@@ -33,5 +33,5 @@ add_custom_command(
   DEPENDS ${XCODEML_CLAW_FILE}
   COMMENT "Decompile XcodeML to Fortran")
 
-add_custom_target(transform
+add_custom_target(transform ALL
   DEPENDS ${OUTPUT_FILE})
