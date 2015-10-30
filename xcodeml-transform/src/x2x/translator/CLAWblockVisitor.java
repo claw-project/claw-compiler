@@ -1,5 +1,7 @@
 package x2x.translator;
 
+import x2x.translator.pragma.CLAWpragma;
+
 import exc.block.*;
 
 public class CLAWblockVisitor implements BasicBlockVisitor {
@@ -9,22 +11,31 @@ public class CLAWblockVisitor implements BasicBlockVisitor {
   }
 
   public void visit(BasicBlock bb){
-    System.out.println("Visit BB");
+    //System.out.println("Visit BB");
     if(bb == null) {
       return;
     }
     for(Statement s = bb.getHead(); s != null; s = s.getNext()) {
       if(s.getExpr() != null) {
+        if(s.getExpr().isPragma()){
+          String pragmaName = s.getExpr().getArg(0).getString();
+          /*System.out.println("PRAGMA FOUND");
           System.out.println("@: " + s.getExpr());
+          System.out.println(pragmaName);*/
+
+          if(!CLAWpragma.isValid(pragmaName)){
+              System.err.println("Unvalid CLAW pragma detected: !$" + pragmaName);
+          }
+        }
       }
     }
-    if(bb.getExpr() != null) {
+    /*if(bb.getExpr() != null) {
         System.out.println("@: " + bb.getExpr());
-    }
+    }*/
   }
 
   public void visit(Block b){
-    System.out.println("Visit B");
+    //System.out.println("Visit B");
     if(b == null) {
       return;
     }
@@ -40,7 +51,7 @@ public class CLAWblockVisitor implements BasicBlockVisitor {
   }
 
   public void visit(BlockList b_list){
-    System.out.println("Visit BL");
+    //System.out.println("Visit BL");
     if(b_list == null){
       return;
     }

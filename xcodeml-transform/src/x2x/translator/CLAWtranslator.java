@@ -16,7 +16,6 @@ public class CLAWtranslator implements XobjectDefVisitor
   // alorithms
 
   public CLAWtranslator() {
-    System.out.println("CLAW translator created");
 
   }
 
@@ -34,16 +33,16 @@ public class CLAWtranslator implements XobjectDefVisitor
     if(is_module){
       System.out.println("MODULE found");
     } else if (is_func){
-      System.out.println("FUNCTION found");
+      //System.out.println("FUNCTION found");
       Xtype ft = d.getFuncType();
       if(ft != null && ft.isFprogram()) {
         // Do smth to program function
         fd = new FuncDefBlock(d);
-        System.out.println("PROGRAM function: " + fd.getBlock().getName());
+        //System.out.println("PROGRAM function: " + fd.getBlock().getName());
       } else if(d.getParent() == null) {
         // standalone function
         fd = new FuncDefBlock(d);
-        System.out.println(fd.getBlock().getName());
+        //System.out.println(fd.getBlock().getName());
 
         Block funcBlock = fd.getBlock();
         //BlockPrintWriter printer = new BlockPrintWriter(System.out);
@@ -56,7 +55,7 @@ public class CLAWtranslator implements XobjectDefVisitor
           System.out.println("FOUND PRAGMA");
         }*/
 
-        System.out.println("standalone function");
+        //System.out.println("standalone function");
       } else {
         System.err.println("Fotran: unknown decls");
       }

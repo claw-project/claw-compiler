@@ -33,6 +33,8 @@ import javax.xml.transform.stream.StreamResult;
 
 
 import x2x.translator.CLAWtranslator;
+import x2x.translator.CLAWglobalDecl;
+import x2x.translator.pragma.CLAWanalyzePragma;
 
 public class ClawX2X {
   private static void error(String s) {
@@ -229,6 +231,11 @@ public class ClawX2X {
     // Transformation will happen here
     CLAWtranslator claw_translator = new CLAWtranslator();
     xobjFile.iterateDef(claw_translator);
+
+    CLAWglobalDecl clawGlobalDecl = new CLAWglobalDecl(xobjFile);
+    CLAWanalyzePragma clawAnalyzer = new CLAWanalyzePragma(clawGlobalDecl);
+    //xobjFile.iterateDef(clawAnalyzer);
+
 
 
     if(!dump && outputXcode) {
