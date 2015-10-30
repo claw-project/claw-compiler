@@ -5,20 +5,24 @@ set (XCODEML_FILE original_code.f90.xcodeml)
 set (XCODEML_CLAW_FILE original_code.f90.xcodeml.claw)
 set (OUTPUT_FILE transformed_code.f90)
 
-set (OMNIJAR_INCLUDE /usr/local/lib/om-common.jar:/usr/local/lib/om-f-back.jar:/usr/local/lib/om-exc-tools.jar)
+set (OMNIJAR_INCLUDE /usr/local/lib/om-common.jar:/usr/local/lib/om-f-back.jar:/usr/local/lib/om-exc-tools.jar:../../../build/omni-x2x.jar)
+
+set (OMNI_F_FRONTEND F_Front)
+set (OMNI_X2X x2x.ClawX2X)
 set (OMNI_F_BACKEND xcodeml.f.util.omx2f)
+
 
 # Create intermediate representation in XcodeML Fortran format
 add_custom_command(
   OUTPUT  ${XCODEML_FILE}
-  COMMAND F_Front -o ${XCODEML_FILE} ${ORIGINAL_FILE}
+  COMMAND ${OMNI_F_FRONTEND} -o ${XCODEML_FILE} ${ORIGINAL_FILE}
   DEPENDS ${ORIGINAL_FILE}
   COMMENT "Generating XcodeML file")
 
 # Manipulate the intermediate representation and output XcodeML Fortran
 add_custom_command(
   OUTPUT  ${XCODEML_CLAW_FILE}
-  COMMAND cp ${XCODEML_FILE} ${XCODEML_CLAW_FILE}
+  COMMAND java -cp ${OMNIJAR_INCLUDE} ${OMNI_X2X} -o ${XCODEML_CLAW_FILE} ${XCODEML_FILE}
   DEPENDS ${XCODEML_FILE}
   COMMENT "Apply XcodeML transformation")
 
