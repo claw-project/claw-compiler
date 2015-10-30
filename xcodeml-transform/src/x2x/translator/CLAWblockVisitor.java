@@ -25,6 +25,20 @@ public class CLAWblockVisitor implements BasicBlockVisitor {
 
           if(!CLAWpragma.isValid(pragmaName)){
               System.err.println("Unvalid CLAW pragma detected: !$" + pragmaName);
+          } else {
+            CLAWpragma directive = CLAWpragma.getDirective(pragmaName);
+            if(directive == null){
+
+            } else {
+              switch(directive){
+                case LOOP_FUSION:
+                  System.out.println("Apply loop fusion");
+                  break;
+                case LOOP_INTERCHANGE:
+                  System.out.println("Apply loop interchange");
+                  break;
+              }
+            }
           }
         }
       }
@@ -35,7 +49,7 @@ public class CLAWblockVisitor implements BasicBlockVisitor {
   }
 
   public void visit(Block b){
-    //System.out.println("Visit B");
+
     if(b == null) {
       return;
     }
@@ -48,10 +62,11 @@ public class CLAWblockVisitor implements BasicBlockVisitor {
 
     b.visitBasicBlock(this);
     b.visitBody(this);
+
   }
 
   public void visit(BlockList b_list){
-    //System.out.println("Visit BL");
+    System.out.println("Visit BL");
     if(b_list == null){
       return;
     }

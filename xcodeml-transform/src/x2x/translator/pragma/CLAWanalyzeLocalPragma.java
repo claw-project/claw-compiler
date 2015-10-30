@@ -17,6 +17,7 @@ public class CLAWanalyzeLocalPragma {
 
   public void analyze(FuncDefBlock def) {
     System.out.println("CLAWanalyzeLocalPragma");
+    System.out.println(def.getBlock().toString());
     FunctionBlock fb = def.getBlock();
 
     BlockIterator i = new topdownBlockIterator(fb);
@@ -34,20 +35,25 @@ public class CLAWanalyzeLocalPragma {
         } catch (Exception e) {
           //TODO
           //ACC.error(pb.getLineNo(), e.getMessage());
-        }
+        }<
       } else if (b.Opcode() == Xcode.F_STATEMENT_LIST){
         System.out.println("  F_STATEMENT_LIST");
         //System.out.println(b.toString());
         BlockIterator j = new topdownBlockIterator(b);
         for (j.init(); !j.end(); j.next()) {
-          Block bb = j.getBlock();
-          //
-          System.out.println("    XX" + bb.toString());
-          if (bb.Opcode() ==  Xcode.PRAGMA_LINE) {
-            System.out.println("PRAGMA XXX");
+          BasicBlock bb = j.getBlock().getBasicBlock();
+          if(bb != null){
+            for(Statement s = bb.getHead(); s != null; s = s.getNext()) {
+              if(s.getExpr() != null) {
+                if(s.getExpr().isPragma()){
+                  String pragmaName = s.getExpr().getArg(0).getString();
+                  System.out.println("PRAGMA " + pragmaName);
+                }
+              }
+            } // end for Statement
           }
 
-        }
+        } // end for BlockIterator
       }
     }
   }

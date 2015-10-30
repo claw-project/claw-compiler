@@ -27,6 +27,20 @@ public enum CLAWpragma {
     return name;
   }
 
+  public static CLAWpragma getDirective(String pragma){
+    // TODO error handling
+    String[] parts = pragma.split(" ");
+    String directive = parts[1];
+    switch(directive){
+      case LOOP_FUSION_DIRECTIVE:
+        return CLAWpragma.LOOP_FUSION;
+      case LOOP_INTERCHANGE_DIRECTIVE:
+        return CLAWpragma.LOOP_INTERCHANGE;
+      default:
+        return null;
+    }
+  }
+
 
   // Check the correctness of a claw directive
   // TODO correct error message
@@ -58,6 +72,8 @@ public enum CLAWpragma {
   private static boolean isValidOption(CLAWpragma directive, String[] options){
     return true;
   }
+
+
 
   public static CLAWpragma valueOf(Xobject x) {
     return valueOf(x.getString());
