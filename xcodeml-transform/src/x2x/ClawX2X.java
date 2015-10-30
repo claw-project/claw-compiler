@@ -31,6 +31,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+
+import x2x.translator.CLAWtranslator;
+
 public class ClawX2X {
   private static void error(String s) {
     System.err.println(s);
@@ -224,7 +227,8 @@ public class ClawX2X {
 
 
     // Transformation will happen here
-
+    CLAWtranslator claw_translator = new CLAWtranslator();
+    xobjFile.iterateDef(claw_translator);
 
 
     if(!dump && outputXcode) {
