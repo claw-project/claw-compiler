@@ -7,3 +7,5 @@ install_manifest.txt
 build
 *.class
 *.jar
+*.xcodeml
+*.xcodeml.claw
