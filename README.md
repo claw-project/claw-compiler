@@ -1,2 +1,3 @@
-# omni-claw
-Test to evaluate the omni compiler in the CLAW project
+# omni-x2x
+
+Small test to evaluate the XcodeML to XcodeML transformation ability of the OMNI Compiler.
