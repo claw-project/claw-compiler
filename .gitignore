@@ -9,3 +9,4 @@ build
 *.jar
 *.xcodeml
 *.xcodeml.claw
+.project
