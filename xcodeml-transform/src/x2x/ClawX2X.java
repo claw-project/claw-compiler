@@ -31,6 +31,16 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+// TODO move in transform file once its created
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import java.io.File;
+// end TODO
+
 
 import x2x.translator.CLAWtranslator;
 import x2x.translator.CLAWglobalDecl;
@@ -86,6 +96,7 @@ public class ClawX2X {
       "  -intel       decompile for Intel Fortran.",
       "  -M dir       specify where to search for .xmod files",
       "  -decomp      output decompiled source code.",
+      "  -xcodeml     Perform XcodeML transformation only. No Xobject.",
       "",
       " Debug Options:",
       "  -d           enable output debug message.",
@@ -107,6 +118,7 @@ public class ClawX2X {
     boolean outputXcode = false;
     boolean outputDecomp = false;
     boolean dump = false;
+    boolean xcodeml_only = false;
     int maxColumns = 0;
 
     for(int i = 0; i < args.length; ++i) {
@@ -151,6 +163,8 @@ public class ClawX2X {
           else {
             XcodeMLtools_Fmod.addSearchPath(arg.substring(2));
           }
+      } else if (arg.startsWith("-xcodeml")) {
+        xcodeml_only = true;
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(inXmlFile == null) {
@@ -159,6 +173,33 @@ public class ClawX2X {
         error("too many arguments");
       }
     }
+
+
+    if(xcodeml_only){
+      System.out.println("XcodeML transformation");
+      File fXmlFile = new File(inXmlFile);
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(fXmlFile);
+
+      doc.getDocumentElement().normalize();
+
+      System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+      //NodeList nList = doc.getElementsByTagName("staff");
+
+      Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      DOMSource source = new DOMSource(doc);
+      // Output to console
+      //StreamResult console = new StreamResult(System.out);
+      // Output to file
+      StreamResult console = new StreamResult(new File(outXmlFile));
+      transformer.transform(source, console);
+
+      return;
+    }
+
+
 
     Reader reader = null;
     Writer xmlWriter = null;
