@@ -39,6 +39,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import java.io.File;
+import x2x.translator.pragma.CLAWpragma;
 // end TODO
 
 
@@ -181,17 +182,38 @@ public class ClawX2X {
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
       Document doc = dBuilder.parse(fXmlFile);
-
       doc.getDocumentElement().normalize();
 
       System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+      // TODO valid root information such as language, version ...
+
+
+      // TODO use the enum
       NodeList nList = doc.getElementsByTagName("FpragmaStatement");
       for (int i = 0; i < nList.getLength(); i++) {
-		    Node nNode = nList.item(i);
-        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-          Element eElement = (Element) nNode;
-          System.out.println("PRAGMA: " + eElement.getTextContent());
-          
+		    Node pragmaNode = nList.item(i);
+        if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
+          Element pragmaElement = (Element) pragmaNode;
+          String fullPragmaText = pragmaElement.getTextContent();
+
+          if(CLAWpragma.isValid(fullPragmaText)){
+            System.out.println("VALID PRAGMA: " + fullPragmaText);
+            CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
+            if(clawDirective == CLAWpragma.LOOP_FUSION){
+            /*  Node pragmaSibling = pragmaSibling.getNextSibling();
+              while (!(sibling instanceof Element) && sibling != null) {
+
+                sibling = sibling.getNextSibling();
+              }*/
+              System.out.println("LOOP FUSION detected");
+
+            }
+          } else {
+            System.out.println("INVALID PRAGMA: " + fullPragmaText);
+          }
+
+
+
         }
 		  }
 
