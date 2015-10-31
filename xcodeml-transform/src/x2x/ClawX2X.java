@@ -185,7 +185,16 @@ public class ClawX2X {
       doc.getDocumentElement().normalize();
 
       System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-      //NodeList nList = doc.getElementsByTagName("staff");
+      NodeList nList = doc.getElementsByTagName("FpragmaStatement");
+      for (int i = 0; i < nList.getLength(); i++) {
+		    Node nNode = nList.item(i);
+        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+          Element eElement = (Element) nNode;
+          System.out.println("PRAGMA: " + eElement.getTextContent());
+          
+        }
+		  }
+
 
       Transformer transformer = TransformerFactory.newInstance().newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
