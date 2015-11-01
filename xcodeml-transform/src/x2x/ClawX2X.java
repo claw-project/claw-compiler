@@ -200,8 +200,21 @@ public class ClawX2X {
             System.out.println("VALID PRAGMA: " + fullPragmaText);
             CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
             if(clawDirective == CLAWpragma.LOOP_FUSION){
-            /*  Node pragmaSibling = pragmaSibling.getNextSibling();
-              while (!(sibling instanceof Element) && sibling != null) {
+
+              // TODO find attached loop and raise error in case there is not 
+              Node pragmaSibling = pragmaNode.getNextSibling();
+              while(pragmaSibling.getNodeType() != Node.ELEMENT_NODE){
+                pragmaSibling = pragmaSibling.getNextSibling();
+              }
+
+              if (pragmaSibling.getNodeType() == Node.ELEMENT_NODE) {
+                Element elementSibling = (Element) pragmaSibling;
+                if(elementSibling.getTagName().equals("FdoStatement")){
+                  System.out.println("DO LOOP attached to pragma");
+                }
+              }
+
+            /*  while (!(sibling instanceof Element) && sibling != null) {
 
                 sibling = sibling.getNextSibling();
               }*/
