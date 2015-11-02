@@ -31,21 +31,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-// TODO move in transform file once its created
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import java.io.File;
-import x2x.translator.pragma.CLAWpragma;
-// end TODO
-
-
 import x2x.translator.xobject.CLAWtranslator;
 import x2x.translator.xobject.CLAWglobalDecl;
 import x2x.translator.pragma.CLAWanalyzePragma;
+import x2x.translator.xcodeml.CLAWxcodemlTranslator;
 
 public class ClawX2X {
   private static void error(String s) {
@@ -177,72 +166,9 @@ public class ClawX2X {
 
 
     if(xcodeml_only){
-      System.out.println("XcodeML transformation");
-      File fXmlFile = new File(inXmlFile);
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(fXmlFile);
-      doc.getDocumentElement().normalize();
-
-      System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-      // TODO valid root information such as language, version ...
-
-
-      // TODO use the enum
-      NodeList nList = doc.getElementsByTagName("FpragmaStatement");
-      for (int i = 0; i < nList.getLength(); i++) {
-		    Node pragmaNode = nList.item(i);
-        if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
-          Element pragmaElement = (Element) pragmaNode;
-          String fullPragmaText = pragmaElement.getTextContent();
-
-          if(CLAWpragma.isValid(fullPragmaText)){
-            System.out.println("VALID PRAGMA: " + fullPragmaText);
-            CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
-            if(clawDirective == CLAWpragma.LOOP_FUSION){
-
-              // TODO find attached loop and raise error in case there is not
-              Node pragmaSibling = pragmaNode.getNextSibling();
-              while(pragmaSibling.getNodeType() != Node.ELEMENT_NODE){
-                pragmaSibling = pragmaSibling.getNextSibling();
-              }
-
-
-              if (pragmaSibling.getNodeType() == Node.ELEMENT_NODE) {
-                Element elementSibling = (Element) pragmaSibling;
-                if(elementSibling.getTagName().equals("FdoStatement")){
-                  System.out.println("DO LOOP attached to pragma");
-                }
-              }
-
-            /*  while (!(sibling instanceof Element) && sibling != null) {
-
-                sibling = sibling.getNextSibling();
-              }*/
-              System.out.println("LOOP FUSION detected");
-              pragmaElement.getParentNode().removeChild(pragmaElement);
-
-            }
-
-          } else {
-            System.out.println("INVALID PRAGMA: " + fullPragmaText);
-          }
-
-
-
-        }
-		  }
-
-
-      Transformer transformer = TransformerFactory.newInstance().newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      DOMSource source = new DOMSource(doc);
-      // Output to console
-      //StreamResult console = new StreamResult(System.out);
-      // Output to file
-      StreamResult console = new StreamResult(new File(outXmlFile));
-      transformer.transform(source, console);
-
+      CLAWxcodemlTranslator xcmlTranslator = new CLAWxcodemlTranslator(inXmlFile, outXmlFile);
+      xcmlTranslator.analyze();
+      xcmlTranslator.transform();
       return;
     }
 
