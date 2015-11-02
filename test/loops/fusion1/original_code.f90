@@ -15,4 +15,10 @@ SUBROUTINE clawloop
   DO i=1,10
     PRINT *, 'Second loop body:',i
   END DO
+
+  !$claw loop-fusion
+  DO i=1,10
+    PRINT *, 'Third loop body:',i
+  END DO
+
 END
