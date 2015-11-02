@@ -18,6 +18,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 
+import java.util.*;
+
+
 import exc.xcodeml.*;
 import exc.object.Xcode;
 
@@ -29,11 +32,13 @@ public class CLAWxcodemlTranslator {
   private boolean _canTransform = false;
   private XcodeMLNameTable_F _xcodemlNameTable = null;
   private Document _xcodemlDoc = null;
+  private ArrayList<CLAWloopFusion> _loopFusion = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile, String xcodemlOutputFile){
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _xcodemlNameTable = new XcodeMLNameTable_F();
+    _loopFusion = new ArrayList<CLAWloopFusion>();
   }
 
   private void readXcodeML(){
@@ -83,7 +88,6 @@ public class CLAWxcodemlTranslator {
       return false;
     }
 
-    //System.out.println(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));
     return true;
   }
 
@@ -108,10 +112,7 @@ public class CLAWxcodemlTranslator {
       return;
     }
 
-
-
-    // TODO use the enum
-    /*NodeList nList = doc.getElementsByTagName("FpragmaStatement");
+    NodeList nList = _xcodemlDoc.getElementsByTagName(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));
     for (int i = 0; i < nList.getLength(); i++) {
       Node pragmaNode = nList.item(i);
       if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -119,9 +120,10 @@ public class CLAWxcodemlTranslator {
         String fullPragmaText = pragmaElement.getTextContent();
 
         if(CLAWpragma.isValid(fullPragmaText)){
-          System.out.println("VALID PRAGMA: " + fullPragmaText);
+
           CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
           if(clawDirective == CLAWpragma.LOOP_FUSION){
+
 
             // TODO find attached loop and raise error in case there is not
             Node pragmaSibling = pragmaNode.getNextSibling();
@@ -134,11 +136,12 @@ public class CLAWxcodemlTranslator {
               Element elementSibling = (Element) pragmaSibling;
               if(elementSibling.getTagName().equals("FdoStatement")){
                 System.out.println("DO LOOP attached to pragma");
+                _loopFusion.add(new CLAWloopFusion(pragmaElement, elementSibling));
               }
             }
 
-            System.out.println("LOOP FUSION detected");
-            pragmaElement.getParentNode().removeChild(pragmaElement);
+            //System.out.println("LOOP FUSION detected");
+            //pragmaElement.getParentNode().removeChild(pragmaElement);
 
           }
 
@@ -151,8 +154,8 @@ public class CLAWxcodemlTranslator {
       }
     }
 
-
-  */
+    // Analysis done, the transformation can be performed.
+    _canTransform = true;
   }
 
   public void transform() {
@@ -161,6 +164,17 @@ public class CLAWxcodemlTranslator {
         ouputXcodeML();
         return;
       }
+
+      // Do the transformation here
+      System.out.println("Loop in the loop fusion array: " + _loopFusion.size());
+
+      if(_loopFusion.get(0).canMergeWith(_loopFusion.get(1))){
+        System.out.println("Loop 0 and loop 1 have the same parent block");
+        _loopFusion.get(0).merge(_loopFusion.get(1));
+
+      }
+
+
 
       ouputXcodeML();
     } catch (Exception ex) {
