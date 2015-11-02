@@ -6,12 +6,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import xcodeml.util.XmOption;
+
 public class CLAWloopInterchange extends CLAWloop {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
 
-  private Element _loopLevel1 = null;
+  private CLAWloop _loopLevel1 = null;
+  private CLAWloop _loopLevel2 = null;
 
   public CLAWloopInterchange(Element pragma, Element loop){
     super(pragma, loop);
@@ -20,8 +23,11 @@ public class CLAWloopInterchange extends CLAWloop {
 
   public void transform(){
     if(analyze()){
-      System.out.println("loop-interchange transformation");
-
+      if(XmOption.isDebugOutput()){
+        System.out.println("loop-interchange transformation (loop 1 <--> loop 2)");
+        System.out.println("  loop 1: " + getFormattedRange());
+        System.out.println("  loop 2: " + _loopLevel1.getFormattedRange());
+      }
     }
     _transformationDone = true;
   }
@@ -30,11 +36,12 @@ public class CLAWloopInterchange extends CLAWloop {
   private boolean analyze(){
     Element body = getBodyElement();
     getIterationVariableValue();
-    _loopLevel1 = findChildLoop(body);
-    if(_loopLevel1 != null){
-      return true;
+    Element loop = findChildLoop(body);
+    if(loop == null){
+      return false;
     }
-    return false;
+    _loopLevel1 = new CLAWloop(_pragmaElement, loop);
+    return true;
   }
 
 

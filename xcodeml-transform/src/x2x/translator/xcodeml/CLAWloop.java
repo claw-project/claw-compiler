@@ -8,10 +8,15 @@ public class CLAWloop {
   protected Element _pragmaElement = null;
   protected Element _loopElement = null;
 
+  private Element _rangeElement = null;
+  private Element _rangeVar = null;
+
   private String _iterationVar;
   private String _lowerBoundValue;
   private String _upperBoundValue;
   private String _stepValue;
+
+
 
   public CLAWloop(Element pragma, Element loop){
     _pragmaElement = pragma;
@@ -19,8 +24,11 @@ public class CLAWloop {
 
     NodeList vars = _loopElement.getElementsByTagName("Var");
     Element var = (Element) vars.item(0);
+    _rangeVar = var;
     _iterationVar = var.getTextContent();
-
+    NodeList ranges = _loopElement.getElementsByTagName("indexRange");
+    Element range = (Element) vars.item(0);
+    _rangeElement = range;
 
     _lowerBoundValue = getRangeValue("lowerBound");
     _upperBoundValue = getRangeValue("upperBound");
@@ -81,6 +89,10 @@ public class CLAWloop {
     return _stepValue;
   }
 
+  public String getFormattedRange(){
+    return _iterationVar + "=" + _lowerBoundValue + "," + _upperBoundValue + ","
+      + _stepValue;
+  }
 
   public boolean hasSameRangeWith(CLAWloop otherLoop){
     return _lowerBoundValue == otherLoop.getLowerBoundValue() &&
