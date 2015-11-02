@@ -35,6 +35,20 @@ public class CLAWloop {
     _stepValue = getRangeValue("step");
   }
 
+  protected void findRangeElements(){
+    NodeList vars = _loopElement.getElementsByTagName("Var");
+    Element var = (Element) vars.item(0);
+    _rangeVarElement = var;
+    _iterationVar = var.getTextContent();
+    NodeList ranges = _loopElement.getElementsByTagName("indexRange");
+    Element range = (Element) ranges.item(0);
+    _rangeElement = range;
+
+    _lowerBoundValue = getRangeValue("lowerBound");
+    _upperBoundValue = getRangeValue("upperBound");
+    _stepValue = getRangeValue("step");
+  }
+
   private String getRangeValue(String tag){
     NodeList rangeElements = _loopElement.getElementsByTagName(tag);
     Element rangeElement = (Element) rangeElements.item(0);
@@ -43,13 +57,29 @@ public class CLAWloop {
     return constant.getTextContent();
   }
 
-  public void setNewRange(Element var, Element range){
+  public void setNewRange(Node var, Node range){
     Element body = getBodyElement();
-    _loopElement.insertBefore(var, body);
-    _loopElement.insertBefore(range, body);
-    _rangeVarElement = var;
-    _rangeElement = range;
+    Node newVar = var.cloneNode(true);
+    Node newRange = range.cloneNode(true);
+    _loopElement.insertBefore(newVar, body);
+    _loopElement.insertBefore(newRange, body);
+    findRangeElements();
+
+    //_rangeVarElement = var;
+    //_rangeElement = range;
   }
+
+  public void deleteRangeElements(){
+    _loopElement.removeChild(_rangeVarElement);
+    _loopElement.removeChild(_rangeElement);
+  }
+
+  protected void swapRangeElementsWith(CLAWloop otherLoop){
+    otherLoop.setNewRange(_rangeVarElement, _rangeElement);
+    setNewRange(otherLoop.getRangeVarElement(), otherLoop.getRangeElement());
+  }
+
+
 
   public Element getLoopElement(){
     return _loopElement;
@@ -65,6 +95,8 @@ public class CLAWloop {
     Element body = (Element) bodies.item(0);
     return body;
   }
+
+
 
 /*
 <Var type="Fint" scope="local">i</Var>
