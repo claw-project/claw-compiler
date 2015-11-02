@@ -1,5 +1,7 @@
 package x2x.translator.xcodeml;
 
+import x2x.translator.pragma.CLAWpragma;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,13 +11,13 @@ public class CLAWloopFusion {
   private Element _pragmaElement = null;
   private Element _loopElement = null;
   private boolean _merged = false;
+  private String _groupLabel = null;
 
   public CLAWloopFusion(Element pragma, Element loop){
     _pragmaElement = pragma;
     _loopElement = loop;
+    _groupLabel = CLAWpragma.getGroupOptionValue(pragma.getTextContent());
   }
-
-
 
   public Element getLoopElement(){
     return _loopElement;
@@ -23,6 +25,10 @@ public class CLAWloopFusion {
 
   public Element getPragmaElement(){
     return _pragmaElement;
+  }
+
+  public String getGroupOptionLabel(){
+    return _groupLabel;
   }
 
   private boolean hasSameParentBlockWith(CLAWloopFusion otherLoop){
@@ -40,6 +46,11 @@ public class CLAWloopFusion {
     if(!hasSameParentBlockWith(otherLoop)){
       return false;
     }
+    if(!getGroupOptionLabel().equals(otherLoop.getGroupOptionLabel())){
+      return false;
+    }
+    // TODO compare the range !!
+
     return true;
   }
 

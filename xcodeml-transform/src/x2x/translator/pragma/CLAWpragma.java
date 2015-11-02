@@ -1,7 +1,7 @@
 package x2x.translator.pragma;
 
 import exc.object.Xobject;
-
+import java.util.regex.*;
 
 
 public enum CLAWpragma {
@@ -19,6 +19,9 @@ public enum CLAWpragma {
   private static final String CLAW_DIRECTIVE = "claw";
   private static final String LOOP_FUSION_DIRECTIVE = "loop-fusion";
   private static final String LOOP_INTERCHANGE_DIRECTIVE = "loop-interchange";
+  private static final String OPTION_FUSION_GROUP = "group";
+  private static final String MULTIPLE_SPACES = " *";
+  private static final String INNER_OPTION = "\\(([^)]+)\\)";
 
   private String name = null;
 
@@ -39,6 +42,26 @@ public enum CLAWpragma {
       default:
         return null;
     }
+  }
+
+
+  public static String getGroupOptionValue(String pragma){
+    if(getDirective(pragma) != CLAWpragma.LOOP_FUSION){
+      return null;
+    }
+
+    Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
+      MULTIPLE_SPACES + LOOP_FUSION_DIRECTIVE + MULTIPLE_SPACES +
+      OPTION_FUSION_GROUP + INNER_OPTION).matcher(pragma);
+    if(!matchFullDirective.matches()){
+      return null;
+    }
+
+    Matcher matchOption = Pattern.compile(INNER_OPTION).matcher(pragma);
+    while(matchOption.find()) {
+      return matchOption.group(1);
+    }
+    return null;
   }
 
 
