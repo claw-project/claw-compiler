@@ -43,26 +43,12 @@ public class CLAWloop {
     return constant.getTextContent();
   }
 
-  private void setRangeValue(String tag, String newValue){
-    NodeList rangeElements = _loopElement.getElementsByTagName(tag);
-    Element rangeElement = (Element) rangeElements.item(0);
-    NodeList constants = rangeElement.getElementsByTagName("FintConstant");
-    Element constant = (Element) constants.item(0);
-    constant.setTextContent(newValue);
-  }
-
-  public void setNewRange(String iterationVariable, String lowerBound,
-    String upperBound, String step){
-      _rangeVarElement.setTextContent(iterationVariable);
-      setRangeValue("lowerBound", lowerBound);
-      setRangeValue("upperBound", upperBound);
-      setRangeValue("step", step);
-  }
-
   public void setNewRange(Element var, Element range){
     Element body = getBodyElement();
     _loopElement.insertBefore(var, body);
     _loopElement.insertBefore(range, body);
+    _rangeVarElement = var;
+    _rangeElement = range;
   }
 
   public Element getLoopElement(){
