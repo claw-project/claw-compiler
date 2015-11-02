@@ -10,3 +10,4 @@ build
 *.xcodeml
 *.xcodeml.claw
 .project
+transformed_code.f90
