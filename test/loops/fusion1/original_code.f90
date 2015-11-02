@@ -1,6 +1,6 @@
 ! Simple program to test the loop-fusion directive
 
-PROGRAM LOOP_INTERCHANGE
+PROGRAM LOOP_FUSION
   CALL clawloop
 END
 
