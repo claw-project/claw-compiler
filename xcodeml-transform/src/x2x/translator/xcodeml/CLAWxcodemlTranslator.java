@@ -23,7 +23,7 @@ import java.util.*;
 
 import exc.xcodeml.*;
 import exc.object.Xcode;
-
+import xcodeml.util.XmOption;
 import x2x.translator.pragma.CLAWpragma;
 
 public class CLAWxcodemlTranslator {
@@ -33,12 +33,14 @@ public class CLAWxcodemlTranslator {
   private XcodeMLNameTable_F _xcodemlNameTable = null;
   private Document _xcodemlDoc = null;
   private ArrayList<CLAWloopFusion> _loopFusion = null;
+  private ArrayList<CLAWloopInterchange> _loopInterchange = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile, String xcodemlOutputFile){
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _xcodemlNameTable = new XcodeMLNameTable_F();
     _loopFusion = new ArrayList<CLAWloopFusion>();
+    _loopInterchange = new ArrayList<CLAWloopInterchange>();
   }
 
   private void readXcodeML(){
@@ -118,10 +120,10 @@ public class CLAWxcodemlTranslator {
         String fullPragmaText = pragmaElement.getTextContent();
 
         if(CLAWpragma.isValid(fullPragmaText)){
-
           CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
-          if(clawDirective == CLAWpragma.LOOP_FUSION){
 
+          // loop-fusion directives
+          if(clawDirective == CLAWpragma.LOOP_FUSION){
 
             // TODO find attached loop and raise error in case there is not
             Node pragmaSibling = pragmaNode.getNextSibling();
@@ -129,17 +131,20 @@ public class CLAWxcodemlTranslator {
               pragmaSibling = pragmaSibling.getNextSibling();
             }
 
-
-            if (pragmaSibling.getNodeType() == Node.ELEMENT_NODE) {
-              Element elementSibling = (Element) pragmaSibling;
-              if(elementSibling.getTagName().equals("FdoStatement")){
-                _loopFusion.add(new CLAWloopFusion(pragmaElement, elementSibling));
-              }
+            Element elementSibling = (Element) pragmaSibling;
+            if(elementSibling.getTagName().equals("FdoStatement")){
+              _loopFusion.add(new CLAWloopFusion(pragmaElement, elementSibling));
             }
 
-            //System.out.println("LOOP FUSION detected");
-            //pragmaElement.getParentNode().removeChild(pragmaElement);
 
+            // loop-interchange directives
+          } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
+            Element loop = findNextLoop(pragmaNode);
+            if(loop == null){
+              System.err.println("loop-interchange pragma is not followed by a loop");
+            } else {
+                _loopInterchange.add(new CLAWloopInterchange(pragmaElement, loop));
+            }
           }
 
         } else {
@@ -164,6 +169,11 @@ public class CLAWxcodemlTranslator {
 
       // Do the transformation here
 
+      if(XmOption.isDebugOutput()){
+        System.out.println("transform loop-fusion: "+ _loopFusion.size());
+        System.out.println("transform loop-interchange: "+ _loopInterchange.size());
+      }
+
       // Apply loop-fusion transformation
       for(int i = 0; i < _loopFusion.size(); ++i){
         CLAWloopFusion base = _loopFusion.get(i);
@@ -178,11 +188,34 @@ public class CLAWxcodemlTranslator {
         }
       }
 
+      // Apply loop-interchange transformation
+      for(int i = 0; i < _loopInterchange.size(); ++i){
+        CLAWloopInterchange  loop = _loopInterchange.get(i);
+        loop.transform();
+      }
+
 
       ouputXcodeML();
     } catch (Exception ex) {
       // TODO handle exception
     }
+  }
+
+
+
+  private Element findNextLoop(Node from){
+    Node nextNode = from.getNextSibling();
+    boolean elementFound = false;
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals("FdoStatement")){
+          return element;
+        }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
   }
 
 }

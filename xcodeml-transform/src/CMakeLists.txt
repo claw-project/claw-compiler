@@ -9,6 +9,8 @@ add_jar(omni-x2x
   x2x/translator/pragma/CLAWanalyzePragma.java
   x2x/translator/pragma/CLAWpragma.java
   x2x/translator/xcodeml/CLAWxcodemlTranslator.java
+  x2x/translator/xcodeml/CLAWloop.java
   x2x/translator/xcodeml/CLAWloopFusion.java
+  x2x/translator/xcodeml/CLAWloopInterchange.java
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )

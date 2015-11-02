@@ -6,25 +6,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class CLAWloopFusion {
+public class CLAWloopFusion extends CLAWloop {
 
-  private Element _pragmaElement = null;
-  private Element _loopElement = null;
   private boolean _merged = false;
   private String _groupLabel = null;
 
   public CLAWloopFusion(Element pragma, Element loop){
-    _pragmaElement = pragma;
-    _loopElement = loop;
+    super(pragma, loop);
     _groupLabel = CLAWpragma.getGroupOptionValue(pragma.getTextContent());
-  }
-
-  public Element getLoopElement(){
-    return _loopElement;
-  }
-
-  public Element getPragmaElement(){
-    return _pragmaElement;
   }
 
   public String getGroupOptionLabel(){
@@ -43,18 +32,8 @@ public class CLAWloopFusion {
   }
 
   private boolean hasSameGroupOption(CLAWloopFusion otherLoop){
-    if(otherLoop.getGroupOptionLabel() == null && getGroupOptionLabel() == null){
-      return true;
-    }
-
-    if(otherLoop.getGroupOptionLabel() == null || getGroupOptionLabel() == null){
-      return false;
-    }
-
-    if(getGroupOptionLabel().equals(otherLoop.getGroupOptionLabel())){
-      return true;
-    }
-    return false;
+    return (otherLoop.getGroupOptionLabel() == null ? getGroupOptionLabel()
+      == null : otherLoop.getGroupOptionLabel().equals(getGroupOptionLabel()));
   }
 
   public boolean canMergeWith(CLAWloopFusion otherLoop){
@@ -64,8 +43,9 @@ public class CLAWloopFusion {
     if(!hasSameGroupOption(otherLoop)){
       return false;
     }
-    // TODO compare the range !!
-
+    if(!hasSameRangeWith(otherLoop)){
+      return false;
+    }
     return true;
   }
 

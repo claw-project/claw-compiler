@@ -27,7 +27,7 @@ add_custom_command(
 # Manipulate the intermediate representation and output XcodeML Fortran
 add_custom_command(
   OUTPUT  ${XCODEML_CLAW_FILE}
-  COMMAND java -cp ${OMNIJAR_INCLUDE} ${OMNI_X2X} -xcodeml -o ${XCODEML_CLAW_FILE} ${XCODEML_FILE}
+  COMMAND java -cp ${OMNIJAR_INCLUDE} ${OMNI_X2X} -xcodeml -d -o ${XCODEML_CLAW_FILE} ${XCODEML_FILE}
   DEPENDS ${XCODEML_FILE}
   COMMENT "Apply XcodeML transformation")
 

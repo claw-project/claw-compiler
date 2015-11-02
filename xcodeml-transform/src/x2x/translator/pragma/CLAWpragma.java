@@ -20,6 +20,7 @@ public enum CLAWpragma {
   private static final String LOOP_FUSION_DIRECTIVE = "loop-fusion";
   private static final String LOOP_INTERCHANGE_DIRECTIVE = "loop-interchange";
   private static final String OPTION_FUSION_GROUP = "group";
+  private static final String OPTION_INTERCHANGE_NEWORDER = "new-order";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
 
@@ -53,6 +54,25 @@ public enum CLAWpragma {
     Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
       MULTIPLE_SPACES + LOOP_FUSION_DIRECTIVE + MULTIPLE_SPACES +
       OPTION_FUSION_GROUP + INNER_OPTION).matcher(pragma);
+    if(!matchFullDirective.matches()){
+      return null;
+    }
+
+    Matcher matchOption = Pattern.compile(INNER_OPTION).matcher(pragma);
+    while(matchOption.find()) {
+      return matchOption.group(1);
+    }
+    return null;
+  }
+
+  public static String getNewOrderOptionValue(String pragma){
+    if(getDirective(pragma) != CLAWpragma.LOOP_INTERCHANGE){
+      return null;
+    }
+
+    Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
+      MULTIPLE_SPACES + LOOP_INTERCHANGE_DIRECTIVE + MULTIPLE_SPACES +
+      OPTION_INTERCHANGE_NEWORDER + INNER_OPTION).matcher(pragma);
     if(!matchFullDirective.matches()){
       return null;
     }
