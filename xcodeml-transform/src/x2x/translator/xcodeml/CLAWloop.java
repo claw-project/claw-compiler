@@ -27,7 +27,7 @@ public class CLAWloop {
     _rangeVarElement = var;
     _iterationVar = var.getTextContent();
     NodeList ranges = _loopElement.getElementsByTagName("indexRange");
-    Element range = (Element) vars.item(0);
+    Element range = (Element) ranges.item(0);
     _rangeElement = range;
 
     _lowerBoundValue = getRangeValue("lowerBound");
@@ -57,6 +57,12 @@ public class CLAWloop {
       setRangeValue("lowerBound", lowerBound);
       setRangeValue("upperBound", upperBound);
       setRangeValue("step", step);
+  }
+
+  public void setNewRange(Element var, Element range){
+    Element body = getBodyElement();
+    _loopElement.insertBefore(var, body);
+    _loopElement.insertBefore(range, body);
   }
 
   public Element getLoopElement(){
@@ -115,6 +121,14 @@ public class CLAWloop {
            _upperBoundValue == otherLoop.getUpperBoundValue() &&
            _stepValue == otherLoop.getStepValue() &&
            _iterationVar == otherLoop.getIterationVariableValue();
+  }
+
+  public Element getRangeElement(){
+    return _rangeElement;
+  }
+
+  public Element getRangeVarElement(){
+    return _rangeVarElement;
   }
 
 

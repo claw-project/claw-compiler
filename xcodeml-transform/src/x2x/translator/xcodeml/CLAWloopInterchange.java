@@ -30,38 +30,24 @@ public class CLAWloopInterchange extends CLAWloop {
       }
     }
 
+    /* To perform the loop interchange, only the ranges and iteration
+     * variables are swapped
+     */
 
     if(_loopLevel1 != null && _loopLevel2 == null){
-      /* Loop interchange between 2 loops
-       * To perform the loop interchange, only the ranges and iteration
-       * variables are swapped
-       */
-
-      String tmpIterationVaribale = _iterationVar;
-      String tmpLowerBoundValue = _lowerBoundValue;
-      String tmpUpperBoundValue = _upperBoundValue;
-      String tmpStepValue = _stepValue;
-
-      // Set range of inner loop to outer loop
-      this.setNewRange(_loopLevel1.getIterationVariableValue(),
-        _loopLevel1.getLowerBoundValue(), _loopLevel1.getUpperBoundValue(),
-        _loopLevel1.getStepValue());
-
-      // Set range of outer loop to inner loop
-      _loopLevel1.setNewRange(tmpIterationVaribale, tmpLowerBoundValue,
-        tmpUpperBoundValue, tmpStepValue);
-
-
+      // Loop interchange between 2 loops
+      swapRangeElementsWith(_loopLevel1);
     } else if (_loopLevel1 != null && _loopLevel2 != null){
       // loop interchange between 3 loops with new-order
+
     }
-
-
-
-
-
-
     _transformationDone = true;
+  }
+
+
+  private void swapRangeElementsWith(CLAWloop otherLoop){
+    setNewRange(otherLoop.getRangeVarElement(), otherLoop.getRangeElement());
+    otherLoop.setNewRange(_rangeVarElement, _rangeElement);
   }
 
 
