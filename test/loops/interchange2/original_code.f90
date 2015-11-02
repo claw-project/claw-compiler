@@ -6,7 +6,7 @@ END
 
 SUBROUTINE clawloop
   INTEGER :: i, j, k
-
+  !$claw loop-interchange new-order(k,i,j)
   DO i=1,4
     DO j=1,3
       DO k=1,2
