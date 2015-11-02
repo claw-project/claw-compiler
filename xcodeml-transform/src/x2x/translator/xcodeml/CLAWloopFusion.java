@@ -42,11 +42,26 @@ public class CLAWloopFusion {
     return true; // TODO compare range from both element
   }
 
+  private boolean hasSameGroupOption(CLAWloopFusion otherLoop){
+    if(otherLoop.getGroupOptionLabel() == null && getGroupOptionLabel() == null){
+      return true;
+    }
+
+    if(otherLoop.getGroupOptionLabel() == null || getGroupOptionLabel() == null){
+      return false;
+    }
+
+    if(getGroupOptionLabel().equals(otherLoop.getGroupOptionLabel())){
+      return true;
+    }
+    return false;
+  }
+
   public boolean canMergeWith(CLAWloopFusion otherLoop){
     if(!hasSameParentBlockWith(otherLoop)){
       return false;
     }
-    if(!getGroupOptionLabel().equals(otherLoop.getGroupOptionLabel())){
+    if(!hasSameGroupOption(otherLoop)){
       return false;
     }
     // TODO compare the range !!
