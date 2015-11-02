@@ -8,11 +8,14 @@ public class CLAWloopFusion {
 
   private Element _pragmaElement = null;
   private Element _loopElement = null;
+  private boolean _merged = false;
 
   public CLAWloopFusion(Element pragma, Element loop){
     _pragmaElement = pragma;
     _loopElement = loop;
   }
+
+
 
   public Element getLoopElement(){
     return _loopElement;
@@ -40,6 +43,17 @@ public class CLAWloopFusion {
     return true;
   }
 
+  public boolean isMerged(){
+    return _merged;
+  }
+
+  public void finalizeMerge(){
+    // Remove the pragma and the loop block of the second loop
+    _pragmaElement.getParentNode().removeChild(_pragmaElement);
+    _loopElement.getParentNode().removeChild(_loopElement);
+    _merged = true;
+  }
+
   /**
    * Merge the given loop with this one
    */
@@ -55,14 +69,10 @@ public class CLAWloopFusion {
         // Do something with childNode, including move or delete...
         if(childNode.getNodeType() == Node.ELEMENT_NODE){
           masterBody.appendChild(childNode);
-          System.out.println("Element" +  childNode.getNodeName());
         }
         childNode = nextChild;
     }
-
-    // Remove the pragma and the loop block of the second loop
-    loop.getPragmaElement().getParentNode().removeChild(loop.getPragmaElement());
-    loop.getLoopElement().getParentNode().removeChild(loop.getLoopElement());
+    loop.finalizeMerge();
   }
 
 

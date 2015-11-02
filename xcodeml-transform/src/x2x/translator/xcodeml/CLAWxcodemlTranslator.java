@@ -103,8 +103,6 @@ public class CLAWxcodemlTranslator {
   }
 
   public void analyze() throws Exception {
-    System.out.println("XcodeML transformation");
-
     readXcodeML();
 
     if(!isXcodeMLvalid()){
@@ -135,7 +133,6 @@ public class CLAWxcodemlTranslator {
             if (pragmaSibling.getNodeType() == Node.ELEMENT_NODE) {
               Element elementSibling = (Element) pragmaSibling;
               if(elementSibling.getTagName().equals("FdoStatement")){
-                System.out.println("DO LOOP attached to pragma");
                 _loopFusion.add(new CLAWloopFusion(pragmaElement, elementSibling));
               }
             }
@@ -166,14 +163,20 @@ public class CLAWxcodemlTranslator {
       }
 
       // Do the transformation here
-      System.out.println("Loop in the loop fusion array: " + _loopFusion.size());
 
-      if(_loopFusion.get(0).canMergeWith(_loopFusion.get(1))){
-        System.out.println("Loop 0 and loop 1 have the same parent block");
-        _loopFusion.get(0).merge(_loopFusion.get(1));
-
+      // Apply loop-fusion transformation
+      for(int i = 0; i < _loopFusion.size(); ++i){
+        CLAWloopFusion base = _loopFusion.get(i);
+        for(int j = i+1; j < _loopFusion.size(); ++j){
+          CLAWloopFusion candidate = _loopFusion.get(j);
+          if(candidate.isMerged()){
+            continue;
+          }
+          if(base.canMergeWith(candidate)){
+            base.merge(candidate);
+          }
+        }
       }
-
 
 
       ouputXcodeML();
