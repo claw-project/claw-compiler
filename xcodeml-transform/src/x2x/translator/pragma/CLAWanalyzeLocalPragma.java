@@ -3,7 +3,7 @@ package x2x.translator.pragma;
 import exc.block.*;
 import exc.object.*;
 
-import x2x.translator.CLAWglobalDecl;
+import x2x.translator.xobject.CLAWglobalDecl;
 
 import java.util.*;
 

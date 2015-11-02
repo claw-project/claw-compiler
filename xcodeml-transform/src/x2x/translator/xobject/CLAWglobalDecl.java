@@ -1,4 +1,4 @@
-package x2x.translator;
+package x2x.translator.xobject;
 
 import exc.block.Bcons;
 import exc.block.BlockList;

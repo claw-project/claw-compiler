@@ -4,7 +4,7 @@ import exc.block.*;
 import exc.object.*;
 import xcodeml.util.XmOption;
 
-import x2x.translator.CLAWglobalDecl;
+import x2x.translator.xobject.CLAWglobalDecl;
 
 public class CLAWanalyzePragma implements XobjectDefVisitor {
   private CLAWglobalDecl _globalDecl;

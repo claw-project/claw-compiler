@@ -1,4 +1,4 @@
-package x2x.translator;
+package x2x.translator.xobject;
 
 import x2x.translator.pragma.CLAWpragma;
 

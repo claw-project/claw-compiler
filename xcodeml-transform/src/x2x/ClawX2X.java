@@ -43,8 +43,8 @@ import x2x.translator.pragma.CLAWpragma;
 // end TODO
 
 
-import x2x.translator.CLAWtranslator;
-import x2x.translator.CLAWglobalDecl;
+import x2x.translator.xobject.CLAWtranslator;
+import x2x.translator.xobject.CLAWglobalDecl;
 import x2x.translator.pragma.CLAWanalyzePragma;
 
 public class ClawX2X {
@@ -201,11 +201,12 @@ public class ClawX2X {
             CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
             if(clawDirective == CLAWpragma.LOOP_FUSION){
 
-              // TODO find attached loop and raise error in case there is not 
+              // TODO find attached loop and raise error in case there is not
               Node pragmaSibling = pragmaNode.getNextSibling();
               while(pragmaSibling.getNodeType() != Node.ELEMENT_NODE){
                 pragmaSibling = pragmaSibling.getNextSibling();
               }
+
 
               if (pragmaSibling.getNodeType() == Node.ELEMENT_NODE) {
                 Element elementSibling = (Element) pragmaSibling;
@@ -219,8 +220,10 @@ public class ClawX2X {
                 sibling = sibling.getNextSibling();
               }*/
               System.out.println("LOOP FUSION detected");
+              pragmaElement.getParentNode().removeChild(pragmaElement);
 
             }
+
           } else {
             System.out.println("INVALID PRAGMA: " + fullPragmaText);
           }
