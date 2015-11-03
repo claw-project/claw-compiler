@@ -16,13 +16,17 @@ public class CLAWloopInterchange extends CLAWloop {
   private CLAWloop _loopLevel1 = null;
   private CLAWloop _loopLevel2 = null;
 
-  private String it0 = null;
-  private String it1 = null;
-  private String it2 = null;
+  private String _baseLoop0 = null;
+  private String _baseLoop1 = null;
+  private String _baseLoop2 = null;
+  private String _newLoop0 = null;
+  private String _newLoop1 = null;
+  private String _newLoop2 = null;
 
-  private String newit0 = null;
-  private String newit1 = null;
-  private String newit2 = null;
+  // New ordering of the loops. Values are initial position.
+  private int _loopNewPos0 = 0;
+  private int _loopNewPos1 = 1;
+  private int _loopNewPos2 = 2;
 
   public CLAWloopInterchange(Element pragma, Element loop){
     super(pragma, loop);
@@ -33,10 +37,10 @@ public class CLAWloopInterchange extends CLAWloop {
     if(analyze()){
       if(XmOption.isDebugOutput()){
         System.out.println("loop-interchange transformation (loop 1 <--> loop 2)");
-        System.out.println("  loop 1: " + getFormattedRange());
-        System.out.println("  loop 2: " + _loopLevel1.getFormattedRange());
+        System.out.println("  loop 0: " + getFormattedRange());
+        System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
         if(_loopLevel2 != null){
-          System.out.println("  loop 3: " + _loopLevel2.getFormattedRange());
+          System.out.println("  loop 2: " + _loopLevel2.getFormattedRange());
         }
       }
 
@@ -60,46 +64,134 @@ public class CLAWloopInterchange extends CLAWloop {
         this.deleteRangeElements();
       } else if (_loopLevel1 != null && _loopLevel2 != null){
         // loop interchange between 3 loops with new-order
-
-        // Save most inner loop iteration variable and range
-        Node tmpIterationVar = _loopLevel2.getRangeVarElement().cloneNode(true);
-        Node tmpRange = _loopLevel2.getRangeElement().cloneNode(true);
-
-        // Set the range of loop 0 to loop 2
-        _loopLevel2.setNewRange(getRangeVarElement(), getRangeElement());
-        // Remove the previous range of loop 2
-        _loopLevel2.deleteRangeElements();
-        // Set new range of loop 2 to loop 0
-        this.setNewRange(tmpIterationVar, tmpRange);
-        // Remove the previous range of loop 0
-        this.deleteRangeElements();
-
-        // recompute the range elements
-        _loopLevel2.findRangeElements();
-        this.findRangeElements();
+        computeLoopNewPosition();
 
 
 
-        // Save most inner loop iteration variable and range
-        tmpIterationVar = _loopLevel2.getRangeVarElement().cloneNode(true);
-        tmpRange = _loopLevel2.getRangeElement().cloneNode(true);
 
-        // Set the range of loop 0 to loop 2
-        _loopLevel2.setNewRange(_loopLevel1.getRangeVarElement(), _loopLevel1.getRangeElement());
-        // Remove the previous range of loop 2
-        _loopLevel2.deleteRangeElements();
-        // Set new range of loop 2 to loop 0
-        _loopLevel1.setNewRange(tmpIterationVar, tmpRange);
-        // Remove the previous range of loop 0
-        _loopLevel1.deleteRangeElements();
 
+        if(XmOption.isDebugOutput()){
+          System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
+            + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 + "," +
+            _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
+              _loopNewPos2 + ")");
+
+          if(needDoubleSwap()){
+            System.out.println("    double swap required");
+          }
+        }
+
+
+        if(needDoubleSwap()){
+          CLAWloop loop1 = null;
+          CLAWloop loop2 = null;
+
+
+
+
+          // Save most inner loop iteration variable and range
+          Node tmpIterationVar = _loopLevel2.getRangeVarElement().cloneNode(true);
+          Node tmpRange = _loopLevel2.getRangeElement().cloneNode(true);
+
+          // Set the range of loop 0 to loop 2
+          _loopLevel2.setNewRange(getRangeVarElement(), getRangeElement());
+          // Remove the previous range of loop 2
+          _loopLevel2.deleteRangeElements();
+          // Set new range of loop 2 to loop 0
+          this.setNewRange(tmpIterationVar, tmpRange);
+          // Remove the previous range of loop 0
+          this.deleteRangeElements();
+
+          // recompute the range elements
+          _loopLevel2.findRangeElements();
+          this.findRangeElements();
+
+
+
+          // Save most inner loop iteration variable and range
+          tmpIterationVar = _loopLevel2.getRangeVarElement().cloneNode(true);
+          tmpRange = _loopLevel2.getRangeElement().cloneNode(true);
+
+          // Set the range of loop 0 to loop 2
+          _loopLevel2.setNewRange(_loopLevel1.getRangeVarElement(), _loopLevel1.getRangeElement());
+          // Remove the previous range of loop 2
+          _loopLevel2.deleteRangeElements();
+          // Set new range of loop 2 to loop 0
+          _loopLevel1.setNewRange(tmpIterationVar, tmpRange);
+          // Remove the previous range of loop 0
+          _loopLevel1.deleteRangeElements();
+
+
+        } else {
+          // Only one loop swap is needed
+          CLAWloop from = null;
+          CLAWloop to = null;
+          if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
+            from = _loopLevel1;
+            to = _loopLevel2;
+          } else if(_loopNewPos1 == 1){ // Loop 1 stay in place 1
+            from = this;
+            to = _loopLevel2;
+          } else if(_loopNewPos2 == 2){ // Loop 2 stay in place 2
+            from = this;
+            to = _loopLevel1;
+          }
+
+          swapLoops(from, to);
+        }
       }
       _transformationDone = true;
     }
   }
 
+  private void swapLoops(CLAWloop loop1, CLAWloop loop2){
+    // Save most inner loop iteration variable and range
+    Node tmpIterationVar = loop2.getRangeVarElement().cloneNode(true);
+    Node tmpRange = loop2.getRangeElement().cloneNode(true);
+
+    // Set the range of loop 0 to loop 2
+    loop2.setNewRange(loop1.getRangeVarElement(), loop1.getRangeElement());
+    // Remove the previous range of loop 2
+    loop2.deleteRangeElements();
+    // Set new range of loop 2 to loop 0
+    loop1.setNewRange(tmpIterationVar, tmpRange);
+    // Remove the previous range of loop 0
+    loop1.deleteRangeElements();
+
+    // recompute the range elements
+    loop2.findRangeElements();
+    loop1.findRangeElements();
+
+  }
+
+  private boolean needDoubleSwap(){
+    if((_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1) ||
+      (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0)){
+      return true;
+    }
+    return false;
+  }
 
 
+  private void computeLoopNewPosition(){
+    if (_baseLoop0.equals(_newLoop1)){
+      _loopNewPos0 = 1;
+    } else if (_baseLoop0.equals(_newLoop2)){
+      _loopNewPos0 = 2;
+    }
+
+    if (_baseLoop1.equals(_newLoop0)){
+      _loopNewPos1 = 0;
+    } else if (_baseLoop1.equals(_newLoop2)){
+      _loopNewPos1 = 2;
+    }
+
+    if (_baseLoop2.equals(_newLoop0)){
+      _loopNewPos2 = 0;
+    } else if (_baseLoop2.equals(_newLoop1)){
+      _loopNewPos2 = 1;
+    }
+  }
 
 
   private boolean analyze(){
@@ -114,10 +206,18 @@ public class CLAWloopInterchange extends CLAWloop {
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
+      // TODO error handling
 
       Element loop1Body = _loopLevel1.getBodyElement();
       Element loop2 = findChildLoop(loop1Body);
       _loopLevel2 = new CLAWloop(_pragmaElement, loop2);
+
+      _baseLoop0 = this.getIterationVariableValue();
+      _baseLoop1 = _loopLevel1.getIterationVariableValue();
+      _baseLoop2 = _loopLevel2.getIterationVariableValue();
+      _newLoop0 = vars[0];
+      _newLoop1 = vars[1];
+      _newLoop2 = vars[2];
     }
 
 
