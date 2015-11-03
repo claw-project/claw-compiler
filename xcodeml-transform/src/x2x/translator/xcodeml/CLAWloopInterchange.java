@@ -36,7 +36,7 @@ public class CLAWloopInterchange extends CLAWloop {
   public void transform(){
     if(analyze()){
       if(XmOption.isDebugOutput()){
-        System.out.println("loop-interchange transformation (loop 1 <--> loop 2)");
+        System.out.println("loop-interchange transformation");
         System.out.println("  loop 0: " + getFormattedRange());
         System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
         if(_loopLevel2 != null){
@@ -49,46 +49,21 @@ public class CLAWloopInterchange extends CLAWloop {
        */
       if(_loopLevel1 != null && _loopLevel2 == null){
         // Loop interchange between 2 loops
-
-        // Save inner loop iteration variable and range
-        Node tmpIterationVar = _loopLevel1.getRangeVarElement().cloneNode(true);
-        Node tmpRange = _loopLevel1.getRangeElement().cloneNode(true);
-
-        // Set the range of loop 0 to loop 1
-        _loopLevel1.setNewRange(getRangeVarElement(), getRangeElement());
-        // Remove the previous range of loop 1
-        _loopLevel1.deleteRangeElements();
-        // Set new range of loop 1 to loop 0
-        this.setNewRange(tmpIterationVar, tmpRange);
-        // Remove the previous range of loop 0
-        this.deleteRangeElements();
+        swapLoops(this, _loopLevel1);
       } else if (_loopLevel1 != null && _loopLevel2 != null){
         // loop interchange between 3 loops with new-order
         computeLoopNewPosition();
-
-
-
-
-
-        if(XmOption.isDebugOutput()){
-          System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
-            + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 + "," +
-            _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
-              _loopNewPos2 + ")");
-
-          if(needDoubleSwap()){
-            System.out.println("    double swap required");
-          }
-        }
-
+        printTransformDebugInfo();
 
         if(needDoubleSwap()){
           // Case 201
           if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
+            printTransformSwapInfo(201);
             swapLoops(this, _loopLevel2);
             swapLoops(this, _loopLevel1);
           // Case 120
           } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
+            printTransformSwapInfo(120);
             swapLoops(this, _loopLevel2);
             swapLoops(_loopLevel1, _loopLevel2);
           }
@@ -106,11 +81,33 @@ public class CLAWloopInterchange extends CLAWloop {
             from = this;
             to = _loopLevel1;
           }
-
           swapLoops(from, to);
         }
       }
       _transformationDone = true;
+    }
+  }
+
+  private void printTransformDebugInfo(){
+    if(XmOption.isDebugOutput()){
+      System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
+        + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 + "," +
+        _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
+          _loopNewPos2 + ")");
+
+      if(needDoubleSwap()){
+        System.out.println("    double swap required");
+      }
+    }
+  }
+
+  private void printTransformSwapInfo(int swapCase) {
+    if(XmOption.isDebugOutput() && swapCase == 120){
+      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
+      System.out.println("    swap 2: " + _baseLoop1 + " <--> " + _baseLoop0);
+    } else if (XmOption.isDebugOutput() && swapCase == 201){
+      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
+      System.out.println("    swap 2: " + _baseLoop2 + " <--> " + _baseLoop1);
     }
   }
 
