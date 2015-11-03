@@ -174,6 +174,10 @@ public class CLAWloopInterchange extends CLAWloop {
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
       // TODO error handling
+      if(vars.length != 3){
+        abort("new-order option has not enough parameters");
+      }
+
 
       Element loop1Body = _loopLevel1.getBodyElement();
       Element loop2 = findChildLoop(loop1Body);
@@ -182,6 +186,9 @@ public class CLAWloopInterchange extends CLAWloop {
       _baseLoop0 = this.getIterationVariableValue();
       _baseLoop1 = _loopLevel1.getIterationVariableValue();
       _baseLoop2 = _loopLevel2.getIterationVariableValue();
+
+      checkNewOrderOption(vars);
+
       _newLoop0 = vars[0];
       _newLoop1 = vars[1];
       _newLoop2 = vars[2];
@@ -191,6 +198,22 @@ public class CLAWloopInterchange extends CLAWloop {
     return true;
   }
 
+  private void checkNewOrderOption(String[] vars){
+    for(String var : vars){
+      if(!var.equals(_baseLoop0) && !var.equals(_baseLoop1)
+        && !var.equals(_baseLoop2))
+      {
+        abort("invalid iteration varibale in new-order option. " + var);
+      }
+    }
+  }
+
+
+  private void abort(String message){
+    System.err.println("claw-error: " + message + ", " + getOriginalFilename()
+      + ":" + getPragmaLine());
+    System.exit(1);
+  }
 
   private Element findChildLoop(Node from){
     Node nextNode = from.getFirstChild();

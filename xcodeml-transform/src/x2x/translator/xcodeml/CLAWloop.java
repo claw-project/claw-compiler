@@ -3,6 +3,7 @@ package x2x.translator.xcodeml;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.NamedNodeMap;
 
 public class CLAWloop {
   protected Element _pragmaElement = null;
@@ -96,6 +97,23 @@ public class CLAWloop {
     return body;
   }
 
+  private String getAttributeValue(Element el, String attrName){
+    NamedNodeMap attributes = el.getAttributes();
+    for (int j = 0; j < attributes.getLength(); j++) {
+      if(attributes.item(j).getNodeName().equals(attrName)){
+        return attributes.item(j).getNodeValue();
+      }
+    }
+    return "";
+  }
+
+  public String getOriginalFilename(){
+    return getAttributeValue(_pragmaElement, "file"); // TODO use constant
+  }
+
+  public String getPragmaLine(){
+    return getAttributeValue(_pragmaElement, "lineno"); // TODO use constant
+  }
 
 
 /*
