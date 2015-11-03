@@ -26,7 +26,7 @@ SUBROUTINE clawloop ( )
  DO b = 1 , 3 , 1
   DO c = 1 , 2 , 1
    DO a = 1 , 4 , 1
-    PRINT * ,"Iteration i=" , i ,", j=" , j ,", k=" , k
+    PRINT * ,"Iteration a=" , a ,", b=" , b ,", c=" , c
    END DO
   END DO
  END DO
@@ -34,7 +34,7 @@ SUBROUTINE clawloop ( )
  DO x = 1 , 4 , 1
   DO z = 1 , 2 , 1
    DO y = 1 , 3 , 1
-    PRINT * ,"Iteration i=" , i ,", j=" , j ,", k=" , k
+    PRINT * ,"Iteration x=" , x ,", y=" , y ,", z=" , z
    END DO
   END DO
  END DO
