@@ -13,5 +13,5 @@ build
 *.xcodeml.claw
 .project
 transformed_code.f90
-original_code
-transformed_code
+original_code_*
+transformed_code_*

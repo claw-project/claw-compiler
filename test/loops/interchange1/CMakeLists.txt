@@ -1,16 +1,11 @@
-cmake_minimum_required(VERSION 2.8)
-
-enable_language (Fortran)
-enable_testing ()
-
 set (ORIGINAL_FILE original_code.f90)
 set (XCODEML_FILE original_code.f90.xcodeml)
 set (XCODEML_CLAW_FILE original_code.f90.xcodeml.claw)
 set (OUTPUT_FILE transformed_code.f90)
 set (REFERENCE_FILE reference.f90)
 
-set (EXECUTABLE_ORIGINAL original_code)
-set (EXECUTABLE_TRANSFORMED transformed_code)
+set (EXECUTABLE_ORIGINAL original_code_interchange1)
+set (EXECUTABLE_TRANSFORMED transformed_code_interchange1)
 
 set (OMNIJAR_INCLUDE /usr/local/lib/om-common.jar:/usr/local/lib/om-f-back.jar:/usr/local/lib/om-exc-tools.jar:../../../build/omni-x2x.jar)
 
@@ -40,11 +35,11 @@ add_custom_command(
   DEPENDS ${XCODEML_CLAW_FILE}
   COMMENT "Decompile XcodeML to Fortran")
 
-add_custom_target(transform ALL
+add_custom_target(transform-interchange1 ALL
   DEPENDS ${OUTPUT_FILE})
 
 
 add_executable (${EXECUTABLE_ORIGINAL} ${ORIGINAL_FILE})
 add_executable (${EXECUTABLE_TRANSFORMED} ${OUTPUT_FILE})
 
-add_test(NAME ast-transform COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
+add_test(NAME ast-transform-interchange1 COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
