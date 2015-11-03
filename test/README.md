@@ -7,3 +7,12 @@ group option.
 the new-order option.
 * **loops/interchange2**: loop-interchange over 3 nested loops (i,j,k) using the
 new-order option.
+
+To compile and run test, execute the followings commands:
+
+```bash
+$ cd loops
+$ cmake .
+$ make
+$ ctest
+```
