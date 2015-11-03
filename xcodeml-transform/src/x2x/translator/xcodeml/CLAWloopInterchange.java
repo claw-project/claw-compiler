@@ -83,45 +83,15 @@ public class CLAWloopInterchange extends CLAWloop {
 
 
         if(needDoubleSwap()){
-          CLAWloop loop1 = null;
-          CLAWloop loop2 = null;
-
-
-
-
-          // Save most inner loop iteration variable and range
-          Node tmpIterationVar = _loopLevel2.getRangeVarElement().cloneNode(true);
-          Node tmpRange = _loopLevel2.getRangeElement().cloneNode(true);
-
-          // Set the range of loop 0 to loop 2
-          _loopLevel2.setNewRange(getRangeVarElement(), getRangeElement());
-          // Remove the previous range of loop 2
-          _loopLevel2.deleteRangeElements();
-          // Set new range of loop 2 to loop 0
-          this.setNewRange(tmpIterationVar, tmpRange);
-          // Remove the previous range of loop 0
-          this.deleteRangeElements();
-
-          // recompute the range elements
-          _loopLevel2.findRangeElements();
-          this.findRangeElements();
-
-
-
-          // Save most inner loop iteration variable and range
-          tmpIterationVar = _loopLevel2.getRangeVarElement().cloneNode(true);
-          tmpRange = _loopLevel2.getRangeElement().cloneNode(true);
-
-          // Set the range of loop 0 to loop 2
-          _loopLevel2.setNewRange(_loopLevel1.getRangeVarElement(), _loopLevel1.getRangeElement());
-          // Remove the previous range of loop 2
-          _loopLevel2.deleteRangeElements();
-          // Set new range of loop 2 to loop 0
-          _loopLevel1.setNewRange(tmpIterationVar, tmpRange);
-          // Remove the previous range of loop 0
-          _loopLevel1.deleteRangeElements();
-
-
+          // Case 201
+          if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
+            swapLoops(this, _loopLevel2);
+            swapLoops(this, _loopLevel1);
+          // Case 120
+          } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
+            swapLoops(this, _loopLevel2);
+            swapLoops(_loopLevel1, _loopLevel2);
+          }
         } else {
           // Only one loop swap is needed
           CLAWloop from = null;
