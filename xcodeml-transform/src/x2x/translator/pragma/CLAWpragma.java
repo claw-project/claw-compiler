@@ -8,7 +8,7 @@ public enum CLAWpragma {
   //directive
   LOOP_FUSION,
   LOOP_INTERCHANGE,
-
+  LOOP_TO,
   // loop-fusion
   FUSION_GROUP,
 
@@ -19,6 +19,7 @@ public enum CLAWpragma {
   private static final String CLAW_DIRECTIVE = "claw";
   private static final String LOOP_FUSION_DIRECTIVE = "loop-fusion";
   private static final String LOOP_INTERCHANGE_DIRECTIVE = "loop-interchange";
+  private static final String LOOP_TO_DIRECTIVE = "to-loop";
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String OPTION_INTERCHANGE_NEWORDER = "new-order";
   private static final String MULTIPLE_SPACES = " *";
@@ -113,6 +114,8 @@ public enum CLAWpragma {
         return isValidOption(CLAWpragma.LOOP_FUSION, null);
       case LOOP_INTERCHANGE_DIRECTIVE:
         return isValidOption(CLAWpragma.LOOP_INTERCHANGE, null);
+      case LOOP_TO_DIRECTIVE:
+        return isValidOption(CLAWpragma.LOOP_TO, null);
       default:
         return false;
     }
@@ -133,6 +136,7 @@ public enum CLAWpragma {
     switch(this){
     case LOOP_FUSION:
     case LOOP_INTERCHANGE:
+    case LOOP_TO:
       return true;
     default:
       return false;
@@ -143,6 +147,7 @@ public enum CLAWpragma {
     switch(this){
     case LOOP_FUSION:
     case LOOP_INTERCHANGE:
+    case LOOP_TO:
       return true;
     default:
       return false;
