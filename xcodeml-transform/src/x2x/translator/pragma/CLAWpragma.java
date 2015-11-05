@@ -84,6 +84,13 @@ public enum CLAWpragma {
     return null;
   }
 
+  public static boolean startsWithClaw(String pragma){
+    if(pragma.startsWith(CLAW_DIRECTIVE)){
+      return true;
+    }
+    return false;
+  }
+
 
   // Check the correctness of a claw directive
   // TODO correct error message

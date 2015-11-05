@@ -119,6 +119,10 @@ public class CLAWxcodemlTranslator {
         Element pragmaElement = (Element) pragmaNode;
         String fullPragmaText = pragmaElement.getTextContent();
 
+        if(!CLAWpragma.startsWithClaw(fullPragmaText)){
+          continue; // Not CLAW pragma, we do nothing
+        }
+
         if(CLAWpragma.isValid(fullPragmaText)){
           CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
 
