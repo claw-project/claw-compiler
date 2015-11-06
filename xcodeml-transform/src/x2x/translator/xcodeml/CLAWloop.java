@@ -53,9 +53,17 @@ public class CLAWloop {
   private String getRangeValue(String tag){
     NodeList rangeElements = _loopElement.getElementsByTagName(tag);
     Element rangeElement = (Element) rangeElements.item(0);
-    NodeList constants = rangeElement.getElementsByTagName("FintConstant");
+    NodeList constants = rangeElement.getElementsByTagName("FintConstant"); // TODO string constant
     Element constant = (Element) constants.item(0);
-    return constant.getTextContent();
+    NodeList vars = rangeElement.getElementsByTagName("Var"); // TODO string constant
+    Element var = (Element) constants.item(0);
+    if(constant != null){
+      return constant.getTextContent();
+    }
+    if(var != null){
+      return var.getTextContent();
+    }
+    return null; // TODO probably throws an exception
   }
 
   public void setNewRange(Node var, Node range){
