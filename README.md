@@ -2,10 +2,25 @@
 
 Tool to perform XcodeML to XcodeML transformation.
 
+The directives that control the transformation flow are defined in the
+CLAW language definition.
+
+[CLAW language definition](https://github.com/C2SM-RCM/claw-language-definition)
+
+We are currently evaluation the potential of such a translator. The current
+development status is the following. Only limited cases have been tested. 
+- [x] loop-fusion
+- [x] loop-interchange
+- [ ] loop-extract
+- [ ] loop-vector
+- [ ] scalar-replace
+- [ ] data
+
+
 Transformation flow is defined as follows:
 
-*Fortran Code* -> **Preprocessor(1)** -> *Fortran Code* -> **F_Front (2)** -> *XcodeML Code* -> **x2x(3)** -> *XcodeML Code* ->
-**omx2f(4)** -> *Fortran Code*
+*Fortran Code* -> **Preprocessor(1)** -> *Fortran Code* -> **F_Front (2)** ->
+*XcodeML Code* -> **x2x(3)** -> *XcodeML Code* -> **omx2f(4)** -> *Fortran Code*
 
 ###### Transformation process
 1. The Fortran code is passed into the preprocessor with the corresponding
