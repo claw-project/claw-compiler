@@ -8,7 +8,7 @@ public enum CLAWpragma {
   //directive
   LOOP_FUSION,
   LOOP_INTERCHANGE,
-  LOOP_TO,
+  LOOP_VECTOR,
   // loop-fusion
   FUSION_GROUP,
 
@@ -19,7 +19,7 @@ public enum CLAWpragma {
   private static final String CLAW_DIRECTIVE = "claw";
   private static final String LOOP_FUSION_DIRECTIVE = "loop-fusion";
   private static final String LOOP_INTERCHANGE_DIRECTIVE = "loop-interchange";
-  private static final String LOOP_TO_DIRECTIVE = "loop-vector";
+  private static final String LOOP_VECTOR_DIRECTIVE = "loop-vector";
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
@@ -40,6 +40,8 @@ public enum CLAWpragma {
         return CLAWpragma.LOOP_FUSION;
       case LOOP_INTERCHANGE_DIRECTIVE:
         return CLAWpragma.LOOP_INTERCHANGE;
+      case LOOP_VECTOR_DIRECTIVE:
+        return CLAWpragma.LOOP_VECTOR;
       default:
         return null;
     }
@@ -113,8 +115,8 @@ public enum CLAWpragma {
         return isValidOption(CLAWpragma.LOOP_FUSION, null);
       case LOOP_INTERCHANGE_DIRECTIVE:
         return isValidOption(CLAWpragma.LOOP_INTERCHANGE, null);
-      case LOOP_TO_DIRECTIVE:
-        return isValidOption(CLAWpragma.LOOP_TO, null);
+      case LOOP_VECTOR_DIRECTIVE:
+        return isValidOption(CLAWpragma.LOOP_VECTOR, null);
       default:
         return false;
     }
@@ -135,7 +137,7 @@ public enum CLAWpragma {
     switch(this){
     case LOOP_FUSION:
     case LOOP_INTERCHANGE:
-    case LOOP_TO:
+    case LOOP_VECTOR:
       return true;
     default:
       return false;
@@ -146,7 +148,7 @@ public enum CLAWpragma {
     switch(this){
     case LOOP_FUSION:
     case LOOP_INTERCHANGE:
-    case LOOP_TO:
+    case LOOP_VECTOR:
       return true;
     default:
       return false;
