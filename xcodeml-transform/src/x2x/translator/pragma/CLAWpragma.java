@@ -19,7 +19,7 @@ public enum CLAWpragma {
   private static final String CLAW_DIRECTIVE = "claw";
   private static final String LOOP_FUSION_DIRECTIVE = "loop-fusion";
   private static final String LOOP_INTERCHANGE_DIRECTIVE = "loop-interchange";
-  private static final String LOOP_TO_DIRECTIVE = "to-loop";
+  private static final String LOOP_TO_DIRECTIVE = "loop-vector";
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
