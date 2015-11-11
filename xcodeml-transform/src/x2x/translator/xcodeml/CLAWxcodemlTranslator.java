@@ -34,6 +34,7 @@ public class CLAWxcodemlTranslator {
   private Document _xcodemlDoc = null;
   private ArrayList<CLAWloopFusion> _loopFusion = null;
   private ArrayList<CLAWloopInterchange> _loopInterchange = null;
+  private ArrayList<CLAWextract> _loopExtract = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile, String xcodemlOutputFile){
     _xcodemlInputFile = xcodemlInputFile;
@@ -41,6 +42,7 @@ public class CLAWxcodemlTranslator {
     _xcodemlNameTable = new XcodeMLNameTable_F();
     _loopFusion = new ArrayList<CLAWloopFusion>();
     _loopInterchange = new ArrayList<CLAWloopInterchange>();
+    _loopExtract = new ArrayList<CLAWextract>();
   }
 
   private void readXcodeML(){
@@ -141,13 +143,23 @@ public class CLAWxcodemlTranslator {
             }
 
 
-            // loop-interchange directives
+          // loop-interchange directives
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
             Element loop = findNextLoop(pragmaNode);
             if(loop == null){
               System.err.println("loop-interchange pragma is not followed by a loop");
             } else {
                 _loopInterchange.add(new CLAWloopInterchange(pragmaElement, loop));
+            }
+
+
+          // loop-extract directives
+          } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
+            Element exprStmt = findNextExprStatement(pragmaNode);
+            if(exprStmt == null){
+              System.err.println("loop-extract pragma is not followed by a expression statment");
+            } else {
+              _loopExtract.add(new CLAWextract(pragmaElement, exprStmt));
             }
           }
 
@@ -176,6 +188,7 @@ public class CLAWxcodemlTranslator {
       if(XmOption.isDebugOutput()){
         System.out.println("transform loop-fusion: "+ _loopFusion.size());
         System.out.println("transform loop-interchange: "+ _loopInterchange.size());
+        System.out.println("transform loop-extract: "+ _loopExtract.size());
       }
 
       // Apply loop-fusion transformation
@@ -214,6 +227,21 @@ public class CLAWxcodemlTranslator {
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element) nextNode;
         if(element.getTagName().equals("FdoStatement")){
+          return element;
+        }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
+  private Element findNextExprStatement(Node from){
+    Node nextNode = from.getNextSibling();
+    boolean elementFound = false;
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals("exprStatement")){
           return element;
         }
       }
