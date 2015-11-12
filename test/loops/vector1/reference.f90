@@ -15,3 +15,4 @@ SUBROUTINE claw ( )
  vec1 ( 0 : i ) = vec1 ( 0 : i ) + 10
  PRINT * , vec1
 END SUBROUTINE claw
+
