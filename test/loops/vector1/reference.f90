@@ -11,8 +11,7 @@ SUBROUTINE claw ( )
  DO j = 0 , i , 1
   vec1 ( j ) = j
  END DO
-!$claw to-loop
+!$claw loop-vector
  vec1 ( 0 : i ) = vec1 ( 0 : i ) + 10
  PRINT * , vec1
 END SUBROUTINE claw
-
