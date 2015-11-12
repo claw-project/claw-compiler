@@ -159,16 +159,17 @@ public class CLAWxcodemlTranslator {
             if(exprStmt == null){
               System.err.println("loop-extract pragma is not followed by a expression statment");
             } else {
-              _loopExtract.add(new CLAWextract(pragmaElement, exprStmt));
+              CLAWextract extraction = new CLAWextract(pragmaElement, exprStmt, _xcodemlDoc);
+              if(extraction.analyze()){
+                _loopExtract.add(extraction);
+              }
             }
           }
 
         } else {
           System.out.println("INVALID PRAGMA: " + fullPragmaText);
+          System.exit(1);
         }
-
-
-
       }
     }
 
@@ -190,6 +191,13 @@ public class CLAWxcodemlTranslator {
         System.out.println("transform loop-interchange: "+ _loopInterchange.size());
         System.out.println("transform loop-extract: "+ _loopExtract.size());
       }
+
+      // Apply loop-extract transformation
+      for(int i = 0; i < _loopExtract.size(); ++i){
+        CLAWextract extraction = _loopExtract.get(i);
+        extraction.transform();
+      }
+
 
       // Apply loop-fusion transformation
       for(int i = 0; i < _loopFusion.size(); ++i){
