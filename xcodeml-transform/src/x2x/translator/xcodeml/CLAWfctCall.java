@@ -16,8 +16,6 @@ import org.w3c.dom.NodeList;
  */
 
 public class CLAWfctCall extends CLAWfct {
-  private Element _fctCallElement = null;
-  private CLAWname _fctName = null;
 
   public CLAWfctCall(Element fctCallElement){
     super(fctCallElement);
