@@ -19,32 +19,19 @@ public class CLAWloop {
 
 
 
+
   public CLAWloop(Element pragma, Element loop){
     _pragmaElement = pragma;
     _loopElement = loop;
 
-    NodeList vars = _loopElement.getElementsByTagName("Var");
-    Element var = (Element) vars.item(0);
-    _rangeVarElement = var;
-    _iterationVar = var.getTextContent();
-    NodeList ranges = _loopElement.getElementsByTagName("indexRange");
-    Element range = (Element) ranges.item(0);
-    _rangeElement = range;
-
-    _lowerBoundValue = getRangeValue("lowerBound");
-    _upperBoundValue = getRangeValue("upperBound");
-    _stepValue = getRangeValue("step");
+    findRangeElements();
   }
 
   protected void findRangeElements(){
-    NodeList vars = _loopElement.getElementsByTagName("Var");
-    Element var = (Element) vars.item(0);
-    _rangeVarElement = var;
-    _iterationVar = var.getTextContent();
-    NodeList ranges = _loopElement.getElementsByTagName("indexRange");
-    Element range = (Element) ranges.item(0);
-    _rangeElement = range;
+    _rangeVarElement = CLAWelementHelper.findVar(_loopElement);
+    _rangeElement = CLAWelementHelper.findIndexRange(_loopElement);
 
+    _iterationVar = _rangeVarElement.getTextContent();
     _lowerBoundValue = getRangeValue("lowerBound");
     _upperBoundValue = getRangeValue("upperBound");
     _stepValue = getRangeValue("step");
@@ -73,9 +60,6 @@ public class CLAWloop {
     _loopElement.insertBefore(newVar, body);
     _loopElement.insertBefore(newRange, body);
     findRangeElements();
-
-    //_rangeVarElement = var;
-    //_rangeElement = range;
   }
 
   public void deleteRangeElements(){
