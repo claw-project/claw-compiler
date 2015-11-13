@@ -45,6 +45,20 @@ public class CLAWelementHelper {
     return null;
   }
 
+  public static CLAWfctDef findParentFctDef(Element child){
+    Node parent = child.getParentNode();
+    while(child.getParentNode() != null){
+      if (parent.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) parent;
+        if(element.getTagName().equals(XelementName.FCT_DEFINITION)){
+          return new CLAWfctDef(element);
+        }
+      }
+      parent = parent.getParentNode();
+    }
+    return null;
+  }
+
   public static CLAWloop findLoop(CLAWfctDef fctDef){
     Element body = fctDef.getBody();
     Element loopElement = CLAWelementHelper.findLoopStament(body);
@@ -72,6 +86,10 @@ public class CLAWelementHelper {
   }
 
   public static Element findLoopStament(Element parent){
+    return findFirstElement(parent, XelementName.DO_STMT);
+  }
+
+  public static Element findSymbols(Element parent){
     return findFirstElement(parent, XelementName.DO_STMT);
   }
 

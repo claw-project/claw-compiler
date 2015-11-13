@@ -14,6 +14,7 @@ public class CLAWextract {
   protected XcodemlDocument _xcodeml = null;
 
   private CLAWfctCall _fctCall = null;
+  private CLAWfctDef _fctDef = null; // Fct holding the fct call
   private CLAWloop _extractedLoop = null;
 
   public CLAWextract(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
@@ -40,6 +41,18 @@ public class CLAWextract {
 
     _fctCall = new CLAWfctCall(fctCallElement);
     System.out.println(_fctCall.getFctName());
+
+
+    _fctDef = CLAWelementHelper.findParentFctDef(_fctCall.getFctElement());
+    if(_fctDef == null){
+      System.err.println("No function around the fct call");
+      System.exit(1);
+    }
+
+    System.out.println("Fct : " + _fctDef.getFctName() + " found symbols: "
+      + _fctDef.getSymbolTable().size());
+
+
 
     // Find function declaration
     CLAWfctDef fctDef = CLAWelementHelper.findFunctionDefinition(
