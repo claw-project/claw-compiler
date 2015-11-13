@@ -18,7 +18,7 @@ public class CLAWelementHelper {
     return null;
   }
 
-  public static Element findFunctionDefinition(Document xcodemlDoc,
+  public static CLAWfctDef findFunctionDefinition(Document xcodemlDoc,
     CLAWfctCall fctCall)
   {
     if(xcodemlDoc == null || fctCall == null) {
@@ -28,7 +28,7 @@ public class CLAWelementHelper {
       fctCall.getFctType());
   }
 
-  public static Element findFunctionDefinition(Document xcodemlDoc, String name,
+  public static CLAWfctDef findFunctionDefinition(Document xcodemlDoc, String name,
     String type)
   {
     NodeList nList = xcodemlDoc.getElementsByTagName(XelementName.FCT_DEFINITION);
@@ -38,7 +38,7 @@ public class CLAWelementHelper {
         Element fctDefElement = (Element) fctDefNode;
         CLAWname fctDefName = findName(fctDefElement);
         if(name != null && fctDefName.isIdentical(name, type)){
-          return fctDefElement;
+          return new CLAWfctDef(fctDefElement);
         }
       }
     }
@@ -46,29 +46,21 @@ public class CLAWelementHelper {
   }
 
   public static CLAWname findName(Element parent){
-    NodeList names = parent.getElementsByTagName(XelementName.NAME);
-    Element nameElement = (Element) names.item(0);
-    if(nameElement == null){
-      return null;
-    }
-    return new CLAWname(nameElement);
+    Element element = findFirstElement(parent, XelementName.NAME);
+    return (element != null) ? new CLAWname(element) : null;
   }
 
   public static Element getBody(Element parent){
-    NodeList elements = parent.getElementsByTagName(XelementName.BODY);
-    Element element = (Element) elements.item(0);
-    if(element == null){
-      return null;
-    }
-    return element;
+    return findFirstElement(parent, XelementName.BODY);
   }
 
   public static Element findLoopStament(Element parent){
-    NodeList elements = parent.getElementsByTagName(XelementName.DO_STMT);
+    return findFirstElement(parent, XelementName.DO_STMT);
+  }
+
+  private static Element findFirstElement(Element parent, String elementName){
+    NodeList elements = parent.getElementsByTagName(elementName);
     Element element = (Element) elements.item(0);
-    if(element == null){
-      return null;
-    }
     return element;
   }
 

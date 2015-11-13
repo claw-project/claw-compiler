@@ -50,4 +50,11 @@ public class CLAWloopIterationRange {
     }
     return true;
   }
+
+  public String toString() {
+    return getInductionVar().getValue() + "="
+      + getIndexRange().getLowerBound().getValue() + ","
+      + getIndexRange().getUpperBound().getValue() + ","
+      + getIndexRange().getStep().getValue();
+  }
 }

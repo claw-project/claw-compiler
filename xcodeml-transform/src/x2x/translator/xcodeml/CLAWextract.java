@@ -47,16 +47,14 @@ public class CLAWextract {
     System.out.println(_fctCall.getFctName());
 
     // Find function declaration
-    Element fctDefinitionElement = CLAWelementHelper.findFunctionDefinition(
+    CLAWfctDef fctDef = CLAWelementHelper.findFunctionDefinition(
       _xcodemlDoc, _fctCall);
 
-    if(fctDefinitionElement == null){
+    if(fctDef == null){
       System.err.println("Could not locate the function definition for: "
         + _fctCall.getFctName());
       System.exit(1);
     }
-
-    CLAWfctDef fctDef = new CLAWfctDef(fctDefinitionElement);
 
     // Find loop in function
     Element body = fctDef.getBody();

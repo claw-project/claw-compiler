@@ -17,4 +17,22 @@ public class CLAWvar {
   public CLAWvar(Element var){
     _varElement = var;
   }
+
+  public String getValue(){
+    return _identity;
+  }
+
+  public String getScope(){
+    return _scope;
+  }
+
+  public String getType(){
+    return _type;
+  }
+
+  private void readElementInformation(){
+    _type = CLAWelementHelper.getAttributeValue(_varElement, XelementName.ATTR_TYPE);
+    _scope = CLAWelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
+    _identity = _varElement.getTextContent();
+  }
 }
