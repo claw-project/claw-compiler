@@ -1,6 +1,7 @@
 package x2x.translator.xcodeml;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -30,6 +31,10 @@ public class CLAWindexRange {
       _lowerBound = lowerBound;
       _upperBound = upperBound;
       _step = step;
+  }
+
+  public Node clone(){
+    return _indexRangeElement.cloneNode(true);
   }
 
   public CLAWindexRange(Element indexRangeElement){
