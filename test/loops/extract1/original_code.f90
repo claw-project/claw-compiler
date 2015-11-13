@@ -5,7 +5,7 @@ PROGRAM LOOP_EXTRACT
   INTEGER :: value2(10)
 
 
-  !$claw loop-extract range(i=istart,iend) map(value1,value2:i)
+  !$claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)
   CALL clawloop(value1, value2)
 END
 
