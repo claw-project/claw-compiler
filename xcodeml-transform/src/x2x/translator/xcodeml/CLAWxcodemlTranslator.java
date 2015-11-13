@@ -89,9 +89,6 @@ public class CLAWxcodemlTranslator {
     // Read information from the type table
     _program.readTypeTable();
 
-    System.out.println("type table size: " + _program.getTypeTable().size());
-
-
     NodeList nList = _program.getDocument()
       .getElementsByTagName(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));
 

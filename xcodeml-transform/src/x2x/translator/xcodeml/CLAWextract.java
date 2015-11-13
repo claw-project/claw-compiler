@@ -1,10 +1,14 @@
 package x2x.translator.xcodeml;
 
+import x2x.translator.pragma.CLAWmapping;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Document;
+
+import java.util.ArrayList;
 
 public class CLAWextract {
 
@@ -13,6 +17,7 @@ public class CLAWextract {
   protected Element _fncCallStmt = null;
   protected XcodemlDocument _xcodeml = null;
 
+  private ArrayList<CLAWmapping> _mappings = null;
   private CLAWfctCall _fctCall = null;
   private CLAWfctDef _fctDef = null; // Fct holding the fct call
   private CLAWfctDef _extractedFctDef = null;
@@ -24,13 +29,10 @@ public class CLAWextract {
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
     _xcodeml = xcodemlDoc;
+    extractMappingInformation();
   }
 
-  private void extractMapping(){
-
-  }
-
-  private void analyzeMapping(){
+  private void extractMappingInformation(){
 
   }
 
@@ -43,20 +45,12 @@ public class CLAWextract {
     }
 
     _fctCall = new CLAWfctCall(fctCallElement);
-    System.out.println(_fctCall.getFctName());
-
 
     _fctDef = CLAWelementHelper.findParentFctDef(_fctCall.getFctElement());
     if(_fctDef == null){
       System.err.println("No function around the fct call");
       System.exit(1);
     }
-
-    System.out.println("Fct : " + _fctDef.getFctName() + " found symbols: "
-      + _fctDef.getSymbolTable().size());
-    System.out.println("Fct : " + _fctDef.getFctName() + " found decl: "
-        + _fctDef.getDeclarationTable().size());
-
 
     // Find function declaration
     _extractedFctDef = CLAWelementHelper.findFunctionDefinition(
@@ -75,9 +69,6 @@ public class CLAWextract {
         + _extractedFctDef.getFctName());
       System.exit(1);
     }
-
-    System.out.println("loopRange: "
-      + _extractedLoop.getIterationRange().toString());
 
     return true;
   }
