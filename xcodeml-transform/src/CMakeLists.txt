@@ -17,5 +17,8 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/CLAWbound.java
   x2x/translator/xcodeml/CLAWvar.java
   x2x/translator/xcodeml/CLAWloopIterationRange.java
+  x2x/translator/xcodeml/CLAWname.java
+  x2x/translator/xcodeml/CLAWfctCall.java
+  x2x/translator/xcodeml/CLAWelementHelper.java
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )

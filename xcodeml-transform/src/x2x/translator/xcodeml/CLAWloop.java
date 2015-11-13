@@ -105,6 +105,7 @@ public class CLAWloop {
     return body;
   }
 
+  // TODO replace with CLAWelementHelper
   private String getAttributeValue(Element el, String attrName){
     NamedNodeMap attributes = el.getAttributes();
     for (int j = 0; j < attributes.getLength(); j++) {

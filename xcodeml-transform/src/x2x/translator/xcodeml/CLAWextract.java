@@ -13,6 +13,8 @@ public class CLAWextract {
   protected Element _fncCallStmt = null;
   protected Document _xcodemlDoc = null;
 
+  private CLAWfctCall _fctCall = null;
+
   protected CLAWindexRange _extractedLoopRange = null;
 
   public CLAWextract(Element pragma, Element exprStmt, Document xcodemlDoc){
@@ -36,12 +38,14 @@ public class CLAWextract {
 
   public boolean analyze(){
     // Find function CALL
-    Element fctCall = findFctCall();
-    if(fctCall == null){
+    Element fctCallElement = findFctCall();
+    if(fctCallElement == null){
       System.err.println("No function call detected after loop-extract");
       System.exit(1);
     }
 
+    _fctCall = new CLAWfctCall(fctCallElement);
+    System.out.println(_fctCall.getFctName());
 
     // Find function declaration
 
