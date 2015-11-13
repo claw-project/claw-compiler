@@ -8,11 +8,33 @@ public class CLAWmapping {
   private ArrayList<String> _mappedVariables = null;
   private ArrayList<String> _mappingVariables = null;
 
-
-  public CLAWmapping(String pragmaClause){
-
+  /**
+   * loop-extract mapping representation
+   * @param mappingClause inner part of the mapping clause like
+   * var_list:mapping_list
+   */
+  public CLAWmapping(String mappingClause){
+    String[] parts = mappingClause.split(":");
+    if(parts.length != 2) {
+      // TODO throw exception mappingClause is wrong
+    }
+    String[] vars = parts[0].split(",");
+    String[] mappings = parts[1].split(",");
+    if(vars.length == 0 || mappings.length == 0){
+      // TODO throw exception mappingClause is wrong
+    }
+    for(String var : vars){
+      _mappedVariables.add(var);
+    }
+    for(String mapping : mappings){
+      _mappedVariables.add(mapping);
+    }
+    _mappedDimension = _mappingVariables.size();
   }
 
+  /**
+   * @return the dimension to be mapped
+   */
   public int getMappedDimension(){
     return _mappedDimension;
   }
