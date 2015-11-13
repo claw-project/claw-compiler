@@ -244,11 +244,11 @@ public class ClawX2X {
 
     // Transformation will happen here
     CLAWtranslator claw_translator = new CLAWtranslator();
-    //xobjFile.iterateDef(claw_translator);
+    xobjFile.iterateDef(claw_translator);
 
-    CLAWglobalDecl clawGlobalDecl = new CLAWglobalDecl(xobjFile);
+    /*CLAWglobalDecl clawGlobalDecl = new CLAWglobalDecl(xobjFile);
     CLAWanalyzePragma clawAnalyzer = new CLAWanalyzePragma(clawGlobalDecl);
-    xobjFile.iterateDef(clawAnalyzer);
+    xobjFile.iterateDef(clawAnalyzer);*/
 
 
 

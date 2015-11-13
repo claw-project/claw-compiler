@@ -2,6 +2,10 @@ package x2x.translator.xobject;
 
 import exc.object.*;
 import exc.block.*;
+import exc.openmp.OMPpragma;
+import xcodeml.util.XmOption;
+
+import java.util.*;
 
 /**
  * XcalableMP AST translator
@@ -9,7 +13,7 @@ import exc.block.*;
 public class CLAWtranslator implements XobjectDefVisitor
 {
   BlockPrintWriter debug_out;
-
+  private XobjectDef		currentDef;
 
   //private final static String XMP_GENERATED_CHILD = "XMP_GENERATED_CHILD";
 
@@ -24,63 +28,101 @@ public class CLAWtranslator implements XobjectDefVisitor
   }
 
 
-  public void doDef(XobjectDef d){
+  public void doDef(XobjectDef def){
+    translate(def);
+  }
 
-    FuncDefBlock fd = null;
-    Boolean is_module = d.isFmoduleDef();
-    Boolean is_func = d.isFuncDef();
 
-    if(is_module){
-      System.out.println("MODULE found");
-    } else if (is_func){
-      //System.out.println("FUNCTION found");
-      Xtype ft = d.getFuncType();
-      if(ft != null && ft.isFprogram()) {
-        // Do smth to program function
-        fd = new FuncDefBlock(d);
-        //System.out.println("PROGRAM function: " + fd.getBlock().getName());
-      } else if(d.getParent() == null) {
-        // standalone function
-        fd = new FuncDefBlock(d);
-        //System.out.println(fd.getBlock().getName());
 
-        Block funcBlock = fd.getBlock();
-        //BlockPrintWriter printer = new BlockPrintWriter(System.out);
-        CLAWblockVisitor printer = new CLAWblockVisitor();
-        funcBlock.visitBody(printer);
 
-        /*Block head = funcBody.getHead();
-        Xobject obj = head.toXobject();
-        if(obj.isPragma()){
-          System.out.println("FOUND PRAGMA");
-        }*/
 
-        //System.out.println("standalone function");
-      } else {
-        System.err.println("Fotran: unknown decls");
+  private void translate(XobjectDef def) {
+
+    if (!def.isFuncDef()) { // Translate global directives
+      Xobject x = def.getDef();
+      System.out.println("OPCODE: " + x.Opcode());
+
+      /*switch (x.Opcode()) {
+      case XMP_PRAGMA:
+        //_translateGlobalPragma.translate(x);
+        break;
+      case VAR_DECL:
+        // for coarray declaration of XMP1.2
+        _rewriteExpr.rewriteVarDecl(x, false);   // isLocal=false
+        break;
       }
+      return;*/
+      return;
     }
 
 
+    // Translate local directives
+    FuncDefBlock fd = new FuncDefBlock(def);
 
+    translateLocal(fd);
 
+    // fix subarrays
+    //fixSubArrayRef(fd);
 
+    // translate directives
+    //_translateLocalPragma.translate(fd);
 
+    // rewrite expressions
+    //_rewriteExpr.rewrite(fd);
 
-
-    /*System.out.println("doDef" + d.toString());
-    System.out.println("doDef" + d.getDef().toString());
-
-    System.out.println("=== CHILD");
-    for(Xobject decl: (XobjList)d.getDef().getArg(2)){
-      System.out.println("  doDef" + d.toString());
-      System.out.println("  doDef" + d.getDef().toString());
-    }
-
-    Xobject pragme = d.getDef().find(String name, int kind);
-
-    if(d.getDef().isPragma()){
-      System.out.println("PRAGMA found");
+    /*String funcName = fd.getBlock().getName();
+    if(funcName == "main"){
+      try{
+        add_args_into_main(fd);   // ex) main() -> main(int argc, char **argv)
+        create_new_main(fd);      // create new function "xmpc_main"
+      } catch (XMPexception e) {
+        Block b = fd.getBlock();
+        XMP.error(b.getLineNo(), e.getMessage());
+      }
     }*/
   }
+
+  private void translateLocal(FuncDefBlock def){
+    FunctionBlock fb = def.getBlock();
+    currentDef = def.getDef();
+
+    BlockIterator i = new topdownBlockIterator(fb);
+    for (i.init(); !i.end(); i.next()) {
+      Block b = i.getBlock();
+      System.out.println("translateLocal opcode: " + b.Opcode());
+      //System.out.println("block: " + b);
+
+      BasicBlock bb = b.getBasicBlock();
+      if(bb!=null){
+        System.out.println("bb: " + bb);
+        for(Statement s = bb.getHead(); s != null; s = s.getNext()) {
+          if(s.getExpr() != null) {
+            if(s.getExpr().isPragma()){
+              String pragmaName = s.getExpr().getArg(0).getString();
+              System.out.println("    PRAGMA " + pragmaName);
+            }
+          }
+        } // end for Statement
+      }
+
+
+      if(b.Opcode() == Xcode.PRAGMA_LINE){
+
+      }
+      /*if (b.Opcode() ==  Xcode.XMP_PRAGMA) {
+        PragmaBlock pb = (PragmaBlock)b;
+
+        try {
+  	       translatePragma(pb);
+        } catch (Exception e) {
+          //XMP.error(pb.getLineNo(), e.getMessage());
+          System.err.println("Error in translateLocal: " + pb.getLineNo());
+          System.err.println(e.getMessage());
+        }
+      }*/
+    }
+
+    def.Finalize();
+  }
+
 }

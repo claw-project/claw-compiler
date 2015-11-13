@@ -13,7 +13,7 @@ public class CLAWextract {
   protected Element _fncCallStmt = null;
   protected Document _xcodemlDoc = null;
 
-  protected CLAWrange _extractedLoopRange = null;
+  protected CLAWindexRange _extractedLoopRange = null;
 
   public CLAWextract(Element pragma, Element exprStmt, Document xcodemlDoc){
     _pragmaElement = pragma;
@@ -41,7 +41,7 @@ public class CLAWextract {
       System.err.println("No function call detected after loop-extract");
       System.exit(1);
     }
-    
+
 
     // Find function declaration
 
