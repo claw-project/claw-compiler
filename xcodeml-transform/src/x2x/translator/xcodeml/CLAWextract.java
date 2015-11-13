@@ -10,6 +10,9 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 
+import xcodeml.util.XmOption;
+
+
 public class CLAWextract {
 
   protected Element _pragmaElement = null;
@@ -33,7 +36,11 @@ public class CLAWextract {
   }
 
   private void extractMappingInformation(){
+    //TODO
+  }
 
+  private boolean checkMappingInformation(){
+    return true; //TODO
   }
 
   public boolean analyze(){
@@ -70,6 +77,12 @@ public class CLAWextract {
       System.exit(1);
     }
 
+    if(!checkMappingInformation()){
+      System.err.println("Mapping information are not usable"
+        + _extractedFctDef.getFctName());
+      System.exit(1);
+    }
+
     return true;
   }
 
@@ -79,13 +92,26 @@ public class CLAWextract {
     CLAWfctDef clonedFctDef = new CLAWfctDef((Element)cloned);
     clonedFctDef.updateName(clonedFctDef.getFctName() + "_claw");
 
+    if(XmOption.isDebugOutput()){
+      System.out.println("loop-extract transformation");
+      System.out.println("  created subroutine: " + clonedFctDef.getFctName());
+    }
+
     CLAWelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
 
     // Remove loop from body
 
+    // Demote body array references
 
     // Wrap function call with loop
     wrapCallWithLoop(xcodeml, _extractedLoop.getIterationRange());
+
+    if(XmOption.isDebugOutput()){
+      System.out.println("  call wrapped with loop: " + _fctCall.getFctName()
+       + " --> " + clonedFctDef.getFctName());
+    }
+
+    // Change called fct name
 
     // Adapt function call parameters
   }

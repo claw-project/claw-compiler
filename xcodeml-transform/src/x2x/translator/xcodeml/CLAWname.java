@@ -25,6 +25,7 @@ public class CLAWname {
   public void setName(String value){
     if(_nameElement != null){
       _nameElement.setTextContent(value);
+      _nameValue = value;
     }
   }
 
