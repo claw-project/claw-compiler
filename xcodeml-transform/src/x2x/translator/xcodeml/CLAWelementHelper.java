@@ -45,6 +45,14 @@ public class CLAWelementHelper {
     return null;
   }
 
+  public static Element findVar(Element parent){
+    return findFirstElement(parent, XelementName.VAR);
+  }
+
+  public static Element findIndexRange(Element parent){
+    return findFirstElement(parent, XelementName.INDEX_RANGE);
+  }
+
   public static CLAWname findName(Element parent){
     Element element = findFirstElement(parent, XelementName.NAME);
     return (element != null) ? new CLAWname(element) : null;

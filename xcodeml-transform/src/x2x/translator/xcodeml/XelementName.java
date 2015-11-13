@@ -11,5 +11,7 @@ public class XelementName {
   public static final String DO_STMT = "FdoStatement";
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String NAME = "name";
+  public static final String VAR = "Var";
+  public static final String INDEX_RANGE = "indexRange";
 
 }
