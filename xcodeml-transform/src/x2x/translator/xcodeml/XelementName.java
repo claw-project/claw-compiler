@@ -5,6 +5,8 @@ public class XelementName {
   // Element attributes
   public static final String ATTR_TYPE = "type";
   public static final String ATTR_SCOPE = "scope";
+  public static final String ATTR_FILE = "file";
+  public static final String ATTR_LINENO = "lineno";
 
   // Element names
   public static final String BODY = "body";

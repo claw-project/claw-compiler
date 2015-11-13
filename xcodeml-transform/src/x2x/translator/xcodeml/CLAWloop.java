@@ -97,20 +97,17 @@ public class CLAWloop {
   }
 
   public Element getBodyElement(){
-    // TODO be sure that there is only one body per loop
-    NodeList bodies = _loopElement.getElementsByTagName("body");
-    Element body = (Element) bodies.item(0);
-    return body;
+    return CLAWelementHelper.getBody(_loopElement);
   }
 
   public String getOriginalFilename(){
-    // TODO use constant
-    return CLAWelementHelper.getAttributeValue(_pragmaElement, "file");
+    return CLAWelementHelper
+      .getAttributeValue(_pragmaElement, XelementName.ATTR_FILE);
   }
 
   public String getPragmaLine(){
-    // TODO use constant
-    return CLAWelementHelper.getAttributeValue(_pragmaElement, "lineno");
+    return CLAWelementHelper
+      .getAttributeValue(_pragmaElement, XelementName.ATTR_LINENO);
   }
 
 
