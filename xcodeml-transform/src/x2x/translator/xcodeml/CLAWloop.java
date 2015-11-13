@@ -88,8 +88,6 @@ public class CLAWloop {
     setNewRange(otherLoop.getRangeVarElement(), otherLoop.getRangeElement());
   }
 
-
-
   public Element getLoopElement(){
     return _loopElement;
   }
@@ -105,23 +103,14 @@ public class CLAWloop {
     return body;
   }
 
-  // TODO replace with CLAWelementHelper
-  private String getAttributeValue(Element el, String attrName){
-    NamedNodeMap attributes = el.getAttributes();
-    for (int j = 0; j < attributes.getLength(); j++) {
-      if(attributes.item(j).getNodeName().equals(attrName)){
-        return attributes.item(j).getNodeValue();
-      }
-    }
-    return "";
-  }
-
   public String getOriginalFilename(){
-    return getAttributeValue(_pragmaElement, "file"); // TODO use constant
+    // TODO use constant
+    return CLAWelementHelper.getAttributeValue(_pragmaElement, "file");
   }
 
   public String getPragmaLine(){
-    return getAttributeValue(_pragmaElement, "lineno"); // TODO use constant
+    // TODO use constant
+    return CLAWelementHelper.getAttributeValue(_pragmaElement, "lineno");
   }
 
 
