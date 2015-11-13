@@ -51,7 +51,8 @@ public class CLAWextract {
 
     System.out.println("Fct : " + _fctDef.getFctName() + " found symbols: "
       + _fctDef.getSymbolTable().size());
-
+    System.out.println("Fct : " + _fctDef.getFctName() + " found decl: "
+        + _fctDef.getDeclarationTable().size());
 
 
     // Find function declaration

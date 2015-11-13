@@ -22,6 +22,8 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/CLAWfctDef.java
   x2x/translator/xcodeml/CLAWfctCall.java
   x2x/translator/xcodeml/CLAWelementHelper.java
+  x2x/translator/xcodeml/CLAWid.java
+  x2x/translator/xcodeml/CLAWvarDecl.java
   x2x/translator/xcodeml/XelementName.java
   x2x/translator/xcodeml/XcodemlDocument.java
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build

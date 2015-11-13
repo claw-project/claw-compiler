@@ -6,26 +6,6 @@ import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 
 /*
-<symbols>
-  <id type="A7fd318c079e0" sclass="flocal">
-    <name>value1</name>
-  </id>
-  <id type="A7fd318c08290" sclass="flocal">
-    <name>value2</name>
-  </id>
-  <id type="Fint" sclass="flocal">
-    <name>i</name>
-  </id>
-  <id type="Fint" sclass="flocal">
-    <name>istart</name>
-  </id>
-  <id type="Fint" sclass="flocal">
-    <name>iend</name>
-  </id>
-  <id type="F7fd318c0a260" sclass="ffunc">
-    <name>clawloop</name>
-  </id>
-</symbols>
 <declarations>
   <varDecl lineno="4" file="original_code.f90">
     <name type="A7fd318c079e0">value1</name>
@@ -54,17 +34,22 @@ import java.util.Hashtable;
 public class CLAWfctDef extends CLAWfct {
 
   private Hashtable<String, CLAWid> _symbolTable;
-
+  private Hashtable<String, CLAWvarDecl> _declTable;
 
   public CLAWfctDef(Element fctDefElement){
     super(fctDefElement);
-
     _symbolTable = new Hashtable<String, CLAWid>();
+    _declTable = new Hashtable<String, CLAWvarDecl>();
     readSymbolsTable();
+    readDeclarationTable();
   }
 
   public Hashtable<String, CLAWid> getSymbolTable(){
     return _symbolTable;
+  }
+
+  public Hashtable<String, CLAWvarDecl> getDeclarationTable(){
+    return _declTable;
   }
 
   private void readSymbolsTable(){
@@ -76,6 +61,20 @@ public class CLAWfctDef extends CLAWfct {
         Element idElement = (Element) idNode;
         CLAWid id = new CLAWid(idElement);
         _symbolTable.put(id.getName(), id);
+      }
+    }
+  }
+
+  private void readDeclarationTable(){
+    Element symbols = CLAWelementHelper.findSymbols(getFctElement());
+    NodeList nodeList = getFctElement()
+      .getElementsByTagName(XelementName.VAR_DECL);
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node n = nodeList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element)n;
+        CLAWvarDecl decl = new CLAWvarDecl(el);
+        _declTable.put(decl.getName(), decl);
       }
     }
   }

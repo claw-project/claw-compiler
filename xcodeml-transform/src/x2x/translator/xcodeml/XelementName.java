@@ -18,6 +18,8 @@ public class XelementName {
   public static final String INT_CONST = "FintConstant";
   public static final String SYMBOLS = "symbols";
   public static final String ID = "id";
+  public static final String VAR_DECL = "varDecl";
+  public static final String VALUE = "value";
 
   public static final String INDEX_RANGE = "indexRange";
   public static final String LOWER_BOUND = "lowerBound";
