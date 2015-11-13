@@ -1,6 +1,7 @@
 package x2x.translator.xcodeml;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /*
 <varDecl lineno="5" file="original_code.f90">
@@ -29,6 +30,10 @@ public class CLAWvarDecl {
   public CLAWvarDecl(Element varDeclElement){
     _varDeclElement = varDeclElement;
     readElementInformation();
+  }
+
+  public Node clone(){
+    return _varDeclElement.cloneNode(true);
   }
 
   private void readElementInformation(){

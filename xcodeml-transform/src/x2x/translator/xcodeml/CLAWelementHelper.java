@@ -90,7 +90,11 @@ public class CLAWelementHelper {
   }
 
   public static Element findSymbols(Element parent){
-    return findFirstElement(parent, XelementName.DO_STMT);
+    return findFirstElement(parent, XelementName.SYMBOLS);
+  }
+
+  public static Element findDeclarations(Element parent){
+    return findFirstElement(parent, XelementName.DECLARATIONS);
   }
 
   public static Element findFirstElement(Element parent, String elementName){

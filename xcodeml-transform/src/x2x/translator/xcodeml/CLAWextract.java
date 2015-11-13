@@ -15,6 +15,7 @@ public class CLAWextract {
 
   private CLAWfctCall _fctCall = null;
   private CLAWfctDef _fctDef = null; // Fct holding the fct call
+  private CLAWfctDef _extractedFctDef = null;
   private CLAWloop _extractedLoop = null;
 
   public CLAWextract(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
@@ -56,20 +57,20 @@ public class CLAWextract {
 
 
     // Find function declaration
-    CLAWfctDef fctDef = CLAWelementHelper.findFunctionDefinition(
+    _extractedFctDef = CLAWelementHelper.findFunctionDefinition(
       _xcodeml.getDocument(), _fctCall);
 
-    if(fctDef == null){
+    if(_extractedFctDef == null){
       System.err.println("Could not locate the function definition for: "
         + _fctCall.getFctName());
       System.exit(1);
     }
 
     // Find loop in function
-    _extractedLoop = CLAWelementHelper.findLoop(fctDef);
+    _extractedLoop = CLAWelementHelper.findLoop(_extractedFctDef);
     if(_extractedLoop == null){
       System.err.println("Could not locate inner loop in subroutine "
-        + fctDef.getFctName());
+        + _extractedFctDef.getFctName());
       System.exit(1);
     }
 
@@ -110,7 +111,31 @@ public class CLAWextract {
     // Move the call into the loop body
     body.appendChild(_fctCall.getFctElement().getParentNode());
 
-    // TODO create needed variable
+
+    insertDeclaration(iterationRange.getInductionVar().getValue());
+    if(iterationRange.getIndexRange().getLowerBound().isVar()){
+      insertDeclaration(iterationRange.getIndexRange().getLowerBound().getValue());
+    }
+    if(iterationRange.getIndexRange().getUpperBound().isVar()){
+      insertDeclaration(iterationRange.getIndexRange().getUpperBound().getValue());
+    }
+    if(iterationRange.getIndexRange().getStep().isVar()){
+      insertDeclaration(iterationRange.getIndexRange().getStep().getValue());
+    }
+  }
+
+  private void insertDeclaration(String id){
+    CLAWid inductionVarId = _fctDef.getSymbolTable().get(id);
+    if(inductionVarId == null){
+      CLAWid copyId = _extractedFctDef.getSymbolTable().get(id);
+      _fctDef.addSymbol(copyId);
+    }
+
+    CLAWvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
+    if(inductionVarDecl == null){
+      CLAWvarDecl copyDecl = _extractedFctDef.getDeclarationTable().get(id);
+      _fctDef.addDeclaration(copyDecl);
+    }
   }
 
   private Element findFctCall(){

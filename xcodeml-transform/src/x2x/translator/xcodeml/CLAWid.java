@@ -1,6 +1,7 @@
 package x2x.translator.xcodeml;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /*<id type="A7fd318c079e0" sclass="flocal">
   <name>value1</name>
@@ -29,6 +30,10 @@ public class CLAWid {
 
   public String getName(){
     return _name;
+  }
+
+  public Node clone(){
+    return _idElement.cloneNode(true);
   }
 
 }

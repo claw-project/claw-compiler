@@ -17,6 +17,7 @@ public class XelementName {
   public static final String VAR = "Var";
   public static final String INT_CONST = "FintConstant";
   public static final String SYMBOLS = "symbols";
+  public static final String DECLARATIONS = "declarations";
   public static final String ID = "id";
   public static final String VAR_DECL = "varDecl";
   public static final String VALUE = "value";

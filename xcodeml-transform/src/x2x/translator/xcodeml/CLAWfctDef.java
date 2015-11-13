@@ -36,6 +36,9 @@ public class CLAWfctDef extends CLAWfct {
   private Hashtable<String, CLAWid> _symbolTable;
   private Hashtable<String, CLAWvarDecl> _declTable;
 
+  private Element _symbolsElement = null;
+  private Element _declarationsElement = null;
+
   public CLAWfctDef(Element fctDefElement){
     super(fctDefElement);
     _symbolTable = new Hashtable<String, CLAWid>();
@@ -52,9 +55,13 @@ public class CLAWfctDef extends CLAWfct {
     return _declTable;
   }
 
+  public void addSymbol(CLAWid id){
+    _symbolsElement.appendChild(id.clone());
+  }
+
   private void readSymbolsTable(){
-    Element symbols = CLAWelementHelper.findSymbols(getFctElement());
-    NodeList nodeList = getFctElement().getElementsByTagName(XelementName.ID);
+    _symbolsElement = CLAWelementHelper.findSymbols(getFctElement());
+    NodeList nodeList = _symbolsElement.getElementsByTagName(XelementName.ID);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node idNode = nodeList.item(i);
       if (idNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -65,9 +72,13 @@ public class CLAWfctDef extends CLAWfct {
     }
   }
 
+  public void addDeclaration(CLAWvarDecl decl){
+    _declarationsElement.appendChild(decl.clone());
+  }
+
   private void readDeclarationTable(){
-    Element symbols = CLAWelementHelper.findSymbols(getFctElement());
-    NodeList nodeList = getFctElement()
+    _declarationsElement = CLAWelementHelper.findDeclarations(getFctElement());
+    NodeList nodeList = _declarationsElement
       .getElementsByTagName(XelementName.VAR_DECL);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node n = nodeList.item(i);
