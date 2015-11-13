@@ -45,6 +45,15 @@ public class CLAWelementHelper {
     return null;
   }
 
+  public static CLAWloop findLoop(CLAWfctDef fctDef){
+    Element body = fctDef.getBody();
+    Element loopElement = CLAWelementHelper.findLoopStament(body);
+    if(loopElement == null){
+      return null;
+    }
+    return new CLAWloop(null, loopElement);
+  }
+
   public static Element findVar(Element parent){
     return findFirstElement(parent, XelementName.VAR);
   }

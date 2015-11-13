@@ -57,24 +57,14 @@ public class CLAWextract {
     }
 
     // Find loop in function
-    Element body = fctDef.getBody();
-    Element loop = CLAWelementHelper.findLoopStament(body);
-
-    if(loop != null){
-      System.out.println("Inner loop found");
-    } else {
+    CLAWloop loop = CLAWelementHelper.findLoop(fctDef);
+    if(loop == null){
       System.err.println("Could not locate inner loop in subroutine "
         + fctDef.getFctName());
+      System.exit(1);
     }
 
-    Element loopVar = CLAWelementHelper.findVar(loop);
-    Element loopIndexRange = CLAWelementHelper.findIndexRange(loop);
-
-    CLAWloopIterationRange loopRange =
-      new CLAWloopIterationRange(loopVar, loopIndexRange);
-    System.out.println("loopRange: " + loopRange.toString());
-
-    // Compare range
+    System.out.println("loopRange: " + loop.getIterationRange().toString());
 
     // Duplicate function without the loop
 
