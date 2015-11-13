@@ -36,4 +36,30 @@ public class CLAWvar {
     _scope = CLAWelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
     _identity = _varElement.getTextContent();
   }
+
+  @Override
+  public boolean equals(Object ob) {
+    if (ob == null) return false;
+    if (ob.getClass() != getClass()) return false;
+    CLAWvar other = (CLAWvar)ob;
+
+    if(!_identity.toLowerCase().equals(other.getValue().toLowerCase())){
+      return false;
+    }
+
+    if(!_type.equals(other.getType())){
+      return false;
+    }
+
+    if(!_scope.equals(other.getScope())){
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return _identity.hashCode() ^ _scope.hashCode() ^ _type.hashCode();
+  }
 }

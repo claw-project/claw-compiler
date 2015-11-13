@@ -27,23 +27,19 @@ public class CLAWloopFusion extends CLAWloop {
     return false;
   }
 
-  private boolean hasSameRangeWith(CLAWloopFusion otherLoop){
-    return true; // TODO compare range from both element
-  }
-
   private boolean hasSameGroupOption(CLAWloopFusion otherLoop){
     return (otherLoop.getGroupOptionLabel() == null ? getGroupOptionLabel()
       == null : otherLoop.getGroupOptionLabel().equals(getGroupOptionLabel()));
   }
 
-  public boolean canMergeWith(CLAWloopFusion otherLoop){
-    if(!hasSameParentBlockWith(otherLoop)){
+  public boolean canMergeWith(CLAWloopFusion other){
+    if(!hasSameParentBlockWith(other)){
       return false;
     }
-    if(!hasSameGroupOption(otherLoop)){
+    if(!hasSameGroupOption(other)){
       return false;
     }
-    if(!hasSameRangeWith(otherLoop)){
+    if(!hasSameRangeWith(other)){
       return false;
     }
     return true;
