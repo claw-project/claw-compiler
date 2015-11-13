@@ -65,15 +65,38 @@ public class CLAWextract {
     return true;
   }
 
-  public void transform(XcodemlDocument xcodemlDoc){
+  public void transform(XcodemlDocument xcodeml){
     // Duplicate function definition
 
     // Remove loop from body
 
+
     // Wrap function call with loop
-    _fctCall.wrapWithLoop(_extractedLoop.getIterationRange());
+    wrapCallWithLoop(xcodeml, _extractedLoop.getIterationRange());
 
     // Adapt function call parameters
+  }
+
+  private void wrapCallWithLoop(XcodemlDocument xcodeml,
+    CLAWloopIterationRange iterationRange)
+  {
+    Document document = xcodeml.getDocument();
+
+    // Create the loop before the call
+    Element loop = document.createElement(XelementName.DO_STMT);
+    _pragmaElement.getParentNode().insertBefore(loop, _pragmaElement.getNextSibling());
+
+    loop.appendChild(iterationRange.getInductionVar().clone());
+    loop.appendChild(iterationRange.getIndexRange().clone());
+
+    Element body = document.createElement(XelementName.BODY);
+
+    loop.appendChild(body);
+
+    // Move the call into the loop body
+    body.appendChild(_fctCall.getFctElement().getParentNode());
+
+    // TODO create needed variable
   }
 
   private Element findFctCall(){
