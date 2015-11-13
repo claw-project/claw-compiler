@@ -80,10 +80,17 @@ public class CLAWxcodemlTranslator {
     _program = new XcodemlDocument(_xcodemlInputFile);
     _program.readXcodeML();
 
+
     if(!_program.isXcodeMLvalid()){
       System.err.println("XcodeML document is not valid");
       return;
     }
+
+    // Read information from the type table
+    _program.readTypeTable();
+
+    System.out.println("type table size: " + _program.getTypeTable().size());
+
 
     NodeList nList = _program.getDocument()
       .getElementsByTagName(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));

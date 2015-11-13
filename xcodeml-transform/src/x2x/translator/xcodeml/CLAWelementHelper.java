@@ -97,6 +97,17 @@ public class CLAWelementHelper {
     return findFirstElement(parent, XelementName.DECLARATIONS);
   }
 
+  public static Element findTypeTable(Document doc){
+    NodeList nodeList = doc.getElementsByTagName(XelementName.TYPE_TABLE);
+    Element element = (Element) nodeList.item(0);
+    return element;
+  }
+
+  public static int findNumberOfRange(Element parent){
+    NodeList elements = parent.getElementsByTagName(XelementName.INDEX_RANGE);
+    return elements.getLength();
+  }
+
   public static Element findFirstElement(Element parent, String elementName){
     NodeList elements = parent.getElementsByTagName(elementName);
     Element element = (Element) elements.item(0);

@@ -8,6 +8,7 @@ public class XelementName {
   public static final String ATTR_FILE = "file";
   public static final String ATTR_LINENO = "lineno";
   public static final String ATTR_SCLASS = "sclass";
+  public static final String ATTR_REF = "ref";
 
   // Element names
   public static final String BODY = "body";
@@ -21,6 +22,8 @@ public class XelementName {
   public static final String ID = "id";
   public static final String VAR_DECL = "varDecl";
   public static final String VALUE = "value";
+  public static final String TYPE_TABLE = "typeTable";
+  public static final String BASIC_TYPE = "FbasicType";
 
   public static final String INDEX_RANGE = "indexRange";
   public static final String LOWER_BOUND = "lowerBound";
