@@ -66,7 +66,7 @@ public class CLAWelementHelper {
     return findFirstElement(parent, XelementName.DO_STMT);
   }
 
-  private static Element findFirstElement(Element parent, String elementName){
+  public static Element findFirstElement(Element parent, String elementName){
     NodeList elements = parent.getElementsByTagName(elementName);
     Element element = (Element) elements.item(0);
     return element;

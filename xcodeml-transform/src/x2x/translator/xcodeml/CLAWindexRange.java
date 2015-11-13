@@ -26,10 +26,6 @@ public class CLAWindexRange {
 
   protected Element _indexRangeElement;
 
-  private static final String LOWER_BOUND = "lowerBound";
-  private static final String UPPER_BOUND = "upperBound";
-  private static final String STEP = "step";
-
   public CLAWindexRange(CLAWbound lowerBound, CLAWbound upperBound, CLAWbound step){
       _lowerBound = lowerBound;
       _upperBound = upperBound;
@@ -42,9 +38,12 @@ public class CLAWindexRange {
   }
 
   private void readRangeValue(){
-    _lowerBound = new CLAWbound(getRangeElement(LOWER_BOUND));
-    _upperBound = new CLAWbound(getRangeElement(UPPER_BOUND));
-    _step = new CLAWbound(getRangeElement(STEP));
+    _lowerBound = new CLAWbound(CLAWelementHelper
+      .findFirstElement(_indexRangeElement, XelementName.LOWER_BOUND));
+    _upperBound = new CLAWbound(CLAWelementHelper
+      .findFirstElement(_indexRangeElement,XelementName.UPPER_BOUND));
+    _step = new CLAWbound(CLAWelementHelper
+      .findFirstElement(_indexRangeElement,XelementName.STEP));
   }
 
   public CLAWbound getLowerBound(){
@@ -57,12 +56,6 @@ public class CLAWindexRange {
 
   public CLAWbound getStep(){
     return _step;
-  }
-
-  private Element getRangeElement(String tag){
-    NodeList rangeElements = _indexRangeElement.getElementsByTagName(tag);
-    Element rangeElement = (Element) rangeElements.item(0);
-    return rangeElement;
   }
 
   @Override

@@ -35,10 +35,10 @@ public class CLAWbound {
   }
 
   private void readRangeValue(){
-    NodeList constants = _boundElement.getElementsByTagName("FintConstant"); // TODO string constant
-    Element constant = (Element) constants.item(0);
-    NodeList vars = _boundElement.getElementsByTagName("Var"); // TODO string constant
-    Element var = (Element) constants.item(0);
+    Element constant = CLAWelementHelper
+      .findFirstElement(_boundElement, XelementName.INT_CONST);
+    Element var = CLAWelementHelper
+      .findFirstElement(_boundElement, XelementName.VAR);
     if(constant != null){
       _constant = true;
       _value = constant.getTextContent();

@@ -67,6 +67,13 @@ public class CLAWextract {
         + fctDef.getFctName());
     }
 
+    Element loopVar = CLAWelementHelper.findVar(loop);
+    Element loopIndexRange = CLAWelementHelper.findIndexRange(loop);
+
+    CLAWloopIterationRange loopRange =
+      new CLAWloopIterationRange(loopVar, loopIndexRange);
+    System.out.println("loopRange: " + loopRange.toString());
+
     // Compare range
 
     // Duplicate function without the loop

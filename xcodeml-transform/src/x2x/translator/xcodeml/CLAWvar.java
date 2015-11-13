@@ -16,6 +16,7 @@ public class CLAWvar {
 
   public CLAWvar(Element var){
     _varElement = var;
+    readElementInformation();
   }
 
   public String getValue(){
