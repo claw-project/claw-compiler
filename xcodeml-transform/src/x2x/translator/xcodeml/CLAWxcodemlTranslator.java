@@ -48,18 +48,30 @@ public class CLAWxcodemlTranslator {
 
 
 
-  private void ouputXcodeML() throws Exception {
-    Transformer transformer = TransformerFactory.newInstance().newTransformer();
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    DOMSource source = new DOMSource(_program.getDocument());
-    if(_xcodemlOutputFile == null){
-      // Output to console
-      StreamResult console = new StreamResult(System.out);
-    } else {
-      // Output to file
-      StreamResult console = new StreamResult(new File(_xcodemlOutputFile));
-      transformer.transform(source, console);
+  private void ouputXcodeML() {
+
+    try {
+      cleanEmptyTextNodes(_program.getDocument());
+      Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(
+                "{http://xml.apache.org/xslt}indent-amount",
+                Integer.toString(2));
+      DOMSource source = new DOMSource(_program.getDocument());
+      if(_xcodemlOutputFile == null){
+        // Output to console
+        StreamResult console = new StreamResult(System.out);
+      } else {
+        // Output to file
+        StreamResult console = new StreamResult(new File(_xcodemlOutputFile));
+        transformer.transform(source, console);
+      }
+    } catch (TransformerConfigurationException ex){
+      System.out.println("Cannot output file: " + ex.getMessage());
+    } catch (TransformerException ex){
+      System.out.println("Cannot output file: " + ex.getMessage());
     }
+
   }
 
 
@@ -184,6 +196,8 @@ public class CLAWxcodemlTranslator {
       ouputXcodeML();
     } catch (Exception ex) {
       // TODO handle exception
+      System.out.println("Transformation exception: ");
+      ex.printStackTrace();
     }
   }
 
@@ -217,6 +231,65 @@ public class CLAWxcodemlTranslator {
       nextNode = nextNode.getNextSibling();
     }
     return null;
+  }
+
+
+  /**
+   * Removes text nodes that only contains whitespace. The conditions for
+   * removing text nodes, besides only containing whitespace, are: If the
+   * parent node has at least one child of any of the following types, all
+   * whitespace-only text-node children will be removed: - ELEMENT child -
+   * CDATA child - COMMENT child
+   *
+   * The purpose of this is to make the format() method (that use a
+   * Transformer for formatting) more consistent regarding indenting and line
+   * breaks.
+   */
+  private static void cleanEmptyTextNodes(Node parentNode) {
+    boolean removeEmptyTextNodes = false;
+    Node childNode = parentNode.getFirstChild();
+    while (childNode != null) {
+      removeEmptyTextNodes |= checkNodeTypes(childNode);
+      childNode = childNode.getNextSibling();
+    }
+
+    if (removeEmptyTextNodes) {
+      removeEmptyTextNodes(parentNode);
+    }
+  }
+
+  private static void removeEmptyTextNodes(Node parentNode) {
+    Node childNode = parentNode.getFirstChild();
+    while (childNode != null) {
+      // grab the "nextSibling" before the child node is removed
+      Node nextChild = childNode.getNextSibling();
+
+      short nodeType = childNode.getNodeType();
+      if (nodeType == Node.TEXT_NODE) {
+        boolean containsOnlyWhitespace = childNode.getNodeValue()
+          .trim().isEmpty();
+        if (containsOnlyWhitespace) {
+          parentNode.removeChild(childNode);
+        }
+      }
+      childNode = nextChild;
+    }
+  }
+
+  private static boolean checkNodeTypes(Node childNode) {
+    short nodeType = childNode.getNodeType();
+
+    if (nodeType == Node.ELEMENT_NODE) {
+      cleanEmptyTextNodes(childNode); // recurse into subtree
+    }
+
+    if (nodeType == Node.ELEMENT_NODE
+        || nodeType == Node.CDATA_SECTION_NODE
+        || nodeType == Node.COMMENT_NODE) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }
