@@ -35,4 +35,12 @@ public class CLAWname {
     return _nameType;
   }
 
+  public boolean isIdentical(CLAWname other){
+    return isIdentical(other.getName(), other.getType());
+  }
+
+  public boolean isIdentical(String name, String type){
+    return _nameValue.equals(name) && _nameType.equals(type);
+  }
+
 }

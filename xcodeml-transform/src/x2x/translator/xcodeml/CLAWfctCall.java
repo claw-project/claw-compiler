@@ -28,7 +28,7 @@ public class CLAWfctCall {
   }
 
   private void readElementInformation(){
-    NodeList names = _fctCallElement.getElementsByTagName(NAME_ELEMENT);
+    NodeList names = _fctCallElement.getElementsByTagName(XelementName.NAME);
     Element nameElement = (Element) names.item(0);
     _fctName = new CLAWname(nameElement);
   }
