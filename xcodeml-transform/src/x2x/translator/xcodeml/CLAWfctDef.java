@@ -59,6 +59,10 @@ public class CLAWfctDef extends CLAWfct {
     _symbolsElement.appendChild(id.clone());
   }
 
+  public Node clone(){
+    return getFctElement().cloneNode(true);
+  }
+
   private void readSymbolsTable(){
     _symbolsElement = CLAWelementHelper.findSymbols(getFctElement());
     NodeList nodeList = _symbolsElement.getElementsByTagName(XelementName.ID);

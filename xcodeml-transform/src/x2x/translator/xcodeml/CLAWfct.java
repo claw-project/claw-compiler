@@ -18,6 +18,10 @@ public class CLAWfct {
     _fctName = new CLAWname(nameElement);
   }
 
+  public void updateName(String value){
+    _fctName.setName(value);
+  }
+
   protected Element getFctElement(){
     return _fctElement;
   }

@@ -22,6 +22,12 @@ public class CLAWname {
     readElementInformation();
   }
 
+  public void setName(String value){
+    if(_nameElement != null){
+      _nameElement.setTextContent(value);
+    }
+  }
+
   private void readElementInformation(){
     _nameType = CLAWelementHelper.getAttributeValue(_nameElement, TYPE);
     _nameValue = _nameElement.getTextContent();

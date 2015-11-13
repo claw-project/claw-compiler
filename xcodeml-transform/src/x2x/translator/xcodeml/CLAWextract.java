@@ -18,6 +18,8 @@ public class CLAWextract {
   private CLAWfctDef _extractedFctDef = null;
   private CLAWloop _extractedLoop = null;
 
+  private CLAWfctDef _copiedFctDef = null;
+
   public CLAWextract(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
@@ -82,6 +84,11 @@ public class CLAWextract {
 
   public void transform(XcodemlDocument xcodeml){
     // Duplicate function definition
+    Node cloned = _extractedFctDef.clone();
+    CLAWfctDef clonedFctDef = new CLAWfctDef((Element)cloned);
+    clonedFctDef.updateName(clonedFctDef.getFctName() + "_claw");
+
+    CLAWelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
 
     // Remove loop from body
 

@@ -103,4 +103,8 @@ public class CLAWelementHelper {
     return element;
   }
 
+  public static void insertAfter(Node refNode, Node newNode){
+    refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
+  }
+
 }
