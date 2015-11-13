@@ -15,36 +15,11 @@ import org.w3c.dom.NodeList;
  * </functionCall>
  */
 
-public class CLAWfctCall {
+public class CLAWfctCall extends CLAWfct {
   private Element _fctCallElement = null;
   private CLAWname _fctName = null;
 
-  // TODO move to a single file all XcodeML element constant
-  private static final String NAME_ELEMENT = "name";
-
   public CLAWfctCall(Element fctCallElement){
-    _fctCallElement = fctCallElement;
-    readElementInformation();
+    super(fctCallElement);
   }
-
-  private void readElementInformation(){
-    NodeList names = _fctCallElement.getElementsByTagName(XelementName.NAME);
-    Element nameElement = (Element) names.item(0);
-    _fctName = new CLAWname(nameElement);
-  }
-
-  public String getFctName(){
-    if(_fctName == null){
-      return null;
-    }
-    return _fctName.getName();
-  }
-
-  public String getFctType(){
-    if(_fctName == null){
-      return null;
-    }
-    return _fctName.getType();
-  }
-
 }

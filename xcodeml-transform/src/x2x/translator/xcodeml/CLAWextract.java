@@ -25,7 +25,6 @@ public class CLAWextract {
 
   private void extractMapping(){
 
-
   }
 
   private void extractRange(){
@@ -54,10 +53,18 @@ public class CLAWextract {
     if(fctDefinitionElement == null){
       System.err.println("Could not locate the function definition for: "
         + _fctCall.getFctName());
+      System.exit(1);
     }
 
+    CLAWfctDef fctDef = new CLAWfctDef(fctDefinitionElement);
 
     // Find loop in function
+    if(fctDef.hasLoop()){
+      System.out.println("Inner loop found");
+    } else {
+      System.err.println("Could not locate inner loop in subroutine "
+        + fctDef.getFctName());
+    }
 
     // Compare range
 

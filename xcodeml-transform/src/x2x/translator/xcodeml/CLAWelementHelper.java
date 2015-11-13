@@ -54,4 +54,22 @@ public class CLAWelementHelper {
     return new CLAWname(nameElement);
   }
 
+  public static Element getBody(Element parent){
+    NodeList elements = parent.getElementsByTagName(XelementName.BODY);
+    Element element = (Element) elements.item(0);
+    if(element == null){
+      return null;
+    }
+    return element;
+  }
+
+  public static Element findLoopStament(Element parent){
+    NodeList elements = parent.getElementsByTagName(XelementName.DO_STMT);
+    Element element = (Element) elements.item(0);
+    if(element == null){
+      return null;
+    }
+    return element;
+  }
+
 }
