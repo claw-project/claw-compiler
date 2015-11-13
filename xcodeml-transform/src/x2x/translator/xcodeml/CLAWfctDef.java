@@ -8,12 +8,7 @@ public class CLAWfctDef extends CLAWfct {
     super(fctDefElement);
   }
 
-  public boolean hasLoop(){
-    Element body = CLAWelementHelper.getBody(getFctElement());
-    Element loop = CLAWelementHelper.findLoopStament(body);
-    if(loop == null){
-      return false;
-    }
-    return true;
+  public Element getBody(){
+    return CLAWelementHelper.getBody(getFctElement());
   }
 }

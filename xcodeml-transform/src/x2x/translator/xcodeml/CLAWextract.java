@@ -59,7 +59,10 @@ public class CLAWextract {
     CLAWfctDef fctDef = new CLAWfctDef(fctDefinitionElement);
 
     // Find loop in function
-    if(fctDef.hasLoop()){
+    Element body = fctDef.getBody();
+    Element loop = CLAWelementHelper.findLoopStament(body);
+
+    if(loop != null){
       System.out.println("Inner loop found");
     } else {
       System.err.println("Could not locate inner loop in subroutine "
