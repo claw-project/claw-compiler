@@ -31,10 +31,11 @@ public class CLAWxcodemlTranslator {
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
   private XcodeMLNameTable_F _xcodemlNameTable = null;
-  private Document _xcodemlDoc = null;
+
   private ArrayList<CLAWloopFusion> _loopFusion = null;
   private ArrayList<CLAWloopInterchange> _loopInterchange = null;
   private ArrayList<CLAWextract> _loopExtract = null;
+  private XcodemlDocument _program = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile, String xcodemlOutputFile){
     _xcodemlInputFile = xcodemlInputFile;
@@ -45,23 +46,12 @@ public class CLAWxcodemlTranslator {
     _loopExtract = new ArrayList<CLAWextract>();
   }
 
-  private void readXcodeML(){
-    try {
-      File fXmlFile = new File(_xcodemlInputFile);
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(fXmlFile);
-      doc.getDocumentElement().normalize();
-      _xcodemlDoc = doc;
-    } catch(Exception ex){
-      _xcodemlDoc = null;
-    }
-  }
+
 
   private void ouputXcodeML() throws Exception {
     Transformer transformer = TransformerFactory.newInstance().newTransformer();
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    DOMSource source = new DOMSource(_xcodemlDoc);
+    DOMSource source = new DOMSource(_program.getDocument());
     if(_xcodemlOutputFile == null){
       // Output to console
       StreamResult console = new StreamResult(System.out);
@@ -72,49 +62,20 @@ public class CLAWxcodemlTranslator {
     }
   }
 
-  private boolean isXcodeMLvalid() throws Exception {
-    if(_xcodemlDoc == null){
-      return false;
-    }
 
-    Element root = _xcodemlDoc.getDocumentElement();
-    if(!root.getNodeName().equals("XcodeProgram")){ // TODO const or enum
-      return false;
-    }
-
-    if(!validateStringAttribute("1.0", "/XcodeProgram/@version")){
-      System.err.println("Language is not set to fortran");
-      return false;
-    }
-
-    if(!validateStringAttribute("Fortran", "/XcodeProgram/@language")){
-      System.err.println("Language is not set to fortran");
-      return false;
-    }
-
-    return true;
-  }
-
-  private boolean validateStringAttribute(String attrValue, String xpathQuery) throws Exception {
-    XPathFactory xPathfactory = XPathFactory.newInstance();
-    XPath xpath = xPathfactory.newXPath();
-    XPathExpression getVersion = xpath.compile(xpathQuery);
-    String outputValue = (String) getVersion.evaluate(_xcodemlDoc, XPathConstants.STRING);
-    if(outputValue.equals(attrValue)){
-      return true;
-    }
-    return false;
-  }
 
   public void analyze() throws Exception {
-    readXcodeML();
+    _program = new XcodemlDocument(_xcodemlInputFile);
+    _program.readXcodeML();
 
-    if(!isXcodeMLvalid()){
+    if(!_program.isXcodeMLvalid()){
       System.err.println("XcodeML document is not valid");
       return;
     }
 
-    NodeList nList = _xcodemlDoc.getElementsByTagName(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));
+    NodeList nList = _program.getDocument()
+      .getElementsByTagName(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));
+
     for (int i = 0; i < nList.getLength(); i++) {
       Node pragmaNode = nList.item(i);
       if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -159,7 +120,7 @@ public class CLAWxcodemlTranslator {
             if(exprStmt == null){
               System.err.println("loop-extract pragma is not followed by a expression statment");
             } else {
-              CLAWextract extraction = new CLAWextract(pragmaElement, exprStmt, _xcodemlDoc);
+              CLAWextract extraction = new CLAWextract(pragmaElement, exprStmt, _program);
               if(extraction.analyze()){
                 _loopExtract.add(extraction);
               }
@@ -195,7 +156,7 @@ public class CLAWxcodemlTranslator {
       // Apply loop-extract transformation
       for(int i = 0; i < _loopExtract.size(); ++i){
         CLAWextract extraction = _loopExtract.get(i);
-        extraction.transform();
+        extraction.transform(_program);
       }
 
 

@@ -11,23 +11,18 @@ public class CLAWextract {
   protected Element _pragmaElement = null;
   protected Element _exprStmtElement = null;
   protected Element _fncCallStmt = null;
-  protected Document _xcodemlDoc = null;
+  protected XcodemlDocument _xcodeml = null;
 
   private CLAWfctCall _fctCall = null;
+  private CLAWloop _extractedLoop = null;
 
-  protected CLAWindexRange _extractedLoopRange = null;
-
-  public CLAWextract(Element pragma, Element exprStmt, Document xcodemlDoc){
+  public CLAWextract(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
-    _xcodemlDoc = xcodemlDoc;
+    _xcodeml = xcodemlDoc;
   }
 
   private void extractMapping(){
-
-  }
-
-  private void extractRange(){
 
   }
 
@@ -48,7 +43,7 @@ public class CLAWextract {
 
     // Find function declaration
     CLAWfctDef fctDef = CLAWelementHelper.findFunctionDefinition(
-      _xcodemlDoc, _fctCall);
+      _xcodeml.getDocument(), _fctCall);
 
     if(fctDef == null){
       System.err.println("Could not locate the function definition for: "
@@ -57,25 +52,28 @@ public class CLAWextract {
     }
 
     // Find loop in function
-    CLAWloop loop = CLAWelementHelper.findLoop(fctDef);
-    if(loop == null){
+    _extractedLoop = CLAWelementHelper.findLoop(fctDef);
+    if(_extractedLoop == null){
       System.err.println("Could not locate inner loop in subroutine "
         + fctDef.getFctName());
       System.exit(1);
     }
 
-    System.out.println("loopRange: " + loop.getIterationRange().toString());
-
-    // Duplicate function without the loop
-
-
+    System.out.println("loopRange: "
+      + _extractedLoop.getIterationRange().toString());
 
     return true;
   }
 
-  public void transform(){
-    // Do smth here
+  public void transform(XcodemlDocument xcodemlDoc){
+    // Duplicate function definition
 
+    // Remove loop from body
+
+    // Wrap function call with loop
+    _fctCall.wrapWithLoop(_extractedLoop.getIterationRange());
+
+    // Adapt function call parameters
   }
 
   private Element findFctCall(){
