@@ -58,12 +58,14 @@ public enum CLAWpragma {
 
     Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
       MULTIPLE_SPACES + LOOP_FUSION_DIRECTIVE + MULTIPLE_SPACES +
-      OPTION_FUSION_GROUP + INNER_OPTION).matcher(pragma);
+      OPTION_FUSION_GROUP + INNER_OPTION, Pattern.CASE_INSENSITIVE
+      ).matcher(pragma);
     if(!matchFullDirective.matches()){
       return null;
     }
 
-    Matcher matchOption = Pattern.compile(INNER_OPTION).matcher(pragma);
+    Matcher matchOption = Pattern.compile(INNER_OPTION,
+      Pattern.CASE_INSENSITIVE).matcher(pragma);
     while(matchOption.find()) {
       return matchOption.group(1);
     }
@@ -77,12 +79,13 @@ public enum CLAWpragma {
 
     Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
       MULTIPLE_SPACES + LOOP_INTERCHANGE_DIRECTIVE + MULTIPLE_SPACES
-      + INNER_OPTION).matcher(pragma);
+      + INNER_OPTION, Pattern.CASE_INSENSITIVE).matcher(pragma);
     if(!matchFullDirective.matches()){
       return null;
     }
 
-    Matcher matchOption = Pattern.compile(INNER_OPTION).matcher(pragma);
+    Matcher matchOption = Pattern.compile(INNER_OPTION,
+      Pattern.CASE_INSENSITIVE).matcher(pragma);
     while(matchOption.find()) {
       return matchOption.group(1);
     }
