@@ -32,7 +32,6 @@ public class CLAWxcodemlTranslator {
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
-  private XcodeMLNameTable_F _xcodemlNameTable = null;
 
   private ArrayList<LoopFusion> _loopFusion = null;
   private ArrayList<LoopInterchange> _loopInterchange = null;
@@ -42,7 +41,6 @@ public class CLAWxcodemlTranslator {
   public CLAWxcodemlTranslator(String xcodemlInputFile, String xcodemlOutputFile){
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _xcodemlNameTable = new XcodeMLNameTable_F();
     _loopFusion = new ArrayList<LoopFusion>();
     _loopInterchange = new ArrayList<LoopInterchange>();
     _loopExtract = new ArrayList<LoopExtraction>();
@@ -82,7 +80,6 @@ public class CLAWxcodemlTranslator {
     _program = new XcodemlDocument(_xcodemlInputFile);
     _program.readXcodeML();
 
-
     if(!_program.isXcodeMLvalid()){
       System.err.println("XcodeML document is not valid");
       return;
@@ -91,11 +88,10 @@ public class CLAWxcodemlTranslator {
     // Read information from the type table
     _program.readTypeTable();
 
-    NodeList nList = _program.getDocument()
-      .getElementsByTagName(_xcodemlNameTable.getName(Xcode.PRAGMA_LINE));
+    NodeList pragmaList = XelementHelper.getPragmas(_program.getDocument());
 
-    for (int i = 0; i < nList.getLength(); i++) {
-      Node pragmaNode = nList.item(i);
+    for (int i = 0; i < pragmaList.getLength(); i++) {
+      Node pragmaNode = pragmaList.item(i);
       if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
         Element pragmaElement = (Element) pragmaNode;
         String fullPragmaText = pragmaElement.getTextContent();

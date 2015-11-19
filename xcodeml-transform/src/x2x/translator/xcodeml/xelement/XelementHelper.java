@@ -150,6 +150,10 @@ public class XelementHelper {
     return null;
   }
 
+  public static NodeList getPragmas(Document root){
+    return root.getElementsByTagName(XelementName.PRAGMA_STMT);
+  }
+
   /**
    * Removes text nodes that only contains whitespace. The conditions for
    * removing text nodes, besides only containing whitespace, are: If the

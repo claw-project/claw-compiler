@@ -34,6 +34,7 @@ public class XelementName {
   public static final String LENGTH = "len";
   public static final String LOWER_BOUND = "lowerBound";
   public static final String NAME = "name";
+  public static final String PRAGMA_STMT = "FpragmaStatement";
   public static final String STEP = "step";
   public static final String SYMBOLS = "symbols";
   public static final String TYPE_TABLE = "typeTable";
