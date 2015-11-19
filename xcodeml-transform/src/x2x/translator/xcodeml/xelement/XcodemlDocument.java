@@ -14,18 +14,17 @@ public class XcodemlDocument{
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
   private Element _typeTableElement = null;
-  private Hashtable<String, XbasicType> _typeTable = null;
+  private XtypeTable _typeTable = null;
 
   public XcodemlDocument(String inputFile){
     _xcodemlInputFile = inputFile;
-    _typeTable = new Hashtable<String, XbasicType>();
   }
 
   public Document getDocument(){
     return _xcodemlDoc;
   }
 
-  public Hashtable<String, XbasicType> getTypeTable(){
+  public XtypeTable getTypeTable(){
     return _typeTable;
   }
 
@@ -67,15 +66,7 @@ public class XcodemlDocument{
 
   public void readTypeTable(){
     _typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
-    NodeList nodeList = _typeTableElement.getElementsByTagName(XelementName.BASIC_TYPE);
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node n = nodeList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        XbasicType btype = new XbasicType(el);
-        _typeTable.put(btype.getType(), btype);
-      }
-    }
+    _typeTable = new XtypeTable(_typeTableElement);
   }
 
   private boolean validateStringAttribute(String attrValue, String xpathQuery) throws Exception {
