@@ -47,16 +47,20 @@ public class XcodemlDocument{
     }
 
     Element root = _xcodemlDoc.getDocumentElement();
-    if(!root.getNodeName().equals("XcodeProgram")){ // TODO const or enum
+    if(!root.getNodeName().equals(XelementName.X_CODE_PROGRAM)){
       return false;
     }
 
-    if(!validateStringAttribute("1.0", "/XcodeProgram/@version")){
+    if(!validateStringAttribute(XelementName.SUPPORTED_VERSION, "/" +
+      XelementName.X_CODE_PROGRAM + "/@" + XelementName.ATTR_VERSION))
+    {
       System.err.println("Language is not set to fortran");
       return false;
     }
 
-    if(!validateStringAttribute("Fortran", "/XcodeProgram/@language")){
+    if(!validateStringAttribute(XelementName.SUPPORTED_LANGUAGE, "/" +
+      XelementName.X_CODE_PROGRAM + "/@" +  XelementName.ATTR_LANGUAGE))
+    {
       System.err.println("Language is not set to fortran");
       return false;
     }

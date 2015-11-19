@@ -5,16 +5,20 @@ public class XelementName {
   // helpers
   public static final String TRUE = "true";
   public static final String FALSE = "false";
+  public static final String SUPPORTED_VERSION = "1.0";
+  public static final String SUPPORTED_LANGUAGE = "Fortran";
 
   // Element attributes
   public static final String ATTR_FILE = "file";
   public static final String ATTR_IS_PROGRAM = "is_program";
+  public static final String ATTR_LANGUAGE = "language";
   public static final String ATTR_LINENO = "lineno";
   public static final String ATTR_REF = "ref";
   public static final String ATTR_RETURN_TYPE = "return_type";
   public static final String ATTR_SCLASS = "sclass";
   public static final String ATTR_SCOPE = "scope";
   public static final String ATTR_TYPE = "type";
+  public static final String ATTR_VERSION = "version";
 
   // Element names
   public static final String BASIC_TYPE = "FbasicType";
@@ -36,5 +40,6 @@ public class XelementName {
   public static final String VAR = "Var";
   public static final String VAR_DECL = "varDecl";
   public static final String VALUE = "value";
+  public static final String X_CODE_PROGRAM = "XcodeProgram";
 
 }
