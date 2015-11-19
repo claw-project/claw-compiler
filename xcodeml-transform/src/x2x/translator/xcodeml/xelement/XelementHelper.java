@@ -108,6 +108,10 @@ public class XelementHelper {
     return elements.getLength();
   }
 
+  public static NodeList findIndexRanges(Element parent){
+    return parent.getElementsByTagName(XelementName.INDEX_RANGE);
+  }
+
   public static Element findLen(Element parent){
     NodeList elements = parent.getElementsByTagName(XelementName.LENGTH);
     if(elements.getLength() == 0){

@@ -2,7 +2,7 @@ package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
+import org.w3c.dom.NodeList;
 /*
 <FbasicType type="A7f9c1a5046e0" ref="Fint">
   <indexRange>
@@ -44,7 +44,10 @@ public class XbasicType extends Xtype {
     if (_dimension > 0){
       _isArray = true;
       _dimensionRanges = new XindexRange[_dimension];
-      // TODO read dimensions information
+      NodeList ranges = XelementHelper.findIndexRanges(_element);
+      for(int i = 0; i < _dimension; ++i){
+        _dimensionRanges[i] = new XindexRange((Element)ranges.item(i));
+      }
     }
 
     // has length ?
