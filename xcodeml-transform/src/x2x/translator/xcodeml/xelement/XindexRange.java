@@ -23,11 +23,11 @@ public class XindexRange {
 
   protected Xbound _lowerBound;
   protected Xbound _upperBound;
-  protected Xbound _step;
+  protected Xstep _step;
 
   protected Element _indexRangeElement;
 
-  public XindexRange(Xbound lowerBound, Xbound upperBound, Xbound step){
+  public XindexRange(Xbound lowerBound, Xbound upperBound, Xstep step){
       _lowerBound = lowerBound;
       _upperBound = upperBound;
       _step = step;
@@ -47,7 +47,7 @@ public class XindexRange {
       .findFirstElement(_indexRangeElement, XelementName.LOWER_BOUND));
     _upperBound = new Xbound(XelementHelper
       .findFirstElement(_indexRangeElement,XelementName.UPPER_BOUND));
-    _step = new Xbound(XelementHelper
+    _step = new Xstep(XelementHelper
       .findFirstElement(_indexRangeElement,XelementName.STEP));
   }
 
