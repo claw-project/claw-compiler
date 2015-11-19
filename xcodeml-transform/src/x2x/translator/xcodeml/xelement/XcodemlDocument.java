@@ -54,7 +54,7 @@ public class XcodemlDocument{
     if(!validateStringAttribute(XelementName.SUPPORTED_VERSION, "/" +
       XelementName.X_CODE_PROGRAM + "/@" + XelementName.ATTR_VERSION))
     {
-      System.err.println("Language is not set to fortran");
+      System.err.println("XcodeML version is not supported");
       return false;
     }
 
