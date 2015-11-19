@@ -22,7 +22,7 @@ public class XtypeTable {
 
   public void add(Xtype type){
     _baseElement.appendChild(type.clone());
-    _table.put(id.getName(), id);
+    _table.put(type.getType(), type);
   }
 
   public Xtype get(String key){
