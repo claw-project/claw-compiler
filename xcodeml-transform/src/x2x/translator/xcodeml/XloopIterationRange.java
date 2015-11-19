@@ -20,20 +20,20 @@ import org.w3c.dom.NodeList;
  * </indexRange>
  */
 
-public class CLAWloopIterationRange {
-  private CLAWindexRange _indexRange;
-  private CLAWvar _inductionVariable;
+public class XloopIterationRange {
+  private XindexRange _indexRange;
+  private Xvar _inductionVariable;
 
-  public CLAWloopIterationRange(Element inductionVarElement, Element indexRangeElement){
-    _inductionVariable = new CLAWvar(inductionVarElement);
-    _indexRange = new CLAWindexRange(indexRangeElement);
+  public XloopIterationRange(Element inductionVarElement, Element indexRangeElement){
+    _inductionVariable = new Xvar(inductionVarElement);
+    _indexRange = new XindexRange(indexRangeElement);
   }
 
-  public CLAWvar getInductionVar(){
+  public Xvar getInductionVar(){
     return _inductionVariable;
   }
 
-  public CLAWindexRange getIndexRange(){
+  public XindexRange getIndexRange(){
     return _indexRange;
   }
 
@@ -41,7 +41,7 @@ public class CLAWloopIterationRange {
    * Compare this loopIterationRange with the given one. Return true if all the
    * internal variable of the loopIterationRange are identical.
    */
-  public boolean isFullyIdentical(CLAWloopIterationRange other){
+  public boolean isFullyIdentical(XloopIterationRange other){
     if(!getInductionVar().equals(other.getInductionVar())){
       return false;
     }

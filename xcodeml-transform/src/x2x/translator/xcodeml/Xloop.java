@@ -5,27 +5,27 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
-public class CLAWloop {
+public class Xloop {
   protected Element _pragmaElement = null;
   protected Element _loopElement = null;
 
   protected Element _indexRangeElement = null;
   protected Element _inductionVarElement = null;
 
-  protected CLAWloopIterationRange _iterationRange;
+  protected XloopIterationRange _iterationRange;
 
-  public CLAWloop(Element pragma, Element loop){
+  public Xloop(Element pragma, Element loop){
     _pragmaElement = pragma;
     _loopElement = loop;
     findRangeElements();
   }
 
   protected void findRangeElements(){
-    _inductionVarElement = CLAWelementHelper.findVar(_loopElement);
-    _indexRangeElement = CLAWelementHelper.findIndexRange(_loopElement);
+    _inductionVarElement = XelementHelper.findVar(_loopElement);
+    _indexRangeElement = XelementHelper.findIndexRange(_loopElement);
 
     _iterationRange =
-      new CLAWloopIterationRange(_inductionVarElement, _indexRangeElement);
+      new XloopIterationRange(_inductionVarElement, _indexRangeElement);
   }
 
   public void setNewRange(Node var, Node range){
@@ -42,12 +42,12 @@ public class CLAWloop {
     _loopElement.removeChild(_indexRangeElement);
   }
 
-  protected void swapRangeElementsWith(CLAWloop otherLoop){
+  protected void swapRangeElementsWith(Xloop otherLoop){
     otherLoop.setNewRange(_inductionVarElement, _indexRangeElement);
     setNewRange(otherLoop.getRangeVarElement(), otherLoop.getRangeElement());
   }
 
-  public CLAWloopIterationRange getIterationRange(){
+  public XloopIterationRange getIterationRange(){
     return _iterationRange;
   }
 
@@ -60,16 +60,16 @@ public class CLAWloop {
   }
 
   public Element getBodyElement(){
-    return CLAWelementHelper.getBody(_loopElement);
+    return XelementHelper.getBody(_loopElement);
   }
 
   public String getOriginalFilename(){
-    return CLAWelementHelper
+    return XelementHelper
       .getAttributeValue(_pragmaElement, XelementName.ATTR_FILE);
   }
 
   public String getPragmaLine(){
-    return CLAWelementHelper
+    return XelementHelper
       .getAttributeValue(_pragmaElement, XelementName.ATTR_LINENO);
   }
 
@@ -93,7 +93,7 @@ public class CLAWloop {
     return _iterationRange.toString();
   }
 
-  public boolean hasSameRangeWith(CLAWloop other){
+  public boolean hasSameRangeWith(Xloop other){
     return _iterationRange.isFullyIdentical(other.getIterationRange());
   }
 

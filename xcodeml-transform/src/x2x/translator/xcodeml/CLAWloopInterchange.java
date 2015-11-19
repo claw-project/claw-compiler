@@ -8,13 +8,13 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class CLAWloopInterchange extends CLAWloop {
+public class CLAWloopInterchange extends Xloop {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
 
-  private CLAWloop _loopLevel1 = null;
-  private CLAWloop _loopLevel2 = null;
+  private Xloop _loopLevel1 = null;
+  private Xloop _loopLevel2 = null;
 
   private String _baseLoop0 = null;
   private String _baseLoop1 = null;
@@ -69,8 +69,8 @@ public class CLAWloopInterchange extends CLAWloop {
           }
         } else {
           // Only one loop swap is needed
-          CLAWloop from = null;
-          CLAWloop to = null;
+          Xloop from = null;
+          Xloop to = null;
           if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
             from = _loopLevel1;
             to = _loopLevel2;
@@ -111,7 +111,7 @@ public class CLAWloopInterchange extends CLAWloop {
     }
   }
 
-  private void swapLoops(CLAWloop loop1, CLAWloop loop2){
+  private void swapLoops(Xloop loop1, Xloop loop2){
     // Save most inner loop iteration variable and range
     Node tmpIterationVar = loop2.getRangeVarElement().cloneNode(true);
     Node tmpRange = loop2.getRangeElement().cloneNode(true);
@@ -169,7 +169,7 @@ public class CLAWloopInterchange extends CLAWloop {
       return false;
     }
 
-    _loopLevel1 = new CLAWloop(_pragmaElement, loop);
+    _loopLevel1 = new Xloop(_pragmaElement, loop);
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
@@ -181,7 +181,7 @@ public class CLAWloopInterchange extends CLAWloop {
 
       Element loop1Body = _loopLevel1.getBodyElement();
       Element loop2 = findChildLoop(loop1Body);
-      _loopLevel2 = new CLAWloop(_pragmaElement, loop2);
+      _loopLevel2 = new Xloop(_pragmaElement, loop2);
 
       _baseLoop0 = this.getIterationVariableValue();
       _baseLoop1 = _loopLevel1.getIterationVariableValue();

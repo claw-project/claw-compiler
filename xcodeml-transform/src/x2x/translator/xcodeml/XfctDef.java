@@ -31,31 +31,31 @@ import java.util.Hashtable;
 </declarations>
 */
 
-public class CLAWfctDef extends CLAWfct {
+public class XfctDef extends Xfct {
 
-  private Hashtable<String, CLAWid> _symbolTable;
-  private Hashtable<String, CLAWvarDecl> _declTable;
+  private Hashtable<String, Xid> _symbolTable;
+  private Hashtable<String, XvarDecl> _declTable;
 
   private Element _symbolsElement = null;
   private Element _declarationsElement = null;
 
-  public CLAWfctDef(Element fctDefElement){
+  public XfctDef(Element fctDefElement){
     super(fctDefElement);
-    _symbolTable = new Hashtable<String, CLAWid>();
-    _declTable = new Hashtable<String, CLAWvarDecl>();
+    _symbolTable = new Hashtable<String, Xid>();
+    _declTable = new Hashtable<String, XvarDecl>();
     readSymbolsTable();
     readDeclarationTable();
   }
 
-  public Hashtable<String, CLAWid> getSymbolTable(){
+  public Hashtable<String, Xid> getSymbolTable(){
     return _symbolTable;
   }
 
-  public Hashtable<String, CLAWvarDecl> getDeclarationTable(){
+  public Hashtable<String, XvarDecl> getDeclarationTable(){
     return _declTable;
   }
 
-  public void addSymbol(CLAWid id){
+  public void addSymbol(Xid id){
     _symbolsElement.appendChild(id.clone());
   }
 
@@ -64,37 +64,37 @@ public class CLAWfctDef extends CLAWfct {
   }
 
   private void readSymbolsTable(){
-    _symbolsElement = CLAWelementHelper.findSymbols(getFctElement());
+    _symbolsElement = XelementHelper.findSymbols(getFctElement());
     NodeList nodeList = _symbolsElement.getElementsByTagName(XelementName.ID);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node idNode = nodeList.item(i);
       if (idNode.getNodeType() == Node.ELEMENT_NODE) {
         Element idElement = (Element) idNode;
-        CLAWid id = new CLAWid(idElement);
+        Xid id = new Xid(idElement);
         _symbolTable.put(id.getName(), id);
       }
     }
   }
 
-  public void addDeclaration(CLAWvarDecl decl){
+  public void addDeclaration(XvarDecl decl){
     _declarationsElement.appendChild(decl.clone());
   }
 
   private void readDeclarationTable(){
-    _declarationsElement = CLAWelementHelper.findDeclarations(getFctElement());
+    _declarationsElement = XelementHelper.findDeclarations(getFctElement());
     NodeList nodeList = _declarationsElement
       .getElementsByTagName(XelementName.VAR_DECL);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node n = nodeList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)n;
-        CLAWvarDecl decl = new CLAWvarDecl(el);
+        XvarDecl decl = new XvarDecl(el);
         _declTable.put(decl.getName(), decl);
       }
     }
   }
 
   public Element getBody(){
-    return CLAWelementHelper.getBody(getFctElement());
+    return XelementHelper.getBody(getFctElement());
   }
 }

@@ -11,13 +11,13 @@ import org.w3c.dom.NodeList;
  * </lowerBound>
  */
 
-public class CLAWbound {
+public class Xbound {
   private String _value = null;
   private boolean _constant = false;
   private boolean _var = false;
   private Element _boundElement = null;
 
-  public CLAWbound(Element boundElement){
+  public Xbound(Element boundElement){
     _boundElement = boundElement;
     readRangeValue();
   }
@@ -35,9 +35,9 @@ public class CLAWbound {
   }
 
   private void readRangeValue(){
-    Element constant = CLAWelementHelper
+    Element constant = XelementHelper
       .findFirstElement(_boundElement, XelementName.INT_CONST);
-    Element var = CLAWelementHelper
+    Element var = XelementHelper
       .findFirstElement(_boundElement, XelementName.VAR);
     if(constant != null){
       _constant = true;
@@ -53,7 +53,7 @@ public class CLAWbound {
   public boolean equals(Object ob) {
     if (ob == null) return false;
     if (ob.getClass() != getClass()) return false;
-    CLAWbound other = (CLAWbound)ob;
+    Xbound other = (Xbound)ob;
 
     if(isVar() != other.isVar()){
       return false;

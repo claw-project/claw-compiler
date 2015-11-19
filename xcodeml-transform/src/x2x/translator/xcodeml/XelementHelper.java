@@ -6,7 +6,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 
-public class CLAWelementHelper {
+public class XelementHelper {
 
   public static String getAttributeValue(Element el, String attrName){
     NamedNodeMap attributes = el.getAttributes();
@@ -18,8 +18,8 @@ public class CLAWelementHelper {
     return null;
   }
 
-  public static CLAWfctDef findFunctionDefinition(Document xcodemlDoc,
-    CLAWfctCall fctCall)
+  public static XfctDef findFunctionDefinition(Document xcodemlDoc,
+    XfctCall fctCall)
   {
     if(xcodemlDoc == null || fctCall == null) {
       return null;
@@ -28,7 +28,7 @@ public class CLAWelementHelper {
       fctCall.getFctType());
   }
 
-  public static CLAWfctDef findFunctionDefinition(Document xcodemlDoc, String name,
+  public static XfctDef findFunctionDefinition(Document xcodemlDoc, String name,
     String type)
   {
     NodeList nList = xcodemlDoc.getElementsByTagName(XelementName.FCT_DEFINITION);
@@ -36,22 +36,22 @@ public class CLAWelementHelper {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
         Element fctDefElement = (Element) fctDefNode;
-        CLAWname fctDefName = findName(fctDefElement);
+        Xname fctDefName = findName(fctDefElement);
         if(name != null && fctDefName.isIdentical(name, type)){
-          return new CLAWfctDef(fctDefElement);
+          return new XfctDef(fctDefElement);
         }
       }
     }
     return null;
   }
 
-  public static CLAWfctDef findParentFctDef(Element child){
+  public static XfctDef findParentFctDef(Element child){
     Node parent = child.getParentNode();
     while(child.getParentNode() != null){
       if (parent.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) parent;
         if(element.getTagName().equals(XelementName.FCT_DEFINITION)){
-          return new CLAWfctDef(element);
+          return new XfctDef(element);
         }
       }
       parent = parent.getParentNode();
@@ -59,13 +59,13 @@ public class CLAWelementHelper {
     return null;
   }
 
-  public static CLAWloop findLoop(CLAWfctDef fctDef){
+  public static Xloop findLoop(XfctDef fctDef){
     Element body = fctDef.getBody();
-    Element loopElement = CLAWelementHelper.findLoopStament(body);
+    Element loopElement = XelementHelper.findLoopStament(body);
     if(loopElement == null){
       return null;
     }
-    return new CLAWloop(null, loopElement);
+    return new Xloop(null, loopElement);
   }
 
   public static Element findVar(Element parent){
@@ -76,9 +76,9 @@ public class CLAWelementHelper {
     return findFirstElement(parent, XelementName.INDEX_RANGE);
   }
 
-  public static CLAWname findName(Element parent){
+  public static Xname findName(Element parent){
     Element element = findFirstElement(parent, XelementName.NAME);
-    return (element != null) ? new CLAWname(element) : null;
+    return (element != null) ? new Xname(element) : null;
   }
 
   public static Element getBody(Element parent){

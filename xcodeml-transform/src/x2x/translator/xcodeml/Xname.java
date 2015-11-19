@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
  * <name type="F7fdd2b600350">clawloop</name>
  */
 
-public class CLAWname {
+public class Xname {
   private Element _nameElement = null;
   private String _nameValue = null;
   private String _nameType = null;
@@ -17,7 +17,7 @@ public class CLAWname {
   // TODO move constant to a single file
   private static final String TYPE = "type";
 
-  public CLAWname(Element name){
+  public Xname(Element name){
     _nameElement = name;
     readElementInformation();
   }
@@ -30,7 +30,7 @@ public class CLAWname {
   }
 
   private void readElementInformation(){
-    _nameType = CLAWelementHelper.getAttributeValue(_nameElement, TYPE);
+    _nameType = XelementHelper.getAttributeValue(_nameElement, TYPE);
     _nameValue = _nameElement.getTextContent();
   }
 
@@ -42,7 +42,7 @@ public class CLAWname {
     return _nameType;
   }
 
-  public boolean isIdentical(CLAWname other){
+  public boolean isIdentical(Xname other){
     return isIdentical(other.getName(), other.getType());
   }
 

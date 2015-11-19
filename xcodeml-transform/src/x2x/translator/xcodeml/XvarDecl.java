@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
   </value>
 </varDecl>*/
 
-public class CLAWvarDecl {
+public class XvarDecl {
   private String _type = null;
   private String _name = null;
   private boolean _hasValue = false;
@@ -27,7 +27,7 @@ public class CLAWvarDecl {
   // TODO keep as element for the moment but it should be read as well
   private Element _valueElement;
 
-  public CLAWvarDecl(Element varDeclElement){
+  public XvarDecl(Element varDeclElement){
     _varDeclElement = varDeclElement;
     readElementInformation();
   }
@@ -37,12 +37,12 @@ public class CLAWvarDecl {
   }
 
   private void readElementInformation(){
-    Element nameElement = CLAWelementHelper.findFirstElement(_varDeclElement,
+    Element nameElement = XelementHelper.findFirstElement(_varDeclElement,
       XelementName.NAME);
     _name = nameElement.getTextContent();
-    _type = CLAWelementHelper.getAttributeValue(nameElement,
+    _type = XelementHelper.getAttributeValue(nameElement,
       XelementName.ATTR_TYPE);
-    _valueElement = CLAWelementHelper.findFirstElement(_varDeclElement,
+    _valueElement = XelementHelper.findFirstElement(_varDeclElement,
         XelementName.VALUE);
     if(_valueElement != null){
       _hasValue = true;

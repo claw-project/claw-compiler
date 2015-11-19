@@ -21,7 +21,7 @@ import org.w3c.dom.Node;
   </len>
 </FbasicType>
 */
-public class CLAWbasicType {
+public class XbasicType {
   private Element _element;
   private String _type;
   private String _ref;
@@ -29,19 +29,19 @@ public class CLAWbasicType {
   private int _dimension = 0;
 
 
-  public CLAWbasicType(Element element){
+  public XbasicType(Element element){
     _element = element;
     readElementInformation();
   }
 
   private void readElementInformation(){
-    _type = CLAWelementHelper.getAttributeValue(_element,
+    _type = XelementHelper.getAttributeValue(_element,
       XelementName.ATTR_TYPE);
-    _ref = CLAWelementHelper.getAttributeValue(_element,
+    _ref = XelementHelper.getAttributeValue(_element,
       XelementName.ATTR_REF);
 
     // is array ?
-    _dimension = CLAWelementHelper.findNumberOfRange(_element);
+    _dimension = XelementHelper.findNumberOfRange(_element);
 
     // has length ?
 

@@ -9,13 +9,13 @@ import org.w3c.dom.NodeList;
  * <Var type="Fint" scope="local">i</Var>
  */
 
-public class CLAWvar {
+public class Xvar {
   private Element _varElement = null;
   private String _identity = null;
   private String _type = null;
   private String _scope = null;
 
-  public CLAWvar(Element var){
+  public Xvar(Element var){
     _varElement = var;
     readElementInformation();
   }
@@ -37,8 +37,8 @@ public class CLAWvar {
   }
 
   private void readElementInformation(){
-    _type = CLAWelementHelper.getAttributeValue(_varElement, XelementName.ATTR_TYPE);
-    _scope = CLAWelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
+    _type = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_TYPE);
+    _scope = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
     _identity = _varElement.getTextContent();
   }
 
@@ -46,7 +46,7 @@ public class CLAWvar {
   public boolean equals(Object ob) {
     if (ob == null) return false;
     if (ob.getClass() != getClass()) return false;
-    CLAWvar other = (CLAWvar)ob;
+    Xvar other = (Xvar)ob;
 
     if(!_identity.toLowerCase().equals(other.getValue().toLowerCase())){
       return false;

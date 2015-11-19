@@ -14,18 +14,18 @@ public class XcodemlDocument{
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
   private Element _typeTableElement = null;
-  private Hashtable<String, CLAWbasicType> _typeTable = null;
+  private Hashtable<String, XbasicType> _typeTable = null;
 
   public XcodemlDocument(String inputFile){
     _xcodemlInputFile = inputFile;
-    _typeTable = new Hashtable<String, CLAWbasicType>();
+    _typeTable = new Hashtable<String, XbasicType>();
   }
 
   public Document getDocument(){
     return _xcodemlDoc;
   }
 
-  public Hashtable<String, CLAWbasicType> getTypeTable(){
+  public Hashtable<String, XbasicType> getTypeTable(){
     return _typeTable;
   }
 
@@ -66,13 +66,13 @@ public class XcodemlDocument{
   }
 
   public void readTypeTable(){
-    _typeTableElement = CLAWelementHelper.findTypeTable(_xcodemlDoc);
+    _typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
     NodeList nodeList = _typeTableElement.getElementsByTagName(XelementName.BASIC_TYPE);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node n = nodeList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) n;
-        CLAWbasicType btype = new CLAWbasicType(el);
+        XbasicType btype = new XbasicType(el);
         _typeTable.put(btype.getType(), btype);
       }
     }

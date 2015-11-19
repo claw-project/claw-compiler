@@ -15,9 +15,9 @@ import org.w3c.dom.NodeList;
  * </functionCall>
  */
 
-public class CLAWfctCall extends CLAWfct {
+public class XfctCall extends Xfct {
 
-  public CLAWfctCall(Element fctCallElement){
+  public XfctCall(Element fctCallElement){
     super(fctCallElement);
   }
 }

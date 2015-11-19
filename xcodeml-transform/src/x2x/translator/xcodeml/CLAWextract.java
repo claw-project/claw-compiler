@@ -21,12 +21,12 @@ public class CLAWextract {
   protected XcodemlDocument _xcodeml = null;
 
   private ArrayList<CLAWmapping> _mappings = null;
-  private CLAWfctCall _fctCall = null;
-  private CLAWfctDef _fctDef = null; // Fct holding the fct call
-  private CLAWfctDef _extractedFctDef = null;
-  private CLAWloop _extractedLoop = null;
+  private XfctCall _fctCall = null;
+  private XfctDef _fctDef = null; // Fct holding the fct call
+  private XfctDef _extractedFctDef = null;
+  private Xloop _extractedLoop = null;
 
-  private CLAWfctDef _copiedFctDef = null;
+  private XfctDef _copiedFctDef = null;
 
   public CLAWextract(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
     _pragmaElement = pragma;
@@ -51,16 +51,16 @@ public class CLAWextract {
       System.exit(1);
     }
 
-    _fctCall = new CLAWfctCall(fctCallElement);
+    _fctCall = new XfctCall(fctCallElement);
 
-    _fctDef = CLAWelementHelper.findParentFctDef(_fctCall.getFctElement());
+    _fctDef = XelementHelper.findParentFctDef(_fctCall.getFctElement());
     if(_fctDef == null){
       System.err.println("No function around the fct call");
       System.exit(1);
     }
 
     // Find function declaration
-    _extractedFctDef = CLAWelementHelper.findFunctionDefinition(
+    _extractedFctDef = XelementHelper.findFunctionDefinition(
       _xcodeml.getDocument(), _fctCall);
 
     if(_extractedFctDef == null){
@@ -70,7 +70,7 @@ public class CLAWextract {
     }
 
     // Find loop in function
-    _extractedLoop = CLAWelementHelper.findLoop(_extractedFctDef);
+    _extractedLoop = XelementHelper.findLoop(_extractedFctDef);
     if(_extractedLoop == null){
       System.err.println("Could not locate inner loop in subroutine "
         + _extractedFctDef.getFctName());
@@ -89,7 +89,7 @@ public class CLAWextract {
   public void transform(XcodemlDocument xcodeml){
     // Duplicate function definition
     Node cloned = _extractedFctDef.clone();
-    CLAWfctDef clonedFctDef = new CLAWfctDef((Element)cloned);
+    XfctDef clonedFctDef = new XfctDef((Element)cloned);
     clonedFctDef.updateName(clonedFctDef.getFctName() + "_claw");
 
     if(XmOption.isDebugOutput()){
@@ -97,7 +97,7 @@ public class CLAWextract {
       System.out.println("  created subroutine: " + clonedFctDef.getFctName());
     }
 
-    CLAWelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
+    XelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
 
     // Remove loop from body
 
@@ -117,7 +117,7 @@ public class CLAWextract {
   }
 
   private void wrapCallWithLoop(XcodemlDocument xcodeml,
-    CLAWloopIterationRange iterationRange)
+    XloopIterationRange iterationRange)
   {
     Document document = xcodeml.getDocument();
 
@@ -149,15 +149,15 @@ public class CLAWextract {
   }
 
   private void insertDeclaration(String id){
-    CLAWid inductionVarId = _fctDef.getSymbolTable().get(id);
+    Xid inductionVarId = _fctDef.getSymbolTable().get(id);
     if(inductionVarId == null){
-      CLAWid copyId = _extractedFctDef.getSymbolTable().get(id);
+      Xid copyId = _extractedFctDef.getSymbolTable().get(id);
       _fctDef.addSymbol(copyId);
     }
 
-    CLAWvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
+    XvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
     if(inductionVarDecl == null){
-      CLAWvarDecl copyDecl = _extractedFctDef.getDeclarationTable().get(id);
+      XvarDecl copyDecl = _extractedFctDef.getDeclarationTable().get(id);
       _fctDef.addDeclaration(copyDecl);
     }
   }

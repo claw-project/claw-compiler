@@ -3,11 +3,11 @@ package x2x.translator.xcodeml;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class CLAWfct {
+public class Xfct {
   private Element _fctElement = null;
-  private CLAWname _fctName = null;
+  private Xname _fctName = null;
 
-  public CLAWfct(Element fctElement){
+  public Xfct(Element fctElement){
     _fctElement = fctElement;
     readElementInformation();
   }
@@ -15,7 +15,7 @@ public class CLAWfct {
   private void readElementInformation(){
     NodeList names = _fctElement.getElementsByTagName(XelementName.NAME);
     Element nameElement = (Element) names.item(0);
-    _fctName = new CLAWname(nameElement);
+    _fctName = new Xname(nameElement);
   }
 
   public void updateName(String value){
