@@ -17,7 +17,26 @@ public class XtypeTable {
   }
 
   private void readTable(){
-    // TODO
+    // Read basic type
+    NodeList basicTypes = _baseElement.getElementsByTagName(XelementName.BASIC_TYPE);
+    for (int i = 0; i < basicTypes.getLength(); i++) {
+      Node n = basicTypes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        XbasicType bt = new XbasicType(el);
+        _table.put(bt.getType(), bt);
+      }
+    }
+    // Read fct type
+    NodeList fctTypes = _baseElement.getElementsByTagName(XelementName.FCT_TYPE);
+    for (int i = 0; i < fctTypes.getLength(); i++) {
+      Node n = fctTypes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        XfctType ft = new XfctType(el);
+        _table.put(ft.getType(), ft);
+      }
+    }
   }
 
   public void add(Xtype type){
