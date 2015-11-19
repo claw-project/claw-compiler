@@ -159,7 +159,7 @@ public class CLAWextract {
     XvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
     if(inductionVarDecl == null){
       XvarDecl copyDecl = _extractedFctDef.getDeclarationTable().get(id);
-      _fctDef.addDeclaration(copyDecl);
+      _fctDef.getDeclarationTable().addDeclaration(copyDecl);
     }
   }
 

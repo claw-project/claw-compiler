@@ -34,7 +34,7 @@ import java.util.Hashtable;
 public class XfctDef extends Xfct {
 
   private XsymbolTable _symbolTable;
-  private Hashtable<String, XvarDecl> _declTable;
+  private XdeclTable _declTable;
 
   //private Element _symbolsElement = null;
   private Element _declarationsElement = null;
@@ -43,16 +43,17 @@ public class XfctDef extends Xfct {
     super(fctDefElement);
     Element symbols = XelementHelper.findSymbols(getFctElement());
     _symbolTable = new XsymbolTable(symbols);
-    _declTable = new Hashtable<String, XvarDecl>();
+    Element decl = XelementHelper.findDeclarations(getFctElement());
+    _declTable = new XdeclTable(decl);
 
-    readDeclarationTable();
+
   }
 
   public XsymbolTable getSymbolTable(){
     return _symbolTable;
   }
 
-  public Hashtable<String, XvarDecl> getDeclarationTable(){
+  public XdeclTable getDeclarationTable(){
     return _declTable;
   }
 
@@ -60,23 +61,6 @@ public class XfctDef extends Xfct {
     return getFctElement().cloneNode(true);
   }
 
-  public void addDeclaration(XvarDecl decl){
-    _declarationsElement.appendChild(decl.clone());
-  }
-
-  private void readDeclarationTable(){
-    _declarationsElement = XelementHelper.findDeclarations(getFctElement());
-    NodeList nodeList = _declarationsElement
-      .getElementsByTagName(XelementName.VAR_DECL);
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node n = nodeList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element)n;
-        XvarDecl decl = new XvarDecl(el);
-        _declTable.put(decl.getName(), decl);
-      }
-    }
-  }
 
   public Element getBody(){
     return XelementHelper.getBody(getFctElement());

@@ -8,16 +8,16 @@ import java.util.Hashtable;
 public class XsymbolTable {
 
   private Hashtable<String, Xid> _table;
-  private Element _symbolsElement = null;
+  private Element _baseElement = null;
 
   public XsymbolTable(Element symbols){
-    _symbolsElement = symbols;
+    _baseElement = symbols;
     _table = new Hashtable<String, Xid>();
-    readSymbolsTable();
+    readTable();
   }
 
-  private void readSymbolsTable(){
-    NodeList nodeList = _symbolsElement.getElementsByTagName(XelementName.ID);
+  private void readTable(){
+    NodeList nodeList = _baseElement.getElementsByTagName(XelementName.ID);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node idNode = nodeList.item(i);
       if (idNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -29,7 +29,8 @@ public class XsymbolTable {
   }
 
   public void addSymbol(Xid id){
-    _symbolsElement.appendChild(id.clone());
+    _baseElement.appendChild(id.clone());
+    _table.put(id.getName(), id);
   }
 
   public Xid get(String key){
