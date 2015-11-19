@@ -33,21 +33,22 @@ import java.util.Hashtable;
 
 public class XfctDef extends Xfct {
 
-  private Hashtable<String, Xid> _symbolTable;
+  private XsymbolTable _symbolTable;
   private Hashtable<String, XvarDecl> _declTable;
 
-  private Element _symbolsElement = null;
+  //private Element _symbolsElement = null;
   private Element _declarationsElement = null;
 
   public XfctDef(Element fctDefElement){
     super(fctDefElement);
-    _symbolTable = new Hashtable<String, Xid>();
+    Element symbols = XelementHelper.findSymbols(getFctElement());
+    _symbolTable = new XsymbolTable(symbols);
     _declTable = new Hashtable<String, XvarDecl>();
-    readSymbolsTable();
+
     readDeclarationTable();
   }
 
-  public Hashtable<String, Xid> getSymbolTable(){
+  public XsymbolTable getSymbolTable(){
     return _symbolTable;
   }
 
@@ -55,25 +56,8 @@ public class XfctDef extends Xfct {
     return _declTable;
   }
 
-  public void addSymbol(Xid id){
-    _symbolsElement.appendChild(id.clone());
-  }
-
   public Node clone(){
     return getFctElement().cloneNode(true);
-  }
-
-  private void readSymbolsTable(){
-    _symbolsElement = XelementHelper.findSymbols(getFctElement());
-    NodeList nodeList = _symbolsElement.getElementsByTagName(XelementName.ID);
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node idNode = nodeList.item(i);
-      if (idNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element idElement = (Element) idNode;
-        Xid id = new Xid(idElement);
-        _symbolTable.put(id.getName(), id);
-      }
-    }
   }
 
   public void addDeclaration(XvarDecl decl){

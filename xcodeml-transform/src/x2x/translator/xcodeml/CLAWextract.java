@@ -153,7 +153,7 @@ public class CLAWextract {
     Xid inductionVarId = _fctDef.getSymbolTable().get(id);
     if(inductionVarId == null){
       Xid copyId = _extractedFctDef.getSymbolTable().get(id);
-      _fctDef.addSymbol(copyId);
+      _fctDef.getSymbolTable().addSymbol(copyId);
     }
 
     XvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
