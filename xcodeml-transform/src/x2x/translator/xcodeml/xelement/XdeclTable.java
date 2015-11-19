@@ -29,7 +29,7 @@ public class XdeclTable {
     }
   }
 
-  public void addDeclaration(XvarDecl decl){
+  public void add(XvarDecl decl){
     _baseElement.appendChild(decl.clone());
     _table.put(decl.getName(), decl);
   }

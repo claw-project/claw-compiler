@@ -28,7 +28,7 @@ public class XsymbolTable {
     }
   }
 
-  public void addSymbol(Xid id){
+  public void add(Xid id){
     _baseElement.appendChild(id.clone());
     _table.put(id.getName(), id);
   }
