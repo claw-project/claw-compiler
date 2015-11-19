@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml;
+package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,7 +20,7 @@ public class Xloop {
     findRangeElements();
   }
 
-  protected void findRangeElements(){
+  public void findRangeElements(){
     _inductionVarElement = XelementHelper.findVar(_loopElement);
     _indexRangeElement = XelementHelper.findIndexRange(_loopElement);
 

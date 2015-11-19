@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml;
+package x2x.translator.xcodeml.xelement;
 
 public class XelementName {
 

@@ -1,5 +1,6 @@
 package x2x.translator.xcodeml;
 
+import x2x.translator.xcodeml.xelement.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

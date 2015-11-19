@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml;
+package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,7 +22,7 @@ public class Xfct {
     _fctName.setName(value);
   }
 
-  protected Element getFctElement(){
+  public Element getFctElement(){
     return _fctElement;
   }
 

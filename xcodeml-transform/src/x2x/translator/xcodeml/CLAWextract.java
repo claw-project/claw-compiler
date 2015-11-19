@@ -1,6 +1,7 @@
 package x2x.translator.xcodeml;
 
 import x2x.translator.pragma.CLAWmapping;
+import x2x.translator.xcodeml.xelement.*;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
