@@ -7,8 +7,8 @@ CLAW language definition.
 
 [CLAW language definition](https://github.com/C2SM-RCM/claw-language-definition)
 
-We are currently evaluation the potential of such a translator. The current
-development status is the following. Only limited cases have been tested. 
+We are currently evaluating the potential of such a translator. The current
+development status is the following. Only limited cases have been tested.
 - [x] loop-fusion
 - [x] loop-interchange
 - [ ] loop-extract
