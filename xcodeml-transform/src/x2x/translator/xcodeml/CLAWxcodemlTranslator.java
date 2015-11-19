@@ -134,7 +134,7 @@ public class CLAWxcodemlTranslator {
 
           // loop-extract directives
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
-            Element exprStmt = findNextExprStatement(pragmaNode);
+            Element exprStmt = XelementHelper.findNextExprStatement(pragmaNode);
             if(exprStmt == null){
               System.err.println("loop-extract pragma is not followed by a expression statment");
             } else {
@@ -207,20 +207,7 @@ public class CLAWxcodemlTranslator {
     }
   }
 
-  private Element findNextExprStatement(Node from){
-    Node nextNode = from.getNextSibling();
-    boolean elementFound = false;
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals("exprStatement")){
-          return element;
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
+
 
 
   /**

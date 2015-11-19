@@ -128,12 +128,20 @@ public class XelementHelper {
 
 
   public static Element findNextLoop(Node from){
+    return findNextElementOfType(from, XelementName.DO_STMT);
+  }
+
+  public static Element findNextExprStatement(Node from){
+    return findNextElementOfType(from, XelementName.EXPR_STMT);
+  }
+
+  private static Element findNextElementOfType(Node from, String tag){
     Node nextNode = from.getNextSibling();
     boolean elementFound = false;
     while (nextNode != null){
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element) nextNode;
-        if(element.getTagName().equals(XelementName.DO_STMT)){
+        if(element.getTagName().equals(tag)){
           return element;
         }
       }

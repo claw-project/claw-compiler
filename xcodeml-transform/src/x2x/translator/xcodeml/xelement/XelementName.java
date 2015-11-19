@@ -25,6 +25,7 @@ public class XelementName {
   public static final String BODY = "body";
   public static final String DECLARATIONS = "declarations";
   public static final String DO_STMT = "FdoStatement";
+  public static final String EXPR_STMT = "exprStatement";
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String FCT_TYPE = "FfunctionType";
   public static final String ID = "id";
