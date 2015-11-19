@@ -124,7 +124,7 @@ public class CLAWxcodemlTranslator {
 
           // loop-interchange directives
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
-            Element loop = findNextLoop(pragmaNode);
+            Element loop = XelementHelper.findNextLoop(pragmaNode);
             if(loop == null){
               System.err.println("loop-interchange pragma is not followed by a loop");
             } else {
@@ -205,23 +205,6 @@ public class CLAWxcodemlTranslator {
       System.out.println("Transformation exception: ");
       ex.printStackTrace();
     }
-  }
-
-
-
-  private Element findNextLoop(Node from){
-    Node nextNode = from.getNextSibling();
-    boolean elementFound = false;
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals("FdoStatement")){
-          return element;
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
   }
 
   private Element findNextExprStatement(Node from){

@@ -126,4 +126,20 @@ public class XelementHelper {
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
+
+  public static Element findNextLoop(Node from){
+    Node nextNode = from.getNextSibling();
+    boolean elementFound = false;
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(XelementName.DO_STMT)){
+          return element;
+        }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
 }
