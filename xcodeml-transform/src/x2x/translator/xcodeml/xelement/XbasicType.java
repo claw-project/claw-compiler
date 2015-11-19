@@ -21,11 +21,9 @@ import org.w3c.dom.Node;
   </len>
 </FbasicType>
 */
-public class XbasicType {
-  private Element _element;
-  private String _type;
-  private String _ref;
+public class XbasicType extends Xtype {
 
+  private String _ref;
   private int _dimension = 0;
   private int _length = 0;
   private boolean _isArray = false;
@@ -33,13 +31,11 @@ public class XbasicType {
   private XindexRange[] _dimensionRanges = null;
 
   public XbasicType(Element element){
-    _element = element;
-    readElementInformation();
+    super(element);
+    readBasicTypeInformation();
   }
 
-  private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(_element,
-      XelementName.ATTR_TYPE);
+  private void readBasicTypeInformation(){
     _ref = XelementHelper.getAttributeValue(_element,
       XelementName.ATTR_REF);
 
@@ -57,7 +53,6 @@ public class XbasicType {
       _hasLength = true;
       // TODO have a length object with information
     }
-
   }
 
   public XindexRange getDimensions(int index){
@@ -81,14 +76,6 @@ public class XbasicType {
 
   public String getRef(){
     return _ref;
-  }
-
-  public String getType(){
-    return _type;
-  }
-
-  public Node clone(){
-    return _element.cloneNode(true);
   }
 
 }
