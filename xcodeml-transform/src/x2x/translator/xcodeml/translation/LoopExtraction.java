@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml;
+package x2x.translator.xcodeml.translation;
 
 import x2x.translator.pragma.CLAWmapping;
 import x2x.translator.xcodeml.xelement.*;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import xcodeml.util.XmOption;
 
 
-public class CLAWextract {
+public class LoopExtraction {
 
   protected Element _pragmaElement = null;
   protected Element _exprStmtElement = null;
@@ -29,7 +29,7 @@ public class CLAWextract {
 
   private XfctDef _copiedFctDef = null;
 
-  public CLAWextract(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
+  public LoopExtraction(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
     _xcodeml = xcodemlDoc;

@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml;
+package x2x.translator.xcodeml.translation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class CLAWloopInterchange extends Xloop {
+public class LoopInterchange extends Xloop {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
@@ -29,7 +29,7 @@ public class CLAWloopInterchange extends Xloop {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
-  public CLAWloopInterchange(Element pragma, Element loop){
+  public LoopInterchange(Element pragma, Element loop){
     super(pragma, loop);
     _newOrderOption = CLAWpragma.getNewOrderOptionValue(pragma.getTextContent());
   }

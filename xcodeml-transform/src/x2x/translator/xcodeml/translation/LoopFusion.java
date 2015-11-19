@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml;
+package x2x.translator.xcodeml.translation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
@@ -7,12 +7,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class CLAWloopFusion extends Xloop {
+public class LoopFusion extends Xloop {
 
   private boolean _merged = false;
   private String _groupLabel = null;
 
-  public CLAWloopFusion(Element pragma, Element loop){
+  public LoopFusion(Element pragma, Element loop){
     super(pragma, loop);
     _groupLabel = CLAWpragma.getGroupOptionValue(pragma.getTextContent());
   }
@@ -21,19 +21,19 @@ public class CLAWloopFusion extends Xloop {
     return _groupLabel;
   }
 
-  private boolean hasSameParentBlockWith(CLAWloopFusion otherLoop){
+  private boolean hasSameParentBlockWith(LoopFusion otherLoop){
     if(_loopElement.getParentNode() == otherLoop.getLoopElement().getParentNode()){
       return true;
     }
     return false;
   }
 
-  private boolean hasSameGroupOption(CLAWloopFusion otherLoop){
+  private boolean hasSameGroupOption(LoopFusion otherLoop){
     return (otherLoop.getGroupOptionLabel() == null ? getGroupOptionLabel()
       == null : otherLoop.getGroupOptionLabel().equals(getGroupOptionLabel()));
   }
 
-  public boolean canMergeWith(CLAWloopFusion other){
+  public boolean canMergeWith(LoopFusion other){
     if(!hasSameParentBlockWith(other)){
       return false;
     }
@@ -60,7 +60,7 @@ public class CLAWloopFusion extends Xloop {
   /**
    * Merge the given loop with this one
    */
-  public void merge(CLAWloopFusion loop){
+  public void merge(LoopFusion loop){
     NodeList masterBodies = _loopElement.getElementsByTagName("body");
     Element masterBody = (Element) masterBodies.item(0);
     NodeList slaveBodies = loop.getLoopElement().getElementsByTagName("body");

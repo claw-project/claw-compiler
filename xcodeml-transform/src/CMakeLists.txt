@@ -14,9 +14,11 @@ add_jar(omni-x2x
 
 # XcodeML package
   x2x/translator/xcodeml/CLAWxcodemlTranslator.java
-  x2x/translator/xcodeml/CLAWloopFusion.java
-  x2x/translator/xcodeml/CLAWloopInterchange.java
-  x2x/translator/xcodeml/CLAWextract.java
+
+# XcodeML.translation package
+  x2x/translator/xcodeml/translation/LoopFusion.java
+  x2x/translator/xcodeml/translation/LoopInterchange.java
+  x2x/translator/xcodeml/translation/LoopExtraction.java
 
 # XcodeML.Xelement package
   x2x/translator/xcodeml/xelement/XbasicType.java

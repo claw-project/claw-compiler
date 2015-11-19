@@ -1,6 +1,7 @@
 package x2x.translator.xcodeml;
 
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.translation.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -33,18 +34,18 @@ public class CLAWxcodemlTranslator {
   private boolean _canTransform = false;
   private XcodeMLNameTable_F _xcodemlNameTable = null;
 
-  private ArrayList<CLAWloopFusion> _loopFusion = null;
-  private ArrayList<CLAWloopInterchange> _loopInterchange = null;
-  private ArrayList<CLAWextract> _loopExtract = null;
+  private ArrayList<LoopFusion> _loopFusion = null;
+  private ArrayList<LoopInterchange> _loopInterchange = null;
+  private ArrayList<LoopExtraction> _loopExtract = null;
   private XcodemlDocument _program = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile, String xcodemlOutputFile){
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _xcodemlNameTable = new XcodeMLNameTable_F();
-    _loopFusion = new ArrayList<CLAWloopFusion>();
-    _loopInterchange = new ArrayList<CLAWloopInterchange>();
-    _loopExtract = new ArrayList<CLAWextract>();
+    _loopFusion = new ArrayList<LoopFusion>();
+    _loopInterchange = new ArrayList<LoopInterchange>();
+    _loopExtract = new ArrayList<LoopExtraction>();
   }
 
 
@@ -117,7 +118,7 @@ public class CLAWxcodemlTranslator {
 
             Element elementSibling = (Element) pragmaSibling;
             if(elementSibling.getTagName().equals("FdoStatement")){
-              _loopFusion.add(new CLAWloopFusion(pragmaElement, elementSibling));
+              _loopFusion.add(new LoopFusion(pragmaElement, elementSibling));
             }
 
 
@@ -127,7 +128,7 @@ public class CLAWxcodemlTranslator {
             if(loop == null){
               System.err.println("loop-interchange pragma is not followed by a loop");
             } else {
-                _loopInterchange.add(new CLAWloopInterchange(pragmaElement, loop));
+                _loopInterchange.add(new LoopInterchange(pragmaElement, loop));
             }
 
 
@@ -137,7 +138,7 @@ public class CLAWxcodemlTranslator {
             if(exprStmt == null){
               System.err.println("loop-extract pragma is not followed by a expression statment");
             } else {
-              CLAWextract extraction = new CLAWextract(pragmaElement, exprStmt, _program);
+              LoopExtraction extraction = new LoopExtraction(pragmaElement, exprStmt, _program);
               if(extraction.analyze()){
                 _loopExtract.add(extraction);
               }
@@ -172,16 +173,16 @@ public class CLAWxcodemlTranslator {
 
       // Apply loop-extract transformation
       for(int i = 0; i < _loopExtract.size(); ++i){
-        CLAWextract extraction = _loopExtract.get(i);
+        LoopExtraction extraction = _loopExtract.get(i);
         extraction.transform(_program);
       }
 
 
       // Apply loop-fusion transformation
       for(int i = 0; i < _loopFusion.size(); ++i){
-        CLAWloopFusion base = _loopFusion.get(i);
+        LoopFusion base = _loopFusion.get(i);
         for(int j = i+1; j < _loopFusion.size(); ++j){
-          CLAWloopFusion candidate = _loopFusion.get(j);
+          LoopFusion candidate = _loopFusion.get(j);
           if(candidate.isMerged()){
             continue;
           }
@@ -193,7 +194,7 @@ public class CLAWxcodemlTranslator {
 
       // Apply loop-interchange transformation
       for(int i = 0; i < _loopInterchange.size(); ++i){
-        CLAWloopInterchange  loop = _loopInterchange.get(i);
+        LoopInterchange  loop = _loopInterchange.get(i);
         loop.transform();
       }
 
