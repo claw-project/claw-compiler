@@ -98,14 +98,22 @@ public class XelementHelper {
   }
 
   public static Element findTypeTable(Document doc){
-    NodeList nodeList = doc.getElementsByTagName(XelementName.TYPE_TABLE);
-    Element element = (Element) nodeList.item(0);
+    NodeList elements = doc.getElementsByTagName(XelementName.TYPE_TABLE);
+    Element element = (Element) elements.item(0);
     return element;
   }
 
   public static int findNumberOfRange(Element parent){
     NodeList elements = parent.getElementsByTagName(XelementName.INDEX_RANGE);
     return elements.getLength();
+  }
+
+  public static Element findLen(Element parent){
+    NodeList elements = parent.getElementsByTagName(XelementName.LENGTH);
+    if(elements.getLength() == 0){
+      return null;
+    }
+    return (Element) elements.item(0);
   }
 
   public static Element findFirstElement(Element parent, String elementName){

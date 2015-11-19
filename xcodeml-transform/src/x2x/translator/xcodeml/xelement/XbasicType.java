@@ -27,7 +27,10 @@ public class XbasicType {
   private String _ref;
 
   private int _dimension = 0;
-
+  private int _length = 0;
+  private boolean _isArray = false;
+  private boolean _hasLength = false;
+  private XindexRange[] _dimensionRanges = null;
 
   public XbasicType(Element element){
     _element = element;
@@ -42,12 +45,37 @@ public class XbasicType {
 
     // is array ?
     _dimension = XelementHelper.findNumberOfRange(_element);
+    if (_dimension > 0){
+      _isArray = true;
+      _dimensionRanges = new XindexRange[_dimension];
+      // TODO read dimensions information
+    }
 
     // has length ?
+    Element length = XelementHelper.findLen(_element);
+    if(length != null){
+      _hasLength = true;
+      // TODO have a length object with information
+    }
 
   }
 
-  public int getDimension(){
+  public XindexRange getDimensions(int index){
+    if(index >= _dimensionRanges.length || index < 0){
+      return null;
+    }
+    return _dimensionRanges[index];
+  }
+
+  public boolean isArray(){
+    return _isArray;
+  }
+
+  public boolean hasLength(){
+    return _hasLength;
+  }
+
+  public int getDimensions(){
     return _dimension;
   }
 
