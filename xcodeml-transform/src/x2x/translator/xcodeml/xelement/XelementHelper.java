@@ -5,6 +5,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
+import javax.xml.xpath.*;
 
 public class XelementHelper {
 
@@ -214,6 +215,20 @@ public class XelementHelper {
     } else {
       return false;
     }
+  }
+
+  public static boolean validateStringAttribute(Document doc, String attrValue
+    , String xpathQuery) throws Exception
+  {
+    XPathFactory xPathfactory = XPathFactory.newInstance();
+    XPath xpath = xPathfactory.newXPath();
+    XPathExpression getVersion = xpath.compile(xpathQuery);
+    String outputValue = (String) getVersion.evaluate(doc,
+      XPathConstants.STRING);
+    if(outputValue.equals(attrValue)){
+      return true;
+    }
+    return false;
   }
 
 }

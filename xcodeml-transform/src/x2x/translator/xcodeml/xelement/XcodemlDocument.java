@@ -6,7 +6,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.*;
 import java.io.File;
 import java.util.Hashtable;
 
@@ -76,15 +75,17 @@ public class XcodemlDocument{
       return false;
     }
 
-    if(!validateStringAttribute(XelementName.SUPPORTED_VERSION, "/" +
-      XelementName.X_CODE_PROGRAM + "/@" + XelementName.ATTR_VERSION))
+    if(!XelementHelper.validateStringAttribute(_xcodemlDoc,
+      XelementName.SUPPORTED_VERSION, "/" + XelementName.X_CODE_PROGRAM + "/@"
+      + XelementName.ATTR_VERSION))
     {
       System.err.println("XcodeML version is not supported");
       return false;
     }
 
-    if(!validateStringAttribute(XelementName.SUPPORTED_LANGUAGE, "/" +
-      XelementName.X_CODE_PROGRAM + "/@" +  XelementName.ATTR_LANGUAGE))
+    if(!XelementHelper.validateStringAttribute(_xcodemlDoc,
+      XelementName.SUPPORTED_LANGUAGE, "/" + XelementName.X_CODE_PROGRAM + "/@"
+      +  XelementName.ATTR_LANGUAGE))
     {
       System.err.println("Language is not set to fortran");
       return false;
@@ -98,14 +99,4 @@ public class XcodemlDocument{
     _typeTable = new XtypeTable(_typeTableElement);
   }
 
-  private boolean validateStringAttribute(String attrValue, String xpathQuery) throws Exception {
-    XPathFactory xPathfactory = XPathFactory.newInstance();
-    XPath xpath = xPathfactory.newXPath();
-    XPathExpression getVersion = xpath.compile(xpathQuery);
-    String outputValue = (String) getVersion.evaluate(_xcodemlDoc, XPathConstants.STRING);
-    if(outputValue.equals(attrValue)){
-      return true;
-    }
-    return false;
-  }
 }
