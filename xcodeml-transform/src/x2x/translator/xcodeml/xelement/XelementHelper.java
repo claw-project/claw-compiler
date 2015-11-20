@@ -177,12 +177,26 @@ public class XelementHelper {
       XelementName.BODY);
     // Append content of loop-body (loop) to this loop-body
     for(Node childNode = slaveBody.getFirstChild(); childNode!=null;){
-        Node nextChild = childNode.getNextSibling();
-        // Do something with childNode, including move or delete...
-        if(childNode.getNodeType() == Node.ELEMENT_NODE){
-          masterBody.appendChild(childNode);
-        }
-        childNode = nextChild;
+      Node nextChild = childNode.getNextSibling();
+      // Do something with childNode, including move or delete...
+      if(childNode.getNodeType() == Node.ELEMENT_NODE){
+        masterBody.appendChild(childNode);
+      }
+      childNode = nextChild;
+    }
+  }
+
+  public static void extractBody(Xloop loop){
+    Element loopElement = loop.getLoopElement();
+    Element body = XelementHelper.findFirstElement(loopElement,
+      XelementName.BODY);
+    for(Node childNode = body.getFirstChild(); childNode!=null;){
+      Node nextChild = childNode.getNextSibling();
+      // Do something with childNode, including move or delete...
+      if(childNode.getNodeType() == Node.ELEMENT_NODE){
+        XelementHelper.insertAfter(loopElement, (Element)childNode);
+      }
+      childNode = nextChild;
     }
   }
 

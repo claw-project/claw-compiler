@@ -92,6 +92,7 @@ public class LoopExtraction {
     Node cloned = _extractedFctDef.clone();
     XfctDef clonedFctDef = new XfctDef((Element)cloned);
     clonedFctDef.updateName(clonedFctDef.getFctName() + "_claw");
+    Xloop loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation");
@@ -100,9 +101,15 @@ public class LoopExtraction {
 
     XelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
 
-    // Remove loop from body
-
     // Demote body array references
+
+    // Remove loop from body
+    // 1. append body into fct body after loop
+    XelementHelper.extractBody(loopInClonedFct);
+    // 2. delete loop
+    XelementHelper.delete(loopInClonedFct.getLoopElement());
+
+
 
     // Wrap function call with loop
     wrapCallWithLoop(xcodeml, _extractedLoop.getIterationRange());
