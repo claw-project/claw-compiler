@@ -52,6 +52,10 @@ public class XcodemlDocument{
     return _typeTable;
   }
 
+  public XsymbolTable getGlobalSymbolsTable() {
+    return _globalSymbolsTable;
+  }
+
   public boolean isLoaded(){
     return _isLoaded;
   }

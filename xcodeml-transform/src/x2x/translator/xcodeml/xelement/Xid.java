@@ -41,6 +41,10 @@ public class Xid {
     return _name;
   }
 
+  public String getType() {
+    return _type;
+  }
+
   public Node clone(){
     return _idElement.cloneNode(true);
   }

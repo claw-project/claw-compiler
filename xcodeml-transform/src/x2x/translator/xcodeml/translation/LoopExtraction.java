@@ -97,6 +97,10 @@ public class LoopExtraction {
     // Get the fctType in typeTable
     XfctType fctType = (XfctType)_xcodeml
       .getTypeTable().get(_extractedFctDef.getFctType());
+    Xid fctId = _xcodeml.getGlobalSymbolsTable()
+      .get(_extractedFctDef.getFctName());
+
+
 
 
     if(XmOption.isDebugOutput()){
