@@ -3,6 +3,10 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+/**
+ * Xtype is the base class for element in the XtypeTable (XbasicType, XfctType)
+ */
+ 
 public class Xtype {
   protected Element _element;
   protected String _type;

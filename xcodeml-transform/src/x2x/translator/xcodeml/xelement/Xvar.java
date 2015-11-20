@@ -5,8 +5,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * example of XcodeML representation
- * <Var type="Fint" scope="local">i</Var>
+ * The XtypeTable represents the typeTable (7.4.1) element in XcodeML intermediate
+ * representation.
+ *
+ * Elements: the base element can contains text data
+ * Attributes:
+ * - Required: scope (text: local, global, param) // TODO move to enum
+ * - Optional: type (text)
  */
 
 public class Xvar {

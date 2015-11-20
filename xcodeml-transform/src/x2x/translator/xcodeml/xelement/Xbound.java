@@ -3,13 +3,15 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/*
- * Example of XcodeML representation
+/**
+ * The Xbound represents the lowerBound and upperBound (8.12, 8.13) element in
+ * XcodeML intermediate representation.
  *
- * <lowerBound>
- *   <Var type="Fint" scope="local">istart</Var>
- * </lowerBound>
+ * Elements:
+ * - exprModel TODO move to exprModel
  */
+
+// TODO have a derived class for upper and lower bound
 
 public class Xbound {
   private String _value = null;

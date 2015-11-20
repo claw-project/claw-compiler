@@ -7,7 +7,8 @@ import org.w3c.dom.NodeList;
 /**
  * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
  * representation.
- * It can contains the following elements:
+ *
+ * Elements:
  * - Optional:
  *   - kind TODO
  *   - len TODO

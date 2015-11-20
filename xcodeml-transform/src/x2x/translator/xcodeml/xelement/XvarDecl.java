@@ -6,7 +6,8 @@ import org.w3c.dom.Node;
 /**
  * The XvarDecl represents the varDecl (5.4) element in XcodeML intermediate
  * representation.
- * It can contains the following elements:
+ *
+ * Elements:
  * - Required:
  *   - name (with attribute "type (text)") // TODO move to Xname
  * - Optional:

@@ -5,20 +5,17 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Class representing an xcodeml indexRange
- * <indexRange>
- *   <lowerBound>
- *     <Var type="Fint" scope="local">istart</Var>
- *   </lowerBound>
- *   <upperBound>
- *     <Var type="Fint" scope="local">iend</Var>
- *   </upperBound>
- *   <step>
- *     <FintConstant type="Fint">1</FintConstant>
- *   </step>
- * </indexRange>
+ * The XindexRange represents the indexRange (8.11) element in XcodeML
+ * intermediate representation.
+ * 
+ * Elements:
+ * - Optional:
+ *   - lowerBound (Xbound)
+ *   - upperBound (Xbound)
+ *   - step (Xstep)
+ * Attributes:
+ * - Optional: is_assume_size (bool) // TODO
  */
-
 public class XindexRange {
 
   protected Xbound _lowerBound;

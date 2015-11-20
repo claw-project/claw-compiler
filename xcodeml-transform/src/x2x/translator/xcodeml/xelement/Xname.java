@@ -6,7 +6,7 @@ import org.w3c.dom.NodeList;
 /**
  * The Xname represents the name (8.3) element in XcodeML intermediate
  * representation.
- * It can contains text data
+ * Elements: the base element can contains text data
  * Attributes:
  * - Requited: type (text)
  */

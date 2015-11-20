@@ -5,6 +5,17 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
+
+/**
+ * The XindexRange represents the indexRange (8.11) element in XcodeML
+ * intermediate representation.
+ *
+ * Elements:
+ * - Required:
+ *   - Var (Xvar)
+ *   - indexRange (XindexRange)
+ *   - value // TODO check what is the meaning of this value
+ */
 public class Xloop {
   protected Element _pragmaElement = null;
   protected Element _loopElement = null;

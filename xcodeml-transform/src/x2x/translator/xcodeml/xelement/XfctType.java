@@ -6,7 +6,8 @@ import org.w3c.dom.Node;
 /**
  * The XfctType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
- * It can contains the following elements:
+ *
+ * Elements:
  * - Optional:
  *   - params TODO
  * Attributes:
@@ -14,7 +15,7 @@ import org.w3c.dom.Node;
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
  *   is_internal (bool) TODO
  */
- 
+
 public class XfctType extends Xtype {
 
   private String _returnType = null;

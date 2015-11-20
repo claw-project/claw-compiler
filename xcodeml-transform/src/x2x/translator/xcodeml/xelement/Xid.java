@@ -3,9 +3,18 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/*<id type="A7fd318c079e0" sclass="flocal">
-  <name>value1</name>
-</id>*/
+/**
+ * The Xid represents the id (8.2) element in XcodeML intermediate
+ * representation.
+ *
+ * Elements:
+ * - Required:
+ *   - name (Xname)
+ * Attributes:
+ * - Required: type (text), sclass (text: auto, param, extern, extern_def,
+ *             label, tagname) // TODO move to enum
+ */
+
 public class Xid {
   private String _type = null;
   private String _sclass = null;

@@ -8,7 +8,8 @@ import java.util.Hashtable;
 /**
  * The XfctDef represents the FfunctionDefinition (5.3) element in XcodeML
  * intermediate representation.
- * It can contains the following elements:
+ *
+ * Elements:
  * - Required:
  *   - name (text)
  *   - body

@@ -2,12 +2,12 @@ package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 
-/*
- * Example of XcodeML representation
+/**
+ * The Xstep represents the step (8.14) element in XcodeML intermediate
+ * representation.
  *
- * <step>
- *   <Var type="Fint" scope="local">istart</Var>
- * </step>
+ * Elements:
+ * - exprModel TODO move to exprModel in Xbound
  */
 
 public class Xstep extends Xbound {

@@ -5,6 +5,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 
+
 public class XdeclTable {
 
   private Hashtable<String, XvarDecl> _table;

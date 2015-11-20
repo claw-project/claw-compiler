@@ -9,13 +9,14 @@ import java.util.Hashtable;
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
  * representation.
- * It can contains the following elements:
+ *
+ * Elements:
  * - Optional:
  *   - FbasicType (XbasicType)
  *   - FfunctionType (XfctType)
  *   - FstructType (XstructType)
  */
- 
+
 public class XtypeTable {
 
   private Hashtable<String, Xtype> _table;
