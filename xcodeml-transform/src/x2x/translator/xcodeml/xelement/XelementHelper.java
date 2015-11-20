@@ -19,6 +19,17 @@ public class XelementHelper {
     return null;
   }
 
+  public static boolean getBooleanAttributeValue(Element el, String attrName) {
+    String value = XelementHelper.getAttributeValue(el, attrName);
+    if(value == null) {
+      return false;
+    }
+    if (value.equals(XelementName.TRUE)){
+      return true;
+    }
+    return false;
+  }
+
   public static XfctDef findFunctionDefinition(Document xcodemlDoc,
     XfctCall fctCall)
   {

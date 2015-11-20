@@ -50,8 +50,8 @@ public class XbasicType extends Xtype {
   }
 
   private void readBasicTypeInformation(){
-    _ref = XelementHelper.getAttributeValue(_element,
-      XelementName.ATTR_REF);
+    readRequiredAttributes();
+    readOptionalAttributes();
 
     // is array ?
     _dimension = XelementHelper.findNumberOfRange(_element);
@@ -70,6 +70,37 @@ public class XbasicType extends Xtype {
       _hasLength = true;
       // TODO have a length object with information
     }
+  }
+
+  private void readRequiredAttributes() {
+    // Attribute type is read in Xtype
+
+
+    _ref = XelementHelper.getAttributeValue(_element,
+      XelementName.ATTR_REF);
+  }
+
+  private void readOptionalAttributes() {
+    _is_public = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_PUBLIC);
+    _is_private = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_PRIVATE);
+    _is_pointer = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_POINTER);
+    _is_target = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_TARGET);
+    _is_external = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_EXTERNAL);
+    _is_intrinsic = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_INTRINSIC);
+    _is_optional = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_OPTIONAL);
+    _is_save = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_SAVE);
+    _is_parameter = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_PARAMETER);
+    _is_allocatable = XelementHelper.getBooleanAttributeValue(_element,
+      XelementName.ATTR_IS_ALLOCATABLE);
   }
 
   public XindexRange getDimensions(int index){
