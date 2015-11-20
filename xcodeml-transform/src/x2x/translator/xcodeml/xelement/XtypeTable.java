@@ -5,6 +5,17 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 
+
+/**
+ * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
+ * representation.
+ * It can contains the following elements:
+ * - Optional:
+ *   - FbasicType (XbasicType)
+ *   - FfunctionType (XfctType)
+ *   - FstructType (XstructType)
+ */
+ 
 public class XtypeTable {
 
   private Hashtable<String, Xtype> _table;
@@ -37,6 +48,8 @@ public class XtypeTable {
         _table.put(ft.getType(), ft);
       }
     }
+
+    // TODO read structtype object
   }
 
   public void add(Xtype type){
@@ -46,5 +59,10 @@ public class XtypeTable {
 
   public Xtype get(String key){
     return _table.get(key);
+  }
+
+  public String generateHash(){
+    // TODO generate a new hash for a new type
+    return "";
   }
 }

@@ -5,6 +5,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 
+/**
+ * The XsymbolTable represents the symbols (4) element in XcodeML intermediate
+ * representation.
+ * It can contains the following elements:
+ * - Optional:
+ *   - id
+ */
 public class XsymbolTable {
 
   private Hashtable<String, Xid> _table;

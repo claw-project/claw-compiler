@@ -3,10 +3,12 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/*
- * Example of XcodeML representation
- *
- * <name type="F7fdd2b600350">clawloop</name>
+/**
+ * The Xname represents the name (8.3) element in XcodeML intermediate
+ * representation.
+ * It can contains text data
+ * Attributes:
+ * - Requited: type (text)
  */
 
 public class Xname {

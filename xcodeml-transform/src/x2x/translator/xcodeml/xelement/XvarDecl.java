@@ -3,19 +3,15 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/*
-<varDecl lineno="5" file="original_code.f90">
-  <name type="A7fd318c08290">value2</name>
-</varDecl>
-<varDecl lineno="6" file="original_code.f90">
-  <name type="Fint">i</name>
-</varDecl>
-<varDecl lineno="7" file="original_code.f90">
-  <name type="Fint">istart</name>
-  <value>
-    <FintConstant type="Fint">1</FintConstant>
-  </value>
-</varDecl>*/
+/**
+ * The XvarDecl represents the varDecl (5.4) element in XcodeML intermediate
+ * representation.
+ * It can contains the following elements:
+ * - Required:
+ *   - name (with attribute "type (text)") // TODO move to Xname
+ * - Optional:
+ *   - value (text)
+ */
 
 public class XvarDecl {
   private String _type = null;

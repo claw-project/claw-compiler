@@ -3,14 +3,18 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-/*
-<FfunctionType type="F7fe5cad05ac0" return_type="Fvoid">
-  <params>
-    <name type="A7fe5cad072a0">value1</name>
-    <name type="A7fe5cad07a50">value2</name>
-  </params>
-</FfunctionType>
-*/
+/**
+ * The XfctType represents the FfunctionType (3.4) element in XcodeML
+ * intermediate representation.
+ * It can contains the following elements:
+ * - Optional:
+ *   - params TODO
+ * Attributes:
+ * - Required: type (text), return_type (text)
+ * - Optional: result_name (text), is_recursive (bool), is_program (bool),
+ *   is_internal (bool) TODO
+ */
+ 
 public class XfctType extends Xtype {
 
   private String _returnType = null;

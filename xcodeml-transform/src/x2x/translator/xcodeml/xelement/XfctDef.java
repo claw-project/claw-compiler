@@ -5,31 +5,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 
-/*
-<declarations>
-  <varDecl lineno="4" file="original_code.f90">
-    <name type="A7fd318c079e0">value1</name>
-  </varDecl>
-  <varDecl lineno="5" file="original_code.f90">
-    <name type="A7fd318c08290">value2</name>
-  </varDecl>
-  <varDecl lineno="6" file="original_code.f90">
-    <name type="Fint">i</name>
-  </varDecl>
-  <varDecl lineno="7" file="original_code.f90">
-    <name type="Fint">istart</name>
-    <value>
-      <FintConstant type="Fint">1</FintConstant>
-    </value>
-  </varDecl>
-  <varDecl lineno="8" file="original_code.f90">
-    <name type="Fint">iend</name>
-    <value>
-      <FintConstant type="Fint">10</FintConstant>
-    </value>
-  </varDecl>
-</declarations>
-*/
+/**
+ * The XfctDef represents the FfunctionDefinition (5.3) element in XcodeML
+ * intermediate representation.
+ * It can contains the following elements:
+ * - Required:
+ *   - name (text)
+ *   - body
+ * - Optional:
+ *   - symbols (XsymbolTable)
+ *   - params
+ *   - declarations (XdeclTable)
+ */
 
 public class XfctDef extends Xfct {
 

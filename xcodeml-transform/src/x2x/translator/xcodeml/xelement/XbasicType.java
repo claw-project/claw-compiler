@@ -3,24 +3,26 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-/*
-<FbasicType type="A7f9c1a5046e0" ref="Fint">
-  <indexRange>
-    <lowerBound>
-      <FintConstant type="Fint">1</FintConstant>
-    </lowerBound>
-    <upperBound>
-      <FintConstant type="Fint">10</FintConstant>
-    </upperBound>
-  </indexRange>
-</FbasicType>
 
-<FbasicType type="C7f9c1a50ae40" ref="Fcharacter">
-  <len>
-    <FintConstant type="Fint">8</FintConstant>
-  </len>
-</FbasicType>
-*/
+/**
+ * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
+ * representation.
+ * It can contains the following elements:
+ * - Optional:
+ *   - kind TODO
+ *   - len TODO
+ *   - arrayIndex TODO
+ *   - indexRange (XindexRange)
+ *   - coShape TODO not needed for the moment
+ * Attributes:
+ * - Requited: type (text), ref (text)
+ * - Optional: is_public (bool), is_private (bool), is_pointer (bool),
+ *             is_target (bool), is_external (bool),is_intrinsic (bool),
+ *             is_optional (bool), is_save (bool), is_parameter (bool),
+ *             is_allocatable (bool), intent (text: in, out, inout)
+ *   TODO all attributes
+ */
+
 public class XbasicType extends Xtype {
 
   private String _ref;
