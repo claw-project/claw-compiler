@@ -131,17 +131,19 @@ public class XelementHelper {
   }
 
   public static Element findLen(Element parent){
-    NodeList elements = parent.getElementsByTagName(XelementName.LENGTH);
-    if(elements.getLength() == 0){
-      return null;
-    }
-    return (Element) elements.item(0);
+    return findFirstElement(parent, XelementName.LENGTH);
+  }
+
+  public static Element findKind(Element parent){
+    return findFirstElement(parent, XelementName.KIND);
   }
 
   public static Element findFirstElement(Element parent, String elementName){
     NodeList elements = parent.getElementsByTagName(elementName);
-    Element element = (Element) elements.item(0);
-    return element;
+    if(elements.getLength() == 0){
+      return null;
+    }
+    return (Element) elements.item(0);
   }
 
   public static void insertAfter(Node refNode, Node newNode){

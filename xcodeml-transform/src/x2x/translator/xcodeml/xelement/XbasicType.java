@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * Elements:
  * - Optional:
- *   - kind TODO
+ *   - kind (Xkind)
  *   - len TODO
  *   - arrayIndex TODO
  *   - indexRange (XindexRange)
@@ -27,13 +27,19 @@ import java.util.ArrayList;
 
 public class XbasicType extends Xtype {
 
-  private String _ref;
+
   private int _dimension = 0;
   private int _length = 0;
   private boolean _isArray = false;
-  private boolean _hasLength = false;
-  private ArrayList<XindexRange> _dimensionRanges = null;
 
+  // XbasicType inner elements
+  private ArrayList<XindexRange> _dimensionRanges = null;
+  private Xkind _kind = null;
+
+  // XbasicType required attributes (type is declared in Xtype)
+  private String _ref;
+
+  // XbasicType optional attributes
   private boolean _is_public = false;
   private boolean _is_private = false;
   private boolean _is_pointer = false;
@@ -68,12 +74,14 @@ public class XbasicType extends Xtype {
     // has length ?
     Element length = XelementHelper.findLen(_element);
     if(length != null){
-      _hasLength = true;
       // TODO have a length object with information
     }
 
     // has kind ?
-    // TODO
+    Element kindElement = XelementHelper.findKind(_element);
+    if(kindElement != null) {
+      _kind = new Xkind(kindElement);
+    }
 
     // has arrayIndex ?
     // TODO
@@ -120,7 +128,11 @@ public class XbasicType extends Xtype {
   }
 
   public boolean hasLength(){
-    return _hasLength;
+    return _length != 0;
+  }
+
+  public boolean hasKind(){
+    return _kind != null;
   }
 
   public int getDimensions(){

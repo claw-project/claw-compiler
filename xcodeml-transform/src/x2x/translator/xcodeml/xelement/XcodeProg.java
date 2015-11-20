@@ -27,11 +27,11 @@ public class XcodeProg {
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
 
-  // Xcode inner elements
+  // XcodeProg inner elements
   private XtypeTable _typeTable = null;
   private XsymbolTable _globalSymbolsTable = null;
 
-  // Xcode optional attributes
+  // XcodeProg optional attributes
   private String _version = null;
   private String _lanaguage = null;
   private String _time = null;
