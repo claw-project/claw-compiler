@@ -4,6 +4,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+
 /**
  * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
  * representation.
@@ -30,7 +32,7 @@ public class XbasicType extends Xtype {
   private int _length = 0;
   private boolean _isArray = false;
   private boolean _hasLength = false;
-  private XindexRange[] _dimensionRanges = null;
+  private ArrayList<XindexRange> _dimensionRanges = null;
 
   private boolean _is_public = false;
   private boolean _is_private = false;
@@ -56,10 +58,10 @@ public class XbasicType extends Xtype {
     _dimension = XelementHelper.findNumberOfRange(_element);
     if (_dimension > 0){
       _isArray = true;
-      _dimensionRanges = new XindexRange[_dimension];
+      _dimensionRanges = new ArrayList<XindexRange>();
       NodeList ranges = XelementHelper.findIndexRanges(_element);
       for(int i = 0; i < _dimension; ++i){
-        _dimensionRanges[i] = new XindexRange((Element)ranges.item(i));
+        _dimensionRanges.add(new XindexRange((Element)ranges.item(i)));
       }
     }
 
@@ -69,12 +71,16 @@ public class XbasicType extends Xtype {
       _hasLength = true;
       // TODO have a length object with information
     }
+
+    // has kind ?
+    // TODO
+
+    // has arrayIndex ?
+    // TODO
   }
 
   private void readRequiredAttributes() {
     // Attribute type is read in Xtype
-
-
     _ref = XelementHelper.getAttributeValue(_element,
       XelementName.ATTR_REF);
   }
@@ -103,10 +109,10 @@ public class XbasicType extends Xtype {
   }
 
   public XindexRange getDimensions(int index){
-    if(index >= _dimensionRanges.length || index < 0){
+    if(index >= _dimensionRanges.size() || index < 0){
       return null;
     }
-    return _dimensionRanges[index];
+    return _dimensionRanges.get(index);
   }
 
   public boolean isArray(){
