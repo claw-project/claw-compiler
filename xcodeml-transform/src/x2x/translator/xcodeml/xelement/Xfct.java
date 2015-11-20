@@ -30,7 +30,7 @@ public class Xfct {
     if(_fctName == null){
       return null;
     }
-    return _fctName.getName();
+    return _fctName.getValue();
   }
 
   public String getFctType(){

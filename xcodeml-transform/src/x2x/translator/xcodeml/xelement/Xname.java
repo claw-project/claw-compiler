@@ -34,7 +34,7 @@ public class Xname {
     _nameValue = _nameElement.getTextContent();
   }
 
-  public String getName(){
+  public String getValue(){
     return _nameValue;
   }
 
@@ -43,7 +43,7 @@ public class Xname {
   }
 
   public boolean isIdentical(Xname other){
-    return isIdentical(other.getName(), other.getType());
+    return isIdentical(other.getValue(), other.getType());
   }
 
   public boolean isIdentical(String name, String type){

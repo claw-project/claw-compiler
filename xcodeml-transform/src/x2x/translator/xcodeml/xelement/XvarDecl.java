@@ -9,37 +9,29 @@ import org.w3c.dom.Node;
  *
  * Elements:
  * - Required:
- *   - name (with attribute "type (text)") // TODO move to Xname
+ *   - name (Xname)
  * - Optional:
- *   - value (text)
+ *   - value (text) TODO have an object for that
  */
 
-public class XvarDecl {
-  private String _type = null;
-  private String _name = null;
+public class XvarDecl extends Xdecl {
+  private Xname _name = null;
   private boolean _hasValue = false;
 
-  private Element _varDeclElement;
+  private Element _valueElement = null; // TODO to be removed
 
-  // TODO keep as element for the moment but it should be read as well
-  private Element _valueElement;
-
-  public XvarDecl(Element varDeclElement){
-    _varDeclElement = varDeclElement;
+  public XvarDecl(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
-  public Node clone(){
-    return _varDeclElement.cloneNode(true);
-  }
-
   private void readElementInformation(){
-    Element nameElement = XelementHelper.findFirstElement(_varDeclElement,
+    Element nameElement = XelementHelper.findFirstElement(_element,
       XelementName.NAME);
-    _name = nameElement.getTextContent();
-    _type = XelementHelper.getAttributeValue(nameElement,
-      XelementName.ATTR_TYPE);
-    _valueElement = XelementHelper.findFirstElement(_varDeclElement,
+    _name = new Xname(nameElement);
+
+    // TODO move to an object
+    _valueElement = XelementHelper.findFirstElement(_element,
         XelementName.VALUE);
     if(_valueElement != null){
       _hasValue = true;
@@ -50,7 +42,7 @@ public class XvarDecl {
     return _hasValue;
   }
 
-  public String getName(){
+  public Xname getName(){
     return _name;
   }
 
