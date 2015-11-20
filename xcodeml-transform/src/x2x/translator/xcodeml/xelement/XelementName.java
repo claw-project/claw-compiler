@@ -9,6 +9,7 @@ public class XelementName {
   public static final String SUPPORTED_LANGUAGE = "Fortran";
 
   // Element attributes
+  public static final String ATTR_COMPILER_INFO = "compiler-info";
   public static final String ATTR_FILE = "file";
   public static final String ATTR_IS_PROGRAM = "is_program";
   public static final String ATTR_LANGUAGE = "language";
@@ -17,8 +18,11 @@ public class XelementName {
   public static final String ATTR_RETURN_TYPE = "return_type";
   public static final String ATTR_SCLASS = "sclass";
   public static final String ATTR_SCOPE = "scope";
+  public static final String ATTR_SOURCE = "source";
+  public static final String ATTR_TIME = "time";
   public static final String ATTR_TYPE = "type";
   public static final String ATTR_VERSION = "version";
+
 
   // Element names
   public static final String BASIC_TYPE = "FbasicType";

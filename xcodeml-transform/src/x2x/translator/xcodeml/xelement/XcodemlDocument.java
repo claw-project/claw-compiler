@@ -15,9 +15,28 @@ public class XcodemlDocument{
   private String _xcodemlInputFile = null;
   private Element _typeTableElement = null;
   private XtypeTable _typeTable = null;
+  private String _version = null;
+  private String _lanaguage = null;
+  private String _time = null;
+  private String _source = null;
+  private String _compilerInfo = null;
+  private boolean _isLoaded = false;
 
   public XcodemlDocument(String inputFile){
     _xcodemlInputFile = inputFile;
+  }
+
+  private void readDocumentInformation(){
+    _version = XelementHelper.getAttributeValue(
+      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_VERSION);
+    _lanaguage = XelementHelper.getAttributeValue(
+      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_LANGUAGE);
+    _time = XelementHelper.getAttributeValue(
+      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_TIME);
+    _source = XelementHelper.getAttributeValue(
+      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_SOURCE);
+    _compilerInfo = XelementHelper.getAttributeValue(
+      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_COMPILER_INFO);
   }
 
   public Document getDocument(){
@@ -28,6 +47,10 @@ public class XcodemlDocument{
     return _typeTable;
   }
 
+  public boolean isLoaded(){
+    return _isLoaded;
+  }
+
   public void readXcodeML(){
     try {
       File fXmlFile = new File(_xcodemlInputFile);
@@ -36,6 +59,8 @@ public class XcodemlDocument{
       Document doc = dBuilder.parse(fXmlFile);
       doc.getDocumentElement().normalize();
       _xcodemlDoc = doc;
+      readDocumentInformation();
+      _isLoaded = true;
     } catch(Exception ex){
       _xcodemlDoc = null;
     }
