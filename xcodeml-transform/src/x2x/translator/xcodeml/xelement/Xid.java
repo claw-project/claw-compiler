@@ -64,4 +64,9 @@ public class Xid {
     return _idElement.cloneNode(true);
   }
 
+  public Xid cloneObject(){
+    Node clone = clone();
+    return new Xid((Element)clone);
+  }
+
 }

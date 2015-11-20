@@ -117,9 +117,13 @@ public class LoopExtraction {
     _xcodeml.getTypeTable().add(newFctType);
 
     // Get the id from the global symbols table
-    //Xid fctId = _xcodeml.getGlobalSymbolsTable()
-    //  .get(_extractedFctDef.getFctName());
-    // Get the declaration from the global declaration table
+    Xid globalFctId = _xcodeml.getGlobalSymbolsTable()
+      .get(_extractedFctDef.getFctName());
+    Xid newFctId = globalFctId.cloneObject();
+    newFctId.setType(newTypeHash);
+    newFctId.setName(newFctName);
+    _xcodeml.getGlobalSymbolsTable().add(newFctId);
+
 
 
 
