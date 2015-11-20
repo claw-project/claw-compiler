@@ -35,7 +35,7 @@ public class CLAWxcodemlTranslator {
   private ArrayList<LoopFusion> _loopFusion = null;
   private ArrayList<LoopInterchange> _loopInterchange = null;
   private ArrayList<LoopExtraction> _loopExtract = null;
-  private XcodemlDocument _program = null;
+  private XcodeProg _program = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile,
     String xcodemlOutputFile)
@@ -79,8 +79,8 @@ public class CLAWxcodemlTranslator {
 
 
   public void analyze() throws Exception {
-    _program = new XcodemlDocument(_xcodemlInputFile);
-    _program.readXcodeML();
+    _program = new XcodeProg(_xcodemlInputFile);
+    _program.load();
 
     if(!_program.isXcodeMLvalid()){
       System.err.println("XcodeML document is not valid");

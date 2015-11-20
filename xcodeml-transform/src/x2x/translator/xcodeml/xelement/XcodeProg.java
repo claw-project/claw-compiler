@@ -9,25 +9,39 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.Hashtable;
 
-public class XcodemlDocument{
-  private XtypeTable _typeTable = null;
-  private XsymbolTable _globalSymbolsTable = null;
+/**
+ * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
+ * representation.
+ *
+ * Elements:
+ * - Required:
+ *   - typeTable (XtypeTable)
+ *   - globalSymbols (XsymbolTable)
+ *   - globalDeclarations TODO
+ * Attributes:
+ * - Optional: compiler-info (text), version (text), time (time),
+ *             language (text), source (text)
+ */
 
+public class XcodeProg {
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
 
-  private Element _typeTableElement = null;
-  private Element _globalSymbolsElement = null;
+  // Xcode inner elements
+  private XtypeTable _typeTable = null;
+  private XsymbolTable _globalSymbolsTable = null;
 
-
+  // Xcode optional attributes
   private String _version = null;
   private String _lanaguage = null;
   private String _time = null;
   private String _source = null;
   private String _compilerInfo = null;
+
+
   private boolean _isLoaded = false;
 
-  public XcodemlDocument(String inputFile){
+  public XcodeProg(String inputFile){
     _xcodemlInputFile = inputFile;
   }
 
@@ -56,11 +70,8 @@ public class XcodemlDocument{
     return _globalSymbolsTable;
   }
 
-  public boolean isLoaded(){
-    return _isLoaded;
-  }
-
-  public void readXcodeML(){
+  // Read the XcodeML file and load its object representation
+  public void load(){
     try {
       File fXmlFile = new File(_xcodemlInputFile);
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -73,6 +84,10 @@ public class XcodemlDocument{
     } catch(Exception ex){
       _xcodemlDoc = null;
     }
+  }
+
+  public boolean isLoaded(){
+    return _isLoaded;
   }
 
   public boolean isXcodeMLvalid() throws Exception {
@@ -105,13 +120,13 @@ public class XcodemlDocument{
   }
 
   public void readTypeTable() {
-    _typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
-    _typeTable = new XtypeTable(_typeTableElement);
+    Element typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
+    _typeTable = new XtypeTable(typeTableElement);
   }
 
   public void readGlobalSymbolsTable() {
-    _globalSymbolsElement = XelementHelper.findGlobalSymbols(_xcodemlDoc);
-    _globalSymbolsTable = new XsymbolTable(_globalSymbolsElement);
+    Element globalSymbolsElement = XelementHelper.findGlobalSymbols(_xcodemlDoc);
+    _globalSymbolsTable = new XsymbolTable(globalSymbolsElement);
   }
 
 }

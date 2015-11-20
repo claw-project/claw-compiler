@@ -19,7 +19,7 @@ public class LoopExtraction {
   protected Element _pragmaElement = null;
   protected Element _exprStmtElement = null;
   protected Element _fncCallStmt = null;
-  protected XcodemlDocument _xcodeml = null;
+  protected XcodeProg _xcodeml = null;
 
   private ArrayList<CLAWmapping> _mappings = null;
   private XfctCall _fctCall = null;
@@ -29,7 +29,7 @@ public class LoopExtraction {
 
   private XfctDef _copiedFctDef = null;
 
-  public LoopExtraction(Element pragma, Element exprStmt, XcodemlDocument xcodemlDoc){
+  public LoopExtraction(Element pragma, Element exprStmt, XcodeProg xcodemlDoc) {
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
     _xcodeml = xcodemlDoc;
@@ -87,7 +87,7 @@ public class LoopExtraction {
     return true;
   }
 
-  public void transform(XcodemlDocument xcodeml){
+  public void transform(XcodeProg xcodeml){
     // Duplicate function definition
     Node cloned = _extractedFctDef.clone();
     XfctDef clonedFctDef = new XfctDef((Element)cloned);
@@ -97,8 +97,11 @@ public class LoopExtraction {
     // Get the fctType in typeTable
     XfctType fctType = (XfctType)_xcodeml
       .getTypeTable().get(_extractedFctDef.getFctType());
+    // Get the id from the global symbols table
     Xid fctId = _xcodeml.getGlobalSymbolsTable()
       .get(_extractedFctDef.getFctName());
+    // Get the declaration from the global declaration table
+
 
 
 
@@ -133,7 +136,7 @@ public class LoopExtraction {
     // Adapt function call parameters
   }
 
-  private void wrapCallWithLoop(XcodemlDocument xcodeml,
+  private void wrapCallWithLoop(XcodeProg xcodeml,
     XloopIterationRange iterationRange)
   {
     Document document = xcodeml.getDocument();

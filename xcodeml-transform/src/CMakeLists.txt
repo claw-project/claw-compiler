@@ -23,7 +23,7 @@ add_jar(omni-x2x
 # XcodeML.Xelement package
   x2x/translator/xcodeml/xelement/XbasicType.java
   x2x/translator/xcodeml/xelement/Xbound.java
-  x2x/translator/xcodeml/xelement/XcodemlDocument.java
+  x2x/translator/xcodeml/xelement/XcodeProg.java
   x2x/translator/xcodeml/xelement/XdeclTable.java
   x2x/translator/xcodeml/xelement/XelementHelper.java
   x2x/translator/xcodeml/xelement/XelementName.java
