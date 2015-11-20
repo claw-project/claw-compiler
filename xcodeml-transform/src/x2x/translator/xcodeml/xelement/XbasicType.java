@@ -33,6 +33,17 @@ public class XbasicType extends Xtype {
   private boolean _hasLength = false;
   private XindexRange[] _dimensionRanges = null;
 
+  private boolean _is_public = false;
+  private boolean _is_private = false;
+  private boolean _is_pointer = false;
+  private boolean _is_target = false;
+  private boolean _is_external = false;
+  private boolean _is_intrinsic = false;
+  private boolean _is_optional = false;
+  private boolean _is_save = false;
+  private boolean _is_parameter = false;
+  private boolean _is_allocatable = false;
+
   public XbasicType(Element element){
     super(element);
     readBasicTypeInformation();
@@ -82,6 +93,47 @@ public class XbasicType extends Xtype {
 
   public String getRef(){
     return _ref;
+  }
+
+
+  public boolean isPublic() {
+    return _is_public;
+  }
+
+  public boolean isPrivate() {
+    return _is_private;
+  }
+
+  public boolean isPointer() {
+    return _is_pointer;
+  }
+
+  public boolean isTarget() {
+    return _is_target;
+  }
+
+  public boolean isExternal() {
+    return _is_external;
+  }
+
+  public boolean isIntrinsic() {
+    return _is_intrinsic;
+  }
+
+  public boolean isOptional(){
+    return _is_optional;
+  }
+
+  public boolean isSave() {
+    return _is_save;
+  }
+
+  public boolean isParameter() {
+    return _is_parameter;
+  }
+
+  public boolean isAllocatable() {
+    return _is_allocatable;
   }
 
 }
