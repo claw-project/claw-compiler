@@ -11,10 +11,15 @@ import java.util.Hashtable;
 
 public class XcodemlDocument{
   private XtypeTable _typeTable = null;
+  private XsymbolTable _globalSymbolsTable = null;
 
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
+
   private Element _typeTableElement = null;
+  private Element _globalSymbolsElement = null;
+
+
   private String _version = null;
   private String _lanaguage = null;
   private String _time = null;
@@ -95,9 +100,14 @@ public class XcodemlDocument{
     return true;
   }
 
-  public void readTypeTable(){
+  public void readTypeTable() {
     _typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
     _typeTable = new XtypeTable(_typeTableElement);
+  }
+
+  public void readGlobalSymbolsTable() {
+    _globalSymbolsElement = XelementHelper.findGlobalSymbols(_xcodemlDoc);
+    _globalSymbolsTable = new XsymbolTable(_globalSymbolsElement);
   }
 
 }

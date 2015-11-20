@@ -115,6 +115,12 @@ public class XelementHelper {
     return element;
   }
 
+  public static Element findGlobalSymbols(Document doc){
+    NodeList elements = doc.getElementsByTagName(XelementName.GLOBAL_SYMBOLS);
+    Element element = (Element) elements.item(0);
+    return element;
+  }
+
   public static int findNumberOfRange(Element parent){
     NodeList elements = parent.getElementsByTagName(XelementName.INDEX_RANGE);
     return elements.getLength();

@@ -89,6 +89,7 @@ public class CLAWxcodemlTranslator {
 
     // Read information from the type table
     _program.readTypeTable();
+    _program.readGlobalSymbolsTable();
 
     NodeList pragmaList = XelementHelper.getPragmas(_program.getDocument());
 
