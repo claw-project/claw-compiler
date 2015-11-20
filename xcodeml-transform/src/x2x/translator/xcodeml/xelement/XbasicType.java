@@ -21,7 +21,6 @@ import org.w3c.dom.NodeList;
  *             is_target (bool), is_external (bool),is_intrinsic (bool),
  *             is_optional (bool), is_save (bool), is_parameter (bool),
  *             is_allocatable (bool), intent (text: in, out, inout)
- *   TODO all attributes
  */
 
 public class XbasicType extends Xtype {
