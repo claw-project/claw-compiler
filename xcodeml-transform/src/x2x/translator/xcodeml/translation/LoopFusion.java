@@ -52,8 +52,8 @@ public class LoopFusion extends Xloop {
 
   public void finalizeMerge(){
     // Remove the pragma and the loop block of the second loop
-    _pragmaElement.getParentNode().removeChild(_pragmaElement);
-    _loopElement.getParentNode().removeChild(_loopElement);
+    XelementHelper.delete(_pragmaElement);
+    XelementHelper.delete(_loopElement);
     _merged = true;
   }
 
@@ -61,20 +61,7 @@ public class LoopFusion extends Xloop {
    * Merge the given loop with this one
    */
   public void merge(LoopFusion loop){
-    NodeList masterBodies = _loopElement.getElementsByTagName("body");
-    Element masterBody = (Element) masterBodies.item(0);
-    NodeList slaveBodies = loop.getLoopElement().getElementsByTagName("body");
-    Element slaveBody = (Element) slaveBodies.item(0);
-
-    // Append content of loop-body (loop) to this loop-body
-    for(Node childNode = slaveBody.getFirstChild(); childNode!=null;){
-        Node nextChild = childNode.getNextSibling();
-        // Do something with childNode, including move or delete...
-        if(childNode.getNodeType() == Node.ELEMENT_NODE){
-          masterBody.appendChild(childNode);
-        }
-        childNode = nextChild;
-    }
+    XelementHelper.appendBody(_loopElement, loop.getLoopElement());
     loop.finalizeMerge();
   }
 

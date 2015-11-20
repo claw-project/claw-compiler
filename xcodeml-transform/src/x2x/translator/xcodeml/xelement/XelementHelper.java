@@ -170,6 +170,26 @@ public class XelementHelper {
     return root.getElementsByTagName(XelementName.PRAGMA_STMT);
   }
 
+  public static void appendBody(Element elementMaster, Element elementSlave) {
+    Element masterBody = XelementHelper.findFirstElement(elementMaster,
+      XelementName.BODY);
+    Element slaveBody = XelementHelper.findFirstElement(elementSlave,
+      XelementName.BODY);
+    // Append content of loop-body (loop) to this loop-body
+    for(Node childNode = slaveBody.getFirstChild(); childNode!=null;){
+        Node nextChild = childNode.getNextSibling();
+        // Do something with childNode, including move or delete...
+        if(childNode.getNodeType() == Node.ELEMENT_NODE){
+          masterBody.appendChild(childNode);
+        }
+        childNode = nextChild;
+    }
+  }
+
+  public static void delete(Element element){
+    element.getParentNode().removeChild(element);
+  }
+
   /**
    * Removes text nodes that only contains whitespace. The conditions for
    * removing text nodes, besides only containing whitespace, are: If the
