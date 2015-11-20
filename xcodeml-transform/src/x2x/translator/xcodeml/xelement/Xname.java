@@ -16,9 +16,6 @@ public class Xname {
   private String _nameValue = null;
   private String _nameType = null;
 
-  // TODO move constant to a single file
-  private static final String TYPE = "type";
-
   public Xname(Element name){
     _nameElement = name;
     readElementInformation();
@@ -32,7 +29,8 @@ public class Xname {
   }
 
   private void readElementInformation(){
-    _nameType = XelementHelper.getAttributeValue(_nameElement, TYPE);
+    _nameType = XelementHelper.getAttributeValue(_nameElement
+      , XelementName.ATTR_TYPE);
     _nameValue = _nameElement.getTextContent();
   }
 
