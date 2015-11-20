@@ -16,8 +16,9 @@ import org.w3c.dom.NodeList;
 public class Xbound {
   private String _value = null;
   private boolean _constant = false;
-  private boolean _var = false;
+  private boolean _isVar = false;
   private Element _boundElement = null;
+  private Xvar _var = null;
 
   public Xbound(Element boundElement){
     _boundElement = boundElement;
@@ -29,11 +30,18 @@ public class Xbound {
   }
 
   public boolean isVar(){
-    return _var;
+    return _isVar;
   }
 
   public String getValue(){
     return _value;
+  }
+
+  public String getType(){
+    if(isVar() && _var != null) {
+      return _var.getType();
+    }
+    return null;
   }
 
   private void readRangeValue(){
@@ -45,7 +53,8 @@ public class Xbound {
       _constant = true;
       _value = constant.getTextContent();
     } else if(var != null){
-      _var = true;
+      _isVar = true;
+      _var = new Xvar(var);
       _value = var.getTextContent();
     }
   }
