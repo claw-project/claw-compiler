@@ -21,6 +21,7 @@ public class Xid {
   private String _name = null;
 
   private Element _idElement;
+  private Element _nameElement;
 
   public Xid(Element idElement){
     _idElement = idElement;
@@ -32,9 +33,23 @@ public class Xid {
       XelementName.ATTR_TYPE);
     _sclass = XelementHelper.getAttributeValue(_idElement,
       XelementName.ATTR_SCLASS);
-    Element nameElement = XelementHelper.findFirstElement(_idElement,
+    _nameElement = XelementHelper.findFirstElement(_idElement,
       XelementName.NAME);
-    _name = nameElement.getTextContent();
+    _name = _nameElement.getTextContent();
+  }
+
+  public void setName(String value){
+    if(_nameElement != null){
+      _nameElement.setTextContent(value);
+      _name = value;
+    }
+  }
+
+  public void setType(String value){
+    if(_idElement != null){
+      _idElement.setAttribute(XelementName.ATTR_TYPE, value);
+      _type = value;
+    }
   }
 
   public String getName(){

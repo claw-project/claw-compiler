@@ -33,8 +33,6 @@ public class XfctDef extends Xfct {
     _symbolTable = new XsymbolTable(symbols);
     Element decl = XelementHelper.findDeclarations(getFctElement());
     _declTable = new XdeclTable(decl);
-
-
   }
 
   public XsymbolTable getSymbolTable(){

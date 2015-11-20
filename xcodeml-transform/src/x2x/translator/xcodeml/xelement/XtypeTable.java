@@ -4,6 +4,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
+import java.util.Random;
 
 
 /**
@@ -62,8 +63,17 @@ public class XtypeTable {
     return _table.get(key);
   }
 
-  public String generateHash(){
-    // TODO generate a new hash for a new type
-    return "";
+  public String generateFctTypeHash(){
+    // TODO check that hash is unique otherwise generate a new one
+    return "F" + generateHash(12);
+  }
+
+  private String generateHash(int length){
+    Random r = new Random();
+    StringBuffer sb = new StringBuffer();
+    while(sb.length() < length){
+      sb.append(Integer.toHexString(r.nextInt()));
+    }
+    return sb.toString().substring(0, length);
   }
 }

@@ -91,15 +91,34 @@ public class LoopExtraction {
     // Duplicate function definition
     Node cloned = _extractedFctDef.clone();
     XfctDef clonedFctDef = new XfctDef((Element)cloned);
-    clonedFctDef.updateName(clonedFctDef.getFctName() + "_claw");
+    String newTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
+    // TODO new name should be generated and unique
+    String newFctName = clonedFctDef.getFctName() + "_claw";
+    clonedFctDef.updateName(newFctName);
+    clonedFctDef.updateType(newTypeHash);
+    // Update the symbol table in the fct definition
+    Xid fctId = clonedFctDef.getSymbolTable().
+      get(_extractedFctDef.getFctName());
+    fctId.setType(newTypeHash);
+    fctId.setName(newFctName);
+
+
+
     Xloop loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
+
+
+
 
     // Get the fctType in typeTable
     XfctType fctType = (XfctType)_xcodeml
       .getTypeTable().get(_extractedFctDef.getFctType());
+    XfctType newFctType = fctType.cloneObject();
+    newFctType.setType(newTypeHash);
+    _xcodeml.getTypeTable().add(newFctType);
+
     // Get the id from the global symbols table
-    Xid fctId = _xcodeml.getGlobalSymbolsTable()
-      .get(_extractedFctDef.getFctName());
+    //Xid fctId = _xcodeml.getGlobalSymbolsTable()
+    //  .get(_extractedFctDef.getFctName());
     // Get the declaration from the global declaration table
 
 

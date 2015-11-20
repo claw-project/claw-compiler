@@ -28,6 +28,13 @@ public class Xname {
     }
   }
 
+  public void setType(String value){
+    if(_nameElement != null){
+      _nameElement.setAttribute(XelementName.ATTR_TYPE, value);
+      _nameType = value;
+    }
+  }
+
   private void readElementInformation(){
     _nameType = XelementHelper.getAttributeValue(_nameElement
       , XelementName.ATTR_TYPE);

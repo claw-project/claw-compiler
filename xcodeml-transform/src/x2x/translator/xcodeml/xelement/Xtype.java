@@ -6,7 +6,7 @@ import org.w3c.dom.Node;
 /**
  * Xtype is the base class for element in the XtypeTable (XbasicType, XfctType)
  */
- 
+
 public class Xtype {
   protected Element _element;
   protected String _type;
@@ -23,6 +23,13 @@ public class Xtype {
 
   public Node clone(){
     return _element.cloneNode(true);
+  }
+
+  public void setType(String value){
+    if(_element != null){
+      _element.setAttribute(XelementName.ATTR_TYPE, value);
+      _type = value;
+    }
   }
 
   public String getType(){

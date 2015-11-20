@@ -22,6 +22,10 @@ public class Xfct {
     _fctName.setName(value);
   }
 
+  public void updateType(String value){
+    _fctName.setType(value);
+  }
+
   public Element getFctElement(){
     return _fctElement;
   }

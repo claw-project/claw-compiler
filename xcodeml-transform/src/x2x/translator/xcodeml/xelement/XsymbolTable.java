@@ -8,7 +8,7 @@ import java.util.Hashtable;
 /**
  * The XsymbolTable represents the symbols (4) element in XcodeML intermediate
  * representation.
- * 
+ *
  * Elements:
  * - Optional:
  *   - id

@@ -48,4 +48,9 @@ public class XfctType extends Xtype {
     return _isProgram;
   }
 
+  public XfctType cloneObject(){
+    Node clone = clone();
+    return new XfctType((Element)clone);
+  }
+
 }
