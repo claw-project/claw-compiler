@@ -91,15 +91,15 @@ public class LoopExtraction {
     // Duplicate function definition
     Node cloned = _extractedFctDef.clone();
     XfctDef clonedFctDef = new XfctDef((Element)cloned);
-    String newTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
+    String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     // TODO new name should be generated and unique
     String newFctName = clonedFctDef.getFctName() + "_claw";
     clonedFctDef.updateName(newFctName);
-    clonedFctDef.updateType(newTypeHash);
+    clonedFctDef.updateType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable().
       get(_extractedFctDef.getFctName());
-    fctId.setType(newTypeHash);
+    fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
 
 
@@ -113,14 +113,14 @@ public class LoopExtraction {
     XfctType fctType = (XfctType)_xcodeml
       .getTypeTable().get(_extractedFctDef.getFctType());
     XfctType newFctType = fctType.cloneObject();
-    newFctType.setType(newTypeHash);
+    newFctType.setType(newFctTypeHash);
     _xcodeml.getTypeTable().add(newFctType);
 
     // Get the id from the global symbols table
     Xid globalFctId = _xcodeml.getGlobalSymbolsTable()
       .get(_extractedFctDef.getFctName());
     Xid newFctId = globalFctId.cloneObject();
-    newFctId.setType(newTypeHash);
+    newFctId.setType(newFctTypeHash);
     newFctId.setName(newFctName);
     _xcodeml.getGlobalSymbolsTable().add(newFctId);
 
@@ -155,6 +155,8 @@ public class LoopExtraction {
     }
 
     // Change called fct name
+    _fctCall.setName(newFctName);
+    _fctCall.setType(newFctTypeHash);
 
     // Adapt function call parameters
   }
