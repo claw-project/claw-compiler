@@ -46,7 +46,7 @@ public class Xbound {
 
   private void readRangeValue(){
     Element constant = XelementHelper
-      .findFirstElement(_boundElement, XelementName.INT_CONST);
+      .findFirstElement(_boundElement, XelementName.F_INT_CONST);
     Element var = XelementHelper
       .findFirstElement(_boundElement, XelementName.VAR);
     if(constant != null){

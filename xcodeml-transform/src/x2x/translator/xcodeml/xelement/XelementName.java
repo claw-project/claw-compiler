@@ -42,10 +42,14 @@ public class XelementName {
   public static final String EXPR_STMT = "exprStatement";
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String FCT_TYPE = "FfunctionType";
+  public static final String F_INT_CONST = "FintConstant";
+  public static final String F_REAL_CONST = "FrealConstant";
+  public static final String F_COMPLEX_CONST = "FcomplexConstant";
+  public static final String F_CHAR_CONST = "FcharacterConstant";
+  public static final String F_LOGICAL_CONST = "FlogicalConstant";
   public static final String GLOBAL_SYMBOLS = "globalSymbols";
   public static final String ID = "id";
   public static final String INDEX_RANGE = "indexRange";
-  public static final String INT_CONST = "FintConstant";
   public static final String KIND = "kind";
   public static final String LENGTH = "len";
   public static final String LOWER_BOUND = "lowerBound";
