@@ -10,10 +10,11 @@ import java.io.File;
 import java.util.Hashtable;
 
 public class XcodemlDocument{
+  private XtypeTable _typeTable = null;
+
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
   private Element _typeTableElement = null;
-  private XtypeTable _typeTable = null;
   private String _version = null;
   private String _lanaguage = null;
   private String _time = null;

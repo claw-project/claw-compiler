@@ -94,6 +94,11 @@ public class LoopExtraction {
     clonedFctDef.updateName(clonedFctDef.getFctName() + "_claw");
     Xloop loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
 
+    // Get the fctType in typeTable
+    XfctType fctType = (XfctType)_xcodeml
+      .getTypeTable().get(_extractedFctDef.getFctType());
+
+
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation");
       System.out.println("  created subroutine: " + clonedFctDef.getFctName());
