@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+// TODO refactor to adpot Translation interface
 public class LoopFusion extends Xloop {
 
   private boolean _merged = false;

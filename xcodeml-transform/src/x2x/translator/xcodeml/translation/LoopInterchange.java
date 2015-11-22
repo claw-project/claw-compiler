@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class LoopInterchange extends Xloop {
+public class LoopInterchange extends Xloop implements Translation {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
@@ -34,7 +34,7 @@ public class LoopInterchange extends Xloop {
     _newOrderOption = CLAWpragma.getNewOrderOptionValue(pragma.getTextContent());
   }
 
-  public void transform(){
+  public void transform(XcodeProg xcodeml){
     if(analyze()){
       if(XmOption.isDebugOutput()){
         System.out.println("loop-interchange transformation");
@@ -162,7 +162,7 @@ public class LoopInterchange extends Xloop {
   }
 
 
-  private boolean analyze(){
+  public boolean analyze(){
     Element body = getBodyElement();
     getIterationVariableValue();
     Element loop = findChildLoop(body);

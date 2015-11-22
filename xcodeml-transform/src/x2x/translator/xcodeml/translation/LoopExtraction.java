@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import xcodeml.util.XmOption;
 
 
-public class LoopExtraction {
+public class LoopExtraction implements Translation {
 
   protected Element _pragmaElement = null;
   protected Element _exprStmtElement = null;

@@ -199,7 +199,7 @@ public class CLAWxcodemlTranslator {
       // Apply loop-interchange transformation
       for(int i = 0; i < _loopInterchange.size(); ++i){
         LoopInterchange  loop = _loopInterchange.get(i);
-        loop.transform();
+        loop.transform(_program);
       }
 
 
