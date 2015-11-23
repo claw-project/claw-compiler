@@ -14,6 +14,9 @@ public class CLAWmapping {
    * var_list:mapping_list
    */
   public CLAWmapping(String mappingClause){
+    _mappedVariables = new ArrayList<String>();
+    _mappingVariables = new ArrayList<String>();
+
     String[] parts = mappingClause.split(":");
     if(parts.length != 2) {
       // TODO throw exception mappingClause is wrong

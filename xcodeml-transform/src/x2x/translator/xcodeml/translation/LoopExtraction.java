@@ -10,6 +10,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.*;
 
 import xcodeml.util.XmOption;
 
@@ -33,14 +35,32 @@ public class LoopExtraction implements Translation {
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
     _xcodeml = xcodemlDoc;
+    _mappings = new ArrayList<CLAWmapping>();
     extractMappingInformation();
   }
 
+  private void extractRangeInformation(){
+
+  }
+
   private void extractMappingInformation(){
-    //TODO
+    List<String> allMappings = new ArrayList<String>();
+    Matcher m = Pattern.compile("map\\(([^:]*:.)\\)")
+     .matcher(_pragmaElement.getTextContent());
+    while (m.find()) {
+      allMappings.add(m.group());
+    }
+
+    for(String mappingClause : allMatches){
+      System.out.println("MAPPING " + mappingClause);
+      CLAWmapping mapping = new CLAWmapping(mappingClause);
+      _mappings.add(mapping);
+    }
   }
 
   private boolean checkMappingInformation(){
+    
+
     return true; //TODO
   }
 
