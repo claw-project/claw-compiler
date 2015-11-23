@@ -33,8 +33,8 @@ public class CLAWxcodemlTranslator {
   private boolean _canTransform = false;
 
   private ArrayList<LoopFusion> _loopFusion = null;
-  private ArrayList<LoopInterchange> _loopInterchange = null;
-  private ArrayList<LoopExtraction> _loopExtract = null;
+  private IndependentTranslationGroup<LoopInterchange> _loopInterchange = null;
+  private IndependentTranslationGroup<LoopExtraction> _loopExtract = null;
   private XcodeProg _program = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile,
@@ -43,8 +43,8 @@ public class CLAWxcodemlTranslator {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _loopFusion = new ArrayList<LoopFusion>();
-    _loopInterchange = new ArrayList<LoopInterchange>();
-    _loopExtract = new ArrayList<LoopExtraction>();
+    _loopInterchange = new IndependentTranslationGroup<LoopInterchange>();
+    _loopExtract = new IndependentTranslationGroup<LoopExtraction>();
   }
 
 
@@ -167,15 +167,14 @@ public class CLAWxcodemlTranslator {
       if(XmOption.isDebugOutput()){
         System.out.println("transform loop-fusion: "+ _loopFusion.size());
         System.out.println("transform loop-interchange: "
-          + _loopInterchange.size());
-        System.out.println("transform loop-extract: "+ _loopExtract.size());
+          + _loopInterchange.count());
+        System.out.println("transform loop-extract: "+ _loopExtract.count());
       }
 
+
+
       // Apply loop-extract transformation
-      for(int i = 0; i < _loopExtract.size(); ++i){
-        LoopExtraction extraction = _loopExtract.get(i);
-        extraction.transform(_program);
-      }
+      _loopExtract.applyTranslations(_program);
 
 
       // Apply loop-fusion transformation
@@ -193,10 +192,7 @@ public class CLAWxcodemlTranslator {
       }
 
       // Apply loop-interchange transformation
-      for(int i = 0; i < _loopInterchange.size(); ++i){
-        LoopInterchange  loop = _loopInterchange.get(i);
-        loop.transform(_program);
-      }
+      _loopInterchange.applyTranslations(_program);
 
 
       ouputXcodeML();
