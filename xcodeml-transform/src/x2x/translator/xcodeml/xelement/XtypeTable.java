@@ -20,6 +20,9 @@ import java.util.Random;
 
 public class XtypeTable {
 
+  private static final int HASH_LENGTH = 12;
+  private static final String FCT_HASH_PREFIX = "F";
+
   private Hashtable<String, Xtype> _table;
   private Element _baseElement = null;
 
@@ -64,8 +67,11 @@ public class XtypeTable {
   }
 
   public String generateFctTypeHash(){
-    // TODO check that hash is unique otherwise generate a new one
-    return "F" + generateHash(12);
+    String hash;
+    do {
+      hash = FCT_HASH_PREFIX + generateHash(HASH_LENGTH);
+    } while(_table.containsKey(hash));
+    return hash;
   }
 
   private String generateHash(int length){
