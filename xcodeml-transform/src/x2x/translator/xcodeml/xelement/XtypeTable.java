@@ -43,6 +43,7 @@ public class XtypeTable {
         _table.put(bt.getType(), bt);
       }
     }
+
     // Read fct type
     NodeList fctTypes = _baseElement.getElementsByTagName(XelementName.FCT_TYPE);
     for (int i = 0; i < fctTypes.getLength(); i++) {
@@ -54,7 +55,16 @@ public class XtypeTable {
       }
     }
 
-    // TODO read structtype object
+    // Read struct type
+    NodeList structTypes =
+      _baseElement.getElementsByTagName(XelementName.F_STRUCT_TYPE);
+    for (int i = 0; i < structTypes.getLength(); i++) {
+      Node n = structTypes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        // TODO create XstructType object and insert it in the table
+      }
+    }
   }
 
   public void add(Xtype type){

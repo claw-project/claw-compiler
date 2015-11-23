@@ -47,6 +47,7 @@ public class XelementName {
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
   public static final String F_CHAR_CONST = "FcharacterConstant";
   public static final String F_LOGICAL_CONST = "FlogicalConstant";
+  public static final String F_STRUCT_TYPE = "FstructType";
   public static final String GLOBAL_SYMBOLS = "globalSymbols";
   public static final String ID = "id";
   public static final String INDEX_RANGE = "indexRange";
