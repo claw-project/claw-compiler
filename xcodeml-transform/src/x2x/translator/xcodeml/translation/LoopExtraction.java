@@ -51,7 +51,7 @@ public class LoopExtraction implements Translation {
       allMappings.add(m.group());
     }
 
-    for(String mappingClause : allMatches){
+    for(String mappingClause : allMappings){
       System.out.println("MAPPING " + mappingClause);
       CLAWmapping mapping = new CLAWmapping(mappingClause);
       _mappings.add(mapping);
@@ -59,7 +59,7 @@ public class LoopExtraction implements Translation {
   }
 
   private boolean checkMappingInformation(){
-    
+
 
     return true; //TODO
   }
