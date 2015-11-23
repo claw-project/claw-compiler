@@ -88,6 +88,11 @@ public class LoopExtraction implements Translation {
   }
 
   public void transform(XcodeProg xcodeml){
+
+    /*
+     * DUPLICATE THE FUNCTION
+     */
+
     // Duplicate function definition
     Node cloned = _extractedFctDef.clone();
     XfctDef clonedFctDef = new XfctDef((Element)cloned);
@@ -101,13 +106,6 @@ public class LoopExtraction implements Translation {
       get(_extractedFctDef.getFctName());
     fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
-
-
-
-    Xloop loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
-
-
-
 
     // Get the fctType in typeTable
     XfctType fctType = (XfctType)_xcodeml
@@ -126,6 +124,8 @@ public class LoopExtraction implements Translation {
 
 
 
+    // Find the loop that will be extracted
+    Xloop loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
 
 
 
@@ -136,15 +136,25 @@ public class LoopExtraction implements Translation {
 
     XelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
 
-    // Demote body array references
+    /*
+     * DEMOTE ARRAY REFERENCES IN THE BODY OF THE FUNCTION
+     */
 
-    // Remove loop from body
+
+
+    /*
+     * REMOVE BODY FROM THE LOOP AND DELETE THE LOOP
+     */
+
     // 1. append body into fct body after loop
     XelementHelper.extractBody(loopInClonedFct);
     // 2. delete loop
     XelementHelper.delete(loopInClonedFct.getLoopElement());
 
 
+    /*
+     * ADAPT FUNCTION CALL
+     */
 
     // Wrap function call with loop
     wrapCallWithLoop(xcodeml, _extractedLoop.getIterationRange());
@@ -159,11 +169,13 @@ public class LoopExtraction implements Translation {
     _fctCall.setType(newFctTypeHash);
 
     // Adapt function call parameters
+
   }
 
   private void wrapCallWithLoop(XcodeProg xcodeml,
     XloopIterationRange iterationRange)
   {
+    // TODO have single method to create a loop from iterationRange
     Document document = xcodeml.getDocument();
 
     // Create the loop before the call
