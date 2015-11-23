@@ -108,18 +108,14 @@ public class CLAWxcodemlTranslator {
 
           // loop-fusion directives
           if(clawDirective == CLAWpragma.LOOP_FUSION){
-
-            // TODO find attached loop and raise error in case there is not
-            Node pragmaSibling = pragmaNode.getNextSibling();
-            while(pragmaSibling.getNodeType() != Node.ELEMENT_NODE){
-              pragmaSibling = pragmaSibling.getNextSibling();
+            Element loop = XelementHelper.findNextLoop(pragmaNode);
+            if(loop == null){
+              System.err
+                .println("loop-fusion pragma is not followed by a loop");
+              System.exit(1);
+            } else {
+              _loopFusion.add(new LoopFusion(pragmaElement, loop));
             }
-
-            Element elementSibling = (Element) pragmaSibling;
-            if(elementSibling.getTagName().equals("FdoStatement")){
-              _loopFusion.add(new LoopFusion(pragmaElement, elementSibling));
-            }
-
 
           // loop-interchange directives
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
@@ -127,11 +123,11 @@ public class CLAWxcodemlTranslator {
             if(loop == null){
               System.err
                 .println("loop-interchange pragma is not followed by a loop");
+              System.exit(1);
             } else {
                 _loopInterchange.add(
                   new LoopInterchange(pragmaElement, loop));
             }
-
 
           // loop-extract directives
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
