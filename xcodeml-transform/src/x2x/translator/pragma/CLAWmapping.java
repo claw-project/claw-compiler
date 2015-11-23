@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class CLAWmapping {
 
-  private int _mappedDimension = 0;
   private ArrayList<String> _mappedVariables = null;
   private ArrayList<String> _mappingVariables = null;
 
@@ -32,14 +31,13 @@ public class CLAWmapping {
     for(String mapping : mappings){
       _mappedVariables.add(mapping);
     }
-    _mappedDimension = _mappingVariables.size();
   }
 
   /**
-   * @return the dimension to be mapped
+   * @return the number of dimension to be mapped
    */
   public int getMappedDimension(){
-    return _mappedDimension;
+    return _mappingVariables.size();
   }
 
 }
