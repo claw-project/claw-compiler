@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml.translation;
+package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class LoopInterchange extends Xloop implements Translation {
+public class LoopInterchange extends Xloop implements Transformation {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;

@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml.translation;
+package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWmapping;
 import x2x.translator.xcodeml.xelement.*;
@@ -16,7 +16,7 @@ import java.util.regex.*;
 import xcodeml.util.XmOption;
 
 
-public class LoopExtraction implements Translation {
+public class LoopExtraction implements Transformation {
 
   protected Element _pragmaElement = null;
   protected Element _exprStmtElement = null;

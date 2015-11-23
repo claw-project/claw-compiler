@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml.translation;
+package x2x.translator.xcodeml.transformation;
 
 import java.util.ArrayList;
 
@@ -6,11 +6,11 @@ import x2x.translator.xcodeml.xelement.XcodeProg;
 
 
 
-public class IndependentTranslationGroup<T extends Translation> implements TranslationGroup<T> {
+public class IndependentTransformationGroup<T extends Transformation> implements TransformationGroup<T> {
 
   private ArrayList<T> _translations = null;
 
-  public IndependentTranslationGroup() {
+  public IndependentTransformationGroup() {
     _translations = new ArrayList<T>();
   }
 

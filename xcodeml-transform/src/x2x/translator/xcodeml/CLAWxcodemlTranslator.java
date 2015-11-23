@@ -1,7 +1,7 @@
 package x2x.translator.xcodeml;
 
 import x2x.translator.xcodeml.xelement.*;
-import x2x.translator.xcodeml.translation.*;
+import x2x.translator.xcodeml.transformation.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -33,8 +33,8 @@ public class CLAWxcodemlTranslator {
   private boolean _canTransform = false;
 
   private ArrayList<LoopFusion> _loopFusion = null;
-  private IndependentTranslationGroup<LoopInterchange> _loopInterchange = null;
-  private IndependentTranslationGroup<LoopExtraction> _loopExtract = null;
+  private IndependentTransformationGroup<LoopInterchange> _loopInterchange = null;
+  private IndependentTransformationGroup<LoopExtraction> _loopExtract = null;
   private XcodeProg _program = null;
 
   public CLAWxcodemlTranslator(String xcodemlInputFile,
@@ -43,8 +43,8 @@ public class CLAWxcodemlTranslator {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _loopFusion = new ArrayList<LoopFusion>();
-    _loopInterchange = new IndependentTranslationGroup<LoopInterchange>();
-    _loopExtract = new IndependentTranslationGroup<LoopExtraction>();
+    _loopInterchange = new IndependentTransformationGroup<LoopInterchange>();
+    _loopExtract = new IndependentTransformationGroup<LoopExtraction>();
   }
 
 

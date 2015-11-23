@@ -1,4 +1,4 @@
-package x2x.translator.xcodeml.translation;
+package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
