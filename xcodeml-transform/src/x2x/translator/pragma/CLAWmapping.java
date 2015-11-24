@@ -34,6 +34,14 @@ public class CLAWmapping {
     }
   }
 
+  public ArrayList<String> getMappingVariable(){
+    return _mappingVariables;
+  }
+
+  public ArrayList<String> getMappedVariables(){
+    return _mappedVariables;
+  }
+
   /**
    * @return the number of dimension to be mapped
    */
