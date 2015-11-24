@@ -43,6 +43,7 @@ public class XelementName {
   public static final String ATTR_VERSION = "version";
 
   // Element names
+  public static final String ARGUMENTS = "arguments";
   public static final String BASIC_TYPE = "FbasicType";
   public static final String BODY = "body";
   public static final String DECLARATIONS = "declarations";
