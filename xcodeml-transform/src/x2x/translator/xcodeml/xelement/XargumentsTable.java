@@ -4,6 +4,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * The XargumentsTable represents the arguments (7.5.3) element in XcodeML
@@ -36,6 +37,15 @@ public class XargumentsTable {
         _table.put(var.getType(), var);
       }
     }
+  }
+
+  public Xvar findArgument(String name){
+    for(String key : _table.keySet()){
+      if(_table.get(key).getValue().equals(name)){
+        return _table.get(key);
+      }
+    }
+    return null;
   }
 
   public void add(Xvar var){
