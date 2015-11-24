@@ -18,7 +18,16 @@ import org.w3c.dom.NodeList;
 
 public class XfctCall extends Xfct {
 
+  private XargumentsTable _arguments = null;
+
   public XfctCall(Element fctCallElement){
     super(fctCallElement);
+    Element arguments = XelementHelper.findFirstElement(getFctElement(),
+      XelementName.ARGUMENTS);
+    _arguments = new XargumentsTable(arguments);
+  }
+
+  public XargumentsTable getArgumentsTable(){
+    return _arguments;
   }
 }

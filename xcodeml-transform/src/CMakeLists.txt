@@ -25,6 +25,7 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/transformation/TransformationGroup.java
 
 # XcodeML.Xelement package
+  x2x/translator/xcodeml/xelement/XargumentsTable.java
   x2x/translator/xcodeml/xelement/XbasicType.java
   x2x/translator/xcodeml/xelement/Xbound.java
   x2x/translator/xcodeml/xelement/XcodeProg.java
