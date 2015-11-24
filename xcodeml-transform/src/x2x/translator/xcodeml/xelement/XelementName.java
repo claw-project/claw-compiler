@@ -8,6 +8,14 @@ public class XelementName {
   public static final String SUPPORTED_VERSION = "1.0";
   public static final String SUPPORTED_LANGUAGE = "Fortran";
 
+  // Base type (9.1)
+  public static final String TYPE_F_INT = "Fint";
+  public static final String TYPE_F_REAL = "Freal";
+  public static final String TYPE_F_COMPLEX = "Fcomplex";
+  public static final String TYPE_F_LOGICAL = "Flogical";
+  public static final String TYPE_F_CHAR = "Fcharacter";
+  public static final String TYPE_F_VOID = "Fvoid";
+
   // Element attributes
   public static final String ATTR_COMPILER_INFO = "compiler-info";
   public static final String ATTR_FILE = "file";
