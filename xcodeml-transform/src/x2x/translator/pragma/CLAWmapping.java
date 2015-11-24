@@ -45,7 +45,7 @@ public class CLAWmapping {
   /**
    * @return the number of dimension to be mapped
    */
-  public int getMappedDimension(){
+  public int getMappedDimensions(){
     return _mappingVariables.size();
   }
 
