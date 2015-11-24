@@ -24,12 +24,13 @@ public class CLAWmapping {
     String[] mappings = parts[1].split(",");
     if(vars.length == 0 || mappings.length == 0){
       // TODO throw exception mappingClause is wrong
+      System.err.println("Fatal error mapping !!");
     }
     for(String var : vars){
       _mappedVariables.add(var);
     }
     for(String mapping : mappings){
-      _mappedVariables.add(mapping);
+      _mappingVariables.add(mapping);
     }
   }
 
