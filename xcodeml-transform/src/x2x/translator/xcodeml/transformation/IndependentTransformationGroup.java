@@ -6,20 +6,10 @@ import x2x.translator.xcodeml.xelement.XcodeProg;
 
 
 
-public class IndependentTransformationGroup<T extends Transformation> implements TransformationGroup<T> {
+public class IndependentTransformationGroup<T extends Transformation> extends TransformationGroup<T> {
 
-  private ArrayList<T> _translations = null;
-
-  public IndependentTransformationGroup() {
-    _translations = new ArrayList<T>();
-  }
-
-  public int count(){
-    return _translations.size();
-  }
-
-  public void add(T translation){
-    _translations.add(translation);
+  public IndependentTransformationGroup(String name) {
+    super(name);
   }
 
   public void applyTranslations(XcodeProg xcodeml){

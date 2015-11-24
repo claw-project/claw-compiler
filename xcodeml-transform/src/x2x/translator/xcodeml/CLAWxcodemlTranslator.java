@@ -29,6 +29,7 @@ public class CLAWxcodemlTranslator {
   private DependentTransformationGroup<LoopFusion> _loopFusion = null;
   private IndependentTransformationGroup<LoopInterchange> _loopInterchange = null;
   private IndependentTransformationGroup<LoopExtraction> _loopExtract = null;
+  private ArrayList<TransformationGroup> _translations = null;
   private XcodeProg _program = null;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
@@ -38,11 +39,15 @@ public class CLAWxcodemlTranslator {
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _loopFusion = new DependentTransformationGroup<LoopFusion>();
-    _loopInterchange = new IndependentTransformationGroup<LoopInterchange>();
-    _loopExtract = new IndependentTransformationGroup<LoopExtraction>();
+    _loopFusion = new DependentTransformationGroup<LoopFusion>("loop-fusion");
+    _loopInterchange = new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
+    _loopExtract = new IndependentTransformationGroup<LoopExtraction>("loop-extract");
 
     // Add transformations
+    _translations = new ArrayList<TransformationGroup>();
+    _translations.add(_loopExtract);
+    _translations.add(_loopFusion);
+    _translations.add(_loopInterchange);
   }
 
   public void analyze() throws Exception {
@@ -139,20 +144,15 @@ public class CLAWxcodemlTranslator {
       // Do the transformation here
 
       if(XmOption.isDebugOutput()){
-        System.out.println("transform loop-fusion: "+ _loopFusion.count());
-        System.out.println("transform loop-interchange: "
-          + _loopInterchange.count());
-        System.out.println("transform loop-extract: "+ _loopExtract.count());
+        for(TransformationGroup t : _translations){
+          System.out.println("transform " + t.transformationName () + ": "
+          + t.count());
+        }
       }
 
-      // Apply loop-extract transformation
-      _loopExtract.applyTranslations(_program);
-
-      // Apply loop-fusion transformation
-      _loopFusion.applyTranslations(_program);
-
-      // Apply loop-interchange transformation
-      _loopInterchange.applyTranslations(_program);
+      for(TransformationGroup t : _translations){
+        t.applyTranslations(_program);
+      }
 
       // TODO handle the return value
       XelementHelper.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);

@@ -6,22 +6,12 @@ import x2x.translator.xcodeml.xelement.XcodeProg;
 
 
 
-public class DependentTransformationGroup<T extends Transformation> implements TransformationGroup<T> {
+public class DependentTransformationGroup<T extends Transformation> extends TransformationGroup<T> {
 
-  private ArrayList<T> _translations = null;
-
-  public DependentTransformationGroup() {
-    _translations = new ArrayList<T>();
+  public DependentTransformationGroup(String name) {
+    super(name);
   }
-
-  public int count(){
-    return _translations.size();
-  }
-
-  public void add(T translation){
-    _translations.add(translation);
-  }
-
+  
   public void applyTranslations(XcodeProg xcodeml){
     for(int i = 0; i < _translations.size(); ++i){
       T base = _translations.get(i);
