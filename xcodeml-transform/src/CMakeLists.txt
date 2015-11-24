@@ -16,7 +16,7 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/CLAWxcodemlTranslator.java
 
 # XcodeML.translation package
-  x2x/translator/xcodeml/transformation/DependentTransformation.java
+  x2x/translator/xcodeml/transformation/DependentTransformationGroup.java
   x2x/translator/xcodeml/transformation/IndependentTransformationGroup.java
   x2x/translator/xcodeml/transformation/LoopFusion.java
   x2x/translator/xcodeml/transformation/LoopInterchange.java

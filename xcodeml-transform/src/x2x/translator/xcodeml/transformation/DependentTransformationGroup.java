@@ -6,11 +6,11 @@ import x2x.translator.xcodeml.xelement.XcodeProg;
 
 
 
-public class IndependentTransformationGroup<T extends Transformation> implements TransformationGroup<T> {
+public class DependentTransformationGroup<T extends Transformation> implements TransformationGroup<T> {
 
   private ArrayList<T> _translations = null;
 
-  public IndependentTransformationGroup() {
+  public DependentTransformationGroup() {
     _translations = new ArrayList<T>();
   }
 
@@ -24,8 +24,16 @@ public class IndependentTransformationGroup<T extends Transformation> implements
 
   public void applyTranslations(XcodeProg xcodeml){
     for(int i = 0; i < _translations.size(); ++i){
-      T translation = _translations.get(i);
-      translation.transform(xcodeml, null);
+      T base = _translations.get(i);
+      for(int j = i + 1; j < _translations.size(); ++j){
+        T candidate = _translations.get(j);
+        if(candidate.isTransformed()){
+          continue;
+        }
+        if(base.canBeTransformedWith(candidate)){
+          base.transform(xcodeml, candidate);
+        }
+      }
     }
   }
 }

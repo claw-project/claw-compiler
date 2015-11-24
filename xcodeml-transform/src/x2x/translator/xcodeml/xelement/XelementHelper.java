@@ -5,7 +5,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import javax.xml.xpath.*;
+
+import java.io.File;
 
 public class XelementHelper {
 
@@ -210,6 +221,44 @@ public class XelementHelper {
 
   public static void delete(Element element){
     element.getParentNode().removeChild(element);
+  }
+
+
+  /**
+   * Write the XcodeML to file or std out
+   * @param xcodeml    The XcodeML to write in the output
+   * @param outputFile Path of the output file or null to output on std out
+   * @param indent     Number of spaces used for the indentation
+   * @return true if the output could be write without problems.
+   */
+  public static boolean writeXcodeML(XcodeProg xcodeml, String outputFile, int indent) {
+    try {
+      XelementHelper.cleanEmptyTextNodes(xcodeml.getDocument());
+      Transformer transformer
+        = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(
+                "{http://xml.apache.org/xslt}indent-amount",
+                Integer.toString(2));
+      DOMSource source = new DOMSource(xcodeml.getDocument());
+      if(outputFile == null){
+        // Output to console
+        StreamResult console = new StreamResult(System.out);
+      } else {
+        // Output to file
+        StreamResult console = new StreamResult(new File(outputFile));
+        transformer.transform(source, console);
+      }
+    } catch (TransformerConfigurationException ex){
+      // TODO move to stderr and correct error msg
+      System.out.println("Cannot output file: " + ex.getMessage());
+      return false;
+    } catch (TransformerException ex){
+      // TODO move to stderr and correct error msg
+      System.out.println("Cannot output file: " + ex.getMessage());
+      return false;
+    }
+    return true;
   }
 
   /**

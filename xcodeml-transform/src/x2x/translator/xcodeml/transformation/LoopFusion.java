@@ -7,16 +7,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-// TODO refactor to adpot Translation interface
-public class LoopFusion extends Xloop {
 
-  private boolean _merged = false;
+public class LoopFusion extends Xloop implements Transformation<LoopFusion> {
+
+  private boolean _transformed = false;
   private String _groupLabel = null;
 
   public LoopFusion(Element pragma, Element loop){
     super(pragma, loop);
     _groupLabel = CLAWpragma.getGroupOptionValue(pragma.getTextContent());
   }
+
+  public boolean analyze(XcodeProg xcodeml) {
+    return true;
+  }
+
 
   public String getGroupOptionLabel(){
     return _groupLabel;
@@ -34,7 +39,7 @@ public class LoopFusion extends Xloop {
       == null : otherLoop.getGroupOptionLabel().equals(getGroupOptionLabel()));
   }
 
-  public boolean canMergeWith(LoopFusion other){
+  public boolean canBeTransformedWith(LoopFusion other){
     if(!hasSameParentBlockWith(other)){
       return false;
     }
@@ -47,25 +52,24 @@ public class LoopFusion extends Xloop {
     return true;
   }
 
-  public boolean isMerged(){
-    return _merged;
+  public boolean isTransformed(){
+    return _transformed;
   }
 
-  public void finalizeMerge(){
+
+  public void finalizeTransformation(){
     // Remove the pragma and the loop block of the second loop
     XelementHelper.delete(_pragmaElement);
     XelementHelper.delete(_loopElement);
-    _merged = true;
+    _transformed = true;
   }
 
   /**
    * Merge the given loop with this one
    */
-  public void merge(LoopFusion loop){
+  public void transform(XcodeProg xcodeml, LoopFusion loop){
     XelementHelper.appendBody(_loopElement, loop.getLoopElement());
-    loop.finalizeMerge();
+    loop.finalizeTransformation();
   }
-
-
 
 }

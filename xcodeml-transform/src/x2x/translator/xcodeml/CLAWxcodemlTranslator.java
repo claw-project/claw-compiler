@@ -11,13 +11,7 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+
 import javax.xml.xpath.*;
 
 import java.util.*;
@@ -32,51 +26,24 @@ public class CLAWxcodemlTranslator {
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
 
-  private ArrayList<LoopFusion> _loopFusion = null;
+  private DependentTransformationGroup<LoopFusion> _loopFusion = null;
   private IndependentTransformationGroup<LoopInterchange> _loopInterchange = null;
   private IndependentTransformationGroup<LoopExtraction> _loopExtract = null;
   private XcodeProg _program = null;
+
+  private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
   public CLAWxcodemlTranslator(String xcodemlInputFile,
     String xcodemlOutputFile)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _loopFusion = new ArrayList<LoopFusion>();
+    _loopFusion = new DependentTransformationGroup<LoopFusion>();
     _loopInterchange = new IndependentTransformationGroup<LoopInterchange>();
     _loopExtract = new IndependentTransformationGroup<LoopExtraction>();
+
+    // Add transformations
   }
-
-
-
-  private void ouputXcodeML() {
-
-    try {
-      XelementHelper.cleanEmptyTextNodes(_program.getDocument());
-      Transformer transformer
-        = TransformerFactory.newInstance().newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty(
-                "{http://xml.apache.org/xslt}indent-amount",
-                Integer.toString(2));
-      DOMSource source = new DOMSource(_program.getDocument());
-      if(_xcodemlOutputFile == null){
-        // Output to console
-        StreamResult console = new StreamResult(System.out);
-      } else {
-        // Output to file
-        StreamResult console = new StreamResult(new File(_xcodemlOutputFile));
-        transformer.transform(source, console);
-      }
-    } catch (TransformerConfigurationException ex){
-      System.out.println("Cannot output file: " + ex.getMessage());
-    } catch (TransformerException ex){
-      System.out.println("Cannot output file: " + ex.getMessage());
-    }
-
-  }
-
-
 
   public void analyze() throws Exception {
     _program = new XcodeProg(_xcodemlInputFile);
@@ -114,8 +81,12 @@ public class CLAWxcodemlTranslator {
                 .println("loop-fusion pragma is not followed by a loop");
               System.exit(1);
             } else {
-              _loopFusion.add(new LoopFusion(pragmaElement, loop));
+              LoopFusion trans = new LoopFusion(pragmaElement, loop);
+              if(trans.analyze(_program)){
+                _loopFusion.add(trans);
+              }
             }
+
 
           // loop-interchange directives
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
@@ -125,21 +96,22 @@ public class CLAWxcodemlTranslator {
                 .println("loop-interchange pragma is not followed by a loop");
               System.exit(1);
             } else {
-                _loopInterchange.add(
-                  new LoopInterchange(pragmaElement, loop));
+              LoopInterchange trans = new LoopInterchange(pragmaElement, loop);
+              if(trans.analyze(_program)){
+                _loopInterchange.add(trans);
+              }
             }
 
           // loop-extract directives
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
-            Element exprStmt = XelementHelper.findNextExprStatement(pragmaNode);
-            if(exprStmt == null){
+            Element expr = XelementHelper.findNextExprStatement(pragmaNode);
+            if(expr == null){
               System.err.println("loop-extract pragma is not followed by an " +
                 "expression statment");
             } else {
-              LoopExtraction extraction =
-                new LoopExtraction(pragmaElement, exprStmt, _program);
-              if(extraction.analyze()){
-                _loopExtract.add(extraction);
+              LoopExtraction trans = new LoopExtraction(pragmaElement, expr);
+              if(trans.analyze(_program)){
+                _loopExtract.add(trans);
               }
             }
           }
@@ -151,6 +123,7 @@ public class CLAWxcodemlTranslator {
       }
     }
 
+
     // Analysis done, the transformation can be performed.
     _canTransform = true;
   }
@@ -158,44 +131,32 @@ public class CLAWxcodemlTranslator {
   public void transform() {
     try {
       if(!_canTransform){
-        ouputXcodeML();
+        // TODO handle return value
+        XelementHelper.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
         return;
       }
 
       // Do the transformation here
 
       if(XmOption.isDebugOutput()){
-        System.out.println("transform loop-fusion: "+ _loopFusion.size());
+        System.out.println("transform loop-fusion: "+ _loopFusion.count());
         System.out.println("transform loop-interchange: "
           + _loopInterchange.count());
         System.out.println("transform loop-extract: "+ _loopExtract.count());
       }
 
-
-
       // Apply loop-extract transformation
       _loopExtract.applyTranslations(_program);
 
-
       // Apply loop-fusion transformation
-      for(int i = 0; i < _loopFusion.size(); ++i){
-        LoopFusion base = _loopFusion.get(i);
-        for(int j = i+1; j < _loopFusion.size(); ++j){
-          LoopFusion candidate = _loopFusion.get(j);
-          if(candidate.isMerged()){
-            continue;
-          }
-          if(base.canMergeWith(candidate)){
-            base.merge(candidate);
-          }
-        }
-      }
+      _loopFusion.applyTranslations(_program);
 
       // Apply loop-interchange transformation
       _loopInterchange.applyTranslations(_program);
 
+      // TODO handle the return value
+      XelementHelper.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
 
-      ouputXcodeML();
     } catch (Exception ex) {
       // TODO handle exception
       System.out.println("Transformation exception: ");

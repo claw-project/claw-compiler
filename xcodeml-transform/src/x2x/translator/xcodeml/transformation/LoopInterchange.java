@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class LoopInterchange extends Xloop implements Transformation {
+public class LoopInterchange extends Xloop implements Transformation<LoopInterchange> {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
@@ -34,59 +34,59 @@ public class LoopInterchange extends Xloop implements Transformation {
     _newOrderOption = CLAWpragma.getNewOrderOptionValue(pragma.getTextContent());
   }
 
-  public void transform(XcodeProg xcodeml){
-    if(analyze()){
-      if(XmOption.isDebugOutput()){
-        System.out.println("loop-interchange transformation");
-        System.out.println("  loop 0: " + getFormattedRange());
-        System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
-        if(_loopLevel2 != null){
-          System.out.println("  loop 2: " + _loopLevel2.getFormattedRange());
-        }
-      }
+  public void transform(XcodeProg xcodeml, LoopInterchange other){
 
-      /* To perform the loop interchange, only the ranges and iteration
-       * variables are swapped
-       */
-      if(_loopLevel1 != null && _loopLevel2 == null){
-        // Loop interchange between 2 loops
-        swapLoops(this, _loopLevel1);
-      } else if (_loopLevel1 != null && _loopLevel2 != null){
-        // loop interchange between 3 loops with new-order
-        computeLoopNewPosition();
-        printTransformDebugInfo();
-
-        if(needDoubleSwap()){
-          // Case 201
-          if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
-            printTransformSwapInfo(201);
-            swapLoops(this, _loopLevel2);
-            swapLoops(this, _loopLevel1);
-          // Case 120
-          } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
-            printTransformSwapInfo(120);
-            swapLoops(this, _loopLevel2);
-            swapLoops(_loopLevel1, _loopLevel2);
-          }
-        } else {
-          // Only one loop swap is needed
-          Xloop from = null;
-          Xloop to = null;
-          if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
-            from = _loopLevel1;
-            to = _loopLevel2;
-          } else if(_loopNewPos1 == 1){ // Loop 1 stay in place 1
-            from = this;
-            to = _loopLevel2;
-          } else if(_loopNewPos2 == 2){ // Loop 2 stay in place 2
-            from = this;
-            to = _loopLevel1;
-          }
-          swapLoops(from, to);
-        }
+    if(XmOption.isDebugOutput()){
+      System.out.println("loop-interchange transformation");
+      System.out.println("  loop 0: " + getFormattedRange());
+      System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
+      if(_loopLevel2 != null){
+        System.out.println("  loop 2: " + _loopLevel2.getFormattedRange());
       }
-      _transformationDone = true;
     }
+
+    /* To perform the loop interchange, only the ranges and iteration
+     * variables are swapped
+     */
+    if(_loopLevel1 != null && _loopLevel2 == null){
+      // Loop interchange between 2 loops
+      swapLoops(this, _loopLevel1);
+    } else if (_loopLevel1 != null && _loopLevel2 != null){
+      // loop interchange between 3 loops with new-order
+      computeLoopNewPosition();
+      printTransformDebugInfo();
+
+      if(needDoubleSwap()){
+        // Case 201
+        if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
+          printTransformSwapInfo(201);
+          swapLoops(this, _loopLevel2);
+          swapLoops(this, _loopLevel1);
+        // Case 120
+        } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
+          printTransformSwapInfo(120);
+          swapLoops(this, _loopLevel2);
+          swapLoops(_loopLevel1, _loopLevel2);
+        }
+      } else {
+        // Only one loop swap is needed
+        Xloop from = null;
+        Xloop to = null;
+        if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
+          from = _loopLevel1;
+          to = _loopLevel2;
+        } else if(_loopNewPos1 == 1){ // Loop 1 stay in place 1
+          from = this;
+          to = _loopLevel2;
+        } else if(_loopNewPos2 == 2){ // Loop 2 stay in place 2
+          from = this;
+          to = _loopLevel1;
+        }
+        swapLoops(from, to);
+      }
+    }
+    _transformationDone = true;
+
   }
 
   private void printTransformDebugInfo(){
@@ -162,7 +162,7 @@ public class LoopInterchange extends Xloop implements Transformation {
   }
 
 
-  public boolean analyze(){
+  public boolean analyze(XcodeProg xcodeml){
     Element body = getBodyElement();
     getIterationVariableValue();
     Element loop = findChildLoop(body);
@@ -230,4 +230,15 @@ public class LoopInterchange extends Xloop implements Transformation {
     }
     return null;
   }
+
+  public boolean isTransformed() {
+    return true; // TODO
+  }
+
+  public boolean canBeTransformedWith(LoopInterchange other){
+    return true; // Always true as independent transformation
+  }
+
+
+
 }

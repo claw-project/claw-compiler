@@ -16,12 +16,11 @@ import java.util.regex.*;
 import xcodeml.util.XmOption;
 
 
-public class LoopExtraction implements Transformation {
+public class LoopExtraction implements Transformation<LoopExtraction> {
 
   protected Element _pragmaElement = null;
   protected Element _exprStmtElement = null;
   protected Element _fncCallStmt = null;
-  protected XcodeProg _xcodeml = null;
 
   private ArrayList<CLAWmapping> _mappings = null;
   private XfctCall _fctCall = null;
@@ -31,10 +30,9 @@ public class LoopExtraction implements Transformation {
 
   private XfctDef _copiedFctDef = null;
 
-  public LoopExtraction(Element pragma, Element exprStmt, XcodeProg xcodemlDoc) {
+  public LoopExtraction(Element pragma, Element exprStmt) {
     _pragmaElement = pragma;
     _exprStmtElement = exprStmt;
-    _xcodeml = xcodemlDoc;
     _mappings = new ArrayList<CLAWmapping>();
     extractMappingInformation();
   }
@@ -64,7 +62,7 @@ public class LoopExtraction implements Transformation {
     return true; //TODO
   }
 
-  public boolean analyze(){
+  public boolean analyze(XcodeProg xcodeml){
     // Find function CALL
     Element fctCallElement = findFctCall();
     if(fctCallElement == null){
@@ -82,7 +80,7 @@ public class LoopExtraction implements Transformation {
 
     // Find function declaration
     _extractedFctDef = XelementHelper.findFunctionDefinition(
-      _xcodeml.getDocument(), _fctCall);
+      xcodeml.getDocument(), _fctCall);
 
     if(_extractedFctDef == null){
       System.err.println("Could not locate the function definition for: "
@@ -107,7 +105,7 @@ public class LoopExtraction implements Transformation {
     return true;
   }
 
-  public void transform(XcodeProg xcodeml){
+  public void transform(XcodeProg xcodeml, LoopExtraction other){
 
     /*
      * DUPLICATE THE FUNCTION
@@ -118,7 +116,7 @@ public class LoopExtraction implements Transformation {
     XfctDef clonedFctDef = new XfctDef((Element)cloned);
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     // TODO new name should be generated and unique
-    String newFctName = clonedFctDef.getFctName() + "_claw";
+    String newFctName = clonedFctDef.getFctName() + "_extracted";
     clonedFctDef.updateName(newFctName);
     clonedFctDef.updateType(newFctTypeHash);
     // Update the symbol table in the fct definition
@@ -128,19 +126,19 @@ public class LoopExtraction implements Transformation {
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
-    XfctType fctType = (XfctType)_xcodeml
+    XfctType fctType = (XfctType)xcodeml
       .getTypeTable().get(_extractedFctDef.getFctType());
     XfctType newFctType = fctType.cloneObject();
     newFctType.setType(newFctTypeHash);
-    _xcodeml.getTypeTable().add(newFctType);
+    xcodeml.getTypeTable().add(newFctType);
 
     // Get the id from the global symbols table
-    Xid globalFctId = _xcodeml.getGlobalSymbolsTable()
+    Xid globalFctId = xcodeml.getGlobalSymbolsTable()
       .get(_extractedFctDef.getFctName());
     Xid newFctId = globalFctId.cloneObject();
     newFctId.setType(newFctTypeHash);
     newFctId.setName(newFctName);
-    _xcodeml.getGlobalSymbolsTable().add(newFctId);
+    xcodeml.getGlobalSymbolsTable().add(newFctId);
 
 
 
@@ -255,6 +253,14 @@ public class LoopExtraction implements Transformation {
       }
     }
     return null;
+  }
+
+  public boolean isTransformed() {
+    return true; // TODO
+  }
+
+  public boolean canBeTransformedWith(LoopExtraction other){
+    return true; // Always true as independent transformation
   }
 
 }
