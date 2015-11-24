@@ -44,6 +44,7 @@ public class XelementName {
 
   // Element names
   public static final String ARGUMENTS = "arguments";
+  public static final String ARRAY_INDEX = "arrayIndex";
   public static final String BASIC_TYPE = "FbasicType";
   public static final String BODY = "body";
   public static final String DECLARATIONS = "declarations";
@@ -51,6 +52,7 @@ public class XelementName {
   public static final String EXPR_STMT = "exprStatement";
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String FCT_TYPE = "FfunctionType";
+  public static final String F_ARRAY_REF = "FarrayRef";
   public static final String F_INT_CONST = "FintConstant";
   public static final String F_REAL_CONST = "FrealConstant";
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
@@ -71,6 +73,7 @@ public class XelementName {
   public static final String UPPER_BOUND = "upperBound";
   public static final String VAR = "Var";
   public static final String VAR_DECL = "varDecl";
+  public static final String VAR_REF = "varRef";
   public static final String VALUE = "value";
   public static final String X_CODE_PROGRAM = "XcodeProgram";
 
