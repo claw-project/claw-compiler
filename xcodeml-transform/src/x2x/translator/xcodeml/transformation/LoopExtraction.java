@@ -46,7 +46,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     Matcher m = Pattern.compile("map\\(([^:]*:.)\\)")
      .matcher(_pragmaElement.getTextContent());
     while (m.find()) {
-      allMappings.add(m.group());
+      allMappings.add(m.group(1));
     }
 
     for(String mappingClause : allMappings){
@@ -187,6 +187,32 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     _fctCall.setType(newFctTypeHash);
 
     // Adapt function call parameters
+    XargumentsTable args = _fctCall.getArgumentsTable();
+    for(CLAWmapping mapping : _mappings){
+      System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
+      for(String var : mapping.getMappedVariables()){
+        System.out.println("  Var: " + var);
+        Xvar argument = args.findArgument(var);
+        if(argument != null){
+          System.out.println("  arg found: " + argument.getType());
+          XbasicType type = (XbasicType)xcodeml.getTypeTable().get(argument.getType());
+
+          System.out.println("  ref: " + type.getRef());
+          System.out.println("  dimensions: " + type.getDimensions());
+          if(type.getDimensions() < mapping.getMappedDimensions()){
+            // TODO problem !!!! demotion to big
+          }
+
+          if(type.getDimensions() == mapping.getMappedDimensions()){
+            // Type is reduce to reference
+
+          }
+
+        }
+      }
+    }
+
+
 
   }
 
