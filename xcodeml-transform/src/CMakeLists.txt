@@ -50,6 +50,7 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/xelement/XtypeTable.java
   x2x/translator/xcodeml/xelement/Xvar.java
   x2x/translator/xcodeml/xelement/XvarDecl.java
+  x2x/translator/xcodeml/xelement/XvarRef.java
 
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
