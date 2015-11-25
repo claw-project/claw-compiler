@@ -1,0 +1,207 @@
+<XcodeProgram source="original_code.f90"
+              language="Fortran"
+              time="2015-11-25 14:47:59"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FbasicType type="A7fca03c07980" ref="Fint">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fca03c08230" ref="Fint">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fca03c0a560" ref="Fint">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fca03c0ad10" ref="Fint">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="C7fca03c0d3c0" ref="Fcharacter">
+      <len>
+        <FintConstant type="Fint">8</FintConstant>
+      </len>
+    </FbasicType>
+    <FbasicType type="C7fca03c0e390" ref="Fcharacter">
+      <len>
+        <FintConstant type="Fint">8</FintConstant>
+      </len>
+    </FbasicType>
+    <FfunctionType type="F7fca03c070d0" return_type="Fvoid" is_program="true"/>
+    <FfunctionType type="F7fca03c08d80" return_type="Fvoid">
+      <params>
+        <name type="A7fca03c0a560">value1</name>
+        <name type="A7fca03c0ad10">value2</name>
+      </params>
+    </FfunctionType>
+  </typeTable>
+  <globalSymbols>
+    <id type="F7fca03c070d0" sclass="ffunc">
+      <name>loop_extract</name>
+    </id>
+    <id type="F7fca03c08d80" sclass="ffunc">
+      <name>clawloop</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition lineno="3" file="original_code.f90">
+      <name type="F7fca03c070d0">loop_extract</name>
+      <symbols>
+        <id type="A7fca03c07980" sclass="flocal">
+          <name>value1</name>
+        </id>
+        <id type="A7fca03c08230" sclass="flocal">
+          <name>value2</name>
+        </id>
+        <id type="F7fca03c08d80" sclass="ffunc">
+          <name>clawloop</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="4" file="original_code.f90">
+          <name type="A7fca03c07980">value1</name>
+        </varDecl>
+        <varDecl lineno="5" file="original_code.f90">
+          <name type="A7fca03c08230">value2</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FpragmaStatement lineno="8" file="original_code.f90">claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)</FpragmaStatement>
+        <exprStatement lineno="9" file="original_code.f90">
+          <functionCall type="Fvoid">
+            <name type="F7fca03c08d80">clawloop</name>
+            <arguments>
+              <Var type="A7fca03c07980" scope="local">value1</Var>
+              <Var type="A7fca03c08230" scope="local">value2</Var>
+            </arguments>
+          </functionCall>
+        </exprStatement>
+      </body>
+    </FfunctionDefinition>
+    <FfunctionDefinition lineno="12" file="original_code.f90">
+      <name type="F7fca03c08d80">clawloop</name>
+      <symbols>
+        <id type="F7fca03c08d80" sclass="ffunc">
+          <name>clawloop</name>
+        </id>
+        <id type="A7fca03c0a560" sclass="fparam">
+          <name>value1</name>
+        </id>
+        <id type="A7fca03c0ad10" sclass="fparam">
+          <name>value2</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>i</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>istart</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>iend</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="13" file="original_code.f90">
+          <name type="A7fca03c0a560">value1</name>
+        </varDecl>
+        <varDecl lineno="14" file="original_code.f90">
+          <name type="A7fca03c0ad10">value2</name>
+        </varDecl>
+        <varDecl lineno="15" file="original_code.f90">
+          <name type="Fint">i</name>
+        </varDecl>
+        <varDecl lineno="16" file="original_code.f90">
+          <name type="Fint">istart</name>
+          <value>
+            <FintConstant type="Fint">1</FintConstant>
+          </value>
+        </varDecl>
+        <varDecl lineno="17" file="original_code.f90">
+          <name type="Fint">iend</name>
+          <value>
+            <FintConstant type="Fint">10</FintConstant>
+          </value>
+        </varDecl>
+      </declarations>
+      <body>
+        <FdoStatement lineno="19" file="original_code.f90">
+          <Var type="Fint" scope="local">i</Var>
+          <indexRange>
+            <lowerBound>
+              <Var type="Fint" scope="local">istart</Var>
+            </lowerBound>
+            <upperBound>
+              <Var type="Fint" scope="local">iend</Var>
+            </upperBound>
+            <step>
+              <FintConstant type="Fint">1</FintConstant>
+            </step>
+          </indexRange>
+          <body>
+            <FprintStatement format="*" lineno="20" file="original_code.f90">
+              <valueList>
+                <value>
+                  <FcharacterConstant type="C7fca03c0d3c0">value1: </FcharacterConstant>
+                </value>
+                <value>
+                  <FarrayRef type="Fint">
+                    <varRef type="A7fca03c0a560">
+                      <Var type="A7fca03c0a560" scope="local">value1</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">i</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                </value>
+              </valueList>
+            </FprintStatement>
+            <FprintStatement format="*" lineno="21" file="original_code.f90">
+              <valueList>
+                <value>
+                  <FcharacterConstant type="C7fca03c0e390">value2: </FcharacterConstant>
+                </value>
+                <value>
+                  <FarrayRef type="Fint">
+                    <varRef type="A7fca03c0ad10">
+                      <Var type="A7fca03c0ad10" scope="local">value2</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">i</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                </value>
+              </valueList>
+            </FprintStatement>
+          </body>
+        </FdoStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>

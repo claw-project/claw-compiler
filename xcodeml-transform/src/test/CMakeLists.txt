@@ -28,6 +28,7 @@ add_jar(omni-cx2x-unittest
   helper/XmlHelper.java
   xelement/XidTest.java
   xelement/XvarTest.java
+  xelement/XcodeProgTest.java
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 
@@ -37,5 +38,5 @@ get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
 
 add_junit_test(xelement
    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-   TESTS xelement.XidTest xelement.XvarTest
+   TESTS xelement.XidTest xelement.XvarTest xelement.XcodeProgTest
 )
