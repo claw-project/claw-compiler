@@ -25,10 +25,6 @@ public class Xvar {
     readElementInformation();
   }
 
-  public Node clone(){
-    return _varElement.cloneNode(true);
-  }
-
   public void setValue(String value){
     if(_varElement != null){
       _varElement.setTextContent(value);
@@ -66,6 +62,15 @@ public class Xvar {
     _type = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_TYPE);
     _scope = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
     _identity = _varElement.getTextContent();
+  }
+
+  public Node clone(){
+    return _varElement.cloneNode(true);
+  }
+
+  public Xvar cloneObject(){
+    Node clone = clone();
+    return new Xvar((Element)clone);
   }
 
   @Override

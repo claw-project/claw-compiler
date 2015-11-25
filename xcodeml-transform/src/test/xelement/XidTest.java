@@ -34,14 +34,19 @@ public class XidTest {
 
   @Test
   public void setElementInformationTest() {
-    Xid simpleId = createSimpleXid();
-    simpleId.setName(ALT_TEST_NAME);
-    simpleId.setType(ALT_TEST_TYPE);
-    simpleId.setSclass(ALT_TEST_SCLASS);
+    Xid element = createSimpleXid();
+    element.setName(ALT_TEST_NAME);
+    element.setType(ALT_TEST_TYPE);
+    element.setSclass(ALT_TEST_SCLASS);
 
-    assertEquals(ALT_TEST_NAME, simpleId.getName());
-    assertEquals(ALT_TEST_TYPE, simpleId.getType());
-    assertEquals(ALT_TEST_SCLASS, simpleId.getSclass());
+    assertEquals(ALT_TEST_NAME, element.getName());
+    assertEquals(ALT_TEST_TYPE, element.getType());
+    assertEquals(ALT_TEST_SCLASS, element.getSclass());
+
+    Xid clone = element.cloneObject();
+    assertEquals(ALT_TEST_NAME, clone.getName());
+    assertEquals(ALT_TEST_TYPE, clone.getType());
+    assertEquals(ALT_TEST_SCLASS, clone.getSclass());
   }
 
 

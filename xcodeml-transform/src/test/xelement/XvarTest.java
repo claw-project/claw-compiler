@@ -42,6 +42,11 @@ public class XvarTest {
     assertEquals(ALT_TEST_VALUE, element.getValue());
     assertEquals(ALT_TEST_TYPE, element.getType());
     assertEquals(ALT_TEST_SCOPE, element.getScope());
+
+    Xvar clone = element.cloneObject();
+    assertEquals(ALT_TEST_VALUE, clone.getValue());
+    assertEquals(ALT_TEST_TYPE, clone.getType());
+    assertEquals(ALT_TEST_SCOPE, clone.getScope());
   }
 
 }
