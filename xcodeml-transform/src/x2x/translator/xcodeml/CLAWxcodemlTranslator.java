@@ -26,9 +26,9 @@ public class CLAWxcodemlTranslator {
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
 
-  private DependentTransformationGroup<LoopFusion> _loopFusion = null;
-  private IndependentTransformationGroup<LoopInterchange> _loopInterchange = null;
-  private IndependentTransformationGroup<LoopExtraction> _loopExtract = null;
+  private TransformationGroup<LoopFusion> _loopFusion = null;
+  private TransformationGroup<LoopInterchange> _loopInterchange = null;
+  private TransformationGroup<LoopExtraction> _loopExtract = null;
   private ArrayList<TransformationGroup> _translations = null;
   private XcodeProg _program = null;
 
@@ -43,7 +43,7 @@ public class CLAWxcodemlTranslator {
     _loopInterchange = new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
     _loopExtract = new IndependentTransformationGroup<LoopExtraction>("loop-extract");
 
-    // Add transformations
+    // Add transformations (order of insertion is the one that will be applied)
     _translations = new ArrayList<TransformationGroup>();
     _translations.add(_loopExtract);
     _translations.add(_loopFusion);
