@@ -1,0 +1,40 @@
+include(junit.cmake)
+
+set(JUNIT_VERSION "4.12")
+set(HAMCREST_VERSION "1.3")
+
+set(OMNICX2X ${PROJECT_BINARY_DIR}/build/omni-cx2x.jar)
+set(JUNIT_JAR /usr/local/lib/junit-${JUNIT_VERSION}.jar)
+set(HAMCREST_JAR /usr/local/lib/hamcrest-core-${HAMCREST_VERSION}.jar)
+
+if(NOT EXISTS ${JUNIT_JAR})
+  message( FATAL_ERROR "JUnit jar is not present (${JUNIT_JAR}). CMake will exit." )
+endif()
+
+if(NOT EXISTS ${HAMCREST_JAR})
+  message( FATAL_ERROR "Hamcrest jar is not present (${HAMCREST_JAR}). CMake will exit." )
+endif()
+
+enable_testing()
+
+set(CMAKE_JAVA_INCLUDE_PATH
+  ${OMNICX2X}
+  ${JUNIT_JAR}
+  ${HAMCREST_JAR}
+  ${SAMPLE_JAVA_MAIN_SOURCE_DIR}/${SAMPLE_JAR}
+)
+
+add_jar(omni-cx2x-unittest
+  helper/XmlHelper.java
+  xelement/XidTest.java
+  OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
+)
+
+get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
+
+# Add unit test classes
+
+add_junit_test(xidtest
+   CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+   TESTS xelement.XidTest
+)

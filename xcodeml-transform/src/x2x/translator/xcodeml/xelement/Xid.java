@@ -52,12 +52,23 @@ public class Xid {
     }
   }
 
+  public void setSclass(String value){
+    if(_idElement != null){
+      _idElement.setAttribute(XelementName.ATTR_SCLASS, value);
+      _sclass = value;
+    }
+  }
+
   public String getName(){
     return _name;
   }
 
   public String getType() {
     return _type;
+  }
+
+  public String getSclass(){
+    return _sclass;
   }
 
   public Node clone(){

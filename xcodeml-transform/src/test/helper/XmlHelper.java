@@ -1,0 +1,34 @@
+package helper;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.xml.sax.InputSource;
+
+public class XmlHelper {
+
+  public static Document loadXMLFromString(String xml) {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      InputSource is = new InputSource(new StringReader(xml));
+      return builder.parse(is);
+    } catch(Exception ex){
+      return null;
+    }
+  }
+
+  public static Element getElementFromString(String xml){
+    Document doc = loadXMLFromString(xml);
+    if(doc != null){
+      return doc.getDocumentElement();
+    }
+    return null;
+  }
+
+}
