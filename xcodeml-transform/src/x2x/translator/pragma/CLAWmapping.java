@@ -34,7 +34,7 @@ public class CLAWmapping {
     }
   }
 
-  public ArrayList<String> getMappingVariable(){
+  public ArrayList<String> getMappingVariables(){
     return _mappingVariables;
   }
 
