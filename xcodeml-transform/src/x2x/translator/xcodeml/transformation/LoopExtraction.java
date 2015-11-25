@@ -190,7 +190,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     XargumentsTable args = _fctCall.getArgumentsTable();
     for(CLAWmapping mapping : _mappings){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
+
       for(String var : mapping.getMappedVariables()){
+
         System.out.println("  Var: " + var);
         Xvar argument = args.findArgument(var);
         if(argument != null){
@@ -199,18 +201,39 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
           System.out.println("  ref: " + type.getRef());
           System.out.println("  dimensions: " + type.getDimensions());
+
+          // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()){
             // TODO problem !!!! demotion to big
           }
 
-          if(type.getDimensions() == mapping.getMappedDimensions()){
-            // Type is reduce to reference
-
+          //
+          for(String mappingVar : mapping.getMappingVariables()){
+            
           }
+
 
         }
       }
     }
+
+    /* TODO
+     * Demotion possibility
+     * 1. Var --> ArrayRef
+     * 2. ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
+     *
+     * Var --> ArrayRef transformation
+     * 1. Check that the variable used as array index exists in the current
+     *    scope (XdeclTable). If so, get its type value. Create a Var element
+     *    for the arrayIndex. Create the arrayIndex element with Var as child.
+     *
+     * 2. Get the reference type of the base variable.
+     *    2.1 Create the varRef element with the type of base variable
+     *    2.2 insert clone of base variable in varRef
+     * 3. Create arrayRef element with varRef + arrayIndex
+     */
+
+
 
 
 
