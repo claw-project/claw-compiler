@@ -53,6 +53,7 @@ add_jar(omni-cx2x
   x2x/translator/xcodeml/xelement/XloopIterationRange.java
   x2x/translator/xcodeml/xelement/Xname.java
   x2x/translator/xcodeml/xelement/XrealConstant.java
+  x2x/translator/xcodeml/xelement/Xscope.java
   x2x/translator/xcodeml/xelement/Xstep.java
   x2x/translator/xcodeml/xelement/XsymbolTable.java
   x2x/translator/xcodeml/xelement/Xtype.java

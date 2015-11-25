@@ -10,7 +10,7 @@ import org.w3c.dom.NodeList;
  *
  * Elements: the base element can contains text data
  * Attributes:
- * - Required: scope (text: local, global, param) // TODO move to enum
+ * - Required: scope (Xscope: LOCAL, GLOBAL, PARAM)
  * - Optional: type (text)
  */
 
@@ -18,7 +18,7 @@ public class Xvar {
   private Element _varElement = null;
   private String _identity = null;
   private String _type = null;
-  private String _scope = null;
+  private Xscope _scope = null;
 
   public Xvar(Element var){
     _varElement = var;
@@ -39,9 +39,9 @@ public class Xvar {
     }
   }
 
-  public void setScope(String value){
+  public void setScope(Xscope value){
     if(_varElement != null){
-      _varElement.setAttribute(XelementName.ATTR_SCOPE, value);
+      _varElement.setAttribute(XelementName.ATTR_SCOPE, value.toString());
       _scope = value;
     }
   }
@@ -50,7 +50,7 @@ public class Xvar {
     return _identity;
   }
 
-  public String getScope(){
+  public Xscope getScope(){
     return _scope;
   }
 
@@ -60,7 +60,8 @@ public class Xvar {
 
   private void readElementInformation(){
     _type = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_TYPE);
-    _scope = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
+    String scope = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
+    _scope = Xscope.fromString(scope);
     _identity = _varElement.getTextContent();
   }
 

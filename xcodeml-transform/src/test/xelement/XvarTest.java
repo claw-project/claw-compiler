@@ -8,14 +8,15 @@ import org.w3c.dom.Element;
 import helper.XmlHelper;
 
 import x2x.translator.xcodeml.xelement.Xvar;
+import x2x.translator.xcodeml.xelement.Xscope;
 
 public class XvarTest {
   private static final String TEST_TYPE = "Fint";
-  private static final String TEST_SCOPE = "local";
+  private static final Xscope TEST_SCOPE = Xscope.LOCAL;
   private static final String TEST_VALUE = "i";
 
   private static final String ALT_TEST_TYPE = "F7f81a04070d0";
-  private static final String ALT_TEST_SCOPE = "global";
+  private static final Xscope ALT_TEST_SCOPE = Xscope.GLOBAL;
   private static final String ALT_TEST_VALUE = "j";
 
   private Xvar createSimpleXvar(){

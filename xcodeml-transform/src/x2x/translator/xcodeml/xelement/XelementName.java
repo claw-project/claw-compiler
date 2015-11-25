@@ -16,6 +16,11 @@ public class XelementName {
   public static final String TYPE_F_CHAR = "Fcharacter";
   public static final String TYPE_F_VOID = "Fvoid";
 
+  // Scope
+  public static final String SCOPE_LOCAL = "local";
+  public static final String SCOPE_GLOBAL = "global";
+  public static final String SCOPE_PARAM = "param";
+
   // Element attributes
   public static final String ATTR_COMPILER_INFO = "compiler-info";
   public static final String ATTR_FILE = "file";
