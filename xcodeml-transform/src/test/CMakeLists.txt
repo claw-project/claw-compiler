@@ -27,6 +27,7 @@ set(CMAKE_JAVA_INCLUDE_PATH
 add_jar(omni-cx2x-unittest
   helper/XmlHelper.java
   xelement/XidTest.java
+  xelement/XvarTest.java
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 
@@ -34,7 +35,7 @@ get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
 
 # Add unit test classes
 
-add_junit_test(xidtest
+add_junit_test(xelement
    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-   TESTS xelement.XidTest
+   TESTS xelement.XidTest xelement.XvarTest
 )

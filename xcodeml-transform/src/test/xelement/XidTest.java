@@ -18,17 +18,15 @@ public class XidTest {
   private static final String ALT_TEST_SCLASS = "auto";
   private static final String ALT_TEST_NAME = "func_name";
 
-  private Xid createXidFromString(){
+  private Xid createSimpleXid(){
     String simpleIdElement = "<id type=\"" + TEST_TYPE + "\" sclass=\"" +
       TEST_SCLASS + "\"><name>" + TEST_NAME + "</name></id>";
-    Element id = XmlHelper.getElementFromString(simpleIdElement);
-    assertNotNull(id);
-    return new Xid(id);
+    return XmlHelper.createXidFromString(simpleIdElement);
   }
 
   @Test
   public void readElementInformationTest() {
-    Xid simpleId = createXidFromString();
+    Xid simpleId = createSimpleXid();
     assertEquals(TEST_NAME, simpleId.getName());
     assertEquals(TEST_TYPE, simpleId.getType());
     assertEquals(TEST_SCLASS, simpleId.getSclass());
@@ -36,7 +34,7 @@ public class XidTest {
 
   @Test
   public void setElementInformationTest() {
-    Xid simpleId = createXidFromString();
+    Xid simpleId = createSimpleXid();
     simpleId.setName(ALT_TEST_NAME);
     simpleId.setType(ALT_TEST_TYPE);
     simpleId.setSclass(ALT_TEST_SCLASS);

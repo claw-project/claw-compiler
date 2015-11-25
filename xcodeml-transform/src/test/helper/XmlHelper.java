@@ -1,5 +1,7 @@
 package helper;
 
+import static org.junit.Assert.*;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -9,6 +11,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.xml.sax.InputSource;
+
+import x2x.translator.xcodeml.xelement.Xid;
+import x2x.translator.xcodeml.xelement.Xvar;
+
+
 
 public class XmlHelper {
 
@@ -29,6 +36,18 @@ public class XmlHelper {
       return doc.getDocumentElement();
     }
     return null;
+  }
+
+  public static Xid createXidFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xid(el);
+  }
+
+  public static Xvar createXvarFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xvar(el);
   }
 
 }

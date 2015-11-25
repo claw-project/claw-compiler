@@ -29,6 +29,27 @@ public class Xvar {
     return _varElement.cloneNode(true);
   }
 
+  public void setValue(String value){
+    if(_varElement != null){
+      _varElement.setTextContent(value);
+      _identity = value;
+    }
+  }
+
+  public void setType(String value){
+    if(_varElement != null){
+      _varElement.setAttribute(XelementName.ATTR_TYPE, value);
+      _type = value;
+    }
+  }
+
+  public void setScope(String value){
+    if(_varElement != null){
+      _varElement.setAttribute(XelementName.ATTR_SCOPE, value);
+      _scope = value;
+    }
+  }
+
   public String getValue(){
     return _identity;
   }
