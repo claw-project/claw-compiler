@@ -21,4 +21,8 @@ public class XarrayIndex {
   public XarrayIndex(Element element){
     _element = element;
   }
+
+  public Element getRawElement(){
+    return _element;
+  }
 }

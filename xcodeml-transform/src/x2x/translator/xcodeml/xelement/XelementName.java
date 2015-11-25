@@ -31,6 +31,7 @@ public class XelementName {
   public static final String ATTR_IS_PUBLIC = "is_public";
   public static final String ATTR_IS_SAVE = "is_save";
   public static final String ATTR_IS_TARGET = "is_target";
+  public static final String ATTR_KIND = "kind";
   public static final String ATTR_LANGUAGE = "language";
   public static final String ATTR_LINENO = "lineno";
   public static final String ATTR_REF = "ref";

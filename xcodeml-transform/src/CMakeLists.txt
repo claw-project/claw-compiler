@@ -1,7 +1,12 @@
 set(CMAKE_JAVA_INCLUDE_PATH ../../../omni-compiler/XcodeML-Common/build/om-common.jar ../../../omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar )
 
-add_jar(omni-x2x
+set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
+
+add_jar(omni-cx2x
+# Base class
   x2x/ClawX2X.java
+
+# xobject package
   x2x/translator/xobject/CLAWblockVisitor.java
   x2x/translator/xobject/CLAWglobalDecl.java
   x2x/translator/xobject/CLAWtranslator.java
@@ -31,7 +36,9 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/xelement/XbasicType.java
   x2x/translator/xcodeml/xelement/Xbound.java
   x2x/translator/xcodeml/xelement/XcodeProg.java
+  x2x/translator/xcodeml/xelement/Xconstant.java
   x2x/translator/xcodeml/xelement/XdeclTable.java
+  x2x/translator/xcodeml/xelement/XexprModel.java
   x2x/translator/xcodeml/xelement/XelementHelper.java
   x2x/translator/xcodeml/xelement/XelementName.java
   x2x/translator/xcodeml/xelement/Xfct.java
@@ -39,11 +46,13 @@ add_jar(omni-x2x
   x2x/translator/xcodeml/xelement/XfctCall.java
   x2x/translator/xcodeml/xelement/XfctType.java
   x2x/translator/xcodeml/xelement/Xid.java
+  x2x/translator/xcodeml/xelement/XintConstant.java
   x2x/translator/xcodeml/xelement/XindexRange.java
   x2x/translator/xcodeml/xelement/Xkind.java
   x2x/translator/xcodeml/xelement/Xloop.java
   x2x/translator/xcodeml/xelement/XloopIterationRange.java
   x2x/translator/xcodeml/xelement/Xname.java
+  x2x/translator/xcodeml/xelement/XrealConstant.java
   x2x/translator/xcodeml/xelement/Xstep.java
   x2x/translator/xcodeml/xelement/XsymbolTable.java
   x2x/translator/xcodeml/xelement/Xtype.java
@@ -54,3 +63,5 @@ add_jar(omni-x2x
 
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
+
+add_subdirectory(test)
