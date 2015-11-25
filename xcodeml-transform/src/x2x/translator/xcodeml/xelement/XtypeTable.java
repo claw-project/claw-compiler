@@ -67,6 +67,10 @@ public class XtypeTable {
     }
   }
 
+  public int count(){
+    return _table.size();
+  }
+
   public void add(Xtype type){
     _baseElement.appendChild(type.clone());
     _table.put(type.getType(), type);

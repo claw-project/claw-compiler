@@ -36,6 +36,10 @@ public class XsymbolTable {
     }
   }
 
+  public int count(){
+    return _table.size();
+  }
+
   public void add(Xid id){
     _baseElement.appendChild(id.clone());
     _table.put(id.getName(), id);

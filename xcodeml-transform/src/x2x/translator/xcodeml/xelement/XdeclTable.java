@@ -64,4 +64,8 @@ public class XdeclTable {
   public XvarDecl get(String key){
     return _table.get(key);
   }
+
+  public int count(){
+    return _table.size();
+  }
 }
