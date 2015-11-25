@@ -6,7 +6,7 @@ import x2x.translator.xcodeml.xelement.XcodeProg;
 
 
 
-public class IndependentTransformationGroup<T extends Transformation> extends TransformationGroup<T> {
+public class IndependentTransformationGroup<T extends Transformation<? super T>> extends TransformationGroup<T> {
 
   public IndependentTransformationGroup(String name) {
     super(name);
