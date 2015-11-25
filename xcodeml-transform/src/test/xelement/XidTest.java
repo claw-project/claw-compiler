@@ -10,34 +10,40 @@ import helper.XmlHelper;
 import x2x.translator.xcodeml.xelement.Xid;
 
 public class XidTest {
+  private static final String TEST_TYPE = "F7f9502e03d00";
+  private static final String TEST_SCLASS = "ffunc";
+  private static final String TEST_NAME = "loop_extract";
 
+  private static final String ALT_TEST_TYPE = "F7f81a04070d0";
+  private static final String ALT_TEST_SCLASS = "auto";
+  private static final String ALT_TEST_NAME = "func_name";
 
   private Xid createXidFromString(){
-    String simpleIdElement = "<id type=\"F7f9502e03d00\" sclass=\"ffunc\"><name>loop_extract</name></id>";
+    String simpleIdElement = "<id type=\"" + TEST_TYPE + "\" sclass=\"" +
+      TEST_SCLASS + "\"><name>" + TEST_NAME + "</name></id>";
     Element id = XmlHelper.getElementFromString(simpleIdElement);
     assertNotNull(id);
     return new Xid(id);
   }
 
-
   @Test
   public void readElementInformationTest() {
     Xid simpleId = createXidFromString();
-    assertEquals("loop_extract", simpleId.getName());
-    assertEquals("F7f9502e03d00", simpleId.getType());
-    assertEquals("ffunc", simpleId.getSclass());
+    assertEquals(TEST_NAME, simpleId.getName());
+    assertEquals(TEST_TYPE, simpleId.getType());
+    assertEquals(TEST_SCLASS, simpleId.getSclass());
   }
 
   @Test
   public void setElementInformationTest() {
     Xid simpleId = createXidFromString();
-    simpleId.setName("new_name");
-    simpleId.setType("new_type");
-    simpleId.setSclass("auto");
+    simpleId.setName(ALT_TEST_NAME);
+    simpleId.setType(ALT_TEST_TYPE);
+    simpleId.setSclass(ALT_TEST_SCLASS);
 
-    assertEquals("new_name", simpleId.getName());
-    assertEquals("new_type", simpleId.getType());
-    assertEquals("auto", simpleId.getSclass());
+    assertEquals(ALT_TEST_NAME, simpleId.getName());
+    assertEquals(ALT_TEST_TYPE, simpleId.getType());
+    assertEquals(ALT_TEST_SCLASS, simpleId.getSclass());
   }
 
 
