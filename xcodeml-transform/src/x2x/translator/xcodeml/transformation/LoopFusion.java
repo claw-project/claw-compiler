@@ -56,6 +56,9 @@ public class LoopFusion implements Transformation<LoopFusion> {
   }
 
   public boolean canBeTransformedWith(LoopFusion other){
+    if(_transformed || other.isTransformed()){
+      return false;
+    }
     if(!hasSameParentBlockWith(other)){
       return false;
     }
