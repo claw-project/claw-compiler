@@ -59,7 +59,7 @@ public class LoopFusion extends XdoStatement implements Transformation<LoopFusio
 
   public void finalizeTransformation(){
     // Remove the pragma and the loop block of the second loop
-    XelementHelper.delete(_pragmaElement);
+    XelementHelper.delete(getPragma().getBaseElement());
     XelementHelper.delete(baseElement);
     _transformed = true;
   }

@@ -25,4 +25,8 @@ public class XbaseElement {
     }
     return null;
   }
+
+  public String getData(){
+    return baseElement.getTextContent();
+  }
 }

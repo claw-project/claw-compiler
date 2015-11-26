@@ -169,7 +169,7 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
       return false;
     }
 
-    _loopLevel1 = new XdoStatement(_pragmaElement, loop);
+    _loopLevel1 = new XdoStatement(getPragma().getBaseElement(), loop);
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
@@ -181,7 +181,7 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
 
       Element loop1Body = _loopLevel1.getBodyElement();
       Element loop2 = findChildLoop(loop1Body);
-      _loopLevel2 = new XdoStatement(_pragmaElement, loop2);
+      _loopLevel2 = new XdoStatement(getPragma().getBaseElement(), loop2);
 
       _baseLoop0 = this.getIterationVariableValue();
       _baseLoop1 = _loopLevel1.getIterationVariableValue();
@@ -210,8 +210,8 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
 
 
   private void abort(String message){
-    System.err.println("claw-error: " + message + ", " + getOriginalFilename()
-      + ":" + getPragmaLine());
+    System.err.println("claw-error: " + message + ", " + getPragma().getFilename()
+      + ":" + getPragma().getLine());
     System.exit(1);
   }
 

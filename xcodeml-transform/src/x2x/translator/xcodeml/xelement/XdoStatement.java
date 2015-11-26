@@ -19,13 +19,12 @@ import org.w3c.dom.NamedNodeMap;
  * - Optional: construct_name TODO
  */
 public class XdoStatement extends XbaseElement {
-  protected Element _pragmaElement = null;
-
+  protected Xpragma _pragma = null; // TODO move it out from doStatement
   protected XloopIterationRange _iterationRange;
 
   public XdoStatement(Element pragma, Element doStatementElement){
     super(doStatementElement);
-    _pragmaElement = pragma;
+    _pragma = new Xpragma(pragma);
     findRangeElements();
   }
 
@@ -60,23 +59,12 @@ public class XdoStatement extends XbaseElement {
     return _iterationRange;
   }
 
-
-  public Element getPragmaElement(){
-    return _pragmaElement;
+  public Xpragma getPragma(){
+    return _pragma;
   }
 
   public Element getBodyElement(){
     return XelementHelper.getBody(baseElement);
-  }
-
-  public String getOriginalFilename(){
-    return XelementHelper
-      .getAttributeValue(_pragmaElement, XelementName.ATTR_FILE);
-  }
-
-  public String getPragmaLine(){
-    return XelementHelper
-      .getAttributeValue(_pragmaElement, XelementName.ATTR_LINENO);
   }
 
   public String getIterationVariableValue(){
