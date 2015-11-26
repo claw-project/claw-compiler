@@ -18,7 +18,7 @@ import xcodeml.util.XmOption;
 
 public class LoopExtraction implements Transformation<LoopExtraction> {
 
-  protected Element _pragmaElement = null;
+  private Xpragma _pragma = null;
   protected Element _exprStmtElement = null;
   protected Element _fncCallStmt = null;
 
@@ -31,7 +31,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private XfctDef _copiedFctDef = null;
 
   public LoopExtraction(Element pragma, Element exprStmt) {
-    _pragmaElement = pragma;
+    _pragma = new Xpragma(pragma);
     _exprStmtElement = exprStmt;
     _mappings = new ArrayList<CLAWmapping>();
     extractMappingInformation();
@@ -44,7 +44,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private void extractMappingInformation(){
     List<String> allMappings = new ArrayList<String>();
     Matcher m = Pattern.compile("map\\(([^:]*:.)\\)")
-     .matcher(_pragmaElement.getTextContent());
+     .matcher(_pragma.getData());
     while (m.find()) {
       allMappings.add(m.group(1));
     }
@@ -247,7 +247,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
     // Create the loop before the call
     Element loop = document.createElement(XelementName.DO_STMT);
-    _pragmaElement.getParentNode().insertBefore(loop, _pragmaElement.getNextSibling());
+    _pragma.getBaseElement().getParentNode().insertBefore(loop,
+      _pragma.getBaseElement().getNextSibling());
 
     loop.appendChild(iterationRange.getInductionVar().clone());
     loop.appendChild(iterationRange.getIndexRange().clone());
