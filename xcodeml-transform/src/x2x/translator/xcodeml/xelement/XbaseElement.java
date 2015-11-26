@@ -32,5 +32,6 @@ public class XbaseElement {
 
   public void delete(){
     XelementHelper.delete(baseElement);
+    baseElement = null;
   }
 }
