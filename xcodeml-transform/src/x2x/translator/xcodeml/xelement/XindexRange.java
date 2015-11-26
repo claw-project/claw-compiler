@@ -55,6 +55,11 @@ public class XindexRange extends XbaseElement {
     return _step;
   }
 
+  public XindexRange cloneObject(){
+    Node clone = clone();
+    return new XindexRange((Element)clone);
+  }
+
   @Override
   public boolean equals(Object ob) {
     if (ob == null) return false;

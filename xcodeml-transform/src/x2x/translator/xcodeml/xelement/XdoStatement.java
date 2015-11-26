@@ -21,9 +21,6 @@ import org.w3c.dom.NamedNodeMap;
 public class XdoStatement extends XbaseElement {
   protected Element _pragmaElement = null;
 
-  protected Element _indexRangeElement = null;
-  protected Element _inductionVarElement = null;
-
   protected XloopIterationRange _iterationRange;
 
   public XdoStatement(Element pragma, Element doStatementElement){
@@ -33,39 +30,36 @@ public class XdoStatement extends XbaseElement {
   }
 
   public void findRangeElements(){
-    _inductionVarElement = XelementHelper.findVar(baseElement);
-    _indexRangeElement = XelementHelper.findIndexRange(baseElement);
+    Element inductionVarElement = XelementHelper.findVar(baseElement);
+    Element indexRangeElement = XelementHelper.findIndexRange(baseElement);
 
     _iterationRange =
-      new XloopIterationRange(_inductionVarElement, _indexRangeElement);
+      new XloopIterationRange(inductionVarElement, indexRangeElement);
   }
 
-  public void setNewRange(Node var, Node range){
+  public void setNewRange(XloopIterationRange range){
     Element body = getBodyElement();
-    Node newVar = var.cloneNode(true);
-    Node newRange = range.cloneNode(true);
+    Node newVar = range.getInductionVar().clone();
+    Node newRange = range.getIndexRange().clone();
     baseElement.insertBefore(newVar, body);
     baseElement.insertBefore(newRange, body);
     findRangeElements();
   }
 
   public void deleteRangeElements(){
-    baseElement.removeChild(_inductionVarElement);
-    baseElement.removeChild(_indexRangeElement);
+    baseElement.removeChild(_iterationRange.getInductionVar().getBaseElement());
+    baseElement.removeChild(_iterationRange.getIndexRange().getBaseElement());
   }
 
   protected void swapRangeElementsWith(XdoStatement otherLoop){
-    otherLoop.setNewRange(_inductionVarElement, _indexRangeElement);
-    setNewRange(otherLoop.getRangeVarElement(), otherLoop.getRangeElement());
+    otherLoop.setNewRange(_iterationRange);
+    setNewRange(otherLoop.getIterationRange());
   }
 
   public XloopIterationRange getIterationRange(){
     return _iterationRange;
   }
 
-  public Element getLoopElement(){
-    return baseElement;
-  }
 
   public Element getPragmaElement(){
     return _pragmaElement;
@@ -108,14 +102,4 @@ public class XdoStatement extends XbaseElement {
   public boolean hasSameRangeWith(XdoStatement other){
     return _iterationRange.isFullyIdentical(other.getIterationRange());
   }
-
-  public Element getRangeElement(){
-    return _indexRangeElement;
-  }
-
-  public Element getRangeVarElement(){
-    return _inductionVarElement;
-  }
-
-
 }

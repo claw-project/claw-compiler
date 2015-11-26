@@ -28,7 +28,7 @@ public class LoopFusion extends XdoStatement implements Transformation<LoopFusio
   }
 
   private boolean hasSameParentBlockWith(LoopFusion otherLoop){
-    if(baseElement.getParentNode() == otherLoop.getLoopElement().getParentNode()){
+    if(baseElement.getParentNode() == otherLoop.getBaseElement().getParentNode()){
       return true;
     }
     return false;
@@ -68,7 +68,7 @@ public class LoopFusion extends XdoStatement implements Transformation<LoopFusio
    * Merge the given loop with this one
    */
   public void transform(XcodeProg xcodeml, LoopFusion loop){
-    XelementHelper.appendBody(baseElement, loop.getLoopElement());
+    XelementHelper.appendBody(baseElement, loop.getBaseElement());
     loop.finalizeTransformation();
   }
 

@@ -24,6 +24,11 @@ public class XloopIterationRange {
   private XindexRange _indexRange;
   private Xvar _inductionVariable;
 
+  public XloopIterationRange(Xvar inductionVar, XindexRange range){
+    _inductionVariable = inductionVar;
+    _indexRange = range;
+  }
+
   public XloopIterationRange(Element inductionVarElement, Element indexRangeElement){
     _inductionVariable = new Xvar(inductionVarElement);
     _indexRange = new XindexRange(indexRangeElement);
@@ -56,5 +61,11 @@ public class XloopIterationRange {
       + getIndexRange().getLowerBound().getValue() + ","
       + getIndexRange().getUpperBound().getValue() + ","
       + getIndexRange().getStep().getValue();
+  }
+
+  public XloopIterationRange cloneObject(){
+    Xvar tmpVar = _inductionVariable.cloneObject();
+    XindexRange tmpRange = _indexRange.cloneObject();
+    return new XloopIterationRange(tmpVar, tmpRange);
   }
 }

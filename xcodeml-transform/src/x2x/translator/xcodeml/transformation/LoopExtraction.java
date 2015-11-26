@@ -167,7 +167,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     // 1. append body into fct body after loop
     XelementHelper.extractBody(loopInClonedFct);
     // 2. delete loop
-    XelementHelper.delete(loopInClonedFct.getLoopElement());
+    XelementHelper.delete(loopInClonedFct.getBaseElement());
 
 
     /*

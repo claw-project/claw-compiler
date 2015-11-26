@@ -114,15 +114,14 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
 
   private void swapLoops(XdoStatement loop1, XdoStatement loop2){
     // Save most inner loop iteration variable and range
-    Node tmpIterationVar = loop2.getRangeVarElement().cloneNode(true);
-    Node tmpRange = loop2.getRangeElement().cloneNode(true);
+    XloopIterationRange tmpIterationRange = loop2.getIterationRange().cloneObject();
 
     // Set the range of loop 0 to loop 2
-    loop2.setNewRange(loop1.getRangeVarElement(), loop1.getRangeElement());
+    loop2.setNewRange(loop1.getIterationRange());
     // Remove the previous range of loop 2
     loop2.deleteRangeElements();
     // Set new range of loop 2 to loop 0
-    loop1.setNewRange(tmpIterationVar, tmpRange);
+    loop1.setNewRange(tmpIterationRange);
     // Remove the previous range of loop 0
     loop1.deleteRangeElements();
 

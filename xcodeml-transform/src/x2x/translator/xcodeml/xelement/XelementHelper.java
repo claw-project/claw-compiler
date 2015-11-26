@@ -206,7 +206,7 @@ public class XelementHelper {
   }
 
   public static void extractBody(XdoStatement loop){
-    Element loopElement = loop.getLoopElement();
+    Element loopElement = loop.getBaseElement();
     Element body = XelementHelper.findFirstElement(loopElement,
       XelementName.BODY);
     for(Node childNode = body.getFirstChild(); childNode!=null;){
