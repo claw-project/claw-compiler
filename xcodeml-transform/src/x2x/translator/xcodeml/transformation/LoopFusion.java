@@ -74,9 +74,9 @@ public class LoopFusion implements Transformation<LoopFusion> {
 
 
   public void finalizeTransformation(){
-    // Remove the pragma and the loop block of the second loop
-    XelementHelper.delete(_loopFusionPragma.getBaseElement());
-    XelementHelper.delete(_loop.getBaseElement());
+    // Remove the pragma and the loop block of that was loop
+    _loopFusionPragma.delete();
+    _loop.delete();
     _transformed = true;
   }
 

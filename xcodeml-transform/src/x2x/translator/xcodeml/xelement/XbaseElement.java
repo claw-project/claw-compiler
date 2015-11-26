@@ -29,4 +29,8 @@ public class XbaseElement {
   public String getData(){
     return baseElement.getTextContent();
   }
+
+  public void delete(){
+    XelementHelper.delete(baseElement);
+  }
 }
