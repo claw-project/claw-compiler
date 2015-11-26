@@ -2,6 +2,7 @@ package x2x.translator.pragma;
 
 import exc.object.Xobject;
 import java.util.regex.*;
+import java.util.Arrays;
 
 
 public enum CLAWpragma {
@@ -16,14 +17,30 @@ public enum CLAWpragma {
 
   ;
 
-  private static final String CLAW_DIRECTIVE = "claw";
-  private static final String LOOP_FUSION_DIRECTIVE = "loop-fusion";
-  private static final String LOOP_INTERCHANGE_DIRECTIVE = "loop-interchange";
-  private static final String LOOP_VECTOR_DIRECTIVE = "loop-vector";
-  private static final String LOOP_EXTRACT_DIRECTIVE = "loop-extract";
+  private static final String PREFIX_CLAW = "claw";
+  private static final String DIRECTIVE_LOOP_FUSION = "loop-fusion";
+  private static final String DIRECTIVE_LOOP_INTERCHANGE = "loop-interchange";
+  private static final String DIRECTIVE_LOOP_VECTOR = "loop-vector";
+  private static final String DIRECTIVE_LOOP_EXTRACT = "loop-extract";
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
+  private static final String ANY_SPACES = "\\s*";
+
+
+
+  private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES +
+    DIRECTIVE_LOOP_FUSION;
+
+  private static final String REGEX_LOOP_INTERCHANGE = PREFIX_CLAW + ANY_SPACES
+    + DIRECTIVE_LOOP_INTERCHANGE;
+
+  private static final String REGEX_OPTION_SIMPLE = ANY_SPACES + INNER_OPTION;
+  private static final String REGEX_OPTION_GROUP = ANY_SPACES +
+    OPTION_FUSION_GROUP + REGEX_OPTION_SIMPLE;
+
+
+
 
   private String name = null;
 
@@ -37,13 +54,13 @@ public enum CLAWpragma {
     String[] parts = pragma.split(" ");
     String directive = parts[1];
     switch(directive){
-      case LOOP_FUSION_DIRECTIVE:
+      case DIRECTIVE_LOOP_FUSION:
         return CLAWpragma.LOOP_FUSION;
-      case LOOP_INTERCHANGE_DIRECTIVE:
+      case DIRECTIVE_LOOP_INTERCHANGE:
         return CLAWpragma.LOOP_INTERCHANGE;
-      case LOOP_VECTOR_DIRECTIVE:
+      case DIRECTIVE_LOOP_VECTOR:
         return CLAWpragma.LOOP_VECTOR;
-      case LOOP_EXTRACT_DIRECTIVE:
+      case DIRECTIVE_LOOP_EXTRACT:
         return CLAWpragma.LOOP_EXTRACT;
       default:
         return null;
@@ -52,14 +69,9 @@ public enum CLAWpragma {
 
 
   public static String getGroupOptionValue(String pragma){
-    if(getDirective(pragma) != CLAWpragma.LOOP_FUSION){
-      return null;
-    }
+    Matcher matchFullDirective = Pattern.compile(REGEX_LOOP_FUSION +
+      REGEX_OPTION_GROUP, Pattern.CASE_INSENSITIVE).matcher(pragma);
 
-    Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
-      MULTIPLE_SPACES + LOOP_FUSION_DIRECTIVE + MULTIPLE_SPACES +
-      OPTION_FUSION_GROUP + INNER_OPTION, Pattern.CASE_INSENSITIVE
-      ).matcher(pragma);
     if(!matchFullDirective.matches()){
       return null;
     }
@@ -72,14 +84,15 @@ public enum CLAWpragma {
     return null;
   }
 
-  public static String getNewOrderOptionValue(String pragma){
+  public static String getSimpleOptionValue(String pragma){
     if(getDirective(pragma) != CLAWpragma.LOOP_INTERCHANGE){
       return null;
     }
 
-    Matcher matchFullDirective = Pattern.compile(CLAW_DIRECTIVE +
-      MULTIPLE_SPACES + LOOP_INTERCHANGE_DIRECTIVE + MULTIPLE_SPACES
-      + INNER_OPTION, Pattern.CASE_INSENSITIVE).matcher(pragma);
+    Matcher matchFullDirective = Pattern.compile(REGEX_LOOP_INTERCHANGE
+      + REGEX_OPTION_SIMPLE,
+      Pattern.CASE_INSENSITIVE).matcher(pragma);
+
     if(!matchFullDirective.matches()){
       return null;
     }
@@ -93,7 +106,7 @@ public enum CLAWpragma {
   }
 
   public static boolean startsWithClaw(String pragma){
-    if(pragma.startsWith(CLAW_DIRECTIVE)){
+    if(pragma.startsWith(PREFIX_CLAW)){
       return true;
     }
     return false;
@@ -112,30 +125,73 @@ public enum CLAWpragma {
     String claw = parts[0];
     String directive = parts[1];
 
-    if(!claw.equals(CLAW_DIRECTIVE)){
+    if(!claw.equals(PREFIX_CLAW)){
       return false;
     }
 
+    String options = null;
+    if (parts.length > 2){
+      // Take only the options
+      String[] temp = Arrays.copyOfRange(parts, 2, parts.length);
+      options = String.join(" ", temp);
+    }
+
     switch(directive){
-      case LOOP_FUSION_DIRECTIVE:
-        return isValidOption(CLAWpragma.LOOP_FUSION, null);
-      case LOOP_INTERCHANGE_DIRECTIVE:
-        return isValidOption(CLAWpragma.LOOP_INTERCHANGE, null);
-      case LOOP_VECTOR_DIRECTIVE:
-        return isValidOption(CLAWpragma.LOOP_VECTOR, null);
-      case LOOP_EXTRACT_DIRECTIVE:
-        return isValidOption(CLAWpragma.LOOP_EXTRACT, null);
+      case DIRECTIVE_LOOP_FUSION:
+        return isValidOptions(CLAWpragma.LOOP_FUSION, options);
+      case DIRECTIVE_LOOP_INTERCHANGE:
+        return isValidOptions(CLAWpragma.LOOP_INTERCHANGE, options);
+      case DIRECTIVE_LOOP_VECTOR:
+        return isValidOptions(CLAWpragma.LOOP_VECTOR, options);
+      case DIRECTIVE_LOOP_EXTRACT:
+        return isValidOptions(CLAWpragma.LOOP_EXTRACT, options);
       default:
         return false;
     }
   }
 
-  // TODO check option according to the directive
-  private static boolean isValidOption(CLAWpragma directive, String[] options){
-    return true;
+  private static boolean isValidOptions(CLAWpragma directive, String option){
+    switch(directive){
+      case LOOP_FUSION: // loop-fusion has only group option
+        return CLAWpragma.isGroupOptionValid(option);
+      case LOOP_INTERCHANGE:
+        return CLAWpragma.isOrderOptionValid(option);
+      case LOOP_VECTOR:
+        return true; // TODO
+      case LOOP_EXTRACT:
+        return true; // TODO
+      default:
+        return false;
+    }
   }
 
+  private static boolean isGroupOptionValid(String option){
+    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_GROUP, false);
+  }
 
+  private static boolean isOrderOptionValid(String option){
+    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_SIMPLE, false);
+  }
+
+  private static boolean checkOptionalOption(String option, String regex,
+    boolean allowOnlySpaces)
+  {
+    if(option == null){ // option is not mandatory
+      return true;
+    }
+    Matcher matchOption = Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
+      .matcher(option);
+
+    while(matchOption.find()) {
+      String match =  matchOption.group(1);
+      if(match.trim().length() > 0){
+        return true;
+      }
+      return false;
+    }
+
+    return false;
+  }
 
   public static CLAWpragma valueOf(Xobject x) {
     return valueOf(x.getString());

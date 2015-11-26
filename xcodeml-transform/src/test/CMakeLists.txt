@@ -15,8 +15,6 @@ if(NOT EXISTS ${HAMCREST_JAR})
   message( FATAL_ERROR "Hamcrest jar is not present (${HAMCREST_JAR}). CMake will exit." )
 endif()
 
-enable_testing()
-
 set(CMAKE_JAVA_INCLUDE_PATH
   ${OMNICX2X}
   ${JUNIT_JAR}
@@ -26,6 +24,7 @@ set(CMAKE_JAVA_INCLUDE_PATH
 
 add_jar(omni-cx2x-unittest
   helper/XmlHelper.java
+  pragma/CLAWpragmaTest.java
   xelement/XidTest.java
   xelement/XvarTest.java
   xelement/XcodeProgTest.java
@@ -39,4 +38,9 @@ get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
 add_junit_test(xelement
    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
    TESTS xelement.XidTest xelement.XvarTest xelement.XcodeProgTest
+)
+
+add_junit_test(pragma
+   CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+   TESTS pragma.CLAWpragmaTest
 )

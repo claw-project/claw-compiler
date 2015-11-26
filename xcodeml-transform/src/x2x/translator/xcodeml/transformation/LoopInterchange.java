@@ -31,7 +31,7 @@ public class LoopInterchange extends Xloop implements Transformation<LoopInterch
 
   public LoopInterchange(Element pragma, Element loop){
     super(pragma, loop);
-    _newOrderOption = CLAWpragma.getNewOrderOptionValue(pragma.getTextContent());
+    _newOrderOption = CLAWpragma.getSimpleOptionValue(pragma.getTextContent());
   }
 
   public void transform(XcodeProg xcodeml, LoopInterchange other){
