@@ -19,8 +19,7 @@ import xcodeml.util.XmOption;
 public class LoopExtraction implements Transformation<LoopExtraction> {
 
   private Xpragma _pragma = null;
-  protected Element _exprStmtElement = null;
-  protected Element _fncCallStmt = null;
+  private XexprStatement _exprStmt = null;
 
   private ArrayList<CLAWmapping> _mappings = null;
   private XfctCall _fctCall = null;
@@ -32,7 +31,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
   public LoopExtraction(Element pragma, Element exprStmt) {
     _pragma = new Xpragma(pragma);
-    _exprStmtElement = exprStmt;
+    _exprStmt = new XexprStatement(exprStmt);
     _mappings = new ArrayList<CLAWmapping>();
     extractMappingInformation();
   }
@@ -288,11 +287,11 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   }
 
   private Element findFctCall(){
-    if(_exprStmtElement == null){
+    if(_exprStmt == null){
       return null;
     }
 
-    NodeList nodeList = _exprStmtElement.getChildNodes();
+    NodeList nodeList = _exprStmt.getBaseElement().getChildNodes();
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node nextNode = nodeList.item(i);
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){

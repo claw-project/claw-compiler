@@ -4,15 +4,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * The Xid represents the id (8.2) element in XcodeML intermediate
- * representation.
+ * The Xpragma represents the FpragmaStatement (6.25) element in XcodeML
+ * intermediate representation.
  *
- * Elements:
- * - Required:
- *   - name (Xname)
- * Attributes:
- * - Required: type (text), sclass (text: auto, param, extern, extern_def,
- *             label, tagname) // TODO move to enum
+ * Elements: contains value of the pragma line.
  */
 
 public class Xpragma extends XbaseElement {
@@ -43,7 +38,6 @@ public class Xpragma extends XbaseElement {
     Node clone = clone();
     return new Xpragma((Element)clone);
   }
-
 
   public void setData(String value){
     if(baseElement != null){
