@@ -23,6 +23,7 @@ import org.w3c.dom.Node;
 public class XarrayRef extends XbaseElement {
 
   private String _type = null;
+  private Xvar _var = null;
 
   public XarrayRef(Element arrayRefElement){
     super(arrayRefElement);
@@ -34,6 +35,17 @@ public class XarrayRef extends XbaseElement {
 
     _type = XelementHelper.getAttributeValue(baseElement
       , XelementName.ATTR_TYPE);
+
+    // Find Var element
+    Element varElement = XelementHelper.findVar(baseElement);
+    if(varElement != null){
+      _var = new Xvar(varElement);
+    }
+
+  }
+
+  public Xvar getVar(){
+    return _var;
   }
 
   public void append(XbaseElement element){
@@ -46,6 +58,10 @@ public class XarrayRef extends XbaseElement {
       baseElement.appendChild(clone);
     } else {
       baseElement.appendChild(element.getBaseElement());
+    }
+
+    if(element instanceof Xvar){
+      _var = (Xvar)element;
     }
   }
 
