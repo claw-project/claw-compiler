@@ -78,22 +78,21 @@ public class CLAWxcodemlTranslator {
         if(CLAWpragma.isValid(pragma.getData())){
           CLAWpragma clawDirective = CLAWpragma.getDirective(pragma.getData());
 
-          // loop-fusion directives
           if(clawDirective == CLAWpragma.LOOP_FUSION){
             LoopFusion trans = new LoopFusion(pragma);
             if(trans.analyze(_program)){
               _loopFusion.add(trans);
-            }
+            } // TODO maybe exit on failed analysis
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
             LoopInterchange trans = new LoopInterchange(pragma);
             if(trans.analyze(_program)){
               _loopInterchange.add(trans);
-            }
+            } // TODO maybe exit on failed analysis
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
             LoopExtraction trans = new LoopExtraction(pragma);
             if(trans.analyze(_program)){
               _loopExtract.add(trans);
-            }
+            } // TODO maybe exit on failed analysis
           }
 
         } else {

@@ -201,8 +201,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       for(String var : mapping.getMappedVariables()){
 
         System.out.println("  Var: " + var);
-        Xvar argument = args.findArgument(var);
+        Xvar argument = (Xvar)args.findArgument(var); // TODO return a dedictaed type
         if(argument != null){
+          
           System.out.println("  arg found: " + argument.getType());
           XbasicType type = (XbasicType)xcodeml.getTypeTable().get(argument.getType());
 
@@ -214,10 +215,14 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
             // TODO problem !!!! demotion to big
           }
 
+          XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
+          newArg.append(argument, true);
+
           //
           for(String mappingVar : mapping.getMappingVariables()){
 
           }
+
 
 
         }
@@ -252,7 +257,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     // TODO have single method to create a loop from iterationRange
     Document document = xcodeml.getDocument();
 
-    // Create the loop before the call
+    // Create the loop before the call TODO priority move
     Element loop = document.createElement(XelementName.DO_STMT);
     _pragma.getBaseElement().getParentNode().insertBefore(loop,
       _pragma.getBaseElement().getNextSibling());

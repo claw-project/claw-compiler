@@ -17,11 +17,11 @@ import java.util.Map;
 
 public class XargumentsTable extends XbaseElement {
   // TODO exprModel. For the moment only read var
-  private Hashtable<String, Xvar> _table;
+  private Hashtable<String, XbaseElement> _table;
 
   public XargumentsTable(Element arguments){
     super(arguments);
-    _table = new Hashtable<String, Xvar>();
+    _table = new Hashtable<String, XbaseElement>();
     readTable();
   }
 
@@ -33,26 +33,26 @@ public class XargumentsTable extends XbaseElement {
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) n;
         Xvar var = new Xvar(el);
-        _table.put(var.getType(), var);
+        _table.put(var.getValue(), var);
       }
     }
   }
 
-  public Xvar findArgument(String name){
-    for(String key : _table.keySet()){
-      if(_table.get(key).getValue().equals(name)){
-        return _table.get(key);
-      }
-    }
-    return null;
+  public XbaseElement findArgument(String name){
+     return _table.get(name);
+  }
+
+  public void add(XarrayRef arrayRef){
+    baseElement.appendChild(arrayRef.clone());
+    _table.put(arrayRef.getVar().getValue(), arrayRef);
   }
 
   public void add(Xvar var){
     baseElement.appendChild(var.clone());
-    _table.put(var.getType(), var);
+    _table.put(var.getValue(), var);
   }
 
-  public Xvar get(String key){
+  public XbaseElement get(String key){
     return _table.get(key);
   }
 }
