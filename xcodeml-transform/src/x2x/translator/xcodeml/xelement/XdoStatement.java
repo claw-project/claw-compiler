@@ -19,12 +19,10 @@ import org.w3c.dom.NamedNodeMap;
  * - Optional: construct_name TODO
  */
 public class XdoStatement extends XbaseElement {
-  protected Xpragma _pragma = null; // TODO move it out from doStatement
   protected XloopIterationRange _iterationRange;
 
-  public XdoStatement(Element pragma, Element doStatementElement){
+  public XdoStatement(Element doStatementElement){
     super(doStatementElement);
-    _pragma = new Xpragma(pragma);
     findRangeElements();
   }
 
@@ -57,10 +55,6 @@ public class XdoStatement extends XbaseElement {
 
   public XloopIterationRange getIterationRange(){
     return _iterationRange;
-  }
-
-  public Xpragma getPragma(){
-    return _pragma;
   }
 
   public Element getBodyElement(){

@@ -9,13 +9,16 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class LoopInterchange extends XdoStatement implements Transformation<LoopInterchange> {
+public class LoopInterchange implements Transformation<LoopInterchange> {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
 
+  private XdoStatement _loopLevel0 = null;
   private XdoStatement _loopLevel1 = null;
   private XdoStatement _loopLevel2 = null;
+  private Xpragma _loopInterchangePragma = null;
+
 
   private String _baseLoop0 = null;
   private String _baseLoop1 = null;
@@ -30,15 +33,17 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
   private int _loopNewPos2 = 2;
 
   public LoopInterchange(Element pragma, Element loop){
-    super(pragma, loop);
-    _newOrderOption = CLAWpragma.getSimpleOptionValue(pragma.getTextContent());
+    _loopLevel0 = new XdoStatement(loop);
+    _loopInterchangePragma = new Xpragma(pragma);
+    _newOrderOption = CLAWpragma
+      .getSimpleOptionValue(_loopInterchangePragma.getData());
   }
 
   public void transform(XcodeProg xcodeml, LoopInterchange other){
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-interchange transformation");
-      System.out.println("  loop 0: " + getFormattedRange());
+      System.out.println("  loop 0: " + _loopLevel0.getFormattedRange());
       System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
       if(_loopLevel2 != null){
         System.out.println("  loop 2: " + _loopLevel2.getFormattedRange());
@@ -50,7 +55,7 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
      */
     if(_loopLevel1 != null && _loopLevel2 == null){
       // Loop interchange between 2 loops
-      swapLoops(this, _loopLevel1);
+      swapLoops(_loopLevel0, _loopLevel1);
     } else if (_loopLevel1 != null && _loopLevel2 != null){
       // loop interchange between 3 loops with new-order
       computeLoopNewPosition();
@@ -60,12 +65,12 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
         // Case 201
         if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
           printTransformSwapInfo(201);
-          swapLoops(this, _loopLevel2);
-          swapLoops(this, _loopLevel1);
+          swapLoops(_loopLevel0, _loopLevel2);
+          swapLoops(_loopLevel0, _loopLevel1);
         // Case 120
         } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
           printTransformSwapInfo(120);
-          swapLoops(this, _loopLevel2);
+          swapLoops(_loopLevel0, _loopLevel2);
           swapLoops(_loopLevel1, _loopLevel2);
         }
       } else {
@@ -76,10 +81,10 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
           from = _loopLevel1;
           to = _loopLevel2;
         } else if(_loopNewPos1 == 1){ // Loop 1 stay in place 1
-          from = this;
+          from = _loopLevel0;
           to = _loopLevel2;
         } else if(_loopNewPos2 == 2){ // Loop 2 stay in place 2
-          from = this;
+          from = _loopLevel0;
           to = _loopLevel1;
         }
         swapLoops(from, to);
@@ -162,14 +167,13 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
 
 
   public boolean analyze(XcodeProg xcodeml){
-    Element body = getBodyElement();
-    getIterationVariableValue();
-    Element loop = findChildLoop(body);
-    if(loop == null){
+    Element body = _loopLevel0.getBodyElement();
+    Element loop1 = findChildLoop(body);
+    if(loop1 == null){
       return false;
     }
 
-    _loopLevel1 = new XdoStatement(getPragma().getBaseElement(), loop);
+    _loopLevel1 = new XdoStatement(loop1);
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
@@ -181,9 +185,9 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
 
       Element loop1Body = _loopLevel1.getBodyElement();
       Element loop2 = findChildLoop(loop1Body);
-      _loopLevel2 = new XdoStatement(getPragma().getBaseElement(), loop2);
+      _loopLevel2 = new XdoStatement(loop2);
 
-      _baseLoop0 = this.getIterationVariableValue();
+      _baseLoop0 = _loopLevel0.getIterationVariableValue();
       _baseLoop1 = _loopLevel1.getIterationVariableValue();
       _baseLoop2 = _loopLevel2.getIterationVariableValue();
 
@@ -210,8 +214,8 @@ public class LoopInterchange extends XdoStatement implements Transformation<Loop
 
 
   private void abort(String message){
-    System.err.println("claw-error: " + message + ", " + getPragma().getFilename()
-      + ":" + getPragma().getLine());
+    System.err.println("claw-error: " + message + ", " + _loopInterchangePragma.getFilename()
+      + ":" + _loopInterchangePragma.getLine());
     System.exit(1);
   }
 

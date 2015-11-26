@@ -88,7 +88,7 @@ public class XelementHelper {
     if(loopElement == null){
       return null;
     }
-    return new XdoStatement(null, loopElement);
+    return new XdoStatement(loopElement);
   }
 
   public static Element findVar(Element parent){
