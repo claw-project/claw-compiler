@@ -22,30 +22,60 @@ import org.w3c.dom.Node;
 
 public class XarrayRef extends XbaseElement {
 
+  private String _type = null;
+
   public XarrayRef(Element arrayRefElement){
     super(arrayRefElement);
     readElementInformation();
   }
 
   private void readElementInformation(){
+    // TODO
 
+    _type = XelementHelper.getAttributeValue(baseElement
+      , XelementName.ATTR_TYPE);
   }
 
-  public static Element create(XcodeProg xcodeml, Xvar var, String type, XarrayIndex index){
+  public void append(XbaseElement element){
+    append(element, false);
+  }
+
+  public void append(XbaseElement element, boolean cloneElement){
+    if(cloneElement){
+      Node clone = element.clone();
+      baseElement.appendChild(clone);
+    } else {
+      baseElement.appendChild(element.getBaseElement());
+    }
+  }
+
+  /**
+   * Create an empty arrayReg element in the given program
+   * param type attribute of the element. If null, no attribute is set
+   */
+  public static XarrayRef createEmpty(XcodeProg xcodeml, String type){
+    Element arrayRef = xcodeml.getDocument().
+      createElement(XelementName.F_ARRAY_REF);
+    if(type != null){
+      arrayRef.setAttribute(XelementName.ATTR_TYPE, type);
+    }
+    return new XarrayRef(arrayRef);
+  }
+
+
+
+  /*public static Element create(XcodeProg xcodeml, Xvar var, String type, XarrayIndex index){
     // Make sure var is an array
     // TODO
 
     // Wrap the var with the array reference
-    Node varClone = var.clone();
-    Element arrayRef = xcodeml.getDocument().createElement(XelementName.F_ARRAY_REF);
-    if(type != null){ // Set ref type of the Xvar
-      arrayRef.setAttribute(XelementName.ATTR_TYPE, type);
-    }
-    Element varRef = xcodeml.getDocument().createElement(XelementName.VAR_REF);
+
+
+    /*Element varRef = xcodeml.getDocument().createElement(XelementName.VAR_REF);
     varRef.setAttribute(XelementName.ATTR_TYPE, var.getType());
     varRef.appendChild(varClone);
     arrayRef.appendChild(varRef);
-    arrayRef.appendChild(index.getBaseElement());
+    arrayRef.appendChild(index.getBaseElement());*/
 
 
     /*<Var type="A7fa7b35045b0" scope="local">value1</Var>
@@ -59,10 +89,10 @@ public class XarrayRef extends XbaseElement {
         <Var type="Fint" scope="local">i</Var>
       </arrayIndex>
     </FarrayRef>
-    */
+
 
 
 
     return arrayRef;
-  }
+  }*/
 }
