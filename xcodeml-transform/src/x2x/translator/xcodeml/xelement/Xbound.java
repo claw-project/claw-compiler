@@ -13,15 +13,14 @@ import org.w3c.dom.NodeList;
 
 // TODO have a derived class for upper and lower bound
 
-public class Xbound {
+public class Xbound extends XbaseElement {
   private String _value = null;
   private boolean _constant = false;
   private boolean _isVar = false;
-  private Element _boundElement = null;
   private Xvar _var = null;
 
   public Xbound(Element boundElement){
-    _boundElement = boundElement;
+    super(boundElement);
     readRangeValue();
   }
 
@@ -46,9 +45,9 @@ public class Xbound {
 
   private void readRangeValue(){
     Element constant = XelementHelper
-      .findFirstElement(_boundElement, XelementName.F_INT_CONST);
+      .findFirstElement(baseElement, XelementName.F_INT_CONST);
     Element var = XelementHelper
-      .findFirstElement(_boundElement, XelementName.VAR);
+      .findFirstElement(baseElement, XelementName.VAR);
     if(constant != null){
       _constant = true;
       _value = constant.getTextContent();

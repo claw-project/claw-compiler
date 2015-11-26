@@ -3,17 +3,16 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class Xfct {
-  private Element _fctElement = null;
+public class Xfct extends XbaseElement {
   private Xname _fctName = null;
 
   public Xfct(Element fctElement){
-    _fctElement = fctElement;
+    super(fctElement);
     readElementInformation();
   }
 
   private void readElementInformation(){
-    NodeList names = _fctElement.getElementsByTagName(XelementName.NAME);
+    NodeList names = baseElement.getElementsByTagName(XelementName.NAME);
     Element nameElement = (Element) names.item(0);
     _fctName = new Xname(nameElement);
   }
@@ -32,10 +31,6 @@ public class Xfct {
 
   public void setType(String value){
     _fctName.setType(value);
-  }
-
-  public Element getFctElement(){
-    return _fctElement;
   }
 
   public String getFctName(){

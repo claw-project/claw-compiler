@@ -14,34 +14,33 @@ import org.w3c.dom.NodeList;
  * - Optional: type (text)
  */
 
-public class Xvar {
-  private Element _varElement = null;
+public class Xvar extends XbaseElement {
   private String _identity = null;
   private String _type = null;
   private Xscope _scope = null;
 
-  public Xvar(Element var){
-    _varElement = var;
+  public Xvar(Element varElement){
+    super(varElement);
     readElementInformation();
   }
 
   public void setValue(String value){
-    if(_varElement != null){
-      _varElement.setTextContent(value);
+    if(baseElement != null){
+      baseElement.setTextContent(value);
       _identity = value;
     }
   }
 
   public void setType(String value){
-    if(_varElement != null){
-      _varElement.setAttribute(XelementName.ATTR_TYPE, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
   }
 
   public void setScope(Xscope value){
-    if(_varElement != null){
-      _varElement.setAttribute(XelementName.ATTR_SCOPE, value.toString());
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_SCOPE, value.toString());
       _scope = value;
     }
   }
@@ -59,14 +58,10 @@ public class Xvar {
   }
 
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_TYPE);
-    String scope = XelementHelper.getAttributeValue(_varElement, XelementName.ATTR_SCOPE);
+    _type = XelementHelper.getAttributeValue(baseElement, XelementName.ATTR_TYPE);
+    String scope = XelementHelper.getAttributeValue(baseElement, XelementName.ATTR_SCOPE);
     _scope = Xscope.fromString(scope);
-    _identity = _varElement.getTextContent();
-  }
-
-  public Node clone(){
-    return _varElement.cloneNode(true);
+    _identity = baseElement.getTextContent();
   }
 
   public Xvar cloneObject(){

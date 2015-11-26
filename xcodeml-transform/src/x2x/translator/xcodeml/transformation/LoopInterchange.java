@@ -9,13 +9,13 @@ import org.w3c.dom.NodeList;
 
 import xcodeml.util.XmOption;
 
-public class LoopInterchange extends Xloop implements Transformation<LoopInterchange> {
+public class LoopInterchange extends XdoStatement implements Transformation<LoopInterchange> {
 
   private String _newOrderOption = null;
   private boolean _transformationDone = false;
 
-  private Xloop _loopLevel1 = null;
-  private Xloop _loopLevel2 = null;
+  private XdoStatement _loopLevel1 = null;
+  private XdoStatement _loopLevel2 = null;
 
   private String _baseLoop0 = null;
   private String _baseLoop1 = null;
@@ -70,8 +70,8 @@ public class LoopInterchange extends Xloop implements Transformation<LoopInterch
         }
       } else {
         // Only one loop swap is needed
-        Xloop from = null;
-        Xloop to = null;
+        XdoStatement from = null;
+        XdoStatement to = null;
         if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
           from = _loopLevel1;
           to = _loopLevel2;
@@ -112,7 +112,7 @@ public class LoopInterchange extends Xloop implements Transformation<LoopInterch
     }
   }
 
-  private void swapLoops(Xloop loop1, Xloop loop2){
+  private void swapLoops(XdoStatement loop1, XdoStatement loop2){
     // Save most inner loop iteration variable and range
     Node tmpIterationVar = loop2.getRangeVarElement().cloneNode(true);
     Node tmpRange = loop2.getRangeElement().cloneNode(true);
@@ -170,7 +170,7 @@ public class LoopInterchange extends Xloop implements Transformation<LoopInterch
       return false;
     }
 
-    _loopLevel1 = new Xloop(_pragmaElement, loop);
+    _loopLevel1 = new XdoStatement(_pragmaElement, loop);
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
@@ -182,7 +182,7 @@ public class LoopInterchange extends Xloop implements Transformation<LoopInterch
 
       Element loop1Body = _loopLevel1.getBodyElement();
       Element loop2 = findChildLoop(loop1Body);
-      _loopLevel2 = new Xloop(_pragmaElement, loop2);
+      _loopLevel2 = new XdoStatement(_pragmaElement, loop2);
 
       _baseLoop0 = this.getIterationVariableValue();
       _baseLoop1 = _loopLevel1.getIterationVariableValue();

@@ -1,5 +1,9 @@
 package x2x.translator.xcodeml.xelement;
 
+/**
+ * 
+ */
+
 public class XelementName {
 
   // helpers

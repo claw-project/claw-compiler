@@ -14,22 +14,21 @@ import org.w3c.dom.NodeList;
  * - Optional: type (text), kind (text)
  */
 
-public class Xconstant {
-  private Element _element = null;
+public class Xconstant extends XbaseElement {
   private String _value = null;
   private String _type = null;
   private String _kind = null;
 
   public Xconstant(Element element){
-    _element = element;
+    super(element);
     readElementInformation();
   }
 
   private void readElementInformation(){
-    _value = _element.getTextContent();
-    _type = XelementHelper.getAttributeValue(_element,
+    _value = baseElement.getTextContent();
+    _type = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_TYPE);
-    _kind = XelementHelper.getAttributeValue(_element,
+    _kind = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_TYPE);
   }
 
@@ -38,8 +37,8 @@ public class Xconstant {
   }
 
   public void setKind(String value){
-    if(_element != null){
-      _element.setAttribute(XelementName.ATTR_KIND, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_KIND, value);
       _kind = value;
     }
   }
@@ -49,8 +48,8 @@ public class Xconstant {
   }
 
   public void setType(String value){
-    if(_element != null){
-      _element.setAttribute(XelementName.ATTR_TYPE, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
   }
@@ -60,16 +59,9 @@ public class Xconstant {
   }
 
   public void setValue(String value){
-    if(_element != null){
-      _element.setTextContent(value);
+    if(baseElement != null){
+      baseElement.setTextContent(value);
       _value = value;
     }
-  }
-
-  public Node clone(){
-    if(_element != null){
-      return _element.cloneNode(true);
-    }
-    return null;
   }
 }

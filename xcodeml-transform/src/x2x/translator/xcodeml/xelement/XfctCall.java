@@ -22,7 +22,7 @@ public class XfctCall extends Xfct {
 
   public XfctCall(Element fctCallElement){
     super(fctCallElement);
-    Element arguments = XelementHelper.findFirstElement(getFctElement(),
+    Element arguments = XelementHelper.findFirstElement(baseElement,
       XelementName.ARGUMENTS);
     _arguments = new XargumentsTable(arguments);
   }

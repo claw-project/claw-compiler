@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class LoopFusion extends Xloop implements Transformation<LoopFusion> {
+public class LoopFusion extends XdoStatement implements Transformation<LoopFusion> {
 
   private boolean _transformed = false;
   private String _groupLabel = null;
@@ -28,7 +28,7 @@ public class LoopFusion extends Xloop implements Transformation<LoopFusion> {
   }
 
   private boolean hasSameParentBlockWith(LoopFusion otherLoop){
-    if(_loopElement.getParentNode() == otherLoop.getLoopElement().getParentNode()){
+    if(baseElement.getParentNode() == otherLoop.getLoopElement().getParentNode()){
       return true;
     }
     return false;
@@ -60,7 +60,7 @@ public class LoopFusion extends Xloop implements Transformation<LoopFusion> {
   public void finalizeTransformation(){
     // Remove the pragma and the loop block of the second loop
     XelementHelper.delete(_pragmaElement);
-    XelementHelper.delete(_loopElement);
+    XelementHelper.delete(baseElement);
     _transformed = true;
   }
 
@@ -68,7 +68,7 @@ public class LoopFusion extends Xloop implements Transformation<LoopFusion> {
    * Merge the given loop with this one
    */
   public void transform(XcodeProg xcodeml, LoopFusion loop){
-    XelementHelper.appendBody(_loopElement, loop.getLoopElement());
+    XelementHelper.appendBody(baseElement, loop.getLoopElement());
     loop.finalizeTransformation();
   }
 

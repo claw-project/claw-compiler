@@ -15,25 +15,24 @@ import org.w3c.dom.Node;
  *             label, tagname) // TODO move to enum
  */
 
-public class Xid {
+public class Xid extends XbaseElement {
   private String _type = null;
   private String _sclass = null;
   private String _name = null;
 
-  private Element _idElement;
   private Element _nameElement;
 
   public Xid(Element idElement){
-    _idElement = idElement;
+    super(idElement);
     readElementInformation();
   }
 
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(_idElement,
+    _type = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_TYPE);
-    _sclass = XelementHelper.getAttributeValue(_idElement,
+    _sclass = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_SCLASS);
-    _nameElement = XelementHelper.findFirstElement(_idElement,
+    _nameElement = XelementHelper.findFirstElement(baseElement,
       XelementName.NAME);
     _name = _nameElement.getTextContent();
   }
@@ -46,15 +45,15 @@ public class Xid {
   }
 
   public void setType(String value){
-    if(_idElement != null){
-      _idElement.setAttribute(XelementName.ATTR_TYPE, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
   }
 
   public void setSclass(String value){
-    if(_idElement != null){
-      _idElement.setAttribute(XelementName.ATTR_SCLASS, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_SCLASS, value);
       _sclass = value;
     }
   }
@@ -69,10 +68,6 @@ public class Xid {
 
   public String getSclass(){
     return _sclass;
-  }
-
-  public Node clone(){
-    return _idElement.cloneNode(true);
   }
 
   public Xid cloneObject(){

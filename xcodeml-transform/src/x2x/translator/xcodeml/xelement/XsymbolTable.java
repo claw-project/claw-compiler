@@ -13,19 +13,18 @@ import java.util.Hashtable;
  * - Optional:
  *   - id
  */
-public class XsymbolTable {
+public class XsymbolTable extends XbaseElement {
 
   private Hashtable<String, Xid> _table;
-  private Element _baseElement = null;
 
-  public XsymbolTable(Element symbols){
-    _baseElement = symbols;
+  public XsymbolTable(Element symbolsElement){
+    super(symbolsElement);
     _table = new Hashtable<String, Xid>();
     readTable();
   }
 
   private void readTable(){
-    NodeList nodeList = _baseElement.getElementsByTagName(XelementName.ID);
+    NodeList nodeList = baseElement.getElementsByTagName(XelementName.ID);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node idNode = nodeList.item(i);
       if (idNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -41,7 +40,7 @@ public class XsymbolTable {
   }
 
   public void add(Xid id){
-    _baseElement.appendChild(id.clone());
+    baseElement.appendChild(id.clone());
     _table.put(id.getName(), id);
   }
 

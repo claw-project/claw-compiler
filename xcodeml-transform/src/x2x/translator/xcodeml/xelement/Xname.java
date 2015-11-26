@@ -11,34 +11,33 @@ import org.w3c.dom.NodeList;
  * - Requited: type (text)
  */
 
-public class Xname {
-  private Element _nameElement = null;
+public class Xname extends XbaseElement {
   private String _nameValue = null;
   private String _nameType = null;
 
-  public Xname(Element name){
-    _nameElement = name;
+  public Xname(Element nameElement){
+    super(nameElement);
     readElementInformation();
   }
 
   public void setName(String value){
-    if(_nameElement != null){
-      _nameElement.setTextContent(value);
+    if(baseElement != null){
+      baseElement.setTextContent(value);
       _nameValue = value;
     }
   }
 
   public void setType(String value){
-    if(_nameElement != null){
-      _nameElement.setAttribute(XelementName.ATTR_TYPE, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _nameType = value;
     }
   }
 
   private void readElementInformation(){
-    _nameType = XelementHelper.getAttributeValue(_nameElement
+    _nameType = XelementHelper.getAttributeValue(baseElement
       , XelementName.ATTR_TYPE);
-    _nameValue = _nameElement.getTextContent();
+    _nameValue = baseElement.getTextContent();
   }
 
   public String getValue(){

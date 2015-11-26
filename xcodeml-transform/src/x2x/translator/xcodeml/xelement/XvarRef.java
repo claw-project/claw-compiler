@@ -18,11 +18,10 @@ import org.w3c.dom.Node;
  * - Optional: type (text) TODO
  */
 
-public class XvarRef {
-  private Element _element;
+public class XvarRef extends XbaseElement {
 
-  public XvarRef(Element element){
-    _element = element;
+  public XvarRef(Element varRefElement){
+    super(varRefElement);
     readElementInformation();
   }
 

@@ -9,13 +9,12 @@ import org.w3c.dom.Node;
  * Elements: the base element can contains text data
  */
 
-public class Xkind {
-  private Element _element;
+public class Xkind extends XbaseElement {
   private String _value;
 
-  public Xkind(Element element){
-    _element = element;
-    _value = _element.getTextContent();
+  public Xkind(Element kindElement){
+    super(kindElement);
+    _value = baseElement.getTextContent();
   }
 
   public String getValue(){
@@ -24,9 +23,5 @@ public class Xkind {
 
   public void setValue(){
     // TODO
-  }
-
-  public Node clone(){
-    return _element.cloneNode(true);
   }
 }

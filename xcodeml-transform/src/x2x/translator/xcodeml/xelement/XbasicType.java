@@ -61,24 +61,24 @@ public class XbasicType extends Xtype {
     readOptionalAttributes();
 
     // is array ?
-    _dimension = XelementHelper.findNumberOfRange(_element);
+    _dimension = XelementHelper.findNumberOfRange(baseElement);
     if (_dimension > 0){
       _isArray = true;
       _dimensionRanges = new ArrayList<XindexRange>();
-      NodeList ranges = XelementHelper.findIndexRanges(_element);
+      NodeList ranges = XelementHelper.findIndexRanges(baseElement);
       for(int i = 0; i < _dimension; ++i){
         _dimensionRanges.add(new XindexRange((Element)ranges.item(i)));
       }
     }
 
     // has length ?
-    Element length = XelementHelper.findLen(_element);
+    Element length = XelementHelper.findLen(baseElement);
     if(length != null){
       // TODO have a length object with information
     }
 
     // has kind ?
-    Element kindElement = XelementHelper.findKind(_element);
+    Element kindElement = XelementHelper.findKind(baseElement);
     if(kindElement != null) {
       _kind = new Xkind(kindElement);
     }
@@ -89,30 +89,30 @@ public class XbasicType extends Xtype {
 
   private void readRequiredAttributes() {
     // Attribute type is read in Xtype
-    _ref = XelementHelper.getAttributeValue(_element,
+    _ref = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_REF);
   }
 
   private void readOptionalAttributes() {
-    _is_public = XelementHelper.getBooleanAttributeValue(_element,
+    _is_public = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_PUBLIC);
-    _is_private = XelementHelper.getBooleanAttributeValue(_element,
+    _is_private = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_PRIVATE);
-    _is_pointer = XelementHelper.getBooleanAttributeValue(_element,
+    _is_pointer = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_POINTER);
-    _is_target = XelementHelper.getBooleanAttributeValue(_element,
+    _is_target = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_TARGET);
-    _is_external = XelementHelper.getBooleanAttributeValue(_element,
+    _is_external = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_EXTERNAL);
-    _is_intrinsic = XelementHelper.getBooleanAttributeValue(_element,
+    _is_intrinsic = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_INTRINSIC);
-    _is_optional = XelementHelper.getBooleanAttributeValue(_element,
+    _is_optional = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_OPTIONAL);
-    _is_save = XelementHelper.getBooleanAttributeValue(_element,
+    _is_save = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_SAVE);
-    _is_parameter = XelementHelper.getBooleanAttributeValue(_element,
+    _is_parameter = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_PARAMETER);
-    _is_allocatable = XelementHelper.getBooleanAttributeValue(_element,
+    _is_allocatable = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_ALLOCATABLE);
   }
 

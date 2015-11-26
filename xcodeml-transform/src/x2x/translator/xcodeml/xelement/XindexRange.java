@@ -7,7 +7,7 @@ import org.w3c.dom.NodeList;
 /**
  * The XindexRange represents the indexRange (8.11) element in XcodeML
  * intermediate representation.
- * 
+ *
  * Elements:
  * - Optional:
  *   - lowerBound (Xbound)
@@ -16,36 +16,24 @@ import org.w3c.dom.NodeList;
  * Attributes:
  * - Optional: is_assume_size (bool) // TODO
  */
-public class XindexRange {
+public class XindexRange extends XbaseElement {
 
   protected Xbound _lowerBound;
   protected Xbound _upperBound;
   protected Xstep _step = null;
 
-  protected Element _indexRangeElement;
-
-  public XindexRange(Xbound lowerBound, Xbound upperBound, Xstep step){
-      _lowerBound = lowerBound;
-      _upperBound = upperBound;
-      _step = step;
-  }
-
   public XindexRange(Element indexRangeElement){
-    _indexRangeElement = indexRangeElement;
+    super(indexRangeElement);
     readRangeValue();
-  }
-
-  public Node clone(){
-    return _indexRangeElement.cloneNode(true);
   }
 
   private void readRangeValue(){
     _lowerBound = new Xbound(XelementHelper
-      .findFirstElement(_indexRangeElement, XelementName.LOWER_BOUND));
+      .findFirstElement(baseElement, XelementName.LOWER_BOUND));
     _upperBound = new Xbound(XelementHelper
-      .findFirstElement(_indexRangeElement,XelementName.UPPER_BOUND));
+      .findFirstElement(baseElement,XelementName.UPPER_BOUND));
     Element step = XelementHelper
-      .findFirstElement(_indexRangeElement, XelementName.STEP);
+      .findFirstElement(baseElement, XelementName.STEP);
     if(step != null){
       _step = new Xstep(step);
     }

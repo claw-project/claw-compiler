@@ -13,8 +13,8 @@ import org.w3c.dom.Element;
  */
 
 public class XintConstant extends Xconstant {
-  public XintConstant(Element element){
-    super(element);
+  public XintConstant(Element intConstantElement){
+    super(intConstantElement);
   }
 
   public Element create(XcodeProg xcodeml, String value, String type, String kind){

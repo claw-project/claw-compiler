@@ -23,10 +23,9 @@ import org.w3c.dom.NodeList;
  *   - FdoLoop
  */
 
-public class XexprModel {
-  private Element _element = null;
+public class XexprModel extends XbaseElement {
 
-  public XexprModel(Element element){
-    _element = element;
+  public XexprModel(Element exprModelElement){
+    super(exprModelElement);
   }
 }

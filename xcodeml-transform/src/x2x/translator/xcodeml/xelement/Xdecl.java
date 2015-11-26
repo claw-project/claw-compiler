@@ -7,14 +7,9 @@ import org.w3c.dom.Node;
  * Xdecl is the base class for element in the XdeclTable (XvarDecl, TODO)
  */
 
-public class Xdecl {
-  protected Element _element;
+public class Xdecl extends XbaseElement {
 
   public Xdecl(Element element){
-    _element = element;
-  }
-
-  public Node clone(){
-    return _element.cloneNode(true);
+    super(element);
   }
 }

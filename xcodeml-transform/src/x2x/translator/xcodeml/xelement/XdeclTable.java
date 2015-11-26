@@ -22,20 +22,19 @@ import java.util.Hashtable;
  *   - FcommonDecl TODO
  */
 
-public class XdeclTable {
+public class XdeclTable extends XbaseElement {
 
   private Hashtable<String, XvarDecl> _table;
-  private Element _baseElement = null;
 
-  public XdeclTable(Element symbols){
-    _baseElement = symbols;
+  public XdeclTable(Element declarations){
+    super(declarations);
     _table = new Hashtable<String, XvarDecl>();
     readTable();
   }
 
   private void readTable(){
     // Read all varDecl elements
-    NodeList nodeList = _baseElement
+    NodeList nodeList = baseElement
       .getElementsByTagName(XelementName.VAR_DECL);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node n = nodeList.item(i);
@@ -57,7 +56,7 @@ public class XdeclTable {
   }
 
   public void add(XvarDecl decl){
-    _baseElement.appendChild(decl.clone());
+    baseElement.appendChild(decl.clone());
     _table.put(decl.getName().getValue(), decl);
   }
 

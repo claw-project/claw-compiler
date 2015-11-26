@@ -18,23 +18,22 @@ import java.util.Random;
  *   - FstructType (XstructType)
  */
 
-public class XtypeTable {
+public class XtypeTable extends XbaseElement {
 
   private static final int HASH_LENGTH = 12;
   private static final String FCT_HASH_PREFIX = "F";
 
   private Hashtable<String, Xtype> _table;
-  private Element _baseElement = null;
 
-  public XtypeTable(Element symbols){
-    _baseElement = symbols;
+  public XtypeTable(Element typeTableElement){
+    super(typeTableElement);
     _table = new Hashtable<String, Xtype>();
     readTable();
   }
 
   private void readTable(){
     // Read basic type
-    NodeList basicTypes = _baseElement.getElementsByTagName(XelementName.BASIC_TYPE);
+    NodeList basicTypes = baseElement.getElementsByTagName(XelementName.BASIC_TYPE);
     for (int i = 0; i < basicTypes.getLength(); i++) {
       Node n = basicTypes.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -45,7 +44,7 @@ public class XtypeTable {
     }
 
     // Read fct type
-    NodeList fctTypes = _baseElement.getElementsByTagName(XelementName.FCT_TYPE);
+    NodeList fctTypes = baseElement.getElementsByTagName(XelementName.FCT_TYPE);
     for (int i = 0; i < fctTypes.getLength(); i++) {
       Node n = fctTypes.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -57,7 +56,7 @@ public class XtypeTable {
 
     // Read struct type
     NodeList structTypes =
-      _baseElement.getElementsByTagName(XelementName.F_STRUCT_TYPE);
+      baseElement.getElementsByTagName(XelementName.F_STRUCT_TYPE);
     for (int i = 0; i < structTypes.getLength(); i++) {
       Node n = structTypes.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -72,7 +71,7 @@ public class XtypeTable {
   }
 
   public void add(Xtype type){
-    _baseElement.appendChild(type.clone());
+    baseElement.appendChild(type.clone());
     _table.put(type.getType(), type);
   }
 

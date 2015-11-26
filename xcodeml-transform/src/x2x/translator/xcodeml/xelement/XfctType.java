@@ -27,10 +27,10 @@ public class XfctType extends Xtype {
   }
 
   private void readFctTypeInformation(){
-    _returnType = XelementHelper.getAttributeValue(_element,
+    _returnType = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_RETURN_TYPE);
 
-    String value = XelementHelper.getAttributeValue(_element,
+    String value = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_IS_PROGRAM);
 
     if(value != null && value.equals(XelementName.TRUE)){

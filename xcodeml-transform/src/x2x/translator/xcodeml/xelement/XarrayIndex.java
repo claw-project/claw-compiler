@@ -15,14 +15,10 @@ import java.util.Map;
  *   - exprModel TODO
  */
 
-public class XarrayIndex {
-  private Element _element = null;
+public class XarrayIndex extends XbaseElement {
 
-  public XarrayIndex(Element element){
-    _element = element;
+  public XarrayIndex(Element arrayIndexElement){
+    super(arrayIndexElement);
   }
-
-  public Element getRawElement(){
-    return _element;
-  }
+  
 }

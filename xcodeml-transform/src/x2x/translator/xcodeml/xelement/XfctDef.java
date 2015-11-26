@@ -24,14 +24,11 @@ public class XfctDef extends Xfct {
   private XsymbolTable _symbolTable;
   private XdeclTable _declTable;
 
-  //private Element _symbolsElement = null;
-  private Element _declarationsElement = null;
-
   public XfctDef(Element fctDefElement){
     super(fctDefElement);
-    Element symbols = XelementHelper.findSymbols(getFctElement());
+    Element symbols = XelementHelper.findSymbols(baseElement);
     _symbolTable = new XsymbolTable(symbols);
-    Element decl = XelementHelper.findDeclarations(getFctElement());
+    Element decl = XelementHelper.findDeclarations(baseElement);
     _declTable = new XdeclTable(decl);
   }
 
@@ -43,12 +40,7 @@ public class XfctDef extends Xfct {
     return _declTable;
   }
 
-  public Node clone(){
-    return getFctElement().cloneNode(true);
-  }
-
-
   public Element getBody(){
-    return XelementHelper.getBody(getFctElement());
+    return XelementHelper.getBody(baseElement);
   }
 }

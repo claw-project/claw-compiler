@@ -26,7 +26,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _extractedFctDef = null;
-  private Xloop _extractedLoop = null;
+  private XdoStatement _extractedLoop = null;
 
   private XfctDef _copiedFctDef = null;
 
@@ -72,7 +72,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
     _fctCall = new XfctCall(fctCallElement);
 
-    _fctDef = XelementHelper.findParentFctDef(_fctCall.getFctElement());
+    _fctDef = XelementHelper.findParentFctDef(_fctCall.getBaseElement());
     if(_fctDef == null){
       System.err.println("No function around the fct call");
       System.exit(1);
@@ -143,7 +143,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
 
     // Find the loop that will be extracted
-    Xloop loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
+    XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
 
 
 
@@ -152,7 +152,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       System.out.println("  created subroutine: " + clonedFctDef.getFctName());
     }
 
-    XelementHelper.insertAfter(_extractedFctDef.getFctElement(), cloned);
+    XelementHelper.insertAfter(_extractedFctDef.getBaseElement(), cloned);
 
     /*
      * DEMOTE ARRAY REFERENCES IN THE BODY OF THE FUNCTION
@@ -209,7 +209,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
           //
           for(String mappingVar : mapping.getMappingVariables()){
-            
+
           }
 
 
@@ -257,7 +257,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     loop.appendChild(body);
 
     // Move the call into the loop body
-    body.appendChild(_fctCall.getFctElement().getParentNode());
+    body.appendChild(_fctCall.getBaseElement().getParentNode());
 
 
     insertDeclaration(iterationRange.getInductionVar().getValue());

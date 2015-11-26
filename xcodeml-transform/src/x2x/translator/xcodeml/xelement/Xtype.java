@@ -7,27 +7,22 @@ import org.w3c.dom.Node;
  * Xtype is the base class for element in the XtypeTable (XbasicType, XfctType)
  */
 
-public class Xtype {
-  protected Element _element;
+public class Xtype extends XbaseElement {
   protected String _type;
 
-  public Xtype(Element element){
-    _element = element;
+  public Xtype(Element typeElement){
+    super(typeElement);
     readElementInformation();
   }
 
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(_element,
+    _type = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_TYPE);
   }
 
-  public Node clone(){
-    return _element.cloneNode(true);
-  }
-
   public void setType(String value){
-    if(_element != null){
-      _element.setAttribute(XelementName.ATTR_TYPE, value);
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
   }

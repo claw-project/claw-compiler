@@ -7,33 +7,34 @@ import org.w3c.dom.NamedNodeMap;
 
 
 /**
- * The XindexRange represents the indexRange (8.11) element in XcodeML
+ * The XdoStatement represents the FdoStatement (6.5) element in XcodeML
  * intermediate representation.
  *
  * Elements:
  * - Required:
  *   - Var (Xvar)
  *   - indexRange (XindexRange)
- *   - value // TODO check what is the meaning of this value
+ *   - body // TODO check what is the meaning of this value
+ * Attributes:
+ * - Optional: construct_name TODO
  */
-public class Xloop {
+public class XdoStatement extends XbaseElement {
   protected Element _pragmaElement = null;
-  protected Element _loopElement = null;
 
   protected Element _indexRangeElement = null;
   protected Element _inductionVarElement = null;
 
   protected XloopIterationRange _iterationRange;
 
-  public Xloop(Element pragma, Element loop){
+  public XdoStatement(Element pragma, Element doStatementElement){
+    super(doStatementElement);
     _pragmaElement = pragma;
-    _loopElement = loop;
     findRangeElements();
   }
 
   public void findRangeElements(){
-    _inductionVarElement = XelementHelper.findVar(_loopElement);
-    _indexRangeElement = XelementHelper.findIndexRange(_loopElement);
+    _inductionVarElement = XelementHelper.findVar(baseElement);
+    _indexRangeElement = XelementHelper.findIndexRange(baseElement);
 
     _iterationRange =
       new XloopIterationRange(_inductionVarElement, _indexRangeElement);
@@ -43,17 +44,17 @@ public class Xloop {
     Element body = getBodyElement();
     Node newVar = var.cloneNode(true);
     Node newRange = range.cloneNode(true);
-    _loopElement.insertBefore(newVar, body);
-    _loopElement.insertBefore(newRange, body);
+    baseElement.insertBefore(newVar, body);
+    baseElement.insertBefore(newRange, body);
     findRangeElements();
   }
 
   public void deleteRangeElements(){
-    _loopElement.removeChild(_inductionVarElement);
-    _loopElement.removeChild(_indexRangeElement);
+    baseElement.removeChild(_inductionVarElement);
+    baseElement.removeChild(_indexRangeElement);
   }
 
-  protected void swapRangeElementsWith(Xloop otherLoop){
+  protected void swapRangeElementsWith(XdoStatement otherLoop){
     otherLoop.setNewRange(_inductionVarElement, _indexRangeElement);
     setNewRange(otherLoop.getRangeVarElement(), otherLoop.getRangeElement());
   }
@@ -63,7 +64,7 @@ public class Xloop {
   }
 
   public Element getLoopElement(){
-    return _loopElement;
+    return baseElement;
   }
 
   public Element getPragmaElement(){
@@ -71,7 +72,7 @@ public class Xloop {
   }
 
   public Element getBodyElement(){
-    return XelementHelper.getBody(_loopElement);
+    return XelementHelper.getBody(baseElement);
   }
 
   public String getOriginalFilename(){
@@ -104,7 +105,7 @@ public class Xloop {
     return _iterationRange.toString();
   }
 
-  public boolean hasSameRangeWith(Xloop other){
+  public boolean hasSameRangeWith(XdoStatement other){
     return _iterationRange.isFullyIdentical(other.getIterationRange());
   }
 

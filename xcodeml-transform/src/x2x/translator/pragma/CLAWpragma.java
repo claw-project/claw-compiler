@@ -23,21 +23,27 @@ public enum CLAWpragma {
   private static final String DIRECTIVE_LOOP_VECTOR = "loop-vector";
   private static final String DIRECTIVE_LOOP_EXTRACT = "loop-extract";
   private static final String OPTION_FUSION_GROUP = "group";
+  private static final String OPTION_EXTRACT_RANGE = "range";
+  private static final String OPTION_EXTRACT_MAP = "map";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
   private static final String ANY_SPACES = "\\s*";
-
+  private static final String RANGE = "([^=]+)=([^,]+),([^,]+),?(.+)?";
+  private static final String SIMPLE_MAPPING = "([^:]+):(.*)";
 
 
   private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES +
     DIRECTIVE_LOOP_FUSION;
-
   private static final String REGEX_LOOP_INTERCHANGE = PREFIX_CLAW + ANY_SPACES
     + DIRECTIVE_LOOP_INTERCHANGE;
+  private static final String REGEX_LOOP_EXTRACT = PREFIX_CLAW + ANY_SPACES
+    + DIRECTIVE_LOOP_EXTRACT;
 
   private static final String REGEX_OPTION_SIMPLE = ANY_SPACES + INNER_OPTION;
-  private static final String REGEX_OPTION_GROUP = ANY_SPACES +
-    OPTION_FUSION_GROUP + REGEX_OPTION_SIMPLE;
+  private static final String REGEX_OPTION_GROUP = ANY_SPACES
+    + OPTION_FUSION_GROUP + REGEX_OPTION_SIMPLE;
+  private static final String REGEX_OPTION_RANGE = ANY_SPACES
+    + OPTION_EXTRACT_RANGE + ANY_SPACES + RANGE;
 
 
 

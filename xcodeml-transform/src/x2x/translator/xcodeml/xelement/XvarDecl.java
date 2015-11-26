@@ -20,18 +20,18 @@ public class XvarDecl extends Xdecl {
 
   private Element _valueElement = null; // TODO to be removed
 
-  public XvarDecl(Element baseElement){
-    super(baseElement);
+  public XvarDecl(Element varDeclElement){
+    super(varDeclElement);
     readElementInformation();
   }
 
   private void readElementInformation(){
-    Element nameElement = XelementHelper.findFirstElement(_element,
+    Element nameElement = XelementHelper.findFirstElement(baseElement,
       XelementName.NAME);
     _name = new Xname(nameElement);
 
     // TODO move to an object
-    _valueElement = XelementHelper.findFirstElement(_element,
+    _valueElement = XelementHelper.findFirstElement(baseElement,
         XelementName.VALUE);
     if(_valueElement != null){
       _hasValue = true;

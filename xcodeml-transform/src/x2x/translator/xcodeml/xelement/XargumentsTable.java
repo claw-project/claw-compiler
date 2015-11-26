@@ -15,20 +15,19 @@ import java.util.Map;
  *   - exprModel
  */
 
-public class XargumentsTable {
+public class XargumentsTable extends XbaseElement {
   // TODO exprModel. For the moment only read var
   private Hashtable<String, Xvar> _table;
-  private Element _baseElement = null;
 
   public XargumentsTable(Element arguments){
-    _baseElement = arguments;
+    super(arguments);
     _table = new Hashtable<String, Xvar>();
     readTable();
   }
 
   private void readTable(){
     // Read Var element
-    NodeList elements = _baseElement.getElementsByTagName(XelementName.VAR);
+    NodeList elements = baseElement.getElementsByTagName(XelementName.VAR);
     for (int i = 0; i < elements.getLength(); i++) {
       Node n = elements.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -49,7 +48,7 @@ public class XargumentsTable {
   }
 
   public void add(Xvar var){
-    _baseElement.appendChild(var.clone());
+    baseElement.appendChild(var.clone());
     _table.put(var.getType(), var);
   }
 

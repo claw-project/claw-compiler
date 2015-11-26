@@ -82,13 +82,13 @@ public class XelementHelper {
     return null;
   }
 
-  public static Xloop findLoop(XfctDef fctDef){
+  public static XdoStatement findLoop(XfctDef fctDef){
     Element body = fctDef.getBody();
     Element loopElement = XelementHelper.findLoopStament(body);
     if(loopElement == null){
       return null;
     }
-    return new Xloop(null, loopElement);
+    return new XdoStatement(null, loopElement);
   }
 
   public static Element findVar(Element parent){
@@ -205,7 +205,7 @@ public class XelementHelper {
     }
   }
 
-  public static void extractBody(Xloop loop){
+  public static void extractBody(XdoStatement loop){
     Element loopElement = loop.getLoopElement();
     Element body = XelementHelper.findFirstElement(loopElement,
       XelementName.BODY);
