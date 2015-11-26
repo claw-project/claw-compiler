@@ -29,9 +29,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
   private XfctDef _copiedFctDef = null;
 
-  public LoopExtraction(Element pragma, Element exprStmt) {
-    _pragma = new Xpragma(pragma);
-    _exprStmt = new XexprStatement(exprStmt);
+  public LoopExtraction(Xpragma pragma) {
+    _pragma = pragma;
     _mappings = new ArrayList<CLAWmapping>();
     extractMappingInformation();
   }
@@ -62,6 +61,15 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   }
 
   public boolean analyze(XcodeProg xcodeml){
+    Element exprElement = XelementHelper
+      .findNextExprStatement(_pragma.getBaseElement());
+
+    if(exprElement == null){
+      // TODO give the reason and stops analysis
+      return false;
+    }
+    _exprStmt = new XexprStatement(exprElement);
+
     // Find function CALL
     Element fctCallElement = findFctCall();
     if(fctCallElement == null){

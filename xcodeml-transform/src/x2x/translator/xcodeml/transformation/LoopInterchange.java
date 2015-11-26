@@ -32,9 +32,8 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
-  public LoopInterchange(Element pragma, Element loop){
-    _loopLevel0 = new XdoStatement(loop);
-    _loopInterchangePragma = new Xpragma(pragma);
+  public LoopInterchange(Xpragma pragma){
+    _loopInterchangePragma = pragma;
     _newOrderOption = CLAWpragma
       .getSimpleOptionValue(_loopInterchangePragma.getData());
   }
@@ -167,6 +166,17 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
 
 
   public boolean analyze(XcodeProg xcodeml){
+    // Find next loop after pragma
+    Element loopElement =
+      XelementHelper.findNextLoop(_loopInterchangePragma.getBaseElement());
+
+    if(loopElement == null){
+      // TODO give the reason and stops analysis
+      return false;
+    }
+
+    _loopLevel0 = new XdoStatement(loopElement);
+
     Element body = _loopLevel0.getBodyElement();
     Element loop1 = findChildLoop(body);
     if(loop1 == null){

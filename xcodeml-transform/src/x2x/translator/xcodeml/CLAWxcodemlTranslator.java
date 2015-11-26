@@ -69,60 +69,35 @@ public class CLAWxcodemlTranslator {
       Node pragmaNode = pragmaList.item(i);
       if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
         Element pragmaElement = (Element) pragmaNode;
-        String fullPragmaText = pragmaElement.getTextContent();
+        Xpragma pragma = new Xpragma(pragmaElement);
 
-        if(!CLAWpragma.startsWithClaw(fullPragmaText)){
+        if(!CLAWpragma.startsWithClaw(pragma.getData())){
           continue; // Not CLAW pragma, we do nothing
         }
 
-        if(CLAWpragma.isValid(fullPragmaText)){
-          CLAWpragma clawDirective = CLAWpragma.getDirective(fullPragmaText);
+        if(CLAWpragma.isValid(pragma.getData())){
+          CLAWpragma clawDirective = CLAWpragma.getDirective(pragma.getData());
 
           // loop-fusion directives
           if(clawDirective == CLAWpragma.LOOP_FUSION){
-            Element loop = XelementHelper.findNextLoop(pragmaNode);
-            if(loop == null){
-              System.err
-                .println("loop-fusion pragma is not followed by a loop");
-              System.exit(1);
-            } else {
-              LoopFusion trans = new LoopFusion(pragmaElement, loop);
-              if(trans.analyze(_program)){
-                _loopFusion.add(trans);
-              }
+            LoopFusion trans = new LoopFusion(pragma);
+            if(trans.analyze(_program)){
+              _loopFusion.add(trans);
             }
-
-
-          // loop-interchange directives
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
-            Element loop = XelementHelper.findNextLoop(pragmaNode);
-            if(loop == null){
-              System.err
-                .println("loop-interchange pragma is not followed by a loop");
-              System.exit(1);
-            } else {
-              LoopInterchange trans = new LoopInterchange(pragmaElement, loop);
-              if(trans.analyze(_program)){
-                _loopInterchange.add(trans);
-              }
+            LoopInterchange trans = new LoopInterchange(pragma);
+            if(trans.analyze(_program)){
+              _loopInterchange.add(trans);
             }
-
-          // loop-extract directives
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
-            Element expr = XelementHelper.findNextExprStatement(pragmaNode);
-            if(expr == null){
-              System.err.println("loop-extract pragma is not followed by an " +
-                "expression statment");
-            } else {
-              LoopExtraction trans = new LoopExtraction(pragmaElement, expr);
-              if(trans.analyze(_program)){
-                _loopExtract.add(trans);
-              }
+            LoopExtraction trans = new LoopExtraction(pragma);
+            if(trans.analyze(_program)){
+              _loopExtract.add(trans);
             }
           }
 
         } else {
-          System.out.println("INVALID PRAGMA: " + fullPragmaText);
+          System.out.println("INVALID PRAGMA: !$" + pragma.getData());
           System.exit(1);
         }
       }

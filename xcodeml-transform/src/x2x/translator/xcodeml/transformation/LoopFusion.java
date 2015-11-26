@@ -15,9 +15,8 @@ public class LoopFusion implements Transformation<LoopFusion> {
   private Xpragma _loopFusionPragma = null;
   private XdoStatement _loop = null;
 
-  public LoopFusion(Element pragma, Element loop){
-    _loopFusionPragma = new Xpragma(pragma);
-    _loop = new XdoStatement(loop);
+  public LoopFusion(Xpragma pragma){
+    _loopFusionPragma = pragma;
     _groupLabel = CLAWpragma.getGroupOptionValue(_loopFusionPragma.getData());
   }
 
@@ -26,6 +25,14 @@ public class LoopFusion implements Transformation<LoopFusion> {
   }
 
   public boolean analyze(XcodeProg xcodeml) {
+    Element loopElement =
+      XelementHelper.findNextLoop(_loopFusionPragma.getBaseElement());
+
+    if(loopElement == null){
+      // TODO give the reason and stops analysis
+      return false;
+    }
+    _loop = new XdoStatement(loopElement);
     return true;
   }
 
