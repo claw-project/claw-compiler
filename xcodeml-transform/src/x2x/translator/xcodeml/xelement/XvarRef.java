@@ -29,12 +29,27 @@ public class XvarRef extends XbaseElement {
     // TODO
   }
 
-  public static Element create(XcodeProg xcodeml, Xvar var, String type, XarrayIndex index){
-    /* TODO
-      <varRef type="A7fa7b35045b0">
-        <Var type="A7fa7b35045b0" scope="local">value1</Var>
-      </varRef>
-      */
-    return null;
+  /**
+   * Create an empty varRef element in the given program
+   * param type attribute of the element. If null, no attribute is set
+   */
+  public static XvarRef createEmpty(XcodeProg xcodeml, String type){
+    Element arrayRef = xcodeml.getDocument().
+      createElement(XelementName.VAR_REF);
+    if(type != null){
+      arrayRef.setAttribute(XelementName.ATTR_TYPE, type);
+    }
+    return new XvarRef(arrayRef);
+  }
+
+  public void append(XbaseElement element, boolean cloneElement){
+    if(cloneElement){
+      Node clone = element.clone();
+      baseElement.appendChild(clone);
+    } else {
+      baseElement.appendChild(element.getBaseElement());
+    }
+
+    // TODO set the correct variable once they are there
   }
 }

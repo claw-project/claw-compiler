@@ -20,5 +20,27 @@ public class XarrayIndex extends XbaseElement {
   public XarrayIndex(Element arrayIndexElement){
     super(arrayIndexElement);
   }
-  
+
+  /**
+   * Create an empty arrayIndex element in the given program
+   */
+  public static XarrayIndex createEmpty(XcodeProg xcodeml){
+    Element arrayIndex = xcodeml.getDocument().
+      createElement(XelementName.ARRAY_INDEX);
+    return new XarrayIndex(arrayIndex);
+  }
+
+  public void append(XbaseElement element){
+    append(element, false);
+  }
+
+  public void append(XbaseElement element, boolean cloneElement){
+    if(cloneElement){
+      Node clone = element.clone();
+      baseElement.appendChild(clone);
+    } else {
+      baseElement.appendChild(element.getBaseElement());
+    }
+  }
+
 }

@@ -69,6 +69,21 @@ public class Xvar extends XbaseElement {
     return new Xvar((Element)clone);
   }
 
+  /**
+   * Create an empty arrayRef element in the given program
+   * param type attribute of the element. If null, no attribute is set
+   */
+  public static Xvar createEmpty(XcodeProg xcodeml, String scope){
+    Element var = xcodeml.getDocument().
+      createElement(XelementName.VAR);
+    if(scope == null){
+      // TODO trigger an error, scope is required
+    } else {
+      var.setAttribute(XelementName.ATTR_SCOPE, scope);
+    }
+    return new Xvar(var);
+  }
+
   @Override
   public boolean equals(Object ob) {
     if (ob == null) return false;
