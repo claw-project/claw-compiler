@@ -56,4 +56,20 @@ public class Xname extends XbaseElement {
     return _nameValue.equals(name) && _nameType.equals(type);
   }
 
+  /**
+   * Create a name element with value and type in the given program
+   * @param name  Value of the element
+   * @param type  Type of the name element
+   */
+  public static Xname createEmpty(XcodeProg xcodeml, String value,
+    String type)
+  {
+    Element nameElement = xcodeml.getDocument().
+      createElement(XelementName.NAME);
+    Xname name = new Xname(nameElement);
+    name.setName(value);
+    name.setType(type);
+    return name;
+  }
+
 }
