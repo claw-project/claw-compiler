@@ -1,10 +1,15 @@
 PROGRAM loop_extract
  INTEGER :: value1 ( 1 : 10 )
  INTEGER :: value2 ( 1 : 10 )
+ INTEGER :: j
  INTEGER :: i
  INTEGER :: istart = 1
  INTEGER :: iend = 10
 
+ DO j = 1 , 10 , 1
+  value1 ( j ) = j
+  value2 ( j ) = j
+ END DO
 !$claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)
  DO i = istart , iend , 1
   CALL clawloop_extracted ( value1 ( i ) , value2 ( i ) )
@@ -34,4 +39,3 @@ SUBROUTINE clawloop_extracted ( value1 , value2 )
  PRINT * ,"value1: " , value1
  PRINT * ,"value2: " , value2
 END SUBROUTINE clawloop_extracted
-
