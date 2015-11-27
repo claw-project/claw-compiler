@@ -10,8 +10,8 @@ CLAW language definition.
 We are currently evaluating the potential of such a translator. The current
 development status is the following. Only limited cases have been tested.
 - [x] loop-fusion
-- [x] loop-interchange
-- [ ] loop-extract
+- [x] loop-interchange (naive)
+- [x] loop-extract (very simple case for evaluation)
 - [ ] loop-vector
 - [ ] scalar-replace
 - [ ] data
