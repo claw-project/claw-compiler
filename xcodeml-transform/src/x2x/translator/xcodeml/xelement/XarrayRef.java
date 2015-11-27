@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 public class XarrayRef extends XbaseElement {
 
   private String _type = null;
-  private Xvar _var = null;
+  private XvarRef _varRef = null;
 
   public XarrayRef(Element arrayRefElement){
     super(arrayRefElement);
@@ -37,15 +37,15 @@ public class XarrayRef extends XbaseElement {
       , XelementName.ATTR_TYPE);
 
     // Find Var element
-    Element varElement = XelementHelper.findVar(baseElement);
+    Element varElement = XelementHelper.findVarRef(baseElement);
     if(varElement != null){
-      _var = new Xvar(varElement);
+      _varRef = new XvarRef(varElement);
     }
 
   }
 
-  public Xvar getVar(){
-    return _var;
+  public XvarRef getVarRef(){
+    return _varRef;
   }
 
   public void append(XbaseElement element){
@@ -60,13 +60,13 @@ public class XarrayRef extends XbaseElement {
       baseElement.appendChild(element.getBaseElement());
     }
 
-    if(element instanceof Xvar){
-      _var = (Xvar)element;
+    if(element instanceof XvarRef){
+      _varRef = (XvarRef)element;
     }
   }
 
   /**
-   * Create an empty arrayReg element in the given program
+   * Create an empty arrayRef element in the given program
    * param type attribute of the element. If null, no attribute is set
    */
   public static XarrayRef createEmpty(XcodeProg xcodeml, String type){
@@ -77,38 +77,4 @@ public class XarrayRef extends XbaseElement {
     }
     return new XarrayRef(arrayRef);
   }
-
-
-
-  /*public static Element create(XcodeProg xcodeml, Xvar var, String type, XarrayIndex index){
-    // Make sure var is an array
-    // TODO
-
-    // Wrap the var with the array reference
-
-
-    /*Element varRef = xcodeml.getDocument().createElement(XelementName.VAR_REF);
-    varRef.setAttribute(XelementName.ATTR_TYPE, var.getType());
-    varRef.appendChild(varClone);
-    arrayRef.appendChild(varRef);
-    arrayRef.appendChild(index.getBaseElement());*/
-
-
-    /*<Var type="A7fa7b35045b0" scope="local">value1</Var>
-
-    Create this element
-    <FarrayRef type="Fint">
-      <varRef type="A7fa7b35045b0">
-        <Var type="A7fa7b35045b0" scope="local">value1</Var>
-      </varRef>
-      <arrayIndex>
-        <Var type="Fint" scope="local">i</Var>
-      </arrayIndex>
-    </FarrayRef>
-
-
-
-
-    return arrayRef;
-  }*/
 }
