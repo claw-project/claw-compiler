@@ -28,7 +28,10 @@ public class XvarDecl extends Xdecl {
   private void readElementInformation(){
     Element nameElement = XelementHelper.findFirstElement(baseElement,
       XelementName.NAME);
-    _name = new Xname(nameElement);
+
+    if(nameElement != null){
+      _name = new Xname(nameElement);
+    }
 
     // TODO move to an object
     _valueElement = XelementHelper.findFirstElement(baseElement,
