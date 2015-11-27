@@ -55,6 +55,16 @@ public class XdeclTable extends XbaseElement {
     // TODO read FcommonDecl elements
   }
 
+  public void replace(XvarDecl decl){
+    XvarDecl oldDecl = _table.get(decl.getName().getValue());
+    if(oldDecl == null){
+      // TODO error handling
+    }
+
+    XelementHelper.insertAfter(oldDecl.getBaseElement(), decl.getBaseElement());
+    oldDecl.delete();
+  }
+
   public void add(XvarDecl decl){
     baseElement.appendChild(decl.clone());
     _table.put(decl.getName().getValue(), decl);
