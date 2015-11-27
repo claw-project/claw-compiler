@@ -42,9 +42,19 @@ public class XargumentsTable extends XbaseElement {
      return _table.get(name);
   }
 
+  public void replace(Xvar var, XarrayRef arrayRef){
+    if(var != null){
+      XelementHelper.insertAfter(var.getBaseElement(),
+        arrayRef.getBaseElement());
+      var.delete();
+    } else {
+      // TODO trigger a critical error
+    }
+  }
+
   public void add(XarrayRef arrayRef){
     baseElement.appendChild(arrayRef.clone());
-    _table.put(arrayRef.getVar().getValue(), arrayRef);
+    //_table.put(arrayRef.getVar().getValue(), arrayRef); TODO
   }
 
   public void add(Xvar var){
