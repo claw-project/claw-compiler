@@ -213,11 +213,14 @@ public class XelementHelper {
     Element loopElement = loop.getBaseElement();
     Element body = XelementHelper.findFirstElement(loopElement,
       XelementName.BODY);
+
+    Node refNode = loopElement;
     for(Node childNode = body.getFirstChild(); childNode!=null;){
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE){
-        XelementHelper.insertAfter(loopElement, (Element)childNode);
+        XelementHelper.insertAfter(refNode, (Element)childNode);
+        refNode = childNode;
       }
       childNode = nextChild;
     }
