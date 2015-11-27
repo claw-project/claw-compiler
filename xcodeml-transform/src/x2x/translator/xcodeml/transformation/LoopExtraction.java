@@ -201,27 +201,52 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       for(String var : mapping.getMappedVariables()){
 
         System.out.println("  Var: " + var);
-        Xvar argument = (Xvar)args.findArgument(var); // TODO return a dedictaed type
+        XbaseElement argument = args.findArgument(var); // TODO return a dedictaed type
         if(argument != null){
-          
-          System.out.println("  arg found: " + argument.getType());
-          XbasicType type = (XbasicType)xcodeml.getTypeTable().get(argument.getType());
 
-          System.out.println("  ref: " + type.getRef());
-          System.out.println("  dimensions: " + type.getDimensions());
+          // Case 1: Var --> ArrayRef
+          if(argument instanceof Xvar){
+            Xvar varArg = (Xvar)argument;
+            System.out.println("  arg found: " + varArg.getType());
+            XbasicType type = (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
 
-          // Demotion cannot be applied as type dimension is smaller
-          if(type.getDimensions() < mapping.getMappedDimensions()){
-            // TODO problem !!!! demotion to big
+            System.out.println("  ref: " + type.getRef());
+            System.out.println("  dimensions: " + type.getDimensions());
+
+            // Demotion cannot be applied as type dimension is smaller
+            if(type.getDimensions() < mapping.getMappedDimensions()){
+              // TODO problem !!!! demotion to big
+            }
+
+            XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
+            XvarRef varRef = XvarRef.createEmpty(xcodeml, varArg.getType());
+            varRef.append(varArg, true);
+            newArg.append(varRef);
+
+            XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
+
+
+            //  create arrayIndex
+
+            for(String mappingVar : mapping.getMappingVariables()){
+              // Find the mapping var in the local table (fct scope)
+              XvarDecl mappingVarDecl = _fctDef.getDeclarationTable().get(mappingVar);
+              
+              // Add to arrayIndex
+              Xvar newMappingVar = Xvar.createEmpty(xcodeml, Xscope.LOCAL.toString());
+              newMappingVar.setType(mappingVarDecl.getName().getType());
+              newMappingVar.setValue(mappingVarDecl.getName().getValue());
+              arrayIndex.append(newMappingVar);
+            }
+            newArg.append(arrayIndex);
+            args.replace(varArg, newArg);
+          }
+          // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
+          else if (argument instanceof XarrayRef){
+
           }
 
-          XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
-          newArg.append(argument, true);
 
-          //
-          for(String mappingVar : mapping.getMappingVariables()){
-
-          }
 
 
 
@@ -243,6 +268,17 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
      *    2.1 Create the varRef element with the type of base variable
      *    2.2 insert clone of base variable in varRef
      * 3. Create arrayRef element with varRef + arrayIndex
+
+     <FarrayRef type="Fint">
+       <varRef type="A7fa7b35045b0">
+         <Var type="A7fa7b35045b0" scope="local">value1</Var>
+       </varRef>
+       <arrayIndex>
+         <Var type="Fint" scope="local">i</Var>
+       </arrayIndex>
+     </FarrayRef>
+
+
      */
 
 
