@@ -7,7 +7,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
- * The XarrayIndex represents the arrayIndex (8.1) element in XcodeML
+ * The XarrayIndex represents the arrayIndex (8.10) element in XcodeML
  * intermediate representation.
  *
  * Elements:
