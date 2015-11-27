@@ -17,6 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class XelementHelper {
 
@@ -67,6 +68,21 @@ public class XelementHelper {
     }
     return null;
   }
+
+  public static ArrayList<XarrayRef> getAllArrayReferences(Element parent){
+    ArrayList<XarrayRef> references = new ArrayList<XarrayRef>();
+    NodeList nList = parent.getElementsByTagName(XelementName.F_ARRAY_REF);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        XarrayRef ref = new XarrayRef(el);
+        references.add(ref);
+      }
+    }
+    return references;
+  }
+
 
   public static XfctDef findParentFctDef(Element child){
     Node parent = child.getParentNode();
