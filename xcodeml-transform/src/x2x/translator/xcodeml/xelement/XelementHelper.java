@@ -95,6 +95,10 @@ public class XelementHelper {
     return findFirstElement(parent, XelementName.VAR);
   }
 
+  public static Element findVarRef(Element parent){
+    return findFirstElement(parent, XelementName.VAR_REF);
+  }
+
   public static Element findIndexRange(Element parent){
     return findFirstElement(parent, XelementName.INDEX_RANGE);
   }
