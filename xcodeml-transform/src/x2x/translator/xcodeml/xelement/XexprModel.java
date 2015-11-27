@@ -23,9 +23,48 @@ import org.w3c.dom.NodeList;
  *   - FdoLoop
  */
 
-public class XexprModel extends XbaseElement {
+public class XexprModel {
+  private XbaseElement _element = null;
 
-  public XexprModel(Element exprModelElement){
-    super(exprModelElement);
+  public XexprModel(XbaseElement element){
+    _element = element;
   }
+
+  public XbaseElement getElement(){
+    return _element;
+  }
+
+  public void setElement(XbaseElement element){
+    _element = element;
+  }
+
+  public boolean isVar(){
+    if(_element != null && _element instanceof Xvar){
+      return true;
+    }
+    return false;
+  }
+
+  public Xvar getVar(){
+    if(isVar()){
+      return (Xvar)_element;
+    }
+    return null;
+  }
+
+  public boolean isIntConst(){
+    if(_element != null && _element instanceof XintConstant){
+      return true;
+    }
+    return false;
+  }
+
+  public XintConstant getIntConstant(){
+    if(isIntConst()){
+      return (XintConstant)_element;
+    }
+    return null;
+  }
+
+
 }

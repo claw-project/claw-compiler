@@ -12,13 +12,27 @@ import java.util.Map;
  *
  * Elements:
  * - Required:
- *   - exprModel TODO
+ *   - exprModel (XbaseElement)
  */
 
 public class XarrayIndex extends XbaseElement {
+  private XexprModel _exprModel;
 
   public XarrayIndex(Element arrayIndexElement){
     super(arrayIndexElement);
+    readElementInformation();
+  }
+
+  private void readElementInformation(){
+    // Find Var element if there is one
+    Element varElement = XelementHelper.findVar(baseElement);
+    if(varElement != null){
+      _exprModel = new XexprModel(new Xvar(varElement));
+    }
+  }
+
+  public XexprModel getExprModel(){
+    return _exprModel;
   }
 
   /**
