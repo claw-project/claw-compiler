@@ -55,7 +55,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   }
 
   private boolean checkMappingInformation(){
-
+    // Mapped variable should appear on one time
+    // mapped variable should be declared in the fct def or in the global decl
+    //
 
     return true; //TODO
   }
@@ -193,8 +195,11 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     _fctCall.setName(newFctName);
     _fctCall.setType(newFctTypeHash);
 
-    // Adapt function call parameters
+    // Adapt function call parameters and function declaration
     XargumentsTable args = _fctCall.getArgumentsTable();
+    XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
+    XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
+
     for(CLAWmapping mapping : _mappings){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
 
@@ -204,11 +209,23 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
         XbaseElement argument = args.findArgument(var); // TODO return a dedictaed type
         if(argument != null){
 
-          // Case 1: Var --> ArrayRef
+          /* Case 1: Var --> ArrayRef
+           * Var --> ArrayRef transformation
+           * 1. Check that the variable used as array index exists in the
+           *    current scope (XdeclTable). If so, get its type value. Create a
+           *    Var element for the arrayIndex. Create the arrayIndex element
+           *    with Var as child.
+           *
+           * 2. Get the reference type of the base variable.
+           *    2.1 Create the varRef element with the type of base variable
+           *    2.2 insert clone of base variable in varRef
+           * 3. Create arrayRef element with varRef + arrayIndex
+           */
           if(argument instanceof Xvar){
             Xvar varArg = (Xvar)argument;
             System.out.println("  arg found: " + varArg.getType());
-            XbasicType type = (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
+            XbasicType type =
+              (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
 
             System.out.println("  ref: " + type.getRef());
             System.out.println("  dimensions: " + type.getDimensions());
@@ -230,8 +247,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
             for(String mappingVar : mapping.getMappingVariables()){
               // Find the mapping var in the local table (fct scope)
-              XvarDecl mappingVarDecl = _fctDef.getDeclarationTable().get(mappingVar);
-              
+              XvarDecl mappingVarDecl =
+                _fctDef.getDeclarationTable().get(mappingVar);
+
               // Add to arrayIndex
               Xvar newMappingVar = Xvar.createEmpty(xcodeml, Xscope.LOCAL.toString());
               newMappingVar.setType(mappingVarDecl.getName().getType());
@@ -243,48 +261,30 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
           }
           // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
           else if (argument instanceof XarrayRef){
-
+            // TODO
           }
 
 
+          // Change variable declaration in extracted fct
 
+          XvarDecl varDecl = fctDeclarations.get(var);
+          Xid id = fctSymbols.get(var);
+          XbasicType varDeclType =
+            (XbasicType)xcodeml.getTypeTable().get(varDecl.getName().getType());
 
+          // Case 1: variable is demoted to scalar then take the ref type
+          if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
+            XvarDecl newVarDecl = XvarDecl.createEmpty(xcodeml, var, varDeclType.getRef());
+            fctDeclarations.replace(newVarDecl);
+            id.setType(varDeclType.getRef());
+          }
+
+          // Case 2: variable is not totally demoted then create new type
+          // TODO
 
         }
       }
     }
-
-    /* TODO
-     * Demotion possibility
-     * 1. Var --> ArrayRef
-     * 2. ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-     *
-     * Var --> ArrayRef transformation
-     * 1. Check that the variable used as array index exists in the current
-     *    scope (XdeclTable). If so, get its type value. Create a Var element
-     *    for the arrayIndex. Create the arrayIndex element with Var as child.
-     *
-     * 2. Get the reference type of the base variable.
-     *    2.1 Create the varRef element with the type of base variable
-     *    2.2 insert clone of base variable in varRef
-     * 3. Create arrayRef element with varRef + arrayIndex
-
-     <FarrayRef type="Fint">
-       <varRef type="A7fa7b35045b0">
-         <Var type="A7fa7b35045b0" scope="local">value1</Var>
-       </varRef>
-       <arrayIndex>
-         <Var type="Fint" scope="local">i</Var>
-       </arrayIndex>
-     </FarrayRef>
-
-
-     */
-
-
-
-
-
   }
 
   private void wrapCallWithLoop(XcodeProg xcodeml,
