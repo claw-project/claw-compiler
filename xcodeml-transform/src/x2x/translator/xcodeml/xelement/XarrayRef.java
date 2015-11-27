@@ -2,6 +2,9 @@ package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
 
 
 /**
@@ -24,23 +27,46 @@ public class XarrayRef extends XbaseElement {
 
   private String _type = null;
   private XvarRef _varRef = null;
+  private ArrayList<XbaseElement> _innerElement = null;
 
   public XarrayRef(Element arrayRefElement){
     super(arrayRefElement);
+    _innerElement = new ArrayList<XbaseElement>();
     readElementInformation();
   }
 
-  private void readElementInformation(){
-    // TODO
+  public ArrayList<XbaseElement> getInnerElements(){
+    return _innerElement;
+  }
 
-    _type = XelementHelper.getAttributeValue(baseElement
-      , XelementName.ATTR_TYPE);
+  private void readElementInformation(){
+    _type = XelementHelper.getAttributeValue(baseElement,
+      XelementName.ATTR_TYPE);
 
     // Find Var element
     Element varElement = XelementHelper.findVarRef(baseElement);
     if(varElement != null){
       _varRef = new XvarRef(varElement);
     }
+
+    // Read potential arrayIndex
+    NodeList nodeList = baseElement.
+      getElementsByTagName(XelementName.ARRAY_INDEX);
+
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node n = nodeList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element)n;
+        XarrayIndex arrayIndex = new XarrayIndex(el);
+        _innerElement.add(arrayIndex);
+      }
+    }
+
+    // TODO read indexRange
+
+    // TODO read FarrayConstructor
+
+    // TODO read FarrayRef
 
   }
 
