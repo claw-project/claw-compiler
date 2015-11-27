@@ -282,6 +282,38 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
           // Case 2: variable is not totally demoted then create new type
           // TODO
 
+
+          // Adapt array reference in extracted fct BODY
+          ArrayList<XarrayRef> arrayReferences =
+            XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
+          for(String mappingVar : mapping.getMappingVariables()){
+
+            System.out.println("references: " + arrayReferences.size());
+            for(XarrayRef ref : arrayReferences){
+              System.out.println("  inner elements:" + ref.getInnerElements().size());
+              for(XbaseElement e : ref.getInnerElements()){
+                if(e instanceof XarrayIndex){
+                  System.out.println("  is array index");
+                  XarrayIndex arrayIndex = (XarrayIndex)e;
+                  if(arrayIndex.getExprModel() == null){
+                    System.out.println("  expr model is null");
+                  }
+
+                  if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
+                    System.out.println("HERE : " + arrayIndex.getExprModel().getVar().getValue());
+                    if(arrayIndex.getExprModel().getVar().getValue().equals(mappingVar)){
+                      XelementHelper.insertAfter(ref.getBaseElement(), ref.getVarRef().clone());
+                      ref.delete();
+                    }
+                  }
+                }
+              }
+            }
+
+          }
+
+
+
         }
       }
     }
