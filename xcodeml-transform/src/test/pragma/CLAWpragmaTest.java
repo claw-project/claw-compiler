@@ -27,7 +27,17 @@ public class CLAWpragmaTest {
     assertFalse(CLAWpragma.isValid("claw loop-interchange ()"));
     assertFalse(CLAWpragma.isValid("claw loop-interchange (  )"));
 
-    
+    // loop-extract
+    assertTrue(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)"));
+    assertTrue(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1,value2:i)"));
+    assertTrue(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1, value2:i)"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1, value2)"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(:i)"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend)"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract map(value1:i)"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range() map(value1:i)"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map()"));
+
 
     // invalid dummy directives
     assertFalse(CLAWpragma.isValid("claw"));

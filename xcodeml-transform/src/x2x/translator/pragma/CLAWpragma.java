@@ -28,8 +28,8 @@ public enum CLAWpragma {
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
   private static final String ANY_SPACES = "\\s*";
-  private static final String RANGE = "([^=]+)=([^,]+),([^,]+),?(.+)?";
-  private static final String SIMPLE_MAPPING = "([^:]+):(.*)";
+  private static final String RANGE = "\\(([^=]+)=([^,]+),([^,]+),?(.+)?\\)";
+  private static final String SIMPLE_MAPPING = "\\(([^:]+):(.*)\\)";
 
 
   private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES +
@@ -44,6 +44,9 @@ public enum CLAWpragma {
     + OPTION_FUSION_GROUP + REGEX_OPTION_SIMPLE;
   private static final String REGEX_OPTION_RANGE = ANY_SPACES
     + OPTION_EXTRACT_RANGE + ANY_SPACES + RANGE;
+
+  private static final String REGEX_OPTION_MAP = ANY_SPACES
+    + OPTION_EXTRACT_MAP + ANY_SPACES + SIMPLE_MAPPING;
 
 
 
@@ -165,7 +168,8 @@ public enum CLAWpragma {
       case LOOP_VECTOR:
         return true; // TODO
       case LOOP_EXTRACT:
-        return true; // TODO
+        return CLAWpragma.isRangeOptionValid(option)
+          && CLAWpragma.isMapOptionValid(option);
       default:
         return false;
     }
@@ -179,9 +183,18 @@ public enum CLAWpragma {
     return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_SIMPLE, false);
   }
 
+  private static boolean isRangeOptionValid(String option){
+    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_RANGE, false);
+  }
+
+  private static boolean isMapOptionValid(String option){
+    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_MAP, false);
+  }
+
   private static boolean checkOptionalOption(String option, String regex,
     boolean allowOnlySpaces)
   {
+    // TODO handle allowOnlySpaces parameter
     if(option == null){ // option is not mandatory
       return true;
     }
