@@ -15,7 +15,7 @@ set (EXECUTABLE_TRANSFORMED transformed_code_${TEST_NAME})
 # Create intermediate representation in XcodeML Fortran format
 add_custom_command(
   OUTPUT  ${XCODEML_FILE}
-  COMMAND ${OMNI_F_FRONTEND} -o ${XCODEML_FILE} ${ORIGINAL_FILE}
+  COMMAND ${OMNI_F_FRONTEND} ${OMNI_F_FRONTEND_OPTION} -o ${XCODEML_FILE} ${ORIGINAL_FILE}
   DEPENDS ${ORIGINAL_FILE}
   COMMENT "Generating XcodeML file"
 )
