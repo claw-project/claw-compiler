@@ -37,6 +37,8 @@ public class CLAWpragmaTest {
     assertFalse(CLAWpragma.isValid("claw loop-extract map(value1:i)"));
     assertFalse(CLAWpragma.isValid("claw loop-extract range() map(value1:i)"));
     assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map()"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range() map()"));
+    assertFalse(CLAWpragma.isValid("claw loop-extract range map"));
 
 
     // invalid dummy directives
