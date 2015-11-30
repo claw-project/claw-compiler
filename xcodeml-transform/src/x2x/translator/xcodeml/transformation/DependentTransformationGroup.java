@@ -4,7 +4,11 @@ import java.util.ArrayList;
 
 import x2x.translator.xcodeml.xelement.XcodeProg;
 
-
+/**
+ * An dependent transformation group check wether it can be transformed with
+ * another pending transformation in the pipeline. Each transformation are
+ * applied only once. 
+ */
 
 public class DependentTransformationGroup<T extends Transformation<? super T>> extends TransformationGroup<T> {
 

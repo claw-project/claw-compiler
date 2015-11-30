@@ -11,17 +11,16 @@ import org.w3c.dom.NodeList;
 public class LoopFusion implements Transformation<LoopFusion> {
 
   private boolean _transformed = false;
+  // Contains the value of the group option
   private String _groupLabel = null;
+  // The pragma statement that triggered the transformation
   private Xpragma _loopFusionPragma = null;
+  // The loop statement involved in the Transformation
   private XdoStatement _loop = null;
 
   public LoopFusion(Xpragma pragma){
     _loopFusionPragma = pragma;
     _groupLabel = CLAWpragma.getGroupOptionValue(_loopFusionPragma.getData());
-  }
-
-  public XdoStatement getLoop(){
-    return _loop;
   }
 
   public boolean analyze(XcodeProg xcodeml) {
@@ -34,6 +33,51 @@ public class LoopFusion implements Transformation<LoopFusion> {
     }
     _loop = new XdoStatement(loopElement);
     return true;
+  }
+
+  /**
+   * Merge the given loop with this one
+   */
+  public void transform(XcodeProg xcodeml, LoopFusion loopFusionUnit){
+    XelementHelper.appendBody(_loop.getBaseElement(),
+      loopFusionUnit.getLoop().getBaseElement());
+    loopFusionUnit.finalizeTransformation();
+  }
+
+  public boolean isTransformed(){
+    return _transformed;
+  }
+
+  public boolean canBeTransformedWith(LoopFusion otherLoopUnit){
+    // No loop is transformed already
+    if(_transformed || otherLoopUnit.isTransformed()){
+      return false;
+    }
+    // Loops can only be merged if they are at the same level
+    if(!hasSameParentBlockWith(otherLoopUnit)){
+      return false;
+    }
+    // Loop must share the same group option
+    if(!hasSameGroupOption(otherLoopUnit)){
+      return false;
+    }
+    // Loop must share the same iteration range
+    if(!_loop.hasSameRangeWith(otherLoopUnit.getLoop())){
+      return false;
+    }
+    return true;
+  }
+
+  public void finalizeTransformation(){
+    // Delete the pragma of the transformed loop
+    _loopFusionPragma.delete();
+    // Delete the loop that was merged with the main one
+    _loop.delete();
+    _transformed = true;
+  }
+
+  public XdoStatement getLoop(){
+    return _loop;
   }
 
   public String getGroupOptionLabel(){
@@ -53,43 +97,6 @@ public class LoopFusion implements Transformation<LoopFusion> {
     return (otherLoopUnit.getGroupOptionLabel() == null
       ? getGroupOptionLabel() == null
       : otherLoopUnit.getGroupOptionLabel().equals(getGroupOptionLabel()));
-  }
-
-  public boolean canBeTransformedWith(LoopFusion other){
-    if(_transformed || other.isTransformed()){
-      return false;
-    }
-    if(!hasSameParentBlockWith(other)){
-      return false;
-    }
-    if(!hasSameGroupOption(other)){
-      return false;
-    }
-    if(!_loop.hasSameRangeWith(other.getLoop())){
-      return false;
-    }
-    return true;
-  }
-
-  public boolean isTransformed(){
-    return _transformed;
-  }
-
-
-  public void finalizeTransformation(){
-    // Remove the pragma and the loop block of that was loop
-    _loopFusionPragma.delete();
-    _loop.delete();
-    _transformed = true;
-  }
-
-  /**
-   * Merge the given loop with this one
-   */
-  public void transform(XcodeProg xcodeml, LoopFusion loopFusionUnit){
-    XelementHelper.appendBody(_loop.getBaseElement(),
-      loopFusionUnit.getLoop().getBaseElement());
-    loopFusionUnit.finalizeTransformation();
   }
 
 }

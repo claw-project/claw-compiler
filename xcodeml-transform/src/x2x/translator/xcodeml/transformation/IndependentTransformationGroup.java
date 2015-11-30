@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import x2x.translator.xcodeml.xelement.XcodeProg;
 
-
+/**
+ * An independent transformation group applies each transformation without
+ * checking with any other transformation in the pipeline. 
+ */
 
 public class IndependentTransformationGroup<T extends Transformation<? super T>> extends TransformationGroup<T> {
 

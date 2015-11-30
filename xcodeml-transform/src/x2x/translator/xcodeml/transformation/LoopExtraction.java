@@ -55,11 +55,14 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   }
 
   private boolean checkMappingInformation(){
-    // Mapped variable should appear on one time
-    // mapped variable should be declared in the fct def or in the global decl
-    //
+    // TODO Mapped variable should appear on one time
+    // TODO Mapped variable should be declared in the fct definition
+    // declarations or in the global declarations table
 
-    return true; //TODO
+    // TODO Merge mapping if they have the exact same mapping vars to reduce the
+    // number of iteration for the demotions
+
+    return true; // TODO
   }
 
   public boolean analyze(XcodeProg xcodeml){
@@ -164,7 +167,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     XelementHelper.insertAfter(_extractedFctDef.getBaseElement(), cloned);
 
     /*
-     * DEMOTE ARRAY REFERENCES IN THE BODY OF THE FUNCTION
+     *
      */
 
 
@@ -180,7 +183,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
 
     /*
-     * ADAPT FUNCTION CALL
+     * ADAPT FUNCTION CALL AND DEMOTE ARRAY REFERENCES IN THE BODY
+     * OF THE FUNCTION
      */
 
     // Wrap function call with loop
@@ -283,24 +287,16 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
           // TODO
 
 
-          // Adapt array reference in extracted fct BODY
+          // Adapt array reference in extracted fct body element
           ArrayList<XarrayRef> arrayReferences =
             XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
           for(String mappingVar : mapping.getMappingVariables()){
-
-            System.out.println("references: " + arrayReferences.size());
             for(XarrayRef ref : arrayReferences){
-              System.out.println("  inner elements:" + ref.getInnerElements().size());
               for(XbaseElement e : ref.getInnerElements()){
                 if(e instanceof XarrayIndex){
-                  System.out.println("  is array index");
                   XarrayIndex arrayIndex = (XarrayIndex)e;
-                  if(arrayIndex.getExprModel() == null){
-                    System.out.println("  expr model is null");
-                  }
 
                   if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
-                    System.out.println("HERE : " + arrayIndex.getExprModel().getVar().getValue());
                     if(arrayIndex.getExprModel().getVar().getValue().equals(mappingVar)){
                       XelementHelper.insertAfter(ref.getBaseElement(), ref.getVarRef().clone());
                       ref.delete();
@@ -308,15 +304,16 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
                   }
                 }
               }
-            }
+            } // Loop over arrayReferences
+          } // Loop over mapping variables
 
-          }
+          // End of array references adaptation block TODO refactor the code to
+          // be more readable and segment it in smaller methods
 
 
-
-        }
-      }
-    }
+        } // If arg null TODO invert if to reduce nesting
+      } // Loop mapped variables
+    } // Loop over mapping clauses
   }
 
   private void wrapCallWithLoop(XcodeProg xcodeml,
