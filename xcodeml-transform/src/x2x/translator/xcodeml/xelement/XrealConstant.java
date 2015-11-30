@@ -17,8 +17,10 @@ public class XrealConstant extends Xconstant {
     super(element);
   }
 
-  public Element create(XcodeProg xcodeml, String value, String type, String kind){
-    // TODO
-    return null;
+  public XrealConstant create(XcodeProg xcodeml, String value, String type,
+    String kind)
+  {
+    Xconstant constant = create(xcodeml, value, type, kind, XconstType.REAL);
+    return constant == null ? null : (XrealConstant)constant;
   }
 }

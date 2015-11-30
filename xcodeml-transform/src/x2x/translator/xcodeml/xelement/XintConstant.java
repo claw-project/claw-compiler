@@ -17,8 +17,10 @@ public class XintConstant extends Xconstant {
     super(intConstantElement);
   }
 
-  public Element create(XcodeProg xcodeml, String value, String type, String kind){
-    // TODO
-    return null;
+  public XintConstant create(XcodeProg xcodeml, String value, String type,
+    String kind)
+  {
+    Xconstant constant = create(xcodeml, value, type, kind, XconstType.INT);
+    return constant == null ? null : (XintConstant)constant;
   }
 }

@@ -64,4 +64,48 @@ public class Xconstant extends XbaseElement {
       _value = value;
     }
   }
+
+  protected Xconstant create(XcodeProg xcodeml, String value, String type, String kind, XconstType constType){
+    if(value == null){
+      return null;
+    }
+
+    Xconstant constant;
+    Element base;
+    switch(constType){
+      case INT:
+        base = xcodeml.getDocument().
+          createElement(XelementName.F_CHAR_CONST);
+        constant = new XintConstant(base);
+        break;
+      case REAL:
+        base = xcodeml.getDocument().
+          createElement(XelementName.F_CHAR_CONST);
+        constant = new XintConstant(base);
+        break;
+      case CHAR:
+        base = xcodeml.getDocument().
+          createElement(XelementName.F_CHAR_CONST);
+        constant = new XintConstant(base);
+        break;
+      case LOGICAL:
+        base = xcodeml.getDocument().
+          createElement(XelementName.F_CHAR_CONST);
+        constant = new XintConstant(base);
+        break;
+      default:
+        return null;
+    }
+
+    constant.setValue(value);
+    if(type != null){
+      constant.setType(type);
+    }
+
+    if(kind != null){
+      constant.setKind(kind);
+    }
+
+    return constant;
+  }
 }
