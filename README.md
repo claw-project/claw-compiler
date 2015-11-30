@@ -12,9 +12,9 @@ development status is the following. Only limited cases have been tested.
 - [x] loop-fusion
 - [x] loop-interchange (naive)
 - [x] loop-extract (very simple case for evaluation)
-- [ ] loop-vector
-- [ ] scalar-replace
-- [ ] data
+- [ ] loop-vector (on hold in the spec)
+- [ ] scalar-replace (out of scope for evaluation)
+- [ ] data (out of scope for evaluation)
 
 
 Transformation flow is defined as follows:
