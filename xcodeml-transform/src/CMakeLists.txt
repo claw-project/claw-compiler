@@ -42,6 +42,7 @@ add_jar(omni-cx2x
   x2x/translator/xcodeml/xelement/Xbound.java
   x2x/translator/xcodeml/xelement/XcharacterConstant.java
   x2x/translator/xcodeml/xelement/XcodeProg.java
+  x2x/translator/xcodeml/xelement/XcomplexConstant.java
   x2x/translator/xcodeml/xelement/Xconstant.java
   x2x/translator/xcodeml/xelement/XconstType.java
   x2x/translator/xcodeml/xelement/XdeclTable.java

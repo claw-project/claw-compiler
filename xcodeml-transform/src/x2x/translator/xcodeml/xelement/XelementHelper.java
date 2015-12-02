@@ -83,6 +83,20 @@ public class XelementHelper {
     return references;
   }
 
+  public static ArrayList<XrealConstant> getRealConstants(Element parent){
+    ArrayList<XrealConstant> elements = new ArrayList<XrealConstant>();
+    NodeList nList = parent.getElementsByTagName(XelementName.F_REAL_CONST);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        XrealConstant ref = new XrealConstant(el);
+        elements.add(ref);
+      }
+    }
+    return elements;
+  }
+
 
   public static XfctDef findParentFctDef(Element child){
     Node parent = child.getParentNode();
