@@ -24,11 +24,13 @@ public class LoopFusion implements Transformation<LoopFusion> {
   public LoopFusion(Xpragma pragma){
     _loopFusionPragma = pragma;
     _groupLabel = CLAWpragma.getGroupOptionValue(_loopFusionPragma.getData());
+    _startLine = _loopFusionPragma.getLine();
   }
 
-  public LoopFusion(XdoStatement loop, String group){
+  public LoopFusion(XdoStatement loop, String group, int lineNumber){
     _loop = loop;
     _groupLabel = group;
+    _startLine = lineNumber;
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {

@@ -29,16 +29,17 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private XdoStatement _extractedLoop = null;
   private XfctDef _copiedFctDef = null;
 
+  private int _startLine = 0;
+
   // Fusion and fusion option
   private boolean _hasFusion = false;
   private String _fusionGroupLabel = "";
-
-  private int _startLine = 0;
 
 
   public LoopExtraction(Xpragma pragma) {
     _pragma = pragma;
     _mappings = new ArrayList<CLAWmapping>();
+    _startLine = _pragma.getLine();
     extractMappingInformation();
     extractFusionInformation();
   }
@@ -350,7 +351,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     // Transformation is done. Add additional transfomation here
     if(_hasFusion){
 
-      LoopFusion fusion = new LoopFusion(extractedLoop, _fusionGroupLabel);
+      LoopFusion fusion = new LoopFusion(extractedLoop, _fusionGroupLabel,
+        _pragma.getLine());
       transformer.addTransformation(fusion);
 
       if(XmOption.isDebugOutput()){
