@@ -12,3 +12,4 @@ set(CLAW_EXT ${XCODEML_EXT}.claw)
 
 # List of test directories
 add_subdirectory(loops)
+add_subdirectory(fortran)
