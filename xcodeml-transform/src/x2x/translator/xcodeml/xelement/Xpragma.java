@@ -12,15 +12,18 @@ import org.w3c.dom.Node;
 
 public class Xpragma extends XbaseElement {
   private String _value = null;
-  private String _line = null;
+  private int _line = 0;
   private String _filename = null;
 
   public Xpragma(Element pragmaElement){
     super(pragmaElement);
     if(pragmaElement != null){
       _value = getData();
-      _line = XelementHelper.getAttributeValue(baseElement,
+      String lineAttr = XelementHelper.getAttributeValue(baseElement,
         XelementName.ATTR_LINENO);
+      if(lineAttr != null){
+        _line = Integer.parseInt(lineAttr);
+      }
       _filename = XelementHelper.getAttributeValue(baseElement,
         XelementName.ATTR_FILE);
     }
@@ -30,7 +33,7 @@ public class Xpragma extends XbaseElement {
     return _filename;
   }
 
-  public String getLine(){
+  public int getLine(){
     return _line;
   }
 
