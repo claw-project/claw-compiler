@@ -27,13 +27,18 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _extractedFctDef = null;
   private XdoStatement _extractedLoop = null;
-
   private XfctDef _copiedFctDef = null;
+
+  // Fusion and fusion option
+  private boolean _hasFusion = false;
+  private String _fusionGroupLabel = "";
+
 
   public LoopExtraction(Xpragma pragma) {
     _pragma = pragma;
     _mappings = new ArrayList<CLAWmapping>();
     extractMappingInformation();
+    extractFusionInformation();
   }
 
   private void extractRangeInformation(){
@@ -52,6 +57,20 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       System.out.println("MAPPING " + mappingClause);
       CLAWmapping mapping = new CLAWmapping(mappingClause);
       _mappings.add(mapping);
+    }
+  }
+
+  private void extractFusionInformation(){
+    if(_pragma.getData().contains(" fusion ")){
+      _hasFusion = true;
+    }
+
+    // TODO centralize in the pragma class
+    Matcher m = Pattern.compile("fusion\\s+group\\((.*)\\)")
+     .matcher(_pragma.getData());
+    while(m.find()){
+      _fusionGroupLabel = m.group(1);
+
     }
   }
 
@@ -196,7 +215,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
      */
 
     // Wrap function call with loop
-    wrapCallWithLoop(xcodeml, _extractedLoop.getIterationRange());
+    XdoStatement extractedLoop = wrapCallWithLoop(xcodeml,
+      _extractedLoop.getIterationRange());
 
     if(XmOption.isDebugOutput()){
       System.out.println("  call wrapped with loop: " + _fctCall.getFctName()
@@ -322,9 +342,24 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
         } // If arg null TODO invert if to reduce nesting
       } // Loop mapped variables
     } // Loop over mapping clauses
+
+
+
+    // Transformation is done. Add additional transfomation here
+    if(_hasFusion){
+
+      LoopFusion fusion = new LoopFusion(extractedLoop, _fusionGroupLabel);
+      transformer.addTransformation(fusion);
+
+      if(XmOption.isDebugOutput()){
+        System.out.println("Loop fusion added: " + _fusionGroupLabel);
+      }
+
+    }
+
   }
 
-  private void wrapCallWithLoop(XcodeProg xcodeml,
+  private XdoStatement wrapCallWithLoop(XcodeProg xcodeml,
     XloopIterationRange iterationRange)
   {
     // TODO have single method to create a loop from iterationRange
@@ -356,6 +391,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     if(iterationRange.getIndexRange().getStep().isVar()){
       insertDeclaration(iterationRange.getIndexRange().getStep().getValue());
     }
+
+    return new XdoStatement(loop);
   }
 
   private void insertDeclaration(String id){
