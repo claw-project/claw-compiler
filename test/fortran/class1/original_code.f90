@@ -1,33 +1,33 @@
-module class_Circle
-  implicit none
-  private
-  public :: Circle, circle_area, circle_print
+MODULE class_Circle
+  IMPLICIT NONE
+  PRIVATE
+  PUBLIC :: Circle, circle_area, circle_print
 
-  real :: pi = 3.1415926535897931d0 ! Class-wide private constant
+  REAL :: pi = 3.1415926535897931d0 ! Class-wide private constant
 
-  type Circle
+  TYPE Circle
      real :: radius
-  end type Circle
-contains
-  function circle_area(this) result(area)
-    type(Circle), intent(in) :: this
-    real :: area
+  END TYPE Circle
+CONTAINS
+  FUNCTION circle_area(this) RESULT(area)
+    TYPE(Circle), INTENT(IN) :: this
+    REAL :: area
     area = pi * this%radius**2
-  end function circle_area
+  END FUNCTION circle_area
 
-  subroutine circle_print(this)
-    type(Circle), intent(in) :: this
-    real :: area
+  SUBROUTINE circle_print(this)
+    TYPE(Circle), INTENT(IN) :: this
+    REAL :: area
     area = circle_area(this)  ! Call the circle_area function
-    print *, 'Circle: r = ', this%radius, ' area = ', area
-  end subroutine circle_print
-end module class_Circle
+    PRINT *, 'Circle: r = ', this%radius, ' area = ', area
+  END SUBROUTINE circle_print
+END MODULE class_Circle
 
-program circle_test
-  use class_Circle
-  implicit none
+PROGRAM circle_test
+  USE class_Circle
+  IMPLICIT NONE
 
-  type(Circle) :: c     ! Declare a variable of type Circle.
+  TYPE(Circle) :: c     ! Declare a variable of type Circle.
   c = Circle(1.5)       ! Use the implicit constructor, radius = 1.5.
-  call circle_print(c)  ! Call a class subroutine
-end program circle_test
+  CALL circle_print(c)  ! Call a class subroutine
+END PROGRAM circle_test
