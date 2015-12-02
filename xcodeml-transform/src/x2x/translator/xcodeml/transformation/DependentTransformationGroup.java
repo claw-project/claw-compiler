@@ -3,11 +3,12 @@ package x2x.translator.xcodeml.transformation;
 import java.util.ArrayList;
 
 import x2x.translator.xcodeml.xelement.XcodeProg;
+import x2x.translator.xcodeml.transformer.Transformer;
 
 /**
  * An dependent transformation group check wether it can be transformed with
  * another pending transformation in the pipeline. Each transformation are
- * applied only once. 
+ * applied only once.
  */
 
 public class DependentTransformationGroup<T extends Transformation<? super T>> extends TransformationGroup<T> {
@@ -16,7 +17,7 @@ public class DependentTransformationGroup<T extends Transformation<? super T>> e
     super(name);
   }
 
-  public void applyTranslations(XcodeProg xcodeml){
+  public void applyTranslations(XcodeProg xcodeml, Transformer transformer){
     for(int i = 0; i < _translations.size(); ++i){
       T base = _translations.get(i);
       for(int j = i + 1; j < _translations.size(); ++j){
@@ -25,7 +26,7 @@ public class DependentTransformationGroup<T extends Transformation<? super T>> e
           continue;
         }
         if(base.canBeTransformedWith(candidate)){
-          base.transform(xcodeml, candidate);
+          base.transform(xcodeml, transformer, candidate);
         }
       }
     }

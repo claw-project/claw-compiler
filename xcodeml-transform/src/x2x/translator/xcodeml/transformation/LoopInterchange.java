@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.transformer.Transformer;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,7 +39,9 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
       .getSimpleOptionValue(_loopInterchangePragma.getData());
   }
 
-  public void transform(XcodeProg xcodeml, LoopInterchange other){
+  public void transform(XcodeProg xcodeml, Transformer transformer,
+    LoopInterchange other)
+  {
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-interchange transformation");
@@ -165,7 +168,7 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
   }
 
 
-  public boolean analyze(XcodeProg xcodeml){
+  public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     // Find next loop after pragma
     Element loopElement =
       XelementHelper.findNextLoop(_loopInterchangePragma.getBaseElement());

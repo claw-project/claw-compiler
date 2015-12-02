@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.transformer.Transformer;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,7 +24,7 @@ public class LoopFusion implements Transformation<LoopFusion> {
     _groupLabel = CLAWpragma.getGroupOptionValue(_loopFusionPragma.getData());
   }
 
-  public boolean analyze(XcodeProg xcodeml) {
+  public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
     Element loopElement =
       XelementHelper.findNextLoop(_loopFusionPragma.getBaseElement());
 
@@ -38,7 +39,9 @@ public class LoopFusion implements Transformation<LoopFusion> {
   /**
    * Merge the given loop with this one
    */
-  public void transform(XcodeProg xcodeml, LoopFusion loopFusionUnit){
+  public void transform(XcodeProg xcodeml, Transformer transformer,
+    LoopFusion loopFusionUnit)
+  {
     XelementHelper.appendBody(_loop.getBaseElement(),
       loopFusionUnit.getLoop().getBaseElement());
     loopFusionUnit.finalizeTransformation();

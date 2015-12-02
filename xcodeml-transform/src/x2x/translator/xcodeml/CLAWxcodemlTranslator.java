@@ -2,6 +2,7 @@ package x2x.translator.xcodeml;
 
 import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.transformation.*;
+import x2x.translator.xcodeml.transformer.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -26,10 +27,7 @@ public class CLAWxcodemlTranslator {
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
 
-  private TransformationGroup<LoopFusion> _loopFusion = null;
-  private TransformationGroup<LoopInterchange> _loopInterchange = null;
-  private TransformationGroup<LoopExtraction> _loopExtract = null;
-  private ArrayList<TransformationGroup> _translations = null;
+  private ClawTransformer _transformer = null;
   private XcodeProg _program = null;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
@@ -39,15 +37,7 @@ public class CLAWxcodemlTranslator {
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _loopFusion = new DependentTransformationGroup<LoopFusion>("loop-fusion");
-    _loopInterchange = new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
-    _loopExtract = new IndependentTransformationGroup<LoopExtraction>("loop-extract");
-
-    // Add transformations (order of insertion is the one that will be applied)
-    _translations = new ArrayList<TransformationGroup>();
-    _translations.add(_loopExtract);
-    _translations.add(_loopFusion);
-    _translations.add(_loopInterchange);
+    _transformer = new ClawTransformer();
   }
 
   public void analyze() throws Exception {
@@ -80,18 +70,18 @@ public class CLAWxcodemlTranslator {
 
           if(clawDirective == CLAWpragma.LOOP_FUSION){
             LoopFusion trans = new LoopFusion(pragma);
-            if(trans.analyze(_program)){
-              _loopFusion.add(trans);
+            if(trans.analyze(_program, _transformer)){
+              _transformer.addTransformation(trans);
             } // TODO maybe exit on failed analysis
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
             LoopInterchange trans = new LoopInterchange(pragma);
-            if(trans.analyze(_program)){
-              _loopInterchange.add(trans);
+            if(trans.analyze(_program, _transformer)){
+              _transformer.addTransformation(trans);
             } // TODO maybe exit on failed analysis
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
             LoopExtraction trans = new LoopExtraction(pragma);
-            if(trans.analyze(_program)){
-              _loopExtract.add(trans);
+            if(trans.analyze(_program, _transformer)){
+              _transformer.addTransformation(trans);
             } // TODO maybe exit on failed analysis
           }
 
@@ -118,14 +108,14 @@ public class CLAWxcodemlTranslator {
       // Do the transformation here
 
       if(XmOption.isDebugOutput()){
-        for(TransformationGroup t : _translations){
+        for(TransformationGroup t : _transformer.getGroups()){
           System.out.println("transform " + t.transformationName () + ": "
           + t.count());
         }
       }
 
-      for(TransformationGroup t : _translations){
-        t.applyTranslations(_program);
+      for(TransformationGroup t : _transformer.getGroups()){
+        t.applyTranslations(_program, _transformer);
       }
 
       // TODO handle the return value

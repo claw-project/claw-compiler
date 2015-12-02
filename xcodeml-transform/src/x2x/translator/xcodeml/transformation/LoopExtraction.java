@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWmapping;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.transformer.Transformer;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -65,7 +66,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     return true; // TODO
   }
 
-  public boolean analyze(XcodeProg xcodeml){
+  public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     Element exprElement = XelementHelper
       .findNextExprStatement(_pragma.getBaseElement());
 
@@ -117,7 +118,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     return true;
   }
 
-  public void transform(XcodeProg xcodeml, LoopExtraction other){
+  public void transform(XcodeProg xcodeml, Transformer transformer,
+    LoopExtraction other)
+  {
 
     /*
      * DUPLICATE THE FUNCTION
