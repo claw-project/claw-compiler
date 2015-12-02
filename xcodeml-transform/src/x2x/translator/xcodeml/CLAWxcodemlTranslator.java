@@ -115,6 +115,9 @@ public class CLAWxcodemlTranslator {
       }
 
       for(TransformationGroup t : _transformer.getGroups()){
+        if(XmOption.isDebugOutput()){
+          System.out.println("Apply transfomation: " + t.transformationName());
+        }
         t.applyTranslations(_program, _transformer);
       }
 
