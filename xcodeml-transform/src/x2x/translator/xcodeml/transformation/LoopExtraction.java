@@ -147,10 +147,15 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     // Get the id from the global symbols table
     Xid globalFctId = xcodeml.getGlobalSymbolsTable()
       .get(_extractedFctDef.getFctName());
-    Xid newFctId = globalFctId.cloneObject();
-    newFctId.setType(newFctTypeHash);
-    newFctId.setName(newFctName);
-    xcodeml.getGlobalSymbolsTable().add(newFctId);
+
+    // If the fct is define in the global symbol table, duplicate it
+    if(globalFctId != null){
+      Xid newFctId = globalFctId.cloneObject();
+      newFctId.setType(newFctTypeHash);
+      newFctId.setName(newFctName);
+      xcodeml.getGlobalSymbolsTable().add(newFctId);
+    }
+
 
 
 
