@@ -31,4 +31,19 @@ public class DependentTransformationGroup<T extends Transformation<? super T>> e
       }
     }
   }
+
+
+  // In the dependent transformation group, the order in which transformation
+  // appears is important
+  public void add(T translation){
+    int linePosition = translation.getStartLine();
+    int insertIndex = 0;
+    for(Transformation t : _translations){
+      if(t.getStartLine() > linePosition){
+        break;
+      }
+      ++insertIndex;
+    }
+    _translations.add(insertIndex, translation);
+  }
 }
