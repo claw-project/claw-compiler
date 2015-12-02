@@ -61,27 +61,21 @@ public class LoopFusion implements Transformation<LoopFusion> {
   }
 
   public boolean canBeTransformedWith(LoopFusion otherLoopUnit){
-    System.out.println("  Compare " + getGroupOptionLabel() + "/" +
-      otherLoopUnit.getGroupOptionLabel());
 
     // No loop is transformed already
     if(_transformed || otherLoopUnit.isTransformed()){
-      System.out.println("  one transformed");
       return false;
     }
     // Loops can only be merged if they are at the same level
     if(!hasSameParentBlockWith(otherLoopUnit)){
-      System.out.println("  different parent block");
       return false;
     }
     // Loop must share the same group option
     if(!hasSameGroupOption(otherLoopUnit)){
-      System.out.println("  Different group option");
       return false;
     }
     // Loop must share the same iteration range
     if(!_loop.hasSameRangeWith(otherLoopUnit.getLoop())){
-      System.out.println("  Different range " + _loop.getIterationRange().toString() +  " / " + otherLoopUnit.getLoop().getIterationRange().toString());
       return false;
     }
     return true;
