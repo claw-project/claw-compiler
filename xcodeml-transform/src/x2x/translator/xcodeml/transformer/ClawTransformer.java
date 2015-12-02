@@ -1,0 +1,44 @@
+package x2x.translator.xcodeml.transformer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import x2x.translator.xcodeml.transformation.*;
+
+
+public class ClawTransformer implements Transformer {
+  private TransformationGroup<LoopFusion> _loopFusion = null;
+  private TransformationGroup<LoopInterchange> _loopInterchange = null;
+  private TransformationGroup<LoopExtraction> _loopExtract = null;
+  private ArrayList<TransformationGroup> _transformationGroups = null;
+
+  public ClawTransformer(){
+    _loopFusion = new DependentTransformationGroup<LoopFusion>("loop-fusion");
+    _loopInterchange = new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
+    _loopExtract = new IndependentTransformationGroup<LoopExtraction>("loop-extract");
+
+    // Add transformations (order of insertion is the one that will be applied)
+    _transformationGroups = new ArrayList<TransformationGroup>();
+    _transformationGroups.add(_loopExtract);
+    _transformationGroups.add(_loopFusion);
+    _transformationGroups.add(_loopInterchange);
+  }
+
+  public void addTransformation(Transformation t){
+    if(t instanceof LoopFusion){
+      _loopFusion.add((LoopFusion)t);
+    } else if(t instanceof LoopInterchange){
+      _loopInterchange.add((LoopInterchange)t);
+    } else if(t instanceof LoopExtraction){
+      _loopExtract.add((LoopExtraction)t);
+    }
+  }
+
+  public void addTransformationGroup(TransformationGroup tg, int position){
+    // TODO
+  }
+
+  public List<TransformationGroup> getGroups(){
+    return _transformationGroups;
+  }
+}
