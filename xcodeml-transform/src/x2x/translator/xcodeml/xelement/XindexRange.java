@@ -14,13 +14,14 @@ import org.w3c.dom.NodeList;
  *   - upperBound (Xbound)
  *   - step (Xstep)
  * Attributes:
- * - Optional: is_assume_size (bool) // TODO
+ * - Optional: is_assumed_shape (bool)
  */
 public class XindexRange extends XbaseElement {
 
   protected Xbound _lowerBound;
   protected Xbound _upperBound;
   protected Xstep _step = null;
+  private boolean _isAssumedShape = false;
 
   public XindexRange(Element indexRangeElement){
     super(indexRangeElement);
@@ -28,14 +29,20 @@ public class XindexRange extends XbaseElement {
   }
 
   private void readRangeValue(){
-    _lowerBound = new Xbound(XelementHelper
-      .findFirstElement(baseElement, XelementName.LOWER_BOUND));
-    _upperBound = new Xbound(XelementHelper
-      .findFirstElement(baseElement,XelementName.UPPER_BOUND));
-    Element step = XelementHelper
-      .findFirstElement(baseElement, XelementName.STEP);
-    if(step != null){
-      _step = new Xstep(step);
+    _isAssumedShape = XelementHelper.getBooleanAttributeValue(baseElement,
+      XelementName.ATTR_IS_ASSUMED_SHAPE);
+
+    // If the shape is assumed, there is no inner elements
+    if(!_isAssumedShape){
+      _lowerBound = new Xbound(XelementHelper
+        .findFirstElement(baseElement, XelementName.LOWER_BOUND));
+      _upperBound = new Xbound(XelementHelper
+        .findFirstElement(baseElement,XelementName.UPPER_BOUND));
+      Element step = XelementHelper
+        .findFirstElement(baseElement, XelementName.STEP);
+      if(step != null){
+        _step = new Xstep(step);
+      }
     }
   }
 

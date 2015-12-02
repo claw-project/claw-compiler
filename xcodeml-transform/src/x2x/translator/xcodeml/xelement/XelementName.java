@@ -1,7 +1,7 @@
 package x2x.translator.xcodeml.xelement;
 
 /**
- * 
+ *
  */
 
 public class XelementName {
@@ -28,8 +28,9 @@ public class XelementName {
   // Element attributes
   public static final String ATTR_COMPILER_INFO = "compiler-info";
   public static final String ATTR_FILE = "file";
-  public static final String ATTR_IS_PROGRAM = "is_program";
   public static final String ATTR_INTENT = "intent";
+  public static final String ATTR_IS_ASSUMED_SHAPE = "is_assumed_shape";
+  public static final String ATTR_IS_PROGRAM = "is_program";
   public static final String ATTR_IS_ALLOCATABLE = "is_allocatable";
   public static final String ATTR_IS_EXTERNAL = "is_external";
   public static final String ATTR_IS_INTRINSIC = "is_intrinsic";
