@@ -47,7 +47,7 @@ public class XloopIterationRange {
    * internal variable of the loopIterationRange are identical.
    */
   public boolean isFullyIdentical(XloopIterationRange other){
-    if(!getInductionVar().equals(other.getInductionVar())){
+    if(!getInductionVar().getValue().equals(other.getInductionVar().getValue())){
       return false;
     }
     if(!getIndexRange().equals(other.getIndexRange())){
