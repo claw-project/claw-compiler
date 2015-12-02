@@ -33,6 +33,8 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
+  private int _startLine = 0;
+
   public LoopInterchange(Xpragma pragma){
     _loopInterchangePragma = pragma;
     _newOrderOption = CLAWpragma
@@ -255,6 +257,9 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
     return true; // Always true as independent transformation
   }
 
+  public int getStartLine(){
+    return _startLine;
+  }
 
 
 }

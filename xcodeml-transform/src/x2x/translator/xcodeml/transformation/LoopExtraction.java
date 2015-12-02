@@ -33,6 +33,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private boolean _hasFusion = false;
   private String _fusionGroupLabel = "";
 
+  private int _startLine = 0;
+
 
   public LoopExtraction(Xpragma pragma) {
     _pragma = pragma;
@@ -433,6 +435,10 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
   public boolean canBeTransformedWith(LoopExtraction other){
     return true; // Always true as independent transformation
+  }
+
+  public int getStartLine(){
+    return _startLine;
   }
 
 }

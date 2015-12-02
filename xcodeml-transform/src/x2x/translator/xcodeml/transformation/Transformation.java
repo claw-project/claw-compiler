@@ -8,4 +8,5 @@ public interface Transformation<T> {
   public boolean isTransformed();
   public boolean canBeTransformedWith(T other);
   public void transform(XcodeProg xcodeml, Transformer translator, T other);
+  public int getStartLine();
 }

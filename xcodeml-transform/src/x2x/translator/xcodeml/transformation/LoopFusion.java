@@ -19,9 +19,16 @@ public class LoopFusion implements Transformation<LoopFusion> {
   // The loop statement involved in the Transformation
   private XdoStatement _loop = null;
 
+  private int _startLine = 0;
+
   public LoopFusion(Xpragma pragma){
     _loopFusionPragma = pragma;
     _groupLabel = CLAWpragma.getGroupOptionValue(_loopFusionPragma.getData());
+  }
+
+  public LoopFusion(XdoStatement loop, String group){
+    _loop = loop;
+    _groupLabel = group;
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
@@ -52,20 +59,27 @@ public class LoopFusion implements Transformation<LoopFusion> {
   }
 
   public boolean canBeTransformedWith(LoopFusion otherLoopUnit){
+    System.out.println("  Compare " + getGroupOptionLabel() + "/" +
+      otherLoopUnit.getGroupOptionLabel());
+
     // No loop is transformed already
     if(_transformed || otherLoopUnit.isTransformed()){
+      System.out.println("  one transformed");
       return false;
     }
     // Loops can only be merged if they are at the same level
     if(!hasSameParentBlockWith(otherLoopUnit)){
+      System.out.println("  different parent block");
       return false;
     }
     // Loop must share the same group option
     if(!hasSameGroupOption(otherLoopUnit)){
+      System.out.println("  Different group option");
       return false;
     }
     // Loop must share the same iteration range
     if(!_loop.hasSameRangeWith(otherLoopUnit.getLoop())){
+      System.out.println("  Different range " + _loop.getIterationRange().toString() +  " / " + otherLoopUnit.getLoop().getIterationRange().toString());
       return false;
     }
     return true;
@@ -73,9 +87,13 @@ public class LoopFusion implements Transformation<LoopFusion> {
 
   public void finalizeTransformation(){
     // Delete the pragma of the transformed loop
-    _loopFusionPragma.delete();
+    if(_loopFusionPragma != null){
+      _loopFusionPragma.delete();
+    }
     // Delete the loop that was merged with the main one
-    _loop.delete();
+    if(_loop != null){
+      _loop.delete();
+    }
     _transformed = true;
   }
 
@@ -100,6 +118,10 @@ public class LoopFusion implements Transformation<LoopFusion> {
     return (otherLoopUnit.getGroupOptionLabel() == null
       ? getGroupOptionLabel() == null
       : otherLoopUnit.getGroupOptionLabel().equals(getGroupOptionLabel()));
+  }
+
+  public int getStartLine(){
+    return _startLine;
   }
 
 }
