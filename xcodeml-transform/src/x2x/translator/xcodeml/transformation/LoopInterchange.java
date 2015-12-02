@@ -39,11 +39,14 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
     _loopInterchangePragma = pragma;
     _newOrderOption = CLAWpragma
       .getSimpleOptionValue(_loopInterchangePragma.getData());
+    _startLine = _loopInterchangePragma.getLine();
   }
 
   public void transform(XcodeProg xcodeml, Transformer transformer,
     LoopInterchange other)
   {
+
+    analyze(xcodeml, transformer);
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-interchange transformation");
