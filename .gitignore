@@ -11,6 +11,8 @@ build
 *.jar
 *.xcodeml
 *.xcodeml.claw
+*.xmod
+*.mod
 .project
 transformed_code.f90
 original_code_*
