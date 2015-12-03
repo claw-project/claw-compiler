@@ -23,6 +23,7 @@ import xcodeml.util.XmOption;
 import x2x.translator.pragma.CLAWpragma;
 
 public class CLAWxcodemlTranslator {
+  private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
@@ -72,17 +73,23 @@ public class CLAWxcodemlTranslator {
             LoopFusion trans = new LoopFusion(pragma);
             if(trans.analyze(_program, _transformer)){
               _transformer.addTransformation(trans);
-            } // TODO maybe exit on failed analysis
+            } else {
+              abort();
+            }
           } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
             LoopInterchange trans = new LoopInterchange(pragma);
             if(trans.analyze(_program, _transformer)){
               _transformer.addTransformation(trans);
-            } // TODO maybe exit on failed analysis
+            } else {
+              abort();
+            }
           } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
             LoopExtraction trans = new LoopExtraction(pragma);
             if(trans.analyze(_program, _transformer)){
               _transformer.addTransformation(trans);
-            } // TODO maybe exit on failed analysis
+            } else {
+              abort();
+            }
           }
 
         } else {
@@ -129,6 +136,14 @@ public class CLAWxcodemlTranslator {
       System.out.println("Transformation exception: ");
       ex.printStackTrace();
     }
+  }
+
+
+  private void abort(){
+    for(XanalysisError error : _program.getErrors()){
+      System.err.println(ERROR_PREFIX + error.getMessage() + ", " + error.getLine());
+    }
+    System.exit(1);
   }
 
 }

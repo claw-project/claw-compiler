@@ -18,7 +18,7 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
   private XdoStatement _loopLevel0 = null;
   private XdoStatement _loopLevel1 = null;
   private XdoStatement _loopLevel2 = null;
-  private Xpragma _loopInterchangePragma = null;
+  private Xpragma _pragma = null;
 
 
   private String _baseLoop0 = null;
@@ -36,10 +36,10 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
   private int _startLine = 0;
 
   public LoopInterchange(Xpragma pragma){
-    _loopInterchangePragma = pragma;
+    _pragma = pragma;
     _newOrderOption = CLAWpragma
-      .getSimpleOptionValue(_loopInterchangePragma.getData());
-    _startLine = _loopInterchangePragma.getLine();
+      .getSimpleOptionValue(_pragma.getData());
+    _startLine = _pragma.getLine();
   }
 
   public void transform(XcodeProg xcodeml, Transformer transformer,
@@ -152,7 +152,7 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     // Find next loop after pragma
-    _loopLevel0 = XelementHelper.findNextLoop(_loopInterchangePragma);
+    _loopLevel0 = XelementHelper.findNextLoop(_pragma);
 
     if(_loopLevel0 == null){
       // TODO give the reason and stops analysis
@@ -168,7 +168,8 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
       String[] vars = _newOrderOption.split(",");
       // TODO error handling
       if(vars.length != 3){
-        abort("new-order option has not enough parameters");
+        xcodeml.addError("new-order option has not enough parameters",
+          _pragma.getLine());
       }
 
       _loopLevel2 = XelementHelper.findChildLoop(_loopLevel1.getBody());
@@ -180,7 +181,9 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
       _baseLoop1 = _loopLevel1.getIterationVariableValue();
       _baseLoop2 = _loopLevel2.getIterationVariableValue();
 
-      checkNewOrderOption(vars);
+      if(!checkNewOrderOption(xcodeml, vars)){
+        return false;
+      }
 
       _newLoop0 = vars[0];
       _newLoop1 = vars[1];
@@ -191,21 +194,17 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
     return true;
   }
 
-  private void checkNewOrderOption(String[] vars){
+  private boolean checkNewOrderOption(XcodeProg xcodeml, String[] vars){
     for(String var : vars){
       if(!var.equals(_baseLoop0) && !var.equals(_baseLoop1)
         && !var.equals(_baseLoop2))
       {
-        abort("invalid iteration varibale in new-order option. " + var);
+        xcodeml.addError("invalid iteration varibale in new-order option. "
+          + var, _pragma.getLine());
+        return false;
       }
     }
-  }
-
-
-  private void abort(String message){
-    System.err.println("claw-error: " + message + ", " + _loopInterchangePragma.getFilename()
-      + ":" + _loopInterchangePragma.getLine());
-    System.exit(1);
+    return true;
   }
 
   public boolean isTransformed() {

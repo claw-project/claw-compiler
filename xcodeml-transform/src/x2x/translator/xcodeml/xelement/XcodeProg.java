@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
@@ -42,7 +43,7 @@ public class XcodeProg {
 
   private boolean _isLoaded = false;
 
-  private ArrayList<XanalysisError> _errors;
+  private List<XanalysisError> _errors;
 
   public XcodeProg(String inputFile){
     _xcodemlInputFile = inputFile;
@@ -64,6 +65,10 @@ public class XcodeProg {
 
   public void addError(String msg, int lineno){
     _errors.add(new XanalysisError(msg, lineno));
+  }
+
+  public List<XanalysisError> getErrors(){
+    return _errors;
   }
 
   public Document getDocument(){
