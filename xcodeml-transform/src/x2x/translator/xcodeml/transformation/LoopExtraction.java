@@ -264,12 +264,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
             varRef.append(varArg, true);
             newArg.append(varRef);
 
-            XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
-
-
             //  create arrayIndex
-
             for(String mappingVar : mapping.getMappingVariables()){
+              XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
               // Find the mapping var in the local table (fct scope)
               XvarDecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar);
@@ -279,8 +276,9 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
               newMappingVar.setType(mappingVarDecl.getName().getType());
               newMappingVar.setValue(mappingVarDecl.getName().getValue());
               arrayIndex.append(newMappingVar);
+              newArg.append(arrayIndex);
             }
-            newArg.append(arrayIndex);
+
             args.replace(varArg, newArg);
           }
           // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
