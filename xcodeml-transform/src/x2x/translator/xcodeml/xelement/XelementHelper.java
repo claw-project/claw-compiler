@@ -203,6 +203,11 @@ public class XelementHelper {
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
+  public static void insertBefore(XbaseElement ref, XbaseElement insert){
+    ref.getBaseElement().getParentNode().insertBefore(insert.getBaseElement(),
+      ref.getBaseElement());
+  }
+
   public static void insertAfter(XbaseElement refElement, XbaseElement element){
     XelementHelper.insertAfter(refElement.getBaseElement(),
       element.getBaseElement());
