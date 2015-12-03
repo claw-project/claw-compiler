@@ -74,6 +74,10 @@ public class XarrayRef extends XbaseElement {
     return _varRef;
   }
 
+  public String getType(){
+    return _type;
+  }
+
   public void append(XbaseElement element){
     append(element, false);
   }
