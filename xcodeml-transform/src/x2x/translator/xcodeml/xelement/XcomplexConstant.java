@@ -1,7 +1,7 @@
 package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The XcomplexConstant represents the FcomplexConstant elements (7.1.2) element
@@ -23,7 +23,7 @@ public class XcomplexConstant extends Xconstant {
   }
 
   private void readElementInformation(){
-    ArrayList<XrealConstant> innerElements = XelementHelper
+    List<XrealConstant> innerElements = XelementHelper
       .getRealConstants(baseElement);
     if(innerElements.size() != 2){
       // TODO error handling : exception

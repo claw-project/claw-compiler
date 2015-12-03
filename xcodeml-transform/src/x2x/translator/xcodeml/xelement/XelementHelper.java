@@ -70,8 +70,8 @@ public class XelementHelper {
     return null;
   }
 
-  public static ArrayList<XarrayRef> getAllArrayReferences(Element parent){
-    ArrayList<XarrayRef> references = new ArrayList<XarrayRef>();
+  public static List<XarrayRef> getAllArrayReferences(Element parent){
+    List<XarrayRef> references = new ArrayList<XarrayRef>();
     NodeList nList = parent.getElementsByTagName(XelementName.F_ARRAY_REF);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
@@ -84,8 +84,8 @@ public class XelementHelper {
     return references;
   }
 
-  public static ArrayList<XrealConstant> getRealConstants(Element parent){
-    ArrayList<XrealConstant> elements = new ArrayList<XrealConstant>();
+  public static List<XrealConstant> getRealConstants(Element parent){
+    List<XrealConstant> elements = new ArrayList<XrealConstant>();
     NodeList nList = parent.getElementsByTagName(XelementName.F_REAL_CONST);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);

@@ -308,7 +308,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
 
           // Adapt array reference in extracted fct body element
-          ArrayList<XarrayRef> arrayReferences =
+          List<XarrayRef> arrayReferences =
             XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
           for(String mappingVar : mapping.getMappingVariables()){
             for(XarrayRef ref : arrayReferences){
