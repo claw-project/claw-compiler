@@ -33,7 +33,7 @@ public class XcodeProg {
 
   // XcodeProg optional attributes
   private String _version = null;
-  private String _lanaguage = null;
+  private String _language = null;
   private String _time = null;
   private String _source = null;
   private String _compilerInfo = null;
@@ -48,7 +48,7 @@ public class XcodeProg {
   private void readDocumentInformation(){
     _version = XelementHelper.getAttributeValue(
       _xcodemlDoc.getDocumentElement(), XelementName.ATTR_VERSION);
-    _lanaguage = XelementHelper.getAttributeValue(
+    _language = XelementHelper.getAttributeValue(
       _xcodemlDoc.getDocumentElement(), XelementName.ATTR_LANGUAGE);
     _time = XelementHelper.getAttributeValue(
       _xcodemlDoc.getDocumentElement(), XelementName.ATTR_TIME);
