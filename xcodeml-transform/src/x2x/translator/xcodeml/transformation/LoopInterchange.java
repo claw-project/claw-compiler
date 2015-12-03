@@ -4,10 +4,6 @@ import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import xcodeml.util.XmOption;
 
 public class LoopInterchange implements Transformation<LoopInterchange> {

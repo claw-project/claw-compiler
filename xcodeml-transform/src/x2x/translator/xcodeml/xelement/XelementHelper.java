@@ -215,19 +215,35 @@ public class XelementHelper {
     return null;
   }
 
+  public static XfctCall findFctCall(XexprStatement exprStmt){
+    if(exprStmt == null){
+      return null;
+    }
+
+    NodeList nodeList = exprStmt.getBaseElement().getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node nextNode = nodeList.item(i);
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(XelementName.FCT_CALL)){
+          return new XfctCall(element);
+        }
+      }
+    }
+    return null;
+  }
+
 
   public static XdoStatement findNextLoop(XbaseElement from){
     Element loopElement = findNextElementOfType(from.getBaseElement(),
       XelementName.DO_STMT);
-      
-    if(loopElement == null){
-      return null;
-    }
-    return new XdoStatement(loopElement);
+    return (loopElement == null) ? null : new XdoStatement(loopElement);
   }
 
-  public static Element findNextExprStatement(Node from){
-    return findNextElementOfType(from, XelementName.EXPR_STMT);
+  public static XexprStatement findNextExprStatement(XbaseElement from){
+    Element element = findNextElementOfType(from.getBaseElement(),
+      XelementName.EXPR_STMT);
+    return (element == null) ? null : new XexprStatement(element);
   }
 
   private static Element findNextElementOfType(Node from, String tag){

@@ -4,12 +4,6 @@ import x2x.translator.pragma.CLAWmapping;
 import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.*;
@@ -90,28 +84,26 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
-    Element exprElement = XelementHelper
-      .findNextExprStatement(_pragma.getBaseElement());
-
-    if(exprElement == null){
-      // TODO give the reason and stops analysis
+    _exprStmt = XelementHelper.findNextExprStatement(_pragma);
+    if(_exprStmt == null){
+      xcodeml.addError("No function call detected after loop-extract",
+        _pragma.getLine());
       return false;
     }
-    _exprStmt = new XexprStatement(exprElement);
 
     // Find function CALL
-    Element fctCallElement = findFctCall();
-    if(fctCallElement == null){
-      System.err.println("No function call detected after loop-extract");
-      System.exit(1);
+    _fctCall = XelementHelper.findFctCall(_exprStmt);
+    if(_fctCall == null){
+      xcodeml.addError("No function call detected after loop-extract",
+        _pragma.getLine());
+      return false;
     }
-
-    _fctCall = new XfctCall(fctCallElement);
 
     _fctDef = XelementHelper.findParentFctDef(_fctCall.getBaseElement());
     if(_fctDef == null){
-      System.err.println("No function around the fct call");
-      System.exit(1);
+      xcodeml.addError("No function around the fct call",
+        _pragma.getLine());
+      return false;
     }
 
     // Find function declaration
@@ -401,23 +393,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     }
   }
 
-  private Element findFctCall(){
-    if(_exprStmt == null){
-      return null;
-    }
 
-    NodeList nodeList = _exprStmt.getBaseElement().getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals("functionCall")){
-          return element;
-        }
-      }
-    }
-    return null;
-  }
 
   public boolean isTransformed() {
     return true; // TODO

@@ -4,11 +4,6 @@ import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-
 public class LoopFusion implements Transformation<LoopFusion> {
 
   private boolean _transformed = false;
@@ -54,6 +49,18 @@ public class LoopFusion implements Transformation<LoopFusion> {
     loopFusionUnit.finalizeTransformation();
   }
 
+  public void finalizeTransformation(){
+    // Delete the pragma of the transformed loop
+    if(_loopFusionPragma != null){
+      _loopFusionPragma.delete();
+    }
+    // Delete the loop that was merged with the main one
+    if(_loop != null){
+      _loop.delete();
+    }
+    _transformed = true;
+  }
+
   public boolean isTransformed(){
     return _transformed;
   }
@@ -77,18 +84,6 @@ public class LoopFusion implements Transformation<LoopFusion> {
       return false;
     }
     return true;
-  }
-
-  public void finalizeTransformation(){
-    // Delete the pragma of the transformed loop
-    if(_loopFusionPragma != null){
-      _loopFusionPragma.delete();
-    }
-    // Delete the loop that was merged with the main one
-    if(_loop != null){
-      _loop.delete();
-    }
-    _transformed = true;
   }
 
   public XdoStatement getLoop(){
