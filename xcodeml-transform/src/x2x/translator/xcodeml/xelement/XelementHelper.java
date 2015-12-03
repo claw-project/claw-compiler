@@ -200,6 +200,21 @@ public class XelementHelper {
       element.getBaseElement());
   }
 
+  public static XdoStatement findChildLoop(Xbody from){
+    Node nextNode = from.getBaseElement().getFirstChild();
+    boolean elementFound = false;
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals("FdoStatement")){
+          return new XdoStatement(element);
+        }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
 
   public static Element findNextLoop(Node from){
     return findNextElementOfType(from, XelementName.DO_STMT);

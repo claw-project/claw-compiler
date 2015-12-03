@@ -39,6 +39,7 @@ add_jar(omni-cx2x
   x2x/translator/xcodeml/xelement/XarrayRef.java
   x2x/translator/xcodeml/xelement/XbaseElement.java
   x2x/translator/xcodeml/xelement/XbasicType.java
+  x2x/translator/xcodeml/xelement/Xbody.java
   x2x/translator/xcodeml/xelement/Xbound.java
   x2x/translator/xcodeml/xelement/XcharacterConstant.java
   x2x/translator/xcodeml/xelement/Xclonable.java

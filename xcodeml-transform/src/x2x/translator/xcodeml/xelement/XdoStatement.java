@@ -19,11 +19,16 @@ import org.w3c.dom.NamedNodeMap;
  * - Optional: construct_name TODO
  */
 public class XdoStatement extends XbaseElement {
-  protected XloopIterationRange _iterationRange;
+  private XloopIterationRange _iterationRange = null;
+  private Xbody _body = null;
 
   public XdoStatement(Element doStatementElement){
     super(doStatementElement);
     findRangeElements();
+    Element bodyElement = XelementHelper.getBody(baseElement);
+    if(bodyElement != null){
+      _body = new Xbody(bodyElement);
+    }
   }
 
   public void findRangeElements(){
@@ -81,6 +86,10 @@ public class XdoStatement extends XbaseElement {
 
   public Element getBodyElement(){
     return XelementHelper.getBody(baseElement);
+  }
+
+  public Xbody getBody(){
+    return _body;
   }
 
   public String getIterationVariableValue(){

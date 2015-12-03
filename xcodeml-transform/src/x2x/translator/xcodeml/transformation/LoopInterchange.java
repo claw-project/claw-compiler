@@ -101,29 +101,6 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
 
   }
 
-  private void printTransformDebugInfo(){
-    if(XmOption.isDebugOutput()){
-      System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
-        + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 + "," +
-        _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
-          _loopNewPos2 + ")");
-
-      if(needDoubleSwap()){
-        System.out.println("    double swap required");
-      }
-    }
-  }
-
-  private void printTransformSwapInfo(int swapCase) {
-    if(XmOption.isDebugOutput() && swapCase == 120){
-      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
-      System.out.println("    swap 2: " + _baseLoop1 + " <--> " + _baseLoop0);
-    } else if (XmOption.isDebugOutput() && swapCase == 201){
-      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
-      System.out.println("    swap 2: " + _baseLoop2 + " <--> " + _baseLoop1);
-    }
-  }
-
   private void swapLoops(XdoStatement loop1, XdoStatement loop2){
     // Save most inner loop iteration variable and range
     XloopIterationRange tmpIterationRange = loop2.getIterationRange().cloneObject();
@@ -185,13 +162,10 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
 
     _loopLevel0 = new XdoStatement(loopElement);
 
-    Element body = _loopLevel0.getBodyElement();
-    Element loop1 = findChildLoop(body);
-    if(loop1 == null){
+    _loopLevel1 = XelementHelper.findChildLoop(_loopLevel0.getBody());
+    if(_loopLevel1 == null){
       return false;
     }
-
-    _loopLevel1 = new XdoStatement(loop1);
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
@@ -200,10 +174,10 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
         abort("new-order option has not enough parameters");
       }
 
-
-      Element loop1Body = _loopLevel1.getBodyElement();
-      Element loop2 = findChildLoop(loop1Body);
-      _loopLevel2 = new XdoStatement(loop2);
+      _loopLevel2 = XelementHelper.findChildLoop(_loopLevel1.getBody());
+      if(_loopLevel2 == null){
+        return false;
+      }
 
       _baseLoop0 = _loopLevel0.getIterationVariableValue();
       _baseLoop1 = _loopLevel1.getIterationVariableValue();
@@ -237,21 +211,6 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
     System.exit(1);
   }
 
-  private Element findChildLoop(Node from){
-    Node nextNode = from.getFirstChild();
-    boolean elementFound = false;
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals("FdoStatement")){
-          return element;
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
-
   public boolean isTransformed() {
     return true; // TODO
   }
@@ -262,6 +221,29 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
 
   public int getStartLine(){
     return _startLine;
+  }
+
+  private void printTransformDebugInfo(){
+    if(XmOption.isDebugOutput()){
+      System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
+        + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 + "," +
+        _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
+          _loopNewPos2 + ")");
+
+      if(needDoubleSwap()){
+        System.out.println("    double swap required");
+      }
+    }
+  }
+
+  private void printTransformSwapInfo(int swapCase) {
+    if(XmOption.isDebugOutput() && swapCase == 120){
+      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
+      System.out.println("    swap 2: " + _baseLoop1 + " <--> " + _baseLoop0);
+    } else if (XmOption.isDebugOutput() && swapCase == 201){
+      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
+      System.out.println("    swap 2: " + _baseLoop2 + " <--> " + _baseLoop1);
+    }
   }
 
 
