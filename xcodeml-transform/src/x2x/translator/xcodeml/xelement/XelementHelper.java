@@ -216,8 +216,14 @@ public class XelementHelper {
   }
 
 
-  public static Element findNextLoop(Node from){
-    return findNextElementOfType(from, XelementName.DO_STMT);
+  public static XdoStatement findNextLoop(XbaseElement from){
+    Element loopElement = findNextElementOfType(from.getBaseElement(),
+      XelementName.DO_STMT);
+      
+    if(loopElement == null){
+      return null;
+    }
+    return new XdoStatement(loopElement);
   }
 
   public static Element findNextExprStatement(Node from){

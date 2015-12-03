@@ -34,14 +34,11 @@ public class LoopFusion implements Transformation<LoopFusion> {
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
-    Element loopElement =
-      XelementHelper.findNextLoop(_loopFusionPragma.getBaseElement());
-
-    if(loopElement == null){
+    _loop = XelementHelper.findNextLoop(_loopFusionPragma);
+    if(_loop == null){
       // TODO give the reason and stops analysis
       return false;
     }
-    _loop = new XdoStatement(loopElement);
     return true;
   }
 

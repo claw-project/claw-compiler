@@ -152,15 +152,12 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     // Find next loop after pragma
-    Element loopElement =
-      XelementHelper.findNextLoop(_loopInterchangePragma.getBaseElement());
+    _loopLevel0 = XelementHelper.findNextLoop(_loopInterchangePragma);
 
-    if(loopElement == null){
+    if(_loopLevel0 == null){
       // TODO give the reason and stops analysis
       return false;
     }
-
-    _loopLevel0 = new XdoStatement(loopElement);
 
     _loopLevel1 = XelementHelper.findChildLoop(_loopLevel0.getBody());
     if(_loopLevel1 == null){
