@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
  * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
@@ -41,8 +42,11 @@ public class XcodeProg {
 
   private boolean _isLoaded = false;
 
+  private ArrayList<XanalysisError> _errors;
+
   public XcodeProg(String inputFile){
     _xcodemlInputFile = inputFile;
+    _errors = new ArrayList<XanalysisError>();
   }
 
   private void readDocumentInformation(){
@@ -56,6 +60,10 @@ public class XcodeProg {
       _xcodemlDoc.getDocumentElement(), XelementName.ATTR_SOURCE);
     _compilerInfo = XelementHelper.getAttributeValue(
       _xcodemlDoc.getDocumentElement(), XelementName.ATTR_COMPILER_INFO);
+  }
+
+  public void addError(String msg, int lineno){
+    _errors.add(new XanalysisError(msg, lineno));
   }
 
   public Document getDocument(){

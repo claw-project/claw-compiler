@@ -34,6 +34,7 @@ add_jar(omni-cx2x
   x2x/translator/xcodeml/transformer/Transformer.java
 
 # XcodeML.Xelement package
+  x2x/translator/xcodeml/xelement/XanalysisError.java
   x2x/translator/xcodeml/xelement/XargumentsTable.java
   x2x/translator/xcodeml/xelement/XarrayIndex.java
   x2x/translator/xcodeml/xelement/XarrayRef.java
