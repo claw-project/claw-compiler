@@ -50,7 +50,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
   private void extractMappingInformation(){
     List<String> allMappings = new ArrayList<String>();
-    Matcher m = Pattern.compile("map\\(([^:]*:.)\\)")
+    // TODO move regex somewhere centralized
+    Matcher m = Pattern.compile("map\\(([^:]*:[^)]*)\\)")
      .matcher(_pragma.getData());
     while (m.find()) {
       allMappings.add(m.group(1));
