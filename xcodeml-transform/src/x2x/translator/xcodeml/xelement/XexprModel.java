@@ -11,16 +11,18 @@ import org.w3c.dom.NodeList;
  * Elements:
  * - Required: on of the followings elements:
  *   - FintConstant (XintConstant), FrealConstant (XrealConstant),
- *     FcomplexConstant TODO, FcharacterConstant (TODO), FlogicalConstant TODO
- *   - FarrayConstructor, FstructConstructor
+ *     FcomplexConstant (XcomplexConstant), FcharacterConstant
+ *     (XcharacterConstant), FlogicalConstant (XlogicalConstant)
+ *   - FarrayConstructor TODO, FstructConstructor TODO
  *   - Var (Xvar)
- *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
- *   - functionCall
+ *   - FarrayRef (XarrayRef), FcharacterRef TODO, FmemberRef TODO,
+ *     FcoArrayRef TODO, varRef (XvarRef)
+ *   - functionCall (XfctCall)
  *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
  *   - logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
- *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr
- *   - unaryMinusExpr, userBinaryExpr, userUnaryExpr
- *   - FdoLoop
+ *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr TODO ALL
+ *   - unaryMinusExpr, userBinaryExpr, userUnaryExpr TODO
+ *   - FdoLoop (Xdo)
  */
 
 public class XexprModel {
@@ -53,10 +55,23 @@ public class XexprModel {
   }
 
   public boolean isIntConst(){
-    if(_element != null && _element instanceof XintConstant){
-      return true;
-    }
-    return false;
+    return isOfType(XintConstant.class);
+  }
+
+  public boolean isRealConst(){
+    return isOfType(XrealConstant.class);
+  }
+
+  public boolean isCharConst(){
+    return isOfType(XcharacterConstant.class);
+  }
+
+  public boolean isLogicalConst(){
+    return isOfType(XlogicalConstant.class);
+  }
+
+  public boolean isComplexConst(){
+    return isOfType(XcomplexConstant.class);
   }
 
   public XintConstant getIntConstant(){
@@ -64,6 +79,15 @@ public class XexprModel {
       return (XintConstant)_element;
     }
     return null;
+  }
+
+  
+
+  private boolean isOfType(Class type){
+    if(_element != null && type.isInstance(_element)){
+      return true;
+    }
+    return false;
   }
 
 
