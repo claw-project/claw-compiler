@@ -98,10 +98,17 @@ public class XelementHelper {
     return elements;
   }
 
+  public static void insertFctCallIntoLoop(XdoStatement loop, XfctCall call){
+    loop.getBodyElement().appendChild(call.getBaseElement().getParentNode());
+  }
 
-  public static XfctDef findParentFctDef(Element child){
-    Node parent = child.getParentNode();
-    while(child.getParentNode() != null){
+
+  public static XfctDef findParentFctDef(XbaseElement child){
+    if(child == null || child.getBaseElement() == null){
+      return null;
+    }
+    Node parent = child.getBaseElement().getParentNode();
+    while(child.getBaseElement().getParentNode() != null){
       if (parent.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) parent;
         if(element.getTagName().equals(XelementName.FCT_DEFINITION)){

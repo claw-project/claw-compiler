@@ -99,7 +99,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       return false;
     }
 
-    _fctDef = XelementHelper.findParentFctDef(_fctCall.getBaseElement());
+    _fctDef = XelementHelper.findParentFctDef(_fctCall);
     if(_fctDef == null){
       xcodeml.addError("No function around the fct call",
         _pragma.getLine());
@@ -362,8 +362,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     XelementHelper.insertAfter(_pragma, loop);
 
     // Move the call into the loop body
-    // TODO hide element manipulation into Xelement
-    loop.getBodyElement().appendChild(_fctCall.getBaseElement().getParentNode());
+    XelementHelper.insertFctCallIntoLoop(loop, _fctCall);
 
     insertDeclaration(iterationRange.getInductionVar().getValue());
     if(iterationRange.getIndexRange().getLowerBound().isVar()){
