@@ -92,6 +92,11 @@ public class XdoStatement extends XbaseElement {
     return _body;
   }
 
+  public void appendToBody(XdoStatement otherLoop){
+    XelementHelper.appendBody(this.getBaseElement(),
+      otherLoop.getBaseElement());
+  }
+
   public String getIterationVariableValue(){
     return _iterationRange.getInductionVar().getValue();
   }

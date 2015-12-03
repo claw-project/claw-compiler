@@ -276,6 +276,21 @@ public class XelementHelper {
     return pragmas;
   }
 
+  public static boolean hasSameParentBlock(XbaseElement e1, XbaseElement e2){
+    if(e1 == null || e2 == null || e1.getBaseElement() == null
+      || e2.getBaseElement() == null)
+    {
+      return false;
+    }
+
+    if(e1.getBaseElement().getParentNode()
+      == e2.getBaseElement().getParentNode())
+    {
+      return true;
+    }
+    return false;
+  }
+
   public static void appendBody(Element elementMaster, Element elementSlave) {
     Element masterBody = XelementHelper.findFirstElement(elementMaster,
       XelementName.BODY);

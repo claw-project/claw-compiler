@@ -44,8 +44,7 @@ public class LoopFusion implements Transformation<LoopFusion> {
   public void transform(XcodeProg xcodeml, Transformer transformer,
     LoopFusion loopFusionUnit)
   {
-    XelementHelper.appendBody(_loop.getBaseElement(),
-      loopFusionUnit.getLoop().getBaseElement());
+    _loop.appendToBody(loopFusionUnit.getLoop());
     loopFusionUnit.finalizeTransformation();
   }
 
@@ -72,7 +71,7 @@ public class LoopFusion implements Transformation<LoopFusion> {
       return false;
     }
     // Loops can only be merged if they are at the same level
-    if(!hasSameParentBlockWith(otherLoopUnit)){
+    if(!XelementHelper.hasSameParentBlock(_loop, otherLoopUnit.getLoop())){
       return false;
     }
     // Loop must share the same group option
@@ -92,15 +91,6 @@ public class LoopFusion implements Transformation<LoopFusion> {
 
   public String getGroupOptionLabel(){
     return _groupLabel;
-  }
-
-  private boolean hasSameParentBlockWith(LoopFusion otherLoopUnit){
-    if(_loop.getBaseElement().getParentNode()
-      == otherLoopUnit.getLoop().getBaseElement().getParentNode())
-    {
-      return true;
-    }
-    return false;
   }
 
   private boolean hasSameGroupOption(LoopFusion otherLoopUnit){
