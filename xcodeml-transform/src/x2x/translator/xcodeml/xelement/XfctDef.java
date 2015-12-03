@@ -1,8 +1,6 @@
 package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 
 /**
@@ -42,5 +40,10 @@ public class XfctDef extends Xfct {
 
   public Element getBody(){
     return XelementHelper.getBody(baseElement);
+  }
+
+  public XfctDef cloneObject(){
+    Element clone = (Element)clone();
+    return new XfctDef(clone);
   }
 }

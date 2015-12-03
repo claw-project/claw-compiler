@@ -195,6 +195,11 @@ public class XelementHelper {
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
+  public static void insertAfter(XbaseElement refElement, XbaseElement element){
+    XelementHelper.insertAfter(refElement.getBaseElement(),
+      element.getBaseElement());
+  }
+
 
   public static Element findNextLoop(Node from){
     return findNextElementOfType(from, XelementName.DO_STMT);

@@ -25,7 +25,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private ArrayList<CLAWmapping> _mappings = null;
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
-  private XfctDef _extractedFctDef = null;
+  private XfctDef _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
   private XfctDef _copiedFctDef = null;
 
@@ -114,26 +114,26 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     }
 
     // Find function declaration
-    _extractedFctDef = XelementHelper.findFunctionDefinition(
+    _fctDefToExtract = XelementHelper.findFunctionDefinition(
       xcodeml.getDocument(), _fctCall);
 
-    if(_extractedFctDef == null){
+    if(_fctDefToExtract == null){
       System.err.println("Could not locate the function definition for: "
         + _fctCall.getFctName());
       System.exit(1);
     }
 
     // Find loop in function
-    _extractedLoop = XelementHelper.findLoop(_extractedFctDef);
+    _extractedLoop = XelementHelper.findLoop(_fctDefToExtract);
     if(_extractedLoop == null){
       System.err.println("Could not locate inner loop in subroutine "
-        + _extractedFctDef.getFctName());
+        + _fctDefToExtract.getFctName());
       System.exit(1);
     }
 
     if(!checkMappingInformation()){
       System.err.println("Mapping information are not usable"
-        + _extractedFctDef.getFctName());
+        + _fctDefToExtract.getFctName());
       System.exit(1);
     }
 
@@ -149,8 +149,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
      */
 
     // Duplicate function definition
-    Node cloned = _extractedFctDef.clone();
-    XfctDef clonedFctDef = new XfctDef((Element)cloned);
+    XfctDef clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     // TODO new name should be generated and unique
     String newFctName = clonedFctDef.getFctName() + "_extracted";
@@ -158,20 +157,20 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     clonedFctDef.updateType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable().
-      get(_extractedFctDef.getFctName());
+      get(_fctDefToExtract.getFctName());
     fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
     XfctType fctType = (XfctType)xcodeml
-      .getTypeTable().get(_extractedFctDef.getFctType());
+      .getTypeTable().get(_fctDefToExtract.getFctType());
     XfctType newFctType = fctType.cloneObject();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
 
     // Get the id from the global symbols table
     Xid globalFctId = xcodeml.getGlobalSymbolsTable()
-      .get(_extractedFctDef.getFctName());
+      .get(_fctDefToExtract.getFctName());
 
     // If the fct is define in the global symbol table, duplicate it
     if(globalFctId != null){
@@ -181,24 +180,17 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       xcodeml.getGlobalSymbolsTable().add(newFctId);
     }
 
-
-
+    // Insert the duplicated function declaration
+    XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
     XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
 
 
-
     if(XmOption.isDebugOutput()){
-      System.out.println("loop-extract transformation");
+      System.out.println("loop-extract transformation: " + _pragma.getData());
       System.out.println("  created subroutine: " + clonedFctDef.getFctName());
     }
-
-    XelementHelper.insertAfter(_extractedFctDef.getBaseElement(), cloned);
-
-    /*
-     *
-     */
 
 
 
@@ -234,6 +226,10 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
     XargumentsTable args = _fctCall.getArgumentsTable();
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
     XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
+
+    if(XmOption.isDebugOutput()){
+      System.out.println("  Start to apply mapping: " + _mappings.size());
+    }
 
     for(CLAWmapping mapping : _mappings){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
@@ -329,7 +325,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
 
                   if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
                     if(arrayIndex.getExprModel().getVar().getValue().equals(mappingVar)){
-                      XelementHelper.insertAfter(ref.getBaseElement(), ref.getVarRef().clone());
+                      XelementHelper.insertAfter(ref, ref.getVarRef().cloneObject());
                       ref.delete();
                     }
                   }
@@ -402,13 +398,13 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private void insertDeclaration(String id){
     Xid inductionVarId = _fctDef.getSymbolTable().get(id);
     if(inductionVarId == null){
-      Xid copyId = _extractedFctDef.getSymbolTable().get(id);
+      Xid copyId = _fctDefToExtract.getSymbolTable().get(id);
       _fctDef.getSymbolTable().add(copyId);
     }
 
     XvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
     if(inductionVarDecl == null){
-      XvarDecl copyDecl = _extractedFctDef.getDeclarationTable().get(id);
+      XvarDecl copyDecl = _fctDefToExtract.getDeclarationTable().get(id);
       _fctDef.getDeclarationTable().add(copyDecl);
     }
   }

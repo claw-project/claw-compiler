@@ -52,4 +52,9 @@ public class XvarRef extends XbaseElement {
 
     // TODO set the correct variable once they are there
   }
+
+  public XvarRef cloneObject(){
+    Element clone = (Element)clone();
+    return new XvarRef(clone);
+  }
 }
