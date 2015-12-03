@@ -15,7 +15,7 @@ import org.w3c.dom.Node;
  *             label, tagname) // TODO move to enum
  */
 
-public class Xid extends XbaseElement {
+public class Xid extends XbaseElement implements Xclonable<Xid> {
   private String _type = null;
   private String _sclass = null;
   private String _name = null;

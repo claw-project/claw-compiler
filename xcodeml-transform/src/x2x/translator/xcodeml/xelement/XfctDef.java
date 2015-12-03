@@ -17,7 +17,7 @@ import java.util.Hashtable;
  *   - declarations (XdeclTable)
  */
 
-public class XfctDef extends Xfct {
+public class XfctDef extends Xfct implements Xclonable<XfctDef> {
 
   private XsymbolTable _symbolTable;
   private XdeclTable _declTable;

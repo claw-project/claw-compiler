@@ -14,7 +14,7 @@ import org.w3c.dom.NodeList;
  * - Optional: type (text)
  */
 
-public class Xvar extends XbaseElement {
+public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   private String _identity = null;
   private String _type = null;
   private Xscope _scope = null;

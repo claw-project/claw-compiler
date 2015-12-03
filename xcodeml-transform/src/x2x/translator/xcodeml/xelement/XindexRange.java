@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
  * Attributes:
  * - Optional: is_assumed_shape (bool)
  */
-public class XindexRange extends XbaseElement {
+public class XindexRange extends XbaseElement implements Xclonable<XindexRange> {
 
   protected Xbound _lowerBound;
   protected Xbound _upperBound;

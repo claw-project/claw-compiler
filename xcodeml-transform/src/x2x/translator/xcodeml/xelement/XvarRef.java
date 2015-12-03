@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
  * - Optional: type (text) TODO
  */
 
-public class XvarRef extends XbaseElement {
+public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
 
   public XvarRef(Element varRefElement){
     super(varRefElement);

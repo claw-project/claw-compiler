@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
  *   is_internal (bool) TODO
  */
 
-public class XfctType extends Xtype {
+public class XfctType extends Xtype implements Xclonable<XfctType> {
 
   private String _returnType = null;
   private boolean _isProgram = false;
