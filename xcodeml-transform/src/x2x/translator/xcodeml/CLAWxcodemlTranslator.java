@@ -1,26 +1,18 @@
 package x2x.translator.xcodeml;
 
+// Xelement import
 import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.transformation.*;
 import x2x.translator.xcodeml.transformer.*;
+import x2x.translator.pragma.CLAWpragma;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import java.io.File;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import javax.xml.xpath.*;
-
-import java.util.*;
-
+// OMNI import
 import exc.xcodeml.*;
 import exc.object.Xcode;
 import xcodeml.util.XmOption;
-import x2x.translator.pragma.CLAWpragma;
+
+// Java import
+import java.util.*;
 
 public class CLAWxcodemlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
@@ -54,48 +46,40 @@ public class CLAWxcodemlTranslator {
     _program.readTypeTable();
     _program.readGlobalSymbolsTable();
 
-    NodeList pragmaList = XelementHelper.getPragmas(_program.getDocument());
+    for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
+      if(!CLAWpragma.startsWithClaw(pragma.getData())){
+        continue; // Not CLAW pragma, we do nothing
+      }
 
-    for (int i = 0; i < pragmaList.getLength(); i++) {
-      Node pragmaNode = pragmaList.item(i);
-      if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element pragmaElement = (Element) pragmaNode;
-        Xpragma pragma = new Xpragma(pragmaElement);
+      if(CLAWpragma.isValid(pragma.getData())){
+        CLAWpragma clawDirective = CLAWpragma.getDirective(pragma.getData());
 
-        if(!CLAWpragma.startsWithClaw(pragma.getData())){
-          continue; // Not CLAW pragma, we do nothing
-        }
-
-        if(CLAWpragma.isValid(pragma.getData())){
-          CLAWpragma clawDirective = CLAWpragma.getDirective(pragma.getData());
-
-          if(clawDirective == CLAWpragma.LOOP_FUSION){
-            LoopFusion trans = new LoopFusion(pragma);
-            if(trans.analyze(_program, _transformer)){
-              _transformer.addTransformation(trans);
-            } else {
-              abort();
-            }
-          } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
-            LoopInterchange trans = new LoopInterchange(pragma);
-            if(trans.analyze(_program, _transformer)){
-              _transformer.addTransformation(trans);
-            } else {
-              abort();
-            }
-          } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
-            LoopExtraction trans = new LoopExtraction(pragma);
-            if(trans.analyze(_program, _transformer)){
-              _transformer.addTransformation(trans);
-            } else {
-              abort();
-            }
+        if(clawDirective == CLAWpragma.LOOP_FUSION){
+          LoopFusion trans = new LoopFusion(pragma);
+          if(trans.analyze(_program, _transformer)){
+            _transformer.addTransformation(trans);
+          } else {
+            abort();
           }
-
-        } else {
-          System.out.println("INVALID PRAGMA: !$" + pragma.getData());
-          System.exit(1);
+        } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
+          LoopInterchange trans = new LoopInterchange(pragma);
+          if(trans.analyze(_program, _transformer)){
+            _transformer.addTransformation(trans);
+          } else {
+            abort();
+          }
+        } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
+          LoopExtraction trans = new LoopExtraction(pragma);
+          if(trans.analyze(_program, _transformer)){
+            _transformer.addTransformation(trans);
+          } else {
+            abort();
+          }
         }
+
+      } else {
+        System.out.println("INVALID PRAGMA: !$" + pragma.getData());
+        System.exit(1);
       }
     }
 

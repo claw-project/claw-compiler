@@ -18,6 +18,7 @@ import javax.xml.xpath.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class XelementHelper {
 
@@ -261,8 +262,18 @@ public class XelementHelper {
     return null;
   }
 
-  public static NodeList getPragmas(Document root){
-    return root.getElementsByTagName(XelementName.PRAGMA_STMT);
+  public static List<Xpragma> findAllPragmas(XcodeProg xcodeml){
+    NodeList pragmaList = xcodeml.getDocument()
+      .getElementsByTagName(XelementName.PRAGMA_STMT);
+    List<Xpragma> pragmas = new ArrayList<Xpragma>();
+    for (int i = 0; i < pragmaList.getLength(); i++) {
+      Node pragmaNode = pragmaList.item(i);
+      if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) pragmaNode;
+        pragmas.add(new Xpragma(element));
+      }
+    }
+    return pragmas;
   }
 
   public static void appendBody(Element elementMaster, Element elementSlave) {
