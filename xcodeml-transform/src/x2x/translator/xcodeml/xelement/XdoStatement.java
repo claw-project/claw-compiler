@@ -30,8 +30,30 @@ public class XdoStatement extends XbaseElement {
     Element inductionVarElement = XelementHelper.findVar(baseElement);
     Element indexRangeElement = XelementHelper.findIndexRange(baseElement);
 
-    _iterationRange =
-      new XloopIterationRange(inductionVarElement, indexRangeElement);
+    if(inductionVarElement != null && indexRangeElement != null){
+      _iterationRange =
+        new XloopIterationRange(inductionVarElement, indexRangeElement);
+    }
+  }
+
+  /**
+   * Create an empty arrayIndex element in the given program
+   */
+  public static XdoStatement createEmpty(XcodeProg xcodeml,
+    XloopIterationRange range)
+  {
+    Element element = xcodeml.getDocument().
+      createElement(XelementName.DO_STMT);
+
+    if(range != null){
+      element.appendChild(range.getInductionVar().clone());
+      element.appendChild(range.getIndexRange().clone());
+    }
+
+    Element body = xcodeml.getDocument().createElement(XelementName.BODY);
+    element.appendChild(body);
+
+    return new XdoStatement(element);
   }
 
   public void setNewRange(XloopIterationRange range){

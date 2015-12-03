@@ -362,24 +362,15 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private XdoStatement wrapCallWithLoop(XcodeProg xcodeml,
     XloopIterationRange iterationRange)
   {
-    // TODO have single method to create a loop from iterationRange
-    Document document = xcodeml.getDocument();
+    // Create a new empty loop
+    XdoStatement loop = XdoStatement.createEmpty(xcodeml, iterationRange);
 
-    // Create the loop before the call TODO priority move
-    Element loop = document.createElement(XelementName.DO_STMT);
-    _pragma.getBaseElement().getParentNode().insertBefore(loop,
-      _pragma.getBaseElement().getNextSibling());
-
-    loop.appendChild(iterationRange.getInductionVar().clone());
-    loop.appendChild(iterationRange.getIndexRange().clone());
-
-    Element body = document.createElement(XelementName.BODY);
-
-    loop.appendChild(body);
+    // Insert the new empty loop just after the pragma
+    XelementHelper.insertAfter(_pragma, loop);
 
     // Move the call into the loop body
-    body.appendChild(_fctCall.getBaseElement().getParentNode());
-
+    // TODO hide element manipulation into Xelement
+    loop.getBodyElement().appendChild(_fctCall.getBaseElement().getParentNode());
 
     insertDeclaration(iterationRange.getInductionVar().getValue());
     if(iterationRange.getIndexRange().getLowerBound().isVar()){
@@ -392,7 +383,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       insertDeclaration(iterationRange.getIndexRange().getStep().getValue());
     }
 
-    return new XdoStatement(loop);
+    return loop;
   }
 
   private void insertDeclaration(String id){

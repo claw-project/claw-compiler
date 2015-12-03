@@ -19,7 +19,7 @@ public class XbaseElement {
     return baseElement;
   }
 
-  public Node clone(){
+  protected Node clone(){
     if(baseElement != null){
       return baseElement.cloneNode(true);
     }
