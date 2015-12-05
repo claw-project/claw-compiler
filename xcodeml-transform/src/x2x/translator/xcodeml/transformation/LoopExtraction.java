@@ -11,9 +11,8 @@ import java.util.regex.*;
 import xcodeml.util.XmOption;
 
 
-public class LoopExtraction implements Transformation<LoopExtraction> {
+public class LoopExtraction extends Transformation<LoopExtraction> {
 
-  private Xpragma _pragma = null;
   private XexprStatement _exprStmt = null;
 
   private ArrayList<CLAWmapping> _mappings = null;
@@ -23,17 +22,14 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   private XdoStatement _extractedLoop = null;
   private XfctDef _copiedFctDef = null;
 
-  private int _startLine = 0;
-
   // Fusion and fusion option
   private boolean _hasFusion = false;
   private String _fusionGroupLabel = "";
 
 
   public LoopExtraction(Xpragma pragma) {
-    _pragma = pragma;
+    super(pragma);
     _mappings = new ArrayList<CLAWmapping>();
-    _startLine = _pragma.getLine();
     extractMappingInformation();
     extractFusionInformation();
   }
@@ -352,7 +348,7 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
       }
 
     }
-
+    this.transformed();
   }
 
   private XdoStatement wrapCallWithLoop(XcodeProg xcodeml,
@@ -396,17 +392,8 @@ public class LoopExtraction implements Transformation<LoopExtraction> {
   }
 
 
-
-  public boolean isTransformed() {
-    return true; // TODO
-  }
-
   public boolean canBeTransformedWith(LoopExtraction other){
     return true; // Always true as independent transformation
-  }
-
-  public int getStartLine(){
-    return _startLine;
   }
 
 }

@@ -6,15 +6,13 @@ import x2x.translator.xcodeml.transformer.Transformer;
 
 import xcodeml.util.XmOption;
 
-public class LoopInterchange implements Transformation<LoopInterchange> {
+public class LoopInterchange extends Transformation<LoopInterchange> {
 
   private String _newOrderOption = null;
-  private boolean _transformationDone = false;
 
   private XdoStatement _loopLevel0 = null;
   private XdoStatement _loopLevel1 = null;
   private XdoStatement _loopLevel2 = null;
-  private Xpragma _pragma = null;
 
 
   private String _baseLoop0 = null;
@@ -29,13 +27,11 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
-  private int _startLine = 0;
 
   public LoopInterchange(Xpragma pragma){
-    _pragma = pragma;
+    super(pragma);
     _newOrderOption = CLAWpragma
       .getSimpleOptionValue(_pragma.getData());
-    _startLine = _pragma.getLine();
   }
 
   public void transform(XcodeProg xcodeml, Transformer transformer,
@@ -93,7 +89,7 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
         swapLoops(from, to);
       }
     }
-    _transformationDone = true;
+    this.transformed();
 
   }
 
@@ -203,16 +199,9 @@ public class LoopInterchange implements Transformation<LoopInterchange> {
     return true;
   }
 
-  public boolean isTransformed() {
-    return true; // TODO
-  }
 
   public boolean canBeTransformedWith(LoopInterchange other){
     return true; // Always true as independent transformation
-  }
-
-  public int getStartLine(){
-    return _startLine;
   }
 
   private void printTransformDebugInfo(){

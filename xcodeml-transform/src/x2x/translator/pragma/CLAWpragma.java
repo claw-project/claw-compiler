@@ -25,6 +25,7 @@ public enum CLAWpragma {
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String OPTION_EXTRACT_RANGE = "range";
   private static final String OPTION_EXTRACT_MAP = "map";
+  private static final String OPTION_FUSION = "fusion";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
   private static final String ANY_SPACES = "\\s*";

@@ -4,35 +4,29 @@ import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
-public class LoopFusion implements Transformation<LoopFusion> {
-
-  private boolean _transformed = false;
+public class LoopFusion extends Transformation<LoopFusion> {
   // Contains the value of the group option
   private String _groupLabel = null;
-  // The pragma statement that triggered the transformation
-  private Xpragma _loopFusionPragma = null;
   // The loop statement involved in the Transformation
   private XdoStatement _loop = null;
 
-  private int _startLine = 0;
-
   public LoopFusion(Xpragma pragma){
-    _loopFusionPragma = pragma;
-    _groupLabel = CLAWpragma.getGroupOptionValue(_loopFusionPragma.getData());
-    _startLine = _loopFusionPragma.getLine();
+    super(pragma);
+    _groupLabel = CLAWpragma.getGroupOptionValue(_pragma.getData());
   }
 
   public LoopFusion(XdoStatement loop, String group, int lineNumber){
+    super(null);
     _loop = loop;
     _groupLabel = group;
-    _startLine = lineNumber;
+    setStartLine(lineNumber);
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
-    _loop = XelementHelper.findNextLoop(_loopFusionPragma);
+    _loop = XelementHelper.findNextLoop(_pragma);
     if(_loop == null){
       xcodeml.addError("Cannot find loop after directive",
-        _loopFusionPragma.getLine());
+        _pragma.getLine());
       return false;
     }
     return true;
@@ -50,24 +44,20 @@ public class LoopFusion implements Transformation<LoopFusion> {
 
   public void finalizeTransformation(){
     // Delete the pragma of the transformed loop
-    if(_loopFusionPragma != null){
-      _loopFusionPragma.delete();
+    if(_pragma != null){
+      _pragma.delete();
     }
     // Delete the loop that was merged with the main one
     if(_loop != null){
       _loop.delete();
     }
-    _transformed = true;
-  }
-
-  public boolean isTransformed(){
-    return _transformed;
+    this.transformed();
   }
 
   public boolean canBeTransformedWith(LoopFusion otherLoopUnit){
 
     // No loop is transformed already
-    if(_transformed || otherLoopUnit.isTransformed()){
+    if(this.isTransformed() || otherLoopUnit.isTransformed()){
       return false;
     }
     // Loops can only be merged if they are at the same level
@@ -97,10 +87,6 @@ public class LoopFusion implements Transformation<LoopFusion> {
     return (otherLoopUnit.getGroupOptionLabel() == null
       ? getGroupOptionLabel() == null
       : otherLoopUnit.getGroupOptionLabel().equals(getGroupOptionLabel()));
-  }
-
-  public int getStartLine(){
-    return _startLine;
   }
 
 }
