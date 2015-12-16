@@ -77,4 +77,6 @@ add_jar(omni-cx2x
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 
+install(FILES omni-cx2x.jar DESTINATION share/cx2x)
+
 add_subdirectory(test)
