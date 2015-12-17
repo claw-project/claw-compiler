@@ -9,6 +9,12 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set (CMAKE_INSTALL_PREFIX "/usr/local/" CACHE PATH "default install path" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
+
+# Define the OMNI installation directory
+if(NOT DEFINED ${OMNI_HOME})
+  set(OMNI_HOME "/usr/local/")
+endif()
+
 # Build instruction for the xcodeml translator tool
 add_subdirectory(xcodeml-transform)
 
