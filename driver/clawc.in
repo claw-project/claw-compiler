@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ### Read configration file and library ###
-OM_DRIVER_CONF_DIR=@OM_DRIVER_CONF_DIR@
-. ${OM_DRIVER_CONF_DIR}/xmpf90.conf
+OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
+. ${OM_CX2X_DRIVER_CONF_DIR}/clawc.conf
 . ${OMNI_HOME}/libexec/omni_common_lib.sh
-. ${OMNI_HOME}/libexec/xmpf90_lib.sh
+#. ${OMNI_HOME}/libexec/xmpf90_lib.sh
 
 ### Directory for saving intermediate files ###
 PID=$$
@@ -12,11 +12,11 @@ TEMP_DIR=/tmp/__omni_tmp__${PID}
 DEBUG_TEMP_DIR="__omni_tmp__"
 
 ### Default options ###
-ENABLE_LINKER=true
+ENABLE_LINKER=false
 ONLY_PP=false
 ENABLE_CPP=false
 VERBOSE=false
-ENABLE_DEBUG=false
+ENABLE_DEBUG=true
 OUTPUT_TEMPORAL=false
 DRY_RUN=false
 STOP_PP=false
