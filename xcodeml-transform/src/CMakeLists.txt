@@ -2,7 +2,9 @@ set(CMAKE_JAVA_INCLUDE_PATH ../../../omni-compiler/XcodeML-Common/build/om-commo
 
 set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 
-add_jar(omni-cx2x
+set(OMNI_CX2X_NAME om-cx2x)
+
+add_jar(${OMNI_CX2X_NAME}
 # Base class
   x2x/ClawX2X.java
 
@@ -77,6 +79,6 @@ add_jar(omni-cx2x
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 
-install(FILES omni-cx2x.jar DESTINATION share/cx2x)
+install(FILES ${OMNI_CX2X_NAME}.jar DESTINATION share/cx2x)
 
 add_subdirectory(test)
