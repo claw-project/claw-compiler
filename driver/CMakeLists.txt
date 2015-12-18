@@ -25,8 +25,9 @@ if(NOT EXISTS ${OMNI_JAR_TOOLS} OR NOT EXISTS ${OMNI_JAR_COMMON} OR NOT EXISTS $
 endif()
 
 # Check the existence of the OMNI Compiler front-end
-# TODO
-
+if(NOT EXISTS ${OMNI_F_FRONT})
+  message(FATAL_ERROR "OMNI Compiler Fortran front-end not found.") # TODO specifiy how to give OMNI_HOME
+endif()
 
 # Configure files with varibales information
 configure_file(

@@ -20,6 +20,8 @@ endif()
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build/")
 set(OMNI_CX2X_NAME om-cx2x)
 
+set(OMNI_F_FRONT "${OMNI_HOME}/bin/F_Front")
+set(OMNI_C_FRONT "${OMNI_HOME}/bin/C_Front")
 set(OMNI_JAR_TOOLS "${OMNI_HOME}/share/xcalablemp/om-exc-tools.jar")
 set(OMNI_JAR_COMMON "${OMNI_HOME}/share/xcalablemp/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_HOME}/share/xcalablemp/om-f-back.jar")
