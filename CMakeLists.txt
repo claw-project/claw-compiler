@@ -25,12 +25,6 @@ set(OMNI_JAR_COMMON "${OMNI_HOME}/share/xcalablemp/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_HOME}/share/xcalablemp/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_HOME}/share/xcalablemp/om-c-back.jar")
 set(OMNI_JAR_CX2X "${BUILD_DIR}${OMNI_CX2X_NAME}.jar")
-# TODO remove JAR1,2,3,4 when driver is modified
-set(OMNI_JAR1 "${OMNI_JAR_TOOLS}")
-set(OMNI_JAR2 "${OMNI_JAR_C_BACKEND}")
-set(OMNI_JAR3 "${OMNI_JAR_F_BACKEND}")
-set(OMNI_JAR4 "${OMNI_JAR_COMMON}")
-
 
 # Build instruction for the xcodeml translator tool
 add_subdirectory(xcodeml-transform)

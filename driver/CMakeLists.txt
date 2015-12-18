@@ -20,7 +20,7 @@ set(CLAW_COMPILER_FILE "clawc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 
 # Check existence of OMNI Compiler Java librairies
-if(NOT EXISTS ${OMNI_JAR1} OR NOT EXISTS ${OMNI_JAR2} OR NOT EXISTS ${OMNI_JAR3} OR NOT EXISTS ${OMNI_JAR4})
+if(NOT EXISTS ${OMNI_JAR_TOOLS} OR NOT EXISTS ${OMNI_JAR_COMMON} OR NOT EXISTS ${OMNI_JAR_F_BACKEND} OR NOT EXISTS ${OMNI_JAR_C_BACKEND})
   message(FATAL_ERROR "OMNI Compiler library not found. Specify OMNI Compiler install path with -DOMNI_HOME=<path>")
 endif()
 
