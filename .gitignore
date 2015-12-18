@@ -17,5 +17,6 @@ build
 transformed_code.f90
 original_code_*
 transformed_code_*
-driver/clawc
-driver/clawc.conf
+clawc
+claw_f.conf
+claw_f_lib.sh
