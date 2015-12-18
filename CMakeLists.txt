@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+project(CLAWC)
+
 find_package(Java REQUIRED)
 include(UseJava)
 enable_testing()
@@ -15,11 +17,26 @@ if(NOT DEFINED ${OMNI_HOME})
   set(OMNI_HOME "/usr/local/")
 endif()
 
+set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build/")
+set(OMNI_CX2X_NAME om-cx2x)
+
+set(OMNI_JAR_TOOLS "${OMNI_HOME}/share/xcalablemp/om-exc-tools.jar")
+set(OMNI_JAR_COMMON "${OMNI_HOME}/share/xcalablemp/om-common.jar")
+set(OMNI_JAR_F_BACKEND "${OMNI_HOME}/share/xcalablemp/om-f-back.jar")
+set(OMNI_JAR_C_BACKEND "${OMNI_HOME}/share/xcalablemp/om-c-back.jar")
+set(OMNI_JAR_CX2X "${BUILD_DIR}${OMNI_CX2X_NAME}.jar")
+# TODO remove JAR1,2,3,4 when driver is modified
+set(OMNI_JAR1 "${OMNI_JAR_TOOLS}")
+set(OMNI_JAR2 "${OMNI_JAR_C_BACKEND}")
+set(OMNI_JAR3 "${OMNI_JAR_F_BACKEND}")
+set(OMNI_JAR4 "${OMNI_JAR_COMMON}")
+
+
 # Build instruction for the xcodeml translator tool
 add_subdirectory(xcodeml-transform)
 
 # compiler driver
-#add_subdirectory(driver)
+add_subdirectory(driver)
 
 # Build functional test
 add_subdirectory(test)

@@ -1,10 +1,6 @@
 # This CMake file define the configuration and the installation steps of the
 # claw compiler driver
 
-# TODO remove once it is integrated with the main CMakeLists.txt
-cmake_minimum_required(VERSION 3.1)
-project(CLAWC VERSION 0.1.0)
-
 find_package(Java)
 #if(NOT Java_Runtime_FOUND)
 #  message(FATAL_ERROR "Java not found")
@@ -18,10 +14,6 @@ set(OMNI_F2X_FLAGS "-I${OMNI_HOME}/include -M.")
 set(FPPFLAGS "-E")  # TODO must be define on the fly
 set(FPP "gfortran") # TODO must be define on the fly CMAKE_Fotran_COMPILER
 set(CPP_OPT "-cpp") # TODO must be define on the fly
-set(OMNI_JAR1 "${OMNI_HOME}/share/xcalablemp/om-exc-tools.jar")
-set(OMNI_JAR2 "${OMNI_HOME}/share/xcalablemp/om-c-back.jar")
-set(OMNI_JAR3 "${OMNI_HOME}/share/xcalablemp/om-f-back.jar")
-set(OMNI_JAR4 "${OMNI_HOME}/share/xcalablemp/om-common.jar")
 set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
 set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawc")
