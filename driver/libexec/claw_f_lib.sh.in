@@ -30,8 +30,6 @@ Process Options
   --Wf[option] : Add frontend option.
   --Wx[option] : Add Xcode translator option.
   --Wb[option] : Add backend option.
-  --Wn[option] : Add native compiler option.
-  --Wl[option] : Add linker option.
 EOF
 }
 
