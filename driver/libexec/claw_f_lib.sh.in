@@ -8,9 +8,6 @@ Compile Driver Options
    -o <file>         : place the output into <file>.
    -I <dir>          : add the directory dir to the list of directories to be searched for header files.
    -J <dir>          : specify where to put .mod and .xmod files for compiled modules.
-   -c                : compile and assemble, but do not link.
-   -E                : preprocess only; do not compile, assemble or link.
-   -cpp              : enable preprocess.
    -v,--verbose      : print processing status.
    --version         : print version.
    -h,--help         : print usage.
@@ -21,8 +18,6 @@ Compile Driver Options
    --stop-pp         : save intermediate files and stop after preprocess.
    --stop-frontend   : save intermediate files and stop after frontend.
    --stop-translator : save intermediate files and stop after translator.
-   --stop-backend    : save intermediate files and stop after backend.
-   --stop-compile    : save intermediate files and stop after compile.
 
 Process Options
 
