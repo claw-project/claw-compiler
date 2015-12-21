@@ -35,108 +35,108 @@ EOF
 
 function claw_f_show_env()
 {
-    CONF_FILE=${OM_DRIVER_CONF_DIR}/xmpf90.conf
-    if [ -f $CONF_FILE ]; then
-	for val in `sed '/^[[:space:]]*$/d' ${CONF_FILE} | grep -v '^#' | awk -F= '{print $1}'`
-	do
-	    echo -n ${val}=\"
-            eval echo -n \"\$$val\"
-	    echo \"
-	done
-    else
-	omni_error_exit "$CONF_FILE not exist."
-    fi
+  CONF_FILE=${OM_DRIVER_CONF_DIR}/xmpf90.conf
+  if [ -f $CONF_FILE ]; then
+    for val in `sed '/^[[:space:]]*$/d' ${CONF_FILE} | grep -v '^#' | awk -F= '{print $1}'`
+    do
+      echo -n ${val}=\"
+      eval echo -n \"\$$val\"
+      echo \"
+    done
+  else
+    omni_error_exit "$CONF_FILE not exist."
+  fi
 }
 
 function get_target()
 {
-    xmpf90 --show-env | grep TARGET | sed 's/TARGET=//' | sed "s/\"//g"
+  xmpf90 --show-env | grep TARGET | sed 's/TARGET=//' | sed "s/\"//g"
 }
 
 function claw_f_set_parameters()
 {
-    while [ -n "$1" ]; do
-        case "$1" in
-	    *.f90|*.f|*.F90|*.F)
-		f_files+=("$1");;
-	    *.a)
-		archive_files+=("$1");;
-	    *.o)
-		obj_files+=("$1");;
-	    -o)
-                shift; output_file=("$1");;
-	    -J)
-		shift;
-		module_dir=("${1#-J}")
-		module_opt=("-M${module_dir[0]}")
-		target=`get_target`
-		if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]; then
-                    other_args+=("${OMNI_MODINC}${module_dir}")
-                else
-                    other_args+=("${OMNI_MODINC}" "${module_dir}")
-                fi;;
-	    -J?*)
-		module_dir=("${1#-J}")
-                module_opt=("-M${module_dir[0]}")
-		target=`get_target`
-		if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]; then
-                    other_args+=("${OMNI_MODINC}${module_dir}")
-                else
-                    other_args+=("${OMNI_MODINC}" "${module_dir}")
-		fi;;
-            -I)
-		shift;
-		include_opt+=("-I$1")
-		other_args+=("-I$1")
-		module_dir=("${1#-I}")
-		trans_module_opt+=("-M${module_dir[0]}");;
-	    -I?*)
-		include_opt+=("$1")
-		other_args+=("$1")
-		module_dir=("${1#-I}")
-		trans_module_opt+=("-M${module_dir[0]}");;
-            -c)
-		ENABLE_LINKER=false;;
-	    -E)
-		ONLY_PP=true;;
-	    -cpp)
-		ENABLE_CPP=true;;
-            -v|--verbose)
-		VERBOSE=true;;
-	    --version)
-		claw_f_print_version; exit 0;;
-            -h|--help)
-		claw_f_print_help `basename $0`; exit 0;;
-	    --show-env)
-		claw_f_show_env; exit 0;;
-            --tmp)
-		OUTPUT_TEMPORAL=true;;
-            --dry)
-		DRY_RUN=true;;
-	    --debug)
-		ENABLE_DEBUG=true;;
-            --stop-pp)
-		VERBOSE=true; STOP_PP=true;;
-            --stop-frontend)
-		VERBOSE=true; STOP_FRONTEND=true;;
-	    --stop-translator)
-		VERBOSE=true; STOP_TRANSLATOR=true;;
-	    --stop-backend)
-		VERBOSE=true; STOP_BACKEND=true;;
-	    --stop-compile)
-		VERBOSE=true; STOP_COMPILE=true;;
-            --Wp*)
-                pp_add_opt+=("${1#--Wp}");;
-            --Wf*)
-                frontend_add_opt+=("${1#--Wf}");;
-            --Wx*)
-                xcode_translator_add_opt+=("${1#--Wx}");;
-            --Wn*)
-                native_add_opt+=("${1#--Wn}");;
-            --Wb*)
-                backend_add_opt+=("${1#--Wb}");;
-            --Wl*)
-                linker_add_opt+=("${1#--Wl}");;
+  while [ -n "$1" ]; do
+    case "$1" in
+      *.f90|*.f|*.F90|*.F)
+        f_files+=("$1");;
+      *.a)
+        archive_files+=("$1");;
+      *.o)
+        obj_files+=("$1");;
+      -o)
+        shift; output_file=("$1");;
+      -J)
+        shift;
+        module_dir=("${1#-J}")
+        module_opt=("-M${module_dir[0]}")
+        target=`get_target`
+        if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]; then
+          other_args+=("${OMNI_MODINC}${module_dir}")
+        else
+          other_args+=("${OMNI_MODINC}" "${module_dir}")
+        fi;;
+      -J?*)
+        module_dir=("${1#-J}")
+        module_opt=("-M${module_dir[0]}")
+        target=`get_target`
+        if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]; then
+          other_args+=("${OMNI_MODINC}${module_dir}")
+        else
+          other_args+=("${OMNI_MODINC}" "${module_dir}")
+        fi;;
+      -I)
+        shift;
+        include_opt+=("-I$1")
+        other_args+=("-I$1")
+        module_dir=("${1#-I}")
+        trans_module_opt+=("-M${module_dir[0]}");;
+      -I?*)
+        include_opt+=("$1")
+        other_args+=("$1")
+        module_dir=("${1#-I}")
+        trans_module_opt+=("-M${module_dir[0]}");;
+#      -c) # Option disable for clawf90
+#        ENABLE_LINKER=false;;
+      -E)
+        ONLY_PP=true;;
+      -cpp)
+        ENABLE_CPP=true;;
+      -v|--verbose)
+        VERBOSE=true;;
+      --version)
+        claw_f_print_version; exit 0;;
+      -h|--help)
+        claw_f_print_help `basename $0`; exit 0;;
+      --show-env)
+        claw_f_show_env; exit 0;;
+      --tmp)
+        OUTPUT_TEMPORAL=true;;
+      --dry)
+        DRY_RUN=true;;
+      --debug)
+        ENABLE_DEBUG=true;;
+      --stop-pp)
+        VERBOSE=true; STOP_PP=true;;
+      --stop-frontend)
+        VERBOSE=true; STOP_FRONTEND=true;;
+      --stop-translator)
+        VERBOSE=true; STOP_TRANSLATOR=true;;
+      --stop-backend)
+        VERBOSE=true; STOP_BACKEND=true;;
+      --stop-compile)
+        VERBOSE=true; STOP_COMPILE=true;;
+      --Wp*)
+        pp_add_opt+=("${1#--Wp}");;
+      --Wf*)
+        frontend_add_opt+=("${1#--Wf}");;
+      --Wx*)
+        xcode_translator_add_opt+=("${1#--Wx}");;
+      --Wn*)
+        native_add_opt+=("${1#--Wn}");;
+      --Wb*)
+        backend_add_opt+=("${1#--Wb}");;
+      --Wl*)
+        linker_add_opt+=("${1#--Wl}");;
 #	    --openmp|-omp)
 #		ENABLE_OPENMP=true;;
 #	    --xcalableacc|-xacc)
@@ -149,15 +149,15 @@ function claw_f_set_parameters()
 #		ENABLE_TLOG_ALL=true;;
 #	    --tlog)
 #		ENABLE_TLOG=true;;
-	    *)
-		other_args+=("$1");;
-	esac
-	shift
-    done
+      *)
+        other_args+=("$1");;
+    esac
+    shift
+  done
 
-    if test $OUTPUT_TEMPORAL = true -a $DRY_RUN = true; then
-        omni_error_exit "cannot use both --tmp and --dry options at the same time."
-    fi
+  if test $OUTPUT_TEMPORAL = true -a $DRY_RUN = true; then
+    omni_error_exit "cannot use both --tmp and --dry options at the same time."
+  fi
 }
 
 function claw_f_print_version()
