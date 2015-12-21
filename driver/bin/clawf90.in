@@ -8,7 +8,6 @@
 
 ## TODO add option to output file in a given directory
 ## TODO if more than one file and -o ! error
-## TODO fix xmod directory option
 
 ### Read configration file and library ###
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
