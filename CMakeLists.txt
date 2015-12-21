@@ -26,7 +26,9 @@ set(OMNI_JAR_TOOLS "${OMNI_HOME}/share/xcalablemp/om-exc-tools.jar")
 set(OMNI_JAR_COMMON "${OMNI_HOME}/share/xcalablemp/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_HOME}/share/xcalablemp/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_HOME}/share/xcalablemp/om-c-back.jar")
-set(OMNI_JAR_CX2X "${BUILD_DIR}${OMNI_CX2X_NAME}.jar")
+set(OMNI_BUILD_JAR_CX2X "${BUILD_DIR}${OMNI_CX2X_NAME}.jar")
+set(OMNI_JAR_CX2X "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_NAME}.jar")
+
 
 # Build instruction for the xcodeml translator tool
 add_subdirectory(xcodeml-transform)
