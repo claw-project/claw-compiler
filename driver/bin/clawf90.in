@@ -22,7 +22,7 @@ DEBUG_TEMP_DIR="__omni_tmp__"
 ### Default options ###
 ENABLE_LINKER=false
 ONLY_PP=false
-ENABLE_CPP=false
+ENABLE_CPP=true
 VERBOSE=false
 ENABLE_DEBUG=true
 OUTPUT_TEMPORAL=true
@@ -79,6 +79,9 @@ omni_set_trap
 [ $ONLY_PP = true -a -f "${output_file}" ] && omni_exec rm "${output_file}"
 [ $ENABLE_CPP = true ] && OMNI_FPP_OPT="$OMNI_FPP_OPT $CPP_OPT"
 for file in "${f_files[@]}"; do
+  [ $ENABLE_DEBUG = true ] && echo "Prepocessing ..."
+  [ $ENABLE_DEBUG = true ] && echo "OMNI_FPP_OPT $OMNI_FPP_OPT"
+  [ $ENABLE_DEBUG = true ] && echo "CPP_OPT $CPP_OPT"
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -106,6 +109,7 @@ done
 
 ### Frontend ###
 for file in "${f_files[@]}"; do
+  [ $ENABLE_DEBUG = true ] && echo "Fortran to XcodeML ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -123,6 +127,7 @@ done
 
 ### Translator ###
 for file in "${f_files[@]}"; do
+  [ $ENABLE_DEBUG = true ] && echo "XcodeML to XcodeML translation ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -147,9 +152,7 @@ for file in "${f_files[@]}"; do
   #FILE_F90=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.F90
   #BASENAME=`basename $FILE .$EXT`
 
-  echo "${FILE_OUT_X} ${FILE_OUT_F}"
-  #omni_exec cp "${FILE_F90}" __omni_tmp__"${BASENAME}".${EXT}
-  #echo output __omni_tmp__"${BASENAME}".${EXT}
+  omni_exec $OMNI_X2F_CMD $OMNI_X2F_OPT "${backend_add_opt[@]}" -o "${FILE_OUT_F}" "${FILE_OUT_X}"
 done
 
 ### Delete temporal directory ###
