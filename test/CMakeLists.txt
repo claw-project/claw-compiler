@@ -5,7 +5,7 @@ enable_language (Fortran)
 #set (OMNI_F_FRONTEND_OPTION -fleave-comment)
 #set (OMNI_X2X x2x.ClawX2X)
 #set (OMNI_F_BACKEND xcodeml.f.util.omx2f)
-set (CLAWF90 clawf90)
+set (CLAWF90 ${CMAKE_SOURCE_DIR}/driver/clawf90)
 
 #set(XCODEML_EXT .xcodeml)
 #set(CLAW_EXT ${XCODEML_EXT}.claw)
