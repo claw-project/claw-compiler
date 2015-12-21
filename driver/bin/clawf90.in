@@ -6,6 +6,9 @@
 ### This driver is based on the xmpf90 compiler driver from the OMNI Compiler.
 ###
 
+## TODO add option to output file in a given directory
+## TODO if more than one file and -o ! error
+## TODO fix xmod directory option
 
 ### Read configration file and library ###
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
@@ -142,13 +145,17 @@ done
 [ $STOP_TRANSLATOR = true ] && exit 0;
 
 ### Backend ###
-
 for file in "${f_files[@]}"; do
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
   FILE_OUT_F=${TEMP_DIR}/"${FILE}"
+  echo "output_file: ${output_file}"
+  if [ output_file != "" ]
+  then
+    FILE_OUT_F=${output_file}
+  fi
   #FILE_F90=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.F90
   #BASENAME=`basename $FILE .$EXT`
 
