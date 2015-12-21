@@ -85,6 +85,8 @@ for file in "${f_files[@]}"; do
   [ $ENABLE_DEBUG = true ] && echo "Prepocessing ..."
   [ $ENABLE_DEBUG = true ] && echo "OMNI_FPP_OPT $OMNI_FPP_OPT"
   [ $ENABLE_DEBUG = true ] && echo "CPP_OPT $CPP_OPT"
+  [ $ENABLE_DEBUG = true ] && echo "module_dir $module_dir"
+  [ $ENABLE_DEBUG = true ] && echo "module_opt $module_opt"
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -151,7 +153,6 @@ for file in "${f_files[@]}"; do
   EXT=${file##*.}
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
   FILE_OUT_F=${TEMP_DIR}/"${FILE}"
-  echo "output_file: ${output_file}"
   if [ output_file != "" ]
   then
     FILE_OUT_F=${output_file}

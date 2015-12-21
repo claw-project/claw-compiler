@@ -64,21 +64,25 @@ function claw_f_set_parameters()
         shift;
         module_dir=("${1#-J}")
         module_opt=("-M${module_dir[0]}")
-        target=`get_target`
-        if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]; then
-          other_args+=("${OMNI_MODINC}${module_dir}")
-        else
-          other_args+=("${OMNI_MODINC}" "${module_dir}")
-        fi;;
+        #target=`get_target`
+        #if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]
+        #then
+        #  other_args+=("${OMNI_MODINC}${module_dir}")
+        #else
+        #  other_args+=("${OMNI_MODINC}" "${module_dir}")
+        #fi;;
+        ;;
       -J?*)
         module_dir=("${1#-J}")
         module_opt=("-M${module_dir[0]}")
-        target=`get_target`
-        if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]; then
-          other_args+=("${OMNI_MODINC}${module_dir}")
-        else
-          other_args+=("${OMNI_MODINC}" "${module_dir}")
-        fi;;
+        #target=`get_target`
+        #if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]
+        #then
+        #  other_args+=("${OMNI_MODINC}${module_dir}")
+        #else
+        #  other_args+=("${OMNI_MODINC}" "${module_dir}")
+        #fi;;
+        ;;
       -I)
         shift;
         include_opt+=("-I$1")

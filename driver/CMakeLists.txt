@@ -10,7 +10,7 @@ find_package(Java)
 set(OMNI_HOME "/usr/local")
 set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
 set(JAVA_OPT "-Xmx200m -Xms200m")
-set(OMNI_F2X_FLAGS "-I${OMNI_HOME}/include -M.")
+set(OMNI_F2X_FLAGS "")
 set(FPPFLAGS "-E")  # TODO must be define on the fly
 set(FPP "gfortran") # TODO must be define on the fly CMAKE_Fotran_COMPILER
 set(CPP_OPT "-cpp") # TODO must be define on the fly
