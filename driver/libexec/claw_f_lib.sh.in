@@ -8,6 +8,7 @@ Compile Driver Options
    -o <file>         : place the output into <file>.
    -I <dir>          : add the directory dir to the list of directories to be searched for header files.
    -J <dir>          : specify where to put .mod and .xmod files for compiled modules.
+   -D <dir>          : specify output directory for transformed files
    -v,--verbose      : print processing status.
    --version         : print version.
    -h,--help         : print usage.
@@ -60,6 +61,8 @@ function claw_f_set_parameters()
         obj_files+=("$1");;
       -o)
         shift; output_file=("$1");;
+      -D)
+        shift; output_dir=("$1");;
       -J)
         shift;
         module_dir=("${1#-J}")

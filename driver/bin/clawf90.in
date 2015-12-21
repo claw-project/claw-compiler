@@ -8,6 +8,7 @@
 
 ## TODO add option to output file in a given directory
 ## TODO if more than one file and -o ! error
+## TODO cp original file in case of error
 
 ### Read configration file and library ###
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
@@ -48,6 +49,7 @@ STOP_COMPILE=false
 #
 # To deal with space-separator in options, the following variables are defined as an array
 output_file=()
+output_dir=()
 f_files=()
 f_files_transformation=()
 archive_files=()
@@ -67,6 +69,22 @@ include_opt=()
 
 claw_f_set_parameters ${@+"$@"}
 omni_f_check_file_exist
+
+
+## Check if multiple file, output_dir must be specified and output_file not
+if [ ${#f_files[@]} -gt 1 ] && [ ${#output_dir[@]} = 0 ]
+then
+  # Error: multiple files without output directory specified
+  echo "Error: output directory not specified"
+  exit 1
+elif [ ${#output_file[@]} != 0 ] && [ ${#output_dir[@]} != 0 ]
+then
+  # Error: output file and output directory defined at the same time
+  echo "Error: output directory and output file cannot be specified together"
+  exit 1
+fi
+
+
 
 ### Create temporal directory ###
 [ $ENABLE_DEBUG = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
