@@ -49,6 +49,7 @@ STOP_COMPILE=false
 # To deal with space-separator in options, the following variables are defined as an array
 output_file=()
 f_files=()
+f_files_transformation=()
 archive_files=()
 obj_files=()
 other_args=()
@@ -77,15 +78,27 @@ omni_exec mkdir -p $TEMP_DIR
 ### Clean temporal directory before exit ###
 omni_set_trap
 
+### bypass file without code transformation ###
+for file in "${f_files[@]}"
+do
+  FILE=("${file}")
+  NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${FILE}")
+  if [ $NUM_DIRECTIVES = "0" ]
+  then
+    echo "Warning: file ${FILE} does not contains any code transformation. Skip ..."
+    # TODO handle destination dir if multiple
+    cp ${FILE} ${output_file}
+  else
+    f_files_transformation+=${FILE}
+  fi
+done
+
+
 ### Preprocessor ###
 [ $ONLY_PP = true -a -f "${output_file}" ] && omni_exec rm "${output_file}"
 [ $ENABLE_CPP = true ] && OMNI_FPP_OPT="$OMNI_FPP_OPT $CPP_OPT"
-for file in "${f_files[@]}"; do
+for file in "${f_files_transformation[@]}"; do
   [ $ENABLE_DEBUG = true ] && echo "Prepocessing ..."
-  [ $ENABLE_DEBUG = true ] && echo "OMNI_FPP_OPT $OMNI_FPP_OPT"
-  [ $ENABLE_DEBUG = true ] && echo "CPP_OPT $CPP_OPT"
-  [ $ENABLE_DEBUG = true ] && echo "module_dir $module_dir"
-  [ $ENABLE_DEBUG = true ] && echo "module_opt $module_opt"
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -112,7 +125,7 @@ done
 [ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }  # xmpf90 -E hoge.c
 
 ### Frontend ###
-for file in "${f_files[@]}"; do
+for file in "${f_files_transformation[@]}"; do
   [ $ENABLE_DEBUG = true ] && echo "Fortran to XcodeML ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
@@ -130,7 +143,7 @@ done
 [ $STOP_FRONTEND = true ] && exit 0;
 
 ### Translator ###
-for file in "${f_files[@]}"; do
+for file in "${f_files_transformation[@]}"; do
   [ $ENABLE_DEBUG = true ] && echo "XcodeML to XcodeML translation ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
@@ -146,7 +159,7 @@ done
 [ $STOP_TRANSLATOR = true ] && exit 0;
 
 ### Backend ###
-for file in "${f_files[@]}"; do
+for file in "${f_files_transformation[@]}"; do
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}

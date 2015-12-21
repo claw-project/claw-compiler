@@ -45,6 +45,14 @@ configure_file(
   @ONLY
 )
 
+# Copy the executable to be used by the test directly before installation
+file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_COMPILER_FILE})
+file(
+  COPY ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CLAW_COMPILER_FILE}
+  DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/
+  FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ
+)
+
 # Installatin steps
 install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}
