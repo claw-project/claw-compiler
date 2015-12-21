@@ -30,7 +30,7 @@ EOF
 
 function claw_f_show_env()
 {
-  CONF_FILE=${OM_DRIVER_CONF_DIR}/xmpf90.conf
+  CONF_FILE=$OM_CX2X_DRIVER_CONF_DIR/claw_f.conf
   if [ -f $CONF_FILE ]; then
     for val in `sed '/^[[:space:]]*$/d' ${CONF_FILE} | grep -v '^#' | awk -F= '{print $1}'`
     do

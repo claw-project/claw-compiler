@@ -14,7 +14,6 @@ set(OMNI_F2X_FLAGS "-I${OMNI_HOME}/include -M.")
 set(FPPFLAGS "-E")  # TODO must be define on the fly
 set(FPP "gfortran") # TODO must be define on the fly CMAKE_Fotran_COMPILER
 set(CPP_OPT "-cpp") # TODO must be define on the fly
-set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
 set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawf90")
 set(CLAW_LIB_SH "claw_f_lib.sh")
