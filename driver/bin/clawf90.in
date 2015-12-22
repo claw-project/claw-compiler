@@ -102,8 +102,12 @@ do
   if [ $NUM_DIRECTIVES = "0" ]
   then
     echo "Warning: file ${FILE} does not contains any code transformation. Skip ..."
-    # TODO handle destination dir if multiple
-    cp ${FILE} ${output_file}
+    if [ "${#output_dir}" != "0" ]
+    then
+      cp ${FILE} ${output_dir}/${FILE}
+    else
+      cp ${FILE} ${output_file}
+    fi
   else
     f_files_transformation+=("${FILE}")
   fi
@@ -181,10 +185,10 @@ for file in "${f_files_transformation[@]}"; do
   EXT=${file##*.}
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
   FILE_OUT_F=${TEMP_DIR}/"${FILE}"
-  if [ "${#output_file}" != "0" ] # TODO fix condition
+  if [ "${#output_file}" != "0" ]
   then
     FILE_OUT_F=${output_file}
-  elif [ "${#output_dir}" != "0" ] # TODO fix condition
+  elif [ "${#output_dir}" != "0" ]
   then
     FILE_OUT_F=${output_dir}/${FILE}
   fi
