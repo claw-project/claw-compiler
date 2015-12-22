@@ -7,6 +7,7 @@
 ###
 
 ## TODO cp original file in case of error
+## TODO dependencies finder
 
 ### Read configration file and library ###
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
@@ -33,6 +34,7 @@ STOP_FRONTEND=false
 STOP_TRANSLATOR=false
 STOP_BACKEND=false
 STOP_COMPILE=false
+STOP_DEPENDENCIES=false
 
 ### Set options ###
 # e.g.) clawf90 -I/usr/lib a.f b.F c.f90 d.F90 e.o --tmp --Wlfoo lib.a -omp -o a.out
@@ -144,6 +146,32 @@ done
 [ $ONLY_PP = true -a $ENABLE_DEBUG = true ] && exit 0;            # xmpf90 -E --debug hoge.c (save $TMP_DIR)
 [ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }  # xmpf90 -E hoge.c
 
+### dependencies resolution ###
+for file in "${f_files_transformation[@]}"
+do
+  [ $ENABLE_DEBUG = true ] && echo "Dependencies resolution ..."
+  FILE=("${file}")
+  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+  EXT=${file##*.}
+
+  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
+    FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+  else
+    FILE_PP="${FILE}"
+  fi
+
+
+
+  claw_f_process_dependencies $FILE_PP $dependencies
+
+  # TODO Preprocess file
+
+
+
+
+done
+[ $STOP_DEPENDENCIES = true ] && exit 0;
+
 ### Frontend ###
 for file in "${f_files_transformation[@]}"; do
   [ $ENABLE_DEBUG = true ] && echo "Fortran to XcodeML ..."
@@ -157,7 +185,6 @@ for file in "${f_files_transformation[@]}"; do
     FILE_PP="${FILE}"
   fi
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
-
   omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
 done
 [ $STOP_FRONTEND = true ] && exit 0;

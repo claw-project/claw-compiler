@@ -5,20 +5,21 @@ usage: $1 <OPTIONS> <INPUTFILE> ...
 
 Compile Driver Options
 
-   -o <file>         : place the output into <file>.
-   -I <dir>          : add the directory dir to the list of directories to be searched for header files.
-   -J <dir>          : specify where to put .mod and .xmod files for compiled modules.
-   -D <dir>          : specify output directory for transformed files
-   -v,--verbose      : print processing status.
-   --version         : print version.
-   -h,--help         : print usage.
-   --show-env        : show environment variables.
-   --tmp             : output parallel code (__omni_tmp__<file>).
-   --dry             : only print processing status (not compile).
-   --debug           : save intermediate files in __omni_tmp__.
-   --stop-pp         : save intermediate files and stop after preprocess.
-   --stop-frontend   : save intermediate files and stop after frontend.
-   --stop-translator : save intermediate files and stop after translator.
+   -o <file>           : place the output into <file>.
+   -I <dir>            : add the directory dir to the list of directories to be searched for header files.
+   -J <dir>            : specify where to put .mod and .xmod files for compiled modules.
+   -D <dir>            : specify output directory for transformed files
+   -v,--verbose        : print processing status.
+   --version           : print version.
+   -h,--help           : print usage.
+   --show-env          : show environment variables.
+   --tmp               : output parallel code (__omni_tmp__<file>).
+   --dry               : only print processing status (not compile).
+   --debug             : save intermediate files in __omni_tmp__.
+   --stop-pp           : save intermediate files and stop after preprocess.
+   --stop-frontend     : save intermediate files and stop after frontend.
+   --stop-dependencies : save intermediate files and stop after dependencies resolution.
+   --stop-translator   : save intermediate files and stop after translator.
 
 Process Options
 
@@ -121,6 +122,8 @@ function claw_f_set_parameters()
         VERBOSE=true; STOP_PP=true;;
       --stop-frontend)
         VERBOSE=true; STOP_FRONTEND=true;;
+      --stop-dependencies)
+        VERBOSE=true; STOP_DEPENDENCIES=true;;
       --stop-translator)
         VERBOSE=true; STOP_TRANSLATOR=true;;
       --stop-backend)
@@ -165,4 +168,67 @@ function claw_f_set_parameters()
 function claw_f_print_version()
 {
   echo "@CLAW_COMPILER_FILE@ - Version: @CLAWC_VERSION@"
+}
+
+# Process dependencies file trough the frontend
+# $1 must be set to the file to process dependencies
+function claw_f_process_dependencies()
+{
+  dependencies=()
+  module_regex="^[[:space:]]*USE[[:space:]]*([^,]*)"
+  while IFS= read -r line
+  do
+    if [[ $line =~ $module_regex ]]
+    then
+      module_name="${BASH_REMATCH[1]}"
+      dependencies+=("$module_name")
+    fi
+  done <$1
+
+  for dep in "${dependencies[@]}"
+  do
+    module_name=${dep// }
+    module_name=${module_name%% }
+    module_file=""
+    if [[ -f $module_name.f90 ]]
+    then
+      module_file="$module_name.f90"
+    elif [[ -f $module_name.F90 ]]
+    then
+      module_file="$module_name.F90"
+    elif [[ -f $module_name.f ]]
+    then
+      module_file="$module_name.f"
+    elif [[ -f $module_name.F ]]
+    then
+      module_file="$module_name.F"
+    else
+      echo "Error: cannot find module file $dep"
+      exit 1;
+    fi
+
+    local current_module = $module_file
+    echo $current_module
+
+    ### Preprocess file ###
+    FILE=$module_file
+    FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+    EXT=${file##*.}
+    local FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+
+    # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run" instead of "omni_exec".
+    omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
+    omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
+
+    # Recurse to get dependencies in the right order
+    claw_f_process_dependencies $FILE_PP
+
+    FILE_IN_X=${TEMP_DIR}/"dummy.xml"
+
+    # Pass the module in the front-end to get the .xmod file
+    omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
+
+    rm -f $FILE_IN_X
+
+  done
 }
