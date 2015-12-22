@@ -6,8 +6,6 @@
 ### This driver is based on the xmpf90 compiler driver from the OMNI Compiler.
 ###
 
-## TODO add option to output file in a given directory
-## TODO if more than one file and -o ! error
 ## TODO cp original file in case of error
 
 ### Read configration file and library ###
@@ -107,7 +105,7 @@ do
     # TODO handle destination dir if multiple
     cp ${FILE} ${output_file}
   else
-    f_files_transformation+=${FILE}
+    f_files_transformation+=("${FILE}")
   fi
 done
 
@@ -183,12 +181,13 @@ for file in "${f_files_transformation[@]}"; do
   EXT=${file##*.}
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
   FILE_OUT_F=${TEMP_DIR}/"${FILE}"
-  if [ output_file != "" ]
+  if [ "${#output_file}" != "0" ] # TODO fix condition
   then
     FILE_OUT_F=${output_file}
+  elif [ "${#output_dir}" != "0" ] # TODO fix condition
+  then
+    FILE_OUT_F=${output_dir}/${FILE}
   fi
-  #FILE_F90=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.F90
-  #BASENAME=`basename $FILE .$EXT`
 
   omni_exec $OMNI_X2F_CMD $OMNI_X2F_OPT "${backend_add_opt[@]}" -o "${FILE_OUT_F}" "${FILE_OUT_X}"
 done
