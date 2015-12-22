@@ -207,9 +207,6 @@ function claw_f_process_dependencies()
       exit 1;
     fi
 
-    local current_module = $module_file
-    echo $current_module
-
     ### Preprocess file ###
     FILE=$module_file
     FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
