@@ -7,7 +7,6 @@
 ###
 
 ## TODO cp original file in case of error
-## TODO dependencies finder
 
 ### Read configration file and library ###
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
@@ -28,6 +27,7 @@ ENABLE_CPP=true
 VERBOSE=false
 ENABLE_DEBUG=false
 OUTPUT_TEMPORAL=true
+RESOLVE_DEPENDENCIES=true
 DRY_RUN=false
 STOP_PP=false
 STOP_FRONTEND=false
@@ -96,7 +96,7 @@ omni_exec mkdir -p $TEMP_DIR
 ### Clean temporal directory before exit ###
 omni_set_trap
 
-### bypass file without code transformation ###
+### Bypass file without code transformation ###
 for file in "${f_files[@]}"
 do
   FILE=("${file}")
@@ -147,30 +147,25 @@ done
 [ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }  # xmpf90 -E hoge.c
 
 ### dependencies resolution ###
-for file in "${f_files_transformation[@]}"
+if [ $RESOLVE_DEPENDENCIES ]
 do
-  [ $ENABLE_DEBUG = true ] && echo "Dependencies resolution ..."
-  FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
-  EXT=${file##*.}
+  for file in "${f_files_transformation[@]}"
+  do
+    [ $ENABLE_DEBUG = true ] && echo "Dependencies resolution ..."
+    FILE=("${file}")
+    FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+    EXT=${file##*.}
 
-  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
-    FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
-  else
-    FILE_PP="${FILE}"
-  fi
+    if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
+      FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+    else
+      FILE_PP="${FILE}"
+    fi
 
-
-
-  claw_f_process_dependencies $FILE_PP $dependencies
-
-  # TODO Preprocess file
-
-
-
-
+    claw_f_process_dependencies $FILE_PP $dependencies
+  done
+  [ $STOP_DEPENDENCIES = true ] && exit 0;
 done
-[ $STOP_DEPENDENCIES = true ] && exit 0;
 
 ### Frontend ###
 for file in "${f_files_transformation[@]}"; do
