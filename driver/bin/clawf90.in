@@ -148,7 +148,7 @@ done
 
 ### dependencies resolution ###
 if [ $RESOLVE_DEPENDENCIES ]
-do
+then
   for file in "${f_files_transformation[@]}"
   do
     [ $ENABLE_DEBUG = true ] && echo "Dependencies resolution ..."
@@ -165,7 +165,7 @@ do
     claw_f_process_dependencies $FILE_PP $dependencies
   done
   [ $STOP_DEPENDENCIES = true ] && exit 0;
-done
+fi
 
 ### Frontend ###
 for file in "${f_files_transformation[@]}"; do
