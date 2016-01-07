@@ -1,6 +1,6 @@
-# omni-cx2x
+# CLAW Fortran Compiler (omni-cx2x)
 
-Tool to perform XcodeML to XcodeML transformation.
+![CLAW logo](resource/claw_image.png)
 
 The directives that control the transformation flow are defined in the
 CLAW language definition.
