@@ -306,6 +306,22 @@ public class XelementHelper {
     return null;
   }
 
+  public static void deleteBetween(Xpragma start, Xpragma end){
+    ArrayList<Element> toDelete = new ArrayList<Element>();
+    Node node = start.getBaseElement().getNextSibling();
+    while (node != null && node != end.getBaseElement()){
+      if(node.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element)node;
+        toDelete.add(element);
+      }
+      node = node.getNextSibling();
+    }
+
+    for(Element e : toDelete){
+      delete(e);
+    }
+  }
+
   public static List<Xpragma> findAllPragmas(XcodeProg xcodeml){
     NodeList pragmaList = xcodeml.getDocument()
       .getElementsByTagName(XelementName.PRAGMA_STMT);

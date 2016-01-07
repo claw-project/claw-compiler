@@ -48,7 +48,9 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
       }
       _pragma.delete();
     } else {
-
+      XelementHelper.deleteBetween(_pragma, _end);
+      _pragma.delete();
+      _end.delete();
     }
   }
 
