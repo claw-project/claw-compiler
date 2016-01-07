@@ -13,9 +13,7 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 
 # Define the OMNI installation directory
-if(NOT DEFINED ${OMNI_HOME})
-  set(OMNI_HOME "/usr/local/")
-endif()
+set(OMNI_HOME "/usr/local/" CACHE STRING "OMNI Compiler install dir")
 
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build/")
 set(OMNI_CX2X_NAME om-cx2x)
