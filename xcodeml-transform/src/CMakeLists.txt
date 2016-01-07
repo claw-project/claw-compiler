@@ -60,8 +60,9 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/XfctCall.java
   x2x/translator/xcodeml/xelement/XfctType.java
   x2x/translator/xcodeml/xelement/Xid.java
-  x2x/translator/xcodeml/xelement/XintConstant.java
+  x2x/translator/xcodeml/xelement/XifStatement.java
   x2x/translator/xcodeml/xelement/XindexRange.java
+  x2x/translator/xcodeml/xelement/XintConstant.java
   x2x/translator/xcodeml/xelement/Xkind.java
   x2x/translator/xcodeml/xelement/XlogicalConstant.java
   x2x/translator/xcodeml/xelement/XloopIterationRange.java

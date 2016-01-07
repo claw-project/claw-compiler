@@ -65,6 +65,7 @@ public class XelementName {
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String FCT_TYPE = "FfunctionType";
   public static final String F_ARRAY_REF = "FarrayRef";
+  public static final String F_IF_STMT = "FifStatement";
   public static final String F_INT_CONST = "FintConstant";
   public static final String F_REAL_CONST = "FrealConstant";
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
