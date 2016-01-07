@@ -26,7 +26,8 @@ with the CLAW Fortran Compiler and then the original code as well as the
 transformed are compiled with a standard Fortran compiler.
 
 ```bash
-make transformation
+make clean-transformation # To clean all transformed files
+make transformation       # To apply all transformations
 ```
 
 To verify the applied transformation, use the following command. The output is
