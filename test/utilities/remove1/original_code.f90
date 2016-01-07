@@ -9,7 +9,7 @@ SUBROUTINE dummy
   INTEGER :: kend = 5, iend = 10
   DO k=1, kend
     DO i=1, iend
-
+      ! loop #1 body here
     END DO
 
     !$claw remove
