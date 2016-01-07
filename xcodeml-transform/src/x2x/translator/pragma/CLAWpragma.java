@@ -11,9 +11,13 @@ public enum CLAWpragma {
   LOOP_INTERCHANGE,
   LOOP_VECTOR,
   LOOP_EXTRACT,
+  UTILITIES_REMOVE,
+  BASE_END,
 
   // loop-fusion
   FUSION_GROUP,
+
+
 
   ;
 
@@ -22,6 +26,8 @@ public enum CLAWpragma {
   private static final String DIRECTIVE_LOOP_INTERCHANGE = "loop-interchange";
   private static final String DIRECTIVE_LOOP_VECTOR = "loop-vector";
   private static final String DIRECTIVE_LOOP_EXTRACT = "loop-extract";
+  private static final String DIRECTIVE_UTILITIES_REMOVE = "remove";
+  private static final String DIRECTIVE_BASE_END = "end";
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String OPTION_EXTRACT_RANGE = "range";
   private static final String OPTION_EXTRACT_MAP = "map";
@@ -33,8 +39,8 @@ public enum CLAWpragma {
   private static final String SIMPLE_MAPPING = "\\(([^:]+):(.*)\\)";
 
 
-  private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES +
-    DIRECTIVE_LOOP_FUSION;
+  private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES
+    + DIRECTIVE_LOOP_FUSION;
   private static final String REGEX_LOOP_INTERCHANGE = PREFIX_CLAW + ANY_SPACES
     + DIRECTIVE_LOOP_INTERCHANGE;
   private static final String REGEX_LOOP_EXTRACT = PREFIX_CLAW + ANY_SPACES
@@ -49,6 +55,10 @@ public enum CLAWpragma {
   private static final String REGEX_OPTION_MAP = ANY_SPACES
     + OPTION_EXTRACT_MAP + ANY_SPACES + SIMPLE_MAPPING;
 
+  private static final String REGEX_REMOVE = PREFIX_CLAW + ANY_SPACES
+    + DIRECTIVE_UTILITIES_REMOVE;
+  private static final String REGEX_END_REMOVE = PREFIX_CLAW + ANY_SPACES
+    + DIRECTIVE_BASE_END + ANY_SPACES + DIRECTIVE_UTILITIES_REMOVE;
 
 
 
@@ -72,6 +82,10 @@ public enum CLAWpragma {
         return CLAWpragma.LOOP_VECTOR;
       case DIRECTIVE_LOOP_EXTRACT:
         return CLAWpragma.LOOP_EXTRACT;
+      case DIRECTIVE_UTILITIES_REMOVE:
+        return CLAWpragma.UTILITIES_REMOVE;
+      case DIRECTIVE_BASE_END:
+        return CLAWpragma.BASE_END;
       default:
         return null;
     }
@@ -155,6 +169,10 @@ public enum CLAWpragma {
         return isValidOptions(CLAWpragma.LOOP_VECTOR, options);
       case DIRECTIVE_LOOP_EXTRACT:
         return isValidOptions(CLAWpragma.LOOP_EXTRACT, options);
+      case DIRECTIVE_UTILITIES_REMOVE:
+        return true;
+      case DIRECTIVE_BASE_END:
+        return isValidOptions(CLAWpragma.BASE_END, options);
       default:
         return false;
     }
@@ -171,6 +189,12 @@ public enum CLAWpragma {
       case LOOP_EXTRACT:
         return CLAWpragma.isRangeOptionValid(option)
           && CLAWpragma.isMapOptionValid(option);
+      case BASE_END:
+        // Only remove is associated with end directive now
+        if(option.contains(DIRECTIVE_UTILITIES_REMOVE)){
+          return true;
+        }
+        return false;
       default:
         return false;
     }
