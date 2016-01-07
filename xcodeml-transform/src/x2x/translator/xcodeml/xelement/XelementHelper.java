@@ -274,6 +274,38 @@ public class XelementHelper {
     return null;
   }
 
+  public static XdoStatement findDirectNextDoStmt(Node from){
+    Element el = findDirectNextElement(from, XelementName.DO_STMT);
+    if(el == null){
+      return null;
+    }
+    return new XdoStatement(el);
+  }
+
+  public static XifStatement findDirectNextIfStmt(Node from){
+    Element el = findDirectNextElement(from, XelementName.F_IF_STMT);
+    if(el == null){
+      return null;
+    }
+    return new XifStatement(el);
+  }
+
+  private static Element findDirectNextElement(Node from, String tag){
+    Node nextNode = from.getNextSibling();
+    boolean elementFound = false;
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(tag)){
+          return element;
+        }
+        return null;
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
   public static List<Xpragma> findAllPragmas(XcodeProg xcodeml){
     NodeList pragmaList = xcodeml.getDocument()
       .getElementsByTagName(XelementName.PRAGMA_STMT);

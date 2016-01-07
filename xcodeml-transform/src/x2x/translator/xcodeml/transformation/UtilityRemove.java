@@ -7,7 +7,8 @@ import x2x.translator.xcodeml.transformer.Transformer;
 public class UtilityRemove extends Transformation<UtilityRemove> {
 
   // The loop statement involved in the Transformation
-  private XdoStatement _loop = null;
+  private XdoStatement _do = null;
+  private XifStatement _if = null;
   private Xpragma _end = null;
 
   public UtilityRemove(Xpragma pragma){
@@ -19,10 +20,19 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
-    // Check if there is an end pragma
 
-    // if not, check if the next block is an if statement or a do statement
+    // if there is no end directive, the following statement must be a if or
+    // do statement
+    if(_end == null){
+      _do = XelementHelper.findDirectNextDoStmt(_pragma.getBaseElement());
+      _if = XelementHelper.findDirectNextIfStmt(_pragma.getBaseElement());
 
+      if(_do == null && _if == null){
+        xcodeml.addError("Directive remove without end not followed by a do or if statement",
+          _pragma.getLine());
+        return false;
+      }
+    }
     return true;
   }
 
@@ -30,7 +40,16 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
   public void transform(XcodeProg xcodeml, Transformer transformer,
     UtilityRemove other)
   {
-    // Delete all
+    if(_end == null){
+      if(_do != null){
+        _do.delete();
+      } else if(_if != null){
+        _if.delete();
+      }
+      _pragma.delete();
+    } else {
+
+    }
   }
 
   public boolean canBeTransformedWith(UtilityRemove other){
