@@ -4,7 +4,7 @@ set(JUNIT_VERSION "4.12")
 set(HAMCREST_VERSION "1.3")
 
 set(OMNICX2X ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_NAME}.jar)
-# TODO detect jar and do not build if not present
+# TODO detect jar and do not build if not present (use find_jar)
 set(JUNIT_JAR /usr/local/lib/junit-${JUNIT_VERSION}.jar)
 set(HAMCREST_JAR /usr/local/lib/hamcrest-core-${HAMCREST_VERSION}.jar)
 
