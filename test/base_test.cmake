@@ -26,22 +26,22 @@ add_custom_command(
   COMMENT "Translating CLAW directive with ${CLAWFC}"
 )
 
-add_custom_target(transform-${TEST_NAME} ALL
-  DEPENDS ${OUTPUT_FILE})
-
-# Clean previous transformed code to trigger the transformation each time as
-# original code doesn't change but we want to test the transformation
-add_custom_command(
-  TARGET transform-${TEST_NAME}
-  PRE_BUILD
-  COMMAND rm ${OUTPUT_FILE}
-  COMMENT "Clean previous transformation"
+add_custom_target(
+  transform-${TEST_NAME}
+  DEPENDS ${OUTPUT_FILE} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED}
 )
 
+add_custom_target(
+  clean-${TEST_NAME}
+  COMMAND rm -f ${OUTPUT_FILE}
+)
+
+add_dependencies(${BUILD_TEST_TARGET} transform-${TEST_NAME})
+add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 
 # Build the original code and the transformed code
-add_executable (${EXECUTABLE_ORIGINAL} ${ORIGINAL_FILE})
-add_executable (${EXECUTABLE_TRANSFORMED} ${OUTPUT_FILE})
+add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
+add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
 
 # Compare reference transformed code and output of the transformation
 add_test(NAME ast-transform-${TEST_NAME} COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})

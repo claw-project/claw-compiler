@@ -10,6 +10,12 @@ set (CLAWFC ${CMAKE_SOURCE_DIR}/driver/clawfc_test)
 #set(XCODEML_EXT .xcodeml)
 #set(CLAW_EXT ${XCODEML_EXT}.claw)
 
+set(BUILD_TEST_TARGET transformation)
+set(CLEAN_TEST_TARGET clean-transformation)
+
+add_custom_target(${BUILD_TEST_TARGET})
+add_custom_target(${CLEAN_TEST_TARGET})
+
 # List of test directories
 add_subdirectory(loops)
 add_subdirectory(fortran)
