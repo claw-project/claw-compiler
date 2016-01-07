@@ -14,8 +14,15 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
     super(pragma);
   }
 
+  public void setEnd(Xpragma pragma){
+    _end = pragma;
+  }
+
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
     // Check if there is an end pragma
+
+    // if not, check if the next block is an if statement or a do statement
+
     return true;
   }
 
@@ -23,6 +30,7 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
   public void transform(XcodeProg xcodeml, Transformer transformer,
     UtilityRemove other)
   {
+    // Delete all
   }
 
   public boolean canBeTransformedWith(UtilityRemove other){

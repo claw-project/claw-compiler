@@ -46,6 +46,8 @@ public class CLAWxcodemlTranslator {
     _program.readTypeTable();
     _program.readGlobalSymbolsTable();
 
+    UtilityRemove _remove = null;
+
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
       if(!CLAWpragma.startsWithClaw(pragma.getData())){
         continue; // Not CLAW pragma, we do nothing
@@ -56,31 +58,27 @@ public class CLAWxcodemlTranslator {
 
         if(clawDirective == CLAWpragma.LOOP_FUSION){
           LoopFusion trans = new LoopFusion(pragma);
-          if(trans.analyze(_program, _transformer)){
-            _transformer.addTransformation(trans);
-          } else {
-            abort();
-          }
+          addOrAbort(trans, _program, _transformer);
         } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
           LoopInterchange trans = new LoopInterchange(pragma);
-          if(trans.analyze(_program, _transformer)){
-            _transformer.addTransformation(trans);
-          } else {
-            abort();
-          }
+          addOrAbort(trans, _program, _transformer);
         } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
           LoopExtraction trans = new LoopExtraction(pragma);
-          if(trans.analyze(_program, _transformer)){
-            _transformer.addTransformation(trans);
-          } else {
-            abort();
-          }
+          addOrAbort(trans, _program, _transformer);
         } else if (clawDirective == CLAWpragma.UTILITIES_REMOVE){
-          UtilityRemove trans = new UtilityRemove(pragma);
-          if(trans.analyze(_program, _transformer)){
-            _transformer.addTransformation(trans);
-          } else {
+          if(_remove != null){
+            addOrAbort(_remove, _program, _transformer);
+            _remove = null;
+          }
+          _remove = new UtilityRemove(pragma);
+        } else if (clawDirective == CLAWpragma.BASE_END){
+          if(_remove == null){
+            // TODO error message no end with start
             abort();
+          } else {
+            _remove.setEnd(pragma);
+            addOrAbort(_remove, _program, _transformer);
+            _remove = null;
           }
         }
 
@@ -89,10 +87,21 @@ public class CLAWxcodemlTranslator {
         System.exit(1);
       }
     }
+    if(_remove != null){
+      addOrAbort(_remove, _program, _transformer);
+    }
 
 
     // Analysis done, the transformation can be performed.
     _canTransform = true;
+  }
+
+  private void addOrAbort(Transformation t, XcodeProg xcodeml, Transformer translator){
+    if(t.analyze(xcodeml, translator)){
+      translator.addTransformation(t);
+    } else {
+      abort();
+    }
   }
 
   public void transform() {
