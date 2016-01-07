@@ -75,6 +75,13 @@ public class CLAWxcodemlTranslator {
           } else {
             abort();
           }
+        } else if (clawDirective == CLAWpragma.UTILITIES_REMOVE){
+          UtilityRemove trans = new UtilityRemove(pragma);
+          if(trans.analyze(_program, _transformer)){
+            _transformer.addTransformation(trans);
+          } else {
+            abort();
+          }
         }
 
       } else {
