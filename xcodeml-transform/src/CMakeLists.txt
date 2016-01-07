@@ -29,6 +29,7 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/transformation/LoopExtraction.java
   x2x/translator/xcodeml/transformation/Transformation.java
   x2x/translator/xcodeml/transformation/TransformationGroup.java
+  x2x/translator/xcodeml/transformation/UtilityRemove.java
 
 # XcodeML.transformer
   x2x/translator/xcodeml/transformer/ClawTransformer.java
