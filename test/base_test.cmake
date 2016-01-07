@@ -21,9 +21,9 @@ endif()
 # Create intermediate representation in XcodeML Fortran format
 add_custom_command(
   OUTPUT  ${OUTPUT_FILE}
-  COMMAND ${CLAWF90} -J ${XMOD_DIR} --Wx-d -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+  COMMAND ${CLAWFC} -J ${XMOD_DIR} --Wx-d -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
   DEPENDS ${ORIGINAL_FILE}
-  COMMENT "Translating CLAW directive with ${CLAWF90}"
+  COMMENT "Translating CLAW directive with ${CLAWFC}"
 )
 
 add_custom_target(transform-${TEST_NAME} ALL

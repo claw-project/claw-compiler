@@ -15,7 +15,7 @@ set(FPPFLAGS "-E")  # TODO must be define on the fly
 set(FPP "gfortran") # TODO must be define on the fly CMAKE_Fotran_COMPILER
 set(CPP_OPT "-cpp") # TODO must be define on the fly
 set(CLAW_CONF_FILE "claw_f.conf")
-set(CLAW_COMPILER_FILE "clawf90")
+set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 
 # Check existence of OMNI Compiler Java librairies

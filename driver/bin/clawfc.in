@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###
-### clawf90
+### clawfc
 ### Compiler driver for the claw language translation for Fortran language.
 ### This driver is based on the xmpf90 compiler driver from the OMNI Compiler.
 ###
@@ -37,7 +37,7 @@ STOP_COMPILE=false
 STOP_DEPENDENCIES=false
 
 ### Set options ###
-# e.g.) clawf90 -I/usr/lib a.f b.F c.f90 d.F90 e.o --tmp --Wlfoo lib.a -omp -o a.out
+# e.g.) clawfc -I/usr/lib a.f b.F c.f90 d.F90 e.o --tmp --Wlfoo lib.a -omp -o a.out
 #
 #  output_file="a.out"              # Output file
 #  f_files="a.f b.F c.f90 d.F90"    # All fortran files
