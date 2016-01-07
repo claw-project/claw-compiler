@@ -13,3 +13,4 @@ set (CLAWF90 ${CMAKE_SOURCE_DIR}/driver/clawf90)
 # List of test directories
 add_subdirectory(loops)
 add_subdirectory(fortran)
+add_subdirectory(utilities)
