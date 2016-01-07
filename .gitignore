@@ -18,7 +18,9 @@ transformed_code.f90
 original_code_*
 transformed_code_*
 clawf90
+clawf90_test
 claw_f.conf
+claw_f.conf_test
 claw_f_lib.sh
 __omni_tmp__
 __xmod__
