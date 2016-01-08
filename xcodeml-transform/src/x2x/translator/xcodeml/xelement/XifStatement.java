@@ -1,9 +1,6 @@
 package x2x.translator.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
 
 
 /**
@@ -26,6 +23,6 @@ public class XifStatement extends XbaseElement {
   public XifStatement(Element baseElement){
     super(baseElement);
 
-    _then = XelementHelper.findThen(getBaseElement());
+    _then = XelementHelper.findThen(this);
   }
 }
