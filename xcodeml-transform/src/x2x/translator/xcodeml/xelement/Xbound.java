@@ -11,7 +11,6 @@ import org.w3c.dom.NodeList;
  * - exprModel TODO move to exprModel
  */
 
-// TODO have a derived class for upper and lower bound
 
 public class Xbound extends XbaseElement {
   private String _value = null;
