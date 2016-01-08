@@ -146,6 +146,11 @@ public class XelementHelper {
     return (element != null) ? new Xname(element) : null;
   }
 
+  public static Xthen findThen(Element parent){
+    Element element = findFirstElement(parent, XelementName.THEN);
+    return (element != null) ? new Xthen(element) : null;
+  }
+
   public static Element getBody(Element parent){
     return findFirstElement(parent, XelementName.BODY);
   }

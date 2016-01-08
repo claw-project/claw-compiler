@@ -13,7 +13,7 @@ import org.w3c.dom.NamedNodeMap;
  * Elements:
  * - Required:
  *   - condition TODO
- *   - then TODO
+ *   - then (Xthen)
  * - Optional:
  *   - else TODO
  * Attributes:
@@ -21,7 +21,11 @@ import org.w3c.dom.NamedNodeMap;
  */
 public class XifStatement extends XbaseElement {
 
+  Xthen _then = null;
+
   public XifStatement(Element baseElement){
     super(baseElement);
+
+    _then = XelementHelper.findThen(getBaseElement());
   }
 }

@@ -71,6 +71,7 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/Xscope.java
   x2x/translator/xcodeml/xelement/Xstep.java
   x2x/translator/xcodeml/xelement/XsymbolTable.java
+  x2x/translator/xcodeml/xelement/Xthen.java
   x2x/translator/xcodeml/xelement/Xtype.java
   x2x/translator/xcodeml/xelement/XtypeTable.java
   x2x/translator/xcodeml/xelement/Xvar.java

@@ -82,6 +82,7 @@ public class XelementName {
   public static final String PRAGMA_STMT = "FpragmaStatement";
   public static final String STEP = "step";
   public static final String SYMBOLS = "symbols";
+  public static final String THEN = "then";
   public static final String TYPE_TABLE = "typeTable";
   public static final String UPPER_BOUND = "upperBound";
   public static final String VAR = "Var";
