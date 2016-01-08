@@ -19,13 +19,12 @@ import org.w3c.dom.Node;
 public class XfctType extends Xtype implements Xclonable<XfctType> {
 
   private String _returnType = null;
-  private boolean _isProgram = false;
 
-  // attributes
-  private String _result_name = null;
-  private boolean _is_recursive = false;
-  private boolean _is_program = false;
-  private boolean _is_internal = false;
+  // optional attributes
+  private String _resultName = null;
+  private boolean _isRecursive = false;
+  private boolean _isProgram = false;
+  private boolean _isInternal = false;
 
   public XfctType(Element element){
     super(element);
@@ -46,14 +45,26 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
     // TODO read parameters as Xname element
 
     // read optional attributes
-    _result_name = XelementHelper.getAttributeValue(baseElement,
+    _resultName = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_RESULT_NAME);
-    _is_recursive = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isRecursive = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_RECURSIVE);
-    _is_program = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isProgram = XelementHelper.getBooleanAttributeValue(baseElement,
         XelementName.ATTR_IS_PROGRAM);
-    _is_internal = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isInternal = XelementHelper.getBooleanAttributeValue(baseElement,
         XelementName.ATTR_IS_INTERNAL);
+  }
+
+  public String getResultName(){
+    return _resultName;
+  }
+
+  public boolean isRecursive(){
+    return _isRecursive;
+  }
+
+  public boolean isInternal(){
+    return _isInternal;
   }
 
   public String getReturnType(){
