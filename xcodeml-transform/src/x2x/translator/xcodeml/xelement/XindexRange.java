@@ -62,6 +62,10 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
     return _step;
   }
 
+  public boolean isAssumedShape(){
+    return _isAssumedShape;
+  }
+
   public XindexRange cloneObject(){
     Node clone = clone();
     return new XindexRange((Element)clone);
