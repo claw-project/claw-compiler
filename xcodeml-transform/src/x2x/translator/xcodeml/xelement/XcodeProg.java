@@ -84,7 +84,7 @@ public class XcodeProg {
   }
 
   // Read the XcodeML file and load its object representation
-  public void load(){
+  public boolean load(){
     try {
       File fXmlFile = new File(_xcodemlInputFile);
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -94,16 +94,28 @@ public class XcodeProg {
       _xcodemlDoc = doc;
       readDocumentInformation();
       _isLoaded = true;
+
+      if (!isXcodeMLvalid()){
+        addError("XcodeML document is not valid", 0);
+        return false;
+      }
     } catch(Exception ex){
       _xcodemlDoc = null;
+      _isLoaded = false;
+      return false;
     }
+
+    // Read information from the type table
+    readTypeTable();
+    readGlobalSymbolsTable();
+    return true;
   }
 
   public boolean isLoaded(){
     return _isLoaded;
   }
 
-  public boolean isXcodeMLvalid() throws Exception {
+  private boolean isXcodeMLvalid() throws Exception {
     if(_xcodemlDoc == null){
       return false;
     }
@@ -132,12 +144,12 @@ public class XcodeProg {
     return true;
   }
 
-  public void readTypeTable() {
+  private void readTypeTable() {
     Element typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
     _typeTable = new XtypeTable(typeTableElement);
   }
 
-  public void readGlobalSymbolsTable() {
+  private void readGlobalSymbolsTable() {
     Element globalSymbolsElement = XelementHelper.findGlobalSymbols(_xcodemlDoc);
     _globalSymbolsTable = new XsymbolTable(globalSymbolsElement);
   }

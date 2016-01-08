@@ -35,16 +35,9 @@ public class CLAWxcodemlTranslator {
 
   public void analyze() throws Exception {
     _program = new XcodeProg(_xcodemlInputFile);
-    _program.load();
-
-    if(!_program.isXcodeMLvalid()){
-      System.err.println("XcodeML document is not valid");
-      return;
+    if(!_program.load()){
+      abort();
     }
-
-    // Read information from the type table
-    _program.readTypeTable();
-    _program.readGlobalSymbolsTable();
 
     UtilityRemove _remove = null;
 

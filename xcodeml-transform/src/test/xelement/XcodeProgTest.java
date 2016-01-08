@@ -17,9 +17,8 @@ public class XcodeProgTest {
     File f = new File(TEST_DATA);
     assertTrue(f.exists());
     XcodeProg xcodeml = new XcodeProg(TEST_DATA);
-    xcodeml.load();
-    xcodeml.readTypeTable();
-    xcodeml.readGlobalSymbolsTable();
+    boolean loaded = xcodeml.load();
+    assertTrue(loaded);
     assertEquals(8, xcodeml.getTypeTable().count());
     assertEquals(2, xcodeml.getGlobalSymbolsTable().count());
   }
