@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
- *   is_internal (bool) TODO
+ *   is_internal (bool)
  */
 
 public class XfctType extends Xtype implements Xclonable<XfctType> {
