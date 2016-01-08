@@ -13,18 +13,37 @@ import org.w3c.dom.NodeList;
  * - Optional:
  *   - arguments (XexprModel) // TODO
  * Attribute:
- * - Optional: type (text), is_intrinsic (bool) // TODO
+ * - Optional: type (text), is_intrinsic (bool)
  */
 
 public class XfctCall extends Xfct {
 
   private XargumentsTable _arguments = null;
 
-  public XfctCall(Element fctCallElement){
-    super(fctCallElement);
+  private boolean _isInstrinsic = false;
+  private String _type = null;
+
+  public XfctCall(Element baseElement){
+    super(baseElement);
+
+    _isInstrinsic = XelementHelper.getBooleanAttributeValue(baseElement,
+      XelementName.ATTR_IS_INTRINSIC);
+    _type = XelementHelper.getAttributeValue(baseElement,
+      XelementName.ATTR_TYPE);
+
     Element arguments = XelementHelper.findFirstElement(baseElement,
       XelementName.ARGUMENTS);
     _arguments = new XargumentsTable(arguments);
+
+
+  }
+
+  public boolean isIntrinsic(){
+    return _isInstrinsic;
+  }
+
+  public String getType(){
+    return _type;
   }
 
   public XargumentsTable getArgumentsTable(){
