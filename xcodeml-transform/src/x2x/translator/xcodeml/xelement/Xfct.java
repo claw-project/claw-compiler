@@ -3,6 +3,10 @@ package x2x.translator.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/**
+ * The Xfct is the base class for the XfctCall and the XfctDef classes
+ */
+
 public class Xfct extends XbaseElement {
   private Xname _fctName = null;
 
