@@ -37,8 +37,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
 
 
       _lowerBound = XelementHelper.findLowerBound(this);
-      _upperBound = new XupperBound(XelementHelper
-        .findFirstElement(baseElement,XelementName.UPPER_BOUND));
+      _upperBound = XelementHelper.findUpperBound(this);
       Element step = XelementHelper
         .findFirstElement(baseElement, XelementName.STEP);
       if(step != null){

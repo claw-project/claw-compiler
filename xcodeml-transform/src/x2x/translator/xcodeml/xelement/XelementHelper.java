@@ -174,6 +174,12 @@ public class XelementHelper {
     return (element != null) ? new XlowerBound(element) : null;
   }
 
+  public static XupperBound findUpperBound(XbaseElement parent){
+    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+      XelementName.UPPER_BOUND);
+    return (element != null) ? new XupperBound(element) : null;
+  }
+
   public static Xbody findBody(XbaseElement parent){
     Element element = findFirstElement(parent.getBaseElement(),
       XelementName.BODY);
