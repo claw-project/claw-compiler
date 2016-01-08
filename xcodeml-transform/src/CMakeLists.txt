@@ -48,10 +48,12 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/Xclonable.java
   x2x/translator/xcodeml/xelement/XcodeProg.java
   x2x/translator/xcodeml/xelement/XcomplexConstant.java
+  x2x/translator/xcodeml/xelement/Xcondition.java
   x2x/translator/xcodeml/xelement/Xconstant.java
   x2x/translator/xcodeml/xelement/XconstType.java
   x2x/translator/xcodeml/xelement/XdeclTable.java
   x2x/translator/xcodeml/xelement/XdoStatement.java
+  x2x/translator/xcodeml/xelement/Xelse.java
   x2x/translator/xcodeml/xelement/XexprModel.java
   x2x/translator/xcodeml/xelement/XelementHelper.java
   x2x/translator/xcodeml/xelement/XelementName.java

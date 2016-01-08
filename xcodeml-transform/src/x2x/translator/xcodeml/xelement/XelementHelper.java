@@ -152,6 +152,10 @@ public class XelementHelper {
     return (element != null) ? new Xthen(element) : null;
   }
 
+  public static XexprModel findExprModel(XbaseElement parent){
+    return null; // TODO
+  }
+
   public static Xelse findElse(XbaseElement parent){
     Element element = findFirstElement(parent.getBaseElement(),
       XelementName.ELSE);
