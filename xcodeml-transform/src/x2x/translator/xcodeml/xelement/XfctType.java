@@ -21,6 +21,12 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
   private String _returnType = null;
   private boolean _isProgram = false;
 
+  // attributes
+  private String _result_name = null;
+  private boolean _is_recursive = false;
+  private boolean _is_program = false;
+  private boolean _is_internal = false;
+
   public XfctType(Element element){
     super(element);
     readFctTypeInformation();
@@ -38,6 +44,16 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
     }
 
     // TODO read parameters as Xname element
+
+    // read optional attributes
+    _result_name = XelementHelper.getAttributeValue(baseElement,
+      XelementName.ATTR_RESULT_NAME);
+    _is_recursive = XelementHelper.getBooleanAttributeValue(baseElement,
+      XelementName.ATTR_IS_RECURSIVE);
+    _is_program = XelementHelper.getBooleanAttributeValue(baseElement,
+        XelementName.ATTR_IS_PROGRAM);
+    _is_internal = XelementHelper.getBooleanAttributeValue(baseElement,
+        XelementName.ATTR_IS_INTERNAL);
   }
 
   public String getReturnType(){
