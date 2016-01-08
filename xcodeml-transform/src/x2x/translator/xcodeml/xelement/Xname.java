@@ -13,7 +13,7 @@ import org.w3c.dom.NodeList;
 
 public class Xname extends XbaseElement {
   private String _nameValue = null;
-  private String _nameType = null;
+  private String _type = null;
 
   public Xname(Element nameElement){
     super(nameElement);
@@ -30,12 +30,12 @@ public class Xname extends XbaseElement {
   public void setType(String value){
     if(baseElement != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
-      _nameType = value;
+      _type = value;
     }
   }
 
   private void readElementInformation(){
-    _nameType = XelementHelper.getAttributeValue(baseElement
+    _type = XelementHelper.getAttributeValue(baseElement
       , XelementName.ATTR_TYPE);
     _nameValue = baseElement.getTextContent();
   }
@@ -45,7 +45,7 @@ public class Xname extends XbaseElement {
   }
 
   public String getType(){
-    return _nameType;
+    return _type;
   }
 
   public boolean isIdentical(Xname other){
@@ -53,7 +53,7 @@ public class Xname extends XbaseElement {
   }
 
   public boolean isIdentical(String name, String type){
-    return _nameValue.equals(name) && _nameType.equals(type);
+    return _nameValue.equals(name) && _type.equals(type);
   }
 
   /**
