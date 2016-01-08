@@ -9,7 +9,7 @@ import org.w3c.dom.NodeList;
  *
  * Elements:
  * - Required:
- *   - name (Xname)
+ *   - name (Xname) defined in the Xfct class
  * - Optional:
  *   - arguments (XexprModel) // TODO
  * Attribute:
@@ -26,16 +26,14 @@ public class XfctCall extends Xfct {
   public XfctCall(Element baseElement){
     super(baseElement);
 
+    // Read attributes
     _isInstrinsic = XelementHelper.getBooleanAttributeValue(baseElement,
       XelementName.ATTR_IS_INTRINSIC);
     _type = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_TYPE);
 
-    Element arguments = XelementHelper.findFirstElement(baseElement,
-      XelementName.ARGUMENTS);
-    _arguments = new XargumentsTable(arguments);
-
-
+    // Read element
+    _arguments = XelementHelper.findArgumentsTable(this);
   }
 
   public boolean isIntrinsic(){

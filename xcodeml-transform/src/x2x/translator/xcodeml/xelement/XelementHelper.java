@@ -162,6 +162,12 @@ public class XelementHelper {
     return (element != null) ? new Xelse(element) : null;
   }
 
+  public static XargumentsTable findArgumentsTable(XbaseElement parent){
+    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+      XelementName.ARGUMENTS);
+    return (element != null) ? new XargumentsTable(element) : null;
+  }
+
   public static Xbody findBody(XbaseElement parent){
     Element element = findFirstElement(parent.getBaseElement(),
       XelementName.BODY);
