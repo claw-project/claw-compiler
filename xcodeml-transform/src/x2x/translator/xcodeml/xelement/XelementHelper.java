@@ -168,6 +168,12 @@ public class XelementHelper {
     return (element != null) ? new XargumentsTable(element) : null;
   }
 
+  public static XlowerBound findLowerBound(XbaseElement parent){
+    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+      XelementName.LOWER_BOUND);
+    return (element != null) ? new XlowerBound(element) : null;
+  }
+
   public static Xbody findBody(XbaseElement parent){
     Element element = findFirstElement(parent.getBaseElement(),
       XelementName.BODY);
