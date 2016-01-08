@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
  */
 public class XindexRange extends XbaseElement implements Xclonable<XindexRange> {
 
-  protected Xbound _lowerBound;
+  protected XlowerBound _lowerBound;
   protected Xbound _upperBound;
   protected Xstep _step = null;
   private boolean _isAssumedShape = false;
@@ -34,7 +34,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
 
     // If the shape is assumed, there is no inner elements
     if(!_isAssumedShape){
-      _lowerBound = new Xbound(XelementHelper
+      _lowerBound = new XlowerBound(XelementHelper
         .findFirstElement(baseElement, XelementName.LOWER_BOUND));
       _upperBound = new Xbound(XelementHelper
         .findFirstElement(baseElement,XelementName.UPPER_BOUND));
@@ -46,7 +46,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
     }
   }
 
-  public Xbound getLowerBound(){
+  public XlowerBound getLowerBound(){
     return _lowerBound;
   }
 
