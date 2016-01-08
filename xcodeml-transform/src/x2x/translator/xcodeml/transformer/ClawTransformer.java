@@ -40,7 +40,7 @@ public class ClawTransformer implements Transformer {
   }
 
   public void addTransformationGroup(TransformationGroup tg, int position){
-    // TODO
+    _transformationGroups.add(position, tg);
   }
 
   public List<TransformationGroup> getGroups(){
