@@ -27,6 +27,7 @@ public class XelementName {
 
   // Element attributes
   public static final String ATTR_COMPILER_INFO = "compiler-info";
+  public static final String ATTR_CONSTRUCT_NAME = "construct_name";
   public static final String ATTR_FILE = "file";
   public static final String ATTR_INTENT = "intent";
   public static final String ATTR_IS_ASSUMED_SHAPE = "is_assumed_shape";

@@ -18,13 +18,21 @@ import org.w3c.dom.Element;
  */
 public class XifStatement extends XbaseElement {
 
-  Xthen _then = null;
-  Xelse _else = null;
+
+  private Xthen _then = null;
+  private Xelse _else = null;
+
+  // attributes
+  private String _constructName = null;
 
   public XifStatement(Element baseElement){
     super(baseElement);
 
     _then = XelementHelper.findThen(this);
     _else = XelementHelper.findElse(this);
+
+    // read optional attributes
+    _constructName = XelementHelper.getAttributeValue(baseElement,
+      XelementName.ATTR_CONSTRUCT_NAME);
   }
 }
