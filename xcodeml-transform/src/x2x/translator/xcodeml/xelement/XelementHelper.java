@@ -152,6 +152,12 @@ public class XelementHelper {
     return (element != null) ? new Xthen(element) : null;
   }
 
+  public static Xelse findElse(XbaseElement parent){
+    Element element = findFirstElement(parent.getBaseElement(),
+      XelementName.ELSE);
+    return (element != null) ? new Xelse(element) : null;
+  }
+
   public static Xbody findBody(XbaseElement parent){
     Element element = findFirstElement(parent.getBaseElement(),
       XelementName.BODY);

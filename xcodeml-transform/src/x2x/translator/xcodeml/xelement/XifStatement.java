@@ -19,10 +19,12 @@ import org.w3c.dom.Element;
 public class XifStatement extends XbaseElement {
 
   Xthen _then = null;
+  Xelse _else = null;
 
   public XifStatement(Element baseElement){
     super(baseElement);
 
     _then = XelementHelper.findThen(this);
+    _else = XelementHelper.findElse(this);
   }
 }
