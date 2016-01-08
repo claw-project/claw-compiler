@@ -9,10 +9,12 @@ import org.w3c.dom.Element;
  * Elements: defined in Xconstant
  * - contains constant value
  * Attributes: defined in Xconstant
- * - Optional: type (text), kind (text)
+ * - Optional: type (text) defined in Xconstant, kind (text) defined
+ *             in Xconstant
  */
 
 public class XintConstant extends Xconstant {
+
   public XintConstant(Element intConstantElement){
     super(intConstantElement);
   }
