@@ -41,8 +41,14 @@ public class CLAWpragmaTest {
     assertFalse(CLAWpragma.isValid("claw loop-extract range map"));
 
 
+    // remove
+    assertTrue(CLAWpragma.isValid("claw remove"));
+    assertTrue(CLAWpragma.isValid("claw end remove"));
+
     // invalid dummy directives
     assertFalse(CLAWpragma.isValid("claw"));
     assertFalse(CLAWpragma.isValid("claw dummy-directive"));
+
+
   }
 }
