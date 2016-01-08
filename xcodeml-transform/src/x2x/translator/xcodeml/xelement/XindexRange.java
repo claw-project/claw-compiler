@@ -10,8 +10,8 @@ import org.w3c.dom.NodeList;
  *
  * Elements:
  * - Optional:
- *   - lowerBound (Xbound)
- *   - upperBound (Xbound)
+ *   - lowerBound (XlowerBound)
+ *   - upperBound (XupperBound)
  *   - step (Xstep)
  * Attributes:
  * - Optional: is_assumed_shape (bool)
@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 public class XindexRange extends XbaseElement implements Xclonable<XindexRange> {
 
   protected XlowerBound _lowerBound;
-  protected Xbound _upperBound;
+  protected XupperBound _upperBound;
   protected Xstep _step = null;
   private boolean _isAssumedShape = false;
 
@@ -36,7 +36,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
     if(!_isAssumedShape){
       _lowerBound = new XlowerBound(XelementHelper
         .findFirstElement(baseElement, XelementName.LOWER_BOUND));
-      _upperBound = new Xbound(XelementHelper
+      _upperBound = new XupperBound(XelementHelper
         .findFirstElement(baseElement,XelementName.UPPER_BOUND));
       Element step = XelementHelper
         .findFirstElement(baseElement, XelementName.STEP);
@@ -50,7 +50,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
     return _lowerBound;
   }
 
-  public Xbound getUpperBound(){
+  public XupperBound getUpperBound(){
     return _upperBound;
   }
 
