@@ -210,17 +210,17 @@ public class XelementHelper {
       return realConst;
     }
 
-    Element element = findFirstElement(parent, XelementName.F_COMPLEX_CONST);
-    if(element != null){
-      return new XcomplexConstant(element);
+    XcomplexConstant complexConst = findComplexConstant(parent);
+    if(complexConst != null){
+      return complexConst;
     }
 
-    element = findFirstElement(parent, XelementName.F_CHAR_CONST);
-    if(element != null){
-      return new XcharacterConstant(element);
+    XcharacterConstant charConst = findCharacterConstant(parent);
+    if(charConst != null){
+      return charConst;
     }
 
-    element = findFirstElement(parent, XelementName.F_LOGICAL_CONST);
+    Element element = findFirstElement(parent, XelementName.F_LOGICAL_CONST);
     if(element != null){
       return new XlogicalConstant(element);
     }
@@ -236,6 +236,16 @@ public class XelementHelper {
   public static XrealConstant findRealConstant(XbaseElement parent){
     Element element = findFirstElement(parent, XelementName.F_REAL_CONST);
     return (element != null) ? new XrealConstant(element) : null;
+  }
+
+  public static XcomplexConstant findComplexConstant(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.F_COMPLEX_CONST);
+    return (element != null) ? new XcomplexConstant(element) : null;
+  }
+
+  public static XcharacterConstant findCharacterConstant(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.F_CHAR_CONST);
+    return (element != null) ? new XcharacterConstant(element) : null;
   }
 
   public static Xelse findElse(XbaseElement parent){
