@@ -32,12 +32,12 @@ public class XdoStatement extends XbaseElement {
   }
 
   public void findRangeElements(){
-    Element inductionVarElement = XelementHelper.findVar(this);
-    Element indexRangeElement = XelementHelper.findIndexRange(this);
+    Xvar inductionVar = XelementHelper.findVar(this);
+    XindexRange indexRange = XelementHelper.findIndexRange(this);
 
-    if(inductionVarElement != null && indexRangeElement != null){
+    if(inductionVar != null && indexRange != null){
       _iterationRange =
-        new XloopIterationRange(inductionVarElement, indexRangeElement);
+        new XloopIterationRange(inductionVar, indexRange);
     }
   }
 

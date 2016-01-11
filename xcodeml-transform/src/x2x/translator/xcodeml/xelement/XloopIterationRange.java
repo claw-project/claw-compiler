@@ -29,11 +29,6 @@ public class XloopIterationRange {
     _indexRange = range;
   }
 
-  public XloopIterationRange(Element inductionVarElement, Element indexRangeElement){
-    _inductionVariable = new Xvar(inductionVarElement);
-    _indexRange = new XindexRange(indexRangeElement);
-  }
-
   public Xvar getInductionVar(){
     return _inductionVariable;
   }
