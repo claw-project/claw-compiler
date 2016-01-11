@@ -41,6 +41,7 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/XarrayIndex.java
   x2x/translator/xcodeml/xelement/XarrayRef.java
   x2x/translator/xcodeml/xelement/XbaseElement.java
+  x2x/translator/xcodeml/xelement/XbaseExpr.java
   x2x/translator/xcodeml/xelement/XbasicType.java
   x2x/translator/xcodeml/xelement/Xbody.java
   x2x/translator/xcodeml/xelement/Xbound.java
@@ -66,6 +67,7 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/XindexRange.java
   x2x/translator/xcodeml/xelement/XintConstant.java
   x2x/translator/xcodeml/xelement/Xkind.java
+  x2x/translator/xcodeml/xelement/Xlength.java
   x2x/translator/xcodeml/xelement/XlogicalConstant.java
   x2x/translator/xcodeml/xelement/XloopIterationRange.java
   x2x/translator/xcodeml/xelement/XlowerBound.java
@@ -78,6 +80,7 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/Xtype.java
   x2x/translator/xcodeml/xelement/XtypeTable.java
   x2x/translator/xcodeml/xelement/XupperBound.java
+  x2x/translator/xcodeml/xelement/Xvalue.java
   x2x/translator/xcodeml/xelement/Xvar.java
   x2x/translator/xcodeml/xelement/XvarDecl.java
   x2x/translator/xcodeml/xelement/XvarRef.java
