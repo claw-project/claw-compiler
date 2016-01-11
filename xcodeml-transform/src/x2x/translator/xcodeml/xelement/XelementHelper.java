@@ -220,9 +220,9 @@ public class XelementHelper {
       return charConst;
     }
 
-    Element element = findFirstElement(parent, XelementName.F_LOGICAL_CONST);
-    if(element != null){
-      return new XlogicalConstant(element);
+    XlogicalConstant logConst = findLogicalConstant(parent);
+    if(logConst != null){
+      return logConst;
     }
 
     return null;
@@ -246,6 +246,11 @@ public class XelementHelper {
   public static XcharacterConstant findCharacterConstant(XbaseElement parent){
     Element element = findFirstElement(parent, XelementName.F_CHAR_CONST);
     return (element != null) ? new XcharacterConstant(element) : null;
+  }
+
+  public static XlogicalConstant findLogicalConstant(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.F_LOGICAL_CONST);
+    return (element != null) ? new XlogicalConstant(element) : null;
   }
 
   public static Xelse findElse(XbaseElement parent){
