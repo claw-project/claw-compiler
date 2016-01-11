@@ -153,7 +153,7 @@ public class XelementHelper {
   }
 
   public static XexprModel findExprModel(XbaseElement parent){
-    return null; // TODO
+      return null; // TODO
   }
 
   public static Xelse findElse(XbaseElement parent){
@@ -294,19 +294,20 @@ public class XelementHelper {
 
 
   public static XdoStatement findNextLoop(XbaseElement from){
-    Element loopElement = findNextElementOfType(from.getBaseElement(),
-      XelementName.DO_STMT);
+    Element loopElement = findNextElementOfType(from, XelementName.DO_STMT);
     return (loopElement == null) ? null : new XdoStatement(loopElement);
   }
 
   public static XexprStatement findNextExprStatement(XbaseElement from){
-    Element element = findNextElementOfType(from.getBaseElement(),
-      XelementName.EXPR_STMT);
+    Element element = findNextElementOfType(from, XelementName.EXPR_STMT);
     return (element == null) ? null : new XexprStatement(element);
   }
 
-  private static Element findNextElementOfType(Node from, String tag){
-    Node nextNode = from.getNextSibling();
+  private static Element findNextElementOfType(XbaseElement from, String tag){
+    if(from == null || from.getBaseElement() == null){
+      return null;
+    }
+    Node nextNode = from.getBaseElement().getNextSibling();
     boolean elementFound = false;
     while (nextNode != null){
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
