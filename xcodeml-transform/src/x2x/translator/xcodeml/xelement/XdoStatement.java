@@ -32,8 +32,8 @@ public class XdoStatement extends XbaseElement {
   }
 
   public void findRangeElements(){
-    Element inductionVarElement = XelementHelper.findVar(baseElement);
-    Element indexRangeElement = XelementHelper.findIndexRange(baseElement);
+    Element inductionVarElement = XelementHelper.findVar(this);
+    Element indexRangeElement = XelementHelper.findIndexRange(this);
 
     if(inductionVarElement != null && indexRangeElement != null){
       _iterationRange =
@@ -62,7 +62,7 @@ public class XdoStatement extends XbaseElement {
   }
 
   public void setNewRange(XloopIterationRange range){
-    Element body = getBodyElement();
+    Element body = _body.getBaseElement();
     Node newVar = range.getInductionVar().clone();
     Node newRange = range.getIndexRange().clone();
     baseElement.insertBefore(newVar, body);
@@ -82,10 +82,6 @@ public class XdoStatement extends XbaseElement {
 
   public XloopIterationRange getIterationRange(){
     return _iterationRange;
-  }
-
-  public Element getBodyElement(){
-    return XelementHelper.getBody(baseElement);
   }
 
   public Xbody getBody(){

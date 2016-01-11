@@ -70,9 +70,10 @@ public class XelementHelper {
     return null;
   }
 
-  public static List<XarrayRef> getAllArrayReferences(Element parent){
+  public static List<XarrayRef> getAllArrayReferences(Xbody parent){
     List<XarrayRef> references = new ArrayList<XarrayRef>();
-    NodeList nList = parent.getElementsByTagName(XelementName.F_ARRAY_REF);
+    NodeList nList = parent.getBaseElement().
+      getElementsByTagName(XelementName.F_ARRAY_REF);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -84,9 +85,10 @@ public class XelementHelper {
     return references;
   }
 
-  public static List<XrealConstant> getRealConstants(Element parent){
+  public static List<XrealConstant> getRealConstants(XbaseElement parent){
     List<XrealConstant> elements = new ArrayList<XrealConstant>();
-    NodeList nList = parent.getElementsByTagName(XelementName.F_REAL_CONST);
+    NodeList nList = parent.getBaseElement().
+      getElementsByTagName(XelementName.F_REAL_CONST);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -99,7 +101,7 @@ public class XelementHelper {
   }
 
   public static void insertFctCallIntoLoop(XdoStatement loop, XfctCall call){
-    loop.getBodyElement().appendChild(call.getBaseElement().getParentNode());
+    loop.getBody().getBaseElement().appendChild(call.getBaseElement().getParentNode());
   }
 
 
@@ -121,23 +123,21 @@ public class XelementHelper {
   }
 
   public static XdoStatement findLoop(XfctDef fctDef){
-    Element body = fctDef.getBody();
-    Element loopElement = XelementHelper.findLoopStament(body);
-    if(loopElement == null){
-      return null;
-    }
-    return new XdoStatement(loopElement);
+    Xbody body = fctDef.getBody();
+    XdoStatement doStmt = XelementHelper.findLoopStament(body);
+    return doStmt;
   }
 
-  public static Element findVar(Element parent){
+  public static Element findVar(XbaseElement parent){
     return findFirstElement(parent, XelementName.VAR);
   }
 
-  public static Element findVarRef(Element parent){
-    return findFirstElement(parent, XelementName.VAR_REF);
+  public static XvarRef findVarRef(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.VAR_REF);
+    return (element != null) ? new XvarRef(element) : null;
   }
 
-  public static Element findIndexRange(Element parent){
+  public static Element findIndexRange(XbaseElement parent){
     return findFirstElement(parent, XelementName.INDEX_RANGE);
   }
 
@@ -260,15 +260,16 @@ public class XelementHelper {
     return findFirstElement(parent, XelementName.BODY);
   }
 
-  public static Element findLoopStament(Element parent){
-    return findFirstElement(parent, XelementName.DO_STMT);
+  public static XdoStatement findLoopStament(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.DO_STMT);
+    return (element != null) ? new XdoStatement(element) : null;
   }
 
-  public static Element findSymbols(Element parent){
+  public static Element findSymbols(XbaseElement parent){
     return findFirstElement(parent, XelementName.SYMBOLS);
   }
 
-  public static Element findDeclarations(Element parent){
+  public static Element findDeclarations(XbaseElement parent){
     return findFirstElement(parent, XelementName.DECLARATIONS);
   }
 
@@ -293,11 +294,11 @@ public class XelementHelper {
     return parent.getElementsByTagName(XelementName.INDEX_RANGE);
   }
 
-  public static Element findLen(Element parent){
+  public static Element findLen(XbaseElement parent){
     return findFirstElement(parent, XelementName.LENGTH);
   }
 
-  public static Element findKind(Element parent){
+  public static Element findKind(XbaseElement parent){
     return findFirstElement(parent, XelementName.KIND);
   }
 

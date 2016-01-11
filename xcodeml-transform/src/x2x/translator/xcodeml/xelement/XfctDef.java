@@ -19,15 +19,18 @@ import java.util.Hashtable;
 
 public class XfctDef extends Xfct implements Xclonable<XfctDef> {
 
-  private XsymbolTable _symbolTable;
-  private XdeclTable _declTable;
+  private XsymbolTable _symbolTable = null;
+  private XdeclTable _declTable = null;
+  private Xbody _body = null;
+
 
   public XfctDef(Element fctDefElement){
     super(fctDefElement);
-    Element symbols = XelementHelper.findSymbols(baseElement);
+    Element symbols = XelementHelper.findSymbols(this);
     _symbolTable = new XsymbolTable(symbols);
-    Element decl = XelementHelper.findDeclarations(baseElement);
+    Element decl = XelementHelper.findDeclarations(this);
     _declTable = new XdeclTable(decl);
+    _body = XelementHelper.findBody(this);
   }
 
   public XsymbolTable getSymbolTable(){
@@ -38,8 +41,8 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
     return _declTable;
   }
 
-  public Element getBody(){
-    return XelementHelper.getBody(baseElement);
+  public Xbody getBody(){
+    return _body;
   }
 
   public XfctDef cloneObject(){

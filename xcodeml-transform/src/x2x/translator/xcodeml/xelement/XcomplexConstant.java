@@ -24,7 +24,7 @@ public class XcomplexConstant extends Xconstant {
 
   private void readElementInformation(){
     List<XrealConstant> innerElements = XelementHelper
-      .getRealConstants(baseElement);
+      .getRealConstants(this);
     if(innerElements.size() != 2){
       // TODO error handling : exception
     }
