@@ -81,7 +81,7 @@ public class XexprModel {
     return null;
   }
 
-  
+
 
   private boolean isOfType(Class type){
     if(_element != null && type.isInstance(_element)){

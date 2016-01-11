@@ -165,6 +165,7 @@ public class XelementHelper {
      *     FlogicalConstant
      *   TODO
      *   - FarrayConstructor, FstructConstructor
+     *   TODO
      *   - Var
      *   TODO
      *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
@@ -204,12 +205,12 @@ public class XelementHelper {
       return intConst;
     }
 
-    Element element = findFirstElement(parent, XelementName.F_REAL_CONST);
-    if(element != null){
-      return new XrealConstant(element);
+    XrealConstant realConst = findRealConstant(parent);
+    if(realConst != null){
+      return realConst;
     }
 
-    element = findFirstElement(parent, XelementName.F_COMPLEX_CONST);
+    Element element = findFirstElement(parent, XelementName.F_COMPLEX_CONST);
     if(element != null){
       return new XcomplexConstant(element);
     }
@@ -230,6 +231,11 @@ public class XelementHelper {
   public static XintConstant findIntConstant(XbaseElement parent){
     Element element = findFirstElement(parent, XelementName.F_INT_CONST);
     return (element != null) ? new XintConstant(element) : null;
+  }
+
+  public static XrealConstant findRealConstant(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.F_REAL_CONST);
+    return (element != null) ? new XrealConstant(element) : null;
   }
 
   public static Xelse findElse(XbaseElement parent){
