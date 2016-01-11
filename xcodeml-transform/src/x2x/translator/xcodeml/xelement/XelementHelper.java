@@ -153,7 +153,72 @@ public class XelementHelper {
   }
 
   public static XexprModel findExprModel(XbaseElement parent){
-      return null; // TODO
+    /** An exprModel can be of the following type
+     *   TODO
+     *   - FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
+     *     FlogicalConstant
+     *   TODO
+     *   - FarrayConstructor, FstructConstructor
+     *   - Var
+     *   TODO
+     *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
+     *   TODO
+     *   - functionCall
+     *   TODO
+     *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
+     *     logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
+     *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr,
+     *     unaryMinusExpr, userBinaryExpr, userUnaryExpr
+     *   TODO
+     *   - FdoLoop
+     */
+
+    // Try to find constant
+    Xconstant constant = findConstant(parent);
+    if(constant != null){
+      return new XexprModel(constant);
+    }
+
+    // Try to find
+
+
+    return null; // TODO
+  }
+
+  /**
+   *
+   * @return A Xconstant object if one is found. null otherwise.
+   */
+  private static Xconstant findConstant(XbaseElement parent){
+    // FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
+    // FlogicalConstant
+
+    Element element = findNextElementOfType(parent, XelementName.F_INT_CONST);
+    if(element != null){
+      return new XintConstant(element);
+    }
+
+    element = findNextElementOfType(parent, XelementName.F_REAL_CONST);
+    if(element != null){
+      return new XintConstant(element);
+    }
+
+    element = findNextElementOfType(parent, XelementName.F_COMPLEX_CONST);
+    if(element != null){
+      return new XcomplexConstant(element);
+    }
+
+    element = findNextElementOfType(parent, XelementName.F_CHAR_CONST);
+    if(element != null){
+      return new XcharacterConstant(element);
+    }
+
+    element = findNextElementOfType(parent, XelementName.F_LOGICAL_CONST);
+    if(element != null){
+      return new XlogicalConstant(element);
+    }
+
+    return null;
   }
 
   public static Xelse findElse(XbaseElement parent){
