@@ -186,7 +186,12 @@ public class XelementHelper {
       return new XexprModel(constant);
     }
 
-    // Try to find
+
+    // Try to find var
+    Xvar var = findVar(parent);
+    if(var != null){
+      return new XexprModel(var);
+    }
 
 
     return null; // TODO

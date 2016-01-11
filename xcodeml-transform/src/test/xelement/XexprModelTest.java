@@ -23,9 +23,12 @@ public class XexprModelTest {
     "<FcharacterConstant type=\"C7fca03c0d3c0\">value1: </FcharacterConstant>"
     + dummyRootClose;
 
+  private String exprModel_Var = dummyRootOpen +
+    "<Var type=\"Fint\" scope=\"local\">k</Var>" + dummyRootClose;
 
   @Test
   public void findExprModelTest() {
+    // XintConstant object
     Document xml = XmlHelper.loadXMLFromString(exprModel_IntConst);
     XbaseElement element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
@@ -33,7 +36,10 @@ public class XexprModelTest {
     assertNotNull(model);
     assertTrue(model.isIntConst());
 
+    // XrealConstant object TODO
+    // XcomplexConstant object TODO
 
+    // XlogicalConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_LogConst);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
@@ -41,12 +47,21 @@ public class XexprModelTest {
     assertNotNull(model);
     assertTrue(model.isLogicalConst());
 
+    // XcharacterConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_CharConst);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
     model = XelementHelper.findExprModel(element);
     assertNotNull(model);
     assertTrue(model.isCharConst());
+
+    // Xvar object
+    xml = XmlHelper.loadXMLFromString(exprModel_Var);
+    element = new XbaseElement(xml.getDocumentElement());
+    assertNotNull(element);
+    model = XelementHelper.findExprModel(element);
+    assertNotNull(model);
+    assertTrue(model.isVar());
   }
 
 }

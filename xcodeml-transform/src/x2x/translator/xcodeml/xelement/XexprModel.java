@@ -41,10 +41,7 @@ public class XexprModel {
   }
 
   public boolean isVar(){
-    if(_element != null && _element instanceof Xvar){
-      return true;
-    }
-    return false;
+    return isOfType(Xvar.class);
   }
 
   public Xvar getVar(){
