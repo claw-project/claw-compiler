@@ -189,31 +189,31 @@ public class XelementHelper {
    *
    * @return A Xconstant object if one is found. null otherwise.
    */
-  private static Xconstant findConstant(XbaseElement parent){
+  public static Xconstant findConstant(XbaseElement parent){
     // FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
     // FlogicalConstant
 
-    Element element = findNextElementOfType(parent, XelementName.F_INT_CONST);
+    Element element = findFirstElement(parent, XelementName.F_INT_CONST);
     if(element != null){
       return new XintConstant(element);
     }
 
-    element = findNextElementOfType(parent, XelementName.F_REAL_CONST);
+    element = findFirstElement(parent, XelementName.F_REAL_CONST);
     if(element != null){
-      return new XintConstant(element);
+      return new XrealConstant(element);
     }
 
-    element = findNextElementOfType(parent, XelementName.F_COMPLEX_CONST);
+    element = findFirstElement(parent, XelementName.F_COMPLEX_CONST);
     if(element != null){
       return new XcomplexConstant(element);
     }
 
-    element = findNextElementOfType(parent, XelementName.F_CHAR_CONST);
+    element = findFirstElement(parent, XelementName.F_CHAR_CONST);
     if(element != null){
       return new XcharacterConstant(element);
     }
 
-    element = findNextElementOfType(parent, XelementName.F_LOGICAL_CONST);
+    element = findFirstElement(parent, XelementName.F_LOGICAL_CONST);
     if(element != null){
       return new XlogicalConstant(element);
     }
@@ -222,37 +222,36 @@ public class XelementHelper {
   }
 
   public static Xelse findElse(XbaseElement parent){
-    Element element = findFirstElement(parent.getBaseElement(),
-      XelementName.ELSE);
+    Element element = findFirstElement(parent, XelementName.ELSE);
     return (element != null) ? new Xelse(element) : null;
   }
 
   public static XargumentsTable findArgumentsTable(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+    Element element = XelementHelper.findFirstElement(parent,
       XelementName.ARGUMENTS);
     return (element != null) ? new XargumentsTable(element) : null;
   }
 
   public static XlowerBound findLowerBound(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+    Element element = XelementHelper.findFirstElement(parent,
       XelementName.LOWER_BOUND);
     return (element != null) ? new XlowerBound(element) : null;
   }
 
   public static XupperBound findUpperBound(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+    Element element = XelementHelper.findFirstElement(parent,
       XelementName.UPPER_BOUND);
     return (element != null) ? new XupperBound(element) : null;
   }
 
   public static Xstep findStep(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent.getBaseElement(),
+    Element element = XelementHelper.findFirstElement(parent,
       XelementName.STEP);
     return (element != null) ? new Xstep(element) : null;
   }
 
   public static Xbody findBody(XbaseElement parent){
-    Element element = findFirstElement(parent.getBaseElement(),
+    Element element = findFirstElement(parent,
       XelementName.BODY);
     return (element != null) ? new Xbody(element) : null;
   }
@@ -300,6 +299,10 @@ public class XelementHelper {
 
   public static Element findKind(Element parent){
     return findFirstElement(parent, XelementName.KIND);
+  }
+
+  public static Element findFirstElement(XbaseElement parent, String elementName){
+    return findFirstElement(parent.getBaseElement(), elementName);
   }
 
   public static Element findFirstElement(Element parent, String elementName){
@@ -373,7 +376,6 @@ public class XelementHelper {
       return null;
     }
     Node nextNode = from.getBaseElement().getNextSibling();
-    boolean elementFound = false;
     while (nextNode != null){
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element) nextNode;
