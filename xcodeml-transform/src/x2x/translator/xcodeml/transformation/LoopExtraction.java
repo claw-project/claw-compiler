@@ -103,8 +103,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
 
     // Find function declaration
-    _fctDefToExtract = XelementHelper.findFunctionDefinition(
-      xcodeml.getDocument(), _fctCall);
+    _fctDefToExtract = XelementHelper.findFunctionDefinition(xcodeml, _fctCall);
 
     if(_fctDefToExtract == null){
       System.err.println("Could not locate the function definition for: "

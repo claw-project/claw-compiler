@@ -75,6 +75,10 @@ public class XcodeProg {
     return _xcodemlDoc;
   }
 
+  public Element getBaseElement(){
+    return (_xcodemlDoc != null) ? _xcodemlDoc.getDocumentElement() : null;
+  }
+
   public XtypeTable getTypeTable(){
     return _typeTable;
   }

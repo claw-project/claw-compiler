@@ -43,20 +43,15 @@ public class XelementHelper {
     return false;
   }
 
-  public static XfctDef findFunctionDefinition(Document xcodemlDoc,
+  public static XfctDef findFunctionDefinition(XcodeProg xcodeml,
     XfctCall fctCall)
   {
-    if(xcodemlDoc == null || fctCall == null) {
+    if(xcodeml.getBaseElement() == null){
       return null;
     }
-    return findFunctionDefinition(xcodemlDoc, fctCall.getFctName(),
-      fctCall.getFctType());
-  }
-
-  public static XfctDef findFunctionDefinition(Document xcodemlDoc, String name,
-    String type)
-  {
-    NodeList nList = xcodemlDoc.getElementsByTagName(XelementName.FCT_DEFINITION);
+    String name = fctCall.getFctName();
+    String type = fctCall.getType();
+    NodeList nList = xcodeml.getBaseElement().getElementsByTagName(XelementName.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -317,8 +312,6 @@ public class XelementHelper {
     Element element = findFirstElement(parent, XelementName.KIND);
     return (element != null) ? new Xkind(element) : null;
   }
-
-
 
   public static void insertAfter(Node refNode, Node newNode){
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
