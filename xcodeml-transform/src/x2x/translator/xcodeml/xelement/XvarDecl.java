@@ -11,14 +11,14 @@ import org.w3c.dom.Node;
  * - Required:
  *   - name (Xname)
  * - Optional:
- *   - value (text) TODO have an object for that
+ *   - value (text)
  */
 
 public class XvarDecl extends Xdecl {
   private Xname _name = null;
   private boolean _hasValue = false;
 
-  private Element _valueElement = null; // TODO to be removed
+  private Xvalue _value = null; // TODO to be removed
 
   public XvarDecl(Element varDeclElement){
     super(varDeclElement);
@@ -26,17 +26,9 @@ public class XvarDecl extends Xdecl {
   }
 
   private void readElementInformation(){
-    Element nameElement = XelementHelper.findFirstElement(baseElement,
-      XelementName.NAME);
-
-    if(nameElement != null){
-      _name = new Xname(nameElement);
-    }
-
-    // TODO move to an object
-    _valueElement = XelementHelper.findFirstElement(baseElement,
-        XelementName.VALUE);
-    if(_valueElement != null){
+    _name = XelementHelper.findName(this);
+    _value = XelementHelper.findValue(this);
+    if(_value != null){
       _hasValue = true;
     }
   }

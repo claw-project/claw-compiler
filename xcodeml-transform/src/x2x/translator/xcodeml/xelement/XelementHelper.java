@@ -143,6 +143,9 @@ public class XelementHelper {
     return (element != null) ? new XindexRange(element) : null;
   }
 
+  public static Xname findName(XbaseElement parent){ // TODO to be removed
+    return findName(parent.getBaseElement());
+  }
   public static Xname findName(Element parent){
     Element element = findFirstElement(parent, XelementName.NAME);
     return (element != null) ? new Xname(element) : null;
@@ -152,6 +155,12 @@ public class XelementHelper {
     Element element = findFirstElement(parent.getBaseElement(),
       XelementName.THEN);
     return (element != null) ? new Xthen(element) : null;
+  }
+
+  public static Xvalue findValue(XbaseElement parent){
+    Element element = findFirstElement(parent.getBaseElement(),
+      XelementName.VALUE);
+    return (element != null) ? new Xvalue(element) : null;
   }
 
   public static XexprModel findExprModel(XbaseElement parent){
@@ -195,12 +204,12 @@ public class XelementHelper {
     // FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
     // FlogicalConstant
 
-    Element element = findFirstElement(parent, XelementName.F_INT_CONST);
-    if(element != null){
-      return new XintConstant(element);
+    XintConstant intConst = findIntConstant(parent);
+    if(intConst != null){
+      return intConst;
     }
 
-    element = findFirstElement(parent, XelementName.F_REAL_CONST);
+    Element element = findFirstElement(parent, XelementName.F_REAL_CONST);
     if(element != null){
       return new XrealConstant(element);
     }
@@ -221,6 +230,11 @@ public class XelementHelper {
     }
 
     return null;
+  }
+
+  public static XintConstant findIntConstant(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.F_INT_CONST);
+    return (element != null) ? new XintConstant(element) : null;
   }
 
   public static Xelse findElse(XbaseElement parent){
@@ -302,17 +316,7 @@ public class XelementHelper {
     return findFirstElement(parent, XelementName.KIND);
   }
 
-  public static Element findFirstElement(XbaseElement parent, String elementName){
-    return findFirstElement(parent.getBaseElement(), elementName);
-  }
 
-  public static Element findFirstElement(Element parent, String elementName){
-    NodeList elements = parent.getElementsByTagName(elementName);
-    if(elements.getLength() == 0){
-      return null;
-    }
-    return (Element) elements.item(0);
-  }
 
   public static void insertAfter(Node refNode, Node newNode){
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
@@ -611,6 +615,23 @@ public class XelementHelper {
       return true;
     }
     return false;
+  }
+
+
+  /**
+   * PRIVATE SECTION
+   */
+
+  private static Element findFirstElement(XbaseElement parent, String elementName){
+    return findFirstElement(parent.getBaseElement(), elementName);
+  }
+
+  private static Element findFirstElement(Element parent, String elementName){
+    NodeList elements = parent.getElementsByTagName(elementName);
+    if(elements.getLength() == 0){
+      return null;
+    }
+    return (Element) elements.item(0);
   }
 
 }

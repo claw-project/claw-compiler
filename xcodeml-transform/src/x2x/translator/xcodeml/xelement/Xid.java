@@ -18,9 +18,8 @@ import org.w3c.dom.Node;
 public class Xid extends XbaseElement implements Xclonable<Xid> {
   private String _type = null;
   private String _sclass = null;
-  private String _name = null;
 
-  private Element _nameElement;
+  private Xname _xname;
 
   public Xid(Element idElement){
     super(idElement);
@@ -32,15 +31,12 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
       XelementName.ATTR_TYPE);
     _sclass = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_SCLASS);
-    _nameElement = XelementHelper.findFirstElement(baseElement,
-      XelementName.NAME);
-    _name = _nameElement.getTextContent();
+    _xname = XelementHelper.findName(this);
   }
 
   public void setName(String value){
-    if(_nameElement != null){
-      _nameElement.setTextContent(value);
-      _name = value;
+    if(_xname != null){
+      _xname.setName(value);
     }
   }
 
@@ -59,7 +55,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
   }
 
   public String getName(){
-    return _name;
+    return (_xname != null) ? _xname.getValue() : null;
   }
 
   public String getType() {

@@ -43,17 +43,15 @@ public class Xbound extends XbaseElement {
   }
 
   private void readRangeValue(){
-    Element constant = XelementHelper
-      .findFirstElement(baseElement, XelementName.F_INT_CONST);
-    Element var = XelementHelper
-      .findFirstElement(baseElement, XelementName.VAR);
+    XintConstant constant = XelementHelper.findIntConstant(this);
+    Xvar var = XelementHelper.findVar(this);
     if(constant != null){
       _constant = true;
-      _value = constant.getTextContent();
+      _value = constant.getValue();
     } else if(var != null){
       _isVar = true;
-      _var = new Xvar(var);
-      _value = var.getTextContent();
+      _var = var;
+      _value = var.getValue();
     }
   }
 
