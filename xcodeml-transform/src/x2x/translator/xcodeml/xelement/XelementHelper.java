@@ -273,16 +273,16 @@ public class XelementHelper {
     return (element != null) ? new XdeclTable(element) : null;
   }
 
-  public static Element findTypeTable(Document doc){
+  public static XtypeTable findTypeTable(Document doc){
     NodeList elements = doc.getElementsByTagName(XelementName.TYPE_TABLE);
     Element element = (Element) elements.item(0);
-    return element;
+    return (element != null) ? new XtypeTable(element) : null;
   }
 
-  public static Element findGlobalSymbols(Document doc){
+  public static XsymbolTable findGlobalSymbols(Document doc){
     NodeList elements = doc.getElementsByTagName(XelementName.GLOBAL_SYMBOLS);
     Element element = (Element) elements.item(0);
-    return element;
+    return (element != null) ? new XsymbolTable(element) : null;
   }
 
   public static int findNumberOfRange(Element parent){

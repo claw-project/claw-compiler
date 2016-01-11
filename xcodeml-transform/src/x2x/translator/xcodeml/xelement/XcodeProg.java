@@ -145,13 +145,11 @@ public class XcodeProg {
   }
 
   private void readTypeTable() {
-    Element typeTableElement = XelementHelper.findTypeTable(_xcodemlDoc);
-    _typeTable = new XtypeTable(typeTableElement);
+    _typeTable = XelementHelper.findTypeTable(_xcodemlDoc);
   }
 
   private void readGlobalSymbolsTable() {
-    Element globalSymbolsElement = XelementHelper.findGlobalSymbols(_xcodemlDoc);
-    _globalSymbolsTable = new XsymbolTable(globalSymbolsElement);
+    _globalSymbolsTable = XelementHelper.findGlobalSymbols(_xcodemlDoc);
   }
 
 }
