@@ -308,8 +308,9 @@ public class XelementHelper {
     return parent.getElementsByTagName(XelementName.INDEX_RANGE);
   }
 
-  public static Element findLen(XbaseElement parent){
-    return findFirstElement(parent, XelementName.LENGTH);
+  public static Xlength findLen(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.LENGTH);
+    return (element != null) ? new Xlength(element) : null;
   }
 
   public static Xkind findKind(XbaseElement parent){

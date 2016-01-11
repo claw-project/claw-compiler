@@ -72,7 +72,7 @@ public class XbasicType extends Xtype {
     }
 
     // has length ?
-    Element length = XelementHelper.findLen(this);
+    Xlength length = XelementHelper.findLen(this);
     if(length != null){
       // TODO have a length object with information
     }
