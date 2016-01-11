@@ -263,12 +263,14 @@ public class XelementHelper {
     return (element != null) ? new XdoStatement(element) : null;
   }
 
-  public static Element findSymbols(XbaseElement parent){
-    return findFirstElement(parent, XelementName.SYMBOLS);
+  public static XsymbolTable findSymbols(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.SYMBOLS);
+    return (element != null) ? new XsymbolTable(element) : null;
   }
 
-  public static Element findDeclarations(XbaseElement parent){
-    return findFirstElement(parent, XelementName.DECLARATIONS);
+  public static XdeclTable findDeclarations(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.DECLARATIONS);
+    return (element != null) ? new XdeclTable(element) : null;
   }
 
   public static Element findTypeTable(Document doc){
