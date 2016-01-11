@@ -25,10 +25,7 @@ public class XdoStatement extends XbaseElement {
   public XdoStatement(Element doStatementElement){
     super(doStatementElement);
     findRangeElements();
-    Element bodyElement = XelementHelper.getBody(baseElement);
-    if(bodyElement != null){
-      _body = new Xbody(bodyElement);
-    }
+    _body = XelementHelper.findBody(this);
   }
 
   public void findRangeElements(){

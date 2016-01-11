@@ -258,10 +258,6 @@ public class XelementHelper {
     return (element != null) ? new Xbody(element) : null;
   }
 
-  public static Element getBody(Element parent){
-    return findFirstElement(parent, XelementName.BODY);
-  }
-
   public static XdoStatement findLoopStament(XbaseElement parent){
     Element element = findFirstElement(parent, XelementName.DO_STMT);
     return (element != null) ? new XdoStatement(element) : null;
