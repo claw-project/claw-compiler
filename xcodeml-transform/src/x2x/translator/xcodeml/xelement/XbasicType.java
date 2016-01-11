@@ -78,10 +78,7 @@ public class XbasicType extends Xtype {
     }
 
     // has kind ?
-    Element kindElement = XelementHelper.findKind(this);
-    if(kindElement != null) {
-      _kind = new Xkind(kindElement);
-    }
+    _kind = XelementHelper.findKind(this);
 
     // has arrayIndex ?
     // TODO

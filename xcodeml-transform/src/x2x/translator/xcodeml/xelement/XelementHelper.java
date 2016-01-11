@@ -312,8 +312,9 @@ public class XelementHelper {
     return findFirstElement(parent, XelementName.LENGTH);
   }
 
-  public static Element findKind(XbaseElement parent){
-    return findFirstElement(parent, XelementName.KIND);
+  public static Xkind findKind(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.KIND);
+    return (element != null) ? new Xkind(element) : null;
   }
 
 
