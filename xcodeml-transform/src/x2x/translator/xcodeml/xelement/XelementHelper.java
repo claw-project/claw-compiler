@@ -134,9 +134,8 @@ public class XelementHelper {
     return findXelement(parent, any, XvarRef.class);
   }
 
-  public static XindexRange findIndexRange(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.INDEX_RANGE);
-    return (element != null) ? new XindexRange(element) : null;
+  public static XindexRange findIndexRange(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XindexRange.class);
   }
 
   public static Xname findName(XbaseElement parent){
