@@ -16,7 +16,7 @@ public class Xthen extends XbaseElement {
 
   public Xthen(Element baseElement){
     super(baseElement);
-    _body = XelementHelper.findBody(this);
+    _body = XelementHelper.findBody(this, false);
   }
 
   public Xbody getBody(){

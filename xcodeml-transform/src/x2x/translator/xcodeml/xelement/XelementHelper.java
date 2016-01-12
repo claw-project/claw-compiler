@@ -292,10 +292,8 @@ public class XelementHelper {
     return findXelement(parent, any, Xstep.class);
   }
 
-  public static Xbody findBody(XbaseElement parent){
-    Element element = findFirstElement(parent,
-      XelementName.BODY);
-    return (element != null) ? new Xbody(element) : null;
+  public static Xbody findBody(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xbody.class);
   }
 
   public static XdoStatement findLoopStament(XbaseElement parent){
