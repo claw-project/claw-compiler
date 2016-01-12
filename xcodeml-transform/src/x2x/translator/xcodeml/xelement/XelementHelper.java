@@ -130,9 +130,8 @@ public class XelementHelper {
     return findXelement(parent, any, Xvar.class);
   }
 
-  public static XvarRef findVarRef(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.VAR_REF);
-    return (element != null) ? new XvarRef(element) : null;
+  public static XvarRef findVarRef(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XvarRef.class);
   }
 
   public static XindexRange findIndexRange(XbaseElement parent){
@@ -140,10 +139,10 @@ public class XelementHelper {
     return (element != null) ? new XindexRange(element) : null;
   }
 
-  public static Xname findName(XbaseElement parent){ // TODO to be removed
+  public static Xname findName(XbaseElement parent){
     return findName(parent.getBaseElement());
   }
-  public static Xname findName(Element parent){
+  public static Xname findName(Element parent){ // TODO to be removed
     Element element = findFirstElement(parent, XelementName.NAME);
     return (element != null) ? new Xname(element) : null;
   }

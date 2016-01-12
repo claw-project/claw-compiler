@@ -44,7 +44,7 @@ public class XarrayRef extends XbaseElement {
       XelementName.ATTR_TYPE);
 
     // Find Var element
-    _varRef = XelementHelper.findVarRef(this);
+    _varRef = XelementHelper.findVarRef(this, false);
 
     // Read potential arrayIndex
     NodeList nodeList = baseElement.
