@@ -25,7 +25,7 @@ import java.util.List;
  *             language (text), source (text)
  */
 
-public class XcodeProg {
+public class XcodeProg extends XbaseElement {
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
 
@@ -46,6 +46,7 @@ public class XcodeProg {
   private List<XanalysisError> _errors;
 
   public XcodeProg(String inputFile){
+    super(null);
     _xcodemlInputFile = inputFile;
     _errors = new ArrayList<XanalysisError>();
   }
@@ -98,6 +99,7 @@ public class XcodeProg {
       _xcodemlDoc = doc;
       readDocumentInformation();
       _isLoaded = true;
+      baseElement = _xcodemlDoc.getDocumentElement();
 
       if (!isXcodeMLvalid()){
         addError("XcodeML document is not valid", 0);
@@ -149,7 +151,7 @@ public class XcodeProg {
   }
 
   private void readTypeTable() {
-    _typeTable = XelementHelper.findTypeTable(_xcodemlDoc);
+    _typeTable = XelementHelper.findTypeTable(this, true);
   }
 
   private void readGlobalSymbolsTable() {

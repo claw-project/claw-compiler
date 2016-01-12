@@ -309,10 +309,11 @@ public class XelementHelper {
     return findXelement(parent, any, XdeclTable.class);
   }
 
-  public static XtypeTable findTypeTable(Document doc){
-    NodeList elements = doc.getElementsByTagName(XelementName.TYPE_TABLE);
+  public static XtypeTable findTypeTable(XcodeProg parent, boolean any){
+    return findXelement(parent, any, XtypeTable.class);
+    /*NodeList elements = doc.getElementsByTagName(XelementName.TYPE_TABLE);
     Element element = (Element) elements.item(0);
-    return (element != null) ? new XtypeTable(element) : null;
+    return (element != null) ? new XtypeTable(element) : null;*/
   }
 
   public static XsymbolTable findGlobalSymbols(Document doc){
