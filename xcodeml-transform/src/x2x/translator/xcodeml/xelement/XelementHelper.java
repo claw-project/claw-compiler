@@ -308,8 +308,16 @@ public class XelementHelper {
     return elements.getLength();
   }
 
-  public static NodeList findIndexRanges(Element parent){
-    return parent.getElementsByTagName(XelementName.INDEX_RANGE);
+  public static ArrayList<XindexRange> findIndexRanges(XbaseElement parent){
+    ArrayList<XindexRange> indexRanges = new ArrayList<XindexRange>();
+    if(parent == null || parent.getBaseElement() == null){
+      return indexRanges;
+    }
+    NodeList ranges = parent.getBaseElement().getElementsByTagName(XelementName.INDEX_RANGE);
+    for(int i = 0; i < ranges.getLength(); ++i){
+      indexRanges.add(new XindexRange((Element)ranges.item(i)));
+    }
+    return indexRanges;
   }
 
   public static Xlength findLen(XbaseElement parent, boolean any){

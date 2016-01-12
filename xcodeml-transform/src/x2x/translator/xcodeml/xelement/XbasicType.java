@@ -64,11 +64,7 @@ public class XbasicType extends Xtype {
     _dimension = XelementHelper.findNumberOfRange(this);
     if (_dimension > 0){
       _isArray = true;
-      _dimensionRanges = new ArrayList<XindexRange>();
-      NodeList ranges = XelementHelper.findIndexRanges(baseElement);
-      for(int i = 0; i < _dimension; ++i){
-        _dimensionRanges.add(new XindexRange((Element)ranges.item(i)));
-      }
+      _dimensionRanges = XelementHelper.findIndexRanges(this);
     }
 
     // has length ?
