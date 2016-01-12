@@ -23,7 +23,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
   }
 
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
-    _loop = XelementHelper.findNextLoop(_pragma);
+    _loop = XelementHelper.findNextDoStatement(_pragma);
     if(_loop == null){
       xcodeml.addError("Cannot find loop after directive",
         _pragma.getLine());

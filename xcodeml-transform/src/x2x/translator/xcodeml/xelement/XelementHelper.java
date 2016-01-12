@@ -120,9 +120,9 @@ public class XelementHelper {
     return null;
   }
 
-  public static XdoStatement findLoop(XfctDef fctDef){
+  public static XdoStatement findLoop(XfctDef fctDef, boolean any){
     Xbody body = fctDef.getBody();
-    XdoStatement doStmt = XelementHelper.findLoopStament(body);
+    XdoStatement doStmt = XelementHelper.findDoStatement(body, any);
     return doStmt;
   }
 
@@ -276,9 +276,13 @@ public class XelementHelper {
     return findXelement(parent, any, Xbody.class);
   }
 
-  public static XdoStatement findLoopStament(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.DO_STMT);
-    return (element != null) ? new XdoStatement(element) : null;
+  public static XdoStatement findDoStatement(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XdoStatement.class);
+  }
+
+  public static XdoStatement findNextDoStatement(XbaseElement from){
+    Element loopElement = findNextElementOfType(from, XelementName.DO_STMT);
+    return (loopElement == null) ? null : new XdoStatement(loopElement);
   }
 
   public static XsymbolTable findSymbols(XbaseElement parent, boolean any){
@@ -327,21 +331,6 @@ public class XelementHelper {
       element.getBaseElement());
   }
 
-  public static XdoStatement findChildLoop(Xbody from){
-    Node nextNode = from.getBaseElement().getFirstChild();
-    boolean elementFound = false;
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals("FdoStatement")){
-          return new XdoStatement(element);
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
-
   public static XfctCall findFctCall(XbaseElement parent){
     Element element = findFirstElement(parent, XelementName.FCT_CALL);
     return (element != null) ? new XfctCall(element) : null;
@@ -363,12 +352,6 @@ public class XelementHelper {
       }
     }
     return null;
-  }
-
-
-  public static XdoStatement findNextLoop(XbaseElement from){
-    Element loopElement = findNextElementOfType(from, XelementName.DO_STMT);
-    return (loopElement == null) ? null : new XdoStatement(loopElement);
   }
 
   public static XexprStatement findNextExprStatement(XbaseElement from){

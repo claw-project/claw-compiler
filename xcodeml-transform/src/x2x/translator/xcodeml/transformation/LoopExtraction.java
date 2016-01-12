@@ -112,7 +112,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
 
     // Find loop in function
-    _extractedLoop = XelementHelper.findLoop(_fctDefToExtract);
+    // TODO find any loops ? or subroutine must have only one loop ? ...
+    _extractedLoop = XelementHelper.findLoop(_fctDefToExtract, true);
     if(_extractedLoop == null){
       System.err.println("Could not locate inner loop in subroutine "
         + _fctDefToExtract.getFctName());
@@ -172,7 +173,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
-    XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef);
+    // TODO find any loops ? 
+    XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef, true);
 
 
     if(XmOption.isDebugOutput()){
