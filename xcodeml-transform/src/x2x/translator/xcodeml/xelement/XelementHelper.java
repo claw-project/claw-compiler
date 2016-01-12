@@ -228,22 +228,6 @@ public class XelementHelper {
     return null;
   }
 
-  public static <T extends XbaseElement> T findXelement(XbaseElement parent,
-    boolean any, Class<T> xElementClass)
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    Element element = findElement(parent, elementName, any);
-    if (element != null){
-      try{
-        T xelement = xElementClass.getDeclaredConstructor(Element.class).newInstance(element);
-        return xelement;
-      } catch(Exception ex){
-        return null;
-      }
-    }
-    return null;
-  }
-
   public static XintConstant findIntConstant(XbaseElement parent, boolean any){
     return findXelement(parent, any, XintConstant.class);
   }
@@ -640,6 +624,22 @@ public class XelementHelper {
 
   private static void insertAfter(Node refNode, Node newNode){
      refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
+  }
+
+  private static <T extends XbaseElement> T findXelement(XbaseElement parent,
+    boolean any, Class<T> xElementClass)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    Element element = findElement(parent, elementName, any);
+    if (element != null){
+      try{
+        T xelement = xElementClass.getDeclaredConstructor(Element.class).newInstance(element);
+        return xelement;
+      } catch(Exception ex){
+        return null;
+      }
+    }
+    return null;
   }
 
    // TODO description
