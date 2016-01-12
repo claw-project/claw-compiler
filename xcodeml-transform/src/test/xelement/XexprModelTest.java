@@ -16,8 +16,18 @@ public class XexprModelTest {
   private String exprModel_IntConst = dummyRootOpen +
     "<FintConstant type=\"Fint\">16</FintConstant>" + dummyRootClose;
 
+  private String exprModel_RealConst = dummyRootOpen +
+    "<FrealConstant type=\"Freal\">9.81</FrealConstant>" + dummyRootClose;
+
+  private String exprModel_ComplexConst = dummyRootOpen +
+    "<FcomplexConstant type=\"Fcomplex\">" +
+    "  <FrealConstant type=\"Freal\">1.0</FrealConstant>" +
+    "  <FrealConstant type=\"Freal\">2.0</FrealConstant>" +
+    "</FcomplexConstant>" + dummyRootClose;
+
   private String exprModel_LogConst = dummyRootOpen +
-    "<FlogicalConstant>0</FlogicalConstant>" + dummyRootClose; // TODO check with real XcodeML
+    "<FlogicalConstant type=\"Flogical\">.TRUE.</FlogicalConstant>" +
+    dummyRootClose;
 
   private String exprModel_CharConst = dummyRootOpen +
     "<FcharacterConstant type=\"C7fca03c0d3c0\">value1: </FcharacterConstant>"
@@ -45,8 +55,21 @@ public class XexprModelTest {
     assertNotNull(model);
     assertTrue(model.isIntConst());
 
-    // XrealConstant object TODO
-    // XcomplexConstant object TODO
+    // XrealConstant object
+    xml = XmlHelper.loadXMLFromString(exprModel_RealConst);
+    element = new XbaseElement(xml.getDocumentElement());
+    assertNotNull(element);
+    model = XelementHelper.findExprModel(element);
+    assertNotNull(model);
+    assertTrue(model.isRealConst());
+
+    // XcomplexConstant object
+    xml = XmlHelper.loadXMLFromString(exprModel_ComplexConst);
+    element = new XbaseElement(xml.getDocumentElement());
+    assertNotNull(element);
+    model = XelementHelper.findExprModel(element);
+    assertNotNull(model);
+    assertTrue(model.isComplexConst());
 
     // XlogicalConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_LogConst);
