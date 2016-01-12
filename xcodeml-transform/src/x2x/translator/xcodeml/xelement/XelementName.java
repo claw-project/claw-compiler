@@ -152,7 +152,7 @@ public class XelementName {
     if(_classToElementNameMapping.containsKey(xElementClass)){
       return _classToElementNameMapping.get(xElementClass);
     }
-    return "";
+    return null;
   }
 
 }

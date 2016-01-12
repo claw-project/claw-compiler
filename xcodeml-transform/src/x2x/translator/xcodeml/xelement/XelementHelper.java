@@ -281,8 +281,7 @@ public class XelementHelper {
   }
 
   public static XdoStatement findNextDoStatement(XbaseElement from){
-    Element loopElement = findNextElementOfType(from, XelementName.DO_STMT);
-    return (loopElement == null) ? null : new XdoStatement(loopElement);
+    return findNextElementOfType(from, XdoStatement.class);
   }
 
   public static XsymbolTable findSymbols(XbaseElement parent, boolean any){
@@ -355,25 +354,7 @@ public class XelementHelper {
   }
 
   public static XexprStatement findNextExprStatement(XbaseElement from){
-    Element element = findNextElementOfType(from, XelementName.EXPR_STMT);
-    return (element == null) ? null : new XexprStatement(element);
-  }
-
-  private static Element findNextElementOfType(XbaseElement from, String tag){
-    if(from == null || from.getBaseElement() == null){
-      return null;
-    }
-    Node nextNode = from.getBaseElement().getNextSibling();
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(tag)){
-          return element;
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
+    return findNextElementOfType(from, XexprStatement.class);
   }
 
   public static XdoStatement findDirectNextDoStmt(Node from){
@@ -613,14 +594,46 @@ public class XelementHelper {
     boolean any, Class<T> xElementClass)
   {
     String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || parent == null
+      || parent.getBaseElement() == null)
+    {
+      return null;
+    }
     Element element = findElement(parent, elementName, any);
     if (element != null){
       try{
-        T xelement = xElementClass.getDeclaredConstructor(Element.class).newInstance(element);
+        T xelement = xElementClass.
+          getDeclaredConstructor(Element.class).newInstance(element);
         return xelement;
       } catch(Exception ex){
         return null;
       }
+    }
+    return null;
+  }
+
+  private static <T extends XbaseElement> T findNextElementOfType(
+    XbaseElement from, Class<T> xElementClass)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || from == null || from.getBaseElement() == null){
+      return null;
+    }
+    Node nextNode = from.getBaseElement().getNextSibling();
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(elementName)){
+          try{
+            T xelement = xElementClass.
+              getDeclaredConstructor(Element.class).newInstance(element);
+            return xelement;
+          } catch(Exception ex){
+            return null;
+          }
+        }
+      }
+      nextNode = nextNode.getNextSibling();
     }
     return null;
   }
