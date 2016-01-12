@@ -288,10 +288,8 @@ public class XelementHelper {
     return findXelement(parent, any, XupperBound.class);
   }
 
-  public static Xstep findStep(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent,
-      XelementName.STEP);
-    return (element != null) ? new Xstep(element) : null;
+  public static Xstep findStep(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xstep.class);
   }
 
   public static Xbody findBody(XbaseElement parent){

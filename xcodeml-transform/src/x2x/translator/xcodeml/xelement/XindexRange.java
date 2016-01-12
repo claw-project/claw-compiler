@@ -36,7 +36,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
     if(!_isAssumedShape){
       _lowerBound = XelementHelper.findLowerBound(this, false);
       _upperBound = XelementHelper.findUpperBound(this, false);
-      _step = XelementHelper.findStep(this);
+      _step = XelementHelper.findStep(this, false);
     }
   }
 
