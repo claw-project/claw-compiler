@@ -31,7 +31,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
       XelementName.ATTR_TYPE);
     _sclass = XelementHelper.getAttributeValue(baseElement,
       XelementName.ATTR_SCLASS);
-    _xname = XelementHelper.findName(this);
+    _xname = XelementHelper.findName(this, false);
   }
 
   public void setName(String value){

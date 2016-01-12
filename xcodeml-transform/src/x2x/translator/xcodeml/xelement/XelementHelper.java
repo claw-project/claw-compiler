@@ -58,10 +58,10 @@ public class XelementHelper {
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element fctDefElement = (Element) fctDefNode;
-        Xname fctDefName = findName(fctDefElement);
+        XbaseElement dummyFctDef = new XbaseElement((Element)fctDefNode);
+        Xname fctDefName = findName(dummyFctDef, false);
         if(name != null && fctDefName.isIdentical(name, type)){
-          return new XfctDef(fctDefElement);
+          return new XfctDef(dummyFctDef.getBaseElement());
         }
       }
     }
@@ -138,12 +138,8 @@ public class XelementHelper {
     return findXelement(parent, any, XindexRange.class);
   }
 
-  public static Xname findName(XbaseElement parent){
-    return findName(parent.getBaseElement());
-  }
-  public static Xname findName(Element parent){ // TODO to be removed
-    Element element = findFirstElement(parent, XelementName.NAME);
-    return (element != null) ? new Xname(element) : null;
+  public static Xname findName(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xname.class);
   }
 
   public static Xvalue findValue(XbaseElement parent, boolean any){
@@ -335,10 +331,6 @@ public class XelementHelper {
 
   public static Xkind findKind(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xkind.class);
-  }
-
-  public static void insertAfter(Node refNode, Node newNode){
-    refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
   public static void insertBefore(XbaseElement ref, XbaseElement insert){
@@ -593,6 +585,25 @@ public class XelementHelper {
     }
   }
 
+  public static boolean validateStringAttribute(Document doc, String attrValue
+    , String xpathQuery) throws Exception
+  {
+    XPathFactory xPathfactory = XPathFactory.newInstance();
+    XPath xpath = xPathfactory.newXPath();
+    XPathExpression getVersion = xpath.compile(xpathQuery);
+    String outputValue = (String) getVersion.evaluate(doc,
+      XPathConstants.STRING);
+    if(outputValue.equals(attrValue)){
+      return true;
+    }
+    return false;
+  }
+
+
+  /**
+   * PRIVATE SECTION
+   */
+
   private static void removeEmptyTextNodes(Node parentNode) {
     Node childNode = parentNode.getFirstChild();
     while (childNode != null) {
@@ -627,24 +638,9 @@ public class XelementHelper {
     }
   }
 
-  public static boolean validateStringAttribute(Document doc, String attrValue
-    , String xpathQuery) throws Exception
-  {
-    XPathFactory xPathfactory = XPathFactory.newInstance();
-    XPath xpath = xPathfactory.newXPath();
-    XPathExpression getVersion = xpath.compile(xpathQuery);
-    String outputValue = (String) getVersion.evaluate(doc,
-      XPathConstants.STRING);
-    if(outputValue.equals(attrValue)){
-      return true;
-    }
-    return false;
+  private static void insertAfter(Node refNode, Node newNode){
+     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
-
-
-  /**
-   * PRIVATE SECTION
-   */
 
    // TODO description
   private static Element findElement(XbaseElement parent, String elementName, boolean any){

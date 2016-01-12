@@ -61,7 +61,7 @@ public class XdeclTable extends XbaseElement {
       // TODO error handling
     }
 
-    XelementHelper.insertAfter(oldDecl.getBaseElement(), decl.getBaseElement());
+    XelementHelper.insertAfter(oldDecl, decl);
     oldDecl.delete();
   }
 

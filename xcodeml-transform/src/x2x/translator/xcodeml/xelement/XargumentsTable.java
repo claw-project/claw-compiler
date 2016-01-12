@@ -44,8 +44,7 @@ public class XargumentsTable extends XbaseElement {
 
   public void replace(Xvar var, XarrayRef arrayRef){
     if(var != null){
-      XelementHelper.insertAfter(var.getBaseElement(),
-        arrayRef.getBaseElement());
+      XelementHelper.insertAfter(var, arrayRef);
       var.delete();
     } else {
       // TODO trigger a critical error
