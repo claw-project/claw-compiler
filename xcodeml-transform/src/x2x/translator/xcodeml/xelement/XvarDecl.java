@@ -27,7 +27,7 @@ public class XvarDecl extends Xdecl {
 
   private void readElementInformation(){
     _name = XelementHelper.findName(this);
-    _value = XelementHelper.findValue(this);
+    _value = XelementHelper.findValue(this, false);
     if(_value != null){
       _hasValue = true;
     }

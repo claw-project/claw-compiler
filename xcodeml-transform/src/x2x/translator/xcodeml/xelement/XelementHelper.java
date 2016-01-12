@@ -152,10 +152,8 @@ public class XelementHelper {
     return (element != null) ? new Xthen(element) : null;
   }
 
-  public static Xvalue findValue(XbaseElement parent){
-    Element element = findFirstElement(parent.getBaseElement(),
-      XelementName.VALUE);
-    return (element != null) ? new Xvalue(element) : null;
+  public static Xvalue findValue(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xvalue.class);
   }
 
   public static XexprModel findExprModel(XbaseElement parent){
