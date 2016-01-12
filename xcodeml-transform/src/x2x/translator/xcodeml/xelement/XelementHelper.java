@@ -138,6 +138,10 @@ public class XelementHelper {
     return findXelement(parent, any, XindexRange.class);
   }
 
+  public static XarrayIndex findArrayIndex(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XarrayIndex.class);
+  }
+
   public static Xname findName(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xname.class);
   }

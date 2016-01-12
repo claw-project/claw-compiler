@@ -13,12 +13,12 @@ import java.util.ArrayList;
  * Elements:
  * - Optional:
  *   - kind (Xkind)
- *   - len TODO
- *   - arrayIndex TODO
+ *   - len (Xlength)
+ *   - arrayIndex (XarrayIndex)
  *   - indexRange (XindexRange)
  *   - coShape TODO not needed for the moment
  * Attributes:
- * - Requited: type (text), ref (text)
+ * - Required: type (text), ref (text)
  * - Optional: is_public (bool), is_private (bool), is_pointer (bool),
  *             is_target (bool), is_external (bool),is_intrinsic (bool),
  *             is_optional (bool), is_save (bool), is_parameter (bool),
@@ -29,12 +29,13 @@ public class XbasicType extends Xtype {
 
 
   private int _dimension = 0;
-  private int _length = 0;
   private boolean _isArray = false;
 
-  // XbasicType inner elements
+  // Optional elements
   private ArrayList<XindexRange> _dimensionRanges = null;
+  private XarrayIndex _arrayIndex = null; // TODO can be 1 to N
   private Xkind _kind = null;
+  private Xlength _length = null;
 
   // XbasicType required attributes (type is declared in Xtype)
   private String _ref;
@@ -68,16 +69,13 @@ public class XbasicType extends Xtype {
     }
 
     // has length ?
-    Xlength length = XelementHelper.findLen(this, false);
-    if(length != null){
-      // TODO have a length object with information
-    }
+    _length = XelementHelper.findLen(this, false);
 
     // has kind ?
     _kind = XelementHelper.findKind(this, false);
 
     // has arrayIndex ?
-    // TODO
+    _arrayIndex = XelementHelper.findArrayIndex(this, false);
   }
 
   private void readRequiredAttributes() {
@@ -121,11 +119,15 @@ public class XbasicType extends Xtype {
   }
 
   public boolean hasLength(){
-    return _length != 0;
+    return _length != null;
   }
 
   public boolean hasKind(){
     return _kind != null;
+  }
+
+  public boolean hasArrayIndex(){
+    return _arrayIndex != null;
   }
 
   public int getDimensions(){
@@ -135,7 +137,6 @@ public class XbasicType extends Xtype {
   public String getRef(){
     return _ref;
   }
-
 
   public boolean isPublic() {
     return _is_public;
