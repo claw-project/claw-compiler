@@ -1,5 +1,10 @@
 package x2x.translator.xcodeml.xelement;
 
+
+import java.util.Map;
+import java.util.Hashtable;
+import java.util.Collections;
+
 /**
  *
  */
@@ -95,5 +100,59 @@ public class XelementName {
   public static final String VAR_REF = "varRef";
   public static final String VALUE = "value";
   public static final String X_CODE_PROGRAM = "XcodeProgram";
+
+
+  private static Map<Class, String> _classToElementNameMapping;
+
+  static {
+    Map<Class, String> tempMap = new Hashtable<Class, String>();
+    tempMap.put(XargumentsTable.class, ARGUMENTS);
+    tempMap.put(XarrayIndex.class, ARRAY_INDEX);
+    tempMap.put(XbasicType.class, BASIC_TYPE);
+    tempMap.put(Xbody.class, BODY);
+    tempMap.put(XdeclTable.class, DECLARATIONS);
+    tempMap.put(XdoStatement.class, DO_STMT);
+    tempMap.put(Xelse.class, ELSE);
+    tempMap.put(XexprStatement.class, EXPR_STMT);
+    tempMap.put(XfctCall.class, FCT_CALL);
+    tempMap.put(XfctDef.class, FCT_DEFINITION);
+    tempMap.put(XfctType.class, FCT_TYPE);
+    tempMap.put(XarrayRef.class, F_ARRAY_REF);
+    tempMap.put(XifStatement.class, F_IF_STMT);
+    tempMap.put(XintConstant.class, F_INT_CONST);
+    tempMap.put(XrealConstant.class, F_REAL_CONST);
+    tempMap.put(XcomplexConstant.class, F_COMPLEX_CONST);
+    tempMap.put(XcharacterConstant.class, F_CHAR_CONST);
+    tempMap.put(XlogicalConstant.class, F_LOGICAL_CONST);
+    //tempMap.put(XstructType.class, F_STRUCT_TYPE); TODO Uncomment when XstructType available
+    //tempMap.put(.class, GLOBAL_SYMBOLS); TODO have XglobalSymbols extends from XsymbolTable
+    tempMap.put(Xid.class, ID);
+    tempMap.put(XindexRange.class, INDEX_RANGE);
+    tempMap.put(Xkind.class, KIND);
+    tempMap.put(Xlength.class, LENGTH);
+    tempMap.put(XlowerBound.class, LOWER_BOUND);
+    tempMap.put(Xname.class, NAME);
+    tempMap.put(Xpragma.class, PRAGMA_STMT);
+    tempMap.put(Xstep.class, STEP);
+    tempMap.put(XsymbolTable.class, SYMBOLS);
+    tempMap.put(Xthen.class, THEN);
+    tempMap.put(XtypeTable.class, TYPE_TABLE);
+    tempMap.put(XupperBound.class, UPPER_BOUND);
+    tempMap.put(Xvar.class, VAR);
+    tempMap.put(XvarDecl.class, VAR_DECL);
+    tempMap.put(XvarRef.class, VAR_REF);
+    tempMap.put(Xvalue.class, VALUE);
+    tempMap.put(XcodeProg.class, X_CODE_PROGRAM);
+    _classToElementNameMapping = Collections.unmodifiableMap(tempMap);
+  }
+
+  public static <T extends XbaseElement> String
+    getElementNameFromClass(Class<T> xElementClass)
+  {
+    if(_classToElementNameMapping.containsKey(xElementClass)){
+      return _classToElementNameMapping.get(xElementClass);
+    }
+    return "";
+  }
 
 }
