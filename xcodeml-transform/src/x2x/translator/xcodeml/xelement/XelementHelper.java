@@ -276,10 +276,8 @@ public class XelementHelper {
     return findXelement(parent, any, Xelse.class);
   }
 
-  public static XargumentsTable findArgumentsTable(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent,
-      XelementName.ARGUMENTS);
-    return (element != null) ? new XargumentsTable(element) : null;
+  public static XargumentsTable findArgumentsTable(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XargumentsTable.class);
   }
 
   public static XlowerBound findLowerBound(XbaseElement parent){

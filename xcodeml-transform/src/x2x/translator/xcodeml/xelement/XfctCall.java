@@ -33,7 +33,7 @@ public class XfctCall extends Xfct {
       XelementName.ATTR_TYPE);
 
     // Read element
-    _arguments = XelementHelper.findArgumentsTable(this);
+    _arguments = XelementHelper.findArgumentsTable(this, false);
   }
 
   public boolean isIntrinsic(){
