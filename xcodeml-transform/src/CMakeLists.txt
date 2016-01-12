@@ -38,6 +38,7 @@ add_jar(${OMNI_CX2X_NAME}
 # XcodeML.Xelement package
   x2x/translator/xcodeml/xelement/XanalysisError.java
   x2x/translator/xcodeml/xelement/XargumentsTable.java
+  x2x/translator/xcodeml/xelement/XarrayConstructor.java
   x2x/translator/xcodeml/xelement/XarrayIndex.java
   x2x/translator/xcodeml/xelement/XarrayRef.java
   x2x/translator/xcodeml/xelement/XbaseElement.java
@@ -76,6 +77,7 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/XrealConstant.java
   x2x/translator/xcodeml/xelement/Xscope.java
   x2x/translator/xcodeml/xelement/Xstep.java
+  x2x/translator/xcodeml/xelement/XstructConstructor.java
   x2x/translator/xcodeml/xelement/XsymbolTable.java
   x2x/translator/xcodeml/xelement/Xthen.java
   x2x/translator/xcodeml/xelement/Xtype.java
