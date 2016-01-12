@@ -61,7 +61,7 @@ public class XbasicType extends Xtype {
     readOptionalAttributes();
 
     // is array ?
-    _dimension = XelementHelper.findNumberOfRange(baseElement);
+    _dimension = XelementHelper.findNumberOfRange(this);
     if (_dimension > 0){
       _isArray = true;
       _dimensionRanges = new ArrayList<XindexRange>();
@@ -72,13 +72,13 @@ public class XbasicType extends Xtype {
     }
 
     // has length ?
-    Xlength length = XelementHelper.findLen(this);
+    Xlength length = XelementHelper.findLen(this, false);
     if(length != null){
       // TODO have a length object with information
     }
 
     // has kind ?
-    _kind = XelementHelper.findKind(this);
+    _kind = XelementHelper.findKind(this, false);
 
     // has arrayIndex ?
     // TODO

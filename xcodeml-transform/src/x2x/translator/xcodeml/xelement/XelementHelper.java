@@ -319,8 +319,9 @@ public class XelementHelper {
     return findXelement(parent, any, XglobalSymbolTable.class);
   }
 
-  public static int findNumberOfRange(Element parent){
-    NodeList elements = parent.getElementsByTagName(XelementName.INDEX_RANGE);
+  public static int findNumberOfRange(XbaseElement parent){
+    NodeList elements = parent.getBaseElement().
+      getElementsByTagName(XelementName.INDEX_RANGE);
     return elements.getLength();
   }
 
@@ -328,14 +329,12 @@ public class XelementHelper {
     return parent.getElementsByTagName(XelementName.INDEX_RANGE);
   }
 
-  public static Xlength findLen(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.LENGTH);
-    return (element != null) ? new Xlength(element) : null;
+  public static Xlength findLen(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xlength.class);
   }
 
-  public static Xkind findKind(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.KIND);
-    return (element != null) ? new Xkind(element) : null;
+  public static Xkind findKind(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xkind.class);
   }
 
   public static void insertAfter(Node refNode, Node newNode){
