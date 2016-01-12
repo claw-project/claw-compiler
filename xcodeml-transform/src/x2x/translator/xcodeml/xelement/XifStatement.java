@@ -28,8 +28,8 @@ public class XifStatement extends XbaseElement {
   public XifStatement(Element baseElement){
     super(baseElement);
 
-    _then = XelementHelper.findThen(this);
-    _else = XelementHelper.findElse(this);
+    _then = XelementHelper.findThen(this, false);
+    _else = XelementHelper.findElse(this, false);
 
     // read optional attributes
     _constructName = XelementHelper.getAttributeValue(baseElement,

@@ -146,12 +146,6 @@ public class XelementHelper {
     return (element != null) ? new Xname(element) : null;
   }
 
-  public static Xthen findThen(XbaseElement parent){
-    Element element = findFirstElement(parent.getBaseElement(),
-      XelementName.THEN);
-    return (element != null) ? new Xthen(element) : null;
-  }
-
   public static Xvalue findValue(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xvalue.class);
   }
@@ -274,9 +268,12 @@ public class XelementHelper {
     return findXelement(parent, any, XlogicalConstant.class);
   }
 
-  public static Xelse findElse(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.ELSE);
-    return (element != null) ? new Xelse(element) : null;
+  public static Xthen findThen(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xthen.class);
+  }
+
+  public static Xelse findElse(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xelse.class);
   }
 
   public static XargumentsTable findArgumentsTable(XbaseElement parent){
