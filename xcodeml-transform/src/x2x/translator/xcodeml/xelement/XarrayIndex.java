@@ -26,7 +26,7 @@ public class XarrayIndex extends XbaseElement {
   private void readElementInformation(){
     // Find Var element if there is one
     // TODO move to XexprModel
-    Xvar var = XelementHelper.findVar(this);
+    Xvar var = XelementHelper.findVar(this, false);
     if(var != null){
       _exprModel = new XexprModel(var);
     }

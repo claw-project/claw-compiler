@@ -53,7 +53,8 @@ public class Xname extends XbaseElement {
   }
 
   public boolean isIdentical(String name, String type){
-    return _nameValue.equals(name) && _type.equals(type);
+    return _nameValue.equals(name); //&& _type.equals(type);
+    //TODO analyze why type if not identical in fcall and fdef
   }
 
   /**

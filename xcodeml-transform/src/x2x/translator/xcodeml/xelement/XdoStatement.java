@@ -29,7 +29,7 @@ public class XdoStatement extends XbaseElement {
   }
 
   public void findRangeElements(){
-    Xvar inductionVar = XelementHelper.findVar(this);
+    Xvar inductionVar = XelementHelper.findVar(this, false);
     XindexRange indexRange = XelementHelper.findIndexRange(this);
 
     if(inductionVar != null && indexRange != null){

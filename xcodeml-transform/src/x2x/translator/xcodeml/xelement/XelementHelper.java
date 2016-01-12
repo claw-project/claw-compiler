@@ -22,6 +22,9 @@ import java.util.List;
 
 public class XelementHelper {
 
+
+
+
   public static String getAttributeValue(Element el, String attrName){
     NamedNodeMap attributes = el.getAttributes();
     for (int j = 0; j < attributes.getLength(); j++) {
@@ -123,9 +126,8 @@ public class XelementHelper {
     return doStmt;
   }
 
-  public static Xvar findVar(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.VAR);
-    return (element != null) ? new Xvar(element) : null;
+  public static Xvar findVar(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xvar.class);
   }
 
   public static XvarRef findVarRef(XbaseElement parent){
@@ -165,11 +167,9 @@ public class XelementHelper {
      *     FlogicalConstant
      *   TODO
      *   - FarrayConstructor, FstructConstructor
-     *   TODO
      *   - Var
      *   TODO
      *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
-     *   TODO
      *   - functionCall
      *   TODO
      *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
@@ -181,16 +181,25 @@ public class XelementHelper {
      */
 
     // Try to find constant
-    Xconstant constant = findConstant(parent);
+    Xconstant constant = findConstant(parent, false);
     if(constant != null){
       return new XexprModel(constant);
     }
 
-
     // Try to find var
-    Xvar var = findVar(parent);
+    Xvar var = findVar(parent, false);
     if(var != null){
       return new XexprModel(var);
+    }
+
+    // TODO all findFunction here msut be perform on direct children only
+    // otherwise it will fails ... big refactoring needed
+
+
+    // Try to find fctCall
+    XfctCall fctCall = findFctCall(parent);
+    if(fctCall != null) {
+      return new XexprModel(fctCall);
     }
 
 
@@ -201,31 +210,31 @@ public class XelementHelper {
    *
    * @return A Xconstant object if one is found. null otherwise.
    */
-  public static Xconstant findConstant(XbaseElement parent){
+  public static Xconstant findConstant(XbaseElement parent, boolean any){
     // FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
     // FlogicalConstant
 
-    XintConstant intConst = findIntConstant(parent);
+    XintConstant intConst = findIntConstant(parent, any);
     if(intConst != null){
       return intConst;
     }
 
-    XrealConstant realConst = findRealConstant(parent);
+    XrealConstant realConst = findRealConstant(parent, any);
     if(realConst != null){
       return realConst;
     }
 
-    XcomplexConstant complexConst = findComplexConstant(parent);
+    XcomplexConstant complexConst = findComplexConstant(parent, any);
     if(complexConst != null){
       return complexConst;
     }
 
-    XcharacterConstant charConst = findCharacterConstant(parent);
+    XcharacterConstant charConst = findCharacterConstant(parent, any);
     if(charConst != null){
       return charConst;
     }
 
-    XlogicalConstant logConst = findLogicalConstant(parent);
+    XlogicalConstant logConst = findLogicalConstant(parent, any);
     if(logConst != null){
       return logConst;
     }
@@ -233,29 +242,40 @@ public class XelementHelper {
     return null;
   }
 
-  public static XintConstant findIntConstant(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.F_INT_CONST);
-    return (element != null) ? new XintConstant(element) : null;
+  public static <T extends XbaseElement> T findXelement(XbaseElement parent,
+    boolean any, Class<T> xElementClass)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    Element element = findElement(parent, elementName, any);
+    if (element != null){
+      try{
+        T xelement = xElementClass.getDeclaredConstructor(Element.class).newInstance(element);
+        return xelement;
+      } catch(Exception ex){
+        return null;
+      }
+    }
+    return null;
   }
 
-  public static XrealConstant findRealConstant(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.F_REAL_CONST);
-    return (element != null) ? new XrealConstant(element) : null;
+  public static XintConstant findIntConstant(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XintConstant.class);
   }
 
-  public static XcomplexConstant findComplexConstant(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.F_COMPLEX_CONST);
-    return (element != null) ? new XcomplexConstant(element) : null;
+  public static XrealConstant findRealConstant(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XrealConstant.class);
   }
 
-  public static XcharacterConstant findCharacterConstant(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.F_CHAR_CONST);
-    return (element != null) ? new XcharacterConstant(element) : null;
+  public static XcomplexConstant findComplexConstant(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XcomplexConstant.class);
   }
 
-  public static XlogicalConstant findLogicalConstant(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.F_LOGICAL_CONST);
-    return (element != null) ? new XlogicalConstant(element) : null;
+  public static XcharacterConstant findCharacterConstant(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XcharacterConstant.class);
+  }
+
+  public static XlogicalConstant findLogicalConstant(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XlogicalConstant.class);
   }
 
   public static Xelse findElse(XbaseElement parent){
@@ -366,6 +386,11 @@ public class XelementHelper {
       nextNode = nextNode.getNextSibling();
     }
     return null;
+  }
+
+  public static XfctCall findFctCall(XbaseElement parent){
+    Element element = findFirstElement(parent, XelementName.FCT_CALL);
+    return (element != null) ? new XfctCall(element) : null;
   }
 
   public static XfctCall findFctCall(XexprStatement exprStmt){
@@ -643,6 +668,23 @@ public class XelementHelper {
    * PRIVATE SECTION
    */
 
+   // TODO description
+  private static Element findElement(XbaseElement parent, String elementName, boolean any){
+    return findElement(parent.getBaseElement(), elementName, any);
+  }
+
+  /**
+   * Find an element starting from the parent.
+   *
+   */
+  private static Element findElement(Element parent, String elementName, boolean any){
+    if(any){
+      return findFirstElement(parent, elementName);
+    } else {
+      return findFirstChildElement(parent, elementName);
+    }
+  }
+
   private static Element findFirstElement(XbaseElement parent, String elementName){
     return findFirstElement(parent.getBaseElement(), elementName);
   }
@@ -653,6 +695,24 @@ public class XelementHelper {
       return null;
     }
     return (Element) elements.item(0);
+  }
+
+  /**
+   * Search only in the direct children of the parent element and not in the
+   * children of children TODO
+   */
+  private static Element findFirstChildElement(Element parent, String elementName){
+    NodeList nodeList = parent.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node nextNode = nodeList.item(i);
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(elementName)){
+          return element;
+        }
+      }
+    }
+    return null;
   }
 
 }

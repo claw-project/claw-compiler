@@ -26,6 +26,15 @@ public class XexprModelTest {
   private String exprModel_Var = dummyRootOpen +
     "<Var type=\"Fint\" scope=\"local\">k</Var>" + dummyRootClose;
 
+  private String exprModel_fctCall = dummyRootOpen +
+    "<functionCall type=\"Fvoid\">" +
+    "  <name type=\"F7fca03c08d80\">clawloop</name>" +
+    "  <arguments>" +
+    "    <Var type=\"A7fca03c07980\" scope=\"local\">value1</Var>" +
+    "    <Var type=\"A7fca03c08230\" scope=\"local\">value2</Var>" +
+    "  </arguments>" +
+    "</functionCall>" + dummyRootClose;
+
   @Test
   public void findExprModelTest() {
     // XintConstant object
@@ -62,6 +71,15 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element);
     assertNotNull(model);
     assertTrue(model.isVar());
+
+    // XfctCall
+    xml = XmlHelper.loadXMLFromString(exprModel_fctCall);
+    element = new XbaseElement(xml.getDocumentElement());
+    assertNotNull(element);
+    model = XelementHelper.findExprModel(element);
+    assertNotNull(model);
+    assertTrue(model.isFctCall());
+
   }
 
 }
