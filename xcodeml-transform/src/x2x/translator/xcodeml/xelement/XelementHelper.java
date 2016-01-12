@@ -280,16 +280,12 @@ public class XelementHelper {
     return findXelement(parent, any, XargumentsTable.class);
   }
 
-  public static XlowerBound findLowerBound(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent,
-      XelementName.LOWER_BOUND);
-    return (element != null) ? new XlowerBound(element) : null;
+  public static XlowerBound findLowerBound(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XlowerBound.class);
   }
 
-  public static XupperBound findUpperBound(XbaseElement parent){
-    Element element = XelementHelper.findFirstElement(parent,
-      XelementName.UPPER_BOUND);
-    return (element != null) ? new XupperBound(element) : null;
+  public static XupperBound findUpperBound(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XupperBound.class);
   }
 
   public static Xstep findStep(XbaseElement parent){
