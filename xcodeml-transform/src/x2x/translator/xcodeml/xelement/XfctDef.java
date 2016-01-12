@@ -26,8 +26,8 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
 
   public XfctDef(Element fctDefElement){
     super(fctDefElement);
-    _symbolTable = XelementHelper.findSymbols(this);
-    _declTable = XelementHelper.findDeclarations(this);
+    _symbolTable = XelementHelper.findSymbols(this, false);
+    _declTable = XelementHelper.findDeclarations(this, false);
     _body = XelementHelper.findBody(this, false);
   }
 

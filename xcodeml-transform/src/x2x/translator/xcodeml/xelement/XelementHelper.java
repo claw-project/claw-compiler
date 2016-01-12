@@ -301,14 +301,12 @@ public class XelementHelper {
     return (element != null) ? new XdoStatement(element) : null;
   }
 
-  public static XsymbolTable findSymbols(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.SYMBOLS);
-    return (element != null) ? new XsymbolTable(element) : null;
+  public static XsymbolTable findSymbols(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XsymbolTable.class);
   }
 
-  public static XdeclTable findDeclarations(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.DECLARATIONS);
-    return (element != null) ? new XdeclTable(element) : null;
+  public static XdeclTable findDeclarations(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XdeclTable.class);
   }
 
   public static XtypeTable findTypeTable(Document doc){
