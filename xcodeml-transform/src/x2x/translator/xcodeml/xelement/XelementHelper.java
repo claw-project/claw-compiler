@@ -311,15 +311,12 @@ public class XelementHelper {
 
   public static XtypeTable findTypeTable(XcodeProg parent, boolean any){
     return findXelement(parent, any, XtypeTable.class);
-    /*NodeList elements = doc.getElementsByTagName(XelementName.TYPE_TABLE);
-    Element element = (Element) elements.item(0);
-    return (element != null) ? new XtypeTable(element) : null;*/
   }
 
-  public static XsymbolTable findGlobalSymbols(Document doc){
-    NodeList elements = doc.getElementsByTagName(XelementName.GLOBAL_SYMBOLS);
-    Element element = (Element) elements.item(0);
-    return (element != null) ? new XsymbolTable(element) : null;
+  public static XglobalSymbolTable findGlobalSymbols(XcodeProg parent,
+    boolean any)
+  {
+    return findXelement(parent, any, XglobalSymbolTable.class);
   }
 
   public static int findNumberOfRange(Element parent){

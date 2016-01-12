@@ -125,7 +125,7 @@ public class XelementName {
     tempMap.put(XcharacterConstant.class, F_CHAR_CONST);
     tempMap.put(XlogicalConstant.class, F_LOGICAL_CONST);
     //tempMap.put(XstructType.class, F_STRUCT_TYPE); TODO Uncomment when XstructType available
-    //tempMap.put(.class, GLOBAL_SYMBOLS); TODO have XglobalSymbols extends from XsymbolTable
+    tempMap.put(XglobalSymbolTable.class, GLOBAL_SYMBOLS);
     tempMap.put(Xid.class, ID);
     tempMap.put(XindexRange.class, INDEX_RANGE);
     tempMap.put(Xkind.class, KIND);

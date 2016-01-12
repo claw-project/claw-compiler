@@ -31,7 +31,7 @@ public class XcodeProg extends XbaseElement {
 
   // XcodeProg inner elements
   private XtypeTable _typeTable = null;
-  private XsymbolTable _globalSymbolsTable = null;
+  private XglobalSymbolTable _globalSymbolsTable = null;
 
   // XcodeProg optional attributes
   private String _version = null;
@@ -155,7 +155,7 @@ public class XcodeProg extends XbaseElement {
   }
 
   private void readGlobalSymbolsTable() {
-    _globalSymbolsTable = XelementHelper.findGlobalSymbols(_xcodemlDoc);
+    _globalSymbolsTable = XelementHelper.findGlobalSymbols(this, true);
   }
 
 }
