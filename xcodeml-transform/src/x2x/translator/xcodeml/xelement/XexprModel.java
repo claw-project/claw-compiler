@@ -71,6 +71,10 @@ public class XexprModel {
     return isOfType(XcomplexConstant.class);
   }
 
+  public boolean isFctCall(){
+    return isOfType(XfctCall.class);
+  }
+
   public XintConstant getIntConstant(){
     if(isIntConst()){
       return (XintConstant)_element;
