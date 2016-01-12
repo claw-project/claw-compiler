@@ -357,37 +357,15 @@ public class XelementHelper {
     return findNextElementOfType(from, XexprStatement.class);
   }
 
-  public static XdoStatement findDirectNextDoStmt(Node from){
-    Element el = findDirectNextElement(from, XelementName.DO_STMT);
-    if(el == null){
-      return null;
-    }
-    return new XdoStatement(el);
+  public static XdoStatement findDirectNextDoStmt(XbaseElement from){
+    return findDirectNextElement(from, XdoStatement.class);
   }
 
-  public static XifStatement findDirectNextIfStmt(Node from){
-    Element el = findDirectNextElement(from, XelementName.F_IF_STMT);
-    if(el == null){
-      return null;
-    }
-    return new XifStatement(el);
+  public static XifStatement findDirectNextIfStmt(XbaseElement from){
+    return findDirectNextElement(from, XifStatement.class);
   }
 
-  private static Element findDirectNextElement(Node from, String tag){
-    Node nextNode = from.getNextSibling();
-    boolean elementFound = false;
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(tag)){
-          return element;
-        }
-        return null;
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
+
 
   public static void deleteBetween(Xpragma start, Xpragma end){
     ArrayList<Element> toDelete = new ArrayList<Element>();
@@ -632,6 +610,34 @@ public class XelementHelper {
             return null;
           }
         }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
+
+  private static <T extends XbaseElement> T findDirectNextElement(
+    XbaseElement from, Class<T> xElementClass)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || from == null || from.getBaseElement() == null){
+      return null;
+    }
+    Node nextNode = from.getBaseElement().getNextSibling();
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(elementName)){
+          try{
+            T xelement = xElementClass.
+              getDeclaredConstructor(Element.class).newInstance(element);
+            return xelement;
+          } catch(Exception ex){
+            return null;
+          }
+        }
+        return null;
       }
       nextNode = nextNode.getNextSibling();
     }

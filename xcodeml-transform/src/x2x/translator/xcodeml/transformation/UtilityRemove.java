@@ -24,8 +24,8 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_end == null){
-      _do = XelementHelper.findDirectNextDoStmt(_pragma.getBaseElement());
-      _if = XelementHelper.findDirectNextIfStmt(_pragma.getBaseElement());
+      _do = XelementHelper.findDirectNextDoStmt(_pragma);
+      _if = XelementHelper.findDirectNextIfStmt(_pragma);
 
       if(_do == null && _if == null){
         xcodeml.addError("Directive remove without end not followed by a do or if statement",
