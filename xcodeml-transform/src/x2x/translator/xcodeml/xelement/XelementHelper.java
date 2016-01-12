@@ -183,7 +183,7 @@ public class XelementHelper {
 
 
     // Try to find fctCall
-    XfctCall fctCall = findFctCall(parent);
+    XfctCall fctCall = findFctCall(parent, false);
     if(fctCall != null) {
       return new XexprModel(fctCall);
     }
@@ -338,9 +338,8 @@ public class XelementHelper {
       element.getBaseElement());
   }
 
-  public static XfctCall findFctCall(XbaseElement parent){
-    Element element = findFirstElement(parent, XelementName.FCT_CALL);
-    return (element != null) ? new XfctCall(element) : null;
+  public static XfctCall findFctCall(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XfctCall.class);
   }
 
   public static XfctCall findFctCall(XexprStatement exprStmt){
@@ -683,7 +682,7 @@ public class XelementHelper {
 
   /**
    * Search only in the direct children of the parent element and not in the
-   * children of children TODO
+   * children of children
    */
   private static Element findFirstChildElement(Element parent, String elementName){
     NodeList nodeList = parent.getChildNodes();
