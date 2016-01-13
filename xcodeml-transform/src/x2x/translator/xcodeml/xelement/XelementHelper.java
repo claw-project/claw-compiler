@@ -25,8 +25,11 @@ public class XelementHelper {
 
 
 
-  public static String getAttributeValue(Element el, String attrName){
-    NamedNodeMap attributes = el.getAttributes();
+  public static String getAttributeValue(XbaseElement el, String attrName){
+    if(el == null || el.getBaseElement() == null){
+      return null;
+    }
+    NamedNodeMap attributes = el.getBaseElement().getAttributes();
     for (int j = 0; j < attributes.getLength(); j++) {
       if(attributes.item(j).getNodeName().equals(attrName)){
         return attributes.item(j).getNodeValue();
@@ -35,7 +38,12 @@ public class XelementHelper {
     return null;
   }
 
-  public static boolean getBooleanAttributeValue(Element el, String attrName) {
+  public static boolean getBooleanAttributeValue(XbaseElement el,
+    String attrName)
+  {
+    if(el == null || el.getBaseElement() == null){
+      return false;
+    }
     String value = XelementHelper.getAttributeValue(el, attrName);
     if(value == null) {
       return false;

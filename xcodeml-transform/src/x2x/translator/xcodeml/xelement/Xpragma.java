@@ -19,12 +19,12 @@ public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {
     super(pragmaElement);
     if(pragmaElement != null){
       _value = getData();
-      String lineAttr = XelementHelper.getAttributeValue(baseElement,
+      String lineAttr = XelementHelper.getAttributeValue(this,
         XelementName.ATTR_LINENO);
       if(lineAttr != null){
         _line = Integer.parseInt(lineAttr);
       }
-      _filename = XelementHelper.getAttributeValue(baseElement,
+      _filename = XelementHelper.getAttributeValue(this,
         XelementName.ATTR_FILE);
     }
   }

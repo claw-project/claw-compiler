@@ -32,10 +32,10 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
   }
 
   private void readFctTypeInformation(){
-    _returnType = XelementHelper.getAttributeValue(baseElement,
+    _returnType = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_RETURN_TYPE);
 
-    String value = XelementHelper.getAttributeValue(baseElement,
+    String value = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_IS_PROGRAM);
 
     if(value != null && value.equals(XelementName.TRUE)){
@@ -45,13 +45,13 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
     // TODO read parameters as Xname element
 
     // read optional attributes
-    _resultName = XelementHelper.getAttributeValue(baseElement,
+    _resultName = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_RESULT_NAME);
-    _isRecursive = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isRecursive = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_RECURSIVE);
-    _isProgram = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isProgram = XelementHelper.getBooleanAttributeValue(this,
         XelementName.ATTR_IS_PROGRAM);
-    _isInternal = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isInternal = XelementHelper.getBooleanAttributeValue(this,
         XelementName.ATTR_IS_INTERNAL);
   }
 

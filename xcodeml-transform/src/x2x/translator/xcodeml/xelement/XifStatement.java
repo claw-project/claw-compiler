@@ -32,7 +32,7 @@ public class XifStatement extends XbaseElement {
     _else = XelementHelper.findElse(this, false);
 
     // read optional attributes
-    _constructName = XelementHelper.getAttributeValue(baseElement,
+    _constructName = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_CONSTRUCT_NAME);
   }
 }

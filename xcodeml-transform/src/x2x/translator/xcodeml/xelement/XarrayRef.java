@@ -40,7 +40,7 @@ public class XarrayRef extends XbaseElement {
   }
 
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(baseElement,
+    _type = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
 
     // Find Var element

@@ -29,7 +29,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
   }
 
   private void readRangeValue(){
-    _isAssumedShape = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isAssumedShape = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_ASSUMED_SHAPE);
 
     // If the shape is assumed, there is no inner elements

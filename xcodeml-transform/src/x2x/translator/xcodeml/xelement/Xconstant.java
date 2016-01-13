@@ -26,9 +26,9 @@ public class Xconstant extends XbaseElement {
 
   private void readElementInformation(){
     _value = baseElement.getTextContent();
-    _type = XelementHelper.getAttributeValue(baseElement,
+    _type = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
-    _kind = XelementHelper.getAttributeValue(baseElement,
+    _kind = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
   }
 

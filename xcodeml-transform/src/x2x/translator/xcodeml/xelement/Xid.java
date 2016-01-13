@@ -27,10 +27,8 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
   }
 
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(baseElement,
-      XelementName.ATTR_TYPE);
-    _sclass = XelementHelper.getAttributeValue(baseElement,
-      XelementName.ATTR_SCLASS);
+    _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
+    _sclass = XelementHelper.getAttributeValue(this, XelementName.ATTR_SCLASS);
     _xname = XelementHelper.findName(this, false);
   }
 

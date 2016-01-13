@@ -21,7 +21,7 @@ public class XarrayConstructor extends XbaseElement {
 
   public XarrayConstructor(Element baseElement){
     super(baseElement);
-    _type = XelementHelper.getAttributeValue(baseElement,
+    _type = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
   }
 

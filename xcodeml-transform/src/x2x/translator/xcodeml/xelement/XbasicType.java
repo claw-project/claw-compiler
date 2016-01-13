@@ -80,30 +80,29 @@ public class XbasicType extends Xtype {
 
   private void readRequiredAttributes() {
     // Attribute type is read in Xtype
-    _ref = XelementHelper.getAttributeValue(baseElement,
-      XelementName.ATTR_REF);
+    _ref = XelementHelper.getAttributeValue(this, XelementName.ATTR_REF);
   }
 
   private void readOptionalAttributes() {
-    _is_public = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_public = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_PUBLIC);
-    _is_private = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_private = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_PRIVATE);
-    _is_pointer = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_pointer = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_POINTER);
-    _is_target = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_target = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_TARGET);
-    _is_external = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_external = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_EXTERNAL);
-    _is_intrinsic = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_intrinsic = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_INTRINSIC);
-    _is_optional = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_optional = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_OPTIONAL);
-    _is_save = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_save = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_SAVE);
-    _is_parameter = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_parameter = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_PARAMETER);
-    _is_allocatable = XelementHelper.getBooleanAttributeValue(baseElement,
+    _is_allocatable = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_ALLOCATABLE);
   }
 

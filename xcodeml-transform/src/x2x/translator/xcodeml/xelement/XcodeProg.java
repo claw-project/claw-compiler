@@ -52,16 +52,14 @@ public class XcodeProg extends XbaseElement {
   }
 
   private void readDocumentInformation(){
-    _version = XelementHelper.getAttributeValue(
-      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_VERSION);
-    _language = XelementHelper.getAttributeValue(
-      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_LANGUAGE);
-    _time = XelementHelper.getAttributeValue(
-      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_TIME);
-    _source = XelementHelper.getAttributeValue(
-      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_SOURCE);
-    _compilerInfo = XelementHelper.getAttributeValue(
-      _xcodemlDoc.getDocumentElement(), XelementName.ATTR_COMPILER_INFO);
+    _version = XelementHelper.getAttributeValue(this,
+      XelementName.ATTR_VERSION);
+    _language = XelementHelper.getAttributeValue(this,
+      XelementName.ATTR_LANGUAGE);
+    _time = XelementHelper.getAttributeValue(this, XelementName.ATTR_TIME);
+    _source = XelementHelper.getAttributeValue(this, XelementName.ATTR_SOURCE);
+    _compilerInfo = XelementHelper.getAttributeValue(this,
+      XelementName.ATTR_COMPILER_INFO);
   }
 
   public void addError(String msg, int lineno){
@@ -97,9 +95,9 @@ public class XcodeProg extends XbaseElement {
       Document doc = dBuilder.parse(fXmlFile);
       doc.getDocumentElement().normalize();
       _xcodemlDoc = doc;
-      readDocumentInformation();
       _isLoaded = true;
       baseElement = _xcodemlDoc.getDocumentElement();
+      readDocumentInformation();
 
       if (!isXcodeMLvalid()){
         addError("XcodeML document is not valid", 0);

@@ -27,9 +27,9 @@ public class XfctCall extends Xfct {
     super(baseElement);
 
     // Read attributes
-    _isInstrinsic = XelementHelper.getBooleanAttributeValue(baseElement,
+    _isInstrinsic = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_INTRINSIC);
-    _type = XelementHelper.getAttributeValue(baseElement,
+    _type = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
 
     // Read element

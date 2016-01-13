@@ -58,8 +58,8 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   }
 
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(baseElement, XelementName.ATTR_TYPE);
-    String scope = XelementHelper.getAttributeValue(baseElement, XelementName.ATTR_SCOPE);
+    _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
+    String scope = XelementHelper.getAttributeValue(this, XelementName.ATTR_SCOPE);
     _scope = Xscope.fromString(scope);
     _identity = baseElement.getTextContent();
   }
