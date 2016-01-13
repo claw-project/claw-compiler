@@ -1,5 +1,7 @@
 package x2x.translator.xcodeml.xelement;
 
+import x2x.translator.xcodeml.xelement.exception.*;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -431,17 +433,29 @@ public class XelementHelper {
     return false;
   }
 
-  public static void appendBody(Element elementMaster, Element elementSlave) {
-    Element masterBody = XelementHelper.findFirstElement(elementMaster,
-      XelementName.BODY);
-    Element slaveBody = XelementHelper.findFirstElement(elementSlave,
-      XelementName.BODY);
+  /**
+   * Insert all the statements from a given body at the end of another body
+   * @param originalBody The body in which the extra body will be appended
+   * @param extraBody    The body that will be appended to the original body
+   * @throws IllegalTransformationException if one of the body or their base
+   *         element is null.
+   */
+  public static void appendBody(Xbody originalBody, Xbody extraBody)
+    throws IllegalTransformationException
+  {
+    if(originalBody == null || originalBody.getBaseElement() == null
+      || extraBody == null || extraBody.getBaseElement() == null)
+    {
+      throw new IllegalTransformationException("One of the body is null.");
+    }
+
     // Append content of loop-body (loop) to this loop-body
-    for(Node childNode = slaveBody.getFirstChild(); childNode!=null;){
+    Node childNode = extraBody.getBaseElement().getFirstChild();
+    while(childNode != null){
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE){
-        masterBody.appendChild(childNode);
+        originalBody.getBaseElement().appendChild(childNode);
       }
       childNode = nextChild;
     }

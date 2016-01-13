@@ -5,6 +5,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
+import x2x.translator.xcodeml.xelement.exception.*;
 
 /**
  * The XdoStatement represents the FdoStatement (6.5) element in XcodeML
@@ -85,9 +86,10 @@ public class XdoStatement extends XbaseElement {
     return _body;
   }
 
-  public void appendToBody(XdoStatement otherLoop){
-    XelementHelper.appendBody(this.getBaseElement(),
-      otherLoop.getBaseElement());
+  public void appendToBody(XdoStatement otherLoop)
+    throws IllegalTransformationException
+  {
+    XelementHelper.appendBody(_body, otherLoop.getBody());
   }
 
   public String getIterationVariableValue(){

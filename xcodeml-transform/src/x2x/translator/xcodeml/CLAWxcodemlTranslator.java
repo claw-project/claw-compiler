@@ -2,6 +2,7 @@ package x2x.translator.xcodeml;
 
 // Xelement import
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformation.*;
 import x2x.translator.xcodeml.transformer.*;
 import x2x.translator.pragma.CLAWpragma;
@@ -115,10 +116,18 @@ public class CLAWxcodemlTranslator {
       }
 
       for(TransformationGroup t : _transformer.getGroups()){
+
         if(XmOption.isDebugOutput()){
           System.out.println("Apply transfomation: " + t.transformationName());
         }
-        t.applyTranslations(_program, _transformer);
+
+        try {
+          t.applyTranslations(_program, _transformer);
+        } catch (IllegalTransformationException itex) {
+          _program.addError("IllegalTransformationException: " +
+            itex.getMessage(), itex.getStartLine());
+          abort();
+        }
       }
 
       // TODO handle the return value

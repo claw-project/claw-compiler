@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
 public class UtilityRemove extends Transformation<UtilityRemove> {
@@ -38,7 +39,7 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
 
 
   public void transform(XcodeProg xcodeml, Transformer transformer,
-    UtilityRemove other)
+    UtilityRemove other) throws IllegalTransformationException
   {
     if(_end == null){
       if(_do != null){

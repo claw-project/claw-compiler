@@ -3,6 +3,7 @@ package x2x.translator.xcodeml.transformation;
 import java.util.ArrayList;
 
 import x2x.translator.xcodeml.xelement.XcodeProg;
+import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
 /**
@@ -17,7 +18,9 @@ public class DependentTransformationGroup<T extends Transformation<? super T>> e
     super(name);
   }
 
-  public void applyTranslations(XcodeProg xcodeml, Transformer transformer){
+  public void applyTranslations(XcodeProg xcodeml, Transformer transformer)
+    throws IllegalTransformationException
+  {
     for(int i = 0; i < _translations.size(); ++i){
       T base = _translations.get(i);
       for(int j = i + 1; j < _translations.size(); ++j){
@@ -26,7 +29,15 @@ public class DependentTransformationGroup<T extends Transformation<? super T>> e
           continue;
         }
         if(base.canBeTransformedWith(candidate)){
-          base.transform(xcodeml, transformer, candidate);
+          try {
+            base.transform(xcodeml, transformer, candidate);
+          } catch (IllegalTransformationException itex) {
+            // Catch the exception to add line information and rethrow it
+            if(itex.getStartLine() == 0){
+              itex.setStartLine(base.getStartLine());
+              throw itex;
+            }
+          }
         }
       }
     }

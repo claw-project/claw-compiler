@@ -88,6 +88,9 @@ add_jar(${OMNI_CX2X_NAME}
   x2x/translator/xcodeml/xelement/XvarDecl.java
   x2x/translator/xcodeml/xelement/XvarRef.java
 
+# XcodeML.Xelement.Exception package
+  x2x/translator/xcodeml/xelement/exception/IllegalTransformationException.java
+
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 

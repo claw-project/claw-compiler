@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
 import xcodeml.util.XmOption;
@@ -35,7 +36,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   }
 
   public void transform(XcodeProg xcodeml, Transformer transformer,
-    LoopInterchange other)
+    LoopInterchange other) throws IllegalTransformationException
   {
 
     analyze(xcodeml, transformer);

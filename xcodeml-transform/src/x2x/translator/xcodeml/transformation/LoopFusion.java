@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWpragma;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
 public class LoopFusion extends Transformation<LoopFusion> {
@@ -36,7 +37,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * Merge the given loop with this one
    */
   public void transform(XcodeProg xcodeml, Transformer transformer,
-    LoopFusion loopFusionUnit)
+    LoopFusion loopFusionUnit) throws IllegalTransformationException
   {
     _loop.appendToBody(loopFusionUnit.getLoop());
     loopFusionUnit.finalizeTransformation();

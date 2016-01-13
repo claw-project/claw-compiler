@@ -2,6 +2,7 @@ package x2x.translator.xcodeml.transformation;
 
 import x2x.translator.pragma.CLAWmapping;
 import x2x.translator.xcodeml.xelement.*;
+import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
 import java.util.ArrayList;
@@ -130,7 +131,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   }
 
   public void transform(XcodeProg xcodeml, Transformer transformer,
-    LoopExtraction other)
+    LoopExtraction other) throws IllegalTransformationException
   {
 
     /*
@@ -173,7 +174,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
-    // TODO find any loops ? 
+    // TODO find any loops ?
     XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef, true);
 
 
