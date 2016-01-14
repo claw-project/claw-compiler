@@ -29,7 +29,7 @@ set(OMNI_JAR_CX2X "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_NAME}.jar")
 
 
 # Build instruction for the xcodeml translator tool
-add_subdirectory(xcodeml-transform)
+add_subdirectory(omni-cx2x)
 
 # compiler driver
 add_subdirectory(driver)

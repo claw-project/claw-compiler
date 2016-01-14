@@ -1,12 +1,31 @@
-package x2x.translator.xcodeml.xelement;
+/*
+ * This file is part of the OMNI CLAW Fortran Compiler.
+ *
+ * OMNI CLAW Fortran Compiler is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * OMNI CLAW Fortran Compiler is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
+package x2x.translator.xcodeml.xelement;
 
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.Collections;
 
 /**
+ * XelementName class contains all element and attributes values that can be
+ * found in the XcodeML/F intermediate representation language.
  *
+ * @author Valentin Clement
  */
 
 public class XelementName {
@@ -146,6 +165,11 @@ public class XelementName {
     _classToElementNameMapping = Collections.unmodifiableMap(tempMap);
   }
 
+  /**
+   * Get the corresponding element name from a XbaseElement derived class
+   * @param xElementClass XbaseElement derived class
+   * @return String value of the element name if know. Null otherwise
+   */
   public static <T extends XbaseElement> String
     getElementNameFromClass(Class<T> xElementClass)
   {

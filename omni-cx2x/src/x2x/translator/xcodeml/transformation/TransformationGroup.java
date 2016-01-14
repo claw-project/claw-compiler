@@ -6,6 +6,14 @@ import x2x.translator.xcodeml.transformer.Transformer;
 
 import java.util.ArrayList;
 
+/**
+ * A TransformationGroup holds transformation units and can apply. Normally,
+ * only derived classes of TransformationGroup should be used as they
+ * implement applyTranslations.
+ *
+ * @author Valentin Clement
+ */
+
 public abstract class TransformationGroup<T extends Transformation> {
   private String _name = null;
   protected ArrayList<T> _translations = null;

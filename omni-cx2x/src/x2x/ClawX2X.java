@@ -172,7 +172,7 @@ public class ClawX2X {
       return;
     }
 
-
+/*
 
     Reader reader = null;
     Writer xmlWriter = null;
@@ -246,9 +246,6 @@ public class ClawX2X {
     CLAWtranslator claw_translator = new CLAWtranslator();
     xobjFile.iterateDef(claw_translator);
 
-    /*CLAWglobalDecl clawGlobalDecl = new CLAWglobalDecl(xobjFile);
-    CLAWanalyzePragma clawAnalyzer = new CLAWanalyzePragma(clawGlobalDecl);
-    xobjFile.iterateDef(clawAnalyzer);*/
 
 
 
@@ -337,7 +334,7 @@ public class ClawX2X {
         decompWriter.close();
       }
     }
-
+*/
 
   }
 

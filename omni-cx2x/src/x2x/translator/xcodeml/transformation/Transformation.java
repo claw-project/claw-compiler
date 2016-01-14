@@ -4,6 +4,14 @@ import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
+/**
+ * A Transformation is an object capable of analyzing a possible code
+ * transformation to be applied and the steps to apply it to the intermediate
+ * representation. Normally, only derived classes of Transformation should be
+ * applied as the base class does not implement the core methods.
+ *
+ * @author Valentin Clement
+ */
 
 public abstract class Transformation<T> {
   protected boolean _transformed = false;

@@ -5,6 +5,16 @@ import x2x.translator.xcodeml.xelement.*;
 import x2x.translator.xcodeml.xelement.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
+/**
+ * A LoopFusion transformation is a dependent transformation. If two LoopFusion
+ * transformation units shared the same fusion group and the same loop iteration
+ * information, they can be merge together.
+ * The transformation consists of merging the body of the second do statement to
+ * the end of the first do statement.
+ *
+ * @author Valentin Clement
+ */
+
 public class LoopFusion extends Transformation<LoopFusion> {
   // Contains the value of the group option
   private String _groupLabel = null;
