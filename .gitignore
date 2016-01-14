@@ -24,3 +24,5 @@ claw_f.conf_test
 claw_f_lib.sh
 __omni_tmp__
 __xmod__
+.idea
+out
