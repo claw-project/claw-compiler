@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public interface Transformer {
-  public void addTransformation(Transformation t);
-  public void addTransformationGroup(TransformationGroup tg, int position);
-  public List<TransformationGroup> getGroups();
+  void addTransformation(Transformation t);
+  void addTransformationGroup(TransformationGroup tg, int position);
+  List<TransformationGroup> getGroups();
 }
