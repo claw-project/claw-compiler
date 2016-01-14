@@ -6,7 +6,7 @@ set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 
 add_jar(${OMNI_CX2X_NAME}
 # Base class
-  x2x/ClawX2X.java
+  x2x/Cx2x.java
 
 # xobject package
   x2x/translator/xobject/CLAWblockVisitor.java

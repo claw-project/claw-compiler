@@ -36,7 +36,7 @@ import x2x.translator.xobject.CLAWglobalDecl;
 import x2x.translator.pragma.CLAWanalyzePragma;
 import x2x.translator.xcodeml.CLAWxcodemlTranslator;
 
-public class ClawX2X {
+public class Cx2x {
   private static void error(String s) {
     System.err.println(s);
     System.exit(1);
