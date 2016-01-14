@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
 import helper.XmlHelper;
-import x2x.translator.xcodeml.xelement.*;
+import x2x.xcodeml.xelement.*;
 
 public class XexprModelTest {
 

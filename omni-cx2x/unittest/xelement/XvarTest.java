@@ -7,8 +7,8 @@ import org.w3c.dom.Element;
 
 import helper.XmlHelper;
 
-import x2x.translator.xcodeml.xelement.Xvar;
-import x2x.translator.xcodeml.xelement.Xscope;
+import x2x.xcodeml.xelement.Xvar;
+import x2x.xcodeml.xelement.Xscope;
 
 public class XvarTest {
   private static final String TEST_TYPE = "Fint";

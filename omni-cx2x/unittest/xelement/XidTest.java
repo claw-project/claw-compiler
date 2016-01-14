@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 
 import helper.XmlHelper;
 
-import x2x.translator.xcodeml.xelement.Xid;
+import x2x.xcodeml.xelement.Xid;
 
 public class XidTest {
   private static final String TEST_TYPE = "F7f9502e03d00";

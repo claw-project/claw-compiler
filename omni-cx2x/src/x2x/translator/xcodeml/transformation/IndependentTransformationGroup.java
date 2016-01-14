@@ -2,8 +2,8 @@ package x2x.translator.xcodeml.transformation;
 
 import java.util.ArrayList;
 
-import x2x.translator.xcodeml.xelement.XcodeProg;
-import x2x.translator.xcodeml.xelement.exception.*;
+import x2x.xcodeml.xelement.XcodeProg;
+import x2x.translator.exception.*;
 import x2x.translator.xcodeml.transformer.Transformer;
 
 /**
