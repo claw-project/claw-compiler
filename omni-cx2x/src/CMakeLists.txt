@@ -8,11 +8,6 @@ add_jar(${OMNI_CX2X_NAME}
 # Base class
   cx2x/Cx2x.java
 
-# xobject package
-  cx2x/translator/xobject/CLAWblockVisitor.java
-  cx2x/translator/xobject/CLAWglobalDecl.java
-  cx2x/translator/xobject/CLAWtranslator.java
-
 # Pragma package
   cx2x/translator/pragma/CLAWanalyzeLocalPragma.java
   cx2x/translator/pragma/CLAWanalyzePragma.java
