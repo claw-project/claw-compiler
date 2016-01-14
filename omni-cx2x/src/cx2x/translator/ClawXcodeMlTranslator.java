@@ -5,7 +5,7 @@ import cx2x.xcodeml.xelement.*;
 import cx2x.translator.transformer.*;
 import cx2x.translator.transformation.*;
 import cx2x.translator.exception.*;
-import cx2x.translator.pragma.CLAWpragma;
+import cx2x.translator.pragma.ClawPragma;
 
 // OMNI import
 import exc.xcodeml.*;
@@ -43,29 +43,29 @@ public class ClawXcodeMlTranslator {
     UtilityRemove _remove = null;
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
-      if(!CLAWpragma.startsWithClaw(pragma.getData())){
+      if(!ClawPragma.startsWithClaw(pragma.getData())){
         continue; // Not CLAW pragma, we do nothing
       }
 
-      if(CLAWpragma.isValid(pragma.getData())){
-        CLAWpragma clawDirective = CLAWpragma.getDirective(pragma.getData());
+      if(ClawPragma.isValid(pragma.getData())){
+        ClawPragma clawDirective = ClawPragma.getDirective(pragma.getData());
 
-        if(clawDirective == CLAWpragma.LOOP_FUSION){
+        if(clawDirective == ClawPragma.LOOP_FUSION){
           LoopFusion trans = new LoopFusion(pragma);
           addOrAbort(trans, _program, _transformer);
-        } else if(clawDirective == CLAWpragma.LOOP_INTERCHANGE){
+        } else if(clawDirective == ClawPragma.LOOP_INTERCHANGE){
           LoopInterchange trans = new LoopInterchange(pragma);
           addOrAbort(trans, _program, _transformer);
-        } else if(clawDirective == CLAWpragma.LOOP_EXTRACT){
+        } else if(clawDirective == ClawPragma.LOOP_EXTRACT){
           LoopExtraction trans = new LoopExtraction(pragma);
           addOrAbort(trans, _program, _transformer);
-        } else if (clawDirective == CLAWpragma.UTILITIES_REMOVE){
+        } else if (clawDirective == ClawPragma.UTILITIES_REMOVE){
           if(_remove != null){
             addOrAbort(_remove, _program, _transformer);
             _remove = null;
           }
           _remove = new UtilityRemove(pragma);
-        } else if (clawDirective == CLAWpragma.BASE_END){
+        } else if (clawDirective == ClawPragma.BASE_END){
           if(_remove == null){
             // TODO error message no end with start
             abort();

@@ -9,10 +9,8 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/Cx2x.java
 
 # Pragma package
-  cx2x/translator/pragma/CLAWanalyzeLocalPragma.java
-  cx2x/translator/pragma/CLAWanalyzePragma.java
-  cx2x/translator/pragma/CLAWpragma.java
-  cx2x/translator/pragma/CLAWmapping.java
+  cx2x/translator/pragma/ClawPragma.java
+  cx2x/translator/pragma/ClawMapping.java
 
 # XcodeML package
   cx2x/translator/ClawXcodeMlTranslator.java

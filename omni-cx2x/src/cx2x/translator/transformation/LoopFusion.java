@@ -1,6 +1,6 @@
 package cx2x.translator.transformation;
 
-import cx2x.translator.pragma.CLAWpragma;
+import cx2x.translator.pragma.ClawPragma;
 import cx2x.xcodeml.xelement.*;
 import cx2x.translator.exception.*;
 import cx2x.translator.transformer.Transformer;
@@ -23,7 +23,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
 
   public LoopFusion(Xpragma pragma){
     super(pragma);
-    _groupLabel = CLAWpragma.getGroupOptionValue(_pragma.getData());
+    _groupLabel = ClawPragma.getGroupOptionValue(_pragma.getData());
   }
 
   public LoopFusion(XdoStatement loop, String group, int lineNumber){

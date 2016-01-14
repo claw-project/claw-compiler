@@ -1,22 +1,29 @@
 package cx2x.translator.transformation;
 
-import cx2x.translator.pragma.CLAWmapping;
-import cx2x.translator.exception.*;
+// Cx2x import
 import cx2x.xcodeml.xelement.*;
+import cx2x.translator.pragma.*;
+import cx2x.translator.exception.*;
 import cx2x.translator.transformer.Transformer;
 
+// OMNI import
+import xcodeml.util.XmOption;
+
+// Java import
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.*;
 
-import xcodeml.util.XmOption;
-
+/**
+ * 
+ * @author Valentin Clement
+ */
 
 public class LoopExtraction extends Transformation<LoopExtraction> {
 
   private XexprStatement _exprStmt = null;
 
-  private ArrayList<CLAWmapping> _mappings = null;
+  private ArrayList<ClawMapping> _mappings = null;
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _fctDefToExtract = null;
@@ -30,7 +37,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
   public LoopExtraction(Xpragma pragma) {
     super(pragma);
-    _mappings = new ArrayList<CLAWmapping>();
+    _mappings = new ArrayList<ClawMapping>();
     extractMappingInformation();
     extractFusionInformation();
   }
@@ -50,7 +57,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     for(String mappingClause : allMappings){
       System.out.println("MAPPING " + mappingClause);
-      CLAWmapping mapping = new CLAWmapping(mappingClause);
+      ClawMapping mapping = new ClawMapping(mappingClause);
       _mappings.add(mapping);
     }
   }
@@ -222,7 +229,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       System.out.println("  Start to apply mapping: " + _mappings.size());
     }
 
-    for(CLAWmapping mapping : _mappings){
+    for(ClawMapping mapping : _mappings){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
 
       for(String var : mapping.getMappedVariables()){

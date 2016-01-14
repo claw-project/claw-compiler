@@ -5,7 +5,7 @@ import java.util.regex.*;
 import java.util.Arrays;
 
 
-public enum CLAWpragma {
+public enum ClawPragma {
   //directive
   LOOP_FUSION,
   LOOP_INTERCHANGE,
@@ -69,23 +69,23 @@ public enum CLAWpragma {
     return name;
   }
 
-  public static CLAWpragma getDirective(String pragma){
+  public static ClawPragma getDirective(String pragma){
     // TODO error handling
     String[] parts = pragma.split(" ");
     String directive = parts[1];
     switch(directive){
       case DIRECTIVE_LOOP_FUSION:
-        return CLAWpragma.LOOP_FUSION;
+        return ClawPragma.LOOP_FUSION;
       case DIRECTIVE_LOOP_INTERCHANGE:
-        return CLAWpragma.LOOP_INTERCHANGE;
+        return ClawPragma.LOOP_INTERCHANGE;
       case DIRECTIVE_LOOP_VECTOR:
-        return CLAWpragma.LOOP_VECTOR;
+        return ClawPragma.LOOP_VECTOR;
       case DIRECTIVE_LOOP_EXTRACT:
-        return CLAWpragma.LOOP_EXTRACT;
+        return ClawPragma.LOOP_EXTRACT;
       case DIRECTIVE_UTILITIES_REMOVE:
-        return CLAWpragma.UTILITIES_REMOVE;
+        return ClawPragma.UTILITIES_REMOVE;
       case DIRECTIVE_BASE_END:
-        return CLAWpragma.BASE_END;
+        return ClawPragma.BASE_END;
       default:
         return null;
     }
@@ -109,7 +109,7 @@ public enum CLAWpragma {
   }
 
   public static String getSimpleOptionValue(String pragma){
-    if(getDirective(pragma) != CLAWpragma.LOOP_INTERCHANGE){
+    if(getDirective(pragma) != ClawPragma.LOOP_INTERCHANGE){
       return null;
     }
 
@@ -162,33 +162,33 @@ public enum CLAWpragma {
 
     switch(directive){
       case DIRECTIVE_LOOP_FUSION:
-        return isValidOptions(CLAWpragma.LOOP_FUSION, options);
+        return isValidOptions(ClawPragma.LOOP_FUSION, options);
       case DIRECTIVE_LOOP_INTERCHANGE:
-        return isValidOptions(CLAWpragma.LOOP_INTERCHANGE, options);
+        return isValidOptions(ClawPragma.LOOP_INTERCHANGE, options);
       case DIRECTIVE_LOOP_VECTOR:
-        return isValidOptions(CLAWpragma.LOOP_VECTOR, options);
+        return isValidOptions(ClawPragma.LOOP_VECTOR, options);
       case DIRECTIVE_LOOP_EXTRACT:
-        return isValidOptions(CLAWpragma.LOOP_EXTRACT, options);
+        return isValidOptions(ClawPragma.LOOP_EXTRACT, options);
       case DIRECTIVE_UTILITIES_REMOVE:
         return true;
       case DIRECTIVE_BASE_END:
-        return isValidOptions(CLAWpragma.BASE_END, options);
+        return isValidOptions(ClawPragma.BASE_END, options);
       default:
         return false;
     }
   }
 
-  private static boolean isValidOptions(CLAWpragma directive, String option){
+  private static boolean isValidOptions(ClawPragma directive, String option){
     switch(directive){
       case LOOP_FUSION: // loop-fusion has only group option
-        return CLAWpragma.isGroupOptionValid(option);
+        return ClawPragma.isGroupOptionValid(option);
       case LOOP_INTERCHANGE:
-        return CLAWpragma.isOrderOptionValid(option);
+        return ClawPragma.isOrderOptionValid(option);
       case LOOP_VECTOR:
         return true; // TODO
       case LOOP_EXTRACT:
-        return CLAWpragma.isRangeOptionValid(option)
-          && CLAWpragma.isMapOptionValid(option);
+        return ClawPragma.isRangeOptionValid(option)
+          && ClawPragma.isMapOptionValid(option);
       case BASE_END:
         // Only remove is associated with end directive now
         if(option.contains(DIRECTIVE_UTILITIES_REMOVE)){
@@ -201,19 +201,19 @@ public enum CLAWpragma {
   }
 
   private static boolean isGroupOptionValid(String option){
-    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_GROUP, false);
+    return ClawPragma.checkOptionalOption(option, REGEX_OPTION_GROUP, false);
   }
 
   private static boolean isOrderOptionValid(String option){
-    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_SIMPLE, false);
+    return ClawPragma.checkOptionalOption(option, REGEX_OPTION_SIMPLE, false);
   }
 
   private static boolean isRangeOptionValid(String option){
-    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_RANGE, false);
+    return ClawPragma.checkOptionalOption(option, REGEX_OPTION_RANGE, false);
   }
 
   private static boolean isMapOptionValid(String option){
-    return CLAWpragma.checkOptionalOption(option, REGEX_OPTION_MAP, false);
+    return ClawPragma.checkOptionalOption(option, REGEX_OPTION_MAP, false);
   }
 
   private static boolean checkOptionalOption(String option, String regex,
@@ -237,7 +237,7 @@ public enum CLAWpragma {
     return false;
   }
 
-  public static CLAWpragma valueOf(Xobject x) {
+  public static ClawPragma valueOf(Xobject x) {
     return valueOf(x.getString());
   }
 

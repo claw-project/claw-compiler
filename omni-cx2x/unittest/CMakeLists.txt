@@ -25,7 +25,7 @@ set(CMAKE_JAVA_INCLUDE_PATH
 add_jar(omni-cx2x-unittest
 
   helper/XmlHelper.java
-  pragma/CLAWpragmaTest.java
+  pragma/ClawPragmaTest.java
   xelement/XcodeProgTest.java
   xelement/XidTest.java
   xelement/XexprModelTest.java
@@ -45,5 +45,5 @@ add_junit_test(xelement
 
 add_junit_test(pragma
    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-   TESTS pragma.CLAWpragmaTest
+   TESTS pragma.ClawPragmaTest
 )

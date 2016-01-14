@@ -1,4 +1,4 @@
-package x2x;
+package cx2x;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -31,9 +31,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import cx2x.translator.xobject.CLAWtranslator;
-import cx2x.translator.xobject.CLAWglobalDecl;
-import cx2x.translator.pragma.CLAWanalyzePragma;
 import cx2x.translator.ClawXcodeMlTranslator;
 
 public class Cx2x {

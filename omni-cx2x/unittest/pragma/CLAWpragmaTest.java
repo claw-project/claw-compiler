@@ -3,51 +3,51 @@ package pragma;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import cx2x.translator.pragma.CLAWpragma;
+import cx2x.translator.pragma.ClawPragma;
 
-public class CLAWpragmaTest {
+public class ClawPragmaTest {
 
   @Test
   public void isValidTest() {
     // loop-fusion
-    assertTrue(CLAWpragma.isValid("claw loop-fusion"));
-    assertTrue(CLAWpragma.isValid("claw loop-fusion group(g1)"));
-    assertTrue(CLAWpragma.isValid("claw loop-fusion group( g1 )"));
-    assertTrue(CLAWpragma.isValid("claw loop-fusion group ( g1   ) "));
-    assertFalse(CLAWpragma.isValid("claw loop-fusiongroup(g1)"));
-    assertFalse(CLAWpragma.isValid("claw loop-fusion group"));
-    assertFalse(CLAWpragma.isValid("claw loop-fusion (i,j,k)"));
-    assertFalse(CLAWpragma.isValid("claw loop-fusion group()"));
-    assertFalse(CLAWpragma.isValid("claw loop-fusion group(   )"));
+    assertTrue(ClawPragma.isValid("claw loop-fusion"));
+    assertTrue(ClawPragma.isValid("claw loop-fusion group(g1)"));
+    assertTrue(ClawPragma.isValid("claw loop-fusion group( g1 )"));
+    assertTrue(ClawPragma.isValid("claw loop-fusion group ( g1   ) "));
+    assertFalse(ClawPragma.isValid("claw loop-fusiongroup(g1)"));
+    assertFalse(ClawPragma.isValid("claw loop-fusion group"));
+    assertFalse(ClawPragma.isValid("claw loop-fusion (i,j,k)"));
+    assertFalse(ClawPragma.isValid("claw loop-fusion group()"));
+    assertFalse(ClawPragma.isValid("claw loop-fusion group(   )"));
 
     // loop-interchange
-    assertTrue(CLAWpragma.isValid("claw loop-interchange"));
-    assertTrue(CLAWpragma.isValid("claw loop-interchange (i,j,k)"));
-    assertTrue(CLAWpragma.isValid("claw loop-interchange (  i,j,k  ) "));
-    assertFalse(CLAWpragma.isValid("claw loop-interchange ()"));
-    assertFalse(CLAWpragma.isValid("claw loop-interchange (  )"));
+    assertTrue(ClawPragma.isValid("claw loop-interchange"));
+    assertTrue(ClawPragma.isValid("claw loop-interchange (i,j,k)"));
+    assertTrue(ClawPragma.isValid("claw loop-interchange (  i,j,k  ) "));
+    assertFalse(ClawPragma.isValid("claw loop-interchange ()"));
+    assertFalse(ClawPragma.isValid("claw loop-interchange (  )"));
 
     // loop-extract
-    assertTrue(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)"));
-    assertTrue(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1,value2:i)"));
-    assertTrue(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1, value2:i)"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(value1, value2)"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map(:i)"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend)"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract map(value1:i)"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range() map(value1:i)"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range(i=istart,iend) map()"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range() map()"));
-    assertFalse(CLAWpragma.isValid("claw loop-extract range map"));
+    assertTrue(ClawPragma.isValid("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)"));
+    assertTrue(ClawPragma.isValid("claw loop-extract range(i=istart,iend) map(value1,value2:i)"));
+    assertTrue(ClawPragma.isValid("claw loop-extract range(i=istart,iend) map(value1, value2:i)"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range(i=istart,iend) map(value1, value2)"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range(i=istart,iend) map(:i)"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range(i=istart,iend)"));
+    assertFalse(ClawPragma.isValid("claw loop-extract map(value1:i)"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range() map(value1:i)"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range(i=istart,iend) map()"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range() map()"));
+    assertFalse(ClawPragma.isValid("claw loop-extract range map"));
 
 
     // remove
-    assertTrue(CLAWpragma.isValid("claw remove"));
-    assertTrue(CLAWpragma.isValid("claw end remove"));
+    assertTrue(ClawPragma.isValid("claw remove"));
+    assertTrue(ClawPragma.isValid("claw end remove"));
 
     // invalid dummy directives
-    assertFalse(CLAWpragma.isValid("claw"));
-    assertFalse(CLAWpragma.isValid("claw dummy-directive"));
+    assertFalse(ClawPragma.isValid("claw"));
+    assertFalse(ClawPragma.isValid("claw dummy-directive"));
 
 
   }

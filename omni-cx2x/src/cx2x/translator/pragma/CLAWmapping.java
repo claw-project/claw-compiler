@@ -2,7 +2,7 @@ package cx2x.translator.pragma;
 
 import java.util.ArrayList;
 
-public class CLAWmapping {
+public class ClawMapping {
 
   private ArrayList<String> _mappedVariables = null;
   private ArrayList<String> _mappingVariables = null;
@@ -12,7 +12,7 @@ public class CLAWmapping {
    * @param mappingClause inner part of the mapping clause like
    * var_list:mapping_list
    */
-  public CLAWmapping(String mappingClause){
+  public ClawMapping(String mappingClause){
     _mappedVariables = new ArrayList<String>();
     _mappingVariables = new ArrayList<String>();
 
