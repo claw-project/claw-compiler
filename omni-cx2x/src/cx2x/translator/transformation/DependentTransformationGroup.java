@@ -1,7 +1,5 @@
 package cx2x.translator.transformation;
 
-import java.util.ArrayList;
-
 import cx2x.xcodeml.xelement.XcodeProg;
 import cx2x.translator.exception.*;
 import cx2x.translator.transformer.Transformer;
@@ -10,9 +8,13 @@ import cx2x.translator.transformer.Transformer;
  * An dependent transformation group check wether it can be transformed with
  * another pending transformation in the pipeline. Each transformation are
  * applied only once.
+ *
+ * @author Valentin Clement
  */
 
-public class DependentTransformationGroup<T extends Transformation<? super T>> extends TransformationGroup<T> {
+public class DependentTransformationGroup<T extends Transformation<? super T>>
+    extends TransformationGroup<T>
+{
 
   public DependentTransformationGroup(String name) {
     super(name);

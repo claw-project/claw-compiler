@@ -1,7 +1,5 @@
 package cx2x.translator.transformation;
 
-import java.util.ArrayList;
-
 import cx2x.xcodeml.xelement.XcodeProg;
 import cx2x.translator.exception.*;
 import cx2x.translator.transformer.Transformer;
@@ -9,9 +7,13 @@ import cx2x.translator.transformer.Transformer;
 /**
  * An independent transformation group applies each transformation without
  * checking with any other transformation in the pipeline.
+ *
+ * @author Valentin Clement
  */
 
-public class IndependentTransformationGroup<T extends Transformation<? super T>> extends TransformationGroup<T> {
+public class IndependentTransformationGroup<T extends Transformation<? super T>>
+    extends TransformationGroup<T>
+{
 
   public IndependentTransformationGroup(String name) {
     super(name);

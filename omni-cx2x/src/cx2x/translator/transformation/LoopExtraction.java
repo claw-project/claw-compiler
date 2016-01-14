@@ -15,7 +15,11 @@ import java.util.List;
 import java.util.regex.*;
 
 /**
- * 
+ * A LoopExtraction transformation is an independent transformation. The
+ * transformation consists of locating a loop in a function call and extract it.
+ * This loop is then wrapped around the function call and the parameters are
+ * demoted accordingly to the mapping options.
+ *
  * @author Valentin Clement
  */
 

@@ -15,6 +15,11 @@ import xcodeml.util.XmOption;
 // Java import
 import java.util.*;
 
+/**
+ * ClawXcodeMlTranslator is the entry point of any CLAW XcodeML/F translation.
+ *
+ * @author Valentin Clement
+ */
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;

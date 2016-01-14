@@ -1,10 +1,15 @@
 package cx2x.translator.transformation;
 
-import cx2x.translator.pragma.ClawPragma;
 import cx2x.xcodeml.xelement.*;
 import cx2x.translator.exception.*;
 import cx2x.translator.transformer.Transformer;
 
+/**
+ * A UtilityRemove is an independent transformation. It allows to delete part of
+ * the code.
+ *
+ * @author Valentin Clement
+ */
 public class UtilityRemove extends Transformation<UtilityRemove> {
 
   // The loop statement involved in the Transformation

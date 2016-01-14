@@ -5,7 +5,12 @@ import java.util.List;
 
 import cx2x.translator.transformation.*;
 
-
+/**
+ * ClawTransformer stores all transformation groups applied during the
+ * translation.
+ *
+ * @author Valentin Clement
+ */
 public class ClawTransformer implements Transformer {
   private TransformationGroup<LoopFusion> _loopFusion = null;
   private TransformationGroup<LoopInterchange> _loopInterchange = null;
@@ -15,9 +20,12 @@ public class ClawTransformer implements Transformer {
 
   public ClawTransformer(){
     _loopFusion = new DependentTransformationGroup<LoopFusion>("loop-fusion");
-    _loopInterchange = new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
-    _loopExtract = new IndependentTransformationGroup<LoopExtraction>("loop-extract");
-    _utilityRemove = new IndependentTransformationGroup<UtilityRemove>("remove");
+    _loopInterchange =
+        new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
+    _loopExtract =
+        new IndependentTransformationGroup<LoopExtraction>("loop-extract");
+    _utilityRemove =
+        new IndependentTransformationGroup<UtilityRemove>("remove");
 
     // Add transformations (order of insertion is the one that will be applied)
     _transformationGroups = new ArrayList<TransformationGroup>();

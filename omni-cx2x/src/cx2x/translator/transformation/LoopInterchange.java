@@ -11,7 +11,6 @@ import xcodeml.util.XmOption;
  * A LoopInterchange transformation is a an independent transformation. It allow
  * to reorder nested loops up to three levels.
  *
- *
  * @author Valentin Clement
  */
 
