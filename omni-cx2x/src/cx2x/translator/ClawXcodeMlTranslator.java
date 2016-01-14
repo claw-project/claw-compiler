@@ -8,18 +8,17 @@ import cx2x.translator.exception.*;
 import cx2x.translator.pragma.ClawPragma;
 
 // OMNI import
-import exc.xcodeml.*;
-import exc.object.Xcode;
 import xcodeml.util.XmOption;
 
-// Java import
-import java.util.*;
 
 /**
- * ClawXcodeMlTranslator is the entry point of any CLAW XcodeML/F translation.
+ * ClawXcodeMlTranslator is the class driving the translation. It analyzes the
+ * CLAW directives and applies the corresponding transformation to the XcodeML/F
+ * intermediate representation.
  *
  * @author Valentin Clement
  */
+
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;

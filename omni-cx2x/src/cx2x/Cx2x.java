@@ -4,6 +4,12 @@ import cx2x.translator.ClawXcodeMlTranslator;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import xcodeml.util.XmOption;
 
+/**
+ * Cx2x is the entry point of any CLAW XcodeML/F translation.
+ *
+ * @author Valentin Clement
+ */
+
 public class Cx2x {
   private static void error(String s) {
     System.err.println(s);
