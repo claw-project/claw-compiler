@@ -67,7 +67,8 @@ public class ClawXcodeMlTranslator {
           _remove = new UtilityRemove(pragma);
         } else if (clawDirective == ClawPragma.BASE_END){
           if(_remove == null){
-            // TODO error message no end with start
+            _program.addError("Invalid Claw directive (end with no start)",
+              pragma.getLine());
             abort();
           } else {
             _remove.setEnd(pragma);
