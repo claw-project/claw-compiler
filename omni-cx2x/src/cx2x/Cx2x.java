@@ -1,37 +1,8 @@
 package cx2x;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import exc.object.XobjectFile;
-
-import xcodeml.XmLanguage;
-import xcodeml.XmObj;
-import xcodeml.binding.XmXcodeProgram;
-import xcodeml.util.*;
-import xcodeml.XmException;
-
-import exc.xcodeml.XcodeMLtools;
-import exc.xcodeml.XcodeMLtools_F;
-import exc.xcodeml.XcodeMLtools_C;
-import exc.xcodeml.XcodeMLtools_Fmod;
-
-import exc.xcodeml.XmXobjectToXcodeTranslator;
-import exc.xcodeml.XmfXobjectToXcodeTranslator;
-import exc.xcodeml.XmcXobjectToXcodeTranslator;
-
-import org.w3c.dom.Document;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import cx2x.translator.ClawXcodeMlTranslator;
+import exc.xcodeml.XcodeMLtools_Fmod;
+import xcodeml.util.XmOption;
 
 public class Cx2x {
   private static void error(String s) {
