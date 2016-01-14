@@ -12,8 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.xml.sax.InputSource;
 
-import x2x.xcodeml.xelement.Xid;
-import x2x.xcodeml.xelement.Xvar;
+import cx2x.xcodeml.xelement.Xid;
+import cx2x.xcodeml.xelement.Xvar;
 
 
 

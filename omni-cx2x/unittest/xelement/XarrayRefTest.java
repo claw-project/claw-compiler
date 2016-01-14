@@ -7,9 +7,9 @@ import org.w3c.dom.Element;
 
 import helper.XmlHelper;
 
-import x2x.xcodeml.xelement.Xvar;
-import x2x.xcodeml.xelement.Xscope;
-import x2x.xcodeml.xelement.XarrayRef;
+import cx2x.xcodeml.xelement.Xvar;
+import cx2x.xcodeml.xelement.Xscope;
+import cx2x.xcodeml.xelement.XarrayRef;
 
 public class XarrayRefTest {
   private static final String ARRAYREF_TYPE = "Fint";

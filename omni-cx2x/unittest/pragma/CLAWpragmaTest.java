@@ -3,7 +3,7 @@ package pragma;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import x2x.translator.pragma.CLAWpragma;
+import cx2x.translator.pragma.CLAWpragma;
 
 public class CLAWpragmaTest {
 
