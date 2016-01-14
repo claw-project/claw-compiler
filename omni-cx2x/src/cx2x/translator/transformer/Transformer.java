@@ -1,6 +1,6 @@
-package cx2x.translator.xcodeml.transformer;
+package cx2x.translator.transformer;
 
-import cx2x.translator.xcodeml.transformation.*;
+import cx2x.translator.transformation.*;
 import java.util.List;
 
 /**

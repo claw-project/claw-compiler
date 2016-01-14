@@ -20,21 +20,21 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/translator/pragma/CLAWmapping.java
 
 # XcodeML package
-  cx2x/translator/xcodeml/CLAWxcodemlTranslator.java
+  cx2x/translator/ClawXcodeMlTranslator.java
 
 # XcodeML.transformation package
-  cx2x/translator/xcodeml/transformation/DependentTransformationGroup.java
-  cx2x/translator/xcodeml/transformation/IndependentTransformationGroup.java
-  cx2x/translator/xcodeml/transformation/LoopFusion.java
-  cx2x/translator/xcodeml/transformation/LoopInterchange.java
-  cx2x/translator/xcodeml/transformation/LoopExtraction.java
-  cx2x/translator/xcodeml/transformation/Transformation.java
-  cx2x/translator/xcodeml/transformation/TransformationGroup.java
-  cx2x/translator/xcodeml/transformation/UtilityRemove.java
+  cx2x/translator/transformation/DependentTransformationGroup.java
+  cx2x/translator/transformation/IndependentTransformationGroup.java
+  cx2x/translator/transformation/LoopFusion.java
+  cx2x/translator/transformation/LoopInterchange.java
+  cx2x/translator/transformation/LoopExtraction.java
+  cx2x/translator/transformation/Transformation.java
+  cx2x/translator/transformation/TransformationGroup.java
+  cx2x/translator/transformation/UtilityRemove.java
 
 # XcodeML.transformer
-  cx2x/translator/xcodeml/transformer/ClawTransformer.java
-  cx2x/translator/xcodeml/transformer/Transformer.java
+  cx2x/translator/transformer/ClawTransformer.java
+  cx2x/translator/transformer/Transformer.java
 
 # XcodeML.Xelement package
   cx2x/xcodeml/xelement/XanalysisError.java

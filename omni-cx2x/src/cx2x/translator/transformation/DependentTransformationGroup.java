@@ -1,10 +1,10 @@
-package cx2x.translator.xcodeml.transformation;
+package cx2x.translator.transformation;
 
 import java.util.ArrayList;
 
 import cx2x.xcodeml.xelement.XcodeProg;
 import cx2x.translator.exception.*;
-import cx2x.translator.xcodeml.transformer.Transformer;
+import cx2x.translator.transformer.Transformer;
 
 /**
  * An dependent transformation group check wether it can be transformed with

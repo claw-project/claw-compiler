@@ -1,9 +1,9 @@
-package cx2x.translator.xcodeml.transformer;
+package cx2x.translator.transformer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cx2x.translator.xcodeml.transformation.*;
+import cx2x.translator.transformation.*;
 
 
 public class ClawTransformer implements Transformer {

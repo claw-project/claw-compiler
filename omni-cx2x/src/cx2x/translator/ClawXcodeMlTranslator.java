@@ -1,10 +1,10 @@
-package cx2x.translator.xcodeml;
+package cx2x.translator;
 
-// Xelement import
+// Cx2x import
 import cx2x.xcodeml.xelement.*;
+import cx2x.translator.transformer.*;
+import cx2x.translator.transformation.*;
 import cx2x.translator.exception.*;
-import cx2x.translator.xcodeml.transformation.*;
-import cx2x.translator.xcodeml.transformer.*;
 import cx2x.translator.pragma.CLAWpragma;
 
 // OMNI import
@@ -15,7 +15,7 @@ import xcodeml.util.XmOption;
 // Java import
 import java.util.*;
 
-public class CLAWxcodemlTranslator {
+public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
@@ -26,7 +26,7 @@ public class CLAWxcodemlTranslator {
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
-  public CLAWxcodemlTranslator(String xcodemlInputFile,
+  public ClawXcodeMlTranslator(String xcodemlInputFile,
     String xcodemlOutputFile)
   {
     _xcodemlInputFile = xcodemlInputFile;

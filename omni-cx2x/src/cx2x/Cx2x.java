@@ -34,7 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 import cx2x.translator.xobject.CLAWtranslator;
 import cx2x.translator.xobject.CLAWglobalDecl;
 import cx2x.translator.pragma.CLAWanalyzePragma;
-import cx2x.translator.xcodeml.CLAWxcodemlTranslator;
+import cx2x.translator.ClawXcodeMlTranslator;
 
 public class Cx2x {
   private static void error(String s) {
@@ -166,7 +166,7 @@ public class Cx2x {
 
 
     if(xcodeml_only){
-      CLAWxcodemlTranslator xcmlTranslator = new CLAWxcodemlTranslator(inXmlFile, outXmlFile);
+      ClawXcodeMlTranslator xcmlTranslator = new ClawXcodeMlTranslator(inXmlFile, outXmlFile);
       xcmlTranslator.analyze();
       xcmlTranslator.transform();
       return;

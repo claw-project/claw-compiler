@@ -1,9 +1,9 @@
-package cx2x.translator.xcodeml.transformation;
+package cx2x.translator.transformation;
 
 import cx2x.translator.pragma.CLAWmapping;
 import cx2x.translator.exception.*;
 import cx2x.xcodeml.xelement.*;
-import cx2x.translator.xcodeml.transformer.Transformer;
+import cx2x.translator.transformer.Transformer;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,8 @@
-package cx2x.translator.xcodeml.transformation;
+package cx2x.translator.transformation;
 
 import cx2x.xcodeml.xelement.*;
 import cx2x.translator.exception.*;
-import cx2x.translator.xcodeml.transformer.Transformer;
+import cx2x.translator.transformer.Transformer;
 
 /**
  * A Transformation is an object capable of analyzing a possible code

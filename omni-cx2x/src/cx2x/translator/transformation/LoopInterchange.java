@@ -1,16 +1,16 @@
-package cx2x.translator.xcodeml.transformation;
+package cx2x.translator.transformation;
 
 import cx2x.translator.pragma.CLAWpragma;
 import cx2x.xcodeml.xelement.*;
 import cx2x.translator.exception.*;
-import cx2x.translator.xcodeml.transformer.Transformer;
+import cx2x.translator.transformer.Transformer;
 
 import xcodeml.util.XmOption;
 
 /**
  * A LoopInterchange transformation is a an independent transformation. It allow
  * to reorder nested loops up to three levels.
- * 
+ *
  *
  * @author Valentin Clement
  */
