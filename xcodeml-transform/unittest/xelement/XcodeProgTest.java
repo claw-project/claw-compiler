@@ -15,6 +15,8 @@ public class XcodeProgTest {
   @Test
   public void basicXcodeProgTest() {
     File f = new File(TEST_DATA);
+    System.out.println("Working Directory = " +
+        System.getProperty("user.dir"));
     assertTrue(f.exists());
     XcodeProg xcodeml = new XcodeProg(TEST_DATA);
     boolean loaded = xcodeml.load();

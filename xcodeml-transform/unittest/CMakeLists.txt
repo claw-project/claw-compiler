@@ -20,7 +20,6 @@ set(CMAKE_JAVA_INCLUDE_PATH
   ${OMNICX2X}
   ${JUNIT_JAR}
   ${HAMCREST_JAR}
-  ${SAMPLE_JAVA_MAIN_SOURCE_DIR}/${SAMPLE_JAR}
 )
 
 add_jar(omni-cx2x-unittest
