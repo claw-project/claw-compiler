@@ -6,6 +6,7 @@
 package cx2x.translator.pragma;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A ClawMapping object holds the loop-extract mapping option representation
@@ -38,12 +39,8 @@ public class ClawMapping {
       // TODO throw exception mappingClause is wrong
       System.err.println("Fatal error mapping !!");
     }
-    for(String var : vars){
-      _mappedVariables.add(var);
-    }
-    for(String mapping : mappings){
-      _mappingVariables.add(mapping);
-    }
+    Collections.addAll(_mappedVariables, vars);
+    Collections.addAll(_mappingVariables, mappings);
   }
 
   /**
