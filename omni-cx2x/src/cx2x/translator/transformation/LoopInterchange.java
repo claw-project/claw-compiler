@@ -35,13 +35,24 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
-
+  /**
+   * LoopInterchange ctor. Get the new ordering option.
+   * @see Transformation#Transformation(Xpragma)
+   */
   public LoopInterchange(Xpragma pragma){
     super(pragma);
     _newOrderOption = ClawPragma
       .getSimpleOptionValue(_pragma.getData());
   }
 
+  /**
+   * Apply the transformation.
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
+   * @param other       Only for dependent transformation. The other
+   *                    transformation part of the transformation.
+   * @throws IllegalTransformationException
+   */
   public void transform(XcodeProg xcodeml, Transformer transformer,
     LoopInterchange other) throws IllegalTransformationException
   {
@@ -101,6 +112,11 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
 
   }
 
+  /**
+   * Swap two do statement. Induction variable and range are swapped.
+   * @param loop1 The first do statement.
+   * @param loop2 The second do statement.
+   */
   private void swapLoops(XdoStatement loop1, XdoStatement loop2){
     // Save most inner loop iteration variable and range
     XloopIterationRange tmpIterationRange = loop2.getIterationRange().cloneObject();
@@ -120,6 +136,12 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
 
   }
 
+  /**
+   * Check whether the transformation needs a single swap transformation or a
+   * double swap transformation.
+   * @return True if the transformation needs a double swap. False if a single
+   * swap is needed.
+   */
   private boolean needDoubleSwap(){
     if((_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1) ||
       (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0)){
@@ -128,7 +150,10 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     return false;
   }
 
-
+  /**
+   * Based on the new ordering option, compute the new position of the different
+   * do statement.
+   */
   private void computeLoopNewPosition(){
     if (_baseLoop0.equals(_newLoop1)){
       _loopNewPos0 = 1;
@@ -149,7 +174,14 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     }
   }
 
-
+  /**
+   * Loop fusion analysis:
+   * - Find the different do statement that will be reordered.
+   * - Check the validity of the new ordering option.
+   * @param xcodeml      The XcodeML on which the transformations are applied.
+   * @param transformer  The transformer used to applied the transformations.
+   * @return True if the transformation can be performed. False otherwise.
+   */
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     // Find next loop after pragma
     _loopLevel0 = XelementHelper.findNextDoStatement(_pragma);
@@ -194,12 +226,18 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     return true;
   }
 
+  /**
+   * Check the vailidity of the new ordering option.
+   * @param xcodeml The XcodeML object
+   * @param vars    Array containing the induction variables
+   * @return True if the new ordering is valid. False otherwise.
+   */
   private boolean checkNewOrderOption(XcodeProg xcodeml, String[] vars){
     for(String var : vars){
       if(!var.equals(_baseLoop0) && !var.equals(_baseLoop1)
         && !var.equals(_baseLoop2))
       {
-        xcodeml.addError("invalid iteration varibale in new-order option. "
+        xcodeml.addError("invalid induction variable in new-order option. "
           + var, _pragma.getLine());
         return false;
       }
@@ -207,11 +245,17 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     return true;
   }
 
-
+  /**
+   * @see Transformation#canBeTransformedWith(Object)
+   * @return Always false as independent transformation are applied one by one.
+   */
   public boolean canBeTransformedWith(LoopInterchange other){
-    return true; // Always true as independent transformation
+    return false; // Always true as independent transformation
   }
 
+  /**
+   * Print some useful debugging information
+   */
   private void printTransformDebugInfo(){
     if(XmOption.isDebugOutput()){
       System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
@@ -225,6 +269,10 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     }
   }
 
+  /**
+   * Print information for double swap cases
+   * @param swapCase Integer representing the new ordering (120 or 201)
+   */
   private void printTransformSwapInfo(int swapCase) {
     if(XmOption.isDebugOutput() && swapCase == 120){
       System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);

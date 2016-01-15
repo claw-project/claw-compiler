@@ -14,11 +14,17 @@ import cx2x.translator.transformer.Transformer;
 public class IndependentTransformationGroup<T extends Transformation<? super T>>
     extends TransformationGroup<T>
 {
-
+  /**
+   * IndependentTransformationGroup ctor
+   * @param name A friendly name to describe the transformation group.
+   */
   public IndependentTransformationGroup(String name) {
     super(name);
   }
 
+  /**
+   * @see TransformationGroup#applyTranslations(XcodeProg, Transformer)
+   */
   public void applyTranslations(XcodeProg xcodeml, Transformer transformer)
     throws IllegalTransformationException
   {

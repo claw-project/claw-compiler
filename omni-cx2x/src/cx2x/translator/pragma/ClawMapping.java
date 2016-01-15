@@ -2,15 +2,21 @@ package cx2x.translator.pragma;
 
 import java.util.ArrayList;
 
+/**
+ * A ClawMapping object holds the loop-extract mapping option representation
+ * var_list:mapping_list
+ *
+ * @author Valentin Clement
+ */
 public class ClawMapping {
 
   private ArrayList<String> _mappedVariables = null;
   private ArrayList<String> _mappingVariables = null;
 
   /**
-   * loop-extract mapping representation
+   * ClawMapping ctor.
    * @param mappingClause inner part of the mapping clause like
-   * var_list:mapping_list
+   *                      var_list:mapping_list
    */
   public ClawMapping(String mappingClause){
     _mappedVariables = new ArrayList<String>();
@@ -34,15 +40,24 @@ public class ClawMapping {
     }
   }
 
+  /**
+   * Get a list of all mapping variables.
+   * @return List of mapping variable as String.
+   */
   public ArrayList<String> getMappingVariables(){
     return _mappingVariables;
   }
 
+  /**
+   * Get a list of all mapped variables.
+   * @return List of mapped variable as String.
+   */
   public ArrayList<String> getMappedVariables(){
     return _mappedVariables;
   }
 
   /**
+   * get the number of dimension mapped in this ClawMapping object
    * @return the number of dimension to be mapped
    */
   public int getMappedDimensions(){

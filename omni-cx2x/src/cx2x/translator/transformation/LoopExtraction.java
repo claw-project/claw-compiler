@@ -26,7 +26,6 @@ import java.util.regex.*;
 public class LoopExtraction extends Transformation<LoopExtraction> {
 
   private XexprStatement _exprStmt = null;
-
   private ArrayList<ClawMapping> _mappings = null;
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
@@ -43,13 +42,18 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     super(pragma);
     _mappings = new ArrayList<ClawMapping>();
     extractMappingInformation();
+    extractRangeInformation();
     extractFusionInformation();
   }
 
   private void extractRangeInformation(){
-
+    // TODO
   }
 
+  /**
+   * Extract all mapping information from the pragma data. Each
+   * map(<mapped>:<mapping>) produces a ClawMapping object.
+   */
   private void extractMappingInformation(){
     List<String> allMappings = new ArrayList<String>();
     // TODO move regex somewhere centralized
@@ -66,6 +70,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
   }
 
+  /**
+   * Extract optional fusion information. The extract loop might later be merged
+   * with a fusion group. This method extract whether there is a fusion to
+   * perform and its optional fusion group option.
+   */
   private void extractFusionInformation(){
     if(_pragma.getData().contains(" fusion ")){
       _hasFusion = true;
@@ -80,6 +89,13 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
   }
 
+  /**
+   * Check whether the provided mapping information are correct or not. A
+   * mapped variable should only appear once. Mapped variable must be parameters
+   * in the function definition.
+   * Mapping using the same mapping variables are merged together.
+   * @return True if all the conditions are respected. False otherwise.
+   */
   private boolean checkMappingInformation(){
     // TODO Mapped variable should appear on one time
     // TODO Mapped variable should be declared in the fct definition
@@ -91,6 +107,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     return true; // TODO
   }
 
+  /**
+   *
+   * @param xcodeml      The XcodeML on which the transformations are applied.
+   * @param transformer  The transformer used to applied the transformations.
+   * @return
+   */
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     _exprStmt = XelementHelper.findNextExprStatement(_pragma);
     if(_exprStmt == null){
@@ -141,6 +163,21 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     return true;
   }
 
+  /**
+   * Apply the transformation. A loop extraction is applied in the following
+   * steps:
+   *  1) Duplicate the function targeted by the transformation
+   *  2) Extract the loop body in the duplicated function and remove the loop.
+   *  3) Adapt function call and demote array references in the duplicated
+   *     function body.
+   *  4) Optional: Add a LoopFusion transformation to the transformaions' queue.
+   *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
+   * @param other       Only for dependent transformation. The other
+   *                    transformation part of the transformation.
+   * @throws IllegalTransformationException
+   */
   public void transform(XcodeProg xcodeml, Transformer transformer,
     LoopExtraction other) throws IllegalTransformationException
   {
@@ -364,6 +401,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     this.transformed();
   }
 
+  /**
+   *
+   * @param xcodeml
+   * @param iterationRange
+   * @return
+   */
   private XdoStatement wrapCallWithLoop(XcodeProg xcodeml,
     XloopIterationRange iterationRange)
   {
@@ -390,6 +433,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     return loop;
   }
 
+  /**
+   *
+   * @param id
+   */
   private void insertDeclaration(String id){
     Xid inductionVarId = _fctDef.getSymbolTable().get(id);
     if(inductionVarId == null){
@@ -404,9 +451,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
   }
 
-
-  public boolean canBeTransformedWith(LoopExtraction other){
-    return true; // Always true as independent transformation
+  /**
+   * @see Transformation#canBeTransformedWith(Object)
+   * @return Always false as independent transformation are applied one by one.
+   */
+  public boolean canBeTransformedWith(LoopExtraction other) {
+    return false;
   }
-
 }

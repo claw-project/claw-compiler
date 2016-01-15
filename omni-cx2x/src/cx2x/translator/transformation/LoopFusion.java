@@ -21,11 +21,21 @@ public class LoopFusion extends Transformation<LoopFusion> {
   // The loop statement involved in the Transformation
   private XdoStatement _loop = null;
 
+  /**
+   * LoopFusion default ctor.
+   * @see Transformation#Transformation(Xpragma)
+   */
   public LoopFusion(Xpragma pragma){
     super(pragma);
     _groupLabel = ClawPragma.getGroupOptionValue(_pragma.getData());
   }
 
+  /**
+   * LoopFusion ctor without pragma. Create a LoopFusion dynamically at runtime.
+   * @param loop        The do statement to be merge by the loop fusion.
+   * @param group       The group fusion option to apply during the loop fusion.
+   * @param lineNumber  The line number that triggered the transformation.
+   */
   public LoopFusion(XdoStatement loop, String group, int lineNumber){
     super(null);
     _loop = loop;
@@ -33,6 +43,13 @@ public class LoopFusion extends Transformation<LoopFusion> {
     setStartLine(lineNumber);
   }
 
+  /**
+   * Loop fusion analysis: find whether the pragma statement is followed by a
+   * do statement.
+   * @param xcodeml      The XcodeML on which the transformations are applied.
+   * @param transformer  The transformer used to applied the transformations.
+   * @return True if a do statement is found. False otherwise.
+   */
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
     _loop = XelementHelper.findNextDoStatement(_pragma);
     if(_loop == null){
@@ -44,7 +61,13 @@ public class LoopFusion extends Transformation<LoopFusion> {
   }
 
   /**
-   * Merge the given loop with this one
+   * Apply the loop fusion transformation.
+   * @param xcodeml         The XcodeML on which the transformations are
+   *                        applied.
+   * @param transformer     The transformer used to applied the transformations.
+   * @param loopFusionUnit  The other loop fusion unit to be merge with this
+   *                        one.
+   * @throws IllegalTransformationException
    */
   public void transform(XcodeProg xcodeml, Transformer transformer,
     LoopFusion loopFusionUnit) throws IllegalTransformationException
@@ -53,6 +76,11 @@ public class LoopFusion extends Transformation<LoopFusion> {
     loopFusionUnit.finalizeTransformation();
   }
 
+  /**
+   * Call by the transform method of the master loop fusion unit on the slave
+   * loop fusion unit to finalize the transformation. Pragma and loop of the
+   * slave loop fusion unit are deleted.
+   */
   public void finalizeTransformation(){
     // Delete the pragma of the transformed loop
     if(_pragma != null){
@@ -65,6 +93,14 @@ public class LoopFusion extends Transformation<LoopFusion> {
     this.transformed();
   }
 
+  /**
+   * Check whether the loop fusion unit can be merged with the given loop fusion
+   * unit. To be able to be transformed together, the loop fusion units must
+   * share the same parent block, the same iteration range, the same group
+   * option and both units must be not transformed.
+   * @param otherLoopUnit The other loop fusion unit to be merge with this one.
+   * @return True if the two loop fusion unit can be merge together.
+   */
   public boolean canBeTransformedWith(LoopFusion otherLoopUnit){
 
     // No loop is transformed already
@@ -86,14 +122,29 @@ public class LoopFusion extends Transformation<LoopFusion> {
     return true;
   }
 
+  /**
+   * Return the do statement associated with this loop fusion unit.
+   * @return A do statement element.
+   */
   public XdoStatement getLoop(){
     return _loop;
   }
 
+  /**
+   * Get the group option associated with this loop fusion unit.
+   * @return
+   */
   public String getGroupOptionLabel(){
     return _groupLabel;
   }
 
+  /**
+   * Check whether the given loop fusion unit share the same group fusion option
+   * with this loop fusion unit.
+   * @param otherLoopUnit The other loop fusion unit to be check with this one.
+   * @return True if the two loop fusion units share the same group fusion
+   * option.
+   */
   private boolean hasSameGroupOption(LoopFusion otherLoopUnit){
     return (otherLoopUnit.getGroupOptionLabel() == null
       ? getGroupOptionLabel() == null

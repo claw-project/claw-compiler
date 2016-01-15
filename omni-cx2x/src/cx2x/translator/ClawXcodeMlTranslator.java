@@ -18,7 +18,6 @@ import xcodeml.util.XmOption;
  *
  * @author Valentin Clement
  */
-
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;
@@ -30,6 +29,11 @@ public class ClawXcodeMlTranslator {
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
+  /**
+   * ClawXcodeMlTranslator ctor.
+   * @param xcodemlInputFile  The XcodeML input file path.
+   * @param xcodemlOutputFile The XcodeML output file path.
+   */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
     String xcodemlOutputFile)
   {
@@ -38,6 +42,10 @@ public class ClawXcodeMlTranslator {
     _transformer = new ClawTransformer();
   }
 
+  /**
+   * Analysis the XcodeML code and produce a list of applicable transformation.
+   * @throws Exception
+   */
   public void analyze() throws Exception {
     _program = new XcodeProg(_xcodemlInputFile);
     if(!_program.load()){
@@ -95,7 +103,16 @@ public class ClawXcodeMlTranslator {
     _canTransform = true;
   }
 
-  private void addOrAbort(Transformation t, XcodeProg xcodeml, Transformer translator){
+  /**
+   * Add a transformation in the pipeline if the analysis is succeded.
+   * Otherwise, abort the translation.
+   * @param t           The transformation to be analyzed and added.
+   * @param xcodeml     The XcodeML object
+   * @param translator  The current translator
+   */
+  private void addOrAbort(Transformation t, XcodeProg xcodeml,
+                          Transformer translator)
+  {
     if(t.analyze(xcodeml, translator)){
       translator.addTransformation(t);
     } else {
@@ -103,6 +120,9 @@ public class ClawXcodeMlTranslator {
     }
   }
 
+  /**
+   * Apply all the transformation in the pipeline.
+   */
   public void transform() {
     try {
       if(!_canTransform){
@@ -145,10 +165,13 @@ public class ClawXcodeMlTranslator {
     }
   }
 
-
+  /**
+   * Print all the errors stored in the XcodeML object and abort the program.
+   */
   private void abort(){
     for(XanalysisError error : _program.getErrors()){
-      System.err.println(ERROR_PREFIX + error.getMessage() + ", " + error.getLine());
+      System.err.println(ERROR_PREFIX + error.getMessage() + ", " +
+          error.getLine());
     }
     System.exit(1);
   }

@@ -4,7 +4,11 @@ import exc.object.Xobject;
 import java.util.regex.*;
 import java.util.Arrays;
 
-
+/**
+ * Enumeration of the different directive available in the CLAW language.
+ *
+ * @author Valentin Clement
+ */
 public enum ClawPragma {
   //directive
   LOOP_FUSION,
@@ -16,9 +20,6 @@ public enum ClawPragma {
 
   // loop-fusion
   FUSION_GROUP,
-
-
-
   ;
 
   private static final String PREFIX_CLAW = "claw";

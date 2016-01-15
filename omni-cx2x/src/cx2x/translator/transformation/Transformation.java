@@ -18,11 +18,10 @@ public abstract class Transformation<T> {
   protected Xpragma _pragma = null;
   protected int _startLine = 0;
 
-  public abstract boolean analyze(XcodeProg xcodeml, Transformer translator);
-  public abstract boolean canBeTransformedWith(T other);
-  public abstract void transform(XcodeProg xcodeml, Transformer translator,
-    T other) throws IllegalTransformationException;
-
+  /**
+   * Transformation ctor.
+   * @param pragma The pragma that triggered the transformation.
+   */
   public Transformation(Xpragma pragma){
     _pragma = pragma;
     if(_pragma != null){
@@ -30,22 +29,73 @@ public abstract class Transformation<T> {
     }
   }
 
+  /**
+   * Analyze the possibility to apply the transformation. Gather information to
+   * be able to apply the transformation in when calling #transform.
+   * @param xcodeml      The XcodeML on which the transformations are applied.
+   * @param transformer  The transformer used to applied the transformations.
+   * @return
+   */
+  public abstract boolean analyze(XcodeProg xcodeml, Transformer transformer);
+
+  /**
+   * Check whether the current transformation can be transformed together with
+   * the given transformation. Useful only for dependent transformation.
+   * @see DependentTransformationGroup
+   * @param other The other transformation part of the dependent transformation.
+   * @return True if the two transformation can be transform together. False
+   * otherwise.
+   */
+  public abstract boolean canBeTransformedWith(T other);
+
+  /**
+   * Apply the actual transformation.
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
+   * @param other       Only for dependent transformation. The other
+   *                    transformation part of the transformation.
+   * @throws IllegalTransformationException
+   */
+  public abstract void transform(XcodeProg xcodeml, Transformer transformer,
+    T other) throws IllegalTransformationException;
+
+
+  /**
+   * Get the pragma that triggered the transformation.
+   * @return A Xpragma element.
+   */
   public Xpragma getPragma(){
     return _pragma;
   }
 
+  /**
+   * Get the line number where the pragma was found.
+   * @return Line number of the pragma.
+   */
   public int getStartLine(){
     return _startLine;
   }
 
+  /**
+   * Set the start line of the transformation. Normally, this is the line where
+   * the pragma was found.
+   * @param lineno  An positive integer value representing the line number.
+   */
   public void setStartLine(int lineno){
     _startLine = lineno;
   }
 
+  /**
+   * Get the information whether the transformation has been applied or not.
+   * @return True is the transformation has been applied. False otherwise.
+   */
   public boolean isTransformed(){
     return _transformed;
   }
 
+  /**
+   * Set the transformation as transformed.
+   */
   public void transformed(){
     _transformed = true;
   }

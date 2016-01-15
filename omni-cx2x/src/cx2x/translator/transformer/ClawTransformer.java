@@ -18,6 +18,10 @@ public class ClawTransformer implements Transformer {
   private TransformationGroup<UtilityRemove> _utilityRemove = null;
   private ArrayList<TransformationGroup> _transformationGroups = null;
 
+  /**
+   * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
+   * transformation and order the accordingly to their interpretation order.
+   */
   public ClawTransformer(){
     _loopFusion = new DependentTransformationGroup<LoopFusion>("loop-fusion");
     _loopInterchange =
@@ -35,6 +39,9 @@ public class ClawTransformer implements Transformer {
     _transformationGroups.add(_loopInterchange);
   }
 
+  /**
+   * @see Transformer#addTransformation(Transformation)
+   */
   public void addTransformation(Transformation t){
     if(t instanceof LoopFusion){
       _loopFusion.add((LoopFusion)t);
@@ -47,10 +54,16 @@ public class ClawTransformer implements Transformer {
     }
   }
 
+  /**
+   * @see Transformer#addTransformationGroup(TransformationGroup, int)
+   */
   public void addTransformationGroup(TransformationGroup tg, int position){
     _transformationGroups.add(position, tg);
   }
 
+  /**
+   * @see Transformer#getGroups()
+   */
   public List<TransformationGroup> getGroups(){
     return _transformationGroups;
   }

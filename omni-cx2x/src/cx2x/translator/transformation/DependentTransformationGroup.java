@@ -16,10 +16,17 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
     extends TransformationGroup<T>
 {
 
+  /**
+   * DependentTransformationGroup ctor.
+   * @param name A friendly name to describe the transformation group.
+   */
   public DependentTransformationGroup(String name) {
     super(name);
   }
 
+  /**
+   * @see TransformationGroup#applyTranslations(XcodeProg, Transformer)
+   */
   public void applyTranslations(XcodeProg xcodeml, Transformer transformer)
     throws IllegalTransformationException
   {
@@ -45,9 +52,12 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
     }
   }
 
-
-  // In the dependent transformation group, the order in which transformation
-  // appears is important
+  /**
+   * Add a new transformation in the group. As transformation are dependent
+   * between each other, the position in the list is determined by the
+   * transformation's start line.
+   * @see TransformationGroup#add(Transformation)
+   */
   public void add(T translation){
     int linePosition = translation.getStartLine();
     int insertIndex = 0;

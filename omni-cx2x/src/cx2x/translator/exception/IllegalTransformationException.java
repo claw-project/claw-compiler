@@ -46,10 +46,18 @@ public class IllegalTransformationException extends Exception {
     _transformationStartLine = lineno;
   }
 
+  /**
+   * Set the start line of the transformation that triggered the exception.
+   * @param lineno Line number
+   */
   public void setStartLine(int lineno) {
     _transformationStartLine = lineno;
   }
 
+  /**
+   * Get the start line of the transformation that triggered the exception.
+   * @return Line number
+   */
   public int getStartLine() {
     return _transformationStartLine;
   }

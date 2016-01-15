@@ -25,8 +25,12 @@ import java.util.List;
 public class XelementHelper {
 
 
-
-
+  /**
+   * Get a text attribute value from an element.
+   * @param el        The element in which the attribute is searched.
+   * @param attrName  The name of the attribute to be found.
+   * @return The attribute's value if the attribute is found. Null otherwise.
+   */
   public static String getAttributeValue(XbaseElement el, String attrName){
     if(el == null || el.getBaseElement() == null){
       return null;
@@ -40,6 +44,12 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Get a boolean attribute value from an element.
+   * @param el        The element in which the attribute is searched.
+   * @param attrName  The name of the attribute to be found.
+   * @return The attribute's value if the attribute is found. Null otherwise.
+   */
   public static boolean getBooleanAttributeValue(XbaseElement el,
     String attrName)
   {
@@ -56,6 +66,12 @@ public class XelementHelper {
     return false;
   }
 
+  /**
+   * Find a function definition according to a function call.
+   * @param xcodeml The XcodeML program to search in.
+   * @param fctCall The function call used to find the function definition.
+   * @return A function definition element if found. Null otherwise.
+   */
   public static XfctDef findFunctionDefinition(XcodeProg xcodeml,
     XfctCall fctCall)
   {
@@ -78,6 +94,11 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Find all array references elements in a given body.
+   * @param parent The body element to search for the array references.
+   * @return A list of all array references found.
+   */
   public static List<XarrayRef> getAllArrayReferences(Xbody parent){
     List<XarrayRef> references = new ArrayList<XarrayRef>();
     NodeList nList = parent.getBaseElement().
@@ -108,6 +129,7 @@ public class XelementHelper {
     return elements;
   }
 
+
   public static void insertFctCallIntoLoop(XdoStatement loop, XfctCall call){
     loop.getBody().getBaseElement().appendChild(call.getBaseElement().getParentNode());
   }
@@ -129,7 +151,7 @@ public class XelementHelper {
     }
     return null;
   }
-
+  
   public static XdoStatement findLoop(XfctDef fctDef, boolean any){
     Xbody body = fctDef.getBody();
     XdoStatement doStmt = XelementHelper.findDoStatement(body, any);
@@ -342,20 +364,15 @@ public class XelementHelper {
     return findXelement(parent, any, Xkind.class);
   }
 
-  public static void insertBefore(XbaseElement ref, XbaseElement insert){
-    ref.getBaseElement().getParentNode().insertBefore(insert.getBaseElement(),
-      ref.getBaseElement());
-  }
-
-  public static void insertAfter(XbaseElement refElement, XbaseElement element){
-    XelementHelper.insertAfter(refElement.getBaseElement(),
-      element.getBaseElement());
-  }
-
   public static XfctCall findFctCall(XbaseElement parent, boolean any){
     return findXelement(parent, any, XfctCall.class);
   }
 
+  /**
+   * Find a function call element nested in the given expression statement.
+   * @param exprStmt The expression statement to search from.
+   * @return A function call element if found. Null otherwise.
+   */
   public static XfctCall findFctCall(XexprStatement exprStmt){
     if(exprStmt == null){
       return null;
@@ -374,20 +391,39 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Find if there is a expr statement directly after the given element.
+   * @param from  The element to search from
+   * @return An expr statement element if found. Null otherwise.
+   */
   public static XexprStatement findNextExprStatement(XbaseElement from){
     return findNextElementOfType(from, XexprStatement.class);
   }
 
+  /**
+   * Find if there is a do statement directly after the given element.
+   * @param from  The element to search from
+   * @return A do statement element if found. Null otherwise.
+   */
   public static XdoStatement findDirectNextDoStmt(XbaseElement from){
     return findDirectNextElement(from, XdoStatement.class);
   }
 
+  /**
+   * Find if there is a if statement directly after the given element.
+   * @param from  The element to search from
+   * @return An if statement element if found. Null otherwise.
+   */
   public static XifStatement findDirectNextIfStmt(XbaseElement from){
     return findDirectNextElement(from, XifStatement.class);
   }
 
 
-
+  /**
+   * Delete all the elements between the two given pragmas.
+   * @param start The start pragma. Deletion start from next element.
+   * @param end   The end pragma. Deletion end just before this element.
+   */
   public static void deleteBetween(Xpragma start, Xpragma end){
     ArrayList<Element> toDelete = new ArrayList<Element>();
     Node node = start.getBaseElement().getNextSibling();
@@ -404,6 +440,11 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Find all the pragma element in an XcodeML tree.
+   * @param xcodeml The XcodeML program to search in.
+   * @return A list of all pragmas found in the XcodeML program.
+   */
   public static List<Xpragma> findAllPragmas(XcodeProg xcodeml){
     NodeList pragmaList = xcodeml.getDocument()
       .getElementsByTagName(XelementName.PRAGMA_STMT);
@@ -418,6 +459,13 @@ public class XelementHelper {
     return pragmas;
   }
 
+  /**
+   * Check if the two element are direct children of the same parent element.
+   * @param e1 First element.
+   * @param e2 Second element.
+   * @return True if the two element are direct children of the same parent.
+   * False otherwise.
+   */
   public static boolean hasSameParentBlock(XbaseElement e1, XbaseElement e2){
     if(e1 == null || e2 == null || e1.getBaseElement() == null
       || e2.getBaseElement() == null)
@@ -461,6 +509,10 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Extract the body of a do statement and place it directly after it.
+   * @param loop The do statement containing the body to be extracted.
+   */
   public static void extractBody(XdoStatement loop){
     Element loopElement = loop.getBaseElement();
     Element body = XelementHelper.findFirstElement(loopElement,
@@ -478,6 +530,10 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Delete an element for the tree.
+   * @param element Element to be deleted.
+   */
   public static void delete(Element element){
     element.getParentNode().removeChild(element);
   }
@@ -525,11 +581,8 @@ public class XelementHelper {
    * removing text nodes, besides only containing whitespace, are: If the
    * parent node has at least one child of any of the following types, all
    * whitespace-only text-node children will be removed: - ELEMENT child -
-   * CDATA child - COMMENT child
-   *
-   * The purpose of this is to make the format() method (that use a
-   * Transformer for formatting) more consistent regarding indenting and line
-   * breaks.
+   * CDATA child - COMMENT child.
+   * @param parentNode Root node to start the cleaning.
    */
   public static void cleanEmptyTextNodes(Node parentNode) {
     boolean removeEmptyTextNodes = false;
@@ -558,11 +611,34 @@ public class XelementHelper {
     return false;
   }
 
+  /**
+   * Insert an element just before a reference element.
+   * @param ref    The reference element.
+   * @param insert The element to be inserted.
+   */
+  public static void insertBefore(XbaseElement ref, XbaseElement insert){
+    ref.getBaseElement().getParentNode().insertBefore(insert.getBaseElement(),
+        ref.getBaseElement());
+  }
 
   /**
+   * Insert an element just after a reference element.
+   * @param refElement  The reference element.
+   * @param element     The element to be inserted.
+   */
+  public static void insertAfter(XbaseElement refElement, XbaseElement element){
+    XelementHelper.insertAfter(refElement.getBaseElement(),
+        element.getBaseElement());
+  }
+
+  /*
    * PRIVATE SECTION
    */
 
+  /**
+   * Remove all empty text nodes in the subtree.
+   * @param parentNode Root node to start the search.
+   */
   private static void removeEmptyTextNodes(Node parentNode) {
     Node childNode = parentNode.getFirstChild();
     while (childNode != null) {
@@ -581,6 +657,11 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Check the type of the given node.
+   * @param childNode Node to be checked.
+   * @return True if the node contains data. False otherwise.
+   */
   private static boolean checkNodeTypes(Node childNode) {
     short nodeType = childNode.getNodeType();
 
@@ -597,10 +678,26 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Insert a node directly after a reference node.
+   * @param refNode The reference node. New node will be inserted after this
+   *                one.
+   * @param newNode The new node to be inserted.
+   */
   private static void insertAfter(Node refNode, Node newNode){
      refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
+  /**
+   * Find an element of Class T in the nested elements under parent.
+   * @param parent        XbaseElement to search from.
+   * @param any           If true, find in any nested element under parent. If
+   *                      false, only direct children are search for.
+   * @param xElementClass Element's class to be found.
+   * @param <T>           Derived class of XbaseElement.
+   * @return An instance of T class if an element is found. Null if no element
+   * is found.
+   */
   private static <T extends XbaseElement> T findXelement(XbaseElement parent,
     boolean any, Class<T> xElementClass)
   {
@@ -623,6 +720,15 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Find any element of the the given Class in the direct children of from
+   * element. Only first level children are search for.
+   * @param from          XbaseElement to search from.
+   * @param xElementClass Element's class to be found.
+   * @param <T>           Derived class of XbaseElement
+   * @return The first element found under from element. Null if no element is
+   * found.
+   */
   private static <T extends XbaseElement> T findNextElementOfType(
     XbaseElement from, Class<T> xElementClass)
   {
@@ -649,7 +755,14 @@ public class XelementHelper {
     return null;
   }
 
-
+  /**
+   * Find element of the the given Class that is directly after the given from
+   * element.
+   * @param from          XbaseElement to search from.
+   * @param xElementClass Element's class to be found.
+   * @param <T>           Derived class of XbaseElement.
+   * @return Instance of the xElementClass. Null if no element is found.
+   */
   private static <T extends XbaseElement> T findDirectNextElement(
     XbaseElement from, Class<T> xElementClass)
   {
@@ -677,14 +790,25 @@ public class XelementHelper {
     return null;
   }
 
-   // TODO description
+  /**
+   * Find the first element with tag corresponding to elementName.
+   * @param parent      The root element to search from.
+   * @param elementName The tag of the element to search for.
+   * @param any         If true, find in any nested element under parent. If
+   *                    false, only direct children are search for.
+   * @return first element found. Null if no element is found.
+   */
   private static Element findElement(XbaseElement parent, String elementName, boolean any){
     return findElement(parent.getBaseElement(), elementName, any);
   }
 
   /**
-   * Find an element starting from the parent.
-   *
+   * Find the first element with tag corresponding to elementName.
+   * @param parent      The root element to search from.
+   * @param elementName The tag of the element to search for.
+   * @param any         If true, find in any nested element under parent. If
+   *                    false, only direct children are search for.
+   * @return first element found. Null if no element is found.
    */
   private static Element findElement(Element parent, String elementName, boolean any){
     if(any){
@@ -698,6 +822,14 @@ public class XelementHelper {
     return findFirstElement(parent.getBaseElement(), elementName);
   }
 
+  /**
+   * Find the first element with tag corresponding to elementName nested under
+   * the parent element.
+   * @param parent      The root element to search from.
+   * @param elementName The tag of the element to search for.
+   * @return The first element found under parent with the corresponding tag.
+   * Null if no element is found.
+   */
   private static Element findFirstElement(Element parent, String elementName){
     NodeList elements = parent.getElementsByTagName(elementName);
     if(elements.getLength() == 0){
@@ -707,8 +839,12 @@ public class XelementHelper {
   }
 
   /**
-   * Search only in the direct children of the parent element and not in the
-   * children of children
+   * Find the first element with tag corresponding to elementName in the direct
+   * children of the parent element.
+   * @param parent      The root element to search from.
+   * @param elementName The tag of the element to search for.
+   * @return The first element found in the direct children of the element
+   * parent with the corresponding tag. Null if no element is found.
    */
   private static Element findFirstChildElement(Element parent, String elementName){
     NodeList nodeList = parent.getChildNodes();
