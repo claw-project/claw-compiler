@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * The Xbound represents the lowerBound and upperBound (8.12, 8.13) element in
