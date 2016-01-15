@@ -1,8 +1,9 @@
-package cx2x.xcodeml.xelement;
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+package cx2x.xcodeml.xelement;
 
 /**
  * The XexprModel represents the exprModel (9.4) element in XcodeML
@@ -23,6 +24,8 @@ import org.w3c.dom.NodeList;
  *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr TODO ALL
  *   - unaryMinusExpr, userBinaryExpr, userUnaryExpr TODO
  *   - FdoLoop (Xdo)
+ *
+ * @author clementval
  */
 
 public class XexprModel {

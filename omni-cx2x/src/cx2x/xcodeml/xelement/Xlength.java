@@ -1,7 +1,11 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * The Xlength represents the len (8.6) element in XcodeML intermediate
@@ -9,6 +13,8 @@ import org.w3c.dom.Node;
  *
  * Elements:
  * - exprModel (XexprModel)
+ *
+ * @author clementval
  */
 
 public class Xlength extends XbaseElement {

@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 // Cx2x import
@@ -20,7 +25,7 @@ import java.util.regex.*;
  * This loop is then wrapped around the function call and the parameters are
  * demoted accordingly to the mapping options.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public class LoopExtraction extends Transformation<LoopExtraction> {

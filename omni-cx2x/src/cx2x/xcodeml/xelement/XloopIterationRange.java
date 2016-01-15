@@ -1,23 +1,15 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-/*
- * Example of XcodeML representation
+/**
+ * A XloopIterationRange represents the elements parts of the iteration in a do
+ * statement (induction variable, lower bound, upper bound, step)
  *
- * <Var type="Fint" scope="local">i</Var>
- * <indexRange>
- *   <lowerBound>
- *     <Var type="Fint" scope="local">istart</Var>
- *   </lowerBound>
- *   <upperBound>
- *     <Var type="Fint" scope="local">iend</Var>
- *   </upperBound>
- *   <step>
- *     <FintConstant type="Fint">1</FintConstant>
- *   </step>
- * </indexRange>
+ * @author clementval
  */
 
 public class XloopIterationRange {

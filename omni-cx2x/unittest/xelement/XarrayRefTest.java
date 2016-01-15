@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package xelement;
 
 import static org.junit.Assert.*;
@@ -11,6 +16,12 @@ import cx2x.xcodeml.xelement.Xvar;
 import cx2x.xcodeml.xelement.Xscope;
 import cx2x.xcodeml.xelement.XarrayRef;
 
+/**
+ * Test the features of the XarrayRef class
+ *
+ * @author clementval
+ */
+ 
 public class XarrayRefTest {
   private static final String ARRAYREF_TYPE = "Fint";
   private static final String TEST_TYPE = "F7f81a04070d0";
@@ -32,7 +43,7 @@ public class XarrayRefTest {
     xcodeml.readTypeTable();
     xcodeml.readGlobalSymbolsTable();
 
-    
+
 
     XarrayRef arrayRef = XarrayRef.create(xcodeml, var, ARRAYREF_TYPE, XarrayIndex index);*/
 

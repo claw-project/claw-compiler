@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package xelement;
 
 import java.io.File;
@@ -6,6 +11,12 @@ import org.junit.Test;
 import org.w3c.dom.Element;
 import helper.XmlHelper;
 import cx2x.xcodeml.xelement.XcodeProg;
+
+/**
+ * Test the features of the XcodeProg class
+ *
+ * @author clementval
+ */
 
 public class XcodeProgTest {
 

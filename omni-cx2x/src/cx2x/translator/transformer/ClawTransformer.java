@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformer;
 
 import java.util.ArrayList;
@@ -9,8 +14,9 @@ import cx2x.translator.transformation.*;
  * ClawTransformer stores all transformation groups applied during the
  * translation.
  *
- * @author Valentin Clement
+ * @author clementval
  */
+ 
 public class ClawTransformer implements Transformer {
   private TransformationGroup<LoopFusion> _loopFusion = null;
   private TransformationGroup<LoopInterchange> _loopInterchange = null;

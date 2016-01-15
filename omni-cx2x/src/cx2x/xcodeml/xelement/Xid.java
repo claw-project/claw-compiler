@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -13,6 +18,8 @@ import org.w3c.dom.Node;
  * Attributes:
  * - Required: type (text), sclass (text: auto, param, extern, extern_def,
  *             label, tagname) // TODO move to enum
+ *
+ * @author clementval
  */
 
 public class Xid extends XbaseElement implements Xclonable<Xid> {

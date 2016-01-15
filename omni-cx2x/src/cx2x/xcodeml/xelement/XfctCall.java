@@ -1,7 +1,11 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * The XfctCall represents the functionCall (7.5.1) element in XcodeML
@@ -14,6 +18,8 @@ import org.w3c.dom.NodeList;
  *   - arguments (XexprModel) // TODO
  * Attribute:
  * - Optional: type (text), is_intrinsic (bool)
+ *
+ * @author clementval
  */
 
 public class XfctCall extends Xfct {

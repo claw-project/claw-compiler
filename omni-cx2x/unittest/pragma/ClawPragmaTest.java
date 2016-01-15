@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package pragma;
 
 import static org.junit.Assert.*;
@@ -5,6 +10,12 @@ import org.junit.Test;
 
 import cx2x.translator.pragma.ClawPragma;
 
+/**
+ * Test the features of the ClawPragma enum.
+ *
+ * @author clementval
+ */
+ 
 public class ClawPragmaTest {
 
   @Test

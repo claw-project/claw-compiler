@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 import cx2x.translator.pragma.ClawPragma;
@@ -12,7 +17,7 @@ import cx2x.translator.transformer.Transformer;
  * The transformation consists of merging the body of the second do statement to
  * the end of the first do statement.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public class LoopFusion extends Transformation<LoopFusion> {

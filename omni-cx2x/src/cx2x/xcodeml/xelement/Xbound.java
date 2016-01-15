@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -9,8 +14,9 @@ import org.w3c.dom.NodeList;
  *
  * Elements:
  * - exprModel TODO move to exprModel
+ *
+ * @author clementval
  */
-
 
 public class Xbound extends XbaseElement {
   private String _value = null;

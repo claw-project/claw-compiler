@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator;
 
 // Cx2x import
@@ -16,8 +21,9 @@ import xcodeml.util.XmOption;
  * CLAW directives and applies the corresponding transformation to the XcodeML/F
  * intermediate representation.
  *
- * @author Valentin Clement
+ * @author clementval
  */
+ 
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;

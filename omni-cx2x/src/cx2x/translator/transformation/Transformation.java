@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 import cx2x.xcodeml.xelement.*;
@@ -10,7 +15,7 @@ import cx2x.translator.transformer.Transformer;
  * representation. Normally, only derived classes of Transformation should be
  * applied as the base class does not implement the core methods.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public abstract class Transformation<T> {

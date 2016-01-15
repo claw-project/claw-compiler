@@ -1,7 +1,11 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import java.util.Hashtable;
 
 /**
  * The XfctDef represents the FfunctionDefinition (5.3) element in XcodeML
@@ -15,6 +19,8 @@ import java.util.Hashtable;
  *   - symbols (XsymbolTable)
  *   - params
  *   - declarations (XdeclTable)
+ *
+ * @author clementval
  */
 
 public class XfctDef extends Xfct implements Xclonable<XfctDef> {

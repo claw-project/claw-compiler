@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -23,6 +28,8 @@ import java.util.ArrayList;
  *             is_target (bool), is_external (bool),is_intrinsic (bool),
  *             is_optional (bool), is_save (bool), is_parameter (bool),
  *             is_allocatable (bool), intent (text: in, out, inout)
+ *
+ * @author clementval
  */
 
 public class XbasicType extends Xtype {
@@ -51,6 +58,7 @@ public class XbasicType extends Xtype {
   private boolean _is_save = false;
   private boolean _is_parameter = false;
   private boolean _is_allocatable = false;
+  // TODO intent as enum
 
   public XbasicType(Element element){
     super(element);

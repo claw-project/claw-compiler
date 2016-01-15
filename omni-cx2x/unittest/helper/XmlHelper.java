@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package helper;
 
 import static org.junit.Assert.*;
@@ -16,7 +21,12 @@ import cx2x.xcodeml.xelement.Xid;
 import cx2x.xcodeml.xelement.Xvar;
 
 
-
+/**
+ * Helper class containing static methods for the unit tests.
+ *
+ * @author clementval
+ */
+ 
 public class XmlHelper {
 
   public static Document loadXMLFromString(String xml) {

@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.pragma;
 
 import java.util.ArrayList;
@@ -6,8 +11,9 @@ import java.util.ArrayList;
  * A ClawMapping object holds the loop-extract mapping option representation
  * var_list:mapping_list
  *
- * @author Valentin Clement
+ * @author clementval
  */
+ 
 public class ClawMapping {
 
   private ArrayList<String> _mappedVariables = null;

@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 OMNI_HOME="@OMNI_HOME@"
 CPP_OPT="@CPP_OPT@"
 

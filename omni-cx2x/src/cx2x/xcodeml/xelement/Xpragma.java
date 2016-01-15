@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -8,6 +13,8 @@ import org.w3c.dom.Node;
  * intermediate representation.
  *
  * Elements: contains value of the pragma line.
+ *
+ * @author clementval
  */
 
 public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {

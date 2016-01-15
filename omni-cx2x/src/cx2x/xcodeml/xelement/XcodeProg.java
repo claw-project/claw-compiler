@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -23,6 +28,8 @@ import java.util.List;
  * Attributes:
  * - Optional: compiler-info (text), version (text), time (time),
  *             language (text), source (text)
+ *
+ * @author clementval
  */
 
 public class XcodeProg extends XbaseElement {

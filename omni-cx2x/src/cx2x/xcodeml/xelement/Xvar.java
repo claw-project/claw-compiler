@@ -1,8 +1,12 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * The XtypeTable represents the typeTable (7.4.1) element in XcodeML intermediate
@@ -12,6 +16,8 @@ import org.w3c.dom.NodeList;
  * Attributes:
  * - Required: scope (Xscope: LOCAL, GLOBAL, PARAM)
  * - Optional: type (text)
+ *
+ * @author clementval
  */
 
 public class Xvar extends XbaseElement implements Xclonable<Xvar> {

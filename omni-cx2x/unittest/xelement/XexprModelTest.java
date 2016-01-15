@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package xelement;
 
 import static org.junit.Assert.*;
@@ -7,6 +12,12 @@ import org.w3c.dom.Document;
 
 import helper.XmlHelper;
 import cx2x.xcodeml.xelement.*;
+
+/**
+ * Test the features of the XexprModel class
+ *
+ * @author clementval
+ */
 
 public class XexprModelTest {
 

@@ -1,10 +1,16 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.exception;
 
 /**
  * Exception thrown during the transformation process
  *
- * @author Valentin Clement
+ * @author clementval
  */
+ 
 public class IllegalTransformationException extends Exception {
   private int _transformationStartLine = 0;
 

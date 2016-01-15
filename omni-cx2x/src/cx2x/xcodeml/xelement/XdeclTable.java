@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -20,6 +25,8 @@ import java.util.Hashtable;
  *   - FnamelistDecl TODO
  *   - FequivalenceDecl TODO
  *   - FcommonDecl TODO
+ *
+ * @author clementval
  */
 
 public class XdeclTable extends XbaseElement {

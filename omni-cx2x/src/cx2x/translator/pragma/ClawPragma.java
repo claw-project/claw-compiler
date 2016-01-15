@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.pragma;
 
 import exc.object.Xobject;
@@ -7,8 +12,9 @@ import java.util.Arrays;
 /**
  * Enumeration of the different directive available in the CLAW language.
  *
- * @author Valentin Clement
+ * @author clementval
  */
+ 
 public enum ClawPragma {
   //directive
   LOOP_FUSION,

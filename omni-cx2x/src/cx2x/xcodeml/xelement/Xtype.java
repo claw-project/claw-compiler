@@ -1,10 +1,16 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Xtype is the base class for element in the XtypeTable (XbasicType, XfctType)
+ *
+ * @author clementval
  */
 
 public class Xtype extends XbaseElement {

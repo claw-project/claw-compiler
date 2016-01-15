@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -5,7 +10,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
 import java.util.Random;
-
 
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
@@ -16,6 +20,8 @@ import java.util.Random;
  *   - FbasicType (XbasicType)
  *   - FfunctionType (XfctType)
  *   - FstructType (XstructType)
+ *
+ * @author clementval
  */
 
 public class XtypeTable extends XbaseElement {

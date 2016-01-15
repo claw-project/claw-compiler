@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import cx2x.translator.exception.*;
@@ -22,6 +27,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The class XelementHelper contains only static method to help manipulating the
+ * raw Elements in the XcodeML representation by using the abstracted Xelements.
+ *
+ * @author clementval
+ */
+ 
 public class XelementHelper {
 
 
@@ -151,7 +163,7 @@ public class XelementHelper {
     }
     return null;
   }
-  
+
   public static XdoStatement findLoop(XfctDef fctDef, boolean any){
     Xbody body = fctDef.getBody();
     XdoStatement doStmt = XelementHelper.findDoStatement(body, any);

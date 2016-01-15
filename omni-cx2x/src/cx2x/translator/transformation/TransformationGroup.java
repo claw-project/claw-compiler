@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 import cx2x.xcodeml.xelement.XcodeProg;
@@ -11,7 +16,7 @@ import java.util.ArrayList;
  * only derived classes of TransformationGroup should be used as they
  * implement applyTranslations.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public abstract class TransformationGroup<T extends Transformation> {

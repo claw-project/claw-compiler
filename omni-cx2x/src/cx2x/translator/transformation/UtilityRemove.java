@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 import cx2x.xcodeml.xelement.*;
@@ -8,7 +13,7 @@ import cx2x.translator.transformer.Transformer;
  * A UtilityRemove is an independent transformation. It allows to delete part of
  * the code.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 public class UtilityRemove extends Transformation<UtilityRemove> {
 

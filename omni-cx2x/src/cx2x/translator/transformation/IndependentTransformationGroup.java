@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 import cx2x.xcodeml.xelement.XcodeProg;
@@ -8,7 +13,7 @@ import cx2x.translator.transformer.Transformer;
  * An independent transformation group applies each transformation without
  * checking with any other transformation in the pipeline.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public class IndependentTransformationGroup<T extends Transformation<? super T>>

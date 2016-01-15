@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -11,6 +16,8 @@ import java.util.List;
  * - Required: FrealConstant (XrealConstant)
  * Attributes: defined in Xconstant
  * - Optional: type (text)
+ *
+ * @author clementval
  */
 
 public class XcomplexConstant extends Xconstant {

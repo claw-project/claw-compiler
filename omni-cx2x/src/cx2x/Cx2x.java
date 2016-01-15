@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x;
 
 import cx2x.translator.ClawXcodeMlTranslator;
@@ -7,7 +12,7 @@ import xcodeml.util.XmOption;
 /**
  * Cx2x is the entry point of any CLAW XcodeML/F translation.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public class Cx2x {

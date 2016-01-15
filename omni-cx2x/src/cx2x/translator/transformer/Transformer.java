@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformer;
 
 import cx2x.translator.transformation.*;
@@ -8,7 +13,7 @@ import java.util.List;
  *
  * Transformer stores all the transformation to be applied by a translator.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public interface Transformer {

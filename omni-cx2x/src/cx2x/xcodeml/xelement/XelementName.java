@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import java.util.Map;
@@ -8,7 +13,7 @@ import java.util.Collections;
  * XelementName class contains all element and attributes values that can be
  * found in the XcodeML/F intermediate representation language.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public class XelementName {

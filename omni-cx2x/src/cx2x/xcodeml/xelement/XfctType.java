@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -14,6 +19,8 @@ import org.w3c.dom.Node;
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
  *   is_internal (bool)
+ *
+ * @author clementval
  */
 
 public class XfctType extends Xtype implements Xclonable<XfctType> {

@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -18,7 +23,10 @@ import cx2x.translator.exception.*;
  *   - body // TODO check what is the meaning of this value
  * Attributes:
  * - Optional: construct_name TODO
+ *
+ * @author clementval
  */
+ 
 public class XdoStatement extends XbaseElement {
   private XloopIterationRange _iterationRange = null;
   private Xbody _body = null;

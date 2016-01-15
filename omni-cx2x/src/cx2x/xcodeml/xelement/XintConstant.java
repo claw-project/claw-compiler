@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
@@ -11,6 +16,8 @@ import org.w3c.dom.Element;
  * Attributes: defined in Xconstant
  * - Optional: type (text) defined in Xconstant, kind (text) defined
  *             in Xconstant
+ *
+ * @author clementval
  */
 
 public class XintConstant extends Xconstant {

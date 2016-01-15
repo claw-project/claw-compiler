@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package xelement;
 
 import static org.junit.Assert.*;
@@ -9,6 +14,12 @@ import helper.XmlHelper;
 
 import cx2x.xcodeml.xelement.Xid;
 
+/**
+ * Test the features of the Xid class
+ *
+ * @author clementval
+ */
+ 
 public class XidTest {
   private static final String TEST_TYPE = "F7f9502e03d00";
   private static final String TEST_SCLASS = "ffunc";

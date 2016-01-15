@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.transformation;
 
 import cx2x.xcodeml.xelement.XcodeProg;
@@ -9,7 +14,7 @@ import cx2x.translator.transformer.Transformer;
  * another pending transformation in the pipeline. Each transformation are
  * applied only once.
  *
- * @author Valentin Clement
+ * @author clementval
  */
 
 public class DependentTransformationGroup<T extends Transformation<? super T>>

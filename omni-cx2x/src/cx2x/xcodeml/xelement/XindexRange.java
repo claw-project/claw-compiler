@@ -1,8 +1,12 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * The XindexRange represents the indexRange (8.11) element in XcodeML
@@ -15,7 +19,10 @@ import org.w3c.dom.NodeList;
  *   - step (Xstep)
  * Attributes:
  * - Optional: is_assumed_shape (bool)
+ *
+ * @author clementval
  */
+ 
 public class XindexRange extends XbaseElement implements Xclonable<XindexRange> {
 
   protected XlowerBound _lowerBound;
