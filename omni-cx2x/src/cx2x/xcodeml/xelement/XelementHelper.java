@@ -535,7 +535,7 @@ public class XelementHelper {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE){
-        XelementHelper.insertAfter(refNode, (Element)childNode);
+        XelementHelper.insertAfter(refNode, childNode);
         refNode = childNode;
       }
       childNode = nextChild;
