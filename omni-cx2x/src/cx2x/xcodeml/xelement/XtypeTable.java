@@ -33,7 +33,7 @@ public class XtypeTable extends XbaseElement {
 
   public XtypeTable(Element typeTableElement){
     super(typeTableElement);
-    _table = new Hashtable<String, Xtype>();
+    _table = new Hashtable<>();
     readTable();
   }
 
@@ -95,7 +95,7 @@ public class XtypeTable extends XbaseElement {
 
   private String generateHash(int length){
     Random r = new Random();
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     while(sb.length() < length){
       sb.append(Integer.toHexString(r.nextInt()));
     }

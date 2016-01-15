@@ -34,12 +34,13 @@ public enum Xscope {
   }
 
   public static Xscope fromString(String value){
-    if(value.equals(XelementName.SCOPE_LOCAL)){
-      return LOCAL;
-    } else if (value.equals(XelementName.SCOPE_GLOBAL)){
-      return GLOBAL;
-    } else if (value.equals(XelementName.SCOPE_PARAM)){
-      return PARAM;
+    switch (value) {
+      case XelementName.SCOPE_LOCAL:
+        return LOCAL;
+      case XelementName.SCOPE_GLOBAL:
+        return GLOBAL;
+      case XelementName.SCOPE_PARAM:
+        return PARAM;
     }
     return null;
   }

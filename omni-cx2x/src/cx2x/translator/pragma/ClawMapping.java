@@ -26,8 +26,8 @@ public class ClawMapping {
    *                      var_list:mapping_list
    */
   public ClawMapping(String mappingClause){
-    _mappedVariables = new ArrayList<String>();
-    _mappingVariables = new ArrayList<String>();
+    _mappedVariables = new ArrayList<>();
+    _mappingVariables = new ArrayList<>();
 
     String[] parts = mappingClause.split(":");
     if(parts.length != 2) {

@@ -45,7 +45,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
   public LoopExtraction(Xpragma pragma) {
     super(pragma);
-    _mappings = new ArrayList<ClawMapping>();
+    _mappings = new ArrayList<>();
     extractMappingInformation();
     extractRangeInformation();
     extractFusionInformation();
@@ -60,7 +60,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
   private void extractMappingInformation(){
-    List<String> allMappings = new ArrayList<String>();
+    List<String> allMappings = new ArrayList<>();
     // TODO move regex somewhere centralized
     Matcher m = Pattern.compile("map\\(([^:]*:[^)]*)\\)")
      .matcher(_pragma.getData());

@@ -55,7 +55,7 @@ public class XcodeProg extends XbaseElement {
   public XcodeProg(String inputFile){
     super(null);
     _xcodemlInputFile = inputFile;
-    _errors = new ArrayList<XanalysisError>();
+    _errors = new ArrayList<>();
   }
 
   private void readDocumentInformation(){

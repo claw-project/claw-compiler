@@ -21,13 +21,14 @@ import java.util.Hashtable;
  * @author clementval
  */
  
+@SuppressWarnings("Convert2Diamond")
 public class XsymbolTable extends XbaseElement {
 
   private Hashtable<String, Xid> _table;
 
   public XsymbolTable(Element symbolsElement){
     super(symbolsElement);
-    _table = new Hashtable<String, Xid>();
+    _table = new Hashtable<>();
     readTable();
   }
 

@@ -35,7 +35,7 @@ public class XdeclTable extends XbaseElement {
 
   public XdeclTable(Element declarations){
     super(declarations);
-    _table = new Hashtable<String, XvarDecl>();
+    _table = new Hashtable<>();
     readTable();
   }
 

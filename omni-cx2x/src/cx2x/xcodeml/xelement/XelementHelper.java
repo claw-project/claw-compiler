@@ -112,7 +112,7 @@ public class XelementHelper {
    * @return A list of all array references found.
    */
   public static List<XarrayRef> getAllArrayReferences(Xbody parent){
-    List<XarrayRef> references = new ArrayList<XarrayRef>();
+    List<XarrayRef> references = new ArrayList<>();
     NodeList nList = parent.getBaseElement().
       getElementsByTagName(XelementName.F_ARRAY_REF);
     for (int i = 0; i < nList.getLength(); i++) {
@@ -127,7 +127,7 @@ public class XelementHelper {
   }
 
   public static List<XrealConstant> getRealConstants(XbaseElement parent){
-    List<XrealConstant> elements = new ArrayList<XrealConstant>();
+    List<XrealConstant> elements = new ArrayList<>();
     NodeList nList = parent.getBaseElement().
       getElementsByTagName(XelementName.F_REAL_CONST);
     for (int i = 0; i < nList.getLength(); i++) {
@@ -357,7 +357,7 @@ public class XelementHelper {
   }
 
   public static ArrayList<XindexRange> findIndexRanges(XbaseElement parent){
-    ArrayList<XindexRange> indexRanges = new ArrayList<XindexRange>();
+    ArrayList<XindexRange> indexRanges = new ArrayList<>();
     if(parent == null || parent.getBaseElement() == null){
       return indexRanges;
     }
@@ -437,7 +437,7 @@ public class XelementHelper {
    * @param end   The end pragma. Deletion end just before this element.
    */
   public static void deleteBetween(Xpragma start, Xpragma end){
-    ArrayList<Element> toDelete = new ArrayList<Element>();
+    ArrayList<Element> toDelete = new ArrayList<>();
     Node node = start.getBaseElement().getNextSibling();
     while (node != null && node != end.getBaseElement()){
       if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -460,7 +460,7 @@ public class XelementHelper {
   public static List<Xpragma> findAllPragmas(XcodeProg xcodeml){
     NodeList pragmaList = xcodeml.getDocument()
       .getElementsByTagName(XelementName.PRAGMA_STMT);
-    List<Xpragma> pragmas = new ArrayList<Xpragma>();
+    List<Xpragma> pragmas = new ArrayList<>();
     for (int i = 0; i < pragmaList.getLength(); i++) {
       Node pragmaNode = pragmaList.item(i);
       if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {

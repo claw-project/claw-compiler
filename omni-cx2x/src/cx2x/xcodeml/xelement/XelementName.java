@@ -112,7 +112,7 @@ public class XelementName {
   private static Map<Class, String> _classToElementNameMapping;
 
   static {
-    Map<Class, String> tempMap = new Hashtable<Class, String>();
+    Map<Class, String> tempMap = new Hashtable<>();
     tempMap.put(XargumentsTable.class, ARGUMENTS);
     tempMap.put(XarrayIndex.class, ARRAY_INDEX);
     tempMap.put(XbasicType.class, BASIC_TYPE);

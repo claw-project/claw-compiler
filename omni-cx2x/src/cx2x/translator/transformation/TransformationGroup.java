@@ -29,7 +29,7 @@ public abstract class TransformationGroup<T extends Transformation> {
    */
   public TransformationGroup(String name){
     _name = name;
-    _translations = new ArrayList<T>();
+    _translations = new ArrayList<>();
   }
 
   /**

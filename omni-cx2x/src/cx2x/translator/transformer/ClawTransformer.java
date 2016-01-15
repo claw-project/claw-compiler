@@ -29,16 +29,16 @@ public class ClawTransformer implements Transformer {
    * transformation and order the accordingly to their interpretation order.
    */
   public ClawTransformer(){
-    _loopFusion = new DependentTransformationGroup<LoopFusion>("loop-fusion");
+    _loopFusion = new DependentTransformationGroup<>("loop-fusion");
     _loopInterchange =
-        new IndependentTransformationGroup<LoopInterchange>("loop-interchange");
+        new IndependentTransformationGroup<>("loop-interchange");
     _loopExtract =
-        new IndependentTransformationGroup<LoopExtraction>("loop-extract");
+        new IndependentTransformationGroup<>("loop-extract");
     _utilityRemove =
-        new IndependentTransformationGroup<UtilityRemove>("remove");
+        new IndependentTransformationGroup<>("remove");
 
     // Add transformations (order of insertion is the one that will be applied)
-    _transformationGroups = new ArrayList<TransformationGroup>();
+    _transformationGroups = new ArrayList<>();
     _transformationGroups.add(_utilityRemove);
     _transformationGroups.add(_loopExtract);
     _transformationGroups.add(_loopFusion);

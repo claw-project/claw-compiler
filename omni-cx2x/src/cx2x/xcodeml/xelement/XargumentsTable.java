@@ -28,7 +28,7 @@ public class XargumentsTable extends XbaseElement {
 
   public XargumentsTable(Element arguments){
     super(arguments);
-    _table = new Hashtable<String, XbaseElement>();
+    _table = new Hashtable<>();
     readTable();
   }
 

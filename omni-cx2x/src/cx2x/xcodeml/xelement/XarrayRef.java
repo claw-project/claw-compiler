@@ -38,7 +38,7 @@ public class XarrayRef extends XbaseElement {
 
   public XarrayRef(Element arrayRefElement){
     super(arrayRefElement);
-    _innerElement = new ArrayList<XbaseElement>();
+    _innerElement = new ArrayList<>();
     readElementInformation();
   }
 
