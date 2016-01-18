@@ -187,8 +187,7 @@ public class XelementHelper {
    */
   public static XdoStatement findLoop(XfctDef fctDef, boolean any){
     Xbody body = fctDef.getBody();
-    XdoStatement doStmt = XelementHelper.findDoStatement(body, any);
-    return doStmt;
+    return XelementHelper.findDoStatement(body, any);
   }
 
   /**
@@ -715,12 +714,8 @@ public class XelementHelper {
       return false;
     }
 
-    if(e1.getBaseElement().getParentNode()
-      == e2.getBaseElement().getParentNode())
-    {
-      return true;
-    }
-    return false;
+    return e1.getBaseElement().getParentNode()
+        == e2.getBaseElement().getParentNode();
   }
 
   /**
@@ -761,6 +756,9 @@ public class XelementHelper {
       XelementName.BODY);
 
     Node refNode = loopElement;
+    if(body == null){
+      return;
+    }
     for(Node childNode = body.getFirstChild(); childNode!=null;){
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
@@ -796,7 +794,7 @@ public class XelementHelper {
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty(
                 "{http://xml.apache.org/xslt}indent-amount",
-                Integer.toString(2));
+                Integer.toString(indent));
       DOMSource source = new DOMSource(xcodeml.getDocument());
       if(outputFile == null){
         // Output to console
@@ -919,13 +917,9 @@ public class XelementHelper {
       cleanEmptyTextNodes(childNode); // recurse into subtree
     }
 
-    if (nodeType == Node.ELEMENT_NODE
+    return nodeType == Node.ELEMENT_NODE
         || nodeType == Node.CDATA_SECTION_NODE
-        || nodeType == Node.COMMENT_NODE) {
-      return true;
-    } else {
-      return false;
-    }
+        || nodeType == Node.COMMENT_NODE;
   }
 
   /**
@@ -960,9 +954,8 @@ public class XelementHelper {
     Element element = findElement(parent, elementName, any);
     if (element != null){
       try{
-        T xelement = xElementClass.
+        return xElementClass.
           getDeclaredConstructor(Element.class).newInstance(element);
-        return xelement;
       } catch(Exception ex){
         return null;
       }
@@ -991,10 +984,9 @@ public class XelementHelper {
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element) nextNode;
         if(element.getTagName().equals(elementName)){
-          try{
-            T xelement = xElementClass.
+          try {
+            return xElementClass.
               getDeclaredConstructor(Element.class).newInstance(element);
-            return xelement;
           } catch(Exception ex){
             return null;
           }
@@ -1026,9 +1018,8 @@ public class XelementHelper {
         Element element = (Element) nextNode;
         if(element.getTagName().equals(elementName)){
           try{
-            T xelement = xElementClass.
+            return xElementClass.
               getDeclaredConstructor(Element.class).newInstance(element);
-            return xelement;
           } catch(Exception ex){
             return null;
           }
