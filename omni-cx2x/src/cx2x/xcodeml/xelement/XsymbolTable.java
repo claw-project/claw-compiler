@@ -64,7 +64,7 @@ public class XsymbolTable extends XbaseElement {
    * @param id The new Xid object to be added.
    */
   public void add(Xid id){
-    baseElement.appendChild(id.clone());
+    baseElement.appendChild(id.cloneNode());
     _table.put(id.getName(), id);
   }
 

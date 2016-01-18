@@ -81,7 +81,7 @@ public class XargumentsTable extends XbaseElement {
    * @param arrayRef The arrayRef to be added.
    */
   public void add(XarrayRef arrayRef){
-    baseElement.appendChild(arrayRef.clone());
+    baseElement.appendChild(arrayRef.cloneNode());
     //_table.put(arrayRef.getVar().getValue(), arrayRef); TODO
   }
 
@@ -90,7 +90,7 @@ public class XargumentsTable extends XbaseElement {
    * @param var The var to be added.
    */
   public void add(Xvar var){
-    baseElement.appendChild(var.clone());
+    baseElement.appendChild(var.cloneNode());
     _table.put(var.getValue(), var);
   }
 

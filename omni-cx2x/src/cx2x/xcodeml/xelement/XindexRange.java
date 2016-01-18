@@ -100,7 +100,7 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
    * @return A new object XindexRange that is the clone of the current object.
    */
   public XindexRange cloneObject(){
-    Node clone = clone();
+    Node clone = cloneNode();
     return new XindexRange((Element)clone);
   }
 

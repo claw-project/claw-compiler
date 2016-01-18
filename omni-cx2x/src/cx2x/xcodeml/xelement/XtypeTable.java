@@ -93,7 +93,7 @@ public class XtypeTable extends XbaseElement {
    * @param type The new type to be added.
    */
   public void add(Xtype type){
-    baseElement.appendChild(type.clone());
+    baseElement.appendChild(type.cloneNode());
     _table.put(type.getType(), type);
   }
 

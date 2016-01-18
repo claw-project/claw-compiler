@@ -115,7 +115,7 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
    * @return A new XfctType that is a clone of the current one.
    */
   public XfctType cloneObject(){
-    Node clone = clone();
+    Node clone = cloneNode();
     return new XfctType((Element)clone);
   }
 

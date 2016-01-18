@@ -79,7 +79,7 @@ public class XvarDecl extends Xdecl {
    */
   public void append(XbaseElement element, boolean cloneElement){
     if(cloneElement){
-      Node clone = element.clone();
+      Node clone = element.cloneNode();
       baseElement.appendChild(clone);
     } else {
       baseElement.appendChild(element.getBaseElement());

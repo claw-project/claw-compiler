@@ -89,7 +89,7 @@ public class XdeclTable extends XbaseElement {
    * @param decl The new declaration object.
    */
   public void add(XvarDecl decl){
-    baseElement.appendChild(decl.clone());
+    baseElement.appendChild(decl.cloneNode());
     _table.put(decl.getName().getValue(), decl);
   }
 

@@ -66,7 +66,7 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
    */
   public void append(XbaseElement element, boolean cloneElement){
     if(cloneElement){
-      Node clone = element.clone();
+      Node clone = element.cloneNode();
       baseElement.appendChild(clone);
     } else {
       baseElement.appendChild(element.getBaseElement());
@@ -80,7 +80,7 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
    * @return A cloned copy of the XvarRef object.
    */
   public XvarRef cloneObject(){
-    Element clone = (Element)clone();
+    Element clone = (Element)cloneNode();
     return new XvarRef(clone);
   }
 }

@@ -37,7 +37,7 @@ public class XbaseElement {
    * Create an identical copy of the element and its children.
    * @return A node representing the root element of the clone.
    */
-  protected Node clone(){
+  protected Node cloneNode(){
     if(baseElement != null){
       return baseElement.cloneNode(true);
     }

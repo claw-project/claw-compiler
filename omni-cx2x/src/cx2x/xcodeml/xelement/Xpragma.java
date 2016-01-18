@@ -62,7 +62,7 @@ public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {
    * @return A new object Xpragma that is the clone of the current object.
    */
   public Xpragma cloneObject(){
-    Node clone = clone();
+    Node clone = cloneNode();
     return new Xpragma((Element)clone);
   }
 

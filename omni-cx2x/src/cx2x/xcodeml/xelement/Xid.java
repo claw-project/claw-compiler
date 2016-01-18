@@ -107,7 +107,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * @return A new object Xid that is the clone of the current object.
    */
   public Xid cloneObject(){
-    Node clone = clone();
+    Node clone = cloneNode();
     return new Xid((Element)clone);
   }
 

@@ -70,7 +70,7 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
    * @return A new XfctDef object that is the clone of this function definition.
    */
   public XfctDef cloneObject(){
-    Element clone = (Element)clone();
+    Element clone = (Element)cloneNode();
     return new XfctDef(clone);
   }
 }

@@ -107,7 +107,7 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
    * @return  A new object Xvar that is the clone of the current object.
    */
   public Xvar cloneObject(){
-    Node clone = clone();
+    Node clone = cloneNode();
     return new Xvar((Element)clone);
   }
 

@@ -64,8 +64,8 @@ public class XdoStatement extends XbaseElement {
       createElement(XelementName.DO_STMT);
 
     if(range != null){
-      element.appendChild(range.getInductionVar().clone());
-      element.appendChild(range.getIndexRange().clone());
+      element.appendChild(range.getInductionVar().cloneNode());
+      element.appendChild(range.getIndexRange().cloneNode());
     }
 
     Element body = xcodeml.getDocument().createElement(XelementName.BODY);
@@ -80,8 +80,8 @@ public class XdoStatement extends XbaseElement {
    */
   public void setNewRange(XloopIterationRange range){
     Element body = _body.getBaseElement();
-    Node newVar = range.getInductionVar().clone();
-    Node newRange = range.getIndexRange().clone();
+    Node newVar = range.getInductionVar().cloneNode();
+    Node newRange = range.getIndexRange().cloneNode();
     baseElement.insertBefore(newVar, body);
     baseElement.insertBefore(newRange, body);
     findRangeElements();
