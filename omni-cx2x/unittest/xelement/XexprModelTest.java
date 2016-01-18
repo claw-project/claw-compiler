@@ -62,7 +62,7 @@ public class XexprModelTest {
     Document xml = XmlHelper.loadXMLFromString(exprModel_IntConst);
     XbaseElement element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    XexprModel model = XelementHelper.findExprModel(element);
+    XexprModel model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isIntConst());
 
@@ -70,7 +70,7 @@ public class XexprModelTest {
     xml = XmlHelper.loadXMLFromString(exprModel_RealConst);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    model = XelementHelper.findExprModel(element);
+    model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isRealConst());
 
@@ -78,7 +78,7 @@ public class XexprModelTest {
     xml = XmlHelper.loadXMLFromString(exprModel_ComplexConst);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    model = XelementHelper.findExprModel(element);
+    model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isComplexConst());
 
@@ -86,7 +86,7 @@ public class XexprModelTest {
     xml = XmlHelper.loadXMLFromString(exprModel_LogConst);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    model = XelementHelper.findExprModel(element);
+    model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isLogicalConst());
 
@@ -94,7 +94,7 @@ public class XexprModelTest {
     xml = XmlHelper.loadXMLFromString(exprModel_CharConst);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    model = XelementHelper.findExprModel(element);
+    model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isCharConst());
 
@@ -102,7 +102,7 @@ public class XexprModelTest {
     xml = XmlHelper.loadXMLFromString(exprModel_Var);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    model = XelementHelper.findExprModel(element);
+    model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isVar());
 
@@ -110,7 +110,7 @@ public class XexprModelTest {
     xml = XmlHelper.loadXMLFromString(exprModel_fctCall);
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
-    model = XelementHelper.findExprModel(element);
+    model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isFctCall());
 
