@@ -80,7 +80,6 @@ public class ClawXcodeMlTranslator {
         } else if (clawDirective == ClawPragma.UTILITIES_REMOVE){
           if(_remove != null){
             addOrAbort(_remove, _program, _transformer);
-            _remove = null;
           }
           _remove = new UtilityRemove(pragma);
         } else if (clawDirective == ClawPragma.BASE_END){
