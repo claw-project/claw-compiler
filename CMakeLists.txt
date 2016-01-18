@@ -13,6 +13,8 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 
+option(BUILD_OMNI "Build OMNI Compiler" ON)
+
 # Define the OMNI installation directory
 set(OMNI_HOME "/usr/local" CACHE STRING "OMNI Compiler install dir")
 set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp/")
@@ -29,17 +31,17 @@ set(OMNI_JAR_C_BACKEND "${OMNI_HOME}/share/xcalablemp/om-c-back.jar")
 set(OMNI_BUILD_JAR_CX2X "${BUILD_DIR}${OMNI_CX2X_NAME}.jar")
 set(OMNI_JAR_CX2X "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_NAME}.jar")
 
-
-# Build OMNI compiler
-ExternalProject_Add(
-  omni-compiler
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler
-  CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler/configure
-  PREFIX ${CMAKE_INSTALL_PREFIX}
-  BUILD_COMMAND make
-  BUILD_IN_SOURCE 1
-)
-
+if(BUILD_OMNI)
+  # Build OMNI compiler
+  ExternalProject_Add(
+    omni-compiler
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler/configure
+    PREFIX ${CMAKE_INSTALL_PREFIX}
+    BUILD_COMMAND make
+    BUILD_IN_SOURCE 1
+  )
+endif()
 
 
 # Build instruction for the xcodeml translator tool
