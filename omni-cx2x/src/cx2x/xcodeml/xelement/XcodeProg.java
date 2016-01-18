@@ -207,4 +207,45 @@ public class XcodeProg extends XbaseElement {
     _globalSymbolsTable = XelementHelper.findGlobalSymbols(this, true);
   }
 
+
+  /**
+   * Get the XcodeML version.
+   * @return XcodeML version attribute value.
+   */
+  public String getVersion(){
+    return _version;
+  }
+
+  /**
+   * Get the XcodeML language.
+   * @return XcodeML language attribute value.
+   */
+  public String getLanguage(){
+    return _language;
+  }
+
+  /**
+   * Get the XcodeML generation time.
+   * @return XcodeML time attribute value.
+   */
+  public String getTime(){
+    return _time;
+  }
+
+  /**
+   * Get the XcodeML source file information.
+   * @return Source file attribute value.
+   */
+  public String getSource(){
+    return _source;
+  }
+
+  /**
+   * Get the XcodeML compiler information.
+   * @return Compiler information attribute value.
+   */
+  public String getCompilerInfo(){
+    return _compilerInfo;
+  }
+
 }
