@@ -772,6 +772,9 @@ public class XelementHelper {
    * @param element Element to be deleted.
    */
   public static void delete(Element element){
+    if(element == null || element.getParentNode() == null){
+      return;
+    }
     element.getParentNode().removeChild(element);
   }
 
@@ -796,6 +799,7 @@ public class XelementHelper {
       if(outputFile == null){
         // Output to console
         StreamResult console = new StreamResult(System.out);
+        transformer.transform(source, console);
       } else {
         // Output to file
         StreamResult console = new StreamResult(new File(outputFile));
