@@ -1,5 +1,6 @@
-# TODO move dependencies ...
-set(CMAKE_JAVA_INCLUDE_PATH ../../../omni-compiler/XcodeML-Common/build/om-common.jar ../../../omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar )
+# Build Claw XcodeML to XcodeML translator
+
+set(CMAKE_JAVA_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar )
 #set(CMAKE_JAVA_INCLUDE_PATH ${OMNI_JAR_COMMON} ${OMNI_JAR_TOOLS})
 set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 
