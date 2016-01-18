@@ -267,8 +267,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
 
     // Change called fct name
-    _fctCall.setName(newFctName);
-    _fctCall.setType(newFctTypeHash);
+    _fctCall.updateName(newFctName);
+    _fctCall.updateType(newFctTypeHash);
 
     // Adapt function call parameters and function declaration
     XargumentsTable args = _fctCall.getArgumentsTable();

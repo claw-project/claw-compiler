@@ -55,17 +55,7 @@ public class Xfct extends XbaseElement {
       _fctName.setType(value);
     }
   }
-
-  @Deprecated
-  public void setName(String value){ // TODO remove
-    this.updateName(value);
-  }
-
-  @Deprecated
-  public void setType(String value){ // TODO remove
-    this.updateType(value);
-  }
-
+  
   /**
    * Get the function name.
    * @return Name of the function as a String value.
