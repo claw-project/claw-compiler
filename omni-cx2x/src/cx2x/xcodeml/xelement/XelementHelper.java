@@ -265,10 +265,7 @@ public class XelementHelper {
    * @return        A XexprModel object if found. Null otherwise.
    */
   public static XexprModel findExprModel(XbaseElement parent, boolean any){
-    /* TODO find the first element and create it in function of its tag. much
-     * better */
     /** An exprModel can be of the following type
-     *   TODO
      *   - FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
      *     FlogicalConstant
      *   TODO
@@ -282,34 +279,34 @@ public class XelementHelper {
      *     logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
      *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr,
      *     unaryMinusExpr, userBinaryExpr, userUnaryExpr
-     *   TODO
      *   - FdoLoop
      */
 
-    // Try to find constant
-    Xconstant constant = findConstant(parent, false);
-    if(constant != null){
-      return new XexprModel(constant);
+    Element element = getFirstChildElement(parent.getBaseElement());
+    if(element == null){
+      return null;
     }
 
-    // Try to find var
-    Xvar var = findVar(parent, false);
-    if(var != null){
-      return new XexprModel(var);
+    switch (element.getTagName()){
+      case XelementName.F_INT_CONST:
+        return new XexprModel(new XintConstant(element));
+      case XelementName.F_REAL_CONST:
+        return new XexprModel(new XrealConstant(element));
+      case XelementName.F_LOGICAL_CONST:
+        return new XexprModel(new XlogicalConstant(element));
+      case XelementName.F_COMPLEX_CONST:
+        return new XexprModel(new XcomplexConstant(element));
+      case XelementName.F_CHAR_CONST:
+        return new XexprModel(new XcharacterConstant(element));
+      case XelementName.VAR:
+        return new XexprModel(new Xvar(element));
+      case XelementName.FCT_CALL:
+        return new XexprModel(new XfctCall(element));
+      case XelementName.DO_STMT:
+        return new XexprModel(new XdoStatement(element));
     }
 
-    // TODO all findFunction here msut be perform on direct children only
-    // otherwise it will fails ... big refactoring needed
-
-
-    // Try to find fctCall
-    XfctCall fctCall = findFctCall(parent, false);
-    if(fctCall != null) {
-      return new XexprModel(fctCall);
-    }
-
-
-    return null; // TODO
+    return null;
   }
 
   /**
@@ -1108,6 +1105,22 @@ public class XelementHelper {
         if(element.getTagName().equals(elementName)){
           return element;
         }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get the first child element.
+   * @param parent Root element to search form.
+   * @return First found element.
+   */
+  private static Element getFirstChildElement(Element parent){
+    NodeList nodeList = parent.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node nextNode = nodeList.item(i);
+      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
+        return (Element) nextNode;
       }
     }
     return null;
