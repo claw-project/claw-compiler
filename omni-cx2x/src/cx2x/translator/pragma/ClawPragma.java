@@ -109,7 +109,7 @@ public enum ClawPragma {
 
     Matcher matchOption = Pattern.compile(INNER_OPTION,
       Pattern.CASE_INSENSITIVE).matcher(pragma);
-    while(matchOption.find()) {
+    if(matchOption.find()) {
       return matchOption.group(1);
     }
     return null;
@@ -130,7 +130,7 @@ public enum ClawPragma {
 
     Matcher matchOption = Pattern.compile(INNER_OPTION,
       Pattern.CASE_INSENSITIVE).matcher(pragma);
-    while(matchOption.find()) {
+    if(matchOption.find()) {
       return matchOption.group(1);
     }
     return null;
@@ -233,7 +233,7 @@ public enum ClawPragma {
     Matcher matchOption = Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
       .matcher(option);
 
-    while(matchOption.find()) {
+    if(matchOption.find()) {
       String match =  matchOption.group(1);
       if(match.trim().length() > 0){
         return true;
