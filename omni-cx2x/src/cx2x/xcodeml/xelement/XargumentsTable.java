@@ -62,6 +62,11 @@ public class XargumentsTable extends XbaseElement {
     return _table.get(name);
   }
 
+  /**
+   * Replace a var arguments by a array reference.
+   * @param var       The var arguments to be replaced.
+   * @param arrayRef  The new array reference arguments.
+   */
   public void replace(Xvar var, XarrayRef arrayRef){
     if(var != null){
       XelementHelper.insertAfter(var, arrayRef);
