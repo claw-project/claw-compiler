@@ -25,11 +25,20 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   private String _type = null;
   private Xscope _scope = null;
 
-  public Xvar(Element varElement){
-    super(varElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xvar(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Set var value.
+   * @param value Var value.
+   */
   public void setValue(String value){
     if(baseElement != null){
       baseElement.setTextContent(value);
@@ -37,6 +46,10 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
     }
   }
 
+  /**
+   * Set var type.
+   * @param value var type.
+   */
   public void setType(String value){
     if(baseElement != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
@@ -44,6 +57,10 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
     }
   }
 
+  /**
+   * Set var scope.
+   * @param value var scope.
+   */
   public void setScope(Xscope value){
     if(baseElement != null){
       baseElement.setAttribute(XelementName.ATTR_SCOPE, value.toString());
@@ -51,18 +68,33 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
     }
   }
 
+  /**
+   * Get var value.
+   * @return var value.
+   */
   public String getValue(){
     return _identity;
   }
 
+  /**
+   * Get var scope.
+   * @return var scope.
+   */
   public Xscope getScope(){
     return _scope;
   }
 
+  /**
+   * Get var type.
+   * @return var type.
+   */
   public String getType(){
     return _type;
   }
 
+  /**
+   * Read inner element information.
+   */
   private void readElementInformation(){
     _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
     String scope = XelementHelper.getAttributeValue(this, XelementName.ATTR_SCOPE);
@@ -70,6 +102,10 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
     _identity = baseElement.getTextContent();
   }
 
+  /**
+   * Clone the current object
+   * @return  A new object Xvar that is the clone of the current object.
+   */
   public Xvar cloneObject(){
     Node clone = clone();
     return new Xvar((Element)clone);

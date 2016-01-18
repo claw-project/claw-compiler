@@ -17,33 +17,59 @@ import org.w3c.dom.NodeList;
 public class Xfct extends XbaseElement {
   private Xname _fctName = null;
 
-  public Xfct(Element fctElement){
-    super(fctElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xfct(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Read the inner element information.
+   */
   private void readElementInformation(){
     NodeList names = baseElement.getElementsByTagName(XelementName.NAME);
     Element nameElement = (Element) names.item(0);
     _fctName = new Xname(nameElement);
   }
 
+  /**
+   * Update the function name.
+   * @param value New name of the function
+   */
   public void updateName(String value){
-    _fctName.setName(value);
+    if(_fctName != null) {
+      _fctName.setName(value);
+    }
   }
 
+  /**
+   * Update function type.
+   * @param value New type of the function.
+   */
   public void updateType(String value){
-    _fctName.setType(value);
+    if(_fctName != null){
+      _fctName.setType(value);
+    }
   }
 
-  public void setName(String value){
-    _fctName.setName(value);
+  @Deprecated
+  public void setName(String value){ // TODO remove
+    this.updateName(value);
   }
 
-  public void setType(String value){
-    _fctName.setType(value);
+  @Deprecated
+  public void setType(String value){ // TODO remove
+    this.updateType(value);
   }
 
+  /**
+   * Get the function name.
+   * @return Name of the function as a String value.
+   */
   public String getFctName(){
     if(_fctName == null){
       return null;
@@ -51,6 +77,10 @@ public class Xfct extends XbaseElement {
     return _fctName.getValue();
   }
 
+  /**
+   * Get the function type.
+   * @return Type of the function as a String value.
+   */
   public String getFctType(){
     if(_fctName == null){
       return null;

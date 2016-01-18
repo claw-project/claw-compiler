@@ -36,16 +36,28 @@ public class XarrayRef extends XbaseElement {
   private XvarRef _varRef = null;
   private ArrayList<XbaseElement> _innerElement = null;
 
-  public XarrayRef(Element arrayRefElement){
-    super(arrayRefElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XarrayRef(Element baseElement){
+    super(baseElement);
     _innerElement = new ArrayList<>();
     readElementInformation();
   }
 
+  /**
+   * Get a list of all inner elements.
+   * @return A list of XbaseElement.
+   */
   public ArrayList<XbaseElement> getInnerElements(){
     return _innerElement;
   }
 
+  /**
+   *  Read inner element information.
+   */
   private void readElementInformation(){
     _type = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
@@ -74,18 +86,36 @@ public class XarrayRef extends XbaseElement {
 
   }
 
+  /**
+   * Get the inner varRef object.
+   * @return The inner varRef object.
+   */
   public XvarRef getVarRef(){
     return _varRef;
   }
 
+  /**
+   * Get the arrayRef type value.
+   * @return The type value as String. Null if the type value is not set.
+   */
   public String getType(){
     return _type;
   }
 
+  /**
+   * Append a XbaseElement as the last children of XarrayRef.
+   * @param element The element to append.
+   */
   public void append(XbaseElement element){
     append(element, false);
   }
 
+  /**
+   * Append a XbaseElement as the last children of XarrayRef.
+   * @param element       The element to append.
+   * @param cloneElement  If true, the element is cloned before being added. If
+   *                      false, the element is directly added.
+   */
   public void append(XbaseElement element, boolean cloneElement){
     if(cloneElement){
       Node clone = element.clone();
@@ -101,7 +131,10 @@ public class XarrayRef extends XbaseElement {
 
   /**
    * Create an empty arrayRef element in the given program
-   * param type attribute of the element. If null, no attribute is set
+   * param type attribute of the element. If null, no attribute is set.
+   * @param xcodeml XcodeML program in which the new object is created.
+   * @param type    Optional type of the new arrayRef object.
+   * @return A new empty XarrayRef object with optional type.
    */
   public static XarrayRef createEmpty(XcodeProg xcodeml, String type){
     Element arrayRef = xcodeml.getDocument().

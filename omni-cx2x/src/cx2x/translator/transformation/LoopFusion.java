@@ -27,8 +27,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
   private XdoStatement _loop = null;
 
   /**
-   * LoopFusion default ctor.
-   * @see Transformation#Transformation(Xpragma)
+   * Constructs a new LoopFusion triggered from a specific pragma.
+   * @param pragma The pragma that triggered the loop fusion transformation.
    */
   public LoopFusion(Xpragma pragma){
     super(pragma);
@@ -137,7 +137,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
 
   /**
    * Get the group option associated with this loop fusion unit.
-   * @return
+   * @return Group option value.
    */
   public String getGroupOptionLabel(){
     return _groupLabel;

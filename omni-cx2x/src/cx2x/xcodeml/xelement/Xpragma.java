@@ -22,9 +22,14 @@ public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {
   private int _line = 0;
   private String _filename = null;
 
-  public Xpragma(Element pragmaElement){
-    super(pragmaElement);
-    if(pragmaElement != null){
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xpragma(Element baseElement){
+    super(baseElement);
+    if(baseElement != null){
       _value = getData();
       String lineAttr = XelementHelper.getAttributeValue(this,
         XelementName.ATTR_LINENO);
@@ -36,19 +41,35 @@ public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {
     }
   }
 
+  /**
+   * Get the filename attribute value.
+   * @return Filename value.
+   */
   public String getFilename(){
     return _filename;
   }
 
+  /**
+   * Get the line attribute value.
+   * @return Line value.
+   */
   public int getLine(){
     return _line;
   }
 
+  /**
+   * Clone the current object.
+   * @return A new object Xpragma that is the clone of the current object.
+   */
   public Xpragma cloneObject(){
     Node clone = clone();
     return new Xpragma((Element)clone);
   }
 
+  /**
+   * Set pragma data.
+   * @param value New pragma data.
+   */
   public void setData(String value){
     if(baseElement != null){
       baseElement.setTextContent(value);

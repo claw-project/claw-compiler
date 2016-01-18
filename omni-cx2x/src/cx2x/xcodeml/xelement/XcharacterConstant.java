@@ -20,14 +20,15 @@ import org.w3c.dom.Element;
  */
 
 public class XcharacterConstant extends Xconstant {
-  public XcharacterConstant(Element charConstantElement){
-    super(charConstantElement);
+
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XcharacterConstant(Element baseElement){
+    super(baseElement);
   }
 
-  public XcharacterConstant create(XcodeProg xcodeml, String value, String type,
-    String kind)
-  {
-    Xconstant constant = create(xcodeml, value, type, kind, XconstType.CHAR);
-    return constant == null ? null : (XcharacterConstant)constant;
-  }
+
 }

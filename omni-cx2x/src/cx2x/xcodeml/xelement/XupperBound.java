@@ -16,6 +16,11 @@ import org.w3c.dom.Element;
 
 public class XupperBound extends Xbound {
 
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
   public XupperBound(Element baseElement){
     super(baseElement);
   }

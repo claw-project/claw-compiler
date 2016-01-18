@@ -31,12 +31,20 @@ public class XtypeTable extends XbaseElement {
 
   private Hashtable<String, Xtype> _table;
 
-  public XtypeTable(Element typeTableElement){
-    super(typeTableElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XtypeTable(Element baseElement){
+    super(baseElement);
     _table = new Hashtable<>();
     readTable();
   }
 
+  /**
+   * Read the type table.
+   */
   private void readTable(){
     // Read basic type
     NodeList basicTypes = baseElement.getElementsByTagName(XelementName.BASIC_TYPE);
@@ -72,19 +80,39 @@ public class XtypeTable extends XbaseElement {
     }
   }
 
+  /**
+   * Get number of elements in the type table.
+   * @return Number of elements in the table.
+   */
   public int count(){
     return _table.size();
   }
 
+  /**
+   * Add a new element in the type table.
+   * @param type The new type to be added.
+   */
   public void add(Xtype type){
     baseElement.appendChild(type.clone());
     _table.put(type.getType(), type);
   }
 
-  public Xtype get(String key){
-    return _table.get(key);
+  /**
+   * Get an element from the type table.
+   * @param key Key of the element to be returned.
+   * @return Xtype object if found in the table. Null otherwise.
+   */
+  public Xtype get(String key) {
+    if(_table.containsKey(key)){
+      return _table.get(key);
+    }
+    return null;
   }
 
+  /**
+   * Get a new unique function hash for the type table.
+   * @return A unique function hash as String value.
+   */
   public String generateFctTypeHash(){
     String hash;
     do {
@@ -93,6 +121,11 @@ public class XtypeTable extends XbaseElement {
     return hash;
   }
 
+  /**
+   * Generate a new unique type hash for the table.
+   * @param length Length of the hash string to be generated.
+   * @return The new unique hash.
+   */
   private String generateHash(int length){
     Random r = new Random();
     StringBuilder sb = new StringBuilder();

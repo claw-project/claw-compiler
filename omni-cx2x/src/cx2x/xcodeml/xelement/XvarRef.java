@@ -27,18 +27,27 @@ import org.w3c.dom.Node;
 
 public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
 
-  public XvarRef(Element varRefElement){
-    super(varRefElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XvarRef(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Read the inner element information.
+   */
   private void readElementInformation(){
     // TODO
   }
 
   /**
    * Create an empty varRef element in the given program
-   * param type attribute of the element. If null, no attribute is set
+   * @param type Attribute of the element. If null, no attribute is set
+   * @return A new varRef element with no children.
    */
   public static XvarRef createEmpty(XcodeProg xcodeml, String type){
     Element arrayRef = xcodeml.getDocument().
@@ -49,6 +58,12 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
     return new XvarRef(arrayRef);
   }
 
+  /**
+   * Insert an element as the last child of the XvarRef.
+   * @param element      The element to be inserted.
+   * @param cloneElement If true, the element is cloned and then inserted as the
+   *                     last child. The clone is inserted.
+   */
   public void append(XbaseElement element, boolean cloneElement){
     if(cloneElement){
       Node clone = element.clone();
@@ -60,6 +75,10 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
     // TODO set the correct variable once they are there
   }
 
+  /**
+   * Clone this object.
+   * @return A cloned copy of the XvarRef object.
+   */
   public XvarRef cloneObject(){
     Element clone = (Element)clone();
     return new XvarRef(clone);

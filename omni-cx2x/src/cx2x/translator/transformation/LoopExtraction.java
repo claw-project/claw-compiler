@@ -42,7 +42,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private boolean _hasFusion = false;
   private String _fusionGroupLabel = "";
 
-
+  /**
+   * Constructs a new LoopExtraction triggered from a specific pragma.
+   * @param pragma  The pragma that triggered the loop extraction
+   *                transformation.
+   */
   public LoopExtraction(Xpragma pragma) {
     super(pragma);
     _mappings = new ArrayList<>();
@@ -116,7 +120,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    *
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.
-   * @return
+   * @return True if the transformation analysis succeeded. False otherwise.
    */
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
     _exprStmt = XelementHelper.findNextExprStatement(_pragma);
@@ -407,10 +411,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   }
 
   /**
-   *
-   * @param xcodeml
-   * @param iterationRange
-   * @return
+   * Wrap a function call with a do statement.
+   * @param xcodeml        The XcodeML representation.
+   * @param iterationRange Iteration range to be applied to the do statement.
+   * @return The created do statement.
    */
   private XdoStatement wrapCallWithLoop(XcodeProg xcodeml,
     XloopIterationRange iterationRange)
@@ -439,8 +443,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   }
 
   /**
-   *
-   * @param id
+   * Insert new declaration in the function definition.
+   * @param id The id used for insertion.
    */
   private void insertDeclaration(String id){
     Xid inductionVarId = _fctDef.getSymbolTable().get(id);

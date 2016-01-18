@@ -23,15 +23,22 @@ import org.w3c.dom.Node;
 
 public class XvarDecl extends Xdecl {
   private Xname _name = null;
+  private Xvalue _value = null; // TODO to be removed
   private boolean _hasValue = false;
 
-  private Xvalue _value = null; // TODO to be removed
-
-  public XvarDecl(Element varDeclElement){
-    super(varDeclElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XvarDecl(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Read the inner element information.
+   */
   private void readElementInformation(){
     _name = XelementHelper.findName(this, false);
     _value = XelementHelper.findValue(this, false);
@@ -40,18 +47,36 @@ public class XvarDecl extends Xdecl {
     }
   }
 
+  /**
+   * Check whether the XvarDecl has a value set.
+   * @return True if there is a value set. False otherwise.
+   */
   public boolean hasValue(){
     return _hasValue;
   }
 
+  /**
+   * Get the inner Xname element.
+   * @return Xname element.
+   */
   public Xname getName(){
     return _name;
   }
 
+  /**
+   * Insert the given element as the last child of the XvarDecl.
+   * @param element The element to be inserted.
+   */
   public void append(XbaseElement element){
     append(element, false);
   }
 
+  /**
+   * Insert an element as the last child of the XvarDecl.
+   * @param element      The element to be inserted.
+   * @param cloneElement If true, the element is cloned and then inserted as the
+   *                     last child. The clone is inserted.
+   */
   public void append(XbaseElement element, boolean cloneElement){
     if(cloneElement){
       Node clone = element.clone();

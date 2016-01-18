@@ -14,11 +14,16 @@ import org.w3c.dom.Element;
  * Elements:
  * - exprModel TODO move to exprModel in Xbound
  *
- * @author
+ * @author clementval
  */
 
 public class Xstep extends Xbound {
-  public Xstep(Element stepElement){
-    super(stepElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xstep(Element baseElement){
+    super(baseElement);
   }
 }

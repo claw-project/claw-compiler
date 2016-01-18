@@ -21,11 +21,20 @@ public class Xname extends XbaseElement {
   private String _nameValue = null;
   private String _type = null;
 
-  public Xname(Element nameElement){
-    super(nameElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xname(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Set name value.
+   * @param value New name value.
+   */
   public void setName(String value){
     if(baseElement != null){
       baseElement.setTextContent(value);
@@ -33,6 +42,10 @@ public class Xname extends XbaseElement {
     }
   }
 
+  /**
+   * Get the type attribute value.
+   * @param value Type value.
+   */
   public void setType(String value){
     if(baseElement != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
@@ -40,23 +53,47 @@ public class Xname extends XbaseElement {
     }
   }
 
+  /**
+   * Read inner element information.
+   */
   private void readElementInformation(){
     _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
     _nameValue = baseElement.getTextContent();
   }
 
+  /**
+   * Get the name value.
+   * @return Name value.
+   */
   public String getValue(){
     return _nameValue;
   }
 
+  /**
+   * Get the type attribute value.
+   * @return Type value.
+   */
   public String getType(){
     return _type;
   }
 
+  /**
+   * Check whether a given Xname object is identical with the current one.
+   * @param other The other object to compare with.
+   * @return True if the two objects are identical. False otherwise.
+   */
   public boolean isIdentical(Xname other){
+    // TODO override equals ?
     return isIdentical(other.getValue(), other.getType());
   }
 
+  /**
+   * Check whether a given name and type combination is identical with the
+   * current one.
+   * @param name The name to compare with.
+   * @param type The type to compare with.
+   * @return True if the two objects are identical. False otherwise.
+   */
   public boolean isIdentical(String name, String type){
     return _nameValue.equals(name); //&& _type.equals(type);
     //TODO analyze why type if not identical in fcall and fdef

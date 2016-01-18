@@ -24,11 +24,19 @@ public class Xconstant extends XbaseElement {
   private String _type = null;
   private String _kind = null;
 
-  public Xconstant(Element element){
-    super(element);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xconstant(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Read inner element information.
+   */
   private void readElementInformation(){
     _value = baseElement.getTextContent();
     _type = XelementHelper.getAttributeValue(this,
@@ -37,10 +45,18 @@ public class Xconstant extends XbaseElement {
       XelementName.ATTR_TYPE);
   }
 
+  /**
+   * Check whether the element has kind attribute.
+   * @return True if the element has kind attribute. False otherwise.
+   */
   public boolean hasKind(){
     return _kind != null;
   }
 
+  /**
+   * Set the kind attribute.
+   * @param value Kind value.
+   */
   public void setKind(String value){
     if(baseElement != null){
       baseElement.setAttribute(XelementName.ATTR_KIND, value);
@@ -48,10 +64,18 @@ public class Xconstant extends XbaseElement {
     }
   }
 
+  /**
+   * Check whether the element has type attribute.
+   * @return True if the element has type attribute. False otherwise.
+   */
   public boolean hasType(){
     return _type != null;
   }
 
+  /**
+   * Set the type attribute.
+   * @param value The type value.
+   */
   public void setType(String value){
     if(baseElement != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
@@ -59,58 +83,22 @@ public class Xconstant extends XbaseElement {
     }
   }
 
+  /**
+   * Get the constant value.
+   * @return The constant value as String.
+   */
   public String getValue(){
     return _value;
   }
 
+  /**
+   * Set the constant value.
+   * @param value The constant value.
+   */
   public void setValue(String value){
     if(baseElement != null){
       baseElement.setTextContent(value);
       _value = value;
     }
-  }
-
-  protected Xconstant create(XcodeProg xcodeml, String value, String type, String kind, XconstType constType){
-    if(value == null){
-      return null;
-    }
-
-    Xconstant constant;
-    Element base;
-    switch(constType){
-      case INT:
-        base = xcodeml.getDocument().
-          createElement(XelementName.F_CHAR_CONST);
-        constant = new XintConstant(base);
-        break;
-      case REAL:
-        base = xcodeml.getDocument().
-          createElement(XelementName.F_CHAR_CONST);
-        constant = new XintConstant(base);
-        break;
-      case CHAR:
-        base = xcodeml.getDocument().
-          createElement(XelementName.F_CHAR_CONST);
-        constant = new XintConstant(base);
-        break;
-      case LOGICAL:
-        base = xcodeml.getDocument().
-          createElement(XelementName.F_CHAR_CONST);
-        constant = new XintConstant(base);
-        break;
-      default:
-        return null;
-    }
-
-    constant.setValue(value);
-    if(type != null){
-      constant.setType(type);
-    }
-
-    if(kind != null){
-      constant.setKind(kind);
-    }
-
-    return constant;
   }
 }

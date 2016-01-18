@@ -23,6 +23,11 @@ import org.w3c.dom.Element;
  
 public class XglobalSymbolTable extends XsymbolTable {
 
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
   public XglobalSymbolTable(Element baseElement){
     super(baseElement);
   }

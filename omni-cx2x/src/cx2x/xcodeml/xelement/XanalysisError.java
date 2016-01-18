@@ -16,15 +16,26 @@ public class XanalysisError {
   private String _errorMsg;
   private int _errorLineNumber = 0;
 
+  /**
+   * Default ctor.
+   * @param msg     Error message
+   * @param lineno  Line number that triggered the error.
+   */
   public XanalysisError(String msg, int lineno){
     _errorMsg = msg;
     _errorLineNumber = lineno;
   }
 
+  /**
+   * @return The error message
+   */
   public String getMessage(){
     return _errorMsg;
   }
 
+  /**
+   * @return The line number that triggered the error.
+   */
   public int getLine(){
     return _errorLineNumber;
   }

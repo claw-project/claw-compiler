@@ -20,14 +20,13 @@ import org.w3c.dom.Element;
  */
 
 public class XlogicalConstant extends Xconstant {
-  public XlogicalConstant(Element logicalConstantElement){
-    super(logicalConstantElement);
-  }
 
-  public XlogicalConstant create(XcodeProg xcodeml, String value, String type,
-    String kind)
-  {
-    Xconstant constant = create(xcodeml, value, type, kind, XconstType.LOGICAL);
-    return constant == null ? null : (XlogicalConstant)constant;
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XlogicalConstant(Element baseElement){
+    super(baseElement);
   }
 }

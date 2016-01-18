@@ -39,7 +39,7 @@ public abstract class Transformation<T> {
    * be able to apply the transformation in when calling #transform.
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.
-   * @return
+   * @return True if analysis succeeded. False otherwise.
    */
   public abstract boolean analyze(XcodeProg xcodeml, Transformer transformer);
 

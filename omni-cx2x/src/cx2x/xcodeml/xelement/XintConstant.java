@@ -22,14 +22,13 @@ import org.w3c.dom.Element;
 
 public class XintConstant extends Xconstant {
 
-  public XintConstant(Element intConstantElement){
-    super(intConstantElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XintConstant(Element baseElement){
+    super(baseElement);
   }
 
-  public XintConstant create(XcodeProg xcodeml, String value, String type,
-    String kind)
-  {
-    Xconstant constant = create(xcodeml, value, type, kind, XconstType.INT);
-    return constant == null ? null : (XintConstant)constant;
-  }
 }

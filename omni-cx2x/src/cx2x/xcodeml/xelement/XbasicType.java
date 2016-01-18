@@ -58,11 +58,19 @@ public class XbasicType extends Xtype {
   private boolean _is_allocatable = false;
   // TODO intent as enum
 
-  public XbasicType(Element element){
-    super(element);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XbasicType(Element baseElement){
+    super(baseElement);
     readBasicTypeInformation();
   }
 
+  /**
+   * Read inner element information.
+   */
   private void readBasicTypeInformation(){
     readRequiredAttributes();
     readOptionalAttributes();
@@ -84,11 +92,17 @@ public class XbasicType extends Xtype {
     _arrayIndex = XelementHelper.findArrayIndex(this, false);
   }
 
+  /**
+   * Read all required attributes.
+   */
   private void readRequiredAttributes() {
     // Attribute type is read in Xtype
     _ref = XelementHelper.getAttributeValue(this, XelementName.ATTR_REF);
   }
 
+  /**
+   * Read all optional attributes
+   */
   private void readOptionalAttributes() {
     _is_public = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_PUBLIC);
@@ -112,6 +126,13 @@ public class XbasicType extends Xtype {
       XelementName.ATTR_IS_ALLOCATABLE);
   }
 
+  /**
+   * Get the indexRange object for the given dimension.
+   * @param index The position of the dimension. For the first dimension, index
+   *              is 0, for the second is 1 and so on.
+   * @return A XindexRange object representing the index range of a specific
+   * dimension.
+   */
   public XindexRange getDimensions(int index){
     if(index >= _dimensionRanges.size() || index < 0){
       return null;
@@ -119,66 +140,130 @@ public class XbasicType extends Xtype {
     return _dimensionRanges.get(index);
   }
 
+  /**
+   * Check whether the type is an array type.
+   * @return True if the type is an array type. False otherwise.
+   */
   public boolean isArray(){
     return _isArray;
   }
 
+  /**
+   * Check whether the type has a length attribute.
+   * @return True if the type has a length attribute. False otherwise.
+   */
   public boolean hasLength(){
     return _length != null;
   }
 
+  /**
+   * Check whether the type has a kind attribute.
+   * @return True if the type has a kind attribute. False otherwise.
+   */
   public boolean hasKind(){
     return _kind != null;
   }
 
+  /**
+   * Check whether the type has array indexes.
+   * @return True if the type has array indexes. False otherwise.
+   */
   public boolean hasArrayIndex(){
     return _arrayIndex != null;
   }
 
+  /**
+   * Get the array dimensions.
+   * @return The dimensions of the array type.
+   */
   public int getDimensions(){
     return _dimension;
   }
 
+  /**
+   * Get ref attribute value.
+   * @return The ref attribute value as String.
+   */
   public String getRef(){
     return _ref;
   }
 
+  /**
+   * Check whether the type is public.
+   * @return True if the type is public. False otherwise.
+   */
   public boolean isPublic() {
     return _is_public;
   }
 
+  /**
+   * Check whether the type is private.
+   * @return True if the type is private. False otherwise.
+   */
   public boolean isPrivate() {
     return _is_private;
   }
 
+  /**
+   * Check whether the type is a pointer.
+   * @return True if the type is a pointer. False otherwise.
+   */
   public boolean isPointer() {
     return _is_pointer;
   }
 
+  /**
+   * Check whether the type is a target.
+   * @return True if the type is a target. False otherwise.
+   */
   public boolean isTarget() {
     return _is_target;
   }
 
+  /**
+   * Check whether the type is external.
+   * @return True if the type is external. False otherwise.
+   */
   public boolean isExternal() {
     return _is_external;
   }
 
+  /**
+   * Check whether the type is intrinsic.
+   * @return True if the type is intrinsic. False otherwise.
+   */
   public boolean isIntrinsic() {
     return _is_intrinsic;
   }
 
+  /**
+   * Check whether the type is optional.
+   * @return True if the type is optional. False otherwise.
+   */
   public boolean isOptional(){
     return _is_optional;
   }
 
+  /**
+   * Check whether the type is save.
+   * @return True if the type is save. False otherwise.
+   */
   public boolean isSave() {
     return _is_save;
   }
 
+  /**
+   * Check whether the type is a parameter.
+   * @return True if the type is a parameter. False otherwise.
+   */
   public boolean isParameter() {
     return _is_parameter;
   }
 
+  /**
+   * Check whether the type is allocatable.
+   * @return True if the type is allocatable. False otherwise.
+   */
   public boolean isAllocatable() {
     return _is_allocatable;
   }

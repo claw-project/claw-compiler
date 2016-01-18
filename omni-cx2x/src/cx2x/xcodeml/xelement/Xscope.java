@@ -20,6 +20,10 @@ public enum Xscope {
   PARAM
   ;
 
+  /**
+   * Convert current enum to String value.
+   * @return Corresponding String value.
+   */
   public String toString(){
     switch(this){
       case LOCAL:
@@ -33,6 +37,11 @@ public enum Xscope {
     }
   }
 
+  /**
+   * Convert string value to enum.
+   * @param value String value.
+   * @return Corresponding enum value.
+   */
   public static Xscope fromString(String value){
     switch (value) {
       case XelementName.SCOPE_LOCAL:

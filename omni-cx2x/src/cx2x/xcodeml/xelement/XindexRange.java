@@ -30,12 +30,20 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
   protected Xstep _step = null;
   private boolean _isAssumedShape = false;
 
-  public XindexRange(Element indexRangeElement){
-    super(indexRangeElement);
-    readRangeValue();
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XindexRange(Element baseElement){
+    super(baseElement);
+    readElementInformation();
   }
 
-  private void readRangeValue(){
+  /**
+   * Read inner element information.
+   */
+  private void readElementInformation(){
     _isAssumedShape = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_ASSUMED_SHAPE);
 
@@ -47,26 +55,50 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
     }
   }
 
+  /**
+   * Get the lower bound object.
+   * @return XlowerBound object.
+   */
   public XlowerBound getLowerBound(){
     return _lowerBound;
   }
 
+  /**
+   * Get the upper bound object.
+   * @return XupperBound object.
+   */
   public XupperBound getUpperBound(){
     return _upperBound;
   }
 
+  /**
+   * Check whether the index range has a step defined.
+   * @return True if a step is defined. False otherwise.
+   */
   public boolean hasStep(){
     return _step != null;
   }
 
+  /**
+   * Get the step object.
+   * @return Xstep object.
+   */
   public Xstep getStep(){
     return _step;
   }
 
+  /**
+   * Check whether the index range is of assumed shape.
+   * @return True if the index range is of assumed shape.
+   */
   public boolean isAssumedShape(){
     return _isAssumedShape;
   }
 
+  /**
+   * Clone the current object.
+   * @return A new object XindexRange that is the clone of the current object.
+   */
   public XindexRange cloneObject(){
     Node clone = clone();
     return new XindexRange((Element)clone);

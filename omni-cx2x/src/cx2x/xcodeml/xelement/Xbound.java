@@ -23,23 +23,32 @@ public class Xbound extends XbaseElement {
   private boolean _isVar = false;
   private Xvar _var = null;
 
-  public Xbound(Element boundElement){
-    super(boundElement);
-    readRangeValue();
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xbound(Element baseElement){
+    super(baseElement);
+    readElementInformation();
   }
 
+  // TODO to be removed when moved to exprModel
   public boolean isContant(){
     return _constant;
   }
 
+  // TODO to be removed when moved to exprModel
   public boolean isVar(){
     return _isVar;
   }
 
+  // TODO to be removed when moved to exprModel
   public String getValue(){
     return _value;
   }
 
+  // TODO to be removed when moved to exprModel
   public String getType(){
     if(isVar() && _var != null) {
       return _var.getType();
@@ -47,7 +56,10 @@ public class Xbound extends XbaseElement {
     return null;
   }
 
-  private void readRangeValue(){
+  /**
+   * Read inner element information
+   */
+  private void readElementInformation(){
     XintConstant constant = XelementHelper.findIntConstant(this, false);
     Xvar var = XelementHelper.findVar(this, false);
     if(constant != null){
@@ -59,7 +71,6 @@ public class Xbound extends XbaseElement {
       _value = var.getValue();
     }
   }
-
 
   @Override
   public boolean equals(Object ob) {

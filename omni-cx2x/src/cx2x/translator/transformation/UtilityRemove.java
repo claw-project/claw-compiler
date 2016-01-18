@@ -22,6 +22,10 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
   private XifStatement _if = null;
   private Xpragma _end = null;
 
+  /**
+   * Constructs a new UtilityRemove triggered from a specific pragma.
+   * @param pragma The pragma that triggered the remove transformation.
+   */
   public UtilityRemove(Xpragma pragma){
     super(pragma);
   }

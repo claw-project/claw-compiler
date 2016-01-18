@@ -126,7 +126,13 @@ public class XelementHelper {
     return references;
   }
 
+  /**
+   * Find all real constants in the direct children of the given parent.
+   * @param parent Root element to search from.
+   * @return A list of all found real constants.
+   */
   public static List<XrealConstant> getRealConstants(XbaseElement parent){
+    // TODO find only in the direct children !!!!
     List<XrealConstant> elements = new ArrayList<>();
     NodeList nList = parent.getBaseElement().
       getElementsByTagName(XelementName.F_REAL_CONST);
@@ -141,12 +147,20 @@ public class XelementHelper {
     return elements;
   }
 
-
+  /**
+   * Insert a function call at the end of a do statement.
+   * @param loop The do statement to insert in.
+   * @param call The function call to be inserted.
+   */
   public static void insertFctCallIntoLoop(XdoStatement loop, XfctCall call){
     loop.getBody().getBaseElement().appendChild(call.getBaseElement().getParentNode());
   }
 
-
+  /**
+   * Find function definition in the ancestor.
+   * @param child The child element to search from.
+   * @return A XfctDef object if found. Null otherwise.
+   */
   public static XfctDef findParentFctDef(XbaseElement child){
     if(child == null || child.getBaseElement() == null){
       return null;
@@ -164,37 +178,95 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Find do statement element.
+   * @param fctDef  Function definition to search in.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XdoStatement object if found. Null otherwise.
+   */
   public static XdoStatement findLoop(XfctDef fctDef, boolean any){
     Xbody body = fctDef.getBody();
     XdoStatement doStmt = XelementHelper.findDoStatement(body, any);
     return doStmt;
   }
 
+  /**
+   * Find var element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xvar object if found. Null otherwise.
+   */
   public static Xvar findVar(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xvar.class);
   }
 
+  /**
+   * Find varRef element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XvarRef object if found. Null otherwise.
+   */
   public static XvarRef findVarRef(XbaseElement parent, boolean any){
     return findXelement(parent, any, XvarRef.class);
   }
 
+  /**
+   * Find indexRange element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XindexRange object if found. Null otherwise.
+   */
   public static XindexRange findIndexRange(XbaseElement parent, boolean any){
     return findXelement(parent, any, XindexRange.class);
   }
 
+  /**
+   * Find arrayIndex element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XarrayIndex object if found. Null otherwise.
+   */
   public static XarrayIndex findArrayIndex(XbaseElement parent, boolean any){
     return findXelement(parent, any, XarrayIndex.class);
   }
 
+  /**
+   * Find name element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xname object if found. Null otherwise.
+   */
   public static Xname findName(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xname.class);
   }
 
+  /**
+   * Find value element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xvalue object if found. Null otherwise.
+   */
   public static Xvalue findValue(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xvalue.class);
   }
 
-  public static XexprModel findExprModel(XbaseElement parent){
+  /**
+   * Find exprModel element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XexprModel object if found. Null otherwise.
+   */
+  public static XexprModel findExprModel(XbaseElement parent, boolean any){
+    /* TODO find the first element and create it in function of its tag. much
+     * better */
     /** An exprModel can be of the following type
      *   TODO
      *   - FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
@@ -241,8 +313,11 @@ public class XelementHelper {
   }
 
   /**
-   *
-   * @return A Xconstant object if one is found. null otherwise.
+   * Find constant element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xconstant object if found. Null otherwise.
    */
   public static Xconstant findConstant(XbaseElement parent, boolean any){
     // FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
@@ -276,87 +351,224 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Find integer constant element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XintConstant object if found. Null otherwise.
+   */
   public static XintConstant findIntConstant(XbaseElement parent, boolean any){
     return findXelement(parent, any, XintConstant.class);
   }
 
+  /**
+   * Find real constant element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XrealConstant object if found. Null otherwise.
+   */
   public static XrealConstant findRealConstant(XbaseElement parent, boolean any){
     return findXelement(parent, any, XrealConstant.class);
   }
 
+  /**
+   * Find complex constant element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XcomplexConstant object if found. Null otherwise.
+   */
   public static XcomplexConstant findComplexConstant(XbaseElement parent, boolean any){
     return findXelement(parent, any, XcomplexConstant.class);
   }
 
+  /**
+   * Find character constant element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XcharacterConstant object if found. Null otherwise.
+   */
   public static XcharacterConstant findCharacterConstant(XbaseElement parent, boolean any){
     return findXelement(parent, any, XcharacterConstant.class);
   }
 
+  /**
+   * Find logical constant element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XlogicalConstant object if found. Null otherwise.
+   */
   public static XlogicalConstant findLogicalConstant(XbaseElement parent, boolean any){
     return findXelement(parent, any, XlogicalConstant.class);
   }
 
+  /**
+   * Find then element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xthen object if found. Null otherwise.
+   */
   public static Xthen findThen(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xthen.class);
   }
 
+  /**
+   * Find else element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xelse object if found. Null otherwise.
+   */
   public static Xelse findElse(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xelse.class);
   }
 
+  /**
+   * Find arguments element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XargumentsTable object if found. Null otherwise.
+   */
   public static XargumentsTable findArgumentsTable(XbaseElement parent, boolean any){
     return findXelement(parent, any, XargumentsTable.class);
   }
 
+  /**
+   * Find lowerBound element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XlowerBound object if found. Null otherwise.
+   */
   public static XlowerBound findLowerBound(XbaseElement parent, boolean any){
     return findXelement(parent, any, XlowerBound.class);
   }
 
+  /**
+   * Find upperBound element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XupperBound object if found. Null otherwise.
+   */
   public static XupperBound findUpperBound(XbaseElement parent, boolean any){
     return findXelement(parent, any, XupperBound.class);
   }
 
+  /**
+   * Find step element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xstep object if found. Null otherwise.
+   */
   public static Xstep findStep(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xstep.class);
   }
 
+  /**
+   * Find body element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xbody object if found. Null otherwise.
+   */
   public static Xbody findBody(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xbody.class);
   }
 
+  /**
+   * Find do statement element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XdoStatement object if found. Null otherwise.
+   */
   public static XdoStatement findDoStatement(XbaseElement parent, boolean any){
     return findXelement(parent, any, XdoStatement.class);
   }
 
+  /**
+   * Find the direct next do statement element.
+   * @param from The element to search from. Direct next sibling is searched.
+   * @return A XdoStatement object if it directly follows the given from
+   * element. Null otherwise.
+   */
   public static XdoStatement findNextDoStatement(XbaseElement from){
     return findNextElementOfType(from, XdoStatement.class);
   }
 
+  /**
+   * Find symbols element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XsymbolsTable object if found. Null otherwise.
+   */
   public static XsymbolTable findSymbols(XbaseElement parent, boolean any){
     return findXelement(parent, any, XsymbolTable.class);
   }
 
+  /**
+   * Find declarations element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XdeclTable object if found. Null otherwise.
+   */
   public static XdeclTable findDeclarations(XbaseElement parent, boolean any){
     return findXelement(parent, any, XdeclTable.class);
   }
 
+  /**
+   * Find type table elements.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XtypeTable object if found. Null otherwise.
+   */
   public static XtypeTable findTypeTable(XcodeProg parent, boolean any){
     return findXelement(parent, any, XtypeTable.class);
   }
 
+  /**
+   * Find global symbols element in the XcodeML representation.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XglobalSymbolTable object if found. Null otherwise.
+   */
   public static XglobalSymbolTable findGlobalSymbols(XcodeProg parent,
     boolean any)
   {
     return findXelement(parent, any, XglobalSymbolTable.class);
   }
 
+  /**
+   * Find number of index ranges in an element.
+   * @param parent  Root element to search from.
+   * @return The number of index ranges found.
+   */
   public static int findNumberOfRange(XbaseElement parent){
+    // TODO search only in the direct children.
     NodeList elements = parent.getBaseElement().
       getElementsByTagName(XelementName.INDEX_RANGE);
     return elements.getLength();
   }
 
+  /**
+   * Find all the index ranges in an element.
+   * @param parent  Root element to search from.
+   * @return A list of all index ranges found.
+   */
   public static ArrayList<XindexRange> findIndexRanges(XbaseElement parent){
+    // TODO search only in the direct children.
     ArrayList<XindexRange> indexRanges = new ArrayList<>();
     if(parent == null || parent.getBaseElement() == null){
       return indexRanges;
@@ -368,14 +580,35 @@ public class XelementHelper {
     return indexRanges;
   }
 
+  /**
+   * Find len element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xlength object if found. Null otherwise.
+   */
   public static Xlength findLen(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xlength.class);
   }
 
+  /**
+   * Find kind element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xkind object if found. Null otherwise.
+   */
   public static Xkind findKind(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xkind.class);
   }
 
+  /**
+   * Find function call element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XfctCall object if found. Null otherwise.
+   */
   public static XfctCall findFctCall(XbaseElement parent, boolean any){
     return findXelement(parent, any, XfctCall.class);
   }
@@ -609,6 +842,14 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Validate a string attribute.
+   * @param doc         Document in which the attribute must be validated.
+   * @param attrValue   Attribute value expected.
+   * @param xpathQuery  Xpath query to locate the attribute value.
+   * @return True if the attribute validates. False otherwise.
+   * @throws Exception
+   */
   public static boolean validateStringAttribute(Document doc, String attrValue
     , String xpathQuery) throws Exception
   {

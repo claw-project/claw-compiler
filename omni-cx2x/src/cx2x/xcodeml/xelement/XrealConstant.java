@@ -21,14 +21,14 @@ import org.w3c.dom.Element;
  */
 
 public class XrealConstant extends Xconstant {
-  public XrealConstant(Element element){
-    super(element);
+
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XrealConstant(Element baseElement){
+    super(baseElement);
   }
 
-  public XrealConstant create(XcodeProg xcodeml, String value, String type,
-    String kind)
-  {
-    Xconstant constant = create(xcodeml, value, type, kind, XconstType.REAL);
-    return constant == null ? null : (XrealConstant)constant;
-  }
 }

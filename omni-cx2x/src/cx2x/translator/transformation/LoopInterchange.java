@@ -41,8 +41,9 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   private int _loopNewPos2 = 2;
 
   /**
-   * LoopInterchange ctor. Get the new ordering option.
-   * @see Transformation#Transformation(Xpragma)
+   * Constructs a new LoopInterchange triggered from a specific pragma.
+   * @param pragma The pragma that triggered the loop interchange
+   *               transformation.
    */
   public LoopInterchange(Xpragma pragma){
     super(pragma);

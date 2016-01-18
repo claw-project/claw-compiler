@@ -43,6 +43,10 @@ public class XloopIterationRange {
     return true;
   }
 
+  /**
+   * Get a string representation of the iteration range.
+   * @return A string representing the iteration range (e.g. i=1,10,1)
+   */
   public String toString() {
     return getInductionVar().getValue() + "="
       + getIndexRange().getLowerBound().getValue() + ","
@@ -50,6 +54,10 @@ public class XloopIterationRange {
       + getIndexRange().getStep().getValue();
   }
 
+  /**
+   * Clone the current loop iteration range object.
+   * @return A new XloopIterationRange that is the clone of the current one.
+   */
   public XloopIterationRange cloneObject(){
     Xvar tmpVar = _inductionVariable.cloneObject();
     XindexRange tmpRange = _indexRange.cloneObject();

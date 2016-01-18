@@ -14,5 +14,8 @@ package cx2x.xcodeml.xelement;
  */
  
 public interface Xclonable<T extends XbaseElement> {
+  /**
+   * @return A new object of type T that is the clone of the current object.
+   */
   T cloneObject();
 }

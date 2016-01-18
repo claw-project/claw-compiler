@@ -26,6 +26,11 @@ public class XstructConstructor extends XbaseElement {
 
   private String _type = null;
 
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
   public XstructConstructor(Element baseElement){
     super(baseElement);
     _type = XelementHelper.getAttributeValue(this,

@@ -22,11 +22,19 @@ import org.w3c.dom.Element;
 public class Xcondition extends XbaseElement {
   private XexprModel _exprModel;
 
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
   public Xcondition(Element baseElement){
     super(baseElement);
     _exprModel = XelementHelper.findExprModel(this);
   }
 
+  /**
+   * @return The inner exprModel element.
+   */
   public XexprModel getExprModel(){
     return _exprModel;
   }

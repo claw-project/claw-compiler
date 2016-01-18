@@ -18,16 +18,29 @@ import org.w3c.dom.Element;
 public class Xkind extends XbaseElement {
   private String _value;
 
-  public Xkind(Element kindElement){
-    super(kindElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public Xkind(Element baseElement){
+    super(baseElement);
     _value = baseElement.getTextContent();
   }
 
+  /**
+   * Get the kind value.
+   * @return Kind value as String.
+   */
   public String getValue(){
     return _value;
   }
 
-  public void setValue(){
+  /**
+   * Set a new kind value.
+   * @param value The new kind value.
+   */
+  public void setValue(String value){
     // TODO
   }
 }

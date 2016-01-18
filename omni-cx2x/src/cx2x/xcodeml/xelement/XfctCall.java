@@ -23,12 +23,18 @@ import org.w3c.dom.Element;
  */
 
 public class XfctCall extends Xfct {
-
+  // Elements
   private XargumentsTable _arguments = null;
 
+  // Attributes
   private boolean _isInstrinsic = false;
   private String _type = null;
 
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
   public XfctCall(Element baseElement){
     super(baseElement);
 
@@ -42,14 +48,25 @@ public class XfctCall extends Xfct {
     _arguments = XelementHelper.findArgumentsTable(this, false);
   }
 
+  /**
+   * @return True if the fct is intrinsic. False otherwise.
+   */
   public boolean isIntrinsic(){
     return _isInstrinsic;
   }
 
+  /**
+   * Get the function type.
+   * @return Type of the function as a String value.
+   */
   public String getType(){
     return _type;
   }
 
+  /**
+   * Get the function's arguments table.
+   * @return A XargumentsTable object containing the function's arguments.
+   */
   public XargumentsTable getArgumentsTable(){
     return _arguments;
   }

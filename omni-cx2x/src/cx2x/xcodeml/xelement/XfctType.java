@@ -33,12 +33,20 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
   private boolean _isProgram = false;
   private boolean _isInternal = false;
 
-  public XfctType(Element element){
-    super(element);
-    readFctTypeInformation();
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XfctType(Element baseElement){
+    super(baseElement);
+    readElementInformation();
   }
 
-  private void readFctTypeInformation(){
+  /**
+   * Read inner element information.
+   */
+  private void readElementInformation(){
     _returnType = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_RETURN_TYPE);
 
@@ -62,26 +70,50 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
         XelementName.ATTR_IS_INTERNAL);
   }
 
+  /**
+   * Get the function result name.
+   * @return Result name value.
+   */
   public String getResultName(){
     return _resultName;
   }
 
+  /**
+   * Check whether function is recursive.
+   * @return True if the function is recursive. False otherwise.
+   */
   public boolean isRecursive(){
     return _isRecursive;
   }
 
+  /**
+   * Check whether function is internal.
+   * @return True if the function is internal. False otherwise.
+   */
   public boolean isInternal(){
     return _isInternal;
   }
 
+  /**
+   * Get the function return type.
+   * @return The function's return type as String.
+   */
   public String getReturnType(){
     return _returnType;
   }
 
+  /**
+   * Check whether function is the program function.
+   * @return True if the function is the program function. False otherwise.
+   */
   public boolean isProgram(){
     return _isProgram;
   }
 
+  /**
+   * A new object XfctType that is the clone of the current object.
+   * @return A new XfctType that is a clone of the current one.
+   */
   public XfctType cloneObject(){
     Node clone = clone();
     return new XfctType((Element)clone);

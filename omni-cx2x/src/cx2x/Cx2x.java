@@ -16,11 +16,18 @@ import xcodeml.util.XmOption;
  */
 
 public class Cx2x {
+  /**
+   * Print an error message an abort.
+   * @param s Error message.
+   */
   private static void error(String s) {
     System.err.println(s);
     System.exit(1);
   }
 
+  /**
+   * Print program usage.
+   */
   private static void usage() {
     final String[] lines = {
       /*"arguments: [-xc|-xf] [-l] [-fopenmp] [-f[no]coarray] [-dxcode] [-ddecomp] [-dump]",
@@ -79,6 +86,11 @@ public class Cx2x {
     System.exit(1);
   }
 
+  /**
+   * Main point of entry of the program.
+   * @param args  Arguments of the program.
+   * @throws Exception
+   */
   public static void main(String[] args) throws Exception {
     String inXmlFile = null;
     String outXmlFile = null;

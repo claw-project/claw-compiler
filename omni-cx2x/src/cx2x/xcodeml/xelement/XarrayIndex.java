@@ -22,11 +22,19 @@ import org.w3c.dom.Node;
 public class XarrayIndex extends XbaseElement {
   private XexprModel _exprModel;
 
-  public XarrayIndex(Element arrayIndexElement){
-    super(arrayIndexElement);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XarrayIndex(Element baseElement){
+    super(baseElement);
     readElementInformation();
   }
 
+  /**
+   * Read inner element information.
+   */
   private void readElementInformation(){
     // Find Var element if there is one
     // TODO move to XexprModel
@@ -36,6 +44,10 @@ public class XarrayIndex extends XbaseElement {
     }
   }
 
+  /**
+   * Get the inner exprModel object.
+   * @return The inner exprModel object.
+   */
   public XexprModel getExprModel(){
     return _exprModel;
   }
@@ -49,10 +61,20 @@ public class XarrayIndex extends XbaseElement {
     return new XarrayIndex(arrayIndex);
   }
 
+  /**
+   * Append a XbaseElement as the last children of XarrayIndex.
+   * @param element The element to append.
+   */
   public void append(XbaseElement element){
     append(element, false);
   }
 
+  /**
+   * Append a XbaseElement as the last children of XarrayIndex.
+   * @param element       The element to append.
+   * @param cloneElement  If true, the element is cloned before being added. If
+   *                      false, the element is directly added.
+   */
   public void append(XbaseElement element, boolean cloneElement){
     if(cloneElement){
       Node clone = element.clone();

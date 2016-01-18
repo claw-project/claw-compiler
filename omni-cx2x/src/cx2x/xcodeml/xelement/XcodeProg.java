@@ -49,12 +49,20 @@ public class XcodeProg extends XbaseElement {
 
   private List<XanalysisError> _errors;
 
+  /**
+   * XcodeProg base constructor.
+   * @param inputFile The XcodeML input file path.
+   */
   public XcodeProg(String inputFile){
     super(null);
     _xcodemlInputFile = inputFile;
     _errors = new ArrayList<>();
   }
 
+  /**
+   * Read all the XcodeML document information: version, language, time, source,
+   * compiler info.
+   */
   private void readDocumentInformation(){
     _version = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_VERSION);
@@ -66,31 +74,55 @@ public class XcodeProg extends XbaseElement {
       XelementName.ATTR_COMPILER_INFO);
   }
 
+  /**
+   * Add an error.
+   * @param msg     Error message.
+   * @param lineno  Line number that triggered the error.
+   */
   public void addError(String msg, int lineno){
     _errors.add(new XanalysisError(msg, lineno));
   }
 
+  /**
+   * Get all the errors.
+   * @return A list containing all the errors.
+   */
   public List<XanalysisError> getErrors(){
     return _errors;
   }
 
+  /**
+   * @return The XML Document representing the XcodeML program.
+   */
   public Document getDocument(){
     return _xcodemlDoc;
   }
 
+  /**
+   * @return The root element of the XcodeML program.
+   */
   public Element getBaseElement(){
     return (_xcodemlDoc != null) ? _xcodemlDoc.getDocumentElement() : null;
   }
 
+  /**
+   * @return The types table of the XcodeML program.
+   */
   public XtypeTable getTypeTable(){
     return _typeTable;
   }
 
+  /**
+   * @return The symbols table of the XcodeML program.
+   */
   public XsymbolTable getGlobalSymbolsTable() {
     return _globalSymbolsTable;
   }
 
-  // Read the XcodeML file and load its object representation
+  /**
+   * Open the XcodeML input file and read its information.
+   * @return True if the XcodeML was loaded successfully. False otherwise.
+   */
   public boolean load(){
     try {
       File fXmlFile = new File(_xcodemlInputFile);
@@ -119,10 +151,19 @@ public class XcodeProg extends XbaseElement {
     return true;
   }
 
+  /**
+   * Check whether the XcodeML is loaded.
+   * @return True if the XcodeML is loaded. False otherwise.
+   */
   public boolean isLoaded(){
     return _isLoaded;
   }
 
+  /**
+   * Check whether the XcodeML input file match the requirements.
+   * @return True if the XcodeML file matches the requirements.
+   * @throws Exception
+   */
   private boolean isXcodeMLvalid() throws Exception {
     if(_xcodemlDoc == null){
       return false;
@@ -152,10 +193,16 @@ public class XcodeProg extends XbaseElement {
     return true;
   }
 
+  /**
+   * Read the XcodeML type table
+   */
   private void readTypeTable() {
     _typeTable = XelementHelper.findTypeTable(this, true);
   }
 
+  /**
+   * Read the XcodeML symbols table
+   */
   private void readGlobalSymbolsTable() {
     _globalSymbolsTable = XelementHelper.findGlobalSymbols(this, true);
   }

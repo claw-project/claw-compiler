@@ -33,6 +33,11 @@ public class XifStatement extends XbaseElement {
   // attributes
   private String _constructName = null;
 
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
   public XifStatement(Element baseElement){
     super(baseElement);
 

@@ -33,12 +33,20 @@ public class XdeclTable extends XbaseElement {
 
   private Hashtable<String, XvarDecl> _table;
 
-  public XdeclTable(Element declarations){
-    super(declarations);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XdeclTable(Element baseElement){
+    super(baseElement);
     _table = new Hashtable<>();
     readTable();
   }
 
+  /**
+   * Read the declaration table.
+   */
   private void readTable(){
     // Read all varDecl elements
     NodeList nodeList = baseElement
@@ -62,6 +70,10 @@ public class XdeclTable extends XbaseElement {
     // TODO read FcommonDecl elements
   }
 
+  /**
+   * Replace a declaration in the table.
+   * @param decl The new declaration to be inserted.
+   */
   public void replace(XvarDecl decl){
     XvarDecl oldDecl = _table.get(decl.getName().getValue());
     if(oldDecl == null){
@@ -72,15 +84,31 @@ public class XdeclTable extends XbaseElement {
     oldDecl.delete();
   }
 
+  /**
+   * Add a new declaration.
+   * @param decl The new declaration object.
+   */
   public void add(XvarDecl decl){
     baseElement.appendChild(decl.clone());
     _table.put(decl.getName().getValue(), decl);
   }
 
+  /**
+   * Get a specific declaration based on its name.
+   * @param key The name of the declaration to be returned.
+   * @return A XvarDecl object if key is found. Null otherwise.
+   */
   public XvarDecl get(String key){
-    return _table.get(key);
+    if(_table.containsKey(key)) {
+      return _table.get(key);
+    }
+    return null;
   }
 
+  /**
+   * Get the number of declarations in the table.
+   * @return The number of declarations in the table.
+   */
   public int count(){
     return _table.size();
   }

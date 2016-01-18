@@ -20,7 +20,12 @@ public class XbaseExpr extends XbaseElement {
   private XexprModel _part1 = null;
   private XexprModel _part2 = null;
 
-  public XbaseExpr(Element element){
-    super(element);
+  /**
+   * Xelement standard ctor. Pass the base element to the base class and read
+   * inner information (elements and attributes).
+   * @param baseElement The root element of the Xelement
+   */
+  public XbaseExpr(Element baseElement){
+    super(baseElement);
   }
 }
