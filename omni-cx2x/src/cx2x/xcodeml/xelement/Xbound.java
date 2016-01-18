@@ -86,11 +86,8 @@ public class Xbound extends XbaseElement {
       return false;
     }
 
-    if (!getValue().toLowerCase().equals(other.getValue())){
-      return false;
-    }
+    return getValue().toLowerCase().equals(other.getValue());
 
-    return true;
   }
 
   @Override

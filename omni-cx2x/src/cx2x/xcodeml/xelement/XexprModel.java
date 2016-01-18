@@ -141,10 +141,7 @@ public class XexprModel {
    * @return True if the exprModel is of the given class. False otherwise.
    */
   private <T extends XbaseElement> boolean isOfType(Class<T> type){
-    if(_element != null && type.isInstance(_element)){
-      return true;
-    }
-    return false;
+    return _element != null && type.isInstance(_element);
   }
 
 

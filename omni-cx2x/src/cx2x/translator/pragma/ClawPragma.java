@@ -137,10 +137,7 @@ public enum ClawPragma {
   }
 
   public static boolean startsWithClaw(String pragma){
-    if(pragma.startsWith(PREFIX_CLAW)){
-      return true;
-    }
-    return false;
+    return pragma.startsWith(PREFIX_CLAW);
   }
 
 
@@ -198,10 +195,7 @@ public enum ClawPragma {
           && ClawPragma.isMapOptionValid(option);
       case BASE_END:
         // Only remove is associated with end directive now
-        if(option.contains(DIRECTIVE_UTILITIES_REMOVE)){
-          return true;
-        }
-        return false;
+        return option.contains(DIRECTIVE_UTILITIES_REMOVE);
       default:
         return false;
     }
@@ -235,10 +229,7 @@ public enum ClawPragma {
 
     if(matchOption.find()) {
       String match =  matchOption.group(1);
-      if(match.trim().length() > 0){
-        return true;
-      }
-      return false;
+      return match.trim().length() > 0;
     }
 
     return false;

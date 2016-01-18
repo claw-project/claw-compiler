@@ -140,11 +140,8 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
       return false;
     }
 
-    if(!_scope.equals(other.getScope())){
-      return false;
-    }
+    return _scope.equals(other.getScope());
 
-    return true;
   }
 
   @Override

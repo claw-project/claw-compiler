@@ -72,10 +72,7 @@ public class XelementHelper {
     if(value == null) {
       return false;
     }
-    if (value.equals(XelementName.TRUE)){
-      return true;
-    }
-    return false;
+    return value.equals(XelementName.TRUE);
   }
 
   /**
@@ -853,10 +850,7 @@ public class XelementHelper {
     XPathExpression getVersion = xpath.compile(xpathQuery);
     String outputValue = (String) getVersion.evaluate(doc,
       XPathConstants.STRING);
-    if(outputValue.equals(attrValue)){
-      return true;
-    }
-    return false;
+    return outputValue.equals(attrValue);
   }
 
   /**

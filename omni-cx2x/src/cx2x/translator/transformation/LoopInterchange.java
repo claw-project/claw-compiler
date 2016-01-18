@@ -149,11 +149,8 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    * swap is needed.
    */
   private boolean needDoubleSwap(){
-    if((_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1) ||
-      (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0)){
-      return true;
-    }
-    return false;
+    return (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1) ||
+        (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0);
   }
 
   /**

@@ -118,11 +118,8 @@ public class XindexRange extends XbaseElement implements Xclonable<XindexRange> 
       return false;
     }
 
-    if (!getStep().equals(other.getStep())){
-      return false;
-    }
+    return getStep().equals(other.getStep());
 
-    return true;
   }
 
   @Override

@@ -37,10 +37,7 @@ public class XloopIterationRange {
     if(!getInductionVar().getValue().equals(other.getInductionVar().getValue())){
       return false;
     }
-    if(!getIndexRange().equals(other.getIndexRange())){
-      return false;
-    }
-    return true;
+    return getIndexRange().equals(other.getIndexRange());
   }
 
   /**

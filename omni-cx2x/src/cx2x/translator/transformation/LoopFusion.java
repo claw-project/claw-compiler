@@ -121,10 +121,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
       return false;
     }
     // Loop must share the same iteration range
-    if(!_loop.hasSameRangeWith(otherLoopUnit.getLoop())){
-      return false;
-    }
-    return true;
+    return _loop.hasSameRangeWith(otherLoopUnit.getLoop());
   }
 
   /**
