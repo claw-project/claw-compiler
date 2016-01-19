@@ -3,14 +3,14 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.exception;
+package cx2x.xcodeml.exception;
 
 /**
  * Exception thrown during the transformation process
  *
  * @author clementval
  */
- 
+
 public class IllegalTransformationException extends Exception {
   private int _transformationStartLine = 0;
 

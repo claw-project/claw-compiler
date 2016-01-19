@@ -9,10 +9,10 @@ package cx2x.translator;
 import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.translator.transformer.*;
 import cx2x.translator.transformation.*;
-import cx2x.translator.exception.*;
 import cx2x.translator.pragma.ClawPragma;
 
 // OMNI import

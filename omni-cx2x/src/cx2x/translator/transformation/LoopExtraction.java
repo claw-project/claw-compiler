@@ -9,8 +9,9 @@ package cx2x.translator.transformation;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
+import cx2x.xcodeml.exception.*;
 import cx2x.translator.pragma.*;
-import cx2x.translator.exception.*;
+
 
 // OMNI import
 import xcodeml.util.XmOption;
