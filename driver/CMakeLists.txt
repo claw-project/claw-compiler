@@ -47,7 +47,8 @@ configure_file(
 
 # Only to run test, we use the local build
 set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_SOURCE_DIR}/driver/etc/")
-set(OMNI_JAR_CX2X "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_NAME}.jar")
+set(OMNI_JAR_CX2X_CLAW "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar")
+set(OMNI_JAR_CX2X_XCODEML "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar")
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}_test

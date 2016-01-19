@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import helper.XmlHelper;
+import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 
 /**

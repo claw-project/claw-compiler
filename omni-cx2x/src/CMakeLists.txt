@@ -5,31 +5,7 @@ set(CMAKE_JAVA_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/bui
 set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 
 
-add_jar(${OMNI_CX2X_NAME}
-# Base class
-  cx2x/Cx2x.java
-
-# translator.pragma package
-  cx2x/translator/pragma/ClawPragma.java
-  cx2x/translator/pragma/ClawMapping.java
-
-# translator package
-  cx2x/translator/ClawXcodeMlTranslator.java
-
-# translator.transformer package
-  cx2x/translator/transformer/ClawTransformer.java
-
-# translator.transformation package
-  cx2x/translator/transformation/LoopFusion.java
-  cx2x/translator/transformation/LoopInterchange.java
-  cx2x/translator/transformation/LoopExtraction.java
-  cx2x/translator/transformation/UtilityRemove.java
-
-# XcodeML.transformation package
-  cx2x/xcodeml/transformation/DependentTransformationGroup.java
-  cx2x/xcodeml/transformation/IndependentTransformationGroup.java
-  cx2x/xcodeml/transformation/Transformation.java
-  cx2x/xcodeml/transformation/TransformationGroup.java
+add_jar(${OMNI_CX2X_XCODEML_NAME}
 
 # XcodeML.transformer
   cx2x/xcodeml/transformation/Transformer.java
@@ -94,9 +70,31 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/xcodeml/xelement/XvarDecl.java
   cx2x/xcodeml/xelement/XvarRef.java
 
+  OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
+)
 
+add_jar(${OMNI_CX2X_CLAW_NAME}
+# Base class
+  cx2x/Cx2x.java
+
+# translator.pragma package
+  cx2x/translator/pragma/ClawPragma.java
+  cx2x/translator/pragma/ClawMapping.java
+
+# translator package
+  cx2x/translator/ClawXcodeMlTranslator.java
+
+# translator.transformer package
+  cx2x/translator/transformer/ClawTransformer.java
+
+# translator.transformation package
+  cx2x/translator/transformation/LoopFusion.java
+  cx2x/translator/transformation/LoopInterchange.java
+  cx2x/translator/transformation/LoopExtraction.java
+  cx2x/translator/transformation/UtilityRemove.java
 
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 
-install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ccx2x/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ccx2x/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/ccx2x/)
