@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.xcodeml.xelement;
+package cx2x.xcodeml.error;
 
 /**
  * This class hold information about error happening during transformation
@@ -11,7 +11,7 @@ package cx2x.xcodeml.xelement;
  *
  * @author clementval
  */
- 
+
 public class XanalysisError {
   private String _errorMsg;
   private int _errorLineNumber = 0;

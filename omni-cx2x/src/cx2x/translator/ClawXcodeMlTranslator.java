@@ -7,6 +7,7 @@ package cx2x.translator;
 
 // Cx2x import
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.error.*;
 import cx2x.translator.transformer.*;
 import cx2x.translator.transformation.*;
 import cx2x.translator.exception.*;
@@ -23,7 +24,7 @@ import xcodeml.util.XmOption;
  *
  * @author clementval
  */
- 
+
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
   private String _xcodemlInputFile = null;

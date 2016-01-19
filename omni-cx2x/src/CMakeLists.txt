@@ -30,8 +30,10 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/translator/transformer/ClawTransformer.java
   cx2x/translator/transformer/Transformer.java
 
+# XcodeML.error package
+  cx2x/xcodeml/error/XanalysisError.java
+
 # XcodeML.Xelement package
-  cx2x/xcodeml/xelement/XanalysisError.java
   cx2x/xcodeml/xelement/XargumentsTable.java
   cx2x/xcodeml/xelement/XarrayConstructor.java
   cx2x/xcodeml/xelement/XarrayIndex.java

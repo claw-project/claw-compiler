@@ -13,6 +13,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import cx2x.xcodeml.error.*;
+
 /**
  * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
  * representation.
