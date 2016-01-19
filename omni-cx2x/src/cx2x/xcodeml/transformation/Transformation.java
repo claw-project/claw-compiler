@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation;
+package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.xelement.*;
 import cx2x.translator.exception.*;

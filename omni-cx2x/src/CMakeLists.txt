@@ -9,22 +9,25 @@ add_jar(${OMNI_CX2X_NAME}
 # Base class
   cx2x/Cx2x.java
 
-# Pragma package
+# translator.pragma package
   cx2x/translator/pragma/ClawPragma.java
   cx2x/translator/pragma/ClawMapping.java
 
-# XcodeML package
+# translator package
   cx2x/translator/ClawXcodeMlTranslator.java
 
-# XcodeML.transformation package
-  cx2x/translator/transformation/DependentTransformationGroup.java
-  cx2x/translator/transformation/IndependentTransformationGroup.java
+# translator.transformation package
   cx2x/translator/transformation/LoopFusion.java
   cx2x/translator/transformation/LoopInterchange.java
   cx2x/translator/transformation/LoopExtraction.java
-  cx2x/translator/transformation/Transformation.java
-  cx2x/translator/transformation/TransformationGroup.java
   cx2x/translator/transformation/UtilityRemove.java
+
+# XcodeML.transformation package
+  cx2x/xcodeml/transformation/DependentTransformationGroup.java
+  cx2x/xcodeml/transformation/IndependentTransformationGroup.java
+  cx2x/xcodeml/transformation/Transformation.java
+  cx2x/xcodeml/transformation/TransformationGroup.java
+
 
 # XcodeML.transformer
   cx2x/translator/transformer/ClawTransformer.java
@@ -34,7 +37,7 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/xcodeml/error/XanalysisError.java
 
 # XcodeML.helper package
-  cx2x/xcodeml/helper/XelementHelper.java  
+  cx2x/xcodeml/helper/XelementHelper.java
 
 # XcodeML.Xelement package
   cx2x/xcodeml/xelement/XargumentsTable.java

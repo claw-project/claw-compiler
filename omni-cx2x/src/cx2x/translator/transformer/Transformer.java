@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformer;
 
-import cx2x.translator.transformation.*;
+import cx2x.xcodeml.transformation.*;
 import java.util.List;
 
 /**

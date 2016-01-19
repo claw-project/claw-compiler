@@ -8,6 +8,7 @@ package cx2x.translator.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import cx2x.xcodeml.transformation.*;
 import cx2x.translator.transformation.*;
 
 /**
@@ -16,7 +17,7 @@ import cx2x.translator.transformation.*;
  *
  * @author clementval
  */
- 
+
 public class ClawTransformer implements Transformer {
   private TransformationGroup<LoopFusion> _loopFusion = null;
   private TransformationGroup<LoopInterchange> _loopInterchange = null;
