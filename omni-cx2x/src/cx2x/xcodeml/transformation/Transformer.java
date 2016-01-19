@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformer;
+package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.transformation.*;
 import java.util.List;

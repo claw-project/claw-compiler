@@ -11,7 +11,6 @@ import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.translator.pragma.*;
 import cx2x.translator.exception.*;
-import cx2x.translator.transformer.Transformer;
 
 // OMNI import
 import xcodeml.util.XmOption;

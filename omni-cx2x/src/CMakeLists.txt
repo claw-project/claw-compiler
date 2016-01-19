@@ -16,6 +16,9 @@ add_jar(${OMNI_CX2X_NAME}
 # translator package
   cx2x/translator/ClawXcodeMlTranslator.java
 
+# translator.transformer package
+  cx2x/translator/transformer/ClawTransformer.java
+
 # translator.transformation package
   cx2x/translator/transformation/LoopFusion.java
   cx2x/translator/transformation/LoopInterchange.java
@@ -28,10 +31,8 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/xcodeml/transformation/Transformation.java
   cx2x/xcodeml/transformation/TransformationGroup.java
 
-
 # XcodeML.transformer
-  cx2x/translator/transformer/ClawTransformer.java
-  cx2x/translator/transformer/Transformer.java
+  cx2x/xcodeml/transformation/Transformer.java
 
 # XcodeML.error package
   cx2x/xcodeml/error/XanalysisError.java

@@ -10,7 +10,6 @@ import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.translator.exception.*;
-import cx2x.translator.transformer.Transformer;
 
 import xcodeml.util.XmOption;
 

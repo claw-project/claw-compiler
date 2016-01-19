@@ -7,7 +7,6 @@ package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.xelement.XcodeProg;
 import cx2x.translator.exception.*;
-import cx2x.translator.transformer.Transformer;
 
 /**
  * An independent transformation group applies each transformation without
