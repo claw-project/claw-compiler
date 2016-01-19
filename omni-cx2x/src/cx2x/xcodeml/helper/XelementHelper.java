@@ -3,9 +3,10 @@
  * See LICENSE file for more information
  */
 
-package cx2x.xcodeml.xelement;
+package cx2x.xcodeml.helper;
 
 import cx2x.translator.exception.*;
+import cx2x.xcodeml.xelement.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,7 +34,7 @@ import java.util.List;
  *
  * @author clementval
  */
- 
+
 public class XelementHelper {
 
 
@@ -63,16 +64,12 @@ public class XelementHelper {
    * @return The attribute's value if the attribute is found. Null otherwise.
    */
   public static boolean getBooleanAttributeValue(XbaseElement el,
-    String attrName)
-  {
-    if(el == null || el.getBaseElement() == null){
+    String attrName) {
+    if (el == null || el.getBaseElement() == null) {
       return false;
     }
     String value = XelementHelper.getAttributeValue(el, attrName);
-    if(value == null) {
-      return false;
-    }
-    return value.equals(XelementName.TRUE);
+    return value != null && value.equals(XelementName.TRUE);
   }
 
   /**

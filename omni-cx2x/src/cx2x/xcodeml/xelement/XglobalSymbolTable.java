@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
- 
+
 public class XglobalSymbolTable extends XsymbolTable {
 
   /**

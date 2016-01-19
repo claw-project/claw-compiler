@@ -8,6 +8,8 @@ package cx2x.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import cx2x.xcodeml.helper.*;
+
 /**
  * The XarrayIndex represents the arrayIndex (8.10) element in XcodeML
  * intermediate representation.

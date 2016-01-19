@@ -8,6 +8,8 @@ package cx2x.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import cx2x.xcodeml.helper.*;
+
 /**
  * The XtypeTable represents the typeTable (7.4.1) element in XcodeML intermediate
  * representation.

@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The Xconstant represents the base of constants elements (7.1.1) element in

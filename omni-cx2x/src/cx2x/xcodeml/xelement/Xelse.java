@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The Xelse represents the else (6.29) element in XcodeML intermediate

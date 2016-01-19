@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XfctCall represents the functionCall (7.5.1) element in XcodeML

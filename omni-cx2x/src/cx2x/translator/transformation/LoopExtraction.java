@@ -7,6 +7,7 @@ package cx2x.translator.transformation;
 
 // Cx2x import
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.helper.*;
 import cx2x.translator.pragma.*;
 import cx2x.translator.exception.*;
 import cx2x.translator.transformer.Transformer;

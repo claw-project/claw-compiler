@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XindexRange represents the indexRange (8.11) element in XcodeML
@@ -22,7 +23,7 @@ import org.w3c.dom.Node;
  *
  * @author clementval
  */
- 
+
 public class XindexRange extends XbaseElement implements Xclonable<XindexRange> {
 
   protected XlowerBound _lowerBound;

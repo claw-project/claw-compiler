@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XstructConstructor represents the FstructConstructor (7.3.1) element in

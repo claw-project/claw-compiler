@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import cx2x.translator.exception.*;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XdoStatement represents the FdoStatement (6.5) element in XcodeML
@@ -24,7 +25,7 @@ import cx2x.translator.exception.*;
  *
  * @author clementval
  */
- 
+
 public class XdoStatement extends XbaseElement {
   private XloopIterationRange _iterationRange = null;
   private Xbody _body = null;

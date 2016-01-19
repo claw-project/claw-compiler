@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XargumentsTable represents the arguments (7.5.3) element in XcodeML

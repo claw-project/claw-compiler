@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XdeclTable represents the typeTable (5.2) element in XcodeML intermediate

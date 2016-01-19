@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import java.util.List;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XcomplexConstant represents the FcomplexConstant elements (7.1.2) element

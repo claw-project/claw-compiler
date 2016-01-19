@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The Xname represents the name (8.3) element in XcodeML intermediate

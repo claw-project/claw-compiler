@@ -6,8 +6,8 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
-
 import java.util.ArrayList;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XbasicType represents the basicType (3.3) element in XcodeML intermediate

@@ -33,6 +33,9 @@ add_jar(${OMNI_CX2X_NAME}
 # XcodeML.error package
   cx2x/xcodeml/error/XanalysisError.java
 
+# XcodeML.helper package
+  cx2x/xcodeml/helper/XelementHelper.java  
+
 # XcodeML.Xelement package
   cx2x/xcodeml/xelement/XargumentsTable.java
   cx2x/xcodeml/xelement/XarrayConstructor.java
@@ -54,7 +57,6 @@ add_jar(${OMNI_CX2X_NAME}
   cx2x/xcodeml/xelement/XdoStatement.java
   cx2x/xcodeml/xelement/Xelse.java
   cx2x/xcodeml/xelement/XexprModel.java
-  cx2x/xcodeml/xelement/XelementHelper.java
   cx2x/xcodeml/xelement/XelementName.java
   cx2x/xcodeml/xelement/Xfct.java
   cx2x/xcodeml/xelement/XfctDef.java

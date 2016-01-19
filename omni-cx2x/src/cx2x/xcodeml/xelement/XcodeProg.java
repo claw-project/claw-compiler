@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cx2x.xcodeml.error.*;
+import cx2x.xcodeml.helper.*;
 
 /**
  * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
