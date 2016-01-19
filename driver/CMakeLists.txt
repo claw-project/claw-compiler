@@ -47,6 +47,10 @@ configure_file(
 
 # Only to run test, we use the local build
 set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_SOURCE_DIR}/driver/etc/")
+set(OMNI_JAR_TOOLS="${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
+set(OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
+set(OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
+set(OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
 set(OMNI_JAR_CX2X_CLAW "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar")
 set(OMNI_JAR_CX2X_XCODEML "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar")
 configure_file(
