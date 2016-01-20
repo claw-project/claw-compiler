@@ -41,6 +41,8 @@ public class Xkind extends XbaseElement {
    * @param value The new kind value.
    */
   public void setValue(String value){
-    // TODO
+    if(baseElement != null){
+      baseElement.setTextContent(value);
+    }
   }
 }
