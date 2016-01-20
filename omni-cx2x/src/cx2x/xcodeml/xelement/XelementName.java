@@ -82,12 +82,15 @@ public class XelementName {
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String FCT_TYPE = "FfunctionType";
   public static final String F_ARRAY_REF = "FarrayRef";
+  public static final String F_CHAR_REF = "FcharacterRef";
+  public static final String F_COARRAY_REF = "FcoArrayRef";
   public static final String F_IF_STMT = "FifStatement";
   public static final String F_INT_CONST = "FintConstant";
   public static final String F_REAL_CONST = "FrealConstant";
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
   public static final String F_CHAR_CONST = "FcharacterConstant";
   public static final String F_LOGICAL_CONST = "FlogicalConstant";
+  public static final String F_MEMBER_REF = "FmemberRef";
   public static final String F_STRUCT_TYPE = "FstructType";
   public static final String GLOBAL_SYMBOLS = "globalSymbols";
   public static final String ID = "id";

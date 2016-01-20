@@ -303,6 +303,38 @@ public class XelementHelper {
   }
 
   /**
+   * The inner element of a varRef is one of the following:
+   * - Var
+   * - FmemberRef
+   * - FarrayRef
+   * - FcharacterRef
+   * - FcoArrayRef
+   * @param parent
+   * @return
+   */
+  public static XbaseElement findVarRefInnerElement(XbaseElement parent){
+    Element element = getFirstChildElement(parent.getBaseElement());
+    if(element == null){
+      return null;
+    }
+
+    switch (element.getTagName()) {
+      case XelementName.VAR:
+        return new Xvar(element);
+      case XelementName.F_MEMBER_REF:
+        return null; // TODO move to XmemberRef
+      case XelementName.F_ARRAY_REF:
+        return new XarrayRef(element);
+      case XelementName.F_CHAR_REF:
+        return null; // TODO move to XcharacterRef
+      case XelementName.F_COARRAY_REF:
+        return null; // TODO move to XcoArrayRef
+      default:
+        return null;
+    }
+  }
+
+  /**
    * Find constant element.
    * @param parent  Root element to search from.
    * @param any     If true, find in any nested element under parent. If

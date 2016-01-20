@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
  */
 
 public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
+  private String _type = null;
   private XbaseElement _innerElement = null;
 
 
@@ -37,24 +38,39 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
    */
   public XvarRef(Element baseElement){
     super(baseElement);
-    readElementInformation();
+    _innerElement = XelementHelper.findVarRefInnerElement(this);
+    _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
   }
 
+
   /**
-   * Read the inner element information.
+   * Check whether the varRef has a type.
+   * @return True if a type is associated. False otherwise.
    */
-  private void readElementInformation(){
-    _innerElement = XelementHelper.findVar(this, false);
+  public boolean hasType(){
+    return _type != null;
   }
 
   /**
-   * Check if the inner element is a var element
-   * @return True if the inner element is a var
+   * Get the associated type.
+   * @return Type value.
+   */
+  public String getType(){
+    return _type;
+  }
+
+  /**
+   * Check if the inner element is a var element.
+   * @return True if the inner element is a var.
    */
   public boolean isVar(){
     return _innerElement instanceof Xvar;
   }
 
+  /**
+   * Get the var element.
+   * @return Var element. Null if the inner element is not a var element.
+   */
   public Xvar getVar(){
     if(isVar()){
       return (Xvar)_innerElement;
@@ -62,6 +78,25 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
     return null;
   }
 
+  /**
+   * Check if the inner element is a arrayRef element.
+   * @return True if the inner element is a arrayRef.
+   */
+  public boolean isArrayRef(){
+    return _innerElement instanceof XarrayRef;
+  }
+
+  /**
+   * Get the arrayRef element.
+   * @return arrayRef element. Null if the inner element is not a arrayRef
+   * element.
+   */
+  public XarrayRef getArrayRef(){
+    if(isArrayRef()){
+      return (XarrayRef)_innerElement;
+    }
+    return null;
+  }
 
   /**
    * Create an empty varRef element in the given program
