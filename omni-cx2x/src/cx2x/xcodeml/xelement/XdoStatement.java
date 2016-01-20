@@ -29,6 +29,7 @@ import cx2x.xcodeml.helper.*;
 public class XdoStatement extends XbaseElement {
   private XloopIterationRange _iterationRange = null;
   private Xbody _body = null;
+  private String _construct_name = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -39,6 +40,8 @@ public class XdoStatement extends XbaseElement {
     super(baseElement);
     findRangeElements();
     _body = XelementHelper.findBody(this, false);
+    _construct_name = XelementHelper.getAttributeValue(this,
+        XelementName.ATTR_CONSTRUCT_NAME);
   }
 
   /**
@@ -180,5 +183,21 @@ public class XdoStatement extends XbaseElement {
    */
   public boolean hasSameRangeWith(XdoStatement other){
     return _iterationRange.isFullyIdentical(other.getIterationRange());
+  }
+
+  /**
+   * Check whether the element has a construct name attribute defined.
+   * @return True the attribute is defined. False otherwise.
+   */
+  public boolean hasConstructName(){
+    return _construct_name != null;
+  }
+
+  /**
+   * Get the construct name attribute value.
+   * @return Construct name value. Null if the attribute is not defined. 
+   */
+  public String getConstructName(){
+    return _construct_name;
   }
 }
