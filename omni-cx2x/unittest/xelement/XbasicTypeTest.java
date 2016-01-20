@@ -141,6 +141,25 @@ public class XbasicTypeTest {
     assertNotNull(b.getDimensions(1));
     assertNull(b.getDimensions(2));
 
+    Xindex dim0 = b.getDimensions(0);
+    Xindex dim1 = b.getDimensions(1);
+
+    assertTrue(dim0.isArrayIndex());
+    assertTrue(dim1.isIndexRange());
+
+    XarrayIndex arrayIndex = (XarrayIndex)dim0;
+    assertNotNull(arrayIndex.getExprModel());
+    assertTrue(arrayIndex.getExprModel().isIntConst());
+    assertEquals("10", arrayIndex.getExprModel().getIntConstant().getValue());
+
+    XindexRange indexRange = (XindexRange)dim1;
+    assertNotNull(indexRange.getLowerBound());
+    assertNotNull(indexRange.getUpperBound());
+    assertTrue(indexRange.getLowerBound().getExprModel().isIntConst());
+    assertEquals("1", indexRange.getLowerBound().getValue());
+    assertTrue(indexRange.getUpperBound().getExprModel().isIntConst());
+    assertEquals("10", indexRange.getUpperBound().getValue());
+
     assertEquals("Fint", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
   }
