@@ -322,11 +322,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
             newArg.append(varRef);
 
             //  create arrayIndex
-            for(String mappingVar : mapping.getMappingVariables()){
+            for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
               XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
               // Find the mapping var in the local table (fct scope)
               XvarDecl mappingVarDecl =
-                _fctDef.getDeclarationTable().get(mappingVar);
+                _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
               // Add to arrayIndex
               Xvar newMappingVar = Xvar.createEmpty(xcodeml, Xscope.LOCAL.toString());
@@ -365,14 +365,14 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           // Adapt array reference in extracted fct body element
           List<XarrayRef> arrayReferences =
             XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
-          for(String mappingVar : mapping.getMappingVariables()){
+          for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
             for(XarrayRef ref : arrayReferences){
               boolean changeRef = true;
               for(XbaseElement e : ref.getInnerElements()){
                 if(e instanceof XarrayIndex){
                   XarrayIndex arrayIndex = (XarrayIndex)e;
                   if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
-                    if(!arrayIndex.getExprModel().getVar().getValue().equals(mappingVar)){
+                    if(!arrayIndex.getExprModel().getVar().getValue().equals(mappingVar.getFctMapping())){
                       changeRef = false;
                     }
                   }

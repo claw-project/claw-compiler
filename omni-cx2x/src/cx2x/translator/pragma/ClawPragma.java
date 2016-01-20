@@ -6,6 +6,9 @@
 package cx2x.translator.pragma;
 
 import exc.object.Xobject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 import java.util.Arrays;
 
@@ -233,6 +236,24 @@ public enum ClawPragma {
     }
 
     return false;
+  }
+
+  public static List<ClawMapping> extractMappingInformation(String data) {
+    List<String> allMappings = new ArrayList<>();
+    List<ClawMapping> mappings = new ArrayList<>();
+    // TODO move regex somewhere centralized
+    Matcher m = Pattern.compile("map\\(([^:]*:[^)]*)\\)")
+        .matcher(data);
+    while (m.find()) {
+      allMappings.add(m.group(1));
+    }
+
+    for(String mappingClause : allMappings){
+      System.out.println("MAPPING " + mappingClause);
+      ClawMapping mapping = new ClawMapping(mappingClause);
+      mappings.add(mapping);
+    }
+    return mappings;
   }
 
   public static ClawPragma valueOf(Xobject x) {

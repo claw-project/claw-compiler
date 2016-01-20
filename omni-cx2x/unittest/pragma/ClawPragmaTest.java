@@ -6,9 +6,14 @@
 package pragma;
 
 import static org.junit.Assert.*;
+
+import cx2x.translator.pragma.ClawMapping;
 import org.junit.Test;
 
 import cx2x.translator.pragma.ClawPragma;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test the features of the ClawPragma enum.
@@ -52,6 +57,13 @@ public class ClawPragmaTest {
     assertFalse(ClawPragma.isValid("claw loop-extract range map"));
 
 
+    assertTrue(ClawPragma.isValid("claw loop-extract range(j1=ki1sc,ki1ec) "
+        + " map(pduh2oc,pduh2of:j1,ki3sc/j3) "
+        + " map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3)"
+        + " map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) "
+        + " fusion group(j1)"));
+
+
     // remove
     assertTrue(ClawPragma.isValid("claw remove"));
     assertTrue(ClawPragma.isValid("claw end remove"));
@@ -60,6 +72,38 @@ public class ClawPragmaTest {
     assertFalse(ClawPragma.isValid("claw"));
     assertFalse(ClawPragma.isValid("claw dummy-directive"));
 
+
+  }
+
+  @Test
+  public void extractMappingTest(){
+    List<ClawMapping> mappings = ClawPragma.extractMappingInformation(
+        "claw loop-extract range(j1=ki1sc,ki1ec) "
+            + " map(pduh2oc,pduh2of:j1,ki3sc/j3) "
+            + " map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3)"
+            + " map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) "
+            + " fusion group(j1)");
+
+    assertEquals(4, mappings.size());
+
+    assertEquals(2, mappings.get(0).getMappedDimensions());
+    assertEquals(2, mappings.get(0).getMappedVariables().size());
+    assertEquals(2, mappings.get(0).getMappingVariables().size());
+
+
+    assertEquals(2, mappings.get(1).getMappedDimensions());
+    assertEquals(8, mappings.get(1).getMappedVariables().size());
+    assertEquals(2, mappings.get(1).getMappingVariables().size());
+
+
+    assertEquals(2, mappings.get(2).getMappedDimensions());
+    assertEquals(2, mappings.get(2).getMappedVariables().size());
+    assertEquals(2, mappings.get(2).getMappingVariables().size());
+
+
+    assertEquals(1, mappings.get(3).getMappedDimensions());
+    assertEquals(6, mappings.get(3).getMappedVariables().size());
+    assertEquals(1, mappings.get(3).getMappingVariables().size());
 
   }
 }

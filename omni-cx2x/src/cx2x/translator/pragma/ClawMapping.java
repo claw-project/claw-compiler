@@ -5,6 +5,7 @@
 
 package cx2x.translator.pragma;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -17,8 +18,12 @@ import java.util.Collections;
  
 public class ClawMapping {
 
-  private ArrayList<String> _mappedVariables = null;
-  private ArrayList<String> _mappingVariables = null;
+  private List<String> _mappedVariables = null;
+  private List<ClawMappingVar> _mappingVariables = null;
+
+
+  private static final String VAR_SEPARATOR = ",";
+  private static final String MAPPING_SEPARATOR = "/";
 
   /**
    * ClawMapping ctor.
@@ -33,21 +38,35 @@ public class ClawMapping {
     if(parts.length != 2) {
       // TODO throw exception mappingClause is wrong
     }
-    String[] vars = parts[0].split(",");
-    String[] mappings = parts[1].split(",");
+    String[] vars = parts[0].split(VAR_SEPARATOR);
+    String[] mappings = parts[1].split(VAR_SEPARATOR);
     if(vars.length == 0 || mappings.length == 0){
       // TODO throw exception mappingClause is wrong
       System.err.println("Fatal error mapping !!");
     }
+    for (String mapping : mappings) {
+      String[] advancedMapping = mapping.split(MAPPING_SEPARATOR);
+      if(advancedMapping.length == 0 || advancedMapping.length > 2){
+        // TODO throw exception mappingClause if wrong.
+      }
+      if(advancedMapping.length > 1){
+        _mappingVariables.add(
+            new ClawMappingVar(advancedMapping[0], advancedMapping[1])
+        );
+      } else {
+        _mappingVariables.add(
+            new ClawMappingVar(advancedMapping[0], advancedMapping[0])
+        );
+      }
+    }
     Collections.addAll(_mappedVariables, vars);
-    Collections.addAll(_mappingVariables, mappings);
   }
 
   /**
    * Get a list of all mapping variables.
-   * @return List of mapping variable as String.
+   * @return List of mapping variable as ClawMappingVar.
    */
-  public ArrayList<String> getMappingVariables(){
+  public List<ClawMappingVar> getMappingVariables(){
     return _mappingVariables;
   }
 
@@ -55,7 +74,7 @@ public class ClawMapping {
    * Get a list of all mapped variables.
    * @return List of mapped variable as String.
    */
-  public ArrayList<String> getMappedVariables(){
+  public List<String> getMappedVariables(){
     return _mappedVariables;
   }
 

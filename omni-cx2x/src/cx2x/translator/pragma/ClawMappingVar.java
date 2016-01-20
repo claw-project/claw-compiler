@@ -1,0 +1,62 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
+package cx2x.translator.pragma;
+
+/**
+ * ClawMappingVar represents the mapping variable used in a loop-extract
+ * transformation.
+ *
+ * In the following mapping option:
+ *
+ * map(v1,v2,v3:i/j)
+ *
+ * The mapping variable i is the "arg" mapping as used as the mapping variable
+ * in the function call arguments. The mapping variable j is the "fct" mapping
+ * as used as the mapping variable in the function body.
+ *
+ * @author clementval
+ */
+public class ClawMappingVar {
+
+  private String _argPart = null;
+  private String _fctPart = null;
+
+  /**
+   * Constructs a new ClawMappingVar
+   * @param argMapping
+   * @param fctMapping
+   */
+  public ClawMappingVar(String argMapping, String fctMapping){
+    _argPart = argMapping;
+    _fctPart = fctMapping;
+  }
+
+  /**
+   * Check whether the mapping variable has two different variables for the
+   * function call arguments mapping and the function body mapping.
+   * @return True if the two mapping are different. False otherwise.
+   */
+  public boolean hasDifferentMappping(){
+    return !_argPart.equals(_fctPart);
+  }
+
+  /**
+   * Get the function call argument mapping part
+   * @return Mapping variable
+   */
+  public String getArgMapping(){
+    return _argPart;
+  }
+
+  /**
+   * Get the function body mapping part
+   * @return Mapping variable
+   */
+  public String getFctMapping(){
+    return _fctPart;
+  }
+
+}
