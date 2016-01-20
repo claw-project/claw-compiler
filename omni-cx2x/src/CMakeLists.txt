@@ -50,8 +50,10 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xelement/XglobalSymbolTable.java
   cx2x/xcodeml/xelement/Xid.java
   cx2x/xcodeml/xelement/XifStatement.java
+  cx2x/xcodeml/xelement/Xindex.java
   cx2x/xcodeml/xelement/XindexRange.java
   cx2x/xcodeml/xelement/XintConstant.java
+  cx2x/xcodeml/xelement/Xintent.java
   cx2x/xcodeml/xelement/Xkind.java
   cx2x/xcodeml/xelement/Xlength.java
   cx2x/xcodeml/xelement/XlogicalConstant.java

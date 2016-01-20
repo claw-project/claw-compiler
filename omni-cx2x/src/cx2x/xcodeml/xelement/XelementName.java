@@ -37,6 +37,11 @@ public class XelementName {
   public static final String SCOPE_GLOBAL = "global";
   public static final String SCOPE_PARAM = "param";
 
+  // Intent
+  public static final String INTENT_IN = "in";
+  public static final String INTENT_OUT = "out";
+  public static final String INTENT_INOUT = "inout";
+
   // Element attributes
   public static final String ATTR_COMPILER_INFO = "compiler-info";
   public static final String ATTR_CONSTRUCT_NAME = "construct_name";
