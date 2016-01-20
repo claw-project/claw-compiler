@@ -13,7 +13,7 @@ import cx2x.xcodeml.helper.*;
  * XcodeML intermediate representation.
  *
  * Elements:
- * - exprModel TODO move to exprModel
+ * - exprModel  
  *
  * @author clementval
  */
