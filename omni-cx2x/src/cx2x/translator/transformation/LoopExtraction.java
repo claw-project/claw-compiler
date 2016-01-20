@@ -17,8 +17,7 @@ import cx2x.translator.pragma.*;
 import xcodeml.util.XmOption;
 
 // Java import
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 
 /**
@@ -33,7 +32,8 @@ import java.util.regex.*;
 public class LoopExtraction extends Transformation<LoopExtraction> {
 
   private XexprStatement _exprStmt = null;
-  private ArrayList<ClawMapping> _mappings = null;
+  private List<ClawMapping> _mappings = null;
+  private Map<String, ClawMapping> _mappingMap = null;
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _fctDefToExtract = null;
@@ -52,6 +52,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   public LoopExtraction(Xpragma pragma) {
     super(pragma);
     _mappings = new ArrayList<>();
+    _mappingMap = new Hashtable<>();
     extractMappingInformation();
     extractRangeInformation();
     extractFusionInformation();
@@ -66,18 +67,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
   private void extractMappingInformation(){
-    List<String> allMappings = new ArrayList<>();
-    // TODO move regex somewhere centralized
-    Matcher m = Pattern.compile("map\\(([^:]*:[^)]*)\\)")
-     .matcher(_pragma.getData());
-    while (m.find()) {
-      allMappings.add(m.group(1));
-    }
-
-    for(String mappingClause : allMappings){
-      System.out.println("MAPPING " + mappingClause);
-      ClawMapping mapping = new ClawMapping(mappingClause);
-      _mappings.add(mapping);
+    _mappings = ClawPragma.extractMappingInformation(_pragma.getData());
+    for(ClawMapping m : _mappings){
+      for(String mappedVar : m.getMappedVariables()){
+        _mappingMap.put(mappedVar, m);
+      }
     }
   }
 
@@ -205,8 +199,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     clonedFctDef.updateName(newFctName);
     clonedFctDef.updateType(newFctTypeHash);
     // Update the symbol table in the fct definition
-    Xid fctId = clonedFctDef.getSymbolTable().
-      get(_fctDefToExtract.getFctName());
+    Xid fctId = clonedFctDef.getSymbolTable()
+        .get(_fctDefToExtract.getFctName());
     fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
 
@@ -236,13 +230,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     // TODO find any loops ?
     XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef, true);
 
-
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " + _pragma.getData());
       System.out.println("  created subroutine: " + clonedFctDef.getFctName());
     }
-
-
 
     /*
      * REMOVE BODY FROM THE LOOP AND DELETE THE LOOP
@@ -272,6 +263,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _fctCall.updateName(newFctName);
     _fctCall.updateType(newFctTypeHash);
 
+
     // Adapt function call parameters and function declaration
     XargumentsTable args = _fctCall.getArgumentsTable();
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
@@ -288,112 +280,120 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
         System.out.println("  Var: " + var);
         XbaseElement argument = args.findArgument(var); // TODO return a dedictaed type
-        if(argument != null){
+        if(argument == null) {
+          continue;
+        }
 
-          /* Case 1: Var --> ArrayRef
-           * Var --> ArrayRef transformation
-           * 1. Check that the variable used as array index exists in the
-           *    current scope (XdeclTable). If so, get its type value. Create a
-           *    Var element for the arrayIndex. Create the arrayIndex element
-           *    with Var as child.
-           *
-           * 2. Get the reference type of the base variable.
-           *    2.1 Create the varRef element with the type of base variable
-           *    2.2 insert clone of base variable in varRef
-           * 3. Create arrayRef element with varRef + arrayIndex
-           */
-          if(argument instanceof Xvar){
-            Xvar varArg = (Xvar)argument;
-            System.out.println("  arg found: " + varArg.getType());
-            XbasicType type =
+        /* Case 1: Var --> ArrayRef
+         * Var --> ArrayRef transformation
+         * 1. Check that the variable used as array index exists in the
+         *    current scope (XdeclTable). If so, get its type value. Create a
+         *    Var element for the arrayIndex. Create the arrayIndex element
+         *    with Var as child.
+         *
+         * 2. Get the reference type of the base variable.
+         *    2.1 Create the varRef element with the type of base variable
+         *    2.2 insert clone of base variable in varRef
+         * 3. Create arrayRef element with varRef + arrayIndex
+         */
+        if(argument instanceof Xvar){
+          Xvar varArg = (Xvar)argument;
+          System.out.println("  arg found: " + varArg.getType());
+          XbasicType type =
               (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
 
-            System.out.println("  ref: " + type.getRef());
-            System.out.println("  dimensions: " + type.getDimensions());
+          System.out.println("  ref: " + type.getRef());
+          System.out.println("  dimensions: " + type.getDimensions());
 
-            // Demotion cannot be applied as type dimension is smaller
-            if(type.getDimensions() < mapping.getMappedDimensions()){
-              // TODO problem !!!! demotion to big
-            }
+          // Demotion cannot be applied as type dimension is smaller
+          if(type.getDimensions() < mapping.getMappedDimensions()){
+            // TODO problem !!!! demotion to big
+          }
 
-            XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
-            XvarRef varRef = XvarRef.createEmpty(xcodeml, varArg.getType());
-            varRef.append(varArg, true);
-            newArg.append(varRef);
+          XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
+          XvarRef varRef = XvarRef.createEmpty(xcodeml, varArg.getType());
+          varRef.append(varArg, true);
+          newArg.append(varRef);
 
-            //  create arrayIndex
-            for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
-              XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
-              // Find the mapping var in the local table (fct scope)
-              XvarDecl mappingVarDecl =
+          //  create arrayIndex
+          for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
+            XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
+            // Find the mapping var in the local table (fct scope)
+            XvarDecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
-              // Add to arrayIndex
-              Xvar newMappingVar = Xvar.createEmpty(xcodeml, Xscope.LOCAL.toString());
-              newMappingVar.setType(mappingVarDecl.getName().getType());
-              newMappingVar.setValue(mappingVarDecl.getName().getValue());
-              arrayIndex.append(newMappingVar);
-              newArg.append(arrayIndex);
-            }
-
-            args.replace(varArg, newArg);
-          }
-          // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-          else if (argument instanceof XarrayRef){
-            // TODO
+            // Add to arrayIndex
+            Xvar newMappingVar = Xvar.createEmpty(xcodeml, Xscope.LOCAL.toString());
+            newMappingVar.setType(mappingVarDecl.getName().getType());
+            newMappingVar.setValue(mappingVarDecl.getName().getValue());
+            arrayIndex.append(newMappingVar);
+            newArg.append(arrayIndex);
           }
 
+          args.replace(varArg, newArg);
+        }
+        // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
+        else if (argument instanceof XarrayRef){
+          // TODO
+        }
 
-          // Change variable declaration in extracted fct
-
-          XvarDecl varDecl = fctDeclarations.get(var);
-          Xid id = fctSymbols.get(var);
-          XbasicType varDeclType =
+        // Change variable declaration in extracted fct
+        XvarDecl varDecl = fctDeclarations.get(var);
+        Xid id = fctSymbols.get(var);
+        XbasicType varDeclType =
             (XbasicType)xcodeml.getTypeTable().get(varDecl.getName().getType());
 
-          // Case 1: variable is demoted to scalar then take the ref type
-          if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
-            XvarDecl newVarDecl = XvarDecl.createEmpty(xcodeml, var, varDeclType.getRef());
-            fctDeclarations.replace(newVarDecl);
-            id.setType(varDeclType.getRef());
-          }
+        // Case 1: variable is demoted to scalar then take the ref type
+        if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
+          XvarDecl newVarDecl = XvarDecl.createEmpty(xcodeml, var, varDeclType.getRef());
+          fctDeclarations.replace(newVarDecl);
+          id.setType(varDeclType.getRef());
+        }
 
-          // Case 2: variable is not totally demoted then create new type
-          // TODO
-
-
-          // Adapt array reference in extracted fct body element
-          List<XarrayRef> arrayReferences =
-            XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
-          for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
-            for(XarrayRef ref : arrayReferences){
-              boolean changeRef = true;
-              for(XbaseElement e : ref.getInnerElements()){
-                if(e instanceof XarrayIndex){
-                  XarrayIndex arrayIndex = (XarrayIndex)e;
-                  if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
-                    if(!arrayIndex.getExprModel().getVar().getValue().equals(mappingVar.getFctMapping())){
-                      changeRef = false;
-                    }
-                  }
-                }
-              }
-              if(changeRef){
-                // TODO Var ref should be extracted only if the reference can be
-                // totally demoted
-                XelementHelper.insertBefore(ref, ref.getVarRef().cloneObject());
-                ref.delete();
-              }
-            } // Loop over arrayReferences
-          } // Loop over mapping variables
-
-          // End of array references adaptation block TODO refactor the code to
-          // be more readable and segment it in smaller methods
+        // Case 2: variable is not totally demoted then create new type
+        // TODO
 
 
-        } // If arg null TODO invert if to reduce nesting
+
       } // Loop mapped variables
     } // Loop over mapping clauses
+
+
+    // Adapt array reference in function body
+    List<XarrayRef> arrayReferences =
+        XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
+    for(XarrayRef ref : arrayReferences){
+      if(!ref.getVarRef().isVar()){
+        continue;
+      }
+      String mappedVar = ref.getVarRef().getVar().getValue();
+      if(_mappingMap.containsKey(mappedVar)){
+        ClawMapping mapping = _mappingMap.get(mappedVar);
+
+        boolean changeRef = true;
+
+        int mappingIndex = 0;
+        for(XbaseElement e : ref.getInnerElements()){
+          if(e instanceof XarrayIndex){
+            XarrayIndex arrayIndex = (XarrayIndex)e;
+            if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
+              String varName = arrayIndex.getExprModel().getVar().getValue();
+              if(varName.equals(mapping.getMappingVariables().get(mappingIndex).getFctMapping())){
+                ++mappingIndex;
+              } else {
+                changeRef = false;
+              }
+            }
+          }
+        }
+        if(changeRef){
+          // TODO Var ref should be extracted only if the reference can be
+          // totally demoted
+          XelementHelper.insertBefore(ref, ref.getVarRef().getVar().cloneObject());
+          ref.delete();
+        }
+      }
+    }
 
 
 

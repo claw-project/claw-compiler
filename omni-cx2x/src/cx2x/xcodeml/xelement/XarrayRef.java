@@ -9,6 +9,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.ArrayList;
+import java.util.List;
+
 import cx2x.xcodeml.helper.*;
 
 
@@ -34,7 +36,7 @@ public class XarrayRef extends XbaseElement {
 
   private String _type = null;
   private XvarRef _varRef = null;
-  private ArrayList<XbaseElement> _innerElement = null;
+  private List<XbaseElement> _innerElement = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -51,7 +53,7 @@ public class XarrayRef extends XbaseElement {
    * Get a list of all inner elements.
    * @return A list of XbaseElement.
    */
-  public ArrayList<XbaseElement> getInnerElements(){
+  public List<XbaseElement> getInnerElements(){
     return _innerElement;
   }
 

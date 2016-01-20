@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.helper.XelementHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -26,6 +27,8 @@ import org.w3c.dom.Node;
  */
 
 public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
+  private XbaseElement _innerElement = null;
+
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -41,8 +44,24 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
    * Read the inner element information.
    */
   private void readElementInformation(){
-    // TODO
+    _innerElement = XelementHelper.findVar(this, false);
   }
+
+  /**
+   * Check if the inner element is a var element
+   * @return True if the inner element is a var
+   */
+  public boolean isVar(){
+    return _innerElement instanceof Xvar;
+  }
+
+  public Xvar getVar(){
+    if(isVar()){
+      return (Xvar)_innerElement;
+    }
+    return null;
+  }
+
 
   /**
    * Create an empty varRef element in the given program

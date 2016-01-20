@@ -7,6 +7,7 @@ package helper;
 
 import static org.junit.Assert.*;
 
+import cx2x.xcodeml.xelement.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -59,5 +60,13 @@ public class XmlHelper {
     assertNotNull(el);
     return new Xvar(el);
   }
+
+  public static XvarRef createXvarRefFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XvarRef(el);
+  }
+
+
 
 }

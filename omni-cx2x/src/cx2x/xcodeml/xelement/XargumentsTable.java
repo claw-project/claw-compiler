@@ -9,6 +9,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+
 import cx2x.xcodeml.helper.*;
 
 /**
@@ -24,7 +27,7 @@ import cx2x.xcodeml.helper.*;
 
 public class XargumentsTable extends XbaseElement {
   // TODO move to exprModel. For the moment only read var
-  private Hashtable<String, XbaseElement> _table;
+  private Map<String, XbaseElement> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -59,8 +62,10 @@ public class XargumentsTable extends XbaseElement {
    * @return The argument if found. Null otherwise.
    */
   public XbaseElement findArgument(String name){
-    // TODO handle error
-    return _table.get(name);
+    if(_table.containsKey(name)) {
+      return _table.get(name);
+    }
+    return null;
   }
 
   /**
@@ -103,5 +108,13 @@ public class XargumentsTable extends XbaseElement {
   public XbaseElement get(String key){
     // TODO check if present otherwise null.
     return _table.get(key);
+  }
+
+  /**
+   * Get an iterator on the arguments table
+   * @return An iterator over the arguments table
+   */
+  public Iterator<Map.Entry<String, XbaseElement>> iterator(){
+    return _table.entrySet().iterator();
   }
 }
