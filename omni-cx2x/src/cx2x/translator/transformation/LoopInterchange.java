@@ -191,7 +191,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     _loopLevel0 = XelementHelper.findNextDoStatement(_pragma);
 
     if(_loopLevel0 == null){
-      // TODO give the reason and stops analysis
+      xcodeml.addError("top level loop not found", _pragma.getLine());
       return false;
     }
 
