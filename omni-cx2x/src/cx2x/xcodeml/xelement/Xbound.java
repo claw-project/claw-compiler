@@ -23,6 +23,7 @@ public class Xbound extends XbaseElement {
   private boolean _constant = false;
   private boolean _isVar = false;
   private Xvar _var = null;
+  private XexprModel _exprModel = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -31,46 +32,25 @@ public class Xbound extends XbaseElement {
    */
   public Xbound(Element baseElement){
     super(baseElement);
-    readElementInformation();
-  }
-
-  // TODO to be removed when moved to exprModel
-  public boolean isContant(){
-    return _constant;
-  }
-
-  // TODO to be removed when moved to exprModel
-  public boolean isVar(){
-    return _isVar;
-  }
-
-  // TODO to be removed when moved to exprModel
-  public String getValue(){
-    return _value;
-  }
-
-  // TODO to be removed when moved to exprModel
-  public String getType(){
-    if(isVar() && _var != null) {
-      return _var.getType();
-    }
-    return null;
+    _exprModel = XelementHelper.findExprModel(this, false);
   }
 
   /**
-   * Read inner element information
+   * Get the inner element
+   * @return Inner element as exprModel
    */
-  private void readElementInformation(){
-    XintConstant constant = XelementHelper.findIntConstant(this, false);
-    Xvar var = XelementHelper.findVar(this, false);
-    if(constant != null){
-      _constant = true;
-      _value = constant.getValue();
-    } else if(var != null){
-      _isVar = true;
-      _var = var;
-      _value = var.getValue();
+  public XexprModel getExprModel(){
+    return _exprModel;
+  }
+
+  public String getValue(){
+    if(_exprModel.isVar()){
+      return _exprModel.getVar().getValue();
     }
+    if(_exprModel.isConstant()){
+      return _exprModel.getConstant().getValue();
+    }
+    return null;
   }
 
   @Override
@@ -79,16 +59,12 @@ public class Xbound extends XbaseElement {
     if (ob.getClass() != getClass()) return false;
     Xbound other = (Xbound)ob;
 
-    if(isVar() != other.isVar()){
-      return false;
+    if(getValue() != null && other.getValue() != null
+        && getValue().toLowerCase().equals(other.getValue().toLowerCase()))
+    {
+      return true;
     }
-
-    if(isContant() != isContant()){
-      return false;
-    }
-
-    return getValue().toLowerCase().equals(other.getValue());
-
+    return false;
   }
 
   @Override

@@ -125,6 +125,17 @@ public class XexprModel {
   }
 
   /**
+   * Get the constant element.
+   * @return the constant element.
+   */
+  public Xconstant getConstant(){
+    if(isConstant()){
+      return (Xconstant)_element;
+    }
+    return null;
+  }
+
+  /**
    * Check whether the exprModel is a function call.
    * @return True if the exprModel is a function call. False otherwise.
    */

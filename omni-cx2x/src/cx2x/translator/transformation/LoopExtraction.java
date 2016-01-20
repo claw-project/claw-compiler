@@ -437,13 +437,13 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XelementHelper.insertFctCallIntoLoop(loop, _fctCall);
 
     insertDeclaration(iterationRange.getInductionVar().getValue());
-    if(iterationRange.getIndexRange().getLowerBound().isVar()){
+    if(iterationRange.getIndexRange().getLowerBound().getExprModel().isVar()){
       insertDeclaration(iterationRange.getIndexRange().getLowerBound().getValue());
     }
-    if(iterationRange.getIndexRange().getUpperBound().isVar()){
+    if(iterationRange.getIndexRange().getUpperBound().getExprModel().isVar()){
       insertDeclaration(iterationRange.getIndexRange().getUpperBound().getValue());
     }
-    if(iterationRange.getIndexRange().getStep().isVar()){
+    if(iterationRange.getIndexRange().getStep().getExprModel().isVar()){
       insertDeclaration(iterationRange.getIndexRange().getStep().getValue());
     }
 
