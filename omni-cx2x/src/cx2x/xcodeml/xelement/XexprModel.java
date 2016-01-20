@@ -116,6 +116,15 @@ public class XexprModel {
   }
 
   /**
+   * Check whether the exprModel is a constant type.
+   * @return True if the exprModel is a constant type. False otherwise.
+   */
+  public boolean isConstant() {
+    return isIntConst() || isRealConst() || isLogicalConst() || isCharConst()
+        || isComplexConst();
+  }
+
+  /**
    * Check whether the exprModel is a function call.
    * @return True if the exprModel is a function call. False otherwise.
    */
