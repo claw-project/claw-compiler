@@ -45,26 +45,6 @@ configure_file(
   @ONLY
 )
 
-# Only to run test, we use the local build
-set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_SOURCE_DIR}/driver/etc/")
-set(OMNI_JAR_TOOLS="${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
-set(OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
-set(OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
-set(OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
-set(OMNI_JAR_CX2X_CLAW "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_JAR_CX2X_XCODEML "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar")
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}_test
-  @ONLY
-)
-set(CLAW_CONF_FILE "${CLAW_CONF_FILE}_test")
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CLAW_COMPILER_FILE}.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CLAW_COMPILER_FILE}_test
-  @ONLY
-)
-
 # Copy the executable to be used by the test directly before installation
 file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_COMPILER_FILE})
 file(REMOVE ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_COMPILER_FILE}_test)
@@ -94,4 +74,25 @@ install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/libexec/${CLAW_LIB_SH}
   PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ
   DESTINATION ${CMAKE_INSTALL_PREFIX}/libexec
+)
+
+
+# Only to run test, we use the local build
+set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_SOURCE_DIR}/driver/etc/")
+set(OMNI_JAR_TOOLS="${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
+set(OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
+set(OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
+set(OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
+set(OMNI_JAR_CX2X_CLAW "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar")
+set(OMNI_JAR_CX2X_XCODEML "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar")
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}_test
+  @ONLY
+)
+set(CLAW_CONF_FILE "${CLAW_CONF_FILE}_test")
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CLAW_COMPILER_FILE}.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/bin/${CLAW_COMPILER_FILE}_test
+  @ONLY
 )
