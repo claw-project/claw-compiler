@@ -19,9 +19,9 @@ import cx2x.xcodeml.helper.*;
  * - Required:
  *   - Var (Xvar)
  *   - indexRange (XindexRange)
- *   - body // TODO check what is the meaning of this value
+ *   - body (Xbody)
  * Attributes:
- * - Optional: construct_name TODO
+ * - Optional: construct_name
  *
  * @author clementval
  */
@@ -195,7 +195,7 @@ public class XdoStatement extends XbaseElement {
 
   /**
    * Get the construct name attribute value.
-   * @return Construct name value. Null if the attribute is not defined. 
+   * @return Construct name value. Null if the attribute is not defined.
    */
   public String getConstructName(){
     return _construct_name;
