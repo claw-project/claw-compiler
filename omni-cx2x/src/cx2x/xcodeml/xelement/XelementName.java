@@ -92,6 +92,7 @@ public class XelementName {
   public static final String F_LOGICAL_CONST = "FlogicalConstant";
   public static final String F_MEMBER_REF = "FmemberRef";
   public static final String F_STRUCT_TYPE = "FstructType";
+  public static final String GLOBAL_DECLARATIONS = "globalDeclarations";
   public static final String GLOBAL_SYMBOLS = "globalSymbols";
   public static final String ID = "id";
   public static final String INDEX_RANGE = "indexRange";
@@ -135,6 +136,7 @@ public class XelementName {
     tempMap.put(XcharacterConstant.class, F_CHAR_CONST);
     tempMap.put(XlogicalConstant.class, F_LOGICAL_CONST);
     //tempMap.put(XstructType.class, F_STRUCT_TYPE); TODO Uncomment when XstructType available
+    tempMap.put(XglobalDeclTable.class, GLOBAL_DECLARATIONS);
     tempMap.put(XglobalSymbolTable.class, GLOBAL_SYMBOLS);
     tempMap.put(Xid.class, ID);
     tempMap.put(XindexRange.class, INDEX_RANGE);

@@ -573,6 +573,19 @@ public class XelementHelper {
   }
 
   /**
+   * Find global declarations element in the XcodeML representation.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A XglobalSymbolTable object if found. Null otherwise.
+   */
+  public static XglobalDeclTable findGlobalDeclarations(XcodeProg parent,
+                                                        boolean any)
+  {
+    return findXelement(parent, any, XglobalDeclTable.class);
+  }
+
+  /**
    * Find number of index ranges in an element.
    * @param parent  Root element to search from.
    * @return The number of index ranges found.

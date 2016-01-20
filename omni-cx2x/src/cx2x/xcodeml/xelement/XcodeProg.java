@@ -24,7 +24,7 @@ import cx2x.xcodeml.helper.*;
  * - Required:
  *   - typeTable (XtypeTable)
  *   - globalSymbols (XsymbolTable)
- *   - globalDeclarations TODO
+ *   - globalDeclarations (XglobalDeclTable)
  * Attributes:
  * - Optional: compiler-info (text), version (text), time (time),
  *             language (text), source (text)
@@ -39,6 +39,7 @@ public class XcodeProg extends XbaseElement {
   // XcodeProg inner elements
   private XtypeTable _typeTable = null;
   private XglobalSymbolTable _globalSymbolsTable = null;
+  private XglobalDeclTable _globalDeclarationsTable = null;
 
   // XcodeProg optional attributes
   private String _version = null;
@@ -109,14 +110,16 @@ public class XcodeProg extends XbaseElement {
   }
 
   /**
-   * @return The types table of the XcodeML program.
+   * Get the type table of the XcodeML program..
+   * @return The types table.
    */
   public XtypeTable getTypeTable(){
     return _typeTable;
   }
 
   /**
-   * @return The symbols table of the XcodeML program.
+   * Get the symbols table of the XcodeML program.
+   * @return The symbols table.
    */
   public XsymbolTable getGlobalSymbolsTable() {
     return _globalSymbolsTable;
@@ -151,6 +154,7 @@ public class XcodeProg extends XbaseElement {
     // Read information from the type table
     readTypeTable();
     readGlobalSymbolsTable();
+    readGlobalDeclarationsTable();
     return true;
   }
 
@@ -204,10 +208,18 @@ public class XcodeProg extends XbaseElement {
   }
 
   /**
-   * Read the XcodeML symbols table
+   * Read the XcodeML global symbols table
    */
   private void readGlobalSymbolsTable() {
     _globalSymbolsTable = XelementHelper.findGlobalSymbols(this, true);
+  }
+
+  /**
+   * Read the XcodeML global declarations table
+   */
+  private void readGlobalDeclarationsTable(){
+    _globalDeclarationsTable = XelementHelper
+        .findGlobalDeclarations(this, true);
   }
 
 
