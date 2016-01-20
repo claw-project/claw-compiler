@@ -202,7 +202,6 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
 
     if(_newOrderOption != null){
       String[] vars = _newOrderOption.split(",");
-      // TODO error handling
       if(vars.length != 3){
         xcodeml.addError("new-order option has not enough parameters",
           _pragma.getLine());
@@ -213,9 +212,9 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
         return false;
       }
 
-      _baseLoop0 = _loopLevel0.getIterationVariableValue();
-      _baseLoop1 = _loopLevel1.getIterationVariableValue();
-      _baseLoop2 = _loopLevel2.getIterationVariableValue();
+      _baseLoop0 = _loopLevel0.getInductionVariable();
+      _baseLoop1 = _loopLevel1.getInductionVariable();
+      _baseLoop2 = _loopLevel2.getInductionVariable();
 
       if(!checkNewOrderOption(xcodeml, vars)){
         return false;

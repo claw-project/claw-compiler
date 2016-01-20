@@ -609,20 +609,32 @@ public class XelementHelper {
   }
 
   /**
-   * Find all the index ranges in an element.
+   * Find all the index elements (arrayIndex and indexRange) in an element.
    * @param parent  Root element to search from.
    * @return A list of all index ranges found.
    */
-  public static ArrayList<XindexRange> findIndexRanges(XbaseElement parent){
-    // TODO search only in the direct children.
-    ArrayList<XindexRange> indexRanges = new ArrayList<>();
+  public static List<Xindex> findIndexes(XbaseElement parent){
+    List<Xindex> indexRanges = new ArrayList<>();
     if(parent == null || parent.getBaseElement() == null){
       return indexRanges;
     }
-    NodeList ranges = parent.getBaseElement().getElementsByTagName(XelementName.INDEX_RANGE);
-    for(int i = 0; i < ranges.getLength(); ++i){
-      indexRanges.add(new XindexRange((Element)ranges.item(i)));
+
+    Node node = parent.getBaseElement().getFirstChild();
+    while (node != null){
+      if(node.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element)node;
+        switch (element.getTagName()){
+          case XelementName.ARRAY_INDEX:
+            indexRanges.add(new XarrayIndex(element));
+            break;
+          case XelementName.INDEX_RANGE:
+            indexRanges.add(new XindexRange(element));
+            break;
+        }
+      }
+      node = node.getNextSibling();
     }
+
     return indexRanges;
   }
 

@@ -20,7 +20,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XarrayIndex extends XbaseElement {
+public class XarrayIndex extends Xindex {
   private XexprModel _exprModel;
 
   /**

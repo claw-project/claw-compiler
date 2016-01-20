@@ -24,7 +24,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XindexRange extends XbaseElement implements Xclonable<XindexRange> {
+public class XindexRange extends Xindex implements Xclonable<XindexRange> {
 
   protected XlowerBound _lowerBound;
   protected XupperBound _upperBound;

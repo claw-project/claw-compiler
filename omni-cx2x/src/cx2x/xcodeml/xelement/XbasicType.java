@@ -7,13 +7,15 @@ package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import java.util.ArrayList;
+import java.util.List;
+
 import cx2x.xcodeml.helper.*;
 
 /**
  * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:
  *   - kind (Xkind)
  *   - len (Xlength)
@@ -27,17 +29,18 @@ import cx2x.xcodeml.helper.*;
  *             is_optional (bool), is_save (bool), is_parameter (bool),
  *             is_allocatable (bool), intent (text: in, out, inout)
  *
+ * The type attribute is defined in the Xtype base class.
+ *
  * @author clementval
  */
 
 public class XbasicType extends Xtype {
 
 
-  private int _dimension = 0;
   private boolean _isArray = false;
 
   // Optional elements
-  private ArrayList<XindexRange> _dimensionRanges = null;
+  private List<Xindex> _dimensions = null;
   private XarrayIndex _arrayIndex = null; // TODO can be 1 to N
   private Xkind _kind = null;
   private Xlength _length = null;
@@ -56,7 +59,7 @@ public class XbasicType extends Xtype {
   private boolean _is_save = false;
   private boolean _is_parameter = false;
   private boolean _is_allocatable = false;
-  // TODO intent as enum
+  private Xintent _intent = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -75,11 +78,11 @@ public class XbasicType extends Xtype {
     readRequiredAttributes();
     readOptionalAttributes();
 
+
+    _dimensions = XelementHelper.findIndexes(this);
     // is array ?
-    _dimension = XelementHelper.findNumberOfRange(this);
-    if (_dimension > 0){
+    if (_dimensions.size() > 0){
       _isArray = true;
-      _dimensionRanges = XelementHelper.findIndexRanges(this);
     }
 
     // has length ?
@@ -124,6 +127,15 @@ public class XbasicType extends Xtype {
       XelementName.ATTR_IS_PARAMETER);
     _is_allocatable = XelementHelper.getBooleanAttributeValue(this,
       XelementName.ATTR_IS_ALLOCATABLE);
+
+    String intentValue = XelementHelper.getAttributeValue(this,
+        XelementName.ATTR_INTENT);
+
+
+    _intent = Xintent.fromString(intentValue);
+
+
+
   }
 
   /**
@@ -133,11 +145,11 @@ public class XbasicType extends Xtype {
    * @return A XindexRange object representing the index range of a specific
    * dimension.
    */
-  public XindexRange getDimensions(int index){
-    if(index >= _dimensionRanges.size() || index < 0){
+  public Xindex getDimensions(int index){
+    if(index >= _dimensions.size() || index < 0){
       return null;
     }
-    return _dimensionRanges.get(index);
+    return _dimensions.get(index);
   }
 
   /**
@@ -149,27 +161,35 @@ public class XbasicType extends Xtype {
   }
 
   /**
-   * Check whether the type has a length attribute.
-   * @return True if the type has a length attribute. False otherwise.
+   * Check whether the type has a length element.
+   * @return True if the type has a length element. False otherwise.
    */
   public boolean hasLength(){
     return _length != null;
   }
 
   /**
-   * Check whether the type has a kind attribute.
-   * @return True if the type has a kind attribute. False otherwise.
+   * Get the len element.
+   * @return Len element. Null if the basic type has no len element.
+   */
+  public Xlength getLength(){
+    return _length;
+  }
+
+  /**
+   * Check whether the type has a kind element.
+   * @return True if the type has a kind element. False otherwise.
    */
   public boolean hasKind(){
     return _kind != null;
   }
 
   /**
-   * Check whether the type has array indexes.
-   * @return True if the type has array indexes. False otherwise.
+   * Get the kind element.
+   * @return Kind element. Null if the basic type has no kind element.
    */
-  public boolean hasArrayIndex(){
-    return _arrayIndex != null;
+  public Xkind getKind(){
+    return _kind;
   }
 
   /**
@@ -177,7 +197,7 @@ public class XbasicType extends Xtype {
    * @return The dimensions of the array type.
    */
   public int getDimensions(){
-    return _dimension;
+    return _dimensions.size();
   }
 
   /**
@@ -268,4 +288,19 @@ public class XbasicType extends Xtype {
     return _is_allocatable;
   }
 
+  /**
+   * Check whether the type has an intent.
+   * @return True if the type has an intent. False otherwise.
+   */
+  public boolean hasIntent(){
+    return _intent != null;
+  }
+
+  /**
+   * Get the intent of the type.
+   * @return Intent. Null if the type has no intent.
+   */
+  public Xintent getIntent(){
+    return _intent;
+  }
 }
