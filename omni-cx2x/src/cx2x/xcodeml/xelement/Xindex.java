@@ -26,4 +26,12 @@ public class Xindex extends XbaseElement {
   public Xindex(Element baseElement){
     super(baseElement);
   }
+
+  public boolean isArrayIndex(){
+    return this instanceof XarrayIndex;
+  }
+
+  public boolean isIndexRange(){
+    return this instanceof XindexRange;
+  }
 }
