@@ -21,7 +21,7 @@ import cx2x.xcodeml.helper.*;
  *   - indexRange (XindexRange)
  *   - body (Xbody)
  * Attributes:
- * - Optional: construct_name
+ * - Optional: construct_name (text)
  *
  * @author clementval
  */
@@ -48,7 +48,6 @@ public class XdoStatement extends XbaseElement {
    * Find the different elements that are included in the iteration range.
    */
   public void findRangeElements(){
-    // TODO check if can be private
     Xvar inductionVar = XelementHelper.findVar(this, false);
     XindexRange indexRange = XelementHelper.findIndexRange(this, false);
 
@@ -138,9 +137,9 @@ public class XdoStatement extends XbaseElement {
 
   /**
    * Get the induction variable of the do statement.
-   * @return The induction variable as a String value. TODO rename
+   * @return The induction variable as a String value.
    */
-  public String getIterationVariableValue(){
+  public String getInductionVariable(){
     return _iterationRange.getInductionVar().getValue();
   }
 
