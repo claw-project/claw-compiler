@@ -18,9 +18,9 @@ import cx2x.xcodeml.helper.*;
  *   - condition (Xcondition)
  *   - then (Xthen)
  * - Optional:
- *   - else TODO
+ *   - else (Xelse)
  * Attributes:
- * - Optional: construct_name (text) TODO
+ * - Optional: construct_name (text)
  *
  * @author clementval
  */
@@ -32,7 +32,7 @@ public class XifStatement extends XbaseElement {
   private Xelse _else = null;
 
   // attributes
-  private String _constructName = null;
+  private String _construct_name = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -47,7 +47,24 @@ public class XifStatement extends XbaseElement {
 
 
     // read optional attributes
-    _constructName = XelementHelper.getAttributeValue(this,
+    _construct_name = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_CONSTRUCT_NAME);
+  }
+
+
+  /**
+   * Check whether the element has a construct name attribute defined.
+   * @return True the attribute is defined. False otherwise.
+   */
+  public boolean hasConstructName(){
+    return _construct_name != null;
+  }
+
+  /**
+   * Get the construct name attribute value.
+   * @return Construct name value. Null if the attribute is not defined.
+   */
+  public String getConstructName(){
+    return _construct_name;
   }
 }
