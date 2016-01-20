@@ -16,7 +16,7 @@ import cx2x.xcodeml.helper.*;
  * - Required:
  *   - name (Xname) defined in the Xfct class
  * - Optional:
- *   - arguments (XexprModel) // TODO
+ *   - arguments (XargumentsTable)
  * Attribute:
  * - Optional: type (text), is_intrinsic (bool)
  *
