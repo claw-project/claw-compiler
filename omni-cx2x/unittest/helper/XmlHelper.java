@@ -67,6 +67,12 @@ public class XmlHelper {
     return new XvarRef(el);
   }
 
+  public static XbasicType createXbasicTypeFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XbasicType(el);
+  }
+
 
 
 }
