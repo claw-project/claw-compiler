@@ -100,6 +100,9 @@ public class ClawXcodeMlTranslator {
         } catch(IllegalDirectiveException ide){
           System.err.println("INVALID DIRECTIVE: " + ide.getDirective());
           System.err.println("cause: " + ide.getMessage());
+          if(ide.getDirectiveLine() != 0) {
+            System.err.println("line: " + ide.getDirectiveLine());
+          }
           System.exit(1);
         }
 

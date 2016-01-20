@@ -53,9 +53,15 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     super(pragma);
     _mappings = new ArrayList<>();
     _mappingMap = new Hashtable<>();
-    extractMappingInformation();
     extractRangeInformation();
     extractFusionInformation();
+
+    try {
+      extractMappingInformation();
+    } catch (IllegalDirectiveException ide){
+      ide.setDirectiveLine(_pragma.getLine());
+      throw ide;
+    }
   }
 
   private void extractRangeInformation(){
