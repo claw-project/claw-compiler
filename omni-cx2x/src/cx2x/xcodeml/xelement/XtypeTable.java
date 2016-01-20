@@ -15,7 +15,7 @@ import java.util.Random;
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: ( FbasicType | FfunctionType | FstructType ) *
  * - Optional:
  *   - FbasicType (XbasicType)
  *   - FfunctionType (XfctType)

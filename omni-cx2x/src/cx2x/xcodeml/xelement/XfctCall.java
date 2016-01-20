@@ -50,6 +50,7 @@ public class XfctCall extends Xfct {
   }
 
   /**
+   * Check whether the function is an intrinsic function.
    * @return True if the fct is intrinsic. False otherwise.
    */
   public boolean isIntrinsic(){

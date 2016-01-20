@@ -54,6 +54,4 @@ public enum Xscope {
     return null;
   }
 
-
-
 }

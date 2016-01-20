@@ -20,7 +20,7 @@ import cx2x.xcodeml.helper.*;
  * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: ( typeTable, globalSymbols, globalDeclarations )
  * - Required:
  *   - typeTable (XtypeTable)
  *   - globalSymbols (XsymbolTable)
