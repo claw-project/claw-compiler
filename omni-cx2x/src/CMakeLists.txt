@@ -14,6 +14,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/error/XanalysisError.java
 
 # XcodeML.Xelement.Exception package
+  cx2x/xcodeml/exception/IllegalDirectiveException.java
   cx2x/xcodeml/exception/IllegalTransformationException.java
 
 # XcodeML.helper package

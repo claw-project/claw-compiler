@@ -71,34 +71,40 @@ public class ClawXcodeMlTranslator {
       if(ClawPragma.isValid(pragma.getData())){
         ClawPragma clawDirective = ClawPragma.getDirective(pragma.getData());
 
-        if(clawDirective == ClawPragma.LOOP_FUSION){
-          LoopFusion trans = new LoopFusion(pragma);
-          addOrAbort(trans, _program, _transformer);
-        } else if(clawDirective == ClawPragma.LOOP_INTERCHANGE){
-          LoopInterchange trans = new LoopInterchange(pragma);
-          addOrAbort(trans, _program, _transformer);
-        } else if(clawDirective == ClawPragma.LOOP_EXTRACT){
-          LoopExtraction trans = new LoopExtraction(pragma);
-          addOrAbort(trans, _program, _transformer);
-        } else if (clawDirective == ClawPragma.UTILITIES_REMOVE){
-          if(_remove != null){
-            addOrAbort(_remove, _program, _transformer);
+        try {
+          if (clawDirective == ClawPragma.LOOP_FUSION) {
+            LoopFusion trans = new LoopFusion(pragma);
+            addOrAbort(trans, _program, _transformer);
+          } else if (clawDirective == ClawPragma.LOOP_INTERCHANGE) {
+            LoopInterchange trans = new LoopInterchange(pragma);
+            addOrAbort(trans, _program, _transformer);
+          } else if (clawDirective == ClawPragma.LOOP_EXTRACT) {
+            LoopExtraction trans = new LoopExtraction(pragma);
+            addOrAbort(trans, _program, _transformer);
+          } else if (clawDirective == ClawPragma.UTILITIES_REMOVE) {
+            if (_remove != null) {
+              addOrAbort(_remove, _program, _transformer);
+            }
+            _remove = new UtilityRemove(pragma);
+          } else if (clawDirective == ClawPragma.BASE_END) {
+            if (_remove == null) {
+              _program.addError("Invalid Claw directive (end with no start)",
+                  pragma.getLine());
+              abort();
+            } else {
+              _remove.setEnd(pragma);
+              addOrAbort(_remove, _program, _transformer);
+              _remove = null;
+            }
           }
-          _remove = new UtilityRemove(pragma);
-        } else if (clawDirective == ClawPragma.BASE_END){
-          if(_remove == null){
-            _program.addError("Invalid Claw directive (end with no start)",
-              pragma.getLine());
-            abort();
-          } else {
-            _remove.setEnd(pragma);
-            addOrAbort(_remove, _program, _transformer);
-            _remove = null;
-          }
+        } catch(IllegalDirectiveException ide){
+          System.err.println("INVALID DIRECTIVE: " + ide.getDirective());
+          System.err.println("cause: " + ide.getMessage());
+          System.exit(1);
         }
 
       } else {
-        System.out.println("INVALID PRAGMA: !$" + pragma.getData());
+        System.err.println("INVALID PRAGMA: !$" + pragma.getData());
         System.exit(1);
       }
     }

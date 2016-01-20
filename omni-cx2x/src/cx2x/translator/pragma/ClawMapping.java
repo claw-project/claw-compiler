@@ -5,6 +5,8 @@
 
 package cx2x.translator.pragma;
 
+import cx2x.xcodeml.exception.IllegalDirectiveException;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,24 +32,29 @@ public class ClawMapping {
    * @param mappingClause inner part of the mapping clause like
    *                      var_list:mapping_list
    */
-  public ClawMapping(String mappingClause){
+  public ClawMapping(String mappingClause) throws IllegalDirectiveException {
     _mappedVariables = new ArrayList<>();
     _mappingVariables = new ArrayList<>();
 
     String[] parts = mappingClause.split(":");
     if(parts.length != 2) {
-      // TODO throw exception mappingClause is wrong
+      throw new IllegalDirectiveException(mappingClause, "Not enough information");
     }
     String[] vars = parts[0].split(VAR_SEPARATOR);
     String[] mappings = parts[1].split(VAR_SEPARATOR);
     if(vars.length == 0 || mappings.length == 0){
-      // TODO throw exception mappingClause is wrong
-      System.err.println("Fatal error mapping !!");
+      throw new IllegalDirectiveException(mappingClause,
+          "Missing mapping or mapped variables");
     }
     for (String mapping : mappings) {
       String[] advancedMapping = mapping.split(MAPPING_SEPARATOR);
-      if(advancedMapping.length == 0 || advancedMapping.length > 2){
-        // TODO throw exception mappingClause if wrong.
+      if(advancedMapping.length == 0){
+        throw new IllegalDirectiveException(mappingClause,
+            "Advanced mapping has not enough arguments");
+      }
+      if(advancedMapping.length > 2){
+        throw new IllegalDirectiveException(mappingClause,
+            "Advanced mapping has too many arguments");
       }
       if(advancedMapping.length > 1){
         _mappingVariables.add(

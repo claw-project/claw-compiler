@@ -5,6 +5,7 @@
 
 package cx2x.translator.pragma;
 
+import cx2x.xcodeml.exception.IllegalDirectiveException;
 import exc.object.Xobject;
 
 import java.util.ArrayList;
@@ -238,7 +239,9 @@ public enum ClawPragma {
     return false;
   }
 
-  public static List<ClawMapping> extractMappingInformation(String data) {
+  public static List<ClawMapping> extractMappingInformation(String data)
+      throws IllegalDirectiveException
+  {
     List<String> allMappings = new ArrayList<>();
     List<ClawMapping> mappings = new ArrayList<>();
     // TODO move regex somewhere centralized

@@ -8,6 +8,7 @@ package pragma;
 import static org.junit.Assert.*;
 
 import cx2x.translator.pragma.ClawMapping;
+import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.junit.Test;
 
 import cx2x.translator.pragma.ClawPragma;
@@ -77,13 +78,19 @@ public class ClawPragmaTest {
 
   @Test
   public void extractMappingTest(){
-    List<ClawMapping> mappings = ClawPragma.extractMappingInformation(
-        "claw loop-extract range(j1=ki1sc,ki1ec) "
-            + " map(pduh2oc,pduh2of:j1,ki3sc/j3) "
-            + " map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3)"
-            + " map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) "
-            + " fusion group(j1)");
+    List<ClawMapping> mappings = null;
+    try {
+       mappings = ClawPragma.extractMappingInformation(
+          "claw loop-extract range(j1=ki1sc,ki1ec) "
+              + " map(pduh2oc,pduh2of:j1,ki3sc/j3) "
+              + " map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3)"
+              + " map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) "
+              + " fusion group(j1)");
+    } catch (IllegalDirectiveException ide){
 
+    }
+
+    assertNotNull(mappings);
     assertEquals(4, mappings.size());
 
     assertEquals(2, mappings.get(0).getMappedDimensions());

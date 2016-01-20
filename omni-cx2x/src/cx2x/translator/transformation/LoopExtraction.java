@@ -49,7 +49,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param pragma  The pragma that triggered the loop extraction
    *                transformation.
    */
-  public LoopExtraction(Xpragma pragma) {
+  public LoopExtraction(Xpragma pragma) throws IllegalDirectiveException {
     super(pragma);
     _mappings = new ArrayList<>();
     _mappingMap = new Hashtable<>();
@@ -66,7 +66,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * Extract all mapping information from the pragma data. Each
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
-  private void extractMappingInformation(){
+  private void extractMappingInformation() throws IllegalDirectiveException {
     _mappings = ClawPragma.extractMappingInformation(_pragma.getData());
     for(ClawMapping m : _mappings){
       for(String mappedVar : m.getMappedVariables()){
