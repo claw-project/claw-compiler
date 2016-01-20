@@ -13,7 +13,7 @@ import cx2x.xcodeml.helper.*;
  * The XarrayIndex represents the arrayIndex (8.10) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: (exprModel)
  * - Required:
  *   - exprModel (XbaseElement)
  *
@@ -30,19 +30,7 @@ public class XarrayIndex extends Xindex {
    */
   public XarrayIndex(Element baseElement){
     super(baseElement);
-    readElementInformation();
-  }
-
-  /**
-   * Read inner element information.
-   */
-  private void readElementInformation(){
-    // Find Var element if there is one
-    // TODO move to XexprModel
-    Xvar var = XelementHelper.findVar(this, false);
-    if(var != null){
-      _exprModel = new XexprModel(var);
-    }
+    _exprModel = XelementHelper.findExprModel(this, false);
   }
 
   /**
