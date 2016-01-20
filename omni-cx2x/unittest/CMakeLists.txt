@@ -29,6 +29,7 @@ add_jar(omni-cx2x-unittest
   helper/XmlHelper.java
   pragma/ClawPragmaTest.java
   xelement/XcodeProgTest.java
+  xelement/XbasicTypeTest.java
   xelement/XidTest.java
   xelement/XexprModelTest.java
   xelement/XvarRefTest.java
@@ -43,7 +44,7 @@ get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
 
 add_junit_test(xelement
    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-   TESTS xelement.XidTest xelement.XvarTest xelement.XcodeProgTest xelement.XexprModelTest xelement.XvarRefTest
+   TESTS xelement.XidTest xelement.XvarTest xelement.XcodeProgTest xelement.XexprModelTest xelement.XvarRefTest xelement.XbasicTypeTest
 )
 
 add_junit_test(pragma
