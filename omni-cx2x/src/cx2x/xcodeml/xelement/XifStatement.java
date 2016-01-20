@@ -15,7 +15,7 @@ import cx2x.xcodeml.helper.*;
  *
  * Elements:
  * - Required:
- *   - condition TODO
+ *   - condition (Xcondition)
  *   - then (Xthen)
  * - Optional:
  *   - else TODO
@@ -27,7 +27,7 @@ import cx2x.xcodeml.helper.*;
 
 public class XifStatement extends XbaseElement {
 
-
+  private Xcondition _cond = null;
   private Xthen _then = null;
   private Xelse _else = null;
 
@@ -41,9 +41,10 @@ public class XifStatement extends XbaseElement {
    */
   public XifStatement(Element baseElement){
     super(baseElement);
-
+    _cond = XelementHelper.findCondition(this, false);
     _then = XelementHelper.findThen(this, false);
     _else = XelementHelper.findElse(this, false);
+
 
     // read optional attributes
     _constructName = XelementHelper.getAttributeValue(this,

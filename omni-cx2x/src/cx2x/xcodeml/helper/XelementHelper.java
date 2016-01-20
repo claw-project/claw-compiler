@@ -429,6 +429,17 @@ public class XelementHelper {
   }
 
   /**
+   * Find condition element.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xcondition object if found. Null otherwise.
+   */
+  public static Xcondition findCondition(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xcondition.class);
+  }
+
+  /**
    * Find then element.
    * @param parent  Root element to search from.
    * @param any     If true, find in any nested element under parent. If

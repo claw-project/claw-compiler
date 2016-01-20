@@ -74,6 +74,7 @@ public class XelementName {
   public static final String ARRAY_INDEX = "arrayIndex";
   public static final String BASIC_TYPE = "FbasicType";
   public static final String BODY = "body";
+  public static final String CONDITION = "condition";
   public static final String DECLARATIONS = "declarations";
   public static final String DO_STMT = "FdoStatement";
   public static final String ELSE = "else";
@@ -121,6 +122,7 @@ public class XelementName {
     tempMap.put(XarrayIndex.class, ARRAY_INDEX);
     tempMap.put(XbasicType.class, BASIC_TYPE);
     tempMap.put(Xbody.class, BODY);
+    tempMap.put(Xcondition.class, CONDITION);
     tempMap.put(XdeclTable.class, DECLARATIONS);
     tempMap.put(XdoStatement.class, DO_STMT);
     tempMap.put(Xelse.class, ELSE);
