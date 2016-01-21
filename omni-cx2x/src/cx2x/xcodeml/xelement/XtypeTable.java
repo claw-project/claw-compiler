@@ -8,10 +8,8 @@ package cx2x.xcodeml.xelement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+
+import java.util.*;
 
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
@@ -136,5 +134,13 @@ public class XtypeTable extends XbaseElement {
       sb.append(Integer.toHexString(r.nextInt()));
     }
     return sb.toString().substring(0, length);
+  }
+
+  /**
+   * Returns a Collection view of the values contained in this XtypeTable.
+   * @return A view of the values contained in this map
+   */
+  public Collection<Xtype> values(){
+    return _table.values();
   }
 }
