@@ -87,7 +87,7 @@ public class ClawPragmaTest {
               + " map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) "
               + " fusion group(j1)");
     } catch (IllegalDirectiveException ide){
-
+      fail();
     }
 
     assertNotNull(mappings);

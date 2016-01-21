@@ -21,7 +21,7 @@ import cx2x.xcodeml.xelement.XarrayRef;
  *
  * @author clementval
  */
- 
+
 public class XarrayRefTest {
   private static final String ARRAYREF_TYPE = "Fint";
   private static final String TEST_TYPE = "F7f81a04070d0";
