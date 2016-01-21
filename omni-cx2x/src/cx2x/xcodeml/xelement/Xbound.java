@@ -59,12 +59,8 @@ public class Xbound extends XbaseElement {
     if (ob.getClass() != getClass()) return false;
     Xbound other = (Xbound)ob;
 
-    if(getValue() != null && other.getValue() != null
-        && getValue().toLowerCase().equals(other.getValue().toLowerCase()))
-    {
-      return true;
-    }
-    return false;
+    return getValue() != null && other.getValue() != null
+        && getValue().toLowerCase().equals(other.getValue().toLowerCase());
   }
 
   @Override

@@ -41,7 +41,6 @@ public class XbasicType extends Xtype {
 
   // Optional elements
   private List<Xindex> _dimensions = null;
-  private XarrayIndex _arrayIndex = null; // TODO can be 1 to N
   private Xkind _kind = null;
   private Xlength _length = null;
 
@@ -90,9 +89,6 @@ public class XbasicType extends Xtype {
 
     // has kind ?
     _kind = XelementHelper.findKind(this, false);
-
-    // has arrayIndex ?
-    _arrayIndex = XelementHelper.findArrayIndex(this, false);
   }
 
   /**

@@ -126,6 +126,14 @@ public class XcodeProg extends XbaseElement {
   }
 
   /**
+   * Get the delcarations table of the XcodeML program.
+   * @return The declarations table.
+   */
+  public XglobalDeclTable getGlobalDeclarationsTable(){
+    return _globalDeclarationsTable;
+  }
+
+  /**
    * Open the XcodeML input file and read its information.
    * @return True if the XcodeML was loaded successfully. False otherwise.
    */

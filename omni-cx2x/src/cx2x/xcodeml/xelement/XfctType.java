@@ -13,7 +13,7 @@ import cx2x.xcodeml.helper.*;
  * The XfctType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: (params?)
  * - Optional:
  *   - params TODO
  * Attributes:
@@ -25,6 +25,9 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class XfctType extends Xtype implements Xclonable<XfctType> {
+
+  // Elements
+  private Xparams _params = null;
 
   private String _returnType = null;
 
@@ -48,6 +51,8 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
    * Read inner element information.
    */
   private void readElementInformation(){
+    _params = XelementHelper.findParams(this, false);
+
     _returnType = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_RETURN_TYPE);
 
@@ -111,13 +116,22 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
     return _isProgram;
   }
 
+
+  /**
+   * Get the params element.
+   * @return Params element.
+   */
+  public Xparams getParams(){
+    return _params;
+  }
+
   /**
    * A new object XfctType that is the clone of the current object.
    * @return A new XfctType that is a clone of the current one.
    */
-  public XfctType cloneObject(){
+  public XfctType cloneObject() {
     Node clone = cloneNode();
-    return new XfctType((Element)clone);
+    return new XfctType((Element) clone);
   }
 
 }

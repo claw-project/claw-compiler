@@ -309,8 +309,8 @@ public class XelementHelper {
    * - FarrayRef
    * - FcharacterRef
    * - FcoArrayRef
-   * @param parent
-   * @return
+   * @param parent The root element to search form.
+   * @return The varRef inner element as a XbaseElement derived type.
    */
   public static XbaseElement findVarRefInnerElement(XbaseElement parent){
     Element element = getFirstChildElement(parent.getBaseElement());
@@ -597,6 +597,17 @@ public class XelementHelper {
   }
 
   /**
+   * Find params in the XcodeML representation.
+   * @param parent  Root element to search from.
+   * @param any     If true, find in any nested element under parent. If
+   *                false, only direct children are search for.
+   * @return        A Xparams object if found. Null otherwise.
+   */
+  public static Xparams findParams(XbaseElement parent, boolean any){
+    return findXelement(parent, any, Xparams.class);
+  }
+
+  /**
    * Find number of index ranges in an element.
    * @param parent  Root element to search from.
    * @return The number of index ranges found.
@@ -636,6 +647,31 @@ public class XelementHelper {
     }
 
     return indexRanges;
+  }
+
+  /**
+   * Find all the name elements in an element.
+   * @param parent  Root element to search from.
+   * @return A list of all name elements found.
+   */
+  public static List<Xname> findAllNames(XbaseElement parent){
+    List<Xname> names = new ArrayList<>();
+    if(parent == null || parent.getBaseElement() == null){
+      return names;
+    }
+
+    Node node = parent.getBaseElement().getFirstChild();
+    while (node != null){
+      if(node.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element)node;
+        if(element.getTagName().equals(XelementName.NAME)) {
+          names.add(new Xname(element));
+        }
+      }
+      node = node.getNextSibling();
+    }
+
+    return names;
   }
 
   /**

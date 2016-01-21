@@ -25,9 +25,9 @@ public class ClawMappingVar {
   private String _fctPart = null;
 
   /**
-   * Constructs a new ClawMappingVar
-   * @param argMapping
-   * @param fctMapping
+   * Constructs a new ClawMappingVar.
+   * @param argMapping Function call mapping variable.
+   * @param fctMapping Function body mapping variable.
    */
   public ClawMappingVar(String argMapping, String fctMapping){
     _argPart = argMapping;

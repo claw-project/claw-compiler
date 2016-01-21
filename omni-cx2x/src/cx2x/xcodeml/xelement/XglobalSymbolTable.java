@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
  * Implementation is done in XsymbolTable as they are identical. Just the
  * root element name differs.
  *
- * Elements:
+ * Elements: (id*)
  * - Optional:
  *   - id
  *

@@ -106,6 +106,7 @@ public class XelementName {
   public static final String LENGTH = "len";
   public static final String LOWER_BOUND = "lowerBound";
   public static final String NAME = "name";
+  public static final String PARAMS = "params";
   public static final String PRAGMA_STMT = "FpragmaStatement";
   public static final String STEP = "step";
   public static final String SYMBOLS = "symbols";
@@ -151,6 +152,7 @@ public class XelementName {
     tempMap.put(Xlength.class, LENGTH);
     tempMap.put(XlowerBound.class, LOWER_BOUND);
     tempMap.put(Xname.class, NAME);
+    tempMap.put(Xparams.class, PARAMS);
     tempMap.put(Xpragma.class, PRAGMA_STMT);
     tempMap.put(Xstep.class, STEP);
     tempMap.put(XsymbolTable.class, SYMBOLS);
