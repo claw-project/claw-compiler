@@ -9,6 +9,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -29,7 +31,7 @@ public class XtypeTable extends XbaseElement {
   private static final int HASH_LENGTH = 12;
   private static final String FCT_HASH_PREFIX = "F";
 
-  private Hashtable<String, Xtype> _table;
+  private Map<String, Xtype> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -38,7 +40,7 @@ public class XtypeTable extends XbaseElement {
    */
   public XtypeTable(Element baseElement){
     super(baseElement);
-    _table = new Hashtable<>();
+    _table = new LinkedHashMap<>();
     readTable();
   }
 
@@ -46,6 +48,7 @@ public class XtypeTable extends XbaseElement {
    * Read the type table.
    */
   private void readTable(){
+    // TODO read all element in one loop.
     // Read basic type
     NodeList basicTypes = baseElement.getElementsByTagName(XelementName.BASIC_TYPE);
     for (int i = 0; i < basicTypes.getLength(); i++) {
