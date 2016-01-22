@@ -15,7 +15,7 @@
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
 OM_CX2X_DRIVER_LIB_DIR=@CMAKE_INSTALL_PREFIX@/libexec/
 . ${OM_CX2X_DRIVER_CONF_DIR}/@CLAW_CONF_FILE@
-. ${OMNI_HOME}/libexec/omni_common_lib.sh
+. ${OMNI_DRIVER_DIR}/omni_common_lib.sh
 . ${OM_CX2X_DRIVER_LIB_DIR}@CLAW_LIB_SH@
 
 ### Directory for saving intermediate files ###
