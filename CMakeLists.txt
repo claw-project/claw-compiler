@@ -18,7 +18,7 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 option(BUILD_OMNI "Build OMNI Compiler" ON)
 
 # Define the OMNI installation directory
-set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}/share/xcalablemp")
+set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}")
 set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
 
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
