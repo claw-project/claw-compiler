@@ -9,50 +9,50 @@ set(OMNICX2X_JAR2 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar)
 set(JUNIT_JAR /usr/local/lib/junit-${JUNIT_VERSION}.jar)
 set(HAMCREST_JAR /usr/local/lib/hamcrest-core-${HAMCREST_VERSION}.jar)
 
-if(NOT EXISTS ${JUNIT_JAR})
-  message( FATAL_ERROR "JUnit jar is not present (${JUNIT_JAR}). CMake will exit." )
+
+
+if(NOT EXISTS ${JUNIT_JAR} OR NOT EXISTS ${HAMCREST_JAR})
+  message( FATAL_ERROR "JUnit jar or Hamcrest is not present. Unit test will not be build." )
+else()
+
+  set(CMAKE_JAVA_INCLUDE_PATH
+    ${OMNICX2X_JAR1}
+    ${OMNICX2X_JAR2}
+    ${JUNIT_JAR}
+    ${HAMCREST_JAR}
+  )
+
+  add_jar(omni-cx2x-unittest
+
+    helper/XmlHelper.java
+    pragma/ClawPragmaTest.java
+    xelement/XcodeProgTest.java
+    xelement/XbasicTypeTest.java
+    xelement/XexprModelTest.java
+    xelement/XidTest.java
+    xelement/XsymbolsTest.java
+    xelement/XfctTypeTest.java
+    xelement/XvarRefTest.java
+    xelement/XvarTest.java
+
+    OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
+  )
+
+  get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
+
+  # Add unit test classes
+
+  add_junit_test(xelement
+     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+     TESTS
+     xelement.XidTest xelement.XvarTest xelement.XcodeProgTest
+     xelement.XexprModelTest xelement.XvarRefTest xelement.XbasicTypeTest
+     xelement.XfctTypeTest xelement.XsymbolsTest
+  )
+
+  add_junit_test(pragma
+     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+     TESTS pragma.ClawPragmaTest
+  )
+
 endif()
-
-if(NOT EXISTS ${HAMCREST_JAR})
-  message( FATAL_ERROR "Hamcrest jar is not present (${HAMCREST_JAR}). CMake will exit." )
-endif()
-
-set(CMAKE_JAVA_INCLUDE_PATH
-  ${OMNICX2X_JAR1}
-  ${OMNICX2X_JAR2}
-  ${JUNIT_JAR}
-  ${HAMCREST_JAR}
-)
-
-add_jar(omni-cx2x-unittest
-
-  helper/XmlHelper.java
-  pragma/ClawPragmaTest.java
-  xelement/XcodeProgTest.java
-  xelement/XbasicTypeTest.java
-  xelement/XexprModelTest.java
-  xelement/XidTest.java
-  xelement/XsymbolsTest.java
-  xelement/XfctTypeTest.java
-  xelement/XvarRefTest.java
-  xelement/XvarTest.java
-
-  OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
-)
-
-get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
-
-# Add unit test classes
-
-add_junit_test(xelement
-   CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-   TESTS
-   xelement.XidTest xelement.XvarTest xelement.XcodeProgTest
-   xelement.XexprModelTest xelement.XvarRefTest xelement.XbasicTypeTest
-   xelement.XfctTypeTest xelement.XsymbolsTest
-)
-
-add_junit_test(pragma
-   CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-   TESTS pragma.ClawPragmaTest
-)
