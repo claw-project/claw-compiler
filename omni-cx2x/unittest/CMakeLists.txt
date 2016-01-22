@@ -12,7 +12,7 @@ set(HAMCREST_JAR /usr/local/lib/hamcrest-core-${HAMCREST_VERSION}.jar)
 
 
 if(NOT EXISTS ${JUNIT_JAR} OR NOT EXISTS ${HAMCREST_JAR})
-  message( FATAL_ERROR "JUnit jar or Hamcrest is not present. Unit test will not be build." )
+  message( WARNING "JUnit jar or Hamcrest is not present. Unit test will not be build." )
 else()
 
   set(CMAKE_JAVA_INCLUDE_PATH
