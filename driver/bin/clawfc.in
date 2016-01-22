@@ -165,7 +165,7 @@ then
       FILE_PP="${FILE}"
     fi
 
-    claw_f_process_dependencies $FILE_PP $dependencies
+    claw_f_process_dependencies $FILE_PP ${file}
   done
   [ $STOP_DEPENDENCIES = true ] && exit 0;
 fi

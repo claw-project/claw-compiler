@@ -191,6 +191,9 @@ function claw_f_process_dependencies()
     fi
   done <$1
 
+  # Get the directory and use it to look in the same for dependencies
+  moddirname=$(dirname $2)
+
   for dep in "${dependencies[@]}"
   do
     module_name=${dep// }
@@ -206,6 +209,19 @@ function claw_f_process_dependencies()
     then
       module_file="$module_name.f"
     elif [[ -f $module_name.F ]]
+    then
+      module_file="$module_name.F"
+    # Dependencies not found in the current dir. Try to check in the same dir. 
+    elif [[ -f "$moddirname/$module_name.f90" ]]
+    then
+      module_file="$moddirname/$module_name.f90"
+    elif [[ -f $moddirname/$module_name.F90 ]]
+    then
+      module_file="$moddirname/$module_name.F90"
+    elif [[ -f $moddirname/$module_name.f ]]
+    then
+      module_file="$moddirname/$module_name.f"
+    elif [[ -f $moddirname/$module_name.F ]]
     then
       module_file="$module_name.F"
     else
@@ -224,7 +240,7 @@ function claw_f_process_dependencies()
     omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
 
     # Recurse to get dependencies in the right order
-    claw_f_process_dependencies $FILE_PP
+    claw_f_process_dependencies $FILE_PP $FILE
 
     FILE_IN_X=${TEMP_DIR}/"dummy.xml"
 
