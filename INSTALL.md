@@ -14,7 +14,11 @@ installation of OMNI Compiler is pointing to the default directory, the option
 is not necessary.
 
 ```bash
-cmake -DOMNI_HOME=<omni compiler install dir> .
+git clone git@github.com:clementval/claw-compiler.git
+cd claw-compiler
+git submodule init
+git submodule update --remote
+cmake -DCMAKE_INSTALL_PREFIX=<install_path>.
 make
 make install
 ```
