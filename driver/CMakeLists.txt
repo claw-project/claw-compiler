@@ -69,7 +69,7 @@ install(
 # Only to run test, we use the local build
 set(OMNI_HOME "${CMAKE_SOURCE_DIR}/omni-compiler")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/Driver/libexec")
-set(OMNI_BIN_DIR "${OMNI_HOME}/F-Frontend/src")
+set(OMNI_BIN_DIR "${OMNI_HOME}/F-FrontEnd/src")
 set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_SOURCE_DIR}/driver/etc/")
 set(OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
 set(OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
