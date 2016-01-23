@@ -3,6 +3,10 @@ PROGRAM openacc_cont
   PRINT*, 'dummy'
   !$claw end remove
 
+  !$acc parallel
+
+  !$acc end parallel
+
   !$acc data &
   !---- Argument arrays - intent(in)
   !$acc present ( pti,pdp,pclc,pwv,psw,pqlwc,pqiwc,pduco2,pduo3  ) &

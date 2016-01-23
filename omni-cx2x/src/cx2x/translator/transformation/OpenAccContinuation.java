@@ -60,21 +60,25 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
   {
     String allPragma = _pragma.getData();
 
+
+
     String[] pragmas = allPragma.split("acc");
 
-    _pragma.setData(OPEN_ACC_START + pragmas[1] + OPEN_ACC_CONT);
-    Xpragma newlyInserted = _pragma;
-    for (int i = 2; i < pragmas.length; ++i){
-      Xpragma p = Xpragma.createEmpty(xcodeml);
-      p.setFilename(_pragma.getFilename());
-      p.setLine(_pragma.getLine() + (i-1));
-      if(i == pragmas.length - 1){
-        p.setData(OPEN_ACC_START + pragmas[i]);
-      } else {
-        p.setData(OPEN_ACC_START + pragmas[i] + OPEN_ACC_CONT);
+    if(pragmas.length != 2) {
+      _pragma.setData(OPEN_ACC_START + pragmas[1] + OPEN_ACC_CONT);
+      Xpragma newlyInserted = _pragma;
+      for (int i = 2; i < pragmas.length; ++i) {
+        Xpragma p = Xpragma.createEmpty(xcodeml);
+        p.setFilename(_pragma.getFilename());
+        p.setLine(_pragma.getLine() + (i - 1));
+        if (i == pragmas.length - 1) {
+          p.setData(OPEN_ACC_START + pragmas[i]);
+        } else {
+          p.setData(OPEN_ACC_START + pragmas[i] + OPEN_ACC_CONT);
+        }
+        XelementHelper.insertAfter(newlyInserted, p);
+        newlyInserted = p;
       }
-      XelementHelper.insertAfter(newlyInserted, p);
-      newlyInserted = p;
     }
   }
 }
