@@ -253,7 +253,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    * @return Always false as independent transformation are applied one by one.
    */
   public boolean canBeTransformedWith(LoopInterchange other){
-    return false; // Always true as independent transformation
+    return false; // Always false as independent transformation
   }
 
   /**

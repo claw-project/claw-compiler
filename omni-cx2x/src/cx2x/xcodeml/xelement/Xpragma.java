@@ -77,4 +77,36 @@ public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {
       _value = value;
     }
   }
+
+  /**
+   * Set the line number of the pragma statement.
+   * @param lineno Line number.
+   */
+  public void setLine(int lineno){
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_LINENO, "" + lineno);
+      _line = lineno;
+    }
+  }
+
+  /**
+   * Set the filename attribute.
+   * @param filename Filename.
+   */
+  public void setFilename(String filename){
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_FILE, filename);
+      _filename = filename;
+    }
+  }
+
+  /**
+   * Create an empty pragma element in the given program
+   * @return A new pragma element with no children.
+   */
+  public static Xpragma createEmpty(XcodeProg xcodeml){
+    Element element = xcodeml.getDocument().
+        createElement(XelementName.PRAGMA_STMT);
+    return new Xpragma(element);
+  }
 }

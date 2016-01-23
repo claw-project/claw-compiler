@@ -23,6 +23,7 @@ public class ClawTransformer implements Transformer {
   private TransformationGroup<LoopInterchange> _loopInterchange = null;
   private TransformationGroup<LoopExtraction> _loopExtract = null;
   private TransformationGroup<UtilityRemove> _utilityRemove = null;
+  private TransformationGroup<OpenAccContinuation> _openAccCont = null;
   private ArrayList<TransformationGroup> _transformationGroups = null;
 
   /**
@@ -37,6 +38,8 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup<>("loop-extract");
     _utilityRemove =
         new IndependentTransformationGroup<>("remove");
+    _openAccCont =
+        new IndependentTransformationGroup<>("open-acc-continuation");
 
     // Add transformations (order of insertion is the one that will be applied)
     _transformationGroups = new ArrayList<>();
@@ -44,6 +47,7 @@ public class ClawTransformer implements Transformer {
     _transformationGroups.add(_loopExtract);
     _transformationGroups.add(_loopFusion);
     _transformationGroups.add(_loopInterchange);
+    _transformationGroups.add(_openAccCont);
   }
 
   /**
@@ -58,6 +62,8 @@ public class ClawTransformer implements Transformer {
       _loopExtract.add((LoopExtraction)t);
     } else if(t instanceof UtilityRemove){
       _utilityRemove.add((UtilityRemove)t);
+    } else if (t instanceof OpenAccContinuation){
+      _openAccCont.add((OpenAccContinuation)t);
     }
   }
 

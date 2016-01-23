@@ -473,6 +473,6 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @return Always false as independent transformation are applied one by one.
    */
   public boolean canBeTransformedWith(LoopExtraction other) {
-    return false;
+    return false; // Always false as independent transformation
   }
 }
