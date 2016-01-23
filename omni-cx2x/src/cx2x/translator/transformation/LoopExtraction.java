@@ -201,7 +201,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XfctDef clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     // TODO new name should be generated and unique
-    String newFctName = clonedFctDef.getFctName() + "_extracted";
+    String newFctName = clonedFctDef.getFctName() + "_extracted" +
+        transformer.getNextTransformationCounter();
     clonedFctDef.updateName(newFctName);
     clonedFctDef.updateType(newFctTypeHash);
     // Update the symbol table in the fct definition

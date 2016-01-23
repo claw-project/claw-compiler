@@ -19,6 +19,8 @@ import cx2x.translator.transformation.*;
  */
 
 public class ClawTransformer implements Transformer {
+  private int _transformationCounter = 0;
+
   private TransformationGroup<LoopFusion> _loopFusion = null;
   private TransformationGroup<LoopInterchange> _loopInterchange = null;
   private TransformationGroup<LoopExtraction> _loopExtract = null;
@@ -79,5 +81,13 @@ public class ClawTransformer implements Transformer {
    */
   public List<TransformationGroup> getGroups(){
     return _transformationGroups;
+  }
+
+  /**
+   * Get the next extraction counter value.
+   * @return Transformation counter value.
+   */
+  public int getNextTransformationCounter(){
+    return _transformationCounter++;
   }
 }

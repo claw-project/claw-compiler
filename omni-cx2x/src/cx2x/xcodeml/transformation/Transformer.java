@@ -38,4 +38,12 @@ public interface Transformer {
    * @return A list of all transformation groups.
    */
   List<TransformationGroup> getGroups();
+
+
+
+  /**
+   * Get the next transformation counter value.
+   * @return Transformation counter value.
+   */
+  int getNextTransformationCounter();
 }
