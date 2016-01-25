@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package xelement;
+package cx2x.xcodeml.xelement;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -14,39 +14,46 @@ import helper.XmlHelper;
 
 import cx2x.xcodeml.xelement.Xvar;
 import cx2x.xcodeml.xelement.Xscope;
+import cx2x.xcodeml.xelement.XarrayRef;
 
 /**
- * Test the features of the Xvar class
+ * Test the features of the XarrayRef class
  *
  * @author clementval
  */
 
-public class XvarTest {
-  private static final String TEST_TYPE = "Fint";
-  private static final Xscope TEST_SCOPE = Xscope.LOCAL;
-  private static final String TEST_VALUE = "i";
+public class XarrayRefTest {
+  private static final String ARRAYREF_TYPE = "Fint";
+  private static final String TEST_TYPE = "F7f81a04070d0";
+  private static final Xscope TEST_SCOPE = Xscope.GLOBAL;
+  private static final String TEST_VALUE = "j";
 
-  private static final String ALT_TEST_TYPE = "F7f81a04070d0";
-  private static final Xscope ALT_TEST_SCOPE = Xscope.GLOBAL;
-  private static final String ALT_TEST_VALUE = "j";
-
-  private Xvar createSimpleXvar(){
+  private Xvar createXvar(){
     String simpleVarElement = "<Var type=\"" + TEST_TYPE + "\" scope=\"" +
       TEST_SCOPE + "\">" + TEST_VALUE + "</Var>";
     return XmlHelper.createXvarFromString(simpleVarElement);
   }
 
   @Test
-  public void readElementInformationTest() {
-    Xvar element = createSimpleXvar();
-    assertEquals(TEST_VALUE, element.getValue());
-    assertEquals(TEST_TYPE, element.getType());
-    assertEquals(TEST_SCOPE, element.getScope());
+  public void transformVarToArrayRef() {
+    /*File f = new File(TEST_DATA);
+    assertTrue(f.exists());
+    XcodeProg xcodeml = new XcodeProg(TEST_DATA);
+    xcodeml.load();
+    xcodeml.readTypeTable();
+    xcodeml.readGlobalSymbolsTable();
+
+
+
+    XarrayRef arrayRef = XarrayRef.create(xcodeml, var, ARRAYREF_TYPE, XarrayIndex index);*/
+
+
+
   }
 
   @Test
   public void setElementInformationTest() {
-    Xvar element = createSimpleXvar();
+   /* Xvar element = createSimpleXvar();
     element.setValue(ALT_TEST_VALUE);
     element.setType(ALT_TEST_TYPE);
     element.setScope(ALT_TEST_SCOPE);
@@ -58,7 +65,7 @@ public class XvarTest {
     Xvar clone = element.cloneObject();
     assertEquals(ALT_TEST_VALUE, clone.getValue());
     assertEquals(ALT_TEST_TYPE, clone.getType());
-    assertEquals(ALT_TEST_SCOPE, clone.getScope());
+    assertEquals(ALT_TEST_SCOPE, clone.getScope());*/
   }
 
 }

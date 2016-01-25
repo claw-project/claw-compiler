@@ -23,36 +23,39 @@ else()
   )
 
   add_jar(omni-cx2x-unittest
-
     helper/XmlHelper.java
-    pragma/ClawPragmaTest.java
-    xelement/XcodeProgTest.java
-    xelement/XbasicTypeTest.java
-    xelement/XexprModelTest.java
-    xelement/XidTest.java
-    xelement/XsymbolsTest.java
-    xelement/XfctTypeTest.java
-    xelement/XvarRefTest.java
-    xelement/XvarTest.java
-
+    cx2x/translator/pragma/ClawPragmaTest.java
+    cx2x/xcodeml/xelement/XbasicTypeTest.java
+    cx2x/xcodeml/xelement/XcodeProgTest.java
+    cx2x/xcodeml/xelement/XexprModelTest.java
+    cx2x/xcodeml/xelement/XfctTypeTest.java
+    cx2x/xcodeml/xelement/XidTest.java
+    cx2x/xcodeml/xelement/XsymbolsTest.java
+    cx2x/xcodeml/xelement/XvarRefTest.java
+    cx2x/xcodeml/xelement/XvarTest.java
     OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
   )
 
   get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
 
   # Add unit test classes
-
-  add_junit_test(xelement
-     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-     TESTS
-     xelement.XidTest xelement.XvarTest xelement.XcodeProgTest
-     xelement.XexprModelTest xelement.XvarRefTest xelement.XbasicTypeTest
-     xelement.XfctTypeTest xelement.XsymbolsTest
+  add_junit_test(xcodeml.xelement
+    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+    TESTS
+    cx2x.xcodeml.xelement.XbasicTypeTest
+    cx2x.xcodeml.xelement.XcodeProgTest
+    cx2x.xcodeml.xelement.XexprModelTest
+    cx2x.xcodeml.xelement.XfctTypeTest
+    cx2x.xcodeml.xelement.XidTest
+    cx2x.xcodeml.xelement.XsymbolsTest
+    cx2x.xcodeml.xelement.XvarRefTest
+    cx2x.xcodeml.xelement.XvarTest
   )
 
-  add_junit_test(pragma
-     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
-     TESTS pragma.ClawPragmaTest
+  add_junit_test(translator.pragma
+    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+    TESTS
+    cx2x.translator.pragma.ClawPragmaTest
   )
 
 endif()

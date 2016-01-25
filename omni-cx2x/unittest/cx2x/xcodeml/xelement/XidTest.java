@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package xelement;
+package cx2x.xcodeml.xelement;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import cx2x.xcodeml.xelement.Xid;
  *
  * @author clementval
  */
- 
+
 public class XidTest {
   private static final String TEST_TYPE = "F7f9502e03d00";
   private static final String TEST_SCLASS = "ffunc";

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package xelement;
+package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.xelement.*;
 import helper.XmlHelper;

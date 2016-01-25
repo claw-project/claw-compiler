@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package pragma;
+package cx2x.translator.pragma;
 
 import static org.junit.Assert.*;
 
@@ -21,7 +21,7 @@ import java.util.List;
  *
  * @author clementval
  */
- 
+
 public class ClawPragmaTest {
 
   @Test
