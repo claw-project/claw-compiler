@@ -59,7 +59,7 @@ public enum ClawPragma {
 
   private static final String REGEX_OPTION_SIMPLE = ANY_SPACES + INNER_OPTION;
   private static final String REGEX_OPTION_GROUP = ANY_SPACES
-    + OPTION_FUSION_GROUP + REGEX_OPTION_SIMPLE;
+    + OPTION_FUSION_GROUP + REGEX_OPTION_SIMPLE + ANY_SPACES;
   private static final String REGEX_OPTION_RANGE = ANY_SPACES
     + OPTION_EXTRACT_RANGE + ANY_SPACES + RANGE;
 
@@ -114,7 +114,11 @@ public enum ClawPragma {
     Matcher matchOption = Pattern.compile(INNER_OPTION,
       Pattern.CASE_INSENSITIVE).matcher(pragma);
     if(matchOption.find()) {
-      return matchOption.group(1);
+      if(matchOption.group(1).trim().length() == 0){
+        return null;
+      } else {
+        return matchOption.group(1).trim();
+      }
     }
     return null;
   }

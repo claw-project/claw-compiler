@@ -113,4 +113,14 @@ public class ClawPragmaTest {
     assertEquals(1, mappings.get(3).getMappingVariables().size());
 
   }
+
+  @Test
+  public void getGroupOptionTest(){
+    assertEquals("g1", ClawPragma.getGroupOptionValue("claw loop-fusion group (g1)"));
+    assertEquals("g1", ClawPragma.getGroupOptionValue("claw loop-fusion group (g1) "));
+    assertEquals("g1", ClawPragma.getGroupOptionValue("claw loop-fusion group ( g1  )  "));
+    assertNull(ClawPragma.getGroupOptionValue("claw loop-fusion group()"));
+    assertNull(ClawPragma.getGroupOptionValue("claw loop-fusion group(  )"));
+    assertNull(ClawPragma.getGroupOptionValue("claw loop-fusion"));
+  }
 }
