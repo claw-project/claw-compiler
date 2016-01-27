@@ -5,6 +5,7 @@
 
 package cx2x.translator.pragma;
 
+import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import exc.object.Xobject;
 
@@ -195,26 +196,6 @@ public enum ClawPragma {
     return data.toLowerCase().contains(OPTION_EXTRACT_PARALLEL);
   }
 
-  /**
-   * Join an array of String elements into a single String.
-   * @param delimiter Delimeter to be placed between each element.
-   * @param elements  Array of String elements.
-   * @return A joined string of all elements separated by the delimiter.
-   */
-  private static String join(String delimiter, String[] elements){
-    StringBuilder ret = new StringBuilder();
-    boolean firstIter = true;
-    for(String s : elements){
-      if(!firstIter){
-        ret.append(delimiter);
-      } else {
-        firstIter = false;
-      }
-      ret.append(s);
-    }
-    return ret.toString();
-  }
-
   // Check the correctness of a claw directive
   // TODO correct error message
   public static boolean isValid(String pragma){
@@ -235,7 +216,7 @@ public enum ClawPragma {
     if (parts.length > 2){
       // Take only the options
       String[] temp = Arrays.copyOfRange(parts, 2, parts.length);
-      options = join(" ", temp);
+      options = Utility.join(" ", temp);
     }
 
     switch(directive){

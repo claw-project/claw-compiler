@@ -5,6 +5,7 @@
 
 package cx2x.translator.pragma;
 
+import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 
 import java.util.List;
@@ -93,4 +94,14 @@ public class ClawMapping {
     return _mappingVariables.size();
   }
 
+
+  /**
+   * Return a string representation of the object.
+   * @return String representation of the ClawMapping object.
+   */
+  @Override
+  public String toString(){
+    return Utility.join(",", getMappedVariables()) + ":" +
+        Utility.join(",", getMappingVariables());
+  }
 }

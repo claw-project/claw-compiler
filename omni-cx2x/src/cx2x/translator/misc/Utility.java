@@ -1,0 +1,57 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
+package cx2x.translator.misc;
+
+import cx2x.translator.pragma.ClawMapping;
+import cx2x.translator.pragma.ClawMappingVar;
+
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * This class contains utilities methods that are useful in the whole project.
+ * Mostly to implements java 1.8 features that are not present in java 1.7.
+ * @author clementval
+ */
+public class Utility {
+  /**
+   * Join an array of String elements into a single String.
+   * @param delimiter Delimeter to be placed between each element.
+   * @param elements  Array of String elements.
+   * @return A joined string of all elements separated by the delimiter.
+   */
+  public static String join(String delimiter, String[] elements){
+    StringBuilder ret = new StringBuilder();
+    boolean firstIter = true;
+    for(String s : elements){
+      if(!firstIter){
+        ret.append(delimiter);
+      } else {
+        firstIter = false;
+      }
+      ret.append(s);
+    }
+    return ret.toString();
+  }
+
+  /**
+   * Join a list of String elements into a single String.
+   * @param delimiter Delimeter to be placed between each element.
+   * @param elements  List of String elements.
+   * @return A joined string of all elements separated by the delimiter.
+   */
+  public static <T> String join(String delimiter, List<T> elements){
+    StringBuilder ret = new StringBuilder();
+    Iterator<T> it = elements.iterator();
+    while(it.hasNext()){
+      ret.append(it.next().toString());
+      if(it.hasNext()) {
+        ret.append(delimiter);
+      }
+    }
+    return ret.toString();
+  }
+}

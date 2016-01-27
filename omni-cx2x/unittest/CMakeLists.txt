@@ -24,6 +24,7 @@ else()
 
   add_jar(omni-cx2x-unittest
     helper/XmlHelper.java
+    cx2x/translator/misc/UtilityTest.java
     cx2x/translator/pragma/ClawPragmaTest.java
     cx2x/xcodeml/xelement/XbasicTypeTest.java
     cx2x/xcodeml/xelement/XcodeProgTest.java
@@ -56,6 +57,12 @@ else()
     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
     TESTS
     cx2x.translator.pragma.ClawPragmaTest
+  )
+
+  add_junit_test(misc.utility
+    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
+    TESTS
+    cx2x.translator.misc.UtilityTest
   )
 
 endif()

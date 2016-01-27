@@ -59,4 +59,16 @@ public class ClawMappingVar {
     return _fctPart;
   }
 
+  /**
+   * Return a string representation of the object.
+   * @return String representation of the ClawMapping object.
+   */
+  @Override
+  public String toString(){
+    if(hasDifferentMappping()){
+      return getArgMapping() + "/" + getFctMapping();
+    }
+    return getArgMapping();
+  }
+
 }

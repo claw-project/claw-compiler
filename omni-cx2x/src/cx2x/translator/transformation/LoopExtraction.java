@@ -312,7 +312,9 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()){
-            // TODO problem !!!! demotion to big
+            throw new IllegalTransformationException(
+                "mapping dimensions too big. Mapping " + mapping.toString() +
+                    " is wrong ...", _pragma.getLine());
           }
 
           XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
