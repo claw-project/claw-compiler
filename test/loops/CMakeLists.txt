@@ -2,6 +2,7 @@
 add_subdirectory(extract1)
 add_subdirectory(extract2)
 add_subdirectory(extract3)
+add_subdirectory(extract4)
 add_subdirectory(fusion1)
 add_subdirectory(fusion2)
 add_subdirectory(interchange1)

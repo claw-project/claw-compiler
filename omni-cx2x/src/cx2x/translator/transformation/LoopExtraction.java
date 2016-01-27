@@ -419,7 +419,15 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
       XelementHelper.insertAfter(_pragma, parallelStart);
       XelementHelper.insertAfter(extractedLoop, parallelEnd);
+
+      if(_accAdditionalOption != null){
+        insertAccOption(parallelStart, xcodeml);
+      }
+    } else if (_accAdditionalOption != null){
+      insertAccOption(_pragma, xcodeml);
     }
+
+
 
     // Transformation is done. Add additional transfomation here
     if(_hasFusion){
@@ -434,6 +442,17 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     }
     this.transformed();
+  }
+
+  /**
+   * Create a new pragma statement and insert it after the insert point
+   * @param insertPoint Statement just before the insertion
+   * @param xcodeml     The XcodeML representation.
+   */
+  private void insertAccOption(Xpragma insertPoint, XcodeProg xcodeml){
+    Xpragma accAdditionalOption = Xpragma.createEmpty(xcodeml);
+    accAdditionalOption.setData("acc " + _accAdditionalOption); // TODO move acc
+    XelementHelper.insertAfter(insertPoint, accAdditionalOption);
   }
 
   /**
