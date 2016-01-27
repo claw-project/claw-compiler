@@ -12,10 +12,11 @@ The current development status is the following (Only limited cases have been
 tested).
 - [x] loop-fusion
 - [x] loop-interchange
-- [ ] loop-extract
+- [x] loop-extract
 - [x] remove
 
 For future version
 - [ ] loop-vector (on hold in the spec)
 - [ ] scalar-replace (out of scope for evaluation)
 - [ ] data (out of scope for the moment)
+- [ ] higher abstractions to come from our imagination :-)
