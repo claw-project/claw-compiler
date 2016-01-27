@@ -70,7 +70,7 @@ public enum ClawPragma {
     + OPTION_EXTRACT_MAP + ANY_SPACES + SIMPLE_MAPPING;
 
   private static final String REGEX_OPTION_ACC = ANY_SPACES
-      + OPTION_EXTRACT_ACC + ANY_SPACES + REGEX_OPTION_RANGE + ANY_SPACES;
+      + OPTION_EXTRACT_ACC + ANY_SPACES + INNER_OPTION + ANY_SPACES;
 
   private static final String REGEX_REMOVE = PREFIX_CLAW + ANY_SPACES
     + DIRECTIVE_UTILITIES_REMOVE;
@@ -106,6 +106,24 @@ public enum ClawPragma {
       default:
         return null;
     }
+  }
+
+  /**
+   * Get the value of the acc option.
+   * @param pragma The pragma string value.
+   * @return The acc option. Null if no option is set.
+   */
+  public static String getAccOptionValue(String pragma){
+    Matcher matchOption = Pattern.compile(REGEX_OPTION_ACC,
+        Pattern.CASE_INSENSITIVE).matcher(pragma);
+    if(matchOption.find()) {
+      if(matchOption.group(1).trim().length() == 0){
+        return null;
+      } else {
+        return matchOption.group(1).trim();
+      }
+    }
+    return null;
   }
 
 

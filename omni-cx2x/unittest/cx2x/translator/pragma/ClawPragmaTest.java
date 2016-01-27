@@ -83,6 +83,14 @@ public class ClawPragmaTest {
   }
 
   @Test
+  public void accOptionTest(){
+    assertEquals("loop gang vector", ClawPragma.getAccOptionValue("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel acc(loop gang vector)"));
+    assertEquals("loop seq", ClawPragma.getAccOptionValue("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel acc(loop seq)"));
+    assertNull(ClawPragma.getAccOptionValue("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel acc()"));
+    assertNull(ClawPragma.getAccOptionValue("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)"));
+  }
+
+  @Test
   public void extractMappingTest(){
     List<ClawMapping> mappings = null;
     try {
