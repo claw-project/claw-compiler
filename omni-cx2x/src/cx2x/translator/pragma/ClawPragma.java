@@ -132,9 +132,9 @@ public enum ClawPragma {
   }
 
   /**
-   *
-   * @param data
-   * @return
+   * Extract the optional fusion group option value of loop-extract directive.
+   * @param data The pragma string value.
+   * @return The group value. Null if not specified.
    */
   public static String getExtractFusionOption(String data){
     Matcher m = Pattern.compile("fusion\\s*group\\(([^)]*)\\)\\s*")
