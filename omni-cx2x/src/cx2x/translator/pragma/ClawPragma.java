@@ -42,6 +42,7 @@ public enum ClawPragma {
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String OPTION_EXTRACT_RANGE = "range";
   private static final String OPTION_EXTRACT_MAP = "map";
+
   private static final String OPTION_FUSION = "fusion";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
@@ -50,6 +51,7 @@ public enum ClawPragma {
   private static final String SIMPLE_MAPPING = "\\(([^:]+):(.*)\\)";
 
 
+  private static final String REGEX_MAPPING = "map\\(([^:]*:[^)]*)\\)";
   private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES
     + DIRECTIVE_LOOP_FUSION;
   private static final String REGEX_LOOP_INTERCHANGE = PREFIX_CLAW + ANY_SPACES
@@ -65,6 +67,8 @@ public enum ClawPragma {
 
   private static final String REGEX_OPTION_MAP = ANY_SPACES
     + OPTION_EXTRACT_MAP + ANY_SPACES + SIMPLE_MAPPING;
+
+  
 
   private static final String REGEX_REMOVE = PREFIX_CLAW + ANY_SPACES
     + DIRECTIVE_UTILITIES_REMOVE;
@@ -262,13 +266,15 @@ public enum ClawPragma {
     return false;
   }
 
+
+
   public static List<ClawMapping> extractMappingInformation(String data)
       throws IllegalDirectiveException
   {
     List<String> allMappings = new ArrayList<>();
     List<ClawMapping> mappings = new ArrayList<>();
-    // TODO move regex somewhere centralized
-    Matcher m = Pattern.compile("map\\(([^:]*:[^)]*)\\)")
+
+    Matcher m = Pattern.compile(REGEX_MAPPING)
         .matcher(data);
     while (m.find()) {
       allMappings.add(m.group(1));
