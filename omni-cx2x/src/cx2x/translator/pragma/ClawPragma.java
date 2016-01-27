@@ -42,7 +42,8 @@ public enum ClawPragma {
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String OPTION_EXTRACT_RANGE = "range";
   private static final String OPTION_EXTRACT_MAP = "map";
-
+  private static final String OPTION_EXTRACT_ACC = "acc";
+  private static final String OPTION_EXTRACT_PARALLEL = "parallel";
   private static final String OPTION_FUSION = "fusion";
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
@@ -68,7 +69,8 @@ public enum ClawPragma {
   private static final String REGEX_OPTION_MAP = ANY_SPACES
     + OPTION_EXTRACT_MAP + ANY_SPACES + SIMPLE_MAPPING;
 
-  
+  private static final String REGEX_OPTION_ACC = ANY_SPACES
+      + OPTION_EXTRACT_ACC + ANY_SPACES + REGEX_OPTION_RANGE + ANY_SPACES;
 
   private static final String REGEX_REMOVE = PREFIX_CLAW + ANY_SPACES
     + DIRECTIVE_UTILITIES_REMOVE;
@@ -152,6 +154,10 @@ public enum ClawPragma {
     return pragma.startsWith(PREFIX_CLAW);
   }
 
+  public static boolean hasParallelOption(String data){
+    return data.toLowerCase().contains(OPTION_EXTRACT_PARALLEL);
+  }
+
   /**
    * Join an array of String elements into a single String.
    * @param delimiter Delimeter to be placed between each element.
@@ -223,7 +229,7 @@ public enum ClawPragma {
         return true; // TODO
       case LOOP_EXTRACT:
         return ClawPragma.isRangeOptionValid(option)
-          && ClawPragma.isMapOptionValid(option);
+            && ClawPragma.isMapOptionValid(option);
       case BASE_END:
         // Only remove is associated with end directive now
         return option.contains(DIRECTIVE_UTILITIES_REMOVE);

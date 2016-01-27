@@ -77,6 +77,12 @@ public class ClawPragmaTest {
   }
 
   @Test
+  public void parallelOptionTest(){
+    assertTrue(ClawPragma.hasParallelOption("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel "));
+    assertFalse(ClawPragma.hasParallelOption("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)"));
+  }
+
+  @Test
   public void extractMappingTest(){
     List<ClawMapping> mappings = null;
     try {
