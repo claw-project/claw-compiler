@@ -44,6 +44,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private boolean _hasFusion = false;
   private String _fusionGroupLabel = "";
 
+  // Acc options
+  private boolean _hasParallelOption = false;
+  private String _accAdditionalOption = null;
+
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
    * @param pragma  The pragma that triggered the loop extraction
@@ -55,6 +59,9 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _mappingMap = new Hashtable<>();
     extractRangeInformation();
     extractFusionInformation();
+
+    _hasParallelOption = ClawPragma.hasParallelOption(pragma.getData());
+    _accAdditionalOption = ClawPragma.getAccOptionValue(pragma.getData());
 
     try {
       extractMappingInformation();
@@ -402,7 +409,17 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       }
     }
 
+    // Wrap with parallel section if option is set
+    if(_hasParallelOption){
+      Xpragma parallelStart = Xpragma.createEmpty(xcodeml);
+      parallelStart.setData("acc parallel");
 
+      Xpragma parallelEnd = Xpragma.createEmpty(xcodeml);
+      parallelEnd.setData("acc end parallel");
+
+      XelementHelper.insertAfter(_pragma, parallelStart);
+      XelementHelper.insertAfter(extractedLoop, parallelEnd);
+    }
 
     // Transformation is done. Add additional transfomation here
     if(_hasFusion){
