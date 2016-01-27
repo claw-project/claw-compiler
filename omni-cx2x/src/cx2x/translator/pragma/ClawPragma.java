@@ -127,6 +127,25 @@ public enum ClawPragma {
   }
 
 
+  public static boolean hasFusionOption(String data){
+    return data.contains(" fusion ");
+  }
+
+  /**
+   *
+   * @param data
+   * @return
+   */
+  public static String getExtractFusionOption(String data){
+    Matcher m = Pattern.compile("fusion\\s*group\\(([^)]*)\\)\\s*")
+        .matcher(data);
+    if(m.find()){
+      return m.group(1);
+    }
+    return null;
+  }
+
+
   public static String getGroupOptionValue(String pragma){
     Matcher matchFullDirective = Pattern.compile(REGEX_LOOP_FUSION +
       REGEX_OPTION_GROUP, Pattern.CASE_INSENSITIVE).matcher(pragma);

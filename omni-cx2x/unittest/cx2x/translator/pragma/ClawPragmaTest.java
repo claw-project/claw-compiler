@@ -137,4 +137,10 @@ public class ClawPragmaTest {
     assertNull(ClawPragma.getGroupOptionValue("claw loop-fusion group(  )"));
     assertNull(ClawPragma.getGroupOptionValue("claw loop-fusion"));
   }
+
+  @Test
+  public void getExtractFusionOptionTest(){
+    assertEquals("j1", ClawPragma.getExtractFusionOption("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) fusion group(j1) parallel acc(loop seq)"));
+    assertEquals("j1", ClawPragma.getExtractFusionOption("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel acc(loop seq) fusion group(j1)"));
+  }
 }

@@ -94,17 +94,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * perform and its optional fusion group option.
    */
   private void extractFusionInformation(){
-    if(_pragma.getData().contains(" fusion ")){
-      _hasFusion = true;
-    }
-
-    // TODO centralize in the pragma class
-    Matcher m = Pattern.compile("fusion\\s+group\\((.*)\\)")
-     .matcher(_pragma.getData());
-    while(m.find()){
-      _fusionGroupLabel = m.group(1);
-
-    }
+    _hasFusion = ClawPragma.hasFusionOption(_pragma.getData());
+    _fusionGroupLabel = ClawPragma.getExtractFusionOption(_pragma.getData());
   }
 
   /**
