@@ -106,9 +106,14 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * Mapping using the same mapping variables are merged together.
    * @return True if all the conditions are respected. False otherwise.
    */
-  private boolean checkMappingInformation(){
-    // TODO Mapped variable should be declared in the fct definition
-    // declarations or in the global declarations table
+  private boolean checkMappingInformation(XcodeProg xcodeml){
+    for(Map.Entry<String, ClawMapping> map : _mappingMap.entrySet()){
+      if(_fctCall.getArgumentsTable().findArgument(map.getKey()) == null){
+        xcodeml.addError("Mapped variable " + map.getKey() +
+            " not found in function call arguments", _pragma.getLine());
+        return false;
+      }
+    }
 
     // TODO Merge mapping if they have the exact same mapping vars to reduce the
     // number of iteration for the demotions
@@ -163,10 +168,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       System.exit(1);
     }
 
-    if(!checkMappingInformation()){
-      System.err.println("Mapping information are not usable"
-        + _fctDefToExtract.getFctName());
-      System.exit(1);
+    if(!checkMappingInformation(xcodeml)){
+      return false;
     }
 
     return true;
