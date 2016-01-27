@@ -12,13 +12,11 @@ import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 import cx2x.translator.pragma.*;
 
-
 // OMNI import
 import xcodeml.util.XmOption;
 
 // Java import
 import java.util.*;
-import java.util.regex.*;
 
 /**
  * A LoopExtraction transformation is an independent transformation. The
@@ -31,14 +29,12 @@ import java.util.regex.*;
 
 public class LoopExtraction extends Transformation<LoopExtraction> {
 
-  private XexprStatement _exprStmt = null;
   private List<ClawMapping> _mappings = null;
   private Map<String, ClawMapping> _mappingMap = null;
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
-  private XfctDef _copiedFctDef = null;
 
   // Fusion and fusion option
   private boolean _hasFusion = false;
@@ -83,7 +79,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _mappings = ClawPragma.extractMappingInformation(_pragma.getData());
     for(ClawMapping m : _mappings){
       for(String mappedVar : m.getMappedVariables()){
-        _mappingMap.put(mappedVar, m);
+        if(_mappingMap.containsKey(mappedVar)){
+          throw new IllegalDirectiveException(_pragma.getData(), mappedVar +
+              " appears more than once in the mapping");
+        } else {
+          _mappingMap.put(mappedVar, m);
+        }
       }
     }
   }
@@ -106,7 +107,6 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @return True if all the conditions are respected. False otherwise.
    */
   private boolean checkMappingInformation(){
-    // TODO Mapped variable should appear on one time
     // TODO Mapped variable should be declared in the fct definition
     // declarations or in the global declarations table
 
@@ -123,7 +123,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @return True if the transformation analysis succeeded. False otherwise.
    */
   public boolean analyze(XcodeProg xcodeml, Transformer transformer){
-    _exprStmt = XelementHelper.findNextExprStatement(_pragma);
+    XexprStatement _exprStmt = XelementHelper.findNextExprStatement(_pragma);
     if(_exprStmt == null){
       xcodeml.addError("No function call detected after loop-extract",
         _pragma.getLine());
