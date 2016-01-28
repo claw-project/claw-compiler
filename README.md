@@ -41,7 +41,7 @@ representation.
 representation.
 
 ### How to install
-See [INSTALL.md](./INTSTALL.md) file.
+See [INSTALL.md](https://github.com/clementval/claw-compiler/blob/master/INSTALL.md) file.
 
 ### OMNI Compiler
 The CLAW Compiler is built on the top of the OMNI Compiler. For more
