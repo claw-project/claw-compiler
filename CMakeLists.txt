@@ -42,7 +42,7 @@ if(BUILD_OMNI)
   ExternalProject_Add(
     omni-compiler
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler
-    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler/configure --prefix=${CMAKE_INSTALL_PREFIX}
+    CONFIGURE_COMMAND touch configure.ac aclocal.m4 configure Makefile.am Makefile.in && configure --prefix=${CMAKE_INSTALL_PREFIX}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
   )
