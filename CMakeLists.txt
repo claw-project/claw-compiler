@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(CLAWC)
+project(clawfc)
+set(CLAWFC_VERSION "0.1")
 
 find_package(Java REQUIRED)
 
@@ -37,13 +38,14 @@ set(OMNI_JAR_CX2X_CLAW "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_CLAW_NAME
 set(OMNI_JAR_CX2X_XCODEML "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_XCODEML_NAME}.jar")
 
 if(BUILD_OMNI)
-  # TODO allows to give configure option
   set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)
   # Build OMNI compiler
   ExternalProject_Add(
     omni-compiler
     SOURCE_DIR ${OMNIC_DIR}
-    CONFIGURE_COMMAND touch ${OMNIC_DIR}/configure.ac ${OMNIC_DIR}/aclocal.m4 ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX}
+    CONFIGURE_COMMAND touch ${OMNIC_DIR}/configure.ac ${OMNIC_DIR}/aclocal.m4
+    ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in
+    && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_CONF_OPTION}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
   )
