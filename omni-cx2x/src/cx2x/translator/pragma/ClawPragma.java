@@ -53,7 +53,8 @@ public enum ClawPragma {
   private static final String MULTIPLE_SPACES = " *";
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
   private static final String ANY_SPACES = "\\s*";
-  private static final String RANGE = "\\(([^=]+)=([^,]+),([^,]+),?(.+)?\\)";
+  private static final String RANGE_GLOBAL = "range\\(([^\\)]+)";
+  private static final String RANGE = "([^=]+)=([^,]+),([^,]+),?(.+)?";
   private static final String SIMPLE_MAPPING = "\\(([^:]+):(.*)\\)";
 
 
@@ -317,16 +318,21 @@ public enum ClawPragma {
   }
 
   public static ClawRange extractRangeInformation(String data) {
-    Matcher m = Pattern.compile(OPTION_EXTRACT_RANGE + ANY_SPACES + RANGE)
-        .matcher(data);
-    if(m.find()) {
-      ClawRange range = new ClawRange();
-      range.setInductionVar(m.group(1));
-      range.setLowerBound(m.group(2));
-      range.setUpperBound(m.group(3));
-      range.setStep(m.group(4));
-      return range;
+    Matcher m1 = Pattern.compile(RANGE_GLOBAL).matcher(data);
+    if(m1.find()){
+      Matcher m2 = Pattern.compile(RANGE)
+          .matcher(m1.group(1));
+      if(m2.find()) {
+        ClawRange range = new ClawRange();
+        range.setInductionVar(m2.group(1));
+        range.setLowerBound(m2.group(2));
+        range.setUpperBound(m2.group(3));
+        range.setStep(m2.group(4));
+        return range;
+      }
     }
+
+
     return null;
   }
 

@@ -93,5 +93,12 @@ public class ClawRangeTest {
     ClawRange range10 = new ClawRange("j", "istart", "iend", "1");
     assertFalse(range10.equals(iterationRange2));
     assertFalse(range10.equals(iterationRange1));
+
+    ClawRange range11 = new ClawRange();
+    range11.setInductionVar("i");
+    range11.setLowerBound("istart");
+    range11.setUpperBound("iend");
+    assertTrue(range11.equals(iterationRange2));
+
   }
 }

@@ -240,8 +240,18 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
-    // TODO find any loops ?
     XdoStatement loopInClonedFct = XelementHelper.findLoop(clonedFctDef, true);
+    if(loopInClonedFct == null){
+      throw new IllegalTransformationException("No loop found in function",
+          _pragma.getLine());
+    }
+
+    if(!_range.equals(loopInClonedFct.getIterationRange())){
+      throw new IllegalTransformationException(
+          "Iteration range is different than the loop to be extracted",
+          _pragma.getLine()
+      );
+    }
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " + _pragma.getData());

@@ -17,7 +17,7 @@ public class ClawRange {
   private String _inductionVar = null;
   private String _lowerBound = null;
   private String _upperBound = null;
-  private String _step = null;
+  private String _step = "1"; // Default value set by OMNI F_Front
 
   /**
    * Constructs null initialized ClawRange object.

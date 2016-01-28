@@ -7,6 +7,7 @@ package cx2x.translator.pragma;
 
 import static org.junit.Assert.*;
 
+import cx2x.translator.common.Constant;
 import cx2x.translator.pragma.ClawMapping;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.junit.Test;
@@ -151,14 +152,14 @@ public class ClawPragmaTest {
     assertEquals("i", r1.getInductionVar());
     assertEquals("istart", r1.getLowerBound());
     assertEquals("iend", r1.getUpperBound());
-    assertNull(r1.getStep());
+    assertEquals(Constant.DEFAULT_STEP_VALUE, r1.getStep());
 
     ClawRange r2 = ClawPragma.extractRangeInformation("claw loop-extract range(i=1,10)");
     assertNotNull(r2);
     assertEquals("i", r2.getInductionVar());
     assertEquals("1", r2.getLowerBound());
     assertEquals("10", r2.getUpperBound());
-    assertNull(r2.getStep());
+    assertEquals(Constant.DEFAULT_STEP_VALUE, r2.getStep());
 
     ClawRange r3 = ClawPragma.extractRangeInformation("claw loop-extract range(i=1,10,2 )");
     assertNotNull(r3);
@@ -177,5 +178,12 @@ public class ClawPragmaTest {
 
     ClawRange r5 = ClawPragma.extractRangeInformation("claw loop-extract range()");
     assertNull(r5);
+
+    ClawRange r6 = ClawPragma.extractRangeInformation("claw loop-extract range(i=istart,iend) map(a:j1)");
+    assertNotNull(r6);
+    assertEquals("i", r6.getInductionVar());
+    assertEquals("istart", r6.getLowerBound());
+    assertEquals("iend", r6.getUpperBound());
+    assertEquals(Constant.DEFAULT_STEP_VALUE, r1.getStep());
   }
 }
