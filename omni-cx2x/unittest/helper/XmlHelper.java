@@ -91,4 +91,17 @@ public class XmlHelper {
     return new XsymbolTable(el);
   }
 
+  public static XloopIterationRange createXloopIterationRange(String var,
+                                                              String indexRange)
+  {
+    Element el = XmlHelper.getElementFromString(var);
+    assertNotNull(el);
+    Xvar xvar = new Xvar(el);
+    el = XmlHelper.getElementFromString(indexRange);
+    assertNotNull(el);
+    XindexRange xindexRange = new XindexRange(el);
+
+    return new XloopIterationRange(xvar, xindexRange);
+  }
+
 }
