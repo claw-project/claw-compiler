@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.transformation;
 
-import cx2x.xcodeml.transformation.*;
 import java.util.List;
 
 /**

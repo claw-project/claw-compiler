@@ -70,8 +70,7 @@ public class ClawXcodeMlTranslator {
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
       if(!ClawPragma.startsWithClaw(pragma.getData())){
-        if(pragma.getData().toLowerCase()
-            .startsWith(Constant.OPENACC_PREFIX))
+        if(pragma.getData().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
         {
           OpenAccContinuation t = new OpenAccContinuation(pragma);
           addOrAbort(t, _program, _transformer);
