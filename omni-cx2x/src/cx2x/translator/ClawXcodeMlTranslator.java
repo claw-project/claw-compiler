@@ -9,6 +9,7 @@ package cx2x.translator;
 import cx2x.translator.transformation.loop.LoopExtraction;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
+import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;

@@ -100,7 +100,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/transformation/loop/LoopFusion.java
   cx2x/translator/transformation/loop/LoopInterchange.java
   cx2x/translator/transformation/loop/LoopExtraction.java
-  cx2x/translator/transformation/OpenAccContinuation.java
+  cx2x/translator/transformation/openacc/OpenAccContinuation.java
   cx2x/translator/transformation/UtilityRemove.java
 
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
