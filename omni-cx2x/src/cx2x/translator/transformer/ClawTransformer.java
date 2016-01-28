@@ -12,8 +12,8 @@ import cx2x.translator.transformation.loop.LoopExtraction;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
+import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.transformation.*;
-import cx2x.translator.transformation.*;
 
 /**
  * ClawTransformer stores all transformation groups applied during the
