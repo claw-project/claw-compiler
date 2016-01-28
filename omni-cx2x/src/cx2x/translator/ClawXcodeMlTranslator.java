@@ -197,7 +197,7 @@ public class ClawXcodeMlTranslator {
    */
   private void abort(){
     for(XanalysisError error : _program.getErrors()){
-      System.err.println(ERROR_PREFIX + error.getMessage() + ", " +
+      System.err.println(ERROR_PREFIX + error.getMessage() + ", line:" +
           error.getLine());
     }
     System.exit(1);
