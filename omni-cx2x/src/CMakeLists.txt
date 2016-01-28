@@ -83,6 +83,9 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
 # Base class
   cx2x/Cx2x.java
 
+# translator.common package
+  cx2x/translator/common/Constant.java
+
 # translator.misc package
   cx2x/translator/misc/Utility.java
 

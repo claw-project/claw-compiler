@@ -6,6 +6,7 @@
 package cx2x.translator;
 
 // Cx2x import
+import cx2x.translator.common.Constant;
 import cx2x.translator.transformation.loop.LoopExtraction;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -70,7 +71,7 @@ public class ClawXcodeMlTranslator {
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
       if(!ClawPragma.startsWithClaw(pragma.getData())){
         if(pragma.getData().toLowerCase()
-            .startsWith(OpenAccContinuation.OPEN_ACC_PREFIX))
+            .startsWith(Constant.OPENACC_PREFIX))
         {
           OpenAccContinuation t = new OpenAccContinuation(pragma);
           addOrAbort(t, _program, _transformer);

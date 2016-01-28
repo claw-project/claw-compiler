@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.openacc;
 
+import cx2x.translator.common.Constant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
@@ -40,11 +41,6 @@ import cx2x.xcodeml.xelement.Xpragma;
  */
 public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
 
-  public static final String OPEN_ACC_PREFIX = "acc";
-
-  private static final String OPEN_ACC_START = "acc ";
-  private static final String OPEN_ACC_CONT = " &";
-
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
    * @param pragma The pragma that triggered the loop fusion transformation.
@@ -61,7 +57,7 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    * @return True if a do statement is found. False otherwise.
    */
   public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
-    return _pragma.getData().toLowerCase().startsWith(OPEN_ACC_PREFIX);
+    return _pragma.getData().toLowerCase().startsWith(Constant.OPENACC_PREFIX);
   }
 
   @Override
@@ -83,21 +79,21 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
   {
     String allPragma = _pragma.getData();
 
-
-
-    String[] pragmas = allPragma.split("acc");
+    String[] pragmas = allPragma.split(Constant.OPENACC_PREFIX);
 
     if(pragmas.length != 2) {
-      _pragma.setData(OPEN_ACC_START + pragmas[1] + OPEN_ACC_CONT);
+      _pragma.setData(Constant.OPENACC_PREFIX + " " + pragmas[1] + " " +
+          Constant.CONTINUATION_LINE_SYMBOL);
       Xpragma newlyInserted = _pragma;
       for (int i = 2; i < pragmas.length; ++i) {
         Xpragma p = Xpragma.createEmpty(xcodeml);
         p.setFilename(_pragma.getFilename());
         p.setLine(_pragma.getLine() + (i - 1));
         if (i == pragmas.length - 1) {
-          p.setData(OPEN_ACC_START + pragmas[i]);
+          p.setData(Constant.OPENACC_PREFIX + " " + pragmas[i]);
         } else {
-          p.setData(OPEN_ACC_START + pragmas[i] + OPEN_ACC_CONT);
+          p.setData(Constant.OPENACC_PREFIX + " " + pragmas[i] + " " +
+              Constant.CONTINUATION_LINE_SYMBOL);
         }
         XelementHelper.insertAfter(newlyInserted, p);
         newlyInserted = p;
