@@ -18,7 +18,7 @@ git clone git@github.com:clementval/claw-compiler.git
 cd claw-compiler
 git submodule init
 git submodule update --remote
-cmake -DCMAKE_INSTALL_PREFIX=<install_path>.
+cmake -DCMAKE_INSTALL_PREFIX=<install_path> .
 make
 make install
 ```
