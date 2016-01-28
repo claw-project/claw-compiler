@@ -90,8 +90,10 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/misc/Utility.java
 
 # translator.pragma package
-  cx2x/translator/pragma/ClawPragma.java
   cx2x/translator/pragma/ClawMapping.java
+  cx2x/translator/pragma/ClawMappingVar.java
+  cx2x/translator/pragma/ClawPragma.java
+  cx2x/translator/pragma/ClawRange.java
 
 # translator package
   cx2x/translator/ClawXcodeMlTranslator.java

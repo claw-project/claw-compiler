@@ -7,6 +7,10 @@ package cx2x.translator.pragma;
 
 import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.xelement.Xindex;
+import cx2x.xcodeml.xelement.XindexRange;
+import cx2x.xcodeml.xelement.XloopIterationRange;
+import cx2x.xcodeml.xelement.Xvar;
 import exc.object.Xobject;
 
 import java.util.ArrayList;
@@ -310,6 +314,20 @@ public enum ClawPragma {
       mappings.add(mapping);
     }
     return mappings;
+  }
+
+  public static ClawRange extractRangeInformation(String data) {
+    Matcher m = Pattern.compile(OPTION_EXTRACT_RANGE + ANY_SPACES + RANGE)
+        .matcher(data);
+    if(m.find()) {
+      ClawRange range = new ClawRange();
+      range.setInductionVar(m.group(1));
+      range.setLowerBound(m.group(2));
+      range.setUpperBound(m.group(3));
+      range.setStep(m.group(4));
+      return range;
+    }
+    return null;
   }
 
   public static ClawPragma valueOf(Xobject x) {

@@ -36,6 +36,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
+  private ClawRange _range = null;
 
   // Fusion and fusion option
   private boolean _hasFusion = false;
@@ -55,7 +56,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _mappings = new ArrayList<>();
     _argMappingMap = new Hashtable<>();
     _fctMappingMap = new Hashtable<>();
-    extractRangeInformation();
+    _range = ClawPragma.extractRangeInformation(pragma.getData());
     extractFusionInformation();
 
     _hasParallelOption = ClawPragma.hasParallelOption(pragma.getData());
@@ -67,10 +68,6 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       ide.setDirectiveLine(_pragma.getLine());
       throw ide;
     }
-  }
-
-  private void extractRangeInformation(){
-    // TODO
   }
 
   /**

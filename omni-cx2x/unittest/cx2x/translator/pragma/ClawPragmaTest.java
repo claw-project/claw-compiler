@@ -143,4 +143,39 @@ public class ClawPragmaTest {
     assertEquals("j1", ClawPragma.getExtractFusionOption("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) fusion group(j1) parallel acc(loop seq)"));
     assertEquals("j1", ClawPragma.getExtractFusionOption("claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel acc(loop seq) fusion group(j1)"));
   }
+
+  @Test
+  public void extractRangeInformationTest(){
+    ClawRange r1 = ClawPragma.extractRangeInformation("claw loop-extract range(i=istart,iend)");
+    assertNotNull(r1);
+    assertEquals("i", r1.getInductionVar());
+    assertEquals("istart", r1.getLowerBound());
+    assertEquals("iend", r1.getUpperBound());
+    assertNull(r1.getStep());
+
+    ClawRange r2 = ClawPragma.extractRangeInformation("claw loop-extract range(i=1,10)");
+    assertNotNull(r2);
+    assertEquals("i", r2.getInductionVar());
+    assertEquals("1", r2.getLowerBound());
+    assertEquals("10", r2.getUpperBound());
+    assertNull(r2.getStep());
+
+    ClawRange r3 = ClawPragma.extractRangeInformation("claw loop-extract range(i=1,10,2 )");
+    assertNotNull(r3);
+    assertEquals("i", r3.getInductionVar());
+    assertEquals("1", r3.getLowerBound());
+    assertEquals("10", r3.getUpperBound());
+    assertEquals("2", r3.getStep());
+
+
+    ClawRange r4 = ClawPragma.extractRangeInformation("claw loop-extract range(i=istart, iend , 10)");
+    assertNotNull(r4);
+    assertEquals("i", r4.getInductionVar());
+    assertEquals("istart", r4.getLowerBound());
+    assertEquals("iend", r4.getUpperBound());
+    assertEquals("10", r4.getStep());
+
+    ClawRange r5 = ClawPragma.extractRangeInformation("claw loop-extract range()");
+    assertNull(r5);
+  }
 }
