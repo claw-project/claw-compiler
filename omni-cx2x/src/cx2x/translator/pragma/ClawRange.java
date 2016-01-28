@@ -133,7 +133,7 @@ public class ClawRange {
     if(iterationRange.getIndexRange().getLowerBound() == null ||
         _lowerBound == null ||
         !iterationRange.getIndexRange().getLowerBound().getValue()
-            .equals(_inductionVar))
+            .equals(_lowerBound))
     {
       return false;
     }
@@ -141,7 +141,7 @@ public class ClawRange {
     if(iterationRange.getIndexRange().getUpperBound() == null ||
         _upperBound == null ||
         !iterationRange.getIndexRange().getUpperBound().getValue()
-            .equals(_inductionVar))
+            .equals(_upperBound))
     {
       return false;
     }
@@ -155,7 +155,7 @@ public class ClawRange {
 
 
     if(iterationRange.getIndexRange().getStep() == null ||
-        _step == null || _step.equals(iterationRange.getIndexRange().getStep()))
+        _step == null || !_step.equals(iterationRange.getIndexRange().getStep().getValue()))
     {
       return false;
     }
