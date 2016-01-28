@@ -53,20 +53,20 @@ SUBROUTINE clawloop_extracted0 ( value1 , value2 )
 END SUBROUTINE clawloop_extracted0
 
 SUBROUTINE test ( )
- INTEGER :: value1 ( 1 : 10 )
- INTEGER :: value2 ( 1 : 10 )
+ INTEGER :: v1 ( 1 : 10 )
+ INTEGER :: v2 ( 1 : 10 )
  INTEGER :: j
  INTEGER :: i
  INTEGER :: istart = 1
  INTEGER :: iend = 10
 
  DO j = 1 , 10 , 1
-  value1 ( j ) = j
-  value2 ( j ) = j
+  v1 ( j ) = j
+  v2 ( j ) = j
  END DO
-!$claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i)
+!$claw loop-extract range(i=istart,iend) map(v1/value1:i) map(v2/value2:i)
  DO i = istart , iend , 1
-  CALL clawloop_extracted1 ( value1 ( i ) , value2 ( i ) )
+  CALL clawloop_extracted1 ( v1 ( i ) , v2 ( i ) )
  END DO
 END SUBROUTINE test
 

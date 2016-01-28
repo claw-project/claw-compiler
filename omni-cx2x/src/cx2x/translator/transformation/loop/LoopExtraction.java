@@ -30,7 +30,8 @@ import java.util.*;
 public class LoopExtraction extends Transformation<LoopExtraction> {
 
   private List<ClawMapping> _mappings = null;
-  private Map<String, ClawMapping> _mappingMap = null;
+  private Map<String, ClawMapping> _fctMappingMap = null;
+  private Map<String, ClawMapping> _argMappingMap = null;
   private XfctCall _fctCall = null;
   private XfctDef _fctDef = null; // Fct holding the fct call
   private XfctDef _fctDefToExtract = null;
@@ -52,7 +53,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   public LoopExtraction(Xpragma pragma) throws IllegalDirectiveException {
     super(pragma);
     _mappings = new ArrayList<>();
-    _mappingMap = new Hashtable<>();
+    _argMappingMap = new Hashtable<>();
+    _fctMappingMap = new Hashtable<>();
     extractRangeInformation();
     extractFusionInformation();
 
@@ -78,12 +80,18 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private void extractMappingInformation() throws IllegalDirectiveException {
     _mappings = ClawPragma.extractMappingInformation(_pragma.getData());
     for(ClawMapping m : _mappings){
-      for(String mappedVar : m.getMappedVariables()){
-        if(_mappingMap.containsKey(mappedVar)){
+      for(ClawMappingVar mappedVar : m.getMappedVariables()){
+        if(_argMappingMap.containsKey(mappedVar.getArgMapping())){
           throw new IllegalDirectiveException(_pragma.getData(), mappedVar +
               " appears more than once in the mapping");
         } else {
-          _mappingMap.put(mappedVar, m);
+          _argMappingMap.put(mappedVar.getArgMapping(), m);
+        }
+        if(_fctMappingMap.containsKey(mappedVar.getFctMapping())){
+          throw new IllegalDirectiveException(_pragma.getData(), mappedVar +
+              " appears more than once in the mapping");
+        } else {
+          _fctMappingMap.put(mappedVar.getFctMapping(), m);
         }
       }
     }
@@ -107,7 +115,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @return True if all the conditions are respected. False otherwise.
    */
   private boolean checkMappingInformation(XcodeProg xcodeml){
-    for(Map.Entry<String, ClawMapping> map : _mappingMap.entrySet()){
+    for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()){
       if(_fctCall.getArgumentsTable().findArgument(map.getKey()) == null){
         xcodeml.addError("Mapped variable " + map.getKey() +
             " not found in function call arguments", _pragma.getLine());
@@ -284,10 +292,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     for(ClawMapping mapping : _mappings){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
 
-      for(String var : mapping.getMappedVariables()){
+      for(ClawMappingVar var : mapping.getMappedVariables()){
 
         System.out.println("  Var: " + var);
-        XbaseElement argument = args.findArgument(var); // TODO return a dedictaed type
+        XbaseElement argument = args.findArgument(var.getArgMapping()); // TODO return a dedictaed type
         if(argument == null) {
           continue;
         }
@@ -348,14 +356,15 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
         }
 
         // Change variable declaration in extracted fct
-        XvarDecl varDecl = fctDeclarations.get(var);
-        Xid id = fctSymbols.get(var);
+        XvarDecl varDecl = fctDeclarations.get(var.getFctMapping());
+        Xid id = fctSymbols.get(var.getFctMapping());
         XbasicType varDeclType =
             (XbasicType)xcodeml.getTypeTable().get(varDecl.getName().getType());
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
-          XvarDecl newVarDecl = XvarDecl.createEmpty(xcodeml, var, varDeclType.getRef());
+          XvarDecl newVarDecl = XvarDecl.createEmpty(xcodeml,
+              var.getFctMapping(), varDeclType.getRef());
           fctDeclarations.replace(newVarDecl);
           id.setType(varDeclType.getRef());
         }
@@ -377,8 +386,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
         continue;
       }
       String mappedVar = ref.getVarRef().getVar().getValue();
-      if(_mappingMap.containsKey(mappedVar)){
-        ClawMapping mapping = _mappingMap.get(mappedVar);
+      if(_fctMappingMap.containsKey(mappedVar)){
+        ClawMapping mapping = _fctMappingMap.get(mappedVar);
 
         boolean changeRef = true;
 

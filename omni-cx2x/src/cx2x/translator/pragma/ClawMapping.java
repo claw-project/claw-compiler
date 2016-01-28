@@ -10,7 +10,6 @@ import cx2x.xcodeml.exception.IllegalDirectiveException;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * A ClawMapping object holds the loop-extract mapping option representation
@@ -21,7 +20,7 @@ import java.util.Collections;
  
 public class ClawMapping {
 
-  private List<String> _mappedVariables = null;
+  private List<ClawMappingVar> _mappedVariables = null;
   private List<ClawMappingVar> _mappingVariables = null;
 
 
@@ -35,7 +34,6 @@ public class ClawMapping {
    */
   public ClawMapping(String mappingClause) throws IllegalDirectiveException {
     _mappedVariables = new ArrayList<>();
-    _mappingVariables = new ArrayList<>();
 
     String[] parts = mappingClause.split(":");
     if(parts.length != 2) {
@@ -47,8 +45,27 @@ public class ClawMapping {
       throw new IllegalDirectiveException(mappingClause,
           "Missing mapping or mapped variables");
     }
-    for (String mapping : mappings) {
-      String[] advancedMapping = mapping.split(MAPPING_SEPARATOR);
+
+    _mappingVariables = splitVariable(mappings, mappingClause);
+    _mappedVariables = splitVariable(vars, mappingClause);
+  }
+
+  /**
+   * Split the variables defined as var1/var,2var1/var2 into a list of
+   * ClawMappingVar.
+   * @param joinedVariables An array of joined variables
+   *                        (var1/var2,var3,var4/var5)
+   * @param mappingClause   The initial mapping clause
+   * @return A list of ClawMappingVar
+   * @throws IllegalDirectiveException
+   */
+  private List<ClawMappingVar> splitVariable(String[] joinedVariables,
+                                             String mappingClause)
+      throws IllegalDirectiveException
+  {
+    List<ClawMappingVar> vars = new ArrayList<>();
+    for (String var : joinedVariables) {
+      String[] advancedMapping = var.split(MAPPING_SEPARATOR);
       if(advancedMapping.length == 0){
         throw new IllegalDirectiveException(mappingClause,
             "Advanced mapping has not enough arguments");
@@ -58,16 +75,16 @@ public class ClawMapping {
             "Advanced mapping has too many arguments");
       }
       if(advancedMapping.length > 1){
-        _mappingVariables.add(
+        vars.add(
             new ClawMappingVar(advancedMapping[0], advancedMapping[1])
         );
       } else {
-        _mappingVariables.add(
+        vars.add(
             new ClawMappingVar(advancedMapping[0], advancedMapping[0])
         );
       }
     }
-    Collections.addAll(_mappedVariables, vars);
+    return vars;
   }
 
   /**
@@ -82,7 +99,7 @@ public class ClawMapping {
    * Get a list of all mapped variables.
    * @return List of mapped variable as String.
    */
-  public List<String> getMappedVariables(){
+  public List<ClawMappingVar> getMappedVariables(){
     return _mappedVariables;
   }
 
