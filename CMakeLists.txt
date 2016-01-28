@@ -38,11 +38,12 @@ set(OMNI_JAR_CX2X_XCODEML "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_XCODEM
 
 if(BUILD_OMNI)
   # TODO allows to give configure option
+  set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)
   # Build OMNI compiler
   ExternalProject_Add(
     omni-compiler
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler
-    CONFIGURE_COMMAND touch configure.ac aclocal.m4 configure Makefile.am Makefile.in && configure --prefix=${CMAKE_INSTALL_PREFIX}
+    SOURCE_DIR ${OMNIC_DIR}
+    CONFIGURE_COMMAND touch ${OMNIC_DIR}/configure.ac ${OMNIC_DIR}/aclocal.m4 ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
   )
