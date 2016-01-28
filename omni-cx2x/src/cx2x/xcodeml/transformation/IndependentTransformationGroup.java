@@ -40,8 +40,8 @@ public class IndependentTransformationGroup<T extends Transformation<? super T>>
         // Catch the exception to add line information and rethrow it
         if(itex.getStartLine() == 0){
           itex.setStartLine(translation.getStartLine());
-          throw itex;
         }
+        throw itex;
       }
 
     }

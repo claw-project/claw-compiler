@@ -48,8 +48,8 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
             // Catch the exception to add line information and rethrow it
             if(itex.getStartLine() == 0){
               itex.setStartLine(base.getStartLine());
-              throw itex;
             }
+            throw itex;
           }
         }
       }
