@@ -39,11 +39,11 @@ if(NOT EXISTS ${HAMCREST_JAR})
   if( error_code )
     file( REMOVE ${JUNIT_JAR} )
   endif()
-  
+
 endif()
 
 if(NOT EXISTS ${JUNIT_JAR} OR NOT EXISTS ${HAMCREST_JAR})
-  message( WARNING "JUnit jar or Hamcrest could not be dowloaded. Unit tests will not be built and executed." )
+  message( WARNING "JUnit jar or Hamcrest could not be downloaded. Unit tests will not be built and executed." )
 else()
 
   set(CMAKE_JAVA_INCLUDE_PATH
