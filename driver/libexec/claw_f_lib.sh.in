@@ -6,7 +6,7 @@ function claw_f_print_help()
 cat <<EOF
 usage: $1 <OPTIONS> <INPUTFILE> ...
 
-Compile Driver Options
+CLAW Fortran compiler options:
 
    -o <file>           : place the output into <file>.
    -I <dir>            : add the directory dir to the list of directories to be searched for header files.
@@ -173,7 +173,7 @@ function claw_f_set_parameters()
 
 function claw_f_print_version()
 {
-  echo "@CLAW_COMPILER_FILE@ - Version: @CLAWC_VERSION@"
+  echo "CLAW Fortran compiler @CLAWFC_VERSION@"
 }
 
 # Process dependencies file trough the frontend
@@ -211,7 +211,7 @@ function claw_f_process_dependencies()
     elif [[ -f $module_name.F ]]
     then
       module_file="$module_name.F"
-    # Dependencies not found in the current dir. Try to check in the same dir. 
+    # Dependencies not found in the current dir. Try to check in the same dir.
     elif [[ -f "$moddirname/$module_name.f90" ]]
     then
       module_file="$moddirname/$module_name.f90"
