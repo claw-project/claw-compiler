@@ -17,7 +17,14 @@ if(NOT EXISTS ${JUNIT_JAR})
     DOWNLOAD
     http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar
     ${JUNIT_JAR}
+    STATUS status
   )
+
+  list( GET status 0 error_code )
+  if( error_code )
+    file( REMOVE ${JUNIT_JAR} )
+  endif()
+
 endif()
 
 if(NOT EXISTS ${HAMCREST_JAR})
@@ -27,6 +34,12 @@ if(NOT EXISTS ${HAMCREST_JAR})
     http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
     ${HAMCREST_JAR}
   )
+
+  list( GET status 0 error_code )
+  if( error_code )
+    file( REMOVE ${JUNIT_JAR} )
+  endif()
+  
 endif()
 
 if(NOT EXISTS ${JUNIT_JAR} OR NOT EXISTS ${HAMCREST_JAR})
