@@ -13,6 +13,29 @@ import cx2x.xcodeml.xelement.XcodeProg;
 import cx2x.xcodeml.xelement.Xpragma;
 
 /**
+ * OpenACC line continuation transformation. The XcodeML/F prgama statement
+ * representation is an aggrated version of the pragma with all its continuation
+ * lines.
+ * As thoses directives are not handled by the CLAW XcodeML to XcodeML
+ * translator, they must be output in a correct way. This transformation divides
+ * the XcodeML representation back to a multi-line pragma definition.
+ *
+ * Example:
+ * The followings OpenACC directives in Fortran code:
+ *
+ *   !$acc data &
+ *   !$acc present (a,b,c,d,e,f,g)
+ *
+ * are represented in XcodeML with
+ *
+ * <FpragmaStatement>acc data acc present (a,b,c,d,e,f,g)</FpragmaStatement>
+ *
+ * The transofrmation will split it like this:
+ *
+ * <FpragmaStatement>acc data &</FpragmaStatement
+ * <FpragmaStatement>acc present (a,b,c,d,e,f,g)</FpragmaStatement>
+ *
+ *
  * @author clementval
  */
 public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
