@@ -6,6 +6,9 @@
 package cx2x.translator;
 
 // Cx2x import
+import cx2x.translator.transformation.loop.LoopExtraction;
+import cx2x.translator.transformation.loop.LoopFusion;
+import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;

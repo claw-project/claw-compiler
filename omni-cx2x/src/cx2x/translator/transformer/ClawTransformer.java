@@ -8,6 +8,9 @@ package cx2x.translator.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import cx2x.translator.transformation.loop.LoopExtraction;
+import cx2x.translator.transformation.loop.LoopFusion;
+import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.transformation.*;
 import cx2x.translator.transformation.*;
 

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation;
+package cx2x.translator.transformation.loop;
 
 // Cx2x import
 import cx2x.xcodeml.helper.*;

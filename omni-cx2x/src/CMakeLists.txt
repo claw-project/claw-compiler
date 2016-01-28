@@ -97,9 +97,9 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/transformer/ClawTransformer.java
 
 # translator.transformation package
-  cx2x/translator/transformation/LoopFusion.java
-  cx2x/translator/transformation/LoopInterchange.java
-  cx2x/translator/transformation/LoopExtraction.java
+  cx2x/translator/transformation/loop/LoopFusion.java
+  cx2x/translator/transformation/loop/LoopInterchange.java
+  cx2x/translator/transformation/loop/LoopExtraction.java
   cx2x/translator/transformation/OpenAccContinuation.java
   cx2x/translator/transformation/UtilityRemove.java
 
