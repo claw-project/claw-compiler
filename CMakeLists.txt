@@ -5,6 +5,8 @@ set(CLAWFC_VERSION "0.1")
 
 find_package(Java REQUIRED)
 
+enable_language(Fortran)
+
 include(UseJava)
 include(ExternalProject)
 

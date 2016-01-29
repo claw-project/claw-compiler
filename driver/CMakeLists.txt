@@ -15,9 +15,9 @@ set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
 set(OM_CX2X_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(JAVA_OPT "-Xmx200m -Xms200m")
 set(OMNI_F2X_FLAGS "")
-set(FPPFLAGS "-E")  # TODO must be define on the fly
-set(FPP "gfortran") # TODO must be define on the fly CMAKE_Fotran_COMPILER
-set(CPP_OPT "-cpp") # TODO must be define on the fly
+set(FPPFLAGS "-E")  # Nothing is done except preprocessing
+set(FPP "${CMAKE_Fortran_COMPILER}")
+set(CPP_OPT "-cpp")
 set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
