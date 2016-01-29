@@ -15,8 +15,14 @@ set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
 set(OM_CX2X_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(JAVA_OPT "-Xmx200m -Xms200m")
 set(OMNI_F2X_FLAGS "")
-set(FPPFLAGS "-E")  # Nothing is done except preprocessing
 set(FPP "${CMAKE_Fortran_COMPILER}")
+if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
+  # For Cray Compiler
+  set(FPPFLAGS "-e P")
+else()
+  # Std option for gfortran
+  set(FPPFLAGS "-E")
+endif()
 set(CPP_OPT "-cpp")
 set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawfc")
