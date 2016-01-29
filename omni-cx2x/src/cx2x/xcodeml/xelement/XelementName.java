@@ -97,6 +97,7 @@ public class XelementName {
   public static final String F_CHAR_CONST = "FcharacterConstant";
   public static final String F_LOGICAL_CONST = "FlogicalConstant";
   public static final String F_MEMBER_REF = "FmemberRef";
+  public static final String F_MODULE_DEFINITION = "FmoduleDefinition";
   public static final String F_STRUCT_TYPE = "FstructType";
   public static final String GLOBAL_DECLARATIONS = "globalDeclarations";
   public static final String GLOBAL_SYMBOLS = "globalSymbols";
