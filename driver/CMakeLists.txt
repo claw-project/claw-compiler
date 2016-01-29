@@ -19,9 +19,11 @@ set(FPP "${CMAKE_Fortran_COMPILER}")
 if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
   # For Cray Compiler
   set(FPPFLAGS "-e P")
+  set(FPP_REDIRECT false)
 else()
   # Std option for gfortran
   set(FPPFLAGS "-E")
+  set(FPP_REDIRECT true)
 endif()
 set(CPP_OPT "-cpp")
 set(CLAW_CONF_FILE "claw_f.conf")
