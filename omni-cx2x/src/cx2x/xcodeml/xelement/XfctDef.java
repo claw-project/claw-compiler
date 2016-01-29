@@ -12,13 +12,13 @@ import cx2x.xcodeml.helper.*;
  * The XfctDef represents the FfunctionDefinition (5.3) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: (name, symbols?, params?, declarations?, body)
  * - Required:
  *   - name (text)
- *   - body
+ *   - body (Xbody)
  * - Optional:
  *   - symbols (XsymbolTable)
- *   - params
+ *   - params  TODO
  *   - declarations (XdeclTable)
  *
  * @author clementval
@@ -27,6 +27,7 @@ import cx2x.xcodeml.helper.*;
 public class XfctDef extends Xfct implements Xclonable<XfctDef> {
 
   private XsymbolTable _symbolTable = null;
+  private Xparams _params = null;
   private XdeclTable _declTable = null;
   private Xbody _body = null;
 
@@ -38,6 +39,7 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
   public XfctDef(Element baseElement){
     super(baseElement);
     _symbolTable = XelementHelper.findSymbols(this, false);
+    _params = XelementHelper.findParams(this, false);
     _declTable = XelementHelper.findDeclarations(this, false);
     _body = XelementHelper.findBody(this, false);
   }
@@ -64,6 +66,15 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
    */
   public Xbody getBody(){
     return _body;
+  }
+
+
+  /**
+   * Get the parameters list.
+   * @return Parameters list.
+   */
+  public Xparams getParams(){
+    return _params;
   }
 
   /**
