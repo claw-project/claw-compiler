@@ -126,7 +126,7 @@ done
 for file in "${f_files_transformation[@]}"; do
   [ $ENABLE_DEBUG = true ] && echo "Prepocessing ..."
   FILE=("${file}")
-  BASENAME=`basename ${FILE}`
+  BASENAME=`basename ${FILE%.*}`
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
