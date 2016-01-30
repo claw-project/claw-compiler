@@ -5,13 +5,12 @@
 CLAW Fortran compiler (clawfc) is built on the top of the
 [OMNI Compiler](http://www,omni-compiler.org). It is currently tested with
 version
-[0.9.2](http://omni-compiler.org/download/stable/omnicompiler-0.9.2.tar.bz2).
+[0.9.3](http://omni-compiler.org/download/stable/omnicompiler-0.9.3.tar.bz2).
 
 
 To build the and install the CLAW Fortran Compiler, use the followings commands.
-By default, the `OMNI_HOME` variable is set up to `/usr/local/`. If your
-installation of OMNI Compiler is pointing to the default directory, the option
-is not necessary.
+_NOTE_: OMNI Compiler is packaged with the CLAW Compiler so you don't need to
+install a separated version. 
 
 ```bash
 git clone git@github.com:clementval/claw-compiler.git
