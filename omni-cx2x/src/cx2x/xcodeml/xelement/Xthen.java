@@ -12,7 +12,7 @@ import cx2x.xcodeml.helper.*;
  * The Xthen represents the then (6.28) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: (body)
  * - Required:
  *   - body (Xbody)
  *

@@ -13,7 +13,7 @@ import cx2x.xcodeml.helper.*;
  * The Xcondition represents the condition (6.27) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: (exprModel)
  * - Required:
  *   - exprModel (XexprModel)
  *

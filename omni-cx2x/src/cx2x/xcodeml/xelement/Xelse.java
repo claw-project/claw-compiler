@@ -12,7 +12,7 @@ import cx2x.xcodeml.helper.*;
  * The Xelse represents the else (6.29) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: (body)
  * - Required:
  *   - body (Xbody)
  *
