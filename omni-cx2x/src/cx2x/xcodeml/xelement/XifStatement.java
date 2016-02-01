@@ -88,7 +88,7 @@ public class XifStatement extends XbaseElement {
 
   /**
    * Get the else block of the if statement
-   * @return A Xelse object. Null if there is no else block. 
+   * @return A Xelse object. Null if there is no else block.
    */
   public Xelse getElse(){
     return _else;

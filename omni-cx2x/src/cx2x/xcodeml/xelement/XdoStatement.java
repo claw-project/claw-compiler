@@ -15,7 +15,7 @@ import cx2x.xcodeml.helper.*;
  * The XdoStatement represents the FdoStatement (6.5) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: (Var?, indexRange?, body?)
  * - Required:
  *   - Var (Xvar)
  *   - indexRange (XindexRange)
@@ -23,11 +23,14 @@ import cx2x.xcodeml.helper.*;
  * Attributes:
  * - Optional: construct_name (text)
  *
+ * Can have lineno and file attributes
+ *
  * @author clementval
  */
 
 public class XdoStatement extends XbaseElement {
   private XloopIterationRange _iterationRange = null;
+  // TODO separate var/indexRange
   private Xbody _body = null;
   private String _construct_name = null;
 
