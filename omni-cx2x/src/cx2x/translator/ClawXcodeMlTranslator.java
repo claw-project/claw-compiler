@@ -156,7 +156,6 @@ public class ClawXcodeMlTranslator {
         if(!XelementHelper.writeXcodeML(_program,
             _xcodemlOutputFile, INDENT_OUTPUT))
         {
-          _program.addError("Cannot write XcodeML output file", -1);
           abort();
         }
         return;
@@ -190,7 +189,6 @@ public class ClawXcodeMlTranslator {
       if(!XelementHelper.writeXcodeML(_program, _xcodemlOutputFile,
           INDENT_OUTPUT))
       {
-        _program.addError("Cannot output transformed XcodeML", -1);
         abort();
       }
 

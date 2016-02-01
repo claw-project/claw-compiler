@@ -914,12 +914,10 @@ public class XelementHelper {
         transformer.transform(source, console);
       }
     } catch (TransformerConfigurationException ex){
-      // TODO move to stderr and correct error msg
-      System.out.println("Cannot output file: " + ex.getMessage());
+      xcodeml.addError("Cannot output file: " + ex.getMessage(), 0);
       return false;
     } catch (TransformerException ex){
-      // TODO move to stderr and correct error msg
-      System.out.println("Cannot output file: " + ex.getMessage());
+      xcodeml.addError("Cannot output file: " + ex.getMessage(), 0);
       return false;
     }
     return true;
