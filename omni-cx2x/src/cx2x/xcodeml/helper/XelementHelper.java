@@ -179,7 +179,7 @@ public class XelementHelper {
    *                false, only direct children are search for.
    * @return        A XdoStatement object if found. Null otherwise.
    */
-  public static XdoStatement findLoop(XfctDef fctDef, boolean any){
+  public static XdoStatement findDoStatement(XfctDef fctDef, boolean any){
     Xbody body = fctDef.getBody();
     return XelementHelper.findDoStatement(body, any);
   }
