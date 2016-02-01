@@ -13,7 +13,7 @@ import cx2x.xcodeml.helper.*;
  * The XifStatement represents the FifStatement (6.4) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: (condition, then, else?)
  * - Required:
  *   - condition (Xcondition)
  *   - then (Xthen)
@@ -21,6 +21,8 @@ import cx2x.xcodeml.helper.*;
  *   - else (Xelse)
  * Attributes:
  * - Optional: construct_name (text)
+ *
+ * Can have lineno and file attribtues
  *
  * @author clementval
  */
@@ -66,5 +68,29 @@ public class XifStatement extends XbaseElement {
    */
   public String getConstructName(){
     return _construct_name;
+  }
+
+  /**
+   * Get the condition part of the if statement.
+   * @return A Xcondition object.
+   */
+  public Xcondition getCondition(){
+    return _cond;
+  }
+
+  /**
+   * Get the then block of the if statement.
+   * @return A Xthen object.
+   */
+  public Xthen getThen(){
+    return _then;
+  }
+
+  /**
+   * Get the else block of the if statement
+   * @return A Xelse object. Null if there is no else block. 
+   */
+  public Xelse getElse(){
+    return _else;
   }
 }
