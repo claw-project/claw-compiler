@@ -14,18 +14,20 @@ import cx2x.xcodeml.helper.*;
  * The XvarDecl represents the varDecl (5.4) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: (name, value?)
  * - Required:
  *   - name (Xname)
  * - Optional:
  *   - value (text)
+ *
+ * Can have lineno and file attributes
  *
  * @author clementval
  */
 
 public class XvarDecl extends Xdecl {
   private Xname _name = null;
-  private Xvalue _value = null; // TODO to be removed
+  private Xvalue _value = null;
   private boolean _hasValue = false;
 
   /**

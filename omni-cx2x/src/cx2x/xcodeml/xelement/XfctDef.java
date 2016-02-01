@@ -18,8 +18,10 @@ import cx2x.xcodeml.helper.*;
  *   - body (Xbody)
  * - Optional:
  *   - symbols (XsymbolTable)
- *   - params  TODO
+ *   - params  (Xparams)
  *   - declarations (XdeclTable)
+ *
+ * Can have lineno and file attributes
  *
  * @author clementval
  */
