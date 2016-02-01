@@ -126,17 +126,17 @@ public class XelementHelper {
    * @return A list of all found real constants.
    */
   public static List<XrealConstant> getRealConstants(XbaseElement parent){
-    // TODO find only in the direct children !!!!
     List<XrealConstant> elements = new ArrayList<>();
-    NodeList nList = parent.getBaseElement().
-      getElementsByTagName(XelementName.F_REAL_CONST);
-    for (int i = 0; i < nList.getLength(); i++) {
-      Node n = nList.item(i);
+    Node n = parent.getBaseElement().getFirstChild();
+    while(n != null){
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) n;
-        XrealConstant ref = new XrealConstant(el);
-        elements.add(ref);
+        if(el.getTagName().equals(XelementName.F_REAL_CONST)) {
+          XrealConstant ref = new XrealConstant(el);
+          elements.add(ref);
+        }
       }
+      n = n.getNextSibling();
     }
     return elements;
   }
