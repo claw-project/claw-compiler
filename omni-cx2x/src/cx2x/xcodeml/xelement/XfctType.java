@@ -15,7 +15,7 @@ import cx2x.xcodeml.helper.*;
  *
  * Elements: (params?)
  * - Optional:
- *   - params TODO
+ *   - params (Xparams)
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
