@@ -460,7 +460,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    */
   private void insertAccOption(Xpragma insertPoint, XcodeProg xcodeml){
     Xpragma accAdditionalOption = Xpragma.createEmpty(xcodeml);
-    accAdditionalOption.setData("acc " + _accAdditionalOption); // TODO move acc
+    accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
+        _accAdditionalOption);
     XelementHelper.insertAfter(insertPoint, accAdditionalOption);
   }
 
