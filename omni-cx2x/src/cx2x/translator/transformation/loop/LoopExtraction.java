@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 // Cx2x import
+import cx2x.translator.common.Constant;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -203,8 +204,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     // Duplicate function definition
     XfctDef clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
-    // TODO new name should be generated and unique
-    String newFctName = clonedFctDef.getFctName() + "_extracted" +
+    String newFctName = clonedFctDef.getFctName() + Constant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
     clonedFctDef.updateName(newFctName);
     clonedFctDef.updateType(newFctTypeHash);

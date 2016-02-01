@@ -15,4 +15,6 @@ public class Constant {
   public static final String CONTINUATION_LINE_SYMBOL = "&";
   public static final String DEFAULT_STEP_VALUE = "1";
 
+  public static final String EXTRACTION_SUFFIX = "_extracted";
+
 }
