@@ -186,8 +186,13 @@ public class ClawXcodeMlTranslator {
         }
       }
 
-      // TODO handle the return value
-      XelementHelper.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
+
+      if(!XelementHelper.writeXcodeML(_program, _xcodemlOutputFile,
+          INDENT_OUTPUT))
+      {
+        _program.addError("Cannot output transformed XcodeML", -1);
+        abort();
+      }
 
     } catch (Exception ex) {
       // TODO handle exception
