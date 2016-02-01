@@ -613,10 +613,17 @@ public class XelementHelper {
    * @return The number of index ranges found.
    */
   public static int findNumberOfRange(XbaseElement parent){
-    // TODO search only in the direct children.
-    NodeList elements = parent.getBaseElement().
-      getElementsByTagName(XelementName.INDEX_RANGE);
-    return elements.getLength();
+    int indexCounter = 0;
+    Node node = parent.getBaseElement().getFirstChild();
+    while(node != null){
+      if(node.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element)node;
+        if(element.getTagName().equals(XelementName.INDEX_RANGE)){
+          ++indexCounter;
+        }
+      }
+    }
+    return indexCounter;
   }
 
   /**
