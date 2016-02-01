@@ -162,15 +162,13 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       System.exit(1);
     }
 
-    // Find loop in function
-    // TODO find any loops ? or subroutine must have only one loop ? ...
-    _extractedLoop = XelementHelper.findDoStatement(_fctDefToExtract, true);
-
-
-    if(_extractedLoop == null){
-      System.err.println("Could not locate inner loop in subroutine "
-        + _fctDefToExtract.getFctName());
-      System.exit(1);
+    // Find the loop to be extracted
+    try {
+      _extractedLoop = locateDoStatement(_fctDefToExtract);
+    } catch (IllegalTransformationException itex){
+      xcodeml.addError(itex.getMessage(),
+          _pragma.getLine());
+      return false;
     }
 
     if(!checkMappingInformation(xcodeml)){
@@ -239,18 +237,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
-    XdoStatement loopInClonedFct = XelementHelper.findDoStatement(clonedFctDef, true);
-    if(loopInClonedFct == null){
-      throw new IllegalTransformationException("No loop found in function",
-          _pragma.getLine());
-    }
-
-    if(!_range.equals(loopInClonedFct.getIterationRange())){
-      throw new IllegalTransformationException(
-          "Iteration range is different than the loop to be extracted",
-          _pragma.getLine()
-      );
-    }
+    XdoStatement loopInClonedFct = locateDoStatement(clonedFctDef);
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " + _pragma.getData());
@@ -453,6 +440,44 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     }
     this.transformed();
+  }
+
+  /**
+   *
+   * @param from
+   * @return
+   */
+  private XdoStatement locateDoStatement(XbaseElement from)
+      throws IllegalTransformationException
+  {
+    XdoStatement foundStatement = XelementHelper.findDoStatement(from, true);
+    if(foundStatement == null){
+      throw new IllegalTransformationException("No loop found in function",
+          _pragma.getLine());
+    } else {
+      if(!_range.equals(foundStatement.getIterationRange())) {
+        // Try to find another loops that meet the criteria
+        do {
+          foundStatement = XelementHelper.findNextDoStatement(foundStatement);
+        } while (foundStatement != null
+            && !_range.equals(foundStatement.getIterationRange()));
+      }
+    }
+
+    if(foundStatement == null){
+      throw new IllegalTransformationException("No loop found in function",
+          _pragma.getLine());
+    }
+
+    if(foundStatement != null
+        && !_range.equals(foundStatement.getIterationRange()))
+    {
+      throw new IllegalTransformationException(
+          "Iteration range is different than the loop to be extracted",
+          _pragma.getLine()
+      );
+    }
+    return foundStatement;
   }
 
   /**
