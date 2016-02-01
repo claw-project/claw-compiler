@@ -63,8 +63,6 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
       _isProgram = true;
     }
 
-    // TODO read parameters as Xname element
-
     // read optional attributes
     _resultName = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_RESULT_NAME);
