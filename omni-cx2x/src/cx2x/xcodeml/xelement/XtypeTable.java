@@ -46,37 +46,23 @@ public class XtypeTable extends XbaseElement {
    * Read the type table.
    */
   private void readTable(){
-    // TODO read all element in one loop.
-    // Read basic type
-    NodeList basicTypes = baseElement.getElementsByTagName(XelementName.BASIC_TYPE);
-    for (int i = 0; i < basicTypes.getLength(); i++) {
-      Node n = basicTypes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        XbasicType bt = new XbasicType(el);
-        _table.put(bt.getType(), bt);
-      }
-    }
-
-    // Read fct type
-    NodeList fctTypes = baseElement.getElementsByTagName(XelementName.FCT_TYPE);
-    for (int i = 0; i < fctTypes.getLength(); i++) {
-      Node n = fctTypes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        XfctType ft = new XfctType(el);
-        _table.put(ft.getType(), ft);
-      }
-    }
-
-    // Read struct type
-    NodeList structTypes =
-      baseElement.getElementsByTagName(XelementName.F_STRUCT_TYPE);
-    for (int i = 0; i < structTypes.getLength(); i++) {
-      Node n = structTypes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        // TODO create XstructType object and insert it in the table
+    Node crtNode = baseElement.getFirstChild();
+    while(crtNode != null){
+      if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element)crtNode;
+        switch (el.getTagName()){
+          case XelementName.BASIC_TYPE:
+            XbasicType bt = new XbasicType(el);
+            _table.put(bt.getType(), bt);
+            break;
+          case XelementName.FCT_TYPE:
+            XfctType ft = new XfctType(el);
+            _table.put(ft.getType(), ft);
+            break;
+          case XelementName.F_STRUCT_TYPE:
+            // TODO create XstructType object and insert it in the table
+            break;
+        }
       }
     }
   }
