@@ -84,20 +84,20 @@ public class Xname extends XbaseElement {
    * @return True if the two objects are identical. False otherwise.
    */
   public boolean isIdentical(Xname other){
-    // TODO override equals ?
-    return isIdentical(other.getValue(), other.getType());
+    if(other == null){
+      return false;
+    }
+    return _nameValue.equals(other.getValue());
   }
 
   /**
-   * Check whether a given name and type combination is identical with the
-   * current one.
+   * Check whether a given name is identical with the current one.
    * @param name The name to compare with.
-   * @param type The type to compare with.
-   * @return True if the two objects are identical. False otherwise.
+   * @return True if the name is identical with the name of this Xname.
+   * False otherwise.
    */
-  public boolean isIdentical(String name, String type){
-    return _nameValue.equals(name); //&& _type.equals(type);
-    //TODO analyze why type if not identical in fcall and fdef
+  public boolean isIdentical(String name){
+    return _nameValue.equals(name);
   }
 
   /**

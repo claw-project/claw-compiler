@@ -85,14 +85,13 @@ public class XelementHelper {
       return null;
     }
     String name = fctCall.getFctName();
-    String type = fctCall.getType();
     NodeList nList = xcodeml.getBaseElement().getElementsByTagName(XelementName.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
         XbaseElement dummyFctDef = new XbaseElement((Element)fctDefNode);
         Xname fctDefName = findName(dummyFctDef, false);
-        if(name != null && fctDefName.isIdentical(name, type)){
+        if(name != null && fctDefName.isIdentical(name)){
           return new XfctDef(dummyFctDef.getBaseElement());
         }
       }
