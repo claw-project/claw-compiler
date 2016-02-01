@@ -16,7 +16,8 @@ CLAW Fortran compiler options:
    --version           : print version.
    -h,--help           : print usage.
    --show-env          : show environment variables.
-   --no-dep            : don't generate .mod or .xmod file for dependencies
+   --no-dep            : don't generate .mod or .xmod file for dependencies.
+   -f,--force          : forece the translation of files without directives.
    --tmp               : output parallel code (__omni_tmp__<file>).
    --dry               : only print processing status (not compile).
    --debug             : save intermediate files in __omni_tmp__.
@@ -116,6 +117,8 @@ function claw_f_set_parameters()
         claw_f_print_help `basename $0`; exit 0;;
       --show-env)
         claw_f_show_env; exit 0;;
+      -f|--force)
+        FORCE_TRANSLATION=true;;
       --no-dep)
         RESOLVE_DEPENDENCIES=false;;
       --tmp)

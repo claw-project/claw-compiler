@@ -39,6 +39,7 @@ STOP_TRANSLATOR=false
 STOP_BACKEND=false
 STOP_COMPILE=false
 STOP_DEPENDENCIES=false
+FORCE_TRANSLATION=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib a.f b.F c.f90 d.F90 e.o --tmp --Wlfoo lib.a -omp -o a.out
@@ -104,20 +105,28 @@ omni_set_trap
 for file in "${f_files[@]}"
 do
   FILE=("${file}")
-  NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${FILE}")
-  if [ $NUM_DIRECTIVES = "0" ]
+  if ! [ $FORCE_TRANSLATION == true ]
   then
-    echo "Warning: file ${FILE} does not contains any code transformation. Skip ..."
-    if [ "${#output_dir}" != "0" ]
+    NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${FILE}")
+    if [ $NUM_DIRECTIVES = "0" ]
     then
-      cp ${FILE} ${output_dir}/${FILE}
+      echo "Warning: file ${FILE} does not contains any code transformation. Skip ..."
+      if [ "${#output_dir}" != "0" ]
+      then
+        cp ${FILE} ${output_dir}/${FILE}
+      else
+        cp ${FILE} ${output_file}
+      fi
     else
-      cp ${FILE} ${output_file}
+      f_files_transformation+=("${FILE}")
     fi
   else
     f_files_transformation+=("${FILE}")
   fi
 done
+
+
+### TODO check if f_files_transformation has any files in ...
 
 
 ### Preprocessor ###
