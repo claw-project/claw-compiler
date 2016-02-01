@@ -195,8 +195,7 @@ public class ClawXcodeMlTranslator {
       }
 
     } catch (Exception ex) {
-      // TODO handle exception
-      System.out.println("Transformation exception: ");
+      System.err.println("Transformation exception: ");
       ex.printStackTrace();
     }
   }
