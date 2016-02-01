@@ -120,10 +120,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       }
     }
 
-    // TODO Merge mapping if they have the exact same mapping vars to reduce the
-    // number of iteration for the demotions
-
-    return true; // TODO
+    return true;
   }
 
   /**
