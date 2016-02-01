@@ -153,8 +153,12 @@ public class ClawXcodeMlTranslator {
   public void transform() {
     try {
       if(!_canTransform){
-        // TODO handle return value
-        XelementHelper.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
+        if(!XelementHelper.writeXcodeML(_program,
+            _xcodemlOutputFile, INDENT_OUTPUT))
+        {
+          _program.addError("Cannot write XcodeML output file", -1);
+          abort();
+        }
         return;
       }
 
