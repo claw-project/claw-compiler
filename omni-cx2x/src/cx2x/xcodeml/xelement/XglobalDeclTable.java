@@ -16,7 +16,7 @@ import java.util.Hashtable;
  *
  * Elements: (FfunctionDefinition | FmoduleDefinition)*
  * - Optional:
- *   - FfunctionDefinition (XfctDef)
+ *   - FfunctionDefinition (XfunctionDefinition)
  *   - FmoduleDefinition (XmoduleDef)
  *
  * @author clementval
@@ -50,7 +50,7 @@ public class XglobalDeclTable extends XbaseElement {
       if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)currentNode;
         if(el.getTagName().equals(XelementName.FCT_DEFINITION)){
-          XfctDef fctDef = new XfctDef(el);
+          XfunctionDefinition fctDef = new XfunctionDefinition(el);
           _table.put(fctDef.getName().getValue(), fctDef);
         } else if(el.getTagName().equals(XelementName.F_MODULE_DEFINITION)){
           XmoduleDef moduleDef = new XmoduleDef(el);
@@ -64,13 +64,13 @@ public class XglobalDeclTable extends XbaseElement {
   /**
    * Get a specific function declaration based on its name.
    * @param name The name of the function to be returned.
-   * @return A XfctDef object if key is found. Null otherwise.
+   * @return A XfunctionDefinition object if key is found. Null otherwise.
    */
-  public XfctDef getFctDefinition(String name){
+  public XfunctionDefinition getFctDefinition(String name){
     if(_table.containsKey(name)) {
       XbaseElement el = _table.get(name);
-      if(el instanceof XfctDef){
-        return (XfctDef)el;
+      if(el instanceof XfunctionDefinition){
+        return (XfunctionDefinition)el;
       }
     }
     return null;

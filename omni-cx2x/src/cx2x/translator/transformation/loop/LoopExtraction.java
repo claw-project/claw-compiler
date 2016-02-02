@@ -34,8 +34,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private Map<String, ClawMapping> _fctMappingMap = null;
   private Map<String, ClawMapping> _argMappingMap = null;
   private XfctCall _fctCall = null;
-  private XfctDef _fctDef = null; // Fct holding the fct call
-  private XfctDef _fctDefToExtract = null;
+  private XfunctionDefinition _fctDef = null; // Fct holding the fct call
+  private XfunctionDefinition _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
   private ClawRange _range = null;
 
@@ -202,7 +202,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
      */
 
     // Duplicate function definition
-    XfctDef clonedFctDef = _fctDefToExtract.cloneObject();
+    XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     String newFctName = clonedFctDef.getName().getValue() + Constant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();

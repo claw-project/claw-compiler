@@ -78,8 +78,8 @@ public class XelementHelper {
    * @param fctCall The function call used to find the function definition.
    * @return A function definition element if found. Null otherwise.
    */
-  public static XfctDef findFunctionDefinition(XcodeProgram xcodeml,
-    XfctCall fctCall)
+  public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
+                                                           XfctCall fctCall)
   {
     if(xcodeml.getBaseElement() == null){
       return null;
@@ -92,7 +92,7 @@ public class XelementHelper {
         XbaseElement dummyFctDef = new XbaseElement((Element)fctDefNode);
         Xname fctDefName = findName(dummyFctDef, false);
         if(name != null && fctDefName.isIdentical(name)){
-          return new XfctDef(dummyFctDef.getBaseElement());
+          return new XfunctionDefinition(dummyFctDef.getBaseElement());
         }
       }
     }
@@ -152,9 +152,9 @@ public class XelementHelper {
   /**
    * Find function definition in the ancestor.
    * @param child The child element to search from.
-   * @return A XfctDef object if found. Null otherwise.
+   * @return A XfunctionDefinition object if found. Null otherwise.
    */
-  public static XfctDef findParentFctDef(XbaseElement child){
+  public static XfunctionDefinition findParentFctDef(XbaseElement child){
     if(child == null || child.getBaseElement() == null){
       return null;
     }
@@ -163,7 +163,7 @@ public class XelementHelper {
       if (parent.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) parent;
         if(element.getTagName().equals(XelementName.FCT_DEFINITION)){
-          return new XfctDef(element);
+          return new XfunctionDefinition(element);
         }
       }
       parent = parent.getParentNode();
@@ -178,7 +178,7 @@ public class XelementHelper {
    *                false, only direct children are search for.
    * @return        A XdoStatement object if found. Null otherwise.
    */
-  public static XdoStatement findDoStatement(XfctDef fctDef, boolean any){
+  public static XdoStatement findDoStatement(XfunctionDefinition fctDef, boolean any){
     Xbody body = fctDef.getBody();
     return XelementHelper.findDoStatement(body, any);
   }

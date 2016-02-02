@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 
 /**
- * The XfctDef represents the FfunctionDefinition (5.3) element in XcodeML
+ * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in XcodeML
  * intermediate representation.
  *
  * Elements: (name, symbols?, params?, declarations?, body)
@@ -26,7 +26,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfctDef extends XenhancedElement implements Xclonable<XfctDef> {
+public class XfunctionDefinition extends XenhancedElement implements Xclonable<XfunctionDefinition> {
 
   // Elements
   private XsymbolTable _symbolTable = null;
@@ -40,7 +40,7 @@ public class XfctDef extends XenhancedElement implements Xclonable<XfctDef> {
    * inner information (elements and attributes).
    * @param baseElement The root element of the Xelement
    */
-  public XfctDef(Element baseElement){
+  public XfunctionDefinition(Element baseElement){
     super(baseElement);
     _symbolTable = XelementHelper.findSymbols(this, false);
     _params = XelementHelper.findParams(this, false);
@@ -93,10 +93,10 @@ public class XfctDef extends XenhancedElement implements Xclonable<XfctDef> {
 
   /**
    * Create an identical copy of the current function definition.
-   * @return A new XfctDef object that is the clone of this function definition.
+   * @return A new XfunctionDefinition object that is the clone of this function definition.
    */
-  public XfctDef cloneObject(){
+  public XfunctionDefinition cloneObject(){
     Element clone = (Element)cloneNode();
-    return new XfctDef(clone);
+    return new XfunctionDefinition(clone);
   }
 }

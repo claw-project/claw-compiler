@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Test features of the XfctDef class.
+ * Test features of the XfunctionDefinition class.
  *
  * @author clementval
  */
@@ -38,7 +38,7 @@ public class XfunctionDefinitionTest {
 
   @Test
   public void basicFunctionDefinitionTest(){
-    XfctDef fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
+    XfunctionDefinition fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
     assertEquals("force_dummy", fctDef.getName().getValue());
     assertEquals(1, fctDef.getLineNo());

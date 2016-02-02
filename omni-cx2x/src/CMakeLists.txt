@@ -43,7 +43,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xelement/XenhancedElement.java
   cx2x/xcodeml/xelement/XexprModel.java
   cx2x/xcodeml/xelement/XelementName.java
-  cx2x/xcodeml/xelement/XfctDef.java
+  cx2x/xcodeml/xelement/XfunctionDefinition.java
   cx2x/xcodeml/xelement/XfctCall.java
   cx2x/xcodeml/xelement/XfctType.java
   cx2x/xcodeml/xelement/XglobalDeclTable.java
