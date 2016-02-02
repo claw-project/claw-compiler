@@ -1234,7 +1234,7 @@ public class XelementHelper {
                                                        XcodeProgram xcodeml)
   {
     String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null){
+    if(elementName != null){
       Element element = xcodeml.getDocument().createElement(elementName);
       try {
         return xElementClass.

@@ -43,6 +43,9 @@ public enum Xscope {
    * @return Corresponding enum value.
    */
   public static Xscope fromString(String value){
+    if(value == null){
+      return null;
+    }
     switch (value) {
       case XelementName.SCOPE_LOCAL:
         return LOCAL;
