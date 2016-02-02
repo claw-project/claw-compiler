@@ -100,22 +100,4 @@ public class Xname extends XbaseElement {
     return _nameValue.equals(name);
   }
 
-  /**
-   * Create a name element with value and type in the given program.
-   * @param xcodeml The XcodeProgram object in which the empty element is created.
-   * @param value   Value of the element.
-   * @param type    Type of the name element.
-   * @return The empty element created.
-   */
-  public static Xname createEmpty(XcodeProgram xcodeml, String value,
-                                  String type)
-  {
-    Element nameElement = xcodeml.getDocument().
-      createElement(XelementName.NAME);
-    Xname name = new Xname(nameElement);
-    name.setName(value);
-    name.setType(type);
-    return name;
-  }
-
 }
