@@ -326,7 +326,9 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
               XelementHelper.createEmpty(XarrayRef.class, xcodeml);
           newArg.setType(type.getRef());
 
-          XvarRef varRef = XvarRef.createEmpty(xcodeml, varArg.getType());
+          XvarRef varRef = XelementHelper.createEmpty(XvarRef.class, xcodeml);
+          varRef.setType(varArg.getType());
+
           varRef.append(varArg, true);
           newArg.append(varRef);
 

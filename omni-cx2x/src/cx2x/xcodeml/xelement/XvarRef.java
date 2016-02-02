@@ -60,6 +60,16 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
   }
 
   /**
+   * Set the associated type.
+   * @param type The type.
+   */
+  public void setType(String type){
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, type);
+    }
+  }
+
+  /**
    * Check if the inner element is a var element.
    * @return True if the inner element is a var.
    */
@@ -96,20 +106,6 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
       return (XarrayRef)_innerElement;
     }
     return null;
-  }
-
-  /**
-   * Create an empty varRef element in the given program
-   * @param type Attribute of the element. If null, no attribute is set
-   * @return A new varRef element with no children.
-   */
-  public static XvarRef createEmpty(XcodeProgram xcodeml, String type){
-    Element arrayRef = xcodeml.getDocument().
-      createElement(XelementName.VAR_REF);
-    if(type != null){
-      arrayRef.setAttribute(XelementName.ATTR_TYPE, type);
-    }
-    return new XvarRef(arrayRef);
   }
 
   /**
