@@ -103,6 +103,12 @@ public class XmlHelper {
     return new XfunctionDefinition(el);
   }
 
+  public static XfunctionCall createXfunctionCallFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XfunctionCall(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

@@ -111,6 +111,14 @@ public class XargumentsTable extends XbaseElement {
   }
 
   /**
+   *
+   * @return
+   */
+  public int count(){
+    return _table.size();
+  }
+
+  /**
    * Get an iterator on the arguments table
    * @return An iterator over the arguments table
    */
