@@ -158,7 +158,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(_fctDefToExtract == null){
       xcodeml.addError("Could not locate the function definition for: "
-          + _fctCall.getFctName(), _pragma.getLine());
+          + _fctCall.getName().getValue(), _pragma.getLine());
       return false;
     }
 
@@ -264,13 +264,14 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       _extractedLoop.getIterationRange());
 
     if(XmOption.isDebugOutput()){
-      System.out.println("  call wrapped with loop: " + _fctCall.getFctName()
-       + " --> " + clonedFctDef.getName().getValue());
+      System.out.println("  call wrapped with loop: " +
+          _fctCall.getName().getValue() + " --> " +
+          clonedFctDef.getName().getValue());
     }
 
     // Change called fct name
-    _fctCall.updateName(newFctName);
-    _fctCall.updateType(newFctTypeHash);
+    _fctCall.getName().setName(newFctName);
+    _fctCall.getName().setType(newFctTypeHash);
 
 
     // Adapt function call parameters and function declaration

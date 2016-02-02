@@ -14,7 +14,7 @@ import cx2x.xcodeml.helper.*;
  *
  * Elements:
  * - Required:
- *   - name (Xname) defined in the Xfct class
+ *   - name (Xname)
  * - Optional:
  *   - arguments (XargumentsTable)
  * Attribute:
@@ -23,9 +23,10 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfctCall extends Xfct {
+public class XfctCall extends XbaseElement {
   // Elements
   private XargumentsTable _arguments = null;
+  private Xname _name = null;
 
   // Attributes
   private boolean _isInstrinsic = false;
@@ -47,6 +48,7 @@ public class XfctCall extends Xfct {
 
     // Read element
     _arguments = XelementHelper.findArgumentsTable(this, false);
+    _name = XelementHelper.findName(this, false);
   }
 
   /**
@@ -71,5 +73,13 @@ public class XfctCall extends Xfct {
    */
   public XargumentsTable getArgumentsTable(){
     return _arguments;
+  }
+
+  /**
+   * Get the function name.
+   * @return Name of the function as an Xname object.
+   */
+  public Xname getName(){
+    return _name;
   }
 }

@@ -84,7 +84,7 @@ public class XelementHelper {
     if(xcodeml.getBaseElement() == null){
       return null;
     }
-    String name = fctCall.getFctName();
+    String name = fctCall.getName().getValue();
     NodeList nList = xcodeml.getBaseElement().getElementsByTagName(XelementName.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
