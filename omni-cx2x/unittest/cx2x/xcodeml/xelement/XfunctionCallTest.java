@@ -35,7 +35,9 @@ public class XfunctionCallTest {
     assertEquals("clawloop", fctCall.getName().getValue());
     assertEquals(2, fctCall.getArgumentsTable().count());
 
+    assertTrue(fctCall.getArgumentsTable().hasArgument("value1"));
     assertNotNull(fctCall.getArgumentsTable().findArgument("value1"));
+    assertTrue(fctCall.getArgumentsTable().hasArgument("value2"));
     assertNotNull(fctCall.getArgumentsTable().findArgument("value2"));
 
     XbaseElement arg1 = fctCall.getArgumentsTable().findArgument("value1");

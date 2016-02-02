@@ -100,22 +100,22 @@ public class XargumentsTable extends XbaseElement {
     _table.put(var.getValue(), var);
   }
 
-  /**
-   * Get an argument element based on its key value.
-   * @param key The key to search for the arguments.
-   * @return The derived XbaseElement if found. Null otherwiese.
-   */
-  public XbaseElement get(String key){
-    // TODO check if present otherwise null.
-    return _table.get(key);
-  }
 
   /**
-   *
-   * @return
+   * Get number of arguments presnet in the table.
+   * @return Number of arguements in the table.
    */
   public int count(){
     return _table.size();
+  }
+
+  /**
+   * Check if an argument is present in the argument table
+   * @param name Name of the argument to be checked.
+   * @return True if the argument is present. False otherwise.
+   */
+  public boolean hasArgument(String name){
+    return _table.containsKey(name);
   }
 
   /**
