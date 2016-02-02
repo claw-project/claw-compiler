@@ -105,7 +105,7 @@ public class XvarDecl extends Xdecl {
     Xname name = XelementHelper.createEmpty(Xname.class, xcodeml);
     name.setName(nameValue);
     name.setType(nameType);
-    
+
     Element varDeclElement = xcodeml.getDocument().
       createElement(XelementName.VAR_DECL);
     XvarDecl varDecl = new XvarDecl(varDeclElement);

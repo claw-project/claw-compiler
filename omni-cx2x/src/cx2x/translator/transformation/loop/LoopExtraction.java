@@ -322,7 +322,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
                     " is wrong ...", _pragma.getLine());
           }
 
-          XarrayRef newArg = XarrayRef.createEmpty(xcodeml, type.getRef());
+          XarrayRef newArg =
+              XelementHelper.createEmpty(XarrayRef.class, xcodeml);
+          newArg.setType(type.getRef());
+
           XvarRef varRef = XvarRef.createEmpty(xcodeml, varArg.getType());
           varRef.append(varArg, true);
           newArg.append(varRef);

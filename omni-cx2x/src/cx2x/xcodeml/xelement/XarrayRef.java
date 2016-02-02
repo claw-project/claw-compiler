@@ -104,6 +104,17 @@ public class XarrayRef extends XbaseElement {
     return _type;
   }
 
+
+  /**
+   * Set the type attribute of the arrayRef element.
+   * @param type Type of the arrayRef.
+   */
+  public void setType(String type){
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, type);
+    }
+  }
+
   /**
    * Append a XbaseElement as the last children of XarrayRef.
    * @param element The element to append.
@@ -131,19 +142,4 @@ public class XarrayRef extends XbaseElement {
     }
   }
 
-  /**
-   * Create an empty arrayRef element in the given program
-   * param type attribute of the element. If null, no attribute is set.
-   * @param xcodeml XcodeML program in which the new object is created.
-   * @param type    Optional type of the new arrayRef object.
-   * @return A new empty XarrayRef object with optional type.
-   */
-  public static XarrayRef createEmpty(XcodeProgram xcodeml, String type){
-    Element arrayRef = xcodeml.getDocument().
-      createElement(XelementName.F_ARRAY_REF);
-    if(type != null){
-      arrayRef.setAttribute(XelementName.ATTR_TYPE, type);
-    }
-    return new XarrayRef(arrayRef);
-  }
 }
