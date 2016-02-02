@@ -87,14 +87,23 @@ public class XtypeTable extends XbaseElement {
 
   /**
    * Get an element from the type table.
-   * @param key Key of the element to be returned.
+   * @param type Type of the element to be returned.
    * @return Xtype object if found in the table. Null otherwise.
    */
-  public Xtype get(String key) {
-    if(_table.containsKey(key)){
-      return _table.get(key);
+  public Xtype get(String type) {
+    if(_table.containsKey(type)){
+      return _table.get(type);
     }
     return null;
+  }
+
+  /**
+   * Check if a type is present in the type table
+   * @param type Type of the element to be checked.
+   * @return True if the element is present. False otherwise.
+   */
+  public boolean hasType(String type){
+    return _table.containsKey(type);
   }
 
   /**

@@ -91,6 +91,12 @@ public class XmlHelper {
     return new XsymbolTable(el);
   }
 
+  public static XtypeTable createXtypeTableFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XtypeTable(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {
