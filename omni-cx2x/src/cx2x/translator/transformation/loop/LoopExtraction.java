@@ -112,7 +112,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * Mapping using the same mapping variables are merged together.
    * @return True if all the conditions are respected. False otherwise.
    */
-  private boolean checkMappingInformation(XcodeProg xcodeml){
+  private boolean checkMappingInformation(XcodeProgram xcodeml){
     for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()){
       if(_fctCall.getArgumentsTable().findArgument(map.getKey()) == null){
         xcodeml.addError("Mapped variable " + map.getKey() +
@@ -130,7 +130,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if the transformation analysis succeeded. False otherwise.
    */
-  public boolean analyze(XcodeProg xcodeml, Transformer transformer){
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     XexprStatement _exprStmt = XelementHelper.findNextExprStatement(_pragma);
     if(_exprStmt == null){
       xcodeml.addError("No function call detected after loop-extract",
@@ -193,8 +193,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    *                    transformation part of the transformation.
    * @throws IllegalTransformationException
    */
-  public void transform(XcodeProg xcodeml, Transformer transformer,
-    LoopExtraction other) throws IllegalTransformationException
+  public void transform(XcodeProgram xcodeml, Transformer transformer,
+                        LoopExtraction other) throws IllegalTransformationException
   {
 
     /*
@@ -485,7 +485,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param insertPoint Statement just before the insertion
    * @param xcodeml     The XcodeML representation.
    */
-  private void insertAccOption(Xpragma insertPoint, XcodeProg xcodeml){
+  private void insertAccOption(Xpragma insertPoint, XcodeProgram xcodeml){
     Xpragma accAdditionalOption = Xpragma.createEmpty(xcodeml);
     accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
         _accAdditionalOption);
@@ -498,7 +498,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param iterationRange Iteration range to be applied to the do statement.
    * @return The created do statement.
    */
-  private XdoStatement wrapCallWithLoop(XcodeProg xcodeml,
+  private XdoStatement wrapCallWithLoop(XcodeProgram xcodeml,
     XloopIterationRange iterationRange)
   {
     // Create a new empty loop

@@ -39,7 +39,7 @@ public class ClawXcodeMlTranslator {
   private boolean _canTransform = false;
 
   private ClawTransformer _transformer = null;
-  private XcodeProg _program = null;
+  private XcodeProgram _program = null;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
@@ -61,7 +61,7 @@ public class ClawXcodeMlTranslator {
    * @throws Exception
    */
   public void analyze() throws Exception {
-    _program = new XcodeProg(_xcodemlInputFile);
+    _program = new XcodeProgram(_xcodemlInputFile);
     if(!_program.load()){
       abort();
     }
@@ -137,7 +137,7 @@ public class ClawXcodeMlTranslator {
    * @param xcodeml     The XcodeML object
    * @param translator  The current translator
    */
-  private void addOrAbort(Transformation t, XcodeProg xcodeml,
+  private void addOrAbort(Transformation t, XcodeProgram xcodeml,
                           Transformer translator)
   {
     if(t.analyze(xcodeml, translator)){

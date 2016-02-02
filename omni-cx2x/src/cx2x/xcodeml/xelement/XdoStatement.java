@@ -63,7 +63,7 @@ public class XdoStatement extends XbaseElement {
   /**
    * Create an empty arrayIndex element in the given program
    */
-  public static XdoStatement createEmpty(XcodeProg xcodeml,
+  public static XdoStatement createEmpty(XcodeProgram xcodeml,
     XloopIterationRange range)
   {
     Element element = xcodeml.getDocument().

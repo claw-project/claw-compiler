@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.transformation;
 
-import cx2x.xcodeml.xelement.XcodeProg;
+import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.exception.*;
 
 /**
@@ -27,9 +27,9 @@ public class IndependentTransformationGroup<T extends Transformation<? super T>>
   }
 
   /**
-   * @see TransformationGroup#applyTranslations(XcodeProg, Transformer)
+   * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
    */
-  public void applyTranslations(XcodeProg xcodeml, Transformer transformer)
+  public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
     throws IllegalTransformationException
   {
     for(T translation : _translations){

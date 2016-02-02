@@ -38,7 +38,7 @@ public class XarrayRefTest {
   public void transformVarToArrayRef() {
     /*File f = new File(TEST_DATA);
     assertTrue(f.exists());
-    XcodeProg xcodeml = new XcodeProg(TEST_DATA);
+    XcodeProgram xcodeml = new XcodeProgram(TEST_DATA);
     xcodeml.load();
     xcodeml.readTypeTable();
     xcodeml.readGlobalSymbolsTable();

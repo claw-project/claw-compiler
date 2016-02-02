@@ -138,7 +138,7 @@ public class XarrayRef extends XbaseElement {
    * @param type    Optional type of the new arrayRef object.
    * @return A new empty XarrayRef object with optional type.
    */
-  public static XarrayRef createEmpty(XcodeProg xcodeml, String type){
+  public static XarrayRef createEmpty(XcodeProgram xcodeml, String type){
     Element arrayRef = xcodeml.getDocument().
       createElement(XelementName.F_ARRAY_REF);
     if(type != null){

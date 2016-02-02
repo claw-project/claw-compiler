@@ -56,7 +56,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
    */
-  public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     _loop = XelementHelper.findNextDoStatement(_pragma);
     if(_loop == null){
       xcodeml.addError("Cannot find loop after directive",
@@ -75,8 +75,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
    *                        one.
    * @throws IllegalTransformationException
    */
-  public void transform(XcodeProg xcodeml, Transformer transformer,
-    LoopFusion loopFusionUnit) throws IllegalTransformationException
+  public void transform(XcodeProgram xcodeml, Transformer transformer,
+                        LoopFusion loopFusionUnit) throws IllegalTransformationException
   {
     _loop.appendToBody(loopFusionUnit.getLoop());
     loopFusionUnit.finalizeTransformation();

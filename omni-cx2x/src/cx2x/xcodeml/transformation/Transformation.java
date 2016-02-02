@@ -40,7 +40,7 @@ public abstract class Transformation<T> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if analysis succeeded. False otherwise.
    */
-  public abstract boolean analyze(XcodeProg xcodeml, Transformer transformer);
+  public abstract boolean analyze(XcodeProgram xcodeml, Transformer transformer);
 
   /**
    * Check whether the current transformation can be transformed together with
@@ -60,8 +60,8 @@ public abstract class Transformation<T> {
    *                    transformation part of the transformation.
    * @throws IllegalTransformationException
    */
-  public abstract void transform(XcodeProg xcodeml, Transformer transformer,
-    T other) throws IllegalTransformationException;
+  public abstract void transform(XcodeProgram xcodeml, Transformer transformer,
+                                 T other) throws IllegalTransformationException;
 
 
   /**

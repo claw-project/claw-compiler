@@ -99,8 +99,8 @@ public class XvarDecl extends Xdecl {
    * @param nameValue  Value of the element required in a varDecl
    * @param nameType   Type of the name element requited in a varDecl
    */
-  public static XvarDecl createEmpty(XcodeProg xcodeml, String nameValue,
-    String nameType)
+  public static XvarDecl createEmpty(XcodeProgram xcodeml, String nameValue,
+                                     String nameType)
   {
     Xname name = Xname.createEmpty(xcodeml, nameValue, nameType);
     Element varDeclElement = xcodeml.getDocument().

@@ -60,8 +60,8 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    *                    transformation part of the transformation.
    * @throws IllegalTransformationException
    */
-  public void transform(XcodeProg xcodeml, Transformer transformer,
-    LoopInterchange other) throws IllegalTransformationException
+  public void transform(XcodeProgram xcodeml, Transformer transformer,
+                        LoopInterchange other) throws IllegalTransformationException
   {
 
     analyze(xcodeml, transformer);
@@ -186,7 +186,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if the transformation can be performed. False otherwise.
    */
-  public boolean analyze(XcodeProg xcodeml, Transformer transformer){
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
     _loopLevel0 = XelementHelper.findNextDoStatement(_pragma);
 
@@ -235,7 +235,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    * @param vars    Array containing the induction variables
    * @return True if the new ordering is valid. False otherwise.
    */
-  private boolean checkNewOrderOption(XcodeProg xcodeml, String[] vars){
+  private boolean checkNewOrderOption(XcodeProgram xcodeml, String[] vars){
     for(String var : vars){
       if(!var.equals(_baseLoop0) && !var.equals(_baseLoop1)
         && !var.equals(_baseLoop2))

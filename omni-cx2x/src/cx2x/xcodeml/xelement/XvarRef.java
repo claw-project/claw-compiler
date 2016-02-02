@@ -103,7 +103,7 @@ public class XvarRef extends XbaseElement implements Xclonable<XvarRef> {
    * @param type Attribute of the element. If null, no attribute is set
    * @return A new varRef element with no children.
    */
-  public static XvarRef createEmpty(XcodeProg xcodeml, String type){
+  public static XvarRef createEmpty(XcodeProgram xcodeml, String type){
     Element arrayRef = xcodeml.getDocument().
       createElement(XelementName.VAR_REF);
     if(type != null){

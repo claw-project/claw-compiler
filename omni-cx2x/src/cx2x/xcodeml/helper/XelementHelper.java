@@ -78,7 +78,7 @@ public class XelementHelper {
    * @param fctCall The function call used to find the function definition.
    * @return A function definition element if found. Null otherwise.
    */
-  public static XfctDef findFunctionDefinition(XcodeProg xcodeml,
+  public static XfctDef findFunctionDefinition(XcodeProgram xcodeml,
     XfctCall fctCall)
   {
     if(xcodeml.getBaseElement() == null){
@@ -565,7 +565,7 @@ public class XelementHelper {
    *                false, only direct children are search for.
    * @return        A XtypeTable object if found. Null otherwise.
    */
-  public static XtypeTable findTypeTable(XcodeProg parent, boolean any){
+  public static XtypeTable findTypeTable(XcodeProgram parent, boolean any){
     return findXelement(parent, any, XtypeTable.class);
   }
 
@@ -576,7 +576,7 @@ public class XelementHelper {
    *                false, only direct children are search for.
    * @return        A XglobalSymbolTable object if found. Null otherwise.
    */
-  public static XglobalSymbolTable findGlobalSymbols(XcodeProg parent,
+  public static XglobalSymbolTable findGlobalSymbols(XcodeProgram parent,
     boolean any)
   {
     return findXelement(parent, any, XglobalSymbolTable.class);
@@ -589,7 +589,7 @@ public class XelementHelper {
    *                false, only direct children are search for.
    * @return        A XglobalSymbolTable object if found. Null otherwise.
    */
-  public static XglobalDeclTable findGlobalDeclarations(XcodeProg parent,
+  public static XglobalDeclTable findGlobalDeclarations(XcodeProgram parent,
                                                         boolean any)
   {
     return findXelement(parent, any, XglobalDeclTable.class);
@@ -790,7 +790,7 @@ public class XelementHelper {
    * @param xcodeml The XcodeML program to search in.
    * @return A list of all pragmas found in the XcodeML program.
    */
-  public static List<Xpragma> findAllPragmas(XcodeProg xcodeml){
+  public static List<Xpragma> findAllPragmas(XcodeProgram xcodeml){
     NodeList pragmaList = xcodeml.getDocument()
       .getElementsByTagName(XelementName.PRAGMA_STMT);
     List<Xpragma> pragmas = new ArrayList<>();
@@ -893,7 +893,7 @@ public class XelementHelper {
    * @param indent     Number of spaces used for the indentation
    * @return true if the output could be write without problems.
    */
-  public static boolean writeXcodeML(XcodeProg xcodeml, String outputFile, int indent) {
+  public static boolean writeXcodeML(XcodeProgram xcodeml, String outputFile, int indent) {
     try {
       XelementHelper.cleanEmptyTextNodes(xcodeml.getDocument());
       Transformer transformer

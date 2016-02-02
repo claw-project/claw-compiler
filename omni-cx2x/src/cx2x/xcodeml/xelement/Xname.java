@@ -102,13 +102,13 @@ public class Xname extends XbaseElement {
 
   /**
    * Create a name element with value and type in the given program.
-   * @param xcodeml The XcodeProg object in which the empty element is created.
+   * @param xcodeml The XcodeProgram object in which the empty element is created.
    * @param value   Value of the element.
    * @param type    Type of the name element.
    * @return The empty element created.
    */
-  public static Xname createEmpty(XcodeProg xcodeml, String value,
-    String type)
+  public static Xname createEmpty(XcodeProgram xcodeml, String value,
+                                  String type)
   {
     Element nameElement = xcodeml.getDocument().
       createElement(XelementName.NAME);

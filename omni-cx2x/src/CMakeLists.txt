@@ -32,7 +32,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xelement/Xbound.java
   cx2x/xcodeml/xelement/XcharacterConstant.java
   cx2x/xcodeml/xelement/Xclonable.java
-  cx2x/xcodeml/xelement/XcodeProg.java
+  cx2x/xcodeml/xelement/XcodeProgram.java
   cx2x/xcodeml/xelement/XcomplexConstant.java
   cx2x/xcodeml/xelement/Xcondition.java
   cx2x/xcodeml/xelement/Xconstant.java

@@ -44,7 +44,7 @@ public class XarrayIndex extends Xindex {
   /**
    * Create an empty arrayIndex element in the given program
    */
-  public static XarrayIndex createEmpty(XcodeProg xcodeml){
+  public static XarrayIndex createEmpty(XcodeProgram xcodeml){
     Element arrayIndex = xcodeml.getDocument().
       createElement(XelementName.ARRAY_INDEX);
     return new XarrayIndex(arrayIndex);

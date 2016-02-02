@@ -10,7 +10,7 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.XcodeProg;
+import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.Xpragma;
 
 /**
@@ -56,7 +56,7 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
    */
-  public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     return _pragma.getData().toLowerCase().startsWith(Constant.OPENACC_PREFIX);
   }
 
@@ -73,7 +73,7 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    * @param other           Not used in this transformation
    * @throws IllegalTransformationException
    */
-  public void transform(XcodeProg xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Transformer transformer,
                         OpenAccContinuation other)
       throws IllegalTransformationException
   {

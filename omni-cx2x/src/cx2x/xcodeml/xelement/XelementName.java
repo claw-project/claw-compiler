@@ -165,7 +165,7 @@ public class XelementName {
     tempMap.put(XvarDecl.class, VAR_DECL);
     tempMap.put(XvarRef.class, VAR_REF);
     tempMap.put(Xvalue.class, VALUE);
-    tempMap.put(XcodeProg.class, X_CODE_PROGRAM);
+    tempMap.put(XcodeProgram.class, X_CODE_PROGRAM);
     _classToElementNameMapping = Collections.unmodifiableMap(tempMap);
   }
 

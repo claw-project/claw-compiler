@@ -17,8 +17,8 @@ import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
 
 /**
- * The XcodeProg represents the XcodeProgram (2) element in XcodeML intermediate
- * representation.
+ * The XcodeProgram represents the XcodeProgram (2) element in XcodeML
+ * intermediate representation.
  *
  * Elements: ( typeTable, globalSymbols, globalDeclarations )
  * - Required:
@@ -32,16 +32,16 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XcodeProg extends XbaseElement {
+public class XcodeProgram extends XbaseElement {
   private Document _xcodemlDoc = null;
   private String _xcodemlInputFile = null;
 
-  // XcodeProg inner elements
+  // XcodeProgram inner elements
   private XtypeTable _typeTable = null;
   private XglobalSymbolTable _globalSymbolsTable = null;
   private XglobalDeclTable _globalDeclarationsTable = null;
 
-  // XcodeProg optional attributes
+  // XcodeProgram optional attributes
   private String _version = null;
   private String _language = null;
   private String _time = null;
@@ -54,10 +54,10 @@ public class XcodeProg extends XbaseElement {
   private List<XanalysisError> _errors;
 
   /**
-   * XcodeProg base constructor.
+   * XcodeProgram base constructor.
    * @param inputFile The XcodeML input file path.
    */
-  public XcodeProg(String inputFile){
+  public XcodeProgram(String inputFile){
     super(null);
     _xcodemlInputFile = inputFile;
     _errors = new ArrayList<>();

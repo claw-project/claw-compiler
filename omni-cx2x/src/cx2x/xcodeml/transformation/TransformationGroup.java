@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.transformation;
 
-import cx2x.xcodeml.xelement.XcodeProg;
+import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.exception.*;
 
 import java.util.ArrayList;
@@ -58,12 +58,12 @@ public abstract class TransformationGroup<T extends Transformation> {
   /**
    * Apply all transformation stored in this group. Method transform from each
    * transformation is called.
-   * @see Transformation#transform(XcodeProg, Transformer, Object)
+   * @see Transformation#transform(XcodeProgram, Transformer, Object)
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param transformer The transformer used to applied the transformations.
    * @throws IllegalTransformationException
    */
-  public abstract void applyTranslations(XcodeProg xcodeml,
+  public abstract void applyTranslations(XcodeProgram xcodeml,
     Transformer transformer) throws IllegalTransformationException;
 
 }

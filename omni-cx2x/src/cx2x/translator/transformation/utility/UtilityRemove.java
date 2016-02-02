@@ -35,7 +35,7 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
     _end = pragma;
   }
 
-  public boolean analyze(XcodeProg xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // if there is no end directive, the following statement must be a if or
     // do statement
@@ -53,8 +53,8 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
   }
 
 
-  public void transform(XcodeProg xcodeml, Transformer transformer,
-    UtilityRemove other) throws IllegalTransformationException
+  public void transform(XcodeProgram xcodeml, Transformer transformer,
+                        UtilityRemove other) throws IllegalTransformationException
   {
     if(_end == null){
       if(_do != null){
