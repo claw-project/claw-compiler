@@ -17,7 +17,7 @@ import java.util.Hashtable;
  * Elements: (FfunctionDefinition | FmoduleDefinition)*
  * - Optional:
  *   - FfunctionDefinition (XfctDef)
- *   - FmoduleDefinition (XmoduleDef) TODO
+ *   - FmoduleDefinition (XmoduleDef)
  *
  * @author clementval
  */
@@ -53,13 +53,13 @@ public class XglobalDeclTable extends XbaseElement {
           XfctDef fctDef = new XfctDef(el);
           _table.put(fctDef.getFctName(), fctDef);
         } else if(el.getTagName().equals(XelementName.F_MODULE_DEFINITION)){
-          // TODO when XmoduleDef is available
+          XmoduleDef moduleDef = new XmoduleDef(el);
+          _table.put(moduleDef.getName(), moduleDef);
         }
       }
       currentNode = currentNode.getNextSibling();
     }
   }
-
 
   /**
    * Get a specific function declaration based on its name.
@@ -76,7 +76,20 @@ public class XglobalDeclTable extends XbaseElement {
     return null;
   }
 
-  // TODO getModuleDefinition
+  /**
+   * Get a specific module declaration based on its name.
+   * @param name The name of the module to be returned.
+   * @return A XmoduleDef object if key is found. Null otherwise.
+   */
+  public XmoduleDef getModuleDefinition(String name){
+    if(_table.containsKey(name)){
+      XbaseElement el = _table.get(name);
+      if(el instanceof XmoduleDef){
+        return  (XmoduleDef)el;
+      }
+    }
+    return null;
+  }
 
   /**
    * Get the number of declarations in the table.
