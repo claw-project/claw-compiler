@@ -11,8 +11,8 @@ import org.w3c.dom.Node;
 import cx2x.xcodeml.helper.*;
 
 /**
- * The XtypeTable represents the typeTable (7.4.1) element in XcodeML intermediate
- * representation.
+ * The XtypeTable represents the typeTable (7.4.1) element in XcodeML
+ * intermediate representation.
  *
  * Elements: the base element can contains text data
  * Attributes:
