@@ -329,7 +329,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
           //  create arrayIndex
           for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
-            XarrayIndex arrayIndex = XarrayIndex.createEmpty(xcodeml);
+            XarrayIndex arrayIndex = XelementHelper.
+                createEmpty(XarrayIndex.class, xcodeml);
             // Find the mapping var in the local table (fct scope)
             XvarDecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());

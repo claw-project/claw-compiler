@@ -1220,4 +1220,30 @@ public class XelementHelper {
     return null;
   }
 
+
+
+
+
+  /**
+   * Create an empty arrayIndex element in the given program.
+   * @param xElementClass The class to be created
+   * @param xcodeml       The current XcodeML program.
+   * @return An empty arrayIndex element.
+   */
+  public static <T extends XbaseElement> T createEmpty(Class<T> xElementClass,
+                                                       XcodeProgram xcodeml)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null){
+      Element element = xcodeml.getDocument().createElement(elementName);
+      try {
+        return xElementClass.
+            getDeclaredConstructor(Element.class).newInstance(element);
+      } catch(Exception ex){
+        return null;
+      }
+    }
+    return null;
+  }
+
 }
