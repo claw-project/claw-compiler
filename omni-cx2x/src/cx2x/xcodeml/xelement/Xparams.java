@@ -38,7 +38,7 @@ public class Xparams extends XbaseElement {
    * Get the number of parameters in the params element.
    * @return Number of parameters.
    */
-  public int size(){
+  public int count(){
     return _parameters.size();
   }
 

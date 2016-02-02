@@ -46,7 +46,7 @@ public class XfctTypeTest {
     assertEquals("F0", f.getType());
 
     // Test parameters
-    assertEquals(2, f.getParams().size());
+    assertEquals(2, f.getParams().count());
     assertEquals("a", f.getParams().getAll().get(0).getValue());
     assertEquals("Fint", f.getParams().getAll().get(0).getType());
     assertEquals("b", f.getParams().getAll().get(1).getValue());
