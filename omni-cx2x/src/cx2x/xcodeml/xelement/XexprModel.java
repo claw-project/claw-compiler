@@ -19,7 +19,7 @@ package cx2x.xcodeml.xelement;
  *   - Var (Xvar)
  *   - FarrayRef (XarrayRef), FcharacterRef TODO, FmemberRef TODO,
  *     FcoArrayRef TODO, varRef (XvarRef)
- *   - functionCall (XfctCall)
+ *   - functionCall (XfunctionCall)
  *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
  *   - logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
  *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr TODO ALL
@@ -140,7 +140,7 @@ public class XexprModel {
    * @return True if the exprModel is a function call. False otherwise.
    */
   public boolean isFctCall(){
-    return isOfType(XfctCall.class);
+    return isOfType(XfunctionCall.class);
   }
 
   /**

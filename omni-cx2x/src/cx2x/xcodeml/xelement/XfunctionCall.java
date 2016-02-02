@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 
 /**
- * The XfctCall represents the functionCall (7.5.1) element in XcodeML
+ * The XfunctionCall represents the functionCall (7.5.1) element in XcodeML
  * intermediate representation.
  *
  * Elements:
@@ -23,7 +23,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfctCall extends XbaseElement {
+public class XfunctionCall extends XbaseElement {
   // Elements
   private XargumentsTable _arguments = null;
   private Xname _name = null;
@@ -37,7 +37,7 @@ public class XfctCall extends XbaseElement {
    * inner information (elements and attributes).
    * @param baseElement The root element of the Xelement
    */
-  public XfctCall(Element baseElement){
+  public XfunctionCall(Element baseElement){
     super(baseElement);
 
     // Read attributes

@@ -79,7 +79,7 @@ public class XelementHelper {
    * @return A function definition element if found. Null otherwise.
    */
   public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
-                                                           XfctCall fctCall)
+                                                           XfunctionCall fctCall)
   {
     if(xcodeml.getBaseElement() == null){
       return null;
@@ -145,7 +145,7 @@ public class XelementHelper {
    * @param loop The do statement to insert in.
    * @param call The function call to be inserted.
    */
-  public static void insertFctCallIntoLoop(XdoStatement loop, XfctCall call){
+  public static void insertFctCallIntoLoop(XdoStatement loop, XfunctionCall call){
     loop.getBody().getBaseElement().appendChild(call.getBaseElement().getParentNode());
   }
 
@@ -293,7 +293,7 @@ public class XelementHelper {
       case XelementName.VAR:
         return new XexprModel(new Xvar(element));
       case XelementName.FCT_CALL:
-        return new XexprModel(new XfctCall(element));
+        return new XexprModel(new XfunctionCall(element));
       case XelementName.DO_STMT:
         return new XexprModel(new XdoStatement(element));
     }
@@ -707,10 +707,10 @@ public class XelementHelper {
    * @param parent  Root element to search from.
    * @param any     If true, find in any nested element under parent. If
    *                false, only direct children are search for.
-   * @return        A XfctCall object if found. Null otherwise.
+   * @return        A XfunctionCall object if found. Null otherwise.
    */
-  public static XfctCall findFctCall(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XfctCall.class);
+  public static XfunctionCall findFctCall(XbaseElement parent, boolean any){
+    return findXelement(parent, any, XfunctionCall.class);
   }
 
   /**
@@ -718,7 +718,7 @@ public class XelementHelper {
    * @param exprStmt The expression statement to search from.
    * @return A function call element if found. Null otherwise.
    */
-  public static XfctCall findFctCall(XexprStatement exprStmt){
+  public static XfunctionCall findFctCall(XexprStatement exprStmt){
     if(exprStmt == null){
       return null;
     }
@@ -729,7 +729,7 @@ public class XelementHelper {
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element) nextNode;
         if(element.getTagName().equals(XelementName.FCT_CALL)){
-          return new XfctCall(element);
+          return new XfunctionCall(element);
         }
       }
     }

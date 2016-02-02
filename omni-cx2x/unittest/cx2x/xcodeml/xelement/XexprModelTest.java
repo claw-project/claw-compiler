@@ -112,7 +112,7 @@ public class XexprModelTest {
     assertNotNull(model);
     assertTrue(model.isVar());
 
-    // XfctCall
+    // XfunctionCall
     xml = XmlHelper.loadXMLFromString(exprModel_fctCall);
     assertNotNull(xml);
     element = new XbaseElement(xml.getDocumentElement());

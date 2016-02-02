@@ -33,7 +33,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private List<ClawMapping> _mappings = null;
   private Map<String, ClawMapping> _fctMappingMap = null;
   private Map<String, ClawMapping> _argMappingMap = null;
-  private XfctCall _fctCall = null;
+  private XfunctionCall _fctCall = null;
   private XfunctionDefinition _fctDef = null; // Fct holding the fct call
   private XfunctionDefinition _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
