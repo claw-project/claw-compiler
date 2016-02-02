@@ -86,7 +86,7 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
           Constant.CONTINUATION_LINE_SYMBOL);
       Xpragma newlyInserted = _pragma;
       for (int i = 2; i < pragmas.length; ++i) {
-        Xpragma p = Xpragma.createEmpty(xcodeml);
+        Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
         p.setFilename(_pragma.getFilename());
         p.setLine(_pragma.getLine() + (i - 1));
         if (i == pragmas.length - 1) {

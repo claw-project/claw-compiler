@@ -100,13 +100,4 @@ public class Xpragma extends XbaseElement implements Xclonable<Xpragma> {
     }
   }
 
-  /**
-   * Create an empty pragma element in the given program
-   * @return A new pragma element with no children.
-   */
-  public static Xpragma createEmpty(XcodeProgram xcodeml){
-    Element element = xcodeml.getDocument().
-        createElement(XelementName.PRAGMA_STMT);
-    return new Xpragma(element);
-  }
 }

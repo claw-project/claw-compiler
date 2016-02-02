@@ -411,10 +411,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     // Wrap with parallel section if option is set
     if(_hasParallelOption){
-      Xpragma parallelStart = Xpragma.createEmpty(xcodeml);
+      Xpragma parallelStart =
+          XelementHelper.createEmpty(Xpragma.class, xcodeml);
       parallelStart.setData("acc parallel");
 
-      Xpragma parallelEnd = Xpragma.createEmpty(xcodeml);
+      Xpragma parallelEnd =
+          XelementHelper.createEmpty(Xpragma.class, xcodeml);
       parallelEnd.setData("acc end parallel");
 
       XelementHelper.insertAfter(_pragma, parallelStart);
@@ -488,7 +490,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param xcodeml     The XcodeML representation.
    */
   private void insertAccOption(Xpragma insertPoint, XcodeProgram xcodeml){
-    Xpragma accAdditionalOption = Xpragma.createEmpty(xcodeml);
+    Xpragma accAdditionalOption = XelementHelper.
+        createEmpty(Xpragma.class, xcodeml);
     accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
         _accAdditionalOption);
     XelementHelper.insertAfter(insertPoint, accAdditionalOption);
