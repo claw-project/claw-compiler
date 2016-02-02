@@ -13,5 +13,5 @@ public interface Xcreatable<T extends XbaseElement> {
    * Construct an empty element of the defined type.
    * @return A new object of type T that is empty.
    */
-  T createEmpty();
+  T createEmpty(XcodeProgram program);
 }
