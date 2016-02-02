@@ -47,8 +47,8 @@ public class XtypeTableTest {
     assertTrue(typeTable.hasType("F23079f0"));
     Xtype type2 = typeTable.get("F23079f0");
     assertNotNull(type2);
-    assertTrue(type2 instanceof XfctType);
-    XfctType fType2 = (XfctType)type2;
+    assertTrue(type2 instanceof XfunctionType);
+    XfunctionType fType2 = (XfunctionType)type2;
     assertEquals(XelementName.TYPE_F_VOID, fType2.getReturnType());
     assertTrue(fType2.isProgram());
     assertFalse(fType2.isInternal());

@@ -215,9 +215,9 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
-    XfctType fctType = (XfctType)xcodeml
+    XfunctionType fctType = (XfunctionType)xcodeml
       .getTypeTable().get(_fctDefToExtract.getName().getType());
-    XfctType newFctType = fctType.cloneObject();
+    XfunctionType newFctType = fctType.cloneObject();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
 

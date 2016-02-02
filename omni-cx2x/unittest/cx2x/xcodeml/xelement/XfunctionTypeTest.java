@@ -5,18 +5,17 @@
 
 package cx2x.xcodeml.xelement;
 
-import cx2x.xcodeml.xelement.*;
 import helper.XmlHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * Test XfctType features
+ * Test XfunctionType features
  *
  * @author clementval
  */
-public class XfctTypeTest {
+public class XfunctionTypeTest {
 
   private static final String fctType1 =
       "<FfunctionType type=\"F0\" return_type=\"Freal\">" +
@@ -34,7 +33,7 @@ public class XfctTypeTest {
    */
   @Test
   public void simpleFctTypeTest(){
-    XfctType f = XmlHelper.createXfctTypeFromString(fctType1);
+    XfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
     assertNotNull(f);
 
 

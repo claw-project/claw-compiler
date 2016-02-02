@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 import cx2x.xcodeml.helper.*;
 
 /**
- * The XfctType represents the FfunctionType (3.4) element in XcodeML
+ * The XfunctionType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
  *
  * Elements: (params?)
@@ -24,7 +24,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfctType extends Xtype implements Xclonable<XfctType> {
+public class XfunctionType extends Xtype implements Xclonable<XfunctionType> {
 
   // Elements
   private Xparams _params = null;
@@ -42,7 +42,7 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
    * inner information (elements and attributes).
    * @param baseElement The root element of the Xelement
    */
-  public XfctType(Element baseElement){
+  public XfunctionType(Element baseElement){
     super(baseElement);
     readElementInformation();
   }
@@ -124,12 +124,12 @@ public class XfctType extends Xtype implements Xclonable<XfctType> {
   }
 
   /**
-   * A new object XfctType that is the clone of the current object.
-   * @return A new XfctType that is a clone of the current one.
+   * A new object XfunctionType that is the clone of the current object.
+   * @return A new XfunctionType that is a clone of the current one.
    */
-  public XfctType cloneObject() {
+  public XfunctionType cloneObject() {
     Node clone = cloneNode();
-    return new XfctType((Element) clone);
+    return new XfunctionType((Element) clone);
   }
 
 }

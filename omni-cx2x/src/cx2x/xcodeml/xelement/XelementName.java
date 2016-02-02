@@ -137,7 +137,7 @@ public class XelementName {
     tempMap.put(XexprStatement.class, EXPR_STMT);
     tempMap.put(XfunctionCall.class, FCT_CALL);
     tempMap.put(XfunctionDefinition.class, FCT_DEFINITION);
-    tempMap.put(XfctType.class, FCT_TYPE);
+    tempMap.put(XfunctionType.class, FCT_TYPE);
     tempMap.put(XarrayRef.class, F_ARRAY_REF);
     tempMap.put(XifStatement.class, F_IF_STMT);
     tempMap.put(XintConstant.class, F_INT_CONST);

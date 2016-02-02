@@ -61,7 +61,7 @@ else()
     cx2x/xcodeml/xelement/XbasicTypeTest.java
     cx2x/xcodeml/xelement/XcodeProgTest.java
     cx2x/xcodeml/xelement/XexprModelTest.java
-    cx2x/xcodeml/xelement/XfctTypeTest.java
+    cx2x/xcodeml/xelement/XfunctionTypeTest.java
     cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
     cx2x/xcodeml/xelement/XidTest.java
     cx2x/xcodeml/xelement/XloopIterationRangeTest.java
@@ -81,7 +81,7 @@ else()
     cx2x.xcodeml.xelement.XbasicTypeTest
     cx2x.xcodeml.xelement.XcodeProgTest
     cx2x.xcodeml.xelement.XexprModelTest
-    cx2x.xcodeml.xelement.XfctTypeTest
+    cx2x.xcodeml.xelement.XfunctionTypeTest
     cx2x.xcodeml.xelement.XfunctionDefinitionTest
     cx2x.xcodeml.xelement.XidTest
     cx2x.xcodeml.xelement.XloopIterationRangeTest

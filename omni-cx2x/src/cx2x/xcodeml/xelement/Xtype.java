@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 
 /**
- * Xtype is the base class for element in the XtypeTable (XbasicType, XfctType)
+ * Xtype is the base class for element in the XtypeTable (XbasicType, XfunctionType)
  *
  * @author clementval
  */

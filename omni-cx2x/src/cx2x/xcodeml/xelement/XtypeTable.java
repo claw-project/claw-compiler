@@ -7,7 +7,6 @@ package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.*;
 
@@ -18,7 +17,7 @@ import java.util.*;
  * Elements: ( FbasicType | FfunctionType | FstructType ) *
  * - Optional:
  *   - FbasicType (XbasicType)
- *   - FfunctionType (XfctType)
+ *   - FfunctionType (XfunctionType)
  *   - FstructType (XstructType)
  *
  * @author clementval
@@ -56,7 +55,7 @@ public class XtypeTable extends XbaseElement {
             _table.put(bt.getType(), bt);
             break;
           case XelementName.FCT_TYPE:
-            XfctType ft = new XfctType(el);
+            XfunctionType ft = new XfunctionType(el);
             _table.put(ft.getType(), ft);
             break;
           case XelementName.F_STRUCT_TYPE:

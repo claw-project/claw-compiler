@@ -73,10 +73,10 @@ public class XmlHelper {
     return new XbasicType(el);
   }
 
-  public static XfctType createXfctTypeFromString(String xml){
+  public static XfunctionType createXfctTypeFromString(String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
-    return new XfctType(el);
+    return new XfunctionType(el);
   }
 
   public static XglobalSymbolTable createXglobalSymbolFromString(String xml){
