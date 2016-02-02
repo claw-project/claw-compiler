@@ -364,8 +364,13 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
-          XvarDecl newVarDecl = XvarDecl.createEmpty(xcodeml,
-              var.getFctMapping(), varDeclType.getRef());
+          Xname tempName = XelementHelper.createEmpty(Xname.class, xcodeml);
+          tempName.setName(var.getFctMapping());
+          tempName.setType(varDeclType.getRef());
+          XvarDecl newVarDecl =
+              XelementHelper.createEmpty(XvarDecl.class, xcodeml);
+          newVarDecl.append(tempName);
+
           fctDeclarations.replace(newVarDecl);
           id.setType(varDeclType.getRef());
         }

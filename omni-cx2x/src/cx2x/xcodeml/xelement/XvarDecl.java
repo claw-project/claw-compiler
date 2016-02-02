@@ -94,23 +94,4 @@ public class XvarDecl extends Xdecl {
     }
   }
 
-  /**
-   * Create an empty varDecl element in the given program
-   * @param nameValue  Value of the element required in a varDecl
-   * @param nameType   Type of the name element requited in a varDecl
-   */
-  public static XvarDecl createEmpty(XcodeProgram xcodeml, String nameValue,
-                                     String nameType)
-  {
-    Xname name = XelementHelper.createEmpty(Xname.class, xcodeml);
-    name.setName(nameValue);
-    name.setType(nameType);
-
-    Element varDeclElement = xcodeml.getDocument().
-      createElement(XelementName.VAR_DECL);
-    XvarDecl varDecl = new XvarDecl(varDeclElement);
-    varDecl.append(name);
-    return varDecl;
-  }
-
 }
