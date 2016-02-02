@@ -204,26 +204,26 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     // Duplicate function definition
     XfctDef clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
-    String newFctName = clonedFctDef.getFctName() + Constant.EXTRACTION_SUFFIX +
+    String newFctName = clonedFctDef.getName().getValue() + Constant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
-    clonedFctDef.updateName(newFctName);
-    clonedFctDef.updateType(newFctTypeHash);
+    clonedFctDef.getName().setName(newFctName);
+    clonedFctDef.getName().setType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
-        .get(_fctDefToExtract.getFctName());
+        .get(_fctDefToExtract.getName().getValue());
     fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
     XfctType fctType = (XfctType)xcodeml
-      .getTypeTable().get(_fctDefToExtract.getFctType());
+      .getTypeTable().get(_fctDefToExtract.getName().getType());
     XfctType newFctType = fctType.cloneObject();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
 
     // Get the id from the global symbols table
     Xid globalFctId = xcodeml.getGlobalSymbolsTable()
-      .get(_fctDefToExtract.getFctName());
+      .get(_fctDefToExtract.getName().getValue());
 
     // If the fct is define in the global symbol table, duplicate it
     if(globalFctId != null){
@@ -241,7 +241,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " + _pragma.getData());
-      System.out.println("  created subroutine: " + clonedFctDef.getFctName());
+      System.out.println("  created subroutine: " + clonedFctDef.getName().getValue());
     }
 
     /*
@@ -265,7 +265,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(XmOption.isDebugOutput()){
       System.out.println("  call wrapped with loop: " + _fctCall.getFctName()
-       + " --> " + clonedFctDef.getFctName());
+       + " --> " + clonedFctDef.getName().getValue());
     }
 
     // Change called fct name

@@ -26,12 +26,14 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfctDef extends Xfct implements Xclonable<XfctDef> {
+public class XfctDef extends XbaseElement implements Xclonable<XfctDef> {
 
+  // Elements
   private XsymbolTable _symbolTable = null;
   private Xparams _params = null;
   private XdeclTable _declTable = null;
   private Xbody _body = null;
+  private Xname _name = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -44,6 +46,7 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
     _params = XelementHelper.findParams(this, false);
     _declTable = XelementHelper.findDeclarations(this, false);
     _body = XelementHelper.findBody(this, false);
+    _name = XelementHelper.findName(this, false);
   }
 
   /**
@@ -68,6 +71,15 @@ public class XfctDef extends Xfct implements Xclonable<XfctDef> {
    */
   public Xbody getBody(){
     return _body;
+  }
+
+
+  /**
+   * Get the function name.
+   * @return Name of the function as an Xname object.
+   */
+  public Xname getName(){
+    return _name;
   }
 
 

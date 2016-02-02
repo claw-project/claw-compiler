@@ -51,7 +51,7 @@ public class XglobalDeclTable extends XbaseElement {
         Element el = (Element)currentNode;
         if(el.getTagName().equals(XelementName.FCT_DEFINITION)){
           XfctDef fctDef = new XfctDef(el);
-          _table.put(fctDef.getFctName(), fctDef);
+          _table.put(fctDef.getName().getValue(), fctDef);
         } else if(el.getTagName().equals(XelementName.F_MODULE_DEFINITION)){
           XmoduleDef moduleDef = new XmoduleDef(el);
           _table.put(moduleDef.getName(), moduleDef);

@@ -40,6 +40,6 @@ public class XfunctionDefinitionTest {
   public void basicFunctionDefinitionTest(){
     XfctDef fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
-    assertEquals("force_dummy", fctDef.getFctName());
+    assertEquals("force_dummy", fctDef.getName().getValue());
   }
 }
