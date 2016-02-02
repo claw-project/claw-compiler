@@ -339,7 +339,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
-            Xvar newMappingVar = Xvar.createEmpty(xcodeml, Xscope.LOCAL.toString());
+            Xvar newMappingVar =
+                XelementHelper.createEmpty(Xvar.class, xcodeml);
+            newMappingVar.setScope(Xscope.LOCAL);
+
             newMappingVar.setType(mappingVarDecl.getName().getType());
             newMappingVar.setValue(mappingVarDecl.getName().getValue());
             arrayIndex.append(newMappingVar);
