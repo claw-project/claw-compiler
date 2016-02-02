@@ -64,6 +64,7 @@ public class XtypeTable extends XbaseElement {
             break;
         }
       }
+      crtNode = crtNode.getNextSibling();
     }
   }
 
