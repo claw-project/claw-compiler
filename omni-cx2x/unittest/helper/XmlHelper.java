@@ -97,6 +97,12 @@ public class XmlHelper {
     return new XtypeTable(el);
   }
 
+  public static XfctDef createXfunctionDefinitionFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XfctDef(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {
