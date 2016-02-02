@@ -128,6 +128,7 @@ public class XelementName {
     Map<Class, String> tempMap = new Hashtable<>();
     tempMap.put(XargumentsTable.class, ARGUMENTS);
     tempMap.put(XarrayIndex.class, ARRAY_INDEX);
+    tempMap.put(XarrayRef.class, F_ARRAY_REF);
     tempMap.put(XbasicType.class, BASIC_TYPE);
     tempMap.put(Xbody.class, BODY);
     tempMap.put(Xcondition.class, CONDITION);
