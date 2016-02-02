@@ -41,5 +41,8 @@ public class XfunctionDefinitionTest {
     XfctDef fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
     assertEquals("force_dummy", fctDef.getName().getValue());
+    assertEquals(1, fctDef.getLineNo());
+    assertEquals("original_code.f90", fctDef.getFile());
+
   }
 }

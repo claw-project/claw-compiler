@@ -21,12 +21,12 @@ import cx2x.xcodeml.helper.*;
  *   - params  (Xparams)
  *   - declarations (XdeclTable)
  *
- * Can have lineno and file attributes
+ * Can have lineno and file attributes (XenhancedElement)
  *
  * @author clementval
  */
 
-public class XfctDef extends XbaseElement implements Xclonable<XfctDef> {
+public class XfctDef extends XenhancedElement implements Xclonable<XfctDef> {
 
   // Elements
   private XsymbolTable _symbolTable = null;
