@@ -520,7 +520,9 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XloopIterationRange iterationRange)
   {
     // Create a new empty loop
-    XdoStatement loop = XdoStatement.createEmpty(xcodeml, iterationRange);
+
+    XdoStatement loop = XelementHelper.createWithEmptyBody(xcodeml,
+        iterationRange);
 
     // Insert the new empty loop just after the pragma
     XelementHelper.insertAfter(_pragma, loop);

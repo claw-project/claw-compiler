@@ -61,26 +61,6 @@ public class XdoStatement extends XbaseElement {
   }
 
   /**
-   * Create an empty arrayIndex element in the given program
-   */
-  public static XdoStatement createEmpty(XcodeProgram xcodeml,
-    XloopIterationRange range)
-  {
-    Element element = xcodeml.getDocument().
-      createElement(XelementName.DO_STMT);
-
-    if(range != null){
-      element.appendChild(range.getInductionVar().cloneNode());
-      element.appendChild(range.getIndexRange().cloneNode());
-    }
-
-    Element body = xcodeml.getDocument().createElement(XelementName.BODY);
-    element.appendChild(body);
-
-    return new XdoStatement(element);
-  }
-
-  /**
    * Apply a new iteration range to the do statement.
    * @param range The range to be applied.
    */

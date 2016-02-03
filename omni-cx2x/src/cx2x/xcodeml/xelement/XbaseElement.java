@@ -38,7 +38,7 @@ public class XbaseElement {
    * Create an identical copy of the element and its children.
    * @return A node representing the root element of the clone.
    */
-  protected Node cloneNode(){
+  public Node cloneNode(){
     if(baseElement != null){
       return baseElement.cloneNode(true);
     }
@@ -59,5 +59,21 @@ public class XbaseElement {
   public void delete(){
     XelementHelper.delete(baseElement);
     baseElement = null;
+  }
+
+  /**
+   * Append an element ot the children of this element.
+   * @param element The element to append.
+   * @param clone   If true, the element is cloned before being appened. If
+   *                false, the element is directly appened.
+   */
+  public void appendToChildren(XbaseElement element, boolean clone){
+    if(baseElement != null && element != null){
+      if(clone){
+        baseElement.appendChild(element.getBaseElement());
+      } else {
+        baseElement.appendChild(element.cloneNode());
+      }
+    }
   }
 }
