@@ -37,6 +37,20 @@ public class XarrayRefTest {
     assertNotNull(arrayRef.getVarRef().getVar());
     assertEquals("array1", arrayRef.getVarRef().getVar().getValue());
     assertEquals(2, arrayRef.getInnerElements().size());
+
+    XbaseElement el1 = arrayRef.getInnerElements().get(0);
+    assertTrue(el1 instanceof XarrayIndex);
+    XarrayIndex index1 = (XarrayIndex)el1;
+    assertNotNull(index1);
+    assertTrue(index1.getExprModel().isVar());
+    assertEquals("i", index1.getExprModel().getVar().getValue());
+
+    XbaseElement el2 = arrayRef.getInnerElements().get(1);
+    assertTrue(el2 instanceof XarrayIndex);
+    XarrayIndex index2 = (XarrayIndex)el2;
+    assertNotNull(index2);
+    assertTrue(index2.getExprModel().isVar());
+    assertEquals("j", index2.getExprModel().getVar().getValue());
   }
 
 
