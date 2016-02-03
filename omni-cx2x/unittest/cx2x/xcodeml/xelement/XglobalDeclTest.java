@@ -32,6 +32,9 @@ public class XglobalDeclTest {
     XglobalDeclTable gdTable = XmlHelper.createGlobalDeclTable(simpleGlobDecl);
     assertNotNull(gdTable);
     assertEquals(2, gdTable.count());
+    assertTrue(gdTable.hasDefinition("fct1"));
+    assertTrue(gdTable.hasFunctionDefinition("fct1"));
+    assertFalse(gdTable.hasModuleDefinition("fct1"));
     XfunctionDefinition fDef = gdTable.getFctDefinition("fct1");
     assertNotNull(fDef);
     assertEquals("fct1", fDef.getName().getValue());
@@ -41,6 +44,9 @@ public class XglobalDeclTest {
     assertNull(fDef.getSymbolTable());
     assertEquals(917, fDef.getLineNo());
     assertEquals("./src/mymodule.f90", fDef.getFile());
+    assertTrue(gdTable.hasDefinition("mymodule"));
+    assertFalse(gdTable.hasFunctionDefinition("mymodule"));
+    assertTrue(gdTable.hasModuleDefinition("mymodule"));
     XmoduleDefinition mDef = gdTable.getModuleDefinition("mymodule");
     assertNotNull(mDef);
     assertEquals("mymodule", mDef.getName());

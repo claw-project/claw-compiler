@@ -92,6 +92,35 @@ public class XglobalDeclTable extends XbaseElement {
   }
 
   /**
+   * Check if there is a definition for the given name.
+   * @param name Name to be searched.
+   * @return True if there is a definition. False otherwise.
+   */
+  public boolean hasDefinition(String name){
+    return _table.containsKey(name);
+  }
+
+  /**
+   * Check if there is a module definition for the given name.
+   * @param name Name to be searched.
+   * @return True if there is a definition. False otherwise.
+   */
+  public boolean hasModuleDefinition(String name) {
+    return _table.containsKey(name) &&
+        (_table.get(name) instanceof XmoduleDefinition);
+  }
+
+  /**
+   * Check if there is a function definition for the given name.
+   * @param name Name to be searched.
+   * @return True if there is a definition. False otherwise.
+   */
+  public boolean hasFunctionDefinition(String name){
+    return _table.containsKey(name) &&
+        (_table.get(name) instanceof XfunctionDefinition);
+  }
+
+  /**
    * Get the number of declarations in the table.
    * @return The number of declarations in the table.
    */
