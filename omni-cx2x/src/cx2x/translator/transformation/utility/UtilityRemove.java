@@ -45,7 +45,7 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
 
       if(_do == null && _if == null){
         xcodeml.addError("Directive remove without end not followed by a do or if statement",
-          _pragma.getLine());
+          _pragma.getLineNo());
         return false;
       }
     }

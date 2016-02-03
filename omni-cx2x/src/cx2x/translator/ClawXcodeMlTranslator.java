@@ -102,7 +102,7 @@ public class ClawXcodeMlTranslator {
           } else if (clawDirective == ClawPragma.BASE_END) {
             if (_remove == null) {
               _program.addError("Invalid Claw directive (end with no start)",
-                  pragma.getLine());
+                  pragma.getLineNo());
               abort();
             } else {
               _remove.setEnd(pragma);

@@ -191,7 +191,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     _loopLevel0 = XelementHelper.findNextDoStatement(_pragma);
 
     if(_loopLevel0 == null){
-      xcodeml.addError("top level loop not found", _pragma.getLine());
+      xcodeml.addError("top level loop not found", _pragma.getLineNo());
       return false;
     }
 
@@ -204,7 +204,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
       String[] vars = _newOrderOption.split(",");
       if(vars.length != 3){
         xcodeml.addError("new-order option has not enough parameters",
-          _pragma.getLine());
+          _pragma.getLineNo());
       }
 
       _loopLevel2 = XelementHelper.findDoStatement(_loopLevel1.getBody(), false);
@@ -241,7 +241,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
         && !var.equals(_baseLoop2))
       {
         xcodeml.addError("invalid induction variable in new-order option. "
-          + var, _pragma.getLine());
+          + var, _pragma.getLineNo());
         return false;
       }
     }

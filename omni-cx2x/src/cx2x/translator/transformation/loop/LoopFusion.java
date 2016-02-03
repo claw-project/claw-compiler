@@ -60,7 +60,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
     _loop = XelementHelper.findNextDoStatement(_pragma);
     if(_loop == null){
       xcodeml.addError("Cannot find loop after directive",
-        _pragma.getLine());
+        _pragma.getLineNo());
       return false;
     }
     return true;

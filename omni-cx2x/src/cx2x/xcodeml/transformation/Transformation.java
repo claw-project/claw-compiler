@@ -29,7 +29,7 @@ public abstract class Transformation<T> {
   public Transformation(Xpragma pragma){
     _pragma = pragma;
     if(_pragma != null){
-      _startLine = _pragma.getLine();
+      _startLine = _pragma.getLineNo();
     }
   }
 

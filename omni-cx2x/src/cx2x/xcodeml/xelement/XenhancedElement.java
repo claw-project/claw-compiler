@@ -28,15 +28,16 @@ public class XenhancedElement extends XbaseElement {
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root element of the Xelement
    */
-  public XenhancedElement(Element baseElement){
+  public XenhancedElement(Element baseElement) {
     super(baseElement);
     String lineno = XelementHelper.getAttributeValue(this,
         XelementName.ATTR_LINENO);
     try {
       _lineno = Integer.parseInt(lineno);
-    } catch (NumberFormatException ex){
+    } catch (NumberFormatException ex) {
       _lineno = 0;
     }
     _file = XelementHelper.getAttributeValue(this, XelementName.ATTR_FILE);
@@ -45,17 +46,44 @@ public class XenhancedElement extends XbaseElement {
 
   /**
    * Get the source file name.
+   *
    * @return Source file name.
    */
-  public String getFile(){
+  public String getFile() {
     return _file;
   }
 
   /**
    * Get the start line number of the element
+   *
    * @return Line number.
    */
-  public int getLineNo(){
+  public int getLineNo() {
     return _lineno;
+  }
+
+
+  /**
+   * Set the line number of the pragma statement.
+   *
+   * @param lineno Line number.
+   */
+  public void setLine(int lineno) {
+    if (baseElement != null) {
+      baseElement.setAttribute(XelementName.ATTR_LINENO, "" + lineno);
+      _lineno = lineno;
+    }
+  }
+
+  /**
+   * Set the filename attribute.
+   *
+   * @param filename Filename.
+   */
+  public void setFile(String filename) {
+    if (baseElement != null) {
+      baseElement.setAttribute(XelementName.ATTR_FILE, filename);
+      _file = filename;
+    }
   }
 }

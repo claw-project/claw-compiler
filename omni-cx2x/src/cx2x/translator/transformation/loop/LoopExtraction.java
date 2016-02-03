@@ -66,7 +66,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     try {
       extractMappingInformation();
     } catch (IllegalDirectiveException ide){
-      ide.setDirectiveLine(_pragma.getLine());
+      ide.setDirectiveLine(_pragma.getLineNo());
       throw ide;
     }
   }
@@ -116,7 +116,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()){
       if(_fctCall.getArgumentsTable().findArgument(map.getKey()) == null){
         xcodeml.addError("Mapped variable " + map.getKey() +
-            " not found in function call arguments", _pragma.getLine());
+            " not found in function call arguments", _pragma.getLineNo());
         return false;
       }
     }
@@ -134,7 +134,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XexprStatement _exprStmt = XelementHelper.findNextExprStatement(_pragma);
     if(_exprStmt == null){
       xcodeml.addError("No function call detected after loop-extract",
-        _pragma.getLine());
+        _pragma.getLineNo());
       return false;
     }
 
@@ -142,14 +142,14 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _fctCall = XelementHelper.findFctCall(_exprStmt);
     if(_fctCall == null){
       xcodeml.addError("No function call detected after loop-extract",
-        _pragma.getLine());
+        _pragma.getLineNo());
       return false;
     }
 
     _fctDef = XelementHelper.findParentFctDef(_fctCall);
     if(_fctDef == null){
       xcodeml.addError("No function around the fct call",
-        _pragma.getLine());
+        _pragma.getLineNo());
       return false;
     }
 
@@ -158,7 +158,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(_fctDefToExtract == null){
       xcodeml.addError("Could not locate the function definition for: "
-          + _fctCall.getName().getValue(), _pragma.getLine());
+          + _fctCall.getName().getValue(), _pragma.getLineNo());
       return false;
     }
 
@@ -167,7 +167,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       _extractedLoop = locateDoStatement(_fctDefToExtract);
     } catch (IllegalTransformationException itex){
       xcodeml.addError(itex.getMessage(),
-          _pragma.getLine());
+          _pragma.getLineNo());
       return false;
     }
 
@@ -319,7 +319,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           if(type.getDimensions() < mapping.getMappedDimensions()){
             throw new IllegalTransformationException(
                 "mapping dimensions too big. Mapping " + mapping.toString() +
-                    " is wrong ...", _pragma.getLine());
+                    " is wrong ...", _pragma.getLineNo());
           }
 
           XarrayRef newArg =
@@ -448,7 +448,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     if(_hasFusion){
 
       LoopFusion fusion = new LoopFusion(extractedLoop, _fusionGroupLabel,
-        _pragma.getLine());
+        _pragma.getLineNo());
       transformer.addTransformation(fusion);
 
       if(XmOption.isDebugOutput()){
@@ -470,7 +470,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XdoStatement foundStatement = XelementHelper.findDoStatement(from, true);
     if(foundStatement == null){
       throw new IllegalTransformationException("No loop found in function",
-          _pragma.getLine());
+          _pragma.getLineNo());
     } else {
       if(!_range.equals(foundStatement.getIterationRange())) {
         // Try to find another loops that meet the criteria
@@ -483,7 +483,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(foundStatement == null){
       throw new IllegalTransformationException("No loop found in function",
-          _pragma.getLine());
+          _pragma.getLineNo());
     }
 
     if(foundStatement != null
@@ -491,7 +491,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
-          _pragma.getLine()
+          _pragma.getLineNo()
       );
     }
     return foundStatement;

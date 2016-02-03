@@ -87,8 +87,8 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
       Xpragma newlyInserted = _pragma;
       for (int i = 2; i < pragmas.length; ++i) {
         Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        p.setFilename(_pragma.getFilename());
-        p.setLine(_pragma.getLine() + (i - 1));
+        p.setFile(_pragma.getFile());
+        p.setLine(_pragma.getLineNo() + (i - 1));
         if (i == pragmas.length - 1) {
           p.setData(Constant.OPENACC_PREFIX + " " + pragmas[i]);
         } else {
