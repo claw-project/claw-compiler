@@ -14,6 +14,9 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -1246,9 +1249,29 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Constructs a new empty XcodeML program.
+   * @return A new XcodeProgram object with only the root element.
+   */
+  public static XcodeProgram createNewProgram(){
+    try {
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+      Document doc = docBuilder.newDocument();
+      doc.createElement(XelementName.X_CODE_PROGRAM);
+      XcodeProgram program = new XcodeProgram(doc);
+      return program;
+    } catch (ParserConfigurationException ex){
+      return null;
+    }
+  }
+
 
   /**
    * Create an empty arrayIndex element in the given program
+   * @param xcodeml The current XcodeProgram in wihch the statement is created.
+   * @param range   The iteration range to be applied to the do statement.
+   * @return A new XdoStetement object with an empty body.
    */
   public static XdoStatement createWithEmptyBody(XcodeProgram xcodeml,
                                          XloopIterationRange range)

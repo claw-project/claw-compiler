@@ -64,6 +64,15 @@ public class XcodeProgram extends XbaseElement {
   }
 
   /**
+   * Constructs a new XcodeProgram object from a single root element.
+   * @param doc The XcodeML document.
+   */
+  public XcodeProgram(Document doc){
+    super(doc.getDocumentElement());
+    _xcodemlDoc = doc;
+  }
+
+  /**
    * Read all the XcodeML document information: version, language, time, source,
    * compiler info.
    */
