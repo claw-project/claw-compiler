@@ -133,6 +133,12 @@ public class XmlHelper {
     return new XcharacterConstant(el);
   }
 
+  public static XglobalDeclTable createGlobalDeclTable(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XglobalDeclTable(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

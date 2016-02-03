@@ -64,6 +64,7 @@ else()
     cx2x/xcodeml/xelement/XexprModelTest.java
     cx2x/xcodeml/xelement/XfunctionTypeTest.java
     cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
+    cx2x/xcodeml/xelement/XglobalDeclTest.java
     cx2x/xcodeml/xelement/XidTest.java
     cx2x/xcodeml/xelement/XloopIterationRangeTest.java
     cx2x/xcodeml/xelement/XsymbolsTest.java
@@ -85,6 +86,7 @@ else()
     cx2x.xcodeml.xelement.XexprModelTest
     cx2x.xcodeml.xelement.XfunctionTypeTest
     cx2x.xcodeml.xelement.XfunctionDefinitionTest
+    cx2x.xcodeml.xelement.XglobalDeclTest
     cx2x.xcodeml.xelement.XidTest
     cx2x.xcodeml.xelement.XloopIterationRangeTest
     cx2x.xcodeml.xelement.XsymbolsTest
