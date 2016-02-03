@@ -16,15 +16,21 @@ import static org.junit.Assert.*;
  */
 public class XvarDeclTest {
 
-  private static final String xVarDecl1 =
+  private static final String varDecl1 =
       "<varDecl lineno=\"946\" file=\"./src/mymodule.f90\">" +
       "<name type=\"Ib3f750\">testvar</name>" +
       "<value>10.0</value>" +
       "</varDecl>";
 
+
+  private static final String varDecl2 =
+      "<varDecl lineno=\"946\" file=\"./src/mymodule.f90\">" +
+      "<name type=\"Ib3f750\">testvar</name>" +
+      "</varDecl>";
+
   @Test
-  public void simpleXvarDeclTest(){
-    XvarDecl varDecl = XmlHelper.createXvarDecl(xVarDecl1);
+  public void simpleXvarDeclWithValueTest(){
+    XvarDecl varDecl = XmlHelper.createXvarDecl(varDecl1);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/mymodule.f90", varDecl.getFile());
@@ -34,6 +40,20 @@ public class XvarDeclTest {
     assertTrue(varDecl.hasValue());
     assertEquals("10.0", varDecl.getValue());
   }
+
+  @Test
+  public void simpleXvarDeclWithoutValueTest(){
+    XvarDecl varDecl = XmlHelper.createXvarDecl(varDecl2);
+    assertNotNull(varDecl);
+    assertEquals(946, varDecl.getLineNo());
+    assertEquals("./src/mymodule.f90", varDecl.getFile());
+    assertNotNull(varDecl.getName());
+    assertEquals("Ib3f750", varDecl.getName().getType());
+    assertEquals("testvar", varDecl.getName().getValue());
+    assertFalse(varDecl.hasValue());
+    assertNull(varDecl.getValue());
+  }
+
 
 
 }
