@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XmoduleDef extends XbaseElement {
+public class XmoduleDef extends XenhancedElement {
 
   private String _name;
   private XsymbolTable _symbols;
