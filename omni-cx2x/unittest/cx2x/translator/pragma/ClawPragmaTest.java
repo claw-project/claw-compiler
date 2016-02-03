@@ -8,17 +8,11 @@ package cx2x.translator.pragma;
 import static org.junit.Assert.*;
 
 import cx2x.translator.common.Constant;
-import cx2x.translator.pragma.ClawMapping;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.XelementName;
 import cx2x.xcodeml.xelement.Xpragma;
 import org.junit.Test;
-
-import cx2x.translator.pragma.ClawPragma;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
