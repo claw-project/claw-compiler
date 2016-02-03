@@ -49,7 +49,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   public LoopInterchange(Xpragma pragma){
     super(pragma);
     _newOrderOption = ClawPragma
-      .getSimpleOptionValue(_pragma.getData());
+      .getSimpleOptionValue(_pragma);
   }
 
   /**

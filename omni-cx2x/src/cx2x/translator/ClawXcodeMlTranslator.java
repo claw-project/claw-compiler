@@ -72,7 +72,7 @@ public class ClawXcodeMlTranslator {
     UtilityRemove _remove = null;
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
-      if(!ClawPragma.startsWithClaw(pragma.getData())){
+      if(!ClawPragma.startsWithClaw(pragma)){
         if(pragma.getData().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
         {
           OpenAccContinuation t = new OpenAccContinuation(pragma);
@@ -81,8 +81,8 @@ public class ClawXcodeMlTranslator {
         continue; // Not CLAW pragma, we do nothing
       }
 
-      if(ClawPragma.isValid(pragma.getData())){
-        ClawPragma clawDirective = ClawPragma.getDirective(pragma.getData());
+      if(ClawPragma.isValid(pragma)){
+        ClawPragma clawDirective = ClawPragma.getDirective(pragma);
 
         try {
           if (clawDirective == ClawPragma.LOOP_FUSION) {

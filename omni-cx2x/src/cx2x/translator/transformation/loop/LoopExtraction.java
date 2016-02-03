@@ -57,11 +57,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _mappings = new ArrayList<>();
     _argMappingMap = new Hashtable<>();
     _fctMappingMap = new Hashtable<>();
-    _range = ClawPragma.extractRangeInformation(pragma.getData());
+    _range = ClawPragma.extractRangeInformation(pragma);
     extractFusionInformation();
 
-    _hasParallelOption = ClawPragma.hasParallelOption(pragma.getData());
-    _accAdditionalOption = ClawPragma.getAccOptionValue(pragma.getData());
+    _hasParallelOption = ClawPragma.hasParallelOption(pragma);
+    _accAdditionalOption = ClawPragma.getAccOptionValue(pragma);
 
     try {
       extractMappingInformation();
@@ -76,7 +76,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
   private void extractMappingInformation() throws IllegalDirectiveException {
-    _mappings = ClawPragma.extractMappingInformation(_pragma.getData());
+    _mappings = ClawPragma.extractMappingInformation(_pragma);
     for(ClawMapping m : _mappings){
       for(ClawMappingVar mappedVar : m.getMappedVariables()){
         if(_argMappingMap.containsKey(mappedVar.getArgMapping())){
@@ -101,8 +101,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * perform and its optional fusion group option.
    */
   private void extractFusionInformation(){
-    _hasFusion = ClawPragma.hasFusionOption(_pragma.getData());
-    _fusionGroupLabel = ClawPragma.getExtractFusionOption(_pragma.getData());
+    _hasFusion = ClawPragma.hasFusionOption(_pragma);
+    _fusionGroupLabel = ClawPragma.getExtractFusionOption(_pragma);
   }
 
   /**

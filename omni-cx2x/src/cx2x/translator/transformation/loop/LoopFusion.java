@@ -33,7 +33,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    */
   public LoopFusion(Xpragma pragma){
     super(pragma);
-    _groupLabel = ClawPragma.getGroupOptionValue(_pragma.getData());
+    _groupLabel = ClawPragma.getGroupOptionValue(_pragma);
   }
 
   /**
