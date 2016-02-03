@@ -263,17 +263,18 @@ public class XelementHelper {
     /** An exprModel can be of the following type
      *   - FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
      *     FlogicalConstant
-     *   TODO
+     *   TODO FarrayConstructor, FstructConstructor
      *   - FarrayConstructor, FstructConstructor
      *   - Var
-     *   TODO
+     *   TODO FcharacterRef, FmemberRef, FcoArrayRef
      *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
      *   - functionCall
-     *   TODO
+     *   TODO all
      *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
      *     logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
      *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr,
      *     unaryMinusExpr, userBinaryExpr, userUnaryExpr
+     *   TODO FdoLoop
      *   - FdoLoop
      */
 
@@ -297,11 +298,13 @@ public class XelementHelper {
         return new XexprModel(new Xvar(element));
       case XelementName.FCT_CALL:
         return new XexprModel(new XfunctionCall(element));
-      case XelementName.DO_STMT:
-        return new XexprModel(new XdoStatement(element));
+      case XelementName.F_ARRAY_REF:
+        return new XexprModel(new XarrayRef(element));
+      case XelementName.VAR_REF:
+        return new XexprModel(new XvarRef(element));
+      default:
+        return null;
     }
-
-    return null;
   }
 
   /**

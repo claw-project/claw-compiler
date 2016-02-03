@@ -295,7 +295,7 @@ public enum ClawPragma {
       case LOOP_INTERCHANGE:
         return ClawPragma.isOrderOptionValid(option);
       case LOOP_VECTOR:
-        return true; // TODO
+        return true; // TODO maybe for 0.2
       case LOOP_EXTRACT:
         return ClawPragma.isRangeOptionValid(option)
             && ClawPragma.isMapOptionValid(option);
