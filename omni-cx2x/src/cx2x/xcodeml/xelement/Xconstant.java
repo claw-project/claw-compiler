@@ -43,7 +43,7 @@ public class Xconstant extends XbaseElement {
     _type = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_TYPE);
     _kind = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_TYPE);
+      XelementName.ATTR_KIND);
   }
 
   /**
@@ -66,6 +66,14 @@ public class Xconstant extends XbaseElement {
   }
 
   /**
+   * Get the kind value of the constant.
+   * @return Kind value.
+   */
+  public String getKind(){
+    return _kind;
+  }
+
+  /**
    * Check whether the element has type attribute.
    * @return True if the element has type attribute. False otherwise.
    */
@@ -82,6 +90,14 @@ public class Xconstant extends XbaseElement {
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
+  }
+
+  /**
+   * Get the constant type.
+   * @return Constant type.
+   */
+  public String getType(){
+    return _type;
   }
 
   /**
