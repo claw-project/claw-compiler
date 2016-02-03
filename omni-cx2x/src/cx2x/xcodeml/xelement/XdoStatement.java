@@ -28,7 +28,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XdoStatement extends XbaseElement {
+public class XdoStatement extends XenhancedElement {
   private XloopIterationRange _iterationRange = null;
   // TODO separate var/indexRange
   private Xbody _body = null;
