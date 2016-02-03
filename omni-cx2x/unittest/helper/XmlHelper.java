@@ -151,6 +151,12 @@ public class XmlHelper {
     return new XarrayRef(el);
   }
 
+  public static XdoStatement createXdoStatement(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XdoStatement(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {
