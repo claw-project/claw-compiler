@@ -19,6 +19,7 @@ public class XvarDeclTest {
   private static final String xVarDecl1 =
       "<varDecl lineno=\"946\" file=\"./src/mymodule.f90\">" +
       "<name type=\"Ib3f750\">testvar</name>" +
+      "<value>10.0</value>" +
       "</varDecl>";
 
   @Test
@@ -30,6 +31,9 @@ public class XvarDeclTest {
     assertNotNull(varDecl.getName());
     assertEquals("Ib3f750", varDecl.getName().getType());
     assertEquals("testvar", varDecl.getName().getValue());
+    assertTrue(varDecl.hasValue());
+    assertEquals("10.0", varDecl.getValue());
   }
+
 
 }
