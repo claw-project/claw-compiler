@@ -9,7 +9,7 @@ import cx2x.xcodeml.helper.XelementHelper;
 import org.w3c.dom.Element;
 
 /**
- * The XmoduleDef represents the FmoduleDefinition (5.7) element in XcodeML
+ * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in XcodeML
  * intermediate representation.
  *
  * Elements: (symbols?, declarations?, FcontainsStatement?)
@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XmoduleDef extends XenhancedElement {
+public class XmoduleDefinition extends XenhancedElement {
 
   private String _name;
   private XsymbolTable _symbols;
@@ -36,7 +36,7 @@ public class XmoduleDef extends XenhancedElement {
    * inner information (elements and attributes).
    * @param baseElement The root element of the Xelement
    */
-  public XmoduleDef(Element baseElement){
+  public XmoduleDefinition(Element baseElement){
     super(baseElement);
 
     _name = XelementHelper.getAttributeValue(this, XelementName.ATTR_NAME);

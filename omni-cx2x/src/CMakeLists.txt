@@ -59,7 +59,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xelement/XlogicalConstant.java
   cx2x/xcodeml/xelement/XloopIterationRange.java
   cx2x/xcodeml/xelement/XlowerBound.java
-  cx2x/xcodeml/xelement/XmoduleDef.java
+  cx2x/xcodeml/xelement/XmoduleDefinition.java
   cx2x/xcodeml/xelement/Xname.java
   cx2x/xcodeml/xelement/Xparams.java
   cx2x/xcodeml/xelement/Xpragma.java
