@@ -69,6 +69,7 @@ else()
     cx2x/xcodeml/xelement/XloopIterationRangeTest.java
     cx2x/xcodeml/xelement/XsymbolsTest.java
     cx2x/xcodeml/xelement/XtypeTableTest.java
+    cx2x/xcodeml/xelement/XvarDeclTest.java
     cx2x/xcodeml/xelement/XvarRefTest.java
     cx2x/xcodeml/xelement/XvarTest.java
     OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
@@ -91,6 +92,7 @@ else()
     cx2x.xcodeml.xelement.XloopIterationRangeTest
     cx2x.xcodeml.xelement.XsymbolsTest
     cx2x.xcodeml.xelement.XtypeTableTest
+    cx2x.xcodeml.xelement.XvarDeclTest
     cx2x.xcodeml.xelement.XvarRefTest
     cx2x.xcodeml.xelement.XvarTest
   )
