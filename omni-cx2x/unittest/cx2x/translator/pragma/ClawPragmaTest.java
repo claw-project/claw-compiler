@@ -191,10 +191,14 @@ public class ClawPragmaTest {
     Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
     assertNotNull(pragma1);
     pragma1.setData("claw loop-fusion group (g1)");
-    ClawPragma cp1 = ClawPragma.getDirective(pragma1);
-    assertNotNull(cp1);
-    assertTrue(cp1.isDirective());
-    assertEquals(ClawPragma.LOOP_FUSION, cp1);
+    try {
+      ClawPragma cp1 = ClawPragma.getDirective(pragma1);
+      assertNotNull(cp1);
+      assertTrue(cp1.isDirective());
+      assertEquals(ClawPragma.LOOP_FUSION, cp1);
+    } catch (IllegalDirectiveException itex){
+      fail();
+    }
     assertEquals("g1", ClawPragma.getGroupOptionValue(pragma1));
     pragma1.setData("claw loop-fusion group (g1) ");
     assertEquals("g1", ClawPragma.getGroupOptionValue(pragma1));

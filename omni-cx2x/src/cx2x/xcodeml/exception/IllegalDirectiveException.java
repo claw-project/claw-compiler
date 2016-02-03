@@ -16,14 +16,26 @@ public class IllegalDirectiveException extends Exception {
 
   /**
    * Constructs a new exception with a specific detail message and clause.
-   * @param directive  Illegal directive
-   * @param message Specific exception message.
+   * @param directive Illegal directive
+   * @param message   Specific exception message.
    */
   public IllegalDirectiveException(String directive, String message){
     super(message);
     _directive = directive;
   }
 
+  /**
+   * Constructs a new exception with a specific detail message and line number.
+   * @param directive Illegal directive
+   * @param message   Specific exception message.
+   * @param lineno    Line number of the directive.
+   */
+  public IllegalDirectiveException(String directive, String message, int lineno)
+  {
+    super(message);
+    _directive = directive;
+    _directiveLine = lineno;
+  }
   /**
    * Get the illegal directive.
    * @return The illegal directive.
@@ -54,5 +66,11 @@ public class IllegalDirectiveException extends Exception {
    */
   public int getDirectiveLine() {
     return _directiveLine;
+  }
+
+  @Override
+  public String getMessage() {
+    return "Illegal directive: " + super.getMessage() + ". Directive: " +
+        _directive + " - line: " + _directiveLine;
   }
 }

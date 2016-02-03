@@ -80,14 +80,16 @@ public enum ClawPragma {
    * @param pragma  The Xpragma in which the directive is searched.
    * @return ClawPragma enum value if a directive is found. Null otherwise.
    */
-  public static ClawPragma getDirective(Xpragma pragma){
+  public static ClawPragma getDirective(Xpragma pragma)
+      throws IllegalDirectiveException
+  {
     if(pragma == null || pragma.getData() == null){
-      return null;
+      throw new IllegalDirectiveException("", "directive is null", 0);
     }
-    // TODO throw exception instead of returning null
     String[] parts = pragma.getData().split(" ");
     if(parts.length < 2){
-      return null;
+      throw new IllegalDirectiveException("",
+          "cannot get the directive keyword", pragma.getLineNo());
     }
     String directive = parts[1];
     switch(directive){
@@ -104,7 +106,8 @@ public enum ClawPragma {
       case DIRECTIVE_BASE_END:
         return ClawPragma.BASE_END;
       default:
-        return null;
+        throw new IllegalDirectiveException("",
+            "unknown directive", pragma.getLineNo());
     }
   }
 
@@ -194,7 +197,11 @@ public enum ClawPragma {
     if(pragma == null || pragma.getData() == null){
       return null;
     }
-    if(getDirective(pragma) != ClawPragma.LOOP_INTERCHANGE){
+    try {
+      if (getDirective(pragma) != ClawPragma.LOOP_INTERCHANGE) {
+        return null;
+      }
+    } catch (IllegalDirectiveException itex){
       return null;
     }
 
