@@ -109,6 +109,30 @@ public class XmlHelper {
     return new XfunctionCall(el);
   }
 
+  public static XintConstant createIntConstantFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XintConstant(el);
+  }
+
+  public static XrealConstant createRealConstantFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XrealConstant(el);
+  }
+
+  public static XlogicalConstant createLogicalConstantFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XlogicalConstant(el);
+  }
+
+  public static XcharacterConstant createCharConstantFromString(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XcharacterConstant(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

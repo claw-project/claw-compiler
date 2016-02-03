@@ -60,6 +60,7 @@ else()
     cx2x/translator/pragma/ClawRangeTest.java
     cx2x/xcodeml/xelement/XbasicTypeTest.java
     cx2x/xcodeml/xelement/XcodeProgTest.java
+    cx2x/xcodeml/xelement/XconstantTest.java
     cx2x/xcodeml/xelement/XexprModelTest.java
     cx2x/xcodeml/xelement/XfunctionTypeTest.java
     cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
@@ -80,6 +81,7 @@ else()
     TESTS
     cx2x.xcodeml.xelement.XbasicTypeTest
     cx2x.xcodeml.xelement.XcodeProgTest
+    cx2x.xcodeml.xelement.XconstantTest
     cx2x.xcodeml.xelement.XexprModelTest
     cx2x.xcodeml.xelement.XfunctionTypeTest
     cx2x.xcodeml.xelement.XfunctionDefinitionTest
