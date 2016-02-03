@@ -60,6 +60,17 @@ public class XvarDecl extends Xdecl {
   }
 
   /**
+   * Get the var value.
+   * @return Value assigned to the var declaration.
+   */
+  public String getValue(){
+    if(_hasValue){
+      return _value.getData();
+    }
+    return null;
+  }
+
+  /**
    * Get the inner Xname element.
    * @return Xname element.
    */
