@@ -32,7 +32,7 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
    * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
    */
   public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
-    throws IllegalTransformationException
+    throws Exception
   {
     for(int i = 0; i < _translations.size(); ++i){
       T base = _translations.get(i);
@@ -50,6 +50,8 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
               itex.setStartLine(base.getStartLine());
             }
             throw itex;
+          } catch(Exception ex){
+            throw ex;
           }
         }
       }
