@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class Xdecl extends XbaseElement {
+public class Xdecl extends XenhancedElement {
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
