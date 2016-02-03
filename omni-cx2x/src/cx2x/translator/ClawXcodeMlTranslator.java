@@ -23,6 +23,9 @@ import cx2x.translator.pragma.ClawPragma;
 // OMNI import
 import xcodeml.util.XmOption;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 
 /**
  * ClawXcodeMlTranslator is the class driving the translation. It analyzes the
@@ -182,6 +185,14 @@ public class ClawXcodeMlTranslator {
           _program.addError("IllegalTransformationException: " +
             itex.getMessage(), itex.getStartLine());
           abort();
+        } catch (Exception ex){
+          _program.addError("Unexpected error: " + ex.getMessage(), 0);
+          if(XmOption.isDebugOutput()){
+            StringWriter errors = new StringWriter();
+            ex.printStackTrace(new PrintWriter(errors));
+            _program.addError(errors.toString(), 0);
+          }
+          abort();
         }
       }
 
@@ -203,8 +214,13 @@ public class ClawXcodeMlTranslator {
    */
   private void abort(){
     for(XanalysisError error : _program.getErrors()){
-      System.err.println(ERROR_PREFIX + error.getMessage() + ", line:" +
-          error.getLine());
+      if(error.getLine() == 0){
+        System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
+            "undefined");
+      } else {
+        System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
+            error.getLine());
+      }
     }
     System.exit(1);
   }

@@ -194,7 +194,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @throws IllegalTransformationException
    */
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopExtraction other) throws IllegalTransformationException
+                        LoopExtraction other) throws Exception
   {
 
     /*
@@ -517,7 +517,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @return The created do statement.
    */
   private XdoStatement wrapCallWithLoop(XcodeProgram xcodeml,
-    XloopIterationRange iterationRange)
+    XloopIterationRange iterationRange) throws Exception
   {
     // Create a new empty loop
 
@@ -529,7 +529,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     // Move the call into the loop body
     XelementHelper.insertFctCallIntoLoop(loop, _fctCall);
-
+    iterationRange = null;
     insertDeclaration(iterationRange.getInductionVar().getValue());
     if(iterationRange.getIndexRange().getLowerBound().getExprModel().isVar()){
       insertDeclaration(iterationRange.getIndexRange().getLowerBound().getValue());

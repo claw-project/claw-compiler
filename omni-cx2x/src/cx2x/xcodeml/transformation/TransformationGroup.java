@@ -64,6 +64,6 @@ public abstract class TransformationGroup<T extends Transformation> {
    * @throws IllegalTransformationException
    */
   public abstract void applyTranslations(XcodeProgram xcodeml,
-    Transformer transformer) throws IllegalTransformationException;
+    Transformer transformer) throws Exception;
 
 }

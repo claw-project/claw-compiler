@@ -61,7 +61,7 @@ public abstract class Transformation<T> {
    * @throws IllegalTransformationException
    */
   public abstract void transform(XcodeProgram xcodeml, Transformer transformer,
-                                 T other) throws IllegalTransformationException;
+                                 T other) throws Exception;
 
 
   /**

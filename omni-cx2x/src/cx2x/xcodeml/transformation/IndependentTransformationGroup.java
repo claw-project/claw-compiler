@@ -30,10 +30,9 @@ public class IndependentTransformationGroup<T extends Transformation<? super T>>
    * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
    */
   public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
-    throws IllegalTransformationException
+    throws Exception
   {
     for(T translation : _translations){
-
       try {
         translation.transform(xcodeml, transformer, null);
       } catch (IllegalTransformationException itex) {
@@ -42,8 +41,9 @@ public class IndependentTransformationGroup<T extends Transformation<? super T>>
           itex.setStartLine(translation.getStartLine());
         }
         throw itex;
+      } catch (Exception ex){
+        throw ex;
       }
-
     }
   }
 }
