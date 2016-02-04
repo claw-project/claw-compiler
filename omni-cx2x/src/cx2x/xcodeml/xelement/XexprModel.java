@@ -11,6 +11,16 @@ package cx2x.xcodeml.xelement;
  * intermediate representation.
  *
  * Elements:
+ *
+ * ( FintConstant | FrealConstant | FcomplexConstant | FcharacterConstant
+ *   | FlogicalConstant | FarrayConstructor | FstructConstructor | Var
+ *   | FarrayRef | FcharacterRef | FmemberRef | FcoArrayRef | varRef
+ *   | functionCall | plusExpr | minusExpr | mulExpr | divExpr | FpowerExpr
+ *   | FconcatExpr | logEQExpr | logNEQExpr | logGEExpr | logGTExpr | logLEExpr
+ *   | logLTExpr | logAndExpr | logOrExpr | logEQVExpr | logNEQVExpr
+ *   | unaryMinusExpr | logNotExpr | userBinaryExpr | userUnaryExpr | FdoLoop )
+ *
+ *
  * - Required: on of the followings elements:
  *   - FintConstant (XintConstant), FrealConstant (XrealConstant),
  *     FcomplexConstant (XcomplexConstant), FcharacterConstant

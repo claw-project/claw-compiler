@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
  * The XvarRef represents the varRef (7.4.6) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: ( Var | FmemberRef | FarrayRef | FcharacterRef | FcoArrayRef )
  * - Required: one of the followings
  *   - Var (Xvar)
  *   - FmemberRef TODO

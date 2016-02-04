@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
  * representation.
  *
  * Elements:
- * - exprModel (XexprModel) defined in Xbound class.
+ * - Required: exprModel (XexprModel) defined in Xbound class.
  *
  * @author clementval
  */

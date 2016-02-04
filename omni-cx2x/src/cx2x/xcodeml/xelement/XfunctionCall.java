@@ -12,7 +12,7 @@ import cx2x.xcodeml.helper.*;
  * The XfunctionCall represents the functionCall (7.5.1) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: ( name, arguments? )
  * - Required:
  *   - name (Xname)
  * - Optional:

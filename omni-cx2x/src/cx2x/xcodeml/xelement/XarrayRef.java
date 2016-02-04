@@ -19,6 +19,7 @@ import cx2x.xcodeml.helper.*;
  * intermediate representation.
  *
  * Elements:
+ * ( varRef, (arrayIndex | indexRange | FarrayConstructor | FarrayRef)* )
  * - Required:
  *   - varRef
  * - Optional:
@@ -67,6 +68,7 @@ public class XarrayRef extends XbaseElement {
     // Find Var element
     _varRef = XelementHelper.findVarRef(this, false);
 
+    // TODO read all in one loop
     // Read potential arrayIndex
     NodeList nodeList = baseElement.
       getElementsByTagName(XelementName.ARRAY_INDEX);

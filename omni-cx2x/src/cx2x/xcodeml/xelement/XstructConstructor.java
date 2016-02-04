@@ -12,9 +12,9 @@ import cx2x.xcodeml.helper.*;
  * The XstructConstructor represents the FstructConstructor (7.3.1) element in
  * XcodeML intermediate representation.
  *
- * Elements:
+ * Elements: ( exprModel )*
  * - Optional:
- *   - exprModel* (XexprModel) TODO
+ *   - exprModel (XexprModel) TODO
  *
  * Attributes:
  * - Optional:

@@ -11,6 +11,9 @@ import org.w3c.dom.Element;
  * The XupperBound represents the upperBound (8.13) element in
  * XcodeML intermediate representation.
  *
+ * Elements:
+ * - Required: exprModel (XexprModel) defined in Xbound class.
+ *
  * @author clementval 
  */
 
