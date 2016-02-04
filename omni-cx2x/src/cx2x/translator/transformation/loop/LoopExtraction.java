@@ -206,7 +206,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     String newFctName = clonedFctDef.getName().getValue() + Constant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
-    clonedFctDef.getName().setName(newFctName);
+    clonedFctDef.getName().setValue(newFctName);
     clonedFctDef.getName().setType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
@@ -270,7 +270,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
 
     // Change called fct name
-    _fctCall.getName().setName(newFctName);
+    _fctCall.getName().setValue(newFctName);
     _fctCall.getName().setType(newFctTypeHash);
 
 
@@ -367,7 +367,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
           Xname tempName = XelementHelper.createEmpty(Xname.class, xcodeml);
-          tempName.setName(var.getFctMapping());
+          tempName.setValue(var.getFctMapping());
           tempName.setType(varDeclType.getRef());
           XvarDecl newVarDecl =
               XelementHelper.createEmpty(XvarDecl.class, xcodeml);

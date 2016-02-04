@@ -32,16 +32,6 @@ public class Xname extends XbaseElement {
   }
 
   /**
-   * Set name value.
-   * @param value New name value.
-   */
-  public void setName(String value){ // TODO refactor setValue
-    if(baseElement != null){
-      baseElement.setTextContent(value);
-    }
-  }
-
-  /**
    * Get the type attribute value.
    * @param value Type value.
    */

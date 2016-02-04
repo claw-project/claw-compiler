@@ -54,7 +54,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    */
   public void setName(String value){
     if(_xname != null){
-      _xname.setName(value);
+      _xname.setValue(value);
     }
   }
 
