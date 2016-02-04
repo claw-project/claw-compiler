@@ -34,6 +34,7 @@ public class XfunctionCallTest {
     assertEquals("F7f84b9c0b200", fctCall.getName().getType());
     assertEquals("clawloop", fctCall.getName().getValue());
     assertEquals(2, fctCall.getArgumentsTable().count());
+    assertFalse(fctCall.isIntrinsic());
 
     assertTrue(fctCall.getArgumentsTable().hasArgument("value1"));
     assertNotNull(fctCall.getArgumentsTable().findArgument("value1"));
