@@ -181,6 +181,18 @@ public class XmlHelper {
     return new XindexRange(el);
   }
 
+  public static Xvalue createXvalue(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xvalue(el);
+  }
+
+  public static Xname createXname(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xname(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

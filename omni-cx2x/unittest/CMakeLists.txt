@@ -60,6 +60,7 @@ else()
     cx2x/translator/misc/UtilityTest.java
     cx2x/translator/pragma/ClawPragmaTest.java
     cx2x/translator/pragma/ClawRangeTest.java
+    cx2x/xcodeml/xelement/XbasicTest.java
     cx2x/xcodeml/xelement/XbasicTypeTest.java
     cx2x/xcodeml/xelement/XcodeProgTest.java
     cx2x/xcodeml/xelement/XconstantTest.java
@@ -88,6 +89,7 @@ else()
   add_junit_test(junit-xcodeml.xelement
     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
     TESTS
+    cx2x.xcodeml.xelement.XbasicTest
     cx2x.xcodeml.xelement.XbasicTypeTest
     cx2x.xcodeml.xelement.XcodeProgTest
     cx2x.xcodeml.xelement.XconstantTest

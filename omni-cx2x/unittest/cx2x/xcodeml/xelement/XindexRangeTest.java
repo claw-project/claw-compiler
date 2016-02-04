@@ -10,6 +10,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
+ * Test features of the XindexRange class. 
+ *
  * @author clementval
  */
 public class XindexRangeTest {
