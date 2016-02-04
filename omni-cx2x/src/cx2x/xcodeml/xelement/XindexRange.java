@@ -13,7 +13,7 @@ import cx2x.xcodeml.helper.*;
  * The XindexRange represents the indexRange (8.11) element in XcodeML
  * intermediate representation.
  *
- * Elements:
+ * Elements: ( lowerBound?, upperBound?, step? )
  * - Optional:
  *   - lowerBound (XlowerBound)
  *   - upperBound (XupperBound)
