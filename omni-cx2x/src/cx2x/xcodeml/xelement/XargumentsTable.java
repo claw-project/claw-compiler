@@ -27,7 +27,7 @@ import cx2x.xcodeml.helper.*;
 
 public class XargumentsTable extends XbaseElement {
   // TODO move to exprModel. For the moment only read var
-  private Map<String, XbaseElement> _table;
+  private Map<String, XexprModel> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -50,8 +50,8 @@ public class XargumentsTable extends XbaseElement {
       Node n = elements.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) n;
-        Xvar var = new Xvar(el); // TODO move to exprModel
-        _table.put(var.getValue(), var);
+        Xvar var = new Xvar(el);
+        _table.put(var.getValue(), new XexprModel(var));
       }
     }
   }
@@ -61,7 +61,7 @@ public class XargumentsTable extends XbaseElement {
    * @param name Name of the arguments.
    * @return The argument if found. Null otherwise.
    */
-  public XbaseElement findArgument(String name){
+  public XexprModel findArgument(String name){
     if(_table.containsKey(name)) {
       return _table.get(name);
     }
@@ -97,7 +97,7 @@ public class XargumentsTable extends XbaseElement {
    */
   public void add(Xvar var){
     baseElement.appendChild(var.cloneNode());
-    _table.put(var.getValue(), var);
+    _table.put(var.getValue(), new XexprModel(var));
   }
 
 
@@ -122,7 +122,7 @@ public class XargumentsTable extends XbaseElement {
    * Get an iterator on the arguments table
    * @return An iterator over the arguments table
    */
-  public Iterator<Map.Entry<String, XbaseElement>> iterator(){
+  public Iterator<Map.Entry<String, XexprModel>> iterator(){
     return _table.entrySet().iterator();
   }
 }

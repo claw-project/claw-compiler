@@ -21,33 +21,33 @@ import cx2x.xcodeml.xelement.*;
 
 public class XexprModelTest {
 
-  private String dummyRootOpen = "<exprModel>";
-  private String dummyRootClose = "</exprModel>";
+  private static final String dummyRootOpen = "<exprModel>";
+  private static final String dummyRootClose = "</exprModel>";
 
-  private String exprModel_IntConst = dummyRootOpen +
+  private static final String exprModel_IntConst = dummyRootOpen +
     "<FintConstant type=\"Fint\">16</FintConstant>" + dummyRootClose;
 
-  private String exprModel_RealConst = dummyRootOpen +
+  private static final String exprModel_RealConst = dummyRootOpen +
     "<FrealConstant type=\"Freal\">9.81</FrealConstant>" + dummyRootClose;
 
-  private String exprModel_ComplexConst = dummyRootOpen +
+  private static final String exprModel_ComplexConst = dummyRootOpen +
     "<FcomplexConstant type=\"Fcomplex\">" +
     "  <FrealConstant type=\"Freal\">1.0</FrealConstant>" +
     "  <FrealConstant type=\"Freal\">2.0</FrealConstant>" +
     "</FcomplexConstant>" + dummyRootClose;
 
-  private String exprModel_LogConst = dummyRootOpen +
+  private static final String exprModel_LogConst = dummyRootOpen +
     "<FlogicalConstant type=\"Flogical\">.TRUE.</FlogicalConstant>" +
     dummyRootClose;
 
-  private String exprModel_CharConst = dummyRootOpen +
+  private static final String exprModel_CharConst = dummyRootOpen +
     "<FcharacterConstant type=\"C7fca03c0d3c0\">value1: </FcharacterConstant>"
     + dummyRootClose;
 
-  private String exprModel_Var = dummyRootOpen +
+  private static final String exprModel_Var = dummyRootOpen +
     "<Var type=\"Fint\" scope=\"local\">k</Var>" + dummyRootClose;
 
-  private String exprModel_fctCall = dummyRootOpen +
+  private static final String exprModel_fctCall = dummyRootOpen +
     "<functionCall type=\"Fvoid\">" +
     "  <name type=\"F7fca03c08d80\">clawloop</name>" +
     "  <arguments>" +
@@ -55,6 +55,20 @@ public class XexprModelTest {
     "    <Var type=\"A7fca03c08230\" scope=\"local\">value2</Var>" +
     "  </arguments>" +
     "</functionCall>" + dummyRootClose;
+
+  private static final String exprModel_arrayRef = dummyRootOpen +
+      "<FarrayRef type=\"Rb0fd40\">" +
+      "<varRef type=\"Ab0fe80\">" +
+      "<Var type=\"Ab0fe80\" scope=\"local\">array1</Var>" +
+      "</varRef>" +
+      "<arrayIndex>" +
+      "<Var type=\"Ib524e0\" scope=\"local\">i</Var>" +
+      "</arrayIndex>" +
+      "<arrayIndex>" +
+      "<Var type=\"Ib52650\" scope=\"local\">j</Var>" +
+      "</arrayIndex>" +
+      "</FarrayRef>" +
+      dummyRootClose;
 
   @Test
   public void findExprModelTest() {
@@ -92,7 +106,6 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isComplexConst());
-
 
     // XlogicalConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_LogConst);
@@ -148,6 +161,15 @@ public class XexprModelTest {
     assertEquals("clawloop", fCall.getName().getValue());
     assertEquals("F7fca03c08d80", fCall.getName().getType());
     assertEquals(2, fCall.getArgumentsTable().count());
+
+    // ArrayRef
+    xml = XmlHelper.loadXMLFromString(exprModel_arrayRef);
+    assertNotNull(xml);
+    element = new XbaseElement(xml.getDocumentElement());
+    assertNotNull(element);
+    model = XelementHelper.findExprModel(element, false);
+    assertTrue(model.isArrayRef());
+    assertNotNull(model.getArrayRef());
   }
 
 }

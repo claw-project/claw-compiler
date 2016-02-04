@@ -289,7 +289,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       for(ClawMappingVar var : mapping.getMappedVariables()){
 
         System.out.println("  Var: " + var);
-        XbaseElement argument = args.findArgument(var.getArgMapping()); // TODO return a dedictaed type
+        XexprModel argument = args.findArgument(var.getArgMapping()); // TODO return a dedictaed type
         if(argument == null) {
           continue;
         }
@@ -306,8 +306,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
          *    2.2 insert clone of base variable in varRef
          * 3. Create arrayRef element with varRef + arrayIndex
          */
-        if(argument instanceof Xvar){
-          Xvar varArg = (Xvar)argument;
+        if(argument.isVar()){
+          Xvar varArg = argument.getVar();
           System.out.println("  arg found: " + varArg.getType());
           XbasicType type =
               (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
@@ -354,7 +354,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           args.replace(varArg, newArg);
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-        else if (argument instanceof XarrayRef){
+        else if (argument.isArrayRef()){
+          XarrayRef arraRef = argument.getArrayRef();
           // TODO
         }
 

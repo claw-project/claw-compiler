@@ -41,15 +41,15 @@ public class XfunctionCallTest {
     assertTrue(fctCall.getArgumentsTable().hasArgument("value2"));
     assertNotNull(fctCall.getArgumentsTable().findArgument("value2"));
 
-    XbaseElement arg1 = fctCall.getArgumentsTable().findArgument("value1");
-    assertTrue(arg1 instanceof Xvar);
-    Xvar var1 = (Xvar)arg1;
+    XexprModel arg1 = fctCall.getArgumentsTable().findArgument("value1");
+    assertTrue(arg1.isVar());
+    Xvar var1 = arg1.getVar();
     assertEquals("A7f84b9c076b0", var1.getType());
     assertEquals(Xscope.LOCAL, var1.getScope());
 
-    XbaseElement arg2 = fctCall.getArgumentsTable().findArgument("value2");
-    assertTrue(arg2 instanceof Xvar);
-    Xvar var2 = (Xvar)arg2;
+    XexprModel arg2 = fctCall.getArgumentsTable().findArgument("value2");
+    assertTrue(arg2.isVar());
+    Xvar var2 = arg2.getVar();
     assertEquals("A7f84b9c07f60", var2.getType());
     assertEquals(Xscope.LOCAL, var2.getScope());
 

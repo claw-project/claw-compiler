@@ -86,6 +86,25 @@ public class XexprModel {
   }
 
   /**
+   * Check whether the exprModel is an arrayRef.
+   * @return True if the exprModel is an arrayRef. False otherwise.
+   */
+  public boolean isArrayRef(){
+    return isOfType(XarrayRef.class);
+  }
+
+  /**
+   * Get the exprModel as var.
+   * @return Xvar object if the exprModel is a var. Null otherwise.
+   */
+  public XarrayRef getArrayRef(){
+    if(isArrayRef()){
+      return (XarrayRef)_element;
+    }
+    return null;
+  }
+
+  /**
    * Check whether the exprModel is an integer constant.
    * @return True if the exprModel is an integer constant. False otherwise.
    */
