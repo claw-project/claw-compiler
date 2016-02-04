@@ -53,4 +53,21 @@ public class XmoduleDefinition extends XenhancedElement {
   }
 
 
+  /**
+   * Get the module's symbols table.
+   * @return A XsymbolTable object containing the module's symbols.
+   */
+  public XsymbolTable getSymbolTable(){
+    return _symbols;
+  }
+
+  /**
+   * Get the module's declarations table.
+   * @return A XdeclTable object containing the module's declarations.
+   */
+  public XdeclTable getDeclarationTable(){
+    return _declarations;
+  }
+
+
 }
