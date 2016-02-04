@@ -156,6 +156,18 @@ public class XexprModel {
   }
 
   /**
+   * Get the exprModel as logical constant.
+   * @return XlogicalConstant object if the exprModel is a logical constant.
+   * Null otherwise.
+   */
+  public XlogicalConstant getLogicalConstant(){
+    if(isLogicalConst()){
+      return (XlogicalConstant)_element;
+    }
+    return null;
+  }
+
+  /**
    * Check whether the exprModel is of a given class type.
    * @param type Class to be checked (Derived type of XbaseElement).
    * @return True if the exprModel is of the given class. False otherwise.
