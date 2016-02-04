@@ -70,6 +70,7 @@ else()
     cx2x/xcodeml/xelement/XglobalDeclTest.java
     cx2x/xcodeml/xelement/XidTest.java
     cx2x/xcodeml/xelement/XifStatementTest.java
+    cx2x/xcodeml/xelement/XindexRangeTest.java
     cx2x/xcodeml/xelement/XloopIterationRangeTest.java
     cx2x/xcodeml/xelement/XmoduleDefinitionTest.java
     cx2x/xcodeml/xelement/XpragmaTest.java
@@ -97,6 +98,7 @@ else()
     cx2x.xcodeml.xelement.XglobalDeclTest
     cx2x.xcodeml.xelement.XidTest
     cx2x.xcodeml.xelement.XifStatementTest
+    cx2x.xcodeml.xelement.XindexRangeTest
     cx2x.xcodeml.xelement.XloopIterationRangeTest
     cx2x.xcodeml.xelement.XmoduleDefinitionTest
     cx2x.xcodeml.xelement.XpragmaTest
