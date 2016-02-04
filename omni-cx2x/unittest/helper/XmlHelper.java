@@ -157,6 +157,12 @@ public class XmlHelper {
     return new XdoStatement(el);
   }
 
+  public static XmoduleDefinition createXmoduleDefinition(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XmoduleDefinition(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {
