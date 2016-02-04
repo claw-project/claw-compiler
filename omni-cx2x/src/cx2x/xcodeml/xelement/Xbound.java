@@ -43,7 +43,9 @@ public class Xbound extends XbaseElement {
     return _exprModel;
   }
 
+  // TODO should be done in exprModel
   public String getValue(){
+
     if(_exprModel.isVar()){
       return _exprModel.getVar().getValue();
     }
