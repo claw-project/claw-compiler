@@ -21,7 +21,7 @@ package cx2x.xcodeml.xelement;
  *   | unaryMinusExpr | logNotExpr | userBinaryExpr | userUnaryExpr | FdoLoop )
  *
  *
- * - Required: on of the followings elements:
+ * - Required: one of the following elements:
  *   - FintConstant (XintConstant), FrealConstant (XrealConstant),
  *     FcomplexConstant (XcomplexConstant), FcharacterConstant
  *     (XcharacterConstant), FlogicalConstant (XlogicalConstant)
@@ -94,11 +94,35 @@ public class XexprModel {
   }
 
   /**
+   * Get the exprModel as integer constant.
+   * @return XintConstant object if the exprModel is an integer constant.
+   * Null otherwise.
+   */
+  public XintConstant getIntConstant(){
+    if(isIntConst()){
+      return (XintConstant)_element;
+    }
+    return null;
+  }
+
+  /**
    * Check whether the exprModel is a real constant.
    * @return True if the exprModel is a real constant. False otherwise.
    */
   public boolean isRealConst(){
     return isOfType(XrealConstant.class);
+  }
+
+  /**
+   * Get the exprModel as character constant.
+   * @return XrealConstant object if the exprModel is a real constant.
+   * Null otherwise.
+   */
+  public XrealConstant getRealConstant(){
+    if(isRealConst()){
+      return (XrealConstant)_element;
+    }
+    return null;
   }
 
   /**
@@ -110,11 +134,35 @@ public class XexprModel {
   }
 
   /**
+   * Get the exprModel as character constant.
+   * @return XcharacterConstant object if the exprModel is a character constant.
+   * Null otherwise.
+   */
+  public XcharacterConstant getCharacterConstant(){
+    if(isCharConst()){
+      return (XcharacterConstant)_element;
+    }
+    return null;
+  }
+
+  /**
    * Check whether the exprModel is a logical constant.
    * @return True if the exprModel is a logical constant. False otherwise.
    */
   public boolean isLogicalConst(){
     return isOfType(XlogicalConstant.class);
+  }
+
+  /**
+   * Get the exprModel as logical constant.
+   * @return XlogicalConstant object if the exprModel is a logical constant.
+   * Null otherwise.
+   */
+  public XlogicalConstant getLogicalConstant(){
+    if(isLogicalConst()){
+      return (XlogicalConstant)_element;
+    }
+    return null;
   }
 
   /**
@@ -154,28 +202,18 @@ public class XexprModel {
   }
 
   /**
-   * Get the exprModel as integer constant.
-   * @return XintConstant object if the exprModel is an integer constant.
+   * Get the exprModel as function call.
+   * @return XfunctionCall object if the exprModel is a function call.
    * Null otherwise.
    */
-  public XintConstant getIntConstant(){
-    if(isIntConst()){
-      return (XintConstant)_element;
+  public XfunctionCall getFctCall(){
+    if(isFctCall()){
+      return (XfunctionCall) _element;
     }
     return null;
   }
 
-  /**
-   * Get the exprModel as logical constant.
-   * @return XlogicalConstant object if the exprModel is a logical constant.
-   * Null otherwise.
-   */
-  public XlogicalConstant getLogicalConstant(){
-    if(isLogicalConst()){
-      return (XlogicalConstant)_element;
-    }
-    return null;
-  }
+
 
   /**
    * Check whether the exprModel is of a given class type.

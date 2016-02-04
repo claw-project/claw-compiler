@@ -66,6 +66,10 @@ public class XexprModelTest {
     XexprModel model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isIntConst());
+    XintConstant iConst = model.getIntConstant();
+    assertNotNull(iConst);
+    assertEquals(XelementName.TYPE_F_INT, iConst.getType());
+    assertEquals("16", iConst.getValue());
 
     // XrealConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_RealConst);
@@ -75,6 +79,10 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isRealConst());
+    XrealConstant rConst = model.getRealConstant();
+    assertNotNull(rConst);
+    assertEquals(XelementName.TYPE_F_REAL, rConst.getType());
+    assertEquals("9.81", rConst.getValue());
 
     // XcomplexConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_ComplexConst);
@@ -85,6 +93,7 @@ public class XexprModelTest {
     assertNotNull(model);
     assertTrue(model.isComplexConst());
 
+
     // XlogicalConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_LogConst);
     assertNotNull(xml);
@@ -93,6 +102,10 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isLogicalConst());
+    XlogicalConstant lConst = model.getLogicalConstant();
+    assertNotNull(lConst);
+    assertEquals(XelementName.TYPE_F_LOGICAL, lConst.getType());
+    assertEquals(".TRUE.", lConst.getValue());
 
     // XcharacterConstant object
     xml = XmlHelper.loadXMLFromString(exprModel_CharConst);
@@ -102,6 +115,10 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isCharConst());
+    XcharacterConstant cConst = model.getCharacterConstant();
+    assertNotNull(cConst);
+    assertEquals("C7fca03c0d3c0", cConst.getType());
+    assertEquals("value1: ", cConst.getValue());
 
     // Xvar object
     xml = XmlHelper.loadXMLFromString(exprModel_Var);
@@ -111,6 +128,11 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isVar());
+    Xvar var = model.getVar();
+    assertNotNull(var);
+    assertEquals(XelementName.TYPE_F_INT, var.getType());
+    assertEquals(Xscope.LOCAL, var.getScope());
+    assertEquals("k", var.getValue());
 
     // XfunctionCall
     xml = XmlHelper.loadXMLFromString(exprModel_fctCall);
@@ -120,7 +142,12 @@ public class XexprModelTest {
     model = XelementHelper.findExprModel(element, false);
     assertNotNull(model);
     assertTrue(model.isFctCall());
-
+    XfunctionCall fCall = model.getFctCall();
+    assertNotNull(fCall);
+    assertEquals(XelementName.TYPE_F_VOID, fCall.getType());
+    assertEquals("clawloop", fCall.getName().getValue());
+    assertEquals("F7fca03c08d80", fCall.getName().getType());
+    assertEquals(2, fCall.getArgumentsTable().count());
   }
 
 }
