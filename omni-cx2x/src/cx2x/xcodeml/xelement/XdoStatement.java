@@ -15,7 +15,7 @@ import cx2x.xcodeml.helper.*;
  * The XdoStatement represents the FdoStatement (6.5) element in XcodeML
  * intermediate representation.
  *
- * Elements: (Var?, indexRange?, body?)
+ * Elements: ( Var?, indexRange?, body? )
  * - Required:
  *   - Var (Xvar)
  *   - indexRange (XindexRange)
@@ -30,7 +30,8 @@ import cx2x.xcodeml.helper.*;
 
 public class XdoStatement extends XenhancedElement {
   private XloopIterationRange _iterationRange = null;
-  // TODO separate var/indexRange
+  private XindexRange _indexRange = null;
+  private Xvar _var = null;
   private Xbody _body = null;
   private String _construct_name = null;
 
@@ -51,12 +52,12 @@ public class XdoStatement extends XenhancedElement {
    * Find the different elements that are included in the iteration range.
    */
   public void findRangeElements(){
-    Xvar inductionVar = XelementHelper.findVar(this, false);
-    XindexRange indexRange = XelementHelper.findIndexRange(this, false);
+    _var = XelementHelper.findVar(this, false);
+    _indexRange = XelementHelper.findIndexRange(this, false);
 
-    if(inductionVar != null && indexRange != null){
+    if(_var != null && _var != null){
       _iterationRange =
-        new XloopIterationRange(inductionVar, indexRange);
+        new XloopIterationRange(_var, _indexRange);
     }
   }
 
