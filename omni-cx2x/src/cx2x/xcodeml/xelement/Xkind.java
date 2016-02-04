@@ -16,7 +16,6 @@ import org.w3c.dom.Element;
  */
 
 public class Xkind extends XbaseElement {
-  private String _value;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -25,6 +24,6 @@ public class Xkind extends XbaseElement {
    */
   public Xkind(Element baseElement){
     super(baseElement);
-    _value = baseElement.getTextContent();
   }
+  
 }
