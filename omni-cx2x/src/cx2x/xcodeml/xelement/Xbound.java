@@ -19,10 +19,6 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class Xbound extends XbaseElement {
-  private String _value = null;
-  private boolean _constant = false;
-  private boolean _isVar = false;
-  private Xvar _var = null;
   private XexprModel _exprModel = null;
 
   /**
@@ -68,7 +64,7 @@ public class Xbound extends XbaseElement {
 
   @Override
   public int hashCode() {
-    return _value.hashCode();
+    return getValue().hashCode();
   }
 
 }
