@@ -68,26 +68,29 @@ public class XarrayRef extends XbaseElement {
     // Find Var element
     _varRef = XelementHelper.findVarRef(this, false);
 
-    // TODO read all in one loop
-    // Read potential arrayIndex
-    NodeList nodeList = baseElement.
-      getElementsByTagName(XelementName.ARRAY_INDEX);
-
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node n = nodeList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element)n;
-        XarrayIndex arrayIndex = new XarrayIndex(el);
-        _innerElement.add(arrayIndex);
+    // Read all inner elements
+    Node crtNode = baseElement.getFirstChild();
+    while(crtNode != null){
+      if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element)crtNode;
+        switch (element.getTagName()){
+          case XelementName.ARRAY_INDEX:
+            XarrayIndex arrayIndex = new XarrayIndex(element);
+            _innerElement.add(arrayIndex);
+            break;
+          case XelementName.INDEX_RANGE:
+            XindexRange indexRange = new XindexRange(element);
+            _innerElement.add(indexRange);
+            break;
+          case XelementName.F_ARRAY_REF:
+            XarrayRef arrayRef = new XarrayRef(element);
+            _innerElement.add(arrayRef);
+            break;
+          // TODO read FarrayConstructor
+        }
       }
+      crtNode = crtNode.getNextSibling();
     }
-
-    // TODO read indexRange
-
-    // TODO read FarrayConstructor
-
-    // TODO read FarrayRef
-
   }
 
   /**
