@@ -12,7 +12,7 @@ import cx2x.xcodeml.helper.*;
  * The Xlength represents the len (8.6) element in XcodeML intermediate
  * representation.
  *
- * Elements:
+ * Elements: ( exprModel )
  * - exprModel (XexprModel)
  *
  * @author clementval

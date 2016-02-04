@@ -38,4 +38,12 @@ public class XstructConstructor extends XbaseElement {
       XelementName.ATTR_TYPE);
   }
 
+  /**
+   * Get the struct constructor type.
+   * @return Type of the strcut constructor as a String value.
+   */
+  public String getType(){
+    return _type;
+  }
+
 }

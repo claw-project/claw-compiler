@@ -11,8 +11,8 @@ import org.w3c.dom.Element;
  * The Xbody represents the body (8.7) element in XcodeML intermediate
  * representation.
  *
- * Elements:
- * - statementModel*
+ * Elements: ( statementModel* )
+ * - statementModel TODO not useful at the moment
  *
  * @author clementval
  */
