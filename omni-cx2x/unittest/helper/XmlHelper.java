@@ -169,6 +169,12 @@ public class XmlHelper {
     return new Xpragma(el);
   }
 
+  public static XifStatement createXifStatement(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XifStatement(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

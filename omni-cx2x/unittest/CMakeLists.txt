@@ -1,16 +1,16 @@
 include(junit.cmake)
 
+# Third party dependencies
 set(JUNIT_VERSION "4.12")
 set(HAMCREST_VERSION "1.3")
-
-
-
-set(OMNICX2X_JAR1 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar)
-set(OMNICX2X_JAR2 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar)
 set(JUNIT_JAR ${PROJECT_BINARY_DIR}/build/junit-${JUNIT_VERSION}.jar)
 set(HAMCREST_JAR ${PROJECT_BINARY_DIR}/build/hamcrest-core-${HAMCREST_VERSION}.jar)
-# Try to download the jar dependencies
 
+# Local dependencies
+set(OMNICX2X_JAR1 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar)
+set(OMNICX2X_JAR2 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar)
+
+# Try to download the jar dependencies
 if(NOT EXISTS ${JUNIT_JAR})
   message("Try to download junit dependency")
   file(
@@ -42,6 +42,8 @@ if(NOT EXISTS ${HAMCREST_JAR})
 
 endif()
 
+# Unit tests are not built and executed if third-party dependencies are not
+# present.
 if(NOT EXISTS ${JUNIT_JAR} OR NOT EXISTS ${HAMCREST_JAR})
   message( WARNING "JUnit jar or Hamcrest could not be downloaded. Unit tests will not be built and executed." )
 else()
@@ -67,6 +69,7 @@ else()
     cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
     cx2x/xcodeml/xelement/XglobalDeclTest.java
     cx2x/xcodeml/xelement/XidTest.java
+    cx2x/xcodeml/xelement/XifStatementTest.java
     cx2x/xcodeml/xelement/XloopIterationRangeTest.java
     cx2x/xcodeml/xelement/XmoduleDefinitionTest.java
     cx2x/xcodeml/xelement/XpragmaTest.java
@@ -93,6 +96,7 @@ else()
     cx2x.xcodeml.xelement.XfunctionDefinitionTest
     cx2x.xcodeml.xelement.XglobalDeclTest
     cx2x.xcodeml.xelement.XidTest
+    cx2x.xcodeml.xelement.XifStatementTest
     cx2x.xcodeml.xelement.XloopIterationRangeTest
     cx2x.xcodeml.xelement.XmoduleDefinitionTest
     cx2x.xcodeml.xelement.XpragmaTest
