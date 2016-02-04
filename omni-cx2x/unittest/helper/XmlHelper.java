@@ -193,6 +193,12 @@ public class XmlHelper {
     return new Xname(el);
   }
 
+  public static XdeclTable createXdeclTable(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XdeclTable(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

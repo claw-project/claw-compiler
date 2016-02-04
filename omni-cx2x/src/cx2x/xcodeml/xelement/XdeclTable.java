@@ -52,26 +52,29 @@ public class XdeclTable extends XbaseElement {
    * Read the declaration table.
    */
   private void readTable(){
-    // Read all varDecl elements
-    NodeList nodeList = baseElement
-      .getElementsByTagName(XelementName.VAR_DECL);
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node n = nodeList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element)n;
-        XvarDecl decl = new XvarDecl(el);
-        _table.put(decl.getName().getValue(), decl);
-      }
-    }
+    Node crtNode = baseElement.getFirstChild();
+    while(crtNode != null){
+      if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element)crtNode;
+        switch (element.getTagName()){
+          case XelementName.VAR_DECL:
+            XvarDecl decl = new XvarDecl(element);
+            _table.put(decl.getName().getValue(), decl);
+            break;
 
-    // TODO read FstructDecl elements
-    // TODO read externDecl elements
-    // TODO read FuseDecl elements
-    // TODO read FuseOnlyDecl elements
-    // TODO read FinterfaceDecl elements
-    // TODO read FnamelistDecl elements
-    // TODO read FequivalenceDecl elements
-    // TODO read FcommonDecl elements
+          // TODO read FstructDecl elements
+          // TODO read externDecl elements
+          // TODO read FuseDecl elements
+          // TODO read FuseOnlyDecl elements
+          // TODO read FinterfaceDecl elements
+          // TODO read FnamelistDecl elements
+          // TODO read FequivalenceDecl elements
+          // TODO read FcommonDecl elements
+
+        }
+      }
+      crtNode = crtNode.getNextSibling();
+    }
   }
 
   /**
