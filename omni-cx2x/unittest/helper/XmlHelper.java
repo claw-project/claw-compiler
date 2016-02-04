@@ -163,6 +163,12 @@ public class XmlHelper {
     return new XmoduleDefinition(el);
   }
 
+  public static Xpragma createXpragma(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xpragma(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {
