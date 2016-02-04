@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
  *
  * Elements: ( exprModel )
  * - Required:
- *   - exprModel TODO
+ *   - exprModel (XexprModel)
  *
  * Attributes:
  * - Optional: repeat_count (text)
