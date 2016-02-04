@@ -23,7 +23,6 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class Xvar extends XbaseElement implements Xclonable<Xvar> {
-  private String _identity = null;
   private String _type = null;
   private Xscope _scope = null;
 
@@ -35,17 +34,6 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   public Xvar(Element baseElement){
     super(baseElement);
     readElementInformation();
-  }
-
-  /**
-   * Set var value.
-   * @param value Var value.
-   */
-  public void setValue(String value){
-    if(baseElement != null){
-      baseElement.setTextContent(value);
-      _identity = value;
-    }
   }
 
   /**
@@ -71,14 +59,6 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   }
 
   /**
-   * Get var value.
-   * @return var value.
-   */
-  public String getValue(){
-    return _identity;
-  }
-
-  /**
    * Get var scope.
    * @return var scope.
    */
@@ -101,7 +81,6 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
     _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
     String scope = XelementHelper.getAttributeValue(this, XelementName.ATTR_SCOPE);
     _scope = Xscope.fromString(scope);
-    _identity = baseElement.getTextContent();
   }
 
   /**
@@ -119,7 +98,7 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
     if (ob.getClass() != getClass()) return false;
     Xvar other = (Xvar)ob;
 
-    if(!_identity.toLowerCase().equals(other.getValue().toLowerCase())){
+    if(!getValue().toLowerCase().equals(other.getValue().toLowerCase())){
       return false;
     }
 
@@ -133,6 +112,6 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
 
   @Override
   public int hashCode() {
-    return _identity.hashCode() ^ _scope.hashCode() ^ _type.hashCode();
+    return getValue().hashCode() ^ _scope.hashCode() ^ _type.hashCode();
   }
 }

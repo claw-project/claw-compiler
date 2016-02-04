@@ -25,7 +25,7 @@ public class XpragmaTest {
   public void simplePragmaTest(){
     Xpragma pragma = XmlHelper.createXpragma(pragma1);
     assertNotNull(pragma);
-    assertEquals("claw loop-fusion", pragma.getData());
+    assertEquals("claw loop-fusion", pragma.getValue());
     assertEquals(9, pragma.getLineNo());
     assertEquals("original_code.f90", pragma.getFile());
   }
@@ -35,10 +35,10 @@ public class XpragmaTest {
     Xpragma pragma = XmlHelper.createXpragma(pragma1);
     assertNotNull(pragma);
     Xpragma clone = pragma.cloneObject();
-    assertEquals("claw loop-fusion", clone.getData());
+    assertEquals("claw loop-fusion", clone.getValue());
     clone.setData("claw loop-interchange");
-    assertEquals("claw loop-fusion", pragma.getData());
-    assertEquals("claw loop-interchange", clone.getData());
+    assertEquals("claw loop-fusion", pragma.getValue());
+    assertEquals("claw loop-interchange", clone.getValue());
     assertEquals(9, pragma.getLineNo());
     assertEquals(9, clone.getLineNo());
     assertEquals("original_code.f90", pragma.getFile());

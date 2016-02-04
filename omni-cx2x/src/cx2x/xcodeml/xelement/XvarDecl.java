@@ -63,9 +63,10 @@ public class XvarDecl extends Xdecl {
    * Get the var value.
    * @return Value assigned to the var declaration.
    */
+  @Override
   public String getValue(){
     if(_hasValue){
-      return _value.getData();
+      return _value.getValue();
     }
     return null;
   }

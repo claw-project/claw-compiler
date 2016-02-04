@@ -44,6 +44,7 @@ public class Xbound extends XbaseElement {
   }
 
   // TODO should be done in exprModel
+  @Override
   public String getValue(){
 
     if(_exprModel.isVar()){

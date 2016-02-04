@@ -57,7 +57,7 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    * @return True if a do statement is found. False otherwise.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    return _pragma.getData().toLowerCase().startsWith(Constant.OPENACC_PREFIX);
+    return _pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX);
   }
 
   @Override
@@ -77,7 +77,7 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
                         OpenAccContinuation other)
       throws IllegalTransformationException
   {
-    String allPragma = _pragma.getData();
+    String allPragma = _pragma.getValue();
 
     String[] pragmas = allPragma.split(Constant.OPENACC_PREFIX);
 

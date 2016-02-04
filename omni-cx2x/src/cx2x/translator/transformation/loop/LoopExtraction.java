@@ -80,13 +80,13 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     for(ClawMapping m : _mappings){
       for(ClawMappingVar mappedVar : m.getMappedVariables()){
         if(_argMappingMap.containsKey(mappedVar.getArgMapping())){
-          throw new IllegalDirectiveException(_pragma.getData(), mappedVar +
+          throw new IllegalDirectiveException(_pragma.getValue(), mappedVar +
               " appears more than once in the mapping");
         } else {
           _argMappingMap.put(mappedVar.getArgMapping(), m);
         }
         if(_fctMappingMap.containsKey(mappedVar.getFctMapping())){
-          throw new IllegalDirectiveException(_pragma.getData(), mappedVar +
+          throw new IllegalDirectiveException(_pragma.getValue(), mappedVar +
               " appears more than once in the mapping");
         } else {
           _fctMappingMap.put(mappedVar.getFctMapping(), m);
@@ -240,7 +240,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XdoStatement loopInClonedFct = locateDoStatement(clonedFctDef);
 
     if(XmOption.isDebugOutput()){
-      System.out.println("loop-extract transformation: " + _pragma.getData());
+      System.out.println("loop-extract transformation: " + _pragma.getValue());
       System.out.println("  created subroutine: " + clonedFctDef.getName().getValue());
     }
 

@@ -73,7 +73,7 @@ public class ClawXcodeMlTranslator {
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
       if(!ClawPragma.startsWithClaw(pragma)){
-        if(pragma.getData().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
+        if(pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
         {
           OpenAccContinuation t = new OpenAccContinuation(pragma);
           addOrAbort(t, _program, _transformer);
@@ -120,7 +120,7 @@ public class ClawXcodeMlTranslator {
         }
 
       } else {
-        System.err.println("INVALID PRAGMA: !$" + pragma.getData());
+        System.err.println("INVALID PRAGMA: !$" + pragma.getValue());
         System.exit(1);
       }
     }

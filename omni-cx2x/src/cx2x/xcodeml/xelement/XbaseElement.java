@@ -49,8 +49,18 @@ public class XbaseElement {
    * Get the text content of the stored root element.
    * @return A string value representing the content of the element.
    */
-  public String getData(){
+  public String getValue(){
     return baseElement.getTextContent();
+  }
+
+  /**
+   * Set the element value.
+   * @param value The element value.
+   */
+  public void setValue(String value){
+    if(baseElement != null){
+      baseElement.setTextContent(value);
+    }
   }
 
   /**

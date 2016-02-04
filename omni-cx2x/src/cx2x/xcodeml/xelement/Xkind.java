@@ -27,22 +27,4 @@ public class Xkind extends XbaseElement {
     super(baseElement);
     _value = baseElement.getTextContent();
   }
-
-  /**
-   * Get the kind value.
-   * @return Kind value as String.
-   */
-  public String getValue(){
-    return _value;
-  }
-
-  /**
-   * Set a new kind value.
-   * @param value The new kind value.
-   */
-  public void setValue(String value){
-    if(baseElement != null){
-      baseElement.setTextContent(value);
-    }
-  }
 }

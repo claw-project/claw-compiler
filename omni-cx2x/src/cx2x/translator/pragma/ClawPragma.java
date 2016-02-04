@@ -83,10 +83,10 @@ public enum ClawPragma {
   public static ClawPragma getDirective(Xpragma pragma)
       throws IllegalDirectiveException
   {
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       throw new IllegalDirectiveException("", "directive is null", 0);
     }
-    String[] parts = pragma.getData().split(" ");
+    String[] parts = pragma.getValue().split(" ");
     if(parts.length < 2){
       throw new IllegalDirectiveException("",
           "cannot get the directive keyword", pragma.getLineNo());
@@ -121,7 +121,7 @@ public enum ClawPragma {
       return null;
     }
     Matcher matchOption = Pattern.compile(REGEX_OPTION_ACC,
-        Pattern.CASE_INSENSITIVE).matcher(pragma.getData());
+        Pattern.CASE_INSENSITIVE).matcher(pragma.getValue());
     if(matchOption.find()) {
       if(matchOption.group(1).trim().length() == 0){
         return null;
@@ -138,8 +138,8 @@ public enum ClawPragma {
    * @return True if fusion option is defined. False otherwise.
    */
   public static boolean hasFusionOption(Xpragma pragma) {
-    return !(pragma == null || pragma.getData() == null)
-        && pragma.getData().contains(OPTION_FUSION);
+    return !(pragma == null || pragma.getValue() == null)
+        && pragma.getValue().contains(OPTION_FUSION);
   }
 
   /**
@@ -148,11 +148,11 @@ public enum ClawPragma {
    * @return The fusion group value. Null if not specified.
    */
   public static String getExtractFusionOption(Xpragma pragma){
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       return null;
     }
     Matcher m = Pattern.compile(REGEX_LOOP_EXTRACT_FUSION)
-        .matcher(pragma.getData());
+        .matcher(pragma.getValue());
     if(m.find()){
       return m.group(1);
     }
@@ -166,18 +166,18 @@ public enum ClawPragma {
    * @return The fusion group value. Null if not specified.
    */
   public static String getGroupOptionValue(Xpragma pragma){
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       return null;
     }
     Matcher matchFullDirective = Pattern.compile(REGEX_LOOP_FUSION +
-      REGEX_OPTION_GROUP, Pattern.CASE_INSENSITIVE).matcher(pragma.getData());
+      REGEX_OPTION_GROUP, Pattern.CASE_INSENSITIVE).matcher(pragma.getValue());
 
     if(!matchFullDirective.matches()){
       return null;
     }
 
     Matcher matchOption = Pattern.compile(INNER_OPTION,
-      Pattern.CASE_INSENSITIVE).matcher(pragma.getData());
+      Pattern.CASE_INSENSITIVE).matcher(pragma.getValue());
     if(matchOption.find()) {
       if(matchOption.group(1).trim().length() == 0){
         return null;
@@ -194,7 +194,7 @@ public enum ClawPragma {
    * @return The option value if present. Null otherwise.
    */
   public static String getSimpleOptionValue(Xpragma pragma){
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       return null;
     }
     try {
@@ -207,14 +207,14 @@ public enum ClawPragma {
 
     Matcher matchFullDirective = Pattern.compile(REGEX_LOOP_INTERCHANGE
       + REGEX_OPTION_SIMPLE,
-      Pattern.CASE_INSENSITIVE).matcher(pragma.getData());
+      Pattern.CASE_INSENSITIVE).matcher(pragma.getValue());
 
     if(!matchFullDirective.matches()){
       return null;
     }
 
     Matcher matchOption = Pattern.compile(INNER_OPTION,
-      Pattern.CASE_INSENSITIVE).matcher(pragma.getData());
+      Pattern.CASE_INSENSITIVE).matcher(pragma.getValue());
     if(matchOption.find()) {
       return matchOption.group(1);
     }
@@ -227,8 +227,8 @@ public enum ClawPragma {
    * @return True if the statement starts with claw keyword. False otherwise.
    */
   public static boolean startsWithClaw(Xpragma pragma) {
-    return !(pragma == null || pragma.getData() == null)
-        && pragma.getData().startsWith(PREFIX_CLAW);
+    return !(pragma == null || pragma.getValue() == null)
+        && pragma.getValue().startsWith(PREFIX_CLAW);
   }
 
   /**
@@ -237,8 +237,8 @@ public enum ClawPragma {
    * @return True if the option is activated. False otherwise.
    */
   public static boolean hasParallelOption(Xpragma pragma) {
-    return !(pragma == null || pragma.getData() == null)
-        && pragma.getData().toLowerCase().contains(OPTION_EXTRACT_PARALLEL);
+    return !(pragma == null || pragma.getValue() == null)
+        && pragma.getValue().toLowerCase().contains(OPTION_EXTRACT_PARALLEL);
   }
 
   /**
@@ -247,10 +247,10 @@ public enum ClawPragma {
    * @return True if the directive is valid. False otherwise.
    */
   public static boolean isValid(Xpragma pragma){
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       return false;
     }
-    String[] parts = pragma.getData().split(" ");
+    String[] parts = pragma.getValue().split(" ");
 
     if(parts.length < 2){
       return false;
@@ -376,12 +376,12 @@ public enum ClawPragma {
     List<String> allMappings = new ArrayList<>();
     List<ClawMapping> mappings = new ArrayList<>();
 
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       return mappings;
     }
 
     Matcher m = Pattern.compile(REGEX_MAPPING)
-        .matcher(pragma.getData());
+        .matcher(pragma.getValue());
     while (m.find()) {
       allMappings.add(m.group(1));
     }
@@ -400,11 +400,11 @@ public enum ClawPragma {
    * @return A ClawRange object containing the range information.
    */
   public static ClawRange extractRangeInformation(Xpragma pragma) {
-    if(pragma == null || pragma.getData() == null){
+    if(pragma == null || pragma.getValue() == null){
       return null;
     }
 
-    Matcher m1 = Pattern.compile(RANGE_GLOBAL).matcher(pragma.getData());
+    Matcher m1 = Pattern.compile(RANGE_GLOBAL).matcher(pragma.getValue());
     if(m1.find()){
       Matcher m2 = Pattern.compile(RANGE)
           .matcher(m1.group(1));

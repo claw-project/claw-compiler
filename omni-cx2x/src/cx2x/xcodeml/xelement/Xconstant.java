@@ -101,14 +101,6 @@ public class Xconstant extends XbaseElement {
   }
 
   /**
-   * Get the constant value.
-   * @return The constant value as String.
-   */
-  public String getValue(){
-    return _value;
-  }
-
-  /**
    * Set the constant value.
    * @param value The constant value.
    */

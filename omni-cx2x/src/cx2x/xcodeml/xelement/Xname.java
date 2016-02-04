@@ -19,7 +19,6 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class Xname extends XbaseElement {
-  private String _nameValue = null;
   private String _type = null;
 
   /**
@@ -36,10 +35,9 @@ public class Xname extends XbaseElement {
    * Set name value.
    * @param value New name value.
    */
-  public void setName(String value){
+  public void setName(String value){ // TODO refactor setValue
     if(baseElement != null){
       baseElement.setTextContent(value);
-      _nameValue = value;
     }
   }
 
@@ -59,15 +57,6 @@ public class Xname extends XbaseElement {
    */
   private void readElementInformation(){
     _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
-    _nameValue = baseElement.getTextContent();
-  }
-
-  /**
-   * Get the name value.
-   * @return Name value.
-   */
-  public String getValue(){
-    return _nameValue;
   }
 
   /**
@@ -87,7 +76,7 @@ public class Xname extends XbaseElement {
     if(other == null){
       return false;
     }
-    return _nameValue.equals(other.getValue());
+    return getValue().equals(other.getValue());
   }
 
   /**
@@ -97,7 +86,7 @@ public class Xname extends XbaseElement {
    * False otherwise.
    */
   public boolean isIdentical(String name){
-    return _nameValue.equals(name);
+    return getValue().equals(name);
   }
 
 }
