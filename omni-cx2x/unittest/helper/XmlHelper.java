@@ -199,6 +199,12 @@ public class XmlHelper {
     return new XdeclTable(el);
   }
 
+  public static XcomplexConstant createXcomplexConstant(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XcomplexConstant(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {

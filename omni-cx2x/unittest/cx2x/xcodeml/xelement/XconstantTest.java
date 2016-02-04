@@ -35,6 +35,12 @@ public class XconstantTest {
   private static final String charConst2 =
       "<FcharacterConstant type=\"Ce47ed0\">****</FcharacterConstant>";
 
+  private static final String cmplxConst1 =
+      "<FcomplexConstant type=\"Fcomplex\">" +
+      "<FrealConstant type=\"Freal\">1.0</FrealConstant>" +
+      "<FrealConstant type=\"Freal\">2.0</FrealConstant>" +
+      "</FcomplexConstant>";
+
 
   @Test
   public void intConstantTest(){
@@ -98,6 +104,19 @@ public class XconstantTest {
     assertTrue(charConst.hasType());
     assertEquals("Ce47ed0", charConst.getType());
     assertEquals("****", charConst.getValue());
+  }
+
+  @Test
+  public void complexConstantTest(){
+    XcomplexConstant cmplx = XmlHelper.createXcomplexConstant(cmplxConst1);
+    assertNotNull(cmplx);
+    assertEquals(XelementName.TYPE_F_COMPLEX, cmplx.getType());
+    assertNotNull(cmplx.getRealPart());
+    assertNotNull(cmplx.getImaginaryPart());
+    assertEquals(XelementName.TYPE_F_REAL, cmplx.getRealPart().getType());
+    assertEquals("1.0", cmplx.getRealPart().getValue());
+    assertEquals(XelementName.TYPE_F_REAL, cmplx.getImaginaryPart().getType());
+    assertEquals("2.0", cmplx.getImaginaryPart().getValue());
   }
 
 
