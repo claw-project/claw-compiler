@@ -289,7 +289,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       for(ClawMappingVar var : mapping.getMappedVariables()){
 
         System.out.println("  Var: " + var);
-        XexprModel argument = args.findArgument(var.getArgMapping()); // TODO return a dedictaed type
+        XexprModel argument = args.findArgument(var.getArgMapping());
         if(argument == null) {
           continue;
         }
