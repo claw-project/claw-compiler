@@ -27,7 +27,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XifStatement extends XbaseElement {
+public class XifStatement extends XenhancedElement {
 
   private Xcondition _cond = null;
   private Xthen _then = null;

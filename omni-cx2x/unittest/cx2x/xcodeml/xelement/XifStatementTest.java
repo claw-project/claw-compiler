@@ -50,5 +50,8 @@ public class XifStatementTest {
     assertNotNull(ifStmt.getThen().getBody());
     assertNotNull(ifStmt.getElse());
     assertNotNull(ifStmt.getElse().getBody());
+
+    assertEquals(3, ifStmt.getLineNo());
+    assertEquals("test.f90", ifStmt.getFile());
   }
 }
