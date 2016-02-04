@@ -1238,6 +1238,7 @@ public class XelementHelper {
    */
   public static <T extends XbaseElement> T createEmpty(Class<T> xElementClass,
                                                        XcodeProgram xcodeml)
+      throws IllegalTransformationException
   {
     String elementName = XelementName.getElementNameFromClass(xElementClass);
     if(elementName != null){
@@ -1246,10 +1247,12 @@ public class XelementHelper {
         return xElementClass.
             getDeclaredConstructor(Element.class).newInstance(element);
       } catch(Exception ex){
-        return null;
+        throw new IllegalTransformationException("Cannot create new statement: "
+            + elementName);
       }
     }
-    return null;
+    throw new IllegalTransformationException("Cannot create new statement: "
+        + elementName);
   }
 
   /**

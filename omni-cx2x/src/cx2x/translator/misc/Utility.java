@@ -5,9 +5,6 @@
 
 package cx2x.translator.misc;
 
-import cx2x.translator.pragma.ClawMapping;
-import cx2x.translator.pragma.ClawMappingVar;
-
 import java.util.Iterator;
 import java.util.List;
 

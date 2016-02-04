@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 
 import cx2x.translator.common.Constant;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.Xpragma;
@@ -26,7 +27,12 @@ public class ClawPragmaTest {
   @Test
   public void isValidTest() {
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
 
     // loop-fusion
@@ -115,7 +121,12 @@ public class ClawPragmaTest {
   @Test
   public void parallelOptionTest(){
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
     pragma1.setData("claw loop-extract range(i=istart,iend) map(value1:i) " +
         "map(value2:i) parallel ");
@@ -128,7 +139,12 @@ public class ClawPragmaTest {
   @Test
   public void accOptionTest(){
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
     pragma1.setData("claw loop-extract range(i=istart,iend) map(value1:i) " +
         "map(value2:i) parallel acc(loop gang vector)");
@@ -147,7 +163,12 @@ public class ClawPragmaTest {
   @Test
   public void extractMappingTest(){
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
     pragma1.setData("claw loop-extract range(j1=ki1sc,ki1ec) "
         + " map(pduh2oc,pduh2of:j1,ki3sc/j3) "
@@ -188,7 +209,12 @@ public class ClawPragmaTest {
   @Test
   public void getGroupOptionTest(){
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
     pragma1.setData("claw loop-fusion group (g1)");
     try {
@@ -215,7 +241,12 @@ public class ClawPragmaTest {
   @Test
   public void getExtractFusionOptionTest() {
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
     pragma1.setData("claw loop-extract range(i=istart,iend) map(value1:i) " +
         "map(value2:i) fusion group(j1) parallel acc(loop seq)");
@@ -228,7 +259,12 @@ public class ClawPragmaTest {
   @Test
   public void extractRangeInformationTest(){
     XcodeProgram program = XelementHelper.createNewProgram();
-    Xpragma pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    Xpragma pragma1 = null;
+    try {
+      pragma1 = XelementHelper.createEmpty(Xpragma.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
     assertNotNull(pragma1);
     pragma1.setData("claw loop-extract range(i=istart,iend)");
     ClawRange r1 = ClawPragma.extractRangeInformation(pragma1);

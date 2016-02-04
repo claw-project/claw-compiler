@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import static org.junit.Assert.*;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -123,8 +124,12 @@ public class XconstantTest {
   @Test
   public void fromScratchTest(){
     XcodeProgram program = XelementHelper.createNewProgram();
-    XintConstant intConst =
-        XelementHelper.createEmpty(XintConstant.class, program);
+    XintConstant intConst = null;
+    try {
+      intConst = XelementHelper.createEmpty(XintConstant.class, program);
+    } catch (IllegalTransformationException itex){
+      fail();
+    }
 
     intConst.setType(XelementName.TYPE_F_INT);
     intConst.setValue("10");

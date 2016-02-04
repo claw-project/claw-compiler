@@ -171,11 +171,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       return false;
     }
 
-    if(!checkMappingInformation(xcodeml)){
-      return false;
-    }
-
-    return true;
+    return checkMappingInformation(xcodeml);
   }
 
   /**
@@ -376,13 +372,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
           fctDeclarations.replace(newVarDecl);
           id.setType(varDeclType.getRef());
+        } else {
+          // Case 2: variable is not totally demoted then create new type
+          // TODO
+
         }
-
-        // Case 2: variable is not totally demoted then create new type
-        // TODO
-
-
-
       } // Loop mapped variables
     } // Loop over mapping clauses
 
@@ -461,9 +455,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   }
 
   /**
-   *
-   * @param from
-   * @return
+   * Try to find a do statement matching the range of loop-extract.
+   * @param from XbaseElement to search from. Search is performed in its
+   *             children.
+   * @return A XdoStatement object that match the range of loop-extract.
+   * @throws IllegalTransformationException
    */
   private XdoStatement locateDoStatement(XbaseElement from)
       throws IllegalTransformationException
@@ -487,9 +483,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           _pragma.getLineNo());
     }
 
-    if(foundStatement != null
-        && !_range.equals(foundStatement.getIterationRange()))
-    {
+    if(!_range.equals(foundStatement.getIterationRange())) {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
           _pragma.getLineNo()
@@ -503,7 +497,9 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param insertPoint Statement just before the insertion
    * @param xcodeml     The XcodeML representation.
    */
-  private void insertAccOption(Xpragma insertPoint, XcodeProgram xcodeml){
+  private void insertAccOption(Xpragma insertPoint, XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
     Xpragma accAdditionalOption = XelementHelper.
         createEmpty(Xpragma.class, xcodeml);
     accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
