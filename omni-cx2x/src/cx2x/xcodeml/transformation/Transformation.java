@@ -58,7 +58,8 @@ public abstract class Transformation<T> {
    * @param transformer The transformer used to applied the transformations.
    * @param other       Only for dependent transformation. The other
    *                    transformation part of the transformation.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if the transformation cannot be
+   * applied.
    */
   public abstract void transform(XcodeProgram xcodeml, Transformer transformer,
                                  T other) throws Exception;

@@ -31,6 +31,7 @@ public class ClawMapping {
    * ClawMapping ctor.
    * @param mappingClause inner part of the mapping clause like
    *                      var_list:mapping_list
+   * @throws IllegalDirectiveException if the map option is malformed.
    */
   public ClawMapping(String mappingClause) throws IllegalDirectiveException {
     _mappedVariables = new ArrayList<>();

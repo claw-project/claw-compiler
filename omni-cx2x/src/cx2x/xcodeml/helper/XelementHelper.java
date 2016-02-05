@@ -955,7 +955,7 @@ public class XelementHelper {
    * @param attrValue   Attribute value expected.
    * @param xpathQuery  Xpath query to locate the attribute value.
    * @return True if the attribute validates. False otherwise.
-   * @throws Exception
+   * @throws Exception if xpathQuery cannot be executed.
    */
   public static boolean validateStringAttribute(Document doc, String attrValue
     , String xpathQuery) throws Exception
@@ -1234,7 +1234,9 @@ public class XelementHelper {
    * Create an empty arrayIndex element in the given program.
    * @param xElementClass The class to be created
    * @param xcodeml       The current XcodeML program.
+   * @param <T>           Type of the class to be created.
    * @return An empty arrayIndex element.
+   * @throws IllegalTransformationException if element cannot be created.
    */
   public static <T extends XbaseElement> T createEmpty(Class<T> xElementClass,
                                                        XcodeProgram xcodeml)

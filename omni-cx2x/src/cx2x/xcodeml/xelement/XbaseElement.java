@@ -21,6 +21,7 @@ public class XbaseElement {
 
   /**
    * XbaseElement standard ctor. Base element is stored in this class.
+   * @param element Root element to create the XbaseElement.
    */
   public XbaseElement(Element element){
     baseElement = element;

@@ -73,7 +73,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @param transformer     The transformer used to applied the transformations.
    * @param loopFusionUnit  The other loop fusion unit to be merge with this
    *                        one.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if the transformation cannot be
+   * applied.
    */
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         LoopFusion loopFusionUnit) throws IllegalTransformationException

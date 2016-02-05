@@ -61,7 +61,7 @@ public class ClawXcodeMlTranslator {
 
   /**
    * Analysis the XcodeML code and produce a list of applicable transformation.
-   * @throws Exception
+   * @throws Exception if analysis fails.
    */
   public void analyze() throws Exception {
     _program = new XcodeProgram(_xcodemlInputFile);

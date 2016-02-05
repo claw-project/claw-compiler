@@ -14,6 +14,7 @@ import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.Xpragma;
 
 /**
+ * <pre>
  * OpenACC line continuation transformation. The XcodeML/F prgama statement
  * representation is an aggrated version of the pragma with all its continuation
  * lines.
@@ -24,18 +25,18 @@ import cx2x.xcodeml.xelement.Xpragma;
  * Example:
  * The followings OpenACC directives in Fortran code:
  *
- *   !$acc data &
+ *   !$acc data &amp;
  *   !$acc present (a,b,c,d,e,f,g)
  *
  * are represented in XcodeML with
  *
- * <FpragmaStatement>acc data acc present (a,b,c,d,e,f,g)</FpragmaStatement>
+ * &lt;FpragmaStatement&gt;acc data acc present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
  *
  * The transofrmation will split it like this:
  *
- * <FpragmaStatement>acc data &</FpragmaStatement
- * <FpragmaStatement>acc present (a,b,c,d,e,f,g)</FpragmaStatement>
- *
+ * &lt;FpragmaStatement&gt;acc data &amp; &lt;/FpragmaStatement&gt;
+ * &lt;FpragmaStatement&gt;acc present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
+ * </pre>
  *
  * @author clementval
  */
@@ -71,7 +72,8 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    *                        applied.
    * @param transformer     The transformer used to applied the transformations.
    * @param other           Not used in this transformation
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if the transformation cannot be
+   * applied.
    */
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         OpenAccContinuation other)

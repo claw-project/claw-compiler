@@ -58,10 +58,12 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    * @param transformer The transformer used to applied the transformations.
    * @param other       Only for dependent transformation. The other
    *                    transformation part of the transformation.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if the tranformation cannot be
+   * applied.
    */
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopInterchange other) throws IllegalTransformationException
+                        LoopInterchange other)
+      throws IllegalTransformationException
   {
 
     analyze(xcodeml, transformer);

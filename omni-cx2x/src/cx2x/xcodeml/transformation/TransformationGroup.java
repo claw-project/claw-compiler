@@ -61,7 +61,7 @@ public abstract class TransformationGroup<T extends Transformation> {
    * @see Transformation#transform(XcodeProgram, Transformer, Object)
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param transformer The transformer used to applied the transformations.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if transformation cannot be applied.
    */
   public abstract void applyTranslations(XcodeProgram xcodeml,
     Transformer transformer) throws Exception;

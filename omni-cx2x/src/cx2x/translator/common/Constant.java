@@ -7,6 +7,7 @@ package cx2x.translator.common;
 
 /**
  * Contains common constants values of the CLAW XcodeML to XcodeML translator
+ *
  * @author clementval
  */
 public class Constant {

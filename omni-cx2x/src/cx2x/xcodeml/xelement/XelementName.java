@@ -174,6 +174,7 @@ public class XelementName {
   /**
    * Get the corresponding element name from a XbaseElement derived class
    * @param xElementClass XbaseElement derived class
+   * @param <T>           Type of the XbaseElement to be found.
    * @return String value of the element name if know. Null otherwise
    */
   public static <T extends XbaseElement> String

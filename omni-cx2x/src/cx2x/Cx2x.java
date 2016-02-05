@@ -89,7 +89,7 @@ public class Cx2x {
   /**
    * Main point of entry of the program.
    * @param args  Arguments of the program.
-   * @throws Exception
+   * @throws Exception if translation failed.
    */
   public static void main(String[] args) throws Exception {
     String inXmlFile = null;

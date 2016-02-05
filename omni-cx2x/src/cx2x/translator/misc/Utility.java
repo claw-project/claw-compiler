@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * This class contains utilities methods that are useful in the whole project.
  * Mostly to implements java 1.8 features that are not present in java 1.7.
+ * 
  * @author clementval
  */
 public class Utility {
@@ -38,6 +39,7 @@ public class Utility {
    * Join a list of String elements into a single String.
    * @param delimiter Delimeter to be placed between each element.
    * @param elements  List of String elements.
+   * @param <T>       Type of element in the list.
    * @return A joined string of all elements separated by the delimiter.
    */
   public static <T> String join(String delimiter, List<T> elements){

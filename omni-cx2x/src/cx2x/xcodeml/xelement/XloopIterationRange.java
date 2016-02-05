@@ -32,6 +32,9 @@ public class XloopIterationRange {
   /**
    * Compare this loopIterationRange with the given one. Return true if all the
    * internal variable of the loopIterationRange are identical.
+   * @param other The other object to be checked with.
+   * @return True if the two loop iteration range are identical. False
+   * otherwise.
    */
   public boolean isFullyIdentical(XloopIterationRange other){
     if(!getInductionVar().getValue().equals(other.getInductionVar().getValue())){

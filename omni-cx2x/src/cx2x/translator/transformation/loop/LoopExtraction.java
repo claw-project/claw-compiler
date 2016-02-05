@@ -51,6 +51,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * Constructs a new LoopExtraction triggered from a specific pragma.
    * @param pragma  The pragma that triggered the loop extraction
    *                transformation.
+   * @throws IllegalDirectiveException if something is wrong in the directive's
+   * options
    */
   public LoopExtraction(Xpragma pragma) throws IllegalDirectiveException {
     super(pragma);
@@ -187,7 +189,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * @param transformer The transformer used to applied the transformations.
    * @param other       Only for dependent transformation. The other
    *                    transformation part of the transformation.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if the transformation cannot be
+   * applied.
    */
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         LoopExtraction other) throws Exception

@@ -111,7 +111,8 @@ public class XdoStatement extends XenhancedElement {
   /**
    * Append the body of a do statement to this one.
    * @param otherLoop The do statement containing the body to be appended.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if append operation cannot be
+   * performed.
    */
   public void appendToBody(XdoStatement otherLoop)
     throws IllegalTransformationException

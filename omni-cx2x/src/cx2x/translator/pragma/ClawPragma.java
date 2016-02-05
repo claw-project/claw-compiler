@@ -79,6 +79,7 @@ public enum ClawPragma {
    * Get the directive based on the token directly after the CLAW keyword.
    * @param pragma  The Xpragma in which the directive is searched.
    * @return ClawPragma enum value if a directive is found. Null otherwise.
+   * @throws IllegalDirectiveException if directive cannot be found.
    */
   public static ClawPragma getDirective(Xpragma pragma)
       throws IllegalDirectiveException
@@ -368,7 +369,7 @@ public enum ClawPragma {
    * Extract the mapping information from a pragma statement.
    * @param pragma The Xpragma object to extract from.
    * @return A list of ClawMapping objects containing the mapping information.
-   * @throws IllegalDirectiveException
+   * @throws IllegalDirectiveException if mapping information are malformed.
    */
   public static List<ClawMapping> extractMappingInformation(Xpragma pragma)
       throws IllegalDirectiveException
@@ -387,7 +388,6 @@ public enum ClawPragma {
     }
 
     for(String mappingClause : allMappings){
-      System.out.println("MAPPING " + mappingClause);
       ClawMapping mapping = new ClawMapping(mappingClause);
       mappings.add(mapping);
     }
