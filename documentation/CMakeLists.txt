@@ -11,10 +11,18 @@ if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
 endif()
 
 # Build the javadoc
-set (JAVADOC_TITLE "omni-cx2x")
-create_javadoc(
+set (JAVADOC_TITLE "OMNI CLAW XcodeML to XcodeML translator (omni-cx2x)")
+add_custom_target(
   claw-javadoc
-  PACKAGES
+  COMMAND ${Java_JAVADOC_EXECUTABLE}
+    -d ${CMAKE_SOURCE_DIR}/documentation/javadoc
+    -sourcepath ${CMAKE_SOURCE_DIR}/omni-cx2x/src
+    -classpath ${LOCAL_OMNI_JAR_TOOLS}:${LOCAL_OMNI_JAR_COMMON}:${LOCAL_OMNI_JAR_F_BACKEND}:${LOCAL_OMNI_JAR_C_BACKEND}
+    -doctitle '<h1>${JAVADOC_TITLE}</h1>'
+    -windowtitle '${JAVADOC_TITLE}'
+    -author
+    -use
+    -version
     cx2x
     cx2x.translator
     cx2x.translator.common
@@ -29,26 +37,11 @@ create_javadoc(
     cx2x.xcodeml.helper
     cx2x.xcodeml.transformation
     cx2x.xcodeml.xelement
-  INSTALLPATH ${CMAKE_SOURCE_DIR}/documentation/javadoc
-  SOURCEPATH ${CMAKE_SOURCE_DIR}/omni-cx2x/src
-  CLASSPATH
-    ${LOCAL_OMNI_JAR_TOOLS}
-    ${LOCAL_OMNI_JAR_COMMON}
-    ${LOCAL_OMNI_JAR_F_BACKEND}
-    ${LOCAL_OMNI_JAR_C_BACKEND}
-  WINDOWTITLE ${JAVADOC_TITLE}
-  DOCTITLE "<h1>${JAVADOC_TITLE}</h1>"
-  AUTHOR TRUE
-  USE TRUE
-  VERSION TRUE
+  COMMENT "Generating javadoc"
 )
-set_target_properties(
-  claw-javadoc_javadoc
-  PROPERTIES
-  EXCLUDE_FROM_ALL 1
-)
+
 if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
-  add_custom_target(doc DEPENDS claw-javadoc_javadoc claw-latex)
+  add_custom_target(doc DEPENDS claw-javadoc claw-latex)
 else()
-  add_custom_target(doc DEPENDS claw-javadoc_javadoc)
+  add_custom_target(doc DEPENDS claw-javadoc)
 endif()
