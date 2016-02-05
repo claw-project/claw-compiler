@@ -43,6 +43,18 @@ representation.
 ### How to install
 See [INSTALL.md](./INSTALL.md) file.
 
+### Documentation
+To generate the java documentation and the compiler documentation, run the
+following command. The compiler documentation require `pdflatex`.
+
+The compiler documentation is generated in the `/documentation` directory and
+the `javadoc` is generated in the `/documentation/javadoc/` directory.
+
+```bash
+make doc
+```
+
+
 ### OMNI Compiler
 The CLAW Compiler is built on the top of the OMNI Compiler. For more
 information: [OMNI Compiler website](http://omni-compiler.org)
