@@ -17,7 +17,7 @@ CLAW Fortran compiler options:
    -h,--help           : print usage.
    --show-env          : show environment variables.
    --no-dep            : don't generate .mod or .xmod file for dependencies.
-   -f,--force          : forece the translation of files without directives.
+   -f,--force          : force the translation of files without directives.
    --tmp               : output parallel code (__omni_tmp__<file>).
    --dry               : only print processing status (not compile).
    --debug             : save intermediate files in __omni_tmp__.
