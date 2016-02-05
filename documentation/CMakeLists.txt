@@ -1,3 +1,15 @@
+# Generate documentation
+find_package(LATEX)
+if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
+  set(CLAW_DOC_FILE "claw_fortran_compiler")
+  add_custom_target(
+    claw-latex
+    COMMAND ${PDFLATEX_COMPILER} ${CLAW_DOC_FILE}.tex &>/dev/null
+    COMMENT "Generating documentation"
+    SOURCES ${CLAW_DOC_FILE}.tex
+  )
+endif()
+
 # Build the javadoc
 set (JAVADOC_TITLE "omni-cx2x")
 create_javadoc(
@@ -35,4 +47,8 @@ set_target_properties(
   PROPERTIES
   EXCLUDE_FROM_ALL 1
 )
-add_custom_target(doc DEPENDS claw-javadoc_javadoc)
+if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
+  add_custom_target(doc DEPENDS claw-javadoc_javadoc claw-latex)
+else()
+  add_custom_target(doc DEPENDS claw-javadoc_javadoc)
+endif()
