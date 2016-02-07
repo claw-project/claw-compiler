@@ -23,10 +23,10 @@ import cx2x.xcodeml.helper.*;
  * - Required:
  *   - varRef
  * - Optional:
- *   - arrayIndex TODO
- *   - indexRange TODO
+ *   - arrayIndex (XarrayIndex)
+ *   - indexRange (XindexRange)
  *   - FarrayConstructor TODO
- *   - FarrayRef TODO (XarrayRef)
+ *   - FarrayRef (XarrayRef)
  * Attributes:
  * - Optional: type (text)
  *
@@ -135,6 +135,8 @@ public class XarrayRef extends XbaseElement {
    *                      false, the element is directly added.
    */
   public void append(XbaseElement element, boolean cloneElement){
+    // TODO if varRef, replace the element.
+
     if(cloneElement){
       Node clone = element.cloneNode();
       baseElement.appendChild(clone);
