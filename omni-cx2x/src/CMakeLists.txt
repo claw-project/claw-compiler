@@ -28,6 +28,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xelement/XbaseElement.java
   cx2x/xcodeml/xelement/XbaseExpr.java
   cx2x/xcodeml/xelement/XbasicType.java
+  cx2x/xcodeml/xelement/XbinaryExpr.java
   cx2x/xcodeml/xelement/Xbody.java
   cx2x/xcodeml/xelement/Xbound.java
   cx2x/xcodeml/xelement/XcharacterConstant.java
