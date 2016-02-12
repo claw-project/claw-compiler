@@ -2,6 +2,8 @@
 All notable changes to the CLAW Fortran Compiler project will be documented in
 this file.
 
+## [Unreleased]
+
 ## [0.1.0] - 2016-02-05
 ### First release
 - **CX2X XcodeML library**: An abstraction of a set of the XcodeML/F
