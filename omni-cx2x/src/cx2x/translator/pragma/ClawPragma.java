@@ -22,6 +22,7 @@ import java.util.Arrays;
  
 public enum ClawPragma {
   //directive
+  KCACHE,
   LOOP_FUSION,
   LOOP_INTERCHANGE,
   LOOP_VECTOR,
@@ -53,7 +54,6 @@ public enum ClawPragma {
   private static final String RANGE_GLOBAL = "range\\(([^\\)]+)";
   private static final String RANGE = "([^=]+)=([^,]+),([^,]+),?(.+)?";
   private static final String SIMPLE_MAPPING = "\\(([^:]+):(.*)\\)";
-
 
   private static final String REGEX_MAPPING = "map\\(([^:]*:[^)]*)\\)";
   private static final String REGEX_LOOP_FUSION = PREFIX_CLAW + ANY_SPACES
@@ -432,13 +432,15 @@ public enum ClawPragma {
    */
   public boolean isDirective(){
     switch(this){
-    case LOOP_FUSION:
-    case LOOP_INTERCHANGE:
-    case LOOP_VECTOR:
-    case LOOP_EXTRACT:
-      return true;
-    default:
-      return false;
+      case KCACHE:
+      case LOOP_FUSION:
+      case LOOP_INTERCHANGE:
+      case LOOP_VECTOR:
+      case LOOP_EXTRACT:
+      case UTILITIES_REMOVE:
+        return true;
+      default:
+        return false;
     }
   }
 
@@ -448,13 +450,13 @@ public enum ClawPragma {
    */
   public boolean isLoop(){
     switch(this){
-    case LOOP_FUSION:
-    case LOOP_INTERCHANGE:
-    case LOOP_VECTOR:
-    case LOOP_EXTRACT:
-      return true;
-    default:
-      return false;
+      case LOOP_FUSION:
+      case LOOP_INTERCHANGE:
+      case LOOP_VECTOR:
+      case LOOP_EXTRACT:
+        return true;
+      default:
+        return false;
     }
   }
 }
