@@ -116,6 +116,18 @@ public class ClawPragmaTest {
     pragma1.setData("claw dummy-directive");
     assertFalse(ClawPragma.isValid(pragma1));
 
+    // kcache
+    pragma1.setData("claw kcache plus 1");
+    assertTrue(ClawPragma.isValid(pragma1));
+    pragma1.setData("claw kcache minus 1");
+    assertTrue(ClawPragma.isValid(pragma1));
+    pragma1.setData("claw kcache");
+    assertTrue(ClawPragma.isValid(pragma1));
+    pragma1.setData("claw kcache plus");
+    assertTrue(ClawPragma.isValid(pragma1));
+    pragma1.setData("claw kcache plus  ");
+    assertTrue(ClawPragma.isValid(pragma1));
+
   }
 
   @Test
