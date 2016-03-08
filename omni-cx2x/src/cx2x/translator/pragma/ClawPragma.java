@@ -72,6 +72,17 @@ public enum ClawPragma {
   private static final String REGEX_OPTION_ACC = ANY_SPACES
       + OPTION_EXTRACT_ACC + ANY_SPACES + INNER_OPTION + ANY_SPACES;
 
+  // Kcache
+  private static final String OPTION_KCACHE_PM = "(" + OPTION_KCACHE_PLUS +
+      "|" + OPTION_KCACHE_MINUS + ")";
+  private static final String OPTION_KCACHE_DIGIT = "([0-9]*)";
+  private static final String REGEX_PLUSMINUS_OPTION = OPTION_KCACHE_PM +
+      ANY_SPACES + OPTION_KCACHE_DIGIT + ANY_SPACES;
+  private static final String REGEX_KCACHE = PREFIX_CLAW + ANY_SPACES +
+      REGEX_PLUSMINUS_OPTION;
+
+
+
   /**
    * Get a string representation of the enum.
    * @return String value of the enum.
@@ -111,6 +122,8 @@ public enum ClawPragma {
         return ClawPragma.UTILITIES_REMOVE;
       case DIRECTIVE_BASE_END:
         return ClawPragma.BASE_END;
+      case DIRECTIVE_CLAW_KCACHE:
+        return ClawPragma.KCACHE;
       default:
         throw new IllegalDirectiveException("",
             "unknown directive", pragma.getLineNo());
@@ -289,6 +302,8 @@ public enum ClawPragma {
         return true;
       case DIRECTIVE_BASE_END:
         return isValidOptions(ClawPragma.BASE_END, options);
+      case DIRECTIVE_CLAW_KCACHE:
+        return isValidOptions(ClawPragma.KCACHE, options);
       default:
         return false;
     }
@@ -308,6 +323,8 @@ public enum ClawPragma {
       case BASE_END:
         // Only remove is associated with end directive now
         return option.contains(DIRECTIVE_UTILITIES_REMOVE);
+      case KCACHE:
+        return isPlusMinusOptionValid(option);
       default:
         return false;
     }
@@ -347,6 +364,10 @@ public enum ClawPragma {
    */
   private static boolean isMapOptionValid(String option){
     return ClawPragma.checkOptionalOption(option, REGEX_OPTION_MAP);
+  }
+
+  private static boolean isPlusMinusOptionValid(String option){
+    return ClawPragma.checkOptionalOption(option, REGEX_PLUSMINUS_OPTION);
   }
 
   /**
