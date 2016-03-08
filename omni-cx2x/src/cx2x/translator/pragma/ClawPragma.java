@@ -31,18 +31,23 @@ public enum ClawPragma {
   ;
 
   private static final String PREFIX_CLAW = "claw";
+  private static final String DIRECTIVE_CLAW_KCACHE = "kcache";
   private static final String DIRECTIVE_LOOP_FUSION = "loop-fusion";
   private static final String DIRECTIVE_LOOP_INTERCHANGE = "loop-interchange";
   private static final String DIRECTIVE_LOOP_VECTOR = "loop-vector";
   private static final String DIRECTIVE_LOOP_EXTRACT = "loop-extract";
   private static final String DIRECTIVE_UTILITIES_REMOVE = "remove";
   private static final String DIRECTIVE_BASE_END = "end";
+
   private static final String OPTION_FUSION_GROUP = "group";
   private static final String OPTION_EXTRACT_RANGE = "range";
   private static final String OPTION_EXTRACT_MAP = "map";
   private static final String OPTION_EXTRACT_ACC = "acc";
   private static final String OPTION_EXTRACT_PARALLEL = "parallel";
   private static final String OPTION_FUSION = "fusion";
+  private static final String OPTION_KCACHE_PLUS = "plus";
+  private static final String OPTION_KCACHE_MINUS = "minus";
+
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
   private static final String ANY_SPACES = "\\s*";
   private static final String RANGE_GLOBAL = "range\\(([^\\)]+)";
