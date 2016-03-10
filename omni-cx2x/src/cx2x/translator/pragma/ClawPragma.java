@@ -46,8 +46,6 @@ public enum ClawPragma {
   private static final String OPTION_EXTRACT_ACC = "acc";
   private static final String OPTION_EXTRACT_PARALLEL = "parallel";
   private static final String OPTION_FUSION = "fusion";
-  private static final String OPTION_KCACHE_PLUS = "plus";
-  private static final String OPTION_KCACHE_MINUS = "minus";
 
   private static final String INNER_OPTION = "\\(([^)]+)\\)";
   private static final String ANY_SPACES = "\\s*";
@@ -73,13 +71,11 @@ public enum ClawPragma {
       + OPTION_EXTRACT_ACC + ANY_SPACES + INNER_OPTION + ANY_SPACES;
 
   // Kcache
-  private static final String OPTION_KCACHE_PM = "(" + OPTION_KCACHE_PLUS +
-      "|" + OPTION_KCACHE_MINUS + ")";
-  private static final String OPTION_KCACHE_DIGIT = "([0-9]*)";
-  private static final String REGEX_PLUSMINUS_OPTION = OPTION_KCACHE_PM +
-      ANY_SPACES + OPTION_KCACHE_DIGIT + ANY_SPACES;
+  private static final String OPTION_KCACHE_DIGIT = "([+-]?[0-9]*\\s*)";
+  private static final String REGEX_PLUSMINUS_OPTION = ANY_SPACES +
+      OPTION_KCACHE_DIGIT + ANY_SPACES;
   private static final String REGEX_KCACHE = PREFIX_CLAW + ANY_SPACES +
-      REGEX_PLUSMINUS_OPTION;
+      DIRECTIVE_CLAW_KCACHE + REGEX_PLUSMINUS_OPTION;
 
 
 

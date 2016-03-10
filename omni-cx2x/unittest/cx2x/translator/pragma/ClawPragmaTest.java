@@ -117,15 +117,15 @@ public class ClawPragmaTest {
     assertFalse(ClawPragma.isValid(pragma1));
 
     // kcache
-    pragma1.setData("claw kcache plus 1");
+    pragma1.setData("claw kcache 0 -1");
     assertTrue(ClawPragma.isValid(pragma1));
-    pragma1.setData("claw kcache minus 1");
+    pragma1.setData("claw kcache 0 0");
     assertTrue(ClawPragma.isValid(pragma1));
-    pragma1.setData("claw kcache");
+    pragma1.setData("claw kcache +1 -1");
     assertTrue(ClawPragma.isValid(pragma1));
-    pragma1.setData("claw kcache plus");
+    pragma1.setData("claw kcache 0 +1 ");
     assertTrue(ClawPragma.isValid(pragma1));
-    pragma1.setData("claw kcache plus  ");
+    pragma1.setData("claw kcache 0 -1");
     assertTrue(ClawPragma.isValid(pragma1));
 
   }
