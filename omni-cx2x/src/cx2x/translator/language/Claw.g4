@@ -76,8 +76,11 @@ END          : 'end';
 GROUP        : 'group';
 
 // Special elements
-IDENTIFIER   : [a-zA-Z_$] [a-zA-Z_$0-9]*;
-COMMA        : ',';
+IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9]* ;
+COMMA           : ',' ;
+NUMBER          : (DIGIT)+ ;
+fragment DIGIT  : '0'..'9' ;
+
 
 // Skip whitspaces
 WHITESPACE   : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ { skip(); };
