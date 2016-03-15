@@ -62,6 +62,14 @@ range_option:
     RANGE '(' IDENTIFIER '=' ')'
 ;
 
+mapping_option:
+    MAP '(' COLON ')'
+;
+
+map_list:
+    mapping_option
+  | mapping_option map_list
+;
 
 
 /*----------------------------------------------------------------------------
