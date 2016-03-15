@@ -48,7 +48,7 @@ index_list returns [List<String> indexes]
 directive[ClawLanguage language]:
     LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option
   | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } '(' index_list ')'
-  | LEXTRACT { $language.setDirective(ClawDirective.LOOP_EXTRACT); }
+  | LEXTRACT { $language.setDirective(ClawDirective.LOOP_EXTRACT); } range_option
   | REMOVE { $language.setDirective(ClawDirective.REMOVE); }
   | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); }
 ;
@@ -57,6 +57,12 @@ group_option:
     GROUP '(' IDENTIFIER ')'
   | /* empty */
 ;
+
+range_option:
+    RANGE '(' IDENTIFIER '=' ')'
+;
+
+
 
 /*----------------------------------------------------------------------------
  * LEXER RULES
@@ -74,10 +80,13 @@ END          : 'end';
 
 // Options
 GROUP        : 'group';
+RANGE        : 'range';
+MAP          : 'map';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9]* ;
 COMMA           : ',' ;
+COLON           : ':';
 NUMBER          : (DIGIT)+ ;
 fragment DIGIT  : '0'..'9' ;
 
