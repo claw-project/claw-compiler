@@ -35,19 +35,19 @@ analyze returns [ClawLanguage language]
 ;
 
 
-index_list returns [List<String> indexes]
+ids_list returns [List<String> ids]
   @init{
-    $indexes = new ArrayList();
+    $ids = new ArrayList();
   }
   :
-    i=IDENTIFIER { $indexes.add($i.text); }
-  | i=IDENTIFIER { $indexes.add($i.text); } COMMA index_list
+    i=IDENTIFIER { $ids.add($i.text); }
+  | i=IDENTIFIER { $ids.add($i.text); } COMMA ids_list
 ;
 
 
 directive[ClawLanguage language]:
     LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option
-  | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } '(' index_list ')'
+  | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } '(' ids_list ')'
   | LEXTRACT { $language.setDirective(ClawDirective.LOOP_EXTRACT); } range_option
   | REMOVE { $language.setDirective(ClawDirective.REMOVE); }
   | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); }
@@ -63,7 +63,7 @@ range_option:
 ;
 
 mapping_option:
-    MAP '(' COLON ')'
+    MAP '(' ids_list COLON ids_list ')'
 ;
 
 map_list:
