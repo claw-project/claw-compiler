@@ -28,3 +28,4 @@ __xmod__
 out
 *.iml
 omni-compiler-prefix
+*.tokens
