@@ -15,6 +15,8 @@ grammar Claw;
 {
 import java.util.List;
 import java.util.ArrayList;
+import cx2x.translator.common.Constant;
+import cx2x.translator.pragma.ClawRange;
 }
 
 /*----------------------------------------------------------------------------
@@ -45,7 +47,11 @@ ids_list[List<String> ids]
 directive[ClawLanguage language]:
     LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language] EOF
   | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$language] EOF
-  | LEXTRACT { $language.setDirective(ClawDirective.LOOP_EXTRACT); } range_option EOF
+  | LEXTRACT range_option EOF
+    {
+      $language.setDirective(ClawDirective.LOOP_EXTRACT);
+      $language.setRange($range_option.r);
+    }
   | REMOVE { $language.setDirective(ClawDirective.REMOVE); } EOF
   | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); } EOF
 ;
@@ -61,13 +67,29 @@ indexes_option[ClawLanguage language]
     List<String> indexes = new ArrayList();
   }
   :
-    '(' ids_list[indexes] ')' { $language.setIdList(indexes); }
+    '(' ids_list[indexes] ')' { $language.setIndexes(indexes); }
   | /* empty */
 ;
 
-range_option:
-    RANGE '(' induction=IDENTIFIER '=' ',' lower=IDENTIFIER ',' upper=IDENTIFIER ')'
-  | RANGE '(' induction=IDENTIFIER '=' ',' lower=IDENTIFIER ',' upper=IDENTIFIER ',' step=IDENTIFIER ')'
+range_option returns [ClawRange r]
+  @init{
+    $r = new ClawRange();
+  }
+  :
+    RANGE '(' induction=IDENTIFIER '=' lower=IDENTIFIER ',' upper=IDENTIFIER ')'
+    {
+      $r.setInductionVar($induction.text);
+      $r.setLowerBound($lower.text);
+      $r.setUpperBound($upper.text);
+      $r.setStep(Constant.DEFAULT_STEP_VALUE);
+    }
+  | RANGE '(' induction=IDENTIFIER '=' lower=IDENTIFIER ',' upper=IDENTIFIER ',' step=IDENTIFIER ')'
+    {
+      $r.setInductionVar($induction.text);
+      $r.setLowerBound($lower.text);
+      $r.setUpperBound($upper.text);
+      $r.setStep($step.text);
+    }
 ;
 /*
 mapping_option:
@@ -100,7 +122,7 @@ RANGE        : 'range';
 MAP          : 'map';
 
 // Special elements
-IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9]* ;
+IDENTIFIER      : [a-zA-Z_$0-9] [a-zA-Z_$0-9]* ;
 NUMBER          : (DIGIT)+ ;
 fragment DIGIT  : '0'..'9' ;
 
