@@ -5,6 +5,7 @@
 
 package cx2x.translator.pragma;
 
+import cx2x.translator.common.Constant;
 import cx2x.xcodeml.xelement.XloopIterationRange;
 
 /**
@@ -17,7 +18,7 @@ public class ClawRange {
   private String _inductionVar = null;
   private String _lowerBound = null;
   private String _upperBound = null;
-  private String _step = "1"; // Default value set by OMNI F_Front
+  private String _step = Constant.DEFAULT_STEP_VALUE;
 
   /**
    * Constructs null initialized ClawRange object.
