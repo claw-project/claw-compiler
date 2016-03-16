@@ -147,4 +147,52 @@ public class ClawLanguageTest {
   }
 
 
+  /**
+   * Test various input for the CLAW loop extract directive.
+   */
+  @Test
+  public void ExtractTest(){
+    // Valid directives
+    analyzeValidClawLoopExtract("claw loop-extract range(i=istart,iend)", "i",
+        "istart", "iend", null);
+    analyzeValidClawLoopExtract("claw loop-extract range(i=istart,iend,2)", "i",
+        "istart", "iend", "2");
+    analyzeValidClawLoopExtract("claw loop-extract range(i=1,10)", "i", "1",
+        "10", null);
+    analyzeValidClawLoopExtract("claw loop-extract range(i=1,10,2)",  "i", "1",
+        "10", "2");
+
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw loop-extract");
+    analyzeUnvalidClawLanguage("claw loop   -   extract ");
+  }
+
+  /**
+   * Assert the result for valid loop extract CLAW directive
+   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param induction Induction var to be found.
+   * @param lower     Lower bound value to be found.
+   * @param upper     Upper bound value to be found.
+   * @param step      Step valu to be found if any.
+   *
+   */
+  private void analyzeValidClawLoopExtract(String raw, String induction,
+                                           String lower, String upper,
+                                           String step)
+  {
+    try {
+      ClawLanguage l = ClawLanguage.analyze(raw);
+      assertEquals(ClawDirective.LOOP_EXTRACT, l.getDirective());
+      assertEquals(induction, l.getRange().getInductionVar());
+      assertEquals(lower, l.getRange().getLowerBound());
+      assertEquals(upper, l.getRange().getUpperBound());
+      if(step != null){
+        assertEquals(step, l.getRange().getStep());
+      }
+    } catch(IllegalDirectiveException idex){
+      System.err.println(idex.getMessage());
+      fail();
+    }
+  }
+
 }
