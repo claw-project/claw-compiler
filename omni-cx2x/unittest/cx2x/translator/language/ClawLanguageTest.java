@@ -107,7 +107,6 @@ public class ClawLanguageTest {
       if(indexes != null){
         assertTrue(l.hasIndexes());
         assertEquals(indexes.size(), l.getIndexes().size());
-
       } else {
         assertFalse(l.hasIndexes());
         assertNull(l.getIndexes());
@@ -116,5 +115,36 @@ public class ClawLanguageTest {
       fail();
     }
   }
+
+  /**
+   * Test various input for the CLAW remove directive.
+   */
+  @Test
+  public void RemoveTest(){
+    // Valid directives
+    analyzeValidSimpleClaw("claw remove", ClawDirective.REMOVE);
+    analyzeValidSimpleClaw("claw end remove", ClawDirective.END_REMOVE);
+    analyzeValidSimpleClaw("claw   end   remove  ", ClawDirective.END_REMOVE);
+
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw");
+    analyzeUnvalidClawLanguage("claw dummy");
+    analyzeUnvalidClawLanguage("claw end re move");
+  }
+
+  /**
+   * Assert the result for valid lo CLAW directive
+   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param directive Directive to be match.
+   */
+  private void analyzeValidSimpleClaw(String raw, ClawDirective directive) {
+    try {
+      ClawLanguage l = ClawLanguage.analyze(raw);
+      assertEquals(directive, l.getDirective());
+    } catch(IllegalDirectiveException idex){
+      fail();
+    }
+  }
+
 
 }
