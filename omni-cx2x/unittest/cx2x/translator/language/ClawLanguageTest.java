@@ -10,7 +10,6 @@ import static org.junit.Assert.*;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,6 +71,8 @@ public class ClawLanguageTest {
       fail();
     } catch (IllegalDirectiveException pex){
       assertNull(l);
+      assertNotNull(pex);
+      assertNotNull(pex.getMessage());
     }
   }
 
