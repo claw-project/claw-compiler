@@ -35,22 +35,19 @@ analyze returns [ClawLanguage language]
 ;
 
 
-ids_list returns [List<String> ids]
-  @init{
-    $ids = new ArrayList();
-  }
+ids_list[List<String> ids]
   :
     i=IDENTIFIER { $ids.add($i.text); }
-  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list
+  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
 ;
 
 
 directive[ClawLanguage language]:
-    LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language]
-  | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } '(' ids_list ')'
-  | LEXTRACT { $language.setDirective(ClawDirective.LOOP_EXTRACT); } range_option
-  | REMOVE { $language.setDirective(ClawDirective.REMOVE); }
-  | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); }
+    LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language] EOF
+  | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$language] EOF
+  | LEXTRACT { $language.setDirective(ClawDirective.LOOP_EXTRACT); } range_option EOF
+  | REMOVE { $language.setDirective(ClawDirective.REMOVE); } EOF
+  | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); } EOF
 ;
 
 group_option[ClawLanguage language]:
@@ -59,11 +56,20 @@ group_option[ClawLanguage language]:
   | /* empty */
 ;
 
+indexes_option[ClawLanguage language]
+  @init{
+    List<String> indexes = new ArrayList();
+  }
+  :
+    '(' ids_list[indexes] ')' { $language.setIdList(indexes); }
+  | /* empty */
+;
+
 range_option:
     RANGE '(' induction=IDENTIFIER '=' ',' lower=IDENTIFIER ',' upper=IDENTIFIER ')'
   | RANGE '(' induction=IDENTIFIER '=' ',' lower=IDENTIFIER ',' upper=IDENTIFIER ',' step=IDENTIFIER ')'
 ;
-
+/*
 mapping_option:
     MAP '(' ids_list ':' ids_list ')'
 ;
@@ -72,7 +78,7 @@ map_list:
     mapping_option
   | mapping_option map_list
 ;
-
+*/
 
 /*----------------------------------------------------------------------------
  * LEXER RULES
