@@ -82,7 +82,10 @@ public class ClawLanguageTest {
   public void InterchangeTest(){
     // Valid directives
     analyzeValidClawLoopInterchange("claw loop-interchange", null);
-    analyzeValidClawLoopInterchange("claw loop-interchange (i,j,k)", Arrays.asList("i", "j", "k"));
+    analyzeValidClawLoopInterchange("claw loop-interchange (i,j,k)",
+        Arrays.asList("i", "j", "k"));
+    analyzeValidClawLoopInterchange("claw loop-interchange (  i,j,k  ) ",
+        Arrays.asList("i", "j", "k"));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-interchange ()");
