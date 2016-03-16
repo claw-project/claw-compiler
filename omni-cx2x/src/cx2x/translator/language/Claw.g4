@@ -16,7 +16,7 @@ grammar Claw;
 import java.util.List;
 import java.util.ArrayList;
 import cx2x.translator.common.Constant;
-import cx2x.translator.pragma.ClawRange;
+import cx2x.translator.pragma.*;
 }
 
 /*----------------------------------------------------------------------------
