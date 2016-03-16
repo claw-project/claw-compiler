@@ -56,6 +56,9 @@ public class ClawLanguage {
     // Pass the tokens to the parser
     ClawParser parser = new ClawParser(tokens);
     parser.setErrorHandler(new BailErrorStrategy());
+    parser.removeErrorListeners();
+    ClawErrorListener cel = new ClawErrorListener();
+    parser.addErrorListener(cel);
 
     try {
       // Start the parser analysis from the "analyze" entry point
@@ -63,7 +66,12 @@ public class ClawLanguage {
       // Get the ClawLanguage object return by the parser after analysis.
       return ctx.language;
     } catch(ParseCancellationException pcex){
-      throw new IllegalDirectiveException(rawInput, "Unvalid CLAW directive");
+      IllegalDirectiveException ex = cel.getLastError();
+      if(ex != null){
+        throw ex;
+      } else {
+        throw new IllegalDirectiveException("", "", 0, 0); // TODO
+      }
     }
   }
 
