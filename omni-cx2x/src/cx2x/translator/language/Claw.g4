@@ -99,6 +99,12 @@ mapping_var returns [ClawMappingVar mappingVar]:
   | i=IDENTIFIER { $mappingVar = new ClawMappingVar($i.text, $i.text); }
 ;
 
+mapping_var_list[List<ClawMappingVar> vars]:
+     mv=mapping_var { $vars.add($mv.mappingVar); }
+   | mv=mapping_var { $vars.add($mv.mappingVar); } ',' mapping_var_list[$vars]
+;
+
+
 /*
 mapping_option returns [ClawMapping mapping]
   @init{
