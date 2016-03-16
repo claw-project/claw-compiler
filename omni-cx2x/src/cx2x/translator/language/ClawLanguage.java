@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import java.util.List;
+
 /**
  * ClawLanguage class represent an analyzed pragma statement.
  *
@@ -20,7 +22,8 @@ public class ClawLanguage {
 
   private ClawDirective _directive;
   private String _groupName;
-  private boolean _valid, _hasGroup;
+  private List<String> _indexes;
+  private boolean _valid, _hasGroup, _hasIndexes;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -30,7 +33,9 @@ public class ClawLanguage {
     _directive = null;
     _valid = false;
     _hasGroup = false;
+    _hasIndexes = false;
     _groupName = null;
+    _indexes = null;
   }
 
 
@@ -70,6 +75,10 @@ public class ClawLanguage {
     return _valid;
   }
 
+
+
+  // Group option specific methods
+
   /**
    * Check whether a group option was specified.
    * @return True if group option was specified.
@@ -78,14 +87,51 @@ public class ClawLanguage {
     return _hasGroup;
   }
 
-  public void setGroupOption(String groupName){
+  /**
+   * Set the group name and hasGroupOption to true
+   * @param groupName The group name defined in the group option.
+   */
+  protected void setGroupOption(String groupName){
     _hasGroup = true;
     _groupName = groupName;
   }
 
+  /**
+   * Get the group name defined in the group option.
+   * @return The group name as a String value.
+   */
   public String getGroupName(){
     return _groupName;
   }
+
+  // Loop interchange specific methods
+
+  /**
+   * Set the list of interhcnage indexes.
+   * @param indexes List of indexes as string.
+   */
+  public void setIdList(List<String> indexes){
+    _hasIndexes = true;
+    _indexes = indexes;
+  }
+
+  /**
+   * Get the loop index list
+   * @return List of loop index
+   */
+  public List<String> getIndexes(){
+    return _indexes;
+  }
+
+  /**
+   * Check whether the interchange directive has indexes values.
+   * @return True if the directive has interchange value.
+   */
+  public boolean hasIndexes(){
+    return _hasIndexes;
+  }
+
+  // Directive generic method
 
   /**
    * Define the current directive of the language section.
