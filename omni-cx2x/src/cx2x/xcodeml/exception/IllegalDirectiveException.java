@@ -12,6 +12,7 @@ package cx2x.xcodeml.exception;
  */
 public class IllegalDirectiveException extends Exception {
   private int _directiveLine = 0;
+  private int _charPos = 0;
   private String _directive;
 
   /**
@@ -36,6 +37,24 @@ public class IllegalDirectiveException extends Exception {
     _directive = directive;
     _directiveLine = lineno;
   }
+
+  /**
+   * Constructs a new exception with a specific detail message, line number and
+   * char position.
+   * @param directive Illegal directive
+   * @param message   Specific exception message.
+   * @param lineno    Line number of the directive.
+   * @param charPos   Character position where the directive error happened.
+   */
+  public IllegalDirectiveException(String directive, String message, int lineno,
+                                   int charPos)
+  {
+    super(message);
+    _directive = directive;
+    _directiveLine = lineno;
+    _charPos = charPos;
+  }
+
   /**
    * Get the illegal directive.
    * @return The illegal directive.
@@ -66,6 +85,14 @@ public class IllegalDirectiveException extends Exception {
    */
   public int getDirectiveLine() {
     return _directiveLine;
+  }
+
+  /**
+   * Get the character position where the directive error happened.
+   * @return Character position in the line.
+   */
+  public int getCharPosition() {
+    return _charPos;
   }
 
   @Override
