@@ -5,6 +5,7 @@
 
 package cx2x.translator.language;
 
+import cx2x.translator.pragma.ClawRange;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -21,9 +22,11 @@ import java.util.List;
 public class ClawLanguage {
 
   private ClawDirective _directive;
+  private ClawRange _range;
   private String _groupName;
   private List<String> _indexes;
   private boolean _valid, _hasGroup, _hasIndexes;
+
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -36,6 +39,7 @@ public class ClawLanguage {
     _hasIndexes = false;
     _groupName = null;
     _indexes = null;
+    _range = null;
   }
 
 
@@ -118,7 +122,7 @@ public class ClawLanguage {
    * Set the list of interhcnage indexes.
    * @param indexes List of indexes as string.
    */
-  public void setIdList(List<String> indexes){
+  protected void setIndexes(List<String> indexes){
     _hasIndexes = true;
     _indexes = indexes;
   }
@@ -138,6 +142,25 @@ public class ClawLanguage {
   public boolean hasIndexes(){
     return _hasIndexes;
   }
+
+  // Loop extract specific methods
+
+  /**
+   * Set the range value.
+   * @param range A ClawRange object.
+   */
+  protected void setRange(ClawRange range){
+    _range = range;
+  }
+
+  /**
+   * Get the range extracted value.
+   * @return A ClawRange object.
+   */
+  public ClawRange getRange(){
+    return _range;
+  }
+
 
   // Directive generic method
 
