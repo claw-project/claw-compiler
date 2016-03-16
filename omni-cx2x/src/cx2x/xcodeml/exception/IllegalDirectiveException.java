@@ -97,7 +97,14 @@ public class IllegalDirectiveException extends Exception {
 
   @Override
   public String getMessage() {
-    return "Illegal directive: " + super.getMessage() + ". Directive: " +
-        _directive + " - line: " + _directiveLine;
+    String errorMessage = "Illegal directive ";
+
+    if(_directiveLine > 0) {
+      errorMessage += _directiveLine + ":" +  _charPos;
+    } else {
+      errorMessage += "-:" + _charPos;
+    }
+    errorMessage += " : " + super.getMessage();
+    return errorMessage;
   }
 }
