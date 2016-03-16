@@ -43,7 +43,6 @@ ids_list[List<String> ids]
   | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
 ;
 
-
 directive[ClawLanguage language]:
     LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language] EOF
   | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$language] EOF
@@ -91,8 +90,21 @@ range_option returns [ClawRange r]
       $r.setStep($step.text);
     }
 ;
+
+mapping_var returns [ClawMappingVar mappingVar]:
+    lhs=IDENTIFIER '/' rhs=IDENTIFIER
+    {
+      $mappingVar = new ClawMappingVar($lhs.text, $rhs.text);
+    }
+  | i=IDENTIFIER { $mappingVar = new ClawMappingVar($i.text, $i.text); }
+;
+
 /*
-mapping_option:
+mapping_option returns [ClawMapping mapping]
+  @init{
+    $mapping = new ClawMapping();
+  }
+  :
     MAP '(' ids_list ':' ids_list ')'
 ;
 
