@@ -302,4 +302,41 @@ public class ClawLanguageTest {
     }
   }
 
+  /**
+   * Test various input for the CLAW kcache directive.
+   */
+  @Test
+  public void KcacheTest(){
+    // Valid directives
+    analyzeValidKcache("claw kcache", null);
+    analyzeValidKcache("claw kcache 0 1", Arrays.asList("0", "1"));
+    analyzeValidKcache("claw kcache 0 -1 0", Arrays.asList("0", "-1", "0"));
+    analyzeValidKcache("claw kcache +1 -1 0", Arrays.asList("1", "-1", "0"));
+
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw k cache ");
+    analyzeUnvalidClawLanguage("claw k-cache");
+  }
+
+  /**
+   * Assert the result for valid lo CLAW directive
+   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param offsets   List of offsets to be checked.
+   */
+  private void analyzeValidKcache(String raw, List<String> offsets) {
+    try {
+      ClawLanguage l = ClawLanguage.analyze(raw);
+      assertEquals(ClawDirective.KCACHE, l.getDirective());
+      if(offsets != null){
+        assertEquals(offsets.size(), l.getOffsets().size());
+        for(int i = 0; i < offsets.size(); ++i){
+          assertEquals(offsets.get(i), l.getOffsets().get(i));
+        }
+      }
+    } catch(IllegalDirectiveException idex){
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
 }
