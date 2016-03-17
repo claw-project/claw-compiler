@@ -26,6 +26,7 @@ set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
 set(OMNI_CX2X_CLAW_NAME om-cx2x-claw)
 set(OMNI_CX2X_XCODEML_NAME om-cx2x-xcodeml)
+set(ANTLR_NAME antlr-4.5.2-complete)
 
 # Define OMNI Compiler executables and jar archives
 set(OMNI_F_FRONT "${OMNI_HOME}/bin/F_Front")
@@ -34,6 +35,7 @@ set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-exc-tools.jar")
 set(OMNI_JAR_COMMON "${OMNI_CLASSPATH}/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
+
 
 # Define location of jar archives where they are built. For test and javadoc.
 set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
@@ -45,6 +47,9 @@ set(OMNI_BUILD_JAR_CX2X_CLAW "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
 set(OMNI_BUILD_JAR_CX2X_XCODEML "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
 set(OMNI_JAR_CX2X_CLAW "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_CLAW_NAME}.jar")
 set(OMNI_JAR_CX2X_XCODEML "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_XCODEML_NAME}.jar")
+
+# Define ANTLR jar
+set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
 
 if(BUILD_OMNI)
   set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)

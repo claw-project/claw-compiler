@@ -1,7 +1,7 @@
 # Build Claw XcodeML to XcodeML translator
 
 # ANTLR
-set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/antlr-4.5.2-complete.jar)
+set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/${ANTLR_NAME}.jar)
 
 # Try to download the jar dependencies
 if(NOT EXISTS ${ANTLR_JAR})
@@ -157,3 +157,4 @@ add_dependencies(${OMNI_CX2X_CLAW_NAME} claw-antlr)
 
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${ANTLR_JAR} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
