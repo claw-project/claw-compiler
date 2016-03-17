@@ -5,6 +5,7 @@
 
 package cx2x.translator.language;
 
+import cx2x.translator.pragma.ClawMapping;
 import cx2x.translator.pragma.ClawRange;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -25,7 +26,9 @@ public class ClawLanguage {
   private ClawRange _range;
   private String _groupName;
   private List<String> _indexes;
+  private List<ClawMapping> _mappings;
   private boolean _valid, _hasGroup, _hasIndexes;
+
 
 
   /**
@@ -40,6 +43,7 @@ public class ClawLanguage {
     _groupName = null;
     _indexes = null;
     _range = null;
+    _mappings = null;
   }
 
 
@@ -161,6 +165,22 @@ public class ClawLanguage {
     return _range;
   }
 
+  /**
+   * Set the ClawMapping list
+   * @param mappings A list of ClawMapping objects.
+   */
+  public void setMappings(List<ClawMapping> mappings){
+    _mappings = mappings;
+  }
+
+  /**
+   * Get the list of extracted ClawMapping objects.
+   * @return List of ClawMapping objects.
+   */
+  public List<ClawMapping> getMappings(){
+    return _mappings;
+  }
+
 
   // Directive generic method
 
@@ -179,6 +199,7 @@ public class ClawLanguage {
   public ClawDirective getDirective(){
     return _directive;
   }
+
 
 
 
