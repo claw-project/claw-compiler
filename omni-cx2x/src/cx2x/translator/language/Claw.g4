@@ -16,6 +16,7 @@ grammar Claw;
 import java.util.List;
 import java.util.ArrayList;
 import cx2x.translator.common.Constant;
+import cx2x.translator.misc.Utility;
 import cx2x.translator.pragma.*;
 }
 
@@ -82,16 +83,16 @@ parallel_optional[ClawLanguage l]:
 
 acc_optional[ClawLanguage l]
   @init{
-    StringBuilder tempAcc = new StringBuilder();
+    List<String> tempAcc = new ArrayList<>();
   }
   :
-    ACC '(' identifiers[tempAcc] ')' { $l.setAccClauses(tempAcc.toString()); }
+    ACC '(' identifiers[tempAcc] ')' { $l.setAccClauses(Utility.join(" ", tempAcc)); }
   | /* empty */
 ;
 
-identifiers[StringBuilder sb]:
-    i=IDENTIFIER { $sb.append($i.text); }
-  | i=IDENTIFIER { $sb.append($i.text); } identifiers[$sb]
+identifiers[List<String> ids]:
+    i=IDENTIFIER { $ids.add($i.text); }
+  | i=IDENTIFIER { $ids.add($i.text); } identifiers[$ids]
 ;
 
 

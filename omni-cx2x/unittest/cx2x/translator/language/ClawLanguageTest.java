@@ -249,14 +249,14 @@ public class ClawLanguageTest {
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
-            "acc(loop)", "i", "istart", "iend", null);
+            "acc(loop gang vector)", "i", "istart", "iend", null);
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
     assertTrue(l.hasFusionOption());
     assertTrue(l.hasGroupOption());
     assertTrue(l.hasAccOption());
-    assertEquals("loop", l.getAccClauses());
+    assertEquals("loop gang vector", l.getAccClauses());
     assertEquals("j1", l.getGroupName());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
