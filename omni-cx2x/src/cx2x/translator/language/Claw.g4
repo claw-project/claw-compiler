@@ -70,7 +70,7 @@ directive[ClawLanguage l]
   | END REMOVE { $l.setDirective(ClawDirective.END_REMOVE); } EOF
 
   // Kcache directive
-  | KCACHE offset_list[o]
+  | KCACHE offset_list_optional[o]
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(o);
@@ -117,6 +117,11 @@ indexes_option[ClawLanguage l]
   | /* empty */
 ;
 
+offset_list_optional[List<String> offsets]:
+    offset_list[$offsets]
+  | /* empty */
+;
+
 offset_list[List<String> offsets]:
     offset[$offsets]
   | offset[$offsets] offset_list[$offsets]
@@ -134,20 +139,25 @@ range_option returns [ClawRange r]
     $r = new ClawRange();
   }
   :
-    RANGE '(' induction=IDENTIFIER '=' lower=IDENTIFIER ',' upper=IDENTIFIER ')'
+    RANGE '(' induction=IDENTIFIER '=' lower=range_id ',' upper=range_id ')'
     {
       $r.setInductionVar($induction.text);
       $r.setLowerBound($lower.text);
       $r.setUpperBound($upper.text);
       $r.setStep(Constant.DEFAULT_STEP_VALUE);
     }
-  | RANGE '(' induction=IDENTIFIER '=' lower=IDENTIFIER ',' upper=IDENTIFIER ',' step=IDENTIFIER ')'
+  | RANGE '(' induction=IDENTIFIER '=' lower=range_id ',' upper=range_id ',' step=range_id ')'
     {
       $r.setInductionVar($induction.text);
       $r.setLowerBound($lower.text);
       $r.setUpperBound($upper.text);
       $r.setStep($step.text);
     }
+;
+
+range_id returns [String text]:
+    n=NUMBER { $text = $n.text; }
+  | i=IDENTIFIER { $text = $i.text; }
 ;
 
 
@@ -210,9 +220,9 @@ PARALLEL     : 'parallel';
 RANGE        : 'range';
 
 // Special elements
-IDENTIFIER      : [a-zA-Z_$0-9] [a-zA-Z_$0-9]* ;
+IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9]* ;
 NUMBER          : (DIGIT)+ ;
-fragment DIGIT  : '0'..'9' ;
+fragment DIGIT  : [0-9] ;
 
 // Skip whitspaces
 WHITESPACE   : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ { skip(); };
