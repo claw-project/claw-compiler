@@ -7,6 +7,7 @@ package cx2x.translator.language;
 
 import static org.junit.Assert.*;
 
+import cx2x.translator.pragma.ClawMapping;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.junit.Test;
 
@@ -153,14 +154,96 @@ public class ClawLanguageTest {
   @Test
   public void ExtractTest(){
     // Valid directives
-    analyzeValidClawLoopExtract("claw loop-extract range(i=istart,iend)", "i",
-        "istart", "iend", null);
-    analyzeValidClawLoopExtract("claw loop-extract range(i=istart,iend,2)", "i",
-        "istart", "iend", "2");
-    analyzeValidClawLoopExtract("claw loop-extract range(i=1,10)", "i", "1",
-        "10", null);
-    analyzeValidClawLoopExtract("claw loop-extract range(i=1,10,2)",  "i", "1",
-        "10", "2");
+    ClawLanguage l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend) map(i:j)", "i", "istart",
+        "iend", null);
+    assertNotNull(l);
+    assertEquals(1, l.getMappings().size());
+    assertNotNull(l.getMappings().get(0));
+    ClawMapping map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+
+    l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend,2) map(i:j)", "i", "istart",
+        "iend", "2");
+    map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+
+    l = analyzeValidClawLoopExtract("claw loop-extract range(i=1,10) map(i:j)",
+        "i", "1", "10", null);
+    map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+
+    l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=1,10,2) map(i:j)",  "i", "1", "10", "2");
+    map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+
+    l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend) map(i:j) fusion", "i", "istart",
+        "iend", null);
+    assertNotNull(l);
+    assertEquals(1, l.getMappings().size());
+    assertNotNull(l.getMappings().get(0));
+    assertTrue(l.hasFusionOption());
+    assertFalse(l.hasGroupOption());
+    map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+
+
+    l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1)",
+        "i", "istart", "iend", null);
+    assertNotNull(l);
+    assertEquals(1, l.getMappings().size());
+    assertNotNull(l.getMappings().get(0));
+    assertTrue(l.hasFusionOption());
+    assertTrue(l.hasGroupOption());
+    assertEquals("j1", l.getGroupName());
+    map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-extract");
@@ -174,9 +257,8 @@ public class ClawLanguageTest {
    * @param lower     Lower bound value to be found.
    * @param upper     Upper bound value to be found.
    * @param step      Step valu to be found if any.
-   *
    */
-  private void analyzeValidClawLoopExtract(String raw, String induction,
+  private ClawLanguage analyzeValidClawLoopExtract(String raw, String induction,
                                            String lower, String upper,
                                            String step)
   {
@@ -189,9 +271,11 @@ public class ClawLanguageTest {
       if(step != null){
         assertEquals(step, l.getRange().getStep());
       }
+      return l;
     } catch(IllegalDirectiveException idex){
       System.err.println(idex.getMessage());
       fail();
+      return null;
     }
   }
 
