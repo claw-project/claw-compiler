@@ -27,6 +27,7 @@ public class ClawLanguage {
   private String _groupName;
   private List<String> _indexes;
   private List<ClawMapping> _mappings;
+  private List<String> _offsets;
   private String _accClauses;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
   private boolean _acc;
@@ -50,6 +51,7 @@ public class ClawLanguage {
     _mappings = null;
     _acc = false;
     _accClauses = null;
+    _offsets = null;
   }
 
 
@@ -243,6 +245,21 @@ public class ClawLanguage {
     return _accClauses;
   }
 
+  /**
+   * Set the offsets list extracted from the kcache directive.
+   * @param offsets A list of offsets.
+   */
+  protected void setOffsets(List<String> offsets){
+    _offsets = offsets;
+  }
+
+  /**
+   * Get the list of offsets.
+   * @return List of offsets.
+   */
+  public List<String> getOffsets(){
+    return _offsets;
+  }
 
   // Directive generic method
 

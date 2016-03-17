@@ -46,13 +46,17 @@ ids_list[List<String> ids]
 
 directive[ClawLanguage l]
   @init{
-    List<ClawMapping> m = new ArrayList<ClawMapping>();
+    List<ClawMapping> m = new ArrayList<>();
+    List<String> o = new ArrayList<>();
   }
   :
+
   // loop-fusion directive
     LFUSION { $l.setDirective(ClawDirective.LOOP_FUSION); } group_option[$l] EOF
+
   // loop-interchange directive
   | LINTERCHANGE { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$l] EOF
+
   // loop-extract directive
   | LEXTRACT range_option mapping_option_list[m] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
     {
@@ -60,9 +64,13 @@ directive[ClawLanguage l]
       $l.setRange($range_option.r);
       $l.setMappings(m);
     }
+
   // remove directive
   | REMOVE { $l.setDirective(ClawDirective.REMOVE); } EOF
   | END REMOVE { $l.setDirective(ClawDirective.END_REMOVE); } EOF
+
+  // Kcache directive
+  | KCACHE offset_list[o] { $l.setOffsets(o); }
 ;
 
 group_option[ClawLanguage l]:
@@ -103,6 +111,17 @@ indexes_option[ClawLanguage l]
   :
     '(' ids_list[indexes] ')' { $l.setIndexes(indexes); }
   | /* empty */
+;
+
+offset_list[List<String> offsets]:
+    offset[$offsets]
+  | offset[$offsets] offset_list[$offsets]
+;
+
+offset[List<String> offsets]:
+    n=NUMBER { $offsets.add($n.text); }
+  | '-' n=NUMBER { $offsets.add("-" + $n.text); }
+  | '+' n=NUMBER { $offsets.add($n.text); }
 ;
 
 
