@@ -96,8 +96,6 @@ identifiers[List<String> ids]:
 ;
 
 
-
-
 indexes_option[ClawLanguage l]
   @init{
     List<String> indexes = new ArrayList();
@@ -173,19 +171,20 @@ mapping_option_list[List<ClawMapping> mappings]:
 CLAW         : 'claw';
 
 // Directives
+END          : 'end';
+KCACHE       : 'kcache';
 LFUSION      : 'loop-fusion';
 LINTERCHANGE : 'loop-interchange';
 LEXTRACT     : 'loop-extract';
 REMOVE       : 'remove';
-END          : 'end';
 
 // Options
-GROUP        : 'group';
-RANGE        : 'range';
-MAP          : 'map';
-FUSION       : 'fusion';
-PARALLEL     : 'parallel';
 ACC          : 'acc';
+FUSION       : 'fusion';
+GROUP        : 'group';
+MAP          : 'map';
+PARALLEL     : 'parallel';
+RANGE        : 'range';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$0-9] [a-zA-Z_$0-9]* ;
