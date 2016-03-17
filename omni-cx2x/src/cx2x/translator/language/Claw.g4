@@ -43,16 +43,21 @@ ids_list[List<String> ids]
   | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
 ;
 
-directive[ClawLanguage language]:
+directive[ClawLanguage language]
+  @init{
+    List<ClawMapping> mappings = new ArrayList<ClawMapping>();
+  }
+  :
   // loop-fusion directive
     LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language] EOF
   // loop-interchange directive
   | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$language] EOF
   // loop-extract directive
-  | LEXTRACT range_option mapping_option EOF
+  | LEXTRACT range_option mapping_option_list[mappings] EOF
     {
       $language.setDirective(ClawDirective.LOOP_EXTRACT);
       $language.setRange($range_option.r);
+      $language.setMappings(mappings);
     }
   // remove directive
   | REMOVE { $language.setDirective(ClawDirective.REMOVE); } EOF
@@ -127,6 +132,10 @@ mapping_option returns [ClawMapping mapping]
     MAP '(' mapping_var_list[listMapped] ':' mapping_var_list[listMapping] ')'
 ;
 
+mapping_option_list[List<ClawMapping> mappings]:
+    m=mapping_option { $mappings.add($m.mapping); }
+  | m=mapping_option { $mappings.add($m.mapping); } mapping_option_list[$mappings]
+;
 
 /*----------------------------------------------------------------------------
  * LEXER RULES
