@@ -72,6 +72,9 @@ group_option[ClawLanguage l]:
 
 fusion_optional[ClawLanguage l]:
     FUSION group_option[$l]
+    {
+      $l.setFusionOption();
+    }
   | /* empty */
 ;
 

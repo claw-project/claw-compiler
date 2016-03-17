@@ -27,7 +27,7 @@ public class ClawLanguage {
   private String _groupName;
   private List<String> _indexes;
   private List<ClawMapping> _mappings;
-  private boolean _valid, _hasGroup, _hasIndexes;
+  private boolean _valid, _hasGroup, _hasIndexes, _hasFusion;
 
 
 
@@ -169,7 +169,7 @@ public class ClawLanguage {
    * Set the ClawMapping list
    * @param mappings A list of ClawMapping objects.
    */
-  public void setMappings(List<ClawMapping> mappings){
+  protected void setMappings(List<ClawMapping> mappings){
     _mappings = mappings;
   }
 
@@ -179,6 +179,21 @@ public class ClawLanguage {
    */
   public List<ClawMapping> getMappings(){
     return _mappings;
+  }
+
+  /**
+   * Enable the fusion option for the current directive.
+   */
+  protected void setFusionOption(){
+    _hasFusion = true;
+  }
+
+  /**
+   * Check whether the current directive has the fusion option enabled.
+   * @return True if the fusion option is enabled.
+   */
+  public boolean hasFusionOption(){
+    return _hasFusion;
   }
 
 
