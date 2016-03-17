@@ -28,12 +28,12 @@ import cx2x.translator.pragma.*;
  * Entry point for the analyzis of a CLAW directive.
  * Return a CLawLanguage object with all needed information.
  */
-analyze returns [ClawLanguage language]
+analyze returns [ClawLanguage l]
   @init{
-    $language = new ClawLanguage();
+    $l = new ClawLanguage();
   }
   :
-  CLAW directive[$language]
+  CLAW directive[$l]
 ;
 
 
@@ -43,39 +43,45 @@ ids_list[List<String> ids]
   | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
 ;
 
-directive[ClawLanguage language]
+directive[ClawLanguage l]
   @init{
-    List<ClawMapping> mappings = new ArrayList<ClawMapping>();
+    List<ClawMapping> m = new ArrayList<ClawMapping>();
   }
   :
   // loop-fusion directive
-    LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language] EOF
+    LFUSION { $l.setDirective(ClawDirective.LOOP_FUSION); } group_option[$l] EOF
   // loop-interchange directive
-  | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$language] EOF
+  | LINTERCHANGE { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$l] EOF
   // loop-extract directive
-  | LEXTRACT range_option mapping_option_list[mappings] EOF
+  | LEXTRACT range_option mapping_option_list[m] fusion_optional[$l] EOF
     {
-      $language.setDirective(ClawDirective.LOOP_EXTRACT);
-      $language.setRange($range_option.r);
-      $language.setMappings(mappings);
+      $l.setDirective(ClawDirective.LOOP_EXTRACT);
+      $l.setRange($range_option.r);
+      $l.setMappings(m);
     }
   // remove directive
-  | REMOVE { $language.setDirective(ClawDirective.REMOVE); } EOF
-  | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); } EOF
+  | REMOVE { $l.setDirective(ClawDirective.REMOVE); } EOF
+  | END REMOVE { $l.setDirective(ClawDirective.END_REMOVE); } EOF
 ;
 
-group_option[ClawLanguage language]:
+group_option[ClawLanguage l]:
     GROUP '(' group_name=IDENTIFIER ')'
-    { $language.setGroupOption($group_name.text); }
+    { $l.setGroupOption($group_name.text); }
   | /* empty */
 ;
 
-indexes_option[ClawLanguage language]
+fusion_optional[ClawLanguage l]:
+    FUSION group_option[$l]
+  | /* empty */
+;
+
+
+indexes_option[ClawLanguage l]
   @init{
     List<String> indexes = new ArrayList();
   }
   :
-    '(' ids_list[indexes] ')' { $language.setIndexes(indexes); }
+    '(' ids_list[indexes] ')' { $l.setIndexes(indexes); }
   | /* empty */
 ;
 
@@ -155,6 +161,7 @@ END          : 'end';
 GROUP        : 'group';
 RANGE        : 'range';
 MAP          : 'map';
+FUSION       : 'fusion';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$0-9] [a-zA-Z_$0-9]* ;

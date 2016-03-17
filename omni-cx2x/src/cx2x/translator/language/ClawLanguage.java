@@ -72,7 +72,7 @@ public class ClawLanguage {
       // Start the parser analysis from the "analyze" entry point
       ClawParser.AnalyzeContext ctx = parser.analyze();
       // Get the ClawLanguage object return by the parser after analysis.
-      return ctx.language;
+      return ctx.l;
     } catch(ParseCancellationException pcex){
       IllegalDirectiveException ex = cel.getLastError();
       if(ex != null){
