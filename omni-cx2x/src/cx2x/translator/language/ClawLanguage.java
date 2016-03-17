@@ -8,6 +8,7 @@ package cx2x.translator.language;
 import cx2x.translator.pragma.ClawMapping;
 import cx2x.translator.pragma.ClawRange;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.xelement.Xpragma;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -31,6 +32,7 @@ public class ClawLanguage {
   private String _accClauses;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
   private boolean _acc;
+  private Xpragma _pragma;
 
 
 
@@ -280,6 +282,13 @@ public class ClawLanguage {
   }
 
 
+  /**
+   * Attach the pragma related to this CLAW language analysis.
+   * @param pragma Xpragma object.
+   */
+  public void attachPragma(Xpragma pragma){
+    _pragma = pragma;
+  }
 
 
 
