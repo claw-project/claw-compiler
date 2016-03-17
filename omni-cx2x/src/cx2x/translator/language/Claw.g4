@@ -44,13 +44,17 @@ ids_list[List<String> ids]
 ;
 
 directive[ClawLanguage language]:
+  // loop-fusion directive
     LFUSION { $language.setDirective(ClawDirective.LOOP_FUSION); } group_option[$language] EOF
+  // loop-interchange directive
   | LINTERCHANGE { $language.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$language] EOF
-  | LEXTRACT range_option EOF
+  // loop-extract directive
+  | LEXTRACT range_option mapping_option EOF
     {
       $language.setDirective(ClawDirective.LOOP_EXTRACT);
       $language.setRange($range_option.r);
     }
+  // remove directive
   | REMOVE { $language.setDirective(ClawDirective.REMOVE); } EOF
   | END REMOVE { $language.setDirective(ClawDirective.END_REMOVE); } EOF
 ;
@@ -69,6 +73,7 @@ indexes_option[ClawLanguage language]
     '(' ids_list[indexes] ')' { $language.setIndexes(indexes); }
   | /* empty */
 ;
+
 
 range_option returns [ClawRange r]
   @init{
@@ -91,13 +96,18 @@ range_option returns [ClawRange r]
     }
 ;
 
+
 mapping_var returns [ClawMappingVar mappingVar]:
     lhs=IDENTIFIER '/' rhs=IDENTIFIER
     {
       $mappingVar = new ClawMappingVar($lhs.text, $rhs.text);
     }
-  | i=IDENTIFIER { $mappingVar = new ClawMappingVar($i.text, $i.text); }
+  | i=IDENTIFIER
+    {
+      $mappingVar = new ClawMappingVar($i.text, $i.text);
+    }
 ;
+
 
 mapping_var_list[List<ClawMappingVar> vars]:
      mv=mapping_var { $vars.add($mv.mappingVar); }
@@ -105,20 +115,18 @@ mapping_var_list[List<ClawMappingVar> vars]:
 ;
 
 
-/*
 mapping_option returns [ClawMapping mapping]
   @init{
     $mapping = new ClawMapping();
+    List<ClawMappingVar> listMapped = new ArrayList<ClawMappingVar>();
+    List<ClawMappingVar> listMapping = new ArrayList<ClawMappingVar>();
+    $mapping.setMappedVariables(listMapped);
+    $mapping.setMappingVariables(listMapping);
   }
   :
-    MAP '(' ids_list ':' ids_list ')'
+    MAP '(' mapping_var_list[listMapped] ':' mapping_var_list[listMapping] ')'
 ;
 
-map_list:
-    mapping_option
-  | mapping_option map_list
-;
-*/
 
 /*----------------------------------------------------------------------------
  * LEXER RULES
@@ -143,7 +151,6 @@ MAP          : 'map';
 IDENTIFIER      : [a-zA-Z_$0-9] [a-zA-Z_$0-9]* ;
 NUMBER          : (DIGIT)+ ;
 fragment DIGIT  : '0'..'9' ;
-
 
 // Skip whitspaces
 WHITESPACE   : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ { skip(); };
