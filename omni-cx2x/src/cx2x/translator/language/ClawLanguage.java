@@ -27,7 +27,9 @@ public class ClawLanguage {
   private String _groupName;
   private List<String> _indexes;
   private List<ClawMapping> _mappings;
+  private String _accClauses;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
+  private boolean _acc;
 
 
 
@@ -46,6 +48,8 @@ public class ClawLanguage {
     _indexes = null;
     _range = null;
     _mappings = null;
+    _acc = false;
+    _accClauses = null;
   }
 
 
@@ -207,10 +211,36 @@ public class ClawLanguage {
 
   /**
    * Check whether the current directive has the parallel option enabled.
-   * @return True if the fusion option is enabled.
+   * @return True if the parallel option is enabled.
    */
   public boolean hasParallelOption(){
     return _hasParallel;
+  }
+
+  /**
+   * Enable the acc option for the current directive and set the extracted
+   * clauses.
+   * @param clauses Clauses extracted from the acc option.
+   */
+  protected void setAccClauses(String clauses){
+    _acc = true;
+    _accClauses = clauses;
+  }
+
+  /**
+   * Check whether the current directive has the acc option enabled.
+   * @return True if the acc option is enabled.
+   */
+  public boolean hasAccOption(){
+    return _acc;
+  }
+
+  /**
+   * Get the acc clauses extracted from the acc option.
+   * @return OpenACC clauses as a String.
+   */
+  public String getAccClauses(){
+    return _accClauses;
   }
 
 

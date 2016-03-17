@@ -53,7 +53,7 @@ directive[ClawLanguage l]
   // loop-interchange directive
   | LINTERCHANGE { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$l] EOF
   // loop-extract directive
-  | LEXTRACT range_option mapping_option_list[m] fusion_optional[$l] parallel_optional[$l] EOF
+  | LEXTRACT range_option mapping_option_list[m] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.LOOP_EXTRACT);
       $l.setRange($range_option.r);
@@ -79,6 +79,22 @@ parallel_optional[ClawLanguage l]:
     PARALLEL { $l.setParallelOption(); }
   | /* empty */
 ;
+
+acc_optional[ClawLanguage l]
+  @init{
+    StringBuilder tempAcc = new StringBuilder();
+  }
+  :
+    ACC '(' identifiers[tempAcc] ')' { $l.setAccClauses(tempAcc.toString()); }
+  | /* empty */
+;
+
+identifiers[StringBuilder sb]:
+    i=IDENTIFIER { $sb.append($i.text); }
+  | i=IDENTIFIER { $sb.append($i.text); } identifiers[$sb]
+;
+
+
 
 
 indexes_option[ClawLanguage l]
@@ -168,6 +184,7 @@ RANGE        : 'range';
 MAP          : 'map';
 FUSION       : 'fusion';
 PARALLEL     : 'parallel';
+ACC          : 'acc';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$0-9] [a-zA-Z_$0-9]* ;
