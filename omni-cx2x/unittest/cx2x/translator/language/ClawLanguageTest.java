@@ -247,6 +247,27 @@ public class ClawLanguageTest {
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
     assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
 
+    l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
+            "acc(loop)", "i", "istart", "iend", null);
+    assertNotNull(l);
+    assertEquals(1, l.getMappings().size());
+    assertNotNull(l.getMappings().get(0));
+    assertTrue(l.hasFusionOption());
+    assertTrue(l.hasGroupOption());
+    assertTrue(l.hasAccOption());
+    assertEquals("loop", l.getAccClauses());
+    assertEquals("j1", l.getGroupName());
+    map = l.getMappings().get(0);
+    assertEquals(1, map.getMappedVariables().size());
+    assertEquals(1, map.getMappingVariables().size());
+    assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
+    assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-extract");
     analyzeUnvalidClawLanguage("claw loop   -   extract ");
