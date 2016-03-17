@@ -196,8 +196,9 @@ public class ClawLanguageTest {
     assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
 
     l = analyzeValidClawLoopExtract(
-        "claw loop-extract range(i=1,10,2) map(i:j)",  "i", "1", "10", "2");
+        "claw loop-extract range(i=1,10,2) map(i:j) parallel",  "i", "1", "10", "2");
     map = l.getMappings().get(0);
+    assertTrue(l.hasParallelOption());
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
@@ -215,6 +216,7 @@ public class ClawLanguageTest {
     assertNotNull(l.getMappings().get(0));
     assertTrue(l.hasFusionOption());
     assertFalse(l.hasGroupOption());
+    assertFalse(l.hasParallelOption());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
