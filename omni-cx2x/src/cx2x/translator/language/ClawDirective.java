@@ -12,6 +12,7 @@ package cx2x.translator.language;
  * @author clementval
  */
 public enum ClawDirective {
+  KCACHE,
   LOOP_FUSION,
   LOOP_INTERCHANGE,
   LOOP_EXTRACT,

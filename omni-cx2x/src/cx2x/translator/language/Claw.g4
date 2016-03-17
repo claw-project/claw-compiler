@@ -70,7 +70,11 @@ directive[ClawLanguage l]
   | END REMOVE { $l.setDirective(ClawDirective.END_REMOVE); } EOF
 
   // Kcache directive
-  | KCACHE offset_list[o] { $l.setOffsets(o); }
+  | KCACHE offset_list[o]
+    {
+      $l.setDirective(ClawDirective.KCACHE);
+      $l.setOffsets(o);
+    }
 ;
 
 group_option[ClawLanguage l]:
