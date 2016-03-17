@@ -27,7 +27,7 @@ public class ClawLanguage {
   private String _groupName;
   private List<String> _indexes;
   private List<ClawMapping> _mappings;
-  private boolean _valid, _hasGroup, _hasIndexes, _hasFusion;
+  private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
 
 
 
@@ -40,6 +40,8 @@ public class ClawLanguage {
     _valid = false;
     _hasGroup = false;
     _hasIndexes = false;
+    _hasFusion = false;
+    _hasParallel = false;
     _groupName = null;
     _indexes = null;
     _range = null;
@@ -194,6 +196,21 @@ public class ClawLanguage {
    */
   public boolean hasFusionOption(){
     return _hasFusion;
+  }
+
+  /**
+   * Enable the parallel option for the current directive.
+   */
+  protected void setParallelOption(){
+    _hasParallel = true;
+  }
+
+  /**
+   * Check whether the current directive has the parallel option enabled.
+   * @return True if the fusion option is enabled.
+   */
+  public boolean hasParallelOption(){
+    return _hasParallel;
   }
 
 
