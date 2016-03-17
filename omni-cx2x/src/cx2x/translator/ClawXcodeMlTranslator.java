@@ -7,6 +7,8 @@ package cx2x.translator;
 
 // Cx2x import
 import cx2x.translator.common.Constant;
+import cx2x.translator.language.ClawDirective;
+import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.transformation.loop.LoopExtraction;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -72,6 +74,7 @@ public class ClawXcodeMlTranslator {
     UtilityRemove _remove = null;
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
+
       if(!ClawPragma.startsWithClaw(pragma)){
         if(pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
         {
@@ -81,10 +84,43 @@ public class ClawXcodeMlTranslator {
         continue; // Not CLAW pragma, we do nothing
       }
 
-      if(ClawPragma.isValid(pragma)){
-        ClawPragma clawDirective = ClawPragma.getDirective(pragma);
+      // Analyze the raw pragma with the CLAW language parser
+      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma.getValue());
+      analyzedPragma.attachPragma(pragma);
 
-        try {
+      switch (analyzedPragma.getDirective()){
+        case LOOP_FUSION:
+          addOrAbort(new LoopFusion(pragma), _program, _transformer);
+          break;
+        case LOOP_INTERCHANGE:
+          addOrAbort(new LoopInterchange(pragma), _program, _transformer);
+          break;
+        case LOOP_EXTRACT:
+          addOrAbort(new LoopExtraction(pragma), _program, _transformer);
+          break;
+        case REMOVE:
+          if (_remove != null) {
+            addOrAbort(_remove, _program, _transformer);
+          }
+          _remove = new UtilityRemove(pragma);
+          break;
+        case END_REMOVE:
+          if (_remove == null) {
+            _program.addError("Invalid Claw directive (end with no start)",
+                pragma.getLineNo());
+            abort();
+          } else {
+            _remove.setEnd(pragma);
+            addOrAbort(_remove, _program, _transformer);
+            _remove = null;
+          }
+          break;
+        default:
+          // TODO add error
+          abort();
+      }
+
+        /*try {
           if (clawDirective == ClawPragma.LOOP_FUSION) {
             LoopFusion trans = new LoopFusion(pragma);
             addOrAbort(trans, _program, _transformer);
@@ -122,7 +158,7 @@ public class ClawXcodeMlTranslator {
       } else {
         System.err.println("INVALID PRAGMA: !$" + pragma.getValue());
         System.exit(1);
-      }
+      }*/
     }
     if(_remove != null){
       addOrAbort(_remove, _program, _transformer);
