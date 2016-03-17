@@ -1,9 +1,34 @@
 # Build Claw XcodeML to XcodeML translator
 
-set(CMAKE_JAVA_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar )
-#set(CMAKE_JAVA_INCLUDE_PATH ${OMNI_JAR_COMMON} ${OMNI_JAR_TOOLS})
+# ANTLR
+set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/antlr-4.5.2-complete.jar)
+
+# Try to download the jar dependencies
+if(NOT EXISTS ${ANTLR_JAR})
+  message("Try to download antlr dependency")
+  file(
+    DOWNLOAD
+    http://www.antlr.org/download/antlr-4.5.2-complete.jar
+    ${ANTLR_JAR}
+    STATUS status
+  )
+
+  list( GET status 0 error_code )
+  if( error_code )
+    file( REMOVE ${ANTLR_JAR} )
+    message(FATAL_ERROR "File ${ANTLR_JAR} cannot be downloaded. Download it manually and store it in ${PROJECT_BINARY_DIR}/build/")
+  endif()
+endif()
+
+set(CMAKE_JAVA_INCLUDE_PATH
+  ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar
+  ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar
+  ${ANTLR_JAR}
+)
+
 set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 
+add_subdirectory(cx2x/translator/language)
 
 add_jar(${OMNI_CX2X_XCODEML_NAME}
 
@@ -87,6 +112,15 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
 
 # translator.common package
   cx2x/translator/common/Constant.java
+
+# translator.language package
+  cx2x/translator/language/ClawBaseListener.java
+  cx2x/translator/language/ClawDirective.java
+  cx2x/translator/language/ClawErrorListener.java
+  cx2x/translator/language/ClawLanguage.java
+  cx2x/translator/language/ClawLexer.java
+  cx2x/translator/language/ClawListener.java
+  cx2x/translator/language/ClawParser.java
 
 # translator.misc package
   cx2x/translator/misc/Utility.java
