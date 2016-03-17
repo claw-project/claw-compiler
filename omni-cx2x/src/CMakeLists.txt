@@ -28,8 +28,11 @@ set(CMAKE_JAVA_INCLUDE_PATH
 
 set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 
-add_subdirectory(cx2x/translator/language)
+# Add subdirectory for ANTLR CLAW Parser generation
+set(CLAW_PARSER_DIR "cx2x/translator/language")
+add_subdirectory(${CLAW_PARSER_DIR})
 
+# XcodeML general library
 add_jar(${OMNI_CX2X_XCODEML_NAME}
 
 # XcodeML.transformer
@@ -106,6 +109,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 
+# CLAW translator specific library
 add_jar(${OMNI_CX2X_CLAW_NAME}
 # Base class
   cx2x/Cx2x.java
@@ -147,6 +151,9 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
 
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
+
+# Add dependency between the CLAW translator library and the parser generation
+add_dependencies(${OMNI_CX2X_CLAW_NAME} claw-antlr)
 
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
