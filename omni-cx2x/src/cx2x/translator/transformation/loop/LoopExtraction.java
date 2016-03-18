@@ -8,11 +8,13 @@ package cx2x.translator.transformation.loop;
 // Cx2x import
 import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.ClawMapping;
+import cx2x.translator.language.ClawMappingVar;
+import cx2x.translator.language.ClawRange;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
-import cx2x.translator.pragma.*;
 
 // OMNI import
 import xcodeml.util.XmOption;

@@ -7,7 +7,6 @@ package cx2x.translator.language;
 
 import static org.junit.Assert.*;
 
-import cx2x.translator.pragma.ClawMapping;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.junit.Test;
 

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.pragma;
+package cx2x.translator.language;
 
 import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
@@ -54,11 +54,10 @@ public class ClawMapping {
 
 
   /**
-   * TODO set protected once the class has been move to the language package.
    * Constructs an empty ClawMapping object. Normally only used from the
    * CLAW Parser.
    */
-  public ClawMapping(){}
+  protected ClawMapping(){}
 
   /**
    * Split the variables defined as var1/var,2var1/var2 into a list of
@@ -115,22 +114,20 @@ public class ClawMapping {
 
 
   /**
-   * TODO move to protected once the class is in the correct package
    * Set the mapped variable list.
    * @param mappedVars List of ClawMappingVar that represents the mapped
    *                   variables.
    */
-  public void setMappedVariables(List<ClawMappingVar> mappedVars){
+  protected void setMappedVariables(List<ClawMappingVar> mappedVars){
     _mappedVariables = mappedVars;
   }
 
   /**
-   * TODO move to protected once the class is in the correct package
    * Set the mapping variable list.
    * @param mappingVars List of ClawMappingVar that represents the mapping
    *                    variables.
    */
-  public void setMappingVariables(List<ClawMappingVar> mappingVars){
+  protected void setMappingVariables(List<ClawMappingVar> mappingVars){
     _mappingVariables = mappingVars;
   }
 

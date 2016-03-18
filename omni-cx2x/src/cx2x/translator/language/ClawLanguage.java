@@ -5,8 +5,6 @@
 
 package cx2x.translator.language;
 
-import cx2x.translator.pragma.ClawMapping;
-import cx2x.translator.pragma.ClawRange;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.xelement.Xpragma;
 import org.antlr.v4.runtime.ANTLRInputStream;
