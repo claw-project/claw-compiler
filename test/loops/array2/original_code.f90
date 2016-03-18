@@ -6,7 +6,6 @@ END
 
 ! Before the transformation
 SUBROUTINE claw
-  INTEGER :: j
   INTEGER :: i = 10
   INTEGER, DIMENSION(0:10,0:10) :: vec1
   INTEGER, DIMENSION(0:10,0:10) :: vec2

@@ -38,7 +38,7 @@ public class ArrayTransform extends Transformation<ArrayTransform> {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    return false;
+    return true;
   }
 
   @Override

@@ -14,7 +14,7 @@ SUBROUTINE claw
   		vec1(j) = j
   END DO
 
-  !$claw loop-vector
+  !$claw array-transform
   vec1(0:i) = vec1(0:i) + 10;
 
   PRINT*,vec1
