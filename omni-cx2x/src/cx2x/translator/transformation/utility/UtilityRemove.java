@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.utility;
 
+import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -25,10 +26,10 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
 
   /**
    * Constructs a new UtilityRemove triggered from a specific pragma.
-   * @param pragma The pragma that triggered the remove transformation.
+   * @param directive The directive that triggered the remove transformation.
    */
-  public UtilityRemove(Xpragma pragma){
-    super(pragma);
+  public UtilityRemove(ClawLanguage directive){
+    super(directive);
   }
 
   public void setEnd(Xpragma pragma){
@@ -40,12 +41,12 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_end == null){
-      _do = XelementHelper.findDirectNextDoStmt(_pragma);
-      _if = XelementHelper.findDirectNextIfStmt(_pragma);
+      _do = XelementHelper.findDirectNextDoStmt(_directive.getPragma());
+      _if = XelementHelper.findDirectNextIfStmt(_directive.getPragma());
 
       if(_do == null && _if == null){
         xcodeml.addError("Directive remove without end not followed by a do or if statement",
-          _pragma.getLineNo());
+          _directive.getPragma().getLineNo());
         return false;
       }
     }
@@ -62,10 +63,10 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
       } else if(_if != null){
         _if.delete();
       }
-      _pragma.delete();
+      _directive.getPragma().delete();
     } else {
-      XelementHelper.deleteBetween(_pragma, _end);
-      _pragma.delete();
+      XelementHelper.deleteBetween(_directive.getPragma(), _end);
+      _directive.getPragma().delete();
       _end.delete();
     }
   }

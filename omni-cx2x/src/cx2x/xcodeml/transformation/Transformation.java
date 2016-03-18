@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.transformation;
 
+import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.exception.*;
 
@@ -19,19 +20,20 @@ import cx2x.xcodeml.exception.*;
 
 public abstract class Transformation<T> {
   protected boolean _transformed = false;
-  protected Xpragma _pragma = null;
   protected int _startLine = 0;
+  protected ClawLanguage _directive = null;
 
   /**
    * Transformation ctor.
-   * @param pragma The pragma that triggered the transformation.
+   * @param directive The directive that triggered the transformation.
    */
-  public Transformation(Xpragma pragma){
-    _pragma = pragma;
-    if(_pragma != null){
-      _startLine = _pragma.getLineNo();
+  public Transformation(ClawLanguage directive){
+    _directive = directive;
+    if(_directive.getPragma() != null){
+      _startLine = _directive.getPragma().getLineNo();
     }
   }
+
 
   /**
    * Analyze the possibility to apply the transformation. Gather information to
@@ -66,11 +68,11 @@ public abstract class Transformation<T> {
 
 
   /**
-   * Get the pragma that triggered the transformation.
-   * @return A Xpragma element.
+   * Get the directive that triggered the transformation.
+   * @return The analyzed directive as a ClawLanguage object.
    */
-  public Xpragma getPragma(){
-    return _pragma;
+  public ClawLanguage getDirective(){
+    return _directive;
   }
 
   /**

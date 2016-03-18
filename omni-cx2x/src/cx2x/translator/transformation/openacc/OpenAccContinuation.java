@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.Constant;
+import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
@@ -44,11 +45,13 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
-   * @param pragma The pragma that triggered the loop fusion transformation.
+   * @param directive The directive that triggered the loop fusion
+   *                  transformation.
    */
-  public OpenAccContinuation(Xpragma pragma){
-    super(pragma);
+  public OpenAccContinuation(ClawLanguage directive){
+    super(directive);
   }
+
 
   /**
    * Loop fusion analysis: find whether the pragma statement is followed by a
@@ -58,7 +61,8 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    * @return True if a do statement is found. False otherwise.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    return _pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX);
+    return _directive.getPragma().getValue().toLowerCase().
+        startsWith(Constant.OPENACC_PREFIX);
   }
 
   @Override
@@ -79,14 +83,14 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
                         OpenAccContinuation other)
       throws IllegalTransformationException
   {
-    String allPragma = _pragma.getValue();
+    String allPragma = _directive.getPragma().getValue();
 
     String[] pragmas = allPragma.split(Constant.OPENACC_PREFIX);
 
     if(pragmas.length != 2) {
-      _pragma.setData(Constant.OPENACC_PREFIX + " " + pragmas[1] + " " +
+      _directive.getPragma().setData(Constant.OPENACC_PREFIX + " " + pragmas[1] + " " +
           Constant.CONTINUATION_LINE_SYMBOL);
-      Xpragma newlyInserted = _pragma;
+      Xpragma newlyInserted = _directive.getPragma();
       for (int i = 2; i < pragmas.length; ++i) {
         Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
         if(p == null){
@@ -94,8 +98,8 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
               "Cannot create new pragma statement"
           );
         }
-        p.setFile(_pragma.getFile());
-        p.setLine(_pragma.getLineNo() + (i - 1));
+        p.setFile(_directive.getPragma().getFile());
+        p.setLine(_directive.getPragma().getLineNo() + (i - 1));
         if (i == pragmas.length - 1) {
           p.setData(Constant.OPENACC_PREFIX + " " + pragmas[i]);
         } else {

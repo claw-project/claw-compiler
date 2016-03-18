@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.claw;
 
+import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -22,12 +23,12 @@ public class Kcaching extends Transformation<Kcaching> {
 
   /**
    * Constructs a new Kcachine triggered from a specific pragma.
-   * @param pragma  The pragma that triggered the k caching transformation.
+   * @param directive  The directive that triggered the k caching transformation.
    * @throws IllegalDirectiveException if something is wrong in the directive's
    * options
    */
-  public Kcaching(Xpragma pragma) throws IllegalDirectiveException {
-    super(pragma);
+  public Kcaching(ClawLanguage directive) throws IllegalDirectiveException {
+    super(directive);
   }
 
   @Override

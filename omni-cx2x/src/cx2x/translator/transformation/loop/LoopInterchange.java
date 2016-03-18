@@ -5,13 +5,15 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.pragma.ClawPragma;
+import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 
 import xcodeml.util.XmOption;
+
+import java.util.List;
 
 /**
  * A LoopInterchange transformation is a an independent transformation. It allow
@@ -22,7 +24,7 @@ import xcodeml.util.XmOption;
 
 public class LoopInterchange extends Transformation<LoopInterchange> {
 
-  private String _newOrderOption = null;
+  private List<String> _newOrderOption = null;
 
   private XdoStatement _loopLevel0 = null;
   private XdoStatement _loopLevel1 = null;
@@ -43,13 +45,12 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
 
   /**
    * Constructs a new LoopInterchange triggered from a specific pragma.
-   * @param pragma The pragma that triggered the loop interchange
-   *               transformation.
+   * @param directive The directive that triggered the loop interchange
+   *                  transformation.
    */
-  public LoopInterchange(Xpragma pragma){
-    super(pragma);
-    _newOrderOption = ClawPragma
-      .getSimpleOptionValue(_pragma);
+  public LoopInterchange(ClawLanguage directive){
+    super(directive);
+    _newOrderOption = directive.getIndexes();
   }
 
   /**
@@ -190,10 +191,11 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
-    _loopLevel0 = XelementHelper.findNextDoStatement(_pragma);
+    _loopLevel0 = XelementHelper.findNextDoStatement(_directive.getPragma());
 
     if(_loopLevel0 == null){
-      xcodeml.addError("top level loop not found", _pragma.getLineNo());
+      xcodeml.addError("top level loop not found",
+          _directive.getPragma().getLineNo());
       return false;
     }
 
@@ -203,10 +205,9 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     }
 
     if(_newOrderOption != null){
-      String[] vars = _newOrderOption.split(",");
-      if(vars.length != 3){
+      if(_newOrderOption.size() != 3){
         xcodeml.addError("new-order option has not enough parameters",
-          _pragma.getLineNo());
+          _directive.getPragma().getLineNo());
       }
 
       _loopLevel2 = XelementHelper.findDoStatement(_loopLevel1.getBody(), false);
@@ -218,13 +219,13 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
       _baseLoop1 = _loopLevel1.getInductionVariable();
       _baseLoop2 = _loopLevel2.getInductionVariable();
 
-      if(!checkNewOrderOption(xcodeml, vars)){
+      if(!checkNewOrderOption(xcodeml, _newOrderOption)){
         return false;
       }
 
-      _newLoop0 = vars[0];
-      _newLoop1 = vars[1];
-      _newLoop2 = vars[2];
+      _newLoop0 = _newOrderOption.get(0);
+      _newLoop1 = _newOrderOption.get(1);
+      _newLoop2 = _newOrderOption.get(2);
     }
 
 
@@ -233,17 +234,17 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
 
   /**
    * Check the vailidity of the new ordering option.
-   * @param xcodeml The XcodeML object
-   * @param vars    Array containing the induction variables
+   * @param xcodeml The XcodeML object.
+   * @param idxs    List containing the induction variables.
    * @return True if the new ordering is valid. False otherwise.
    */
-  private boolean checkNewOrderOption(XcodeProgram xcodeml, String[] vars){
-    for(String var : vars){
-      if(!var.equals(_baseLoop0) && !var.equals(_baseLoop1)
-        && !var.equals(_baseLoop2))
+  private boolean checkNewOrderOption(XcodeProgram xcodeml, List<String> idxs){
+    for(String idx : idxs){
+      if(!idx.equals(_baseLoop0) && !idx.equals(_baseLoop1)
+        && !idx.equals(_baseLoop2))
       {
         xcodeml.addError("invalid induction variable in new-order option. "
-          + var, _pragma.getLineNo());
+          + idx, _directive.getPragma().getLineNo());
         return false;
       }
     }

@@ -5,7 +5,7 @@ set(JUNIT_VERSION "4.12")
 set(HAMCREST_VERSION "1.3")
 set(JUNIT_JAR ${PROJECT_BINARY_DIR}/build/junit-${JUNIT_VERSION}.jar)
 set(HAMCREST_JAR ${PROJECT_BINARY_DIR}/build/hamcrest-core-${HAMCREST_VERSION}.jar)
-
+set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/${ANTLR_NAME}.jar)
 # Local dependencies
 set(OMNICX2X_JAR1 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar)
 set(OMNICX2X_JAR2 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar)
@@ -53,13 +53,14 @@ else()
     ${OMNICX2X_JAR2}
     ${JUNIT_JAR}
     ${HAMCREST_JAR}
+    ${ANTLR_JAR}
   )
 
   add_jar(omni-cx2x-unittest
     helper/XmlHelper.java
     cx2x/translator/misc/UtilityTest.java
-    cx2x/translator/pragma/ClawPragmaTest.java
-    cx2x/translator/pragma/ClawRangeTest.java
+    cx2x/translator/language/ClawRangeTest.java
+    cx2x/translator/language/ClawLanguageTest.java
     cx2x/xcodeml/xelement/XbasicTest.java
     cx2x/xcodeml/xelement/XbasicTypeTest.java
     cx2x/xcodeml/xelement/XcodeProgTest.java
@@ -113,11 +114,11 @@ else()
     cx2x.xcodeml.xelement.XvarTest
   )
 
-  add_junit_test(junit-translator.pragma
+  add_junit_test(junit-translator.language
     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
     TESTS
-    cx2x.translator.pragma.ClawPragmaTest
-    cx2x.translator.pragma.ClawRangeTest
+    cx2x.translator.language.ClawLanguageTest
+    cx2x.translator.language.ClawRangeTest
   )
 
   add_junit_test(junit-misc.utility

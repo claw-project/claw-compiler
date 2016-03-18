@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.pragma.ClawPragma;
+import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -29,11 +29,12 @@ public class LoopFusion extends Transformation<LoopFusion> {
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
-   * @param pragma The pragma that triggered the loop fusion transformation.
+   * @param directive The directive that triggered the loop fusion
+   *                  transformation.
    */
-  public LoopFusion(Xpragma pragma){
-    super(pragma);
-    _groupLabel = ClawPragma.getGroupOptionValue(_pragma);
+  public LoopFusion(ClawLanguage directive){
+    super(directive);
+    _groupLabel = directive.getGroupName();
   }
 
   /**
@@ -57,10 +58,10 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @return True if a do statement is found. False otherwise.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _loop = XelementHelper.findNextDoStatement(_pragma);
+    _loop = XelementHelper.findNextDoStatement(_directive.getPragma());
     if(_loop == null){
       xcodeml.addError("Cannot find loop after directive",
-        _pragma.getLineNo());
+        _directive.getPragma().getLineNo());
       return false;
     }
     return true;
@@ -90,8 +91,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
    */
   public void finalizeTransformation(){
     // Delete the pragma of the transformed loop
-    if(_pragma != null){
-      _pragma.delete();
+    if(_directive.getPragma() != null){
+      _directive.getPragma().delete();
     }
     // Delete the loop that was merged with the main one
     if(_loop != null){

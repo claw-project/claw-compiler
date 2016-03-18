@@ -3,8 +3,9 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.pragma;
+package cx2x.translator.language;
 
+import cx2x.translator.pragma.ClawRange;
 import cx2x.xcodeml.xelement.XloopIterationRange;
 import helper.XmlHelper;
 import org.junit.Test;

@@ -22,7 +22,7 @@ import java.util.List;
  * @author clementval
  */
 public class ClawLanguage {
-
+  private static final String PREFIX_CLAW = "claw";
   private ClawDirective _directive;
   private ClawRange _range;
   private String _groupName;
@@ -41,6 +41,20 @@ public class ClawLanguage {
    * WARNING: This ctor should only be used by the parser.
    */
   protected ClawLanguage(){
+    resetVariables();
+  }
+
+  /**
+   * Constructs an empty ClawLanguage object with an attached pragma. Used only
+   * for transformation that are not CLAW related.
+   * @param pragma The pragma that is attached to the ClawLanguage object.
+   */
+  public ClawLanguage(Xpragma pragma){
+    resetVariables();
+    _pragma = pragma;
+  }
+
+  private void resetVariables(){
     _directive = null;
     _valid = false;
     _hasGroup = false;
@@ -54,8 +68,18 @@ public class ClawLanguage {
     _acc = false;
     _accClauses = null;
     _offsets = null;
+    _pragma = null;
   }
 
+  /**
+   * Check if the pragma statement starts with the claw keyword.
+   * @param pragma The Xpragma object to check.
+   * @return True if the statement starts with claw keyword. False otherwise.
+   */
+  public static boolean startsWithClaw(Xpragma pragma) {
+    return !(pragma == null || pragma.getValue() == null)
+        && pragma.getValue().startsWith(PREFIX_CLAW);
+  }
 
   /**
    * Analyze a raw string input and match it with the CLAW language definition.
@@ -288,6 +312,14 @@ public class ClawLanguage {
    */
   public void attachPragma(Xpragma pragma){
     _pragma = pragma;
+  }
+
+  /**
+   * Get the attached pragma object.
+   * @return Attached pragma object.
+   */
+  public Xpragma getPragma(){
+    return _pragma;
   }
 
 
