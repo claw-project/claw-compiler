@@ -30,7 +30,6 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   private XdoStatement _loopLevel1 = null;
   private XdoStatement _loopLevel2 = null;
 
-
   private String _baseLoop0 = null;
   private String _baseLoop1 = null;
   private String _baseLoop2 = null;

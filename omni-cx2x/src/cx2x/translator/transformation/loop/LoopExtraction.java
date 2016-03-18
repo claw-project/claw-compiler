@@ -33,22 +33,12 @@ import java.util.*;
 
 public class LoopExtraction extends Transformation<LoopExtraction> {
 
-  private List<ClawMapping> _mappings = null;
   private Map<String, ClawMapping> _fctMappingMap = null;
   private Map<String, ClawMapping> _argMappingMap = null;
   private XfunctionCall _fctCall = null;
   private XfunctionDefinition _fctDef = null; // Fct holding the fct call
   private XfunctionDefinition _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
-  private ClawRange _range = null;
-
-  // Fusion and fusion option
-  private boolean _hasFusion = false;
-  private String _fusionGroupLabel = "";
-
-  // Acc options
-  private boolean _hasParallelOption = false;
-  private String _accAdditionalOption = null;
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
@@ -59,24 +49,8 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    */
   public LoopExtraction(ClawLanguage directive) throws IllegalDirectiveException {
     super(directive);
-    _mappings = new ArrayList<>();
     _argMappingMap = new Hashtable<>();
     _fctMappingMap = new Hashtable<>();
-    _range = directive.getRange();
-
-
-    _hasFusion = directive.hasFusionOption();
-    if(_hasFusion){
-      _fusionGroupLabel = directive.getGroupName();
-    }
-
-    _hasParallelOption = directive.hasParallelOption();
-    if(directive.hasAccOption()){
-      _accAdditionalOption = directive.getAccClauses();
-    }
-
-
-
 
     try {
       extractMappingInformation();
@@ -91,9 +65,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
   private void extractMappingInformation() throws IllegalDirectiveException {
-    _mappings = _directive.getMappings();
-
-    for(ClawMapping m : _mappings){
+    for(ClawMapping m : _directive.getMappings()){
       for(ClawMappingVar mappedVar : m.getMappedVariables()){
         if(_argMappingMap.containsKey(mappedVar.getArgMapping())){
           throw new IllegalDirectiveException(_directive.getPragma().getValue(),
@@ -287,10 +259,11 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
 
     if(XmOption.isDebugOutput()){
-      System.out.println("  Start to apply mapping: " + _mappings.size());
+      System.out.println("  Start to apply mapping: " +
+          _directive.getMappings().size());
     }
 
-    for(ClawMapping mapping : _mappings){
+    for(ClawMapping mapping : _directive.getMappings()){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
 
       for(ClawMappingVar var : mapping.getMappedVariables()){
@@ -429,7 +402,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
 
     // Wrap with parallel section if option is set
-    if(_hasParallelOption){
+    if(_directive.hasParallelOption()){
       Xpragma parallelStart =
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
       parallelStart.setData("acc parallel");
@@ -441,24 +414,24 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       XelementHelper.insertAfter(_directive.getPragma(), parallelStart);
       XelementHelper.insertAfter(extractedLoop, parallelEnd);
 
-      if(_accAdditionalOption != null){
+      if(_directive.hasAccOption()){
         insertAccOption(parallelStart, xcodeml);
       }
-    } else if (_accAdditionalOption != null){
+    } else if (_directive.hasAccOption()){
       insertAccOption(_directive.getPragma(), xcodeml);
     }
 
 
 
     // Transformation is done. Add additional transfomation here
-    if(_hasFusion){
+    if(_directive.hasFusionOption()){
 
-      LoopFusion fusion = new LoopFusion(extractedLoop, _fusionGroupLabel,
-          _directive.getPragma().getLineNo());
+      LoopFusion fusion = new LoopFusion(extractedLoop,
+          _directive.getGroupName(), _directive.getPragma().getLineNo());
       transformer.addTransformation(fusion);
 
       if(XmOption.isDebugOutput()){
-        System.out.println("Loop fusion added: " + _fusionGroupLabel);
+        System.out.println("Loop fusion added: " + _directive.getGroupName());
       }
 
     }
@@ -480,12 +453,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       throw new IllegalTransformationException("No loop found in function",
           _directive.getPragma().getLineNo());
     } else {
-      if(!_range.equals(foundStatement.getIterationRange())) {
+      if(!_directive.getRange().equals(foundStatement.getIterationRange())) {
         // Try to find another loops that meet the criteria
         do {
           foundStatement = XelementHelper.findNextDoStatement(foundStatement);
-        } while (foundStatement != null
-            && !_range.equals(foundStatement.getIterationRange()));
+        } while (foundStatement != null &&
+            !_directive.getRange().equals(foundStatement.getIterationRange()));
       }
     }
 
@@ -494,7 +467,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           _directive.getPragma().getLineNo());
     }
 
-    if(!_range.equals(foundStatement.getIterationRange())) {
+    if(!_directive.getRange().equals(foundStatement.getIterationRange())) {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
           _directive.getPragma().getLineNo()
@@ -514,7 +487,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     Xpragma accAdditionalOption = XelementHelper.
         createEmpty(Xpragma.class, xcodeml);
     accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
-        _accAdditionalOption);
+        _directive.getAccClauses());
     XelementHelper.insertAfter(insertPoint, accAdditionalOption);
   }
 
