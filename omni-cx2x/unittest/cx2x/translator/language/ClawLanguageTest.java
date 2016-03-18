@@ -267,6 +267,92 @@ public class ClawLanguageTest {
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
     assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
 
+    l = analyzeValidClawLoopExtract(
+        "claw loop-extract range(j1=ki1sc,ki1ec) " +
+        "map(pduh2oc,pduh2of:j1,ki3sc/j3) " +
+        "map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3) " +
+        "map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) " +
+        "fusion group(coeth-j1) parallel acc(loop gang vector)",
+        "j1", "ki1sc", "ki1ec", null);
+    assertNotNull(l);
+    assertEquals(4, l.getMappings().size());
+
+    ClawMapping map1 = l.getMappings().get(0);
+    assertNotNull(map1);
+    assertEquals(2, map1.getMappedVariables().size());
+    assertEquals(2, map1.getMappingVariables().size());
+    assertEquals("pduh2oc", map1.getMappedVariables().get(0).getArgMapping());
+    assertEquals("pduh2oc", map1.getMappedVariables().get(0).getFctMapping());
+    assertEquals("pduh2of", map1.getMappedVariables().get(1).getArgMapping());
+    assertEquals("pduh2of", map1.getMappedVariables().get(1).getFctMapping());
+    assertEquals("j1", map1.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j1", map1.getMappingVariables().get(0).getFctMapping());
+    assertEquals("ki3sc", map1.getMappingVariables().get(1).getArgMapping());
+    assertEquals("j3", map1.getMappingVariables().get(1).getFctMapping());
+
+    ClawMapping map2 = l.getMappings().get(1);
+    assertNotNull(map2);
+    assertEquals(8, map2.getMappedVariables().size());
+    assertEquals(2, map2.getMappingVariables().size());
+    assertEquals("pduco2", map2.getMappedVariables().get(0).getArgMapping());
+    assertEquals("pduco2", map2.getMappedVariables().get(0).getFctMapping());
+    assertEquals("pduo3",  map2.getMappedVariables().get(1).getArgMapping());
+    assertEquals("pduo3",  map2.getMappedVariables().get(1).getFctMapping());
+    assertEquals("palogp", map2.getMappedVariables().get(2).getArgMapping());
+    assertEquals("palogp", map2.getMappedVariables().get(2).getFctMapping());
+    assertEquals("palogt", map2.getMappedVariables().get(3).getArgMapping());
+    assertEquals("palogt", map2.getMappedVariables().get(3).getFctMapping());
+    assertEquals("podsc",  map2.getMappedVariables().get(4).getArgMapping());
+    assertEquals("podsc",  map2.getMappedVariables().get(4).getFctMapping());
+    assertEquals("podsf",  map2.getMappedVariables().get(5).getArgMapping());
+    assertEquals("podsf",  map2.getMappedVariables().get(5).getFctMapping());
+    assertEquals("podac",  map2.getMappedVariables().get(6).getArgMapping());
+    assertEquals("podac",  map2.getMappedVariables().get(6).getFctMapping());
+    assertEquals("podaf",  map2.getMappedVariables().get(7).getArgMapping());
+    assertEquals("podaf",  map2.getMappedVariables().get(7).getFctMapping());
+    assertEquals("j1",     map2.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j1",     map2.getMappingVariables().get(0).getFctMapping());
+    assertEquals("ki3sc",  map2.getMappingVariables().get(1).getArgMapping());
+    assertEquals("j3",     map2.getMappingVariables().get(1).getFctMapping());
+
+    ClawMapping map3 = l.getMappings().get(2);
+    assertNotNull(map3);
+    assertEquals(2, map3.getMappedVariables().size());
+    assertEquals(2, map3.getMappingVariables().size());
+    assertEquals("pbsff", map3.getMappedVariables().get(0).getArgMapping());
+    assertEquals("pbsff", map3.getMappedVariables().get(0).getFctMapping());
+    assertEquals("pbsfc", map3.getMappedVariables().get(1).getArgMapping());
+    assertEquals("pbsfc", map3.getMappedVariables().get(1).getFctMapping());
+    assertEquals("j1",    map3.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j1",    map3.getMappingVariables().get(0).getFctMapping());
+    assertEquals("ki3sc", map3.getMappingVariables().get(1).getArgMapping());
+    assertEquals("j3",    map3.getMappingVariables().get(1).getFctMapping());
+
+    ClawMapping map4 = l.getMappings().get(3);
+    assertNotNull(map4);
+    assertEquals(6, map4.getMappedVariables().size());
+    assertEquals(1, map4.getMappingVariables().size());
+    assertEquals("pa1c", map4.getMappedVariables().get(0).getArgMapping());
+    assertEquals("pa1c", map4.getMappedVariables().get(0).getFctMapping());
+    assertEquals("pa1f", map4.getMappedVariables().get(1).getArgMapping());
+    assertEquals("pa1f", map4.getMappedVariables().get(1).getFctMapping());
+    assertEquals("pa2c", map4.getMappedVariables().get(2).getArgMapping());
+    assertEquals("pa2c", map4.getMappedVariables().get(2).getFctMapping());
+    assertEquals("pa2f", map4.getMappedVariables().get(3).getArgMapping());
+    assertEquals("pa2f", map4.getMappedVariables().get(3).getFctMapping());
+    assertEquals("pa3c", map4.getMappedVariables().get(4).getArgMapping());
+    assertEquals("pa3c", map4.getMappedVariables().get(4).getFctMapping());
+    assertEquals("pa3f", map4.getMappedVariables().get(5).getArgMapping());
+    assertEquals("pa3f", map4.getMappedVariables().get(5).getFctMapping());
+    assertEquals("j1",   map4.getMappingVariables().get(0).getArgMapping());
+    assertEquals("j1",   map4.getMappingVariables().get(0).getFctMapping());
+
+    assertTrue(l.hasFusionOption());
+    assertTrue(l.hasGroupOption());
+    assertEquals("coeth-j1", l.getGroupName());
+    assertTrue(l.hasAccOption());
+    assertEquals("loop gang vector", l.getAccClauses());
+
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-extract");
     analyzeUnvalidClawLanguage("claw loop   -   extract ");
