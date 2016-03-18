@@ -226,7 +226,7 @@ PARALLEL     : 'parallel';
 RANGE        : 'range';
 
 // Special elements
-IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9]* ;
+IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;
 NUMBER          : (DIGIT)+ ;
 fragment DIGIT  : [0-9] ;
 
