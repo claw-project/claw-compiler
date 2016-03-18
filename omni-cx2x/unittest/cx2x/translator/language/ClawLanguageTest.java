@@ -338,4 +338,77 @@ public class ClawLanguageTest {
     }
   }
 
+  /**
+   * Test various input for the CLAW array-transform directive.
+   */
+  @Test
+  public void ArrayTransformTest(){
+    // Valid directives
+    analyzeValidArrayTransform("claw array-transform", false, null, false,
+        null);
+    analyzeValidArrayTransform("claw array-transform fusion", true, null, false,
+        null);
+    analyzeValidArrayTransform("claw array-transform fusion group(j1)", true,
+        "j1", false, null);
+    analyzeValidArrayTransform("claw array-transform fusion parallel", true,
+        null, true, null);
+    analyzeValidArrayTransform("claw array-transform fusion parallel acc(loop)",
+        true, null, true, "loop");
+    analyzeValidArrayTransform("claw array-transform fusion acc(loop)", true,
+        null, false, "loop");
+    analyzeValidArrayTransform(
+        "claw array-transform fusion parallel acc(loop gang vector)", true,
+        null, true, "loop gang vector");
+    analyzeValidArrayTransform(
+        "claw array-transform fusion group(j1) parallel acc(loop gang vector)",
+        true, "j1", true, "loop gang vector");
+    analyzeValidArrayTransform(
+        "claw array-transform parallel acc(loop gang vector)",
+        false, null, true, "loop gang vector");
+    analyzeValidArrayTransform("claw array-transform parallel", false, null,
+        true, null);
+    analyzeValidArrayTransform("claw array-transform acc(loop gang vector)",
+        false, null, false, "loop gang vector");
+  }
+
+  /**
+   * Assert the result for valid lo CLAW directive
+   * @param raw         Raw string valud of the CLAW directive to be analyzed.
+   * @param fusion      Set to true if the extracted option should be present.
+   * @param fusionGroup Name of the group in the extracted fusion option.
+   * @param parallel    Set to true if the extracted option should be present.
+   * @param acc         String of acc clauses that should be present.
+   */
+  private void analyzeValidArrayTransform(String raw, boolean fusion,
+                                          String fusionGroup, boolean parallel,
+                                          String acc)
+  {
+    try {
+      ClawLanguage l = ClawLanguage.analyze(raw);
+      assertEquals(ClawDirective.ARRAY_TRANSFORM, l.getDirective());
+      if(fusion){
+        assertTrue(l.hasFusionOption());
+        assertEquals(fusionGroup, l.getGroupName());
+      } else {
+        assertFalse(l.hasFusionOption());
+        assertNull(l.getGroupName());
+      }
+      if(parallel){
+        assertTrue(l.hasParallelOption());
+      } else {
+        assertFalse(l.hasParallelOption());
+      }
+      if(acc != null){
+        assertTrue(l.hasAccOption());
+        assertEquals(acc, l.getAccClauses());
+      } else {
+        assertFalse(l.hasAccOption());
+        assertNull(acc);
+      }
+    } catch(IllegalDirectiveException idex){
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
 }

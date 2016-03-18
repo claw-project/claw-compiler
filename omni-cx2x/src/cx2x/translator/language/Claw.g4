@@ -69,10 +69,16 @@ directive[ClawLanguage l]
   | END REMOVE { $l.setDirective(ClawDirective.END_REMOVE); } EOF
 
   // Kcache directive
-  | KCACHE offset_list_optional[o]
+  | KCACHE offset_list_optional[o] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(o);
+    }
+
+  // Array notation transformation directive
+  | ARRAY_TRANS fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
+    {
+      $l.setDirective(ClawDirective.ARRAY_TRANSFORM);
     }
 ;
 
@@ -203,6 +209,7 @@ mapping_option_list[List<ClawMapping> mappings]:
 CLAW         : 'claw';
 
 // Directives
+ARRAY_TRANS  : 'array-transform';
 END          : 'end';
 KCACHE       : 'kcache';
 LFUSION      : 'loop-fusion';
