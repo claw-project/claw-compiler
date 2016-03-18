@@ -30,9 +30,10 @@ public class ClawLanguageTest {
     analyzeValidClawLoopFusion("claw loop-fusion group(g1)", "g1");
     analyzeValidClawLoopFusion("claw loop-fusion group( g1 )", "g1");
     analyzeValidClawLoopFusion("claw loop-fusion group ( g1   ) ", "g1");
-    analyzeValidClawLoopFusion("claw loop-fusiongroup(g1)", "g1");
+
 
     // Unvalid directives
+    analyzeUnvalidClawLanguage("claw loop-fusiongroup(g1)");
     analyzeUnvalidClawLanguage("claw loop-fusion group");
     analyzeUnvalidClawLanguage("claw loop-fusion (i,j,k)");
     analyzeUnvalidClawLanguage("claw loop-fusion group()");
