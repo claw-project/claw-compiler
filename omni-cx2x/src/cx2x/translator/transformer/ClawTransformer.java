@@ -8,6 +8,7 @@ package cx2x.translator.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import cx2x.translator.transformation.loop.ArrayTransform;
 import cx2x.translator.transformation.loop.LoopExtraction;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -30,6 +31,7 @@ public class ClawTransformer implements Transformer {
   private TransformationGroup<LoopExtraction> _loopExtract = null;
   private TransformationGroup<UtilityRemove> _utilityRemove = null;
   private TransformationGroup<OpenAccContinuation> _openAccCont = null;
+  private TransformationGroup<ArrayTransform> _arrayTransformation = null;
   private ArrayList<TransformationGroup> _transformationGroups = null;
 
   /**
@@ -46,10 +48,13 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup<>("remove");
     _openAccCont =
         new IndependentTransformationGroup<>("open-acc-continuation");
+    _arrayTransformation =
+        new IndependentTransformationGroup<>("array-transform");
 
     // Add transformations (order of insertion is the one that will be applied)
     _transformationGroups = new ArrayList<>();
     _transformationGroups.add(_utilityRemove);
+    _transformationGroups.add(_arrayTransformation);
     _transformationGroups.add(_loopExtract);
     _transformationGroups.add(_loopFusion);
     _transformationGroups.add(_loopInterchange);
@@ -70,6 +75,8 @@ public class ClawTransformer implements Transformer {
       _utilityRemove.add((UtilityRemove)t);
     } else if (t instanceof OpenAccContinuation){
       _openAccCont.add((OpenAccContinuation)t);
+    } else if (t instanceof ArrayTransform){
+      _arrayTransformation.add((ArrayTransform)t);
     }
   }
 

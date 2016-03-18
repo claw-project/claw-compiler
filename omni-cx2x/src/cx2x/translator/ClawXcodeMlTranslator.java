@@ -8,6 +8,7 @@ package cx2x.translator;
 // Cx2x import
 import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.transformation.loop.ArrayTransform;
 import cx2x.translator.transformation.loop.LoopExtraction;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -95,6 +96,9 @@ public class ClawXcodeMlTranslator {
           break;
         case LOOP_EXTRACT:
           addOrAbort(new LoopExtraction(analyzedPragma), _program, _transformer);
+          break;
+        case ARRAY_TRANSFORM:
+          addOrAbort(new ArrayTransform(analyzedPragma), _program, _transformer);
           break;
         case REMOVE:
           if (_remove != null) {
