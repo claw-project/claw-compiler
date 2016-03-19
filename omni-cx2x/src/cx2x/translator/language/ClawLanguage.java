@@ -29,8 +29,9 @@ public class ClawLanguage {
   private List<String> _offsets;
   private String _accClauses;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
-  private boolean _acc;
+  private boolean _acc, _hasCollapse;
   private Xpragma _pragma;
+  private int _collapseValue;
 
 
 
@@ -67,6 +68,8 @@ public class ClawLanguage {
     _accClauses = null;
     _offsets = null;
     _pragma = null;
+    _hasCollapse = false;
+    _collapseValue = 0;
   }
 
   /**
@@ -150,6 +153,32 @@ public class ClawLanguage {
    */
   public String getGroupName(){
     return _groupName;
+  }
+
+
+  /**
+   * Check whether the collapse clause is used.
+   * @return True if the collapse clause if used.
+   */
+  public boolean hasCollapseClause(){
+    return _hasCollapse;
+  }
+
+  /**
+   * Set the collapse number and boolean flag.
+   * @param n Number of loop to be collapsed.
+   */
+  protected void setCollapseClause(String n){
+    _hasCollapse = true;
+    _collapseValue = Integer.parseInt(n);
+  }
+
+  /**
+   * Get the collapse clause extracted value.
+   * @return An interger value.
+   */
+  public int getCollapseValue(){
+    return _collapseValue;
   }
 
   // Loop interchange specific methods

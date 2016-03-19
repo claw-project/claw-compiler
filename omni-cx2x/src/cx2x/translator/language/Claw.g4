@@ -51,7 +51,7 @@ directive[ClawLanguage l]
   :
 
   // loop-fusion directive
-    LFUSION { $l.setDirective(ClawDirective.LOOP_FUSION); } group_option[$l] EOF
+    LFUSION { $l.setDirective(ClawDirective.LOOP_FUSION); } group_option[$l] collapse_optional[$l] EOF
 
   // loop-interchange directive
   | LINTERCHANGE { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$l] EOF
@@ -85,6 +85,12 @@ directive[ClawLanguage l]
 group_option[ClawLanguage l]:
     GROUP '(' group_name=IDENTIFIER ')'
     { $l.setGroupOption($group_name.text); }
+  | /* empty */
+;
+
+collapse_optional[ClawLanguage l]:
+    COLLAPSE '(' n=NUMBER ')'
+    { $l.setCollapseClause($n.text); }
   | /* empty */
 ;
 
@@ -217,13 +223,15 @@ LINTERCHANGE : 'loop-interchange';
 LEXTRACT     : 'loop-extract';
 REMOVE       : 'remove';
 
-// Options
+// Clauses
 ACC          : 'acc';
+COLLAPSE     : 'collapse';
 FUSION       : 'fusion';
 GROUP        : 'group';
 MAP          : 'map';
 PARALLEL     : 'parallel';
 RANGE        : 'range';
+
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;

@@ -26,10 +26,20 @@ public class ClawLanguageTest {
   @Test
   public void FusionTest(){
     // Valid directives
-    analyzeValidClawLoopFusion("claw loop-fusion", null);
-    analyzeValidClawLoopFusion("claw loop-fusion group(g1)", "g1");
-    analyzeValidClawLoopFusion("claw loop-fusion group( g1 )", "g1");
-    analyzeValidClawLoopFusion("claw loop-fusion group ( g1   ) ", "g1");
+    analyzeValidClawLoopFusion("claw loop-fusion", null, false, 0);
+    analyzeValidClawLoopFusion("claw loop-fusion group(g1)", "g1", false, 0);
+    analyzeValidClawLoopFusion("claw loop-fusion group( g1 )", "g1", false, 0);
+    analyzeValidClawLoopFusion("claw loop-fusion group ( g1   ) ", "g1",
+        false, 0);
+    analyzeValidClawLoopFusion("claw loop-fusion group(g1) collapse(2)", "g1",
+        true, 2);
+    analyzeValidClawLoopFusion("claw loop-fusion group(g1) collapse(3)", "g1",
+        true, 3);
+    analyzeValidClawLoopFusion("claw loop-fusion collapse(2)", null,
+        true, 2);
+    analyzeValidClawLoopFusion("claw loop-fusion collapse(3)", null,
+        true, 3);
+
 
 
     // Unvalid directives
@@ -45,7 +55,8 @@ public class ClawLanguageTest {
    * @param raw       Raw string valud of the CLAW directive to be analyzed.
    * @param groupName Group name to be found if any.
    */
-  private void analyzeValidClawLoopFusion(String raw, String groupName){
+  private void analyzeValidClawLoopFusion(String raw, String groupName,
+                                          boolean collapse, int n){
     try {
       ClawLanguage l = ClawLanguage.analyze(raw);
       assertEquals(ClawDirective.LOOP_FUSION, l.getDirective());
@@ -55,6 +66,12 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasGroupOption());
         assertNull(l.getGroupName());
+      }
+      if(collapse){
+        assertTrue(l.hasCollapseClause());
+        assertEquals(n, l.getCollapseValue());
+      } else {
+        assertFalse(l.hasCollapseClause());
       }
     } catch(IllegalDirectiveException idex){
       fail();
