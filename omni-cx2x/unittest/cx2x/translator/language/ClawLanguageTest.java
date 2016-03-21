@@ -515,4 +515,59 @@ public class ClawLanguageTest {
     }
   }
 
+
+  /**
+   * Test various input for the CLAW loop-hoist directive.
+   */
+  @Test
+  public void LoopHoistTest(){
+    // Valid directives
+    analyzeValidLoopHoist("claw loop-hoist(i,j)",
+        Arrays.asList("i", "j"), false, null);
+    analyzeValidLoopHoist("claw loop-hoist(i,j) interchange",
+        Arrays.asList("i", "j"), true, null);
+    analyzeValidLoopHoist("claw loop-hoist(i,j) interchange(j,i)",
+        Arrays.asList("i", "j"), true, Arrays.asList("j", "i"));
+
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw loop-hoist");
+    analyzeUnvalidClawLanguage("claw loop-hoist()");
+    analyzeUnvalidClawLanguage("claw loop-hoist(i,j) interchange()");
+  }
+
+  /**
+   * Assert the result for valid lo CLAW directive
+   * @param raw         Raw string valud of the CLAW directive to be analyzed.
+   * @param inductions  List of induction variables to be checked.
+   */
+  private void analyzeValidLoopHoist(String raw, List<String> inductions,
+                                     boolean interchange, List<String> indexes)
+  {
+    try {
+      ClawLanguage l = ClawLanguage.analyze(raw);
+      assertEquals(ClawDirective.LOOP_HOIST, l.getDirective());
+
+      assertEquals(inductions.size(), l.getHoistInductionVars().size());
+      for(int i = 0; i < inductions.size(); ++i){
+        assertEquals(inductions.get(i), l.getHoistInductionVars().get(i));
+      }
+
+      if(interchange){
+        assertTrue(l.hasInterchangeClause());
+      } else {
+        assertFalse(l.hasInterchangeClause());
+      }
+
+      if(indexes != null){
+        for(int i = 0; i < indexes.size(); ++i){
+          assertEquals(indexes.get(i), l.getIndexes().get(i));
+        }
+      }
+
+    } catch(IllegalDirectiveException idex){
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
 }
