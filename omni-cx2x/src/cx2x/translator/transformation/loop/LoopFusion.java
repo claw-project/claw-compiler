@@ -25,7 +25,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
   // Contains the value of the group option
   private String _groupLabel = null;
   // The loop statement involved in the Transformation
-  private XdoStatement _loop = null;
+  private XdoStatement[] _loops = null;
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -45,26 +45,52 @@ public class LoopFusion extends Transformation<LoopFusion> {
    */
   public LoopFusion(XdoStatement loop, String group, int lineNumber){
     super(null);
-    _loop = loop;
+    _loops = new XdoStatement[] { loop };
     _groupLabel = group;
     setStartLine(lineNumber);
   }
 
   /**
-   * Loop fusion analysis: find whether the pragma statement is followed by a
-   * do statement.
+   * Loop fusion analysis:
+   * - Without collapse clause: find whether the pragma statement is followed
+   * by a do statement.
+   * - With collapse clause: Finf the i loops follwing the pragma.
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _loop = XelementHelper.findNextDoStatement(_directive.getPragma());
-    if(_loop == null){
-      xcodeml.addError("Cannot find loop after directive",
-        _directive.getPragma().getLineNo());
-      return false;
+    // With collapse clause
+    if(_directive.hasCollapseClause() && _directive.getCollapseValue() > 0){
+      _loops = new XdoStatement[_directive.getCollapseValue()];
+      for(int i = 0; i < _directive.getCollapseValue(); ++i){
+        if(i == 0){ // Find the outter loop from pragma
+          _loops[0] = XelementHelper.
+              findNextDoStatement(_directive.getPragma());
+        } else { // Find the next i loops
+          _loops[i] = XelementHelper.
+              findDoStatement(_loops[i-1].getBody(), false);
+        }
+        if(_loops[i] == null){
+          xcodeml.addError("Cannot find loop at depth " + i +
+              " after directive", _directive.getPragma().getLineNo());
+          return false;
+        }
+      }
+      return true;
+    } else {
+      // Without collapse clause, just fin the first do statement from the
+      // pragma
+      XdoStatement loop = XelementHelper.
+          findNextDoStatement(_directive.getPragma());
+      if(loop == null){
+        xcodeml.addError("Cannot find loop after directive",
+            _directive.getPragma().getLineNo());
+        return false;
+      }
+      _loops = new XdoStatement[] { loop };
+      return true;
     }
-    return true;
   }
 
   /**
@@ -78,9 +104,26 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * applied.
    */
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopFusion loopFusionUnit) throws IllegalTransformationException
+                        LoopFusion loopFusionUnit)
+      throws IllegalTransformationException
   {
-    _loop.appendToBody(loopFusionUnit.getLoop());
+    // Apply different transformation if the collapse clause is used
+    if(_directive.hasCollapseClause() && _directive.getCollapseValue() > 0){
+      // Merge the most inner loop with the most inner loop of the other fusion
+      // unit
+      int innerLoopIdx = _directive.getCollapseValue() - 1;
+      if(_loops[innerLoopIdx] == null
+          || loopFusionUnit.getLoop(innerLoopIdx) == null)
+      {
+        throw new IllegalTransformationException(
+            "Cannot apply transformation, one or both do stmt are invalid.",
+            _directive.getPragma().getLineNo()
+        );
+      }
+      _loops[innerLoopIdx].appendToBody(loopFusionUnit.getLoop(innerLoopIdx));
+    } else {
+      _loops[0].appendToBody(loopFusionUnit.getLoop(0));
+    }
     loopFusionUnit.finalizeTransformation();
   }
 
@@ -89,14 +132,15 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * loop fusion unit to finalize the transformation. Pragma and loop of the
    * slave loop fusion unit are deleted.
    */
-  public void finalizeTransformation(){
+  private void finalizeTransformation(){
     // Delete the pragma of the transformed loop
     if(_directive.getPragma() != null){
       _directive.getPragma().delete();
     }
+
     // Delete the loop that was merged with the main one
-    if(_loop != null){
-      _loop.delete();
+    if(_loops[0] != null){
+      _loops[0].delete();
     }
     this.transformed();
   }
@@ -115,31 +159,53 @@ public class LoopFusion extends Transformation<LoopFusion> {
     if(this.isTransformed() || otherLoopUnit.isTransformed()){
       return false;
     }
-    // Loops can only be merged if they are at the same level
-    if(!XelementHelper.hasSameParentBlock(_loop, otherLoopUnit.getLoop())){
-      return false;
-    }
     // Loop must share the same group option
     if(!hasSameGroupOption(otherLoopUnit)){
       return false;
     }
-    // Loop must share the same iteration range
-    return _loop.hasSameRangeWith(otherLoopUnit.getLoop());
+
+    // Loops can only be merged if they are at the same level
+    if(!XelementHelper.hasSameParentBlock(_loops[0],
+        otherLoopUnit.getLoop(0)))
+    {
+      return false;
+    }
+
+    if(_directive.hasCollapseClause() && _directive.getCollapseValue() > 0){
+      for(int i = 0; i < _directive.getCollapseValue(); ++i){
+        if(!_loops[i].hasSameRangeWith(otherLoopUnit.getLoop(i))){
+          return false;
+        }
+      }
+      return true;
+    } else {
+      // Loop must share the same iteration range
+      return _loops[0].hasSameRangeWith(otherLoopUnit.getLoop(0));
+    }
+
   }
 
   /**
-   * Return the do statement associated with this loop fusion unit.
-   * @return A do statement element.
+   * Return the do statement associated with this loop fusion unit at given
+   * depth.
+   * @param depth Integer avlue representing the depth of the loop from the
+   *              pragma statement.
+   * @return A do statement.
    */
-  public XdoStatement getLoop(){
-    return _loop;
+  private XdoStatement getLoop(int depth){
+    if(_directive.hasCollapseClause() &&
+        depth < _directive.getCollapseValue())
+    {
+      return _loops[depth];
+    }
+    return _loops[0];
   }
 
   /**
    * Get the group option associated with this loop fusion unit.
    * @return Group option value.
    */
-  public String getGroupOptionLabel(){
+  private String getGroupOptionLabel(){
     return _groupLabel;
   }
 
