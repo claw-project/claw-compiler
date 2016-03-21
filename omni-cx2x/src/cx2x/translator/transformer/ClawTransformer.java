@@ -8,10 +8,7 @@ package cx2x.translator.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
-import cx2x.translator.transformation.loop.ArrayTransform;
-import cx2x.translator.transformation.loop.LoopExtraction;
-import cx2x.translator.transformation.loop.LoopFusion;
-import cx2x.translator.transformation.loop.LoopInterchange;
+import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.transformation.*;
@@ -32,6 +29,7 @@ public class ClawTransformer implements Transformer {
   private TransformationGroup<UtilityRemove> _utilityRemove = null;
   private TransformationGroup<OpenAccContinuation> _openAccCont = null;
   private TransformationGroup<ArrayTransform> _arrayTransformation = null;
+  private TransformationGroup<LoopHoist> _loopHoist = null;
   private ArrayList<TransformationGroup> _transformationGroups = null;
 
   /**
@@ -40,16 +38,14 @@ public class ClawTransformer implements Transformer {
    */
   public ClawTransformer(){
     _loopFusion = new DependentTransformationGroup<>("loop-fusion");
-    _loopInterchange =
-        new IndependentTransformationGroup<>("loop-interchange");
-    _loopExtract =
-        new IndependentTransformationGroup<>("loop-extract");
-    _utilityRemove =
-        new IndependentTransformationGroup<>("remove");
+    _loopInterchange = new IndependentTransformationGroup<>("loop-interchange");
+    _loopExtract = new IndependentTransformationGroup<>("loop-extract");
+    _utilityRemove = new IndependentTransformationGroup<>("remove");
     _openAccCont =
         new IndependentTransformationGroup<>("open-acc-continuation");
     _arrayTransformation =
         new IndependentTransformationGroup<>("array-transform");
+    _loopHoist = new IndependentTransformationGroup<>("loop-hoist");
 
     // Add transformations (order of insertion is the one that will be applied)
     _transformationGroups = new ArrayList<>();
@@ -57,6 +53,7 @@ public class ClawTransformer implements Transformer {
     _transformationGroups.add(_arrayTransformation);
     _transformationGroups.add(_loopExtract);
     _transformationGroups.add(_loopFusion);
+    _transformationGroups.add(_loopHoist);
     _transformationGroups.add(_loopInterchange);
     _transformationGroups.add(_openAccCont);
   }
@@ -77,6 +74,8 @@ public class ClawTransformer implements Transformer {
       _openAccCont.add((OpenAccContinuation)t);
     } else if (t instanceof ArrayTransform){
       _arrayTransformation.add((ArrayTransform)t);
+    } else if (t instanceof LoopHoist){
+      _loopHoist.add((LoopHoist)t);
     }
   }
 
