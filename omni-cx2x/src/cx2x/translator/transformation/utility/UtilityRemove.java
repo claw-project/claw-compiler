@@ -17,30 +17,29 @@ import cx2x.xcodeml.exception.*;
  *
  * @author clementval
  */
-public class UtilityRemove extends Transformation<UtilityRemove> {
+public class UtilityRemove extends BlockTransformation<UtilityRemove> {
 
   // The loop statement involved in the Transformation
   private XdoStatement _do = null;
   private XifStatement _if = null;
-  private Xpragma _end = null;
 
   /**
    * Constructs a new UtilityRemove triggered from a specific pragma.
-   * @param directive The directive that triggered the remove transformation.
+   * @param startDirective The directive that triggered the remove $
+   *                       transformation.
+   * @param endDirective   The end directive that close the structured block.
+   *                       Can be null if the start directve is used before a
+   *                       do statment or an if statment.
    */
-  public UtilityRemove(ClawLanguage directive){
-    super(directive);
-  }
-
-  public void setEnd(Xpragma pragma){
-    _end = pragma;
+  public UtilityRemove(ClawLanguage startDirective, ClawLanguage endDirective){
+    super(startDirective, endDirective);
   }
 
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // if there is no end directive, the following statement must be a if or
     // do statement
-    if(_end == null){
+    if(_endDirective == null){
       _do = XelementHelper.findDirectNextDoStmt(_directive.getPragma());
       _if = XelementHelper.findDirectNextIfStmt(_directive.getPragma());
 
@@ -57,7 +56,7 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         UtilityRemove other) throws IllegalTransformationException
   {
-    if(_end == null){
+    if(_endDirective == null){
       if(_do != null){
         _do.delete();
       } else if(_if != null){
@@ -65,9 +64,10 @@ public class UtilityRemove extends Transformation<UtilityRemove> {
       }
       _directive.getPragma().delete();
     } else {
-      XelementHelper.deleteBetween(_directive.getPragma(), _end);
+      XelementHelper.deleteBetween(_directive.getPragma(),
+          _endDirective.getPragma());
       _directive.getPragma().delete();
-      _end.delete();
+      _endDirective.getPragma().delete();
     }
   }
 

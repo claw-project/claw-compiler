@@ -36,6 +36,11 @@ add_subdirectory(${CLAW_PARSER_DIR})
 add_jar(${OMNI_CX2X_XCODEML_NAME}
 
 # XcodeML.transformer
+  cx2x/xcodeml/transformation/BlockTransformation.java
+  cx2x/xcodeml/transformation/DependentTransformationGroup.java
+  cx2x/xcodeml/transformation/IndependentTransformationGroup.java
+  cx2x/xcodeml/transformation/Transformation.java
+  cx2x/xcodeml/transformation/TransformationGroup.java
   cx2x/xcodeml/transformation/Transformer.java
 
 # XcodeML.error package

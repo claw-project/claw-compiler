@@ -70,7 +70,8 @@ public class ClawXcodeMlTranslator {
       abort();
     }
 
-    UtilityRemove _remove = null;
+    // TODO have a generic mechanism for the directive with end ...
+    ClawLanguage _startRemove = null;
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
 
@@ -92,29 +93,33 @@ public class ClawXcodeMlTranslator {
           addOrAbort(new LoopFusion(analyzedPragma), _program, _transformer);
           break;
         case LOOP_INTERCHANGE:
-          addOrAbort(new LoopInterchange(analyzedPragma), _program, _transformer);
+          addOrAbort(new LoopInterchange(analyzedPragma), _program,
+              _transformer);
           break;
         case LOOP_EXTRACT:
-          addOrAbort(new LoopExtraction(analyzedPragma), _program, _transformer);
+          addOrAbort(new LoopExtraction(analyzedPragma), _program,
+              _transformer);
           break;
         case ARRAY_TRANSFORM:
-          addOrAbort(new ArrayTransform(analyzedPragma), _program, _transformer);
+          addOrAbort(new ArrayTransform(analyzedPragma), _program,
+              _transformer);
           break;
         case REMOVE:
-          if (_remove != null) {
-            addOrAbort(_remove, _program, _transformer);
+          if (_startRemove != null) {
+            addOrAbort(new UtilityRemove(_startRemove, null), _program,
+                _transformer);
           }
-          _remove = new UtilityRemove(analyzedPragma);
+          _startRemove = analyzedPragma;
           break;
         case END_REMOVE:
-          if (_remove == null) {
+          if (_startRemove == null) {
             _program.addError("Invalid Claw directive (end with no start)",
                 pragma.getLineNo());
             abort();
           } else {
-            _remove.setEnd(pragma);
-            addOrAbort(_remove, _program, _transformer);
-            _remove = null;
+            addOrAbort(new UtilityRemove(_startRemove, analyzedPragma),
+                _program, _transformer);
+            _startRemove = null;
           }
           break;
         default:
@@ -123,8 +128,8 @@ public class ClawXcodeMlTranslator {
       }
 
     }
-    if(_remove != null){
-      addOrAbort(_remove, _program, _transformer);
+    if(_startRemove != null){
+      addOrAbort(new UtilityRemove(_startRemove, null), _program, _transformer);
     }
 
 
