@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(clawfc)
-set(CLAWFC_VERSION "0.1")
+set(CLAWFC_VERSION "0.2a")
 
 find_package(Java REQUIRED)
 
