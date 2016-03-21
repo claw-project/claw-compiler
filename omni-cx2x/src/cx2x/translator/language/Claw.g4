@@ -51,10 +51,12 @@ directive[ClawLanguage l]
   :
 
   // loop-fusion directive
-    LFUSION { $l.setDirective(ClawDirective.LOOP_FUSION); } group_option[$l] collapse_optional[$l] EOF
+    LFUSION group_option[$l] collapse_optional[$l] EOF
+    { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
-  | LINTERCHANGE { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); } indexes_option[$l] EOF
+  | LINTERCHANGE indexes_option[$l] EOF
+    { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive
   | LEXTRACT range_option mapping_option_list[m] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
@@ -65,8 +67,10 @@ directive[ClawLanguage l]
     }
 
   // remove directive
-  | REMOVE { $l.setDirective(ClawDirective.REMOVE); } EOF
-  | END REMOVE { $l.setDirective(ClawDirective.END_REMOVE); } EOF
+  | REMOVE EOF
+    { $l.setDirective(ClawDirective.REMOVE); }
+  | END REMOVE EOF
+    { $l.setDirective(ClawDirective.END_REMOVE); }
 
   // Kcache directive
   | KCACHE offset_list_optional[o] EOF
@@ -80,6 +84,15 @@ directive[ClawLanguage l]
     {
       $l.setDirective(ClawDirective.ARRAY_TRANSFORM);
     }
+
+  // loop-hoist directive
+  | LHOIST '(' ids_list[o] ')' interchange_optional[$l] EOF
+    {
+      $l.setHoistInductionVars(o);
+      $l.setDirective(ClawDirective.LOOP_HOIST);
+    }
+  | END LHOIST EOF
+    { $l.setDirective(ClawDirective.END_LOOP_HOIST); }
 ;
 
 group_option[ClawLanguage l]:
@@ -112,6 +125,15 @@ acc_optional[ClawLanguage l]
     ACC '(' identifiers[tempAcc] ')' { $l.setAccClauses(Utility.join(" ", tempAcc)); }
   | /* empty */
 ;
+
+interchange_optional[ClawLanguage l]:
+    INTERCHANGE indexes_option[$l]
+    {
+      $l.setInterchange();
+    }
+  | /* empty */
+;
+
 
 identifiers[List<String> ids]:
     i=IDENTIFIER { $ids.add($i.text); }
@@ -218,9 +240,10 @@ CLAW         : 'claw';
 ARRAY_TRANS  : 'array-transform';
 END          : 'end';
 KCACHE       : 'kcache';
-LFUSION      : 'loop-fusion';
-LINTERCHANGE : 'loop-interchange';
 LEXTRACT     : 'loop-extract';
+LFUSION      : 'loop-fusion';
+LHOIST       : 'loop-hoist';
+LINTERCHANGE : 'loop-interchange';
 REMOVE       : 'remove';
 
 // Clauses
@@ -228,6 +251,7 @@ ACC          : 'acc';
 COLLAPSE     : 'collapse';
 FUSION       : 'fusion';
 GROUP        : 'group';
+INTERCHANGE  : 'interchange';
 MAP          : 'map';
 PARALLEL     : 'parallel';
 RANGE        : 'range';

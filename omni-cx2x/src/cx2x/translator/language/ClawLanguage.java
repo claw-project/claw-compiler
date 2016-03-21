@@ -27,9 +27,10 @@ public class ClawLanguage {
   private List<String> _indexes;
   private List<ClawMapping> _mappings;
   private List<String> _offsets;
+  private List<String> _hoistInductionVars;
   private String _accClauses;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
-  private boolean _acc, _hasCollapse;
+  private boolean _acc, _hasCollapse, _hasInterchange;
   private Xpragma _pragma;
   private int _collapseValue;
 
@@ -70,6 +71,8 @@ public class ClawLanguage {
     _pragma = null;
     _hasCollapse = false;
     _collapseValue = 0;
+    _hasInterchange = false;
+    _hoistInductionVars = null;
   }
 
   /**
@@ -313,6 +316,40 @@ public class ClawLanguage {
   public List<String> getOffsets(){
     return _offsets;
   }
+
+  // loop hoist clauses
+
+  /**
+   * Check whether the interchange clause is used.
+   * @return True if the interchange clause if used.
+   */
+  public boolean hasInterchangeClause(){
+    return _hasInterchange;
+  }
+
+  /**
+   * Set the interchange clause as used.
+   */
+  protected void setInterchange(){
+    _hasInterchange = true;
+  }
+
+  /**
+   * Set the list of induction variables used in the loop-hoist directive.
+   * @param vars List of induction variable.
+   */
+  protected void setHoistInductionVars(List<String> vars){
+    _hoistInductionVars = vars;
+  }
+
+  /**
+   * Get the list of induction variables used in the hoist directive.
+   * @return A list of induction variable.
+   */
+  public List<String> getHoistInductionVars(){
+    return _hoistInductionVars;
+  }
+
 
   // Directive generic method
 
