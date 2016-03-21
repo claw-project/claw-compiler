@@ -6,6 +6,7 @@
 package cx2x.translator.language;
 
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.Xpragma;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ClawLanguage {
+public class ClawLanguage extends AnalyzedPragma {
   private static final String PREFIX_CLAW = "claw";
   private ClawDirective _directive;
   private ClawRange _range;
@@ -31,7 +32,6 @@ public class ClawLanguage {
   private String _accClauses;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
   private boolean _acc, _hasCollapse, _hasInterchange;
-  private Xpragma _pragma;
   private int _collapseValue;
 
 
@@ -50,8 +50,8 @@ public class ClawLanguage {
    * @param pragma The pragma that is attached to the ClawLanguage object.
    */
   public ClawLanguage(Xpragma pragma){
+    super(pragma);
     resetVariables();
-    _pragma = pragma;
   }
 
   private void resetVariables(){
@@ -68,11 +68,13 @@ public class ClawLanguage {
     _acc = false;
     _accClauses = null;
     _offsets = null;
-    _pragma = null;
     _hasCollapse = false;
     _collapseValue = 0;
     _hasInterchange = false;
     _hoistInductionVars = null;
+
+    // super class members
+    _pragma = null;
   }
 
   /**
@@ -378,13 +380,7 @@ public class ClawLanguage {
     _pragma = pragma;
   }
 
-  /**
-   * Get the attached pragma object.
-   * @return Attached pragma object.
-   */
-  public Xpragma getPragma(){
-    return _pragma;
-  }
+
 
 
 

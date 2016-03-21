@@ -35,13 +35,7 @@ add_subdirectory(${CLAW_PARSER_DIR})
 # XcodeML general library
 add_jar(${OMNI_CX2X_XCODEML_NAME}
 
-# XcodeML.transformer
-  cx2x/xcodeml/transformation/BlockTransformation.java
-  cx2x/xcodeml/transformation/DependentTransformationGroup.java
-  cx2x/xcodeml/transformation/IndependentTransformationGroup.java
-  cx2x/xcodeml/transformation/Transformation.java
-  cx2x/xcodeml/transformation/TransformationGroup.java
-  cx2x/xcodeml/transformation/Transformer.java
+
 
 # XcodeML.error package
   cx2x/xcodeml/error/XanalysisError.java
@@ -52,6 +46,17 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
 
 # XcodeML.helper package
   cx2x/xcodeml/helper/XelementHelper.java
+
+# XcodeML.language
+  cx2x/xcodeml/language/AnalyzedPragma.java
+
+# XcodeML.transformation
+  cx2x/xcodeml/transformation/BlockTransformation.java
+  cx2x/xcodeml/transformation/DependentTransformationGroup.java
+  cx2x/xcodeml/transformation/IndependentTransformationGroup.java
+  cx2x/xcodeml/transformation/Transformation.java
+  cx2x/xcodeml/transformation/TransformationGroup.java
+  cx2x/xcodeml/transformation/Transformer.java
 
 # XcodeML.Xelement package
   cx2x/xcodeml/xelement/XargumentsTable.java

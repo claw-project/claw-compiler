@@ -38,6 +38,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   private XfunctionDefinition _fctDef = null; // Fct holding the fct call
   private XfunctionDefinition _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
+  private ClawLanguage _claw;
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
@@ -48,6 +49,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    */
   public LoopExtraction(ClawLanguage directive) throws IllegalDirectiveException {
     super(directive);
+    _claw = directive;
     _argMappingMap = new Hashtable<>();
     _fctMappingMap = new Hashtable<>();
 
@@ -64,16 +66,16 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
   private void extractMappingInformation() throws IllegalDirectiveException {
-    for(ClawMapping m : _directive.getMappings()){
+    for(ClawMapping m : _claw.getMappings()){
       for(ClawMappingVar mappedVar : m.getMappedVariables()){
         if(_argMappingMap.containsKey(mappedVar.getArgMapping())){
-          throw new IllegalDirectiveException(_directive.getPragma().getValue(),
+          throw new IllegalDirectiveException(_claw.getPragma().getValue(),
               mappedVar + " appears more than once in the mapping");
         } else {
           _argMappingMap.put(mappedVar.getArgMapping(), m);
         }
         if(_fctMappingMap.containsKey(mappedVar.getFctMapping())){
-          throw new IllegalDirectiveException(_directive.getPragma().getValue(),
+          throw new IllegalDirectiveException(_claw.getPragma().getValue(),
               mappedVar + " appears more than once in the mapping");
         } else {
           _fctMappingMap.put(mappedVar.getFctMapping(), m);
@@ -94,7 +96,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       if(_fctCall.getArgumentsTable().findArgument(map.getKey()) == null){
         xcodeml.addError("Mapped variable " + map.getKey() +
             " not found in function call arguments",
-            _directive.getPragma().getLineNo());
+            _claw.getPragma().getLineNo());
         return false;
       }
     }
@@ -110,10 +112,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     XexprStatement _exprStmt =
-        XelementHelper.findNextExprStatement(_directive.getPragma());
+        XelementHelper.findNextExprStatement(_claw.getPragma());
     if(_exprStmt == null){
       xcodeml.addError("No function call detected after loop-extract",
-        _directive.getPragma().getLineNo());
+        _claw.getPragma().getLineNo());
       return false;
     }
 
@@ -121,14 +123,14 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     _fctCall = XelementHelper.findFctCall(_exprStmt);
     if(_fctCall == null){
       xcodeml.addError("No function call detected after loop-extract",
-        _directive.getPragma().getLineNo());
+        _claw.getPragma().getLineNo());
       return false;
     }
 
     _fctDef = XelementHelper.findParentFctDef(_fctCall);
     if(_fctDef == null){
       xcodeml.addError("No function around the fct call",
-        _directive.getPragma().getLineNo());
+        _claw.getPragma().getLineNo());
       return false;
     }
 
@@ -137,7 +139,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(_fctDefToExtract == null){
       xcodeml.addError("Could not locate the function definition for: "
-          + _fctCall.getName().getValue(), _directive.getPragma().getLineNo());
+          + _fctCall.getName().getValue(), _claw.getPragma().getLineNo());
       return false;
     }
 
@@ -146,7 +148,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
       _extractedLoop = locateDoStatement(_fctDefToExtract);
     } catch (IllegalTransformationException itex){
       xcodeml.addError(itex.getMessage(),
-          _directive.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
       return false;
     }
 
@@ -217,7 +219,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " +
-          _directive.getPragma().getValue());
+          _claw.getPragma().getValue());
       System.out.println("  created subroutine: " +
           clonedFctDef.getName().getValue());
     }
@@ -259,10 +261,10 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
 
     if(XmOption.isDebugOutput()){
       System.out.println("  Start to apply mapping: " +
-          _directive.getMappings().size());
+          _claw.getMappings().size());
     }
 
-    for(ClawMapping mapping : _directive.getMappings()){
+    for(ClawMapping mapping : _claw.getMappings()){
       System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
 
       for(ClawMappingVar var : mapping.getMappedVariables()){
@@ -298,7 +300,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           if(type.getDimensions() < mapping.getMappedDimensions()){
             throw new IllegalTransformationException(
                 "mapping dimensions too big. Mapping " + mapping.toString() +
-                    " is wrong ...", _directive.getPragma().getLineNo());
+                    " is wrong ...", _claw.getPragma().getLineNo());
           }
 
           XarrayRef newArg =
@@ -401,7 +403,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     }
 
     // Wrap with parallel section if option is set
-    if(_directive.hasParallelOption()){
+    if(_claw.hasParallelOption()){
       Xpragma parallelStart =
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
       parallelStart.setData("acc parallel");
@@ -410,27 +412,27 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
       parallelEnd.setData("acc end parallel");
 
-      XelementHelper.insertAfter(_directive.getPragma(), parallelStart);
+      XelementHelper.insertAfter(_claw.getPragma(), parallelStart);
       XelementHelper.insertAfter(extractedLoop, parallelEnd);
 
-      if(_directive.hasAccOption()){
+      if(_claw.hasAccOption()){
         insertAccOption(parallelStart, xcodeml);
       }
-    } else if (_directive.hasAccOption()){
-      insertAccOption(_directive.getPragma(), xcodeml);
+    } else if (_claw.hasAccOption()){
+      insertAccOption(_claw.getPragma(), xcodeml);
     }
 
 
 
     // Transformation is done. Add additional transfomation here
-    if(_directive.hasFusionOption()){
+    if(_claw.hasFusionOption()){
 
       LoopFusion fusion = new LoopFusion(extractedLoop,
-          _directive.getGroupName(), _directive.getPragma().getLineNo());
+          _claw.getGroupName(), _claw.getPragma().getLineNo());
       transformer.addTransformation(fusion);
 
       if(XmOption.isDebugOutput()){
-        System.out.println("Loop fusion added: " + _directive.getGroupName());
+        System.out.println("Loop fusion added: " + _claw.getGroupName());
       }
 
     }
@@ -450,26 +452,26 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     XdoStatement foundStatement = XelementHelper.findDoStatement(from, true);
     if(foundStatement == null){
       throw new IllegalTransformationException("No loop found in function",
-          _directive.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
     } else {
-      if(!_directive.getRange().equals(foundStatement.getIterationRange())) {
+      if(!_claw.getRange().equals(foundStatement.getIterationRange())) {
         // Try to find another loops that meet the criteria
         do {
           foundStatement = XelementHelper.findNextDoStatement(foundStatement);
         } while (foundStatement != null &&
-            !_directive.getRange().equals(foundStatement.getIterationRange()));
+            !_claw.getRange().equals(foundStatement.getIterationRange()));
       }
     }
 
     if(foundStatement == null){
       throw new IllegalTransformationException("No loop found in function",
-          _directive.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
     }
 
-    if(!_directive.getRange().equals(foundStatement.getIterationRange())) {
+    if(!_claw.getRange().equals(foundStatement.getIterationRange())) {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
-          _directive.getPragma().getLineNo()
+          _claw.getPragma().getLineNo()
       );
     }
     return foundStatement;
@@ -486,7 +488,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
     Xpragma accAdditionalOption = XelementHelper.
         createEmpty(Xpragma.class, xcodeml);
     accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
-        _directive.getAccClauses());
+        _claw.getAccClauses());
     XelementHelper.insertAfter(insertPoint, accAdditionalOption);
   }
 
@@ -505,7 +507,7 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
         iterationRange);
 
     // Insert the new empty loop just after the pragma
-    XelementHelper.insertAfter(_directive.getPragma(), loop);
+    XelementHelper.insertAfter(_claw.getPragma(), loop);
 
     // Move the call into the loop body
     XelementHelper.insertFctCallIntoLoop(loop, _fctCall);

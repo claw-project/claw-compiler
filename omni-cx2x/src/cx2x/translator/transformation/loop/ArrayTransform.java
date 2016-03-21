@@ -27,6 +27,8 @@ import cx2x.xcodeml.xelement.XcodeProgram;
  */
 public class ArrayTransform extends Transformation<ArrayTransform> {
 
+  private ClawLanguage _claw;
+
   /**
    * Constructs a new ArrayTransform triggered from a specific directive.
    * @param directive The directive that triggered the array transform
@@ -34,6 +36,7 @@ public class ArrayTransform extends Transformation<ArrayTransform> {
    */
   public ArrayTransform(ClawLanguage directive) {
     super(directive);
+    _claw = directive;
   }
 
   @Override

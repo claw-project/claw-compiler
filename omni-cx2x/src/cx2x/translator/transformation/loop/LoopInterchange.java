@@ -42,6 +42,8 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
+  private ClawLanguage _claw;
+
   /**
    * Constructs a new LoopInterchange triggered from a specific pragma.
    * @param directive The directive that triggered the loop interchange
@@ -49,6 +51,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    */
   public LoopInterchange(ClawLanguage directive){
     super(directive);
+    _claw = directive;
     _newOrderOption = directive.getIndexes();
   }
 
@@ -190,11 +193,11 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
-    _loopLevel0 = XelementHelper.findNextDoStatement(_directive.getPragma());
+    _loopLevel0 = XelementHelper.findNextDoStatement(_claw.getPragma());
 
     if(_loopLevel0 == null){
       xcodeml.addError("top level loop not found",
-          _directive.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
       return false;
     }
 
@@ -206,7 +209,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
     if(_newOrderOption != null){
       if(_newOrderOption.size() != 3){
         xcodeml.addError("new-order option has not enough parameters",
-          _directive.getPragma().getLineNo());
+            _claw.getPragma().getLineNo());
       }
 
       _loopLevel2 = XelementHelper.findDoStatement(_loopLevel1.getBody(), false);
@@ -243,7 +246,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
         && !idx.equals(_baseLoop2))
       {
         xcodeml.addError("invalid induction variable in new-order option. "
-          + idx, _directive.getPragma().getLineNo());
+          + idx, _claw.getPragma().getLineNo());
         return false;
       }
     }

@@ -16,6 +16,7 @@ import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
+import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.transformation.*;
@@ -78,7 +79,7 @@ public class ClawXcodeMlTranslator {
       if(!ClawLanguage.startsWithClaw(pragma)){
         if(pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
         {
-          OpenAccContinuation t = new OpenAccContinuation(new ClawLanguage(pragma));
+          OpenAccContinuation t = new OpenAccContinuation(new AnalyzedPragma(pragma));
           addOrAbort(t, _program, _transformer);
         }
         continue; // Not CLAW pragma, we do nothing

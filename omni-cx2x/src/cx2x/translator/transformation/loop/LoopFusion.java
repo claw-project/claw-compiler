@@ -27,6 +27,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
   // The loop statement involved in the Transformation
   private XdoStatement[] _loops = null;
 
+  private ClawLanguage _claw;
+
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
    * @param directive The directive that triggered the loop fusion
@@ -34,6 +36,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    */
   public LoopFusion(ClawLanguage directive){
     super(directive);
+    _claw = directive;
     _groupLabel = directive.getGroupName();
   }
 
@@ -61,19 +64,19 @@ public class LoopFusion extends Transformation<LoopFusion> {
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     // With collapse clause
-    if(_directive.hasCollapseClause() && _directive.getCollapseValue() > 0){
-      _loops = new XdoStatement[_directive.getCollapseValue()];
-      for(int i = 0; i < _directive.getCollapseValue(); ++i){
+    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
+      _loops = new XdoStatement[_claw.getCollapseValue()];
+      for(int i = 0; i < _claw.getCollapseValue(); ++i){
         if(i == 0){ // Find the outter loop from pragma
           _loops[0] = XelementHelper.
-              findNextDoStatement(_directive.getPragma());
+              findNextDoStatement(_claw.getPragma());
         } else { // Find the next i loops
           _loops[i] = XelementHelper.
               findDoStatement(_loops[i-1].getBody(), false);
         }
         if(_loops[i] == null){
           xcodeml.addError("Cannot find loop at depth " + i +
-              " after directive", _directive.getPragma().getLineNo());
+              " after directive", _claw.getPragma().getLineNo());
           return false;
         }
       }
@@ -82,10 +85,10 @@ public class LoopFusion extends Transformation<LoopFusion> {
       // Without collapse clause, just fin the first do statement from the
       // pragma
       XdoStatement loop = XelementHelper.
-          findNextDoStatement(_directive.getPragma());
+          findNextDoStatement(_claw.getPragma());
       if(loop == null){
         xcodeml.addError("Cannot find loop after directive",
-            _directive.getPragma().getLineNo());
+            _claw.getPragma().getLineNo());
         return false;
       }
       _loops = new XdoStatement[] { loop };
@@ -108,16 +111,16 @@ public class LoopFusion extends Transformation<LoopFusion> {
       throws IllegalTransformationException
   {
     // Apply different transformation if the collapse clause is used
-    if(_directive.hasCollapseClause() && _directive.getCollapseValue() > 0){
+    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
       // Merge the most inner loop with the most inner loop of the other fusion
       // unit
-      int innerLoopIdx = _directive.getCollapseValue() - 1;
+      int innerLoopIdx = _claw.getCollapseValue() - 1;
       if(_loops[innerLoopIdx] == null
           || loopFusionUnit.getLoop(innerLoopIdx) == null)
       {
         throw new IllegalTransformationException(
             "Cannot apply transformation, one or both do stmt are invalid.",
-            _directive.getPragma().getLineNo()
+            _claw.getPragma().getLineNo()
         );
       }
       _loops[innerLoopIdx].appendToBody(loopFusionUnit.getLoop(innerLoopIdx));
@@ -134,8 +137,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
    */
   private void finalizeTransformation(){
     // Delete the pragma of the transformed loop
-    if(_directive.getPragma() != null){
-      _directive.getPragma().delete();
+    if(_claw.getPragma() != null){
+      _claw.getPragma().delete();
     }
 
     // Delete the loop that was merged with the main one
@@ -171,8 +174,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
       return false;
     }
 
-    if(_directive.hasCollapseClause() && _directive.getCollapseValue() > 0){
-      for(int i = 0; i < _directive.getCollapseValue(); ++i){
+    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
+      for(int i = 0; i < _claw.getCollapseValue(); ++i){
         if(!_loops[i].hasSameRangeWith(otherLoopUnit.getLoop(i))){
           return false;
         }
@@ -193,8 +196,8 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @return A do statement.
    */
   private XdoStatement getLoop(int depth){
-    if(_directive.hasCollapseClause() &&
-        depth < _directive.getCollapseValue())
+    if(_claw.hasCollapseClause() &&
+        depth < _claw.getCollapseValue())
     {
       return _loops[depth];
     }
