@@ -29,7 +29,7 @@ public class ArrayTransform extends Transformation<ArrayTransform> {
 
   /**
    * Constructs a new ArrayTransform triggered from a specific directive.
-   * @param directive The directive that triggered the loop fusion
+   * @param directive The directive that triggered the array transform
    *                  transformation.
    */
   public ArrayTransform(ClawLanguage directive) {
