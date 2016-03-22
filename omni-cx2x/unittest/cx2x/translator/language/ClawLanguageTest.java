@@ -570,4 +570,10 @@ public class ClawLanguageTest {
     }
   }
 
+  @Test
+  public void ContinuationTest(){
+    String continuedPragma = "claw loop-fusion   claw collapse(2)";
+    analyzeValidClawLoopFusion(continuedPragma, null, true, 2);
+  }
+
 }

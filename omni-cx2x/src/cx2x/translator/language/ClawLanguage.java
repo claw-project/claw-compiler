@@ -95,8 +95,19 @@ public class ClawLanguage extends AnalyzedPragma {
   public static ClawLanguage analyze(String rawInput)
       throws IllegalDirectiveException
   {
+
+    /*
+     * OMNI compiler keeps the claw prefix when a pragma is defined on several
+     * lines using the continuation symbol '&'. In order to have a simpler
+     * grammar, these multiple occurences of the prefix are not taken into
+     * account. Therefore, this method remove all the prefix and keeps only the
+     * first one.
+     */
+    String nakedPragma = rawInput.toLowerCase().replaceAll(PREFIX_CLAW, "");
+    nakedPragma = PREFIX_CLAW + " " + nakedPragma;
+
     // Instantiate the lexer with the raw string input
-    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(rawInput));
+    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(nakedPragma));
 
     // Get a list of matched tokens
     CommonTokenStream tokens = new CommonTokenStream(lexer);
