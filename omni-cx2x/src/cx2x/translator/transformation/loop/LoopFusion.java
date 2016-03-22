@@ -47,7 +47,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @param lineNumber  The line number that triggered the transformation.
    */
   public LoopFusion(XdoStatement loop, String group, int lineNumber){
-    super(null);
+    super(null); // TODO think of a better solution than passing a null
     _loops = new XdoStatement[] { loop };
     _groupLabel = group;
     setStartLine(lineNumber);
@@ -111,7 +111,9 @@ public class LoopFusion extends Transformation<LoopFusion> {
       throws IllegalTransformationException
   {
     // Apply different transformation if the collapse clause is used
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
+    if(_claw != null && _claw.hasCollapseClause()
+        && _claw.getCollapseValue() > 0)
+    {
       // Merge the most inner loop with the most inner loop of the other fusion
       // unit
       int innerLoopIdx = _claw.getCollapseValue() - 1;
@@ -174,7 +176,9 @@ public class LoopFusion extends Transformation<LoopFusion> {
       return false;
     }
 
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
+    if(_claw != null && _claw.hasCollapseClause()
+        && _claw.getCollapseValue() > 0)
+    {
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
         if(!_loops[i].hasSameRangeWith(otherLoopUnit.getLoop(i))){
           return false;
@@ -196,7 +200,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @return A do statement.
    */
   private XdoStatement getLoop(int depth){
-    if(_claw.hasCollapseClause() &&
+    if(_claw != null && _claw.hasCollapseClause() &&
         depth < _claw.getCollapseValue())
     {
       return _loops[depth];

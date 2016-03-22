@@ -29,7 +29,8 @@ public abstract class Transformation<T> {
    */
   public Transformation(AnalyzedPragma directive){
     _directive = directive;
-    if(_directive.getPragma() != null){
+
+    if (_directive != null && _directive.getPragma() != null) {
       _startLine = _directive.getPragma().getLineNo();
     }
   }
