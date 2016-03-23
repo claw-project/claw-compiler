@@ -28,7 +28,7 @@ public class Xbound extends XbaseElement {
    */
   public Xbound(Element baseElement){
     super(baseElement);
-    _exprModel = XelementHelper.findExprModel(this, false);
+    _exprModel = XelementHelper.findExprModel(this, 0);
   }
 
   /**

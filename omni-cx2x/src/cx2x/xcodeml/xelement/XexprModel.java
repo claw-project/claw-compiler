@@ -6,6 +6,8 @@
 package cx2x.xcodeml.xelement;
 
 
+import cx2x.xcodeml.helper.XelementHelper;
+
 /**
  * The XexprModel represents the exprModel (9.4) element in XcodeML
  * intermediate representation.
@@ -39,69 +41,15 @@ package cx2x.xcodeml.xelement;
  * @author clementval
  */
 
-public class XexprModel {
-  private XbaseElement _element = null;
+public class XexprModel extends XbaseModel {
+
 
   /**
    * Constructs a new XexprModel object from an XbaseElement.
    * @param baseElement The root XbaseElement.
    */
   public XexprModel(XbaseElement baseElement){
-    _element = baseElement;
-  }
-
-  /**
-   * Get the root XbaseElement.
-   * @return The root XbaseElement.
-   */
-  public XbaseElement getElement(){
-    return _element;
-  }
-
-  /**
-   * Set the root XbaseElement.
-   * @param element The root XbaseElement.
-   */
-  public void setElement(XbaseElement element){
-    _element = element;
-  }
-
-  /**
-   * Check whether the exprModel is a var.
-   * @return True if the exprModel is a var. False otherwise.
-   */
-  public boolean isVar(){
-    return isOfType(Xvar.class);
-  }
-
-  /**
-   * Get the exprModel as var.
-   * @return Xvar object if the exprModel is a var. Null otherwise.
-   */
-  public Xvar getVar(){
-    if(isVar()){
-      return (Xvar)_element;
-    }
-    return null;
-  }
-
-  /**
-   * Check whether the exprModel is an arrayRef.
-   * @return True if the exprModel is an arrayRef. False otherwise.
-   */
-  public boolean isArrayRef(){
-    return isOfType(XarrayRef.class);
-  }
-
-  /**
-   * Get the exprModel as var.
-   * @return Xvar object if the exprModel is a var. Null otherwise.
-   */
-  public XarrayRef getArrayRef(){
-    if(isArrayRef()){
-      return (XarrayRef)_element;
-    }
-    return null;
+    super(baseElement);
   }
 
   /**
@@ -231,17 +179,5 @@ public class XexprModel {
     }
     return null;
   }
-
-
-
-  /**
-   * Check whether the exprModel is of a given class type.
-   * @param type Class to be checked (Derived type of XbaseElement).
-   * @return True if the exprModel is of the given class. False otherwise.
-   */
-  private <T extends XbaseElement> boolean isOfType(Class<T> type){
-    return _element != null && type.isInstance(_element);
-  }
-
 
 }

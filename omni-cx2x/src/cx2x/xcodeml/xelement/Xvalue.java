@@ -36,7 +36,7 @@ public class Xvalue extends XbaseElement {
     super(baseElement);
     _repeatCount = XelementHelper.getAttributeValue(this,
         XelementName.ATTR_REPEAT_COUNT);
-    _exprModel = XelementHelper.findExprModel(this, false);
+    _exprModel = XelementHelper.findExprModel(this, 0);
   }
 
   /**

@@ -151,6 +151,12 @@ public class XmlHelper {
     return new XarrayRef(el);
   }
 
+  public static XassignStatement createXassignStatement(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new XassignStatement(el);
+  }
+
   public static XdoStatement createXdoStatement(String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);

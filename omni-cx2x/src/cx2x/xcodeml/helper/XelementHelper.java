@@ -253,13 +253,39 @@ public class XelementHelper {
   }
 
   /**
-   * Find exprModel element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XexprModel object if found. Null otherwise.
+   * Find lValueModel element at given position.
+   * @param parent   Root element to search from.
+   * @param position Position of the element to be found in the parent children
+   *                 list.
+   * @return A XLValueModel object if found. Null otherwise.
    */
-  public static XexprModel findExprModel(XbaseElement parent, boolean any){
+  public static XLValueModel findLValueModel(XbaseElement parent, int position){
+    Element element = getXthChildElement(parent.getBaseElement(), position);
+    if(element == null){
+      return null;
+    }
+    switch (element.getTagName()) {
+      case XelementName.VAR:
+        return new XLValueModel(new Xvar(element));
+      case XelementName.F_ARRAY_REF:
+        return new XLValueModel(new XarrayRef(element));
+      case XelementName.F_CHAR_REF:
+      case XelementName.F_MEMBER_REF:
+      case XelementName.F_COARRAY_REF:
+        return null; // TODO when classes are available
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Find exprModel element at given position.
+   * @param parent   Root element to search from.
+   * @param position Position of the element to be found in the parent children
+   *                 list.
+   * @return A XexprModel object if found. Null otherwise.
+   */
+  public static XexprModel findExprModel(XbaseElement parent, int position){
     /** An exprModel can be of the following type
      *   - FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
      *     FlogicalConstant
@@ -278,7 +304,8 @@ public class XelementHelper {
      *   - FdoLoop
      */
 
-    Element element = getFirstChildElement(parent.getBaseElement());
+
+    Element element = getXthChildElement(parent.getBaseElement(), position);
     if(element == null){
       return null;
     }
@@ -540,6 +567,19 @@ public class XelementHelper {
    */
   public static XdoStatement findNextDoStatement(XbaseElement from){
     return findNextElementOfType(from, XdoStatement.class);
+  }
+
+  /**
+   * Find the direct next do statement element.
+   * @param from  The element to search from. Direct next sibling is searched.
+   * @param until The element to search until.
+   * @return A XdoStatement object if it directly follows the given from
+   * element. Null otherwise.
+   */
+  public static XdoStatement findNextDoStatement(XbaseElement from,
+                                                 XbaseElement until)
+  {
+    return findNextElementOfType(from, until, XdoStatement.class);
   }
 
   /**
@@ -1107,6 +1147,47 @@ public class XelementHelper {
   }
 
   /**
+   * Find any element of the the given Class in the direct children of from
+   * element until the end element is reached.
+   * Only first level children are search for.
+   * @param from          XbaseElement to search from.
+   * @param until         XbaseElement to search until.
+   * @param xElementClass Element's class to be found.
+   * @param <T>           Derived class of XbaseElement
+   * @return The first element found under from element. Null if no element is
+   * found.
+   */
+  private static <T extends XbaseElement> T findNextElementOfType(
+      XbaseElement from, XbaseElement until, Class<T> xElementClass)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || from == null || until == null
+        || from.getBaseElement() == null)
+    {
+      return null;
+    }
+    Node nextNode = from.getBaseElement().getNextSibling();
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element == until.getBaseElement()){ // End element is reached
+          return null;
+        }
+        if(element.getTagName().equals(elementName)){
+          try {
+            return xElementClass.
+                getDeclaredConstructor(Element.class).newInstance(element);
+          } catch(Exception ex){
+            return null;
+          }
+        }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
+  /**
    * Find element of the the given Class that is directly after the given from
    * element.
    * @param from          XbaseElement to search from.
@@ -1226,6 +1307,26 @@ public class XelementHelper {
     return null;
   }
 
+  /**
+   * Get the xth child element.
+   * @param parent   Root element to search form.
+   * @param position Position of the element to be found. Start at 0.
+   * @return Element found at position.
+   */
+  private static Element getXthChildElement(Element parent, int position){
+    int crtIndex = 0;
+    NodeList nodeList = parent.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node nextNode = nodeList.item(i);
+      if (nextNode.getNodeType() == Node.ELEMENT_NODE && crtIndex == position) {
+        return (Element) nextNode;
+      } else if (nextNode.getNodeType() == Node.ELEMENT_NODE){
+        ++crtIndex;
+      }
+    }
+    return null;
+  }
+
 
 
 
@@ -1296,4 +1397,6 @@ public class XelementHelper {
 
     return new XdoStatement(element);
   }
+
+
 }

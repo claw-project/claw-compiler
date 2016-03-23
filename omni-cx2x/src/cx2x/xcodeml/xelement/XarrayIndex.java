@@ -30,7 +30,7 @@ public class XarrayIndex extends Xindex {
    */
   public XarrayIndex(Element baseElement){
     super(baseElement);
-    _exprModel = XelementHelper.findExprModel(this, false);
+    _exprModel = XelementHelper.findExprModel(this, 0);
   }
 
   /**

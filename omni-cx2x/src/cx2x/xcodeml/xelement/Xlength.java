@@ -29,7 +29,7 @@ public class Xlength extends XbaseElement {
    */
   public Xlength(Element baseElement){
     super(baseElement);
-    _exprModel = XelementHelper.findExprModel(this, false);
+    _exprModel = XelementHelper.findExprModel(this, 0);
   }
 
   /**
