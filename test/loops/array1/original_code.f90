@@ -8,14 +8,35 @@ END
 SUBROUTINE claw
   INTEGER :: j
   INTEGER :: i = 10
-  INTEGER, DIMENSION(0:9) :: vec1
+  INTEGER, DIMENSION(0:10) :: vec1
 
   DO j = 0, i
-  		vec1(j) = j
+    vec1(j) = j
   END DO
 
   !$claw array-transform
-  vec1(0:i) = vec1(0:i) + 10;
+  vec1(0:i) = vec1(0:i) + 10
 
   PRINT*,vec1
 END SUBROUTINE claw
+
+
+! Example of the transformation for development purpose
+SUBROUTINE claw_transformed
+  INTEGER :: i = 10
+  INTEGER, DIMENSION(0:10) :: vec1
+  INTEGER :: claw_induc1 ! induction variable is declared
+
+  DO j = 0, i
+    vec1(j) = j
+  END DO
+
+  ! Do stmt is inserted
+  DO claw_induc1=0,i
+    ! index range are replaced with arrayIndex
+    vec1(claw_induc1) = vec1(claw_induc1) + 10
+  END DO
+
+  PRINT*,vec1
+  PRINT*,vec2
+END SUBROUTINE claw_transformed
