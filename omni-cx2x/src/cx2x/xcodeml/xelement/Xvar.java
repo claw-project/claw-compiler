@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -113,5 +114,27 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   @Override
   public int hashCode() {
     return getValue().hashCode() ^ _scope.hashCode() ^ _type.hashCode();
+  }
+
+  /**
+   * Create a new Xvar object with all the underlying elements.
+   * @param type    Value for the attribute type.
+   * @param value   Value of the var element.
+   * @param scope   Value for the attribute scope.
+   * @param xcodeml XcodeML program.
+   * @return A newly constructs Xvar element with all the information loaded.
+   * @throws IllegalTransformationException can be thrown while constrcuting
+   * empty elements.
+   */
+  public static Xvar create(String type, String value, Xscope scope,
+                            XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xvar var = XelementHelper.createEmpty(Xvar.class, xcodeml);
+    var.setType(type);
+    var.setValue(value);
+    var.setScope(scope);
+    var.readElementInformation();
+    return var;
   }
 }

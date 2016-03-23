@@ -42,6 +42,13 @@ public class XdoStatement extends XenhancedElement {
    */
   public XdoStatement(Element baseElement){
     super(baseElement);
+    readElementInformation();
+  }
+
+  /**
+   * Read the inner element information.
+   */
+  private void readElementInformation(){
     findRangeElements();
     _body = XelementHelper.findBody(this, false);
     _construct_name = XelementHelper.getAttributeValue(this,
@@ -183,5 +190,32 @@ public class XdoStatement extends XenhancedElement {
    */
   public String getConstructName(){
     return _construct_name;
+  }
+
+  /**
+   * Create a new XvarDecl object with all the underlying elements.
+   * @param induction A var element that represents the induction variable.
+   * @param range     An indexRange element that represents the do statement
+   *                  iteration range.
+   * @param clone     If true, induction and range element will be cloned to be
+   *                  part of the do statement.
+   * @param xcodeml   XcodeML program.
+   * @return A newly constructs XvarDecl element with all the information
+   * loaded.
+   * @throws IllegalTransformationException can be thrown while constrcuting
+   * empty elements.
+   */
+  public static XdoStatement create(Xvar induction, XindexRange range,
+                                    boolean clone, XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XdoStatement doStmt = XelementHelper.createEmpty(XdoStatement.class,
+        xcodeml);
+    doStmt.appendToChildren(induction, clone);
+    doStmt.appendToChildren(range, clone);
+    Xbody body = XelementHelper.createEmpty(Xbody.class, xcodeml);
+    doStmt.appendToChildren(body, false);
+    doStmt.readElementInformation();
+    return doStmt;
   }
 }
