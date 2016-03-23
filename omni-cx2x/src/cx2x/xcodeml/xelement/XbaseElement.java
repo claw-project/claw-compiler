@@ -81,9 +81,9 @@ public class XbaseElement {
   public void appendToChildren(XbaseElement element, boolean clone){
     if(baseElement != null && element != null){
       if(clone){
-        baseElement.appendChild(element.getBaseElement());
-      } else {
         baseElement.appendChild(element.cloneNode());
+      } else {
+        baseElement.appendChild(element.getBaseElement());
       }
     }
   }
