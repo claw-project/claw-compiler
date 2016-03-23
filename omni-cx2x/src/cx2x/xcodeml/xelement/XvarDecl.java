@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -104,6 +105,29 @@ public class XvarDecl extends Xdecl {
     if(element instanceof Xname){
       _name = (Xname)element; // TODO error if there is a name already
     }
+  }
+
+  /**
+   * Create a new XvarDecl object with all the underlying elements.
+   * @param nameType  Value for the attribute type of the name element.
+   * @param nameValue Value of the name inner element.
+   * @param xcodeml   XcodeML program.
+   * @return A newly constructs XvarDecl element with all the information
+   * loaded.
+   * @throws IllegalTransformationException can be thrown while constrcuting
+   * empty elements.
+   */
+  public static XvarDecl create(String nameType, String nameValue,
+                                XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XvarDecl varD = XelementHelper.createEmpty(XvarDecl.class, xcodeml);
+    Xname internalName = XelementHelper.createEmpty(Xname.class, xcodeml);
+    internalName.setValue(nameValue);
+    internalName.setType(nameType);
+    varD.appendToChildren(internalName, false);
+    varD.readElementInformation();
+    return varD;
   }
 
 }
