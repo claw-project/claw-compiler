@@ -90,6 +90,7 @@ public class XelementName {
   public static final String FCT_DEFINITION = "FfunctionDefinition";
   public static final String FCT_TYPE = "FfunctionType";
   public static final String F_ARRAY_REF = "FarrayRef";
+  public static final String F_ASSIGN_STMT = "FassignStatement";
   public static final String F_CHAR_REF = "FcharacterRef";
   public static final String F_COARRAY_REF = "FcoArrayRef";
   public static final String F_IF_STMT = "FifStatement";
@@ -122,6 +123,30 @@ public class XelementName {
   public static final String VALUE = "value";
   public static final String X_CODE_PROGRAM = "XcodeProgram";
 
+  // Binary expression element
+  public static final String DIV_EXPR = "divExpr";
+  public static final String F_CONCAT_EXPR = "FconcatExpr";
+  public static final String F_POWER_EXPR = "FpowerExpr";
+  public static final String LOG_AND_EXPR = "logAndExpr";
+  public static final String LOG_EQ_EXPR = "logEQExpr";
+  public static final String LOG_EQV_EXPR = "logEQVExpr";
+  public static final String LOG_GE_EXPR = "logGEExpr";
+  public static final String LOG_GT_EXPR = "logGTExpr";
+  public static final String LOG_LE_EXPR = "logLEExpr";
+  public static final String LOG_LT_EXPR = "logLTExpr";
+  public static final String LOG_NEQ_EXPR = "logNEQExpr";
+  public static final String LOG_NEWV_EXPR = "logNEWVExpr";
+  public static final String LOG_OR_EXPR = "logOrExpr";
+  public static final String MINUS_EXPR = "minusExpr";
+  public static final String MUL_EXPR = "mulExpr";
+  public static final String PLUS_EXPR = "plusExpr";
+  public static final String USER_BINARY_EXPR = "userBinaryExpr";
+
+  // Unary expression element
+  public static final String LOG_NOT_EXPR = "logNotExpr";
+  public static final String UNARY_MINUS_EXPR = "unaryMinusExpr";
+  public static final String USER_UNARY_EXPR = "userUnaryExpr";
+
 
   private static Map<Class, String> _classToElementNameMapping;
 
@@ -130,6 +155,7 @@ public class XelementName {
     tempMap.put(XargumentsTable.class, ARGUMENTS);
     tempMap.put(XarrayIndex.class, ARRAY_INDEX);
     tempMap.put(XarrayRef.class, F_ARRAY_REF);
+    tempMap.put(XassignStatement.class, F_ASSIGN_STMT);
     tempMap.put(XbasicType.class, BASIC_TYPE);
     tempMap.put(Xbody.class, BODY);
     tempMap.put(Xcondition.class, CONDITION);
