@@ -60,11 +60,21 @@ public class XsymbolTable extends XbaseElement {
   }
 
   /**
-   * Add a new symbols in the table.
+   * Add a new symbols in the table. Xid object is cloned.
    * @param id The new Xid object to be added.
    */
   public void add(Xid id){
-    baseElement.appendChild(id.cloneNode());
+    add(id, true);
+  }
+
+  /**
+   * Add a new symbols in the table. Xid object is cloned.
+   * @param id    The new Xid object to be added.
+   * @param clone Tell whether the element is cloned before added or not. If
+   *              true the element is cloned.
+   */
+  public void add(Xid id, boolean clone){
+    this.appendToChildren(id, clone);
     _table.put(id.getName(), id);
   }
 
