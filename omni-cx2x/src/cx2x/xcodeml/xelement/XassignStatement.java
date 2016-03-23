@@ -19,7 +19,9 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XassignStatement extends XenhancedElement {
+public class XassignStatement extends XenhancedElement
+    implements Xclonable<XassignStatement>
+{
 
   private XLValueModel _lValueModel = null;
   private XexprModel _exprModel = null;
@@ -52,5 +54,11 @@ public class XassignStatement extends XenhancedElement {
    */
   public XexprModel getExprModel(){
     return _exprModel;
+  }
+
+  @Override
+  public XassignStatement cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XassignStatement(clone);
   }
 }
