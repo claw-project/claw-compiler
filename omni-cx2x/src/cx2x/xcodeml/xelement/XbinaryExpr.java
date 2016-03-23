@@ -25,9 +25,9 @@ import org.w3c.dom.Element;
  */
 public class XbinaryExpr extends XbaseElement {
 
-  private XexprModel _lhs;
-  private XexprModel _rhs;
-  private String _type;
+  private XexprModel _lhs = null;
+  private XexprModel _rhs = null;
+  private String _type = null;
 
   /**
    * Constructs new XbinaryExpr by reading element information.
@@ -36,7 +36,8 @@ public class XbinaryExpr extends XbaseElement {
   public XbinaryExpr(Element baseElement){
     super(baseElement);
     _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
-    
+    _lhs = XelementHelper.findExprModel(this, 0);
+    _rhs = XelementHelper.findExprModel(this, 1);
   }
 
   /**

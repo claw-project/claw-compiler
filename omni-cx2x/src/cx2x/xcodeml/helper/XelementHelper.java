@@ -304,7 +304,6 @@ public class XelementHelper {
      *   - FdoLoop
      */
 
-
     Element element = getXthChildElement(parent.getBaseElement(), position);
     if(element == null){
       return null;
@@ -329,6 +328,33 @@ public class XelementHelper {
         return new XexprModel(new XarrayRef(element));
       case XelementName.VAR_REF:
         return new XexprModel(new XvarRef(element));
+      // binary expression
+      case XelementName.DIV_EXPR:
+      case XelementName.F_CONCAT_EXPR:
+      case XelementName.F_POWER_EXPR:
+      case XelementName.LOG_AND_EXPR:
+      case XelementName.LOG_EQ_EXPR:
+      case XelementName.LOG_EQV_EXPR:
+      case XelementName.LOG_GE_EXPR:
+      case XelementName.LOG_GT_EXPR:
+      case XelementName.LOG_LE_EXPR:
+      case XelementName.LOG_LT_EXPR:
+      case XelementName.LOG_NEQ_EXPR:
+      case XelementName.LOG_NEWV_EXPR:
+      case XelementName.LOG_OR_EXPR:
+      case XelementName.MINUS_EXPR:
+      case XelementName.MUL_EXPR:
+      case XelementName.PLUS_EXPR:
+      case XelementName.USER_BINARY_EXPR:
+        return new XexprModel(new XbinaryExpr(element));
+
+      // unary expression
+      case XelementName.LOG_NOT_EXPR:
+      case XelementName.UNARY_MINUS_EXPR:
+      case XelementName.USER_UNARY_EXPR:
+        return new XexprModel(new XunaryExpr(element));
+
+
       default:
         return null;
     }
@@ -801,12 +827,21 @@ public class XelementHelper {
   }
 
   /**
-   * Find if there is a if statement directly after the given element.
+   * Find if there is an if statement directly after the given element.
    * @param from  The element to search from
    * @return An if statement element if found. Null otherwise.
    */
   public static XifStatement findDirectNextIfStmt(XbaseElement from){
     return findDirectNextElement(from, XifStatement.class);
+  }
+
+  /**
+   * Find if there is an assign statement directly after the given element.
+   * @param from  The element to search from
+   * @return An assign statement element if found. Null otherwise.
+   */
+  public static XassignStatement findDirectNextAssignStmt(XbaseElement from){
+    return findDirectNextElement(from, XassignStatement.class);
   }
 
 
