@@ -2,20 +2,20 @@
 
 PROGRAM VECTOR_LOOP
   CALL claw
+  CALL claw_transformed
 END
 
 ! Before the transformation
 SUBROUTINE claw
   INTEGER :: j
-  INTEGER :: i = 10
   INTEGER, DIMENSION(0:10) :: vec1
 
-  DO j = 0, i
+  DO j = 0, 10
     vec1(j) = j
   END DO
 
   !$claw array-transform
-  vec1(0:i) = vec1(0:i) + 10
+  vec1(:) = vec1(:) + 10
 
   PRINT*,vec1
 END SUBROUTINE claw
@@ -38,5 +38,4 @@ SUBROUTINE claw_transformed
   END DO
 
   PRINT*,vec1
-  PRINT*,vec2
 END SUBROUTINE claw_transformed
