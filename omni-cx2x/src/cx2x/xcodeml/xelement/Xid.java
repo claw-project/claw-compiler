@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import cx2x.xcodeml.helper.*;
@@ -110,6 +111,30 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
   public Xid cloneObject(){
     Node clone = cloneNode();
     return new Xid((Element)clone);
+  }
+
+  /**
+   * Create a new Xid object with all the underlying elements.
+   * @param type      Value for the attribute type.
+   * @param sclass    Value for the attribute sclass.
+   * @param nameValue Value of the name inner element.
+   * @param xcodeml   XcodeML program.
+   * @return A newly constructs Xid element with all the information loaded.
+   * @throws IllegalTransformationException can be thrown while constrcuting
+   * empty elements.
+   */
+  public static Xid create(String type, String sclass, String nameValue,
+                           XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xid id = XelementHelper.createEmpty(Xid.class, xcodeml);
+    Xname internalName = XelementHelper.createEmpty(Xname.class, xcodeml);
+    internalName.setValue(nameValue);
+    id.appendToChildren(internalName, false);
+    id.setType(type);
+    id.setSclass(sclass);
+    id.readElementInformation();
+    return id;
   }
 
 }
