@@ -54,7 +54,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * @param value The new name value.
    */
   public void setName(String value){
-    if(_xname != null){
+    if(_xname != null && value != null){
       _xname.setValue(value);
     }
   }
@@ -64,7 +64,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * @param value The new type value.
    */
   public void setType(String value){
-    if(baseElement != null){
+    if(baseElement != null && value != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
@@ -75,7 +75,7 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * @param value The new sclass value.
    */
   public void setSclass(String value){
-    if(baseElement != null){
+    if(baseElement != null && value != null){
       baseElement.setAttribute(XelementName.ATTR_SCLASS, value);
       _sclass = value;
     }

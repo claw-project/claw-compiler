@@ -42,7 +42,7 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
    * @param value var type.
    */
   public void setType(String value){
-    if(baseElement != null){
+    if(baseElement != null && value != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
@@ -53,7 +53,7 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
    * @param value var scope.
    */
   public void setScope(Xscope value){
-    if(baseElement != null){
+    if(baseElement != null && value != null){
       baseElement.setAttribute(XelementName.ATTR_SCOPE, value.toString());
       _scope = value;
     }

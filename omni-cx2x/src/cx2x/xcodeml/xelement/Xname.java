@@ -36,7 +36,7 @@ public class Xname extends XbaseElement {
    * @param value Type value.
    */
   public void setType(String value){
-    if(baseElement != null){
+    if(baseElement != null && value != null){
       baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
