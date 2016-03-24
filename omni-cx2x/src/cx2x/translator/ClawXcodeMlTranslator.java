@@ -7,6 +7,7 @@ package cx2x.translator;
 
 // Cx2x import
 import cx2x.translator.common.Constant;
+import cx2x.translator.language.ClawDirective;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.transformation.loop.ArrayTransform;
 import cx2x.translator.transformation.loop.LoopExtraction;
@@ -27,6 +28,8 @@ import xcodeml.util.XmOption;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Hashtable;
+import java.util.Map;
 
 
 /**
@@ -71,8 +74,9 @@ public class ClawXcodeMlTranslator {
       abort();
     }
 
-    // TODO have a generic mechanism for the directive with end ...
-    ClawLanguage _startRemove = null;
+    // TODO make it generic in the loop
+    Map<ClawDirective, ClawLanguage> _blockDirectives = new Hashtable<>();
+
 
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
 
@@ -106,21 +110,30 @@ public class ClawXcodeMlTranslator {
               _transformer);
           break;
         case REMOVE:
-          if (_startRemove != null) {
-            addOrAbort(new UtilityRemove(_startRemove, null), _program,
-                _transformer);
+          if (_blockDirectives.containsKey(ClawDirective.REMOVE)) {
+            addOrAbort(
+                new UtilityRemove(
+                    _blockDirectives.get(ClawDirective.REMOVE), null
+                ), _program, _transformer
+            );
           }
-          _startRemove = analyzedPragma;
+          _blockDirectives.remove(ClawDirective.REMOVE);
+          _blockDirectives.put(ClawDirective.REMOVE, analyzedPragma);
           break;
         case END_REMOVE:
-          if (_startRemove == null) {
+          if (!_blockDirectives.containsKey(ClawDirective.REMOVE)) {
             _program.addError("Invalid Claw directive (end with no start)",
                 pragma.getLineNo());
             abort();
           } else {
-            addOrAbort(new UtilityRemove(_startRemove, analyzedPragma),
-                _program, _transformer);
-            _startRemove = null;
+
+            addOrAbort(
+                new UtilityRemove(
+                    _blockDirectives.get(ClawDirective.REMOVE), analyzedPragma
+                ),
+                _program, _transformer
+            );
+            _blockDirectives.remove(ClawDirective.REMOVE);
           }
           break;
         default:
@@ -129,8 +142,12 @@ public class ClawXcodeMlTranslator {
       }
 
     }
-    if(_startRemove != null){
-      addOrAbort(new UtilityRemove(_startRemove, null), _program, _transformer);
+    if(_blockDirectives.containsKey(ClawDirective.REMOVE)){
+      addOrAbort(
+          new UtilityRemove(
+              _blockDirectives.get(ClawDirective.REMOVE), null
+          ), _program, _transformer
+      );
     }
 
 
@@ -191,6 +208,7 @@ public class ClawXcodeMlTranslator {
             itex.getMessage(), itex.getStartLine());
           abort();
         } catch (Exception ex){
+          ex.printStackTrace();
           _program.addError("Unexpected error: " + ex.getMessage(), 0);
           if(XmOption.isDebugOutput()){
             StringWriter errors = new StringWriter();
