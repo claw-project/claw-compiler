@@ -103,9 +103,8 @@ public class ArrayTransform extends Transformation<ArrayTransform> {
           transformer.getNextTransformationCounter();
 
       // 2.2 inject a new entry in the symbol table
-      // TODO define flocal in XelementName in some way
-      Xid inductionVarId = Xid.create(XelementName.TYPE_F_INT, "flocal",
-          inductionVars[i], xcodeml);
+      Xid inductionVarId = Xid.create(XelementName.TYPE_F_INT,
+          XelementName.SCLASS_F_LOCAL, inductionVars[i], xcodeml);
       fctDef.getSymbolTable().add(inductionVarId, false);
 
       // 2.3 inject a new entry in the declaration table
