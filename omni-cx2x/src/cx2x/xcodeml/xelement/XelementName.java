@@ -25,12 +25,17 @@ public class XelementName {
   public static final String SUPPORTED_LANGUAGE = "Fortran";
 
   // Base type (9.1)
-  public static final String TYPE_F_INT = "Fint";
-  public static final String TYPE_F_REAL = "Freal";
+  public static final String TYPE_F_INT     = "Fint";
+  public static final String TYPE_F_REAL    = "Freal";
   public static final String TYPE_F_COMPLEX = "Fcomplex";
   public static final String TYPE_F_LOGICAL = "Flogical";
-  public static final String TYPE_F_CHAR = "Fcharacter";
-  public static final String TYPE_F_VOID = "Fvoid";
+  public static final String TYPE_F_CHAR    = "Fcharacter";
+  public static final String TYPE_F_VOID    = "Fvoid";
+
+  // Sclass
+  public static final String SCLASS_F_LOCAL = "flocal";
+  public static final String SCLASS_F_FUNC  = "ffunc";
+  // TODO there is more entry here
 
   // Scope
   public static final String SCOPE_LOCAL = "local";
