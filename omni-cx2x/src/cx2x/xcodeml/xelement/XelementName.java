@@ -24,7 +24,7 @@ public class XelementName {
   public static final String SUPPORTED_VERSION = "1.0";
   public static final String SUPPORTED_LANGUAGE = "Fortran";
 
-  // Base type (9.1)
+  // Base type (XcodeML/F 9.1)
   public static final String TYPE_F_INT     = "Fint";
   public static final String TYPE_F_REAL    = "Freal";
   public static final String TYPE_F_COMPLEX = "Fcomplex";
@@ -32,10 +32,14 @@ public class XelementName {
   public static final String TYPE_F_CHAR    = "Fcharacter";
   public static final String TYPE_F_VOID    = "Fvoid";
 
-  // Sclass
-  public static final String SCLASS_F_LOCAL = "flocal";
-  public static final String SCLASS_F_FUNC  = "ffunc";
-  // TODO there is more entry here
+  // Storage class (part of Id - XcodeML/F 8.2)
+  public static final String SCLASS_AUTO       = "auto";
+  public static final String SCLASS_EXTERN     = "extern";
+  public static final String SCLASS_EXTERN_DEF = "extern_def";
+  public static final String SCLASS_F_LOCAL    = "flocal";
+  public static final String SCLASS_F_FUNC     = "ffunc";
+  public static final String SCLASS_LABEL      = "label";
+  public static final String SCLASS_PARAM      = "param";
 
   // Scope
   public static final String SCOPE_LOCAL = "local";
