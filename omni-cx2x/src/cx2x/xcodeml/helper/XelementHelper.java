@@ -107,7 +107,7 @@ public class XelementHelper {
    * @param parent The body element to search for the array references.
    * @return A list of all array references found.
    */
-  public static List<XarrayRef> getAllArrayReferences(Xbody parent){
+  public static List<XarrayRef> getAllArrayReferences(XbaseElement parent){
     List<XarrayRef> references = new ArrayList<>();
     NodeList nList = parent.getBaseElement().
       getElementsByTagName(XelementName.F_ARRAY_REF);
