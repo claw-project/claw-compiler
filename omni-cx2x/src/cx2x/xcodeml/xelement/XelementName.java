@@ -24,7 +24,7 @@ public class XelementName {
   public static final String SUPPORTED_VERSION = "1.0";
   public static final String SUPPORTED_LANGUAGE = "Fortran";
 
-  // Base type (XcodeML/F 9.1)
+  // Base type (XcodeML/F 0.91J 9.1)
   public static final String TYPE_F_INT     = "Fint";
   public static final String TYPE_F_REAL    = "Freal";
   public static final String TYPE_F_COMPLEX = "Fcomplex";
@@ -32,7 +32,7 @@ public class XelementName {
   public static final String TYPE_F_CHAR    = "Fcharacter";
   public static final String TYPE_F_VOID    = "Fvoid";
 
-  // Storage class (part of Id - XcodeML/F 8.2)
+  // Storage class (part of Id - XcodeML/F 0.91J 8.2)
   public static final String SCLASS_AUTO       = "auto";
   public static final String SCLASS_EXTERN     = "extern";
   public static final String SCLASS_EXTERN_DEF = "extern_def";
@@ -41,12 +41,12 @@ public class XelementName {
   public static final String SCLASS_LABEL      = "label";
   public static final String SCLASS_PARAM      = "param";
 
-  // Scope
+  // Scope (part of Var - XcodeML/F 0.91J 7.4.1)
   public static final String SCOPE_LOCAL = "local";
   public static final String SCOPE_GLOBAL = "global";
   public static final String SCOPE_PARAM = "param";
 
-  // Intent
+  // Intent (part of FbasicType - XcodeML/F 0.91J 3.3)
   public static final String INTENT_IN = "in";
   public static final String INTENT_OUT = "out";
   public static final String INTENT_INOUT = "inout";
