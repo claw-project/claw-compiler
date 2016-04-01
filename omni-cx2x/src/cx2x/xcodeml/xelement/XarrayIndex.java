@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import cx2x.xcodeml.helper.*;
@@ -30,6 +31,10 @@ public class XarrayIndex extends Xindex {
    */
   public XarrayIndex(Element baseElement){
     super(baseElement);
+    readElementInformation();
+  }
+
+  private void readElementInformation(){
     _exprModel = XelementHelper.findExprModel(this, 0);
   }
 
@@ -62,6 +67,24 @@ public class XarrayIndex extends Xindex {
     } else {
       baseElement.appendChild(element.getBaseElement());
     }
+  }
+
+  /**
+   * Create a new XarrayIndex object with all the underlying elements.
+   * @param inner   The inner element of the arrayIndex.
+   * @param xcodeml XcodeML program.
+   * @return A newly constructs XarrayIndex element with all the
+   * information loaded.
+   * @throws IllegalTransformationException can be thrown while constrcuting
+   * empty elements.
+   */
+  public static XarrayIndex create(XexprModel inner, XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XarrayIndex idx = XelementHelper.createEmpty(XarrayIndex.class, xcodeml);
+    idx.appendToChildren(inner.getElement(), false);
+    idx.readElementInformation();
+    return idx;
   }
 
 }
