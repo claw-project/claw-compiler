@@ -126,10 +126,31 @@ public class ArrayTransform extends Transformation<ArrayTransform> {
     }
 
     // 3. Adapat array reference with induction variables
+    List<XarrayRef> allArrayRef = XelementHelper.getAllArrayReferences(_stmt);
+    for(XarrayRef arrayRef : allArrayRef) {
+
+      // TODO handle more complicated cases
+      String id = arrayRef.getVarRef().getVar().getValue();
+
+      for(int i = 0; i < arrayRef.getInnerElements().size(); ++i){
+        XbaseElement el = arrayRef.getInnerElements().get(i);
+        if(el instanceof XindexRange){
+          String induction = doStmts[i].getInductionVariable();
+
+          Xvar iterVar = Xvar.create(XelementName.TYPE_F_INT, induction,
+              Xscope.LOCAL, xcodeml);
+          XarrayIndex arrayIdx =
+              XarrayIndex.create(new XexprModel(iterVar), xcodeml);
+
+          XelementHelper.insertAfter(el, arrayIdx);
+          el.delete();
+        }
+      }
+    }
     
 
 
-    // 4. Move array reference inside the most inner loop
+    // 4. Move assignment statement inside the most inner loop
     doStmts[_ranges.size()-1].getBody().appendToChildren(_stmt, true);
     _stmt.delete();
 
