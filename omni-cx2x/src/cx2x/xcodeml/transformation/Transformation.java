@@ -19,9 +19,9 @@ import cx2x.xcodeml.exception.*;
  */
 
 public abstract class Transformation<T> {
-  protected boolean _transformed = false;
-  protected int _startLine = 0;
-  private AnalyzedPragma _directive = null;
+  private boolean _transformed = false;
+  private int _startLine = 0;
+  private final AnalyzedPragma _directive;
 
   /**
    * Transformation ctor.
