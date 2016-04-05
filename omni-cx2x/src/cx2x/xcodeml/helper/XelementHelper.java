@@ -1433,5 +1433,19 @@ public class XelementHelper {
     return new XdoStatement(element);
   }
 
+  /**
+   * Get the depth of an element in the AST.
+   * @param element The element to start from.
+   * @return A depth value >= 0.
+   */
+  public static int getDepth(Element element) {
+    Node parent = element.getParentNode();
+    int depth = 0;
+    while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
+      ++depth;
+      parent = parent.getParentNode();
+    }
+    return depth;
+  }
 
 }
