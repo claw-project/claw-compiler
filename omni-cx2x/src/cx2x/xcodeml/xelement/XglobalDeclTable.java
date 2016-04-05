@@ -28,7 +28,7 @@ public class XglobalDeclTable extends XbaseElement {
    * Hastable containing the global declaration elements. Key is the name of the
    * function or the module.
    */
-  private Hashtable<String, XbaseElement> _table;
+  private final Hashtable<String, XbaseElement> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read

@@ -26,8 +26,7 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class XargumentsTable extends XbaseElement {
-  // TODO move to exprModel. For the moment only read var
-  private Map<String, XexprModel> _table;
+  private final Map<String, XexprModel> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read

@@ -35,7 +35,7 @@ import cx2x.xcodeml.helper.*;
 
 public class XdeclTable extends XbaseElement {
 
-  private Hashtable<String, XvarDecl> _table;
+  private final Hashtable<String, XvarDecl> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read

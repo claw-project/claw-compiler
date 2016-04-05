@@ -28,7 +28,7 @@ public class XtypeTable extends XbaseElement {
   private static final int HASH_LENGTH = 12;
   private static final String FCT_HASH_PREFIX = "F";
 
-  private Map<String, Xtype> _table;
+  private final Map<String, Xtype> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read

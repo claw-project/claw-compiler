@@ -23,7 +23,7 @@ import java.util.Hashtable;
 
 public class XsymbolTable extends XbaseElement {
 
-  private Hashtable<String, Xid> _table;
+  private final Hashtable<String, Xid> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
