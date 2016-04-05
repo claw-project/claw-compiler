@@ -89,10 +89,10 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Analyze a raw string input and match it with the CLAW language definition.
-   * @param rawInput A string line to be analyzed against the CLAW language.
+   * @param pragma A Xpragma object to be analyzed against the CLAW language.
    * @return A ClawLanguage object with the corresponding extracted information.
    */
-  public static ClawLanguage analyze(String rawInput)
+  public static ClawLanguage analyze(Xpragma pragma)
       throws IllegalDirectiveException
   {
 
@@ -103,7 +103,7 @@ public class ClawLanguage extends AnalyzedPragma {
      * account. Therefore, this method remove all the prefix and keeps only the
      * first one.
      */
-    String nakedPragma = rawInput.toLowerCase().replaceAll(PREFIX_CLAW, "");
+    String nakedPragma = pragma.getValue().toLowerCase().replaceAll(PREFIX_CLAW, "");
     nakedPragma = PREFIX_CLAW + " " + nakedPragma;
 
     // Instantiate the lexer with the raw string input
@@ -123,6 +123,7 @@ public class ClawLanguage extends AnalyzedPragma {
       // Start the parser analysis from the "analyze" entry point
       ClawParser.AnalyzeContext ctx = parser.analyze();
       // Get the ClawLanguage object return by the parser after analysis.
+      ctx.l.attachPragma(pragma);
       return ctx.l;
     } catch(ParseCancellationException pcex){
       IllegalDirectiveException ex = cel.getLastError();
@@ -387,12 +388,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * Attach the pragma related to this CLAW language analysis.
    * @param pragma Xpragma object.
    */
-  public void attachPragma(Xpragma pragma){
+  private void attachPragma(Xpragma pragma){
     _pragma = pragma;
   }
-
-
-
-
 
 }

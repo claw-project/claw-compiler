@@ -90,10 +90,7 @@ public class ClawXcodeMlTranslator {
       }
 
       // Analyze the raw pragma with the CLAW language parser
-      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma.getValue());
-      analyzedPragma.attachPragma(pragma);
-      // TODO code review pass Xpargma directly
-
+      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma);
       switch (analyzedPragma.getDirective()){
         case LOOP_FUSION:
           addOrAbort(new LoopFusion(analyzedPragma), _program, _transformer);

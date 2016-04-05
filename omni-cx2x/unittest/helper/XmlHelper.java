@@ -224,4 +224,10 @@ public class XmlHelper {
     return new XloopIterationRange(xvar, xindexRange);
   }
 
+  public static Xpragma createXpragma(){
+    String xml = "<" + XelementName.PRAGMA_STMT + "></" +
+        XelementName.PRAGMA_STMT + ">";
+    Element el = XmlHelper.getElementFromString(xml);
+    return new Xpragma(el);
+  }
 }
