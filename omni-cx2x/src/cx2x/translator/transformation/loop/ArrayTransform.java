@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ArrayTransform extends Transformation<ArrayTransform> {
+public class ArrayTransform extends Transformation {
 
   private ClawLanguage _claw;
   private XassignStatement _stmt;
@@ -78,15 +78,26 @@ public class ArrayTransform extends Transformation<ArrayTransform> {
     return true;
   }
 
+  /**
+   * @see Transformation#canBeTransformedWith(Transformation)
+   */
   @Override
-  public boolean canBeTransformedWith(ArrayTransform other) {
+  public boolean canBeTransformedWith(Transformation other) {
     // independent transformation
     return false;
   }
 
+  /**
+   * Transform an assignement using array notation to a do statement.
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
+   * @param other       Only for dependent transformation. The other
+   *                    transformation part of the transformation.
+   * @throws Exception If the thransformation cannot be applied.
+   */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        ArrayTransform other) throws Exception
+                        Transformation other) throws Exception
   {
     // 1. Find the function/module declaration
     // TODO hanlde module/program as well

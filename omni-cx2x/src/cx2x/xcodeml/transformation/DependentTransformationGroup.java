@@ -8,6 +8,8 @@ package cx2x.xcodeml.transformation;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.exception.*;
 
+import java.util.List;
+
 /**
  * An dependent transformation group check wether it can be transformed with
  * another pending transformation in the pipeline. Each transformation are
@@ -16,9 +18,7 @@ import cx2x.xcodeml.exception.*;
  * @author clementval
  */
 
-public class DependentTransformationGroup<T extends Transformation<? super T>>
-    extends TransformationGroup<T>
-{
+public class DependentTransformationGroup extends TransformationGroup {
 
   /**
    * DependentTransformationGroup ctor.
@@ -34,10 +34,11 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
   public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
     throws Exception
   {
-    for(int i = 0; i < _translations.size(); ++i){
-      T base = _translations.get(i);
-      for(int j = i + 1; j < _translations.size(); ++j){
-        T candidate = _translations.get(j);
+    List<Transformation> transformations = getTransformations();
+    for(int i = 0; i < transformations.size(); ++i){
+      Transformation base = transformations.get(i);
+      for(int j = i + 1; j < transformations.size(); ++j){
+        Transformation candidate = transformations.get(j);
         if(candidate.isTransformed()){
           continue;
         }
@@ -64,15 +65,15 @@ public class DependentTransformationGroup<T extends Transformation<? super T>>
    * transformation's start line.
    * @see TransformationGroup#add(Transformation)
    */
-  public void add(T translation){
-    int linePosition = translation.getStartLine();
+  public void add(Transformation transformation){
+    int linePosition = transformation.getStartLine();
     int insertIndex = 0;
-    for(Transformation t : _translations){
+    for(Transformation t : getTransformations()){
       if(t.getStartLine() > linePosition){
         break;
       }
       ++insertIndex;
     }
-    _translations.add(insertIndex, translation);
+    getTransformations().add(insertIndex, transformation);
   }
 }

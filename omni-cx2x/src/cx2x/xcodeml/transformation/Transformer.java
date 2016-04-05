@@ -6,6 +6,7 @@
 package cx2x.xcodeml.transformation;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Transformer interface
@@ -24,19 +25,11 @@ public interface Transformer {
   void addTransformation(Transformation t);
 
   /**
-   * Add a transformation group to the transformer.
-   * @param tg        The transformation group to be added.
-   * @param position  The insert position of the transformation group. If the
-   *                  position is out of bound, the transformation group is
-   *                  added at the end of the list.
-   */
-  void addTransformationGroup(TransformationGroup tg, int position);
-
-  /**
    * Get all transformation groups stored in this transformer.
    * @return A list of all transformation groups.
    */
-  List<TransformationGroup> getGroups();
+  //List<TransformationGroup> getGroups();
+  Map<Class, TransformationGroup> getGroups();
 
 
 

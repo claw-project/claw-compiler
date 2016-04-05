@@ -30,7 +30,7 @@ import java.util.*;
  * @author clementval
  */
 
-public class LoopExtraction extends Transformation<LoopExtraction> {
+public class LoopExtraction extends Transformation {
 
   private Map<String, ClawMapping> _fctMappingMap = null;
   private Map<String, ClawMapping> _argMappingMap = null;
@@ -105,11 +105,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   }
 
   /**
-   *
+   * Check whether the transformation can be applied.
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.
    * @return True if the transformation analysis succeeded. False otherwise.
    */
+  @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     XexprStatement _exprStmt =
         XelementHelper.findNextExprStatement(_claw.getPragma());
@@ -164,15 +165,16 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
    *     function body.
    *  4) Optional: Add a LoopFusion transformation to the transformaions' queue.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
-   * @param other       Only for dependent transformation. The other
-   *                    transformation part of the transformation.
+   * @param xcodeml        The XcodeML on which the transformations are applied.
+   * @param transformer    The transformer used to applied the transformations.
+   * @param transformation Only for dependent transformation. The other
+   *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
    * applied.
    */
+  @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopExtraction other) throws Exception
+                        Transformation transformation) throws Exception
   {
 
     /*
@@ -544,10 +546,12 @@ public class LoopExtraction extends Transformation<LoopExtraction> {
   }
 
   /**
-   * @see Transformation#canBeTransformedWith(Object)
+   * @see Transformation#canBeTransformedWith(Transformation)
    * @return Always false as independent transformation are applied one by one.
    */
-  public boolean canBeTransformedWith(LoopExtraction other) {
-    return false; // Always false as independent transformation
+  @Override
+  public boolean canBeTransformedWith(Transformation other) {
+    // independant transformation
+    return false;
   }
 }

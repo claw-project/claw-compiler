@@ -15,9 +15,7 @@ import cx2x.xcodeml.exception.*;
  * @author clementval
  */
 
-public class IndependentTransformationGroup<T extends Transformation<? super T>>
-    extends TransformationGroup<T>
-{
+public class IndependentTransformationGroup extends TransformationGroup {
   /**
    * IndependentTransformationGroup ctor
    * @param name A friendly name to describe the transformation group.
@@ -32,13 +30,13 @@ public class IndependentTransformationGroup<T extends Transformation<? super T>>
   public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
     throws Exception
   {
-    for(T translation : _translations){
+    for(Transformation trans : getTransformations()){
       try {
-        translation.transform(xcodeml, transformer, null);
+        trans.transform(xcodeml, transformer, null);
       } catch (IllegalTransformationException itex) {
         // Catch the exception to add line information and rethrow it
         if(itex.getStartLine() == 0){
-          itex.setStartLine(translation.getStartLine());
+          itex.setStartLine(trans.getStartLine());
         }
         throw itex;
       } catch (Exception ex){

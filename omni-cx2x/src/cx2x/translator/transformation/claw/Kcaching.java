@@ -19,7 +19,7 @@ import cx2x.xcodeml.xelement.Xpragma;
  *
  * @author clementval
  */
-public class Kcaching extends Transformation<Kcaching> {
+public class Kcaching extends Transformation {
   private ClawLanguage _claw;
 
   /**
@@ -33,19 +33,29 @@ public class Kcaching extends Transformation<Kcaching> {
     _claw = directive;
   }
 
+  /**
+   * @see Transformation#analyze(XcodeProgram, Transformer)
+   */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     return false;
   }
 
+  /**
+   * @see Transformation#canBeTransformedWith(Transformation)
+   */
   @Override
-  public boolean canBeTransformedWith(Kcaching other) {
+  public boolean canBeTransformedWith(Transformation other) {
+    // independant transformation
     return false;
   }
 
+  /**
+   * @see Transformation#transform(XcodeProgram, Transformer, Transformation)
+   */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        Kcaching other) throws Exception
+                        Transformation other) throws Exception
   {
 
   }

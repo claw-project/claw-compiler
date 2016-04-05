@@ -92,6 +92,7 @@ public class ClawXcodeMlTranslator {
       // Analyze the raw pragma with the CLAW language parser
       ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma.getValue());
       analyzedPragma.attachPragma(pragma);
+      // TODO code review pass Xpargma directly
 
       switch (analyzedPragma.getDirective()){
         case LOOP_FUSION:
@@ -110,6 +111,7 @@ public class ClawXcodeMlTranslator {
               _transformer);
           break;
         case REMOVE:
+          // TODO code review have a notion of depth to associate pragma of block transformation
           if (_blockDirectives.containsKey(ClawDirective.REMOVE)) {
             addOrAbort(
                 new UtilityRemove(
@@ -188,21 +190,27 @@ public class ClawXcodeMlTranslator {
 
       // Do the transformation here
 
-      if(XmOption.isDebugOutput()){
-        for(TransformationGroup t : _transformer.getGroups()){
-          System.out.println("transform " + t.transformationName () + ": "
-          + t.count());
-        }
-      }
+      /*if(XmOption.isDebugOutput()){
+        for (Map.Entry<Class, TransformationGroup> entry : _transformer.getGroups().entrySet()) {
 
-      for(TransformationGroup t : _transformer.getGroups()){
+        //for(TransformationGroup t : _transformer.getGroups()){
+          //System.out.println("transform " + t.transformationName () + ": "
+          //+ t.count());
+
+          System.out.println("transform " + entry.getValue().transformationName () + ": "
+              + entry.getValue().count());
+        }
+      }*/
+
+      //for(TransformationGroup t : _transformer.getGroups()){
+      for (Map.Entry<Class, TransformationGroup> entry : _transformer.getGroups().entrySet()) {
 
         if(XmOption.isDebugOutput()){
-          System.out.println("Apply transfomation: " + t.transformationName());
+          System.out.println("Apply transfomation: " + entry.getValue().transformationName());
         }
 
         try {
-          t.applyTranslations(_program, _transformer);
+          entry.getValue().applyTranslations(_program, _transformer);
         } catch (IllegalTransformationException itex) {
           _program.addError("IllegalTransformationException: " +
             itex.getMessage(), itex.getStartLine());

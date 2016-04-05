@@ -18,7 +18,7 @@ import cx2x.xcodeml.exception.*;
  * @author clementval
  */
 
-public abstract class Transformation<T> {
+public abstract class Transformation {
   private boolean _transformed = false;
   private int _startLine = 0;
   private final AnalyzedPragma _directive;
@@ -53,7 +53,7 @@ public abstract class Transformation<T> {
    * @return True if the two transformation can be transform together. False
    * otherwise.
    */
-  public abstract boolean canBeTransformedWith(T other);
+  public abstract boolean canBeTransformedWith(Transformation other);
 
   /**
    * Apply the actual transformation.
@@ -65,7 +65,7 @@ public abstract class Transformation<T> {
    * applied.
    */
   public abstract void transform(XcodeProgram xcodeml, Transformer transformer,
-                                 T other) throws Exception;
+                                 Transformation other) throws Exception;
 
 
   /**

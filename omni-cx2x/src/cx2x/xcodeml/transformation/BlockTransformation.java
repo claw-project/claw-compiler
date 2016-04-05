@@ -15,7 +15,7 @@ import cx2x.xcodeml.language.AnalyzedPragma;
  *
  * @author clementval
  */
-public abstract class BlockTransformation<T> extends Transformation<T> {
+public abstract class BlockTransformation extends Transformation {
   private AnalyzedPragma _endDirective = null;
 
   /**

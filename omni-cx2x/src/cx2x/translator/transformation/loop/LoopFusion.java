@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
+import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
@@ -21,12 +22,11 @@ import cx2x.xcodeml.exception.*;
  * @author clementval
  */
 
-public class LoopFusion extends Transformation<LoopFusion> {
+public class LoopFusion extends Transformation {
   // Contains the value of the group option
-  private String _groupLabel = null;
+  private String _groupLabel = Constant.EMPTY_STRING;
   // The loop statement involved in the Transformation
-  private XdoStatement[] _loops = null;
-
+  private XdoStatement[] _loops;
   private ClawLanguage _claw;
 
   /**
@@ -38,6 +38,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
     super(directive);
     _claw = directive;
     _groupLabel = directive.getGroupName();
+    _loops = new XdoStatement[0];
   }
 
   /**
@@ -62,6 +63,7 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
    */
+  @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     // With collapse clause
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
@@ -101,15 +103,22 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * @param xcodeml         The XcodeML on which the transformations are
    *                        applied.
    * @param transformer     The transformer used to applied the transformations.
-   * @param loopFusionUnit  The other loop fusion unit to be merge with this
+   * @param transformation  The other loop fusion unit to be merge with this
    *                        one.
    * @throws IllegalTransformationException if the transformation cannot be
    * applied.
    */
+  @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopFusion loopFusionUnit)
+                        Transformation transformation)
       throws IllegalTransformationException
   {
+    if(!(transformation instanceof LoopFusion)){
+      throw new IllegalTransformationException("Incompatibl transformation",
+          _claw.getPragma().getLineNo());
+    }
+    LoopFusion loopFusionUnit = (LoopFusion)transformation;
+
     // Apply different transformation if the collapse clause is used
     if(_claw != null && _claw.hasCollapseClause()
         && _claw.getCollapseValue() > 0)
@@ -155,10 +164,15 @@ public class LoopFusion extends Transformation<LoopFusion> {
    * unit. To be able to be transformed together, the loop fusion units must
    * share the same parent block, the same iteration range, the same group
    * option and both units must be not transformed.
-   * @param otherLoopUnit The other loop fusion unit to be merge with this one.
+   * @param transformation The other loop fusion unit to be merge with this one.
    * @return True if the two loop fusion unit can be merge together.
    */
-  public boolean canBeTransformedWith(LoopFusion otherLoopUnit){
+  @Override
+  public boolean canBeTransformedWith(Transformation transformation){
+    if(!(transformation instanceof LoopFusion)){
+      return false;
+    }
+    LoopFusion otherLoopUnit = (LoopFusion)transformation;
 
     // No loop is transformed already
     if(this.isTransformed() || otherLoopUnit.isTransformed()){

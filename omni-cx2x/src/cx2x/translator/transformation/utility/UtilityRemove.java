@@ -17,7 +17,7 @@ import cx2x.xcodeml.exception.*;
  *
  * @author clementval
  */
-public class UtilityRemove extends BlockTransformation<UtilityRemove> {
+public class UtilityRemove extends BlockTransformation {
 
   // The loop statement involved in the Transformation
   private XdoStatement _do = null;
@@ -39,6 +39,13 @@ public class UtilityRemove extends BlockTransformation<UtilityRemove> {
     _clawEnd = endDirective;
   }
 
+  /**
+   * Check whether the transformation can be applied or not.
+   * @param xcodeml      The XcodeML on which the transformations are applied.
+   * @param transformer  The transformer used to applied the transformations.
+   * @return True if the transformation can be applied.
+   */
+  @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // if there is no end directive, the following statement must be a if or
@@ -56,9 +63,17 @@ public class UtilityRemove extends BlockTransformation<UtilityRemove> {
     return true;
   }
 
-
+  /**
+   * Delete the corresponding elements.
+   * @param xcodeml        The XcodeML on which the transformations are applied.
+   * @param transformer    The transformer used to applied the transformations.
+   * @param transformation Not used for independant transformation.
+   * @throws IllegalTransformationException If transformation cannot be applied.
+   */
+  @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        UtilityRemove other) throws IllegalTransformationException
+                        Transformation transformation)
+      throws IllegalTransformationException
   {
     if(_clawEnd == null){
       if(_do != null){
@@ -75,7 +90,11 @@ public class UtilityRemove extends BlockTransformation<UtilityRemove> {
     }
   }
 
-  public boolean canBeTransformedWith(UtilityRemove other){
+  /**
+   * @see Transformation#canBeTransformedWith(Transformation)
+   */
+  @Override
+  public boolean canBeTransformedWith(Transformation transformation){
     return true; // Always true as independent transformation
   }
 

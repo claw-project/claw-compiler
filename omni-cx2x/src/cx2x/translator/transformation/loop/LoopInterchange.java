@@ -22,7 +22,7 @@ import java.util.List;
  * @author clementval
  */
 
-public class LoopInterchange extends Transformation<LoopInterchange> {
+public class LoopInterchange extends Transformation {
 
   private List<String> _newOrderOption = null;
 
@@ -57,15 +57,16 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
 
   /**
    * Apply the transformation.
-   * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
-   * @param other       Only for dependent transformation. The other
-   *                    transformation part of the transformation.
+   * @param xcodeml        The XcodeML on which the transformations are applied.
+   * @param transformer    The transformer used to applied the transformations.
+   * @param transformation Only for dependent transformation. The other
+   *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the tranformation cannot be
    * applied.
    */
+  @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopInterchange other)
+                        Transformation transformation)
       throws IllegalTransformationException
   {
 
@@ -191,6 +192,7 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
    * @param transformer  The transformer used to applied the transformations.
    * @return True if the transformation can be performed. False otherwise.
    */
+  @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
     _loopLevel0 = XelementHelper.findNextDoStatement(_claw.getPragma());
@@ -254,11 +256,13 @@ public class LoopInterchange extends Transformation<LoopInterchange> {
   }
 
   /**
-   * @see Transformation#canBeTransformedWith(Object)
+   * @see Transformation#canBeTransformedWith(Transformation)
    * @return Always false as independent transformation are applied one by one.
    */
-  public boolean canBeTransformedWith(LoopInterchange other){
-    return false; // Always false as independent transformation
+  @Override
+  public boolean canBeTransformedWith(Transformation transformation){
+    // independent transformation
+    return false;
   }
 
   /**

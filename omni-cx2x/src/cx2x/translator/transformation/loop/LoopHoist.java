@@ -8,6 +8,7 @@ package cx2x.translator.transformation.loop;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.BlockTransformation;
+import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
@@ -23,7 +24,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class LoopHoist extends BlockTransformation<LoopHoist> {
+public class LoopHoist extends BlockTransformation {
 
   private List<XdoStatement[]> _loops;
   private int _nestedLevel;
@@ -42,6 +43,9 @@ public class LoopHoist extends BlockTransformation<LoopHoist> {
     _loops = new ArrayList<>();
   }
 
+  /**
+   * @see Transformation#analyze(XcodeProgram, Transformer)
+   */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     _nestedLevel = _startClaw.getHoistInductionVars().size();
@@ -61,14 +65,20 @@ public class LoopHoist extends BlockTransformation<LoopHoist> {
     return true;
   }
 
+  /**
+   * @see Transformation#canBeTransformedWith(Transformation)
+   */
   @Override
-  public boolean canBeTransformedWith(LoopHoist other) {
+  public boolean canBeTransformedWith(Transformation transformation) {
     return false;
   }
 
+  /**
+   * @see Transformation#transform(XcodeProgram, Transformer, Transformation)
+   */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        LoopHoist other) throws Exception
+                        Transformation transformation) throws Exception
   {
 
   }

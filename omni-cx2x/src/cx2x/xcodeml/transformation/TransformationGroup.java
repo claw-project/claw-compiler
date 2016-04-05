@@ -7,20 +7,20 @@ package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.exception.*;
-
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A TransformationGroup holds transformation units and can apply. Normally,
- * only derived classes of TransformationGroup should be used as they
- * implement applyTranslations.
+ * A TransformationGroup holds transformation units and can apply. Only derived
+ * classes of TransformationGroup must be used as they implement
+ * applyTranslations.
  *
  * @author clementval
  */
 
-public abstract class TransformationGroup<T extends Transformation> {
-  private String _name = null;
-  protected ArrayList<T> _translations = null;
+public abstract class TransformationGroup {
+  private final String _name;
+  private final List<Transformation> _transformations;
 
   /**
    * TransformationGroup ctor.
@@ -28,7 +28,7 @@ public abstract class TransformationGroup<T extends Transformation> {
    */
   public TransformationGroup(String name){
     _name = name;
-    _translations = new ArrayList<>();
+    _transformations = new ArrayList<>();
   }
 
   /**
@@ -36,15 +36,23 @@ public abstract class TransformationGroup<T extends Transformation> {
    * @return The number of transformation in the group.
    */
   public int count(){
-    return _translations.size();
+    return _transformations.size();
   }
 
   /**
    * Add a new transformation in the group.
    * @param translation The transformation to be added.
    */
-  public void add(T translation){
-    _translations.add(translation);
+  public void add(Transformation translation){
+    _transformations.add(translation);
+  }
+
+  /**
+   * Return the list of all transformations in this group.
+   * @return A list of Transformation object.
+   */
+  protected List<Transformation> getTransformations(){
+    return _transformations;
   }
 
   /**
@@ -58,7 +66,7 @@ public abstract class TransformationGroup<T extends Transformation> {
   /**
    * Apply all transformation stored in this group. Method transform from each
    * transformation is called.
-   * @see Transformation#transform(XcodeProgram, Transformer, Object)
+   * @see Transformation#transform(XcodeProgram, Transformer, Transformation)
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param transformer The transformer used to applied the transformations.
    * @throws IllegalTransformationException if transformation cannot be applied.

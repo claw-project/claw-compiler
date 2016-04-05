@@ -41,7 +41,7 @@ import cx2x.xcodeml.xelement.Xpragma;
  *
  * @author clementval
  */
-public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
+public class OpenAccContinuation extends Transformation {
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -66,8 +66,9 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
   }
 
   @Override
-  public boolean canBeTransformedWith(OpenAccContinuation other) {
-    return false; // Always false as independent transformation
+  public boolean canBeTransformedWith(Transformation other) {
+    // independent transformation
+    return false;
   }
 
   /**
@@ -75,12 +76,13 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
    * @param xcodeml         The XcodeML on which the transformations are
    *                        applied.
    * @param transformer     The transformer used to applied the transformations.
-   * @param other           Not used in this transformation
+   * @param transformation  Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
    * applied.
    */
+  @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        OpenAccContinuation other)
+                        Transformation transformation)
       throws IllegalTransformationException
   {
     String allPragma = getDirective().getPragma().getValue();
@@ -93,11 +95,6 @@ public class OpenAccContinuation extends Transformation<OpenAccContinuation> {
       Xpragma newlyInserted = getDirective().getPragma();
       for (int i = 2; i < pragmas.length; ++i) {
         Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        if(p == null){
-          throw new IllegalTransformationException(
-              "Cannot create new pragma statement"
-          );
-        }
         p.setFile(getDirective().getPragma().getFile());
         p.setLine(getDirective().getPragma().getLineNo() + (i - 1));
         if (i == pragmas.length - 1) {
