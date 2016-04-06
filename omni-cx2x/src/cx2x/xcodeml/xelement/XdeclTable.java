@@ -118,4 +118,13 @@ public class XdeclTable extends XbaseElement {
   public int count(){
     return _table.size();
   }
+
+  /**
+   * Check if a name is already present in the declaration table.
+   * @param name String value of the name to check.
+   * @return True if the name is already in the table. False otherwise.
+   */
+  public boolean contains(String name){
+    return _table.containsKey(name);
+  }
 }

@@ -89,4 +89,13 @@ public class XsymbolTable extends XbaseElement {
     }
     return null;
   }
+
+  /**
+   * Check if an id is already present in the symbols table.
+   * @param id String value of the id to check.
+   * @return True if the id is already in the table. False otherwise.
+   */
+  public boolean contains(String id){
+    return _table.containsKey(id);
+  }
 }
