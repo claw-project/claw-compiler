@@ -20,4 +20,9 @@ public class Constant {
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 
+
+  // OpenACC
+  public static final String OPENACC_PARALLEL = "acc parallel";
+  public static final String OPENACC_END_PARALLEL = "acc end parallel";
+
 }

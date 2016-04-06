@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
+import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.language.AnalyzedPragma;
@@ -188,6 +189,30 @@ public class ArrayTransform extends BlockTransformation {
       // 4. Move assignment statement inside the most inner loop
       doStmts[_ranges.size() - 1].getBody().appendToChildren(_stmt, true);
       _stmt.delete();
+
+
+
+      // TODO move 5.1 & 5.2 in a centralized place as they are common to multiple transformation
+      // 5.1 Generate accelerator directive if option is given
+      if(_clawBegin.hasAccOption()){
+        Xpragma acceleratorPragma = XelementHelper.createEmpty(Xpragma.class,
+            xcodeml);
+        acceleratorPragma.setValue(Constant.OPENACC_PREFIX + " " +
+            _clawBegin.getAccClauses());
+        XelementHelper.insertAfter(_clawBegin.getPragma(), acceleratorPragma);
+      }
+
+      // 5.2 Generate accelerator directive for parallel option
+      if(_clawBegin.hasParallelOption()){
+        Xpragma beginParallel =
+            XelementHelper.createEmpty(Xpragma.class, xcodeml);
+        beginParallel.setValue(Constant.OPENACC_PARALLEL);
+        Xpragma endParallel =
+            XelementHelper.createEmpty(Xpragma.class, xcodeml);
+        endParallel.setValue(Constant.OPENACC_END_PARALLEL);
+        XelementHelper.insertAfter(_clawBegin.getPragma(), beginParallel);
+        XelementHelper.insertAfter(doStmts[0], endParallel);
+      }
 
       this.transformed();
     }
