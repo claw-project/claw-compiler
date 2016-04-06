@@ -30,8 +30,9 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<String> _offsets;
   private List<String> _hoistInductionVars;
   private String _accClauses;
+  private List<String> _inductionNames;
   private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
-  private boolean _acc, _hasCollapse, _hasInterchange;
+  private boolean _acc, _hasCollapse, _hasInterchange, _hasInduction;
   private int _collapseValue;
 
 
@@ -72,6 +73,8 @@ public class ClawLanguage extends AnalyzedPragma {
     _collapseValue = 0;
     _hasInterchange = false;
     _hoistInductionVars = null;
+    _inductionNames = null;
+    _hasInduction = false;
 
     // super class members
     _pragma = null;
@@ -381,6 +384,32 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public ClawDirective getDirective(){
     return _directive;
+  }
+
+  /**
+   * Enable the induction option for the current directive and set the extracted
+   * name value.
+   * @param names List of induction name extracted from the option.
+   */
+  protected void setInductionOption(List<String> names){
+    _hasInduction = true;
+    _inductionNames = names;
+  }
+
+  /**
+   * Check whether the current directive has the induction option enabled.
+   * @return True if the induction option is enabled.
+   */
+  public boolean hasInductionOption(){
+    return _hasInduction;
+  }
+
+  /**
+   * Get the name value extracted from the induction option.
+   * @return Induction name as a String.
+   */
+  public List<String> getInductionNames(){
+    return _inductionNames;
   }
 
 

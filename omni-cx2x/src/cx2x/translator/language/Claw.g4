@@ -83,7 +83,7 @@ directive[ClawLanguage l]
     }
 
   // Array notation transformation directive
-  | ARRAY_TRANS fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
+  | ARRAY_TRANS induction_optional[$l] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
     {  $l.setDirective(ClawDirective.ARRAY_TRANSFORM); }
   | END ARRAY_TRANS
     {
@@ -140,6 +140,15 @@ interchange_optional[ClawLanguage l]:
     {
       $l.setInterchange();
     }
+  | /* empty */
+;
+
+induction_optional[ClawLanguage l]
+  @init{
+    List<String> temp = new ArrayList<>();
+  }
+  :
+    INDUCTION '(' ids_list[temp] ')' { $l.setInductionOption(temp); }
   | /* empty */
 ;
 
@@ -264,6 +273,7 @@ INTERCHANGE  : 'interchange';
 MAP          : 'map';
 PARALLEL     : 'parallel';
 RANGE        : 'range';
+INDUCTION    : 'induction';
 
 
 // Special elements

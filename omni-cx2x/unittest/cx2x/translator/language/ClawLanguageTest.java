@@ -471,30 +471,39 @@ public class ClawLanguageTest {
   public void ArrayTransformTest(){
     // Valid directives
     analyzeValidArrayTransform("claw array-transform", false, null, false,
-        null);
+        null, null);
     analyzeValidArrayTransform("claw array-transform fusion", true, null, false,
-        null);
+        null, null);
     analyzeValidArrayTransform("claw array-transform fusion group(j1)", true,
-        "j1", false, null);
+        "j1", false, null, null);
     analyzeValidArrayTransform("claw array-transform fusion parallel", true,
-        null, true, null);
+        null, true, null, null);
     analyzeValidArrayTransform("claw array-transform fusion parallel acc(loop)",
-        true, null, true, "loop");
+        true, null, true, "loop", null);
     analyzeValidArrayTransform("claw array-transform fusion acc(loop)", true,
-        null, false, "loop");
+        null, false, "loop", null);
     analyzeValidArrayTransform(
         "claw array-transform fusion parallel acc(loop gang vector)", true,
-        null, true, "loop gang vector");
+        null, true, "loop gang vector", null);
     analyzeValidArrayTransform(
         "claw array-transform fusion group(j1) parallel acc(loop gang vector)",
-        true, "j1", true, "loop gang vector");
+        true, "j1", true, "loop gang vector", null);
     analyzeValidArrayTransform(
         "claw array-transform parallel acc(loop gang vector)",
-        false, null, true, "loop gang vector");
+        false, null, true, "loop gang vector", null);
     analyzeValidArrayTransform("claw array-transform parallel", false, null,
-        true, null);
+        true, null, null);
     analyzeValidArrayTransform("claw array-transform acc(loop gang vector)",
-        false, null, false, "loop gang vector");
+        false, null, false, "loop gang vector", null);
+
+    analyzeValidArrayTransform("claw array-transform induction(j1,j3)",
+        false, null, false, null, Arrays.asList("j1","j3"));
+    analyzeValidArrayTransform("claw array-transform induction(j1)",
+        false, null, false, null, Arrays.asList("j1"));
+    analyzeValidArrayTransform("claw array-transform induction(i,j,k)",
+        false, null, false, null, Arrays.asList("i", "j", "k"));
+    analyzeUnvalidClawLanguage("claw array-transform induction()");
+    analyzeUnvalidClawLanguage("claw array-transform induction");
 
     analyzeValidSimpleClaw("claw end array-transform",
         ClawDirective.ARRAY_TRANSFORM, true);
@@ -512,7 +521,7 @@ public class ClawLanguageTest {
    */
   private void analyzeValidArrayTransform(String raw, boolean fusion,
                                           String fusionGroup, boolean parallel,
-                                          String acc)
+                                          String acc, List<String> inducNames)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -536,6 +545,15 @@ public class ClawLanguageTest {
         assertEquals(acc, l.getAccClauses());
       } else {
         assertFalse(l.hasAccOption());
+      }
+      if(inducNames != null){
+        assertTrue(l.hasInductionOption());
+        assertEquals(inducNames.size(), l.getInductionNames().size());
+        for(int i = 0; i < inducNames.size(); ++ i){
+          assertEquals(inducNames.get(i), l.getInductionNames().get(i));
+        }
+      } else {
+        assertFalse(l.hasInductionOption());
       }
     } catch(IllegalDirectiveException idex){
       System.err.print(idex.getMessage());
