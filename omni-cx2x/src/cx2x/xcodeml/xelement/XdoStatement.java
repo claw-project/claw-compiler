@@ -30,8 +30,6 @@ import cx2x.xcodeml.helper.*;
 
 public class XdoStatement extends XenhancedElement {
   private XloopIterationRange _iterationRange = null;
-  private XindexRange _indexRange = null;
-  private Xvar _var = null;
   private Xbody _body = null;
   private String _construct_name = null;
 
@@ -59,8 +57,8 @@ public class XdoStatement extends XenhancedElement {
    * Find the different elements that are included in the iteration range.
    */
   public void findRangeElements(){
-    _var = XelementHelper.findVar(this, false);
-    _indexRange = XelementHelper.findIndexRange(this, false);
+    Xvar _var = XelementHelper.findVar(this, false);
+    XindexRange _indexRange = XelementHelper.findIndexRange(this, false);
 
     if(_var != null && _indexRange != null){
       _iterationRange =
