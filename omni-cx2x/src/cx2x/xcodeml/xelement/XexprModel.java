@@ -5,9 +5,6 @@
 
 package cx2x.xcodeml.xelement;
 
-
-import cx2x.xcodeml.helper.XelementHelper;
-
 /**
  * The XexprModel represents the exprModel (9.4) element in XcodeML
  * intermediate representation.

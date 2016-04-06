@@ -18,9 +18,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.xml.sax.InputSource;
 
-import cx2x.xcodeml.xelement.Xid;
-import cx2x.xcodeml.xelement.Xvar;
-
 
 /**
  * Helper class containing static methods for the unit tests.
@@ -41,7 +38,7 @@ public class XmlHelper {
     }
   }
 
-  public static Element getElementFromString(String xml){
+  private static Element getElementFromString(String xml){
     Document doc = loadXMLFromString(xml);
     if(doc != null){
       return doc.getDocumentElement();

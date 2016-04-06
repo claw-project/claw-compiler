@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.transformation;
 
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -6,11 +6,9 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
-import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.Xpragma;
 
 /**
  * A Kcaching transformation is an independent transformation. The

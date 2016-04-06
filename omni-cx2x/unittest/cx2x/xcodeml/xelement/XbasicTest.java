@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.xelement;
 
-import cx2x.xcodeml.helper.XelementHelper;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
