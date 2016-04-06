@@ -1403,8 +1403,7 @@ public class XelementHelper {
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
       Document doc = docBuilder.newDocument();
       doc.createElement(XelementName.X_CODE_PROGRAM);
-      XcodeProgram program = new XcodeProgram(doc);
-      return program;
+      return new XcodeProgram(doc);
     } catch (ParserConfigurationException ex){
       return null;
     }
