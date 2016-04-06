@@ -37,14 +37,4 @@ public class Xpragma extends XenhancedElement implements Xclonable<Xpragma> {
     return new Xpragma((Element)clone);
   }
 
-  /**
-   * Set pragma data.
-   * @param value New pragma data.
-   */
-  public void setData(String value){
-    if(baseElement != null){
-      baseElement.setTextContent(value);
-    }
-  }
-
 }

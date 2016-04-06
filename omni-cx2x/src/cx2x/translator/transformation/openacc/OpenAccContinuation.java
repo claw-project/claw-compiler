@@ -90,17 +90,17 @@ public class OpenAccContinuation extends Transformation {
     String[] pragmas = allPragma.split(Constant.OPENACC_PREFIX);
 
     if(pragmas.length != 2) {
-      getDirective().getPragma().setData(Constant.OPENACC_PREFIX + " " + pragmas[1] + " " +
-          Constant.CONTINUATION_LINE_SYMBOL);
+      getDirective().getPragma().setValue(Constant.OPENACC_PREFIX + " " +
+          pragmas[1] + " " + Constant.CONTINUATION_LINE_SYMBOL);
       Xpragma newlyInserted = getDirective().getPragma();
       for (int i = 2; i < pragmas.length; ++i) {
         Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
         p.setFile(getDirective().getPragma().getFile());
         p.setLine(getDirective().getPragma().getLineNo() + (i - 1));
         if (i == pragmas.length - 1) {
-          p.setData(Constant.OPENACC_PREFIX + " " + pragmas[i]);
+          p.setValue(Constant.OPENACC_PREFIX + " " + pragmas[i]);
         } else {
-          p.setData(Constant.OPENACC_PREFIX + " " + pragmas[i] + " " +
+          p.setValue(Constant.OPENACC_PREFIX + " " + pragmas[i] + " " +
               Constant.CONTINUATION_LINE_SYMBOL);
         }
         XelementHelper.insertAfter(newlyInserted, p);

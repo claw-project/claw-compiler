@@ -408,11 +408,11 @@ public class LoopExtraction extends Transformation {
     if(_claw.hasParallelOption()){
       Xpragma parallelStart =
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      parallelStart.setData("acc parallel");
+      parallelStart.setValue("acc parallel");
 
       Xpragma parallelEnd =
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      parallelEnd.setData("acc end parallel");
+      parallelEnd.setValue("acc end parallel");
 
       XelementHelper.insertAfter(_claw.getPragma(), parallelStart);
       XelementHelper.insertAfter(extractedLoop, parallelEnd);
@@ -489,7 +489,7 @@ public class LoopExtraction extends Transformation {
   {
     Xpragma accAdditionalOption = XelementHelper.
         createEmpty(Xpragma.class, xcodeml);
-    accAdditionalOption.setData(Constant.OPENACC_PREFIX + " " +
+    accAdditionalOption.setValue(Constant.OPENACC_PREFIX + " " +
         _claw.getAccClauses());
     XelementHelper.insertAfter(insertPoint, accAdditionalOption);
   }

@@ -36,7 +36,7 @@ public class XpragmaTest {
     assertNotNull(pragma);
     Xpragma clone = pragma.cloneObject();
     assertEquals("claw loop-fusion", clone.getValue());
-    clone.setData("claw loop-interchange");
+    clone.setValue("claw loop-interchange");
     assertEquals("claw loop-fusion", pragma.getValue());
     assertEquals("claw loop-interchange", clone.getValue());
     assertEquals(9, pragma.getLineNo());
