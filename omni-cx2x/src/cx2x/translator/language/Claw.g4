@@ -84,8 +84,11 @@ directive[ClawLanguage l]
 
   // Array notation transformation directive
   | ARRAY_TRANS fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
+    {  $l.setDirective(ClawDirective.ARRAY_TRANSFORM); }
+  | END ARRAY_TRANS
     {
       $l.setDirective(ClawDirective.ARRAY_TRANSFORM);
+      $l.setEndPragma(true);
     }
 
   // loop-hoist directive

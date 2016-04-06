@@ -495,6 +495,11 @@ public class ClawLanguageTest {
         true, null);
     analyzeValidArrayTransform("claw array-transform acc(loop gang vector)",
         false, null, false, "loop gang vector");
+
+    analyzeValidSimpleClaw("claw end array-transform",
+        ClawDirective.ARRAY_TRANSFORM, true);
+    analyzeValidSimpleClaw("claw   end   array-transform  ",
+        ClawDirective.ARRAY_TRANSFORM, true);
   }
 
   /**
@@ -556,6 +561,11 @@ public class ClawLanguageTest {
     analyzeUnvalidClawLanguage("claw loop-hoist");
     analyzeUnvalidClawLanguage("claw loop-hoist()");
     analyzeUnvalidClawLanguage("claw loop-hoist(i,j) interchange()");
+
+    analyzeValidSimpleClaw("claw end loop-hoist",
+        ClawDirective.LOOP_HOIST, true);
+    analyzeValidSimpleClaw("claw   end   loop-hoist  ",
+        ClawDirective.LOOP_HOIST, true);
   }
 
   /**
