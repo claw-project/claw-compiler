@@ -72,7 +72,7 @@ directive[ClawLanguage l]
   | END REMOVE EOF
     {
       $l.setDirective(ClawDirective.REMOVE);
-      $l.setEndPragma(true);
+      $l.setEndPragma();
     }
 
   // Kcache directive
@@ -88,7 +88,7 @@ directive[ClawLanguage l]
   | END ARRAY_TRANS
     {
       $l.setDirective(ClawDirective.ARRAY_TRANSFORM);
-      $l.setEndPragma(true);
+      $l.setEndPragma();
     }
 
   // loop-hoist directive
@@ -100,7 +100,7 @@ directive[ClawLanguage l]
   | END LHOIST EOF
     {
       $l.setDirective(ClawDirective.LOOP_HOIST);
-      $l.setEndPragma(true);
+      $l.setEndPragma();
     }
 ;
 

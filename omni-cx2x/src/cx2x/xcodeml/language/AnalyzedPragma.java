@@ -59,10 +59,9 @@ public class AnalyzedPragma {
 
   /**
    * Set valu to the endPragma flag.
-   * @param value Value to set to the flag.
    */
-  public void setEndPragma(boolean value){
-    _isEndPragma = value;
+  public void setEndPragma(){
+    _isEndPragma = true;
   }
 
 }
