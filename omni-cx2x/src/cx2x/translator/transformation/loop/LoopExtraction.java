@@ -501,7 +501,7 @@ public class LoopExtraction extends Transformation {
    * @return The created do statement.
    */
   private XdoStatement wrapCallWithLoop(XcodeProgram xcodeml,
-    XloopIterationRange iterationRange) throws Exception
+    XloopIterationRange iterationRange)
   {
     // Create a new empty loop
 

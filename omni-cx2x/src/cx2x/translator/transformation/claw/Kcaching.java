@@ -25,10 +25,8 @@ public class Kcaching extends Transformation {
   /**
    * Constructs a new Kcachine triggered from a specific pragma.
    * @param directive  The directive that triggered the k caching transformation.
-   * @throws IllegalDirectiveException if something is wrong in the directive's
-   * options
    */
-  public Kcaching(ClawLanguage directive) throws IllegalDirectiveException {
+  public Kcaching(ClawLanguage directive) {
     super(directive);
     _claw = directive;
   }
