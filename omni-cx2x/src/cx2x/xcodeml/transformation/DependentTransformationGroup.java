@@ -51,8 +51,6 @@ public class DependentTransformationGroup extends TransformationGroup {
               itex.setStartLine(base.getStartLine());
             }
             throw itex;
-          } catch(Exception ex){
-            throw ex;
           }
         }
       }

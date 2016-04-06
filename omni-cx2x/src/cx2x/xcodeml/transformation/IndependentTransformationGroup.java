@@ -39,8 +39,6 @@ public class IndependentTransformationGroup extends TransformationGroup {
           itex.setStartLine(trans.getStartLine());
         }
         throw itex;
-      } catch (Exception ex){
-        throw ex;
       }
     }
   }
