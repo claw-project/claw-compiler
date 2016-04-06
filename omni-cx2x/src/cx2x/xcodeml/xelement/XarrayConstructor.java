@@ -38,4 +38,13 @@ public class XarrayConstructor extends XbaseElement {
       XelementName.ATTR_TYPE);
   }
 
+
+  /**
+   * Get the value of the type attribute.
+   * @return Value of the type attribute if defined. Null otherwise.
+   */
+  public String getType(){
+    return _type;
+  }
+
 }
