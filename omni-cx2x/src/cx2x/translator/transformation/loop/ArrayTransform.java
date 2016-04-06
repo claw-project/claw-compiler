@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class ArrayTransform extends BlockTransformation {
 
-  private ClawLanguage _claw;
+  private final ClawLanguage _claw;
   private XassignStatement _stmt;
   private List<XindexRange> _ranges;
 

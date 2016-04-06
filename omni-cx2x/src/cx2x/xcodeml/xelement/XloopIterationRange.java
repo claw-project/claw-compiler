@@ -13,8 +13,8 @@ package cx2x.xcodeml.xelement;
  */
 
 public class XloopIterationRange {
-  private XindexRange _indexRange;
-  private Xvar _inductionVariable;
+  private final XindexRange _indexRange;
+  private final Xvar _inductionVariable;
 
   public XloopIterationRange(Xvar inductionVar, XindexRange range){
     _inductionVariable = inductionVar;

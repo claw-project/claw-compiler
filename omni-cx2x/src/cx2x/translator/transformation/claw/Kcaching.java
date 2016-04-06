@@ -20,7 +20,7 @@ import cx2x.xcodeml.xelement.Xpragma;
  * @author clementval
  */
 public class Kcaching extends Transformation {
-  private ClawLanguage _claw;
+  private final ClawLanguage _claw;
 
   /**
    * Constructs a new Kcachine triggered from a specific pragma.

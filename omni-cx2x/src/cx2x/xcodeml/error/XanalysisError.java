@@ -13,8 +13,8 @@ package cx2x.xcodeml.error;
  */
 
 public class XanalysisError {
-  private String _errorMsg;
-  private int _errorLineNumber = 0;
+  private final String _errorMsg;
+  private final int _errorLineNumber;
 
   /**
    * Default ctor.

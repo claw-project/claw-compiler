@@ -23,7 +23,7 @@ public class ClawTransformer implements Transformer {
   private int _transformationCounter = 0;
 
   // Hold all tranformation groups
-  private Map<Class, TransformationGroup> _tGroups;
+  private final Map<Class, TransformationGroup> _tGroups;
 
 
   /**

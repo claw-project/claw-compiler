@@ -23,7 +23,7 @@ public class UtilityRemove extends BlockTransformation {
   private XdoStatement _do = null;
   private XifStatement _if = null;
 
-  private ClawLanguage _clawStart, _clawEnd;
+  private final ClawLanguage _clawStart, _clawEnd;
 
   /**
    * Constructs a new UtilityRemove triggered from a specific pragma.

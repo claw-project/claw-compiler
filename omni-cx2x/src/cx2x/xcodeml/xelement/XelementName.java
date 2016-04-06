@@ -157,7 +157,7 @@ public class XelementName {
   public static final String USER_UNARY_EXPR = "userUnaryExpr";
 
 
-  private static Map<Class, String> _classToElementNameMapping;
+  private static final Map<Class, String> _classToElementNameMapping;
 
   static {
     Map<Class, String> tempMap = new Hashtable<>();

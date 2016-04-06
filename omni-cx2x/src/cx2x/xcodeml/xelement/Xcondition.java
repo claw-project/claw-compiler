@@ -21,7 +21,7 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class Xcondition extends XbaseElement {
-  private XexprModel _exprModel;
+  private final XexprModel _exprModel;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read

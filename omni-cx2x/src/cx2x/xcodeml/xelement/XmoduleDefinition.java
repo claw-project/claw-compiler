@@ -28,8 +28,8 @@ import org.w3c.dom.Element;
 public class XmoduleDefinition extends XenhancedElement {
 
   private String _name;
-  private XsymbolTable _symbols;
-  private XdeclTable _declarations;
+  private final XsymbolTable _symbols;
+  private final XdeclTable _declarations;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read

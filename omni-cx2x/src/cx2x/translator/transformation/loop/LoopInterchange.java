@@ -42,7 +42,7 @@ public class LoopInterchange extends Transformation {
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
 
-  private ClawLanguage _claw;
+  private final ClawLanguage _claw;
 
   /**
    * Constructs a new LoopInterchange triggered from a specific pragma.

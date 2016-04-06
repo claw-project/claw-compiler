@@ -16,7 +16,7 @@ import org.junit.Test;
  * @author clementval
  */
 public class XtypeTableTest {
-  private static String basicTypeTable =
+  private static final String basicTypeTable =
       "<typeTable>" +
       "<FbasicType type=\"C2307e50\" ref=\"Fcharacter\">" +
       "<len>" +

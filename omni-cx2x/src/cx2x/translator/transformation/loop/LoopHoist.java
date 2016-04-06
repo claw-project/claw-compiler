@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class LoopHoist extends BlockTransformation {
 
-  private List<XdoStatement[]> _loops;
+  private final List<XdoStatement[]> _loops;
+  private final ClawLanguage _startClaw, _endClaw;
   private int _nestedLevel;
-  private ClawLanguage _startClaw, _endClaw;
 
   /**
    * Constructs a new LoopHoist triggered from a specific directive.

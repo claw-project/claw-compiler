@@ -32,13 +32,13 @@ import java.util.*;
 
 public class LoopExtraction extends Transformation {
 
-  private Map<String, ClawMapping> _fctMappingMap = null;
-  private Map<String, ClawMapping> _argMappingMap = null;
+  private final ClawLanguage _claw;
+  private final Map<String, ClawMapping> _fctMappingMap;
+  private final Map<String, ClawMapping> _argMappingMap;
   private XfunctionCall _fctCall = null;
   private XfunctionDefinition _fctDef = null; // Fct holding the fct call
   private XfunctionDefinition _fctDefToExtract = null;
   private XdoStatement _extractedLoop = null;
-  private ClawLanguage _claw;
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
