@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class ArrayTransform extends BlockTransformation {
 
-  private final ClawLanguage _claw;
+  private final ClawLanguage _clawBegin, _clawEnd;
   private XassignStatement _stmt;
   private List<XindexRange> _ranges;
 
@@ -47,39 +47,47 @@ public class ArrayTransform extends BlockTransformation {
    */
   public ArrayTransform(AnalyzedPragma begin, AnalyzedPragma end){
     super(begin, end);
-    _claw = (ClawLanguage) begin;
+    _clawBegin = (ClawLanguage) begin;
+    _clawEnd = (ClawLanguage) end;
   }
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    // pragma must be followed by an assign statement
-    _stmt = XelementHelper.findDirectNextAssignStmt(_claw.getPragma());
-    if(_stmt == null){
-      xcodeml.addError("Directive not follwed by an assign statement",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
-    // Check if we are dealing with an array notation
-    if(!_stmt.getLValueModel().isArrayRef()){
-      xcodeml.addError("Assign stament is not an array notation",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
+    if(_clawEnd != null){ // Block transformation
 
-    _ranges = new ArrayList<>();
-    for(XbaseElement el :
-        _stmt.getLValueModel().getArrayRef().getInnerElements())
-    {
-      if(el instanceof XindexRange){
-        _ranges.add((XindexRange) el);
+
+
+      return true;
+    } else { // single transformation
+      // pragma must be followed by an assign statement
+      _stmt = XelementHelper.findDirectNextAssignStmt(_clawBegin.getPragma());
+      if(_stmt == null){
+        xcodeml.addError("Directive not follwed by an assign statement",
+            _clawBegin.getPragma().getLineNo());
+        return false;
       }
+      // Check if we are dealing with an array notation
+      if(!_stmt.getLValueModel().isArrayRef()){
+        xcodeml.addError("Assign stament is not an array notation",
+            _clawBegin.getPragma().getLineNo());
+        return false;
+      }
+
+      _ranges = new ArrayList<>();
+      for(XbaseElement el :
+          _stmt.getLValueModel().getArrayRef().getInnerElements())
+      {
+        if(el instanceof XindexRange){
+          _ranges.add((XindexRange) el);
+        }
+      }
+      if(_ranges.size() == 0){
+        xcodeml.addError("Assign stament is not an array notation",
+            _clawBegin.getPragma().getLineNo());
+        return false;
+      }
+      return true;
     }
-    if(_ranges.size() == 0){
-      xcodeml.addError("Assign stament is not an array notation",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -103,72 +111,85 @@ public class ArrayTransform extends BlockTransformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
-    // 1. Find the function/module declaration
-    // TODO hanlde module/program as well
-    XfunctionDefinition fctDef =
-        XelementHelper.findParentFctDef(_claw.getPragma());
+    if(_clawEnd != null) { // Block transformation
 
-    String[] inductionVars = new String[_ranges.size()];
-    XdoStatement[] doStmts = new XdoStatement[_ranges.size()];
+    } else {  // Single transformation
 
-    // 2. Create do statements with induction variables
-    for(int i = 0; i < _ranges.size(); ++i){
-      // 2.1 Create induction variables
-      inductionVars[i] = "claw_induction_" +
-          transformer.getNextTransformationCounter();
 
-      // 2.2 inject a new entry in the symbol table
-      Xid inductionVarId = Xid.create(XelementName.TYPE_F_INT,
-          XelementName.SCLASS_F_LOCAL, inductionVars[i], xcodeml);
-      fctDef.getSymbolTable().add(inductionVarId, false);
+      // 1. Find the function/module declaration
+      // TODO hanlde module/program as well
+      XfunctionDefinition fctDef =
+          XelementHelper.findParentFctDef(_clawBegin.getPragma());
 
-      // 2.3 inject a new entry in the declaration table
-      XvarDecl inductionVarDecl = XvarDecl.create(XelementName.TYPE_F_INT,
-          inductionVars[i], xcodeml);
-      fctDef.getDeclarationTable().add(inductionVarDecl);
+      String[] inductionVars = new String[_ranges.size()];
+      XdoStatement[] doStmts = new XdoStatement[_ranges.size()];
 
-      // 2.4 create do statements
-      Xvar inductionVar = Xvar.create(XelementName.TYPE_F_INT, inductionVars[i],
-          Xscope.LOCAL, xcodeml);
-      XindexRange range = _ranges.get(i).cloneObject();
-      doStmts[i] = XdoStatement.create(inductionVar, range, false, xcodeml);
+      // 2. Create do statements with induction variables
+      for (int i = 0; i < _ranges.size(); ++i) {
+        // 2.1 Create induction variables
+        if(_clawBegin.hasInductionOption()){ // Use user names
+          inductionVars[i] = _clawBegin.getInductionNames().get(i);
+        } else { // genarate new names
+          inductionVars[i] = "claw_induction_" +
+              transformer.getNextTransformationCounter();
+        }
 
-      if(i == 0){ // most outter loop goes after the pragma
-        XelementHelper.insertAfter(_claw.getPragma(), doStmts[i]);
-      } else { // others loop go in the previous one
-        doStmts[i-1].getBody().appendToChildren(doStmts[i], false);
-      }
-    }
+        // 2.2 inject a new entry in the symbol table
+        if(!fctDef.getSymbolTable().contains(inductionVars[i])){
+          Xid inductionVarId = Xid.create(XelementName.TYPE_F_INT,
+              XelementName.SCLASS_F_LOCAL, inductionVars[i], xcodeml);
+          fctDef.getSymbolTable().add(inductionVarId, false);
+        }
 
-    // 3. Adapat array reference with induction variables
-    List<XarrayRef> allArrayRef = XelementHelper.getAllArrayReferences(_stmt);
-    for(XarrayRef arrayRef : allArrayRef) {
+        // 2.3 inject a new entry in the declaration table
+        if(!fctDef.getDeclarationTable().contains(inductionVars[i])){
+          XvarDecl inductionVarDecl = XvarDecl.create(XelementName.TYPE_F_INT,
+              inductionVars[i], xcodeml);
+          fctDef.getDeclarationTable().add(inductionVarDecl);
+        }
 
-      // TODO handle more complicated cases
-      String id = arrayRef.getVarRef().getVar().getValue();
+        // 2.4 create do statements
+        Xvar inductionVar = Xvar.create(XelementName.TYPE_F_INT, inductionVars[i],
+            Xscope.LOCAL, xcodeml);
+        XindexRange range = _ranges.get(i).cloneObject();
+        doStmts[i] = XdoStatement.create(inductionVar, range, false, xcodeml);
 
-      for(int i = 0; i < arrayRef.getInnerElements().size(); ++i){
-        XbaseElement el = arrayRef.getInnerElements().get(i);
-        if(el instanceof XindexRange){
-          String induction = doStmts[i].getInductionVariable();
-
-          Xvar iterVar = Xvar.create(XelementName.TYPE_F_INT, induction,
-              Xscope.LOCAL, xcodeml);
-          XarrayIndex arrayIdx =
-              XarrayIndex.create(new XexprModel(iterVar), xcodeml);
-
-          XelementHelper.insertAfter(el, arrayIdx);
-          el.delete();
+        if (i == 0) { // most outter loop goes after the pragma
+          XelementHelper.insertAfter(_clawBegin.getPragma(), doStmts[i]);
+        } else { // others loop go in the previous one
+          doStmts[i - 1].getBody().appendToChildren(doStmts[i], false);
         }
       }
+
+      // 3. Adapat array reference with induction variables
+      List<XarrayRef> allArrayRef = XelementHelper.getAllArrayReferences(_stmt);
+      for (XarrayRef arrayRef : allArrayRef) {
+
+        // TODO handle more complicated cases
+        String id = arrayRef.getVarRef().getVar().getValue();
+
+        for (int i = 0; i < arrayRef.getInnerElements().size(); ++i) {
+          XbaseElement el = arrayRef.getInnerElements().get(i);
+          if (el instanceof XindexRange) {
+            String induction = doStmts[i].getInductionVariable();
+
+            Xvar iterVar = Xvar.create(XelementName.TYPE_F_INT, induction,
+                Xscope.LOCAL, xcodeml);
+            XarrayIndex arrayIdx =
+                XarrayIndex.create(new XexprModel(iterVar), xcodeml);
+
+            XelementHelper.insertAfter(el, arrayIdx);
+            el.delete();
+          }
+        }
+      }
+
+
+      // 4. Move assignment statement inside the most inner loop
+      doStmts[_ranges.size() - 1].getBody().appendToChildren(_stmt, true);
+      _stmt.delete();
+
+      this.transformed();
     }
-    
-
-
-    // 4. Move assignment statement inside the most inner loop
-    doStmts[_ranges.size()-1].getBody().appendToChildren(_stmt, true);
-    _stmt.delete();
-
-    this.transformed();
   }
 }
