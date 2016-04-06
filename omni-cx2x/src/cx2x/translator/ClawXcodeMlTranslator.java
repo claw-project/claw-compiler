@@ -7,12 +7,8 @@ package cx2x.translator;
 
 // Cx2x import
 import cx2x.translator.common.Constant;
-import cx2x.translator.language.ClawDirective;
 import cx2x.translator.language.ClawLanguage;
-import cx2x.translator.transformation.loop.ArrayTransform;
-import cx2x.translator.transformation.loop.LoopExtraction;
-import cx2x.translator.transformation.loop.LoopFusion;
-import cx2x.translator.transformation.loop.LoopInterchange;
+import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.error.*;
@@ -42,6 +38,7 @@ import java.util.Map;
 
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
+  private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
@@ -62,6 +59,7 @@ public class ClawXcodeMlTranslator {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _transformer = new ClawTransformer();
+    _blockDirectives = new Hashtable<>();
   }
 
   /**
@@ -74,98 +72,121 @@ public class ClawXcodeMlTranslator {
       abort();
     }
 
-    // TODO make it generic in the loop
-    Map<ClawDirective, ClawLanguage> _blockDirectives = new Hashtable<>();
-
-
+    // Check all pragma found in the program
     for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
 
+      // pragma does not start with the CLAW prefix
       if(!ClawLanguage.startsWithClaw(pragma)){
-        if(pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX))
-        {
-          OpenAccContinuation t = new OpenAccContinuation(new AnalyzedPragma(pragma));
-          addOrAbort(t, _program, _transformer);
+        // Handle special transformation of OpenACC line continuation
+        if(pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX)){
+          OpenAccContinuation t =
+              new OpenAccContinuation(new AnalyzedPragma(pragma));
+          addOrAbort(t);
         }
-        continue; // Not CLAW pragma, we do nothing
+
+        // Not CLAW pragma, we do nothing
+        continue;
       }
 
       // Analyze the raw pragma with the CLAW language parser
       ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma);
+
+      // Create transformation object based on the directive
       switch (analyzedPragma.getDirective()){
         case LOOP_FUSION:
-          addOrAbort(new LoopFusion(analyzedPragma), _program, _transformer);
+          addOrAbort(new LoopFusion(analyzedPragma));
           break;
         case LOOP_INTERCHANGE:
-          addOrAbort(new LoopInterchange(analyzedPragma), _program,
-              _transformer);
+          addOrAbort(new LoopInterchange(analyzedPragma));
           break;
         case LOOP_EXTRACT:
-          addOrAbort(new LoopExtraction(analyzedPragma), _program,
-              _transformer);
+          addOrAbort(new LoopExtraction(analyzedPragma));
+          break;
+        case LOOP_HOIST:
+          HandleBlockDirective(analyzedPragma);
           break;
         case ARRAY_TRANSFORM:
-          addOrAbort(new ArrayTransform(analyzedPragma), _program,
-              _transformer);
+          HandleBlockDirective(analyzedPragma);
           break;
         case REMOVE:
-          // TODO code review have a notion of depth to associate pragma of block transformation
-          if (_blockDirectives.containsKey(ClawDirective.REMOVE)) {
-            addOrAbort(
-                new UtilityRemove(
-                    _blockDirectives.get(ClawDirective.REMOVE), null
-                ), _program, _transformer
-            );
-          }
-          _blockDirectives.remove(ClawDirective.REMOVE);
-          _blockDirectives.put(ClawDirective.REMOVE, analyzedPragma);
-          break;
-        case END_REMOVE:
-          if (!_blockDirectives.containsKey(ClawDirective.REMOVE)) {
-            _program.addError("Invalid Claw directive (end with no start)",
-                pragma.getLineNo());
-            abort();
-          } else {
-
-            addOrAbort(
-                new UtilityRemove(
-                    _blockDirectives.get(ClawDirective.REMOVE), analyzedPragma
-                ),
-                _program, _transformer
-            );
-            _blockDirectives.remove(ClawDirective.REMOVE);
-          }
+          HandleBlockDirective(analyzedPragma);
           break;
         default:
-          // TODO add error
+          _program.addError("Unrecognized CLAW directive", pragma.getLineNo());
           abort();
       }
-
-    }
-    if(_blockDirectives.containsKey(ClawDirective.REMOVE)){
-      addOrAbort(
-          new UtilityRemove(
-              _blockDirectives.get(ClawDirective.REMOVE), null
-          ), _program, _transformer
-      );
     }
 
+    // Clean up block transformation map
+    for(Map.Entry<ClawDirectiveKey, ClawLanguage> entry :
+        _blockDirectives.entrySet())
+    {
+      createBlockDirectiveTransformation(entry.getValue(), null);
+    }
 
     // Analysis done, the transformation can be performed.
     _canTransform = true;
+  }
+
+
+  /**
+   * Associate correctly the start and end directive to form blocks.
+   * @param analyzedPragma Analyzed pragma object to be handle.
+   */
+  private void HandleBlockDirective(ClawLanguage analyzedPragma){
+    int depth =
+        XelementHelper.getDepth(analyzedPragma.getPragma().getBaseElement());
+    ClawDirectiveKey crtRemoveKey =
+        new ClawDirectiveKey(analyzedPragma.getDirective(), depth);
+    if(analyzedPragma.isEndPragma()){ // start block directive
+      if (!_blockDirectives.containsKey(crtRemoveKey)) {
+        _program.addError("Invalid Claw directive (end with no start)",
+            analyzedPragma.getPragma().getLineNo());
+        abort();
+      } else {
+        createBlockDirectiveTransformation(_blockDirectives.get(crtRemoveKey),
+            analyzedPragma);
+        _blockDirectives.remove(crtRemoveKey);
+      }
+    } else { // end block directive
+      if (_blockDirectives.containsKey(crtRemoveKey)) {
+        createBlockDirectiveTransformation(_blockDirectives.get(crtRemoveKey),
+            null);
+      }
+      _blockDirectives.remove(crtRemoveKey);
+      _blockDirectives.put(crtRemoveKey, analyzedPragma);
+    }
+  }
+
+  /**
+   * Create a new block transformation object according to its start directive.
+   * @param begin Begin directive which starts the block.
+   * @param end   End directive which ends the block.
+   */
+  private void createBlockDirectiveTransformation(ClawLanguage begin,
+                                                  ClawLanguage end)
+  {
+    switch (begin.getDirective()){
+      case REMOVE:
+        addOrAbort(new UtilityRemove(begin, end));
+        break;
+      case ARRAY_TRANSFORM:
+        addOrAbort(new ArrayTransform(begin, end));
+        break;
+      case LOOP_HOIST:
+        addOrAbort(new LoopHoist(begin, end));
+    }
   }
 
   /**
    * Add a transformation in the pipeline if the analysis is succeded.
    * Otherwise, abort the translation.
    * @param t           The transformation to be analyzed and added.
-   * @param xcodeml     The XcodeML object
-   * @param translator  The current translator
    */
-  private void addOrAbort(Transformation t, XcodeProgram xcodeml,
-                          Transformer translator)
+  private void addOrAbort(Transformation t)
   {
-    if(t.analyze(xcodeml, translator)){
-      translator.addTransformation(t);
+    if(t.analyze(_program, _transformer)){
+      _transformer.addTransformation(t);
     } else {
       abort();
     }
@@ -185,25 +206,12 @@ public class ClawXcodeMlTranslator {
         return;
       }
 
-      // Do the transformation here
-
-      /*if(XmOption.isDebugOutput()){
-        for (Map.Entry<Class, TransformationGroup> entry : _transformer.getGroups().entrySet()) {
-
-        //for(TransformationGroup t : _transformer.getGroups()){
-          //System.out.println("transform " + t.transformationName () + ": "
-          //+ t.count());
-
-          System.out.println("transform " + entry.getValue().transformationName () + ": "
-              + entry.getValue().count());
-        }
-      }*/
-
-      //for(TransformationGroup t : _transformer.getGroups()){
-      for (Map.Entry<Class, TransformationGroup> entry : _transformer.getGroups().entrySet()) {
-
+      for (Map.Entry<Class, TransformationGroup> entry :
+          _transformer.getGroups().entrySet())
+      {
         if(XmOption.isDebugOutput()){
-          System.out.println("Apply transfomation: " + entry.getValue().transformationName());
+          System.out.println("Apply transfomation: " +
+              entry.getValue().transformationName());
         }
 
         try {

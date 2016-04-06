@@ -15,11 +15,14 @@ import cx2x.xcodeml.xelement.Xpragma;
  */
 public class AnalyzedPragma {
   protected Xpragma _pragma;
+  private boolean _isEndPragma;
 
   /**
    * Default ctor.
    */
-  public AnalyzedPragma(){}
+  public AnalyzedPragma(){
+    _isEndPragma = false;
+  }
 
   /**
    * Contructs an AnalyzedPragma object with a Xpragma object attached.
@@ -27,6 +30,7 @@ public class AnalyzedPragma {
    */
   public AnalyzedPragma(Xpragma rawPragma){
     _pragma = rawPragma;
+    _isEndPragma = false;
   }
 
   /**
@@ -43,6 +47,22 @@ public class AnalyzedPragma {
    */
   public void setPragma(Xpragma rawPragma){
     _pragma = rawPragma;
+  }
+
+  /**
+   * Check whether the pragma is an end block pragma.
+   * @return True if the pragma ends a block. False otherwise.
+   */
+  public boolean isEndPragma(){
+    return _isEndPragma;
+  }
+
+  /**
+   * Set valu to the endPragma flag.
+   * @param value Value to set to the flag.
+   */
+  public void setEndPragma(boolean value){
+    _isEndPragma = value;
   }
 
 }

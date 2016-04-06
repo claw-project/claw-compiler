@@ -146,9 +146,9 @@ public class ClawLanguageTest {
   @Test
   public void RemoveTest(){
     // Valid directives
-    analyzeValidSimpleClaw("claw remove", ClawDirective.REMOVE);
-    analyzeValidSimpleClaw("claw end remove", ClawDirective.END_REMOVE);
-    analyzeValidSimpleClaw("claw   end   remove  ", ClawDirective.END_REMOVE);
+    analyzeValidSimpleClaw("claw remove", ClawDirective.REMOVE, false);
+    analyzeValidSimpleClaw("claw end remove", ClawDirective.REMOVE, true);
+    analyzeValidSimpleClaw("claw   end   remove  ", ClawDirective.REMOVE, true);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw");
@@ -161,12 +161,19 @@ public class ClawLanguageTest {
    * @param raw       Raw string valud of the CLAW directive to be analyzed.
    * @param directive Directive to be match.
    */
-  private void analyzeValidSimpleClaw(String raw, ClawDirective directive) {
+  private void analyzeValidSimpleClaw(String raw, ClawDirective directive,
+                                      boolean isEnd)
+  {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
       ClawLanguage l = ClawLanguage.analyze(p);
       assertEquals(directive, l.getDirective());
+      if(isEnd){
+        assertTrue(l.isEndPragma());
+      } else {
+        assertFalse(l.isEndPragma());
+      }
     } catch(IllegalDirectiveException idex){
       fail();
     }

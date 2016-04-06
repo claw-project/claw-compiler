@@ -7,6 +7,8 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.language.AnalyzedPragma;
+import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
@@ -29,7 +31,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ArrayTransform extends Transformation {
+public class ArrayTransform extends BlockTransformation {
 
   private ClawLanguage _claw;
   private XassignStatement _stmt;
@@ -38,12 +40,14 @@ public class ArrayTransform extends Transformation {
 
   /**
    * Constructs a new ArrayTransform triggered from a specific directive.
-   * @param directive The directive that triggered the array transform
-   *                  transformation.
+   * @param begin The directive that triggered the array transform
+   *              transformation.
+   * @param end   The directive that close the block transformation.
+   *              Can be null.
    */
-  public ArrayTransform(ClawLanguage directive) {
-    super(directive);
-    _claw = directive;
+  public ArrayTransform(AnalyzedPragma begin, AnalyzedPragma end){
+    super(begin, end);
+    _claw = (ClawLanguage) begin;
   }
 
   @Override

@@ -147,6 +147,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/misc/Utility.java
 
 # translator package
+  cx2x/translator/ClawDirectiveKey.java
   cx2x/translator/ClawXcodeMlTranslator.java
 
 # translator.transformer package
