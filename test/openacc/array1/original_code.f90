@@ -14,7 +14,7 @@ SUBROUTINE claw
     vec1(j) = j
   END DO
 
-  !$claw array-transform
+  !$claw array-transform parallel acc(loop)
   vec1(:) = vec1(:) + 10
 
   PRINT*,vec1

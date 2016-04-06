@@ -12,10 +12,13 @@ SUBROUTINE claw ( )
  DO j = 0 , 10 , 1
   vec1 ( j ) = j
  END DO
-!$claw array-transform
+!$claw array-transform parallel acc(loop)
+!$acc parallel
+!$acc loop
  DO claw_induction_0 = 0 , 10
   vec1 ( claw_induction_0 ) = vec1 ( claw_induction_0 ) + 10
  END DO
+!$acc end parallel
  PRINT * , vec1
 END SUBROUTINE claw
 
