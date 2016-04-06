@@ -84,10 +84,10 @@ public class XdeclTable extends XbaseElement {
     XvarDecl oldDecl = _table.get(decl.getName().getValue());
     if(oldDecl == null){
       // TODO error handling
+    } else {
+      XelementHelper.insertAfter(oldDecl, decl);
+      oldDecl.delete();
     }
-
-    XelementHelper.insertAfter(oldDecl, decl);
-    oldDecl.delete();
   }
 
   /**

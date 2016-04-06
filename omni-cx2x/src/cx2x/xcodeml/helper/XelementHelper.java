@@ -1389,8 +1389,8 @@ public class XelementHelper {
             + elementName);
       }
     }
-    throw new IllegalTransformationException("Cannot create new statement: "
-        + elementName);
+    throw new IllegalTransformationException("Undefined statement for classe:" +
+      xElementClass.toString());
   }
 
   /**

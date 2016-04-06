@@ -62,7 +62,7 @@ public class XdoStatement extends XenhancedElement {
     _var = XelementHelper.findVar(this, false);
     _indexRange = XelementHelper.findIndexRange(this, false);
 
-    if(_var != null && _var != null){
+    if(_var != null && _indexRange != null){
       _iterationRange =
         new XloopIterationRange(_var, _indexRange);
     }

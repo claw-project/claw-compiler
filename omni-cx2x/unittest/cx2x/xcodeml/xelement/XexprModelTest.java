@@ -168,6 +168,7 @@ public class XexprModelTest {
     element = new XbaseElement(xml.getDocumentElement());
     assertNotNull(element);
     model = XelementHelper.findExprModel(element, 0);
+    assertNotNull(model);
     assertTrue(model.isArrayRef());
     assertNotNull(model.getArrayRef());
   }
