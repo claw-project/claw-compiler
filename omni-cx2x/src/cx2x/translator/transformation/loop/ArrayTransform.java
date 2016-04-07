@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.language.AnalyzedPragma;
@@ -190,14 +191,13 @@ public class ArrayTransform extends BlockTransformation {
       doStmts[_ranges.size() - 1].getBody().appendToChildren(_stmt, true);
       _stmt.delete();
 
+
       // Generate accelerator pragmas if needed
       AcceleratorHelper.applyAllForAccelerator(_clawBegin, xcodeml, doStmts[0]);
 
-      // 5.3 Generate fusion transformation if needed
-      if(_clawBegin.hasFusionOption()){
-        // TODO move to an helper as for Accelerator helper
-      }
-
+      // Add any additional transformation defined in the directive clauses
+      TransformationHelper.
+          generateAdditionalTransformation(_clawBegin, transformer, doStmts[0]);
 
       this.transformed();
     }
