@@ -10,7 +10,8 @@ import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawMapping;
 import cx2x.translator.language.ClawMappingVar;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -404,22 +405,14 @@ public class LoopExtraction extends Transformation {
         }
       }
     }
-    
+
     // Generate accelerator pragmas if needed
     AcceleratorHelper.applyAllForAccelerator(_claw, xcodeml, extractedLoop);
 
-    // Transformation is done. Add additional transfomation here
-    if(_claw.hasFusionOption()){
-      // TODO move to an helper as for Accelerator helper
-      LoopFusion fusion = new LoopFusion(extractedLoop,
-          _claw.getGroupName(), _claw.getPragma().getLineNo());
-      transformer.addTransformation(fusion);
+    // Add any additional transformation defined in the directive clauses
+    TransformationHelper.
+        generateAdditionalTransformation(_claw, transformer, extractedLoop);
 
-      if(XmOption.isDebugOutput()){
-        System.out.println("Loop fusion added: " + _claw.getGroupName());
-      }
-
-    }
     this.transformed();
   }
 
