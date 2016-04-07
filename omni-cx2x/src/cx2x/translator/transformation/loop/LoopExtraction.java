@@ -409,6 +409,7 @@ public class LoopExtraction extends Transformation {
       Xpragma parallelStart =
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
       parallelStart.setValue("acc parallel");
+      // TODO move to centralized place with Array TRansform
 
       Xpragma parallelEnd =
           XelementHelper.createEmpty(Xpragma.class, xcodeml);
@@ -417,10 +418,10 @@ public class LoopExtraction extends Transformation {
       XelementHelper.insertAfter(_claw.getPragma(), parallelStart);
       XelementHelper.insertAfter(extractedLoop, parallelEnd);
 
-      if(_claw.hasAccOption()){
+      if(_claw.hasAcceleratorOption()){
         insertAccOption(parallelStart, xcodeml);
       }
-    } else if (_claw.hasAccOption()){
+    } else if (_claw.hasAcceleratorOption()){
       insertAccOption(_claw.getPragma(), xcodeml);
     }
 
@@ -490,7 +491,7 @@ public class LoopExtraction extends Transformation {
     Xpragma accAdditionalOption = XelementHelper.
         createEmpty(Xpragma.class, xcodeml);
     accAdditionalOption.setValue(Constant.OPENACC_PREFIX + " " +
-        _claw.getAccClauses());
+        _claw.getAcceleratorClauses());
     XelementHelper.insertAfter(insertPoint, accAdditionalOption);
   }
 

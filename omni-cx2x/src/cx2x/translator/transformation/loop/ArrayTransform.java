@@ -13,6 +13,7 @@ import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import xcodeml.util.XmOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,16 +195,18 @@ public class ArrayTransform extends BlockTransformation {
 
       // TODO move 5.1 & 5.2 in a centralized place as they are common to multiple transformation
       // 5.1 Generate accelerator directive if option is given
-      if(_clawBegin.hasAccOption()){
+      if(_clawBegin.hasAcceleratorOption()){
+        // TODO depends on the target
         Xpragma acceleratorPragma = XelementHelper.createEmpty(Xpragma.class,
             xcodeml);
         acceleratorPragma.setValue(Constant.OPENACC_PREFIX + " " +
-            _clawBegin.getAccClauses());
+            _clawBegin.getAcceleratorClauses());
         XelementHelper.insertAfter(_clawBegin.getPragma(), acceleratorPragma);
       }
 
       // 5.2 Generate accelerator directive for parallel option
       if(_clawBegin.hasParallelOption()){
+        // TODO depends on the target
         Xpragma beginParallel =
             XelementHelper.createEmpty(Xpragma.class, xcodeml);
         beginParallel.setValue(Constant.OPENACC_PARALLEL);
@@ -213,6 +216,12 @@ public class ArrayTransform extends BlockTransformation {
         XelementHelper.insertAfter(_clawBegin.getPragma(), beginParallel);
         XelementHelper.insertAfter(doStmts[0], endParallel);
       }
+
+      // 5.3 Generate fusion transformation if needed
+      if(_clawBegin.hasFusionOption()){
+        // TODO
+      }
+
 
       this.transformed();
     }

@@ -295,9 +295,9 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Enable the acc option for the current directive and set the extracted
    * clauses.
-   * @param clauses Clauses extracted from the acc option.
+   * @param clauses Accelerator clauses extracted from the acc option.
    */
-  protected void setAccClauses(String clauses){
+  protected void setAcceleratorClauses(String clauses){
     _acc = true;
     _accClauses = clauses;
   }
@@ -306,15 +306,15 @@ public class ClawLanguage extends AnalyzedPragma {
    * Check whether the current directive has the acc option enabled.
    * @return True if the acc option is enabled.
    */
-  public boolean hasAccOption(){
+  public boolean hasAcceleratorOption(){
     return _acc;
   }
 
   /**
-   * Get the acc clauses extracted from the acc option.
-   * @return OpenACC clauses as a String.
+   * Get the accelerator clauses extracted from the acc option.
+   * @return Accelerator clauses as a String.
    */
-  public String getAccClauses(){
+  public String getAcceleratorClauses(){
     return _accClauses;
   }
 

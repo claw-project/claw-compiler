@@ -290,8 +290,8 @@ public class ClawLanguageTest {
     assertNotNull(l.getMappings().get(0));
     assertTrue(l.hasFusionOption());
     assertTrue(l.hasGroupOption());
-    assertTrue(l.hasAccOption());
-    assertEquals("loop gang vector", l.getAccClauses());
+    assertTrue(l.hasAcceleratorOption());
+    assertEquals("loop gang vector", l.getAcceleratorClauses());
     assertEquals("j1", l.getGroupName());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
@@ -386,8 +386,8 @@ public class ClawLanguageTest {
     assertTrue(l.hasFusionOption());
     assertTrue(l.hasGroupOption());
     assertEquals("coeth-j1", l.getGroupName());
-    assertTrue(l.hasAccOption());
-    assertEquals("loop gang vector", l.getAccClauses());
+    assertTrue(l.hasAcceleratorOption());
+    assertEquals("loop gang vector", l.getAcceleratorClauses());
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-extract");
@@ -541,10 +541,10 @@ public class ClawLanguageTest {
         assertFalse(l.hasParallelOption());
       }
       if(acc != null){
-        assertTrue(l.hasAccOption());
-        assertEquals(acc, l.getAccClauses());
+        assertTrue(l.hasAcceleratorOption());
+        assertEquals(acc, l.getAcceleratorClauses());
       } else {
-        assertFalse(l.hasAccOption());
+        assertFalse(l.hasAcceleratorOption());
       }
       if(inducNames != null){
         assertTrue(l.hasInductionOption());

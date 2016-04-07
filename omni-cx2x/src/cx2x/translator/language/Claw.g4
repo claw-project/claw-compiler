@@ -131,7 +131,7 @@ acc_optional[ClawLanguage l]
     List<String> tempAcc = new ArrayList<>();
   }
   :
-    ACC '(' identifiers[tempAcc] ')' { $l.setAccClauses(Utility.join(" ", tempAcc)); }
+    ACC '(' identifiers[tempAcc] ')' { $l.setAcceleratorClauses(Utility.join(" ", tempAcc)); }
   | /* empty */
 ;
 
