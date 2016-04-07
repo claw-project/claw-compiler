@@ -9,45 +9,53 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
-import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XdoStatement;
 import xcodeml.util.XmOption;
 
 /**
+ * The class TransformationHelper contains only static method to help the
+ * generation of additional transformation described as clause in main
+ * directive.
+ *
  * @author clementval
  */
 public class TransformationHelper {
 
 
   /**
-   *
-   * @param claw
-   * @param xcodeml
-   * @param transformer
-   * @param stmt
+   * Generate corresponding additional transformation according to optional
+   * clauses given to the directive.
+   * @param claw        ClawLanguage object that tells encapsulates all
+   *                    information about the current directives and its
+   *                    clauses.
+   * @param transformer Transformer object in which new transformation are
+   *                    added.
+   * @param stmt        Statement on which the transformation is attached.
    */
   public static void generateAdditionalTransformation(ClawLanguage claw,
-                                                      XcodeProgram xcodeml,
                                                       Transformer transformer,
                                                       XbaseElement stmt)
   {
-    applyFusionClause(claw, xcodeml, transformer, stmt);
+    applyFusionClause(claw, transformer, stmt);
   }
 
 
   /**
-   *
-   * @param claw
-   * @param xcodeml
-   * @param transformer
-   * @param stmt
+   * Generate loop fusion transformation if the clause is present in the
+   * directive.
+   * @param claw        ClawLanguage object that tells encapsulates all
+   *                    information about the current directives and its
+   *                    clauses.
+   * @param transformer Transformer object in which new transformation are
+   *                    added.
+   * @param stmt        Statement on which the transformation is attached. Must
+   *                    be a FdoStatement for the loop fusion transformation.
    */
   private static void applyFusionClause(ClawLanguage claw,
-                                        XcodeProgram xcodeml,
                                         Transformer transformer,
                                         XbaseElement stmt)
   {
-    if(claw.hasFusionOption()){
+    if(claw.hasFusionOption() && stmt instanceof XdoStatement){
       LoopFusion fusion = new LoopFusion((XdoStatement) stmt,
           claw.getGroupName(), claw.getPragma().getLineNo());
       transformer.addTransformation(fusion);
