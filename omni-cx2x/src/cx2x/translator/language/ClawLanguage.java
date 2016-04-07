@@ -162,7 +162,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the group name and hasGroupOption to true
    * @param groupName The group name defined in the group option.
    */
-  protected void setGroupOption(String groupName){
+  void setGroupOption(String groupName){
     _hasGroup = true;
     _groupName = groupName;
   }
@@ -188,7 +188,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the collapse number and boolean flag.
    * @param n Number of loop to be collapsed.
    */
-  protected void setCollapseClause(String n){
+  void setCollapseClause(String n){
     _hasCollapse = true;
     _collapseValue = Integer.parseInt(n);
   }
@@ -207,7 +207,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the list of interhcnage indexes.
    * @param indexes List of indexes as string.
    */
-  protected void setIndexes(List<String> indexes){
+  void setIndexes(List<String> indexes){
     _hasIndexes = true;
     _indexes = indexes;
   }
@@ -250,7 +250,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the ClawMapping list
    * @param mappings A list of ClawMapping objects.
    */
-  protected void setMappings(List<ClawMapping> mappings){
+  void setMappings(List<ClawMapping> mappings){
     _mappings = mappings;
   }
 
@@ -265,7 +265,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Enable the fusion option for the current directive.
    */
-  protected void setFusionOption(){
+  void setFusionOption(){
     _hasFusion = true;
   }
 
@@ -280,7 +280,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Enable the parallel option for the current directive.
    */
-  protected void setParallelOption(){
+  void setParallelOption(){
     _hasParallel = true;
   }
 
@@ -297,7 +297,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * clauses.
    * @param clauses Accelerator clauses extracted from the acc option.
    */
-  protected void setAcceleratorClauses(String clauses){
+  void setAcceleratorClauses(String clauses){
     _acc = true;
     _accClauses = clauses;
   }
@@ -322,7 +322,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the offsets list extracted from the kcache directive.
    * @param offsets A list of offsets.
    */
-  protected void setOffsets(List<String> offsets){
+  void setOffsets(List<String> offsets){
     _offsets = offsets;
   }
 
@@ -347,7 +347,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Set the interchange clause as used.
    */
-  protected void setInterchange(){
+  void setInterchange(){
     _hasInterchange = true;
   }
 
@@ -355,7 +355,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the list of induction variables used in the loop-hoist directive.
    * @param vars List of induction variable.
    */
-  protected void setHoistInductionVars(List<String> vars){
+  void setHoistInductionVars(List<String> vars){
     _hoistInductionVars = vars;
   }
 
@@ -391,7 +391,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * name value.
    * @param names List of induction name extracted from the option.
    */
-  protected void setInductionOption(List<String> names){
+  void setInductionOption(List<String> names){
     _hasInduction = true;
     _inductionNames = names;
   }
