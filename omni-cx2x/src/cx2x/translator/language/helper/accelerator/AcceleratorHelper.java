@@ -35,9 +35,9 @@ public class AcceleratorHelper {
    *                in which the pragmas will be generated.
    * @param endStmt End statement representing the end of the parallel region.
    */
-  private static void applyParallelClause(ClawLanguage claw,
-                                          XcodeProgram xcodeml,
-                                          XbaseElement endStmt)
+  private static void generateParallelClause(ClawLanguage claw,
+                                             XcodeProgram xcodeml,
+                                             XbaseElement endStmt)
   {
     if(claw.hasParallelOption()){
       // TODO depends on the target
@@ -61,8 +61,8 @@ public class AcceleratorHelper {
    * @param xcodeml Object representation of the current XcodeML representation
    *                in which the pragmas will be generated.
    */
-  private static void applyAcceleratorClause(ClawLanguage claw,
-                                             XcodeProgram xcodeml)
+  private static void generateAcceleratorClause(ClawLanguage claw,
+                                                XcodeProgram xcodeml)
   {
     if(claw.hasAcceleratorOption()){
       try {
@@ -86,12 +86,12 @@ public class AcceleratorHelper {
    * @param endStmt End statement for all pragma generation that need end pragma
    *                statement.
    */
-  public static void applyAllForAccelerator(ClawLanguage claw,
-                                            XcodeProgram xcodeml,
-                                            XbaseElement endStmt)
+  public static void generateAdditionalDirectives(ClawLanguage claw,
+                                                  XcodeProgram xcodeml,
+                                                  XbaseElement endStmt)
   {
-    applyAcceleratorClause(claw, xcodeml);
-    applyParallelClause(claw, xcodeml, endStmt);
+    generateAcceleratorClause(claw, xcodeml);
+    generateParallelClause(claw, xcodeml, endStmt);
   }
 
 

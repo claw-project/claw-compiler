@@ -407,7 +407,8 @@ public class LoopExtraction extends Transformation {
     }
 
     // Generate accelerator pragmas if needed
-    AcceleratorHelper.applyAllForAccelerator(_claw, xcodeml, extractedLoop);
+    AcceleratorHelper.
+        generateAdditionalDirectives(_claw, xcodeml, extractedLoop);
 
     // Add any additional transformation defined in the directive clauses
     TransformationHelper.

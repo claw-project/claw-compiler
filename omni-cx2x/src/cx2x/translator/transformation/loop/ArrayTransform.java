@@ -193,7 +193,8 @@ public class ArrayTransform extends BlockTransformation {
 
 
       // Generate accelerator pragmas if needed
-      AcceleratorHelper.applyAllForAccelerator(_clawBegin, xcodeml, doStmts[0]);
+      AcceleratorHelper.
+          generateAdditionalDirectives(_clawBegin, xcodeml, doStmts[0]);
 
       // Add any additional transformation defined in the directive clauses
       TransformationHelper.
