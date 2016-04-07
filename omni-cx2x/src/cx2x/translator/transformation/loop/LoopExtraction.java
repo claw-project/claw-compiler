@@ -10,6 +10,7 @@ import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawMapping;
 import cx2x.translator.language.ClawMappingVar;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -403,33 +404,13 @@ public class LoopExtraction extends Transformation {
         }
       }
     }
-
-    // Wrap with parallel section if option is set
-    if(_claw.hasParallelOption()){
-      Xpragma parallelStart =
-          XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      parallelStart.setValue("acc parallel");
-      // TODO move to centralized place with Array TRansform
-
-      Xpragma parallelEnd =
-          XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      parallelEnd.setValue("acc end parallel");
-
-      XelementHelper.insertAfter(_claw.getPragma(), parallelStart);
-      XelementHelper.insertAfter(extractedLoop, parallelEnd);
-
-      if(_claw.hasAcceleratorOption()){
-        insertAccOption(parallelStart, xcodeml);
-      }
-    } else if (_claw.hasAcceleratorOption()){
-      insertAccOption(_claw.getPragma(), xcodeml);
-    }
-
-
+    
+    // Generate accelerator pragmas if needed
+    AcceleratorHelper.applyAllForAccelerator(_claw, xcodeml, extractedLoop);
 
     // Transformation is done. Add additional transfomation here
     if(_claw.hasFusionOption()){
-
+      // TODO move to an helper as for Accelerator helper
       LoopFusion fusion = new LoopFusion(extractedLoop,
           _claw.getGroupName(), _claw.getPragma().getLineNo());
       transformer.addTransformation(fusion);
