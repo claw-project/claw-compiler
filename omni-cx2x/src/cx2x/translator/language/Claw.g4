@@ -55,7 +55,7 @@ directive[ClawLanguage l]
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
-  | LINTERCHANGE indexes_option[$l] EOF
+  | LINTERCHANGE indexes_option[$l] parallel_optional[$l] acc_optional[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive

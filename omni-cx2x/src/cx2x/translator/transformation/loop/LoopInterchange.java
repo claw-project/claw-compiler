@@ -6,6 +6,8 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -121,8 +123,12 @@ public class LoopInterchange extends Transformation {
         swapLoops(from, to);
       }
     }
-    this.transformed();
 
+
+    // Generate accelerator pragmas if needed
+    AcceleratorHelper.applyAllForAccelerator(_claw, xcodeml, _loopLevel0);
+
+    this.transformed();
   }
 
   /**

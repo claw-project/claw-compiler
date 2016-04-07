@@ -104,11 +104,22 @@ public class ClawLanguageTest {
   @Test
   public void InterchangeTest(){
     // Valid directives
-    analyzeValidClawLoopInterchange("claw loop-interchange", null);
+    analyzeValidClawLoopInterchange("claw loop-interchange", null, false, null);
     analyzeValidClawLoopInterchange("claw loop-interchange (i,j,k)",
-        Arrays.asList("i", "j", "k"));
+        Arrays.asList("i", "j", "k"), false, null);
     analyzeValidClawLoopInterchange("claw loop-interchange (  i,j,k  ) ",
-        Arrays.asList("i", "j", "k"));
+        Arrays.asList("i", "j", "k"), false, null);
+
+    analyzeValidClawLoopInterchange("claw loop-interchange parallel",
+        null, true, null);
+    analyzeValidClawLoopInterchange("claw loop-interchange parallel acc(loop)",
+        null, true, "loop");
+    analyzeValidClawLoopInterchange("claw loop-interchange acc(loop)", null,
+        false, "loop");
+    analyzeValidClawLoopInterchange("claw loop-interchange (j,k,i) parallel",
+        Arrays.asList("j", "k", "i"), true, null);
+
+
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-interchange ()");
@@ -121,7 +132,9 @@ public class ClawLanguageTest {
    * @param indexes   List of indexes to be found if any.
    */
   private void analyzeValidClawLoopInterchange(String raw,
-                                               List<String> indexes)
+                                               List<String> indexes,
+                                               boolean parallel,
+                                               String acc)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -135,6 +148,21 @@ public class ClawLanguageTest {
         assertFalse(l.hasIndexes());
         assertNull(l.getIndexes());
       }
+
+      if(parallel){
+        assertTrue(l.hasParallelOption());
+      } else {
+        assertFalse(l.hasParallelOption());
+      }
+
+      if(acc != null){
+        assertTrue(l.hasAcceleratorOption());
+        assertEquals(acc, l.getAcceleratorClauses());
+      } else {
+        assertFalse(l.hasAcceleratorOption());
+        assertNull(l.getAcceleratorClauses());
+      }
+
     } catch(IllegalDirectiveException idex){
       fail();
     }
