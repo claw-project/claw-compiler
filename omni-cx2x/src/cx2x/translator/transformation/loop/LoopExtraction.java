@@ -455,21 +455,6 @@ public class LoopExtraction extends Transformation {
   }
 
   /**
-   * Create a new pragma statement and insert it after the insert point
-   * @param insertPoint Statement just before the insertion
-   * @param xcodeml     The XcodeML representation.
-   */
-  private void insertAccOption(Xpragma insertPoint, XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    Xpragma accAdditionalOption = XelementHelper.
-        createEmpty(Xpragma.class, xcodeml);
-    accAdditionalOption.setValue(Constant.OPENACC_PREFIX + " " +
-        _claw.getAcceleratorClauses());
-    XelementHelper.insertAfter(insertPoint, accAdditionalOption);
-  }
-
-  /**
    * Wrap a function call with a do statement.
    * @param xcodeml        The XcodeML representation.
    * @param iterationRange Iteration range to be applied to the do statement.
