@@ -106,7 +106,7 @@ directive[ClawLanguage l]
 
 group_option[ClawLanguage l]:
     GROUP '(' group_name=IDENTIFIER ')'
-    { $l.setGroupOption($group_name.text); }
+    { $l.setGroupClause($group_name.text); }
   | /* empty */
 ;
 
@@ -117,12 +117,12 @@ collapse_optional[ClawLanguage l]:
 ;
 
 fusion_optional[ClawLanguage l]:
-    FUSION group_option[$l] { $l.setFusionOption(); }
+    FUSION group_option[$l] { $l.setFusionClause(); }
   | /* empty */
 ;
 
 parallel_optional[ClawLanguage l]:
-    PARALLEL { $l.setParallelOption(); }
+    PARALLEL { $l.setParallelClause(); }
   | /* empty */
 ;
 
@@ -138,7 +138,7 @@ acc_optional[ClawLanguage l]
 interchange_optional[ClawLanguage l]:
     INTERCHANGE indexes_option[$l]
     {
-      $l.setInterchange();
+      $l.setInterchangeClause();
     }
   | /* empty */
 ;
@@ -148,7 +148,7 @@ induction_optional[ClawLanguage l]
     List<String> temp = new ArrayList<>();
   }
   :
-    INDUCTION '(' ids_list[temp] ')' { $l.setInductionOption(temp); }
+    INDUCTION '(' ids_list[temp] ')' { $l.setInductionClause(temp); }
   | /* empty */
 ;
 

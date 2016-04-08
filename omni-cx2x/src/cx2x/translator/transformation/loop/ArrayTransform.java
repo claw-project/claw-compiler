@@ -129,8 +129,8 @@ public class ArrayTransform extends BlockTransformation {
       // 2. Create do statements with induction variables
       for (int i = 0; i < _ranges.size(); ++i) {
         // 2.1 Create induction variables
-        if(_clawBegin.hasInductionOption()){ // Use user names
-          inductionVars[i] = _clawBegin.getInductionNames().get(i);
+        if(_clawBegin.hasInductionClause()){ // Use user names
+          inductionVars[i] = _clawBegin.getInductionValues().get(i);
         } else { // genarate new names
           inductionVars[i] = "claw_induction_" +
               transformer.getNextTransformationCounter();

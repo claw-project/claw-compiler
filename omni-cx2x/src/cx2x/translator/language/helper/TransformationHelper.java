@@ -36,7 +36,9 @@ public class TransformationHelper {
                                                       Transformer transformer,
                                                       XbaseElement stmt)
   {
+    // Order doesn't matter
     applyFusionClause(claw, transformer, stmt);
+    applyInterchangeClause(claw, transformer, stmt);
   }
 
 
@@ -55,13 +57,39 @@ public class TransformationHelper {
                                         Transformer transformer,
                                         XbaseElement stmt)
   {
-    if(claw.hasFusionOption() && stmt instanceof XdoStatement){
+    if(claw.hasFusionClause() && stmt instanceof XdoStatement){
       LoopFusion fusion = new LoopFusion((XdoStatement) stmt,
-          claw.getGroupName(), claw.getPragma().getLineNo());
+          claw.getGroupValue(), claw.getPragma().getLineNo());
+      // TODO maybe run analysis
       transformer.addTransformation(fusion);
 
       if(XmOption.isDebugOutput()){
-        System.out.println("Loop fusion added: " + claw.getGroupName());
+        System.out.println("Loop fusion added: " + claw.getGroupValue());
+      }
+    }
+  }
+
+  /**
+   * Generate loop interchange transformation if the clause is present in the
+   * directive.
+   * @param claw        ClawLanguage object that tells encapsulates all
+   *                    information about the current directives and its
+   *                    clauses.
+   * @param transformer Transformer object in which new transformation are
+   *                    added.
+   * @param stmt        Statement on which the transformation is attached. Must
+   *                    be a FdoStatement for the loop interchange
+   *                    transformation.
+   */
+  private static void applyInterchangeClause(ClawLanguage claw,
+                                             Transformer transformer,
+                                             XbaseElement stmt)
+  {
+    if(claw.hasInductionClause() && stmt instanceof XdoStatement){
+      // TODO
+
+      if(XmOption.isDebugOutput()){
+        System.out.println("Loop interchange added: " + claw.getIndexes());
       }
     }
   }

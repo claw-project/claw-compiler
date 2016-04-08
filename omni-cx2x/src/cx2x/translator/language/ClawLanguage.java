@@ -5,6 +5,7 @@
 
 package cx2x.translator.language;
 
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.Xpragma;
@@ -21,20 +22,27 @@ import java.util.List;
  * @author clementval
  */
 public class ClawLanguage extends AnalyzedPragma {
-  private static final String PREFIX_CLAW = "claw";
-  private ClawDirective _directive;
-  private ClawRange _range;
-  private String _groupName;
-  private List<String> _indexes;
-  private List<ClawMapping> _mappings;
-  private List<String> _offsets;
-  private List<String> _hoistInductionVars;
-  private String _accClauses;
-  private List<String> _inductionNames;
-  private boolean _valid, _hasGroup, _hasIndexes, _hasFusion, _hasParallel;
-  private boolean _acc, _hasCollapse, _hasInterchange, _hasInduction;
-  private int _collapseValue;
 
+  private static final String PREFIX_CLAW = "claw";
+
+  private AcceleratorDirective _target;
+  private ClawDirective _directive;
+
+  // Clauses values
+  private String _accClausesValue;
+  private int _collapseClauseValue;
+  private String _groupClauseValue;
+  private List<String> _hoistInductionValues;
+  private List<String> _indexesValues;
+  private List<String> _inductionClauseValues;
+  private List<ClawMapping> _mappingValues;
+  private List<String> _offsetValues;
+  private ClawRange _rangeValue;
+
+  // Clauses flags
+  private boolean _hasAccClause, _hasCollapseClause, _hasFusionClause;
+  private boolean  _hasGroupClause, _hasIndexesValue, _hasInductionClause;
+  private boolean _hasInterchangeClause, _hasParallelClause;
 
 
   /**
@@ -56,25 +64,30 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   private void resetVariables(){
+    // Clauses values members
+    _accClausesValue = null;
+    _collapseClauseValue = 0;
+    _groupClauseValue = null;
+    _hoistInductionValues = null;
+    _indexesValues = null;
+    _inductionClauseValues = null;
+    _mappingValues = null;
+    _offsetValues = null;
+    _rangeValue = null;
+
+    // Clauses flags members
+    _hasAccClause = false;
+    _hasCollapseClause = false;
+    _hasFusionClause = false;
+    _hasGroupClause = false;
+    _hasIndexesValue = false;
+    _hasInductionClause = false;
+    _hasInterchangeClause = false;
+    _hasParallelClause = false;
+
+    // General members
     _directive = null;
-    _valid = false;
-    _hasGroup = false;
-    _hasIndexes = false;
-    _hasFusion = false;
-    _hasParallel = false;
-    _groupName = null;
-    _indexes = null;
-    _range = null;
-    _mappings = null;
-    _acc = false;
-    _accClauses = null;
-    _offsets = null;
-    _hasCollapse = false;
-    _collapseValue = 0;
-    _hasInterchange = false;
-    _hoistInductionVars = null;
-    _inductionNames = null;
-    _hasInduction = false;
+    _target = AcceleratorDirective.NONE;
 
     // super class members
     _pragma = null;
@@ -95,7 +108,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param pragma A Xpragma object to be analyzed against the CLAW language.
    * @return A ClawLanguage object with the corresponding extracted information.
    */
-  public static ClawLanguage analyze(Xpragma pragma)
+  public static ClawLanguage analyze(Xpragma pragma,
+                                     AcceleratorDirective target)
       throws IllegalDirectiveException
   {
 
@@ -127,6 +141,7 @@ public class ClawLanguage extends AnalyzedPragma {
       ClawParser.AnalyzeContext ctx = parser.analyze();
       // Get the ClawLanguage object return by the parser after analysis.
       ctx.l.attachPragma(pragma);
+      ctx.l.setAcceleratorDirective(target);
       return ctx.l;
     } catch(ParseCancellationException pcex){
       IllegalDirectiveException ex = cel.getLastError();
@@ -139,40 +154,28 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Check whether the current language section is valid.
-   * @return True if the language is valid.
+   * Check whether a group clause was specified.
+   * @return True if group clause was specified.
    */
-  public boolean isValid(){
-    return _valid;
-  }
-
-
-
-  // Group option specific methods
-
-  /**
-   * Check whether a group option was specified.
-   * @return True if group option was specified.
-   */
-  public boolean hasGroupOption(){
-    return _hasGroup;
+  public boolean hasGroupClause(){
+    return _hasGroupClause;
   }
 
   /**
-   * Set the group name and hasGroupOption to true
-   * @param groupName The group name defined in the group option.
+   * Set the group name and hasGroupClause to true
+   * @param groupName The group name defined in the group clause.
    */
-  void setGroupOption(String groupName){
-    _hasGroup = true;
-    _groupName = groupName;
+  void setGroupClause(String groupName){
+    _hasGroupClause = true;
+    _groupClauseValue = groupName;
   }
 
   /**
-   * Get the group name defined in the group option.
+   * Get the group name defined in the group clause.
    * @return The group name as a String value.
    */
-  public String getGroupName(){
-    return _groupName;
+  public String getGroupValue(){
+    return _groupClauseValue;
   }
 
 
@@ -181,7 +184,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return True if the collapse clause if used.
    */
   public boolean hasCollapseClause(){
-    return _hasCollapse;
+    return _hasCollapseClause;
   }
 
   /**
@@ -189,8 +192,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param n Number of loop to be collapsed.
    */
   void setCollapseClause(String n){
-    _hasCollapse = true;
-    _collapseValue = Integer.parseInt(n);
+    _hasCollapseClause = true;
+    _collapseClauseValue = Integer.parseInt(n);
   }
 
   /**
@@ -198,7 +201,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return An interger value.
    */
   public int getCollapseValue(){
-    return _collapseValue;
+    return _collapseClauseValue;
   }
 
   // Loop interchange specific methods
@@ -208,8 +211,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param indexes List of indexes as string.
    */
   void setIndexes(List<String> indexes){
-    _hasIndexes = true;
-    _indexes = indexes;
+    _hasIndexesValue = true;
+    _indexesValues = indexes;
   }
 
   /**
@@ -217,7 +220,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return List of loop index
    */
   public List<String> getIndexes(){
-    return _indexes;
+    return _indexesValues;
   }
 
   /**
@@ -225,7 +228,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return True if the directive has interchange value.
    */
   public boolean hasIndexes(){
-    return _hasIndexes;
+    return _hasIndexesValue;
   }
 
   // Loop extract specific methods
@@ -235,7 +238,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param range A ClawRange object.
    */
   protected void setRange(ClawRange range){
-    _range = range;
+    _rangeValue = range;
   }
 
   /**
@@ -243,7 +246,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return A ClawRange object.
    */
   public ClawRange getRange(){
-    return _range;
+    return _rangeValue;
   }
 
   /**
@@ -251,7 +254,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param mappings A list of ClawMapping objects.
    */
   void setMappings(List<ClawMapping> mappings){
-    _mappings = mappings;
+    _mappingValues = mappings;
   }
 
   /**
@@ -259,63 +262,63 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return List of ClawMapping objects.
    */
   public List<ClawMapping> getMappings(){
-    return _mappings;
+    return _mappingValues;
   }
 
   /**
-   * Enable the fusion option for the current directive.
+   * Enable the fusion clause for the current directive.
    */
-  void setFusionOption(){
-    _hasFusion = true;
+  void setFusionClause(){
+    _hasFusionClause = true;
   }
 
   /**
-   * Check whether the current directive has the fusion option enabled.
-   * @return True if the fusion option is enabled.
+   * Check whether the current directive has the fusion clause enabled.
+   * @return True if the fusion clause is enabled.
    */
-  public boolean hasFusionOption(){
-    return _hasFusion;
+  public boolean hasFusionClause(){
+    return _hasFusionClause;
   }
 
   /**
-   * Enable the parallel option for the current directive.
+   * Enable the parallel clause for the current directive.
    */
-  void setParallelOption(){
-    _hasParallel = true;
+  void setParallelClause(){
+    _hasParallelClause = true;
   }
 
   /**
-   * Check whether the current directive has the parallel option enabled.
-   * @return True if the parallel option is enabled.
+   * Check whether the current directive has the parallel clause enabled.
+   * @return True if the parallel clause is enabled.
    */
-  public boolean hasParallelOption(){
-    return _hasParallel;
+  public boolean hasParallelClause(){
+    return _hasParallelClause;
   }
 
   /**
-   * Enable the acc option for the current directive and set the extracted
-   * clauses.
-   * @param clauses Accelerator clauses extracted from the acc option.
+   * Enable the accelerator clause for the current directive and set the
+   * extracted clauses.
+   * @param clauses Accelerator clauses extracted from the accelerator clause.
    */
   void setAcceleratorClauses(String clauses){
-    _acc = true;
-    _accClauses = clauses;
+    _hasAccClause = true;
+    _accClausesValue = clauses;
   }
 
   /**
-   * Check whether the current directive has the acc option enabled.
-   * @return True if the acc option is enabled.
+   * Check whether the current directive has the accelerator clause enabled.
+   * @return True if the accelerator clause is enabled.
    */
-  public boolean hasAcceleratorOption(){
-    return _acc;
+  public boolean hasAcceleratorClause(){
+    return _hasAccClause;
   }
 
   /**
-   * Get the accelerator clauses extracted from the acc option.
+   * Get the accelerator clauses extracted from the accelerator clause.
    * @return Accelerator clauses as a String.
    */
   public String getAcceleratorClauses(){
-    return _accClauses;
+    return _accClausesValue;
   }
 
   /**
@@ -323,7 +326,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param offsets A list of offsets.
    */
   void setOffsets(List<String> offsets){
-    _offsets = offsets;
+    _offsetValues = offsets;
   }
 
   /**
@@ -331,7 +334,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return List of offsets.
    */
   public List<String> getOffsets(){
-    return _offsets;
+    return _offsetValues;
   }
 
   // loop hoist clauses
@@ -341,14 +344,14 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return True if the interchange clause if used.
    */
   public boolean hasInterchangeClause(){
-    return _hasInterchange;
+    return _hasInterchangeClause;
   }
 
   /**
    * Set the interchange clause as used.
    */
-  void setInterchange(){
-    _hasInterchange = true;
+  void setInterchangeClause(){
+    _hasInterchangeClause = true;
   }
 
   /**
@@ -356,7 +359,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param vars List of induction variable.
    */
   void setHoistInductionVars(List<String> vars){
-    _hoistInductionVars = vars;
+    _hoistInductionValues = vars;
   }
 
   /**
@@ -364,7 +367,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return A list of induction variable.
    */
   public List<String> getHoistInductionVars(){
-    return _hoistInductionVars;
+    return _hoistInductionValues;
   }
 
 
@@ -387,29 +390,29 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Enable the induction option for the current directive and set the extracted
+   * Enable the induction clause for the current directive and set the extracted
    * name value.
-   * @param names List of induction name extracted from the option.
+   * @param names List of induction name extracted from the clause.
    */
-  void setInductionOption(List<String> names){
-    _hasInduction = true;
-    _inductionNames = names;
+  void setInductionClause(List<String> names){
+    _hasInductionClause = true;
+    _inductionClauseValues = names;
   }
 
   /**
-   * Check whether the current directive has the induction option enabled.
-   * @return True if the induction option is enabled.
+   * Check whether the current directive has the induction clause enabled.
+   * @return True if the induction clause is enabled.
    */
-  public boolean hasInductionOption(){
-    return _hasInduction;
+  public boolean hasInductionClause(){
+    return _hasInductionClause;
   }
 
   /**
-   * Get the name value extracted from the induction option.
+   * Get the name value extracted from the induction clause.
    * @return Induction name as a String.
    */
-  public List<String> getInductionNames(){
-    return _inductionNames;
+  public List<String> getInductionValues(){
+    return _inductionClauseValues;
   }
 
 
@@ -421,4 +424,20 @@ public class ClawLanguage extends AnalyzedPragma {
     _pragma = pragma;
   }
 
+
+  /**
+   * Set the accelerator target for pragma generation
+   * @param target Accelerator directive value.
+   */
+  private void setAcceleratorDirective(AcceleratorDirective target){
+    _target = target;
+  }
+
+  /**
+   * Get the accelerator directive language associated with
+   * @return Associated accelerator directive.
+   */
+  public AcceleratorDirective getAcceleratorDirective(){
+    return _target;
+  }
 }

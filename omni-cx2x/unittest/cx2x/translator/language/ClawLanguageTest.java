@@ -7,12 +7,14 @@ package cx2x.translator.language;
 
 import static org.junit.Assert.*;
 
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.xelement.Xpragma;
 import helper.XmlHelper;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,14 +64,14 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.LOOP_FUSION, l.getDirective());
       if(groupName != null){
-        assertTrue(l.hasGroupOption());
-        assertEquals(groupName, l.getGroupName());
+        assertTrue(l.hasGroupClause());
+        assertEquals(groupName, l.getGroupValue());
       } else {
-        assertFalse(l.hasGroupOption());
-        assertNull(l.getGroupName());
+        assertFalse(l.hasGroupClause());
+        assertNull(l.getGroupValue());
       }
       if(collapse){
         assertTrue(l.hasCollapseClause());
@@ -90,7 +92,7 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage.analyze(p);
+      ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       fail();
     } catch (IllegalDirectiveException pex){
       assertNotNull(pex);
@@ -139,7 +141,7 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.LOOP_INTERCHANGE, l.getDirective());
       if(indexes != null){
         assertTrue(l.hasIndexes());
@@ -150,16 +152,16 @@ public class ClawLanguageTest {
       }
 
       if(parallel){
-        assertTrue(l.hasParallelOption());
+        assertTrue(l.hasParallelClause());
       } else {
-        assertFalse(l.hasParallelOption());
+        assertFalse(l.hasParallelClause());
       }
 
       if(acc != null){
-        assertTrue(l.hasAcceleratorOption());
+        assertTrue(l.hasAcceleratorClause());
         assertEquals(acc, l.getAcceleratorClauses());
       } else {
-        assertFalse(l.hasAcceleratorOption());
+        assertFalse(l.hasAcceleratorClause());
         assertNull(l.getAcceleratorClauses());
       }
 
@@ -195,7 +197,7 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(directive, l.getDirective());
       if(isEnd){
         assertTrue(l.isEndPragma());
@@ -261,7 +263,7 @@ public class ClawLanguageTest {
         "claw loop-extract range(i=1,10,2) map(i:j) parallel",  "i", "1", "10", "2");
     assertNotNull(l);
     map = l.getMappings().get(0);
-    assertTrue(l.hasParallelOption());
+    assertTrue(l.hasParallelClause());
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
@@ -277,9 +279,9 @@ public class ClawLanguageTest {
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
-    assertTrue(l.hasFusionOption());
-    assertFalse(l.hasGroupOption());
-    assertFalse(l.hasParallelOption());
+    assertTrue(l.hasFusionClause());
+    assertFalse(l.hasGroupClause());
+    assertFalse(l.hasParallelClause());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
@@ -297,9 +299,9 @@ public class ClawLanguageTest {
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
-    assertTrue(l.hasFusionOption());
-    assertTrue(l.hasGroupOption());
-    assertEquals("j1", l.getGroupName());
+    assertTrue(l.hasFusionClause());
+    assertTrue(l.hasGroupClause());
+    assertEquals("j1", l.getGroupValue());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
@@ -316,11 +318,11 @@ public class ClawLanguageTest {
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
-    assertTrue(l.hasFusionOption());
-    assertTrue(l.hasGroupOption());
-    assertTrue(l.hasAcceleratorOption());
+    assertTrue(l.hasFusionClause());
+    assertTrue(l.hasGroupClause());
+    assertTrue(l.hasAcceleratorClause());
     assertEquals("loop gang vector", l.getAcceleratorClauses());
-    assertEquals("j1", l.getGroupName());
+    assertEquals("j1", l.getGroupValue());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
@@ -411,10 +413,10 @@ public class ClawLanguageTest {
     assertEquals("j1",   map4.getMappingVariables().get(0).getArgMapping());
     assertEquals("j1",   map4.getMappingVariables().get(0).getFctMapping());
 
-    assertTrue(l.hasFusionOption());
-    assertTrue(l.hasGroupOption());
-    assertEquals("coeth-j1", l.getGroupName());
-    assertTrue(l.hasAcceleratorOption());
+    assertTrue(l.hasFusionClause());
+    assertTrue(l.hasGroupClause());
+    assertEquals("coeth-j1", l.getGroupValue());
+    assertTrue(l.hasAcceleratorClause());
     assertEquals("loop gang vector", l.getAcceleratorClauses());
 
     // Unvalid directives
@@ -437,7 +439,7 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.LOOP_EXTRACT, l.getDirective());
       assertEquals(induction, l.getRange().getInductionVar());
       assertEquals(lower, l.getRange().getLowerBound());
@@ -478,7 +480,7 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.KCACHE, l.getDirective());
       if(offsets != null){
         assertEquals(offsets.size(), l.getOffsets().size());
@@ -527,7 +529,7 @@ public class ClawLanguageTest {
     analyzeValidArrayTransform("claw array-transform induction(j1,j3)",
         false, null, false, null, Arrays.asList("j1","j3"));
     analyzeValidArrayTransform("claw array-transform induction(j1)",
-        false, null, false, null, Arrays.asList("j1"));
+        false, null, false, null, Collections.singletonList("j1"));
     analyzeValidArrayTransform("claw array-transform induction(i,j,k)",
         false, null, false, null, Arrays.asList("i", "j", "k"));
     analyzeUnvalidClawLanguage("claw array-transform induction()");
@@ -554,34 +556,34 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.ARRAY_TRANSFORM, l.getDirective());
       if(fusion){
-        assertTrue(l.hasFusionOption());
-        assertEquals(fusionGroup, l.getGroupName());
+        assertTrue(l.hasFusionClause());
+        assertEquals(fusionGroup, l.getGroupValue());
       } else {
-        assertFalse(l.hasFusionOption());
-        assertNull(l.getGroupName());
+        assertFalse(l.hasFusionClause());
+        assertNull(l.getGroupValue());
       }
       if(parallel){
-        assertTrue(l.hasParallelOption());
+        assertTrue(l.hasParallelClause());
       } else {
-        assertFalse(l.hasParallelOption());
+        assertFalse(l.hasParallelClause());
       }
       if(acc != null){
-        assertTrue(l.hasAcceleratorOption());
+        assertTrue(l.hasAcceleratorClause());
         assertEquals(acc, l.getAcceleratorClauses());
       } else {
-        assertFalse(l.hasAcceleratorOption());
+        assertFalse(l.hasAcceleratorClause());
       }
       if(inducNames != null){
-        assertTrue(l.hasInductionOption());
-        assertEquals(inducNames.size(), l.getInductionNames().size());
+        assertTrue(l.hasInductionClause());
+        assertEquals(inducNames.size(), l.getInductionValues().size());
         for(int i = 0; i < inducNames.size(); ++ i){
-          assertEquals(inducNames.get(i), l.getInductionNames().get(i));
+          assertEquals(inducNames.get(i), l.getInductionValues().get(i));
         }
       } else {
-        assertFalse(l.hasInductionOption());
+        assertFalse(l.hasInductionClause());
       }
     } catch(IllegalDirectiveException idex){
       System.err.print(idex.getMessage());
@@ -625,7 +627,7 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.LOOP_HOIST, l.getDirective());
 
       assertEquals(inductions.size(), l.getHoistInductionVars().size());
