@@ -70,7 +70,7 @@ public class ArrayTransform extends BlockTransformation {
       }
       // Check if we are dealing with an array notation
       if(!_stmt.getLValueModel().isArrayRef()){
-        xcodeml.addError("Assign stament is not an array notation",
+        xcodeml.addError("Assign statement is not an array notation",
             _clawBegin.getPragma().getLineNo());
         return false;
       }
@@ -84,7 +84,7 @@ public class ArrayTransform extends BlockTransformation {
         }
       }
       if(_ranges.size() == 0){
-        xcodeml.addError("Assign stament is not an array notation",
+        xcodeml.addError("Assign statement is not an array notation",
             _clawBegin.getPragma().getLineNo());
         return false;
       }
