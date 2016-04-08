@@ -3,6 +3,12 @@ All notable changes to the CLAW Fortran Compiler project will be documented in
 this file.
 
 ## [Unreleased]
+New transformation:
+* `array-transform`
+* `kcache`
+
+Modification:
+* `collapse` clause can be applied to `loop-fusion` transformation.
 
 ## [0.1.0] - 2016-02-05
 ### First release
