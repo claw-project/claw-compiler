@@ -37,27 +37,31 @@ public class LoopFusion extends Transformation {
   public LoopFusion(ClawLanguage directive){
     super(directive);
     _claw = directive;
-    _groupLabel = directive.getGroupName();
+    if(_claw.hasGroupClause()){
+      _groupLabel = directive.getGroupValue();
+    }
     _loops = new XdoStatement[0];
   }
 
   /**
    * LoopFusion ctor without pragma. Create a LoopFusion dynamically at runtime.
-   * @param loop        The do statement to be merge by the loop fusion.
-   * @param group       The group fusion option to apply during the loop fusion.
-   * @param lineNumber  The line number that triggered the transformation.
+   * @param loop           The do statement to be merge by the loop fusion.
+   * @param ghostDirective The generated directive that will be used for the
+   *                       loop-fusion transformation.
    */
-  public LoopFusion(XdoStatement loop, String group, int lineNumber){
-    super(null); // TODO think of a better solution than passing a null
+  public LoopFusion(XdoStatement loop, ClawLanguage ghostDirective){
+    super(ghostDirective);
     _loops = new XdoStatement[] { loop };
-    _groupLabel = group;
-    setStartLine(lineNumber);
+    if(ghostDirective.hasGroupClause()) {
+      _groupLabel = ghostDirective.getGroupValue();
+    }
+    setStartLine(ghostDirective.getPragma().getLineNo());
   }
 
   /**
    * Loop fusion analysis:
    * - Without collapse clause: find whether the pragma statement is followed
-   * by a do statement.
+   *   by a do statement.
    * - With collapse clause: Finf the i loops follwing the pragma.
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.

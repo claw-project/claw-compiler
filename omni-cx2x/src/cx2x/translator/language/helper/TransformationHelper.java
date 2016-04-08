@@ -58,8 +58,8 @@ public class TransformationHelper {
                                         XbaseElement stmt)
   {
     if(claw.hasFusionClause() && stmt instanceof XdoStatement){
-      LoopFusion fusion = new LoopFusion((XdoStatement) stmt,
-          claw.getGroupValue(), claw.getPragma().getLineNo());
+      ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
+      LoopFusion fusion = new LoopFusion((XdoStatement) stmt, l);
       // TODO maybe run analysis
       transformer.addTransformation(fusion);
 

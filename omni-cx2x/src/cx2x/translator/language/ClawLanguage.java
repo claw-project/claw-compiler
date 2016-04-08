@@ -166,8 +166,10 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param groupName The group name defined in the group clause.
    */
   void setGroupClause(String groupName){
-    _hasGroupClause = true;
-    _groupClauseValue = groupName;
+    if(groupName != null) {
+      _hasGroupClause = true;
+      _groupClauseValue = groupName;
+    }
   }
 
   /**
@@ -189,11 +191,23 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Set the collapse number and boolean flag.
-   * @param n Number of loop to be collapsed.
+   * @param n Number of loop to be collapsed. Will be converted to integer.
    */
   void setCollapseClause(String n){
     _hasCollapseClause = true;
     _collapseClauseValue = Integer.parseInt(n);
+  }
+
+  /**
+   * Set the collapse number and boolean flag. Flag is enable if n is greater
+   * than 1. Otherwise, collapse clause has no impact.
+   * @param n Number of loops to be collapsed.
+   */
+  void setCollapseClause(int n){
+    if(n > 1) {
+      _hasCollapseClause = true;
+      _collapseClauseValue = n;
+    }
   }
 
   /**
@@ -439,5 +453,19 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public AcceleratorDirective getAcceleratorDirective(){
     return _target;
+  }
+
+  /**
+   *
+   * @param master
+   * @return
+   */
+  public static ClawLanguage createLoopFusionLanguage(ClawLanguage master){
+    ClawLanguage l = new ClawLanguage();
+    l.setDirective(ClawDirective.LOOP_FUSION);
+    l.setGroupClause(master.getGroupValue());
+    l.setCollapseClause(master.getCollapseValue());
+    l.attachPragma(master.getPragma());
+    return l;
   }
 }
