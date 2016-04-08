@@ -7,8 +7,10 @@ package cx2x.translator.language.helper;
 
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.transformation.loop.LoopFusion;
+import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
+import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XdoStatement;
 import xcodeml.util.XmOption;
 
@@ -85,9 +87,11 @@ public class TransformationHelper {
                                              Transformer transformer,
                                              XbaseElement stmt)
   {
-    if(claw.hasInductionClause() && stmt instanceof XdoStatement){
+    if(claw.hasInterchangeClause() && stmt instanceof XdoStatement){
       // TODO
+      LoopInterchange interchange = new LoopInterchange(claw);
 
+      transformer.addTransformation(interchange);
       if(XmOption.isDebugOutput()){
         System.out.println("Loop interchange added: " + claw.getIndexes());
       }

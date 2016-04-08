@@ -51,7 +51,7 @@ public class LoopFusion extends Transformation {
    */
   public LoopFusion(XdoStatement loop, ClawLanguage ghostDirective){
     super(ghostDirective);
-    _loops = new XdoStatement[] { loop };
+    _loops = new XdoStatement[] { loop }; // TODO should be done by analysis
     if(ghostDirective.hasGroupClause()) {
       _groupLabel = ghostDirective.getGroupValue();
     }
