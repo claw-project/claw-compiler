@@ -5,4 +5,5 @@ add_subdirectory(array2)
 #add_subdirectory(array4) # under dev
 #add_subdirectory(array5) # under dev
 add_subdirectory(array6)
+add_subdirectory(array7)
 add_subdirectory(continuation)
