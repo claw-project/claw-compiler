@@ -81,6 +81,12 @@ directive[ClawLanguage l]
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(o);
     }
+  | KCACHE offset_list_optional[o] INIT EOF
+    {
+      $l.setDirective(ClawDirective.KCACHE);
+      $l.setOffsets(o);
+      $l.setInitClause();
+    }
 
   // Array notation transformation directive
   | ARRAY_TRANS induction_optional[$l] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
@@ -274,6 +280,7 @@ MAP          : 'map';
 PARALLEL     : 'parallel';
 RANGE        : 'range';
 INDUCTION    : 'induction';
+INIT         : 'init';
 
 
 // Special elements

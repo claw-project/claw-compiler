@@ -42,7 +42,7 @@ public class ClawLanguage extends AnalyzedPragma {
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasFusionClause;
   private boolean  _hasGroupClause, _hasIndexesValue, _hasInductionClause;
-  private boolean _hasInterchangeClause, _hasParallelClause;
+  private boolean _hasInitClause, _hasInterchangeClause, _hasParallelClause;
 
 
   /**
@@ -82,6 +82,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasGroupClause = false;
     _hasIndexesValue = false;
     _hasInductionClause = false;
+    _hasInitClause = false;
     _hasInterchangeClause = false;
     _hasParallelClause = false;
 
@@ -427,6 +428,21 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public List<String> getInductionValues(){
     return _inductionClauseValues;
+  }
+
+  /**
+   * Check whether the init clause is used.
+   * @return True if the init clause if used.
+   */
+  public boolean hasInitClause(){
+    return _hasInitClause;
+  }
+
+  /**
+   * Set the init clause flag.
+   */
+  void setInitClause(){
+    _hasInitClause = true;
   }
 
 
