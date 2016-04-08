@@ -1,6 +1,4 @@
-# List of test directories
-#add_subdirectory(array1) not implemented yet
-#add_subdirectory(array2) not implemented yet
+# List of test directories to be executed
 add_subdirectory(extract1)
 add_subdirectory(extract2)
 add_subdirectory(extract3)
@@ -12,5 +10,6 @@ add_subdirectory(fusion2)
 add_subdirectory(fusion3)
 add_subdirectory(fusion4)
 add_subdirectory(fusion5)
+#add_subdirectory(hoist1)
 add_subdirectory(interchange1)
 add_subdirectory(interchange2)
