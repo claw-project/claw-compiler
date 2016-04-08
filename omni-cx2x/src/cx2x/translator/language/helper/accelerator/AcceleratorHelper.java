@@ -5,7 +5,6 @@
 
 package cx2x.translator.language.helper.accelerator;
 
-import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
@@ -21,11 +20,6 @@ import cx2x.xcodeml.xelement.Xpragma;
  */
 public class AcceleratorHelper {
 
-
-  // OpenACC TODO will be move to specific generator when in place
-  private static final String OPENACC_PARALLEL = "acc parallel";
-  private static final String OPENACC_END_PARALLEL = "acc end parallel";
-
   /**
    * Generate corresponding pragmas to surround the code with a parallel
    * accelerated region.
@@ -37,17 +31,17 @@ public class AcceleratorHelper {
    */
   private static void generateParallelClause(ClawLanguage claw,
                                              XcodeProgram xcodeml,
-                                             XbaseElement endStmt)
+                                             XbaseElement endStmt,
+                                             AcceleratorGenerator generator)
   {
-    if(claw.hasParallelOption()){
-      // TODO depends on the target
+    if(claw.hasParallelClause()){
       try {
         Xpragma beginParallel =
             XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        beginParallel.setValue(OPENACC_PARALLEL);
+        beginParallel.setValue(generator.getStartParellelDirective());
         Xpragma endParallel =
             XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        endParallel.setValue(OPENACC_END_PARALLEL);
+        endParallel.setValue(generator.getEndParellelDirective());
         XelementHelper.insertAfter(claw.getPragma(), beginParallel);
         XelementHelper.insertAfter(endStmt, endParallel);
       } catch (IllegalTransformationException ignored) { }
@@ -62,20 +56,21 @@ public class AcceleratorHelper {
    *                in which the pragmas will be generated.
    */
   private static void generateAcceleratorClause(ClawLanguage claw,
-                                                XcodeProgram xcodeml)
+                                                XcodeProgram xcodeml,
+                                                AcceleratorGenerator generator)
   {
-    if(claw.hasAcceleratorOption()){
+    if(claw.hasAcceleratorClause())
+    {
       try {
-        // TODO depends on the target
         Xpragma acceleratorPragma = XelementHelper.createEmpty(Xpragma.class,
             xcodeml);
-        acceleratorPragma.setValue(Constant.OPENACC_PREFIX + " " +
-            claw.getAcceleratorClauses());
+        acceleratorPragma.setValue(
+            generator.getSingleDirective(claw.getAcceleratorClauses())
+        );
         XelementHelper.insertAfter(claw.getPragma(), acceleratorPragma);
       } catch (IllegalTransformationException ignored) { }
     }
   }
-
 
   /**
    * Generate all corresponding pragmas to be applied for accelerator.
@@ -90,11 +85,35 @@ public class AcceleratorHelper {
                                                   XcodeProgram xcodeml,
                                                   XbaseElement endStmt)
   {
-    generateAcceleratorClause(claw, xcodeml);
-    generateParallelClause(claw, xcodeml, endStmt);
+    if(claw.getAcceleratorDirective() == AcceleratorDirective.NONE){
+      return;
+    }
+
+    // Get specific instance of accelerator generator
+    AcceleratorGenerator generator = AcceleratorHelper.
+        createAcceleratorGenerator(claw.getAcceleratorDirective());
+
+    generateAcceleratorClause(claw, xcodeml, generator);
+    generateParallelClause(claw, xcodeml, endStmt, generator);
   }
 
-
-
+  /**
+   * Constructs the correct AcceleratorGenerator object regarding the enum
+   * value passed.
+   * @param accDirective Enum value that define the generator to be created.
+   * @return A specific implementation of an AcceleratorGenerator.
+   */
+  private static AcceleratorGenerator createAcceleratorGenerator(
+          AcceleratorDirective accDirective)
+  {
+    switch (accDirective){
+      case OPENACC:
+        return new OpenAcc();
+      case OPENMP:
+        return new OpenMp();
+      default:
+        return new AcceleratorGenerator();
+    }
+  }
 
 }

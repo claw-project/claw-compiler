@@ -8,6 +8,7 @@ package cx2x.translator;
 // Cx2x import
 import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
@@ -89,7 +90,9 @@ public class ClawXcodeMlTranslator {
       }
 
       // Analyze the raw pragma with the CLAW language parser
-      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma);
+      // TODO give correct accelerator definition when option is available #17
+      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma,
+          AcceleratorDirective.OPENACC);
 
       // Create transformation object based on the directive
       switch (analyzedPragma.getDirective()){
