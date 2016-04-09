@@ -6,8 +6,10 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.xelement.XassignStatement;
 import cx2x.xcodeml.xelement.XcodeProgram;
 
 /**
@@ -19,6 +21,7 @@ import cx2x.xcodeml.xelement.XcodeProgram;
  */
 public class Kcaching extends Transformation {
   private final ClawLanguage _claw;
+  private XassignStatement _stmt;
 
   /**
    * Constructs a new Kcachine triggered from a specific pragma.
@@ -34,6 +37,19 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+    // pragma must be followed by an assign statement
+    _stmt = XelementHelper.findDirectNextAssignStmt(_claw.getPragma());
+    if(_stmt == null){
+      xcodeml.addError("Directive not follwed by an assign statement",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+    // Check if the LHS of the assign stmt is an array reference
+    if(!_stmt.getLValueModel().isArrayRef()){
+      xcodeml.addError("LHS of assign statement is not an array reference",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
     return false;
   }
 
