@@ -5,8 +5,10 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -53,5 +55,28 @@ public class XifStatementTest {
 
     assertEquals(3, ifStmt.getLineNo());
     assertEquals("test.f90", ifStmt.getFile());
+  }
+
+  @Test
+  public void createIfStatementTest(){
+    try {
+      XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+      XifStatement stmt1 = XifStatement.create(xcodeml);
+      assertNotNull(stmt1);
+      assertNotNull(stmt1.getCondition());
+      assertNotNull(stmt1.getThen());
+      assertNotNull(stmt1.getThen().getBody());
+      assertNull(stmt1.getElse());
+
+      XifStatement stmt2 = XifStatement.createWithElseBlock(xcodeml);
+      assertNotNull(stmt2);
+      assertNotNull(stmt2.getCondition());
+      assertNotNull(stmt2.getThen());
+      assertNotNull(stmt2.getThen().getBody());
+      assertNotNull(stmt2.getElse());
+      assertNotNull(stmt2.getElse().getBody());
+    } catch (IllegalTransformationException e) {
+      fail();
+    }
   }
 }
