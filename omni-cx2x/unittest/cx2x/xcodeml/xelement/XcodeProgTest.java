@@ -7,6 +7,8 @@ package cx2x.xcodeml.xelement;
 
 import java.io.File;
 import static org.junit.Assert.*;
+
+import helper.XmlHelper;
 import org.junit.Test;
 
 /**
@@ -17,16 +19,13 @@ import org.junit.Test;
 
 public class XcodeProgTest {
 
-  // Path is relative to the test directory
-  private static final String TEST_DATA = "./data/basic.xcml";
+
 
   @Test
   public void basicXcodeProgTest() {
-    File f = new File(TEST_DATA);
-    System.out.println("Working Directory = " +
-        System.getProperty("user.dir"));
+    File f = new File(XmlHelper.TEST_DATA);
     assertTrue(f.exists());
-    XcodeProgram xcodeml = new XcodeProgram(TEST_DATA);
+    XcodeProgram xcodeml = new XcodeProgram(XmlHelper.TEST_DATA);
     boolean loaded = xcodeml.load();
     assertTrue(loaded);
     assertEquals(8, xcodeml.getTypeTable().count());

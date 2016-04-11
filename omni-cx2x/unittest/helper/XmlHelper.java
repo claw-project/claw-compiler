@@ -8,9 +8,11 @@ package helper;
 import static org.junit.Assert.*;
 
 import cx2x.xcodeml.xelement.*;
+import exc.object.Xcode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
+import java.io.File;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,6 +28,19 @@ import org.xml.sax.InputSource;
  */
  
 public class XmlHelper {
+
+  // Path is relative to the test directory
+  public static final String TEST_DATA = "./data/basic.xml";
+
+
+  public static XcodeProgram getDummyXcodeProgram(){
+    File f = new File(XmlHelper.TEST_DATA);
+    assertTrue(f.exists());
+    XcodeProgram xcodeml =  new XcodeProgram(XmlHelper.TEST_DATA);
+    xcodeml.load();
+    assertTrue(xcodeml.isLoaded());
+    return xcodeml;
+  }
 
   public static Document loadXMLFromString(String xml) {
     try {
