@@ -99,6 +99,7 @@ public class ClawXcodeMlTranslator {
       switch (analyzedPragma.getDirective()){
         case KCACHE:
           addOrAbort(new Kcaching(analyzedPragma));
+          break;
         case LOOP_FUSION:
           addOrAbort(new LoopFusion(analyzedPragma));
           break;
