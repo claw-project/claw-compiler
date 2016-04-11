@@ -1387,12 +1387,27 @@ public class XelementHelper {
     return null;
   }
 
-
-
-
+  /**
+   * Create an empty XbinaryExpr object with the given tag.
+   * @param exprTag The tag associated with the specialized binary expression.
+   * @param xcodeml The current XcodeML program.
+   * @return A new Xbinary object.
+   * @throws IllegalTransformationException If the tag is not associated with
+   * any binary expression.
+   */
+  public static XbinaryExpr createEmpty(String exprTag, XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    if(XelementName.isBinaryExprTag(exprTag)){
+      Element element = xcodeml.getDocument().createElement(exprTag);
+      return new XbinaryExpr(element);
+    }
+    throw new IllegalTransformationException("No binary expression with tag:" +
+        exprTag);
+  }
 
   /**
-   * Create an empty arrayIndex element in the given program.
+   * Create an empty of the given class element in the given program.
    * @param xElementClass The class to be created
    * @param xcodeml       The current XcodeML program.
    * @param <T>           Type of the class to be created.
