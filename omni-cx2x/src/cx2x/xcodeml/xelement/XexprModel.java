@@ -177,4 +177,61 @@ public class XexprModel extends XbaseModel {
     return null;
   }
 
+  /**
+   * Check whether the exprModel is a unary minus expression.
+   * @return True if the exprModel is a unary minus expression. False otherwise.
+   */
+  public boolean isUnaryMinusExpr(){
+    return isUnaryExpr() && getElement().getBaseElement().
+        getTagName().equals(XelementName.UNARY_MINUS_EXPR);
+  }
+
+  /**
+   * Check whether the exprModel is a binary minus expression.
+   * @return True if the exprModel is a binary minus expression. False otherwise.
+   */
+  public boolean isMinusExpr(){
+    return isBinaryExpr() && getElement().getBaseElement().
+        getTagName().equals(XelementName.MINUS_EXPR);
+  }
+
+  /**
+   * Check whether the exprModel is a unary expression.
+   * @return True if the exprModel is a unary expression. False otherwise.
+   */
+  public boolean isUnaryExpr(){
+    return isOfType(XunaryExpr.class);
+  }
+
+  /**
+   * Get the exprModel as unary expression.
+   * @return XunaryExpr object if the exprModel is a unary expression.
+   */
+  public XunaryExpr getUnaryExpr(){
+    if(isUnaryExpr()){
+      return (XunaryExpr)_element;
+    }
+    return null;
+  }
+
+  /**
+   * Check whether the exprModel is a binary expression.
+   * @return True if the exprModel is a binary expression. False otherwise.
+   */
+  public boolean isBinaryExpr(){
+    return isOfType(XbinaryExpr.class);
+  }
+
+  /**
+   * Get the exprModel as unary expression.
+   * @return XbinaryExpr object if the exprModel is a binary expression.
+   */
+  public XbinaryExpr getBinaryExpr(){
+    if(isBinaryExpr()){
+      return (XbinaryExpr) _element;
+    }
+    return null;
+  }
+
+
 }

@@ -70,6 +70,12 @@ public class XexprModelTest {
       "</FarrayRef>" +
       dummyRootClose;
 
+  private static final String exprModel_Minus = dummyRootOpen +
+      "<minusExpr type=\"Fint\">" +
+      "<Var type=\"Fint\" scope=\"local\">j</Var>" +
+      "<FintConstant type=\"Fint\">1</FintConstant>" +
+      "</minusExpr>" + dummyRootClose;
+
   @Test
   public void findExprModelTest() {
     // XintConstant object
@@ -171,6 +177,20 @@ public class XexprModelTest {
     assertNotNull(model);
     assertTrue(model.isArrayRef());
     assertNotNull(model.getArrayRef());
+
+
+    // Minus expr
+    xml = XmlHelper.loadXMLFromString(exprModel_Minus);
+    assertNotNull(xml);
+    element = new XbaseElement(xml.getDocumentElement());
+    assertNotNull(element);
+    model = XelementHelper.findExprModel(element, 0);
+    assertNotNull(model);
+    assertTrue(model.isMinusExpr());
+    assertTrue(model.isBinaryExpr());
+    assertNotNull(model.getBinaryExpr());
+    assertTrue(model.getBinaryExpr().getLhsExpr().isVar());
+    assertTrue(model.getBinaryExpr().getRhsExpr().isIntConst());
   }
 
 }
