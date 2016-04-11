@@ -31,6 +31,7 @@ public class ClawLanguage extends AnalyzedPragma {
   // Clauses values
   private String _accClausesValue;
   private int _collapseClauseValue;
+  private List<String> _dataValues;
   private String _groupClauseValue;
   private List<String> _hoistInductionValues;
   private List<String> _indexesValues;
@@ -40,10 +41,10 @@ public class ClawLanguage extends AnalyzedPragma {
   private ClawRange _rangeValue;
 
   // Clauses flags
-  private boolean _hasAccClause, _hasCollapseClause, _hasFusionClause;
-  private boolean  _hasGroupClause, _hasIndexesValue, _hasInductionClause;
-  private boolean _hasInitClause, _hasInterchangeClause, _hasParallelClause;
-
+  private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
+  private boolean _hasFusionClause, _hasGroupClause, _hasIndexesValue;
+  private boolean _hasInductionClause, _hasInitClause, _hasInterchangeClause;
+  private boolean _hasParallelClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -67,6 +68,7 @@ public class ClawLanguage extends AnalyzedPragma {
     // Clauses values members
     _accClausesValue = null;
     _collapseClauseValue = 0;
+    _dataValues = null;
     _groupClauseValue = null;
     _hoistInductionValues = null;
     _indexesValues = null;
@@ -428,6 +430,34 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public List<String> getInductionValues(){
     return _inductionClauseValues;
+  }
+
+
+
+  /**
+   * Enable the data clause for the current directive and set the extracted
+   * identifiers value.
+   * @param data List of identifiers extracted from the clause.
+   */
+  void setDataClause(List<String> data){
+    _hasDataClause = true;
+    _dataValues = data;
+  }
+
+  /**
+   * Check whether the current directive has the induction clause enabled.
+   * @return True if the induction clause is enabled.
+   */
+  public boolean hasDataClause(){
+    return _hasDataClause;
+  }
+
+  /**
+   * Get the identifier values extracted from the data clause.
+   * @return Identifier as a String.
+   */
+  public List<String> getDataClauseValues(){
+    return _dataValues;
   }
 
   /**

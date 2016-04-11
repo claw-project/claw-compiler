@@ -461,10 +461,17 @@ public class ClawLanguageTest {
   @Test
   public void KcacheTest(){
     // Valid directives
-    analyzeValidKcache("claw kcache", null);
-    analyzeValidKcache("claw kcache 0 1", Arrays.asList("0", "1"));
-    analyzeValidKcache("claw kcache 0 -1 0", Arrays.asList("0", "-1", "0"));
-    analyzeValidKcache("claw kcache +1 -1 0", Arrays.asList("1", "-1", "0"));
+    analyzeValidKcache("claw kcache", null, null);
+    analyzeValidKcache("claw kcache 0 1", null, Arrays.asList("0", "1"));
+    analyzeValidKcache("claw kcache 0 -1 0", null, Arrays.asList("0", "-1", "0"));
+    analyzeValidKcache("claw kcache +1 -1 0", null, Arrays.asList("1", "-1", "0"));
+
+    analyzeValidKcache("claw kcache data(var1,var2) 0 1",
+        Arrays.asList("var1", "var2"), Arrays.asList("0", "1"));
+    analyzeValidKcache("claw kcache data(var1,var2) 0 -1 0",
+        Arrays.asList("var1", "var2"), Arrays.asList("0", "-1", "0"));
+    analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0",
+        Arrays.asList("var1", "var2"), Arrays.asList("1", "-1", "0"));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw k cache ");
@@ -474,14 +481,26 @@ public class ClawLanguageTest {
   /**
    * Assert the result for valid lo CLAW directive
    * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param data      List of identifiers to be checked.
    * @param offsets   List of offsets to be checked.
    */
-  private void analyzeValidKcache(String raw, List<String> offsets) {
+  private void analyzeValidKcache(String raw, List<String> data,
+                                  List<String> offsets)
+  {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
       ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
       assertEquals(ClawDirective.KCACHE, l.getDirective());
+      if(data != null){
+        assertTrue(l.hasDataClause());
+        assertEquals(data.size(), l.getDataClauseValues().size());
+        for(int i = 0; i < data.size(); ++i){
+          assertEquals(data.get(i), l.getDataClauseValues().get(i));
+        }
+      } else {
+        assertFalse(l.hasDataClause());
+      }
       if(offsets != null){
         assertEquals(offsets.size(), l.getOffsets().size());
         for(int i = 0; i < offsets.size(); ++i){

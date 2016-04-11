@@ -76,7 +76,7 @@ directive[ClawLanguage l]
     }
 
   // Kcache directive
-  | KCACHE offset_list_optional[o] EOF
+  | KCACHE data_optional[$l] offset_list_optional[o] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(o);
@@ -155,6 +155,15 @@ induction_optional[ClawLanguage l]
   }
   :
     INDUCTION '(' ids_list[temp] ')' { $l.setInductionClause(temp); }
+  | /* empty */
+;
+
+data_optional[ClawLanguage l]
+  @init {
+    List<String> temp = new ArrayList<>();
+  }
+  :
+    DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
   | /* empty */
 ;
 
@@ -273,6 +282,7 @@ REMOVE       : 'remove';
 // Clauses
 ACC          : 'acc';
 COLLAPSE     : 'collapse';
+DATA         : 'data';
 FUSION       : 'fusion';
 GROUP        : 'group';
 INTERCHANGE  : 'interchange';
