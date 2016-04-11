@@ -5,9 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * XelementName class contains all element and attributes values that can be
@@ -206,6 +204,29 @@ public class XelementName {
     _classToElementNameMapping = Collections.unmodifiableMap(tempMap);
   }
 
+  private static final Set<String> _binaryExprSet;
+
+  static {
+    _binaryExprSet = new HashSet<>();
+    _binaryExprSet.add(DIV_EXPR);
+    _binaryExprSet.add(F_CONCAT_EXPR);
+    _binaryExprSet.add(F_POWER_EXPR);
+    _binaryExprSet.add(LOG_AND_EXPR);
+    _binaryExprSet.add(LOG_EQ_EXPR);
+    _binaryExprSet.add(LOG_EQV_EXPR);
+    _binaryExprSet.add(LOG_GE_EXPR);
+    _binaryExprSet.add(LOG_GT_EXPR);
+    _binaryExprSet.add(LOG_LE_EXPR);
+    _binaryExprSet.add(LOG_LT_EXPR);
+    _binaryExprSet.add(LOG_NEQ_EXPR);
+    _binaryExprSet.add(LOG_NEWV_EXPR);
+    _binaryExprSet.add(LOG_OR_EXPR);
+    _binaryExprSet.add(MINUS_EXPR);
+    _binaryExprSet.add(MUL_EXPR);
+    _binaryExprSet.add(PLUS_EXPR);
+    _binaryExprSet.add(USER_BINARY_EXPR);
+  }
+
   /**
    * Get the corresponding element name from a XbaseElement derived class
    * @param xElementClass XbaseElement derived class
@@ -219,6 +240,15 @@ public class XelementName {
       return _classToElementNameMapping.get(xElementClass);
     }
     return null;
+  }
+
+  /**
+   * Check if the given tag is associated with a binary expression.
+   * @param tag Tag to be checked.
+   * @return True if the tag is a binary expression. False otherwise.
+   */
+  public static boolean isBinaryExprTag(String tag){
+    return _binaryExprSet.contains(tag);
   }
 
 }
