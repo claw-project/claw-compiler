@@ -158,20 +158,16 @@ public class XelementHelper {
    * @return A XfunctionDefinition object if found. Null otherwise.
    */
   public static XfunctionDefinition findParentFctDef(XbaseElement child){
-    if(child == null || child.getBaseElement() == null){
-      return null;
-    }
-    Node parent = child.getBaseElement().getParentNode();
-    while(child.getBaseElement().getParentNode() != null){
-      if (parent.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) parent;
-        if(element.getTagName().equals(XelementName.FCT_DEFINITION)){
-          return new XfunctionDefinition(element);
-        }
-      }
-      parent = parent.getParentNode();
-    }
-    return null;
+    return findParentOfType(child, XfunctionDefinition.class);
+  }
+
+  /**
+   * Find do statment in which the child is included if any.
+   * @param child The child element to search from.
+   * @return A XdoStatement object if found. Null otherwise.
+   */
+  public static XdoStatement findParentDoStmt(XbaseElement child){
+    return findParentOfType(child, XdoStatement.class);
   }
 
   /**
@@ -295,7 +291,6 @@ public class XelementHelper {
      *   TODO FcharacterRef, FmemberRef, FcoArrayRef
      *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
      *   - functionCall
-     *   TODO all
      *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
      *     logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
      *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr,
@@ -1252,6 +1247,36 @@ public class XelementHelper {
         return null;
       }
       nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
+  /**
+   * Find a parent element from a child in the ancestors.
+   * @param from The child element to search from.
+   * @return A XbaseElement object if found. Null otherwise.
+   */
+  private static <T extends XbaseElement> T findParentOfType(
+      XbaseElement from, Class<T> xElementClass)
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || from == null || from.getBaseElement() == null){
+      return null;
+    }
+    Node parent = from.getBaseElement().getParentNode();
+    while(from.getBaseElement().getParentNode() != null){
+      if (parent.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) parent;
+        if(element.getTagName().equals(elementName)){
+          try{
+            return xElementClass.
+                getDeclaredConstructor(Element.class).newInstance(element);
+          } catch(Exception ex){
+            return null;
+          }
+        }
+      }
+      parent = parent.getParentNode();
     }
     return null;
   }
