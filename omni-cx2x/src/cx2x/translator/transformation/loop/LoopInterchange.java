@@ -6,7 +6,6 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
-import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
@@ -225,9 +224,9 @@ public class LoopInterchange extends Transformation {
         return false;
       }
 
-      _baseLoop0 = _loopLevel0.getInductionVariable();
-      _baseLoop1 = _loopLevel1.getInductionVariable();
-      _baseLoop2 = _loopLevel2.getInductionVariable();
+      _baseLoop0 = _loopLevel0.getInductionVarValue();
+      _baseLoop1 = _loopLevel1.getInductionVarValue();
+      _baseLoop2 = _loopLevel2.getInductionVarValue();
 
       if(!checkNewOrderOption(xcodeml, _newOrderOption)){
         return false;

@@ -129,7 +129,7 @@ public class XdoStatement extends XenhancedElement {
    * Get the induction variable of the do statement.
    * @return The induction variable as a String value.
    */
-  public String getInductionVariable(){
+  public String getInductionVarValue(){
     return _iterationRange.getInductionVar().getValue();
   }
 

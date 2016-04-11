@@ -173,7 +173,7 @@ public class ArrayTransform extends BlockTransformation {
         for (int i = 0; i < arrayRef.getInnerElements().size(); ++i) {
           XbaseElement el = arrayRef.getInnerElements().get(i);
           if (el instanceof XindexRange) {
-            String induction = doStmts[i].getInductionVariable();
+            String induction = doStmts[i].getInductionVarValue();
 
             Xvar iterVar = Xvar.create(XelementName.TYPE_F_INT, induction,
                 Xscope.LOCAL, xcodeml);

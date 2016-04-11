@@ -55,7 +55,7 @@ public class LoopHoist extends BlockTransformation {
     do {
       outterLoop = XelementHelper.
           findNextDoStatement(from, _endClaw.getPragma());
-      if(outterLoop.getInductionVariable().equals(_startClaw.getHoistInductionVars().get(0))){
+      if(outterLoop.getInductionVarValue().equals(_startClaw.getHoistInductionVars().get(0))){
         // outter loop meet induction variable criteria
 
       }
