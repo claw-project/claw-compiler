@@ -67,6 +67,7 @@ else()
     cx2x/xcodeml/xelement/XconstantTest.java
     cx2x/xcodeml/xelement/XdeclTableTest.java
     cx2x/xcodeml/xelement/XdoStatementTest.java
+    cx2x/xcodeml/xelement/XelementHelperTest.java
     cx2x/xcodeml/xelement/XelementNameTest.java
     cx2x/xcodeml/xelement/XexprModelTest.java
     cx2x/xcodeml/xelement/XfunctionTypeTest.java
@@ -98,6 +99,7 @@ else()
     cx2x.xcodeml.xelement.XconstantTest
     cx2x.xcodeml.xelement.XdeclTableTest
     cx2x.xcodeml.xelement.XdoStatementTest
+    cx2x.xcodeml.xelement.XelementHelperTest
     cx2x.xcodeml.xelement.XelementNameTest
     cx2x.xcodeml.xelement.XexprModelTest
     cx2x.xcodeml.xelement.XfunctionTypeTest
