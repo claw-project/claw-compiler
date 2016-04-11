@@ -8,7 +8,6 @@ package helper;
 import static org.junit.Assert.*;
 
 import cx2x.xcodeml.xelement.*;
-import exc.object.Xcode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
