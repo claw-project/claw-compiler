@@ -7,6 +7,8 @@ package cx2x.translator.transformer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
@@ -40,6 +42,8 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("remove"));
     _tGroups.put(ArrayTransform.class,
         new IndependentTransformationGroup("array-transform"));
+    _tGroups.put(Kcaching.class,
+        new IndependentTransformationGroup("kcache"));
     _tGroups.put(LoopExtraction.class,
         new IndependentTransformationGroup("loop-extract"));
     _tGroups.put(LoopFusion.class,
