@@ -18,10 +18,10 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  REAL ( KIND= 8 ) :: array7 ( istart : iend , istart : iend )
  REAL ( KIND= 8 ) :: array8 ( istart : iend , istart : iend )
  REAL ( KIND= 8 ) :: array9 ( istart : iend , istart : iend )
- REAL ( KIND= 8 ) :: array6_k
- REAL ( KIND= 8 ) :: array7_k
- REAL ( KIND= 8 ) :: array8_k
- REAL ( KIND= 8 ) :: array9_k
+ REAL ( KIND= 8 ) :: array6_k_m1
+ REAL ( KIND= 8 ) :: array7_k_m1
+ REAL ( KIND= 8 ) :: array8_k_m1
+ REAL ( KIND= 8 ) :: array9_k_m1
 
  DO i = istart , iend , 1
   array6 ( i , 1 ) = 1.0
@@ -31,14 +31,14 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  END DO
  DO i = istart , iend , 1
   DO j = jstart + 1 , jend , 1
-   array6_k = array6 ( i , j ) * 2.0
-   array6 ( i , j ) = array6_k
-   array7_k = array7 ( i , j ) * 2.0 + array6_k
-   array7 ( i , j ) = array7_k
-   array8_k = array8 ( i , j ) * 2.0 + array6_k + array7_k
-   array8 ( i , j ) = array8_k
-   array9_k = array9 ( i , j ) * 2.0 + array6_k + array8_k
-   array9 ( i , j ) = array9_k
+   array6_k_m1 = array6 ( i , j ) * 2.0
+   array6 ( i , j ) = array6_k_m1
+   array7_k_m1 = array7 ( i , j ) * 2.0 + array6_k_m1
+   array7 ( i , j ) = array7_k_m1
+   array8_k_m1 = array8 ( i , j ) * 2.0 + array6_k_m1 + array7_k_m1
+   array8 ( i , j ) = array8_k_m1
+   array9_k_m1 = array9 ( i , j ) * 2.0 + array6_k_m1 + array8_k_m1
+   array9 ( i , j ) = array9_k_m1
   END DO
  END DO
  PRINT * , sum ( array6 )
