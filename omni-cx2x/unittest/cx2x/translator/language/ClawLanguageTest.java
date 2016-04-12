@@ -462,16 +462,16 @@ public class ClawLanguageTest {
   public void KcacheTest(){
     // Valid directives
     analyzeValidKcache("claw kcache", null, null);
-    analyzeValidKcache("claw kcache 0 1", null, Arrays.asList("0", "1"));
-    analyzeValidKcache("claw kcache 0 -1 0", null, Arrays.asList("0", "-1", "0"));
-    analyzeValidKcache("claw kcache +1 -1 0", null, Arrays.asList("1", "-1", "0"));
+    analyzeValidKcache("claw kcache 0 1", null, Arrays.asList(0, 1));
+    analyzeValidKcache("claw kcache 0 -1 0", null, Arrays.asList(0, -1, 0));
+    analyzeValidKcache("claw kcache +1 -1 0", null, Arrays.asList(1, -1, 0));
 
     analyzeValidKcache("claw kcache data(var1,var2) 0 1",
-        Arrays.asList("var1", "var2"), Arrays.asList("0", "1"));
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1));
     analyzeValidKcache("claw kcache data(var1,var2) 0 -1 0",
-        Arrays.asList("var1", "var2"), Arrays.asList("0", "-1", "0"));
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0));
     analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0",
-        Arrays.asList("var1", "var2"), Arrays.asList("1", "-1", "0"));
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw k cache ");
@@ -485,7 +485,7 @@ public class ClawLanguageTest {
    * @param offsets   List of offsets to be checked.
    */
   private void analyzeValidKcache(String raw, List<String> data,
-                                  List<String> offsets)
+                                  List<Integer> offsets)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
