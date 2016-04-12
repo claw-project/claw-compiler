@@ -37,7 +37,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<String> _indexesValues;
   private List<String> _inductionClauseValues;
   private List<ClawMapping> _mappingValues;
-  private List<String> _offsetValues;
+  private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
 
   // Clauses flags
@@ -342,7 +342,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the offsets list extracted from the kcache directive.
    * @param offsets A list of offsets.
    */
-  void setOffsets(List<String> offsets){
+  void setOffsets(List<Integer> offsets){
     _offsetValues = offsets;
   }
 
@@ -350,7 +350,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Get the list of offsets.
    * @return List of offsets.
    */
-  public List<String> getOffsets(){
+  public List<Integer> getOffsets(){
     return _offsetValues;
   }
 

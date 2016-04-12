@@ -47,6 +47,7 @@ directive[ClawLanguage l]
   @init{
     List<ClawMapping> m = new ArrayList<>();
     List<String> o = new ArrayList<>();
+    List<Integer> i = new ArrayList<>();
   }
   :
 
@@ -76,15 +77,15 @@ directive[ClawLanguage l]
     }
 
   // Kcache directive
-  | KCACHE data_optional[$l] offset_list_optional[o] EOF
+  | KCACHE data_optional[$l] offset_list_optional[i] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
-      $l.setOffsets(o);
+      $l.setOffsets(i);
     }
-  | KCACHE offset_list_optional[o] INIT EOF
+  | KCACHE offset_list_optional[i] INIT EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
-      $l.setOffsets(o);
+      $l.setOffsets(i);
       $l.setInitClause();
     }
 
@@ -183,20 +184,20 @@ indexes_option[ClawLanguage l]
   | /* empty */
 ;
 
-offset_list_optional[List<String> offsets]:
+offset_list_optional[List<Integer> offsets]:
     offset_list[$offsets]
   | /* empty */
 ;
 
-offset_list[List<String> offsets]:
+offset_list[List<Integer> offsets]:
     offset[$offsets]
   | offset[$offsets] offset_list[$offsets]
 ;
 
-offset[List<String> offsets]:
-    n=NUMBER { $offsets.add($n.text); }
-  | '-' n=NUMBER { $offsets.add("-" + $n.text); }
-  | '+' n=NUMBER { $offsets.add($n.text); }
+offset[List<Integer> offsets]:
+    n=NUMBER { $offsets.add(Integer.parseInt($n.text)); }
+  | '-' n=NUMBER { $offsets.add(-Integer.parseInt($n.text)); }
+  | '+' n=NUMBER { $offsets.add(Integer.parseInt($n.text)); }
 ;
 
 
