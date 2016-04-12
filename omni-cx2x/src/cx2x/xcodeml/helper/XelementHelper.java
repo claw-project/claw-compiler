@@ -123,6 +123,83 @@ public class XelementHelper {
   }
 
   /**
+   * Find all array references in the next children that match the given
+   * criteria.
+   *
+   * This methods use powerful Xpath expression to locate the correct nodes in
+   * the AST
+   *
+   * Here is an example of such a query that return all node that are array
+   * references for the array "array6" with an offset of 0 -1
+   *
+   * //FarrayRef[varRef[Var[text()="array6"]] and arrayIndex and
+   * arrayIndex[minusExpr[Var and FintConstant[text()="1"]]]]
+   *
+   * @param from        The element from which the search is initiated.
+   * @param identifier  Identifier of the array.
+   * @param offsets     List of offsets to be search for.
+   * @return A list of all array references found.
+   */
+  public static List<XarrayRef> getAllArrayReferencesByOffsets(
+      XbaseElement from,
+      String identifier,
+      List<Integer> offsets)
+  {
+    String offsetXpath = "";
+    for (int i = 0; i < offsets.size(); ++i){
+      if(offsets.get(i) == 0){
+        offsetXpath +=
+            String.format("%s[%s]",
+                XelementName.ARRAY_INDEX,
+                XelementName.VAR
+            );
+      } else if(offsets.get(i) > 0) {
+        offsetXpath +=
+            String.format("%s[%s[%s and %s[text()=\"%s\"]",
+                XelementName.ARRAY_INDEX,
+                XelementName.MINUS_EXPR,
+                XelementName.VAR,
+                XelementName.F_INT_CONST,
+                offsets.get(i));
+      } else {
+        offsetXpath +=
+            String.format("%s[%s[%s and %s[text()=\"%s\"]",
+                XelementName.ARRAY_INDEX,
+                XelementName.MINUS_EXPR,
+                XelementName.VAR,
+                XelementName.F_INT_CONST,
+                Math.abs(offsets.get(i)));
+      }
+      if(i != offsets.size()-1){
+        offsetXpath += " and ";
+      }
+    }
+
+    // Start of the Xpath query
+    String xpathQuery = String.format("//%s[%s[%s[text()=\"%s\"]] and %s]]]",
+        XelementName.F_ARRAY_REF,
+        XelementName.VAR_REF,
+        XelementName.VAR,
+        identifier,
+        offsetXpath
+        );
+
+    List<XarrayRef> arrayRefs = new ArrayList<>();
+    try {
+      XPathFactory xPathfactory = XPathFactory.newInstance();
+      XPath xpath = xPathfactory.newXPath();
+      XPathExpression xpathExpr = xpath.compile(xpathQuery);
+      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+          XPathConstants.NODESET);
+      for (int i = 0; i < output.getLength(); i++) {
+        Element arrayRef = (Element) output.item(i);
+        arrayRefs.add(new XarrayRef(arrayRef));
+      }
+    } catch (XPathExpressionException ignored) { }
+    return arrayRefs;
+  }
+
+  /**
    * Find all real constants in the direct children of the given parent.
    * @param parent Root element to search from.
    * @return A list of all found real constants.
