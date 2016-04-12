@@ -119,8 +119,8 @@ public class Kcaching extends Transformation {
     // 2. introduce the scalar variable for caching
     String arrayVarName =
         _stmt.getLValueModel().getArrayRef().getVarRef().getVar().getValue();
-    String cacheName = arrayVarName + "_k";
-    // TODO name with offsets information included
+    String cacheName =
+        generateNameWithOffsetInfo(arrayVarName, _claw.getOffsets());
 
     // TODO check for type if it is correct one in any case
     String type = _stmt.getLValueModel().getArrayRef().getType();
@@ -202,5 +202,27 @@ public class Kcaching extends Transformation {
       //TODO
 
     }
+  }
+
+  /**
+   * Generate a new variable name with the offsets information.
+   * @param basename The original variable name.
+   * @param offsets  The offsets to be applied.
+   * @return Original name with offsets information.
+   */
+  private String generateNameWithOffsetInfo(String basename,
+                                            List<Integer> offsets)
+  {
+    String newName = basename + "_k";
+    for(Integer i : offsets){
+      if(i > 0) {
+        newName += "p" + i;
+      } else if (i < 0){
+        newName += "m" + Math.abs(i);
+      } else {
+        newName += "_";
+      }
+    }
+    return newName;
   }
 }
