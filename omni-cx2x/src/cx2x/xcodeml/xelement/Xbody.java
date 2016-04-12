@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * The Xbody represents the body (8.7) element in XcodeML intermediate
@@ -26,5 +27,22 @@ public class Xbody extends XbaseElement {
    */
   public Xbody(Element baseElement){
     super(baseElement);
+  }
+
+  /**
+   * Insert XbaseElement at the beginning of the body children's list.
+   * @param element Element to be inserted.
+   */
+  public void appendAsFirst(XbaseElement element){
+    if(baseElement == null){
+      throw new NullPointerException("body element is null");
+    }
+
+    Node firstElement = baseElement.getFirstChild();
+    if(firstElement == null){
+      baseElement.appendChild(element.getBaseElement());
+    } else {
+      baseElement.insertBefore(element.getBaseElement(), firstElement);
+    }
   }
 }

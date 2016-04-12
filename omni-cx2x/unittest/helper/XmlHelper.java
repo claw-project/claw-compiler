@@ -222,6 +222,12 @@ public class XmlHelper {
     return new XcomplexConstant(el);
   }
 
+  public static Xbody createXbody(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xbody(el);
+  }
+
   public static XloopIterationRange createXloopIterationRange(String var,
                                                               String indexRange)
   {
