@@ -13,6 +13,7 @@ import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +42,18 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+    _doStmt = XelementHelper.findParentDoStmt(_claw.getPragma());
+    if(_doStmt == null){
+      xcodeml.addError("The kcache directive is not nested in a do statement",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+    if(_claw.hasDataClause()){
+      return true; // Analysis is not done at this time
+    }
+
+    // Only for assign statement cache from here
+
     // pragma must be followed by an assign statement
     _stmt = XelementHelper.findDirectNextAssignStmt(_claw.getPragma());
     if(_stmt == null){
@@ -51,12 +64,6 @@ public class Kcaching extends Transformation {
     // Check if the LHS of the assign stmt is an array reference
     if(!_stmt.getLValueModel().isArrayRef()){
       xcodeml.addError("LHS of assign statement is not an array reference",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
-    _doStmt = XelementHelper.findParentDoStmt(_stmt);
-    if(_doStmt == null){
-      xcodeml.addError("The kcache directive is not nested in a do statement",
           _claw.getPragma().getLineNo());
       return false;
     }
@@ -80,7 +87,7 @@ public class Kcaching extends Transformation {
                         Transformation other) throws Exception
   {
     if(_claw.hasDataClause()){
-      transformData(xcodeml, transformer);
+      transformData(xcodeml);
     } else {
       transformAssignStmt(xcodeml, transformer);
     }
@@ -89,10 +96,9 @@ public class Kcaching extends Transformation {
   /**
    * Apply the tranformation for the data list.
    * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @param transformer  The transformer used to applied the transformations.
    * @throws Exception If smth prevent the transformation to be done.
    */
-  private void transformData(XcodeProgram xcodeml, Transformer transformer)
+  private void transformData(XcodeProgram xcodeml)
       throws Exception
   {
     // 1. Find the function/module declaration
@@ -100,7 +106,17 @@ public class Kcaching extends Transformation {
     XfunctionDefinition fctDef =
         XelementHelper.findParentFctDef(_claw.getPragma());
 
+    for(String var : _claw.getDataClauseValues()){
+      List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, var);
 
+      // Generate the cache variable and its assignment
+      String type = aRefs.get(0).getType();
+      Xvar cacheVar = generateCacheVarAndAssignStmt(xcodeml, var, type, fctDef,
+          aRefs.get(0));
+
+      updateArrayRefWithCache(aRefs, cacheVar);
+    }
+    _claw.getPragma().delete();
   }
 
   /**
@@ -117,73 +133,21 @@ public class Kcaching extends Transformation {
     XfunctionDefinition fctDef =
         XelementHelper.findParentFctDef(_claw.getPragma());
 
-    // 2. introduce the scalar variable for caching
-    String arrayVarName =
+    String var =
         _stmt.getLValueModel().getArrayRef().getVarRef().getVar().getValue();
-    String cacheName =
-        generateNameWithOffsetInfo(arrayVarName, _claw.getOffsets());
 
-
-
-    // TODO check for type if it is correct one in any case
     String type = _stmt.getLValueModel().getArrayRef().getType();
-    // 2.2 inject a new entry in the symbol table
-    if(!fctDef.getSymbolTable().contains(cacheName)){
-      Xid cacheVarId = Xid.create(type, XelementName.SCLASS_F_LOCAL, cacheName,
-          xcodeml);
-      fctDef.getSymbolTable().add(cacheVarId, false);
-    }
+    Xvar cacheVar =
+        generateCacheVarAndAssignStmt(xcodeml, var, type, fctDef, _stmt);
 
-    // 2.3 inject a new entry in the declaration table
-    if(!fctDef.getDeclarationTable().contains(cacheName)){
-      XvarDecl cacheVarDecl = XvarDecl.create(type, cacheName, xcodeml);
-      fctDef.getDeclarationTable().add(cacheVarDecl);
-    }
+    List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, var);
 
-    // 2.4 Prepare the new variable that is used for caching
-    Xvar cacheVar = Xvar.create(type, cacheName, Xscope.LOCAL, xcodeml);
+    applyInitClause(xcodeml, transformer, cacheVar, aRefs.get(0));
 
-    // 2.5 Retrieve all array references that must be modified to use the cache
-    List<XarrayRef> arrayRefs =
-        XelementHelper.getAllArrayReferencesByOffsets(_doStmt.getBody(),
-            arrayVarName, _claw.getOffsets());
-    if(arrayRefs.size() == 0){
-      throw new IllegalTransformationException(
-          "No array reference matches the cache directive",
-          _claw.getPragma().getLineNo()
-      );
-    }
+    updateArrayRefWithCache(aRefs, cacheVar);
 
-    // 2. Insert init statement if needed
-    applyInitClause(xcodeml, transformer, cacheVar, arrayRefs.get(0));
-
-    /*
-     * 2.4 add new assign statement
-     * We replace an assignement of type
-     * A = B
-     * by
-     * cache_A = B
-     * A = cache_A
-     */
-    XassignStatement cache1 =
-        XelementHelper.createEmpty(XassignStatement.class, xcodeml);
-    cache1.appendToChildren(cacheVar, false);
-    cache1.appendToChildren(_stmt.getExprModel().getElement(), true);
-    XassignStatement cache2 =
-        XelementHelper.createEmpty(XassignStatement.class, xcodeml);
-    cache2.appendToChildren(_stmt.getLValueModel().getElement(), true);
-    cache2.appendToChildren(cacheVar, true);
-    XelementHelper.insertAfter(_stmt, cache1);
-    XelementHelper.insertAfter(cache1, cache2);
     _stmt.delete();
     _claw.getPragma().delete();
-
-    // 3. Update array refences at given offset.
-    for(XarrayRef ref : arrayRefs){
-      // Swap arrayRef with the cache variable
-      XelementHelper.insertAfter(ref, cacheVar.cloneObject());
-      ref.delete();
-    }
   }
 
   /**
@@ -254,5 +218,136 @@ public class Kcaching extends Transformation {
       }
     }
     return newName;
+  }
+
+  /**
+   * Generate correct offset inferred by the dimension of the variable.
+   * @param xcodeml The current program
+   * @param fctDef  The function definition which holds the variable
+   *                information.
+   * @param var     The variable on which the offset are inferred.
+   * @return List of integer representing the offset for the given variable.
+   * @throws IllegalTransformationException if symbole id is not found.
+   */
+  private List<Integer> generateInferredOffsets(XcodeProgram xcodeml,
+                                                XfunctionDefinition fctDef,
+                                                String var)
+      throws IllegalTransformationException
+  {
+    Xid id = fctDef.getSymbolTable().get(var);
+    if(id == null){
+      throw new IllegalTransformationException("Variable " + var +
+          " defined in the data clause has not been found",
+          _claw.getPragma().getLineNo()
+      );
+    }
+    XbasicType btype = (XbasicType)xcodeml.getTypeTable().get(id.getType());
+    int dim = btype.getDimensions();
+    List<Integer> offsets = new ArrayList<>();
+    for(int i = 0; i < dim; ++i){
+      offsets.add(0);
+    }
+    return offsets;
+  }
+
+  /**
+   * Generate the necessary intermediate code to create the new cache variable
+   * and set its assignment.
+   * @param xcodeml The current program.
+   * @param var     The original variable name.
+   * @param type    The original variable type.
+   * @param fctDef  The function definition holding the variable.
+   * @param rhs     The element that will be set as the rhs of the assignment.
+   * @return The new created Xvar element.
+   * @throws IllegalTransformationException
+   */
+  private Xvar generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
+                                             String type,
+                                             XfunctionDefinition fctDef,
+                                             XbaseElement rhs)
+      throws IllegalTransformationException
+  {
+    String cacheName =
+        generateNameWithOffsetInfo(var, _claw.getOffsets());
+
+    // 2.2 inject a new entry in the symbol table
+    if(!fctDef.getSymbolTable().contains(cacheName)){
+      Xid cacheVarId = Xid.create(type, XelementName.SCLASS_F_LOCAL, cacheName,
+          xcodeml);
+      fctDef.getSymbolTable().add(cacheVarId, false);
+    }
+
+    // 2.3 inject a new entry in the declaration table
+    if(!fctDef.getDeclarationTable().contains(cacheName)){
+      XvarDecl cacheVarDecl = XvarDecl.create(type, cacheName, xcodeml);
+      fctDef.getDeclarationTable().add(cacheVarDecl);
+    }
+
+    // 2.4 Prepare the new variable that is used for caching
+    Xvar cacheVar = Xvar.create(type, cacheName, Xscope.LOCAL, xcodeml);
+
+    if(_claw.hasDataClause()) {
+
+      XassignStatement cache1 =
+          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
+      cache1.appendToChildren(cacheVar, false);
+      cache1.appendToChildren(rhs, true);
+      XelementHelper.insertAfter(_claw.getPragma(), cache1);
+    } else {
+      /*
+       * We replace an assignement of type
+       * A = B
+       * by
+       * cache_A = B
+       * A = cache_A
+       */
+      XassignStatement cache1 =
+          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
+      cache1.appendToChildren(cacheVar, false);
+      cache1.appendToChildren(_stmt.getExprModel().getElement(), true);
+      XassignStatement cache2 =
+          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
+      cache2.appendToChildren(_stmt.getLValueModel().getElement(), true);
+      cache2.appendToChildren(cacheVar, true);
+      XelementHelper.insertAfter(_stmt, cache1);
+      XelementHelper.insertAfter(cache1, cache2);
+
+    }
+    return cacheVar;
+  }
+
+  private List<XarrayRef> checkOffsetAndGetArrayRefs(XcodeProgram xcodeml,
+                                                     XfunctionDefinition fctDef,
+                                                     String var)
+      throws IllegalTransformationException
+  {
+    List<Integer> offsets = _claw.getOffsets();
+    if(offsets.size() == 0){
+      offsets = generateInferredOffsets(xcodeml, fctDef, var);
+    }
+
+    List<XarrayRef> arrayRefs =
+        XelementHelper.getAllArrayReferencesByOffsets(_doStmt.getBody(),
+            var, offsets);
+    if(arrayRefs.size() == 0){
+      throw new IllegalTransformationException("Variable " + var +
+          " defined in the data clause has not been found",
+          _claw.getPragma().getLineNo()
+      );
+    }
+    return arrayRefs;
+  }
+
+  /**
+   * Update the array references with the newly created cache variable.
+   * @param arrayRefs The list of array references to be updated.
+   * @param cache     The new cache variable.
+   */
+  private void updateArrayRefWithCache(List<XarrayRef> arrayRefs, Xvar cache){
+    for(XarrayRef ref : arrayRefs){
+      // Swap arrayRef with the cache variable
+      XelementHelper.insertAfter(ref, cache.cloneObject());
+      ref.delete();
+    }
   }
 }
