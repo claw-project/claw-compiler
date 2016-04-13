@@ -224,8 +224,7 @@ public class ClawXcodeMlTranslator {
         try {
           entry.getValue().applyTranslations(_program, _transformer);
         } catch (IllegalTransformationException itex) {
-          _program.addError("IllegalTransformationException: " +
-            itex.getMessage(), itex.getStartLine());
+          _program.addError(itex.getMessage(), itex.getStartLine());
           abort();
         } catch (Exception ex){
           ex.printStackTrace();
