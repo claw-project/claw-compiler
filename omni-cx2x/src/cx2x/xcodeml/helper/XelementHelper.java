@@ -149,22 +149,25 @@ public class XelementHelper {
     for (int i = 0; i < offsets.size(); ++i){
       if(offsets.get(i) == 0){
         offsetXpath +=
-            String.format("%s[%s]",
+            String.format("%s[position()=%s and %s]",
                 XelementName.ARRAY_INDEX,
+                i+1,
                 XelementName.VAR
             );
       } else if(offsets.get(i) > 0) {
         offsetXpath +=
-            String.format("%s[%s[%s and %s[text()=\"%s\"]]]",
+            String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
                 XelementName.ARRAY_INDEX,
+                i+1,
                 XelementName.MINUS_EXPR,
                 XelementName.VAR,
                 XelementName.F_INT_CONST,
                 offsets.get(i));
       } else {
         offsetXpath +=
-            String.format("%s[%s[%s and %s[text()=\"%s\"]]]",
+            String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
                 XelementName.ARRAY_INDEX,
+                i+1,
                 XelementName.MINUS_EXPR,
                 XelementName.VAR,
                 XelementName.F_INT_CONST,
@@ -176,7 +179,7 @@ public class XelementHelper {
     }
 
     // Start of the Xpath query
-    String xpathQuery = String.format("//%s[%s[%s[text()=\"%s\"]] and %s]",
+    String xpathQuery = String.format(".//%s[%s[%s[text()=\"%s\"]] and %s]",
         XelementName.F_ARRAY_REF,
         XelementName.VAR_REF,
         XelementName.VAR,
