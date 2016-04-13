@@ -155,7 +155,7 @@ public class XelementHelper {
             );
       } else if(offsets.get(i) > 0) {
         offsetXpath +=
-            String.format("%s[%s[%s and %s[text()=\"%s\"]",
+            String.format("%s[%s[%s and %s[text()=\"%s\"]]]",
                 XelementName.ARRAY_INDEX,
                 XelementName.MINUS_EXPR,
                 XelementName.VAR,
@@ -163,7 +163,7 @@ public class XelementHelper {
                 offsets.get(i));
       } else {
         offsetXpath +=
-            String.format("%s[%s[%s and %s[text()=\"%s\"]",
+            String.format("%s[%s[%s and %s[text()=\"%s\"]]]",
                 XelementName.ARRAY_INDEX,
                 XelementName.MINUS_EXPR,
                 XelementName.VAR,
@@ -176,7 +176,7 @@ public class XelementHelper {
     }
 
     // Start of the Xpath query
-    String xpathQuery = String.format("//%s[%s[%s[text()=\"%s\"]] and %s]]]",
+    String xpathQuery = String.format("//%s[%s[%s[text()=\"%s\"]] and %s]",
         XelementName.F_ARRAY_REF,
         XelementName.VAR_REF,
         XelementName.VAR,
@@ -195,7 +195,9 @@ public class XelementHelper {
         Element arrayRef = (Element) output.item(i);
         arrayRefs.add(new XarrayRef(arrayRef));
       }
-    } catch (XPathExpressionException ignored) { }
+    } catch (XPathExpressionException ignored) {
+      String t = ignored.getMessage();
+    }
     return arrayRefs;
   }
 
