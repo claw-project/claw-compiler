@@ -460,18 +460,31 @@ public class ClawLanguageTest {
    */
   @Test
   public void KcacheTest(){
-    // Valid directives
-    analyzeValidKcache("claw kcache", null, null);
-    analyzeValidKcache("claw kcache 0 1", null, Arrays.asList(0, 1));
-    analyzeValidKcache("claw kcache 0 -1 0", null, Arrays.asList(0, -1, 0));
-    analyzeValidKcache("claw kcache +1 -1 0", null, Arrays.asList(1, -1, 0));
+    // Just offsets
+    analyzeValidKcache("claw kcache", null, null, false);
+    analyzeValidKcache("claw kcache 0 1", null, Arrays.asList(0, 1), false);
+    analyzeValidKcache("claw kcache 0 -1 0", null,
+        Arrays.asList(0, -1, 0), false);
+    analyzeValidKcache("claw kcache +1 -1 0", null,
+        Arrays.asList(1, -1, 0), false);
+    analyzeValidKcache("claw kcache 0 -2 0", null,
+        Arrays.asList(0, -2, 0), false);
 
+    // data clause + offsets
     analyzeValidKcache("claw kcache data(var1,var2) 0 1",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, 1));
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false);
     analyzeValidKcache("claw kcache data(var1,var2) 0 -1 0",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0));
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false);
     analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0));
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false);
+
+    // offset + init clause
+    analyzeValidKcache("claw kcache init", null, null, true);
+    analyzeValidKcache("claw kcache 0 1 init", null, Arrays.asList(0, 1), true);
+    analyzeValidKcache("claw kcache 0 -1 0 init", null,
+        Arrays.asList(0, -1, 0), true);
+    analyzeValidKcache("claw kcache +1 -1 0 init", null,
+        Arrays.asList(1, -1, 0), true);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw k cache ");
@@ -480,12 +493,14 @@ public class ClawLanguageTest {
 
   /**
    * Assert the result for valid lo CLAW directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
-   * @param data      List of identifiers to be checked.
-   * @param offsets   List of offsets to be checked.
+   * @param raw     Raw string valud of the CLAW directive to be analyzed.
+   * @param data    List of identifiers to be checked.
+   * @param offsets List of offsets to be checked.
+   * @param init    If true, check that ClawLanguage object has init clause
+   *                enabled.
    */
   private void analyzeValidKcache(String raw, List<String> data,
-                                  List<Integer> offsets)
+                                  List<Integer> offsets, boolean init)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -506,6 +521,11 @@ public class ClawLanguageTest {
         for(int i = 0; i < offsets.size(); ++i){
           assertEquals(offsets.get(i), l.getOffsets().get(i));
         }
+      }
+      if(init){
+        assertTrue(l.hasInitClause());
+      } else {
+        assertFalse(l.hasInitClause());
       }
     } catch(IllegalDirectiveException idex){
       System.err.print(idex.getMessage());
