@@ -461,30 +461,42 @@ public class ClawLanguageTest {
   @Test
   public void KcacheTest(){
     // Just offsets
-    analyzeValidKcache("claw kcache", null, null, false);
-    analyzeValidKcache("claw kcache 0 1", null, Arrays.asList(0, 1), false);
+    analyzeValidKcache("claw kcache", null, null, false, false);
+    analyzeValidKcache("claw kcache 0 1", null,
+        Arrays.asList(0, 1), false, false);
     analyzeValidKcache("claw kcache 0 -1 0", null,
-        Arrays.asList(0, -1, 0), false);
+        Arrays.asList(0, -1, 0), false, false);
     analyzeValidKcache("claw kcache +1 -1 0", null,
-        Arrays.asList(1, -1, 0), false);
+        Arrays.asList(1, -1, 0), false, false);
     analyzeValidKcache("claw kcache 0 -2 0", null,
-        Arrays.asList(0, -2, 0), false);
+        Arrays.asList(0, -2, 0), false, false);
+    analyzeValidKcache("claw kcache 0 -2 0 private", null,
+        Arrays.asList(0, -2, 0), false, true);
 
     // data clause + offsets
     analyzeValidKcache("claw kcache data(var1,var2) 0 1",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false);
     analyzeValidKcache("claw kcache data(var1,var2) 0 -1 0",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false);
     analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false);
+    analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0 private",
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true);
+    analyzeValidKcache("claw kcache data(var1,var2) private",
+        Arrays.asList("var1", "var2"), null, false, true);
 
     // offset + init clause
-    analyzeValidKcache("claw kcache init", null, null, true);
-    analyzeValidKcache("claw kcache 0 1 init", null, Arrays.asList(0, 1), true);
+    analyzeValidKcache("claw kcache init", null, null, true, false);
+    analyzeValidKcache("claw kcache 0 1 init", null,
+        Arrays.asList(0, 1), true, false);
     analyzeValidKcache("claw kcache 0 -1 0 init", null,
-        Arrays.asList(0, -1, 0), true);
+        Arrays.asList(0, -1, 0), true, false);
     analyzeValidKcache("claw kcache +1 -1 0 init", null,
-        Arrays.asList(1, -1, 0), true);
+        Arrays.asList(1, -1, 0), true, false);
+    analyzeValidKcache("claw kcache +1 -1 0 init private", null,
+        Arrays.asList(1, -1, 0), true, true);
+    analyzeValidKcache("claw kcache init private", null, null, true,
+        true);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw k cache ");
@@ -500,7 +512,8 @@ public class ClawLanguageTest {
    *                enabled.
    */
   private void analyzeValidKcache(String raw, List<String> data,
-                                  List<Integer> offsets, boolean init)
+                                  List<Integer> offsets, boolean init,
+                                  boolean hasPrivate)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -526,6 +539,11 @@ public class ClawLanguageTest {
         assertTrue(l.hasInitClause());
       } else {
         assertFalse(l.hasInitClause());
+      }
+      if(hasPrivate){
+        assertTrue(l.hasPrivateClause());
+      } else {
+        assertFalse(l.hasPrivateClause());
       }
     } catch(IllegalDirectiveException idex){
       System.err.print(idex.getMessage());

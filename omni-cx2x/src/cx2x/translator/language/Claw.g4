@@ -77,12 +77,12 @@ directive[ClawLanguage l]
     }
 
   // Kcache directive
-  | KCACHE data_optional[$l] offset_list_optional[i] EOF
+  | KCACHE data_optional[$l] offset_list_optional[i] private_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(i);
     }
-  | KCACHE offset_list_optional[i] INIT EOF
+  | KCACHE offset_list_optional[i] INIT private_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(i);
@@ -168,6 +168,10 @@ data_optional[ClawLanguage l]
   | /* empty */
 ;
 
+private_optional[ClawLanguage l]:
+    PRIVATE { $l.setPrivateClause(); }
+  | /* empty */
+;
 
 identifiers[List<String> ids]:
     i=IDENTIFIER { $ids.add($i.text); }
@@ -286,13 +290,13 @@ COLLAPSE     : 'collapse';
 DATA         : 'data';
 FUSION       : 'fusion';
 GROUP        : 'group';
+INDUCTION    : 'induction';
+INIT         : 'init';
 INTERCHANGE  : 'interchange';
 MAP          : 'map';
 PARALLEL     : 'parallel';
+PRIVATE      : 'private';
 RANGE        : 'range';
-INDUCTION    : 'induction';
-INIT         : 'init';
-
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;

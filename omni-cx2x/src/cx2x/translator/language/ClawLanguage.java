@@ -44,7 +44,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
   private boolean _hasFusionClause, _hasGroupClause, _hasIndexesValue;
   private boolean _hasInductionClause, _hasInitClause, _hasInterchangeClause;
-  private boolean _hasParallelClause;
+  private boolean _hasParallelClause, _hasPrivateClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -87,6 +87,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasInitClause = false;
     _hasInterchangeClause = false;
     _hasParallelClause = false;
+    _hasPrivateClause = false;
 
     // General members
     _directive = null;
@@ -473,6 +474,21 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   void setInitClause(){
     _hasInitClause = true;
+  }
+
+  /**
+   * Check whether the private clause is used.
+   * @return True if the init clause if used.
+   */
+  public boolean hasPrivateClause(){
+    return _hasPrivateClause;
+  }
+
+  /**
+   * Set the private clause flag.
+   */
+  void setPrivateClause(){
+    _hasPrivateClause = true;
   }
 
 
