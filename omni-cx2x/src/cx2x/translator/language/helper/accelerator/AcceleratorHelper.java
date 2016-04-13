@@ -12,6 +12,8 @@ import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.Xpragma;
 
+import java.util.List;
+
 /**
  * The class AcceleratorHelper contains only static method to help the
  * generation of the accelerator related pragma during code transformations.
@@ -98,6 +100,42 @@ public class AcceleratorHelper {
   }
 
   /**
+   *
+   * @param claw    ClawLanguage object that tells which accelerator pragmas
+   *                are enabled.
+   * @param xcodeml Object representation of the current XcodeML
+   *                representation in which the pragmas will be generated.
+   * @param stmt    Statement from which we looks for a parallel clause to
+   *                append private clauses.
+   * @param vars    List of variables for the private clause.
+   * TODO what about OpenMP
+   */
+  public static void generatePrivateClause(ClawLanguage claw,
+                                           XcodeProgram xcodeml,
+                                           XbaseElement stmt,
+                                           List<String> vars)
+  {
+    if(claw.getAcceleratorDirective() == AcceleratorDirective.NONE
+        || !claw.hasPrivateClause()){
+      return;
+    }
+
+    AcceleratorGenerator generator = AcceleratorHelper.
+        createAcceleratorGenerator(claw.getAcceleratorDirective());
+
+    Xpragma parallel =
+        XelementHelper.findPreviousPragma(stmt, generator.getParallelKeyword());
+
+    if(parallel == null){
+      // TODO add warning in the XcodeProgram
+    } else {
+      for (String var : vars) {
+        parallel.append(generator.getPrivateClause(var));
+      }
+    }
+  }
+
+  /**
    * Constructs the correct AcceleratorGenerator object regarding the enum
    * value passed.
    * @param accDirective Enum value that define the generator to be created.
@@ -111,9 +149,8 @@ public class AcceleratorHelper {
         return new OpenAcc();
       case OPENMP:
         return new OpenMp();
-      default:
-        return new AcceleratorGenerator();
     }
+    return null;
   }
 
 }
