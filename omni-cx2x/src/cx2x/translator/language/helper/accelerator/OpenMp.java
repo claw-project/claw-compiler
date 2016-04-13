@@ -5,8 +5,6 @@
 
 package cx2x.translator.language.helper.accelerator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * OpenMP specific accelerator directive generator.
  *
