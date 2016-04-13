@@ -17,16 +17,26 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 class OpenMp extends AcceleratorGenerator {
   @Override
   protected String getStartParellelDirective() {
-    throw new NotImplementedException();
+    return "";
   }
 
   @Override
   public String getEndParellelDirective() {
-    throw new NotImplementedException();
+    return "";
   }
 
   @Override
   public String getSingleDirective(String clause) {
-    throw new NotImplementedException();
+    return "";
+  }
+
+  @Override
+  protected String getParallelKeyword() {
+    return "";
+  }
+
+  @Override
+  protected String getPrivateClause(String var) {
+    return "";
   }
 }

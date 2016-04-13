@@ -16,23 +16,19 @@ import cx2x.translator.common.Constant;
  *
  * @author clementval
  */
-class AcceleratorGenerator {
+abstract class AcceleratorGenerator {
 
   /**
    * Get the start pragma to define a parallel accelerated region.
    * @return String value that represents the pragma.
    */
-  protected String getStartParellelDirective(){
-    return Constant.EMPTY_STRING;
-  }
+  protected abstract String getStartParellelDirective();
 
   /**
    * Get the end pragma to define a parallel accelerated region.
    * @return String value that represents the pragma.
    */
-  protected String getEndParellelDirective(){
-    return Constant.EMPTY_STRING;
-  }
+  protected abstract String getEndParellelDirective();
 
   /**
    * Get formatted pragma defined by the accelerator directive prefix and the
@@ -40,15 +36,19 @@ class AcceleratorGenerator {
    * @param clause Clauses to append to the accelerator directive prefix
    * @return String value that represents the pragma.
    */
-  protected String getSingleDirective(String clause){
-    return Constant.EMPTY_STRING;
-  }
+  protected abstract String getSingleDirective(String clause);
 
   /**
    * Get the parallel keyword for a given accelerator language.
    * @return The corresponding parallel keyword.
    */
-  protected String getParallelKeyword(){
-    return Constant.EMPTY_STRING;
-  }
+  protected abstract String getParallelKeyword();
+
+  /**
+   * Return contruction of the clause for a private variable in a
+   * @param var
+   * @return
+   */
+  protected abstract String getPrivateClause(String var);
+
 }
