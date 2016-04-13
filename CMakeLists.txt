@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(clawfc)
-set(CLAWFC_VERSION "0.2a")
+
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+set(CLAWFC_VERSION "0.2a rev. ${GIT_COMMIT_HASH}")
 
 find_package(Java REQUIRED)
 
