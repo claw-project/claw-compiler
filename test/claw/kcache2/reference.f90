@@ -37,13 +37,13 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
     array8_k_m1 = array8 ( i , j - 1 )
     array9_k_m1 = array9 ( i , j - 1 )
    END IF
-   array6_k_m1 = array6 ( i , j - 1 ) * 2.0
+   array6_k_m1 = array6_k_m1 * 2.0
    array6 ( i , j ) = array6_k_m1
-   array7_k_m1 = array7 ( i , j - 1 ) * 2.0 + array6_k_m1
+   array7_k_m1 = array7_k_m1 * 2.0 + array6_k_m1
    array7 ( i , j ) = array7_k_m1
-   array8_k_m1 = array8 ( i , j - 1 ) * 2.0 + array6_k_m1 + array7_k_m1
+   array8_k_m1 = array8_k_m1 * 2.0 + array6_k_m1 + array7_k_m1
    array8 ( i , j ) = array8_k_m1
-   array9_k_m1 = array9 ( i , j - 1 ) * 2.0 + array6_k_m1 + array8_k_m1
+   array9_k_m1 = array9_k_m1 * 2.0 + array6_k_m1 + array8_k_m1
    array9 ( i , j ) = array9_k_m1
   END DO
  END DO
