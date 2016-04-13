@@ -250,6 +250,37 @@ public class XelementHelper {
   }
 
   /**
+   * Find a pragma element in the previous nodes containing a given keyword.
+   * @param from    Element to start from.
+   * @param keyword Keyword to be found in the pragma.
+   * @return The pragma if found. Null otherwise.
+   */
+  public static Xpragma findPreviousPragma(XbaseElement from, String keyword){
+    if(from == null || from.getBaseElement() == null){
+      return null;
+    }
+    Node prev = from.getBaseElement().getPreviousSibling();
+    Node parent = from.getBaseElement();
+    do {
+      while (prev != null) {
+        if (prev.getNodeType() == Node.ELEMENT_NODE) {
+          Element element = (Element) prev;
+          if (element.getTagName().equals(XelementName.PRAGMA_STMT)
+              && element.getTextContent().toLowerCase().
+              contains(keyword.toLowerCase()))
+          {
+            return new Xpragma(element);
+          }
+        }
+        prev = prev.getPreviousSibling();
+      }
+      parent = parent.getParentNode();
+      prev = parent;
+    } while(parent != null);
+    return null;
+  }
+
+  /**
    * Find do statement element.
    * @param fctDef  Function definition to search in.
    * @param any     If true, find in any nested element under parent. If
