@@ -37,4 +37,12 @@ public class Xpragma extends XenhancedElement implements Xclonable<Xpragma> {
     return new Xpragma((Element)clone);
   }
 
+  /**
+   * Append information to the current pragma.
+   * @param data New information to be inserted.
+   */
+  public void append(String data){
+    setValue(getValue() + " " + data);
+  }
+
 }

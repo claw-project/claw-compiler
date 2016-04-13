@@ -21,6 +21,11 @@ public class XpragmaTest {
       "claw loop-fusion" +
       "</FpragmaStatement>";
 
+  private static final String pragma2 =
+      "<FpragmaStatement lineno=\"9\" file=\"original_code.f90\">" +
+      "acc parallel" +
+      "</FpragmaStatement>";
+
   @Test
   public void simplePragmaTest(){
     Xpragma pragma = XmlHelper.createXpragma(pragma1);
@@ -28,6 +33,17 @@ public class XpragmaTest {
     assertEquals("claw loop-fusion", pragma.getValue());
     assertEquals(9, pragma.getLineNo());
     assertEquals("original_code.f90", pragma.getFile());
+  }
+
+  @Test
+  public void appendTest(){
+    Xpragma pragma = XmlHelper.createXpragma(pragma2);
+    assertNotNull(pragma);
+    assertEquals("acc parallel", pragma.getValue());
+    assertEquals(9, pragma.getLineNo());
+    assertEquals("original_code.f90", pragma.getFile());
+    pragma.append("private(var1)");
+    assertEquals("acc parallel private(var1)", pragma.getValue());
   }
 
   @Test
