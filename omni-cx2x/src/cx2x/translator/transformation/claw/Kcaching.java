@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
@@ -14,6 +15,8 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -106,6 +109,7 @@ public class Kcaching extends Transformation {
     XfunctionDefinition fctDef =
         XelementHelper.findParentFctDef(_claw.getPragma());
 
+    List<String> privateVars = new ArrayList<>();
     for(String var : _claw.getDataClauseValues()){
       List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, var);
 
@@ -115,7 +119,11 @@ public class Kcaching extends Transformation {
           aRefs.get(0));
 
       updateArrayRefWithCache(aRefs, cacheVar);
+      privateVars.add(cacheVar.getValue());
     }
+
+    AcceleratorHelper.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
+        privateVars);
     _claw.getPragma().delete();
   }
 
@@ -146,6 +154,8 @@ public class Kcaching extends Transformation {
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
+    AcceleratorHelper.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
+        Collections.singletonList(cacheVar.getValue()));
     _stmt.delete();
     _claw.getPragma().delete();
   }
