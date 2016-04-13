@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformer;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.transformation.*;
+import cx2x.xcodeml.xelement.XbaseElement;
+import org.w3c.dom.Element;
 
 /**
  * ClawTransformer stores all transformation groups applied during the
@@ -27,6 +30,9 @@ public class ClawTransformer implements Transformer {
   // Hold all tranformation groups
   private final Map<Class, TransformationGroup> _tGroups;
 
+  // Hold cross-transformation elements
+  private final Map<Element, XbaseElement> _crossTransformationTable;
+
 
   /**
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
@@ -37,6 +43,7 @@ public class ClawTransformer implements Transformer {
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
      */
+    // TODO read configuration from a config file for transformation order
     _tGroups = new LinkedHashMap<>();
     _tGroups.put(UtilityRemove.class,
         new IndependentTransformationGroup("remove"));
@@ -54,6 +61,9 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("loop-interchange"));
     _tGroups.put(OpenAccContinuation.class,
         new IndependentTransformationGroup("open-acc-continuation"));
+
+
+    _crossTransformationTable = new HashMap<>();
   }
 
   /**
@@ -78,5 +88,31 @@ public class ClawTransformer implements Transformer {
    */
   public int getNextTransformationCounter(){
     return _transformationCounter++;
+  }
+
+
+  /**
+   * Get a stored element from a previous transformation.
+   * @param key Key to use to retrieve the element.
+   * @return The stored element if present. Null otherwise.
+   */
+  public XbaseElement hasElement(XbaseElement key){
+    if(_crossTransformationTable.containsKey(key.getBaseElement())){
+      return _crossTransformationTable.get(key.getBaseElement());
+    }
+    return null;
+  }
+
+  /**
+   * Store a XbaseElement from a transformation for a possible usage in another
+   * transformation. If a key is already present, the element is overwritten.
+   * @param key   The element acting as a key.
+   * @param value The element to be stored.
+   */
+  public void storeElement(XbaseElement key, XbaseElement value){
+    if(_crossTransformationTable.containsKey(key.getBaseElement())){
+      _crossTransformationTable.remove(key.getBaseElement());
+    }
+    _crossTransformationTable.put(key.getBaseElement(), value);
   }
 }
