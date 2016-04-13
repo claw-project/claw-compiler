@@ -52,6 +52,7 @@ public class XcodeProgram extends XbaseElement {
   private boolean _isLoaded = false;
 
   private List<XanalysisError> _errors;
+  private List<XanalysisError> _warnings;
 
   /**
    * XcodeProgram base constructor.
@@ -61,6 +62,7 @@ public class XcodeProgram extends XbaseElement {
     super(null);
     _xcodemlInputFile = inputFile;
     _errors = new ArrayList<>();
+    _warnings = new ArrayList<>();
   }
 
   /**
@@ -102,6 +104,30 @@ public class XcodeProgram extends XbaseElement {
    */
   public List<XanalysisError> getErrors(){
     return _errors;
+  }
+
+  /**
+   * Add a warning.
+   * @param msg     Warning message.
+   * @param lineno  Line number that triggered the warning.
+   */
+  public void addWarning(String msg, int lineno){
+    _warnings.add(new XanalysisError(msg, lineno));
+  }
+
+  /**
+   * Get all the warnings.
+   * @return A list containing all the warnings.
+   */
+  public List<XanalysisError> getWarnings(){
+    return _errors;
+  }
+
+  /**
+   * Purge all current warnings.
+   */
+  public void purgeWarning(){
+    _warnings.clear();
   }
 
   /**

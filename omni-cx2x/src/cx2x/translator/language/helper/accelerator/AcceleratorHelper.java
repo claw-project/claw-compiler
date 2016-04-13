@@ -100,7 +100,7 @@ public class AcceleratorHelper {
   }
 
   /**
-   *
+   * Generate the correct clauses for private variable on accelerator.
    * @param claw    ClawLanguage object that tells which accelerator pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
@@ -127,7 +127,8 @@ public class AcceleratorHelper {
         XelementHelper.findPreviousPragma(stmt, generator.getParallelKeyword());
 
     if(parallel == null){
-      // TODO add warning in the XcodeProgram
+      xcodeml.addWarning("No parallel construct found to attach private clause",
+          claw.getPragma().getLineNo());
     } else {
       for (String var : vars) {
         parallel.append(generator.getPrivateClause(var));
