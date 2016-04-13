@@ -13,21 +13,26 @@ package cx2x.translator.language.helper.accelerator;
 class OpenAcc extends AcceleratorGenerator {
 
   private static final String OPENACC_PREFIX = "acc";
-  private static final String OPENACC_PARALLEL = "acc parallel";
-  private static final String OPENACC_END_PARALLEL = "acc end parallel";
+  private static final String OPENACC_PARALLEL = "parallel";
+  private static final String OPENACC_END = "end";
 
   @Override
   protected String getStartParellelDirective() {
-    return OPENACC_PARALLEL;
+    return OPENACC_PREFIX + " " + OPENACC_PARALLEL;
   }
 
   @Override
   protected String getEndParellelDirective() {
-    return OPENACC_END_PARALLEL;
+    return OPENACC_PREFIX + " " + OPENACC_END + " " + OPENACC_PARALLEL;
   }
 
   @Override
   protected String getSingleDirective(String clause) {
     return OPENACC_PREFIX + " " + clause;
+  }
+
+  @Override
+  protected String getParallelKeyword(){
+    return OPENACC_PARALLEL;
   }
 }

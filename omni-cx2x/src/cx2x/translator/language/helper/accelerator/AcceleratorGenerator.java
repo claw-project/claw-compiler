@@ -43,4 +43,12 @@ class AcceleratorGenerator {
   protected String getSingleDirective(String clause){
     return Constant.EMPTY_STRING;
   }
+
+  /**
+   * Get the parallel keyword for a given accelerator language.
+   * @return The corresponding parallel keyword.
+   */
+  protected String getParallelKeyword(){
+    return Constant.EMPTY_STRING;
+  }
 }
