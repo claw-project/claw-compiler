@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
@@ -122,6 +123,8 @@ public class Kcaching extends Transformation {
     String cacheName =
         generateNameWithOffsetInfo(arrayVarName, _claw.getOffsets());
 
+
+
     // TODO check for type if it is correct one in any case
     String type = _stmt.getLValueModel().getArrayRef().getType();
     // 2.2 inject a new entry in the symbol table
@@ -137,6 +140,22 @@ public class Kcaching extends Transformation {
       fctDef.getDeclarationTable().add(cacheVarDecl);
     }
 
+    // 2.4 Prepare the new variable that is used for caching
+    Xvar cacheVar = Xvar.create(type, cacheName, Xscope.LOCAL, xcodeml);
+
+    // 2.5 Retrieve all array references that must be modified to use the cache
+    List<XarrayRef> arrayRefs =
+        XelementHelper.getAllArrayReferencesByOffsets(_doStmt.getBody(),
+            arrayVarName, _claw.getOffsets());
+    if(arrayRefs.size() == 0){
+      throw new IllegalTransformationException(
+          "No array reference matches the cache directive",
+          _claw.getPragma().getLineNo()
+      );
+    }
+
+    // 2. Insert init statement if needed
+    applyInitClause(xcodeml, transformer, cacheVar, arrayRefs.get(0));
 
     /*
      * 2.4 add new assign statement
@@ -146,7 +165,6 @@ public class Kcaching extends Transformation {
      * cache_A = B
      * A = cache_A
      */
-    Xvar cacheVar = Xvar.create(type, cacheName, Xscope.LOCAL, xcodeml);
     XassignStatement cache1 =
         XelementHelper.createEmpty(XassignStatement.class, xcodeml);
     cache1.appendToChildren(cacheVar, false);
@@ -157,17 +175,10 @@ public class Kcaching extends Transformation {
     cache2.appendToChildren(cacheVar, true);
     XelementHelper.insertAfter(_stmt, cache1);
     XelementHelper.insertAfter(cache1, cache2);
-
     _stmt.delete();
     _claw.getPragma().delete();
 
-    // 2. Insert init statement if needed
-    applyInitClause(xcodeml);
-
     // 3. Update array refences at given offset.
-    List<XarrayRef> arrayRefs =
-        XelementHelper.getAllArrayReferencesByOffsets(_doStmt.getBody(),
-            arrayVarName, _claw.getOffsets());
     for(XarrayRef ref : arrayRefs){
       // Swap arrayRef with the cache variable
       XelementHelper.insertAfter(ref, cacheVar.cloneObject());
@@ -177,30 +188,49 @@ public class Kcaching extends Transformation {
 
   /**
    * Apply the init clause if it was part of the kcache directive.
-   * @param xcodeml Current program in which the transformation is performed.
+   * @param xcodeml     Current program in which the transformation is
+   *                    performed.
+   * @param transformer Current transformer used to store elements informations.
+   * @param cacheVar    Newly created cache variable that will be used for the
+   *                    initialization (rhs of the assign statement). Element
+   *                    will be cloned before insertion.
+   * @param arrayRef    Array reference to be modified that will be
+   *                    used for the initialization (lhs of the assign
+   *                    statement). Element will be cloned before insertion.
    * @throws IllegalTransformationException
    */
-  private void applyInitClause(XcodeProgram xcodeml)
+  private void applyInitClause(XcodeProgram xcodeml, Transformer transformer,
+                               Xvar cacheVar, XarrayRef arrayRef)
     throws IllegalTransformationException
   {
+
     if(_claw.hasInitClause()){
-      XifStatement initIfStmt = XifStatement.create(xcodeml);
-      XbinaryExpr logEq =
-          XelementHelper.createEmpty(XelementName.LOG_EQ_EXPR, xcodeml);
+      ClawTransformer ct = (ClawTransformer)transformer;
+      XifStatement initIfStmt = (XifStatement) ct.hasElement(_doStmt);
+      if(initIfStmt == null){
+        // If statement has not been created yet so we do it here
+        initIfStmt = XifStatement.create(xcodeml);
+        XbinaryExpr logEq =
+            XelementHelper.createEmpty(XelementName.LOG_EQ_EXPR, xcodeml);
 
-      // Set lhs of equality
-      logEq.appendToChildren(_doStmt.getIterationRange().getInductionVar(),
-          true);
-      // Set rhs of equality
-      logEq.appendToChildren(_doStmt.getIterationRange().getIndexRange().
-          getLowerBound().getExprModel().getElement(), true);
+        // Set lhs of equality
+        logEq.appendToChildren(_doStmt.getIterationRange().getInductionVar(),
+            true);
+        // Set rhs of equality
+        logEq.appendToChildren(_doStmt.getIterationRange().getIndexRange().
+            getLowerBound().getExprModel().getElement(), true);
 
-      initIfStmt.getCondition().appendToChildren(logEq, false);
+        initIfStmt.getCondition().appendToChildren(logEq, false);
+        _doStmt.getBody().appendAsFirst(initIfStmt);
+        ct.storeElement(_doStmt, initIfStmt);
+      }
 
-
-
-      //TODO
-
+      XassignStatement initAssignement =
+          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
+      initAssignement.appendToChildren(cacheVar, true); // set rhs
+      initAssignement.appendToChildren(arrayRef, true); // set lhs
+      // Add assignment in the "then" body element
+      initIfStmt.getThen().getBody().appendToChildren(initAssignement, false);
     }
   }
 
