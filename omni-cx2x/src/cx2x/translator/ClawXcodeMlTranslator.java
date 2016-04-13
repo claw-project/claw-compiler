@@ -40,6 +40,7 @@ import java.util.Map;
 
 public class ClawXcodeMlTranslator {
   private static final String ERROR_PREFIX = "claw-error: ";
+  private static final String WARNING_PREFIX = "claw warning: ";
   private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
@@ -223,6 +224,7 @@ public class ClawXcodeMlTranslator {
 
         try {
           entry.getValue().applyTranslations(_program, _transformer);
+          displayWarnings();
         } catch (IllegalTransformationException itex) {
           _program.addError(itex.getMessage(), itex.getStartLine());
           abort();
@@ -265,6 +267,23 @@ public class ClawXcodeMlTranslator {
       }
     }
     System.exit(1);
+  }
+
+  /**
+   * Print all the warnings stored in the XcodeML object and purge them after
+   * displaying.
+   */
+  private void displayWarnings(){
+    for(XanalysisError warn : _program.getWarnings()){
+      if(warn.getLine() == 0){
+        System.err.println(WARNING_PREFIX + warn.getMessage() + ", line: " +
+            "undefined");
+      } else {
+        System.err.println(WARNING_PREFIX + warn.getMessage() + ", line: " +
+            warn.getLine());
+      }
+    }
+    _program.purgeWarning();
   }
 
 }
