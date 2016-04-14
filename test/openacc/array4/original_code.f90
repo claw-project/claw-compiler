@@ -9,6 +9,7 @@ END
 SUBROUTINE claw_test
   INTEGER, DIMENSION(0:10) :: vec1
   INTEGER, DIMENSION(0:10) :: vec2
+  INTEGER, DIMENSION(0:10) :: vec3
 
   vec1(:) = 0;
   vec2(:) = 100;
@@ -17,6 +18,9 @@ SUBROUTINE claw_test
   vec1(:) = vec2(:) + 10
   vec2(:) = vec1(:) + 10
   !$claw end array-transform
+
+  vec3(:) = vec1(:) + vec2(:)
+
 
   PRINT*,vec1
   PRINT*,vec2
