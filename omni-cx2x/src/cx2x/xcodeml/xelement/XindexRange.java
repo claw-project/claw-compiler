@@ -109,17 +109,19 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
   public boolean equals(Object ob) {
     if (ob == null) return false;
     if (ob.getClass() != getClass()) return false;
-    XindexRange other = (XindexRange)ob;
+    XindexRange other = (XindexRange) ob;
 
-    if (!getLowerBound().equals(other.getLowerBound())){
+    if (!getLowerBound().equals(other.getLowerBound())) {
       return false;
     }
 
-    if (!getUpperBound().equals(other.getUpperBound())){
+    if (!getUpperBound().equals(other.getUpperBound())) {
       return false;
     }
 
-    return getStep().equals(other.getStep());
+    // step is optional
+    return getStep() == null && other.getStep() == null ||
+        getStep().equals(other.getStep());
 
   }
 
