@@ -142,7 +142,7 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
    * @param xcodeml Current program in which the indexRange will be created.
    * @param arrayVar Var used on the function call to size() intrinsic.
    * @return New index range 0, size(var)
-   * @throws IllegalTransformationException if an element cannot be created. 
+   * @throws IllegalTransformationException if an element cannot be created.
    */
   public static XindexRange createAssumedShapeRange(XcodeProgram xcodeml,
                                                     Xvar arrayVar)
