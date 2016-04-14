@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XelementHelper;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,5 +48,39 @@ public class XindexRangeTest {
         idx.getUpperBound().getExprModel().getIntConstant().getValue());
     assertEquals("1",
         idx.getStep().getExprModel().getIntConstant().getValue());
+  }
+
+  @Test
+  public void createTest(){
+    try {
+      XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+      Xvar var = Xvar.create("dummy", "array1", Xscope.LOCAL, xcodeml);
+      XindexRange range = XindexRange.createAssumedShapeRange(xcodeml, var);
+      assertFalse(range.isAssumedShape());
+      assertNotNull(range.getLowerBound());
+
+      assertNotNull(range.getLowerBound().getExprModel());
+      assertTrue(range.getLowerBound().getExprModel().isIntConst());
+      assertNotNull(range.getLowerBound().getExprModel().getIntConstant());
+      assertEquals("0", range.getLowerBound().getExprModel().getIntConstant().
+          getValue());
+
+      assertNotNull(range.getUpperBound());
+      assertTrue(range.getUpperBound().getExprModel().isFctCall());
+      assertNotNull(range.getUpperBound().getExprModel().getFctCall());
+      assertTrue(range.getUpperBound().getExprModel().getFctCall().
+          isIntrinsic());
+      assertNotNull(range.getUpperBound().getExprModel().getFctCall().
+          getName());
+      assertEquals(XelementName.INTRINSIC_SIZE,
+          range.getUpperBound().getExprModel().getFctCall().getName().
+              getValue());
+      assertEquals(1, range.getUpperBound().getExprModel().getFctCall().
+          getArgumentsTable().count());
+      assertNotNull(range.getUpperBound().getExprModel().getFctCall().
+          getArgumentsTable().findArgument("array1"));
+    } catch (IllegalTransformationException itex) {
+      fail();
+    }
   }
 }
