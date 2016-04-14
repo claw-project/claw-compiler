@@ -59,12 +59,35 @@ public class XfunctionCall extends XbaseElement {
     return _isInstrinsic;
   }
 
+
+  /**
+   * Set the value if the is_instrinsic attribute.
+   * @param value boolean value of the attribute.
+   */
+  public void setIntrinsic(boolean value){
+    if(value){
+      baseElement.setAttribute(XelementName.ATTR_IS_INTRINSIC,
+          XelementName.TRUE);
+    } else {
+      baseElement.setAttribute(XelementName.ATTR_IS_INTRINSIC,
+          XelementName.FALSE);
+    }
+  }
+
   /**
    * Get the function type.
    * @return Type of the function as a String value.
    */
   public String getType(){
     return _type;
+  }
+
+  /**
+   * Set the value of the type attribute.
+   * @param type New value to be set.
+   */
+  public void setType(String type){
+      baseElement.setAttribute(XelementName.ATTR_TYPE, type);
   }
 
   /**
