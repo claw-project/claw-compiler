@@ -175,15 +175,21 @@ public class ArrayTransform extends BlockTransformation {
   }
 
   /**
-   *
-   * @param xcodeml
-   * @param transformer
-   * @param fctDef
-   * @param ranges
-   * @param statements
-   * @param doStmtGrip
-   * @return
-   * @throws IllegalTransformationException
+   * Generate the correspondind do statements for the array notations. A do
+   * statement is generated per dimension of the arrays. Iteration index range
+   * are computed with array dimensions.
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
+   * @param fctDef      The function definition in which the array notation is
+   *                    nested.
+   * @param ranges      The list of iteration ranges to be applied to the
+   *                    created do statements.
+   * @param statements  The list of assign statements (array notation) that will
+   *                    be included in the nested do statements.
+   * @param doStmtGrip  Grip for the code insertion. Do statements will be
+   *                    inserted after the grip element.
+   * @return The outter most do statement created during the transformation.
+   * @throws IllegalTransformationException if creation of elements fail. 
    */
   private XdoStatement generateDoStmtNotation(XcodeProgram xcodeml,
                                       Transformer transformer,
