@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import cx2x.xcodeml.helper.*;
@@ -111,6 +112,10 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
     if (ob.getClass() != getClass()) return false;
     XindexRange other = (XindexRange) ob;
 
+    if(isAssumedShape() && other.isAssumedShape()){
+      return true;
+    }
+
     if (!getLowerBound().equals(other.getLowerBound())) {
       return false;
     }
@@ -129,5 +134,44 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
   public int hashCode() {
     return _lowerBound.hashCode() ^ _upperBound.hashCode()
       ^ _step.hashCode();
+  }
+
+
+  /**
+   * Create an index range element for an iteration between 0 and size(var).
+   * @param xcodeml Current program in which the indexRange will be created.
+   * @param arrayVar Var used on the function call to size() intrinsic.
+   * @return New index range 0, size(var)
+   * @throws IllegalTransformationException if an element cannot be created. 
+   */
+  public static XindexRange createAssumedShapeRange(XcodeProgram xcodeml,
+                                                    Xvar arrayVar)
+      throws IllegalTransformationException
+  {
+    XindexRange range = XelementHelper.createEmpty(XindexRange.class, xcodeml);
+    XlowerBound lower = XelementHelper.createEmpty(XlowerBound.class, xcodeml);
+    XupperBound upper = XelementHelper.createEmpty(XupperBound.class, xcodeml);
+    range.appendToChildren(lower, false);
+    range.appendToChildren(upper, false);
+    XintConstant lowerBound =
+        XelementHelper.createEmpty(XintConstant.class, xcodeml);
+    lowerBound.setValue("0");
+    lower.appendToChildren(lowerBound, false);
+
+    XfunctionCall fctCall =
+        XelementHelper.createEmpty(XfunctionCall.class, xcodeml);
+    upper.appendToChildren(fctCall, false);
+
+    fctCall.setIntrinsic(true);
+    fctCall.setType(XelementName.TYPE_F_INT);
+    Xname name = XelementHelper.createEmpty(Xname.class, xcodeml);
+    name.setValue(XelementName.INTRINSIC_SIZE);
+    fctCall.appendToChildren(name, false);
+    XargumentsTable args = XelementHelper.createEmpty(XargumentsTable.class, xcodeml);
+    fctCall.appendToChildren(args, false);
+    args.add(arrayVar);
+
+    range.readElementInformation();
+    return range;
   }
 }
