@@ -154,6 +154,9 @@ public class XelementName {
   public static final String UNARY_MINUS_EXPR = "unaryMinusExpr";
   public static final String USER_UNARY_EXPR = "userUnaryExpr";
 
+  // Intrinsic function
+  public static final String INTRINSIC_SIZE = "size";
+
 
   private static final Map<Class, String> _classToElementNameMapping;
 
