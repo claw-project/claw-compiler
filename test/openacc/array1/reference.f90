@@ -12,7 +12,6 @@ SUBROUTINE claw ( )
  DO j = 0 , 10 , 1
   vec1 ( j ) = j
  END DO
-!$claw array-transform parallel acc(loop)
 !$acc parallel
 !$acc loop
  DO claw_induction_0 = 0 , 10

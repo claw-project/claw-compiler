@@ -12,7 +12,6 @@ SUBROUTINE claw ( )
 
  vec1 ( 0 : i , 0 : i ) = 0
  vec2 ( 0 : i , 0 : i ) = 100
-!$claw array-transform induction(j1,j3)
  DO j1 = 0 , i
   DO j3 = 0 , i
    vec1 ( j1 , j3 ) = vec2 ( j1 , j3 ) + 10

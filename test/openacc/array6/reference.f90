@@ -13,11 +13,9 @@ SUBROUTINE claw ( )
 
  vec1 = 0
  vec2 = 100
-!$claw array-transform
  DO claw_induction_0 = lower , upper
   vec1 ( claw_induction_0 ) = vec2 ( claw_induction_0 ) + 10
  END DO
-!$claw array-transform
  DO claw_induction_1 = lower + 1 , upper
   vec2 ( claw_induction_1 ) = vec2 ( 1 ) + 10
  END DO
