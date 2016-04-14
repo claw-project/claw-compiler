@@ -123,6 +123,43 @@ public class XelementHelper {
   }
 
   /**
+   * Retrieve the index ranges of an array notation.
+   * @param arrayRef The array reference statements to extract the ranges from.
+   * @return A list if indexRanges elements.
+   */
+  public static List<XindexRange> getIdxRangesFromArrayRef(XarrayRef arrayRef){
+    List<XindexRange> ranges = new ArrayList<>();
+    for(XbaseElement el : arrayRef.getInnerElements()){
+      if(el instanceof XindexRange){
+        ranges.add((XindexRange) el);
+      }
+    }
+    return ranges;
+  }
+
+
+  /**
+   * Compare two list of indexRange.
+   * @param list1 First list of indexRange.
+   * @param list2 Second list of indexRange.
+   * @return True if the indexRange at the same position in the two list are all
+   * identical. False otherwise. 
+   */
+  public static boolean compareIndexRanges(List<XindexRange> list1,
+                                           List<XindexRange> list2){
+    if(list1.size() != list2.size()){
+      return false;
+    }
+
+    for(int i = 0; i < list1.size(); ++i){
+      if(!list1.get(i).equals(list2.get(i))){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * <pre>
    * Find all assignment statement from a node until the end pragma.
    *
