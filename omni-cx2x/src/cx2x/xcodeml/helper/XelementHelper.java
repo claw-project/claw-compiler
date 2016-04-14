@@ -143,7 +143,7 @@ public class XelementHelper {
    * @param list1 First list of indexRange.
    * @param list2 Second list of indexRange.
    * @return True if the indexRange at the same position in the two list are all
-   * identical. False otherwise. 
+   * identical. False otherwise.
    */
   public static boolean compareIndexRanges(List<XindexRange> list1,
                                            List<XindexRange> list2){
