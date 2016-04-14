@@ -123,6 +123,65 @@ public class XelementHelper {
   }
 
   /**
+   * <pre>
+   * Find all assignment statement from a node until the end pragma.
+   *
+   * This method use Xpath to select the correct nodes. Xpath 1.0 does not have
+   * the intersect operator but only union. By using the Kaysian Method, we can
+   * it is possible to express the intersection of two node sets.
+   *
+   *       $set1[count(.|$set2)=count($set2)]
+   *
+   * In our case, we intersect all assign statments which are next siblings of
+   * the "from" element with all the assign statements which are previous
+   * siblings of the ending pragma.
+   * </pre>
+   *
+   * @param from      The element from which the search is initiated.
+   * @param endPragma Value of the end pragma. Search will be performed until
+   *                  there.
+   * @return A list of all assign statements found. List is empty if no
+   * statements are found.
+   */
+  public static List<XassignStatement> getArrayAssignInBlock(XbaseElement from,
+                                                             String endPragma)
+  {
+
+    /* Define all the assign element with array refs which are next siblings of
+     * the "from" element */
+    String s1 = String.format(
+        "following-sibling::%s[%s]",
+        XelementName.F_ASSIGN_STMT,
+        XelementName.F_ARRAY_REF
+    );
+    /* Define all the assign element with array refs which are previous siblings
+     * of the end pragma element */
+    String s2 = String.format(
+        "following-sibling::%s[text()=\"%s\"]/preceding-sibling::%s[%s]",
+        XelementName.PRAGMA_STMT,
+        endPragma,
+        XelementName.F_ASSIGN_STMT,
+        XelementName.F_ARRAY_REF
+    );
+    // Use the Kaysian method to express the intersect operator
+    String intersect = String.format("%s[count(.|%s)=count(%s)]", s1, s2, s2);
+
+    List<XassignStatement> assignements = new ArrayList<>();
+    try {
+      XPathFactory xPathfactory = XPathFactory.newInstance();
+      XPath xpath = xPathfactory.newXPath();
+      XPathExpression xpathExpr = xpath.compile(intersect);
+      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+          XPathConstants.NODESET);
+      for (int i = 0; i < output.getLength(); i++) {
+        Element assign = (Element) output.item(i);
+        assignements.add(new XassignStatement(assign));
+      }
+    } catch (XPathExpressionException ignored) {}
+    return assignements;
+  }
+
+  /**
    * Find all array references in the next children that match the given
    * criteria.
    *
@@ -198,9 +257,7 @@ public class XelementHelper {
         Element arrayRef = (Element) output.item(i);
         arrayRefs.add(new XarrayRef(arrayRef));
       }
-    } catch (XPathExpressionException ignored) {
-      String t = ignored.getMessage();
-    }
+    } catch (XPathExpressionException ignored) { }
     return arrayRefs;
   }
 
