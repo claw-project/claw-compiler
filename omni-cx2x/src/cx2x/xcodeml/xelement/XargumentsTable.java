@@ -44,13 +44,22 @@ public class XargumentsTable extends XbaseElement {
    */
   private void readTable(){
     // Read Var element
-    NodeList elements = baseElement.getElementsByTagName(XelementName.VAR);
+    NodeList elements = baseElement.getChildNodes();
     for (int i = 0; i < elements.getLength(); i++) {
       Node n = elements.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) n;
-        Xvar var = new Xvar(el);
-        _table.put(var.getValue(), new XexprModel(var));
+        switch (el.getTagName()){
+          case XelementName.VAR:
+            Xvar var = new Xvar(el);
+            _table.put(var.getValue(), new XexprModel(var));
+            break;
+          case XelementName.F_INT_CONST:
+            XintConstant con = new XintConstant(el);
+            _table.put(con.getValue(), new XexprModel(con));
+            break;
+        }
+        // TODO read table differently to have all elements.
       }
     }
   }
@@ -98,6 +107,17 @@ public class XargumentsTable extends XbaseElement {
     baseElement.appendChild(var.cloneNode());
     _table.put(var.getValue(), new XexprModel(var));
   }
+
+  /**
+   * Add a exprModel to the arguments table.
+   * @param constant The exprModel to be added.
+   */
+  public void add(XintConstant constant){
+    baseElement.appendChild(constant.cloneNode());
+    _table.put(constant.getValue(), new XexprModel(constant));
+  }
+
+
 
 
   /**
