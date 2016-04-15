@@ -55,14 +55,15 @@ public class XindexRangeTest {
     try {
       XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
       Xvar var = Xvar.create("dummy", "array1", Xscope.LOCAL, xcodeml);
-      XindexRange range = XindexRange.createAssumedShapeRange(xcodeml, var, 0);
+      XindexRange range =
+          XindexRange.createAssumedShapeRange(xcodeml, var, 1, 0);
       assertFalse(range.isAssumedShape());
       assertNotNull(range.getLowerBound());
 
       assertNotNull(range.getLowerBound().getExprModel());
       assertTrue(range.getLowerBound().getExprModel().isIntConst());
       assertNotNull(range.getLowerBound().getExprModel().getIntConstant());
-      assertEquals("0", range.getLowerBound().getExprModel().getIntConstant().
+      assertEquals("1", range.getLowerBound().getExprModel().getIntConstant().
           getValue());
 
       assertNotNull(range.getUpperBound());

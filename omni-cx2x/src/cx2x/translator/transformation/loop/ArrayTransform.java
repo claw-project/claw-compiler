@@ -60,6 +60,9 @@ public class ArrayTransform extends BlockTransformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     if(_clawEnd != null){ // Block transformation
+
+      // TODO Analyse dependcy between assignments. cf array9 example.
+
       // Find assignments with array notation
       List<XassignStatement> foundAssignments =
           XelementHelper.getArrayAssignInBlock(_clawBegin.getPragma(),
@@ -234,7 +237,7 @@ public class ArrayTransform extends BlockTransformation {
       XindexRange range;
       if(ranges.get(i).isAssumedShape()){ // Allocatable array
         // dimension argument of size starts at one
-        range = XindexRange.createAssumedShapeRange(xcodeml, var, i + 1);
+        range = XindexRange.createAssumedShapeRange(xcodeml, var, 1, i + 1);
       } else {
         range = ranges.get(i).cloneObject();
       }
