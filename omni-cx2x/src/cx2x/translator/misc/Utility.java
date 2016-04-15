@@ -57,8 +57,8 @@ public class Utility {
   }
 
   /**
-   * Print debugging information on the standard output if option is active,
-   * @param value Value to be printed. 
+   * Print debugging information on the standard output if option is active.
+   * @param value Value to be printed.
    */
   public static void debug(String value){
     if(XmOption.isDebugOutput()) {
