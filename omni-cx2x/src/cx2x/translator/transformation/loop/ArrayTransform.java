@@ -109,7 +109,8 @@ public class ArrayTransform extends BlockTransformation {
       return true;
     } else { // single transformation
       // pragma must be followed by an assign statement
-      XassignStatement stmt = XelementHelper.findDirectNextAssignStmt(_clawBegin.getPragma());
+      XassignStatement stmt =
+          XelementHelper.findDirectNextAssignStmt(_clawBegin.getPragma());
       if(stmt == null){
         xcodeml.addError("Directive not follwed by an assign statement",
             _clawBegin.getPragma().getLineNo());
