@@ -48,6 +48,10 @@ the `javadoc` is generated in the `/documentation/javadoc/` directory.
 make doc
 ```
 
+### Supported version
+The CLAW XcodeML to XcodeML translator is written in Java. Java version 7 and
+above are supported.
+
 
 ### OMNI Compiler
 The CLAW Compiler is built on the top of the OMNI Compiler. For more
