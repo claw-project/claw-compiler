@@ -62,11 +62,8 @@ public class Xname extends XbaseElement {
    * @param other The other object to compare with.
    * @return True if the two objects are identical. False otherwise.
    */
-  public boolean isIdentical(Xname other){
-    if(other == null){
-      return false;
-    }
-    return getValue().equals(other.getValue());
+  public boolean isIdentical(Xname other) {
+    return other != null && getValue().equals(other.getValue());
   }
 
   /**

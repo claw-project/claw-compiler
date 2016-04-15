@@ -7,9 +7,6 @@ package cx2x.translator.misc;
 
 
 import static org.junit.Assert.*;
-
-import cx2x.translator.language.ClawMapping;
-import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.junit.Test;
 
 import java.util.ArrayList;

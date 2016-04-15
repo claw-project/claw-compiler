@@ -52,7 +52,7 @@ public class XbodyTest {
       Node n = ifStmt.getThen().getBody().getBaseElement().getFirstChild();
       assertTrue(n instanceof Element);
       assertEquals(XelementName.PRAGMA_STMT, ((Element)n).getTagName());
-      assertEquals("pragma2", ((Element)n).getTextContent());
+      assertEquals("pragma2", n.getTextContent());
     } catch (IllegalTransformationException ex){
       fail();
     }
