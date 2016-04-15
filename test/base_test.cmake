@@ -19,12 +19,21 @@ if (NOT EXISTS ${XMOD_DIR})
 endif()
 
 # Create intermediate representation in XcodeML Fortran format
-add_custom_command(
-  OUTPUT  ${OUTPUT_FILE}
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --debug -J ${XMOD_DIR} --Wx-d -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
-  DEPENDS ${ORIGINAL_FILE}
-  COMMENT "Translating CLAW directive with ${CLAWFC}"
-)
+if(${TEST_DEBUG}) # with debug option
+  add_custom_command(
+    OUTPUT  ${OUTPUT_FILE}
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --debug -J ${XMOD_DIR} --Wx-d -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    DEPENDS ${ORIGINAL_FILE}
+    COMMENT "Translating CLAW directive with ${CLAWFC}"
+  )
+else() # without debug option
+  add_custom_command(
+    OUTPUT  ${OUTPUT_FILE}
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    DEPENDS ${ORIGINAL_FILE}
+    COMMENT "Translating CLAW directive with ${CLAWFC}"
+  )
+endif()
 
 add_custom_target(
   transform-${TEST_NAME}
