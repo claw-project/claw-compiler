@@ -55,7 +55,7 @@ public class XindexRangeTest {
     try {
       XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
       Xvar var = Xvar.create("dummy", "array1", Xscope.LOCAL, xcodeml);
-      XindexRange range = XindexRange.createAssumedShapeRange(xcodeml, var);
+      XindexRange range = XindexRange.createAssumedShapeRange(xcodeml, var, 0);
       assertFalse(range.isAssumedShape());
       assertNotNull(range.getLowerBound());
 
@@ -75,7 +75,7 @@ public class XindexRangeTest {
       assertEquals(XelementName.INTRINSIC_SIZE,
           range.getUpperBound().getExprModel().getFctCall().getName().
               getValue());
-      assertEquals(1, range.getUpperBound().getExprModel().getFctCall().
+      assertEquals(2, range.getUpperBound().getExprModel().getFctCall().
           getArgumentsTable().count());
       assertNotNull(range.getUpperBound().getExprModel().getFctCall().
           getArgumentsTable().findArgument("array1"));
