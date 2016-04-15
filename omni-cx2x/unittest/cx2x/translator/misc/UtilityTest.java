@@ -17,6 +17,8 @@ import java.util.List;
 
 
 /**
+ * Join utility test
+ *
  * @author clementval
  */
 public class UtilityTest {
@@ -36,13 +38,5 @@ public class UtilityTest {
     List<String> b = new ArrayList<>();
     b.add("a");
     assertEquals("a", Utility.join(",", b));
-    ClawMapping cm = null;
-    try {
-      cm = new ClawMapping("a,b:j1/k1,j2");
-    } catch (IllegalDirectiveException e) {
-      fail();
-    }
-    assertNotNull(cm);
-    assertEquals("a,b:j1/k1,j2", cm.toString());
   }
 }
