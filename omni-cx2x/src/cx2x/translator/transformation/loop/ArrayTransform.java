@@ -79,7 +79,8 @@ public class ArrayTransform extends BlockTransformation {
       /* Using a structure of list of list of assignments to group together the
        * array notation that share an identical iteration range. */
 
-      _groupedAssignStmts.add(new ArrayList<>()); // 1st group always exists
+      // 1st group always exists
+      _groupedAssignStmts.add(new ArrayList<XassignStatement>());
       int crtGroup = 0;
       XarrayRef refArrayRef =
           foundAssignments.get(0).getLValueModel().getArrayRef();
@@ -100,7 +101,7 @@ public class ArrayTransform extends BlockTransformation {
         if(!XelementHelper.compareIndexRanges(refRanges, ranges)){
           refRanges = ranges;
           ++crtGroup;
-          _groupedAssignStmts.add(new ArrayList<>());
+          _groupedAssignStmts.add(new ArrayList<XassignStatement>());
           _groupIterationRanges.add(refRanges);
         }
         _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(i));
