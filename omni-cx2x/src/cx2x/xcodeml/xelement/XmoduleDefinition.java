@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
  */
 public class XmoduleDefinition extends XenhancedElement {
 
-  private String _name;
+  private final String _name;
   private final XsymbolTable _symbols;
   private final XdeclTable _declarations;
 

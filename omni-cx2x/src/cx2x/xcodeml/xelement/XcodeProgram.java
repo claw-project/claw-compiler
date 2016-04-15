@@ -47,8 +47,8 @@ public class XcodeProgram extends XbaseElement {
   private String _source = null;
   private String _compilerInfo = null;
 
-  private List<XanalysisError> _errors;
-  private List<XanalysisError> _warnings;
+  private final List<XanalysisError> _errors;
+  private final List<XanalysisError> _warnings;
 
   /**
    * XcodeProgram base constructor.

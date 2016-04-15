@@ -38,8 +38,8 @@ import java.util.List;
 public class ArrayTransform extends BlockTransformation {
 
   private final ClawLanguage _clawBegin, _clawEnd;
-  private List<List<XindexRange>> _groupIterationRanges;
-  private List<List<XassignStatement>> _groupedAssignStmts;
+  private final List<List<XindexRange>> _groupIterationRanges;
+  private final List<List<XassignStatement>> _groupedAssignStmts;
 
 
   /**
