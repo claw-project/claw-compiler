@@ -1641,23 +1641,6 @@ public class XelementHelper {
   }
 
   /**
-   * Constructs a new empty XcodeML program.
-   * @return A new XcodeProgram object with only the root element.
-   */
-  public static XcodeProgram createNewProgram(){
-    try {
-      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-      Document doc = docBuilder.newDocument();
-      doc.createElement(XelementName.X_CODE_PROGRAM);
-      return new XcodeProgram(doc);
-    } catch (ParserConfigurationException ex){
-      return null;
-    }
-  }
-
-
-  /**
    * Create an empty arrayIndex element in the given program
    * @param xcodeml The current XcodeProgram in wihch the statement is created.
    * @param range   The iteration range to be applied to the do statement.

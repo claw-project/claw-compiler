@@ -54,7 +54,7 @@ public class XcodeProgram extends XbaseElement {
    * XcodeProgram base constructor.
    * @param doc The XcodeML document.
    */
-  public XcodeProgram(Document doc){
+  private XcodeProgram(Document doc){
     super(doc.getDocumentElement());
     _xcodemlDoc = doc;
     _errors = new ArrayList<>();
