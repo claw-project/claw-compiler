@@ -7,22 +7,22 @@ END
 
 ! Before the transformation
 SUBROUTINE claw_test
-  INTEGER, DIMENSION(:), ALLOCATABLE :: vec1
-  INTEGER, DIMENSION(:), ALLOCATABLE :: vec2
+  INTEGER, DIMENSION(:,:), ALLOCATABLE :: vec1
+  INTEGER, DIMENSION(:,:), ALLOCATABLE :: vec2
 
-  ALLOCATE(vec1(10))
-  ALLOCATE(vec2(10))
+  ALLOCATE(vec1(10,20))
+  ALLOCATE(vec2(10,20))
 
-  vec1(:) = 0;
-  vec2(:) = 100;
+  vec1(:,:) = 0;
+  vec2(:,:) = 100;
 
   !$claw array-transform
-  vec1(:) = vec2(:) + 10
-  vec2(:) = vec1(:) + 10
+  vec1(:,:) = vec2(:,:) + 10
+  vec2(:,:) = vec2(:,:) + 10
   !$claw end array-transform
 
-  PRINT*,vec1
-  PRINT*,vec2
+  PRINT*,SUM(vec1)
+  PRINT*,SUM(vec2)
 
   DEALLOCATE(vec1)
   DEALLOCATE(vec2)
