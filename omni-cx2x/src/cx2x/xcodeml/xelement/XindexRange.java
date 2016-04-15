@@ -139,13 +139,15 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
 
   /**
    * Create an index range element for an iteration between 0 and size(var).
-   * @param xcodeml Current program in which the indexRange will be created.
-   * @param arrayVar Var used on the function call to size() intrinsic.
-   * @return New index range 0, size(var)
+   * @param xcodeml   Current program in which the indexRange will be created.
+   * @param arrayVar  Var used on the function call to size() intrinsic.
+   * @param dimension Dimension to be deduced from the array. Start at 1.
+   * @return New index range 0, size(arrayVar, dimension)
    * @throws IllegalTransformationException if an element cannot be created.
    */
   public static XindexRange createAssumedShapeRange(XcodeProgram xcodeml,
-                                                    Xvar arrayVar)
+                                                    Xvar arrayVar,
+                                                    int dimension)
       throws IllegalTransformationException
   {
     XindexRange range = XelementHelper.createEmpty(XindexRange.class, xcodeml);
@@ -170,6 +172,9 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
     XargumentsTable args = XelementHelper.createEmpty(XargumentsTable.class, xcodeml);
     fctCall.appendToChildren(args, false);
     args.add(arrayVar);
+    XintConstant dim = XelementHelper.createEmpty(XintConstant.class, xcodeml);
+    dim.setValue(String.valueOf(dimension));
+    args.add(dim);
 
     range.readElementInformation();
     return range;
