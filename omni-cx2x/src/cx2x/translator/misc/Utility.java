@@ -5,6 +5,8 @@
 
 package cx2x.translator.misc;
 
+import xcodeml.util.XmOption;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -52,5 +54,15 @@ public class Utility {
       }
     }
     return ret.toString();
+  }
+
+  /**
+   * Print debugging information on the standard output if option is active,
+   * @param value Value to be printed. 
+   */
+  public static void debug(String value){
+    if(XmOption.isDebugOutput()) {
+      System.out.println(value);
+    }
   }
 }

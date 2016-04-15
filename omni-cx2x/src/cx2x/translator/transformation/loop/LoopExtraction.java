@@ -12,6 +12,7 @@ import cx2x.translator.language.ClawMapping;
 import cx2x.translator.language.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
@@ -263,17 +264,12 @@ public class LoopExtraction extends Transformation {
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
     XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
 
-    if(XmOption.isDebugOutput()){
-      System.out.println("  Start to apply mapping: " +
-          _claw.getMappings().size());
-    }
+    Utility.debug("  Start to apply mapping: " + _claw.getMappings().size());
 
     for(ClawMapping mapping : _claw.getMappings()){
-      System.out.println("Apply mapping (" + mapping.getMappedDimensions() + ") ");
-
+      Utility.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
       for(ClawMappingVar var : mapping.getMappedVariables()){
-
-        System.out.println("  Var: " + var);
+        Utility.debug("  Var: " + var);
         XexprModel argument = args.findArgument(var.getArgMapping());
         if(argument == null) {
           continue;
@@ -293,12 +289,13 @@ public class LoopExtraction extends Transformation {
          */
         if(argument.isVar()){
           Xvar varArg = argument.getVar();
-          System.out.println("  arg found: " + varArg.getType());
+
           XbasicType type =
               (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
 
-          System.out.println("  ref: " + type.getRef());
-          System.out.println("  dimensions: " + type.getDimensions());
+          /*Utility.debug("  arg found: " + varArg.getType());
+          Utility.debug("  ref: " + type.getRef());
+          Utility.debug("  dimensions: " + type.getDimensions());*/
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()){
