@@ -19,16 +19,20 @@ import org.junit.Test;
 
 public class XcodeProgTest {
 
-
-
   @Test
   public void basicXcodeProgTest() {
     File f = new File(XmlHelper.TEST_DATA);
     assertTrue(f.exists());
     XcodeProgram xcodeml = XcodeProgram.createFromFile(XmlHelper.TEST_DATA);
     assertNotNull(xcodeml);
+    assertNotNull(xcodeml.getTime());
+    assertNotNull(xcodeml.getCompilerInfo());
+    assertNotNull(xcodeml.getVersion());
+    assertNotNull(xcodeml.getLanguage());
+    assertNotNull(xcodeml.getSource());
     assertEquals(8, xcodeml.getTypeTable().count());
     assertEquals(2, xcodeml.getGlobalSymbolsTable().count());
+    assertEquals(2, xcodeml.getGlobalDeclarationsTable().count());
   }
 
 }
