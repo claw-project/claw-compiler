@@ -5,8 +5,6 @@
 
 package cx2x.translator.language.helper.accelerator;
 
-import cx2x.translator.common.Constant;
-
 /**
  * Basic accelerator directive generator that does nothing. Used when
  * AcceleratorDirective.NONE is set.

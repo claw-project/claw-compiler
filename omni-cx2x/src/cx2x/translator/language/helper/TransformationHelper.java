@@ -10,7 +10,6 @@ import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
-import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XdoStatement;
 import xcodeml.util.XmOption;
 
