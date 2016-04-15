@@ -46,8 +46,8 @@ abstract class AcceleratorGenerator {
 
   /**
    * Return contruction of the clause for a private variable in a
-   * @param var
-   * @return
+   * @param var Variable name that will be inserted in the generated clause.
+   * @return An accelerator language specific private clause with the var.
    */
   protected abstract String getPrivateClause(String var);
 

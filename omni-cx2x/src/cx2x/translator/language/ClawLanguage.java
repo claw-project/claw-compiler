@@ -518,9 +518,11 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   *
-   * @param master
-   * @return
+   * Create an instance of ClawLanguage that correspond to a loop-fusion
+   * directive. Used for dynamically created transformation.
+   * @param master Base object which initiate the creation of this instance.
+   * @return An instance of ClawLanguage describing a loop-fusion with the
+   * group, collapse clauses and the pragma from the master object.
    */
   public static ClawLanguage createLoopFusionLanguage(ClawLanguage master){
     ClawLanguage l = new ClawLanguage();
