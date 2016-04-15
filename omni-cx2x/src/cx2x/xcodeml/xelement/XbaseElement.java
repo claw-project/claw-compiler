@@ -17,8 +17,7 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class XbaseElement {
-  // TODO code review private final Element baseElement ... to avoid null checking
-  protected Element baseElement = null;
+  protected final Element baseElement;
 
   /**
    * XbaseElement standard ctor. Base element is stored in this class.
@@ -44,10 +43,7 @@ public class XbaseElement {
    * @return A node representing the root element of the clone.
    */
   public Node cloneNode(){
-    if(baseElement != null){
-      return baseElement.cloneNode(true);
-    }
-    return null;
+    return baseElement.cloneNode(true);
   }
 
   /**
@@ -63,9 +59,7 @@ public class XbaseElement {
    * @param value The element value.
    */
   public void setValue(String value){
-    if(baseElement != null){
-      baseElement.setTextContent(value);
-    }
+    baseElement.setTextContent(value);
   }
 
   /**
@@ -73,7 +67,6 @@ public class XbaseElement {
    */
   public void delete(){
     XelementHelper.delete(baseElement);
-    baseElement = null;
   }
 
   /**
@@ -83,7 +76,7 @@ public class XbaseElement {
    *                false, the element is directly appened.
    */
   public void appendToChildren(XbaseElement element, boolean clone){
-    if(baseElement != null && element != null){
+    if(element != null){
       if(clone){
         baseElement.appendChild(element.cloneNode());
       } else {
