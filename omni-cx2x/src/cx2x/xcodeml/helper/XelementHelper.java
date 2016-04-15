@@ -1641,28 +1641,6 @@ public class XelementHelper {
   }
 
   /**
-   * Create an empty arrayIndex element in the given program
-   * @param xcodeml The current XcodeProgram in wihch the statement is created.
-   * @param range   The iteration range to be applied to the do statement.
-   * @return A new XdoStetement object with an empty body.
-   */
-  public static XdoStatement createWithEmptyBody(XcodeProgram xcodeml,
-                                         XloopIterationRange range)
-  {
-    Element element = xcodeml.getDocument().createElement(XelementName.DO_STMT);
-
-    if(range != null){
-      element.appendChild(range.getInductionVar().cloneNode());
-      element.appendChild(range.getIndexRange().cloneNode());
-    }
-
-    Element body = xcodeml.getDocument().createElement(XelementName.BODY);
-    element.appendChild(body);
-
-    return new XdoStatement(element);
-  }
-
-  /**
    * Get the depth of an element in the AST.
    * @param element The element to start from.
    * @return A depth value >= 0.
