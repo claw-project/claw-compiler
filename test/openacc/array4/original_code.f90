@@ -14,14 +14,19 @@ SUBROUTINE claw_test
   vec1(:) = 0;
   vec2(:) = 100;
 
+  PRINT*,vec1
+  PRINT*,vec2
+
   !$claw array-transform
   vec1(:) = vec2(:) + 10
-  vec2(:) = vec1(:) + 10
+  vec2(:) = vec2(:) + 10
   !$claw end array-transform
-
-  vec3(:) = vec1(:) + vec2(:)
-
 
   PRINT*,vec1
   PRINT*,vec2
+  vec3(:) = vec1(:) + vec2(:)
+
+
+  PRINT*,SUM(vec1)
+  PRINT*,SUM(vec2)
 END SUBROUTINE claw_test
