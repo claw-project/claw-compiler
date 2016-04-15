@@ -111,7 +111,7 @@ public class XcodeProgram extends XbaseElement {
    * @return A list containing all the warnings.
    */
   public List<XanalysisError> getWarnings(){
-    return _errors;
+    return _warnings;
   }
 
   /**
