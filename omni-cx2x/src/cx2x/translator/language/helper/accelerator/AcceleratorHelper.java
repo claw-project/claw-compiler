@@ -25,16 +25,19 @@ public class AcceleratorHelper {
   /**
    * Generate corresponding pragmas to surround the code with a parallel
    * accelerated region.
-   * @param claw    ClawLanguage object that tells if the parallel clause is
-   *                enable and where the start pragma is located.
-   * @param xcodeml Object representation of the current XcodeML representation
-   *                in which the pragmas will be generated.
-   * @param endStmt End statement representing the end of the parallel region.
+   * @param claw      ClawLanguage object that tells if the parallel clause is
+   *                  enable and where the start pragma is located.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param startStmt Start statement representing the beginning of the parallel
+   *                  region.
+   * @param endStmt   End statement representing the end of the parallel region.
+   * @param generator An instance of accelerator generator.
+   * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static void generateParallelClause(ClawLanguage claw,
-                                             XcodeProgram xcodeml,
-                                             XbaseElement endStmt,
-                                             AcceleratorGenerator generator)
+  private static XbaseElement generateParallelClause(
+      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
+      XbaseElement endStmt, AcceleratorGenerator generator)
   {
     if(claw.hasParallelClause()){
       try {
@@ -44,22 +47,28 @@ public class AcceleratorHelper {
         Xpragma endParallel =
             XelementHelper.createEmpty(Xpragma.class, xcodeml);
         endParallel.setValue(generator.getEndParellelDirective());
-        XelementHelper.insertAfter(claw.getPragma(), beginParallel);
+        XelementHelper.insertBefore(startStmt, beginParallel);
         XelementHelper.insertAfter(endStmt, endParallel);
+        return endParallel;
       } catch (IllegalTransformationException ignored) { }
     }
+    return null;
   }
 
   /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
-   * @param claw    ClawLanguage object that tells if the parallel clause is
-   *                enable and where the start pragma is located.
-   * @param xcodeml Object representation of the current XcodeML representation
-   *                in which the pragmas will be generated.
+   * @param claw      ClawLanguage object that tells if the parallel clause is
+   *                  enable and where the start pragma is located.
+   * @param startStmt Start statement representing the beginning of the parallel
+   *                  region.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param generator An instance of accelerator generator.
+   * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static void generateAcceleratorClause(ClawLanguage claw,
-                                                XcodeProgram xcodeml,
-                                                AcceleratorGenerator generator)
+  private static XbaseElement generateAcceleratorClause(
+      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
+      AcceleratorGenerator generator)
   {
     if(claw.hasAcceleratorClause())
     {
@@ -69,34 +78,42 @@ public class AcceleratorHelper {
         acceleratorPragma.setValue(
             generator.getSingleDirective(claw.getAcceleratorClauses())
         );
-        XelementHelper.insertAfter(claw.getPragma(), acceleratorPragma);
+        XelementHelper.insertBefore(startStmt, acceleratorPragma);
+        return acceleratorPragma;
       } catch (IllegalTransformationException ignored) { }
     }
+    return null;
   }
 
   /**
    * Generate all corresponding pragmas to be applied for accelerator.
-   * @param claw    ClawLanguage object that tells which accelerator pragmas are
-   *                enabled.
-   * @param xcodeml Object representation of the current XcodeML representation
-   *                in which the pragmas will be generated.
-   * @param endStmt End statement for all pragma generation that need end pragma
-   *                statement.
+   * @param claw      ClawLanguage object that tells which accelerator pragmas
+   *                  are enabled.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param startStmt Start statement for all pragma generation.
+   * @param endStmt   End statement for all pragma generation that need end
+   *                  pragma statement.
+   * @return Last stmt inserted.
    */
-  public static void generateAdditionalDirectives(ClawLanguage claw,
-                                                  XcodeProgram xcodeml,
-                                                  XbaseElement endStmt)
+  public static XbaseElement generateAdditionalDirectives(
+      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
+      XbaseElement endStmt)
   {
     if(claw.getAcceleratorDirective() == AcceleratorDirective.NONE){
-      return;
+      return null;
     }
 
     // Get specific instance of accelerator generator
     AcceleratorGenerator generator = AcceleratorHelper.
         createAcceleratorGenerator(claw.getAcceleratorDirective());
 
-    generateAcceleratorClause(claw, xcodeml, generator);
-    generateParallelClause(claw, xcodeml, endStmt, generator);
+    XbaseElement pragma =
+        generateAcceleratorClause(claw, xcodeml, startStmt, generator);
+    if(pragma != null){
+      startStmt = pragma;
+    }
+    return generateParallelClause(claw, xcodeml, startStmt, endStmt, generator);
   }
 
   /**

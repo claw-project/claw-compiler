@@ -125,7 +125,8 @@ public class LoopInterchange extends Transformation {
 
 
     // Generate accelerator pragmas if needed
-    AcceleratorHelper.generateAdditionalDirectives(_claw, xcodeml, _loopLevel0);
+    AcceleratorHelper.
+        generateAdditionalDirectives(_claw, xcodeml, _loopLevel0, _loopLevel0);
 
     this.transformed();
   }

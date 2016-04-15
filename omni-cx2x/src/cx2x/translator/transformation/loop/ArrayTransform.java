@@ -193,15 +193,15 @@ public class ArrayTransform extends BlockTransformation {
    *                    be included in the nested do statements.
    * @param doStmtGrip  Grip for the code insertion. Do statements will be
    *                    inserted after the grip element.
-   * @return The outter most do statement created during the transformation.
+   * @return The last stmt created to be used as a grip for next insertion.
    * @throws IllegalTransformationException if creation of elements fail.
    */
-  private XdoStatement generateDoStmtNotation(XcodeProgram xcodeml,
-                                      Transformer transformer,
-                                      XfunctionDefinition fctDef,
-                                      List<XindexRange> ranges,
-                                      List<XassignStatement> statements,
-                                      XbaseElement doStmtGrip)
+  private XbaseElement generateDoStmtNotation(XcodeProgram xcodeml,
+                                              Transformer transformer,
+                                              XfunctionDefinition fctDef,
+                                              List<XindexRange> ranges,
+                                              List<XassignStatement> statements,
+                                              XbaseElement doStmtGrip)
       throws IllegalTransformationException
   {
     String[] inductionVars = new String[ranges.size()];
@@ -285,13 +285,13 @@ public class ArrayTransform extends BlockTransformation {
 
 
     // Generate accelerator pragmas if needed
-    AcceleratorHelper.
-        generateAdditionalDirectives(_clawBegin, xcodeml, doStmts[0]);
+    XbaseElement potentialGrip = AcceleratorHelper.
+        generateAdditionalDirectives(_clawBegin, xcodeml, doStmts[0], doStmts[0]);
 
     // Add any additional transformation defined in the directive clauses
     TransformationHelper.
         generateAdditionalTransformation(_clawBegin, transformer, doStmts[0]);
 
-    return doStmts[0];
+    return potentialGrip == null ? doStmts[0] : potentialGrip;
   }
 }
