@@ -189,7 +189,7 @@ public class ArrayTransform extends BlockTransformation {
    * @param doStmtGrip  Grip for the code insertion. Do statements will be
    *                    inserted after the grip element.
    * @return The outter most do statement created during the transformation.
-   * @throws IllegalTransformationException if creation of elements fail. 
+   * @throws IllegalTransformationException if creation of elements fail.
    */
   private XdoStatement generateDoStmtNotation(XcodeProgram xcodeml,
                                       Transformer transformer,
@@ -201,7 +201,8 @@ public class ArrayTransform extends BlockTransformation {
   {
     String[] inductionVars = new String[ranges.size()];
     XdoStatement[] doStmts = new XdoStatement[ranges.size()];
-
+    Xvar var =
+        statements.get(0).getLValueModel().getArrayRef().getVarRef().getVar();
     // 1. Create do statements with induction variables
     for (int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
@@ -229,7 +230,14 @@ public class ArrayTransform extends BlockTransformation {
       // 2.4 create do statements
       Xvar inductionVar = Xvar.create(XelementName.TYPE_F_INT, inductionVars[i],
           Xscope.LOCAL, xcodeml);
-      XindexRange range = ranges.get(i).cloneObject();
+
+      XindexRange range;
+      if(ranges.get(i).isAssumedShape()){ // Allocatable array
+        // dimension argument of size starts at one
+        range = XindexRange.createAssumedShapeRange(xcodeml, var, i + 1);
+      } else {
+        range = ranges.get(i).cloneObject();
+      }
       doStmts[i] = XdoStatement.create(inductionVar, range, false, xcodeml);
 
       if (i == 0) { // most outter loop goes after the pragma
