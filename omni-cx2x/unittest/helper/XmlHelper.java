@@ -35,9 +35,8 @@ public class XmlHelper {
   public static XcodeProgram getDummyXcodeProgram(){
     File f = new File(XmlHelper.TEST_DATA);
     assertTrue(f.exists());
-    XcodeProgram xcodeml =  new XcodeProgram(XmlHelper.TEST_DATA);
-    xcodeml.load();
-    assertTrue(xcodeml.isLoaded());
+    XcodeProgram xcodeml =  XcodeProgram.createFromFile(XmlHelper.TEST_DATA);
+    assertNotNull(xcodeml);
     return xcodeml;
   }
 

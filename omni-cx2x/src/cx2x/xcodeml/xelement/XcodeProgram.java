@@ -34,7 +34,6 @@ import cx2x.xcodeml.helper.*;
 
 public class XcodeProgram extends XbaseElement {
   private Document _xcodemlDoc = null;
-  private String _xcodemlInputFile = null;
 
   // XcodeProgram inner elements
   private XtypeTable _typeTable = null;
@@ -48,30 +47,18 @@ public class XcodeProgram extends XbaseElement {
   private String _source = null;
   private String _compilerInfo = null;
 
-
-  private boolean _isLoaded = false;
-
   private List<XanalysisError> _errors;
   private List<XanalysisError> _warnings;
 
   /**
    * XcodeProgram base constructor.
-   * @param inputFile The XcodeML input file path.
-   */
-  public XcodeProgram(String inputFile){
-    super(null);
-    _xcodemlInputFile = inputFile;
-    _errors = new ArrayList<>();
-    _warnings = new ArrayList<>();
-  }
-
-  /**
-   * Constructs a new XcodeProgram object from a single root element.
    * @param doc The XcodeML document.
    */
   public XcodeProgram(Document doc){
     super(doc.getDocumentElement());
     _xcodemlDoc = doc;
+    _errors = new ArrayList<>();
+    _warnings = new ArrayList<>();
   }
 
   /**
@@ -87,6 +74,10 @@ public class XcodeProgram extends XbaseElement {
     _source = XelementHelper.getAttributeValue(this, XelementName.ATTR_SOURCE);
     _compilerInfo = XelementHelper.getAttributeValue(this,
       XelementName.ATTR_COMPILER_INFO);
+
+    readTypeTable();
+    readGlobalSymbolsTable();
+    readGlobalDeclarationsTable();
   }
 
   /**
@@ -166,47 +157,6 @@ public class XcodeProgram extends XbaseElement {
    */
   public XglobalDeclTable getGlobalDeclarationsTable(){
     return _globalDeclarationsTable;
-  }
-
-  /**
-   * Open the XcodeML input file and read its information.
-   * @return True if the XcodeML was loaded successfully. False otherwise.
-   */
-  public boolean load(){
-    try {
-      File fXmlFile = new File(_xcodemlInputFile);
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(fXmlFile);
-      doc.getDocumentElement().normalize();
-      _xcodemlDoc = doc;
-      _isLoaded = true;
-      baseElement = _xcodemlDoc.getDocumentElement();
-      readDocumentInformation();
-
-      if (!isXcodeMLvalid()){
-        addError("XcodeML document is not valid", 0);
-        return false;
-      }
-    } catch(Exception ex){
-      _xcodemlDoc = null;
-      _isLoaded = false;
-      return false;
-    }
-
-    // Read information from the type table
-    readTypeTable();
-    readGlobalSymbolsTable();
-    readGlobalDeclarationsTable();
-    return true;
-  }
-
-  /**
-   * Check whether the XcodeML is loaded.
-   * @return True if the XcodeML is loaded. False otherwise.
-   */
-  public boolean isLoaded(){
-    return _isLoaded;
   }
 
   /**
@@ -304,6 +254,38 @@ public class XcodeProgram extends XbaseElement {
    */
   public String getCompilerInfo(){
     return _compilerInfo;
+  }
+
+
+  /**
+   * Create a XcodeProgram object from an XcodeML input file.
+   * @param input XcodeML input filename or path
+   * @return A XcodeProgram object loaded with the information from the file.
+   * Null if the file couldn't be read.
+   */
+  public static XcodeProgram createFromFile(String input){
+    try {
+      File fXmlFile = new File(input);
+      if(!fXmlFile.exists()){
+        System.err.println("Input file does not exists: " + input + "\n");
+        return null;
+      }
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(fXmlFile);
+      doc.getDocumentElement().normalize();
+
+      XcodeProgram program = new XcodeProgram(doc);
+      program.readDocumentInformation();
+      if (!program.isXcodeMLvalid()){
+        System.err.print("XcodeML file is not valid\n");
+        return null;
+      }
+      return program;
+    } catch(Exception ex){
+      System.err.print("Unable to read file " + input + "\n");
+    }
+    return null;
   }
 
 }

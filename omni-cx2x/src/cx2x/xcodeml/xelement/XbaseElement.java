@@ -17,6 +17,7 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class XbaseElement {
+  // TODO code review private final Element baseElement ... to avoid null checking
   protected Element baseElement = null;
 
   /**
@@ -24,6 +25,9 @@ public class XbaseElement {
    * @param element Root element to create the XbaseElement.
    */
   public XbaseElement(Element element){
+    if(element == null){
+      throw new IllegalArgumentException();
+    }
     baseElement = element;
   }
 

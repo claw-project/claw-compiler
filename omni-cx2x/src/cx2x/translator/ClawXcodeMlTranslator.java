@@ -70,8 +70,8 @@ public class ClawXcodeMlTranslator {
    * @throws Exception if analysis fails.
    */
   public void analyze() throws Exception {
-    _program = new XcodeProgram(_xcodemlInputFile);
-    if(!_program.load()){
+    _program = XcodeProgram.createFromFile(_xcodemlInputFile);
+    if(_program == null){
       abort();
     }
 
@@ -257,13 +257,15 @@ public class ClawXcodeMlTranslator {
    * Print all the errors stored in the XcodeML object and abort the program.
    */
   private void abort(){
-    for(XanalysisError error : _program.getErrors()){
-      if(error.getLine() == 0){
-        System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
-            "undefined");
-      } else {
-        System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
-            error.getLine());
+    if(_program != null) {
+      for (XanalysisError error : _program.getErrors()) {
+        if (error.getLine() == 0) {
+          System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
+              "undefined");
+        } else {
+          System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
+              error.getLine());
+        }
       }
     }
     System.exit(1);

@@ -123,7 +123,7 @@ public class XconstantTest {
 
   @Test
   public void fromScratchTest(){
-    XcodeProgram program = XelementHelper.createNewProgram();
+    XcodeProgram program = XmlHelper.getDummyXcodeProgram();
     XintConstant intConst = null;
     try {
       intConst = XelementHelper.createEmpty(XintConstant.class, program);

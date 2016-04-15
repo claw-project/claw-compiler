@@ -25,9 +25,8 @@ public class XcodeProgTest {
   public void basicXcodeProgTest() {
     File f = new File(XmlHelper.TEST_DATA);
     assertTrue(f.exists());
-    XcodeProgram xcodeml = new XcodeProgram(XmlHelper.TEST_DATA);
-    boolean loaded = xcodeml.load();
-    assertTrue(loaded);
+    XcodeProgram xcodeml = XcodeProgram.createFromFile(XmlHelper.TEST_DATA);
+    assertNotNull(xcodeml);
     assertEquals(8, xcodeml.getTypeTable().count());
     assertEquals(2, xcodeml.getGlobalSymbolsTable().count());
   }
