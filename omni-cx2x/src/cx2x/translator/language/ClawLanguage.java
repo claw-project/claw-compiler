@@ -110,7 +110,11 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Analyze a raw string input and match it with the CLAW language definition.
    * @param pragma A Xpragma object to be analyzed against the CLAW language.
+   * @param target Code generation target that influence accelerator directive
+   *               generation.
    * @return A ClawLanguage object with the corresponding extracted information.
+   * @throws IllegalDirectiveException If directive does not follow the CLAW
+   * language specification. 
    */
   public static ClawLanguage analyze(Xpragma pragma,
                                      AcceleratorDirective target)

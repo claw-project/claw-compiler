@@ -17,7 +17,7 @@ add_custom_target(
   COMMAND ${Java_JAVADOC_EXECUTABLE}
     -d ${CMAKE_SOURCE_DIR}/documentation/javadoc
     -sourcepath ${CMAKE_SOURCE_DIR}/omni-cx2x/src
-    -classpath ${LOCAL_OMNI_JAR_TOOLS}:${LOCAL_OMNI_JAR_COMMON}:${LOCAL_OMNI_JAR_F_BACKEND}:${LOCAL_OMNI_JAR_C_BACKEND}
+    -classpath ${LOCAL_OMNI_JAR_TOOLS}:${LOCAL_OMNI_JAR_COMMON}:${LOCAL_OMNI_JAR_F_BACKEND}:${LOCAL_OMNI_JAR_C_BACKEND}:${ANTLR}
     -doctitle '<h1>${JAVADOC_TITLE}</h1>'
     -windowtitle '${JAVADOC_TITLE}'
     -author
@@ -26,8 +26,8 @@ add_custom_target(
     cx2x
     cx2x.translator
     cx2x.translator.common
+    cx2x.translator.language
     cx2x.translator.misc
-    cx2x.translator.pragma
     cx2x.translator.transformation.loop
     cx2x.translator.transformation.openacc
     cx2x.translator.transformation.utility

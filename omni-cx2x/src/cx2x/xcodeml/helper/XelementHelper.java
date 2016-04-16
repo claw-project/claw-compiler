@@ -1639,7 +1639,7 @@ public class XelementHelper {
   /**
    * Get the depth of an element in the AST.
    * @param element The element to start from.
-   * @return A depth value >= 0.
+   * @return A depth value greater or equal to 0.
    */
   public static int getDepth(Element element) {
     Node parent = element.getParentNode();
