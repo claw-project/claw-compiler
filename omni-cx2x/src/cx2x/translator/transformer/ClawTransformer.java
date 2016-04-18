@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
@@ -49,6 +50,8 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("remove"));
     _tGroups.put(ArrayTransform.class,
         new IndependentTransformationGroup("array-transform"));
+    _tGroups.put(ArrayToFctCall.class,
+        new IndependentTransformationGroup("call"));
     _tGroups.put(Kcaching.class,
         new IndependentTransformationGroup("kcache"));
     _tGroups.put(LoopExtraction.class,
@@ -61,7 +64,6 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("loop-interchange"));
     _tGroups.put(OpenAccContinuation.class,
         new IndependentTransformationGroup("open-acc-continuation"));
-
 
     _crossTransformationTable = new HashMap<>();
   }

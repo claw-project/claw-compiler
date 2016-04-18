@@ -9,6 +9,7 @@ package cx2x.translator;
 import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
@@ -98,6 +99,9 @@ public class ClawXcodeMlTranslator {
 
       // Create transformation object based on the directive
       switch (analyzedPragma.getDirective()){
+        case ARRAY_TO_CALL:
+          addOrAbort(new ArrayToFctCall(analyzedPragma));
+          break;
         case KCACHE:
           addOrAbort(new Kcaching(analyzedPragma));
           break;
