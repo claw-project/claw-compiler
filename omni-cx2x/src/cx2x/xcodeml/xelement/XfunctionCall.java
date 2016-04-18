@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import exc.object.Xcode;
 import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 
@@ -23,7 +25,9 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfunctionCall extends XbaseElement {
+public class XfunctionCall extends XbaseElement
+    implements Xclonable<XfunctionCall>
+{
   // Elements
   private XargumentsTable _arguments = null;
   private Xname _name = null;
@@ -39,12 +43,18 @@ public class XfunctionCall extends XbaseElement {
    */
   public XfunctionCall(Element baseElement){
     super(baseElement);
+    readElementInformation();
+  }
 
+  /**
+   * Read inner elements information.
+   */
+  private void readElementInformation(){
     // Read attributes
     _isInstrinsic = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_INTRINSIC);
+        XelementName.ATTR_IS_INTRINSIC);
     _type = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_TYPE);
+        XelementName.ATTR_TYPE);
 
     // Read element
     _arguments = XelementHelper.findArgumentsTable(this, false);
@@ -104,5 +114,39 @@ public class XfunctionCall extends XbaseElement {
    */
   public Xname getName(){
     return _name;
+  }
+
+
+  /**
+   * Create a new functionCall element with the given function name.
+   * @param returnType Return type value.
+   * @param name       Name of the function to be inserted in the "name"
+   *                   element.
+   * @param nameType   Type of the function name.
+   * @return A new XfunctionCall object with the given name and an empty
+   * arguments' table
+   */
+  public static XfunctionCall create(XcodeProgram xcodeml, String returnType,
+                                     String name, String nameType)
+      throws IllegalTransformationException
+  {
+    XfunctionCall fctCall =
+        XelementHelper.createEmpty(XfunctionCall.class, xcodeml);
+    fctCall.setType(returnType);
+    Xname fctName = XelementHelper.createEmpty(Xname.class, xcodeml);
+    fctName.setValue(name);
+    fctName.setType(nameType);
+    XargumentsTable args =
+        XelementHelper.createEmpty(XargumentsTable.class, xcodeml);
+    fctCall.appendToChildren(fctName, false);
+    fctCall.appendToChildren(args, false);
+    fctCall.readElementInformation();
+    return fctCall;
+  }
+
+  @Override
+  public XfunctionCall cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XfunctionCall(clone);
   }
 }
