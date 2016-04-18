@@ -6,10 +6,13 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xelement.*;
+
+import java.util.List;
 
 /**
  * An array access to function call transformation replace the access to an
@@ -19,6 +22,9 @@ import cx2x.xcodeml.xelement.XcodeProgram;
  */
 public class ArrayToFctCall extends Transformation {
   private final ClawLanguage _claw;
+  private XfunctionDefinition _fctDef;
+  private XfunctionDefinition _replaceFct;
+
 
   /**
    * ArrayToFctCall ctor.
@@ -32,6 +38,37 @@ public class ArrayToFctCall extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+    _fctDef = XelementHelper.findParentFctDef(_claw.getPragma());
+    if(_fctDef == null){
+      xcodeml.addError("Cannot locate function definition.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    if(!_fctDef.getDeclarationTable().contains(_claw.getArrayName())){
+      xcodeml.addError(_claw.getArrayName() +
+          " is not delcared in current function/subroutine.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    _replaceFct = xcodeml.getGlobalDeclarationsTable().
+        getFctDefinition(_claw.getFctName());
+    if(_replaceFct == null){
+      xcodeml.addError("Function " + _claw.getFctName() +
+          " not found in current file.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    // TODO does it make sense ?
+   /*if(_replaceFct.getParams().count() != _claw.getFctParams().size()){
+      xcodeml.addError("Function " + _claw.getFctName() +
+              " parameters mismatch.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }*/
+
     return true; // skeleton
   }
 
@@ -45,5 +82,32 @@ public class ArrayToFctCall extends Transformation {
                         Transformation other) throws Exception
   {
 
+    XfunctionType fctType =
+        (XfunctionType)xcodeml.getTypeTable().get(_replaceFct.getName().getType());
+
+
+
+    // Prepare the function call
+    XfunctionCall fctCall = XfunctionCall.create(xcodeml,
+        fctType.getReturnType(), _claw.getFctName(),
+        _replaceFct.getName().getType());
+    XargumentsTable args = fctCall.getArgumentsTable();
+    for(String arg : _claw.getFctParams()){
+      Xvar var = Xvar.create(XelementName.TYPE_F_INT, arg, Xscope.LOCAL, xcodeml);
+      args.add(var);
+    }
+
+    List<XarrayRef> refs =
+        XelementHelper.getAllArrayReferencesInSiblings(_claw.getPragma(),
+            _claw.getArrayName());
+
+    for(XarrayRef ref : refs){
+      XelementHelper.insertAfter(ref, fctCall.cloneObject());
+      ref.delete();
+    }
+
+    fctCall.delete();
+    _claw.getPragma().delete();
+    this.transformed();
   }
 }
