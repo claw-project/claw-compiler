@@ -30,9 +30,12 @@ public class ClawLanguage extends AnalyzedPragma {
 
   // Clauses values
   private String _accClausesValue;
+  private String _arrayName;
   private int _collapseClauseValue;
   private List<String> _dataValues;
   private String _groupClauseValue;
+  private List<String> _fctCallParameters;
+  private String _fctName;
   private List<String> _hoistInductionValues;
   private List<String> _indexesValues;
   private List<String> _inductionClauseValues;
@@ -67,8 +70,11 @@ public class ClawLanguage extends AnalyzedPragma {
   private void resetVariables(){
     // Clauses values members
     _accClausesValue = null;
+    _arrayName = null;
     _collapseClauseValue = 0;
     _dataValues = null;
+    _fctCallParameters = null;
+    _fctName = null;
     _groupClauseValue = null;
     _hoistInductionValues = null;
     _indexesValues = null;
@@ -495,6 +501,30 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasPrivateClause = true;
   }
 
+
+  /**
+   * Set the list of parameters for the fct call of the "call" directive
+   * @param data List of identifiers extracted from the clause.
+   */
+  void setFctParams(List<String> data){
+    _fctCallParameters = data;
+  }
+
+  /**
+   * Set the array name value.
+   * @param value String value for the array name.
+   */
+  void setArrayName(String value){
+    _arrayName = value;
+  }
+
+  /**
+   * Set the function name value.
+   * @param value String value for the function name.
+   */
+  void setFctName(String value){
+    _fctName = value;
+  }
 
   /**
    * Attach the pragma related to this CLAW language analysis.

@@ -109,6 +109,14 @@ directive[ClawLanguage l]
       $l.setDirective(ClawDirective.LOOP_HOIST);
       $l.setEndPragma();
     }
+
+  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')'
+    {
+      $l.setDirective(ClawDirective.ARRAY_TO_CALL);
+      $l.setFctParams(o);
+      $l.setFctName($fct_name.text);
+      $l.setArrayName($array_name.text);
+    }
 ;
 
 group_option[ClawLanguage l]:
@@ -176,6 +184,11 @@ private_optional[ClawLanguage l]:
 identifiers[List<String> ids]:
     i=IDENTIFIER { $ids.add($i.text); }
   | i=IDENTIFIER { $ids.add($i.text); } identifiers[$ids]
+;
+
+identifiers_list[List<String> ids]:
+    i=IDENTIFIER { $ids.add($i.text); }
+  | i=IDENTIFIER { $ids.add($i.text); } ',' identifiers_list[$ids]
 ;
 
 
@@ -276,6 +289,7 @@ CLAW         : 'claw';
 
 // Directives
 ARRAY_TRANS  : 'array-transform';
+ARRAY_TO_CALL: 'call';
 END          : 'end';
 KCACHE       : 'kcache';
 LEXTRACT     : 'loop-extract';
