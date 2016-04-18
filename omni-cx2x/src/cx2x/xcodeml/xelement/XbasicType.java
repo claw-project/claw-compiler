@@ -33,7 +33,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XbasicType extends Xtype {
+public class XbasicType extends Xtype implements Xclonable<XbasicType> {
 
 
   private boolean _isArray = false;
@@ -297,5 +297,11 @@ public class XbasicType extends Xtype {
    */
   public Xintent getIntent(){
     return _intent;
+  }
+
+  @Override
+  public XbasicType cloneObject() {
+    Element element = (Element)cloneNode();
+    return new XbasicType(element);
   }
 }
