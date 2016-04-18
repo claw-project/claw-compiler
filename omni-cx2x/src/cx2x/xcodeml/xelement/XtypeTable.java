@@ -27,6 +27,7 @@ public class XtypeTable extends XbaseElement {
 
   private static final int HASH_LENGTH = 12;
   private static final String FCT_HASH_PREFIX = "F";
+  private static final String REAL_HASH_PREFIX = "R";
 
   private final Map<String, Xtype> _table;
 
@@ -107,12 +108,29 @@ public class XtypeTable extends XbaseElement {
 
   /**
    * Get a new unique function hash for the type table.
-   * @return A unique function hash as String value.
+   * @return New unique fct type hash.
    */
   public String generateFctTypeHash(){
+    return generateHash(FCT_HASH_PREFIX);
+  }
+
+  /**
+   * Get a new unique real hash for the type table.
+   * @return New unique real type hash.
+   */
+  public String generateRealTypeHash(){
+    return generateHash(REAL_HASH_PREFIX);
+  }
+
+  /**
+   * Get a new unique hash for the type table with the given prefix.
+   * @param prefix Prefix added to the hash string.
+   * @return New unique hash.
+   */
+  private String generateHash(String prefix){
     String hash;
     do {
-      hash = FCT_HASH_PREFIX + generateHash(HASH_LENGTH);
+      hash = prefix + generateHash(HASH_LENGTH);
     } while(_table.containsKey(hash));
     return hash;
   }
