@@ -22,7 +22,6 @@ import java.util.List;
  */
 public class ArrayToFctCall extends Transformation {
   private final ClawLanguage _claw;
-  private XfunctionDefinition _fctDef;
   private XfunctionDefinition _replaceFct;
 
 
@@ -38,7 +37,7 @@ public class ArrayToFctCall extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _fctDef = XelementHelper.findParentFctDef(_claw.getPragma());
+    XfunctionDefinition _fctDef = XelementHelper.findParentFctDef(_claw.getPragma());
     if(_fctDef == null){
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().getLineNo());
