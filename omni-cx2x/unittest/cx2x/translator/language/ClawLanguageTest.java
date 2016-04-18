@@ -44,8 +44,6 @@ public class ClawLanguageTest {
     analyzeValidClawLoopFusion("claw loop-fusion collapse(3)", null,
         true, 3);
 
-
-
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-fusiongroup(g1)");
     analyzeUnvalidClawLanguage("claw loop-fusion group");
@@ -704,6 +702,57 @@ public class ClawLanguageTest {
         }
       }
 
+    } catch(IllegalDirectiveException idex){
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
+
+  /**
+   * Test various input for the CLAW loop-hoist directive.
+   */
+  @Test
+  public void ArrayToFctCallTest(){
+    // Valid directives
+    analyzeValidArrayToFctCall("claw call var1=f_var1(i,j)", "var1", "f_var1",
+        Arrays.asList("i", "j"));
+
+    analyzeValidArrayToFctCall("claw call var1=f_var1(i)", "var1", "f_var1",
+        Arrays.asList("i"));
+
+    analyzeValidArrayToFctCall("claw call v=f(i,j)", "v", "f",
+        Arrays.asList("i", "j"));
+
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw call ");
+    analyzeUnvalidClawLanguage("claw call v=");
+    analyzeUnvalidClawLanguage("claw call v=()");
+  }
+
+  /**
+   * Assert the result for valid lo CLAW directive
+   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param arrayName Array name to be checked.
+   * @param fctName   Function name to be checked.
+   * @param params    List of parameters identifier to be checked.
+   */
+  private void analyzeValidArrayToFctCall(String raw, String arrayName,
+                                          String fctName, List<String> params)
+  {
+    try {
+      Xpragma p = XmlHelper.createXpragma();
+      p.setValue(raw);
+      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      assertEquals(ClawDirective.ARRAY_TO_CALL, l.getDirective());
+
+      assertEquals(params.size(), l.getFctParams().size());
+      for(int i = 0; i < params.size(); ++i){
+        assertEquals(params.get(i), l.getFctParams().get(i));
+      }
+
+      assertEquals(arrayName, l.getArrayName());
+      assertEquals(fctName, l.getFctName());
     } catch(IllegalDirectiveException idex){
       System.err.print(idex.getMessage());
       fail();
