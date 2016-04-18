@@ -214,6 +214,35 @@ public class XelementHelper {
     return assignements;
   }
 
+  public static List<XarrayRef> getAllArrayReferencesInSiblings(
+      XbaseElement from,
+      String identifier)
+  {
+    String s1 = String.format("following-sibling::*//%s[%s[%s[text()=\"%s\"]]]",
+        XelementName.F_ARRAY_REF,
+        XelementName.VAR_REF,
+        XelementName.VAR,
+        identifier
+    );
+
+    List<XarrayRef> refs = new ArrayList<>();
+    try {
+      XPathFactory xPathfactory = XPathFactory.newInstance();
+      XPath xpath = xPathfactory.newXPath();
+      XPathExpression xpathExpr = xpath.compile(s1);
+      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+          XPathConstants.NODESET);
+      for (int i = 0; i < output.getLength(); i++) {
+        Element arraRef = (Element) output.item(i);
+        refs.add(new XarrayRef(arraRef));
+      }
+    } catch (XPathExpressionException ignored) {
+      System.out.println("EX");
+    }
+    return refs;
+
+  }
+
   /**
    * Find all array references in the next children that match the given
    * criteria.
@@ -237,6 +266,7 @@ public class XelementHelper {
       String identifier,
       List<Integer> offsets)
   {
+
     String offsetXpath = "";
     for (int i = 0; i < offsets.size(); ++i){
       if(offsets.get(i) == 0){
@@ -277,7 +307,7 @@ public class XelementHelper {
         XelementName.VAR,
         identifier,
         offsetXpath
-        );
+    );
 
     List<XarrayRef> arrayRefs = new ArrayList<>();
     try {
