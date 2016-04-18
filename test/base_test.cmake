@@ -56,8 +56,8 @@ add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
 add_test(NAME ast-transform-${TEST_NAME} COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
 # Compare the output of both executable
 if(OUTPUT_TEST)
-  set (TEST_PARAMETERS ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED})
-  add_test(NAME compare-output-${TEST_NAME} COMMAND ${CMAKE_SOURCE_DIR}/test/compare_output.sh ${TEST_PARAMETERS})
+  set (TEST_PARAMETERS "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED})")
+  add_test(NAME compare-output-${TEST_NAME} COMMAND bash -c "diff ${TEST_PARAMETERS}")
 endif()
 
 # Add build directory to be removed with clean target
