@@ -511,6 +511,14 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
+   * Get the list of parameters extracted from the call directive.
+   * @return List of parameters identifier as String value.
+   */
+  public List<String> getFctParams(){
+    return _fctCallParameters;
+  }
+
+  /**
    * Set the array name value.
    * @param value String value for the array name.
    */
@@ -519,11 +527,27 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
+   * Get the array name extracted from the call directive.
+   * @return Array name from the call directive.
+   */
+  public String getArrayName(){
+    return _arrayName;
+  }
+
+  /**
    * Set the function name value.
    * @param value String value for the function name.
    */
   void setFctName(String value){
     _fctName = value;
+  }
+
+  /**
+   * Get the fct name extracted from the call directive.
+   * @return Fct name from the call directive.
+   */
+  public String getFctName(){
+    return _fctName;
   }
 
   /**
