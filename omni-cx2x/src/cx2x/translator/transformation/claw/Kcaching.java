@@ -276,6 +276,16 @@ public class Kcaching extends Transformation {
                                              XbaseElement rhs)
       throws IllegalTransformationException
   {
+    XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
+    if(t.getIntent() != null){
+      // Type has an intent ... duplicate it and remove it
+      XbasicType newType = t.cloneObject();
+      type = xcodeml.getTypeTable().generateRealTypeHash();
+      t.setType(type);
+      xcodeml.getTypeTable().add(newType);
+    }
+
+
     String cacheName =
         generateNameWithOffsetInfo(var, _claw.getOffsets());
 
