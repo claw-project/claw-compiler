@@ -277,12 +277,13 @@ public class Kcaching extends Transformation {
       throws IllegalTransformationException
   {
     XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
-    if(t.getIntent() != null){
+    if(t.getIntent() != null || t.isAllocatable()){
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneObject();
       type = xcodeml.getTypeTable().generateRealTypeHash();
       newType.setType(type);
       newType.removeIntent();
+      newType.removeAllocatable();
       xcodeml.getTypeTable().add(newType);
     }
 
