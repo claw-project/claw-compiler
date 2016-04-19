@@ -305,6 +305,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   public void removeIntent(){
     if(hasIntent()) {
       baseElement.removeAttribute(XelementName.ATTR_INTENT);
+      _intent = null;
     }
   }
 
@@ -314,6 +315,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   public void removeAllocatable(){
     if(isAllocatable()){
       baseElement.removeAttribute(XelementName.ATTR_IS_ALLOCATABLE);
+      _is_allocatable = false;
     }
   }
 
