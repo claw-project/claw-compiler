@@ -191,6 +191,7 @@ public class XelementName {
     tempMap.put(Xkind.class, KIND);
     tempMap.put(Xlength.class, LENGTH);
     tempMap.put(XlowerBound.class, LOWER_BOUND);
+    tempMap.put(XmoduleDefinition.class, F_MODULE_DEFINITION);
     tempMap.put(Xname.class, NAME);
     tempMap.put(Xparams.class, PARAMS);
     tempMap.put(Xpragma.class, PRAGMA_STMT);

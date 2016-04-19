@@ -99,6 +99,33 @@ public class XelementHelper {
   }
 
   /**
+   * Find a function definition in a module definition.
+   * @param module Module definition in which we search for the function
+   *               definition.
+   * @param name   Name of the function to be found.
+   * @return A function definition element if found. Null otherwise.
+   */
+  public static XfunctionDefinition findFunctionDefinitionInModule(
+      XmoduleDefinition module, String name)
+  {
+    if(module.getBaseElement() == null){
+      return null;
+    }
+    NodeList nList = module.getBaseElement().
+        getElementsByTagName(XelementName.FCT_DEFINITION);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        XfunctionDefinition fctDef = new XfunctionDefinition((Element)n);
+        if(fctDef.getName().getValue().equals(name)){
+          return fctDef;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Find all array references elements in a given body.
    * @param parent The body element to search for the array references.
    * @return A list of all array references found.
@@ -371,6 +398,18 @@ public class XelementHelper {
   public static XdoStatement findParentDoStmt(XbaseElement child){
     return findParentOfType(child, XdoStatement.class);
   }
+
+  /**
+   * Find module definition element in which the child is included if any.
+   * @param child The child element to search from.
+   * @return A XmoduleDefinition object if found. Null otherwise.
+   */
+  public static XmoduleDefinition findParentModuleDefinition(XbaseElement child)
+  {
+    return findParentOfType(child, XmoduleDefinition.class);
+  }
+
+
 
   /**
    * Find a pragma element in the previous nodes containing a given keyword.
