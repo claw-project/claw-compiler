@@ -88,6 +88,9 @@ public class Kcaching extends Transformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
+    // It mihgt have change from the analysis
+    _doStmt = XelementHelper.findParentDoStmt(_claw.getPragma());
+    
     if(_claw.hasDataClause()){
       transformData(xcodeml);
     } else {
