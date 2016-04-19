@@ -147,10 +147,11 @@ public class Kcaching extends Transformation {
         _stmt.getLValueModel().getArrayRef().getVarRef().getVar().getValue();
 
     String type = _stmt.getLValueModel().getArrayRef().getType();
-    Xvar cacheVar =
-        generateCacheVarAndAssignStmt(xcodeml, var, type, fctDef, _stmt);
 
     List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, var);
+
+    Xvar cacheVar =
+        generateCacheVarAndAssignStmt(xcodeml, var, type, fctDef, _stmt);
 
     applyInitClause(xcodeml, transformer, cacheVar, aRefs.get(0));
 
