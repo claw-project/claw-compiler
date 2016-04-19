@@ -45,13 +45,15 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
    END IF
    data2_k = data2 ( i , j )
    data1_k = data1 ( i , j )
-   array6_k_m1 = array6_k_m1 * 2.0 + data1_k
+   array6_k_m1 = array6 ( i , j - 1 ) * 2.0 + data1_k
    array6 ( i , j ) = array6_k_m1
-   array7_k_m1 = array7_k_m1 * 2.0 + array6_k_m1 + data1_k
+   array7_k_m1 = array7 ( i , j - 1 ) * 2.0 + array6_k_m1 + data1_k
    array7 ( i , j ) = array7_k_m1
-   array8_k_m1 = array8_k_m1 * 2.0 + array6_k_m1 + array7_k_m1 + data2_k
+   array8_k_m1 = array8 ( i , j - 1 ) * 2.0 + array6_k_m1 + array7_k_m1 +&
+    data2_k
    array8 ( i , j ) = array8_k_m1
-   array9_k_m1 = array9_k_m1 * 2.0 + array6_k_m1 + array8_k_m1 + data2_k
+   array9_k_m1 = array9 ( i , j - 1 ) * 2.0 + array6_k_m1 + array8_k_m1 +&
+    data2_k
    array9 ( i , j ) = array9_k_m1
   END DO
  END DO
