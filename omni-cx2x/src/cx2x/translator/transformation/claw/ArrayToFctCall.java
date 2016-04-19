@@ -54,10 +54,17 @@ public class ArrayToFctCall extends Transformation {
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
         getFctDefinition(_claw.getFctName());
     if(_replaceFct == null){
-      xcodeml.addError("Function " + _claw.getFctName() +
-          " not found in current file.",
-          _claw.getPragma().getLineNo());
-      return false;
+      XmoduleDefinition parentModule =
+          XelementHelper.findParentModuleDefinition(_claw.getPragma());
+      _replaceFct = XelementHelper.findFunctionDefinitionInModule(parentModule,
+          _claw.getFctName());
+
+      if(_replaceFct == null){
+        xcodeml.addError("Function " + _claw.getFctName() +
+                " not found in current file.",
+            _claw.getPragma().getLineNo());
+        return false;
+      }
     }
 
     // TODO does it make sense ?
