@@ -299,6 +299,15 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
     return _intent;
   }
 
+  /**
+   * Remove intent attribute from the element.
+   */
+  public void removeIntent(){
+    if(hasIntent()) {
+      baseElement.removeAttribute(XelementName.ATTR_INTENT);
+    }
+  }
+
   @Override
   public XbasicType cloneObject() {
     Element element = (Element)cloneNode();
