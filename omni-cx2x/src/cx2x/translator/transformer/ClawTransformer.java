@@ -50,10 +50,6 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("remove"));
     _tGroups.put(ArrayTransform.class,
         new IndependentTransformationGroup("array-transform"));
-    _tGroups.put(ArrayToFctCall.class,
-        new IndependentTransformationGroup("call"));
-    _tGroups.put(Kcaching.class,
-        new IndependentTransformationGroup("kcache"));
     _tGroups.put(LoopExtraction.class,
         new IndependentTransformationGroup("loop-extract"));
     _tGroups.put(LoopFusion.class,
@@ -62,6 +58,10 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("loop-hoist"));
     _tGroups.put(LoopInterchange.class,
         new IndependentTransformationGroup("loop-interchange"));
+    _tGroups.put(ArrayToFctCall.class,
+        new IndependentTransformationGroup("call"));
+    _tGroups.put(Kcaching.class,
+        new IndependentTransformationGroup("kcache"));
     _tGroups.put(OpenAccContinuation.class,
         new IndependentTransformationGroup("open-acc-continuation"));
 
