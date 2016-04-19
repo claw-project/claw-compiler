@@ -281,7 +281,7 @@ public class Kcaching extends Transformation {
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneObject();
       type = xcodeml.getTypeTable().generateRealTypeHash();
-      t.setType(type);
+      newType.setType(type);
       xcodeml.getTypeTable().add(newType);
     }
 
