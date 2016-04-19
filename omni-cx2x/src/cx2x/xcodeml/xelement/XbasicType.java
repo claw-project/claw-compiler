@@ -308,6 +308,15 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
     }
   }
 
+  /**
+   * Remove is_allocatable attribute from the element.
+   */
+  public void removeAllocatable(){
+    if(isAllocatable()){
+      baseElement.removeAttribute(XelementName.ATTR_IS_ALLOCATABLE);
+    }
+  }
+
   @Override
   public XbasicType cloneObject() {
     Element element = (Element)cloneNode();
