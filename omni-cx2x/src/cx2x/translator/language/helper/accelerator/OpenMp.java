@@ -13,6 +13,12 @@ package cx2x.translator.language.helper.accelerator;
  * @author clementval
  */
 class OpenMp extends AcceleratorGenerator {
+
+  @Override
+  protected String getPrefix(){
+    return "";
+  }
+
   @Override
   protected String getStartParellelDirective() {
     return "";

@@ -17,6 +17,12 @@ package cx2x.translator.language.helper.accelerator;
 abstract class AcceleratorGenerator {
 
   /**
+   * Get the prefix for the current accelerator lanugage.
+   * @return Language prefix.
+   */
+  protected abstract String getPrefix();
+
+  /**
    * Get the start pragma to define a parallel accelerated region.
    * @return String value that represents the pragma.
    */

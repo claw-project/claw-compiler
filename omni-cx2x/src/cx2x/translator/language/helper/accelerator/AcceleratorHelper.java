@@ -6,8 +6,11 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.language.AnalyzedPragma;
+import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.Xpragma;
@@ -129,6 +132,7 @@ public class AcceleratorHelper {
    */
   public static void generatePrivateClause(ClawLanguage claw,
                                            XcodeProgram xcodeml,
+                                           Transformer transformer,
                                            XbaseElement stmt,
                                            List<String> vars)
   {
@@ -148,6 +152,12 @@ public class AcceleratorHelper {
           claw.getPragma().getLineNo());
     } else {
       for (String var : vars) {
+        if(parallel.getValue().length() >= 80){
+          parallel.append(" " + generator.getPrefix() + " ");
+          transformer.addTransformation(new OpenAccContinuation(
+              new AnalyzedPragma(parallel)));
+        }
+
         parallel.append(generator.getPrivateClause(var));
       }
     }

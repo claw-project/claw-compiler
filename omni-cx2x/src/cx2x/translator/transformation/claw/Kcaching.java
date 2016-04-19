@@ -90,9 +90,9 @@ public class Kcaching extends Transformation {
   {
     // It mihgt have change from the analysis
     _doStmt = XelementHelper.findParentDoStmt(_claw.getPragma());
-    
+
     if(_claw.hasDataClause()){
-      transformData(xcodeml);
+      transformData(xcodeml, transformer);
     } else {
       transformAssignStmt(xcodeml, transformer);
     }
@@ -103,7 +103,7 @@ public class Kcaching extends Transformation {
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @throws Exception If smth prevent the transformation to be done.
    */
-  private void transformData(XcodeProgram xcodeml)
+  private void transformData(XcodeProgram xcodeml, Transformer transformer)
       throws Exception
   {
     // 1. Find the function/module declaration
@@ -124,8 +124,8 @@ public class Kcaching extends Transformation {
       privateVars.add(cacheVar.getValue());
     }
 
-    AcceleratorHelper.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
-        privateVars);
+    AcceleratorHelper.generatePrivateClause(_claw, xcodeml, transformer,
+        _claw.getPragma(), privateVars);
     _claw.getPragma().delete();
   }
 
@@ -156,8 +156,8 @@ public class Kcaching extends Transformation {
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
-    AcceleratorHelper.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
-        Collections.singletonList(cacheVar.getValue()));
+    AcceleratorHelper.generatePrivateClause(_claw, xcodeml, transformer,
+        _claw.getPragma(), Collections.singletonList(cacheVar.getValue()));
     _stmt.delete();
     _claw.getPragma().delete();
   }

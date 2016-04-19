@@ -18,6 +18,11 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PRIVATE = "private";
 
   @Override
+  protected String getPrefix(){
+    return OPENACC_PREFIX;
+  }
+
+  @Override
   protected String getStartParellelDirective() {
     return OPENACC_PREFIX + " " + OPENACC_PARALLEL;
   }
