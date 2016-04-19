@@ -204,6 +204,16 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   }
 
   /**
+   * Set the value of ref attribute.
+   * @param value New value of ref attribute.
+   */
+  public void setRef(String value){
+    if(baseElement != null){
+      baseElement.setAttribute(XelementName.ATTR_REF, value);
+    }
+  }
+
+  /**
    * Check whether the type is public.
    * @return True if the type is public. False otherwise.
    */
