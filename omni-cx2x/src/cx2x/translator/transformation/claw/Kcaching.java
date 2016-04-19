@@ -284,6 +284,19 @@ public class Kcaching extends Transformation {
       newType.setType(type);
       newType.removeIntent();
       newType.removeAllocatable();
+
+      XbasicType ref = (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
+      if(ref != null && (ref.isAllocatable() || ref.hasIntent())){
+        // TODO is there several level to reach ref ? Check if ref is Freal ...
+        XbasicType newRef = ref.cloneObject();
+        // TODO generate appropriate type
+        String refType = xcodeml.getTypeTable().generateRealTypeHash();
+        newRef.setType(refType);
+        newRef.removeIntent();
+        newRef.removeAllocatable();
+        newType.setRef(refType);
+        xcodeml.getTypeTable().add(newRef);
+      }
       xcodeml.getTypeTable().add(newType);
     }
 
