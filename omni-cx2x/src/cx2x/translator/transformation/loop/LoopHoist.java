@@ -50,14 +50,24 @@ public class LoopHoist extends BlockTransformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     _nestedLevel = _startClaw.getHoistInductionVars().size();
 
+
+
+
+
+
+
+
+
     XdoStatement outterLoop;
     XbaseElement from = _startClaw.getPragma();
     do {
       outterLoop = XelementHelper.
           findNextDoStatement(from, _endClaw.getPragma());
-      if(outterLoop.getInductionVarValue().equals(_startClaw.getHoistInductionVars().get(0))){
-        // outter loop meet induction variable criteria
+      if(outterLoop != null){
+        if(outterLoop.getInductionVarValue().equals(_startClaw.getHoistInductionVars().get(0))){
+          // outter loop meet induction variable criteria
 
+        }
       }
       from = outterLoop;  // next search start from the current loop
     } while(outterLoop != null);
