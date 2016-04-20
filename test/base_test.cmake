@@ -52,14 +52,15 @@ add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
 add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
 
-# Compare reference transformed code and output of the transformation
-add_test(NAME ast-transform-${TEST_NAME} COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
-# Compare the output of both executable
-if(OUTPUT_TEST)
-  set (TEST_PARAMETERS "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED})")
-  add_test(NAME compare-output-${TEST_NAME} COMMAND bash -c "diff ${TEST_PARAMETERS}")
+if(NOT IGNORE_TEST)
+  # Compare reference transformed code and output of the transformation
+  add_test(NAME ast-transform-${TEST_NAME} COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
+  # Compare the output of both executable
+  if(OUTPUT_TEST)
+    set (TEST_PARAMETERS "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED})")
+    add_test(NAME compare-output-${TEST_NAME} COMMAND bash -c "diff ${TEST_PARAMETERS}")
+  endif()
 endif()
-
 # Add build directory to be removed with clean target
 set_property(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

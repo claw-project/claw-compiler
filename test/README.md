@@ -18,6 +18,8 @@ the test targets. Here is the format of this file.
 set(TEST_NAME <test_name>) # test_name must be replaced by a relevant test name
 set(TEST_DEBUG ON)         # optional, run clawfc with debug flag
 set(OUTPUT_TEST ON)        # optional, execute executable output comparison
+set(IGNORE_TEST ON)        # optional, does not perform the test but apply
+                           # transformations
 include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # always like this
 ```
 
