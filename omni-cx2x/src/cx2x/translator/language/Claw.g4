@@ -99,7 +99,7 @@ directive[ClawLanguage l]
     }
 
   // loop-hoist directive
-  | LHOIST '(' ids_list[o] ')' interchange_optional[$l] EOF
+  | LHOIST '(' ids_list[o] ')' reshape_optional[$l] interchange_optional[$l] EOF
     {
       $l.setHoistInductionVars(o);
       $l.setDirective(ClawDirective.LOOP_HOIST);
@@ -179,6 +179,32 @@ data_optional[ClawLanguage l]
 private_optional[ClawLanguage l]:
     PRIVATE { $l.setPrivateClause(); }
   | /* empty */
+;
+
+reshape_optional[ClawLanguage l]
+  @init{
+    List<ClawReshapeInfo> r = new ArrayList();
+  }
+  :
+    RESHAPE '(' reshape_list[r] ')'
+    { $l.setReshapeClauseValues(r); }
+  | /* empty */
+;
+
+reshape_element returns [ClawReshapeInfo i]
+  @init{
+    List<String> temp = new ArrayList();
+  }
+:
+    array_name=IDENTIFIER '(' target_dim=NUMBER ')'
+    { $i = new ClawReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
+  | array_name=IDENTIFIER '(' target_dim=NUMBER ',' identifiers_list[temp] ')'
+    { $i = new ClawReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
+;
+
+reshape_list[List<ClawReshapeInfo> r]:
+    info=reshape_element { $r.add($info.i); } ',' reshape_list[$r]
+  | info=reshape_element { $r.add($info.i); }
 ;
 
 identifiers[List<String> ids]:
@@ -311,6 +337,7 @@ MAP          : 'map';
 PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
+RESHAPE      : 'reshape';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;

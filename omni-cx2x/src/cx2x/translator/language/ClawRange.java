@@ -9,7 +9,7 @@ import cx2x.translator.common.Constant;
 import cx2x.xcodeml.xelement.XloopIterationRange;
 
 /**
- * Store the information from a range option in a CLAW directives
+ * Store the information from a range option in a CLAW directives.
  *
  * @author clementval
  */

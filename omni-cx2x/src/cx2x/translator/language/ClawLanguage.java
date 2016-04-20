@@ -42,12 +42,13 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<ClawMapping> _mappingValues;
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
+  private List<ClawReshapeInfo> _reshapeInfos;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
   private boolean _hasFusionClause, _hasGroupClause, _hasIndexesValue;
   private boolean _hasInductionClause, _hasInitClause, _hasInterchangeClause;
-  private boolean _hasParallelClause, _hasPrivateClause;
+  private boolean _hasParallelClause, _hasPrivateClause, _hasReshapeClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -82,6 +83,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _mappingValues = null;
     _offsetValues = null;
     _rangeValue = null;
+    _reshapeInfos = null;
 
     // Clauses flags members
     _hasAccClause = false;
@@ -94,6 +96,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasInterchangeClause = false;
     _hasParallelClause = false;
     _hasPrivateClause = false;
+    _hasReshapeClause = false;
 
     // General members
     _directive = null;
@@ -473,7 +476,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Check whether the init clause is used.
-   * @return True if the init clause if used.
+   * @return True if the init clause is used.
    */
   public boolean hasInitClause(){
     return _hasInitClause;
@@ -488,7 +491,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Check whether the private clause is used.
-   * @return True if the init clause if used.
+   * @return True if the private clause is used.
    */
   public boolean hasPrivateClause(){
     return _hasPrivateClause;
@@ -551,13 +554,39 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
+   * Set the reshape clause extracted information.
+   * @param infos List of ClawReshapeInfo objects containing the extracted
+   * information from the reshape clause.
+   */
+  void setReshapeClauseValues(List<ClawReshapeInfo> infos){
+    _hasReshapeClause = true;
+    _reshapeInfos = infos;
+  }
+
+  /**
+   * Get the reshape extracted information.
+   * @return List of ClawReshapeInfo objects containing the extracted
+   * information from the reshape clause.
+   */
+  public List<ClawReshapeInfo> getReshapeClauseValues(){
+    return _reshapeInfos;
+  }
+
+  /**
+   * Check whether the reshape clause is used.
+   * @return True if the reshape clause is used.
+   */
+  public boolean hasReshapeClause(){
+    return _hasReshapeClause;
+  }
+
+  /**
    * Attach the pragma related to this CLAW language analysis.
    * @param pragma Xpragma object.
    */
   private void attachPragma(Xpragma pragma){
     _pragma = pragma;
   }
-
 
   /**
    * Set the accelerator target for pragma generation
