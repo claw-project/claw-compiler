@@ -13,6 +13,7 @@ import cx2x.xcodeml.xelement.Xpragma;
 import helper.XmlHelper;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -654,11 +655,19 @@ public class ClawLanguageTest {
   public void LoopHoistTest(){
     // Valid directives
     analyzeValidLoopHoist("claw loop-hoist(i,j)",
-        Arrays.asList("i", "j"), false, null);
+        Arrays.asList("i", "j"), false, null, false, null);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange",
-        Arrays.asList("i", "j"), true, null);
+        Arrays.asList("i", "j"), true, null, false, null);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange(j,i)",
-        Arrays.asList("i", "j"), true, Arrays.asList("j", "i"));
+        Arrays.asList("i", "j"), true, Arrays.asList("j", "i"), false, null);
+
+
+    ClawReshapeInfo info1 = new ClawReshapeInfo("zmd", 0, new ArrayList<>());
+    ClawReshapeInfo info2 =
+        new ClawReshapeInfo("zsediflux", 1, Collections.singletonList("j"));
+    analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,j))",
+        Arrays.asList("i", "j"), false, null, true,
+        Arrays.asList(info1, info2));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-hoist");
@@ -677,7 +686,9 @@ public class ClawLanguageTest {
    * @param inductions  List of induction variables to be checked.
    */
   private void analyzeValidLoopHoist(String raw, List<String> inductions,
-                                     boolean interchange, List<String> indexes)
+                                     boolean interchange, List<String> indexes,
+                                     boolean reshape,
+                                     List<ClawReshapeInfo> infos)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -700,6 +711,26 @@ public class ClawLanguageTest {
         for(int i = 0; i < indexes.size(); ++i){
           assertEquals(indexes.get(i), l.getIndexes().get(i));
         }
+      }
+
+      if(reshape){
+        assertTrue(l.hasReshapeClause());
+        assertEquals(infos.size(), l.getReshapeClauseValues().size());
+        for(int i = 0; i < infos.size(); ++i){
+          assertEquals(infos.get(i).getArrayName(),
+              l.getReshapeClauseValues().get(i).getArrayName());
+          assertEquals(infos.get(i).getTargetDimension(),
+              l.getReshapeClauseValues().get(i).getTargetDimension());
+          List<String> expected = infos.get(i).getKeptDimensions();
+          List<String> actual =
+              l.getReshapeClauseValues().get(i).getKeptDimensions();
+          assertEquals(expected.size(), actual.size());
+          for(int j=0; j < expected.size(); ++j){
+            assertEquals(expected.get(j), actual.get(j));
+          }
+        }
+      } else {
+        assertFalse(l.hasReshapeClause());
       }
 
     } catch(IllegalDirectiveException idex){
