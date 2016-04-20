@@ -1,3 +1,5 @@
 set(TEST_NAME hoist2)
+set(TEST_DEBUG ON)
+#set(OUTPUT_TEST ON)
 set(IGNORE_TEST ON)
 include(${CMAKE_SOURCE_DIR}/test/base_test.cmake)
