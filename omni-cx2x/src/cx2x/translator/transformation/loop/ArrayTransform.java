@@ -74,6 +74,7 @@ public class ArrayTransform extends BlockTransformation {
             "No array notation assignments found in the array-transform block.",
             _clawBegin.getPragma().getLineNo()
         );
+        return false;
       }
 
       /* Using a structure of list of list of assignments to group together the
