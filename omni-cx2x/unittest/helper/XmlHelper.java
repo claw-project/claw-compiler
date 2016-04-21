@@ -30,6 +30,7 @@ public class XmlHelper {
 
   // Path is relative to the test directory
   public static final String TEST_DATA = "./data/basic.xml";
+  public static final String TEST_PROGRAM = "./data/program.xml";
 
 
   public static XcodeProgram getDummyXcodeProgram(){

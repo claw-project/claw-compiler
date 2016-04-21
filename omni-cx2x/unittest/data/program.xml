@@ -1,0 +1,1282 @@
+<XcodeProgram source="original_code.f90"
+              language="Fortran"
+              time="2016-04-20 16:22:14"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FbasicType type="A7fc140408180" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404082f0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404085c0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140408730" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140408a00" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140408b70" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140408e40" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140408fb0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140409280" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404093f0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040a090" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040a200" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040a370" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">2</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040a640" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040a7b0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040a920" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">2</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FstructType type="S7fc14040aca0">
+      <symbols>
+        <id type="Freal">
+          <name>value1</name>
+        </id>
+        <id type="Freal">
+          <name>value2</name>
+        </id>
+      </symbols>
+    </FstructType>
+    <FbasicType type="S7fc14040bfc0" ref="S7fc14040aca0"/>
+    <FbasicType type="A7fc14040fe10" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140410060" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040edb0" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc14040f000" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140412080" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404122d0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140411020" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140411270" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404142f0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140414540" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140413290" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404134e0" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140416560" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404167b0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140415500" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140415750" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404187d0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140418a20" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">100</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc140417770" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7fc1404179c0" ref="Fint">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F7fc1404036f0" return_type="Fvoid" is_program="true"/>
+    <FfunctionType type="F7fc140403b00" return_type="Fvoid">
+      <params>
+      </params>
+    </FfunctionType>
+    <FfunctionType type="F7fc140429100" return_type="Freal" is_intrinsic="true"/>
+    <FfunctionType type="F7fc140428d90" return_type="Freal" is_intrinsic="true"/>
+  </typeTable>
+  <globalSymbols>
+    <id type="F7fc1404036f0" sclass="ffunc">
+      <name>claw_test</name>
+    </id>
+    <id type="F7fc140403b00" sclass="ffunc">
+      <name>claw_hoist2</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition lineno="5" file="original_code.f90">
+      <name type="F7fc1404036f0">claw_test</name>
+      <symbols>
+        <id type="F7fc140403b00" sclass="ffunc">
+          <name>claw_hoist2</name>
+        </id>
+      </symbols>
+      <declarations>
+      </declarations>
+      <body>
+        <exprStatement lineno="6" file="original_code.f90">
+          <functionCall type="Fvoid">
+            <name type="F7fc140403b00">claw_hoist2</name>
+          </functionCall>
+        </exprStatement>
+      </body>
+    </FfunctionDefinition>
+    <FfunctionDefinition lineno="11" file="original_code.f90">
+      <name type="F7fc140403b00">claw_hoist2</name>
+      <symbols>
+        <id type="F7fc140403b00" sclass="ffunc">
+          <name>claw_hoist2</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>jt</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>i</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>j</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>ntrac</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>klev</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>kproma</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>var1</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>var2</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>var3</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>var4</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>var5</name>
+        </id>
+        <id type="A7fc1404082f0" sclass="flocal">
+          <name>array2d_1</name>
+        </id>
+        <id type="A7fc140408730" sclass="flocal">
+          <name>array2d_2</name>
+        </id>
+        <id type="A7fc140408b70" sclass="flocal">
+          <name>array2d_3</name>
+        </id>
+        <id type="A7fc140408fb0" sclass="flocal">
+          <name>array2d_4</name>
+        </id>
+        <id type="A7fc1404093f0" sclass="flocal">
+          <name>array2d_5</name>
+        </id>
+        <id type="A7fc14040a370" sclass="flocal">
+          <name>array3d_1</name>
+        </id>
+        <id type="A7fc14040a920" sclass="flocal">
+          <name>array3d_2</name>
+        </id>
+        <id type="S7fc14040aca0" sclass="ftype_name">
+          <name>dummy</name>
+        </id>
+        <id type="S7fc14040bfc0" sclass="flocal">
+          <name>tdum</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>zsedtend</name>
+        </id>
+        <id type="Freal" sclass="flocal">
+          <name>time_step_len</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="12" file="original_code.f90">
+          <name type="Fint">jt</name>
+        </varDecl>
+        <varDecl lineno="12" file="original_code.f90">
+          <name type="Fint">i</name>
+        </varDecl>
+        <varDecl lineno="12" file="original_code.f90">
+          <name type="Fint">j</name>
+        </varDecl>
+        <varDecl lineno="12" file="original_code.f90">
+          <name type="Fint">ntrac</name>
+        </varDecl>
+        <varDecl lineno="12" file="original_code.f90">
+          <name type="Fint">klev</name>
+        </varDecl>
+        <varDecl lineno="12" file="original_code.f90">
+          <name type="Fint">kproma</name>
+        </varDecl>
+        <varDecl lineno="13" file="original_code.f90">
+          <name type="Freal">var1</name>
+        </varDecl>
+        <varDecl lineno="13" file="original_code.f90">
+          <name type="Freal">var2</name>
+        </varDecl>
+        <varDecl lineno="13" file="original_code.f90">
+          <name type="Freal">var3</name>
+        </varDecl>
+        <varDecl lineno="13" file="original_code.f90">
+          <name type="Freal">var4</name>
+        </varDecl>
+        <varDecl lineno="13" file="original_code.f90">
+          <name type="Freal">var5</name>
+        </varDecl>
+        <varDecl lineno="14" file="original_code.f90">
+          <name type="A7fc1404082f0">array2d_1</name>
+        </varDecl>
+        <varDecl lineno="14" file="original_code.f90">
+          <name type="A7fc140408730">array2d_2</name>
+        </varDecl>
+        <varDecl lineno="14" file="original_code.f90">
+          <name type="A7fc140408b70">array2d_3</name>
+        </varDecl>
+        <varDecl lineno="14" file="original_code.f90">
+          <name type="A7fc140408fb0">array2d_4</name>
+        </varDecl>
+        <varDecl lineno="14" file="original_code.f90">
+          <name type="A7fc1404093f0">array2d_5</name>
+        </varDecl>
+        <varDecl lineno="16" file="original_code.f90">
+          <name type="A7fc14040a370">array3d_1</name>
+        </varDecl>
+        <varDecl lineno="16" file="original_code.f90">
+          <name type="A7fc14040a920">array3d_2</name>
+        </varDecl>
+        <FstructDecl lineno="17" file="original_code.f90">
+          <name type="S7fc14040aca0">dummy</name>
+        </FstructDecl>
+        <varDecl lineno="21" file="original_code.f90">
+          <name type="S7fc14040bfc0">tdum</name>
+        </varDecl>
+        <varDecl>
+          <name type="Freal">zsedtend</name>
+        </varDecl>
+        <varDecl>
+          <name type="Freal">time_step_len</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FassignStatement lineno="23" file="original_code.f90">
+          <Var type="Freal" scope="local">zsedtend</Var>
+          <FrealConstant type="Freal">1.0</FrealConstant>
+        </FassignStatement>
+        <FassignStatement lineno="24" file="original_code.f90">
+          <Var type="Freal" scope="local">var3</Var>
+          <FrealConstant type="Freal">2.0</FrealConstant>
+        </FassignStatement>
+        <FassignStatement lineno="26" file="original_code.f90">
+          <Var type="Fint" scope="local">ntrac</Var>
+          <FintConstant type="Fint">2</FintConstant>
+        </FassignStatement>
+        <FassignStatement lineno="27" file="original_code.f90">
+          <Var type="Fint" scope="local">klev</Var>
+          <FintConstant type="Fint">10</FintConstant>
+        </FassignStatement>
+        <FassignStatement lineno="28" file="original_code.f90">
+          <Var type="Fint" scope="local">kproma</Var>
+          <FintConstant type="Fint">100</FintConstant>
+        </FassignStatement>
+        <FassignStatement lineno="29" file="original_code.f90">
+          <FarrayRef type="A7fc140410060">
+            <varRef type="A7fc1404082f0">
+              <Var type="A7fc1404082f0" scope="local">array2d_1</Var>
+            </varRef>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">10</FintConstant>
+              </upperBound>
+            </indexRange>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">100</FintConstant>
+              </upperBound>
+            </indexRange>
+          </FarrayRef>
+          <FrealConstant type="Freal">0.0</FrealConstant>
+        </FassignStatement>
+        <FassignStatement lineno="30" file="original_code.f90">
+          <FarrayRef type="A7fc1404122d0">
+            <varRef type="A7fc140408730">
+              <Var type="A7fc140408730" scope="local">array2d_2</Var>
+            </varRef>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">10</FintConstant>
+              </upperBound>
+            </indexRange>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">100</FintConstant>
+              </upperBound>
+            </indexRange>
+          </FarrayRef>
+          <FrealConstant type="Freal">0.0</FrealConstant>
+        </FassignStatement>
+        <FassignStatement lineno="31" file="original_code.f90">
+          <FarrayRef type="A7fc140414540">
+            <varRef type="A7fc140408b70">
+              <Var type="A7fc140408b70" scope="local">array2d_3</Var>
+            </varRef>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">10</FintConstant>
+              </upperBound>
+            </indexRange>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">100</FintConstant>
+              </upperBound>
+            </indexRange>
+          </FarrayRef>
+          <FrealConstant type="Freal">0.0</FrealConstant>
+        </FassignStatement>
+        <FassignStatement lineno="32" file="original_code.f90">
+          <FarrayRef type="A7fc1404167b0">
+            <varRef type="A7fc140408fb0">
+              <Var type="A7fc140408fb0" scope="local">array2d_4</Var>
+            </varRef>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">10</FintConstant>
+              </upperBound>
+            </indexRange>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">100</FintConstant>
+              </upperBound>
+            </indexRange>
+          </FarrayRef>
+          <FrealConstant type="Freal">0.0</FrealConstant>
+        </FassignStatement>
+        <FassignStatement lineno="33" file="original_code.f90">
+          <FarrayRef type="A7fc140418a20">
+            <varRef type="A7fc1404093f0">
+              <Var type="A7fc1404093f0" scope="local">array2d_5</Var>
+            </varRef>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">10</FintConstant>
+              </upperBound>
+            </indexRange>
+            <indexRange>
+              <lowerBound>
+                <FintConstant type="Fint">1</FintConstant>
+              </lowerBound>
+              <upperBound>
+                <FintConstant type="Fint">100</FintConstant>
+              </upperBound>
+            </indexRange>
+          </FarrayRef>
+          <FrealConstant type="Freal">0.0</FrealConstant>
+        </FassignStatement>
+        <FpragmaStatement lineno="35" file="original_code.f90">acc parallel loop gang vector collapse(2)</FpragmaStatement>
+        <FdoStatement lineno="36" file="original_code.f90">
+          <Var type="Fint" scope="local">jt</Var>
+          <indexRange>
+            <lowerBound>
+              <FintConstant type="Fint">1</FintConstant>
+            </lowerBound>
+            <upperBound>
+              <Var type="Fint" scope="local">ntrac</Var>
+            </upperBound>
+            <step>
+              <FintConstant type="Fint">1</FintConstant>
+            </step>
+          </indexRange>
+          <body>
+            <FpragmaStatement lineno="37" file="original_code.f90">claw loop-hoist(j,i) reshape(array2d_2(0),array2d_1(1,j)) interchange</FpragmaStatement>
+            <FifStatement lineno="38" file="original_code.f90">
+              <condition>
+                <FlogicalConstant type="Flogical">.FALSE.</FlogicalConstant>
+              </condition>
+              <then>
+                <body>
+                  <FcycleStatement lineno="38" file="original_code.f90"/>
+                </body>
+              </then>
+            </FifStatement>
+            <FassignStatement lineno="39" file="original_code.f90">
+              <Var type="Freal" scope="local">var1</Var>
+              <FmemberRef type="Freal" member="value1">
+                <varRef type="S7fc14040bfc0">
+                  <Var type="S7fc14040bfc0" scope="local">tdum</Var>
+                </varRef>
+              </FmemberRef>
+            </FassignStatement>
+            <FassignStatement lineno="40" file="original_code.f90">
+              <Var type="Freal" scope="local">var2</Var>
+              <FpowerExpr type="Freal">
+                <Var type="Freal" scope="local">var1</Var>
+                <FrealConstant type="Freal">2.</FrealConstant>
+              </FpowerExpr>
+            </FassignStatement>
+            <FifStatement lineno="41" file="original_code.f90">
+              <condition>
+                <logEQExpr type="Flogical">
+                  <Var type="Fint" scope="local">jt</Var>
+                  <FintConstant type="Fint">2</FintConstant>
+                </logEQExpr>
+              </condition>
+              <then>
+                <body>
+                  <FdoStatement lineno="42" file="original_code.f90">
+                    <Var type="Fint" scope="local">j</Var>
+                    <indexRange>
+                      <lowerBound>
+                        <FintConstant type="Fint">1</FintConstant>
+                      </lowerBound>
+                      <upperBound>
+                        <Var type="Fint" scope="local">klev</Var>
+                      </upperBound>
+                      <step>
+                        <FintConstant type="Fint">1</FintConstant>
+                      </step>
+                    </indexRange>
+                    <body>
+                      <FdoStatement lineno="43" file="original_code.f90">
+                        <Var type="Fint" scope="local">i</Var>
+                        <indexRange>
+                          <lowerBound>
+                            <FintConstant type="Fint">1</FintConstant>
+                          </lowerBound>
+                          <upperBound>
+                            <Var type="Fint" scope="local">kproma</Var>
+                          </upperBound>
+                          <step>
+                            <FintConstant type="Fint">1</FintConstant>
+                          </step>
+                        </indexRange>
+                        <body>
+                          <FassignStatement lineno="44" file="original_code.f90">
+                            <FarrayRef type="Freal">
+                              <varRef type="A7fc140408730">
+                                <Var type="A7fc140408730" scope="local">array2d_2</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">i</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">j</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <functionCall type="Freal" is_intrinsic="true">
+                              <name>min</name>
+                              <arguments>
+                                <mulExpr type="Freal">
+                                  <FmemberRef type="Freal" member="value2">
+                                    <varRef type="S7fc14040bfc0">
+                                      <Var type="S7fc14040bfc0" scope="local">tdum</Var>
+                                    </varRef>
+                                  </FmemberRef>
+                                  <FintConstant type="Fint">2</FintConstant>
+                                </mulExpr>
+                                <FrealConstant type="Freal">50.e-6</FrealConstant>
+                              </arguments>
+                            </functionCall>
+                          </FassignStatement>
+                        </body>
+                      </FdoStatement>
+                    </body>
+                  </FdoStatement>
+                </body>
+              </then>
+            </FifStatement>
+            <FdoStatement lineno="48" file="original_code.f90">
+              <Var type="Fint" scope="local">j</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="Fint" scope="local">klev</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FdoStatement lineno="49" file="original_code.f90">
+                  <Var type="Fint" scope="local">i</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <Var type="Fint" scope="local">kproma</Var>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="50" file="original_code.f90">
+                      <FarrayRef type="Freal">
+                        <varRef type="A7fc1404082f0">
+                          <Var type="A7fc1404082f0" scope="local">array2d_1</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">i</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">j</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <FrealConstant type="Freal">0.0</FrealConstant>
+                    </FassignStatement>
+                    <FifStatement lineno="51" file="original_code.f90">
+                      <condition>
+                        <logGTExpr type="Flogical">
+                          <FarrayRef type="Freal">
+                            <varRef type="A7fc140408730">
+                              <Var type="A7fc140408730" scope="local">array2d_2</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">i</Var>
+                            </arrayIndex>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">j</Var>
+                            </arrayIndex>
+                          </FarrayRef>
+                          <FrealConstant type="Freal">0.0</FrealConstant>
+                        </logGTExpr>
+                      </condition>
+                      <then>
+                        <body>
+                          <FassignStatement lineno="52" file="original_code.f90">
+                            <Var type="Freal" scope="local">var3</Var>
+                            <plusExpr type="Freal">
+                              <FarrayRef type="Freal">
+                                <varRef type="A7fc14040a370">
+                                  <Var type="A7fc14040a370" scope="local">array3d_1</Var>
+                                </varRef>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">i</Var>
+                                </arrayIndex>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">j</Var>
+                                </arrayIndex>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">jt</Var>
+                                </arrayIndex>
+                              </FarrayRef>
+                              <mulExpr type="Freal">
+                                <FarrayRef type="Freal">
+                                  <varRef type="A7fc14040a920">
+                                    <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">i</Var>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">j</Var>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">jt</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                                <Var type="Freal" scope="local">time_step_len</Var>
+                              </mulExpr>
+                            </plusExpr>
+                          </FassignStatement>
+                          <FassignStatement lineno="53" file="original_code.f90">
+                            <Var type="Freal" scope="local">var5</Var>
+                            <functionCall type="Freal" is_intrinsic="true">
+                              <name>min</name>
+                              <arguments>
+                                <divExpr type="Freal">
+                                  <FrealConstant type="Freal">2.0</FrealConstant>
+                                  <FrealConstant type="Freal">9.0</FrealConstant>
+                                </divExpr>
+                                <FarrayRef type="Freal">
+                                  <varRef type="A7fc1404082f0">
+                                    <Var type="A7fc1404082f0" scope="local">array2d_1</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">i</Var>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">j</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                              </arguments>
+                            </functionCall>
+                          </FassignStatement>
+                          <FassignStatement lineno="54" file="original_code.f90">
+                            <Var type="Freal" scope="local">zsedtend</Var>
+                            <functionCall type="Freal" is_intrinsic="true">
+                              <name>min</name>
+                              <arguments>
+                                <functionCall type="Freal" is_intrinsic="true">
+                                  <name>max</name>
+                                  <arguments>
+                                    <FrealConstant type="Freal">0.0</FrealConstant>
+                                    <divExpr type="Freal">
+                                      <mulExpr type="Freal">
+                                        <Var type="Freal" scope="local">var3</Var>
+                                        <Var type="Freal" scope="local">var5</Var>
+                                      </mulExpr>
+                                      <FarrayRef type="Freal">
+                                        <varRef type="A7fc140408b70">
+                                          <Var type="A7fc140408b70" scope="local">array2d_3</Var>
+                                        </varRef>
+                                        <arrayIndex>
+                                          <Var type="Fint" scope="local">i</Var>
+                                        </arrayIndex>
+                                        <arrayIndex>
+                                          <Var type="Fint" scope="local">j</Var>
+                                        </arrayIndex>
+                                      </FarrayRef>
+                                    </divExpr>
+                                  </arguments>
+                                </functionCall>
+                                <FrealConstant type="Freal">2.0</FrealConstant>
+                              </arguments>
+                            </functionCall>
+                          </FassignStatement>
+                          <FassignStatement lineno="55" file="original_code.f90">
+                            <FarrayRef type="Freal">
+                              <varRef type="A7fc14040a920">
+                                <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">i</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">j</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">jt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <minusExpr type="Freal">
+                              <FarrayRef type="Freal">
+                                <varRef type="A7fc14040a920">
+                                  <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                                </varRef>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">i</Var>
+                                </arrayIndex>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">j</Var>
+                                </arrayIndex>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">jt</Var>
+                                </arrayIndex>
+                              </FarrayRef>
+                              <Var type="Freal" scope="local">var4</Var>
+                            </minusExpr>
+                          </FassignStatement>
+                          <FassignStatement lineno="56" file="original_code.f90">
+                            <FarrayRef type="Freal">
+                              <varRef type="A7fc1404082f0">
+                                <Var type="A7fc1404082f0" scope="local">array2d_1</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">i</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">j</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <mulExpr type="Freal">
+                              <Var type="Freal" scope="local">var4</Var>
+                              <FarrayRef type="Freal">
+                                <varRef type="A7fc140408fb0">
+                                  <Var type="A7fc140408fb0" scope="local">array2d_4</Var>
+                                </varRef>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">i</Var>
+                                </arrayIndex>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">j</Var>
+                                </arrayIndex>
+                              </FarrayRef>
+                            </mulExpr>
+                          </FassignStatement>
+                        </body>
+                      </then>
+                    </FifStatement>
+                  </body>
+                </FdoStatement>
+              </body>
+            </FdoStatement>
+            <FdoStatement lineno="60" file="original_code.f90">
+              <Var type="Fint" scope="local">j</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">2</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="Fint" scope="local">klev</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FdoStatement lineno="61" file="original_code.f90">
+                  <Var type="Fint" scope="local">i</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <Var type="Fint" scope="local">kproma</Var>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="62" file="original_code.f90">
+                      <FarrayRef type="Freal">
+                        <varRef type="A7fc14040a920">
+                          <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">i</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">j</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">jt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <plusExpr type="Freal">
+                        <FarrayRef type="Freal">
+                          <varRef type="A7fc14040a920">
+                            <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">i</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">j</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">jt</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                        <divExpr type="Freal">
+                          <FarrayRef type="Freal">
+                            <varRef type="A7fc1404082f0">
+                              <Var type="A7fc1404082f0" scope="local">array2d_1</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">i</Var>
+                            </arrayIndex>
+                            <arrayIndex>
+                              <minusExpr type="Fint">
+                                <Var type="Fint" scope="local">j</Var>
+                                <FintConstant type="Fint">1</FintConstant>
+                              </minusExpr>
+                            </arrayIndex>
+                          </FarrayRef>
+                          <FarrayRef type="Freal">
+                            <varRef type="A7fc1404093f0">
+                              <Var type="A7fc1404093f0" scope="local">array2d_5</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">i</Var>
+                            </arrayIndex>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">j</Var>
+                            </arrayIndex>
+                          </FarrayRef>
+                        </divExpr>
+                      </plusExpr>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+              </body>
+            </FdoStatement>
+            <FpragmaStatement lineno="65" file="original_code.f90">claw end loop-hoist</FpragmaStatement>
+            <FdoStatement lineno="66" file="original_code.f90">
+              <Var type="Fint" scope="local">j</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">2</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="Fint" scope="local">klev</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FdoStatement lineno="67" file="original_code.f90">
+                  <Var type="Fint" scope="local">i</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <Var type="Fint" scope="local">kproma</Var>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="68" file="original_code.f90">
+                      <FarrayRef type="Freal">
+                        <varRef type="A7fc14040a920">
+                          <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">i</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">j</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">jt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <plusExpr type="Freal">
+                        <FarrayRef type="Freal">
+                          <varRef type="A7fc14040a920">
+                            <Var type="A7fc14040a920" scope="local">array3d_2</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">i</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">j</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">jt</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                        <divExpr type="Freal">
+                          <FarrayRef type="Freal">
+                            <varRef type="A7fc1404082f0">
+                              <Var type="A7fc1404082f0" scope="local">array2d_1</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">i</Var>
+                            </arrayIndex>
+                            <arrayIndex>
+                              <minusExpr type="Fint">
+                                <Var type="Fint" scope="local">j</Var>
+                                <FintConstant type="Fint">1</FintConstant>
+                              </minusExpr>
+                            </arrayIndex>
+                          </FarrayRef>
+                          <FarrayRef type="Freal">
+                            <varRef type="A7fc1404093f0">
+                              <Var type="A7fc1404093f0" scope="local">array2d_5</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">i</Var>
+                            </arrayIndex>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">j</Var>
+                            </arrayIndex>
+                          </FarrayRef>
+                        </divExpr>
+                      </plusExpr>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+              </body>
+            </FdoStatement>
+          </body>
+        </FdoStatement>
+        <FpragmaStatement lineno="72" file="original_code.f90">acc end parallel loop</FpragmaStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>
