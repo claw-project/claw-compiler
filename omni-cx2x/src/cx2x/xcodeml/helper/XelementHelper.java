@@ -184,7 +184,7 @@ public class XelementHelper {
 
   /**
    * <pre>
-   * Find all assignment statement from a node until the end pragma.
+   * Intersect two sets of elements in XPath 1.0
    *
    * This method use Xpath to select the correct nodes. Xpath 1.0 does not have
    * the intersect operator but only union. By using the Kaysian Method, we can
@@ -192,7 +192,20 @@ public class XelementHelper {
    *
    *       $set1[count(.|$set2)=count($set2)]
    *
-   * In our case, we intersect all assign statments which are next siblings of
+   * </pre>
+   * @param s1 First set of element.
+   * @param s2 Second set of element.
+   * @return Xpath query that performs the intersect operator between s1 and s2.
+   */
+  private static String xPathIntersect(String s1, String s2){
+    return String.format("%s[count(.|%s)=count(%s)]", s1, s2, s2);
+  }
+
+  /**
+   * <pre>
+   * Find all assignment statement from a node until the end pragma.
+   *
+   * We intersect all assign statments which are next siblings of
    * the "from" element with all the assign statements which are previous
    * siblings of the ending pragma.
    * </pre>
@@ -224,7 +237,7 @@ public class XelementHelper {
         XelementName.F_ARRAY_REF
     );
     // Use the Kaysian method to express the intersect operator
-    String intersect = String.format("%s[count(.|%s)=count(%s)]", s1, s2, s2);
+    String intersect = XelementHelper.xPathIntersect(s2, s1);
 
     List<XassignStatement> assignements = new ArrayList<>();
     try {
@@ -241,6 +254,13 @@ public class XelementHelper {
     return assignements;
   }
 
+  /**
+   * Get all array references in the siblings of the given element.
+   * @param from        Element to start from.
+   * @param identifier  Array name value.
+   * @return List of all array references found. List is empty if nothing is
+   * found.
+   */
   public static List<XarrayRef> getAllArrayReferencesInSiblings(
       XbaseElement from,
       String identifier)
@@ -268,6 +288,78 @@ public class XelementHelper {
     }
     return refs;
 
+  }
+
+  /**
+   * Find all the nested do statement groups following the inductions iterations
+   * define in inductionVars and being located between the "from" element and
+   * the end pragma.
+   * @param from          Element from which the search is started.
+   * @param endPragma     End pragma that terminates the search block.
+   * @param inductionVars Induction variables that define the nested group to
+   *                      locates.
+   * @return List of do statements elements (outter most loops for each nested
+   * group) found between the "from" element and the end pragma.
+   */
+  public static List<XdoStatement> findDoStatement(XbaseElement from,
+                                                   Xpragma endPragma,
+                                                   List<String> inductionVars)
+  {
+
+    /* s1 is selecting all the nested do statement groups that meet the criteria
+     * from the "from" element down to the end of the block. */
+    String s1 = "following::";
+
+    String dynamic_part_s1 = "";
+    for(int i = inductionVars.size() - 1; i >= 0; --i){
+      /*
+       * Here is example of there xpath query format for 1,2 and 3 nested loops
+       *
+       * FdoStatement[Var[text()="induction_var"]]
+       *
+       * FdoStatement[Var[text()="induction_var"] and
+       * body[FdoStatement[Var[text()="induction_var"]]]
+       *
+       * FdoStatement[Var[text()="induction_var"] and
+       * body[FdoStatement[Var[text()="induction_var"] and
+       * body[FdoStatement[Var[text()="induction_var"]]]]
+       */
+
+      String tempQuery;
+      if(i == inductionVars.size() - 1) { // first iteration
+        tempQuery = String.format("%s[%s[text()=\"%s\"]]",
+            XelementName.DO_STMT,
+            XelementName.VAR,
+            inductionVars.get(i));
+      } else {
+        tempQuery = String.format("%s[%s[text()=\"%s\"] and %s[%s]]",
+            XelementName.DO_STMT,
+            XelementName.VAR,
+            inductionVars.get(i),
+            XelementName.BODY,
+            dynamic_part_s1); // Including previsouly formed xpath query
+      }
+      dynamic_part_s1 = tempQuery;
+    }
+    s1 = s1 + dynamic_part_s1;
+    List<XdoStatement> doStatements = new ArrayList<>();
+    try {
+      XPathFactory xPathfactory = XPathFactory.newInstance();
+      XPath xpath = xPathfactory.newXPath();
+      XPathExpression xpathExpr = xpath.compile(s1);
+      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+          XPathConstants.NODESET);
+      for (int i = 0; i < output.getLength(); i++) {
+        Element el = (Element) output.item(i);
+        XdoStatement doStmt = new XdoStatement(el);
+        if(doStmt.getLineNo() != 0 && doStmt.getLineNo() < endPragma.getLineNo()){
+          doStatements.add(doStmt);
+        }
+      }
+    } catch (XPathExpressionException ignored) {
+      System.err.println(ignored);
+    }
+    return doStatements;
   }
 
   /**
