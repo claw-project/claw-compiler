@@ -237,7 +237,7 @@ public class XelementHelper {
         XelementName.F_ARRAY_REF
     );
     // Use the Kaysian method to express the intersect operator
-    String intersect = XelementHelper.xPathIntersect(s2, s1);
+    String intersect = XelementHelper.xPathIntersect(s1, s2);
 
     List<XassignStatement> assignements = new ArrayList<>();
     try {
