@@ -10,8 +10,14 @@ import cx2x.xcodeml.helper.XelementHelper;
 import helper.XmlHelper;
 import org.junit.Test;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
 import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test methods of the XelementHelper class
@@ -31,5 +37,31 @@ public class XelementHelperTest {
     } catch (IllegalTransformationException ex){
       fail();
     }
+  }
+
+  @Test
+  public void xpathIntersectTest(){
+    File f = new File(XmlHelper.TEST_PROGRAM);
+    assertTrue(f.exists());
+    XcodeProgram xcodeml =  XcodeProgram.createFromFile(XmlHelper.TEST_PROGRAM);
+    assertNotNull(xcodeml);
+
+    List<Xpragma> pragmas = XelementHelper.findAllPragmas(xcodeml);
+    assertEquals(4, pragmas.size());
+
+    Xpragma loopHoistStart = pragmas.get(1);
+    assertNotNull(loopHoistStart);
+    assertTrue(loopHoistStart.getValue().contains("loop-hoist"));
+    Xpragma loopHoistEnd = pragmas.get(2);
+    assertNotNull(loopHoistEnd);
+    assertTrue(loopHoistEnd.getValue().contains("end loop-hoist"));
+
+    List<XdoStatement> stmts =
+        XelementHelper.findDoStatement(loopHoistStart, loopHoistEnd,
+        Arrays.asList("j", "i"));
+
+    assertEquals(3, stmts.size());
+
+
   }
 }
