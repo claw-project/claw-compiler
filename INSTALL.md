@@ -10,10 +10,10 @@ version
 
 To build the and install the CLAW Fortran Compiler, use the followings commands.
 _NOTE_: OMNI Compiler is packaged with the CLAW Compiler so you don't need to
-install a separated version. 
+install a separated version.
 
 ```bash
-git clone git@github.com:clementval/claw-compiler.git
+git clone git@github.com:C2SM-RCM/claw-compiler.git
 cd claw-compiler
 git submodule init
 git submodule update --remote
