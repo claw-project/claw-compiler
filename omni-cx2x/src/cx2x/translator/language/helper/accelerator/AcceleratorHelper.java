@@ -134,7 +134,7 @@ public class AcceleratorHelper {
                                            XcodeProgram xcodeml,
                                            Transformer transformer,
                                            XbaseElement stmt,
-                                           List<String> vars)
+                                           String var)
   {
     if(claw.getAcceleratorDirective() == AcceleratorDirective.NONE
         || !claw.hasPrivateClause()){
@@ -151,15 +151,12 @@ public class AcceleratorHelper {
       xcodeml.addWarning("No parallel construct found to attach private clause",
           claw.getPragma().getLineNo());
     } else {
-      for (String var : vars) {
-        if(parallel.getValue().length() >= 80){
-          parallel.append(" " + generator.getPrefix() + " ");
-          transformer.addTransformation(new OpenAccContinuation(
-              new AnalyzedPragma(parallel)));
-        }
-
-        parallel.append(generator.getPrivateClause(var));
+      if(parallel.getValue().length() >= 80){
+        parallel.append(" " + generator.getPrefix() + " ");
+        transformer.addTransformation(new OpenAccContinuation(
+            new AnalyzedPragma(parallel)));
       }
+      parallel.append(generator.getPrivateClause(var));
     }
   }
 
