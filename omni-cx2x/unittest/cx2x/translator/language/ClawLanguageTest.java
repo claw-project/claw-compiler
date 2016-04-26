@@ -461,25 +461,25 @@ public class ClawLanguageTest {
   public void KcacheTest(){
 
     // data clause + offsets
-    analyzeValidKcache("claw kcache data(var1,var2) 0 1",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0 1)",
         Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false);
-    analyzeValidKcache("claw kcache data(var1,var2) 0 -1 0",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0 -1 0)",
         Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false);
-    analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(+1 -1 0)",
         Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false);
-    analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0 private",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(+1 -1 0) private",
         Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true);
     analyzeValidKcache("claw kcache data(var1,var2) private",
         Arrays.asList("var1", "var2"), null, false, true);
 
     // offset + init clause
-    analyzeValidKcache("claw kcache data(var1,var2) 0 1 init",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0 1) init",
         Arrays.asList("var1", "var2"), Arrays.asList(0, 1), true, false);
-    analyzeValidKcache("claw kcache data(var1,var2) 0 -1 0 init",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0 -1 0) init",
         Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false);
-    analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0 init",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(+1 -1 0) init",
         Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false);
-    analyzeValidKcache("claw kcache data(var1,var2) +1 -1 0 init private",
+    analyzeValidKcache("claw kcache data(var1,var2) offset(+1 -1 0) init private",
         Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true);
     analyzeValidKcache("claw kcache data(var1,var2) init private",
         Arrays.asList("var1", "var2"), null, true, true);
