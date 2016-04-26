@@ -27,7 +27,6 @@ import java.util.List;
  */
 public class Kcaching extends Transformation {
   private final ClawLanguage _claw;
-  private XassignStatement _stmt;
   private XdoStatement _doStmt;
 
   /**
@@ -50,25 +49,7 @@ public class Kcaching extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-    if(_claw.hasDataClause()){
-      return true; // Analysis is not done at this time
-    }
 
-    // Only for assign statement cache from here
-
-    // pragma must be followed by an assign statement
-    _stmt = XelementHelper.findDirectNextAssignStmt(_claw.getPragma());
-    if(_stmt == null){
-      xcodeml.addError("Directive not follwed by an assign statement",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
-    // Check if the LHS of the assign stmt is an array reference
-    if(!_stmt.getLValueModel().isArrayRef()){
-      xcodeml.addError("LHS of assign statement is not an array reference",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
     return true;
   }
 
@@ -91,76 +72,82 @@ public class Kcaching extends Transformation {
     // It mihgt have change from the analysis
     _doStmt = XelementHelper.findParentDoStmt(_claw.getPragma());
 
-    if(_claw.hasDataClause()){
-      transformData(xcodeml, transformer);
-    } else {
-      transformAssignStmt(xcodeml, transformer);
-    }
-  }
+    // Check if there is an assignment
 
-  /**
-   * Apply the tranformation for the data list.
-   * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @throws Exception If smth prevent the transformation to be done.
-   */
-  private void transformData(XcodeProgram xcodeml, Transformer transformer)
-      throws Exception
-  {
     // 1. Find the function/module declaration
     // TODO find parent definition with symbols and declaration table
     XfunctionDefinition fctDef =
         XelementHelper.findParentFctDef(_claw.getPragma());
 
-    List<String> privateVars = new ArrayList<>();
-    for(String var : _claw.getDataClauseValues()){
-      List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, var);
+    for(String data : _claw.getDataClauseValues()){
+      XassignStatement stmt =
+          XelementHelper.getFirstArrayAssign(_claw.getPragma(), data);
 
-      // Generate the cache variable and its assignment
-      String type = aRefs.get(0).getType();
-      Xvar cacheVar = generateCacheVarAndAssignStmt(xcodeml, var, type, fctDef,
-          aRefs.get(0));
-
-      updateArrayRefWithCache(aRefs, cacheVar);
-      privateVars.add(cacheVar.getValue());
+      if(stmt == null){
+        transformData(xcodeml, fctDef, data, transformer);
+      } else {
+        transformAssignStmt(xcodeml, fctDef, data, stmt, transformer);
+      }
     }
+    _claw.getPragma().delete();
+  }
+
+  /**
+   * Apply the tranformation for the data list.
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param fctDef      Function/module definition in which the data are nested.
+   * @param data        Array identifier on which the caching is done.
+   * @param transformer Current instance of the transformer.
+   * @throws Exception If smth prevent the transformation to be done.
+   */
+  private void transformData(XcodeProgram xcodeml, XfunctionDefinition fctDef,
+                             String data,
+                             Transformer transformer)
+      throws Exception
+  {
+
+    List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
+
+    // Generate the cache variable and its assignment
+    String type = aRefs.get(0).getType();
+    Xvar cacheVar = generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef,
+        aRefs.get(0), null);
+
+    updateArrayRefWithCache(aRefs, cacheVar);
 
     AcceleratorHelper.generatePrivateClause(_claw, xcodeml, transformer,
-        _claw.getPragma(), privateVars);
-    _claw.getPragma().delete();
+        _claw.getPragma(), cacheVar.getValue());
   }
 
   /**
    * Apply the transformation for the LHS array reference.
    * @param xcodeml      The XcodeML on which the transformations are applied.
+   * @param fctDef       Function/module definition in which the data are nested.
+   * @param data         Array identifier on which the caching is done.
+   * @param stmt         First statement including the array ref on the lhs.
    * @param transformer  The transformer used to applied the transformations.
    * @throws Exception If smth prevent the transformation to be done.
    */
   private void transformAssignStmt(XcodeProgram xcodeml,
+                                   XfunctionDefinition fctDef,
+                                   String data,
+                                   XassignStatement stmt,
                                    Transformer transformer) throws Exception
   {
-    // 1. Find the function/module declaration
-    // TODO find parent definition with symbols and declaration table
-    XfunctionDefinition fctDef =
-        XelementHelper.findParentFctDef(_claw.getPragma());
+    String type = stmt.getLValueModel().getArrayRef().getType();
 
-    String var =
-        _stmt.getLValueModel().getArrayRef().getVarRef().getVar().getValue();
-
-    String type = _stmt.getLValueModel().getArrayRef().getType();
-
-    List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, var);
+    List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
     Xvar cacheVar =
-        generateCacheVarAndAssignStmt(xcodeml, var, type, fctDef, _stmt);
+        generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef, stmt, stmt);
 
     applyInitClause(xcodeml, transformer, cacheVar, aRefs.get(0));
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
     AcceleratorHelper.generatePrivateClause(_claw, xcodeml, transformer,
-        _claw.getPragma(), Collections.singletonList(cacheVar.getValue()));
-    _stmt.delete();
-    _claw.getPragma().delete();
+        _claw.getPragma(), cacheVar.getValue());
+    stmt.delete();
   }
 
   /**
@@ -271,13 +258,15 @@ public class Kcaching extends Transformation {
    * @param type    The original variable type.
    * @param fctDef  The function definition holding the variable.
    * @param rhs     The element that will be set as the rhs of the assignment.
+   * @param stmt    The assign statement including the array ref.
    * @return The new created Xvar element.
    * @throws IllegalTransformationException
    */
   private Xvar generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
                                              String type,
                                              XfunctionDefinition fctDef,
-                                             XbaseElement rhs)
+                                             XbaseElement rhs,
+                                             XassignStatement stmt)
       throws IllegalTransformationException
   {
     XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
@@ -324,7 +313,7 @@ public class Kcaching extends Transformation {
     // 2.4 Prepare the new variable that is used for caching
     Xvar cacheVar = Xvar.create(type, cacheName, Xscope.LOCAL, xcodeml);
 
-    if(_claw.hasDataClause()) {
+    if(stmt == null) {
 
       XassignStatement cache1 =
           XelementHelper.createEmpty(XassignStatement.class, xcodeml);
@@ -342,12 +331,12 @@ public class Kcaching extends Transformation {
       XassignStatement cache1 =
           XelementHelper.createEmpty(XassignStatement.class, xcodeml);
       cache1.appendToChildren(cacheVar, false);
-      cache1.appendToChildren(_stmt.getExprModel().getElement(), true);
+      cache1.appendToChildren(stmt.getExprModel().getElement(), true);
       XassignStatement cache2 =
           XelementHelper.createEmpty(XassignStatement.class, xcodeml);
-      cache2.appendToChildren(_stmt.getLValueModel().getElement(), true);
+      cache2.appendToChildren(stmt.getLValueModel().getElement(), true);
       cache2.appendToChildren(cacheVar, true);
-      XelementHelper.insertAfter(_stmt, cache1);
+      XelementHelper.insertAfter(stmt, cache1);
       XelementHelper.insertAfter(cache1, cache2);
 
     }
