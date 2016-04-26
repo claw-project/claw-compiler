@@ -291,6 +291,41 @@ public class XelementHelper {
   }
 
   /**
+   * Get the first assignment statement for an array reference.
+   * @param from      Statement to look from.
+   * @param arrayName Identifier of the array.
+   * @return The assignement statement if found. Null otherwise.
+   */
+  public static XassignStatement getFirstArrayAssign(XbaseElement from,
+                                                           String arrayName)
+  {
+    String s1 = String.format(
+        "following::%s[%s[%s[%s[text()=\"%s\"]] and position()=1]]",
+        XelementName.F_ASSIGN_STMT,
+        XelementName.F_ARRAY_REF,
+        XelementName.VAR_REF,
+        XelementName.VAR,
+        arrayName
+    );
+
+    try {
+      XPathFactory xPathfactory = XPathFactory.newInstance();
+      XPath xpath = xPathfactory.newXPath();
+      XPathExpression xpathExpr = xpath.compile(s1);
+      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+          XPathConstants.NODESET);
+      if(output.getLength() == 0){
+        return null;
+      }
+      Element assign = (Element) output.item(0);
+      return new XassignStatement(assign);
+
+    } catch (XPathExpressionException ignored) {
+      return null;
+    }
+  }
+
+  /**
    * Find all the nested do statement groups following the inductions iterations
    * define in inductionVars and being located between the "from" element and
    * the end pragma.
