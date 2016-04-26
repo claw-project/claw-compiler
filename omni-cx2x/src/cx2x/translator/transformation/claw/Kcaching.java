@@ -83,11 +83,25 @@ public class Kcaching extends Transformation {
       XassignStatement stmt =
           XelementHelper.getFirstArrayAssign(_claw.getPragma(), data);
 
-      if(stmt == null){
-        transformData(xcodeml, fctDef, data, transformer);
-      } else {
-        transformAssignStmt(xcodeml, fctDef, data, stmt, transformer);
+      boolean standardArrayRef = true;
+      if(stmt != null) {
+        for (XbaseElement el :
+            stmt.getLValueModel().getArrayRef().getInnerElements()) {
+          if (el instanceof XarrayIndex) {
+            if (!(((XarrayIndex) el).getExprModel().isVar() ||
+                ((XarrayIndex) el).getExprModel().isConstant())) {
+              standardArrayRef = false;
+            }
+          }
+        }
       }
+
+      if(stmt != null && standardArrayRef){
+        transformAssignStmt(xcodeml, fctDef, data, stmt, transformer);
+      } else {
+        transformData(xcodeml, fctDef, data, transformer);
+      }
+
     }
     _claw.getPragma().delete();
   }
