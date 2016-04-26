@@ -77,12 +77,12 @@ directive[ClawLanguage l]
     }
 
   // Kcache directive
-  | KCACHE data_optional[$l] offset_list_optional[i] private_optional[$l] EOF
+  | KCACHE data_clause[$l] offset_list_optional[i] private_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(i);
     }
-  | KCACHE offset_list_optional[i] INIT private_optional[$l] EOF
+  | KCACHE data_clause[$l] offset_list_optional[i] INIT private_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
       $l.setOffsets(i);
@@ -167,13 +167,12 @@ induction_optional[ClawLanguage l]
   | /* empty */
 ;
 
-data_optional[ClawLanguage l]
+data_clause[ClawLanguage l]
   @init {
     List<String> temp = new ArrayList<>();
   }
   :
     DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
-  | /* empty */
 ;
 
 private_optional[ClawLanguage l]:
