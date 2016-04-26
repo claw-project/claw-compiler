@@ -227,7 +227,7 @@ indexes_option[ClawLanguage l]
 ;
 
 offset_list_optional[List<Integer> offsets]:
-    offset_list[$offsets]
+    OFFSET '(' offset_list[$offsets] ')'
   | /* empty */
 ;
 
@@ -333,6 +333,7 @@ INDUCTION    : 'induction';
 INIT         : 'init';
 INTERCHANGE  : 'interchange';
 MAP          : 'map';
+OFFSET       : 'offset';
 PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
