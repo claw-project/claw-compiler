@@ -23,13 +23,10 @@ SUBROUTINE kcache(istart,iend,jstart,jend)
 
   DO i = istart, iend
     DO j = jstart+1, jend
-      !$claw kcache 0 -1
+      !$claw kcache data(array6, array7, array8, array9) 0 -1
       array6(i,j) = array6(i,j) * 2.0
-      !$claw kcache 0 -1
       array7(i,j) = array7(i,j) * 2.0 + array6(i,j-1)
-      !$claw kcache 0 -1
       array8(i,j) = array8(i,j) * 2.0 + array6(i,j-1) + array7(i,j-1)
-      !$claw kcache 0 -1
       array9(i,j) = array9(i,j) * 2.0 + array6(i,j-1) + array8(i,j-1)
       array10(i,j) = array9(i,j-1) + 1.0
     END DO
