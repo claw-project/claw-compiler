@@ -43,6 +43,28 @@ public class XloopIterationRange {
     return getIndexRange().equals(other.getIndexRange());
   }
 
+  public boolean isIdenticalBesidesLowerBound(XloopIterationRange other){
+    if(!getInductionVar().getValue().equals(other.getInductionVar().getValue())){
+      return false;
+    }
+
+    if(getIndexRange().isAssumedShape()
+        && other.getIndexRange().isAssumedShape()){
+      return true;
+    }
+
+    if (!getIndexRange().getUpperBound().equals(
+        other.getIndexRange().getUpperBound()))
+    {
+      return false;
+    }
+
+    // step is optional
+    return getIndexRange().getStep() == null &&
+        other.getIndexRange().getStep() == null ||
+        getIndexRange().getStep().equals(other.getIndexRange().getStep());
+  }
+
   /**
    * Get a string representation of the iteration range.
    * @return A string representing the iteration range (e.g. i=1,10,1)
