@@ -63,6 +63,7 @@ else()
   )
 
   add_jar(omni-cx2x-unittest
+    helper/TestConstant.java
     helper/XmlHelper.java
     cx2x/translator/misc/UtilityTest.java
     cx2x/translator/language/ClawRangeTest.java
