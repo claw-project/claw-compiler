@@ -28,7 +28,9 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XdoStatement extends XenhancedElement {
+public class XdoStatement extends XenhancedElement
+    implements Xclonable<XdoStatement>
+{
   private XloopIterationRange _iterationRange = null;
   private Xbody _body = null;
   private String _construct_name = null;
@@ -237,5 +239,11 @@ public class XdoStatement extends XenhancedElement {
     element.appendChild(body);
 
     return new XdoStatement(element);
+  }
+
+  @Override
+  public XdoStatement cloneObject() {
+    Node clone = cloneNode();
+    return new XdoStatement((Element)clone);
   }
 }
