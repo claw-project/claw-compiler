@@ -65,7 +65,7 @@ SUBROUTINE claw_hoist2
     !$claw end loop-hoist
     DO j=2,klev
       DO i=1,kproma
-        array3d_2(i,j,jt) = array3d_2(i,j,jt) + (array2d_1(i,j-1) / array2d_5(i,j))
+        array3d_2(i,j,jt) = array3d_2(i,j,jt) + (5.0 / array2d_5(i,j))
       END DO
     END DO
   END DO
