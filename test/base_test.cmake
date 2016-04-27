@@ -57,6 +57,7 @@ add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
   add_test(NAME ast-transform-${TEST_NAME} COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
+  set_tests_properties(ast-transform-${TEST_NAME} PROPERTIES DEPENDS transform-${TEST_NAME})
   # Compare the output of both executable
   if(OUTPUT_TEST)
     set (TEST_PARAMETERS "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED})")
