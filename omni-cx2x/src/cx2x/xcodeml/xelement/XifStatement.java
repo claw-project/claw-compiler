@@ -8,6 +8,7 @@ package cx2x.xcodeml.xelement;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
+import org.w3c.dom.Node;
 
 
 /**
@@ -28,7 +29,9 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XifStatement extends XenhancedElement {
+public class XifStatement extends XenhancedElement
+    implements Xclonable<XifStatement>
+{
 
   private Xcondition _cond = null;
   private Xthen _then = null;
@@ -118,8 +121,8 @@ public class XifStatement extends XenhancedElement {
     Xthen thenBlock = XelementHelper.createEmpty(Xthen.class, xcodeml);
     Xbody thenBody = XelementHelper.createEmpty(Xbody.class, xcodeml);
     thenBlock.appendToChildren(thenBody, false);
-    root.appendToChildren(thenBlock, false);
     root.appendToChildren(cond, false);
+    root.appendToChildren(thenBlock, false);
     root.readElementinformation();
     return root;
   }
@@ -143,5 +146,11 @@ public class XifStatement extends XenhancedElement {
     root.appendToChildren(elseBlock, false);
     root.readElementinformation();
     return root;
+  }
+
+  @Override
+  public XifStatement cloneObject() {
+    Node clone = cloneNode();
+    return new XifStatement((Element)clone);
   }
 }
