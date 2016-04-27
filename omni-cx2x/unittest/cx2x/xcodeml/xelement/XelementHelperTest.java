@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
+import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -41,9 +42,10 @@ public class XelementHelperTest {
 
   @Test
   public void xpathIntersectTest(){
-    File f = new File(XmlHelper.TEST_PROGRAM);
+    File f = new File(TestConstant.TEST_PROGRAM);
     assertTrue(f.exists());
-    XcodeProgram xcodeml =  XcodeProgram.createFromFile(XmlHelper.TEST_PROGRAM);
+    XcodeProgram xcodeml =
+        XcodeProgram.createFromFile(TestConstant.TEST_PROGRAM);
     assertNotNull(xcodeml);
 
     List<Xpragma> pragmas = XelementHelper.findAllPragmas(xcodeml);

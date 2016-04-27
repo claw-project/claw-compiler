@@ -33,3 +33,5 @@ ClawBaseListener.java
 ClawLexer.java
 ClawListener.java
 ClawParser.java
+
+omni-cx2x/unittest/helper/TestConstant.java

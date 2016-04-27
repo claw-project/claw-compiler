@@ -28,15 +28,10 @@ import org.xml.sax.InputSource;
  
 public class XmlHelper {
 
-  // Path is relative to the test directory
-  public static final String TEST_DATA = "./data/basic.xml";
-  public static final String TEST_PROGRAM = "./data/program.xml";
-
-
   public static XcodeProgram getDummyXcodeProgram(){
-    File f = new File(XmlHelper.TEST_DATA);
+    File f = new File(TestConstant.TEST_DATA);
     assertTrue(f.exists());
-    XcodeProgram xcodeml =  XcodeProgram.createFromFile(XmlHelper.TEST_DATA);
+    XcodeProgram xcodeml =  XcodeProgram.createFromFile(TestConstant.TEST_DATA);
     assertNotNull(xcodeml);
     return xcodeml;
   }

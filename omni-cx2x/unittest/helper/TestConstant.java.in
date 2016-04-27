@@ -1,0 +1,17 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
+package helper;
+
+/**
+ * Stores constant for JUnit tests
+ *
+ * @author clementval
+ */
+public class TestConstant {
+  // Path is relative to the test directory
+  public static final String TEST_DATA = "@CMAKE_CURRENT_SOURCE_DIR@/data/basic.xml";
+  public static final String TEST_PROGRAM = "@CMAKE_CURRENT_SOURCE_DIR@/data/program.xml";
+}

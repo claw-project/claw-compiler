@@ -8,6 +8,7 @@ package cx2x.xcodeml.xelement;
 import java.io.File;
 import static org.junit.Assert.*;
 
+import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -21,9 +22,9 @@ public class XcodeProgTest {
 
   @Test
   public void basicXcodeProgTest() {
-    File f = new File(XmlHelper.TEST_DATA);
+    File f = new File(TestConstant.TEST_DATA);
     assertTrue(f.exists());
-    XcodeProgram xcodeml = XcodeProgram.createFromFile(XmlHelper.TEST_DATA);
+    XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DATA);
     assertNotNull(xcodeml);
     assertNotNull(xcodeml.getTime());
     assertNotNull(xcodeml.getCompilerInfo());

@@ -10,6 +10,12 @@ set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/${ANTLR_NAME}.jar)
 set(OMNICX2X_JAR1 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar)
 set(OMNICX2X_JAR2 ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/helper/TestConstant.java.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/helper/TestConstant.java
+  @ONLY
+)
+
 # Try to download the jar dependencies
 if(NOT EXISTS ${JUNIT_JAR})
   message("Try to download junit dependency")
