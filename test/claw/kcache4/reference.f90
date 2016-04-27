@@ -48,6 +48,7 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
    END IF
    data2_k = data2 ( i , j )
    data1_k = data1 ( i , j )
+   data1 ( i , j - 1 ) = 0.0
    array6_k_m1 = array6 ( i , j - 1 ) * 2.0 + data1_k
    array6 ( i , j ) = array6_k_m1
    array7_k_m1 = array7 ( i , j - 1 ) * 2.0 + array6_k_m1 + data1_k

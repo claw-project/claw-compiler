@@ -26,8 +26,11 @@ SUBROUTINE kcache(istart,iend,jstart,jend)
   !$acc parallel
   DO i = istart, iend
     DO j = jstart+1, jend
+      ! data1 has no assignment with the current induction variables so it
+      ! should create one. 
       !$claw kcache data(data1, data2) private
       !$claw kcache data(array6, array7, array8, array9) offset(0 -1) init private
+      data1(i,j-1) = 0.0
       array6(i,j) = array6(i,j-1) * 2.0 + data1(i,j)
       array7(i,j) = array7(i,j-1) * 2.0 + array6(i,j-1) + data1(i,j)
       array8(i,j) = array8(i,j-1) * 2.0 + array6(i,j-1) + array7(i,j-1) +  &
