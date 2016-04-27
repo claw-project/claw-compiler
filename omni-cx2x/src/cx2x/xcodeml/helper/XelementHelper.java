@@ -536,6 +536,16 @@ public class XelementHelper {
     return findParentOfType(child, XmoduleDefinition.class);
   }
 
+  /**
+   * Find if statement element in which the child is included if any.
+   * @param child The child element to search from.
+   * @return A XifStatement object if found. Null otherwise.
+   */
+  public static XifStatement findParentIfStatement(XbaseElement child)
+  {
+    return findParentOfType(child, XifStatement.class);
+  }
+
 
 
   /**
