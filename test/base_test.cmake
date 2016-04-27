@@ -2,9 +2,9 @@
 # Perform code transformation and compare the output with a reference
 
 # Define input and output file name
-set (ORIGINAL_FILE original_code.f90)
-set (OUTPUT_FILE transformed_code.f90)
-set (REFERENCE_FILE reference.f90)
+set (ORIGINAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/original_code.f90)
+set (OUTPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code.f90)
+set (REFERENCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/reference.f90)
 
 # Define executable file name
 set (EXECUTABLE_ORIGINAL original_code_${TEST_NAME})
@@ -23,6 +23,7 @@ if(${TEST_DEBUG}) # with debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
     COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --debug -J ${XMOD_DIR} --Wx-d -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "Translating CLAW directive with ${CLAWFC}"
   )
@@ -30,6 +31,7 @@ else() # without debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
     COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "Translating CLAW directive with ${CLAWFC}"
   )
