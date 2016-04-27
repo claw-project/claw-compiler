@@ -30,7 +30,7 @@ set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 
-# Configure files with varibales information
+# Configure files with variables information
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}
@@ -85,9 +85,9 @@ set(OMNI_JAR_TOOLS "${LOCAL_OMNI_JAR_TOOLS}")
 set(OMNI_JAR_COMMON "${LOCAL_OMNI_JAR_COMMON}")
 set(OMNI_JAR_F_BACKEND "${LOCAL_OMNI_JAR_F_BACKEND}")
 set(OMNI_JAR_C_BACKEND "${LOCAL_OMNI_JAR_C_BACKEND}")
-set(OMNI_JAR_CX2X_CLAW "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_JAR_CX2X_XCODEML "${CMAKE_SOURCE_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar")
-set(ANTLR "${CMAKE_SOURCE_DIR}/build/${ANTLR_NAME}.jar")
+set(OMNI_JAR_CX2X_CLAW "${CMAKE_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar")
+set(OMNI_JAR_CX2X_XCODEML "${CMAKE_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar")
+set(ANTLR "${CMAKE_BINARY_DIR}/build/${ANTLR_NAME}.jar")
 
 
 configure_file(
