@@ -147,7 +147,7 @@ public class ClawXcodeMlTranslator {
    */
   private void HandleBlockDirective(ClawLanguage analyzedPragma){
     int depth =
-        XelementHelper.getDepth(analyzedPragma.getPragma().getBaseElement());
+        XelementHelper.getDepth(analyzedPragma.getPragma());
     ClawDirectiveKey crtRemoveKey =
         new ClawDirectiveKey(analyzedPragma.getDirective(), depth);
     if(analyzedPragma.isEndPragma()){ // start block directive

@@ -1834,11 +1834,14 @@ public class XelementHelper {
 
   /**
    * Get the depth of an element in the AST.
-   * @param element The element to start from.
+   * @param element The element for which the depth is computed.
    * @return A depth value greater or equal to 0.
    */
-  public static int getDepth(Element element) {
-    Node parent = element.getParentNode();
+  public static int getDepth(XbaseElement element) {
+    if(element == null || element.getBaseElement() == null){
+      return -1;
+    }
+    Node parent = element.getBaseElement().getParentNode();
     int depth = 0;
     while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
       ++depth;
