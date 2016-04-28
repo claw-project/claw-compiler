@@ -196,7 +196,9 @@ public class LoopHoist extends BlockTransformation {
     ifStmt.getThen().
         appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
     g.getDoStmts()[nestedDepth-1].getBody().delete();
-    g.getDoStmts()[nestedDepth-1].appendToChildren(ifStmt, false);
+    Xbody body = XelementHelper.createEmpty(Xbody.class, xcodeml);
+    body.appendToChildren(ifStmt, false);
+    g.getDoStmts()[nestedDepth-1].appendToChildren(body, false);
   }
 
 
