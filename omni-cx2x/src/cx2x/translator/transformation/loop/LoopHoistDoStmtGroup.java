@@ -5,6 +5,8 @@
 
 package cx2x.translator.transformation.loop;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.xelement.XdoStatement;
 
 /**
@@ -42,4 +44,21 @@ public class LoopHoistDoStmtGroup {
     return _doStmts;
   }
 
+  /**
+   *
+   * @return
+   */
+  public LoopHoistDoStmtGroup cloneObjectAndElement() {
+    XdoStatement newDoStmt = _doStmts[0].cloneObject();
+    XdoStatement[] nestedDoStmts = new XdoStatement[_doStmts.length];
+    nestedDoStmts[0] = newDoStmt;
+    for(int j = 1; j < nestedDoStmts.length; ++j){
+      XdoStatement next =
+          XelementHelper.findDoStatement(nestedDoStmts[j-1].getBody(), false);
+      nestedDoStmts[j] = next;
+    }
+    LoopHoistDoStmtGroup newDoStmtGroup =
+        new LoopHoistDoStmtGroup(nestedDoStmts);
+    return newDoStmtGroup;
+  }
 }
