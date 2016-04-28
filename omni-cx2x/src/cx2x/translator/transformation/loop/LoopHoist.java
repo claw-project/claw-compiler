@@ -121,9 +121,6 @@ public class LoopHoist extends BlockTransformation {
     return true;
   }
 
-
-
-
   /**
    * @see Transformation#canBeTransformedWith(Transformation)
    */
@@ -152,11 +149,12 @@ public class LoopHoist extends BlockTransformation {
   }
 
   /**
-   *
-   * @param xcodeml
-   * @param ifStmt
-   * @param g
-   * @throws IllegalTransformationException
+   * Extract a group of nested do statements from an if-then statement. The if
+   * statement is move to the most inner do statement.
+   * @param xcodeml Current XcodeML program
+   * @param ifStmt  If statement in which the group of do statements is nested.
+   * @param g       The group of do statements.
+   * @throws IllegalTransformationException If creation of elements fails.
    */
   private void extractDoStmtFromIf(XcodeProgram xcodeml, XifStatement ifStmt,
                                    LoopHoistDoStmtGroup g)
@@ -164,20 +162,27 @@ public class LoopHoist extends BlockTransformation {
   {
     int nestedDepth = g.getDoStmts().length;
     XifStatement newIfStmt = ifStmt.cloneObject();
-    XdoStatement newDoStmt = g.getDoStmts()[0].cloneObject();
+    LoopHoistDoStmtGroup newDoStmtGroup = g.cloneObjectAndElement();
     newIfStmt.getThen().getBody().delete();
     newIfStmt.getThen().
         appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
-    newDoStmt.getBody().delete();
+    newDoStmtGroup.getDoStmts()[nestedDepth-1].getBody().delete();
     Xbody body = XelementHelper.createEmpty(Xbody.class, xcodeml);
     body.appendToChildren(newIfStmt, false);
-    newDoStmt.appendToChildren(body, false);
-    XelementHelper.insertAfter(ifStmt, newDoStmt);
+    newDoStmtGroup.getDoStmts()[nestedDepth-1].appendToChildren(body, false);
+    XelementHelper.insertAfter(ifStmt, newDoStmtGroup.getDoStmts()[0]);
     g.getDoStmts()[0].delete();
     ifStmt.delete();
-    reloadDoStmts(g, newDoStmt);
+    reloadDoStmts(g, newDoStmtGroup.getDoStmts()[0]);
   }
 
+  /**
+   * Create an IF statement surrounding the entire most inner do statement body.
+   * Condition if made from the lower bound (if(induction_var >= lower_bound).
+   * @param xcodeml Current XcodeML program
+   * @param g       The group of do statements.
+   * @throws IllegalTransformationException If creation of elements fails.
+   */
   private void createIfStatementForLowerBound(XcodeProgram xcodeml,
                                               LoopHoistDoStmtGroup g)
       throws IllegalTransformationException
@@ -186,8 +191,8 @@ public class LoopHoist extends BlockTransformation {
     XifStatement ifStmt = XifStatement.create(xcodeml);
     XbinaryExpr cond =
         XelementHelper.createEmpty(XelementName.LOG_GE_EXPR, xcodeml);
-    cond.appendToChildren(g.getDoStmts()[0].getIterationRange().getInductionVar(),
-        true);
+    cond.appendToChildren(
+        g.getDoStmts()[0].getIterationRange().getInductionVar(),true);
     cond.appendToChildren(g.getDoStmts()[0].getIterationRange().getIndexRange().
         getLowerBound().getExprModel().getElement(), true);
 
@@ -202,14 +207,25 @@ public class LoopHoist extends BlockTransformation {
   }
 
 
+  /**
+   * Relocated nested do statement inside a group of do statement.
+   * @param g        The group of do statement.
+   * @param newStart The new outter do statement.
+   * @throws IllegalTransformationException If the nested group doen't match the
+   * correct size.
+   */
   private void reloadDoStmts(LoopHoistDoStmtGroup g, XdoStatement newStart)
       throws IllegalTransformationException
   {
     g.getDoStmts()[0] = newStart;
     for(int j = 1; j < g.getDoStmts().length; ++j){
-      XdoStatement next = XelementHelper.findDoStatement(g.getDoStmts()[j-1].getBody(), false);
+      XdoStatement next =
+          XelementHelper.findDoStatement(g.getDoStmts()[j-1].getBody(), false);
       if(next == null){
-        throw new IllegalTransformationException("", _startClaw.getPragma().getLineNo());
+        throw new IllegalTransformationException(
+            "Unable to find enough nested do statements",
+            _startClaw.getPragma().getLineNo()
+        );
       }
       g.getDoStmts()[j] = next;
     }
