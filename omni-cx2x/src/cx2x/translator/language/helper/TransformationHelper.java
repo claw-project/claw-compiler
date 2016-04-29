@@ -8,9 +8,13 @@ package cx2x.translator.language.helper;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
+import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XdoStatement;
+import cx2x.xcodeml.xelement.Xpragma;
 import xcodeml.util.XmOption;
 
 /**
@@ -29,17 +33,20 @@ public class TransformationHelper {
    * @param claw        ClawLanguage object that tells encapsulates all
    *                    information about the current directives and its
    *                    clauses.
+   * @param xcodeml     Current XcodeML program.
    * @param transformer Transformer object in which new transformation are
    *                    added.
    * @param stmt        Statement on which the transformation is attached.
    */
   public static void generateAdditionalTransformation(ClawLanguage claw,
+                                                      XcodeProgram xcodeml,
                                                       Transformer transformer,
                                                       XbaseElement stmt)
+      throws IllegalTransformationException
   {
     // Order doesn't matter
     applyFusionClause(claw, transformer, stmt);
-    applyInterchangeClause(claw, transformer, stmt);
+    applyInterchangeClause(claw, xcodeml, transformer, stmt);
   }
 
 
@@ -76,6 +83,7 @@ public class TransformationHelper {
    * @param claw        ClawLanguage object that tells encapsulates all
    *                    information about the current directives and its
    *                    clauses.
+   * @param xcodeml     Current XcodeML program.
    * @param transformer Transformer object in which new transformation are
    *                    added.
    * @param stmt        Statement on which the transformation is attached. Must
@@ -83,13 +91,16 @@ public class TransformationHelper {
    *                    transformation.
    */
   private static void applyInterchangeClause(ClawLanguage claw,
+                                             XcodeProgram xcodeml,
                                              Transformer transformer,
                                              XbaseElement stmt)
+      throws IllegalTransformationException
   {
     if(claw.hasInterchangeClause() && stmt instanceof XdoStatement){
-      // TODO
-      LoopInterchange interchange = new LoopInterchange(claw);
-
+      Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
+      XelementHelper.insertAfter(stmt, p);
+      ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
+      LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);
       if(XmOption.isDebugOutput()){
         System.out.println("Loop interchange added: " + claw.getIndexes());

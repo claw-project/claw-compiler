@@ -409,8 +409,8 @@ public class LoopExtraction extends Transformation {
             extractedLoop);
 
     // Add any additional transformation defined in the directive clauses
-    TransformationHelper.
-        generateAdditionalTransformation(_claw, transformer, extractedLoop);
+    TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
+        transformer, extractedLoop);
 
     this.transformed();
   }

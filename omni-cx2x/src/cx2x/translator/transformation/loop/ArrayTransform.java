@@ -286,12 +286,12 @@ public class ArrayTransform extends BlockTransformation {
 
 
     // Generate accelerator pragmas if needed
-    XbaseElement potentialGrip = AcceleratorHelper.
-        generateAdditionalDirectives(_clawBegin, xcodeml, doStmts[0], doStmts[0]);
+    XbaseElement potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
+        _clawBegin, xcodeml, doStmts[0], doStmts[0]);
 
     // Add any additional transformation defined in the directive clauses
-    TransformationHelper.
-        generateAdditionalTransformation(_clawBegin, transformer, doStmts[0]);
+    TransformationHelper.generateAdditionalTransformation(_clawBegin, xcodeml,
+        transformer, doStmts[0]);
 
     return potentialGrip == null ? doStmts[0] : potentialGrip;
   }
