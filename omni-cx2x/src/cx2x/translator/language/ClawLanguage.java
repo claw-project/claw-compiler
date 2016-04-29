@@ -619,4 +619,25 @@ public class ClawLanguage extends AnalyzedPragma {
     l.attachPragma(master.getPragma());
     return l;
   }
+
+  /**
+   * Create an instance of ClawLanguage that correspond to a loop-fusion
+   * directive. Used for dynamically created transformation.
+   * @param base     Pragma that triggered the transformation.
+   * @param group    Group clause value.
+   * @param collapse Collapse clause value.
+   * @return An instance of ClawLanguage describing a loop-fusion with the
+   * group, collapse clauses and the pragma from the master object.
+   */
+  public static ClawLanguage createLoopFusionLanguage(Xpragma base,
+                                                      String group,
+                                                      int collapse)
+  {
+    ClawLanguage l = new ClawLanguage();
+    l.setDirective(ClawDirective.LOOP_FUSION);
+    l.setGroupClause(group);
+    l.setCollapseClause(collapse);
+    l.attachPragma(base);
+    return l;
+  }
 }
