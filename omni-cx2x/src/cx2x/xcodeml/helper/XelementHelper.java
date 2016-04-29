@@ -1851,13 +1851,42 @@ public class XelementHelper {
     if(element == null || element.getBaseElement() == null){
       return -1;
     }
-    Node parent = element.getBaseElement().getParentNode();
+    return getDepth(element.getBaseElement());
+  }
+
+  /**
+   * Get the depth of an element in the AST.
+   * @param element XML element for which the depth is computed.
+   * @return A depth value greater or equal to 0.
+   */
+  private static int getDepth(Element element){
+    Node parent = element.getParentNode();
     int depth = 0;
     while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
       ++depth;
       parent = parent.getParentNode();
     }
     return depth;
+  }
+
+  /**
+   * Shift all statements from the first siblings of the "from" element until
+   * the "until" element (not included).
+   * @param from       Start element for the swifting.
+   * @param until      End element for the swifting.
+   * @param targetBody Body element in which statements are inserted.
+   */
+  public static void shiftStatementsInBody(XbaseElement from,
+                                           XbaseElement until, Xbody targetBody)
+  {
+    Node currentSibling = from.getBaseElement().getNextSibling();
+    Node firstStatementInBody = targetBody.getBaseElement().getFirstChild();
+    while(currentSibling != null && currentSibling != until.getBaseElement()){
+      Node nextSibling = currentSibling.getNextSibling();
+      targetBody.getBaseElement().insertBefore(currentSibling,
+          firstStatementInBody);
+      currentSibling = nextSibling;
+    }
   }
 
 }
