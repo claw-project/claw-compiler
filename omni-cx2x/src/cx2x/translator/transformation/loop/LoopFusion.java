@@ -51,11 +51,24 @@ public class LoopFusion extends Transformation {
    */
   public LoopFusion(XdoStatement loop, ClawLanguage ghostDirective){
     super(ghostDirective);
-    _loops = new XdoStatement[] { loop }; // TODO should be done by analysis
-    if(ghostDirective.hasGroupClause()) {
+    _claw = ghostDirective;
+    if(_claw.hasCollapseClause()){
+      _loops = new XdoStatement[_claw.getCollapseValue()];
+      _loops[0] = loop;
+      for(int i = 1; i < _claw.getCollapseValue(); ++i){
+        _loops[i] = XelementHelper.
+            findDoStatement(_loops[i-1].getBody(), false);
+      }
+    } else {
+      _loops = new XdoStatement[] { loop };
+    }
+
+    if(_claw.hasGroupClause()) {
       _groupLabel = ghostDirective.getGroupValue();
     }
-    setStartLine(ghostDirective.getPragma().getLineNo());
+    if(_claw.getPragma() != null) {
+      setStartLine(ghostDirective.getPragma().getLineNo());
+    }
   }
 
   /**
