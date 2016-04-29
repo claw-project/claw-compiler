@@ -69,6 +69,6 @@ SUBROUTINE claw_hoist2
       END DO
     END DO
   END DO
-  !$acc end parallel 
+  !$acc end parallel
 
 END SUBROUTINE claw_hoist2
