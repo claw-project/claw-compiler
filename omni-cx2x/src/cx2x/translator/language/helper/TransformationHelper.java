@@ -98,7 +98,7 @@ public class TransformationHelper {
   {
     if(claw.hasInterchangeClause() && stmt instanceof XdoStatement){
       Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      XelementHelper.insertAfter(stmt, p);
+      XelementHelper.insertBefore(stmt, p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);
