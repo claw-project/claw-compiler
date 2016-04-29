@@ -640,4 +640,24 @@ public class ClawLanguage extends AnalyzedPragma {
     l.attachPragma(base);
     return l;
   }
+
+  /**
+   * Create an instance of ClawLanguage that correspond to a loop-interchange
+   * directive. Used for dynamically created transformation.
+   * @param master Base object which initiate the creation of this instance.
+   * @param pragma Pragma statement located just before the first do stmt.
+   * @return An instance of ClawLanguage describing a loop-interchange with the
+   * indexes from the master object.
+   */
+  public static ClawLanguage createLoopInterchangeLanguage(ClawLanguage master,
+                                                           Xpragma pragma)
+  {
+    ClawLanguage l = new ClawLanguage();
+    l.setDirective(ClawDirective.LOOP_INTERCHANGE);
+    l.setIndexes(master.getIndexes());
+    l.attachPragma(pragma);
+    return l;
+  }
+
+
 }
