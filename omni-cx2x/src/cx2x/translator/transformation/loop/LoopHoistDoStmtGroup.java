@@ -61,7 +61,7 @@ public class LoopHoistDoStmtGroup {
 
   /**
    * Get the array of do statements associated with this object.
-   * @return Do statements array associated with this group. 
+   * @return Do statements array associated with this group.
    */
   XdoStatement[] getDoStmts(){
     return _doStmts;
