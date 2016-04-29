@@ -128,6 +128,8 @@ public class LoopInterchange extends Transformation {
     AcceleratorHelper.
         generateAdditionalDirectives(_claw, xcodeml, _loopLevel0, _loopLevel0);
 
+    _claw.getPragma().delete();
+
     this.transformed();
   }
 

@@ -14,7 +14,6 @@ SUBROUTINE clawloop ( )
  INTEGER :: y
  INTEGER :: z
 
-!$claw loop-interchange (k,i,j)
  DO k = 1 , 2 , 1
   DO i = 1 , 4 , 1
    DO j = 1 , 3 , 1
@@ -22,7 +21,6 @@ SUBROUTINE clawloop ( )
    END DO
   END DO
  END DO
-!$claw loop-interchange (b,c,a)
  DO b = 1 , 3 , 1
   DO c = 1 , 2 , 1
    DO a = 1 , 4 , 1
@@ -30,7 +28,6 @@ SUBROUTINE clawloop ( )
    END DO
   END DO
  END DO
-!$claw loop-interchange (x,z,y)
  DO x = 1 , 4 , 1
   DO z = 1 , 2 , 1
    DO y = 1 , 3 , 1
