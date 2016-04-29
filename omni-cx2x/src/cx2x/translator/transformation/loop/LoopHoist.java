@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.BlockTransformation;
@@ -28,7 +29,6 @@ public class LoopHoist extends BlockTransformation {
   private final List<LoopHoistDoStmtGroup> _doGroup;
   private final ClawLanguage _startClaw, _endClaw;
   private int _nestedLevel;
-  private int _pragmaDepthLevel;
 
   /**
    * Constructs a new LoopHoist triggered from a specific directive.
@@ -48,7 +48,7 @@ public class LoopHoist extends BlockTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _pragmaDepthLevel = XelementHelper.getDepth(_startClaw.getPragma());
+    int _pragmaDepthLevel = XelementHelper.getDepth(_startClaw.getPragma());
     _nestedLevel = _startClaw.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
@@ -136,6 +136,9 @@ public class LoopHoist extends BlockTransformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation transformation) throws Exception
   {
+
+    List<LoopFusion> fusions = new ArrayList<>();
+    // Perform IF extraction and IF creation for lower-bound
     for(LoopHoistDoStmtGroup g : _doGroup){
       if(g.needExtraction()){
         XifStatement ifStmt =
@@ -145,7 +148,35 @@ public class LoopHoist extends BlockTransformation {
       if(g.needIfStatement()){
         createIfStatementForLowerBound(xcodeml, g);
       }
+
+      ClawLanguage dummyFusionDirective =
+          ClawLanguage.createLoopFusionLanguage(null, "hoist", _nestedLevel);
+      fusions.add(new LoopFusion(g.getDoStmts()[0], dummyFusionDirective));
     }
+
+    // Do the fusion
+    for(int i = 1; i < fusions.size(); ++i){
+      fusions.get(0).transform(xcodeml, transformer, fusions.get(i));
+    }
+    reloadDoStmts(_doGroup.get(0), _doGroup.get(0).getDoStmts()[0]);
+
+    // Do the hoisting
+    XelementHelper.shiftStatementsInBody(
+        _startClaw.getPragma(),                                // Start element
+        _doGroup.get(0).getDoStmts()[0],                       // Stop element
+        _doGroup.get(0).getDoStmts()[_nestedLevel-1].getBody() // Target body
+    );
+
+    // Generate dynamic transformation (interchange)
+    TransformationHelper.generateAdditionalTransformation(_startClaw,
+        xcodeml, transformer, _doGroup.get(0).getDoStmts()[0]);
+
+    // Apply reshape clause
+    // TODO
+
+    // Delete pragmas
+    _startClaw.getPragma().delete();
+    _endClaw.getPragma().delete();
   }
 
   /**
