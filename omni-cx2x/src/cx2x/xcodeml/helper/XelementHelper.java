@@ -1889,4 +1889,18 @@ public class XelementHelper {
     }
   }
 
+
+  /**
+   * Copy the enhanced information from an element to a target element.
+   * Enhanced information include line number and original file name.
+   * @param base    Base element to copy information from.
+   * @param target  Target element to copy information to.
+   */
+  public static void copyEnhancedInfo(XenhancedElement base,
+                                      XenhancedElement target)
+  {
+    target.setLine(base.getLineNo());
+    target.setFile(base.getFile());
+  }
+
 }
