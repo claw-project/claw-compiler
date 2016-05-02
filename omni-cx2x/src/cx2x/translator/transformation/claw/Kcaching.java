@@ -15,7 +15,6 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
