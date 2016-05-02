@@ -246,6 +246,7 @@ public class LoopHoist extends BlockTransformation {
   {
     int nestedDepth = g.getDoStmts().length;
     XifStatement ifStmt = XifStatement.create(xcodeml);
+    XelementHelper.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
     XbinaryExpr cond =
         XelementHelper.createEmpty(XelementName.LOG_GE_EXPR, xcodeml);
     cond.appendToChildren(
