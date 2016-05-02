@@ -188,6 +188,7 @@ public class Kcaching extends Transformation {
       if(initIfStmt == null){
         // If statement has not been created yet so we do it here
         initIfStmt = XifStatement.create(xcodeml);
+        XelementHelper.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
         XbinaryExpr logEq =
             XelementHelper.createEmpty(XelementName.LOG_EQ_EXPR, xcodeml);
 
