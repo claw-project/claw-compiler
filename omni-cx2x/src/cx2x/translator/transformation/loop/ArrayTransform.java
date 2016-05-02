@@ -245,7 +245,7 @@ public class ArrayTransform extends BlockTransformation {
         range = ranges.get(i).cloneObject();
       }
       doStmts[i] = XdoStatement.create(inductionVar, range, false, xcodeml);
-
+      XelementHelper.copyEnhancedInfo(statements.get(0), doStmts[i]);
       if (i == 0) { // most outter loop goes after the pragma
         XelementHelper.insertAfter(doStmtGrip, doStmts[i]);
       } else { // others loop go in the previous one
