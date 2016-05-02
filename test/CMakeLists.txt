@@ -1,7 +1,7 @@
-enable_language (Fortran)
+enable_language(Fortran)
 
 # Set up some common env variable for the transformation flow
-set (CLAWFC ${CMAKE_SOURCE_DIR}/driver/clawfc_test)
+set(CLAWFC ${CMAKE_SOURCE_DIR}/driver/clawfc_test)
 set(BUILD_TEST_TARGET transformation)
 set(CLEAN_TEST_TARGET clean-transformation)
 
