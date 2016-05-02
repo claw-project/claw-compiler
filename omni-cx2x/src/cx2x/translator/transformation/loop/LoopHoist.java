@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
@@ -118,6 +119,29 @@ public class LoopHoist extends BlockTransformation {
         }
       }
     }
+
+
+    // Check reshape mandatory points
+    XfunctionDefinition fctDef =
+        XelementHelper.findParentFctDef(_startClaw.getPragma());
+    if(fctDef == null){
+      xcodeml.addError("Unable to find the function/subroutine/module " +
+          "definition including the current directive",
+          _startClaw.getPragma().getLineNo()
+      );
+      return false;
+    }
+
+    for(ClawReshapeInfo r : _startClaw.getReshapeClauseValues()){
+      if(!fctDef.getSymbolTable().contains(r.getArrayName()) ||
+          !fctDef.getDeclarationTable().contains(r.getArrayName())){
+        xcodeml.addError("Reshape variable " + r.getArrayName() + " not found" +
+            " in the definition.", _startClaw.getPragma().getLineNo()
+        );
+        return false;
+      }
+    }
+
     return true;
   }
 
