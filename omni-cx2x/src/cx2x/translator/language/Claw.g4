@@ -233,7 +233,7 @@ offset_list_optional[List<Integer> offsets]:
 
 offset_list[List<Integer> offsets]:
     offset[$offsets]
-  | offset[$offsets] offset_list[$offsets]
+  | offset[$offsets] ',' offset_list[$offsets]
 ;
 
 offset[List<Integer> offsets]:
