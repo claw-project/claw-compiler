@@ -41,6 +41,7 @@ STOP_COMPILE=false
 STOP_DEPENDENCIES=false
 FORCE_TRANSLATION=false
 LIST_TARGET=false
+SHOW_CONFIG=false
 TARGET=false
 CONFIG=false
 
@@ -82,7 +83,22 @@ claw_f_set_parameters ${@+"$@"}
 ### List target ###
 if [ $LIST_TARGET = true ]
 then
-  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT -target-list
+  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --target-list
+  exit 0
+fi
+
+### Set correct configuration file info ###
+if [ $CONFIG = true ]
+then
+  OMNI_CX2X_CONFIG_OPT="--config=$config_opt"
+else
+  OMNI_CX2X_CONFIG_OPT="--config=$OMNI_CX2X_CONFIG_DEFAULT"
+fi
+
+### Show config ###
+if [ $SHOW_CONFIG = true ]
+then
+  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --show-config $OMNI_CX2X_CONFIG_OPT
   exit 0
 fi
 
@@ -226,17 +242,9 @@ for file in "${f_files_transformation[@]}"; do
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
 
-  if [ $CONFIG = true ]
-  then
-    OMNI_CX2X_CONFIG_OPT="-config=$config_opt"
-  else
-    OMNI_CX2X_CONFIG_OPT="-config=$OMNI_CX2X_CONFIG_DEFAULT"
-  fi
-
-
   if [ $TARGET = true ]
   then
-    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT -target=$target_opt $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
+    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --target=$target_opt $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
   else
     omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
   fi

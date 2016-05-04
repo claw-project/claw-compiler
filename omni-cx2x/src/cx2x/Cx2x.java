@@ -6,11 +6,20 @@
 package cx2x;
 
 import cx2x.translator.ClawXcodeMlTranslator;
+import cx2x.translator.common.ConfigurationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import exc.xcodeml.XcodeMLtools_Fmod;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import xcodeml.util.XmOption;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.util.List;
 
 /**
  * Cx2x is the entry point of any CLAW XcodeML/F translation.
@@ -100,6 +109,27 @@ public class Cx2x {
   }
 
   /**
+   * Read the configuration file and output the information for user.
+   * @param configPath Path to the configuration file
+   */
+  private static void showConfig(String configPath){
+    try{
+      List<String[]> groups = ConfigurationHelper.readGroups(configPath);
+      AcceleratorDirective target =
+          ConfigurationHelper.readDefaultTarget(configPath);
+      System.out.println("- CLAW translator configuration -\n");
+      System.out.println("Default accelerator target: " + target + "\n");
+      System.out.println("Current transformation order:");
+      for (int i = 0; i < groups.size(); ++i) {
+        System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
+            i, groups.get(i)[0], groups.get(i)[1], groups.get(i)[2]);
+      }
+    } catch (Exception e) {
+      error("Could not read the configuration file");
+    }
+  }
+
+  /**
    * Main point of entry of the program.
    * @param args  Arguments of the program.
    * @throws Exception if translation failed.
@@ -110,6 +140,7 @@ public class Cx2x {
     String lang = "F"; // default language is Fortran
     String target_option = null;
     String configuration_path = null;
+    boolean show_configuration = false;
     boolean async = false;
     boolean outputXcode = false;
     boolean outputDecomp = false;
@@ -161,13 +192,15 @@ public class Cx2x {
           }
       } else if (arg.startsWith("-xcodeml")) {
         xcodeml_only = true;
-      } else if (arg.startsWith("-target-list")) {
+      } else if (arg.startsWith("--target-list")) {
         listTarget();
         return;
-      } else if (arg.startsWith("-target=")) {
-        target_option = arg.replace("-target=", "");
-      } else if (arg.startsWith("-config=")) {
-        configuration_path = arg.replace("-config=", "");
+      } else if (arg.startsWith("--target=")) {
+        target_option = arg.replace("--target=", "");
+      } else if (arg.startsWith("--config=")) {
+        configuration_path = arg.replace("--config=", "");
+      } else if (arg.startsWith("--show-config")) {
+        show_configuration = true;
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(inXmlFile == null) {
@@ -177,15 +210,19 @@ public class Cx2x {
       }
     }
 
+    // Check that configuration file exists
+    File config = new File(configuration_path);
+    if(!config.exists()){
+      error("Configuration file not found. " + configuration_path);
+      return;
+    }
+
+    if(show_configuration){
+      showConfig(configuration_path);
+      return;
+    }
 
     if(xcodeml_only){
-
-      File config = new File(configuration_path);
-      if(!config.exists()){
-        error("Configuration file not found. " + configuration_path);
-        return;
-      }
-
       AcceleratorDirective target =
           AcceleratorDirective.fromString(target_option);
       ClawXcodeMlTranslator xcmlTranslator =

@@ -129,6 +129,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/Cx2x.java
 
 # translator.common package
+  cx2x/translator/common/ConfigurationHelper.java
   cx2x/translator/common/Constant.java
 
 # translator.language package

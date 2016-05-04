@@ -13,8 +13,9 @@ CLAW Fortran compiler options:
    -J <dir>               : specify where to put .mod and .xmod files for compiled modules.
    -D <dir>               : specify output directory for transformed files
    -t=,--target= <target> : specify the type of accelerator directive language for code generation.
-   --config=<config_file> : specify a different configuration for the translator. 
    --target-list          : list the available type of accelerator directive language supported.
+   --config=<config_file> : specify a different configuration for the translator.
+   --show-config          : list the current configuration information. If used with --config, list the information from the specific configuration.
    -v,--verbose           : print processing status.
    --version              : print version.
    -h,--help              : print usage.
@@ -154,6 +155,8 @@ function claw_f_set_parameters()
         linker_add_opt+=("${1#--Wl}");;
       --target-list)
         LIST_TARGET=true;;
+      --show-config)
+        SHOW_CONFIG=true;;
       -t=*)
         TARGET=true;
         target_opt+=("${1#-t=}");;
