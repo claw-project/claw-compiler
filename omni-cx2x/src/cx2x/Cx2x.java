@@ -20,7 +20,6 @@ import java.util.List;
  *
  * @author clementval
  */
-
 public class Cx2x {
   /**
    * Print an error message an abort.
