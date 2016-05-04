@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformer;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class ClawTransformer implements Transformer {
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
    */
-  public ClawTransformer(){
+  public ClawTransformer(String configPath){
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.

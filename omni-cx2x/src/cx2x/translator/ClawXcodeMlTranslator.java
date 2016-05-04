@@ -61,11 +61,12 @@ public class ClawXcodeMlTranslator {
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
-                               AcceleratorDirective target)
+                               AcceleratorDirective target,
+                               String configPath)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer();
+    _transformer = new ClawTransformer(configPath);
     _blockDirectives = new Hashtable<>();
     _target = target;
   }

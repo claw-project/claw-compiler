@@ -10,6 +10,8 @@ import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import xcodeml.util.XmOption;
 
+import java.io.File;
+
 /**
  * Cx2x is the entry point of any CLAW XcodeML/F translation.
  *
@@ -105,6 +107,7 @@ public class Cx2x {
     String outXmlFile = null;
     String lang = "F"; // default language is Fortran
     String target_option = null;
+    String configuration_path = null;
     boolean async = false;
     boolean outputXcode = false;
     boolean outputDecomp = false;
@@ -166,6 +169,13 @@ public class Cx2x {
           target_option = narg;
           ++i;
         }
+      } else if (arg.startsWith("-config")) {
+        if (arg.equals("-config")) {
+          if (narg == null)
+            error("needs argument after config");
+          configuration_path = narg;
+          ++i;
+        }
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(inXmlFile == null) {
@@ -177,10 +187,18 @@ public class Cx2x {
 
 
     if(xcodeml_only){
+
+      File config = new File(configuration_path);
+      if(!config.exists()){
+        error("Configuration file not found. " + configuration_path);
+        return;
+      }
+
       AcceleratorDirective target =
           AcceleratorDirective.fromString(target_option);
       ClawXcodeMlTranslator xcmlTranslator =
-          new ClawXcodeMlTranslator(inXmlFile, outXmlFile, target);
+          new ClawXcodeMlTranslator(inXmlFile, outXmlFile, target,
+              configuration_path);
       xcmlTranslator.analyze();
       xcmlTranslator.transform();
       return;

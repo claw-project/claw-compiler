@@ -159,6 +159,9 @@ function claw_f_set_parameters()
       --target=*)
         TARGET=true;
         target_opt+=("${1#--target=}");;
+      --config=*)
+        CONFIG=true;
+        config_opt+=("${1#--config=}");;
 #	    --openmp|-omp)
 #		ENABLE_OPENMP=true;;
 #	    --xcalableacc|-xacc)
