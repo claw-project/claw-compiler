@@ -1,5 +1,4 @@
 <!-- CLAW default configuration. This file should not be edited ! -->
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <claw version="0.2">
   <target default="openacc" />
   <groups>
