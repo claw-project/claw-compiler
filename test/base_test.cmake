@@ -14,6 +14,7 @@ set (EXECUTABLE_TRANSFORMED transformed_code_${TEST_NAME})
 set (XMOD_DIR __xmod__)
 set (OMNI_TMP_DIR __omni_tmp__)
 
+# Directory where OMNI xmod files will be placed
 if (NOT EXISTS ${XMOD_DIR})
   file(MAKE_DIRECTORY ${XMOD_DIR})
 endif()
@@ -37,16 +38,19 @@ else() # without debug option
   )
 endif()
 
+# Target for the transformation
 add_custom_target(
   transform-${TEST_NAME}
   DEPENDS ${OUTPUT_FILE} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED}
 )
 
+# Target to clean the generated file (Output of clawfc)
 add_custom_target(
   clean-${TEST_NAME}
   COMMAND rm -f ${OUTPUT_FILE}
 )
 
+# Add target to the global build/clean target
 add_dependencies(${BUILD_TEST_TARGET} transform-${TEST_NAME})
 add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 
@@ -66,6 +70,7 @@ if(NOT IGNORE_TEST)
     add_test(NAME compare-output-${TEST_NAME} COMMAND bash -c "diff ${TEST_PARAMETERS}")
   endif()
 endif()
+
 # Add build directory to be removed with clean target
 set_property(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
