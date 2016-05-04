@@ -66,7 +66,10 @@ public class Cx2x {
    * List all accelerator target available for code generation.
    */
   private static void listTarget(){
-    System.out.println("Not implemented yet.");
+    System.out.println("- CLAW accelerator targets -");
+    for(String t : AcceleratorDirective.availableTarget()){
+      System.out.println("  - " + t);
+    }
   }
 
   /**
