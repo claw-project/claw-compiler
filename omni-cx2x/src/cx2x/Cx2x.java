@@ -7,17 +7,11 @@ package cx2x;
 
 import cx2x.translator.ClawXcodeMlTranslator;
 import cx2x.translator.common.ConfigurationHelper;
+import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import exc.xcodeml.XcodeMLtools_Fmod;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import xcodeml.util.XmOption;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.util.List;
 
@@ -114,15 +108,17 @@ public class Cx2x {
    */
   private static void showConfig(String configPath){
     try{
-      List<String[]> groups = ConfigurationHelper.readGroups(configPath);
+      List<GroupConfiguration> groups =
+          ConfigurationHelper.readGroups(configPath);
       AcceleratorDirective target =
           ConfigurationHelper.readDefaultTarget(configPath);
       System.out.println("- CLAW translator configuration -\n");
       System.out.println("Default accelerator target: " + target + "\n");
       System.out.println("Current transformation order:");
       for (int i = 0; i < groups.size(); ++i) {
+        GroupConfiguration g = groups.get(i);
         System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
-            i, groups.get(i)[0], groups.get(i)[1], groups.get(i)[2]);
+            i, g.getName(), g.getType(), g.getTransformationClass());
       }
     } catch (Exception e) {
       error("Could not read the configuration file");
@@ -223,11 +219,25 @@ public class Cx2x {
     }
 
     if(xcodeml_only){
-      AcceleratorDirective target =
-          AcceleratorDirective.fromString(target_option);
+      // Read default target from config if not set by user
+      AcceleratorDirective target;
+      if(target_option == null){
+        target = ConfigurationHelper.readDefaultTarget(configuration_path);
+      } else {
+        target = AcceleratorDirective.fromString(target_option);
+      }
+
+      // Read transformation group configuration
+      List<GroupConfiguration> groups;
+      try {
+         groups = ConfigurationHelper.readGroups(configuration_path);
+      } catch (Exception ex){
+        error(ex.getMessage());
+        return;
+      }
+
       ClawXcodeMlTranslator xcmlTranslator =
-          new ClawXcodeMlTranslator(inXmlFile, outXmlFile, target,
-              configuration_path);
+          new ClawXcodeMlTranslator(inXmlFile, outXmlFile, target, groups);
       xcmlTranslator.analyze();
       xcmlTranslator.transform();
       return;

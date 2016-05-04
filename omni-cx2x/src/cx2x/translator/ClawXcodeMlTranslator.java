@@ -7,6 +7,7 @@ package cx2x.translator;
 
 // Cx2x import
 import cx2x.translator.common.Constant;
+import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
@@ -29,6 +30,7 @@ import xcodeml.util.XmOption;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 
@@ -58,15 +60,17 @@ public class ClawXcodeMlTranslator {
    * ClawXcodeMlTranslator ctor.
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
+   * @param target            Accelerator target for code generation.
+   * @param groups            Transformation groups configuration list.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
                                AcceleratorDirective target,
-                               String configPath)
+                               List<GroupConfiguration> groups)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(configPath);
+    _transformer = new ClawTransformer(groups);
     _blockDirectives = new Hashtable<>();
     _target = target;
   }

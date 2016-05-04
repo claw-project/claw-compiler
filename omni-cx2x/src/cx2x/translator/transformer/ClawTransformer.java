@@ -8,8 +8,11 @@ package cx2x.translator.transformer;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import cx2x.translator.common.ConfigurationHelper;
+import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.loop.*;
@@ -40,7 +43,7 @@ public class ClawTransformer implements Transformer {
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
    */
-  public ClawTransformer(String configPath){
+  public ClawTransformer(List<GroupConfiguration> groups){
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.

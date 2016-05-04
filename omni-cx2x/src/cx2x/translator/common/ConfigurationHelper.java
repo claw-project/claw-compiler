@@ -23,6 +23,9 @@ import java.util.List;
  */
 public class ConfigurationHelper {
 
+  private static final String DEPENDENT_GR_TYPE = "dependent";
+  private static final String INDEPENDENT_GR_TYPE = "independent";
+
   // Elements and attributes constant name
   private static final String GROUP_ELEMENT = "group";
   private static final String TARGET_ELEMENT = "target";
@@ -40,8 +43,10 @@ public class ConfigurationHelper {
    * @return A list of String arrays with 3 elements. 0) type, 1) name, 2) class
    * @throws Exception When configuration file cannot be read
    */
-  public static List<String[]> readGroups(String path) throws Exception {
-    List<String[]> groups = new ArrayList<>();
+  public static List<GroupConfiguration> readGroups(String path)
+      throws Exception
+  {
+    List<GroupConfiguration> groups = new ArrayList<>();
     Element root = open(path);
     NodeList groupElements = root.getElementsByTagName(GROUP_ELEMENT);
     for (int i = 0; i < groupElements.getLength(); ++i){
@@ -49,8 +54,22 @@ public class ConfigurationHelper {
         Element g = (Element) groupElements.item(i);
         String name = g.getAttribute(NAME_ATTR);
         String type = g.getAttribute(TYPE_ATTR);
-        String gClass = g.getAttribute(CLASS_ATTR);
-        groups.add(new String[]{name, type, gClass});
+        GroupConfiguration.GroupType gType;
+        switch (type) {
+          case DEPENDENT_GR_TYPE:
+            gType = GroupConfiguration.GroupType.DEPENDENT;
+            break;
+          case INDEPENDENT_GR_TYPE:
+            gType = GroupConfiguration.GroupType.INDEPENDENT;
+            break;
+          default:
+            throw new Exception("Invalid group type specified.");
+        }
+        String cPath = g.getAttribute(CLASS_ATTR);
+        if(cPath == null || cPath.isEmpty()){
+          throw new Exception("Invalid group class transformation definition.");
+        }
+        groups.add(new GroupConfiguration(name, gType, cPath));
       }
     }
     return groups;
@@ -60,19 +79,20 @@ public class ConfigurationHelper {
    * Read the default target from the configuration file.
    * @param path Path to the configuration file.
    * @return Enum value corresponding to the target. NONE if nothing defined.
-   * @throws Exception When configuration file cannot be read
    */
-  public static AcceleratorDirective readDefaultTarget(String path)
-      throws Exception
-  {
-    Element root = open(path);
-    NodeList targets = root.getElementsByTagName(TARGET_ELEMENT);
-    if(targets.getLength() != 1){
+  public static AcceleratorDirective readDefaultTarget(String path) {
+    try {
+      Element root = open(path);
+      NodeList targets = root.getElementsByTagName(TARGET_ELEMENT);
+      if(targets.getLength() != 1){
+        return AcceleratorDirective.NONE;
+      }
+      Element target = (Element)targets.item(0);
+      String defaultTarget = target.getAttribute(DEFAULT_ATTR);
+      return AcceleratorDirective.fromString(defaultTarget);
+    } catch (Exception ignored){
       return AcceleratorDirective.NONE;
     }
-    Element target = (Element)targets.item(0);
-    String defaultTarget = target.getAttribute(DEFAULT_ATTR);
-    return AcceleratorDirective.fromString(defaultTarget);
   }
 
   /**
