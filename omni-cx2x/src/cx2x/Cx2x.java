@@ -85,7 +85,7 @@ public class Cx2x {
       for (int i = 0; i < groups.size(); ++i) {
         GroupConfiguration g = groups.get(i);
         System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
-            i, g.getName(), g.getType(), g.getTransformationClass());
+            i, g.getName(), g.getType(), g.getTransformationClassName());
       }
     } catch (Exception e) {
       error("Could not read the configuration file");

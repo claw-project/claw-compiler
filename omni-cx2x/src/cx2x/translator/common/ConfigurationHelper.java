@@ -69,7 +69,15 @@ public class ConfigurationHelper {
         if(cPath == null || cPath.isEmpty()){
           throw new Exception("Invalid group class transformation definition.");
         }
-        groups.add(new GroupConfiguration(name, gType, cPath));
+        Class transClass;
+        try {
+          // Check if class is there
+          transClass = Class.forName(cPath);
+        } catch (ClassNotFoundException e) {
+          throw new Exception("Transformation class " + cPath +
+              " not available");
+        }
+        groups.add(new GroupConfiguration(name, gType, cPath, transClass));
       }
     }
     return groups;

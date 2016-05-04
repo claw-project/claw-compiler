@@ -16,6 +16,7 @@ public class GroupConfiguration {
   private final String _name;
   private final String _cPath;
   private final GroupType _type;
+  private Class _transformationClass;
 
   /**
    * Constructs a new GroupConfiguration element with all mandatory information.
@@ -23,10 +24,11 @@ public class GroupConfiguration {
    * @param type  Type of the group.
    * @param cPath Path to the transformation class.
    */
-  public GroupConfiguration(String name, GroupType type, String cPath){
+  public GroupConfiguration(String name, GroupType type, String cPath, Class c){
     _name = name;
     _cPath = cPath;
     _type = type;
+    _transformationClass = c;
   }
 
   /**
@@ -41,7 +43,7 @@ public class GroupConfiguration {
    * Get the class path value.
    * @return Class path value.
    */
-  public String getTransformationClass(){
+  public String getTransformationClassName(){
     return _cPath;
   }
 
@@ -51,6 +53,14 @@ public class GroupConfiguration {
    */
   public GroupType getType(){
     return _type;
+  }
+
+  /**
+   * Get the transformation class value.
+   * @return Transformation class value.
+   */
+  public Class getTransformationClass(){
+    return _transformationClass;
   }
 
 

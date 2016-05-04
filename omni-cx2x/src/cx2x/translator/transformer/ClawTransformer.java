@@ -5,19 +5,13 @@
 
 package cx2x.translator.transformer;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import cx2x.translator.common.ConfigurationHelper;
 import cx2x.translator.common.GroupConfiguration;
-import cx2x.translator.transformation.claw.ArrayToFctCall;
-import cx2x.translator.transformation.claw.Kcaching;
-import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
-import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xelement.XbaseElement;
 import org.w3c.dom.Element;
@@ -48,27 +42,24 @@ public class ClawTransformer implements Transformer {
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
      */
-    // TODO read configuration from a config file for transformation order
     _tGroups = new LinkedHashMap<>();
-    _tGroups.put(UtilityRemove.class,
-        new IndependentTransformationGroup("remove"));
-    _tGroups.put(ArrayTransform.class,
-        new IndependentTransformationGroup("array-transform"));
-    _tGroups.put(LoopExtraction.class,
-        new IndependentTransformationGroup("loop-extract"));
-    _tGroups.put(LoopFusion.class,
-        new DependentTransformationGroup("loop-fusion"));
-    _tGroups.put(LoopHoist.class,
-        new IndependentTransformationGroup("loop-hoist"));
-    _tGroups.put(LoopInterchange.class,
-        new IndependentTransformationGroup("loop-interchange"));
-    _tGroups.put(ArrayToFctCall.class,
-        new IndependentTransformationGroup("call"));
-    _tGroups.put(Kcaching.class,
-        new IndependentTransformationGroup("kcache"));
+    for(GroupConfiguration g : groups){
+      switch (g.getType()){
+        case DEPENDENT:
+          _tGroups.put(g.getTransformationClass(),
+              new DependentTransformationGroup(g.getName()));
+          break;
+        case INDEPENDENT:
+          _tGroups.put(g.getTransformationClass(),
+              new IndependentTransformationGroup(g.getName()));
+          break;
+      }
+    }
+
+    // Internal transformations not specified by default configuration or user
     _tGroups.put(OpenAccContinuation.class,
         new IndependentTransformationGroup("open-acc-continuation"));
-
+    
     _crossTransformationTable = new HashMap<>();
   }
 
