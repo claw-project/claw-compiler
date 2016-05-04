@@ -40,6 +40,8 @@ STOP_BACKEND=false
 STOP_COMPILE=false
 STOP_DEPENDENCIES=false
 FORCE_TRANSLATION=false
+LIST_TARGET=false
+TARGET=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib a.f b.F c.f90 d.F90 e.o --tmp --Wlfoo lib.a -omp -o a.out
@@ -71,10 +73,18 @@ linker_add_opt=()
 module_opt=()
 trans_module_opt=()
 include_opt=()
+target_opt=()
 
 claw_f_set_parameters ${@+"$@"}
-omni_f_check_file_exist
 
+### List target ###
+if [ $LIST_TARGET = true ]
+then
+  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT -target-list
+  exit 0
+fi
+
+omni_f_check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
 if [ ${#f_files[@]} -gt 1 ] && [ ${#output_dir[@]} = 0 ]
@@ -213,8 +223,12 @@ for file in "${f_files_transformation[@]}"; do
   EXT=${file##*.}
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
-
-  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
+  if [ $TARGET = true ]
+  then
+    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT -target $target_opt "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
+  else
+    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
+  fi
   # also create ${TEMP_DIR}/${FILE_NAME}_${EXT}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
   # So that remains .F90 extention after process of the native compilier.

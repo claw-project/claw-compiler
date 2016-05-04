@@ -73,6 +73,7 @@ public class Cx2x {
       "  -M dir       specify where to search for .xmod files",
       "  -decomp      output decompiled source code.",
       "  -xcodeml     Perform XcodeML transformation only. No Xobject.",
+      "  -target-list List all accelerator target available for code generation.",
       "",
       " Debug Options:",
       "  -d           enable output debug message.",
@@ -87,6 +88,13 @@ public class Cx2x {
   }
 
   /**
+   * List all accelerator target available for code generation.
+   */
+  private static void listTarget(){
+    System.out.println("Not implemented yet.");
+  }
+
+  /**
    * Main point of entry of the program.
    * @param args  Arguments of the program.
    * @throws Exception if translation failed.
@@ -95,6 +103,7 @@ public class Cx2x {
     String inXmlFile = null;
     String outXmlFile = null;
     String lang = "F"; // default language is Fortran
+    String target = null;
     boolean async = false;
     boolean outputXcode = false;
     boolean outputDecomp = false;
@@ -146,6 +155,16 @@ public class Cx2x {
           }
       } else if (arg.startsWith("-xcodeml")) {
         xcodeml_only = true;
+      } else if (arg.startsWith("-target-list")) {
+        listTarget();
+        return;
+      } else if (arg.startsWith("-target")) {
+        if (arg.equals("-target")) {
+          if (narg == null)
+            error("needs argument after target");
+          target = narg;
+          ++i;
+        }
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(inXmlFile == null) {
