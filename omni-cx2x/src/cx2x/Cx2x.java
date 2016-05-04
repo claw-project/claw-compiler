@@ -77,8 +77,8 @@ public class Cx2x {
       "  -decomp          output decompiled source code.",
       "  -xcodeml         perform XcodeML transformation only. No Xobject.",
       "  -target-list     list all accelerator target available for code generation.",
-      "  -target <target> specify the accelerator language target for code generation.",
-      "  -config <target> specify an alternative configuration for the translator.",
+      "  -target=<target> specify the accelerator language target for code generation.",
+      "  -config=<target> specify an alternative configuration for the translator.",
       "",
       " Debug Options:",
       "  -d           enable output debug message.",
@@ -164,20 +164,10 @@ public class Cx2x {
       } else if (arg.startsWith("-target-list")) {
         listTarget();
         return;
-      } else if (arg.startsWith("-target")) {
-        if (arg.equals("-target")) {
-          if (narg == null)
-            error("needs argument after target");
-          target_option = narg;
-          ++i;
-        }
-      } else if (arg.startsWith("-config")) {
-        if (arg.equals("-config")) {
-          if (narg == null)
-            error("needs argument after config");
-          configuration_path = narg;
-          ++i;
-        }
+      } else if (arg.startsWith("-target=")) {
+        target_option = arg.replace("-target=", "");
+      } else if (arg.startsWith("-config=")) {
+        configuration_path = arg.replace("-config=", "");
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(inXmlFile == null) {
