@@ -6,6 +6,7 @@
 package cx2x;
 
 import cx2x.translator.ClawXcodeMlTranslator;
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import xcodeml.util.XmOption;
 
@@ -103,7 +104,7 @@ public class Cx2x {
     String inXmlFile = null;
     String outXmlFile = null;
     String lang = "F"; // default language is Fortran
-    String target = null;
+    String target_option = null;
     boolean async = false;
     boolean outputXcode = false;
     boolean outputDecomp = false;
@@ -162,7 +163,7 @@ public class Cx2x {
         if (arg.equals("-target")) {
           if (narg == null)
             error("needs argument after target");
-          target = narg;
+          target_option = narg;
           ++i;
         }
       } else if(arg.startsWith("-")){
@@ -176,7 +177,10 @@ public class Cx2x {
 
 
     if(xcodeml_only){
-      ClawXcodeMlTranslator xcmlTranslator = new ClawXcodeMlTranslator(inXmlFile, outXmlFile);
+      AcceleratorDirective target =
+          AcceleratorDirective.fromString(target_option);
+      ClawXcodeMlTranslator xcmlTranslator =
+          new ClawXcodeMlTranslator(inXmlFile, outXmlFile, target);
       xcmlTranslator.analyze();
       xcmlTranslator.transform();
       return;

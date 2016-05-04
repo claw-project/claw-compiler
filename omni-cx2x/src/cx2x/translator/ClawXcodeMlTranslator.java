@@ -9,6 +9,7 @@ package cx2x.translator;
 import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.loop.*;
@@ -49,6 +50,7 @@ public class ClawXcodeMlTranslator {
 
   private ClawTransformer _transformer = null;
   private XcodeProgram _program = null;
+  private final AcceleratorDirective _target;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
@@ -58,12 +60,14 @@ public class ClawXcodeMlTranslator {
    * @param xcodemlOutputFile The XcodeML output file path.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
-    String xcodemlOutputFile)
+                               String xcodemlOutputFile,
+                               AcceleratorDirective target)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _transformer = new ClawTransformer();
     _blockDirectives = new Hashtable<>();
+    _target = target;
   }
 
   /**
@@ -93,9 +97,7 @@ public class ClawXcodeMlTranslator {
       }
 
       // Analyze the raw pragma with the CLAW language parser
-      // TODO give correct accelerator definition when option is available #17
-      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma,
-          AcceleratorDirective.OPENACC);
+      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma, _target);
 
       // Create transformation object based on the directive
       switch (analyzedPragma.getDirective()){
