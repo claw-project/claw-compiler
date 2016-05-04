@@ -1,5 +1,7 @@
 include(FindJava)
 
+# This file help integration of JUnit tests with cmake (ctest)
+
 # Usage:
 #   add_junit_test(<target name>
 #       CLASSPATH [path1 ...]
