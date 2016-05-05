@@ -1,26 +1,26 @@
 # CLAW functional tests
 
-This directory contains a set of functional tests of the CLAW Fortran compiler.
-All tests have the same structure as follows:
+This directory contains a set of functional tests for the CLAW Fortran compiler.
+All tests have the same structure described below:
 
-* `CMakeLists.txt`: CMake file for the test (see below the format).
-* `original_code.f90`: The original code with CLAW directives.
-* `reference.f90`: A reference code that will be compared to the transformed
-  code.
+* `CMakeLists.txt`: `CMake` file including specififc information for the test
+  case for the test (see below the format for this file).
+* `original_code.f90`: The original Fortran code with CLAW directives.
+* `reference.f90`: A reference Fortran code that will be compared to the
+  transformed code.
 
-#####
-
-
-##### CMakeLists structure
+##### CMakeLists.txt structure
 Each test has a `CMakeLists.txt` file that set up few variables to generate
-the test targets. Here is the format of this file.
+the specific targets for the test case. Here is the format of this file. Note
+that only first and last line are mandatory (`TEST_NAME` and `include`)
 ```cmake
 set(TEST_NAME <test_name>) # test_name must be replaced by a relevant test name
+                           # for the test case
 set(TEST_DEBUG ON)         # optional, run clawfc with debug flag
 set(OUTPUT_TEST ON)        # optional, execute executable output comparison
 set(IGNORE_TEST ON)        # optional, does not perform the test but apply
                            # transformations
-include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # always like this
+include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # base cmake file
 ```
 
 The file `base_test.cmake` is common for all tests and does the following
@@ -46,19 +46,23 @@ make clean-transformation transformation test
 
 The CLAW Fortran compiler must be compiled once before executing the test.
 
-##### One test
-Each test has its specific set of target to be run individually. For example,
-the test `fusion1` located in `test/loops/fusion1` can be executed with the
+Make sure to use the `clean-transformation` target in order to get rid of
+previous code transformations. As the source files do not change, test cases
+cannot rely on `make` dependency.
+
+##### Only one test
+Each test has its specific set of targets to be run individually. For example,
+the test case `fusion1` located in `test/loops/fusion1` can be executed with the
 following command:
 
 ```bash
 cd test/loops/fusion1
-make clean-fusion1 transform-fusion1
+make clean-fusion1 transform-fusion1 test
 ```
 
 More generally, use the following command and modify `test_path`and `test_name`
 accordingly.
 ```bash
 cd <test_path>
-make clean-<test_name> transform-<test_name>
+make clean-<test_name> transform-<test_name> test
 ```
