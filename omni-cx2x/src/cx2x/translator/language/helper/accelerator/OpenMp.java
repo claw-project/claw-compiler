@@ -14,6 +14,8 @@ package cx2x.translator.language.helper.accelerator;
  */
 class OpenMp extends AcceleratorGenerator {
 
+  private static final String OPENMP_PREFIX = "omp";
+
   @Override
   protected String getPrefix(){
     return "";
@@ -46,7 +48,8 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public boolean isCompileGuard(String rawDirective){
-    return false; // TODO
+    return rawDirective.toLowerCase().startsWith(OPENMP_PREFIX) &&
+        rawDirective.toLowerCase().contains(COMPILE_GUARD);
   }
 
   @Override
