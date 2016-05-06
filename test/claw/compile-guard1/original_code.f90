@@ -1,4 +1,4 @@
-! Simple program to test the CLAW compile guard
+! Simple program to test the CLAW compile guard OpenACC
 
 PROGRAM compile_guard_test
   CALL dummy_subroutine
