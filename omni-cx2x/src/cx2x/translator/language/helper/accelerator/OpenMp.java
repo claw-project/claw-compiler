@@ -43,4 +43,14 @@ class OpenMp extends AcceleratorGenerator {
   protected String getPrivateClause(String var) {
     return "";
   }
+
+  @Override
+  public boolean isCompileGuard(String rawDirective){
+    return false; // TODO
+  }
+
+  @Override
+  public AcceleratorDirective getTarget(){
+    return AcceleratorDirective.OPENACC;
+  }
 }

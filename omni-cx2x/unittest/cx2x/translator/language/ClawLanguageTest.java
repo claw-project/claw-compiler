@@ -8,6 +8,8 @@ package cx2x.translator.language;
 import static org.junit.Assert.*;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.xelement.Xpragma;
 import helper.XmlHelper;
@@ -63,7 +65,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.LOOP_FUSION, l.getDirective());
       if(groupName != null){
         assertTrue(l.hasGroupClause());
@@ -91,7 +96,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage.analyze(p, generator);
       fail();
     } catch (IllegalDirectiveException pex){
       assertNotNull(pex);
@@ -140,7 +148,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.LOOP_INTERCHANGE, l.getDirective());
       if(indexes != null){
         assertTrue(l.hasIndexes());
@@ -196,7 +207,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(directive, l.getDirective());
       if(isEnd){
         assertTrue(l.isEndPragma());
@@ -438,7 +452,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.LOOP_EXTRACT, l.getDirective());
       assertEquals(induction, l.getRange().getInductionVar());
       assertEquals(lower, l.getRange().getLowerBound());
@@ -504,7 +521,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.KCACHE, l.getDirective());
       if(data != null){
         assertTrue(l.hasDataClause());
@@ -599,7 +619,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.ARRAY_TRANSFORM, l.getDirective());
       if(fusion){
         assertTrue(l.hasFusionClause());
@@ -681,7 +704,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.LOOP_HOIST, l.getDirective());
 
       assertEquals(inductions.size(), l.getHoistInductionVars().size());
@@ -738,7 +764,7 @@ public class ClawLanguageTest {
         Arrays.asList("i", "j"));
 
     analyzeValidArrayToFctCall("claw call var1=f_var1(i)", "var1", "f_var1",
-        Arrays.asList("i"));
+        Collections.singletonList("i"));
 
     analyzeValidArrayToFctCall("claw call v=f(i,j)", "v", "f",
         Arrays.asList("i", "j"));
@@ -762,7 +788,10 @@ public class ClawLanguageTest {
     try {
       Xpragma p = XmlHelper.createXpragma();
       p.setValue(raw);
-      ClawLanguage l = ClawLanguage.analyze(p, AcceleratorDirective.OPENACC);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator);
       assertEquals(ClawDirective.ARRAY_TO_CALL, l.getDirective());
 
       assertEquals(params.size(), l.getFctParams().size());

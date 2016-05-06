@@ -10,6 +10,7 @@ import cx2x.translator.common.Constant;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
@@ -52,7 +53,7 @@ public class ClawXcodeMlTranslator {
 
   private ClawTransformer _transformer = null;
   private XcodeProgram _program = null;
-  private final AcceleratorDirective _target;
+  private final AcceleratorGenerator _generator;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
@@ -72,7 +73,7 @@ public class ClawXcodeMlTranslator {
     _xcodemlOutputFile = xcodemlOutputFile;
     _transformer = new ClawTransformer(groups);
     _blockDirectives = new Hashtable<>();
-    _target = target;
+    _generator = AcceleratorHelper.createAcceleratorGenerator(target);
   }
 
   /**
@@ -90,8 +91,14 @@ public class ClawXcodeMlTranslator {
 
       // pragma does not start with the CLAW prefix
       if(!ClawLanguage.startsWithClaw(pragma)){
+        // Compile guard removal
+        if(_generator != null && _generator.isCompileGuard(pragma.getValue())){
+          pragma.delete();
+        }
         // Handle special transformation of OpenACC line continuation
-        if(pragma.getValue().toLowerCase().startsWith(Constant.OPENACC_PREFIX)){
+        else if(pragma.getValue().
+            toLowerCase().startsWith(Constant.OPENACC_PREFIX))
+        {
           OpenAccContinuation t =
               new OpenAccContinuation(new AnalyzedPragma(pragma));
           addOrAbort(t);
@@ -102,7 +109,7 @@ public class ClawXcodeMlTranslator {
       }
 
       // Analyze the raw pragma with the CLAW language parser
-      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma, _target);
+      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma, _generator);
 
       // Create transformation object based on the directive
       switch (analyzedPragma.getDirective()){

@@ -14,7 +14,9 @@ package cx2x.translator.language.helper.accelerator;
  *
  * @author clementval
  */
-abstract class AcceleratorGenerator {
+public abstract class AcceleratorGenerator {
+
+  public static final String COMPILE_GUARD = "claw-guard";
 
   /**
    * Get the prefix for the current accelerator lanugage.
@@ -55,4 +57,18 @@ abstract class AcceleratorGenerator {
    */
   protected abstract String getPrivateClause(String var);
 
+
+  /**
+   * Check whether the raw directive is a CLAW compile guard that must be
+   * removed.
+   * @param rawDirective The raw directive without any preprocessing.
+   * @return True if it is a CLAW compile guard. False otherwise.
+   */
+  public abstract boolean isCompileGuard(String rawDirective);
+
+  /**
+   * Get the target of the current generator.
+   * @return Current target as an accelerator directive enumeration value.
+   */
+  public abstract AcceleratorDirective getTarget();
 }

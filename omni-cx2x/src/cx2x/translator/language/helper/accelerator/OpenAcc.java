@@ -46,4 +46,15 @@ class OpenAcc extends AcceleratorGenerator {
   protected String getPrivateClause(String var) {
     return OPENACC_PRIVATE + "(" + var + ")";
   }
+
+  @Override
+  public boolean isCompileGuard(String rawDirective){
+    return rawDirective.toLowerCase().startsWith(OPENACC_PREFIX) &&
+        rawDirective.toLowerCase().contains(COMPILE_GUARD);
+  }
+
+  @Override
+  public AcceleratorDirective getTarget(){
+    return AcceleratorDirective.OPENACC;
+  }
 }

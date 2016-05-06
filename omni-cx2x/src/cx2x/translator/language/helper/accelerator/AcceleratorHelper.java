@@ -15,8 +15,6 @@ import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.Xpragma;
 
-import java.util.List;
-
 /**
  * The class AcceleratorHelper contains only static method to help the
  * generation of the accelerator related pragma during code transformations.
@@ -35,21 +33,24 @@ public class AcceleratorHelper {
    * @param startStmt Start statement representing the beginning of the parallel
    *                  region.
    * @param endStmt   End statement representing the end of the parallel region.
-   * @param generator An instance of accelerator generator.
    * @return Last stmt inserted or null if nothing is inserted.
    */
   private static XbaseElement generateParallelClause(
       ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
-      XbaseElement endStmt, AcceleratorGenerator generator)
+      XbaseElement endStmt)
   {
     if(claw.hasParallelClause()){
       try {
         Xpragma beginParallel =
             XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        beginParallel.setValue(generator.getStartParellelDirective());
+        beginParallel.setValue(
+            claw.getAcceleratorGenerator().getStartParellelDirective()
+        );
         Xpragma endParallel =
             XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        endParallel.setValue(generator.getEndParellelDirective());
+        endParallel.setValue(
+            claw.getAcceleratorGenerator().getEndParellelDirective()
+        );
         XelementHelper.insertBefore(startStmt, beginParallel);
         XelementHelper.insertAfter(endStmt, endParallel);
         return endParallel;
@@ -66,12 +67,10 @@ public class AcceleratorHelper {
    *                  region.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
-   * @param generator An instance of accelerator generator.
    * @return Last stmt inserted or null if nothing is inserted.
    */
   private static XbaseElement generateAcceleratorClause(
-      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
-      AcceleratorGenerator generator)
+      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt)
   {
     if(claw.hasAcceleratorClause())
     {
@@ -79,7 +78,8 @@ public class AcceleratorHelper {
         Xpragma acceleratorPragma = XelementHelper.createEmpty(Xpragma.class,
             xcodeml);
         acceleratorPragma.setValue(
-            generator.getSingleDirective(claw.getAcceleratorClauses())
+            claw.getAcceleratorGenerator().
+                getSingleDirective(claw.getAcceleratorClauses())
         );
         XelementHelper.insertBefore(startStmt, acceleratorPragma);
         return acceleratorPragma;
@@ -103,20 +103,16 @@ public class AcceleratorHelper {
       ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
       XbaseElement endStmt)
   {
-    if(claw.getAcceleratorDirective() == AcceleratorDirective.NONE){
+    if(claw.getCurrentTarget() == AcceleratorDirective.NONE){
       return null;
     }
 
-    // Get specific instance of accelerator generator
-    AcceleratorGenerator generator = AcceleratorHelper.
-        createAcceleratorGenerator(claw.getAcceleratorDirective());
-
     XbaseElement pragma =
-        generateAcceleratorClause(claw, xcodeml, startStmt, generator);
+        generateAcceleratorClause(claw, xcodeml, startStmt);
     if(pragma != null){
       startStmt = pragma;
     }
-    return generateParallelClause(claw, xcodeml, startStmt, endStmt, generator);
+    return generateParallelClause(claw, xcodeml, startStmt, endStmt);
   }
 
   /**
@@ -127,8 +123,8 @@ public class AcceleratorHelper {
    *                representation in which the pragmas will be generated.
    * @param stmt    Statement from which we looks for a parallel clause to
    *                append private clauses.
-   * @param vars    List of variables for the private clause.
-   * TODO what about OpenMP
+   * @param var     Variable to generate the private clause.
+   * TODO what about OpenMP ?
    */
   public static void generatePrivateClause(ClawLanguage claw,
                                            XcodeProgram xcodeml,
@@ -136,27 +132,25 @@ public class AcceleratorHelper {
                                            XbaseElement stmt,
                                            String var)
   {
-    if(claw.getAcceleratorDirective() == AcceleratorDirective.NONE
+    if(claw.getCurrentTarget() == AcceleratorDirective.NONE
         || !claw.hasPrivateClause()){
       return;
     }
 
-    AcceleratorGenerator generator = AcceleratorHelper.
-        createAcceleratorGenerator(claw.getAcceleratorDirective());
-
     Xpragma parallel =
-        XelementHelper.findPreviousPragma(stmt, generator.getParallelKeyword());
+        XelementHelper.findPreviousPragma(stmt,
+            claw.getAcceleratorGenerator().getParallelKeyword());
 
     if(parallel == null){
       xcodeml.addWarning("No parallel construct found to attach private clause",
           claw.getPragma().getLineNo());
     } else {
       if(parallel.getValue().length() >= 80){
-        parallel.append(" " + generator.getPrefix() + " ");
+        parallel.append(" " + claw.getAcceleratorGenerator().getPrefix() + " ");
         transformer.addTransformation(new OpenAccContinuation(
             new AnalyzedPragma(parallel)));
       }
-      parallel.append(generator.getPrivateClause(var));
+      parallel.append(claw.getAcceleratorGenerator().getPrivateClause(var));
     }
   }
 
@@ -166,7 +160,7 @@ public class AcceleratorHelper {
    * @param accDirective Enum value that define the generator to be created.
    * @return A specific implementation of an AcceleratorGenerator.
    */
-  private static AcceleratorGenerator createAcceleratorGenerator(
+  public static AcceleratorGenerator createAcceleratorGenerator(
           AcceleratorDirective accDirective)
   {
     switch (accDirective){

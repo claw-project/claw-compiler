@@ -6,6 +6,7 @@
 package cx2x.translator.language;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.Xpragma;
@@ -25,7 +26,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   private static final String PREFIX_CLAW = "claw";
 
-  private AcceleratorDirective _target;
+  private AcceleratorGenerator _generator;
   private ClawDirective _directive;
 
   // Clauses values
@@ -100,7 +101,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
     // General members
     _directive = null;
-    _target = AcceleratorDirective.NONE;
+    _generator = null;
 
     // super class members
     _pragma = null;
@@ -118,15 +119,14 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Analyze a raw string input and match it with the CLAW language definition.
-   * @param pragma A Xpragma object to be analyzed against the CLAW language.
-   * @param target Code generation target that influence accelerator directive
-   *               generation.
+   * @param pragma    A Xpragma object to be analyzed against the CLAW language.
+   * @param generator Accelerator directive generator.
    * @return A ClawLanguage object with the corresponding extracted information.
    * @throws IllegalDirectiveException If directive does not follow the CLAW
    * language specification. 
    */
   public static ClawLanguage analyze(Xpragma pragma,
-                                     AcceleratorDirective target)
+                                     AcceleratorGenerator generator)
       throws IllegalDirectiveException
   {
 
@@ -158,7 +158,7 @@ public class ClawLanguage extends AnalyzedPragma {
       ClawParser.AnalyzeContext ctx = parser.analyze();
       // Get the ClawLanguage object return by the parser after analysis.
       ctx.l.attachPragma(pragma);
-      ctx.l.setAcceleratorDirective(target);
+      ctx.l.setAcceleratorGenerator(generator);
       return ctx.l;
     } catch(ParseCancellationException pcex){
       IllegalDirectiveException ex = cel.getLastError();
@@ -589,19 +589,29 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Set the accelerator target for pragma generation
-   * @param target Accelerator directive value.
+   * Set the accelerator directive generator for pragma generation
+   * @param generator The current accelerator directive generator.
    */
-  private void setAcceleratorDirective(AcceleratorDirective target){
-    _target = target;
+  private void setAcceleratorGenerator(AcceleratorGenerator generator){
+    _generator = generator;
   }
 
   /**
-   * Get the accelerator directive language associated with
-   * @return Associated accelerator directive.
+   * Get the accelerator generator for the current accelerator directive
+   * language associated with the program.
+   * @return Associated accelerator directive generator.
    */
-  public AcceleratorDirective getAcceleratorDirective(){
-    return _target;
+  public AcceleratorGenerator getAcceleratorGenerator(){
+    return _generator;
+  }
+
+  /**
+   * Get the current accelerator directive language target.
+   * @return Value of the AcceleratorDirective enumeration.
+   */
+  public AcceleratorDirective getCurrentTarget(){
+    return (_generator != null) ? _generator.getTarget() :
+        AcceleratorDirective.NONE;
   }
 
   /**
