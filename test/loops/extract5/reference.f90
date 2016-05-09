@@ -48,6 +48,7 @@ SUBROUTINE clawloop_extracted0 ( value1 , value2 )
  INTEGER :: istart = 1
  INTEGER :: iend = 10
 
+!$acc routine
  DO j = 1 , 10 , 2
   PRINT * ,"j" , j
  END DO
