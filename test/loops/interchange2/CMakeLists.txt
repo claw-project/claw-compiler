@@ -1,4 +1,5 @@
 set(TEST_NAME interchange2)
-set(TRANSLATOR_OPTION "-d")
-
+set(TEST_DEBUG OFF)
+set(OUTPUT_TEST OFF)
+set(IGNORE_TEST OFF)
 include(${CMAKE_SOURCE_DIR}/test/base_test.cmake)
