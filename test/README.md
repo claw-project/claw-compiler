@@ -14,12 +14,13 @@ Each test has a `CMakeLists.txt` file that set up few variables to generate
 the specific targets for the test case. Here is the format of this file. Note
 that only first and last line are mandatory (`TEST_NAME` and `include`)
 ```cmake
-set(TEST_NAME <test_name>) # test_name must be replaced by a relevant test name
-                           # for the test case
-set(TEST_DEBUG ON)         # optional, run clawfc with debug flag
-set(OUTPUT_TEST ON)        # optional, execute executable output comparison
-set(IGNORE_TEST ON)        # optional, does not perform the test but apply
-                           # transformations
+set(TEST_NAME <test_name>)  # test_name must be replaced by a relevant test name
+                            # for the test case
+set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
+set(OUTPUT_TEST ON)         # optional, execute executable output comparison
+set(IGNORE_TEST ON)         # optional, does not perform the test but apply
+                            # transformations
+set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc                           
 include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # base cmake file
 ```
 
