@@ -240,7 +240,9 @@ public class ClawXcodeMlTranslator {
       {
         if(XmOption.isDebugOutput()){
           System.out.println("Apply transfomation: " +
-              entry.getValue().transformationName());
+              entry.getValue().transformationName() + " - " +
+              entry.getValue().count()
+          );
         }
 
         try {

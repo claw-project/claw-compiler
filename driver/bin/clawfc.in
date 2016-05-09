@@ -124,7 +124,7 @@ fi
 # Note that, if TEMP_DIR exists, the TEMP_DIR is not deleted (KAGEMAI #379)
 
 omni_exec mkdir -p $TEMP_DIR
-[ $ENABLE_DEBUG = true ] && echo "Create ${TEMP_DIR}/"
+[ $VERBOSE = true ] && echo "Create ${TEMP_DIR}/"
 
 ### Clean temporal directory before exit ###
 omni_set_trap
@@ -161,7 +161,7 @@ done
 [ $ONLY_PP = true -a -f "${output_file}" ] && omni_exec rm "${output_file}"
 [ $ENABLE_CPP = true ] && OMNI_FPP_OPT="$OMNI_FPP_OPT $CPP_OPT"
 for file in "${f_files_transformation[@]}"; do
-  [ $ENABLE_DEBUG = true ] && echo "Prepocessing ..."
+  [ $VERBOSE = true ] && echo "Prepocessing ..."
   FILE=("${file}")
   BASENAME=`basename ${FILE%.*}`
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
@@ -200,7 +200,7 @@ if [ $RESOLVE_DEPENDENCIES ]
 then
   for file in "${f_files_transformation[@]}"
   do
-    [ $ENABLE_DEBUG = true ] && echo "Dependencies resolution ..."
+    [ $VERBOSE = true ] && echo "Dependencies resolution ..."
     FILE=("${file}")
     FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
     EXT=${file##*.}
@@ -218,7 +218,7 @@ fi
 
 ### Frontend ###
 for file in "${f_files_transformation[@]}"; do
-  [ $ENABLE_DEBUG = true ] && echo "Fortran to XcodeML ..."
+  [ $VERBOSE = true ] && echo "Fortran to XcodeML ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -233,9 +233,16 @@ for file in "${f_files_transformation[@]}"; do
 done
 [ $STOP_FRONTEND = true ] && exit 0;
 
+if [ $ENABLE_DEBUG = true ]
+then
+  TRANSLATOR_OPTION="-d"
+else
+  TRANSLATOR_OPTION=""
+fi
+
 ### Translator ###
 for file in "${f_files_transformation[@]}"; do
-  [ $ENABLE_DEBUG = true ] && echo "XcodeML to XcodeML translation ..."
+  [ $VERBOSE = true ] && echo "XcodeML to XcodeML translation ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
@@ -244,9 +251,9 @@ for file in "${f_files_transformation[@]}"; do
 
   if [ $TARGET = true ]
   then
-    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --target=$target_opt $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
+    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION --target=$target_opt $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
   else
-    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
+    omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION $OMNI_CX2X_CONFIG_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" "${FILE_IN_X}" -o "${FILE_OUT_X}"
   fi
   # also create ${TEMP_DIR}/${FILE_NAME}_${EXT}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
@@ -256,6 +263,7 @@ done
 
 ### Backend ###
 for file in "${f_files_transformation[@]}"; do
+  [ $VERBOSE = true ] && echo "XcodeML to Fortran decompilation ..."
   FILE=("${file}")
   FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}

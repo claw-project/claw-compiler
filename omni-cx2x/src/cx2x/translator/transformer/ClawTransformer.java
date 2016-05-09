@@ -58,7 +58,7 @@ public class ClawTransformer implements Transformer {
 
     // Internal transformations not specified by default configuration or user
     _tGroups.put(OpenAccContinuation.class,
-        new IndependentTransformationGroup("open-acc-continuation"));
+        new IndependentTransformationGroup("intrenal-open-acc-continuation"));
 
     _crossTransformationTable = new HashMap<>();
   }
