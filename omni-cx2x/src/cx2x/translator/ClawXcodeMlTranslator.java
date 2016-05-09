@@ -141,8 +141,8 @@ public class ClawXcodeMlTranslator {
             abort();
         }
       } catch (IllegalDirectiveException ex){
-        System.err.println("Illegal directive: " + ex.getMessage());
-        return;
+        System.err.println(ex.getMessage());
+        abort();
       }
     }
 
