@@ -10,6 +10,7 @@ add_custom_target(${CLEAN_TEST_TARGET})
 
 # List of test directories
 add_subdirectory(claw)
+add_subdirectory(driver)
 add_subdirectory(fortran)
 add_subdirectory(loops)
 add_subdirectory(utilities)
