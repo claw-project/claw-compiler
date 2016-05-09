@@ -66,6 +66,6 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public AcceleratorDirective getTarget(){
-    return AcceleratorDirective.OPENACC;
+    return AcceleratorDirective.OPENMP;
   }
 }
