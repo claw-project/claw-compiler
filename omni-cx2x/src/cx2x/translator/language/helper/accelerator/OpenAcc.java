@@ -25,17 +25,18 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getStartParellelDirective() {
-    return OPENACC_PREFIX + " " + OPENACC_PARALLEL;
+    return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL);
   }
 
   @Override
   protected String getEndParellelDirective() {
-    return OPENACC_PREFIX + " " + OPENACC_END + " " + OPENACC_PARALLEL;
+    return String.format(FORMAT3,
+        OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL);
   }
 
   @Override
   protected String getSingleDirective(String clause) {
-    return OPENACC_PREFIX + " " + clause;
+    return String.format(FORMAT2, OPENACC_PREFIX, clause);
   }
 
   @Override
@@ -45,12 +46,12 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(String var) {
-    return OPENACC_PRIVATE + "(" + var + ")";
+    return String.format(FORMATPAR, OPENACC_PRIVATE, var);
   }
 
   @Override
   protected String getAcceleratorRoutineDirective(){
-    return OPENACC_PREFIX + " " + OPENACC_ROUTINE;
+    return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE);
   }
 
   @Override

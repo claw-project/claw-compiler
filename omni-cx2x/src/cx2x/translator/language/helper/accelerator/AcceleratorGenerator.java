@@ -6,8 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 /**
- * Basic accelerator directive generator that does nothing. Used when
- * AcceleratorDirective.NONE is set.
+ * Interface for accelerator directive generator.
  *
  * TODO interface might need some refinments when we have a better idea of
  * TODO OpenACC vs OpenMP
@@ -16,7 +15,12 @@ package cx2x.translator.language.helper.accelerator;
  */
 public abstract class AcceleratorGenerator {
 
-  public static final String COMPILE_GUARD = "claw-guard";
+  static final String COMPILE_GUARD = "claw-guard";
+  static final String FORMATPAR = "%s (%s)";
+  static final String FORMAT2 = "%s %s";
+  static final String FORMAT3 = "%s %s %s";
+  static final String FORMAT4 = "%s %s %s %s";
+  static final String FORMAT5 = "%s %s %s %s %s";
 
   /**
    * Get the prefix for the current accelerator lanugage.

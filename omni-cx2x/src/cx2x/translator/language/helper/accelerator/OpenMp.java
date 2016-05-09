@@ -8,8 +8,6 @@ package cx2x.translator.language.helper.accelerator;
 /**
  * OpenMP specific accelerator directive generator.
  *
- * TODO all
- *
  * @author clementval
  */
 class OpenMp extends AcceleratorGenerator {
@@ -17,40 +15,47 @@ class OpenMp extends AcceleratorGenerator {
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "delcare";
   private static final String OPENMP_TARGET = "target";
+  private static final String OPENMP_PARALLEL = "parallel";
+  private static final String OPENMP_DO = "do";
+  private static final String OPENMP_END = "end";
 
   @Override
   protected String getPrefix(){
-    return "";
+    return OPENMP_PREFIX;
   }
 
   @Override
   protected String getStartParellelDirective() {
-    return "";
+    //!$omp target parallel do
+    return String.format(FORMAT4,
+        OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL, OPENMP_DO);
   }
 
   @Override
   public String getEndParellelDirective() {
-    return "";
+    //!$omp end target parallel do
+    return String.format(FORMAT5,
+        OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL, OPENMP_DO);
   }
 
   @Override
   public String getSingleDirective(String clause) {
-    return "";
+    return ""; // TODO
   }
 
   @Override
   protected String getParallelKeyword() {
-    return "";
+    return ""; // TODO
   }
 
   @Override
   protected String getPrivateClause(String var) {
-    return "";
+    return ""; // TODO
   }
 
   @Override
   protected String getAcceleratorRoutineDirective(){
-    return OPENMP_PREFIX + " " + OPENMP_DECLARE + " " + OPENMP_TARGET;
+    return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET);
   }
 
   @Override
