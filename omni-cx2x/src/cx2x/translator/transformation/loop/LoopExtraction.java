@@ -412,6 +412,7 @@ public class LoopExtraction extends Transformation {
     TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
         transformer, extractedLoop);
 
+    _claw.getPragma().delete();
     this.transformed();
   }
 
