@@ -30,10 +30,10 @@ CLAW Fortran compiler options:
 
 Process Options
 
-  --Wp[option] : Add preprocessor option.
-  --Wf[option] : Add frontend option.
-  --Wx[option] : Add Xcode translator option.
-  --Wb[option] : Add backend option.
+   --Wp[option] : Add preprocessor option.
+   --Wf[option] : Add frontend option.
+   --Wx[option] : Add Xcode translator option.
+   --Wb[option] : Add backend option.
 EOF
 }
 
