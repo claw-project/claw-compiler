@@ -16,6 +16,7 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PARALLEL = "parallel";
   private static final String OPENACC_END = "end";
   private static final String OPENACC_PRIVATE = "private";
+  private static final String OPENACC_ROUTINE = "routine";
 
   @Override
   protected String getPrefix(){
@@ -45,6 +46,11 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String getPrivateClause(String var) {
     return OPENACC_PRIVATE + "(" + var + ")";
+  }
+
+  @Override
+  protected String getAcceleratorRoutineDirective(){
+    return OPENACC_PREFIX + " " + OPENACC_ROUTINE;
   }
 
   @Override

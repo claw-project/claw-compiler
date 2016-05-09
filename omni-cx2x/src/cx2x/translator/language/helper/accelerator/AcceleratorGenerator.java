@@ -59,6 +59,14 @@ public abstract class AcceleratorGenerator {
 
 
   /**
+   * Return the formatted directive to be inserted in a subroutine/function
+   * definition.
+   * @return Routine directive.
+   */
+  protected abstract String getAcceleratorRoutineDirective();
+
+
+  /**
    * Check whether the raw directive is a CLAW compile guard that must be
    * removed.
    * @param rawDirective The raw directive without any preprocessing.

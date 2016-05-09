@@ -15,6 +15,8 @@ package cx2x.translator.language.helper.accelerator;
 class OpenMp extends AcceleratorGenerator {
 
   private static final String OPENMP_PREFIX = "omp";
+  private static final String OPENMP_DECLARE = "delcare";
+  private static final String OPENMP_TARGET = "target";
 
   @Override
   protected String getPrefix(){
@@ -44,6 +46,11 @@ class OpenMp extends AcceleratorGenerator {
   @Override
   protected String getPrivateClause(String var) {
     return "";
+  }
+
+  @Override
+  protected String getAcceleratorRoutineDirective(){
+    return OPENMP_PREFIX + " " + OPENMP_DECLARE + " " + OPENMP_TARGET;
   }
 
   @Override
