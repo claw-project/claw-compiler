@@ -50,7 +50,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getAcceleratorRoutineDirective(){
+  protected String getRoutineDirective(){
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE);
   }
 

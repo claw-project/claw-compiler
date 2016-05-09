@@ -67,7 +67,7 @@ public abstract class AcceleratorGenerator {
    * definition.
    * @return Routine directive.
    */
-  protected abstract String getAcceleratorRoutineDirective();
+  protected abstract String getRoutineDirective();
 
 
   /**

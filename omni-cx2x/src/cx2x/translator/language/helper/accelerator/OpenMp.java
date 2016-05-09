@@ -54,7 +54,7 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getAcceleratorRoutineDirective(){
+  protected String getRoutineDirective(){
     return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET);
   }
 

@@ -13,6 +13,7 @@ import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xelement.XfunctionDefinition;
 import cx2x.xcodeml.xelement.Xpragma;
 
 /**
@@ -113,6 +114,31 @@ public class AcceleratorHelper {
       startStmt = pragma;
     }
     return generateParallelClause(claw, xcodeml, startStmt, endStmt);
+  }
+
+  /**
+   * Generate all corresponding pragmas to be applied to an accelerated
+   * function/subroutine.
+   * @param claw    ClawLanguage object that tells which accelerator pragmas
+   *                are enabled.
+   * @param xcodeml Object representation of the current XcodeML
+   *                representation in which the pragmas will be generated.
+   * @param fctDef  Function/subroutine in which accelerator directives are
+   *                generated.
+   * @throws IllegalTransformationException if new element cannot be created.
+   */
+  public static void generateRoutineDirectives(ClawLanguage claw,
+                                               XcodeProgram xcodeml,
+                                               XfunctionDefinition fctDef)
+      throws IllegalTransformationException
+  {
+    if(claw.getCurrentTarget() == AcceleratorDirective.NONE){
+      return; // Don't do anything if the target is none
+    }
+
+    Xpragma routine = XelementHelper.createEmpty(Xpragma.class, xcodeml);
+    routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
+    fctDef.getBody().appendAsFirst(routine);
   }
 
   /**
