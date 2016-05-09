@@ -10,7 +10,6 @@ PROGRAM loop_extract
   value1 ( j ) = j
   value2 ( j ) = j
  END DO
-!$claw loop-extract range(i=istart,iend) map(value1:i) map(value2:i) parallel
 !$acc parallel
  DO i = istart , iend , 1
   CALL clawloop_extracted0 ( value1 ( i ) , value2 ( i ) )
