@@ -16,7 +16,7 @@ package cx2x.translator.language.helper.accelerator;
 public abstract class AcceleratorGenerator {
 
   static final String COMPILE_GUARD = "claw-guard";
-  static final String FORMATPAR = "%s (%s)";
+  static final String FORMATPAR = "%s(%s)";
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
