@@ -136,9 +136,11 @@ public class AcceleratorHelper {
       return; // Don't do anything if the target is none
     }
 
-    Xpragma routine = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-    routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
-    fctDef.getBody().appendAsFirst(routine);
+    if(claw.hasParallelClause() || claw.hasAcceleratorClause()) {
+      Xpragma routine = XelementHelper.createEmpty(Xpragma.class, xcodeml);
+      routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
+      fctDef.getBody().appendAsFirst(routine);
+    }
   }
 
   /**
