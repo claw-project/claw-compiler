@@ -78,9 +78,8 @@ public class ClawXcodeMlTranslator {
 
   /**
    * Analysis the XcodeML code and produce a list of applicable transformation.
-   * @throws Exception if analysis fails.
    */
-  public void analyze() throws Exception {
+  public void analyze() {
     _program = XcodeProgram.createFromFile(_xcodemlInputFile);
     if(_program == null){
       abort();
@@ -107,39 +106,43 @@ public class ClawXcodeMlTranslator {
         // Not CLAW pragma, we do nothing
         continue;
       }
+      try {
+        // Analyze the raw pragma with the CLAW language parser
+        ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma, _generator);
 
-      // Analyze the raw pragma with the CLAW language parser
-      ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma, _generator);
-
-      // Create transformation object based on the directive
-      switch (analyzedPragma.getDirective()){
-        case ARRAY_TO_CALL:
-          addOrAbort(new ArrayToFctCall(analyzedPragma));
-          break;
-        case KCACHE:
-          addOrAbort(new Kcaching(analyzedPragma));
-          break;
-        case LOOP_FUSION:
-          addOrAbort(new LoopFusion(analyzedPragma));
-          break;
-        case LOOP_INTERCHANGE:
-          addOrAbort(new LoopInterchange(analyzedPragma));
-          break;
-        case LOOP_EXTRACT:
-          addOrAbort(new LoopExtraction(analyzedPragma));
-          break;
-        case LOOP_HOIST:
-          HandleBlockDirective(analyzedPragma);
-          break;
-        case ARRAY_TRANSFORM:
-          HandleBlockDirective(analyzedPragma);
-          break;
-        case REMOVE:
-          HandleBlockDirective(analyzedPragma);
-          break;
-        default:
-          _program.addError("Unrecognized CLAW directive", pragma.getLineNo());
-          abort();
+        // Create transformation object based on the directive
+        switch (analyzedPragma.getDirective()) {
+          case ARRAY_TO_CALL:
+            addOrAbort(new ArrayToFctCall(analyzedPragma));
+            break;
+          case KCACHE:
+            addOrAbort(new Kcaching(analyzedPragma));
+            break;
+          case LOOP_FUSION:
+            addOrAbort(new LoopFusion(analyzedPragma));
+            break;
+          case LOOP_INTERCHANGE:
+            addOrAbort(new LoopInterchange(analyzedPragma));
+            break;
+          case LOOP_EXTRACT:
+            addOrAbort(new LoopExtraction(analyzedPragma));
+            break;
+          case LOOP_HOIST:
+            HandleBlockDirective(analyzedPragma);
+            break;
+          case ARRAY_TRANSFORM:
+            HandleBlockDirective(analyzedPragma);
+            break;
+          case REMOVE:
+            HandleBlockDirective(analyzedPragma);
+            break;
+          default:
+            _program.addError("Unrecognized CLAW directive", pragma.getLineNo());
+            abort();
+        }
+      } catch (IllegalDirectiveException ex){
+        System.err.println("Illegal directive: " + ex.getMessage());
+        return;
       }
     }
 
@@ -266,8 +269,7 @@ public class ClawXcodeMlTranslator {
       }
 
     } catch (Exception ex) {
-      System.err.println("Transformation exception: ");
-      ex.printStackTrace();
+      System.err.println("Transformation exception: " + ex.getMessage());
     }
   }
 
