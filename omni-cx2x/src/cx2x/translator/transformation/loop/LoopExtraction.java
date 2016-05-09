@@ -407,7 +407,8 @@ public class LoopExtraction extends Transformation {
     AcceleratorHelper.
         generateAdditionalDirectives(_claw, xcodeml, extractedLoop,
             extractedLoop);
-    AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
+    // TODO must be triggered by a clause
+    //AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 
     // Add any additional transformation defined in the directive clauses
     TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
