@@ -6,16 +6,16 @@
 package cx2x.translator.language.helper;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.XbaseElement;
-import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.XdoStatement;
-import cx2x.xcodeml.xelement.Xpragma;
+import cx2x.xcodeml.xelement.*;
 import xcodeml.util.XmOption;
+
+import java.util.List;
 
 /**
  * The class TransformationHelper contains only static method to help the
@@ -104,6 +104,89 @@ public class TransformationHelper {
       transformer.addTransformation(interchange);
       if(XmOption.isDebugOutput()){
         System.out.println("Loop interchange added: " + claw.getIndexes());
+      }
+    }
+  }
+
+
+  /**
+   * Apply the reshape clause transformation.
+   * @param claw    The claw language object holding the reshape information.
+   * @param xcodeml The current XcodeML program.
+   * @throws IllegalTransformationException when reshape information are not
+   * valid or an new element cannot be created.
+   */
+  public static void applyReshapeClause(ClawLanguage claw,
+                                        XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    if(!claw.hasReshapeClause()){
+      return;
+    }
+
+    XfunctionDefinition fctDef =
+        XelementHelper.findParentFctDef(claw.getPragma());
+    for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
+      Xid id = fctDef.getSymbolTable().get(reshapeInfo.getArrayName());
+      XvarDecl decl =
+          fctDef.getDeclarationTable().get(reshapeInfo.getArrayName());
+
+      String crtTypeHash = id.getType();
+
+      Xtype rawType = xcodeml.getTypeTable().get(crtTypeHash);
+      if(!(rawType instanceof XbasicType)){
+        throw new IllegalTransformationException(
+            String.format("Reshape variable %s is not a basic type.",
+                reshapeInfo.getArrayName()),
+            claw.getPragma().getLineNo()
+        );
+      }
+      XbasicType crtType = (XbasicType)rawType;
+
+      // Check dimension
+      if(crtType.getDimensions() < reshapeInfo.getTargetDimension()){
+        throw new IllegalTransformationException(
+            String.format(
+                "Reshape variable %s has smaller dimension than requested.",
+                reshapeInfo.getArrayName()
+            ), claw.getPragma().getLineNo()
+        );
+      }
+
+      // Create new type
+      XbasicType newType = crtType.cloneObject();
+      newType.setType(xcodeml.getTypeTable().generateRealTypeHash());
+      if(reshapeInfo.getTargetDimension() == 0){ // Demote to scalar
+        newType.resetDimension();
+      } else { // Demote to smaller dimension array
+
+        if(crtType.getDimensions() - reshapeInfo.getKeptDimensions().size() !=
+            reshapeInfo.getTargetDimension()){
+          throw new IllegalTransformationException(
+              String.format("Reshape information for %s not valid. " +
+                      "Target dimension and kept dimension mismatch.",
+                  reshapeInfo.getArrayName())
+          );
+        }
+        newType.removeDimension(reshapeInfo.getKeptDimensions());
+      }
+      xcodeml.getTypeTable().add(newType);
+
+      // Update symbol & declaration
+      id.setType(newType.getType());
+      decl.getName().setType(newType.getType());
+
+      // Update array references
+      List<XarrayRef> refs =
+          XelementHelper.getAllArrayReferences(fctDef,
+              reshapeInfo.getArrayName());
+
+      for(XarrayRef ref : refs){
+        if(reshapeInfo.getTargetDimension() == 0){
+          XelementHelper.demoteToScalar(ref);
+        } else {
+          XelementHelper.demote(ref, reshapeInfo.getKeptDimensions());
+        }
       }
     }
   }
