@@ -148,4 +148,12 @@ public class XarrayRef extends XbaseElement {
     }
   }
 
+  /**
+   * Reset internal information and read from XcodeML elements again.
+   */
+  public void reset(){
+    _innerElement.clear();
+    readElementInformation();
+  }
+
 }
