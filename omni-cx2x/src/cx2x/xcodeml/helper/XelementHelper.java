@@ -146,6 +146,34 @@ public class XelementHelper {
   }
 
   /**
+   * Find all array references elements in a given body and give var name.
+   * @param parent    The body element to search for the array references.
+   * @param arrayName Name of the array for the array reference to be found.
+   * @return A list of all array references found.
+   */
+  public static List<XarrayRef> getAllArrayReferences(XbaseElement parent,
+                                                      String arrayName )
+  {
+    List<XarrayRef> references = new ArrayList<>();
+    NodeList nList = parent.getBaseElement().
+        getElementsByTagName(XelementName.F_ARRAY_REF);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        XarrayRef ref = new XarrayRef(el);
+        if(ref.getVarRef().getVar().getValue().toLowerCase().
+            equals(arrayName.toLowerCase()))
+        {
+          references.add(ref);
+        }
+      }
+    }
+    return references;
+  }
+
+  
+  /**
    * Retrieve the index ranges of an array notation.
    * @param arrayRef The array reference statements to extract the ranges from.
    * @return A list if indexRanges elements.
