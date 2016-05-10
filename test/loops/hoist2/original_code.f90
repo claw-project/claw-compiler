@@ -25,7 +25,7 @@ SUBROUTINE claw_hoist2
 
   ntrac=2
   klev=10
-  kproma=100
+  kproma=100  
   array2d_1(:,:) = 0.0
   array2d_2(:,:) = 0.0
   array2d_3(:,:) = 0.0
@@ -34,7 +34,7 @@ SUBROUTINE claw_hoist2
 
   !$acc parallel loop gang vector collapse(2)
   DO jt=1,ntrac
-    !$claw loop-hoist(j,i) reshape(array2d_2(0),array2d_1(1,j)) interchange
+    !$claw loop-hoist(j,i) reshape(array2d_2(0),array2d_1(1,2)) interchange
     IF (.FALSE.) CYCLE
     var1=tdum%value1
     var2=var1**2.
