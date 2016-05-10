@@ -192,12 +192,12 @@ reshape_optional[ClawLanguage l]
 
 reshape_element returns [ClawReshapeInfo i]
   @init{
-    List<String> temp = new ArrayList();
+    List<Integer> temp = new ArrayList();
   }
 :
     array_name=IDENTIFIER '(' target_dim=NUMBER ')'
     { $i = new ClawReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
-  | array_name=IDENTIFIER '(' target_dim=NUMBER ',' identifiers_list[temp] ')'
+  | array_name=IDENTIFIER '(' target_dim=NUMBER ',' integers_list[temp] ')'
     { $i = new ClawReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
 ;
 
@@ -216,6 +216,14 @@ identifiers_list[List<String> ids]:
   | i=IDENTIFIER { $ids.add($i.text); } ',' identifiers_list[$ids]
 ;
 
+integers[List<Integer> ints]:
+
+;
+
+integers_list[List<Integer> ints]:
+    i=NUMBER { $ints.add(Integer.parseInt($i.text)); }
+  | i=NUMBER { $ints.add(Integer.parseInt($i.text)); } ',' integers[$ints]
+;
 
 indexes_option[ClawLanguage l]
   @init{

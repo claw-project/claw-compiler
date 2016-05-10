@@ -15,7 +15,7 @@ import java.util.List;
 public class ClawReshapeInfo {
   private final String _array_name;
   private final int _target_dimension;
-  private final List<String> _kept_dimensions;
+  private final List<Integer> _kept_dimensions;
 
   /**
    * Constructs a new ClawReshapeInfo object with all its needed information.
@@ -24,7 +24,7 @@ public class ClawReshapeInfo {
    *                        this list informs which dimension is preserved.
    */
   ClawReshapeInfo(String array_name, int dimension,
-                  List<String> kept_dimensions)
+                  List<Integer> kept_dimensions)
   {
     _array_name = array_name;
     _target_dimension = dimension;
@@ -52,7 +52,7 @@ public class ClawReshapeInfo {
    * @return List of kept dimensions if any. List is empty if this information
    * is not present.
    */
-  public List<String> getKeptDimensions(){
+  public List<Integer> getKeptDimensions(){
     return _kept_dimensions;
   }
 

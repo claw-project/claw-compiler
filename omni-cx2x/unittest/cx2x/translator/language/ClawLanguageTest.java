@@ -673,9 +673,9 @@ public class ClawLanguageTest {
 
 
     ClawReshapeInfo info1 = new ClawReshapeInfo("zmd", 0,
-        new ArrayList<String>());
+        new ArrayList<Integer>());
     ClawReshapeInfo info2 =
-        new ClawReshapeInfo("zsediflux", 1, Collections.singletonList("j"));
+        new ClawReshapeInfo("zsediflux", 1, Collections.singletonList(2));
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,j))",
         Arrays.asList("i", "j"), false, null, true,
         Arrays.asList(info1, info2));
@@ -735,8 +735,8 @@ public class ClawLanguageTest {
               l.getReshapeClauseValues().get(i).getArrayName());
           assertEquals(infos.get(i).getTargetDimension(),
               l.getReshapeClauseValues().get(i).getTargetDimension());
-          List<String> expected = infos.get(i).getKeptDimensions();
-          List<String> actual =
+          List<Integer> expected = infos.get(i).getKeptDimensions();
+          List<Integer> actual =
               l.getReshapeClauseValues().get(i).getKeptDimensions();
           assertEquals(expected.size(), actual.size());
           for(int j=0; j < expected.size(); ++j){
