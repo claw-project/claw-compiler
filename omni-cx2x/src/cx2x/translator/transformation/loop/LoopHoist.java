@@ -198,7 +198,7 @@ public class LoopHoist extends BlockTransformation {
         xcodeml, transformer, _doGroup.get(0).getDoStmts()[0]);
 
     // Apply reshape clause
-    // TODO
+    TransformationHelper.applyReshapeClause(_startClaw, xcodeml);
 
     // Delete pragmas
     _startClaw.getPragma().delete();
