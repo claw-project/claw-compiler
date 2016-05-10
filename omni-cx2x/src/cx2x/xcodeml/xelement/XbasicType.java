@@ -6,6 +6,8 @@
 package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import cx2x.xcodeml.helper.*;
@@ -327,6 +329,36 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
       baseElement.removeAttribute(XelementName.ATTR_IS_ALLOCATABLE);
       _is_allocatable = false;
     }
+  }
+
+  /**
+   * Remove all dimension from the type
+   */
+  public void resetDimension(){
+    for(Xindex idx : _dimensions){
+      idx.delete();
+    }
+    _dimensions.clear();
+    _isArray = false;
+  }
+
+  /**
+   * Remove the dimensions not in the given list. Dimension index starts at 1.
+   * @param keptDimensions List of dimension index to be kept.
+   */
+  public void removeDimension(List<Integer> keptDimensions){
+    List<Xindex> keptDim = new ArrayList<>();
+    for(int i = 0; i < _dimensions.size(); i++){
+      if(keptDimensions.contains(i+1)){
+        keptDim.add(_dimensions.get(i));
+      } else {
+        _dimensions.get(i).delete();
+      }
+    }
+    if(keptDim.size() == 0){
+      _isArray = false;
+    }
+    _dimensions = keptDim;
   }
 
   @Override
