@@ -172,7 +172,31 @@ public class XelementHelper {
     return references;
   }
 
-  
+  /**
+   * Demote an array reference to a var reference.
+   * @param ref     The array reference to be modified.
+   */
+  public static void demoteToScalar(XarrayRef ref){
+    Xvar var = ref.getVarRef().getVar().cloneObject();
+    insertAfter(ref, var);
+    ref.delete();
+  }
+
+  /**
+   * Demote an array reference to a reference with fewer dimensions.
+   * @param ref            The array reference to be modified.
+   * @param keptDimensions List of dimensions to be kept. Dimension index starts
+   *                       at 1.
+   */
+  public static void demote(XarrayRef ref, List<Integer> keptDimensions){
+    for(int i = 0; i < ref.getInnerElements().size(); ++i){
+      if(!keptDimensions.contains(i+1)){
+        ref.getInnerElements().get(i).delete();
+      }
+    }
+    ref.reset();
+  }
+
   /**
    * Retrieve the index ranges of an array notation.
    * @param arrayRef The array reference statements to extract the ranges from.
