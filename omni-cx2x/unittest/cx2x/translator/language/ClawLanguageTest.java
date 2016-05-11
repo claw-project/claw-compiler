@@ -676,7 +676,7 @@ public class ClawLanguageTest {
         new ArrayList<Integer>());
     ClawReshapeInfo info2 =
         new ClawReshapeInfo("zsediflux", 1, Collections.singletonList(2));
-    analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,j))",
+    analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
         Arrays.asList(info1, info2));
 
