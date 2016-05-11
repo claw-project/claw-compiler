@@ -186,10 +186,10 @@ function claw_f_set_parameters()
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
-  if [ ${target_opt[0]} == "openacc" ]
+  if [ "${target_opt[0]}" == "openacc" ]
   then
     pp_add_opt+=("-D_OPENACC")
-  elif [ ${target_opt[0]} == "openmp" ]
+  elif [ "${target_opt[0]}" == "openmp" ]
   then
     pp_add_opt+=("-D_OPENMP")
   fi
