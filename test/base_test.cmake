@@ -54,6 +54,9 @@ add_custom_target(
 add_dependencies(${BUILD_TEST_TARGET} transform-${TEST_NAME})
 add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 
+# Define additional compilation flags
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
+
 # Build the original code and the transformed code
 add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
 add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})

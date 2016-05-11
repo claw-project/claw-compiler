@@ -63,9 +63,9 @@ set(OMNI_CX2X_CONFIG_DEFAULT "${CMAKE_INSTALL_PREFIX}/etc/${CLAW_CONFIG_FILE}")
 # Define ANTLR jar
 set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
 
+# Build OMNI compiler
 if(BUILD_OMNI)
   set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)
-  # Build OMNI compiler
   ExternalProject_Add(
     omni-compiler
     SOURCE_DIR ${OMNIC_DIR}
@@ -77,6 +77,19 @@ if(BUILD_OMNI)
   )
 endif()
 
+# Define preprocessor information used in the driver and tests
+# The driver uses preprocessor only pass but the tests compile the code.
+if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
+  # For Cray Compiler
+  set(FPPFLAGS "-e P") # for preprocessing only
+  set(FPP_REDIRECT false)
+  set(CLAW_TEST_FFP_FLAGS "-e Z") # for preprocessing and compilation
+else()
+  # Std option for gfortran
+  set(FPPFLAGS "-E") # for preprocessing only
+  set(FPP_REDIRECT true)
+  set(CLAW_TEST_FFP_FLAGS "")   # don't need it with gfortran as it is automatic
+endif()
 
 # Build instruction for the xcodeml translator tool
 add_subdirectory(omni-cx2x)
