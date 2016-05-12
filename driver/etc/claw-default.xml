@@ -1,6 +1,7 @@
 <!-- CLAW default configuration. This file should not be edited ! -->
 <claw version="0.2">
-  <target default="openacc" />
+  <target default="gpu" />
+  <directive default="openacc" />
   <groups>
     <group type="independent" name="remove"           class="cx2x.translator.transformation.utility.UtilityRemove" />
     <group type="independent" name="array-transform"  class="cx2x.translator.transformation.loop.ArrayTransform" />
