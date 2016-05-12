@@ -187,7 +187,7 @@ public class Cx2x {
     if(directive_option == null){
       directive = ConfigurationHelper.readDefaultDirective(configuration_path);
     } else {
-      directive = AcceleratorDirective.fromString(target_option);
+      directive = AcceleratorDirective.fromString(directive_option);
     }
 
     Target target;
