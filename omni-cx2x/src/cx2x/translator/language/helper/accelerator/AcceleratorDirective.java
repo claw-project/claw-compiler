@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.translator.language.helper.accelerator;
 
 import java.util.Arrays;
@@ -7,7 +12,7 @@ import java.util.List;
  * Enumeration that define the possible accelerator directive supported.
  * Currently OpenACC, OpenMP and NONE are available.
  *
- * Created by clementval on 07/04/16.
+ * @author clementval
  */
 public enum AcceleratorDirective {
   NONE,
@@ -18,7 +23,7 @@ public enum AcceleratorDirective {
   private static final String openacc = "openacc";
   private static final String openmp = "openmp";
 
-  public static List<String> availableTarget(){
+  public static List<String> availableDirectiveLanguage(){
     return Arrays.asList(none, openacc, openmp);
   }
 
