@@ -55,6 +55,7 @@ public class ClawXcodeMlTranslator {
   private ClawTransformer _transformer = null;
   private XcodeProgram _program = null;
   private final AcceleratorGenerator _generator;
+  private final Target _target;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
@@ -75,8 +76,9 @@ public class ClawXcodeMlTranslator {
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(groups, target);
+    _transformer = new ClawTransformer(groups);
     _blockDirectives = new Hashtable<>();
+    _target = target;
     _generator = AcceleratorHelper.createAcceleratorGenerator(directive);
   }
 
@@ -112,7 +114,8 @@ public class ClawXcodeMlTranslator {
       }
       try {
         // Analyze the raw pragma with the CLAW language parser
-        ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma, _generator);
+        ClawLanguage analyzedPragma =
+            ClawLanguage.analyze(pragma, _generator, _target);
 
         // Create transformation object based on the directive
         switch (analyzedPragma.getDirective()) {

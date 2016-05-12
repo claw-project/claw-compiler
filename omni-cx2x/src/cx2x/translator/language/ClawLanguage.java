@@ -7,6 +7,7 @@ package cx2x.translator.language;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.Xpragma;
@@ -27,6 +28,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private static final String PREFIX_CLAW = "claw";
 
   private AcceleratorGenerator _generator;
+  private Target _target;
   private ClawDirective _directive;
 
   // Clauses values
@@ -121,12 +123,14 @@ public class ClawLanguage extends AnalyzedPragma {
    * Analyze a raw string input and match it with the CLAW language definition.
    * @param pragma    A Xpragma object to be analyzed against the CLAW language.
    * @param generator Accelerator directive generator.
+   * @param target Target that influences the code transformation.
    * @return A ClawLanguage object with the corresponding extracted information.
    * @throws IllegalDirectiveException If directive does not follow the CLAW
    * language specification. 
    */
   public static ClawLanguage analyze(Xpragma pragma,
-                                     AcceleratorGenerator generator)
+                                     AcceleratorGenerator generator,
+                                     Target target)
       throws IllegalDirectiveException
   {
 
@@ -159,6 +163,7 @@ public class ClawLanguage extends AnalyzedPragma {
       // Get the ClawLanguage object return by the parser after analysis.
       ctx.l.attachPragma(pragma);
       ctx.l.setAcceleratorGenerator(generator);
+      ctx.l.setTarget(target);
       return ctx.l;
     } catch(ParseCancellationException pcex){
       IllegalDirectiveException ex = cel.getLastError();
@@ -603,6 +608,22 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public AcceleratorGenerator getAcceleratorGenerator(){
     return _generator;
+  }
+
+  /**
+   * Set the target for code transformation.
+   * @param target A target value from the enumeration.
+   */
+  private void setTarget(Target target){
+    _target = target;
+  }
+
+  /**
+   * Get the associated target.
+   * @return Target.
+   */
+  public Target getTarget(){
+    return _target;
   }
 
   /**
