@@ -13,12 +13,13 @@ SUBROUTINE compute_column(q, t)
   INTEGER :: k
   INTEGER :: kend = 60
 
-  c = 5.345
   ! Define a dimension that will be added to the variable in data clause
-  !$claw define dimension proma(0:NPROMA,:)
   ! Apply the parallelization transformation and add new dimension to the
   ! variables declared in the data clause
+  !$claw define dimension proma(1:NPROMA,:)
   !$claw parallelize data(q,t) dimension(proma)
+
+  c = 5.345
   DO k = 1, kend
     t(k) = c * k
     q(k) = q(k - 1)  + t(k) * c
