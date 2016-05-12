@@ -6,6 +6,7 @@
 package cx2x.translator.common;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.target.Target;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -29,6 +30,7 @@ public class ConfigurationHelper {
   // Elements and attributes constant name
   private static final String GROUP_ELEMENT = "group";
   private static final String TARGET_ELEMENT = "target";
+  private static final String DIRECTIVE_ELEMENT = "directive";
   private static final String CLASS_ATTR = "class";
   private static final String DEFAULT_ATTR = "default";
   private static final String NAME_ATTR = "name";
@@ -86,12 +88,34 @@ public class ConfigurationHelper {
   /**
    * Read the default target from the configuration file.
    * @param path Path to the configuration file.
-   * @return Enum value corresponding to the target. NONE if nothing defined.
+   * @return Enum value corresponding to the target. CPU if nothing defined.
    */
-  public static AcceleratorDirective readDefaultTarget(String path) {
+  public static Target readDefaultTarget(String path) {
     try {
       Element root = open(path);
       NodeList targets = root.getElementsByTagName(TARGET_ELEMENT);
+      if(targets.getLength() != 1){
+        return Target.CPU;
+      }
+      Element target = (Element)targets.item(0);
+      String defaultTarget = target.getAttribute(DEFAULT_ATTR);
+      return Target.fromString(defaultTarget);
+    } catch (Exception ignored){
+      return Target.CPU;
+    }
+  }
+
+  /**
+   * Read the default accelerator directive language from the configuration
+   * file.
+   * @param path Path to the configuration file.
+   * @return Enum value corresponding to the directive language. NONE if
+   * nothing defined.
+   */
+  public static AcceleratorDirective readDefaultDirective(String path) {
+    try {
+      Element root = open(path);
+      NodeList targets = root.getElementsByTagName(DIRECTIVE_ELEMENT);
       if(targets.getLength() != 1){
         return AcceleratorDirective.NONE;
       }

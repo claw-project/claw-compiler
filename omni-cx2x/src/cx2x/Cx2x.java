@@ -9,6 +9,7 @@ import cx2x.translator.ClawXcodeMlTranslator;
 import cx2x.translator.common.ConfigurationHelper;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.target.Target;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import xcodeml.util.XmOption;
 
@@ -39,21 +40,17 @@ public class Cx2x {
       "           <input XcodeML file>",
       "           [-o <output reconstructed XcodeML file>]",
       "",
-      "  -h, --help       display program usage.",
-      "  -l               suppress line directive in decompiled code.",
-      //"  -w N             set max columns to N for Fortran source.",
-      //"  -gnu             decompile for GNU Fortran (default).",
-      //"  -intel           decompile for Intel Fortran.",
-      "  -M dir           specify where to search for .xmod files",
-      //"  -decomp          output decompiled source code.",
-      "  -target-list     list all accelerator target available for code generation.",
-      "  -target=<target> specify the accelerator language target for code generation.",
-      "  -config=<target> specify an alternative configuration for the translator.",
+      "  -h, --help              display program usage.",
+      "  -l                      suppress line directive in decompiled code.",
+      "  -M dir                  specify where to search for .xmod files",
+      "  --target-list           list all target available for code transformation.",
+      "  --target=<target>       specify the target for the code transformation.",
+      "  --directive-list        list all accelerator directive language available for code generation.",
+      "  --directive=<directive> specify the accelerator directive language for code generation.",
+      "  --config=<target>       specify an alternative configuration for the translator.",
       "",
       " Debug Options:",
-      "  -d           enable output debug message.",
-      //"  -dxcode      output Xcode file as <input file>.x",
-      //"  -dump        output Xcode file and decompiled file to standard output.",
+      "  -d                      enable output debug message.",
     };
 
     for(String line : lines) {
@@ -66,9 +63,19 @@ public class Cx2x {
    * List all accelerator target available for code generation.
    */
   private static void listTarget(){
-    System.out.println("- CLAW accelerator targets -");
-    for(String t : AcceleratorDirective.availableTarget()){
+    System.out.println("- CLAW available targets -");
+    for(String t : Target.availableTargets()){
       System.out.println("  - " + t);
+    }
+  }
+
+  /**
+   * List all accelerator directive language available for code generation.
+   */
+  private static void listDirectiveLanguage(){
+    System.out.println("- CLAW accelerator directive language -");
+    for(String d : AcceleratorDirective.availableDirectiveLanguage()){
+      System.out.println("  - " + d);
     }
   }
 
@@ -80,10 +87,13 @@ public class Cx2x {
     try{
       List<GroupConfiguration> groups =
           ConfigurationHelper.readGroups(configPath);
-      AcceleratorDirective target =
+      AcceleratorDirective directive =
+          ConfigurationHelper.readDefaultDirective(configPath);
+      Target target =
           ConfigurationHelper.readDefaultTarget(configPath);
       System.out.println("- CLAW translator configuration -\n");
-      System.out.println("Default accelerator target: " + target + "\n");
+      System.out.println("Default accelerator directive: " + directive + "\n");
+      System.out.println("Default target: " + target + "\n");
       System.out.println("Current transformation order:");
       for (int i = 0; i < groups.size(); ++i) {
         GroupConfiguration g = groups.get(i);
@@ -103,8 +113,8 @@ public class Cx2x {
   public static void main(String[] args) throws Exception {
     String inXmlFile = null;
     String outXmlFile = null;
-    //String lang = "F"; // default language is Fortran
     String target_option = null;
+    String directive_option = null;
     String configuration_path = null;
     boolean show_configuration = false;
 
@@ -123,10 +133,6 @@ public class Cx2x {
           error("needs argument after -o");
         outXmlFile = narg;
         ++i;
-      /*} else if(arg.equals("-gnu")) {
-        XmOption.setCompilerVendor(XmOption.COMP_VENDOR_GNU);
-      } else if(arg.equals("-intel")) {
-        XmOption.setCompilerVendor(XmOption.COMP_VENDOR_INTEL);*/
       } else if (arg.startsWith("-M")) {
           if (arg.equals("-M")) {
             if (narg == null)
@@ -142,6 +148,11 @@ public class Cx2x {
         return;
       } else if (arg.startsWith("--target=")) {
         target_option = arg.replace("--target=", "");
+      } else if (arg.startsWith("--directive-list")) {
+        listDirectiveLanguage();
+        return;
+      } else if (arg.startsWith("--directive=")) {
+        directive_option = arg.replace("--directive=", "");
       } else if (arg.startsWith("--config=")) {
         configuration_path = arg.replace("--config=", "");
       } else if (arg.startsWith("--show-config")) {
@@ -172,11 +183,18 @@ public class Cx2x {
     }
 
     // Read default target from config if not set by user
-    AcceleratorDirective target;
+    AcceleratorDirective directive;
+    if(directive_option == null){
+      directive = ConfigurationHelper.readDefaultDirective(configuration_path);
+    } else {
+      directive = AcceleratorDirective.fromString(target_option);
+    }
+
+    Target target;
     if(target_option == null){
       target = ConfigurationHelper.readDefaultTarget(configuration_path);
     } else {
-      target = AcceleratorDirective.fromString(target_option);
+      target = Target.fromString(target_option);
     }
 
     // Read transformation group configuration
@@ -189,7 +207,7 @@ public class Cx2x {
     }
 
     ClawXcodeMlTranslator translator =
-        new ClawXcodeMlTranslator(inXmlFile, outXmlFile, target, groups);
+        new ClawXcodeMlTranslator(inXmlFile, outXmlFile, directive, groups);
     translator.analyze();
     translator.transform();
   }

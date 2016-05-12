@@ -156,6 +156,9 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/language/helper/accelerator/OpenAcc.java
   cx2x/translator/language/helper/accelerator/OpenMp.java
 
+# translator.language.helper.accelerator package
+  cx2x/translator/language/helper/target/Target.java
+
 # translator.misc package
   cx2x/translator/misc/Utility.java
 

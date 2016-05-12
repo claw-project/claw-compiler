@@ -61,19 +61,20 @@ public class ClawXcodeMlTranslator {
    * ClawXcodeMlTranslator ctor.
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
-   * @param target            Accelerator target for code generation.
+   * @param directive         Accelerator directlve language for code
+   *                          generation.
    * @param groups            Transformation groups configuration list.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
-                               AcceleratorDirective target,
+                               AcceleratorDirective directive,
                                List<GroupConfiguration> groups)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
     _transformer = new ClawTransformer(groups);
     _blockDirectives = new Hashtable<>();
-    _generator = AcceleratorHelper.createAcceleratorGenerator(target);
+    _generator = AcceleratorHelper.createAcceleratorGenerator(directive);
   }
 
   /**
