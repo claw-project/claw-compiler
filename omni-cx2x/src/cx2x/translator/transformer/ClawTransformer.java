@@ -36,6 +36,8 @@ public class ClawTransformer implements Transformer {
   /**
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
+   * @param groups List of transformation groups that define the transformation
+   *               order.
    */
   public ClawTransformer(List<GroupConfiguration> groups){
     /*
