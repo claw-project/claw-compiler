@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import cx2x.translator.common.GroupConfiguration;
+import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xelement.XbaseElement;
@@ -26,6 +27,8 @@ import org.w3c.dom.Element;
 public class ClawTransformer implements Transformer {
   private int _transformationCounter = 0;
 
+  private final Target _target;
+
   // Hold all tranformation groups
   private final Map<Class, TransformationGroup> _tGroups;
 
@@ -38,8 +41,11 @@ public class ClawTransformer implements Transformer {
    * transformation and order the accordingly to their interpretation order.
    * @param groups List of transformation groups that define the transformation
    *               order.
+   * @param target Target that influences the code transformation.
    */
-  public ClawTransformer(List<GroupConfiguration> groups){
+  public ClawTransformer(List<GroupConfiguration> groups, Target target){
+    _target = target;
+
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
@@ -113,5 +119,13 @@ public class ClawTransformer implements Transformer {
       _crossTransformationTable.remove(key.getBaseElement());
     }
     _crossTransformationTable.put(key.getBaseElement(), value);
+  }
+
+  /**
+   * Get the associated target.
+   * @return Target.
+   */
+  public Target getTarget(){
+    return _target;
   }
 }

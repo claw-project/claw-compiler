@@ -111,8 +111,8 @@ public class Cx2x {
    * @throws Exception if translation failed.
    */
   public static void main(String[] args) throws Exception {
-    String inXmlFile = null;
-    String outXmlFile = null;
+    String input = null;
+    String output = null;
     String target_option = null;
     String directive_option = null;
     String configuration_path = null;
@@ -131,7 +131,7 @@ public class Cx2x {
       } else if(arg.equals("-o")) {
         if(narg == null)
           error("needs argument after -o");
-        outXmlFile = narg;
+        output = narg;
         ++i;
       } else if (arg.startsWith("-M")) {
           if (arg.equals("-M")) {
@@ -159,8 +159,8 @@ public class Cx2x {
         show_configuration = true;
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
-      } else if(inXmlFile == null) {
-        inXmlFile = arg;
+      } else if(input == null) {
+        input = arg;
       } else {
         error("too many arguments");
       }
@@ -207,7 +207,7 @@ public class Cx2x {
     }
 
     ClawXcodeMlTranslator translator =
-        new ClawXcodeMlTranslator(inXmlFile, outXmlFile, directive, groups);
+        new ClawXcodeMlTranslator(input, output, directive, target, groups);
     translator.analyze();
     translator.transform();
   }

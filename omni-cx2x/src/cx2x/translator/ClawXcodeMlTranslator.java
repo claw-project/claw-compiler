@@ -12,6 +12,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.loop.*;
@@ -63,16 +64,18 @@ public class ClawXcodeMlTranslator {
    * @param xcodemlOutputFile The XcodeML output file path.
    * @param directive         Accelerator directlve language for code
    *                          generation.
+   * @param target            Target influencing code transformation.
    * @param groups            Transformation groups configuration list.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
                                AcceleratorDirective directive,
+                               Target target,
                                List<GroupConfiguration> groups)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(groups);
+    _transformer = new ClawTransformer(groups, target);
     _blockDirectives = new Hashtable<>();
     _generator = AcceleratorHelper.createAcceleratorGenerator(directive);
   }
