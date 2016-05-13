@@ -1,4 +1,4 @@
-# Build Claw XcodeML to XcodeML translator
+# CLAW XcodeML manipulation library and translator library
 
 # ANTLR
 set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/${ANTLR_NAME}.jar)
@@ -20,7 +20,9 @@ if(NOT EXISTS ${ANTLR_JAR})
   endif()
 endif()
 
-set(CMAKE_JAVA_INCLUDE_PATH
+# Set jar dependencies in the Java classpath
+set(
+  CMAKE_JAVA_INCLUDE_PATH
   ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar
   ${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar
   ${ANTLR_JAR}
@@ -34,8 +36,6 @@ add_subdirectory(${CLAW_PARSER_DIR})
 
 # XcodeML general library
 add_jar(${OMNI_CX2X_XCODEML_NAME}
-
-
 
 # XcodeML.error package
   cx2x/xcodeml/error/XanalysisError.java
