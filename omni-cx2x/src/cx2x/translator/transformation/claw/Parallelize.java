@@ -5,12 +5,16 @@
 
 package cx2x.translator.transformation.claw;
 
+import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XfunctionDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The parallelize transformation transforms the code contained in a
@@ -22,6 +26,7 @@ import cx2x.xcodeml.xelement.XfunctionDefinition;
 public class Parallelize extends Transformation {
 
   private final ClawLanguage _claw;
+  private Map<String, ClawDimension> _dimensions;
 
   /**
    * Constructs a new Parallelize transfomration triggered from a specific
@@ -31,6 +36,7 @@ public class Parallelize extends Transformation {
   public Parallelize(ClawLanguage directive) {
     super(directive);
     _claw = directive; // Keep information about the claw directive here
+    _dimensions = new HashMap<>();
   }
 
   @Override
@@ -51,6 +57,16 @@ public class Parallelize extends Transformation {
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().getLineNo());
       return false;
+    }
+
+    for(ClawDimension d : _claw.getDimesionValues()){
+      if(_dimensions.containsKey(d.getIdentifier())){
+        xcodeml.addError(
+            String.format("Dimension with identifier %s already specified.",
+                d.getIdentifier()), _claw.getPragma().getLineNo()
+        );
+      }
+      _dimensions.put(d.getIdentifier(), d);
     }
 
     // Check data information
@@ -77,6 +93,15 @@ public class Parallelize extends Transformation {
           "over clause. Use : to specify it.",
           _claw.getPragma().getLineNo());
       return false;
+    }
+
+    for(String o : _claw.getOverClauseValues()){
+      if(!_dimensions.containsKey(o)){
+        xcodeml.addError(
+            String.format("Dimension %s is not defined. Cannot be used in over " +
+                "clause", o), _claw.getPragma().getLineNo()
+        );
+      }
     }
 
 
