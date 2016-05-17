@@ -58,7 +58,7 @@ public class ClawLanguageTest {
 
   /**
    * Assert the result for valid loop fusion CLAW directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param raw       Raw string value of the CLAW directive to be analyzed.
    * @param groupName Group name to be found if any.
    */
   private void analyzeValidClawLoopFusion(String raw, String groupName,
@@ -91,7 +91,7 @@ public class ClawLanguageTest {
 
   /**
    * Assert any unvalid claw raw input
-   * @param raw Raw string valud of the CLAW directive to be analyzed.
+   * @param raw Raw string value of the CLAW directive to be analyzed.
    */
   private void analyzeUnvalidClawLanguage(String raw){
     try {
@@ -138,7 +138,7 @@ public class ClawLanguageTest {
 
   /**
    * Assert the result for valid loop interchange CLAW directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param raw       Raw string value of the CLAW directive to be analyzed.
    * @param indexes   List of indexes to be found if any.
    */
   private void analyzeValidClawLoopInterchange(String raw,
@@ -198,8 +198,8 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert the result for valid lo CLAW directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * Assert the result for valid simple CLAW directive
+   * @param raw       Raw string value of the CLAW directive to be analyzed.
    * @param directive Directive to be match.
    */
   private void analyzeValidSimpleClaw(String raw, ClawDirective directive,
@@ -440,7 +440,7 @@ public class ClawLanguageTest {
 
   /**
    * Assert the result for valid loop extract CLAW directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param raw       Raw string value of the CLAW directive to be analyzed.
    * @param induction Induction var to be found.
    * @param lower     Lower bound value to be found.
    * @param upper     Upper bound value to be found.
@@ -508,8 +508,8 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert the result for valid lo CLAW directive
-   * @param raw     Raw string valud of the CLAW directive to be analyzed.
+   * Assert the result for valid CLAW kcache directive
+   * @param raw     Raw string value of the CLAW directive to be analyzed.
    * @param data    List of identifiers to be checked.
    * @param offsets List of offsets to be checked.
    * @param init    If true, check that ClawLanguage object has init clause
@@ -606,8 +606,8 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert the result for valid lo CLAW directive
-   * @param raw         Raw string valud of the CLAW directive to be analyzed.
+   * Assert the result for valid CLAW array-transform directive
+   * @param raw         Raw string value of the CLAW directive to be analyzed.
    * @param fusion      Set to true if the extracted option should be present.
    * @param fusionGroup Name of the group in the extracted fusion option.
    * @param parallel    Set to true if the extracted option should be present.
@@ -693,8 +693,8 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert the result for valid lo CLAW directive
-   * @param raw         Raw string valud of the CLAW directive to be analyzed.
+   * Assert the result for valid CLAW loop-hoist directive
+   * @param raw         Raw string value of the CLAW directive to be analyzed.
    * @param inductions  List of induction variables to be checked.
    */
   private void analyzeValidLoopHoist(String raw, List<String> inductions,
@@ -754,9 +754,8 @@ public class ClawLanguageTest {
     }
   }
 
-
   /**
-   * Test various input for the CLAW loop-hoist directive.
+   * Test various input for the CLAW call directive.
    */
   @Test
   public void ArrayToFctCallTest(){
@@ -777,8 +776,8 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert the result for valid lo CLAW directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * Assert the result for valid CLAW call directive
+   * @param raw       Raw string value of the CLAW directive to be analyzed.
    * @param arrayName Array name to be checked.
    * @param fctName   Function name to be checked.
    * @param params    List of parameters identifier to be checked.
@@ -838,7 +837,7 @@ public class ClawLanguageTest {
 
   /**
    * Assert the result for valid CLAW define dimension directive
-   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param raw       Raw string value of the CLAW directive to be analyzed.
    * @param dimesion  Reference dimension to be checked.
    */
   private void analyzeValidDimension(String raw, ClawDimension dimesion)
