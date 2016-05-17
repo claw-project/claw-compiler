@@ -46,12 +46,14 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ClawReshapeInfo> _reshapeInfos;
+  private ClawDimension _dimension;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
-  private boolean _hasFusionClause, _hasGroupClause, _hasIndexesValue;
-  private boolean _hasInductionClause, _hasInitClause, _hasInterchangeClause;
-  private boolean _hasParallelClause, _hasPrivateClause, _hasReshapeClause;
+  private boolean _hasDimensionClause, _hasFusionClause, _hasGroupClause;
+  private boolean _hasIndexesValue, _hasInductionClause, _hasInitClause;
+  private boolean _hasInterchangeClause, _hasParallelClause, _hasPrivateClause;
+  private boolean _hasReshapeClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -77,6 +79,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _arrayName = null;
     _collapseClauseValue = 0;
     _dataValues = null;
+    _dimension = null;
     _fctCallParameters = null;
     _fctName = null;
     _groupClauseValue = null;
@@ -91,6 +94,7 @@ public class ClawLanguage extends AnalyzedPragma {
     // Clauses flags members
     _hasAccClause = false;
     _hasCollapseClause = false;
+    _hasDimensionClause = false;
     _hasFusionClause = false;
     _hasGroupClause = false;
     _hasIndexesValue = false;
@@ -583,6 +587,32 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public boolean hasReshapeClause(){
     return _hasReshapeClause;
+  }
+
+  /**
+   * Check whether the dimesion clause is used.
+   * @return True if the dimesion clause is used.
+   */
+  public boolean hasDimensionClause(){
+    return _hasDimensionClause;
+  }
+
+  /**
+   * Set the dimension clause value.
+   * @param dimension ClawDimension object constructed from the value extracted
+   *                  in the clause.
+   */
+  void setDimensionClauseValue(ClawDimension dimension){
+    _hasDimensionClause = true;
+    _dimension = dimension;
+  }
+
+  /**
+   * Get the dimension extracted information.
+   * @return Dimesion defined in the clause.
+   */
+  public ClawDimension getDimesionClauseValue(){
+    return _dimension;
   }
 
   /**

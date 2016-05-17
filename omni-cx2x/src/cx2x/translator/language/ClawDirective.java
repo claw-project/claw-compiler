@@ -14,6 +14,7 @@ package cx2x.translator.language;
 public enum ClawDirective {
   ARRAY_TRANSFORM,
   ARRAY_TO_CALL,
+  DEFINE,
   KCACHE,
   LOOP_FUSION,
   LOOP_INTERCHANGE,

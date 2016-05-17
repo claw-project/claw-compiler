@@ -109,7 +109,7 @@ directive[ClawLanguage l]
       $l.setDirective(ClawDirective.LOOP_HOIST);
       $l.setEndPragma();
     }
-
+  // on the fly directive
   | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')'
     {
       $l.setDirective(ClawDirective.ARRAY_TO_CALL);
@@ -117,6 +117,15 @@ directive[ClawLanguage l]
       $l.setFctName($fct_name.text);
       $l.setArrayName($array_name.text);
     }
+
+   //
+   | DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ',' upper=range_id ')'
+     {
+       $l.setDirective(ClawDirective.DEFINE);
+       ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
+       $l.setDimensionClauseValue(cd);
+     }
+   | PARALLELIZE DATA '(' ')' OVER '(' ')'
 ;
 
 group_option[ClawLanguage l]:
@@ -323,18 +332,22 @@ CLAW         : 'claw';
 // Directives
 ARRAY_TRANS  : 'array-transform';
 ARRAY_TO_CALL: 'call';
+DEFINE       : 'define';
 END          : 'end';
 KCACHE       : 'kcache';
 LEXTRACT     : 'loop-extract';
 LFUSION      : 'loop-fusion';
 LHOIST       : 'loop-hoist';
 LINTERCHANGE : 'loop-interchange';
+PARALLELIZE  : 'parallelize';
 REMOVE       : 'remove';
+
 
 // Clauses
 ACC          : 'acc';
 COLLAPSE     : 'collapse';
 DATA         : 'data';
+DIMENSION    : 'dimension';
 FUSION       : 'fusion';
 GROUP        : 'group';
 INDUCTION    : 'induction';
@@ -342,6 +355,7 @@ INIT         : 'init';
 INTERCHANGE  : 'interchange';
 MAP          : 'map';
 OFFSET       : 'offset';
+OVER         : 'over';
 PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';

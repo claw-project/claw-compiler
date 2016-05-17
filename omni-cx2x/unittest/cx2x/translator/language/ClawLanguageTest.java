@@ -808,6 +808,72 @@ public class ClawLanguageTest {
     }
   }
 
+  /**
+   * Test various input for the CLAW loop-hoist directive.
+   */
+  @Test
+  public void DefineDimensionTest(){
+    // Valid directives
+
+    ClawDimension d1 = new ClawDimension("i", "1", "NX");
+    analyzeValidDimesion("claw define dimension i(1,NX)", d1);
+
+    ClawDimension d2 = new ClawDimension("j", "1", "NY");
+    analyzeValidDimesion("claw define dimension j(1,NY)", d2);
+
+    ClawDimension d3 = new ClawDimension("j", "1", "10");
+    analyzeValidDimesion("claw define dimension j(1,10)", d3);
+
+    ClawDimension d4 = new ClawDimension("j", "jstart", "10");
+    analyzeValidDimesion("claw define dimension j(jstart,10)", d4);
+
+    ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
+    analyzeValidDimesion("claw define dimension j(jstart,ny)", d5);
+
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw define ");
+    analyzeUnvalidClawLanguage("claw define dimension");
+    analyzeUnvalidClawLanguage("claw define dimension ()");
+  }
+
+  /**
+   * Assert the result for valid lo CLAW directive
+   * @param raw       Raw string valud of the CLAW directive to be analyzed.
+   * @param dimesion  Reference dimension to be checked.
+   */
+  private void analyzeValidDimesion(String raw, ClawDimension dimesion)
+  {
+    try {
+      Xpragma p = XmlHelper.createXpragma();
+      p.setValue(raw);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
+      assertEquals(ClawDirective.DEFINE, l.getDirective());
+
+      assertEquals(dimesion.getIdentifier(),
+          l.getDimesionClauseValue().getIdentifier());
+      assertEquals(dimesion.lowerBoundIsVar(),
+          l.getDimesionClauseValue().lowerBoundIsVar());
+      assertEquals(dimesion.upperBoundIsVar(),
+          l.getDimesionClauseValue().upperBoundIsVar());
+      assertEquals(dimesion.getLowerBoundInt(),
+          l.getDimesionClauseValue().getLowerBoundInt());
+      assertEquals(dimesion.getUpperBoundInt(),
+          l.getDimesionClauseValue().getUpperBoundInt());
+      assertEquals(dimesion.getLowerBoundId(),
+          l.getDimesionClauseValue().getLowerBoundId());
+      assertEquals(dimesion.getUpperBoundId(),
+          l.getDimesionClauseValue().getUpperBoundId());
+
+    } catch(IllegalDirectiveException idex){
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
+
   @Test
   public void ContinuationTest(){
     String continuedPragma = "claw loop-fusion   claw collapse(2)";
