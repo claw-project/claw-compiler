@@ -16,7 +16,7 @@ SUBROUTINE compute_column(q, t)
   ! Define a dimension that will be added to the variable in data clause
   ! Apply the parallelization transformation and add new dimension to the
   ! variables declared in the data clause
-  !$claw define dimension proma(1:NPROMA) &
+  !$claw define dimension proma(1,NPROMA) &
   !$claw parallelize data(q,t) over (proma,:)
 
   c = 5.345
