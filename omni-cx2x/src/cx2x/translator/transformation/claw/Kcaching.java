@@ -29,8 +29,8 @@ public class Kcaching extends Transformation {
   private XdoStatement _doStmt;
 
   /**
-   * Constructs a new Kcachine triggered from a specific pragma.
-   * @param directive  The directive that triggered the k caching transformation.
+   * Constructs a new Kcaching transformation triggered from a specific pragma.
+   * @param directive The directive that triggered the k caching transformation.
    */
   public Kcaching(ClawLanguage directive) {
     super(directive);
