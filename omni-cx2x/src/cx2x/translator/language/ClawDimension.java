@@ -98,7 +98,7 @@ public class ClawDimension {
   }
 
   /**
-   * Get the identifier for the current dimension. 
+   * Get the identifier for the current dimension.
    * @returnThe identifier of the current dimension.
    */
   public String getIdentifier(){
