@@ -127,14 +127,8 @@ directive[ClawLanguage l]
       $l.setArrayName($array_name.text);
     }
 
-   //
-   | DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ',' upper=range_id ')'
-     {
-       $l.setDirective(ClawDirective.DEFINE);
-       ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
-       $l.setDimensionClauseValue(cd);
-     }
-   | PARALLELIZE DATA '(' ids_list[o] ')' OVER '(' ids_or_colon_list[s] ')'
+   // parallelize directive
+   | define_option[$l]* PARALLELIZE DATA '(' ids_list[o] ')' OVER '(' ids_or_colon_list[s] ')'
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setDataClause(o);
@@ -335,6 +329,16 @@ mapping_option_list[List<ClawMapping> mappings]:
     m=mapping_option { $mappings.add($m.mapping); }
   | m=mapping_option { $mappings.add($m.mapping); } mapping_option_list[$mappings]
 ;
+
+
+define_option[ClawLanguage l]:
+    DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ',' upper=range_id ')'
+    {
+      ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
+      $l.addDimension(cd);
+    }
+;
+
 
 /*----------------------------------------------------------------------------
  * LEXER RULES

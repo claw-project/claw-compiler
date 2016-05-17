@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ClawReshapeInfo> _reshapeInfos;
-  private ClawDimension _dimension;
+  private List<ClawDimension> _dimensions;
   private List<String> _overValues;
 
   // Clauses flags
@@ -80,7 +81,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _arrayName = null;
     _collapseClauseValue = 0;
     _dataValues = null;
-    _dimension = null;
+    _dimensions = null;
     _fctCallParameters = null;
     _fctName = null;
     _groupClauseValue = null;
@@ -627,21 +628,24 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Set the dimension clause value.
+   * Add a new dimension extracted from the directive.
    * @param dimension ClawDimension object constructed from the value extracted
    *                  in the clause.
    */
-  void setDimensionClauseValue(ClawDimension dimension){
+  void addDimension(ClawDimension dimension){
     _hasDimensionClause = true;
-    _dimension = dimension;
+    if(_dimensions == null){
+      _dimensions = new ArrayList<>();
+    }
+    _dimensions.add(dimension);
   }
 
   /**
-   * Get the dimension extracted information.
-   * @return Dimesion defined in the clause.
+   * Get the dimensions extracted information.
+   * @return All dimensions extracted from the directive.
    */
-  public ClawDimension getDimesionClauseValue(){
-    return _dimension;
+  public List<ClawDimension> getDimesionValues(){
+    return _dimensions;
   }
 
   /**
