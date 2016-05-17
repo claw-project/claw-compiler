@@ -69,7 +69,14 @@ public class Parallelize extends Transformation {
         );
         return false;
       }
+    }
 
+    // Check the dimension information
+    if(!_claw.getOverClauseValues().contains(":")){
+      xcodeml.addError("The column dimension has not been specified in the " +
+          "over clause. Use : to specify it.",
+          _claw.getPragma().getLineNo());
+      return false;
     }
 
 
