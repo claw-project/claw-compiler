@@ -47,13 +47,14 @@ public class ClawLanguage extends AnalyzedPragma {
   private ClawRange _rangeValue;
   private List<ClawReshapeInfo> _reshapeInfos;
   private ClawDimension _dimension;
+  private List<String> _overValues;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
   private boolean _hasDimensionClause, _hasFusionClause, _hasGroupClause;
   private boolean _hasIndexesValue, _hasInductionClause, _hasInitClause;
-  private boolean _hasInterchangeClause, _hasParallelClause, _hasPrivateClause;
-  private boolean _hasReshapeClause;
+  private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
+  private boolean _hasPrivateClause, _hasReshapeClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -88,6 +89,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _inductionClauseValues = null;
     _mappingValues = null;
     _offsetValues = null;
+    _overValues = null;
     _rangeValue = null;
     _reshapeInfos = null;
 
@@ -101,6 +103,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasInductionClause = false;
     _hasInitClause = false;
     _hasInterchangeClause = false;
+    _hasOverClause = false;
     _hasParallelClause = false;
     _hasPrivateClause = false;
     _hasReshapeClause = false;
@@ -469,7 +472,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Check whether the current directive has the induction clause enabled.
-   * @return True if the induction clause is enabled.
+   * @return True if the data clause is enabled.
    */
   public boolean hasDataClause(){
     return _hasDataClause;
@@ -481,6 +484,32 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public List<String> getDataClauseValues(){
     return _dataValues;
+  }
+
+  /**
+   * Enable the over clause for the current directive and set the extracted
+   * dimensions value.
+   * @param data List of dimension extracted from the clause.
+   */
+  void setOverClause(List<String> data){
+    _hasOverClause = true;
+    _overValues = data;
+  }
+
+  /**
+   * Check whether the current directive has the over clause enabled.
+   * @return True if the over clause is enabled.
+   */
+  public boolean hasOverClause(){
+    return _hasOverClause;
+  }
+
+  /**
+   * Get the dimensions values extracted from the over clause.
+   * @return Dimensions identifier or : as a String.
+   */
+  public List<String> getOverClauseValues(){
+    return _overValues;
   }
 
   /**
