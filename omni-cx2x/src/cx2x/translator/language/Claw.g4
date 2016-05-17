@@ -47,8 +47,8 @@ ids_or_colon_list[List<String> ids]
   :
     i=IDENTIFIER { $ids.add($i.text); }
   | ':' { $ids.add(":"); }
-  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
-  | ':' { $ids.add(":"); } ',' ids_list[$ids]
+  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_or_colon_list[$ids]
+  | ':' { $ids.add(":"); } ',' ids_or_colon_list[$ids]
 ;
 
 directive[ClawLanguage l]
