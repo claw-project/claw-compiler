@@ -33,6 +33,12 @@ public class Parallelize extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+    // Check if any dimension has been defined. 
+    if(!_claw.hasDimensionClause()){
+      xcodeml.addError("No dimension defined for parallelization.",
+          _claw.getPragma().getLineNo());
+    }
+
 
     return true;
   }
