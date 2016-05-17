@@ -808,84 +808,50 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Test various input for the CLAW define dimension directive.
-   */
-  @Test
-  public void DefineDimensionTest(){
-    // Valid directives
-
-    ClawDimension d1 = new ClawDimension("i", "1", "NX");
-    analyzeValidDimension("claw define dimension i(1,NX)", d1);
-
-    ClawDimension d2 = new ClawDimension("j", "1", "NY");
-    analyzeValidDimension("claw define dimension j(1,NY)", d2);
-
-    ClawDimension d3 = new ClawDimension("j", "1", "10");
-    analyzeValidDimension("claw define dimension j(1,10)", d3);
-
-    ClawDimension d4 = new ClawDimension("j", "jstart", "10");
-    analyzeValidDimension("claw define dimension j(jstart,10)", d4);
-
-    ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
-    analyzeValidDimension("claw define dimension j(jstart,ny)", d5);
-
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw define ");
-    analyzeUnvalidClawLanguage("claw define dimension");
-    analyzeUnvalidClawLanguage("claw define dimension ()");
-  }
-
-  /**
-   * Assert the result for valid CLAW define dimension directive
-   * @param raw       Raw string value of the CLAW directive to be analyzed.
-   * @param dimesion  Reference dimension to be checked.
-   */
-  private void analyzeValidDimension(String raw, ClawDimension dimesion)
-  {
-    try {
-      Xpragma p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.
-              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
-      ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
-      assertEquals(ClawDirective.DEFINE, l.getDirective());
-
-      assertEquals(dimesion.getIdentifier(),
-          l.getDimesionClauseValue().getIdentifier());
-      assertEquals(dimesion.lowerBoundIsVar(),
-          l.getDimesionClauseValue().lowerBoundIsVar());
-      assertEquals(dimesion.upperBoundIsVar(),
-          l.getDimesionClauseValue().upperBoundIsVar());
-      assertEquals(dimesion.getLowerBoundInt(),
-          l.getDimesionClauseValue().getLowerBoundInt());
-      assertEquals(dimesion.getUpperBoundInt(),
-          l.getDimesionClauseValue().getUpperBoundInt());
-      assertEquals(dimesion.getLowerBoundId(),
-          l.getDimesionClauseValue().getLowerBoundId());
-      assertEquals(dimesion.getUpperBoundId(),
-          l.getDimesionClauseValue().getUpperBoundId());
-
-    } catch(IllegalDirectiveException idex){
-      System.err.print(idex.getMessage());
-      fail();
-    }
-  }
-
-  /**
    * Test various input for the CLAW parallelize directive.
    */
   @Test
   public void parallelizeTest(){
+
     // Valid directives
+    ClawDimension d1 = new ClawDimension("i", "1", "NX");
+    analyzeValidParallelize("claw define dimension i(1,NX)" +
+        " parallelize data(t,qc,qv) over (i,j,:)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
+        Collections.singletonList(d1));
+
+    ClawDimension d2 = new ClawDimension("j", "1", "NY");
+    analyzeValidParallelize("claw define dimension j(1,NY)" +
+        "parallelize data(t,qc,qv) over (i,j,:)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
+        Collections.singletonList(d2));
+
+    ClawDimension d3 = new ClawDimension("j", "1", "10");
+    analyzeValidParallelize("claw define dimension j(1,10) " +
+        "parallelize data(t,qc,qv) over (i,j,:)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
+        Collections.singletonList(d3));
+
+    ClawDimension d4 = new ClawDimension("j", "jstart", "10");
+    analyzeValidParallelize("claw define dimension j(jstart,10) " +
+        "parallelize data(t,qc,qv) over (i,j,:)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
+        Collections.singletonList(d4));
+
+    ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
+    analyzeValidParallelize("claw define dimension j(jstart,ny) " +
+        "parallelize data(t,qc,qv) over (i,j,:)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
+        Collections.singletonList(d5));
+
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"));
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"), null);
 
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (:,i,j)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList(":", "i", "j"));
+        Arrays.asList("t", "qc", "qv"), Arrays.asList(":", "i", "j"), null);
 
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,:,j)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", ":", "j"));
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", ":", "j"), null);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw parallelize over ");
@@ -894,12 +860,14 @@ public class ClawLanguageTest {
 
   /**
    * Assert the result for valid CLAW parallelize directive
-   * @param raw  Raw string value of the CLAW directive to be analyzed.
-   * @param data Reference list for the data clause values.
-   * @param over Reference list for the over cluase values.
+   * @param raw        Raw string value of the CLAW directive to be analyzed.
+   * @param data       Reference list for the data clause values.
+   * @param over       Reference list for the over clause values.
+   * @param dimensions Reference list of dimensions.
    */
   private void analyzeValidParallelize(String raw, List<String> data,
-                                       List<String> over)
+                                       List<String> over,
+                                       List<ClawDimension> dimensions)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -921,6 +889,26 @@ public class ClawLanguageTest {
       assertTrue(l.hasOverClause());
       for(int i = 0; i < over.size(); ++i){
         assertEquals(over.get(i), l.getOverClauseValues().get(i));
+      }
+
+      if(dimensions != null){
+        assertEquals(dimensions.size(), l.getDimesionValues().size());
+        for(int i = 0; i < dimensions.size(); ++i){
+          assertEquals(dimensions.get(i).getIdentifier(),
+              l.getDimesionValues().get(i).getIdentifier());
+          assertEquals(dimensions.get(i).lowerBoundIsVar(),
+              l.getDimesionValues().get(i).lowerBoundIsVar());
+          assertEquals(dimensions.get(i).upperBoundIsVar(),
+              l.getDimesionValues().get(i).upperBoundIsVar());
+          assertEquals(dimensions.get(i).getLowerBoundInt(),
+              l.getDimesionValues().get(i).getLowerBoundInt());
+          assertEquals(dimensions.get(i).getUpperBoundInt(),
+              l.getDimesionValues().get(i).getUpperBoundInt());
+          assertEquals(dimensions.get(i).getLowerBoundId(),
+              l.getDimesionValues().get(i).getLowerBoundId());
+          assertEquals(dimensions.get(i).getUpperBoundId(),
+              l.getDimesionValues().get(i).getUpperBoundId());
+        }
       }
 
     } catch(IllegalDirectiveException idex){
