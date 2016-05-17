@@ -30,7 +30,7 @@ public class ClawTransformer implements Transformer {
   private final Map<Class, TransformationGroup> _tGroups;
 
   // Hold cross-transformation elements
-  private final Map<Element, XbaseElement> _crossTransformationTable;
+  private final Map<Element, Object> _crossTransformationTable;
 
 
   /**
@@ -95,7 +95,7 @@ public class ClawTransformer implements Transformer {
    * @param key Key to use to retrieve the element.
    * @return The stored element if present. Null otherwise.
    */
-  public XbaseElement hasElement(XbaseElement key){
+  public Object hasElement(XbaseElement key){
     if(_crossTransformationTable.containsKey(key.getBaseElement())){
       return _crossTransformationTable.get(key.getBaseElement());
     }
@@ -108,7 +108,7 @@ public class ClawTransformer implements Transformer {
    * @param key   The element acting as a key.
    * @param value The element to be stored.
    */
-  public void storeElement(XbaseElement key, XbaseElement value){
+  public void storeElement(XbaseElement key, Object value){
     if(_crossTransformationTable.containsKey(key.getBaseElement())){
       _crossTransformationTable.remove(key.getBaseElement());
     }
