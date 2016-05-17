@@ -809,26 +809,26 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Test various input for the CLAW loop-hoist directive.
+   * Test various input for the CLAW define dimension directive.
    */
   @Test
   public void DefineDimensionTest(){
     // Valid directives
 
     ClawDimension d1 = new ClawDimension("i", "1", "NX");
-    analyzeValidDimesion("claw define dimension i(1,NX)", d1);
+    analyzeValidDimension("claw define dimension i(1,NX)", d1);
 
     ClawDimension d2 = new ClawDimension("j", "1", "NY");
-    analyzeValidDimesion("claw define dimension j(1,NY)", d2);
+    analyzeValidDimension("claw define dimension j(1,NY)", d2);
 
     ClawDimension d3 = new ClawDimension("j", "1", "10");
-    analyzeValidDimesion("claw define dimension j(1,10)", d3);
+    analyzeValidDimension("claw define dimension j(1,10)", d3);
 
     ClawDimension d4 = new ClawDimension("j", "jstart", "10");
-    analyzeValidDimesion("claw define dimension j(jstart,10)", d4);
+    analyzeValidDimension("claw define dimension j(jstart,10)", d4);
 
     ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
-    analyzeValidDimesion("claw define dimension j(jstart,ny)", d5);
+    analyzeValidDimension("claw define dimension j(jstart,ny)", d5);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw define ");
@@ -837,11 +837,11 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert the result for valid lo CLAW directive
+   * Assert the result for valid CLAW define dimension directive
    * @param raw       Raw string valud of the CLAW directive to be analyzed.
    * @param dimesion  Reference dimension to be checked.
    */
-  private void analyzeValidDimesion(String raw, ClawDimension dimesion)
+  private void analyzeValidDimension(String raw, ClawDimension dimesion)
   {
     try {
       Xpragma p = XmlHelper.createXpragma();
@@ -872,6 +872,9 @@ public class ClawLanguageTest {
       fail();
     }
   }
+
+
+
 
 
   @Test
