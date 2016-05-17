@@ -24,7 +24,7 @@ public class Parallelize extends Transformation {
   /**
    * Constructs a new Parallelize transfomration triggered from a specific
    * pragma.
-   * @param directive The directive that triggered the k caching transformation.
+   * @param directive The directive that triggered the define transformation.
    */
   public Parallelize(ClawLanguage directive) {
     super(directive);
