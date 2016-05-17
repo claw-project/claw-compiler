@@ -34,7 +34,7 @@ set(CMAKE_JAVA_COMPILE_FLAGS -Xlint:unchecked)
 set(CLAW_PARSER_DIR "cx2x/translator/language")
 add_subdirectory(${CLAW_PARSER_DIR})
 
-# XcodeML general library
+# XcodeML manipulation library
 add_jar(${OMNI_CX2X_XCODEML_NAME}
 
 # XcodeML.error package
