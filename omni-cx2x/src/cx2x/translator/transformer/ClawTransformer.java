@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import cx2x.translator.common.GroupConfiguration;
-import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xelement.XbaseElement;
