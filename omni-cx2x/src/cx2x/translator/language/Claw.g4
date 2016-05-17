@@ -43,10 +43,19 @@ ids_list[List<String> ids]
   | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
 ;
 
+ids_or_colon_list[List<String> ids]
+  :
+    i=IDENTIFIER { $ids.add($i.text); }
+  | ':' { $ids.add(":"); }
+  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
+  | ':' { $ids.add(":"); } ',' ids_list[$ids]
+;
+
 directive[ClawLanguage l]
   @init{
     List<ClawMapping> m = new ArrayList<>();
     List<String> o = new ArrayList<>();
+    List<String> s = new ArrayList<>();
     List<Integer> i = new ArrayList<>();
   }
   :
@@ -125,7 +134,12 @@ directive[ClawLanguage l]
        ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
        $l.setDimensionClauseValue(cd);
      }
-   | PARALLELIZE DATA '(' ')' OVER '(' ')'
+   | PARALLELIZE DATA '(' ids_list[o] ')' OVER '(' ids_or_colon_list[s] ')'
+     {
+       $l.setDirective(ClawDirective.PARALLELIZE);
+       $l.setDataClause(o);
+       $l.setOverClause(s);
+     }
 ;
 
 group_option[ClawLanguage l]:
