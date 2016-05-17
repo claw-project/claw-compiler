@@ -96,11 +96,12 @@ public class Parallelize extends Transformation {
     }
 
     for(String o : _claw.getOverClauseValues()){
-      if(!_dimensions.containsKey(o)){
+      if(o != ":" && !_dimensions.containsKey(o)){
         xcodeml.addError(
             String.format("Dimension %s is not defined. Cannot be used in over " +
                 "clause", o), _claw.getPragma().getLineNo()
         );
+        return false;
       }
     }
 
