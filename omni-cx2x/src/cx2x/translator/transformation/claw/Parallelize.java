@@ -53,6 +53,24 @@ public class Parallelize extends Transformation {
       return false;
     }
 
+    // Check data information
+    for(String d : _claw.getDataClauseValues()){
+      if(!fctDef.getSymbolTable().contains(d)){
+        xcodeml.addError(
+            String.format("Data %s is not defined in the current block.", d),
+            _claw.getPragma().getLineNo()
+        );
+        return false;
+      }
+      if(!fctDef.getDeclarationTable().contains(d)){
+        xcodeml.addError(
+            String.format("Data %s is not declared in the current block.", d),
+            _claw.getPragma().getLineNo()
+        );
+        return false;
+      }
+
+    }
 
 
 
