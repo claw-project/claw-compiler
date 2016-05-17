@@ -873,9 +873,62 @@ public class ClawLanguageTest {
     }
   }
 
+  /**
+   * Test various input for the CLAW parallelize directive.
+   */
+  @Test
+  public void parallelizeTest(){
+    // Valid directives
+    analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,j,:)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"));
 
+    analyzeValidParallelize("claw parallelize data(t,qc,qv) over (:,i,j)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList(":", "i", "j"));
 
+    analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,:,j)",
+        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", ":", "j"));
 
+    // Unvalid directives
+    analyzeUnvalidClawLanguage("claw parallelize over ");
+    analyzeUnvalidClawLanguage("claw parallelite data() over ()");
+  }
+
+  /**
+   * Assert the result for valid CLAW parallelize directive
+   * @param raw  Raw string value of the CLAW directive to be analyzed.
+   * @param data Reference list for the data clause values.
+   * @param over Reference list for the over cluase values.
+   */
+  private void analyzeValidParallelize(String raw, List<String> data,
+                                       List<String> over)
+  {
+    try {
+      Xpragma p = XmlHelper.createXpragma();
+      p.setValue(raw);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.
+              createAcceleratorGenerator(AcceleratorDirective.OPENACC);
+      ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
+      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+
+      assertEquals(data.size(), l.getDataClauseValues().size());
+      assertEquals(over.size(), l.getOverClauseValues().size());
+
+      assertTrue(l.hasDataClause());
+      for(int i = 0; i < data.size(); ++i){
+        assertEquals(data.get(i), l.getDataClauseValues().get(i));
+      }
+
+      assertTrue(l.hasOverClause());
+      for(int i = 0; i < over.size(); ++i){
+        assertEquals(over.get(i), l.getOverClauseValues().get(i));
+      }
+
+    } catch(IllegalDirectiveException idex){
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
 
   @Test
   public void ContinuationTest(){
