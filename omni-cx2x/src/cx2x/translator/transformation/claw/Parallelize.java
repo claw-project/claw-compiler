@@ -6,9 +6,11 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xelement.XfunctionDefinition;
 
 /**
  * The parallelize transformation transforms the code contained in a
@@ -33,11 +35,25 @@ public class Parallelize extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    // Check if any dimension has been defined. 
+
+    // Check for the parent fct/subroutine definition
+    XfunctionDefinition fctDef =
+        XelementHelper.findParentFctDef(_claw.getPragma());
+    if(fctDef == null){
+      xcodeml.addError("Parent function/subroutine cannot be found. " +
+          "Parallelize directive must be defined in a function/subroutine.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    // Check if any dimension has been defined.
     if(!_claw.hasDimensionClause()){
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().getLineNo());
+      return false;
     }
+
+
 
 
     return true;
