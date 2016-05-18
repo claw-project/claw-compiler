@@ -27,7 +27,7 @@ CONTAINS
       t(k) = c * k
       q(k) = q(k - 1)  + t(k) * c
     END DO
-    q(kend) = q(kend) * c
+    q(nz) = q(nz) * c
 
   END SUBROUTINE compute_column
 
