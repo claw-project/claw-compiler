@@ -97,7 +97,7 @@ public class Parallelize extends Transformation {
     }
 
     for(String o : _claw.getOverClauseValues()){
-      if(o != ":" && !_dimensions.containsKey(o)){
+      if(!o.equals(ClawDimension.BASE_DIM) && !_dimensions.containsKey(o)){
         xcodeml.addError(
             String.format("Dimension %s is not defined. Cannot be used in over " +
                 "clause", o), _claw.getPragma().getLineNo()
@@ -114,69 +114,112 @@ public class Parallelize extends Transformation {
                         Transformation other)
       throws Exception
   {
+
+    // Apply first all common declaration
+
+    // Insert the declarations of variables to iterate over the new dimensions
+    insertVariableToIterateOverDimension(xcodeml);
+
+    // Promot all array fields with new dimensions.
+    promoteFields(xcodeml);
+
+    // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU){
       transformForGPU(xcodeml, transformer);
     } else {
       transformForCPU(xcodeml, transformer);
     }
+
+    // Adapt array references.
+
+
   }
 
   /**
    * Apply GPU based transformation.
-   * @param xcodeProgram Current XcodeML program unit.
-   * @param transformer  Current transformer.
+   * @param xcodeml     Current XcodeML program unit.
+   * @param transformer Current transformer.
    * @throws Exception
    */
-  private void transformForGPU(XcodeProgram xcodeProgram,
-                               Transformer transformer)
+  private void transformForGPU(XcodeProgram xcodeml, Transformer transformer)
       throws Exception
   {
-    // Insert the declarations of variables to iterate over the new dimensions
-    insertVariableToIterateOverDimension(xcodeProgram);
+
+    // Wrap the whole subroutine in the loop 
+    XdoStatement outerStatement = null;
+    XdoStatement innerStatement = null;
+
+    for(String o : _claw.getOverClauseValues()){
+      if(o.equals(ClawDimension.BASE_DIM)){
+        continue;
+      }
+      ClawDimension dim = _dimensions.get(o);
+      Xvar induction = Xvar.create(XelementName.TYPE_F_INT,
+          dim.getIdentifier(), Xscope.LOCAL, xcodeml);
+      XindexRange range = dim.generateIndexRange(xcodeml);
+      XdoStatement doSt = XdoStatement.create(induction, range, false, xcodeml);
+      if(outerStatement == null){
+        outerStatement = doSt;
+      } else {
+        innerStatement.getBody().appendToChildren(doSt, false);
+      }
+      innerStatement = doSt;
+    }
+
+    XelementHelper.copyBody(_fctDef.getBody(), innerStatement);
+    _fctDef.getBody().delete();
+    Xbody newBody = XelementHelper.createEmpty(Xbody.class, xcodeml);
+    newBody.appendToChildren(outerStatement, false);
+    _fctDef.appendToChildren(newBody, false);
+  }
+
+  /**
+   * Apply CPU based transformations.
+   * @param xcodeml     Current XcodeML program unit
+   * @param transformer Current transformer
+   * @throws Exception
+   */
+  private void transformForCPU(XcodeProgram xcodeml, Transformer transformer)
+      throws Exception
+  {
+
+  }
 
 
-    
-
-    // Common
+  /**
+   * Promote all fields declared in the data clause with the additional
+   * dimensions.
+   * @param xcodeml Current XcodeML program unit in which element are created.
+   * @throws IllegalTransformationException if elements cannot be created or
+   * elements cannot be found.
+   */
+  private void promoteFields(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
     for(String data : _claw.getDataClauseValues()){
       Xid id = _fctDef.getSymbolTable().get(data);
       XvarDecl decl = _fctDef.getDeclarationTable().get(data);
-      XbasicType bType = (XbasicType) xcodeProgram.getTypeTable().get(id.getType());
+      XbasicType bType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
       if(bType == null){
         throw new IllegalTransformationException("Cannot find type for " + data,
             _claw.getPragma().getLineNo());
       }
       XbasicType newType = bType.cloneObject();
-      newType.setType(xcodeProgram.getTypeTable().generateArrayTypeHash());
-      XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeProgram);
+      newType.setType(xcodeml.getTypeTable().generateArrayTypeHash());
+      XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeml);
       newType.addDimension(index, 0);
       id.setType(newType.getType());
       decl.getName().setType(newType.getType());
-      xcodeProgram.getTypeTable().add(newType);
+      xcodeml.getTypeTable().add(newType);
     }
-
-
   }
-
-  /**
-   * Apply CPU based transformations.
-   * @param xcodeProgram Current XcodeML program unit
-   * @param transformer  Current transformer
-   * @throws Exception
-   */
-  private void transformForCPU(XcodeProgram xcodeProgram,
-                               Transformer transformer)
-      throws Exception
-  {
-
-  }
-
 
   /**
    * Insert the declaration of the different variables needed to iterate over
    * the additional dimensions.
    * @param xcodeml Current XcodeML program unit in which element are created.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException if elements cannot be created or
+   * elements cannot be found.
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml)
       throws IllegalTransformationException
@@ -184,7 +227,6 @@ public class Parallelize extends Transformation {
     // Find function type
     XfunctionType fctType =
         (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getType());
-
 
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XbasicType.create(
