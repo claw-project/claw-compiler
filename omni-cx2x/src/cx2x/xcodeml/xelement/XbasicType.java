@@ -312,6 +312,17 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   }
 
   /**
+   * Set the intent of the type.
+   * @param value Intent value to be set.
+   */
+  public void setIntent(Xintent value){
+    if(value != null) {
+      baseElement.setAttribute(XelementName.ATTR_INTENT, value.toString());
+    }
+    _intent = value;
+  }
+
+  /**
    * Remove intent attribute from the element.
    */
   public void removeIntent(){
