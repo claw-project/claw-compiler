@@ -1955,4 +1955,18 @@ public class XelementHelper {
     target.setFile(base.getFile());
   }
 
+  /**
+   * Copy the whole body element into the destination one. Destination is
+   * overwritten.
+   * @param from The body to be copied.
+   * @param to   The desination of the copied body.
+   */
+  public static void copyBody(Xbody from, XdoStatement to){
+    Node copiedBody = from.cloneNode();
+    if(to.getBody() != null){
+      to.getBody().delete();
+    }
+    to.getBaseElement().appendChild(copiedBody);
+  }
+
 }
