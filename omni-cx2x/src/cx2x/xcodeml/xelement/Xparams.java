@@ -52,7 +52,7 @@ public class Xparams extends XbaseElement {
 
   /**
    * Add a name element to the parameters list.
-   * @param name The name element to add. 
+   * @param name The name element to add.
    */
   public void add(Xname name){
     _parameters.add(name);
