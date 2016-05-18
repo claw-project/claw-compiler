@@ -5,6 +5,10 @@
 
 package cx2x.translator.language;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xelement.*;
+
 /**
  * Class holding information about defined dimension.
  *
@@ -16,7 +20,8 @@ public class ClawDimension {
   private final String _lowerBoundId;
   private final String _upperBoundId;
   private final String _identifier;
-
+  private String _lowerBoundType;
+  private String _upperBoundType;
 
   /**
    * Constructs a new dimension object from the extracted information.
@@ -103,6 +108,77 @@ public class ClawDimension {
    */
   public String getIdentifier(){
     return _identifier;
+  }
+
+
+  /**
+   * Set the value of upper bound var.
+   * @param value Type value.
+   */
+  public void setUpperBoundType(String value){
+    _upperBoundType = value;
+  }
+
+  /**
+   * Set the value of lower bound var.
+   * @param value Type value.
+   */
+  public void setLowerBoundType(String value){
+    _lowerBoundType = value;
+  }
+
+
+  /**
+   * Generate the correct indexRange element with lowerBound, upperBound and
+   * step from the current dimension.
+   * @param xcodeml Current XcodeML progra unit in which elements will be
+   *                created.
+   * @return A new indexRange elements.
+   * @throws IllegalTransformationException if elements cannot be created.
+   */
+  public XindexRange generateIndexRange(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XindexRange range = XelementHelper.createEmpty(XindexRange.class, xcodeml);
+    XlowerBound lower = XelementHelper.createEmpty(XlowerBound.class, xcodeml);
+    XupperBound upper = XelementHelper.createEmpty(XupperBound.class, xcodeml);
+    Xstep step = XelementHelper.createEmpty(Xstep.class, xcodeml);
+    XintConstant stepValue =
+        XelementHelper.createEmpty(XintConstant.class, xcodeml);
+    stepValue.setType(XelementName.TYPE_F_INT);
+    stepValue.setValue(XelementName.DEFAULT_STEP_VALUE);
+    step.appendToChildren(stepValue, false);
+
+    range.appendToChildren(lower, false);
+    range.appendToChildren(upper, false);
+    range.appendToChildren(step, false);
+
+    // lower bound
+    if(lowerBoundIsVar()){
+      Xvar lowerBoundValue =
+          Xvar.create(_lowerBoundType, _lowerBoundId, Xscope.LOCAL, xcodeml);
+      lower.appendToChildren(lowerBoundValue, false);
+    } else {
+      XintConstant lowerBoundValue =
+          XelementHelper.createEmpty(XintConstant.class, xcodeml);
+      lowerBoundValue.setType(XelementName.TYPE_F_INT);
+      lowerBoundValue.setValue(String.valueOf(_lowerBound));
+      lower.appendToChildren(lowerBoundValue, false);
+    }
+
+    // upper bound
+    if(upperBoundIsVar()){
+      Xvar upperBoundValue =
+          Xvar.create(_upperBoundType, _upperBoundId, Xscope.LOCAL, xcodeml);
+      upper.appendToChildren(upperBoundValue, false);
+    } else {
+      XintConstant upperBoundValue =
+          XelementHelper.createEmpty(XintConstant.class, xcodeml);
+      upperBoundValue.setType(XelementName.TYPE_F_INT);
+      upperBoundValue.setValue(String.valueOf(_upperBound));
+      lower.appendToChildren(upperBoundValue, false);
+    }
+    return range;
   }
 
 }
