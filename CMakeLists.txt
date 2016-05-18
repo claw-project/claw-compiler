@@ -79,9 +79,9 @@ if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
   set(CLAW_TEST_FFP_FLAGS "-e Z") # for preprocessing and compilation
 else()
   # Std option for gfortran/pgi
-  set(FPPFLAGS "-E")          # for preprocessing only
-  set(FPP_REDIRECT true)      # use redirection > to save file
-  set(CLAW_TEST_FFP_FLAGS "") # don't need it with gfortran as it is automatic
+  set(FPPFLAGS "-E")              # for preprocessing only
+  set(FPP_REDIRECT true)          # use redirection > to save file
+  set(CLAW_TEST_FFP_FLAGS "-cpp") # force preprocessing
 endif()
 
 # Build OMNI compiler
