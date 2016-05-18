@@ -36,6 +36,7 @@ public class XelementName {
   public static final String SCLASS_EXTERN_DEF = "extern_def";
   public static final String SCLASS_F_LOCAL    = "flocal";
   public static final String SCLASS_F_FUNC     = "ffunc";
+  public static final String SCLASS_F_PARAM    = "fparam";
   public static final String SCLASS_LABEL      = "label";
   public static final String SCLASS_PARAM      = "param";
 
