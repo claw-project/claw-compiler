@@ -108,7 +108,7 @@ public class AcceleratorHelper {
       ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
       XbaseElement endStmt)
   {
-    if(claw.getCurrentTarget() == AcceleratorDirective.NONE){
+    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
       return null;
     }
 
@@ -136,7 +136,7 @@ public class AcceleratorHelper {
                                                XfunctionDefinition fctDef)
       throws IllegalTransformationException
   {
-    if(claw.getCurrentTarget() == AcceleratorDirective.NONE){
+    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
       return; // Don't do anything if the target is none
     }
 
@@ -165,7 +165,7 @@ public class AcceleratorHelper {
                                            XbaseElement stmt,
                                            String var)
   {
-    if(claw.getCurrentTarget() == AcceleratorDirective.NONE
+    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE
         || !claw.hasPrivateClause()){
       return;
     }
