@@ -65,7 +65,7 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  public AcceleratorDirective getTarget(){
+  public AcceleratorDirective getDirectiveLanguage(){
     return AcceleratorDirective.OPENMP;
   }
 }

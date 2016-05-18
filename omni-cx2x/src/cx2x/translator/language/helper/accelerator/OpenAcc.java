@@ -61,7 +61,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  public AcceleratorDirective getTarget(){
+  public AcceleratorDirective getDirectiveLanguage(){
     return AcceleratorDirective.OPENACC;
   }
 }

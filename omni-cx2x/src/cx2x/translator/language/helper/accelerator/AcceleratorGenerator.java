@@ -82,5 +82,5 @@ public abstract class AcceleratorGenerator {
    * Get the target of the current generator.
    * @return Current target as an accelerator directive enumeration value.
    */
-  public abstract AcceleratorDirective getTarget();
+  public abstract AcceleratorDirective getDirectiveLanguage();
 }

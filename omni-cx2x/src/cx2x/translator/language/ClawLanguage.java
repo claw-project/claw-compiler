@@ -693,8 +693,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * Get the current accelerator directive language target.
    * @return Value of the AcceleratorDirective enumeration.
    */
-  public AcceleratorDirective getCurrentTarget(){
-    return (_generator != null) ? _generator.getTarget() :
+  public AcceleratorDirective getDirectiveLanguage(){
+    return (_generator != null) ? _generator.getDirectiveLanguage() :
         AcceleratorDirective.NONE;
   }
 
