@@ -10,7 +10,7 @@ PROGRAM test_abstraction1
   kend = 60
 
 #ifdef _CLAW
-  !CALL compute_column_claw(nz, q, t, xend, yend)
+  CALL compute_column(nz, q, t, nproma)
 #else
   DO p = 1, nproma
     CALL compute_column(nz, q(p,:), t(p,:))
