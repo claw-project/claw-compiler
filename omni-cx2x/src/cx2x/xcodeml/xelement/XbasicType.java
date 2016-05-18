@@ -361,6 +361,28 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
     _dimensions = keptDim;
   }
 
+  /**
+   * Add a dimension to the basic type.
+   * @param index    Index element to add as the new dimension.
+   * @param position Position compared to already existing element.
+   */
+  public void addDimension(Xindex index, int position){
+    if(_dimensions.size() == 0){
+      this.appendToChildren(index, false);
+      _isArray = true;
+    } else {
+      if(position == _dimensions.size() - 1){ // Add at the end
+        Xindex last = _dimensions.get(_dimensions.size()-1);
+        XelementHelper.insertAfter(last, index);
+        _dimensions.add(index);
+      } else {
+        Xindex crtPos = _dimensions.get(position);
+        XelementHelper.insertBefore(crtPos, index);
+        _dimensions.add(position, index);
+      }
+    }
+  }
+
   @Override
   public XbasicType cloneObject() {
     Element element = (Element)cloneNode();
