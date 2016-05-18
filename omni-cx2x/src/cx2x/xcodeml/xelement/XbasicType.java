@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -398,5 +399,30 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   public XbasicType cloneObject() {
     Element element = (Element)cloneNode();
     return new XbasicType(element);
+  }
+
+
+  /**
+   * Constructs a new basicType element with the given information.
+   * @param type    Type hash.
+   * @param ref     Reference type.
+   * @param intent  Optional intent information.
+   * @param xcodeml Current XcodeML program unit.
+   * @return A new XbasicType object with the new element inside.
+   * @throws IllegalTransformationException If the element cannot be created.
+   */
+  public static XbasicType create(String type, String ref, Xintent intent,
+                                  XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XbasicType bt = XelementHelper.createEmpty(XbasicType.class, xcodeml);
+    bt.setType(type);
+    if(ref != null) {
+      bt.setRef(ref);
+    }
+    if(intent != null) {
+      bt.setIntent(Xintent.IN);
+    }
+    return bt;
   }
 }
