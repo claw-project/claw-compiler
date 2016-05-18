@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 
@@ -74,6 +75,31 @@ public class Xname extends XbaseElement {
    */
   public boolean isIdentical(String name){
     return getValue().equals(name);
+  }
+
+
+  /**
+   * Constructs a new name element with name value and optional type.
+   * @param name    Name value.
+   * @param type    Optional type value.
+   * @param xcodeml Current XcodeML program unit in which the element is
+   *                created.
+   * @return A new Xname object which the new element.
+   * @throws IllegalTransformationException If the element cannot be created.
+   */
+  public static Xname create(String name, String type, XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xname n = XelementHelper.createEmpty(Xname.class, xcodeml);
+    if(name == null){
+      throw new IllegalTransformationException(
+          "Cannot create name element without name value");
+    }
+    n.setValue(name);
+    if(type != null){
+      n.setType(type);
+    }
+    return n;
   }
 
 }
