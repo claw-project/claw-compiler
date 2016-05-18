@@ -13,8 +13,8 @@ PROGRAM test_abstraction2
 #ifdef _CLAW
   !CALL compute_column_claw(kend, q, t, xend, yend)
 #else
-  DO i = 1, xend
-    DO j = 1, yend
+  DO i = 1, nx
+    DO j = 1, ny
       CALL compute_column(kend, q(i,j,:), t(i,j,:))
     END DO
   END DO
