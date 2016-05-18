@@ -98,6 +98,15 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
   }
 
   /**
+   * Set attribute is_assumed_shape to true for the element.
+   */
+  public void setAssumedShape(){
+    baseElement.setAttribute(XelementName.ATTR_IS_ASSUMED_SHAPE,
+        XelementName.TRUE);
+    _isAssumedShape = true;
+  }
+
+  /**
    * Clone the current object.
    * @return A new object XindexRange that is the clone of the current object.
    */
@@ -178,6 +187,21 @@ public class XindexRange extends Xindex implements Xclonable<XindexRange> {
     dim.setValue(String.valueOf(dimension));
     args.add(dim);
 
+    range.readElementInformation();
+    return range;
+  }
+
+  /**
+   * Create an empty indexRange element with assumed shape attribute to true.
+   * @param xcodeml Current program in which the indexRange will be created.
+   * @return A new XindexRange object including the created element.
+   * @throws IllegalTransformationException if an element cannot be created.
+   */
+  public static XindexRange createEmptyAssumedShaped(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XindexRange range = XelementHelper.createEmpty(XindexRange.class, xcodeml);
+    range.setAssumedShape();
     range.readElementInformation();
     return range;
   }
