@@ -39,7 +39,7 @@ public class ClawDimension {
     }
 
     try {
-      tempUb = Integer.parseInt(lowerBound);
+      tempUb = Integer.parseInt(upperBound);
       tempUbStr = null;
     } catch (NumberFormatException ex){
       tempUb = -1;
