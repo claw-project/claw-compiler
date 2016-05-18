@@ -7,11 +7,12 @@ package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.target.Target;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.XfunctionDefinition;
+import cx2x.xcodeml.xelement.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class Parallelize extends Transformation {
 
   private final ClawLanguage _claw;
   private Map<String, ClawDimension> _dimensions;
+  private XfunctionDefinition _fctDef;
 
   /**
    * Constructs a new Parallelize transfomration triggered from a specific
@@ -43,9 +45,8 @@ public class Parallelize extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // Check for the parent fct/subroutine definition
-    XfunctionDefinition fctDef =
-        XelementHelper.findParentFctDef(_claw.getPragma());
-    if(fctDef == null){
+    _fctDef = XelementHelper.findParentFctDef(_claw.getPragma());
+    if(_fctDef == null){
       xcodeml.addError("Parent function/subroutine cannot be found. " +
           "Parallelize directive must be defined in a function/subroutine.",
           _claw.getPragma().getLineNo());
@@ -71,14 +72,14 @@ public class Parallelize extends Transformation {
 
     // Check data information
     for(String d : _claw.getDataClauseValues()){
-      if(!fctDef.getSymbolTable().contains(d)){
+      if(!_fctDef.getSymbolTable().contains(d)){
         xcodeml.addError(
             String.format("Data %s is not defined in the current block.", d),
             _claw.getPragma().getLineNo()
         );
         return false;
       }
-      if(!fctDef.getDeclarationTable().contains(d)){
+      if(!_fctDef.getDeclarationTable().contains(d)){
         xcodeml.addError(
             String.format("Data %s is not declared in the current block.", d),
             _claw.getPragma().getLineNo()
@@ -105,8 +106,6 @@ public class Parallelize extends Transformation {
       }
     }
 
-
-
     return true;
   }
 
@@ -115,8 +114,59 @@ public class Parallelize extends Transformation {
                         Transformation other)
       throws Exception
   {
+    if(_claw.getTarget() == Target.GPU){
+      transformForGPU(xcodeml, transformer);
+    } else {
+      transformForCPU(xcodeml, transformer);
+    }
+  }
+
+  /**
+   * Apply GPU based transformation.
+   * @param xcodeProgram Current XcodeML program unit.
+   * @param transformer  Current transformer.
+   * @throws Exception
+   */
+  private void transformForGPU(XcodeProgram xcodeProgram,
+                               Transformer transformer)
+      throws Exception
+  {
+
+    // Common
+    for(String data : _claw.getDataClauseValues()){
+      Xid id = _fctDef.getSymbolTable().get(data);
+      XvarDecl decl = _fctDef.getDeclarationTable().get(data);
+      XbasicType bType = (XbasicType) xcodeProgram.getTypeTable().get(id.getType());
+      if(bType == null){
+        throw new IllegalTransformationException("Cannot find type for " + data,
+            _claw.getPragma().getLineNo());
+      }
+      XbasicType newType = bType.cloneObject();
+      newType.setType(xcodeProgram.getTypeTable().generateArrayTypeHash());
+      XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeProgram);
+      newType.addDimension(index, 0);
+      id.setType(newType.getType());
+      decl.getName().setType(newType.getType());
+      xcodeProgram.getTypeTable().add(newType);
+    }
+
 
   }
+
+  /**
+   * Apply CPU based transformations.
+   * @param xcodeProgram Current XcodeML program unit
+   * @param transformer  Current transformer
+   * @throws Exception
+   */
+  private void transformForCPU(XcodeProgram xcodeProgram,
+                               Transformer transformer)
+      throws Exception
+  {
+
+  }
+
+
 
   @Override
   public boolean canBeTransformedWith(Transformation other) {
