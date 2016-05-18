@@ -23,6 +23,8 @@ public class ClawDimension {
   private String _lowerBoundType;
   private String _upperBoundType;
 
+  public static final String BASE_DIM = ":";
+
   /**
    * Constructs a new dimension object from the extracted information.
    * @param id          Identifier of the defined dimension.
