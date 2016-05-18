@@ -50,4 +50,13 @@ public class Xparams extends XbaseElement {
     return _parameters;
   }
 
+  /**
+   * Add a name element to the parameters list.
+   * @param name The name element to add. 
+   */
+  public void add(Xname name){
+    _parameters.add(name);
+    appendToChildren(name, false);
+  }
+
 }
