@@ -29,6 +29,7 @@ public class XtypeTable extends XbaseElement {
   private static final String FCT_HASH_PREFIX = "F";
   private static final String INT_HASH_PREFIX = "I";
   private static final String REAL_HASH_PREFIX = "R";
+  private static final String ARRAY_HASH_PREFIX = "A";
 
   private final Map<String, Xtype> _table;
 
@@ -129,6 +130,14 @@ public class XtypeTable extends XbaseElement {
    */
   public String generateRealTypeHash(){
     return generateHash(REAL_HASH_PREFIX);
+  }
+
+  /**
+   * Get a new unique array hash for the type table.
+   * @return New unique array type hash.
+   */
+  public String generateArrayTypeHash(){
+    return generateHash(ARRAY_HASH_PREFIX);
   }
 
   /**
