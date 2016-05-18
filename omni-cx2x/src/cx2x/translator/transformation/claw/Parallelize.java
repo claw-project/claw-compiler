@@ -131,6 +131,11 @@ public class Parallelize extends Transformation {
                                Transformer transformer)
       throws Exception
   {
+    // Insert the declarations of variables to iterate over the new dimensions
+    insertVariableToIterateOverDimension(xcodeProgram);
+
+
+    
 
     // Common
     for(String data : _claw.getDataClauseValues()){
@@ -166,6 +171,68 @@ public class Parallelize extends Transformation {
 
   }
 
+
+  /**
+   * Insert the declaration of the different variables needed to iterate over
+   * the additional dimensions.
+   * @param xcodeml Current XcodeML program unit in which element are created.
+   * @throws IllegalTransformationException
+   */
+  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    // Find function type
+    XfunctionType fctType =
+        (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getType());
+
+
+    // Create type and declaration for iterations over the new dimensions
+    XbasicType intTypeIntentIn = XbasicType.create(
+        xcodeml.getTypeTable().generateIntegerTypeHash(),
+        XelementName.TYPE_F_INT, Xintent.IN, xcodeml);
+    xcodeml.getTypeTable().add(intTypeIntentIn);
+
+    // For each dimension defined in the directive
+    for(ClawDimension dimension : _claw.getDimesionValues()){
+      if(dimension.lowerBoundIsVar()){
+        createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
+            XelementName.SCLASS_F_PARAM, xcodeml);
+        Xname paramName = Xname.create(dimension.getLowerBoundId(),
+            intTypeIntentIn.getType(), xcodeml);
+        fctType.getParams().add(paramName);
+      }
+      if(dimension.upperBoundIsVar()){
+        createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
+            XelementName.SCLASS_F_PARAM, xcodeml);
+        Xname paramName = Xname.create(dimension.getUpperBoundId(),
+            intTypeIntentIn.getType(), xcodeml);
+        fctType.getParams().add(paramName);
+      }
+      // Create induction variable declaration
+      createIdAndDecl(dimension.getIdentifier(), XelementName.TYPE_F_INT,
+          XelementName.SCLASS_F_LOCAL, xcodeml);
+    }
+  }
+
+  /**
+   * Create the id and varDecl elements and add them to the symbol/declaration
+   * table.
+   * @param name    Name of the variable.
+   * @param type    Type of the variable.
+   * @param sclass  Scope class of the variable (from XelementName).
+   * @param xcodeml Current XcodeML program unit in which the elements will be
+   *                created.
+   * @throws IllegalTransformationException if the elements cannot be created.
+   */
+  private void createIdAndDecl(String name, String type, String sclass,
+                               XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xid id = Xid.create(type, XelementName.SCLASS_F_PARAM, name, xcodeml);
+    _fctDef.getSymbolTable().add(id);
+    XvarDecl decl = XvarDecl.create(type, name, xcodeml);
+    _fctDef.getDeclarationTable().add(decl);
+  }
 
 
   @Override
