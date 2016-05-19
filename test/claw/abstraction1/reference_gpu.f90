@@ -11,7 +11,6 @@ CONTAINS
   INTEGER :: proma
 
   DO proma = 1 , nproma , 1
-!$claw define dimension proma(1,nproma) claw parallelize data(q,t) over (proma,:)
    c = 5.345
    DO k = 1 , nz , 1
     t ( nproma , k ) = c * k
