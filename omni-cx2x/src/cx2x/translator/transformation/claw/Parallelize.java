@@ -145,7 +145,7 @@ public class Parallelize extends Transformation {
       throws Exception
   {
 
-    // Wrap the whole subroutine in the loop 
+    // Wrap the whole subroutine in the loop
     XdoStatement outerStatement = null;
     XdoStatement innerStatement = null;
 
