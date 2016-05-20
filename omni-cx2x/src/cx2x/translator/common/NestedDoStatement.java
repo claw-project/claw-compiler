@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class holding information about nested do statements. 
+ * Class holding information about nested do statements.
  *
  * Created by clementval on 20/05/16.
  */
