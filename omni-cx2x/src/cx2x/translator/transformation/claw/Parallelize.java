@@ -5,8 +5,10 @@
 
 package cx2x.translator.transformation.claw;
 
+import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
@@ -14,7 +16,9 @@ import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -133,44 +137,30 @@ public class Parallelize extends Transformation {
     // Adapt array references.
 
 
+    _claw.getPragma().delete();
   }
 
   /**
    * Apply GPU based transformation.
    * @param xcodeml     Current XcodeML program unit.
-   * @param transformer Current transformer.
    * @throws Exception
    */
   private void transformForGPU(XcodeProgram xcodeml, Transformer transformer)
       throws Exception
   {
-
-    // Wrap the whole subroutine in the loop
-    XdoStatement outerStatement = null;
-    XdoStatement innerStatement = null;
-
-    for(String o : _claw.getOverClauseValues()){
-      if(o.equals(ClawDimension.BASE_DIM)){
-        continue;
-      }
-      ClawDimension dim = _dimensions.get(o);
-      Xvar induction = Xvar.create(XelementName.TYPE_F_INT,
-          dim.getIdentifier(), Xscope.LOCAL, xcodeml);
-      XindexRange range = dim.generateIndexRange(xcodeml);
-      XdoStatement doSt = XdoStatement.create(induction, range, false, xcodeml);
-      if(outerStatement == null){
-        outerStatement = doSt;
-      } else {
-        innerStatement.getBody().appendToChildren(doSt, false);
-      }
-      innerStatement = doSt;
-    }
-
-    XelementHelper.copyBody(_fctDef.getBody(), innerStatement);
+    /* Create a nested loop with the new defined dimensions and wrap it around
+     * the whole subroutine's body. This is for the moment a really naive
+     * transformation idead but it is our start point. */
+    NestedDoStatement loops =
+        new NestedDoStatement(getOrderedDimensionsFromDefinition(), xcodeml);
+    XelementHelper.copyBody(_fctDef.getBody(), loops.getInnerStatement());
     _fctDef.getBody().delete();
     Xbody newBody = XelementHelper.createEmpty(Xbody.class, xcodeml);
-    newBody.appendToChildren(outerStatement, false);
+    newBody.appendToChildren(loops.getOuterStatement(), false);
     _fctDef.appendToChildren(newBody, false);
+    AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml,
+        loops.getOuterStatement(), loops.getOuterStatement(),
+        loops.getGroupSize());
   }
 
   /**
@@ -182,6 +172,11 @@ public class Parallelize extends Transformation {
   private void transformForCPU(XcodeProgram xcodeml, Transformer transformer)
       throws Exception
   {
+    /* Create a group of nested loop with the newly defined dimension and wrap
+     * every assignement statement in the column loop or including data with it.
+     * This is for the moment a really naive transformation idea but it is our
+     * start point.
+     */
 
   }
 
@@ -274,6 +269,21 @@ public class Parallelize extends Transformation {
     _fctDef.getSymbolTable().add(id);
     XvarDecl decl = XvarDecl.create(type, name, xcodeml);
     _fctDef.getDeclarationTable().add(decl);
+  }
+
+  /**
+   * Get the list of dimensions in order from the parallelize over definition.
+   * @return Ordered list of dimension object.
+   */
+  private List<ClawDimension> getOrderedDimensionsFromDefinition(){
+    List<ClawDimension> dimensions = new ArrayList<>();
+    for(String o : _claw.getOverClauseValues()) {
+      if (o.equals(ClawDimension.BASE_DIM)) {
+        continue;
+      }
+      dimensions.add(_dimensions.get(o));
+    }
+    return dimensions;
   }
 
 
