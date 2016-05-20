@@ -70,7 +70,7 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getStartLoopDirective(int value) {
-    if(value > 0){
+    if(value > 1){
       return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
           String.format("%s(%d)", OPENACC_COLLAPSE, value));
     } else {
