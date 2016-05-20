@@ -814,14 +814,14 @@ public class ClawLanguageTest {
   public void parallelizeTest(){
 
     // Valid directives
-    ClawDimension d1 = new ClawDimension("i", "1", "NX");
-    analyzeValidParallelize("claw define dimension i(1,NX)" +
+    ClawDimension d1 = new ClawDimension("i", "1", "nx");
+    analyzeValidParallelize("claw define dimension i(1,nx)" +
         " parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d1));
 
-    ClawDimension d2 = new ClawDimension("j", "1", "NY");
-    analyzeValidParallelize("claw define dimension j(1,NY)" +
+    ClawDimension d2 = new ClawDimension("j", "1", "ny");
+    analyzeValidParallelize("claw define dimension j(1,ny)" +
         "parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d2));
@@ -924,3 +924,4 @@ public class ClawLanguageTest {
   }
 
 }
+
