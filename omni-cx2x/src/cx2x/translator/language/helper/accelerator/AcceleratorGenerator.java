@@ -35,6 +35,20 @@ public abstract class AcceleratorGenerator {
   protected abstract String getStartParellelDirective();
 
   /**
+   * Get the formattated directive to start the parallelization of a loop.
+   * @param value Collapse value. if greater than 0, a collapse clause will be
+   *              added to the construct.
+   * @return String value that represents the start of a parallelized loop.
+   */
+  protected abstract String getStartLoopDirective(int value);
+
+  /**
+   * Get the formattated directive to end the parallelization of a loop.
+   * @return String value that represents the start of a parallelized loop.
+   */
+  protected abstract String getEndLoopDirective();
+
+  /**
    * Get the end pragma to define a parallel accelerated region.
    * @return String value that represents the pragma.
    */

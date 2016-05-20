@@ -5,6 +5,8 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  * OpenMP specific accelerator directive generator.
  *
@@ -67,5 +69,15 @@ class OpenMp extends AcceleratorGenerator {
   @Override
   public AcceleratorDirective getDirectiveLanguage(){
     return AcceleratorDirective.OPENMP;
+  }
+
+  @Override
+  protected String getStartLoopDirective(int value) {
+    throw new NotImplementedException();
+  }
+
+  @Override
+  protected String getEndLoopDirective() {
+    throw new NotImplementedException();
   }
 }

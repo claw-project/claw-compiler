@@ -61,6 +61,48 @@ public class AcceleratorHelper {
   }
 
   /**
+   * Generate accelerator directive for a parallel loop.
+   * @param claw      ClawLanguage object that tells if the parallel clause is
+   *                  enable and where the start pragma is located.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param startStmt Start statement representing the beginning of the parallel
+   *                  region.
+   * @param endStmt   End statement representing the end of the parallel region.
+   * @param collapse  If value bigger than 0, a corresponding collapse
+   *                  constructs can be generated.
+   */
+  public static void generateParallelLoopClause(ClawLanguage claw,
+                                                 XcodeProgram xcodeml,
+                                                 XbaseElement startStmt,
+                                                 XbaseElement endStmt,
+                                                 int collapse)
+  {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return;
+    }
+
+    try {
+      Xpragma beginParallel =
+          Xpragma.create(gen.getStartParellelDirective(), xcodeml);
+      Xpragma endParallel =
+          Xpragma.create(gen.getEndParellelDirective(), xcodeml);
+      Xpragma beginLoop =
+          Xpragma.create(gen.getStartLoopDirective(collapse), xcodeml);
+
+      XelementHelper.insertBefore(startStmt, beginParallel);
+      XelementHelper.insertBefore(startStmt, beginLoop);
+      XelementHelper.insertAfter(endStmt, endParallel);
+
+      if(gen.getEndLoopDirective() != null) {
+        Xpragma endLoop = Xpragma.create(gen.getEndLoopDirective(), xcodeml);
+        XelementHelper.insertAfter(endStmt, endLoop);
+      }
+    } catch (IllegalTransformationException ignored) { }
+  }
+
+  /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.

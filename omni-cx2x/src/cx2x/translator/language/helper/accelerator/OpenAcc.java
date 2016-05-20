@@ -12,11 +12,14 @@ package cx2x.translator.language.helper.accelerator;
  */
 class OpenAcc extends AcceleratorGenerator {
 
-  private static final String OPENACC_PREFIX = "acc";
-  private static final String OPENACC_PARALLEL = "parallel";
+  private static final String OPENACC_COLLAPSE = "collapse";
   private static final String OPENACC_END = "end";
+  private static final String OPENACC_LOOP = "loop";
+  private static final String OPENACC_PARALLEL = "parallel";
+  private static final String OPENACC_PREFIX = "acc";
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_ROUTINE = "routine";
+
 
   @Override
   protected String getPrefix(){
@@ -63,5 +66,20 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   public AcceleratorDirective getDirectiveLanguage(){
     return AcceleratorDirective.OPENACC;
+  }
+
+  @Override
+  protected String getStartLoopDirective(int value) {
+    if(value > 0){
+      return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
+          String.format("%s(%d)", OPENACC_COLLAPSE, value));
+    } else {
+      return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_LOOP);
+    }
+  }
+
+  @Override
+  protected String getEndLoopDirective() {
+    return null;
   }
 }
