@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XelementHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -43,6 +45,23 @@ public class Xpragma extends XenhancedElement implements Xclonable<Xpragma> {
    */
   public void append(String data){
     setValue(getValue() + " " + data);
+  }
+
+
+  /**
+   * Create a pragma statement with its original value.
+   * @param value   String value of the pragma statement.
+   * @param xcodeml Current XcodeML program unit in which the element will be
+   *                created.
+   * @return A new Xpragma object holding the element information.
+   * @throws IllegalTransformationException
+   */
+  public static Xpragma create(String value, XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
+    p.setValue(value);
+    return p;
   }
 
 }
