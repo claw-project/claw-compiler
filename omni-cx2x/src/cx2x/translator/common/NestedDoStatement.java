@@ -62,4 +62,12 @@ public class NestedDoStatement {
     return _statements.isEmpty() ? null : _statements.get(_statements.size()-1);
   }
 
+  /**
+   * Get the size of the group of nested do statements.
+   * @return Size of the group.
+   */
+  public int getGroupSize(){
+    return _statements.size();
+  }
+
 }
