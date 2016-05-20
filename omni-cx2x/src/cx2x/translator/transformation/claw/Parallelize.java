@@ -129,9 +129,9 @@ public class Parallelize extends Transformation {
 
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU){
-      transformForGPU(xcodeml, transformer);
+      transformForGPU(xcodeml);
     } else {
-      transformForCPU(xcodeml, transformer);
+      transformForCPU(xcodeml);
     }
 
     // Adapt array references.
@@ -145,7 +145,7 @@ public class Parallelize extends Transformation {
    * @param xcodeml     Current XcodeML program unit.
    * @throws Exception
    */
-  private void transformForGPU(XcodeProgram xcodeml, Transformer transformer)
+  private void transformForGPU(XcodeProgram xcodeml)
       throws Exception
   {
     /* Create a nested loop with the new defined dimensions and wrap it around
@@ -166,10 +166,9 @@ public class Parallelize extends Transformation {
   /**
    * Apply CPU based transformations.
    * @param xcodeml     Current XcodeML program unit
-   * @param transformer Current transformer
    * @throws Exception
    */
-  private void transformForCPU(XcodeProgram xcodeml, Transformer transformer)
+  private void transformForCPU(XcodeProgram xcodeml)
       throws Exception
   {
     /* Create a group of nested loop with the newly defined dimension and wrap
