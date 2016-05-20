@@ -264,7 +264,7 @@ public class Parallelize extends Transformation {
                                XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    Xid id = Xid.create(type, XelementName.SCLASS_F_PARAM, name, xcodeml);
+    Xid id = Xid.create(type, sclass, name, xcodeml);
     _fctDef.getSymbolTable().add(id);
     XvarDecl decl = XvarDecl.create(type, name, xcodeml);
     _fctDef.getDeclarationTable().add(decl);
