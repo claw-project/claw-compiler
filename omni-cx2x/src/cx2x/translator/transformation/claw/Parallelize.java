@@ -15,6 +15,7 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import exc.object.Xcode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,8 +136,9 @@ public class Parallelize extends Transformation {
     }
 
     // Adapt array references.
+    adapteArrayReferences(xcodeml);
 
-
+    // Delete the pragma
     _claw.getPragma().delete();
   }
 
@@ -183,7 +185,8 @@ public class Parallelize extends Transformation {
   /**
    * Promote all fields declared in the data clause with the additional
    * dimensions.
-   * @param xcodeml Current XcodeML program unit in which element are created.
+   * @param xcodeml Current XcodeML program unit in which the element will be
+   *                created.
    * @throws IllegalTransformationException if elements cannot be created or
    * elements cannot be found.
    */
@@ -206,6 +209,20 @@ public class Parallelize extends Transformation {
       decl.getName().setType(newType.getType());
       xcodeml.getTypeTable().add(newType);
     }
+  }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   * @param xcodeml Current XcodeML program unit in which the element will be
+   *                created.
+   * @throws IllegalTransformationException if elements cannot be created or
+   * elements cannot be found.
+   */
+  private void adapteArrayReferences(XcodeProgram xcodeml) throws
+      IllegalTransformationException
+  {
+
   }
 
   /**
