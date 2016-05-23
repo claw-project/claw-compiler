@@ -173,6 +173,25 @@ public class XelementHelper {
   }
 
   /**
+   * Find all assignment statement elements in a given body.
+   * @param parent The body element to search for the array references.
+   * @return A list of all assignment statements found.
+   */
+  public static List<XassignStatement> getAllAssignments(XbaseElement parent){
+    List<XassignStatement> assignments = new ArrayList<>();
+    NodeList nList = parent.getBaseElement().
+        getElementsByTagName(XelementName.F_ASSIGN_STMT);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        assignments.add(new XassignStatement(el));
+      }
+    }
+    return assignments;
+  }
+
+  /**
    * Demote an array reference to a var reference.
    * @param ref     The array reference to be modified.
    */
