@@ -29,6 +29,7 @@ public class Parallelize extends Transformation {
 
   private final ClawLanguage _claw;
   private Map<String, ClawDimension> _dimensions;
+  private int _overDimensions;
   private XfunctionDefinition _fctDef;
 
   /**
@@ -38,6 +39,7 @@ public class Parallelize extends Transformation {
    */
   public Parallelize(ClawLanguage directive) {
     super(directive);
+    _overDimensions = 0;
     _claw = directive; // Keep information about the claw directive here
     _dimensions = new HashMap<>();
   }
@@ -97,13 +99,18 @@ public class Parallelize extends Transformation {
       return false;
     }
 
+    // Check if over dimensions are defined dimensions
     for(String o : _claw.getOverClauseValues()){
-      if(!o.equals(ClawDimension.BASE_DIM) && !_dimensions.containsKey(o)){
-        xcodeml.addError(
-            String.format("Dimension %s is not defined. Cannot be used in over " +
-                "clause", o), _claw.getPragma().getLineNo()
-        );
-        return false;
+      if(!o.equals(ClawDimension.BASE_DIM)){
+        ++_overDimensions;
+        if(!_dimensions.containsKey(o)){
+          xcodeml.addError(
+              String.format(
+                  "Dimension %s is not defined. Cannot be used in over " +
+                  "clause", o), _claw.getPragma().getLineNo()
+          );
+          return false;
+        }
       }
     }
 
@@ -217,8 +224,10 @@ public class Parallelize extends Transformation {
       }
       XbasicType newType = bType.cloneObject();
       newType.setType(xcodeml.getTypeTable().generateArrayTypeHash());
-      XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeml);
-      newType.addDimension(index, 0);
+      for(int i = 0; i < _overDimensions; ++i){
+        XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeml);
+        newType.addDimension(index, 0);
+      }
       id.setType(newType.getType());
       decl.getName().setType(newType.getType());
       xcodeml.getTypeTable().add(newType);
