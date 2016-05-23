@@ -15,7 +15,6 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
-import exc.object.Xcode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,18 +127,18 @@ public class Parallelize extends Transformation {
     // Promot all array fields with new dimensions.
     promoteFields(xcodeml);
 
+    // Adapt array references.
+    adapteArrayReferences(xcodeml);
+
+    // Delete the pragma
+    _claw.getPragma().delete();
+
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU){
       transformForGPU(xcodeml);
     } else {
       transformForCPU(xcodeml);
     }
-
-    // Adapt array references.
-    adapteArrayReferences(xcodeml);
-
-    // Delete the pragma
-    _claw.getPragma().delete();
   }
 
   /**
@@ -222,7 +221,32 @@ public class Parallelize extends Transformation {
   private void adapteArrayReferences(XcodeProgram xcodeml) throws
       IllegalTransformationException
   {
+    List<XarrayIndex> beforeCrt = new ArrayList<>();
+    List<XarrayIndex> afterCrt = new ArrayList<>();
+    List<XarrayIndex> crt = beforeCrt;
+    for(String dim : _claw.getOverClauseValues()){
+      if(dim.equals(ClawDimension.BASE_DIM)){
+        crt = afterCrt;
+      } else {
+        ClawDimension d = _dimensions.get(dim);
+        crt.add(d.generateArrayIndex(xcodeml));
+      }
+    }
 
+    for(String data : _claw.getDataClauseValues()){
+      List<XarrayRef> refs =
+          XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
+      for(XarrayRef ref : refs){
+        for(XarrayIndex ai : beforeCrt){
+          XelementHelper.insertAfter(ref.getVarRef(), ai.cloneObject());
+        }
+        for(XarrayIndex ai : afterCrt){
+          XelementHelper.insertAfter(
+              ref.getInnerElements().get(ref.getInnerElements().size()-1),
+              ai.cloneObject());
+        }
+      }
+    }
   }
 
   /**
