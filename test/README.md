@@ -3,16 +3,30 @@
 This directory contains a set of functional tests for the CLAW Fortran compiler.
 All tests have the same structure described below:
 
+###### Low level transformation tests
 * `CMakeLists.txt`: `CMake` file including specififc information for the test
   case for the test (see below the format for this file).
 * `original_code.f90`: The original Fortran code with CLAW directives.
 * `reference.f90`: A reference Fortran code that will be compared to the
   transformed code.
 
+###### Abstraction tests
+* `CMakeLists.txt`: `CMake` file including specififc information for the test
+  case for the test (see below the format for this file).
+* `main.f90`: The test driver including the `PROGRAM` subroutine.
+* `mo_column.f90`: The "compute" part of the test. Includes a subroutine which
+  abstracts the column/box model with dedicated CLAW directives.
+* `reference_gpu.f90`: A reference Fortran code that will be compared to the
+  transformed code for the GPU target.
+* `reference_cpu.f90`: A reference Fortran code that will be compared to the
+  transformed code for the CPU target.
+
 ##### CMakeLists.txt structure
 Each test has a `CMakeLists.txt` file that set up few variables to generate
 the specific targets for the test case. Here is the format of this file. Note
 that only first and last line are mandatory (`TEST_NAME` and `include`)
+
+###### For low level transformation tests
 ```cmake
 set(TEST_NAME <test_name>)  # test_name must be replaced by a relevant test name
                             # for the test case
@@ -20,8 +34,22 @@ set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
 set(OUTPUT_TEST ON)         # optional, execute executable output comparison
 set(IGNORE_TEST ON)         # optional, does not perform the test but apply
                             # transformations
-set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc                           
+set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
 include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # base cmake file
+```
+
+###### For higher abstraction transformation tests
+```cmake
+set(TEST_NAME <test_name>)  # test_name must be replaced by a relevant test name
+                            # for the test case
+set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
+set(OUTPUT_TEST ON)         # optional, execute executable output comparison
+set(IGNORE_TEST ON)         # optional, does not perform the test but apply
+                            # transformations
+set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
+set(DIRECTIVE_GPU "--directive=opemacc") # Define the directive language for GPU
+set(DIRECTIVE_CPU "--directive=opemmp")  # Define the directive language for CPU
+include(${CMAKE_SOURCE_DIR}/test/module_test.cmake) # base cmake file
 ```
 
 The file `base_test.cmake` is common for all tests and does the following
