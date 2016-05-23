@@ -57,6 +57,12 @@ add_custom_target(
   COMMAND rm -f ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU}
 )
 
+# Clean module file between compilation as it change
+add_custom_target(
+  clean-mod-file-${TEST_NAME}
+  COMMAND rm -f *.mod
+)
+
 # Add target to the global build/clean target
 add_dependencies(${BUILD_TEST_TARGET} transform-${TEST_NAME})
 add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
@@ -70,6 +76,10 @@ add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL ${OUTPUT_FILE_CPU
 target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
 add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL ${OUTPUT_FILE_GPU} main.f90)
 target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
+
+add_dependencies(${EXECUTABLE_ORIGINAL} clean-mod-file-${TEST_NAME})
+add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} clean-mod-file-${TEST_NAME})
+add_dependencies(${EXECUTABLE_TRANSFORMED_GPU} clean-mod-file-${TEST_NAME})
 
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
