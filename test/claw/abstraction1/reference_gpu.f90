@@ -14,7 +14,7 @@ CONTAINS
 !$acc loop
   DO proma = 1 , nproma , 1
    c = 5.345
-   DO k = 1 , nz , 1
+   DO k = 2 , nz , 1
     t ( proma , k ) = c * k
     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
    END DO

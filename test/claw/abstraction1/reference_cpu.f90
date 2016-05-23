@@ -11,7 +11,7 @@ CONTAINS
   INTEGER :: proma
 
   c = 5.345
-  DO k = 1 , nz , 1
+  DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
     t ( proma , k ) = c * k
    END DO
