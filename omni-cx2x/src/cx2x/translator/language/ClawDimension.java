@@ -183,4 +183,23 @@ public class ClawDimension {
     return range;
   }
 
+  /**
+   * Generate the array index that will be placed in the array reference for
+   * this additional dimension.
+   * @param xcodeml Current XcodeML progra unit in which elements will be
+   *                created.
+   * @return A new arrayIndex element including a var element with the dimension
+   * identifier.
+   * @throws IllegalTransformationException if elements cannot be created.
+   */
+  public XarrayIndex generateArrayIndex(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XarrayIndex aIdx = XelementHelper.createEmpty(XarrayIndex.class, xcodeml);
+    Xvar v = Xvar.create(XelementName.TYPE_F_INT, _identifier, Xscope.LOCAL,
+        xcodeml);
+    aIdx.appendToChildren(v, false);
+    return aIdx;
+  }
+
 }
