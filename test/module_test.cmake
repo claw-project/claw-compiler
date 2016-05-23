@@ -30,7 +30,7 @@ endif()
 # Execute the CLAW compiler for CPU target
 add_custom_command(
   OUTPUT  ${OUTPUT_FILE_CPU}
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
+  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${ORIGINAL_FILE}
   COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target"
@@ -39,7 +39,7 @@ add_custom_command(
 # Execute the CLAW compiler for GPU target
 add_custom_command(
   OUTPUT  ${OUTPUT_FILE_GPU}
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
+  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${ORIGINAL_FILE}
   COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target"
