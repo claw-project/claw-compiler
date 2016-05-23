@@ -175,9 +175,27 @@ public class Parallelize extends Transformation {
     /* Create a group of nested loop with the newly defined dimension and wrap
      * every assignement statement in the column loop or including data with it.
      * This is for the moment a really naive transformation idea but it is our
-     * start point.
-     */
+     * start point. */
 
+    List<ClawDimension> order = getOrderedDimensionsFromDefinition();
+    List<XassignStatement> assignStatements =
+        XelementHelper.getAllAssignments(_fctDef.getBody());
+
+    for(XassignStatement assign : assignStatements){
+      if(!assign.getLValueModel().isArrayRef()){
+        continue;
+      }
+
+      XarrayRef ref = assign.getLValueModel().getArrayRef();
+      if(_claw.getDataClauseValues().
+          contains(ref.getVarRef().getVar().getValue()))
+      {
+        NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
+        XelementHelper.insertAfter(assign, loops.getOuterStatement());
+        loops.getInnerStatement().getBody().appendToChildren(assign, true);
+        assign.delete();
+      }
+    }
   }
 
 
