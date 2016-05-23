@@ -138,8 +138,7 @@ public class XelementHelper {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) n;
-        XarrayRef ref = new XarrayRef(el);
-        references.add(ref);
+        references.add(new XarrayRef(el));
       }
     }
     return references;
