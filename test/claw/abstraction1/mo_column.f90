@@ -1,7 +1,6 @@
 MODULE mo_column
   IMPLICIT NONE
 CONTAINS
-
   ! Compute only one column
   SUBROUTINE compute_column(nz, q, t)
     IMPLICIT NONE
@@ -22,12 +21,10 @@ CONTAINS
     !$claw parallelize data(q,t) over (proma,:)
 
     c = 5.345
-    DO k = 1, nz
+    DO k = 2, nz
       t(k) = c * k
       q(k) = q(k - 1)  + t(k) * c
     END DO
     q(nz) = q(nz) * c
-
   END SUBROUTINE compute_column
-
 END MODULE mo_column

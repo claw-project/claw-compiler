@@ -7,7 +7,12 @@ PROGRAM test_abstraction1
   INTEGER :: p                    ! Loop index
 
   nproma = 20
-  kend = 60
+  nz = 60
+
+  DO p = 1, nproma
+    q(p,1) = 0.0
+    t(p,1) = 0.0
+  END DO
 
 #ifdef _CLAW
   CALL compute_column(nz, q, t, nproma)
