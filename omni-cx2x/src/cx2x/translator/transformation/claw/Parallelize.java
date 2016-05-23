@@ -16,10 +16,7 @@ import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The parallelize transformation transforms the code contained in a
@@ -251,10 +248,13 @@ public class Parallelize extends Transformation {
       }
     }
 
+    Collections.reverse(beforeCrt); // Because of insertion order
+
     for(String data : _claw.getDataClauseValues()){
       List<XarrayRef> refs =
           XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
       for(XarrayRef ref : refs){
+
         for(XarrayIndex ai : beforeCrt){
           XelementHelper.insertAfter(ref.getVarRef(), ai.cloneObject());
         }
