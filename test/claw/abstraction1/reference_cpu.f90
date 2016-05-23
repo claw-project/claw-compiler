@@ -13,14 +13,14 @@ CONTAINS
   c = 5.345
   DO k = 1 , nz , 1
    DO proma = 1 , nproma , 1
-    t ( nproma , k ) = c * k
+    t ( proma , k ) = c * k
    END DO
    DO proma = 1 , nproma , 1
-    q ( nproma , k ) = q ( nproma , k - 1 ) + t ( nproma , k ) * c
+    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
    END DO
   END DO
   DO proma = 1 , nproma , 1
-   q ( nproma , nz ) = q ( nproma , nz ) * c
+   q ( proma , nz ) = q ( proma , nz ) * c
   END DO
  END SUBROUTINE compute_column
 
