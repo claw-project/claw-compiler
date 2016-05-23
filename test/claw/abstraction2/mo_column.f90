@@ -1,8 +1,7 @@
 MODULE mo_column
   IMPLICIT NONE
-
 CONTAINS
-
+  ! Compute only one column
   SUBROUTINE compute_column(nz, q, t)
     IMPLICIT NONE
 
@@ -28,7 +27,5 @@ CONTAINS
       q(k) = q(k - 1)  + t(k) * c
     END DO
     q(nz) = q(nz) * c
-
   END SUBROUTINE compute_column
-
 END MODULE mo_column
