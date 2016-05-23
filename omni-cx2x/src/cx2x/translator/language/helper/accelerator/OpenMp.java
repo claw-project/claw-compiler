@@ -39,20 +39,20 @@ public class OpenMp extends AcceleratorGenerator {
   protected String getStartParellelDirective() {
     if(_target == Target.CPU){
       // TODO check syntax and variant
-      return String.format(FORMAT3,
-          OPENMP_PREFIX, OPENMP_PARALLEL, OPENMP_DO);
+      return String.format(FORMAT2,
+          OPENMP_PREFIX, OPENMP_PARALLEL);
     } else {
       //!$omp target parallel do
-      return String.format(FORMAT4,
-          OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL, OPENMP_DO);
+      return String.format(FORMAT3,
+          OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL);
     }
   }
 
   @Override
   public String getEndParellelDirective() {
     //!$omp end target parallel do
-    return String.format(FORMAT5,
-        OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL, OPENMP_DO);
+    return String.format(FORMAT4,
+        OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL);
   }
 
   @Override
