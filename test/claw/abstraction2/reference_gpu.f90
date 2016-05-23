@@ -17,7 +17,7 @@ CONTAINS
   DO i = 1 , nx , 1
    DO j = 1 , ny , 1
     c = 5.345
-    DO k = 1 , nz , 1
+    DO k = 2 , nz , 1
      t ( i , j , k ) = c * k
      q ( i , j , k ) = q ( i , j , k - 1 ) + t ( i , j , k ) * c
     END DO

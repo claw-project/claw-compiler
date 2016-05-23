@@ -22,7 +22,7 @@ CONTAINS
     !$claw parallelize data(q,t) over (i,j,:)
 
     c = 5.345
-    DO k = 1, nz
+    DO k = 2, nz
       t(k) = c * k
       q(k) = q(k - 1)  + t(k) * c
     END DO
