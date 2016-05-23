@@ -21,7 +21,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XarrayIndex extends Xindex {
+public class XarrayIndex extends Xindex implements Xclonable<XarrayIndex> {
   private XexprModel _exprModel;
 
   /**
@@ -87,4 +87,9 @@ public class XarrayIndex extends Xindex {
     return idx;
   }
 
+  @Override
+  public XarrayIndex cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XarrayIndex(clone);
+  }
 }
