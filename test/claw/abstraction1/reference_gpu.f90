@@ -10,14 +10,17 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
+!$acc parallel
+!$acc loop
   DO proma = 1 , nproma , 1
    c = 5.345
    DO k = 1 , nz , 1
-    t ( nproma , k ) = c * k
-    q ( nproma , k ) = q ( nproma , k - 1 ) + t ( nproma , k ) * c
+    t ( proma , k ) = c * k
+    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
    END DO
-   q ( nproma , nz ) = q ( nproma , nz ) * c
+   q ( proma , nz ) = q ( proma , nz ) * c
   END DO
+!$acc end parallel
  END SUBROUTINE compute_column
 
 END MODULE mo_column
