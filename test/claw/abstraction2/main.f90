@@ -10,12 +10,19 @@ PROGRAM test_abstraction2
   ny = 10
   nz = 60
 
+  DO i = 1, nx
+    DO j = 1, ny
+      q(i,j,1) = 0.0
+      t(i,j,1) = 0.0
+    END DO
+  END DO
+
 #ifdef _CLAW
-  !CALL compute_column_claw(kend, q, t, xend, yend)
+  CALL compute_column(nz, q, t, i, j)
 #else
   DO i = 1, nx
     DO j = 1, ny
-      CALL compute_column(kend, q(i,j,:), t(i,j,:))
+      CALL compute_column(nz, q(i,j,:), t(i,j,:))
     END DO
   END DO
 #endif
