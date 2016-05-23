@@ -18,7 +18,7 @@ PROGRAM test_abstraction2
   END DO
 
 #ifdef _CLAW
-  CALL compute_column(nz, q, t, i, j)
+  CALL compute_column(nz, q, t, nx, ny)
 #else
   DO i = 1, nx
     DO j = 1, ny
