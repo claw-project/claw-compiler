@@ -80,7 +80,8 @@ public class ClawXcodeMlTranslator {
     _transformer = new ClawTransformer(groups);
     _blockDirectives = new Hashtable<>();
     _target = target;
-    _generator = AcceleratorHelper.createAcceleratorGenerator(directive);
+    _generator =
+        AcceleratorHelper.createAcceleratorGenerator(directive, target);
   }
 
   /**

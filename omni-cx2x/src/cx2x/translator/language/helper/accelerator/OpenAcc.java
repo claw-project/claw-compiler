@@ -5,6 +5,8 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import cx2x.translator.language.helper.target.Target;
+
 /**
  * OpenACC specific accelerator directive generator.
  *
@@ -19,6 +21,15 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PREFIX = "acc";
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_ROUTINE = "routine";
+
+  /**
+   * Constructs a new object with the given target.
+   *
+   * @param target Target for which the directive must be generated.
+   */
+  protected OpenAcc(Target target) {
+    super(target);
+  }
 
 
   @Override

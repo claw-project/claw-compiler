@@ -5,6 +5,8 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import cx2x.translator.language.helper.target.Target;
+
 /**
  * Interface for accelerator directive generator.
  *
@@ -15,12 +17,21 @@ package cx2x.translator.language.helper.accelerator;
  */
 public abstract class AcceleratorGenerator {
 
+  protected final Target _target;
   static final String COMPILE_GUARD = "claw-guard";
   static final String FORMATPAR = "%s(%s)";
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
   static final String FORMAT5 = "%s %s %s %s %s";
+
+  /**
+   * Constructs a new object with the given target.
+   * @param target Target for which the directive must be generated.
+   */
+  protected AcceleratorGenerator(Target target) {
+    _target = target;
+  }
 
   /**
    * Get the prefix for the current accelerator lanugage.

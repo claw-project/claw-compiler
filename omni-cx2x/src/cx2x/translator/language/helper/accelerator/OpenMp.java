@@ -5,21 +5,30 @@
 
 package cx2x.translator.language.helper.accelerator;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import cx2x.translator.language.helper.target.Target;
 
 /**
- * OpenMP specific accelerator directive generator.
+ * OpenMP base accelerator directive generator. Implements everything that is
+ * common for host and device target.
  *
  * @author clementval
  */
-class OpenMp extends AcceleratorGenerator {
-
+public class OpenMp extends AcceleratorGenerator {
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "delcare";
   private static final String OPENMP_TARGET = "target";
   private static final String OPENMP_PARALLEL = "parallel";
   private static final String OPENMP_DO = "do";
   private static final String OPENMP_END = "end";
+
+  /**
+   * Constructs a new object with the given target.
+   *
+   * @param target Target for which the directive must be generated.
+   */
+  protected OpenMp(Target target) {
+    super(target);
+  }
 
   @Override
   protected String getPrefix(){
@@ -28,9 +37,15 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartParellelDirective() {
-    //!$omp target parallel do
-    return String.format(FORMAT4,
-        OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL, OPENMP_DO);
+    if(_target == Target.CPU){
+      // TODO check syntax and variant
+      return String.format(FORMAT3,
+          OPENMP_PREFIX, OPENMP_PARALLEL, OPENMP_DO);
+    } else {
+      //!$omp target parallel do
+      return String.format(FORMAT4,
+          OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL, OPENMP_DO);
+    }
   }
 
   @Override
@@ -73,11 +88,11 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartLoopDirective(int value) {
-    throw new NotImplementedException();
+    return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_PARALLEL, OPENMP_DO);
   }
 
   @Override
   protected String getEndLoopDirective() {
-    throw new NotImplementedException();
+    return null;
   }
 }

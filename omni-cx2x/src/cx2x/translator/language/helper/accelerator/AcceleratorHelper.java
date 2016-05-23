@@ -6,6 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
@@ -232,17 +233,19 @@ public class AcceleratorHelper {
   /**
    * Constructs the correct AcceleratorGenerator object regarding the enum
    * value passed.
-   * @param accDirective Enum value that define the generator to be created.
+   * @param directive Enum value that define the generator to be created.
+   * @param target    Target for which the directives will be generated.
    * @return A specific implementation of an AcceleratorGenerator.
    */
   public static AcceleratorGenerator createAcceleratorGenerator(
-          AcceleratorDirective accDirective)
+          AcceleratorDirective directive,
+          Target target)
   {
-    switch (accDirective){
+    switch (directive){
       case OPENACC:
-        return new OpenAcc();
+        return new OpenAcc(target);
       case OPENMP:
-        return new OpenMp();
+        return new OpenMp(target);
     }
     return null;
   }
