@@ -112,7 +112,6 @@ public class ClawDimension {
     return _identifier;
   }
 
-
   /**
    * Set the value of upper bound var.
    * @param value Type value.
