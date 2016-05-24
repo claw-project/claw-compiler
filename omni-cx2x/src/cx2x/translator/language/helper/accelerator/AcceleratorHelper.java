@@ -182,7 +182,7 @@ public class AcceleratorHelper {
     if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
       return; // Don't do anything if the target is none
     }
-    
+
     Xpragma routine = XelementHelper.createEmpty(Xpragma.class, xcodeml);
     routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
     fctDef.getBody().appendAsFirst(routine);
@@ -197,7 +197,6 @@ public class AcceleratorHelper {
    * @param stmt    Statement from which we looks for a parallel clause to
    *                append private clauses.
    * @param var     Variable to generate the private clause.
-   * TODO what about OpenMP ?
    */
   public static void generatePrivateClause(ClawLanguage claw,
                                            XcodeProgram xcodeml,
