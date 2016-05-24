@@ -99,6 +99,13 @@ target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
 add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${CMAKE_CURRENT_SOURCE_DIR}/${GPU_DIR}/main.f90")
 target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
 
+# Set target specific compilation options
+if(OPENACC_ENABLE)
+  target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${OPENACC_FLAGS})
+elseif(OPENMP_ENABLE)
+  target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${OPENMP_FLAGS})
+endif()
+
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
   add_test(NAME ast-transform-${TEST_NAME} COMMAND "${CMAKE_COMMAND}"  --build ${CMAKE_BINARY_DIR} --target transform-${TEST_NAME})
