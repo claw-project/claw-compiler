@@ -32,6 +32,8 @@ claw_f_lib.sh
 # OMNI compiler temporary folders
 __omni_tmp__
 __xmod__
+__cpu__
+__gpu__
 
 # ANTLR generated files
 *.tokens
