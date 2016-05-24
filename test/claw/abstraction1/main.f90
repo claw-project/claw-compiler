@@ -14,6 +14,8 @@ PROGRAM test_abstraction1
     t(p,1) = 0.0
   END DO
 
+  !$acc data copyin(q,t)
+
 #ifdef _CLAW
   CALL compute_column(nz, q, t, nproma)
 #else
@@ -21,6 +23,8 @@ PROGRAM test_abstraction1
     CALL compute_column(nz, q(p,:), t(p,:))
   END DO
 #endif
+
+  !$acc end data
 
   PRINT*,SUM(q)
   PRINT*,SUM(t)
