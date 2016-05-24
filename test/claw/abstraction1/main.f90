@@ -14,7 +14,7 @@ PROGRAM test_abstraction1
     t(p,1) = 0.0
   END DO
 
-  !$acc data copyin(q,t)
+  !$acc data copyin(q,t) copyout(q,t)
 
 #ifdef _CLAW
   CALL compute_column(nz, q, t, nproma)
