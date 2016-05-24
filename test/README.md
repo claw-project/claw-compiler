@@ -49,6 +49,8 @@ set(IGNORE_TEST ON)         # optional, does not perform the test but apply
 set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
 set(DIRECTIVE_GPU "--directive=opemacc") # Define the directive language for GPU
 set(DIRECTIVE_CPU "--directive=opemmp")  # Define the directive language for CPU
+set(OPENACC_ENABLE ON)      # Activate/deactivate OpenACC compilation if available
+set(OPENMP_ENABLE OFF)      # Activate/deactivate OpenMP compilation if available
 include(${CMAKE_SOURCE_DIR}/test/module_test.cmake) # base cmake file
 ```
 
