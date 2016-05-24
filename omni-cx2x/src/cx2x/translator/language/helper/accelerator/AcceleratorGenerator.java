@@ -82,7 +82,7 @@ public abstract class AcceleratorGenerator {
   protected abstract String getParallelKeyword();
 
   /**
-   * Return contruction of the clause for a private variable in a
+   * Return contruction of the clause for a private variable. 
    * @param var Variable name that will be inserted in the generated clause.
    * @return An accelerator language specific private clause with the var.
    */
