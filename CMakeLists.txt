@@ -74,14 +74,26 @@ set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
 # The driver uses preprocessed files only but the tests compile the code.
 if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
   # For Cray Compiler
-  set(FPPFLAGS "-e P")            # for preprocessing only
-  set(FPP_REDIRECT false)         # cannot use redirection > to save file
-  set(CLAW_TEST_FFP_FLAGS "-e Z") # for preprocessing and compilation
-else()
+  set(FPPFLAGS "-e P")              # for preprocessing only
+  set(FPP_REDIRECT false)           # cannot use redirection > to save file
+  set(CLAW_TEST_FFP_FLAGS "-e Z")   # for preprocessing and compilation
+  set(OPENACC_FLAGS "-h acc,noomp") # flags to compile with OpenACC support
+  set(OPENMP_FALGS "-h noacc,omp")  # flags to compile with OpenMP support
+elseif("${CMAKE_Fortran_COMPILER}" MATCHES "pgfortran")
   # Std option for gfortran/pgi
-  set(FPPFLAGS "-E")              # for preprocessing only
-  set(FPP_REDIRECT true)          # use redirection > to save file
-  set(CLAW_TEST_FFP_FLAGS "-cpp") # force preprocessing
+  set(FPPFLAGS "-E")                # for preprocessing only
+  set(FPP_REDIRECT true)            # use redirection > to save file
+  set(CLAW_TEST_FFP_FLAGS "-cpp")   # force preprocessing
+  set(OPENACC_FLAGS "-acc")         # flags to compile with OpenACC support
+                                    # TODO maybe need -ta=<target>
+  set(OPENMP_FALGS "-mp")           # flags to compile with OpenMP support
+else()
+  # Std option for gfortran
+  set(FPPFLAGS "-E")                # for preprocessing only
+  set(FPP_REDIRECT true)            # use redirection > to save file
+  set(CLAW_TEST_FFP_FLAGS "-cpp")   # force preprocessing
+  set(OPENACC_FLAGS "")             # flags to compile with OpenACC support
+  set(OPENMP_FALGS "-fopenmp")      # flags to compile with OpenMP support
 endif()
 
 # Build OMNI compiler
