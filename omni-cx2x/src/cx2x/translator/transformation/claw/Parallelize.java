@@ -56,22 +56,8 @@ public class Parallelize extends Transformation {
       return false;
     }
 
-    // Check if any dimension has been defined.
-    if(!analyseDimension(xcodeml)){
-      return false;
-    }
-
-    // Check data information
-    if(!analyseData(xcodeml)){
-      return false;
-    }
-
-    // Check the dimension information
-    if(!analyseOver(xcodeml)){
-      return false;
-    }
-
-    return true;
+    return analyseDimension(xcodeml) && analyseData(xcodeml) &&
+        analyseOver(xcodeml);
   }
 
 
