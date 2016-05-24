@@ -4,5 +4,5 @@ set(OUTPUT_TEST ON)            # If ON, test the output of executables with orig
 set(IGNORE_TEST ON)            # If ON, ignore all test targets
 set(DIRECTIVE_GPU "-d=openmp") # Set directive language to OpenMP
 set(OPENACC_ENABLE OFF)        # If ON, try to compile with OpenACC
-set(OPENMP_ENABLE ON)          # If ON, try to compile with OpenMP
+set(OPENMP_ENABLE OFF)         # If ON, try to compile with OpenMP
 include(${CMAKE_SOURCE_DIR}/test/module_test.cmake)
