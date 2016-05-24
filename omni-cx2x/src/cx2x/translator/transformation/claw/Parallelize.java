@@ -67,26 +67,8 @@ public class Parallelize extends Transformation {
     }
 
     // Check the dimension information
-    if(!_claw.getOverClauseValues().contains(":")){
-      xcodeml.addError("The column dimension has not been specified in the " +
-          "over clause. Use : to specify it.",
-          _claw.getPragma().getLineNo());
+    if(!analyseOver(xcodeml)){
       return false;
-    }
-
-    // Check if over dimensions are defined dimensions
-    for(String o : _claw.getOverClauseValues()){
-      if(!o.equals(ClawDimension.BASE_DIM)){
-        ++_overDimensions;
-        if(!_dimensions.containsKey(o)){
-          xcodeml.addError(
-              String.format(
-                  "Dimension %s is not defined. Cannot be used in over " +
-                  "clause", o), _claw.getPragma().getLineNo()
-          );
-          return false;
-        }
-      }
     }
 
     return true;
@@ -117,9 +99,9 @@ public class Parallelize extends Transformation {
     }
     return true;
   }
-  
+
   /**
-   * Analyse the defined data.
+   * Analyse the information defined in the data clause.
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
@@ -138,6 +120,36 @@ public class Parallelize extends Transformation {
             _claw.getPragma().getLineNo()
         );
         return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Analyse the information defined in the over clause.
+   * @param xcodeml Current XcodeML program unit to store the error message.
+   * @return True if the analysis succeeded. False otherwise.
+   */
+  private boolean analyseOver(XcodeProgram xcodeml){
+    if(!_claw.getOverClauseValues().contains(":")){
+      xcodeml.addError("The column dimension has not been specified in the " +
+              "over clause. Use : to specify it.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    // Check if over dimensions are defined dimensions
+    for(String o : _claw.getOverClauseValues()){
+      if(!o.equals(ClawDimension.BASE_DIM)){
+        ++_overDimensions;
+        if(!_dimensions.containsKey(o)){
+          xcodeml.addError(
+              String.format(
+                  "Dimension %s is not defined. Cannot be used in over " +
+                      "clause", o), _claw.getPragma().getLineNo()
+          );
+          return false;
+        }
       }
     }
     return true;
