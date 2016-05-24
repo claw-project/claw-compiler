@@ -62,21 +62,8 @@ public class Parallelize extends Transformation {
     }
 
     // Check data information
-    for(String d : _claw.getDataClauseValues()){
-      if(!_fctDef.getSymbolTable().contains(d)){
-        xcodeml.addError(
-            String.format("Data %s is not defined in the current block.", d),
-            _claw.getPragma().getLineNo()
-        );
-        return false;
-      }
-      if(!_fctDef.getDeclarationTable().contains(d)){
-        xcodeml.addError(
-            String.format("Data %s is not declared in the current block.", d),
-            _claw.getPragma().getLineNo()
-        );
-        return false;
-      }
+    if(!analyseData(xcodeml)){
+      return false;
     }
 
     // Check the dimension information
@@ -127,6 +114,31 @@ public class Parallelize extends Transformation {
         return false;
       }
       _dimensions.put(d.getIdentifier(), d);
+    }
+    return true;
+  }
+  
+  /**
+   * Analyse the defined data.
+   * @param xcodeml Current XcodeML program unit to store the error message.
+   * @return True if the analysis succeeded. False otherwise.
+   */
+  private boolean analyseData(XcodeProgram xcodeml){
+    for(String d : _claw.getDataClauseValues()){
+      if(!_fctDef.getSymbolTable().contains(d)){
+        xcodeml.addError(
+            String.format("Data %s is not defined in the current block.", d),
+            _claw.getPragma().getLineNo()
+        );
+        return false;
+      }
+      if(!_fctDef.getDeclarationTable().contains(d)){
+        xcodeml.addError(
+            String.format("Data %s is not declared in the current block.", d),
+            _claw.getPragma().getLineNo()
+        );
+        return false;
+      }
     }
     return true;
   }
