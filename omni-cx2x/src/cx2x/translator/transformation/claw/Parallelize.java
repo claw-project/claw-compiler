@@ -122,9 +122,6 @@ public class Parallelize extends Transformation {
                         Transformation other)
       throws Exception
   {
-
-    // Apply first all common declaration
-
     // Insert the declarations of variables to iterate over the new dimensions
     insertVariableToIterateOverDimension(xcodeml);
 
