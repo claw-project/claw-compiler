@@ -7,6 +7,8 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.helper.target.Target;
 
+import java.util.List;
+
 /**
  * Interface for accelerator directive generator.
  *
@@ -86,6 +88,14 @@ public abstract class AcceleratorGenerator {
    */
   protected abstract String getPrivateClause(String var);
 
+  /**
+   * Return contruction of the clause for a list of private variable.
+   * @param vars List of variables name that will be inserted in the generated
+   *             clause.
+   * @return An accelerator language specific private clause with the list of
+   * variables.
+   */
+  protected abstract String getPrivateClause(List<String> vars);
 
   /**
    * Return the formatted directive to be inserted in a subroutine/function

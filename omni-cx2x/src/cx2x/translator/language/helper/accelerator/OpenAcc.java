@@ -6,6 +6,9 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.misc.Utility;
+
+import java.util.List;
 
 /**
  * OpenACC specific accelerator directive generator.
@@ -61,6 +64,11 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String getPrivateClause(String var) {
     return String.format(FORMATPAR, OPENACC_PRIVATE, var);
+  }
+
+  @Override
+  protected String getPrivateClause(List<String> vars) {
+    return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
 
   @Override
