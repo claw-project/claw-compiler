@@ -178,7 +178,8 @@ public class ClawLanguage extends AnalyzedPragma {
       if(ex != null){
         throw ex;
       } else {
-        throw new IllegalDirectiveException("", "", 0, 0); // TODO
+        throw new IllegalDirectiveException(pragma.getValue(),
+            "Unsupported construct", pragma.getLineNo(), 0);
       }
     }
   }
