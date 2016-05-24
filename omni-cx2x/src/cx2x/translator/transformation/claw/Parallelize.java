@@ -57,20 +57,8 @@ public class Parallelize extends Transformation {
     }
 
     // Check if any dimension has been defined.
-    if(!_claw.hasDimensionClause()){
-      xcodeml.addError("No dimension defined for parallelization.",
-          _claw.getPragma().getLineNo());
+    if(!analyseDimension(xcodeml)){
       return false;
-    }
-
-    for(ClawDimension d : _claw.getDimesionValues()){
-      if(_dimensions.containsKey(d.getIdentifier())){
-        xcodeml.addError(
-            String.format("Dimension with identifier %s already specified.",
-                d.getIdentifier()), _claw.getPragma().getLineNo()
-        );
-      }
-      _dimensions.put(d.getIdentifier(), d);
     }
 
     // Check data information
@@ -114,6 +102,32 @@ public class Parallelize extends Transformation {
       }
     }
 
+    return true;
+  }
+
+
+  /**
+   * Analyse the defined dimension.
+   * @param xcodeml Current XcodeML program unit to store the error message.
+   * @return True if the analysis succeeded. False otherwise.
+   */
+  private boolean analyseDimension(XcodeProgram xcodeml){
+    if(!_claw.hasDimensionClause()){
+      xcodeml.addError("No dimension defined for parallelization.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    for(ClawDimension d : _claw.getDimesionValues()){
+      if(_dimensions.containsKey(d.getIdentifier())){
+        xcodeml.addError(
+            String.format("Dimension with identifier %s already specified.",
+                d.getIdentifier()), _claw.getPragma().getLineNo()
+        );
+        return false;
+      }
+      _dimensions.put(d.getIdentifier(), d);
+    }
     return true;
   }
 
