@@ -14,10 +14,12 @@ import cx2x.translator.language.helper.target.Target;
  * @author clementval
  */
 public class OpenMp extends AcceleratorGenerator {
+
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "delcare";
   private static final String OPENMP_TARGET = "target";
   private static final String OPENMP_PARALLEL = "parallel";
+  private static final String OPENMP_PRIVATE = "private";
   private static final String OPENMP_DO = "do";
   private static final String OPENMP_END = "end";
 
@@ -57,17 +59,17 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getSingleDirective(String clause) {
-    return ""; // TODO
+    return String.format(FORMAT2, OPENMP_PREFIX, clause);
   }
 
   @Override
   protected String getParallelKeyword() {
-    return ""; // TODO
+    return OPENMP_PARALLEL;
   }
 
   @Override
   protected String getPrivateClause(String var) {
-    return ""; // TODO
+    return String.format(FORMATPAR, OPENMP_PRIVATE, var);
   }
 
   @Override
