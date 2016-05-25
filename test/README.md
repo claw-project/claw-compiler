@@ -4,14 +4,14 @@ This directory contains a set of functional tests for the CLAW Fortran compiler.
 All tests have the same structure described below:
 
 ###### Low level transformation tests
-* `CMakeLists.txt`: `CMake` file including specififc information for the test
+* `CMakeLists.txt`: `CMake` file including specific information for the test
   case for the test (see below the format for this file).
 * `original_code.f90`: The original Fortran code with CLAW directives.
 * `reference.f90`: A reference Fortran code that will be compared to the
   transformed code.
 
-###### Abstraction tests
-* `CMakeLists.txt`: `CMake` file including specififc information for the test
+###### Test case with module and targets for abstraction
+* `CMakeLists.txt`: `CMake` file including specific information for the test
   case for the test (see below the format for this file).
 * `main.f90`: The test driver including the `PROGRAM` subroutine.
 * `mo_column.f90`: The "compute" part of the test. Includes a subroutine which
