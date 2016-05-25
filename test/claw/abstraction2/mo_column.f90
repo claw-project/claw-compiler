@@ -10,6 +10,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
     INTEGER :: k                  ! Loop index
     REAL :: c                     ! Coefficient
+    REAL :: d                     ! Intermediate varibale
 
     ! CLAW definition
 
@@ -24,7 +25,8 @@ CONTAINS
     c = 5.345
     DO k = 2, nz
       t(k) = c * k
-      q(k) = q(k - 1)  + t(k) * c
+      d = t(k) + c
+      q(k) = q(k - 1)  + t(k) * c + d
     END DO
     q(nz) = q(nz) * c
   END SUBROUTINE compute_column
