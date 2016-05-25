@@ -218,9 +218,12 @@ public class Parallelize extends Transformation {
       }
 
       XarrayRef ref = assign.getLValueModel().getArrayRef();
+
+      // TODO data list to be adapted must be deduced and not 
       if(_claw.getDataClauseValues().
           contains(ref.getVarRef().getVar().getValue()))
       {
+
         NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
         XelementHelper.insertAfter(assign, loops.getOuterStatement());
         loops.getInnerStatement().getBody().appendToChildren(assign, true);
@@ -275,6 +278,7 @@ public class Parallelize extends Transformation {
     List<XarrayIndex> beforeCrt = new ArrayList<>();
     List<XarrayIndex> afterCrt = new ArrayList<>();
     List<XarrayIndex> crt = beforeCrt;
+
     if(_claw.hasOverClause()) {
 
       /* If the over clause is specified, the indexes respect the definition of
@@ -305,6 +309,7 @@ public class Parallelize extends Transformation {
     Collections.reverse(beforeCrt); // Because of insertion order
 
     for(String data : _claw.getDataClauseValues()){
+      // TODO list of data must be deduced and not given by the data clause
       List<XarrayRef> refs =
           XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
       for(XarrayRef ref : refs){
