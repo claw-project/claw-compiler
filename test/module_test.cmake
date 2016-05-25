@@ -44,24 +44,6 @@ if(${TEST_DEBUG}) # with debug option
   set(DEBUG_FLAG --debug)
 endif()
 
-# Execute the CLAW compiler for CPU target
-add_custom_command(
-  OUTPUT  ${OUTPUT_FILE_CPU}
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  DEPENDS ${ORIGINAL_FILE}
-  COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target"
-)
-
-# Execute the CLAW compiler for GPU target
-add_custom_command(
-  OUTPUT  ${OUTPUT_FILE_GPU}
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  DEPENDS ${ORIGINAL_FILE}
-  COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target"
-)
-
 add_custom_command(
   OUTPUT  ${MAIN_CPU}
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/main.f90 ${MAIN_CPU}
@@ -73,10 +55,30 @@ add_custom_command(
   COMMENT "Copy main.f90 to ${MAIN_GPU}"
 )
 
+# Execute the CLAW compiler for CPU target
+add_custom_command(
+  OUTPUT  ${OUTPUT_FILE_CPU}
+  COMMAND touch ${ORIGINAL_FILE}
+  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  DEPENDS ${ORIGINAL_FILE}
+  COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target"
+)
+
+# Execute the CLAW compiler for GPU target
+add_custom_command(
+  OUTPUT  ${OUTPUT_FILE_GPU}
+  COMMAND touch ${ORIGINAL_FILE}
+  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  DEPENDS ${ORIGINAL_FILE}
+  COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target"
+)
+
 # Target for the transformation
 add_custom_target(
   transform-${TEST_NAME}
-  DEPENDS ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU}
+  DEPENDS ${MAIN_CPU} ${OUTPUT_FILE_CPU} ${MAIN_GPU} ${OUTPUT_FILE_GPU} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU}
 )
 
 # Target to clean the generated file (Output of clawfc)
