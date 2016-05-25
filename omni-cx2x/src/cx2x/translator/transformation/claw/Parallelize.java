@@ -159,7 +159,7 @@ public class Parallelize extends Transformation {
     promoteFields(xcodeml);
 
     // Adapt array references.
-    adapteArrayReferences(xcodeml);
+    adaptArrayReferences(xcodeml);
 
     // Delete the pragma
     _claw.getPragma().delete();
@@ -269,7 +269,7 @@ public class Parallelize extends Transformation {
    * @throws IllegalTransformationException if elements cannot be created or
    * elements cannot be found.
    */
-  private void adapteArrayReferences(XcodeProgram xcodeml) throws
+  private void adaptArrayReferences(XcodeProgram xcodeml) throws
       IllegalTransformationException
   {
     List<XarrayIndex> beforeCrt = new ArrayList<>();
