@@ -2,6 +2,7 @@
 # Perform code transformation and compare the output with a reference
 
 # Define input and output file name
+set (MAIN_F90 ${CMAKE_CURRENT_SOURCE_DIR}/main.f90)
 set (ORIGINAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mo_column.f90)
 set (OUTPUT_FILE_CPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_cpu.f90)
 set (OUTPUT_FILE_GPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_gpu.f90)
@@ -67,10 +68,10 @@ add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
 
 # Build the original code and the transformed code
-add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL "${ORIGINAL_FILE}" "main.f90")
-add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "main.f90")
+add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL "${ORIGINAL_FILE}" "${MAIN_F90}")
+add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "${MAIN_F90}")
 target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
-add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "main.f90")
+add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${MAIN_F90}")
 target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
 
 # Set target specific compilation options
