@@ -72,7 +72,7 @@ set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
 
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
-if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
+if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
   # For Cray Compiler
   set(FPPFLAGS "-e P")              # for preprocessing only
   set(FPP_REDIRECT false)           # cannot use redirection > to save file
@@ -80,8 +80,8 @@ if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
   set(TEST_BASE_FLAGS "-h noacc,noomp") # Unactivate OpenACC and OpenMP
   set(OPENACC_FLAGS "-h acc,noomp") # flags to compile with OpenACC support
   set(OPENMP_FLAGS "-h noacc,omp")  # flags to compile with OpenMP support
-elseif("${CMAKE_Fortran_COMPILER}" MATCHES "pgfortran")
-  # Std option for gfortran/pgi
+elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
+  # For PGI compiler
   set(FPPFLAGS "-E")                # for preprocessing only
   set(FPP_REDIRECT true)            # use redirection > to save file
   set(CLAW_TEST_FFP_FLAGS "-cpp")   # force preprocessing
