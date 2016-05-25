@@ -15,8 +15,8 @@ CONTAINS
 
 !$acc parallel
 !$acc loop collapse(2)
-  DO i = 1 , nx , 1
-   DO j = 1 , ny , 1
+  DO j = 1 , ny , 1
+   DO i = 1 , nx , 1
     c = 5.345
     DO k = 2 , nz , 1
      t ( i , j , k ) = c * k
