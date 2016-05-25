@@ -20,7 +20,7 @@ CONTAINS
 
     !$claw define dimension i(1,nx) &
     !$claw define dimension j(1,ny) &
-    !$claw parallelize data(q,t) over (i,j,:)
+    !$claw parallelize
 
     c = 5.345
     DO k = 2, nz
