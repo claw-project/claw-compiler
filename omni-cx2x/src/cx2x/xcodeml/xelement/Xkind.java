@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class Xkind extends XbaseElement {
+public class Xkind extends XbaseElement implements Xclonable<Xkind> {
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -24,6 +24,12 @@ public class Xkind extends XbaseElement {
    */
   public Xkind(Element baseElement){
     super(baseElement);
+  }
+
+  @Override
+  public Xkind cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xkind(clone);
   }
   
 }

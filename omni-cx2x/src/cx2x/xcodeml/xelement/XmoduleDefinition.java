@@ -25,7 +25,8 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XmoduleDefinition extends XenhancedElement {
+public class XmoduleDefinition extends XenhancedElement
+    implements Xclonable<XmoduleDefinition> {
 
   private final String _name;
   private final XsymbolTable _symbols;
@@ -69,5 +70,9 @@ public class XmoduleDefinition extends XenhancedElement {
     return _declarations;
   }
 
-
+  @Override
+  public XmoduleDefinition cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XmoduleDefinition(clone);
+  }
 }

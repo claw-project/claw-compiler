@@ -26,7 +26,9 @@ import java.util.List;
  * @author clementval
  */
 
-public class XstructConstructor extends XbaseElement {
+public class XstructConstructor extends XbaseElement
+    implements Xclonable<XstructConstructor>
+{
 
   private String _type = null;
   private List<XexprModel> _models = null;
@@ -59,5 +61,11 @@ public class XstructConstructor extends XbaseElement {
    */
   public List<XexprModel> getExprModels(){
     return _models;
+  }
+
+  @Override
+  public XstructConstructor cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XstructConstructor(clone);
   }
 }

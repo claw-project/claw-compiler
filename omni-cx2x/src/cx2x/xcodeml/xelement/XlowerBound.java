@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class XlowerBound extends Xbound {
+public class XlowerBound extends Xbound implements Xclonable<XlowerBound> {
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -28,4 +28,9 @@ public class XlowerBound extends Xbound {
     super(baseElement);
   }
 
+  @Override
+  public XlowerBound cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XlowerBound(clone);
+  }
 }

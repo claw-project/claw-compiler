@@ -19,7 +19,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xelse extends XbaseElement {
+public class Xelse extends XbaseElement implements Xclonable<Xelse> {
   private Xbody _body = null;
 
   /**
@@ -40,4 +40,9 @@ public class Xelse extends XbaseElement {
     return _body;
   }
 
+  @Override
+  public Xelse cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xelse(clone);
+  }
 }

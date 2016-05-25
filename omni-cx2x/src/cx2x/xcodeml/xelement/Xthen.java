@@ -19,7 +19,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xthen extends XbaseElement {
+public class Xthen extends XbaseElement implements Xclonable<Xthen> {
   private Xbody _body = null;
 
   /**
@@ -40,4 +40,9 @@ public class Xthen extends XbaseElement {
     return _body;
   }
 
+  @Override
+  public Xthen cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xthen(clone);
+  }
 }

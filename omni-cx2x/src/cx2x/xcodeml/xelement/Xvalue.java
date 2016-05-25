@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class Xvalue extends XbaseElement {
+public class Xvalue extends XbaseElement implements Xclonable<Xvalue> {
 
   private String _repeatCount = null;
   private XexprModel _exprModel = null;
@@ -61,5 +61,11 @@ public class Xvalue extends XbaseElement {
    */
   public boolean hasRepeatCount(){
     return _repeatCount != null;
+  }
+
+  @Override
+  public Xvalue cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xvalue(clone);
   }
 }

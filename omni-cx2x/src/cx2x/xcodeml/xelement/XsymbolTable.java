@@ -21,7 +21,9 @@ import java.util.Hashtable;
  * @author clementval
  */
 
-public class XsymbolTable extends XbaseElement {
+public class XsymbolTable extends XbaseElement
+    implements Xclonable<XsymbolTable>
+{
 
   private final Hashtable<String, Xid> _table;
 
@@ -97,5 +99,11 @@ public class XsymbolTable extends XbaseElement {
    */
   public boolean contains(String id){
     return _table.containsKey(id);
+  }
+
+  @Override
+  public XsymbolTable cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XsymbolTable(clone);
   }
 }

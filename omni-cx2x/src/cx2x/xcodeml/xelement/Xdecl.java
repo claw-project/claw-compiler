@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class Xdecl extends XenhancedElement {
+public class Xdecl extends XenhancedElement implements Xclonable<Xdecl> {
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -22,5 +22,12 @@ public class Xdecl extends XenhancedElement {
    */
   public Xdecl(Element baseElement){
     super(baseElement);
+  }
+
+
+  @Override
+  public Xdecl cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xdecl(clone);
   }
 }

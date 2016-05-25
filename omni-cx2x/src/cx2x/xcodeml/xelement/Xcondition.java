@@ -20,7 +20,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xcondition extends XbaseElement {
+public class Xcondition extends XbaseElement implements Xclonable<Xcondition> {
   private final XexprModel _exprModel;
 
   /**
@@ -38,5 +38,12 @@ public class Xcondition extends XbaseElement {
    */
   public XexprModel getExprModel(){
     return _exprModel;
+  }
+
+
+  @Override
+  public Xcondition cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xcondition(clone);
   }
 }

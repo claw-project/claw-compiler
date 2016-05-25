@@ -22,7 +22,9 @@ import java.util.Hashtable;
  * @author clementval
  */
 
-public class XglobalDeclTable extends XbaseElement {
+public class XglobalDeclTable extends XbaseElement
+    implements Xclonable<XglobalDeclTable>
+{
 
   /*
    * Hastable containing the global declaration elements. Key is the name of the
@@ -126,6 +128,13 @@ public class XglobalDeclTable extends XbaseElement {
    */
   public int count(){
     return _table.size();
+  }
+
+
+  @Override
+  public XglobalDeclTable cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XglobalDeclTable(clone);
   }
 
 }

@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class Xparams extends XbaseElement {
+public class Xparams extends XbaseElement implements Xclonable<Xparams> {
 
   private List<Xname> _parameters = null;
 
@@ -59,4 +59,9 @@ public class Xparams extends XbaseElement {
     appendToChildren(name, false);
   }
 
+  @Override
+  public Xparams cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xparams(clone);
+  }
 }

@@ -20,7 +20,9 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class XrealConstant extends Xconstant {
+public class XrealConstant extends Xconstant
+    implements Xclonable<XrealConstant>
+{
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -31,4 +33,9 @@ public class XrealConstant extends Xconstant {
     super(baseElement);
   }
 
+  @Override
+  public XrealConstant cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XrealConstant(clone);
+  }
 }

@@ -18,7 +18,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xlength extends XbaseElement {
+public class Xlength extends XbaseElement implements Xclonable<Xlength> {
 
   private XexprModel _exprModel = null;
 
@@ -38,5 +38,11 @@ public class Xlength extends XbaseElement {
    */
   public XexprModel getExprModel(){
     return _exprModel;
+  }
+
+  @Override
+  public Xlength cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xlength(clone);
   }
 }

@@ -130,4 +130,10 @@ public class XvarDecl extends Xdecl {
     return varD;
   }
 
+  @Override
+  public XvarDecl cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XvarDecl(clone);
+  }
+
 }

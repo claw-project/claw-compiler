@@ -21,7 +21,9 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XcomplexConstant extends Xconstant {
+public class XcomplexConstant extends Xconstant
+    implements Xclonable<XcomplexConstant>
+{
 
   private String _type = null;
 
@@ -73,5 +75,12 @@ public class XcomplexConstant extends Xconstant {
    */
   public String getType(){
     return _type;
+  }
+
+
+  @Override
+  public XcomplexConstant cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XcomplexConstant(clone);
   }
 }

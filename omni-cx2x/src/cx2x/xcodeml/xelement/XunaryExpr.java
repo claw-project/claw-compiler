@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XunaryExpr extends XbaseElement {
+public class XunaryExpr extends XbaseElement implements Xclonable<XunaryExpr> {
 
   private XexprModel _expr = null;
   private String _type = null;
@@ -59,5 +59,11 @@ public class XunaryExpr extends XbaseElement {
    */
   public void setType(String type){
     _type = type;
+  }
+
+  @Override
+  public XunaryExpr cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XunaryExpr(clone);
   }
 }

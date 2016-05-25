@@ -19,7 +19,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xname extends XbaseElement {
+public class Xname extends XbaseElement implements Xclonable<Xname> {
   private String _type = null;
 
   /**
@@ -102,4 +102,9 @@ public class Xname extends XbaseElement {
     return n;
   }
 
+  @Override
+  public Xname cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xname(clone);
+  }
 }

@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class Xstep extends Xbound {
+public class Xstep extends Xbound implements Xclonable<Xstep> {
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
@@ -25,5 +25,11 @@ public class Xstep extends Xbound {
    */
   public Xstep(Element baseElement){
     super(baseElement);
+  }
+
+  @Override
+  public Xstep cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xstep(clone);
   }
 }

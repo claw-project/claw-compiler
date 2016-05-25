@@ -23,7 +23,8 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XbinaryExpr extends XbaseElement {
+public class XbinaryExpr extends XbaseElement implements Xclonable<XbinaryExpr>
+{
 
   private XexprModel _lhs = null;
   private XexprModel _rhs = null;
@@ -70,5 +71,12 @@ public class XbinaryExpr extends XbaseElement {
    */
   public XexprModel getRhsExpr(){
     return _rhs;
+  }
+
+
+  @Override
+  public XbinaryExpr cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XbinaryExpr(clone);
   }
 }

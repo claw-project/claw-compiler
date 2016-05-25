@@ -23,7 +23,7 @@ import java.util.*;
  * @author clementval
  */
 
-public class XtypeTable extends XbaseElement {
+public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
 
   private static final int HASH_LENGTH = 12;
   private static final String FCT_HASH_PREFIX = "F";
@@ -173,5 +173,11 @@ public class XtypeTable extends XbaseElement {
    */
   public Collection<Xtype> values(){
     return _table.values();
+  }
+
+  @Override
+  public XtypeTable cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XtypeTable(clone);
   }
 }

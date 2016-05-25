@@ -32,7 +32,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XdeclTable extends XbaseElement {
+public class XdeclTable extends XbaseElement implements Xclonable<XdeclTable> {
 
   private final Hashtable<String, XvarDecl> _table;
 
@@ -126,5 +126,12 @@ public class XdeclTable extends XbaseElement {
    */
   public boolean contains(String name){
     return _table.containsKey(name);
+  }
+
+
+  @Override
+  public XdeclTable cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XdeclTable(clone);
   }
 }

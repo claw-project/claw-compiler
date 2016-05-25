@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
  * @author clementval
  */
 
-public class Xbody extends XbaseElement {
+public class Xbody extends XbaseElement implements Xclonable<Xbody> {
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -44,5 +44,12 @@ public class Xbody extends XbaseElement {
     } else {
       baseElement.insertBefore(element.getBaseElement(), firstElement);
     }
+  }
+
+
+  @Override
+  public Xbody cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new Xbody(clone);
   }
 }

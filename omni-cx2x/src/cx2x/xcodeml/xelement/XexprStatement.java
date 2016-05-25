@@ -16,7 +16,9 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class XexprStatement extends XbaseElement {
+public class XexprStatement extends XbaseElement
+    implements Xclonable<XexprStatement>
+{
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -25,5 +27,11 @@ public class XexprStatement extends XbaseElement {
    */
   public XexprStatement(Element baseElement){
     super(baseElement);
+  }
+
+  @Override
+  public XexprStatement cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XexprStatement(clone);
   }
 }

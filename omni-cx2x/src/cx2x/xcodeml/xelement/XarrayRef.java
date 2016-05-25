@@ -32,7 +32,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XarrayRef extends XbaseElement {
+public class XarrayRef extends XbaseElement implements Xclonable<XarrayRef> {
 
   private String _type = null;
   private XvarRef _varRef = null;
@@ -156,4 +156,9 @@ public class XarrayRef extends XbaseElement {
     readElementInformation();
   }
 
+  @Override
+  public XarrayRef cloneObject() {
+    Element clone = (Element)cloneNode();
+    return new XarrayRef(clone);
+  }
 }
