@@ -79,6 +79,8 @@ if(OPENACC_ENABLE)
   target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${OPENACC_FLAGS})
 elseif(OPENMP_ENABLE)
   target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${OPENMP_FLAGS})
+else()
+  target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${TEST_BASE_FLAGS})
 endif()
 
 if(NOT IGNORE_TEST)
