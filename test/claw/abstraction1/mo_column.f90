@@ -18,7 +18,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1,nproma) &
-    !$claw parallelize data(q,t) over (proma,:)
+    !$claw parallelize 
 
     c = 5.345
     DO k = 2, nz
