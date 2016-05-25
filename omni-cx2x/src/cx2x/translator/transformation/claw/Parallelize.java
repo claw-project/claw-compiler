@@ -370,14 +370,19 @@ public class Parallelize extends Transformation {
    * @return Ordered list of dimension object.
    */
   private List<ClawDimension> getOrderedDimensionsFromDefinition(){
-    List<ClawDimension> dimensions = new ArrayList<>();
-    for(String o : _claw.getOverClauseValues()) {
-      if (o.equals(ClawDimension.BASE_DIM)) {
-        continue;
+    // TODO activate when over clause become optional
+    /*if(_claw.hasOverClause()){
+      List<ClawDimension> dimensions = new ArrayList<>();
+      for(String o : _claw.getOverClauseValues()) {
+        if (o.equals(ClawDimension.BASE_DIM)) {
+          continue;
+        }
+        dimensions.add(_dimensions.get(o));
       }
-      dimensions.add(_dimensions.get(o));
-    }
-    return dimensions;
+      return dimensions;
+    } else {*/
+      return _claw.getDimensionValuesReversed();
+    //}
   }
 
 
