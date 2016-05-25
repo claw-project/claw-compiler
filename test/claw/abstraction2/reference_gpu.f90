@@ -7,6 +7,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : , : )
   INTEGER :: k
   REAL :: c
+  REAL :: d
   INTEGER , INTENT(IN) :: nx
   INTEGER :: i
   INTEGER , INTENT(IN) :: ny
@@ -19,7 +20,8 @@ CONTAINS
     c = 5.345
     DO k = 2 , nz , 1
      t ( i , j , k ) = c * k
-     q ( i , j , k ) = q ( i , j , k - 1 ) + t ( i , j , k ) * c
+     d = t ( i , j , k ) + c
+     q ( i , j , k ) = q ( i , j , k - 1 ) + t ( i , j , k ) * c + d
     END DO
     q ( i , j , nz ) = q ( i , j , nz ) * c
    END DO
