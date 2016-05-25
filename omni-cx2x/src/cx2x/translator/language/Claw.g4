@@ -128,13 +128,24 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE DATA '(' ids_list[o] ')' OVER '(' ids_or_colon_list[s] ')'
+   | define_option[$l]* PARALLELIZE data_clause_optional[$l] over_clause_optional[$l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
-       $l.setDataClause(o);
-       $l.setOverClause(s);
      }
 ;
+
+over_clause_optional[ClawLanguage l]
+  @init{
+    List<String> s = new ArrayList<>();
+  }
+:
+    OVER '(' ids_or_colon_list[s] ')'
+    {
+      $l.setOverClause(s);
+    }
+  | /* empty */
+;
+
 
 group_option[ClawLanguage l]:
     GROUP '(' group_name=IDENTIFIER ')'
@@ -190,6 +201,11 @@ data_clause[ClawLanguage l]
   }
   :
     DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
+;
+
+data_clause_optional[ClawLanguage l]:
+    data_clause[$l]
+  | /* empty */
 ;
 
 private_optional[ClawLanguage l]:
