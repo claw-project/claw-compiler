@@ -1,10 +1,15 @@
 # Base test definition
 # Perform code transformation and compare the output with a reference
 
+set (CPU_DIR __cpu__)
+set (GPU_DIR __gpu__)
+
 # Define input and output file name
-set (ORIGINAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/original_code.f90)
-set (OUTPUT_FILE_CPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_cpu.f90)
-set (OUTPUT_FILE_GPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_gpu.f90)
+set (ORIGINAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mo_column.f90)
+set (OUTPUT_FILE_CPU ${CMAKE_CURRENT_SOURCE_DIR}/${CPU_DIR}/transformed_code_cpu.f90)
+set (OUTPUT_FILE_GPU ${CMAKE_CURRENT_SOURCE_DIR}/${GPU_DIR}/transformed_code_gpu.f90)
+set (MAIN_CPU ${CMAKE_CURRENT_SOURCE_DIR}/${CPU_DIR}/main.f90)
+set (MAIN_GPU ${CMAKE_CURRENT_SOURCE_DIR}/${GPU_DIR}/main.f90)
 set (REFERENCE_FILE_CPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_cpu.f90)
 set (REFERENCE_FILE_GPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_gpu.f90)
 
@@ -24,6 +29,14 @@ endif()
 
 if (NOT EXISTS ${XMOD_DIR})
   file(MAKE_DIRECTORY ${XMOD_DIR})
+endif()
+
+if (NOT EXISTS ${CPU_DIR})
+  file(MAKE_DIRECTORY ${CPU_DIR})
+endif()
+
+if (NOT EXISTS ${GPU_DIR})
+  file(MAKE_DIRECTORY ${GPU_DIR})
 endif()
 
 # Create intermediate representation in XcodeML Fortran format
@@ -49,6 +62,17 @@ add_custom_command(
   COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target"
 )
 
+add_custom_command(
+  OUTPUT  ${MAIN_CPU}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/main.f90 ${MAIN_CPU}
+  COMMENT "Copy main.f90 to ${MAIN_CPU}"
+)
+add_custom_command(
+  OUTPUT  ${MAIN_GPU}
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/main.f90 ${MAIN_GPU}
+  COMMENT "Copy main.f90 to ${MAIN_GPU}"
+)
+
 # Target for the transformation
 add_custom_target(
   transform-${TEST_NAME}
@@ -69,9 +93,11 @@ add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
 
 # Build the original code and the transformed code
-add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL "${ORIGINAL_FILE}")
-add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}")
-add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}")
+add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL "${ORIGINAL_FILE}" "main.f90")
+add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "${CMAKE_CURRENT_SOURCE_DIR}/${CPU_DIR}/main.f90")
+target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
+add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${CMAKE_CURRENT_SOURCE_DIR}/${GPU_DIR}/main.f90")
+target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
 
 # Set target specific compilation options
 if(OPENACC_ENABLE)
