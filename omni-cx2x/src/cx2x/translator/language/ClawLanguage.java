@@ -17,6 +17,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -646,6 +647,16 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public List<ClawDimension> getDimesionValues(){
     return _dimensions;
+  }
+
+  /**
+   * Get the dimensions extracted information in reverse order.
+   * @return All dimensions extracted from the directive in reverse order.
+   */
+  public List<ClawDimension> getDimensionValuesReversed(){
+    List tmp = ((List) ((ArrayList) _dimensions).clone());
+    Collections.reverse(tmp);
+    return tmp;
   }
 
   /**
