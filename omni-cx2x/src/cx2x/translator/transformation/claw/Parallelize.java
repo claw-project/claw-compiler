@@ -275,12 +275,30 @@ public class Parallelize extends Transformation {
     List<XarrayIndex> beforeCrt = new ArrayList<>();
     List<XarrayIndex> afterCrt = new ArrayList<>();
     List<XarrayIndex> crt = beforeCrt;
-    for(String dim : _claw.getOverClauseValues()){
-      if(dim.equals(ClawDimension.BASE_DIM)){
-        crt = afterCrt;
-      } else {
-        ClawDimension d = _dimensions.get(dim);
-        crt.add(d.generateArrayIndex(xcodeml));
+    if(_claw.hasOverClause()) {
+
+      /* If the over clause is specified, the indexes respect the definition of
+       * the over clause. Indexes before the "colon" symbol will be inserted
+       * before the current indexes and the remaining indexes will be inserted
+       * after the current indexes.  */
+
+      for (String dim : _claw.getOverClauseValues()) {
+        if (dim.equals(ClawDimension.BASE_DIM)) {
+          crt = afterCrt;
+        } else {
+          ClawDimension d = _dimensions.get(dim);
+          crt.add(d.generateArrayIndex(xcodeml));
+        }
+      }
+
+    } else {
+
+      /* If no over clause, the indexes are inserted from the defined dimensions
+       * from left to right. Everything is inserted on the left of current
+       * indexes */
+
+      for(ClawDimension dim : _claw.getDimesionValues()){
+        crt.add(dim.generateArrayIndex(xcodeml));
       }
     }
 
