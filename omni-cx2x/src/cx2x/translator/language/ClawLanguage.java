@@ -654,9 +654,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return All dimensions extracted from the directive in reverse order.
    */
   public List<ClawDimension> getDimensionValuesReversed(){
-    List tmp = ((List) ((ArrayList) _dimensions).clone());
-    Collections.reverse(tmp);
-    return tmp;
+    return new ArrayList<>(_dimensions);
   }
 
   /**
