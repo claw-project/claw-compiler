@@ -7,7 +7,10 @@ package cx2x.xcodeml.xelement;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import java.util.Collection;
 import java.util.Hashtable;
+
 import cx2x.xcodeml.helper.*;
 
 /**
@@ -34,6 +37,7 @@ import cx2x.xcodeml.helper.*;
 
 public class XdeclTable extends XbaseElement implements Xclonable<XdeclTable> {
 
+  // TODO move to Xdecl
   private final Hashtable<String, XvarDecl> _table;
 
   /**
@@ -109,6 +113,15 @@ public class XdeclTable extends XbaseElement implements Xclonable<XdeclTable> {
       return _table.get(key);
     }
     return null;
+  }
+
+  /**
+   * Get all elements in the table.
+   * @return All elements stored in the table.
+   * TODO move to Xdecl
+   */
+  public Collection<XvarDecl> getAll(){
+    return _table.values();
   }
 
   /**

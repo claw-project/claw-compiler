@@ -28,7 +28,8 @@ import java.util.*;
 public class Parallelize extends Transformation {
 
   private final ClawLanguage _claw;
-  private Map<String, ClawDimension> _dimensions;
+  private final Map<String, ClawDimension> _dimensions;
+  private List<String> _fields;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
 
@@ -42,6 +43,7 @@ public class Parallelize extends Transformation {
     _overDimensions = 0;
     _claw = directive; // Keep information about the claw directive here
     _dimensions = new HashMap<>();
+    _fields = new ArrayList<>();
   }
 
   @Override
@@ -93,6 +95,15 @@ public class Parallelize extends Transformation {
    */
   private boolean analyseData(XcodeProgram xcodeml){
     if(!_claw.hasDataClause()){
+      for(XvarDecl decl : _fctDef.getDeclarationTable().getAll()){
+        Xtype type = xcodeml.getTypeTable().get(decl.getName().getType());
+        if(type instanceof XbasicType){
+          XbasicType bType = (XbasicType)type;
+          if(bType.getIntent() == Xintent.INOUT && bType.isArray()){
+            _fields.add(decl.getName().getValue());
+          }
+        }
+      }
       return true;
     }
     for(String d : _claw.getDataClauseValues()){
@@ -111,6 +122,7 @@ public class Parallelize extends Transformation {
         return false;
       }
     }
+    _fields = _claw.getDataClauseValues();
     return true;
   }
 
@@ -121,6 +133,7 @@ public class Parallelize extends Transformation {
    */
   private boolean analyseOver(XcodeProgram xcodeml){
     if(!_claw.hasOverClause()){
+      _overDimensions += _claw.getDimesionValues().size();
       return true;
     }
     if(!_claw.getOverClauseValues().contains(":")){
@@ -219,11 +232,7 @@ public class Parallelize extends Transformation {
 
       XarrayRef ref = assign.getLValueModel().getArrayRef();
 
-      // TODO data list to be adapted must be deduced and not 
-      if(_claw.getDataClauseValues().
-          contains(ref.getVarRef().getVar().getValue()))
-      {
-
+      if(_fields.contains(ref.getVarRef().getVar().getValue())){
         NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
         XelementHelper.insertAfter(assign, loops.getOuterStatement());
         loops.getInnerStatement().getBody().appendToChildren(assign, true);
@@ -244,7 +253,7 @@ public class Parallelize extends Transformation {
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    for(String data : _claw.getDataClauseValues()){
+    for(String data : _fields){
       Xid id = _fctDef.getSymbolTable().get(data);
       XvarDecl decl = _fctDef.getDeclarationTable().get(data);
       XbasicType bType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
@@ -308,8 +317,7 @@ public class Parallelize extends Transformation {
 
     Collections.reverse(beforeCrt); // Because of insertion order
 
-    for(String data : _claw.getDataClauseValues()){
-      // TODO list of data must be deduced and not given by the data clause
+    for(String data : _fields){
       List<XarrayRef> refs =
           XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
       for(XarrayRef ref : refs){
@@ -393,8 +401,7 @@ public class Parallelize extends Transformation {
    * @return Ordered list of dimension object.
    */
   private List<ClawDimension> getOrderedDimensionsFromDefinition(){
-    // TODO activate when over clause become optional
-    /*if(_claw.hasOverClause()){
+    if(_claw.hasOverClause()){
       List<ClawDimension> dimensions = new ArrayList<>();
       for(String o : _claw.getOverClauseValues()) {
         if (o.equals(ClawDimension.BASE_DIM)) {
@@ -403,9 +410,9 @@ public class Parallelize extends Transformation {
         dimensions.add(_dimensions.get(o));
       }
       return dimensions;
-    } else {*/
+    } else {
       return _claw.getDimensionValuesReversed();
-    //}
+    }
   }
 
 
