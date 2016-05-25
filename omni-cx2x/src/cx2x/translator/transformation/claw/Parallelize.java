@@ -92,6 +92,9 @@ public class Parallelize extends Transformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyseData(XcodeProgram xcodeml){
+    if(!_claw.hasDataClause()){
+      return true;
+    }
     for(String d : _claw.getDataClauseValues()){
       if(!_fctDef.getSymbolTable().contains(d)){
         xcodeml.addError(
@@ -117,6 +120,9 @@ public class Parallelize extends Transformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyseOver(XcodeProgram xcodeml){
+    if(!_claw.hasOverClause()){
+      return true;
+    }
     if(!_claw.getOverClauseValues().contains(":")){
       xcodeml.addError("The column dimension has not been specified in the " +
               "over clause. Use : to specify it.",
