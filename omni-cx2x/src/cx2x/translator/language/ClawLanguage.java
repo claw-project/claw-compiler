@@ -225,8 +225,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param n Number of loop to be collapsed. Will be converted to integer.
    */
   void setCollapseClause(String n){
-    _hasCollapseClause = true;
-    _collapseClauseValue = Integer.parseInt(n);
+    setCollapseClause(Integer.parseInt(n));
   }
 
   /**
