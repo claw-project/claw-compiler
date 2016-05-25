@@ -77,6 +77,7 @@ if("${CMAKE_Fortran_COMPILER}" MATCHES "ftn")
   set(FPPFLAGS "-e P")              # for preprocessing only
   set(FPP_REDIRECT false)           # cannot use redirection > to save file
   set(CLAW_TEST_FFP_FLAGS "-e Z")   # for preprocessing and compilation
+  set(TEST_BASE_FLAGS "-h noacc,noomp") # Unactivate OpenACC and OpenMP
   set(OPENACC_FLAGS "-h acc,noomp") # flags to compile with OpenACC support
   set(OPENMP_FLAGS "-h noacc,omp")  # flags to compile with OpenMP support
 elseif("${CMAKE_Fortran_COMPILER}" MATCHES "pgfortran")
@@ -84,6 +85,7 @@ elseif("${CMAKE_Fortran_COMPILER}" MATCHES "pgfortran")
   set(FPPFLAGS "-E")                # for preprocessing only
   set(FPP_REDIRECT true)            # use redirection > to save file
   set(CLAW_TEST_FFP_FLAGS "-cpp")   # force preprocessing
+  set(TEST_BASE_FLAGS "")           # Base flags for test case compilation
   set(OPENACC_FLAGS "-acc")         # flags to compile with OpenACC support
                                     # TODO maybe need -ta=<target>
   set(OPENMP_FLAGS "-mp")           # flags to compile with OpenMP support
@@ -92,6 +94,7 @@ else()
   set(FPPFLAGS "-E")                # for preprocessing only
   set(FPP_REDIRECT true)            # use redirection > to save file
   set(CLAW_TEST_FFP_FLAGS "-cpp")   # force preprocessing
+  set(TEST_BASE_FLAGS "")           # Base flags for test case compilation
   set(OPENACC_FLAGS "")             # flags to compile with OpenACC support
   set(OPENMP_FLAGS "-fopenmp")      # flags to compile with OpenMP support
 endif()
