@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import exc.object.Xcode;
 import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 

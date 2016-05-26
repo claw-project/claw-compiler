@@ -9,7 +9,6 @@ import java.io.File;
 import static org.junit.Assert.*;
 
 import helper.TestConstant;
-import helper.XmlHelper;
 import org.junit.Test;
 
 /**

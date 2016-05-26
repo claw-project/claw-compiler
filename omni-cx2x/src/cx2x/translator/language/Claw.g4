@@ -13,8 +13,6 @@ grammar Claw;
 
 @header
 {
-import java.util.List;
-import java.util.ArrayList;
 import cx2x.translator.common.Constant;
 import cx2x.translator.misc.Utility;
 }
