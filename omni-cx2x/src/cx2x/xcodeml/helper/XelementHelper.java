@@ -1619,40 +1619,6 @@ public class XelementHelper {
 
   /**
    * Find any element of the the given Class in the direct children of from
-   * element. Only first level children are search for.
-   * @param from          XbaseElement to search from.
-   * @param xElementClass Element's class to be found.
-   * @param <T>           Derived class of XbaseElement
-   * @return The first element found under from element. Null if no element is
-   * found.
-   */
-  private static <T extends XbaseElement> T findNextElementOfType(
-    XbaseElement from, Class<T> xElementClass)
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || from == null || from.getBaseElement() == null){
-      return null;
-    }
-    Node nextNode = from.getBaseElement().getNextSibling();
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(elementName)){
-          try {
-            return xElementClass.
-              getDeclaredConstructor(Element.class).newInstance(element);
-          } catch(Exception ex){
-            return null;
-          }
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
-
-  /**
-   * Find any element of the the given Class in the direct children of from
    * element until the end element is reached.
    * Only first level children are search for.
    * @param from          XbaseElement to search from.
@@ -1734,14 +1700,50 @@ public class XelementHelper {
   private static <T extends XbaseElement> T findParentOfType(
       XbaseElement from, Class<T> xElementClass)
   {
+    return findOfType(from, xElementClass, true);
+  }
+
+  /**
+   * Find any element of the the given Class in the direct children of from
+   * element. Only first level children are search for.
+   * @param from          XbaseElement to search from.
+   * @param xElementClass Element's class to be found.
+   * @param <T>           Derived class of XbaseElement.
+   * @return The first element found under from element. Null if no element is
+   * found.
+   */
+  private static <T extends XbaseElement> T findNextElementOfType(
+      XbaseElement from, Class<T> xElementClass)
+  {
+    return findOfType(from, xElementClass, false);
+  }
+
+  /**
+   * Find any element of the given Class in the direct children or the ancestors
+   * of the from element. In the case if children, only first level children are
+   * search for.
+   * @param from          XbaseElement to search from.
+   * @param xElementClass Element's class to be found.
+   * @param ancestor      if true, search in the ancestor. If false, search in
+   *                      the children.
+   * @param <T>           Derived class of XbaseElement.
+   * @return
+   */
+  private static <T extends XbaseElement> T findOfType(XbaseElement from,
+                                                       Class<T> xElementClass,
+                                                       boolean ancestor)
+  {
     String elementName = XelementName.getElementNameFromClass(xElementClass);
     if(elementName == null || from == null || from.getBaseElement() == null){
       return null;
     }
-    Node parent = from.getBaseElement().getParentNode();
-    while(from.getBaseElement().getParentNode() != null){
-      if (parent.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) parent;
+
+    Node nextNode = ancestor ? from.getBaseElement().getParentNode() :
+        from.getBaseElement().getNextSibling();
+
+    while(nextNode != null){
+      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) nextNode;
         if(element.getTagName().equals(elementName)){
           try{
             return xElementClass.
@@ -1751,7 +1753,7 @@ public class XelementHelper {
           }
         }
       }
-      parent = parent.getParentNode();
+      nextNode = ancestor ? nextNode.getParentNode() : nextNode.getNextSibling();
     }
     return null;
   }
