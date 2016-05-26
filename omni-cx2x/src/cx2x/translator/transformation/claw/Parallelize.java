@@ -259,24 +259,63 @@ public class Parallelize extends Transformation {
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    for(String data : _arrayFieldsInOut){
-      Xid id = _fctDef.getSymbolTable().get(data);
-      XvarDecl decl = _fctDef.getDeclarationTable().get(data);
+    // Promote arrays
+    for(String fieldId : _arrayFieldsInOut){
+      promoteField(fieldId, true, true, xcodeml);
+    }
+
+    // Handle intermediate scalar fields
+    if(_claw.getTarget() == Target.CPU){
+      for(String fieldId : _scalarFields){
+        promoteField(fieldId, false, false, xcodeml);
+      }
+    }
+  }
+
+  /**
+   * Promote a field with the information stored in the defined dimensions.
+   * @param fieldId Id of the field as defined in the symbol table.
+   * @param update  If true, update current type otherwise, create a type from
+   *                scratch.
+   * @param assumed If true, generate assumed dimension range, otherwise, use
+   *                the information in the defined dimension.
+   * @param xcodeml Current XcodeML program unit in which the element will be
+   *                created.
+   * @throws IllegalTransformationException
+   */
+  private void promoteField(String fieldId, boolean update, boolean assumed,
+                            XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xid id = _fctDef.getSymbolTable().get(fieldId);
+    XvarDecl decl = _fctDef.getDeclarationTable().get(fieldId);
+    String type = xcodeml.getTypeTable().generateArrayTypeHash();
+    XbasicType newType;
+
+    if(update){
       XbasicType bType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
       if(bType == null){
-        throw new IllegalTransformationException("Cannot find type for " + data,
-            _claw.getPragma().getLineNo());
+        throw new IllegalTransformationException("Cannot find type for " +
+            fieldId, _claw.getPragma().getLineNo());
       }
-      XbasicType newType = bType.cloneObject();
-      newType.setType(xcodeml.getTypeTable().generateArrayTypeHash());
+      newType = bType.cloneObject();
+    } else {
+      newType = XbasicType.create(type, id.getType(), Xintent.NONE, xcodeml);
+    }
+    if(assumed){
       for(int i = 0; i < _overDimensions; ++i){
         XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeml);
         newType.addDimension(index, 0);
       }
-      id.setType(newType.getType());
-      decl.getName().setType(newType.getType());
-      xcodeml.getTypeTable().add(newType);
+    } else {
+      for(ClawDimension dim : _claw.getDimesionValues()){
+        XindexRange index = dim.generateIndexRange(xcodeml, false);
+        newType.addDimension(index, 0);
+      }
     }
+    id.setType(type);
+    decl.getName().setType(type);
+    xcodeml.getTypeTable().add(newType);
   }
 
   /**
