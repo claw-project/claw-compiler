@@ -29,7 +29,7 @@ public class Parallelize extends Transformation {
 
   private final ClawLanguage _claw;
   private final Map<String, ClawDimension> _dimensions;
-  private List<String> _fields;
+  private List<String> _arrayFieldsInOut;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
 
@@ -43,7 +43,7 @@ public class Parallelize extends Transformation {
     _overDimensions = 0;
     _claw = directive; // Keep information about the claw directive here
     _dimensions = new HashMap<>();
-    _fields = new ArrayList<>();
+    _arrayFieldsInOut = new ArrayList<>();
   }
 
   @Override
@@ -100,7 +100,7 @@ public class Parallelize extends Transformation {
         if(type instanceof XbasicType){
           XbasicType bType = (XbasicType)type;
           if(bType.getIntent() == Xintent.INOUT && bType.isArray()){
-            _fields.add(decl.getName().getValue());
+            _arrayFieldsInOut.add(decl.getName().getValue());
           }
         }
       }
@@ -122,7 +122,7 @@ public class Parallelize extends Transformation {
         return false;
       }
     }
-    _fields = _claw.getDataClauseValues();
+    _arrayFieldsInOut = _claw.getDataClauseValues();
     return true;
   }
 
@@ -232,7 +232,7 @@ public class Parallelize extends Transformation {
 
       XarrayRef ref = assign.getLValueModel().getArrayRef();
 
-      if(_fields.contains(ref.getVarRef().getVar().getValue())){
+      if(_arrayFieldsInOut.contains(ref.getVarRef().getVar().getValue())){
         NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
         XelementHelper.insertAfter(assign, loops.getOuterStatement());
         loops.getInnerStatement().getBody().appendToChildren(assign, true);
@@ -253,7 +253,7 @@ public class Parallelize extends Transformation {
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    for(String data : _fields){
+    for(String data : _arrayFieldsInOut){
       Xid id = _fctDef.getSymbolTable().get(data);
       XvarDecl decl = _fctDef.getDeclarationTable().get(data);
       XbasicType bType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
@@ -317,7 +317,7 @@ public class Parallelize extends Transformation {
 
     Collections.reverse(beforeCrt); // Because of insertion order
 
-    for(String data : _fields){
+    for(String data : _arrayFieldsInOut){
       List<XarrayRef> refs =
           XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
       for(XarrayRef ref : refs){
