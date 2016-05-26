@@ -11,7 +11,7 @@ import helper.XmlHelper;
 import org.junit.Test;
 
 /**
- *
+ * Test features of the XtypeTable
  *
  * @author clementval
  */
@@ -38,6 +38,7 @@ public class XtypeTableTest {
     assertTrue(type1 instanceof XbasicType);
     XbasicType bType1 = (XbasicType)type1;
     assertFalse(bType1.hasIntent());
+    assertEquals(Xintent.NONE, bType1.getIntent());
     assertFalse(bType1.hasKind());
     assertTrue(bType1.hasLength());
     assertEquals(XelementName.TYPE_F_CHAR, bType1.getRef());
