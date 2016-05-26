@@ -16,7 +16,7 @@ public class GroupConfiguration {
   private final String _name;
   private final String _cPath;
   private final GroupType _type;
-  private Class _transformationClass;
+  private final Class _transformationClass;
 
   /**
    * Constructs a new GroupConfiguration element with all mandatory information.

@@ -27,7 +27,7 @@ public class LoopFusion extends Transformation {
   private String _groupLabel = Constant.EMPTY_STRING;
   // The loop statement involved in the Transformation
   private XdoStatement[] _loops;
-  private ClawLanguage _claw;
+  private final ClawLanguage _claw;
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
