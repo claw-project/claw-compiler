@@ -1727,7 +1727,8 @@ public class XelementHelper {
    * @param ancestor      if true, search in the ancestor. If false, search in
    *                      the children.
    * @param <T>           Derived class of XbaseElement.
-   * @return
+   * @return The first element found under or in the ancestors of the from
+   * element. Null if no element is found.
    */
   private static <T extends XbaseElement> T findOfType(XbaseElement from,
                                                        Class<T> xElementClass,
