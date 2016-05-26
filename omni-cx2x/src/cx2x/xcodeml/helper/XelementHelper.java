@@ -1987,4 +1987,24 @@ public class XelementHelper {
     to.getBaseElement().appendChild(copiedBody);
   }
 
+  /**
+   * Check whether the given type is a built-in type or is a type defined in the
+   * type table.
+   * @param type Type to check.
+   * @return True if the type is built-in. False otherwise.
+   */
+  public static boolean isBuiltInType(String type){
+    switch (type){
+      case XelementName.TYPE_F_CHAR:
+      case XelementName.TYPE_F_COMPLEX:
+      case XelementName.TYPE_F_INT:
+      case XelementName.TYPE_F_LOGICAL:
+      case XelementName.TYPE_F_REAL:
+      case XelementName.TYPE_F_VOID:
+        return true;
+      default:
+        return false;
+    }
+  }
+
 }
