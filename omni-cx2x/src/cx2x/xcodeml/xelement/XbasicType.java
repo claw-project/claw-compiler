@@ -301,7 +301,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * @return True if the type has an intent. False otherwise.
    */
   public boolean hasIntent(){
-    return _intent != null;
+    return _intent != Xintent.NONE;
   }
 
   /**
