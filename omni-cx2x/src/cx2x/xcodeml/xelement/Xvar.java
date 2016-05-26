@@ -97,18 +97,10 @@ public class Xvar extends XbaseElement implements Xclonable<Xvar> {
   public boolean equals(Object ob) {
     if (ob == null) return false;
     if (ob.getClass() != getClass()) return false;
-    Xvar other = (Xvar)ob;
+    Xvar other = (Xvar) ob;
 
-    if(!getValue().toLowerCase().equals(other.getValue().toLowerCase())){
-      return false;
-    }
-
-    if(!_type.equals(other.getType())){
-      return false;
-    }
-
-    return _scope.equals(other.getScope());
-
+    return getValue().toLowerCase().equals(other.getValue().toLowerCase())
+        && _type.equals(other.getType()) && _scope.equals(other.getScope());
   }
 
   @Override
