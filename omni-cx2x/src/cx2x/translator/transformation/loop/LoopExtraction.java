@@ -337,7 +337,7 @@ public class LoopExtraction extends Transformation {
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
         else if (argument.isArrayRef()){
-          XarrayRef arraRef = argument.getArrayRef();
+          XarrayRef arrayRef = argument.getArrayRef();
           // TODO
         }
 
