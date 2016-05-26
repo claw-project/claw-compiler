@@ -462,7 +462,6 @@ public class XelementHelper {
         }
       }
     } catch (XPathExpressionException ignored) {
-      System.err.println(ignored);
     }
     return doStatements;
   }
