@@ -137,22 +137,23 @@ public class ClawDimension {
    * @return A new indexRange elements.
    * @throws IllegalTransformationException if elements cannot be created.
    */
-  public XindexRange generateIndexRange(XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
+  public XindexRange generateIndexRange(XcodeProgram xcodeml, boolean withStep)
+      throws IllegalTransformationException {
     XindexRange range = XelementHelper.createEmpty(XindexRange.class, xcodeml);
     XlowerBound lower = XelementHelper.createEmpty(XlowerBound.class, xcodeml);
     XupperBound upper = XelementHelper.createEmpty(XupperBound.class, xcodeml);
-    Xstep step = XelementHelper.createEmpty(Xstep.class, xcodeml);
-    XintConstant stepValue =
-        XelementHelper.createEmpty(XintConstant.class, xcodeml);
-    stepValue.setType(XelementName.TYPE_F_INT);
-    stepValue.setValue(XelementName.DEFAULT_STEP_VALUE);
-    step.appendToChildren(stepValue, false);
-
     range.appendToChildren(lower, false);
     range.appendToChildren(upper, false);
-    range.appendToChildren(step, false);
+
+    if (withStep){
+      Xstep step = XelementHelper.createEmpty(Xstep.class, xcodeml);
+      XintConstant stepValue =
+          XelementHelper.createEmpty(XintConstant.class, xcodeml);
+      stepValue.setType(XelementName.TYPE_F_INT);
+      step.appendToChildren(stepValue, false);
+      stepValue.setValue(XelementName.DEFAULT_STEP_VALUE);
+      range.appendToChildren(step, false);
+    }
 
     // lower bound
     if(lowerBoundIsVar()){

@@ -32,7 +32,7 @@ public class NestedDoStatement {
       for (ClawDimension dim : dimensions) {
         Xvar induction = Xvar.create(XelementName.TYPE_F_INT,
             dim.getIdentifier(), Xscope.LOCAL, xcodeml);
-        XindexRange range = dim.generateIndexRange(xcodeml);
+        XindexRange range = dim.generateIndexRange(xcodeml, true);
         XdoStatement doSt =
             XdoStatement.create(induction, range, false, xcodeml);
         if (_statements.size() != 0) {
