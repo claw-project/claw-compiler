@@ -341,12 +341,25 @@ public class XelementHelper {
         XelementName.VAR,
         identifier
     );
+    return getArrayRefFromXpath(from, s1);
+  }
 
+  /**
+   * Get a list of arrayRef elements from an xpath query executed from the
+   * given element.
+   * @param from       Element to start from.
+   * @param xpathquery XPath query to be executed.
+   * @return List of all array references found. List is empty if nothing is
+   * found.
+   */
+  private static List<XarrayRef> getArrayRefFromXpath(XbaseElement from,
+                                                      String xpathquery)
+  {
     List<XarrayRef> refs = new ArrayList<>();
     try {
       XPathFactory xPathfactory = XPathFactory.newInstance();
       XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(s1);
+      XPathExpression xpathExpr = xpath.compile(xpathquery);
       NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
           XPathConstants.NODESET);
       for (int i = 0; i < output.getLength(); i++) {
@@ -354,10 +367,8 @@ public class XelementHelper {
         refs.add(new XarrayRef(arraRef));
       }
     } catch (XPathExpressionException ignored) {
-      System.out.println("EX");
     }
     return refs;
-
   }
 
   /**
@@ -532,19 +543,7 @@ public class XelementHelper {
         offsetXpath
     );
 
-    List<XarrayRef> arrayRefs = new ArrayList<>();
-    try {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(xpathQuery);
-      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
-          XPathConstants.NODESET);
-      for (int i = 0; i < output.getLength(); i++) {
-        Element arrayRef = (Element) output.item(i);
-        arrayRefs.add(new XarrayRef(arrayRef));
-      }
-    } catch (XPathExpressionException ignored) { }
-    return arrayRefs;
+    return getArrayRefFromXpath(from, xpathQuery);
   }
 
   /**
