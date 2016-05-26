@@ -30,6 +30,7 @@ public class Parallelize extends Transformation {
   private final ClawLanguage _claw;
   private final Map<String, ClawDimension> _dimensions;
   private List<String> _arrayFieldsInOut;
+  private final List<String> _scalarFields;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
 
@@ -44,6 +45,7 @@ public class Parallelize extends Transformation {
     _claw = directive; // Keep information about the claw directive here
     _dimensions = new HashMap<>();
     _arrayFieldsInOut = new ArrayList<>();
+    _scalarFields = new ArrayList<>();
   }
 
   @Override
@@ -96,6 +98,10 @@ public class Parallelize extends Transformation {
   private boolean analyseData(XcodeProgram xcodeml){
     if(!_claw.hasDataClause()){
       for(XvarDecl decl : _fctDef.getDeclarationTable().getAll()){
+        if(decl.isBuiltInType()){
+          _scalarFields.add(decl.getName().getValue());
+        }
+
         Xtype type = xcodeml.getTypeTable().get(decl.getName().getType());
         if(type instanceof XbasicType){
           XbasicType bType = (XbasicType)type;
