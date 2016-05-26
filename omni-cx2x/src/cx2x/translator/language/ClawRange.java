@@ -155,14 +155,10 @@ public class ClawRange {
     }
 
 
-    if(iterationRange.getIndexRange().getStep() == null ||
-        _step == null || !_step.equals(iterationRange.getIndexRange().getStep().getValue()))
-    {
-      return false;
-    }
+    return !(iterationRange.getIndexRange().getStep() == null ||
+        _step == null || !_step.equals(iterationRange.getIndexRange().getStep().getValue()));
 
 
-    return true;
   }
 
 }
