@@ -16,7 +16,8 @@ package cx2x.xcodeml.xelement;
 public enum Xintent {
   IN,
   OUT,
-  INOUT
+  INOUT,
+  NONE
   ;
 
   /**
@@ -43,7 +44,7 @@ public enum Xintent {
    */
   public static Xintent fromString(String value){
     if(value == null){
-      return null;
+      return NONE;
     }
     switch (value) {
       case XelementName.INTENT_IN:
@@ -53,6 +54,6 @@ public enum Xintent {
       case XelementName.INTENT_INOUT:
         return INOUT;
     }
-    return null;
+    return NONE;
   }
 }
