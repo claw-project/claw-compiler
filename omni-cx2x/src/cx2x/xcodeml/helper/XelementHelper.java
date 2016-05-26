@@ -654,7 +654,9 @@ public class XelementHelper {
    *                false, only direct children are search for.
    * @return        A XdoStatement object if found. Null otherwise.
    */
-  public static XdoStatement findDoStatement(XfunctionDefinition fctDef, boolean any){
+  public static XdoStatement findDoStatement(XfunctionDefinition fctDef,
+                                             boolean any)
+  {
     Xbody body = fctDef.getBody();
     return XelementHelper.findDoStatement(body, any);
   }
@@ -1364,15 +1366,11 @@ public class XelementHelper {
    * @return True if the two element are direct children of the same parent.
    * False otherwise.
    */
-  public static boolean hasSameParentBlock(XbaseElement e1, XbaseElement e2){
-    if(e1 == null || e2 == null || e1.getBaseElement() == null
-      || e2.getBaseElement() == null)
-    {
-      return false;
-    }
-
-    return e1.getBaseElement().getParentNode()
-        == e2.getBaseElement().getParentNode();
+  public static boolean hasSameParentBlock(XbaseElement e1, XbaseElement e2) {
+    return !(e1 == null || e2 == null || e1.getBaseElement() == null
+        || e2.getBaseElement() == null)
+        && e1.getBaseElement().getParentNode() ==
+        e2.getBaseElement().getParentNode();
   }
 
   /**
