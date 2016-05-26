@@ -309,19 +309,7 @@ public class XelementHelper {
     // Use the Kaysian method to express the intersect operator
     String intersect = XelementHelper.xPathIntersect(s1, s2);
 
-    List<XassignStatement> assignements = new ArrayList<>();
-    try {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(intersect);
-      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
-          XPathConstants.NODESET);
-      for (int i = 0; i < output.getLength(); i++) {
-        Element assign = (Element) output.item(i);
-        assignements.add(new XassignStatement(assign));
-      }
-    } catch (XPathExpressionException ignored) {}
-    return assignements;
+    return getFromXpath(from, intersect, XassignStatement.class);
   }
 
   /**
@@ -341,34 +329,39 @@ public class XelementHelper {
         XelementName.VAR,
         identifier
     );
-    return getArrayRefFromXpath(from, s1);
+    return getFromXpath(from, s1, XarrayRef.class);
   }
 
   /**
-   * Get a list of arrayRef elements from an xpath query executed from the
+   * Get a list of T elements from an xpath query executed from the
    * given element.
-   * @param from       Element to start from.
-   * @param xpathquery XPath query to be executed.
+   * @param from          Element to start from.
+   * @param xpathQuery    XPath query to be executed.
+   * @param xElementClass Type of element to retrieve.
    * @return List of all array references found. List is empty if nothing is
    * found.
    */
-  private static List<XarrayRef> getArrayRefFromXpath(XbaseElement from,
-                                                      String xpathquery)
+  private static <T extends XbaseElement> List<T> getFromXpath(
+      XbaseElement from, String xpathQuery, Class<T> xElementClass)
   {
-    List<XarrayRef> refs = new ArrayList<>();
+    List<T> elements = new ArrayList<>();
     try {
       XPathFactory xPathfactory = XPathFactory.newInstance();
       XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(xpathquery);
+      XPathExpression xpathExpr = xpath.compile(xpathQuery);
       NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
           XPathConstants.NODESET);
       for (int i = 0; i < output.getLength(); i++) {
-        Element arraRef = (Element) output.item(i);
-        refs.add(new XarrayRef(arraRef));
+        Element element = (Element) output.item(i);
+        try{
+          T el = xElementClass.
+              getDeclaredConstructor(Element.class).newInstance(element);
+          elements.add(el);
+        } catch(Exception ignored){ }
       }
     } catch (XPathExpressionException ignored) {
     }
-    return refs;
+    return elements;
   }
 
   /**
@@ -543,7 +536,7 @@ public class XelementHelper {
         offsetXpath
     );
 
-    return getArrayRefFromXpath(from, xpathQuery);
+    return getFromXpath(from, xpathQuery, XarrayRef.class);
   }
 
   /**
