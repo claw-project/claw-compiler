@@ -2,18 +2,23 @@
 All notable changes to the CLAW Fortran Compiler project will be documented in
 this file.
 
-## [0.2a Unreleased]
+## [0.3a Unreleased]
 New features:
+* Option `--target=<target>` or `-t=<target>` allows to choose the target for
+  code transformation.
+* Option `--directive=<directive_language>` or `-d=<directive_language>` allows
+  to choose the accelerator directive language used for code generation.
 * Transformation order is now configurable with the option `--config=`. A
   default configuration file is available in
   `<INSTALL_DIR>/etc/claw-default.xml`.
-* Option `--target=` allows to generate code for different targets.
 
 New transformation:
 * `array-transform`
 * `kcache`
 * `call`
 * `loop-hoist`
+* `parallelize`
+
 
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
