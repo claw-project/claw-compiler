@@ -244,6 +244,10 @@ public class Parallelize extends Transformation {
         }
       } else if(assign.getLValueModel().isVar()){
 
+        /* TODO
+         * If the assignement is in the column loop, the field must be
+         * promoted and the var reference switch to an array reference */
+
       }
     }
   }
