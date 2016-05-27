@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
  * - Optional:
  *   - symbols (XsymbolTable)
  *   - declarations  (XdeclTable)
- *   - FcontainsStatement (XcontainsStatement)
+ *   - FcontainsStatement (XcontainsStatement) TODO read + getter
  *
  * Attributes:
  * - Required: name (text)
