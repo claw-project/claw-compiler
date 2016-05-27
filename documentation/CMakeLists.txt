@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 # Generate documentation
 find_package(LATEX)
 if(NOT ${PDFLATEX_COMPILER} STREQUAL "")

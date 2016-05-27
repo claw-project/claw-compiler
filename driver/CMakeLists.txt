@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 # This CMake file define the configuration and the installation steps of the
 # claw compiler driver
 

@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 include(FindJava)
 
 # This file help integration of JUnit tests with cmake (ctest)
