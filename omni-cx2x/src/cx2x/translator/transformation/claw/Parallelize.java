@@ -227,22 +227,23 @@ public class Parallelize extends Transformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point. */
 
+
     List<ClawDimension> order = getOrderedDimensionsFromDefinition();
     List<XassignStatement> assignStatements =
         XelementHelper.getAllAssignments(_fctDef.getBody());
 
     for(XassignStatement assign : assignStatements){
-      if(!assign.getLValueModel().isArrayRef()){
-        continue;
-      }
+      if(assign.getLValueModel().isArrayRef()){
+        XarrayRef ref = assign.getLValueModel().getArrayRef();
 
-      XarrayRef ref = assign.getLValueModel().getArrayRef();
+        if(_arrayFieldsInOut.contains(ref.getVarRef().getVar().getValue())){
+          NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
+          XelementHelper.insertAfter(assign, loops.getOuterStatement());
+          loops.getInnerStatement().getBody().appendToChildren(assign, true);
+          assign.delete();
+        }
+      } else if(assign.getLValueModel().isVar()){
 
-      if(_arrayFieldsInOut.contains(ref.getVarRef().getVar().getValue())){
-        NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
-        XelementHelper.insertAfter(assign, loops.getOuterStatement());
-        loops.getInnerStatement().getBody().appendToChildren(assign, true);
-        assign.delete();
       }
     }
   }
@@ -262,13 +263,6 @@ public class Parallelize extends Transformation {
     // Promote arrays
     for(String fieldId : _arrayFieldsInOut){
       promoteField(fieldId, true, true, xcodeml);
-    }
-
-    // Handle intermediate scalar fields
-    if(_claw.getTarget() == Target.CPU){
-      for(String fieldId : _scalarFields){
-        promoteField(fieldId, false, false, xcodeml);
-      }
     }
   }
 
@@ -293,12 +287,13 @@ public class Parallelize extends Transformation {
     XbasicType newType;
 
     if(update){
-      XbasicType bType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
-      if(bType == null){
+      XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
+      if(oldType == null){
         throw new IllegalTransformationException("Cannot find type for " +
             fieldId, _claw.getPragma().getLineNo());
       }
-      newType = bType.cloneObject();
+      newType = oldType.cloneObject();
+      newType.setType(type);
     } else {
       newType = XbasicType.create(type, id.getType(), Xintent.NONE, xcodeml);
     }
