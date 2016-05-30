@@ -3,7 +3,6 @@
  * See LICENSE file for more information
  */
 
-
 /**
  * ANTLR 4 Grammar file for the CLAW directive language.
  *
@@ -34,21 +33,6 @@ analyze returns [ClawLanguage l]
   CLAW directive[$l]
 ;
 
-
-ids_list[List<String> ids]
-  :
-    i=IDENTIFIER { $ids.add($i.text); }
-  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
-;
-
-ids_or_colon_list[List<String> ids]
-  :
-    i=IDENTIFIER { $ids.add($i.text); }
-  | ':' { $ids.add(":"); }
-  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_or_colon_list[$ids]
-  | ':' { $ids.add(":"); } ',' ids_or_colon_list[$ids]
-;
-
 directive[ClawLanguage l]
   @init{
     List<ClawMapping> m = new ArrayList<>();
@@ -59,7 +43,7 @@ directive[ClawLanguage l]
   :
 
   // loop-fusion directive
-    LFUSION group_option[$l] collapse_optional[$l] EOF
+    LFUSION group_clause_optional[$l] collapse_optional[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
@@ -132,6 +116,23 @@ directive[ClawLanguage l]
      }
 ;
 
+// Comma-separated identifiers list
+ids_list[List<String> ids]
+  :
+    i=IDENTIFIER { $ids.add($i.text); }
+  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_list[$ids]
+;
+
+// Comma-separated identifiers or colon symbol list
+ids_or_colon_list[List<String> ids]
+  :
+    i=IDENTIFIER { $ids.add($i.text); }
+  | ':' { $ids.add(":"); }
+  | i=IDENTIFIER { $ids.add($i.text); } ',' ids_or_colon_list[$ids]
+  | ':' { $ids.add(":"); } ',' ids_or_colon_list[$ids]
+;
+
+// over clause
 over_clause_optional[ClawLanguage l]
   @init{
     List<String> s = new ArrayList<>();
@@ -144,29 +145,33 @@ over_clause_optional[ClawLanguage l]
   | /* empty */
 ;
 
-
-group_option[ClawLanguage l]:
+// group clause
+group_clause_optional[ClawLanguage l]:
     GROUP '(' group_name=IDENTIFIER ')'
     { $l.setGroupClause($group_name.text); }
   | /* empty */
 ;
 
+// collapse clause
 collapse_optional[ClawLanguage l]:
     COLLAPSE '(' n=NUMBER ')'
     { $l.setCollapseClause($n.text); }
   | /* empty */
 ;
 
+// fusion clause
 fusion_optional[ClawLanguage l]:
-    FUSION group_option[$l] { $l.setFusionClause(); }
+    FUSION group_clause_optional[$l] { $l.setFusionClause(); }
   | /* empty */
 ;
 
+// parallel clause
 parallel_optional[ClawLanguage l]:
     PARALLEL { $l.setParallelClause(); }
   | /* empty */
 ;
 
+// acc clause
 acc_optional[ClawLanguage l]
   @init{
     List<String> tempAcc = new ArrayList<>();
@@ -176,6 +181,7 @@ acc_optional[ClawLanguage l]
   | /* empty */
 ;
 
+// interchange clause
 interchange_optional[ClawLanguage l]:
     INTERCHANGE indexes_option[$l]
     {
@@ -184,6 +190,7 @@ interchange_optional[ClawLanguage l]:
   | /* empty */
 ;
 
+// induction clause
 induction_optional[ClawLanguage l]
   @init{
     List<String> temp = new ArrayList<>();
@@ -193,6 +200,7 @@ induction_optional[ClawLanguage l]
   | /* empty */
 ;
 
+// data clause
 data_clause[ClawLanguage l]
   @init {
     List<String> temp = new ArrayList<>();
@@ -201,16 +209,19 @@ data_clause[ClawLanguage l]
     DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
 ;
 
+// data clause or empty
 data_clause_optional[ClawLanguage l]:
     data_clause[$l]
   | /* empty */
 ;
 
+// private clause
 private_optional[ClawLanguage l]:
     PRIVATE { $l.setPrivateClause(); }
   | /* empty */
 ;
 
+// reshape clause
 reshape_optional[ClawLanguage l]
   @init{
     List<ClawReshapeInfo> r = new ArrayList();
@@ -221,6 +232,7 @@ reshape_optional[ClawLanguage l]
   | /* empty */
 ;
 
+// reshape clause
 reshape_element returns [ClawReshapeInfo i]
   @init{
     List<Integer> temp = new ArrayList();
