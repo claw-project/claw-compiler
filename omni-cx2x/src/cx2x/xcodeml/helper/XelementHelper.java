@@ -1063,19 +1063,6 @@ public class XelementHelper {
   }
 
   /**
-   * Find the direct next do statement element.
-   * @param from  The element to search from. Direct next sibling is searched.
-   * @param until The element to search until.
-   * @return A XdoStatement object if it directly follows the given from
-   * element. Null otherwise.
-   */
-  public static XdoStatement findNextDoStatement(XbaseElement from,
-                                                 XbaseElement until)
-  {
-    return findNextElementOfType(from, until, XdoStatement.class);
-  }
-
-  /**
    * Find symbols element.
    * @param parent  Root element to search from.
    * @param any     If true, find in any nested element under parent. If
