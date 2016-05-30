@@ -9,8 +9,8 @@ import cx2x.xcodeml.helper.XelementHelper;
 import org.w3c.dom.Element;
 
 /**
- * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in XcodeML
- * intermediate representation.
+ * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in
+ * XcodeML intermediate representation.
  *
  * Elements: (symbols?, declarations?, FcontainsStatement?)
  * - Optional:
