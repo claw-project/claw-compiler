@@ -421,8 +421,9 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
       bt.setRef(ref);
     }
     if(intent != null) {
-      bt.setIntent(Xintent.IN);
+      bt.setIntent(intent);
     }
+    bt.readBasicTypeInformation();
     return bt;
   }
 }
