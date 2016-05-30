@@ -1212,6 +1212,25 @@ public class XelementHelper {
     return findAll(parent, Xvar.class);
   }
 
+  /**
+   * Find all the var elements that are real references to a variable. Var
+   * element nested in an arrayIndex element are excluded.
+   * @param parent Root element to search from.
+   * @return A list of all var elements found.
+   */
+  public static List<Xvar> findAllReferences(XbaseElement parent){
+    List<Xvar> vars = findAllVars(parent);
+    List<Xvar> realReferences = new ArrayList<>();
+    for(Xvar var : vars){
+      if(!((Element)var.getBaseElement().getParentNode()).getTagName().
+          equals(XelementName.ARRAY_INDEX))
+      {
+        realReferences.add(var);
+      }
+    }
+    return realReferences;
+  }
+
 
   /**
    * Find len element.
