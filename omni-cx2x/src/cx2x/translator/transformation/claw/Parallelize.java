@@ -356,16 +356,7 @@ public class Parallelize extends Transformation {
       newType = oldType.cloneObject();
       newType.setType(type);
     } else {
-      String refType;
-      if(XelementHelper.isBuiltInType(id.getType())){
-        refType = xcodeml.getTypeTable().generateRealTypeHash();
-        XbasicType ref =
-            XbasicType.create(refType, id.getType(), Xintent.NONE, xcodeml);
-        xcodeml.getTypeTable().add(ref);
-      } else {
-        refType = id.getType();
-      }
-      newType = XbasicType.create(type, refType, Xintent.NONE, xcodeml);
+      newType = XbasicType.create(type, id.getType(), Xintent.NONE, xcodeml);
     }
     if(assumed){
       for(int i = 0; i < _overDimensions; ++i){
