@@ -33,6 +33,7 @@ public class Parallelize extends Transformation {
   private final List<String> _scalarFields;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
+  private List<XarrayIndex> _beforeCrt, _afterCrt;
 
   /**
    * Constructs a new Parallelize transfomration triggered from a specific
@@ -171,14 +172,18 @@ public class Parallelize extends Transformation {
                         Transformation other)
       throws Exception
   {
-    // Insert the declarations of variables to iterate over the new dimensions
+
+    // Prepare the array index that will be added to the array references.
+    prepareArrayIndexes(xcodeml);
+
+    // Insert the declarations of variables to iterate over the new dimensions.
     insertVariableToIterateOverDimension(xcodeml);
 
     // Promot all array fields with new dimensions.
     promoteFields(xcodeml);
 
     // Adapt array references.
-    adaptArrayReferences(xcodeml);
+    adaptArrayReferences(_arrayFieldsInOut);
 
     // Delete the pragma
     _claw.getPragma().delete();
@@ -242,14 +247,66 @@ public class Parallelize extends Transformation {
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
           assign.delete();
         }
-      } else if(assign.getLValueModel().isVar()){
-
-        /* TODO
-         * If the assignement is in the column loop, the field must be
-         * promoted and the var reference switch to an array reference */
-
+      } else if(assign.getLValueModel().isVar()
+          && _scalarFields.contains(assign.getLValueModel().getVar().getValue()))
+      {
+        /* If the assignement is in the column loop and is composed with some
+         * array fields, the field must be promoted and the var reference switch
+         * to an array reference */
+        Xvar lhs = assign.getLValueModel().getVar();
+        List<Xvar> vars = XelementHelper.findAllReferences(assign);
+        List<String> values = XelementHelper.getAllValues(vars);
+        if(!Collections.disjoint(values, _arrayFieldsInOut)){
+          if(!_arrayFieldsInOut.contains(lhs.getValue())){
+            _arrayFieldsInOut.add(lhs.getValue());
+            promoteField(lhs.getValue(), false, false, xcodeml);
+          }
+          adaptScalarRefToArrayReferences(xcodeml,
+              Collections.singletonList(lhs.getValue()));
+          NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
+          XelementHelper.insertAfter(assign, loops.getOuterStatement());
+          loops.getInnerStatement().getBody().appendToChildren(assign, true);
+          assign.delete();
+        }
       }
     }
+  }
+
+
+  private void prepareArrayIndexes(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    _beforeCrt = new ArrayList<>();
+    _afterCrt = new ArrayList<>();
+    List<XarrayIndex> crt = _beforeCrt;
+
+    if(_claw.hasOverClause()) {
+      /* If the over clause is specified, the indexes respect the definition of
+       * the over clause. Indexes before the "colon" symbol will be inserted
+       * before the current indexes and the remaining indexes will be inserted
+       * after the current indexes.  */
+
+      for (String dim : _claw.getOverClauseValues()) {
+        if (dim.equals(ClawDimension.BASE_DIM)) {
+          crt = _afterCrt;
+        } else {
+          ClawDimension d = _dimensions.get(dim);
+          crt.add(d.generateArrayIndex(xcodeml));
+        }
+      }
+
+    } else {
+
+      /* If no over clause, the indexes are inserted from the defined dimensions
+       * from left to right. Everything is inserted on the left of current
+       * indexes */
+
+      for(ClawDimension dim : _claw.getDimesionValues()){
+        crt.add(dim.generateArrayIndex(xcodeml));
+      }
+    }
+
+    Collections.reverse(_beforeCrt); // Because of insertion order
   }
 
 
@@ -299,7 +356,16 @@ public class Parallelize extends Transformation {
       newType = oldType.cloneObject();
       newType.setType(type);
     } else {
-      newType = XbasicType.create(type, id.getType(), Xintent.NONE, xcodeml);
+      String refType;
+      if(XelementHelper.isBuiltInType(id.getType())){
+        refType = xcodeml.getTypeTable().generateRealTypeHash();
+        XbasicType ref =
+            XbasicType.create(refType, id.getType(), Xintent.NONE, xcodeml);
+        xcodeml.getTypeTable().add(ref);
+      } else {
+        refType = id.getType();
+      }
+      newType = XbasicType.create(type, refType, Xintent.NONE, xcodeml);
     }
     if(assumed){
       for(int i = 0; i < _overDimensions; ++i){
@@ -320,56 +386,18 @@ public class Parallelize extends Transformation {
   /**
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
-   * @param xcodeml Current XcodeML program unit in which the element will be
-   *                created.
-   * @throws IllegalTransformationException if elements cannot be created or
-   * elements cannot be found.
+   * @param ids List of array identifiers that must be adapted.
    */
-  private void adaptArrayReferences(XcodeProgram xcodeml) throws
-      IllegalTransformationException
-  {
-    List<XarrayIndex> beforeCrt = new ArrayList<>();
-    List<XarrayIndex> afterCrt = new ArrayList<>();
-    List<XarrayIndex> crt = beforeCrt;
-
-    if(_claw.hasOverClause()) {
-
-      /* If the over clause is specified, the indexes respect the definition of
-       * the over clause. Indexes before the "colon" symbol will be inserted
-       * before the current indexes and the remaining indexes will be inserted
-       * after the current indexes.  */
-
-      for (String dim : _claw.getOverClauseValues()) {
-        if (dim.equals(ClawDimension.BASE_DIM)) {
-          crt = afterCrt;
-        } else {
-          ClawDimension d = _dimensions.get(dim);
-          crt.add(d.generateArrayIndex(xcodeml));
-        }
-      }
-
-    } else {
-
-      /* If no over clause, the indexes are inserted from the defined dimensions
-       * from left to right. Everything is inserted on the left of current
-       * indexes */
-
-      for(ClawDimension dim : _claw.getDimesionValues()){
-        crt.add(dim.generateArrayIndex(xcodeml));
-      }
-    }
-
-    Collections.reverse(beforeCrt); // Because of insertion order
-
-    for(String data : _arrayFieldsInOut){
+  private void adaptArrayReferences(List<String> ids) {
+    for(String data : ids){
       List<XarrayRef> refs =
           XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
       for(XarrayRef ref : refs){
 
-        for(XarrayIndex ai : beforeCrt){
+        for(XarrayIndex ai : _beforeCrt){
           XelementHelper.insertAfter(ref.getVarRef(), ai.cloneObject());
         }
-        for(XarrayIndex ai : afterCrt){
+        for(XarrayIndex ai : _afterCrt){
           XelementHelper.insertAfter(
               ref.getInnerElements().get(ref.getInnerElements().size()-1),
               ai.cloneObject());
@@ -377,6 +405,40 @@ public class Parallelize extends Transformation {
       }
     }
   }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   * @param xcodeml Current XcodeML program unit in which the element will be
+   *                created.
+   * @throws IllegalTransformationException if elements cannot be created or
+   * elements cannot be found.
+   */
+  private void adaptScalarRefToArrayReferences(XcodeProgram xcodeml,
+                                               List<String> ids)
+      throws IllegalTransformationException
+  {
+    for(String id : ids){
+      List<Xvar> vars = XelementHelper.findAllReferences(_fctDef.getBody(), id);
+
+      Xid sId = _fctDef.getSymbolTable().get(id);
+      XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
+
+      for(Xvar var : vars){
+        XarrayRef ref = XarrayRef.create(type, var.cloneObject(), xcodeml);
+        for(XarrayIndex ai : _beforeCrt){
+          XelementHelper.insertAfter(ref.getVarRef(), ai.cloneObject());
+        }
+        for(XarrayIndex ai : _afterCrt){
+          ref.appendToChildren(ai, true);
+        }
+
+        XelementHelper.insertAfter(var, ref);
+        var.delete();
+      }
+    }
+  }
+
 
   /**
    * Insert the declaration of the different variables needed to iterate over
