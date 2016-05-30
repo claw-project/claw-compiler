@@ -1146,25 +1146,6 @@ public class XelementHelper {
   }
 
   /**
-   * Find number of index ranges in an element.
-   * @param parent  Root element to search from.
-   * @return The number of index ranges found.
-   */
-  public static int findNumberOfRange(XbaseElement parent){
-    int indexCounter = 0;
-    Node node = parent.getBaseElement().getFirstChild();
-    while(node != null){
-      if(node.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element)node;
-        if(element.getTagName().equals(XelementName.INDEX_RANGE)){
-          ++indexCounter;
-        }
-      }
-    }
-    return indexCounter;
-  }
-
-  /**
    * Find all the index elements (arrayIndex and indexRange) in an element.
    * @param parent  Root element to search from.
    * @return A list of all index ranges found.
