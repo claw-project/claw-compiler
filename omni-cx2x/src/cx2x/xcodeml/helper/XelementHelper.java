@@ -1829,10 +1829,6 @@ public class XelementHelper {
     }
   }
 
-  private static Element findFirstElement(XbaseElement parent, String elementName){
-    return findFirstElement(parent.getBaseElement(), elementName);
-  }
-
   /**
    * Find the first element with tag corresponding to elementName nested under
    * the parent element.
