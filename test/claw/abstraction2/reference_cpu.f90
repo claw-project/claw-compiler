@@ -22,7 +22,7 @@ CONTAINS
    END DO
    DO j = 1 , ny , 1
     DO i = 1 , nx , 1
-     d( i , j ) = t ( i , j , k ) + c
+     d ( i , j ) = t ( i , j , k ) + c
     END DO
    END DO
    DO j = 1 , ny , 1
@@ -31,8 +31,8 @@ CONTAINS
     END DO
    END DO
   END DO
-  DO i = 1 , nx , 1
-   DO j = 1 , ny , 1
+  DO j = 1 , ny , 1
+   DO i = 1 , nx , 1
     q ( i , j , nz ) = q ( i , j , nz ) * c
    END DO
   END DO
