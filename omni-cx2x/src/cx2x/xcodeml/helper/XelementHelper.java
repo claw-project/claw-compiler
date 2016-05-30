@@ -1302,29 +1302,6 @@ public class XelementHelper {
   }
 
   /**
-   * Find a function call element nested in the given expression statement.
-   * @param exprStmt The expression statement to search from.
-   * @return A function call element if found. Null otherwise.
-   */
-  public static XfunctionCall findFctCall(XexprStatement exprStmt){
-    if(exprStmt == null){
-      return null;
-    }
-
-    NodeList nodeList = exprStmt.getBaseElement().getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(XelementName.FCT_CALL)){
-          return new XfunctionCall(element);
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
    * Find if there is a expr statement directly after the given element.
    * @param from  The element to search from
    * @return An expr statement element if found. Null otherwise.

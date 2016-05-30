@@ -124,7 +124,7 @@ public class LoopExtraction extends Transformation {
     }
 
     // Find function CALL
-    _fctCall = XelementHelper.findFctCall(_exprStmt);
+    _fctCall = XelementHelper.findFctCall(_exprStmt, true);
     if(_fctCall == null){
       xcodeml.addError("No function call detected after loop-extract",
         _claw.getPragma().getLineNo());
