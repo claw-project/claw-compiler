@@ -26,10 +26,13 @@ import java.util.*;
 public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
 
   private static final int HASH_LENGTH = 12;
+
+  private static final String ARRAY_HASH_PREFIX = "A";
+  private static final String CHAR_HASH_PREFIX = "C";
   private static final String FCT_HASH_PREFIX = "F";
   private static final String INT_HASH_PREFIX = "I";
   private static final String REAL_HASH_PREFIX = "R";
-  private static final String ARRAY_HASH_PREFIX = "A";
+
 
   private final Map<String, Xtype> _table;
 
@@ -138,6 +141,14 @@ public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
    */
   public String generateArrayTypeHash(){
     return generateHash(ARRAY_HASH_PREFIX);
+  }
+
+  /**
+   * Get a new unique character hash for the type table.
+   * @return New unique character type hash.
+   */
+  public String generateCharTypeHash(){
+    return generateHash(CHAR_HASH_PREFIX);
   }
 
   /**
