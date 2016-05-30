@@ -25,7 +25,6 @@ public abstract class AcceleratorGenerator {
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
-  static final String FORMAT5 = "%s %s %s %s %s";
 
   /**
    * Constructs a new object with the given target.
