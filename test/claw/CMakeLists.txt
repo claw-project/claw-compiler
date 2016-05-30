@@ -1,6 +1,6 @@
 # List of test directories
 add_subdirectory(abstraction1)
-#add_subdirectory(abstraction2)
+add_subdirectory(abstraction2)
 add_subdirectory(abstraction3)
 add_subdirectory(call1)
 add_subdirectory(kcache1) # assign cache
