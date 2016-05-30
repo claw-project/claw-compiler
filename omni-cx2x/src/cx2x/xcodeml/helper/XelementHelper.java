@@ -1231,6 +1231,21 @@ public class XelementHelper {
     return realReferences;
   }
 
+  /**
+   * Get a list of all inner values from a list of base elements.
+   * @param elements List of base elements.
+   * @return A list of inner values.
+   */
+  public static <T extends XbaseElement> List<String> getAllValues(
+      List<T> elements)
+  {
+    List<String> values = new ArrayList<>();
+    for(XbaseElement b : elements){
+      values.add(b.getValue());
+    }
+    return values;
+  }
+
 
   /**
    * Find len element.
