@@ -1268,7 +1268,7 @@ public class XelementHelper {
    * @param end   The end pragma. Deletion end just before this element.
    */
   public static void deleteBetween(Xpragma start, Xpragma end){
-    ArrayList<Element> toDelete = new ArrayList<>();
+    List<Element> toDelete = new ArrayList<>();
     Node node = start.getBaseElement().getNextSibling();
     while (node != null && node != end.getBaseElement()){
       if(node.getNodeType() == Node.ELEMENT_NODE){
@@ -1559,7 +1559,7 @@ public class XelementHelper {
     }
     return null;
   }
-  
+
   /**
    * Find element of the the given Class that is directly after the given from
    * element.
