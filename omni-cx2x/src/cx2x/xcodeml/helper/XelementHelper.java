@@ -333,38 +333,6 @@ public class XelementHelper {
   }
 
   /**
-   * Get a list of T elements from an xpath query executed from the
-   * given element.
-   * @param from          Element to start from.
-   * @param xpathQuery    XPath query to be executed.
-   * @param xElementClass Type of element to retrieve.
-   * @return List of all array references found. List is empty if nothing is
-   * found.
-   */
-  private static <T extends XbaseElement> List<T> getFromXpath(
-      XbaseElement from, String xpathQuery, Class<T> xElementClass)
-  {
-    List<T> elements = new ArrayList<>();
-    try {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(xpathQuery);
-      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
-          XPathConstants.NODESET);
-      for (int i = 0; i < output.getLength(); i++) {
-        Element element = (Element) output.item(i);
-        try{
-          T el = xElementClass.
-              getDeclaredConstructor(Element.class).newInstance(element);
-          elements.add(el);
-        } catch(Exception ignored){ }
-      }
-    } catch (XPathExpressionException ignored) {
-    }
-    return elements;
-  }
-
-  /**
    * Get the first assignment statement for an array reference.
    * @param from      Statement to look from.
    * @param arrayName Identifier of the array.
@@ -1221,20 +1189,7 @@ public class XelementHelper {
     return realReferences;
   }
 
-  /**
-   * Get a list of all inner values from a list of base elements.
-   * @param elements List of base elements.
-   * @return A list of inner values.
-   */
-  public static <T extends XbaseElement> List<String> getAllValues(
-      List<T> elements)
-  {
-    List<String> values = new ArrayList<>();
-    for(XbaseElement b : elements){
-      values.add(b.getValue());
-    }
-    return values;
-  }
+
 
 
   /**
@@ -1748,6 +1703,114 @@ public class XelementHelper {
   }
 
   /**
+   * Get a list of T elements from an xpath query executed from the
+   * given element.
+   * @param from          Element to start from.
+   * @param xpathQuery    XPath query to be executed.
+   * @param xElementClass Type of element to retrieve.
+   * @return List of all array references found. List is empty if nothing is
+   * found.
+   */
+  private static <T extends XbaseElement> List<T> getFromXpath(
+      XbaseElement from, String xpathQuery, Class<T> xElementClass)
+  {
+    List<T> elements = new ArrayList<>();
+    try {
+      XPathFactory xPathfactory = XPathFactory.newInstance();
+      XPath xpath = xPathfactory.newXPath();
+      XPathExpression xpathExpr = xpath.compile(xpathQuery);
+      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+          XPathConstants.NODESET);
+      for (int i = 0; i < output.getLength(); i++) {
+        Element element = (Element) output.item(i);
+        try{
+          T el = xElementClass.
+              getDeclaredConstructor(Element.class).newInstance(element);
+          elements.add(el);
+        } catch(Exception ignored){ }
+      }
+    } catch (XPathExpressionException ignored) {
+    }
+    return elements;
+  }
+
+  /**
+   * Get a list of all inner values from a list of base elements.
+   * @param elements List of base elements.
+   * @return A list of inner values.
+   */
+  public static <T extends XbaseElement> List<String> getAllValues(
+      List<T> elements)
+  {
+    List<String> values = new ArrayList<>();
+    for(XbaseElement b : elements){
+      values.add(b.getValue());
+    }
+    return values;
+  }
+
+  /**
+   * Find all elements of the given type in the subtree from the given parent
+   * element.
+   * @param parent        The element to search from.
+   * @param xElementClass Type of element to be searched.
+   * @param <T>           Type of the XbaseElement to be searched.
+   * @return A list of found elements.
+   */
+  private static <T extends XbaseElement> List<T> findAll(XbaseElement parent,
+                                                          Class<T> xElementClass)
+  {
+    List<T> elements = new ArrayList<>();
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || parent == null) {
+      return elements;
+    }
+    NodeList nodes = parent.getBaseElement().getElementsByTagName(elementName);
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node n = nodes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        try {
+          elements.add(xElementClass.
+              getDeclaredConstructor(Element.class).newInstance(el));
+        } catch(Exception ex){
+          return null;
+        }
+
+      }
+    }
+    return elements;
+  }
+
+  /**
+   * Create an empty of the given class element in the given program.
+   * @param xElementClass The class to be created
+   * @param xcodeml       The current XcodeML program.
+   * @param <T>           Type of the class to be created.
+   * @return An empty arrayIndex element.
+   * @throws IllegalTransformationException if element cannot be created.
+   */
+  public static <T extends XbaseElement> T createEmpty(Class<T> xElementClass,
+                                                       XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName != null){
+      Element element = xcodeml.getDocument().createElement(elementName);
+      try {
+        return xElementClass.
+            getDeclaredConstructor(Element.class).newInstance(element);
+      } catch(Exception ex){
+        throw new IllegalTransformationException("Cannot create new statement: "
+            + elementName);
+      }
+    }
+    throw new IllegalTransformationException("Undefined statement for classe:" +
+        xElementClass.toString());
+  }
+
+
+  /**
    * Find the first element with tag corresponding to elementName.
    * @param parent      The root element to search from.
    * @param elementName The tag of the element to search for.
@@ -1868,65 +1931,7 @@ public class XelementHelper {
         exprTag);
   }
 
-  /**
-   * Create an empty of the given class element in the given program.
-   * @param xElementClass The class to be created
-   * @param xcodeml       The current XcodeML program.
-   * @param <T>           Type of the class to be created.
-   * @return An empty arrayIndex element.
-   * @throws IllegalTransformationException if element cannot be created.
-   */
-  public static <T extends XbaseElement> T createEmpty(Class<T> xElementClass,
-                                                       XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName != null){
-      Element element = xcodeml.getDocument().createElement(elementName);
-      try {
-        return xElementClass.
-            getDeclaredConstructor(Element.class).newInstance(element);
-      } catch(Exception ex){
-        throw new IllegalTransformationException("Cannot create new statement: "
-            + elementName);
-      }
-    }
-    throw new IllegalTransformationException("Undefined statement for classe:" +
-      xElementClass.toString());
-  }
 
-  /**
-   * Find all elements of the given type in the subtree from the given parent
-   * element.
-   * @param parent        The element to search from.
-   * @param xElementClass Type of element to be searched.
-   * @param <T>           Type of the XbaseElement to be searched.
-   * @return A list of found elements.
-   */
-  private static <T extends XbaseElement> List<T> findAll(XbaseElement parent,
-                                                         Class<T> xElementClass)
-  {
-    List<T> elements = new ArrayList<>();
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || parent == null) {
-      return elements;
-    }
-    NodeList nodes = parent.getBaseElement().getElementsByTagName(elementName);
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node n = nodes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        try {
-          elements.add(xElementClass.
-              getDeclaredConstructor(Element.class).newInstance(el));
-        } catch(Exception ex){
-          return null;
-        }
-
-      }
-    }
-    return elements;
-  }
 
   /**
    * Get the depth of an element in the AST.
