@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import java.util.ArrayList;
@@ -160,5 +161,32 @@ public class XarrayRef extends XbaseElement implements Xclonable<XarrayRef> {
   public XarrayRef cloneObject() {
     Element clone = (Element)cloneNode();
     return new XarrayRef(clone);
+  }
+
+  /**
+   * Creates a new arrayRef element with the following structure arrayRef (
+   * varRef ( var ) ).
+   * @param type    Basic type used to assign the arrayRef and varRef types.
+   *                The arrayRef's type is assigned with the basicType ref
+   *                attribute. The varRef's type is assigned with the basicType
+   *                type attribute.
+   * @param var     Var element to be inserted in the varRef element.
+   * @param xcodeml The current XcodeML program unit in which the elements are
+   *                created.
+   * @return A new arrayRef element encapsualted in an XarrayRef object.
+   * @throws IllegalTransformationException if elements cannot be created.
+   */
+  public static XarrayRef create(XbasicType type, Xvar var,
+                                 XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    XarrayRef ref = XelementHelper.createEmpty(XarrayRef.class, xcodeml);
+    ref.setType(type.getRef());
+    XvarRef varRef = XelementHelper.createEmpty(XvarRef.class, xcodeml);
+    varRef.setType(type.getType());
+    varRef.appendToChildren(var, false);
+    ref.appendToChildren(varRef, false);
+    ref.readElementInformation();
+    return ref;
   }
 }
