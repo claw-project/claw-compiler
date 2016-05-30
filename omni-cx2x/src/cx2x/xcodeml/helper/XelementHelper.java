@@ -565,8 +565,11 @@ public class XelementHelper {
    * @param loop The do statement to insert in.
    * @param call The function call to be inserted.
    */
-  public static void insertFctCallIntoLoop(XdoStatement loop, XfunctionCall call){
-    loop.getBody().getBaseElement().appendChild(call.getBaseElement().getParentNode());
+  public static void insertFctCallIntoLoop(XdoStatement loop,
+                                           XfunctionCall call)
+  {
+    loop.getBody().getBaseElement().
+        appendChild(call.getBaseElement().getParentNode());
   }
 
   /**
@@ -606,8 +609,6 @@ public class XelementHelper {
   {
     return findParentOfType(child, XifStatement.class);
   }
-
-
 
   /**
    * Find a pragma element in the previous nodes containing a given keyword.
