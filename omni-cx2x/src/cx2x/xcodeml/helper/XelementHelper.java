@@ -1145,7 +1145,7 @@ public class XelementHelper {
    * @param parent Root element to search from.
    * @return A list of all var elements found.
    */
-  public static List<Xvar> findAllVars(XbaseElement parent){
+  private static List<Xvar> findAllVars(XbaseElement parent){
     return findAll(parent, Xvar.class);
   }
 
