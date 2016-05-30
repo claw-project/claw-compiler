@@ -151,7 +151,7 @@ public class XelementHelper {
    * @return A list of all array references found.
    */
   public static List<XarrayRef> getAllArrayReferences(XbaseElement parent,
-                                                      String arrayName )
+                                                      String arrayName)
   {
     List<XarrayRef> references = new ArrayList<>();
     NodeList nList = parent.getBaseElement().
@@ -1224,6 +1224,27 @@ public class XelementHelper {
     for(Xvar var : vars){
       if(!((Element)var.getBaseElement().getParentNode()).getTagName().
           equals(XelementName.ARRAY_INDEX))
+      {
+        realReferences.add(var);
+      }
+    }
+    return realReferences;
+  }
+
+  /**
+   * Find all the var elements that are real references to a variable. Var
+   * element nested in an arrayIndex element are excluded.
+   * @param parent Root element to search from.
+   * @param id     Identifier of the var to be found.
+   * @return A list of all var elements found.
+   */
+  public static List<Xvar> findAllReferences(XbaseElement parent, String id){
+    List<Xvar> vars = findAllVars(parent);
+    List<Xvar> realReferences = new ArrayList<>();
+    for(Xvar var : vars){
+      if(!((Element)var.getBaseElement().getParentNode()).getTagName().
+          equals(XelementName.ARRAY_INDEX)
+          && var.getValue().toLowerCase().equals(id.toLowerCase()))
       {
         realReferences.add(var);
       }
