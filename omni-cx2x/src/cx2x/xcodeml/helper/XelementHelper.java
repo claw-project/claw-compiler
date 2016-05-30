@@ -1559,48 +1559,7 @@ public class XelementHelper {
     }
     return null;
   }
-
-  /**
-   * Find any element of the the given Class in the direct children of from
-   * element until the end element is reached.
-   * Only first level children are search for.
-   * @param from          XbaseElement to search from.
-   * @param until         XbaseElement to search until.
-   * @param xElementClass Element's class to be found.
-   * @param <T>           Derived class of XbaseElement
-   * @return The first element found under from element. Null if no element is
-   * found.
-   */
-  private static <T extends XbaseElement> T findNextElementOfType(
-      XbaseElement from, XbaseElement until, Class<T> xElementClass)
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || from == null || until == null
-        || from.getBaseElement() == null)
-    {
-      return null;
-    }
-    Node nextNode = from.getBaseElement().getNextSibling();
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element == until.getBaseElement()){ // End element is reached
-          return null;
-        }
-        if(element.getTagName().equals(elementName)){
-          try {
-            return xElementClass.
-                getDeclaredConstructor(Element.class).newInstance(element);
-          } catch(Exception ex){
-            return null;
-          }
-        }
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
-
+  
   /**
    * Find element of the the given Class that is directly after the given from
    * element.
