@@ -42,7 +42,7 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartParellelDirective() {
-    if(_target == Target.CPU){
+    if(getTarget() == Target.CPU){
       // TODO check syntax and variant
       return String.format(FORMAT2,
           OPENMP_PREFIX, OPENMP_PARALLEL);

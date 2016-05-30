@@ -19,7 +19,7 @@ import java.util.List;
  */
 public abstract class AcceleratorGenerator {
 
-  protected final Target _target;
+  private final Target _target;
   static final String COMPILE_GUARD = "claw-guard";
   static final String FORMATPAR = "%s(%s)";
   static final String FORMAT2 = "%s %s";
@@ -33,6 +33,14 @@ public abstract class AcceleratorGenerator {
    */
   protected AcceleratorGenerator(Target target) {
     _target = target;
+  }
+
+  /**
+   * Get the associated target.
+   * @return Target.
+   */
+  protected Target getTarget(){
+    return _target;
   }
 
   /**
