@@ -1196,28 +1196,22 @@ public class XelementHelper {
 
   /**
    * Find all the name elements in an element.
-   * @param parent  Root element to search from.
+   * @param parent Root element to search from.
    * @return A list of all name elements found.
    */
   public static List<Xname> findAllNames(XbaseElement parent){
-    List<Xname> names = new ArrayList<>();
-    if(parent == null || parent.getBaseElement() == null){
-      return names;
-    }
-
-    Node node = parent.getBaseElement().getFirstChild();
-    while (node != null){
-      if(node.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element)node;
-        if(element.getTagName().equals(XelementName.NAME)) {
-          names.add(new Xname(element));
-        }
-      }
-      node = node.getNextSibling();
-    }
-
-    return names;
+    return findAll(parent, Xname.class);
   }
+
+  /**
+   * Find all the var elements in an element.
+   * @param parent Root element to search from.
+   * @return A list of all var elements found.
+   */
+  public static List<Xvar> findAllVars(XbaseElement parent){
+    return findAll(parent, Xvar.class);
+  }
+
 
   /**
    * Find len element.
@@ -1902,6 +1896,39 @@ public class XelementHelper {
     }
     throw new IllegalTransformationException("Undefined statement for classe:" +
       xElementClass.toString());
+  }
+
+  /**
+   * Find all elements of the given type in the subtree from the given parent
+   * element.
+   * @param parent        The element to search from.
+   * @param xElementClass Type of element to be searched.
+   * @param <T>           Type of the XbaseElement to be searched.
+   * @return A list of found elements.
+   */
+  private static <T extends XbaseElement> List<T> findAll(XbaseElement parent,
+                                                         Class<T> xElementClass)
+  {
+    List<T> elements = new ArrayList<>();
+    String elementName = XelementName.getElementNameFromClass(xElementClass);
+    if(elementName == null || parent == null) {
+      return elements;
+    }
+    NodeList nodes = parent.getBaseElement().getElementsByTagName(elementName);
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node n = nodes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) n;
+        try {
+          elements.add(xElementClass.
+              getDeclaredConstructor(Element.class).newInstance(el));
+        } catch(Exception ex){
+          return null;
+        }
+
+      }
+    }
+    return elements;
   }
 
   /**
