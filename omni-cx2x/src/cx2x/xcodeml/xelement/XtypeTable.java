@@ -31,6 +31,7 @@ public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
   private static final String CHAR_HASH_PREFIX = "C";
   private static final String FCT_HASH_PREFIX = "F";
   private static final String INT_HASH_PREFIX = "I";
+  private static final String LOGICAL_HASH_PREFIX = "L";
   private static final String REAL_HASH_PREFIX = "R";
 
 
@@ -149,6 +150,14 @@ public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
    */
   public String generateCharTypeHash(){
     return generateHash(CHAR_HASH_PREFIX);
+  }
+
+  /**
+   * Get a new unique logical hash for the type table.
+   * @return New unique logical type hash.
+   */
+  public String generateLogicalTypeHash(){
+    return generateHash(LOGICAL_HASH_PREFIX);
   }
 
   /**
