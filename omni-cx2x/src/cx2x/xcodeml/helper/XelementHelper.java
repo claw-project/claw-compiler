@@ -1424,7 +1424,7 @@ public class XelementHelper {
    * CDATA child - COMMENT child.
    * @param parentNode Root node to start the cleaning.
    */
-  public static void cleanEmptyTextNodes(Node parentNode) {
+  private static void cleanEmptyTextNodes(Node parentNode) {
     boolean removeEmptyTextNodes = false;
     Node childNode = parentNode.getFirstChild();
     while (childNode != null) {
