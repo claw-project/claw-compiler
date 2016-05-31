@@ -1439,20 +1439,17 @@ public class XelementHelper {
 
   /**
    * Validate a string attribute.
-   * @param doc         Document in which the attribute must be validated.
-   * @param attrValue   Attribute value expected.
-   * @param xpathQuery  Xpath query to locate the attribute value.
+   * @param doc       Document in which the attribute must be validated.
+   * @param attrValue Attribute value expected.
+   * @param query     Xpath query to locate the attribute value.
    * @return True if the attribute validates. False otherwise.
    * @throws Exception if xpathQuery cannot be executed.
    */
-  public static boolean validateStringAttribute(Document doc, String attrValue
-    , String xpathQuery) throws Exception
+  public static boolean validateStringAttribute(Document doc, String attrValue,
+                                                String query) throws Exception
   {
-    XPathFactory xPathfactory = XPathFactory.newInstance();
-    XPath xpath = xPathfactory.newXPath();
-    XPathExpression getVersion = xpath.compile(xpathQuery);
-    String outputValue = (String) getVersion.evaluate(doc,
-      XPathConstants.STRING);
+    XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
+    String outputValue = (String) ex.evaluate(doc, XPathConstants.STRING);
     return outputValue.equals(attrValue);
   }
 
