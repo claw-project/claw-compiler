@@ -119,12 +119,11 @@ public class AcceleratorHelper {
     if(claw.hasAcceleratorClause())
     {
       try {
-        Xpragma acceleratorPragma = XelementHelper.createEmpty(Xpragma.class,
-            xcodeml);
-        acceleratorPragma.setValue(
-            claw.getAcceleratorGenerator().
-                getSingleDirective(claw.getAcceleratorClauses())
-        );
+        Xpragma acceleratorPragma =
+            Xpragma.create(
+                claw.getAcceleratorGenerator().getSingleDirective(
+                    claw.getAcceleratorClauses()), xcodeml);
+
         /* TODO
            OpenACC and OpenMP loop construct are pretty different ...
            have to look how to do that properly. See issue #22
@@ -183,8 +182,9 @@ public class AcceleratorHelper {
       return; // Don't do anything if the target is none
     }
 
-    Xpragma routine = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-    routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
+    Xpragma routine =
+        Xpragma.create(claw.getAcceleratorGenerator().getRoutineDirective(),
+            xcodeml);
     fctDef.getBody().appendAsFirst(routine);
   }
 
