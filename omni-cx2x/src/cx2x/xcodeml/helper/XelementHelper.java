@@ -1558,12 +1558,7 @@ public class XelementHelper {
       if(nextNode.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element) nextNode;
         if(element.getTagName().equals(elementName)){
-          try{
-            return xElementClass.
-              getDeclaredConstructor(Element.class).newInstance(element);
-          } catch(Exception ex){
-            return null;
-          }
+          return construct(xElementClass, element);
         }
         return null;
       }
@@ -1626,17 +1621,30 @@ public class XelementHelper {
       if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
         if(element.getTagName().equals(elementName)){
-          try{
-            return xElementClass.
-                getDeclaredConstructor(Element.class).newInstance(element);
-          } catch(Exception ex){
-            return null;
-          }
+          return construct(xElementClass, element);
         }
       }
       nextNode = ancestor ? nextNode.getParentNode() : nextNode.getNextSibling();
     }
     return null;
+  }
+
+  /**
+   * Constructs an object with the base constrcutor for XbaseElement.
+   * @param xElementClass Type of the object.
+   * @param element       Element to pass to the constructor.
+   * @param <T>           Derived class of XbaseElement.
+   * @return A new XbaseElement dervied object or null if the construction
+   * fails.
+   */
+  private static <T extends XbaseElement> T construct(Class<T> xElementClass,
+                                                      Element element){
+    try{
+      return xElementClass.
+          getDeclaredConstructor(Element.class).newInstance(element);
+    } catch(Exception ex){
+      return null;
+    }
   }
 
   /**
