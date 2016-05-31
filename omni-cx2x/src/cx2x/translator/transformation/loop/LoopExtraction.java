@@ -369,7 +369,7 @@ public class LoopExtraction extends Transformation {
 
     // Adapt array reference in function body
     List<XarrayRef> arrayReferences =
-        XelementHelper.getAllArrayReferences(clonedFctDef.getBody());
+        XelementHelper.findAllArrayReferences(clonedFctDef.getBody());
     for(XarrayRef ref : arrayReferences){
       if(!ref.getVarRef().isVar()){
         continue;

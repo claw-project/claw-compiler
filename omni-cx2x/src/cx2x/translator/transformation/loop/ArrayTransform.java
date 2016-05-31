@@ -257,7 +257,7 @@ public class ArrayTransform extends BlockTransformation {
     for(XassignStatement stmt : statements) {
 
       // 3. Adapat array reference with induction variables
-      List<XarrayRef> allArrayRef = XelementHelper.getAllArrayReferences(stmt);
+      List<XarrayRef> allArrayRef = XelementHelper.findAllArrayReferences(stmt);
       for (XarrayRef arrayRef : allArrayRef) {
 
         // TODO handle more complicated cases

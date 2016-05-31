@@ -130,18 +130,8 @@ public class XelementHelper {
    * @param parent The body element to search for the array references.
    * @return A list of all array references found.
    */
-  public static List<XarrayRef> getAllArrayReferences(XbaseElement parent){
-    List<XarrayRef> references = new ArrayList<>();
-    NodeList nList = parent.getBaseElement().
-      getElementsByTagName(XelementName.F_ARRAY_REF);
-    for (int i = 0; i < nList.getLength(); i++) {
-      Node n = nList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        references.add(new XarrayRef(el));
-      }
-    }
-    return references;
+  public static List<XarrayRef> findAllArrayReferences(XbaseElement parent){
+    return findAll(parent, XarrayRef.class);
   }
 
   /**
@@ -176,18 +166,8 @@ public class XelementHelper {
    * @param parent The body element to search for the array references.
    * @return A list of all assignment statements found.
    */
-  public static List<XassignStatement> getAllAssignments(XbaseElement parent){
-    List<XassignStatement> assignments = new ArrayList<>();
-    NodeList nList = parent.getBaseElement().
-        getElementsByTagName(XelementName.F_ASSIGN_STMT);
-    for (int i = 0; i < nList.getLength(); i++) {
-      Node n = nList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        assignments.add(new XassignStatement(el));
-      }
-    }
-    return assignments;
+  public static List<XassignStatement> findAllAssignments(XbaseElement parent){
+    return findAll(parent, XassignStatement.class);
   }
 
   /**
@@ -351,17 +331,12 @@ public class XelementHelper {
     );
 
     try {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(s1);
-      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
-          XPathConstants.NODESET);
+      NodeList output = evaluateXpath(from, s1);
       if(output.getLength() == 0){
         return null;
       }
       Element assign = (Element) output.item(0);
       return new XassignStatement(assign);
-
     } catch (XPathExpressionException ignored) {
       return null;
     }
@@ -421,11 +396,7 @@ public class XelementHelper {
     s1 = s1 + dynamic_part_s1;
     List<XdoStatement> doStatements = new ArrayList<>();
     try {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(s1);
-      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
-          XPathConstants.NODESET);
+      NodeList output = evaluateXpath(from, s1);
       for (int i = 0; i < output.getLength(); i++) {
         Element el = (Element) output.item(i);
         XdoStatement doStmt = new XdoStatement(el);
@@ -436,6 +407,20 @@ public class XelementHelper {
     } catch (XPathExpressionException ignored) {
     }
     return doStatements;
+  }
+
+  /**
+   * Evaluates an Xpath expression and return its result as a NodeList.
+   * @param from  Element to start the evaluation.
+   * @param xpath Xpath expression.
+   * @return Result of evaluation as a NodeList.
+   * @throws XPathExpressionException if evaluation fails.
+   */
+  private static NodeList evaluateXpath(XbaseElement from, String xpath)
+      throws XPathExpressionException
+  {
+    XPathExpression ex = XPathFactory.newInstance().newXPath().compile(xpath);
+    return (NodeList)ex.evaluate(from.getBaseElement(), XPathConstants.NODESET);
   }
 
   /**

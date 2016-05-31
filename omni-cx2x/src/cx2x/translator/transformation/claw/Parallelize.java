@@ -235,7 +235,7 @@ public class Parallelize extends Transformation {
 
     List<ClawDimension> order = getOrderedDimensionsFromDefinition();
     List<XassignStatement> assignStatements =
-        XelementHelper.getAllAssignments(_fctDef.getBody());
+        XelementHelper.findAllAssignments(_fctDef.getBody());
 
     for(XassignStatement assign : assignStatements){
       if(assign.getLValueModel().isArrayRef()){
