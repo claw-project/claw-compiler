@@ -83,6 +83,7 @@ if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
   set(TEST_BASE_FLAGS "-h noacc,noomp") # Unactivate OpenACC and OpenMP
   set(OPENACC_FLAGS "-h acc,noomp") # flags to compile with OpenACC support
   set(OPENMP_FLAGS "-h noacc,omp")  # flags to compile with OpenMP support
+  set(OMNI_CONF_OPTION "${OMNI_CONF_OPTION} --target=Cray-linux-gnu")
 elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
   # For PGI compiler
   set(FPPFLAGS "-E")                # for preprocessing only
