@@ -209,20 +209,21 @@ public class AcceleratorHelper {
       return;
     }
 
-    Xpragma parallel =
+    // TODO check how to do it in a better way
+    Xpragma hook =
         XelementHelper.findPreviousPragma(stmt,
             claw.getAcceleratorGenerator().getParallelKeyword());
 
-    if(parallel == null){
+    if(hook == null){
       xcodeml.addWarning("No parallel construct found to attach private clause",
           claw.getPragma().getLineNo());
     } else {
-      if(parallel.getValue().length() >= 80){
-        parallel.append(" " + claw.getAcceleratorGenerator().getPrefix() + " ");
+      if(hook.getValue().length() >= 80){
+        hook.append(" " + claw.getAcceleratorGenerator().getPrefix() + " ");
         transformer.addTransformation(new OpenAccContinuation(
-            new AnalyzedPragma(parallel)));
+            new AnalyzedPragma(hook)));
       }
-      parallel.append(claw.getAcceleratorGenerator().getPrivateClause(var));
+      hook.append(claw.getAcceleratorGenerator().getPrivateClause(var));
     }
   }
 
