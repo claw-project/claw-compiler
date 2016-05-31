@@ -1486,7 +1486,6 @@ public class XelementHelper {
     while (childNode != null) {
       // grab the "nextSibling" before the child node is removed
       Node nextChild = childNode.getNextSibling();
-
       short nodeType = childNode.getNodeType();
       if (nodeType == Node.TEXT_NODE) {
         boolean containsOnlyWhitespace = childNode.getNodeValue()
@@ -1506,13 +1505,10 @@ public class XelementHelper {
    */
   private static boolean checkNodeTypes(Node childNode) {
     short nodeType = childNode.getNodeType();
-
     if (nodeType == Node.ELEMENT_NODE) {
       cleanEmptyTextNodes(childNode); // recurse into subtree
     }
-
-    return nodeType == Node.ELEMENT_NODE
-        || nodeType == Node.CDATA_SECTION_NODE
+    return nodeType == Node.ELEMENT_NODE || nodeType == Node.CDATA_SECTION_NODE
         || nodeType == Node.COMMENT_NODE;
   }
 
@@ -1662,20 +1658,18 @@ public class XelementHelper {
    * Get a list of T elements from an xpath query executed from the
    * given element.
    * @param from          Element to start from.
-   * @param xpathQuery    XPath query to be executed.
+   * @param query         XPath query to be executed.
    * @param xElementClass Type of element to retrieve.
    * @return List of all array references found. List is empty if nothing is
    * found.
    */
   private static <T extends XbaseElement> List<T> getFromXpath(
-      XbaseElement from, String xpathQuery, Class<T> xElementClass)
+      XbaseElement from, String query, Class<T> xElementClass)
   {
     List<T> elements = new ArrayList<>();
     try {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression xpathExpr = xpath.compile(xpathQuery);
-      NodeList output = (NodeList) xpathExpr.evaluate(from.getBaseElement(),
+      XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
+      NodeList output = (NodeList) ex.evaluate(from.getBaseElement(),
           XPathConstants.NODESET);
       for (int i = 0; i < output.getLength(); i++) {
         Element element = (Element) output.item(i);
