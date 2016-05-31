@@ -1760,7 +1760,7 @@ public class XelementHelper {
         return xElementClass.
             getDeclaredConstructor(Element.class).newInstance(element);
       } catch(Exception ex){
-        throw new IllegalTransformationException("Cannot create new statement: "
+        throw new IllegalTransformationException("Cannot create new element: "
             + elementName);
       }
     }
