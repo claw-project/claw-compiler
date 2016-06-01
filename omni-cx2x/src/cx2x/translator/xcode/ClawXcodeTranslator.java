@@ -6,8 +6,6 @@ import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import exc.object.XobjectFile;
-import exc.openmp.OMP;
-import exc.openmp.OMPtranslate;
 import exc.xcodeml.XcodeMLtools;
 import exc.xcodeml.XcodeMLtools_F;
 import exc.xcodeml.XmXobjectToXcodeTranslator;
@@ -32,7 +30,6 @@ import java.util.List;
  * @author clementval
  */
 public class ClawXcodeTranslator {
-  private final String lang = "F"; // Only support Fortran
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private final AcceleratorGenerator _generator;
@@ -67,10 +64,9 @@ public class ClawXcodeTranslator {
    * @throws Exception
    */
   public void translate() throws Exception {
-    Reader reader = null;
-    Writer xmlWriter = null;
-    Writer xcodeWriter = null;
-    Writer decompWriter = null;
+    Reader reader;
+    Writer xmlWriter;
+    Writer decompWriter;
     File dir = null;
 
     if(_xcodemlInputFile == null) {
@@ -86,6 +82,7 @@ public class ClawXcodeTranslator {
       xmlWriter = new BufferedWriter(new FileWriter(_xcodemlOutputFile));
     }
 
+    String lang = "F";
     XmToolFactory toolFactory = new XmToolFactory(lang);
     XmOption.setLanguage(XmLanguage.valueOf(lang));
 
@@ -102,7 +99,7 @@ public class ClawXcodeTranslator {
     }
 
     String baseName = null;
-    if(_xcodemlOutputFile == null || _xcodemlOutputFile.indexOf("<") >= 0 ) {
+    if(_xcodemlOutputFile == null || _xcodemlOutputFile.contains("<")) {
       _xcodemlOutputFile = null;
     } else {
       String fileName = new File(_xcodemlOutputFile).getName();
@@ -113,36 +110,20 @@ public class ClawXcodeTranslator {
       baseName = fileName.substring(0, idx);
     }
 
-    // Output Xcode
-    if(xcodeWriter != null) {
-      xobjFile.Output(xcodeWriter);
-      xcodeWriter.flush();
-    }
-    System.gc();
-
     // CLAW translation
-    // TODO set up CLAW translate
-    /*OMPtranslate omp_translator = new OMPtranslate(xobjFile);
-    xobjFile.iterateDef(omp_translator);
-
-    if(OMP.hasErrors())
-      System.exit(1);
-
-    omp_translator.finish();
-    */
-    if(xcodeWriter != null) {
-      xobjFile.Output(xcodeWriter);
-      xcodeWriter.flush();
-    }
+    ClawTranslate claw_translator =
+        new ClawTranslate(xobjFile, _target, _generator);
+    xobjFile.iterateDef(claw_translator);
+    claw_translator.finish();
 
     // Translate Xcode to XcodeML
     Document xcodeDoc;
     XmXobjectToXcodeTranslator xc2xcodeTranslator = null;
 
-
     if (lang.equals("F")) {
       xc2xcodeTranslator = new XmfXobjectToXcodeTranslator();
     }
+    assert xc2xcodeTranslator != null;
     xcodeDoc = xc2xcodeTranslator.write(xobjFile);
 
     Transformer transformer;
@@ -167,16 +148,14 @@ public class ClawXcodeTranslator {
       xmlWriter.close();
     }
 
-    XmDecompilerContext context = null;
-
-    context = toolFactory.createDecompilerContext();
+    XmDecompilerContext context = toolFactory.createDecompilerContext();
     // TODO set as option
     int maxColumns = 80;
-    if(maxColumns > 0) {
+    /*if(maxColumns > 0) {
       context.setProperty(XmDecompilerContext.KEY_MAX_COLUMNS, "" +
           maxColumns);
-    }
-
+    }*/
+    context.setProperty(XmDecompilerContext.KEY_MAX_COLUMNS, "" + maxColumns);
 
     // Decompile XcodeML to Fortran
     String newFileName = baseName + ".f90";
