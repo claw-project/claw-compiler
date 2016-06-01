@@ -1,4 +1,4 @@
-package cx2x.translator;
+package cx2x.translator.xcode;
 
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;

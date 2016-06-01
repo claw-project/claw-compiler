@@ -6,25 +6,14 @@
 package cx2x;
 
 import cx2x.translator.ClawXcodeMlTranslator;
-import cx2x.translator.ClawXcodeTranslator;
+import cx2x.translator.xcode.ClawXcodeTranslator;
 import cx2x.translator.common.ConfigurationHelper;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
-import exc.object.XobjectFile;
-import exc.openmp.OMP;
-import exc.openmp.OMPtranslate;
 import exc.xcodeml.*;
-import org.w3c.dom.Document;
-import xcodeml.XmException;
-import xcodeml.XmLanguage;
 import xcodeml.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.List;
 
