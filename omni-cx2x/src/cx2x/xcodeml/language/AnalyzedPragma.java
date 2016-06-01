@@ -6,6 +6,7 @@
 package cx2x.xcodeml.language;
 
 import cx2x.xcodeml.xelement.Xpragma;
+import exc.object.Xobject;
 
 /**
  * Base class for any analyzed pragma. This object is then passed to a
@@ -15,6 +16,7 @@ import cx2x.xcodeml.xelement.Xpragma;
  */
 public class AnalyzedPragma {
   protected Xpragma _pragma;
+  protected Xobject _pragmaXobject;
   private boolean _isEndPragma;
 
   /**
@@ -34,6 +36,15 @@ public class AnalyzedPragma {
   }
 
   /**
+   * Contructs an AnalyzedPragma object with a Xobject object attached.
+   * @param rawPragma Pragma object to be attached.
+   */
+  public AnalyzedPragma(Xobject rawPragma){
+    _pragmaXobject = rawPragma;
+    _isEndPragma = false;
+  }
+
+  /**
    * Get the attached pragma object.
    * @return Attached pragma object.
    */
@@ -42,11 +53,27 @@ public class AnalyzedPragma {
   }
 
   /**
-   * Attache a pragma object.
+   * Get the attached pargma object.
+   * @return Attached pragma object.
+   */
+  public Xobject getPragmaXobject() {
+    return _pragmaXobject;
+  }
+
+  /**
+   * Attach a pragma object.
    * @param rawPragma Pragma object to be attached.
    */
   public void setPragma(Xpragma rawPragma){
     _pragma = rawPragma;
+  }
+
+  /**
+   * Attach a pargma object.
+   * @param rawPragma Pragma object to be attached.
+   */
+  public void setPragma(Xobject rawPragma) {
+    _pragmaXobject = rawPragma;
   }
 
   /**
