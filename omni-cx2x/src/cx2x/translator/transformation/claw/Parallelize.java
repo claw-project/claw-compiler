@@ -251,12 +251,11 @@ public class Parallelize extends Transformation {
           && _scalarFields.contains(assign.getLValueModel().getVar().getValue()))
       {
         /* If the assignement is in the column loop and is composed with some
-         * array fields, the field must be promoted and the var reference switch
+         * variables, the field must be promoted and the var reference switch
          * to an array reference */
         Xvar lhs = assign.getLValueModel().getVar();
         List<Xvar> vars = XelementHelper.findAllReferences(assign);
-        List<String> values = XelementHelper.getAllValues(vars);
-        if(!Collections.disjoint(values, _arrayFieldsInOut)){
+        if(vars.size() > 1){
           if(!_arrayFieldsInOut.contains(lhs.getValue())){
             _arrayFieldsInOut.add(lhs.getValue());
             promoteField(lhs.getValue(), false, false, xcodeml);
