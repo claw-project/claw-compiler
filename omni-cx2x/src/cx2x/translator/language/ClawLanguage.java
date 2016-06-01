@@ -11,6 +11,8 @@ import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.Xpragma;
+import exc.object.Xcode;
+import exc.object.Xobject;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -143,18 +145,81 @@ public class ClawLanguage extends AnalyzedPragma {
       throws IllegalDirectiveException
   {
 
-    /*
-     * OMNI compiler keeps the claw prefix when a pragma is defined on several
-     * lines using the continuation symbol '&'. In order to have a simpler
-     * grammar, these multiple occurences of the prefix are not taken into
-     * account. Therefore, this method remove all the prefix and keeps only the
-     * first one.
-     */
-    String nakedPragma = pragma.getValue().toLowerCase().replaceAll(PREFIX_CLAW, "");
-    nakedPragma = PREFIX_CLAW + " " + nakedPragma;
+    ClawLanguage l =
+        analyze(pragma.getValue(), pragma.getLineNo(), generator, target);
+    if(l != null){
+      l.attachPragma(pragma);
+    }
+    return l;
+  }
+
+  /**
+   * Analyze a raw string input and match it with the CLAW language definition.
+   * @param pragma    A Xobject pragma statement to be analyzed against
+   *                  the CLAW language.
+   * @param generator Accelerator directive generator.
+   * @param target    Target that influences the code transformation.
+   * @return A ClawLanguage object with the corresponding extracted information.
+   * @throws IllegalDirectiveException If directive does not follow the CLAW
+   * language specification.
+   */
+  public static ClawLanguage analyze(Xobject pragma,
+                                     AcceleratorGenerator generator,
+                                     Target target)
+      throws IllegalDirectiveException
+  {
+    if(pragma.Opcode() != Xcode.PRAGMA_LINE){
+      throw new IllegalDirectiveException("Not a pragma statement", "",
+          pragma.getLineNo().lineNo());
+    }
+    ClawLanguage l =
+        analyze(pragma.getArg(0).getString(), pragma.getLineNo().lineNo(),
+            generator, target);
+    if(l != null){
+      l.attachPragma(pragma);
+    }
+    return l;
+  }
+
+
+  /**
+   * Produce a "naked" pragma.
+   * OMNI compiler keeps the claw prefix when a pragma is defined on several
+   * lines using the continuation symbol '&'. In order to have a simpler
+   * grammar, these multiple occurences of the prefix are not taken into
+   * account. Therefore, this method remove all the prefix and keeps only the
+   * first one.
+   * @param rawPragma The original raw pragma statement straight from OMNI
+   *                  compiler resprestentation.
+   * @return A naked pragma statement able to be analyzed by the CLAW parser.
+   */
+  private static String nakenize(String rawPragma){
+    return PREFIX_CLAW + " " +
+        rawPragma.toLowerCase().replaceAll(PREFIX_CLAW, "");
+  }
+
+  /**
+   * Analyze a raw string input and match it with the CLAW language definition.
+   * @param rawPragma A raw pragma statement to be analyzed against the CLAW
+   *                  language.
+   * @param lineno    Line number of the pragma statement.
+   * @param generator Accelerator directive generator.
+   * @param target    Target that influences the code transformation.
+   * @return A ClawLanguage object with the corresponding extracted information.
+   * @throws IllegalDirectiveException If directive does not follow the CLAW
+   * language specification.
+   */
+  private static ClawLanguage analyze(String rawPragma,
+                                      int lineno,
+                                      AcceleratorGenerator generator,
+                                      Target target)
+      throws IllegalDirectiveException
+  {
+    // Remove additional claw keyword
+    rawPragma = nakenize(rawPragma);
 
     // Instantiate the lexer with the raw string input
-    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(nakedPragma));
+    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(rawPragma));
 
     // Get a list of matched tokens
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -170,7 +235,6 @@ public class ClawLanguage extends AnalyzedPragma {
       // Start the parser analysis from the "analyze" entry point
       ClawParser.AnalyzeContext ctx = parser.analyze();
       // Get the ClawLanguage object return by the parser after analysis.
-      ctx.l.attachPragma(pragma);
       ctx.l.setAcceleratorGenerator(generator);
       ctx.l.setTarget(target);
       return ctx.l;
@@ -179,11 +243,12 @@ public class ClawLanguage extends AnalyzedPragma {
       if(ex != null){
         throw ex;
       } else {
-        throw new IllegalDirectiveException(pragma.getValue(),
-            "Unsupported construct", pragma.getLineNo(), 0);
+        throw new IllegalDirectiveException(rawPragma,
+            "Unsupported construct", lineno, 0);
       }
     }
   }
+
 
   /**
    * Check whether a group clause was specified.
@@ -665,6 +730,14 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   private void attachPragma(Xpragma pragma){
     _pragma = pragma;
+  }
+
+  /**
+   * Attach the pragma related to this CLAW language analysis.
+   * @param pragma Xobject associated with the pragma statement.
+   */
+  private void attachPragma(Xobject pragma){
+
   }
 
   /**
