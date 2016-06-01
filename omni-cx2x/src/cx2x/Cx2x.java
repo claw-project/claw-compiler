@@ -6,14 +6,26 @@
 package cx2x;
 
 import cx2x.translator.ClawXcodeMlTranslator;
+import cx2x.translator.ClawXcodeTranslator;
 import cx2x.translator.common.ConfigurationHelper;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
-import exc.xcodeml.XcodeMLtools_Fmod;
-import xcodeml.util.XmOption;
+import exc.object.XobjectFile;
+import exc.openmp.OMP;
+import exc.openmp.OMPtranslate;
+import exc.xcodeml.*;
+import org.w3c.dom.Document;
+import xcodeml.XmException;
+import xcodeml.XmLanguage;
+import xcodeml.util.*;
 
-import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -117,6 +129,7 @@ public class Cx2x {
     String directive_option = null;
     String configuration_path = null;
     boolean show_configuration = false;
+    boolean xcodeTranslation = false;
 
     for(int i = 0; i < args.length; ++i) {
       String arg = args[i];
@@ -157,6 +170,8 @@ public class Cx2x {
         configuration_path = arg.replace("--config=", "");
       } else if (arg.startsWith("--show-config")) {
         show_configuration = true;
+      } else if (arg.startsWith("--xcode")) {
+        xcodeTranslation = true;
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(input == null) {
@@ -206,9 +221,17 @@ public class Cx2x {
       return;
     }
 
-    ClawXcodeMlTranslator translator =
-        new ClawXcodeMlTranslator(input, output, directive, target, groups);
-    translator.analyze();
-    translator.transform();
+    if(xcodeTranslation){
+      ClawXcodeTranslator translator =
+          new ClawXcodeTranslator(input, output, directive, target, groups);
+      translator.translate();
+    } else {
+      ClawXcodeMlTranslator translator =
+          new ClawXcodeMlTranslator(input, output, directive, target, groups);
+      translator.analyze();
+      translator.transform();
+    }
   }
+
+
 }
