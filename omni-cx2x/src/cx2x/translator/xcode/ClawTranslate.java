@@ -1,11 +1,16 @@
 package cx2x.translator.xcode;
 
+import cx2x.translator.language.ClawDirective;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import exc.block.BlockPrintWriter;
 import exc.object.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Xobject translator for the CLAW pragma statements.
@@ -81,7 +86,7 @@ class ClawTranslate implements XobjectDefVisitor {
                 ClawLanguage.analyze(crtObject, _crtGenerator, _crtTarget);
             switch (l.getDirective()){
               case LOOP_FUSION:
-                translateLoopFusion(crtObject);
+                translateLoopFusion(l, iterator, crtObject);
                 break;
             }
             break;
@@ -94,7 +99,29 @@ class ClawTranslate implements XobjectDefVisitor {
     }
   }
 
-  private void translateLoopFusion(Xobject pragma){
+  private void translateLoopFusion(ClawLanguage l, topdownXobjectIterator it,
+                                   Xobject pragma)
+    throws IllegalDirectiveException
+  {
+    List<Xobject> doStatements = new ArrayList<>();
+    boolean findLoop = true;
+    while(!it.end()){
+      Xobject obj = it.getXobject();
+      if(obj != null && obj.Opcode() == Xcode.F_DO_STATEMENT && findLoop){
+        doStatements.add(obj);
+        findLoop = false;
+      } else if(obj != null && obj.Opcode() == Xcode.PRAGMA_LINE && !findLoop){
+        ClawLanguage other = ClawLanguage.analyze(obj, null, null);
+        if(other.getDirective() == ClawDirective.LOOP_FUSION){
+          findLoop = true;
+        }
+      }
+      it.next();
+    }
 
+    if(doStatements.size() <= 1){
+      throw new IllegalDirectiveException("", "", 0); // TODO error
+    }
+    System.out.println(doStatements.size());
   }
 }
