@@ -83,7 +83,7 @@ if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
   set(TEST_BASE_FLAGS "-h noacc,noomp") # Unactivate OpenACC and OpenMP
   set(OPENACC_FLAGS "-h acc,noomp") # flags to compile with OpenACC support
   set(OPENMP_FLAGS "-h noacc,omp")  # flags to compile with OpenMP support
-  set(OMNI_CONF_OPTION "${OMNI_CONF_OPTION} --target=Cray-linux-gnu")
+  set(OMNI_TARGET "--target=Cray-linux-gnu")
 elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
   # For PGI compiler
   set(FPPFLAGS "-E")                # for preprocessing only
@@ -106,7 +106,7 @@ endif()
 # Build OMNI compiler
 if(BUILD_OMNI)
   set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)
-  message("${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_CONF_OPTION}")
+  message("${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}")
   ExternalProject_Add(
     omni-compiler
     SOURCE_DIR ${OMNIC_DIR}
