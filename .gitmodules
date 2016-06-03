@@ -1,4 +1,0 @@
-[submodule "omni-compiler"]
-	path = omni-compiler
-	url = git@github.com:MeteoSwiss-APN/omni-compiler.git
-        branch = master
