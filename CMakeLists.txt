@@ -106,6 +106,7 @@ endif()
 # Build OMNI compiler
 if(BUILD_OMNI)
   set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)
+  message("${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_CONF_OPTION}")
   ExternalProject_Add(
     omni-compiler
     SOURCE_DIR ${OMNIC_DIR}
