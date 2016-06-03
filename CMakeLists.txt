@@ -106,13 +106,12 @@ endif()
 # Build OMNI compiler
 if(BUILD_OMNI)
   set(OMNIC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/omni-compiler)
-  message("${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}")
   ExternalProject_Add(
     omni-compiler
     SOURCE_DIR ${OMNIC_DIR}
     CONFIGURE_COMMAND touch ${OMNIC_DIR}/configure.ac ${OMNIC_DIR}/aclocal.m4
     ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in
-    && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_CONF_OPTION}
+    && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
   )
