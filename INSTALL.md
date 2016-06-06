@@ -1,6 +1,6 @@
 # Installation of the CLAW Fortran compiler
 
-### Dependencies
+### Build & install
 
 CLAW Fortran compiler (clawfc) is built on the top of the
 [OMNI Compiler](http://www,omni-compiler.org). It is currently tested with
