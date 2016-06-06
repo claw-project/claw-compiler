@@ -9,7 +9,6 @@ import exc.block.BlockPrintWriter;
 import exc.object.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -109,6 +108,7 @@ class ClawTranslate implements XobjectDefVisitor {
       Xobject obj = it.getXobject();
       if(obj != null && obj.Opcode() == Xcode.F_DO_STATEMENT && findLoop){
         doStatements.add(obj);
+
         findLoop = false;
       } else if(obj != null && obj.Opcode() == Xcode.PRAGMA_LINE && !findLoop){
         ClawLanguage other = ClawLanguage.analyze(obj, null, null);
@@ -122,6 +122,11 @@ class ClawTranslate implements XobjectDefVisitor {
     if(doStatements.size() <= 1){
       throw new IllegalDirectiveException("", "", 0); // TODO error
     }
-    System.out.println(doStatements.size());
+
+    for(int i=1; i < doStatements.size(); ++i){
+      XobjList list = doStatements.get(i).getIdentList();
+      System.out.println("");
+    }
+
   }
 }
