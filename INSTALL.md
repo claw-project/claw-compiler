@@ -4,8 +4,8 @@
 
 CLAW Fortran compiler (clawfc) is built on the top of the
 [OMNI Compiler](http://www,omni-compiler.org). It is currently tested with
-version
-[1.0.0](http://omni-compiler.org/download/stable/omnicompiler-1.0.0.tar.bz2).
+version [1.0.1](http://omni-compiler.org/download/stable/omnicompiler-1.0.1.tar.bz2).
+OMNI Compiler is packaged and built together with the CLAW Compiler. 
 
 
 To build the and install the CLAW Fortran Compiler, use the followings commands.
