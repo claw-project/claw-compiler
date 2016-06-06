@@ -5,7 +5,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
-import exc.block.BlockPrintWriter;
+import exc.block.*;
 import exc.object.*;
 
 import java.util.ArrayList;
@@ -45,13 +45,79 @@ class ClawTranslate implements XobjectDefVisitor {
 
   @Override
   public void doDef(XobjectDef xobjectDef) {
+
+    if(xobjectDef.getDef().Opcode() == Xcode.FUNCTION_DEFINITION){
+      analyzeFunction(new FuncDefBlock(xobjectDef));
+    }
+
+    /*
     try {
-      System.out.println(xobjectDef.getDef().Opcode());
       if (xobjectDef.getDef().Opcode() == Xcode.FUNCTION_DEFINITION) {
         analyzeFunctionBody(xobjectDef.getFuncBody());
       }
     } catch (IllegalDirectiveException idex){
       System.err.println(idex.getMessage());
+    }*/
+  }
+
+  /**
+   * Print list of identifier in the symbol table
+   * @param ids Identifiers list
+   */
+  private void printIdList(XobjList ids){
+    for(Xobject obj : ids){
+      Ident id = (Ident)obj;
+      System.out.println(String.format("      ID:%s (%s)", id.getSym(), id.getStorageClass()));
+    }
+  }
+
+  private void analyzeCompoundBlock(CompoundBlock cb){
+    System.out.println("    " + cb.Opcode());
+    BlockList body = cb.getBody();
+    if(body == null){
+      return;
+    }
+    Block b = body.getHead();
+    while(b != null){
+      if(b instanceof CompoundBlock){
+        analyzeCompoundBlock((CompoundBlock) b);
+      }
+
+
+
+      switch (b.Opcode()){
+        case PRAGMA_LINE:
+          Xobject pragma = b.toXobject();
+          System.out.println("    PRAGMA: " + pragma.getArg(0).getString());
+          break;
+        case F_DO_STATEMENT:
+          Xobject doStmt = b.toXobject();
+          System.out.println("DO");
+          break;
+      }
+
+
+      b = b.getNext();
+    }
+  }
+
+  /**
+   * Traverse function definition with block api.
+   * @param fb Function definition block.
+   */
+  private void analyzeFunction(FuncDefBlock fb){
+    System.out.println("=== FUNCTION BLOCK ===");
+    System.out.println("  = Function name: " + fb.getBlock().getName());
+    BlockList body = fb.getBlock().getBody();
+    XobjList idList = body.getIdentList();
+    printIdList(idList);
+    Block b = body.getHead();
+    System.out.println("  = FUNCTION BODY");
+    while(b != null) {
+      if (b instanceof CompoundBlock){
+        analyzeCompoundBlock((CompoundBlock) b);
+      }
+      b = b.getNext();
     }
   }
 
@@ -69,6 +135,7 @@ class ClawTranslate implements XobjectDefVisitor {
       // Add error
       System.err.print("Cannot analyze function body!");
     }
+
 
     topdownXobjectIterator iterator = new topdownXobjectIterator(functionBody);
     iterator.init();
@@ -102,12 +169,26 @@ class ClawTranslate implements XobjectDefVisitor {
                                    Xobject pragma)
     throws IllegalDirectiveException
   {
-    List<Xobject> doStatements = new ArrayList<>();
+    List<XobjList> doStatements = new ArrayList<>();
     boolean findLoop = true;
     while(!it.end()){
       Xobject obj = it.getXobject();
+
       if(obj != null && obj.Opcode() == Xcode.F_DO_STATEMENT && findLoop){
-        doStatements.add(obj);
+        Xcode crtCode = obj.Opcode();
+        while(crtCode != Xcode.F_STATEMENT_LIST){
+          it.next();
+          obj = it.getXobject();
+          if(obj != null){
+            crtCode = obj.Opcode();
+          }
+        }
+
+
+
+        System.out.println(obj.Opcode());
+        XobjList stmtList = (XobjList)obj;
+
 
         findLoop = false;
       } else if(obj != null && obj.Opcode() == Xcode.PRAGMA_LINE && !findLoop){
@@ -123,10 +204,7 @@ class ClawTranslate implements XobjectDefVisitor {
       throw new IllegalDirectiveException("", "", 0); // TODO error
     }
 
-    for(int i=1; i < doStatements.size(); ++i){
-      XobjList list = doStatements.get(i).getIdentList();
-      System.out.println("");
-    }
+
 
   }
 }
