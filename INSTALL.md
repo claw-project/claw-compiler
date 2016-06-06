@@ -1,5 +1,18 @@
 # Installation of the CLAW Fortran compiler
 
+### Requirements
+
+The CLAW Fortran compiler has the followings dependencies:
+* Java 1.7 or greater
+* yacc, lex
+* C/C++ compiler (supports C99)
+* Fortran compiler (supports Fortran 90)
+- MPI-2 or over
+* libxml2
+* cmake and make
+
+
+
 ### Build & install
 
 CLAW Fortran compiler (clawfc) is built on the top of the
