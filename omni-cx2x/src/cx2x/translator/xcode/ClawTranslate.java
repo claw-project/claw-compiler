@@ -67,7 +67,8 @@ class ClawTranslate implements XobjectDefVisitor {
   private void printIdList(XobjList ids){
     for(Xobject obj : ids){
       Ident id = (Ident)obj;
-      System.out.println(String.format("      ID:%s (%s)", id.getSym(), id.getStorageClass()));
+      System.out.println(String.format("      ID:%s (%s)", id.getSym(),
+          id.getStorageClass()));
     }
   }
 
@@ -82,8 +83,6 @@ class ClawTranslate implements XobjectDefVisitor {
       if(b instanceof CompoundBlock){
         analyzeCompoundBlock((CompoundBlock) b);
       }
-
-
 
       switch (b.Opcode()){
         case PRAGMA_LINE:
