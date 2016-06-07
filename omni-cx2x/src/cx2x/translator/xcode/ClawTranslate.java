@@ -119,6 +119,11 @@ class ClawTranslate implements XobjectDefVisitor {
         induction.getString(), lb, up, s));
   }
 
+  /**
+   * Get the int value or string var as a String.
+   * @param bound The bound object.
+   * @return Int constant or var as a String.
+   */
   private String getStringOrInt(Xobject bound){
     if(bound instanceof XobjInt){
       return String.valueOf(bound.getInt());
