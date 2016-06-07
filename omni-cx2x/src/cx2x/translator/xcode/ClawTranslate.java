@@ -110,13 +110,10 @@ class ClawTranslate implements XobjectDefVisitor {
    */
   private void analyzeDoBlock(FdoBlock doBlock){
     Xobject induction = doBlock.getInductionVar();
-    Xobject lowerBound = doBlock.getLowerBound();
-    Xobject upperBound = doBlock.getUpperBound();
-    Xobject step = doBlock.getStep();
 
-    String lb = getStringOrInt(lowerBound);
-    String up = getStringOrInt(upperBound);
-    String s = getStringOrInt(step);
+    String lb = getStringOrInt(doBlock.getLowerBound());
+    String up = getStringOrInt(doBlock.getUpperBound());
+    String s = getStringOrInt(doBlock.getStep());
 
     System.out.println(String.format("    DO %s = %s, %s, %s",
         induction.getString(), lb, up, s));
