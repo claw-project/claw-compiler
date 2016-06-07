@@ -115,6 +115,8 @@ class ClawTranslate implements XobjectDefVisitor {
     String up = getStringOrInt(doBlock.getUpperBound());
     String s = getStringOrInt(doBlock.getStep());
 
+    //doBlock.setLowerBound(new XobjInt(Xcode.INT_CONSTANT, 2));
+
     System.out.println(String.format("    DO %s = %s, %s, %s",
         induction.getString(), lb, up, s));
   }
