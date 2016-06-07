@@ -96,32 +96,40 @@ class ClawTranslate implements XobjectDefVisitor {
           break;
         case F_DO_STATEMENT:
           FdoBlock fdb = (FdoBlock)b;
-          Xobject induction = fdb.getInductionVar();
-          Xobject lowerBound = fdb.getLowerBound();
-          Xobject upperBound = fdb.getUpperBound();
-
-          Xobject step = fdb.getStep();
-          String lb;
-          if(lowerBound instanceof XobjInt){
-            lb = String.valueOf(lowerBound.getInt());
-          } else {
-            lb = lowerBound.getString();
-          }
-          String up;
-          if(upperBound instanceof XobjInt){
-            up = String.valueOf(upperBound.getInt());
-          } else {
-            up = upperBound.getString();
-          }
-
-          int s = step.getInt();
-          System.out.println(String.format("    DO %s = %s, %s, %d",
-              induction.getString(), lb, up, s));
+          analyzeDoBlock(fdb);
           break;
       }
 
       b = b.getNext();
     }
+  }
+
+  /**
+   * Analyze a do block.
+   * @param doBlock Do block to be analyzed.
+   */
+  private void analyzeDoBlock(FdoBlock doBlock){
+    Xobject induction = doBlock.getInductionVar();
+    Xobject lowerBound = doBlock.getLowerBound();
+    Xobject upperBound = doBlock.getUpperBound();
+    Xobject step = doBlock.getStep();
+
+    String lb;
+    if(lowerBound instanceof XobjInt){
+      lb = String.valueOf(lowerBound.getInt());
+    } else {
+      lb = lowerBound.getString();
+    }
+    String up;
+    if(upperBound instanceof XobjInt){
+      up = String.valueOf(upperBound.getInt());
+    } else {
+      up = upperBound.getString();
+    }
+
+    int s = step.getInt();
+    System.out.println(String.format("    DO %s = %s, %s, %d",
+        induction.getString(), lb, up, s));
   }
 
 
