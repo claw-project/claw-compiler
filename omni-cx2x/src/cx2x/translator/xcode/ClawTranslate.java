@@ -72,6 +72,11 @@ class ClawTranslate implements XobjectDefVisitor {
     }
   }
 
+  /**
+   * Test method to explore the structure of block and block manipulation.
+   * @param cb    Compound block to be analyzed.
+   * @param level Current level of recursion.
+   */
   private void analyzeCompoundBlock(CompoundBlock cb, int level){
     System.out.println("-->    " + cb.Opcode() + " at level " + level);
     BlockList body = cb.getBody();
@@ -118,6 +123,8 @@ class ClawTranslate implements XobjectDefVisitor {
       b = b.getNext();
     }
   }
+
+
 
   /**
    * Traverse function definition with block api.
