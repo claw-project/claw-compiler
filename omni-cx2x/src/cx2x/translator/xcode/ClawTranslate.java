@@ -72,8 +72,8 @@ class ClawTranslate implements XobjectDefVisitor {
     }
   }
 
-  private void analyzeCompoundBlock(CompoundBlock cb){
-    System.out.println("    " + cb.Opcode());
+  private void analyzeCompoundBlock(CompoundBlock cb, int level){
+    System.out.println("    " + cb.Opcode() + " at level " + level);
     BlockList body = cb.getBody();
     if(body == null){
       return;
@@ -81,7 +81,7 @@ class ClawTranslate implements XobjectDefVisitor {
     Block b = body.getHead();
     while(b != null){
       if(b instanceof CompoundBlock){
-        analyzeCompoundBlock((CompoundBlock) b);
+        analyzeCompoundBlock((CompoundBlock) b, level + 1);
       }
 
       switch (b.Opcode()){
@@ -121,7 +121,9 @@ class ClawTranslate implements XobjectDefVisitor {
     System.out.println("  = FUNCTION BODY");
     while(b != null) {
       if (b instanceof CompoundBlock){
-        analyzeCompoundBlock((CompoundBlock) b);
+        analyzeCompoundBlock((CompoundBlock) b, 0);
+      } else {
+        System.out.println("  -> " + b.Opcode());
       }
       b = b.getNext();
     }
@@ -189,8 +191,6 @@ class ClawTranslate implements XobjectDefVisitor {
             crtCode = obj.Opcode();
           }
         }
-
-
 
         System.out.println(obj.Opcode());
         XobjList stmtList = (XobjList)obj;
