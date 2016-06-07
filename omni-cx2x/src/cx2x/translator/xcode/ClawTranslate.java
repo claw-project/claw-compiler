@@ -73,7 +73,7 @@ class ClawTranslate implements XobjectDefVisitor {
   }
 
   private void analyzeCompoundBlock(CompoundBlock cb, int level){
-    System.out.println("    " + cb.Opcode() + " at level " + level);
+    System.out.println("-->    " + cb.Opcode() + " at level " + level);
     BlockList body = cb.getBody();
     if(body == null){
       return;
