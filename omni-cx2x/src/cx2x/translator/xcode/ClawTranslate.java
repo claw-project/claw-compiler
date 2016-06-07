@@ -91,18 +91,18 @@ class ClawTranslate implements XobjectDefVisitor {
           System.out.println("    PRAGMA: " + pragma.getArg(0).getString());
           break;
         case F_DO_STATEMENT:
-          Xobject doStmt = b.toXobject();
-          Xobject induction = doStmt.getArg(1);
-          Xobject indexRange = doStmt.getArg(2);
-          Xobject lowerBound = indexRange.getArg(0);
+          FdoBlock fdb = (FdoBlock)b;
+          Xobject induction = fdb.getInductionVar();
+          Xobject lowerBound = fdb.getLowerBound();
+          Xobject upperBound = fdb.getUpperBound();
+          Xobject step = fdb.getStep();
           int lb = lowerBound.getInt();
-          Xobject upperBound = indexRange.getArg(1);
           int up = upperBound.getInt();
-          Xobject step = indexRange.getArg(2);
           int s = step.getInt();
+          System.out.println(String.format("    DO %s = %d, %d, %d",
+              induction.getString(), lb, up, s));
           break;
       }
-
 
       b = b.getNext();
     }
