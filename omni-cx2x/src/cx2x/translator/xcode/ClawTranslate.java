@@ -114,22 +114,20 @@ class ClawTranslate implements XobjectDefVisitor {
     Xobject upperBound = doBlock.getUpperBound();
     Xobject step = doBlock.getStep();
 
-    String lb;
-    if(lowerBound instanceof XobjInt){
-      lb = String.valueOf(lowerBound.getInt());
-    } else {
-      lb = lowerBound.getString();
-    }
-    String up;
-    if(upperBound instanceof XobjInt){
-      up = String.valueOf(upperBound.getInt());
-    } else {
-      up = upperBound.getString();
-    }
+    String lb = getStringOrInt(lowerBound);
+    String up = getStringOrInt(upperBound);
+    String s = getStringOrInt(step);
 
-    int s = step.getInt();
-    System.out.println(String.format("    DO %s = %s, %s, %d",
+    System.out.println(String.format("    DO %s = %s, %s, %s",
         induction.getString(), lb, up, s));
+  }
+
+  private String getStringOrInt(Xobject bound){
+    if(bound instanceof XobjInt){
+      return String.valueOf(bound.getInt());
+    } else {
+      return bound.getString();
+    }
   }
 
 
