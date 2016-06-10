@@ -160,6 +160,7 @@ public class Cx2x {
           error("needs argument after -w");
         }
         maxColumns = Integer.parseInt(narg);
+        ++i;
       } else if (arg.startsWith("-l")) {
         lineDirectives = false;
       } else if (arg.startsWith("--target-list")) {
