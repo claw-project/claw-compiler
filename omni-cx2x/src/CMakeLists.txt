@@ -131,6 +131,9 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
 # Base class
   cx2x/Cx2x.java
 
+# decompiler package
+  cx2x/decompiler/FortranDecompiler.java
+
 # translator.common package
   cx2x/translator/common/ConfigurationHelper.java
   cx2x/translator/common/Constant.java
