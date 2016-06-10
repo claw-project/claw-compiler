@@ -28,10 +28,9 @@ import cx2x.xcodeml.transformation.*;
 import cx2x.translator.transformer.*;
 
 // OMNI import
-import xcodeml.util.XmOption;
+import xcodeml.util.*;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -275,7 +274,7 @@ public class ClawXcodeMlTranslator {
         }
       }
 
-
+      // Write transformed IR to file
       if(!XelementHelper.writeXcodeML(_program, _xcodemlOutputFile,
           INDENT_OUTPUT))
       {

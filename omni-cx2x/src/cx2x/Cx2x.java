@@ -5,6 +5,7 @@
 
 package cx2x;
 
+import cx2x.decompiler.FortranDecompiler;
 import cx2x.translator.ClawXcodeMlTranslator;
 import cx2x.translator.xcode.ClawXcodeTranslator;
 import cx2x.translator.common.ConfigurationHelper;
@@ -113,7 +114,8 @@ public class Cx2x {
    */
   public static void main(String[] args) throws Exception {
     String input = null;
-    String output = null;
+    String xcodeMlOutput = null;
+    String fortranOutput = null;
     String target_option = null;
     String directive_option = null;
     String configuration_path = null;
@@ -131,9 +133,14 @@ public class Cx2x {
       } else if(arg.equals("-d")) {
         XmOption.setDebugOutput(true);
       } else if(arg.equals("-o")) {
-        if(narg == null)
+        if (narg == null)
           error("needs argument after -o");
-        output = narg;
+        xcodeMlOutput = narg;
+        ++i;
+      } else if(arg.equals("-f")){
+        if (narg == null)
+          error("needs argument after -f");
+        fortranOutput = narg;
         ++i;
       } else if (arg.startsWith("-M")) {
           if (arg.equals("-M")) {
@@ -212,13 +219,20 @@ public class Cx2x {
 
     if(xcodeTranslation){
       ClawXcodeTranslator translator =
-          new ClawXcodeTranslator(input, output, directive, target, groups);
+          new ClawXcodeTranslator(input, xcodeMlOutput, directive, target, groups);
       translator.translate();
     } else {
       ClawXcodeMlTranslator translator =
-          new ClawXcodeMlTranslator(input, output, directive, target, groups);
+          new ClawXcodeMlTranslator(input, xcodeMlOutput, directive, target, groups);
       translator.analyze();
       translator.transform();
+
+      // Decompile IR to Fortran
+      FortranDecompiler fDecompiler = new FortranDecompiler();
+      fDecompiler.decompile(fortranOutput, xcodeMlOutput, 80, false);
+      // TODO error handling
+      // TODO option lineLength and line directives in the driver.
+
     }
   }
 
