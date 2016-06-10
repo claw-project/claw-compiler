@@ -40,10 +40,12 @@ public class Cx2x {
     final String[] lines = {
       "arguments: options",
       "           <input XcodeML file>",
-      "           [-o <output reconstructed XcodeML file>]",
+      "           -o <output reconstructed XcodeML file>",
+      "           -f <output reconstructed Fortran file>",
       "",
       "  -h, --help              display program usage.",
       "  -l                      suppress line directive in decompiled code.",
+      "  -w <int>                number of character per line in decompiled code.",
       "  -M dir                  specify where to search for .xmod files",
       "  --target-list           list all target available for code transformation.",
       "  --target=<target>       specify the target for the code transformation.",
@@ -121,6 +123,7 @@ public class Cx2x {
     String configuration_path = null;
     boolean show_configuration = false;
     boolean xcodeTranslation = false;
+    boolean lineDirectives = false;
     int maxColumns = 0;
 
     for(int i = 0; i < args.length; ++i) {
@@ -152,11 +155,13 @@ public class Cx2x {
         } else {
           XcodeMLtools_Fmod.addSearchPath(arg.substring(2));
         }
-      } else if (arg.startsWith("-l")){
+      } else if (arg.startsWith("-w")){
         if(narg == null){
-          error("needs argument after -l");
+          error("needs argument after -w");
         }
         maxColumns = Integer.parseInt(narg);
+      } else if (arg.startsWith("-l")) {
+        lineDirectives = false;
       } else if (arg.startsWith("--target-list")) {
         listTarget();
         return;
@@ -234,9 +239,9 @@ public class Cx2x {
 
       // Decompile IR to Fortran
       FortranDecompiler fDecompiler = new FortranDecompiler();
-      fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns, false);
+      fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
+          lineDirectives);
       // TODO error handling
-      // TODO option line directives in the driver.
 
     }
   }
