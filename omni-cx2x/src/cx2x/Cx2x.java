@@ -121,6 +121,7 @@ public class Cx2x {
     String configuration_path = null;
     boolean show_configuration = false;
     boolean xcodeTranslation = false;
+    int maxColumns = 0;
 
     for(int i = 0; i < args.length; ++i) {
       String arg = args[i];
@@ -143,15 +144,19 @@ public class Cx2x {
         fortranOutput = narg;
         ++i;
       } else if (arg.startsWith("-M")) {
-          if (arg.equals("-M")) {
-            if (narg == null)
-              error("needs argument after -M");
-            XcodeMLtools_Fmod.addSearchPath(narg);
-            ++i;
-          }
-          else {
-            XcodeMLtools_Fmod.addSearchPath(arg.substring(2));
-          }
+        if (arg.equals("-M")) {
+          if (narg == null)
+            error("needs argument after -M");
+          XcodeMLtools_Fmod.addSearchPath(narg);
+          ++i;
+        } else {
+          XcodeMLtools_Fmod.addSearchPath(arg.substring(2));
+        }
+      } else if (arg.startsWith("-l")){
+        if(narg == null){
+          error("needs argument after -l");
+        }
+        maxColumns = Integer.parseInt(narg);
       } else if (arg.startsWith("--target-list")) {
         listTarget();
         return;
@@ -229,9 +234,9 @@ public class Cx2x {
 
       // Decompile IR to Fortran
       FortranDecompiler fDecompiler = new FortranDecompiler();
-      fDecompiler.decompile(fortranOutput, xcodeMlOutput, 80, false);
+      fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns, false);
       // TODO error handling
-      // TODO option lineLength and line directives in the driver.
+      // TODO option line directives in the driver.
 
     }
   }
