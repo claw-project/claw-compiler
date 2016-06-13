@@ -17,7 +17,7 @@ public enum Xcode {
   EXPRSTATEMENT("exprStatement"),
   FUNCTIONCALL("functionCall"),
   FFUNCTIONDEFINITION("FfunctionDefinition"),
-  FFFUNCTIONTYPE("FfunctionType"),
+  FFUNCTIONTYPE("FfunctionType"),
   FARRAYREF("FarrayRef"),
   FASSIGNSTATEMENT("FassignStatement"),
   FCHARACTERREF("FcharacterRef"),
@@ -26,7 +26,7 @@ public enum Xcode {
   FINTCONSTANT("FintConstant"),
   FREALCONSTANT("FrealConstant"),
   FCOMPLEXCONSTANT("FcomplexConstant"),
-  FCHARCONSTANT("FcharacterConstant"),
+  FCHARACTERCONSTANT("FcharacterConstant"),
   FLOGICALCONSTANT("FlogicalConstant"),
   FMEMBERREF("FmemberRef"),
   FMODULEDEFINITION("FmoduleDefinition"),
@@ -84,5 +84,9 @@ public enum Xcode {
 
   public String toString() {
     return this.name;
+  }
+
+  public static Xcode fromString(String value){
+    return Xcode.valueOf(value.toUpperCase());
   }
 }
