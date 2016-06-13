@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xelement.XbaseElement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -148,6 +149,38 @@ public class Xnode {
    */
   public void delete(){
     XelementHelper.delete(_baseElement);
+  }
+
+  /**
+   * Get the base element.
+   * @return Element.
+   */
+  public Element getElement(){
+    return _baseElement;
+  }
+
+  /**
+   * Create an identical copy of the element and its children.
+   * @return A node representing the root element of the clone.
+   */
+  public Node cloneNode(){
+    return _baseElement.cloneNode(true);
+  }
+
+  /**
+   * Append an element ot the children of this element.
+   * @param node  The element to append.
+   * @param clone If true, the element is cloned before being appened. If
+   *              false, the element is directly appened.
+   */
+  public void appendToChildren(Xnode node, boolean clone){
+    if(node != null){
+      if(clone){
+        _baseElement.appendChild(node.cloneNode());
+      } else {
+        _baseElement.appendChild(node.getElement());
+      }
+    }
   }
 
 }
