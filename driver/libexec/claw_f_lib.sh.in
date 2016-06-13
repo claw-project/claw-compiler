@@ -60,7 +60,7 @@ function claw_f_show_env()
 
 function get_target()
 {
-  xmpf90 --show-env | grep TARGET | sed 's/TARGET=//' | sed "s/\"//g"
+  clawfc --show-env | grep TARGET | sed 's/TARGET=//' | sed "s/\"//g"
 }
 
 function claw_f_set_parameters()
