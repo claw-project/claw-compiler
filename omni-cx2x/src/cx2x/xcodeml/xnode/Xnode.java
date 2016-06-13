@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
