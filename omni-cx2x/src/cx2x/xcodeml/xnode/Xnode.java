@@ -80,4 +80,40 @@ public class Xnode {
     return nodes;
   }
 
+  /**
+   * Check whether the current element has a body element.
+   * @return True if the element has a body. False otherwise.
+   */
+  public boolean hasBody(){
+    switch (Opcode()){
+      case FDOSTATEMENT:
+      case FFUNCTIONDEFINITION:
+        return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get the inner body element.
+   * @return The body element if found. Null otherwise.
+   */
+  public Xnode getBody(){
+    return findNode(Xcode.BODY);
+  }
+
+  /**
+   * Find first child with the given opcode.
+   * @param opcode Code of the element to be found.
+   * @return The found element. Null if nothing found.
+   */
+  public Xnode findNode(Xcode opcode){
+    List<Xnode> children = getChildren();
+    for(Xnode child : children){
+      if(child.Opcode() == opcode){
+        return child;
+      }
+    }
+    return null;
+  }
+
 }
