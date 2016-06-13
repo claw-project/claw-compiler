@@ -31,8 +31,8 @@ CLAW Fortran compiler options:
    --stop-translator          : save intermediate files and stop after translator.
 
 Decompiler options:
-   -w <integer>               : Set the number of columns for the output Fotran file (default: 80).
-   -l                         : Add preprocessor line directives in the output Fotran file.
+   -w <integer>               : Set the number of columns for the output Fortran file (default: 80).
+   -l                         : Add preprocessor line directives in the output Fortran file.
 
 Process Options
 
