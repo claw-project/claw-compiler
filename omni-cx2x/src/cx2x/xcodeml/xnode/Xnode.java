@@ -121,4 +121,19 @@ public class Xnode {
     return null;
   }
 
+  /**
+   * Get child at position.
+   * @param pos Position of the child.
+   * @return Child at the corresponding position.
+   */
+  public Xnode getChild(int pos){
+    List<Xnode> children = getChildren();
+    if(pos < 0 || pos > children.size() - 1){
+      return null;
+    }
+    return children.get(pos);
+  }
+
+  
+
 }
