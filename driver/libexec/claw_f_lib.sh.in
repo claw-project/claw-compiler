@@ -30,6 +30,10 @@ CLAW Fortran compiler options:
    --stop-frontend            : save intermediate files and stop after frontend.
    --stop-translator          : save intermediate files and stop after translator.
 
+Decompiler options:
+   -w <integer>               : Set the number of columns for the output Fotran file (default: 80).
+   -l                         : Add preprocessor line directives in the output Fotran file.
+
 Process Options
 
    --Wp[option] : Add preprocessor option.
@@ -176,6 +180,11 @@ function claw_f_set_parameters()
       --config=*)
         CONFIG=true;
         config_opt+=("${1#--config=}");;
+      -w)
+        MAX_COLUMN=true;
+        shift; max_columns=("$1");;
+      -l)
+        LINE_DIRECTIVE=true;;
 #	    --openmp|-omp)
 #		ENABLE_OPENMP=true;;
 #	    --xcalableacc|-xacc)
