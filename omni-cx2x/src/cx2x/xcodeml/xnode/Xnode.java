@@ -49,7 +49,7 @@ public class Xnode {
    * @return Opcode.
    */
   public Xcode Opcode(){
-    return Xcode.valueOf(_baseElement.getTagName());
+    return Xcode.valueOf(_baseElement.getTagName().toUpperCase());
   }
 
   /**
@@ -69,6 +69,16 @@ public class Xnode {
    */
   public String getAttribute(Xattr attrCode){
     return _baseElement.getAttribute(attrCode.toString());
+  }
+
+  /**
+   * Get boolean value of an attribute.
+   * @param attrCode Attribute code.
+   * @return Attribute's value. False if attribute doesn't exist.
+   */
+  public boolean getBooleanAttribute(Xattr attrCode) {
+    return _baseElement.hasAttribute(attrCode.toString()) &&
+        _baseElement.getAttribute(attrCode.toString()).equals(XelementName.TRUE);
   }
 
   /**
