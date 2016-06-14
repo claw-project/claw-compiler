@@ -8,6 +8,8 @@ package cx2x.xcodeml.helper;
 import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.xelement.*;
 
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -1246,28 +1248,6 @@ public class XelementHelper {
     return findDirectNextElement(from, XassignStatement.class);
   }
 
-
-  /**
-   * Delete all the elements between the two given pragmas.
-   * @param start The start pragma. Deletion start from next element.
-   * @param end   The end pragma. Deletion end just before this element.
-   */
-  public static void deleteBetween(Xpragma start, Xpragma end){
-    List<Element> toDelete = new ArrayList<>();
-    Node node = start.getBaseElement().getNextSibling();
-    while (node != null && node != end.getBaseElement()){
-      if(node.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element)node;
-        toDelete.add(element);
-      }
-      node = node.getNextSibling();
-    }
-
-    for(Element e : toDelete){
-      delete(e);
-    }
-  }
-
   /**
    * Find all the pragma element in an XcodeML tree.
    * @param xcodeml The XcodeML program to search in.
@@ -1968,6 +1948,80 @@ public class XelementHelper {
         return true;
       default:
         return false;
+    }
+  }
+
+  /* XNODE SECTION */
+
+
+  /**
+   * Find an element in the ancestor of the given element.
+   * @param opcode Code of the element to be found.
+   * @param from   Element to start the search from.
+   * @return The element found. Null if no element is found.
+   */
+  public static Xnode findParent(Xcode opcode, Xnode from){
+    if(from == null){
+      return null;
+    }
+
+    Node nextNode = from.getElement().getParentNode();
+
+    while(nextNode != null){
+      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(opcode.name())){
+          return new Xnode(element);
+        }
+      }
+      nextNode = nextNode.getParentNode();
+    }
+    return null;
+  }
+
+  /**
+   * Find element of the the given type that is directly after the given from
+   * element.
+   * @param opcode Code of the element to be found.
+   * @param from   Element to start the search from.
+   * @return The element found. Null if no element is found.
+   */
+  public static Xnode findDirectNext(Xcode opcode, Xnode from) {
+    if(from == null){
+      return null;
+    }
+    Node nextNode = from.getElement().getNextSibling();
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(opcode.code())){
+          return new Xnode(element);
+        }
+        return null;
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
+  /**
+   * Delete all the elements between the two given elements.
+   * @param start The start element. Deletion start from next element.
+   * @param end   The end element. Deletion end just before this element.
+   */
+  public static void deleteBetween(Xnode start, Xnode end){
+    List<Element> toDelete = new ArrayList<>();
+    Node node = start.getElement().getNextSibling();
+    while (node != null && node != end.getElement()){
+      if(node.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element)node;
+        toDelete.add(element);
+      }
+      node = node.getNextSibling();
+    }
+
+    for(Element e : toDelete){
+      delete(e);
     }
   }
 
