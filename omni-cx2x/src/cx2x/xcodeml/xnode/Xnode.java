@@ -151,6 +151,22 @@ public class Xnode {
   }
 
   /**
+   *
+   * @param opcodes
+   * @return
+   */
+  public Xnode find(Xcode... opcodes){
+    Xnode tmp = this;
+    for(Xcode opcode : opcodes){
+      tmp = tmp.findNode(opcode);
+      if(tmp == null){
+        return null;
+      }
+    }
+    return tmp;
+  }
+
+  /**
    * Get child at position.
    * @param pos Position of the child.
    * @return Child at the corresponding position.
