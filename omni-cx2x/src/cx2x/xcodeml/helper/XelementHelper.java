@@ -203,11 +203,14 @@ public class XelementHelper {
    * @param arrayRef The array reference statements to extract the ranges from.
    * @return A list if indexRanges elements.
    */
-  public static List<XindexRange> getIdxRangesFromArrayRef(XarrayRef arrayRef){
-    List<XindexRange> ranges = new ArrayList<>();
-    for(XbaseElement el : arrayRef.getInnerElements()){
-      if(el instanceof XindexRange){
-        ranges.add((XindexRange) el);
+  public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef){
+    List<Xnode> ranges = new ArrayList<>();
+    if(arrayRef.Opcode() != Xcode.FARRAYREF){
+      return ranges;
+    }
+    for(Xnode el : arrayRef.getChildren()){
+      if(el.Opcode() == Xcode.INDEXRANGE){
+        ranges.add(el);
       }
     }
     return ranges;
