@@ -13,6 +13,9 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,8 @@ import java.util.List;
  */
 public class Kcaching extends Transformation {
   private final ClawLanguage _claw;
-  private XdoStatement _doStmt;
+  private Xnode _doStmt;
+  private Xnode _pragma;
 
   /**
    * Constructs a new Kcaching transformation triggered from a specific pragma.
@@ -35,6 +39,8 @@ public class Kcaching extends Transformation {
   public Kcaching(ClawLanguage directive) {
     super(directive);
     _claw = directive;
+    // TODO XNODE remove after refactoring
+    _pragma = new Xnode(_claw.getPragma().getBaseElement());
   }
 
   /**
@@ -42,7 +48,9 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _doStmt = XelementHelper.findParentDoStmt(_claw.getPragma());
+    // TODO XNODE pargma should be Xnode directly after refactory
+    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT,
+        new Xnode(_claw.getPragma().getBaseElement()));
     if(_doStmt == null){
       xcodeml.addError("The kcache directive is not nested in a do statement",
           _claw.getPragma().getLineNo());
@@ -57,7 +65,7 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean canBeTransformedWith(Transformation other) {
-    // independant transformation
+    // independent transformation
     return false;
   }
 
@@ -69,26 +77,26 @@ public class Kcaching extends Transformation {
                         Transformation other) throws Exception
   {
     // It might have change from the analysis
-    _doStmt = XelementHelper.findParentDoStmt(_claw.getPragma());
+    // TODO XNODE pargma should be Xnode directly after refactory
+    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT,
+        new Xnode(_claw.getPragma().getBaseElement()));
 
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
-    // TODO find parent definition with symbols and declaration table
     XfunctionDefinition fctDef =
         XelementHelper.findParentFctDef(_claw.getPragma());
 
     for(String data : _claw.getDataClauseValues()){
-      XassignStatement stmt =
-          XelementHelper.getFirstArrayAssign(_claw.getPragma(), data);
+      Xnode stmt = XelementHelper.getFirstArrayAssign(_pragma, data);
 
       boolean standardArrayRef = true;
       if(stmt != null) {
-        for (XbaseElement el :
-            stmt.getLValueModel().getArrayRef().getInnerElements()) {
-          if (el instanceof XarrayIndex) {
-            if (!(((XarrayIndex) el).getExprModel().isVar() ||
-                ((XarrayIndex) el).getExprModel().isConstant())) {
+        for (Xnode el : stmt.findNode(Xcode.FARRAYREF).getChildren()) {
+          if (el.Opcode() == Xcode.ARRAYINDEX) {
+
+            if (!(el.findNode(Xcode.VAR) != null ||
+                el.findNode(Xcode.FINTCONSTANT) != null)) {
               standardArrayRef = false;
             }
           }
@@ -119,11 +127,11 @@ public class Kcaching extends Transformation {
       throws Exception
   {
 
-    List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
+    List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
     // Generate the cache variable and its assignment
-    String type = aRefs.get(0).getType();
-    Xvar cacheVar = generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef,
+    String type = aRefs.get(0).getAttribute(Xattr.TYPE);
+    Xnode cacheVar = generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef,
         aRefs.get(0), null);
 
     updateArrayRefWithCache(aRefs, cacheVar);
@@ -144,14 +152,13 @@ public class Kcaching extends Transformation {
   private void transformAssignStmt(XcodeProgram xcodeml,
                                    XfunctionDefinition fctDef,
                                    String data,
-                                   XassignStatement stmt,
+                                   Xnode stmt,
                                    Transformer transformer) throws Exception
   {
-    String type = stmt.getLValueModel().getArrayRef().getType();
+    String type = stmt.findNode(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
+    List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
-    List<XarrayRef> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
-
-    Xvar cacheVar =
+    Xnode cacheVar =
         generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef, stmt, stmt);
 
     applyInitClause(xcodeml, transformer, cacheVar, aRefs.get(0));
@@ -177,38 +184,36 @@ public class Kcaching extends Transformation {
    * @throws IllegalTransformationException
    */
   private void applyInitClause(XcodeProgram xcodeml, Transformer transformer,
-                               Xvar cacheVar, XarrayRef arrayRef)
+                               Xnode cacheVar, Xnode arrayRef)
     throws IllegalTransformationException
   {
 
     if(_claw.hasInitClause()){
       ClawTransformer ct = (ClawTransformer)transformer;
-      XifStatement initIfStmt = (XifStatement) ct.hasElement(_doStmt);
+      Xnode initIfStmt = (Xnode) ct.hasElement(_doStmt);
       if(initIfStmt == null){
         // If statement has not been created yet so we do it here
-        initIfStmt = XifStatement.create(xcodeml);
-        XelementHelper.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
-        XbinaryExpr logEq =
-            XelementHelper.createEmpty(XelementName.LOG_EQ_EXPR, xcodeml);
+        initIfStmt = XelementHelper.createIfThen(xcodeml);
+        XelementHelper.copyEnhancedInfo(_pragma, initIfStmt);
+        Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
         // Set lhs of equality
-        logEq.appendToChildren(_doStmt.getIterationRange().getInductionVar(),
-            true);
+        logEq.appendToChildren(_doStmt.findNode(Xcode.VAR), true);
         // Set rhs of equality
-        logEq.appendToChildren(_doStmt.getIterationRange().getIndexRange().
-            getLowerBound().getExprModel().getElement(), true);
+        logEq.appendToChildren(_doStmt.findNode(Xcode.INDEXRANGE).
+            findNode(Xcode.LOWERBOUND).getChild(0), true);
 
-        initIfStmt.getCondition().appendToChildren(logEq, false);
-        _doStmt.getBody().appendAsFirst(initIfStmt);
+        initIfStmt.findNode(Xcode.CONDITION).appendToChildren(logEq, false);
+        _doStmt.getBody().insert(initIfStmt, false);
         ct.storeElement(_doStmt, initIfStmt);
       }
 
-      XassignStatement initAssignement =
-          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
-      initAssignement.appendToChildren(cacheVar, true); // set rhs
-      initAssignement.appendToChildren(arrayRef, true); // set lhs
+      Xnode initAssignment = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
+      initAssignment.appendToChildren(cacheVar, true); // set rhs
+      initAssignment.appendToChildren(arrayRef, true); // set lhs
       // Add assignment in the "then" body element
-      initIfStmt.getThen().getBody().appendToChildren(initAssignement, false);
+      initIfStmt.findNode(Xcode.THEN).getBody().
+          appendToChildren(initAssignment, false);
     }
   }
 
@@ -276,11 +281,11 @@ public class Kcaching extends Transformation {
    * @return The new created Xvar element.
    * @throws IllegalTransformationException
    */
-  private Xvar generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
+  private Xnode generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
                                              String type,
                                              XfunctionDefinition fctDef,
-                                             XbaseElement rhs,
-                                             XassignStatement stmt)
+                                             Xnode rhs,
+                                             Xnode stmt)
       throws IllegalTransformationException
   {
     XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
@@ -325,15 +330,14 @@ public class Kcaching extends Transformation {
     }
 
     // 2.4 Prepare the new variable that is used for caching
-    Xvar cacheVar = Xvar.create(type, cacheName, Xscope.LOCAL, xcodeml);
+    Xnode cacheVar =
+        XelementHelper.createVar(type, cacheName, Xscope.LOCAL, xcodeml);
 
     if(stmt == null) {
-
-      XassignStatement cache1 =
-          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
+      Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache1.appendToChildren(cacheVar, false);
       cache1.appendToChildren(rhs, true);
-      XelementHelper.insertAfter(_claw.getPragma(), cache1);
+      XelementHelper.insertAfter(_pragma, cache1);
     } else {
       /*
        * We replace an assignement of type
@@ -342,13 +346,11 @@ public class Kcaching extends Transformation {
        * cache_A = B
        * A = cache_A
        */
-      XassignStatement cache1 =
-          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
+      Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache1.appendToChildren(cacheVar, false);
-      cache1.appendToChildren(stmt.getExprModel().getElement(), true);
-      XassignStatement cache2 =
-          XelementHelper.createEmpty(XassignStatement.class, xcodeml);
-      cache2.appendToChildren(stmt.getLValueModel().getElement(), true);
+      cache1.appendToChildren(stmt.getChild(1), true);
+      Xnode cache2 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
+      cache2.appendToChildren(stmt.getChild(0), true);
       cache2.appendToChildren(cacheVar, true);
       XelementHelper.insertAfter(stmt, cache1);
       XelementHelper.insertAfter(cache1, cache2);
@@ -357,7 +359,7 @@ public class Kcaching extends Transformation {
     return cacheVar;
   }
 
-  private List<XarrayRef> checkOffsetAndGetArrayRefs(XcodeProgram xcodeml,
+  private List<Xnode> checkOffsetAndGetArrayRefs(XcodeProgram xcodeml,
                                                      XfunctionDefinition fctDef,
                                                      String var)
       throws IllegalTransformationException
@@ -367,7 +369,7 @@ public class Kcaching extends Transformation {
       offsets = generateInferredOffsets(xcodeml, fctDef, var);
     }
 
-    List<XarrayRef> arrayRefs =
+    List<Xnode> arrayRefs =
         XelementHelper.getAllArrayReferencesByOffsets(_doStmt.getBody(),
             var, offsets);
     if(arrayRefs.size() == 0){
@@ -384,8 +386,8 @@ public class Kcaching extends Transformation {
    * @param arrayRefs The list of array references to be updated.
    * @param cache     The new cache variable.
    */
-  private void updateArrayRefWithCache(List<XarrayRef> arrayRefs, Xvar cache){
-    for(XarrayRef ref : arrayRefs){
+  private void updateArrayRefWithCache(List<Xnode> arrayRefs, Xnode cache){
+    for(Xnode ref : arrayRefs){
       // Swap arrayRef with the cache variable
       XelementHelper.insertAfter(ref, cache.cloneObject());
       ref.delete();

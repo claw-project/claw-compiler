@@ -211,6 +211,23 @@ public class Xnode {
   }
 
   /**
+   * Insert as first child.
+   * @param node  Element to be inserted.
+   * @param clone Clone or not the element before insertion.
+   */
+  public void insert(Xnode node, boolean clone){
+    if(node != null) {
+      NodeList children = _baseElement.getChildNodes();
+      Node toInsert = clone ? node.cloneNode() : node.getElement();
+      if(children.getLength() == 0){
+        _baseElement.appendChild(toInsert);
+      } else {
+        _baseElement.insertBefore(toInsert, children.item(0));
+      }
+    }
+  }
+
+  /**
    * Set the file attribute of the element.
    * @param value File path.
    */

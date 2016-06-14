@@ -321,9 +321,7 @@ public class XelementHelper {
    * @param arrayName Identifier of the array.
    * @return The assignement statement if found. Null otherwise.
    */
-  public static XassignStatement getFirstArrayAssign(XbaseElement from,
-                                                           String arrayName)
-  {
+  public static Xnode getFirstArrayAssign(Xnode from, String arrayName){
     String s1 = String.format(
         "following::%s[%s[%s[%s[text()=\"%s\"]] and position()=1]]",
         XelementName.F_ASSIGN_STMT,
@@ -334,12 +332,12 @@ public class XelementHelper {
     );
 
     try {
-      NodeList output = evaluateXpath(from.getBaseElement(), s1);
+      NodeList output = evaluateXpath(from.getElement(), s1);
       if(output.getLength() == 0){
         return null;
       }
       Element assign = (Element) output.item(0);
-      return new XassignStatement(assign);
+      return new Xnode(assign);
     } catch (XPathExpressionException ignored) {
       return null;
     }
@@ -445,12 +443,9 @@ public class XelementHelper {
    * @param offsets     List of offsets to be search for.
    * @return A list of all array references found.
    */
-  public static List<XarrayRef> getAllArrayReferencesByOffsets(
-      XbaseElement from,
-      String identifier,
-      List<Integer> offsets)
+  public static List<Xnode> getAllArrayReferencesByOffsets(Xnode from,
+      String identifier, List<Integer> offsets)
   {
-
     String offsetXpath = "";
     for (int i = 0; i < offsets.size(); ++i){
       if(offsets.get(i) == 0){
@@ -493,7 +488,7 @@ public class XelementHelper {
         offsetXpath
     );
 
-    return getFromXpath(from, xpathQuery, XarrayRef.class);
+    return getFromXpath(from, xpathQuery);
   }
 
   /**
@@ -2284,9 +2279,55 @@ public class XelementHelper {
         ref.getElement());
   }
 
+  public static Xnode createVar(String type, String value, Xscope scope,
+                            XcodeProgram xcodeml)
+  {
+    Xnode var = new Xnode(Xcode.VAR, xcodeml);
+    var.setAttribute(Xattr.TYPE, type);
+    var.setAttribute(Xattr.SCOPE, scope.toString());
+    var.setValue(value);
+    return var;
+  }
 
 
+  /**
+   * Get a list of T elements from an xpath query executed from the
+   * given element.
+   * @param from          Element to start from.
+   * @param query         XPath query to be executed.
+   * @return List of all array references found. List is empty if nothing is
+   * found.
+   */
+  private static List<Xnode> getFromXpath(Xnode from, String query)
+  {
+    List<Xnode> elements = new ArrayList<>();
+    try {
+      XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
+      NodeList output = (NodeList) ex.evaluate(from.getElement(),
+          XPathConstants.NODESET);
+      for (int i = 0; i < output.getLength(); i++) {
+        Element element = (Element) output.item(i);
+        elements.add(new Xnode(element));
+      }
+    } catch (XPathExpressionException ignored) {
+    }
+    return elements;
+  }
 
-
+  /**
+   *
+   * @param xcodeml
+   * @return
+   */
+  public static Xnode createIfThen(XcodeProgram xcodeml){
+    Xnode root = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
+    Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
+    Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
+    Xnode thenBody = new Xnode(Xcode.BODY, xcodeml);
+    thenBlock.appendToChildren(thenBody, false);
+    root.appendToChildren(cond, false);
+    root.appendToChildren(thenBlock, false);
+    return root;
+  }
 
 }

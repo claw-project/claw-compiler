@@ -13,7 +13,7 @@ import java.util.Map;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.transformation.*;
-import cx2x.xcodeml.xelement.XbaseElement;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
 /**
@@ -95,9 +95,9 @@ public class ClawTransformer implements Transformer {
    * @param key Key to use to retrieve the element.
    * @return The stored element if present. Null otherwise.
    */
-  public Object hasElement(XbaseElement key){
-    if(_crossTransformationTable.containsKey(key.getBaseElement())){
-      return _crossTransformationTable.get(key.getBaseElement());
+  public Object hasElement(Xnode key){
+    if(_crossTransformationTable.containsKey(key.getElement())){
+      return _crossTransformationTable.get(key.getElement());
     }
     return null;
   }
@@ -108,10 +108,10 @@ public class ClawTransformer implements Transformer {
    * @param key   The element acting as a key.
    * @param value The element to be stored.
    */
-  public void storeElement(XbaseElement key, Object value){
-    if(_crossTransformationTable.containsKey(key.getBaseElement())){
-      _crossTransformationTable.remove(key.getBaseElement());
+  public void storeElement(Xnode key, Object value){
+    if(_crossTransformationTable.containsKey(key.getElement())){
+      _crossTransformationTable.remove(key.getElement());
     }
-    _crossTransformationTable.put(key.getBaseElement(), value);
+    _crossTransformationTable.put(key.getElement(), value);
   }
 }
