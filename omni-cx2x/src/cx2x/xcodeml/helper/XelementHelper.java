@@ -8,6 +8,7 @@ package cx2x.xcodeml.helper;
 import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.xelement.*;
 
+import cx2x.xcodeml.xnode.Xattr;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Document;
@@ -2032,6 +2033,130 @@ public class XelementHelper {
    */
   public static void insertAfter(Xnode refElement, Xnode element){
     XelementHelper.insertAfter(refElement.getElement(), element.getElement());
+  }
+
+  /**
+   * Find the first element with tag corresponding to elementName.
+   * @param opcode The XcodeML code of the element to search for.
+   * @param parent The root element to search from.
+   * @param any    If true, find in any nested element under parent. If false,
+   *               only direct children are search for.
+   * @return first element found. Null if no element is found.
+   */
+  public static Xnode find(Xcode opcode, Xnode parent, boolean any){
+    Element el;
+    if(any){
+      el = findFirstElement(parent.getElement(), opcode.code());
+    } else {
+      el = findFirstChildElement(parent.getElement(), opcode.code());
+    }
+    return (el == null) ? null : new Xnode(el);
+  }
+
+  /**
+   * Find element of the the given type that is directly after the given from
+   * element.
+   * @param opcode Code of the element to be found.
+   * @param from   Element to start the search from.
+   * @return The element found. Null if no element is found.
+   */
+  public static Xnode findNext(Xcode opcode, Xnode from) {
+    if(from == null){
+      return null;
+    }
+    Node nextNode = from.getElement().getNextSibling();
+    while (nextNode != null){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(opcode.code())){
+          return new Xnode(element);
+        }
+      }
+      nextNode = nextNode.getNextSibling();
+    }
+    return null;
+  }
+
+  /**
+   * Insert all the statements from a given body at the end of another body
+   * @param originalBody The body in which the extra body will be appended
+   * @param extraBody    The body that will be appended to the original body
+   * @throws IllegalTransformationException if one of the body or their base
+   *         element is null.
+   */
+  public static void appendBody(Xnode originalBody, Xnode extraBody)
+      throws IllegalTransformationException
+  {
+    if(originalBody == null || originalBody.getElement() == null
+        || extraBody == null || extraBody.getElement() == null
+        || originalBody.Opcode() != Xcode.BODY
+        || extraBody.Opcode() != Xcode.BODY)
+    {
+      throw new IllegalTransformationException("One of the body is null.");
+    }
+
+    // Append content of loop-body (loop) to this loop-body
+    Node childNode = extraBody.getElement().getFirstChild();
+    while(childNode != null){
+      Node nextChild = childNode.getNextSibling();
+      // Do something with childNode, including move or delete...
+      if(childNode.getNodeType() == Node.ELEMENT_NODE){
+        originalBody.getElement().appendChild(childNode);
+      }
+      childNode = nextChild;
+    }
+  }
+
+  /**
+   * Check if the two element are direct children of the same parent element.
+   * @param e1 First element.
+   * @param e2 Second element.
+   * @return True if the two element are direct children of the same parent.
+   * False otherwise.
+   */
+  public static boolean hasSameParentBlock(Xnode e1, Xnode e2) {
+    return !(e1 == null || e2 == null || e1.getElement() == null
+        || e2.getElement() == null)
+        && e1.getElement().getParentNode() ==
+        e2.getElement().getParentNode();
+  }
+
+
+  public static boolean hasSameIndexRange(Xnode e1, Xnode e2){
+    Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
+    Xnode low1 = XelementHelper.find(Xcode.LOWERBOUND, indexRange1, false);
+    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false);
+    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false);
+
+    Xnode low2 = XelementHelper.find(Xcode.LOWERBOUND, indexRange2, false);
+    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false);
+    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false);
+
+    if(!inductionVar1.getValue().toLowerCase().
+        equals(inductionVar2.getValue().toLowerCase()))
+    {
+      return false;
+    }
+
+    if(indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+        indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+      return true;
+    }
+
+    if (!low1.getValue().toLowerCase().equals(low2.getValue().toLowerCase())) {
+      return false;
+    }
+
+    if (!up1.getValue().toLowerCase().equals(up2.getValue().toLowerCase())) {
+      return false;
+    }
+
+    // step is optional
+    return s1 == null && s2 == null ||
+        s1.getValue().toLowerCase().equals(s2.getValue().toLowerCase());
   }
 
 }
