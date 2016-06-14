@@ -86,7 +86,7 @@ public class Xnode {
    * @return Element value.
    */
   public String getValue(){
-    return _baseElement.getTextContent();
+    return _baseElement.getTextContent().trim();
   }
 
   /**
@@ -224,6 +224,35 @@ public class Xnode {
    */
   public void setLine(int lineno){
     setAttribute(Xattr.LINENO, String.valueOf(lineno));
+  }
+
+  /**
+   * Clone the current element with all its children.
+   * @return A copy of the current element.
+   */
+  public Xnode cloneObject() {
+    Node clone = cloneNode();
+    return new Xnode((Element)clone);
+  }
+
+  /**
+   *
+   * @return
+   */
+  public int getLineNo(){
+    if(_baseElement.hasAttribute(Xattr.LINENO.toString())){
+      return Integer.parseInt(_baseElement.getAttribute(Xattr.LINENO.toString()));
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   *
+   * @return
+   */
+  public String getFile(){
+    return _baseElement.getAttribute(Xattr.FILE.toString());
   }
 
 }
