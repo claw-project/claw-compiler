@@ -2170,4 +2170,42 @@ public class XelementHelper {
         s1.getValue().toLowerCase().equals(s2.getValue().toLowerCase());
   }
 
+
+  public static void swapIterationRange(Xnode e1, Xnode e2){
+    // The two nodes must be do statement
+    if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
+      return;
+    }
+
+    Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
+    Xnode low1 = XelementHelper.find(Xcode.LOWERBOUND, indexRange1, false).getChild(0);
+    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
+    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false).getChild(0);
+
+    Xnode low2 = XelementHelper.find(Xcode.LOWERBOUND, indexRange2, false).getChild(0);
+    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
+    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false).getChild(0);
+
+    String tmpInduction = inductionVar2.getValue();
+    String tmpLower = low2.getValue();
+    String tmpUpper = up2.getValue();
+    String tmpStep = s2.getValue();
+
+    // Set the range of loop2 to loop1
+    inductionVar2.setValue(inductionVar1.getValue());
+    low2.setValue(low1.getValue());
+    up2.setValue(up1.getValue());
+    s2.setValue(s1.getValue());
+
+    inductionVar1.setValue(tmpInduction);
+    low1.setValue(tmpLower);
+    up1.setValue(tmpUpper);
+    s1.setValue(tmpStep);
+  }
+
+  
+
 }
