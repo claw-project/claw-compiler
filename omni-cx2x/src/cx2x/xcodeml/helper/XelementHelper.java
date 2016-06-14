@@ -269,10 +269,7 @@ public class XelementHelper {
    * @return A list of all assign statements found. List is empty if no
    * statements are found.
    */
-  public static List<XassignStatement> getArrayAssignInBlock(XbaseElement from,
-                                                             String endPragma)
-  {
-
+  public static List<Xnode> getArrayAssignInBlock(Xnode from, String endPragma){
     /* Define all the assign element with array refs which are next siblings of
      * the "from" element */
     String s1 = String.format(
@@ -291,8 +288,7 @@ public class XelementHelper {
     );
     // Use the Kaysian method to express the intersect operator
     String intersect = XelementHelper.xPathIntersect(s1, s2);
-
-    return getFromXpath(from, intersect, XassignStatement.class);
+    return getFromXpath(from, intersect);
   }
 
   /**
