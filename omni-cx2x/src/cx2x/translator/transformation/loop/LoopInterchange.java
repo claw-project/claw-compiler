@@ -12,6 +12,8 @@ import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
 
 import java.util.List;
@@ -27,9 +29,9 @@ public class LoopInterchange extends Transformation {
 
   private List<String> _newOrderOption = null;
 
-  private XdoStatement _loopLevel0 = null;
-  private XdoStatement _loopLevel1 = null;
-  private XdoStatement _loopLevel2 = null;
+  private Xnode _loopLevel0 = null;
+  private Xnode _loopLevel1 = null;
+  private Xnode _loopLevel2 = null;
 
   private String _baseLoop0 = null;
   private String _baseLoop1 = null;
@@ -73,21 +75,22 @@ public class LoopInterchange extends Transformation {
 
     analyze(xcodeml, transformer);
 
-    if(XmOption.isDebugOutput()){
+    // TODO
+  /*  if(XmOption.isDebugOutput()){
       System.out.println("loop-interchange transformation");
       System.out.println("  loop 0: " + _loopLevel0.getFormattedRange());
       System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
       if(_loopLevel2 != null){
         System.out.println("  loop 2: " + _loopLevel2.getFormattedRange());
       }
-    }
+    }*/
 
     /* To perform the loop interchange, only the ranges and iteration
      * variables are swapped
      */
     if(_loopLevel1 != null && _loopLevel2 == null){
       // Loop interchange between 2 loops
-      swapLoops(_loopLevel0, _loopLevel1);
+      XelementHelper.swapIterationRange(_loopLevel0, _loopLevel1);
     } else if (_loopLevel1 != null && _loopLevel2 != null){
       // loop interchange between 3 loops with new-order
       computeLoopNewPosition();
@@ -97,18 +100,18 @@ public class LoopInterchange extends Transformation {
         // Case 201
         if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
           printTransformSwapInfo(201);
-          swapLoops(_loopLevel0, _loopLevel2);
-          swapLoops(_loopLevel0, _loopLevel1);
+          XelementHelper.swapIterationRange(_loopLevel0, _loopLevel2);
+          XelementHelper.swapIterationRange(_loopLevel0, _loopLevel1);
         // Case 120
         } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
           printTransformSwapInfo(120);
-          swapLoops(_loopLevel0, _loopLevel2);
-          swapLoops(_loopLevel1, _loopLevel2);
+          XelementHelper.swapIterationRange(_loopLevel0, _loopLevel2);
+          XelementHelper.swapIterationRange(_loopLevel1, _loopLevel2);
         }
       } else {
         // Only one loop swap is needed
-        XdoStatement from = null;
-        XdoStatement to = null;
+        Xnode from = null;
+        Xnode to = null;
         if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
           from = _loopLevel1;
           to = _loopLevel2;
@@ -119,42 +122,19 @@ public class LoopInterchange extends Transformation {
           from = _loopLevel0;
           to = _loopLevel1;
         }
-        swapLoops(from, to);
+        XelementHelper.swapIterationRange(from, to);
       }
     }
 
 
     // Generate accelerator pragmas if needed
-    AcceleratorHelper.
-        generateAdditionalDirectives(_claw, xcodeml, _loopLevel0, _loopLevel0);
+    // TODO XNODE apply back when rectoring is done
+   /* AcceleratorHelper.
+        generateAdditionalDirectives(_claw, xcodeml, _loopLevel0, _loopLevel0);*/
 
     _claw.getPragma().delete();
 
     this.transformed();
-  }
-
-  /**
-   * Swap two do statement. Induction variable and range are swapped.
-   * @param loop1 The first do statement.
-   * @param loop2 The second do statement.
-   */
-  private void swapLoops(XdoStatement loop1, XdoStatement loop2){
-    // Save most inner loop iteration variable and range
-    XloopIterationRange tmpIterationRange = loop2.getIterationRange().cloneObject();
-
-    // Set the range of loop 0 to loop 2
-    loop2.setNewRange(loop1.getIterationRange());
-    // Remove the previous range of loop 2
-    loop2.deleteRangeElements();
-    // Set new range of loop 2 to loop 0
-    loop1.setNewRange(tmpIterationRange);
-    // Remove the previous range of loop 0
-    loop1.deleteRangeElements();
-
-    // recompute the range elements
-    loop2.findRangeElements();
-    loop1.findRangeElements();
-
   }
 
   /**
@@ -203,7 +183,9 @@ public class LoopInterchange extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
-    _loopLevel0 = XelementHelper.findNextDoStatement(_claw.getPragma());
+    // TODO XNODE pragma will be xnode directly
+    _loopLevel0 = XelementHelper.findNext(Xcode.FDOSTATEMENT,
+        new Xnode(_claw.getPragma().getBaseElement()));
 
     if(_loopLevel0 == null){
       xcodeml.addError("top level loop not found",
@@ -211,7 +193,8 @@ public class LoopInterchange extends Transformation {
       return false;
     }
 
-    _loopLevel1 = XelementHelper.findDoStatement(_loopLevel0.getBody(), false);
+    _loopLevel1 = XelementHelper.find(Xcode.FDOSTATEMENT,
+        _loopLevel0.getBody(), false);
     if(_loopLevel1 == null){
       return false;
     }
@@ -222,14 +205,18 @@ public class LoopInterchange extends Transformation {
             _claw.getPragma().getLineNo());
       }
 
-      _loopLevel2 = XelementHelper.findDoStatement(_loopLevel1.getBody(), false);
+      _loopLevel2 = XelementHelper.find(Xcode.FDOSTATEMENT,
+          _loopLevel1.getBody(), false);
       if(_loopLevel2 == null){
         return false;
       }
 
-      _baseLoop0 = _loopLevel0.getInductionVarValue();
-      _baseLoop1 = _loopLevel1.getInductionVarValue();
-      _baseLoop2 = _loopLevel2.getInductionVarValue();
+      Xnode induction0 = XelementHelper.find(Xcode.VAR, _loopLevel0, false);
+      _baseLoop0 = induction0.getValue();
+      Xnode induction1 = XelementHelper.find(Xcode.VAR, _loopLevel1, false);
+      _baseLoop1 = induction1.getValue();
+      Xnode induction2 = XelementHelper.find(Xcode.VAR, _loopLevel2, false);
+      _baseLoop2 = induction2.getValue();
 
       if(!checkNewOrderOption(xcodeml, _newOrderOption)){
         return false;
