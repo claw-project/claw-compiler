@@ -13,6 +13,7 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
 
 import java.util.List;
@@ -67,7 +68,8 @@ public class TransformationHelper {
   {
     if(claw.hasFusionClause() && stmt instanceof XdoStatement){
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
-      LoopFusion fusion = new LoopFusion((XdoStatement) stmt, l);
+      // TODO XNODE stmt should be directily an Xnode
+      LoopFusion fusion = new LoopFusion(new Xnode(stmt.getBaseElement()), l);
       // TODO maybe run analysis
       transformer.addTransformation(fusion);
 

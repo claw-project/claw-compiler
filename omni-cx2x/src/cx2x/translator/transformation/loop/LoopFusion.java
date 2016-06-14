@@ -11,6 +11,8 @@ import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * A LoopFusion transformation is a dependent transformation. If two LoopFusion
@@ -26,8 +28,9 @@ public class LoopFusion extends Transformation {
   // Contains the value of the group option
   private String _groupLabel = Constant.EMPTY_STRING;
   // The loop statement involved in the Transformation
-  private XdoStatement[] _loops;
+  private Xnode[] _loops;
   private final ClawLanguage _claw;
+  private Xnode _pragma; // TODO XNODE delete after refactoring
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -40,7 +43,8 @@ public class LoopFusion extends Transformation {
     if(_claw.hasGroupClause()){
       _groupLabel = directive.getGroupValue();
     }
-    _loops = new XdoStatement[0];
+    _loops = new Xnode[0];
+    _pragma = new Xnode(_claw.getPragma().getBaseElement());
   }
 
   /**
@@ -49,18 +53,18 @@ public class LoopFusion extends Transformation {
    * @param ghostDirective The generated directive that will be used for the
    *                       loop-fusion transformation.
    */
-  public LoopFusion(XdoStatement loop, ClawLanguage ghostDirective){
+  public LoopFusion(Xnode loop, ClawLanguage ghostDirective){
     super(ghostDirective);
     _claw = ghostDirective;
     if(_claw.hasCollapseClause()){
-      _loops = new XdoStatement[_claw.getCollapseValue()];
+      _loops = new Xnode[_claw.getCollapseValue()];
       _loops[0] = loop;
       for(int i = 1; i < _claw.getCollapseValue(); ++i){
-        _loops[i] = XelementHelper.
-            findDoStatement(_loops[i-1].getBody(), false);
+        _loops[i] = XelementHelper.find(Xcode.FDOSTATEMENT,
+            _loops[i-1].getBody(), false);
       }
     } else {
-      _loops = new XdoStatement[] { loop };
+      _loops = new Xnode[] { loop };
     }
 
     if(_claw.hasGroupClause()) {
@@ -84,14 +88,13 @@ public class LoopFusion extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     // With collapse clause
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
-      _loops = new XdoStatement[_claw.getCollapseValue()];
+      _loops = new Xnode[_claw.getCollapseValue()];
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
         if(i == 0){ // Find the outter loop from pragma
-          _loops[0] = XelementHelper.
-              findNextDoStatement(_claw.getPragma());
+          _loops[0] = XelementHelper.findNext(Xcode.FDOSTATEMENT, _pragma);
         } else { // Find the next i loops
-          _loops[i] = XelementHelper.
-              findDoStatement(_loops[i-1].getBody(), false);
+          _loops[i] = XelementHelper.find(Xcode.FDOSTATEMENT,
+              _loops[i-1].getBody(), false);
         }
         if(_loops[i] == null){
           xcodeml.addError("Cannot find loop at depth " + i +
@@ -103,14 +106,13 @@ public class LoopFusion extends Transformation {
     } else {
       // Without collapse clause, just fin the first do statement from the
       // pragma
-      XdoStatement loop = XelementHelper.
-          findNextDoStatement(_claw.getPragma());
+      Xnode loop = XelementHelper.findNext(Xcode.FDOSTATEMENT, _pragma);
       if(loop == null){
         xcodeml.addError("Cannot find loop after directive",
             _claw.getPragma().getLineNo());
         return false;
       }
-      _loops = new XdoStatement[] { loop };
+      _loops = new Xnode[] { loop };
       return true;
     }
   }
@@ -151,9 +153,11 @@ public class LoopFusion extends Transformation {
             _claw.getPragma().getLineNo()
         );
       }
-      _loops[innerLoopIdx].appendToBody(loopFusionUnit.getLoop(innerLoopIdx));
+      XelementHelper.appendBody(_loops[innerLoopIdx].getBody(),
+          loopFusionUnit.getLoop(innerLoopIdx).getBody());
     } else {
-      _loops[0].appendToBody(loopFusionUnit.getLoop(0));
+      XelementHelper.appendBody(_loops[0].getBody(),
+          loopFusionUnit.getLoop(0).getBody());
     }
     loopFusionUnit.finalizeTransformation();
   }
@@ -189,21 +193,19 @@ public class LoopFusion extends Transformation {
     if(!(transformation instanceof LoopFusion)){
       return false;
     }
-    LoopFusion otherLoopUnit = (LoopFusion)transformation;
+    LoopFusion other = (LoopFusion)transformation;
 
     // No loop is transformed already
-    if(this.isTransformed() || otherLoopUnit.isTransformed()){
+    if(this.isTransformed() || other.isTransformed()){
       return false;
     }
     // Loop must share the same group option
-    if(!hasSameGroupOption(otherLoopUnit)){
+    if(!hasSameGroupOption(other)){
       return false;
     }
 
     // Loops can only be merged if they are at the same level
-    if(!XelementHelper.hasSameParentBlock(_loops[0],
-        otherLoopUnit.getLoop(0)))
-    {
+    if(!XelementHelper.hasSameParentBlock(_loops[0], other.getLoop(0))){
       return false;
     }
 
@@ -211,14 +213,14 @@ public class LoopFusion extends Transformation {
         && _claw.getCollapseValue() > 0)
     {
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
-        if(!_loops[i].hasSameRangeWith(otherLoopUnit.getLoop(i))){
+        if(!XelementHelper.hasSameIndexRange(_loops[i], other.getLoop(i))){
           return false;
         }
       }
       return true;
     } else {
       // Loop must share the same iteration range
-      return _loops[0].hasSameRangeWith(otherLoopUnit.getLoop(0));
+      return XelementHelper.hasSameIndexRange(_loops[0], other.getLoop(0));
     }
 
   }
@@ -230,7 +232,7 @@ public class LoopFusion extends Transformation {
    *              pragma statement.
    * @return A do statement.
    */
-  private XdoStatement getLoop(int depth){
+  private Xnode getLoop(int depth){
     if(_claw != null && _claw.hasCollapseClause() &&
         depth < _claw.getCollapseValue())
     {

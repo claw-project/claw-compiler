@@ -14,6 +14,7 @@ import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,7 +178,9 @@ public class LoopHoist extends BlockTransformation {
 
       ClawLanguage dummyFusionDirective =
           ClawLanguage.createLoopFusionLanguage(null, "hoist", _nestedLevel);
-      fusions.add(new LoopFusion(g.getDoStmts()[0], dummyFusionDirective));
+      // TODO doStmts array should be xnodes directly
+      fusions.add(new LoopFusion(new Xnode(g.getDoStmts()[0].getBaseElement()),
+          dummyFusionDirective));
     }
 
     // Do the fusion
