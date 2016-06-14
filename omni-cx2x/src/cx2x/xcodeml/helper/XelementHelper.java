@@ -2025,4 +2025,13 @@ public class XelementHelper {
     }
   }
 
+  /**
+   * Insert an element just after a reference element.
+   * @param refElement The reference element.
+   * @param element    The element to be inserted.
+   */
+  public static void insertAfter(Xnode refElement, Xnode element){
+    XelementHelper.insertAfter(refElement.getElement(), element.getElement());
+  }
+
 }
