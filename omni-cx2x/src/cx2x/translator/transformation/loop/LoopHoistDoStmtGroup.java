@@ -6,7 +6,8 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xelement.XdoStatement;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * Class holding information about a group of nested loop in the loop-hoist
@@ -17,13 +18,13 @@ import cx2x.xcodeml.xelement.XdoStatement;
 public class LoopHoistDoStmtGroup {
   private boolean _needExtraction = false;
   private boolean _needIfication = false;
-  private XdoStatement[] _doStmts = null;
+  private Xnode[] _doStmts = null;
 
   /**
    * Constrcuts a do statements group with the given do statements.
    * @param doStmts Array of do statements.
    */
-  public LoopHoistDoStmtGroup(XdoStatement[] doStmts){
+  public LoopHoistDoStmtGroup(Xnode[] doStmts){
     _doStmts = doStmts;
   }
 
@@ -63,7 +64,7 @@ public class LoopHoistDoStmtGroup {
    * Get the array of do statements associated with this object.
    * @return Do statements array associated with this group.
    */
-  XdoStatement[] getDoStmts(){
+  Xnode[] getDoStmts(){
     return _doStmts;
   }
 
@@ -73,12 +74,12 @@ public class LoopHoistDoStmtGroup {
    * elements.
    */
   LoopHoistDoStmtGroup cloneObjectAndElement() {
-    XdoStatement newDoStmt = _doStmts[0].cloneObject();
-    XdoStatement[] nestedDoStmts = new XdoStatement[_doStmts.length];
+    Xnode newDoStmt = _doStmts[0].cloneObject();
+    Xnode[] nestedDoStmts = new Xnode[_doStmts.length];
     nestedDoStmts[0] = newDoStmt;
     for(int j = 1; j < nestedDoStmts.length; ++j){
-      XdoStatement next =
-          XelementHelper.findDoStatement(nestedDoStmts[j-1].getBody(), false);
+      Xnode next = XelementHelper.find(Xcode.FDOSTATEMENT,
+          nestedDoStmts[j-1].getBody(), false);
       nestedDoStmts[j] = next;
     }
     return new LoopHoistDoStmtGroup(nestedDoStmts);

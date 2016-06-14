@@ -19,6 +19,7 @@ import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 
 // OMNI import
+import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
 
 // Java import
@@ -411,8 +412,9 @@ public class LoopExtraction extends Transformation {
     //AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 
     // Add any additional transformation defined in the directive clauses
+    // TODO no need to instantiate xnode after refactoring
     TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
-        transformer, extractedLoop);
+        transformer, new Xnode(extractedLoop.getBaseElement()));
 
     _claw.getPragma().delete();
     this.transformed();

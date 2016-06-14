@@ -14,6 +14,7 @@ import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
@@ -54,9 +55,10 @@ public class LoopHoist extends BlockTransformation {
     _nestedLevel = _startClaw.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
-    List<XdoStatement> statements =
-        XelementHelper.findDoStatement(_startClaw.getPragma(),
-            _endClaw.getPragma(), _startClaw.getHoistInductionVars());
+    // TODO XNODE pragma will be Xnode directly
+    List<Xnode> statements =
+        XelementHelper.findDoStatement(new Xnode(_startClaw.getPragma().getBaseElement()),
+            new Xnode(_endClaw.getPragma().getBaseElement()), _startClaw.getHoistInductionVars());
 
     if(statements.size() == 0){
       xcodeml.addError("No do statement group meets the criteria of hoisting.",
@@ -65,7 +67,7 @@ public class LoopHoist extends BlockTransformation {
     }
 
     for(int i = 0; i < statements.size(); i++){
-      XdoStatement[] group = new XdoStatement[_nestedLevel];
+      Xnode[] group = new Xnode[_nestedLevel];
       LoopHoistDoStmtGroup g = new LoopHoistDoStmtGroup(group);
       try {
         reloadDoStmts(g, statements.get(i));
@@ -79,7 +81,7 @@ public class LoopHoist extends BlockTransformation {
       LoopHoistDoStmtGroup crtGroup = new LoopHoistDoStmtGroup(group);
       int depth = XelementHelper.getDepth(group[0]);
       if(depth != _pragmaDepthLevel){
-        XifStatement tmpIf = XelementHelper.findParentIfStatement(group[0]);
+        Xnode tmpIf = XelementHelper.findParent(Xcode.FIFSTATEMENT, group[0]);
         if(tmpIf == null){
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
               "statement for loop hoisting",
@@ -103,16 +105,20 @@ public class LoopHoist extends BlockTransformation {
       for(int j = 0; j < master.getDoStmts().length; ++j){
         // Iteration range are identical, just merge
         if(j == 0
-            && (!master.getDoStmts()[j].getIterationRange().
-            isFullyIdentical(next.getDoStmts()[j].getIterationRange())
-            && master.getDoStmts()[j].getIterationRange().
-            isIdenticalBesidesLowerBound(next.getDoStmts()[j].
-                getIterationRange())))
-        { // Iteration range are identical besides lower-bound, if creation
+            && (
+              !XelementHelper.hasSameIndexRange(master.getDoStmts()[j],
+                next.getDoStmts()[j])
+              && XelementHelper.hasSameIndexRangeBesidesLower(master.getDoStmts()[j],
+                next.getDoStmts()[j])
+            )
+          )
+        {
+          // Iteration range are identical besides lower-bound, if creation
           next.setIfStatement();
-        } else if(!master.getDoStmts()[j].getIterationRange().
-            isFullyIdentical(next.getDoStmts()[j].getIterationRange()))
-        { // Iteration range are too different, stop analysis
+        } else if(!XelementHelper.hasSameIndexRange(master.getDoStmts()[j],
+            next.getDoStmts()[j]))
+        {
+          // Iteration range are too different, stop analysis
           xcodeml.addError("Iteration range of do statements group " + i +
                   " differs from group 0. Loop hoisting aborted.",
               _startClaw.getPragma().getLineNo());
@@ -168,8 +174,8 @@ public class LoopHoist extends BlockTransformation {
     // Perform IF extraction and IF creation for lower-bound
     for(LoopHoistDoStmtGroup g : _doGroup){
       if(g.needExtraction()){
-        XifStatement ifStmt =
-            XelementHelper.findParentIfStatement(g.getDoStmts()[0]);
+        Xnode ifStmt =
+            XelementHelper.findParent(Xcode.FIFSTATEMENT, g.getDoStmts()[0]);
         extractDoStmtFromIf(xcodeml, ifStmt, g);
       }
       if(g.needIfStatement()){
@@ -179,7 +185,7 @@ public class LoopHoist extends BlockTransformation {
       ClawLanguage dummyFusionDirective =
           ClawLanguage.createLoopFusionLanguage(null, "hoist", _nestedLevel);
       // TODO doStmts array should be xnodes directly
-      fusions.add(new LoopFusion(new Xnode(g.getDoStmts()[0].getBaseElement()),
+      fusions.add(new LoopFusion(new Xnode(g.getDoStmts()[0].getElement()),
           dummyFusionDirective));
     }
 
@@ -190,8 +196,9 @@ public class LoopHoist extends BlockTransformation {
     reloadDoStmts(_doGroup.get(0), _doGroup.get(0).getDoStmts()[0]);
 
     // Do the hoisting
+    // TODO XNODE pargma will be xnode directly
     XelementHelper.shiftStatementsInBody(
-        _startClaw.getPragma(),                                // Start element
+        new Xnode(_startClaw.getPragma().getBaseElement()),    // Start element
         _doGroup.get(0).getDoStmts()[0],                       // Stop element
         _doGroup.get(0).getDoStmts()[_nestedLevel-1].getBody() // Target body
     );
@@ -216,18 +223,18 @@ public class LoopHoist extends BlockTransformation {
    * @param g       The group of do statements.
    * @throws IllegalTransformationException If creation of elements fails.
    */
-  private void extractDoStmtFromIf(XcodeProgram xcodeml, XifStatement ifStmt,
+  private void extractDoStmtFromIf(XcodeProgram xcodeml, Xnode ifStmt,
                                    LoopHoistDoStmtGroup g)
       throws IllegalTransformationException
   {
     int nestedDepth = g.getDoStmts().length;
-    XifStatement newIfStmt = ifStmt.cloneObject();
+    Xnode newIfStmt = ifStmt.cloneObject();
     LoopHoistDoStmtGroup newDoStmtGroup = g.cloneObjectAndElement();
-    newIfStmt.getThen().getBody().delete();
-    newIfStmt.getThen().
-        appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
+    Xnode then = newIfStmt.findNode(Xcode.THEN);
+    then.getBody().delete();
+    then.appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
     newDoStmtGroup.getDoStmts()[nestedDepth-1].getBody().delete();
-    Xbody body = XelementHelper.createEmpty(Xbody.class, xcodeml);
+    Xnode body = new Xnode(Xcode.BODY, xcodeml);
     body.appendToChildren(newIfStmt, false);
     newDoStmtGroup.getDoStmts()[nestedDepth-1].appendToChildren(body, false);
     XelementHelper.insertAfter(ifStmt, newDoStmtGroup.getDoStmts()[0]);
@@ -248,21 +255,20 @@ public class LoopHoist extends BlockTransformation {
       throws IllegalTransformationException
   {
     int nestedDepth = g.getDoStmts().length;
-    XifStatement ifStmt = XifStatement.create(xcodeml);
+    Xnode ifStmt = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
+    Xnode condition = new Xnode(Xcode.CONDITION, xcodeml);
+    Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
     XelementHelper.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
-    XbinaryExpr cond =
-        XelementHelper.createEmpty(XelementName.LOG_GE_EXPR, xcodeml);
-    cond.appendToChildren(
-        g.getDoStmts()[0].getIterationRange().getInductionVar(),true);
-    cond.appendToChildren(g.getDoStmts()[0].getIterationRange().getIndexRange().
-        getLowerBound().getExprModel().getElement(), true);
-
-    ifStmt.getCondition().appendToChildren(cond, false);
-    ifStmt.getThen().getBody().delete();
-    ifStmt.getThen().
-        appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
+    Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
+    Xnode inductionVar = XelementHelper.find(Xcode.VAR, g.getDoStmts()[0], false);
+    cond.appendToChildren(inductionVar, true);
+    cond.appendToChildren(g.getDoStmts()[0].findNode(Xcode.INDEXRANGE).findNode(Xcode.LOWERBOUND).getChild(0), true);
+    ifStmt.appendToChildren(condition, false);
+    ifStmt.appendToChildren(thenBlock, false);
+    condition.appendToChildren(cond, false);
+    thenBlock.appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
     g.getDoStmts()[nestedDepth-1].getBody().delete();
-    Xbody body = XelementHelper.createEmpty(Xbody.class, xcodeml);
+    Xnode body = new Xnode(Xcode.BODY, xcodeml);
     body.appendToChildren(ifStmt, false);
     g.getDoStmts()[nestedDepth-1].appendToChildren(body, false);
   }
@@ -275,13 +281,13 @@ public class LoopHoist extends BlockTransformation {
    * @throws IllegalTransformationException If the nested group doen't match the
    * correct size.
    */
-  private void reloadDoStmts(LoopHoistDoStmtGroup g, XdoStatement newStart)
+  private void reloadDoStmts(LoopHoistDoStmtGroup g, Xnode newStart)
       throws IllegalTransformationException
   {
     g.getDoStmts()[0] = newStart;
     for(int j = 1; j < g.getDoStmts().length; ++j){
-      XdoStatement next =
-          XelementHelper.findDoStatement(g.getDoStmts()[j-1].getBody(), false);
+      Xnode next = XelementHelper.find(Xcode.FDOSTATEMENT,
+          g.getDoStmts()[j-1].getBody(), false);
       if(next == null){
         throw new IllegalTransformationException(
             "Unable to find enough nested do statements",

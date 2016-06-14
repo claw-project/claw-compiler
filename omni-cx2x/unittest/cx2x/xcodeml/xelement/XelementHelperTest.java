@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xnode.Xnode;
 import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -51,14 +52,14 @@ public class XelementHelperTest {
     List<Xpragma> pragmas = XelementHelper.findAllPragmas(xcodeml);
     assertEquals(4, pragmas.size());
 
-    Xpragma loopHoistStart = pragmas.get(1);
+    Xnode loopHoistStart = new Xnode(pragmas.get(1).getBaseElement());
     assertNotNull(loopHoistStart);
     assertTrue(loopHoistStart.getValue().contains("loop-hoist"));
-    Xpragma loopHoistEnd = pragmas.get(2);
+    Xnode loopHoistEnd = new Xnode(pragmas.get(2).getBaseElement());
     assertNotNull(loopHoistEnd);
     assertTrue(loopHoistEnd.getValue().contains("end loop-hoist"));
 
-    List<XdoStatement> stmts =
+    List<Xnode> stmts =
         XelementHelper.findDoStatement(loopHoistStart, loopHoistEnd,
         Arrays.asList("j", "i"));
 

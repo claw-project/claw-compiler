@@ -334,7 +334,7 @@ public class XelementHelper {
     );
 
     try {
-      NodeList output = evaluateXpath(from, s1);
+      NodeList output = evaluateXpath(from.getBaseElement(), s1);
       if(output.getLength() == 0){
         return null;
       }
@@ -356,9 +356,8 @@ public class XelementHelper {
    * @return List of do statements elements (outter most loops for each nested
    * group) found between the "from" element and the end pragma.
    */
-  public static List<XdoStatement> findDoStatement(XbaseElement from,
-                                                   Xpragma endPragma,
-                                                   List<String> inductionVars)
+  public static List<Xnode> findDoStatement(Xnode from, Xnode endPragma,
+                                            List<String> inductionVars)
   {
 
     /* s1 is selecting all the nested do statement groups that meet the criteria
@@ -397,13 +396,15 @@ public class XelementHelper {
       dynamic_part_s1 = tempQuery;
     }
     s1 = s1 + dynamic_part_s1;
-    List<XdoStatement> doStatements = new ArrayList<>();
+    List<Xnode> doStatements = new ArrayList<>();
     try {
-      NodeList output = evaluateXpath(from, s1);
+      NodeList output = evaluateXpath(from.getElement(), s1);
       for (int i = 0; i < output.getLength(); i++) {
         Element el = (Element) output.item(i);
-        XdoStatement doStmt = new XdoStatement(el);
-        if(doStmt.getLineNo() != 0 && doStmt.getLineNo() < endPragma.getLineNo()){
+        Xnode doStmt = new Xnode(el);
+        if(doStmt.getLineNo() != 0 &&
+            doStmt.getLineNo() < endPragma.getLineNo())
+        {
           doStatements.add(doStmt);
         }
       }
@@ -419,11 +420,11 @@ public class XelementHelper {
    * @return Result of evaluation as a NodeList.
    * @throws XPathExpressionException if evaluation fails.
    */
-  private static NodeList evaluateXpath(XbaseElement from, String xpath)
+  private static NodeList evaluateXpath(Element from, String xpath)
       throws XPathExpressionException
   {
     XPathExpression ex = XPathFactory.newInstance().newXPath().compile(xpath);
-    return (NodeList)ex.evaluate(from.getBaseElement(), XPathConstants.NODESET);
+    return (NodeList)ex.evaluate(from, XPathConstants.NODESET);
   }
 
   /**
@@ -1891,14 +1892,14 @@ public class XelementHelper {
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
    */
-  public static void shiftStatementsInBody(XbaseElement from,
-                                           XbaseElement until, Xbody targetBody)
+  public static void shiftStatementsInBody(Xnode from,
+                                           Xnode until, Xnode targetBody)
   {
-    Node currentSibling = from.getBaseElement().getNextSibling();
-    Node firstStatementInBody = targetBody.getBaseElement().getFirstChild();
-    while(currentSibling != null && currentSibling != until.getBaseElement()){
+    Node currentSibling = from.getElement().getNextSibling();
+    Node firstStatementInBody = targetBody.getElement().getFirstChild();
+    while(currentSibling != null && currentSibling != until.getElement()){
       Node nextSibling = currentSibling.getNextSibling();
-      targetBody.getBaseElement().insertBefore(currentSibling,
+      targetBody.getElement().insertBefore(currentSibling,
           firstStatementInBody);
       currentSibling = nextSibling;
     }
@@ -1971,7 +1972,7 @@ public class XelementHelper {
     while(nextNode != null){
       if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.name())){
+        if(element.getTagName().equals(opcode.code())){
           return new Xnode(element);
         }
       }
@@ -2134,17 +2135,19 @@ public class XelementHelper {
       return false;
     }
 
+    // TODO XNODE refactoring (have method to get bounds)
+
     Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
     Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
-    Xnode low1 = XelementHelper.find(Xcode.LOWERBOUND, indexRange1, false);
-    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false);
-    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false);
+    Xnode low1 = XelementHelper.find(Xcode.LOWERBOUND, indexRange1, false).getChild(0);
+    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
+    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false).getChild(0);
 
     Xnode low2 = XelementHelper.find(Xcode.LOWERBOUND, indexRange2, false);
-    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false);
-    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false);
+    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
+    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false).getChild(0);
 
     if(!inductionVar1.getValue().toLowerCase().
         equals(inductionVar2.getValue().toLowerCase()))
@@ -2159,6 +2162,48 @@ public class XelementHelper {
 
     if (!low1.getValue().toLowerCase().equals(low2.getValue().toLowerCase())) {
       return false;
+    }
+
+    if (!up1.getValue().toLowerCase().equals(up2.getValue().toLowerCase())) {
+      return false;
+    }
+
+    // step is optional
+    return s1 == null && s2 == null ||
+        s1.getValue().toLowerCase().equals(s2.getValue().toLowerCase());
+  }
+
+
+  /**
+   * Compare the iteration range of two do statements.
+   * @param e1 First do statement.
+   * @param e2 Second do statement.
+   * @return True if the iteration range are identical besides the lower bound.
+   */
+  public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2){
+    // The two nodes must be do statement
+    if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
+      return false;
+    }
+
+    Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
+    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
+    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false).getChild(0);
+    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
+    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false).getChild(0);
+
+    if(!inductionVar1.getValue().toLowerCase().
+        equals(inductionVar2.getValue().toLowerCase()))
+    {
+      return false;
+    }
+
+    if(indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+        indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+      return true;
     }
 
     if (!up1.getValue().toLowerCase().equals(up2.getValue().toLowerCase())) {
@@ -2205,6 +2250,42 @@ public class XelementHelper {
     up1.setValue(tmpUpper);
     s1.setValue(tmpStep);
   }
+
+  /**
+   * Get the depth of an element in the AST.
+   * @param element The element for which the depth is computed.
+   * @return A depth value greater or equal to 0.
+   */
+  public static int getDepth(Xnode element) {
+    if(element == null || element.getElement() == null){
+      return -1;
+    }
+    return getDepth(element.getElement());
+  }
+
+  /**
+   * Copy the enhanced information from an element to a target element.
+   * Enhanced information include line number and original file name.
+   * @param base    Base element to copy information from.
+   * @param target  Target element to copy information to.
+   */
+  public static void copyEnhancedInfo(Xnode base, Xnode target) {
+    target.setLine(base.getLineNo());
+    target.setFile(base.getFile());
+  }
+
+  /**
+   * Insert an element just before a reference element.
+   * @param ref    The reference element.
+   * @param insert The element to be inserted.
+   */
+  public static void insertBefore(Xnode ref, Xnode insert){
+    ref.getElement().getParentNode().insertBefore(insert.getElement(),
+        ref.getElement());
+  }
+
+
+
 
 
 

@@ -13,6 +13,7 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
 
@@ -42,7 +43,7 @@ public class TransformationHelper {
   public static void generateAdditionalTransformation(ClawLanguage claw,
                                                       XcodeProgram xcodeml,
                                                       Transformer transformer,
-                                                      XbaseElement stmt)
+                                                      Xnode stmt)
       throws IllegalTransformationException
   {
     // Order doesn't matter
@@ -64,12 +65,12 @@ public class TransformationHelper {
    */
   private static void applyFusionClause(ClawLanguage claw,
                                         Transformer transformer,
-                                        XbaseElement stmt)
+                                        Xnode stmt)
   {
-    if(claw.hasFusionClause() && stmt instanceof XdoStatement){
+    if(claw.hasFusionClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
       // TODO XNODE stmt should be directily an Xnode
-      LoopFusion fusion = new LoopFusion(new Xnode(stmt.getBaseElement()), l);
+      LoopFusion fusion = new LoopFusion(stmt, l);
       // TODO maybe run analysis
       transformer.addTransformation(fusion);
 
@@ -95,12 +96,14 @@ public class TransformationHelper {
   private static void applyInterchangeClause(ClawLanguage claw,
                                              XcodeProgram xcodeml,
                                              Transformer transformer,
-                                             XbaseElement stmt)
+                                             Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasInterchangeClause() && stmt instanceof XdoStatement){
+    if(claw.hasInterchangeClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
       Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      XelementHelper.insertBefore(stmt, p);
+      // TODO XNODE removed after refctoring
+      Xnode pn = new Xnode(p.getBaseElement());
+      XelementHelper.insertBefore(stmt, pn);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);
