@@ -12,7 +12,8 @@ import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.Xpragma;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * <pre>
@@ -86,17 +87,20 @@ public class OpenAccContinuation extends Transformation {
       throws IllegalTransformationException
   {
     String allPragma = getDirective().getPragma().getValue();
-
     String[] pragmas = allPragma.split(Constant.OPENACC_PREFIX);
 
     if(pragmas.length != 2) {
       getDirective().getPragma().setValue(Constant.OPENACC_PREFIX + " " +
           pragmas[1] + " " + Constant.CONTINUATION_LINE_SYMBOL);
-      Xpragma newlyInserted = getDirective().getPragma();
+      // TODO XNODE take directly pragma as Xnode when refactoring is done
+      Xnode newlyInserted
+          = new Xnode(getDirective().getPragma().getBaseElement());
       for (int i = 2; i < pragmas.length; ++i) {
-        Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
+        Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+
         p.setFile(getDirective().getPragma().getFile());
         p.setLine(getDirective().getPragma().getLineNo() + (i - 1));
+
         if (i == pragmas.length - 1) {
           p.setValue(Constant.OPENACC_PREFIX + " " + pragmas[i]);
         } else {
