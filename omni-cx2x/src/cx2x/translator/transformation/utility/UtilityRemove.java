@@ -24,8 +24,8 @@ public class UtilityRemove extends BlockTransformation {
   // The loop statement involved in the Transformation
   private Xnode _do = null;
   private Xnode _if = null;
-  private Xnode _startPragma = null; // TODO delete when all move to Xnode
-  private Xnode _endPragma = null;   // TODO delete when all move to Xnode
+  private Xnode _startPragma = null; // TODO XNODE delete when all move to Xnode
+  private Xnode _endPragma = null;   // TODO XNODE delete when all move to Xnode
 
   private final ClawLanguage _clawStart, _clawEnd;
 
