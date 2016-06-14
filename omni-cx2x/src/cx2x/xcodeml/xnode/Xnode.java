@@ -200,4 +200,20 @@ public class Xnode {
     }
   }
 
+  /**
+   * Set the file attribute of the element.
+   * @param value File path.
+   */
+  public void setFile(String value){
+    setAttribute(Xattr.FILE, value);
+  }
+
+  /**
+   * Set the lineno attribute in the element.
+   * @param lineno Line number.
+   */
+  public void setLine(int lineno){
+    setAttribute(Xattr.LINENO, String.valueOf(lineno));
+  }
+
 }
