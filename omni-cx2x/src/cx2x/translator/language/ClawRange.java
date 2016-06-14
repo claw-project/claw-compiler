@@ -6,7 +6,10 @@
 package cx2x.translator.language;
 
 import cx2x.translator.common.Constant;
+import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.xelement.XloopIterationRange;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * Store the information from a range option in a CLAW directives.
@@ -115,50 +118,29 @@ public class ClawRange {
   }
 
   /**
-   * Compare a ClawRange with a XloopIterationRange representation.
-   * @param iterationRange A XloopIterationRange object.
+   * Compare a ClawRange with a do statement.
+   * @param doStmt The do statement to compare oteration range.
    * @return True if the iteration range share the same property.
    */
-  public boolean equals(XloopIterationRange iterationRange){
-    if(iterationRange.getInductionVar() == null ||
-        _inductionVar == null ||
-        !iterationRange.getInductionVar().getValue().equals(_inductionVar))
-    {
+  public boolean equals(Xnode doStmt) {
+    if(doStmt.Opcode() != Xcode.FDOSTATEMENT){
       return false;
     }
 
-    if(iterationRange.getIndexRange() == null){
-      return false;
-    }
+    Xnode inductionVar = doStmt.findNode(Xcode.VAR);
+    Xnode indexRange = doStmt.findNode(Xcode.INDEXRANGE);
+    Xnode lower = indexRange.findNode(Xcode.LOWERBOUND).getChild(0);
+    Xnode upper = indexRange.findNode(Xcode.UPPERBOUND).getChild(0);
+    Xnode step = indexRange.findNode(Xcode.STEP).getChild(0);
 
-    if(iterationRange.getIndexRange().getLowerBound() == null ||
-        _lowerBound == null ||
-        !iterationRange.getIndexRange().getLowerBound().getValue()
-            .equals(_lowerBound))
-    {
-      return false;
-    }
-
-    if(iterationRange.getIndexRange().getUpperBound() == null ||
-        _upperBound == null ||
-        !iterationRange.getIndexRange().getUpperBound().getValue()
-            .equals(_upperBound))
-    {
-      return false;
-    }
-
-
-    if(iterationRange.getIndexRange().getStep() == null &&
-        _step == null)
-    {
-      return true;
-    }
-
-
-    return !(iterationRange.getIndexRange().getStep() == null ||
-        _step == null || !_step.equals(iterationRange.getIndexRange().getStep().getValue()));
-
-
+    return !(inductionVar == null || _inductionVar == null
+        || !inductionVar.getValue().equals(_inductionVar))
+        && !(lower == null || _lowerBound == null
+        || !lower.getValue().equals(_lowerBound))
+        && !(upper == null || _upperBound == null
+        || !upper.getValue().equals(_upperBound))
+        && (step == null && _step == null
+        || !(step == null || _step == null || !_step.equals(step.getValue())));
   }
 
 }
