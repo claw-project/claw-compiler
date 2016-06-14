@@ -5,7 +5,11 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xelement.XbaseElement;
+import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xelement.XelementName;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,8 +26,22 @@ public class Xnode {
 
   private final Element _baseElement;
 
+  /**
+   * Constructs an Xnode object from an element in the AST.
+   * @param element Base element for the Xnode object.
+   */
   public Xnode(Element element){
     _baseElement = element;
+  }
+
+  /**
+   * Constructs a new element in the AST.
+   * @param opcode  Code of the new element.
+   * @param xcodeml Current XcodeML program unit in which the element is
+   *                created.
+   */
+  public Xnode(Xcode opcode, XcodeProgram xcodeml){
+    _baseElement = xcodeml.getDocument().createElement(opcode.code());
   }
 
   /**
