@@ -87,6 +87,14 @@ public enum Xcode {
     name = s;
   }
 
+  /**
+   * Get the XcodeML original code.
+   * @return XcodeML code.
+   */
+  public String code(){
+    return name;
+  }
+
   public String toString() {
     return this.name;
   }
