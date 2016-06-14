@@ -12,10 +12,11 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XfunctionDefinition;
 import cx2x.xcodeml.xelement.Xpragma;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * The class AcceleratorHelper contains only static method to help the
@@ -37,26 +38,22 @@ public class AcceleratorHelper {
    * @param endStmt   End statement representing the end of the parallel region.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static XbaseElement generateParallelClause(
-      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
-      XbaseElement endStmt)
+  private static Xnode generateParallelClause(ClawLanguage claw,
+                                              XcodeProgram xcodeml,
+                                              Xnode startStmt, Xnode endStmt)
   {
     if(claw.hasParallelClause()){
-      try {
-        Xpragma beginParallel =
-            XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        beginParallel.setValue(
-            claw.getAcceleratorGenerator().getStartParellelDirective()
-        );
-        Xpragma endParallel =
-            XelementHelper.createEmpty(Xpragma.class, xcodeml);
-        endParallel.setValue(
-            claw.getAcceleratorGenerator().getEndParellelDirective()
-        );
-        XelementHelper.insertBefore(startStmt, beginParallel);
-        XelementHelper.insertAfter(endStmt, endParallel);
-        return endParallel;
-      } catch (IllegalTransformationException ignored) { }
+      Xnode beginParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      beginParallel.setValue(
+          claw.getAcceleratorGenerator().getStartParellelDirective()
+      );
+      Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      endParallel.setValue(
+          claw.getAcceleratorGenerator().getEndParellelDirective()
+      );
+      XelementHelper.insertBefore(startStmt, beginParallel);
+      XelementHelper.insertAfter(endStmt, endParallel);
+      return endParallel;
     }
     return null;
   }
@@ -74,33 +71,32 @@ public class AcceleratorHelper {
    *                  constructs can be generated.
    */
   public static void generateParallelLoopClause(ClawLanguage claw,
-                                                 XcodeProgram xcodeml,
-                                                 XbaseElement startStmt,
-                                                 XbaseElement endStmt,
-                                                 int collapse)
+                                                XcodeProgram xcodeml,
+                                                Xnode startStmt, Xnode endStmt,
+                                                int collapse)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
       return;
     }
 
-    try {
-      Xpragma beginParallel =
-          Xpragma.create(gen.getStartParellelDirective(), xcodeml);
-      Xpragma endParallel =
-          Xpragma.create(gen.getEndParellelDirective(), xcodeml);
-      Xpragma beginLoop =
-          Xpragma.create(gen.getStartLoopDirective(collapse), xcodeml);
+    Xnode beginParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
 
-      XelementHelper.insertBefore(startStmt, beginParallel);
-      XelementHelper.insertBefore(startStmt, beginLoop);
-      XelementHelper.insertAfter(endStmt, endParallel);
+    beginParallel.setValue(gen.getStartParellelDirective());
+    endParallel.setValue(gen.getEndParellelDirective());
+    beginLoop.setValue(gen.getStartLoopDirective(collapse));
 
-      if(gen.getEndLoopDirective() != null) {
-        Xpragma endLoop = Xpragma.create(gen.getEndLoopDirective(), xcodeml);
-        XelementHelper.insertAfter(endStmt, endLoop);
-      }
-    } catch (IllegalTransformationException ignored) { }
+    XelementHelper.insertBefore(startStmt, beginParallel);
+    XelementHelper.insertBefore(startStmt, beginLoop);
+    XelementHelper.insertAfter(endStmt, endParallel);
+
+    if(gen.getEndLoopDirective() != null) {
+      Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      endLoop.setValue(gen.getEndLoopDirective());
+      XelementHelper.insertAfter(endStmt, endLoop);
+    }
   }
 
   /**
@@ -113,24 +109,22 @@ public class AcceleratorHelper {
    *                  representation in which the pragmas will be generated.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static XbaseElement generateAcceleratorClause(
-      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt)
+  private static Xnode generateAcceleratorClause(
+      ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt)
   {
     if(claw.hasAcceleratorClause())
     {
-      try {
-        Xpragma acceleratorPragma =
-            Xpragma.create(
-                claw.getAcceleratorGenerator().getSingleDirective(
-                    claw.getAcceleratorClauses()), xcodeml);
 
-        /* TODO
-           OpenACC and OpenMP loop construct are pretty different ...
-           have to look how to do that properly. See issue #22
-         */
-        XelementHelper.insertBefore(startStmt, acceleratorPragma);
-        return acceleratorPragma;
-      } catch (IllegalTransformationException ignored) { }
+      Xnode acceleratorPragma = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      acceleratorPragma.setValue(claw.getAcceleratorGenerator().
+          getSingleDirective(claw.getAcceleratorClauses()));
+
+      /* TODO
+         OpenACC and OpenMP loop construct are pretty different ...
+         have to look how to do that properly. See issue #22
+       */
+      XelementHelper.insertBefore(startStmt, acceleratorPragma);
+      return acceleratorPragma;
     }
     return null;
   }
@@ -146,15 +140,14 @@ public class AcceleratorHelper {
    *                  pragma statement.
    * @return Last stmt inserted.
    */
-  public static XbaseElement generateAdditionalDirectives(
-      ClawLanguage claw, XcodeProgram xcodeml, XbaseElement startStmt,
-      XbaseElement endStmt)
+  public static Xnode generateAdditionalDirectives(
+      ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
   {
     if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
       return null;
     }
 
-    XbaseElement pragma =
+    Xnode pragma =
         generateAcceleratorClause(claw, xcodeml, startStmt);
     if(pragma != null){
       startStmt = pragma;
@@ -182,10 +175,10 @@ public class AcceleratorHelper {
       return; // Don't do anything if the target is none
     }
 
-    Xpragma routine =
-        Xpragma.create(claw.getAcceleratorGenerator().getRoutineDirective(),
-            xcodeml);
-    fctDef.getBody().appendAsFirst(routine);
+    Xnode routine = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
+    Xnode fct = new Xnode(fctDef.getBaseElement()); // TODO XNODE remove after refactoring
+    fct.getBody().insert(routine, false);
   }
 
   /**
@@ -201,7 +194,7 @@ public class AcceleratorHelper {
   public static void generatePrivateClause(ClawLanguage claw,
                                            XcodeProgram xcodeml,
                                            Transformer transformer,
-                                           XbaseElement stmt,
+                                           Xnode stmt,
                                            String var)
   {
     if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE
@@ -210,7 +203,7 @@ public class AcceleratorHelper {
     }
 
     // TODO check how to do it in a better way
-    Xpragma hook =
+    Xnode hook =
         XelementHelper.findPreviousPragma(stmt,
             claw.getAcceleratorGenerator().getParallelKeyword());
 
@@ -219,11 +212,13 @@ public class AcceleratorHelper {
           claw.getPragma().getLineNo());
     } else {
       if(hook.getValue().length() >= 80){
-        hook.append(" " + claw.getAcceleratorGenerator().getPrefix() + " ");
+        hook.setValue(hook.getValue() + " " +
+            claw.getAcceleratorGenerator().getPrefix() + " ");
         transformer.addTransformation(new OpenAccContinuation(
-            new AnalyzedPragma(hook)));
+            new AnalyzedPragma(new Xpragma(hook.getElement()))));
       }
-      hook.append(claw.getAcceleratorGenerator().getPrivateClause(var));
+      hook.setValue(hook.getValue() +
+          claw.getAcceleratorGenerator().getPrivateClause(var));
     }
   }
 

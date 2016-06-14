@@ -15,6 +15,7 @@ import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -286,13 +287,16 @@ public class ArrayTransform extends BlockTransformation {
 
 
     // Generate accelerator pragmas if needed
-    XbaseElement potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
-        _clawBegin, xcodeml, doStmts[0], doStmts[0]);
+    Xnode potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
+        _clawBegin, xcodeml, new Xnode(doStmts[0].getBaseElement()),
+        new Xnode(doStmts[0].getBaseElement()));
 
     // Add any additional transformation defined in the directive clauses
+    // TODO XNODE no need to instantiate Xnode after refactoring
     TransformationHelper.generateAdditionalTransformation(_clawBegin, xcodeml,
-        transformer, doStmts[0]);
+        transformer, new Xnode(doStmts[0].getBaseElement()));
 
-    return potentialGrip == null ? doStmts[0] : potentialGrip;
+    //return potentialGrip == null ? doStmts[0] : potentialGrip;
+    return null; // TODO XNODE return correct value
   }
 }

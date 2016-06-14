@@ -15,6 +15,7 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.*;
 
@@ -215,7 +216,8 @@ public class Parallelize extends Transformation {
     newBody.appendToChildren(loops.getOuterStatement(), false);
     _fctDef.appendToChildren(newBody, false);
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml,
-        loops.getOuterStatement(), loops.getOuterStatement(),
+        new Xnode(loops.getOuterStatement().getBaseElement()),
+        new Xnode(loops.getOuterStatement().getBaseElement()),
         loops.getGroupSize());
   }
 
