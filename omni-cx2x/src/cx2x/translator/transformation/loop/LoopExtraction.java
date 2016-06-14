@@ -19,6 +19,8 @@ import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 
 // OMNI import
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
 
@@ -39,10 +41,11 @@ public class LoopExtraction extends Transformation {
   private final ClawLanguage _claw;
   private final Map<String, ClawMapping> _fctMappingMap;
   private final Map<String, ClawMapping> _argMappingMap;
-  private XfunctionCall _fctCall = null;
+  private Xnode _fctCall = null;
+  private Xnode _extractedLoop = null;
   private XfunctionDefinition _fctDef = null; // Fct holding the fct call
   private XfunctionDefinition _fctDefToExtract = null;
-  private XdoStatement _extractedLoop = null;
+
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
@@ -97,7 +100,7 @@ public class LoopExtraction extends Transformation {
    */
   private boolean checkMappingInformation(XcodeProgram xcodeml){
     for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()){
-      if(_fctCall.getArgumentsTable().findArgument(map.getKey()) == null){
+      if(XelementHelper.findArg(map.getKey(), _fctCall) == null){
         xcodeml.addError("Mapped variable " + map.getKey() +
             " not found in function call arguments",
             _claw.getPragma().getLineNo());
@@ -116,8 +119,10 @@ public class LoopExtraction extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
-    XexprStatement _exprStmt =
-        XelementHelper.findNextExprStatement(_claw.getPragma());
+    // TODO XNODE pargma will be Xnode after the refactoring is finished.
+    Xnode _exprStmt =
+        XelementHelper.findNext(Xcode.EXPRSTATEMENT,
+            new Xnode(_claw.getPragma().getBaseElement()));
     if(_exprStmt == null){
       xcodeml.addError("No function call detected after loop-extract",
         _claw.getPragma().getLineNo());
@@ -125,32 +130,35 @@ public class LoopExtraction extends Transformation {
     }
 
     // Find function CALL
-    _fctCall = XelementHelper.findFctCall(_exprStmt, true);
+    _fctCall = XelementHelper.find(Xcode.FUNCTIONCALL, _exprStmt, true);
     if(_fctCall == null){
       xcodeml.addError("No function call detected after loop-extract",
         _claw.getPragma().getLineNo());
       return false;
     }
 
-    _fctDef = XelementHelper.findParentFctDef(_fctCall);
-    if(_fctDef == null){
+    Xnode fctDef = XelementHelper.findParent(Xcode.FFUNCTIONDEFINITION, _fctCall);
+    if(fctDef == null){
       xcodeml.addError("No function around the fct call",
         _claw.getPragma().getLineNo());
       return false;
     }
+    _fctDef = new XfunctionDefinition(fctDef.getElement());
 
     // Find function declaration
     _fctDefToExtract = XelementHelper.findFunctionDefinition(xcodeml, _fctCall);
 
     if(_fctDefToExtract == null){
       xcodeml.addError("Could not locate the function definition for: "
-          + _fctCall.getName().getValue(), _claw.getPragma().getLineNo());
+          + _fctCall.findNode(Xcode.NAME).getValue(),
+          _claw.getPragma().getLineNo());
       return false;
     }
 
     // Find the loop to be extracted
     try {
-      _extractedLoop = locateDoStatement(_fctDefToExtract);
+      // TODO XNODE remove instantiation after refactor complete
+      _extractedLoop = locateDoStatement(new Xnode(_fctDefToExtract.getBaseElement()));
     } catch (IllegalTransformationException itex){
       xcodeml.addError(itex.getMessage(),
           _claw.getPragma().getLineNo());
@@ -221,7 +229,8 @@ public class LoopExtraction extends Transformation {
     XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
-    XdoStatement loopInClonedFct = locateDoStatement(clonedFctDef);
+    // TODO XNODE remove instantiation after refactor complete
+    Xnode loopInClonedFct = locateDoStatement(new Xnode(clonedFctDef.getBaseElement()));
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " +
@@ -246,22 +255,20 @@ public class LoopExtraction extends Transformation {
      */
 
     // Wrap function call with loop
-    XdoStatement extractedLoop = wrapCallWithLoop(xcodeml,
-      _extractedLoop.getIterationRange());
+    Xnode extractedLoop = wrapCallWithLoop(xcodeml, _extractedLoop);
 
     if(XmOption.isDebugOutput()){
       System.out.println("  call wrapped with loop: " +
-          _fctCall.getName().getValue() + " --> " +
+          _fctCall.findNode(Xcode.NAME).getValue() + " --> " +
           clonedFctDef.getName().getValue());
     }
 
     // Change called fct name
-    _fctCall.getName().setValue(newFctName);
-    _fctCall.getName().setType(newFctTypeHash);
+    _fctCall.findNode(Xcode.NAME).setValue(newFctName);
+    _fctCall.findNode(Xcode.NAME).setAttribute(Xattr.TYPE, newFctTypeHash);
 
 
     // Adapt function call parameters and function declaration
-    XargumentsTable args = _fctCall.getArgumentsTable();
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
     XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
 
@@ -271,7 +278,7 @@ public class LoopExtraction extends Transformation {
       Utility.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
       for(ClawMappingVar var : mapping.getMappedVariables()){
         Utility.debug("  Var: " + var);
-        XexprModel argument = args.findArgument(var.getArgMapping());
+        Xnode argument = XelementHelper.findArg(var.getArgMapping(), _fctCall);
         if(argument == null) {
           continue;
         }
@@ -288,15 +295,9 @@ public class LoopExtraction extends Transformation {
          *    2.2 insert clone of base variable in varRef
          * 3. Create arrayRef element with varRef + arrayIndex
          */
-        if(argument.isVar()){
-          Xvar varArg = argument.getVar();
-
-          XbasicType type =
-              (XbasicType)xcodeml.getTypeTable().get(varArg.getType());
-
-          /*Utility.debug("  arg found: " + varArg.getType());
-          Utility.debug("  ref: " + type.getRef());
-          Utility.debug("  dimensions: " + type.getDimensions());*/
+        if(argument.Opcode() == Xcode.VAR){
+          XbasicType type = (XbasicType)xcodeml.getTypeTable().
+              get(argument.getAttribute(Xattr.TYPE));
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()){
@@ -305,40 +306,37 @@ public class LoopExtraction extends Transformation {
                     " is wrong ...", _claw.getPragma().getLineNo());
           }
 
-          XarrayRef newArg =
-              XelementHelper.createEmpty(XarrayRef.class, xcodeml);
-          newArg.setType(type.getRef());
+          Xnode newArg = new Xnode(Xcode.FARRAYREF, xcodeml);
+          newArg.setAttribute(Xattr.TYPE, type.getRef());
 
-          XvarRef varRef = XelementHelper.createEmpty(XvarRef.class, xcodeml);
-          varRef.setType(varArg.getType());
+          Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+          varRef.setAttribute(Xattr.TYPE, argument.getAttribute(Xattr.TYPE));
 
-          varRef.append(varArg, true);
-          newArg.append(varRef);
+          varRef.appendToChildren(argument, true);
+          newArg.appendToChildren(varRef, false);
 
           //  create arrayIndex
           for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
-            XarrayIndex arrayIndex = XelementHelper.
-                createEmpty(XarrayIndex.class, xcodeml);
+            Xnode arrayIndex = new Xnode(Xcode.ARRAYINDEX, xcodeml);
             // Find the mapping var in the local table (fct scope)
             XvarDecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
-            Xvar newMappingVar =
-                XelementHelper.createEmpty(Xvar.class, xcodeml);
-            newMappingVar.setScope(Xscope.LOCAL);
-
-            newMappingVar.setType(mappingVarDecl.getName().getType());
+            Xnode newMappingVar = new Xnode(Xcode.VAR,xcodeml);
+            newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
+            newMappingVar.setAttribute(Xattr.TYPE,
+                mappingVarDecl.getName().getType());
             newMappingVar.setValue(mappingVarDecl.getName().getValue());
-            arrayIndex.append(newMappingVar);
-            newArg.append(arrayIndex);
+            arrayIndex.appendToChildren(newMappingVar, false);
+            newArg.appendToChildren(arrayIndex, false);
           }
 
-          args.replace(varArg, newArg);
+          XelementHelper.insertAfter(argument, newArg);
+          argument.delete();
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-        else if (argument.isArrayRef()){
-          XarrayRef arrayRef = argument.getArrayRef();
+        else if (argument.Opcode() == Xcode.FARRAYREF){
           // TODO
         }
 
@@ -405,6 +403,7 @@ public class LoopExtraction extends Transformation {
     }
 
     // Generate accelerator pragmas if needed
+    // TODO XNODE activate once refactoring finished
     AcceleratorHelper.
         generateAdditionalDirectives(_claw, xcodeml, extractedLoop,
             extractedLoop);
@@ -412,9 +411,8 @@ public class LoopExtraction extends Transformation {
     //AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 
     // Add any additional transformation defined in the directive clauses
-    // TODO no need to instantiate xnode after refactoring
     TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
-        transformer, new Xnode(extractedLoop.getBaseElement()));
+        transformer, extractedLoop);
 
     _claw.getPragma().delete();
     this.transformed();
@@ -427,20 +425,21 @@ public class LoopExtraction extends Transformation {
    * @return A XdoStatement object that match the range of loop-extract.
    * @throws IllegalTransformationException
    */
-  private XdoStatement locateDoStatement(XbaseElement from)
+  private Xnode locateDoStatement(Xnode from)
       throws IllegalTransformationException
   {
-    XdoStatement foundStatement = XelementHelper.findDoStatement(from, true);
+    Xnode foundStatement = XelementHelper.find(Xcode.FDOSTATEMENT, from, true);
     if(foundStatement == null){
       throw new IllegalTransformationException("No loop found in function",
           _claw.getPragma().getLineNo());
     } else {
-      if(!_claw.getRange().equals(foundStatement.getIterationRange())) {
+      if(!_claw.getRange().equals(foundStatement)) {
         // Try to find another loops that meet the criteria
         do {
-          foundStatement = XelementHelper.findNextDoStatement(foundStatement);
+          foundStatement =
+              XelementHelper.findNext(Xcode.FDOSTATEMENT, foundStatement);
         } while (foundStatement != null &&
-            !_claw.getRange().equals(foundStatement.getIterationRange()));
+            !_claw.getRange().equals(foundStatement));
       }
     }
 
@@ -449,7 +448,7 @@ public class LoopExtraction extends Transformation {
           _claw.getPragma().getLineNo());
     }
 
-    if(!_claw.getRange().equals(foundStatement.getIterationRange())) {
+    if(!_claw.getRange().equals(foundStatement)) {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
           _claw.getPragma().getLineNo()
@@ -460,32 +459,37 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Wrap a function call with a do statement.
-   * @param xcodeml        The XcodeML representation.
-   * @param iterationRange Iteration range to be applied to the do statement.
+   * @param xcodeml The XcodeML representation.
+   * @param doStmt  Iteration range to be applied to the do statement.
    * @return The created do statement.
    */
-  private XdoStatement wrapCallWithLoop(XcodeProgram xcodeml,
-    XloopIterationRange iterationRange)
+  private Xnode wrapCallWithLoop(XcodeProgram xcodeml, Xnode doStmt)
   {
     // Create a new empty loop
-
-    XdoStatement loop = XdoStatement.createWithEmptyBody(xcodeml,
-        iterationRange);
+    Xnode loop = XelementHelper.createDoStmt(
+        doStmt.findNode(Xcode.VAR).cloneObject(),
+        doStmt.findNode(Xcode.INDEXRANGE).cloneObject(),
+        xcodeml);
 
     // Insert the new empty loop just after the pragma
-    XelementHelper.insertAfter(_claw.getPragma(), loop);
+    // TODO XNODE remove instantiation
+    XelementHelper.insertAfter(new Xnode(_claw.getPragma().getBaseElement()), loop);
 
     // Move the call into the loop body
-    XelementHelper.insertFctCallIntoLoop(loop, _fctCall);
-    insertDeclaration(iterationRange.getInductionVar().getValue());
-    if(iterationRange.getIndexRange().getLowerBound().getExprModel().isVar()){
-      insertDeclaration(iterationRange.getIndexRange().getLowerBound().getValue());
+    loop.getBody().getElement().appendChild(_fctCall.getElement().getParentNode());
+
+    insertDeclaration(doStmt.find(Xcode.VAR).getValue());
+    if(doStmt.find(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR) != null) {
+      insertDeclaration(doStmt.
+          find(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR).getValue());
     }
-    if(iterationRange.getIndexRange().getUpperBound().getExprModel().isVar()){
-      insertDeclaration(iterationRange.getIndexRange().getUpperBound().getValue());
+    if(doStmt.find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR) != null){
+      insertDeclaration(doStmt.
+          find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR).getValue());
     }
-    if(iterationRange.getIndexRange().getStep().getExprModel().isVar()){
-      insertDeclaration(iterationRange.getIndexRange().getStep().getValue());
+    if(doStmt.find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR) != null){
+      insertDeclaration(doStmt.
+          find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR).getValue());
     }
 
     return loop;

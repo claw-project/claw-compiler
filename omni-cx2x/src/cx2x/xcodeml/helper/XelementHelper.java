@@ -81,12 +81,12 @@ public class XelementHelper {
    * @return A function definition element if found. Null otherwise.
    */
   public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
-                                                           XfunctionCall fctCall)
+                                                           Xnode fctCall)
   {
     if(xcodeml.getBaseElement() == null){
       return null;
     }
-    String name = fctCall.getName().getValue();
+    String name = fctCall.findNode(Xcode.NAME).getValue();
     NodeList nList = xcodeml.getBaseElement().getElementsByTagName(XelementName.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
@@ -513,18 +513,6 @@ public class XelementHelper {
   }
 
   /**
-   * Insert a function call at the end of a do statement.
-   * @param loop The do statement to insert in.
-   * @param call The function call to be inserted.
-   */
-  public static void insertFctCallIntoLoop(XdoStatement loop,
-                                           XfunctionCall call)
-  {
-    loop.getBody().getBaseElement().
-        appendChild(call.getBaseElement().getParentNode());
-  }
-
-  /**
    * Find function definition in the ancestor.
    * @param child The child element to search from.
    * @return A XfunctionDefinition object if found. Null otherwise.
@@ -568,21 +556,21 @@ public class XelementHelper {
    * @param keyword Keyword to be found in the pragma.
    * @return The pragma if found. Null otherwise.
    */
-  public static Xpragma findPreviousPragma(XbaseElement from, String keyword){
-    if(from == null || from.getBaseElement() == null){
+  public static Xnode findPreviousPragma(Xnode from, String keyword){
+    if(from == null || from.getElement() == null){
       return null;
     }
-    Node prev = from.getBaseElement().getPreviousSibling();
-    Node parent = from.getBaseElement();
+    Node prev = from.getElement().getPreviousSibling();
+    Node parent = from.getElement();
     do {
       while (prev != null) {
         if (prev.getNodeType() == Node.ELEMENT_NODE) {
           Element element = (Element) prev;
-          if (element.getTagName().equals(XelementName.PRAGMA_STMT)
+          if (element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
               && element.getTextContent().toLowerCase().
               contains(keyword.toLowerCase()))
           {
-            return new Xpragma(element);
+            return new Xnode(element);
           }
         }
         prev = prev.getPreviousSibling();
@@ -1310,8 +1298,8 @@ public class XelementHelper {
    * Extract the body of a do statement and place it directly after it.
    * @param loop The do statement containing the body to be extracted.
    */
-  public static void extractBody(XdoStatement loop){
-    Element loopElement = loop.getBaseElement();
+  public static void extractBody(Xnode loop){
+    Element loopElement = loop.getElement();
     Element body = XelementHelper.findFirstElement(loopElement,
       XelementName.BODY);
 
@@ -2328,6 +2316,48 @@ public class XelementHelper {
     root.appendToChildren(cond, false);
     root.appendToChildren(thenBlock, false);
     return root;
+  }
+
+  /**
+   *
+   * @param inductionVar
+   * @param indexRange
+   * @param xcodeml
+   * @return
+   */
+  public static Xnode createDoStmt(Xnode inductionVar,
+                                   Xnode indexRange,
+                                   XcodeProgram xcodeml)
+  {
+    Xnode root = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
+    root.appendToChildren(inductionVar, false);
+    root.appendToChildren(indexRange, false);
+
+    Xnode body = new Xnode(Xcode.BODY, xcodeml);
+    root.appendToChildren(body, false);
+    return root;
+  }
+
+  /**
+   *
+   * @param value
+   * @param fctCall
+   * @return
+   */
+  public static Xnode findArg(String value, Xnode fctCall){
+    if(fctCall.Opcode() != Xcode.FUNCTIONCALL) {
+      return null;
+    }
+    Xnode args = fctCall.find(Xcode.ARGUMENTS);
+    if(args == null){
+      return null;
+    }
+    for(Xnode arg : args.getChildren()){
+      if(value.toLowerCase().equals(arg.getValue().toLowerCase())){
+        return arg;
+      }
+    }
+    return null;
   }
 
 }
