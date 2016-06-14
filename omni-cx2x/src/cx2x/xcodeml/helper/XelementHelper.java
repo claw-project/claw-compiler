@@ -2122,7 +2122,18 @@ public class XelementHelper {
   }
 
 
+  /**
+   * Compare the iteration range of two do statements.
+   * @param e1 First do statement.
+   * @param e2 Second do statement.
+   * @return True if the iteration range are identical.
+   */
   public static boolean hasSameIndexRange(Xnode e1, Xnode e2){
+    // The two nodes must be do statement
+    if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
+      return false;
+    }
+
     Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
     Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
