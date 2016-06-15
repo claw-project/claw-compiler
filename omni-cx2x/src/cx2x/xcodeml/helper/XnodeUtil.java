@@ -853,31 +853,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Find an element in the ancestor of the given element.
-   * @param opcode Code of the element to be found.
-   * @param from   Element to start the search from.
-   * @return The element found. Null if nothing found.
-   */
-  public static Xnode findParent(Xcode opcode, Xnode from){
-    if(from == null){
-      return null;
-    }
-
-    Node nextNode = from.getElement().getParentNode();
-
-    while(nextNode != null){
-      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.code())){
-          return new Xnode(element);
-        }
-      }
-      nextNode = nextNode.getParentNode();
-    }
-    return null;
-  }
-
-  /**
    * Find element of the the given type that is directly after the given from
    * element.
    * @param opcode Code of the element to be found.
@@ -958,18 +933,43 @@ public class XnodeUtil {
    * @return The element found. Null if no element is found.
    */
   public static Xnode findNext(Xcode opcode, Xnode from) {
+    return findInDirection(opcode, from, true);
+  }
+
+  /**
+   * Find an element in the ancestor of the given element.
+   * @param opcode Code of the element to be found.
+   * @param from   Element to start the search from.
+   * @return The element found. Null if nothing found.
+   */
+  public static Xnode findParent(Xcode opcode, Xnode from){
+    return findInDirection(opcode, from, false);
+  }
+
+  /**
+   * Find an element either in the next siblings or in the ancestors.
+   * @param opcode Code of the element to be found.
+   * @param from   Element to start the search from.
+   * @param down   If True, search in the siblings. If false, search in the
+   *               ancestors.
+   * @return
+   */
+  private static Xnode findInDirection(Xcode opcode, Xnode from, boolean down){
     if(from == null){
       return null;
     }
-    Node nextNode = from.getElement().getNextSibling();
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+
+    Node nextNode = down ? from.getElement().getNextSibling() :
+        from.getElement().getParentNode();
+
+    while(nextNode != null){
+      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
         if(element.getTagName().equals(opcode.code())){
           return new Xnode(element);
         }
       }
-      nextNode = nextNode.getNextSibling();
+      nextNode = down ? nextNode.getNextSibling() : nextNode.getParentNode();
     }
     return null;
   }
@@ -1025,35 +1025,57 @@ public class XnodeUtil {
    * @param e2 Second do statement.
    * @return True if the iteration range are identical.
    */
-  public static boolean hasSameIndexRange(Xnode e1, Xnode e2){
+  public static boolean hasSameIndexRange(Xnode e1, Xnode e2) {
     // The two nodes must be do statement
-    if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
+    if (e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT) {
       return false;
     }
-
-    // TODO XNODE refactoring (have method to get bounds)
 
     Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
     Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
 
-
-    if(!inductionVar1.getValue().toLowerCase().
-        equals(inductionVar2.getValue().toLowerCase()))
-    {
-      return false;
-    }
-    return isIndexRangeIdentical(indexRange1, indexRange2);
+    return compareValues(inductionVar1, inductionVar2) &&
+        isIndexRangeIdentical(indexRange1, indexRange2);
   }
 
-  private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2){
-    if(idx1.Opcode() != Xcode.INDEXRANGE ||idx2.Opcode() != Xcode.INDEXRANGE){
+  /**
+   * Compare the inner values of two nodes.
+   * @param n1 First node.
+   * @param n2 Second node.
+   * @return True is the values are identical. False otherwise.
+   */
+  private static boolean compareValues(Xnode n1, Xnode n2) {
+    return !(n1 == null || n2 == null)
+        && n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase());
+  }
+
+  /**
+   * Compare the inner values of two optional nodes.
+   * @param n1 First node.
+   * @param n2 Second node.
+   * @return True if the values are identical or elements are null. False
+   * otherwise.
+   */
+  private static boolean compareOptionalValues(Xnode n1, Xnode n2){
+    return n1 == null && n2 == null ||
+        n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase());
+  }
+
+  /**
+   * Compare the iteration range of two do statements
+   * @param idx1 First do statement.
+   * @param idx2 Second do statement.
+   * @return True if the index range are identical.
+   */
+  private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2) {
+    if (idx1.Opcode() != Xcode.INDEXRANGE || idx2.Opcode() != Xcode.INDEXRANGE) {
       return false;
     }
 
-    if(idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-        idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+    if (idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+        idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
       return true;
     }
 
@@ -1065,24 +1087,15 @@ public class XnodeUtil {
 
     Xnode s1 = idx1.find(Xcode.STEP);
     Xnode s2 = idx2.find(Xcode.STEP);
-    if(s1 != null){
+    if (s1 != null) {
       s1 = s1.getChild(0);
     }
-    if(s2 != null){
+    if (s2 != null) {
       s2 = s2.getChild(0);
     }
 
-    if (!low1.getValue().toLowerCase().equals(low2.getValue().toLowerCase())) {
-      return false;
-    }
-
-    if (!up1.getValue().toLowerCase().equals(up2.getValue().toLowerCase())) {
-      return false;
-    }
-
-    // step is optional
-    return s1 == null && s2 == null ||
-        s1.getValue().toLowerCase().equals(s2.getValue().toLowerCase());
+    return compareValues(low1, low2) && compareValues(up1, up2) &&
+        compareOptionalValues(s1, s2);
   }
 
 
@@ -1092,9 +1105,9 @@ public class XnodeUtil {
    * @param e2 Second do statement.
    * @return True if the iteration range are identical besides the lower bound.
    */
-  public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2){
+  public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2) {
     // The two nodes must be do statement
-    if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
+    if (e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT) {
       return false;
     }
 
@@ -1107,27 +1120,25 @@ public class XnodeUtil {
     Xnode up2 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
     Xnode s2 = XnodeUtil.find(Xcode.STEP, indexRange2, false).getChild(0);
 
-    if(!inductionVar1.getValue().toLowerCase().
-        equals(inductionVar2.getValue().toLowerCase()))
-    {
+    if (!inductionVar1.getValue().toLowerCase().
+        equals(inductionVar2.getValue().toLowerCase())) {
       return false;
     }
 
-    if(indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-        indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+    if (indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+        indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
       return true;
     }
 
-    if (!up1.getValue().toLowerCase().equals(up2.getValue().toLowerCase())) {
-      return false;
-    }
-
-    // step is optional
-    return s1 == null && s2 == null ||
-        s1.getValue().toLowerCase().equals(s2.getValue().toLowerCase());
+    return compareValues(up1, up2) && compareOptionalValues(s1, s2);
   }
 
 
+  /**
+   * Swap the iteration range information of two do statement.
+   * @param e1 First do statement.
+   * @param e2 Second do statement.
+   */
   public static void swapIterationRange(Xnode e1, Xnode e2){
     // The two nodes must be do statement
     if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
