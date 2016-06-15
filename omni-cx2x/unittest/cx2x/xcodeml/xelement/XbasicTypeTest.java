@@ -6,6 +6,8 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -141,24 +143,23 @@ public class XbasicTypeTest {
     assertNotNull(b.getDimensions(1));
     assertNull(b.getDimensions(2));
 
-    Xindex dim0 = b.getDimensions(0);
-    Xindex dim1 = b.getDimensions(1);
+    Xnode dim0 = b.getDimensions(0);
+    Xnode dim1 = b.getDimensions(1);
 
-    assertTrue(dim0.isArrayIndex());
-    assertTrue(dim1.isIndexRange());
+    assertTrue(dim0.Opcode() == Xcode.ARRAYINDEX);
+    assertTrue(dim1.Opcode() == Xcode.INDEXRANGE);
 
-    XarrayIndex arrayIndex = (XarrayIndex)dim0;
-    assertNotNull(arrayIndex.getExprModel());
-    assertTrue(arrayIndex.getExprModel().isIntConst());
-    assertEquals("10", arrayIndex.getExprModel().getIntConstant().getValue());
+    assertTrue(dim0.getChild(0).Opcode() == Xcode.FINTCONSTANT);
+    assertEquals("10", dim0.getChild(0).getValue());
 
-    XindexRange indexRange = (XindexRange)dim1;
-    assertNotNull(indexRange.getLowerBound());
-    assertNotNull(indexRange.getUpperBound());
-    assertTrue(indexRange.getLowerBound().getExprModel().isIntConst());
-    assertEquals("1", indexRange.getLowerBound().getValue());
-    assertTrue(indexRange.getUpperBound().getExprModel().isIntConst());
-    assertEquals("10", indexRange.getUpperBound().getValue());
+    assertNotNull(dim1.find(Xcode.LOWERBOUND));
+    assertNotNull(dim1.find(Xcode.UPPERBOUND));
+    assertTrue(dim1.find(Xcode.LOWERBOUND).getChild(0).Opcode()
+        == Xcode.FINTCONSTANT);
+    assertEquals("1", dim1.find(Xcode.LOWERBOUND).getChild(0).getValue());
+    assertTrue(dim1.find(Xcode.LOWERBOUND).getChild(0).Opcode()
+        == Xcode.FINTCONSTANT);
+    assertEquals("10", dim1.find(Xcode.UPPERBOUND).getChild(0).getValue());
 
     assertEquals("Fint", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
