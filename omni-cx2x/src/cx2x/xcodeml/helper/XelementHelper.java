@@ -129,15 +129,6 @@ public class XelementHelper {
   }
 
   /**
-   * Find all array references elements in a given body.
-   * @param parent The body element to search for the array references.
-   * @return A list of all array references found.
-   */
-  public static List<XarrayRef> findAllArrayReferences(XbaseElement parent){
-    return findAll(parent, XarrayRef.class);
-  }
-
-  /**
    * Find all array references elements in a given body and give var name.
    * @param parent    The body element to search for the array references.
    * @param arrayName Name of the array for the array reference to be found.
@@ -161,15 +152,6 @@ public class XelementHelper {
       }
     }
     return references;
-  }
-
-  /**
-   * Find all assignment statement elements in a given body.
-   * @param parent The body element to search for the array references.
-   * @return A list of all assignment statements found.
-   */
-  public static List<XassignStatement> findAllAssignments(XbaseElement parent){
-    return findAll(parent, XassignStatement.class);
   }
 
   /**
@@ -509,25 +491,6 @@ public class XelementHelper {
   }
 
   /**
-   * Find do statment in which the child is included if any.
-   * @param child The child element to search from.
-   * @return A XdoStatement object if found. Null otherwise.
-   */
-  public static XdoStatement findParentDoStmt(XbaseElement child){
-    return findParentOfType(child, XdoStatement.class);
-  }
-
-  /**
-   * Find if statement element in which the child is included if any.
-   * @param child The child element to search from.
-   * @return A XifStatement object if found. Null otherwise.
-   */
-  public static XifStatement findParentIfStatement(XbaseElement child)
-  {
-    return findParentOfType(child, XifStatement.class);
-  }
-
-  /**
    * Find a pragma element in the previous nodes containing a given keyword.
    * @param from    Element to start from.
    * @param keyword Keyword to be found in the pragma.
@@ -589,17 +552,6 @@ public class XelementHelper {
    */
   public static XindexRange findIndexRange(XbaseElement parent, boolean any){
     return findXelement(parent, any, XindexRange.class);
-  }
-
-  /**
-   * Find arrayIndex element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XarrayIndex object if found. Null otherwise.
-   */
-  public static XarrayIndex findArrayIndex(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XarrayIndex.class);
   }
 
   /**
@@ -763,99 +715,8 @@ public class XelementHelper {
     }
   }
 
-  /**
-   * Find constant element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xconstant object if found. Null otherwise.
-   */
-  public static Xconstant findConstant(XbaseElement parent, boolean any){
-    // FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
-    // FlogicalConstant
 
-    XintConstant intConst = findIntConstant(parent, any);
-    if(intConst != null){
-      return intConst;
-    }
 
-    XrealConstant realConst = findRealConstant(parent, any);
-    if(realConst != null){
-      return realConst;
-    }
-
-    XcomplexConstant complexConst = findComplexConstant(parent, any);
-    if(complexConst != null){
-      return complexConst;
-    }
-
-    XcharacterConstant charConst = findCharacterConstant(parent, any);
-    if(charConst != null){
-      return charConst;
-    }
-
-    XlogicalConstant logConst = findLogicalConstant(parent, any);
-    if(logConst != null){
-      return logConst;
-    }
-
-    return null;
-  }
-
-  /**
-   * Find integer constant element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XintConstant object if found. Null otherwise.
-   */
-  public static XintConstant findIntConstant(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XintConstant.class);
-  }
-
-  /**
-   * Find real constant element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XrealConstant object if found. Null otherwise.
-   */
-  public static XrealConstant findRealConstant(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XrealConstant.class);
-  }
-
-  /**
-   * Find complex constant element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XcomplexConstant object if found. Null otherwise.
-   */
-  public static XcomplexConstant findComplexConstant(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XcomplexConstant.class);
-  }
-
-  /**
-   * Find character constant element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XcharacterConstant object if found. Null otherwise.
-   */
-  public static XcharacterConstant findCharacterConstant(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XcharacterConstant.class);
-  }
-
-  /**
-   * Find logical constant element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XlogicalConstant object if found. Null otherwise.
-   */
-  public static XlogicalConstant findLogicalConstant(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XlogicalConstant.class);
-  }
 
   /**
    * Find condition element.
@@ -993,14 +854,6 @@ public class XelementHelper {
     return findAll(parent, Xname.class);
   }
 
-  /**
-   * Find all the var elements in an element.
-   * @param parent Root element to search from.
-   * @return A list of all var elements found.
-   */
-  private static List<Xvar> findAllVars(XbaseElement parent){
-    return findAll(parent, Xvar.class);
-  }
 
   /**
    * Find all the var elements that are real references to a variable. Var
@@ -1067,52 +920,7 @@ public class XelementHelper {
     return findXelement(parent, any, Xkind.class);
   }
 
-  /**
-   * Find function call element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XfunctionCall object if found. Null otherwise.
-   */
-  public static XfunctionCall findFctCall(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XfunctionCall.class);
-  }
 
-  /**
-   * Find if there is a expr statement directly after the given element.
-   * @param from  The element to search from
-   * @return An expr statement element if found. Null otherwise.
-   */
-  public static XexprStatement findNextExprStatement(XbaseElement from){
-    return findNextElementOfType(from, XexprStatement.class);
-  }
-
-  /**
-   * Find if there is a do statement directly after the given element.
-   * @param from  The element to search from
-   * @return A do statement element if found. Null otherwise.
-   */
-  public static XdoStatement findDirectNextDoStmt(XbaseElement from){
-    return findDirectNextElement(from, XdoStatement.class);
-  }
-
-  /**
-   * Find if there is an if statement directly after the given element.
-   * @param from  The element to search from
-   * @return An if statement element if found. Null otherwise.
-   */
-  public static XifStatement findDirectNextIfStmt(XbaseElement from){
-    return findDirectNextElement(from, XifStatement.class);
-  }
-
-  /**
-   * Find if there is an assign statement directly after the given element.
-   * @param from  The element to search from
-   * @return An assign statement element if found. Null otherwise.
-   */
-  public static XassignStatement findDirectNextAssignStmt(XbaseElement from){
-    return findDirectNextElement(from, XassignStatement.class);
-  }
 
   /**
    * Find all the pragma element in an XcodeML tree.
@@ -1131,20 +939,6 @@ public class XelementHelper {
       }
     }
     return pragmas;
-  }
-
-  /**
-   * Check if the two element are direct children of the same parent element.
-   * @param e1 First element.
-   * @param e2 Second element.
-   * @return True if the two element are direct children of the same parent.
-   * False otherwise.
-   */
-  public static boolean hasSameParentBlock(XbaseElement e1, XbaseElement e2) {
-    return !(e1 == null || e2 == null || e1.getBaseElement() == null
-        || e2.getBaseElement() == null)
-        && e1.getBaseElement().getParentNode() ==
-        e2.getBaseElement().getParentNode();
   }
 
   /**
