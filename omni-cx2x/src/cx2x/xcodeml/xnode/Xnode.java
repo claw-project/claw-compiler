@@ -68,7 +68,11 @@ public class Xnode {
    * @return Attribute's value.
    */
   public String getAttribute(Xattr attrCode){
-    return _baseElement.getAttribute(attrCode.toString());
+    if(_baseElement.hasAttribute(attrCode.toString())){
+      return _baseElement.getAttribute(attrCode.toString());
+    } else {
+      return null;
+    }
   }
 
   /**
