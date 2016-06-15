@@ -43,9 +43,13 @@ public class XfunctionDefinition extends Xnode {
    */
   public XfunctionDefinition(Element baseElement){
     super(baseElement);
-    _symbolTable = new XsymbolTable(find(Xcode.SYMBOLS).getElement());
+    Xnode symbols = find(Xcode.SYMBOLS);
+    _symbolTable = (symbols != null) ? new XsymbolTable(symbols.getElement())
+        : null;
+    Xnode declarations = find(Xcode.DECLARATIONS);
+    _declTable = (declarations != null) ?
+        new XdeclTable(declarations.getElement()) : null;
     _params = find(Xcode.PARAMS);
-    _declTable = new XdeclTable(find(Xcode.DECLARATIONS).getElement());
     _body = find(Xcode.BODY);
     _name = find(Xcode.NAME);
   }
