@@ -151,9 +151,9 @@ public class Xnode {
   }
 
   /**
-   *
-   * @param opcodes
-   * @return
+   * Find a specific element in the children of the current element.
+   * @param opcodes List of opcode to reach the element.
+   * @return The element if found. Null otherwise.
    */
   public Xnode find(Xcode... opcodes){
     Xnode tmp = this;
