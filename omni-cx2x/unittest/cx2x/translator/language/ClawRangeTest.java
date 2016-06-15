@@ -6,6 +6,7 @@
 package cx2x.translator.language;
 
 import cx2x.xcodeml.xelement.XloopIterationRange;
+import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -17,6 +18,8 @@ import static org.junit.Assert.*;
  */
 public class ClawRangeTest {
 
+  private static final String beginLoop = "<FdoStatement>";
+  private static final String endLoop = "<body></body></FdoStatement>";
   private static final String inducationVar1 =
       "<Var type=\"Fint\" scope=\"local\">i</Var>";
   private static final String indexRange1 =
@@ -47,11 +50,11 @@ public class ClawRangeTest {
 
   @Test
   public void compareWithXloopIterationRangeTest(){
-    XloopIterationRange iterationRange1 =
-        XmlHelper.createXloopIterationRange(inducationVar1, indexRange1);
+    Xnode iterationRange1 =
+        XmlHelper.createXnode(beginLoop + inducationVar1 + indexRange1 + endLoop);
     assertNotNull(iterationRange1);
-    XloopIterationRange iterationRange2 =
-        XmlHelper.createXloopIterationRange(inducationVar1, indexRange2);
+    Xnode iterationRange2 =
+        XmlHelper.createXnode(beginLoop + inducationVar1 + indexRange2 + endLoop);
     assertNotNull(iterationRange1);
 
     ClawRange range1 = new ClawRange("i", "1", "10", "1");

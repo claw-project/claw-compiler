@@ -8,6 +8,7 @@ package helper;
 import static org.junit.Assert.*;
 
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -241,5 +242,12 @@ public class XmlHelper {
         XelementName.PRAGMA_STMT + ">";
     Element el = XmlHelper.getElementFromString(xml);
     return new Xpragma(el);
+  }
+
+
+  public static Xnode createXnode(String xml){
+    Element el = XmlHelper.getElementFromString(xml);
+    assertNotNull(el);
+    return new Xnode(el);
   }
 }
