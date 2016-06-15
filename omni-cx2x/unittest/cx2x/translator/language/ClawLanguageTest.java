@@ -12,7 +12,6 @@ import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
-import cx2x.xcodeml.xelement.Xpragma;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;

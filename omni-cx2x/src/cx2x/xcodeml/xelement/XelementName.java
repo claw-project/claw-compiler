@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xelement;
 
-import java.util.*;
-
 /**
  * XelementName class contains all element and attributes values that can be
  * found in the XcodeML/F intermediate representation language.
@@ -158,103 +156,4 @@ public class XelementName {
 
   // Intrinsic function
   public static final String INTRINSIC_SIZE = "size";
-
-
-  private static final Map<Class, String> _classToElementNameMapping;
-
-  static {
-    Map<Class, String> tempMap = new Hashtable<>();
-    tempMap.put(XargumentsTable.class, ARGUMENTS);
-    tempMap.put(XarrayIndex.class, ARRAY_INDEX);
-    tempMap.put(XarrayRef.class, F_ARRAY_REF);
-    tempMap.put(XassignStatement.class, F_ASSIGN_STMT);
-    tempMap.put(XbasicType.class, BASIC_TYPE);
-    tempMap.put(Xbody.class, BODY);
-    tempMap.put(Xcondition.class, CONDITION);
-    tempMap.put(XdeclTable.class, DECLARATIONS);
-    tempMap.put(XdoStatement.class, DO_STMT);
-    tempMap.put(Xelse.class, ELSE);
-    tempMap.put(XexprStatement.class, EXPR_STMT);
-    tempMap.put(XfunctionCall.class, FCT_CALL);
-    tempMap.put(XfunctionDefinition.class, FCT_DEFINITION);
-    tempMap.put(XfunctionType.class, FCT_TYPE);
-    tempMap.put(XarrayRef.class, F_ARRAY_REF);
-    tempMap.put(XifStatement.class, F_IF_STMT);
-    tempMap.put(XintConstant.class, F_INT_CONST);
-    tempMap.put(XrealConstant.class, F_REAL_CONST);
-    tempMap.put(XcomplexConstant.class, F_COMPLEX_CONST);
-    tempMap.put(XcharacterConstant.class, F_CHAR_CONST);
-    tempMap.put(XlogicalConstant.class, F_LOGICAL_CONST);
-    //tempMap.put(XstructType.class, F_STRUCT_TYPE); TODO Uncomment when XstructType available
-    tempMap.put(XglobalDeclTable.class, GLOBAL_DECLARATIONS);
-    tempMap.put(XglobalSymbolTable.class, GLOBAL_SYMBOLS);
-    tempMap.put(Xid.class, ID);
-    tempMap.put(XindexRange.class, INDEX_RANGE);
-    tempMap.put(Xkind.class, KIND);
-    tempMap.put(Xlength.class, LENGTH);
-    tempMap.put(XlowerBound.class, LOWER_BOUND);
-    tempMap.put(XmoduleDefinition.class, F_MODULE_DEFINITION);
-    tempMap.put(Xname.class, NAME);
-    tempMap.put(Xparams.class, PARAMS);
-    tempMap.put(Xpragma.class, PRAGMA_STMT);
-    tempMap.put(Xstep.class, STEP);
-    tempMap.put(XsymbolTable.class, SYMBOLS);
-    tempMap.put(Xthen.class, THEN);
-    tempMap.put(XtypeTable.class, TYPE_TABLE);
-    tempMap.put(XupperBound.class, UPPER_BOUND);
-    tempMap.put(Xvar.class, VAR);
-    tempMap.put(XvarDecl.class, VAR_DECL);
-    tempMap.put(XvarRef.class, VAR_REF);
-    tempMap.put(Xvalue.class, VALUE);
-    tempMap.put(XcodeProgram.class, X_CODE_PROGRAM);
-    _classToElementNameMapping = Collections.unmodifiableMap(tempMap);
-  }
-
-  private static final Set<String> _binaryExprSet;
-
-  static {
-    _binaryExprSet = new HashSet<>();
-    _binaryExprSet.add(DIV_EXPR);
-    _binaryExprSet.add(F_CONCAT_EXPR);
-    _binaryExprSet.add(F_POWER_EXPR);
-    _binaryExprSet.add(LOG_AND_EXPR);
-    _binaryExprSet.add(LOG_EQ_EXPR);
-    _binaryExprSet.add(LOG_EQV_EXPR);
-    _binaryExprSet.add(LOG_GE_EXPR);
-    _binaryExprSet.add(LOG_GT_EXPR);
-    _binaryExprSet.add(LOG_LE_EXPR);
-    _binaryExprSet.add(LOG_LT_EXPR);
-    _binaryExprSet.add(LOG_NEQ_EXPR);
-    _binaryExprSet.add(LOG_NEWV_EXPR);
-    _binaryExprSet.add(LOG_OR_EXPR);
-    _binaryExprSet.add(MINUS_EXPR);
-    _binaryExprSet.add(MUL_EXPR);
-    _binaryExprSet.add(PLUS_EXPR);
-    _binaryExprSet.add(USER_BINARY_EXPR);
-  }
-
-  /**
-   * Get the corresponding element name from a XbaseElement derived class
-   * @param xElementClass XbaseElement derived class
-   * @param <T>           Type of the XbaseElement to be found.
-   * @return String value of the element name if know. Null otherwise
-   */
-  public static <T extends XbaseElement> String
-    getElementNameFromClass(Class<T> xElementClass)
-  {
-    if(_classToElementNameMapping.containsKey(xElementClass)){
-      return _classToElementNameMapping.get(xElementClass);
-    }
-    return null;
-  }
-
-  /**
-   * Check if the given tag is associated with a binary expression.
-   * @param tag Tag to be checked.
-   * @return True if the tag is a binary expression. False otherwise.
-   */
-  public static boolean isBinaryExprTag(String tag){
-    return _binaryExprSet.contains(tag);
-  }
-
 }

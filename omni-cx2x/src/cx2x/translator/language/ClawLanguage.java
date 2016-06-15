@@ -10,7 +10,6 @@ import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.xelement.Xpragma;
 import cx2x.xcodeml.xnode.Xnode;
 import exc.object.Xcode;
 import exc.object.Xobject;

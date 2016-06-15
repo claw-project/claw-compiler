@@ -6,8 +6,6 @@
 package cx2x.translator.language;
 
 import cx2x.translator.common.Constant;
-import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xelement.XloopIterationRange;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 

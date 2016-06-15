@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,9 +28,9 @@ public class XbasicTest {
 
   @Test
   public void xValueTest(){
-    Xvalue val = XmlHelper.createXvalue(value1);
+    Xnode val = XmlHelper.createXnode(value1);
     assertNotNull(val);
-    assertTrue(val.getExprModel().isIntConst());
+    assertTrue(val.getChild(0).Opcode() == Xcode.FINTCONSTANT);
     assertEquals(XelementName.TYPE_F_INT,
         val.getExprModel().getIntConstant().getType());
     assertEquals("1", val.getExprModel().getIntConstant().getValue());

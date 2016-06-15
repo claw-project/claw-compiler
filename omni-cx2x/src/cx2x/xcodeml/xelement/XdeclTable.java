@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -23,19 +24,19 @@ import cx2x.xcodeml.helper.*;
  *
  * - Optional:
  *   - varDecl (XvarDecl)
- *   - FstructDecl TODO
- *   - externDecl TODO
- *   - FuseDecl TODO
- *   - FuseOnlyDecl TODO
- *   - FinterfaceDecl TODO
- *   - FnamelistDecl TODO
- *   - FequivalenceDecl TODO
- *   - FcommonDecl TODO
+ *   - FstructDecl
+ *   - externDecl
+ *   - FuseDecl
+ *   - FuseOnlyDecl
+ *   - FinterfaceDecl
+ *   - FnamelistDecl
+ *   - FequivalenceDecl
+ *   - FcommonDecl
  *
  * @author clementval
  */
 
-public class XdeclTable extends XbaseElement implements Xclonable<XdeclTable> {
+public class XdeclTable extends Xnode {
 
   // TODO move to Xdecl
   private final Hashtable<String, XvarDecl> _table;
@@ -55,10 +56,11 @@ public class XdeclTable extends XbaseElement implements Xclonable<XdeclTable> {
    * Read the declaration table.
    */
   private void readTable(){
-    Node crtNode = baseElement.getFirstChild();
+    Node crtNode = _baseElement.getFirstChild();
     while(crtNode != null){
       if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element)crtNode;
+
         switch (element.getTagName()){
           case XelementName.VAR_DECL:
             XvarDecl decl = new XvarDecl(element);
@@ -99,7 +101,7 @@ public class XdeclTable extends XbaseElement implements Xclonable<XdeclTable> {
    * @param decl The new declaration object.
    */
   public void add(XvarDecl decl){
-    baseElement.appendChild(decl.cloneNode());
+    _baseElement.appendChild(decl.cloneNode());
     _table.put(decl.getName().getValue(), decl);
   }
 

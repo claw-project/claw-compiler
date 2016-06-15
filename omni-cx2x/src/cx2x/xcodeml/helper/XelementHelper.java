@@ -91,10 +91,12 @@ public class XelementHelper {
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
-        XbaseElement dummyFctDef = new XbaseElement((Element)fctDefNode);
-        Xname fctDefName = findName(dummyFctDef, false);
-        if(name != null && fctDefName.isIdentical(name)){
-          return new XfunctionDefinition(dummyFctDef.getBaseElement());
+        Xnode dummyFctDef = new Xnode((Element)fctDefNode);
+        Xnode fctDefName = dummyFctDef.find(Xcode.NAME);
+        if(name != null &&
+            fctDefName.getValue().toLowerCase().equals(name.toLowerCase()))
+        {
+          return new XfunctionDefinition(dummyFctDef.getElement());
         }
       }
     }
@@ -470,34 +472,13 @@ public class XelementHelper {
   }
 
   /**
-   * Find all real constants in the direct children of the given parent.
-   * @param parent Root element to search from.
-   * @return A list of all found real constants.
-   */
-  public static List<XrealConstant> getRealConstants(XbaseElement parent){
-    List<XrealConstant> elements = new ArrayList<>();
-    Node n = parent.getBaseElement().getFirstChild();
-    while(n != null){
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        if(el.getTagName().equals(XelementName.F_REAL_CONST)) {
-          XrealConstant ref = new XrealConstant(el);
-          elements.add(ref);
-        }
-      }
-      n = n.getNextSibling();
-    }
-    return elements;
-  }
-
-  /**
    * Find a pragma element in the previous nodes containing a given keyword.
    * @param from    Element to start from.
    * @param keyword Keyword to be found in the pragma.
    * @return The pragma if found. Null otherwise.
    */
-  public static Xnode findPreviousPragma(Xnode from, String keyword){
-    if(from == null || from.getElement() == null){
+  public static Xnode findPreviousPragma(Xnode from, String keyword) {
+    if (from == null || from.getElement() == null) {
       return null;
     }
     Node prev = from.getElement().getPreviousSibling();
@@ -508,8 +489,7 @@ public class XelementHelper {
           Element element = (Element) prev;
           if (element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
               && element.getTextContent().toLowerCase().
-              contains(keyword.toLowerCase()))
-          {
+              contains(keyword.toLowerCase())) {
             return new Xnode(element);
           }
         }
@@ -517,304 +497,8 @@ public class XelementHelper {
       }
       parent = parent.getParentNode();
       prev = parent;
-    } while(parent != null);
+    } while (parent != null);
     return null;
-  }
-
-  /**
-   * Find var element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xvar object if found. Null otherwise.
-   */
-  public static Xvar findVar(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xvar.class);
-  }
-
-  /**
-   * Find varRef element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XvarRef object if found. Null otherwise.
-   */
-  public static XvarRef findVarRef(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XvarRef.class);
-  }
-
-  /**
-   * Find indexRange element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XindexRange object if found. Null otherwise.
-   */
-  public static XindexRange findIndexRange(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XindexRange.class);
-  }
-
-  /**
-   * Find name element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xname object if found. Null otherwise.
-   */
-  public static Xname findName(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xname.class);
-  }
-
-  /**
-   * Find value element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xvalue object if found. Null otherwise.
-   */
-  public static Xvalue findValue(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xvalue.class);
-  }
-
-  /**
-   * Find lValueModel element at given position.
-   * @param parent   Root element to search from.
-   * @param position Position of the element to be found in the parent children
-   *                 list.
-   * @return A XLValueModel object if found. Null otherwise.
-   */
-  public static XLValueModel findLValueModel(XbaseElement parent, int position){
-    Element element = getXthChildElement(parent.getBaseElement(), position);
-    if(element == null){
-      return null;
-    }
-    switch (element.getTagName()) {
-      case XelementName.VAR:
-        return new XLValueModel(new Xvar(element));
-      case XelementName.F_ARRAY_REF:
-        return new XLValueModel(new XarrayRef(element));
-      case XelementName.F_CHAR_REF:
-      case XelementName.F_MEMBER_REF:
-      case XelementName.F_COARRAY_REF:
-        return null; // TODO when classes are available
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * Find exprModel element at given position.
-   * @param parent   Root element to search from.
-   * @param position Position of the element to be found in the parent children
-   *                 list.
-   * @return A XexprModel object if found. Null otherwise.
-   */
-  public static XexprModel findExprModel(XbaseElement parent, int position){
-    /** An exprModel can be of the following type
-     *   - FintConstant, FrealConstant, FcomplexConstant, FcharacterConstant,
-     *     FlogicalConstant
-     *   TODO FarrayConstructor, FstructConstructor
-     *   - FarrayConstructor, FstructConstructor
-     *   - Var
-     *   TODO FcharacterRef, FmemberRef, FcoArrayRef
-     *   - FarrayRef, FcharacterRef, FmemberRef, FcoArrayRef, varRef
-     *   - functionCall
-     *   - plusExpr, minusExpr, mulExpr, divExpr, FpowerExpr, FconcatExpr
-     *     logEQExpr, logNEQExpr, logGEExpr, logGTExpr, logLEExpr, logLTExpr,
-     *     logAndExpr, logOrExpr, logEQVExpr, logNEQVExpr, logNotExpr,
-     *     unaryMinusExpr, userBinaryExpr, userUnaryExpr
-     *   TODO FdoLoop
-     *   - FdoLoop
-     */
-
-    Element element = getXthChildElement(parent.getBaseElement(), position);
-    if(element == null){
-      return null;
-    }
-
-    switch (element.getTagName()){
-      case XelementName.F_INT_CONST:
-        return new XexprModel(new XintConstant(element));
-      case XelementName.F_REAL_CONST:
-        return new XexprModel(new XrealConstant(element));
-      case XelementName.F_LOGICAL_CONST:
-        return new XexprModel(new XlogicalConstant(element));
-      case XelementName.F_COMPLEX_CONST:
-        return new XexprModel(new XcomplexConstant(element));
-      case XelementName.F_CHAR_CONST:
-        return new XexprModel(new XcharacterConstant(element));
-      case XelementName.VAR:
-        return new XexprModel(new Xvar(element));
-      case XelementName.FCT_CALL:
-        return new XexprModel(new XfunctionCall(element));
-      case XelementName.F_ARRAY_REF:
-        return new XexprModel(new XarrayRef(element));
-      case XelementName.VAR_REF:
-        return new XexprModel(new XvarRef(element));
-      // binary expression
-      case XelementName.DIV_EXPR:
-      case XelementName.F_CONCAT_EXPR:
-      case XelementName.F_POWER_EXPR:
-      case XelementName.LOG_AND_EXPR:
-      case XelementName.LOG_EQ_EXPR:
-      case XelementName.LOG_EQV_EXPR:
-      case XelementName.LOG_GE_EXPR:
-      case XelementName.LOG_GT_EXPR:
-      case XelementName.LOG_LE_EXPR:
-      case XelementName.LOG_LT_EXPR:
-      case XelementName.LOG_NEQ_EXPR:
-      case XelementName.LOG_NEWV_EXPR:
-      case XelementName.LOG_OR_EXPR:
-      case XelementName.MINUS_EXPR:
-      case XelementName.MUL_EXPR:
-      case XelementName.PLUS_EXPR:
-      case XelementName.USER_BINARY_EXPR:
-        return new XexprModel(new XbinaryExpr(element));
-
-      // unary expression
-      case XelementName.LOG_NOT_EXPR:
-      case XelementName.UNARY_MINUS_EXPR:
-      case XelementName.USER_UNARY_EXPR:
-        return new XexprModel(new XunaryExpr(element));
-
-
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * The inner element of a varRef is one of the following:
-   * - Var
-   * - FmemberRef
-   * - FarrayRef
-   * - FcharacterRef
-   * - FcoArrayRef
-   * @param parent The root element to search form.
-   * @return The varRef inner element as a XbaseElement derived type.
-   */
-  public static XbaseElement findVarRefInnerElement(XbaseElement parent){
-    Element element = getFirstChildElement(parent.getBaseElement());
-    if(element == null){
-      return null;
-    }
-
-    switch (element.getTagName()) {
-      case XelementName.VAR:
-        return new Xvar(element);
-      case XelementName.F_MEMBER_REF:
-        return null; // TODO move to XmemberRef
-      case XelementName.F_ARRAY_REF:
-        return new XarrayRef(element);
-      case XelementName.F_CHAR_REF:
-        return null; // TODO move to XcharacterRef
-      case XelementName.F_COARRAY_REF:
-        return null; // TODO move to XcoArrayRef
-      default:
-        return null;
-    }
-  }
-
-
-
-
-  /**
-   * Find condition element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xcondition object if found. Null otherwise.
-   */
-  public static Xcondition findCondition(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xcondition.class);
-  }
-
-  /**
-   * Find then element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xthen object if found. Null otherwise.
-   */
-  public static Xthen findThen(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xthen.class);
-  }
-
-  /**
-   * Find else element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xelse object if found. Null otherwise.
-   */
-  public static Xelse findElse(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xelse.class);
-  }
-
-  /**
-   * Find arguments element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XargumentsTable object if found. Null otherwise.
-   */
-  public static XargumentsTable findArgumentsTable(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XargumentsTable.class);
-  }
-
-  /**
-   * Find lowerBound element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XlowerBound object if found. Null otherwise.
-   */
-  public static XlowerBound findLowerBound(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XlowerBound.class);
-  }
-
-  /**
-   * Find upperBound element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XupperBound object if found. Null otherwise.
-   */
-  public static XupperBound findUpperBound(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XupperBound.class);
-  }
-
-  /**
-   * Find step element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xstep object if found. Null otherwise.
-   */
-  public static Xstep findStep(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xstep.class);
-  }
-
-  /**
-   * Find body element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xbody object if found. Null otherwise.
-   */
-  public static Xbody findBody(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xbody.class);
-  }
-
-  /**
-   * Find params in the XcodeML representation.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xparams object if found. Null otherwise.
-   */
-  public static Xparams findParams(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xparams.class);
   }
 
   /**
@@ -822,13 +506,13 @@ public class XelementHelper {
    * @param parent  Root element to search from.
    * @return A list of all index ranges found.
    */
-  public static List<Xnode> findIndexes(XbaseElement parent){
+  public static List<Xnode> findIndexes(Xnode parent){
     List<Xnode> indexRanges = new ArrayList<>();
-    if(parent == null || parent.getBaseElement() == null){
+    if(parent == null || parent.getElement() == null){
       return indexRanges;
     }
 
-    Node node = parent.getBaseElement().getFirstChild();
+    Node node = parent.getElement().getFirstChild();
     while (node != null){
       if(node.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element)node;
@@ -850,8 +534,8 @@ public class XelementHelper {
    * @param parent Root element to search from.
    * @return A list of all name elements found.
    */
-  public static List<Xname> findAllNames(XbaseElement parent){
-    return findAll(parent, Xname.class);
+  public static List<Xnode> findAllNames(Xnode parent){
+    return findAll(Xcode.NAME, parent);
   }
 
 
@@ -895,33 +579,6 @@ public class XelementHelper {
     return realReferences;
   }
 
-
-
-
-  /**
-   * Find len element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xlength object if found. Null otherwise.
-   */
-  public static Xlength findLen(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xlength.class);
-  }
-
-  /**
-   * Find kind element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A Xkind object if found. Null otherwise.
-   */
-  public static Xkind findKind(XbaseElement parent, boolean any){
-    return findXelement(parent, any, Xkind.class);
-  }
-
-
-
   /**
    * Find all the pragma element in an XcodeML tree.
    * @param xcodeml The XcodeML program to search in.
@@ -939,34 +596,6 @@ public class XelementHelper {
       }
     }
     return pragmas;
-  }
-
-  /**
-   * Insert all the statements from a given body at the end of another body
-   * @param originalBody The body in which the extra body will be appended
-   * @param extraBody    The body that will be appended to the original body
-   * @throws IllegalTransformationException if one of the body or their base
-   *         element is null.
-   */
-  public static void appendBody(Xbody originalBody, Xbody extraBody)
-    throws IllegalTransformationException
-  {
-    if(originalBody == null || originalBody.getBaseElement() == null
-      || extraBody == null || extraBody.getBaseElement() == null)
-    {
-      throw new IllegalTransformationException("One of the body is null.");
-    }
-
-    // Append content of loop-body (loop) to this loop-body
-    Node childNode = extraBody.getBaseElement().getFirstChild();
-    while(childNode != null){
-      Node nextChild = childNode.getNextSibling();
-      // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE){
-        originalBody.getBaseElement().appendChild(childNode);
-      }
-      childNode = nextChild;
-    }
   }
 
   /**
@@ -1148,280 +777,6 @@ public class XelementHelper {
   }
 
   /**
-   * Find an element of Class T in the nested elements under parent.
-   * @param parent        XbaseElement to search from.
-   * @param any           If true, find in any nested element under parent. If
-   *                      false, only direct children are search for.
-   * @param xElementClass Element's class to be found.
-   * @param <T>           Derived class of XbaseElement.
-   * @return An instance of T class if an element is found. Null if no element
-   * is found.
-   */
-  private static <T extends XbaseElement> T findXelement(XbaseElement parent,
-    boolean any, Class<T> xElementClass)
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || parent == null
-      || parent.getBaseElement() == null)
-    {
-      return null;
-    }
-    Element element = findElement(parent, elementName, any);
-    if (element != null){
-      try{
-        return xElementClass.
-          getDeclaredConstructor(Element.class).newInstance(element);
-      } catch(Exception ex){
-        return null;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find element of the the given Class that is directly after the given from
-   * element.
-   * @param from          XbaseElement to search from.
-   * @param xElementClass Element's class to be found.
-   * @param <T>           Derived class of XbaseElement.
-   * @return Instance of the xElementClass. Null if no element is found.
-   */
-  private static <T extends XbaseElement> T findDirectNextElement(
-    XbaseElement from, Class<T> xElementClass)
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || from == null || from.getBaseElement() == null){
-      return null;
-    }
-    Node nextNode = from.getBaseElement().getNextSibling();
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(elementName)){
-          return construct(xElementClass, element);
-        }
-        return null;
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
-  }
-
-  /**
-   * Find a parent element from a child in the ancestors.
-   * @param from The child element to search from.
-   * @return A XbaseElement object if found. Null otherwise.
-   */
-  private static <T extends XbaseElement> T findParentOfType(
-      XbaseElement from, Class<T> xElementClass)
-  {
-    return findOfType(from, xElementClass, true);
-  }
-
-  /**
-   * Find any element of the the given Class in the direct children of from
-   * element. Only first level children are search for.
-   * @param from          XbaseElement to search from.
-   * @param xElementClass Element's class to be found.
-   * @param <T>           Derived class of XbaseElement.
-   * @return The first element found under from element. Null if no element is
-   * found.
-   */
-  private static <T extends XbaseElement> T findNextElementOfType(
-      XbaseElement from, Class<T> xElementClass)
-  {
-    return findOfType(from, xElementClass, false);
-  }
-
-  /**
-   * Find any element of the given Class in the direct children or the ancestors
-   * of the from element. In the case if children, only first level children are
-   * search for.
-   * @param from          XbaseElement to search from.
-   * @param xElementClass Element's class to be found.
-   * @param ancestor      if true, search in the ancestor. If false, search in
-   *                      the children.
-   * @param <T>           Derived class of XbaseElement.
-   * @return The first element found under or in the ancestors of the from
-   * element. Null if no element is found.
-   */
-  private static <T extends XbaseElement> T findOfType(XbaseElement from,
-                                                       Class<T> xElementClass,
-                                                       boolean ancestor)
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || from == null || from.getBaseElement() == null){
-      return null;
-    }
-
-    Node nextNode = ancestor ? from.getBaseElement().getParentNode() :
-        from.getBaseElement().getNextSibling();
-
-    while(nextNode != null){
-      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(elementName)){
-          return construct(xElementClass, element);
-        }
-      }
-      nextNode = ancestor ? nextNode.getParentNode() : nextNode.getNextSibling();
-    }
-    return null;
-  }
-
-  /**
-   * Constructs an object with the base constrcutor for XbaseElement.
-   * @param xElementClass Type of the object.
-   * @param element       Element to pass to the constructor.
-   * @param <T>           Derived class of XbaseElement.
-   * @return A new XbaseElement dervied object or null if the construction
-   * fails.
-   */
-  private static <T extends XbaseElement> T construct(Class<T> xElementClass,
-                                                      Element element){
-    try{
-      return xElementClass.
-          getDeclaredConstructor(Element.class).newInstance(element);
-    } catch(Exception ex){
-      return null;
-    }
-  }
-
-  /**
-   * Get a list of T elements from an xpath query executed from the
-   * given element.
-   * @param from          Element to start from.
-   * @param query         XPath query to be executed.
-   * @param xElementClass Type of element to retrieve.
-   * @return List of all array references found. List is empty if nothing is
-   * found.
-   */
-  private static <T extends XbaseElement> List<T> getFromXpath(
-      XbaseElement from, String query, Class<T> xElementClass)
-  {
-    List<T> elements = new ArrayList<>();
-    try {
-      XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
-      NodeList output = (NodeList) ex.evaluate(from.getBaseElement(),
-          XPathConstants.NODESET);
-      for (int i = 0; i < output.getLength(); i++) {
-        Element element = (Element) output.item(i);
-        try{
-          T el = xElementClass.
-              getDeclaredConstructor(Element.class).newInstance(element);
-          elements.add(el);
-        } catch(Exception ignored){ }
-      }
-    } catch (XPathExpressionException ignored) {
-    }
-    return elements;
-  }
-
-  /**
-   * Get a list of all inner values from a list of base elements.
-   * @param elements List of base elements.
-   * @return A list of inner values.
-   */
-  public static <T extends XbaseElement> List<String> getAllValues(
-      List<T> elements)
-  {
-    List<String> values = new ArrayList<>();
-    for(XbaseElement b : elements){
-      values.add(b.getValue());
-    }
-    return values;
-  }
-
-  /**
-   * Find all elements of the given type in the subtree from the given parent
-   * element.
-   * @param parent        The element to search from.
-   * @param xElementClass Type of element to be searched.
-   * @param <T>           Type of the XbaseElement to be searched.
-   * @return A list of found elements.
-   */
-  private static <T extends XbaseElement> List<T> findAll(XbaseElement parent,
-                                                          Class<T> xElementClass)
-  {
-    List<T> elements = new ArrayList<>();
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName == null || parent == null) {
-      return elements;
-    }
-    NodeList nodes = parent.getBaseElement().getElementsByTagName(elementName);
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node n = nodes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        try {
-          elements.add(xElementClass.
-              getDeclaredConstructor(Element.class).newInstance(el));
-        } catch(Exception ex){
-          return null;
-        }
-
-      }
-    }
-    return elements;
-  }
-
-  /**
-   * Create an empty of the given class element in the given program.
-   * @param xElementClass The class to be created
-   * @param xcodeml       The current XcodeML program.
-   * @param <T>           Type of the class to be created.
-   * @return An empty arrayIndex element.
-   * @throws IllegalTransformationException if element cannot be created.
-   */
-  public static <T extends XbaseElement> T createEmpty(Class<T> xElementClass,
-                                                       XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    String elementName = XelementName.getElementNameFromClass(xElementClass);
-    if(elementName != null){
-      Element element = xcodeml.getDocument().createElement(elementName);
-      try {
-        return xElementClass.
-            getDeclaredConstructor(Element.class).newInstance(element);
-      } catch(Exception ex){
-        throw new IllegalTransformationException("Cannot create new element: "
-            + elementName);
-      }
-    }
-    throw new IllegalTransformationException("Undefined statement for classe:" +
-        xElementClass.toString());
-  }
-
-
-  /**
-   * Find the first element with tag corresponding to elementName.
-   * @param parent      The root element to search from.
-   * @param elementName The tag of the element to search for.
-   * @param any         If true, find in any nested element under parent. If
-   *                    false, only direct children are search for.
-   * @return first element found. Null if no element is found.
-   */
-  private static Element findElement(XbaseElement parent, String elementName, boolean any){
-    return findElement(parent.getBaseElement(), elementName, any);
-  }
-
-  /**
-   * Find the first element with tag corresponding to elementName.
-   * @param parent      The root element to search from.
-   * @param elementName The tag of the element to search for.
-   * @param any         If true, find in any nested element under parent. If
-   *                    false, only direct children are search for.
-   * @return first element found. Null if no element is found.
-   */
-  private static Element findElement(Element parent, String elementName, boolean any){
-    if(any){
-      return findFirstElement(parent, elementName);
-    } else {
-      return findFirstChildElement(parent, elementName);
-    }
-  }
-
-  /**
    * Find the first element with tag corresponding to elementName nested under
    * the parent element.
    * @param parent      The root element to search from.
@@ -1494,27 +849,6 @@ public class XelementHelper {
     }
     return null;
   }
-
-  /**
-   * Create an empty XbinaryExpr object with the given tag.
-   * @param exprTag The tag associated with the specialized binary expression.
-   * @param xcodeml The current XcodeML program.
-   * @return A new Xbinary object.
-   * @throws IllegalTransformationException If the tag is not associated with
-   * any binary expression.
-   */
-  public static XbinaryExpr createEmpty(String exprTag, XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    if(XelementName.isBinaryExprTag(exprTag)){
-      Element element = xcodeml.getDocument().createElement(exprTag);
-      return new XbinaryExpr(element);
-    }
-    throw new IllegalTransformationException("No binary expression with tag:" +
-        exprTag);
-  }
-
-
 
   /**
    * Get the depth of an element in the AST.
@@ -2207,6 +1541,65 @@ public class XelementHelper {
     id.setAttribute(Xattr.TYPE, type);
     id.setAttribute(Xattr.SCLASS, sclass);
     return new Xid(id.getElement());
+  }
+
+  /**
+   * Constructs a new basicType element with the given information.
+   * @param type    Type hash.
+   * @param ref     Reference type.
+   * @param intent  Optional intent information.
+   * @param xcodeml Current XcodeML program unit.
+   * @return A new XbasicType object with the new element inside.
+   */
+  public static XbasicType createBasicType(String type, String ref,
+                                           Xintent intent, XcodeProgram xcodeml)
+  {
+    Xnode bt = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    bt.setAttribute(Xattr.TYPE, type);
+    if(ref != null) {
+      bt.setAttribute(Xattr.REF, ref);
+    }
+    if(intent != null) {
+      bt.setAttribute(Xattr.INTENT, intent.toString());
+    }
+    return new XbasicType(bt.getElement());
+  }
+
+  /**
+   * Create a new XvarDecl object with all the underlying elements.
+   * @param nameType  Value for the attribute type of the name element.
+   * @param nameValue Value of the name inner element.
+   * @param xcodeml   XcodeML program.
+   * @return A newly constructs XvarDecl element with all the information
+   * loaded.
+   */
+  public static XvarDecl createVarDecl(String nameType, String nameValue,
+                                       XcodeProgram xcodeml)
+  {
+    Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
+    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
+    internalName.setValue(nameValue);
+    internalName.setAttribute(Xattr.TYPE, nameType);
+    varD.appendToChildren(internalName, false);
+    return new XvarDecl(varD.getElement());
+  }
+
+  /**
+   * Constructs a new name element with name value and optional type.
+   * @param name    Name value.
+   * @param type    Optional type value.
+   * @param xcodeml Current XcodeML program unit in which the element is
+   *                created.
+   * @return A new Xname object which the new element.
+   */
+  public static Xnode createName(String name, String type, XcodeProgram xcodeml)
+  {
+    Xnode n = new Xnode(Xcode.NAME, xcodeml);
+    n.setValue(name);
+    if(type != null){
+      n.setAttribute(Xattr.TYPE, type);
+    }
+    return n;
   }
 
 

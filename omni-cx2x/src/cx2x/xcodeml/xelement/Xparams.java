@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.List;
  *
  * @author clementval
  */
-public class Xparams extends XbaseElement implements Xclonable<Xparams> {
+public class Xparams extends Xnode {
 
-  private List<Xname> _parameters = null;
+  private List<Xnode> _parameters = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -46,7 +47,7 @@ public class Xparams extends XbaseElement implements Xclonable<Xparams> {
    * Get the list of all name elements.
    * @return List of Xname objects.
    */
-  public List<Xname> getAll(){
+  public List<Xnode> getAll(){
     return _parameters;
   }
 
@@ -54,7 +55,7 @@ public class Xparams extends XbaseElement implements Xclonable<Xparams> {
    * Add a name element to the parameters list.
    * @param name The name element to add.
    */
-  public void add(Xname name){
+  public void add(Xnode name){
     _parameters.add(name);
     appendToChildren(name, false);
   }

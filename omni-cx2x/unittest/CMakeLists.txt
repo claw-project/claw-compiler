@@ -78,24 +78,17 @@ else()
     cx2x/xcodeml/xelement/XcodeProgTest.java
     cx2x/xcodeml/xelement/XconstantTest.java
     cx2x/xcodeml/xelement/XdeclTableTest.java
-    cx2x/xcodeml/xelement/XdoStatementTest.java
     cx2x/xcodeml/xelement/XelementHelperTest.java
     cx2x/xcodeml/xelement/XelementNameTest.java
-    cx2x/xcodeml/xelement/XexprModelTest.java
     cx2x/xcodeml/xelement/XfunctionTypeTest.java
     cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
     cx2x/xcodeml/xelement/XglobalDeclTest.java
     cx2x/xcodeml/xelement/XidTest.java
-    cx2x/xcodeml/xelement/XifStatementTest.java
-    cx2x/xcodeml/xelement/XindexRangeTest.java
     cx2x/xcodeml/xelement/XloopIterationRangeTest.java
     cx2x/xcodeml/xelement/XmoduleDefinitionTest.java
-    cx2x/xcodeml/xelement/XpragmaTest.java
     cx2x/xcodeml/xelement/XsymbolsTest.java
     cx2x/xcodeml/xelement/XtypeTableTest.java
     cx2x/xcodeml/xelement/XvarDeclTest.java
-    cx2x/xcodeml/xelement/XvarRefTest.java
-    cx2x/xcodeml/xelement/XvarTest.java
     OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
   )
 
@@ -110,24 +103,17 @@ else()
     cx2x.xcodeml.xelement.XcodeProgTest
     cx2x.xcodeml.xelement.XconstantTest
     cx2x.xcodeml.xelement.XdeclTableTest
-    cx2x.xcodeml.xelement.XdoStatementTest
     cx2x.xcodeml.xelement.XelementHelperTest
     cx2x.xcodeml.xelement.XelementNameTest
-    cx2x.xcodeml.xelement.XexprModelTest
     cx2x.xcodeml.xelement.XfunctionTypeTest
     cx2x.xcodeml.xelement.XfunctionDefinitionTest
     cx2x.xcodeml.xelement.XglobalDeclTest
     cx2x.xcodeml.xelement.XidTest
-    cx2x.xcodeml.xelement.XifStatementTest
-    cx2x.xcodeml.xelement.XindexRangeTest
     cx2x.xcodeml.xelement.XloopIterationRangeTest
     cx2x.xcodeml.xelement.XmoduleDefinitionTest
-    cx2x.xcodeml.xelement.XpragmaTest
     cx2x.xcodeml.xelement.XsymbolsTest
     cx2x.xcodeml.xelement.XtypeTableTest
     cx2x.xcodeml.xelement.XvarDeclTest
-    cx2x.xcodeml.xelement.XvarRefTest
-    cx2x.xcodeml.xelement.XvarTest
   )
 
   add_junit_test(junit-translator.language

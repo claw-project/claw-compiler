@@ -6,6 +6,9 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -27,8 +30,8 @@ import cx2x.xcodeml.helper.*;
  */
 
 public class XvarDecl extends Xdecl {
-  private Xname _name = null;
-  private Xvalue _value = null;
+  private Xnode _name = null;
+  private Xnode _value = null;
   private boolean _hasValue = false;
 
   /**
@@ -45,8 +48,8 @@ public class XvarDecl extends Xdecl {
    * Read the inner element information.
    */
   private void readElementInformation(){
-    _name = XelementHelper.findName(this, false);
-    _value = XelementHelper.findValue(this, false);
+    _name = find(Xcode.NAME);
+    _value = find(Xcode.VALUE);
     if(_value != null){
       _hasValue = true;
     }
@@ -76,7 +79,7 @@ public class XvarDecl extends Xdecl {
    * Get the inner Xname element.
    * @return Xname element.
    */
-  public Xname getName(){
+  public Xnode getName(){
     return _name;
   }
 
@@ -86,14 +89,14 @@ public class XvarDecl extends Xdecl {
    * @return True if the type is built-in. False otherwise.
    */
   public boolean isBuiltInType(){
-    return XelementHelper.isBuiltInType(getName().getType());
+    return XelementHelper.isBuiltInType(getName().getAttribute(Xattr.TYPE));
   }
 
   /**
    * Insert the given element as the last child of the XvarDecl.
    * @param element The element to be inserted.
    */
-  public void append(XbaseElement element){
+  public void append(Xnode element){
     append(element, false);
   }
 
@@ -103,46 +106,17 @@ public class XvarDecl extends Xdecl {
    * @param cloneElement If true, the element is cloned and then inserted as the
    *                     last child. The clone is inserted.
    */
-  public void append(XbaseElement element, boolean cloneElement){
+  public void append(Xnode element, boolean cloneElement){
     if(cloneElement){
       Node clone = element.cloneNode();
-      baseElement.appendChild(clone);
+      _baseElement.appendChild(clone);
     } else {
-      baseElement.appendChild(element.getBaseElement());
+      _baseElement.appendChild(element.getElement());
     }
 
-    if(element instanceof Xname){
-      _name = (Xname)element; // TODO error if there is a name already
+    if(element.Opcode() == Xcode.NAME){
+      _name = element; // TODO error if there is a name already
     }
-  }
-
-  /**
-   * Create a new XvarDecl object with all the underlying elements.
-   * @param nameType  Value for the attribute type of the name element.
-   * @param nameValue Value of the name inner element.
-   * @param xcodeml   XcodeML program.
-   * @return A newly constructs XvarDecl element with all the information
-   * loaded.
-   * @throws IllegalTransformationException can be thrown while constrcuting
-   * empty elements.
-   */
-  public static XvarDecl create(String nameType, String nameValue,
-                                XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    XvarDecl varD = XelementHelper.createEmpty(XvarDecl.class, xcodeml);
-    Xname internalName = XelementHelper.createEmpty(Xname.class, xcodeml);
-    internalName.setValue(nameValue);
-    internalName.setType(nameType);
-    varD.appendToChildren(internalName, false);
-    varD.readElementInformation();
-    return varD;
-  }
-
-  @Override
-  public XvarDecl cloneObject() {
-    Element clone = (Element)cloneNode();
-    return new XvarDecl(clone);
   }
 
 }

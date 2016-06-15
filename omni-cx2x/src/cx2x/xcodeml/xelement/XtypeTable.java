@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -23,7 +24,7 @@ import java.util.*;
  * @author clementval
  */
 
-public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
+public class XtypeTable extends Xnode {
 
   private static final int HASH_LENGTH = 12;
 
@@ -53,7 +54,7 @@ public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
    * Read the type table.
    */
   private void readTable(){
-    Node crtNode = baseElement.getFirstChild();
+    Node crtNode = _baseElement.getFirstChild();
     while(crtNode != null){
       if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)crtNode;
@@ -88,7 +89,7 @@ public class XtypeTable extends XbaseElement implements Xclonable<XtypeTable> {
    * @param type The new type to be added.
    */
   public void add(Xtype type){
-    baseElement.appendChild(type.cloneNode());
+    _baseElement.appendChild(type.cloneNode());
     _table.put(type.getType(), type);
   }
 

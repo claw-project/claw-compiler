@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
 /**
@@ -13,7 +14,7 @@ import org.w3c.dom.Element;
  * @author clementval
  */
 
-public class Xdecl extends XenhancedElement implements Xclonable<Xdecl> {
+public class Xdecl extends Xnode {
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -22,12 +23,5 @@ public class Xdecl extends XenhancedElement implements Xclonable<Xdecl> {
    */
   public Xdecl(Element baseElement){
     super(baseElement);
-  }
-
-
-  @Override
-  public Xdecl cloneObject() {
-    Element clone = (Element)cloneNode();
-    return new Xdecl(clone);
   }
 }

@@ -322,7 +322,7 @@ public class LoopExtraction extends Transformation {
             Xnode newMappingVar = new Xnode(Xcode.VAR,xcodeml);
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
             newMappingVar.setAttribute(Xattr.TYPE,
-                mappingVarDecl.getName().getType());
+                mappingVarDecl.getName().getAttribute(Xattr.TYPE));
             newMappingVar.setValue(mappingVarDecl.getName().getValue());
             arrayIndex.appendToChildren(newMappingVar, false);
             newArg.appendToChildren(arrayIndex, false);
@@ -340,15 +340,15 @@ public class LoopExtraction extends Transformation {
         XvarDecl varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
         XbasicType varDeclType =
-            (XbasicType)xcodeml.getTypeTable().get(varDecl.getName().getType());
+            (XbasicType)xcodeml.getTypeTable().get(varDecl.getName().getAttribute(Xattr.TYPE));
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
-          Xname tempName = XelementHelper.createEmpty(Xname.class, xcodeml);
+          Xnode tempName = new Xnode(Xcode.NAME, xcodeml);
           tempName.setValue(var.getFctMapping());
-          tempName.setType(varDeclType.getRef());
+          tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
           XvarDecl newVarDecl =
-              XelementHelper.createEmpty(XvarDecl.class, xcodeml);
+              new XvarDecl(new Xnode(Xcode.VARDECL, xcodeml).getElement());
           newVarDecl.append(tempName);
 
           fctDeclarations.replace(newVarDecl);

@@ -12,6 +12,7 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
+
 import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.xnode.Xattr;
 import cx2x.xcodeml.xnode.Xcode;
@@ -319,7 +320,8 @@ public class Kcaching extends Transformation {
 
     // 2.3 inject a new entry in the declaration table
     if(!fctDef.getDeclarationTable().contains(cacheName)){
-      XvarDecl cacheVarDecl = XvarDecl.create(type, cacheName, xcodeml);
+      XvarDecl cacheVarDecl =
+          XelementHelper.createVarDecl(type, cacheName, xcodeml);
       fctDef.getDeclarationTable().add(cacheVarDecl);
     }
 

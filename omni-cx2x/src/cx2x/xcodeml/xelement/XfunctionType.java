@@ -5,9 +5,11 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import cx2x.xcodeml.helper.*;
 
 /**
  * The XfunctionType represents the FfunctionType (3.4) element in XcodeML
@@ -24,7 +26,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfunctionType extends Xtype implements Xclonable<XfunctionType> {
+public class XfunctionType extends Xtype {
 
   // Elements
   private Xparams _params = null;
@@ -51,27 +53,16 @@ public class XfunctionType extends Xtype implements Xclonable<XfunctionType> {
    * Read inner element information.
    */
   private void readElementInformation(){
-    _params = XelementHelper.findParams(this, false);
-
-    _returnType = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_RETURN_TYPE);
-
-    String value = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_IS_PROGRAM);
-
-    if(value != null && value.equals(XelementName.TRUE)){
-      _isProgram = true;
-    }
+    Xnode paramsNode = find(Xcode.PARAMS);
+    _params = new Xparams(paramsNode.getElement());
+    _returnType = getAttribute(Xattr.RETURN_TYPE);
+    _isProgram = getBooleanAttribute(Xattr.IS_PROGRAM);
 
     // read optional attributes
-    _resultName = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_RESULT_NAME);
-    _isRecursive = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_RECURSIVE);
-    _isProgram = XelementHelper.getBooleanAttributeValue(this,
-        XelementName.ATTR_IS_PROGRAM);
-    _isInternal = XelementHelper.getBooleanAttributeValue(this,
-        XelementName.ATTR_IS_INTERNAL);
+    _resultName = getAttribute(Xattr.RESULT_NAME);
+    _isRecursive = getBooleanAttribute(Xattr.IS_RECURSIVE);
+    _isProgram = getBooleanAttribute(Xattr.IS_PROGRAM);
+    _isInternal = getBooleanAttribute(Xattr.IS_INTERNAL);
   }
 
   /**

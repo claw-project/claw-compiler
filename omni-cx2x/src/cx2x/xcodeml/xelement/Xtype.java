@@ -5,8 +5,9 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
-import cx2x.xcodeml.helper.*;
 
 /**
  * Xtype is the base class for element in the XtypeTable
@@ -15,7 +16,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xtype extends XbaseElement {
+public class Xtype extends Xnode {
   protected String _type;
 
   /**
@@ -32,8 +33,7 @@ public class Xtype extends XbaseElement {
    * Read inner element information.
    */
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_TYPE);
+    _type = getAttribute(Xattr.TYPE);
   }
 
   /**
@@ -41,8 +41,8 @@ public class Xtype extends XbaseElement {
    * @param value New type value.
    */
   public void setType(String value){
-    if(baseElement != null){
-      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
+    if(_baseElement != null){
+      _baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
   }

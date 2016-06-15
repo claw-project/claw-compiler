@@ -6,6 +6,8 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
@@ -37,14 +39,14 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XbasicType extends Xtype implements Xclonable<XbasicType> {
+public class XbasicType extends Xtype {
 
   private boolean _isArray = false;
 
   // Optional elements
   private List<Xnode> _dimensions = null;
-  private Xkind _kind = null;
-  private Xlength _length = null;
+  private Xnode _kind = null;
+  private Xnode _length = null;
 
   // XbasicType required attributes (type is declared in Xtype)
   private String _ref;
@@ -86,10 +88,10 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
     }
 
     // has length ?
-    _length = XelementHelper.findLen(this, false);
+    _length = find(Xcode.LEN);
 
     // has kind ?
-    _kind = XelementHelper.findKind(this, false);
+    _kind = find(Xcode.KIND);
   }
 
   /**
@@ -97,42 +99,24 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    */
   private void readRequiredAttributes() {
     // Attribute type is read in Xtype
-    _ref = XelementHelper.getAttributeValue(this, XelementName.ATTR_REF);
+    _ref = getAttribute(Xattr.REF);
   }
 
   /**
    * Read all optional attributes
    */
   private void readOptionalAttributes() {
-    _is_public = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_PUBLIC);
-    _is_private = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_PRIVATE);
-    _is_pointer = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_POINTER);
-    _is_target = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_TARGET);
-    _is_external = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_EXTERNAL);
-    _is_intrinsic = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_INTRINSIC);
-    _is_optional = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_OPTIONAL);
-    _is_save = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_SAVE);
-    _is_parameter = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_PARAMETER);
-    _is_allocatable = XelementHelper.getBooleanAttributeValue(this,
-      XelementName.ATTR_IS_ALLOCATABLE);
-
-    String intentValue = XelementHelper.getAttributeValue(this,
-        XelementName.ATTR_INTENT);
-
-
-    _intent = Xintent.fromString(intentValue);
-
-
-
+    _is_public = getBooleanAttribute(Xattr.IS_PUBLIC);
+    _is_private = getBooleanAttribute(Xattr.IS_PRIVATE);
+    _is_pointer = getBooleanAttribute(Xattr.IS_POINTER);
+    _is_target = getBooleanAttribute(Xattr.IS_TARGET);
+    _is_external = getBooleanAttribute(Xattr.IS_EXTERNAL);
+    _is_intrinsic = getBooleanAttribute(Xattr.IS_INTRINSIC);
+    _is_optional = getBooleanAttribute(Xattr.IS_OPTIONAL);
+    _is_save = getBooleanAttribute(Xattr.IS_SAVE);
+    _is_parameter = getBooleanAttribute(Xattr.IS_PARAMETER);
+    _is_allocatable = getBooleanAttribute(Xattr.IS_ALLOCATABLE);
+    _intent = Xintent.fromString(getAttribute(Xattr.INTENT));
   }
 
   /**
@@ -169,7 +153,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * Get the len element.
    * @return Len element. Null if the basic type has no len element.
    */
-  public Xlength getLength(){
+  public Xnode getLength(){
     return _length;
   }
 
@@ -185,7 +169,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * Get the kind element.
    * @return Kind element. Null if the basic type has no kind element.
    */
-  public Xkind getKind(){
+  public Xnode getKind(){
     return _kind;
   }
 
@@ -210,9 +194,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * @param value New value of ref attribute.
    */
   public void setRef(String value){
-    if(baseElement != null){
-      baseElement.setAttribute(XelementName.ATTR_REF, value);
-    }
+    setAttribute(Xattr.REF, value);
   }
 
   /**
@@ -316,9 +298,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * @param value Intent value to be set.
    */
   public void setIntent(Xintent value){
-    if(value != null) {
-      baseElement.setAttribute(XelementName.ATTR_INTENT, value.toString());
-    }
+    setAttribute(Xattr.INTENT, value.toString());
     _intent = value;
   }
 
@@ -327,7 +307,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    */
   public void removeIntent(){
     if(hasIntent()) {
-      baseElement.removeAttribute(XelementName.ATTR_INTENT);
+      _baseElement.removeAttribute(XelementName.ATTR_INTENT);
       _intent = null;
     }
   }
@@ -337,7 +317,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    */
   public void removeAllocatable(){
     if(isAllocatable()){
-      baseElement.removeAttribute(XelementName.ATTR_IS_ALLOCATABLE);
+      _baseElement.removeAttribute(XelementName.ATTR_IS_ALLOCATABLE);
       _is_allocatable = false;
     }
   }
@@ -379,8 +359,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    */
   public void addDimension(Xnode index, int position){
     if(_dimensions.size() == 0){
-      Xnode tmp = new Xnode(this.getBaseElement()); // TODO XNODE remove
-      tmp.appendToChildren(index, false);
+      index.appendToChildren(index, false);
       _isArray = true;
     } else {
       if(position == _dimensions.size() - 1){ // Add at the end
@@ -399,31 +378,5 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   public XbasicType cloneObject() {
     Element element = (Element)cloneNode();
     return new XbasicType(element);
-  }
-
-
-  /**
-   * Constructs a new basicType element with the given information.
-   * @param type    Type hash.
-   * @param ref     Reference type.
-   * @param intent  Optional intent information.
-   * @param xcodeml Current XcodeML program unit.
-   * @return A new XbasicType object with the new element inside.
-   * @throws IllegalTransformationException If the element cannot be created.
-   */
-  public static XbasicType create(String type, String ref, Xintent intent,
-                                  XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    XbasicType bt = XelementHelper.createEmpty(XbasicType.class, xcodeml);
-    bt.setType(type);
-    if(ref != null) {
-      bt.setRef(ref);
-    }
-    if(intent != null) {
-      bt.setIntent(intent);
-    }
-    bt.readBasicTypeInformation();
-    return bt;
   }
 }

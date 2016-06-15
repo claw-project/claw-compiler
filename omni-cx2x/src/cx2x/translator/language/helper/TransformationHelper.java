@@ -13,6 +13,7 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xattr;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
@@ -176,7 +177,7 @@ public class TransformationHelper {
 
       // Update symbol & declaration
       id.setType(newType.getType());
-      decl.getName().setType(newType.getType());
+      decl.getName().setAttribute(Xattr.TYPE, newType.getType());
 
       // Update array references
       List<Xnode> refs =
