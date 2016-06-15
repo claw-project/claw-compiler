@@ -11,6 +11,8 @@ import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.List;
 
@@ -94,20 +96,22 @@ public class ArrayToFctCall extends Transformation {
 
 
     // Prepare the function call
-    XfunctionCall fctCall = XfunctionCall.create(xcodeml,
+    Xnode fctCall = XelementHelper.createFctCall(xcodeml,
         fctType.getReturnType(), _claw.getFctName(),
         _replaceFct.getName().getType());
-    XargumentsTable args = fctCall.getArgumentsTable();
+    Xnode args = fctCall.find(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()){
-      Xvar var = Xvar.create(XelementName.TYPE_F_INT, arg, Xscope.LOCAL, xcodeml);
-      args.add(var);
+      Xnode var = XelementHelper.createVar(XelementName.TYPE_F_INT, arg,
+          Xscope.LOCAL, xcodeml);
+      args.appendToChildren(var, false);
     }
 
-    List<XarrayRef> refs =
-        XelementHelper.getAllArrayReferencesInSiblings(_claw.getPragma(),
+    // TODO XNODE remove instantiation
+    List<Xnode> refs =
+        XelementHelper.getAllArrayReferencesInSiblings(new Xnode(_claw.getPragma().getBaseElement()),
             _claw.getArrayName());
 
-    for(XarrayRef ref : refs){
+    for(Xnode ref : refs){
       XelementHelper.insertAfter(ref, fctCall.cloneObject());
       ref.delete();
     }
