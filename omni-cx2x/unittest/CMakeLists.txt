@@ -76,15 +76,12 @@ else()
     cx2x/xcodeml/xelement/XbasicTest.java
     cx2x/xcodeml/xelement/XbasicTypeTest.java
     cx2x/xcodeml/xelement/XcodeProgTest.java
-    cx2x/xcodeml/xelement/XconstantTest.java
     cx2x/xcodeml/xelement/XdeclTableTest.java
     cx2x/xcodeml/xelement/XelementHelperTest.java
-    cx2x/xcodeml/xelement/XelementNameTest.java
     cx2x/xcodeml/xelement/XfunctionTypeTest.java
     cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
     cx2x/xcodeml/xelement/XglobalDeclTest.java
     cx2x/xcodeml/xelement/XidTest.java
-    cx2x/xcodeml/xelement/XloopIterationRangeTest.java
     cx2x/xcodeml/xelement/XmoduleDefinitionTest.java
     cx2x/xcodeml/xelement/XsymbolsTest.java
     cx2x/xcodeml/xelement/XtypeTableTest.java
@@ -101,15 +98,12 @@ else()
     cx2x.xcodeml.xelement.XbasicTest
     cx2x.xcodeml.xelement.XbasicTypeTest
     cx2x.xcodeml.xelement.XcodeProgTest
-    cx2x.xcodeml.xelement.XconstantTest
     cx2x.xcodeml.xelement.XdeclTableTest
     cx2x.xcodeml.xelement.XelementHelperTest
-    cx2x.xcodeml.xelement.XelementNameTest
     cx2x.xcodeml.xelement.XfunctionTypeTest
     cx2x.xcodeml.xelement.XfunctionDefinitionTest
     cx2x.xcodeml.xelement.XglobalDeclTest
     cx2x.xcodeml.xelement.XidTest
-    cx2x.xcodeml.xelement.XloopIterationRangeTest
     cx2x.xcodeml.xelement.XmoduleDefinitionTest
     cx2x.xcodeml.xelement.XsymbolsTest
     cx2x.xcodeml.xelement.XtypeTableTest
