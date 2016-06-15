@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -47,9 +48,11 @@ public class XfunctionTypeTest {
     // Test parameters
     assertEquals(2, f.getParams().count());
     assertEquals("a", f.getParams().getAll().get(0).getValue());
-    assertEquals("Fint", f.getParams().getAll().get(0).getType());
+    assertEquals("Fint",
+        f.getParams().getAll().get(0).getAttribute(Xattr.TYPE));
     assertEquals("b", f.getParams().getAll().get(1).getValue());
-    assertEquals("Fint", f.getParams().getAll().get(1).getType());
+    assertEquals("Fint",
+        f.getParams().getAll().get(1).getAttribute(Xattr.TYPE));
   }
 
 }

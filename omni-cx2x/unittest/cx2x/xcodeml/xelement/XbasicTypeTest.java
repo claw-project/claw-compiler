@@ -106,8 +106,8 @@ public class XbasicTypeTest {
 
     assertEquals("Fcharacter", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
-    assertTrue(b.getLength().getExprModel().isIntConst());
-    assertEquals("10", b.getLength().getExprModel().getIntConstant().getValue());
+    assertTrue(b.getLength().getChild(0).Opcode() == Xcode.FINTCONSTANT);
+    assertEquals("10", b.getLength().getChild(0).getValue());
   }
 
 

@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -23,7 +24,8 @@ public class XmoduleDefinitionTest {
 
   @Test
   public void simpleModuleDefinitionTest(){
-    XmoduleDefinition mod = XmlHelper.createXmoduleDefinition(module1);
+    Xnode node = XmlHelper.createXnode(module1);
+    XmoduleDefinition mod = new XmoduleDefinition(node.getElement());
     assertNotNull(mod);
     assertEquals("mymodule", mod.getName());
     assertEquals(4, mod.getLineNo());

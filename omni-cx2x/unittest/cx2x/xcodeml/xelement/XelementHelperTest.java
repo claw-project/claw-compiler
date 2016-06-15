@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.TestConstant;
 import helper.XmlHelper;
@@ -31,14 +32,9 @@ public class XelementHelperTest {
 
   @Test
   public void createBinaryExprTest(){
-    try {
-      XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-      XbinaryExpr expr =
-          XelementHelper.createEmpty(XelementName.LOG_EQ_EXPR, xcodeml);
-      assertNotNull(expr);
-    } catch (IllegalTransformationException ex){
-      fail();
-    }
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode expr = new Xnode(Xcode.LOGEQEXPR, xcodeml);
+    assertNotNull(expr);
   }
 
   @Test

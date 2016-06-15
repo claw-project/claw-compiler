@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -38,13 +39,13 @@ public class XdeclTableTest {
     assertEquals(4730, var1.getLineNo());
     assertEquals("dummy.f90", var1.getFile());
     assertEquals("name1", var1.getName().getValue());
-    assertEquals("I1241bd0", var1.getName().getType());
+    assertEquals("I1241bd0", var1.getName().getAttribute(Xattr.TYPE));
 
     XvarDecl var2 = decl.get("name2");
     assertNotNull(var2);
     assertEquals(4731, var2.getLineNo());
     assertEquals("dummy.f90", var2.getFile());
     assertEquals("name2", var2.getName().getValue());
-    assertEquals("I1241c70", var2.getName().getType());
+    assertEquals("I1241c70", var2.getName().getAttribute(Xattr.TYPE));
   }
 }

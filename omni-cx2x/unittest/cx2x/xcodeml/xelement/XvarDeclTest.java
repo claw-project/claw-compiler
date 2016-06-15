@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -35,7 +36,7 @@ public class XvarDeclTest {
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/mymodule.f90", varDecl.getFile());
     assertNotNull(varDecl.getName());
-    assertEquals("Ib3f750", varDecl.getName().getType());
+    assertEquals("Ib3f750", varDecl.getName().getAttribute(Xattr.TYPE));
     assertEquals("testvar", varDecl.getName().getValue());
     assertTrue(varDecl.hasValue());
     assertEquals("10.0", varDecl.getValue());
@@ -48,7 +49,7 @@ public class XvarDeclTest {
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/mymodule.f90", varDecl.getFile());
     assertNotNull(varDecl.getName());
-    assertEquals("Ib3f750", varDecl.getName().getType());
+    assertEquals("Ib3f750", varDecl.getName().getAttribute(Xattr.TYPE));
     assertEquals("testvar", varDecl.getName().getValue());
     assertFalse(varDecl.hasValue());
     assertNull(varDecl.getValue());

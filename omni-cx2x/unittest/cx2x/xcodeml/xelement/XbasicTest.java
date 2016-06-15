@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
@@ -32,15 +33,15 @@ public class XbasicTest {
     assertNotNull(val);
     assertTrue(val.getChild(0).Opcode() == Xcode.FINTCONSTANT);
     assertEquals(XelementName.TYPE_F_INT,
-        val.getExprModel().getIntConstant().getType());
-    assertEquals("1", val.getExprModel().getIntConstant().getValue());
+        val.getChild(0).getAttribute(Xattr.TYPE));
+    assertEquals("1", val.getChild(0).getValue());
   }
 
   @Test
   public void xNameTest(){
-    Xname name = XmlHelper.createXname(name1);
+    Xnode name = XmlHelper.createXnode(name1);
     assertNotNull(name);
-    assertEquals(XelementName.TYPE_F_INT, name.getType());
+    assertEquals(XelementName.TYPE_F_INT, name.getAttribute(Xattr.TYPE));
     assertEquals("a", name.getValue());
   }
 

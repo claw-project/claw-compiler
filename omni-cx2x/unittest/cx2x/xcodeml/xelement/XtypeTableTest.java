@@ -7,6 +7,7 @@ package cx2x.xcodeml.xelement;
 
 import static org.junit.Assert.*;
 
+import cx2x.xcodeml.xnode.Xcode;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -42,8 +43,8 @@ public class XtypeTableTest {
     assertFalse(bType1.hasKind());
     assertTrue(bType1.hasLength());
     assertEquals(XelementName.TYPE_F_CHAR, bType1.getRef());
-    assertTrue(bType1.getLength().getExprModel().isIntConst());
-    assertEquals("30", bType1.getLength().getExprModel().getIntConstant().getValue());
+    assertTrue(bType1.getLength().getChild(0).Opcode() == Xcode.FINTCONSTANT);
+    assertEquals("30", bType1.getLength().getChild(0).getValue());
 
     assertTrue(typeTable.hasType("F23079f0"));
     Xtype type2 = typeTable.get("F23079f0");
