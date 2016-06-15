@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
 import helper.XmlHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,7 +42,7 @@ public class XfunctionDefinitionTest {
     XfunctionDefinition fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
     assertEquals("force_dummy", fctDef.getName().getValue());
-    assertEquals("F7ff951406df0", fctDef.getName().getType());
+    assertEquals("F7ff951406df0", fctDef.getName().getAttribute(Xattr.TYPE));
     assertEquals(0, fctDef.getSymbolTable().count());
     assertEquals(0, fctDef.getDeclarationTable().count());
     assertNull(fctDef.getParams());
