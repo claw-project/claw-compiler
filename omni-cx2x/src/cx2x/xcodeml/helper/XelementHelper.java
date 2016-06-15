@@ -301,9 +301,8 @@ public class XelementHelper {
    * @return List of all array references found. List is empty if nothing is
    * found.
    */
-  public static List<XarrayRef> getAllArrayReferencesInSiblings(
-      XbaseElement from,
-      String identifier)
+  public static List<Xnode> getAllArrayReferencesInSiblings(Xnode from,
+                                                            String identifier)
   {
     String s1 = String.format("following-sibling::*//%s[%s[%s[text()=\"%s\"]]]",
         XelementName.F_ARRAY_REF,
@@ -311,7 +310,7 @@ public class XelementHelper {
         XelementName.VAR,
         identifier
     );
-    return getFromXpath(from, s1, XarrayRef.class);
+    return getFromXpath(from, s1);
   }
 
   /**
@@ -2435,6 +2434,27 @@ public class XelementHelper {
       }
     }
     return elements;
+  }
+
+  /**
+   * TODO
+   * @param xcodeml
+   * @param returnType
+   * @param name
+   * @param nameType
+   * @return
+   */
+  public static Xnode createFctCall(XcodeProgram xcodeml, String returnType,
+                                    String name, String nameType){
+    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
+    fctCall.setAttribute(Xattr.TYPE, returnType);
+    Xnode fctName = new Xnode(Xcode.NAME, xcodeml);
+    fctName.setValue(name);
+    fctName.setAttribute(Xattr.TYPE, nameType);
+    Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
+    fctCall.appendToChildren(fctName, false);
+    fctCall.appendToChildren(args, false);
+    return fctCall;
   }
 
 
