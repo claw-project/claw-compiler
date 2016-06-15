@@ -85,7 +85,7 @@ public class XvarDecl extends Xdecl {
    * @return True if the type is built-in. False otherwise.
    */
   public boolean isBuiltInType(){
-    return XelementHelper.isBuiltInType(getName().getAttribute(Xattr.TYPE));
+    return XnodeUtil.isBuiltInType(getName().getAttribute(Xattr.TYPE));
   }
 
   /**

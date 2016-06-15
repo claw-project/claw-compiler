@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -191,7 +191,7 @@ public class Xnode {
    * Delete the stored root element and all its children.
    */
   public void delete(){
-    XelementHelper.delete(_baseElement);
+    XnodeUtil.delete(_baseElement);
   }
 
   /**

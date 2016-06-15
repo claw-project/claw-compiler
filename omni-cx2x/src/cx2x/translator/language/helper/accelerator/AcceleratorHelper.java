@@ -9,7 +9,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.XcodeProgram;
@@ -50,8 +50,8 @@ public class AcceleratorHelper {
       endParallel.setValue(
           claw.getAcceleratorGenerator().getEndParellelDirective()
       );
-      XelementHelper.insertBefore(startStmt, beginParallel);
-      XelementHelper.insertAfter(endStmt, endParallel);
+      XnodeUtil.insertBefore(startStmt, beginParallel);
+      XnodeUtil.insertAfter(endStmt, endParallel);
       return endParallel;
     }
     return null;
@@ -87,14 +87,14 @@ public class AcceleratorHelper {
     endParallel.setValue(gen.getEndParellelDirective());
     beginLoop.setValue(gen.getStartLoopDirective(collapse));
 
-    XelementHelper.insertBefore(startStmt, beginParallel);
-    XelementHelper.insertBefore(startStmt, beginLoop);
-    XelementHelper.insertAfter(endStmt, endParallel);
+    XnodeUtil.insertBefore(startStmt, beginParallel);
+    XnodeUtil.insertBefore(startStmt, beginLoop);
+    XnodeUtil.insertAfter(endStmt, endParallel);
 
     if(gen.getEndLoopDirective() != null) {
       Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
       endLoop.setValue(gen.getEndLoopDirective());
-      XelementHelper.insertAfter(endStmt, endLoop);
+      XnodeUtil.insertAfter(endStmt, endLoop);
     }
   }
 
@@ -122,7 +122,7 @@ public class AcceleratorHelper {
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */
-      XelementHelper.insertBefore(startStmt, acceleratorPragma);
+      XnodeUtil.insertBefore(startStmt, acceleratorPragma);
       return acceleratorPragma;
     }
     return null;
@@ -202,7 +202,7 @@ public class AcceleratorHelper {
 
     // TODO check how to do it in a better way
     Xnode hook =
-        XelementHelper.findPreviousPragma(stmt,
+        XnodeUtil.findPreviousPragma(stmt,
             claw.getAcceleratorGenerator().getParallelKeyword());
 
     if(hook == null){

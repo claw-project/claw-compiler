@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
@@ -78,7 +78,7 @@ public class LoopHoistDoStmtGroup {
     Xnode[] nestedDoStmts = new Xnode[_doStmts.length];
     nestedDoStmts[0] = newDoStmt;
     for(int j = 1; j < nestedDoStmts.length; ++j){
-      Xnode next = XelementHelper.find(Xcode.FDOSTATEMENT,
+      Xnode next = XnodeUtil.find(Xcode.FDOSTATEMENT,
           nestedDoStmts[j-1].getBody(), false);
       nestedDoStmts[j] = next;
     }

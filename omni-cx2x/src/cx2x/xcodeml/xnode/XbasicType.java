@@ -77,7 +77,7 @@ public class XbasicType extends Xtype {
     readRequiredAttributes();
     readOptionalAttributes();
 
-    _dimensions = XelementHelper.findIndexes(this);
+    _dimensions = XnodeUtil.findIndexes(this);
     // is array ?
     if (_dimensions.size() > 0){
       _isArray = true;
@@ -361,11 +361,11 @@ public class XbasicType extends Xtype {
     } else {
       if(position == _dimensions.size() - 1){ // Add at the end
         Xnode last = _dimensions.get(_dimensions.size()-1);
-        XelementHelper.insertAfter(last, index);
+        XnodeUtil.insertAfter(last, index);
         _dimensions.add(index);
       } else {
         Xnode crtPos = _dimensions.get(position);
-        XelementHelper.insertBefore(crtPos, index);
+        XnodeUtil.insertBefore(crtPos, index);
         _dimensions.add(position, index);
       }
     }

@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class Xparams extends Xnode {
    */
   public Xparams(Element baseElement){
     super(baseElement);
-    _parameters = XelementHelper.findAllNames(this);
+    _parameters = XnodeUtil.findAllNames(this);
   }
 
   /**

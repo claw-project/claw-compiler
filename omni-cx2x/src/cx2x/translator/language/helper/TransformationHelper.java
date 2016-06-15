@@ -10,7 +10,7 @@ import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
@@ -99,7 +99,7 @@ public class TransformationHelper {
   {
     if(claw.hasInterchangeClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
       Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      XelementHelper.insertBefore(stmt, p);
+      XnodeUtil.insertBefore(stmt, p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);
@@ -125,7 +125,7 @@ public class TransformationHelper {
       return;
     }
     XfunctionDefinition fctDef =
-        XelementHelper.findParentFunction(claw.getPragma());
+        XnodeUtil.findParentFunction(claw.getPragma());
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
       Xid id = fctDef.getSymbolTable().get(reshapeInfo.getArrayName());
       XvarDecl decl =
@@ -178,14 +178,14 @@ public class TransformationHelper {
 
       // Update array references
       List<Xnode> refs =
-          XelementHelper.getAllArrayReferences(fctDef.getBody(),
+          XnodeUtil.getAllArrayReferences(fctDef.getBody(),
               reshapeInfo.getArrayName());
 
       for(Xnode ref : refs){
         if(reshapeInfo.getTargetDimension() == 0){
-          XelementHelper.demoteToScalar(ref);
+          XnodeUtil.demoteToScalar(ref);
         } else {
-          XelementHelper.demote(ref, reshapeInfo.getKeptDimensions());
+          XnodeUtil.demote(ref, reshapeInfo.getKeptDimensions());
         }
       }
     }

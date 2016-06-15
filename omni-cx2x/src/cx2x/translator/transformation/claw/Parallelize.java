@@ -11,7 +11,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
@@ -53,7 +53,7 @@ public class Parallelize extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // Check for the parent fct/subroutine definition
-    _fctDef = XelementHelper.findParentFunction(_claw.getPragma());
+    _fctDef = XnodeUtil.findParentFunction(_claw.getPragma());
     if(_fctDef == null){
       xcodeml.addError("Parent function/subroutine cannot be found. " +
           "Parallelize directive must be defined in a function/subroutine.",
@@ -210,7 +210,7 @@ public class Parallelize extends Transformation {
      * transformation idead but it is our start point. */
     NestedDoStatement loops =
         new NestedDoStatement(getOrderedDimensionsFromDefinition(), xcodeml);
-    XelementHelper.copyBody(_fctDef.getBody(), loops.getInnerStatement());
+    XnodeUtil.copyBody(_fctDef.getBody(), loops.getInnerStatement());
     _fctDef.getBody().delete();
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
     newBody.appendToChildren(loops.getOuterStatement(), false);
@@ -237,7 +237,7 @@ public class Parallelize extends Transformation {
 
     List<ClawDimension> order = getOrderedDimensionsFromDefinition();
     List<Xnode> assignStatements =
-        XelementHelper.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
+        XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
     for(Xnode assign : assignStatements){
       if(assign.getChild(0).Opcode() == Xcode.FARRAYREF){
@@ -245,7 +245,7 @@ public class Parallelize extends Transformation {
 
         if(_arrayFieldsInOut.contains(ref.find(Xcode.VARREF, Xcode.VAR).getValue())){
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
-          XelementHelper.insertAfter(assign, loops.getOuterStatement());
+          XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
           assign.delete();
         }
@@ -256,7 +256,7 @@ public class Parallelize extends Transformation {
          * variables, the field must be promoted and the var reference switch
          * to an array reference */
         Xnode lhs = assign.getChild(0);
-        List<Xnode> vars = XelementHelper.findAllReferences(assign);
+        List<Xnode> vars = XnodeUtil.findAllReferences(assign);
         if(vars.size() > 1){
           if(!_arrayFieldsInOut.contains(lhs.getValue())){
             _arrayFieldsInOut.add(lhs.getValue());
@@ -265,7 +265,7 @@ public class Parallelize extends Transformation {
           adaptScalarRefToArrayReferences(xcodeml,
               Collections.singletonList(lhs.getValue()));
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
-          XelementHelper.insertAfter(assign, loops.getOuterStatement());
+          XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
           assign.delete();
         }
@@ -357,12 +357,12 @@ public class Parallelize extends Transformation {
       newType = oldType.cloneObject();
       newType.setType(type);
     } else {
-      newType = XelementHelper.createBasicType(xcodeml, type, id.getType(),
+      newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
           Xintent.NONE);
     }
     if(assumed){
       for(int i = 0; i < _overDimensions; ++i){
-        Xnode index = XelementHelper.createEmptyAssumedShaped(xcodeml);
+        Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
         newType.addDimension(index, 0);
       }
     } else {
@@ -384,14 +384,14 @@ public class Parallelize extends Transformation {
   private void adaptArrayReferences(List<String> ids) {
     for(String data : ids){
       List<Xnode> refs =
-          XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
+          XnodeUtil.getAllArrayReferences(_fctDef.getBody(), data);
       for(Xnode ref : refs){
         for(Xnode ai : _beforeCrt){
-          XelementHelper.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+          XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
         for(Xnode ai : _afterCrt){
           List<Xnode> children = ref.getChildren();
-          XelementHelper.insertAfter(children.get(children.size()-1),
+          XnodeUtil.insertAfter(children.get(children.size()-1),
               ai.cloneObject());
         }
       }
@@ -411,22 +411,22 @@ public class Parallelize extends Transformation {
       throws IllegalTransformationException
   {
     for(String id : ids){
-      List<Xnode> vars = XelementHelper.findAllReferences(_fctDef.getBody(), id);
+      List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.getBody(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
       XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
 
       for(Xnode var : vars){
         Xnode ref =
-            XelementHelper.createArrayRef(xcodeml, type, var.cloneObject());
+            XnodeUtil.createArrayRef(xcodeml, type, var.cloneObject());
         for(Xnode ai : _beforeCrt){
-          XelementHelper.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+          XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
         for(Xnode ai : _afterCrt){
           ref.appendToChildren(ai, true);
         }
 
-        XelementHelper.insertAfter(var, ref);
+        XnodeUtil.insertAfter(var, ref);
         var.delete();
       }
     }
@@ -448,7 +448,7 @@ public class Parallelize extends Transformation {
         (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getAttribute(Xattr.TYPE));
 
     // Create type and declaration for iterations over the new dimensions
-    XbasicType intTypeIntentIn = XelementHelper.createBasicType(xcodeml,
+    XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),
         Xname.TYPE_F_INT, Xintent.IN);
     xcodeml.getTypeTable().add(intTypeIntentIn);
@@ -458,14 +458,14 @@ public class Parallelize extends Transformation {
       if(dimension.lowerBoundIsVar()){
         createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);
-        Xnode paramName = XelementHelper.createName(xcodeml,
+        Xnode paramName = XnodeUtil.createName(xcodeml,
             dimension.getLowerBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
       }
       if(dimension.upperBoundIsVar()){
         createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);
-        Xnode paramName = XelementHelper.createName(xcodeml,
+        Xnode paramName = XnodeUtil.createName(xcodeml,
             dimension.getUpperBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
       }
@@ -489,9 +489,9 @@ public class Parallelize extends Transformation {
                                XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    Xid id = XelementHelper.createId(xcodeml, type, sclass, name);
+    Xid id = XnodeUtil.createId(xcodeml, type, sclass, name);
     _fctDef.getSymbolTable().add(id);
-    XvarDecl decl = XelementHelper.createVarDecl(xcodeml, type, name);
+    XvarDecl decl = XnodeUtil.createVarDecl(xcodeml, type, name);
     _fctDef.getDeclarationTable().add(decl);
   }
 

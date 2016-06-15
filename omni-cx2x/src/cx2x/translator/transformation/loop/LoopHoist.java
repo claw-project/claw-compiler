@@ -9,7 +9,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -52,12 +52,12 @@ public class LoopHoist extends BlockTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    int _pragmaDepthLevel = XelementHelper.getDepth(_startClaw.getPragma());
+    int _pragmaDepthLevel = XnodeUtil.getDepth(_startClaw.getPragma());
     _nestedLevel = _startClaw.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
     List<Xnode> statements =
-        XelementHelper.findDoStatement(_startClaw.getPragma(),
+        XnodeUtil.findDoStatement(_startClaw.getPragma(),
             _endClaw.getPragma(), _startClaw.getHoistInductionVars());
 
     if(statements.size() == 0){
@@ -79,15 +79,15 @@ public class LoopHoist extends BlockTransformation {
       }
 
       LoopHoistDoStmtGroup crtGroup = new LoopHoistDoStmtGroup(group);
-      int depth = XelementHelper.getDepth(group[0]);
+      int depth = XnodeUtil.getDepth(group[0]);
       if(depth != _pragmaDepthLevel){
-        Xnode tmpIf = XelementHelper.findParent(Xcode.FIFSTATEMENT, group[0]);
+        Xnode tmpIf = XnodeUtil.findParent(Xcode.FIFSTATEMENT, group[0]);
         if(tmpIf == null){
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
               "statement for loop hoisting",
               _startClaw.getPragma().getLineNo());
         }
-        int ifDepth = XelementHelper.getDepth(tmpIf);
+        int ifDepth = XnodeUtil.getDepth(tmpIf);
         if (_pragmaDepthLevel <= ifDepth && ifDepth < depth){
           crtGroup.setExtraction();
         } else {
@@ -106,16 +106,16 @@ public class LoopHoist extends BlockTransformation {
         // Iteration range are identical, just merge
         if(j == 0
             && (
-              !XelementHelper.hasSameIndexRange(master.getDoStmts()[j],
+              !XnodeUtil.hasSameIndexRange(master.getDoStmts()[j],
                 next.getDoStmts()[j])
-              && XelementHelper.hasSameIndexRangeBesidesLower(master.getDoStmts()[j],
+              && XnodeUtil.hasSameIndexRangeBesidesLower(master.getDoStmts()[j],
                 next.getDoStmts()[j])
             )
           )
         {
           // Iteration range are identical besides lower-bound, if creation
           next.setIfStatement();
-        } else if(!XelementHelper.hasSameIndexRange(master.getDoStmts()[j],
+        } else if(!XnodeUtil.hasSameIndexRange(master.getDoStmts()[j],
             next.getDoStmts()[j]))
         {
           // Iteration range are too different, stop analysis
@@ -131,7 +131,7 @@ public class LoopHoist extends BlockTransformation {
     // Check reshape mandatory points
     if(_startClaw.hasReshapeClause()) {
       XfunctionDefinition fctDef =
-          XelementHelper.findParentFunction(_startClaw.getPragma());
+          XnodeUtil.findParentFunction(_startClaw.getPragma());
       if(fctDef == null){
         xcodeml.addError("Unable to find the function/subroutine/module " +
             "definition including the current directive",
@@ -175,7 +175,7 @@ public class LoopHoist extends BlockTransformation {
     for(LoopHoistDoStmtGroup g : _doGroup){
       if(g.needExtraction()){
         Xnode ifStmt =
-            XelementHelper.findParent(Xcode.FIFSTATEMENT, g.getDoStmts()[0]);
+            XnodeUtil.findParent(Xcode.FIFSTATEMENT, g.getDoStmts()[0]);
         extractDoStmtFromIf(xcodeml, ifStmt, g);
       }
       if(g.needIfStatement()){
@@ -196,7 +196,7 @@ public class LoopHoist extends BlockTransformation {
     reloadDoStmts(_doGroup.get(0), _doGroup.get(0).getDoStmts()[0]);
 
     // Do the hoisting
-    XelementHelper.shiftStatementsInBody(
+    XnodeUtil.shiftStatementsInBody(
         _startClaw.getPragma(),                                // Start element
         _doGroup.get(0).getDoStmts()[0],                       // Stop element
         _doGroup.get(0).getDoStmts()[_nestedLevel-1].getBody() // Target body
@@ -236,7 +236,7 @@ public class LoopHoist extends BlockTransformation {
     Xnode body = new Xnode(Xcode.BODY, xcodeml);
     body.appendToChildren(newIfStmt, false);
     newDoStmtGroup.getDoStmts()[nestedDepth-1].appendToChildren(body, false);
-    XelementHelper.insertAfter(ifStmt, newDoStmtGroup.getDoStmts()[0]);
+    XnodeUtil.insertAfter(ifStmt, newDoStmtGroup.getDoStmts()[0]);
     g.getDoStmts()[0].delete();
     ifStmt.delete();
     reloadDoStmts(g, newDoStmtGroup.getDoStmts()[0]);
@@ -257,9 +257,9 @@ public class LoopHoist extends BlockTransformation {
     Xnode ifStmt = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
     Xnode condition = new Xnode(Xcode.CONDITION, xcodeml);
     Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
-    XelementHelper.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
+    XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
     Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
-    Xnode inductionVar = XelementHelper.find(Xcode.VAR, g.getDoStmts()[0], false);
+    Xnode inductionVar = XnodeUtil.find(Xcode.VAR, g.getDoStmts()[0], false);
     cond.appendToChildren(inductionVar, true);
     cond.appendToChildren(g.getDoStmts()[0].findNode(Xcode.INDEXRANGE).findNode(Xcode.LOWERBOUND).getChild(0), true);
     ifStmt.appendToChildren(condition, false);
@@ -285,7 +285,7 @@ public class LoopHoist extends BlockTransformation {
   {
     g.getDoStmts()[0] = newStart;
     for(int j = 1; j < g.getDoStmts().length; ++j){
-      Xnode next = XelementHelper.find(Xcode.FDOSTATEMENT,
+      Xnode next = XnodeUtil.find(Xcode.FDOSTATEMENT,
           g.getDoStmts()[j-1].getBody(), false);
       if(next == null){
         throw new IllegalTransformationException(

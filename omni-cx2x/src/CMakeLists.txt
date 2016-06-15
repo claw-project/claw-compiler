@@ -48,7 +48,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/exception/IllegalTransformationException.java
 
 # XcodeML.helper package
-  cx2x/xcodeml/helper/XelementHelper.java
+  cx2x/xcodeml/helper/XnodeUtil.java
 
 # XcodeML.language
   cx2x/xcodeml/language/AnalyzedPragma.java

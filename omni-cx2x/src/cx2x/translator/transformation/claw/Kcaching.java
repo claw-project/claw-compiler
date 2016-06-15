@@ -9,7 +9,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 
@@ -43,7 +43,7 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
+    _doStmt = XnodeUtil.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
     if(_doStmt == null){
       xcodeml.addError("The kcache directive is not nested in a do statement",
           _claw.getPragma().getLineNo());
@@ -70,16 +70,16 @@ public class Kcaching extends Transformation {
                         Transformation other) throws Exception
   {
     // It might have change from the analysis
-    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
+    _doStmt = XnodeUtil.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
 
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
     XfunctionDefinition fctDef =
-        XelementHelper.findParentFunction(_claw.getPragma());
+        XnodeUtil.findParentFunction(_claw.getPragma());
 
     for(String data : _claw.getDataClauseValues()){
-      Xnode stmt = XelementHelper.getFirstArrayAssign(_claw.getPragma(), data);
+      Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
 
       boolean standardArrayRef = true;
       if(stmt != null) {
@@ -184,8 +184,8 @@ public class Kcaching extends Transformation {
       Xnode initIfStmt = (Xnode) ct.hasElement(_doStmt);
       if(initIfStmt == null){
         // If statement has not been created yet so we do it here
-        initIfStmt = XelementHelper.createIfThen(xcodeml);
-        XelementHelper.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
+        initIfStmt = XnodeUtil.createIfThen(xcodeml);
+        XnodeUtil.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
         Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
         // Set lhs of equality
@@ -310,7 +310,7 @@ public class Kcaching extends Transformation {
     // 2.2 inject a new entry in the symbol table
     if(!fctDef.getSymbolTable().contains(cacheName)){
       Xid cacheVarId =
-          XelementHelper.createId(xcodeml, type, Xname.SCLASS_F_LOCAL,
+          XnodeUtil.createId(xcodeml, type, Xname.SCLASS_F_LOCAL,
               cacheName);
       fctDef.getSymbolTable().add(cacheVarId, false);
     }
@@ -318,19 +318,19 @@ public class Kcaching extends Transformation {
     // 2.3 inject a new entry in the declaration table
     if(!fctDef.getDeclarationTable().contains(cacheName)){
       XvarDecl cacheVarDecl =
-          XelementHelper.createVarDecl(xcodeml, type, cacheName);
+          XnodeUtil.createVarDecl(xcodeml, type, cacheName);
       fctDef.getDeclarationTable().add(cacheVarDecl);
     }
 
     // 2.4 Prepare the new variable that is used for caching
     Xnode cacheVar =
-        XelementHelper.createVar(type, cacheName, Xscope.LOCAL, xcodeml);
+        XnodeUtil.createVar(type, cacheName, Xscope.LOCAL, xcodeml);
 
     if(stmt == null) {
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache1.appendToChildren(cacheVar, false);
       cache1.appendToChildren(rhs, true);
-      XelementHelper.insertAfter(_claw.getPragma(), cache1);
+      XnodeUtil.insertAfter(_claw.getPragma(), cache1);
     } else {
       /*
        * We replace an assignement of type
@@ -345,8 +345,8 @@ public class Kcaching extends Transformation {
       Xnode cache2 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache2.appendToChildren(stmt.getChild(0), true);
       cache2.appendToChildren(cacheVar, true);
-      XelementHelper.insertAfter(stmt, cache1);
-      XelementHelper.insertAfter(cache1, cache2);
+      XnodeUtil.insertAfter(stmt, cache1);
+      XnodeUtil.insertAfter(cache1, cache2);
 
     }
     return cacheVar;
@@ -363,7 +363,7 @@ public class Kcaching extends Transformation {
     }
 
     List<Xnode> arrayRefs =
-        XelementHelper.getAllArrayReferencesByOffsets(_doStmt.getBody(),
+        XnodeUtil.getAllArrayReferencesByOffsets(_doStmt.getBody(),
             var, offsets);
     if(arrayRefs.size() == 0){
       throw new IllegalTransformationException("Variable " + var +
@@ -382,7 +382,7 @@ public class Kcaching extends Transformation {
   private void updateArrayRefWithCache(List<Xnode> arrayRefs, Xnode cache){
     for(Xnode ref : arrayRefs){
       // Swap arrayRef with the cache variable
-      XelementHelper.insertAfter(ref, cache.cloneObject());
+      XnodeUtil.insertAfter(ref, cache.cloneObject());
       ref.delete();
     }
   }

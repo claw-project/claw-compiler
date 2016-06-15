@@ -9,7 +9,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
@@ -64,7 +64,7 @@ public class ArrayTransform extends BlockTransformation {
 
       // Find assignments with array notation
       List<Xnode> foundAssignments =
-          XelementHelper.getArrayAssignInBlock(_clawBegin.getPragma(),
+          XnodeUtil.getArrayAssignInBlock(_clawBegin.getPragma(),
               _clawEnd.getPragma().getValue()
           );
 
@@ -84,7 +84,7 @@ public class ArrayTransform extends BlockTransformation {
       int crtGroup = 0;
       Xnode refArrayRef = foundAssignments.get(0).find(Xcode.FARRAYREF);
       List<Xnode> refRanges =
-          XelementHelper.getIdxRangesFromArrayRef(refArrayRef);
+          XnodeUtil.getIdxRangesFromArrayRef(refArrayRef);
 
       // First array notation is automatically in the 1st group as 1st element
       _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(0));
@@ -94,10 +94,10 @@ public class ArrayTransform extends BlockTransformation {
         Xnode arrayRef =
             foundAssignments.get(i).find(Xcode.FARRAYREF);
         List<Xnode> ranges =
-            XelementHelper.getIdxRangesFromArrayRef(arrayRef);
+            XnodeUtil.getIdxRangesFromArrayRef(arrayRef);
 
         // ranges are not identical so
-        if(!XelementHelper.compareIndexRanges(refRanges, ranges)){
+        if(!XnodeUtil.compareIndexRanges(refRanges, ranges)){
           refRanges = ranges;
           ++crtGroup;
           _groupedAssignStmts.add(new ArrayList<Xnode>());
@@ -109,7 +109,7 @@ public class ArrayTransform extends BlockTransformation {
     } else { // single transformation
       // pragma must be followed by an assign statement
       Xnode stmt =
-          XelementHelper.findDirectNext(Xcode.FASSIGNSTATEMENT,
+          XnodeUtil.findDirectNext(Xcode.FASSIGNSTATEMENT,
               _clawBegin.getPragma());
       if(stmt == null){
         xcodeml.addError("Directive not follwed by an assign statement",
@@ -164,7 +164,7 @@ public class ArrayTransform extends BlockTransformation {
   {
       // 1. Find the function/module declaration TODO handle module/program ?
       XfunctionDefinition fctDef =
-          XelementHelper.findParentFunction(_clawBegin.getPragma());
+          XnodeUtil.findParentFunction(_clawBegin.getPragma());
       Xnode grip = _clawBegin.getPragma();
       for(int i = 0; i < _groupedAssignStmts.size(); ++i){
         grip = generateDoStmtNotation(xcodeml, transformer, fctDef,
@@ -218,7 +218,7 @@ public class ArrayTransform extends BlockTransformation {
 
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])){
-        Xid inductionVarId = XelementHelper.createId(xcodeml,
+        Xid inductionVarId = XnodeUtil.createId(xcodeml,
             Xname.TYPE_F_INT, Xname.SCLASS_F_LOCAL,
             inductionVars[i]);
         fctDef.getSymbolTable().add(inductionVarId, false);
@@ -227,27 +227,27 @@ public class ArrayTransform extends BlockTransformation {
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])){
         XvarDecl inductionVarDecl =
-            XelementHelper.createVarDecl(xcodeml, Xname.TYPE_F_INT,
+            XnodeUtil.createVarDecl(xcodeml, Xname.TYPE_F_INT,
                 inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);
       }
 
       // 2.4 create do statements
       Xnode inductionVar =
-          XelementHelper.createVar(Xname.TYPE_F_INT, inductionVars[i],
+          XnodeUtil.createVar(Xname.TYPE_F_INT, inductionVars[i],
               Xscope.LOCAL, xcodeml);
       Xnode range;
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
         // Allocatable array
         // dimension argument of size starts at one
-        range = XelementHelper.createAssumedShapeRange(xcodeml, var, 1, i + 1);
+        range = XnodeUtil.createAssumedShapeRange(xcodeml, var, 1, i + 1);
       } else {
         range = ranges.get(i).cloneObject();
       }
-      doStmts[i] = XelementHelper.createDoStmt(xcodeml, inductionVar, range);
-      XelementHelper.copyEnhancedInfo(statements.get(0), doStmts[i]);
+      doStmts[i] = XnodeUtil.createDoStmt(xcodeml, inductionVar, range);
+      XnodeUtil.copyEnhancedInfo(statements.get(0), doStmts[i]);
       if (i == 0) { // most outter loop goes after the pragma
-        XelementHelper.insertAfter(doStmtGrip, doStmts[i]);
+        XnodeUtil.insertAfter(doStmtGrip, doStmts[i]);
       } else { // others loop go in the previous one
         doStmts[i - 1].getBody().appendToChildren(doStmts[i], false);
       }
@@ -257,7 +257,7 @@ public class ArrayTransform extends BlockTransformation {
     for(Xnode stmt : statements) {
       // 3. Adapt array reference with induction variables
       List<Xnode> allArrayRef =
-          XelementHelper.findAll(Xcode.FARRAYREF, stmt);
+          XnodeUtil.findAll(Xcode.FARRAYREF, stmt);
       for (Xnode arrayRef : allArrayRef) {
 
         // TODO handle more complicated cases
@@ -268,13 +268,13 @@ public class ArrayTransform extends BlockTransformation {
           if (el.Opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].find(Xcode.VAR).getValue();
             Xnode iterVar =
-                XelementHelper.createVar(Xname.TYPE_F_INT, induction,
+                XnodeUtil.createVar(Xname.TYPE_F_INT, induction,
                 Xscope.LOCAL, xcodeml);
 
             Xnode arrayIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
             arrayIdx.appendToChildren(iterVar, false);
 
-            XelementHelper.insertAfter(el, arrayIdx);
+            XnodeUtil.insertAfter(el, arrayIdx);
             el.delete();
           }
         }

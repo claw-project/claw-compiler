@@ -52,9 +52,9 @@ public class UtilityRemove extends BlockTransformation {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_clawEnd == null){
-      _do = XelementHelper.findDirectNext(Xcode.FDOSTATEMENT,
+      _do = XnodeUtil.findDirectNext(Xcode.FDOSTATEMENT,
           _clawStart.getPragma());
-      _if = XelementHelper.findDirectNext(Xcode.FIFSTATEMENT,
+      _if = XnodeUtil.findDirectNext(Xcode.FIFSTATEMENT,
           _clawStart.getPragma());
 
       if(_do == null && _if == null){
@@ -86,7 +86,7 @@ public class UtilityRemove extends BlockTransformation {
       }
       _clawStart.getPragma().delete();
     } else {
-      XelementHelper.deleteBetween(_clawStart.getPragma(), _clawEnd.getPragma());
+      XnodeUtil.deleteBetween(_clawStart.getPragma(), _clawEnd.getPragma());
       _clawStart.getPragma().delete();
       _clawEnd.getPragma().delete();
     }

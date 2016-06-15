@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -19,11 +19,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test methods of the XelementHelper class
+ * Test methods of the XnodeUtil class
  *
  * @author clementval
  */
-public class XelementHelperTest {
+public class XnodeUtilTest {
 
 
   @Test
@@ -41,7 +41,7 @@ public class XelementHelperTest {
         XcodeProgram.createFromFile(TestConstant.TEST_PROGRAM);
     assertNotNull(xcodeml);
 
-    List<Xnode> pragmas = XelementHelper.findAllPragmas(xcodeml);
+    List<Xnode> pragmas = XnodeUtil.findAllPragmas(xcodeml);
     assertEquals(4, pragmas.size());
 
     Xnode loopHoistStart = new Xnode(pragmas.get(1).getElement());
@@ -52,7 +52,7 @@ public class XelementHelperTest {
     assertTrue(loopHoistEnd.getValue().contains("end loop-hoist"));
 
     List<Xnode> stmts =
-        XelementHelper.findDoStatement(loopHoistStart, loopHoistEnd,
+        XnodeUtil.findDoStatement(loopHoistStart, loopHoistEnd,
         Arrays.asList("j", "i"));
 
     assertEquals(3, stmts.size());

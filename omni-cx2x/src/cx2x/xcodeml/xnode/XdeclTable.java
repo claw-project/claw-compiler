@@ -90,7 +90,7 @@ public class XdeclTable extends Xnode {
     if(oldDecl == null){
       // TODO error handling
     } else {
-      XelementHelper.insertAfter(oldDecl, decl);
+      XnodeUtil.insertAfter(oldDecl, decl);
       oldDecl.delete();
     }
   }

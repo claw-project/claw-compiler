@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.ClawLanguage;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -39,7 +39,7 @@ public class ArrayToFctCall extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     XfunctionDefinition _fctDef =
-        XelementHelper.findParentFunction(_claw.getPragma());
+        XnodeUtil.findParentFunction(_claw.getPragma());
     if(_fctDef == null){
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().getLineNo());
@@ -57,8 +57,8 @@ public class ArrayToFctCall extends Transformation {
         getFctDefinition(_claw.getFctName());
     if(_replaceFct == null){
       XmoduleDefinition parentModule =
-          XelementHelper.findParentModule(_claw.getPragma());
-      _replaceFct = XelementHelper.findFunctionDefinitionInModule(parentModule,
+          XnodeUtil.findParentModule(_claw.getPragma());
+      _replaceFct = XnodeUtil.findFunctionDefinitionInModule(parentModule,
           _claw.getFctName());
 
       if(_replaceFct == null){
@@ -95,22 +95,21 @@ public class ArrayToFctCall extends Transformation {
             get(_replaceFct.getName().getAttribute(Xattr.TYPE));
 
     // Prepare the function call
-    Xnode fctCall = XelementHelper.createFctCall(xcodeml,
-        fctType.getReturnType(), _claw.getFctName(),
-        _replaceFct.getName().getAttribute(Xattr.TYPE));
+    Xnode fctCall = XnodeUtil.createFctCall(xcodeml, fctType.getReturnType(),
+        _claw.getFctName(), _replaceFct.getName().getAttribute(Xattr.TYPE));
     Xnode args = fctCall.find(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()){
-      Xnode var = XelementHelper.createVar(Xname.TYPE_F_INT, arg,
-          Xscope.LOCAL, xcodeml);
+      Xnode var =
+          XnodeUtil.createVar(Xname.TYPE_F_INT, arg, Xscope.LOCAL, xcodeml);
       args.appendToChildren(var, false);
     }
 
     List<Xnode> refs =
-        XelementHelper.getAllArrayReferencesInSiblings(_claw.getPragma(),
+        XnodeUtil.getAllArrayReferencesInSiblings(_claw.getPragma(),
             _claw.getArrayName());
 
     for(Xnode ref : refs){
-      XelementHelper.insertAfter(ref, fctCall.cloneObject());
+      XnodeUtil.insertAfter(ref, fctCall.cloneObject());
       ref.delete();
     }
 

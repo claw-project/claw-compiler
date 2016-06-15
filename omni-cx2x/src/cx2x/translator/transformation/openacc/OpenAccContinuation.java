@@ -7,7 +7,7 @@ package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.Constant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -105,7 +105,7 @@ public class OpenAccContinuation extends Transformation {
           p.setValue(Constant.OPENACC_PREFIX + " " + pragmas[i] + " " +
               Constant.CONTINUATION_LINE_SYMBOL);
         }
-        XelementHelper.insertAfter(newlyInserted, p);
+        XnodeUtil.insertAfter(newlyInserted, p);
         newlyInserted = p;
       }
     }

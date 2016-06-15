@@ -94,7 +94,7 @@ public class ClawXcodeMlTranslator {
     }
 
     // Check all pragma found in the program
-    for (Xnode pragma :  XelementHelper.findAllPragmas(_program)){
+    for (Xnode pragma :  XnodeUtil.findAllPragmas(_program)){
 
       // pragma does not start with the CLAW prefix
       if(!ClawLanguage.startsWithClaw(pragma)){
@@ -176,7 +176,7 @@ public class ClawXcodeMlTranslator {
    */
   private void HandleBlockDirective(ClawLanguage analyzedPragma){
     int depth =
-        XelementHelper.getDepth(analyzedPragma.getPragma());
+        XnodeUtil.getDepth(analyzedPragma.getPragma());
     ClawDirectiveKey crtRemoveKey =
         new ClawDirectiveKey(analyzedPragma.getDirective(), depth);
     if(analyzedPragma.isEndPragma()){ // start block directive
@@ -239,7 +239,7 @@ public class ClawXcodeMlTranslator {
   public void transform() {
     try {
       if(!_canTransform){
-        if(!XelementHelper.writeXcodeML(_program,
+        if(!XnodeUtil.writeXcodeML(_program,
             _xcodemlOutputFile, INDENT_OUTPUT))
         {
           abort();
@@ -276,7 +276,7 @@ public class ClawXcodeMlTranslator {
       }
 
       // Write transformed IR to file
-      if(!XelementHelper.writeXcodeML(_program, _xcodemlOutputFile,
+      if(!XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile,
           INDENT_OUTPUT))
       {
         abort();

@@ -90,7 +90,7 @@ public class LoopInterchange extends Transformation {
      */
     if(_loopLevel1 != null && _loopLevel2 == null){
       // Loop interchange between 2 loops
-      XelementHelper.swapIterationRange(_loopLevel0, _loopLevel1);
+      XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel1);
     } else if (_loopLevel1 != null && _loopLevel2 != null){
       // loop interchange between 3 loops with new-order
       computeLoopNewPosition();
@@ -100,13 +100,13 @@ public class LoopInterchange extends Transformation {
         // Case 201
         if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
           printTransformSwapInfo(201);
-          XelementHelper.swapIterationRange(_loopLevel0, _loopLevel2);
-          XelementHelper.swapIterationRange(_loopLevel0, _loopLevel1);
+          XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel2);
+          XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel1);
         // Case 120
         } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
           printTransformSwapInfo(120);
-          XelementHelper.swapIterationRange(_loopLevel0, _loopLevel2);
-          XelementHelper.swapIterationRange(_loopLevel1, _loopLevel2);
+          XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel2);
+          XnodeUtil.swapIterationRange(_loopLevel1, _loopLevel2);
         }
       } else {
         // Only one loop swap is needed
@@ -122,7 +122,7 @@ public class LoopInterchange extends Transformation {
           from = _loopLevel0;
           to = _loopLevel1;
         }
-        XelementHelper.swapIterationRange(from, to);
+        XnodeUtil.swapIterationRange(from, to);
       }
     }
 
@@ -183,7 +183,7 @@ public class LoopInterchange extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
     _loopLevel0 =
-        XelementHelper.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
+        XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
 
     if(_loopLevel0 == null){
       xcodeml.addError("top level loop not found",
@@ -191,7 +191,7 @@ public class LoopInterchange extends Transformation {
       return false;
     }
 
-    _loopLevel1 = XelementHelper.find(Xcode.FDOSTATEMENT,
+    _loopLevel1 = XnodeUtil.find(Xcode.FDOSTATEMENT,
         _loopLevel0.getBody(), false);
     if(_loopLevel1 == null){
       return false;
@@ -203,17 +203,17 @@ public class LoopInterchange extends Transformation {
             _claw.getPragma().getLineNo());
       }
 
-      _loopLevel2 = XelementHelper.find(Xcode.FDOSTATEMENT,
+      _loopLevel2 = XnodeUtil.find(Xcode.FDOSTATEMENT,
           _loopLevel1.getBody(), false);
       if(_loopLevel2 == null){
         return false;
       }
 
-      Xnode induction0 = XelementHelper.find(Xcode.VAR, _loopLevel0, false);
+      Xnode induction0 = XnodeUtil.find(Xcode.VAR, _loopLevel0, false);
       _baseLoop0 = induction0.getValue();
-      Xnode induction1 = XelementHelper.find(Xcode.VAR, _loopLevel1, false);
+      Xnode induction1 = XnodeUtil.find(Xcode.VAR, _loopLevel1, false);
       _baseLoop1 = induction1.getValue();
-      Xnode induction2 = XelementHelper.find(Xcode.VAR, _loopLevel2, false);
+      Xnode induction2 = XnodeUtil.find(Xcode.VAR, _loopLevel2, false);
       _baseLoop2 = induction2.getValue();
 
       if(!checkNewOrderOption(xcodeml, _newOrderOption)){

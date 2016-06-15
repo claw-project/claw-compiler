@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The class XelementHelper contains only static method to help manipulating the
+ * The class XnodeUtil contains only static method to help manipulating the
  * raw Elements in the XcodeML representation by using the abstracted Xelements.
  *
  * @author clementval
  */
 
-public class XelementHelper {
+public class XnodeUtil {
   /**
    * Find a function definition according to a function call.
    * @param xcodeml The XcodeML program to search in.
@@ -233,7 +233,7 @@ public class XelementHelper {
         Xname.F_ARRAY_REF
     );
     // Use the Kaysian method to express the intersect operator
-    String intersect = XelementHelper.xPathIntersect(s1, s2);
+    String intersect = XnodeUtil.xPathIntersect(s1, s2);
     return getFromXpath(from, intersect);
   }
 
@@ -565,7 +565,7 @@ public class XelementHelper {
    */
   public static void extractBody(Xnode loop){
     Element loopElement = loop.getElement();
-    Element body = XelementHelper.findFirstElement(loopElement,
+    Element body = XnodeUtil.findFirstElement(loopElement,
       Xname.BODY);
 
     Node refNode = loopElement;
@@ -576,7 +576,7 @@ public class XelementHelper {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE){
-        XelementHelper.insertAfter(refNode, childNode);
+        XnodeUtil.insertAfter(refNode, childNode);
         refNode = childNode;
       }
       childNode = nextChild;
@@ -604,7 +604,7 @@ public class XelementHelper {
    */
   public static boolean writeXcodeML(XcodeProgram xcodeml, String outputFile, int indent) {
     try {
-      XelementHelper.cleanEmptyTextNodes(xcodeml.getDocument());
+      XnodeUtil.cleanEmptyTextNodes(xcodeml.getDocument());
       Transformer transformer
         = TransformerFactory.newInstance().newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -929,7 +929,7 @@ public class XelementHelper {
    * @param element    The element to be inserted.
    */
   public static void insertAfter(Xnode refElement, Xnode element){
-    XelementHelper.insertAfter(refElement.getElement(), element.getElement());
+    XnodeUtil.insertAfter(refElement.getElement(), element.getElement());
   }
 
   /**
@@ -1033,10 +1033,10 @@ public class XelementHelper {
 
     // TODO XNODE refactoring (have method to get bounds)
 
-    Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
+    Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
 
 
     if(!inductionVar1.getValue().toLowerCase().
@@ -1098,14 +1098,14 @@ public class XelementHelper {
       return false;
     }
 
-    Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
-    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
-    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false).getChild(0);
-    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
-    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false).getChild(0);
+    Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
+    Xnode up1 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
+    Xnode s1 = XnodeUtil.find(Xcode.STEP, indexRange1, false).getChild(0);
+    Xnode up2 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
+    Xnode s2 = XnodeUtil.find(Xcode.STEP, indexRange2, false).getChild(0);
 
     if(!inductionVar1.getValue().toLowerCase().
         equals(inductionVar2.getValue().toLowerCase()))
@@ -1134,17 +1134,17 @@ public class XelementHelper {
       return;
     }
 
-    Xnode inductionVar1 = XelementHelper.find(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
-    Xnode low1 = XelementHelper.find(Xcode.LOWERBOUND, indexRange1, false).getChild(0);
-    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
-    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false).getChild(0);
+    Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
+    Xnode low1 = XnodeUtil.find(Xcode.LOWERBOUND, indexRange1, false).getChild(0);
+    Xnode up1 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
+    Xnode s1 = XnodeUtil.find(Xcode.STEP, indexRange1, false).getChild(0);
 
-    Xnode low2 = XelementHelper.find(Xcode.LOWERBOUND, indexRange2, false).getChild(0);
-    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
-    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false).getChild(0);
+    Xnode low2 = XnodeUtil.find(Xcode.LOWERBOUND, indexRange2, false).getChild(0);
+    Xnode up2 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
+    Xnode s2 = XnodeUtil.find(Xcode.STEP, indexRange2, false).getChild(0);
 
     String tmpInduction = inductionVar2.getValue();
     String tmpLower = low2.getValue();

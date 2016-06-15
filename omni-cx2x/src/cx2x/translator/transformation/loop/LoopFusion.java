@@ -58,7 +58,7 @@ public class LoopFusion extends Transformation {
       _loops = new Xnode[_claw.getCollapseValue()];
       _loops[0] = loop;
       for(int i = 1; i < _claw.getCollapseValue(); ++i){
-        _loops[i] = XelementHelper.find(Xcode.FDOSTATEMENT,
+        _loops[i] = XnodeUtil.find(Xcode.FDOSTATEMENT,
             _loops[i-1].getBody(), false);
       }
     } else {
@@ -90,9 +90,9 @@ public class LoopFusion extends Transformation {
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
         if(i == 0){ // Find the outter loop from pragma
           _loops[0] =
-              XelementHelper.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
+              XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
         } else { // Find the next i loops
-          _loops[i] = XelementHelper.find(Xcode.FDOSTATEMENT,
+          _loops[i] = XnodeUtil.find(Xcode.FDOSTATEMENT,
               _loops[i-1].getBody(), false);
         }
         if(_loops[i] == null){
@@ -106,7 +106,7 @@ public class LoopFusion extends Transformation {
       // Without collapse clause, just fin the first do statement from the
       // pragma
       Xnode loop =
-          XelementHelper.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
+          XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
       if(loop == null){
         xcodeml.addError("Cannot find loop after directive",
             _claw.getPragma().getLineNo());
@@ -153,10 +153,10 @@ public class LoopFusion extends Transformation {
             _claw.getPragma().getLineNo()
         );
       }
-      XelementHelper.appendBody(_loops[innerLoopIdx].getBody(),
+      XnodeUtil.appendBody(_loops[innerLoopIdx].getBody(),
           loopFusionUnit.getLoop(innerLoopIdx).getBody());
     } else {
-      XelementHelper.appendBody(_loops[0].getBody(),
+      XnodeUtil.appendBody(_loops[0].getBody(),
           loopFusionUnit.getLoop(0).getBody());
     }
     loopFusionUnit.finalizeTransformation();
@@ -205,7 +205,7 @@ public class LoopFusion extends Transformation {
     }
 
     // Loops can only be merged if they are at the same level
-    if(!XelementHelper.hasSameParentBlock(_loops[0], other.getLoop(0))){
+    if(!XnodeUtil.hasSameParentBlock(_loops[0], other.getLoop(0))){
       return false;
     }
 
@@ -213,14 +213,14 @@ public class LoopFusion extends Transformation {
         && _claw.getCollapseValue() > 0)
     {
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
-        if(!XelementHelper.hasSameIndexRange(_loops[i], other.getLoop(i))){
+        if(!XnodeUtil.hasSameIndexRange(_loops[i], other.getLoop(i))){
           return false;
         }
       }
       return true;
     } else {
       // Loop must share the same iteration range
-      return XelementHelper.hasSameIndexRange(_loops[0], other.getLoop(0));
+      return XnodeUtil.hasSameIndexRange(_loops[0], other.getLoop(0));
     }
 
   }

@@ -5,7 +5,7 @@
 
 package cx2x.translator.language;
 
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
 import cx2x.xcodeml.xnode.Xname;
 
@@ -154,7 +154,7 @@ public class ClawDimension {
 
     // lower bound
     if(lowerBoundIsVar()){
-      Xnode lowerBoundValue = XelementHelper.createVar(_lowerBoundType,
+      Xnode lowerBoundValue = XnodeUtil.createVar(_lowerBoundType,
           _lowerBoundId, Xscope.LOCAL, xcodeml);
       lower.appendToChildren(lowerBoundValue, false);
     } else {
@@ -166,7 +166,7 @@ public class ClawDimension {
 
     // upper bound
     if(upperBoundIsVar()){
-      Xnode upperBoundValue = XelementHelper.createVar(_upperBoundType,
+      Xnode upperBoundValue = XnodeUtil.createVar(_upperBoundType,
           _upperBoundId, Xscope.LOCAL, xcodeml);
       upper.appendToChildren(upperBoundValue, false);
     } else {
@@ -188,7 +188,7 @@ public class ClawDimension {
    */
   public Xnode generateArrayIndex(XcodeProgram xcodeml) {
     Xnode aIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
-    Xnode var = XelementHelper.createVar(Xname.TYPE_F_INT, _identifier,
+    Xnode var = XnodeUtil.createVar(Xname.TYPE_F_INT, _identifier,
         Xscope.LOCAL, xcodeml);
     aIdx.appendToChildren(var, false);
     return aIdx;

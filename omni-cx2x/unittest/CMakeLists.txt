@@ -77,7 +77,7 @@ else()
     cx2x/xcodeml/xnode/XbasicTypeTest.java
     cx2x/xcodeml/xnode/XcodeProgTest.java
     cx2x/xcodeml/xnode/XdeclTableTest.java
-    cx2x/xcodeml/xnode/XelementHelperTest.java
+    cx2x/xcodeml/xnode/XnodeUtilTest.java
     cx2x/xcodeml/xnode/XfunctionTypeTest.java
     cx2x/xcodeml/xnode/XfunctionDefinitionTest.java
     cx2x/xcodeml/xnode/XglobalDeclTest.java
@@ -99,7 +99,7 @@ else()
     cx2x.xcodeml.xnode.XbasicTypeTest
     cx2x.xcodeml.xnode.XcodeProgTest
     cx2x.xcodeml.xnode.XdeclTableTest
-    cx2x.xcodeml.xnode.XelementHelperTest
+    cx2x.xcodeml.xnode.XnodeUtilTest
     cx2x.xcodeml.xnode.XfunctionTypeTest
     cx2x.xcodeml.xnode.XfunctionDefinitionTest
     cx2x.xcodeml.xnode.XglobalDeclTest
