@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cx2x.xcodeml.error.*;
-import cx2x.xcodeml.helper.*;
 
 /**
  * The XcodeProgram represents the XcodeProgram (2) element in XcodeML
@@ -165,7 +164,7 @@ public class XcodeProgram extends Xnode {
     if(_xcodemlDoc == null){
       return false;
     }
-    
+
     if(Opcode() != Xcode.XCODEPROGRAM){
       return false;
     }
