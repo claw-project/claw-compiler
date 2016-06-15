@@ -110,6 +110,4 @@ public class Xid extends Xnode {
     return new Xid((Element)clone);
   }
 
-
-
 }

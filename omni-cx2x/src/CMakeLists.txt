@@ -70,7 +70,6 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xnode/XfunctionDefinition.java
   cx2x/xcodeml/xnode/XfunctionType.java
   cx2x/xcodeml/xnode/XglobalDeclTable.java
-  cx2x/xcodeml/xnode/XglobalSymbolTable.java
   cx2x/xcodeml/xnode/Xid.java
   cx2x/xcodeml/xnode/Xintent.java
   cx2x/xcodeml/xnode/XmoduleDefinition.java

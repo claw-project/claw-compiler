@@ -37,7 +37,7 @@ public class XcodeProgram extends Xnode {
 
   // XcodeProgram inner elements
   private XtypeTable _typeTable = null;
-  private XglobalSymbolTable _globalSymbolsTable = null;
+  private XsymbolTable _globalSymbolsTable = null;
   private XglobalDeclTable _globalDeclarationsTable = null;
 
   // XcodeProgram optional attributes
@@ -202,7 +202,7 @@ public class XcodeProgram extends Xnode {
    */
   private void readGlobalSymbolsTable() {
     _globalSymbolsTable =
-        new XglobalSymbolTable(find(Xcode.GLOBALSYMBOLS).getElement());
+        new XsymbolTable(find(Xcode.GLOBALSYMBOLS).getElement());
   }
 
   /**
