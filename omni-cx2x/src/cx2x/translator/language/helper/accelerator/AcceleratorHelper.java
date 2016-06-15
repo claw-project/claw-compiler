@@ -12,8 +12,8 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.XfunctionDefinition;
+import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.XfunctionDefinition;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 

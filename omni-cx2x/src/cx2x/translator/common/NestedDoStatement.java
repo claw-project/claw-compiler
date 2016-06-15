@@ -2,9 +2,9 @@ package cx2x.translator.common;
 
 import cx2x.translator.language.ClawDimension;
 import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.XelementName;
-import cx2x.xcodeml.xelement.Xscope;
+import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.XelementName;
+import cx2x.xcodeml.xnode.Xscope;
 import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;

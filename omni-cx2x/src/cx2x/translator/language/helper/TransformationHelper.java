@@ -12,10 +12,7 @@ import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.*;
-import cx2x.xcodeml.xnode.Xattr;
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
 import java.util.List;

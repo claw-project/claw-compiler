@@ -7,8 +7,7 @@ package helper;
 
 import static org.junit.Assert.*;
 
-import cx2x.xcodeml.xelement.*;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 

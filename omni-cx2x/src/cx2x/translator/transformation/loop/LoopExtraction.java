@@ -14,14 +14,11 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.helper.*;
-import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 
 // OMNI import
-import cx2x.xcodeml.xnode.Xattr;
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
 // Java import

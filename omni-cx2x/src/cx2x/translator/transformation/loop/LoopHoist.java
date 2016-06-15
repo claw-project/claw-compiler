@@ -13,8 +13,9 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.XfunctionDefinition;
 import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;

@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.transformation;
 
-import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.exception.*;
 
 /**

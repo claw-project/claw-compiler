@@ -6,8 +6,8 @@
 package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.exception.*;
+import cx2x.xcodeml.xnode.XcodeProgram;
 
 /**
  * A Transformation is an object capable of analyzing a possible code

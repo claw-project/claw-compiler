@@ -73,41 +73,41 @@ else()
     cx2x/translator/misc/UtilityTest.java
     cx2x/translator/language/ClawRangeTest.java
     cx2x/translator/language/ClawLanguageTest.java
-    cx2x/xcodeml/xelement/XbasicTest.java
-    cx2x/xcodeml/xelement/XbasicTypeTest.java
-    cx2x/xcodeml/xelement/XcodeProgTest.java
-    cx2x/xcodeml/xelement/XdeclTableTest.java
-    cx2x/xcodeml/xelement/XelementHelperTest.java
-    cx2x/xcodeml/xelement/XfunctionTypeTest.java
-    cx2x/xcodeml/xelement/XfunctionDefinitionTest.java
-    cx2x/xcodeml/xelement/XglobalDeclTest.java
-    cx2x/xcodeml/xelement/XidTest.java
-    cx2x/xcodeml/xelement/XmoduleDefinitionTest.java
-    cx2x/xcodeml/xelement/XsymbolsTest.java
-    cx2x/xcodeml/xelement/XtypeTableTest.java
-    cx2x/xcodeml/xelement/XvarDeclTest.java
+    cx2x/xcodeml/xnode/XbasicTest.java
+    cx2x/xcodeml/xnode/XbasicTypeTest.java
+    cx2x/xcodeml/xnode/XcodeProgTest.java
+    cx2x/xcodeml/xnode/XdeclTableTest.java
+    cx2x/xcodeml/xnode/XelementHelperTest.java
+    cx2x/xcodeml/xnode/XfunctionTypeTest.java
+    cx2x/xcodeml/xnode/XfunctionDefinitionTest.java
+    cx2x/xcodeml/xnode/XglobalDeclTest.java
+    cx2x/xcodeml/xnode/XidTest.java
+    cx2x/xcodeml/xnode/XmoduleDefinitionTest.java
+    cx2x/xcodeml/xnode/XsymbolsTest.java
+    cx2x/xcodeml/xnode/XtypeTableTest.java
+    cx2x/xcodeml/xnode/XvarDeclTest.java
     OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
   )
 
   get_target_property(UNITTEST_JAR omni-cx2x-unittest JAR_FILE)
 
   # Add unit test classes
-  add_junit_test(junit-xcodeml.xelement
+  add_junit_test(junit-xcodeml.xnode
     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
     TESTS
-    cx2x.xcodeml.xelement.XbasicTest
-    cx2x.xcodeml.xelement.XbasicTypeTest
-    cx2x.xcodeml.xelement.XcodeProgTest
-    cx2x.xcodeml.xelement.XdeclTableTest
-    cx2x.xcodeml.xelement.XelementHelperTest
-    cx2x.xcodeml.xelement.XfunctionTypeTest
-    cx2x.xcodeml.xelement.XfunctionDefinitionTest
-    cx2x.xcodeml.xelement.XglobalDeclTest
-    cx2x.xcodeml.xelement.XidTest
-    cx2x.xcodeml.xelement.XmoduleDefinitionTest
-    cx2x.xcodeml.xelement.XsymbolsTest
-    cx2x.xcodeml.xelement.XtypeTableTest
-    cx2x.xcodeml.xelement.XvarDeclTest
+    cx2x.xcodeml.xnode.XbasicTest
+    cx2x.xcodeml.xnode.XbasicTypeTest
+    cx2x.xcodeml.xnode.XcodeProgTest
+    cx2x.xcodeml.xnode.XdeclTableTest
+    cx2x.xcodeml.xnode.XelementHelperTest
+    cx2x.xcodeml.xnode.XfunctionTypeTest
+    cx2x.xcodeml.xnode.XfunctionDefinitionTest
+    cx2x.xcodeml.xnode.XglobalDeclTest
+    cx2x.xcodeml.xnode.XidTest
+    cx2x.xcodeml.xnode.XmoduleDefinitionTest
+    cx2x.xcodeml.xnode.XsymbolsTest
+    cx2x.xcodeml.xnode.XtypeTableTest
+    cx2x.xcodeml.xnode.XvarDeclTest
   )
 
   add_junit_test(junit-translator.language

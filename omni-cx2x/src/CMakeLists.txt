@@ -61,25 +61,28 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/transformation/TransformationGroup.java
   cx2x/xcodeml/transformation/Transformer.java
 
-# XcodeML.Xelement package
-  cx2x/xcodeml/xelement/XbasicType.java
-  cx2x/xcodeml/xelement/XcodeProgram.java
-  cx2x/xcodeml/xelement/Xdecl.java
-  cx2x/xcodeml/xelement/XdeclTable.java
-  cx2x/xcodeml/xelement/XelementName.java
-  cx2x/xcodeml/xelement/XfunctionDefinition.java
-  cx2x/xcodeml/xelement/XfunctionType.java
-  cx2x/xcodeml/xelement/XglobalDeclTable.java
-  cx2x/xcodeml/xelement/XglobalSymbolTable.java
-  cx2x/xcodeml/xelement/Xid.java
-  cx2x/xcodeml/xelement/Xintent.java
-  cx2x/xcodeml/xelement/XmoduleDefinition.java
-  cx2x/xcodeml/xelement/Xparams.java
-  cx2x/xcodeml/xelement/Xscope.java
-  cx2x/xcodeml/xelement/XsymbolTable.java
-  cx2x/xcodeml/xelement/Xtype.java
-  cx2x/xcodeml/xelement/XtypeTable.java
-  cx2x/xcodeml/xelement/XvarDecl.java
+# XcodeML.xnode package
+  cx2x/xcodeml/xnode/XbasicType.java
+  cx2x/xcodeml/xnode/XcodeProgram.java
+  cx2x/xcodeml/xnode/Xdecl.java
+  cx2x/xcodeml/xnode/XdeclTable.java
+  cx2x/xcodeml/xnode/XelementName.java
+  cx2x/xcodeml/xnode/XfunctionDefinition.java
+  cx2x/xcodeml/xnode/XfunctionType.java
+  cx2x/xcodeml/xnode/XglobalDeclTable.java
+  cx2x/xcodeml/xnode/XglobalSymbolTable.java
+  cx2x/xcodeml/xnode/Xid.java
+  cx2x/xcodeml/xnode/Xintent.java
+  cx2x/xcodeml/xnode/XmoduleDefinition.java
+  cx2x/xcodeml/xnode/Xparams.java
+  cx2x/xcodeml/xnode/Xscope.java
+  cx2x/xcodeml/xnode/XsymbolTable.java
+  cx2x/xcodeml/xnode/Xtype.java
+  cx2x/xcodeml/xnode/XtypeTable.java
+  cx2x/xcodeml/xnode/XvarDecl.java
+  cx2x/xcodeml/xnode/Xattr.java
+  cx2x/xcodeml/xnode/Xcode.java
+  cx2x/xcodeml/xnode/Xnode.java
 
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )

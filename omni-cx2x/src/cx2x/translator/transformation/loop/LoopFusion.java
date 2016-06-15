@@ -8,10 +8,10 @@ package cx2x.translator.transformation.loop;
 import cx2x.translator.common.Constant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.*;
-import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
 /**

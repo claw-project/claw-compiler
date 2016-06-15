@@ -6,8 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xelement.XcodeProgram;
-import cx2x.xcodeml.xelement.XelementName;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

@@ -22,12 +22,12 @@ import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.translator.transformer.*;
 
 // OMNI import
+import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.*;
 
