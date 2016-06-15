@@ -756,42 +756,6 @@ public class XelementHelper {
   }
 
   /**
-   * Get the first child element.
-   * @param parent Root element to search form.
-   * @return First found element.
-   */
-  private static Element getFirstChildElement(Element parent){
-    NodeList nodeList = parent.getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        return (Element) nextNode;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Get the xth child element.
-   * @param parent   Root element to search form.
-   * @param position Position of the element to be found. Start at 0.
-   * @return Element found at position.
-   */
-  private static Element getXthChildElement(Element parent, int position){
-    int crtIndex = 0;
-    NodeList nodeList = parent.getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if (nextNode.getNodeType() == Node.ELEMENT_NODE && crtIndex == position) {
-        return (Element) nextNode;
-      } else if (nextNode.getNodeType() == Node.ELEMENT_NODE){
-        ++crtIndex;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Get the depth of an element in the AST.
    * @param element XML element for which the depth is computed.
    * @return A depth value greater or equal to 0.
@@ -876,9 +840,9 @@ public class XelementHelper {
   }
 
   /**
-   * TODO javadoc
-   * @param from
-   * @return
+   * Find function definition in the ancestor of the give element.
+   * @param from Element to start search from.
+   * @return The function definition found. Null if nothing found.
    */
   public static XfunctionDefinition findParentFunction(Xnode from){
     Xnode fctDef = findParent(Xcode.FFUNCTIONDEFINITION, from);
@@ -892,7 +856,7 @@ public class XelementHelper {
    * Find an element in the ancestor of the given element.
    * @param opcode Code of the element to be found.
    * @param from   Element to start the search from.
-   * @return The element found. Null if no element is found.
+   * @return The element found. Null if nothing found.
    */
   public static Xnode findParent(Xcode opcode, Xnode from){
     if(from == null){
@@ -1267,47 +1231,13 @@ public class XelementHelper {
     return elements;
   }
 
-  /**
-   * TODO javadoc
-   * @param xcodeml
-   * @return
-   */
-  public static Xnode createIfThen(XcodeProgram xcodeml){
-    Xnode root = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
-    Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
-    Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
-    Xnode thenBody = new Xnode(Xcode.BODY, xcodeml);
-    thenBlock.appendToChildren(thenBody, false);
-    root.appendToChildren(cond, false);
-    root.appendToChildren(thenBlock, false);
-    return root;
-  }
+
 
   /**
-   * TODO javadoc
-   * @param inductionVar
-   * @param indexRange
-   * @param xcodeml
-   * @return
-   */
-  public static Xnode createDoStmt(Xnode inductionVar,
-                                   Xnode indexRange,
-                                   XcodeProgram xcodeml)
-  {
-    Xnode root = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
-    root.appendToChildren(inductionVar, false);
-    root.appendToChildren(indexRange, false);
-
-    Xnode body = new Xnode(Xcode.BODY, xcodeml);
-    root.appendToChildren(body, false);
-    return root;
-  }
-
-  /**
-   * TODO javadoc
-   * @param value
-   * @param fctCall
-   * @return
+   * Find specific argument in a function call.
+   * @param value   Value of the argument to be found.
+   * @param fctCall Function call to search from.
+   * @return The argument if found. Null otherwise.
    */
   public static Xnode findArg(String value, Xnode fctCall){
     if(fctCall.Opcode() != Xcode.FUNCTIONCALL) {
@@ -1326,12 +1256,171 @@ public class XelementHelper {
   }
 
   /**
-   * TODO javadoc
-   * @param xcodeml
-   * @param arrayVar
-   * @param startIndex
-   * @param dimension
-   * @return
+   * Find all elements of a given type in the subtree.
+   * @param opcode Type of the element to be found.
+   * @param parent Root of the subtree.
+   * @return List of all elements found in the subtree.
+   */
+  public static List<Xnode> findAll(Xcode opcode, Xnode parent) {
+    List<Xnode> elements = new ArrayList<>();
+    if(parent == null) {
+      return elements;
+    }
+    NodeList nodes = parent.getElement().getElementsByTagName(opcode.code());
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node n = nodes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        elements.add(new Xnode((Element)n));
+      }
+    }
+    return elements;
+  }
+
+  /**
+   * Create a new FunctionCall element with elements name and arguments as
+   * children.
+   * @param xcodeml    The current XcodeML program unit in which the elements
+   *                   are created.
+   * @param returnType Value of the type attribute for the functionCall element.
+   * @param name       Value of the name element.
+   * @param nameType   Value of the type attribute for the name element.
+   * @return The newly created element.
+   */
+  public static Xnode createFctCall(XcodeProgram xcodeml, String returnType,
+                                    String name, String nameType){
+    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
+    fctCall.setAttribute(Xattr.TYPE, returnType);
+    Xnode fctName = new Xnode(Xcode.NAME, xcodeml);
+    fctName.setValue(name);
+    fctName.setAttribute(Xattr.TYPE, nameType);
+    Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
+    fctCall.appendToChildren(fctName, false);
+    fctCall.appendToChildren(args, false);
+    return fctCall;
+  }
+
+  /**
+   * Create a new FarrayRef element with varRef element as a child with the
+   * given Var element.
+   * @param xcodeml The current XcodeML program unit in which the elements
+   *                are created.
+   * @param type    Value of the type attribute for the FarrayRef element.
+   * @param var     Var element nested in the varRef element.
+   * @return The newly created element.
+   */
+  public static Xnode createArrayRef(XcodeProgram xcodeml, XbasicType type,
+                                     Xnode var)
+  {
+    Xnode ref = new Xnode(Xcode.FARRAYREF, xcodeml);
+    ref.setAttribute(Xattr.TYPE, type.getRef());
+    Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+    varRef.setAttribute(Xattr.TYPE, type.getType());
+    varRef.appendToChildren(var, false);
+    ref.appendToChildren(varRef, false);
+    return ref;
+  }
+
+  /**
+   * Create a new Id element with all the underlying needed elements.
+   * @param xcodeml   The current XcodeML program unit in which the elements
+   *                  are created.
+   * @param type      Value for the attribute type.
+   * @param sclass    Value for the attribute sclass.
+   * @param nameValue Value of the name inner element.
+   * @return The newly created element.
+   */
+  public static Xid createId(XcodeProgram xcodeml, String type, String sclass,
+                             String nameValue)
+  {
+    Xnode id = new Xnode(Xcode.ID, xcodeml);
+    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
+    internalName.setValue(nameValue);
+    id.appendToChildren(internalName, false);
+    id.setAttribute(Xattr.TYPE, type);
+    id.setAttribute(Xattr.SCLASS, sclass);
+    return new Xid(id.getElement());
+  }
+
+  /**
+   * Constructs a new basicType element with the given information.
+   * @param xcodeml The current XcodeML program unit in which the elements
+   *                are created.
+   * @param type    Type hash.
+   * @param ref     Reference type.
+   * @param intent  Optional intent information.
+   * @return The newly created element.
+   */
+  public static XbasicType createBasicType(XcodeProgram xcodeml, String type,
+                                           String ref, Xintent intent)
+  {
+    Xnode bt = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    bt.setAttribute(Xattr.TYPE, type);
+    if(ref != null) {
+      bt.setAttribute(Xattr.REF, ref);
+    }
+    if(intent != null) {
+      bt.setAttribute(Xattr.INTENT, intent.toString());
+    }
+    return new XbasicType(bt.getElement());
+  }
+
+  /**
+   * Create a new XvarDecl object with all the underlying elements.
+   * @param xcodeml The current XcodeML program unit in which the elements
+   *                are created.
+   * @param nameType  Value for the attribute type of the name element.
+   * @param nameValue Value of the name inner element.
+   * @return The newly created element.
+   */
+  public static XvarDecl createVarDecl(XcodeProgram xcodeml, String nameType,
+                                       String nameValue)
+  {
+    Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
+    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
+    internalName.setValue(nameValue);
+    internalName.setAttribute(Xattr.TYPE, nameType);
+    varD.appendToChildren(internalName, false);
+    return new XvarDecl(varD.getElement());
+  }
+
+  /**
+   * Constructs a new name element with name value and optional type.
+   * @param xcodeml Current XcodeML program unit in which the element is
+   *                created.
+   * @param name    Name value.
+   * @param type    Optional type value.
+   * @return The newly created element.
+   */
+  public static Xnode createName(XcodeProgram xcodeml, String name, String type)
+  {
+    Xnode n = new Xnode(Xcode.NAME, xcodeml);
+    n.setValue(name);
+    if(type != null){
+      n.setAttribute(Xattr.TYPE, type);
+    }
+    return n;
+  }
+
+  /**
+   * Create an empty assumed shape indexRange element.
+   * @param xcodeml Current XcodeML program unit in which the element is
+   *                created.
+   * @return The newly created element.
+   */
+  public static Xnode createEmptyAssumedShaped(XcodeProgram xcodeml) {
+    Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
+    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, XelementName.TRUE);
+    return range;
+  }
+
+  /**
+   * Create an indexRange element to loop over an assumed shape array.
+   * @param xcodeml    Current XcodeML program unit in which the element is
+   *                   created.
+   * @param arrayVar   Var element representing the array variable.
+   * @param startIndex Lower bound index value.
+   * @param dimension  Dimension index for the upper bound value.
+   * @return The newly created element.
    */
   public static Xnode createAssumedShapeRange(XcodeProgram xcodeml,
                                               Xnode arrayVar, int startIndex,
@@ -1367,155 +1456,39 @@ public class XelementHelper {
   }
 
   /**
-   * TODO javadoc
-   * @param xcodeml
-   * @return
+   * Create a new FifStatement element with an empty then body.
+   * @param xcodeml    Current XcodeML program unit in which the element is
+   *                   created.
+   * @return The newly created element.
    */
-  public static Xnode createEmptyAssumedShaped(XcodeProgram xcodeml) {
-    Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
-    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, XelementName.TRUE);
-    return range;
+  public static Xnode createIfThen(XcodeProgram xcodeml){
+    Xnode root = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
+    Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
+    Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
+    Xnode thenBody = new Xnode(Xcode.BODY, xcodeml);
+    thenBlock.appendToChildren(thenBody, false);
+    root.appendToChildren(cond, false);
+    root.appendToChildren(thenBlock, false);
+    return root;
   }
 
   /**
-   * TODO javadoc
-   * @param opcode
-   * @param parent
-   * @return
+   * Create a new FdoStatement element with an empty body.
+   * @param xcodeml      Current XcodeML program unit in which the element is
+   *                     created.
+   * @param inductionVar Var element for the induction variable.
+   * @param indexRange   indexRange element for the iteration range.
+   * @return The newly created element.
    */
-  public static List<Xnode> findAll(Xcode opcode, Xnode parent) {
-    List<Xnode> elements = new ArrayList<>();
-    if(parent == null) {
-      return elements;
-    }
-    NodeList nodes = parent.getElement().getElementsByTagName(opcode.code());
-    for (int i = 0; i < nodes.getLength(); i++) {
-      Node n = nodes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        elements.add(new Xnode((Element)n));
-      }
-    }
-    return elements;
-  }
-
-  /**
-   * TODO javadoc
-   * @param xcodeml
-   * @param returnType
-   * @param name
-   * @param nameType
-   * @return
-   */
-  public static Xnode createFctCall(XcodeProgram xcodeml, String returnType,
-                                    String name, String nameType){
-    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
-    fctCall.setAttribute(Xattr.TYPE, returnType);
-    Xnode fctName = new Xnode(Xcode.NAME, xcodeml);
-    fctName.setValue(name);
-    fctName.setAttribute(Xattr.TYPE, nameType);
-    Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
-    fctCall.appendToChildren(fctName, false);
-    fctCall.appendToChildren(args, false);
-    return fctCall;
-  }
-
-  /**
-   * TODO javadoc
-   * @param type
-   * @param var
-   * @param xcodeml
-   * @return
-   */
-  public static Xnode createArrayRef(XbasicType type, Xnode var,
-                                     XcodeProgram xcodeml)
+  public static Xnode createDoStmt(XcodeProgram xcodeml, Xnode inductionVar,
+                                   Xnode indexRange)
   {
-    Xnode ref = new Xnode(Xcode.FARRAYREF, xcodeml);
-    ref.setAttribute(Xattr.TYPE, type.getRef());
-    Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
-    varRef.setAttribute(Xattr.TYPE, type.getType());
-    varRef.appendToChildren(var, false);
-    ref.appendToChildren(varRef, false);
-    return ref;
+    Xnode root = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
+    root.appendToChildren(inductionVar, false);
+    root.appendToChildren(indexRange, false);
+    Xnode body = new Xnode(Xcode.BODY, xcodeml);
+    root.appendToChildren(body, false);
+    return root;
   }
-
-  /**
-   * Create a new Id element with all the underlying needed elements.
-   * @param type      Value for the attribute type.
-   * @param sclass    Value for the attribute sclass.
-   * @param nameValue Value of the name inner element.
-   * @param xcodeml   XcodeML program.
-   * @return A newly constructs Xid element with all the information loaded.
-   */
-  public static Xid createId(String type, String sclass, String nameValue,
-                               XcodeProgram xcodeml)
-  {
-    Xnode id = new Xnode(Xcode.ID, xcodeml);
-    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
-    internalName.setValue(nameValue);
-    id.appendToChildren(internalName, false);
-    id.setAttribute(Xattr.TYPE, type);
-    id.setAttribute(Xattr.SCLASS, sclass);
-    return new Xid(id.getElement());
-  }
-
-  /**
-   * Constructs a new basicType element with the given information.
-   * @param type    Type hash.
-   * @param ref     Reference type.
-   * @param intent  Optional intent information.
-   * @param xcodeml Current XcodeML program unit.
-   * @return A new XbasicType object with the new element inside.
-   */
-  public static XbasicType createBasicType(String type, String ref,
-                                           Xintent intent, XcodeProgram xcodeml)
-  {
-    Xnode bt = new Xnode(Xcode.FBASICTYPE, xcodeml);
-    bt.setAttribute(Xattr.TYPE, type);
-    if(ref != null) {
-      bt.setAttribute(Xattr.REF, ref);
-    }
-    if(intent != null) {
-      bt.setAttribute(Xattr.INTENT, intent.toString());
-    }
-    return new XbasicType(bt.getElement());
-  }
-
-  /**
-   * Create a new XvarDecl object with all the underlying elements.
-   * @param nameType  Value for the attribute type of the name element.
-   * @param nameValue Value of the name inner element.
-   * @param xcodeml   XcodeML program.
-   * @return A newly constructs XvarDecl element with all the information
-   * loaded.
-   */
-  public static XvarDecl createVarDecl(String nameType, String nameValue,
-                                       XcodeProgram xcodeml)
-  {
-    Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
-    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
-    internalName.setValue(nameValue);
-    internalName.setAttribute(Xattr.TYPE, nameType);
-    varD.appendToChildren(internalName, false);
-    return new XvarDecl(varD.getElement());
-  }
-
-  /**
-   * Constructs a new name element with name value and optional type.
-   * @param name    Name value.
-   * @param type    Optional type value.
-   * @param xcodeml Current XcodeML program unit in which the element is
-   *                created.
-   * @return A new Xname object which the new element.
-   */
-  public static Xnode createName(String name, String type, XcodeProgram xcodeml)
-  {
-    Xnode n = new Xnode(Xcode.NAME, xcodeml);
-    n.setValue(name);
-    if(type != null){
-      n.setAttribute(Xattr.TYPE, type);
-    }
-    return n;
-  }
-
 
 }

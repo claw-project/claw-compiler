@@ -16,9 +16,9 @@ import cx2x.xcodeml.helper.*;
  *
  * Elements: (name, value?)
  * - Required:
- *   - name (Xname)
+ *   - name
  * - Optional:
- *   - value (text)
+ *   - value
  *
  * Can have lineno and file attributes
  *

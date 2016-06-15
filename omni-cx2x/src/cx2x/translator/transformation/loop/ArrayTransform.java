@@ -218,30 +218,33 @@ public class ArrayTransform extends BlockTransformation {
 
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])){
-        Xid inductionVarId = XelementHelper.createId(XelementName.TYPE_F_INT,
-            XelementName.SCLASS_F_LOCAL, inductionVars[i], xcodeml);
+        Xid inductionVarId = XelementHelper.createId(xcodeml,
+            XelementName.TYPE_F_INT, XelementName.SCLASS_F_LOCAL,
+            inductionVars[i]);
         fctDef.getSymbolTable().add(inductionVarId, false);
       }
 
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])){
         XvarDecl inductionVarDecl =
-            XelementHelper.createVarDecl(XelementName.TYPE_F_INT,
-                inductionVars[i], xcodeml);
+            XelementHelper.createVarDecl(xcodeml, XelementName.TYPE_F_INT,
+                inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);
       }
 
       // 2.4 create do statements
       Xnode inductionVar =
-          XelementHelper.createVar(XelementName.TYPE_F_INT, inductionVars[i], Xscope.LOCAL, xcodeml);
+          XelementHelper.createVar(XelementName.TYPE_F_INT, inductionVars[i],
+              Xscope.LOCAL, xcodeml);
       Xnode range;
-      if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){ // Allocatable array
+      if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+        // Allocatable array
         // dimension argument of size starts at one
         range = XelementHelper.createAssumedShapeRange(xcodeml, var, 1, i + 1);
       } else {
         range = ranges.get(i).cloneObject();
       }
-      doStmts[i] = XelementHelper.createDoStmt(inductionVar, range, xcodeml);
+      doStmts[i] = XelementHelper.createDoStmt(xcodeml, inductionVar, range);
       XelementHelper.copyEnhancedInfo(statements.get(0), doStmts[i]);
       if (i == 0) { // most outter loop goes after the pragma
         XelementHelper.insertAfter(doStmtGrip, doStmts[i]);

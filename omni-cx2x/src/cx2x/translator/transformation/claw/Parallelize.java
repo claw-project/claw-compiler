@@ -357,8 +357,8 @@ public class Parallelize extends Transformation {
       newType = oldType.cloneObject();
       newType.setType(type);
     } else {
-      newType = XelementHelper.createBasicType(type, id.getType(),
-          Xintent.NONE, xcodeml);
+      newType = XelementHelper.createBasicType(xcodeml, type, id.getType(),
+          Xintent.NONE);
     }
     if(assumed){
       for(int i = 0; i < _overDimensions; ++i){
@@ -418,7 +418,7 @@ public class Parallelize extends Transformation {
 
       for(Xnode var : vars){
         Xnode ref =
-            XelementHelper.createArrayRef(type, var.cloneObject(), xcodeml);
+            XelementHelper.createArrayRef(xcodeml, type, var.cloneObject());
         for(Xnode ai : _beforeCrt){
           XelementHelper.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
@@ -448,9 +448,9 @@ public class Parallelize extends Transformation {
         (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getAttribute(Xattr.TYPE));
 
     // Create type and declaration for iterations over the new dimensions
-    XbasicType intTypeIntentIn = XelementHelper.createBasicType(
+    XbasicType intTypeIntentIn = XelementHelper.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),
-        XelementName.TYPE_F_INT, Xintent.IN, xcodeml);
+        XelementName.TYPE_F_INT, Xintent.IN);
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
@@ -458,15 +458,15 @@ public class Parallelize extends Transformation {
       if(dimension.lowerBoundIsVar()){
         createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
             XelementName.SCLASS_F_PARAM, xcodeml);
-        Xnode paramName = XelementHelper.createName(dimension.getLowerBoundId(),
-            intTypeIntentIn.getType(), xcodeml);
+        Xnode paramName = XelementHelper.createName(xcodeml,
+            dimension.getLowerBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
       }
       if(dimension.upperBoundIsVar()){
         createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
             XelementName.SCLASS_F_PARAM, xcodeml);
-        Xnode paramName = XelementHelper.createName(dimension.getUpperBoundId(),
-            intTypeIntentIn.getType(), xcodeml);
+        Xnode paramName = XelementHelper.createName(xcodeml,
+            dimension.getUpperBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
       }
       // Create induction variable declaration
@@ -489,9 +489,9 @@ public class Parallelize extends Transformation {
                                XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    Xid id = XelementHelper.createId(type, sclass, name, xcodeml);
+    Xid id = XelementHelper.createId(xcodeml, type, sclass, name);
     _fctDef.getSymbolTable().add(id);
-    XvarDecl decl = XelementHelper.createVarDecl(type, name, xcodeml);
+    XvarDecl decl = XelementHelper.createVarDecl(xcodeml, type, name);
     _fctDef.getDeclarationTable().add(decl);
   }
 

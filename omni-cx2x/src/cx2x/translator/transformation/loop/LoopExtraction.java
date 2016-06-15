@@ -460,9 +460,8 @@ public class LoopExtraction extends Transformation {
   {
     // Create a new empty loop
     Xnode loop = XelementHelper.createDoStmt(
-        doStmt.findNode(Xcode.VAR).cloneObject(),
-        doStmt.findNode(Xcode.INDEXRANGE).cloneObject(),
-        xcodeml);
+        xcodeml, doStmt.findNode(Xcode.VAR).cloneObject(),
+        doStmt.findNode(Xcode.INDEXRANGE).cloneObject());
 
     // Insert the new empty loop just after the pragma
     XelementHelper.insertAfter(_claw.getPragma(), loop);

@@ -310,15 +310,15 @@ public class Kcaching extends Transformation {
     // 2.2 inject a new entry in the symbol table
     if(!fctDef.getSymbolTable().contains(cacheName)){
       Xid cacheVarId =
-          XelementHelper.createId(type, XelementName.SCLASS_F_LOCAL, cacheName,
-          xcodeml);
+          XelementHelper.createId(xcodeml, type, XelementName.SCLASS_F_LOCAL,
+              cacheName);
       fctDef.getSymbolTable().add(cacheVarId, false);
     }
 
     // 2.3 inject a new entry in the declaration table
     if(!fctDef.getDeclarationTable().contains(cacheName)){
       XvarDecl cacheVarDecl =
-          XelementHelper.createVarDecl(type, cacheName, xcodeml);
+          XelementHelper.createVarDecl(xcodeml, type, cacheName);
       fctDef.getDeclarationTable().add(cacheVarDecl);
     }
 

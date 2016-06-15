@@ -35,7 +35,7 @@ public class NestedDoStatement {
       Xnode induction = XelementHelper.createVar(XelementName.TYPE_F_INT,
           dim.getIdentifier(), Xscope.LOCAL, xcodeml);
       Xnode range = dim.generateIndexRange(xcodeml, true);
-      Xnode doSt = XelementHelper.createDoStmt(induction, range, xcodeml);
+      Xnode doSt = XelementHelper.createDoStmt(xcodeml, induction, range);
       if (_statements.size() != 0) {
         _statements.get(_statements.size() - 1).getBody().
             appendToChildren(doSt, false);
