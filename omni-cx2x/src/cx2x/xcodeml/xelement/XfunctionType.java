@@ -54,7 +54,9 @@ public class XfunctionType extends Xtype {
    */
   private void readElementInformation(){
     Xnode paramsNode = find(Xcode.PARAMS);
-    _params = new Xparams(paramsNode.getElement());
+    if(paramsNode != null) {
+      _params = new Xparams(paramsNode.getElement());
+    }
     _returnType = getAttribute(Xattr.RETURN_TYPE);
     _isProgram = getBooleanAttribute(Xattr.IS_PROGRAM);
 
