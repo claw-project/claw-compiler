@@ -39,7 +39,6 @@ import cx2x.xcodeml.helper.*;
 
 public class XbasicType extends Xtype implements Xclonable<XbasicType> {
 
-
   private boolean _isArray = false;
 
   // Optional elements

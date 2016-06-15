@@ -130,8 +130,9 @@ public class LoopHoist extends BlockTransformation {
 
     // Check reshape mandatory points
     if(_startClaw.hasReshapeClause()) {
+      // TODO XNODE pragma
       XfunctionDefinition fctDef =
-          XelementHelper.findParentFctDef(_startClaw.getPragma());
+          XelementHelper.findParentFunction(new Xnode(_startClaw.getPragma().getBaseElement()));
       if(fctDef == null){
         xcodeml.addError("Unable to find the function/subroutine/module " +
             "definition including the current directive",

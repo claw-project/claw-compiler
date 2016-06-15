@@ -84,8 +84,9 @@ public class Kcaching extends Transformation {
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
+    // TODO XNODE pragma
     XfunctionDefinition fctDef =
-        XelementHelper.findParentFctDef(_claw.getPragma());
+        XelementHelper.findParentFunction(new Xnode(_claw.getPragma().getBaseElement()));
 
     for(String data : _claw.getDataClauseValues()){
       Xnode stmt = XelementHelper.getFirstArrayAssign(_pragma, data);
@@ -318,7 +319,8 @@ public class Kcaching extends Transformation {
 
     // 2.2 inject a new entry in the symbol table
     if(!fctDef.getSymbolTable().contains(cacheName)){
-      Xid cacheVarId = Xid.create(type, XelementName.SCLASS_F_LOCAL, cacheName,
+      Xid cacheVarId =
+          XelementHelper.createId(type, XelementName.SCLASS_F_LOCAL, cacheName,
           xcodeml);
       fctDef.getSymbolTable().add(cacheVarId, false);
     }

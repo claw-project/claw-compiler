@@ -157,8 +157,7 @@ public class LoopExtraction extends Transformation {
 
     // Find the loop to be extracted
     try {
-      // TODO XNODE remove instantiation after refactor complete
-      _extractedLoop = locateDoStatement(new Xnode(_fctDefToExtract.getBaseElement()));
+      _extractedLoop = locateDoStatement(_fctDefToExtract);
     } catch (IllegalTransformationException itex){
       xcodeml.addError(itex.getMessage(),
           _claw.getPragma().getLineNo());
@@ -199,7 +198,7 @@ public class LoopExtraction extends Transformation {
     String newFctName = clonedFctDef.getName().getValue() + Constant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
-    clonedFctDef.getName().setType(newFctTypeHash);
+    clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
         .get(_fctDefToExtract.getName().getValue());
@@ -208,7 +207,7 @@ public class LoopExtraction extends Transformation {
 
     // Get the fctType in typeTable
     XfunctionType fctType = (XfunctionType)xcodeml
-      .getTypeTable().get(_fctDefToExtract.getName().getType());
+      .getTypeTable().get(_fctDefToExtract.getName().getAttribute(Xattr.TYPE));
     XfunctionType newFctType = fctType.cloneObject();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
@@ -229,8 +228,7 @@ public class LoopExtraction extends Transformation {
     XelementHelper.insertAfter(_fctDefToExtract, clonedFctDef);
 
     // Find the loop that will be extracted
-    // TODO XNODE remove instantiation after refactor complete
-    Xnode loopInClonedFct = locateDoStatement(new Xnode(clonedFctDef.getBaseElement()));
+    Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
 
     if(XmOption.isDebugOutput()){
       System.out.println("loop-extract transformation: " +

@@ -111,10 +111,10 @@ public class XelementHelper {
   public static XfunctionDefinition findFunctionDefinitionInModule(
       XmoduleDefinition module, String name)
   {
-    if(module.getBaseElement() == null){
+    if(module.getElement() == null){
       return null;
     }
-    NodeList nList = module.getBaseElement().
+    NodeList nList = module.getElement().
         getElementsByTagName(XelementName.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
@@ -509,31 +509,12 @@ public class XelementHelper {
   }
 
   /**
-   * Find function definition in the ancestor.
-   * @param child The child element to search from.
-   * @return A XfunctionDefinition object if found. Null otherwise.
-   */
-  public static XfunctionDefinition findParentFctDef(XbaseElement child){
-    return findParentOfType(child, XfunctionDefinition.class);
-  }
-
-  /**
    * Find do statment in which the child is included if any.
    * @param child The child element to search from.
    * @return A XdoStatement object if found. Null otherwise.
    */
   public static XdoStatement findParentDoStmt(XbaseElement child){
     return findParentOfType(child, XdoStatement.class);
-  }
-
-  /**
-   * Find module definition element in which the child is included if any.
-   * @param child The child element to search from.
-   * @return A XmoduleDefinition object if found. Null otherwise.
-   */
-  public static XmoduleDefinition findParentModuleDefinition(XbaseElement child)
-  {
-    return findParentOfType(child, XmoduleDefinition.class);
   }
 
   /**
@@ -962,86 +943,6 @@ public class XelementHelper {
    */
   public static Xbody findBody(XbaseElement parent, boolean any){
     return findXelement(parent, any, Xbody.class);
-  }
-
-  /**
-   * Find do statement element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XdoStatement object if found. Null otherwise.
-   */
-  public static XdoStatement findDoStatement(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XdoStatement.class);
-  }
-
-  /**
-   * Find the direct next do statement element.
-   * @param from The element to search from. Direct next sibling is searched.
-   * @return A XdoStatement object if it directly follows the given from
-   * element. Null otherwise.
-   */
-  public static XdoStatement findNextDoStatement(XbaseElement from){
-    return findNextElementOfType(from, XdoStatement.class);
-  }
-
-  /**
-   * Find symbols element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XsymbolsTable object if found. Null otherwise.
-   */
-  public static XsymbolTable findSymbols(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XsymbolTable.class);
-  }
-
-  /**
-   * Find declarations element.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XdeclTable object if found. Null otherwise.
-   */
-  public static XdeclTable findDeclarations(XbaseElement parent, boolean any){
-    return findXelement(parent, any, XdeclTable.class);
-  }
-
-  /**
-   * Find type table elements.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XtypeTable object if found. Null otherwise.
-   */
-  public static XtypeTable findTypeTable(XcodeProgram parent, boolean any){
-    return findXelement(parent, any, XtypeTable.class);
-  }
-
-  /**
-   * Find global symbols element in the XcodeML representation.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XglobalSymbolTable object if found. Null otherwise.
-   */
-  public static XglobalSymbolTable findGlobalSymbols(XcodeProgram parent,
-    boolean any)
-  {
-    return findXelement(parent, any, XglobalSymbolTable.class);
-  }
-
-  /**
-   * Find global declarations element in the XcodeML representation.
-   * @param parent  Root element to search from.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XglobalSymbolTable object if found. Null otherwise.
-   */
-  public static XglobalDeclTable findGlobalDeclarations(XcodeProgram parent,
-                                                        boolean any)
-  {
-    return findXelement(parent, any, XglobalDeclTable.class);
   }
 
   /**
@@ -1918,6 +1819,31 @@ public class XelementHelper {
 
   /* XNODE SECTION */
 
+  /**
+   * Find module definition element in which the child is included if any.
+   * @param from The child element to search from.
+   * @return A XmoduleDefinition object if found. Null otherwise.
+   */
+  public static XmoduleDefinition findParentModule(Xnode from) {
+    Xnode moduleDef = from.find(Xcode.FMODULEDEFINITION);
+    if(moduleDef == null){
+      return null;
+    }
+    return new XmoduleDefinition(moduleDef.getElement());
+  }
+
+  /**
+   * TODO javadoc
+   * @param from
+   * @return
+   */
+  public static XfunctionDefinition findParentFunction(Xnode from){
+    Xnode fctDef = from.find(Xcode.FFUNCTIONDEFINITION);
+    if(fctDef == null){
+      return null;
+    }
+    return new XfunctionDefinition(fctDef.getElement());
+  }
 
   /**
    * Find an element in the ancestor of the given element.
@@ -2467,6 +2393,26 @@ public class XelementHelper {
     varRef.appendToChildren(var, false);
     ref.appendToChildren(varRef, false);
     return ref;
+  }
+
+  /**
+   * Create a new Id element with all the underlying needed elements.
+   * @param type      Value for the attribute type.
+   * @param sclass    Value for the attribute sclass.
+   * @param nameValue Value of the name inner element.
+   * @param xcodeml   XcodeML program.
+   * @return A newly constructs Xid element with all the information loaded.
+   */
+  public static Xid createId(String type, String sclass, String nameValue,
+                               XcodeProgram xcodeml)
+  {
+    Xnode id = new Xnode(Xcode.ID, xcodeml);
+    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
+    internalName.setValue(nameValue);
+    id.appendToChildren(internalName, false);
+    id.setAttribute(Xattr.TYPE, type);
+    id.setAttribute(Xattr.SCLASS, sclass);
+    return new Xid(id.getElement());
   }
 
 

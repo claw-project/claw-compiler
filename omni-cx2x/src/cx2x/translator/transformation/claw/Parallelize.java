@@ -15,6 +15,7 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xattr;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
@@ -55,7 +56,8 @@ public class Parallelize extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // Check for the parent fct/subroutine definition
-    _fctDef = XelementHelper.findParentFctDef(_claw.getPragma());
+    // TODO XNODE pargma
+    _fctDef = XelementHelper.findParentFunction(new Xnode(_claw.getPragma().getBaseElement()));
     if(_fctDef == null){
       xcodeml.addError("Parent function/subroutine cannot be found. " +
           "Parallelize directive must be defined in a function/subroutine.",
@@ -215,11 +217,7 @@ public class Parallelize extends Transformation {
     _fctDef.getBody().delete();
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
     newBody.appendToChildren(loops.getOuterStatement(), false);
-
-    // TODO XNODE move back when fctDef is Xnode child
-    //_fctDef.appendToChildren(newBody, false);
-    Xnode tmpFct = new Xnode(_fctDef.getBaseElement());
-    tmpFct.appendToChildren(newBody, false);
+    _fctDef.appendToChildren(newBody, false);
 
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml,
         loops.getOuterStatement(), loops.getOuterStatement(),
@@ -449,7 +447,7 @@ public class Parallelize extends Transformation {
   {
     // Find function type
     XfunctionType fctType =
-        (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getType());
+        (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getAttribute(Xattr.TYPE));
 
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XbasicType.create(
@@ -493,7 +491,7 @@ public class Parallelize extends Transformation {
                                XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    Xid id = Xid.create(type, sclass, name, xcodeml);
+    Xid id = XelementHelper.createId(type, sclass, name, xcodeml);
     _fctDef.getSymbolTable().add(id);
     XvarDecl decl = XvarDecl.create(type, name, xcodeml);
     _fctDef.getDeclarationTable().add(decl);

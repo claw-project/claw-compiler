@@ -11,6 +11,7 @@ import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xattr;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
@@ -39,7 +40,9 @@ public class ArrayToFctCall extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    XfunctionDefinition _fctDef = XelementHelper.findParentFctDef(_claw.getPragma());
+    // TODO XNODE pragma
+    XfunctionDefinition _fctDef =
+        XelementHelper.findParentFunction(new Xnode(_claw.getPragma().getBaseElement()));
     if(_fctDef == null){
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().getLineNo());
@@ -56,8 +59,9 @@ public class ArrayToFctCall extends Transformation {
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
         getFctDefinition(_claw.getFctName());
     if(_replaceFct == null){
+      // TODO XNODE pragma
       XmoduleDefinition parentModule =
-          XelementHelper.findParentModuleDefinition(_claw.getPragma());
+          XelementHelper.findParentModule(new Xnode(_claw.getPragma().getBaseElement()));
       _replaceFct = XelementHelper.findFunctionDefinitionInModule(parentModule,
           _claw.getFctName());
 
@@ -91,14 +95,13 @@ public class ArrayToFctCall extends Transformation {
   {
 
     XfunctionType fctType =
-        (XfunctionType)xcodeml.getTypeTable().get(_replaceFct.getName().getType());
-
-
+        (XfunctionType)xcodeml.getTypeTable().
+            get(_replaceFct.getName().getAttribute(Xattr.TYPE));
 
     // Prepare the function call
     Xnode fctCall = XelementHelper.createFctCall(xcodeml,
         fctType.getReturnType(), _claw.getFctName(),
-        _replaceFct.getName().getType());
+        _replaceFct.getName().getAttribute(Xattr.TYPE));
     Xnode args = fctCall.find(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()){
       Xnode var = XelementHelper.createVar(XelementName.TYPE_F_INT, arg,

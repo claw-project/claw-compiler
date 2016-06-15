@@ -128,9 +128,9 @@ public class TransformationHelper {
     if(!claw.hasReshapeClause()){
       return;
     }
-
+    // TODO XNODE pragma
     XfunctionDefinition fctDef =
-        XelementHelper.findParentFctDef(claw.getPragma());
+        XelementHelper.findParentFunction(new Xnode(claw.getPragma().getBaseElement()));
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
       Xid id = fctDef.getSymbolTable().get(reshapeInfo.getArrayName());
       XvarDecl decl =

@@ -168,8 +168,9 @@ public class ArrayTransform extends BlockTransformation {
                         Transformation other) throws Exception
   {
       // 1. Find the function/module declaration TODO handle module/program ?
+    // TODO XNODE pragma
       XfunctionDefinition fctDef =
-          XelementHelper.findParentFctDef(_clawBegin.getPragma());
+          XelementHelper.findParentFunction(new Xnode(_clawBegin.getPragma().getBaseElement()));
       Xnode grip = _pragma;
       for(int i = 0; i < _groupedAssignStmts.size(); ++i){
         grip = generateDoStmtNotation(xcodeml, transformer, fctDef,
@@ -223,7 +224,7 @@ public class ArrayTransform extends BlockTransformation {
 
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])){
-        Xid inductionVarId = Xid.create(XelementName.TYPE_F_INT,
+        Xid inductionVarId = XelementHelper.createId(XelementName.TYPE_F_INT,
             XelementName.SCLASS_F_LOCAL, inductionVars[i], xcodeml);
         fctDef.getSymbolTable().add(inductionVarId, false);
       }

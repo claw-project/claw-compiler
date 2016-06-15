@@ -177,8 +177,7 @@ public class AcceleratorHelper {
 
     Xnode routine = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
     routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
-    Xnode fct = new Xnode(fctDef.getBaseElement()); // TODO XNODE remove after refactoring
-    fct.getBody().insert(routine, false);
+    fctDef.getBody().insert(routine, false);
   }
 
   /**
