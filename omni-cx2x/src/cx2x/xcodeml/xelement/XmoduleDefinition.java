@@ -5,7 +5,9 @@
 
 package cx2x.xcodeml.xelement;
 
-import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
 /**
@@ -25,8 +27,7 @@ import org.w3c.dom.Element;
  *
  * @author clementval
  */
-public class XmoduleDefinition extends XenhancedElement
-    implements Xclonable<XmoduleDefinition> {
+public class XmoduleDefinition extends Xnode {
 
   private final String _name;
   private final XsymbolTable _symbols;
@@ -39,10 +40,9 @@ public class XmoduleDefinition extends XenhancedElement
    */
   public XmoduleDefinition(Element baseElement){
     super(baseElement);
-
-    _name = XelementHelper.getAttributeValue(this, XelementName.ATTR_NAME);
-    _symbols = XelementHelper.findSymbols(this, false);
-    _declarations = XelementHelper.findDeclarations(this, false);
+    _name = getAttribute(Xattr.NAME);
+    _symbols = new XsymbolTable(find(Xcode.SYMBOLS).getElement());
+    _declarations = new XdeclTable(find(Xcode.DECLARATIONS).getElement());
   }
 
   /**

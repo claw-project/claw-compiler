@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,9 +23,7 @@ import java.util.Hashtable;
  * @author clementval
  */
 
-public class XsymbolTable extends XbaseElement
-    implements Xclonable<XsymbolTable>
-{
+public class XsymbolTable extends Xnode {
 
   private final Hashtable<String, Xid> _table;
 
@@ -42,7 +42,7 @@ public class XsymbolTable extends XbaseElement
    * Read the symbols table.
    */
   private void readTable(){
-    NodeList nodeList = baseElement.getElementsByTagName(XelementName.ID);
+    NodeList nodeList = _baseElement.getElementsByTagName(XelementName.ID);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node idNode = nodeList.item(i);
       if (idNode.getNodeType() == Node.ELEMENT_NODE) {

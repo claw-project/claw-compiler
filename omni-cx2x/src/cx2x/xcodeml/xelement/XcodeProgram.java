@@ -5,6 +5,9 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
@@ -32,7 +35,7 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XcodeProgram extends XbaseElement {
+public class XcodeProgram extends Xnode {
   private Document _xcodemlDoc = null;
 
   // XcodeProgram inner elements
@@ -66,14 +69,11 @@ public class XcodeProgram extends XbaseElement {
    * compiler info.
    */
   private void readDocumentInformation(){
-    _version = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_VERSION);
-    _language = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_LANGUAGE);
-    _time = XelementHelper.getAttributeValue(this, XelementName.ATTR_TIME);
-    _source = XelementHelper.getAttributeValue(this, XelementName.ATTR_SOURCE);
-    _compilerInfo = XelementHelper.getAttributeValue(this,
-      XelementName.ATTR_COMPILER_INFO);
+    _version = getAttribute(Xattr.VERSION);
+    _language = getAttribute(Xattr.LANGUAGE);
+    _time = getAttribute(Xattr.TIME);
+    _source = getAttribute(Xattr.SOURCE);
+    _compilerInfo = getAttribute(Xattr.COMPILER_INFO);
 
     readTypeTable();
     readGlobalSymbolsTable();
@@ -197,24 +197,24 @@ public class XcodeProgram extends XbaseElement {
    * Read the XcodeML type table
    */
   private void readTypeTable() {
-    _typeTable = XelementHelper.findTypeTable(this, true);
+    _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
   }
 
   /**
    * Read the XcodeML global symbols table
    */
   private void readGlobalSymbolsTable() {
-    _globalSymbolsTable = XelementHelper.findGlobalSymbols(this, true);
+    _globalSymbolsTable =
+        new XglobalSymbolTable(find(Xcode.GLOBALSYMBOLS).getElement());
   }
 
   /**
    * Read the XcodeML global declarations table
    */
   private void readGlobalDeclarationsTable(){
-    _globalDeclarationsTable = XelementHelper
-        .findGlobalDeclarations(this, true);
+    _globalDeclarationsTable =
+        new XglobalDeclTable(find(Xcode.GLOBALDECLARATIONS).getElement());
   }
-
 
   /**
    * Get the XcodeML version.

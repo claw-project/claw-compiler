@@ -6,6 +6,9 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import cx2x.xcodeml.helper.*;
@@ -24,11 +27,10 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class Xid extends XbaseElement implements Xclonable<Xid> {
+public class Xid extends Xnode {
   private String _type = null;
   private String _sclass = null;
-
-  private Xname _xname;
+  private Xnode _xname;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -44,9 +46,9 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * Read inner element information.
    */
   private void readElementInformation(){
-    _type = XelementHelper.getAttributeValue(this, XelementName.ATTR_TYPE);
-    _sclass = XelementHelper.getAttributeValue(this, XelementName.ATTR_SCLASS);
-    _xname = XelementHelper.findName(this, false);
+    _type = getAttribute(Xattr.TYPE);
+    _sclass = getAttribute(Xattr.SCLASS);
+    _xname = find(Xcode.NAME);
   }
 
   /**
@@ -64,8 +66,8 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * @param value The new type value.
    */
   public void setType(String value){
-    if(baseElement != null && value != null){
-      baseElement.setAttribute(XelementName.ATTR_TYPE, value);
+    if(_baseElement != null && value != null){
+      _baseElement.setAttribute(XelementName.ATTR_TYPE, value);
       _type = value;
     }
   }
@@ -75,8 +77,8 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
    * @param value The new sclass value.
    */
   public void setSclass(String value){
-    if(baseElement != null && value != null){
-      baseElement.setAttribute(XelementName.ATTR_SCLASS, value);
+    if(_baseElement != null && value != null){
+      _baseElement.setAttribute(XelementName.ATTR_SCLASS, value);
       _sclass = value;
     }
   }
@@ -113,28 +115,6 @@ public class Xid extends XbaseElement implements Xclonable<Xid> {
     return new Xid((Element)clone);
   }
 
-  /**
-   * Create a new Xid object with all the underlying elements.
-   * @param type      Value for the attribute type.
-   * @param sclass    Value for the attribute sclass.
-   * @param nameValue Value of the name inner element.
-   * @param xcodeml   XcodeML program.
-   * @return A newly constructs Xid element with all the information loaded.
-   * @throws IllegalTransformationException can be thrown while constrcuting
-   * empty elements.
-   */
-  public static Xid create(String type, String sclass, String nameValue,
-                           XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    Xid id = XelementHelper.createEmpty(Xid.class, xcodeml);
-    Xname internalName = XelementHelper.createEmpty(Xname.class, xcodeml);
-    internalName.setValue(nameValue);
-    id.appendToChildren(internalName, false);
-    id.setType(type);
-    id.setSclass(sclass);
-    id.readElementInformation();
-    return id;
-  }
+
 
 }

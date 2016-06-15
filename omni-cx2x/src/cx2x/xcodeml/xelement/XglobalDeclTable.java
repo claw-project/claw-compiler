@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -22,15 +23,13 @@ import java.util.Hashtable;
  * @author clementval
  */
 
-public class XglobalDeclTable extends XbaseElement
-    implements Xclonable<XglobalDeclTable>
-{
+public class XglobalDeclTable extends Xnode {
 
   /*
-   * Hastable containing the global declaration elements. Key is the name of the
-   * function or the module.
+   * Hashtable containing the global declaration elements. Key is the name of
+   * the function or the module.
    */
-  private final Hashtable<String, XbaseElement> _table;
+  private final Hashtable<String, Xnode> _table;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -47,7 +46,7 @@ public class XglobalDeclTable extends XbaseElement
    * Read the declaration table
    */
   private void readTable(){
-    Node currentNode = baseElement.getFirstChild();
+    Node currentNode = _baseElement.getFirstChild();
     while(currentNode != null){
       if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)currentNode;
@@ -70,7 +69,7 @@ public class XglobalDeclTable extends XbaseElement
    */
   public XfunctionDefinition getFctDefinition(String name){
     if(_table.containsKey(name)) {
-      XbaseElement el = _table.get(name);
+      Xnode el = _table.get(name);
       if(el instanceof XfunctionDefinition){
         return (XfunctionDefinition)el;
       }
@@ -85,7 +84,7 @@ public class XglobalDeclTable extends XbaseElement
    */
   public XmoduleDefinition getModuleDefinition(String name){
     if(_table.containsKey(name)){
-      XbaseElement el = _table.get(name);
+      Xnode el = _table.get(name);
       if(el instanceof XmoduleDefinition){
         return  (XmoduleDefinition)el;
       }

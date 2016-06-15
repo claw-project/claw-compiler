@@ -8,7 +8,6 @@ package cx2x.xcodeml.xelement;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
-import cx2x.xcodeml.helper.*;
 
 /**
  * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in XcodeML
@@ -28,14 +27,14 @@ import cx2x.xcodeml.helper.*;
  * @author clementval
  */
 
-public class XfunctionDefinition extends XenhancedElement implements Xclonable<XfunctionDefinition> {
+public class XfunctionDefinition extends Xnode {
 
   // Elements
   private XsymbolTable _symbolTable = null;
-  private Xparams _params = null;
+  private Xnode _params = null;
   private XdeclTable _declTable = null;
   private Xnode _body = null;
-  private Xname _name = null;
+  private Xnode _name = null;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
@@ -44,12 +43,11 @@ public class XfunctionDefinition extends XenhancedElement implements Xclonable<X
    */
   public XfunctionDefinition(Element baseElement){
     super(baseElement);
-    Xnode tmp = new Xnode(baseElement); // TODO XNODE remove after refactoring
-    _symbolTable = XelementHelper.findSymbols(this, false);
-    _params = XelementHelper.findParams(this, false);
-    _declTable = XelementHelper.findDeclarations(this, false);
-    _body = tmp.find(Xcode.BODY);
-    _name = XelementHelper.findName(this, false);
+    _symbolTable = new XsymbolTable(find(Xcode.SYMBOLS).getElement());
+    _params = find(Xcode.PARAMS);
+    _declTable = new XdeclTable(find(Xcode.DECLARATIONS).getElement());
+    _body = find(Xcode.BODY);
+    _name = find(Xcode.NAME);
   }
 
   /**
@@ -76,21 +74,19 @@ public class XfunctionDefinition extends XenhancedElement implements Xclonable<X
     return _body;
   }
 
-
   /**
    * Get the function name.
    * @return Name of the function as an Xname object.
    */
-  public Xname getName(){
+  public Xnode getName(){
     return _name;
   }
-
 
   /**
    * Get the parameters list.
    * @return Parameters list.
    */
-  public Xparams getParams(){
+  public Xnode getParams(){
     return _params;
   }
 
