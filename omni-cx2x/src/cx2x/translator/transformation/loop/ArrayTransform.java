@@ -15,6 +15,8 @@ import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
@@ -39,8 +41,9 @@ import java.util.List;
 public class ArrayTransform extends BlockTransformation {
 
   private final ClawLanguage _clawBegin, _clawEnd;
-  private final List<List<XindexRange>> _groupIterationRanges;
-  private final List<List<XassignStatement>> _groupedAssignStmts;
+  private final List<List<Xnode>> _groupIterationRanges;
+  private final List<List<Xnode>> _groupedAssignStmts;
+  private final Xnode _pragma; // TODO XNODE remove after refactor
 
 
   /**
@@ -56,6 +59,7 @@ public class ArrayTransform extends BlockTransformation {
     _clawEnd = (ClawLanguage) end;
     _groupedAssignStmts = new ArrayList<>();
     _groupIterationRanges = new ArrayList<>();
+    _pragma = new Xnode(_clawBegin.getPragma().getBaseElement());
   }
 
   @Override
@@ -65,8 +69,8 @@ public class ArrayTransform extends BlockTransformation {
       // TODO Analyse dependcy between assignments. cf array9 example.
 
       // Find assignments with array notation
-      List<XassignStatement> foundAssignments =
-          XelementHelper.getArrayAssignInBlock(_clawBegin.getPragma(),
+      List<Xnode> foundAssignments =
+          XelementHelper.getArrayAssignInBlock(_pragma,
               _clawEnd.getPragma().getValue()
           );
 
@@ -82,11 +86,10 @@ public class ArrayTransform extends BlockTransformation {
        * array notation that share an identical iteration range. */
 
       // 1st group always exists
-      _groupedAssignStmts.add(new ArrayList<XassignStatement>());
+      _groupedAssignStmts.add(new ArrayList<Xnode>());
       int crtGroup = 0;
-      XarrayRef refArrayRef =
-          foundAssignments.get(0).getLValueModel().getArrayRef();
-      List<XindexRange> refRanges =
+      Xnode refArrayRef = foundAssignments.get(0).find(Xcode.FARRAYREF);
+      List<Xnode> refRanges =
           XelementHelper.getIdxRangesFromArrayRef(refArrayRef);
 
       // First array notation is automatically in the 1st group as 1st element
@@ -94,16 +97,16 @@ public class ArrayTransform extends BlockTransformation {
       _groupIterationRanges.add(refRanges);
 
       for(int i = 1; i < foundAssignments.size(); ++i){
-        XarrayRef arrayRef =
-            foundAssignments.get(i).getLValueModel().getArrayRef();
-        List<XindexRange> ranges =
+        Xnode arrayRef =
+            foundAssignments.get(i).find(Xcode.FARRAYREF);
+        List<Xnode> ranges =
             XelementHelper.getIdxRangesFromArrayRef(arrayRef);
 
         // ranges are not identical so
         if(!XelementHelper.compareIndexRanges(refRanges, ranges)){
           refRanges = ranges;
           ++crtGroup;
-          _groupedAssignStmts.add(new ArrayList<XassignStatement>());
+          _groupedAssignStmts.add(new ArrayList<Xnode>());
           _groupIterationRanges.add(refRanges);
         }
         _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(i));
@@ -111,26 +114,24 @@ public class ArrayTransform extends BlockTransformation {
       return true;
     } else { // single transformation
       // pragma must be followed by an assign statement
-      XassignStatement stmt =
-          XelementHelper.findDirectNextAssignStmt(_clawBegin.getPragma());
+      Xnode stmt =
+          XelementHelper.findDirectNext(Xcode.FASSIGNSTATEMENT, _pragma);
       if(stmt == null){
         xcodeml.addError("Directive not follwed by an assign statement",
             _clawBegin.getPragma().getLineNo());
         return false;
       }
       // Check if we are dealing with an array notation
-      if(!stmt.getLValueModel().isArrayRef()){
+      if(!(stmt.getChild(0).Opcode() == Xcode.FARRAYREF)){
         xcodeml.addError("Assign statement is not an array notation",
             _clawBegin.getPragma().getLineNo());
         return false;
       }
 
-      List<XindexRange> ranges = new ArrayList<>();
-      for(XbaseElement el :
-          stmt.getLValueModel().getArrayRef().getInnerElements())
-      {
-        if(el instanceof XindexRange){
-          ranges.add((XindexRange) el);
+      List<Xnode> ranges = new ArrayList<>();
+      for(Xnode el : stmt.getChild(0).getChildren()){
+        if(el.Opcode() == Xcode.INDEXRANGE){
+          ranges.add(el);
         }
       }
       if(ranges.size() == 0){
@@ -169,7 +170,7 @@ public class ArrayTransform extends BlockTransformation {
       // 1. Find the function/module declaration TODO handle module/program ?
       XfunctionDefinition fctDef =
           XelementHelper.findParentFctDef(_clawBegin.getPragma());
-      XbaseElement grip = _clawBegin.getPragma();
+      Xnode grip = _pragma;
       for(int i = 0; i < _groupedAssignStmts.size(); ++i){
         grip = generateDoStmtNotation(xcodeml, transformer, fctDef,
             _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
@@ -198,18 +199,18 @@ public class ArrayTransform extends BlockTransformation {
    * @return The last stmt created to be used as a grip for next insertion.
    * @throws IllegalTransformationException if creation of elements fail.
    */
-  private XbaseElement generateDoStmtNotation(XcodeProgram xcodeml,
+  private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
                                               Transformer transformer,
                                               XfunctionDefinition fctDef,
-                                              List<XindexRange> ranges,
-                                              List<XassignStatement> statements,
-                                              XbaseElement doStmtGrip)
+                                              List<Xnode> ranges,
+                                              List<Xnode> statements,
+                                              Xnode doStmtGrip)
       throws IllegalTransformationException
   {
     String[] inductionVars = new String[ranges.size()];
-    XdoStatement[] doStmts = new XdoStatement[ranges.size()];
-    Xvar var =
-        statements.get(0).getLValueModel().getArrayRef().getVarRef().getVar();
+    Xnode[] doStmts = new Xnode[ranges.size()];
+    Xnode var =
+        statements.get(0).find(Xcode.FARRAYREF, Xcode.VARREF, Xcode.VAR);
     // 1. Create do statements with induction variables
     for (int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
@@ -235,17 +236,16 @@ public class ArrayTransform extends BlockTransformation {
       }
 
       // 2.4 create do statements
-      Xvar inductionVar = Xvar.create(XelementName.TYPE_F_INT, inductionVars[i],
-          Xscope.LOCAL, xcodeml);
-
-      XindexRange range;
-      if(ranges.get(i).isAssumedShape()){ // Allocatable array
+      Xnode inductionVar =
+          XelementHelper.createVar(XelementName.TYPE_F_INT, inductionVars[i], Xscope.LOCAL, xcodeml);
+      Xnode range;
+      if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){ // Allocatable array
         // dimension argument of size starts at one
-        range = XindexRange.createAssumedShapeRange(xcodeml, var, 1, i + 1);
+        range = XelementHelper.createAssumedShapeRange(xcodeml, var, 1, i + 1);
       } else {
         range = ranges.get(i).cloneObject();
       }
-      doStmts[i] = XdoStatement.create(inductionVar, range, false, xcodeml);
+      doStmts[i] = XelementHelper.createDoStmt(inductionVar, range, xcodeml);
       XelementHelper.copyEnhancedInfo(statements.get(0), doStmts[i]);
       if (i == 0) { // most outter loop goes after the pragma
         XelementHelper.insertAfter(doStmtGrip, doStmts[i]);
@@ -255,24 +255,25 @@ public class ArrayTransform extends BlockTransformation {
     }
 
 
-    for(XassignStatement stmt : statements) {
-
-      // 3. Adapat array reference with induction variables
-      List<XarrayRef> allArrayRef = XelementHelper.findAllArrayReferences(stmt);
-      for (XarrayRef arrayRef : allArrayRef) {
+    for(Xnode stmt : statements) {
+      // 3. Adapt array reference with induction variables
+      List<Xnode> allArrayRef =
+          XelementHelper.findAll(Xcode.FARRAYREF, stmt);
+      for (Xnode arrayRef : allArrayRef) {
 
         // TODO handle more complicated cases
-        String id = arrayRef.getVarRef().getVar().getValue();
+        String id = arrayRef.find(Xcode.VARREF, Xcode.VAR).getValue();
 
-        for (int i = 0; i < arrayRef.getInnerElements().size(); ++i) {
-          XbaseElement el = arrayRef.getInnerElements().get(i);
-          if (el instanceof XindexRange) {
-            String induction = doStmts[i].getInductionVarValue();
-
-            Xvar iterVar = Xvar.create(XelementName.TYPE_F_INT, induction,
+        for (int i = 0; i < arrayRef.getChildren().size() - 1; ++i) {
+          Xnode el = arrayRef.getChild(i + 1);
+          if (el.Opcode() == Xcode.INDEXRANGE) {
+            String induction = doStmts[i].find(Xcode.VAR).getValue();
+            Xnode iterVar =
+                XelementHelper.createVar(XelementName.TYPE_F_INT, induction,
                 Xscope.LOCAL, xcodeml);
-            XarrayIndex arrayIdx =
-                XarrayIndex.create(new XexprModel(iterVar), xcodeml);
+
+            Xnode arrayIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
+            arrayIdx.appendToChildren(iterVar, false);
 
             XelementHelper.insertAfter(el, arrayIdx);
             el.delete();
@@ -288,15 +289,14 @@ public class ArrayTransform extends BlockTransformation {
 
     // Generate accelerator pragmas if needed
     Xnode potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
-        _clawBegin, xcodeml, new Xnode(doStmts[0].getBaseElement()),
-        new Xnode(doStmts[0].getBaseElement()));
+        _clawBegin, xcodeml, new Xnode(doStmts[0].getElement()),
+        new Xnode(doStmts[0].getElement()));
 
     // Add any additional transformation defined in the directive clauses
     // TODO XNODE no need to instantiate Xnode after refactoring
     TransformationHelper.generateAdditionalTransformation(_clawBegin, xcodeml,
-        transformer, new Xnode(doStmts[0].getBaseElement()));
+        transformer, new Xnode(doStmts[0].getElement()));
 
-    //return potentialGrip == null ? doStmts[0] : potentialGrip;
-    return null; // TODO XNODE return correct value
+    return potentialGrip == null ? doStmts[0] : potentialGrip;
   }
 }

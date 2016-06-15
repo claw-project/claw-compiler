@@ -224,14 +224,14 @@ public class XelementHelper {
    * @return True if the indexRange at the same position in the two list are all
    * identical. False otherwise.
    */
-  public static boolean compareIndexRanges(List<XindexRange> list1,
-                                           List<XindexRange> list2){
+  public static boolean compareIndexRanges(List<Xnode> list1,
+                                           List<Xnode> list2){
     if(list1.size() != list2.size()){
       return false;
     }
 
     for(int i = 0; i < list1.size(); ++i){
-      if(!list1.get(i).equals(list2.get(i))){
+      if(!isIndexRangeIdentical(list1.get(i), list2.get(i))){
         return false;
       }
     }
@@ -2123,23 +2123,39 @@ public class XelementHelper {
     Xnode inductionVar2 = XelementHelper.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XelementHelper.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XelementHelper.find(Xcode.INDEXRANGE, e2, false);
-    Xnode low1 = XelementHelper.find(Xcode.LOWERBOUND, indexRange1, false).getChild(0);
-    Xnode up1 = XelementHelper.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
-    Xnode s1 = XelementHelper.find(Xcode.STEP, indexRange1, false).getChild(0);
 
-    Xnode low2 = XelementHelper.find(Xcode.LOWERBOUND, indexRange2, false);
-    Xnode up2 = XelementHelper.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
-    Xnode s2 = XelementHelper.find(Xcode.STEP, indexRange2, false).getChild(0);
 
     if(!inductionVar1.getValue().toLowerCase().
         equals(inductionVar2.getValue().toLowerCase()))
     {
       return false;
     }
+    return isIndexRangeIdentical(indexRange1, indexRange2);
+  }
 
-    if(indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-        indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+  private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2){
+    if(idx1.Opcode() != Xcode.INDEXRANGE ||idx2.Opcode() != Xcode.INDEXRANGE){
+      return false;
+    }
+
+    if(idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+        idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
       return true;
+    }
+
+    Xnode low1 = idx1.find(Xcode.LOWERBOUND).getChild(0);
+    Xnode up1 = idx1.find(Xcode.UPPERBOUND).getChild(0);
+
+    Xnode low2 = idx2.find(Xcode.LOWERBOUND);
+    Xnode up2 = idx2.find(Xcode.UPPERBOUND).getChild(0);
+
+    Xnode s1 = idx1.find(Xcode.STEP);
+    Xnode s2 = idx2.find(Xcode.STEP);
+    if(s1 != null){
+      s1 = s1.getChild(0);
+    }
+    if(s2 != null){
+      s2 = s2.getChild(0);
     }
 
     if (!low1.getValue().toLowerCase().equals(low2.getValue().toLowerCase())) {
@@ -2338,7 +2354,7 @@ public class XelementHelper {
   }
 
   /**
-   *
+   * TODO
    * @param value
    * @param fctCall
    * @return
@@ -2358,5 +2374,69 @@ public class XelementHelper {
     }
     return null;
   }
+
+  /**
+   * TODO
+   * @param xcodeml
+   * @param arrayVar
+   * @param startIndex
+   * @param dimension
+   * @return
+   */
+  public static Xnode createAssumedShapeRange(XcodeProgram xcodeml,
+                                              Xnode arrayVar, int startIndex,
+                                              int dimension)
+  {
+    // Base structure
+    Xnode indexRange = new Xnode(Xcode.INDEXRANGE, xcodeml);
+    Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
+    Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
+    indexRange.appendToChildren(lower, false);
+    indexRange.appendToChildren(upper, false);
+
+    // Lower bound
+    Xnode lowerBound = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+    lowerBound.setValue(String.valueOf(startIndex));
+    lower.appendToChildren(lowerBound, false);
+
+    // Upper bound
+    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
+    upper.appendToChildren(fctCall, false);
+    fctCall.setAttribute(Xattr.IS_INTRINSIC, XelementName.TRUE);
+    fctCall.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
+    Xnode name = new Xnode(Xcode.NAME, xcodeml);
+    name.setValue(XelementName.INTRINSIC_SIZE);
+    fctCall.appendToChildren(name, false);
+    Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
+    fctCall.appendToChildren(args, false);
+    args.appendToChildren(arrayVar, true);
+    Xnode dim = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+    dim.setValue(String.valueOf(dimension));
+    args.appendToChildren(dim, false);
+    return indexRange;
+  }
+
+  /**
+   * TODO
+   * @param opcode
+   * @param parent
+   * @return
+   */
+  public static List<Xnode> findAll(Xcode opcode, Xnode parent) {
+    List<Xnode> elements = new ArrayList<>();
+    if(parent == null) {
+      return elements;
+    }
+    NodeList nodes = parent.getElement().getElementsByTagName(opcode.code());
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node n = nodes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        elements.add(new Xnode((Element)n));
+      }
+    }
+    return elements;
+  }
+
+
 
 }
