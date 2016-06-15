@@ -367,24 +367,24 @@ public class LoopExtraction extends Transformation {
 
 
     // Adapt array reference in function body
-    List<XarrayRef> arrayReferences =
-        XelementHelper.findAllArrayReferences(clonedFctDef.getBody());
-    for(XarrayRef ref : arrayReferences){
-      if(!ref.getVarRef().isVar()){
+    List<Xnode> arrayReferences =
+        XelementHelper.findAll(Xcode.FARRAYREF, clonedFctDef.getBody());
+    for(Xnode ref : arrayReferences){
+      if(!(ref.find(Xcode.VARREF).getChild(0).Opcode() == Xcode.VAR)){
         continue;
       }
-      String mappedVar = ref.getVarRef().getVar().getValue();
+      String mappedVar = ref.find(Xcode.VARREF, Xcode.VAR).getValue();
       if(_fctMappingMap.containsKey(mappedVar)){
         ClawMapping mapping = _fctMappingMap.get(mappedVar);
 
         boolean changeRef = true;
 
         int mappingIndex = 0;
-        for(XbaseElement e : ref.getInnerElements()){
-          if(e instanceof XarrayIndex){
-            XarrayIndex arrayIndex = (XarrayIndex)e;
-            if(arrayIndex.getExprModel() != null && arrayIndex.getExprModel().isVar()){
-              String varName = arrayIndex.getExprModel().getVar().getValue();
+        for(Xnode e : ref.getChildren()){
+          if(e.Opcode() == Xcode.ARRAYINDEX){
+            List<Xnode> children = e.getChildren();
+            if(children.size() > 0 && children.get(0).Opcode() == Xcode.VAR){
+              String varName = e.find(Xcode.VAR).getValue();
               if(varName.equals(mapping.getMappingVariables().get(mappingIndex).getFctMapping())){
                 ++mappingIndex;
               } else {
@@ -396,7 +396,7 @@ public class LoopExtraction extends Transformation {
         if(changeRef){
           // TODO Var ref should be extracted only if the reference can be
           // totally demoted
-          XelementHelper.insertBefore(ref, ref.getVarRef().getVar().cloneObject());
+          XelementHelper.insertBefore(ref, ref.find(Xcode.VARREF, Xcode.VAR).cloneObject());
           ref.delete();
         }
       }

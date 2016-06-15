@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xelement;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   private boolean _isArray = false;
 
   // Optional elements
-  private List<Xindex> _dimensions = null;
+  private List<Xnode> _dimensions = null;
   private Xkind _kind = null;
   private Xlength _length = null;
 
@@ -78,7 +79,6 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
   private void readBasicTypeInformation(){
     readRequiredAttributes();
     readOptionalAttributes();
-
 
     _dimensions = XelementHelper.findIndexes(this);
     // is array ?
@@ -143,7 +143,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * @return A XindexRange object representing the index range of a specific
    * dimension.
    */
-  public Xindex getDimensions(int index){
+  public Xnode getDimensions(int index){
     if(index >= _dimensions.size() || index < 0){
       return null;
     }
@@ -347,7 +347,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * Remove all dimension from the type
    */
   public void resetDimension(){
-    for(Xindex idx : _dimensions){
+    for(Xnode idx : _dimensions){
       idx.delete();
     }
     _dimensions.clear();
@@ -359,7 +359,7 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * @param keptDimensions List of dimension index to be kept.
    */
   public void removeDimension(List<Integer> keptDimensions){
-    List<Xindex> keptDim = new ArrayList<>();
+    List<Xnode> keptDim = new ArrayList<>();
     for(int i = 0; i < _dimensions.size(); i++){
       if(keptDimensions.contains(i+1)){
         keptDim.add(_dimensions.get(i));
@@ -378,17 +378,18 @@ public class XbasicType extends Xtype implements Xclonable<XbasicType> {
    * @param index    Index element to add as the new dimension.
    * @param position Position compared to already existing element.
    */
-  public void addDimension(Xindex index, int position){
+  public void addDimension(Xnode index, int position){
     if(_dimensions.size() == 0){
-      this.appendToChildren(index, false);
+      Xnode tmp = new Xnode(this.getBaseElement()); // TODO XNODE remove
+      tmp.appendToChildren(index, false);
       _isArray = true;
     } else {
       if(position == _dimensions.size() - 1){ // Add at the end
-        Xindex last = _dimensions.get(_dimensions.size()-1);
+        Xnode last = _dimensions.get(_dimensions.size()-1);
         XelementHelper.insertAfter(last, index);
         _dimensions.add(index);
       } else {
-        Xindex crtPos = _dimensions.get(position);
+        Xnode crtPos = _dimensions.get(position);
         XelementHelper.insertBefore(crtPos, index);
         _dimensions.add(position, index);
       }

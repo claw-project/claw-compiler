@@ -15,6 +15,7 @@ import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.*;
@@ -34,7 +35,7 @@ public class Parallelize extends Transformation {
   private final List<String> _scalarFields;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
-  private List<XarrayIndex> _beforeCrt, _afterCrt;
+  private List<Xnode> _beforeCrt, _afterCrt;
 
   /**
    * Constructs a new Parallelize transfomration triggered from a specific
@@ -212,12 +213,16 @@ public class Parallelize extends Transformation {
         new NestedDoStatement(getOrderedDimensionsFromDefinition(), xcodeml);
     XelementHelper.copyBody(_fctDef.getBody(), loops.getInnerStatement());
     _fctDef.getBody().delete();
-    Xbody newBody = XelementHelper.createEmpty(Xbody.class, xcodeml);
+    Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
     newBody.appendToChildren(loops.getOuterStatement(), false);
-    _fctDef.appendToChildren(newBody, false);
+
+    // TODO XNODE move back when fctDef is Xnode child
+    //_fctDef.appendToChildren(newBody, false);
+    Xnode tmpFct = new Xnode(_fctDef.getBaseElement());
+    tmpFct.appendToChildren(newBody, false);
+
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml,
-        new Xnode(loops.getOuterStatement().getBaseElement()),
-        new Xnode(loops.getOuterStatement().getBaseElement()),
+        loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());
   }
 
@@ -230,33 +235,33 @@ public class Parallelize extends Transformation {
       throws Exception
   {
     /* Create a group of nested loop with the newly defined dimension and wrap
-     * every assignement statement in the column loop or including data with it.
+     * every assignment statement in the column loop or including data with it.
      * This is for the moment a really naive transformation idea but it is our
      * start point. */
 
 
     List<ClawDimension> order = getOrderedDimensionsFromDefinition();
-    List<XassignStatement> assignStatements =
-        XelementHelper.findAllAssignments(_fctDef.getBody());
+    List<Xnode> assignStatements =
+        XelementHelper.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
-    for(XassignStatement assign : assignStatements){
-      if(assign.getLValueModel().isArrayRef()){
-        XarrayRef ref = assign.getLValueModel().getArrayRef();
+    for(Xnode assign : assignStatements){
+      if(assign.getChild(0).Opcode() == Xcode.FARRAYREF){
+        Xnode ref = assign.getChild(0);
 
-        if(_arrayFieldsInOut.contains(ref.getVarRef().getVar().getValue())){
+        if(_arrayFieldsInOut.contains(ref.find(Xcode.VARREF, Xcode.VAR).getValue())){
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
           XelementHelper.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
           assign.delete();
         }
-      } else if(assign.getLValueModel().isVar()
-          && _scalarFields.contains(assign.getLValueModel().getVar().getValue()))
+      } else if(assign.getChild(0).Opcode() == Xcode.VAR
+          && _scalarFields.contains(assign.getChild(0).getValue()))
       {
-        /* If the assignement is in the column loop and is composed with some
+        /* If the assignment is in the column loop and is composed with some
          * variables, the field must be promoted and the var reference switch
          * to an array reference */
-        Xvar lhs = assign.getLValueModel().getVar();
-        List<Xvar> vars = XelementHelper.findAllReferences(assign);
+        Xnode lhs = assign.getChild(0);
+        List<Xnode> vars = XelementHelper.findAllReferences(assign);
         if(vars.size() > 1){
           if(!_arrayFieldsInOut.contains(lhs.getValue())){
             _arrayFieldsInOut.add(lhs.getValue());
@@ -279,7 +284,7 @@ public class Parallelize extends Transformation {
   {
     _beforeCrt = new ArrayList<>();
     _afterCrt = new ArrayList<>();
-    List<XarrayIndex> crt = _beforeCrt;
+    List<Xnode> crt = _beforeCrt;
 
     if(_claw.hasOverClause()) {
       /* If the over clause is specified, the indexes respect the definition of
@@ -361,12 +366,12 @@ public class Parallelize extends Transformation {
     }
     if(assumed){
       for(int i = 0; i < _overDimensions; ++i){
-        XindexRange index = XindexRange.createEmptyAssumedShaped(xcodeml);
+        Xnode index = XelementHelper.createEmptyAssumedShaped(xcodeml);
         newType.addDimension(index, 0);
       }
     } else {
       for(ClawDimension dim : _claw.getDimesionValues()){
-        XindexRange index = dim.generateIndexRange(xcodeml, false);
+        Xnode index = dim.generateIndexRange(xcodeml, false);
         newType.addDimension(index, 0);
       }
     }
@@ -382,16 +387,15 @@ public class Parallelize extends Transformation {
    */
   private void adaptArrayReferences(List<String> ids) {
     for(String data : ids){
-      List<XarrayRef> refs =
+      List<Xnode> refs =
           XelementHelper.getAllArrayReferences(_fctDef.getBody(), data);
-      for(XarrayRef ref : refs){
-
-        for(XarrayIndex ai : _beforeCrt){
-          XelementHelper.insertAfter(ref.getVarRef(), ai.cloneObject());
+      for(Xnode ref : refs){
+        for(Xnode ai : _beforeCrt){
+          XelementHelper.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
-        for(XarrayIndex ai : _afterCrt){
-          XelementHelper.insertAfter(
-              ref.getInnerElements().get(ref.getInnerElements().size()-1),
+        for(Xnode ai : _afterCrt){
+          List<Xnode> children = ref.getChildren();
+          XelementHelper.insertAfter(children.get(children.size()-1),
               ai.cloneObject());
         }
       }
@@ -411,17 +415,18 @@ public class Parallelize extends Transformation {
       throws IllegalTransformationException
   {
     for(String id : ids){
-      List<Xvar> vars = XelementHelper.findAllReferences(_fctDef.getBody(), id);
+      List<Xnode> vars = XelementHelper.findAllReferences(_fctDef.getBody(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
       XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
 
-      for(Xvar var : vars){
-        XarrayRef ref = XarrayRef.create(type, var.cloneObject(), xcodeml);
-        for(XarrayIndex ai : _beforeCrt){
-          XelementHelper.insertAfter(ref.getVarRef(), ai.cloneObject());
+      for(Xnode var : vars){
+        Xnode ref =
+            XelementHelper.createArrayRef(type, var.cloneObject(), xcodeml);
+        for(Xnode ai : _beforeCrt){
+          XelementHelper.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
-        for(XarrayIndex ai : _afterCrt){
+        for(Xnode ai : _afterCrt){
           ref.appendToChildren(ai, true);
         }
 

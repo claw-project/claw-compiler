@@ -1,8 +1,11 @@
 package cx2x.translator.common;
 
 import cx2x.translator.language.ClawDimension;
-import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.helper.XelementHelper;
+import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xelement.XelementName;
+import cx2x.xcodeml.xelement.Xscope;
+import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +17,7 @@ import java.util.List;
  */
 public class NestedDoStatement {
 
-  private final List<XdoStatement> _statements;
+  private final List<Xnode> _statements;
 
   /**
    * Constructs a group of nested do statements from a list of dimension
@@ -28,21 +31,16 @@ public class NestedDoStatement {
                            XcodeProgram xcodeml)
   {
     _statements = new ArrayList<>();
-    try {
-      for (ClawDimension dim : dimensions) {
-        Xvar induction = Xvar.create(XelementName.TYPE_F_INT,
-            dim.getIdentifier(), Xscope.LOCAL, xcodeml);
-        XindexRange range = dim.generateIndexRange(xcodeml, true);
-        XdoStatement doSt =
-            XdoStatement.create(induction, range, false, xcodeml);
-        if (_statements.size() != 0) {
-          _statements.get(_statements.size() - 1).getBody().
-              appendToChildren(doSt, false);
-        }
-        _statements.add(doSt);
+    for (ClawDimension dim : dimensions) {
+      Xnode induction = XelementHelper.createVar(XelementName.TYPE_F_INT,
+          dim.getIdentifier(), Xscope.LOCAL, xcodeml);
+      Xnode range = dim.generateIndexRange(xcodeml, true);
+      Xnode doSt = XelementHelper.createDoStmt(induction, range, xcodeml);
+      if (_statements.size() != 0) {
+        _statements.get(_statements.size() - 1).getBody().
+            appendToChildren(doSt, false);
       }
-    } catch (IllegalTransformationException ex){
-      _statements.clear();
+      _statements.add(doSt);
     }
   }
 
@@ -50,7 +48,7 @@ public class NestedDoStatement {
    * Get the outer do statements. First do statement in the nested group.
    * @return XdoStatement holding information about the outer do statement.
    */
-  public XdoStatement getOuterStatement(){
+  public Xnode getOuterStatement(){
     return _statements.isEmpty() ? null : _statements.get(0);
   }
 
@@ -58,7 +56,7 @@ public class NestedDoStatement {
    * Get the inner do statements. Last do statement in the nested group.
    * @return XdoStatement holding information about the inner do statement.
    */
-  public XdoStatement getInnerStatement(){
+  public Xnode getInnerStatement(){
     return _statements.isEmpty() ? null : _statements.get(_statements.size()-1);
   }
 

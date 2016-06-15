@@ -182,11 +182,11 @@ public class TransformationHelper {
       decl.getName().setType(newType.getType());
 
       // Update array references
-      List<XarrayRef> refs =
-          XelementHelper.getAllArrayReferences(fctDef,
+      List<Xnode> refs =
+          XelementHelper.getAllArrayReferences(fctDef.getBody(),
               reshapeInfo.getArrayName());
 
-      for(XarrayRef ref : refs){
+      for(Xnode ref : refs){
         if(reshapeInfo.getTargetDimension() == 0){
           XelementHelper.demoteToScalar(ref);
         } else {

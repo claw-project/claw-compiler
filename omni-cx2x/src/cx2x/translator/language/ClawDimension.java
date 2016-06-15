@@ -5,9 +5,13 @@
 
 package cx2x.translator.language;
 
-import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xelement.*;
+import cx2x.xcodeml.xelement.XcodeProgram;
+import cx2x.xcodeml.xelement.XelementName;
+import cx2x.xcodeml.xelement.Xscope;
+import cx2x.xcodeml.xnode.Xattr;
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * Class holding information about defined dimension.
@@ -135,21 +139,18 @@ public class ClawDimension {
    * @param xcodeml Current XcodeML progra unit in which elements will be
    *                created.
    * @return A new indexRange elements.
-   * @throws IllegalTransformationException if elements cannot be created.
    */
-  public XindexRange generateIndexRange(XcodeProgram xcodeml, boolean withStep)
-      throws IllegalTransformationException {
-    XindexRange range = XelementHelper.createEmpty(XindexRange.class, xcodeml);
-    XlowerBound lower = XelementHelper.createEmpty(XlowerBound.class, xcodeml);
-    XupperBound upper = XelementHelper.createEmpty(XupperBound.class, xcodeml);
+  public Xnode generateIndexRange(XcodeProgram xcodeml, boolean withStep) {
+    Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
+    Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
+    Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
     range.appendToChildren(lower, false);
     range.appendToChildren(upper, false);
 
     if (withStep){
-      Xstep step = XelementHelper.createEmpty(Xstep.class, xcodeml);
-      XintConstant stepValue =
-          XelementHelper.createEmpty(XintConstant.class, xcodeml);
-      stepValue.setType(XelementName.TYPE_F_INT);
+      Xnode step = new Xnode(Xcode.STEP, xcodeml);
+      Xnode stepValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      stepValue.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
       step.appendToChildren(stepValue, false);
       stepValue.setValue(XelementName.DEFAULT_STEP_VALUE);
       range.appendToChildren(step, false);
@@ -157,26 +158,24 @@ public class ClawDimension {
 
     // lower bound
     if(lowerBoundIsVar()){
-      Xvar lowerBoundValue =
-          Xvar.create(_lowerBoundType, _lowerBoundId, Xscope.LOCAL, xcodeml);
+      Xnode lowerBoundValue = XelementHelper.createVar(_lowerBoundType,
+          _lowerBoundId, Xscope.LOCAL, xcodeml);
       lower.appendToChildren(lowerBoundValue, false);
     } else {
-      XintConstant lowerBoundValue =
-          XelementHelper.createEmpty(XintConstant.class, xcodeml);
-      lowerBoundValue.setType(XelementName.TYPE_F_INT);
+      Xnode lowerBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      lowerBoundValue.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
       lowerBoundValue.setValue(String.valueOf(_lowerBound));
       lower.appendToChildren(lowerBoundValue, false);
     }
 
     // upper bound
     if(upperBoundIsVar()){
-      Xvar upperBoundValue =
-          Xvar.create(_upperBoundType, _upperBoundId, Xscope.LOCAL, xcodeml);
+      Xnode upperBoundValue = XelementHelper.createVar(_upperBoundType,
+          _upperBoundId, Xscope.LOCAL, xcodeml);
       upper.appendToChildren(upperBoundValue, false);
     } else {
-      XintConstant upperBoundValue =
-          XelementHelper.createEmpty(XintConstant.class, xcodeml);
-      upperBoundValue.setType(XelementName.TYPE_F_INT);
+      Xnode upperBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      upperBoundValue.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
       upperBoundValue.setValue(String.valueOf(_upperBound));
       lower.appendToChildren(upperBoundValue, false);
     }
@@ -190,15 +189,12 @@ public class ClawDimension {
    *                created.
    * @return A new arrayIndex element including a var element with the dimension
    * identifier.
-   * @throws IllegalTransformationException if elements cannot be created.
    */
-  public XarrayIndex generateArrayIndex(XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    XarrayIndex aIdx = XelementHelper.createEmpty(XarrayIndex.class, xcodeml);
-    Xvar v = Xvar.create(XelementName.TYPE_F_INT, _identifier, Xscope.LOCAL,
-        xcodeml);
-    aIdx.appendToChildren(v, false);
+  public Xnode generateArrayIndex(XcodeProgram xcodeml) {
+    Xnode aIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
+    Xnode var = XelementHelper.createVar(XelementName.TYPE_F_INT, _identifier,
+        Xscope.LOCAL, xcodeml);
+    aIdx.appendToChildren(var, false);
     return aIdx;
   }
 

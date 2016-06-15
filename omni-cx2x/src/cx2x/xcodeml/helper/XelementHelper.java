@@ -143,18 +143,17 @@ public class XelementHelper {
    * @param arrayName Name of the array for the array reference to be found.
    * @return A list of all array references found.
    */
-  public static List<XarrayRef> getAllArrayReferences(XbaseElement parent,
-                                                      String arrayName)
+  public static List<Xnode> getAllArrayReferences(Xnode parent,
+                                                  String arrayName)
   {
-    List<XarrayRef> references = new ArrayList<>();
-    NodeList nList = parent.getBaseElement().
+    List<Xnode> references = new ArrayList<>();
+    NodeList nList = parent.getElement().
         getElementsByTagName(XelementName.F_ARRAY_REF);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) n;
-        XarrayRef ref = new XarrayRef(el);
-        if(ref.getVarRef().getVar().getValue().toLowerCase().
+        Xnode ref = new Xnode((Element) n);
+        if(ref.find(Xcode.VARREF, Xcode.VAR).getValue().toLowerCase().
             equals(arrayName.toLowerCase()))
         {
           references.add(ref);
@@ -177,8 +176,8 @@ public class XelementHelper {
    * Demote an array reference to a var reference.
    * @param ref     The array reference to be modified.
    */
-  public static void demoteToScalar(XarrayRef ref){
-    Xvar var = ref.getVarRef().getVar().cloneObject();
+  public static void demoteToScalar(Xnode ref){
+    Xnode var = ref.find(Xcode.VARREF, Xcode.VAR).cloneObject();
     insertAfter(ref, var);
     ref.delete();
   }
@@ -189,13 +188,12 @@ public class XelementHelper {
    * @param keptDimensions List of dimensions to be kept. Dimension index starts
    *                       at 1.
    */
-  public static void demote(XarrayRef ref, List<Integer> keptDimensions){
-    for(int i = 0; i < ref.getInnerElements().size(); ++i){
-      if(!keptDimensions.contains(i+1)){
-        ref.getInnerElements().get(i).delete();
+  public static void demote(Xnode ref, List<Integer> keptDimensions){
+    for(int i = 1; i < ref.getChildren().size(); ++i){
+      if(!keptDimensions.contains(i)){
+        ref.getChild(i).delete();
       }
     }
-    ref.reset();
   }
 
   /**
@@ -577,20 +575,6 @@ public class XelementHelper {
       prev = parent;
     } while(parent != null);
     return null;
-  }
-
-  /**
-   * Find do statement element.
-   * @param fctDef  Function definition to search in.
-   * @param any     If true, find in any nested element under parent. If
-   *                false, only direct children are search for.
-   * @return        A XdoStatement object if found. Null otherwise.
-   */
-  public static XdoStatement findDoStatement(XfunctionDefinition fctDef,
-                                             boolean any)
-  {
-    Xbody body = fctDef.getBody();
-    return XelementHelper.findDoStatement(body, any);
   }
 
   /**
@@ -1076,8 +1060,8 @@ public class XelementHelper {
    * @param parent  Root element to search from.
    * @return A list of all index ranges found.
    */
-  public static List<Xindex> findIndexes(XbaseElement parent){
-    List<Xindex> indexRanges = new ArrayList<>();
+  public static List<Xnode> findIndexes(XbaseElement parent){
+    List<Xnode> indexRanges = new ArrayList<>();
     if(parent == null || parent.getBaseElement() == null){
       return indexRanges;
     }
@@ -1088,10 +1072,8 @@ public class XelementHelper {
         Element element = (Element)node;
         switch (element.getTagName()){
           case XelementName.ARRAY_INDEX:
-            indexRanges.add(new XarrayIndex(element));
-            break;
           case XelementName.INDEX_RANGE:
-            indexRanges.add(new XindexRange(element));
+            indexRanges.add(new Xnode(element));
             break;
         }
       }
@@ -1125,12 +1107,12 @@ public class XelementHelper {
    * @param parent Root element to search from.
    * @return A list of all var elements found.
    */
-  public static List<Xvar> findAllReferences(XbaseElement parent){
-    List<Xvar> vars = findAllVars(parent);
-    List<Xvar> realReferences = new ArrayList<>();
-    for(Xvar var : vars){
-      if(!((Element)var.getBaseElement().getParentNode()).getTagName().
-          equals(XelementName.ARRAY_INDEX))
+  public static List<Xnode> findAllReferences(Xnode parent){
+    List<Xnode> vars = findAll(Xcode.VAR, parent);
+    List<Xnode> realReferences = new ArrayList<>();
+    for(Xnode var : vars){
+      if(!((Element)var.getElement().getParentNode()).getTagName().
+          equals(Xcode.ARRAYINDEX.code()))
       {
         realReferences.add(var);
       }
@@ -1145,12 +1127,12 @@ public class XelementHelper {
    * @param id     Identifier of the var to be found.
    * @return A list of all var elements found.
    */
-  public static List<Xvar> findAllReferences(XbaseElement parent, String id){
-    List<Xvar> vars = findAllVars(parent);
-    List<Xvar> realReferences = new ArrayList<>();
-    for(Xvar var : vars){
-      if(!((Element)var.getBaseElement().getParentNode()).getTagName().
-          equals(XelementName.ARRAY_INDEX)
+  public static List<Xnode> findAllReferences(Xnode parent, String id){
+    List<Xnode> vars = findAll(Xcode.VAR, parent);
+    List<Xnode> realReferences = new ArrayList<>();
+    for(Xnode var : vars){
+      if(!((Element)var.getElement().getParentNode()).getTagName().
+          equals(Xcode.ARRAYINDEX.code())
           && var.getValue().toLowerCase().equals(id.toLowerCase()))
       {
         realReferences.add(var);
@@ -1906,12 +1888,12 @@ public class XelementHelper {
    * @param from The body to be copied.
    * @param to   The desination of the copied body.
    */
-  public static void copyBody(Xbody from, XdoStatement to){
+  public static void copyBody(Xnode from, Xnode to){
     Node copiedBody = from.cloneNode();
     if(to.getBody() != null){
       to.getBody().delete();
     }
-    to.getBaseElement().appendChild(copiedBody);
+    to.getElement().appendChild(copiedBody);
   }
 
   /**
@@ -2317,7 +2299,7 @@ public class XelementHelper {
   }
 
   /**
-   *
+   * TODO javadoc
    * @param xcodeml
    * @return
    */
@@ -2333,7 +2315,7 @@ public class XelementHelper {
   }
 
   /**
-   *
+   * TODO javadoc
    * @param inductionVar
    * @param indexRange
    * @param xcodeml
@@ -2353,7 +2335,7 @@ public class XelementHelper {
   }
 
   /**
-   * TODO
+   * TODO javadoc
    * @param value
    * @param fctCall
    * @return
@@ -2375,7 +2357,7 @@ public class XelementHelper {
   }
 
   /**
-   * TODO
+   * TODO javadoc
    * @param xcodeml
    * @param arrayVar
    * @param startIndex
@@ -2416,7 +2398,18 @@ public class XelementHelper {
   }
 
   /**
-   * TODO
+   * TODO javadoc
+   * @param xcodeml
+   * @return
+   */
+  public static Xnode createEmptyAssumedShaped(XcodeProgram xcodeml) {
+    Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
+    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, XelementName.TRUE);
+    return range;
+  }
+
+  /**
+   * TODO javadoc
    * @param opcode
    * @param parent
    * @return
@@ -2437,7 +2430,7 @@ public class XelementHelper {
   }
 
   /**
-   * TODO
+   * TODO javadoc
    * @param xcodeml
    * @param returnType
    * @param name
@@ -2457,6 +2450,24 @@ public class XelementHelper {
     return fctCall;
   }
 
+  /**
+   * TODO javadoc
+   * @param type
+   * @param var
+   * @param xcodeml
+   * @return
+   */
+  public static Xnode createArrayRef(XbasicType type, Xnode var,
+                                     XcodeProgram xcodeml)
+  {
+    Xnode ref = new Xnode(Xcode.FARRAYREF, xcodeml);
+    ref.setAttribute(Xattr.TYPE, type.getRef());
+    Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+    varRef.setAttribute(Xattr.TYPE, type.getType());
+    varRef.appendToChildren(var, false);
+    ref.appendToChildren(varRef, false);
+    return ref;
+  }
 
 
 }

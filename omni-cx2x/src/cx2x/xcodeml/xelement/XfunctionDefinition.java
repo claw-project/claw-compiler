@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xelement;
 
+import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 import cx2x.xcodeml.helper.*;
 
@@ -32,7 +34,7 @@ public class XfunctionDefinition extends XenhancedElement implements Xclonable<X
   private XsymbolTable _symbolTable = null;
   private Xparams _params = null;
   private XdeclTable _declTable = null;
-  private Xbody _body = null;
+  private Xnode _body = null;
   private Xname _name = null;
 
   /**
@@ -42,10 +44,11 @@ public class XfunctionDefinition extends XenhancedElement implements Xclonable<X
    */
   public XfunctionDefinition(Element baseElement){
     super(baseElement);
+    Xnode tmp = new Xnode(baseElement); // TODO XNODE remove after refactoring
     _symbolTable = XelementHelper.findSymbols(this, false);
     _params = XelementHelper.findParams(this, false);
     _declTable = XelementHelper.findDeclarations(this, false);
-    _body = XelementHelper.findBody(this, false);
+    _body = tmp.find(Xcode.BODY);
     _name = XelementHelper.findName(this, false);
   }
 
@@ -69,7 +72,7 @@ public class XfunctionDefinition extends XenhancedElement implements Xclonable<X
    * Get the function's body.
    * @return A Xbody object for the function.
    */
-  public Xbody getBody(){
+  public Xnode getBody(){
     return _body;
   }
 
