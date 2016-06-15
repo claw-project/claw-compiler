@@ -1825,7 +1825,7 @@ public class XelementHelper {
    * @return A XmoduleDefinition object if found. Null otherwise.
    */
   public static XmoduleDefinition findParentModule(Xnode from) {
-    Xnode moduleDef = from.find(Xcode.FMODULEDEFINITION);
+    Xnode moduleDef = findParent(Xcode.FMODULEDEFINITION, from);
     if(moduleDef == null){
       return null;
     }
@@ -1838,7 +1838,7 @@ public class XelementHelper {
    * @return
    */
   public static XfunctionDefinition findParentFunction(Xnode from){
-    Xnode fctDef = from.find(Xcode.FFUNCTIONDEFINITION);
+    Xnode fctDef = findParent(Xcode.FFUNCTIONDEFINITION, from);
     if(fctDef == null){
       return null;
     }
