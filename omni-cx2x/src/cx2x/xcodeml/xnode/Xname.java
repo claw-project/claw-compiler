@@ -6,13 +6,13 @@
 package cx2x.xcodeml.xnode;
 
 /**
- * XelementName class contains all element and attributes values that can be
+ * Xname class contains all element and attributes values that can be
  * found in the XcodeML/F intermediate representation language.
  *
  * @author clementval
  */
 
-public class XelementName {
+public class Xname {
 
   // helpers
   public static final String TRUE = "true";

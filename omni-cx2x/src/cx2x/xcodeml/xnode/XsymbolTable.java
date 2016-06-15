@@ -40,7 +40,7 @@ public class XsymbolTable extends Xnode {
    * Read the symbols table.
    */
   private void readTable(){
-    NodeList nodeList = _baseElement.getElementsByTagName(XelementName.ID);
+    NodeList nodeList = _baseElement.getElementsByTagName(Xname.ID);
     for (int i = 0; i < nodeList.getLength(); i++) {
       Node idNode = nodeList.item(i);
       if (idNode.getNodeType() == Node.ELEMENT_NODE) {

@@ -27,11 +27,11 @@ public enum Xintent {
   public String toString(){
     switch(this){
       case IN:
-        return XelementName.INTENT_IN;
+        return Xname.INTENT_IN;
       case OUT:
-        return XelementName.INTENT_OUT;
+        return Xname.INTENT_OUT;
       case INOUT:
-        return XelementName.INTENT_INOUT;
+        return Xname.INTENT_INOUT;
       default:
         return "";
     }
@@ -47,11 +47,11 @@ public enum Xintent {
       return NONE;
     }
     switch (value) {
-      case XelementName.INTENT_IN:
+      case Xname.INTENT_IN:
         return IN;
-      case XelementName.INTENT_OUT:
+      case Xname.INTENT_OUT:
         return OUT;
-      case XelementName.INTENT_INOUT:
+      case Xname.INTENT_INOUT:
         return INOUT;
     }
     return NONE;

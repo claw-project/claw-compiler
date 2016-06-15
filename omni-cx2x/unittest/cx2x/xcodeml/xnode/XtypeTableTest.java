@@ -41,7 +41,7 @@ public class XtypeTableTest {
     assertEquals(Xintent.NONE, bType1.getIntent());
     assertFalse(bType1.hasKind());
     assertTrue(bType1.hasLength());
-    assertEquals(XelementName.TYPE_F_CHAR, bType1.getRef());
+    assertEquals(Xname.TYPE_F_CHAR, bType1.getRef());
     assertTrue(bType1.getLength().getChild(0).Opcode() == Xcode.FINTCONSTANT);
     assertEquals("30", bType1.getLength().getChild(0).getValue());
 
@@ -50,7 +50,7 @@ public class XtypeTableTest {
     assertNotNull(type2);
     assertTrue(type2 instanceof XfunctionType);
     XfunctionType fType2 = (XfunctionType)type2;
-    assertEquals(XelementName.TYPE_F_VOID, fType2.getReturnType());
+    assertEquals(Xname.TYPE_F_VOID, fType2.getReturnType());
     assertTrue(fType2.isProgram());
     assertFalse(fType2.isInternal());
     assertFalse(fType2.isRecursive());

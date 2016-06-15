@@ -66,13 +66,13 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xnode/XcodeProgram.java
   cx2x/xcodeml/xnode/Xdecl.java
   cx2x/xcodeml/xnode/XdeclTable.java
-  cx2x/xcodeml/xnode/XelementName.java
   cx2x/xcodeml/xnode/XfunctionDefinition.java
   cx2x/xcodeml/xnode/XfunctionType.java
   cx2x/xcodeml/xnode/XglobalDeclTable.java
   cx2x/xcodeml/xnode/Xid.java
   cx2x/xcodeml/xnode/Xintent.java
   cx2x/xcodeml/xnode/XmoduleDefinition.java
+  cx2x/xcodeml/xnode/Xname.java
   cx2x/xcodeml/xnode/Xparams.java
   cx2x/xcodeml/xnode/Xscope.java
   cx2x/xcodeml/xnode/XsymbolTable.java

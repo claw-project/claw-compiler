@@ -3,7 +3,7 @@ package cx2x.translator.common;
 import cx2x.translator.language.ClawDimension;
 import cx2x.xcodeml.helper.XelementHelper;
 import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.XelementName;
+import cx2x.xcodeml.xnode.Xname;
 import cx2x.xcodeml.xnode.Xscope;
 import cx2x.xcodeml.xnode.Xnode;
 
@@ -32,7 +32,7 @@ public class NestedDoStatement {
   {
     _statements = new ArrayList<>();
     for (ClawDimension dim : dimensions) {
-      Xnode induction = XelementHelper.createVar(XelementName.TYPE_F_INT,
+      Xnode induction = XelementHelper.createVar(Xname.TYPE_F_INT,
           dim.getIdentifier(), Xscope.LOCAL, xcodeml);
       Xnode range = dim.generateIndexRange(xcodeml, true);
       Xnode doSt = XelementHelper.createDoStmt(xcodeml, induction, range);

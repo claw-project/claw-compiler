@@ -48,7 +48,7 @@ public class XelementHelper {
       return null;
     }
     String name = fctCall.findNode(Xcode.NAME).getValue();
-    NodeList nList = xcodeml.getBaseElement().getElementsByTagName(XelementName.FCT_DEFINITION);
+    NodeList nList = xcodeml.getBaseElement().getElementsByTagName(Xname.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -78,7 +78,7 @@ public class XelementHelper {
       return null;
     }
     NodeList nList = module.getElement().
-        getElementsByTagName(XelementName.FCT_DEFINITION);
+        getElementsByTagName(Xname.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -102,7 +102,7 @@ public class XelementHelper {
   {
     List<Xnode> references = new ArrayList<>();
     NodeList nList = parent.getElement().
-        getElementsByTagName(XelementName.F_ARRAY_REF);
+        getElementsByTagName(Xname.F_ARRAY_REF);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
@@ -220,17 +220,17 @@ public class XelementHelper {
      * the "from" element */
     String s1 = String.format(
         "following-sibling::%s[%s]",
-        XelementName.F_ASSIGN_STMT,
-        XelementName.F_ARRAY_REF
+        Xname.F_ASSIGN_STMT,
+        Xname.F_ARRAY_REF
     );
     /* Define all the assign element with array refs which are previous siblings
      * of the end pragma element */
     String s2 = String.format(
         "following-sibling::%s[text()=\"%s\"]/preceding-sibling::%s[%s]",
-        XelementName.PRAGMA_STMT,
+        Xname.PRAGMA_STMT,
         endPragma,
-        XelementName.F_ASSIGN_STMT,
-        XelementName.F_ARRAY_REF
+        Xname.F_ASSIGN_STMT,
+        Xname.F_ARRAY_REF
     );
     // Use the Kaysian method to express the intersect operator
     String intersect = XelementHelper.xPathIntersect(s1, s2);
@@ -248,9 +248,9 @@ public class XelementHelper {
                                                             String identifier)
   {
     String s1 = String.format("following-sibling::*//%s[%s[%s[text()=\"%s\"]]]",
-        XelementName.F_ARRAY_REF,
-        XelementName.VAR_REF,
-        XelementName.VAR,
+        Xname.F_ARRAY_REF,
+        Xname.VAR_REF,
+        Xname.VAR,
         identifier
     );
     return getFromXpath(from, s1);
@@ -265,10 +265,10 @@ public class XelementHelper {
   public static Xnode getFirstArrayAssign(Xnode from, String arrayName){
     String s1 = String.format(
         "following::%s[%s[%s[%s[text()=\"%s\"]] and position()=1]]",
-        XelementName.F_ASSIGN_STMT,
-        XelementName.F_ARRAY_REF,
-        XelementName.VAR_REF,
-        XelementName.VAR,
+        Xname.F_ASSIGN_STMT,
+        Xname.F_ARRAY_REF,
+        Xname.VAR_REF,
+        Xname.VAR,
         arrayName
     );
 
@@ -321,15 +321,15 @@ public class XelementHelper {
       String tempQuery;
       if(i == inductionVars.size() - 1) { // first iteration
         tempQuery = String.format("%s[%s[text()=\"%s\"]]",
-            XelementName.F_DO_STATEMENT,
-            XelementName.VAR,
+            Xname.F_DO_STATEMENT,
+            Xname.VAR,
             inductionVars.get(i));
       } else {
         tempQuery = String.format("%s[%s[text()=\"%s\"] and %s[%s]]",
-            XelementName.F_DO_STATEMENT,
-            XelementName.VAR,
+            Xname.F_DO_STATEMENT,
+            Xname.VAR,
             inductionVars.get(i),
-            XelementName.BODY,
+            Xname.BODY,
             dynamic_part_s1); // Including previsouly formed xpath query
       }
       dynamic_part_s1 = tempQuery;
@@ -392,27 +392,27 @@ public class XelementHelper {
       if(offsets.get(i) == 0){
         offsetXpath +=
             String.format("%s[position()=%s and %s]",
-                XelementName.ARRAY_INDEX,
+                Xname.ARRAY_INDEX,
                 i+1,
-                XelementName.VAR
+                Xname.VAR
             );
       } else if(offsets.get(i) > 0) {
         offsetXpath +=
             String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
-                XelementName.ARRAY_INDEX,
+                Xname.ARRAY_INDEX,
                 i+1,
-                XelementName.MINUS_EXPR,
-                XelementName.VAR,
-                XelementName.F_INT_CONST,
+                Xname.MINUS_EXPR,
+                Xname.VAR,
+                Xname.F_INT_CONST,
                 offsets.get(i));
       } else {
         offsetXpath +=
             String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
-                XelementName.ARRAY_INDEX,
+                Xname.ARRAY_INDEX,
                 i+1,
-                XelementName.MINUS_EXPR,
-                XelementName.VAR,
-                XelementName.F_INT_CONST,
+                Xname.MINUS_EXPR,
+                Xname.VAR,
+                Xname.F_INT_CONST,
                 Math.abs(offsets.get(i)));
       }
       if(i != offsets.size()-1){
@@ -422,9 +422,9 @@ public class XelementHelper {
 
     // Start of the Xpath query
     String xpathQuery = String.format(".//%s[%s[%s[text()=\"%s\"]] and %s]",
-        XelementName.F_ARRAY_REF,
-        XelementName.VAR_REF,
-        XelementName.VAR,
+        Xname.F_ARRAY_REF,
+        Xname.VAR_REF,
+        Xname.VAR,
         identifier,
         offsetXpath
     );
@@ -478,8 +478,8 @@ public class XelementHelper {
       if(node.getNodeType() == Node.ELEMENT_NODE){
         Element element = (Element)node;
         switch (element.getTagName()){
-          case XelementName.ARRAY_INDEX:
-          case XelementName.INDEX_RANGE:
+          case Xname.ARRAY_INDEX:
+          case Xname.INDEX_RANGE:
             indexRanges.add(new Xnode(element));
             break;
         }
@@ -566,7 +566,7 @@ public class XelementHelper {
   public static void extractBody(Xnode loop){
     Element loopElement = loop.getElement();
     Element body = XelementHelper.findFirstElement(loopElement,
-      XelementName.BODY);
+      Xname.BODY);
 
     Node refNode = loopElement;
     if(body == null){
@@ -812,12 +812,12 @@ public class XelementHelper {
    */
   public static boolean isBuiltInType(String type){
     switch (type){
-      case XelementName.TYPE_F_CHAR:
-      case XelementName.TYPE_F_COMPLEX:
-      case XelementName.TYPE_F_INT:
-      case XelementName.TYPE_F_LOGICAL:
-      case XelementName.TYPE_F_REAL:
-      case XelementName.TYPE_F_VOID:
+      case Xname.TYPE_F_CHAR:
+      case Xname.TYPE_F_COMPLEX:
+      case Xname.TYPE_F_INT:
+      case Xname.TYPE_F_LOGICAL:
+      case Xname.TYPE_F_REAL:
+      case Xname.TYPE_F_VOID:
         return true;
       default:
         return false;
@@ -1409,7 +1409,7 @@ public class XelementHelper {
    */
   public static Xnode createEmptyAssumedShaped(XcodeProgram xcodeml) {
     Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
-    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, XelementName.TRUE);
+    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
     return range;
   }
 
@@ -1441,10 +1441,10 @@ public class XelementHelper {
     // Upper bound
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
     upper.appendToChildren(fctCall, false);
-    fctCall.setAttribute(Xattr.IS_INTRINSIC, XelementName.TRUE);
-    fctCall.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
+    fctCall.setAttribute(Xattr.IS_INTRINSIC, Xname.TRUE);
+    fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
     Xnode name = new Xnode(Xcode.NAME, xcodeml);
-    name.setValue(XelementName.INTRINSIC_SIZE);
+    name.setValue(Xname.INTRINSIC_SIZE);
     fctCall.appendToChildren(name, false);
     Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
     fctCall.appendToChildren(args, false);

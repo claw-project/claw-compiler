@@ -310,7 +310,7 @@ public class Kcaching extends Transformation {
     // 2.2 inject a new entry in the symbol table
     if(!fctDef.getSymbolTable().contains(cacheName)){
       Xid cacheVarId =
-          XelementHelper.createId(xcodeml, type, XelementName.SCLASS_F_LOCAL,
+          XelementHelper.createId(xcodeml, type, Xname.SCLASS_F_LOCAL,
               cacheName);
       fctDef.getSymbolTable().add(cacheVarId, false);
     }

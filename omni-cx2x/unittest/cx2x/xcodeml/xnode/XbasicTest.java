@@ -29,7 +29,7 @@ public class XbasicTest {
     Xnode val = XmlHelper.createXnode(value1);
     assertNotNull(val);
     assertTrue(val.getChild(0).Opcode() == Xcode.FINTCONSTANT);
-    assertEquals(XelementName.TYPE_F_INT,
+    assertEquals(Xname.TYPE_F_INT,
         val.getChild(0).getAttribute(Xattr.TYPE));
     assertEquals("1", val.getChild(0).getValue());
   }
@@ -38,7 +38,7 @@ public class XbasicTest {
   public void xNameTest(){
     Xnode name = XmlHelper.createXnode(name1);
     assertNotNull(name);
-    assertEquals(XelementName.TYPE_F_INT, name.getAttribute(Xattr.TYPE));
+    assertEquals(Xname.TYPE_F_INT, name.getAttribute(Xattr.TYPE));
     assertEquals("a", name.getValue());
   }
 

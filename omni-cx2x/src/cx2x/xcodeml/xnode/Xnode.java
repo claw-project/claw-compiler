@@ -78,7 +78,7 @@ public class Xnode {
    */
   public boolean getBooleanAttribute(Xattr attrCode) {
     return _baseElement.hasAttribute(attrCode.toString()) &&
-        _baseElement.getAttribute(attrCode.toString()).equals(XelementName.TRUE);
+        _baseElement.getAttribute(attrCode.toString()).equals(Xname.TRUE);
   }
 
   /**

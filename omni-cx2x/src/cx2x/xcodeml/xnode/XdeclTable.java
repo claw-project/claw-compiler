@@ -61,7 +61,7 @@ public class XdeclTable extends Xnode {
         Element element = (Element)crtNode;
 
         switch (element.getTagName()){
-          case XelementName.VAR_DECL:
+          case Xname.VAR_DECL:
             XvarDecl decl = new XvarDecl(element);
             _table.put(decl.getName().getValue(), decl);
             break;

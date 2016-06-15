@@ -62,7 +62,7 @@ public class Xid extends Xnode {
    */
   public void setType(String value){
     if(_baseElement != null && value != null){
-      _baseElement.setAttribute(XelementName.ATTR_TYPE, value);
+      _baseElement.setAttribute(Xname.ATTR_TYPE, value);
       _type = value;
     }
   }
@@ -73,7 +73,7 @@ public class Xid extends Xnode {
    */
   public void setSclass(String value){
     if(_baseElement != null && value != null){
-      _baseElement.setAttribute(XelementName.ATTR_SCLASS, value);
+      _baseElement.setAttribute(Xname.ATTR_SCLASS, value);
       _sclass = value;
     }
   }

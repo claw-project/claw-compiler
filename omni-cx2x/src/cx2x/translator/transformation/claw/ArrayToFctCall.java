@@ -100,7 +100,7 @@ public class ArrayToFctCall extends Transformation {
         _replaceFct.getName().getAttribute(Xattr.TYPE));
     Xnode args = fctCall.find(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()){
-      Xnode var = XelementHelper.createVar(XelementName.TYPE_F_INT, arg,
+      Xnode var = XelementHelper.createVar(Xname.TYPE_F_INT, arg,
           Xscope.LOCAL, xcodeml);
       args.appendToChildren(var, false);
     }

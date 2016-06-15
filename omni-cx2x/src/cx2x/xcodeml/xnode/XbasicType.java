@@ -303,7 +303,7 @@ public class XbasicType extends Xtype {
    */
   public void removeIntent(){
     if(hasIntent()) {
-      _baseElement.removeAttribute(XelementName.ATTR_INTENT);
+      _baseElement.removeAttribute(Xname.ATTR_INTENT);
       _intent = null;
     }
   }
@@ -313,7 +313,7 @@ public class XbasicType extends Xtype {
    */
   public void removeAllocatable(){
     if(isAllocatable()){
-      _baseElement.removeAttribute(XelementName.ATTR_IS_ALLOCATABLE);
+      _baseElement.removeAttribute(Xname.ATTR_IS_ALLOCATABLE);
       _is_allocatable = false;
     }
   }

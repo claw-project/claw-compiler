@@ -450,28 +450,28 @@ public class Parallelize extends Transformation {
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XelementHelper.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),
-        XelementName.TYPE_F_INT, Xintent.IN);
+        Xname.TYPE_F_INT, Xintent.IN);
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
     for(ClawDimension dimension : _claw.getDimesionValues()){
       if(dimension.lowerBoundIsVar()){
         createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
-            XelementName.SCLASS_F_PARAM, xcodeml);
+            Xname.SCLASS_F_PARAM, xcodeml);
         Xnode paramName = XelementHelper.createName(xcodeml,
             dimension.getLowerBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
       }
       if(dimension.upperBoundIsVar()){
         createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
-            XelementName.SCLASS_F_PARAM, xcodeml);
+            Xname.SCLASS_F_PARAM, xcodeml);
         Xnode paramName = XelementHelper.createName(xcodeml,
             dimension.getUpperBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
       }
       // Create induction variable declaration
-      createIdAndDecl(dimension.getIdentifier(), XelementName.TYPE_F_INT,
-          XelementName.SCLASS_F_LOCAL, xcodeml);
+      createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
+          Xname.SCLASS_F_LOCAL, xcodeml);
     }
   }
 
@@ -480,7 +480,7 @@ public class Parallelize extends Transformation {
    * table.
    * @param name    Name of the variable.
    * @param type    Type of the variable.
-   * @param sclass  Scope class of the variable (from XelementName).
+   * @param sclass  Scope class of the variable (from Xname).
    * @param xcodeml Current XcodeML program unit in which the elements will be
    *                created.
    * @throws IllegalTransformationException if the elements cannot be created.

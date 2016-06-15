@@ -58,15 +58,15 @@ public class XtypeTable extends Xnode {
       if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)crtNode;
         switch (el.getTagName()){
-          case XelementName.BASIC_TYPE:
+          case Xname.BASIC_TYPE:
             XbasicType bt = new XbasicType(el);
             _table.put(bt.getType(), bt);
             break;
-          case XelementName.FCT_TYPE:
+          case Xname.FCT_TYPE:
             XfunctionType ft = new XfunctionType(el);
             _table.put(ft.getType(), ft);
             break;
-          case XelementName.F_STRUCT_TYPE:
+          case Xname.F_STRUCT_TYPE:
             // TODO create XstructType object and insert it in the table
             break;
         }

@@ -6,12 +6,8 @@
 package cx2x.translator.language;
 
 import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.XelementName;
-import cx2x.xcodeml.xnode.Xscope;
-import cx2x.xcodeml.xnode.Xattr;
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.*;
+import cx2x.xcodeml.xnode.Xname;
 
 /**
  * Class holding information about defined dimension.
@@ -150,9 +146,9 @@ public class ClawDimension {
     if (withStep){
       Xnode step = new Xnode(Xcode.STEP, xcodeml);
       Xnode stepValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
-      stepValue.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
+      stepValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       step.appendToChildren(stepValue, false);
-      stepValue.setValue(XelementName.DEFAULT_STEP_VALUE);
+      stepValue.setValue(Xname.DEFAULT_STEP_VALUE);
       range.appendToChildren(step, false);
     }
 
@@ -163,7 +159,7 @@ public class ClawDimension {
       lower.appendToChildren(lowerBoundValue, false);
     } else {
       Xnode lowerBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
-      lowerBoundValue.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
+      lowerBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       lowerBoundValue.setValue(String.valueOf(_lowerBound));
       lower.appendToChildren(lowerBoundValue, false);
     }
@@ -175,7 +171,7 @@ public class ClawDimension {
       upper.appendToChildren(upperBoundValue, false);
     } else {
       Xnode upperBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
-      upperBoundValue.setAttribute(Xattr.TYPE, XelementName.TYPE_F_INT);
+      upperBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       upperBoundValue.setValue(String.valueOf(_upperBound));
       lower.appendToChildren(upperBoundValue, false);
     }
@@ -192,7 +188,7 @@ public class ClawDimension {
    */
   public Xnode generateArrayIndex(XcodeProgram xcodeml) {
     Xnode aIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
-    Xnode var = XelementHelper.createVar(XelementName.TYPE_F_INT, _identifier,
+    Xnode var = XelementHelper.createVar(Xname.TYPE_F_INT, _identifier,
         Xscope.LOCAL, xcodeml);
     aIdx.appendToChildren(var, false);
     return aIdx;

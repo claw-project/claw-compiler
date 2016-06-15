@@ -40,7 +40,7 @@ public class Xtype extends Xnode {
    */
   public void setType(String value){
     if(_baseElement != null){
-      _baseElement.setAttribute(XelementName.ATTR_TYPE, value);
+      _baseElement.setAttribute(Xname.ATTR_TYPE, value);
       _type = value;
     }
   }

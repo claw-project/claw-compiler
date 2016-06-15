@@ -219,7 +219,7 @@ public class ArrayTransform extends BlockTransformation {
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])){
         Xid inductionVarId = XelementHelper.createId(xcodeml,
-            XelementName.TYPE_F_INT, XelementName.SCLASS_F_LOCAL,
+            Xname.TYPE_F_INT, Xname.SCLASS_F_LOCAL,
             inductionVars[i]);
         fctDef.getSymbolTable().add(inductionVarId, false);
       }
@@ -227,14 +227,14 @@ public class ArrayTransform extends BlockTransformation {
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])){
         XvarDecl inductionVarDecl =
-            XelementHelper.createVarDecl(xcodeml, XelementName.TYPE_F_INT,
+            XelementHelper.createVarDecl(xcodeml, Xname.TYPE_F_INT,
                 inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);
       }
 
       // 2.4 create do statements
       Xnode inductionVar =
-          XelementHelper.createVar(XelementName.TYPE_F_INT, inductionVars[i],
+          XelementHelper.createVar(Xname.TYPE_F_INT, inductionVars[i],
               Xscope.LOCAL, xcodeml);
       Xnode range;
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
@@ -268,7 +268,7 @@ public class ArrayTransform extends BlockTransformation {
           if (el.Opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].find(Xcode.VAR).getValue();
             Xnode iterVar =
-                XelementHelper.createVar(XelementName.TYPE_F_INT, induction,
+                XelementHelper.createVar(Xname.TYPE_F_INT, induction,
                 Xscope.LOCAL, xcodeml);
 
             Xnode arrayIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
