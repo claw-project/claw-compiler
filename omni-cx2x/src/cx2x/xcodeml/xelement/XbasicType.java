@@ -360,6 +360,7 @@ public class XbasicType extends Xtype {
   public void addDimension(Xnode index, int position){
     if(_dimensions.size() == 0){
       appendToChildren(index, false);
+      _dimensions.add(index);
       _isArray = true;
     } else {
       if(position == _dimensions.size() - 1){ // Add at the end
