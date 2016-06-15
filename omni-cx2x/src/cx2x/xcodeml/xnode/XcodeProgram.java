@@ -165,24 +165,17 @@ public class XcodeProgram extends Xnode {
     if(_xcodemlDoc == null){
       return false;
     }
-
-    Element root = _xcodemlDoc.getDocumentElement();
-    if(!root.getNodeName().equals(XelementName.X_CODE_PROGRAM)){
+    
+    if(Opcode() != Xcode.XCODEPROGRAM){
       return false;
     }
 
-    if(!XelementHelper.validateStringAttribute(_xcodemlDoc,
-      XelementName.SUPPORTED_VERSION, "/" + XelementName.X_CODE_PROGRAM + "/@"
-      + XelementName.ATTR_VERSION))
-    {
+    if(!XelementName.SUPPORTED_VERSION.equals(getAttribute(Xattr.VERSION))) {
       System.err.println("XcodeML version is not supported");
       return false;
     }
 
-    if(!XelementHelper.validateStringAttribute(_xcodemlDoc,
-      XelementName.SUPPORTED_LANGUAGE, "/" + XelementName.X_CODE_PROGRAM + "/@"
-      +  XelementName.ATTR_LANGUAGE))
-    {
+    if(!XelementName.SUPPORTED_LANGUAGE.equals(getAttribute(Xattr.LANGUAGE))){
       System.err.println("Language is not set to fortran");
       return false;
     }
