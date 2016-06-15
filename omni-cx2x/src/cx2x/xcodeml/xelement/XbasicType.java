@@ -359,7 +359,7 @@ public class XbasicType extends Xtype {
    */
   public void addDimension(Xnode index, int position){
     if(_dimensions.size() == 0){
-      index.appendToChildren(index, false);
+      appendToChildren(index, false);
       _isArray = true;
     } else {
       if(position == _dimensions.size() - 1){ // Add at the end
