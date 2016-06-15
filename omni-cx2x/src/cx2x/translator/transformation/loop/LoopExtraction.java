@@ -396,10 +396,8 @@ public class LoopExtraction extends Transformation {
     }
 
     // Generate accelerator pragmas if needed
-    // TODO XNODE activate once refactoring finished
-    AcceleratorHelper.
-        generateAdditionalDirectives(_claw, xcodeml, extractedLoop,
-            extractedLoop);
+    AcceleratorHelper.generateAdditionalDirectives(_claw, xcodeml,
+        extractedLoop, extractedLoop);
     // TODO must be triggered by a clause
     //AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 

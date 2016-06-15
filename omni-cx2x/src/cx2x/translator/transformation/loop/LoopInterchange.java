@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.exception.*;
@@ -127,9 +128,8 @@ public class LoopInterchange extends Transformation {
 
 
     // Generate accelerator pragmas if needed
-    // TODO XNODE apply back when rectoring is done
-   /* AcceleratorHelper.
-        generateAdditionalDirectives(_claw, xcodeml, _loopLevel0, _loopLevel0);*/
+    AcceleratorHelper.
+        generateAdditionalDirectives(_claw, xcodeml, _loopLevel0, _loopLevel0);
 
     _claw.getPragma().delete();
 
