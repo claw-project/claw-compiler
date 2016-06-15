@@ -214,7 +214,7 @@ public class AcceleratorHelper {
         hook.setValue(hook.getValue() + " " +
             claw.getAcceleratorGenerator().getPrefix() + " ");
         transformer.addTransformation(new OpenAccContinuation(
-            new AnalyzedPragma(new Xpragma(hook.getElement()))));
+            new AnalyzedPragma(hook)));
       }
       hook.setValue(hook.getValue() + " " +
           claw.getAcceleratorGenerator().getPrivateClause(var));

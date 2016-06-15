@@ -30,7 +30,6 @@ public class LoopFusion extends Transformation {
   // The loop statement involved in the Transformation
   private Xnode[] _loops;
   private final ClawLanguage _claw;
-  private Xnode _pragma; // TODO XNODE delete after refactoring
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -44,7 +43,6 @@ public class LoopFusion extends Transformation {
       _groupLabel = directive.getGroupValue();
     }
     _loops = new Xnode[0];
-    _pragma = new Xnode(_claw.getPragma().getBaseElement());
   }
 
   /**
@@ -91,7 +89,8 @@ public class LoopFusion extends Transformation {
       _loops = new Xnode[_claw.getCollapseValue()];
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
         if(i == 0){ // Find the outter loop from pragma
-          _loops[0] = XelementHelper.findNext(Xcode.FDOSTATEMENT, _pragma);
+          _loops[0] =
+              XelementHelper.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
         } else { // Find the next i loops
           _loops[i] = XelementHelper.find(Xcode.FDOSTATEMENT,
               _loops[i-1].getBody(), false);
@@ -106,7 +105,8 @@ public class LoopFusion extends Transformation {
     } else {
       // Without collapse clause, just fin the first do statement from the
       // pragma
-      Xnode loop = XelementHelper.findNext(Xcode.FDOSTATEMENT, _pragma);
+      Xnode loop =
+          XelementHelper.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
       if(loop == null){
         xcodeml.addError("Cannot find loop after directive",
             _claw.getPragma().getLineNo());

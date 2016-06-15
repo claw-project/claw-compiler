@@ -119,10 +119,8 @@ public class LoopExtraction extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
-    // TODO XNODE pargma will be Xnode after the refactoring is finished.
     Xnode _exprStmt =
-        XelementHelper.findNext(Xcode.EXPRSTATEMENT,
-            new Xnode(_claw.getPragma().getBaseElement()));
+        XelementHelper.findNext(Xcode.EXPRSTATEMENT, _claw.getPragma());
     if(_exprStmt == null){
       xcodeml.addError("No function call detected after loop-extract",
         _claw.getPragma().getLineNo());
@@ -470,8 +468,7 @@ public class LoopExtraction extends Transformation {
         xcodeml);
 
     // Insert the new empty loop just after the pragma
-    // TODO XNODE remove instantiation
-    XelementHelper.insertAfter(new Xnode(_claw.getPragma().getBaseElement()), loop);
+    XelementHelper.insertAfter(_claw.getPragma(), loop);
 
     // Move the call into the loop body
     loop.getBody().getElement().appendChild(_fctCall.getElement().getParentNode());

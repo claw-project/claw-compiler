@@ -11,6 +11,7 @@ import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xelement.Xpragma;
+import cx2x.xcodeml.xnode.Xnode;
 import exc.object.Xcode;
 import exc.object.Xobject;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -73,7 +74,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * for transformation that are not CLAW related.
    * @param pragma The pragma that is attached to the ClawLanguage object.
    */
-  public ClawLanguage(Xpragma pragma){
+  public ClawLanguage(Xnode pragma){
     super(pragma);
     resetVariables();
   }
@@ -125,7 +126,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param pragma The Xpragma object to check.
    * @return True if the statement starts with claw keyword. False otherwise.
    */
-  public static boolean startsWithClaw(Xpragma pragma) {
+  public static boolean startsWithClaw(Xnode pragma) {
     return !(pragma == null || pragma.getValue() == null)
         && pragma.getValue().startsWith(PREFIX_CLAW);
   }
@@ -139,7 +140,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @throws IllegalDirectiveException If directive does not follow the CLAW
    * language specification. 
    */
-  public static ClawLanguage analyze(Xpragma pragma,
+  public static ClawLanguage analyze(Xnode pragma,
                                      AcceleratorGenerator generator,
                                      Target target)
       throws IllegalDirectiveException
@@ -728,7 +729,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Attach the pragma related to this CLAW language analysis.
    * @param pragma Xpragma object.
    */
-  private void attachPragma(Xpragma pragma){
+  private void attachPragma(Xnode pragma){
     _pragma = pragma;
   }
 
@@ -807,7 +808,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return An instance of ClawLanguage describing a loop-fusion with the
    * group, collapse clauses and the pragma from the master object.
    */
-  public static ClawLanguage createLoopFusionLanguage(Xpragma base,
+  public static ClawLanguage createLoopFusionLanguage(Xnode base,
                                                       String group,
                                                       int collapse)
   {
@@ -828,7 +829,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * indexes from the master object.
    */
   public static ClawLanguage createLoopInterchangeLanguage(ClawLanguage master,
-                                                           Xpragma pragma)
+                                                           Xnode pragma)
   {
     ClawLanguage l = new ClawLanguage();
     l.setDirective(ClawDirective.LOOP_INTERCHANGE);

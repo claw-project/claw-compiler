@@ -237,11 +237,11 @@ public class XmlHelper {
     return new XloopIterationRange(xvar, xindexRange);
   }
 
-  public static Xpragma createXpragma(){
+  public static Xnode createXpragma(){
     String xml = "<" + XelementName.PRAGMA_STMT + "></" +
         XelementName.PRAGMA_STMT + ">";
     Element el = XmlHelper.getElementFromString(xml);
-    return new Xpragma(el);
+    return new Xnode(el);
   }
 
 

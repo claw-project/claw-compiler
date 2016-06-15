@@ -100,10 +100,8 @@ public class TransformationHelper {
       throws IllegalTransformationException
   {
     if(claw.hasInterchangeClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
-      Xpragma p = XelementHelper.createEmpty(Xpragma.class, xcodeml);
-      // TODO XNODE removed after refctoring
-      Xnode pn = new Xnode(p.getBaseElement());
-      XelementHelper.insertBefore(stmt, pn);
+      Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      XelementHelper.insertBefore(stmt, p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);
@@ -128,9 +126,8 @@ public class TransformationHelper {
     if(!claw.hasReshapeClause()){
       return;
     }
-    // TODO XNODE pragma
     XfunctionDefinition fctDef =
-        XelementHelper.findParentFunction(new Xnode(claw.getPragma().getBaseElement()));
+        XelementHelper.findParentFunction(claw.getPragma());
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
       Xid id = fctDef.getSymbolTable().get(reshapeInfo.getArrayName());
       XvarDecl decl =

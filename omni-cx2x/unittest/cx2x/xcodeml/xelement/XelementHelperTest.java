@@ -49,13 +49,13 @@ public class XelementHelperTest {
         XcodeProgram.createFromFile(TestConstant.TEST_PROGRAM);
     assertNotNull(xcodeml);
 
-    List<Xpragma> pragmas = XelementHelper.findAllPragmas(xcodeml);
+    List<Xnode> pragmas = XelementHelper.findAllPragmas(xcodeml);
     assertEquals(4, pragmas.size());
 
-    Xnode loopHoistStart = new Xnode(pragmas.get(1).getBaseElement());
+    Xnode loopHoistStart = new Xnode(pragmas.get(1).getElement());
     assertNotNull(loopHoistStart);
     assertTrue(loopHoistStart.getValue().contains("loop-hoist"));
-    Xnode loopHoistEnd = new Xnode(pragmas.get(2).getBaseElement());
+    Xnode loopHoistEnd = new Xnode(pragmas.get(2).getElement());
     assertNotNull(loopHoistEnd);
     assertTrue(loopHoistEnd.getValue().contains("end loop-hoist"));
 

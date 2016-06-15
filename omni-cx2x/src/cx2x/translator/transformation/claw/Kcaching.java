@@ -30,7 +30,6 @@ import java.util.List;
 public class Kcaching extends Transformation {
   private final ClawLanguage _claw;
   private Xnode _doStmt;
-  private Xnode _pragma;
 
   /**
    * Constructs a new Kcaching transformation triggered from a specific pragma.
@@ -39,8 +38,6 @@ public class Kcaching extends Transformation {
   public Kcaching(ClawLanguage directive) {
     super(directive);
     _claw = directive;
-    // TODO XNODE remove after refactoring
-    _pragma = new Xnode(_claw.getPragma().getBaseElement());
   }
 
   /**
@@ -48,9 +45,7 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    // TODO XNODE pargma should be Xnode directly after refactory
-    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT,
-        new Xnode(_claw.getPragma().getBaseElement()));
+    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
     if(_doStmt == null){
       xcodeml.addError("The kcache directive is not nested in a do statement",
           _claw.getPragma().getLineNo());
@@ -77,19 +72,16 @@ public class Kcaching extends Transformation {
                         Transformation other) throws Exception
   {
     // It might have change from the analysis
-    // TODO XNODE pargma should be Xnode directly after refactory
-    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT,
-        new Xnode(_claw.getPragma().getBaseElement()));
+    _doStmt = XelementHelper.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
 
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
-    // TODO XNODE pragma
     XfunctionDefinition fctDef =
-        XelementHelper.findParentFunction(new Xnode(_claw.getPragma().getBaseElement()));
+        XelementHelper.findParentFunction(_claw.getPragma());
 
     for(String data : _claw.getDataClauseValues()){
-      Xnode stmt = XelementHelper.getFirstArrayAssign(_pragma, data);
+      Xnode stmt = XelementHelper.getFirstArrayAssign(_claw.getPragma(), data);
 
       boolean standardArrayRef = true;
       if(stmt != null) {
@@ -138,7 +130,7 @@ public class Kcaching extends Transformation {
     updateArrayRefWithCache(aRefs, cacheVar);
 
     AcceleratorHelper.generatePrivateClause(_claw, xcodeml, transformer,
-        _pragma, cacheVar.getValue());
+        _claw.getPragma(), cacheVar.getValue());
   }
 
   /**
@@ -167,7 +159,7 @@ public class Kcaching extends Transformation {
     updateArrayRefWithCache(aRefs, cacheVar);
 
     AcceleratorHelper.generatePrivateClause(_claw, xcodeml, transformer,
-        _pragma, cacheVar.getValue());
+        _claw.getPragma(), cacheVar.getValue());
     stmt.delete();
   }
 
@@ -195,7 +187,7 @@ public class Kcaching extends Transformation {
       if(initIfStmt == null){
         // If statement has not been created yet so we do it here
         initIfStmt = XelementHelper.createIfThen(xcodeml);
-        XelementHelper.copyEnhancedInfo(_pragma, initIfStmt);
+        XelementHelper.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
         Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
         // Set lhs of equality
@@ -339,7 +331,7 @@ public class Kcaching extends Transformation {
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache1.appendToChildren(cacheVar, false);
       cache1.appendToChildren(rhs, true);
-      XelementHelper.insertAfter(_pragma, cache1);
+      XelementHelper.insertAfter(_claw.getPragma(), cache1);
     } else {
       /*
        * We replace an assignement of type

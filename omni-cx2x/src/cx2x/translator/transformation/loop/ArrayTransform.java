@@ -43,8 +43,6 @@ public class ArrayTransform extends BlockTransformation {
   private final ClawLanguage _clawBegin, _clawEnd;
   private final List<List<Xnode>> _groupIterationRanges;
   private final List<List<Xnode>> _groupedAssignStmts;
-  private final Xnode _pragma; // TODO XNODE remove after refactor
-
 
   /**
    * Constructs a new ArrayTransform triggered from a specific directive.
@@ -59,7 +57,6 @@ public class ArrayTransform extends BlockTransformation {
     _clawEnd = (ClawLanguage) end;
     _groupedAssignStmts = new ArrayList<>();
     _groupIterationRanges = new ArrayList<>();
-    _pragma = new Xnode(_clawBegin.getPragma().getBaseElement());
   }
 
   @Override
@@ -70,7 +67,7 @@ public class ArrayTransform extends BlockTransformation {
 
       // Find assignments with array notation
       List<Xnode> foundAssignments =
-          XelementHelper.getArrayAssignInBlock(_pragma,
+          XelementHelper.getArrayAssignInBlock(_clawBegin.getPragma(),
               _clawEnd.getPragma().getValue()
           );
 
@@ -115,7 +112,8 @@ public class ArrayTransform extends BlockTransformation {
     } else { // single transformation
       // pragma must be followed by an assign statement
       Xnode stmt =
-          XelementHelper.findDirectNext(Xcode.FASSIGNSTATEMENT, _pragma);
+          XelementHelper.findDirectNext(Xcode.FASSIGNSTATEMENT,
+              _clawBegin.getPragma());
       if(stmt == null){
         xcodeml.addError("Directive not follwed by an assign statement",
             _clawBegin.getPragma().getLineNo());
@@ -168,10 +166,9 @@ public class ArrayTransform extends BlockTransformation {
                         Transformation other) throws Exception
   {
       // 1. Find the function/module declaration TODO handle module/program ?
-    // TODO XNODE pragma
       XfunctionDefinition fctDef =
-          XelementHelper.findParentFunction(new Xnode(_clawBegin.getPragma().getBaseElement()));
-      Xnode grip = _pragma;
+          XelementHelper.findParentFunction(_clawBegin.getPragma());
+      Xnode grip = _clawBegin.getPragma();
       for(int i = 0; i < _groupedAssignStmts.size(); ++i){
         grip = generateDoStmtNotation(xcodeml, transformer, fctDef,
             _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);

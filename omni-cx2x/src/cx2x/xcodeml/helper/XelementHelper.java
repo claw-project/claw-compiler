@@ -1119,15 +1119,15 @@ public class XelementHelper {
    * @param xcodeml The XcodeML program to search in.
    * @return A list of all pragmas found in the XcodeML program.
    */
-  public static List<Xpragma> findAllPragmas(XcodeProgram xcodeml){
+  public static List<Xnode> findAllPragmas(XcodeProgram xcodeml){
     NodeList pragmaList = xcodeml.getDocument()
-      .getElementsByTagName(XelementName.PRAGMA_STMT);
-    List<Xpragma> pragmas = new ArrayList<>();
+      .getElementsByTagName(Xcode.FPRAGMASTATEMENT.code());
+    List<Xnode> pragmas = new ArrayList<>();
     for (int i = 0; i < pragmaList.getLength(); i++) {
       Node pragmaNode = pragmaList.item(i);
       if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) pragmaNode;
-        pragmas.add(new Xpragma(element));
+        pragmas.add(new Xnode(element));
       }
     }
     return pragmas;

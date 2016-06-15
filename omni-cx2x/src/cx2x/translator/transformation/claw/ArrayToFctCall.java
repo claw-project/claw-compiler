@@ -40,9 +40,8 @@ public class ArrayToFctCall extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    // TODO XNODE pragma
     XfunctionDefinition _fctDef =
-        XelementHelper.findParentFunction(new Xnode(_claw.getPragma().getBaseElement()));
+        XelementHelper.findParentFunction(_claw.getPragma());
     if(_fctDef == null){
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().getLineNo());
@@ -59,9 +58,8 @@ public class ArrayToFctCall extends Transformation {
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
         getFctDefinition(_claw.getFctName());
     if(_replaceFct == null){
-      // TODO XNODE pragma
       XmoduleDefinition parentModule =
-          XelementHelper.findParentModule(new Xnode(_claw.getPragma().getBaseElement()));
+          XelementHelper.findParentModule(_claw.getPragma());
       _replaceFct = XelementHelper.findFunctionDefinitionInModule(parentModule,
           _claw.getFctName());
 
@@ -109,9 +107,8 @@ public class ArrayToFctCall extends Transformation {
       args.appendToChildren(var, false);
     }
 
-    // TODO XNODE remove instantiation
     List<Xnode> refs =
-        XelementHelper.getAllArrayReferencesInSiblings(new Xnode(_claw.getPragma().getBaseElement()),
+        XelementHelper.getAllArrayReferencesInSiblings(_claw.getPragma(),
             _claw.getArrayName());
 
     for(Xnode ref : refs){

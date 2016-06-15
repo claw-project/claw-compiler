@@ -92,9 +92,7 @@ public class OpenAccContinuation extends Transformation {
     if(pragmas.length != 2) {
       getDirective().getPragma().setValue(Constant.OPENACC_PREFIX + " " +
           pragmas[1] + " " + Constant.CONTINUATION_LINE_SYMBOL);
-      // TODO XNODE take directly pragma as Xnode when refactoring is done
-      Xnode newlyInserted
-          = new Xnode(getDirective().getPragma().getBaseElement());
+      Xnode newlyInserted = getDirective().getPragma();
       for (int i = 2; i < pragmas.length; ++i) {
         Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
 

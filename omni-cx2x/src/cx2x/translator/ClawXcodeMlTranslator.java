@@ -28,6 +28,7 @@ import cx2x.xcodeml.transformation.*;
 import cx2x.translator.transformer.*;
 
 // OMNI import
+import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.*;
 
 import java.io.*;
@@ -93,7 +94,7 @@ public class ClawXcodeMlTranslator {
     }
 
     // Check all pragma found in the program
-    for (Xpragma pragma :  XelementHelper.findAllPragmas(_program)){
+    for (Xnode pragma :  XelementHelper.findAllPragmas(_program)){
 
       // pragma does not start with the CLAW prefix
       if(!ClawLanguage.startsWithClaw(pragma)){

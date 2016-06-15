@@ -13,6 +13,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.xelement.Xpragma;
+import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -64,7 +65,7 @@ public class ClawLanguageTest {
   private void analyzeValidClawLoopFusion(String raw, String groupName,
                                           boolean collapse, int n){
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -95,7 +96,7 @@ public class ClawLanguageTest {
    */
   private void analyzeUnvalidClawLanguage(String raw){
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -147,7 +148,7 @@ public class ClawLanguageTest {
                                                String acc)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -206,7 +207,7 @@ public class ClawLanguageTest {
                                       boolean isEnd)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -451,7 +452,7 @@ public class ClawLanguageTest {
                                            String step)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -520,7 +521,7 @@ public class ClawLanguageTest {
                                   boolean hasPrivate)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -618,7 +619,7 @@ public class ClawLanguageTest {
                                           String acc, List<String> inducNames)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -703,7 +704,7 @@ public class ClawLanguageTest {
                                      List<ClawReshapeInfo> infos)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -786,7 +787,7 @@ public class ClawLanguageTest {
                                           String fctName, List<String> params)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(
@@ -870,7 +871,7 @@ public class ClawLanguageTest {
                                        List<ClawDimension> dimensions)
   {
     try {
-      Xpragma p = XmlHelper.createXpragma();
+      Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator(

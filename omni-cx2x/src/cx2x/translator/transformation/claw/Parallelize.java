@@ -56,8 +56,7 @@ public class Parallelize extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
 
     // Check for the parent fct/subroutine definition
-    // TODO XNODE pargma
-    _fctDef = XelementHelper.findParentFunction(new Xnode(_claw.getPragma().getBaseElement()));
+    _fctDef = XelementHelper.findParentFunction(_claw.getPragma());
     if(_fctDef == null){
       xcodeml.addError("Parent function/subroutine cannot be found. " +
           "Parallelize directive must be defined in a function/subroutine.",

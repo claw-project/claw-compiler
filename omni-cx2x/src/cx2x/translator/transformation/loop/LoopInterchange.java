@@ -183,9 +183,8 @@ public class LoopInterchange extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
     // Find next loop after pragma
-    // TODO XNODE pragma will be xnode directly
-    _loopLevel0 = XelementHelper.findNext(Xcode.FDOSTATEMENT,
-        new Xnode(_claw.getPragma().getBaseElement()));
+    _loopLevel0 =
+        XelementHelper.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
 
     if(_loopLevel0 == null){
       xcodeml.addError("top level loop not found",

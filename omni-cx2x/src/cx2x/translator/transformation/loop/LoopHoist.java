@@ -55,10 +55,9 @@ public class LoopHoist extends BlockTransformation {
     _nestedLevel = _startClaw.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
-    // TODO XNODE pragma will be Xnode directly
     List<Xnode> statements =
-        XelementHelper.findDoStatement(new Xnode(_startClaw.getPragma().getBaseElement()),
-            new Xnode(_endClaw.getPragma().getBaseElement()), _startClaw.getHoistInductionVars());
+        XelementHelper.findDoStatement(_startClaw.getPragma(),
+            _endClaw.getPragma(), _startClaw.getHoistInductionVars());
 
     if(statements.size() == 0){
       xcodeml.addError("No do statement group meets the criteria of hoisting.",
@@ -130,9 +129,8 @@ public class LoopHoist extends BlockTransformation {
 
     // Check reshape mandatory points
     if(_startClaw.hasReshapeClause()) {
-      // TODO XNODE pragma
       XfunctionDefinition fctDef =
-          XelementHelper.findParentFunction(new Xnode(_startClaw.getPragma().getBaseElement()));
+          XelementHelper.findParentFunction(_startClaw.getPragma());
       if(fctDef == null){
         xcodeml.addError("Unable to find the function/subroutine/module " +
             "definition including the current directive",
@@ -197,9 +195,8 @@ public class LoopHoist extends BlockTransformation {
     reloadDoStmts(_doGroup.get(0), _doGroup.get(0).getDoStmts()[0]);
 
     // Do the hoisting
-    // TODO XNODE pargma will be xnode directly
     XelementHelper.shiftStatementsInBody(
-        new Xnode(_startClaw.getPragma().getBaseElement()),    // Start element
+        _startClaw.getPragma(),                                // Start element
         _doGroup.get(0).getDoStmts()[0],                       // Stop element
         _doGroup.get(0).getDoStmts()[_nestedLevel-1].getBody() // Target body
     );
