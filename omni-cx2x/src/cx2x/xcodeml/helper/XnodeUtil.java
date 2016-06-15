@@ -937,7 +937,7 @@ public class XnodeUtil {
    * @param from   Element to start the search from.
    * @param down   If True, search in the siblings. If false, search in the
    *               ancestors.
-   * @return
+   * @return The element found. Null if nothing found.
    */
   private static Xnode findInDirection(Xcode opcode, Xnode from, boolean down){
     if(from == null){
@@ -1115,7 +1115,7 @@ public class XnodeUtil {
     Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
-    if(indexRange1 == null || indexRange2 == null){
+    if (indexRange1 == null || indexRange2 == null) {
       return false;
     }
 
@@ -1124,18 +1124,10 @@ public class XnodeUtil {
     Xnode up2 = indexRange2.find(Xcode.UPPERBOUND);
     Xnode s2 = indexRange2.find(Xcode.STEP).getChild(0);
 
-
-
-    if (!compareValues(inductionVar1, inductionVar2)) {
-      return false;
-    }
-
-    if (indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-        indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
-      return true;
-    }
-
-    return compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
+    return compareValues(inductionVar1, inductionVar2) &&
+        (indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+            indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) ||
+            compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2));
   }
 
 
@@ -1154,13 +1146,19 @@ public class XnodeUtil {
     Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
-    Xnode low1 = XnodeUtil.find(Xcode.LOWERBOUND, indexRange1, false).getChild(0);
-    Xnode up1 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
-    Xnode s1 = XnodeUtil.find(Xcode.STEP, indexRange1, false).getChild(0);
+    if(inductionVar1 == null || inductionVar2 == null ||
+        indexRange1 == null || indexRange2 == null)
+    {
+      return; // TODO exception
+    }
 
-    Xnode low2 = XnodeUtil.find(Xcode.LOWERBOUND, indexRange2, false).getChild(0);
-    Xnode up2 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
-    Xnode s2 = XnodeUtil.find(Xcode.STEP, indexRange2, false).getChild(0);
+    Xnode low1 = indexRange1.find(Xcode.LOWERBOUND).getChild(0);
+    Xnode up1 = indexRange1.find(Xcode.UPPERBOUND).getChild(0);
+    Xnode s1 = indexRange1.find(Xcode.STEP).getChild(0);
+
+    Xnode low2 = indexRange2.find(Xcode.LOWERBOUND).getChild(0);
+    Xnode up2 = indexRange2.find(Xcode.UPPERBOUND).getChild(0);
+    Xnode s2 = indexRange2.find(Xcode.STEP).getChild(0);
 
     String tmpInduction = inductionVar2.getValue();
     String tmpLower = low2.getValue();
