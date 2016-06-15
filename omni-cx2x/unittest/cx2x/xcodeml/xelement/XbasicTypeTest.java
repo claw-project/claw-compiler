@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.xelement;
 
-import cx2x.xcodeml.xelement.*;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
