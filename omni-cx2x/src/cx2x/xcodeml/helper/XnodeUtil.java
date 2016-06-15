@@ -175,7 +175,7 @@ public class XnodeUtil {
     }
 
     for(int i = 0; i < list1.size(); ++i){
-      if(!isIndexRangeIdentical(list1.get(i), list2.get(i))){
+      if(!isIndexRangeIdentical(list1.get(i), list2.get(i), true)){
         return false;
       }
     }
@@ -1003,14 +1003,16 @@ public class XnodeUtil {
         e2.getElement().getParentNode();
   }
 
-
   /**
-   * Compare the iteration range of two do statements.
-   * @param e1 First do statement.
-   * @param e2 Second do statement.
+   Compare the iteration range of two do statements.
+   * @param e1             First do statement.
+   * @param e2             Second do statement.
+   * @param withLowerBound Compare lower bound or not.
    * @return True if the iteration range are identical.
    */
-  public static boolean hasSameIndexRange(Xnode e1, Xnode e2) {
+  private static boolean compareIndexRanges(Xnode e1, Xnode e2,
+                                            boolean withLowerBound)
+  {
     // The two nodes must be do statement
     if (e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT) {
       return false;
@@ -1022,7 +1024,27 @@ public class XnodeUtil {
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
 
     return compareValues(inductionVar1, inductionVar2) &&
-        isIndexRangeIdentical(indexRange1, indexRange2);
+        isIndexRangeIdentical(indexRange1, indexRange2, withLowerBound);
+  }
+
+  /**
+   * Compare the iteration range of two do statements.
+   * @param e1 First do statement.
+   * @param e2 Second do statement.
+   * @return True if the iteration range are identical.
+   */
+  public static boolean hasSameIndexRange(Xnode e1, Xnode e2) {
+    return compareIndexRanges(e1, e2, true);
+  }
+
+  /**
+   * Compare the iteration range of two do statements.
+   * @param e1 First do statement.
+   * @param e2 Second do statement.
+   * @return True if the iteration range are identical besides the lower bound.
+   */
+  public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2) {
+    return compareIndexRanges(e1, e2, false);
   }
 
   /**
@@ -1066,11 +1088,15 @@ public class XnodeUtil {
 
   /**
    * Compare the iteration range of two do statements
-   * @param idx1 First do statement.
-   * @param idx2 Second do statement.
+   * @param idx1           First do statement.
+   * @param idx2           Second do statement.
+   * @param withLowerBound If true, compare lower bound. If false, lower bound
+   *                       is not compared.
    * @return True if the index range are identical.
    */
-  private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2) {
+  private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2,
+                                               boolean withLowerBound)
+  {
     if (idx1.Opcode() != Xcode.INDEXRANGE || idx2.Opcode() != Xcode.INDEXRANGE) {
       return false;
     }
@@ -1094,41 +1120,16 @@ public class XnodeUtil {
       s2 = s2.getChild(0);
     }
 
-    return compareFirstChildValues(low1, low2) &&
-        compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
+    if(withLowerBound){
+      return compareFirstChildValues(low1, low2) &&
+          compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
+    } else {
+      return compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
+    }
   }
 
 
-  /**
-   * Compare the iteration range of two do statements.
-   * @param e1 First do statement.
-   * @param e2 Second do statement.
-   * @return True if the iteration range are identical besides the lower bound.
-   */
-  public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2) {
-    // The two nodes must be do statement
-    if (e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT) {
-      return false;
-    }
 
-    Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
-    if (indexRange1 == null || indexRange2 == null) {
-      return false;
-    }
-
-    Xnode up1 = indexRange1.find(Xcode.UPPERBOUND);
-    Xnode s1 = indexRange1.find(Xcode.STEP).getChild(0);
-    Xnode up2 = indexRange2.find(Xcode.UPPERBOUND);
-    Xnode s2 = indexRange2.find(Xcode.STEP).getChild(0);
-
-    return compareValues(inductionVar1, inductionVar2) &&
-        (indexRange1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-            indexRange2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) ||
-            compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2));
-  }
 
 
   /**
