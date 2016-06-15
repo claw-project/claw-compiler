@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class Xnode {
 
-  private final Element _baseElement;
+  protected final Element _baseElement;
 
   /**
    * Constructs an Xnode object from an element in the AST.
