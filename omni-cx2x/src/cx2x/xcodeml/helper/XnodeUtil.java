@@ -8,7 +8,6 @@ package cx2x.xcodeml.helper;
 import cx2x.xcodeml.exception.*;
 
 import cx2x.xcodeml.xnode.*;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -652,22 +651,6 @@ public class XnodeUtil {
     }
   }
 
-  /**
-   * Validate a string attribute.
-   * @param doc       Document in which the attribute must be validated.
-   * @param attrValue Attribute value expected.
-   * @param query     Xpath query to locate the attribute value.
-   * @return True if the attribute validates. False otherwise.
-   * @throws Exception if xpathQuery cannot be executed.
-   */
-  public static boolean validateStringAttribute(Document doc, String attrValue,
-                                                String query) throws Exception
-  {
-    XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
-    String outputValue = (String) ex.evaluate(doc, XPathConstants.STRING);
-    return outputValue.equals(attrValue);
-  }
-
   /*
    * PRIVATE SECTION
    */
@@ -1044,11 +1027,27 @@ public class XnodeUtil {
    * Compare the inner values of two nodes.
    * @param n1 First node.
    * @param n2 Second node.
-   * @return True is the values are identical. False otherwise.
+   * @return True if the values are identical. False otherwise.
    */
   private static boolean compareValues(Xnode n1, Xnode n2) {
     return !(n1 == null || n2 == null)
         && n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase());
+  }
+
+  /**
+   * Compare the inner value of the first child of two nodes.
+   * @param n1 First node.
+   * @param n2 Second node.
+   * @return True if the value are identiccal. False otherwise.
+   */
+  private static boolean compareFirstChildValues(Xnode n1, Xnode n2) {
+    if(n1 == null || n2 == null){
+      return false;
+    }
+    Xnode c1 = n1.getChild(0);
+    Xnode c2 = n2.getChild(0);
+    return !(c1 == null || c2 == null)
+        && c1.getValue().toLowerCase().equals(c2.getValue().toLowerCase());
   }
 
   /**
@@ -1115,13 +1114,18 @@ public class XnodeUtil {
     Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
     Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
-    Xnode up1 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange1, false).getChild(0);
-    Xnode s1 = XnodeUtil.find(Xcode.STEP, indexRange1, false).getChild(0);
-    Xnode up2 = XnodeUtil.find(Xcode.UPPERBOUND, indexRange2, false).getChild(0);
-    Xnode s2 = XnodeUtil.find(Xcode.STEP, indexRange2, false).getChild(0);
+    if(indexRange1 == null || indexRange2 == null){
+      return false;
+    }
 
-    if (!inductionVar1.getValue().toLowerCase().
-        equals(inductionVar2.getValue().toLowerCase())) {
+    Xnode up1 = indexRange1.find(Xcode.UPPERBOUND);
+    Xnode s1 = indexRange1.find(Xcode.STEP).getChild(0);
+    Xnode up2 = indexRange2.find(Xcode.UPPERBOUND);
+    Xnode s2 = indexRange2.find(Xcode.STEP).getChild(0);
+
+
+
+    if (!compareValues(inductionVar1, inductionVar2)) {
       return false;
     }
 
@@ -1130,7 +1134,7 @@ public class XnodeUtil {
       return true;
     }
 
-    return compareValues(up1, up2) && compareOptionalValues(s1, s2);
+    return compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
   }
 
 
