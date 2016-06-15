@@ -62,7 +62,6 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/transformation/Transformer.java
 
 # XcodeML.Xelement package
-  cx2x/xcodeml/xelement/XbaseElement.java
   cx2x/xcodeml/xelement/XbasicType.java
   cx2x/xcodeml/xelement/XcodeProgram.java
   cx2x/xcodeml/xelement/Xdecl.java

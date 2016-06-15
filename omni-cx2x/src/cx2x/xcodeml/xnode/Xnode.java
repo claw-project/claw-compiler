@@ -5,9 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XelementHelper;
-import cx2x.xcodeml.xelement.XbaseElement;
 import cx2x.xcodeml.xelement.XcodeProgram;
 import cx2x.xcodeml.xelement.XelementName;
 import org.w3c.dom.Element;

@@ -38,42 +38,6 @@ import java.util.List;
  */
 
 public class XelementHelper {
-
-
-  /**
-   * Get a text attribute value from an element.
-   * @param el        The element in which the attribute is searched.
-   * @param attrName  The name of the attribute to be found.
-   * @return The attribute's value if the attribute is found. Null otherwise.
-   */
-  public static String getAttributeValue(XbaseElement el, String attrName){
-    if(el == null || el.getBaseElement() == null){
-      return null;
-    }
-    NamedNodeMap attributes = el.getBaseElement().getAttributes();
-    for (int j = 0; j < attributes.getLength(); j++) {
-      if(attributes.item(j).getNodeName().equals(attrName)){
-        return attributes.item(j).getNodeValue();
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Get a boolean attribute value from an element.
-   * @param el        The element in which the attribute is searched.
-   * @param attrName  The name of the attribute to be found.
-   * @return The attribute's value if the attribute is found. Null otherwise.
-   */
-  public static boolean getBooleanAttributeValue(XbaseElement el,
-    String attrName) {
-    if (el == null || el.getBaseElement() == null) {
-      return false;
-    }
-    String value = XelementHelper.getAttributeValue(el, attrName);
-    return value != null && value.equals(XelementName.TRUE);
-  }
-
   /**
    * Find a function definition according to a function call.
    * @param xcodeml The XcodeML program to search in.
@@ -707,26 +671,6 @@ public class XelementHelper {
     return outputValue.equals(attrValue);
   }
 
-  /**
-   * Insert an element just before a reference element.
-   * @param ref    The reference element.
-   * @param insert The element to be inserted.
-   */
-  public static void insertBefore(XbaseElement ref, XbaseElement insert){
-    ref.getBaseElement().getParentNode().insertBefore(insert.getBaseElement(),
-        ref.getBaseElement());
-  }
-
-  /**
-   * Insert an element just after a reference element.
-   * @param refElement  The reference element.
-   * @param element     The element to be inserted.
-   */
-  public static void insertAfter(XbaseElement refElement, XbaseElement element){
-    XelementHelper.insertAfter(refElement.getBaseElement(),
-        element.getBaseElement());
-  }
-
   /*
    * PRIVATE SECTION
    */
@@ -852,18 +796,6 @@ public class XelementHelper {
 
   /**
    * Get the depth of an element in the AST.
-   * @param element The element for which the depth is computed.
-   * @return A depth value greater or equal to 0.
-   */
-  public static int getDepth(XbaseElement element) {
-    if(element == null || element.getBaseElement() == null){
-      return -1;
-    }
-    return getDepth(element.getBaseElement());
-  }
-
-  /**
-   * Get the depth of an element in the AST.
    * @param element XML element for which the depth is computed.
    * @return A depth value greater or equal to 0.
    */
@@ -895,20 +827,6 @@ public class XelementHelper {
           firstStatementInBody);
       currentSibling = nextSibling;
     }
-  }
-
-
-  /**
-   * Copy the enhanced information from an element to a target element.
-   * Enhanced information include line number and original file name.
-   * @param base    Base element to copy information from.
-   * @param target  Target element to copy information to.
-   */
-  public static void copyEnhancedInfo(XenhancedElement base,
-                                      XenhancedElement target)
-  {
-    target.setLine(base.getLineNo());
-    target.setFile(base.getFile());
   }
 
   /**
