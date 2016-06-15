@@ -7,7 +7,6 @@ package cx2x;
 
 import cx2x.decompiler.FortranDecompiler;
 import cx2x.translator.ClawXcodeMlTranslator;
-import cx2x.translator.xcode.ClawXcodeTranslator;
 import cx2x.translator.common.ConfigurationHelper;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -122,7 +121,6 @@ public class Cx2x {
     String directive_option = null;
     String configuration_path = null;
     boolean show_configuration = false;
-    boolean xcodeTranslation = false;
     boolean lineDirectives = false;
     int maxColumns = 0;
 
@@ -177,8 +175,6 @@ public class Cx2x {
         configuration_path = arg.replace("--config=", "");
       } else if (arg.startsWith("--show-config")) {
         show_configuration = true;
-      } else if (arg.startsWith("--xcode")) {
-        xcodeTranslation = true;
       } else if(arg.startsWith("-")){
         error("unknown option " + arg);
       } else if(input == null) {
@@ -228,23 +224,17 @@ public class Cx2x {
       return;
     }
 
-    if(xcodeTranslation){
-      ClawXcodeTranslator translator =
-          new ClawXcodeTranslator(input, xcodeMlOutput, directive, target, groups);
-      translator.translate();
-    } else {
-      ClawXcodeMlTranslator translator =
-          new ClawXcodeMlTranslator(input, xcodeMlOutput, directive, target, groups);
-      translator.analyze();
-      translator.transform();
 
-      // Decompile IR to Fortran
-      FortranDecompiler fDecompiler = new FortranDecompiler();
-      fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
-          lineDirectives);
-      // TODO error handling
+    ClawXcodeMlTranslator translator =
+        new ClawXcodeMlTranslator(input, xcodeMlOutput, directive, target, groups);
+    translator.analyze();
+    translator.transform();
 
-    }
+    // Decompile IR to Fortran
+    FortranDecompiler fDecompiler = new FortranDecompiler();
+    fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
+        lineDirectives);
+    // TODO error handling
   }
 
 
