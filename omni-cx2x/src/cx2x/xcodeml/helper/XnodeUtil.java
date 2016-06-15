@@ -47,7 +47,8 @@ public class XnodeUtil {
       return null;
     }
     String name = fctCall.findNode(Xcode.NAME).getValue();
-    NodeList nList = xcodeml.getBaseElement().getElementsByTagName(Xname.FCT_DEFINITION);
+    NodeList nList =
+        xcodeml.getBaseElement().getElementsByTagName(Xname.FCT_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -167,7 +168,8 @@ public class XnodeUtil {
    * identical. False otherwise.
    */
   public static boolean compareIndexRanges(List<Xnode> list1,
-                                           List<Xnode> list2){
+                                           List<Xnode> list2)
+  {
     if(list1.size() != list2.size()){
       return false;
     }
@@ -1058,8 +1060,8 @@ public class XnodeUtil {
    * otherwise.
    */
   private static boolean compareOptionalValues(Xnode n1, Xnode n2){
-    return n1 == null && n2 == null ||
-        n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase());
+    return n1 == null && n2 == null || (n1 != null && n2 != null &&
+        n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase()));
   }
 
   /**
@@ -1078,14 +1080,13 @@ public class XnodeUtil {
       return true;
     }
 
-    Xnode low1 = idx1.find(Xcode.LOWERBOUND).getChild(0);
-    Xnode up1 = idx1.find(Xcode.UPPERBOUND).getChild(0);
-
+    Xnode low1 = idx1.find(Xcode.LOWERBOUND);
+    Xnode up1 = idx1.find(Xcode.UPPERBOUND);
     Xnode low2 = idx2.find(Xcode.LOWERBOUND);
-    Xnode up2 = idx2.find(Xcode.UPPERBOUND).getChild(0);
-
+    Xnode up2 = idx2.find(Xcode.UPPERBOUND);
     Xnode s1 = idx1.find(Xcode.STEP);
     Xnode s2 = idx2.find(Xcode.STEP);
+
     if (s1 != null) {
       s1 = s1.getChild(0);
     }
@@ -1093,8 +1094,8 @@ public class XnodeUtil {
       s2 = s2.getChild(0);
     }
 
-    return compareValues(low1, low2) && compareValues(up1, up2) &&
-        compareOptionalValues(s1, s2);
+    return compareFirstChildValues(low1, low2) &&
+        compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
   }
 
 
