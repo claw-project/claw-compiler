@@ -321,12 +321,12 @@ public class XelementHelper {
       String tempQuery;
       if(i == inductionVars.size() - 1) { // first iteration
         tempQuery = String.format("%s[%s[text()=\"%s\"]]",
-            XelementName.DO_STMT,
+            XelementName.F_DO_STATEMENT,
             XelementName.VAR,
             inductionVars.get(i));
       } else {
         tempQuery = String.format("%s[%s[text()=\"%s\"] and %s[%s]]",
-            XelementName.DO_STMT,
+            XelementName.F_DO_STATEMENT,
             XelementName.VAR,
             inductionVars.get(i),
             XelementName.BODY,

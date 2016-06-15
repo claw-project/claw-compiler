@@ -90,7 +90,7 @@ public class XelementName {
   public static final String BODY = "body";
   public static final String CONDITION = "condition";
   public static final String DECLARATIONS = "declarations";
-  public static final String DO_STMT = "FdoStatement";
+  public static final String F_DO_STATEMENT = "FdoStatement";
   public static final String ELSE = "else";
   public static final String EXPR_STMT = "exprStatement";
   public static final String FCT_CALL = "functionCall";
