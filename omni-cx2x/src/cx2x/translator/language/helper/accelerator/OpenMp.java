@@ -31,7 +31,7 @@ public class OpenMp extends AcceleratorGenerator {
    *
    * @param target Target for which the directive must be generated.
    */
-  protected OpenMp(Target target) {
+  OpenMp(Target target) {
     super(target);
   }
 

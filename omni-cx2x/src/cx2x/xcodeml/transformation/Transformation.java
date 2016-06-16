@@ -27,7 +27,7 @@ public abstract class Transformation {
    * Transformation ctor.
    * @param directive The directive that triggered the transformation.
    */
-  public Transformation(AnalyzedPragma directive){
+  protected Transformation(AnalyzedPragma directive){
     _directive = directive;
 
     if (_directive != null && _directive.getPragma() != null) {
@@ -80,7 +80,7 @@ public abstract class Transformation {
    * Get the line number where the pragma was found.
    * @return Line number of the pragma.
    */
-  public int getStartLine(){
+  protected int getStartLine(){
     return _startLine;
   }
 
@@ -89,7 +89,7 @@ public abstract class Transformation {
    * the pragma was found.
    * @param lineno  An positive integer value representing the line number.
    */
-  public void setStartLine(int lineno){
+  protected void setStartLine(int lineno){
     _startLine = lineno;
   }
 
@@ -97,14 +97,14 @@ public abstract class Transformation {
    * Get the information whether the transformation has been applied or not.
    * @return True is the transformation has been applied. False otherwise.
    */
-  public boolean isTransformed(){
+  protected boolean isTransformed(){
     return _transformed;
   }
 
   /**
    * Set the transformation as transformed.
    */
-  public void transformed(){
+  protected void transformed(){
     _transformed = true;
   }
 }

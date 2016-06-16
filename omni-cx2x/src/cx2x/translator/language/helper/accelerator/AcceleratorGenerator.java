@@ -30,7 +30,7 @@ public abstract class AcceleratorGenerator {
    * Constructs a new object with the given target.
    * @param target Target for which the directive must be generated.
    */
-  protected AcceleratorGenerator(Target target) {
+  AcceleratorGenerator(Target target) {
     _target = target;
   }
 
@@ -38,7 +38,7 @@ public abstract class AcceleratorGenerator {
    * Get the associated target.
    * @return Target.
    */
-  protected Target getTarget(){
+  Target getTarget(){
     return _target;
   }
 

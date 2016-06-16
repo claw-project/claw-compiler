@@ -24,7 +24,7 @@ public class ClawMapping {
    * Constructs an empty ClawMapping object. Normally only used from the
    * CLAW Parser.
    */
-  protected ClawMapping(){}
+  ClawMapping(){}
 
   /**
    * Get a list of all mapping variables.

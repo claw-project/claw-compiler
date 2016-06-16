@@ -15,7 +15,7 @@ import cx2x.xcodeml.xnode.Xnode;
  *
  * @author clementval
  */
-public class LoopHoistDoStmtGroup {
+class LoopHoistDoStmtGroup {
   private boolean _needExtraction = false;
   private boolean _needIfication = false;
   private Xnode[] _doStmts = null;

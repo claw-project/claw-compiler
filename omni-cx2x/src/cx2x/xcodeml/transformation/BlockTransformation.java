@@ -23,7 +23,7 @@ public abstract class BlockTransformation extends Transformation {
    * @param startDirective The directive that triggered the transformation.
    * @param endDirective   The end directive that close the structured block.
    */
-  public BlockTransformation(AnalyzedPragma startDirective,
+  protected BlockTransformation(AnalyzedPragma startDirective,
                              AnalyzedPragma endDirective)
   {
     super(startDirective);

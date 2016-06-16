@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
 
 /**

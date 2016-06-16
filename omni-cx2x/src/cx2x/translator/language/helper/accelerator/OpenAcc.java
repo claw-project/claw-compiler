@@ -30,7 +30,7 @@ class OpenAcc extends AcceleratorGenerator {
    *
    * @param target Target for which the directive must be generated.
    */
-  protected OpenAcc(Target target) {
+  OpenAcc(Target target) {
     super(target);
   }
 

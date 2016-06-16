@@ -62,7 +62,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Constructs an empty ClawLanguage section.
    * WARNING: This ctor should only be used by the parser.
    */
-  protected ClawLanguage(){
+  ClawLanguage(){
     resetVariables();
   }
 
@@ -315,7 +315,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the range value.
    * @param range A ClawRange object.
    */
-  protected void setRange(ClawRange range){
+  void setRange(ClawRange range){
     _rangeValue = range;
   }
 

@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  */
 
 public class Xtype extends Xnode {
-  protected String _type;
+  private String _type;
 
   /**
    * Xelement standard ctor. Pass the base element to the base class and read
