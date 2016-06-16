@@ -232,9 +232,10 @@ public class Cx2x {
 
     // Decompile IR to Fortran
     FortranDecompiler fDecompiler = new FortranDecompiler();
-    fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
-        lineDirectives);
-    // TODO error handling
+    if(!fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
+        lineDirectives)){
+      error("Unable to decompile XcodeML to Fortran");
+    }
   }
 
 
