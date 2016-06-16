@@ -429,17 +429,12 @@ public class Parallelize extends Transformation {
     }
   }
 
-
   /**
    * Insert the declaration of the different variables needed to iterate over
    * the additional dimensions.
    * @param xcodeml Current XcodeML program unit in which element are created.
-   * @throws IllegalTransformationException if elements cannot be created or
-   * elements cannot be found.
    */
-  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
+  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml){
     // Find function type
     XfunctionType fctType =
         (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getAttribute(Xattr.TYPE));

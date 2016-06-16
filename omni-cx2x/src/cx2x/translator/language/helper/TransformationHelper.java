@@ -42,7 +42,6 @@ public class TransformationHelper {
                                                       XcodeProgram xcodeml,
                                                       Transformer transformer,
                                                       Xnode stmt)
-      throws IllegalTransformationException
   {
     // Order doesn't matter
     applyFusionClause(claw, transformer, stmt);
