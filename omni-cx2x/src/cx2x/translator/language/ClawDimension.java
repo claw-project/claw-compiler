@@ -7,7 +7,6 @@ package cx2x.translator.language;
 
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
-import cx2x.xcodeml.xnode.Xname;
 
 /**
  * Class holding information about defined dimension.
