@@ -272,8 +272,10 @@ public class Parallelize extends Transformation {
   }
 
   /**
-   * TODO javadoc
-   * @param xcodeml
+   * Prepare the arrayIndex elements that will be inserted before and after the
+   * current indexes in the array references.
+   * @param xcodeml Current XcodeML program unit in which new elements are
+   *                created.
    */
   private void prepareArrayIndexes(XcodeProgram xcodeml) {
     _beforeCrt = new ArrayList<>();
@@ -296,7 +298,6 @@ public class Parallelize extends Transformation {
       }
 
     } else {
-
       /* If no over clause, the indexes are inserted from the defined dimensions
        * from left to right. Everything is inserted on the left of current
        * indexes */

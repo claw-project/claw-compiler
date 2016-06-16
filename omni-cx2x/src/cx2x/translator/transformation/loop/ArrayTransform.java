@@ -259,10 +259,6 @@ public class ArrayTransform extends BlockTransformation {
       List<Xnode> allArrayRef =
           XnodeUtil.findAll(Xcode.FARRAYREF, stmt);
       for (Xnode arrayRef : allArrayRef) {
-
-        // TODO handle more complicated cases
-        String id = arrayRef.find(Xcode.VARREF, Xcode.VAR).getValue();
-
         for (int i = 0; i < arrayRef.getChildren().size() - 1; ++i) {
           Xnode el = arrayRef.getChild(i + 1);
           if (el.Opcode() == Xcode.INDEXRANGE) {
