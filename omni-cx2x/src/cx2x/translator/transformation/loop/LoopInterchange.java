@@ -209,12 +209,9 @@ public class LoopInterchange extends Transformation {
         return false;
       }
 
-      Xnode induction0 = XnodeUtil.find(Xcode.VAR, _loopLevel0, false);
-      _baseLoop0 = induction0.getValue();
-      Xnode induction1 = XnodeUtil.find(Xcode.VAR, _loopLevel1, false);
-      _baseLoop1 = induction1.getValue();
-      Xnode induction2 = XnodeUtil.find(Xcode.VAR, _loopLevel2, false);
-      _baseLoop2 = induction2.getValue();
+      _baseLoop0 = _loopLevel0.find(Xcode.VAR).getValue();
+      _baseLoop1 = _loopLevel1.find(Xcode.VAR).getValue();
+      _baseLoop2 = _loopLevel2.find(Xcode.VAR).getValue();
 
       if(!checkNewOrderOption(xcodeml, _newOrderOption)){
         return false;
@@ -224,7 +221,6 @@ public class LoopInterchange extends Transformation {
       _newLoop1 = _newOrderOption.get(1);
       _newLoop2 = _newOrderOption.get(2);
     }
-
 
     return true;
   }
