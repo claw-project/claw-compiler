@@ -200,10 +200,8 @@ public class Parallelize extends Transformation {
   /**
    * Apply GPU based transformation.
    * @param xcodeml     Current XcodeML program unit.
-   * @throws Exception
    */
   private void transformForGPU(XcodeProgram xcodeml)
-      throws Exception
   {
     /* Create a nested loop with the new defined dimensions and wrap it around
      * the whole subroutine's body. This is for the moment a really naive
@@ -273,10 +271,11 @@ public class Parallelize extends Transformation {
     }
   }
 
-
-  private void prepareArrayIndexes(XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
+  /**
+   * TODO javadoc
+   * @param xcodeml
+   */
+  private void prepareArrayIndexes(XcodeProgram xcodeml) {
     _beforeCrt = new ArrayList<>();
     _afterCrt = new ArrayList<>();
     List<Xnode> crt = _beforeCrt;
@@ -403,12 +402,9 @@ public class Parallelize extends Transformation {
    * current function/subroutine definition.
    * @param xcodeml Current XcodeML program unit in which the element will be
    *                created.
-   * @throws IllegalTransformationException if elements cannot be created or
-   * elements cannot be found.
    */
   private void adaptScalarRefToArrayReferences(XcodeProgram xcodeml,
                                                List<String> ids)
-      throws IllegalTransformationException
   {
     for(String id : ids){
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.getBody(), id);
@@ -483,11 +479,9 @@ public class Parallelize extends Transformation {
    * @param sclass  Scope class of the variable (from Xname).
    * @param xcodeml Current XcodeML program unit in which the elements will be
    *                created.
-   * @throws IllegalTransformationException if the elements cannot be created.
    */
   private void createIdAndDecl(String name, String type, String sclass,
                                XcodeProgram xcodeml)
-      throws IllegalTransformationException
   {
     Xid id = XnodeUtil.createId(xcodeml, type, sclass, name);
     _fctDef.getSymbolTable().add(id);

@@ -95,7 +95,6 @@ public class TransformationHelper {
                                              XcodeProgram xcodeml,
                                              Transformer transformer,
                                              Xnode stmt)
-      throws IllegalTransformationException
   {
     if(claw.hasInterchangeClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
       Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);

@@ -151,9 +151,8 @@ public class XcodeProgram extends Xnode {
   /**
    * Check whether the XcodeML input file match the requirements.
    * @return True if the XcodeML file matches the requirements.
-   * @throws Exception
    */
-  private boolean isXcodeMLvalid() throws Exception {
+  private boolean isXcodeMLvalid() {
     if(_xcodemlDoc == null){
       return false;
     }

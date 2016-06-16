@@ -60,11 +60,9 @@ public class FortranDecompiler {
    * @param maxColumns     Maximum number of column for the output file.
    * @param lineDirectives If true, preprocessor line directives are added.
    * @return True if the decompilation succeeded. False otherwise.
-   * @throws XmException In case anything goes wrong.
    */
   public boolean decompile(String outputFilepath, String inputFilepath,
                            int maxColumns, boolean lineDirectives)
-      throws XmException
   {
     if(!lineDirectives){
       XmOption.setIsSuppressLineDirective(true);

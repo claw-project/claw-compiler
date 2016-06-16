@@ -247,11 +247,9 @@ public class LoopHoist extends BlockTransformation {
    * Condition if made from the lower bound (if(induction_var >= lower_bound).
    * @param xcodeml Current XcodeML program
    * @param g       The group of do statements.
-   * @throws IllegalTransformationException If creation of elements fails.
    */
   private void createIfStatementForLowerBound(XcodeProgram xcodeml,
                                               LoopHoistDoStmtGroup g)
-      throws IllegalTransformationException
   {
     int nestedDepth = g.getDoStmts().length;
     Xnode ifStmt = new Xnode(Xcode.FIFSTATEMENT, xcodeml);

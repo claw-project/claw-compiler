@@ -172,11 +172,9 @@ public class Kcaching extends Transformation {
    * @param arrayRef    Array reference to be modified that will be
    *                    used for the initialization (lhs of the assign
    *                    statement). Element will be cloned before insertion.
-   * @throws IllegalTransformationException
    */
   private void applyInitClause(XcodeProgram xcodeml, Transformer transformer,
                                Xnode cacheVar, Xnode arrayRef)
-    throws IllegalTransformationException
   {
 
     if(_claw.hasInitClause()){
@@ -270,14 +268,12 @@ public class Kcaching extends Transformation {
    * @param rhs     The element that will be set as the rhs of the assignment.
    * @param stmt    The assign statement including the array ref.
    * @return The new created Xvar element.
-   * @throws IllegalTransformationException
    */
   private Xnode generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
                                              String type,
                                              XfunctionDefinition fctDef,
                                              Xnode rhs,
                                              Xnode stmt)
-      throws IllegalTransformationException
   {
     XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
     if(t.getIntent() != null || t.isAllocatable()){

@@ -163,12 +163,10 @@ public class AcceleratorHelper {
    *                representation in which the pragmas will be generated.
    * @param fctDef  Function/subroutine in which accelerator directives are
    *                generated.
-   * @throws IllegalTransformationException if new element cannot be created.
    */
   public static void generateRoutineDirectives(ClawLanguage claw,
                                                XcodeProgram xcodeml,
                                                XfunctionDefinition fctDef)
-      throws IllegalTransformationException
   {
     if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
       return; // Don't do anything if the target is none
