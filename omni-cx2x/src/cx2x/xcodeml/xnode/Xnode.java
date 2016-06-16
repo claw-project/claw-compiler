@@ -269,8 +269,9 @@ public class Xnode {
   }
 
   /**
-   *
-   * @return
+   * Get the lineno attribute value. This attribute is not defined for every
+   * elements.
+   * @return Line number. 0 if the attribute is not defined.
    */
   public int getLineNo(){
     if(_baseElement.hasAttribute(Xattr.LINENO.toString())){
@@ -281,11 +282,13 @@ public class Xnode {
   }
 
   /**
-   *
-   * @return
+   * Get the file attribute value. This attribute is not defined for every
+   * elements.
+   * @return File path. Null if the file attribute is not defined.
    */
   public String getFile(){
-    return _baseElement.getAttribute(Xattr.FILE.toString());
+    return (_baseElement.hasAttribute(Xattr.FILE.toString())) ?
+        _baseElement.getAttribute(Xattr.FILE.toString()) : null;
   }
 
 }
