@@ -292,15 +292,7 @@ public class ClawXcodeMlTranslator {
    */
   private void abort(){
     if(_program != null) {
-      for (XanalysisError error : _program.getErrors()) {
-        if (error.getLine() == 0) {
-          System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
-              "undefined");
-        } else {
-          System.err.println(ERROR_PREFIX + error.getMessage() + ", line: " +
-              error.getLine());
-        }
-      }
+      displayMessages(ERROR_PREFIX, _program.getErrors());
     }
     System.exit(1);
   }
@@ -310,16 +302,25 @@ public class ClawXcodeMlTranslator {
    * displaying.
    */
   private void displayWarnings(){
-    for(XanalysisError warn : _program.getWarnings()){
-      if(warn.getLine() == 0){
-        System.err.println(WARNING_PREFIX + warn.getMessage() + ", line: " +
-            "undefined");
+    displayMessages(WARNING_PREFIX, _program.getWarnings());
+  }
+
+  /**
+   * Print all messages in the given list with the prefix.
+   * @param prefix   Prefix for the message.
+   * @param messages List of messages to display.
+   */
+  private void displayMessages(String prefix, List<XanalysisError> messages){
+    for(XanalysisError message : messages){
+      if(message.getLine() == 0){
+        System.err.println(String.format("%s %s, line: undefined", prefix,
+            message.getMessage()));
       } else {
-        System.err.println(WARNING_PREFIX + warn.getMessage() + ", line: " +
-            warn.getLine());
+        System.err.println(String.format("%s %s, line: %d", prefix,
+            message.getMessage(), message.getLine()));
       }
     }
-    _program.purgeWarning();
+    messages.clear();
   }
 
 }

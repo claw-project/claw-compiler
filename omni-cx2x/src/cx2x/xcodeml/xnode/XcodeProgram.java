@@ -111,13 +111,6 @@ public class XcodeProgram extends Xnode {
   }
 
   /**
-   * Purge all current warnings.
-   */
-  public void purgeWarning(){
-    _warnings.clear();
-  }
-
-  /**
    * @return The XML Document representing the XcodeML program.
    */
   public Document getDocument(){
