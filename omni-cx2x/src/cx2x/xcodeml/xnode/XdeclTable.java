@@ -88,7 +88,7 @@ public class XdeclTable extends Xnode {
   public void replace(XvarDecl decl){
     XvarDecl oldDecl = _table.get(decl.getName().getValue());
     if(oldDecl == null){
-      // TODO error handling
+      appendToChildren(decl, false);
     } else {
       XnodeUtil.insertAfter(oldDecl, decl);
       oldDecl.delete();

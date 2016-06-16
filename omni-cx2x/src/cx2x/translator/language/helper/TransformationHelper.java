@@ -125,6 +125,11 @@ public class TransformationHelper {
     }
     XfunctionDefinition fctDef =
         XnodeUtil.findParentFunction(claw.getPragma());
+    if(fctDef == null){
+      throw new IllegalTransformationException("Cannot apply reshape clause." +
+          "Parent function definition not found.",claw.getPragma().getLineNo());
+    }
+
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
       Xid id = fctDef.getSymbolTable().get(reshapeInfo.getArrayName());
       XvarDecl decl =

@@ -91,7 +91,7 @@ public class LoopInterchange extends Transformation {
     if(_loopLevel1 != null && _loopLevel2 == null){
       // Loop interchange between 2 loops
       XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel1);
-    } else if (_loopLevel1 != null && _loopLevel2 != null){
+    } else {
       // loop interchange between 3 loops with new-order
       computeLoopNewPosition();
       printTransformDebugInfo();
