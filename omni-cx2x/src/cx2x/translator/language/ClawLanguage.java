@@ -11,8 +11,6 @@ import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xnode.Xnode;
-import exc.object.Xcode;
-import exc.object.Xobject;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -144,7 +142,6 @@ public class ClawLanguage extends AnalyzedPragma {
                                      Target target)
       throws IllegalDirectiveException
   {
-
     ClawLanguage l =
         analyze(pragma.getValue(), pragma.getLineNo(), generator, target);
     if(l != null){
@@ -152,35 +149,6 @@ public class ClawLanguage extends AnalyzedPragma {
     }
     return l;
   }
-
-  /**
-   * Analyze a raw string input and match it with the CLAW language definition.
-   * @param pragma    A Xobject pragma statement to be analyzed against
-   *                  the CLAW language.
-   * @param generator Accelerator directive generator.
-   * @param target    Target that influences the code transformation.
-   * @return A ClawLanguage object with the corresponding extracted information.
-   * @throws IllegalDirectiveException If directive does not follow the CLAW
-   * language specification.
-   */
-  public static ClawLanguage analyze(Xobject pragma,
-                                     AcceleratorGenerator generator,
-                                     Target target)
-      throws IllegalDirectiveException
-  {
-    if(pragma.Opcode() != Xcode.PRAGMA_LINE){
-      throw new IllegalDirectiveException("Not a pragma statement", "",
-          pragma.getLineNo().lineNo());
-    }
-    ClawLanguage l =
-        analyze(pragma.getArg(0).getString(), pragma.getLineNo().lineNo(),
-            generator, target);
-    if(l != null){
-      l.attachPragma(pragma);
-    }
-    return l;
-  }
-
 
   /**
    * Produce a "naked" pragma.
@@ -730,14 +698,6 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   private void attachPragma(Xnode pragma){
     _pragma = pragma;
-  }
-
-  /**
-   * Attach the pragma related to this CLAW language analysis.
-   * @param pragma Xobject associated with the pragma statement.
-   */
-  private void attachPragma(Xobject pragma){
-
   }
 
   /**
