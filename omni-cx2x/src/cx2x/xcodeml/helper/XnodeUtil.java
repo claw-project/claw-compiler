@@ -1161,21 +1161,25 @@ public class XnodeUtil {
     Xnode up2 = indexRange2.find(Xcode.UPPERBOUND).getChild(0);
     Xnode s2 = indexRange2.find(Xcode.STEP).getChild(0);
 
-    String tmpInduction = inductionVar2.getValue();
-    String tmpLower = low2.getValue();
-    String tmpUpper = up2.getValue();
-    String tmpStep = s2.getValue();
-
     // Set the range of loop2 to loop1
-    inductionVar2.setValue(inductionVar1.getValue());
-    low2.setValue(low1.getValue());
-    up2.setValue(up1.getValue());
-    s2.setValue(s1.getValue());
+    XnodeUtil.insertAfter(inductionVar2, inductionVar1.cloneObject());
+    XnodeUtil.insertAfter(low2, low1.cloneObject());
+    XnodeUtil.insertAfter(up2, up1.cloneObject());
+    XnodeUtil.insertAfter(s2, s1.cloneObject());
 
-    inductionVar1.setValue(tmpInduction);
-    low1.setValue(tmpLower);
-    up1.setValue(tmpUpper);
-    s1.setValue(tmpStep);
+    XnodeUtil.insertAfter(inductionVar1, inductionVar2.cloneObject());
+    XnodeUtil.insertAfter(low1, low2.cloneObject());
+    XnodeUtil.insertAfter(up1, up2.cloneObject());
+    XnodeUtil.insertAfter(s1, s2.cloneObject());
+
+    inductionVar1.delete();
+    inductionVar2.delete();
+    low1.delete();
+    up1.delete();
+    s1.delete();
+    low2.delete();
+    up2.delete();
+    s2.delete();
   }
 
   /**
