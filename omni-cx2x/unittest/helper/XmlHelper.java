@@ -36,7 +36,7 @@ public class XmlHelper {
     return xcodeml;
   }
 
-  public static Document loadXMLFromString(String xml) {
+  private static Document loadXMLFromString(String xml) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = factory.newDocumentBuilder();
@@ -73,10 +73,10 @@ public class XmlHelper {
     return new XfunctionType(el);
   }
 
-  public static XglobalSymbolTable createXglobalSymbolFromString(String xml){
+  public static XsymbolTable createXglobalSymbolFromString(String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
-    return new XglobalSymbolTable(el);
+    return new XsymbolTable(el);
   }
 
   public static XsymbolTable createXSymbolTableFromString(String xml){
