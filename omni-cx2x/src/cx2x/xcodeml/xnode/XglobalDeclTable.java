@@ -47,7 +47,7 @@ public class XglobalDeclTable extends Xnode {
     while(currentNode != null){
       if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element)currentNode;
-        if(el.getTagName().equals(Xname.FCT_DEFINITION)){
+        if(el.getTagName().equals(Xname.F_FUNCTION_DEFINITION)){
           XfunctionDefinition fctDef = new XfunctionDefinition(el);
           _table.put(fctDef.getName().getValue(), fctDef);
         } else if(el.getTagName().equals(Xname.F_MODULE_DEFINITION)){

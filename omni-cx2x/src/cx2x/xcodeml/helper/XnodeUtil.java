@@ -47,8 +47,8 @@ public class XnodeUtil {
       return null;
     }
     String name = fctCall.findNode(Xcode.NAME).getValue();
-    NodeList nList =
-        xcodeml.getBaseElement().getElementsByTagName(Xname.FCT_DEFINITION);
+    NodeList nList = xcodeml.getBaseElement().
+        getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -78,7 +78,7 @@ public class XnodeUtil {
       return null;
     }
     NodeList nList = module.getElement().
-        getElementsByTagName(Xname.FCT_DEFINITION);
+        getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
