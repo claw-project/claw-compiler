@@ -73,7 +73,7 @@ public class LoopHoist extends BlockTransformation {
         reloadDoStmts(g, statements.get(i));
       } catch (IllegalTransformationException e) {
         xcodeml.addError("Group " + i + " of do statements do not meet the" +
-                " criteria of loop hoisting.",
+                " criteria of loop hoisting (Group index starts at 0).",
             _startClaw.getPragma().getLineNo());
         return false;
       }
@@ -84,16 +84,19 @@ public class LoopHoist extends BlockTransformation {
         Xnode tmpIf = XnodeUtil.findParent(Xcode.FIFSTATEMENT, group[0]);
         if(tmpIf == null){
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
-              "statement for loop hoisting",
+              "statement for loop hoisting (Group index starts at 0).",
               _startClaw.getPragma().getLineNo());
+          return false;
         }
         int ifDepth = XnodeUtil.getDepth(tmpIf);
         if (_pragmaDepthLevel <= ifDepth && ifDepth < depth){
           crtGroup.setExtraction();
         } else {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
-              "statement for loop hoisting or depth is too high.",
+              "statement for loop hoisting or depth is too high " +
+              "(Group index starts at 0).",
               _startClaw.getPragma().getLineNo());
+          return false;
         }
       }
       _doGroup.add(crtGroup);
