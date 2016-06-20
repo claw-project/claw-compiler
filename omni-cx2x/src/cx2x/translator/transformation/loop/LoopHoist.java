@@ -182,11 +182,9 @@ public class LoopHoist extends BlockTransformation {
         createIfStatementForLowerBound(xcodeml, g);
       }
 
-      ClawLanguage dummyFusionDirective =
+      ClawLanguage fusion =
           ClawLanguage.createLoopFusionLanguage(null, "hoist", _nestedLevel);
-      // TODO XNODE doStmts array should be nodes directly
-      fusions.add(new LoopFusion(new Xnode(g.getDoStmts()[0].getElement()),
-          dummyFusionDirective));
+      fusions.add(new LoopFusion(g.getDoStmts()[0], fusion));
     }
 
     // Do the fusion
