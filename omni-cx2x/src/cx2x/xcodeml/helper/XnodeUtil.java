@@ -565,19 +565,27 @@ public class XnodeUtil {
    * @param loop The do statement containing the body to be extracted.
    */
   public static void extractBody(Xnode loop){
+    extractBody(loop, loop);
+  }
+
+  /**
+   * Extract the body of a do statement and place it after the reference node.
+   * @param loop The do statement containing the body to be extracted.
+   * @param ref  Element after which statement are shifted.
+   */
+  public static void extractBody(Xnode loop, Xnode ref){
     Element loopElement = loop.getElement();
     Element body = XnodeUtil.findFirstElement(loopElement,
-      Xname.BODY);
-
-    Node refNode = loopElement;
+        Xname.BODY);
     if(body == null){
       return;
     }
+    Node refNode = ref.getElement();
     for(Node childNode = body.getFirstChild(); childNode!=null;){
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE){
-        XnodeUtil.insertAfter(refNode, childNode);
+        insertAfter(refNode, childNode);
         refNode = childNode;
       }
       childNode = nextChild;

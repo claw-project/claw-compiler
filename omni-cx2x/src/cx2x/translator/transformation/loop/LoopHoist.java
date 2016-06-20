@@ -82,14 +82,18 @@ public class LoopHoist extends BlockTransformation {
       int depth = XnodeUtil.getDepth(group[0]);
       if(depth != _pragmaDepthLevel){
         Xnode tmpIf = XnodeUtil.findParent(Xcode.FIFSTATEMENT, group[0]);
-        if(tmpIf == null){
+        Xnode tmpSelect = XnodeUtil.findParent(Xcode.FSELECTCASESTATEMENT, group[0]);
+        if(tmpIf == null && tmpSelect == null){
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
               "statement for loop hoisting (Group index starts at 0).",
               _startClaw.getPragma().getLineNo());
           return false;
         }
+
         int ifDepth = XnodeUtil.getDepth(tmpIf);
-        if (_pragmaDepthLevel <= ifDepth && ifDepth < depth){
+        int selectDepth = XnodeUtil.getDepth(tmpSelect);
+        if ((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth)
+            && (ifDepth < depth || selectDepth < depth)){
           crtGroup.setExtraction();
         } else {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
@@ -176,36 +180,24 @@ public class LoopHoist extends BlockTransformation {
     List<LoopFusion> fusions = new ArrayList<>();
     // Perform IF extraction and IF creation for lower-bound
     for(LoopHoistDoStmtGroup g : _doGroup){
-      if(g.needExtraction()){
-        Xnode ifStmt =
-            XnodeUtil.findParent(Xcode.FIFSTATEMENT, g.getDoStmts()[0]);
-        extractDoStmtFromIf(xcodeml, ifStmt, g);
-      }
       if(g.needIfStatement()){
         createIfStatementForLowerBound(xcodeml, g);
       }
-
-      ClawLanguage fusion =
-          ClawLanguage.createLoopFusionLanguage(null, "hoist", _nestedLevel);
-      fusions.add(new LoopFusion(g.getDoStmts()[0], fusion));
+      XnodeUtil.extractBody(g.getDoStmts()[_nestedLevel-1], g.getDoStmts()[0]);
+      g.getDoStmts()[0].delete();
     }
-
-    // Do the fusion
-    for(int i = 1; i < fusions.size(); ++i){
-      fusions.get(0).transform(xcodeml, transformer, fusions.get(i));
-    }
-    reloadDoStmts(_doGroup.get(0), _doGroup.get(0).getDoStmts()[0]);
 
     // Do the hoisting
-    XnodeUtil.shiftStatementsInBody(
-        _startClaw.getPragma(),                                // Start element
-        _doGroup.get(0).getDoStmts()[0],                       // Stop element
-        _doGroup.get(0).getDoStmts()[_nestedLevel-1].getBody() // Target body
-    );
+    LoopHoistDoStmtGroup hoisted = _doGroup.get(0).cloneObjectAndElement();
+    hoisted.getDoStmts()[_nestedLevel-1].getBody().delete();
+    Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
+    hoisted.getDoStmts()[_nestedLevel-1].appendToChildren(newBody, false);
+    XnodeUtil.shiftStatementsInBody(_startClaw.getPragma(), _endClaw.getPragma(), newBody);
+    XnodeUtil.insertAfter(_startClaw.getPragma(), hoisted.getDoStmts()[0]);
 
     // Generate dynamic transformation (interchange)
     TransformationHelper.generateAdditionalTransformation(_startClaw,
-        xcodeml, transformer, _doGroup.get(0).getDoStmts()[0]);
+        xcodeml, transformer, hoisted.getDoStmts()[0]);
 
     // Apply reshape clause
     TransformationHelper.applyReshapeClause(_startClaw, xcodeml);
