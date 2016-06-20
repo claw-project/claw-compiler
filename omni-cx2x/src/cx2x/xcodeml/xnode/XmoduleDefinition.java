@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * - Optional:
  *   - symbols (XsymbolTable)
  *   - declarations  (XdeclTable)
- *   - FcontainsStatement (XcontainsStatement) TODO read + getter
+ *   - FcontainsStatement (Xnode)
  *
  * Attributes:
  * - Required: name (text)
@@ -31,9 +31,9 @@ public class XmoduleDefinition extends Xnode {
   private final XdeclTable _declarations;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XmoduleDefinition(Element baseElement){
     super(baseElement);

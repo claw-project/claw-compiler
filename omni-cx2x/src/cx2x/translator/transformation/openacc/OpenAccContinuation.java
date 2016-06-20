@@ -17,10 +17,10 @@ import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * <pre>
- * OpenACC line continuation transformation. The XcodeML/F prgama statement
- * representation is an aggrated version of the pragma with all its continuation
+ * OpenACC line continuation transformation. The XcodeML/F pragma statement
+ * representation is an aggregated version of the pragma with all its continuation
  * lines.
- * As thoses directives are not handled by the CLAW XcodeML to XcodeML
+ * As those directives are not handled by the CLAW XcodeML to XcodeML
  * translator, they must be output in a correct way. This transformation divides
  * the XcodeML representation back to a multi-line pragma definition.
  *
@@ -34,7 +34,7 @@ import cx2x.xcodeml.xnode.Xnode;
  *
  * &lt;FpragmaStatement&gt;acc data acc present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
  *
- * The transofrmation will split it like this:
+ * The transformation will split it like this:
  *
  * &lt;FpragmaStatement&gt;acc data &amp; &lt;/FpragmaStatement&gt;
  * &lt;FpragmaStatement&gt;acc present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;

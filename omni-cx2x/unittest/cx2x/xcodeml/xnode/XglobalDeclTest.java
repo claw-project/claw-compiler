@@ -18,10 +18,10 @@ public class XglobalDeclTest {
 
   private static final String simpleGlobDecl =
       "<globalDeclarations>" +
-      "<FmoduleDefinition name=\"mymodule\" lineno=\"4\" " +
-          "file=\"./src/mymodule.f90\">" +
+      "<FmoduleDefinition name=\"module\" lineno=\"4\" " +
+          "file=\"./src/module.f90\">" +
       "</FmoduleDefinition>" +
-      "<FfunctionDefinition lineno=\"917\" file=\"./src/mymodule.f90\">\n" +
+      "<FfunctionDefinition lineno=\"917\" file=\"./src/module.f90\">\n" +
       "<name type=\"Fb39d60\">fct1</name>" +
       "</FfunctionDefinition>" +
       "</globalDeclarations>";
@@ -43,14 +43,14 @@ public class XglobalDeclTest {
     assertNull(fDef.getParams());
     assertNull(fDef.getSymbolTable());
     assertEquals(917, fDef.getLineNo());
-    assertEquals("./src/mymodule.f90", fDef.getFile());
-    assertTrue(gdTable.hasDefinition("mymodule"));
-    assertFalse(gdTable.hasFunctionDefinition("mymodule"));
-    assertTrue(gdTable.hasModuleDefinition("mymodule"));
-    XmoduleDefinition mDef = gdTable.getModuleDefinition("mymodule");
+    assertEquals("./src/module.f90", fDef.getFile());
+    assertTrue(gdTable.hasDefinition("module"));
+    assertFalse(gdTable.hasFunctionDefinition("module"));
+    assertTrue(gdTable.hasModuleDefinition("module"));
+    XmoduleDefinition mDef = gdTable.getModuleDefinition("module");
     assertNotNull(mDef);
-    assertEquals("mymodule", mDef.getName());
+    assertEquals("module", mDef.getName());
     assertEquals(4, mDef.getLineNo());
-    assertEquals("./src/mymodule.f90", mDef.getFile());
+    assertEquals("./src/module.f90", mDef.getFile());
   }
 }

@@ -41,9 +41,9 @@ public class XdeclTable extends Xnode {
   private final Hashtable<String, XvarDecl> _table;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XdeclTable(Element baseElement){
     super(baseElement);

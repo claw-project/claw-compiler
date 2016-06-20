@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
- * raw Elements in the XcodeML representation by using the abstracted Xelements.
+ * raw Elements in the XcodeML representation by using the abstracted Xnode.
  *
  * @author clementval
  */
@@ -205,7 +205,7 @@ public class XnodeUtil {
    * <pre>
    * Find all assignment statement from a node until the end pragma.
    *
-   * We intersect all assign statments which are next siblings of
+   * We intersect all assign statements which are next siblings of
    * the "from" element with all the assign statements which are previous
    * siblings of the ending pragma.
    * </pre>
@@ -261,7 +261,7 @@ public class XnodeUtil {
    * Get the first assignment statement for an array reference.
    * @param from      Statement to look from.
    * @param arrayName Identifier of the array.
-   * @return The assignement statement if found. Null otherwise.
+   * @return The assignment statement if found. Null otherwise.
    */
   public static Xnode getFirstArrayAssign(Xnode from, String arrayName){
     String s1 = String.format(
@@ -293,7 +293,7 @@ public class XnodeUtil {
    * @param endPragma     End pragma that terminates the search block.
    * @param inductionVars Induction variables that define the nested group to
    *                      locates.
-   * @return List of do statements elements (outter most loops for each nested
+   * @return List of do statements elements (outer most loops for each nested
    * group) found between the "from" element and the end pragma.
    */
   public static List<Xnode> findDoStatement(Xnode from, Xnode endPragma,
@@ -331,7 +331,7 @@ public class XnodeUtil {
             Xname.VAR,
             inductionVars.get(i),
             Xname.BODY,
-            dynamic_part_s1); // Including previsouly formed xpath query
+            dynamic_part_s1); // Including previously formed xpath query
       }
       dynamic_part_s1 = tempQuery;
     }
@@ -603,7 +603,7 @@ public class XnodeUtil {
    * @param indent     Number of spaces used for the indentation
    * @return true if the output could be write without problems.
    */
-  public static boolean writeXcodeML(XcodeProgram xcodeml, String outputFile, int indent) {
+  public static boolean writeXcodeML(XcodeProgram xcodeml, String outputFile, @SuppressWarnings("SameParameterValue") int indent) {
     try {
       XnodeUtil.cleanEmptyTextNodes(xcodeml.getDocument());
       Transformer transformer
@@ -779,7 +779,7 @@ public class XnodeUtil {
    * Copy the whole body element into the destination one. Destination is
    * overwritten.
    * @param from The body to be copied.
-   * @param to   The desination of the copied body.
+   * @param to   The destination of the copied body.
    */
   public static void copyBody(Xnode from, Xnode to){
     Node copiedBody = from.cloneNode();
@@ -1062,7 +1062,7 @@ public class XnodeUtil {
    * Compare the inner value of the first child of two nodes.
    * @param n1 First node.
    * @param n2 Second node.
-   * @return True if the value are identiccal. False otherwise.
+   * @return True if the value are identical. False otherwise.
    */
   private static boolean compareFirstChildValues(Xnode n1, Xnode n2) {
     if(n1 == null || n2 == null){
@@ -1216,8 +1216,8 @@ public class XnodeUtil {
         ref.getElement());
   }
 
-  public static Xnode createVar(String type, String value, Xscope scope,
-                            XcodeProgram xcodeml)
+  public static Xnode createVar(String type, String value, @SuppressWarnings("SameParameterValue") Xscope scope,
+                                XcodeProgram xcodeml)
   {
     Xnode var = new Xnode(Xcode.VAR, xcodeml);
     var.setAttribute(Xattr.TYPE, type);
@@ -1443,7 +1443,7 @@ public class XnodeUtil {
    * @return The newly created element.
    */
   public static Xnode createAssumedShapeRange(XcodeProgram xcodeml,
-                                              Xnode arrayVar, int startIndex,
+                                              Xnode arrayVar, @SuppressWarnings("SameParameterValue") int startIndex,
                                               int dimension)
   {
     // Base structure

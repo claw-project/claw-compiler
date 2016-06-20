@@ -41,12 +41,12 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getStartParellelDirective() {
+  protected String getStartParallelDirective() {
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL);
   }
 
   @Override
-  protected String getEndParellelDirective() {
+  protected String getEndParallelDirective() {
     return String.format(FORMAT3,
         OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL);
   }

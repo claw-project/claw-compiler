@@ -24,16 +24,14 @@ import java.util.Hashtable;
 
 public class XglobalDeclTable extends Xnode {
 
-  /*
-   * Hashtable containing the global declaration elements. Key is the name of
-   * the function or the module.
-   */
+  /* Hashtable containing the global declaration elements. Key is the name of
+   * the function or the module. */
   private final Hashtable<String, Xnode> _table;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XglobalDeclTable(Element baseElement){
     super(baseElement);
@@ -81,7 +79,7 @@ public class XglobalDeclTable extends Xnode {
    * @param name The name of the module to be returned.
    * @return A XmoduleDefinition object if key is found. Null otherwise.
    */
-  public XmoduleDefinition getModuleDefinition(String name){
+  public XmoduleDefinition getModuleDefinition(@SuppressWarnings("SameParameterValue") String name){
     if(_table.containsKey(name)){
       Xnode el = _table.get(name);
       if(el instanceof XmoduleDefinition){

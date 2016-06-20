@@ -67,37 +67,37 @@ public class XmlHelper {
     return new XbasicType(el);
   }
 
-  public static XfunctionType createXfctTypeFromString(String xml){
+  public static XfunctionType createXfctTypeFromString(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XfunctionType(el);
   }
 
-  public static XsymbolTable createXglobalSymbolFromString(String xml){
+  public static XsymbolTable createXglobalSymbolFromString(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XsymbolTable(el);
   }
 
-  public static XsymbolTable createXSymbolTableFromString(String xml){
+  public static XsymbolTable createXSymbolTableFromString(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XsymbolTable(el);
   }
 
-  public static XtypeTable createXtypeTableFromString(String xml){
+  public static XtypeTable createXtypeTableFromString(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XtypeTable(el);
   }
 
-  public static XfunctionDefinition createXfunctionDefinitionFromString(String xml){
+  public static XfunctionDefinition createXfunctionDefinitionFromString(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XfunctionDefinition(el);
   }
 
-  public static XglobalDeclTable createGlobalDeclTable(String xml){
+  public static XglobalDeclTable createGlobalDeclTable(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XglobalDeclTable(el);
@@ -109,7 +109,7 @@ public class XmlHelper {
     return new XvarDecl(el);
   }
 
-  public static XdeclTable createXdeclTable(String xml){
+  public static XdeclTable createXdeclTable(@SuppressWarnings("SameParameterValue") String xml){
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XdeclTable(el);

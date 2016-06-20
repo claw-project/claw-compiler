@@ -32,8 +32,8 @@ public class UtilityRemove extends BlockTransformation {
    * @param startDirective The directive that triggered the remove $
    *                       transformation.
    * @param endDirective   The end directive that close the structured block.
-   *                       Can be null if the start directve is used before a
-   *                       do statment or an if statment.
+   *                       Can be null if the start directive is used before a
+   *                       do statement or an if statement.
    */
   public UtilityRemove(ClawLanguage startDirective, ClawLanguage endDirective){
     super(startDirective, endDirective);
@@ -70,7 +70,7 @@ public class UtilityRemove extends BlockTransformation {
    * Delete the corresponding elements.
    * @param xcodeml        The XcodeML on which the transformations are applied.
    * @param transformer    The transformer used to applied the transformations.
-   * @param transformation Not used for independant transformation.
+   * @param transformation Not used for independent transformation.
    * @throws IllegalTransformationException If transformation cannot be applied.
    */
   @Override

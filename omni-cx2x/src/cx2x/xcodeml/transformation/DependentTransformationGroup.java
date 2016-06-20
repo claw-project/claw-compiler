@@ -11,7 +11,7 @@ import cx2x.xcodeml.exception.*;
 import java.util.List;
 
 /**
- * An dependent transformation group check wether it can be transformed with
+ * An dependent transformation group check whether it can be transformed with
  * another pending transformation in the pipeline. Each transformation are
  * applied only once.
  *

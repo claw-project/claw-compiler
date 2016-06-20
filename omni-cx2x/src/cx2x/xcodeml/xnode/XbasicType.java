@@ -61,9 +61,9 @@ public class XbasicType extends Xtype {
   private Xintent _intent = null;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XbasicType(Element baseElement){
     super(baseElement);
@@ -353,7 +353,7 @@ public class XbasicType extends Xtype {
    * @param index    Index element to add as the new dimension.
    * @param position Position compared to already existing element.
    */
-  public void addDimension(Xnode index, int position){
+  public void addDimension(Xnode index, @SuppressWarnings("SameParameterValue") int position){
     if(_dimensions.size() == 0){
       appendToChildren(index, false);
       _dimensions.add(index);

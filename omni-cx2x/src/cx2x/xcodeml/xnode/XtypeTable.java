@@ -39,9 +39,9 @@ public class XtypeTable extends Xnode {
   private final Map<String, Xtype> _table;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XtypeTable(Element baseElement){
     super(baseElement);
@@ -187,7 +187,7 @@ public class XtypeTable extends Xnode {
    * @param length Length of the hash string to be generated.
    * @return The new unique hash.
    */
-  private String generateHash(int length){
+  private String generateHash(@SuppressWarnings("SameParameterValue") int length){
     Random r = new Random();
     StringBuilder sb = new StringBuilder();
     while(sb.length() < length){

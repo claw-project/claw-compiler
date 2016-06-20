@@ -77,7 +77,7 @@ public class LoopFusion extends Transformation {
    * Loop fusion analysis:
    * - Without collapse clause: find whether the pragma statement is followed
    *   by a do statement.
-   * - With collapse clause: Finf the i loops follwing the pragma.
+   * - With collapse clause: Find the i loops following the pragma.
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
@@ -88,7 +88,7 @@ public class LoopFusion extends Transformation {
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0){
       _loops = new Xnode[_claw.getCollapseValue()];
       for(int i = 0; i < _claw.getCollapseValue(); ++i){
-        if(i == 0){ // Find the outter loop from pragma
+        if(i == 0){ // Find the outer loop from pragma
           _loops[0] =
               XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
         } else { // Find the next i loops
@@ -133,7 +133,7 @@ public class LoopFusion extends Transformation {
       throws IllegalTransformationException
   {
     if(!(transformation instanceof LoopFusion)){
-      throw new IllegalTransformationException("Incompatibl transformation",
+      throw new IllegalTransformationException("Incompatible transformation",
           _claw.getPragma().getLineNo());
     }
     LoopFusion loopFusionUnit = (LoopFusion)transformation;
@@ -228,7 +228,7 @@ public class LoopFusion extends Transformation {
   /**
    * Return the do statement associated with this loop fusion unit at given
    * depth.
-   * @param depth Integer avlue representing the depth of the loop from the
+   * @param depth Integer value representing the depth of the loop from the
    *              pragma statement.
    * @return A do statement.
    */

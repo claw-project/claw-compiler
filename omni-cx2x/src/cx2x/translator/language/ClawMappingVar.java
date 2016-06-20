@@ -39,7 +39,7 @@ public class ClawMappingVar {
    * function call arguments mapping and the function body mapping.
    * @return True if the two mapping are different. False otherwise.
    */
-  public boolean hasDifferentMappping(){
+  public boolean hasDifferentMapping(){
     return !_argPart.equals(_fctPart);
   }
 
@@ -65,7 +65,7 @@ public class ClawMappingVar {
    */
   @Override
   public String toString(){
-    if(hasDifferentMappping()){
+    if(hasDifferentMapping()){
       return getArgMapping() + "/" + getFctMapping();
     }
     return getArgMapping();

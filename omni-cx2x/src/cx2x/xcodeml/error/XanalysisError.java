@@ -7,7 +7,7 @@ package cx2x.xcodeml.error;
 
 /**
  * This class hold information about error happening during transformation
- * analyzis.
+ * analysis.
  *
  * @author clementval
  */

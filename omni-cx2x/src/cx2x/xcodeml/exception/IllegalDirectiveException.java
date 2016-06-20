@@ -80,7 +80,7 @@ public class IllegalDirectiveException extends Exception {
   }
 
   /**
-   * Get the line of the code that contains the illegale directive.
+   * Get the line of the code that contains the illegal directive.
    * @return Line number in the XcodeML that triggered the exception.
    */
   public int getDirectiveLine() {

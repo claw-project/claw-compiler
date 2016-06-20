@@ -169,7 +169,8 @@ public class LoopExtraction extends Transformation {
    *  2) Extract the loop body in the duplicated function and remove the loop.
    *  3) Adapt function call and demote array references in the duplicated
    *     function body.
-   *  4) Optional: Add a LoopFusion transformation to the transformaions' queue.
+   *  4) Optional: Add a LoopFusion transformation to the transformations'
+   *  queue.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
    * @param transformer    The transformer used to applied the transformations.
@@ -411,7 +412,7 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Try to find a do statement matching the range of loop-extract.
-   * @param from XbaseElement to search from. Search is performed in its
+   * @param from Element to search from. Search is performed in its
    *             children.
    * @return A XdoStatement object that match the range of loop-extract.
    * @throws IllegalTransformationException
@@ -508,7 +509,7 @@ public class LoopExtraction extends Transformation {
    */
   @Override
   public boolean canBeTransformedWith(Transformation other) {
-    // independant transformation
+    // independent transformation
     return false;
   }
 }

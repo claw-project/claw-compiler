@@ -64,7 +64,7 @@ public class ClawXcodeMlTranslator {
    * ClawXcodeMlTranslator ctor.
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
-   * @param directive         Accelerator directlve language for code
+   * @param directive         Accelerator directive language for code
    *                          generation.
    * @param target            Target influencing code transformation.
    * @param groups            Transformation groups configuration list.
@@ -220,9 +220,9 @@ public class ClawXcodeMlTranslator {
   }
 
   /**
-   * Add a transformation in the pipeline if the analysis is succeded.
+   * Add a transformation in the pipeline if the analysis is succeeded.
    * Otherwise, abort the translation.
-   * @param t           The transformation to be analyzed and added.
+   * @param t The transformation to be analyzed and added.
    */
   private void addOrAbort(Transformation t)
   {
@@ -251,7 +251,7 @@ public class ClawXcodeMlTranslator {
           _transformer.getGroups().entrySet())
       {
         if(XmOption.isDebugOutput()){
-          System.out.println("Apply transfomation: " +
+          System.out.println("Apply transformation: " +
               entry.getValue().transformationName() + " - " +
               entry.getValue().count()
           );

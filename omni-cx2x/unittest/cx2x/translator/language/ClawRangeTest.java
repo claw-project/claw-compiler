@@ -19,7 +19,7 @@ public class ClawRangeTest {
 
   private static final String beginLoop = "<FdoStatement>";
   private static final String endLoop = "<body></body></FdoStatement>";
-  private static final String inducationVar1 =
+  private static final String inductionVar1 =
       "<Var type=\"Fint\" scope=\"local\">i</Var>";
   private static final String indexRange1 =
       "<indexRange>" +
@@ -48,12 +48,12 @@ public class ClawRangeTest {
           "</indexRange>";
 
   @Test
-  public void compareWithXloopIterationRangeTest(){
+  public void compareWithLoopIterationRangeTest(){
     Xnode iterationRange1 =
-        XmlHelper.createXnode(beginLoop + inducationVar1 + indexRange1 + endLoop);
+        XmlHelper.createXnode(beginLoop + inductionVar1 + indexRange1 + endLoop);
     assertNotNull(iterationRange1);
     Xnode iterationRange2 =
-        XmlHelper.createXnode(beginLoop + inducationVar1 + indexRange2 + endLoop);
+        XmlHelper.createXnode(beginLoop + inductionVar1 + indexRange2 + endLoop);
     assertNotNull(iterationRange1);
 
     ClawRange range1 = new ClawRange("i", "1", "10", "1");

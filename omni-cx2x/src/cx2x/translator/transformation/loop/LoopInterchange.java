@@ -64,7 +64,7 @@ public class LoopInterchange extends Transformation {
    * @param transformer    The transformer used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
-   * @throws IllegalTransformationException if the tranformation cannot be
+   * @throws IllegalTransformationException if the transformation cannot be
    * applied.
    */
   @Override
@@ -224,7 +224,7 @@ public class LoopInterchange extends Transformation {
   }
 
   /**
-   * Check the vailidity of the new ordering option.
+   * Check the validity of the new ordering option.
    * @param xcodeml The XcodeML object.
    * @param idxs    List containing the induction variables.
    * @return True if the new ordering is valid. False otherwise.

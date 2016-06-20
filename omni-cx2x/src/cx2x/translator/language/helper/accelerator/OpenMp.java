@@ -19,7 +19,7 @@ import java.util.List;
 public class OpenMp extends AcceleratorGenerator {
 
   private static final String OPENMP_PREFIX = "omp";
-  private static final String OPENMP_DECLARE = "delcare";
+  private static final String OPENMP_DECLARE = "declare";
   private static final String OPENMP_TARGET = "target";
   private static final String OPENMP_PARALLEL = "parallel";
   private static final String OPENMP_PRIVATE = "private";
@@ -41,7 +41,7 @@ public class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getStartParellelDirective() {
+  protected String getStartParallelDirective() {
     if(getTarget() == Target.CPU){
       // TODO check syntax and variant
       return String.format(FORMAT2,
@@ -54,7 +54,7 @@ public class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  public String getEndParellelDirective() {
+  public String getEndParallelDirective() {
     //!$omp end target parallel do
     return String.format(FORMAT4,
         OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL);

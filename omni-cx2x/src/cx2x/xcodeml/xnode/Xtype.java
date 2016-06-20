@@ -18,9 +18,9 @@ public class Xtype extends Xnode {
   private String _type;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public Xtype(Element baseElement){
     super(baseElement);

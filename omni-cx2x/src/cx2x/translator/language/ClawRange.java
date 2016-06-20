@@ -53,7 +53,7 @@ public class ClawRange {
 
   /**
    * Set the induction variable value.
-   * @param inductionVar The induction varible value.
+   * @param inductionVar The induction variable value.
    */
   public void setInductionVar(String inductionVar) {
     if(inductionVar != null){
@@ -117,7 +117,7 @@ public class ClawRange {
 
   /**
    * Compare a ClawRange with a do statement.
-   * @param doStmt The do statement to compare oteration range.
+   * @param doStmt The do statement to compare iteration range.
    * @return True if the iteration range share the same property.
    */
   public boolean equals(Xnode doStmt) {

@@ -8,8 +8,8 @@ package cx2x.xcodeml.xnode;
 import org.w3c.dom.Element;
 
 /**
- * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in XcodeML
- * intermediate representation.
+ * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in
+ * XcodeML intermediate representation.
  *
  * Elements: (name, symbols?, params?, declarations?, body)
  * - Required:
@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
  *   - params  (Xparams)
  *   - declarations (XdeclTable)
  *
- * Can have lineno and file attributes (XenhancedElement)
+ * Can have lineno and file attributes
  *
  * @author clementval
  */
@@ -35,9 +35,9 @@ public class XfunctionDefinition extends Xnode {
   private Xnode _name = null;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XfunctionDefinition(Element baseElement){
     super(baseElement);

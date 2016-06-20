@@ -19,18 +19,18 @@ import java.util.List;
 public class Utility {
   /**
    * Join an array of String elements into a single String.
-   * @param delimiter Delimeter to be placed between each element.
+   * @param delimiter Delimiter to be placed between each element.
    * @param elements  Array of String elements.
    * @return A joined string of all elements separated by the delimiter.
    */
-  public static String join(String delimiter, String[] elements){
+  public static String join(@SuppressWarnings("SameParameterValue") String delimiter, String[] elements){
     StringBuilder ret = new StringBuilder();
-    boolean firstIter = true;
+    boolean firstIteration = true;
     for(String s : elements){
-      if(!firstIter){
+      if(!firstIteration){
         ret.append(delimiter);
       } else {
-        firstIter = false;
+        firstIteration = false;
       }
       ret.append(s);
     }
@@ -39,7 +39,7 @@ public class Utility {
 
   /**
    * Join a list of String elements into a single String.
-   * @param delimiter Delimeter to be placed between each element.
+   * @param delimiter Delimiter to be placed between each element.
    * @param elements  List of String elements.
    * @param <T>       Type of element in the list.
    * @return A joined string of all elements separated by the delimiter.

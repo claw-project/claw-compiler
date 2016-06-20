@@ -17,8 +17,8 @@ import static org.junit.Assert.*;
 public class XmoduleDefinitionTest {
 
   private static final String module1 =
-      "<FmoduleDefinition name=\"mymodule\" lineno=\"4\" " +
-      "file=\"./src/mymodule.f90\">" +
+      "<FmoduleDefinition name=\"module\" lineno=\"4\" " +
+      "file=\"./src/module.f90\">" +
       "</FmoduleDefinition>";
 
   @Test
@@ -26,9 +26,9 @@ public class XmoduleDefinitionTest {
     Xnode node = XmlHelper.createXnode(module1);
     XmoduleDefinition mod = new XmoduleDefinition(node.getElement());
     assertNotNull(mod);
-    assertEquals("mymodule", mod.getName());
+    assertEquals("module", mod.getName());
     assertEquals(4, mod.getLineNo());
-    assertEquals("./src/mymodule.f90", mod.getFile());
+    assertEquals("./src/module.f90", mod.getFile());
     assertNull(mod.getSymbolTable());
     assertNull(mod.getDeclarationTable());
   }

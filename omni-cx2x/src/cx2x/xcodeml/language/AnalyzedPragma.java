@@ -9,7 +9,8 @@ import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * Base class for any analyzed pragma. This object is then passed to a
- * transformation. Base implementation only stores the raw Xpragma object.
+ * transformation. Base implementation only stores the raw pragma element
+ * object.
  *
  * @author clementval
  */
@@ -25,7 +26,8 @@ public class AnalyzedPragma {
   }
 
   /**
-   * Contructs an AnalyzedPragma object with a Xpragma object attached.
+   * Constructs an AnalyzedPragma object with a raw pragma element object
+   * attached.
    * @param rawPragma Pragma object to be attached.
    */
   public AnalyzedPragma(Xnode rawPragma){
@@ -58,7 +60,7 @@ public class AnalyzedPragma {
   }
 
   /**
-   * Set valu to the endPragma flag.
+   * Set value to the endPragma flag.
    */
   public void setEndPragma(){
     _isEndPragma = true;

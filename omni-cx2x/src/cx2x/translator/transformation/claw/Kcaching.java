@@ -105,12 +105,12 @@ public class Kcaching extends Transformation {
   }
 
   /**
-   * Apply the tranformation for the data list.
+   * Apply the transformation for the data list.
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param fctDef      Function/module definition in which the data are nested.
    * @param data        Array identifier on which the caching is done.
    * @param transformer Current instance of the transformer.
-   * @throws Exception If smth prevent the transformation to be done.
+   * @throws Exception If something prevent the transformation to be done.
    */
   private void transformData(XcodeProgram xcodeml, XfunctionDefinition fctDef,
                              String data,
@@ -138,7 +138,7 @@ public class Kcaching extends Transformation {
    * @param data         Array identifier on which the caching is done.
    * @param stmt         First statement including the array ref on the lhs.
    * @param transformer  The transformer used to applied the transformations.
-   * @throws Exception If smth prevent the transformation to be done.
+   * @throws Exception If something prevent the transformation to be done.
    */
   private void transformAssignStmt(XcodeProgram xcodeml,
                                    XfunctionDefinition fctDef,
@@ -165,7 +165,7 @@ public class Kcaching extends Transformation {
    * Apply the init clause if it was part of the kcache directive.
    * @param xcodeml     Current program in which the transformation is
    *                    performed.
-   * @param transformer Current transformer used to store elements informations.
+   * @param transformer Current transformer used to store elements information.
    * @param cacheVar    Newly created cache variable that will be used for the
    *                    initialization (rhs of the assign statement). Element
    *                    will be cloned before insertion.
@@ -235,7 +235,7 @@ public class Kcaching extends Transformation {
    *                information.
    * @param var     The variable on which the offset are inferred.
    * @return List of integer representing the offset for the given variable.
-   * @throws IllegalTransformationException if symbole id is not found.
+   * @throws IllegalTransformationException if symbol id is not found.
    */
   private List<Integer> generateInferredOffsets(XcodeProgram xcodeml,
                                                 XfunctionDefinition fctDef,
@@ -249,8 +249,8 @@ public class Kcaching extends Transformation {
           _claw.getPragma().getLineNo()
       );
     }
-    XbasicType btype = (XbasicType)xcodeml.getTypeTable().get(id.getType());
-    int dim = btype.getDimensions();
+    XbasicType basicType = (XbasicType)xcodeml.getTypeTable().get(id.getType());
+    int dim = basicType.getDimensions();
     List<Integer> offsets = new ArrayList<>();
     for(int i = 0; i < dim; ++i){
       offsets.add(0);
@@ -329,7 +329,7 @@ public class Kcaching extends Transformation {
       XnodeUtil.insertAfter(_claw.getPragma(), cache1);
     } else {
       /*
-       * We replace an assignement of type
+       * We replace an assignment of type
        * A = B
        * by
        * cache_A = B

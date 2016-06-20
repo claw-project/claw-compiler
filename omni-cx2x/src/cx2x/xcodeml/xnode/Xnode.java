@@ -213,8 +213,8 @@ public class Xnode {
   /**
    * Append an element ot the children of this element.
    * @param node  The element to append.
-   * @param clone If true, the element is cloned before being appened. If
-   *              false, the element is directly appened.
+   * @param clone If true, the element is cloned before being appended. If
+   *              false, the element is directly appended.
    */
   public void appendToChildren(Xnode node, boolean clone){
     if(node != null){
@@ -231,7 +231,7 @@ public class Xnode {
    * @param node  Element to be inserted.
    * @param clone Clone or not the element before insertion.
    */
-  public void insert(Xnode node, boolean clone){
+  public void insert(Xnode node, @SuppressWarnings("SameParameterValue") boolean clone){
     if(node != null) {
       NodeList children = _baseElement.getChildNodes();
       Node toInsert = clone ? node.cloneNode() : node.getElement();

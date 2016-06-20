@@ -241,10 +241,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend,2) map(i:j)", "i", "istart",
@@ -255,10 +255,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract("claw loop-extract range(i=1,10) map(i:j)",
         "i", "1", "10", null);
@@ -268,10 +268,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=1,10,2) map(i:j) parallel",  "i", "1", "10", "2");
@@ -282,10 +282,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion", "i", "istart",
@@ -301,10 +301,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
 
     l = analyzeValidClawLoopExtract(
@@ -321,10 +321,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
@@ -342,10 +342,10 @@ public class ClawLanguageTest {
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
     assertEquals("i", map.getMappedVariables().get(0).getFctMapping());
-    assertFalse(map.getMappedVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappedVariables().get(0).hasDifferentMapping());
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
-    assertFalse(map.getMappingVariables().get(0).hasDifferentMappping());
+    assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(j1=ki1sc,ki1ec) " +
@@ -892,22 +892,22 @@ public class ClawLanguageTest {
       }
 
       if(dimensions != null){
-        assertEquals(dimensions.size(), l.getDimesionValues().size());
+        assertEquals(dimensions.size(), l.getDimensionValues().size());
         for(int i = 0; i < dimensions.size(); ++i){
           assertEquals(dimensions.get(i).getIdentifier(),
-              l.getDimesionValues().get(i).getIdentifier());
+              l.getDimensionValues().get(i).getIdentifier());
           assertEquals(dimensions.get(i).lowerBoundIsVar(),
-              l.getDimesionValues().get(i).lowerBoundIsVar());
+              l.getDimensionValues().get(i).lowerBoundIsVar());
           assertEquals(dimensions.get(i).upperBoundIsVar(),
-              l.getDimesionValues().get(i).upperBoundIsVar());
+              l.getDimensionValues().get(i).upperBoundIsVar());
           assertEquals(dimensions.get(i).getLowerBoundInt(),
-              l.getDimesionValues().get(i).getLowerBoundInt());
+              l.getDimensionValues().get(i).getLowerBoundInt());
           assertEquals(dimensions.get(i).getUpperBoundInt(),
-              l.getDimesionValues().get(i).getUpperBoundInt());
+              l.getDimensionValues().get(i).getUpperBoundInt());
           assertEquals(dimensions.get(i).getLowerBoundId(),
-              l.getDimesionValues().get(i).getLowerBoundId());
+              l.getDimensionValues().get(i).getLowerBoundId());
           assertEquals(dimensions.get(i).getUpperBoundId(),
-              l.getDimesionValues().get(i).getUpperBoundId());
+              l.getDimensionValues().get(i).getUpperBoundId());
         }
       }
 

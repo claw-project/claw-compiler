@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * <pre>
- * An ArrayTranform transformation is an independent transformation. It
+ * An ArrayTransform transformation is an independent transformation. It
  * transforms the Fortran array notation into single or nested do statements.
  *
  * Array notation example:
@@ -60,7 +60,7 @@ public class ArrayTransform extends BlockTransformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     if(_clawEnd != null){ // Block transformation
 
-      // TODO Analyse dependcy between assignments. cf array9 example.
+      // TODO Analyse dependency between assignments. cf array9 example.
 
       // Find assignments with array notation
       List<Xnode> foundAssignments =
@@ -112,7 +112,7 @@ public class ArrayTransform extends BlockTransformation {
           XnodeUtil.findDirectNext(Xcode.FASSIGNSTATEMENT,
               _clawBegin.getPragma());
       if(stmt == null){
-        xcodeml.addError("Directive not follwed by an assign statement",
+        xcodeml.addError("Directive not followed by an assign statement",
             _clawBegin.getPragma().getLineNo());
         return false;
       }
@@ -151,12 +151,12 @@ public class ArrayTransform extends BlockTransformation {
   }
 
   /**
-   * Transform an assignement using array notation to a do statement.
+   * Transform an assignment using array notation to a do statement.
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param transformer The transformer used to applied the transformations.
    * @param other       Only for dependent transformation. The other
    *                    transformation part of the transformation.
-   * @throws Exception If the thransformation cannot be applied.
+   * @throws Exception If the transformation cannot be applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
@@ -178,7 +178,7 @@ public class ArrayTransform extends BlockTransformation {
   }
 
   /**
-   * Generate the correspondind do statements for the array notations. A do
+   * Generate the corresponding do statements for the array notations. A do
    * statement is generated per dimension of the arrays. Iteration index range
    * are computed with array dimensions.
    * @param xcodeml     The XcodeML on which the transformations are applied.
@@ -211,7 +211,7 @@ public class ArrayTransform extends BlockTransformation {
       // 1.1 Create induction variables
       if(_clawBegin.hasInductionClause()){ // Use user names
         inductionVars[i] = _clawBegin.getInductionValues().get(i);
-      } else { // genarate new names
+      } else { // generate new names
         inductionVars[i] = "claw_induction_" +
             transformer.getNextTransformationCounter();
       }
@@ -246,7 +246,7 @@ public class ArrayTransform extends BlockTransformation {
       }
       doStmts[i] = XnodeUtil.createDoStmt(xcodeml, inductionVar, range);
       XnodeUtil.copyEnhancedInfo(statements.get(0), doStmts[i]);
-      if (i == 0) { // most outter loop goes after the pragma
+      if (i == 0) { // most outer loop goes after the pragma
         XnodeUtil.insertAfter(doStmtGrip, doStmts[i]);
       } else { // others loop go in the previous one
         doStmts[i - 1].getBody().appendToChildren(doStmts[i], false);
@@ -263,12 +263,12 @@ public class ArrayTransform extends BlockTransformation {
           Xnode el = arrayRef.getChild(i + 1);
           if (el.Opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].find(Xcode.VAR).getValue();
-            Xnode iterVar =
+            Xnode inductionVar =
                 XnodeUtil.createVar(Xname.TYPE_F_INT, induction,
                 Xscope.LOCAL, xcodeml);
 
             Xnode arrayIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
-            arrayIdx.appendToChildren(iterVar, false);
+            arrayIdx.appendToChildren(inductionVar, false);
 
             XnodeUtil.insertAfter(el, arrayIdx);
             el.delete();

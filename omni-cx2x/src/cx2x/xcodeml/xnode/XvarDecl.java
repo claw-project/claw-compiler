@@ -31,9 +31,9 @@ public class XvarDecl extends Xdecl {
   private boolean _hasValue = false;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement Root of the element.
    */
   public XvarDecl(Element baseElement){
     super(baseElement);
@@ -72,8 +72,8 @@ public class XvarDecl extends Xdecl {
   }
 
   /**
-   * Get the inner Xname element.
-   * @return Xname element.
+   * Get the inner name element.
+   * @return Name element.
    */
   public Xnode getName(){
     return _name;
@@ -102,7 +102,7 @@ public class XvarDecl extends Xdecl {
    * @param cloneElement If true, the element is cloned and then inserted as the
    *                     last child. The clone is inserted.
    */
-  public void append(Xnode element, boolean cloneElement){
+  public void append(Xnode element, @SuppressWarnings("SameParameterValue") boolean cloneElement){
     if(cloneElement){
       Node clone = element.cloneNode();
       _baseElement.appendChild(clone);

@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
 import java.util.List;
 
 /**
- * The Xparams represents the params (8.5) element in XcodeMLintermediate
+ * The Xparams represents the params (8.5) element in XcodeML intermediate
  * representation.
  *
  * Elements: (name*)
@@ -25,9 +25,9 @@ public class Xparams extends Xnode {
   private List<Xnode> _parameters = null;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public Xparams(Element baseElement){
     super(baseElement);

@@ -120,7 +120,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Check if the pragma statement starts with the claw keyword.
-   * @param pragma The Xpragma object to check.
+   * @param pragma The raw pragma element object to check.
    * @return True if the statement starts with claw keyword. False otherwise.
    */
   public static boolean startsWithClaw(Xnode pragma) {
@@ -130,7 +130,8 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Analyze a raw string input and match it with the CLAW language definition.
-   * @param pragma    A Xpragma object to be analyzed against the CLAW language.
+   * @param pragma    A raw pragma element object to be analyzed against the
+   *                  CLAW language.
    * @param generator Accelerator directive generator.
    * @param target Target that influences the code transformation.
    * @return A ClawLanguage object with the corresponding extracted information.
@@ -154,11 +155,11 @@ public class ClawLanguage extends AnalyzedPragma {
    * Produce a "naked" pragma.
    * OMNI compiler keeps the claw prefix when a pragma is defined on several
    * lines using the continuation symbol '&'. In order to have a simpler
-   * grammar, these multiple occurences of the prefix are not taken into
+   * grammar, these multiple occurrences of the prefix are not taken into
    * account. Therefore, this method remove all the prefix and keeps only the
    * first one.
    * @param rawPragma The original raw pragma statement straight from OMNI
-   *                  compiler resprestentation.
+   *                  compiler representation.
    * @return A naked pragma statement able to be analyzed by the CLAW parser.
    */
   private static String nakenize(String rawPragma){
@@ -276,7 +277,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Get the collapse clause extracted value.
-   * @return An interger value.
+   * @return An integer value.
    */
   public int getCollapseValue(){
     return _collapseClauseValue;
@@ -285,7 +286,7 @@ public class ClawLanguage extends AnalyzedPragma {
   // Loop interchange specific methods
 
   /**
-   * Set the list of interhcnage indexes.
+   * Set the list of interchange indexes.
    * @param indexes List of indexes as string.
    */
   void setIndexes(List<String> indexes){
@@ -654,8 +655,8 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Check whether the dimesion clause is used.
-   * @return True if the dimesion clause is used.
+   * Check whether the dimension clause is used.
+   * @return True if the dimension clause is used.
    */
   public boolean hasDimensionClause(){
     return _hasDimensionClause;
@@ -678,7 +679,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Get the dimensions extracted information.
    * @return All dimensions extracted from the directive.
    */
-  public List<ClawDimension> getDimesionValues(){
+  public List<ClawDimension> getDimensionValues(){
     return _dimensions;
   }
 
@@ -694,7 +695,7 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Attach the pragma related to this CLAW language analysis.
-   * @param pragma Xpragma object.
+   * @param pragma Raw pragma element object.
    */
   private void attachPragma(Xnode pragma){
     _pragma = pragma;
@@ -767,8 +768,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return An instance of ClawLanguage describing a loop-fusion with the
    * group, collapse clauses and the pragma from the master object.
    */
-  public static ClawLanguage createLoopFusionLanguage(Xnode base,
-                                                      String group,
+  public static ClawLanguage createLoopFusionLanguage(@SuppressWarnings("SameParameterValue") Xnode base,
+                                                      @SuppressWarnings("SameParameterValue") String group,
                                                       int collapse)
   {
     ClawLanguage l = new ClawLanguage();

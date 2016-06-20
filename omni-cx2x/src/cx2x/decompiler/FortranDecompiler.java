@@ -26,8 +26,8 @@ public class FortranDecompiler {
   private XmToolFactory _toolFactory;
 
   /**
-   * Contructs a new FortranDecompiler object.
-   * @throws XmException If instanciation of the XmToolFactory fails.
+   * Constructs a new FortranDecompiler object.
+   * @throws XmException If instantiation of the XmToolFactory fails.
    */
   public FortranDecompiler()
       throws XmException

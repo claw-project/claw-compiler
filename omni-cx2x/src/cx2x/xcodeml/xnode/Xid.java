@@ -28,9 +28,9 @@ public class Xid extends Xnode {
   private Xnode _xname;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public Xid(Element baseElement){
     super(baseElement);
@@ -71,7 +71,7 @@ public class Xid extends Xnode {
    * Set id sclass value.
    * @param value The new sclass value.
    */
-  public void setSclass(String value){
+  public void setSclass(@SuppressWarnings("SameParameterValue") String value){
     if(_baseElement != null && value != null){
       _baseElement.setAttribute(Xname.ATTR_SCLASS, value);
       _sclass = value;

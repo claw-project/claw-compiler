@@ -48,7 +48,7 @@ public class ArrayToFctCall extends Transformation {
 
     if(!_fctDef.getDeclarationTable().contains(_claw.getArrayName())){
       xcodeml.addError(_claw.getArrayName() +
-          " is not delcared in current function/subroutine.",
+          " is not declared in current function/subroutine.",
           _claw.getPragma().getLineNo());
       return false;
     }

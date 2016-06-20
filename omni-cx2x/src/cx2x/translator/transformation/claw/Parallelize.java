@@ -20,7 +20,7 @@ import java.util.*;
 
 /**
  * The parallelize transformation transforms the code contained in a
- * subtourine/function by adding necessary dimensions and parallelism to the
+ * subroutine/function by adding necessary dimensions and parallelism to the
  * defined data.
  *
  * @author clementval
@@ -36,7 +36,7 @@ public class Parallelize extends Transformation {
   private List<Xnode> _beforeCrt, _afterCrt;
 
   /**
-   * Constructs a new Parallelize transfomration triggered from a specific
+   * Constructs a new Parallelize transformation triggered from a specific
    * pragma.
    * @param directive The directive that triggered the define transformation.
    */
@@ -78,7 +78,7 @@ public class Parallelize extends Transformation {
       return false;
     }
 
-    for(ClawDimension d : _claw.getDimesionValues()){
+    for(ClawDimension d : _claw.getDimensionValues()){
       if(_dimensions.containsKey(d.getIdentifier())){
         xcodeml.addError(
             String.format("Dimension with identifier %s already specified.",
@@ -141,7 +141,7 @@ public class Parallelize extends Transformation {
    */
   private boolean analyseOver(XcodeProgram xcodeml){
     if(!_claw.hasOverClause()){
-      _overDimensions += _claw.getDimesionValues().size();
+      _overDimensions += _claw.getDimensionValues().size();
       return true;
     }
     if(!_claw.getOverClauseValues().contains(":")){
@@ -180,7 +180,7 @@ public class Parallelize extends Transformation {
     // Insert the declarations of variables to iterate over the new dimensions.
     insertVariableToIterateOverDimension(xcodeml);
 
-    // Promot all array fields with new dimensions.
+    // Promote all array fields with new dimensions.
     promoteFields(xcodeml);
 
     // Adapt array references.
@@ -205,7 +205,7 @@ public class Parallelize extends Transformation {
   {
     /* Create a nested loop with the new defined dimensions and wrap it around
      * the whole subroutine's body. This is for the moment a really naive
-     * transformation idead but it is our start point. */
+     * transformation idea but it is our start point. */
     NestedDoStatement loops =
         new NestedDoStatement(getOrderedDimensionsFromDefinition(), xcodeml);
     XnodeUtil.copyBody(_fctDef.getBody(), loops.getInnerStatement());
@@ -302,7 +302,7 @@ public class Parallelize extends Transformation {
        * from left to right. Everything is inserted on the left of current
        * indexes */
 
-      for(ClawDimension dim : _claw.getDimesionValues()){
+      for(ClawDimension dim : _claw.getDimensionValues()){
         crt.add(dim.generateArrayIndex(xcodeml));
       }
     }
@@ -366,7 +366,7 @@ public class Parallelize extends Transformation {
         newType.addDimension(index, 0);
       }
     } else {
-      for(ClawDimension dim : _claw.getDimesionValues()){
+      for(ClawDimension dim : _claw.getDimensionValues()){
         Xnode index = dim.generateIndexRange(xcodeml, false);
         newType.addDimension(index, 0);
       }
@@ -446,7 +446,7 @@ public class Parallelize extends Transformation {
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
-    for(ClawDimension dimension : _claw.getDimesionValues()){
+    for(ClawDimension dimension : _claw.getDimensionValues()){
       if(dimension.lowerBoundIsVar()){
         createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);

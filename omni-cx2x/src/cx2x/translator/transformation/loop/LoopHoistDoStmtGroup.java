@@ -21,7 +21,7 @@ class LoopHoistDoStmtGroup {
   private Xnode[] _doStmts = null;
 
   /**
-   * Constrcuts a do statements group with the given do statements.
+   * Constructs a do statements group with the given do statements.
    * @param doStmts Array of do statements.
    */
   public LoopHoistDoStmtGroup(Xnode[] doStmts){

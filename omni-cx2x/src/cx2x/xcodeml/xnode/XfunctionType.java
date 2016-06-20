@@ -37,9 +37,9 @@ public class XfunctionType extends Xtype {
   private boolean _isInternal = false;
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public XfunctionType(Element baseElement){
     super(baseElement);

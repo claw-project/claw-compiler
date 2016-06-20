@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Interface for accelerator directive generator.
  *
- * TODO interface might need some refinments when we have a better idea of
+ * TODO interface might need some refinements when we have a better idea of
  * TODO OpenACC vs OpenMP
  *
  * @author clementval
@@ -43,7 +43,7 @@ public abstract class AcceleratorGenerator {
   }
 
   /**
-   * Get the prefix for the current accelerator lanugage.
+   * Get the prefix for the current accelerator language.
    * @return Language prefix.
    */
   protected abstract String getPrefix();
@@ -52,10 +52,10 @@ public abstract class AcceleratorGenerator {
    * Get the start pragma to define a parallel accelerated region.
    * @return String value that represents the pragma.
    */
-  protected abstract String getStartParellelDirective();
+  protected abstract String getStartParallelDirective();
 
   /**
-   * Get the formattated directive to start the parallelization of a loop.
+   * Get the formatted directive to start the parallelization of a loop.
    * @param value Collapse value. if greater than 0, a collapse clause will be
    *              added to the construct.
    * @return String value that represents the start of a parallelized loop.
@@ -63,7 +63,7 @@ public abstract class AcceleratorGenerator {
   protected abstract String getStartLoopDirective(int value);
 
   /**
-   * Get the formattated directive to end the parallelization of a loop.
+   * Get the formatted directive to end the parallelization of a loop.
    * @return String value that represents the start of a parallelized loop.
    */
   protected abstract String getEndLoopDirective();
@@ -72,7 +72,7 @@ public abstract class AcceleratorGenerator {
    * Get the end pragma to define a parallel accelerated region.
    * @return String value that represents the pragma.
    */
-  protected abstract String getEndParellelDirective();
+  protected abstract String getEndParallelDirective();
 
   /**
    * Get formatted pragma defined by the accelerator directive prefix and the
@@ -89,14 +89,14 @@ public abstract class AcceleratorGenerator {
   protected abstract String getParallelKeyword();
 
   /**
-   * Return contruction of the clause for a private variable.
+   * Return construction of the clause for a private variable.
    * @param var Variable name that will be inserted in the generated clause.
    * @return An accelerator language specific private clause with the var.
    */
   protected abstract String getPrivateClause(String var);
 
   /**
-   * Return contruction of the clause for a list of private variable.
+   * Return construction of the clause for a list of private variable.
    * @param vars List of variables name that will be inserted in the generated
    *             clause.
    * @return An accelerator language specific private clause with the list of

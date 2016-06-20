@@ -131,7 +131,7 @@ public class ClawDimension {
   /**
    * Generate the correct indexRange element with lowerBound, upperBound and
    * step from the current dimension.
-   * @param xcodeml Current XcodeML progra unit in which elements will be
+   * @param xcodeml Current XcodeML program unit in which elements will be
    *                created.
    * @return A new indexRange elements.
    */
@@ -180,7 +180,7 @@ public class ClawDimension {
   /**
    * Generate the array index that will be placed in the array reference for
    * this additional dimension.
-   * @param xcodeml Current XcodeML progra unit in which elements will be
+   * @param xcodeml Current XcodeML program unit in which elements will be
    *                created.
    * @return A new arrayIndex element including a var element with the dimension
    * identifier.

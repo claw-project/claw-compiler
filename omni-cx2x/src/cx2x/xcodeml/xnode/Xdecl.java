@@ -16,9 +16,9 @@ import org.w3c.dom.Element;
 public class Xdecl extends Xnode {
 
   /**
-   * Xelement standard ctor. Pass the base element to the base class and read
+   * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
-   * @param baseElement The root element of the Xelement
+   * @param baseElement The root of the element.
    */
   public Xdecl(Element baseElement){
     super(baseElement);

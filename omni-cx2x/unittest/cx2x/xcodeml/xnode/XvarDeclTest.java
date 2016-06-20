@@ -17,15 +17,15 @@ import static org.junit.Assert.*;
 public class XvarDeclTest {
 
   private static final String varDecl1 =
-      "<varDecl lineno=\"946\" file=\"./src/mymodule.f90\">" +
-      "<name type=\"Ib3f750\">testvar</name>" +
+      "<varDecl lineno=\"946\" file=\"./src/module.f90\">" +
+      "<name type=\"Ib3f750\">testVar</name>" +
       "<value>10.0</value>" +
       "</varDecl>";
 
 
   private static final String varDecl2 =
-      "<varDecl lineno=\"946\" file=\"./src/mymodule.f90\">" +
-      "<name type=\"Ib3f750\">testvar</name>" +
+      "<varDecl lineno=\"946\" file=\"./src/module.f90\">" +
+      "<name type=\"Ib3f750\">testVar</name>" +
       "</varDecl>";
 
   @Test
@@ -33,10 +33,10 @@ public class XvarDeclTest {
     XvarDecl varDecl = XmlHelper.createXvarDecl(varDecl1);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
-    assertEquals("./src/mymodule.f90", varDecl.getFile());
+    assertEquals("./src/module.f90", varDecl.getFile());
     assertNotNull(varDecl.getName());
     assertEquals("Ib3f750", varDecl.getName().getAttribute(Xattr.TYPE));
-    assertEquals("testvar", varDecl.getName().getValue());
+    assertEquals("testVar", varDecl.getName().getValue());
     assertTrue(varDecl.hasValue());
     assertEquals("10.0", varDecl.getValue());
   }
@@ -46,10 +46,10 @@ public class XvarDeclTest {
     XvarDecl varDecl = XmlHelper.createXvarDecl(varDecl2);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
-    assertEquals("./src/mymodule.f90", varDecl.getFile());
+    assertEquals("./src/module.f90", varDecl.getFile());
     assertNotNull(varDecl.getName());
     assertEquals("Ib3f750", varDecl.getName().getAttribute(Xattr.TYPE));
-    assertEquals("testvar", varDecl.getName().getValue());
+    assertEquals("testVar", varDecl.getName().getValue());
     assertFalse(varDecl.hasValue());
     assertNull(varDecl.getValue());
   }

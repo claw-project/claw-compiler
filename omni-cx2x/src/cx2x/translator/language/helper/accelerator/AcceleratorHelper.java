@@ -43,11 +43,11 @@ public class AcceleratorHelper {
     if(claw.hasParallelClause()){
       Xnode beginParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
       beginParallel.setValue(
-          claw.getAcceleratorGenerator().getStartParellelDirective()
+          claw.getAcceleratorGenerator().getStartParallelDirective()
       );
       Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
       endParallel.setValue(
-          claw.getAcceleratorGenerator().getEndParellelDirective()
+          claw.getAcceleratorGenerator().getEndParallelDirective()
       );
       XnodeUtil.insertBefore(startStmt, beginParallel);
       XnodeUtil.insertAfter(endStmt, endParallel);
@@ -82,8 +82,8 @@ public class AcceleratorHelper {
     Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
     Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
 
-    beginParallel.setValue(gen.getStartParellelDirective());
-    endParallel.setValue(gen.getEndParellelDirective());
+    beginParallel.setValue(gen.getStartParallelDirective());
+    endParallel.setValue(gen.getEndParallelDirective());
     beginLoop.setValue(gen.getStartLoopDirective(collapse));
 
     XnodeUtil.insertBefore(startStmt, beginParallel);

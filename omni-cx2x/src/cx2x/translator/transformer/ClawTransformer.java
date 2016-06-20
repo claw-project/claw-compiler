@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 public class ClawTransformer implements Transformer {
   private int _transformationCounter = 0;
 
-  // Hold all tranformation groups
+  // Hold all transformation groups
   private final Map<Class, TransformationGroup> _tGroups;
 
   // Hold cross-transformation elements
@@ -60,7 +60,7 @@ public class ClawTransformer implements Transformer {
 
     // Internal transformations not specified by default configuration or user
     _tGroups.put(OpenAccContinuation.class,
-        new IndependentTransformationGroup("intrenal-open-acc-continuation"));
+        new IndependentTransformationGroup("internal-open-acc-continuation"));
 
     _crossTransformationTable = new HashMap<>();
   }
@@ -103,7 +103,7 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * Store a XbaseElement from a transformation for a possible usage in another
+   * Store a Xnode from a transformation for a possible usage in another
    * transformation. If a key is already present, the element is overwritten.
    * @param key   The element acting as a key.
    * @param value The element to be stored.

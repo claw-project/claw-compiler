@@ -34,7 +34,7 @@ public class ClawErrorListener extends BaseErrorListener {
 
   /**
    * Get the last error information.
-   * @return IllegalDriectiveException encapsulating the last error information.
+   * @return IllegalDirectiveException encapsulating the last error information.
    */
   IllegalDirectiveException getLastError(){
       return ex;

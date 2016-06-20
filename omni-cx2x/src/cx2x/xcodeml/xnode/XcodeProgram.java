@@ -98,7 +98,7 @@ public class XcodeProgram extends Xnode {
    * @param msg     Warning message.
    * @param lineno  Line number that triggered the warning.
    */
-  public void addWarning(String msg, int lineno){
+  public void addWarning(@SuppressWarnings("SameParameterValue") String msg, int lineno){
     _warnings.add(new XanalysisError(msg, lineno));
   }
 
@@ -141,7 +141,7 @@ public class XcodeProgram extends Xnode {
   }
 
   /**
-   * Get the delcarations table of the XcodeML program.
+   * Get the declarations table of the XcodeML program.
    * @return The declarations table.
    */
   public XglobalDeclTable getGlobalDeclarationsTable(){

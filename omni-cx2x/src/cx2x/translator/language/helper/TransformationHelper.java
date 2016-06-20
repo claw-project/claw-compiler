@@ -66,7 +66,7 @@ public class TransformationHelper {
   {
     if(claw.hasFusionClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
-      // TODO XNODE stmt should be directily an Xnode
+      // TODO XNODE stmt should be directly an Xnode
       LoopFusion fusion = new LoopFusion(stmt, l);
       // TODO maybe run analysis
       transformer.addTransformation(fusion);

@@ -184,7 +184,7 @@ public class LoopHoist extends BlockTransformation {
 
       ClawLanguage dummyFusionDirective =
           ClawLanguage.createLoopFusionLanguage(null, "hoist", _nestedLevel);
-      // TODO doStmts array should be xnodes directly
+      // TODO XNODE doStmts array should be nodes directly
       fusions.add(new LoopFusion(new Xnode(g.getDoStmts()[0].getElement()),
           dummyFusionDirective));
     }
@@ -274,8 +274,8 @@ public class LoopHoist extends BlockTransformation {
   /**
    * Relocated nested do statement inside a group of do statement.
    * @param g        The group of do statement.
-   * @param newStart The new outter do statement.
-   * @throws IllegalTransformationException If the nested group doen't match the
+   * @param newStart The new outer do statement.
+   * @throws IllegalTransformationException If the nested group doesn't match the
    * correct size.
    */
   private void reloadDoStmts(LoopHoistDoStmtGroup g, Xnode newStart)
