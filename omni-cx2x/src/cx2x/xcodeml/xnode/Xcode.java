@@ -24,8 +24,7 @@ public enum Xcode {
   EXPRSTATEMENT(Xname.EXPR_STMT),                            // XcodeML 6.2
   EXTERNDECL(Xname.EXTERN_DECL),                             // XcodeML 5.6
   FUNCTIONCALL(Xname.FUNCTION_CALL),                         // XcodeML 7.5.1
-  FFUNCTIONDEFINITION(Xname.F_FUNCTION_DEFINITION),          // XcodeML 5.3
-  FFUNCTIONTYPE(Xname.F_FUNCTION_TYPE),                      // XcodeML 3.4
+  FALLOCATESTATEMENT(Xname.F_ALLOCATE_STATEMENT),            // XcodeML 6.24.1
   FARRAYCONSTRUCTOR(Xname.F_ARRAY_CONSTRUCTOR),              // XcodeML 7.2.1
   FARRAYREF(Xname.F_ARRAY_REF),                              // XcodeML 7.4.4
   FASSIGNSTATEMENT(Xname.F_ASSIGN_STMT),                     // XcodeML 6.1
@@ -34,10 +33,13 @@ public enum Xcode {
   FCOARRAYREF(Xname.F_COARRAY_REF),                          // XcodeML 7.4.3
   FCONTAINSSTATEMENT(Xname.F_CONTAINS_STATEMENT),            // XcodeML 6.26
   FCYCLESTATEMENT(Xname.F_CYCLE_STATEMENT),                  // XcodeML 6.8
+  FDEALLOCATESTATEMENT(Xname.F_DEALLOCATE_STATEMENT),        // XcodeML 6.24.2
   FDOLOOP(Xname.F_DO_LOOP),                                  // XcodeML 8.15
   FDOSTATEMENT(Xname.F_DO_STATEMENT),                        // XcodeML 6.5
   FDOWHILESTATEMENT(Xname.F_DO_WHILE_STATEMENT),             // XcodeML 6.6
   FEXITSTATEMENT(Xname.F_EXIT_STATEMENT),                    // XcodeML 6.9
+  FFUNCTIONDEFINITION(Xname.F_FUNCTION_DEFINITION),          // XcodeML 5.3
+  FFUNCTIONTYPE(Xname.F_FUNCTION_TYPE),                      // XcodeML 3.4
   FIFSTATEMENT(Xname.F_IF_STMT),                             // XcodeML 6.4
   FINTCONSTANT(Xname.F_INT_CONST),                           // XcodeML 7.1.1
   FINTERFACEDECL(Xname.F_INTERFACE_DECL),                    // XcodeML 5.10
@@ -49,6 +51,7 @@ public enum Xcode {
   FMEMBERREF(Xname.F_MEMBER_REF),                            // XcodeML 7.4.2
   FMODULEDEFINITION(Xname.F_MODULE_DEFINITION),              // XcodeML 5.7
   FMODULEPROCEDUREDECL(Xname.F_MODULE_PROCEDURE_DECL),       // XcodeML 5.11
+  FNULLIFYSTATEMENT(Xname.F_NULLIFY_STATEMENT),              // XcodeML 6.24.3
   FPOINTERASSIGNSTATEMENT(Xname.F_POINTER_ASSIGN_STATEMENT), // XcodeML 6.3
   FRETURNSTATEMENT(Xname.F_RETURN_STATEMENT),                // XcodeML 6.10
   FSELECTCASESTATEMENT(Xname.F_SELECT_CASE_STATEMENT),       // XcodeML 6.13

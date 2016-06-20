@@ -97,6 +97,7 @@ public class Xname {
   public static final String EXPR_STMT = "exprStatement";
   public static final String EXTERN_DECL = "externDecl";
   public static final String FUNCTION_CALL = "functionCall";
+  public static final String F_ALLOCATE_STATEMENT = "FallocateStatement";
   public static final String F_ARRAY_CONSTRUCTOR = "FarrayConstructor";
   public static final String F_ARRAY_REF = "FarrayRef";
   public static final String F_ASSIGN_STMT = "FassignStatement";
@@ -105,6 +106,7 @@ public class Xname {
   public static final String F_COARRAY_REF = "FcoArrayRef";
   public static final String F_CONTAINS_STATEMENT = "FcontainsStatement";
   public static final String F_CYCLE_STATEMENT = "FcycleStatement";
+  public static final String F_DEALLOCATE_STATEMENT = "FdeallocateStatement";
   public static final String F_DO_LOOP = "FdoLoop";
   public static final String F_DO_STATEMENT = "FdoStatement";
   public static final String F_DO_WHILE_STATEMENT = "FdoWhileStatement";
@@ -122,6 +124,7 @@ public class Xname {
   public static final String F_MEMBER_REF = "FmemberRef";
   public static final String F_MODULE_DEFINITION = "FmoduleDefinition";
   public static final String F_MODULE_PROCEDURE_DECL = "FmoduleProcedureDecl";
+  public static final String F_NULLIFY_STATEMENT = "FnullifyStatement";
   public static final String F_POINTER_ASSIGN_STATEMENT = "FpointerAssignStatement";
   public static final String F_RETURN_STATEMENT = "FreturnStatement";
   public static final String F_SELECT_CASE_STATEMENT = "FselectCaseStatement";
