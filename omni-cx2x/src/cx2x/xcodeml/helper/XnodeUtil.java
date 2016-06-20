@@ -1070,8 +1070,7 @@ public class XnodeUtil {
     }
     Xnode c1 = n1.getChild(0);
     Xnode c2 = n2.getChild(0);
-    return !(c1 == null || c2 == null)
-        && c1.getValue().toLowerCase().equals(c2.getValue().toLowerCase());
+    return compareValues(c1, c2);
   }
 
   /**
