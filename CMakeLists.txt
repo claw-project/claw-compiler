@@ -25,7 +25,7 @@ execute_process(
 )
 
 # Define CLAW compiler version
-set(CLAWFC_VERSION "0.2a rev. ${GIT_COMMIT_HASH}")
+set(CLAWFC_VERSION "0.3a rev. ${GIT_COMMIT_HASH}")
 
 # Set the default install directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
