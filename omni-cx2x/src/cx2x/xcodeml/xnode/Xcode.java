@@ -25,7 +25,7 @@ public enum Xcode {
   EXTERNDECL(Xname.EXTERN_DECL),                             // XcodeML 5.6
   FUNCTIONCALL(Xname.FCT_CALL),                              // XcodeML 7.5.1
   FFUNCTIONDEFINITION(Xname.F_FUNCTION_DEFINITION),          // XcodeML 5.3
-  FFUNCTIONTYPE(Xname.FCT_TYPE),                             // XcodeML 3.4
+  FFUNCTIONTYPE(Xname.F_FUNCTION_TYPE),                      // XcodeML 3.4
   FARRAYCONSTRUCTOR(Xname.F_ARRAY_CONSTRUCTOR),              // XcodeML 7.2.1
   FARRAYREF(Xname.F_ARRAY_REF),                              // XcodeML 7.4.4
   FASSIGNSTATEMENT(Xname.F_ASSIGN_STMT),                     // XcodeML 6.1

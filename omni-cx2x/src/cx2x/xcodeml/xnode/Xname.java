@@ -97,7 +97,7 @@ public class Xname {
   public static final String EXPR_STMT = "exprStatement";
   public static final String EXTERN_DECL = "externDecl";
   public static final String FCT_CALL = "functionCall";
-  public static final String FCT_TYPE = "FfunctionType";
+
   public static final String F_ARRAY_CONSTRUCTOR = "FarrayConstructor";
   public static final String F_ARRAY_REF = "FarrayRef";
   public static final String F_ASSIGN_STMT = "FassignStatement";
@@ -111,6 +111,7 @@ public class Xname {
   public static final String F_DO_WHILE_STATEMENT = "FdoWhileStatement";
   public static final String F_EXIT_STATEMENT = "FexitStatement";
   public static final String F_FUNCTION_DEFINITION = "FfunctionDefinition";
+  public static final String F_FUNCTION_TYPE = "FfunctionType";
   public static final String F_IF_STMT = "FifStatement";
   public static final String F_INT_CONST = "FintConstant";
   public static final String F_INTERFACE_DECL = "FinterfaceDecl";

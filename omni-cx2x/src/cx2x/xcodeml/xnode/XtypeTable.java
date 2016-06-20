@@ -62,7 +62,7 @@ public class XtypeTable extends Xnode {
             XbasicType bt = new XbasicType(el);
             _table.put(bt.getType(), bt);
             break;
-          case Xname.FCT_TYPE:
+          case Xname.F_FUNCTION_TYPE:
             XfunctionType ft = new XfunctionType(el);
             _table.put(ft.getType(), ft);
             break;
