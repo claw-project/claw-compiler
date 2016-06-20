@@ -146,13 +146,13 @@ public class LoopHoist extends BlockTransformation {
         );
         return false;
       }
-
-
+      
       for (ClawReshapeInfo r : _startClaw.getReshapeClauseValues()) {
         if (!fctDef.getSymbolTable().contains(r.getArrayName()) ||
             !fctDef.getDeclarationTable().contains(r.getArrayName())) {
-          xcodeml.addError("Reshape variable " + r.getArrayName() + " not found" +
-              " in the definition.", _startClaw.getPragma().getLineNo()
+          xcodeml.addError(String.format("Reshape variable %s not found in " +
+              "the definition of %s", r.getArrayName(),
+              fctDef.getName().getValue()), _startClaw.getPragma().getLineNo()
           );
           return false;
         }
