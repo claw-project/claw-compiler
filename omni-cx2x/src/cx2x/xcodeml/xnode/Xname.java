@@ -96,8 +96,7 @@ public class Xname {
   public static final String ELSE = "else";
   public static final String EXPR_STMT = "exprStatement";
   public static final String EXTERN_DECL = "externDecl";
-  public static final String FCT_CALL = "functionCall";
-
+  public static final String FUNCTION_CALL = "functionCall";
   public static final String F_ARRAY_CONSTRUCTOR = "FarrayConstructor";
   public static final String F_ARRAY_REF = "FarrayRef";
   public static final String F_ASSIGN_STMT = "FassignStatement";
