@@ -86,8 +86,7 @@ public class LoopInterchange extends Transformation {
     }*/
 
     /* To perform the loop interchange, only the ranges and iteration
-     * variables are swapped
-     */
+     * variables are swapped */
     if(_loopLevel1 != null && _loopLevel2 == null){
       // Loop interchange between 2 loops
       XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel1);
@@ -125,7 +124,6 @@ public class LoopInterchange extends Transformation {
         XnodeUtil.swapIterationRange(from, to);
       }
     }
-
 
     // Generate accelerator pragmas if needed
     AcceleratorHelper.

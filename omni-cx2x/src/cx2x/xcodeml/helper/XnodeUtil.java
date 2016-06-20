@@ -1128,16 +1128,16 @@ public class XnodeUtil {
     }
   }
 
-
-
-
-
   /**
    * Swap the iteration range information of two do statement.
    * @param e1 First do statement.
    * @param e2 Second do statement.
+   * @throws IllegalTransformationException if necessary elements are missing
+   * to apply the transformation.
    */
-  public static void swapIterationRange(Xnode e1, Xnode e2){
+  public static void swapIterationRange(Xnode e1, Xnode e2)
+    throws IllegalTransformationException
+  {
     // The two nodes must be do statement
     if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
       return;
@@ -1150,7 +1150,8 @@ public class XnodeUtil {
     if(inductionVar1 == null || inductionVar2 == null ||
         indexRange1 == null || indexRange2 == null)
     {
-      return; // TODO exception
+      throw new IllegalTransformationException("Induction variable or index " +
+          "range missing.");
     }
 
     Xnode low1 = indexRange1.find(Xcode.LOWERBOUND).getChild(0);
