@@ -276,6 +276,12 @@ function claw_f_process_dependencies()
       exit 1;
     fi
 
+    module_xmod_file="$module_name.xmod"
+    if [[ -f $module_xmod_file && $module_xmod_file -nt $module_file ]]
+    then
+      continue # Skip when .xmod file already exists
+    fi
+
     ### Preprocess file ###
     FILE=$module_file
     FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
