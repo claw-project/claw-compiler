@@ -288,9 +288,8 @@ public class ArrayTransform extends BlockTransformation {
         new Xnode(doStmts[0].getElement()));
 
     // Add any additional transformation defined in the directive clauses
-    // TODO XNODE no need to instantiate Xnode after refactoring
     TransformationHelper.generateAdditionalTransformation(_clawBegin, xcodeml,
-        transformer, new Xnode(doStmts[0].getElement()));
+        transformer, doStmts[0]);
 
     return potentialGrip == null ? doStmts[0] : potentialGrip;
   }
