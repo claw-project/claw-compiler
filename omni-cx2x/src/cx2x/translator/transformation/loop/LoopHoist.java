@@ -146,19 +146,41 @@ public class LoopHoist extends BlockTransformation {
         );
         return false;
       }
-      
+
       for (ClawReshapeInfo r : _startClaw.getReshapeClauseValues()) {
         if (!fctDef.getSymbolTable().contains(r.getArrayName()) ||
-            !fctDef.getDeclarationTable().contains(r.getArrayName())) {
-          xcodeml.addError(String.format("Reshape variable %s not found in " +
-              "the definition of %s", r.getArrayName(),
-              fctDef.getName().getValue()), _startClaw.getPragma().getLineNo()
-          );
-          return false;
+            !fctDef.getDeclarationTable().contains(r.getArrayName()))
+        {
+          // Check in the parent def if present
+          if(!checkUpperDefinition(fctDef, r.getArrayName())){
+            xcodeml.addError(String.format("Reshape variable %s not found in " +
+                    "the definition of %s", r.getArrayName(),
+                fctDef.getName().getValue()), _startClaw.getPragma().getLineNo()
+            );
+            return false;
+          }
         }
       }
     }
     return true;
+  }
+
+  /**
+   * Check whether the id is present in the parent function definition if the
+   * current fct definition is nested.
+   * @param fctDef Current function definition.
+   * @param name   Id to be looked for.
+   * @return True if the id has been found. False otherwise.
+   */
+  private boolean checkUpperDefinition(XfunctionDefinition fctDef, String name)
+  {
+    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    if (upperDef == null) {
+      return false;
+    }
+    return !(!upperDef.getSymbolTable().contains(name)
+        || !upperDef.getDeclarationTable().contains(name))
+        || checkUpperDefinition(upperDef, name);
   }
 
   /**
