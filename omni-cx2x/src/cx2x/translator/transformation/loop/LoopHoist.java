@@ -230,34 +230,6 @@ public class LoopHoist extends BlockTransformation {
   }
 
   /**
-   * Extract a group of nested do statements from an if-then statement. The if
-   * statement is move to the most inner do statement.
-   * @param xcodeml Current XcodeML program
-   * @param ifStmt  If statement in which the group of do statements is nested.
-   * @param g       The group of do statements.
-   * @throws IllegalTransformationException If creation of elements fails.
-   */
-  private void extractDoStmtFromIf(XcodeProgram xcodeml, Xnode ifStmt,
-                                   LoopHoistDoStmtGroup g)
-      throws IllegalTransformationException
-  {
-    int nestedDepth = g.getDoStmts().length;
-    Xnode newIfStmt = ifStmt.cloneObject();
-    LoopHoistDoStmtGroup newDoStmtGroup = g.cloneObjectAndElement();
-    Xnode then = newIfStmt.findNode(Xcode.THEN);
-    then.getBody().delete();
-    then.appendToChildren(g.getDoStmts()[nestedDepth-1].getBody(), true);
-    newDoStmtGroup.getDoStmts()[nestedDepth-1].getBody().delete();
-    Xnode body = new Xnode(Xcode.BODY, xcodeml);
-    body.appendToChildren(newIfStmt, false);
-    newDoStmtGroup.getDoStmts()[nestedDepth-1].appendToChildren(body, false);
-    XnodeUtil.insertAfter(ifStmt, newDoStmtGroup.getDoStmts()[0]);
-    g.getDoStmts()[0].delete();
-    ifStmt.delete();
-    reloadDoStmts(g, newDoStmtGroup.getDoStmts()[0]);
-  }
-
-  /**
    * Create an IF statement surrounding the entire most inner do statement body.
    * Condition if made from the lower bound (if(induction_var >= lower_bound).
    * @param xcodeml Current XcodeML program
