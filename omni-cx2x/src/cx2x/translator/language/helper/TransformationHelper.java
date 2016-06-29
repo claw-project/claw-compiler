@@ -107,6 +107,46 @@ public class TransformationHelper {
     }
   }
 
+  /**
+   * Find the id element in the current function definition or in parent if
+   * nested.
+   * @param fctDef Current function definition.
+   * @param name   Id name to be searched for.
+   * @return The element if found. Null otherwise.
+   */
+  private static Xid getIdInNestedFctDef(XfunctionDefinition fctDef,
+                                         String name)
+  {
+    if(fctDef.getSymbolTable().contains(name)){
+      return fctDef.getSymbolTable().get(name);
+    }
+    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    if(upperDef == null){
+      return null;
+    }
+    return getIdInNestedFctDef(upperDef, name);
+  }
+
+  /**
+   * Find the declaration element in the current function definition or in
+   * parent if nested.
+   * @param fctDef Current function definition.
+   * @param name   Declaration name to be searched for.
+   * @return The element if found. Null otherwise.
+   */
+  private static XvarDecl getDeclInNestedFctDef(XfunctionDefinition fctDef,
+                                                String name)
+  {
+    if(fctDef.getSymbolTable().contains(name)){
+      return fctDef.getDeclarationTable().get(name);
+    }
+    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    if(upperDef == null){
+      return null;
+    }
+    return getDeclInNestedFctDef(upperDef, name);
+  }
+
 
   /**
    * Apply the reshape clause transformation.
@@ -130,9 +170,14 @@ public class TransformationHelper {
     }
 
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
-      Xid id = fctDef.getSymbolTable().get(reshapeInfo.getArrayName());
-      XvarDecl decl =
-          fctDef.getDeclarationTable().get(reshapeInfo.getArrayName());
+      Xid id = getIdInNestedFctDef(fctDef, reshapeInfo.getArrayName());
+      XvarDecl decl = getDeclInNestedFctDef(fctDef, reshapeInfo.getArrayName());
+
+      if(id == null || decl == null){
+        throw new IllegalTransformationException("Cannot apply reshape clause."
+            + "Variable " + reshapeInfo.getArrayName() + " not found in " +
+            "declaration table.", claw.getPragma().getLineNo());
+      }
 
       String crtTypeHash = id.getType();
 
