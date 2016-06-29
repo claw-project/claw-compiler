@@ -107,7 +107,8 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if (n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
-        if(ref.find(Xcode.VARREF, Xcode.VAR).getValue().toLowerCase().
+        Xnode var = ref.find(Xcode.VARREF, Xcode.VAR);
+        if(var != null && var.getValue().toLowerCase().
             equals(arrayName.toLowerCase()))
         {
           references.add(ref);
