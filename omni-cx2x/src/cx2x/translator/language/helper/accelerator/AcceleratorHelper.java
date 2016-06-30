@@ -197,10 +197,9 @@ public class AcceleratorHelper {
       return;
     }
 
-    // TODO check how to do it in a better way
-    Xnode hook =
-        XnodeUtil.findPreviousPragma(stmt,
+    Xnode hook = XnodeUtil.findPreviousPragma(stmt,
             claw.getAcceleratorGenerator().getParallelKeyword());
+    // TODO do it with loop as well if hook is null
 
     if(hook == null){
       xcodeml.addWarning("No parallel construct found to attach private clause",
