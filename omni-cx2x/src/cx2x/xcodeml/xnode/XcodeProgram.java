@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
@@ -245,28 +246,18 @@ public class XcodeProgram extends Xnode {
    * Null if the file couldn't be read.
    */
   public static XcodeProgram createFromFile(String input){
-    try {
-      File fXmlFile = new File(input);
-      if(!fXmlFile.exists()){
-        System.err.println("Input file does not exists: " + input + "\n");
-        return null;
-      }
-      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-      Document doc = dBuilder.parse(fXmlFile);
-      doc.getDocumentElement().normalize();
-
-      XcodeProgram program = new XcodeProgram(doc);
-      program.readDocumentInformation();
-      if (!program.isXcodeMLvalid()){
-        System.err.print("XcodeML file is not valid\n");
-        return null;
-      }
-      return program;
-    } catch(Exception ex){
-      System.err.print("Unable to read file " + input + "\n");
+    Document doc = XnodeUtil.readXmlFile(input);
+    if(doc == null){
+      System.err.println("Input file does not exists: " + input + "\n");
+      return null;
     }
-    return null;
+    XcodeProgram program = new XcodeProgram(doc);
+    program.readDocumentInformation();
+    if (!program.isXcodeMLvalid()){
+      System.err.print("XcodeML file is not valid\n");
+      return null;
+    }
+    return program;
   }
 
 }
