@@ -13,7 +13,7 @@ import org.w3c.dom.Document;
  *
  * @author clementval
  */
-public class Xmod extends Xnode {
+public class Xmod extends XcodeML {
 
   // Xmod inner elements
   private final String _path;
@@ -26,7 +26,7 @@ public class Xmod extends Xnode {
    * @param path        Path of the XcodeML module file.
    */
   public Xmod(Document baseElement, String path){
-    super(baseElement.getDocumentElement());
+    super(baseElement);
     _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
     _path = path;
   }
