@@ -467,7 +467,6 @@ public class Parallelize extends Transformation {
       mod.getTypeTable().add(modIntTypeIntentIn);
     }
 
-
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),
@@ -476,29 +475,49 @@ public class Parallelize extends Transformation {
 
     // For each dimension defined in the directive
     for(ClawDimension dimension : _claw.getDimensionValues()){
+      // Create the parameter for the lower bound
       if(dimension.lowerBoundIsVar()){
         createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);
-        Xnode paramName = XnodeUtil.createName(xcodeml,
-            dimension.getLowerBoundId(), intTypeIntentIn.getType());
-        fctType.getParams().add(paramName);
+
+        // Add parameter to the local type table and the xmod file
+        createAndAddParam(xcodeml, dimension.getLowerBoundId(),
+            intTypeIntentIn.getType(), fctType);
+        createAndAddParam(mod, dimension.getLowerBoundId(),
+            modIntTypeIntentIn.getType(), modFctType);
       }
+
+      // Create parameter for the upper bound
       if(dimension.upperBoundIsVar()){
         createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);
-        Xnode paramName = XnodeUtil.createName(xcodeml,
-            dimension.getUpperBoundId(), intTypeIntentIn.getType());
-        fctType.getParams().add(paramName);
 
-        // Update the xmod file
-        Xnode modParamName = XnodeUtil.createName(mod,
-            dimension.getUpperBoundId(), modIntTypeIntentIn.getType());
-        modFctType.getParams().add(modParamName);
+        // Add parameter to the local type table and the xmod file
+        createAndAddParam(xcodeml, dimension.getUpperBoundId(),
+            intTypeIntentIn.getType(), fctType);
+        createAndAddParam(mod, dimension.getUpperBoundId(),
+            modIntTypeIntentIn.getType(), modFctType);
       }
       // Create induction variable declaration
       createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
           Xname.SCLASS_F_LOCAL, xcodeml);
     }
+  }
+
+  /**
+   * Create a name element and adds it as a parameter of the given function
+   * type.
+   * @param xcodeml   Current XcodeML file unit.
+   * @param nameValue Value of the name element to create.
+   * @param type      Type of the name element to create.
+   * @param fctType   Function type in which the element will be added as a
+   *                  parameter.
+   */
+  private void createAndAddParam(XcodeML xcodeml, String nameValue, String type,
+                                 XfunctionType fctType)
+  {
+    Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
+    fctType.getParams().add(param);
   }
 
   /**
