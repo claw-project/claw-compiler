@@ -20,6 +20,7 @@ public enum Xcode {
   CONTINUESTATEMENT(Xname.CONTINUE_STATEMENT),               // XcodeML/F 6.7
   COSHAPE(Xname.CO_SHAPE),                                   // XcodeML/F 3.2
   DECLARATIONS(Xname.DECLARATIONS),                          // XcodeML/F 5.2
+  DEPENDS(Xname.DEPENDS),                                    // Xmod file
   ELSE(Xname.ELSE),                                          // XcodeML/F 6.29
   EXPRSTATEMENT(Xname.EXPR_STMT),                            // XcodeML/F 6.2
   EXTERNDECL(Xname.EXTERN_DECL),                             // XcodeML/F 5.6

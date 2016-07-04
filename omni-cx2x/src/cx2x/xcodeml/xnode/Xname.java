@@ -180,6 +180,9 @@ public class Xname {
 
   public static final String X_CODE_PROGRAM = "XcodeProgram";
 
+  // Xmod files
+  public static final String DEPENDS = "depends";
+
   // Binary expression element
   public static final String DIV_EXPR = "divExpr";
   public static final String F_CONCAT_EXPR = "FconcatExpr";
