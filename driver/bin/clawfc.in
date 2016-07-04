@@ -140,6 +140,15 @@ then
   OMNI_CX2X_LINE_OPT=""
 fi
 
+# Module search path option
+OMNI_CX2X_MOD_OPT=""
+if [ ${#module_opt[@]} -ne 0 ]
+then
+  for mod in "${module_opt[@]}"
+  do
+    OMNI_CX2X_MOD_OPT="$OMNI_CX2X_MOD_OPT $mod"
+  done
+fi
 
 ### Show config ###
 if [ $SHOW_CONFIG = true ]
