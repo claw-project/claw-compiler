@@ -33,10 +33,10 @@ public class Xnode {
   /**
    * Constructs a new element in the AST.
    * @param opcode  Code of the new element.
-   * @param xcodeml Current XcodeML program unit in which the element is
+   * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    */
-  public Xnode(Xcode opcode, XcodeProgram xcodeml){
+  public Xnode(Xcode opcode, XcodeML xcodeml){
     _baseElement = xcodeml.getDocument().createElement(opcode.code());
   }
 
