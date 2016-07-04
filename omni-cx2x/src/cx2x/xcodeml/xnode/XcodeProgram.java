@@ -125,7 +125,7 @@ public class XcodeProgram extends Xnode {
   }
 
   /**
-   * Get the type table of the XcodeML program..
+   * Get the type table of the XcodeML program.
    * @return The types table.
    */
   public XtypeTable getTypeTable(){
