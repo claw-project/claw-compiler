@@ -434,10 +434,33 @@ public class Parallelize extends Transformation {
    * the additional dimensions.
    * @param xcodeml Current XcodeML program unit in which element are created.
    */
-  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml){
+  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
     // Find function type
     XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
         get(_fctDef.getName().getAttribute(Xattr.TYPE));
+
+    XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
+    if(modDef != null) {
+      Xmod mod = XnodeUtil.findContainingModule(_fctDef);
+      if(mod == null){
+        throw new IllegalTransformationException(
+            "Unable to locate module file for: " + modDef.getName(),
+            _claw.getPragma().getLineNo());
+      }
+      XfunctionType modFctType = (XfunctionType) xcodeml.getTypeTable().get(
+          _fctDef.getName().getAttribute(Xattr.TYPE));
+      if(modFctType == null){
+        throw new IllegalTransformationException(
+            "Unable to locate fct " + _fctDef.getName() + " in module " +
+                modDef.getName(), _claw.getPragma().getLineNo());
+      }
+      XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
+          mod.getTypeTable().generateIntegerTypeHash(),
+          Xname.TYPE_F_INT, Xintent.IN);
+      mod.getTypeTable().add(modIntTypeIntentIn);
+    }
 
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
