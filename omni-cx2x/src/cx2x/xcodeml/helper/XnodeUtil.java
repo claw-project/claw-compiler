@@ -8,10 +8,14 @@ package cx2x.xcodeml.helper;
 import cx2x.xcodeml.exception.*;
 
 import cx2x.xcodeml.xnode.*;
+import exc.xcodeml.XcodeMLtools_Fmod;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -1517,6 +1521,48 @@ public class XnodeUtil {
     Xnode body = new Xnode(Xcode.BODY, xcodeml);
     root.appendToChildren(body, false);
     return root;
+  }
+
+  /**
+   * Find module containing the function and read its .xmod file.
+   * @param fctType Function type nested in the module.
+   * @return Xmod object if the module has been found and read. Null otherwise.
+   */
+  public static Xmod findContainingModule(XfunctionType fctType){
+    XmoduleDefinition mod = findParentModule(fctType);
+    if(mod == null){
+      return null;
+    }
+    String modName = mod.getAttribute(Xattr.NAME);
+    for(String dir : XcodeMLtools_Fmod.getSearchPath()){
+      String path = dir + modName + ".xmod";
+      File f = new File(path);
+      if(f.exists()){
+        Document doc = readXmlFile(path);
+        return doc != null ? new Xmod(doc, path) : null;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Read XML file.
+   * @param input Xml file path.
+   * @return Document if the XML file could be read. Null otherwise.
+   */
+  public static Document readXmlFile(String input){
+    try {
+      File fXmlFile = new File(input);
+      if(!fXmlFile.exists()){
+        return null;
+      }
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(fXmlFile);
+      doc.getDocumentElement().normalize();
+      return doc;
+    } catch(Exception ignored){}
+    return null;
   }
 
 }
