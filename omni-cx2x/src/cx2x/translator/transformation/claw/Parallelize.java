@@ -195,6 +195,8 @@ public class Parallelize extends Transformation {
     } else {
       transformForCPU(xcodeml);
     }
+
+    // TODO write module information to disk
   }
 
   /**
@@ -442,25 +444,29 @@ public class Parallelize extends Transformation {
         get(_fctDef.getName().getAttribute(Xattr.TYPE));
 
     XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
+    XbasicType modIntTypeIntentIn = null;
+    Xmod mod = null;
+    XfunctionType modFctType = null;
     if(modDef != null) {
-      Xmod mod = XnodeUtil.findContainingModule(_fctDef);
+      mod = XnodeUtil.findContainingModule(_fctDef);
       if(mod == null){
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + modDef.getName(),
             _claw.getPragma().getLineNo());
       }
-      XfunctionType modFctType = (XfunctionType) xcodeml.getTypeTable().get(
+      modFctType = (XfunctionType) mod.getTypeTable().get(
           _fctDef.getName().getAttribute(Xattr.TYPE));
       if(modFctType == null){
         throw new IllegalTransformationException(
             "Unable to locate fct " + _fctDef.getName() + " in module " +
                 modDef.getName(), _claw.getPragma().getLineNo());
       }
-      XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
+      modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
           mod.getTypeTable().generateIntegerTypeHash(),
           Xname.TYPE_F_INT, Xintent.IN);
       mod.getTypeTable().add(modIntTypeIntentIn);
     }
+
 
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
@@ -483,6 +489,11 @@ public class Parallelize extends Transformation {
         Xnode paramName = XnodeUtil.createName(xcodeml,
             dimension.getUpperBoundId(), intTypeIntentIn.getType());
         fctType.getParams().add(paramName);
+
+        // Update the xmod file
+        Xnode modParamName = XnodeUtil.createName(mod,
+            dimension.getUpperBoundId(), modIntTypeIntentIn.getType());
+        modFctType.getParams().add(modParamName);
       }
       // Create induction variable declaration
       createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
