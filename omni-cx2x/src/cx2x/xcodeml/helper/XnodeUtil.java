@@ -47,11 +47,11 @@ public class XnodeUtil {
   public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
                                                            Xnode fctCall)
   {
-    if(xcodeml.getBaseElement() == null){
+    if(xcodeml.getElement() == null){
       return null;
     }
     String name = fctCall.findNode(Xcode.NAME).getValue();
-    NodeList nList = xcodeml.getBaseElement().
+    NodeList nList = xcodeml.getElement().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for (int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);

@@ -6,11 +6,7 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.helper.XnodeUtil;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +28,7 @@ import cx2x.xcodeml.error.*;
  * @author clementval
  */
 
-public class XcodeProgram extends Xnode {
-  private Document _xcodemlDoc = null;
+public class XcodeProgram extends XcodeML {
 
   // XcodeProgram inner elements
   private XtypeTable _typeTable = null;
@@ -55,8 +50,7 @@ public class XcodeProgram extends Xnode {
    * @param doc The XcodeML document.
    */
   private XcodeProgram(Document doc){
-    super(doc.getDocumentElement());
-    _xcodemlDoc = doc;
+    super(doc);
     _errors = new ArrayList<>();
     _warnings = new ArrayList<>();
   }
@@ -112,20 +106,6 @@ public class XcodeProgram extends Xnode {
   }
 
   /**
-   * @return The XML Document representing the XcodeML program.
-   */
-  public Document getDocument(){
-    return _xcodemlDoc;
-  }
-
-  /**
-   * @return The root element of the XcodeML program.
-   */
-  public Element getBaseElement(){
-    return (_xcodemlDoc != null) ? _xcodemlDoc.getDocumentElement() : null;
-  }
-
-  /**
    * Get the type table of the XcodeML program.
    * @return The types table.
    */
@@ -154,7 +134,7 @@ public class XcodeProgram extends Xnode {
    * @return True if the XcodeML file matches the requirements.
    */
   private boolean isXcodeMLvalid() {
-    if(_xcodemlDoc == null){
+    if(getDocument() == null){
       return false;
     }
 
