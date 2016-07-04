@@ -1525,11 +1525,11 @@ public class XnodeUtil {
 
   /**
    * Find module containing the function and read its .xmod file.
-   * @param fctType Function type nested in the module.
+   * @param fctDef Function definition nested in the module.
    * @return Xmod object if the module has been found and read. Null otherwise.
    */
-  public static Xmod findContainingModule(XfunctionType fctType){
-    XmoduleDefinition mod = findParentModule(fctType);
+  public static Xmod findContainingModule(XfunctionDefinition fctDef){
+    XmoduleDefinition mod = findParentModule(fctDef);
     if(mod == null){
       return null;
     }
