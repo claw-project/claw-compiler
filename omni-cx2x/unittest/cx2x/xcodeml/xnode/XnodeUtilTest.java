@@ -25,14 +25,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class XnodeUtilTest {
 
-
-  @Test
-  public void createBinaryExprTest(){
-    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode expr = new Xnode(Xcode.LOGEQEXPR, xcodeml);
-    assertNotNull(expr);
-  }
-
   @Test
   public void xpathIntersectTest(){
     File f = new File(TestConstant.TEST_PROGRAM);
