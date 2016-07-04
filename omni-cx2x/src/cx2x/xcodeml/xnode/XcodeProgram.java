@@ -98,7 +98,7 @@ public class XcodeProgram extends Xnode {
    * @param msg     Warning message.
    * @param lineno  Line number that triggered the warning.
    */
-  public void addWarning(@SuppressWarnings("SameParameterValue") String msg, int lineno){
+  public void addWarning(String msg, int lineno){
     _warnings.add(new XanalysisError(msg, lineno));
   }
 
