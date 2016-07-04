@@ -63,6 +63,7 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
 
 # XcodeML.xnode package
   cx2x/xcodeml/xnode/XbasicType.java
+  cx2x/xcodeml/xnode/XcodeML.java
   cx2x/xcodeml/xnode/XcodeProgram.java
   cx2x/xcodeml/xnode/Xdecl.java
   cx2x/xcodeml/xnode/XdeclTable.java
