@@ -436,8 +436,8 @@ public class Parallelize extends Transformation {
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml){
     // Find function type
-    XfunctionType fctType =
-        (XfunctionType) xcodeml.getTypeTable().get(_fctDef.getName().getAttribute(Xattr.TYPE));
+    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
+        get(_fctDef.getName().getAttribute(Xattr.TYPE));
 
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
