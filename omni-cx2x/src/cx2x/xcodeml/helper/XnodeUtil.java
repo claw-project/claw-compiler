@@ -1375,14 +1375,14 @@ public class XnodeUtil {
 
   /**
    * Constructs a new basicType element with the given information.
-   * @param xcodeml The current XcodeML program unit in which the elements
+   * @param xcodeml The current XcodeML file unit in which the elements
    *                are created.
    * @param type    Type hash.
    * @param ref     Reference type.
    * @param intent  Optional intent information.
    * @return The newly created element.
    */
-  public static XbasicType createBasicType(XcodeProgram xcodeml, String type,
+  public static XbasicType createBasicType(XcodeML xcodeml, String type,
                                            String ref, Xintent intent)
   {
     Xnode bt = new Xnode(Xcode.FBASICTYPE, xcodeml);
@@ -1398,13 +1398,13 @@ public class XnodeUtil {
 
   /**
    * Create a new XvarDecl object with all the underlying elements.
-   * @param xcodeml The current XcodeML program unit in which the elements
+   * @param xcodeml The current XcodeML file unit in which the elements
    *                are created.
    * @param nameType  Value for the attribute type of the name element.
    * @param nameValue Value of the name inner element.
    * @return The newly created element.
    */
-  public static XvarDecl createVarDecl(XcodeProgram xcodeml, String nameType,
+  public static XvarDecl createVarDecl(XcodeML xcodeml, String nameType,
                                        String nameValue)
   {
     Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
@@ -1417,13 +1417,13 @@ public class XnodeUtil {
 
   /**
    * Constructs a new name element with name value and optional type.
-   * @param xcodeml Current XcodeML program unit in which the element is
+   * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    * @param name    Name value.
    * @param type    Optional type value.
    * @return The newly created element.
    */
-  public static Xnode createName(XcodeProgram xcodeml, String name, String type)
+  public static Xnode createName(XcodeML xcodeml, String name, String type)
   {
     Xnode n = new Xnode(Xcode.NAME, xcodeml);
     n.setValue(name);
@@ -1435,11 +1435,11 @@ public class XnodeUtil {
 
   /**
    * Create an empty assumed shape indexRange element.
-   * @param xcodeml Current XcodeML program unit in which the element is
+   * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    * @return The newly created element.
    */
-  public static Xnode createEmptyAssumedShaped(XcodeProgram xcodeml) {
+  public static Xnode createEmptyAssumedShaped(XcodeML xcodeml) {
     Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
     range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
     return range;
@@ -1447,16 +1447,15 @@ public class XnodeUtil {
 
   /**
    * Create an indexRange element to loop over an assumed shape array.
-   * @param xcodeml    Current XcodeML program unit in which the element is
+   * @param xcodeml    Current XcodeML file unit in which the element is
    *                   created.
    * @param arrayVar   Var element representing the array variable.
    * @param startIndex Lower bound index value.
    * @param dimension  Dimension index for the upper bound value.
    * @return The newly created element.
    */
-  public static Xnode createAssumedShapeRange(XcodeProgram xcodeml,
-                                              Xnode arrayVar, @SuppressWarnings("SameParameterValue") int startIndex,
-                                              int dimension)
+  public static Xnode createAssumedShapeRange(XcodeML xcodeml, Xnode arrayVar,
+                                              int startIndex, int dimension)
   {
     // Base structure
     Xnode indexRange = new Xnode(Xcode.INDEXRANGE, xcodeml);
@@ -1489,11 +1488,11 @@ public class XnodeUtil {
 
   /**
    * Create a new FifStatement element with an empty then body.
-   * @param xcodeml    Current XcodeML program unit in which the element is
+   * @param xcodeml    Current XcodeML file unit in which the element is
    *                   created.
    * @return The newly created element.
    */
-  public static Xnode createIfThen(XcodeProgram xcodeml){
+  public static Xnode createIfThen(XcodeML xcodeml){
     Xnode root = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
     Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
     Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
@@ -1506,13 +1505,13 @@ public class XnodeUtil {
 
   /**
    * Create a new FdoStatement element with an empty body.
-   * @param xcodeml      Current XcodeML program unit in which the element is
+   * @param xcodeml      Current XcodeML file unit in which the element is
    *                     created.
    * @param inductionVar Var element for the induction variable.
    * @param indexRange   indexRange element for the iteration range.
    * @return The newly created element.
    */
-  public static Xnode createDoStmt(XcodeProgram xcodeml, Xnode inductionVar,
+  public static Xnode createDoStmt(XcodeML xcodeml, Xnode inductionVar,
                                    Xnode indexRange)
   {
     Xnode root = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
