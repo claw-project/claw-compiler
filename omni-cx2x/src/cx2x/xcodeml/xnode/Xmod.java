@@ -17,13 +17,14 @@ import org.w3c.dom.Document;
 public class Xmod extends Xnode {
 
   // Xmod inner elements
+  private final String _path;
   private final XtypeTable _typeTable;
 
-  public Xmod(Document baseElement){
+  public Xmod(Document baseElement, String path){
     super(baseElement.getDocumentElement());
     _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
+    _path = path;
   }
-
 
   /**
    * Get the type table of the Xmod module.
