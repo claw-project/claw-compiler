@@ -29,11 +29,15 @@ public interface Transformer {
    */
   Map<Class, TransformationGroup> getGroups();
 
-
-
   /**
    * Get the next transformation counter value.
    * @return Transformation counter value.
    */
   int getNextTransformationCounter();
+
+  /**
+   * Get the internal module cache.
+   * @return Module cache.
+   */
+  ModuleCache getModCache();
 }
