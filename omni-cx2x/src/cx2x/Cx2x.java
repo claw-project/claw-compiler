@@ -230,6 +230,8 @@ public class Cx2x {
     translator.analyze();
     translator.transform();
 
+    translator.writeModuleCache();
+
     // Decompile IR to Fortran
     FortranDecompiler fDecompiler = new FortranDecompiler();
     if(!fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,

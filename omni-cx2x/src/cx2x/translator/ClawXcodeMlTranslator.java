@@ -28,11 +28,13 @@ import cx2x.translator.transformer.*;
 
 // OMNI import
 import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.Xmod;
 import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.*;
 
 import java.io.*;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -321,6 +323,25 @@ public class ClawXcodeMlTranslator {
       }
     }
     messages.clear();
+  }
+
+  /**
+   * Write all modules in the cache to files.
+   */
+  public void writeModuleCache(){
+    ModuleCache cache = _transformer.getModCache();
+    Iterator<Map.Entry<String, Xmod>> it = cache.getIterator();
+    while(it.hasNext()){
+      Map.Entry<String, Xmod> pair = it.next();
+      Xmod module = pair.getValue();
+      String newModuleName = module.getPath() + module.getName() + ".claw.xmod";
+      try {
+        XnodeUtil.writeXcodeML(module, newModuleName, INDENT_OUTPUT);
+      } catch (IllegalTransformationException ex){
+        System.err.println(ex.getMessage());
+        abort();
+      }
+    }
   }
 
 }
