@@ -1534,7 +1534,7 @@ public class XnodeUtil {
     }
     String modName = mod.getAttribute(Xattr.NAME);
     for(String dir : XcodeMLtools_Fmod.getSearchPath()){
-      String path = dir + modName + ".xmod";
+      String path = dir + "/" + modName + ".xmod";
       File f = new File(path);
       if(f.exists()){
         Document doc = readXmlFile(path);
