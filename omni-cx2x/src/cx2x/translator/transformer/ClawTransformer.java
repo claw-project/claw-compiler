@@ -32,6 +32,9 @@ public class ClawTransformer implements Transformer {
   // Hold cross-transformation elements
   private final Map<Element, Object> _crossTransformationTable;
 
+  // Hold the module file cache
+  private final ModuleCache _modCache;
+
 
   /**
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
@@ -63,6 +66,8 @@ public class ClawTransformer implements Transformer {
         new IndependentTransformationGroup("internal-open-acc-continuation"));
 
     _crossTransformationTable = new HashMap<>();
+
+    _modCache = new ModuleCache();
   }
 
   /**
@@ -89,6 +94,13 @@ public class ClawTransformer implements Transformer {
     return _transformationCounter++;
   }
 
+  /**
+   * @see Transformer#getModCache()
+   */
+  @Override
+  public ModuleCache getModCache() {
+    return _modCache;
+  }
 
   /**
    * Get a stored element from a previous transformation.
