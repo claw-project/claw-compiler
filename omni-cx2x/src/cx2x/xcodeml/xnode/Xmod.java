@@ -31,7 +31,7 @@ public class Xmod extends XcodeML {
     super(baseElement);
     _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
     _name = name;
-    _path = path;
+    _path = path.endsWith("/") ? path : path + "/";
   }
 
   /**
