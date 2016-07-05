@@ -39,11 +39,15 @@ public class ModuleCache {
   }
 
   /**
-   * Add a module in the cache by its name.
+   * Add a module in the cache by its name. If already present, the module is
+   * overwritten.
    * @param moduleName Name of the module.
    * @param module     Module object.
    */
   public void add(String moduleName, Xmod module){
+    if(_moduleCache.containsKey(moduleName.toLowerCase())){
+      _moduleCache.remove(moduleName.toLowerCase());
+    }
     _moduleCache.put(moduleName.toLowerCase(), module);
   }
 
