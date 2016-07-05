@@ -61,6 +61,8 @@ public class ClawXcodeMlTranslator {
   private final Target _target;
 
   private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
+  private static final String CLAW_MOD_SUFFIX = ".claw";
+  private static final String XMOD_SUFFIX = ".xmod";
 
   /**
    * ClawXcodeMlTranslator ctor.
@@ -151,7 +153,8 @@ public class ClawXcodeMlTranslator {
             addOrAbort(new Parallelize(analyzedPragma));
             break;
           default:
-            _program.addError("Unrecognized CLAW directive", pragma.getLineNo());
+            _program.addError("Unrecognized CLAW directive",
+                pragma.getLineNo());
             abort();
         }
       } catch (IllegalDirectiveException ex){
@@ -334,7 +337,8 @@ public class ClawXcodeMlTranslator {
     while(it.hasNext()){
       Map.Entry<String, Xmod> pair = it.next();
       Xmod module = pair.getValue();
-      String newModuleName = module.getPath() + module.getName() + ".claw.xmod";
+      String newModuleName = module.getPath() + module.getName() +
+          CLAW_MOD_SUFFIX + XMOD_SUFFIX;
       try {
         XnodeUtil.writeXcodeML(module, newModuleName, INDENT_OUTPUT);
       } catch (IllegalTransformationException ex){
