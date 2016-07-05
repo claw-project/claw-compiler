@@ -178,7 +178,7 @@ public class Parallelize extends Transformation {
     prepareArrayIndexes(xcodeml);
 
     // Insert the declarations of variables to iterate over the new dimensions.
-    insertVariableToIterateOverDimension(xcodeml);
+    insertVariableToIterateOverDimension(xcodeml, transformer);
 
     // Promote all array fields with new dimensions.
     promoteFields(xcodeml);
@@ -434,9 +434,12 @@ public class Parallelize extends Transformation {
   /**
    * Insert the declaration of the different variables needed to iterate over
    * the additional dimensions.
-   * @param xcodeml Current XcodeML program unit in which element are created.
+   * @param xcodeml     Current XcodeML program unit in which element are
+   *                    created.
+   * @param transformer Current transformer object.
    */
-  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml)
+  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml,
+                                                    Transformer transformer)
       throws IllegalTransformationException
   {
     // Find function type
@@ -477,32 +480,40 @@ public class Parallelize extends Transformation {
 
     XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
     if(modDef != null){
-      updateModuleSignature(xcodeml, _fctDef, modDef);
+      updateModuleSignature(xcodeml, _fctDef, modDef, transformer);
     }
   }
 
   /**
    * Update the function signature in the module file to reflects local changes.
-   * @param xcodeml Current XcodeML file unit.
-   * @param fctDef  Function definition that has been changed.
-   * @param modDef  Module definition holding the function definition.
+   * @param xcodeml     Current XcodeML file unit.
+   * @param fctDef      Function definition that has been changed.
+   * @param modDef      Module definition holding the function definition.
+   * @param transformer Current transformer object.
    * @throws IllegalTransformationException If the module file or the function
    * cannot be located
    */
   private void updateModuleSignature(XcodeProgram xcodeml,
                                      XfunctionDefinition fctDef,
-                                     XmoduleDefinition modDef)
+                                     XmoduleDefinition modDef,
+                                     Transformer transformer)
     throws IllegalTransformationException
   {
     XfunctionType fctTypeLocal = (XfunctionType) xcodeml.getTypeTable().
         get(fctDef.getName().getAttribute(Xattr.TYPE));
 
-    Xmod mod = XnodeUtil.findContainingModule(fctDef);
-    if(mod == null){
-      throw new IllegalTransformationException(
-          "Unable to locate module file for: " + modDef.getName(),
-          _claw.getPragma().getLineNo());
+    Xmod mod;
+    if(transformer.getModCache().isModuleLoaded(modDef.getName())){
+      mod = transformer.getModCache().get(modDef.getName());
+    } else {
+      mod = XnodeUtil.findContainingModule(fctDef);
+      if(mod == null){
+        throw new IllegalTransformationException(
+            "Unable to locate module file for: " + modDef.getName(),
+            _claw.getPragma().getLineNo());
+      }
     }
+
     XfunctionType fctTypeMod = (XfunctionType) mod.getTypeTable().get(
         fctDef.getName().getAttribute(Xattr.TYPE));
     if(fctTypeMod == null){
