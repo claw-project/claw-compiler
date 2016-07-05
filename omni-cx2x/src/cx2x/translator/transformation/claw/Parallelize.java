@@ -443,30 +443,6 @@ public class Parallelize extends Transformation {
     XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
         get(_fctDef.getName().getAttribute(Xattr.TYPE));
 
-    XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
-    XbasicType modIntTypeIntentIn = null;
-    Xmod mod = null;
-    XfunctionType modFctType = null;
-    if(modDef != null) {
-      mod = XnodeUtil.findContainingModule(_fctDef);
-      if(mod == null){
-        throw new IllegalTransformationException(
-            "Unable to locate module file for: " + modDef.getName(),
-            _claw.getPragma().getLineNo());
-      }
-      modFctType = (XfunctionType) mod.getTypeTable().get(
-          _fctDef.getName().getAttribute(Xattr.TYPE));
-      if(modFctType == null){
-        throw new IllegalTransformationException(
-            "Unable to locate fct " + _fctDef.getName() + " in module " +
-                modDef.getName(), _claw.getPragma().getLineNo());
-      }
-      modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
-          mod.getTypeTable().generateIntegerTypeHash(),
-          Xname.TYPE_F_INT, Xintent.IN);
-      mod.getTypeTable().add(modIntTypeIntentIn);
-    }
-
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),
@@ -480,11 +456,9 @@ public class Parallelize extends Transformation {
         createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);
 
-        // Add parameter to the local type table and the xmod file
+        // Add parameter to the local type table
         createAndAddParam(xcodeml, dimension.getLowerBoundId(),
             intTypeIntentIn.getType(), fctType);
-        createAndAddParam(mod, dimension.getLowerBoundId(),
-            modIntTypeIntentIn.getType(), modFctType);
       }
 
       // Create parameter for the upper bound
@@ -492,16 +466,78 @@ public class Parallelize extends Transformation {
         createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, xcodeml);
 
-        // Add parameter to the local type table and the xmod file
+        // Add parameter to the local type table
         createAndAddParam(xcodeml, dimension.getUpperBoundId(),
             intTypeIntentIn.getType(), fctType);
-        createAndAddParam(mod, dimension.getUpperBoundId(),
-            modIntTypeIntentIn.getType(), modFctType);
       }
       // Create induction variable declaration
       createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
           Xname.SCLASS_F_LOCAL, xcodeml);
     }
+
+    XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
+    if(modDef != null){
+      updateModuleSignature(xcodeml, _fctDef, modDef);
+    }
+  }
+
+  /**
+   * Update the function signature in the module file to reflects local changes.
+   * @param xcodeml Current XcodeML file unit.
+   * @param fctDef  Function definition that has been changed.
+   * @param modDef  Module definition holding the function definition.
+   * @throws IllegalTransformationException If the module file or the function
+   * cannot be located
+   */
+  private void updateModuleSignature(XcodeProgram xcodeml,
+                                     XfunctionDefinition fctDef,
+                                     XmoduleDefinition modDef)
+    throws IllegalTransformationException
+  {
+    XfunctionType fctTypeLocal = (XfunctionType) xcodeml.getTypeTable().
+        get(fctDef.getName().getAttribute(Xattr.TYPE));
+
+    Xmod mod = XnodeUtil.findContainingModule(fctDef);
+    if(mod == null){
+      throw new IllegalTransformationException(
+          "Unable to locate module file for: " + modDef.getName(),
+          _claw.getPragma().getLineNo());
+    }
+    XfunctionType fctTypeMod = (XfunctionType) mod.getTypeTable().get(
+        fctDef.getName().getAttribute(Xattr.TYPE));
+    if(fctTypeMod == null){
+      throw new IllegalTransformationException(
+          "Unable to locate fct " + fctDef.getName() + " in module " +
+              modDef.getName(), _claw.getPragma().getLineNo());
+    }
+    XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
+          mod.getTypeTable().generateIntegerTypeHash(),
+          Xname.TYPE_F_INT, Xintent.IN);
+    mod.getTypeTable().add(modIntTypeIntentIn);
+
+    List<Xnode> paramsLocal = fctTypeLocal.getParams().getAll();
+    List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
+
+
+    if(paramsLocal.size() < paramsMod.size()){
+      throw new IllegalTransformationException(
+          "Local function has more parameters than module counterpart.",
+          _claw.getPragma().getLineNo());
+    }
+
+    for(int i = 0; i < paramsLocal.size(); i++){
+      Xnode pLocal = paramsLocal.get(i);
+      if(i > (paramsMod.size() - 1)) {
+        // new parameter
+        createAndAddParam(mod, pLocal.getValue(), modIntTypeIntentIn.getType(),
+            fctTypeMod);
+      } else {
+        // TODO compare param
+
+      }
+    }
+
+
   }
 
   /**
