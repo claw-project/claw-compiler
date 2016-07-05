@@ -80,7 +80,13 @@ function claw_f_set_parameters()
       -J)
         shift;
         module_dir=("${1#-J}")
-        module_opt+=("-M${module_dir[0]}")
+        if [[ $a == \/* ]]
+        then
+          module_opt+=("-M${module_dir[0]}")
+        else
+          current_dir=$(pwd)
+          module_opt+=("-M$current_dir/${module_dir[0]}")
+        fi
         #target=`get_target`
         #if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]
         #then
