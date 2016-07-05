@@ -56,7 +56,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasDimensionClause, _hasFusionClause, _hasGroupClause;
   private boolean _hasIndexesValue, _hasInductionClause, _hasInitClause;
   private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
-  private boolean _hasPrivateClause, _hasReshapeClause;
+  private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -100,6 +100,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasCollapseClause = false;
     _hasDimensionClause = false;
     _hasFusionClause = false;
+    _hasForward = false;
     _hasGroupClause = false;
     _hasIndexesValue = false;
     _hasInductionClause = false;
@@ -652,6 +653,22 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   public boolean hasReshapeClause(){
     return _hasReshapeClause;
+  }
+
+
+  /**
+   * Set the forward clause.
+   */
+  void setForwardClause(){
+    _hasForward = true;
+  }
+
+  /**
+   * Check whether the forward clause is used.
+   * @return True if the forward clause is used.
+   */
+  public boolean hasForwardClause(){
+    return _hasForward;
   }
 
   /**

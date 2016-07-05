@@ -114,6 +114,11 @@ directive[ClawLanguage l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
+   | PARALLELIZE FORWARD
+     {
+       $l.setDirective(ClawDirective.PARALLELIZE);
+       $l.setForwardClause();
+     }
 ;
 
 // Comma-separated identifiers list
@@ -392,6 +397,7 @@ ACC          : 'acc';
 COLLAPSE     : 'collapse';
 DATA         : 'data';
 DIMENSION    : 'dimension';
+FORWARD      : 'forward';
 FUSION       : 'fusion';
 GROUP        : 'group';
 INDUCTION    : 'induction';
