@@ -615,8 +615,12 @@ public class XnodeUtil {
    * @param outputFile Path of the output file or null to output on std out
    * @param indent     Number of spaces used for the indentation
    * @return true if the output could be write without problems.
+   * @throws IllegalTransformationException if XML file cannot be written.
    */
-  public static boolean writeXcodeML(XcodeProgram xcodeml, String outputFile, @SuppressWarnings("SameParameterValue") int indent) {
+  public static boolean writeXcodeML(XcodeML xcodeml, String outputFile,
+                                     int indent)
+    throws IllegalTransformationException
+  {
     try {
       XnodeUtil.cleanEmptyTextNodes(xcodeml.getDocument());
       Transformer transformer
@@ -635,12 +639,9 @@ public class XnodeUtil {
         StreamResult console = new StreamResult(new File(outputFile));
         transformer.transform(source, console);
       }
-    } catch (TransformerConfigurationException ex){
-      xcodeml.addError("Cannot output file: " + ex.getMessage(), 0);
-      return false;
-    } catch (TransformerException ex){
-      xcodeml.addError("Cannot output file: " + ex.getMessage(), 0);
-      return false;
+    } catch (Exception ignored){
+      throw new IllegalTransformationException("Cannot output file: " +
+          outputFile, 0);
     }
     return true;
   }
