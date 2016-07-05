@@ -507,6 +507,7 @@ public class Parallelize extends Transformation {
       mod = transformer.getModCache().get(modDef.getName());
     } else {
       mod = XnodeUtil.findContainingModule(fctDef);
+      transformer.getModCache().add(modDef.getName(), mod);
       if(mod == null){
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + modDef.getName(),
