@@ -25,7 +25,7 @@ public class Xmod extends XcodeML {
    * in input.
    * @param baseElement XcodeML document.
    * @param name        Name of the module.
-   * @param path        Path of the XcodeML module file.
+   * @param path        Path of the XcodeML module file without the filename.
    */
   public Xmod(Document baseElement, String name, String path){
     super(baseElement);
