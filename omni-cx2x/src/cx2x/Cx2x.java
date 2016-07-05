@@ -225,8 +225,8 @@ public class Cx2x {
     }
 
 
-    ClawXcodeMlTranslator translator =
-        new ClawXcodeMlTranslator(input, xcodeMlOutput, directive, target, groups);
+    ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
+        xcodeMlOutput, directive, target, groups);
     translator.analyze();
     translator.transform();
 
