@@ -1538,7 +1538,7 @@ public class XnodeUtil {
       File f = new File(path);
       if(f.exists()){
         Document doc = readXmlFile(path);
-        return doc != null ? new Xmod(doc, path) : null;
+        return doc != null ? new Xmod(doc, modName, path) : null;
       }
     }
     return null;
