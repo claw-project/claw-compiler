@@ -27,7 +27,6 @@ public interface Transformer {
    * Get all transformation groups stored in this transformer.
    * @return A list of all transformation groups.
    */
-  //List<TransformationGroup> getGroups();
   Map<Class, TransformationGroup> getGroups();
 
 
