@@ -3,15 +3,15 @@
   <target default="gpu" />
   <directive default="openacc" />
   <groups>
-    <group type="independent" name="remove"           class="cx2x.translator.transformation.utility.UtilityRemove" />
-    <group type="independent" name="parallelize"      class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
-    <group type="independent" name="parallelize"      class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
-    <group type="independent" name="array-transform"  class="cx2x.translator.transformation.loop.ArrayTransform" />
-    <group type="independent" name="loop-extract"     class="cx2x.translator.transformation.loop.LoopExtraction" />
-    <group type="dependent"   name="loop-fusion"      class="cx2x.translator.transformation.loop.LoopFusion" />
-    <group type="independent" name="loop-hoist"       class="cx2x.translator.transformation.loop.LoopHoist" />
-    <group type="independent" name="loop-interchange" class="cx2x.translator.transformation.loop.LoopInterchange" />
-    <group type="independent" name="on-the-fly"       class="cx2x.translator.transformation.claw.ArrayToFctCall" />
-    <group type="independent" name="kcache"           class="cx2x.translator.transformation.claw.Kcaching" />
+    <group type="independent" name="remove"              class="cx2x.translator.transformation.utility.UtilityRemove" />
+    <group type="independent" name="parallelize"         class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
+    <group type="independent" name="parallelize-forward" class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+    <group type="independent" name="array-transform"     class="cx2x.translator.transformation.loop.ArrayTransform" />
+    <group type="independent" name="loop-extract"        class="cx2x.translator.transformation.loop.LoopExtraction" />
+    <group type="dependent"   name="loop-fusion"         class="cx2x.translator.transformation.loop.LoopFusion" />
+    <group type="independent" name="loop-hoist"          class="cx2x.translator.transformation.loop.LoopHoist" />
+    <group type="independent" name="loop-interchange"    class="cx2x.translator.transformation.loop.LoopInterchange" />
+    <group type="independent" name="on-the-fly"          class="cx2x.translator.transformation.claw.ArrayToFctCall" />
+    <group type="independent" name="kcache"              class="cx2x.translator.transformation.claw.Kcaching" />
   </groups>
 </claw>
