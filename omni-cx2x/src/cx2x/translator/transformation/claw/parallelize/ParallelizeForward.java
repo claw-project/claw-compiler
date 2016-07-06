@@ -5,9 +5,12 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * The parallelize forward transformation applies the changes in the subroutine
@@ -19,6 +22,7 @@ import cx2x.xcodeml.xnode.XcodeProgram;
 public class ParallelizeForward extends Transformation {
 
   private final ClawLanguage _claw;
+  private Xnode _fctCall;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -33,6 +37,19 @@ public class ParallelizeForward extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+    Xnode ex = XnodeUtil.findDirectNext(Xcode.EXPRSTATEMENT, _claw.getPragma());
+    if(ex == null){
+      xcodeml.addError("Directive is not followed by a fct call.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    _fctCall = ex.find(Xcode.FUNCTIONCALL);
+    if(_fctCall == null){
+      xcodeml.addError("Directive is not followed by a fct call.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
     return true;
   }
 
