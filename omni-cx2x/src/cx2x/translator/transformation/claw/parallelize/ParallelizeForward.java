@@ -8,9 +8,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.*;
 
 /**
  * The parallelize forward transformation applies the changes in the subroutine
@@ -23,6 +21,8 @@ public class ParallelizeForward extends Transformation {
 
   private final ClawLanguage _claw;
   private Xnode _fctCall;
+  private String _fctType;
+  private boolean _localFct = false;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -47,6 +47,17 @@ public class ParallelizeForward extends Transformation {
     _fctCall = ex.find(Xcode.FUNCTIONCALL);
     if(_fctCall == null){
       xcodeml.addError("Directive is not followed by a fct call.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+
+    _fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
+    XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
+    if(fctType != null){
+      _localFct = true;
+    } else {
+      // TODO check whether the function is defined in another module
+      xcodeml.addError("Function signature not found in the current module.",
           _claw.getPragma().getLineNo());
       return false;
     }
