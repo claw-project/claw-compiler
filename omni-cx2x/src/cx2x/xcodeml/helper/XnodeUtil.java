@@ -1583,4 +1583,20 @@ public class XnodeUtil {
     fctDef.getDeclarationTable().add(decl);
   }
 
+  /**
+   * Create a name element and adds it as a parameter of the given function
+   * type.
+   * @param xcodeml   Current XcodeML file unit.
+   * @param nameValue Value of the name element to create.
+   * @param type      Type of the name element to create.
+   * @param fctType   Function type in which the element will be added as a
+   *                  parameter.
+   */
+  public static void createAndAddParam(XcodeML xcodeml, String nameValue,
+                                       String type, XfunctionType fctType)
+  {
+    Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
+    fctType.getParams().add(param);
+  }
+
 }
