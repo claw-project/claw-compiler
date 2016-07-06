@@ -33,6 +33,7 @@ public class Parallelize extends Transformation {
   private final List<String> _scalarFields;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
+  private XfunctionType _fctType;
   private List<Xnode> _beforeCrt, _afterCrt;
 
   /**
@@ -57,6 +58,13 @@ public class Parallelize extends Transformation {
     if(_fctDef == null){
       xcodeml.addError("Parent function/subroutine cannot be found. " +
           "Parallelize directive must be defined in a function/subroutine.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+    _fctType = (XfunctionType) xcodeml.getTypeTable().
+        get(_fctDef.getName().getAttribute(Xattr.TYPE));
+    if(_fctType == null){
+      xcodeml.addError("Function/subroutine signature cannot be found. ",
           _claw.getPragma().getLineNo());
       return false;
     }
@@ -376,6 +384,13 @@ public class Parallelize extends Transformation {
     id.setType(type);
     decl.getName().setAttribute(Xattr.TYPE, type);
     xcodeml.getTypeTable().add(newType);
+
+    // Update params in function type
+    for(Xnode param : _fctType.getParams().getAll()){
+      if(param.getValue().equals(fieldId)){
+        param.setAttribute(Xattr.TYPE, type);
+      }
+    }
   }
 
   /**
@@ -499,9 +514,6 @@ public class Parallelize extends Transformation {
                                      Transformer transformer)
     throws IllegalTransformationException
   {
-    XfunctionType fctTypeLocal = (XfunctionType) xcodeml.getTypeTable().
-        get(fctDef.getName().getAttribute(Xattr.TYPE));
-
     Xmod mod;
     if(transformer.getModCache().isModuleLoaded(modDef.getName())){
       mod = transformer.getModCache().get(modDef.getName());
@@ -527,7 +539,7 @@ public class Parallelize extends Transformation {
           Xname.TYPE_F_INT, Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
-    List<Xnode> paramsLocal = fctTypeLocal.getParams().getAll();
+    List<Xnode> paramsLocal = _fctType.getParams().getAll();
     List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
 
 
