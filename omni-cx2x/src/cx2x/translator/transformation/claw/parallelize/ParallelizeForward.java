@@ -33,7 +33,7 @@ public class ParallelizeForward extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    return false;
+    return true;
   }
 
   @Override
