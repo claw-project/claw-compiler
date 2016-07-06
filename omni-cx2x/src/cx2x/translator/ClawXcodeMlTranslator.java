@@ -16,6 +16,7 @@ import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.claw.parallelize.Parallelize;
+import cx2x.translator.transformation.claw.parallelize.ParallelizeForward;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
@@ -150,7 +151,11 @@ public class ClawXcodeMlTranslator {
             HandleBlockDirective(analyzedPragma);
             break;
           case PARALLELIZE:
-            addOrAbort(new Parallelize(analyzedPragma));
+            if(analyzedPragma.hasForwardClause()){
+              addOrAbort(new ParallelizeForward(analyzedPragma));
+            } else {
+              addOrAbort(new Parallelize(analyzedPragma));
+            }
             break;
           default:
             _program.addError("Unrecognized CLAW directive",
