@@ -10,6 +10,8 @@ import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 
+import java.util.List;
+
 /**
  * The parallelize forward transformation applies the changes in the subroutine
  * signatures to function call and function in which the call is nested if
@@ -66,7 +68,44 @@ public class ParallelizeForward extends Transformation {
 
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
-                        Transformation other) throws Exception {
+                        Transformation other) throws Exception
+  {
+    XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
+
+    XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
+    List<Xnode> params = fctType.getParams().getAll();
+    List<Xnode> args = _fctCall.find(Xcode.ARGUMENTS).getChildren();
+
+    // 1. Adapt function call with potential new arguments
+    for(int i = args.size(); i < params.size(); i++){
+      Xnode p = params.get(i);
+      String var = p.getValue();
+      String type;
+      if(!fDef.getSymbolTable().contains(var)){
+        // Size variable have to be declared
+        XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
+            xcodeml.getTypeTable().generateIntegerTypeHash(),
+            Xname.TYPE_F_INT, Xintent.IN);
+        xcodeml.getTypeTable().add(intTypeIntentIn);
+        XnodeUtil.createIdAndDecl(var,
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, fDef, xcodeml);
+        type = intTypeIntentIn.getType();
+      } else {
+        type = fDef.getSymbolTable().get(var).getType();
+      }
+
+      Xnode arg = new Xnode(Xcode.VAR, xcodeml);
+      arg.setAttribute(Xattr.TYPE, type);
+      arg.setAttribute(Xattr.SCOPE, Xname.SCOPE_LOCAL);
+      arg.setValue(var);
+      _fctCall.find(Xcode.ARGUMENTS).appendToChildren(arg, false);
+    }
+
+
+    // 2. Adapt function/subroutine in which the function call is nested
+
+    // 3. Replicate the change in a potential module file
+
 
   }
 
