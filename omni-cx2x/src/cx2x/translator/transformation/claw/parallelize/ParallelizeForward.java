@@ -71,6 +71,9 @@ public class ParallelizeForward extends Transformation {
                         Transformation other) throws Exception
   {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
+    XfunctionType parentFctType = (XfunctionType)xcodeml.getTypeTable().
+        get(fDef.getName().getAttribute(Xattr.TYPE));
+
     XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
 
     List<Xnode> params = fctType.getParams().getAll();
@@ -90,6 +93,7 @@ public class ParallelizeForward extends Transformation {
         XnodeUtil.createIdAndDecl(var,
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, fDef, xcodeml);
         type = intTypeIntentIn.getType();
+        XnodeUtil.createAndAddParam(xcodeml, var, type, parentFctType);
       } else {
         type = fDef.getSymbolTable().get(var).getType();
       }
