@@ -204,7 +204,10 @@ public class Parallelize extends Transformation {
       transformForCPU(xcodeml);
     }
 
-    // TODO write module information to disk
+    XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
+    if(modDef != null){
+      updateModuleSignature(xcodeml, _fctDef, modDef, transformer);
+    }
   }
 
   /**
@@ -457,10 +460,6 @@ public class Parallelize extends Transformation {
                                                     Transformer transformer)
       throws IllegalTransformationException
   {
-    // Find function type
-    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
-        get(_fctDef.getName().getAttribute(Xattr.TYPE));
-
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),
@@ -476,7 +475,7 @@ public class Parallelize extends Transformation {
 
         // Add parameter to the local type table
         createAndAddParam(xcodeml, dimension.getLowerBoundId(),
-            intTypeIntentIn.getType(), fctType);
+            intTypeIntentIn.getType(), _fctType);
       }
 
       // Create parameter for the upper bound
@@ -486,16 +485,11 @@ public class Parallelize extends Transformation {
 
         // Add parameter to the local type table
         createAndAddParam(xcodeml, dimension.getUpperBoundId(),
-            intTypeIntentIn.getType(), fctType);
+            intTypeIntentIn.getType(), _fctType);
       }
       // Create induction variable declaration
       createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
           Xname.SCLASS_F_LOCAL, xcodeml);
-    }
-
-    XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
-    if(modDef != null){
-      updateModuleSignature(xcodeml, _fctDef, modDef, transformer);
     }
   }
 
@@ -556,11 +550,28 @@ public class Parallelize extends Transformation {
         createAndAddParam(mod, pLocal.getValue(), modIntTypeIntentIn.getType(),
             fctTypeMod);
       } else {
-        // TODO compare param
+        Xnode pMod = paramsMod.get(i);
+        String localType = pLocal.getAttribute(Xattr.TYPE);
+        String modType = pMod.getAttribute(Xattr.TYPE);
+        if(!localType.equals(modType)){
+          // Param has been update so have to replicate the change to mod file
+          XbasicType lType = (XbasicType)xcodeml.getTypeTable().get(localType);
+          XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
 
+          if(lType.isArray()) {
+            String newType = mod.getTypeTable().generateArrayTypeHash();
+            XbasicType newBasicType = XnodeUtil.createBasicType(mod, newType,
+                crtType.getType(), crtType.getIntent());
+            for(int j = 0; j < lType.getDimensions(); ++j){
+              Xnode assumed = XnodeUtil.createEmptyAssumedShaped(mod);
+              newBasicType.appendToChildren(assumed, false);
+            }
+            mod.getTypeTable().add(newBasicType);
+            pMod.setAttribute(Xattr.TYPE, newType);
+          }
+        }
       }
     }
-
 
   }
 
