@@ -1563,4 +1563,24 @@ public class XnodeUtil {
     return null;
   }
 
+  /**
+   * Create the id and varDecl elements and add them to the symbol/declaration
+   * table.
+   * @param name    Name of the variable.
+   * @param type    Type of the variable.
+   * @param sclass  Scope class of the variable (from Xname).
+   * @param fctDef  Function definition in which id and decl are created.
+   * @param xcodeml Current XcodeML program unit in which the elements will be
+   *                created.
+   */
+  public static void createIdAndDecl(String name, String type, String sclass,
+                                     XfunctionDefinition fctDef,
+                                     XcodeProgram xcodeml)
+  {
+    Xid id = XnodeUtil.createId(xcodeml, type, sclass, name);
+    fctDef.getSymbolTable().add(id);
+    XvarDecl decl = XnodeUtil.createVarDecl(xcodeml, type, name);
+    fctDef.getDeclarationTable().add(decl);
+  }
+
 }

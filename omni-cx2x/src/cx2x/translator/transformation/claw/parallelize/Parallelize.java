@@ -470,8 +470,8 @@ public class Parallelize extends Transformation {
     for(ClawDimension dimension : _claw.getDimensionValues()){
       // Create the parameter for the lower bound
       if(dimension.lowerBoundIsVar()){
-        createIdAndDecl(dimension.getLowerBoundId(), intTypeIntentIn.getType(),
-            Xname.SCLASS_F_PARAM, xcodeml);
+        XnodeUtil.createIdAndDecl(dimension.getLowerBoundId(),
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
         // Add parameter to the local type table
         createAndAddParam(xcodeml, dimension.getLowerBoundId(),
@@ -480,16 +480,16 @@ public class Parallelize extends Transformation {
 
       // Create parameter for the upper bound
       if(dimension.upperBoundIsVar()){
-        createIdAndDecl(dimension.getUpperBoundId(), intTypeIntentIn.getType(),
-            Xname.SCLASS_F_PARAM, xcodeml);
+        XnodeUtil.createIdAndDecl(dimension.getUpperBoundId(),
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
         // Add parameter to the local type table
         createAndAddParam(xcodeml, dimension.getUpperBoundId(),
             intTypeIntentIn.getType(), _fctType);
       }
       // Create induction variable declaration
-      createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
-          Xname.SCLASS_F_LOCAL, xcodeml);
+      XnodeUtil.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
+          Xname.SCLASS_F_LOCAL, _fctDef, xcodeml);
     }
   }
 
@@ -589,24 +589,6 @@ public class Parallelize extends Transformation {
   {
     Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
     fctType.getParams().add(param);
-  }
-
-  /**
-   * Create the id and varDecl elements and add them to the symbol/declaration
-   * table.
-   * @param name    Name of the variable.
-   * @param type    Type of the variable.
-   * @param sclass  Scope class of the variable (from Xname).
-   * @param xcodeml Current XcodeML program unit in which the elements will be
-   *                created.
-   */
-  private void createIdAndDecl(String name, String type, String sclass,
-                               XcodeProgram xcodeml)
-  {
-    Xid id = XnodeUtil.createId(xcodeml, type, sclass, name);
-    _fctDef.getSymbolTable().add(id);
-    XvarDecl decl = XnodeUtil.createVarDecl(xcodeml, type, name);
-    _fctDef.getDeclarationTable().add(decl);
   }
 
   /**
