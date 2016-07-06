@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation.claw;
+package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.language.ClawDimension;

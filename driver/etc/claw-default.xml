@@ -4,7 +4,7 @@
   <directive default="openacc" />
   <groups>
     <group type="independent" name="remove"           class="cx2x.translator.transformation.utility.UtilityRemove" />
-    <group type="independent" name="parallelize"      class="cx2x.translator.transformation.claw.Parallelize" />
+    <group type="independent" name="parallelize"      class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
     <group type="independent" name="array-transform"  class="cx2x.translator.transformation.loop.ArrayTransform" />
     <group type="independent" name="loop-extract"     class="cx2x.translator.transformation.loop.LoopExtraction" />
     <group type="dependent"   name="loop-fusion"      class="cx2x.translator.transformation.loop.LoopFusion" />

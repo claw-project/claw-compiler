@@ -15,7 +15,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
-import cx2x.translator.transformation.claw.Parallelize;
+import cx2x.translator.transformation.claw.parallelize.Parallelize;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
