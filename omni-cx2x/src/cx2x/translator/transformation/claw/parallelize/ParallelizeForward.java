@@ -71,8 +71,8 @@ public class ParallelizeForward extends Transformation {
                         Transformation other) throws Exception
   {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
-
     XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
+
     List<Xnode> params = fctType.getParams().getAll();
     List<Xnode> args = _fctCall.find(Xcode.ARGUMENTS).getChildren();
 
@@ -94,15 +94,13 @@ public class ParallelizeForward extends Transformation {
         type = fDef.getSymbolTable().get(var).getType();
       }
 
-      Xnode arg = new Xnode(Xcode.VAR, xcodeml);
-      arg.setAttribute(Xattr.TYPE, type);
-      arg.setAttribute(Xattr.SCOPE, Xname.SCOPE_LOCAL);
-      arg.setValue(var);
+      Xnode arg = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
       _fctCall.find(Xcode.ARGUMENTS).appendToChildren(arg, false);
     }
 
-
     // 2. Adapt function/subroutine in which the function call is nested
+
+
 
     // 3. Replicate the change in a potential module file
 
