@@ -36,6 +36,9 @@ import java.util.List;
  */
 
 public class XnodeUtil {
+
+  private static final String XMOD_FILE_EXTENSION = ".xmod";
+
   /**
    * Find a function definition according to a function call.
    * @param xcodeml The XcodeML program to search in.
@@ -1533,7 +1536,7 @@ public class XnodeUtil {
     }
     String modName = mod.getAttribute(Xattr.NAME);
     for(String dir : XcodeMLtools_Fmod.getSearchPath()){
-      String path = dir + "/" + modName + ".xmod";
+      String path = dir + "/" + modName + XMOD_FILE_EXTENSION;
       File f = new File(path);
       if(f.exists()){
         Document doc = readXmlFile(path);
