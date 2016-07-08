@@ -1638,6 +1638,7 @@ public class XnodeUtil {
    * @param fctDef      Function definition that has been changed.
    * @param fctType     Function type that has been changed.
    * @param modDef      Module definition holding the function definition.
+   * @param claw        Pragma that has triggered the transformation.
    * @param transformer Current transformer object.
    * @throws IllegalTransformationException If the module file or the function
    * cannot be located
