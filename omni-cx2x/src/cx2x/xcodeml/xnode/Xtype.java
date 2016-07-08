@@ -15,7 +15,6 @@ import org.w3c.dom.Element;
  */
 
 public class Xtype extends Xnode {
-  private String _type;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -24,14 +23,6 @@ public class Xtype extends Xnode {
    */
   public Xtype(Element baseElement){
     super(baseElement);
-    readElementInformation();
-  }
-
-  /**
-   * Read inner element information.
-   */
-  private void readElementInformation(){
-    _type = getAttribute(Xattr.TYPE);
   }
 
   /**
@@ -41,7 +32,6 @@ public class Xtype extends Xnode {
   public void setType(String value){
     if(_baseElement != null){
       _baseElement.setAttribute(Xname.ATTR_TYPE, value);
-      _type = value;
     }
   }
 
@@ -50,6 +40,6 @@ public class Xtype extends Xnode {
    * @return Type value.
    */
   public String getType(){
-    return _type;
+    return getAttribute(Xattr.TYPE);
   }
 }
