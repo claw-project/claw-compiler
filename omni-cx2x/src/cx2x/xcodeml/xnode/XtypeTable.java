@@ -89,7 +89,7 @@ public class XtypeTable extends Xnode {
    */
   public void add(Xtype type){
     _baseElement.appendChild(type.cloneNode());
-    _table.put(type.getType(), type);
+    _table.put(type.getAttribute(Xattr.TYPE), type);
   }
 
   /**
