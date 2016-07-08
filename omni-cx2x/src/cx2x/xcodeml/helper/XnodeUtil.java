@@ -1703,20 +1703,38 @@ public class XnodeUtil {
           XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
 
           if(lType.isArray()) {
-            String newType = mod.getTypeTable().generateArrayTypeHash();
-            XbasicType newBasicType = XnodeUtil.createBasicType(mod, newType,
-                crtType.getType(), crtType.getIntent());
-            for(int j = 0; j < lType.getDimensions(); ++j){
-              Xnode assumed = XnodeUtil.createEmptyAssumedShaped(mod);
-              newBasicType.appendToChildren(assumed, false);
-            }
-            mod.getTypeTable().add(newBasicType);
+            String newType = duplicateWithDimension(lType, crtType, mod);
             pMod.setAttribute(Xattr.TYPE, newType);
           }
         }
       }
     }
+  }
 
+  /**
+   * Duplicates the type to update and add extra dimensions to match the base
+   * type
+   * @param base     Base type.
+   * @param toUpdate Type to update.
+   * @param xcodeml  Current XcodeML file unit.
+   * @return The new type hash generated.
+   */
+  public static String duplicateWithDimension(XbasicType base,
+                                              XbasicType toUpdate,
+                                              XcodeML xcodeml)
+  {
+    XbasicType newType = toUpdate.cloneObject();
+    String type = xcodeml.getTypeTable().generateArrayTypeHash();
+    newType.setAttribute(Xattr.TYPE, type);
+
+    int additionalDimensions = base.getDimensions() - toUpdate.getDimensions();
+    for(int i = 0; i < additionalDimensions; ++i){
+      Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+      newType.addDimension(index, 0);
+    }
+
+    xcodeml.getTypeTable().add(newType);
+    return type;
   }
 
   /**
