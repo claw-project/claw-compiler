@@ -25,6 +25,7 @@ public class ParallelizeForward extends Transformation {
   private Xnode _fctCall;
   private String _fctType;
   private boolean _localFct = false;
+  private boolean _flatten = false;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -61,6 +62,7 @@ public class ParallelizeForward extends Transformation {
    * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeForwardWithDo(XcodeProgram xcodeml){
+    _flatten = true;
     return true;
   }
 
