@@ -39,6 +39,39 @@ public class ParallelizeForward extends Transformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+
+    Xnode next = XnodeUtil.getNextSibling(_claw.getPragma());
+    if(next == null){
+      xcodeml.addError("Directive is not followed a valid statement.",
+          _claw.getPragma().getLineNo());
+      return false;
+    }
+    if(next.Opcode() == Xcode.EXPRSTATEMENT){
+      return analyzeForward(xcodeml);
+    } else if (next.Opcode() == Xcode.FDOSTATEMENT) {
+      return analyzeForwardWithDo(xcodeml);
+    }
+    xcodeml.addError("Directive is not followed a valid statement.",
+        _claw.getPragma().getLineNo());
+    return false;
+  }
+
+  /**
+   * Analyze the directive when it is used just before a do statement.
+   * @param xcodeml Current XcodeML file unit.
+   * @return True if the analysis succeed. False otherwise.
+   */
+  private boolean analyzeForwardWithDo(XcodeProgram xcodeml){
+    return true;
+  }
+
+
+  /**
+   * Analyze the directive when it is used just before a function call.
+   * @param xcodeml Current XcodeML file unit.
+   * @return True if the analysis succeed. False otherwise.
+   */
+  private boolean analyzeForward(XcodeProgram xcodeml){
     Xnode ex = XnodeUtil.findDirectNext(Xcode.EXPRSTATEMENT, _claw.getPragma());
     if(ex == null){
       xcodeml.addError("Directive is not followed by a fct call.",
