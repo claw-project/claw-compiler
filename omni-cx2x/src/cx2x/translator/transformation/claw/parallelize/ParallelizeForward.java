@@ -109,12 +109,48 @@ public class ParallelizeForward extends Transformation {
     }
 
     // 2. Adapt function/subroutine in which the function call is nested
+    for(Xnode pBase : fctType.getParams().getAll()){
+      for(Xnode pUpdate : parentFctType.getParams().getAll()){
+        if(pBase.getValue().equals(pUpdate.getValue())){
+          XbasicType typeBase = (XbasicType)xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE));
+          XbasicType typeToUpdate = (XbasicType)xcodeml.getTypeTable().get(pUpdate.getAttribute(Xattr.TYPE));
 
+          // Types have different dimensions
+          if(typeBase.getDimensions() > typeToUpdate.getDimensions()){
+            XbasicType newType = typeToUpdate.cloneObject();
+            String type = xcodeml.getTypeTable().generateArrayTypeHash();
+            newType.setAttribute(Xattr.TYPE, type);
+
+            int additionalDimensions = typeBase.getDimensions() - typeToUpdate.getDimensions();
+            for(int i = 0; i < additionalDimensions; ++i){
+              Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+              newType.addDimension(index, 0);
+            }
+
+            xcodeml.getTypeTable().add(newType);
+            pUpdate.setAttribute(Xattr.TYPE, type);
+
+            Xid id = fDef.getSymbolTable().get(pBase.getValue());
+            if(id != null){
+              id.setAttribute(Xattr.TYPE, type);
+            }
+            XvarDecl varDecl = fDef.getDeclarationTable().get(pBase.getValue());
+            if(varDecl != null){
+              varDecl.getName().setAttribute(Xattr.TYPE, type);
+            }
+
+          }
+        }
+      }
+    }
 
 
     // 3. Replicate the change in a potential module file
 
 
+
+    // Delete pragma
+    _claw.getPragma().delete();
   }
 
   @Override
