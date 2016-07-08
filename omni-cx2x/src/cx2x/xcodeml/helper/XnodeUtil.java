@@ -1765,4 +1765,14 @@ public class XnodeUtil {
     return null;
   }
 
+  /**
+   * Get next sibling node.
+   * @param crt Current node.
+   * @return Next sibling node.
+   */
+  public static Xnode getNextSibling(Xnode crt){
+    Node n = crt.getElement().getNextSibling();
+    return (n == null) ? null : new Xnode((Element)n);
+  }
+
 }
