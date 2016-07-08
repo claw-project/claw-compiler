@@ -206,7 +206,8 @@ public class Parallelize extends Transformation {
 
     XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
     if(modDef != null){
-      updateModuleSignature(xcodeml, _fctDef, modDef, transformer);
+      XnodeUtil.updateModuleSignature(xcodeml, _fctDef, _fctType, modDef, _claw,
+          transformer);
     }
   }
 
@@ -491,88 +492,6 @@ public class Parallelize extends Transformation {
       XnodeUtil.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
           Xname.SCLASS_F_LOCAL, _fctDef, xcodeml);
     }
-  }
-
-  /**
-   * Update the function signature in the module file to reflects local changes.
-   * @param xcodeml     Current XcodeML file unit.
-   * @param fctDef      Function definition that has been changed.
-   * @param modDef      Module definition holding the function definition.
-   * @param transformer Current transformer object.
-   * @throws IllegalTransformationException If the module file or the function
-   * cannot be located
-   */
-  private void updateModuleSignature(XcodeProgram xcodeml,
-                                     XfunctionDefinition fctDef,
-                                     XmoduleDefinition modDef,
-                                     Transformer transformer)
-    throws IllegalTransformationException
-  {
-    Xmod mod;
-    if(transformer.getModCache().isModuleLoaded(modDef.getName())){
-      mod = transformer.getModCache().get(modDef.getName());
-    } else {
-      mod = XnodeUtil.findContainingModule(fctDef);
-      transformer.getModCache().add(modDef.getName(), mod);
-      if(mod == null){
-        throw new IllegalTransformationException(
-            "Unable to locate module file for: " + modDef.getName(),
-            _claw.getPragma().getLineNo());
-      }
-    }
-
-    XfunctionType fctTypeMod = (XfunctionType) mod.getTypeTable().get(
-        fctDef.getName().getAttribute(Xattr.TYPE));
-    if(fctTypeMod == null){
-      throw new IllegalTransformationException(
-          "Unable to locate fct " + fctDef.getName() + " in module " +
-              modDef.getName(), _claw.getPragma().getLineNo());
-    }
-    XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
-          mod.getTypeTable().generateIntegerTypeHash(),
-          Xname.TYPE_F_INT, Xintent.IN);
-    mod.getTypeTable().add(modIntTypeIntentIn);
-
-    List<Xnode> paramsLocal = _fctType.getParams().getAll();
-    List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
-
-
-    if(paramsLocal.size() < paramsMod.size()){
-      throw new IllegalTransformationException(
-          "Local function has more parameters than module counterpart.",
-          _claw.getPragma().getLineNo());
-    }
-
-    for(int i = 0; i < paramsLocal.size(); i++){
-      Xnode pLocal = paramsLocal.get(i);
-      if(i > (paramsMod.size() - 1)) {
-        // new parameter
-        XnodeUtil.createAndAddParam(mod, pLocal.getValue(),
-            modIntTypeIntentIn.getType(), fctTypeMod);
-      } else {
-        Xnode pMod = paramsMod.get(i);
-        String localType = pLocal.getAttribute(Xattr.TYPE);
-        String modType = pMod.getAttribute(Xattr.TYPE);
-        if(!localType.equals(modType)){
-          // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType)xcodeml.getTypeTable().get(localType);
-          XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
-
-          if(lType.isArray()) {
-            String newType = mod.getTypeTable().generateArrayTypeHash();
-            XbasicType newBasicType = XnodeUtil.createBasicType(mod, newType,
-                crtType.getType(), crtType.getIntent());
-            for(int j = 0; j < lType.getDimensions(); ++j){
-              Xnode assumed = XnodeUtil.createEmptyAssumedShaped(mod);
-              newBasicType.appendToChildren(assumed, false);
-            }
-            mod.getTypeTable().add(newBasicType);
-            pMod.setAttribute(Xattr.TYPE, newType);
-          }
-        }
-      }
-    }
-
   }
 
   /**
