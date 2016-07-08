@@ -123,6 +123,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/language/helper/accelerator/AcceleratorDirective.java
   cx2x/translator/language/helper/accelerator/AcceleratorGenerator.java
   cx2x/translator/language/helper/accelerator/AcceleratorHelper.java
+  cx2x/translator/language/helper/accelerator/AcceleratorNone.java
   cx2x/translator/language/helper/accelerator/OpenAcc.java
   cx2x/translator/language/helper/accelerator/OpenMp.java
 
