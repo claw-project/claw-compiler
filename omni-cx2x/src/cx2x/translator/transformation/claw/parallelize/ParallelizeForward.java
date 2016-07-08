@@ -107,6 +107,26 @@ public class ParallelizeForward extends Transformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
+
+    if(_flatten){
+
+    } else {
+      transformStd(xcodeml, transformer);
+    }
+
+    // Delete pragma
+    _claw.getPragma().delete();
+  }
+
+  /**
+   * Do the standard transformation for the forward directive.
+   * @param xcodeml     Current XcodeML file unit.
+   * @param transformer Current transformer.
+   * @throws Exception If something goes wrong.
+   */
+  private void transformStd(XcodeProgram xcodeml, Transformer transformer)
+      throws Exception
+  {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
     XfunctionType parentFctType = (XfunctionType)xcodeml.getTypeTable().
         get(fDef.getName().getAttribute(Xattr.TYPE));
@@ -172,10 +192,6 @@ public class ParallelizeForward extends Transformation {
     XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
     XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef, _claw,
         transformer);
-
-
-    // Delete pragma
-    _claw.getPragma().delete();
   }
 
   @Override
