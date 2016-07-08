@@ -57,7 +57,9 @@ public class ParallelizeForward extends Transformation {
     _fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
 
     XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
-    if(fctType != null){
+    XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
+        xcodeml.getGlobalDeclarationsTable(), _fctCallName);
+    if(fctType != null && fctDef != null){
       _localFct = true;
     } else {
       // TODO check whether the function is defined in another module
