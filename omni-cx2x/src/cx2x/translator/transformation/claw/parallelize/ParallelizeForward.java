@@ -107,15 +107,26 @@ public class ParallelizeForward extends Transformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
-
     if(_flatten){
-
+      transformFlatten(xcodeml, transformer);
     } else {
       transformStd(xcodeml, transformer);
     }
 
     // Delete pragma
     _claw.getPragma().delete();
+  }
+
+  /**
+   * Do the flatten transformation for the forward directive.
+   * @param xcodeml     Current XcodeML file unit.
+   * @param transformer Current transformer.
+   * @throws Exception If something goes wrong.
+   */
+  private void transformFlatten(XcodeProgram xcodeml, Transformer transformer)
+      throws Exception
+  {
+
   }
 
   /**
