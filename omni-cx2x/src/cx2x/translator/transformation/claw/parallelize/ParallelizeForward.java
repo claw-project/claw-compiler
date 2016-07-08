@@ -23,6 +23,7 @@ public class ParallelizeForward extends Transformation {
 
   private final ClawLanguage _claw;
   private Xnode _fctCall;
+  private String _fctCallName;
   private String _fctType;
   private boolean _localFct = false;
 
@@ -52,8 +53,9 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-
+    _fctCallName = _fctCall.find(Xcode.NAME).getValue();
     _fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
+
     XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
     if(fctType != null){
       _localFct = true;
