@@ -98,7 +98,10 @@ public class ParallelizeForward extends Transformation {
         type = intTypeIntentIn.getType();
         XnodeUtil.createAndAddParam(xcodeml, var, type, parentFctType);
       } else {
+        // Var exists already. Add to to the parameters if not here.
         type = fDef.getSymbolTable().get(var).getType();
+        XnodeUtil.
+            createAndAddParamIfNotExists(xcodeml, var, type, parentFctType);
       }
 
       Xnode arg = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
