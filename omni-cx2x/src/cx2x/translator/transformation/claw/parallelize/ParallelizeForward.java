@@ -117,17 +117,8 @@ public class ParallelizeForward extends Transformation {
 
           // Types have different dimensions
           if(typeBase.getDimensions() > typeToUpdate.getDimensions()){
-            XbasicType newType = typeToUpdate.cloneObject();
-            String type = xcodeml.getTypeTable().generateArrayTypeHash();
-            newType.setAttribute(Xattr.TYPE, type);
-
-            int additionalDimensions = typeBase.getDimensions() - typeToUpdate.getDimensions();
-            for(int i = 0; i < additionalDimensions; ++i){
-              Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
-              newType.addDimension(index, 0);
-            }
-
-            xcodeml.getTypeTable().add(newType);
+            String type = XnodeUtil.duplicateWithDimension(typeBase,
+                typeToUpdate, xcodeml);
             pUpdate.setAttribute(Xattr.TYPE, type);
 
             Xid id = fDef.getSymbolTable().get(pBase.getValue());
@@ -138,7 +129,6 @@ public class ParallelizeForward extends Transformation {
             if(varDecl != null){
               varDecl.getName().setAttribute(Xattr.TYPE, type);
             }
-
           }
         }
       }
