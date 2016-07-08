@@ -118,7 +118,9 @@ public class ParallelizeForward extends Transformation {
   }
 
   /**
-   * Do the flatten transformation for the forward directive.
+   * Do the flatten transformation for the forward directive. This
+   * transformation adapt the function call nested in the do statements and
+   * removes those do statements. The containing subroutine is not adapted.
    * @param xcodeml     Current XcodeML file unit.
    * @param transformer Current transformer.
    * @throws Exception If something goes wrong.
@@ -130,7 +132,9 @@ public class ParallelizeForward extends Transformation {
   }
 
   /**
-   * Do the standard transformation for the forward directive.
+   * Do the standard transformation for the forward directive. This
+   * transformation adapt the function call and replicates any necessary changes
+   * to the containing subroutine.
    * @param xcodeml     Current XcodeML file unit.
    * @param transformer Current transformer.
    * @throws Exception If something goes wrong.
