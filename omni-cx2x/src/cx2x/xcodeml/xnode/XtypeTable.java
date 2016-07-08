@@ -187,7 +187,7 @@ public class XtypeTable extends Xnode {
    * @param length Length of the hash string to be generated.
    * @return The new unique hash.
    */
-  private String generateHash(@SuppressWarnings("SameParameterValue") int length){
+  private String generateHash(int length){
     Random r = new Random();
     StringBuilder sb = new StringBuilder();
     while(sb.length() < length){

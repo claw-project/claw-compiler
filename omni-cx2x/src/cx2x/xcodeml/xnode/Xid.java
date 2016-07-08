@@ -71,7 +71,7 @@ public class Xid extends Xnode {
    * Set id sclass value.
    * @param value The new sclass value.
    */
-  public void setSclass(@SuppressWarnings("SameParameterValue") String value){
+  public void setSclass(String value){
     if(_baseElement != null && value != null){
       _baseElement.setAttribute(Xname.ATTR_SCLASS, value);
       _sclass = value;

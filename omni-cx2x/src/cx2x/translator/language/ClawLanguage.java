@@ -785,8 +785,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return An instance of ClawLanguage describing a loop-fusion with the
    * group, collapse clauses and the pragma from the master object.
    */
-  public static ClawLanguage createLoopFusionLanguage(@SuppressWarnings("SameParameterValue") Xnode base,
-                                                      @SuppressWarnings("SameParameterValue") String group,
+  public static ClawLanguage createLoopFusionLanguage(Xnode base,
+                                                      String group,
                                                       int collapse)
   {
     ClawLanguage l = new ClawLanguage();

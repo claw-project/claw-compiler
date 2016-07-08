@@ -353,7 +353,7 @@ public class XbasicType extends Xtype {
    * @param index    Index element to add as the new dimension.
    * @param position Position compared to already existing element.
    */
-  public void addDimension(Xnode index, @SuppressWarnings("SameParameterValue") int position){
+  public void addDimension(Xnode index, int position){
     if(_dimensions.size() == 0){
       appendToChildren(index, false);
       _dimensions.add(index);

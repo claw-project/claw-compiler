@@ -102,7 +102,7 @@ public class XvarDecl extends Xdecl {
    * @param cloneElement If true, the element is cloned and then inserted as the
    *                     last child. The clone is inserted.
    */
-  public void append(Xnode element, @SuppressWarnings("SameParameterValue") boolean cloneElement){
+  public void append(Xnode element, boolean cloneElement){
     if(cloneElement){
       Node clone = element.cloneNode();
       _baseElement.appendChild(clone);

@@ -79,7 +79,7 @@ public class XglobalDeclTable extends Xnode {
    * @param name The name of the module to be returned.
    * @return A XmoduleDefinition object if key is found. Null otherwise.
    */
-  public XmoduleDefinition getModuleDefinition(@SuppressWarnings("SameParameterValue") String name){
+  public XmoduleDefinition getModuleDefinition(String name){
     if(_table.containsKey(name)){
       Xnode el = _table.get(name);
       if(el instanceof XmoduleDefinition){

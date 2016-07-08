@@ -23,7 +23,7 @@ public class Utility {
    * @param elements  Array of String elements.
    * @return A joined string of all elements separated by the delimiter.
    */
-  public static String join(@SuppressWarnings("SameParameterValue") String delimiter, String[] elements){
+  public static String join(String delimiter, String[] elements){
     StringBuilder ret = new StringBuilder();
     boolean firstIteration = true;
     for(String s : elements){
