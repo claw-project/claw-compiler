@@ -151,7 +151,7 @@ public class ClawXcodeMlTranslator {
             HandleBlockDirective(analyzedPragma);
             break;
           case PARALLELIZE:
-            if(analyzedPragma.hasForwardClause()){
+            if (analyzedPragma.hasForwardClause()) {
               addOrAbort(new ParallelizeForward(analyzedPragma));
             } else {
               addOrAbort(new Parallelize(analyzedPragma));
@@ -226,6 +226,7 @@ public class ClawXcodeMlTranslator {
         break;
       case LOOP_HOIST:
         addOrAbort(new LoopHoist(begin, end));
+        break;
     }
   }
 
