@@ -1230,17 +1230,6 @@ public class XnodeUtil {
         ref.getElement());
   }
 
-  public static Xnode createVar(String type, String value, @SuppressWarnings("SameParameterValue") Xscope scope,
-                                XcodeProgram xcodeml)
-  {
-    Xnode var = new Xnode(Xcode.VAR, xcodeml);
-    var.setAttribute(Xattr.TYPE, type);
-    var.setAttribute(Xattr.SCOPE, scope.toString());
-    var.setValue(value);
-    return var;
-  }
-
-
   /**
    * Get a list of T elements from an xpath query executed from the
    * given element.
@@ -1264,8 +1253,6 @@ public class XnodeUtil {
     }
     return elements;
   }
-
-
 
   /**
    * Find specific argument in a function call.
@@ -1525,6 +1512,24 @@ public class XnodeUtil {
   }
 
   /**
+   * Create a new var element.
+   * @param type    Value of the type attribute.
+   * @param value   Value of the var.
+   * @param scope   Value of the scope attribute.
+   * @param xcodeml Current XcodeML file unit in which the element is created.
+   * @return The newly created element.
+   */
+  public static Xnode createVar(String type, String value, Xscope scope,
+                                XcodeML xcodeml)
+  {
+    Xnode var = new Xnode(Xcode.VAR, xcodeml);
+    var.setAttribute(Xattr.TYPE, type);
+    var.setAttribute(Xattr.SCOPE, scope.toString());
+    var.setValue(value);
+    return var;
+  }
+
+  /**
    * Find module containing the function and read its .xmod file.
    * @param fctDef Function definition nested in the module.
    * @return Xmod object if the module has been found and read. Null otherwise.
@@ -1600,6 +1605,20 @@ public class XnodeUtil {
   {
     Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
     fctType.getParams().add(param);
+  }
+
+  /**
+   * Try to locate a function definition in the current declaration table or
+   * recursively in the modules' delcaration tables.
+   * @param dt      Declaration table to search in.
+   * @param fctName Function's name to be found.
+   * @return The function definition if found. Null otherwise.
+   */
+  public static XfunctionDefinition findFunctionDefinition(XglobalDeclTable dt,
+                                                           String fctName)
+  {
+    
+    return null;
   }
 
 }
