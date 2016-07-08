@@ -233,7 +233,7 @@ public class AcceleratorHelper {
       case OPENMP:
         return new OpenMp(target);
     }
-    return null;
+    return new AcceleratorNone(target);
   }
 
 }
