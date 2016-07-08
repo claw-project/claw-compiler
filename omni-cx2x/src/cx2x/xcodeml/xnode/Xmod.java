@@ -18,7 +18,6 @@ public class Xmod extends XcodeML {
   // Xmod inner elements
   private final String _path;
   private final String _name;
-  private final XtypeTable _typeTable;
 
   /**
    * Constructs a basic Xmod object representing the XcodeML module file given
@@ -29,17 +28,8 @@ public class Xmod extends XcodeML {
    */
   public Xmod(Document baseElement, String name, String path){
     super(baseElement);
-    _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
     _name = name;
     _path = path.endsWith("/") ? path : path + "/";
-  }
-
-  /**
-   * Get the type table of the Xmod module.
-   * @return The types table.
-   */
-  public XtypeTable getTypeTable(){
-    return _typeTable;
   }
 
   /**

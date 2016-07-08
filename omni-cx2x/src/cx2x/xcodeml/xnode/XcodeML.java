@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 public class XcodeML extends Xnode {
 
   private Document _xcodemlDoc = null;
+  private final XtypeTable _typeTable;
 
   /**
    * Constructs a basic XcodeML object representing the XcodeML file given in
@@ -24,6 +25,7 @@ public class XcodeML extends Xnode {
    */
   public XcodeML(Document baseElement){
     super(baseElement.getDocumentElement());
+    _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
     _xcodemlDoc = baseElement;
   }
 
@@ -32,5 +34,13 @@ public class XcodeML extends Xnode {
    */
   public Document getDocument(){
     return _xcodemlDoc;
+  }
+
+  /**
+   * Get the type table of the Xmod module.
+   * @return The types table.
+   */
+  public XtypeTable getTypeTable(){
+    return _typeTable;
   }
 }

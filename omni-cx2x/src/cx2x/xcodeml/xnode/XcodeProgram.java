@@ -31,7 +31,6 @@ import cx2x.xcodeml.error.*;
 public class XcodeProgram extends XcodeML {
 
   // XcodeProgram inner elements
-  private XtypeTable _typeTable = null;
   private XsymbolTable _globalSymbolsTable = null;
   private XglobalDeclTable _globalDeclarationsTable = null;
 
@@ -66,7 +65,6 @@ public class XcodeProgram extends XcodeML {
     _source = getAttribute(Xattr.SOURCE);
     _compilerInfo = getAttribute(Xattr.COMPILER_INFO);
 
-    readTypeTable();
     readGlobalSymbolsTable();
     readGlobalDeclarationsTable();
   }
@@ -103,14 +101,6 @@ public class XcodeProgram extends XcodeML {
    */
   public List<XanalysisError> getWarnings(){
     return _warnings;
-  }
-
-  /**
-   * Get the type table of the XcodeML program.
-   * @return The types table.
-   */
-  public XtypeTable getTypeTable(){
-    return _typeTable;
   }
 
   /**
@@ -153,13 +143,6 @@ public class XcodeProgram extends XcodeML {
     }
 
     return true;
-  }
-
-  /**
-   * Read the XcodeML type table
-   */
-  private void readTypeTable() {
-    _typeTable = new XtypeTable(find(Xcode.TYPETABLE).getElement());
   }
 
   /**
