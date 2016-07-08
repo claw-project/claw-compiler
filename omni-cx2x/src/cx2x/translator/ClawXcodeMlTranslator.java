@@ -249,11 +249,7 @@ public class ClawXcodeMlTranslator {
   public void transform() {
     try {
       if(!_canTransform){
-        if(!XnodeUtil.writeXcodeML(_program,
-            _xcodemlOutputFile, INDENT_OUTPUT))
-        {
-          abort();
-        }
+        XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
         return;
       }
 
@@ -286,12 +282,7 @@ public class ClawXcodeMlTranslator {
       }
 
       // Write transformed IR to file
-      if(!XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile,
-          INDENT_OUTPUT))
-      {
-        abort();
-      }
-
+      XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
     } catch (Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }

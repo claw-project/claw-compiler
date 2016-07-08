@@ -621,7 +621,7 @@ public class XnodeUtil {
    * @return true if the output could be write without problems.
    * @throws IllegalTransformationException if XML file cannot be written.
    */
-  public static boolean writeXcodeML(XcodeML xcodeml, String outputFile,
+  public static void writeXcodeML(XcodeML xcodeml, String outputFile,
                                      int indent)
     throws IllegalTransformationException
   {
@@ -647,7 +647,6 @@ public class XnodeUtil {
       throw new IllegalTransformationException("Cannot output file: " +
           outputFile, 0);
     }
-    return true;
   }
 
   /**
@@ -1415,7 +1414,7 @@ public class XnodeUtil {
    * @param type    Optional type value.
    * @return The newly created element.
    */
-  public static Xnode createName(XcodeML xcodeml, String name, String type)
+  private static Xnode createName(XcodeML xcodeml, String name, String type)
   {
     Xnode n = new Xnode(Xcode.NAME, xcodeml);
     n.setValue(name);
@@ -1537,7 +1536,7 @@ public class XnodeUtil {
    * @param fctDef Function definition nested in the module.
    * @return Xmod object if the module has been found and read. Null otherwise.
    */
-  public static Xmod findContainingModule(XfunctionDefinition fctDef){
+  private static Xmod findContainingModule(XfunctionDefinition fctDef){
     XmoduleDefinition mod = findParentModule(fctDef);
     if(mod == null){
       return null;
@@ -1713,7 +1712,7 @@ public class XnodeUtil {
 
   /**
    * Duplicates the type to update and add extra dimensions to match the base
-   * type
+   * type.
    * @param base     Base type.
    * @param toUpdate Type to update.
    * @param xcodeml  Current XcodeML file unit.
