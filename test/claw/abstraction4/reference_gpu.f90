@@ -19,6 +19,8 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
+!$acc parallel
+!$acc loop
   DO proma = 1 , nproma , 1
    c = 5.345
    DO k = 2 , nz , 1
@@ -27,6 +29,7 @@ CONTAINS
    END DO
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO
+!$acc end parallel
  END SUBROUTINE compute_column
 
 END MODULE mo_column
