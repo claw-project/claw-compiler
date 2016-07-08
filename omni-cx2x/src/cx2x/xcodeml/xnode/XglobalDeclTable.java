@@ -9,6 +9,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * The XglobalDeclTable represents the typeTable (5.1) element in XcodeML
@@ -126,6 +128,13 @@ public class XglobalDeclTable extends Xnode {
     return _table.size();
   }
 
+  /**
+   * Get an iterator over the table.
+   * @return Iterator.
+   */
+  public Iterator<Map.Entry<String, Xnode>> getIterator(){
+    return _table.entrySet().iterator();
+  }
 
   @Override
   public XglobalDeclTable cloneObject() {
