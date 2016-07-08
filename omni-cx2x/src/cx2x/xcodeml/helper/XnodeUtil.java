@@ -26,7 +26,9 @@ import javax.xml.xpath.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -1617,7 +1619,22 @@ public class XnodeUtil {
   public static XfunctionDefinition findFunctionDefinition(XglobalDeclTable dt,
                                                            String fctName)
   {
-    
+    Iterator<Map.Entry<String, Xnode>> it = dt.getIterator();
+    while(it.hasNext()){
+      Map.Entry<String, Xnode> entry = it.next();
+      if(entry.getValue() instanceof XmoduleDefinition){
+        XfunctionDefinition fctDef = findFunctionDefinitionInModule(
+            (XmoduleDefinition)entry.getValue(), fctName);
+        if(fctDef != null){
+          return fctDef;
+        }
+      } else if (entry.getValue() instanceof XfunctionDefinition){
+        XfunctionDefinition fctDef = (XfunctionDefinition)entry.getValue();
+        if(fctDef.getName().getValue().equals(fctName)){
+          return fctDef;
+        }
+      }
+    }
     return null;
   }
 
