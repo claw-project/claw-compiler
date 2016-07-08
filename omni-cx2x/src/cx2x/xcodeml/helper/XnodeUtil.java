@@ -1610,6 +1610,28 @@ public class XnodeUtil {
   }
 
   /**
+   * Create a name element and adds it as a parameter of the given function
+   * type if this parameter is does not exist yet.
+   * @param xcodeml   Current XcodeML file unit.
+   * @param nameValue Value of the name element to create.
+   * @param type      Type of the name element to create.
+   * @param fctType   Function type in which the element will be added as a
+   *                  parameter.
+   */
+  public static void createAndAddParamIfNotExists(XcodeML xcodeml,
+                                                  String nameValue, String type,
+                                                  XfunctionType fctType)
+  {
+    for(Xnode p : fctType.getParams().getAll()){
+      if(p.getValue().toLowerCase().equals(nameValue.toLowerCase())){
+        return;
+      }
+    }
+    Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
+    fctType.getParams().add(param);
+  }
+
+  /**
    * Try to locate a function definition in the current declaration table or
    * recursively in the modules' delcaration tables.
    * @param dt      Declaration table to search in.
