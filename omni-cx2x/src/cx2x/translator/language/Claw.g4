@@ -119,6 +119,11 @@ directive[ClawLanguage l]
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setForwardClause();
      }
+   | END PARALLELIZE
+     {
+       $l.setDirective(ClawDirective.PARALLELIZE);
+       $l.setEndPragma();
+     }
 ;
 
 // Comma-separated identifiers list
