@@ -8,8 +8,7 @@ package cx2x.xcodeml.xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.util.Collection;
-import java.util.Hashtable;
+import java.util.*;
 
 import cx2x.xcodeml.helper.*;
 
@@ -125,6 +124,36 @@ public class XdeclTable extends Xnode {
    */
   public Collection<Xdecl> getAll(){
     return _table.values();
+  }
+
+  /**
+   * Get all declarations of a specific kind of elements.
+   * @param decl Kind of elements to return.
+   * @return A list of all declarations of this kind.
+   */
+  public List<Xdecl> getAll(Xcode decl){
+    switch (decl) {
+      case VARDECL:
+      case FUSEDECL:
+      case FUSEONLYDECL:
+      case FSTRUCTDECL:
+      case EXTERNDECL:
+      case FINTERFACEDECL:
+      case FNAMELISTDECL:
+      case FEQUIVALENCEDECL:
+      case FCOMMONDECL:
+        Iterator<Map.Entry<String, Xdecl>> it = _table.entrySet().iterator();
+        List<Xdecl> decls = new ArrayList<>();
+        while(it.hasNext()){
+          Map.Entry<String, Xdecl> entry = it.next();
+          if(entry.getValue().Opcode() == decl){
+            decls.add(entry.getValue());
+          }
+        }
+        return decls;
+      default:
+        throw new IllegalArgumentException("Not a member of the decl table");
+    }
   }
 
   /**
