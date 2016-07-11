@@ -8,6 +8,8 @@ package cx2x.translator;
 // Cx2x import
 import cx2x.translator.common.Constant;
 import cx2x.translator.common.GroupConfiguration;
+import cx2x.translator.common.topology.DirectedGraph;
+import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
@@ -34,10 +36,7 @@ import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.*;
 
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -252,6 +251,8 @@ public class ClawXcodeMlTranslator {
         return;
       }
 
+      reorderTransformations();
+
       for (Map.Entry<Class, TransformationGroup> entry :
           _transformer.getGroups().entrySet())
       {
@@ -284,6 +285,39 @@ public class ClawXcodeMlTranslator {
       XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
     } catch (Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
+    }
+  }
+
+  private void reorderTransformations(){
+    if(_transformer.getGroups().containsKey(ParallelizeForward.class)){
+      TransformationGroup tg =
+          _transformer.getGroups().get(ParallelizeForward.class);
+
+      if(tg.count() <= 1){
+        return;
+      }
+
+      DirectedGraph<Transformation> dg = new DirectedGraph<>();
+      Map<String, Transformation> fctMap = new HashMap<>();
+
+
+      for (Transformation t : tg.getTransformations()){
+        ParallelizeForward p = (ParallelizeForward)t;
+        dg.addNode(p);
+        fctMap.put(p.getCallingFctName(), p);
+      }
+
+      for (Transformation t : tg.getTransformations()) {
+        ParallelizeForward p = (ParallelizeForward) t;
+        if(p.getCalledFctName() != null){
+          Transformation end = fctMap.get(p.getCalledFctName());
+          dg.addEdge(p, end);
+        }
+      }
+
+      List<Transformation> ordered =
+          TopologicalSort.sort(TopologicalSort.reverseGraph(dg));
+      tg.setTransformations(ordered);
     }
   }
 
