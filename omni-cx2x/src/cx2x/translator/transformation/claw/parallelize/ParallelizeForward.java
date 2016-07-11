@@ -5,6 +5,7 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -23,9 +24,10 @@ public class ParallelizeForward extends Transformation {
 
   private final ClawLanguage _claw;
   private Xnode _fctCall;
-  private String _fctType;
+  private XfunctionType _fctType;
   private boolean _localFct = false;
   private boolean _flatten = false;
+  private Xmod _mod = null;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -87,24 +89,38 @@ public class ParallelizeForward extends Transformation {
       return false;
     }
     String fctCallName = _fctCall.find(Xcode.NAME).getValue();
-    _fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
+    String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
 
-    XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
+    _fctType = (XfunctionType)xcodeml.getTypeTable().get(fctType);
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), fctCallName);
-    if(fctType != null && fctDef != null){
+    if(_fctType != null && fctDef != null){
       _localFct = true;
     } else {
 
       XfunctionDefinition parentFctDef =
           XnodeUtil.findParentFunction(_claw.getPragma());
+      List<Xdecl> uses = parentFctDef.getDeclarationTable().getAll(Xcode.FUSEDECL);
+
+      for(Xdecl d : uses){
+
+        // Check whether a CLAW file is available.
+        _mod = TransformationHelper.
+            locateClawModuleFile(d.getAttribute(Xattr.NAME));
+
+        if(_mod != null){
+          if(_mod.getIdentifiers().contains(fctCallName)){
+            String type = _mod.getIdentifiers().get(fctCallName).getAttribute(Xattr.TYPE);
+            _fctType = (XfunctionType) _mod.getTypeTable().get(type);
+            if(_fctType != null){
+              return true;
+            }
+          }
+        }
+      } // TODO look up in module use statements
 
 
 
-
-
-
-      // TODO check whether the function is defined in another module
       xcodeml.addError("Function signature not found in the current module.",
           _claw.getPragma().getLineNo());
       return false;
@@ -155,9 +171,7 @@ public class ParallelizeForward extends Transformation {
     XfunctionType parentFctType = (XfunctionType)xcodeml.getTypeTable().
         get(fDef.getName().getAttribute(Xattr.TYPE));
 
-    XfunctionType fctType = (XfunctionType)xcodeml.getTypeTable().get(_fctType);
-
-    List<Xnode> params = fctType.getParams().getAll();
+    List<Xnode> params = _fctType.getParams().getAll();
     List<Xnode> args = _fctCall.find(Xcode.ARGUMENTS).getChildren();
 
     // 1. Adapt function call with potential new arguments
@@ -187,10 +201,12 @@ public class ParallelizeForward extends Transformation {
     }
 
     // 2. Adapt function/subroutine in which the function call is nested
-    for(Xnode pBase : fctType.getParams().getAll()){
+    for(Xnode pBase : _fctType.getParams().getAll()){
       for(Xnode pUpdate : parentFctType.getParams().getAll()){
         if(pBase.getValue().equals(pUpdate.getValue())){
-          XbasicType typeBase = (XbasicType)xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE));
+          XbasicType typeBase = (_localFct) ? (XbasicType)
+              xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
+              (XbasicType) _mod.getTypeTable().get(pBase.getAttribute(Xattr.TYPE));
           XbasicType typeToUpdate = (XbasicType)xcodeml.getTypeTable().get(pUpdate.getAttribute(Xattr.TYPE));
 
           // Types have different dimensions
