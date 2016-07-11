@@ -97,7 +97,7 @@ public class ParallelizeForward extends Transformation {
     }
     for(Xnode n : body.getChildren()){
       if(n.Opcode() == Xcode.FDOSTATEMENT){
-        return analyzeNestedDoStmts(xcodeml, doStmt);
+        return analyzeNestedDoStmts(xcodeml, n);
       } else if(n.Opcode() != Xcode.FPRAGMASTATEMENT
           && n.Opcode() != Xcode.EXPRSTATEMENT)
       {
