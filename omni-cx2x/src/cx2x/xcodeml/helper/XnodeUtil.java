@@ -1772,7 +1772,13 @@ public class XnodeUtil {
    */
   public static Xnode getNextSibling(Xnode crt){
     Node n = crt.getElement().getNextSibling();
-    return (n == null) ? null : new Xnode((Element)n);
+    while (n != null){
+      if(n.getNodeType() == Node.ELEMENT_NODE){
+        return new Xnode((Element)n);
+      }
+      n = n.getNextSibling();
+    }
+    return null;
   }
 
 }
