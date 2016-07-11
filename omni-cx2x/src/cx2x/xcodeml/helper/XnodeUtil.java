@@ -1668,8 +1668,8 @@ public class XnodeUtil {
         fctDef.getName().getAttribute(Xattr.TYPE));
     if(fctTypeMod == null){
       throw new IllegalTransformationException(
-          "Unable to locate fct " + fctDef.getName() + " in module " +
-              modDef.getName(), claw.getPragma().getLineNo());
+          "Unable to locate fct " + fctDef.getName().getValue() +
+              " in module " + modDef.getName(), claw.getPragma().getLineNo());
     }
     XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
         mod.getTypeTable().generateIntegerTypeHash(),
