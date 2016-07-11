@@ -226,7 +226,7 @@ public class ArrayTransform extends BlockTransformation {
 
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])){
-        XvarDecl inductionVarDecl =
+        Xdecl inductionVarDecl =
             XnodeUtil.createVarDecl(xcodeml, Xname.TYPE_F_INT,
                 inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);

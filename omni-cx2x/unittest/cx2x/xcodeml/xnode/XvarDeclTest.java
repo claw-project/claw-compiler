@@ -30,28 +30,27 @@ public class XvarDeclTest {
 
   @Test
   public void simpleXvarDeclWithValueTest(){
-    XvarDecl varDecl = XmlHelper.createXvarDecl(varDecl1);
+    Xdecl varDecl = XmlHelper.createXvarDecl(varDecl1);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/module.f90", varDecl.getFile());
-    assertNotNull(varDecl.getName());
-    assertEquals("Ib3f750", varDecl.getName().getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.getName().getValue());
-    assertTrue(varDecl.hasValue());
-    assertEquals("10.0", varDecl.getValue());
+    assertNotNull(varDecl.find(Xcode.NAME));
+    assertEquals("Ib3f750", varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
+    assertEquals("testVar", varDecl.find(Xcode.NAME).getValue());
+    assertNotNull(varDecl.find(Xcode.VALUE));
+    assertEquals("10.0", varDecl.find(Xcode.VALUE).getValue());
   }
 
   @Test
   public void simpleXvarDeclWithoutValueTest(){
-    XvarDecl varDecl = XmlHelper.createXvarDecl(varDecl2);
+    Xdecl varDecl = XmlHelper.createXvarDecl(varDecl2);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/module.f90", varDecl.getFile());
-    assertNotNull(varDecl.getName());
-    assertEquals("Ib3f750", varDecl.getName().getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.getName().getValue());
-    assertFalse(varDecl.hasValue());
-    assertNull(varDecl.getValue());
+    assertNotNull(varDecl.find(Xcode.NAME));
+    assertEquals("Ib3f750", varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
+    assertEquals("testVar", varDecl.find(Xcode.NAME).getValue());
+    assertNull(varDecl.find(Xcode.VALUE));
   }
 
 

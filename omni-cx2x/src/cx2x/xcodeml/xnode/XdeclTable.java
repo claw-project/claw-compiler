@@ -61,8 +61,8 @@ public class XdeclTable extends Xnode {
 
         switch (element.getTagName()){
           case Xname.VAR_DECL:
-            XvarDecl decl = new XvarDecl(element);
-            _table.put(decl.getName().getValue(), decl);
+            Xdecl varDecl = new Xdecl(element);
+            _table.put(varDecl.find(Xcode.NAME).getValue(), varDecl);
             break;
           case Xname.F_USE_DECL:
             Xdecl useDecl = new Xdecl(element);

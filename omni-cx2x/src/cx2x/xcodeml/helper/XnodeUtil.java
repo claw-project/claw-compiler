@@ -1395,7 +1395,7 @@ public class XnodeUtil {
    * @param nameValue Value of the name inner element.
    * @return The newly created element.
    */
-  public static XvarDecl createVarDecl(XcodeML xcodeml, String nameType,
+  public static Xdecl createVarDecl(XcodeML xcodeml, String nameType,
                                        String nameValue)
   {
     Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
@@ -1403,7 +1403,7 @@ public class XnodeUtil {
     internalName.setValue(nameValue);
     internalName.setAttribute(Xattr.TYPE, nameType);
     varD.appendToChildren(internalName, false);
-    return new XvarDecl(varD.getElement());
+    return new Xdecl(varD.getElement());
   }
 
   /**
@@ -1589,7 +1589,7 @@ public class XnodeUtil {
   {
     Xid id = XnodeUtil.createId(xcodeml, type, sclass, name);
     fctDef.getSymbolTable().add(id);
-    XvarDecl decl = XnodeUtil.createVarDecl(xcodeml, type, name);
+    Xdecl decl = XnodeUtil.createVarDecl(xcodeml, type, name);
     fctDef.getDeclarationTable().add(decl);
   }
 
