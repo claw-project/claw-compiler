@@ -144,15 +144,12 @@ public class ParallelizeForward extends Transformation {
     _fctType = (XfunctionType)xcodeml.getTypeTable().get(fctType);
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
+    XfunctionDefinition parentFctDef =
+        XnodeUtil.findParentFunction(_claw.getPragma());
+    _callingFctName = parentFctDef.getName().getValue();
     if(_fctType != null && fctDef != null){
-      XfunctionDefinition parentFctDef =
-          XnodeUtil.findParentFunction(_claw.getPragma());
-      _callingFctName = parentFctDef.getName().getValue();
       _localFct = true;
     } else {
-      XfunctionDefinition parentFctDef =
-          XnodeUtil.findParentFunction(_claw.getPragma());
-      _callingFctName = parentFctDef.getName().getValue();
       List<Xdecl> allUses =
           parentFctDef.getDeclarationTable().getAll(Xcode.FUSEDECL);
       allUses.addAll(parentFctDef.getDeclarationTable().
@@ -175,8 +172,6 @@ public class ParallelizeForward extends Transformation {
           }
         }
       } // TODO look up in module use statements
-
-
 
       xcodeml.addError("Function signature not found in the current module.",
           _claw.getPragma().getLineNo());
