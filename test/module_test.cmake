@@ -43,7 +43,7 @@ add_custom_command(
   COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${ORIGINAL_FILE}
-  COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target"
+  COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${ORIGINAL_FILE}"
 )
 
 # Execute the CLAW compiler for GPU target
@@ -53,7 +53,7 @@ add_custom_command(
   COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${ORIGINAL_FILE}
-  COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target"
+  COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${ORIGINAL_FILE}"
 )
 
 if(HAS_EXTRA_MOD)
@@ -63,8 +63,8 @@ if(HAS_EXTRA_MOD)
     COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
     COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_CPU} ${ORIGINAL_FILE_EXTRA}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS ${ORIGINAL_FILE_EXTRA}
-    COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target"
+    DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_CPU}
+    COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${ORIGINAL_FILE_EXTRA}"
   )
 
   # Execute the CLAW compiler for GPU target
@@ -73,8 +73,8 @@ if(HAS_EXTRA_MOD)
     COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
     COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_GPU} ${ORIGINAL_FILE_EXTRA}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS ${ORIGINAL_FILE_EXTRA}
-    COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target"
+    DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_GPU}
+    COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${ORIGINAL_FILE_EXTRA}"
   )
 
   # Target for the transformation
