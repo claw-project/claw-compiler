@@ -95,6 +95,15 @@ public class ParallelizeForward extends Transformation {
     if(fctType != null && fctDef != null){
       _localFct = true;
     } else {
+
+      XfunctionDefinition parentFctDef =
+          XnodeUtil.findParentFunction(_claw.getPragma());
+
+
+
+
+
+
       // TODO check whether the function is defined in another module
       xcodeml.addError("Function signature not found in the current module.",
           _claw.getPragma().getLineNo());
@@ -194,9 +203,9 @@ public class ParallelizeForward extends Transformation {
             if(id != null){
               id.setAttribute(Xattr.TYPE, type);
             }
-            XvarDecl varDecl = fDef.getDeclarationTable().get(pBase.getValue());
+            Xdecl varDecl = fDef.getDeclarationTable().get(pBase.getValue());
             if(varDecl != null){
-              varDecl.getName().setAttribute(Xattr.TYPE, type);
+              varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
             }
           }
         }

@@ -80,15 +80,6 @@ public class XvarDecl extends Xdecl {
   }
 
   /**
-   * Check whether the var declaration is using a built-in type or a type
-   * defined in the type table.
-   * @return True if the type is built-in. False otherwise.
-   */
-  public boolean isBuiltInType(){
-    return XnodeUtil.isBuiltInType(getName().getAttribute(Xattr.TYPE));
-  }
-
-  /**
    * Insert the given element as the last child of the XvarDecl.
    * @param element The element to be inserted.
    */

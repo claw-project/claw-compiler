@@ -313,15 +313,15 @@ public class LoopExtraction extends Transformation {
           for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
             Xnode arrayIndex = new Xnode(Xcode.ARRAYINDEX, xcodeml);
             // Find the mapping var in the local table (fct scope)
-            XvarDecl mappingVarDecl =
+            Xdecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
             Xnode newMappingVar = new Xnode(Xcode.VAR,xcodeml);
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
             newMappingVar.setAttribute(Xattr.TYPE,
-                mappingVarDecl.getName().getAttribute(Xattr.TYPE));
-            newMappingVar.setValue(mappingVarDecl.getName().getValue());
+                mappingVarDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
+            newMappingVar.setValue(mappingVarDecl.find(Xcode.NAME).getValue());
             arrayIndex.appendToChildren(newMappingVar, false);
             newArg.appendToChildren(arrayIndex, false);
           }
@@ -335,21 +335,20 @@ public class LoopExtraction extends Transformation {
         }
 
         // Change variable declaration in extracted fct
-        XvarDecl varDecl = fctDeclarations.get(var.getFctMapping());
+        Xdecl varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
-        XbasicType varDeclType =
-            (XbasicType)xcodeml.getTypeTable().get(varDecl.getName().getAttribute(Xattr.TYPE));
+        XbasicType varDeclType = (XbasicType)xcodeml.getTypeTable().
+            get(varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
           Xnode tempName = new Xnode(Xcode.NAME, xcodeml);
           tempName.setValue(var.getFctMapping());
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
-          XvarDecl newVarDecl =
-              new XvarDecl(new Xnode(Xcode.VARDECL, xcodeml).getElement());
-          newVarDecl.append(tempName);
-
-          fctDeclarations.replace(newVarDecl);
+          Xdecl newVarDecl =
+              new Xdecl(new Xnode(Xcode.VARDECL, xcodeml).getElement());
+          newVarDecl.appendToChildren(tempName, false);
+          fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
         } else {
           // Case 2: variable is not totally demoted then create new type
@@ -496,9 +495,9 @@ public class LoopExtraction extends Transformation {
       _fctDef.getSymbolTable().add(copyId);
     }
 
-    XvarDecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
+    Xdecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
     if(inductionVarDecl == null){
-      XvarDecl copyDecl = _fctDefToExtract.getDeclarationTable().get(id);
+      Xdecl copyDecl = _fctDefToExtract.getDeclarationTable().get(id);
       _fctDef.getDeclarationTable().add(copyDecl);
     }
   }

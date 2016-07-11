@@ -133,7 +133,7 @@ public class TransformationHelper {
    * @param name   Declaration name to be searched for.
    * @return The element if found. Null otherwise.
    */
-  private static XvarDecl getDeclInNestedFctDef(XfunctionDefinition fctDef,
+  private static Xdecl getDeclInNestedFctDef(XfunctionDefinition fctDef,
                                                 String name)
   {
     if(fctDef.getSymbolTable().contains(name)){
@@ -170,7 +170,7 @@ public class TransformationHelper {
 
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
       Xid id = getIdInNestedFctDef(fctDef, reshapeInfo.getArrayName());
-      XvarDecl decl = getDeclInNestedFctDef(fctDef, reshapeInfo.getArrayName());
+      Xdecl decl = getDeclInNestedFctDef(fctDef, reshapeInfo.getArrayName());
 
       if(id == null || decl == null){
         throw new IllegalTransformationException("Cannot apply reshape clause."
@@ -221,7 +221,7 @@ public class TransformationHelper {
 
       // Update symbol & declaration
       id.setType(newType.getType());
-      decl.getName().setAttribute(Xattr.TYPE, newType.getType());
+      decl.find(Xcode.NAME).setAttribute(Xattr.TYPE, newType.getType());
 
       // Update array references
       List<Xnode> refs =

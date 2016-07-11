@@ -106,17 +106,17 @@ public class Parallelize extends Transformation {
    */
   private boolean analyseData(XcodeProgram xcodeml){
     if(!_claw.hasDataClause()){
-      for(XvarDecl decl : _fctDef.getDeclarationTable().getAll()){
+      for(Xdecl decl : _fctDef.getDeclarationTable().getAll()){
         if(decl.isBuiltInType()){
-          _scalarFields.add(decl.getName().getValue());
+          _scalarFields.add(decl.find(Xcode.NAME).getValue());
         }
 
-        Xtype type =
-            xcodeml.getTypeTable().get(decl.getName().getAttribute(Xattr.TYPE));
+        Xtype type = xcodeml.getTypeTable().
+            get(decl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType){
           XbasicType bType = (XbasicType)type;
           if(bType.getIntent() == Xintent.INOUT && bType.isArray()){
-            _arrayFieldsInOut.add(decl.getName().getValue());
+            _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
           }
         }
       }
@@ -358,7 +358,7 @@ public class Parallelize extends Transformation {
       throws IllegalTransformationException
   {
     Xid id = _fctDef.getSymbolTable().get(fieldId);
-    XvarDecl decl = _fctDef.getDeclarationTable().get(fieldId);
+    Xdecl decl = _fctDef.getDeclarationTable().get(fieldId);
     String type = xcodeml.getTypeTable().generateArrayTypeHash();
     XbasicType newType;
 
@@ -386,7 +386,7 @@ public class Parallelize extends Transformation {
       }
     }
     id.setType(type);
-    decl.getName().setAttribute(Xattr.TYPE, type);
+    decl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
     xcodeml.getTypeTable().add(newType);
 
     // Update params in function type

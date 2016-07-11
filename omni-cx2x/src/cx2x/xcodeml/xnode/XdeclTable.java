@@ -37,8 +37,7 @@ import cx2x.xcodeml.helper.*;
 
 public class XdeclTable extends Xnode {
 
-  // TODO move to Xdecl
-  private final Hashtable<String, XvarDecl> _table;
+  private final Hashtable<String, Xdecl> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -65,10 +64,13 @@ public class XdeclTable extends Xnode {
             XvarDecl decl = new XvarDecl(element);
             _table.put(decl.getName().getValue(), decl);
             break;
+          case Xname.F_USE_DECL:
+            Xdecl useDecl = new Xdecl(element);
+            _table.put(useDecl.getAttribute(Xattr.NAME), useDecl);
+            break;
 
           // TODO read FstructDecl elements
           // TODO read externDecl elements
-          // TODO read FuseDecl elements
           // TODO read FuseOnlyDecl elements
           // TODO read FinterfaceDecl elements
           // TODO read FnamelistDecl elements
@@ -84,9 +86,10 @@ public class XdeclTable extends Xnode {
   /**
    * Replace a declaration in the table.
    * @param decl The new declaration to be inserted.
+   * @param name Name describing the declaration in the table.
    */
-  public void replace(XvarDecl decl){
-    XvarDecl oldDecl = _table.get(decl.getName().getValue());
+  public void replace(Xdecl decl, String name){
+    Xdecl oldDecl = _table.get(name);
     if(oldDecl == null){
       appendToChildren(decl, false);
     } else {
@@ -99,9 +102,9 @@ public class XdeclTable extends Xnode {
    * Add a new declaration.
    * @param decl The new declaration object.
    */
-  public void add(XvarDecl decl){
+  public void add(Xdecl decl){
     _baseElement.appendChild(decl.cloneNode());
-    _table.put(decl.getName().getValue(), decl);
+    _table.put(decl.find(Xcode.NAME).getValue(), decl);
   }
 
   /**
@@ -109,7 +112,7 @@ public class XdeclTable extends Xnode {
    * @param key The name of the declaration to be returned.
    * @return A XvarDecl object if key is found. Null otherwise.
    */
-  public XvarDecl get(String key){
+  public Xdecl get(String key){
     if(_table.containsKey(key)) {
       return _table.get(key);
     }
@@ -119,9 +122,8 @@ public class XdeclTable extends Xnode {
   /**
    * Get all elements in the table.
    * @return All elements stored in the table.
-   * TODO move to Xdecl
    */
-  public Collection<XvarDecl> getAll(){
+  public Collection<Xdecl> getAll(){
     return _table.values();
   }
 
