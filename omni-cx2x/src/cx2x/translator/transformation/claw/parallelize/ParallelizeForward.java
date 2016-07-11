@@ -19,6 +19,11 @@ import java.util.List;
  * signatures to function call and function in which the call is nested if
  * needed.
  *
+ * During the tranformation, a new "CLAW" XcodeML module file is generated
+ * if the transformation has to be applied accross several file unit. This
+ * file will be located in the same directory as the original XcodeML module
+ * file and has the following naming structure: module_name.claw.xmod
+ *
  * @author clementval
  */
 public class ParallelizeForward extends Transformation {
@@ -26,9 +31,9 @@ public class ParallelizeForward extends Transformation {
   private final ClawLanguage _claw;
   private Xnode _fctCall;
   private XfunctionType _fctType;
+  private Xmod _mod = null;
   private boolean _localFct = false;
   private boolean _flatten = false;
-  private Xmod _mod = null;
 
   private Xnode _innerDoStatement;
   private Xnode _outerDoStatement;
@@ -46,7 +51,6 @@ public class ParallelizeForward extends Transformation {
     super(directive);
     _claw = directive; // Keep information about the claw directive here
   }
-
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
@@ -118,7 +122,6 @@ public class ParallelizeForward extends Transformation {
     return false;
   }
 
-
   /**
    * Analyze the directive when it is used just before a function call.
    * @param xcodeml Current XcodeML file unit.
@@ -146,6 +149,11 @@ public class ParallelizeForward extends Transformation {
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
     XfunctionDefinition parentFctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
+    if(parentFctDef == null){
+      xcodeml.addError("Parellilize directive is not nested in a " +
+          "function/subroutine.", _claw.getPragma().getLineNo());
+      return false;
+    }
     _callingFctName = parentFctDef.getName().getValue();
     if(_fctType != null && fctDef != null){
       _localFct = true;
@@ -222,6 +230,10 @@ public class ParallelizeForward extends Transformation {
       throws Exception
   {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
+    if(fDef == null){
+      throw new IllegalTransformationException("Parallelize directive is not " +
+          "nested in a function/subroutine.", _claw.getPragma().getLineNo());
+    }
     XfunctionType parentFctType = (XfunctionType)xcodeml.getTypeTable().
         get(fDef.getName().getAttribute(Xattr.TYPE));
 
