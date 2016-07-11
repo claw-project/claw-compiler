@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class XnodeUtil {
 
-  private static final String XMOD_FILE_EXTENSION = ".xmod";
+  public static final String XMOD_FILE_EXTENSION = ".xmod";
 
   /**
    * Find a function definition according to a function call.
