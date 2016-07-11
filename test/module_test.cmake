@@ -102,7 +102,7 @@ endif()
 # Target to clean the generated file (Output of clawfc)
 add_custom_target(
   clean-${TEST_NAME}
-  COMMAND rm -f ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU}
+  COMMAND rm -f ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU} ${XMOD_DIR}/*
 )
 
 # Add target to the global build/clean target
