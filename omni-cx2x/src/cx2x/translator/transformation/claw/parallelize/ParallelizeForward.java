@@ -33,6 +33,10 @@ public class ParallelizeForward extends Transformation {
   private Xnode _innerDoStatement;
   private Xnode _outerDoStatement;
 
+  private String _calledFctName;  // For topological sorting
+  private String _callingFctName; // For topological sorting
+
+
   /**
    * Constructs a new Parallelize transformation triggered from a specific
    * pragma.
@@ -82,10 +86,11 @@ public class ParallelizeForward extends Transformation {
   }
 
   /**
-   *
-   * @param xcodeml
-   * @param doStmt
-   * @return
+   * Recursively analyze nested do statements in order to find the call
+   * statements.
+   * @param xcodeml Current XcodeML file unit.
+   * @param doStmt  First do statement to start the analyzis.
+   * @return True if the analysis succed. False otehrwise.
    */
   private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt){
     _innerDoStatement = doStmt;
@@ -133,18 +138,21 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-    String fctCallName = _fctCall.find(Xcode.NAME).getValue();
+    _calledFctName = _fctCall.find(Xcode.NAME).getValue();
     String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
 
     _fctType = (XfunctionType)xcodeml.getTypeTable().get(fctType);
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
-        xcodeml.getGlobalDeclarationsTable(), fctCallName);
+        xcodeml.getGlobalDeclarationsTable(), _calledFctName);
     if(_fctType != null && fctDef != null){
-      _localFct = true;
-    } else {
-
       XfunctionDefinition parentFctDef =
           XnodeUtil.findParentFunction(_claw.getPragma());
+      _callingFctName = parentFctDef.getName().getValue();
+      _localFct = true;
+    } else {
+      XfunctionDefinition parentFctDef =
+          XnodeUtil.findParentFunction(_claw.getPragma());
+      _callingFctName = parentFctDef.getName().getValue();
       List<Xdecl> allUses =
           parentFctDef.getDeclarationTable().getAll(Xcode.FUSEDECL);
       allUses.addAll(parentFctDef.getDeclarationTable().
@@ -157,10 +165,11 @@ public class ParallelizeForward extends Transformation {
             locateClawModuleFile(d.getAttribute(Xattr.NAME));
 
         if(_mod != null){
-          if(_mod.getIdentifiers().contains(fctCallName)){
-            String type = _mod.getIdentifiers().get(fctCallName).getAttribute(Xattr.TYPE);
+          if(_mod.getIdentifiers().contains(_calledFctName)){
+            String type = _mod.getIdentifiers().get(_calledFctName).getAttribute(Xattr.TYPE);
             _fctType = (XfunctionType) _mod.getTypeTable().get(type);
             if(_fctType != null){
+              _calledFctName = null;
               return true;
             }
           }
@@ -318,5 +327,21 @@ public class ParallelizeForward extends Transformation {
   @Override
   public boolean canBeTransformedWith(Transformation other) {
     return false; // independent transformation
+  }
+
+  /**
+   * Get the called fct name.
+   * @return Fct name.
+   */
+  public String getCalledFctName(){
+    return _calledFctName;
+  }
+
+  /**
+   * Get the parent fct name.
+   * @return Fct name.
+   */
+  public String getCallingFctName(){
+    return _callingFctName;
   }
 }
