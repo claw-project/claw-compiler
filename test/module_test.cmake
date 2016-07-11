@@ -196,8 +196,12 @@ if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
   add_test(NAME ast-compare-cpu-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_CPU} ${REFERENCE_FILE_CPU})
   add_test(NAME ast-compare-gpu-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_GPU} ${REFERENCE_FILE_GPU})
+  add_test(NAME ast-compare-main-cpu-${TEST_NAME} COMMAND diff ${OUTPUT_MAIN_CPU} ${REFERENCE_MAIN_CPU})
+  add_test(NAME ast-compare-main-gpu-${TEST_NAME} COMMAND diff ${OUTPUT_MAIN_GPU} ${REFERENCE_MAIN_GPU})
   set_tests_properties(ast-compare-cpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
   set_tests_properties(ast-compare-gpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
+  set_tests_properties(ast-compare-main-cpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
+  set_tests_properties(ast-compare-main-gpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
 
   if(HAS_EXTRA_MOD)
     add_test(NAME ast-compare-cpu-extra-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_EXTRA_CPU} ${REFERENCE_FILE_EXTRA_CPU})
