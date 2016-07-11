@@ -3,7 +3,7 @@ add_subdirectory(abstraction1)
 add_subdirectory(abstraction2)
 add_subdirectory(abstraction3)
 add_subdirectory(abstraction4)
-#add_subdirectory(abstraction5)
+add_subdirectory(abstraction5)
 add_subdirectory(call1)
 add_subdirectory(kcache1) # assign cache
 add_subdirectory(kcache2) # assign cache with init clause
