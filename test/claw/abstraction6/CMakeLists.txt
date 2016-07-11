@@ -1,0 +1,8 @@
+set(TEST_NAME abstraction6)
+set(HAS_EXTRA_MOD ON)   # If ON, extra module is transformed and compiled
+set(TEST_DEBUG ON)      # If ON, clawfc is executed with the debig flag
+set(OUTPUT_TEST OFF)    # If ON, test the output of executables with original
+set(IGNORE_TEST OFF)    # If ON, ignore all test targets
+set(OPENACC_ENABLE OFF) # If ON, try to compile with OpenACC
+set(OPENMP_ENABLE OFF)  # If ON, try to compile with OpenMP
+include(${CMAKE_SOURCE_DIR}/test/module_test.cmake)
