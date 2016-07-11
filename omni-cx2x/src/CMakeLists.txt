@@ -81,7 +81,6 @@ add_jar(${OMNI_CX2X_XCODEML_NAME}
   cx2x/xcodeml/xnode/XsymbolTable.java
   cx2x/xcodeml/xnode/Xtype.java
   cx2x/xcodeml/xnode/XtypeTable.java
-  cx2x/xcodeml/xnode/XvarDecl.java
   cx2x/xcodeml/xnode/Xattr.java
   cx2x/xcodeml/xnode/Xcode.java
   cx2x/xcodeml/xnode/Xnode.java

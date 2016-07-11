@@ -1388,7 +1388,7 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a new XvarDecl object with all the underlying elements.
+   * Create a new Xdecl object with all the underlying elements for a varDecl.
    * @param xcodeml The current XcodeML file unit in which the elements
    *                are created.
    * @param nameType  Value for the attribute type of the name element.

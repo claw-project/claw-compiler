@@ -22,7 +22,7 @@ import cx2x.xcodeml.helper.*;
  *            | FcommonDecl )*
  *
  * - Optional:
- *   - varDecl (XvarDecl)
+ *   - varDecl
  *   - FstructDecl
  *   - externDecl
  *   - FuseDecl
