@@ -20,7 +20,7 @@ import java.util.List;
 
 public abstract class TransformationGroup {
   private final String _name;
-  private final List<Transformation> _transformations;
+  private List<Transformation> _transformations;
 
   /**
    * TransformationGroup ctor.
@@ -51,8 +51,16 @@ public abstract class TransformationGroup {
    * Return the list of all transformations in this group.
    * @return A list of Transformation object.
    */
-  protected List<Transformation> getTransformations(){
+  public List<Transformation> getTransformations(){
     return _transformations;
+  }
+
+  /**
+   * Set the list of transformations.
+   * @param transformations New list of transformations.
+   */
+  public void setTransformations(List<Transformation> transformations){
+    _transformations = transformations;
   }
 
   /**
@@ -73,5 +81,6 @@ public abstract class TransformationGroup {
    */
   public abstract void applyTranslations(XcodeProgram xcodeml,
     Transformer transformer) throws Exception;
+
 
 }
