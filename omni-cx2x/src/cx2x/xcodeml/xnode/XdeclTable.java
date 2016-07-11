@@ -64,9 +64,11 @@ public class XdeclTable extends Xnode {
             _table.put(varDecl.find(Xcode.NAME).getValue(), varDecl);
             break;
           case Xname.F_USE_DECL:
+          case Xname.F_USE_ONLY_DECL:
             Xdecl useDecl = new Xdecl(element);
             _table.put(useDecl.getAttribute(Xattr.NAME), useDecl);
             break;
+
 
           // TODO read FstructDecl elements
           // TODO read externDecl elements
@@ -132,6 +134,7 @@ public class XdeclTable extends Xnode {
    * @return A list of all declarations of this kind.
    */
   public List<Xdecl> getAll(Xcode decl){
+
     switch (decl) {
       case VARDECL:
       case FUSEDECL:
