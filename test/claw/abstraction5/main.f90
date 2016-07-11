@@ -1,6 +1,6 @@
 ! Test the CLAW abstraction model with one additional dimension.
 PROGRAM test_abstraction4
-  USE mo_col, ONLY: compute
+  USE mo_column_extra, ONLY: compute
   REAL, DIMENSION(20,60) :: q, t  ! Fields as declared in the whole model
   INTEGER :: nproma, nz           ! Size of array fields
   INTEGER :: p                    ! Loop index

@@ -1,4 +1,4 @@
-MODULE mo_col
+MODULE mo_column_extra
   IMPLICIT NONE
 CONTAINS
 
@@ -14,4 +14,4 @@ CONTAINS
     CALL compute_column(nz, q, t)
   END SUBROUTINE compute
 
-END MODULE mo_col
+END MODULE mo_column_extra
