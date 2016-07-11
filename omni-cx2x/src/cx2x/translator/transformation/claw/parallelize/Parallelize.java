@@ -186,7 +186,7 @@ public class Parallelize extends Transformation {
     prepareArrayIndexes(xcodeml);
 
     // Insert the declarations of variables to iterate over the new dimensions.
-    insertVariableToIterateOverDimension(xcodeml, transformer);
+    insertVariableToIterateOverDimension(xcodeml);
 
     // Promote all array fields with new dimensions.
     promoteFields(xcodeml);
@@ -455,12 +455,8 @@ public class Parallelize extends Transformation {
    * the additional dimensions.
    * @param xcodeml     Current XcodeML program unit in which element are
    *                    created.
-   * @param transformer Current transformer object.
    */
-  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml,
-                                                    Transformer transformer)
-      throws IllegalTransformationException
-  {
+  private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
         xcodeml.getTypeTable().generateIntegerTypeHash(),

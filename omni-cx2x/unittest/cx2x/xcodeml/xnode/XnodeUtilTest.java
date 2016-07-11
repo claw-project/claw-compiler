@@ -7,7 +7,6 @@ package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.helper.XnodeUtil;
 import helper.TestConstant;
-import helper.XmlHelper;
 import org.junit.Test;
 
 import java.io.File;

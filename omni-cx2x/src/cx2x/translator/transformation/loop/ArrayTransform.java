@@ -192,7 +192,6 @@ public class ArrayTransform extends BlockTransformation {
    * @param doStmtGrip  Grip for the code insertion. Do statements will be
    *                    inserted after the grip element.
    * @return The last stmt created to be used as a grip for next insertion.
-   * @throws IllegalTransformationException if creation of elements fail.
    */
   private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
                                               Transformer transformer,
@@ -200,7 +199,6 @@ public class ArrayTransform extends BlockTransformation {
                                               List<Xnode> ranges,
                                               List<Xnode> statements,
                                               Xnode doStmtGrip)
-      throws IllegalTransformationException
   {
     String[] inductionVars = new String[ranges.size()];
     Xnode[] doStmts = new Xnode[ranges.size()];

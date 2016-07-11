@@ -618,7 +618,6 @@ public class XnodeUtil {
    * @param xcodeml    The XcodeML to write in the output
    * @param outputFile Path of the output file or null to output on std out
    * @param indent     Number of spaces used for the indentation
-   * @return true if the output could be write without problems.
    * @throws IllegalTransformationException if XML file cannot be written.
    */
   public static void writeXcodeML(XcodeML xcodeml, String outputFile,

@@ -199,7 +199,6 @@ public class LoopHoist extends BlockTransformation {
                         Transformation transformation) throws Exception
   {
 
-    List<LoopFusion> fusions = new ArrayList<>();
     // Perform IF extraction and IF creation for lower-bound
     for(LoopHoistDoStmtGroup g : _doGroup){
       if(g.needIfStatement()){
