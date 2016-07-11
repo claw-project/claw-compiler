@@ -28,11 +28,11 @@ import org.w3c.dom.Element;
 public class XfunctionDefinition extends Xnode {
 
   // Elements
-  private XsymbolTable _symbolTable = null;
-  private Xnode _params = null;
-  private XdeclTable _declTable = null;
-  private Xnode _body = null;
-  private Xnode _name = null;
+  private final XsymbolTable _symbolTable;
+  private final Xnode _params;
+  private final XdeclTable _declTable;
+  private final Xnode _body;
+  private final Xnode _name;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -42,14 +42,16 @@ public class XfunctionDefinition extends Xnode {
   public XfunctionDefinition(Element baseElement){
     super(baseElement);
     Xnode symbols = find(Xcode.SYMBOLS);
-    _symbolTable = (symbols != null) ? new XsymbolTable(symbols.getElement())
-        : null;
+    assert(symbols != null);
+    _symbolTable = new XsymbolTable(symbols.getElement());
     Xnode declarations = find(Xcode.DECLARATIONS);
-    _declTable = (declarations != null) ?
-        new XdeclTable(declarations.getElement()) : null;
+    assert(declarations != null);
+    _declTable = new XdeclTable(declarations.getElement());
     _params = find(Xcode.PARAMS);
     _body = find(Xcode.BODY);
     _name = find(Xcode.NAME);
+    assert(_name != null);
+    assert(_body != null);
   }
 
   /**
