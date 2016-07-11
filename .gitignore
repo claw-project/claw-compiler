@@ -19,6 +19,7 @@ out
 transformed_code.f90
 original_code_*
 transformed_code_*
+transformed_main_*
 *.xmod
 *.mod
 
