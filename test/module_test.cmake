@@ -8,6 +8,10 @@ set (OUTPUT_FILE_CPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_cpu.f90)
 set (OUTPUT_FILE_GPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_gpu.f90)
 set (REFERENCE_FILE_CPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_cpu.f90)
 set (REFERENCE_FILE_GPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_gpu.f90)
+set (OUTPUT_MAIN_CPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_main_cpu.f90)
+set (OUTPUT_MAIN_GPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_main_gpu.f90)
+set (REFERENCE_MAIN_CPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_main_cpu.f90)
+set (REFERENCE_MAIN_GPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_main_gpu.f90)
 
 if(HAS_EXTRA_MOD)
   set (ORIGINAL_FILE_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/mo_column_extra.f90)
@@ -77,22 +81,64 @@ if(HAS_EXTRA_MOD)
     COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${ORIGINAL_FILE_EXTRA}"
   )
 
+  # Execute the CLAW compiler for CPU target
+  add_custom_command(
+    OUTPUT  ${OUTPUT_MAIN_CPU}
+    COMMAND touch ${MAIN_F90} # to force new compilation
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_CPU} ${MAIN_F90}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${MAIN_F90} ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_EXTRA_CPU}
+    COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${MAIN_F90}"
+  )
+
+  # Execute the CLAW compiler for GPU target
+  add_custom_command(
+    OUTPUT  ${OUTPUT_MAIN_GPU}
+    COMMAND touch ${MAIN_F90} # to force new compilation
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU} ${OUTPUT_FILE_EXTRA_GPU}
+    COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${MAIN_F90}"
+  )
+
   # Target for the transformation
   add_custom_target(
     transform-${TEST_NAME}
     DEPENDS
-    ${MAIN_CPU} ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_EXTRA_CPU} ${MAIN_GPU}
+    ${OUTPUT_MAIN_CPU} ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_EXTRA_CPU} ${OUTPUT_MAIN_GPU}
     ${OUTPUT_FILE_GPU} ${OUTPUT_FILE_EXTRA_GPU} ${EXECUTABLE_ORIGINAL}
     ${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU}
   )
 
 else()
 
+
+
+  # Execute the CLAW compiler for CPU target
+  add_custom_command(
+    OUTPUT  ${OUTPUT_MAIN_CPU}
+    COMMAND touch ${MAIN_F90} # to force new compilation
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_CPU} ${MAIN_F90}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${MAIN_F90} ${OUTPUT_FILE_CPU}
+    COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${MAIN_F90}"
+  )
+
+  # Execute the CLAW compiler for GPU target
+  add_custom_command(
+    OUTPUT  ${OUTPUT_MAIN_GPU}
+    COMMAND touch ${MAIN_F90} # to force new compilation
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU}
+    COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${MAIN_F90}"
+  )
+
   # Target for the transformation
   add_custom_target(
     transform-${TEST_NAME}
     DEPENDS
-    ${MAIN_CPU} ${OUTPUT_FILE_CPU} ${MAIN_GPU} ${OUTPUT_FILE_GPU}
+    ${OUTPUT_MAIN_CPU} ${OUTPUT_FILE_CPU} ${OUTPUT_MAIN_GPU} ${OUTPUT_FILE_GPU}
     ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED_CPU}
     ${EXECUTABLE_TRANSFORMED_GPU}
   )
@@ -102,7 +148,11 @@ endif()
 # Target to clean the generated file (Output of clawfc)
 add_custom_target(
   clean-${TEST_NAME}
-  COMMAND rm -f ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU} ${XMOD_DIR}/*
+  COMMAND rm -f
+  ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU}
+  ${OUTPUT_MAIN_CPU} ${OUTPUT_MAIN_GPU}
+  ${OUTPUT_FILE_EXTRA_CPU} ${OUTPUT_FILE_EXTRA_GPU}
+  ${XMOD_DIR}/*
 )
 
 # Add target to the global build/clean target
@@ -117,18 +167,18 @@ if(HAS_EXTRA_MOD)
 
   # Build the original code and the transformed code
   add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL "${ORIGINAL_FILE}" "${ORIGINAL_FILE_EXTRA}" "${MAIN_F90}")
-  add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "${OUTPUT_FILE_EXTRA_CPU}" "${MAIN_F90}")
+  add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "${OUTPUT_FILE_EXTRA_CPU}" "${OUTPUT_MAIN_CPU}")
   target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
-  add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${OUTPUT_FILE_EXTRA_GPU}" "${MAIN_F90}")
+  add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${OUTPUT_FILE_EXTRA_GPU}" "${OUTPUT_MAIN_GPU}")
   target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
 
 else()
 
   # Build the original code and the transformed code
   add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL "${ORIGINAL_FILE}" "${MAIN_F90}")
-  add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "${MAIN_F90}")
+  add_executable (${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_CPU}" "${OUTPUT_MAIN_CPU}")
   target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
-  add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${MAIN_F90}")
+  add_executable (${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL "${OUTPUT_FILE_GPU}" "${OUTPUT_MAIN_GPU}")
   target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
 
 endif()
@@ -144,7 +194,6 @@ endif()
 
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
-  add_test(NAME ast-transform-${TEST_NAME} COMMAND "${CMAKE_COMMAND}"  --build ${CMAKE_BINARY_DIR} --target transform-${TEST_NAME})
   add_test(NAME ast-compare-cpu-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_CPU} ${REFERENCE_FILE_CPU})
   add_test(NAME ast-compare-gpu-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_GPU} ${REFERENCE_FILE_GPU})
   set_tests_properties(ast-compare-cpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
