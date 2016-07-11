@@ -20,4 +20,6 @@ public class Constant {
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 
+  public static final String CLAW_MOD_SUFFIX = ".claw";
+
 }
