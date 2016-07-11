@@ -17,15 +17,12 @@ PROGRAM test_abstraction2
     END DO
   END DO
 
-#ifdef _CLAW
-  CALL compute_column(nz, q, t, nx, ny)
-#else
+  !$claw parallelize forward
   DO i = 1, nx
     DO j = 1, ny
       CALL compute_column(nz, q(i,j,:), t(i,j,:))
     END DO
   END DO
-#endif
 
   PRINT*,SUM(q)
   PRINT*,SUM(t)
