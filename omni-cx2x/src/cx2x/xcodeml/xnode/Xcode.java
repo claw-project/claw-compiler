@@ -82,6 +82,7 @@ public enum Xcode {
   GLOBALSYMBOLS(Xname.GLOBAL_SYMBOLS),                       // XcodeML/F 4.1
   GOTOSTATEMENT(Xname.GOTO_STATEMENT),                       // XcodeML/F 6.11
   ID(Xname.ID),                                              // XcodeML/F 8.2
+  IDENTIFIERS(Xname.IDENTIFIERS),                            // Xmod file
   INDEXRANGE(Xname.INDEX_RANGE),                             // XcodeML/F 8.11
   KIND(Xname.KIND),                                          // XcodeML/F 8.1
   LEN(Xname.LENGTH),                                         // XcodeML/F 8.6

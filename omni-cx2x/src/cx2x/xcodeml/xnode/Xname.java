@@ -182,6 +182,7 @@ public class Xname {
 
   // Xmod files
   public static final String DEPENDS = "depends";
+  public static final String IDENTIFIERS = "identifiers";
 
   // Binary expression element
   public static final String DIV_EXPR = "divExpr";

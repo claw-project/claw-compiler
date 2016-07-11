@@ -19,6 +19,8 @@ public class Xmod extends XcodeML {
   private final String _path;
   private final String _name;
 
+  private XsymbolTable _identifiers = null;
+
   /**
    * Constructs a basic Xmod object representing the XcodeML module file given
    * in input.
@@ -30,6 +32,7 @@ public class Xmod extends XcodeML {
     super(baseElement);
     _name = name;
     _path = path.endsWith("/") ? path : path + "/";
+    _identifiers = new XsymbolTable(find(Xcode.IDENTIFIERS).getElement());
   }
 
   /**
@@ -46,5 +49,13 @@ public class Xmod extends XcodeML {
    */
   public String getName() {
     return _name;
+  }
+
+  /**
+   * Get the identifiers table.
+   * @return Identifiers as a symbol table.
+   */
+  public XsymbolTable getIdentifiers(){
+    return _identifiers;
   }
 }
