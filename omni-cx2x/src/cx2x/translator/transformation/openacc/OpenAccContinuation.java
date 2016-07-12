@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.openacc;
 
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
@@ -63,7 +63,7 @@ public class OpenAccContinuation extends Transformation {
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     return getDirective().getPragma().getValue().toLowerCase().
-        startsWith(Constant.OPENACC_PREFIX);
+        startsWith(ClawConstant.OPENACC_PREFIX);
   }
 
   @Override
@@ -87,11 +87,11 @@ public class OpenAccContinuation extends Transformation {
       throws IllegalTransformationException
   {
     String allPragma = getDirective().getPragma().getValue();
-    String[] pragmas = allPragma.split(Constant.OPENACC_PREFIX);
+    String[] pragmas = allPragma.split(ClawConstant.OPENACC_PREFIX);
 
     if(pragmas.length != 2) {
-      getDirective().getPragma().setValue(Constant.OPENACC_PREFIX + " " +
-          pragmas[1] + " " + Constant.CONTINUATION_LINE_SYMBOL);
+      getDirective().getPragma().setValue(ClawConstant.OPENACC_PREFIX + " " +
+          pragmas[1] + " " + ClawConstant.CONTINUATION_LINE_SYMBOL);
       Xnode newlyInserted = getDirective().getPragma();
       for (int i = 2; i < pragmas.length; ++i) {
         Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
@@ -100,10 +100,10 @@ public class OpenAccContinuation extends Transformation {
         p.setLine(getDirective().getPragma().getLineNo() + (i - 1));
 
         if (i == pragmas.length - 1) {
-          p.setValue(Constant.OPENACC_PREFIX + " " + pragmas[i]);
+          p.setValue(ClawConstant.OPENACC_PREFIX + " " + pragmas[i]);
         } else {
-          p.setValue(Constant.OPENACC_PREFIX + " " + pragmas[i] + " " +
-              Constant.CONTINUATION_LINE_SYMBOL);
+          p.setValue(ClawConstant.OPENACC_PREFIX + " " + pragmas[i] + " " +
+              ClawConstant.CONTINUATION_LINE_SYMBOL);
         }
         XnodeUtil.insertAfter(newlyInserted, p);
         newlyInserted = p;

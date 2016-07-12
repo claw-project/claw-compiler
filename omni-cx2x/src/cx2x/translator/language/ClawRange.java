@@ -5,7 +5,7 @@
 
 package cx2x.translator.language;
 
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
@@ -19,7 +19,7 @@ public class ClawRange {
   private String _inductionVar = null;
   private String _lowerBound = null;
   private String _upperBound = null;
-  private String _step = Constant.DEFAULT_STEP_VALUE;
+  private String _step = ClawConstant.DEFAULT_STEP_VALUE;
 
   /**
    * Constructs null initialized ClawRange object.

@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.helper;
 
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
@@ -249,7 +249,7 @@ public class TransformationHelper {
    */
   public static Xmod locateClawModuleFile(String modName){
     for(String dir : XcodeMLtools_Fmod.getSearchPath()){
-      String path = dir + "/" + modName + Constant.CLAW_MOD_SUFFIX +
+      String path = dir + "/" + modName + ClawConstant.CLAW_MOD_SUFFIX +
           XnodeUtil.XMOD_FILE_EXTENSION;
       File f = new File(path);
       if(f.exists()){

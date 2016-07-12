@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 // Cx2x import
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawMapping;
 import cx2x.translator.language.ClawMappingVar;
@@ -191,7 +191,7 @@ public class LoopExtraction extends Transformation {
     // Duplicate function definition
     XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
-    String newFctName = clonedFctDef.getName().getValue() + Constant.EXTRACTION_SUFFIX +
+    String newFctName = clonedFctDef.getName().getValue() + ClawConstant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
     clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);

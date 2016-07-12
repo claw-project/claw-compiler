@@ -12,7 +12,7 @@ grammar Claw;
 
 @header
 {
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.misc.Utility;
 }
 
@@ -314,7 +314,7 @@ range_option returns [ClawRange r]
       $r.setInductionVar($induction.text);
       $r.setLowerBound($lower.text);
       $r.setUpperBound($upper.text);
-      $r.setStep(Constant.DEFAULT_STEP_VALUE);
+      $r.setStep(ClawConstant.DEFAULT_STEP_VALUE);
     }
   | RANGE '(' induction=IDENTIFIER '=' lower=range_id ',' upper=range_id ',' step=range_id ')'
     {

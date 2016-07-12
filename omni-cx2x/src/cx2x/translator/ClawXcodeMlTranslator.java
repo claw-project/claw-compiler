@@ -6,7 +6,7 @@
 package cx2x.translator;
 
 // Cx2x import
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
@@ -106,7 +106,7 @@ public class ClawXcodeMlTranslator {
         }
         // Handle special transformation of OpenACC line continuation
         else if(pragma.getValue().
-            toLowerCase().startsWith(Constant.OPENACC_PREFIX))
+            toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX))
         {
           OpenAccContinuation t =
               new OpenAccContinuation(new AnalyzedPragma(pragma));
@@ -367,7 +367,7 @@ public class ClawXcodeMlTranslator {
       Map.Entry<String, Xmod> pair = it.next();
       Xmod module = pair.getValue();
       String newModuleName = module.getPath() + module.getName() +
-          Constant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
+          ClawConstant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
       try {
         XnodeUtil.writeXcodeML(module, newModuleName, INDENT_OUTPUT);
       } catch (IllegalTransformationException ex){

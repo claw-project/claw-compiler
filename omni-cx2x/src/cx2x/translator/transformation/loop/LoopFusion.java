@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.common.Constant;
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.transformation.*;
@@ -26,7 +26,7 @@ import cx2x.xcodeml.xnode.Xnode;
 
 public class LoopFusion extends Transformation {
   // Contains the value of the group option
-  private String _groupLabel = Constant.EMPTY_STRING;
+  private String _groupLabel = ClawConstant.EMPTY_STRING;
   // The loop statement involved in the Transformation
   private Xnode[] _loops;
   private final ClawLanguage _claw;

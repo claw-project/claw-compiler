@@ -10,7 +10,7 @@ package cx2x.translator.common;
  *
  * @author clementval
  */
-public class Constant {
+public class ClawConstant {
 
 
   public static final String EMPTY_STRING = "";
