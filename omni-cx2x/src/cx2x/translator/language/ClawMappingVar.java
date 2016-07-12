@@ -39,7 +39,7 @@ public class ClawMappingVar {
    * function call arguments mapping and the function body mapping.
    * @return True if the two mapping are different. False otherwise.
    */
-  public boolean hasDifferentMapping(){
+  boolean hasDifferentMapping(){
     return !_argPart.equals(_fctPart);
   }
 
