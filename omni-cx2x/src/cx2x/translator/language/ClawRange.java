@@ -47,7 +47,7 @@ public class ClawRange {
    * Get the induction variable value.
    * @return The induction variable value. Null if not defined.
    */
-  public String getInductionVar() {
+  String getInductionVar() {
     return _inductionVar;
   }
 
@@ -55,7 +55,7 @@ public class ClawRange {
    * Set the induction variable value.
    * @param inductionVar The induction variable value.
    */
-  public void setInductionVar(String inductionVar) {
+  void setInductionVar(String inductionVar) {
     if(inductionVar != null){
       this._inductionVar = inductionVar.trim();
     }
@@ -65,7 +65,7 @@ public class ClawRange {
    * Get the lower bound value.
    * @return The lower bound value. Null if not defined.
    */
-  public String getLowerBound() {
+  String getLowerBound() {
     return _lowerBound;
   }
 
@@ -73,7 +73,7 @@ public class ClawRange {
    * Set the lower bound value.
    * @param lowerBound The lower bound value.
    */
-  public void setLowerBound(String lowerBound) {
+  void setLowerBound(String lowerBound) {
     if(lowerBound != null) {
       this._lowerBound = lowerBound.trim();
     }
@@ -83,7 +83,7 @@ public class ClawRange {
    * Get the upper bound value.
    * @return The upper bound value. Null if not set.
    */
-  public String getUpperBound() {
+  String getUpperBound() {
     return _upperBound;
   }
 
@@ -91,7 +91,7 @@ public class ClawRange {
    * Set the upper bound value.
    * @param upperBound The upper bound value.
    */
-  public void setUpperBound(String upperBound) {
+  void setUpperBound(String upperBound) {
     if(upperBound != null){
       this._upperBound = upperBound.trim();
     }
