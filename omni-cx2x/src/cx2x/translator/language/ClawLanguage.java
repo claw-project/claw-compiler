@@ -269,7 +269,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * than 1. Otherwise, collapse clause has no impact.
    * @param n Number of loops to be collapsed.
    */
-  void setCollapseClause(int n){
+  private void setCollapseClause(int n){
     if(n > 1) {
       _hasCollapseClause = true;
       _collapseClauseValue = n;
@@ -307,7 +307,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Check whether the interchange directive has indexes values.
    * @return True if the directive has interchange value.
    */
-  public boolean hasIndexes(){
+  boolean hasIndexes(){
     return _hasIndexesValue;
   }
 
@@ -773,27 +773,6 @@ public class ClawLanguage extends AnalyzedPragma {
     l.setGroupClause(master.getGroupValue());
     l.setCollapseClause(master.getCollapseValue());
     l.attachPragma(master.getPragma());
-    return l;
-  }
-
-  /**
-   * Create an instance of ClawLanguage that correspond to a loop-fusion
-   * directive. Used for dynamically created transformation.
-   * @param base     Pragma that triggered the transformation.
-   * @param group    Group clause value.
-   * @param collapse Collapse clause value.
-   * @return An instance of ClawLanguage describing a loop-fusion with the
-   * group, collapse clauses and the pragma from the master object.
-   */
-  public static ClawLanguage createLoopFusionLanguage(Xnode base,
-                                                      String group,
-                                                      int collapse)
-  {
-    ClawLanguage l = new ClawLanguage();
-    l.setDirective(ClawDirective.LOOP_FUSION);
-    l.setGroupClause(group);
-    l.setCollapseClause(collapse);
-    l.attachPragma(base);
     return l;
   }
 
