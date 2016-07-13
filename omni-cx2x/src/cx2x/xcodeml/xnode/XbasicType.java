@@ -359,15 +359,9 @@ public class XbasicType extends Xtype {
       _dimensions.add(index);
       _isArray = true;
     } else {
-      if(position == _dimensions.size() - 1){ // Add at the end
-        Xnode last = _dimensions.get(_dimensions.size()-1);
-        XnodeUtil.insertAfter(last, index);
-        _dimensions.add(index);
-      } else {
-        Xnode crtPos = _dimensions.get(position);
-        XnodeUtil.insertBefore(crtPos, index);
-        _dimensions.add(position, index);
-      }
+      Xnode crtPos = _dimensions.get(position);
+      XnodeUtil.insertBefore(crtPos, index);
+      _dimensions.add(position, index);
     }
   }
 
