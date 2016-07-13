@@ -848,6 +848,8 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw define dimension j(jstart,ny) parallelize",
         null, null, Collections.singletonList(d6));
 
+    analyzeValidParallelize("claw parallelize forward", null, null, null);
+
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"), null);
 
@@ -916,6 +918,10 @@ public class ClawLanguageTest {
           assertEquals(dimensions.get(i).getUpperBoundId(),
               l.getDimensionValues().get(i).getUpperBoundId());
         }
+      }
+
+      if(data == null && over == null && dimensions == null){
+        assertTrue(l.hasForwardClause());
       }
 
     } catch(IllegalDirectiveException idex){
