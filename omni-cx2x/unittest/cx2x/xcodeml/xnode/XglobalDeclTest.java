@@ -23,6 +23,9 @@ public class XglobalDeclTest {
       "</FmoduleDefinition>" +
       "<FfunctionDefinition lineno=\"917\" file=\"./src/module.f90\">\n" +
       "<name type=\"Fb39d60\">fct1</name>" +
+      "<symbols></symbols>" +
+      "<declarations></declarations>" +
+      "<body></body>" +
       "</FfunctionDefinition>" +
       "</globalDeclarations>";
 
@@ -38,10 +41,10 @@ public class XglobalDeclTest {
     XfunctionDefinition fDef = gdTable.getFctDefinition("fct1");
     assertNotNull(fDef);
     assertEquals("fct1", fDef.getName().getValue());
-    assertNull(fDef.getBody());
-    assertNull(fDef.getDeclarationTable());
+    assertNotNull(fDef.getBody());
+    assertNotNull(fDef.getDeclarationTable());
     assertNull(fDef.getParams());
-    assertNull(fDef.getSymbolTable());
+    assertNotNull(fDef.getSymbolTable());
     assertEquals(917, fDef.getLineNo());
     assertEquals("./src/module.f90", fDef.getFile());
     assertTrue(gdTable.hasDefinition("module"));
