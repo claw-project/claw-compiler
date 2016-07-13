@@ -844,6 +844,10 @@ public class ClawLanguageTest {
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d5));
 
+    ClawDimension d6 = new ClawDimension("j", "jstart", "ny");
+    analyzeValidParallelize("claw define dimension j(jstart,ny) parallelize",
+        null, null, Collections.singletonList(d6));
+
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"), null);
 
@@ -878,17 +882,20 @@ public class ClawLanguageTest {
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
-      assertEquals(data.size(), l.getDataClauseValues().size());
-      assertEquals(over.size(), l.getOverClauseValues().size());
-
-      assertTrue(l.hasDataClause());
-      for(int i = 0; i < data.size(); ++i){
-        assertEquals(data.get(i), l.getDataClauseValues().get(i));
+      if(data != null) {
+        assertTrue(l.hasDataClause());
+        assertEquals(data.size(), l.getDataClauseValues().size());
+        for (int i = 0; i < data.size(); ++i) {
+          assertEquals(data.get(i), l.getDataClauseValues().get(i));
+        }
       }
 
-      assertTrue(l.hasOverClause());
-      for(int i = 0; i < over.size(); ++i){
-        assertEquals(over.get(i), l.getOverClauseValues().get(i));
+      if(over != null) {
+        assertTrue(l.hasOverClause());
+        assertEquals(over.size(), l.getOverClauseValues().size());
+        for (int i = 0; i < over.size(); ++i) {
+          assertEquals(over.get(i), l.getOverClauseValues().get(i));
+        }
       }
 
       if(dimensions != null){
