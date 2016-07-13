@@ -115,7 +115,9 @@ public class Parallelize extends Transformation {
             get(decl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType){
           XbasicType bType = (XbasicType)type;
-          if(bType.getIntent() == Xintent.INOUT && bType.isArray()){
+          if((bType.getIntent() == Xintent.INOUT
+              || bType.getIntent() == Xintent.OUT)
+              && bType.isArray()){
             _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
           }
         }
@@ -351,7 +353,7 @@ public class Parallelize extends Transformation {
    *                the information in the defined dimension.
    * @param xcodeml Current XcodeML program unit in which the element will be
    *                created.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException If type cannot be found.
    */
   private void promoteField(String fieldId, boolean update, boolean assumed,
                             XcodeProgram xcodeml)
