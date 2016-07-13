@@ -116,13 +116,14 @@ public class Parallelize extends Transformation {
             get(decl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType){
           XbasicType bType = (XbasicType)type;
-          if((bType.getIntent() == Xintent.IN
+          if(((bType.getIntent() == Xintent.IN
               || bType.getIntent() == Xintent.OUT
-              || bType.getIntent() == Xintent.INOUT) && bType.isArray())
+              || bType.getIntent() == Xintent.INOUT)
+              || bType.isPointer()) && bType.isArray())
           {
             if(XmOption.isDebugOutput()){
-              System.out.println("Array " +  decl.find(Xcode.NAME).getValue() +
-              " will be promoted.");
+              System.out.println("parallelize promotion: Array " +
+                  decl.find(Xcode.NAME).getValue() + " will be promoted.");
             }
             _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
           }
