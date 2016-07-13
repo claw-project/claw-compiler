@@ -15,6 +15,7 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
+import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -115,9 +116,14 @@ public class Parallelize extends Transformation {
             get(decl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType){
           XbasicType bType = (XbasicType)type;
-          if((bType.getIntent() == Xintent.INOUT
-              || bType.getIntent() == Xintent.OUT)
-              && bType.isArray()){
+          if((bType.getIntent() == Xintent.IN
+              || bType.getIntent() == Xintent.OUT
+              || bType.getIntent() == Xintent.INOUT) && bType.isArray())
+          {
+            if(XmOption.isDebugOutput()){
+              System.out.println("Array " +  decl.find(Xcode.NAME).getValue() +
+              " will be promoted.");
+            }
             _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
           }
         }
