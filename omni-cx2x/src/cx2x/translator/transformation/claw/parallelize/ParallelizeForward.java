@@ -56,7 +56,7 @@ public class ParallelizeForward extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     Xnode next = XnodeUtil.getNextSibling(_claw.getPragma());
     if(next == null){
-      xcodeml.addError("Directive is not followed a valid statement.",
+      xcodeml.addError("Directive is not followed by a valid statement.",
           _claw.getPragma().getLineNo());
       return false;
     }
@@ -66,7 +66,7 @@ public class ParallelizeForward extends Transformation {
       _outerDoStatement = next;
       return analyzeForwardWithDo(xcodeml, next);
     }
-    xcodeml.addError("Directive is not followed a valid statement.",
+    xcodeml.addError("Directive is not followed by a valid statement.",
         _claw.getPragma().getLineNo());
     return false;
   }
