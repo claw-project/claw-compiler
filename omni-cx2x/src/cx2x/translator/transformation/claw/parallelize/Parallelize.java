@@ -389,9 +389,16 @@ public class Parallelize extends Transformation {
           Xintent.NONE);
     }
     if(assumed){
-      for(int i = 0; i < _overDimensions; ++i){
-        Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
-        newType.addDimension(index, 0);
+      if(newType.isAllAssumedShape()){
+        for(int i = 0; i < _overDimensions; ++i){
+          Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+          newType.addDimension(index, 0);
+        }
+      } else {
+        for (ClawDimension dim : _claw.getDimensionValues()) {
+          Xnode index = dim.generateIndexRange(xcodeml, false);
+          newType.addDimension(index, 0);
+        }
       }
     } else {
       for(ClawDimension dim : _claw.getDimensionValues()){
