@@ -396,7 +396,7 @@ public class Parallelize extends Transformation {
     } else {
       for(ClawDimension dim : _claw.getDimensionValues()){
         Xnode index = dim.generateIndexRange(xcodeml, false);
-        newType.addDimension(index, 0);
+        newType.addDimension(index, XbasicType.APPEND);
       }
     }
     id.setType(type);

@@ -60,6 +60,8 @@ public class XbasicType extends Xtype {
   private boolean _is_allocatable = false;
   private Xintent _intent = null;
 
+  public static final int APPEND = -1;
+
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
@@ -351,10 +353,11 @@ public class XbasicType extends Xtype {
   /**
    * Add a dimension to the basic type.
    * @param index    Index element to add as the new dimension.
-   * @param position Position compared to already existing element.
+   * @param position Position compared to already existing element. If -1,
+   *                 dimension is added at the end.
    */
   public void addDimension(Xnode index, int position){
-    if(_dimensions.size() == 0){
+    if(_dimensions.size() == 0 || position == APPEND){
       appendToChildren(index, false);
       _dimensions.add(index);
       _isArray = true;
