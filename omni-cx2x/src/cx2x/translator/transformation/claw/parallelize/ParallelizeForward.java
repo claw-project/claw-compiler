@@ -60,8 +60,13 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-    if(next.Opcode() == Xcode.EXPRSTATEMENT){
-      return analyzeForward(xcodeml, next);
+    if(next.Opcode() == Xcode.EXPRSTATEMENT
+        || next.Opcode() == Xcode.FASSIGNSTATEMENT)
+    {
+      _fctCall = next.find(Xcode.FUNCTIONCALL);
+      if(_fctCall != null){
+        return analyzeForward(xcodeml);
+      }
     } else if (next.Opcode() == Xcode.FDOSTATEMENT) {
       _outerDoStatement = next;
       return analyzeForwardWithDo(xcodeml, next);
@@ -114,8 +119,13 @@ public class ParallelizeForward extends Transformation {
                 "in the do statements.",
             _claw.getPragma().getLineNo());
         return false;
-      } else if (n.Opcode() == Xcode.EXPRSTATEMENT){
-        return analyzeForward(xcodeml, n);
+      } else if (n.Opcode() == Xcode.EXPRSTATEMENT
+          || n.Opcode() == Xcode.FASSIGNSTATEMENT)
+      {
+        _fctCall = n.find(Xcode.FUNCTIONCALL);
+        if(_fctCall != null){
+          return analyzeForward(xcodeml);
+        }
       }
     }
     xcodeml.addError("Function call not found.", _claw.getPragma().getLineNo());
@@ -125,17 +135,9 @@ public class ParallelizeForward extends Transformation {
   /**
    * Analyze the directive when it is used just before a function call.
    * @param xcodeml Current XcodeML file unit.
-   * @param expr    The expression element following the pragma.
    * @return True if the analysis succeed. False otherwise.
    */
-  private boolean analyzeForward(XcodeProgram xcodeml, Xnode expr){
-    if(expr == null){
-      xcodeml.addError("Directive is not followed by a fct call.",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
-
-    _fctCall = expr.find(Xcode.FUNCTIONCALL);
+  private boolean analyzeForward(XcodeProgram xcodeml){
     if(_fctCall == null){
       xcodeml.addError("Directive is not followed by a fct call.",
           _claw.getPragma().getLineNo());
