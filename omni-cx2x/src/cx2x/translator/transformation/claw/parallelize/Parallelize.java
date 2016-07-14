@@ -269,7 +269,9 @@ public class Parallelize extends Transformation {
       if(assign.getChild(0).Opcode() == Xcode.FARRAYREF){
         Xnode ref = assign.getChild(0);
 
-        if(_arrayFieldsInOut.contains(ref.find(Xcode.VARREF, Xcode.VAR).getValue())){
+        if(_arrayFieldsInOut.contains(ref.find(Xcode.VARREF, Xcode.VAR).
+            getValue()))
+        {
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);

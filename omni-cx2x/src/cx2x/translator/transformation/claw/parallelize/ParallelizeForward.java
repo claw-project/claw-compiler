@@ -173,7 +173,8 @@ public class ParallelizeForward extends Transformation {
 
         if(_mod != null){
           if(_mod.getIdentifiers().contains(_calledFctName)){
-            String type = _mod.getIdentifiers().get(_calledFctName).getAttribute(Xattr.TYPE);
+            String type = _mod.getIdentifiers().get(_calledFctName).
+                getAttribute(Xattr.TYPE);
             _fctType = (XfunctionType) _mod.getTypeTable().get(type);
             if(_fctType != null){
               _calledFctName = null;
