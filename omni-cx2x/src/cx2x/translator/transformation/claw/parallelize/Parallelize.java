@@ -109,6 +109,11 @@ public class Parallelize extends Transformation {
     if(!_claw.hasDataClause()){
       for(Xdecl decl : _fctDef.getDeclarationTable().getAll()){
         if(decl.isBuiltInType()){
+          if(XmOption.isDebugOutput()){
+            System.out.println("parallelize promotion: Scalar "
+                + decl.find(Xcode.NAME).getValue()
+                + " is candidate for promotion.");
+          }
           _scalarFields.add(decl.find(Xcode.NAME).getValue());
         }
 
