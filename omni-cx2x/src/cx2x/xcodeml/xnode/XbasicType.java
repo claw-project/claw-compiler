@@ -368,6 +368,19 @@ public class XbasicType extends Xtype {
     }
   }
 
+  /**
+   * Check if the array type is specified with deferred dimension or not.
+   * @return True if all current dimensions are deferred. False otherwise.
+   */
+  public boolean isAllAssumedShape(){
+    for(Xnode dim : _dimensions){
+      if(!dim.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override
   public XbasicType cloneObject() {
     Element element = (Element)cloneNode();
