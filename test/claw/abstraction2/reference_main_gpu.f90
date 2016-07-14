@@ -17,7 +17,7 @@ PROGRAM test_abstraction2
    t ( i , j , 1 ) = 0.0
   END DO
  END DO
- CALL compute_column ( nz , q , t , nx , ny )
+ CALL compute_column ( nz , q , t , nx = nx , ny = ny )
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction2

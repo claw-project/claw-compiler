@@ -7,7 +7,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER , INTENT(IN) :: nproma
 
-  CALL compute_column ( nz , q , t , nproma )
+  CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute
 
  SUBROUTINE compute_column ( nz , q , t , nproma )

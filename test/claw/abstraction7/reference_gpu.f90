@@ -31,7 +31,7 @@ CONTAINS
   INTEGER :: result
   INTEGER , INTENT(IN) :: nproma
 
-  result = compute_column ( nz , q , t , nproma )
+  result = compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute
 
 END MODULE mo_column

@@ -7,7 +7,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER , INTENT(IN) :: nproma
 
-  CALL compute_two ( nz , q , t , nproma )
+  CALL compute_two ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_one
 
  SUBROUTINE compute_two ( nz , q , t , nproma )
@@ -16,7 +16,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER , INTENT(IN) :: nproma
 
-  CALL compute_three ( nz , q , t , nproma )
+  CALL compute_three ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_two
 
  SUBROUTINE compute_three ( nz , q , t , nproma )
@@ -26,7 +26,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER , INTENT(IN) :: nproma
 
-  CALL compute_solver ( nz , q , t , nproma )
+  CALL compute_solver ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_three
 
 END MODULE mo_column_extra
