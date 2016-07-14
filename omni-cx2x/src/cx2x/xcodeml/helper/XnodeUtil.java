@@ -1531,6 +1531,18 @@ public class XnodeUtil {
   }
 
   /**
+   * Create a new namedValue element with its attribute.
+   * @param value   Value of the name attribute.
+   * @param xcodeml Current XcodeML file unit in which the element is created.
+   * @return The newly created element.
+   */
+  public static Xnode createNamedValue(String value, XcodeML xcodeml){
+    Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, xcodeml);
+    namedValue.setAttribute(Xattr.NAME, value);
+    return namedValue;
+  }
+
+  /**
    * Find module containing the function and read its .xmod file.
    * @param fctDef Function definition nested in the module.
    * @return Xmod object if the module has been found and read. Null otherwise.
