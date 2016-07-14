@@ -249,11 +249,11 @@ public class Parallelize extends Transformation {
 
   /**
    * Apply CPU based transformations.
-   * @param xcodeml     Current XcodeML program unit
-   * @throws Exception
+   * @param xcodeml Current XcodeML program unit.
+   * @throws IllegalTransformationException If promotion of arrays fails.
    */
   private void transformForCPU(XcodeProgram xcodeml)
-      throws Exception
+      throws IllegalTransformationException
   {
     /* Create a group of nested loop with the newly defined dimension and wrap
      * every assignment statement in the column loop or including data with it.
