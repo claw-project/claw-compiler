@@ -32,12 +32,9 @@ import cx2x.xcodeml.xnode.Xnode;
  *
  * are represented in XcodeML with
  *
- * &lt;FpragmaStatement&gt;acc data acc present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
+ * &lt;FpragmaStatement&gt;acc data present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
  *
- * The transformation will split it like this:
- *
- * &lt;FpragmaStatement&gt;acc data &amp; &lt;/FpragmaStatement&gt;
- * &lt;FpragmaStatement&gt;acc present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
+ * Based on the defined max columns, the pragma statement will be splitted.
  * </pre>
  *
  * @author clementval
@@ -86,28 +83,54 @@ public class OpenAccContinuation extends Transformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
-    String allPragma = getDirective().getPragma().getValue();
-    String[] pragmas = allPragma.split(ClawConstant.OPENACC_PREFIX);
-
-    if(pragmas.length != 2) {
-      getDirective().getPragma().setValue(ClawConstant.OPENACC_PREFIX + " " +
-          pragmas[1] + " " + ClawConstant.CONTINUATION_LINE_SYMBOL);
-      Xnode newlyInserted = getDirective().getPragma();
-      for (int i = 2; i < pragmas.length; ++i) {
-        Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-
-        p.setFile(getDirective().getPragma().getFile());
-        p.setLine(getDirective().getPragma().getLineNo() + (i - 1));
-
-        if (i == pragmas.length - 1) {
-          p.setValue(ClawConstant.OPENACC_PREFIX + " " + pragmas[i]);
-        } else {
-          p.setValue(ClawConstant.OPENACC_PREFIX + " " + pragmas[i] + " " +
-              ClawConstant.CONTINUATION_LINE_SYMBOL);
-        }
-        XnodeUtil.insertAfter(newlyInserted, p);
-        newlyInserted = p;
-      }
+    if(transformer.getMaxColumns() <= 0){
+      return;
     }
+
+    String allPragma = getDirective().getPragma().getValue();
+
+    if(allPragma.length() > transformer.getMaxColumns()){
+      Xnode newlyInserted = getDirective().getPragma();
+      int lineIndex = 0;
+      while(allPragma.length() > transformer.getMaxColumns()){
+        int splitIndex =
+            allPragma.substring(0,
+                transformer.getMaxColumns() - 2).lastIndexOf(" ");
+        String splittedPragma = allPragma.substring(0, splitIndex);
+        allPragma = allPragma.substring(splitIndex, allPragma.length());
+        newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
+            splittedPragma, true);
+      }
+      createAndInsertPragma(xcodeml, newlyInserted, lineIndex, allPragma, true);
+    }
+  }
+
+  /**
+   * Create a new pragma node and insert it after the hook.
+   * @param xcodeml   Current XcodeML file unit.
+   * @param hook      Hook node. New node will be inserted after this one.
+   * @param lineIndex Line index specify the offset of the line number for the
+   *                  new node from the original pragma node.
+   * @param value     Value of the pragma node.
+   * @param continued If true, continuation symbol is added at the end of the
+   *                  line.
+   * @return The newly created node to be able to insert after it.
+   */
+  private Xnode createAndInsertPragma(XcodeProgram xcodeml, Xnode hook,
+                                      int lineIndex, String value,
+                                      boolean continued)
+  {
+    Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    p.setFile(getDirective().getPragma().getFile());
+    p.setLine(getDirective().getPragma().getLineNo() + lineIndex);
+    if(continued){
+      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value + " " +
+          ClawConstant.CONTINUATION_LINE_SYMBOL);
+    } else {
+      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value);
+    }
+    XnodeUtil.insertAfter(hook, p);
+    getDirective().getPragma().delete();
+    return p;
   }
 }
