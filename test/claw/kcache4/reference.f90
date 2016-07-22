@@ -27,17 +27,16 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  REAL ( KIND= 8 ) :: array8_k_m1
  REAL ( KIND= 8 ) :: array9_k_m1
 
- data1 ( istart : iend , istart : iend ) = 2.0
- data2 ( istart : iend , istart : iend ) = 3.0
+ data1 ( : , : ) = 2.0
+ data2 ( : , : ) = 3.0
  DO i = istart , iend , 1
   array6 ( i , 1 ) = 1.0
   array7 ( i , 1 ) = 2.0
   array8 ( i , 1 ) = 3.0
   array9 ( i , 1 ) = 4.0
  END DO
-!$acc  parallel private(data1_k) private(data2_k) private(array6_k_m1) private(array7_k_m1)  &
-!$acc  private(array8_k_m1)  &
-!$acc  private(array9_k_m1)
+!$acc ACC parallel private(data1_k) private(data2_k) private(array6_k_m1) &
+!$acc  private(array7_k_m1) private(array8_k_m1) private(array9_k_m1)
  DO i = istart , iend , 1
   DO j = jstart + 1 , jend , 1
    IF ( j == jstart + 1 ) THEN
@@ -61,7 +60,7 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
    array9 ( i , j ) = array9_k_m1
   END DO
  END DO
-!$acc end parallel
+!$ACC end parallel
  PRINT * , sum ( array6 )
  PRINT * , sum ( array7 )
  PRINT * , sum ( array8 )
