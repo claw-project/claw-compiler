@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class Xnode {
 
+  private boolean _isDeleted = false;
   final Element _baseElement;
 
   /**
@@ -191,7 +192,16 @@ public class Xnode {
    * Delete the stored root element and all its children.
    */
   public void delete(){
+    _isDeleted = true;
     XnodeUtil.delete(_baseElement);
+  }
+
+  /**
+   * Check whether the node has been deleted.
+   * @return True if the node has been deleted. False otherwise.
+   */
+  public boolean isDeleted(){
+    return _isDeleted;
   }
 
   /**
