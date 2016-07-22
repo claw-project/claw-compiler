@@ -93,6 +93,7 @@ elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
   set(OPENACC_FLAGS "-acc")         # flags to compile with OpenACC support
                                     # TODO maybe need -ta=<target>
   set(OPENMP_FLAGS "-mp")           # flags to compile with OpenMP support
+  set(OMNI_CONF_OPTION ${OMNI_CONF_OPTION} "CPP=pgcc -E")
 else()
   # Std option for gfortran
   set(FPPFLAGS "-E")                # for preprocessing only
