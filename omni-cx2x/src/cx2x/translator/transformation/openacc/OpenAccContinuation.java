@@ -83,7 +83,9 @@ public class OpenAccContinuation extends Transformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
-    if(transformer.getMaxColumns() <= 0){
+    if(transformer.getMaxColumns() <= 0
+        || getDirective().getPragma().isDeleted())
+    {
       return;
     }
 
@@ -103,6 +105,7 @@ public class OpenAccContinuation extends Transformation {
       }
       createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
           allPragma, false);
+      getDirective().getPragma().delete();
     }
   }
 
