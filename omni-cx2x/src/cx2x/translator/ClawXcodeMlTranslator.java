@@ -70,16 +70,18 @@ public class ClawXcodeMlTranslator {
    *                          generation.
    * @param target            Target influencing code transformation.
    * @param groups            Transformation groups configuration list.
+   * @param maxColumns        Maximum number of columns.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
                                AcceleratorDirective directive,
                                Target target,
-                               List<GroupConfiguration> groups)
+                               List<GroupConfiguration> groups,
+                               int maxColumns)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(groups);
+    _transformer = new ClawTransformer(groups, maxColumns);
     _blockDirectives = new Hashtable<>();
     _target = target;
     _generator =
