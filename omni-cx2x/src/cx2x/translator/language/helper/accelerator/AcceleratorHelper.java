@@ -205,12 +205,6 @@ public class AcceleratorHelper {
       xcodeml.addWarning("No parallel construct found to attach private clause",
           claw.getPragma().getLineNo());
     } else {
-      if(hook.getValue().length() >= 80){
-        hook.setValue(hook.getValue() + " " +
-            claw.getAcceleratorGenerator().getPrefix() + " ");
-        transformer.addTransformation(new OpenAccContinuation(
-            new AnalyzedPragma(hook)));
-      }
       hook.setValue(hook.getValue() + " " +
           claw.getAcceleratorGenerator().getPrivateClause(var));
     }
