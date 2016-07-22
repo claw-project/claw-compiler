@@ -8,7 +8,7 @@ set(ANTLR_JAR ${PROJECT_BINARY_DIR}/build/${ANTLR_NAME}.jar)
 
 # Try to download the jar dependencies
 if(NOT EXISTS ${ANTLR_JAR})
-  message("Try to download antlr dependency")
+  message("-- Try to download antlr dependency")
   file(
     DOWNLOAD
     http://www.antlr.org/download/antlr-4.5.2-complete.jar

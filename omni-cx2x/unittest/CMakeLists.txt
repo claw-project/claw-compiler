@@ -21,7 +21,7 @@ configure_file(
 
 # Try to download the jar dependencies
 if(NOT EXISTS ${JUNIT_JAR})
-  message("Try to download junit dependency")
+  message("-- Try to download junit dependency")
   file(
     DOWNLOAD
     http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar
@@ -37,7 +37,7 @@ if(NOT EXISTS ${JUNIT_JAR})
 endif()
 
 if(NOT EXISTS ${HAMCREST_JAR})
-  message("Try to download hamcrest dependency")
+  message("-- Try to download hamcrest dependency")
   file(
     DOWNLOAD
     http://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
