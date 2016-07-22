@@ -101,7 +101,8 @@ public class OpenAccContinuation extends Transformation {
         newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
             splittedPragma, true);
       }
-      createAndInsertPragma(xcodeml, newlyInserted, lineIndex, allPragma, true);
+      createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
+          allPragma, false);
     }
   }
 
