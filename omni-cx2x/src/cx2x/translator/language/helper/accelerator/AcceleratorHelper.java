@@ -7,9 +7,7 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.XfunctionDefinition;
