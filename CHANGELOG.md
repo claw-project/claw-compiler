@@ -19,12 +19,13 @@ New transformation:
 * `loop-hoist`
 * `parallelize`
 
-
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
 
 General:
-* OMNI Compiler version is updated to version 1.0.0.
+* OMNI Compiler is switched to a dedicated forked version including F2003
+  parsing enhancements as well as latest change from the original OMNI
+  repository.
 
 ## [0.1.0] - 2016-02-05
 ### First release
