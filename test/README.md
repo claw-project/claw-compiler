@@ -14,12 +14,21 @@ All tests have the same structure described below:
 * `CMakeLists.txt`: `CMake` file including specific information for the test
   case for the test (see below the format for this file).
 * `main.f90`: The test driver including the `PROGRAM` subroutine.
+* `reference_main_gpu.f90`: A reference Fortran code that will be compared to the
+  transformed code for the GPU target for the main file.
+* `reference_main_cpu.f90`: A reference Fortran code that will be compared to the
+  transformed code for the CPU target for the main file.
 * `mo_column.f90`: The "compute" part of the test. Includes a subroutine which
   abstracts the column/box model with dedicated CLAW directives.
 * `reference_gpu.f90`: A reference Fortran code that will be compared to the
-  transformed code for the GPU target.
+  transformed code for the GPU target for the first module file.
 * `reference_cpu.f90`: A reference Fortran code that will be compared to the
-  transformed code for the CPU target.
+  transformed code for the CPU target for the first module file.
+* `mo_column_extra.f90`: optional module file.
+* `reference_extra_gpu.f90`: A reference Fortran code that will be compared to
+  the transformed code for the GPU target of the extra module.
+* `reference_extra_cpu.f90`: A reference Fortran code that will be compared to
+  the transformed code for the CPU target of the extra module.
 
 ##### CMakeLists.txt structure
 Each test has a `CMakeLists.txt` file that set up few variables to generate
@@ -46,6 +55,8 @@ set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
 set(OUTPUT_TEST ON)         # optional, execute executable output comparison
 set(IGNORE_TEST ON)         # optional, does not perform the test but apply
                             # transformations
+set(HAS_EXTRA_MOD ON)       # optional, enable the second module file      
+                            # transformation in the test case.
 set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
 set(DIRECTIVE_GPU "--directive=opemacc") # Define the directive language for GPU
 set(DIRECTIVE_CPU "--directive=opemmp")  # Define the directive language for CPU
