@@ -17,7 +17,7 @@ public final class DirectedGraph<T> implements Iterable<T> {
   /* A map from nodes in the graph to sets of outgoing edges.  Each
    * set of edges is represented by a map from edges to doubles.
    */
-  private final Map<T, Set<T>> mGraph = new HashMap<T, Set<T>>();
+  private final Map<T, Set<T>> mGraph = new HashMap<>();
 
   /**
    * Adds a new node to the graph.  If the node already exists, this
@@ -27,11 +27,12 @@ public final class DirectedGraph<T> implements Iterable<T> {
    * @return Whether or not the node was added.
    */
   public boolean addNode(T node) {
-        /* If the node already exists, don't do anything. */
-    if (mGraph.containsKey(node))
+    // If the node already exists, don't do anything.
+    if (mGraph.containsKey(node)) {
       return false;
+    }
 
-        /* Otherwise, add the node with an empty set of outgoing edges. */
+    // Otherwise, add the node with an empty set of outgoing edges.
     mGraph.put(node, new HashSet<T>());
     return true;
   }
@@ -48,11 +49,12 @@ public final class DirectedGraph<T> implements Iterable<T> {
    *                                do not exist.
    */
   public void addEdge(T start, T dest) {
-        /* Confirm both endpoints exist. */
-    if (!mGraph.containsKey(start) || !mGraph.containsKey(dest))
+    // Confirm both endpoints exist.
+    if (!mGraph.containsKey(start) || !mGraph.containsKey(dest)) {
       throw new NoSuchElementException("Both nodes must be in the graph.");
+    }
 
-        /* Add the edge. */
+    // Add the edge.
     mGraph.get(start).add(dest);
   }
 
@@ -66,9 +68,10 @@ public final class DirectedGraph<T> implements Iterable<T> {
    * @throws NoSuchElementException If either node is not in the graph.
    */
   public void removeEdge(T start, T dest) {
-        /* Confirm both endpoints exist. */
-    if (!mGraph.containsKey(start) || !mGraph.containsKey(dest))
+    // Confirm both endpoints exist.
+    if (!mGraph.containsKey(start) || !mGraph.containsKey(dest)) {
       throw new NoSuchElementException("Both nodes must be in the graph.");
+    }
 
     mGraph.get(start).remove(dest);
   }
@@ -84,9 +87,10 @@ public final class DirectedGraph<T> implements Iterable<T> {
    * @throws NoSuchElementException If either endpoint does not exist.
    */
   public boolean edgeExists(T start, T end) {
-        /* Confirm both endpoints exist. */
-    if (!mGraph.containsKey(start) || !mGraph.containsKey(end))
+    // Confirm both endpoints exist.
+    if (!mGraph.containsKey(start) || !mGraph.containsKey(end)) {
       throw new NoSuchElementException("Both nodes must be in the graph.");
+    }
 
     return mGraph.get(start).contains(end);
   }
@@ -100,10 +104,11 @@ public final class DirectedGraph<T> implements Iterable<T> {
    * @throws NoSuchElementException If the node does not exist.
    */
   public Set<T> edgesFrom(T node) {
-        /* Check that the node exists. */
+    // Check that the node exists.
     Set<T> arcs = mGraph.get(node);
-    if (arcs == null)
+    if (arcs == null) {
       throw new NoSuchElementException("Source node does not exist.");
+    }
 
     return Collections.unmodifiableSet(arcs);
   }
