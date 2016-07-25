@@ -186,6 +186,7 @@ endif()
 # Set target specific compilation options
 if(OPENACC_ENABLE)
   target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${OPENACC_FLAGS})
+  target_link_libraries(${EXECUTABLE_TRANSFORMED_GPU} ${OPENACC_FLAGS})
 elseif(OPENMP_ENABLE)
   target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC ${OPENMP_FLAGS})
 else()
