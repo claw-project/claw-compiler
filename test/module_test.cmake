@@ -1,4 +1,4 @@
-# Base test definition
+# Base test definition for test case with a main file and one or two modules.
 # Perform code transformation and compare the output with a reference
 
 # Define input and output file name
@@ -13,6 +13,7 @@ set (OUTPUT_MAIN_GPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_main_gpu.f90)
 set (REFERENCE_MAIN_CPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_main_cpu.f90)
 set (REFERENCE_MAIN_GPU ${CMAKE_CURRENT_SOURCE_DIR}/reference_main_gpu.f90)
 
+# If the test case has an extra module.
 if(HAS_EXTRA_MOD)
   set (ORIGINAL_FILE_EXTRA ${CMAKE_CURRENT_SOURCE_DIR}/mo_column_extra.f90)
   set (OUTPUT_FILE_EXTRA_CPU ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code_extra_cpu.f90)
@@ -112,8 +113,6 @@ if(HAS_EXTRA_MOD)
 
 else()
 
-
-
   # Execute the CLAW compiler for CPU target
   add_custom_command(
     OUTPUT  ${OUTPUT_MAIN_CPU}
@@ -162,7 +161,7 @@ add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 # Define additional compilation flags
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
 
-
+# Build of the executables is different if there is one or two modules
 if(HAS_EXTRA_MOD)
 
   # Build the original code and the transformed code
@@ -204,6 +203,7 @@ if(NOT IGNORE_TEST)
   set_tests_properties(ast-compare-main-cpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
   set_tests_properties(ast-compare-main-gpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
 
+  # Test the extra module file with its reference
   if(HAS_EXTRA_MOD)
     add_test(NAME ast-compare-cpu-extra-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_EXTRA_CPU} ${REFERENCE_FILE_EXTRA_CPU})
     add_test(NAME ast-compare-gpu-extra-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_EXTRA_GPU} ${REFERENCE_FILE_EXTRA_GPU})
