@@ -414,7 +414,8 @@ public class LoopExtraction extends Transformation {
    * @param from Element to search from. Search is performed in its
    *             children.
    * @return A XdoStatement object that match the range of loop-extract.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException When something goes wrong with loop
+   * detection or iteration matching.
    */
   private Xnode locateDoStatement(Xnode from)
       throws IllegalTransformationException
