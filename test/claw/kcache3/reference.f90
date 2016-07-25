@@ -27,8 +27,8 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  REAL ( KIND= 8 ) :: array8_k_m1
  REAL ( KIND= 8 ) :: array9_k_m1
 
- data1 ( istart : iend , istart : iend ) = 2.0
- data2 ( istart : iend , istart : iend ) = 3.0
+ data1 ( : , : ) = 2.0
+ data2 ( : , : ) = 3.0
  DO i = istart , iend , 1
   array6 ( i , 1 ) = 1.0
   array7 ( i , 1 ) = 2.0
