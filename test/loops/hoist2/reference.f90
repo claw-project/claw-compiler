@@ -40,7 +40,7 @@ SUBROUTINE claw_hoist2 ( )
  array2d_3 ( 1 : 10 , 1 : 100 ) = 0.0
  array2d_4 ( 1 : 10 , 1 : 100 ) = 0.0
  array2d_5 ( 1 : 10 , 1 : 100 ) = 0.0
-!$acc parallel loop gang vector collapse(2)
+!$ACC parallel loop gang vector collapse(2)
  DO jt = 1 , ntrac , 1
   DO i = 1 , kproma , 1
    DO j = 1 , klev , 1
@@ -74,6 +74,6 @@ SUBROUTINE claw_hoist2 ( )
    END DO
   END DO
  END DO
-!$acc end parallel
+!$ACC end parallel
 END SUBROUTINE claw_hoist2
 
