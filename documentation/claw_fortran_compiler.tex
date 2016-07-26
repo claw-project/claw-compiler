@@ -166,6 +166,38 @@ Allow to specify the type of accelerator directive language for code generation.
 \textbf{\texttt{--target-list}}\\
 Print the list of available type of accelerator directive language supported.
 
+\subsection{Options for the global configuration}
+Default target and directive language as well as transformation order are specified
+by a configuration file. 
+A default file is generated an installed with the CLAW compiler. An option allows to 
+use a different configuration while using the compiler. 
+
+\begin{lstlisting}
+<!-- CLAW default configuration. -->
+<claw version="0.2">
+  <target default="gpu" />
+  <directive default="openacc" />
+  <groups>
+    <group type="independent" name="remove"              class="cx2x.translator.transformation.utility.UtilityRemove" />
+    <group type="independent" name="parallelize"         class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
+    <group type="independent" name="parallelize-forward" class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+    <group type="independent" name="array-transform"     class="cx2x.translator.transformation.loop.ArrayTransform" />
+    <group type="independent" name="loop-extract"        class="cx2x.translator.transformation.loop.LoopExtraction" />
+    <group type="dependent"   name="loop-fusion"         class="cx2x.translator.transformation.loop.LoopFusion" />
+    <group type="independent" name="loop-hoist"          class="cx2x.translator.transformation.loop.LoopHoist" />
+    <group type="independent" name="loop-interchange"    class="cx2x.translator.transformation.loop.LoopInterchange" />
+    <group type="independent" name="on-the-fly"          class="cx2x.translator.transformation.claw.ArrayToFctCall" />
+    <group type="independent" name="kcache"              class="cx2x.translator.transformation.claw.Kcaching" />
+  </groups>
+</claw>
+\end{lstlisting}
+
+\textbf{\texttt{--config=<config-file>}}\\
+Allow to specify a different configuration for the translator.
+
+\textbf{\texttt{--show-config}}\\
+Print the the current configuration information. If used with \texttt{--config}, list the information from the specific configuration.
+
 \subsection{Options for debugging}
 These options affect the output at the command line and give information about the process. 
 
