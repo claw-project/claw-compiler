@@ -92,8 +92,6 @@ will be written in the specified directory
 $ clawfc -D src/ -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
-
-
 \subsection{Options for directory search}
 These options affect how the CLAW compiler searches for files specified by the
 \texttt{"INCLUDE"} directive and where it searches for previously compiled modules.
@@ -110,7 +108,6 @@ All specified paths are used to search for \texttt{.mod/.xmod} file when previou
 \begin{lstlisting}
 $ clawfc -J xmod/ -o transformed_code.f90 original_code.f90
 \end{lstlisting}
-
 
 \subsection{Options to affect the workflow}
 These options affect the workflow of the compiler. 
@@ -150,6 +147,15 @@ Stop the compiler after the translation. Output XcodeML file is generated from t
 \begin{lstlisting}
 $ clawfc --stop-translator -o transformed_code.f90 original_code.f90
 \end{lstlisting}
+
+\subsection{Options for the accelerator language directive}
+These options affect the generation of accelerator language directive.
+
+\textbf{\texttt{-d=,--directive=<dir-lang>}}\\
+Allow to specify the type of accelerator directive language for code generation.
+
+\textbf{\texttt{--directive-list}}\\
+Print the list of available type of accelerator directive language supported.
 
 \subsection{Options for debugging}
 These options affect the output at the command line and give information about the process. 
