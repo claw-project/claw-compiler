@@ -42,30 +42,55 @@ usage: clawfc_test <OPTIONS> <INPUTFILE> ...
 CLAW Fortran compiler options:
 
    -o <file>                  : place the output into <file>.
-   -I <dir>                   : add the directory dir to the list of directories to be searched for header files.
-   -J <dir>                   : specify where to put .mod and .xmod files for compiled modules.
-   -D <dir>                   : specify output directory for transformed files
-   -t=,--target=<target>      : specify the type of accelerator directive language for code generation.
-   --target-list              : list the available type of accelerator directive language supported.
-   -d=,--directive=<dir-lang> : specify the type of accelerator directive language for code generation.
-   --directive-list           : list the available type of accelerator directive language supported.
-   --config=<config_file>     : specify a different configuration for the translator.
-   --show-config              : list the current configuration information. If used with --config, list the information from the specific configuration.
+   -I <dir>                   : add the directory dir to the list 
+                                of directories to be searched for 
+                                header files.
+   -J <dir>                   : specify where to put .mod and .xmod 
+                                files for compiled modules.
+   -D <dir>                   : specify output directory for 
+                                transformed files
+   -t=,--target=<target>      : specify the type of accelerator 
+                                directive language for code 
+                                generation.
+   --target-list              : list the available type of 
+                                accelerator directive language 
+                                supported.
+   -d=,--directive=<dir-lang> : specify the type of accelerator 
+                                directive language for code 
+                                generation.
+   --directive-list           : list the available type of 
+                                accelerator directive language 
+                                supported.
+   --config=<config_file>     : specify a different configuration 
+                                for the translator.
+   --show-config              : list the current configuration 
+                                information. If used with --config, 
+                                list the information from the 
+                                specific configuration.
    -v,--verbose               : print processing status.
    --version                  : print version.
    -h,--help                  : print usage.
    --show-env                 : show environment variables.
-   --no-dep                   : don't generate .mod or .xmod file for dependencies.
-   -f,--force                 : force the translation of files without directives.
-   --debug                    : save intermediate files in __omni_tmp__.
-   --stop-pp                  : save intermediate files and stop after preprocess.
-   --stop-dependencies        : save intermediate files and stop after dependencies resolution.
-   --stop-frontend            : save intermediate files and stop after frontend.
-   --stop-translator          : save intermediate files and stop after translator.
+   --no-dep                   : don't generate .mod or .xmod file 
+                                for dependencies.
+   -f,--force                 : force the translation of files 
+                                without directives.
+   --debug                    : save intermediate files in 
+                                __omni_tmp__.
+   --stop-pp                  : save intermediate files and stop 
+                                after preprocess.
+   --stop-dependencies        : save intermediate files and stop 
+                                after dependencies resolution.
+   --stop-frontend            : save intermediate files and stop 
+                                after frontend.
+   --stop-translator          : save intermediate files and stop 
+                                after translator.
 
 Decompiler options:
-   -w <integer>               : Set the number of columns for the output Fortran file (default: 80).
-   -l                         : Add preprocessor line directives in the output Fortran file.
+   -w <integer>               : Set the number of columns for the 
+                                output Fortran file (default: 80).
+   -l                         : Add preprocessor line directives 
+                                in the output Fortran file.
 
 Process Options
 
