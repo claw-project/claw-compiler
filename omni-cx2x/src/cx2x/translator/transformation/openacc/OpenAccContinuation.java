@@ -94,10 +94,11 @@ public class OpenAccContinuation extends Transformation {
     if(allPragma.length() > transformer.getMaxColumns()){
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = 0;
-      while(allPragma.length() > transformer.getMaxColumns()){
+      int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
+      while(allPragma.length() > (transformer.getMaxColumns() - addLength)){
         int splitIndex =
             allPragma.substring(0,
-                transformer.getMaxColumns() - 2).lastIndexOf(" ");
+                transformer.getMaxColumns() - addLength).lastIndexOf(" ");
         String splittedPragma = allPragma.substring(0, splitIndex);
         allPragma = allPragma.substring(splitIndex, allPragma.length());
         newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
