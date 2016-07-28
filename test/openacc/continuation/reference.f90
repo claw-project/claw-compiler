@@ -2,7 +2,7 @@ PROGRAM openacc_cont
 
 !$ACC parallel
 !$ACC end parallel
-!$acc ACC data  present ( pti,pdp,pclc,pwv,psw,pqlwc,pqiwc,pduco2,pduo3  )  present &
+!$acc data  present ( pti,pdp,pclc,pwv,psw,pqlwc,pqiwc,pduco2,pduo3  )  present &
 !$acc  ( paeq1,paeq2,paeq3,paeq4,paeq5,psmu0,palso      )  present ( &
 !$acc  palth,pskyview,pfcor                           )  present ( papre            &
 !$acc                                )  present ( &
@@ -18,4 +18,3 @@ PROGRAM openacc_cont
 !$acc  pflpar_dp,pflsu_par_dp,pflsd_par_dp            )  present ( pflsp_par_dp     &
 !$acc                                )
 END PROGRAM openacc_cont
-
