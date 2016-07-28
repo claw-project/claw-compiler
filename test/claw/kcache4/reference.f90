@@ -35,7 +35,7 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
   array8 ( i , 1 ) = 3.0
   array9 ( i , 1 ) = 4.0
  END DO
-!$acc ACC parallel private(data1_k) private(data2_k) private(array6_k_m1) &
+!$acc  parallel private(data1_k) private(data2_k) private(array6_k_m1) &
 !$acc  private(array7_k_m1) private(array8_k_m1) private(array9_k_m1)
  DO i = istart , iend , 1
   DO j = jstart + 1 , jend , 1
