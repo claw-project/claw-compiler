@@ -92,6 +92,8 @@ public class OpenAccContinuation extends Transformation {
     String allPragma = getDirective().getPragma().getValue();
 
     if(allPragma.length() > transformer.getMaxColumns()){
+      allPragma =
+          allPragma.toLowerCase().replace(ClawConstant.OPENACC_PREFIX, "");
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = 0;
       int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
