@@ -310,3 +310,41 @@ function claw_f_process_dependencies()
 
   done
 }
+
+# Apply the ignore directive. All lines between `!$claw ignore` and
+# `!$claw end ignore` are prefixed with the `!$claw ignore` prefix. 
+function applyIgnore()
+{
+  # Retrieve the ignore start directives in the file
+  startarray=( $(grep -n "\s*\!\$claw ignore" original_code.f90 | cut -f1 -d:) )
+  # Retrieve the ignore end directives in the file
+  endarray=( $(grep -n "\s*\!\$claw end ignore" original_code.f90 | cut -f1 -d:) )
+
+  # Check that we have the same number of start and end directives
+  startlen=${#startarray[*]}
+  endlen=${#endarray[*]}
+  if [ "${#startlen[@]}" -ne "${#endlen[@]}" ]; then
+    echo "Missing directives"
+    exit 1
+  fi
+
+  outputfile=original_code.f90.ignore
+  # Copy the current file in the output file. Will be edited in place.
+  cat original_code.f90 > $outputfile
+  for (( i=0; i<=$(( $startlen -1 )); i++ ))
+  do
+    sedstart=$((${startarray[$i]} + 1)) # Compute the start line
+    sedend=$((${endarray[$i]} - 1))     # Compute the end line
+    # TODO check that end directive line number is after start directive
+    # Insert directive as prefix of each line in the block
+    sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $outputfile
+  done
+}
+
+# Revert the lines saved by the ignore directive
+# All lines starting with !$claw ignore will be modified. The directive is
+# removed and the text after is kept.
+function revertIgnore()
+{
+
+}
