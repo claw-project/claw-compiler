@@ -313,6 +313,9 @@ function claw_f_process_dependencies()
 
 # Apply the ignore directive. All lines between `!$claw ignore` and
 # `!$claw end ignore` are prefixed with the `!$claw ignore` prefix.
+# Parameters:
+# $1 : input file path
+# $2 : output file path
 function applyIgnore()
 {
   # Retrieve the ignore start directives in the file
