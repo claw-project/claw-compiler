@@ -347,6 +347,7 @@ function applyIgnore()
 # Revert the lines saved by the ignore directive
 # All lines starting with !$claw ignore will be modified. The directive is
 # removed and the text after is kept.
+# $1 : file path
 function revertIgnore()
 {
 
