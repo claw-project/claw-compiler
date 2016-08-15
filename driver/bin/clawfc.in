@@ -250,6 +250,19 @@ done
 [ $ONLY_PP = true -a $ENABLE_DEBUG = true ] && exit 0;            # xmpf90 -E --debug hoge.c (save $TMP_DIR)
 [ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }  # xmpf90 -E hoge.c
 
+### Apply ignore directive
+for file in "${f_files_transformation[@]}"; do
+  FILE=("${file}")
+  FILE_NAME=`omni_f_norm_file_name "${FILE}"` # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+  EXT=${file##*.}
+  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
+    FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+  else
+    FILE_PP="${FILE}"
+  fi
+  applyIgnore $FILE_PP
+done
+
 ### dependencies resolution ###
 if [ $RESOLVE_DEPENDENCIES ]
 then
@@ -319,6 +332,13 @@ for file in "${f_files_transformation[@]}"; do
   # So that remains .F90 extention after process of the native compilier.
 done
 [ $STOP_TRANSLATOR = true ] && exit 0;
+
+### Revert ignore prefix
+for file in "${f_files_transformation[@]}"; do
+  FILE=("${file}")
+  FILE_OUT_F=${TEMP_DIR}/"${FILE}"
+  revertIgnore $FILE_OUT_F
+done
 
 ### Delete temporal directory ###
 [ $ENABLE_DEBUG = false ] && omni_exec rm -rf $TEMP_DIR
