@@ -319,25 +319,25 @@ function claw_f_process_dependencies()
 function applyIgnore()
 {
   # Retrieve the ignore start directives in the file
-  startarray=( $(grep -n "\s*\!\$claw ignore" original_code.f90 | cut -f1 -d:) )
+  local startarray=( $(grep -n "\s*\!\$claw ignore" original_code.f90 | cut -f1 -d:) )
   # Retrieve the ignore end directives in the file
-  endarray=( $(grep -n "\s*\!\$claw end ignore" original_code.f90 | cut -f1 -d:) )
+  local endarray=( $(grep -n "\s*\!\$claw end ignore" original_code.f90 | cut -f1 -d:) )
 
   # Check that we have the same number of start and end directives
-  startlen=${#startarray[*]}
-  endlen=${#endarray[*]}
+  local startlen=${#startarray[*]}
+  local endlen=${#endarray[*]}
   if [ "${#startlen[@]}" -ne "${#endlen[@]}" ]; then
     echo "Missing directives"
     exit 1
   fi
 
-  outputfile=original_code.f90.ignore
+  local outputfile=original_code.f90.ignore
   # Copy the current file in the output file. Will be edited in place.
   cat $1 > $2
   for (( i=0; i<=$(( $startlen -1 )); i++ ))
   do
-    sedstart=$((${startarray[$i]} + 1)) # Compute the start line
-    sedend=$((${endarray[$i]} - 1))     # Compute the end line
+    local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
+    local sedend=$((${endarray[$i]} - 1))     # Compute the end line
     # TODO check that end directive line number is after start directive
     # Insert directive as prefix of each line in the block
     sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $2
