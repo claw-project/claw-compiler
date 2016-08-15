@@ -336,7 +336,13 @@ done
 ### Revert ignore prefix
 for file in "${f_files_transformation[@]}"; do
   FILE=("${file}")
-  FILE_OUT_F=${TEMP_DIR}/"${FILE}"
+  if [ "${#output_file}" != "0" ]
+  then
+    FILE_OUT_F=${output_file}
+  elif [ "${#output_dir}" != "0" ]
+  then
+    FILE_OUT_F=${output_dir}/${FILE}
+  fi
   revertIgnore $FILE_OUT_F
 done
 
