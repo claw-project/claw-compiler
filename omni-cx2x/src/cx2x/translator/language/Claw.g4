@@ -124,6 +124,15 @@ directive[ClawLanguage l]
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setEndPragma();
      }
+   | IGNORE
+     {
+       $l.setDirective(ClawDirective.IGNORE);
+     }
+   | END IGNORE
+     {
+       $l.setDirective(ClawDirective.IGNORE);
+       $l.setEndPragma();
+     }
 ;
 
 // Comma-separated identifiers list
@@ -395,6 +404,7 @@ LHOIST       : 'loop-hoist';
 LINTERCHANGE : 'loop-interchange';
 PARALLELIZE  : 'parallelize';
 REMOVE       : 'remove';
+IGNORE       : 'ignore';
 
 
 // Clauses
