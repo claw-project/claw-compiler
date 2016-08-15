@@ -156,6 +156,8 @@ public class ClawXcodeMlTranslator {
               addOrAbort(new Parallelize(analyzedPragma));
             }
             break;
+          case IGNORE:
+            break;
           default:
             _program.addError("Unrecognized CLAW directive",
                 pragma.getLineNo());
