@@ -15,6 +15,7 @@ public enum ClawDirective {
   ARRAY_TRANSFORM,
   ARRAY_TO_CALL,
   DEFINE,
+  IGNORE,
   KCACHE,
   LOOP_FUSION,
   LOOP_INTERCHANGE,
