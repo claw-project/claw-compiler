@@ -314,8 +314,7 @@ function claw_f_process_dependencies()
 # Apply the ignore directive. All lines between `!$claw ignore` and
 # `!$claw end ignore` are prefixed with the `!$claw ignore` prefix.
 # Parameters:
-# $1 : input file path
-# $2 : output file path
+# $1 : input file path edited in place
 function applyIgnore()
 {
   # Retrieve the ignore start directives in the file
@@ -331,16 +330,13 @@ function applyIgnore()
     exit 1
   fi
 
-  local outputfile=original_code.f90.ignore
-  # Copy the current file in the output file. Will be edited in place.
-  cat $1 > $2
   for (( i=0; i<=$(( $startlen -1 )); i++ ))
   do
     local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
     # TODO check that end directive line number is after start directive
     # Insert directive as prefix of each line in the block
-    sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $2
+    sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $1
   done
 }
 
