@@ -28,6 +28,7 @@ import java.util.List;
 public class ClawLanguage extends AnalyzedPragma {
 
   private static final String PREFIX_CLAW = "claw";
+  private static final String IGNORE = "ignore";
 
   private AcceleratorGenerator _generator;
   private Target _target;
@@ -187,6 +188,12 @@ public class ClawLanguage extends AnalyzedPragma {
   {
     // Remove additional claw keyword
     rawPragma = nakenize(rawPragma);
+
+    // Discard the ignored code after the claw ignore directive
+    if(rawPragma.toLowerCase().contains(IGNORE)){
+      rawPragma = rawPragma.substring(0,
+          rawPragma.toLowerCase().indexOf(IGNORE) + IGNORE.length());
+    }
 
     // Instantiate the lexer with the raw string input
     ClawLexer lexer = new ClawLexer(new ANTLRInputStream(rawPragma));
