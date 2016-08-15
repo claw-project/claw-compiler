@@ -350,5 +350,6 @@ function applyIgnore()
 # $1 : file path
 function revertIgnore()
 {
-
+  sed -i.bak -e "s/\!\$claw ignore//" $1
+  sed -i.bak -e "s/\!\$claw end ignore//" $1
 }
