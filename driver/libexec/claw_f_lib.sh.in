@@ -318,9 +318,9 @@ function claw_f_process_dependencies()
 function applyIgnore()
 {
   # Retrieve the ignore start directives in the file
-  local startarray=( $(grep -n "\s*\!\$claw ignore" original_code.f90 | cut -f1 -d:) )
+  local startarray=( $(grep -n "\s*\!\$claw ignore" $1 | cut -f1 -d:) )
   # Retrieve the ignore end directives in the file
-  local endarray=( $(grep -n "\s*\!\$claw end ignore" original_code.f90 | cut -f1 -d:) )
+  local endarray=( $(grep -n "\s*\!\$claw end ignore" $1 | cut -f1 -d:) )
 
   # Check that we have the same number of start and end directives
   local startlen=${#startarray[*]}
