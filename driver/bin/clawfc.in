@@ -6,7 +6,9 @@
 ###
 ### clawfc
 ### Compiler driver for the claw language translation for Fortran language.
-### This driver is based on the xmpf90 compiler driver from the OMNI Compiler.
+### This driver is based on the xmpf90 compiler driver from the OMNI Compiler
+### project.
+### https://github.com/omni-compiler/omni-compiler/blob/master/Driver/bin/xmpf90.in
 ###
 
 ## TODO cp original file in case of error
