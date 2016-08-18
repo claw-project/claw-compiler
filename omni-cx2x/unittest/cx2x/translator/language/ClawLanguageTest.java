@@ -815,37 +815,37 @@ public class ClawLanguageTest {
 
     // Valid directives
     ClawDimension d1 = new ClawDimension("i", "1", "nx");
-    analyzeValidParallelize("claw define dimension i(1,nx)" +
+    analyzeValidParallelize("claw define dimension i(1:nx)" +
         " parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d1));
 
     ClawDimension d2 = new ClawDimension("j", "1", "ny");
-    analyzeValidParallelize("claw define dimension j(1,ny)" +
+    analyzeValidParallelize("claw define dimension j(1:ny)" +
         "parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d2));
 
     ClawDimension d3 = new ClawDimension("j", "1", "10");
-    analyzeValidParallelize("claw define dimension j(1,10) " +
+    analyzeValidParallelize("claw define dimension j(1:10) " +
         "parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d3));
 
     ClawDimension d4 = new ClawDimension("j", "jstart", "10");
-    analyzeValidParallelize("claw define dimension j(jstart,10) " +
+    analyzeValidParallelize("claw define dimension j(jstart:10) " +
         "parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d4));
 
     ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
-    analyzeValidParallelize("claw define dimension j(jstart,ny) " +
+    analyzeValidParallelize("claw define dimension j(jstart:ny) " +
         "parallelize data(t,qc,qv) over (i,j,:)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
         Collections.singletonList(d5));
 
     ClawDimension d6 = new ClawDimension("j", "jstart", "ny");
-    analyzeValidParallelize("claw define dimension j(jstart,ny) parallelize",
+    analyzeValidParallelize("claw define dimension j(jstart:ny) parallelize",
         null, null, Collections.singletonList(d6));
 
     analyzeValidParallelize("claw parallelize forward", null, null, null);
