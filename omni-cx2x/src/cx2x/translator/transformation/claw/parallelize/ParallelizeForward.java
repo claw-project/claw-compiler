@@ -161,41 +161,53 @@ public class ParallelizeForward extends Transformation {
     if(_fctType != null && fctDef != null){
       _localFct = true;
     } else {
-      List<Xdecl> localScopeUsesStmt =
-          parentFctDef.getDeclarationTable().getAll(Xcode.FUSEDECL);
-      localScopeUsesStmt.addAll(parentFctDef.getDeclarationTable().
-          getAll(Xcode.FUSEONLYDECL));
+      List<Xdecl> localScopeUsesStmt = XnodeUtil.getAllUse(parentFctDef);
+      List<Xdecl> moduleScoptUsesStmt =
+          XnodeUtil.getAllUse(XnodeUtil.findParentModule(parentFctDef));
 
-      for(Xdecl d : localScopeUsesStmt){
-
-        // Check whether a CLAW file is available.
-        _mod = TransformationHelper.
-            locateClawModuleFile(d.getAttribute(Xattr.NAME));
-
-        if(_mod != null){
-
-          // debug information
-          if(XmOption.isDebugOutput()){
-            System.out.print("Reading CLAW module file: " + _mod.getPath() + _mod.getName());
-          }
-
-          if(_mod.getIdentifiers().contains(_calledFctName)){
-            String type = _mod.getIdentifiers().get(_calledFctName).
-                getAttribute(Xattr.TYPE);
-            _fctType = (XfunctionType) _mod.getTypeTable().get(type);
-            if(_fctType != null){
-              _calledFctName = null;
-              return true;
-            }
-          }
-        }
-      } // TODO look up in module use statements
+      if(findInModule(localScopeUsesStmt) || findInModule(moduleScoptUsesStmt)){
+        return true;
+      }
 
       xcodeml.addError("Function signature not found in the current module.",
           _claw.getPragma().getLineNo());
       return false;
     }
     return true;
+  }
+
+  /**
+   * Find a function in modules.
+   * @param useDecls List of all USE statement declarations available for
+   *                 search.
+   * @return True if the function was found. False otherwise.
+   */
+  private boolean findInModule(List<Xdecl> useDecls){
+    for(Xdecl d : useDecls){
+
+      // Check whether a CLAW file is available.
+      _mod = TransformationHelper.
+          locateClawModuleFile(d.getAttribute(Xattr.NAME));
+
+      if(_mod != null){
+
+        // debug information
+        if(XmOption.isDebugOutput()){
+          System.out.print("Reading CLAW module file: " + _mod.getPath() + _mod.getName());
+        }
+
+        if(_mod.getIdentifiers().contains(_calledFctName)){
+          String type = _mod.getIdentifiers().get(_calledFctName).
+              getAttribute(Xattr.TYPE);
+          _fctType = (XfunctionType) _mod.getTypeTable().get(type);
+          if(_fctType != null){
+            _calledFctName = null;
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   @Override
