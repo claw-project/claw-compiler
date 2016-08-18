@@ -11,6 +11,7 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
+import xcodeml.util.XmOption;
 
 import java.util.List;
 
@@ -160,18 +161,24 @@ public class ParallelizeForward extends Transformation {
     if(_fctType != null && fctDef != null){
       _localFct = true;
     } else {
-      List<Xdecl> allUses =
+      List<Xdecl> localScopeUsesStmt =
           parentFctDef.getDeclarationTable().getAll(Xcode.FUSEDECL);
-      allUses.addAll(parentFctDef.getDeclarationTable().
+      localScopeUsesStmt.addAll(parentFctDef.getDeclarationTable().
           getAll(Xcode.FUSEONLYDECL));
 
-      for(Xdecl d : allUses){
+      for(Xdecl d : localScopeUsesStmt){
 
         // Check whether a CLAW file is available.
         _mod = TransformationHelper.
             locateClawModuleFile(d.getAttribute(Xattr.NAME));
 
         if(_mod != null){
+
+          // debug information
+          if(XmOption.isDebugOutput()){
+            System.out.print("Reading CLAW module file: " + _mod.getPath() + _mod.getName());
+          }
+
           if(_mod.getIdentifiers().contains(_calledFctName)){
             String type = _mod.getIdentifiers().get(_calledFctName).
                 getAttribute(Xattr.TYPE);
