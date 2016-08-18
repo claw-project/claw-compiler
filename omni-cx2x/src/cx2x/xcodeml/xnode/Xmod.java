@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 
 /**
@@ -49,6 +51,15 @@ public class Xmod extends XcodeML {
    */
   public String getName() {
     return _name;
+  }
+
+  /**
+   * Get the full path of the module file.
+   * @return Module file full path.
+   */
+  public String getFullPath(){
+    return _path + _name + ClawConstant.CLAW_MOD_SUFFIX
+        + XnodeUtil.XMOD_FILE_EXTENSION;
   }
 
   /**
