@@ -18,8 +18,8 @@ CONTAINS
     ! data clause.
     ! Apply the parallelization transformation on this subroutine.
 
-    !$claw define dimension i(1,nx) &
-    !$claw define dimension j(1,ny) &
+    !$claw define dimension i(1:nx) &
+    !$claw define dimension j(1:ny) &
     !$claw parallelize
 
     c = 5.345

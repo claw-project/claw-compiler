@@ -17,7 +17,7 @@ CONTAINS
     ! data clause.
     ! Apply the parallelization transformation on this subroutine.
 
-    !$claw define dimension proma(1,nproma) &
+    !$claw define dimension proma(1:nproma) &
     !$claw parallelize
 
     c = 5.345
