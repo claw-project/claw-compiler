@@ -1819,7 +1819,7 @@ public class XnodeUtil {
    */
   private static List<Xdecl> getAllUseFromDeclTable(XdeclTable dt){
     if(dt == null){
-      new ArrayList<Xdecl>();
+      return new ArrayList<Xdecl>();
     }
     List<Xdecl> uses = dt.getAll(Xcode.FUSEDECL);
     uses.addAll(dt.getAll(Xcode.FUSEONLYDECL));
