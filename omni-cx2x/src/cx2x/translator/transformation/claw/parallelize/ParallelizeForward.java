@@ -193,7 +193,7 @@ public class ParallelizeForward extends Transformation {
 
         // debug information
         if(XmOption.isDebugOutput()){
-          System.out.print("Reading CLAW module file: " + _mod.getPath() + _mod.getName());
+          System.out.println("Reading CLAW module file: " + _mod.getFullPath());
         }
 
         if(_mod.getIdentifiers().contains(_calledFctName)){
