@@ -377,7 +377,7 @@ mapping_option_list[List<ClawMapping> mappings]:
 
 
 define_option[ClawLanguage l]:
-    DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ',' upper=range_id ')'
+    DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ':' upper=range_id ')'
     {
       ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
       $l.addDimension(cd);
