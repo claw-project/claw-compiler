@@ -5,7 +5,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  INTEGER :: r
   INTEGER , INTENT(IN) :: nproma
 
   CALL compute_column ( nz , q , t , nproma = nproma )
