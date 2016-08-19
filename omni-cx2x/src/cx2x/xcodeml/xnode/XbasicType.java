@@ -39,7 +39,7 @@ public class XbasicType extends Xtype {
 
   private boolean _isArray = false;
 
-  // Type prefix
+  // Type prefix from OMNI Compiler. Taken for the F-output-xcodeml.c file.
   public static final String PREFIX_PROCEDURE = "Z";
   public static final String PREFIX_INTEGER = "I";
   public static final String PREFIX_CHAR = "C";
