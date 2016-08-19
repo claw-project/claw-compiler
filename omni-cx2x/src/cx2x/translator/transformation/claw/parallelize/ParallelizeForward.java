@@ -165,7 +165,17 @@ public class ParallelizeForward extends Transformation {
 
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
 
-    
+    String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
+    Xtype rawType = xcodeml.getTypeTable().get(fctType);
+    if(rawType instanceof XfunctionType){
+      _fctType = (XfunctionType)rawType;
+    } else if (rawType instanceof XbasicType
+        && fctType.startsWith(XbasicType.PREFIX_PROCEDURE))
+    {
+      // Look for FfunctionType with similar name
+      Xid id = parentModule.getSymbolTable().get(_calledFctName);
+      _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+    }
 
     /* Workaround for a bug in OMNI Compiler. Look at test case
      * claw/abstraction10. In this test case, the XcodeML/F intermediate
