@@ -161,12 +161,21 @@ public class ParallelizeForward extends Transformation {
 
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
 
+    /* Workaround for a bug in OMNI Compiler. Look at test case
+     * claw/abstraction10. In this test case, the XcodeML/F intermediate
+     * representation for the function call points to a FfunctionType element
+     * with no parameters. Thus, we have to find the correct FfunctionType
+     * for the same function/subroutine with the same name in the module
+     * symbol table.
+     */
     int nbArgs = 0;
     Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
     if(arguments != null){
       nbArgs = arguments.getChildren().size();
     }
+    // Check that the arguments of the FfunctionType match with functionCall
     if(_fctType.getParameterNb() != nbArgs){
+      // If not, try to find the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
       if(_fctType.getParameterNb() != nbArgs){
@@ -175,6 +184,8 @@ public class ParallelizeForward extends Transformation {
         return false;
       }
     }
+    // end of workaround
+
     _callingFctName = parentFctDef.getName().getValue();
     if(_fctType != null && fctDef != null){
       _localFct = true;
