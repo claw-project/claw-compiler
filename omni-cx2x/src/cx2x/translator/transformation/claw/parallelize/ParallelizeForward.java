@@ -172,7 +172,9 @@ public class ParallelizeForward extends Transformation {
     } else if (rawType instanceof XbasicType
         && fctType.startsWith(XbasicType.PREFIX_PROCEDURE))
     {
-      // Look for FfunctionType with similar name
+      /* If type is a FbasicType element for a type-bound procedure, we have to
+       * find the correct function in the typeTable.
+       * TODO if there is a rename. */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
     }
@@ -182,9 +184,7 @@ public class ParallelizeForward extends Transformation {
      * representation for the function call points to a FfunctionType element
      * with no parameters. Thus, we have to find the correct FfunctionType
      * for the same function/subroutine with the same name in the module
-     * symbol table.
-     */
-    // Check that the arguments of the FfunctionType match with functionCall
+     * symbol table. */
     if(_fctType.getParameterNb() == 0){
       // If not, try to find the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
