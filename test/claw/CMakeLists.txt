@@ -1,10 +1,10 @@
 # List of test directories
-add_subdirectory(abstraction1)
-add_subdirectory(abstraction2)
-add_subdirectory(abstraction3)
-add_subdirectory(abstraction4)
-add_subdirectory(abstraction5)
-add_subdirectory(abstraction6)
+add_subdirectory(abstraction1) # simple 1d
+add_subdirectory(abstraction2) # simple 2d
+add_subdirectory(abstraction3) # openmp
+add_subdirectory(abstraction4) # simple with forward
+add_subdirectory(abstraction5) # cross-module
+add_subdirectory(abstraction6) # cross-module multiple forward
 add_subdirectory(abstraction7)
 add_subdirectory(abstraction8)
 add_subdirectory(abstraction9)  # Private function
