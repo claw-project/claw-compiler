@@ -218,10 +218,12 @@ public class Parallelize extends Transformation {
       transformForCPU(xcodeml);
     }
 
-    XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
-    if(modDef != null){
-      XnodeUtil.updateModuleSignature(xcodeml, _fctDef, _fctType, modDef, _claw,
-          transformer);
+    if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
+      XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
+      if(modDef != null){
+        XnodeUtil.updateModuleSignature(xcodeml, _fctDef, _fctType, modDef, _claw,
+            transformer);
+      }
     }
   }
 

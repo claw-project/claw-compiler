@@ -347,10 +347,12 @@ public class ParallelizeForward extends Transformation {
         }
       }
 
-      // 3. Replicate the change in a potential module file
-      XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
-      XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef,
-          _claw, transformer);
+      if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
+        // 3. Replicate the change in a potential module file
+        XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
+        XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef,
+            _claw, transformer);
+      }
     }
 
   }
