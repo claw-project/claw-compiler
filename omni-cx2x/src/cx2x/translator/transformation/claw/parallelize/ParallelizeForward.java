@@ -146,12 +146,6 @@ public class ParallelizeForward extends Transformation {
     }
     _calledFctName = _fctCall.find(Xcode.NAME).getValue();
 
-
-
-
-
-
-
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
     XfunctionDefinition parentFctDef =
@@ -182,6 +176,10 @@ public class ParallelizeForward extends Transformation {
        * TODO if there is a rename. */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+    } else {
+      xcodeml.addError("Unsupported type of XcodeML/F element for the function "
+              + _calledFctName, _claw.getPragma().getLineNo());
+      return false;
     }
 
     /* Workaround for a bug in OMNI Compiler. Look at test case
