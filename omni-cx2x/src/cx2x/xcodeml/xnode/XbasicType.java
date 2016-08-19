@@ -39,6 +39,10 @@ public class XbasicType extends Xtype {
 
   private boolean _isArray = false;
 
+  // Type prefix
+  public static final String PREFIX_PROCEDURE = "Z";
+
+
   // Optional elements
   private List<Xnode> _dimensions = null;
   private Xnode _kind = null;
