@@ -114,6 +114,14 @@ public class XfunctionType extends Xtype {
   }
 
   /**
+   * Check the number of parameters of the function.
+   * @return Number of parameters.
+   */
+  public int getParameterNb(){
+    return (_params == null) ? 0 : _params.getAll().size();
+  }
+
+  /**
    * A new object XfunctionType that is the clone of the current object.
    * @return A new XfunctionType that is a clone of the current one.
    */
