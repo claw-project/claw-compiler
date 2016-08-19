@@ -145,9 +145,12 @@ public class ParallelizeForward extends Transformation {
       return false;
     }
     _calledFctName = _fctCall.find(Xcode.NAME).getValue();
-    String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
 
-    _fctType = (XfunctionType)xcodeml.getTypeTable().get(fctType);
+
+
+
+
+
 
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
@@ -159,7 +162,10 @@ public class ParallelizeForward extends Transformation {
       return false;
     }
 
+
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
+
+    
 
     /* Workaround for a bug in OMNI Compiler. Look at test case
      * claw/abstraction10. In this test case, the XcodeML/F intermediate
@@ -168,17 +174,12 @@ public class ParallelizeForward extends Transformation {
      * for the same function/subroutine with the same name in the module
      * symbol table.
      */
-    int nbArgs = 0;
-    Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
-    if(arguments != null){
-      nbArgs = arguments.getChildren().size();
-    }
     // Check that the arguments of the FfunctionType match with functionCall
-    if(_fctType.getParameterNb() != nbArgs){
+    if(_fctType.getParameterNb() == 0){
       // If not, try to find the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
-      if(_fctType.getParameterNb() != nbArgs){
+      if(_fctType == null){
         xcodeml.addError("Called function cannot be found in the same module ",
             _claw.getPragma().getLineNo());
         return false;
