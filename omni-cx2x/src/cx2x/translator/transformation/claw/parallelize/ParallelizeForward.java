@@ -148,6 +148,7 @@ public class ParallelizeForward extends Transformation {
     String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
 
     _fctType = (XfunctionType)xcodeml.getTypeTable().get(fctType);
+
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
     XfunctionDefinition parentFctDef =
@@ -157,13 +158,30 @@ public class ParallelizeForward extends Transformation {
           "function/subroutine.", _claw.getPragma().getLineNo());
       return false;
     }
+
+    XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
+
+    int nbArgs = 0;
+    Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
+    if(arguments != null){
+      nbArgs = arguments.getChildren().size();
+    }
+    if(_fctType.getParameterNb() != nbArgs){
+      Xid id = parentModule.getSymbolTable().get(_calledFctName);
+      _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+      if(_fctType.getParameterNb() != nbArgs){
+        xcodeml.addError("Called function cannot be found in the same module ",
+            _claw.getPragma().getLineNo());
+        return false;
+      }
+    }
     _callingFctName = parentFctDef.getName().getValue();
     if(_fctType != null && fctDef != null){
       _localFct = true;
     } else {
       List<Xdecl> localScopeUsesStmt = XnodeUtil.getAllUse(parentFctDef);
       List<Xdecl> moduleScoptUsesStmt =
-          XnodeUtil.getAllUse(XnodeUtil.findParentModule(parentFctDef));
+          XnodeUtil.getAllUse(parentModule);
 
       if(findInModule(localScopeUsesStmt) || findInModule(moduleScoptUsesStmt)){
         return true;
