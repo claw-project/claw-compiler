@@ -173,7 +173,8 @@ public class ParallelizeForward extends Transformation {
     {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * find the correct function in the typeTable.
-       * TODO if there is a rename. */
+       * TODO if there is a rename.
+       * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
     } else {
