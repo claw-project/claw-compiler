@@ -1,16 +1,26 @@
 MODULE mo_column
   IMPLICIT NONE
   PRIVATE
-  TYPE, PUBLIC :: dummytype
-  CONTAINS
-    PROCEDURE, PUBLIC :: compute_column
-  END TYPE
+
+  PUBLIC :: compute_column_public
 
 CONTAINS
-  ! Compute only one column
-  SUBROUTINE compute_column(this, nz, q, t)
+
+  SUBROUTINE compute_column_public(nz, q, t)
     IMPLICIT NONE
-    CLASS(dummytype)      :: this
+    INTEGER, INTENT(IN)   :: nz   ! Size of the array field
+    REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
+    REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
+
+    !$claw parallelize forward
+    CALL compute_column(nz, q, t)
+
+  END SUBROUTINE compute_column_public
+
+
+  ! Compute only one column
+  SUBROUTINE compute_column(nz, q, t)
+    IMPLICIT NONE
     INTEGER, INTENT(IN)   :: nz   ! Size of the array field
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
@@ -33,4 +43,6 @@ CONTAINS
     END DO
     q(nz) = q(nz) * c
   END SUBROUTINE compute_column
+
+
 END MODULE mo_column
