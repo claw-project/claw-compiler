@@ -155,14 +155,8 @@ public class ParallelizeForward extends Transformation {
           "function/subroutine.", _claw.getPragma().getLineNo());
       return false;
     }
-
-
+    
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
-    if(parentModule == null){
-      xcodeml.addError("Called function is not nested in a module. Abort",
-          _claw.getPragma().getLineNo());
-      return false;
-    }
 
     String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
     Xtype rawType = xcodeml.getTypeTable().get(fctType);
