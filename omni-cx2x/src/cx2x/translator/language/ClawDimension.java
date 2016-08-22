@@ -154,6 +154,12 @@ public class ClawDimension {
 
     // lower bound
     if(lowerBoundIsVar()){
+      if(_lowerBoundType == null){
+        _lowerBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
+        XbasicType bType = XnodeUtil.createBasicType(xcodeml, _lowerBoundType,
+            Xname.TYPE_F_INT, Xintent.IN);
+        xcodeml.getTypeTable().add(bType);
+      }
       Xnode lowerBoundValue = XnodeUtil.createVar(_lowerBoundType,
           _lowerBoundId, Xscope.LOCAL, xcodeml);
       lower.appendToChildren(lowerBoundValue, false);
@@ -166,6 +172,12 @@ public class ClawDimension {
 
     // upper bound
     if(upperBoundIsVar()){
+      if(_lowerBoundType == null){
+        _upperBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
+        XbasicType bType = XnodeUtil.createBasicType(xcodeml, _upperBoundType,
+            Xname.TYPE_F_INT, Xintent.IN);
+        xcodeml.getTypeTable().add(bType);
+      }
       Xnode upperBoundValue = XnodeUtil.createVar(_upperBoundType,
           _upperBoundId, Xscope.LOCAL, xcodeml);
       upper.appendToChildren(upperBoundValue, false);
