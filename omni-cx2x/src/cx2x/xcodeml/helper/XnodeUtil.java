@@ -1751,19 +1751,90 @@ public class XnodeUtil {
   public static String duplicateWithDimension(XbasicType base,
                                               XbasicType toUpdate,
                                               XcodeML xcodeml)
+      throws IllegalTransformationException
   {
     XbasicType newType = toUpdate.cloneObject();
     String type = xcodeml.getTypeTable().generateArrayTypeHash();
     newType.setAttribute(Xattr.TYPE, type);
 
-    int additionalDimensions = base.getDimensions() - toUpdate.getDimensions();
-    for(int i = 0; i < additionalDimensions; ++i){
-      Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
-      newType.addDimension(index, 0);
+    if(base.isAllAssumedShape()){
+      int additionalDimensions = base.getDimensions() - toUpdate.getDimensions();
+      for(int i = 0; i < additionalDimensions; ++i){
+        Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+        newType.addDimension(index, 0);
+      }
+    } else {
+      newType.find(Xcode.INDEXRANGE).delete();
+
+      for(int i = 0; i < base.getDimensions(); ++i){
+        Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodeml);
+        newType.appendToChildren(newDim, false);
+
+        Xnode baseDim = base.getDimensions(i);
+        Xnode lowerBound = baseDim.find(Xcode.LOWERBOUND);
+        Xnode upperBound = baseDim.find(Xcode.UPPERBOUND);
+
+        // Create lower bound
+        Xnode newLowerBound = duplicateBound(lowerBound, xcodeml);
+        Xnode newUpperBound = duplicateBound(upperBound, xcodeml);
+
+        newDim.appendToChildren(newLowerBound, false);
+        newDim.appendToChildren(newUpperBound, false);
+        newType.appendToChildren(newDim, false);
+      }
+
     }
 
     xcodeml.getTypeTable().add(newType);
     return type;
+  }
+
+  /**
+   *
+   * @param baseBound
+   * @param xcodeml
+   * @return
+   * @throws IllegalTransformationException
+   */
+  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodeml)
+      throws IllegalTransformationException
+  {
+    if(baseBound.Opcode() != Xcode.LOWERBOUND
+        && baseBound.Opcode() != Xcode.UPPERBOUND)
+    {
+      throw new IllegalTransformationException("Cannot duplicate bound");
+    }
+
+    Xnode boundChild = baseBound.getChild(0);
+
+    Xnode bound = new Xnode(Xcode.LOWERBOUND, xcodeml);
+    if(boundChild.Opcode() == Xcode.FINTCONSTANT){
+      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      intConst.setValue(boundChild.getValue());
+    } else if(boundChild.Opcode() == Xcode.VAR){
+      Xid id = null;
+      if(xcodeml instanceof XcodeProgram){
+        id = ((XcodeProgram)xcodeml).getGlobalSymbolsTable().
+            get(boundChild.getValue());
+      } else if(xcodeml instanceof Xmod){
+        id = ((Xmod)xcodeml).getIdentifiers().get(boundChild.getValue());
+      }
+
+      if(id == null){
+        throw new IllegalTransformationException(
+          "No id found for " + boundChild.getValue());
+      }
+
+      Xnode var = new Xnode(Xcode.VAR, xcodeml);
+      var.setAttribute(Xattr.SCOPE, boundChild.getAttribute(Xattr.SCOPE));
+      var.setValue(boundChild.getValue());
+      var.setAttribute(Xattr.TYPE, id.getType());
+    } else {
+      throw new IllegalTransformationException(
+          "Lower bound type currently not supported");
+    }
+
+    return bound;
   }
 
   /**
