@@ -398,9 +398,23 @@ public class Parallelize extends Transformation {
           newType.addDimension(index, 0);
         }
       } else {
-        for (ClawDimension dim : _claw.getDimensionValues()) {
-          Xnode index = dim.generateIndexRange(xcodeml, false);
-          newType.addDimension(index, 0);
+        if(_claw.hasOverClause()){
+          if(_claw.getOverClauseValues().get(0).equals(ClawDimension.BASE_DIM)){
+            for (ClawDimension dim : _claw.getDimensionValues()) {
+              Xnode index = dim.generateIndexRange(xcodeml, false);
+              newType.addDimension(index, XbasicType.APPEND);
+            }
+          } else {
+            for (ClawDimension dim : _claw.getDimensionValues()) {
+              Xnode index = dim.generateIndexRange(xcodeml, false);
+              newType.addDimension(index, 0);
+            }
+          }
+        } else {
+          for (ClawDimension dim : _claw.getDimensionValues()) {
+            Xnode index = dim.generateIndexRange(xcodeml, false);
+            newType.addDimension(index, 0);
+          }
         }
       }
     } else {
