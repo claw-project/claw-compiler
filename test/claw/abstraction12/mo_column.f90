@@ -41,7 +41,7 @@ CONTAINS
     INTEGER :: result
 
     !$claw parallelize forward
-    result = compute_column(nz, q, t)
+    result = compute_column(nz, b, q, t)
 
   END SUBROUTINE compute
 
