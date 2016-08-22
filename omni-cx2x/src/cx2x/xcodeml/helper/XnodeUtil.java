@@ -1813,6 +1813,10 @@ public class XnodeUtil {
     }
 
     Xnode boundChild = baseBound.getChild(0);
+    if(boundChild == null){
+      throw new IllegalTransformationException("Cannot duplicate bound as it " +
+          "has no children element");
+    }
 
     Xnode bound = new Xnode(baseBound.Opcode(), xcodemlDst);
     if(boundChild.Opcode() == Xcode.FINTCONSTANT){
