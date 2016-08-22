@@ -1675,13 +1675,32 @@ public class XnodeUtil {
       }
     }
 
+
     XfunctionType fctTypeMod = (XfunctionType) mod.getTypeTable().get(
         fctDef.getName().getAttribute(Xattr.TYPE));
+
     if(fctTypeMod == null){
-      throw new IllegalTransformationException(
-          "Unable to locate fct " + fctDef.getName().getValue() +
-              " in module " + modDef.getName(), claw.getPragma().getLineNo());
+      /* Workaround for a bug in OMNI Compiler. Look at test case
+       * claw/abstraction12. In this test case, the XcodeML/F intermediate
+       * representation for the function call points to a FfunctionType element
+       * with no parameters. Thus, we have to find the correct FfunctionType
+       * for the same function/subroutine with the same name in the module
+       * symbol table. */
+      String errorMsg = "Unable to locate fct " + fctDef.getName().getValue() +
+          " in module " + modDef.getName();
+      int lineNo = claw.getPragma().getLineNo();
+
+      // If not, try to find the correct FfunctionType in the module definitions
+      Xid id = mod.getIdentifiers().get(fctDef.getName().getValue());
+      if(id == null){
+        throw new IllegalTransformationException(errorMsg, lineNo);
+      }
+      fctTypeMod = (XfunctionType)mod.getTypeTable().get(id.getType());
+      if(fctTypeMod == null){
+        throw new IllegalTransformationException(errorMsg, lineNo);
+      }
     }
+
     XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
         mod.getTypeTable().generateIntegerTypeHash(),
         Xname.TYPE_F_INT, Xintent.IN);
