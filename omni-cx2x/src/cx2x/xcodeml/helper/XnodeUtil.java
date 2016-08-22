@@ -1744,9 +1744,10 @@ public class XnodeUtil {
   /**
    * Duplicates the type to update and add extra dimensions to match the base
    * type.
-   * @param base     Base type.
-   * @param toUpdate Type to update.
-   * @param xcodemlDst  Current XcodeML file unit.
+   * @param base       Base type.
+   * @param toUpdate   Type to update.
+   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
+   * @param xcodemlSrc Source XcodeML unit. Contains base dimension.
    * @return The new type hash generated.
    */
   public static String duplicateWithDimension(XbasicType base,
@@ -1794,13 +1795,15 @@ public class XnodeUtil {
   }
 
   /**
-   *
-   * @param baseBound
-   * @param xcodemlDst
-   * @return
-   * @throws IllegalTransformationException
+   * Duplicate a lower or an upper bound between two different XcodeML units.
+   * @param baseBound  Base bound to be duplicated.
+   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
+   * @param xcodemlSrc Source XcodeML unit. Contains base bound.
+   * @return The newly duplicated bound element.
+   * @throws IllegalTransformationException If bound cannot be duplicated.
    */
-  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst, XcodeML xcodemlSrc)
+  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst,
+                                      XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
     if(baseBound.Opcode() != Xcode.LOWERBOUND
