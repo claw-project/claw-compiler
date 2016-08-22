@@ -131,8 +131,9 @@ public class ClawDimension {
   /**
    * Generate the correct indexRange element with lowerBound, upperBound and
    * step from the current dimension.
-   * @param xcodeml Current XcodeML program unit in which elements will be
-   *                created.
+   * @param xcodeml  Current XcodeML program unit in which elements will be
+   *                 created.
+   * @param withStep IF true, step element is created.
    * @return A new indexRange elements.
    */
   public Xnode generateIndexRange(XcodeProgram xcodeml, boolean withStep) {
