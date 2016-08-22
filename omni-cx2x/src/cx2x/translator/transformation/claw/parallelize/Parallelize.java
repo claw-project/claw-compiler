@@ -330,10 +330,9 @@ public class Parallelize extends Transformation {
       }
 
     } else {
-      /* If no over clause, the indexes are inserted from the defined dimensions
-       * from left to right. Everything is inserted on the left of current
-       * indexes */
-
+      /* If no over clause, the indexes are inserted in order from the first
+       * defined dimensions from left to right. Everything is inserted on the
+       * left of current indexes. */
       for(ClawDimension dim : _claw.getDimensionValues()){
         crt.add(dim.generateArrayIndex(xcodeml));
       }
