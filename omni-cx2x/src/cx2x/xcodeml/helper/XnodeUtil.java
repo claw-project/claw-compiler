@@ -1812,6 +1812,10 @@ public class XnodeUtil {
       throw new IllegalTransformationException("Cannot duplicate bound");
     }
 
+    if(xcodemlSrc == xcodemlDst){
+      return baseBound.cloneObject();
+    }
+
     Xnode boundChild = baseBound.getChild(0);
     if(boundChild == null){
       throw new IllegalTransformationException("Cannot duplicate bound as it " +
