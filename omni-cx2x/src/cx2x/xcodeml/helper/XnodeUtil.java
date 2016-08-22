@@ -1846,7 +1846,7 @@ public class XnodeUtil {
       bound.appendToChildren(var, false);
     } else {
       throw new IllegalTransformationException(
-          "Lower bound type currently not supported");
+          "Lower/upper bound type currently not supported");
     }
 
     return bound;
