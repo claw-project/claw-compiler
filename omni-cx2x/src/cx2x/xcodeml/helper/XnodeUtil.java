@@ -1732,7 +1732,8 @@ public class XnodeUtil {
           XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
 
           if(lType.isArray()) {
-            String newType = duplicateWithDimension(lType, crtType, mod);
+            String newType =
+                duplicateWithDimension(lType, crtType, mod, xcodeml);
             pMod.setAttribute(Xattr.TYPE, newType);
           }
         }
@@ -1745,29 +1746,30 @@ public class XnodeUtil {
    * type.
    * @param base     Base type.
    * @param toUpdate Type to update.
-   * @param xcodeml  Current XcodeML file unit.
+   * @param xcodemlDst  Current XcodeML file unit.
    * @return The new type hash generated.
    */
   public static String duplicateWithDimension(XbasicType base,
                                               XbasicType toUpdate,
-                                              XcodeML xcodeml)
+                                              XcodeML xcodemlDst,
+                                              XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
     XbasicType newType = toUpdate.cloneObject();
-    String type = xcodeml.getTypeTable().generateArrayTypeHash();
+    String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
     newType.setAttribute(Xattr.TYPE, type);
 
     if(base.isAllAssumedShape()){
       int additionalDimensions = base.getDimensions() - toUpdate.getDimensions();
       for(int i = 0; i < additionalDimensions; ++i){
-        Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+        Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodemlDst);
         newType.addDimension(index, 0);
       }
     } else {
       newType.find(Xcode.INDEXRANGE).delete();
 
       for(int i = 0; i < base.getDimensions(); ++i){
-        Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodeml);
+        Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodemlDst);
         newType.appendToChildren(newDim, false);
 
         Xnode baseDim = base.getDimensions(i);
@@ -1775,8 +1777,10 @@ public class XnodeUtil {
         Xnode upperBound = baseDim.find(Xcode.UPPERBOUND);
 
         // Create lower bound
-        Xnode newLowerBound = duplicateBound(lowerBound, xcodeml);
-        Xnode newUpperBound = duplicateBound(upperBound, xcodeml);
+        Xnode newLowerBound =
+            duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
+        Xnode newUpperBound =
+            duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
 
         newDim.appendToChildren(newLowerBound, false);
         newDim.appendToChildren(newUpperBound, false);
@@ -1785,18 +1789,18 @@ public class XnodeUtil {
 
     }
 
-    xcodeml.getTypeTable().add(newType);
+    xcodemlDst.getTypeTable().add(newType);
     return type;
   }
 
   /**
    *
    * @param baseBound
-   * @param xcodeml
+   * @param xcodemlDst
    * @return
    * @throws IllegalTransformationException
    */
-  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodeml)
+  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst, XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
     if(baseBound.Opcode() != Xcode.LOWERBOUND
@@ -1807,28 +1811,32 @@ public class XnodeUtil {
 
     Xnode boundChild = baseBound.getChild(0);
 
-    Xnode bound = new Xnode(Xcode.LOWERBOUND, xcodeml);
+    Xnode bound = new Xnode(baseBound.Opcode(), xcodemlDst);
     if(boundChild.Opcode() == Xcode.FINTCONSTANT){
-      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
       intConst.setValue(boundChild.getValue());
+      bound.appendToChildren(intConst, false);
     } else if(boundChild.Opcode() == Xcode.VAR){
-      Xid id = null;
-      if(xcodeml instanceof XcodeProgram){
-        id = ((XcodeProgram)xcodeml).getGlobalSymbolsTable().
-            get(boundChild.getValue());
-      } else if(xcodeml instanceof Xmod){
-        id = ((Xmod)xcodeml).getIdentifiers().get(boundChild.getValue());
+      String typeValue = boundChild.getAttribute(Xattr.TYPE);
+      if(!typeValue.startsWith(XbasicType.PREFIX_INTEGER)) {
+        throw new IllegalTransformationException("Only integer variable are " +
+            "supported as lower/upper bound value for promotted arrays.");
       }
 
-      if(id == null){
-        throw new IllegalTransformationException(
-          "No id found for " + boundChild.getValue());
+      XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
+      Xnode bType = new Xnode(Xcode.FBASICTYPE, xcodemlDst);
+      bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
+      bType.setAttribute(Xattr.TYPE,
+          xcodemlDst.getTypeTable().generateIntegerTypeHash());
+      if(type.getIntent() != Xintent.NONE){
+        bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
       }
 
-      Xnode var = new Xnode(Xcode.VAR, xcodeml);
+      Xnode var = new Xnode(Xcode.VAR, xcodemlDst);
       var.setAttribute(Xattr.SCOPE, boundChild.getAttribute(Xattr.SCOPE));
       var.setValue(boundChild.getValue());
-      var.setAttribute(Xattr.TYPE, id.getType());
+      var.setAttribute(Xattr.TYPE, bType.getAttribute(Xattr.TYPE));
+      bound.appendToChildren(var, false);
     } else {
       throw new IllegalTransformationException(
           "Lower bound type currently not supported");
