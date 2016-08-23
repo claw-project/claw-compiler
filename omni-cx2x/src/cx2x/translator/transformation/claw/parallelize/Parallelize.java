@@ -223,7 +223,13 @@ public class Parallelize extends Transformation {
     promoteFields(xcodeml);
 
     // Adapt array references.
-    adaptArrayReferences(_arrayFieldsInOut, 0); // TODO multiple clause
+    if(_claw.hasOverDataClause()){
+      for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i){
+        adaptArrayReferences(_claw.getOverDataClauseValues().get(i), i);
+      }
+    } else {
+      adaptArrayReferences(_arrayFieldsInOut, 0);
+    }
 
     // Delete the pragma
     _claw.getPragma().delete();
