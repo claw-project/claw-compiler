@@ -30,7 +30,7 @@ analyze returns [ClawLanguage l]
     $l = new ClawLanguage();
   }
   :
-  CLAW directive[$l]
+  CLAW directive[$l] EOF
 ;
 
 directive[ClawLanguage l]
