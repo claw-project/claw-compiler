@@ -35,7 +35,7 @@ public class Parallelize extends Transformation {
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
   private XfunctionType _fctType;
-  private List<Xnode> _beforeCrt, _afterCrt;
+  private List<List<Xnode>> _beforeCrt, _afterCrt;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -223,7 +223,7 @@ public class Parallelize extends Transformation {
     promoteFields(xcodeml);
 
     // Adapt array references.
-    adaptArrayReferences(_arrayFieldsInOut);
+    adaptArrayReferences(_arrayFieldsInOut, 0); // TODO multiple clause
 
     // Delete the pragma
     _claw.getPragma().delete();
@@ -310,7 +310,7 @@ public class Parallelize extends Transformation {
             promoteField(lhs.getValue(), false, false, xcodeml);
           }
           adaptScalarRefToArrayReferences(xcodeml,
-              Collections.singletonList(lhs.getValue()));
+              Collections.singletonList(lhs.getValue()), 0); // TODO multiple clause
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
@@ -329,7 +329,6 @@ public class Parallelize extends Transformation {
   private void prepareArrayIndexes(XcodeProgram xcodeml) {
     _beforeCrt = new ArrayList<>();
     _afterCrt = new ArrayList<>();
-    List<Xnode> crt = _beforeCrt;
 
     if(_claw.hasOverClause()) {
       /* If the over clause is specified, the indexes respect the definition of
@@ -337,25 +336,36 @@ public class Parallelize extends Transformation {
        * before the current indexes and the remaining indexes will be inserted
        * after the current indexes.  */
 
-      for (String dim : _claw.getOverClauseValues().get(0)) { // TODO multiple over
-        if (dim.equals(ClawDimension.BASE_DIM)) {
-          crt = _afterCrt;
-        } else {
-          ClawDimension d = _dimensions.get(dim);
-          crt.add(d.generateArrayIndex(xcodeml));
-        }
-      }
+      for(List<String> over : _claw.getOverClauseValues()){
+        List<Xnode> beforeCrt = new ArrayList<>();
+        List<Xnode> afterCrt = new ArrayList<>();
+        List<Xnode> crt = beforeCrt;
 
+        for (String dim : over) {
+          if (dim.equals(ClawDimension.BASE_DIM)) {
+            crt = afterCrt;
+          } else {
+            ClawDimension d = _dimensions.get(dim);
+            crt.add(d.generateArrayIndex(xcodeml));
+          }
+        }
+
+        Collections.reverse(beforeCrt);
+        _beforeCrt.add(beforeCrt);
+        _afterCrt.add(afterCrt);
+      }
     } else {
       /* If no over clause, the indexes are inserted in order from the first
        * defined dimensions from left to right. Everything is inserted on the
        * left of current indexes. */
+      List<Xnode> crt = new ArrayList<>();
       for(ClawDimension dim : _claw.getDimensionValues()){
         crt.add(dim.generateArrayIndex(xcodeml));
       }
+      Collections.reverse(crt);
+      _beforeCrt.add(crt);
+      _afterCrt.add(Collections.emptyList());
     }
-
-    Collections.reverse(_beforeCrt); // Because of insertion order
   }
 
 
@@ -457,15 +467,15 @@ public class Parallelize extends Transformation {
    * current function/subroutine definition.
    * @param ids List of array identifiers that must be adapted.
    */
-  private void adaptArrayReferences(List<String> ids) {
+  private void adaptArrayReferences(List<String> ids, int index) {
     for(String data : ids){
       List<Xnode> refs =
           XnodeUtil.getAllArrayReferences(_fctDef.getBody(), data);
       for(Xnode ref : refs){
-        for(Xnode ai : _beforeCrt){
+        for(Xnode ai : _beforeCrt.get(index)){
           XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
-        for(Xnode ai : _afterCrt){
+        for(Xnode ai : _afterCrt.get(index)){
           List<Xnode> children = ref.getChildren();
           XnodeUtil.insertAfter(children.get(children.size()-1),
               ai.cloneObject());
@@ -481,7 +491,8 @@ public class Parallelize extends Transformation {
    *                created.
    */
   private void adaptScalarRefToArrayReferences(XcodeProgram xcodeml,
-                                               List<String> ids)
+                                               List<String> ids,
+                                               int index)
   {
     for(String id : ids){
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.getBody(), id);
@@ -492,10 +503,10 @@ public class Parallelize extends Transformation {
       for(Xnode var : vars){
         Xnode ref =
             XnodeUtil.createArrayRef(xcodeml, type, var.cloneObject());
-        for(Xnode ai : _beforeCrt){
+        for(Xnode ai : _beforeCrt.get(index)){
           XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
-        for(Xnode ai : _afterCrt){
+        for(Xnode ai : _afterCrt.get(index)){
           ref.appendToChildren(ai, true);
         }
 
