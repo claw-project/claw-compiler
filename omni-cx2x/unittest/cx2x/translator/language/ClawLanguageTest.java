@@ -815,34 +815,38 @@ public class ClawLanguageTest {
 
     // Valid directives
     ClawDimension d1 = new ClawDimension("i", "1", "nx");
+    List<String> data1 = Arrays.asList("t", "qc", "qv");
+    List<List<String>> dataLst1 = Collections.singletonList(data1);
+    List<String> ijc = Arrays.asList("i", "j", ":");
+    List<String> icj = Arrays.asList("i", ":", "j");
+    List<String> cij = Arrays.asList(":", "i", "j");
+    List<List<String>> over1 = Collections.singletonList(ijc);
+    List<List<String>> over2 = Collections.singletonList(icj);
+    List<List<String>> over3 = Collections.singletonList(cij);
+
     analyzeValidParallelize("claw define dimension i(1:nx)" +
         " parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
-        Collections.singletonList(d1));
+        dataLst1, over1, Collections.singletonList(d1));
 
     ClawDimension d2 = new ClawDimension("j", "1", "ny");
     analyzeValidParallelize("claw define dimension j(1:ny)" +
         "parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
-        Collections.singletonList(d2));
+        dataLst1, over1, Collections.singletonList(d2));
 
     ClawDimension d3 = new ClawDimension("j", "1", "10");
     analyzeValidParallelize("claw define dimension j(1:10) " +
         "parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
-        Collections.singletonList(d3));
+        dataLst1, over1, Collections.singletonList(d3));
 
     ClawDimension d4 = new ClawDimension("j", "jstart", "10");
     analyzeValidParallelize("claw define dimension j(jstart:10) " +
         "parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
-        Collections.singletonList(d4));
+        dataLst1, over1, Collections.singletonList(d4));
 
     ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
     analyzeValidParallelize("claw define dimension j(jstart:ny) " +
         "parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"),
-        Collections.singletonList(d5));
+        dataLst1, over1, Collections.singletonList(d5));
 
     ClawDimension d6 = new ClawDimension("j", "jstart", "ny");
     analyzeValidParallelize("claw define dimension j(jstart:ny) parallelize",
@@ -851,16 +855,25 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize forward", null, null, null);
 
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,j,:)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", "j", ":"), null);
+        dataLst1, over1, null);
 
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (:,i,j)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList(":", "i", "j"), null);
+        dataLst1, over3, null);
 
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,:,j)",
-        Arrays.asList("t", "qc", "qv"), Arrays.asList("i", ":", "j"), null);
+        dataLst1, over2, null);
+
+
+    List<String> data2 = Arrays.asList("t");
+    List<String> data3 = Arrays.asList("q");
+    List<List<String>> dataLst2 = Arrays.asList(data2, data3);
+
+    List<String> ic = Arrays.asList("i", ":");
+    List<String> ci = Arrays.asList(":", "i");
+    List<List<String>> over4 = Arrays.asList(ic, ci);
 
     analyzeValidParallelize("claw parallelize data(t) over (i,:) data(q) " +
-        "over(:,i)", Arrays.asList("q"), Arrays.asList(":", "i"), null);
+        "over(:,i)", dataLst2, over4, null);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw parallelize data over ");
@@ -876,8 +889,8 @@ public class ClawLanguageTest {
    * @param over       Reference list for the over clause values.
    * @param dimensions Reference list of dimensions.
    */
-  private void analyzeValidParallelize(String raw, List<String> data,
-                                       List<String> over,
+  private void analyzeValidParallelize(String raw, List<List<String>> data,
+                                       List<List<String>> over,
                                        List<ClawDimension> dimensions)
   {
     try {
@@ -890,10 +903,15 @@ public class ClawLanguageTest {
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
       if(data != null) {
-        assertTrue(l.hasDataClause());
-        assertEquals(data.size(), l.getDataClauseValues().size());
+        assertTrue(l.hasOverDataClause());
+        assertEquals(data.size(), l.getOverDataClauseValues().size());
         for (int i = 0; i < data.size(); ++i) {
-          assertEquals(data.get(i), l.getDataClauseValues().get(i));
+          assertEquals(data.get(i).size(),
+              l.getOverDataClauseValues().get(i).size());
+          for(int j = 0; j < data.get(i).size(); ++j){
+            assertEquals(data.get(i).get(j),
+                l.getOverDataClauseValues().get(i).get(j));
+          }
         }
       }
 
@@ -901,7 +919,12 @@ public class ClawLanguageTest {
         assertTrue(l.hasOverClause());
         assertEquals(over.size(), l.getOverClauseValues().size());
         for (int i = 0; i < over.size(); ++i) {
-          assertEquals(over.get(i), l.getOverClauseValues().get(i));
+          assertEquals(over.get(i).size(),
+              l.getOverClauseValues().get(i).size());
+          for(int j = 0; j < over.get(i).size(); ++j){
+            assertEquals(over.get(i).get(j),
+                l.getOverClauseValues().get(i).get(j));
+          }
         }
       }
 
