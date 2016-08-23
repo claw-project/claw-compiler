@@ -106,7 +106,10 @@ public class Parallelize extends Transformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyseData(XcodeProgram xcodeml){
-    if(!_claw.hasDataClause()){
+    /* If there is no data/over clause specified, an automatic deduction for
+     * array promotion is performed.
+     */
+    if(!_claw.hasOverDataClause()){
       for(Xdecl decl : _fctDef.getDeclarationTable().getAll()){
         if(decl.isBuiltInType()){
           if(XmOption.isDebugOutput()){
