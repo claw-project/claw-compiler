@@ -136,7 +136,13 @@ public class Parallelize extends Transformation {
       }
       return true;
     }
-    // Check presence of defined data in the current scope
+
+    /* If the data clause if defined at least once, manual promotion is the
+     * rule. The array idenitfiers defined in the data clauses will be used as
+     * the list of array to be promoted.
+     * In the analysis, we control that all defined arrays in the data clauses
+     * are actual delcared variables.
+     */
     for(List<String> data : _claw.getOverDataClauseValues()) {
       for (String d : data) {
         if (!_fctDef.getSymbolTable().contains(d)) {
