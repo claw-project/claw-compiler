@@ -864,8 +864,8 @@ public class ClawLanguageTest {
         dataLst1, over2, null);
 
 
-    List<String> data2 = Arrays.asList("t");
-    List<String> data3 = Arrays.asList("q");
+    List<String> data2 = Collections.singletonList("t");
+    List<String> data3 = Collections.singletonList("q");
     List<List<String>> dataLst2 = Arrays.asList(data2, data3);
 
     List<String> ic = Arrays.asList("i", ":");
