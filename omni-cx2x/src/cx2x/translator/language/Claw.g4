@@ -124,6 +124,8 @@ directive[ClawLanguage l]
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setEndPragma();
      }
+
+   // ignore directive
    | IGNORE
      {
        $l.setDirective(ClawDirective.IGNORE);
