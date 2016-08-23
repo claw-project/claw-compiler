@@ -110,7 +110,7 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_over_clause[$l] /*data_clause_optional[$l] over_clause_optional[$l]*/
+   | define_option[$l]* PARALLELIZE data_over_clause[$l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
@@ -153,19 +153,7 @@ ids_or_colon_list[List<String> ids]
   | ':' { $ids.add(":"); } ',' ids_or_colon_list[$ids]
 ;
 
-// over clause
-over_clause_optional[ClawLanguage l]
-  @init{
-    List<String> s = new ArrayList<>();
-  }
-:
-    OVER '(' ids_or_colon_list[s] ')'
-    {
-      $l.setOverClause(s);
-    }
-  | /* empty */
-;
-
+// data over clause used in parallelize directive
 data_over_clause[ClawLanguage l]
   @init{
     List<String> overLst = new ArrayList<>();
@@ -242,12 +230,6 @@ data_clause[ClawLanguage l]
   }
   :
     DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
-;
-
-// data clause or empty
-data_clause_optional[ClawLanguage l]:
-    data_clause[$l]
-  | /* empty */
 ;
 
 // private clause
