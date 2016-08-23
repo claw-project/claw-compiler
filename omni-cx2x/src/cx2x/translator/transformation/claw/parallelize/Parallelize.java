@@ -136,7 +136,7 @@ public class Parallelize extends Transformation {
       }
       return true;
     }
-    for(String d : _claw.getDataClauseValues()){
+    for(String d : _claw.getOverDataClauseValues().get(0)){ // TODO multiple over data clause
       if(!_fctDef.getSymbolTable().contains(d)){
         xcodeml.addError(
             String.format("Data %s is not defined in the current block.", d),
@@ -152,7 +152,7 @@ public class Parallelize extends Transformation {
         return false;
       }
     }
-    _arrayFieldsInOut = _claw.getDataClauseValues();
+    _arrayFieldsInOut = _claw.getOverDataClauseValues().get(0); // TODO multiple over data clause
     return true;
   }
 
