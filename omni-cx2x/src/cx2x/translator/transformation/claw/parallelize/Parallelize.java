@@ -252,9 +252,10 @@ public class Parallelize extends Transformation {
   {
     /* Create a nested loop with the new defined dimensions and wrap it around
      * the whole subroutine's body. This is for the moment a really naive
-     * transformation idea but it is our start point. */
+     * transformation idea but it is our start point.
+     * Use the first over clause to create it. */
     NestedDoStatement loops =
-        new NestedDoStatement(getOrderedDimensionsFromDefinition(), xcodeml);
+        new NestedDoStatement(getOrderedDimensionsFromDefinition(0), xcodeml);
     XnodeUtil.copyBody(_fctDef.getBody(), loops.getInnerStatement());
     _fctDef.getBody().delete();
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
@@ -277,10 +278,9 @@ public class Parallelize extends Transformation {
     /* Create a group of nested loop with the newly defined dimension and wrap
      * every assignment statement in the column loop or including data with it.
      * This is for the moment a really naive transformation idea but it is our
-     * start point. */
-
-
-    List<ClawDimension> order = getOrderedDimensionsFromDefinition();
+     * start point.
+     * Use the first over clause to do it. */
+    List<ClawDimension> order = getOrderedDimensionsFromDefinition(0);
     List<Xnode> assignStatements =
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
@@ -307,10 +307,10 @@ public class Parallelize extends Transformation {
         if(vars.size() > 1){
           if(!_arrayFieldsInOut.contains(lhs.getValue())){
             _arrayFieldsInOut.add(lhs.getValue());
-            promoteField(lhs.getValue(), false, false, 0, xcodeml); // TODO
+            promoteField(lhs.getValue(), false, false, 0, xcodeml); // TODO should be fine
           }
           adaptScalarRefToArrayReferences(xcodeml,
-              Collections.singletonList(lhs.getValue()), 0); // TODO multiple clause
+              Collections.singletonList(lhs.getValue()), 0); // TODO should be fine
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
@@ -570,12 +570,13 @@ public class Parallelize extends Transformation {
 
   /**
    * Get the list of dimensions in order from the parallelize over definition.
+   * @param overIndex Which over clause to use.
    * @return Ordered list of dimension object.
    */
-  private List<ClawDimension> getOrderedDimensionsFromDefinition(){
+  private List<ClawDimension> getOrderedDimensionsFromDefinition(int overIndex){
     if(_claw.hasOverClause()){
       List<ClawDimension> dimensions = new ArrayList<>();
-      for(String o : _claw.getOverClauseValues().get(0)) { // TODO multiple over
+      for(String o : _claw.getOverClauseValues().get(overIndex)) {
         if (o.equals(ClawDimension.BASE_DIM)) {
           continue;
         }
