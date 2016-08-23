@@ -110,7 +110,7 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_over_clause[$l]
+   | define_option[$l]* PARALLELIZE data_over_clause[$l]*
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
@@ -165,7 +165,6 @@ data_over_clause[ClawLanguage l]
     $l.setDataClause(dataLst);
     $l.setOverClause(overLst);
   }
-  | /* empty */
 ;
 
 // group clause
