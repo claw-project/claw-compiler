@@ -307,7 +307,7 @@ public class Parallelize extends Transformation {
         if(vars.size() > 1){
           if(!_arrayFieldsInOut.contains(lhs.getValue())){
             _arrayFieldsInOut.add(lhs.getValue());
-            promoteField(lhs.getValue(), false, false, xcodeml);
+            promoteField(lhs.getValue(), false, false, 0, xcodeml); // TODO
           }
           adaptScalarRefToArrayReferences(xcodeml,
               Collections.singletonList(lhs.getValue()), 0); // TODO multiple clause
@@ -380,25 +380,34 @@ public class Parallelize extends Transformation {
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    // Promote arrays
-    for(String fieldId : _arrayFieldsInOut){
-      promoteField(fieldId, true, true, xcodeml);
+    if(_claw.hasOverDataClause()){
+      for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i){
+        for (String fieldId : _claw.getOverDataClauseValues().get(i)) {
+          promoteField(fieldId, true, true, i, xcodeml);
+        }
+      }
+    } else {
+      // Promote all arrays in a similar manner
+      for (String fieldId : _arrayFieldsInOut) {
+        promoteField(fieldId, true, true, 0, xcodeml);
+      }
     }
   }
 
   /**
    * Promote a field with the information stored in the defined dimensions.
-   * @param fieldId Id of the field as defined in the symbol table.
-   * @param update  If true, update current type otherwise, create a type from
-   *                scratch.
-   * @param assumed If true, generate assumed dimension range, otherwise, use
-   *                the information in the defined dimension.
-   * @param xcodeml Current XcodeML program unit in which the element will be
-   *                created.
+   * @param fieldId   Id of the field as defined in the symbol table.
+   * @param update    If true, update current type otherwise, create a type from
+   *                  scratch.
+   * @param assumed   If true, generate assumed dimension range, otherwise, use
+   *                  the information in the defined dimension.
+   * @param overIndex Over clause to be used for promotion.
+   * @param xcodeml   Current XcodeML program unit in which the element will be
+   *                  created.
    * @throws IllegalTransformationException If type cannot be found.
    */
   private void promoteField(String fieldId, boolean update, boolean assumed,
-                            XcodeProgram xcodeml)
+                            int overIndex, XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
     Xid id = _fctDef.getSymbolTable().get(fieldId);
@@ -426,7 +435,7 @@ public class Parallelize extends Transformation {
         }
       } else {
         if(_claw.hasOverClause()){
-          if(_claw.getOverClauseValues().get(0).get(0).equals(ClawDimension.BASE_DIM)){ // TODO multiple over
+          if(_claw.getOverClauseValues().get(overIndex).get(0).equals(ClawDimension.BASE_DIM)){
             for (ClawDimension dim : _claw.getDimensionValues()) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, XbasicType.APPEND);
@@ -465,7 +474,8 @@ public class Parallelize extends Transformation {
   /**
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
-   * @param ids List of array identifiers that must be adapted.
+   * @param ids   List of array identifiers that must be adapted.
+   * @param index Index designing the correct over clause to be used.
    */
   private void adaptArrayReferences(List<String> ids, int index) {
     for(String data : ids){
@@ -489,6 +499,8 @@ public class Parallelize extends Transformation {
    * current function/subroutine definition.
    * @param xcodeml Current XcodeML program unit in which the element will be
    *                created.
+   * @param ids     List of array identifiers that must be adapted.
+   * @param index   Index designing the correct over clause to be used.
    */
   private void adaptScalarRefToArrayReferences(XcodeProgram xcodeml,
                                                List<String> ids,
