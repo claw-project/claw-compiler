@@ -162,7 +162,7 @@ data_over_clause[ClawLanguage l]
 :
   DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
   {
-    $l.setDataClause(dataLst);
+    $l.setOverDataClause(dataLst);
     $l.setOverClause(overLst);
   }
 ;

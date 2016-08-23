@@ -50,7 +50,8 @@ public class ClawLanguage extends AnalyzedPragma {
   private ClawRange _rangeValue;
   private List<ClawReshapeInfo> _reshapeInfos;
   private List<ClawDimension> _dimensions;
-  private List<String> _overValues;
+  private List<List<String>> _overValues;
+  private List<List<String>> _overDataValues;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
@@ -58,6 +59,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasIndexesValue, _hasInductionClause, _hasInitClause;
   private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
+  private boolean _hasOverDataClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -93,6 +95,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _mappingValues = null;
     _offsetValues = null;
     _overValues = null;
+    _overDataValues = null;
     _rangeValue = null;
     _reshapeInfos = null;
 
@@ -108,6 +111,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasInitClause = false;
     _hasInterchangeClause = false;
     _hasOverClause = false;
+    _hasOverDataClause = false;
     _hasParallelClause = false;
     _hasPrivateClause = false;
     _hasReshapeClause = false;
@@ -536,8 +540,11 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param data List of dimension extracted from the clause.
    */
   void setOverClause(List<String> data){
-    _hasOverClause = true;
-    _overValues = data;
+    if(_overValues == null){
+      _hasOverClause = true;
+      _overValues = new ArrayList<>();
+    }
+    _overValues.add(data);
   }
 
   /**
@@ -552,8 +559,36 @@ public class ClawLanguage extends AnalyzedPragma {
    * Get the dimensions values extracted from the over clause.
    * @return Dimensions identifier or : as a String.
    */
-  public List<String> getOverClauseValues(){
+  public List<List<String>> getOverClauseValues(){
     return _overValues;
+  }
+
+  /**
+   * Enable the data over clause for the current directive.
+   * @param data List of array identifiers extracted from the clause.
+   */
+  void setOverDataClause(List<String> data){
+    if(_overDataValues == null){
+      _hasOverDataClause = true;
+      _overDataValues = new ArrayList<>();
+    }
+    _overDataValues.add(data);
+  }
+
+  /**
+   * Check whether the current directive has the data over clause enabled.
+   * @return True if the data over clause is enabled.
+   */
+  public boolean hasOverDataClause(){
+    return _hasOverDataClause;
+  }
+
+  /**
+   * Get the data values extracted from the data over clause.
+   * @return Array identifier.
+   */
+  public List<List<String>> getOverDataClauseValues(){
+    return _overDataValues;
   }
 
   /**
