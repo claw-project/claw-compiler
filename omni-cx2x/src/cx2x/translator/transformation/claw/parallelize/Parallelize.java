@@ -154,8 +154,8 @@ public class Parallelize extends Transformation {
           return false;
         }
       }
+      _arrayFieldsInOut.addAll(data);
     }
-    _arrayFieldsInOut = _claw.getOverDataClauseValues().get(0); // TODO multiple over data clause
     return true;
   }
 
