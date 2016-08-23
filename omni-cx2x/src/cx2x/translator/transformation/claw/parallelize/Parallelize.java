@@ -166,15 +166,16 @@ public class Parallelize extends Transformation {
       _overDimensions += _claw.getDimensionValues().size();
       return true;
     }
-    if(!_claw.getOverClauseValues().get(0).contains(":")){ // TODO multiple over
-      xcodeml.addError("The column dimension has not been specified in the " +
-              "over clause. Use : to specify it.",
-          _claw.getPragma().getLineNo());
-      return false;
+    for (List<String> over: _claw.getOverClauseValues()) {
+      if(!over.contains(":")){
+        xcodeml.addError("The column dimension has not been specified in the " +
+                "over clause. Use : to specify it.",
+            _claw.getPragma().getLineNo());
+        return false;
+      }
     }
 
     // Check if over dimensions are defined dimensions
-
     for(List<String> overLst: _claw.getOverClauseValues()){
       for(String o : overLst){
         if(!o.equals(ClawDimension.BASE_DIM)){
