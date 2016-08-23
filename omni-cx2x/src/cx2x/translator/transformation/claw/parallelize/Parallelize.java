@@ -136,20 +136,23 @@ public class Parallelize extends Transformation {
       }
       return true;
     }
-    for(String d : _claw.getOverDataClauseValues().get(0)){ // TODO multiple over data clause
-      if(!_fctDef.getSymbolTable().contains(d)){
-        xcodeml.addError(
-            String.format("Data %s is not defined in the current block.", d),
-            _claw.getPragma().getLineNo()
-        );
-        return false;
-      }
-      if(!_fctDef.getDeclarationTable().contains(d)){
-        xcodeml.addError(
-            String.format("Data %s is not declared in the current block.", d),
-            _claw.getPragma().getLineNo()
-        );
-        return false;
+    // Check presence of defined data in the current scope
+    for(List<String> data : _claw.getOverDataClauseValues()) {
+      for (String d : data) {
+        if (!_fctDef.getSymbolTable().contains(d)) {
+          xcodeml.addError(
+              String.format("Data %s is not defined in the current block.", d),
+              _claw.getPragma().getLineNo()
+          );
+          return false;
+        }
+        if (!_fctDef.getDeclarationTable().contains(d)) {
+          xcodeml.addError(
+              String.format("Data %s is not declared in the current block.", d),
+              _claw.getPragma().getLineNo()
+          );
+          return false;
+        }
       }
     }
     _arrayFieldsInOut = _claw.getOverDataClauseValues().get(0); // TODO multiple over data clause
