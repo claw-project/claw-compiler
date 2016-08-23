@@ -166,7 +166,7 @@ public class Parallelize extends Transformation {
       _overDimensions += _claw.getDimensionValues().size();
       return true;
     }
-    if(!_claw.getOverClauseValues().contains(":")){
+    if(!_claw.getOverClauseValues().get(0).contains(":")){ // TODO multiple over
       xcodeml.addError("The column dimension has not been specified in the " +
               "over clause. Use : to specify it.",
           _claw.getPragma().getLineNo());
@@ -174,19 +174,23 @@ public class Parallelize extends Transformation {
     }
 
     // Check if over dimensions are defined dimensions
-    for(String o : _claw.getOverClauseValues()){
-      if(!o.equals(ClawDimension.BASE_DIM)){
-        ++_overDimensions;
-        if(!_dimensions.containsKey(o)){
-          xcodeml.addError(
-              String.format(
-                  "Dimension %s is not defined. Cannot be used in over " +
-                      "clause", o), _claw.getPragma().getLineNo()
-          );
-          return false;
+
+    for(List<String> overLst: _claw.getOverClauseValues()){
+      for(String o : overLst){
+        if(!o.equals(ClawDimension.BASE_DIM)){
+          ++_overDimensions;
+          if(!_dimensions.containsKey(o)){
+            xcodeml.addError(
+                String.format(
+                    "Dimension %s is not defined. Cannot be used in over " +
+                        "clause", o), _claw.getPragma().getLineNo()
+            );
+            return false;
+          }
         }
       }
     }
+
     return true;
   }
 
@@ -320,7 +324,7 @@ public class Parallelize extends Transformation {
        * before the current indexes and the remaining indexes will be inserted
        * after the current indexes.  */
 
-      for (String dim : _claw.getOverClauseValues()) {
+      for (String dim : _claw.getOverClauseValues().get(0)) { // TODO multiple over
         if (dim.equals(ClawDimension.BASE_DIM)) {
           crt = _afterCrt;
         } else {
@@ -399,7 +403,7 @@ public class Parallelize extends Transformation {
         }
       } else {
         if(_claw.hasOverClause()){
-          if(_claw.getOverClauseValues().get(0).equals(ClawDimension.BASE_DIM)){
+          if(_claw.getOverClauseValues().get(0).get(0).equals(ClawDimension.BASE_DIM)){ // TODO multiple over
             for (ClawDimension dim : _claw.getDimensionValues()) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, XbasicType.APPEND);
@@ -535,7 +539,7 @@ public class Parallelize extends Transformation {
   private List<ClawDimension> getOrderedDimensionsFromDefinition(){
     if(_claw.hasOverClause()){
       List<ClawDimension> dimensions = new ArrayList<>();
-      for(String o : _claw.getOverClauseValues()) {
+      for(String o : _claw.getOverClauseValues().get(0)) { // TODO multiple over
         if (o.equals(ClawDimension.BASE_DIM)) {
           continue;
         }
