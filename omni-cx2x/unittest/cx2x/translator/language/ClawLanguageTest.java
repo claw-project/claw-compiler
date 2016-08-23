@@ -16,7 +16,6 @@ import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -674,7 +673,7 @@ public class ClawLanguageTest {
 
 
     ClawReshapeInfo info1 = new ClawReshapeInfo("zmd", 0,
-        new ArrayList<Integer>());
+        Collections.emptyList());
     ClawReshapeInfo info2 =
         new ClawReshapeInfo("zsediflux", 1, Collections.singletonList(2));
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
