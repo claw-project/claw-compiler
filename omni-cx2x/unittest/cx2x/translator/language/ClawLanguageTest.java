@@ -859,8 +859,13 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,:,j)",
         Arrays.asList("t", "qc", "qv"), Arrays.asList("i", ":", "j"), null);
 
+    analyzeValidParallelize("claw parallelize data(t) over (i,:) data(q) " +
+        "over(:,i)", Arrays.asList("q"), Arrays.asList(":", "i"), null);
+
     // Unvalid directives
-    analyzeUnvalidClawLanguage("claw parallelize over ");
+    analyzeUnvalidClawLanguage("claw parallelize data over ");
+    analyzeUnvalidClawLanguage("claw parallelize data");
+    analyzeUnvalidClawLanguage("claw parallelize over");
     analyzeUnvalidClawLanguage("claw parallelite data() over ()");
   }
 
