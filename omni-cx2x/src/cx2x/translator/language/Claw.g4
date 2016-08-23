@@ -110,7 +110,7 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_clause_optional[$l] over_clause_optional[$l]
+   | define_option[$l]* PARALLELIZE data_over_clause[$l] /*data_clause_optional[$l] over_clause_optional[$l]*/
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
@@ -161,6 +161,20 @@ over_clause_optional[ClawLanguage l]
     {
       $l.setOverClause(s);
     }
+  | /* empty */
+;
+
+data_over_clause[ClawLanguage l]
+  @init{
+    List<String> overLst = new ArrayList<>();
+    List<String> dataLst = new ArrayList<>();
+  }
+:
+  DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
+  {
+    $l.setDataClause(dataLst);
+    $l.setOverClause(overLst);
+  }
   | /* empty */
 ;
 
