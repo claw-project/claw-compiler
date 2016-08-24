@@ -178,11 +178,16 @@ public class Parallelize extends Transformation {
       _overDimensions += _claw.getDimensionValues().size();
       return true;
     }
-    for (List<String> over: _claw.getOverClauseValues()) {
+    for (List<String> over : _claw.getOverClauseValues()) {
       if(!over.contains(ClawDimension.BASE_DIM)){
         xcodeml.addError("The column dimension has not been specified in the " +
-                "over clause. Use : to specify it.",
+            "over clause. Use : to specify it.",
             _claw.getPragma().getLineNo());
+        return false;
+      }
+      if(baseDimensionNb(over) > 2){
+        xcodeml.addError("Too many base dimesions specified. Maximum 2 base " +
+            "dimensions can be specified.", _claw.getPragma().getLineNo());
         return false;
       }
     }
