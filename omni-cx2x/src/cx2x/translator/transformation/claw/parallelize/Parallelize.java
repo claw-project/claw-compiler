@@ -187,7 +187,7 @@ public class Parallelize extends Transformation {
       }
       int baseDimNb = baseDimensionNb(over);
       if(baseDimNb > 2){
-        xcodeml.addError("Too many base dimensions specified in over clause." +
+        xcodeml.addError("Too many base dimensions specified in over clause. " +
             "Maximum two base dimensions can be specified.",
             _claw.getPragma().getLineNo());
         return false;
