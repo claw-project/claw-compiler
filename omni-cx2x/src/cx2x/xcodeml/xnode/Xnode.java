@@ -152,6 +152,21 @@ public class Xnode {
   }
 
   /**
+   * Find first child of any given opcodes.
+   * @param opcodes List of opcodes to be searched.
+   * @return The found element. Null if nothing found.
+   */
+  public Xnode findAny(List<Xcode> opcodes){
+    List<Xnode> children = getChildren();
+    for(Xnode child : children){
+      if(opcodes.contains(child.Opcode())){
+        return child;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Find a specific element in the children of the current element.
    * @param opcodes List of opcode to reach the element.
    * @return The element if found. Null otherwise.
