@@ -376,20 +376,31 @@ public class Parallelize extends Transformation {
       for(List<String> over : _claw.getOverClauseValues()){
         List<Xnode> beforeCrt = new ArrayList<>();
         List<Xnode> afterCrt = new ArrayList<>();
+        List<Xnode> inMiddle = new ArrayList<>();
         List<Xnode> crt = beforeCrt;
 
-        for (String dim : over) {
-          if (dim.equals(ClawDimension.BASE_DIM)) {
-            crt = afterCrt;
-          } else {
-            ClawDimension d = _dimensions.get(dim);
-            crt.add(d.generateArrayIndex(xcodeml));
+        if(baseDimensionNb(over) == 2){ // In middle insertion
+          for (String dim : over) {
+            if (!dim.equals(ClawDimension.BASE_DIM)) {
+              ClawDimension d = _dimensions.get(dim);
+              inMiddle.add(d.generateArrayIndex(xcodeml));
+            }
+          }
+        } else {
+          for (String dim : over) {
+            if (dim.equals(ClawDimension.BASE_DIM)) {
+              crt = afterCrt;
+            } else {
+              ClawDimension d = _dimensions.get(dim);
+              crt.add(d.generateArrayIndex(xcodeml));
+            }
           }
         }
 
         Collections.reverse(beforeCrt);
         _beforeCrt.add(beforeCrt);
         _afterCrt.add(afterCrt);
+        _inMiddle.add(inMiddle);
       }
     } else {
       /* If no over clause, the indexes are inserted in order from the first
@@ -403,6 +414,7 @@ public class Parallelize extends Transformation {
       Collections.reverse(crt);
       _beforeCrt.add(crt);
       _afterCrt.add(empty);
+      _inMiddle.add(empty);
     }
   }
 
