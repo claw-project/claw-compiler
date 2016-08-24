@@ -1716,7 +1716,7 @@ public class XnodeUtil {
           claw.getPragma().getLineNo());
     }
 
-    for(int i = 0; i < paramsLocal.size(); i++){
+    for(int i = 0; i < paramsLocal.size(); ++i){
       Xnode pLocal = paramsLocal.get(i);
       if(i > (paramsMod.size() - 1)) {
         // new parameter
@@ -1767,7 +1767,7 @@ public class XnodeUtil {
         newType.addDimension(index, 0);
       }
     } else {
-      newType.find(Xcode.INDEXRANGE).delete();
+      newType.resetDimension();
 
       for(int i = 0; i < base.getDimensions(); ++i){
         Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodemlDst);
@@ -1785,7 +1785,7 @@ public class XnodeUtil {
 
         newDim.appendToChildren(newLowerBound, false);
         newDim.appendToChildren(newUpperBound, false);
-        newType.appendToChildren(newDim, false);
+        newType.addDimension(newDim, XbasicType.APPEND);
       }
 
     }
