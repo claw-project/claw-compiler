@@ -203,10 +203,11 @@ public class Parallelize extends Transformation {
     }
 
     // Check if over dimensions are defined dimensions
+    _overDimensions = _claw.getDimensionValues().size();
     for(List<String> overLst: _claw.getOverClauseValues()){
+      int usedDimension = 0;
       for(String o : overLst){
         if(!o.equals(ClawDimension.BASE_DIM)){
-          ++_overDimensions;
           if(!_dimensions.containsKey(o)){
             xcodeml.addError(
                 String.format(
@@ -215,7 +216,13 @@ public class Parallelize extends Transformation {
             );
             return false;
           }
+          ++usedDimension;
         }
+      }
+      if(usedDimension != _overDimensions){
+        xcodeml.addError("Over clause doesn't use one or more defined " +
+            "dimensions", _claw.getPragma().getLineNo());
+        return false;
       }
     }
 
@@ -479,8 +486,7 @@ public class Parallelize extends Transformation {
     }
     if(assumed){
       if(newType.isAllAssumedShape()){
-        // Over dimension, minus already specified one
-        for(int i = 0; i < _overDimensions - 1; ++i){
+        for(int i = 0; i < _overDimensions; ++i){
           Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
           newType.addDimension(index, 0);
         }
