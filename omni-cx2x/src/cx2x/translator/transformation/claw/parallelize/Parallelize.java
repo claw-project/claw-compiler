@@ -485,12 +485,27 @@ public class Parallelize extends Transformation {
         }
       } else {
         if(_claw.hasOverClause()){
-          if(_claw.getOverClauseValues().get(overIndex).get(0).equals(ClawDimension.BASE_DIM)){
+          /* If the directive has an over clause, there is three possibility to
+           * insert the newly defined dimensions.
+           * 1. Insert the dimensions in the middle on currently existing ones.
+           * 2. Insert the dimensions before currently existing ones.
+           * 3. Insert the dimensions after currently existing ones. */
+          List<String> over = _claw.getOverClauseValues().get(overIndex);
+          if(baseDimensionNb(over) == 2){
+            // Insert new dimension in middle (case 1)
+            int startIdx = 1;
+            for (ClawDimension dim : _claw.getDimensionValues()) {
+              Xnode index = dim.generateIndexRange(xcodeml, false);
+              newType.addDimension(index, startIdx++);
+            }
+          } else if(over.get(0).equals(ClawDimension.BASE_DIM)){
+            // Insert new dimensions at the end (case 3)
             for (ClawDimension dim : _claw.getDimensionValues()) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, XbasicType.APPEND);
             }
           } else {
+            // Insert new dimension at the beginning (case 2)
             for (ClawDimension dim : _claw.getDimensionValues()) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, 0);
@@ -532,13 +547,20 @@ public class Parallelize extends Transformation {
       List<Xnode> refs =
           XnodeUtil.getAllArrayReferences(_fctDef.getBody(), data);
       for(Xnode ref : refs){
-        for(Xnode ai : _beforeCrt.get(index)){
-          XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
-        }
-        for(Xnode ai : _afterCrt.get(index)){
-          List<Xnode> children = ref.getChildren();
-          XnodeUtil.insertAfter(children.get(children.size()-1),
-              ai.cloneObject());
+        if(_inMiddle.get(index).size() == 0) {
+          for (Xnode ai : _beforeCrt.get(index)) {
+            XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+          }
+          for (Xnode ai : _afterCrt.get(index)) {
+            ref.appendToChildren(ai, true);
+          }
+        } else {
+          Xnode hook = ref.find(Xcode.ARRAYINDEX);
+          for (Xnode ai : _inMiddle.get(index)) {
+            Xnode clone = ai.cloneObject();
+            XnodeUtil.insertAfter(hook, clone);
+            hook = clone;
+          }
         }
       }
     }
