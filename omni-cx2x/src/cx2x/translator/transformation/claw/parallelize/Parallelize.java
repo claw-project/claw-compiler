@@ -365,12 +365,13 @@ public class Parallelize extends Transformation {
        * defined dimensions from left to right. Everything is inserted on the
        * left of current indexes. */
       List<Xnode> crt = new ArrayList<>();
+      List<Xnode> empty = Collections.emptyList();
       for(ClawDimension dim : _claw.getDimensionValues()){
         crt.add(dim.generateArrayIndex(xcodeml));
       }
       Collections.reverse(crt);
       _beforeCrt.add(crt);
-      _afterCrt.add(new ArrayList<>());
+      _afterCrt.add(empty);
     }
   }
 
