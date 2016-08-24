@@ -35,7 +35,7 @@ public class Parallelize extends Transformation {
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
   private XfunctionType _fctType;
-  private List<List<Xnode>> _beforeCrt, _afterCrt;
+  private List<List<Xnode>> _beforeCrt, _inMiddle, _afterCrt;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -179,7 +179,7 @@ public class Parallelize extends Transformation {
       return true;
     }
     for (List<String> over: _claw.getOverClauseValues()) {
-      if(!over.contains(":")){
+      if(!over.contains(ClawDimension.BASE_DIM)){
         xcodeml.addError("The column dimension has not been specified in the " +
                 "over clause. Use : to specify it.",
             _claw.getPragma().getLineNo());
@@ -327,6 +327,21 @@ public class Parallelize extends Transformation {
   }
 
   /**
+   * Get the number of base dimension in an over clause.
+   * @param over Over clause as a list of string element.
+   * @return The number of base dimension.
+   */
+  private int baseDimensionNb(List<String> over){
+    int cnt = 0;
+    for(String dim : over){
+      if(dim.equals(ClawDimension.BASE_DIM)){
+        ++cnt;
+      }
+    }
+    return cnt;
+  }
+
+  /**
    * Prepare the arrayIndex elements that will be inserted before and after the
    * current indexes in the array references.
    * @param xcodeml Current XcodeML program unit in which new elements are
@@ -335,6 +350,7 @@ public class Parallelize extends Transformation {
   private void prepareArrayIndexes(XcodeProgram xcodeml) {
     _beforeCrt = new ArrayList<>();
     _afterCrt = new ArrayList<>();
+    _inMiddle = new ArrayList<>();
 
     if(_claw.hasOverClause()) {
       /* If the over clause is specified, the indexes respect the definition of
