@@ -370,7 +370,7 @@ public class Parallelize extends Transformation {
       }
       Collections.reverse(crt);
       _beforeCrt.add(crt);
-      _afterCrt.add(Collections.emptyList());
+      _afterCrt.add(new ArrayList<>());
     }
   }
 
