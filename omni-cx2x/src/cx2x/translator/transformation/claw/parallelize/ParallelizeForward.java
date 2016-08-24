@@ -13,6 +13,7 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -344,8 +345,8 @@ public class ParallelizeForward extends Transformation {
     if(_flatten){
       Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.getChildren()){
-        if(arg.Opcode() == Xcode.FARRAYREF
-            && arg.find(Xcode.INDEXRANGE) != null)
+        if(arg.Opcode() == Xcode.FARRAYREF && arg.findAny(
+            Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {
           Xnode var = arg.find(Xcode.VARREF, Xcode.VAR);
           if(var != null){
