@@ -479,7 +479,8 @@ public class Parallelize extends Transformation {
     }
     if(assumed){
       if(newType.isAllAssumedShape()){
-        for(int i = 0; i < _overDimensions; ++i){
+        // Over dimension, minus already specified one
+        for(int i = 0; i < _overDimensions - 1; ++i){
           Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
           newType.addDimension(index, 0);
         }
