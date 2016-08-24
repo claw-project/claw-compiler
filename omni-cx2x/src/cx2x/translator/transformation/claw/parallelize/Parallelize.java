@@ -555,7 +555,11 @@ public class Parallelize extends Transformation {
             ref.appendToChildren(ai, true);
           }
         } else {
-          Xnode hook = ref.find(Xcode.ARRAYINDEX);
+          Xnode hook =
+              ref.findAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+          if(hook == null){
+            hook = ref.getChild(0);
+          }
           for (Xnode ai : _inMiddle.get(index)) {
             Xnode clone = ai.cloneObject();
             XnodeUtil.insertAfter(hook, clone);
