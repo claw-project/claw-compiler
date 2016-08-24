@@ -185,10 +185,20 @@ public class Parallelize extends Transformation {
             _claw.getPragma().getLineNo());
         return false;
       }
-      if(baseDimensionNb(over) > 2){
-        xcodeml.addError("Too many base dimesions specified. Maximum 2 base " +
-            "dimensions can be specified.", _claw.getPragma().getLineNo());
+      int baseDimNb = baseDimensionNb(over);
+      if(baseDimNb > 2){
+        xcodeml.addError("Too many base dimensions specified in over clause." +
+            "Maximum two base dimensions can be specified.",
+            _claw.getPragma().getLineNo());
         return false;
+      } else if(baseDimNb == 2){
+        if(!over.get(0).equals(ClawDimension.BASE_DIM)
+            || !over.get(over.size()-1).equals(ClawDimension.BASE_DIM))
+        {
+          xcodeml.addError("Base dimensions structure not supported in over" +
+              "clause.", _claw.getPragma().getLineNo());
+          return false;
+        }
       }
     }
 
