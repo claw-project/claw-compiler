@@ -861,6 +861,9 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,:,j)",
         dataLst1, over2, null);
 
+    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j)",
+        dataLst1, over2, null);
+
 
     List<String> data2 = Collections.singletonList("t");
     List<String> data3 = Collections.singletonList("q");
