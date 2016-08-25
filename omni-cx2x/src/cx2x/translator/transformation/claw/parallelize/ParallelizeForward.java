@@ -192,12 +192,10 @@ public class ParallelizeForward extends Transformation {
         // Function is not located in the current module.
         List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
         uses.addAll(XnodeUtil.getAllUse(parentModule));
-        for(Xdecl use : uses){
-          if(use.opcode() == Xcode.FUSEDECL){
-            
-          } else if (use.opcode() == Xcode.FUSEONLYDECL){
-
-          }
+        if(!findInModule(uses)){
+          xcodeml.addError("Function definition not found in module ",
+              _claw.getPragma().getLineNo());
+          return false;
         }
       } else {
         _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
@@ -214,6 +212,12 @@ public class ParallelizeForward extends Transformation {
     if(_fctType != null && fctDef != null){
       _localFct = true;
     } else {
+
+      // Has been found already
+      if(_fctType != null && _calledFctName == null){
+        return true;
+      }
+
       List<Xdecl> localScopeUsesStmt = XnodeUtil.getAllUse(parentFctDef);
       List<Xdecl> moduleScoptUsesStmt =
           XnodeUtil.getAllUse(parentModule);
@@ -236,6 +240,7 @@ public class ParallelizeForward extends Transformation {
    * @return True if the function was found. False otherwise.
    */
   private boolean findInModule(List<Xdecl> useDecls){
+    // TODO handle rename
     for(Xdecl d : useDecls){
 
       // Check whether a CLAW file is available.
