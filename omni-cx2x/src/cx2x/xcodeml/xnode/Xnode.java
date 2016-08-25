@@ -45,7 +45,7 @@ public class Xnode {
    * Get the element opcode.
    * @return Opcode.
    */
-  public Xcode Opcode(){
+  public Xcode opcode(){
     return Xcode.valueOf(_baseElement.getTagName().toUpperCase());
   }
 
@@ -120,7 +120,7 @@ public class Xnode {
    * @return True if the element has a body. False otherwise.
    */
   public boolean hasBody(){
-    switch (Opcode()){
+    switch (opcode()){
       case FDOSTATEMENT:
       case FFUNCTIONDEFINITION:
         return true;
@@ -144,7 +144,7 @@ public class Xnode {
   public Xnode findNode(Xcode opcode){
     List<Xnode> children = getChildren();
     for(Xnode child : children){
-      if(child.Opcode() == opcode){
+      if(child.opcode() == opcode){
         return child;
       }
     }
@@ -159,7 +159,7 @@ public class Xnode {
   public Xnode findAny(List<Xcode> opcodes){
     List<Xnode> children = getChildren();
     for(Xnode child : children){
-      if(opcodes.contains(child.Opcode())){
+      if(opcodes.contains(child.opcode())){
         return child;
       }
     }

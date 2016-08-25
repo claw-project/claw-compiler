@@ -128,7 +128,7 @@ public class XcodeProgram extends XcodeML {
       return false;
     }
 
-    if(Opcode() != Xcode.XCODEPROGRAM){
+    if(opcode() != Xcode.XCODEPROGRAM){
       return false;
     }
 

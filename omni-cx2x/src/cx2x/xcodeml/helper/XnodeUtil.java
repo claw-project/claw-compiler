@@ -157,11 +157,11 @@ public class XnodeUtil {
    */
   public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef){
     List<Xnode> ranges = new ArrayList<>();
-    if(arrayRef.Opcode() != Xcode.FARRAYREF){
+    if(arrayRef.opcode() != Xcode.FARRAYREF){
       return ranges;
     }
     for(Xnode el : arrayRef.getChildren()){
-      if(el.Opcode() == Xcode.INDEXRANGE){
+      if(el.opcode() == Xcode.INDEXRANGE){
         ranges.add(el);
       }
     }
@@ -987,8 +987,8 @@ public class XnodeUtil {
   {
     if(originalBody == null || originalBody.getElement() == null
         || extraBody == null || extraBody.getElement() == null
-        || originalBody.Opcode() != Xcode.BODY
-        || extraBody.Opcode() != Xcode.BODY)
+        || originalBody.opcode() != Xcode.BODY
+        || extraBody.opcode() != Xcode.BODY)
     {
       throw new IllegalTransformationException("One of the body is null.");
     }
@@ -1030,7 +1030,7 @@ public class XnodeUtil {
                                             boolean withLowerBound)
   {
     // The two nodes must be do statement
-    if (e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT) {
+    if (e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
       return false;
     }
 
@@ -1112,7 +1112,7 @@ public class XnodeUtil {
   private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2,
                                                boolean withLowerBound)
   {
-    if (idx1.Opcode() != Xcode.INDEXRANGE || idx2.Opcode() != Xcode.INDEXRANGE) {
+    if (idx1.opcode() != Xcode.INDEXRANGE || idx2.opcode() != Xcode.INDEXRANGE) {
       return false;
     }
 
@@ -1154,7 +1154,7 @@ public class XnodeUtil {
     throws IllegalTransformationException
   {
     // The two nodes must be do statement
-    if(e1.Opcode() != Xcode.FDOSTATEMENT || e2.Opcode() != Xcode.FDOSTATEMENT){
+    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT){
       return;
     }
 
@@ -1262,7 +1262,7 @@ public class XnodeUtil {
    * @return The argument if found. Null otherwise.
    */
   public static Xnode findArg(String value, Xnode fctCall){
-    if(fctCall.Opcode() != Xcode.FUNCTIONCALL) {
+    if(fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return null;
     }
     Xnode args = fctCall.find(Xcode.ARGUMENTS);
@@ -1806,8 +1806,8 @@ public class XnodeUtil {
                                       XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
-    if(baseBound.Opcode() != Xcode.LOWERBOUND
-        && baseBound.Opcode() != Xcode.UPPERBOUND)
+    if(baseBound.opcode() != Xcode.LOWERBOUND
+        && baseBound.opcode() != Xcode.UPPERBOUND)
     {
       throw new IllegalTransformationException("Cannot duplicate bound");
     }
@@ -1822,12 +1822,12 @@ public class XnodeUtil {
           "has no children element");
     }
 
-    Xnode bound = new Xnode(baseBound.Opcode(), xcodemlDst);
-    if(boundChild.Opcode() == Xcode.FINTCONSTANT){
+    Xnode bound = new Xnode(baseBound.opcode(), xcodemlDst);
+    if(boundChild.opcode() == Xcode.FINTCONSTANT){
       Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
       intConst.setValue(boundChild.getValue());
       bound.appendToChildren(intConst, false);
-    } else if(boundChild.Opcode() == Xcode.VAR){
+    } else if(boundChild.opcode() == Xcode.VAR){
       String typeValue = boundChild.getAttribute(Xattr.TYPE);
       if(!typeValue.startsWith(XbasicType.PREFIX_INTEGER)) {
         throw new IllegalTransformationException("Only integer variable are " +

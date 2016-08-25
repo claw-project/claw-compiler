@@ -149,7 +149,7 @@ public class XdeclTable extends Xnode {
         List<Xdecl> decls = new ArrayList<>();
         while(it.hasNext()){
           Map.Entry<String, Xdecl> entry = it.next();
-          if(entry.getValue().Opcode() == decl){
+          if(entry.getValue().opcode() == decl){
             decls.add(entry.getValue());
           }
         }

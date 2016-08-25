@@ -68,7 +68,7 @@ public class TransformationHelper {
                                         Transformer transformer,
                                         Xnode stmt)
   {
-    if(claw.hasFusionClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
+    if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT){
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
       LoopFusion fusion = new LoopFusion(stmt, l);
       // TODO maybe run analysis
@@ -98,7 +98,7 @@ public class TransformationHelper {
                                              Transformer transformer,
                                              Xnode stmt)
   {
-    if(claw.hasInterchangeClause() && stmt.Opcode() == Xcode.FDOSTATEMENT){
+    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT){
       Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
       XnodeUtil.insertBefore(stmt, p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);

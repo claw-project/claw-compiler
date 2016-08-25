@@ -121,7 +121,7 @@ public class ClawRange {
    * @return True if the iteration range share the same property.
    */
   public boolean equals(Xnode doStmt) {
-    if(doStmt.Opcode() != Xcode.FDOSTATEMENT){
+    if(doStmt.opcode() != Xcode.FDOSTATEMENT){
       return false;
     }
 

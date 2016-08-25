@@ -62,14 +62,14 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-    if(next.Opcode() == Xcode.EXPRSTATEMENT
-        || next.Opcode() == Xcode.FASSIGNSTATEMENT)
+    if(next.opcode() == Xcode.EXPRSTATEMENT
+        || next.opcode() == Xcode.FASSIGNSTATEMENT)
     {
       _fctCall = next.find(Xcode.FUNCTIONCALL);
       if(_fctCall != null){
         return analyzeForward(xcodeml);
       }
-    } else if (next.Opcode() == Xcode.FDOSTATEMENT) {
+    } else if (next.opcode() == Xcode.FDOSTATEMENT) {
       _outerDoStatement = next;
       return analyzeForwardWithDo(xcodeml, next);
     }
@@ -112,17 +112,17 @@ public class ParallelizeForward extends Transformation {
       return false;
     }
     for(Xnode n : body.getChildren()){
-      if(n.Opcode() == Xcode.FDOSTATEMENT){
+      if(n.opcode() == Xcode.FDOSTATEMENT){
         return analyzeNestedDoStmts(xcodeml, n);
-      } else if(n.Opcode() != Xcode.FPRAGMASTATEMENT
-          && n.Opcode() != Xcode.EXPRSTATEMENT)
+      } else if(n.opcode() != Xcode.FPRAGMASTATEMENT
+          && n.opcode() != Xcode.EXPRSTATEMENT)
       {
         xcodeml.addError("Only pragmas, comments and function calls allowed " +
                 "in the do statements.",
             _claw.getPragma().getLineNo());
         return false;
-      } else if (n.Opcode() == Xcode.EXPRSTATEMENT
-          || n.Opcode() == Xcode.FASSIGNSTATEMENT)
+      } else if (n.opcode() == Xcode.EXPRSTATEMENT
+          || n.opcode() == Xcode.FASSIGNSTATEMENT)
       {
         _fctCall = n.find(Xcode.FUNCTIONCALL);
         if(_fctCall != null){
@@ -187,11 +187,25 @@ public class ParallelizeForward extends Transformation {
     if(_fctType.getParameterNb() == 0){
       // If not, try to find the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
-      _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
-      if(_fctType == null){
-        xcodeml.addError("Called function cannot be found in the same module ",
+
+      if(id == null){
+        // Function is not located in the current module.
+        List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
+        uses.addAll(XnodeUtil.getAllUse(parentModule));
+        for(Xdecl use : uses){
+          if(use.opcode() == Xcode.FUSEDECL){
+            
+          } else if (use.opcode() == Xcode.FUSEONLYDECL){
+
+          }
+        }
+      } else {
+        _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+        if(_fctType == null){
+          xcodeml.addError("Called function cannot be found in the same module ",
             _claw.getPragma().getLineNo());
-        return false;
+          return false;
+        }
       }
     }
     // end of workaround
@@ -345,7 +359,7 @@ public class ParallelizeForward extends Transformation {
     if(_flatten){
       Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.getChildren()){
-        if(arg.Opcode() == Xcode.FARRAYREF && arg.findAny(
+        if(arg.opcode() == Xcode.FARRAYREF && arg.findAny(
             Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {
           Xnode var = arg.find(Xcode.VARREF, Xcode.VAR);

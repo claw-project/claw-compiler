@@ -313,7 +313,7 @@ public class Parallelize extends Transformation {
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
     for(Xnode assign : assignStatements){
-      if(assign.getChild(0).Opcode() == Xcode.FARRAYREF){
+      if(assign.getChild(0).opcode() == Xcode.FARRAYREF){
         Xnode ref = assign.getChild(0);
 
         if(_arrayFieldsInOut.contains(ref.find(Xcode.VARREF, Xcode.VAR).
@@ -324,7 +324,7 @@ public class Parallelize extends Transformation {
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
           assign.delete();
         }
-      } else if(assign.getChild(0).Opcode() == Xcode.VAR
+      } else if(assign.getChild(0).opcode() == Xcode.VAR
           && _scalarFields.contains(assign.getChild(0).getValue()))
       {
         /* If the assignment is in the column loop and is composed with some

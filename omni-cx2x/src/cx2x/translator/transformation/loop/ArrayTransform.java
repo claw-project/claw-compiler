@@ -116,7 +116,7 @@ public class ArrayTransform extends BlockTransformation {
         return false;
       }
       // Check if we are dealing with an array notation
-      if(!(stmt.getChild(0).Opcode() == Xcode.FARRAYREF)){
+      if(!(stmt.getChild(0).opcode() == Xcode.FARRAYREF)){
         xcodeml.addError("Assign statement is not an array notation",
             _clawBegin.getPragma().getLineNo());
         return false;
@@ -124,7 +124,7 @@ public class ArrayTransform extends BlockTransformation {
 
       List<Xnode> ranges = new ArrayList<>();
       for(Xnode el : stmt.getChild(0).getChildren()){
-        if(el.Opcode() == Xcode.INDEXRANGE){
+        if(el.opcode() == Xcode.INDEXRANGE){
           ranges.add(el);
         }
       }
@@ -258,7 +258,7 @@ public class ArrayTransform extends BlockTransformation {
       for (Xnode arrayRef : allArrayRef) {
         for (int i = 0; i < arrayRef.getChildren().size() - 1; ++i) {
           Xnode el = arrayRef.getChild(i + 1);
-          if (el.Opcode() == Xcode.INDEXRANGE) {
+          if (el.opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].find(Xcode.VAR).getValue();
             Xnode inductionVar =
                 XnodeUtil.createVar(Xname.TYPE_F_INT, induction,
