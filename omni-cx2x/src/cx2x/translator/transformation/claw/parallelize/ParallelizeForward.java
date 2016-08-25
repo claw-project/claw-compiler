@@ -218,11 +218,12 @@ public class ParallelizeForward extends Transformation {
         return true;
       }
 
-      List<Xdecl> localScopeUsesStmt = XnodeUtil.getAllUse(parentFctDef);
-      List<Xdecl> moduleScoptUsesStmt =
-          XnodeUtil.getAllUse(parentModule);
-
-      if(findInModule(localScopeUsesStmt) || findInModule(moduleScoptUsesStmt)){
+      // Get all the use statements in the fct and module definitions
+      List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
+      uses.addAll(XnodeUtil.getAllUse(parentModule));
+      
+      // Try to locate the fct in the modules defined in use statements
+      if(findInModule(uses)){
         return true;
       }
 
