@@ -1650,6 +1650,31 @@ public class XnodeUtil {
   }
 
   /**
+   * Import a type description from one XcodeML unit to another one. If the type
+   * id is not present in the source XcodeML unit, nothing is done.
+   * @param src    Source XcodeML unit.
+   * @param dst    Destination XcodeML unit.
+   * @param typeId Type id to be imported.
+   */
+  private static void importType(XcodeML src, XcodeML dst, String typeId){
+    if(typeId == null || dst.getTypeTable().hasType(typeId)) {
+      return;
+    }
+    Xtype type = src.getTypeTable().get(typeId);
+    if(type == null){
+      return;
+    }
+    Node rawNode = dst.getDocument().importNode(type.getElement(), true);
+    Xtype importedType = new Xtype((Element)rawNode);
+    dst.getTypeTable().add(importedType);
+    if(importedType.hasAttribute(Xattr.REF)
+        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
+    {
+      XnodeUtil.importType(src, dst, importedType.getAttribute(Xattr.REF));
+    }
+  }
+
+  /**
    * Update the function signature in the module file to reflects local changes.
    * @param xcodeml     Current XcodeML file unit.
    * @param fctDef      Function definition that has been changed.
@@ -1685,13 +1710,19 @@ public class XnodeUtil {
 
     XfunctionType fctTypeMod;
     if(importFctType){
-      Node rawNode =
-          mod.getDocument().importNode(fctType.getElement(), true);
+      Node rawNode = mod.getDocument().importNode(fctType.getElement(), true);
       mod.getTypeTable().getElement().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);
       Xid importedFctTypeId = XnodeUtil.createId(mod, importedFctType.getType(),
           Xname.SCLASS_F_FUNC, fctDef.getName().getValue());
       mod.getIdentifiers().add(importedFctTypeId);
+
+      // check if params need to be imported as well
+      if(importedFctType.getParameterNb() > 0){
+        for(Xnode param : importedFctType.getParams().getAll()){
+          XnodeUtil.importType(xcodeml, mod, param.getAttribute(Xattr.TYPE));
+        }
+      }
       return;
     } else {
       fctTypeMod = (XfunctionType) mod.getTypeTable().get(
