@@ -267,7 +267,7 @@ public class Parallelize extends Transformation {
       XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
       if(modDef != null){
         XnodeUtil.updateModuleSignature(xcodeml, _fctDef, _fctType, modDef, _claw,
-            transformer);
+            transformer, false);
       }
     }
   }

@@ -1351,7 +1351,7 @@ public class XnodeUtil {
    * @param nameValue Value of the name inner element.
    * @return The newly created element.
    */
-  public static Xid createId(XcodeProgram xcodeml, String type, String sclass,
+  public static Xid createId(XcodeML xcodeml, String type, String sclass,
                              String nameValue)
   {
     Xnode id = new Xnode(Xcode.ID, xcodeml);
@@ -1668,7 +1668,8 @@ public class XnodeUtil {
                                            XmoduleDefinition modDef,
                                            ClawLanguage claw,
                                            cx2x.xcodeml.transformation.
-                                               Transformer transformer)
+                                               Transformer transformer,
+                                           boolean importFctType)
       throws IllegalTransformationException
   {
     Xmod mod;
@@ -1684,9 +1685,16 @@ public class XnodeUtil {
       }
     }
 
-
-    XfunctionType fctTypeMod = (XfunctionType) mod.getTypeTable().get(
-        fctDef.getName().getAttribute(Xattr.TYPE));
+    XfunctionType fctTypeMod;
+    if(importFctType){
+      Node rawNode =
+          mod.getDocument().importNode(fctType.getElement(), true);
+      mod.getTypeTable().getElement().appendChild(rawNode);
+      return;
+    } else {
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(
+          fctDef.getName().getAttribute(Xattr.TYPE));
+    }
 
     if(fctTypeMod == null){
       /* Workaround for a bug in OMNI Compiler. Look at test case

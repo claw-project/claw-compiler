@@ -160,22 +160,32 @@ public class ParallelizeForward extends Transformation {
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
 
     String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
-    Xtype rawType = xcodeml.getTypeTable().get(fctType);
-    if(rawType instanceof XfunctionType){
-      _fctType = (XfunctionType)rawType;
-    } else if (rawType instanceof XbasicType
-        && fctType.startsWith(Xtype.PREFIX_PROCEDURE))
-    {
+    if(fctType.startsWith(Xtype.PREFIX_PROCEDURE)){
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * find the correct function in the typeTable.
        * TODO if there is a rename.
        * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
-      _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+      if(id == null){
+        List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
+        uses.addAll(XnodeUtil.getAllUse(parentModule));
+        if(!findInModule(uses)){
+          xcodeml.addError("Function definition not found in module ",
+              _claw.getPragma().getLineNo());
+          return false;
+        }
+      } else {
+        _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+      }
     } else {
-      xcodeml.addError("Unsupported type of XcodeML/F element for the function "
-              + _calledFctName, _claw.getPragma().getLineNo());
-      return false;
+      Xtype rawType = xcodeml.getTypeTable().get(fctType);
+      if(rawType instanceof XfunctionType) {
+        _fctType = (XfunctionType) rawType;
+      } else {
+        xcodeml.addError("Unsupported type of XcodeML/F element for the function "
+            + _calledFctName, _claw.getPragma().getLineNo());
+        return false;
+      }
     }
 
     /* Workaround for a bug in OMNI Compiler. Look at test case
@@ -245,6 +255,7 @@ public class ParallelizeForward extends Transformation {
     for(Xdecl d : useDecls){
 
       // Check whether a CLAW file is available.
+      String xx = d.getAttribute(Xattr.NAME);
       _mod = TransformationHelper.
           locateClawModuleFile(d.getAttribute(Xattr.NAME));
 
@@ -425,7 +436,15 @@ public class ParallelizeForward extends Transformation {
         // 3. Replicate the change in a potential module file
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
         XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef,
-            _claw, transformer);
+            _claw, transformer, false);
+      } else if(_fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)){
+        /* The function/subroutine is private but accessible through the type
+         * as a type-bound procedure. In this case, the function is not in the
+         * type table of the .xmod file. We need to insert it first and then
+         * we can update it. */
+        XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
+        XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef,
+            _claw, transformer, true);
       }
     }
 
