@@ -1301,14 +1301,14 @@ public class XnodeUtil {
   /**
    * Create a new FunctionCall element with elements name and arguments as
    * children.
-   * @param xcodeml    The current XcodeML program unit in which the elements
-   *                   are created.
+   * @param xcodeml    The current XcodeML unit in which the elements are
+   *                   created.
    * @param returnType Value of the type attribute for the functionCall element.
    * @param name       Value of the name element.
    * @param nameType   Value of the type attribute for the name element.
    * @return The newly created element.
    */
-  public static Xnode createFctCall(XcodeProgram xcodeml, String returnType,
+  public static Xnode createFctCall(XcodeML xcodeml, String returnType,
                                     String name, String nameType){
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
     fctCall.setAttribute(Xattr.TYPE, returnType);
@@ -1324,13 +1324,12 @@ public class XnodeUtil {
   /**
    * Create a new FarrayRef element with varRef element as a child with the
    * given Var element.
-   * @param xcodeml The current XcodeML program unit in which the elements
-   *                are created.
+   * @param xcodeml The current XcodeML unit in which the elements are created.
    * @param type    Value of the type attribute for the FarrayRef element.
    * @param var     Var element nested in the varRef element.
    * @return The newly created element.
    */
-  public static Xnode createArrayRef(XcodeProgram xcodeml, XbasicType type,
+  public static Xnode createArrayRef(XcodeML xcodeml, XbasicType type,
                                      Xnode var)
   {
     Xnode ref = new Xnode(Xcode.FARRAYREF, xcodeml);
@@ -1600,12 +1599,11 @@ public class XnodeUtil {
    * @param type    Type of the variable.
    * @param sclass  Scope class of the variable (from Xname).
    * @param fctDef  Function definition in which id and decl are created.
-   * @param xcodeml Current XcodeML program unit in which the elements will be
-   *                created.
+   * @param xcodeml Current XcodeML unit in which the elements will be created.
    */
   public static void createIdAndDecl(String name, String type, String sclass,
                                      XfunctionDefinition fctDef,
-                                     XcodeProgram xcodeml)
+                                     XcodeML xcodeml)
   {
     Xid id = XnodeUtil.createId(xcodeml, type, sclass, name);
     fctDef.getSymbolTable().add(id);
