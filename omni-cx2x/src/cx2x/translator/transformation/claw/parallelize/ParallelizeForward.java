@@ -164,7 +164,7 @@ public class ParallelizeForward extends Transformation {
     if(rawType instanceof XfunctionType){
       _fctType = (XfunctionType)rawType;
     } else if (rawType instanceof XbasicType
-        && fctType.startsWith(XbasicType.PREFIX_PROCEDURE))
+        && fctType.startsWith(Xtype.PREFIX_PROCEDURE))
     {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * find the correct function in the typeTable.
@@ -221,7 +221,7 @@ public class ParallelizeForward extends Transformation {
       // Get all the use statements in the fct and module definitions
       List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
       uses.addAll(XnodeUtil.getAllUse(parentModule));
-      
+
       // Try to locate the fct in the modules defined in use statements
       if(findInModule(uses)){
         return true;
@@ -321,8 +321,23 @@ public class ParallelizeForward extends Transformation {
     List<Xnode> params = _fctType.getParams().getAll();
     List<Xnode> args = _fctCall.find(Xcode.ARGUMENTS).getChildren();
 
+    /* Compute the position of the first new arguments. In the case of a
+     * type-bound procedure call, the first parameter declared in the procedure
+     * is not actually passed as an argument. In this case, we add an offset of
+     * one to the starting arguments.
+     * TODO the check might be change to fit with the XcodeML/F2008 specs. The
+     * TODO cont: attribute data_ref will probably be gone and replaced by a
+     * TODO cont: FmemberRef element
+     */
+    int argOffset = 0;
+    if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
+        && _fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF))
+    {
+      argOffset = 1;
+    }
+
     // 1. Adapt function call with potential new arguments
-    for(int i = args.size(); i < params.size(); i++){
+    for(int i = args.size() + argOffset; i < params.size(); i++){
       Xnode p = params.get(i);
       String var = p.getValue();
       String type;
