@@ -100,6 +100,7 @@ public class Xname {
   public static final String ELSE = "else";
   public static final String EXPR_STMT = "exprStatement";
   public static final String EXTERN_DECL = "externDecl";
+  public static final String FINAL_PROCEDURE = "finalProcedure";
   public static final String FUNCTION_CALL = "functionCall";
   public static final String F_ALLOCATE_STATEMENT = "FallocateStatement";
   public static final String F_ARRAY_CONSTRUCTOR = "FarrayConstructor";
@@ -174,6 +175,9 @@ public class Xname {
   public static final String SYMBOLS = "symbols";
   public static final String THEN = "then";
   public static final String TYPE_TABLE = "typeTable";
+  public static final String TYPE_BOUND_GENERIC_PROCEDURE = "typeBoundGenericProcedure";
+  public static final String TYPE_BOUND_PROCEDURE = "typeBoundProcedure";
+  public static final String TYPE_BOUND_PROCEDURES = "typeBoundProcedures";
   public static final String UPPER_BOUND = "upperBound";
   public static final String VALUE = "value";
   public static final String VALUE_LIST = "valueList";

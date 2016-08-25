@@ -50,6 +50,7 @@ public enum Xcode {
   FFUNCTIONDEFINITION(Xname.F_FUNCTION_DEFINITION),          // XcodeML/F 5.3
   FFUNCTIONTYPE(Xname.F_FUNCTION_TYPE),                      // XcodeML/F 3.4
   FIFSTATEMENT(Xname.F_IF_STMT),                             // XcodeML/F 6.4
+  FINALPROCEDURE(Xname.FINAL_PROCEDURE),                     // XcodeML/F 3.12
   FINTCONSTANT(Xname.F_INT_CONST),                           // XcodeML/F 7.1.1
   FINTERFACEDECL(Xname.F_INTERFACE_DECL),                    // XcodeML/F 5.10
   FINQUIRESTATEMENT(Xname.F_INQUIRE_STATEMENT),              // XcodeML/F 6.17.6
@@ -98,6 +99,9 @@ public enum Xcode {
   STEP(Xname.STEP),                                          // XcodeML/F 8.14
   SYMBOLS(Xname.SYMBOLS),                                    // XcodeML/F 4.2
   THEN(Xname.THEN),                                          // XcodeML/F 6.28
+  TYPEBOUNDGENERICPROCEDURE(Xname.TYPE_BOUND_GENERIC_PROCEDURE), // XcodeML 3.11
+  TYPEBOUNDPROCEDURES(Xname.TYPE_BOUND_PROCEDURES),          // XcodeML/F 3.9
+  TYPEBOUNDPROCEDURE(Xname.TYPE_BOUND_PROCEDURE),            // XcodeML/F 3.10
   TYPETABLE(Xname.TYPE_TABLE),                               // XcodeML/F 3.1
   UPPERBOUND(Xname.UPPER_BOUND),                             // XcodeML/F 8.13
   VALUE(Xname.VALUE),                                        // XcodeML/F 8.4
