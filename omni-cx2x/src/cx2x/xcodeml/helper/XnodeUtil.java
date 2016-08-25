@@ -1553,12 +1553,21 @@ public class XnodeUtil {
       return null;
     }
     String modName = mod.getAttribute(Xattr.NAME);
+    return findModule(modName);
+  }
+
+  /**
+   * Find module by name.
+   * @param moduleName Name of the module.
+   * @return Module object if found. Null otherwise.
+   */
+  public static Xmod findModule(String moduleName){
     for(String dir : XcodeMLtools_Fmod.getSearchPath()){
-      String path = dir + "/" + modName + XMOD_FILE_EXTENSION;
+      String path = dir + "/" + moduleName + XMOD_FILE_EXTENSION;
       File f = new File(path);
       if(f.exists()){
         Document doc = readXmlFile(path);
-        return doc != null ? new Xmod(doc, modName, dir) : null;
+        return doc != null ? new Xmod(doc, moduleName, dir) : null;
       }
     }
     return null;
