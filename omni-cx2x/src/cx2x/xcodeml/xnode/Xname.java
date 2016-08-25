@@ -81,6 +81,7 @@ public class Xname {
   public static final String ATTR_SOURCE = "source";
   public static final String ATTR_TIME = "time";
   public static final String ATTR_TYPE = "type";
+  public static final String ATTR_USE_NAME = "use_name";
   public static final String ATTR_VERSION = "version";
 
   // Element names

@@ -42,6 +42,7 @@ public enum Xattr {
   SOURCE(Xname.ATTR_SOURCE),
   TIME(Xname.ATTR_TIME),
   TYPE(Xname.ATTR_TYPE),
+  USENAME(Xname.ATTR_USE_NAME),
   VERSION(Xname.ATTR_VERSION);
 
   private final String name;
