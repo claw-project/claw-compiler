@@ -1838,7 +1838,7 @@ public class XnodeUtil {
       bound.appendToChildren(intConst, false);
     } else if(boundChild.opcode() == Xcode.VAR){
       String typeValue = boundChild.getAttribute(Xattr.TYPE);
-      if(!typeValue.startsWith(XbasicType.PREFIX_INTEGER)) {
+      if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
         throw new IllegalTransformationException("Only integer variable are " +
             "supported as lower/upper bound value for promotted arrays.");
       }
