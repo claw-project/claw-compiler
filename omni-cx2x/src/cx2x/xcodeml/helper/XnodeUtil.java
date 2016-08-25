@@ -1690,6 +1690,10 @@ public class XnodeUtil {
       Node rawNode =
           mod.getDocument().importNode(fctType.getElement(), true);
       mod.getTypeTable().getElement().appendChild(rawNode);
+      XfunctionType importedFctType = new XfunctionType((Element) rawNode);
+      Xid importedFctTypeId = XnodeUtil.createId(mod, importedFctType.getType(),
+          Xname.SCLASS_F_FUNC, fctDef.getName().getValue());
+      mod.getIdentifiers().add(importedFctTypeId);
       return;
     } else {
       fctTypeMod = (XfunctionType) mod.getTypeTable().get(
