@@ -60,6 +60,7 @@ public class Xname {
   public static final String ATTR_IS_EXTERNAL = "is_external";
   public static final String ATTR_IS_INTERNAL = "is_internal";
   public static final String ATTR_IS_INTRINSIC = "is_intrinsic";
+  public static final String ATTR_IS_OPERATOR = "is_operator";
   public static final String ATTR_IS_OPTIONAL = "is_optional";
   public static final String ATTR_IS_PARAMETER = "is_parameter";
   public static final String ATTR_IS_POINTER = "is_pointer";
@@ -72,6 +73,7 @@ public class Xname {
   public static final String ATTR_KIND = "kind";
   public static final String ATTR_LANGUAGE = "language";
   public static final String ATTR_LINENO = "lineno";
+  public static final String ATTR_LOCAL_NAME = "local_name";
   public static final String ATTR_NAME = "name";
   public static final String ATTR_REPEAT_COUNT = "repeat_count";
   public static final String ATTR_REF = "ref";
