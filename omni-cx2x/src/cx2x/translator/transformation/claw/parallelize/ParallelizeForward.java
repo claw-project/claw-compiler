@@ -415,8 +415,13 @@ public class ParallelizeForward extends Transformation {
 
             // Types have different dimensions
             if(typeBase.getDimensions() > typeToUpdate.getDimensions()){
-              String type = XnodeUtil.duplicateWithDimension(typeBase,
-                  typeToUpdate, xcodeml, xcodeml);
+
+              String type = _localFct ?
+                  XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
+                      xcodeml, xcodeml)
+                  : XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
+                      xcodeml, _mod);
+
               pUpdate.setAttribute(Xattr.TYPE, type);
 
               Xid id = fDef.getSymbolTable().get(pBase.getValue());
