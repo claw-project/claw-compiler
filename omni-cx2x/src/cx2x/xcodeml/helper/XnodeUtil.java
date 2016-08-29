@@ -1672,6 +1672,12 @@ public class XnodeUtil {
     {
       XnodeUtil.importType(src, dst, importedType.getAttribute(Xattr.REF));
     }
+
+    // Handle possible type ref in indexRange element
+    List<Xnode> vars = XnodeUtil.findAll(Xcode.VAR, importedType);
+    for(Xnode var : vars){
+      importType(src, dst, var.getAttribute(Xattr.TYPE));
+    }
   }
 
   /**
