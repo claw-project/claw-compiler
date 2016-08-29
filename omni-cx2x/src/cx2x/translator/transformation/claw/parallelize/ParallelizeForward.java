@@ -255,7 +255,6 @@ public class ParallelizeForward extends Transformation {
     for(Xdecl d : useDecls){
 
       // Check whether a CLAW file is available.
-      String xx = d.getAttribute(Xattr.NAME);
       _mod = TransformationHelper.
           locateClawModuleFile(d.getAttribute(Xattr.NAME));
 
