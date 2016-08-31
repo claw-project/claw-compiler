@@ -1879,31 +1879,20 @@ public class XnodeUtil {
     }
 
     Xnode bound = new Xnode(baseBound.opcode(), xcodemlDst);
-    if(boundChild.opcode() == Xcode.FINTCONSTANT){
-      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
-      intConst.setValue(boundChild.getValue());
-      bound.appendToChildren(intConst, false);
-    } else if(boundChild.opcode() == Xcode.VAR){
-      String typeValue = boundChild.getAttribute(Xattr.TYPE);
-      if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
-        throw new IllegalTransformationException("Only integer variable are " +
-            "supported as lower/upper bound value for promotted arrays.");
-      }
-
-      XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
-      Xnode bType = new Xnode(Xcode.FBASICTYPE, xcodemlDst);
-      bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
-      bType.setAttribute(Xattr.TYPE,
-          xcodemlDst.getTypeTable().generateIntegerTypeHash());
-      if(type.getIntent() != Xintent.NONE){
-        bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
-      }
-
-      Xnode var = new Xnode(Xcode.VAR, xcodemlDst);
-      var.setAttribute(Xattr.SCOPE, boundChild.getAttribute(Xattr.SCOPE));
-      var.setValue(boundChild.getValue());
-      var.setAttribute(Xattr.TYPE, bType.getAttribute(Xattr.TYPE));
-      bound.appendToChildren(var, false);
+    if(boundChild.opcode() == Xcode.FINTCONSTANT
+        || boundChild.opcode() == Xcode.VAR)
+    {
+      bound.appendToChildren(
+          importConstOrVar(boundChild, xcodemlSrc, xcodemlDst), false);
+    } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
+      Xnode lhs = boundChild.getChild(0);
+      Xnode rhs = boundChild.getChild(1);
+      Xnode plusExpr = new Xnode(Xcode.PLUSEXPR, xcodemlDst);
+      bound.appendToChildren(plusExpr, false);
+      plusExpr.appendToChildren(
+          importConstOrVar(lhs, xcodemlSrc, xcodemlDst), false);
+      plusExpr.appendToChildren(
+          importConstOrVar(rhs, xcodemlSrc, xcodemlDst), false);
     } else {
       throw new IllegalTransformationException(
           String.format("Lower/upper bound type currently not supported (%s)",
@@ -1912,6 +1901,72 @@ public class XnodeUtil {
     }
 
     return bound;
+  }
+
+  /**
+   * Create a copy of a variable element or an integer constant from a XcodeML
+   * unit to another one.
+   * @param base       Base element to be copied.
+   * @param xcodemlSrc Source XcodeML unit.
+   * @param xcodemlDst Destination XcodeML unit.
+   * @return The newly created element in the destination XcodeML unit.
+   * @throws IllegalTransformationException If the variable element doesn't meet
+   * the criteria.
+   */
+  private static Xnode importConstOrVar(Xnode base, XcodeML xcodemlSrc,
+                                        XcodeML xcodemlDst)
+      throws IllegalTransformationException
+  {
+    if(base.opcode() != Xcode.FINTCONSTANT && base.opcode() != Xcode.VAR){
+      throw new IllegalTransformationException(
+          String.format("Lower/upper bound type currently not supported (%s)",
+              base.opcode().toString())
+      );
+    }
+
+    if(base.opcode() == Xcode.VAR){
+      return importVar(base, xcodemlSrc, xcodemlDst);
+    } else {
+      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
+      intConst.setValue(base.getValue());
+      return intConst;
+    }
+  }
+
+  /**
+   * Create a copy with a new hash type of an integer variable element from one
+   * XcodeML unit to another one.
+   * @param base       Base variable element to be copied.
+   * @param xcodemlSrc Source XcodeML unit.
+   * @param xcodemlDst Destination XcodeML unit.
+   * @return The newly created element in the destination XcodeML unit.
+   * @throws IllegalTransformationException If the variable element doesn't meet
+   * the criteria.
+   */
+  private static Xnode importVar(Xnode base, XcodeML xcodemlSrc,
+                                 XcodeML xcodemlDst)
+      throws IllegalTransformationException
+  {
+    String typeValue = base.getAttribute(Xattr.TYPE);
+    if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
+      throw new IllegalTransformationException("Only integer variable are " +
+          "supported as lower/upper bound value for promotted arrays.");
+    }
+
+    XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
+    Xnode bType = new Xnode(Xcode.FBASICTYPE, xcodemlDst);
+    bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
+    bType.setAttribute(Xattr.TYPE,
+        xcodemlDst.getTypeTable().generateIntegerTypeHash());
+    if(type.getIntent() != Xintent.NONE){
+      bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
+    }
+
+    Xnode var = new Xnode(Xcode.VAR, xcodemlDst);
+    var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
+    var.setValue(base.getValue());
+    var.setAttribute(Xattr.TYPE, bType.getAttribute(Xattr.TYPE));
+    return var;
   }
 
   /**
