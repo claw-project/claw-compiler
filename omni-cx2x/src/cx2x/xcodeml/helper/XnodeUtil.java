@@ -1906,7 +1906,9 @@ public class XnodeUtil {
       bound.appendToChildren(var, false);
     } else {
       throw new IllegalTransformationException(
-          "Lower/upper bound type currently not supported");
+          String.format("Lower/upper bound type currently not supported (%s)",
+              boundChild.opcode().toString())
+      );
     }
 
     return bound;
