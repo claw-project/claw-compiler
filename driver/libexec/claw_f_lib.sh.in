@@ -337,6 +337,7 @@ function applyIgnore()
     # TODO check that end directive line number is after start directive
     # Insert directive as prefix of each line in the block
     sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $1
+    sed -i.bak -e "$sedstart,$sedend s/&/__CLAWAMP__/" $1
   done
 }
 
@@ -348,5 +349,6 @@ function revertIgnore()
 {
   sed -i.bak -e "s/\!\$claw ignore//" $1
   sed -i.bak -e "s/\!\$claw end ignore//" $1
+  sed -i.bak -e "s/__CLAWAMP__/\&/" $1
   rm -f $1.bak
 }
