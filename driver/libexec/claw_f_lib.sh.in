@@ -334,7 +334,13 @@ function applyIgnore()
   do
     local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
-    # TODO check that end directive line number is after start directive
+
+    if [ "$sedstart" -gt "$sedend" ]
+    then
+      echo "claw-error: inverted start-end in ignore directive. ($sedstart:$sedend)"
+      exit 1
+    fi
+
     # Insert directive as prefix of each line in the block
     sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $1
 
