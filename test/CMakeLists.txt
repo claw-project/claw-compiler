@@ -15,3 +15,10 @@ add_subdirectory(fortran)
 add_subdirectory(loops)
 add_subdirectory(utilities)
 add_subdirectory(openacc)
+
+
+# Custom target to run the full transformation test suite
+add_custom_target(test-suite
+  COMMAND ${CMAKE_MAKE_PROGRAM} ${CLEAN_TEST_TARGET} ${BUILD_TEST_TARGET} test
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)

@@ -26,14 +26,13 @@ with the CLAW Fortran Compiler and then the original code as well as the
 transformed are compiled with a standard Fortran compiler.
 
 ```bash
-make clean-transformation # To clean all transformed files
-make transformation       # To apply all transformations
+make test-suite
 ```
 
-To verify the applied transformation, use the following command. The output is
-the one from `CTest`
+This target is a combination of three independent targets:
+
 ```bash
-make test
+make clean-transformation transformation test
 ```
 
 
