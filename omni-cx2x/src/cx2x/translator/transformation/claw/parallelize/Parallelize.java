@@ -284,11 +284,23 @@ public class Parallelize extends Transformation {
      * Use the first over clause to create it. */
     NestedDoStatement loops =
         new NestedDoStatement(getOrderedDimensionsFromDefinition(0), xcodeml);
-    XnodeUtil.copyBody(_fctDef.getBody(), loops.getInnerStatement());
-    _fctDef.getBody().delete();
-    Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-    newBody.appendToChildren(loops.getOuterStatement(), false);
-    _fctDef.appendToChildren(newBody, false);
+
+    /* Subroutine/function can have a contains section with inner subtourines or
+     * functions. The newly created (nested) do statements should stop before
+     * this contains section if it exists. */
+    Xnode contains = _fctDef.getBody().find(Xcode.FCONTAINSSTATEMENT);
+    if(contains != null){
+      XnodeUtil.shiftStatementsInBody(_fctDef.getBody().getChild(0),
+          contains, loops.getInnerStatement().getBody());
+      XnodeUtil.insertBefore(contains, loops.getOuterStatement());
+    } else {
+      // No contains section, all the body is copied to the do statements.
+      XnodeUtil.copyBody(_fctDef.getBody(), loops.getInnerStatement());
+      _fctDef.getBody().delete();
+      Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
+      newBody.appendToChildren(loops.getOuterStatement(), false);
+      _fctDef.appendToChildren(newBody, false);
+    }
 
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml,
         loops.getOuterStatement(), loops.getOuterStatement(),
