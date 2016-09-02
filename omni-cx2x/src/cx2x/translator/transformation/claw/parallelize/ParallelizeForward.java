@@ -13,6 +13,7 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class ParallelizeForward extends Transformation {
 
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
+  private List<String> _promotedVar; // List of promoted array from the call
 
 
   /**
@@ -52,6 +54,7 @@ public class ParallelizeForward extends Transformation {
   public ParallelizeForward(ClawLanguage directive) {
     super(directive);
     _claw = directive; // Keep information about the claw directive here
+    _promotedVar = new ArrayList<>();
   }
 
   @Override
@@ -431,6 +434,8 @@ public class ParallelizeForward extends Transformation {
               if(varDecl != null){
                 varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
               }
+
+              _promotedVar.add(pBase.getValue());
             }
           }
         }
@@ -452,6 +457,32 @@ public class ParallelizeForward extends Transformation {
       }
     }
 
+
+    propagatePromotion();
+  }
+
+  /**
+   * Propagate possible promotion in assignements statements in the parent
+   * subroutine of the function call.
+   */
+  private void propagatePromotion(){
+    XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
+    List<Xnode> assignments =
+        XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);
+    for(Xnode assignment : assignments){
+      Xnode lhs = assignment.getChild(0);
+      Xnode rhs = assignment.getChild(1);
+      List<Xnode> varsInRhs = XnodeUtil.findAll(Xcode.VAR, rhs);
+      for(Xnode var : varsInRhs){
+        if(_promotedVar.contains(var.getValue())
+            && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null)
+        {
+          // TODO promote the variable on the left hand-side and update the
+          // TODO array references in the rhs.
+          break;
+        }
+      }
+    }
   }
 
   @Override
