@@ -1546,7 +1546,7 @@ public class XnodeUtil {
    * @param fctDef Function definition nested in the module.
    * @return Xmod object if the module has been found and read. Null otherwise.
    */
-  private static Xmod findContainingModule(XfunctionDefinition fctDef){
+  public static Xmod findContainingModule(XfunctionDefinition fctDef){
     XmoduleDefinition mod = findParentModule(fctDef);
     if(mod == null){
       return null;
@@ -1656,7 +1656,7 @@ public class XnodeUtil {
    * @param dst    Destination XcodeML unit.
    * @param typeId Type id to be imported.
    */
-  private static void importType(XcodeML src, XcodeML dst, String typeId){
+  public static void importType(XcodeML src, XcodeML dst, String typeId){
     if(typeId == null || dst.getTypeTable().hasType(typeId)) {
       return;
     }
@@ -1677,123 +1677,6 @@ public class XnodeUtil {
     List<Xnode> vars = XnodeUtil.findAll(Xcode.VAR, importedType);
     for(Xnode var : vars){
       importType(src, dst, var.getAttribute(Xattr.TYPE));
-    }
-  }
-
-  /**
-   * Update the function signature in the module file to reflects local changes.
-   * @param xcodeml     Current XcodeML file unit.
-   * @param fctDef      Function definition that has been changed.
-   * @param fctType     Function type that has been changed.
-   * @param modDef      Module definition holding the function definition.
-   * @param claw        Pragma that has triggered the transformation.
-   * @param transformer Current transformer object.
-   * @throws IllegalTransformationException If the module file or the function
-   * cannot be located
-   */
-  public static void updateModuleSignature(XcodeProgram xcodeml,
-                                           XfunctionDefinition fctDef,
-                                           XfunctionType fctType,
-                                           XmoduleDefinition modDef,
-                                           ClawLanguage claw,
-                                           cx2x.xcodeml.transformation.
-                                               Transformer transformer,
-                                           boolean importFctType)
-      throws IllegalTransformationException
-  {
-    Xmod mod;
-    if(transformer.getModCache().isModuleLoaded(modDef.getName())){
-      mod = transformer.getModCache().get(modDef.getName());
-    } else {
-      mod = XnodeUtil.findContainingModule(fctDef);
-      transformer.getModCache().add(modDef.getName(), mod);
-      if(mod == null){
-        throw new IllegalTransformationException(
-            "Unable to locate module file for: " + modDef.getName(),
-            claw.getPragma().getLineNo());
-      }
-    }
-
-    XfunctionType fctTypeMod;
-    if(importFctType){
-      Node rawNode = mod.getDocument().importNode(fctType.getElement(), true);
-      mod.getTypeTable().getElement().appendChild(rawNode);
-      XfunctionType importedFctType = new XfunctionType((Element) rawNode);
-      Xid importedFctTypeId = XnodeUtil.createId(mod, importedFctType.getType(),
-          Xname.SCLASS_F_FUNC, fctDef.getName().getValue());
-      mod.getIdentifiers().add(importedFctTypeId);
-
-      // check if params need to be imported as well
-      if(importedFctType.getParameterNb() > 0){
-        for(Xnode param : importedFctType.getParams().getAll()){
-          XnodeUtil.importType(xcodeml, mod, param.getAttribute(Xattr.TYPE));
-        }
-      }
-      return;
-    } else {
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(
-          fctDef.getName().getAttribute(Xattr.TYPE));
-    }
-
-    if(fctTypeMod == null){
-      /* Workaround for a bug in OMNI Compiler. Look at test case
-       * claw/abstraction12. In this test case, the XcodeML/F intermediate
-       * representation for the function call points to a FfunctionType element
-       * with no parameters. Thus, we have to find the correct FfunctionType
-       * for the same function/subroutine with the same name in the module
-       * symbol table. */
-      String errorMsg = "Unable to locate fct " + fctDef.getName().getValue() +
-          " in module " + modDef.getName();
-      int lineNo = claw.getPragma().getLineNo();
-
-      // If not, try to find the correct FfunctionType in the module definitions
-      Xid id = mod.getIdentifiers().get(fctDef.getName().getValue());
-      if(id == null){
-        throw new IllegalTransformationException(errorMsg, lineNo);
-      }
-      fctTypeMod = (XfunctionType)mod.getTypeTable().get(id.getType());
-      if(fctTypeMod == null){
-        throw new IllegalTransformationException(errorMsg, lineNo);
-      }
-    }
-
-    XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
-        mod.getTypeTable().generateIntegerTypeHash(),
-        Xname.TYPE_F_INT, Xintent.IN);
-    mod.getTypeTable().add(modIntTypeIntentIn);
-
-    List<Xnode> paramsLocal = fctType.getParams().getAll();
-    List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
-
-
-    if(paramsLocal.size() < paramsMod.size()){
-      throw new IllegalTransformationException(
-          "Local function has more parameters than module counterpart.",
-          claw.getPragma().getLineNo());
-    }
-
-    for(int i = 0; i < paramsLocal.size(); ++i){
-      Xnode pLocal = paramsLocal.get(i);
-      if(i > (paramsMod.size() - 1)) {
-        // new parameter
-        XnodeUtil.createAndAddParam(mod, pLocal.getValue(),
-            modIntTypeIntentIn.getType(), fctTypeMod);
-      } else {
-        Xnode pMod = paramsMod.get(i);
-        String localType = pLocal.getAttribute(Xattr.TYPE);
-        String modType = pMod.getAttribute(Xattr.TYPE);
-        if(!localType.equals(modType)){
-          // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType)xcodeml.getTypeTable().get(localType);
-          XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
-
-          if(lType.isArray()) {
-            String newType =
-                duplicateWithDimension(lType, crtType, mod, xcodeml);
-            pMod.setAttribute(Xattr.TYPE, newType);
-          }
-        }
-      }
     }
   }
 

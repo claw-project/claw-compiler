@@ -444,16 +444,16 @@ public class ParallelizeForward extends Transformation {
       if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
         // 3. Replicate the change in a potential module file
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
-        XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef,
-            _claw, transformer, false);
+        TransformationHelper.updateModuleSignature(xcodeml, fDef, parentFctType,
+            modDef, _claw, transformer, false);
       } else if(_fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)){
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
          * we can update it. */
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
-        XnodeUtil.updateModuleSignature(xcodeml, fDef, parentFctType, modDef,
-            _claw, transformer, true);
+        TransformationHelper.updateModuleSignature(xcodeml, fDef, parentFctType,
+            modDef, _claw, transformer, true);
       }
     }
 
@@ -477,8 +477,9 @@ public class ParallelizeForward extends Transformation {
         if(_promotedVar.contains(var.getValue())
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null)
         {
-          // TODO promote the variable on the left hand-side and update the
-          // TODO array references in the rhs.
+          Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+
+          // TODO is assigned to a pointer? Is so, pointer must be promoted.
           break;
         }
       }
