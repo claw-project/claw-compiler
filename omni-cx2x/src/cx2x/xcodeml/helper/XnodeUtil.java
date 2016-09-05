@@ -127,6 +127,28 @@ public class XnodeUtil {
   }
 
   /**
+   * Find all var references elements in a given body and give var name.
+   * @param parent  The body element to search for the array references.
+   * @param varName Name of the var for the reference to be found.
+   * @return A list of all references found.
+   */
+  public static List<Xnode> getAllVarReferences(Xnode parent, String varName){
+    List<Xnode> references = new ArrayList<>();
+    NodeList nList = parent.getElement().
+        getElementsByTagName(Xname.VAR);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        Xnode var = new Xnode((Element) n);
+        if(var.getValue().toLowerCase().equals(varName.toLowerCase())) {
+          references.add(var);
+        }
+      }
+    }
+    return references;
+  }
+
+  /**
    * Demote an array reference to a var reference.
    * @param ref     The array reference to be modified.
    */
