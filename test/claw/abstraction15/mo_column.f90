@@ -31,6 +31,7 @@ CONTAINS
       t(k) = c * k
       q(k) = q(k - 1)  + t(k) * c
     END DO
+    z = q(nz) * 2.0
     q(nz) = q(nz) * c
   END FUNCTION compute_column
 
