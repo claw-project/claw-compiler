@@ -31,6 +31,7 @@ public class Parallelize extends Transformation {
 
   private final ClawLanguage _claw;
   private final Map<String, ClawDimension> _dimensions;
+  private final Map<String, PromotionInfo> _promotions;
   private List<String> _arrayFieldsInOut;
   private final List<String> _scalarFields;
   private int _overDimensions;
@@ -48,6 +49,7 @@ public class Parallelize extends Transformation {
     _overDimensions = 0;
     _claw = directive; // Keep information about the claw directive here
     _dimensions = new HashMap<>();
+    _promotions = new HashMap<>();
     _arrayFieldsInOut = new ArrayList<>();
     _scalarFields = new ArrayList<>();
   }
@@ -497,6 +499,8 @@ public class Parallelize extends Transformation {
       newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
           Xintent.NONE);
     }
+    _promotions.put(fieldId, new PromotionInfo(fieldId, newType.getDimensions(),
+        newType.getDimensions() + _claw.getDimensionValues().size()));
     if(assumed){
       if(newType.isAllAssumedShape()){
         for(int i = 0; i < _overDimensions; ++i){
