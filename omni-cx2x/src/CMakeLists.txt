@@ -146,6 +146,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/transformation/claw/Kcaching.java
   cx2x/translator/transformation/claw/parallelize/Parallelize.java
   cx2x/translator/transformation/claw/parallelize/ParallelizeForward.java
+  cx2x/translator/transformation/claw/parallelize/PromotionInfo.java
   cx2x/translator/transformation/loop/ArrayTransform.java
   cx2x/translator/transformation/loop/LoopExtraction.java
   cx2x/translator/transformation/loop/LoopFusion.java
