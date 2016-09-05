@@ -10,7 +10,7 @@ CONTAINS
     INTEGER, INTENT(IN)   :: b   ! Size of the array field
     REAL, INTENT(INOUT)   :: t(1:b) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(1:b) ! Field declared as one column only
-    REAL, INTENT(IN)      :: z
+    REAL, INTENT(INOUT)    :: z
     INTEGER :: k                  ! Loop index
     REAL :: c                     ! Coefficient
     INTEGER :: r                  ! Function return value
@@ -42,7 +42,7 @@ CONTAINS
     INTEGER, INTENT(IN)   :: b    ! Size of the array field
     REAL, INTENT(INOUT)   :: t(1:b) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(1:b) ! Field declared as one column only
-    REAL, INTENT(IN)      :: z
+    REAL, INTENT(INOUT)   :: z
     INTEGER :: result
 
     !$claw parallelize forward
