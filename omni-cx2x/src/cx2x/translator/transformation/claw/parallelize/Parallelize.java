@@ -490,20 +490,25 @@ public class Parallelize extends Transformation {
 
     if(update){
       XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
-      if(oldType == null){
+      if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())){
         throw new IllegalTransformationException("Cannot find type for " +
             fieldId, _claw.getPragma().getLineNo());
+      } else if(XnodeUtil.isBuiltInType(id.getType())){
+        newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
+            Xintent.NONE);
+      } else {
+        newType = oldType.cloneObject();
+        newType.setType(type);
       }
-      newType = oldType.cloneObject();
-      newType.setType(type);
     } else {
       newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
           Xintent.NONE);
     }
     _promotions.put(fieldId, new PromotionInfo(fieldId, newType.getDimensions(),
         newType.getDimensions() + _claw.getDimensionValues().size(), type));
+    
     if(assumed){
-      if(newType.isAllAssumedShape()){
+      if(newType.isAllAssumedShape() && _fctType.hasParam(fieldId)){
         for(int i = 0; i < _overDimensions; ++i){
           Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
           newType.addDimension(index, 0);
