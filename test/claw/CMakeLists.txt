@@ -16,6 +16,8 @@ add_subdirectory(abstraction14) # adding dimension in the middle of already defi
 add_subdirectory(abstraction15) # data-over clause on a scalar
 add_subdirectory(abstraction16) # parallelize forward over type-bound procedure call
 add_subdirectory(abstraction17) # parallelize in a subroutine with contains
+#add_subdirectory(abstraction18) # parallelize with waterfall promotion
+add_subdirectory(abstraction19) # parallelize in a subroutine with contains
 add_subdirectory(call1)
 add_subdirectory(kcache1) # assign cache
 add_subdirectory(kcache2) # assign cache with init clause
