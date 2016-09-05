@@ -14,18 +14,23 @@ public class PromotionInfo {
   private String _identifier;
   private int _baseDimension;
   private int _targetDimension;
+  private String _targetType;
 
 
   /**
    * Contructs a new PromotionInfo object with all its information.
-   * @param id               Identifier of the promoted variable.
-   * @param baseDimension    Number of dimensions before the promotion.
-   * @param targetDimension  Number of dimensions after the promotion.
+   * @param id              Identifier of the promoted variable.
+   * @param baseDimension   Number of dimensions before the promotion.
+   * @param targetDimension Number of dimensions after the promotion.
+   * @param targetType      Type if after the promotion.
    */
-  public PromotionInfo(String id, int baseDimension, int targetDimension){
+  public PromotionInfo(String id, int baseDimension, int targetDimension,
+                       String targetType)
+  {
     _identifier = id;
     _baseDimension = baseDimension;
     _targetDimension = targetDimension;
+    _targetType = targetType;
   }
 
   /**
@@ -34,6 +39,14 @@ public class PromotionInfo {
    */
   public boolean wasScalar(){
     return _baseDimension == 0;
+  }
+
+  /**
+   * Get the type id after the promotion.
+   * @return Type id.
+   */
+  public String getTargetType(){
+    return _targetType;
   }
 
 }
