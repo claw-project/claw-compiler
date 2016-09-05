@@ -7,7 +7,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  REAL , INTENT(IN) :: z ( : )
+  REAL , INTENT(INOUT) :: z ( : )
   INTEGER :: k
   REAL :: c
   INTEGER , INTENT(IN) :: nproma
@@ -21,6 +21,7 @@ CONTAINS
     t ( proma , k ) = c * k
     q ( k , proma ) = q ( k - 1 , proma ) + t ( proma , k ) * c
    END DO
+   z ( proma ) = q ( nz , proma ) * 2.0
    q ( nz , proma ) = q ( nz , proma ) * c
   END DO
 !$acc end parallel
@@ -31,7 +32,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  REAL , INTENT(IN) :: z ( : )
+  REAL , INTENT(INOUT) :: z ( : )
   INTEGER :: result
   INTEGER , INTENT(IN) :: nproma
 
