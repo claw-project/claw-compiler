@@ -130,4 +130,22 @@ public class XfunctionType extends Xtype {
     return new XfunctionType((Element) clone);
   }
 
+
+  /**
+   * Check if a parameter is part of the function defintion.
+   * @param paramName Parameter's name.
+   * @return True if the parameter is found in the function definition. False
+   * otherwise.
+   */
+  public boolean hasParam(String paramName){
+    if(_params == null){
+      return false;
+    }
+    for(Xnode param : _params.getAll()){
+      if(param.getValue().toLowerCase().equals(paramName.toLowerCase())){
+        return true;
+      }
+    }
+    return false;
+  }
 }
