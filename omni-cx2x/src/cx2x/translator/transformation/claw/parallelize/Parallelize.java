@@ -250,10 +250,11 @@ public class Parallelize extends Transformation {
     // Adapt array references.
     if(_claw.hasOverDataClause()){
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i){
-        adaptArrayReferences(_claw.getOverDataClauseValues().get(i), i);
+        adaptArrayReferences(_claw.getOverDataClauseValues().get(i),
+            i, xcodeml);
       }
     } else {
-      adaptArrayReferences(_arrayFieldsInOut, 0);
+      adaptArrayReferences(_arrayFieldsInOut, 0, xcodeml);
     }
 
     // Delete the pragma
@@ -500,7 +501,7 @@ public class Parallelize extends Transformation {
           Xintent.NONE);
     }
     _promotions.put(fieldId, new PromotionInfo(fieldId, newType.getDimensions(),
-        newType.getDimensions() + _claw.getDimensionValues().size()));
+        newType.getDimensions() + _claw.getDimensionValues().size(), type));
     if(assumed){
       if(newType.isAllAssumedShape()){
         for(int i = 0; i < _overDimensions; ++i){
@@ -566,31 +567,56 @@ public class Parallelize extends Transformation {
    * @param ids   List of array identifiers that must be adapted.
    * @param index Index designing the correct over clause to be used.
    */
-  private void adaptArrayReferences(List<String> ids, int index) {
+  private void adaptArrayReferences(List<String> ids, int index,
+                                    XcodeProgram xcodeml)
+  {
     for(String data : ids){
-      List<Xnode> refs =
-          XnodeUtil.getAllArrayReferences(_fctDef.getBody(), data);
-      for(Xnode ref : refs){
-        if(_inMiddle.get(index).size() == 0) {
+
+      if(_promotions.get(data).wasScalar()){
+        List<Xnode> refs =
+            XnodeUtil.getAllVarReferences(_fctDef.getBody(), data);
+        for(Xnode ref : refs) {
+          Xnode arrayRef = new Xnode(Xcode.FARRAYREF, xcodeml);
+          Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+          arrayRef.setAttribute(Xattr.TYPE, ref.getAttribute(Xattr.TYPE));
+          varRef.setAttribute(Xattr.TYPE, _promotions.get(data).getTargetType());
+          ref.setAttribute(Xattr.TYPE, _promotions.get(data).getTargetType());
+          XnodeUtil.insertAfter(ref, arrayRef);
+          arrayRef.appendToChildren(varRef, false);
+          varRef.appendToChildren(ref, false);
           for (Xnode ai : _beforeCrt.get(index)) {
-            XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+            arrayRef.appendToChildren(ai, true);
           }
           for (Xnode ai : _afterCrt.get(index)) {
-            ref.appendToChildren(ai, true);
+            arrayRef.appendToChildren(ai, true);
           }
-        } else {
-          Xnode hook =
-              ref.findAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
-          if(hook == null){
-            hook = ref.getChild(0);
-          }
-          for (Xnode ai : _inMiddle.get(index)) {
-            Xnode clone = ai.cloneObject();
-            XnodeUtil.insertAfter(hook, clone);
-            hook = clone;
+        }
+      } else {
+        List<Xnode> refs =
+            XnodeUtil.getAllArrayReferences(_fctDef.getBody(), data);
+        for(Xnode ref : refs){
+          if(_inMiddle.get(index).size() == 0) {
+            for (Xnode ai : _beforeCrt.get(index)) {
+              XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+            }
+            for (Xnode ai : _afterCrt.get(index)) {
+              ref.appendToChildren(ai, true);
+            }
+          } else {
+            Xnode hook =
+                ref.findAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+            if(hook == null){
+              hook = ref.getChild(0);
+            }
+            for (Xnode ai : _inMiddle.get(index)) {
+              Xnode clone = ai.cloneObject();
+              XnodeUtil.insertAfter(hook, clone);
+              hook = clone;
+            }
           }
         }
       }
+
     }
   }
 
