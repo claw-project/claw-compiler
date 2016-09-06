@@ -1642,11 +1642,12 @@ public class XnodeUtil {
    * @param fctType   Function type in which the element will be added as a
    *                  parameter.
    */
-  public static void createAndAddParam(XcodeML xcodeml, String nameValue,
+  public static Xnode createAndAddParam(XcodeML xcodeml, String nameValue,
                                        String type, XfunctionType fctType)
   {
     Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
     fctType.getParams().add(param);
+    return param;
   }
 
   /**
