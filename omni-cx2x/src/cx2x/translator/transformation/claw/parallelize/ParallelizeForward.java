@@ -518,10 +518,14 @@ public class ParallelizeForward extends Transformation {
         {
 
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+          XbasicType varType = (XbasicType)
+              xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
+          boolean isTarget = varType.getBooleanAttribute(Xattr.IS_TARGET);
+
           // Declare the induction variable if they are not present
           TransformationHelper.declareInductionVariables(dimensions,
               parentFctDef, xcodeml);
-          
+
           // Generate the do statements and move the assignement statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
@@ -538,7 +542,29 @@ public class ParallelizeForward extends Transformation {
           TransformationHelper.adaptArrayReferences(_promotedVar, 0, assignment,
               _promotions, beforeCrt, inMiddle, afterCrt, xcodeml);
 
-          // TODO is assigned to a pointer? Is so, pointer must be promoted.
+
+          // If the array is a target, check if we have to promote pointer
+          if(isTarget){
+            List<Xnode> pAssignments =
+                XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, parentFctDef);
+            for(Xnode pAssignment : pAssignments){
+              Xnode pointer = pAssignment.getChild(0);
+              Xnode pointee = pAssignment.getChild(1);
+              if(pointee.getValue().toLowerCase().
+                  equals(varInLhs.getValue().toLowerCase()))
+              {
+                XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().get(pointer.getAttribute(Xattr.TYPE));
+                XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().get(promotionInfo.getTargetType());
+                if(pointeeType.getDimensions() != pointerType.getDimensions()){
+                  promotionInfo = TransformationHelper.promoteField(
+                      pointer.getValue(), true, true, 0, dimensions.size(),
+                      parentFctDef, _parentFctType, dimensions, _claw, xcodeml);
+                  _promotions.put(pointer.getValue(), promotionInfo);
+                }
+              }
+            }
+          }
+
           break;
         }
       }

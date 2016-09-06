@@ -478,7 +478,9 @@ public class TransformationHelper {
         newType.getDimensions() + dimensions.size(), type);
 
     if(assumed){
-      if(newType.isAllAssumedShape() && fctType.hasParam(fieldId)){
+      if(newType.isAllAssumedShape()
+          && (fctType.hasParam(fieldId) || newType.isPointer()))
+      {
         for(int i = 0; i < overDimensions; ++i){
           Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
           newType.addDimension(index, 0);
