@@ -18,6 +18,7 @@ add_subdirectory(abstraction16) # parallelize forward over type-bound procedure 
 add_subdirectory(abstraction17) # parallelize in a subroutine with contains
 #add_subdirectory(abstraction18) # parallelize with waterfall promotion
 add_subdirectory(abstraction19) # parallelize in a subroutine with contains
+add_subdirectory(abstraction20) # parallelize/forward with optional
 add_subdirectory(call1)
 add_subdirectory(kcache1) # assign cache
 add_subdirectory(kcache2) # assign cache with init clause
