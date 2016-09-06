@@ -4,6 +4,9 @@
  */
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.NestedDoStatement;
+import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.xnode.ClawAttr;
@@ -14,9 +17,7 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * The parallelize forward transformation applies the changes in the subroutine
@@ -35,6 +36,7 @@ public class ParallelizeForward extends Transformation {
   private final ClawLanguage _claw;
   private Xnode _fctCall;
   private XfunctionType _fctType;
+  private XfunctionType _parentFctType;
   private Xmod _mod = null;
   private boolean _localFct = false;
   private boolean _flatten = false;
@@ -329,7 +331,7 @@ public class ParallelizeForward extends Transformation {
       throw new IllegalTransformationException("Parallelize directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().getLineNo());
     }
-    XfunctionType parentFctType = (XfunctionType)xcodeml.getTypeTable().
+    _parentFctType = (XfunctionType)xcodeml.getTypeTable().
         get(fDef.getName().getAttribute(Xattr.TYPE));
 
     List<Xnode> params = _fctType.getParams().getAll();
@@ -373,11 +375,11 @@ public class ParallelizeForward extends Transformation {
             xcodeml.getTypeTable().generateIntegerTypeHash(),
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(intTypeIntentIn);
-        XnodeUtil.createIdAndDecl(var,
+        Xnode decl = XnodeUtil.createIdAndDecl(var,
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, fDef, xcodeml);
         type = intTypeIntentIn.getType();
         Xnode param =
-            XnodeUtil.createAndAddParam(xcodeml, var, type, parentFctType);
+            XnodeUtil.createAndAddParam(xcodeml, var, type, _parentFctType);
         param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       } else {
 
@@ -388,7 +390,7 @@ public class ParallelizeForward extends Transformation {
          * definition */
         if (!_flatten) {
           XnodeUtil.
-              createAndAddParamIfNotExists(xcodeml, var, type, parentFctType);
+              createAndAddParamIfNotExists(xcodeml, var, type, _parentFctType);
         }
       }
 
@@ -418,7 +420,7 @@ public class ParallelizeForward extends Transformation {
     } else {
       // 2. Adapt function/subroutine in which the function call is nested
       for(Xnode pBase : _fctType.getParams().getAll()){
-        for(Xnode pUpdate : parentFctType.getParams().getAll()){
+        for(Xnode pUpdate : _parentFctType.getParams().getAll()){
           if(pBase.getValue().equals(pUpdate.getValue())){
             XbasicType typeBase = (_localFct) ? (XbasicType)
                 xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
@@ -453,34 +455,37 @@ public class ParallelizeForward extends Transformation {
         }
       }
 
-      if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
+      if(!_parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
         // 3. Replicate the change in a potential module file
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
-        TransformationHelper.updateModuleSignature(xcodeml, fDef, parentFctType,
-            modDef, _claw, transformer, false);
+        TransformationHelper.updateModuleSignature(xcodeml, fDef,
+            _parentFctType, modDef, _claw, transformer, false);
       } else if(_fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)){
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
          * we can update it. */
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
-        TransformationHelper.updateModuleSignature(xcodeml, fDef, parentFctType,
-            modDef, _claw, transformer, true);
+        TransformationHelper.updateModuleSignature(xcodeml, fDef,
+            _parentFctType, modDef, _claw, transformer, true);
       }
     }
 
 
-    propagatePromotion();
+    propagatePromotion(xcodeml);
   }
 
   /**
    * Propagate possible promotion in assignements statements in the parent
    * subroutine of the function call.
+   * @param xcodeml Current XcodeML program unit.
    */
-  private void propagatePromotion(){
+  private void propagatePromotion(XcodeProgram xcodeml){
     XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
     List<Xnode> assignments =
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);
+    List<ClawDimension> dimensions =
+        TransformationHelper.findDimensions(_parentFctType);
     for(Xnode assignment : assignments){
       Xnode lhs = assignment.getChild(0);
       Xnode rhs = assignment.getChild(1);
@@ -490,6 +495,12 @@ public class ParallelizeForward extends Transformation {
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null)
         {
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+          TransformationHelper.declareInductionVariables(dimensions,
+              parentFctDef, xcodeml);
+          NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
+          XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
+          doStmt.getInnerStatement().getBody().appendToChildren(assignment, false);
+
 
           // TODO is assigned to a pointer? Is so, pointer must be promoted.
           break;
@@ -497,6 +508,8 @@ public class ParallelizeForward extends Transformation {
       }
     }
   }
+
+
 
   @Override
   public boolean canBeTransformedWith(Transformation other) {
