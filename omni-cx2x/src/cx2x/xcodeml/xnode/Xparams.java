@@ -59,6 +59,17 @@ public class Xparams extends Xnode {
     appendToChildren(name, false);
   }
 
+  /**
+   * Add a name element to the parameters list before the referenced element.
+   * @param ref  Referenced element. New element will be added before.
+   * @param name The name element to add.
+   */
+  public void addBefore(Xnode ref, Xnode name){
+    int index = _parameters.indexOf(ref);
+    _parameters.add(index, name);
+    XnodeUtil.insertBefore(ref, name);
+  }
+
   @Override
   public Xparams cloneObject() {
     Element clone = (Element)cloneNode();
