@@ -25,7 +25,9 @@ import xcodeml.util.XmOption;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The class TransformationHelper contains only static method to help the
@@ -548,5 +550,68 @@ public class TransformationHelper {
       }
     }
     return cnt;
+  }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   * @param ids   List of array identifiers that must be adapted.
+   * @param index Index designing the correct over clause to be used.
+   */
+  public static void adaptArrayReferences(List<String> ids, int index,
+                                          Xnode parent,
+                                          Map<String, PromotionInfo> promotions,
+                                          List<List<Xnode>> beforeCrt,
+                                          List<List<Xnode>> inMiddle,
+                                          List<List<Xnode>> afterCrt,
+                                          XcodeProgram xcodeml)
+  {
+    for(String data : ids){
+      if(promotions.get(data).wasScalar()){
+        List<Xnode> refs =
+            XnodeUtil.getAllVarReferences(parent, data);
+        for(Xnode ref : refs) {
+          Xnode arrayRef = new Xnode(Xcode.FARRAYREF, xcodeml);
+          Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+          arrayRef.setAttribute(Xattr.TYPE, ref.getAttribute(Xattr.TYPE));
+          varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
+          ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
+          XnodeUtil.insertAfter(ref, arrayRef);
+          arrayRef.appendToChildren(varRef, false);
+          varRef.appendToChildren(ref, false);
+          for (Xnode ai : beforeCrt.get(index)) {
+            arrayRef.appendToChildren(ai, true);
+          }
+          for (Xnode ai : afterCrt.get(index)) {
+            arrayRef.appendToChildren(ai, true);
+          }
+        }
+      } else {
+        List<Xnode> refs =
+            XnodeUtil.getAllArrayReferences(parent, data);
+        for(Xnode ref : refs){
+          if(inMiddle.get(index).size() == 0) {
+            for (Xnode ai : beforeCrt.get(index)) {
+              XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+            }
+            for (Xnode ai : afterCrt.get(index)) {
+              ref.appendToChildren(ai, true);
+            }
+          } else {
+            Xnode hook =
+                ref.findAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+            if(hook == null){
+              hook = ref.getChild(0);
+            }
+            for (Xnode ai : inMiddle.get(index)) {
+              Xnode clone = ai.cloneObject();
+              XnodeUtil.insertAfter(hook, clone);
+              hook = clone;
+            }
+          }
+        }
+      }
+
+    }
   }
 }
