@@ -351,7 +351,7 @@ public class ParallelizeForward extends Transformation {
     }
 
     // 1. Adapt function call with potential new arguments
-    for(int i = args.size() + argOffset; i < params.size(); i++){
+    for(int i = 0; i < params.size(); i++){
       Xnode p = params.get(i);
       String var = p.getValue();
       String type;
@@ -393,11 +393,13 @@ public class ParallelizeForward extends Transformation {
         }
       }
 
-      // Add variable in the function call
+      // Add variable in the function call before the optional parameters
       Xnode arg = XnodeUtil.createNamedValue(var, xcodeml);
       Xnode namedValVar = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
       arg.appendToChildren(namedValVar, false);
-      _fctCall.find(Xcode.ARGUMENTS).appendToChildren(arg, false);
+      Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
+      Xnode hook = arguments.getChild((i - 1) + argOffset);
+      XnodeUtil.insertAfter(hook, arg);
     }
 
     // In flatten mode, arguments are demoted if needed.
