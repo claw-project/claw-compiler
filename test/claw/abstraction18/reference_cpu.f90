@@ -5,8 +5,9 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  REAL :: z ( 1 : nproma , 1 : nz )
+  REAL , TARGET :: z ( 1 : nproma , 1 : nz )
   INTEGER :: k
+  REAL , POINTER :: zp ( : , : )
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
 
@@ -15,6 +16,7 @@ CONTAINS
     z ( iter_nproma , k ) = t ( iter_nproma , k ) + q ( iter_nproma , k )
    END DO
   END DO
+  zp => z
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_all
 
