@@ -6,13 +6,15 @@ CONTAINS
     INTEGER, INTENT(IN)   :: nz   ! Size of the array field
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
-    REAL :: z(1:nz)
+    REAL, TARGET :: z(1:nz)
     INTEGER :: k
+    REAL, POINTER :: zp (:)
 
     DO k=1,nz
       z(k) = t(k) + q(k)
     END DO
 
+    zp => z
 
     !$claw parallelize forward
     CALL compute_column(nz, q, t)
