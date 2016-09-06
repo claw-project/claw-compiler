@@ -524,7 +524,6 @@ public class ParallelizeForward extends Transformation {
 
           XbasicType varType = (XbasicType)
               xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
-          boolean isTarget = varType.getBooleanAttribute(Xattr.IS_TARGET);
 
           // Declare the induction variable if they are not present
           TransformationHelper.declareInductionVariables(dimensions,
@@ -548,7 +547,7 @@ public class ParallelizeForward extends Transformation {
 
 
           // If the array is a target, check if we have to promote pointer
-          if(isTarget){
+          if(varType.isTarget()){
             List<Xnode> pAssignments =
                 XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, parentFctDef);
             for(Xnode pAssignment : pAssignments){
