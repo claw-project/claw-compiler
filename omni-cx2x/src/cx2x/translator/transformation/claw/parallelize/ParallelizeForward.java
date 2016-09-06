@@ -47,6 +47,7 @@ public class ParallelizeForward extends Transformation {
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
   private List<String> _promotedVar; // List of promoted array from the call
+  private Map<String, PromotionInfo> _promotions; // Info about promotion
 
 
   /**
@@ -58,6 +59,7 @@ public class ParallelizeForward extends Transformation {
     super(directive);
     _claw = directive; // Keep information about the claw directive here
     _promotedVar = new ArrayList<>();
+    _promotions = new HashMap<>();
   }
 
   @Override
@@ -428,6 +430,8 @@ public class ParallelizeForward extends Transformation {
                     get(pBase.getAttribute(Xattr.TYPE));
             XbasicType typeToUpdate = (XbasicType)xcodeml.getTypeTable().
                 get(pUpdate.getAttribute(Xattr.TYPE));
+            int targetDim = typeBase.getDimensions();
+            int baseDim = typeToUpdate.getDimensions();
 
             // Types have different dimensions
             if(typeBase.getDimensions() > typeToUpdate.getDimensions()){
@@ -450,6 +454,8 @@ public class ParallelizeForward extends Transformation {
               }
 
               _promotedVar.add(pBase.getValue());
+              _promotions.put(pBase.getValue(), new PromotionInfo(
+                  pBase.getValue(), baseDim, targetDim, type));
             }
           }
         }
@@ -488,6 +494,20 @@ public class ParallelizeForward extends Transformation {
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);
     List<ClawDimension> dimensions =
         TransformationHelper.findDimensions(_parentFctType);
+
+    List<Xnode> crt = new ArrayList<>();
+    List<Xnode> empty = Collections.emptyList();
+    for(ClawDimension dim : dimensions){
+      crt.add(dim.generateArrayIndex(xcodeml));
+    }
+    Collections.reverse(crt);
+    List<List<Xnode>> beforeCrt = new ArrayList<>();
+    List<List<Xnode>> afterCrt = new ArrayList<>();
+    List<List<Xnode>> inMiddle = new ArrayList<>();
+    beforeCrt.add(crt);
+    afterCrt.add(empty);
+    inMiddle.add(empty);
+
     for(Xnode assignment : assignments){
       Xnode lhs = assignment.getChild(0);
       Xnode rhs = assignment.getChild(1);
@@ -496,16 +516,27 @@ public class ParallelizeForward extends Transformation {
         if(_promotedVar.contains(var.getValue())
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null)
         {
+
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+          // Declare the induction variable if they are not present
           TransformationHelper.declareInductionVariables(dimensions,
               parentFctDef, xcodeml);
+          
+          // Generate the do statements and move the assignement statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
           doStmt.getInnerStatement().getBody().appendToChildren(assignment, false);
 
-
-          TransformationHelper.promoteField(varInLhs.getValue(), true, true, 0,
+          // Perform the promotion on the variable
+          PromotionInfo promotionInfo =
+              TransformationHelper.promoteField(varInLhs.getValue(), true, true, 0,
               0, parentFctDef, _parentFctType, dimensions, _claw, xcodeml);
+          _promotions.put(varInLhs.getValue(), promotionInfo);
+          _promotedVar.add(varInLhs.getValue());
+
+          // Adapt the reference in the assignement statement
+          TransformationHelper.adaptArrayReferences(_promotedVar, 0, assignment,
+              _promotions, beforeCrt, inMiddle, afterCrt, xcodeml);
 
           // TODO is assigned to a pointer? Is so, pointer must be promoted.
           break;
