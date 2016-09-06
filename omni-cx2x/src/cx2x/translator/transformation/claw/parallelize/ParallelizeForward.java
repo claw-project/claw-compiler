@@ -375,8 +375,8 @@ public class ParallelizeForward extends Transformation {
             xcodeml.getTypeTable().generateIntegerTypeHash(),
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(intTypeIntentIn);
-        Xnode decl = XnodeUtil.createIdAndDecl(var,
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, fDef, xcodeml);
+        XnodeUtil.createIdAndDecl(var, intTypeIntentIn.getType(),
+            Xname.SCLASS_F_PARAM, fDef, xcodeml);
         type = intTypeIntentIn.getType();
         Xnode param =
             XnodeUtil.createAndAddParam(xcodeml, var, type, _parentFctType);
@@ -480,7 +480,9 @@ public class ParallelizeForward extends Transformation {
    * subroutine of the function call.
    * @param xcodeml Current XcodeML program unit.
    */
-  private void propagatePromotion(XcodeProgram xcodeml){
+  private void propagatePromotion(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
     XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
     List<Xnode> assignments =
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);
@@ -501,6 +503,9 @@ public class ParallelizeForward extends Transformation {
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
           doStmt.getInnerStatement().getBody().appendToChildren(assignment, false);
 
+
+          TransformationHelper.promoteField(varInLhs.getValue(), true, true, 0,
+              0, parentFctDef, _parentFctType, dimensions, _claw, xcodeml);
 
           // TODO is assigned to a pointer? Is so, pointer must be promoted.
           break;
