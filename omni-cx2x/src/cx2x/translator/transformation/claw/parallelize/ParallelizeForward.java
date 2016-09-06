@@ -333,7 +333,6 @@ public class ParallelizeForward extends Transformation {
         get(fDef.getName().getAttribute(Xattr.TYPE));
 
     List<Xnode> params = _fctType.getParams().getAll();
-    List<Xnode> args = _fctCall.find(Xcode.ARGUMENTS).getChildren();
 
     /* Compute the position of the first new arguments. In the case of a
      * type-bound procedure call, the first parameter declared in the procedure
