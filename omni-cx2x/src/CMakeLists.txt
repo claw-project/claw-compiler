@@ -156,6 +156,9 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/transformation/openacc/OpenAccContinuation.java
   cx2x/translator/transformation/utility/UtilityRemove.java
 
+# translator.xnode package
+  cx2x/translator/xnode/ClawAttr.java
+
   OUTPUT_DIR ${PROJECT_BINARY_DIR}/build
 )
 

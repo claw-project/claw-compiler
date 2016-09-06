@@ -23,4 +23,7 @@ public class ClawConstant {
 
   public static final String CLAW_MOD_SUFFIX = ".claw";
 
+  // CLAW atrtibute
+  public static final String IS_CLAW = "is_claw";
+
 }
