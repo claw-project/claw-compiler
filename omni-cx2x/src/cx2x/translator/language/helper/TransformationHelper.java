@@ -10,6 +10,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
+import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformer;
@@ -356,10 +357,13 @@ public class TransformationHelper {
 
     for(int i = 0; i < paramsLocal.size(); ++i){
       Xnode pLocal = paramsLocal.get(i);
-      if(i > (paramsMod.size() - 1)) {
+
+      // Number of parameters in the module function as been
+      if(pLocal.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         // new parameter
-        XnodeUtil.createAndAddParam(mod, pLocal.getValue(),
+        Xnode param = XnodeUtil.createAndAddParam(mod, pLocal.getValue(),
             modIntTypeIntentIn.getType(), fctTypeMod);
+        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       } else {
         Xnode pMod = paramsMod.get(i);
         String localType = pLocal.getAttribute(Xattr.TYPE);

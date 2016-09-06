@@ -6,6 +6,7 @@ package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -358,6 +359,10 @@ public class ParallelizeForward extends Transformation {
       XbasicType paramType =
           (XbasicType) xcodeml.getTypeTable().get(p.getAttribute(Xattr.TYPE));
 
+      if(!p.getBooleanAttribute(ClawAttr.IS_CLAW.toString())){
+        continue;
+      }
+
       if(!fDef.getSymbolTable().contains(var)){
         if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)){
           throw new IllegalTransformationException("Variable " + var + " must" +
@@ -372,14 +377,17 @@ public class ParallelizeForward extends Transformation {
         XnodeUtil.createIdAndDecl(var,
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, fDef, xcodeml);
         type = intTypeIntentIn.getType();
-        XnodeUtil.createAndAddParam(xcodeml, var, type, parentFctType);
+        Xnode param =
+            XnodeUtil.createAndAddParam(xcodeml, var, type, parentFctType);
+        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       } else {
+
         // Var exists already. Add to the parameters if not here.
         type = fDef.getSymbolTable().get(var).getType();
 
         /* If flatten mode, we do not add extra parameters to the function
          * definition */
-        if(!_flatten) {
+        if (!_flatten) {
           XnodeUtil.
               createAndAddParamIfNotExists(xcodeml, var, type, parentFctType);
         }
