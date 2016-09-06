@@ -1,5 +1,5 @@
 ! Test the CLAW abstraction model with one additional dimension.
-PROGRAM test_abstraction19
+PROGRAM test_abstraction20
   USE mo_column, ONLY: compute
   REAL, DIMENSION(20,60) :: q     ! Fields as declared in the whole model
   REAL, DIMENSION(60,20) :: t     ! Fields as declared in the whole model
@@ -27,4 +27,4 @@ PROGRAM test_abstraction19
 
   PRINT*,SUM(q)
   PRINT*,SUM(t)
-END PROGRAM test_abstraction19
+END PROGRAM test_abstraction20
