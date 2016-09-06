@@ -542,6 +542,8 @@ public class ParallelizeForward extends Transformation {
           _promotedVar.add(varInLhs.getValue());
 
           // Adapt the reference in the assignement statement
+          // TODO detect where the induction variable must be placed in the
+          // TODO already promoted variable
           TransformationHelper.adaptArrayReferences(_promotedVar, 0, assignment,
               _promotions, beforeCrt, inMiddle, afterCrt, xcodeml);
 
