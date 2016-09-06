@@ -18,6 +18,8 @@ public class ClawConstant {
   public static final int OPENACC_PREFIX_LENGTH = 6; // "!$acc "
   public static final String CONTINUATION_LINE_SYMBOL = "&";
   public static final String DEFAULT_STEP_VALUE = "1";
+  public static final String DEFUALT_LOWER_BOUND = "1";
+  public static final String ITER_PREFIX = "iter_";
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 
