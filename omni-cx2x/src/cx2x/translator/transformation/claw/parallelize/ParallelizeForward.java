@@ -398,7 +398,7 @@ public class ParallelizeForward extends Transformation {
       Xnode namedValVar = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
       arg.appendToChildren(namedValVar, false);
       Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
-      Xnode hook = arguments.getChild((i - 1) + argOffset);
+      Xnode hook = arguments.getChild((i - 1) - argOffset);
       XnodeUtil.insertAfter(hook, arg);
     }
 
