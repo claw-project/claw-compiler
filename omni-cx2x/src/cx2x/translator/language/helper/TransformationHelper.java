@@ -394,6 +394,9 @@ public class TransformationHelper {
    */
   public static List<ClawDimension> findDimensions(XfunctionType fctType){
     List<ClawDimension> dimensions = new ArrayList<>();
+    if(fctType.getParams() == null){
+      return dimensions;
+    }
     for(Xnode param : fctType.getParams().getAll()){
       if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())){
         dimensions.add(
