@@ -355,8 +355,11 @@ public class ParallelizeForward extends Transformation {
       String var = p.getValue();
       String type;
 
+      XbasicType paramType =
+          (XbasicType) xcodeml.getTypeTable().get(p.getAttribute(Xattr.TYPE));
+
       if(!fDef.getSymbolTable().contains(var)){
-        if(_flatten){
+        if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)){
           throw new IllegalTransformationException("Variable " + var + " must" +
               " be locally defined where the last call to parallelize if made.",
               _claw.getPragma().getLineNo());
