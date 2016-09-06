@@ -516,8 +516,12 @@ public class ParallelizeForward extends Transformation {
         if(_promotedVar.contains(var.getValue())
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null)
         {
-
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+          if(varInLhs == null){
+            throw new IllegalTransformationException("Unable to propagate " +
+                "promotion. Internal error.", _claw.getPragma().getLineNo());
+          }
+
           XbasicType varType = (XbasicType)
               xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
           boolean isTarget = varType.getBooleanAttribute(Xattr.IS_TARGET);
