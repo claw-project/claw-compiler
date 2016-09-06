@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.xnode.ClawAttr;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
@@ -506,7 +507,7 @@ public class Parallelize extends Transformation {
     }
     _promotions.put(fieldId, new PromotionInfo(fieldId, newType.getDimensions(),
         newType.getDimensions() + _claw.getDimensionValues().size(), type));
-    
+
     if(assumed){
       if(newType.isAllAssumedShape() && _fctType.hasParam(fieldId)){
         for(int i = 0; i < _overDimensions; ++i){
@@ -680,8 +681,9 @@ public class Parallelize extends Transformation {
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
         // Add parameter to the local type table
-        XnodeUtil.createAndAddParam(xcodeml, dimension.getLowerBoundId(),
-            intTypeIntentIn.getType(), _fctType);
+        Xnode param = XnodeUtil.createAndAddParam(xcodeml,
+            dimension.getLowerBoundId(), intTypeIntentIn.getType(), _fctType);
+        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       }
 
       // Create parameter for the upper bound
@@ -690,8 +692,9 @@ public class Parallelize extends Transformation {
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
         // Add parameter to the local type table
-        XnodeUtil.createAndAddParam(xcodeml, dimension.getUpperBoundId(),
-            intTypeIntentIn.getType(), _fctType);
+        Xnode param = XnodeUtil.createAndAddParam(xcodeml,
+            dimension.getUpperBoundId(), intTypeIntentIn.getType(), _fctType);
+        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       }
       // Create induction variable declaration
       XnodeUtil.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
