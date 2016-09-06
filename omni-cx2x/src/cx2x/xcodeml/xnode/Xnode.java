@@ -55,8 +55,17 @@ public class Xnode {
    * @return True if the element has the corresponding attribute.
    */
   public boolean hasAttribute(Xattr attrCode){
+    return hasAttribute(attrCode.toString());
+  }
+
+  /**
+   * Check whether the element has the corresponding attribute.
+   * @param attrCode Attribute code.
+   * @return True if the element has the corresponding attribute.
+   */
+  public boolean hasAttribute(String attrCode){
     return _baseElement != null
-        && _baseElement.hasAttribute(attrCode.toString());
+        && _baseElement.hasAttribute(attrCode);
   }
 
   /**
@@ -65,8 +74,17 @@ public class Xnode {
    * @return Attribute's value.
    */
   public String getAttribute(Xattr attrCode){
-    if(_baseElement.hasAttribute(attrCode.toString())){
-      return _baseElement.getAttribute(attrCode.toString());
+    return getAttribute(attrCode.toString());
+  }
+
+  /**
+   * Get the attribute's value.
+   * @param attrCode Attribute code.
+   * @return Attribute's value.
+   */
+  public String getAttribute(String attrCode){
+    if(_baseElement.hasAttribute(attrCode)){
+      return _baseElement.getAttribute(attrCode);
     } else {
       return null;
     }
@@ -78,8 +96,17 @@ public class Xnode {
    * @return Attribute's value. False if attribute doesn't exist.
    */
   public boolean getBooleanAttribute(Xattr attrCode) {
-    return _baseElement.hasAttribute(attrCode.toString()) &&
-        _baseElement.getAttribute(attrCode.toString()).equals(Xname.TRUE);
+    return getBooleanAttribute(attrCode.toString());
+  }
+
+  /**
+   * Get boolean value of an attribute.
+   * @param attrCode Attribute code.
+   * @return Attribute's value. False if attribute doesn't exist.
+   */
+  public boolean getBooleanAttribute(String attrCode) {
+    return _baseElement.hasAttribute(attrCode) &&
+        _baseElement.getAttribute(attrCode).equals(Xname.TRUE);
   }
 
   /**
@@ -96,7 +123,16 @@ public class Xnode {
    * @param value Value of the attribute.
    */
   public void setAttribute(Xattr attrCode, String value){
-    _baseElement.setAttribute(attrCode.toString(), value);
+    setAttribute(attrCode.toString(), value);
+  }
+
+  /**
+   * Set attribute value.
+   * @param attrCode Attribute code.
+   * @param value Value of the attribute.
+   */
+  public void setAttribute(String attrCode, String value){
+    _baseElement.setAttribute(attrCode, value);
   }
 
   /**
