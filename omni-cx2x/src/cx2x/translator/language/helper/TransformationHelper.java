@@ -6,6 +6,7 @@
 package cx2x.translator.language.helper;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
@@ -22,6 +23,7 @@ import org.w3c.dom.Node;
 import xcodeml.util.XmOption;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -383,4 +385,43 @@ public class TransformationHelper {
     }
   }
 
+
+  /**
+   * Find the dimensions defined by the parallelize transformation.
+   * @param fctType Function type to analyze.
+   * @return List of found dimensions.
+   */
+  public static List<ClawDimension> findDimensions(XfunctionType fctType){
+    List<ClawDimension> dimensions = new ArrayList<>();
+    for(Xnode param : fctType.getParams().getAll()){
+      if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())){
+        dimensions.add(
+            new ClawDimension(
+                ClawConstant.ITER_PREFIX + param.getValue(),
+                ClawConstant.DEFUALT_LOWER_BOUND,
+                param.getValue()
+            )
+        );
+      }
+    }
+    return dimensions;
+  }
+
+  /**
+   * Declare induction variables for dimensions if there are not present.
+   * @param dimensions List of dimensions.
+   * @param fctDef     Function defintion in which variable are created.
+   * @param xcodeml    Current XcodeML program unit.
+   */
+  public static void declareInductionVariables(List<ClawDimension> dimensions,
+                                               XfunctionDefinition fctDef,
+                                               XcodeML xcodeml)
+  {
+    for(ClawDimension dim : dimensions){
+      if(fctDef.getDeclarationTable().get(dim.getIdentifier()) == null){
+        XnodeUtil.createIdAndDecl(dim.getIdentifier(), Xname.TYPE_F_INT,
+            Xname.SCLASS_F_LOCAL, fctDef, xcodeml);
+      }
+    }
+  }
 }
