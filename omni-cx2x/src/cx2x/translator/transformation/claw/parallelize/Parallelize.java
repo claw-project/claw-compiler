@@ -189,7 +189,7 @@ public class Parallelize extends Transformation {
             _claw.getPragma().getLineNo());
         return false;
       }
-      int baseDimNb = baseDimensionNb(over);
+      int baseDimNb = TransformationHelper.baseDimensionNb(over);
       if(baseDimNb > 2){
         xcodeml.addError("Too many base dimensions specified in over clause. " +
             "Maximum two base dimensions can be specified.",
@@ -352,7 +352,12 @@ public class Parallelize extends Transformation {
         if(vars.size() > 1){
           if(!_arrayFieldsInOut.contains(lhs.getValue())){
             _arrayFieldsInOut.add(lhs.getValue());
-            promoteField(lhs.getValue(), false, false, 0, xcodeml); // TODO should be fine
+
+            PromotionInfo promotionInfo =
+                TransformationHelper.promoteField(lhs.getValue(), false, false,
+                    0, _overDimensions, _fctDef, _fctType,
+                    _claw.getDimensionValues(), _claw, xcodeml);
+            _promotions.put(lhs.getValue(), promotionInfo);
           }
           adaptScalarRefToArrayReferences(xcodeml,
               Collections.singletonList(lhs.getValue()), 0); // TODO should be fine
@@ -363,21 +368,6 @@ public class Parallelize extends Transformation {
         }
       }
     }
-  }
-
-  /**
-   * Get the number of base dimension in an over clause.
-   * @param over Over clause as a list of string element.
-   * @return The number of base dimension.
-   */
-  private int baseDimensionNb(List<String> over){
-    int cnt = 0;
-    for(String dim : over){
-      if(dim.equals(ClawDimension.BASE_DIM)){
-        ++cnt;
-      }
-    }
-    return cnt;
   }
 
   /**
@@ -403,7 +393,7 @@ public class Parallelize extends Transformation {
         List<Xnode> inMiddle = new ArrayList<>();
         List<Xnode> crt = beforeCrt;
 
-        if(baseDimensionNb(over) == 2){ // In middle insertion
+        if(TransformationHelper.baseDimensionNb(over) == 2){ // In middle insertion
           for (String dim : over) {
             if (!dim.equals(ClawDimension.BASE_DIM)) {
               ClawDimension d = _dimensions.get(dim);
@@ -457,115 +447,26 @@ public class Parallelize extends Transformation {
     if(_claw.hasOverDataClause()){
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i){
         for (String fieldId : _claw.getOverDataClauseValues().get(i)) {
-          promoteField(fieldId, true, true, i, xcodeml);
+          PromotionInfo promotionInfo =
+              TransformationHelper.promoteField(fieldId, true, true, i,
+                  _overDimensions, _fctDef, _fctType,
+                  _claw.getDimensionValues(), _claw, xcodeml);
+          _promotions.put(fieldId, promotionInfo);
         }
       }
     } else {
       // Promote all arrays in a similar manner
       for (String fieldId : _arrayFieldsInOut) {
-        promoteField(fieldId, true, true, 0, xcodeml);
+        PromotionInfo promotionInfo =
+            TransformationHelper.promoteField(fieldId, true, true, 0,
+                _overDimensions, _fctDef, _fctType, _claw.getDimensionValues(),
+                _claw, xcodeml);
+        _promotions.put(fieldId, promotionInfo);
       }
     }
   }
 
-  /**
-   * Promote a field with the information stored in the defined dimensions.
-   * @param fieldId   Id of the field as defined in the symbol table.
-   * @param update    If true, update current type otherwise, create a type from
-   *                  scratch.
-   * @param assumed   If true, generate assumed dimension range, otherwise, use
-   *                  the information in the defined dimension.
-   * @param overIndex Over clause to be used for promotion.
-   * @param xcodeml   Current XcodeML program unit in which the element will be
-   *                  created.
-   * @throws IllegalTransformationException If type cannot be found.
-   */
-  private void promoteField(String fieldId, boolean update, boolean assumed,
-                            int overIndex, XcodeProgram xcodeml)
-      throws IllegalTransformationException
-  {
-    Xid id = _fctDef.getSymbolTable().get(fieldId);
-    Xdecl decl = _fctDef.getDeclarationTable().get(fieldId);
-    String type = xcodeml.getTypeTable().generateArrayTypeHash();
-    XbasicType newType;
 
-    if(update){
-      XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
-      if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())){
-        throw new IllegalTransformationException("Cannot find type for " +
-            fieldId, _claw.getPragma().getLineNo());
-      } else if(XnodeUtil.isBuiltInType(id.getType())){
-        newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
-            Xintent.NONE);
-      } else {
-        newType = oldType.cloneObject();
-        newType.setType(type);
-      }
-    } else {
-      newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
-          Xintent.NONE);
-    }
-    _promotions.put(fieldId, new PromotionInfo(fieldId, newType.getDimensions(),
-        newType.getDimensions() + _claw.getDimensionValues().size(), type));
-
-    if(assumed){
-      if(newType.isAllAssumedShape() && _fctType.hasParam(fieldId)){
-        for(int i = 0; i < _overDimensions; ++i){
-          Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
-          newType.addDimension(index, 0);
-        }
-      } else {
-        if(_claw.hasOverClause()){
-          /* If the directive has an over clause, there is three possibility to
-           * insert the newly defined dimensions.
-           * 1. Insert the dimensions in the middle on currently existing ones.
-           * 2. Insert the dimensions before currently existing ones.
-           * 3. Insert the dimensions after currently existing ones. */
-          List<String> over = _claw.getOverClauseValues().get(overIndex);
-          if(baseDimensionNb(over) == 2){
-            // Insert new dimension in middle (case 1)
-            int startIdx = 1;
-            for (ClawDimension dim : _claw.getDimensionValues()) {
-              Xnode index = dim.generateIndexRange(xcodeml, false);
-              newType.addDimension(index, startIdx++);
-            }
-          } else if(over.get(0).equals(ClawDimension.BASE_DIM)){
-            // Insert new dimensions at the end (case 3)
-            for (ClawDimension dim : _claw.getDimensionValues()) {
-              Xnode index = dim.generateIndexRange(xcodeml, false);
-              newType.addDimension(index, XbasicType.APPEND);
-            }
-          } else {
-            // Insert new dimension at the beginning (case 2)
-            for (ClawDimension dim : _claw.getDimensionValues()) {
-              Xnode index = dim.generateIndexRange(xcodeml, false);
-              newType.addDimension(index, 0);
-            }
-          }
-        } else {
-          for (ClawDimension dim : _claw.getDimensionValues()) {
-            Xnode index = dim.generateIndexRange(xcodeml, false);
-            newType.addDimension(index, 0);
-          }
-        }
-      }
-    } else {
-      for(ClawDimension dim : _claw.getDimensionValues()){
-        Xnode index = dim.generateIndexRange(xcodeml, false);
-        newType.addDimension(index, XbasicType.APPEND);
-      }
-    }
-    id.setType(type);
-    decl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
-    xcodeml.getTypeTable().add(newType);
-
-    // Update params in function type
-    for(Xnode param : _fctType.getParams().getAll()){
-      if(param.getValue().equals(fieldId)){
-        param.setAttribute(Xattr.TYPE, type);
-      }
-    }
-  }
 
   /**
    * Adapt all the array references of the variable in the data clause in the
