@@ -558,15 +558,22 @@ public class ParallelizeForward extends Transformation {
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
           doStmt.getInnerStatement().getBody().appendToChildren(assignment, false);
 
-          // Perform the promotion on the variable
-          PromotionInfo promotionInfo =
-              TransformationHelper.promoteField(varInLhs.getValue(), true, true, 0,
-              0, parentFctDef, _parentFctType, dimensions, _claw, xcodeml);
-          _promotions.put(varInLhs.getValue(), promotionInfo);
+          PromotionInfo promotionInfo;
+          if(!_promotions.containsKey(varInLhs.getValue())) {
+            // Perform the promotion on the variable
+            promotionInfo = TransformationHelper.promoteField(
+                varInLhs.getValue(), true, true, 0, 0, parentFctDef,
+                _parentFctType, dimensions, _claw, xcodeml);
+            _promotions.put(varInLhs.getValue(), promotionInfo);
+            
+            // TODO if #38 is implemented, the varibale has to be put either in
+            // TODO _promotedWithBeforeOver or _promotedWithAfterOver
+            _promotedWithBeforeOver.add(varInLhs.getValue());
+          } else {
+            promotionInfo = _promotions.get(varInLhs.getValue());
+          }
 
-          // TODO if #38 is implemented, the varibale has to be put either in
-          // TODO _promotedWithBeforeOver or _promotedWithAfterOver
-          _promotedWithBeforeOver.add(varInLhs.getValue());
+
 
           // Adapt the reference in the assignement statement
           TransformationHelper.adaptArrayReferences(_promotedWithBeforeOver, 0,
@@ -593,7 +600,9 @@ public class ParallelizeForward extends Transformation {
                     get(pointer.getAttribute(Xattr.TYPE));
                 XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().
                     get(promotionInfo.getTargetType());
-                if(pointeeType.getDimensions() != pointerType.getDimensions()){
+                if(pointeeType.getDimensions() != pointerType.getDimensions()
+                    && !_promotions.containsKey(pointer.getValue()))
+                {
                   promotionInfo = TransformationHelper.promoteField(
                       pointer.getValue(), true, true, 0, dimensions.size(),
                       parentFctDef, _parentFctType, dimensions, _claw, xcodeml);
