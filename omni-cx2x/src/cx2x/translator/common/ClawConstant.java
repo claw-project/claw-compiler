@@ -27,5 +27,11 @@ public class ClawConstant {
 
   // CLAW atrtibute
   public static final String IS_CLAW = "is_claw";
+  public static final String OVER = "over";
+
+  // Over position constant value
+  public static final String BEFORE = "before";
+  public static final String MIDDLE = "middle";
+  public static final String AFTER = "after";
 
 }

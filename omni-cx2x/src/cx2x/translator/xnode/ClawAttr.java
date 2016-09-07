@@ -13,7 +13,8 @@ import cx2x.translator.common.ClawConstant;
  * @author clementval
  */
 public enum ClawAttr {
-  IS_CLAW(ClawConstant.IS_CLAW);
+  IS_CLAW(ClawConstant.IS_CLAW),
+  OVER(ClawConstant.OVER);
 
   private final String name;
 
