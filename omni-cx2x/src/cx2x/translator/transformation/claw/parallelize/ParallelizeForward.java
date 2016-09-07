@@ -525,7 +525,7 @@ public class ParallelizeForward extends Transformation {
           // Perform the promotion on the variable
           promotionInfo = TransformationHelper.promoteField(
               varInLhs.getValue(), true, true, 0, 0, parentFctDef,
-              _parentFctType, dimensions, _claw, xcodeml);
+              _parentFctType, dimensions, _claw, xcodeml, overPos);
           _promotions.put(varInLhs.getValue(), promotionInfo);
 
           addPromotedVar(varInLhs.getValue(), overPos);
@@ -634,7 +634,7 @@ public class ParallelizeForward extends Transformation {
             // Perform the promotion on the variable
             promotionInfo = TransformationHelper.promoteField(
                 varInLhs.getValue(), true, true, 0, 0, parentFctDef,
-                _parentFctType, dimensions, _claw, xcodeml);
+                _parentFctType, dimensions, _claw, xcodeml, null);
             _promotions.put(varInLhs.getValue(), promotionInfo);
             
             // TODO if #38 is implemented, the varibale has to be put either in
@@ -705,7 +705,7 @@ public class ParallelizeForward extends Transformation {
           {
             PromotionInfo promotionInfo = TransformationHelper.promoteField(
                 pointer.getValue(), true, true, 0, dimensions.size(),
-                fctDef, _parentFctType, dimensions, _claw, xcodeml);
+                fctDef, _parentFctType, dimensions, _claw, xcodeml, null);
             _promotions.put(pointer.getValue(), promotionInfo);
           }
         }

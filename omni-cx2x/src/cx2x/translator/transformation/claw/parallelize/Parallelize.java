@@ -359,7 +359,7 @@ public class Parallelize extends Transformation {
             PromotionInfo promotionInfo =
                 TransformationHelper.promoteField(lhs.getValue(), false, false,
                     0, _overDimensions, _fctDef, _fctType,
-                    _claw.getDimensionValues(), _claw, xcodeml);
+                    _claw.getDimensionValues(), _claw, xcodeml, null);
             _promotions.put(lhs.getValue(), promotionInfo);
           }
           adaptScalarRefToArrayReferences(xcodeml,
@@ -453,7 +453,7 @@ public class Parallelize extends Transformation {
           PromotionInfo promotionInfo =
               TransformationHelper.promoteField(fieldId, true, true, i,
                   _overDimensions, _fctDef, _fctType,
-                  _claw.getDimensionValues(), _claw, xcodeml);
+                  _claw.getDimensionValues(), _claw, xcodeml, null);
           _promotions.put(fieldId, promotionInfo);
         }
       }
@@ -463,7 +463,7 @@ public class Parallelize extends Transformation {
         PromotionInfo promotionInfo =
             TransformationHelper.promoteField(fieldId, true, true, 0,
                 _overDimensions, _fctDef, _fctType, _claw.getDimensionValues(),
-                _claw, xcodeml);
+                _claw, xcodeml, null);
         _promotions.put(fieldId, promotionInfo);
       }
     }
