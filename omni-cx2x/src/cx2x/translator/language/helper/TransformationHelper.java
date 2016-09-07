@@ -447,6 +447,7 @@ public class TransformationHelper {
    * @param overIndex Over clause to be used for promotion.
    * @param xcodeml   Current XcodeML program unit in which the element will be
    *                  created.
+   * @param overPos   Force behavior as if over clause is present.
    * @throws IllegalTransformationException If type cannot be found.
    */
   public static PromotionInfo promoteField(String fieldId, boolean update,
@@ -456,7 +457,8 @@ public class TransformationHelper {
                                            XfunctionType fctType,
                                            List<ClawDimension> dimensions,
                                            ClawLanguage claw,
-                                           XcodeProgram xcodeml)
+                                           XcodeProgram xcodeml,
+                                           OverPosition overPos)
       throws IllegalTransformationException
   {
     Xid id = fctDef.getSymbolTable().get(fieldId);
@@ -492,21 +494,24 @@ public class TransformationHelper {
           newType.addDimension(index, 0);
         }
       } else {
-        if(claw.hasOverClause()){
+        if(claw.hasOverClause() || overPos != null){
           /* If the directive has an over clause, there is three possibility to
            * insert the newly defined dimensions.
            * 1. Insert the dimensions in the middle on currently existing ones.
            * 2. Insert the dimensions before currently existing ones.
            * 3. Insert the dimensions after currently existing ones. */
-          List<String> over = claw.getOverClauseValues().get(overIndex);
-          if(baseDimensionNb(over) == 2){
+          if(overPos == null){
+            overPos = getOverPosition(claw.getOverClauseValues().get(overIndex));
+          }
+
+          if(overPos == OverPosition.MIDDLE){
             // Insert new dimension in middle (case 1)
             int startIdx = 1;
             for (ClawDimension dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, startIdx++);
             }
-          } else if(over.get(0).equals(ClawDimension.BASE_DIM)){
+          } else if(overPos == OverPosition.AFTER){
             // Insert new dimensions at the end (case 3)
             for (ClawDimension dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
@@ -565,14 +570,13 @@ public class TransformationHelper {
    * ones.
    */
   private static OverPosition getOverPosition(List<String> overClause){
-    if(overClause.get(0).equals(ClawDimension.BASE_DIM)){
+    if(overClause.get(0).equals(ClawDimension.BASE_DIM) &&
+        overClause.get(overClause.size()-1).equals(ClawDimension.BASE_DIM)) {
+      return OverPosition.MIDDLE;
+    } else if (overClause.get(0).equals(ClawDimension.BASE_DIM)){
       return OverPosition.AFTER;
-    } else if(overClause.get(overClause.size() - 1).
-        equals(ClawDimension.BASE_DIM))
-    {
-      return OverPosition.BEFORE;
     }
-    return OverPosition.MIDDLE;
+    return OverPosition.BEFORE;
   }
 
   /**
