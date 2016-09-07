@@ -548,6 +548,14 @@ public class TransformationHelper {
         }
       }
     }
+    if(fctType.hasAttribute(Xattr.RESULT_NAME)
+        && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId))
+    {
+      if(claw.hasOverClause()) {
+        fctType.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
+            claw.getOverClauseValues().get(overIndex)).toString());
+      }
+    }
     return proInfo;
   }
 
