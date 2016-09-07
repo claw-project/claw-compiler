@@ -9,6 +9,8 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawReshapeInfo;
+import cx2x.translator.language.OverPosition;
+import cx2x.translator.misc.Utility;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -382,6 +384,11 @@ public class TransformationHelper {
             String newType =
                 XnodeUtil.duplicateWithDimension(lType, crtType, mod, xcodeml);
             pMod.setAttribute(Xattr.TYPE, newType);
+            // TODO move all function to TransformationHelper
+            if(pLocal.hasAttribute(ClawAttr.OVER.toString())){
+              pMod.setAttribute(ClawAttr.OVER.toString(),
+                  pLocal.getAttribute(ClawAttr.OVER.toString()));
+            }
           }
         }
       }
@@ -534,9 +541,31 @@ public class TransformationHelper {
     for(Xnode param : fctType.getParams().getAll()){
       if(param.getValue().equals(fieldId)){
         param.setAttribute(Xattr.TYPE, type);
+        // Save the over clause for parallelize forward
+        if(claw.hasOverClause()) {
+          param.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
+              claw.getOverClauseValues().get(overIndex)).toString());
+        }
       }
     }
     return proInfo;
+  }
+
+  /**
+   * Get the enum value for the over position.
+   * @param overClause List of values in the over clause.
+   * @return Position of the newly inserted dimensions compare the the existing
+   * ones.
+   */
+  private static OverPosition getOverPosition(List<String> overClause){
+    if(overClause.get(0).equals(ClawDimension.BASE_DIM)){
+      return OverPosition.AFTER;
+    } else if(overClause.get(overClause.size() - 1).
+        equals(ClawDimension.BASE_DIM))
+    {
+      return OverPosition.BEFORE;
+    }
+    return OverPosition.MIDDLE;
   }
 
   /**
