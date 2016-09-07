@@ -627,7 +627,7 @@ public class XnodeUtil {
    * Delete an element for the tree.
    * @param element Element to be deleted.
    */
-  public static void delete(Element element){
+  public static void delete(Node element){
     if(element == null || element.getParentNode() == null){
       return;
     }
@@ -1967,6 +1967,23 @@ public class XnodeUtil {
     List<Xdecl> uses = dt.getAll(Xcode.FUSEDECL);
     uses.addAll(dt.getAll(Xcode.FUSEONLYDECL));
     return uses;
+  }
+
+  /**
+   * Delete all sibling elements from the start element included.
+   * @param start Element to start from.
+   */
+  public static void deleteFrom(Xnode start){
+    List<Node> toDelete = new ArrayList<>();
+    toDelete.add(start.getElement());
+    Node sibling = start.getElement().getNextSibling();
+    while (sibling != null){
+      toDelete.add(sibling);
+      sibling = sibling.getNextSibling();
+    }
+    for (Node n : toDelete) {
+      XnodeUtil.delete(n);
+    }
   }
 
 }
