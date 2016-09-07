@@ -52,6 +52,7 @@ public class ParallelizeForward extends Transformation {
   private List<String> _promotedWithAfterOver;
   private List<String> _promotedWithMiddleOver;
   private Map<String, PromotionInfo> _promotions; // Info about promotion
+  private boolean _isNestedInAssignement;
 
 
   /**
@@ -80,6 +81,7 @@ public class ParallelizeForward extends Transformation {
     if(next.opcode() == Xcode.EXPRSTATEMENT
         || next.opcode() == Xcode.FASSIGNSTATEMENT)
     {
+      _isNestedInAssignement = next.opcode() == Xcode.FASSIGNSTATEMENT;
       _fctCall = next.find(Xcode.FUNCTIONCALL);
       if(_fctCall != null){
         return analyzeForward(xcodeml);
@@ -463,17 +465,8 @@ public class ParallelizeForward extends Transformation {
               _promotedVar.add(pBase.getValue());
               OverPosition overPos = OverPosition.fromString(
                   pBase.getAttribute(ClawAttr.OVER.toString()));
-              switch (overPos){
-                case BEFORE:
-                  _promotedWithBeforeOver.add(pBase.getValue());
-                  break;
-                case MIDDLE:
-                  _promotedWithMiddleOver.add(pBase.getValue());
-                  break;
-                case AFTER:
-                  _promotedWithAfterOver.add(pBase.getValue());
-                  break;
-              }
+
+              addPromotedVar(pBase.getValue(), overPos);
 
               _promotions.put(pBase.getValue(), new PromotionInfo(
                   pBase.getValue(), baseDim, targetDim, type));
@@ -498,8 +491,86 @@ public class ParallelizeForward extends Transformation {
       }
     }
 
+    updateResultVar(xcodeml);
 
     propagatePromotion(xcodeml);
+  }
+
+  /**
+   * TODO
+   * @param xcodeml
+   * @throws IllegalTransformationException
+   */
+  private void updateResultVar(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    if(_isNestedInAssignement){
+      Xnode assignment = XnodeUtil.getNextSibling(_claw.getPragma());
+      if(_fctType.hasAttribute(ClawAttr.OVER.toString())){
+        OverPosition overPos = OverPosition.fromString(
+            _fctType.getAttribute(ClawAttr.OVER.toString()));
+        Xnode lhs = assignment.getChild(0);
+        // TODO handle the case when the array ref is a var directly
+        Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+
+        List<ClawDimension> dimensions =
+            TransformationHelper.findDimensions(_parentFctType);
+        XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
+
+        XbasicType varType = (XbasicType)
+            xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
+
+        PromotionInfo promotionInfo;
+        if(!_promotions.containsKey(varInLhs.getValue())) {
+          // Perform the promotion on the variable
+          promotionInfo = TransformationHelper.promoteField(
+              varInLhs.getValue(), true, true, 0, 0, parentFctDef,
+              _parentFctType, dimensions, _claw, xcodeml);
+          _promotions.put(varInLhs.getValue(), promotionInfo);
+
+          addPromotedVar(varInLhs.getValue(), overPos);
+
+        } else {
+          promotionInfo = _promotions.get(varInLhs.getValue());
+        }
+
+        // Adapte array index to reflect the new return type
+        if(lhs.opcode() == Xcode.FARRAYREF){
+          for(int i = 0; i < promotionInfo.diffDimension(); ++i){
+            Xnode indexRange = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+            lhs.appendToChildren(indexRange, false);
+          }
+        } else if (lhs.opcode() == Xcode.VAR){
+          // TODO
+        } else {
+          throw new IllegalTransformationException("Unsupported return " +
+              "variable for promotion.", _claw.getPragma().getLineNo());
+        }
+
+        // If the array is a target, check if we have to promote a pointer
+        adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
+            promotionInfo, dimensions);
+      }
+    }
+  }
+
+  /**
+   * Save promoted variable name in function of its over information.
+   * @param fieldId Name of the promoted variable.
+   * @param overPos Over position value.
+   */
+  private void addPromotedVar(String fieldId, OverPosition overPos){
+    switch (overPos){
+      case BEFORE:
+        _promotedWithBeforeOver.add(fieldId);
+        break;
+      case MIDDLE:
+        _promotedWithMiddleOver.add(fieldId);
+        break;
+      case AFTER:
+        _promotedWithAfterOver.add(fieldId);
+        break;
+    }
   }
 
   /**
@@ -573,8 +644,6 @@ public class ParallelizeForward extends Transformation {
             promotionInfo = _promotions.get(varInLhs.getValue());
           }
 
-
-
           // Adapt the reference in the assignement statement
           TransformationHelper.adaptArrayReferences(_promotedWithBeforeOver, 0,
               assignment, _promotions, induction, emptyInd, emptyInd, xcodeml);
@@ -585,32 +654,9 @@ public class ParallelizeForward extends Transformation {
 
 
           // If the array is a target, check if we have to promote a pointer
-          if(varType.isTarget()){
-            List<Xnode> pAssignments =
-                XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, parentFctDef);
-            for(Xnode pAssignment : pAssignments){
-              Xnode pointer = pAssignment.getChild(0);
-              Xnode pointee = pAssignment.getChild(1);
+          adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
+              promotionInfo, dimensions);
 
-              // Check if the pointer assignment has the promoted variable
-              if(pointee.getValue().toLowerCase().
-                  equals(varInLhs.getValue().toLowerCase()))
-              {
-                XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().
-                    get(pointer.getAttribute(Xattr.TYPE));
-                XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().
-                    get(promotionInfo.getTargetType());
-                if(pointeeType.getDimensions() != pointerType.getDimensions()
-                    && !_promotions.containsKey(pointer.getValue()))
-                {
-                  promotionInfo = TransformationHelper.promoteField(
-                      pointer.getValue(), true, true, 0, dimensions.size(),
-                      parentFctDef, _parentFctType, dimensions, _claw, xcodeml);
-                  _promotions.put(pointer.getValue(), promotionInfo);
-                }
-              }
-            }
-          }
           break;
           /* if one var in the rhs of the assignement statement was
            * promoted it's enough and we can switch to the next assignement
@@ -620,7 +666,52 @@ public class ParallelizeForward extends Transformation {
     }
   }
 
+  /**
+   * Adapt potential pointer that are assigned from a promoted variable.
+   * @param varType     Type of the promoted variable.
+   * @param fieldId     Name of the promoted variable.
+   * @param fctDef      Function definition in which assignement statements are
+   *                    checked.
+   * @param xcodeml     Current XcodeML program unit.
+   * @param pointeeInfo PromotionInformation about the promoted variable.
+   * @param dimensions  List of dimensions to add.
+   * @throws IllegalTransformationException If XcodeML modifications failed.
+   */
+  private void adpatPointer(XbasicType varType, String fieldId,
+                            XfunctionDefinition fctDef, XcodeProgram xcodeml,
+                            PromotionInfo pointeeInfo,
+                            List<ClawDimension> dimensions)
+      throws IllegalTransformationException
+  {
+    if(varType.isTarget()){
+      List<Xnode> pAssignments =
+          XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, fctDef);
+      for(Xnode pAssignment : pAssignments){
+        Xnode pointer = pAssignment.getChild(0);
+        Xnode pointee = pAssignment.getChild(1);
 
+        // Check if the pointer assignment has the promoted variable
+        if(pointee.getValue().toLowerCase().
+            equals(fieldId.toLowerCase()))
+        {
+          XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().
+              get(pointer.getAttribute(Xattr.TYPE));
+          XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().
+              get(pointeeInfo.getTargetType());
+
+          // Check if their dimensions differ
+          if(pointeeType.getDimensions() != pointerType.getDimensions()
+              && !_promotions.containsKey(pointer.getValue()))
+          {
+            PromotionInfo promotionInfo = TransformationHelper.promoteField(
+                pointer.getValue(), true, true, 0, dimensions.size(),
+                fctDef, _parentFctType, dimensions, _claw, xcodeml);
+            _promotions.put(pointer.getValue(), promotionInfo);
+          }
+        }
+      }
+    }
+  }
 
   @Override
   public boolean canBeTransformedWith(Transformation other) {
