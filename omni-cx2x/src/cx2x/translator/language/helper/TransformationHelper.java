@@ -10,7 +10,6 @@ import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.language.OverPosition;
-import cx2x.translator.misc.Utility;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
