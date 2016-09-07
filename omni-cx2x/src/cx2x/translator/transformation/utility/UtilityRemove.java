@@ -24,6 +24,7 @@ public class UtilityRemove extends BlockTransformation {
   // The loop statement involved in the Transformation
   private Xnode _do = null;
   private Xnode _if = null;
+  private Xnode _contains = null;
 
   private final ClawLanguage _clawStart, _clawEnd;
 
@@ -56,10 +57,12 @@ public class UtilityRemove extends BlockTransformation {
           _clawStart.getPragma());
       _if = XnodeUtil.findDirectNext(Xcode.FIFSTATEMENT,
           _clawStart.getPragma());
+      _contains = XnodeUtil.findDirectNext(Xcode.FCONTAINSSTATEMENT,
+          _clawStart.getPragma());
 
-      if(_do == null && _if == null){
+      if(_do == null && _if == null && _contains == null){
         xcodeml.addError("Directive remove without end not followed by a do " +
-            "or if statement", _clawStart.getPragma().getLineNo());
+            ", if or contains statement", _clawStart.getPragma().getLineNo());
         return false;
       }
     }
@@ -83,6 +86,8 @@ public class UtilityRemove extends BlockTransformation {
         _do.delete();
       } else if(_if != null){
         _if.delete();
+      } else if (_contains != null){
+        XnodeUtil.deleteFrom(_contains);
       }
       _clawStart.getPragma().delete();
     } else {
