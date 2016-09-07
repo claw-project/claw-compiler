@@ -49,4 +49,13 @@ public class PromotionInfo {
     return _targetType;
   }
 
+
+  /**
+   * Get the number of dimension between the base and the target.
+   * @return Number of dimension.
+   */
+  public int diffDimension(){
+    return  _targetDimension - _baseDimension;
+  }
+
 }
