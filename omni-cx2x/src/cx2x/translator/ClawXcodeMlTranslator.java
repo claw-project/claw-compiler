@@ -304,7 +304,6 @@ public class ClawXcodeMlTranslator {
       DirectedGraph<Transformation> dg = new DirectedGraph<>();
       Map<String, Transformation> fctMap = new HashMap<>();
 
-
       for (Transformation t : tg.getTransformations()){
         ParallelizeForward p = (ParallelizeForward)t;
         dg.addNode(p);
@@ -315,7 +314,9 @@ public class ClawXcodeMlTranslator {
         ParallelizeForward p = (ParallelizeForward) t;
         if(p.getCalledFctName() != null){
           Transformation end = fctMap.get(p.getCalledFctName());
-          dg.addEdge(p, end);
+          if(end != null){
+            dg.addEdge(p, end);
+          }
         }
       }
 
