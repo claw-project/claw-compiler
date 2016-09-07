@@ -31,6 +31,7 @@ public enum OverPosition {
   }
 
   public static OverPosition fromString(String value){
-    return OverPosition.valueOf(value.toUpperCase());
+    return (value == null) ? BEFORE :
+        OverPosition.valueOf(value.toUpperCase());
   }
 }
