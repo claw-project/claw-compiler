@@ -16,6 +16,11 @@ CONTAINS
     z ( iter_nproma , k ) = t ( iter_nproma , k ) + q ( iter_nproma , k )
    END DO
   END DO
+  DO k = 1 , nz , 1
+   DO iter_nproma = 1 , nproma , 1
+    z ( iter_nproma , k ) = t ( iter_nproma , k ) + q ( iter_nproma , k )
+   END DO
+  END DO
   zp => z
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_all

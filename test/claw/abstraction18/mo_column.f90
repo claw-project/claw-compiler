@@ -14,6 +14,10 @@ CONTAINS
       z(k) = t(k) + q(k)
     END DO
 
+    DO k=1,nz
+      z(k) = t(k) + q(k)
+    END DO
+
     zp => z
 
     !$claw parallelize forward
