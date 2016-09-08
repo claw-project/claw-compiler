@@ -176,6 +176,44 @@ public class XdeclTable extends Xnode {
     return _table.containsKey(name);
   }
 
+  /**
+   * Check if the order of declaration makes sense. If not, fix it.
+   * @param fct Function definition which is checked.
+   */
+  public void checkOrder(XfunctionDefinition fct){
+    int functionLineNo = fct.getLineNo();
+
+    Node crtNode = _baseElement.getFirstChild();
+
+    List<Xnode> decl = new ArrayList<>();
+    while(crtNode != null){
+      if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
+        decl.add(new Xnode((Element)crtNode));
+      }
+      crtNode = crtNode.getNextSibling();
+    }
+
+    if(decl.size() < 2){
+      return;
+    }
+
+    int firstDeclLineNo = decl.get(0).getLineNo();
+    int secondDeclLineNo = decl.get(1).getLineNo();
+
+    if(functionLineNo == firstDeclLineNo){
+      _baseElement.appendChild(decl.get(0).getElement());
+    } else if (firstDeclLineNo > secondDeclLineNo) {
+      Xnode hook = decl.get(1);
+      for(int i = 1; i < decl.size(); ++i){
+        if(decl.get(i).getLineNo() > firstDeclLineNo){
+          break;
+        }
+        hook = decl.get(i);
+      }
+      XnodeUtil.insertAfter(hook, decl.get(0));
+    }
+  }
+
 
   @Override
   public XdeclTable cloneObject() {
