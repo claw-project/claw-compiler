@@ -600,7 +600,8 @@ public class ParallelizeForward extends Transformation {
    * @param transformer Current transformer to store information between
    *                    transformation.
    */
-  private void propagatePromotion(XcodeProgram xcodeml, ClawTransformer transformer)
+  private void propagatePromotion(XcodeProgram xcodeml,
+                                  ClawTransformer transformer)
       throws IllegalTransformationException
   {
     // Get all the assignement statements in the function definiton
@@ -673,7 +674,6 @@ public class ParallelizeForward extends Transformation {
             // TODO if #38 is implemented, the varibale has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
             _promotedWithBeforeOver.add(varInLhs.getValue());
-            previouslyPromoted.add(varInLhs.getValue().toLowerCase());
           } else {
             promotionInfo = _promotions.get(varInLhs.getValue());
           }
@@ -686,11 +686,14 @@ public class ParallelizeForward extends Transformation {
           TransformationHelper.adaptArrayReferences(_promotedWithAfterOver, 0,
               assignment, _promotions, emptyInd, emptyInd, induction, xcodeml);
 
-
           // If the array is a target, check if we have to promote a pointer
+          String fieldId = varInLhs.getValue();
           if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
             adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
                 promotionInfo, dimensions);
+
+            // TODO centralized info
+            previouslyPromoted.add(varInLhs.getValue().toLowerCase());
           }
 
           break;
