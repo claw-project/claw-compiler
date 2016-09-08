@@ -513,9 +513,10 @@ public class ParallelizeForward extends Transformation {
   }
 
   /**
-   * TODO
-   * @param xcodeml
-   * @throws IllegalTransformationException
+   * Apply promotion to the result return variable of a foward call.
+   * @param xcodeml Current XcodeML program unit.
+   * @throws IllegalTransformationException If XcodeML transformation cannot be
+   * done.
    */
   private void updateResultVar(XcodeProgram xcodeml)
       throws IllegalTransformationException
