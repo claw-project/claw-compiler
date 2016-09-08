@@ -5,9 +5,13 @@
 package cx2x.translator.transformation.utility;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.XfunctionDefinition;
+
+import java.util.List;
 
 /**
  * Transformation to fix some issues raised in XcodeML.
@@ -16,8 +20,6 @@ import cx2x.xcodeml.xnode.XcodeProgram;
  */
 public class XcodeMLWorkaround extends Transformation {
 
-  private final ClawLanguage _claw;
-
   /**
    * XcodeMLWorkaround ctor.
    * @param claw The directive that triggered the transformation. In case of
@@ -25,7 +27,6 @@ public class XcodeMLWorkaround extends Transformation {
    */
   public XcodeMLWorkaround(ClawLanguage claw) {
     super(claw);
-    _claw = claw;
   }
 
   @Override
@@ -42,7 +43,17 @@ public class XcodeMLWorkaround extends Transformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
+    checkDeclarations(xcodeml);
+  }
 
-
+  /**
+   * Check the declaration table of each function definition.
+   * @param xcodeml Current XcodeML program unit.
+   */
+  private void checkDeclarations(XcodeProgram xcodeml){
+    List<XfunctionDefinition> definitions = XnodeUtil.getAllFctDef(xcodeml);
+    for(XfunctionDefinition fct : definitions){
+      fct.getDeclarationTable().checkOrder(fct);
+    }
   }
 }
