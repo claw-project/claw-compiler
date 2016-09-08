@@ -9,6 +9,7 @@ import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -17,6 +18,7 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -507,7 +509,7 @@ public class ParallelizeForward extends Transformation {
 
     updateResultVar(xcodeml);
 
-    propagatePromotion(xcodeml);
+    propagatePromotion(xcodeml, (ClawTransformer)transformer);
   }
 
   /**
@@ -594,13 +596,23 @@ public class ParallelizeForward extends Transformation {
   /**
    * Propagate possible promotion in assignements statements in the parent
    * subroutine of the function call.
-   * @param xcodeml Current XcodeML program unit.
+   * @param xcodeml     Current XcodeML program unit.
+   * @param transformer Current transformer to store information between
+   *                    transformation.
    */
-  private void propagatePromotion(XcodeProgram xcodeml)
+  private void propagatePromotion(XcodeProgram xcodeml, ClawTransformer transformer)
       throws IllegalTransformationException
   {
     // Get all the assignement statements in the function definiton
     XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
+
+    // Retrieve information of previous forward transformation in the same fct
+    Object rawObject = transformer.hasElement(parentFctDef);
+    List<String> previouslyPromoted = new ArrayList<>();
+    if(rawObject != null && rawObject instanceof ArrayList){
+      previouslyPromoted.addAll((ArrayList) rawObject);
+    }
+
     List<Xnode> assignments =
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);
     List<ClawDimension> dimensions =
@@ -623,6 +635,7 @@ public class ParallelizeForward extends Transformation {
     for(Xnode assignment : assignments){
       Xnode lhs = assignment.getChild(0);
       Xnode rhs = assignment.getChild(1);
+
       List<Xnode> varsInRhs = XnodeUtil.findAll(Xcode.VAR, rhs);
       for(Xnode var : varsInRhs){
         // Check if the assignement statement uses a promoted variable
@@ -634,6 +647,8 @@ public class ParallelizeForward extends Transformation {
             throw new IllegalTransformationException("Unable to propagate " +
                 "promotion. Internal error.", _claw.getPragma().getLineNo());
           }
+
+
 
           XbasicType varType = (XbasicType)
               xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
@@ -648,7 +663,7 @@ public class ParallelizeForward extends Transformation {
           doStmt.getInnerStatement().getBody().appendToChildren(assignment, false);
 
           PromotionInfo promotionInfo;
-          if(!_promotions.containsKey(varInLhs.getValue())) {
+          if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
             // Perform the promotion on the variable
             promotionInfo = TransformationHelper.promoteField(
                 varInLhs.getValue(), true, true, 0, 0, parentFctDef,
@@ -658,6 +673,7 @@ public class ParallelizeForward extends Transformation {
             // TODO if #38 is implemented, the varibale has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
             _promotedWithBeforeOver.add(varInLhs.getValue());
+            previouslyPromoted.add(varInLhs.getValue().toLowerCase());
           } else {
             promotionInfo = _promotions.get(varInLhs.getValue());
           }
@@ -682,6 +698,8 @@ public class ParallelizeForward extends Transformation {
         }
       }
     }
+
+    transformer.storeElement(parentFctDef, previouslyPromoted);
   }
 
   /**
