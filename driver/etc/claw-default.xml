@@ -3,6 +3,7 @@
   <target default="gpu" />
   <directive default="openacc" />
   <groups>
+    <group type="independent" name="xcodeml"             class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
     <group type="independent" name="remove"              class="cx2x.translator.transformation.utility.UtilityRemove" />
     <group type="independent" name="parallelize"         class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
     <group type="independent" name="parallelize-forward" class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />

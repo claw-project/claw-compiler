@@ -156,6 +156,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/transformation/loop/LoopInterchange.java
   cx2x/translator/transformation/openacc/OpenAccContinuation.java
   cx2x/translator/transformation/utility/UtilityRemove.java
+  cx2x/translator/transformation/utility/XcodeMLWorkaround.java
 
 # translator.xnode package
   cx2x/translator/xnode/ClawAttr.java

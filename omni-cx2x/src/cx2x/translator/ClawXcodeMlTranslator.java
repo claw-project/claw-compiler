@@ -22,6 +22,7 @@ import cx2x.translator.transformation.claw.parallelize.ParallelizeForward;
 import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
+import cx2x.translator.transformation.utility.XcodeMLWorkaround;
 import cx2x.xcodeml.error.*;
 import cx2x.xcodeml.helper.*;
 import cx2x.xcodeml.language.AnalyzedPragma;
@@ -175,6 +176,9 @@ public class ClawXcodeMlTranslator {
     {
       createBlockDirectiveTransformation(entry.getValue(), null);
     }
+
+    // Add utility transformation
+    addOrAbort(new XcodeMLWorkaround(new ClawLanguage(_program)));
 
     // Analysis done, the transformation can be performed.
     _canTransform = true;
