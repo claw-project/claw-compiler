@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.helper;
 
-import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.*;
 
