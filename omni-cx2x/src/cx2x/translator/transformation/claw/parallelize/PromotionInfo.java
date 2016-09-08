@@ -11,10 +11,10 @@ package cx2x.translator.transformation.claw.parallelize;
  * @author clementval
  */
 public class PromotionInfo {
-  private String _identifier;
-  private int _baseDimension;
-  private int _targetDimension;
-  private String _targetType;
+  private final String _identifier;
+  private final int _baseDimension;
+  private final int _targetDimension;
+  private final String _targetType;
 
 
   /**
