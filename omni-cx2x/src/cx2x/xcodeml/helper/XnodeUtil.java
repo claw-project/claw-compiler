@@ -1663,6 +1663,7 @@ public class XnodeUtil {
     } else {
       fctType.getParams().addBefore(hook, newParam);
     }
+    // TODO move method to TransformationHelper
     newParam.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
     return newParam;
   }
@@ -1681,12 +1682,11 @@ public class XnodeUtil {
                                                   XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()){
-      if(p.getValue().toLowerCase().equals(nameValue.toLowerCase())){
+      if(p.getValue().toLowerCase().equals(nameValue.toLowerCase())) {
         return;
       }
     }
-    Xnode param = XnodeUtil.createName(xcodeml, nameValue, type);
-    fctType.getParams().add(param);
+    createAndAddParam(xcodeml, nameValue, type, fctType);
   }
 
   /**
