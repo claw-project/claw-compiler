@@ -263,8 +263,10 @@ public class ParallelizeForward extends Transformation {
     for(Xnode arg : _fctCall.find(Xcode.ARGUMENTS).getChildren()){
       if(arg.opcode() == Xcode.NAMEDVALUE){
         String original_name = arg.getAttribute(Xattr.NAME);
-        String target_name = arg.find(Xcode.VAR).getValue();
-        _fctCallMapping.put(original_name, target_name);
+        Xnode target_var = arg.find(Xcode.VAR);
+        if(target_var != null){
+          _fctCallMapping.put(original_name, target_var.getValue());
+        }
       }
     }
 
