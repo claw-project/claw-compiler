@@ -18,7 +18,6 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**

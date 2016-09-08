@@ -5,7 +5,6 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
-import cx2x.translator.xnode.ClawAttr;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
