@@ -686,7 +686,6 @@ public class ParallelizeForward extends Transformation {
               assignment, _promotions, emptyInd, emptyInd, induction, xcodeml);
 
           // If the array is a target, check if we have to promote a pointer
-          String fieldId = varInLhs.getValue();
           if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
             adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
                 promotionInfo, dimensions);
