@@ -374,6 +374,7 @@ public class TransformationHelper {
         Xnode pMod = paramsMod.get(i);
         String localType = pLocal.getAttribute(Xattr.TYPE);
         String modType = pMod.getAttribute(Xattr.TYPE);
+
         if(!localType.equals(modType)){
           // Param has been update so have to replicate the change to mod file
           XbasicType lType = (XbasicType)xcodeml.getTypeTable().get(localType);
@@ -383,17 +384,27 @@ public class TransformationHelper {
             String newType =
                 XnodeUtil.duplicateWithDimension(lType, crtType, mod, xcodeml);
             pMod.setAttribute(Xattr.TYPE, newType);
-            // TODO move all function to TransformationHelper
-            if(pLocal.hasAttribute(ClawAttr.OVER.toString())){
-              pMod.setAttribute(ClawAttr.OVER.toString(),
-                  pLocal.getAttribute(ClawAttr.OVER.toString()));
-            }
           }
         }
+
+        // Propagate the over attribute
+        copyAttribute(pLocal, pMod, ClawAttr.OVER);
       }
     }
   }
 
+  /**
+   * Copy the attribute from one Xnode to another Xnode if it exists in the
+   * from node.
+   * @param from Xnode to copy from.
+   * @param to   Xnode to copy to.
+   * @param attr Attribute code to be copied.
+   */
+  private static void copyAttribute(Xnode from, Xnode to, ClawAttr attr){
+    if(from.hasAttribute(attr.toString())){
+      to.setAttribute(attr.toString(), from.getAttribute(attr.toString()));
+    }
+  }
 
   /**
    * Find the dimensions defined by the parallelize transformation.
@@ -541,11 +552,15 @@ public class TransformationHelper {
     decl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
     xcodeml.getTypeTable().add(newType);
 
+
     // Update params in function type
     for(Xnode param : fctType.getParams().getAll()){
       if(param.getValue().equals(fieldId)){
+
+        // Update type with new promoted type
         param.setAttribute(Xattr.TYPE, type);
-        // Save the over clause for parallelize forward
+
+        // Save the over clause for parallelize forward transformation
         if(claw.hasOverClause()) {
           param.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
               claw.getOverClauseValues().get(overIndex)).toString());
