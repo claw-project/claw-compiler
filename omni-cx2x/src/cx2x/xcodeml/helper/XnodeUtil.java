@@ -128,6 +128,25 @@ public class XnodeUtil {
   }
 
   /**
+   * Find all function definitions in an XcodeML unit.
+   * @param xcodeml Current XcodeML unit.
+   * @return A list of all function definitions in the program.
+   */
+  public static List<XfunctionDefinition> getAllFctDef(XcodeProgram xcodeml)
+  {
+    List<XfunctionDefinition> definitions = new ArrayList<>();
+    NodeList nList = xcodeml.getElement().
+        getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
+    for (int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        definitions.add(new XfunctionDefinition((Element) n));
+      }
+    }
+    return definitions;
+  }
+
+  /**
    * Find all var references elements in a given body and give var name.
    * @param parent  The body element to search for the array references.
    * @param varName Name of the var for the reference to be found.
