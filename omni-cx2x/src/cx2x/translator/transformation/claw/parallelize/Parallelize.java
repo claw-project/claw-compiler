@@ -524,9 +524,8 @@ public class Parallelize extends Transformation {
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
         // Add parameter to the local type table
-        Xnode param = XnodeUtil.createAndAddParam(xcodeml,
+        XnodeUtil.createAndAddParam(xcodeml,
             dimension.getLowerBoundId(), intTypeIntentIn.getType(), _fctType);
-        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       }
 
       // Create parameter for the upper bound
@@ -535,9 +534,8 @@ public class Parallelize extends Transformation {
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
         // Add parameter to the local type table
-        Xnode param = XnodeUtil.createAndAddParam(xcodeml,
+        XnodeUtil.createAndAddParam(xcodeml,
             dimension.getUpperBoundId(), intTypeIntentIn.getType(), _fctType);
-        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
       }
       // Create induction variable declaration
       XnodeUtil.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,

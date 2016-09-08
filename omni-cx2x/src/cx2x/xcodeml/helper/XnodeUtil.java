@@ -6,6 +6,7 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.*;
 
 import cx2x.xcodeml.xnode.*;
@@ -1662,6 +1663,7 @@ public class XnodeUtil {
     } else {
       fctType.getParams().addBefore(hook, newParam);
     }
+    newParam.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
     return newParam;
   }
 

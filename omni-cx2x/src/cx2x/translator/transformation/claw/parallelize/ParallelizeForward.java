@@ -401,9 +401,7 @@ public class ParallelizeForward extends Transformation {
         XnodeUtil.createIdAndDecl(var, intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, fDef, xcodeml);
         type = intTypeIntentIn.getType();
-        Xnode param =
-            XnodeUtil.createAndAddParam(xcodeml, var, type, _parentFctType);
-        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+        XnodeUtil.createAndAddParam(xcodeml, var, type, _parentFctType);
       } else {
 
         // Var exists already. Add to the parameters if not here.
@@ -558,7 +556,10 @@ public class ParallelizeForward extends Transformation {
             lhs.appendToChildren(indexRange, false);
           }
         } else if (lhs.opcode() == Xcode.VAR){
-          // TODO
+          // TODO avoid array var without colon notation
+          /* throw new IllegalTransformationException("Use the colon notation " +
+              "for the return variable. This notation is not supported." +
+              _claw.getPragma().getValue()); */
         } else {
           throw new IllegalTransformationException("Unsupported return " +
               "variable for promotion.", _claw.getPragma().getLineNo());
