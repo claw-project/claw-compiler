@@ -30,9 +30,9 @@ SUBROUTINE call_test ( istart , iend , jstart , jend )
 END SUBROUTINE call_test
 
 PURE FUNCTION f ( i , j )
- REAL :: f
  INTEGER , INTENT(IN) :: i
  INTEGER , INTENT(IN) :: j
+ REAL :: f
 
  f = 1.0 * i * j
 END FUNCTION f

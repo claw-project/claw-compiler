@@ -2,12 +2,12 @@ MODULE mo_column
 
 CONTAINS
  FUNCTION compute_column ( nz , q , t , nproma ) RESULT(r)
-  INTEGER :: r
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
+  INTEGER :: r
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
