@@ -688,8 +688,10 @@ public class ParallelizeForward extends Transformation {
 
 
           // If the array is a target, check if we have to promote a pointer
-          adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
-              promotionInfo, dimensions);
+          if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
+            adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
+                promotionInfo, dimensions);
+          }
 
           break;
           /* if one var in the rhs of the assignement statement was
