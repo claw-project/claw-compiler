@@ -4,7 +4,6 @@
  */
 package cx2x.translator.transformation.claw.parallelize;
 
-import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
@@ -52,6 +51,7 @@ public class ParallelizeForward extends Transformation {
   private List<String> _promotedWithAfterOver;
   private List<String> _promotedWithMiddleOver;
   private Map<String, PromotionInfo> _promotions; // Info about promotion
+  private Map<String, String> _fctCallMapping; // NamedValue mapping
   private boolean _isNestedInAssignement;
 
 
@@ -68,6 +68,7 @@ public class ParallelizeForward extends Transformation {
     _promotedWithAfterOver = new ArrayList<>();
     _promotedWithMiddleOver = new ArrayList<>();
     _promotions = new HashMap<>();
+    _fctCallMapping = new HashMap<>();
   }
 
   @Override
@@ -258,6 +259,15 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
+
+    for(Xnode arg : _fctCall.find(Xcode.ARGUMENTS).getChildren()){
+      if(arg.opcode() == Xcode.NAMEDVALUE){
+        String original_name = arg.getAttribute(Xattr.NAME);
+        String target_name = arg.find(Xcode.VAR).getValue();
+        _fctCallMapping.put(original_name, target_name);
+      }
+    }
+
     return true;
   }
 
@@ -431,8 +441,12 @@ public class ParallelizeForward extends Transformation {
     } else {
       // 2. Adapt function/subroutine in which the function call is nested
       for(Xnode pBase : _fctType.getParams().getAll()){
+        String original_param = pBase.getValue();
+        if(_fctCallMapping.containsKey(original_param)){
+          original_param = _fctCallMapping.get(original_param);
+        }
         for(Xnode pUpdate : _parentFctType.getParams().getAll()){
-          if(pBase.getValue().equals(pUpdate.getValue())){
+          if(original_param.equals(pUpdate.getValue())){
             XbasicType typeBase = (_localFct) ? (XbasicType)
                 xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
                 (XbasicType) _mod.getTypeTable().
@@ -453,22 +467,22 @@ public class ParallelizeForward extends Transformation {
 
               pUpdate.setAttribute(Xattr.TYPE, type);
 
-              Xid id = fDef.getSymbolTable().get(pBase.getValue());
+              Xid id = fDef.getSymbolTable().get(original_param);
               if(id != null){
                 id.setAttribute(Xattr.TYPE, type);
               }
-              Xdecl varDecl = fDef.getDeclarationTable().get(pBase.getValue());
+              Xdecl varDecl = fDef.getDeclarationTable().get(original_param);
               if(varDecl != null){
                 varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
               }
 
-              _promotedVar.add(pBase.getValue());
+              _promotedVar.add(original_param);
               OverPosition overPos = OverPosition.fromString(
                   pBase.getAttribute(ClawAttr.OVER.toString()));
 
-              addPromotedVar(pBase.getValue(), overPos);
+              addPromotedVar(original_param, overPos);
 
-              _promotions.put(pBase.getValue(), new PromotionInfo(
+              _promotions.put(original_param, new PromotionInfo(
                   pBase.getValue(), baseDim, targetDim, type));
             }
           }
