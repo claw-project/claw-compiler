@@ -43,6 +43,7 @@ public class XcodeMLWorkaround extends Transformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
+    // Apply declaration reordering transformation
     checkDeclarations(xcodeml);
   }
 
