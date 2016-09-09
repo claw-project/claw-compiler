@@ -182,13 +182,18 @@ public class XdeclTable extends Xnode {
    */
   public void checkOrder(XfunctionDefinition fct){
     int functionLineNo = fct.getLineNo();
+    List<Xnode> decl = new ArrayList<>();
 
     Node crtNode = _baseElement.getFirstChild();
-
-    List<Xnode> decl = new ArrayList<>();
     while(crtNode != null){
       if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
-        decl.add(new Xnode((Element)crtNode));
+        Xnode node = new Xnode((Element)crtNode);
+        // Only var declarations can be disordered
+        if(node.opcode() == Xcode.VARDECL
+            || node.opcode() == Xcode.FSTRUCTDECL)
+        {
+          decl.add(node);
+        }
       }
       crtNode = crtNode.getNextSibling();
     }
@@ -213,8 +218,7 @@ public class XdeclTable extends Xnode {
       XnodeUtil.insertAfter(hook, decl.get(0));
     }
   }
-
-
+  
   @Override
   public XdeclTable cloneObject() {
     Element clone = (Element)cloneNode();
