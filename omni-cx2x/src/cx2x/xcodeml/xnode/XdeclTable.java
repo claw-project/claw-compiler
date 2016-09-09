@@ -218,7 +218,7 @@ public class XdeclTable extends Xnode {
       XnodeUtil.insertAfter(hook, decl.get(0));
     }
   }
-  
+
   @Override
   public XdeclTable cloneObject() {
     Element clone = (Element)cloneNode();
