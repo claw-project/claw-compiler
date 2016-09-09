@@ -660,15 +660,14 @@ public class ParallelizeForward extends Transformation {
       for(Xnode var : varsInRhs){
         // Check if the assignement statement uses a promoted variable
         if(_promotedVar.contains(var.getValue())
-            && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null)
+            && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null
+            && lhs.opcode() == Xcode.FARRAYREF)
         {
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
           if(varInLhs == null){
             throw new IllegalTransformationException("Unable to propagate " +
                 "promotion. Internal error.", _claw.getPragma().getLineNo());
           }
-
-
 
           XbasicType varType = (XbasicType)
               xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
