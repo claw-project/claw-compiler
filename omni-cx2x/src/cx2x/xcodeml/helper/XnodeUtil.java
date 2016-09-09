@@ -1893,13 +1893,13 @@ public class XnodeUtil {
       throw new IllegalTransformationException("Only integer variable are " +
           "supported as lower/upper bound value for promotted arrays.");
     }
-
+    
     XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
     Xnode bType = new Xnode(Xcode.FBASICTYPE, xcodemlDst);
     bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
     bType.setAttribute(Xattr.TYPE,
         xcodemlDst.getTypeTable().generateIntegerTypeHash());
-    if(type.getIntent() != Xintent.NONE){
+    if(type != null && type.getIntent() != Xintent.NONE){
       bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
     }
 
