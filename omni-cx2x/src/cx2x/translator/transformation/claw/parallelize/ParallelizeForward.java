@@ -164,6 +164,9 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
+
+    detectParameterMapping(_fctCall);
+
     _calledFctName = _fctCall.find(Xcode.NAME).getValue();
 
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
@@ -261,6 +264,20 @@ public class ParallelizeForward extends Transformation {
       return false;
     }
 
+
+
+    return true;
+  }
+
+  /**
+   * Get all the mapping between local variable and parameter names in the
+   * function call.
+   * @param fctCall Fonction call to be analyzed.
+   */
+  private void detectParameterMapping(Xnode fctCall){
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL){
+      return;
+    }
     for(Xnode arg : _fctCall.find(Xcode.ARGUMENTS).getChildren()){
       if(arg.opcode() == Xcode.NAMEDVALUE){
         String original_name = arg.getAttribute(Xattr.NAME);
@@ -269,14 +286,12 @@ public class ParallelizeForward extends Transformation {
           _fctCallMapping.put(original_name, target_var.getValue());
 
           if(XmOption.isDebugOutput()){
-            System.out.print("Fct parameter mapping: original_name=" +
+            System.out.println("Fct parameter mapping: original_name=" +
                 original_name + " target_name=" + target_var.getValue());
           }
         }
       }
     }
-
-    return true;
   }
 
   /**
