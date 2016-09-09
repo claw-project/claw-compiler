@@ -22,6 +22,7 @@ add_subdirectory(abstraction20) # parallelize/forward with optional not set
 add_subdirectory(abstraction21) # parallelize/forward with optional set
 add_subdirectory(abstraction22) # parallelize with automatic promotion placed
 add_subdirectory(abstraction23) # parallelize with promotion of result var
+add_subdirectory(abstraction24) # parallelize forward with namedValue
 add_subdirectory(call1)
 add_subdirectory(kcache1) # assign cache
 add_subdirectory(kcache2) # assign cache with init clause
