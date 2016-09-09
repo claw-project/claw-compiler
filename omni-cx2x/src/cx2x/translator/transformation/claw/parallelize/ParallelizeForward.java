@@ -267,6 +267,11 @@ public class ParallelizeForward extends Transformation {
         Xnode target_var = arg.find(Xcode.VAR);
         if(target_var != null){
           _fctCallMapping.put(original_name, target_var.getValue());
+
+          if(XmOption.isDebugOutput()){
+            System.out.print("Fct parameter mapping: original_name=" +
+                original_name + " target_name=" + target_var.getValue());
+          }
         }
       }
     }
