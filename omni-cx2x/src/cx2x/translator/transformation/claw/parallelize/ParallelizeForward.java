@@ -466,48 +466,66 @@ public class ParallelizeForward extends Transformation {
         if(_fctCallMapping.containsKey(original_param)){
           original_param = _fctCallMapping.get(original_param);
         }
-        for(Xnode pUpdate : _parentFctType.getParams().getAll()){
-          if(original_param.equals(pUpdate.getValue())){
-            XbasicType typeBase = (_localFct) ? (XbasicType)
-                xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
-                (XbasicType) _mod.getTypeTable().
-                    get(pBase.getAttribute(Xattr.TYPE));
-            XbasicType typeToUpdate = (XbasicType)xcodeml.getTypeTable().
-                get(pUpdate.getAttribute(Xattr.TYPE));
-            int targetDim = typeBase.getDimensions();
-            int baseDim = typeToUpdate.getDimensions();
 
-            // Types have different dimensions
-            if(typeBase.getDimensions() > typeToUpdate.getDimensions()){
+        Xnode pUpdate = null;
 
-              String type = _localFct ?
-                  XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
-                      xcodeml, xcodeml)
-                  : XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
-                      xcodeml, _mod);
-
-              pUpdate.setAttribute(Xattr.TYPE, type);
-
-              Xid id = fDef.getSymbolTable().get(original_param);
-              if(id != null){
-                id.setAttribute(Xattr.TYPE, type);
-              }
-              Xdecl varDecl = fDef.getDeclarationTable().get(original_param);
-              if(varDecl != null){
-                varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
-              }
-
-              _promotedVar.add(original_param);
-              OverPosition overPos = OverPosition.fromString(
-                  pBase.getAttribute(ClawAttr.OVER.toString()));
-
-              addPromotedVar(original_param, overPos);
-
-              _promotions.put(original_param, new PromotionInfo(
-                  pBase.getValue(), baseDim, targetDim, type));
-            }
+        for(Xnode param : _parentFctType.getParams().getAll()){
+          if(original_param.equals(param.getValue())){
+            pUpdate = param;
           }
         }
+
+        if(pUpdate == null){ // field is not a parameter but maybe out field
+          Xdecl d = fDef.getDeclarationTable().get(original_param);
+          if(d != null) {
+            pUpdate = d.find(Xcode.NAME);
+          }
+          // TODO handle deferred shape
+        }
+
+        if(pUpdate != null){
+
+          XbasicType typeBase = (_localFct) ? (XbasicType)
+              xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
+              (XbasicType) _mod.getTypeTable().
+                  get(pBase.getAttribute(Xattr.TYPE));
+          XbasicType typeToUpdate = (XbasicType)xcodeml.getTypeTable().
+              get(pUpdate.getAttribute(Xattr.TYPE));
+          int targetDim = typeBase.getDimensions();
+          int baseDim = typeToUpdate.getDimensions();
+
+          // Types have different dimensions
+          if(typeBase.getDimensions() > typeToUpdate.getDimensions()) {
+
+            String type = _localFct ?
+                XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
+                    xcodeml, xcodeml)
+                : XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
+                xcodeml, _mod);
+
+            pUpdate.setAttribute(Xattr.TYPE, type);
+
+            Xid id = fDef.getSymbolTable().get(original_param);
+            if (id != null) {
+              id.setAttribute(Xattr.TYPE, type);
+            }
+            Xdecl varDecl = fDef.getDeclarationTable().get(original_param);
+            if (varDecl != null) {
+              varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
+            }
+
+            _promotedVar.add(original_param);
+            OverPosition overPos = OverPosition.fromString(
+                pBase.getAttribute(ClawAttr.OVER.toString()));
+
+            addPromotedVar(original_param, overPos);
+
+            _promotions.put(original_param, new PromotionInfo(
+                pBase.getValue(), baseDim, targetDim, type));
+          }
+        }
+
+
       }
 
       if(!_parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
