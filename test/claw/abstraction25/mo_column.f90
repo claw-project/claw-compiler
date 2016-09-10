@@ -7,7 +7,7 @@ CONTAINS
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)   :: nz   ! Size of the array field
-    REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
+    REAL, INTENT(INOUT)   :: t(1:nz) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
     INTEGER :: k                  ! Loop index
     REAL :: c                     ! Coefficient
