@@ -468,10 +468,11 @@ public class ParallelizeForward extends Transformation {
         }
 
         Xnode pUpdate = null;
-
+        boolean isParam = false;
         for(Xnode param : _parentFctType.getParams().getAll()){
           if(original_param.equals(param.getValue())){
             pUpdate = param;
+            isParam = true;
           }
         }
 
@@ -484,7 +485,6 @@ public class ParallelizeForward extends Transformation {
         }
 
         if(pUpdate != null){
-
           XbasicType typeBase = (_localFct) ? (XbasicType)
               xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
               (XbasicType) _mod.getTypeTable().
@@ -494,8 +494,15 @@ public class ParallelizeForward extends Transformation {
           int targetDim = typeBase.getDimensions();
           int baseDim = typeToUpdate.getDimensions();
 
+
+
           // Types have different dimensions
           if(typeBase.getDimensions() > typeToUpdate.getDimensions()) {
+
+            // TODO check intent rules
+            /*if(!isParam && typeToUpdate.getIntent() != Xintent.OUT){
+              continue;
+            }*/
 
             String type = _localFct ?
                 XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
