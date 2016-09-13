@@ -306,20 +306,29 @@ public class ClawXcodeMlTranslator {
       }
 
       DirectedGraph<Transformation> dg = new DirectedGraph<>();
-      Map<String, Transformation> fctMap = new HashMap<>();
+      Map<String, List<Transformation>> fctMap = new HashMap<>();
 
       for (Transformation t : tg.getTransformations()){
         ParallelizeForward p = (ParallelizeForward)t;
         dg.addNode(p);
-        fctMap.put(p.getCallingFctName(), p);
+        if(fctMap.containsKey(p.getCallingFctName())) {
+          List<Transformation> tList = fctMap.get(p.getCallingFctName());
+          tList.add(p);
+        } else {
+          List<Transformation> tList = new ArrayList<>();
+          tList.add(p);
+          fctMap.put(p.getCallingFctName(), tList);
+        }
       }
 
       for (Transformation t : tg.getTransformations()) {
         ParallelizeForward p = (ParallelizeForward) t;
         if(p.getCalledFctName() != null){
-          Transformation end = fctMap.get(p.getCalledFctName());
-          if(end != null){
-            dg.addEdge(p, end);
+          if(fctMap.containsKey(p.getCalledFctName())){
+            List<Transformation> tList = fctMap.get(p.getCalledFctName());
+            for(Transformation end : tList){
+              dg.addEdge(p, end);
+            }
           }
         }
       }
