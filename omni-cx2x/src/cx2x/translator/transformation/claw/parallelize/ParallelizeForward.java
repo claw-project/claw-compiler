@@ -485,6 +485,12 @@ public class ParallelizeForward extends Transformation {
         }
 
         if(pUpdate != null){
+
+          if(pUpdate.getAttribute(Xattr.TYPE) == null
+              || XnodeUtil.isBuiltInType(pUpdate.getAttribute(Xattr.TYPE))) {
+            continue;
+          }
+
           XbasicType typeBase = (_localFct) ? (XbasicType)
               xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
               (XbasicType) _mod.getTypeTable().
