@@ -136,7 +136,7 @@ public class ClawDimension {
    * @param withStep IF true, step element is created.
    * @return A new indexRange elements.
    */
-  public Xnode generateIndexRange(XcodeProgram xcodeml, boolean withStep) {
+  public Xnode generateIndexRange(XcodeML xcodeml, boolean withStep) {
     Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
     Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
     Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
