@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.helper;
 
+import cx2x.translator.language.ClawDimension;
+import cx2x.translator.language.OverPosition;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.*;
 
@@ -1750,18 +1752,38 @@ public class XnodeUtil {
   public static String duplicateWithDimension(XbasicType base,
                                               XbasicType toUpdate,
                                               XcodeML xcodemlDst,
-                                              XcodeML xcodemlSrc)
+                                              XcodeML xcodemlSrc,
+                                              OverPosition overPos,
+                                              List<ClawDimension> dimensions)
       throws IllegalTransformationException
   {
     XbasicType newType = toUpdate.cloneObject();
     String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
     newType.setAttribute(Xattr.TYPE, type);
 
-    if(base.isAllAssumedShape()){
+    if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()){
       int additionalDimensions = base.getDimensions() - toUpdate.getDimensions();
       for(int i = 0; i < additionalDimensions; ++i){
         Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodemlDst);
         newType.addDimension(index, 0);
+      }
+    } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {
+      switch (overPos){
+        case BEFORE:
+          // TODO control and validate the before/after
+          for(ClawDimension dim : dimensions){
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false),
+                XbasicType.APPEND);
+          }
+          break;
+        case AFTER:
+          for(ClawDimension dim : dimensions){
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
+          }
+          break;
+        case MIDDLE:
+          throw new IllegalTransformationException("Not supported yet. " +
+              "Insertion in middle for duplicated array type.", 0);
       }
     } else {
       newType.resetDimension();
@@ -1774,14 +1796,16 @@ public class XnodeUtil {
         Xnode lowerBound = baseDim.find(Xcode.LOWERBOUND);
         Xnode upperBound = baseDim.find(Xcode.UPPERBOUND);
 
-        // Create lower bound
-        Xnode newLowerBound =
-            duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
-        Xnode newUpperBound =
-            duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
-
-        newDim.appendToChildren(newLowerBound, false);
-        newDim.appendToChildren(newUpperBound, false);
+        if(lowerBound != null) {
+          Xnode newLowerBound =
+              duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
+          newDim.appendToChildren(newLowerBound, false);
+        }
+        if(upperBound != null){
+          Xnode newUpperBound =
+              duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
+          newDim.appendToChildren(newUpperBound, false);
+        }
         newType.addDimension(newDim, XbasicType.APPEND);
       }
 
