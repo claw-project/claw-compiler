@@ -378,9 +378,14 @@ public class TransformationHelper {
           XbasicType lType = (XbasicType)xcodeml.getTypeTable().get(localType);
           XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
 
+          List<ClawDimension> dimensions =
+              TransformationHelper.findDimensions(fctType);
+          OverPosition overPos = OverPosition.fromString(
+              pLocal.getAttribute(ClawAttr.OVER.toString()));
+
           if(lType.isArray()) {
-            String newType =
-                XnodeUtil.duplicateWithDimension(lType, crtType, mod, xcodeml);
+            String newType = XnodeUtil.duplicateWithDimension(lType, crtType,
+                mod, xcodeml, overPos, dimensions);
             pMod.setAttribute(Xattr.TYPE, newType);
           }
         }

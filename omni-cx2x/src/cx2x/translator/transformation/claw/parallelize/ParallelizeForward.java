@@ -501,7 +501,6 @@ public class ParallelizeForward extends Transformation {
           int baseDim = typeToUpdate.getDimensions();
 
 
-
           // Types have different dimensions
           if(typeBase.getDimensions() > typeToUpdate.getDimensions()) {
 
@@ -510,11 +509,16 @@ public class ParallelizeForward extends Transformation {
               continue;
             }*/
 
+            List<ClawDimension> dimensions =
+                TransformationHelper.findDimensions(_fctType);
+            OverPosition overPos = OverPosition.fromString(
+                pBase.getAttribute(ClawAttr.OVER.toString()));
+
             String type = _localFct ?
                 XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
-                    xcodeml, xcodeml)
+                    xcodeml, xcodeml, overPos, dimensions)
                 : XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
-                xcodeml, _mod);
+                xcodeml, _mod, overPos, dimensions);
 
             pUpdate.setAttribute(Xattr.TYPE, type);
 
@@ -528,8 +532,7 @@ public class ParallelizeForward extends Transformation {
             }
 
             _promotedVar.add(original_param);
-            OverPosition overPos = OverPosition.fromString(
-                pBase.getAttribute(ClawAttr.OVER.toString()));
+
 
             addPromotedVar(original_param, overPos);
 
