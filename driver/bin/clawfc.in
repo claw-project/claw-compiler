@@ -335,7 +335,7 @@ for file in "${f_files_transformation[@]}"; do
 done
 [ $STOP_TRANSLATOR = true ] && exit 0;
 
-### Revert ignore prefix
+### Revert ignore prefix and apply verbatim
 for file in "${f_files_transformation[@]}"; do
   FILE=("${file}")
   if [ "${#output_file}" != "0" ]
@@ -346,6 +346,7 @@ for file in "${f_files_transformation[@]}"; do
     FILE_OUT_F=${output_dir}/${FILE}
   fi
   revertIgnore $FILE_OUT_F
+  applyVerbatim $FILE_OUT_F
 done
 
 ### Delete temporal directory ###
