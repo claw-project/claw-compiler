@@ -158,6 +158,7 @@ public class ClawXcodeMlTranslator {
             }
             break;
           case IGNORE:
+          case VERBATIM:
             break;
           default:
             _program.addError("Unrecognized CLAW directive",
