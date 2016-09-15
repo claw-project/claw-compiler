@@ -22,5 +22,6 @@ public enum ClawDirective {
   LOOP_HOIST,
   LOOP_EXTRACT,
   PARALLELIZE,
-  REMOVE
+  REMOVE,
+  VERBATIM
 }

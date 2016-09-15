@@ -32,6 +32,7 @@ analyze returns [ClawLanguage l]
   :
     CLAW directive[$l] EOF
   | CLAW VERBATIM // this directive as anything behind
+    { $l.setDirective(ClawDirective.VERBATIM); }
 ;
 
 directive[ClawLanguage l]
