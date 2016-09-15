@@ -30,7 +30,8 @@ analyze returns [ClawLanguage l]
     $l = new ClawLanguage();
   }
   :
-  CLAW directive[$l] EOF
+    CLAW directive[$l] EOF
+  | CLAW VERBATIM // this directive as anything behind
 ;
 
 directive[ClawLanguage l]
@@ -402,6 +403,7 @@ LINTERCHANGE : 'loop-interchange';
 PARALLELIZE  : 'parallelize';
 REMOVE       : 'remove';
 IGNORE       : 'ignore';
+VERBATIM     : 'verbatim';
 
 
 // Clauses
