@@ -17,6 +17,7 @@ out
 
 # Test case generated files
 transformed_code.f90
+transformed_code.f90.bak
 original_code_*
 transformed_code_*
 transformed_main_*
