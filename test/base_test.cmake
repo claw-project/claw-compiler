@@ -23,7 +23,7 @@ endif()
 if(${TEST_DEBUG}) # with debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=openacc --debug -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --debug -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "Translating CLAW directive with ${CLAWFC}"
@@ -31,7 +31,7 @@ if(${TEST_DEBUG}) # with debug option
 else() # without debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=openacc -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "Translating CLAW directive with ${CLAWFC}"
