@@ -155,6 +155,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/transformation/loop/LoopHoistDoStmtGroup.java
   cx2x/translator/transformation/loop/LoopInterchange.java
   cx2x/translator/transformation/openacc/OpenAccContinuation.java
+  cx2x/translator/transformation/openacc/DirectivePrimitive.java
   cx2x/translator/transformation/utility/UtilityRemove.java
   cx2x/translator/transformation/utility/XcodeMLWorkaround.java
 

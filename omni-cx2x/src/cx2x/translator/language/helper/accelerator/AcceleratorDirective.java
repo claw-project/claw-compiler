@@ -5,6 +5,8 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import cx2x.translator.common.ClawConstant;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,6 +42,23 @@ public enum AcceleratorDirective {
         return OPENMP;
       default:
         return NONE;
+    }
+  }
+
+  /**
+   * Get the corresponding directive prefix for a given directive primitive
+   * language.
+   * @param directive Current directive primitive language.
+   * @return The corresponding prefix. Null if language is not known.
+   */
+  public static String getPrefix(AcceleratorDirective directive){
+    switch (directive){
+      case OPENACC:
+        return ClawConstant.OPENACC_PREFIX;
+      case OPENMP:
+        return ClawConstant.OPENMP_PREFIX;
+      default:
+        return null;
     }
   }
 }

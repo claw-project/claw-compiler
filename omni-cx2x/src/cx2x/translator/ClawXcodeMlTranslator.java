@@ -20,6 +20,7 @@ import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.claw.parallelize.Parallelize;
 import cx2x.translator.transformation.claw.parallelize.ParallelizeForward;
 import cx2x.translator.transformation.loop.*;
+import cx2x.translator.transformation.openacc.DirectivePrimitive;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.translator.transformation.utility.XcodeMLWorkaround;
@@ -158,7 +159,7 @@ public class ClawXcodeMlTranslator {
             }
             break;
           case PRIMITIVE:
-            // TODO
+            addOrAbort(new DirectivePrimitive(analyzedPragma));
             break;
           // driver handled directives
           case IGNORE:
