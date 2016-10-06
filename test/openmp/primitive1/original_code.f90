@@ -12,6 +12,6 @@ PROGRAM test_primitive
   DO i = 1, 10
     PRINT*,i
   END DO
-  !$claw omp end do
+  !$claw   omp end do
 
 END PROGRAM test_primitive
