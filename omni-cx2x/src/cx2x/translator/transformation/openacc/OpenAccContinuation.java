@@ -42,8 +42,8 @@ import cx2x.xcodeml.xnode.Xnode;
 public class OpenAccContinuation extends Transformation {
 
   /**
-   * Constructs a new LoopFusion triggered from a specific pragma.
-   * @param directive The directive that triggered the loop fusion
+   * Constructs a new OpenACC continuation triggered from a specific pragma.
+   * @param directive The directive that triggered the OpenACC continuation
    *                  transformation.
    */
   public OpenAccContinuation(AnalyzedPragma directive){
@@ -52,11 +52,10 @@ public class OpenAccContinuation extends Transformation {
 
 
   /**
-   * Loop fusion analysis: find whether the pragma statement is followed by a
-   * do statement.
+   * Check if the directive starts with the OpenACC prefix.
    * @param xcodeml      The XcodeML on which the transformations are applied.
    * @param transformer  The transformer used to applied the transformations.
-   * @return True if a do statement is found. False otherwise.
+   * @return True the directive starts with the OpenACC prefix.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     return getDirective().getPragma().getValue().toLowerCase().
@@ -70,7 +69,7 @@ public class OpenAccContinuation extends Transformation {
   }
 
   /**
-   * Apply the loop fusion transformation.
+   * Apply the OpenACC continuation transformation.
    * @param xcodeml         The XcodeML on which the transformations are
    *                        applied.
    * @param transformer     The transformer used to applied the transformations.
