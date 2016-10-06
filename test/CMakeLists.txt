@@ -15,6 +15,7 @@ add_subdirectory(fortran)
 add_subdirectory(loops)
 add_subdirectory(utilities)
 add_subdirectory(openacc)
+add_subdirectory(openmp)
 
 
 # Custom target to run the full transformation test suite
