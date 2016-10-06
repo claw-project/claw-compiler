@@ -157,6 +157,10 @@ public class ClawXcodeMlTranslator {
               addOrAbort(new Parallelize(analyzedPragma));
             }
             break;
+          case PRIMITIVE:
+            // TODO
+            break;
+          // driver handled directives
           case IGNORE:
           case VERBATIM:
             break;

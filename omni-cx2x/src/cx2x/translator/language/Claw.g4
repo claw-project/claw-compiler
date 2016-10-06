@@ -31,8 +31,12 @@ analyze returns [ClawLanguage l]
   }
   :
     CLAW directive[$l] EOF
-  | CLAW VERBATIM // this directive as anything behind
+  | CLAW VERBATIM // this directive accept anything after the verbatim
     { $l.setDirective(ClawDirective.VERBATIM); }
+  | CLAW ACC // this directive accept anything after the acc
+    { $l.setDirective(ClawDirective.PRIMITIVE); }
+  | CLAW OMP // this directive accept anything after the omp
+    { $l.setDirective(ClawDirective.PRIMITIVE); }
 ;
 
 directive[ClawLanguage l]
@@ -407,8 +411,7 @@ IGNORE       : 'ignore';
 VERBATIM     : 'verbatim';
 
 
-// Clauses
-ACC          : 'acc';
+// CLAW Clauses
 COLLAPSE     : 'collapse';
 DATA         : 'data';
 DIMENSION    : 'dimension';
@@ -425,6 +428,10 @@ PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
+
+// Directive primitive clause
+ACC          : 'acc';
+OMP          : 'omp';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;
