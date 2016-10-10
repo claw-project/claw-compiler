@@ -103,6 +103,17 @@ public class AcceleratorHelper {
     }
   }
 
+  /**
+   * Generate accelerator directive for a data region.
+   * @param claw      ClawLanguage object that tells if the parallel clause is
+   *                  enable and where the start pragma is located.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param presents  List of variables to be set presents.
+   * @param startStmt Start statement representing the beginning of the data
+   *                  region.
+   * @param endStmt   End statement representing the end of the data region.
+   */
   public static void generateDataRegionClause(ClawLanguage claw,
                                               XcodeProgram xcodeml,
                                               List<String> presents,
@@ -122,16 +133,10 @@ public class AcceleratorHelper {
     }
 
     beginDataRegion.setValue(beginDataRegionStr);
-    endDataRegion.setValue(gen.getEndParallelDirective());
+    endDataRegion.setValue(gen.getEndDataRegion());
 
     XnodeUtil.insertBefore(startStmt, beginDataRegion);
     XnodeUtil.insertAfter(endStmt, endDataRegion);
-
-    if(gen.getEndDataRegion() != null) {
-      Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      endLoop.setValue(gen.getEndDataRegion());
-      XnodeUtil.insertAfter(endStmt, endLoop);
-    }
   }
 
   /**
