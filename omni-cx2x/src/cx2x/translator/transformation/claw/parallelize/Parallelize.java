@@ -286,6 +286,9 @@ public class Parallelize extends Transformation {
    */
   private void transformForGPU(XcodeProgram xcodeml)
   {
+
+    AcceleratorHelper.generateLoopSeq(_claw, xcodeml, _fctDef);
+
     /* Create a nested loop with the new defined dimensions and wrap it around
      * the whole subroutine's body. This is for the moment a really naive
      * transformation idea but it is our start point.

@@ -7,9 +7,11 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
+import xcodeml.util.XmOption;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +24,38 @@ import java.util.List;
  * @author clementval
  */
 public class AcceleratorHelper {
+
+  /**
+   * Generate loop seq directives on the top of loops in the given function
+   * definition.
+   * @param claw    ClawLanguage object that tells if the parallel clause is
+   *                enable and where the start pragma is located.
+   * @param xcodeml Object representation of the current XcodeML
+   *                representation in which the pragmas will be generated.
+   * @param fctDef  Function definiton in which do statements will be decorated.
+   */
+  public static void generateLoopSeq(ClawLanguage claw, XcodeProgram xcodeml,
+                                     XfunctionDefinition fctDef)
+  {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return;
+    }
+
+    List<Xnode> doStmts = XnodeUtil.findAll(Xcode.FDOSTATEMENT, fctDef);
+    for(Xnode doStmt : doStmts){
+      Xnode loopSeq = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      loopSeq.setValue(gen.getStartLoopDirective(0) + " seq");
+      XnodeUtil.insertBefore(doStmt, loopSeq);
+    }
+
+    if(XmOption.isDebugOutput()){
+      if(XmOption.isDebugOutput()){
+        System.out.println("OpenACC: generated loop seq directive for " +
+            doStmts.size() + " loops");
+      }
+    }
+  }
 
   /**
    * Generate corresponding pragmas to surround the code with a parallel
