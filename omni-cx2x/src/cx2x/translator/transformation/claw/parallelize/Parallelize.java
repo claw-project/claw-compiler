@@ -16,7 +16,6 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
-import exc.openacc.ACC;
 import xcodeml.util.XmOption;
 
 import java.util.*;
@@ -138,6 +137,13 @@ public class Parallelize extends Transformation {
                   decl.find(Xcode.NAME).getValue() + " will be promoted.");
             }
             _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
+          } else if (bType.isArray()){
+            if(XmOption.isDebugOutput()){
+              System.out.println("parallelize promotion: Array "
+                  + decl.find(Xcode.NAME).getValue()
+                  + " is candidate for promotion.");
+            }
+            _scalarFields.add(decl.find(Xcode.NAME).getValue());
           }
         }
       }
@@ -347,37 +353,49 @@ public class Parallelize extends Transformation {
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
     for(Xnode assign : assignStatements){
-      if(assign.getChild(0).opcode() == Xcode.FARRAYREF){
-        Xnode ref = assign.getChild(0);
-
-        if(_arrayFieldsInOut.contains(ref.find(Xcode.VARREF, Xcode.VAR).
-            getValue()))
-        {
-          NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
-          XnodeUtil.insertAfter(assign, loops.getOuterStatement());
-          loops.getInnerStatement().getBody().appendToChildren(assign, true);
-          assign.delete();
-        }
-      } else if(assign.getChild(0).opcode() == Xcode.VAR
-          && _scalarFields.contains(assign.getChild(0).getValue()))
+      Xnode lhs = assign.getChild(Xnode.LHS);
+      String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.getValue() :
+          lhs.find(Xcode.VARREF, Xcode.VAR).getValue();
+      if(lhs.opcode() == Xcode.FARRAYREF &&
+          _arrayFieldsInOut.contains(lhsName))
+      {
+        NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
+        XnodeUtil.insertAfter(assign, loops.getOuterStatement());
+        loops.getInnerStatement().getBody().appendToChildren(assign, true);
+        assign.delete();
+      } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
+          && _scalarFields.contains(lhsName))
       {
         /* If the assignment is in the column loop and is composed with some
-         * variables, the field must be promoted and the var reference switch
-         * to an array reference */
-        Xnode lhs = assign.getChild(0);
-        List<Xnode> vars = XnodeUtil.findAllReferences(assign);
-        if(vars.size() > 1){
-          if(!_arrayFieldsInOut.contains(lhs.getValue())){
-            _arrayFieldsInOut.add(lhs.getValue());
+         * promoted variables, the field must be promoted and the var reference
+         * switch to an array reference */
+        if(shouldBePromoted(assign)){
+          if(!_arrayFieldsInOut.contains(lhsName)){
 
-            PromotionInfo promotionInfo =
-                TransformationHelper.promoteField(lhs.getValue(), false, false,
-                    0, _overDimensions, _fctDef, _fctType,
-                    _claw.getDimensionValues(), _claw, xcodeml, null);
-            _promotions.put(lhs.getValue(), promotionInfo);
+            _arrayFieldsInOut.add(lhsName);
+            PromotionInfo promotionInfo = null;
+            if(lhs.opcode() == Xcode.VAR) { // Scalar to array
+               promotionInfo =
+                  TransformationHelper.promoteField(lhsName, false, false,
+                      0, _overDimensions, _fctDef, _fctType,
+                      _claw.getDimensionValues(), _claw, xcodeml, null);
+            } else { // Array to array
+              promotionInfo =
+                  TransformationHelper.promoteField(lhsName, true, true,
+                      0, _overDimensions, _fctDef, _fctType,
+                      _claw.getDimensionValues(), _claw, xcodeml, null);
+            }
+            _promotions.put(lhsName, promotionInfo);
           }
-          adaptScalarRefToArrayReferences(xcodeml,
-              Collections.singletonList(lhs.getValue()), 0); // TODO should be fine
+          if(lhs.opcode() == Xcode.VAR) {
+            adaptScalarRefToArrayReferences(xcodeml,
+                Collections.singletonList(lhsName), 0); // TODO should be fine
+          } else {
+            TransformationHelper.adaptArrayReferences(
+                Collections.singletonList(lhsName), 0, _fctDef.getBody(),
+                _promotions, _beforeCrt, _inMiddle, _afterCrt,
+                xcodeml);
+          }
           NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
@@ -385,6 +403,27 @@ public class Parallelize extends Transformation {
         }
       }
     }
+
+  }
+
+  /**
+   * Check whether the LHS variable should be promoted.
+   * @param assignStmt Assign statement node.
+   * @return True if the LHS variable should be promoted. False otherwise.
+   */
+  private boolean shouldBePromoted(Xnode assignStmt){
+    Xnode rhs = assignStmt.getChild(Xnode.RHS);
+    if(rhs == null){
+      return false;
+    }
+    List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
+    Set<String> names = XnodeUtil.getNamesFromReferences(vars);
+    for(String n : names){ // TODO better algo
+      if(_arrayFieldsInOut.contains(n)){
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
