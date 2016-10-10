@@ -103,6 +103,37 @@ public class AcceleratorHelper {
     }
   }
 
+  public static void generateDataRegionClause(ClawLanguage claw,
+                                              XcodeProgram xcodeml,
+                                              List<String> presents,
+                                              Xnode startStmt, Xnode endStmt)
+  {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return;
+    }
+
+    Xnode beginDataRegion = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    Xnode endDataRegion = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+
+    String beginDataRegionStr = gen.getStartDataRegion();
+    if(presents.size() > 0){
+      beginDataRegionStr += " " + gen.getPresentClause(presents);
+    }
+
+    beginDataRegion.setValue(beginDataRegionStr);
+    endDataRegion.setValue(gen.getEndParallelDirective());
+
+    XnodeUtil.insertBefore(startStmt, beginDataRegion);
+    XnodeUtil.insertAfter(endStmt, endDataRegion);
+
+    if(gen.getEndDataRegion() != null) {
+      Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      endLoop.setValue(gen.getEndDataRegion());
+      XnodeUtil.insertAfter(endStmt, endLoop);
+    }
+  }
+
   /**
    * Get all the function variables that are input/ouput parameters.
    * @param xcodeml Current XcodeML program unit.
