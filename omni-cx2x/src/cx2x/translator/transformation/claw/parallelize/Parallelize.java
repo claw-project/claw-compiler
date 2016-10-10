@@ -16,6 +16,7 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
+import exc.openacc.ACC;
 import xcodeml.util.XmOption;
 
 import java.util.*;
@@ -281,7 +282,7 @@ public class Parallelize extends Transformation {
 
   /**
    * Apply GPU based transformation.
-   * @param xcodeml     Current XcodeML program unit.
+   * @param xcodeml Current XcodeML program unit.
    */
   private void transformForGPU(XcodeProgram xcodeml)
   {
@@ -309,7 +310,8 @@ public class Parallelize extends Transformation {
       _fctDef.appendToChildren(newBody, false);
     }
 
-    AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml,
+    List<String> privates = AcceleratorHelper.getLocalVariables(xcodeml, _fctDef);
+    AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());
   }
