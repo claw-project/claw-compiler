@@ -23,6 +23,8 @@ import java.util.*;
  */
 public class AcceleratorHelper {
 
+  public static final int NO_COLLAPSE = 0;
+
   /**
    * Generate loop seq directives on the top of loops in the given function
    * definition.
@@ -115,7 +117,7 @@ public class AcceleratorHelper {
     Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
 
     String beginParallelStr = gen.getStartParallelDirective();
-    if(privates.size() > 0){
+    if(privates != null && privates.size() > 0){
       beginParallelStr += " " + gen.getPrivateClause(privates);
     }
 
