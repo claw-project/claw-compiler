@@ -13,9 +13,7 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * The class AcceleratorHelper contains only static method to help the
@@ -51,10 +49,8 @@ public class AcceleratorHelper {
     }
 
     if(XmOption.isDebugOutput()){
-      if(XmOption.isDebugOutput()){
-        System.out.println("OpenACC: generated loop seq directive for " +
-            doStmts.size() + " loops");
-      }
+      System.out.println("OpenACC: generated loop seq directive for " +
+           doStmts.size() + " loops");
     }
   }
 
@@ -297,13 +293,52 @@ public class AcceleratorHelper {
                                                XcodeProgram xcodeml,
                                                XfunctionDefinition fctDef)
   {
-    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
-      return; // Don't do anything if the target is none
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return;
     }
 
-    Xnode routine = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-    routine.setValue(claw.getAcceleratorGenerator().getRoutineDirective());
-    fctDef.getBody().insert(routine, false);
+    List<Xnode> fctCalls = XnodeUtil.findAll(Xcode.FUNCTIONCALL, fctDef);
+    Set<String> fctNames = new HashSet<>();
+    for(Xnode fctCall : fctCalls){
+      if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)){
+        continue;
+      }
+      Xnode name = fctCall.find(Xcode.NAME);
+      if(name != null){
+        fctNames.add(name.getValue().toLowerCase());
+      }
+    }
+
+    // TODO: check that the directive is not present yet.
+
+    for(String fctName : fctNames){
+      XfunctionDefinition calledFctDef =
+          xcodeml.getGlobalDeclarationsTable().getFctDefinition(fctName);
+      if(calledFctDef == null){
+        XmoduleDefinition mod = XnodeUtil.findParentModule(fctDef);
+        List<Xnode> fctDefs = XnodeUtil.findAll(Xcode.FFUNCTIONDEFINITION, mod);
+        for(Xnode fDef : fctDefs){
+          Xnode name = fDef.find(Xcode.NAME);
+          if(name != null && name.getValue().toLowerCase().equals(fctName)){
+            calledFctDef = new XfunctionDefinition(fDef.getElement());
+            break;
+          }
+        }
+      }
+
+      if(calledFctDef != null){
+        Xnode routine = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+        routine.setValue(gen.getRoutineDirective() + " " +
+            gen.getSequentialClause());
+        XnodeUtil.insertBefore(calledFctDef.getBody().getChild(0), routine);
+
+        if(XmOption.isDebugOutput()){
+          System.out.println("OpenACC: generated routine seq directive for " +
+              fctName + " subroutine/function.");
+        }
+      }
+    }
   }
 
   /**
