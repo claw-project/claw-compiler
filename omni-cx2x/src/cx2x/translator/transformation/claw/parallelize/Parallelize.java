@@ -310,7 +310,15 @@ public class Parallelize extends Transformation {
       _fctDef.appendToChildren(newBody, false);
     }
 
-    List<String> privates = AcceleratorHelper.getLocalVariables(xcodeml, _fctDef);
+    // Generate the data region
+    List<String> presents =
+        AcceleratorHelper.getPresentVariabes(xcodeml, _fctDef);
+    AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents,
+        loops.getOuterStatement(), loops.getOuterStatement());
+
+    // Generate the parallel region
+    List<String> privates =
+        AcceleratorHelper.getLocalVariables(xcodeml, _fctDef);
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());
