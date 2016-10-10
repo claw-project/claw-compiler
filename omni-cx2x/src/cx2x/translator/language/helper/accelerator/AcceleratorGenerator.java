@@ -146,4 +146,12 @@ public abstract class AcceleratorGenerator {
    * @return String value that represents the pragma.
    */
   public abstract String getEndDataRegion();
+
+  /**
+   * Get the corresponding clause to have a sequential execution of an
+   * accelerated region.
+   * @return String value that represents the clause.
+   */
+  public abstract String getSequentialClause();
+
 }

@@ -112,6 +112,11 @@ public class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
+  public String getSequentialClause() {
+    return null; // TODO OpenMP if makes sense
+  }
+
+  @Override
   protected String getStartLoopDirective(int value) {
     return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_PARALLEL, OPENMP_DO);
   }

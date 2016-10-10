@@ -98,4 +98,9 @@ public class AcceleratorNone extends AcceleratorGenerator {
   public String getEndDataRegion() {
     return null;
   }
+
+  @Override
+  public String getSequentialClause() {
+    return null;
+  }
 }

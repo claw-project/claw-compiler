@@ -45,7 +45,8 @@ public class AcceleratorHelper {
     List<Xnode> doStmts = XnodeUtil.findAll(Xcode.FDOSTATEMENT, fctDef);
     for(Xnode doStmt : doStmts){
       Xnode loopSeq = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      loopSeq.setValue(gen.getStartLoopDirective(0) + " seq");
+      loopSeq.setValue(gen.getStartLoopDirective(0) + " " +
+          gen.getSequentialClause());
       XnodeUtil.insertBefore(doStmt, loopSeq);
     }
 

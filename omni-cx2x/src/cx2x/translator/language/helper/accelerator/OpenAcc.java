@@ -27,6 +27,7 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_PRESENT = "present";
   private static final String OPENACC_ROUTINE = "routine";
+  private static final String OPENACC_SEQUENTIAL = "seq";
 
   /**
    * Constructs a new object with the given target.
@@ -36,7 +37,6 @@ class OpenAcc extends AcceleratorGenerator {
   OpenAcc(Target target) {
     super(target);
   }
-
 
   @Override
   protected String getPrefix(){
@@ -111,6 +111,11 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   public String getEndDataRegion() {
     return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_DATA);
+  }
+
+  @Override
+  public String getSequentialClause() {
+    return OPENACC_SEQUENTIAL;
   }
 
   @Override
