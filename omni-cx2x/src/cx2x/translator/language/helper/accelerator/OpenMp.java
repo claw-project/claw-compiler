@@ -43,7 +43,7 @@ public class OpenMp extends AcceleratorGenerator {
   @Override
   protected String getStartParallelDirective() {
     if(getTarget() == Target.CPU){
-      // TODO check syntax and variant
+      //!$omp parallel
       return String.format(FORMAT2,
           OPENMP_PREFIX, OPENMP_PARALLEL);
     } else {
@@ -55,9 +55,15 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getEndParallelDirective() {
-    //!$omp end target parallel do
-    return String.format(FORMAT4,
-        OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL);
+    if(getTarget() == Target.CPU){
+      //!$omp end parallel
+      return String.format(FORMAT3,
+          OPENMP_PREFIX, OPENMP_END, OPENMP_PARALLEL);
+    } else {
+      //!$omp end target parallel do
+      return String.format(FORMAT4,
+          OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL);
+    }
   }
 
   @Override
@@ -118,11 +124,15 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartLoopDirective(int value) {
-    return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_PARALLEL, OPENMP_DO);
+    // TODO CPU/GPU difference
+    //!$omp do
+    return String.format(FORMAT2, OPENMP_PREFIX, OPENMP_DO);
   }
 
   @Override
   protected String getEndLoopDirective() {
-    return null;
+    // TODO CPU/GPU difference
+    //!$omp end do
+    return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_END, OPENMP_DO);
   }
 }
