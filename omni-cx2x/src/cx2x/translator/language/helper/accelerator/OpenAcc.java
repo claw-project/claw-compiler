@@ -7,6 +7,7 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.misc.Utility;
+import xcodeml.util.XmOption;
 
 import java.util.List;
 
@@ -68,6 +69,10 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(List<String> vars) {
+    if(XmOption.isDebugOutput()){
+      System.out.println("OpenACC: generate private clause for: " +
+          Utility.join(",", vars));
+    }
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
 
