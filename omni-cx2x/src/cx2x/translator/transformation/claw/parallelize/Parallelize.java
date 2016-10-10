@@ -356,10 +356,11 @@ public class Parallelize extends Transformation {
       Xnode lhs = assign.getChild(Xnode.LHS);
       String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.getValue() :
           lhs.find(Xcode.VARREF, Xcode.VAR).getValue();
+      NestedDoStatement loops = null;
       if(lhs.opcode() == Xcode.FARRAYREF &&
           _arrayFieldsInOut.contains(lhsName))
       {
-        NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
+        loops = new NestedDoStatement(order, xcodeml);
         XnodeUtil.insertAfter(assign, loops.getOuterStatement());
         loops.getInnerStatement().getBody().appendToChildren(assign, true);
         assign.delete();
@@ -396,14 +397,19 @@ public class Parallelize extends Transformation {
                 _promotions, _beforeCrt, _inMiddle, _afterCrt,
                 xcodeml);
           }
-          NestedDoStatement loops = new NestedDoStatement(order, xcodeml);
+          loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
           loops.getInnerStatement().getBody().appendToChildren(assign, true);
           assign.delete();
         }
       }
+      if(loops != null){
+        // Generate the corresponding directive around the loop
+        AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, null,
+            loops.getOuterStatement(), loops.getOuterStatement(),
+            AcceleratorHelper.NO_COLLAPSE);
+      }
     }
-
   }
 
   /**
