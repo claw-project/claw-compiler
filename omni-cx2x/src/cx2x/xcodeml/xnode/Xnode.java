@@ -20,6 +20,9 @@ import java.util.List;
  */
 public class Xnode {
 
+  public static final int LHS = 0;
+  public static final int RHS = 1;
+
   private boolean _isDeleted = false;
   final Element _baseElement;
 
