@@ -9,10 +9,11 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.XfunctionDefinition;
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The class AcceleratorHelper contains only static method to help the
@@ -60,6 +61,7 @@ public class AcceleratorHelper {
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
+   * @param privates  List of variables to be set privates.
    * @param startStmt Start statement representing the beginning of the parallel
    *                  region.
    * @param endStmt   End statement representing the end of the parallel region.
@@ -68,6 +70,7 @@ public class AcceleratorHelper {
    */
   public static void generateParallelLoopClause(ClawLanguage claw,
                                                 XcodeProgram xcodeml,
+                                                List<String> privates,
                                                 Xnode startStmt, Xnode endStmt,
                                                 int collapse)
   {
@@ -80,7 +83,12 @@ public class AcceleratorHelper {
     Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
     Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
 
-    beginParallel.setValue(gen.getStartParallelDirective());
+    String beginParallelStr = gen.getStartParallelDirective();
+    if(privates.size() > 0){
+      beginParallelStr += " " + gen.getPrivateClause(privates);
+    }
+
+    beginParallel.setValue(beginParallelStr);
     endParallel.setValue(gen.getEndParallelDirective());
     beginLoop.setValue(gen.getStartLoopDirective(collapse));
 
@@ -93,6 +101,59 @@ public class AcceleratorHelper {
       endLoop.setValue(gen.getEndLoopDirective());
       XnodeUtil.insertAfter(endStmt, endLoop);
     }
+  }
+
+  /**
+   * Get all the function variables that are input/ouput parameters.
+   * @param xcodeml Current XcodeML program unit.
+   * @param fctDef  Function definition to look in.
+   * @return List of variables names that are function input/output.
+   */
+  public static List<String> getPresentVariabes(XcodeProgram xcodeml,
+                                               XfunctionDefinition fctDef)
+  {
+    List<String> variables = new ArrayList<>();
+    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    for (Xdecl decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL){
+        Xnode name = decl.find(Xcode.NAME);
+        String type = name.getAttribute(Xattr.TYPE);
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        if(bt != null && (bt.getIntent() == Xintent.IN
+            || bt.getIntent() == Xintent.OUT
+            || bt.getIntent() == Xintent.INOUT))
+        {
+          variables.add(name.getValue());
+        }
+      }
+    }
+    return variables;
+  }
+
+  /**
+   * Get all the local variables in the function definition.
+   * @param xcodeml Current XcodeML program unit.
+   * @param fctDef  Function definition to look in.
+   * @return List of variables names that are function local.
+   */
+  public static List<String> getLocalVariables(XcodeProgram xcodeml,
+                                               XfunctionDefinition fctDef)
+  {
+    List<String> variables = new ArrayList<>();
+    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    for (Xdecl decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL){
+        Xnode name = decl.find(Xcode.NAME);
+        String type = name.getAttribute(Xattr.TYPE);
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        if((bt == null && XnodeUtil.isBuiltInType(type))
+            || bt.getIntent() == Xintent.NONE)
+        {
+          variables.add(name.getValue());
+        }
+      }
+    }
+    return variables;
   }
 
   /**
