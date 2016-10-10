@@ -28,10 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -570,6 +567,22 @@ public class XnodeUtil {
       }
     }
     return realReferences;
+  }
+
+  /**
+   * Get all the variables names from a list of var elements.
+   * @param nodes List containing var element.
+   * @return A set of all variable's name.
+   */
+  public static Set<String> getNamesFromReferences(List<Xnode> nodes){
+    Set<String> names = new HashSet<>();
+    for(Xnode node : nodes){
+      if(node.opcode() != Xcode.VAR){
+        continue;
+      }
+      names.add(node.getValue().toLowerCase());
+    }
+    return names;
   }
 
   /**
