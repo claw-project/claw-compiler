@@ -70,6 +70,11 @@ public class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
+  protected String getPresentClause(List<String> vars) {
+    return null;
+  }
+
+  @Override
   protected String getRoutineDirective() {
     return null;
   }
@@ -82,5 +87,15 @@ public class AcceleratorNone extends AcceleratorGenerator {
   @Override
   public AcceleratorDirective getDirectiveLanguage() {
     return AcceleratorDirective.NONE;
+  }
+
+  @Override
+  public String getStartDataRegion() {
+    return null;
+  }
+
+  @Override
+  public String getEndDataRegion() {
+    return null;
   }
 }

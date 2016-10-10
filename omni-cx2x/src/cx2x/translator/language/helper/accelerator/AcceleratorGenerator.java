@@ -96,13 +96,22 @@ public abstract class AcceleratorGenerator {
   protected abstract String getPrivateClause(String var);
 
   /**
-   * Return construction of the clause for a list of private variable.
+   * Return construction of the clause for a list of private variables.
    * @param vars List of variables name that will be inserted in the generated
    *             clause.
    * @return An accelerator language specific private clause with the list of
    * variables.
    */
   protected abstract String getPrivateClause(List<String> vars);
+
+  /**
+   * Return construction of the clause for a list of present variables.
+   * @param vars List of variables name that will be inserted in the generated
+   *             clause.
+   * @return An accelerator language specific present clause with the list of
+   * variables.
+   */
+  protected abstract String getPresentClause(List<String> vars);
 
   /**
    * Return the formatted directive to be inserted in a subroutine/function
@@ -125,4 +134,16 @@ public abstract class AcceleratorGenerator {
    * @return Current target as an accelerator directive enumeration value.
    */
   public abstract AcceleratorDirective getDirectiveLanguage();
+
+  /**
+   * Get the start pragma to define the start of an accelerator data region.
+   * @return String value that represents the pragma.
+   */
+  public abstract String getStartDataRegion();
+
+  /**
+   * Get the end pragma to define the end of an accelerator data region.
+   * @return String value that represents the pragma.
+   */
+  public abstract String getEndDataRegion();
 }

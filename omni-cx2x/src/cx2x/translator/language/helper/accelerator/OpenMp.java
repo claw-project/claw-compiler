@@ -81,6 +81,11 @@ public class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
+  protected String getPresentClause(List<String> vars) {
+    return null; // TODO OpenMP
+  }
+
+  @Override
   protected String getRoutineDirective(){
     return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET);
   }
@@ -94,6 +99,16 @@ public class OpenMp extends AcceleratorGenerator {
   @Override
   public AcceleratorDirective getDirectiveLanguage(){
     return AcceleratorDirective.OPENMP;
+  }
+
+  @Override
+  public String getStartDataRegion() {
+    return null; // TODO OpenMP
+  }
+
+  @Override
+  public String getEndDataRegion() {
+    return null; // TODO OpenMP
   }
 
   @Override

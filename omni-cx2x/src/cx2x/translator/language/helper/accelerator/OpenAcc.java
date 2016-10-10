@@ -19,11 +19,13 @@ import java.util.List;
 class OpenAcc extends AcceleratorGenerator {
 
   private static final String OPENACC_COLLAPSE = "collapse";
+  private static final String OPENACC_DATA = "data";
   private static final String OPENACC_END = "end";
   private static final String OPENACC_LOOP = "loop";
   private static final String OPENACC_PARALLEL = "parallel";
   private static final String OPENACC_PREFIX = "acc";
   private static final String OPENACC_PRIVATE = "private";
+  private static final String OPENACC_PRESENT = "present";
   private static final String OPENACC_ROUTINE = "routine";
 
   /**
@@ -77,6 +79,15 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
+  protected String getPresentClause(List<String> vars) {
+    if(XmOption.isDebugOutput()){
+      System.out.println("OpenACC: generate present clause for: " +
+          Utility.join(",", vars));
+    }
+    return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
+  }
+
+  @Override
   protected String getRoutineDirective(){
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE);
   }
@@ -90,6 +101,16 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   public AcceleratorDirective getDirectiveLanguage(){
     return AcceleratorDirective.OPENACC;
+  }
+
+  @Override
+  public String getStartDataRegion() {
+    return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_DATA);
+  }
+
+  @Override
+  public String getEndDataRegion() {
+    return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_DATA);
   }
 
   @Override
