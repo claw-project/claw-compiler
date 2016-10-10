@@ -325,6 +325,8 @@ public class Parallelize extends Transformation {
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());
+
+    AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, _fctDef);
   }
 
   /**
