@@ -13,11 +13,13 @@ CONTAINS
   INTEGER , INTENT(IN) :: ny
   INTEGER :: j
 
-!$acc parallel
+!$acc data present(q,nz,ny,nx,t)
+!$acc parallel private(k,j,i,d,c)
 !$acc loop collapse(2)
   DO j = 1 , ny , 1
    DO i = 1 , nx , 1
     c = 5.345
+!$acc loop seq
     DO k = 2 , nz , 1
      t ( i , j , k ) = c * k
      d = t ( i , j , k ) + c
@@ -27,6 +29,7 @@ CONTAINS
    END DO
   END DO
 !$acc end parallel
+!$acc end data
  END SUBROUTINE compute_column
 
 END MODULE mo_column

@@ -11,10 +11,12 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-!$acc parallel
+!$acc data present(t,q,nproma,nz)
+!$acc parallel private(k,proma,r,c)
 !$acc loop
   DO proma = 1 , nproma , 1
    c = 5.345
+!$acc loop seq
    DO k = 2 , nz , 1
     t ( k , proma ) = c * k
     q ( k , proma ) = q ( k - 1 , proma ) + t ( k , proma ) * c
@@ -22,6 +24,7 @@ CONTAINS
    q ( nz , proma ) = q ( nz , proma ) * c
   END DO
 !$acc end parallel
+!$acc end data
  END FUNCTION compute_column
 
  SUBROUTINE compute ( nz , q , nproma )
