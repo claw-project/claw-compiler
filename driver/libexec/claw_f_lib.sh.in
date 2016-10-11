@@ -80,7 +80,7 @@ function claw_f_set_parameters()
       -J)
         shift;
         module_dir=("${1#-J}")
-        if [[ $a == \/* ]]
+        if [[ $module_dir == \/* ]]
         then
           module_opt+=("-M${module_dir[0]}")
         else
