@@ -67,6 +67,9 @@ public class DirectivePrimitive extends Transformation {
   {
     String prefix = AcceleratorDirective.getPrefix(
         _claw.getAcceleratorGenerator().getDirectiveLanguage());
+    if(prefix == null){
+      return;
+    }
 
     String regex = ClawConstant.CLAW + " *" + prefix;
     getDirective().getPragma().setValue(
