@@ -7,7 +7,6 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
