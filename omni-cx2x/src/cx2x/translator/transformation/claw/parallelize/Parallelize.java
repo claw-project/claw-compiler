@@ -374,7 +374,7 @@ public class Parallelize extends Transformation {
           if(!_arrayFieldsInOut.contains(lhsName)){
 
             _arrayFieldsInOut.add(lhsName);
-            PromotionInfo promotionInfo = null;
+            PromotionInfo promotionInfo;
             if(lhs.opcode() == Xcode.VAR) { // Scalar to array
                promotionInfo =
                   TransformationHelper.promoteField(lhsName, false, false,
