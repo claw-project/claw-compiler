@@ -468,11 +468,9 @@ public class ParallelizeForward extends Transformation {
         }
 
         Xnode pUpdate = null;
-        boolean isParam = false;
         for(Xnode param : _parentFctType.getParams().getAll()){
           if(original_param.equals(param.getValue())){
             pUpdate = param;
-            isParam = true;
           }
         }
 
