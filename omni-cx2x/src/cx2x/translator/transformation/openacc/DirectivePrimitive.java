@@ -14,26 +14,10 @@ import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.XcodeProgram;
 
 /**
- * <pre>
- * OpenACC line continuation transformation. The XcodeML/F pragma statement
- * representation is an aggregated version of the pragma with all its continuation
- * lines.
- * As those directives are not handled by the CLAW XcodeML to XcodeML
- * translator, they must be output in a correct way. This transformation divides
- * the XcodeML representation back to a multi-line pragma definition.
- *
- * Example:
- * The followings OpenACC directives in Fortran code:
- *
- *   !$acc data &amp;
- *   !$acc present (a,b,c,d,e,f,g)
- *
- * are represented in XcodeML with
- *
- * &lt;FpragmaStatement&gt;acc data present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
- *
- * Based on the defined max columns, the pragma statement will be splitted.
- * </pre>
+ * Directive primitive transformation allows to enable specific directive
+ * primitive specified by the --directive option.
+ * The "directive primitive" directive is the prefix of the directive primitive
+ * language. acc for OpenACC and omp for OpenMP for example.
  *
  * @author clementval
  */
