@@ -68,6 +68,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getSingleDirective(String clause) {
+    //!$omp <clause>
     return String.format(FORMAT2, OPENMP_PREFIX, clause);
   }
 
@@ -96,6 +97,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getRoutineDirective(){
+    // TODO check
     return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET);
   }
 
