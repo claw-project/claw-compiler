@@ -70,17 +70,9 @@ public class AcceleratorHelper {
                                              Xnode startStmt, Xnode endStmt)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
-      return null;
-    }
-
-    Xnode begin =
-        addPragmaBefore(xcodeml, gen.getStartParallelDirective(), startStmt);
-    Xnode end = addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
-    return end != null ? end : begin;
+    return insertPragmas(claw, xcodeml, startStmt, endStmt,
+        gen.getStartParallelDirective(), gen.getEndParallelDirective());
   }
-
-
 
   /**
    * Generate accelerator directive for a parallel loop.
@@ -135,12 +127,8 @@ public class AcceleratorHelper {
                                             int collapse)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
-      return;
-    }
-
-    addPragmaBefore(xcodeml, gen.getStartLoopDirective(collapse), startStmt);
-    addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
+    insertPragmas(claw, xcodeml, startStmt, endStmt,
+        gen.getStartLoopDirective(collapse), gen.getEndLoopDirective());
   }
 
   /**
@@ -443,6 +431,32 @@ public class AcceleratorHelper {
       XnodeUtil.insertBefore(ref, pragma);
     }
     return pragma;
+  }
+
+  /**
+   * Generate corresponding pragmas to surround the code with a parallel
+   * accelerated region.
+   * @param claw           ClawLanguage object that tells if the parallel clause
+   *                       is enable and where the start pragma is located.
+   * @param xcodeml        Current XcodeML program unit.
+   *                       representation in which the pragmas will be generated.
+   * @param startStmt      Start reference statement.
+   * @param endStmt        End reference statement.
+   * @param startDirective String value of the start directive.
+   * @param endDirective   String value of the end directive.
+   * @return Last stmt inserted or null if nothing is inserted.
+   */
+  private static Xnode insertPragmas(ClawLanguage claw, XcodeProgram xcodeml,
+                                     Xnode startStmt, Xnode endStmt,
+                                     String startDirective, String endDirective)
+  {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return null;
+    }
+    Xnode begin = addPragmaBefore(xcodeml, startDirective, startStmt);
+    Xnode end = addPragmaAfter(xcodeml, endDirective, endStmt);
+    return end != null ? end : begin;
   }
 
 }
