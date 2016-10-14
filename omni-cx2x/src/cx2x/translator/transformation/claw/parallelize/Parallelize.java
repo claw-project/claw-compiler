@@ -405,11 +405,14 @@ public class Parallelize extends Transformation {
       }
       if(loops != null){
         // Generate the corresponding directive around the loop
-        AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, null,
+        AcceleratorHelper.generateLoopDirectives(_claw, xcodeml,
             loops.getOuterStatement(), loops.getOuterStatement(),
             AcceleratorHelper.NO_COLLAPSE);
       }
     }
+
+    // Generate the parallel region
+    //AcceleratorHelper.generateParallelClause(_claw, xcodeml, _fctDef.getBody().getChild(0), )
   }
 
   /**
