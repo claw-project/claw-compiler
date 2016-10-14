@@ -36,13 +36,13 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getPrefix(){
+  protected String getPrefix() {
     return OPENMP_PREFIX;
   }
 
   @Override
   protected String getStartParallelDirective() {
-    if(getTarget() == Target.CPU){
+    if(getTarget() == Target.CPU) {
       //!$omp parallel
       return String.format(FORMAT2,
           OPENMP_PREFIX, OPENMP_PARALLEL);
@@ -55,7 +55,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getEndParallelDirective() {
-    if(getTarget() == Target.CPU){
+    if(getTarget() == Target.CPU) {
       //!$omp end parallel
       return String.format(FORMAT3,
           OPENMP_PREFIX, OPENMP_END, OPENMP_PARALLEL);
@@ -84,7 +84,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0){
+    if(vars == null || vars.size() == 0) {
       return "";
     }
     return String.format(FORMATPAR, OPENMP_PRIVATE, Utility.join(",", vars));
@@ -96,19 +96,19 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getRoutineDirective(){
+  protected String getRoutineDirective() {
     // TODO check
     return String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET);
   }
 
   @Override
-  public boolean isCompileGuard(String rawDirective){
+  public boolean isCompileGuard(String rawDirective) {
     return rawDirective.toLowerCase().startsWith(OPENMP_PREFIX) &&
         rawDirective.toLowerCase().contains(COMPILE_GUARD);
   }
 
   @Override
-  public AcceleratorDirective getDirectiveLanguage(){
+  public AcceleratorDirective getDirectiveLanguage() {
     return AcceleratorDirective.OPENMP;
   }
 

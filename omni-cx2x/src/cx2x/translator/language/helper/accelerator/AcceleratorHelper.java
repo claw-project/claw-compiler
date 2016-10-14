@@ -26,6 +26,7 @@ public class AcceleratorHelper {
   /**
    * Generate loop seq directives on the top of loops in the given function
    * definition.
+   *
    * @param claw    ClawLanguage object that tells if the parallel clause is
    *                enable and where the start pragma is located.
    * @param xcodeml Object representation of the current XcodeML
@@ -36,25 +37,26 @@ public class AcceleratorHelper {
                                      XfunctionDefinition fctDef)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
       return;
     }
 
     List<Xnode> doStmts = XnodeUtil.findAll(Xcode.FDOSTATEMENT, fctDef);
-    for(Xnode doStmt : doStmts){
+    for(Xnode doStmt : doStmts) {
       addPragmaBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE) + " " +
           gen.getSequentialClause(), doStmt);
     }
 
-    if(XmOption.isDebugOutput()){
+    if(XmOption.isDebugOutput()) {
       System.out.println("OpenACC: generated loop seq directive for " +
-           doStmts.size() + " loops");
+          doStmts.size() + " loops");
     }
   }
 
   /**
    * Generate corresponding pragmas to surround the code with a parallel
    * accelerated region.
+   *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
@@ -75,6 +77,7 @@ public class AcceleratorHelper {
 
   /**
    * Generate accelerator directive for a parallel loop.
+   *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
@@ -93,7 +96,7 @@ public class AcceleratorHelper {
                                                 int collapse)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
       return;
     }
 
@@ -106,6 +109,7 @@ public class AcceleratorHelper {
 
   /**
    * Generates accelerator directive for a loop region.
+   *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
@@ -128,6 +132,7 @@ public class AcceleratorHelper {
 
   /**
    * Generate accelerator directive for a data region.
+   *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
@@ -149,24 +154,24 @@ public class AcceleratorHelper {
 
   /**
    * Get all the function variables that are input/ouput parameters.
+   *
    * @param xcodeml Current XcodeML program unit.
    * @param fctDef  Function definition to look in.
    * @return List of variables names that are function input/output.
    */
   public static List<String> getPresentVariabes(XcodeProgram xcodeml,
-                                               XfunctionDefinition fctDef)
+                                                XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
     Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
-    for (Xdecl decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL){
+    for(Xdecl decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.find(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
-            || bt.getIntent() == Xintent.INOUT))
-        {
+            || bt.getIntent() == Xintent.INOUT)) {
           variables.add(name.getValue());
         }
       }
@@ -176,6 +181,7 @@ public class AcceleratorHelper {
 
   /**
    * Get all the local variables in the function definition.
+   *
    * @param xcodeml Current XcodeML program unit.
    * @param fctDef  Function definition to look in.
    * @return List of variables names that are function local.
@@ -185,14 +191,13 @@ public class AcceleratorHelper {
   {
     List<String> variables = new ArrayList<>();
     Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
-    for (Xdecl decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL){
+    for(Xdecl decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.find(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if((bt == null && XnodeUtil.isBuiltInType(type))
-            || bt.getIntent() == Xintent.NONE)
-        {
+            || bt.getIntent() == Xintent.NONE) {
           variables.add(name.getValue());
         }
       }
@@ -202,6 +207,7 @@ public class AcceleratorHelper {
 
   /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
+   *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param startStmt Start statement representing the beginning of the parallel
@@ -213,8 +219,7 @@ public class AcceleratorHelper {
   private static Xnode generateAcceleratorClause(
       ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt)
   {
-    if(claw.hasAcceleratorClause())
-    {
+    if(claw.hasAcceleratorClause()) {
       /* TODO
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
@@ -227,6 +232,7 @@ public class AcceleratorHelper {
 
   /**
    * Generate all corresponding pragmas to be applied for accelerator.
+   *
    * @param claw      ClawLanguage object that tells which accelerator pragmas
    *                  are enabled.
    * @param xcodeml   Object representation of the current XcodeML
@@ -239,13 +245,13 @@ public class AcceleratorHelper {
   public static Xnode generateAdditionalDirectives(
       ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
   {
-    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE){
+    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE) {
       return null;
     }
 
     Xnode pragma =
         generateAcceleratorClause(claw, xcodeml, startStmt);
-    if(pragma != null){
+    if(pragma != null) {
       startStmt = pragma;
     }
 
@@ -259,6 +265,7 @@ public class AcceleratorHelper {
   /**
    * Generate all corresponding pragmas to be applied to an accelerated
    * function/subroutine.
+   *
    * @param claw    ClawLanguage object that tells which accelerator pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
@@ -271,43 +278,43 @@ public class AcceleratorHelper {
                                                XfunctionDefinition fctDef)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
       return;
     }
 
     List<Xnode> fctCalls = XnodeUtil.findAll(Xcode.FUNCTIONCALL, fctDef);
     Set<String> fctNames = new HashSet<>();
-    for(Xnode fctCall : fctCalls){
-      if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)){
+    for(Xnode fctCall : fctCalls) {
+      if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
         continue;
       }
       Xnode name = fctCall.find(Xcode.NAME);
-      if(name != null){
+      if(name != null) {
         fctNames.add(name.getValue().toLowerCase());
       }
     }
 
     // TODO: check that the directive is not present yet.
 
-    for(String fctName : fctNames){
+    for(String fctName : fctNames) {
       XfunctionDefinition calledFctDef =
           xcodeml.getGlobalDeclarationsTable().getFctDefinition(fctName);
-      if(calledFctDef == null){
+      if(calledFctDef == null) {
         XmoduleDefinition mod = XnodeUtil.findParentModule(fctDef);
         List<Xnode> fctDefs = XnodeUtil.findAll(Xcode.FFUNCTIONDEFINITION, mod);
-        for(Xnode fDef : fctDefs){
+        for(Xnode fDef : fctDefs) {
           Xnode name = fDef.find(Xcode.NAME);
-          if(name != null && name.getValue().toLowerCase().equals(fctName)){
+          if(name != null && name.getValue().toLowerCase().equals(fctName)) {
             calledFctDef = new XfunctionDefinition(fDef.getElement());
             break;
           }
         }
       }
 
-      if(calledFctDef != null){
+      if(calledFctDef != null) {
         addPragmaBefore(xcodeml, gen.getRoutineDirective() + " " +
             gen.getSequentialClause(), calledFctDef.getBody().getChild(0));
-        if(XmOption.isDebugOutput()){
+        if(XmOption.isDebugOutput()) {
           System.out.println("OpenACC: generated routine seq directive for " +
               fctName + " subroutine/function.");
         }
@@ -317,6 +324,7 @@ public class AcceleratorHelper {
 
   /**
    * Generate the correct clauses for private variable on accelerator.
+   *
    * @param claw    ClawLanguage object that tells which accelerator pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
@@ -331,15 +339,15 @@ public class AcceleratorHelper {
                                            String var)
   {
     if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE
-        || !claw.hasPrivateClause()){
+        || !claw.hasPrivateClause()) {
       return;
     }
 
     Xnode hook = XnodeUtil.findPreviousPragma(stmt,
-            claw.getAcceleratorGenerator().getParallelKeyword());
+        claw.getAcceleratorGenerator().getParallelKeyword());
     // TODO do it with loop as well if hook is null
 
-    if(hook == null){
+    if(hook == null) {
       xcodeml.addWarning("No parallel construct found to attach private clause",
           claw.getPragma().getLineNo());
     } else {
@@ -351,15 +359,16 @@ public class AcceleratorHelper {
   /**
    * Constructs the correct AcceleratorGenerator object regarding the enum
    * value passed.
+   *
    * @param directive Enum value that define the generator to be created.
    * @param target    Target for which the directives will be generated.
    * @return A specific implementation of an AcceleratorGenerator.
    */
   public static AcceleratorGenerator createAcceleratorGenerator(
-          AcceleratorDirective directive,
-          Target target)
+      AcceleratorDirective directive,
+      Target target)
   {
-    switch (directive){
+    switch(directive) {
       case OPENACC:
         return new OpenAcc(target);
       case OPENMP:
@@ -370,6 +379,7 @@ public class AcceleratorHelper {
 
   /**
    * Create and insert a pragma statement before the reference node.
+   *
    * @param xcodeml   Current XcodeML program unit.
    * @param directive Value of the newly created directive.
    * @param ref       Reference node used to insert the newly created pragma.
@@ -383,6 +393,7 @@ public class AcceleratorHelper {
 
   /**
    * Create and insert a pragma statement after the reference node.
+   *
    * @param xcodeml   Current XcodeML program unit.
    * @param directive Value of the newly created directive.
    * @param ref       Reference node used to insert the newly created pragma.
@@ -396,6 +407,7 @@ public class AcceleratorHelper {
 
   /**
    * Create and insert a pragma statement.
+   *
    * @param xcodeml   Current XcodeML program unit.
    * @param directive Value of the newly created directive.
    * @param ref       Reference node used to insert the newly created pragma.
@@ -406,7 +418,7 @@ public class AcceleratorHelper {
   private static Xnode insertPragma(XcodeProgram xcodeml, String directive,
                                     Xnode ref, boolean after)
   {
-    if(directive == null){
+    if(directive == null) {
       return null;
     }
     Xnode pragma = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
@@ -422,6 +434,7 @@ public class AcceleratorHelper {
   /**
    * Generate corresponding pragmas to surround the code with a parallel
    * accelerated region.
+   *
    * @param claw           ClawLanguage object that tells if the parallel clause
    *                       is enable and where the start pragma is located.
    * @param xcodeml        Current XcodeML program unit.
@@ -438,7 +451,7 @@ public class AcceleratorHelper {
                                      String startDirective, String endDirective)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
       return null;
     }
     Xnode begin = addPragmaBefore(xcodeml, startDirective, startStmt);

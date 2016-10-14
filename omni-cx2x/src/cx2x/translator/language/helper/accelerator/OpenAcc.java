@@ -39,7 +39,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getPrefix(){
+  protected String getPrefix() {
     return OPENACC_PREFIX;
   }
 
@@ -63,7 +63,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getParallelKeyword(){
+  protected String getParallelKeyword() {
     return OPENACC_PARALLEL;
   }
 
@@ -74,10 +74,10 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0){
+    if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()){
+    if(XmOption.isDebugOutput()) {
       System.out.println("OpenACC: generate private clause for: " +
           Utility.join(",", vars));
     }
@@ -86,10 +86,10 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getPresentClause(List<String> vars) {
-    if(vars == null || vars.size() == 0){
+    if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()){
+    if(XmOption.isDebugOutput()) {
       System.out.println("OpenACC: generate present clause for: " +
           Utility.join(",", vars));
     }
@@ -97,19 +97,19 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getRoutineDirective(){
+  protected String getRoutineDirective() {
     //!$acc routine
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE);
   }
 
   @Override
-  public boolean isCompileGuard(String rawDirective){
+  public boolean isCompileGuard(String rawDirective) {
     return rawDirective.toLowerCase().startsWith(OPENACC_PREFIX) &&
         rawDirective.toLowerCase().contains(COMPILE_GUARD);
   }
 
   @Override
-  public AcceleratorDirective getDirectiveLanguage(){
+  public AcceleratorDirective getDirectiveLanguage() {
     return AcceleratorDirective.OPENACC;
   }
 
@@ -132,7 +132,7 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getStartLoopDirective(int value) {
-    if(value > 1){
+    if(value > 1) {
       //!$acc loop collapse(<value>)
       return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
           String.format("%s(%d)", OPENACC_COLLAPSE, value));

@@ -13,15 +13,17 @@ package cx2x.xcodeml.error;
  */
 
 public class XanalysisError {
+
   private final String _errorMsg;
   private final int _errorLineNumber;
 
   /**
    * Default ctor.
-   * @param msg     Error message
-   * @param lineno  Line number that triggered the error.
+   *
+   * @param msg    Error message
+   * @param lineno Line number that triggered the error.
    */
-  public XanalysisError(String msg, int lineno){
+  public XanalysisError(String msg, int lineno) {
     _errorMsg = msg;
     _errorLineNumber = lineno;
   }
@@ -29,14 +31,14 @@ public class XanalysisError {
   /**
    * @return The error message
    */
-  public String getMessage(){
+  public String getMessage() {
     return _errorMsg;
   }
 
   /**
    * @return The line number that triggered the error.
    */
-  public int getLine(){
+  public int getLine() {
     return _errorLineNumber;
   }
 }

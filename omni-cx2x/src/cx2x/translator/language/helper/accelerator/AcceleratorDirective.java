@@ -25,15 +25,15 @@ public enum AcceleratorDirective {
   private static final String openacc = "openacc";
   private static final String openmp = "openmp";
 
-  public static List<String> availableDirectiveLanguage(){
+  public static List<String> availableDirectiveLanguage() {
     return Arrays.asList(none, openacc, openmp);
   }
 
-  public static AcceleratorDirective fromString(String value){
-    if(value == null){
+  public static AcceleratorDirective fromString(String value) {
+    if(value == null) {
       return NONE;
     }
-    switch (value){
+    switch(value) {
       case none:
         return NONE;
       case openacc:
@@ -48,11 +48,12 @@ public enum AcceleratorDirective {
   /**
    * Get the corresponding directive prefix for a given directive primitive
    * language.
+   *
    * @param directive Current directive primitive language.
    * @return The corresponding prefix. Null if language is not known.
    */
-  public static String getPrefix(AcceleratorDirective directive){
-    switch (directive){
+  public static String getPrefix(AcceleratorDirective directive) {
+    switch(directive) {
       case OPENACC:
         return ClawConstant.OPENACC_PREFIX;
       case OPENMP:
