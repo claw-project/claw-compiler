@@ -83,6 +83,9 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(List<String> vars) {
+    if(vars == null || vars.size() == 0){
+      return "";
+    }
     return String.format(FORMATPAR, OPENMP_PRIVATE, Utility.join(",", vars));
   }
 

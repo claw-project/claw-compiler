@@ -66,7 +66,7 @@ public class AcceleratorNone extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(List<String> vars) {
-    return null;
+    return "";
   }
 
   @Override

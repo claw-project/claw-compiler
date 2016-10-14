@@ -71,6 +71,9 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getPrivateClause(List<String> vars) {
+    if(vars == null || vars.size() == 0){
+      return "";
+    }
     if(XmOption.isDebugOutput()){
       System.out.println("OpenACC: generate private clause for: " +
           Utility.join(",", vars));

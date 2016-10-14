@@ -97,12 +97,8 @@ public class AcceleratorHelper {
       return;
     }
 
-    String beginParallelStr = gen.getStartParallelDirective();
-    if(privates != null && privates.size() > 0){
-      beginParallelStr += " " + gen.getPrivateClause(privates);
-    }
-
-    addPragmaBefore(xcodeml, beginParallelStr, startStmt);
+    addPragmaBefore(xcodeml, gen.getStartParallelDirective() + " " +
+        gen.getPrivateClause(privates), startStmt);
     addPragmaBefore(xcodeml, gen.getStartLoopDirective(collapse), startStmt);
     addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
