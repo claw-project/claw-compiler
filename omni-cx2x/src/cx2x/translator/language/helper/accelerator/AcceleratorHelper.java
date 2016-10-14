@@ -71,21 +71,18 @@ public class AcceleratorHelper {
                                              XcodeProgram xcodeml,
                                              Xnode startStmt, Xnode endStmt)
   {
-    if(claw.hasParallelClause()){
-      Xnode beginParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      beginParallel.setValue(
-          claw.getAcceleratorGenerator().getStartParallelDirective()
-      );
-      Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      endParallel.setValue(
-          claw.getAcceleratorGenerator().getEndParallelDirective()
-      );
-      XnodeUtil.insertBefore(startStmt, beginParallel);
-      XnodeUtil.insertAfter(endStmt, endParallel);
-      return endParallel;
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return null;
     }
-    return null;
+
+    Xnode begin =
+        addPragmaBefore(xcodeml, gen.getStartParallelDirective(), startStmt);
+    Xnode end = addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
+    return end != null ? end : begin;
   }
+
+
 
   /**
    * Generate accelerator directive for a parallel loop.
@@ -312,7 +309,12 @@ public class AcceleratorHelper {
     if(pragma != null){
       startStmt = pragma;
     }
-    return generateParallelClause(claw, xcodeml, startStmt, endStmt);
+
+    if(claw.hasParallelClause()) {
+      return generateParallelClause(claw, xcodeml, startStmt, endStmt);
+    } else {
+      return startStmt;
+    }
   }
 
   /**
@@ -429,6 +431,57 @@ public class AcceleratorHelper {
         return new OpenMp(target);
     }
     return new AcceleratorNone(target);
+  }
+
+  /**
+   * Create and insert a pragma statement before the reference node.
+   * @param xcodeml   Current XcodeML program unit.
+   * @param directive Value of the newly created directive.
+   * @param ref       Reference node used to insert the newly created pragma.
+   * @return Newly created pragma statement as an Xnode object.
+   */
+  private static Xnode addPragmaBefore(XcodeProgram xcodeml, String directive,
+                                       Xnode ref)
+  {
+    return insertPragma(xcodeml, directive, ref, false);
+  }
+
+  /**
+   * Create and insert a pragma statement after the reference node.
+   * @param xcodeml   Current XcodeML program unit.
+   * @param directive Value of the newly created directive.
+   * @param ref       Reference node used to insert the newly created pragma.
+   * @return Newly created pragma statement as an Xnode object.
+   */
+  private static Xnode addPragmaAfter(XcodeProgram xcodeml, String directive,
+                                      Xnode ref)
+  {
+    return insertPragma(xcodeml, directive, ref, true);
+  }
+
+  /**
+   * Create and insert a pragma statement.
+   * @param xcodeml   Current XcodeML program unit.
+   * @param directive Value of the newly created directive.
+   * @param ref       Reference node used to insert the newly created pragma.
+   * @param after     By default, the pragma is inserted before the reference.
+   *                  If after is set to true, the pragma is inserted after.
+   * @return Newly created pragma statement as an Xnode object.
+   */
+  private static Xnode insertPragma(XcodeProgram xcodeml, String directive,
+                                    Xnode ref, boolean after)
+  {
+    if(directive == null){
+      return null;
+    }
+    Xnode pragma = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    pragma.setValue(directive);
+    if(after) {
+      XnodeUtil.insertAfter(ref, pragma);
+    } else {
+      XnodeUtil.insertBefore(ref, pragma);
+    }
+    return pragma;
   }
 
 }
