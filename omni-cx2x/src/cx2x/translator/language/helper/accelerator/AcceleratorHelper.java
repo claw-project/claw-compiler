@@ -147,17 +147,8 @@ public class AcceleratorHelper {
                                               Xnode startStmt, Xnode endStmt)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
-      return;
-    }
-
-    String beginDataRegionStr = gen.getStartDataRegion();
-    if(presents.size() > 0){
-      beginDataRegionStr += " " + gen.getPresentClause(presents);
-    }
-
-    addPragmaBefore(xcodeml, beginDataRegionStr, startStmt);
-    addPragmaAfter(xcodeml, gen.getEndDataRegion(), endStmt);
+    insertPragmas(claw, xcodeml, startStmt, endStmt, gen.getStartDataRegion() +
+        " " + gen.getPresentClause(presents), gen.getEndDataRegion());
   }
 
   /**

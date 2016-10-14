@@ -71,7 +71,7 @@ public class AcceleratorNone extends AcceleratorGenerator {
 
   @Override
   protected String getPresentClause(List<String> vars) {
-    return null;
+    return "";
   }
 
   @Override

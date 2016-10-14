@@ -88,7 +88,7 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getPresentClause(List<String> vars) {
-    return null; // TODO OpenMP
+    return ""; // TODO OpenMP
   }
 
   @Override

@@ -80,6 +80,9 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getPresentClause(List<String> vars) {
+    if(vars == null || vars.size() == 0){
+      return "";
+    }
     if(XmOption.isDebugOutput()){
       System.out.println("OpenACC: generate present clause for: " +
           Utility.join(",", vars));
