@@ -43,10 +43,8 @@ public class AcceleratorHelper {
 
     List<Xnode> doStmts = XnodeUtil.findAll(Xcode.FDOSTATEMENT, fctDef);
     for(Xnode doStmt : doStmts){
-      Xnode loopSeq = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      loopSeq.setValue(gen.getStartLoopDirective(0) + " " +
-          gen.getSequentialClause());
-      XnodeUtil.insertBefore(doStmt, loopSeq);
+      addPragmaBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE) + " " +
+          gen.getSequentialClause(), doStmt);
     }
 
     if(XmOption.isDebugOutput()){
@@ -108,28 +106,15 @@ public class AcceleratorHelper {
       return;
     }
 
-    Xnode beginParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-    Xnode endParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-    Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-
     String beginParallelStr = gen.getStartParallelDirective();
     if(privates != null && privates.size() > 0){
       beginParallelStr += " " + gen.getPrivateClause(privates);
     }
 
-    beginParallel.setValue(beginParallelStr);
-    endParallel.setValue(gen.getEndParallelDirective());
-    beginLoop.setValue(gen.getStartLoopDirective(collapse));
-
-    XnodeUtil.insertBefore(startStmt, beginParallel);
-    XnodeUtil.insertBefore(startStmt, beginLoop);
-    XnodeUtil.insertAfter(endStmt, endParallel);
-
-    if(gen.getEndLoopDirective() != null) {
-      Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      endLoop.setValue(gen.getEndLoopDirective());
-      XnodeUtil.insertAfter(endStmt, endLoop);
-    }
+    addPragmaBefore(xcodeml, beginParallelStr, startStmt);
+    addPragmaBefore(xcodeml, gen.getStartLoopDirective(collapse), startStmt);
+    addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
+    addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
   }
 
   /**
@@ -154,17 +139,8 @@ public class AcceleratorHelper {
       return;
     }
 
-    if(gen.getStartLoopDirective(collapse) != null) {
-      Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      beginLoop.setValue(gen.getStartLoopDirective(collapse));
-      XnodeUtil.insertBefore(startStmt, beginLoop);
-    }
-
-    if(gen.getEndLoopDirective() != null) {
-      Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      endLoop.setValue(gen.getEndLoopDirective());
-      XnodeUtil.insertAfter(endStmt, endLoop);
-    }
+    addPragmaBefore(xcodeml, gen.getStartLoopDirective(collapse), startStmt);
+    addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
   }
 
   /**
@@ -188,19 +164,13 @@ public class AcceleratorHelper {
       return;
     }
 
-    Xnode beginDataRegion = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-    Xnode endDataRegion = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-
     String beginDataRegionStr = gen.getStartDataRegion();
     if(presents.size() > 0){
       beginDataRegionStr += " " + gen.getPresentClause(presents);
     }
 
-    beginDataRegion.setValue(beginDataRegionStr);
-    endDataRegion.setValue(gen.getEndDataRegion());
-
-    XnodeUtil.insertBefore(startStmt, beginDataRegion);
-    XnodeUtil.insertAfter(endStmt, endDataRegion);
+    addPragmaBefore(xcodeml, beginDataRegionStr, startStmt);
+    addPragmaAfter(xcodeml, gen.getEndDataRegion(), endStmt);
   }
 
   /**
@@ -271,17 +241,12 @@ public class AcceleratorHelper {
   {
     if(claw.hasAcceleratorClause())
     {
-
-      Xnode acceleratorPragma = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      acceleratorPragma.setValue(claw.getAcceleratorGenerator().
-          getSingleDirective(claw.getAcceleratorClauses()));
-
       /* TODO
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */
-      XnodeUtil.insertBefore(startStmt, acceleratorPragma);
-      return acceleratorPragma;
+      return addPragmaBefore(xcodeml, claw.getAcceleratorGenerator().
+          getSingleDirective(claw.getAcceleratorClauses()), startStmt);
     }
     return null;
   }
@@ -366,11 +331,8 @@ public class AcceleratorHelper {
       }
 
       if(calledFctDef != null){
-        Xnode routine = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-        routine.setValue(gen.getRoutineDirective() + " " +
-            gen.getSequentialClause());
-        XnodeUtil.insertBefore(calledFctDef.getBody().getChild(0), routine);
-
+        addPragmaBefore(xcodeml, gen.getRoutineDirective() + " " +
+            gen.getSequentialClause(), calledFctDef.getBody().getChild(0));
         if(XmOption.isDebugOutput()){
           System.out.println("OpenACC: generated routine seq directive for " +
               fctName + " subroutine/function.");
@@ -391,7 +353,6 @@ public class AcceleratorHelper {
    */
   public static void generatePrivateClause(ClawLanguage claw,
                                            XcodeProgram xcodeml,
-                                           Transformer transformer,
                                            Xnode stmt,
                                            String var)
   {
