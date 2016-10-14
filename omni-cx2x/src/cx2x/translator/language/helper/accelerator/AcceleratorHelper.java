@@ -136,6 +136,41 @@ public class AcceleratorHelper {
   }
 
   /**
+   * Generates accelerator directive for a loop region.
+   * @param claw      ClawLanguage object that tells if the parallel clause is
+   *                  enable and where the start pragma is located.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param startStmt Start statement representing the beginning of the loop
+   *                  region.
+   * @param endStmt   End statement representing the end of the loop region.
+   * @param collapse  If value bigger than 0, a corresponding collapse
+   *                  constructs can be generated.
+   */
+  public static void generateLoopDirectives(ClawLanguage claw,
+                                            XcodeProgram xcodeml,
+                                            Xnode startStmt, Xnode endStmt,
+                                            int collapse)
+  {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE){
+      return;
+    }
+
+    if(gen.getStartLoopDirective(collapse) != null) {
+      Xnode beginLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      beginLoop.setValue(gen.getStartLoopDirective(collapse));
+      XnodeUtil.insertBefore(startStmt, beginLoop);
+    }
+
+    if(gen.getEndLoopDirective() != null) {
+      Xnode endLoop = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      endLoop.setValue(gen.getEndLoopDirective());
+      XnodeUtil.insertAfter(endStmt, endLoop);
+    }
+  }
+
+  /**
    * Generate accelerator directive for a data region.
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
