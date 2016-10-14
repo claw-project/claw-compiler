@@ -235,6 +235,24 @@ public class Xnode {
   }
 
   /**
+   * Get the first child node.
+   * @return First child or null if no child exists.
+   */
+  public Xnode getFirstChild(){
+    List<Xnode> children = this.getChildren();
+    return children.size() == 0 ? null : children.get(0);
+  }
+
+  /**
+   * Get the last child node.
+   * @return Last child or null if no child exists.
+   */
+  public Xnode getLastChild(){
+    List<Xnode> children = this.getChildren();
+    return children.size() == 0 ? null : children.get(children.size()-1);
+  }
+
+  /**
    * Set the element value.
    * @param value The element value.
    */
