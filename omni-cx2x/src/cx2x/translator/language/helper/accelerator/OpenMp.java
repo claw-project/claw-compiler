@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class OpenMp extends AcceleratorGenerator {
+class OpenMp extends AcceleratorGenerator {
 
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "declare";

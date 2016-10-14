@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class AcceleratorNone extends AcceleratorGenerator {
+class AcceleratorNone extends AcceleratorGenerator {
 
   /**
    * Constructs a new object with the given target.
