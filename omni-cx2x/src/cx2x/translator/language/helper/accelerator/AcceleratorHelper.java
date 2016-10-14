@@ -67,9 +67,9 @@ public class AcceleratorHelper {
    * @param endStmt   End statement representing the end of the parallel region.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static Xnode generateParallelClause(ClawLanguage claw,
-                                              XcodeProgram xcodeml,
-                                              Xnode startStmt, Xnode endStmt)
+  public static Xnode generateParallelClause(ClawLanguage claw,
+                                             XcodeProgram xcodeml,
+                                             Xnode startStmt, Xnode endStmt)
   {
     if(claw.hasParallelClause()){
       Xnode beginParallel = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
