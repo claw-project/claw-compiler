@@ -109,7 +109,8 @@ public abstract class AcceleratorGenerator {
    * @param vars List of variables name that will be inserted in the generated
    *             clause.
    * @return An accelerator language specific present clause with the list of
-   * variables.
+   * variables. If the list is null or empty, the implementation returns an
+   * empty string.
    */
   protected abstract String getPresentClause(List<String> vars);
 
