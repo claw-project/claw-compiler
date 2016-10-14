@@ -45,17 +45,20 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getStartParallelDirective() {
+    //!$acc parallel
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL);
   }
 
   @Override
   protected String getEndParallelDirective() {
+    //!$acc end parallel
     return String.format(FORMAT3,
         OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL);
   }
 
   @Override
   protected String getSingleDirective(String clause) {
+    //!$acc <clause>
     return String.format(FORMAT2, OPENACC_PREFIX, clause);
   }
 
@@ -95,6 +98,7 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getRoutineDirective(){
+    //!$acc routine
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE);
   }
 
@@ -111,11 +115,13 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   public String getStartDataRegion() {
+    //!$acc data
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_DATA);
   }
 
   @Override
   public String getEndDataRegion() {
+    //!$acc end data
     return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_DATA);
   }
 
@@ -127,9 +133,11 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String getStartLoopDirective(int value) {
     if(value > 1){
+      //!$acc loop collapse(<value>)
       return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
           String.format("%s(%d)", OPENACC_COLLAPSE, value));
     } else {
+      //!$acc loop
       return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_LOOP);
     }
   }
