@@ -47,12 +47,12 @@ public class ParallelizeForward extends Transformation {
 
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
-  private List<String> _promotedVar; // List of promoted array from the call
-  private List<String> _promotedWithBeforeOver;
-  private List<String> _promotedWithAfterOver;
-  private List<String> _promotedWithMiddleOver;
-  private Map<String, PromotionInfo> _promotions; // Info about promotion
-  private Map<String, String> _fctCallMapping; // NamedValue mapping
+  private final List<String> _promotedVar; // List of promoted array from the call
+  private final List<String> _promotedWithBeforeOver;
+  private final List<String> _promotedWithAfterOver;
+  private final List<String> _promotedWithMiddleOver;
+  private final Map<String, PromotionInfo> _promotions; // Info about promotion
+  private final Map<String, String> _fctCallMapping; // NamedValue mapping
   private boolean _isNestedInAssignement;
 
 

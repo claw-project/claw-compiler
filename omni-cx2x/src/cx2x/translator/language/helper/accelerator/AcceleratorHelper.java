@@ -425,7 +425,8 @@ public class AcceleratorHelper {
    * @param claw           ClawLanguage object that tells if the parallel clause
    *                       is enable and where the start pragma is located.
    * @param xcodeml        Current XcodeML program unit.
-   *                       representation in which the pragmas will be generated.
+   *                       representation in which the pragmas will be
+   *                       generated.
    * @param startStmt      Start reference statement.
    * @param endStmt        End reference statement.
    * @param startDirective String value of the start directive.

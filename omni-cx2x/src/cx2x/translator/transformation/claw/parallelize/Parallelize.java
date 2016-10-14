@@ -32,7 +32,7 @@ public class Parallelize extends Transformation {
   private final ClawLanguage _claw;
   private final Map<String, ClawDimension> _dimensions;
   private final Map<String, PromotionInfo> _promotions;
-  private List<String> _arrayFieldsInOut;
+  private final List<String> _arrayFieldsInOut;
   private final List<String> _scalarFields;
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
