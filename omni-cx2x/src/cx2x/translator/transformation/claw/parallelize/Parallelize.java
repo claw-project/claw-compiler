@@ -412,7 +412,8 @@ public class Parallelize extends Transformation {
     }
 
     // Generate the parallel region
-    //AcceleratorHelper.generateParallelClause(_claw, xcodeml, _fctDef.getBody().getChild(0), )
+    AcceleratorHelper.generateParallelClause(_claw, xcodeml,
+        _fctDef.getBody().getFirstChild(), _fctDef.getBody().getLastChild());
   }
 
   /**
