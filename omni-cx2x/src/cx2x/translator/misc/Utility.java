@@ -73,12 +73,13 @@ public class Utility {
 
   /**
    * Check if there is an intersection between the set and the list.
-   * @param set   A given set.
-   * @param list  A given list.
-   * @param <T>   Type of the objects in set or list.
+   *
+   * @param set  A given set.
+   * @param list A given list.
+   * @param <T>  Type of the objects in set or list.
    * @return True if there is an intersection. False otherwise.
    */
-  public static <T> boolean hasIntersection(Set<T> set, List<T> list){
+  public static <T> boolean hasIntersection(Set<T> set, List<T> list) {
     for(T n : set) {
       if(list.contains(n)) {
         return true;
