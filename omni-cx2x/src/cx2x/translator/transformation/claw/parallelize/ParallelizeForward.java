@@ -579,55 +579,60 @@ public class ParallelizeForward extends Transformation {
   {
     if(_isNestedInAssignement) {
       Xnode assignment = XnodeUtil.getNextSibling(_claw.getPragma());
-      if(_fctType.hasAttribute(ClawAttr.OVER.toString())) {
-        OverPosition overPos = OverPosition.fromString(
-            _fctType.getAttribute(ClawAttr.OVER.toString()));
-        Xnode lhs = assignment.getChild(0);
-        // TODO handle the case when the array ref is a var directly
-        Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
+      if(assignment == null
+          || !_fctType.hasAttribute(ClawAttr.OVER.toString()))
+      {
+        return;
+      }
+      
+      OverPosition overPos = OverPosition.fromString(
+          _fctType.getAttribute(ClawAttr.OVER.toString()));
 
-        List<ClawDimension> dimensions =
-            TransformationHelper.findDimensions(_parentFctType);
-        XfunctionDefinition parentFctDef =
-            XnodeUtil.findParentFunction(_fctCall);
+      Xnode lhs = assignment.getChild(0);
+      // TODO handle the case when the array ref is a var directly
+      Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
 
-        XbasicType varType = (XbasicType)
-            xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
+      List<ClawDimension> dimensions =
+          TransformationHelper.findDimensions(_parentFctType);
+      XfunctionDefinition parentFctDef =
+          XnodeUtil.findParentFunction(_fctCall);
 
-        PromotionInfo promotionInfo;
-        if(!_promotions.containsKey(varInLhs.getValue())) {
-          // Perform the promotion on the variable
-          promotionInfo = TransformationHelper.promoteField(
-              varInLhs.getValue(), true, true, 0, 0, parentFctDef,
-              _parentFctType, dimensions, _claw, xcodeml, overPos);
-          _promotions.put(varInLhs.getValue(), promotionInfo);
+      XbasicType varType = (XbasicType)
+          xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
 
-          addPromotedVar(varInLhs.getValue(), overPos);
+      PromotionInfo promotionInfo;
+      if(!_promotions.containsKey(varInLhs.getValue())) {
+        // Perform the promotion on the variable
+        promotionInfo = TransformationHelper.promoteField(
+            varInLhs.getValue(), true, true, 0, 0, parentFctDef,
+            _parentFctType, dimensions, _claw, xcodeml, overPos);
+        _promotions.put(varInLhs.getValue(), promotionInfo);
 
-        } else {
-          promotionInfo = _promotions.get(varInLhs.getValue());
+        addPromotedVar(varInLhs.getValue(), overPos);
+
+      } else {
+        promotionInfo = _promotions.get(varInLhs.getValue());
+      }
+
+      // Adapte array index to reflect the new return type
+      if(lhs.opcode() == Xcode.FARRAYREF) {
+        for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
+          Xnode indexRange = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+          lhs.appendToChildren(indexRange, false);
         }
-
-        // Adapte array index to reflect the new return type
-        if(lhs.opcode() == Xcode.FARRAYREF) {
-          for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
-            Xnode indexRange = XnodeUtil.createEmptyAssumedShaped(xcodeml);
-            lhs.appendToChildren(indexRange, false);
-          }
-        } else if(lhs.opcode() == Xcode.VAR) {
-          // TODO avoid array var without colon notation
+      } else if(lhs.opcode() == Xcode.VAR) {
+        // TODO avoid array var without colon notation
           /* throw new IllegalTransformationException("Use the colon notation "
               + "for the return variable. This notation is not supported." +
               _claw.getPragma().getValue()); */
-        } else {
-          throw new IllegalTransformationException("Unsupported return " +
-              "variable for promotion.", _claw.getPragma().getLineNo());
-        }
-
-        // If the array is a target, check if we have to promote a pointer
-        adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
-            promotionInfo, dimensions);
+      } else {
+        throw new IllegalTransformationException("Unsupported return " +
+            "variable for promotion.", _claw.getPragma().getLineNo());
       }
+
+      // If the array is a target, check if we have to promote a pointer
+      adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
+          promotionInfo, dimensions);
     }
   }
 
