@@ -6,6 +6,7 @@
 package cx2x.translator;
 
 // Cx2x import
+
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.common.topology.DirectedGraph;
@@ -50,6 +51,7 @@ import java.util.*;
  */
 
 public class ClawXcodeMlTranslator {
+
   private static final String ERROR_PREFIX = "claw-error: ";
   private static final String WARNING_PREFIX = "claw warning: ";
   private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
@@ -66,6 +68,7 @@ public class ClawXcodeMlTranslator {
 
   /**
    * ClawXcodeMlTranslator ctor.
+   *
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
    * @param directive         Accelerator directive language for code
@@ -95,23 +98,22 @@ public class ClawXcodeMlTranslator {
    */
   public void analyze() {
     _program = XcodeProgram.createFromFile(_xcodemlInputFile);
-    if(_program == null){
+    if(_program == null) {
       abort();
     }
 
     // Check all pragma found in the program
-    for (Xnode pragma :  XnodeUtil.findAllPragmas(_program)){
+    for(Xnode pragma : XnodeUtil.findAllPragmas(_program)) {
 
       // pragma does not start with the CLAW prefix
-      if(!ClawLanguage.startsWithClaw(pragma)){
+      if(!ClawLanguage.startsWithClaw(pragma)) {
         // Compile guard removal
-        if(_generator != null && _generator.isCompileGuard(pragma.getValue())){
+        if(_generator != null && _generator.isCompileGuard(pragma.getValue())) {
           pragma.delete();
         }
         // Handle special transformation of OpenACC line continuation
         else if(pragma.getValue().
-            toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX))
-        {
+            toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX)) {
           OpenAccContinuation t =
               new OpenAccContinuation(new AnalyzedPragma(pragma));
           addOrAbort(t);
@@ -126,7 +128,7 @@ public class ClawXcodeMlTranslator {
             ClawLanguage.analyze(pragma, _generator, _target);
 
         // Create transformation object based on the directive
-        switch (analyzedPragma.getDirective()) {
+        switch(analyzedPragma.getDirective()) {
           case ARRAY_TO_CALL:
             addOrAbort(new ArrayToFctCall(analyzedPragma));
             break;
@@ -152,7 +154,7 @@ public class ClawXcodeMlTranslator {
             HandleBlockDirective(analyzedPragma);
             break;
           case PARALLELIZE:
-            if (analyzedPragma.hasForwardClause()) {
+            if(analyzedPragma.hasForwardClause()) {
               addOrAbort(new ParallelizeForward(analyzedPragma));
             } else {
               addOrAbort(new Parallelize(analyzedPragma));
@@ -170,7 +172,7 @@ public class ClawXcodeMlTranslator {
                 pragma.getLineNo());
             abort();
         }
-      } catch (IllegalDirectiveException ex){
+      } catch(IllegalDirectiveException ex) {
         System.err.println(ex.getMessage());
         abort();
       }
@@ -178,8 +180,7 @@ public class ClawXcodeMlTranslator {
 
     // Clean up block transformation map
     for(Map.Entry<ClawDirectiveKey, ClawLanguage> entry :
-        _blockDirectives.entrySet())
-    {
+        _blockDirectives.entrySet()) {
       createBlockDirectiveTransformation(entry.getValue(), null);
     }
 
@@ -193,15 +194,16 @@ public class ClawXcodeMlTranslator {
 
   /**
    * Associate correctly the start and end directive to form blocks.
+   *
    * @param analyzedPragma Analyzed pragma object to be handle.
    */
-  private void HandleBlockDirective(ClawLanguage analyzedPragma){
+  private void HandleBlockDirective(ClawLanguage analyzedPragma) {
     int depth =
         XnodeUtil.getDepth(analyzedPragma.getPragma());
     ClawDirectiveKey crtRemoveKey =
         new ClawDirectiveKey(analyzedPragma.getDirective(), depth);
-    if(analyzedPragma.isEndPragma()){ // start block directive
-      if (!_blockDirectives.containsKey(crtRemoveKey)) {
+    if(analyzedPragma.isEndPragma()) { // start block directive
+      if(!_blockDirectives.containsKey(crtRemoveKey)) {
         _program.addError("Invalid Claw directive (end with no start)",
             analyzedPragma.getPragma().getLineNo());
         abort();
@@ -211,7 +213,7 @@ public class ClawXcodeMlTranslator {
         _blockDirectives.remove(crtRemoveKey);
       }
     } else { // end block directive
-      if (_blockDirectives.containsKey(crtRemoveKey)) {
+      if(_blockDirectives.containsKey(crtRemoveKey)) {
         createBlockDirectiveTransformation(_blockDirectives.get(crtRemoveKey),
             null);
       }
@@ -222,13 +224,14 @@ public class ClawXcodeMlTranslator {
 
   /**
    * Create a new block transformation object according to its start directive.
+   *
    * @param begin Begin directive which starts the block.
    * @param end   End directive which ends the block.
    */
   private void createBlockDirectiveTransformation(ClawLanguage begin,
                                                   ClawLanguage end)
   {
-    switch (begin.getDirective()){
+    switch(begin.getDirective()) {
       case REMOVE:
         addOrAbort(new UtilityRemove(begin, end));
         break;
@@ -244,11 +247,12 @@ public class ClawXcodeMlTranslator {
   /**
    * Add a transformation in the pipeline if the analysis is succeeded.
    * Otherwise, abort the translation.
+   *
    * @param t The transformation to be analyzed and added.
    */
   private void addOrAbort(Transformation t)
   {
-    if(t.analyze(_program, _transformer)){
+    if(t.analyze(_program, _transformer)) {
       _transformer.addTransformation(t);
     } else {
       abort();
@@ -260,17 +264,16 @@ public class ClawXcodeMlTranslator {
    */
   public void transform() {
     try {
-      if(!_canTransform){
+      if(!_canTransform) {
         XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
         return;
       }
 
       reorderTransformations();
 
-      for (Map.Entry<Class, TransformationGroup> entry :
-          _transformer.getGroups().entrySet())
-      {
-        if(XmOption.isDebugOutput()){
+      for(Map.Entry<Class, TransformationGroup> entry :
+          _transformer.getGroups().entrySet()) {
+        if(XmOption.isDebugOutput()) {
           System.out.println("Apply transformation: " +
               entry.getValue().transformationName() + " - " +
               entry.getValue().count()
@@ -280,13 +283,13 @@ public class ClawXcodeMlTranslator {
         try {
           entry.getValue().applyTranslations(_program, _transformer);
           displayWarnings();
-        } catch (IllegalTransformationException itex) {
+        } catch(IllegalTransformationException itex) {
           _program.addError(itex.getMessage(), itex.getStartLine());
           abort();
-        } catch (Exception ex){
+        } catch(Exception ex) {
           ex.printStackTrace();
           _program.addError("Unexpected error: " + ex.getMessage(), 0);
-          if(XmOption.isDebugOutput()){
+          if(XmOption.isDebugOutput()) {
             StringWriter errors = new StringWriter();
             ex.printStackTrace(new PrintWriter(errors));
             _program.addError(errors.toString(), 0);
@@ -297,25 +300,25 @@ public class ClawXcodeMlTranslator {
 
       // Write transformed IR to file
       XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
-    } catch (Exception ex) {
+    } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }
   }
 
-  private void reorderTransformations(){
-    if(_transformer.getGroups().containsKey(ParallelizeForward.class)){
+  private void reorderTransformations() {
+    if(_transformer.getGroups().containsKey(ParallelizeForward.class)) {
       TransformationGroup tg =
           _transformer.getGroups().get(ParallelizeForward.class);
 
-      if(tg.count() <= 1){
+      if(tg.count() <= 1) {
         return;
       }
 
       DirectedGraph<Transformation> dg = new DirectedGraph<>();
       Map<String, List<Transformation>> fctMap = new HashMap<>();
 
-      for (Transformation t : tg.getTransformations()){
-        ParallelizeForward p = (ParallelizeForward)t;
+      for(Transformation t : tg.getTransformations()) {
+        ParallelizeForward p = (ParallelizeForward) t;
         dg.addNode(p);
         if(fctMap.containsKey(p.getCallingFctName())) {
           List<Transformation> tList = fctMap.get(p.getCallingFctName());
@@ -327,12 +330,12 @@ public class ClawXcodeMlTranslator {
         }
       }
 
-      for (Transformation t : tg.getTransformations()) {
+      for(Transformation t : tg.getTransformations()) {
         ParallelizeForward p = (ParallelizeForward) t;
-        if(p.getCalledFctName() != null){
-          if(fctMap.containsKey(p.getCalledFctName())){
+        if(p.getCalledFctName() != null) {
+          if(fctMap.containsKey(p.getCalledFctName())) {
             List<Transformation> tList = fctMap.get(p.getCalledFctName());
-            for(Transformation end : tList){
+            for(Transformation end : tList) {
               dg.addEdge(p, end);
             }
           }
@@ -348,7 +351,7 @@ public class ClawXcodeMlTranslator {
   /**
    * Print all the errors stored in the XcodeML object and abort the program.
    */
-  private void abort(){
+  private void abort() {
     if(_program != null) {
       displayMessages(ERROR_PREFIX, _program.getErrors());
     }
@@ -359,18 +362,19 @@ public class ClawXcodeMlTranslator {
    * Print all the warnings stored in the XcodeML object and purge them after
    * displaying.
    */
-  private void displayWarnings(){
+  private void displayWarnings() {
     displayMessages(WARNING_PREFIX, _program.getWarnings());
   }
 
   /**
    * Print all messages in the given list with the prefix.
+   *
    * @param prefix   Prefix for the message.
    * @param messages List of messages to display.
    */
-  private void displayMessages(String prefix, List<XanalysisError> messages){
-    for(XanalysisError message : messages){
-      if(message.getLine() == 0){
+  private void displayMessages(String prefix, List<XanalysisError> messages) {
+    for(XanalysisError message : messages) {
+      if(message.getLine() == 0) {
         System.err.println(String.format("%s %s, line: undefined", prefix,
             message.getMessage()));
       } else {
@@ -384,17 +388,17 @@ public class ClawXcodeMlTranslator {
   /**
    * Write all modules in the cache to files.
    */
-  public void writeModuleCache(){
+  public void writeModuleCache() {
     ModuleCache cache = _transformer.getModCache();
     Iterator<Map.Entry<String, Xmod>> it = cache.getIterator();
-    while(it.hasNext()){
+    while(it.hasNext()) {
       Map.Entry<String, Xmod> pair = it.next();
       Xmod module = pair.getValue();
       String newModuleName = module.getPath() + module.getName() +
           ClawConstant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
       try {
         XnodeUtil.writeXcodeML(module, newModuleName, INDENT_OUTPUT);
-      } catch (IllegalTransformationException ex){
+      } catch(IllegalTransformationException ex) {
         System.err.println(ex.getMessage());
         abort();
       }

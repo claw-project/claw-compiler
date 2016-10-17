@@ -13,31 +13,34 @@ import cx2x.translator.language.ClawDirective;
  * @author clementval
  */
 class ClawDirectiveKey {
+
   private final ClawDirective _directive;
   private final int _depth;
 
   /**
    * Constructs a new composite key with its two elements.
+   *
    * @param directive ClawDirective to be associated with this key.
    * @param depth     Depth of the directive in the AST.
    */
-  public ClawDirectiveKey(ClawDirective directive, int depth){
+  public ClawDirectiveKey(ClawDirective directive, int depth) {
     _directive = directive;
     _depth = depth;
   }
 
   /**
    * Get the directive associated with this key.
+   *
    * @return ClawDirective value.
    */
-  public ClawDirective getDirective(){
+  public ClawDirective getDirective() {
     return _directive;
   }
 
   @Override
   public boolean equals(Object obj) {
     if(obj != null && obj instanceof ClawDirectiveKey) {
-      ClawDirectiveKey o = (ClawDirectiveKey)obj;
+      ClawDirectiveKey o = (ClawDirectiveKey) obj;
       return _directive.equals(o._directive) && _depth == o._depth;
     }
     return false;
