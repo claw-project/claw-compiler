@@ -15,54 +15,59 @@ import cx2x.xcodeml.xnode.Xnode;
  * @author clementval
  */
 public class AnalyzedPragma {
+
   protected Xnode _pragma;
   private boolean _isEndPragma;
 
   /**
    * Default ctor.
    */
-  public AnalyzedPragma(){
+  public AnalyzedPragma() {
     _isEndPragma = false;
   }
 
   /**
    * Constructs an AnalyzedPragma object with a raw pragma element object
    * attached.
+   *
    * @param rawPragma Pragma object to be attached.
    */
-  public AnalyzedPragma(Xnode rawPragma){
+  public AnalyzedPragma(Xnode rawPragma) {
     _pragma = rawPragma;
     _isEndPragma = false;
   }
 
   /**
    * Get the attached pragma object.
+   *
    * @return Attached pragma object.
    */
-  public Xnode getPragma(){
+  public Xnode getPragma() {
     return _pragma;
   }
 
   /**
    * Attach a pragma object.
+   *
    * @param rawPragma Pragma object to be attached.
    */
-  public void setPragma(Xnode rawPragma){
+  public void setPragma(Xnode rawPragma) {
     _pragma = rawPragma;
   }
 
   /**
    * Check whether the pragma is an end block pragma.
+   *
    * @return True if the pragma ends a block. False otherwise.
    */
-  public boolean isEndPragma(){
+  public boolean isEndPragma() {
     return _isEndPragma;
   }
 
   /**
    * Set value to the endPragma flag.
    */
-  public void setEndPragma(){
+  public void setEndPragma() {
     _isEndPragma = true;
   }
 
