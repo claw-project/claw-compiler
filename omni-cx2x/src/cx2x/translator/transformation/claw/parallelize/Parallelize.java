@@ -30,6 +30,8 @@ import java.util.*;
  */
 public class Parallelize extends Transformation {
 
+  private static final int DEFAULT_OVER = 0;
+
   private final ClawLanguage _claw;
   private final Map<String, ClawDimension> _dimensions;
   private final Map<String, PromotionInfo> _promotions;
@@ -265,7 +267,7 @@ public class Parallelize extends Transformation {
             _promotions, _beforeCrt, _inMiddle, _afterCrt, xcodeml);
       }
     } else {
-      TransformationHelper.adaptArrayReferences(_arrayFieldsInOut, 0,
+      TransformationHelper.adaptArrayReferences(_arrayFieldsInOut, DEFAULT_OVER,
           _fctDef.getBody(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
           xcodeml);
     }
@@ -381,24 +383,24 @@ public class Parallelize extends Transformation {
             if(lhs.opcode() == Xcode.VAR) { // Scalar to array
               promotionInfo =
                   TransformationHelper.promoteField(lhsName, false, false,
-                      0, _overDimensions, _fctDef, _fctType,
+                      DEFAULT_OVER, _overDimensions, _fctDef, _fctType,
                       _claw.getDimensionValues(), _claw, xcodeml, null);
             } else { // Array to array
               promotionInfo =
                   TransformationHelper.promoteField(lhsName, true, true,
-                      0, _overDimensions, _fctDef, _fctType,
+                      DEFAULT_OVER, _overDimensions, _fctDef, _fctType,
                       _claw.getDimensionValues(), _claw, xcodeml, null);
             }
             _promotions.put(lhsName, promotionInfo);
           }
           if(lhs.opcode() == Xcode.VAR) {
             adaptScalarRefToArrayReferences(xcodeml,
-                Collections.singletonList(lhsName), 0); // TODO should be fine
+                Collections.singletonList(lhsName), DEFAULT_OVER);
           } else {
             TransformationHelper.adaptArrayReferences(
-                Collections.singletonList(lhsName), 0, _fctDef.getBody(),
-                _promotions, _beforeCrt, _inMiddle, _afterCrt,
-                xcodeml);
+                Collections.singletonList(lhsName), DEFAULT_OVER,
+                _fctDef.getBody(), _promotions, _beforeCrt, _inMiddle,
+                _afterCrt, xcodeml);
           }
           loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
@@ -526,7 +528,7 @@ public class Parallelize extends Transformation {
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo =
-            TransformationHelper.promoteField(fieldId, true, true, 0,
+            TransformationHelper.promoteField(fieldId, true, true, DEFAULT_OVER,
                 _overDimensions, _fctDef, _fctType, _claw.getDimensionValues(),
                 _claw, xcodeml, null);
         _promotions.put(fieldId, promotionInfo);
