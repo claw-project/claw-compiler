@@ -26,7 +26,7 @@ public enum ClawAttr {
     return this.name;
   }
 
-  public static ClawAttr fromString(String value){
+  public static ClawAttr fromString(String value) {
     return ClawAttr.valueOf(value.toUpperCase().replace("-", "_"));
   }
 }
