@@ -9,6 +9,7 @@ import xcodeml.util.XmOption;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class contains utilities methods that are useful in the whole project.
@@ -68,5 +69,21 @@ public class Utility {
     if(XmOption.isDebugOutput()) {
       System.out.println(value);
     }
+  }
+
+  /**
+   * Check if there is an intersection between the set and the list.
+   * @param set   A given set.
+   * @param list  A given list.
+   * @param <T>   Type of the objects in set or list.
+   * @return True if there is an intersection. False otherwise.
+   */
+  public static <T> boolean hasIntersection(Set<T> set, List<T> list){
+    for(T n : set) {
+      if(list.contains(n)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

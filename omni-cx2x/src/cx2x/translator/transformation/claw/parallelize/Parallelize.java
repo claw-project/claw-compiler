@@ -11,6 +11,7 @@ import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.misc.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -431,12 +432,7 @@ public class Parallelize extends Transformation {
     }
     List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
     Set<String> names = XnodeUtil.getNamesFromReferences(vars);
-    for(String n : names) { // TODO better algo
-      if(_arrayFieldsInOut.contains(n)) {
-        return true;
-      }
-    }
-    return false;
+    return Utility.hasIntersection(names, _arrayFieldsInOut);
   }
 
   /**
