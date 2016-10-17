@@ -28,5 +28,9 @@ function(add_junit_test TARGET_NAME)
     endif()
   endforeach(ARG)
 
-  add_test(NAME ${TARGET_NAME} COMMAND ${Java_JAVA_EXECUTABLE} ${JVMARGS} -classpath ${CLASSPATH} org.junit.runner.JUnitCore ${TESTS})
+  add_test(
+    NAME ${TARGET_NAME}
+    COMMAND ${Java_JAVA_EXECUTABLE} ${JVMARGS}
+    -classpath ${CLASSPATH} org.junit.runner.JUnitCore ${TESTS}
+  )
 endfunction(add_junit_test)
