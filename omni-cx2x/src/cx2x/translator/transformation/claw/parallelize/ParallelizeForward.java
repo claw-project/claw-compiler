@@ -9,6 +9,7 @@ import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.misc.Utility;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -666,11 +667,8 @@ public class ParallelizeForward extends Transformation {
     XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
 
     // Retrieve information of previous forward transformation in the same fct
-    Object rawObject = transformer.hasElement(parentFctDef);
-    List<String> previouslyPromoted = new ArrayList<>();
-    if(rawObject != null && rawObject instanceof ArrayList) {
-      previouslyPromoted.addAll((ArrayList) rawObject);
-    }
+    List<String> previouslyPromoted =
+        Utility.convertToList(transformer.hasElement(parentFctDef));
 
     List<Xnode> assignments =
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);

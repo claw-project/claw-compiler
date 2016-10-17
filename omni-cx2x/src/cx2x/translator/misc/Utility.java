@@ -7,9 +7,7 @@ package cx2x.translator.misc;
 
 import xcodeml.util.XmOption;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class contains utilities methods that are useful in the whole project.
@@ -69,6 +67,23 @@ public class Utility {
     if(XmOption.isDebugOutput()) {
       System.out.println(value);
     }
+  }
+
+  /**
+   * Convert an object back to a List<String>
+   * @param rawObject Raw object to be converted.
+   * @return A list of string values. If the raw object is null or not an
+   * original list of string, the returned list will be empty.
+   */
+  public static List<String> convertToList(Object rawObject){
+    List<String> strList = new ArrayList<>();
+    if(rawObject != null && rawObject instanceof ArrayList) {
+      List rawList = (ArrayList) rawObject;
+      for(Object object : rawList) {
+        strList.add(Objects.toString(object, null));
+      }
+    }
+    return strList;
   }
 
   /**
