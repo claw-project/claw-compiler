@@ -12,6 +12,7 @@ package cx2x.xcodeml.exception;
  */
 
 public class IllegalTransformationException extends Exception {
+
   private int _transformationStartLine = 0;
 
   /**
@@ -25,7 +26,8 @@ public class IllegalTransformationException extends Exception {
   /**
    * Constructs a new exception with null as its detail message and a specific
    * line number.
-   * @param lineno  Line number in the XcodeML that triggered the exception.
+   *
+   * @param lineno Line number in the XcodeML that triggered the exception.
    */
   public IllegalTransformationException(int lineno) {
     super();
@@ -35,6 +37,7 @@ public class IllegalTransformationException extends Exception {
   /**
    * Constructs a new exception with a specific details message and 0 as line
    * number.
+   *
    * @param message Specific exception message.
    */
   public IllegalTransformationException(String message) {
@@ -44,6 +47,7 @@ public class IllegalTransformationException extends Exception {
   /**
    * Constructs a new exception with a specific detail message and a specific
    * line number.
+   *
    * @param message Specific exception message.
    * @param lineno  Line number in the XcodeML that triggered the exception.
    */
@@ -54,8 +58,9 @@ public class IllegalTransformationException extends Exception {
 
   /**
    * Constructs a new exception with a specific detail message and cause.
+   *
    * @param message Specific exception message.
-   * @param cause the cause.
+   * @param cause   the cause.
    */
   public IllegalTransformationException(String message, Throwable cause) {
     super(message, cause);
@@ -64,12 +69,13 @@ public class IllegalTransformationException extends Exception {
   /**
    * Constructs a new exception with a specific detail message, cause and line
    * number.
+   *
    * @param message Specific exception message.
    * @param cause   the cause
    * @param lineno  Line number in the XcodeML that triggered the exception.
    */
   public IllegalTransformationException(String message, Throwable cause,
-    int lineno)
+                                        int lineno)
   {
     super(message, cause);
     _transformationStartLine = lineno;
@@ -78,6 +84,7 @@ public class IllegalTransformationException extends Exception {
   /**
    * Constructs a new exception with null as its detail message, 0 as line
    * number and a specific cause.
+   *
    * @param cause The cause.
    */
   public IllegalTransformationException(Throwable cause) {
@@ -87,8 +94,9 @@ public class IllegalTransformationException extends Exception {
   /**
    * Constructs a new exception with null as its detail message, a specific line
    * number and a specific cause.
-   * @param cause   the cause.
-   * @param lineno  Line number in the XcodeML that triggered the exception.
+   *
+   * @param cause  the cause.
+   * @param lineno Line number in the XcodeML that triggered the exception.
    */
   public IllegalTransformationException(Throwable cause, int lineno) {
     super(cause);
@@ -97,6 +105,7 @@ public class IllegalTransformationException extends Exception {
 
   /**
    * Set the start line of the transformation that triggered the exception.
+   *
    * @param lineno Line number in the XcodeML that triggered the exception.
    */
   public void setStartLine(int lineno) {
@@ -105,6 +114,7 @@ public class IllegalTransformationException extends Exception {
 
   /**
    * Get the start line of the transformation that triggered the exception.
+   *
    * @return Line number in the XcodeML that triggered the exception.
    */
   public int getStartLine() {

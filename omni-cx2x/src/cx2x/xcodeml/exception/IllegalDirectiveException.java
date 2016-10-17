@@ -11,22 +11,25 @@ package cx2x.xcodeml.exception;
  * @author clementval
  */
 public class IllegalDirectiveException extends Exception {
+
   private int _directiveLine = 0;
   private int _charPos = 0;
   private String _directive;
 
   /**
    * Constructs a new exception with a specific detail message and clause.
+   *
    * @param directive Illegal directive
    * @param message   Specific exception message.
    */
-  public IllegalDirectiveException(String directive, String message){
+  public IllegalDirectiveException(String directive, String message) {
     super(message);
     _directive = directive;
   }
 
   /**
    * Constructs a new exception with a specific detail message and line number.
+   *
    * @param directive Illegal directive
    * @param message   Specific exception message.
    * @param lineno    Line number of the directive.
@@ -41,6 +44,7 @@ public class IllegalDirectiveException extends Exception {
   /**
    * Constructs a new exception with a specific detail message, line number and
    * char position.
+   *
    * @param directive Illegal directive
    * @param message   Specific exception message.
    * @param lineno    Line number of the directive.
@@ -57,22 +61,25 @@ public class IllegalDirectiveException extends Exception {
 
   /**
    * Get the illegal directive.
+   *
    * @return The illegal directive.
    */
-  public String getDirective(){
+  public String getDirective() {
     return _directive;
   }
 
   /**
    * Set the illegal directive.
+   *
    * @param directive The directive.
    */
-  public void setDirective(String directive){
+  public void setDirective(String directive) {
     _directive = directive;
   }
 
   /**
    * Set the line of the code that contains the illegal directive.
+   *
    * @param lineno Line number in the XcodeML that triggered the exception.
    */
   public void setDirectiveLine(int lineno) {
@@ -81,6 +88,7 @@ public class IllegalDirectiveException extends Exception {
 
   /**
    * Get the line of the code that contains the illegal directive.
+   *
    * @return Line number in the XcodeML that triggered the exception.
    */
   public int getDirectiveLine() {
@@ -89,6 +97,7 @@ public class IllegalDirectiveException extends Exception {
 
   /**
    * Get the character position where the directive error happened.
+   *
    * @return Character position in the line.
    */
   public int getCharPosition() {
@@ -100,7 +109,7 @@ public class IllegalDirectiveException extends Exception {
     String errorMessage = "Illegal directive ";
 
     if(_directiveLine > 0) {
-      errorMessage += _directiveLine + ":" +  _charPos;
+      errorMessage += _directiveLine + ":" + _charPos;
     } else {
       errorMessage += "-:" + _charPos;
     }
