@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
  */
 
 public class ClawTransformer implements Transformer {
+
   private int _transformationCounter = 0;
 
   // Hold all transformation groups
@@ -41,18 +42,19 @@ public class ClawTransformer implements Transformer {
   /**
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
+   *
    * @param groups List of transformation groups that define the transformation
    *               order.
    * @param max    Maximum number of columns.
    */
-  public ClawTransformer(List<GroupConfiguration> groups, int max){
+  public ClawTransformer(List<GroupConfiguration> groups, int max) {
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
      */
     _tGroups = new LinkedHashMap<>();
-    for(GroupConfiguration g : groups){
-      switch (g.getType()){
+    for(GroupConfiguration g : groups) {
+      switch(g.getType()) {
         case DEPENDENT:
           _tGroups.put(g.getTransformationClass(),
               new DependentTransformationGroup(g.getName()));
@@ -78,8 +80,8 @@ public class ClawTransformer implements Transformer {
   /**
    * @see Transformer#addTransformation(Transformation)
    */
-  public void addTransformation(Transformation t){
-    if(_tGroups.containsKey(t.getClass())){
+  public void addTransformation(Transformation t) {
+    if(_tGroups.containsKey(t.getClass())) {
       _tGroups.get(t.getClass()).add(t);
     }
   }
@@ -87,15 +89,16 @@ public class ClawTransformer implements Transformer {
   /**
    * @see Transformer#getGroups()
    */
-  public Map<Class, TransformationGroup> getGroups(){
+  public Map<Class, TransformationGroup> getGroups() {
     return _tGroups;
   }
 
   /**
    * Get the next extraction counter value.
+   *
    * @return Transformation counter value.
    */
-  public int getNextTransformationCounter(){
+  public int getNextTransformationCounter() {
     return _transformationCounter++;
   }
 
@@ -116,8 +119,8 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * @see Transformer#setMaxColumns(int)
    * @param max Max number of columns.
+   * @see Transformer#setMaxColumns(int)
    */
   @Override
   public void setMaxColumns(int max) {
@@ -126,11 +129,12 @@ public class ClawTransformer implements Transformer {
 
   /**
    * Get a stored element from a previous transformation.
+   *
    * @param key Key to use to retrieve the element.
    * @return The stored element if present. Null otherwise.
    */
-  public Object hasElement(Xnode key){
-    if(_crossTransformationTable.containsKey(key.getElement())){
+  public Object hasElement(Xnode key) {
+    if(_crossTransformationTable.containsKey(key.getElement())) {
       return _crossTransformationTable.get(key.getElement());
     }
     return null;
@@ -139,11 +143,12 @@ public class ClawTransformer implements Transformer {
   /**
    * Store a Xnode from a transformation for a possible usage in another
    * transformation. If a key is already present, the element is overwritten.
+   *
    * @param key   The element acting as a key.
    * @param value The element to be stored.
    */
-  public void storeElement(Xnode key, Object value){
-    if(_crossTransformationTable.containsKey(key.getElement())){
+  public void storeElement(Xnode key, Object value) {
+    if(_crossTransformationTable.containsKey(key.getElement())) {
       _crossTransformationTable.remove(key.getElement());
     }
     _crossTransformationTable.put(key.getElement(), value);
