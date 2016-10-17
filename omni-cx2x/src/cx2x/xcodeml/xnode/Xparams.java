@@ -13,10 +13,10 @@ import java.util.List;
 /**
  * The Xparams represents the params (8.5) element in XcodeML intermediate
  * representation.
- *
+ * <p>
  * Elements: (name*)
  * - Optional:
- *   - name (Xname)
+ * - name (Xname)
  *
  * @author clementval
  */
@@ -27,44 +27,49 @@ public class Xparams extends Xnode {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public Xparams(Element baseElement){
+  public Xparams(Element baseElement) {
     super(baseElement);
     _parameters = XnodeUtil.findAllNames(this);
   }
 
   /**
    * Get the number of parameters in the params element.
+   *
    * @return Number of parameters.
    */
-  public int count(){
+  public int count() {
     return _parameters.size();
   }
 
   /**
    * Get the list of all name elements.
+   *
    * @return List of Xname objects.
    */
-  public List<Xnode> getAll(){
+  public List<Xnode> getAll() {
     return _parameters;
   }
 
   /**
    * Add a name element to the parameters list.
+   *
    * @param name The name element to add.
    */
-  public void add(Xnode name){
+  public void add(Xnode name) {
     _parameters.add(name);
     appendToChildren(name, false);
   }
 
   /**
    * Add a name element to the parameters list before the referenced element.
+   *
    * @param ref  Referenced element. New element will be added before.
    * @param name The name element to add.
    */
-  public void addBefore(Xnode ref, Xnode name){
+  public void addBefore(Xnode ref, Xnode name) {
     int index = _parameters.indexOf(ref);
     _parameters.add(index, name);
     XnodeUtil.insertBefore(ref, name);
@@ -72,7 +77,7 @@ public class Xparams extends Xnode {
 
   @Override
   public Xparams cloneObject() {
-    Element clone = (Element)cloneNode();
+    Element clone = (Element) cloneNode();
     return new Xparams(clone);
   }
 }

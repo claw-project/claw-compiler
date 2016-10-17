@@ -8,7 +8,7 @@ package cx2x.xcodeml.xnode;
 /**
  * The Xscope represents the possible value for the scope attribute in XcodeML
  * intermediate representation.
- *
+ * <p>
  * Possible value are: local, global, param
  *
  * @author clementval
@@ -17,15 +17,15 @@ package cx2x.xcodeml.xnode;
 public enum Xscope {
   LOCAL,
   GLOBAL,
-  PARAM
-  ;
+  PARAM;
 
   /**
    * Convert current enum to String value.
+   *
    * @return Corresponding String value.
    */
-  public String toString(){
-    switch(this){
+  public String toString() {
+    switch(this) {
       case LOCAL:
         return Xname.SCOPE_LOCAL;
       case GLOBAL:
@@ -39,14 +39,15 @@ public enum Xscope {
 
   /**
    * Convert string value to enum.
+   *
    * @param value String value.
    * @return Corresponding enum value.
    */
-  public static Xscope fromString(String value){
-    if(value == null){
+  public static Xscope fromString(String value) {
+    if(value == null) {
       return null;
     }
-    switch (value) {
+    switch(value) {
       case Xname.SCOPE_LOCAL:
         return LOCAL;
       case Xname.SCOPE_GLOBAL:

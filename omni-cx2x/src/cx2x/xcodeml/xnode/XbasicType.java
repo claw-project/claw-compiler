@@ -15,21 +15,21 @@ import cx2x.xcodeml.helper.*;
 /**
  * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
  * representation.
- *
+ * <p>
  * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:
- *   - kind (Xkind)
- *   - len (Xlength)
- *   - arrayIndex (XarrayIndex)
- *   - indexRange (XindexRange)
- *   - coShape TODO not needed for the moment
+ * - kind (Xkind)
+ * - len (Xlength)
+ * - arrayIndex (XarrayIndex)
+ * - indexRange (XindexRange)
+ * - coShape TODO not needed for the moment
  * Attributes:
  * - Required: type (text), ref (text)
  * - Optional: is_public (bool), is_private (bool), is_pointer (bool),
- *             is_target (bool), is_external (bool),is_intrinsic (bool),
- *             is_optional (bool), is_save (bool), is_parameter (bool),
- *             is_allocatable (bool), intent (text: in, out, inout)
- *
+ * is_target (bool), is_external (bool),is_intrinsic (bool),
+ * is_optional (bool), is_save (bool), is_parameter (bool),
+ * is_allocatable (bool), intent (text: in, out, inout)
+ * <p>
  * The type attribute is defined in the Xtype base class.
  *
  * @author clementval
@@ -65,9 +65,10 @@ public class XbasicType extends Xtype {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public XbasicType(Element baseElement){
+  public XbasicType(Element baseElement) {
     super(baseElement);
     readBasicTypeInformation();
   }
@@ -75,13 +76,13 @@ public class XbasicType extends Xtype {
   /**
    * Read inner element information.
    */
-  private void readBasicTypeInformation(){
+  private void readBasicTypeInformation() {
     readRequiredAttributes();
     readOptionalAttributes();
 
     _dimensions = XnodeUtil.findIndexes(this);
     // is array ?
-    if (_dimensions.size() > 0){
+    if(_dimensions.size() > 0) {
       _isArray = true;
     }
 
@@ -119,13 +120,14 @@ public class XbasicType extends Xtype {
 
   /**
    * Get the indexRange object for the given dimension.
+   *
    * @param index The position of the dimension. For the first dimension, index
    *              is 0, for the second is 1 and so on.
    * @return A XindexRange object representing the index range of a specific
    * dimension.
    */
-  public Xnode getDimensions(int index){
-    if(index >= _dimensions.size() || index < 0){
+  public Xnode getDimensions(int index) {
+    if(index >= _dimensions.size() || index < 0) {
       return null;
     }
     return _dimensions.get(index);
@@ -133,70 +135,79 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is an array type.
+   *
    * @return True if the type is an array type. False otherwise.
    */
-  public boolean isArray(){
+  public boolean isArray() {
     return _isArray;
   }
 
   /**
    * Check whether the type has a length element.
+   *
    * @return True if the type has a length element. False otherwise.
    */
-  public boolean hasLength(){
+  public boolean hasLength() {
     return _length != null;
   }
 
   /**
    * Get the len element.
+   *
    * @return Len element. Null if the basic type has no len element.
    */
-  public Xnode getLength(){
+  public Xnode getLength() {
     return _length;
   }
 
   /**
    * Check whether the type has a kind element.
+   *
    * @return True if the type has a kind element. False otherwise.
    */
-  public boolean hasKind(){
+  public boolean hasKind() {
     return _kind != null;
   }
 
   /**
    * Get the kind element.
+   *
    * @return Kind element. Null if the basic type has no kind element.
    */
-  public Xnode getKind(){
+  public Xnode getKind() {
     return _kind;
   }
 
   /**
    * Get the array dimensions.
+   *
    * @return The dimensions of the array type.
    */
-  public int getDimensions(){
+  public int getDimensions() {
     return _dimensions.size();
   }
 
   /**
    * Get ref attribute value.
+   *
    * @return The ref attribute value as String.
    */
-  public String getRef(){
+  public String getRef() {
     return _ref;
   }
 
   /**
    * Set the value of ref attribute.
+   *
    * @param value New value of ref attribute.
    */
-  public void setRef(String value){
+  public void setRef(String value) {
     setAttribute(Xattr.REF, value);
   }
 
   /**
    * Check whether the type is public.
+   *
    * @return True if the type is public. False otherwise.
    */
   public boolean isPublic() {
@@ -205,6 +216,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is private.
+   *
    * @return True if the type is private. False otherwise.
    */
   public boolean isPrivate() {
@@ -213,6 +225,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is a pointer.
+   *
    * @return True if the type is a pointer. False otherwise.
    */
   public boolean isPointer() {
@@ -221,6 +234,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is a target.
+   *
    * @return True if the type is a target. False otherwise.
    */
   public boolean isTarget() {
@@ -229,6 +243,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is external.
+   *
    * @return True if the type is external. False otherwise.
    */
   public boolean isExternal() {
@@ -237,6 +252,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is intrinsic.
+   *
    * @return True if the type is intrinsic. False otherwise.
    */
   public boolean isIntrinsic() {
@@ -245,14 +261,16 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is optional.
+   *
    * @return True if the type is optional. False otherwise.
    */
-  public boolean isOptional(){
+  public boolean isOptional() {
     return _is_optional;
   }
 
   /**
    * Check whether the type is save.
+   *
    * @return True if the type is save. False otherwise.
    */
   public boolean isSave() {
@@ -261,6 +279,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is a parameter.
+   *
    * @return True if the type is a parameter. False otherwise.
    */
   public boolean isParameter() {
@@ -269,6 +288,7 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type is allocatable.
+   *
    * @return True if the type is allocatable. False otherwise.
    */
   public boolean isAllocatable() {
@@ -277,25 +297,28 @@ public class XbasicType extends Xtype {
 
   /**
    * Check whether the type has an intent.
+   *
    * @return True if the type has an intent. False otherwise.
    */
-  public boolean hasIntent(){
+  public boolean hasIntent() {
     return _intent != Xintent.NONE;
   }
 
   /**
    * Get the intent of the type.
+   *
    * @return Intent. Null if the type has no intent.
    */
-  public Xintent getIntent(){
+  public Xintent getIntent() {
     return _intent;
   }
 
   /**
    * Set the intent of the type.
+   *
    * @param value Intent value to be set.
    */
-  public void setIntent(Xintent value){
+  public void setIntent(Xintent value) {
     setAttribute(Xattr.INTENT, value.toString());
     _intent = value;
   }
@@ -303,7 +326,7 @@ public class XbasicType extends Xtype {
   /**
    * Remove intent attribute from the element.
    */
-  public void removeIntent(){
+  public void removeIntent() {
     if(hasIntent()) {
       _baseElement.removeAttribute(Xname.ATTR_INTENT);
       _intent = null;
@@ -313,8 +336,8 @@ public class XbasicType extends Xtype {
   /**
    * Remove is_allocatable attribute from the element.
    */
-  public void removeAllocatable(){
-    if(isAllocatable()){
+  public void removeAllocatable() {
+    if(isAllocatable()) {
       _baseElement.removeAttribute(Xname.ATTR_IS_ALLOCATABLE);
       _is_allocatable = false;
     }
@@ -323,8 +346,8 @@ public class XbasicType extends Xtype {
   /**
    * Remove all dimension from the type
    */
-  public void resetDimension(){
-    for(Xnode idx : _dimensions){
+  public void resetDimension() {
+    for(Xnode idx : _dimensions) {
       idx.delete();
     }
     _dimensions.clear();
@@ -333,18 +356,19 @@ public class XbasicType extends Xtype {
 
   /**
    * Remove the dimensions not in the given list. Dimension index starts at 1.
+   *
    * @param keptDimensions List of dimension index to be kept.
    */
-  public void removeDimension(List<Integer> keptDimensions){
+  public void removeDimension(List<Integer> keptDimensions) {
     List<Xnode> keptDim = new ArrayList<>();
-    for(int i = 0; i < _dimensions.size(); i++){
-      if(keptDimensions.contains(i+1)){
+    for(int i = 0; i < _dimensions.size(); i++) {
+      if(keptDimensions.contains(i + 1)) {
         keptDim.add(_dimensions.get(i));
       } else {
         _dimensions.get(i).delete();
       }
     }
-    if(keptDim.size() == 0){
+    if(keptDim.size() == 0) {
       _isArray = false;
     }
     _dimensions = keptDim;
@@ -352,12 +376,13 @@ public class XbasicType extends Xtype {
 
   /**
    * Add a dimension to the basic type.
+   *
    * @param index    Index element to add as the new dimension.
    * @param position Position compared to already existing element. If -1,
    *                 dimension is added at the end.
    */
-  public void addDimension(Xnode index, int position){
-    if(_dimensions.size() == 0 || position == APPEND){
+  public void addDimension(Xnode index, int position) {
+    if(_dimensions.size() == 0 || position == APPEND) {
       appendToChildren(index, false);
       _dimensions.add(index);
       _isArray = true;
@@ -370,11 +395,12 @@ public class XbasicType extends Xtype {
 
   /**
    * Check if the array type is specified with deferred dimension or not.
+   *
    * @return True if all current dimensions are deferred. False otherwise.
    */
-  public boolean isAllAssumedShape(){
-    for(Xnode dim : _dimensions){
-      if(!dim.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)){
+  public boolean isAllAssumedShape() {
+    for(Xnode dim : _dimensions) {
+      if(!dim.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
         return false;
       }
     }
@@ -383,7 +409,7 @@ public class XbasicType extends Xtype {
 
   @Override
   public XbasicType cloneObject() {
-    Element element = (Element)cloneNode();
+    Element element = (Element) cloneNode();
     return new XbasicType(element);
   }
 }

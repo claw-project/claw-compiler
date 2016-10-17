@@ -146,15 +146,16 @@ public enum Xcode {
     return this.name;
   }
 
-  public static Xcode fromString(String value){
+  public static Xcode fromString(String value) {
     return Xcode.valueOf(value.toUpperCase());
   }
 
   /**
    * Get the XcodeML original code.
+   *
    * @return XcodeML code.
    */
-  public String code(){
+  public String code() {
     return name;
   }
 }

@@ -10,16 +10,16 @@ import org.w3c.dom.Element;
 /**
  * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in
  * XcodeML intermediate representation.
- *
+ * <p>
  * Elements: (symbols?, declarations?, FcontainsStatement?)
  * - Optional:
- *   - symbols (XsymbolTable)
- *   - declarations  (XdeclTable)
- *   - FcontainsStatement (Xnode)
- *
+ * - symbols (XsymbolTable)
+ * - declarations  (XdeclTable)
+ * - FcontainsStatement (Xnode)
+ * <p>
  * Attributes:
  * - Required: name (text)
- *
+ * <p>
  * Can have lineno and file attributes
  *
  * @author clementval
@@ -33,9 +33,10 @@ public class XmoduleDefinition extends Xnode {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public XmoduleDefinition(Element baseElement){
+  public XmoduleDefinition(Element baseElement) {
     super(baseElement);
     _name = getAttribute(Xattr.NAME);
     Xnode symbols = find(Xcode.SYMBOLS);
@@ -47,32 +48,35 @@ public class XmoduleDefinition extends Xnode {
 
   /**
    * Get module name.
+   *
    * @return Module name.
    */
-  public String getName(){
+  public String getName() {
     return _name;
   }
 
 
   /**
    * Get the module's symbols table.
+   *
    * @return A XsymbolTable object containing the module's symbols.
    */
-  public XsymbolTable getSymbolTable(){
+  public XsymbolTable getSymbolTable() {
     return _symbols;
   }
 
   /**
    * Get the module's declarations table.
+   *
    * @return A XdeclTable object containing the module's declarations.
    */
-  public XdeclTable getDeclarationTable(){
+  public XdeclTable getDeclarationTable() {
     return _declarations;
   }
 
   @Override
   public XmoduleDefinition cloneObject() {
-    Element clone = (Element)cloneNode();
+    Element clone = (Element) cloneNode();
     return new XmoduleDefinition(clone);
   }
 }

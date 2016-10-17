@@ -11,14 +11,14 @@ import org.w3c.dom.Node;
 /**
  * The XfunctionType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
- *
+ * <p>
  * Elements: (params?)
  * - Optional:
- *   - params (Xparams)
+ * - params (Xparams)
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
- *   is_internal (bool)
+ * is_internal (bool)
  *
  * @author clementval
  */
@@ -39,9 +39,10 @@ public class XfunctionType extends Xtype {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public XfunctionType(Element baseElement){
+  public XfunctionType(Element baseElement) {
     super(baseElement);
     readElementInformation();
   }
@@ -49,7 +50,7 @@ public class XfunctionType extends Xtype {
   /**
    * Read inner element information.
    */
-  private void readElementInformation(){
+  private void readElementInformation() {
     Xnode paramsNode = find(Xcode.PARAMS);
     if(paramsNode != null) {
       _params = new Xparams(paramsNode.getElement());
@@ -66,63 +67,71 @@ public class XfunctionType extends Xtype {
 
   /**
    * Get the function result name.
+   *
    * @return Result name value.
    */
-  public String getResultName(){
+  public String getResultName() {
     return _resultName;
   }
 
   /**
    * Check whether function is recursive.
+   *
    * @return True if the function is recursive. False otherwise.
    */
-  public boolean isRecursive(){
+  public boolean isRecursive() {
     return _isRecursive;
   }
 
   /**
    * Check whether function is internal.
+   *
    * @return True if the function is internal. False otherwise.
    */
-  public boolean isInternal(){
+  public boolean isInternal() {
     return _isInternal;
   }
 
   /**
    * Get the function return type.
+   *
    * @return The function's return type as String.
    */
-  public String getReturnType(){
+  public String getReturnType() {
     return _returnType;
   }
 
   /**
    * Check whether function is the program function.
+   *
    * @return True if the function is the program function. False otherwise.
    */
-  public boolean isProgram(){
+  public boolean isProgram() {
     return _isProgram;
   }
 
 
   /**
    * Get the params element.
+   *
    * @return Params element.
    */
-  public Xparams getParams(){
+  public Xparams getParams() {
     return _params;
   }
 
   /**
    * Check the number of parameters of the function.
+   *
    * @return Number of parameters.
    */
-  public int getParameterNb(){
+  public int getParameterNb() {
     return (_params == null) ? 0 : _params.getAll().size();
   }
 
   /**
    * A new object XfunctionType that is the clone of the current object.
+   *
    * @return A new XfunctionType that is a clone of the current one.
    */
   public XfunctionType cloneObject() {
@@ -133,16 +142,17 @@ public class XfunctionType extends Xtype {
 
   /**
    * Check if a parameter is part of the function defintion.
+   *
    * @param paramName Parameter's name.
    * @return True if the parameter is found in the function definition. False
    * otherwise.
    */
-  public boolean hasParam(String paramName){
-    if(_params == null){
+  public boolean hasParam(String paramName) {
+    if(_params == null) {
       return false;
     }
-    for(Xnode param : _params.getAll()){
-      if(param.getValue().toLowerCase().equals(paramName.toLowerCase())){
+    for(Xnode param : _params.getAll()) {
+      if(param.getValue().toLowerCase().equals(paramName.toLowerCase())) {
         return true;
       }
     }

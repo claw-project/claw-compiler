@@ -28,65 +28,72 @@ public class Xnode {
 
   /**
    * Constructs an Xnode object from an element in the AST.
+   *
    * @param element Base element for the Xnode object.
    */
-  public Xnode(Element element){
+  public Xnode(Element element) {
     _baseElement = element;
   }
 
   /**
    * Constructs a new element in the AST.
+   *
    * @param opcode  Code of the new element.
    * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    */
-  public Xnode(Xcode opcode, XcodeML xcodeml){
+  public Xnode(Xcode opcode, XcodeML xcodeml) {
     _baseElement = xcodeml.getDocument().createElement(opcode.code());
   }
 
   /**
    * Get the element opcode.
+   *
    * @return Opcode.
    */
-  public Xcode opcode(){
+  public Xcode opcode() {
     return Xcode.valueOf(_baseElement.getTagName().toUpperCase());
   }
 
   /**
    * Check whether the element has the corresponding attribute.
+   *
    * @param attrCode Attribute code.
    * @return True if the element has the corresponding attribute.
    */
-  public boolean hasAttribute(Xattr attrCode){
+  public boolean hasAttribute(Xattr attrCode) {
     return hasAttribute(attrCode.toString());
   }
 
   /**
    * Check whether the element has the corresponding attribute.
+   *
    * @param attrCode Attribute code.
    * @return True if the element has the corresponding attribute.
    */
-  public boolean hasAttribute(String attrCode){
+  public boolean hasAttribute(String attrCode) {
     return _baseElement != null
         && _baseElement.hasAttribute(attrCode);
   }
 
   /**
    * Get the attribute's value.
+   *
    * @param attrCode Attribute code.
    * @return Attribute's value.
    */
-  public String getAttribute(Xattr attrCode){
+  public String getAttribute(Xattr attrCode) {
     return getAttribute(attrCode.toString());
   }
 
   /**
    * Get the attribute's value.
+   *
    * @param attrCode Attribute code.
    * @return Attribute's value.
    */
-  public String getAttribute(String attrCode){
-    if(_baseElement.hasAttribute(attrCode)){
+  public String getAttribute(String attrCode) {
+    if(_baseElement.hasAttribute(attrCode)) {
       return _baseElement.getAttribute(attrCode);
     } else {
       return null;
@@ -95,6 +102,7 @@ public class Xnode {
 
   /**
    * Get boolean value of an attribute.
+   *
    * @param attrCode Attribute code.
    * @return Attribute's value. False if attribute doesn't exist.
    */
@@ -104,6 +112,7 @@ public class Xnode {
 
   /**
    * Get boolean value of an attribute.
+   *
    * @param attrCode Attribute code.
    * @return Attribute's value. False if attribute doesn't exist.
    */
@@ -114,41 +123,45 @@ public class Xnode {
 
   /**
    * Get the element's value.
+   *
    * @return Element value.
    */
-  public String getValue(){
+  public String getValue() {
     return _baseElement.getTextContent().trim();
   }
 
   /**
    * Set attribute value.
+   *
    * @param attrCode Attribute code.
-   * @param value Value of the attribute.
+   * @param value    Value of the attribute.
    */
-  public void setAttribute(Xattr attrCode, String value){
+  public void setAttribute(Xattr attrCode, String value) {
     setAttribute(attrCode.toString(), value);
   }
 
   /**
    * Set attribute value.
+   *
    * @param attrCode Attribute code.
-   * @param value Value of the attribute.
+   * @param value    Value of the attribute.
    */
-  public void setAttribute(String attrCode, String value){
+  public void setAttribute(String attrCode, String value) {
     _baseElement.setAttribute(attrCode, value);
   }
 
   /**
    * Get the list of child elements.
+   *
    * @return List of children of the current element.
    */
-  public List<Xnode> getChildren(){
+  public List<Xnode> getChildren() {
     List<Xnode> nodes = new ArrayList<>();
     NodeList children = _baseElement.getChildNodes();
-    for(int i = 0; i < children.getLength(); ++i){
+    for(int i = 0; i < children.getLength(); ++i) {
       Node child = children.item(i);
-      if(child.getNodeType() == Node.ELEMENT_NODE){
-        nodes.add(new Xnode((Element)child));
+      if(child.getNodeType() == Node.ELEMENT_NODE) {
+        nodes.add(new Xnode((Element) child));
       }
     }
     return nodes;
@@ -156,10 +169,11 @@ public class Xnode {
 
   /**
    * Check whether the current element has a body element.
+   *
    * @return True if the element has a body. False otherwise.
    */
-  public boolean hasBody(){
-    switch (opcode()){
+  public boolean hasBody() {
+    switch(opcode()) {
       case FDOSTATEMENT:
       case FFUNCTIONDEFINITION:
         return true;
@@ -169,21 +183,23 @@ public class Xnode {
 
   /**
    * Get the inner body element.
+   *
    * @return The body element if found. Null otherwise.
    */
-  public Xnode getBody(){
+  public Xnode getBody() {
     return findNode(Xcode.BODY);
   }
 
   /**
    * Find first child with the given opcode.
+   *
    * @param opcode Code of the element to be found.
    * @return The found element. Null if nothing found.
    */
-  public Xnode findNode(Xcode opcode){
+  public Xnode findNode(Xcode opcode) {
     List<Xnode> children = getChildren();
-    for(Xnode child : children){
-      if(child.opcode() == opcode){
+    for(Xnode child : children) {
+      if(child.opcode() == opcode) {
         return child;
       }
     }
@@ -192,13 +208,14 @@ public class Xnode {
 
   /**
    * Find first child of any given opcodes.
+   *
    * @param opcodes List of opcodes to be searched.
    * @return The found element. Null if nothing found.
    */
-  public Xnode findAny(List<Xcode> opcodes){
+  public Xnode findAny(List<Xcode> opcodes) {
     List<Xnode> children = getChildren();
-    for(Xnode child : children){
-      if(opcodes.contains(child.opcode())){
+    for(Xnode child : children) {
+      if(opcodes.contains(child.opcode())) {
         return child;
       }
     }
@@ -207,14 +224,15 @@ public class Xnode {
 
   /**
    * Find a specific element in the children of the current element.
+   *
    * @param opcodes List of opcode to reach the element.
    * @return The element if found. Null otherwise.
    */
-  public Xnode find(Xcode... opcodes){
+  public Xnode find(Xcode... opcodes) {
     Xnode tmp = this;
-    for(Xcode opcode : opcodes){
+    for(Xcode opcode : opcodes) {
       tmp = tmp.findNode(opcode);
-      if(tmp == null){
+      if(tmp == null) {
         return null;
       }
     }
@@ -223,12 +241,13 @@ public class Xnode {
 
   /**
    * Get child at position.
+   *
    * @param pos Position of the child.
    * @return Child at the corresponding position.
    */
-  public Xnode getChild(int pos){
+  public Xnode getChild(int pos) {
     List<Xnode> children = getChildren();
-    if(pos < 0 || pos > children.size() - 1){
+    if(pos < 0 || pos > children.size() - 1) {
       return null;
     }
     return children.get(pos);
@@ -236,71 +255,78 @@ public class Xnode {
 
   /**
    * Get the first child node.
+   *
    * @return First child or null if no child exists.
    */
-  public Xnode getFirstChild(){
+  public Xnode getFirstChild() {
     List<Xnode> children = this.getChildren();
     return children.size() == 0 ? null : children.get(0);
   }
 
   /**
    * Get the last child node.
+   *
    * @return Last child or null if no child exists.
    */
-  public Xnode getLastChild(){
+  public Xnode getLastChild() {
     List<Xnode> children = this.getChildren();
-    return children.size() == 0 ? null : children.get(children.size()-1);
+    return children.size() == 0 ? null : children.get(children.size() - 1);
   }
 
   /**
    * Set the element value.
+   *
    * @param value The element value.
    */
-  public void setValue(String value){
+  public void setValue(String value) {
     _baseElement.setTextContent(value);
   }
 
   /**
    * Delete the stored root element and all its children.
    */
-  public void delete(){
+  public void delete() {
     _isDeleted = true;
     XnodeUtil.delete(_baseElement);
   }
 
   /**
    * Check whether the node has been deleted.
+   *
    * @return True if the node has been deleted. False otherwise.
    */
-  public boolean isDeleted(){
+  public boolean isDeleted() {
     return _isDeleted;
   }
 
   /**
    * Get the base element.
+   *
    * @return Element.
    */
-  public Element getElement(){
+  public Element getElement() {
     return _baseElement;
   }
 
   /**
    * Create an identical copy of the element and its children.
+   *
    * @return A node representing the root element of the clone.
    */
-  public Node cloneNode(){
+  public Node cloneNode() {
     return _baseElement.cloneNode(true);
   }
 
   /**
    * Append an element ot the children of this element.
+   *
    * @param node  The element to append.
    * @param clone If true, the element is cloned before being appended. If
    *              false, the element is directly appended.
    */
-  public void appendToChildren(Xnode node, boolean clone){
-    if(node != null){
-      if(clone){
+  public void appendToChildren(Xnode node, boolean clone) {
+    if(node != null) {
+      if(clone) {
         _baseElement.appendChild(node.cloneNode());
       } else {
         _baseElement.appendChild(node.getElement());
@@ -310,14 +336,15 @@ public class Xnode {
 
   /**
    * Insert as first child.
+   *
    * @param node  Element to be inserted.
    * @param clone Clone or not the element before insertion.
    */
-  public void insert(Xnode node, boolean clone){
+  public void insert(Xnode node, boolean clone) {
     if(node != null) {
       NodeList children = _baseElement.getChildNodes();
       Node toInsert = clone ? node.cloneNode() : node.getElement();
-      if(children.getLength() == 0){
+      if(children.getLength() == 0) {
         _baseElement.appendChild(toInsert);
       } else {
         _baseElement.insertBefore(toInsert, children.item(0));
@@ -327,37 +354,43 @@ public class Xnode {
 
   /**
    * Set the file attribute of the element.
+   *
    * @param value File path.
    */
-  public void setFile(String value){
+  public void setFile(String value) {
     setAttribute(Xattr.FILE, value);
   }
 
   /**
    * Set the lineno attribute in the element.
+   *
    * @param lineno Line number.
    */
-  public void setLine(int lineno){
+  public void setLine(int lineno) {
     setAttribute(Xattr.LINENO, String.valueOf(lineno));
   }
 
   /**
    * Clone the current element with all its children.
+   *
    * @return A copy of the current element.
    */
   public Xnode cloneObject() {
     Node clone = cloneNode();
-    return new Xnode((Element)clone);
+    return new Xnode((Element) clone);
   }
 
   /**
    * Get the lineno attribute value. This attribute is not defined for every
    * elements.
+   *
    * @return Line number. 0 if the attribute is not defined.
    */
-  public int getLineNo(){
-    if(_baseElement.hasAttribute(Xattr.LINENO.toString())){
-      return Integer.parseInt(_baseElement.getAttribute(Xattr.LINENO.toString()));
+  public int getLineNo() {
+    if(_baseElement.hasAttribute(Xattr.LINENO.toString())) {
+      return Integer.parseInt(
+          _baseElement.getAttribute(Xattr.LINENO.toString())
+      );
     } else {
       return 0;
     }
@@ -366,9 +399,10 @@ public class Xnode {
   /**
    * Get the file attribute value. This attribute is not defined for every
    * elements.
+   *
    * @return File path. Null if the file attribute is not defined.
    */
-  public String getFile(){
+  public String getFile() {
     return (_baseElement.hasAttribute(Xattr.FILE.toString())) ?
         _baseElement.getAttribute(Xattr.FILE.toString()) : null;
   }

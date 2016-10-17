@@ -15,11 +15,11 @@ import java.util.Map;
 /**
  * The XglobalDeclTable represents the typeTable (5.1) element in XcodeML
  * intermediate representation.
- *
+ * <p>
  * Elements: (FfunctionDefinition | FmoduleDefinition)*
  * - Optional:
- *   - FfunctionDefinition (XfunctionDefinition)
- *   - FmoduleDefinition (XmoduleDefinition)
+ * - FfunctionDefinition (XfunctionDefinition)
+ * - FmoduleDefinition (XmoduleDefinition)
  *
  * @author clementval
  */
@@ -33,9 +33,10 @@ public class XglobalDeclTable extends Xnode {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public XglobalDeclTable(Element baseElement){
+  public XglobalDeclTable(Element baseElement) {
     super(baseElement);
     _table = new Hashtable<>();
     readTable();
@@ -44,15 +45,15 @@ public class XglobalDeclTable extends Xnode {
   /**
    * Read the declaration table
    */
-  private void readTable(){
+  private void readTable() {
     Node currentNode = _baseElement.getFirstChild();
-    while(currentNode != null){
-      if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element)currentNode;
-        if(el.getTagName().equals(Xname.F_FUNCTION_DEFINITION)){
+    while(currentNode != null) {
+      if(currentNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) currentNode;
+        if(el.getTagName().equals(Xname.F_FUNCTION_DEFINITION)) {
           XfunctionDefinition fctDef = new XfunctionDefinition(el);
           _table.put(fctDef.getName().getValue(), fctDef);
-        } else if(el.getTagName().equals(Xname.F_MODULE_DEFINITION)){
+        } else if(el.getTagName().equals(Xname.F_MODULE_DEFINITION)) {
           XmoduleDefinition moduleDef = new XmoduleDefinition(el);
           _table.put(moduleDef.getName(), moduleDef);
         }
@@ -63,14 +64,15 @@ public class XglobalDeclTable extends Xnode {
 
   /**
    * Get a specific function declaration based on its name.
+   *
    * @param name The name of the function to be returned.
    * @return A XfunctionDefinition object if key is found. Null otherwise.
    */
-  public XfunctionDefinition getFctDefinition(String name){
+  public XfunctionDefinition getFctDefinition(String name) {
     if(_table.containsKey(name)) {
       Xnode el = _table.get(name);
-      if(el instanceof XfunctionDefinition){
-        return (XfunctionDefinition)el;
+      if(el instanceof XfunctionDefinition) {
+        return (XfunctionDefinition) el;
       }
     }
     return null;
@@ -78,14 +80,15 @@ public class XglobalDeclTable extends Xnode {
 
   /**
    * Get a specific module declaration based on its name.
+   *
    * @param name The name of the module to be returned.
    * @return A XmoduleDefinition object if key is found. Null otherwise.
    */
-  public XmoduleDefinition getModuleDefinition(String name){
-    if(_table.containsKey(name)){
+  public XmoduleDefinition getModuleDefinition(String name) {
+    if(_table.containsKey(name)) {
       Xnode el = _table.get(name);
-      if(el instanceof XmoduleDefinition){
-        return  (XmoduleDefinition)el;
+      if(el instanceof XmoduleDefinition) {
+        return (XmoduleDefinition) el;
       }
     }
     return null;
@@ -93,15 +96,17 @@ public class XglobalDeclTable extends Xnode {
 
   /**
    * Check if there is a definition for the given name.
+   *
    * @param name Name to be searched.
    * @return True if there is a definition. False otherwise.
    */
-  public boolean hasDefinition(String name){
+  public boolean hasDefinition(String name) {
     return _table.containsKey(name);
   }
 
   /**
    * Check if there is a module definition for the given name.
+   *
    * @param name Name to be searched.
    * @return True if there is a definition. False otherwise.
    */
@@ -112,33 +117,36 @@ public class XglobalDeclTable extends Xnode {
 
   /**
    * Check if there is a function definition for the given name.
+   *
    * @param name Name to be searched.
    * @return True if there is a definition. False otherwise.
    */
-  public boolean hasFunctionDefinition(String name){
+  public boolean hasFunctionDefinition(String name) {
     return _table.containsKey(name) &&
         (_table.get(name) instanceof XfunctionDefinition);
   }
 
   /**
    * Get the number of declarations in the table.
+   *
    * @return The number of declarations in the table.
    */
-  public int count(){
+  public int count() {
     return _table.size();
   }
 
   /**
    * Get an iterator over the table.
+   *
    * @return Iterator.
    */
-  public Iterator<Map.Entry<String, Xnode>> getIterator(){
+  public Iterator<Map.Entry<String, Xnode>> getIterator() {
     return _table.entrySet().iterator();
   }
 
   @Override
   public XglobalDeclTable cloneObject() {
-    Element clone = (Element)cloneNode();
+    Element clone = (Element) cloneNode();
     return new XglobalDeclTable(clone);
   }
 

@@ -34,27 +34,30 @@ public class Xtype extends Xnode {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public Xtype(Element baseElement){
+  public Xtype(Element baseElement) {
     super(baseElement);
   }
 
   /**
    * Set type value.
+   *
    * @param value New type value.
    */
-  public void setType(String value){
-    if(_baseElement != null){
+  public void setType(String value) {
+    if(_baseElement != null) {
       _baseElement.setAttribute(Xname.ATTR_TYPE, value);
     }
   }
 
   /**
    * Get type value.
+   *
    * @return Type value.
    */
-  public String getType(){
+  public String getType() {
     return getAttribute(Xattr.TYPE);
   }
 }

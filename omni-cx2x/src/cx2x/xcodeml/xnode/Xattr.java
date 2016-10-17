@@ -58,7 +58,7 @@ public enum Xattr {
     return this.name;
   }
 
-  public static Xattr fromString(String value){
+  public static Xattr fromString(String value) {
     return Xattr.valueOf(value.toUpperCase().replace("-", "_"));
   }
 

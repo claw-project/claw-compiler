@@ -26,11 +26,12 @@ public class Xmod extends XcodeML {
   /**
    * Constructs a basic Xmod object representing the XcodeML module file given
    * in input.
+   *
    * @param baseElement XcodeML document.
    * @param name        Name of the module.
    * @param path        Path of the XcodeML module file without the filename.
    */
-  public Xmod(Document baseElement, String name, String path){
+  public Xmod(Document baseElement, String name, String path) {
     super(baseElement);
     _name = name;
     _path = path.endsWith("/") ? path : path + "/";
@@ -39,14 +40,16 @@ public class Xmod extends XcodeML {
 
   /**
    * Get the path associated with this XcodeML module.
+   *
    * @return Path of the module file.
    */
-  public String getPath(){
+  public String getPath() {
     return _path;
   }
 
   /**
    * Get the name of the module.
+   *
    * @return Name of the module.
    */
   public String getName() {
@@ -55,18 +58,20 @@ public class Xmod extends XcodeML {
 
   /**
    * Get the full path of the module file.
+   *
    * @return Module file full path.
    */
-  public String getFullPath(){
+  public String getFullPath() {
     return _path + _name + ClawConstant.CLAW_MOD_SUFFIX
         + XnodeUtil.XMOD_FILE_EXTENSION;
   }
 
   /**
    * Get the identifiers table.
+   *
    * @return Identifiers as a symbol table.
    */
-  public XsymbolTable getIdentifiers(){
+  public XsymbolTable getIdentifiers() {
     return _identifiers;
   }
 }

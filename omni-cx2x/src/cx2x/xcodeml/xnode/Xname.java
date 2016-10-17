@@ -22,22 +22,22 @@ public class Xname {
   public static final String DEFAULT_STEP_VALUE = "1";
 
   // Base type (XcodeML/F 0.91J 9.1)
-  public static final String TYPE_F_INT     = "Fint";
-  public static final String TYPE_F_REAL    = "Freal";
+  public static final String TYPE_F_INT = "Fint";
+  public static final String TYPE_F_REAL = "Freal";
   public static final String TYPE_F_COMPLEX = "Fcomplex";
   public static final String TYPE_F_LOGICAL = "Flogical";
-  public static final String TYPE_F_CHAR    = "Fcharacter";
-  public static final String TYPE_F_VOID    = "Fvoid";
+  public static final String TYPE_F_CHAR = "Fcharacter";
+  public static final String TYPE_F_VOID = "Fvoid";
 
   // Storage class (part of Id - XcodeML/F 0.91J 8.2)
-  public static final String SCLASS_AUTO       = "auto";
-  public static final String SCLASS_EXTERN     = "extern";
+  public static final String SCLASS_AUTO = "auto";
+  public static final String SCLASS_EXTERN = "extern";
   public static final String SCLASS_EXTERN_DEF = "extern_def";
-  public static final String SCLASS_F_LOCAL    = "flocal";
-  public static final String SCLASS_F_FUNC     = "ffunc";
-  public static final String SCLASS_F_PARAM    = "fparam";
-  public static final String SCLASS_LABEL      = "label";
-  public static final String SCLASS_PARAM      = "param";
+  public static final String SCLASS_F_LOCAL = "flocal";
+  public static final String SCLASS_F_FUNC = "ffunc";
+  public static final String SCLASS_F_PARAM = "fparam";
+  public static final String SCLASS_LABEL = "label";
+  public static final String SCLASS_PARAM = "param";
 
   // Scope (part of Var - XcodeML/F 0.91J 7.4.1)
   public static final String SCOPE_LOCAL = "local";

@@ -13,12 +13,12 @@ import java.util.*;
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
  * representation.
- *
+ * <p>
  * Elements: ( FbasicType | FfunctionType | FstructType ) *
  * - Optional:
- *   - FbasicType (XbasicType)
- *   - FfunctionType (XfunctionType)
- *   - FstructType (XstructType)
+ * - FbasicType (XbasicType)
+ * - FfunctionType (XfunctionType)
+ * - FstructType (XstructType)
  *
  * @author clementval
  */
@@ -41,9 +41,10 @@ public class XtypeTable extends Xnode {
   /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
+   *
    * @param baseElement The root of the element.
    */
-  public XtypeTable(Element baseElement){
+  public XtypeTable(Element baseElement) {
     super(baseElement);
     _table = new LinkedHashMap<>();
     readTable();
@@ -52,12 +53,12 @@ public class XtypeTable extends Xnode {
   /**
    * Read the type table.
    */
-  private void readTable(){
+  private void readTable() {
     Node crtNode = _baseElement.getFirstChild();
-    while(crtNode != null){
-      if (crtNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element)crtNode;
-        switch (el.getTagName()){
+    while(crtNode != null) {
+      if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element el = (Element) crtNode;
+        switch(el.getTagName()) {
           case Xname.BASIC_TYPE:
             XbasicType bt = new XbasicType(el);
             _table.put(bt.getType(), bt);
@@ -77,28 +78,31 @@ public class XtypeTable extends Xnode {
 
   /**
    * Get number of elements in the type table.
+   *
    * @return Number of elements in the table.
    */
-  public int count(){
+  public int count() {
     return _table.size();
   }
 
   /**
    * Add a new element in the type table.
+   *
    * @param type The new type to be added.
    */
-  public void add(Xtype type){
+  public void add(Xtype type) {
     _baseElement.appendChild(type.cloneNode());
     _table.put(type.getAttribute(Xattr.TYPE), type);
   }
 
   /**
    * Get an element from the type table.
+   *
    * @param type Type of the element to be returned.
    * @return Xtype object if found in the table. Null otherwise.
    */
   public Xtype get(String type) {
-    if(_table.containsKey(type)){
+    if(_table.containsKey(type)) {
       return _table.get(type);
     }
     return null;
@@ -106,75 +110,84 @@ public class XtypeTable extends Xnode {
 
   /**
    * Check if a type is present in the type table
+   *
    * @param type Type of the element to be checked.
    * @return True if the element is present. False otherwise.
    */
-  public boolean hasType(String type){
+  public boolean hasType(String type) {
     return _table.containsKey(type);
   }
 
   /**
    * Get a new unique function hash for the type table.
+   *
    * @return New unique fct type hash.
    */
-  public String generateFctTypeHash(){
+  public String generateFctTypeHash() {
     return generateHash(FCT_HASH_PREFIX);
   }
 
   /**
    * Get a new unique integer hash for the type table.
+   *
    * @return New unique integer type hash.
    */
-  public String generateIntegerTypeHash(){
+  public String generateIntegerTypeHash() {
     return generateHash(INT_HASH_PREFIX);
   }
 
   /**
    * Get a new unique real hash for the type table.
+   *
    * @return New unique real type hash.
    */
-  public String generateRealTypeHash(){
+  public String generateRealTypeHash() {
     return generateHash(REAL_HASH_PREFIX);
   }
 
   /**
    * Get a new unique array hash for the type table.
+   *
    * @return New unique array type hash.
    */
-  public String generateArrayTypeHash(){
+  public String generateArrayTypeHash() {
     return generateHash(ARRAY_HASH_PREFIX);
   }
 
   /**
    * Get a new unique character hash for the type table.
+   *
    * @return New unique character type hash.
    */
-  public String generateCharTypeHash(){
+  public String generateCharTypeHash() {
     return generateHash(CHAR_HASH_PREFIX);
   }
 
   /**
    * Get a new unique logical hash for the type table.
+   *
    * @return New unique logical type hash.
    */
-  public String generateLogicalTypeHash(){
+  public String generateLogicalTypeHash() {
     return generateHash(LOGICAL_HASH_PREFIX);
   }
 
   /**
    * Get a new unique complex hash for the type table.
+   *
    * @return New unique complex type hash.
    */
-  public String generateComplexTypeHash(){
+  public String generateComplexTypeHash() {
     return generateHash(COMPLEX_HASH_PREFIX);
   }
 
   /**
    * Get a new unique hash for the type table with the given prefix.
+   *
    * @param prefix Prefix added to the hash string.
    * @return New unique hash.
    */
-  private String generateHash(String prefix){
+  private String generateHash(String prefix) {
     String hash;
     do {
       hash = prefix + generateHash(HASH_LENGTH);
@@ -184,13 +197,14 @@ public class XtypeTable extends Xnode {
 
   /**
    * Generate a new unique type hash for the table.
+   *
    * @param length Length of the hash string to be generated.
    * @return The new unique hash.
    */
-  private String generateHash(int length){
+  private String generateHash(int length) {
     Random r = new Random();
     StringBuilder sb = new StringBuilder();
-    while(sb.length() < length){
+    while(sb.length() < length) {
       sb.append(Integer.toHexString(r.nextInt()));
     }
     return sb.toString().substring(0, length);
@@ -198,15 +212,16 @@ public class XtypeTable extends Xnode {
 
   /**
    * Returns a Collection view of the values contained in this XtypeTable.
+   *
    * @return A view of the values contained in this map
    */
-  public Collection<Xtype> values(){
+  public Collection<Xtype> values() {
     return _table.values();
   }
 
   @Override
   public XtypeTable cloneObject() {
-    Element clone = (Element)cloneNode();
+    Element clone = (Element) cloneNode();
     return new XtypeTable(clone);
   }
 }
