@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Transformer interface
- *
+ * <p>
  * Transformer stores all the transformation to be applied by a translator.
  *
  * @author clementval
@@ -25,27 +25,29 @@ public class ModuleCache {
   /**
    * Constructs a new empty module cache.
    */
-  public ModuleCache(){
+  public ModuleCache() {
     _moduleCache = new HashMap<>();
   }
 
   /**
    * Check whether a module is in the cache.
+   *
    * @param moduleName Name of the module.
    * @return True if the module is in the cache. False otherwise.
    */
-  public boolean isModuleLoaded(String moduleName){
+  public boolean isModuleLoaded(String moduleName) {
     return _moduleCache.containsKey(moduleName.toLowerCase());
   }
 
   /**
    * Add a module in the cache by its name. If already present, the module is
    * overwritten.
+   *
    * @param moduleName Name of the module.
    * @param module     Module object.
    */
-  public void add(String moduleName, Xmod module){
-    if(_moduleCache.containsKey(moduleName.toLowerCase())){
+  public void add(String moduleName, Xmod module) {
+    if(_moduleCache.containsKey(moduleName.toLowerCase())) {
       _moduleCache.remove(moduleName.toLowerCase());
     }
     _moduleCache.put(moduleName.toLowerCase(), module);
@@ -53,18 +55,20 @@ public class ModuleCache {
 
   /**
    * Get a module in the cache by its name.
+   *
    * @param moduleName Name of the module.
    * @return The cached module.
    */
-  public Xmod get(String moduleName){
+  public Xmod get(String moduleName) {
     return _moduleCache.get(moduleName.toLowerCase());
   }
 
   /**
    * Get an iterator over all the module in the cache.
+   *
    * @return A map entry iterator.
    */
-  public Iterator<Map.Entry<String, Xmod>> getIterator(){
+  public Iterator<Map.Entry<String, Xmod>> getIterator() {
     return _moduleCache.entrySet().iterator();
   }
 }

@@ -16,15 +16,17 @@ import cx2x.xcodeml.language.AnalyzedPragma;
  * @author clementval
  */
 public abstract class BlockTransformation extends Transformation {
+
   private AnalyzedPragma _endDirective = null;
 
   /**
    * BlockTransformation ctor.
+   *
    * @param startDirective The directive that triggered the transformation.
    * @param endDirective   The end directive that close the structured block.
    */
   protected BlockTransformation(AnalyzedPragma startDirective,
-                             AnalyzedPragma endDirective)
+                                AnalyzedPragma endDirective)
   {
     super(startDirective);
     _endDirective = endDirective;
@@ -32,9 +34,10 @@ public abstract class BlockTransformation extends Transformation {
 
   /**
    * Get the end directive that triggered the transformation.
+   *
    * @return The analyzed directive as a language object.
    */
-  public AnalyzedPragma getEndDirective(){
+  public AnalyzedPragma getEndDirective() {
     return _endDirective;
   }
 }

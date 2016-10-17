@@ -16,8 +16,10 @@ import cx2x.xcodeml.exception.*;
  */
 
 public class IndependentTransformationGroup extends TransformationGroup {
+
   /**
    * IndependentTransformationGroup ctor
+   *
    * @param name A friendly name to describe the transformation group.
    */
   public IndependentTransformationGroup(String name) {
@@ -28,14 +30,14 @@ public class IndependentTransformationGroup extends TransformationGroup {
    * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
    */
   public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
-    throws Exception
+      throws Exception
   {
-    for(Transformation trans : getTransformations()){
+    for(Transformation trans : getTransformations()) {
       try {
         trans.transform(xcodeml, transformer, null);
-      } catch (IllegalTransformationException itex) {
+      } catch(IllegalTransformationException itex) {
         // Catch the exception to add line information and rethrow it
-        if(itex.getStartLine() == 0){
+        if(itex.getStartLine() == 0) {
           itex.setStartLine(trans.getStartLine());
         }
         throw itex;

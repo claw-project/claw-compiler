@@ -22,6 +22,7 @@ public class DependentTransformationGroup extends TransformationGroup {
 
   /**
    * DependentTransformationGroup ctor.
+   *
    * @param name A friendly name to describe the transformation group.
    */
   public DependentTransformationGroup(String name) {
@@ -32,22 +33,22 @@ public class DependentTransformationGroup extends TransformationGroup {
    * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
    */
   public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
-    throws Exception
+      throws Exception
   {
     List<Transformation> transformations = getTransformations();
-    for(int i = 0; i < transformations.size(); ++i){
+    for(int i = 0; i < transformations.size(); ++i) {
       Transformation base = transformations.get(i);
-      for(int j = i + 1; j < transformations.size(); ++j){
+      for(int j = i + 1; j < transformations.size(); ++j) {
         Transformation candidate = transformations.get(j);
-        if(candidate.isTransformed()){
+        if(candidate.isTransformed()) {
           continue;
         }
-        if(base.canBeTransformedWith(candidate)){
+        if(base.canBeTransformedWith(candidate)) {
           try {
             base.transform(xcodeml, transformer, candidate);
-          } catch (IllegalTransformationException itex) {
+          } catch(IllegalTransformationException itex) {
             // Catch the exception to add line information and rethrow it
-            if(itex.getStartLine() == 0){
+            if(itex.getStartLine() == 0) {
               itex.setStartLine(base.getStartLine());
             }
             throw itex;
@@ -61,14 +62,15 @@ public class DependentTransformationGroup extends TransformationGroup {
    * Add a new transformation in the group. As transformation are dependent
    * between each other, the position in the list is determined by the
    * transformation's start line.
+   *
    * @see TransformationGroup#add(Transformation)
    */
   @Override
-  public void add(Transformation transformation){
+  public void add(Transformation transformation) {
     int linePosition = transformation.getStartLine();
     int insertIndex = 0;
-    for(Transformation t : getTransformations()){
-      if(t.getStartLine() > linePosition){
+    for(Transformation t : getTransformations()) {
+      if(t.getStartLine() > linePosition) {
         break;
       }
       ++insertIndex;
