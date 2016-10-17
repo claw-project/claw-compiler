@@ -274,6 +274,14 @@ public class Xnode {
   }
 
   /**
+   * Get the number of children node in the current node.
+   * @return Number of children.
+   */
+  public int size(){
+    return this.getChildren().size();
+  }
+
+  /**
    * Set the element value.
    *
    * @param value The element value.
