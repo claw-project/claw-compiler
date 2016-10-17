@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 public class XnodeUtilTest {
 
   @Test
-  public void xpathIntersectTest(){
+  public void xpathIntersectTest() {
     File f = new File(TestConstant.TEST_PROGRAM);
     assertTrue(f.exists());
     XcodeProgram xcodeml =
@@ -44,7 +44,7 @@ public class XnodeUtilTest {
 
     List<Xnode> stmts =
         XnodeUtil.findDoStatement(loopHoistStart, loopHoistEnd,
-        Arrays.asList("j", "i"));
+            Arrays.asList("j", "i"));
 
     assertEquals(3, stmts.size());
 

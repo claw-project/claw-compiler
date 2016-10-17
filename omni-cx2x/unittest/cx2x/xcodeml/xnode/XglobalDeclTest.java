@@ -7,6 +7,7 @@ package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -18,20 +19,20 @@ public class XglobalDeclTest {
 
   private static final String simpleGlobDecl =
       "<globalDeclarations>" +
-      "<FmoduleDefinition name=\"module\" lineno=\"4\" " +
+          "<FmoduleDefinition name=\"module\" lineno=\"4\" " +
           "file=\"./src/module.f90\">" +
-      "</FmoduleDefinition>" +
-      "<FfunctionDefinition lineno=\"917\" file=\"./src/module.f90\">\n" +
-      "<name type=\"Fb39d60\">fct1</name>" +
-      "<symbols></symbols>" +
-      "<declarations></declarations>" +
-      "<body></body>" +
-      "</FfunctionDefinition>" +
-      "</globalDeclarations>";
+          "</FmoduleDefinition>" +
+          "<FfunctionDefinition lineno=\"917\" file=\"./src/module.f90\">\n" +
+          "<name type=\"Fb39d60\">fct1</name>" +
+          "<symbols></symbols>" +
+          "<declarations></declarations>" +
+          "<body></body>" +
+          "</FfunctionDefinition>" +
+          "</globalDeclarations>";
 
 
   @Test
-  public void simpleGlobalDeclarationTest(){
+  public void simpleGlobalDeclarationTest() {
     XglobalDeclTable gdTable = XmlHelper.createGlobalDeclTable(simpleGlobDecl);
     assertNotNull(gdTable);
     assertEquals(2, gdTable.count());

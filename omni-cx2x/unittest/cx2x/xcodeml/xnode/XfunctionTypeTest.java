@@ -19,20 +19,20 @@ public class XfunctionTypeTest {
 
   private static final String fctType1 =
       "<FfunctionType type=\"F0\" return_type=\"Freal\">" +
-      "<params>" +
-      "<name type=\"Fint\">a</name>" +
-      "<name type=\"Fint\">b</name>" +
-      "</params>" +
-      "</FfunctionType>";
+          "<params>" +
+          "<name type=\"Fint\">a</name>" +
+          "<name type=\"Fint\">b</name>" +
+          "</params>" +
+          "</FfunctionType>";
 
   /**
    * Test simple fct type
-   *
+   * <p>
    * function foo(a,b)
-   *   integer a, b
+   * integer a, b
    */
   @Test
-  public void simpleFctTypeTest(){
+  public void simpleFctTypeTest() {
     XfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
     assertNotNull(f);
 

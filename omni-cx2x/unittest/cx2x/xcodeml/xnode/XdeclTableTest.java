@@ -7,6 +7,7 @@ package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -18,17 +19,17 @@ public class XdeclTableTest {
 
   private static final String decl1 =
       "<declarations>" +
-      "<varDecl lineno=\"4730\" file=\"dummy.f90\">" +
-      "<name type=\"I1241bd0\">name1</name>" +
-      "</varDecl>\n" +
-      "<varDecl lineno=\"4731\" file=\"dummy.f90\">" +
-      "<name type=\"I1241c70\">name2</name>" +
-      "</varDecl>" +
-      "</declarations>";
+          "<varDecl lineno=\"4730\" file=\"dummy.f90\">" +
+          "<name type=\"I1241bd0\">name1</name>" +
+          "</varDecl>\n" +
+          "<varDecl lineno=\"4731\" file=\"dummy.f90\">" +
+          "<name type=\"I1241c70\">name2</name>" +
+          "</varDecl>" +
+          "</declarations>";
 
 
   @Test
-  public void simpleDeclTableTest(){
+  public void simpleDeclTableTest() {
     XdeclTable decl = XmlHelper.createXdeclTable(decl1);
     assertNotNull(decl);
     assertEquals(2, decl.count());

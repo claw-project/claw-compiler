@@ -8,6 +8,7 @@ package cx2x.translator.language;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -48,7 +49,7 @@ public class ClawRangeTest {
           "</indexRange>";
 
   @Test
-  public void compareWithLoopIterationRangeTest(){
+  public void compareWithLoopIterationRangeTest() {
     Xnode iterationRange1 =
         XmlHelper.createXnode(beginLoop + inductionVar1 + indexRange1 + endLoop);
     assertNotNull(iterationRange1);

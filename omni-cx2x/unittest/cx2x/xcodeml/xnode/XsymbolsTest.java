@@ -19,23 +19,23 @@ public class XsymbolsTest {
 
   private static final String gSym1 =
       "<globalSymbols>" +
-      "<id sclass=\"ffunc\">" +
-      "<name>radiation_rg</name>" +
-      "</id>" +
-      "</globalSymbols>";
+          "<id sclass=\"ffunc\">" +
+          "<name>radiation_rg</name>" +
+          "</id>" +
+          "</globalSymbols>";
 
   private static final String sym2 =
       "<symbols>" +
-      "<id type=\"I7fcbf34041b0\" sclass=\"flocal\" declared_in=\"mo_kind\">" +
-      "<name>dp</name>" +
-      "</id>" +
-      "<id type=\"I7fcbf3409ec0\" sclass=\"flocal\" declared_in=\"mo_kind\">" +
-      "<name>sp</name>" +
-      "</id>" +
-      "</symbols>";
+          "<id type=\"I7fcbf34041b0\" sclass=\"flocal\" declared_in=\"mo_kind\">" +
+          "<name>dp</name>" +
+          "</id>" +
+          "<id type=\"I7fcbf3409ec0\" sclass=\"flocal\" declared_in=\"mo_kind\">" +
+          "<name>sp</name>" +
+          "</id>" +
+          "</symbols>";
 
   @Test
-  public void simpleGlobalSymbolsTest(){
+  public void simpleGlobalSymbolsTest() {
     XsymbolTable table = XmlHelper.createXglobalSymbolFromString(gSym1);
     assertNotNull(table);
     assertEquals(1, table.count());
@@ -47,7 +47,7 @@ public class XsymbolsTest {
   }
 
   @Test
-  public void simpleSymbolsTest(){
+  public void simpleSymbolsTest() {
     XsymbolTable table = XmlHelper.createXSymbolTableFromString(sym2);
     assertNotNull(table);
     assertEquals(2, table.count());

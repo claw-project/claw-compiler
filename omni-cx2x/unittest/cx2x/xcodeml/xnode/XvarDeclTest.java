@@ -7,6 +7,7 @@ package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -18,18 +19,18 @@ public class XvarDeclTest {
 
   private static final String varDecl1 =
       "<varDecl lineno=\"946\" file=\"./src/module.f90\">" +
-      "<name type=\"Ib3f750\">testVar</name>" +
-      "<value>10.0</value>" +
-      "</varDecl>";
+          "<name type=\"Ib3f750\">testVar</name>" +
+          "<value>10.0</value>" +
+          "</varDecl>";
 
 
   private static final String varDecl2 =
       "<varDecl lineno=\"946\" file=\"./src/module.f90\">" +
-      "<name type=\"Ib3f750\">testVar</name>" +
-      "</varDecl>";
+          "<name type=\"Ib3f750\">testVar</name>" +
+          "</varDecl>";
 
   @Test
-  public void simpleXvarDeclWithValueTest(){
+  public void simpleXvarDeclWithValueTest() {
     Xdecl varDecl = XmlHelper.createXvarDecl(varDecl1);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
@@ -42,7 +43,7 @@ public class XvarDeclTest {
   }
 
   @Test
-  public void simpleXvarDeclWithoutValueTest(){
+  public void simpleXvarDeclWithoutValueTest() {
     Xdecl varDecl = XmlHelper.createXvarDecl(varDecl2);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
@@ -52,7 +53,6 @@ public class XvarDeclTest {
     assertEquals("testVar", varDecl.find(Xcode.NAME).getValue());
     assertNull(varDecl.find(Xcode.VALUE));
   }
-
 
 
 }

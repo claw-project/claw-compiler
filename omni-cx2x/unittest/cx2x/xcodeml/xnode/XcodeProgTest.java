@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xnode;
 
 import java.io.File;
+
 import static org.junit.Assert.*;
 
 import helper.TestConstant;

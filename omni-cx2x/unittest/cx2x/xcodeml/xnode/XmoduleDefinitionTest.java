@@ -7,6 +7,7 @@ package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -18,11 +19,11 @@ public class XmoduleDefinitionTest {
 
   private static final String module1 =
       "<FmoduleDefinition name=\"module\" lineno=\"4\" " +
-      "file=\"./src/module.f90\">" +
-      "</FmoduleDefinition>";
+          "file=\"./src/module.f90\">" +
+          "</FmoduleDefinition>";
 
   @Test
-  public void simpleModuleDefinitionTest(){
+  public void simpleModuleDefinitionTest() {
     Xnode node = XmlHelper.createXnode(module1);
     XmoduleDefinition mod = new XmoduleDefinition(node.getElement());
     assertNotNull(mod);

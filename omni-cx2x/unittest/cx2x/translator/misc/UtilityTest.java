@@ -7,6 +7,7 @@ package cx2x.translator.misc;
 
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,8 +20,9 @@ import java.util.List;
  * @author clementval
  */
 public class UtilityTest {
+
   @Test
-  public void JoinArrayTest(){
+  public void JoinArrayTest() {
     String[] a = {"a", "b", "c"};
     assertEquals("a,b,c", Utility.join(",", a));
     String[] b = {"a"};
@@ -28,9 +30,11 @@ public class UtilityTest {
   }
 
   @Test
-  public void JoinListTest(){
+  public void JoinListTest() {
     List<String> a = new ArrayList<>();
-    a.add("a"); a.add("b"); a.add("c");
+    a.add("a");
+    a.add("b");
+    a.add("c");
     assertEquals("a,b,c", Utility.join(",", a));
     List<String> b = new ArrayList<>();
     b.add("a");

@@ -17,6 +17,7 @@ import helper.XmlHelper;
  */
 
 public class XidTest {
+
   private static final String TEST_TYPE = "F7f9502e03d00";
   private static final String TEST_SCLASS = "ffunc";
   private static final String TEST_NAME = "loop_extract";
@@ -25,9 +26,9 @@ public class XidTest {
   private static final String ALT_TEST_SCLASS = "auto";
   private static final String ALT_TEST_NAME = "func_name";
 
-  private Xid createSimpleXid(){
+  private Xid createSimpleXid() {
     String simpleIdElement = "<id type=\"" + TEST_TYPE + "\" sclass=\"" +
-      TEST_SCLASS + "\"><name>" + TEST_NAME + "</name></id>";
+        TEST_SCLASS + "\"><name>" + TEST_NAME + "</name></id>";
     return XmlHelper.createXidFromString(simpleIdElement);
   }
 

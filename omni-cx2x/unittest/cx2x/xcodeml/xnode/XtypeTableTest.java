@@ -16,19 +16,20 @@ import org.junit.Test;
  * @author clementval
  */
 public class XtypeTableTest {
+
   private static final String basicTypeTable =
       "<typeTable>" +
-      "<FbasicType type=\"C2307e50\" ref=\"Fcharacter\">" +
-      "<len>" +
-      "<FintConstant type=\"Fint\">30</FintConstant>" +
-      "</len>" +
-      "</FbasicType>" +
-      "<FfunctionType type=\"F23079f0\" return_type=\"Fvoid\" is_program=\"true\"/>" +
-      "</typeTable>";
+          "<FbasicType type=\"C2307e50\" ref=\"Fcharacter\">" +
+          "<len>" +
+          "<FintConstant type=\"Fint\">30</FintConstant>" +
+          "</len>" +
+          "</FbasicType>" +
+          "<FfunctionType type=\"F23079f0\" return_type=\"Fvoid\" is_program=\"true\"/>" +
+          "</typeTable>";
 
 
   @Test
-  public void basicTypeTableTest(){
+  public void basicTypeTableTest() {
     XtypeTable typeTable = XmlHelper.createXtypeTableFromString(basicTypeTable);
     assertNotNull(typeTable);
     assertEquals(2, typeTable.count());
@@ -36,7 +37,7 @@ public class XtypeTableTest {
     Xtype type1 = typeTable.get("C2307e50");
     assertNotNull(type1);
     assertTrue(type1 instanceof XbasicType);
-    XbasicType bType1 = (XbasicType)type1;
+    XbasicType bType1 = (XbasicType) type1;
     assertFalse(bType1.hasIntent());
     assertEquals(Xintent.NONE, bType1.getIntent());
     assertFalse(bType1.hasKind());
@@ -49,7 +50,7 @@ public class XtypeTableTest {
     Xtype type2 = typeTable.get("F23079f0");
     assertNotNull(type2);
     assertTrue(type2 instanceof XfunctionType);
-    XfunctionType fType2 = (XfunctionType)type2;
+    XfunctionType fType2 = (XfunctionType) type2;
     assertEquals(Xname.TYPE_F_VOID, fType2.getReturnType());
     assertTrue(fType2.isProgram());
     assertFalse(fType2.isInternal());

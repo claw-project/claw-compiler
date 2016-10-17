@@ -17,37 +17,37 @@ public class XbasicTypeTest {
 
   private static final String type1 =
       "<FbasicType type=\"TYPE_NAME\" ref=\"Fint\">\n" +
-      "<kind>8</kind>"+
-      "</FbasicType>";
+          "<kind>8</kind>" +
+          "</FbasicType>";
 
   private static final String type2 =
       "<FbasicType type=\"TYPE_NAME\" ref=\"Fcharacter\"> <len>\n" +
-      "<FintConstant type=\"Fint\">10</FintConstant> </len>\n" +
-      "</FbasicType>";
+          "<FintConstant type=\"Fint\">10</FintConstant> </len>\n" +
+          "</FbasicType>";
 
   private static final String type3 =
       "<FbasicType type=\"TYPE_NAME\" ref=\"Fint\">" +
-      "<arrayIndex>" +
-      "<FintConstant type=\"Fint\">10</FintConstant>" +
-      "</arrayIndex>" +
-      "<indexRange>" +
-      "<lowerBound>" +
-      "<FintConstant type=\"Fint\">1</FintConstant>" +
-      "</lowerBound>" +
-      "<upperBound>" +
-      "<FintConstant type=\"Fint\">10</FintConstant>" +
-      "</upperBound>" +
-      "</indexRange>" +
-      "</FbasicType>";
+          "<arrayIndex>" +
+          "<FintConstant type=\"Fint\">10</FintConstant>" +
+          "</arrayIndex>" +
+          "<indexRange>" +
+          "<lowerBound>" +
+          "<FintConstant type=\"Fint\">1</FintConstant>" +
+          "</lowerBound>" +
+          "<upperBound>" +
+          "<FintConstant type=\"Fint\">10</FintConstant>" +
+          "</upperBound>" +
+          "</indexRange>" +
+          "</FbasicType>";
 
 
   /**
    * Test for a simple integer type
-   *
+   * <p>
    * integer(kind=8)
    */
   @Test
-  public void simpleIntegerTypeTest(){
+  public void simpleIntegerTypeTest() {
     XbasicType b = XmlHelper.createXbasicTypeFromString(type1);
     assertNotNull(b);
     assertTrue(b.hasKind());
@@ -76,11 +76,11 @@ public class XbasicTypeTest {
 
   /**
    * Test for a simple character declarations
-   *
+   * <p>
    * character(len=10)
    */
   @Test
-  public void simpleCharTypeTest(){
+  public void simpleCharTypeTest() {
     XbasicType b = XmlHelper.createXbasicTypeFromString(type2);
     assertNotNull(b);
     assertFalse(b.hasKind());
@@ -111,7 +111,7 @@ public class XbasicTypeTest {
 
   /**
    * Test for a more complex integer type with dimension
-   *
+   * <p>
    * integer dimension(10, 1:10)
    */
   @Test

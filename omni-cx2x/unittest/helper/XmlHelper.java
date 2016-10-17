@@ -25,13 +25,13 @@ import org.xml.sax.InputSource;
  *
  * @author clementval
  */
- 
+
 public class XmlHelper {
 
-  public static XcodeProgram getDummyXcodeProgram(){
+  public static XcodeProgram getDummyXcodeProgram() {
     File f = new File(TestConstant.TEST_DATA);
     assertTrue(f.exists());
-    XcodeProgram xcodeml =  XcodeProgram.createFromFile(TestConstant.TEST_DATA);
+    XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DATA);
     assertNotNull(xcodeml);
     return xcodeml;
   }
@@ -42,50 +42,50 @@ public class XmlHelper {
       DocumentBuilder builder = factory.newDocumentBuilder();
       InputSource is = new InputSource(new StringReader(xml));
       return builder.parse(is);
-    } catch(Exception ex){
+    } catch(Exception ex) {
       return null;
     }
   }
 
-  private static Element getElementFromString(String xml){
+  private static Element getElementFromString(String xml) {
     Document doc = loadXMLFromString(xml);
-    if(doc != null){
+    if(doc != null) {
       return doc.getDocumentElement();
     }
     return null;
   }
 
-  public static Xid createXidFromString(String xml){
+  public static Xid createXidFromString(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new Xid(el);
   }
 
-  public static XbasicType createXbasicTypeFromString(String xml){
+  public static XbasicType createXbasicTypeFromString(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XbasicType(el);
   }
 
-  public static XfunctionType createXfctTypeFromString(String xml){
+  public static XfunctionType createXfctTypeFromString(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XfunctionType(el);
   }
 
-  public static XsymbolTable createXglobalSymbolFromString(String xml){
+  public static XsymbolTable createXglobalSymbolFromString(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XsymbolTable(el);
   }
 
-  public static XsymbolTable createXSymbolTableFromString(String xml){
+  public static XsymbolTable createXSymbolTableFromString(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XsymbolTable(el);
   }
 
-  public static XtypeTable createXtypeTableFromString(String xml){
+  public static XtypeTable createXtypeTableFromString(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XtypeTable(el);
@@ -99,25 +99,25 @@ public class XmlHelper {
     return new XfunctionDefinition(el);
   }
 
-  public static XglobalDeclTable createGlobalDeclTable(String xml){
+  public static XglobalDeclTable createGlobalDeclTable(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XglobalDeclTable(el);
   }
 
-  public static Xdecl createXvarDecl(String xml){
+  public static Xdecl createXvarDecl(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new Xdecl(el);
   }
 
-  public static XdeclTable createXdeclTable(String xml){
+  public static XdeclTable createXdeclTable(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new XdeclTable(el);
   }
 
-  public static Xnode createXpragma(){
+  public static Xnode createXpragma() {
     String xml = "<" + Xname.PRAGMA_STMT + "></" +
         Xname.PRAGMA_STMT + ">";
     Element el = XmlHelper.getElementFromString(xml);
@@ -125,7 +125,7 @@ public class XmlHelper {
   }
 
 
-  public static Xnode createXnode(String xml){
+  public static Xnode createXnode(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
     return new Xnode(el);

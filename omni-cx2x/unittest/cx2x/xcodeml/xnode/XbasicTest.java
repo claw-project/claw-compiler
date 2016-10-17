@@ -7,6 +7,7 @@ package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -20,12 +21,12 @@ public class XbasicTest {
 
   private static final String value1 =
       "<value>" +
-      "<FintConstant type=\"Fint\">1</FintConstant>\n" +
-      "</value>";
+          "<FintConstant type=\"Fint\">1</FintConstant>\n" +
+          "</value>";
 
 
   @Test
-  public void xValueTest(){
+  public void xValueTest() {
     Xnode val = XmlHelper.createXnode(value1);
     assertNotNull(val);
     assertTrue(val.getChild(0).opcode() == Xcode.FINTCONSTANT);
@@ -35,7 +36,7 @@ public class XbasicTest {
   }
 
   @Test
-  public void xNameTest(){
+  public void xNameTest() {
     Xnode name = XmlHelper.createXnode(name1);
     assertNotNull(name);
     assertEquals(Xname.TYPE_F_INT, name.getAttribute(Xattr.TYPE));
