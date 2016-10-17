@@ -23,8 +23,10 @@ import java.util.List;
  * @author clementval
  */
 public class Cx2x {
+
   /**
    * Print an error message an abort.
+   *
    * @param s Error message.
    */
   private static void error(String s) {
@@ -37,23 +39,23 @@ public class Cx2x {
    */
   private static void usage() {
     final String[] lines = {
-      "arguments: options",
-      "           <input XcodeML file>",
-      "           -o <output reconstructed XcodeML file>",
-      "           -f <output reconstructed Fortran file>",
-      "",
-      "  -h, --help              display program usage.",
-      "  -l                      suppress line directive in decompiled code.",
-      "  -w <int>                number of character per line in decompiled code.",
-      "  -M dir                  specify where to search for .xmod files",
-      "  --target-list           list all target available for code transformation.",
-      "  --target=<target>       specify the target for the code transformation.",
-      "  --directive-list        list all accelerator directive language available for code generation.",
-      "  --directive=<directive> specify the accelerator directive language for code generation.",
-      "  --config=<target>       specify an alternative configuration for the translator.",
-      "",
-      " Debug Options:",
-      "  -d                      enable output debug message.",
+        "arguments: options",
+        "           <input XcodeML file>",
+        "           -o <output reconstructed XcodeML file>",
+        "           -f <output reconstructed Fortran file>",
+        "",
+        "  -h, --help              display program usage.",
+        "  -l                      suppress line directive in decompiled code.",
+        "  -w <int>                number of character per line in decompiled code.",
+        "  -M dir                  specify where to search for .xmod files",
+        "  --target-list           list all target available for code transformation.",
+        "  --target=<target>       specify the target for the code transformation.",
+        "  --directive-list        list all accelerator directive language available for code generation.",
+        "  --directive=<directive> specify the accelerator directive language for code generation.",
+        "  --config=<target>       specify an alternative configuration for the translator.",
+        "",
+        " Debug Options:",
+        "  -d                      enable output debug message.",
     };
 
     for(String line : lines) {
@@ -65,9 +67,9 @@ public class Cx2x {
   /**
    * List all accelerator target available for code generation.
    */
-  private static void listTarget(){
+  private static void listTarget() {
     System.out.println("- CLAW available targets -");
-    for(String t : Target.availableTargets()){
+    for(String t : Target.availableTargets()) {
       System.out.println("  - " + t);
     }
   }
@@ -75,19 +77,20 @@ public class Cx2x {
   /**
    * List all accelerator directive language available for code generation.
    */
-  private static void listDirectiveLanguage(){
+  private static void listDirectiveLanguage() {
     System.out.println("- CLAW accelerator directive language -");
-    for(String d : AcceleratorDirective.availableDirectiveLanguage()){
+    for(String d : AcceleratorDirective.availableDirectiveLanguage()) {
       System.out.println("  - " + d);
     }
   }
 
   /**
    * Read the configuration file and output the information for user.
+   *
    * @param configPath Path to the configuration file
    */
-  private static void showConfig(String configPath){
-    try{
+  private static void showConfig(String configPath) {
+    try {
       List<GroupConfiguration> groups =
           ConfigurationHelper.readGroups(configPath);
       AcceleratorDirective directive =
@@ -98,19 +101,20 @@ public class Cx2x {
       System.out.println("Default accelerator directive: " + directive + "\n");
       System.out.println("Default target: " + target + "\n");
       System.out.println("Current transformation order:");
-      for (int i = 0; i < groups.size(); ++i) {
+      for(int i = 0; i < groups.size(); ++i) {
         GroupConfiguration g = groups.get(i);
         System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
             i, g.getName(), g.getType(), g.getTransformationClassName());
       }
-    } catch (Exception e) {
+    } catch(Exception e) {
       error("Could not read the configuration file");
     }
   }
 
   /**
    * Main point of entry of the program.
-   * @param args  Arguments of the program.
+   *
+   * @param args Arguments of the program.
    * @throws Exception if translation failed.
    */
   public static void main(String[] args) throws Exception {
@@ -135,47 +139,47 @@ public class Cx2x {
       } else if(arg.equals("-d")) {
         XmOption.setDebugOutput(true);
       } else if(arg.equals("-o")) {
-        if (narg == null)
+        if(narg == null)
           error("needs argument after -o");
         xcodeMlOutput = narg;
         ++i;
-      } else if(arg.equals("-f")){
-        if (narg == null)
+      } else if(arg.equals("-f")) {
+        if(narg == null)
           error("needs argument after -f");
         fortranOutput = narg;
         ++i;
-      } else if (arg.startsWith("-M")) {
-        if (arg.equals("-M")) {
-          if (narg == null)
+      } else if(arg.startsWith("-M")) {
+        if(arg.equals("-M")) {
+          if(narg == null)
             error("needs argument after -M");
           XcodeMLtools_Fmod.addSearchPath(narg);
           ++i;
         } else {
           XcodeMLtools_Fmod.addSearchPath(arg.substring(2));
         }
-      } else if (arg.startsWith("-w")){
-        if(narg == null){
+      } else if(arg.startsWith("-w")) {
+        if(narg == null) {
           error("needs argument after -w");
         }
         maxColumns = Integer.parseInt(narg);
         ++i;
-      } else if (arg.startsWith("-l")) {
+      } else if(arg.startsWith("-l")) {
         lineDirectives = false;
-      } else if (arg.startsWith("--target-list")) {
+      } else if(arg.startsWith("--target-list")) {
         listTarget();
         return;
-      } else if (arg.startsWith("--target=")) {
+      } else if(arg.startsWith("--target=")) {
         target_option = arg.replace("--target=", "");
-      } else if (arg.startsWith("--directive-list")) {
+      } else if(arg.startsWith("--directive-list")) {
         listDirectiveLanguage();
         return;
-      } else if (arg.startsWith("--directive=")) {
+      } else if(arg.startsWith("--directive=")) {
         directive_option = arg.replace("--directive=", "");
-      } else if (arg.startsWith("--config=")) {
+      } else if(arg.startsWith("--config=")) {
         configuration_path = arg.replace("--config=", "");
-      } else if (arg.startsWith("--show-config")) {
+      } else if(arg.startsWith("--show-config")) {
         show_configuration = true;
-      } else if(arg.startsWith("-")){
+      } else if(arg.startsWith("-")) {
         error("unknown option " + arg);
       } else if(input == null) {
         input = arg;
@@ -185,31 +189,31 @@ public class Cx2x {
     }
 
     // Check that configuration file exists
-    if(configuration_path == null){
+    if(configuration_path == null) {
       error("Configuration file missing.");
       return;
     }
     File config = new File(configuration_path);
-    if(!config.exists()){
+    if(!config.exists()) {
       error("Configuration file not found. " + configuration_path);
       return;
     }
 
-    if(show_configuration){
+    if(show_configuration) {
       showConfig(configuration_path);
       return;
     }
 
     // Read default target from config if not set by user
     AcceleratorDirective directive;
-    if(directive_option == null){
+    if(directive_option == null) {
       directive = ConfigurationHelper.readDefaultDirective(configuration_path);
     } else {
       directive = AcceleratorDirective.fromString(directive_option);
     }
 
     Target target;
-    if(target_option == null){
+    if(target_option == null) {
       target = ConfigurationHelper.readDefaultTarget(configuration_path);
     } else {
       target = Target.fromString(target_option);
@@ -219,7 +223,7 @@ public class Cx2x {
     List<GroupConfiguration> groups;
     try {
       groups = ConfigurationHelper.readGroups(configuration_path);
-    } catch (Exception ex){
+    } catch(Exception ex) {
       error(ex.getMessage());
       return;
     }
@@ -235,7 +239,7 @@ public class Cx2x {
     // Decompile IR to Fortran
     FortranDecompiler fDecompiler = new FortranDecompiler();
     if(!fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
-        lineDirectives)){
+        lineDirectives)) {
       error("Unable to decompile XcodeML to Fortran");
     }
   }
