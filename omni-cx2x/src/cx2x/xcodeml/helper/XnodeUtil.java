@@ -43,6 +43,7 @@ public class XnodeUtil {
 
   /**
    * Find a function definition according to a function call.
+   *
    * @param xcodeml The XcodeML program to search in.
    * @param fctCall The function call used to find the function definition.
    * @return A function definition element if found. Null otherwise.
@@ -50,20 +51,19 @@ public class XnodeUtil {
   public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
                                                            Xnode fctCall)
   {
-    if(xcodeml.getElement() == null){
+    if(xcodeml.getElement() == null) {
       return null;
     }
     String name = fctCall.findNode(Xcode.NAME).getValue();
     NodeList nList = xcodeml.getElement().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
-    for (int i = 0; i < nList.getLength(); i++) {
+    for(int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
-      if (fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
-        Xnode dummyFctDef = new Xnode((Element)fctDefNode);
+      if(fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
+        Xnode dummyFctDef = new Xnode((Element) fctDefNode);
         Xnode fctDefName = dummyFctDef.find(Xcode.NAME);
         if(name != null &&
-            fctDefName.getValue().toLowerCase().equals(name.toLowerCase()))
-        {
+            fctDefName.getValue().toLowerCase().equals(name.toLowerCase())) {
           return new XfunctionDefinition(dummyFctDef.getElement());
         }
       }
@@ -73,6 +73,7 @@ public class XnodeUtil {
 
   /**
    * Find a function definition in a module definition.
+   *
    * @param module Module definition in which we search for the function
    *               definition.
    * @param name   Name of the function to be found.
@@ -81,16 +82,16 @@ public class XnodeUtil {
   public static XfunctionDefinition findFunctionDefinitionInModule(
       XmoduleDefinition module, String name)
   {
-    if(module.getElement() == null){
+    if(module.getElement() == null) {
       return null;
     }
     NodeList nList = module.getElement().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
-    for (int i = 0; i < nList.getLength(); i++) {
+    for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        XfunctionDefinition fctDef = new XfunctionDefinition((Element)n);
-        if(fctDef.getName().getValue().equals(name)){
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        XfunctionDefinition fctDef = new XfunctionDefinition((Element) n);
+        if(fctDef.getName().getValue().equals(name)) {
           return fctDef;
         }
       }
@@ -100,6 +101,7 @@ public class XnodeUtil {
 
   /**
    * Find all array references elements in a given body and give var name.
+   *
    * @param parent    The body element to search for the array references.
    * @param arrayName Name of the array for the array reference to be found.
    * @return A list of all array references found.
@@ -110,14 +112,13 @@ public class XnodeUtil {
     List<Xnode> references = new ArrayList<>();
     NodeList nList = parent.getElement().
         getElementsByTagName(Xname.F_ARRAY_REF);
-    for (int i = 0; i < nList.getLength(); i++) {
+    for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
         Xnode var = ref.find(Xcode.VARREF, Xcode.VAR);
         if(var != null && var.getValue().toLowerCase().
-            equals(arrayName.toLowerCase()))
-        {
+            equals(arrayName.toLowerCase())) {
           references.add(ref);
         }
       }
@@ -127,6 +128,7 @@ public class XnodeUtil {
 
   /**
    * Find all function definitions in an XcodeML unit.
+   *
    * @param xcodeml Current XcodeML unit.
    * @return A list of all function definitions in the program.
    */
@@ -135,9 +137,9 @@ public class XnodeUtil {
     List<XfunctionDefinition> definitions = new ArrayList<>();
     NodeList nList = xcodeml.getElement().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
-    for (int i = 0; i < nList.getLength(); i++) {
+    for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
         definitions.add(new XfunctionDefinition((Element) n));
       }
     }
@@ -146,17 +148,18 @@ public class XnodeUtil {
 
   /**
    * Find all var references elements in a given body and give var name.
+   *
    * @param parent  The body element to search for the array references.
    * @param varName Name of the var for the reference to be found.
    * @return A list of all references found.
    */
-  public static List<Xnode> getAllVarReferences(Xnode parent, String varName){
+  public static List<Xnode> getAllVarReferences(Xnode parent, String varName) {
     List<Xnode> references = new ArrayList<>();
     NodeList nList = parent.getElement().
         getElementsByTagName(Xname.VAR);
-    for (int i = 0; i < nList.getLength(); i++) {
+    for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode var = new Xnode((Element) n);
         if(var.getValue().toLowerCase().equals(varName.toLowerCase())) {
           references.add(var);
@@ -168,9 +171,10 @@ public class XnodeUtil {
 
   /**
    * Demote an array reference to a var reference.
-   * @param ref     The array reference to be modified.
+   *
+   * @param ref The array reference to be modified.
    */
-  public static void demoteToScalar(Xnode ref){
+  public static void demoteToScalar(Xnode ref) {
     Xnode var = ref.find(Xcode.VARREF, Xcode.VAR).cloneObject();
     insertAfter(ref, var);
     ref.delete();
@@ -178,13 +182,14 @@ public class XnodeUtil {
 
   /**
    * Demote an array reference to a reference with fewer dimensions.
+   *
    * @param ref            The array reference to be modified.
    * @param keptDimensions List of dimensions to be kept. Dimension index starts
    *                       at 1.
    */
-  public static void demote(Xnode ref, List<Integer> keptDimensions){
-    for(int i = 1; i < ref.getChildren().size(); ++i){
-      if(!keptDimensions.contains(i)){
+  public static void demote(Xnode ref, List<Integer> keptDimensions) {
+    for(int i = 1; i < ref.getChildren().size(); ++i) {
+      if(!keptDimensions.contains(i)) {
         ref.getChild(i).delete();
       }
     }
@@ -192,16 +197,17 @@ public class XnodeUtil {
 
   /**
    * Retrieve the index ranges of an array notation.
+   *
    * @param arrayRef The array reference statements to extract the ranges from.
    * @return A list if indexRanges elements.
    */
-  public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef){
+  public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef) {
     List<Xnode> ranges = new ArrayList<>();
-    if(arrayRef.opcode() != Xcode.FARRAYREF){
+    if(arrayRef.opcode() != Xcode.FARRAYREF) {
       return ranges;
     }
-    for(Xnode el : arrayRef.getChildren()){
-      if(el.opcode() == Xcode.INDEXRANGE){
+    for(Xnode el : arrayRef.getChildren()) {
+      if(el.opcode() == Xcode.INDEXRANGE) {
         ranges.add(el);
       }
     }
@@ -211,6 +217,7 @@ public class XnodeUtil {
 
   /**
    * Compare two list of indexRange.
+   *
    * @param list1 First list of indexRange.
    * @param list2 Second list of indexRange.
    * @return True if the indexRange at the same position in the two list are all
@@ -219,12 +226,12 @@ public class XnodeUtil {
   public static boolean compareIndexRanges(List<Xnode> list1,
                                            List<Xnode> list2)
   {
-    if(list1.size() != list2.size()){
+    if(list1.size() != list2.size()) {
       return false;
     }
 
-    for(int i = 0; i < list1.size(); ++i){
-      if(!isIndexRangeIdentical(list1.get(i), list2.get(i), true)){
+    for(int i = 0; i < list1.size(); ++i) {
+      if(!isIndexRangeIdentical(list1.get(i), list2.get(i), true)) {
         return false;
       }
     }
@@ -242,11 +249,12 @@ public class XnodeUtil {
    *       $set1[count(.|$set2)=count($set2)]
    *
    * </pre>
+   *
    * @param s1 First set of element.
    * @param s2 Second set of element.
    * @return Xpath query that performs the intersect operator between s1 and s2.
    */
-  private static String xPathIntersect(String s1, String s2){
+  private static String xPathIntersect(String s1, String s2) {
     return String.format("%s[count(.|%s)=count(%s)]", s1, s2, s2);
   }
 
@@ -265,7 +273,8 @@ public class XnodeUtil {
    * @return A list of all assign statements found. List is empty if no
    * statements are found.
    */
-  public static List<Xnode> getArrayAssignInBlock(Xnode from, String endPragma){
+  public static List<Xnode> getArrayAssignInBlock(Xnode from, String endPragma)
+  {
     /* Define all the assign element with array refs which are next siblings of
      * the "from" element */
     String s1 = String.format(
@@ -289,8 +298,9 @@ public class XnodeUtil {
 
   /**
    * Get all array references in the siblings of the given element.
-   * @param from        Element to start from.
-   * @param identifier  Array name value.
+   *
+   * @param from       Element to start from.
+   * @param identifier Array name value.
    * @return List of all array references found. List is empty if nothing is
    * found.
    */
@@ -308,11 +318,12 @@ public class XnodeUtil {
 
   /**
    * Get the first assignment statement for an array reference.
+   *
    * @param from      Statement to look from.
    * @param arrayName Identifier of the array.
    * @return The assignment statement if found. Null otherwise.
    */
-  public static Xnode getFirstArrayAssign(Xnode from, String arrayName){
+  public static Xnode getFirstArrayAssign(Xnode from, String arrayName) {
     String s1 = String.format(
         "following::%s[%s[%s[%s[text()=\"%s\"]] and position()=1]]",
         Xname.F_ASSIGN_STMT,
@@ -324,12 +335,12 @@ public class XnodeUtil {
 
     try {
       NodeList output = evaluateXpath(from.getElement(), s1);
-      if(output.getLength() == 0){
+      if(output.getLength() == 0) {
         return null;
       }
       Element assign = (Element) output.item(0);
       return new Xnode(assign);
-    } catch (XPathExpressionException ignored) {
+    } catch(XPathExpressionException ignored) {
       return null;
     }
   }
@@ -338,6 +349,7 @@ public class XnodeUtil {
    * Find all the nested do statement groups following the inductions iterations
    * define in inductionVars and being located between the "from" element and
    * the end pragma.
+   *
    * @param from          Element from which the search is started.
    * @param endPragma     End pragma that terminates the search block.
    * @param inductionVars Induction variables that define the nested group to
@@ -354,7 +366,7 @@ public class XnodeUtil {
     String s1 = "following::";
 
     String dynamic_part_s1 = "";
-    for(int i = inductionVars.size() - 1; i >= 0; --i){
+    for(int i = inductionVars.size() - 1; i >= 0; --i) {
       /*
        * Here is example of there xpath query format for 1,2 and 3 nested loops
        *
@@ -388,22 +400,22 @@ public class XnodeUtil {
     List<Xnode> doStatements = new ArrayList<>();
     try {
       NodeList output = evaluateXpath(from.getElement(), s1);
-      for (int i = 0; i < output.getLength(); i++) {
+      for(int i = 0; i < output.getLength(); i++) {
         Element el = (Element) output.item(i);
         Xnode doStmt = new Xnode(el);
         if(doStmt.getLineNo() != 0 &&
-            doStmt.getLineNo() < endPragma.getLineNo())
-        {
+            doStmt.getLineNo() < endPragma.getLineNo()) {
           doStatements.add(doStmt);
         }
       }
-    } catch (XPathExpressionException ignored) {
+    } catch(XPathExpressionException ignored) {
     }
     return doStatements;
   }
 
   /**
    * Evaluates an Xpath expression and return its result as a NodeList.
+   *
    * @param from  Element to start the evaluation.
    * @param xpath Xpath expression.
    * @return Result of evaluation as a NodeList.
@@ -413,44 +425,45 @@ public class XnodeUtil {
       throws XPathExpressionException
   {
     XPathExpression ex = XPathFactory.newInstance().newXPath().compile(xpath);
-    return (NodeList)ex.evaluate(from, XPathConstants.NODESET);
+    return (NodeList) ex.evaluate(from, XPathConstants.NODESET);
   }
 
   /**
    * Find all array references in the next children that match the given
    * criteria.
-   *
+   * <p>
    * This methods use powerful Xpath expression to locate the correct nodes in
    * the AST
-   *
+   * <p>
    * Here is an example of such a query that return all node that are array
    * references for the array "array6" with an offset of 0 -1
-   *
+   * <p>
    * //FarrayRef[varRef[Var[text()="array6"]] and arrayIndex and
    * arrayIndex[minusExpr[Var and FintConstant[text()="1"]]]]
    *
-   * @param from        The element from which the search is initiated.
-   * @param identifier  Identifier of the array.
-   * @param offsets     List of offsets to be search for.
+   * @param from       The element from which the search is initiated.
+   * @param identifier Identifier of the array.
+   * @param offsets    List of offsets to be search for.
    * @return A list of all array references found.
    */
   public static List<Xnode> getAllArrayReferencesByOffsets(Xnode from,
-      String identifier, List<Integer> offsets)
+                                                           String identifier,
+                                                           List<Integer> offsets)
   {
     String offsetXpath = "";
-    for (int i = 0; i < offsets.size(); ++i){
-      if(offsets.get(i) == 0){
+    for(int i = 0; i < offsets.size(); ++i) {
+      if(offsets.get(i) == 0) {
         offsetXpath +=
             String.format("%s[position()=%s and %s]",
                 Xname.ARRAY_INDEX,
-                i+1,
+                i + 1,
                 Xname.VAR
             );
       } else if(offsets.get(i) > 0) {
         offsetXpath +=
             String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
                 Xname.ARRAY_INDEX,
-                i+1,
+                i + 1,
                 Xname.MINUS_EXPR,
                 Xname.VAR,
                 Xname.F_INT_CONST,
@@ -459,13 +472,13 @@ public class XnodeUtil {
         offsetXpath +=
             String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
                 Xname.ARRAY_INDEX,
-                i+1,
+                i + 1,
                 Xname.MINUS_EXPR,
                 Xname.VAR,
                 Xname.F_INT_CONST,
                 Math.abs(offsets.get(i)));
       }
-      if(i != offsets.size()-1){
+      if(i != offsets.size() - 1) {
         offsetXpath += " and ";
       }
     }
@@ -484,21 +497,22 @@ public class XnodeUtil {
 
   /**
    * Find a pragma element in the previous nodes containing a given keyword.
+   *
    * @param from    Element to start from.
    * @param keyword Keyword to be found in the pragma.
    * @return The pragma if found. Null otherwise.
    */
   public static Xnode findPreviousPragma(Xnode from, String keyword) {
-    if (from == null || from.getElement() == null) {
+    if(from == null || from.getElement() == null) {
       return null;
     }
     Node prev = from.getElement().getPreviousSibling();
     Node parent = from.getElement();
     do {
-      while (prev != null) {
-        if (prev.getNodeType() == Node.ELEMENT_NODE) {
+      while(prev != null) {
+        if(prev.getNodeType() == Node.ELEMENT_NODE) {
           Element element = (Element) prev;
-          if (element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
+          if(element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
               && element.getTextContent().toLowerCase().
               contains(keyword.toLowerCase())) {
             return new Xnode(element);
@@ -508,26 +522,27 @@ public class XnodeUtil {
       }
       parent = parent.getParentNode();
       prev = parent;
-    } while (parent != null);
+    } while(parent != null);
     return null;
   }
 
   /**
    * Find all the index elements (arrayIndex and indexRange) in an element.
-   * @param parent  Root element to search from.
+   *
+   * @param parent Root element to search from.
    * @return A list of all index ranges found.
    */
-  public static List<Xnode> findIndexes(Xnode parent){
+  public static List<Xnode> findIndexes(Xnode parent) {
     List<Xnode> indexRanges = new ArrayList<>();
-    if(parent == null || parent.getElement() == null){
+    if(parent == null || parent.getElement() == null) {
       return indexRanges;
     }
 
     Node node = parent.getElement().getFirstChild();
-    while (node != null){
-      if(node.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element)node;
-        switch (element.getTagName()){
+    while(node != null) {
+      if(node.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) node;
+        switch(element.getTagName()) {
           case Xname.ARRAY_INDEX:
           case Xname.INDEX_RANGE:
             indexRanges.add(new Xnode(element));
@@ -542,10 +557,11 @@ public class XnodeUtil {
 
   /**
    * Find all the name elements in an element.
+   *
    * @param parent Root element to search from.
    * @return A list of all name elements found.
    */
-  public static List<Xnode> findAllNames(Xnode parent){
+  public static List<Xnode> findAllNames(Xnode parent) {
     return findAll(Xcode.NAME, parent);
   }
 
@@ -553,16 +569,16 @@ public class XnodeUtil {
   /**
    * Find all the var elements that are real references to a variable. Var
    * element nested in an arrayIndex element are excluded.
+   *
    * @param parent Root element to search from.
    * @return A list of all var elements found.
    */
-  public static List<Xnode> findAllReferences(Xnode parent){
+  public static List<Xnode> findAllReferences(Xnode parent) {
     List<Xnode> vars = findAll(Xcode.VAR, parent);
     List<Xnode> realReferences = new ArrayList<>();
-    for(Xnode var : vars){
-      if(!((Element)var.getElement().getParentNode()).getTagName().
-          equals(Xcode.ARRAYINDEX.code()))
-      {
+    for(Xnode var : vars) {
+      if(!((Element) var.getElement().getParentNode()).getTagName().
+          equals(Xcode.ARRAYINDEX.code())) {
         realReferences.add(var);
       }
     }
@@ -571,13 +587,14 @@ public class XnodeUtil {
 
   /**
    * Get all the variables names from a list of var elements.
+   *
    * @param nodes List containing var element.
    * @return A set of all variable's name.
    */
-  public static Set<String> getNamesFromReferences(List<Xnode> nodes){
+  public static Set<String> getNamesFromReferences(List<Xnode> nodes) {
     Set<String> names = new HashSet<>();
-    for(Xnode node : nodes){
-      if(node.opcode() != Xcode.VAR){
+    for(Xnode node : nodes) {
+      if(node.opcode() != Xcode.VAR) {
         continue;
       }
       names.add(node.getValue().toLowerCase());
@@ -588,18 +605,18 @@ public class XnodeUtil {
   /**
    * Find all the var elements that are real references to a variable. Var
    * element nested in an arrayIndex element are excluded.
+   *
    * @param parent Root element to search from.
    * @param id     Identifier of the var to be found.
    * @return A list of all var elements found.
    */
-  public static List<Xnode> findAllReferences(Xnode parent, String id){
+  public static List<Xnode> findAllReferences(Xnode parent, String id) {
     List<Xnode> vars = findAll(Xcode.VAR, parent);
     List<Xnode> realReferences = new ArrayList<>();
-    for(Xnode var : vars){
-      if(!((Element)var.getElement().getParentNode()).getTagName().
+    for(Xnode var : vars) {
+      if(!((Element) var.getElement().getParentNode()).getTagName().
           equals(Xcode.ARRAYINDEX.code())
-          && var.getValue().toLowerCase().equals(id.toLowerCase()))
-      {
+          && var.getValue().toLowerCase().equals(id.toLowerCase())) {
         realReferences.add(var);
       }
     }
@@ -608,16 +625,17 @@ public class XnodeUtil {
 
   /**
    * Find all the pragma element in an XcodeML tree.
+   *
    * @param xcodeml The XcodeML program to search in.
    * @return A list of all pragmas found in the XcodeML program.
    */
-  public static List<Xnode> findAllPragmas(XcodeProgram xcodeml){
+  public static List<Xnode> findAllPragmas(XcodeProgram xcodeml) {
     NodeList pragmaList = xcodeml.getDocument()
-      .getElementsByTagName(Xcode.FPRAGMASTATEMENT.code());
+        .getElementsByTagName(Xcode.FPRAGMASTATEMENT.code());
     List<Xnode> pragmas = new ArrayList<>();
-    for (int i = 0; i < pragmaList.getLength(); i++) {
+    for(int i = 0; i < pragmaList.getLength(); i++) {
       Node pragmaNode = pragmaList.item(i);
-      if (pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
+      if(pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) pragmaNode;
         pragmas.add(new Xnode(element));
       }
@@ -627,29 +645,31 @@ public class XnodeUtil {
 
   /**
    * Extract the body of a do statement and place it directly after it.
+   *
    * @param loop The do statement containing the body to be extracted.
    */
-  public static void extractBody(Xnode loop){
+  public static void extractBody(Xnode loop) {
     extractBody(loop, loop);
   }
 
   /**
    * Extract the body of a do statement and place it after the reference node.
+   *
    * @param loop The do statement containing the body to be extracted.
    * @param ref  Element after which statement are shifted.
    */
-  public static void extractBody(Xnode loop, Xnode ref){
+  public static void extractBody(Xnode loop, Xnode ref) {
     Element loopElement = loop.getElement();
     Element body = XnodeUtil.findFirstElement(loopElement,
         Xname.BODY);
-    if(body == null){
+    if(body == null) {
       return;
     }
     Node refNode = ref.getElement();
-    for(Node childNode = body.getFirstChild(); childNode!=null;){
+    for(Node childNode = body.getFirstChild(); childNode != null; ) {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE){
+      if(childNode.getNodeType() == Node.ELEMENT_NODE) {
         insertAfter(refNode, childNode);
         refNode = childNode;
       }
@@ -659,10 +679,11 @@ public class XnodeUtil {
 
   /**
    * Delete an element for the tree.
+   *
    * @param element Element to be deleted.
    */
-  public static void delete(Node element){
-    if(element == null || element.getParentNode() == null){
+  public static void delete(Node element) {
+    if(element == null || element.getParentNode() == null) {
       return;
     }
     element.getParentNode().removeChild(element);
@@ -671,25 +692,26 @@ public class XnodeUtil {
 
   /**
    * Write the XcodeML to file or std out
+   *
    * @param xcodeml    The XcodeML to write in the output
    * @param outputFile Path of the output file or null to output on std out
    * @param indent     Number of spaces used for the indentation
    * @throws IllegalTransformationException if XML file cannot be written.
    */
   public static void writeXcodeML(XcodeML xcodeml, String outputFile,
-                                     int indent)
-    throws IllegalTransformationException
+                                  int indent)
+      throws IllegalTransformationException
   {
     try {
       XnodeUtil.cleanEmptyTextNodes(xcodeml.getDocument());
       Transformer transformer
-        = TransformerFactory.newInstance().newTransformer();
+          = TransformerFactory.newInstance().newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty(
-                "{http://xml.apache.org/xslt}indent-amount",
-                Integer.toString(indent));
+          "{http://xml.apache.org/xslt}indent-amount",
+          Integer.toString(indent));
       DOMSource source = new DOMSource(xcodeml.getDocument());
-      if(outputFile == null){
+      if(outputFile == null) {
         // Output to console
         StreamResult console = new StreamResult(System.out);
         transformer.transform(source, console);
@@ -698,7 +720,7 @@ public class XnodeUtil {
         StreamResult console = new StreamResult(new File(outputFile));
         transformer.transform(source, console);
       }
-    } catch (Exception ignored){
+    } catch(Exception ignored) {
       throw new IllegalTransformationException("Cannot output file: " +
           outputFile, 0);
     }
@@ -710,17 +732,18 @@ public class XnodeUtil {
    * parent node has at least one child of any of the following types, all
    * whitespace-only text-node children will be removed: - ELEMENT child -
    * CDATA child - COMMENT child.
+   *
    * @param parentNode Root node to start the cleaning.
    */
   private static void cleanEmptyTextNodes(Node parentNode) {
     boolean removeEmptyTextNodes = false;
     Node childNode = parentNode.getFirstChild();
-    while (childNode != null) {
+    while(childNode != null) {
       removeEmptyTextNodes |= checkNodeTypes(childNode);
       childNode = childNode.getNextSibling();
     }
 
-    if (removeEmptyTextNodes) {
+    if(removeEmptyTextNodes) {
       removeEmptyTextNodes(parentNode);
     }
   }
@@ -731,18 +754,19 @@ public class XnodeUtil {
 
   /**
    * Remove all empty text nodes in the subtree.
+   *
    * @param parentNode Root node to start the search.
    */
   private static void removeEmptyTextNodes(Node parentNode) {
     Node childNode = parentNode.getFirstChild();
-    while (childNode != null) {
+    while(childNode != null) {
       // grab the "nextSibling" before the child node is removed
       Node nextChild = childNode.getNextSibling();
       short nodeType = childNode.getNodeType();
-      if (nodeType == Node.TEXT_NODE) {
+      if(nodeType == Node.TEXT_NODE) {
         boolean containsOnlyWhitespace = childNode.getNodeValue()
-          .trim().isEmpty();
-        if (containsOnlyWhitespace) {
+            .trim().isEmpty();
+        if(containsOnlyWhitespace) {
           parentNode.removeChild(childNode);
         }
       }
@@ -752,12 +776,13 @@ public class XnodeUtil {
 
   /**
    * Check the type of the given node.
+   *
    * @param childNode Node to be checked.
    * @return True if the node contains data. False otherwise.
    */
   private static boolean checkNodeTypes(Node childNode) {
     short nodeType = childNode.getNodeType();
-    if (nodeType == Node.ELEMENT_NODE) {
+    if(nodeType == Node.ELEMENT_NODE) {
       cleanEmptyTextNodes(childNode); // recurse into subtree
     }
     return nodeType == Node.ELEMENT_NODE || nodeType == Node.CDATA_SECTION_NODE
@@ -766,25 +791,27 @@ public class XnodeUtil {
 
   /**
    * Insert a node directly after a reference node.
+   *
    * @param refNode The reference node. New node will be inserted after this
    *                one.
    * @param newNode The new node to be inserted.
    */
-  private static void insertAfter(Node refNode, Node newNode){
-     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
+  private static void insertAfter(Node refNode, Node newNode) {
+    refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
   /**
    * Find the first element with tag corresponding to elementName nested under
    * the parent element.
+   *
    * @param parent      The root element to search from.
    * @param elementName The tag of the element to search for.
    * @return The first element found under parent with the corresponding tag.
    * Null if no element is found.
    */
-  private static Element findFirstElement(Element parent, String elementName){
+  private static Element findFirstElement(Element parent, String elementName) {
     NodeList elements = parent.getElementsByTagName(elementName);
-    if(elements.getLength() == 0){
+    if(elements.getLength() == 0) {
       return null;
     }
     return (Element) elements.item(0);
@@ -793,18 +820,21 @@ public class XnodeUtil {
   /**
    * Find the first element with tag corresponding to elementName in the direct
    * children of the parent element.
+   *
    * @param parent      The root element to search from.
    * @param elementName The tag of the element to search for.
    * @return The first element found in the direct children of the element
    * parent with the corresponding tag. Null if no element is found.
    */
-  private static Element findFirstChildElement(Element parent, String elementName){
+  private static Element findFirstChildElement(Element parent,
+                                               String elementName)
+  {
     NodeList nodeList = parent.getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
+    for(int i = 0; i < nodeList.getLength(); i++) {
       Node nextNode = nodeList.item(i);
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
-        if(element.getTagName().equals(elementName)){
+        if(element.getTagName().equals(elementName)) {
           return element;
         }
       }
@@ -814,10 +844,11 @@ public class XnodeUtil {
 
   /**
    * Get the depth of an element in the AST.
+   *
    * @param element XML element for which the depth is computed.
    * @return A depth value greater or equal to 0.
    */
-  private static int getDepth(Element element){
+  private static int getDepth(Element element) {
     Node parent = element.getParentNode();
     int depth = 0;
     while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
@@ -830,6 +861,7 @@ public class XnodeUtil {
   /**
    * Shift all statements from the first siblings of the "from" element until
    * the "until" element (not included).
+   *
    * @param from       Start element for the swifting.
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
@@ -839,7 +871,7 @@ public class XnodeUtil {
   {
     Node currentSibling = from.getElement().getNextSibling();
     Node firstStatementInBody = targetBody.getElement().getFirstChild();
-    while(currentSibling != null && currentSibling != until.getElement()){
+    while(currentSibling != null && currentSibling != until.getElement()) {
       Node nextSibling = currentSibling.getNextSibling();
       targetBody.getElement().insertBefore(currentSibling,
           firstStatementInBody);
@@ -850,12 +882,13 @@ public class XnodeUtil {
   /**
    * Copy the whole body element into the destination one. Destination is
    * overwritten.
+   *
    * @param from The body to be copied.
    * @param to   The destination of the copied body.
    */
-  public static void copyBody(Xnode from, Xnode to){
+  public static void copyBody(Xnode from, Xnode to) {
     Node copiedBody = from.cloneNode();
-    if(to.getBody() != null){
+    if(to.getBody() != null) {
       to.getBody().delete();
     }
     to.getElement().appendChild(copiedBody);
@@ -864,11 +897,12 @@ public class XnodeUtil {
   /**
    * Check whether the given type is a built-in type or is a type defined in the
    * type table.
+   *
    * @param type Type to check.
    * @return True if the type is built-in. False otherwise.
    */
-  public static boolean isBuiltInType(String type){
-    switch (type){
+  public static boolean isBuiltInType(String type) {
+    switch(type) {
       case Xname.TYPE_F_CHAR:
       case Xname.TYPE_F_COMPLEX:
       case Xname.TYPE_F_INT:
@@ -885,12 +919,13 @@ public class XnodeUtil {
 
   /**
    * Find module definition element in which the child is included if any.
+   *
    * @param from The child element to search from.
    * @return A XmoduleDefinition object if found. Null otherwise.
    */
   public static XmoduleDefinition findParentModule(Xnode from) {
     Xnode moduleDef = findParent(Xcode.FMODULEDEFINITION, from);
-    if(moduleDef == null){
+    if(moduleDef == null) {
       return null;
     }
     return new XmoduleDefinition(moduleDef.getElement());
@@ -898,12 +933,13 @@ public class XnodeUtil {
 
   /**
    * Find function definition in the ancestor of the give element.
+   *
    * @param from Element to start search from.
    * @return The function definition found. Null if nothing found.
    */
-  public static XfunctionDefinition findParentFunction(Xnode from){
+  public static XfunctionDefinition findParentFunction(Xnode from) {
     Xnode fctDef = findParent(Xcode.FFUNCTIONDEFINITION, from);
-    if(fctDef == null){
+    if(fctDef == null) {
       return null;
     }
     return new XfunctionDefinition(fctDef.getElement());
@@ -912,19 +948,20 @@ public class XnodeUtil {
   /**
    * Find element of the the given type that is directly after the given from
    * element.
+   *
    * @param opcode Code of the element to be found.
    * @param from   Element to start the search from.
    * @return The element found. Null if no element is found.
    */
   public static Xnode findDirectNext(Xcode opcode, Xnode from) {
-    if(from == null){
+    if(from == null) {
       return null;
     }
     Node nextNode = from.getElement().getNextSibling();
-    while (nextNode != null){
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE){
+    while(nextNode != null) {
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.code())){
+        if(element.getTagName().equals(opcode.code())) {
           return new Xnode(element);
         }
         return null;
@@ -936,45 +973,48 @@ public class XnodeUtil {
 
   /**
    * Delete all the elements between the two given elements.
+   *
    * @param start The start element. Deletion start from next element.
    * @param end   The end element. Deletion end just before this element.
    */
-  public static void deleteBetween(Xnode start, Xnode end){
+  public static void deleteBetween(Xnode start, Xnode end) {
     List<Element> toDelete = new ArrayList<>();
     Node node = start.getElement().getNextSibling();
-    while (node != null && node != end.getElement()){
-      if(node.getNodeType() == Node.ELEMENT_NODE){
-        Element element = (Element)node;
+    while(node != null && node != end.getElement()) {
+      if(node.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) node;
         toDelete.add(element);
       }
       node = node.getNextSibling();
     }
 
-    for(Element e : toDelete){
+    for(Element e : toDelete) {
       delete(e);
     }
   }
 
   /**
    * Insert an element just after a reference element.
+   *
    * @param refElement The reference element.
    * @param element    The element to be inserted.
    */
-  public static void insertAfter(Xnode refElement, Xnode element){
+  public static void insertAfter(Xnode refElement, Xnode element) {
     XnodeUtil.insertAfter(refElement.getElement(), element.getElement());
   }
 
   /**
    * Find the first element with tag corresponding to elementName.
+   *
    * @param opcode The XcodeML code of the element to search for.
    * @param parent The root element to search from.
    * @param any    If true, find in any nested element under parent. If false,
    *               only direct children are search for.
    * @return first element found. Null if no element is found.
    */
-  public static Xnode find(Xcode opcode, Xnode parent, boolean any){
+  public static Xnode find(Xcode opcode, Xnode parent, boolean any) {
     Element el;
-    if(any){
+    if(any) {
       el = findFirstElement(parent.getElement(), opcode.code());
     } else {
       el = findFirstChildElement(parent.getElement(), opcode.code());
@@ -985,6 +1025,7 @@ public class XnodeUtil {
   /**
    * Find element of the the given type that is directly after the given from
    * element.
+   *
    * @param opcode Code of the element to be found.
    * @param from   Element to start the search from.
    * @return The element found. Null if no element is found.
@@ -995,34 +1036,36 @@ public class XnodeUtil {
 
   /**
    * Find an element in the ancestor of the given element.
+   *
    * @param opcode Code of the element to be found.
    * @param from   Element to start the search from.
    * @return The element found. Null if nothing found.
    */
-  public static Xnode findParent(Xcode opcode, Xnode from){
+  public static Xnode findParent(Xcode opcode, Xnode from) {
     return findInDirection(opcode, from, false);
   }
 
   /**
    * Find an element either in the next siblings or in the ancestors.
+   *
    * @param opcode Code of the element to be found.
    * @param from   Element to start the search from.
    * @param down   If True, search in the siblings. If false, search in the
    *               ancestors.
    * @return The element found. Null if nothing found.
    */
-  private static Xnode findInDirection(Xcode opcode, Xnode from, boolean down){
-    if(from == null){
+  private static Xnode findInDirection(Xcode opcode, Xnode from, boolean down) {
+    if(from == null) {
       return null;
     }
 
     Node nextNode = down ? from.getElement().getNextSibling() :
         from.getElement().getParentNode();
 
-    while(nextNode != null){
-      if (nextNode.getNodeType() == Node.ELEMENT_NODE) {
+    while(nextNode != null) {
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.code())){
+        if(element.getTagName().equals(opcode.code())) {
           return new Xnode(element);
         }
       }
@@ -1033,10 +1076,11 @@ public class XnodeUtil {
 
   /**
    * Insert all the statements from a given body at the end of another body
+   *
    * @param originalBody The body in which the extra body will be appended
    * @param extraBody    The body that will be appended to the original body
    * @throws IllegalTransformationException if one of the body or their base
-   *         element is null.
+   *                                        element is null.
    */
   public static void appendBody(Xnode originalBody, Xnode extraBody)
       throws IllegalTransformationException
@@ -1044,17 +1088,16 @@ public class XnodeUtil {
     if(originalBody == null || originalBody.getElement() == null
         || extraBody == null || extraBody.getElement() == null
         || originalBody.opcode() != Xcode.BODY
-        || extraBody.opcode() != Xcode.BODY)
-    {
+        || extraBody.opcode() != Xcode.BODY) {
       throw new IllegalTransformationException("One of the body is null.");
     }
 
     // Append content of loop-body (loop) to this loop-body
     Node childNode = extraBody.getElement().getFirstChild();
-    while(childNode != null){
+    while(childNode != null) {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE){
+      if(childNode.getNodeType() == Node.ELEMENT_NODE) {
         originalBody.getElement().appendChild(childNode);
       }
       childNode = nextChild;
@@ -1063,6 +1106,7 @@ public class XnodeUtil {
 
   /**
    * Check if the two element are direct children of the same parent element.
+   *
    * @param e1 First element.
    * @param e2 Second element.
    * @return True if the two element are direct children of the same parent.
@@ -1076,7 +1120,8 @@ public class XnodeUtil {
   }
 
   /**
-   Compare the iteration range of two do statements.
+   * Compare the iteration range of two do statements.
+   *
    * @param e1             First do statement.
    * @param e2             Second do statement.
    * @param withLowerBound Compare lower bound or not.
@@ -1086,7 +1131,7 @@ public class XnodeUtil {
                                             boolean withLowerBound)
   {
     // The two nodes must be do statement
-    if (e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
+    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
       return false;
     }
 
@@ -1101,6 +1146,7 @@ public class XnodeUtil {
 
   /**
    * Compare the iteration range of two do statements.
+   *
    * @param e1 First do statement.
    * @param e2 Second do statement.
    * @return True if the iteration range are identical.
@@ -1111,6 +1157,7 @@ public class XnodeUtil {
 
   /**
    * Compare the iteration range of two do statements.
+   *
    * @param e1 First do statement.
    * @param e2 Second do statement.
    * @return True if the iteration range are identical besides the lower bound.
@@ -1121,6 +1168,7 @@ public class XnodeUtil {
 
   /**
    * Compare the inner values of two nodes.
+   *
    * @param n1 First node.
    * @param n2 Second node.
    * @return True if the values are identical. False otherwise.
@@ -1132,12 +1180,13 @@ public class XnodeUtil {
 
   /**
    * Compare the inner value of the first child of two nodes.
+   *
    * @param n1 First node.
    * @param n2 Second node.
    * @return True if the value are identical. False otherwise.
    */
   private static boolean compareFirstChildValues(Xnode n1, Xnode n2) {
-    if(n1 == null || n2 == null){
+    if(n1 == null || n2 == null) {
       return false;
     }
     Xnode c1 = n1.getChild(0);
@@ -1147,18 +1196,20 @@ public class XnodeUtil {
 
   /**
    * Compare the inner values of two optional nodes.
+   *
    * @param n1 First node.
    * @param n2 Second node.
    * @return True if the values are identical or elements are null. False
    * otherwise.
    */
-  private static boolean compareOptionalValues(Xnode n1, Xnode n2){
+  private static boolean compareOptionalValues(Xnode n1, Xnode n2) {
     return n1 == null && n2 == null || (n1 != null && n2 != null &&
         n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase()));
   }
 
   /**
    * Compare the iteration range of two do statements
+   *
    * @param idx1           First do statement.
    * @param idx2           Second do statement.
    * @param withLowerBound If true, compare lower bound. If false, lower bound
@@ -1168,11 +1219,11 @@ public class XnodeUtil {
   private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2,
                                                boolean withLowerBound)
   {
-    if (idx1.opcode() != Xcode.INDEXRANGE || idx2.opcode() != Xcode.INDEXRANGE) {
+    if(idx1.opcode() != Xcode.INDEXRANGE || idx2.opcode() != Xcode.INDEXRANGE) {
       return false;
     }
 
-    if (idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
+    if(idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
         idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
       return true;
     }
@@ -1184,14 +1235,14 @@ public class XnodeUtil {
     Xnode s1 = idx1.find(Xcode.STEP);
     Xnode s2 = idx2.find(Xcode.STEP);
 
-    if (s1 != null) {
+    if(s1 != null) {
       s1 = s1.getChild(0);
     }
-    if (s2 != null) {
+    if(s2 != null) {
       s2 = s2.getChild(0);
     }
 
-    if(withLowerBound){
+    if(withLowerBound) {
       return compareFirstChildValues(low1, low2) &&
           compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
     } else {
@@ -1201,16 +1252,17 @@ public class XnodeUtil {
 
   /**
    * Swap the iteration range information of two do statement.
+   *
    * @param e1 First do statement.
    * @param e2 Second do statement.
    * @throws IllegalTransformationException if necessary elements are missing
-   * to apply the transformation.
+   *                                        to apply the transformation.
    */
   public static void swapIterationRange(Xnode e1, Xnode e2)
-    throws IllegalTransformationException
+      throws IllegalTransformationException
   {
     // The two nodes must be do statement
-    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT){
+    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
       return;
     }
 
@@ -1219,8 +1271,7 @@ public class XnodeUtil {
     Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
     if(inductionVar1 == null || inductionVar2 == null ||
-        indexRange1 == null || indexRange2 == null)
-    {
+        indexRange1 == null || indexRange2 == null) {
       throw new IllegalTransformationException("Induction variable or index " +
           "range missing.");
     }
@@ -1256,11 +1307,12 @@ public class XnodeUtil {
 
   /**
    * Get the depth of an element in the AST.
+   *
    * @param element The element for which the depth is computed.
    * @return A depth value greater or equal to 0.
    */
   public static int getDepth(Xnode element) {
-    if(element == null || element.getElement() == null){
+    if(element == null || element.getElement() == null) {
       return -1;
     }
     return getDepth(element.getElement());
@@ -1269,8 +1321,9 @@ public class XnodeUtil {
   /**
    * Copy the enhanced information from an element to a target element.
    * Enhanced information include line number and original file name.
-   * @param base    Base element to copy information from.
-   * @param target  Target element to copy information to.
+   *
+   * @param base   Base element to copy information from.
+   * @param target Target element to copy information to.
    */
   public static void copyEnhancedInfo(Xnode base, Xnode target) {
     target.setLine(base.getLineNo());
@@ -1279,10 +1332,11 @@ public class XnodeUtil {
 
   /**
    * Insert an element just before a reference element.
+   *
    * @param ref    The reference element.
    * @param insert The element to be inserted.
    */
-  public static void insertBefore(Xnode ref, Xnode insert){
+  public static void insertBefore(Xnode ref, Xnode insert) {
     ref.getElement().getParentNode().insertBefore(insert.getElement(),
         ref.getElement());
   }
@@ -1290,8 +1344,9 @@ public class XnodeUtil {
   /**
    * Get a list of T elements from an xpath query executed from the
    * given element.
-   * @param from          Element to start from.
-   * @param query         XPath query to be executed.
+   *
+   * @param from  Element to start from.
+   * @param query XPath query to be executed.
    * @return List of all array references found. List is empty if nothing is
    * found.
    */
@@ -1302,31 +1357,32 @@ public class XnodeUtil {
       XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
       NodeList output = (NodeList) ex.evaluate(from.getElement(),
           XPathConstants.NODESET);
-      for (int i = 0; i < output.getLength(); i++) {
+      for(int i = 0; i < output.getLength(); i++) {
         Element element = (Element) output.item(i);
         elements.add(new Xnode(element));
       }
-    } catch (XPathExpressionException ignored) {
+    } catch(XPathExpressionException ignored) {
     }
     return elements;
   }
 
   /**
    * Find specific argument in a function call.
+   *
    * @param value   Value of the argument to be found.
    * @param fctCall Function call to search from.
    * @return The argument if found. Null otherwise.
    */
-  public static Xnode findArg(String value, Xnode fctCall){
+  public static Xnode findArg(String value, Xnode fctCall) {
     if(fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return null;
     }
     Xnode args = fctCall.find(Xcode.ARGUMENTS);
-    if(args == null){
+    if(args == null) {
       return null;
     }
-    for(Xnode arg : args.getChildren()){
-      if(value.toLowerCase().equals(arg.getValue().toLowerCase())){
+    for(Xnode arg : args.getChildren()) {
+      if(value.toLowerCase().equals(arg.getValue().toLowerCase())) {
         return arg;
       }
     }
@@ -1335,6 +1391,7 @@ public class XnodeUtil {
 
   /**
    * Find all elements of a given type in the subtree.
+   *
    * @param opcode Type of the element to be found.
    * @param parent Root of the subtree.
    * @return List of all elements found in the subtree.
@@ -1345,10 +1402,10 @@ public class XnodeUtil {
       return elements;
     }
     NodeList nodes = parent.getElement().getElementsByTagName(opcode.code());
-    for (int i = 0; i < nodes.getLength(); i++) {
+    for(int i = 0; i < nodes.getLength(); i++) {
       Node n = nodes.item(i);
-      if (n.getNodeType() == Node.ELEMENT_NODE) {
-        elements.add(new Xnode((Element)n));
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        elements.add(new Xnode((Element) n));
       }
     }
     return elements;
@@ -1357,6 +1414,7 @@ public class XnodeUtil {
   /**
    * Create a new FunctionCall element with elements name and arguments as
    * children.
+   *
    * @param xcodeml    The current XcodeML unit in which the elements are
    *                   created.
    * @param returnType Value of the type attribute for the functionCall element.
@@ -1365,7 +1423,8 @@ public class XnodeUtil {
    * @return The newly created element.
    */
   public static Xnode createFctCall(XcodeML xcodeml, String returnType,
-                                    String name, String nameType){
+                                    String name, String nameType)
+  {
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
     fctCall.setAttribute(Xattr.TYPE, returnType);
     Xnode fctName = new Xnode(Xcode.NAME, xcodeml);
@@ -1380,6 +1439,7 @@ public class XnodeUtil {
   /**
    * Create a new FarrayRef element with varRef element as a child with the
    * given Var element.
+   *
    * @param xcodeml The current XcodeML unit in which the elements are created.
    * @param type    Value of the type attribute for the FarrayRef element.
    * @param var     Var element nested in the varRef element.
@@ -1399,6 +1459,7 @@ public class XnodeUtil {
 
   /**
    * Create a new Id element with all the underlying needed elements.
+   *
    * @param xcodeml   The current XcodeML program unit in which the elements
    *                  are created.
    * @param type      Value for the attribute type.
@@ -1420,6 +1481,7 @@ public class XnodeUtil {
 
   /**
    * Constructs a new basicType element with the given information.
+   *
    * @param xcodeml The current XcodeML file unit in which the elements
    *                are created.
    * @param type    Type hash.
@@ -1443,14 +1505,15 @@ public class XnodeUtil {
 
   /**
    * Create a new Xdecl object with all the underlying elements for a varDecl.
-   * @param xcodeml The current XcodeML file unit in which the elements
-   *                are created.
+   *
+   * @param xcodeml   The current XcodeML file unit in which the elements
+   *                  are created.
    * @param nameType  Value for the attribute type of the name element.
    * @param nameValue Value of the name inner element.
    * @return The newly created element.
    */
   public static Xdecl createVarDecl(XcodeML xcodeml, String nameType,
-                                       String nameValue)
+                                    String nameValue)
   {
     Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
     Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
@@ -1462,6 +1525,7 @@ public class XnodeUtil {
 
   /**
    * Constructs a new name element with name value and optional type.
+   *
    * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    * @param name    Name value.
@@ -1472,7 +1536,7 @@ public class XnodeUtil {
   {
     Xnode n = new Xnode(Xcode.NAME, xcodeml);
     n.setValue(name);
-    if(type != null){
+    if(type != null) {
       n.setAttribute(Xattr.TYPE, type);
     }
     return n;
@@ -1480,6 +1544,7 @@ public class XnodeUtil {
 
   /**
    * Create an empty assumed shape indexRange element.
+   *
    * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    * @return The newly created element.
@@ -1492,6 +1557,7 @@ public class XnodeUtil {
 
   /**
    * Create an indexRange element to loop over an assumed shape array.
+   *
    * @param xcodeml    Current XcodeML file unit in which the element is
    *                   created.
    * @param arrayVar   Var element representing the array variable.
@@ -1533,11 +1599,12 @@ public class XnodeUtil {
 
   /**
    * Create a new FifStatement element with an empty then body.
-   * @param xcodeml    Current XcodeML file unit in which the element is
-   *                   created.
+   *
+   * @param xcodeml Current XcodeML file unit in which the element is
+   *                created.
    * @return The newly created element.
    */
-  public static Xnode createIfThen(XcodeML xcodeml){
+  public static Xnode createIfThen(XcodeML xcodeml) {
     Xnode root = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
     Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
     Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
@@ -1550,6 +1617,7 @@ public class XnodeUtil {
 
   /**
    * Create a new FdoStatement element with an empty body.
+   *
    * @param xcodeml      Current XcodeML file unit in which the element is
    *                     created.
    * @param inductionVar Var element for the induction variable.
@@ -1569,6 +1637,7 @@ public class XnodeUtil {
 
   /**
    * Create a new var element.
+   *
    * @param type    Value of the type attribute.
    * @param value   Value of the var.
    * @param scope   Value of the scope attribute.
@@ -1587,11 +1656,12 @@ public class XnodeUtil {
 
   /**
    * Create a new namedValue element with its attribute.
+   *
    * @param value   Value of the name attribute.
    * @param xcodeml Current XcodeML file unit in which the element is created.
    * @return The newly created element.
    */
-  public static Xnode createNamedValue(String value, XcodeML xcodeml){
+  public static Xnode createNamedValue(String value, XcodeML xcodeml) {
     Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, xcodeml);
     namedValue.setAttribute(Xattr.NAME, value);
     return namedValue;
@@ -1599,12 +1669,13 @@ public class XnodeUtil {
 
   /**
    * Find module containing the function and read its .xmod file.
+   *
    * @param fctDef Function definition nested in the module.
    * @return Xmod object if the module has been found and read. Null otherwise.
    */
-  public static Xmod findContainingModule(XfunctionDefinition fctDef){
+  public static Xmod findContainingModule(XfunctionDefinition fctDef) {
     XmoduleDefinition mod = findParentModule(fctDef);
-    if(mod == null){
+    if(mod == null) {
       return null;
     }
     String modName = mod.getAttribute(Xattr.NAME);
@@ -1613,14 +1684,15 @@ public class XnodeUtil {
 
   /**
    * Find module by name.
+   *
    * @param moduleName Name of the module.
    * @return Module object if found. Null otherwise.
    */
-  public static Xmod findModule(String moduleName){
-    for(String dir : XcodeMLtools_Fmod.getSearchPath()){
+  public static Xmod findModule(String moduleName) {
+    for(String dir : XcodeMLtools_Fmod.getSearchPath()) {
       String path = dir + "/" + moduleName + XMOD_FILE_EXTENSION;
       File f = new File(path);
-      if(f.exists()){
+      if(f.exists()) {
         Document doc = readXmlFile(path);
         return doc != null ? new Xmod(doc, moduleName, dir) : null;
       }
@@ -1630,13 +1702,14 @@ public class XnodeUtil {
 
   /**
    * Read XML file.
+   *
    * @param input Xml file path.
    * @return Document if the XML file could be read. Null otherwise.
    */
-  public static Document readXmlFile(String input){
+  public static Document readXmlFile(String input) {
     try {
       File fXmlFile = new File(input);
-      if(!fXmlFile.exists()){
+      if(!fXmlFile.exists()) {
         return null;
       }
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -1644,13 +1717,15 @@ public class XnodeUtil {
       Document doc = dBuilder.parse(fXmlFile);
       doc.getDocumentElement().normalize();
       return doc;
-    } catch(Exception ignored){}
+    } catch(Exception ignored) {
+    }
     return null;
   }
 
   /**
    * Create the id and varDecl elements and add them to the symbol/declaration
    * table.
+   *
    * @param name    Name of the variable.
    * @param type    Type of the variable.
    * @param sclass  Scope class of the variable (from Xname).
@@ -1671,6 +1746,7 @@ public class XnodeUtil {
    * Create a name element and adds it as a parameter of the given function
    * type. If the function has optional parameters, the newly created parameter
    * is added before the optional ones.
+   *
    * @param xcodeml   Current XcodeML file unit.
    * @param nameValue Value of the name element to create.
    * @param type      Type of the name element to create.
@@ -1678,20 +1754,20 @@ public class XnodeUtil {
    *                  parameter.
    */
   public static Xnode createAndAddParam(XcodeML xcodeml, String nameValue,
-                                       String type, XfunctionType fctType)
+                                        String type, XfunctionType fctType)
   {
     Xnode newParam = XnodeUtil.createName(xcodeml, nameValue, type);
     Xnode hook = null;
     // Newly created parameter must be added before any optional parameter
-    for(Xnode param : fctType.getParams().getAll()){
+    for(Xnode param : fctType.getParams().getAll()) {
       XbasicType paramType = (XbasicType) xcodeml.
           getTypeTable().get(param.getAttribute(Xattr.TYPE));
-      if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)){
+      if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
         break;
       }
     }
-    if(hook == null){
+    if(hook == null) {
       fctType.getParams().add(newParam);
     } else {
       fctType.getParams().addBefore(hook, newParam);
@@ -1704,6 +1780,7 @@ public class XnodeUtil {
   /**
    * Create a name element and adds it as a parameter of the given function
    * type if this parameter is does not exist yet.
+   *
    * @param xcodeml   Current XcodeML file unit.
    * @param nameValue Value of the name element to create.
    * @param type      Type of the name element to create.
@@ -1714,7 +1791,7 @@ public class XnodeUtil {
                                                   String nameValue, String type,
                                                   XfunctionType fctType)
   {
-    for(Xnode p : fctType.getParams().getAll()){
+    for(Xnode p : fctType.getParams().getAll()) {
       if(p.getValue().toLowerCase().equals(nameValue.toLowerCase())) {
         return;
       }
@@ -1725,30 +1802,30 @@ public class XnodeUtil {
   /**
    * Import a type description from one XcodeML unit to another one. If the type
    * id is not present in the source XcodeML unit, nothing is done.
+   *
    * @param src    Source XcodeML unit.
    * @param dst    Destination XcodeML unit.
    * @param typeId Type id to be imported.
    */
-  public static void importType(XcodeML src, XcodeML dst, String typeId){
+  public static void importType(XcodeML src, XcodeML dst, String typeId) {
     if(typeId == null || dst.getTypeTable().hasType(typeId)) {
       return;
     }
     Xtype type = src.getTypeTable().get(typeId);
-    if(type == null){
+    if(type == null) {
       return;
     }
     Node rawNode = dst.getDocument().importNode(type.getElement(), true);
-    Xtype importedType = new Xtype((Element)rawNode);
+    Xtype importedType = new Xtype((Element) rawNode);
     dst.getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
-        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
-    {
+        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF))) {
       XnodeUtil.importType(src, dst, importedType.getAttribute(Xattr.REF));
     }
 
     // Handle possible type ref in indexRange element
     List<Xnode> vars = XnodeUtil.findAll(Xcode.VAR, importedType);
-    for(Xnode var : vars){
+    for(Xnode var : vars) {
       importType(src, dst, var.getAttribute(Xattr.TYPE));
     }
   }
@@ -1756,6 +1833,7 @@ public class XnodeUtil {
   /**
    * Duplicates the type to update and add extra dimensions to match the base
    * type.
+   *
    * @param base       Base type.
    * @param toUpdate   Type to update.
    * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
@@ -1774,23 +1852,24 @@ public class XnodeUtil {
     String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
     newType.setAttribute(Xattr.TYPE, type);
 
-    if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()){
-      int additionalDimensions = base.getDimensions() - toUpdate.getDimensions();
-      for(int i = 0; i < additionalDimensions; ++i){
+    if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {
+      int additionalDimensions =
+          base.getDimensions() - toUpdate.getDimensions();
+      for(int i = 0; i < additionalDimensions; ++i) {
         Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodemlDst);
         newType.addDimension(index, 0);
       }
     } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {
-      switch (overPos){
+      switch(overPos) {
         case BEFORE:
           // TODO control and validate the before/after
-          for(ClawDimension dim : dimensions){
+          for(ClawDimension dim : dimensions) {
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false),
                 XbasicType.APPEND);
           }
           break;
         case AFTER:
-          for(ClawDimension dim : dimensions){
+          for(ClawDimension dim : dimensions) {
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
           }
           break;
@@ -1801,7 +1880,7 @@ public class XnodeUtil {
     } else {
       newType.resetDimension();
 
-      for(int i = 0; i < base.getDimensions(); ++i){
+      for(int i = 0; i < base.getDimensions(); ++i) {
         Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodemlDst);
         newType.appendToChildren(newDim, false);
 
@@ -1814,7 +1893,7 @@ public class XnodeUtil {
               duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
           newDim.appendToChildren(newLowerBound, false);
         }
-        if(upperBound != null){
+        if(upperBound != null) {
           Xnode newUpperBound =
               duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
           newDim.appendToChildren(newUpperBound, false);
@@ -1830,6 +1909,7 @@ public class XnodeUtil {
 
   /**
    * Duplicate a lower or an upper bound between two different XcodeML units.
+   *
    * @param baseBound  Base bound to be duplicated.
    * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
    * @param xcodemlSrc Source XcodeML unit. Contains base bound.
@@ -1841,25 +1921,23 @@ public class XnodeUtil {
       throws IllegalTransformationException
   {
     if(baseBound.opcode() != Xcode.LOWERBOUND
-        && baseBound.opcode() != Xcode.UPPERBOUND)
-    {
+        && baseBound.opcode() != Xcode.UPPERBOUND) {
       throw new IllegalTransformationException("Cannot duplicate bound");
     }
 
-    if(xcodemlSrc == xcodemlDst){
+    if(xcodemlSrc == xcodemlDst) {
       return baseBound.cloneObject();
     }
 
     Xnode boundChild = baseBound.getChild(0);
-    if(boundChild == null){
+    if(boundChild == null) {
       throw new IllegalTransformationException("Cannot duplicate bound as it " +
           "has no children element");
     }
 
     Xnode bound = new Xnode(baseBound.opcode(), xcodemlDst);
     if(boundChild.opcode() == Xcode.FINTCONSTANT
-        || boundChild.opcode() == Xcode.VAR)
-    {
+        || boundChild.opcode() == Xcode.VAR) {
       bound.appendToChildren(
           importConstOrVar(boundChild, xcodemlSrc, xcodemlDst), false);
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
@@ -1884,25 +1962,26 @@ public class XnodeUtil {
   /**
    * Create a copy of a variable element or an integer constant from a XcodeML
    * unit to another one.
+   *
    * @param base       Base element to be copied.
    * @param xcodemlSrc Source XcodeML unit.
    * @param xcodemlDst Destination XcodeML unit.
    * @return The newly created element in the destination XcodeML unit.
    * @throws IllegalTransformationException If the variable element doesn't meet
-   * the criteria.
+   *                                        the criteria.
    */
   private static Xnode importConstOrVar(Xnode base, XcodeML xcodemlSrc,
                                         XcodeML xcodemlDst)
       throws IllegalTransformationException
   {
-    if(base.opcode() != Xcode.FINTCONSTANT && base.opcode() != Xcode.VAR){
+    if(base.opcode() != Xcode.FINTCONSTANT && base.opcode() != Xcode.VAR) {
       throw new IllegalTransformationException(
           String.format("Lower/upper bound type currently not supported (%s)",
               base.opcode().toString())
       );
     }
 
-    if(base.opcode() == Xcode.VAR){
+    if(base.opcode() == Xcode.VAR) {
       return importVar(base, xcodemlSrc, xcodemlDst);
     } else {
       Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
@@ -1914,12 +1993,13 @@ public class XnodeUtil {
   /**
    * Create a copy with a new hash type of an integer variable element from one
    * XcodeML unit to another one.
+   *
    * @param base       Base variable element to be copied.
    * @param xcodemlSrc Source XcodeML unit.
    * @param xcodemlDst Destination XcodeML unit.
    * @return The newly created element in the destination XcodeML unit.
    * @throws IllegalTransformationException If the variable element doesn't meet
-   * the criteria.
+   *                                        the criteria.
    */
   private static Xnode importVar(Xnode base, XcodeML xcodemlSrc,
                                  XcodeML xcodemlDst)
@@ -1930,13 +2010,13 @@ public class XnodeUtil {
       throw new IllegalTransformationException("Only integer variable are " +
           "supported as lower/upper bound value for promotted arrays.");
     }
-    
+
     XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
     Xnode bType = new Xnode(Xcode.FBASICTYPE, xcodemlDst);
     bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
     bType.setAttribute(Xattr.TYPE,
         xcodemlDst.getTypeTable().generateIntegerTypeHash());
-    if(type != null && type.getIntent() != Xintent.NONE){
+    if(type != null && type.getIntent() != Xintent.NONE) {
       bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
     }
 
@@ -1950,6 +2030,7 @@ public class XnodeUtil {
   /**
    * Try to locate a function definition in the current declaration table or
    * recursively in the modules' delcaration tables.
+   *
    * @param dt      Declaration table to search in.
    * @param fctName Function's name to be found.
    * @return The function definition if found. Null otherwise.
@@ -1958,17 +2039,17 @@ public class XnodeUtil {
                                                            String fctName)
   {
     Iterator<Map.Entry<String, Xnode>> it = dt.getIterator();
-    while(it.hasNext()){
+    while(it.hasNext()) {
       Map.Entry<String, Xnode> entry = it.next();
-      if(entry.getValue() instanceof XmoduleDefinition){
+      if(entry.getValue() instanceof XmoduleDefinition) {
         XfunctionDefinition fctDef = findFunctionDefinitionInModule(
-            (XmoduleDefinition)entry.getValue(), fctName);
-        if(fctDef != null){
+            (XmoduleDefinition) entry.getValue(), fctName);
+        if(fctDef != null) {
           return fctDef;
         }
-      } else if (entry.getValue() instanceof XfunctionDefinition){
-        XfunctionDefinition fctDef = (XfunctionDefinition)entry.getValue();
-        if(fctDef.getName().getValue().equals(fctName)){
+      } else if(entry.getValue() instanceof XfunctionDefinition) {
+        XfunctionDefinition fctDef = (XfunctionDefinition) entry.getValue();
+        if(fctDef.getName().getValue().equals(fctName)) {
           return fctDef;
         }
       }
@@ -1978,14 +2059,15 @@ public class XnodeUtil {
 
   /**
    * Get next sibling node.
+   *
    * @param crt Current node.
    * @return Next sibling node.
    */
-  public static Xnode getNextSibling(Xnode crt){
+  public static Xnode getNextSibling(Xnode crt) {
     Node n = crt.getElement().getNextSibling();
-    while (n != null){
-      if(n.getNodeType() == Node.ELEMENT_NODE){
-        return new Xnode((Element)n);
+    while(n != null) {
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        return new Xnode((Element) n);
       }
       n = n.getNextSibling();
     }
@@ -1994,31 +2076,34 @@ public class XnodeUtil {
 
   /**
    * Get all the USE statement declaration in a module definition.
+   *
    * @param mod Module definition.
    * @return A list of all declaration. Empty list if no USE declaration.
    */
-  public static List<Xdecl> getAllUse(XmoduleDefinition mod){
+  public static List<Xdecl> getAllUse(XmoduleDefinition mod) {
     return mod == null ? getAllUseFromDeclTable(null) :
         getAllUseFromDeclTable(mod.getDeclarationTable());
   }
 
   /**
    * Get all the USE statement declaration in a function definition.
+   *
    * @param fctDef Function definition.
    * @return A list of all declaration. Empty list if no USE declaration.
    */
-  public static List<Xdecl> getAllUse(XfunctionDefinition fctDef){
+  public static List<Xdecl> getAllUse(XfunctionDefinition fctDef) {
     return fctDef == null ? getAllUseFromDeclTable(null) :
         getAllUseFromDeclTable(fctDef.getDeclarationTable());
   }
 
   /**
    * Get all the USE statement declaration in a declaration table.
+   *
    * @param dt Declaration table.
    * @return A list of all declaration. Empty list if no USE declaration.
    */
-  private static List<Xdecl> getAllUseFromDeclTable(XdeclTable dt){
-    if(dt == null){
+  private static List<Xdecl> getAllUseFromDeclTable(XdeclTable dt) {
+    if(dt == null) {
       return new ArrayList<Xdecl>();
     }
     List<Xdecl> uses = dt.getAll(Xcode.FUSEDECL);
@@ -2028,17 +2113,18 @@ public class XnodeUtil {
 
   /**
    * Delete all sibling elements from the start element included.
+   *
    * @param start Element to start from.
    */
-  public static void deleteFrom(Xnode start){
+  public static void deleteFrom(Xnode start) {
     List<Node> toDelete = new ArrayList<>();
     toDelete.add(start.getElement());
     Node sibling = start.getElement().getNextSibling();
-    while (sibling != null){
+    while(sibling != null) {
       toDelete.add(sibling);
       sibling = sibling.getNextSibling();
     }
-    for (Node n : toDelete) {
+    for(Node n : toDelete) {
       XnodeUtil.delete(n);
     }
   }
