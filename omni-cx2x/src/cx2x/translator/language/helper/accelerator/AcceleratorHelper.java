@@ -197,7 +197,8 @@ public class AcceleratorHelper {
         String type = name.getAttribute(Xattr.TYPE);
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if((bt == null && XnodeUtil.isBuiltInType(type))
-            || bt.getIntent() == Xintent.NONE) {
+            || (bt != null && bt.getIntent() == Xintent.NONE))
+        {
           variables.add(name.getValue());
         }
       }
