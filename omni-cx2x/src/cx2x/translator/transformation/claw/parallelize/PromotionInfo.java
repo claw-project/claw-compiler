@@ -11,6 +11,7 @@ package cx2x.translator.transformation.claw.parallelize;
  * @author clementval
  */
 public class PromotionInfo {
+
   private final String _identifier;
   private final int _baseDimension;
   private final int _targetDimension;
@@ -19,6 +20,7 @@ public class PromotionInfo {
 
   /**
    * Contructs a new PromotionInfo object with all its information.
+   *
    * @param id              Identifier of the promoted variable.
    * @param baseDimension   Number of dimensions before the promotion.
    * @param targetDimension Number of dimensions after the promotion.
@@ -35,27 +37,30 @@ public class PromotionInfo {
 
   /**
    * Check whether the variable was a scalar before the promotion.
+   *
    * @return True if the variable was a scalar. False otherwise.
    */
-  public boolean wasScalar(){
+  public boolean wasScalar() {
     return _baseDimension == 0;
   }
 
   /**
    * Get the type id after the promotion.
+   *
    * @return Type id.
    */
-  public String getTargetType(){
+  public String getTargetType() {
     return _targetType;
   }
 
 
   /**
    * Get the number of dimension between the base and the target.
+   *
    * @return Number of dimension.
    */
-  public int diffDimension(){
-    return  _targetDimension - _baseDimension;
+  public int diffDimension() {
+    return _targetDimension - _baseDimension;
   }
 
 }

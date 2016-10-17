@@ -22,6 +22,7 @@ public class XcodeMLWorkaround extends Transformation {
 
   /**
    * XcodeMLWorkaround ctor.
+   *
    * @param claw The directive that triggered the transformation. In case of
    *             this specific transformation, there is no directive.
    */
@@ -49,11 +50,12 @@ public class XcodeMLWorkaround extends Transformation {
 
   /**
    * Check the declaration table of each function definition.
+   *
    * @param xcodeml Current XcodeML program unit.
    */
-  private void checkDeclarations(XcodeProgram xcodeml){
+  private void checkDeclarations(XcodeProgram xcodeml) {
     List<XfunctionDefinition> definitions = XnodeUtil.getAllFctDef(xcodeml);
-    for(XfunctionDefinition fct : definitions){
+    for(XfunctionDefinition fct : definitions) {
       fct.getDeclarationTable().checkOrder(fct);
     }
   }

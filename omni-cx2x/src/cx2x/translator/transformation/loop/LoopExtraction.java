@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 // Cx2x import
+
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.ClawLanguage;
 import cx2x.translator.language.ClawMapping;
@@ -46,12 +47,15 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
-   * @param directive  The directive that triggered the loop extraction
-   *                   transformation.
+   *
+   * @param directive The directive that triggered the loop extraction
+   *                  transformation.
    * @throws IllegalDirectiveException if something is wrong in the directive's
-   * options
+   *                                   options
    */
-  public LoopExtraction(ClawLanguage directive) throws IllegalDirectiveException {
+  public LoopExtraction(ClawLanguage directive)
+      throws IllegalDirectiveException
+  {
     super(directive);
     _claw = directive;
     _argMappingMap = new Hashtable<>();
@@ -59,7 +63,7 @@ public class LoopExtraction extends Transformation {
 
     try {
       extractMappingInformation();
-    } catch (IllegalDirectiveException ide){
+    } catch(IllegalDirectiveException ide) {
       ide.setDirectiveLine(directive.getPragma().getLineNo());
       throw ide;
     }
@@ -70,15 +74,15 @@ public class LoopExtraction extends Transformation {
    * map(<mapped>:<mapping>) produces a ClawMapping object.
    */
   private void extractMappingInformation() throws IllegalDirectiveException {
-    for(ClawMapping m : _claw.getMappings()){
-      for(ClawMappingVar mappedVar : m.getMappedVariables()){
-        if(_argMappingMap.containsKey(mappedVar.getArgMapping())){
+    for(ClawMapping m : _claw.getMappings()) {
+      for(ClawMappingVar mappedVar : m.getMappedVariables()) {
+        if(_argMappingMap.containsKey(mappedVar.getArgMapping())) {
           throw new IllegalDirectiveException(_claw.getPragma().getValue(),
               mappedVar + " appears more than once in the mapping");
         } else {
           _argMappingMap.put(mappedVar.getArgMapping(), m);
         }
-        if(_fctMappingMap.containsKey(mappedVar.getFctMapping())){
+        if(_fctMappingMap.containsKey(mappedVar.getFctMapping())) {
           throw new IllegalDirectiveException(_claw.getPragma().getValue(),
               mappedVar + " appears more than once in the mapping");
         } else {
@@ -93,13 +97,14 @@ public class LoopExtraction extends Transformation {
    * mapped variable should only appear once. Mapped variable must be parameters
    * in the function definition.
    * Mapping using the same mapping variables are merged together.
+   *
    * @return True if all the conditions are respected. False otherwise.
    */
-  private boolean checkMappingInformation(XcodeProgram xcodeml){
-    for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()){
-      if(XnodeUtil.findArg(map.getKey(), _fctCall) == null){
+  private boolean checkMappingInformation(XcodeProgram xcodeml) {
+    for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()) {
+      if(XnodeUtil.findArg(map.getKey(), _fctCall) == null) {
         xcodeml.addError("Mapped variable " + map.getKey() +
-            " not found in function call arguments",
+                " not found in function call arguments",
             _claw.getPragma().getLineNo());
         return false;
       }
@@ -110,32 +115,33 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Check whether the transformation can be applied.
-   * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @param transformer  The transformer used to applied the transformations.
+   *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
    * @return True if the transformation analysis succeeded. False otherwise.
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     Xnode _exprStmt =
         XnodeUtil.findNext(Xcode.EXPRSTATEMENT, _claw.getPragma());
-    if(_exprStmt == null){
+    if(_exprStmt == null) {
       xcodeml.addError("No function call detected after loop-extract",
-        _claw.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
       return false;
     }
 
     // Find function CALL
     _fctCall = XnodeUtil.find(Xcode.FUNCTIONCALL, _exprStmt, true);
-    if(_fctCall == null){
+    if(_fctCall == null) {
       xcodeml.addError("No function call detected after loop-extract",
-        _claw.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
       return false;
     }
 
     Xnode fctDef = XnodeUtil.findParent(Xcode.FFUNCTIONDEFINITION, _fctCall);
-    if(fctDef == null){
+    if(fctDef == null) {
       xcodeml.addError("No function around the fct call",
-        _claw.getPragma().getLineNo());
+          _claw.getPragma().getLineNo());
       return false;
     }
     _fctDef = new XfunctionDefinition(fctDef.getElement());
@@ -143,9 +149,9 @@ public class LoopExtraction extends Transformation {
     // Find function declaration
     _fctDefToExtract = XnodeUtil.findFunctionDefinition(xcodeml, _fctCall);
 
-    if(_fctDefToExtract == null){
+    if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "
-          + _fctCall.findNode(Xcode.NAME).getValue(),
+              + _fctCall.findNode(Xcode.NAME).getValue(),
           _claw.getPragma().getLineNo());
       return false;
     }
@@ -153,7 +159,7 @@ public class LoopExtraction extends Transformation {
     // Find the loop to be extracted
     try {
       _extractedLoop = locateDoStatement(_fctDefToExtract);
-    } catch (IllegalTransformationException itex){
+    } catch(IllegalTransformationException itex) {
       xcodeml.addError(itex.getMessage(),
           _claw.getPragma().getLineNo());
       return false;
@@ -165,19 +171,19 @@ public class LoopExtraction extends Transformation {
   /**
    * Apply the transformation. A loop extraction is applied in the following
    * steps:
-   *  1) Duplicate the function targeted by the transformation
-   *  2) Extract the loop body in the duplicated function and remove the loop.
-   *  3) Adapt function call and demote array references in the duplicated
-   *     function body.
-   *  4) Optional: Add a LoopFusion transformation to the transformations'
-   *  queue.
+   * 1) Duplicate the function targeted by the transformation
+   * 2) Extract the loop body in the duplicated function and remove the loop.
+   * 3) Adapt function call and demote array references in the duplicated
+   * function body.
+   * 4) Optional: Add a LoopFusion transformation to the transformations'
+   * queue.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
    * @param transformer    The transformer used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
-   * applied.
+   *                                        applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
@@ -191,7 +197,8 @@ public class LoopExtraction extends Transformation {
     // Duplicate function definition
     XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneObject();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
-    String newFctName = clonedFctDef.getName().getValue() + ClawConstant.EXTRACTION_SUFFIX +
+    String newFctName = clonedFctDef.getName().getValue() +
+        ClawConstant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
     clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);
@@ -202,18 +209,18 @@ public class LoopExtraction extends Transformation {
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
-    XfunctionType fctType = (XfunctionType)xcodeml
-      .getTypeTable().get(_fctDefToExtract.getName().getAttribute(Xattr.TYPE));
+    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
+        get(_fctDefToExtract.getName().getAttribute(Xattr.TYPE));
     XfunctionType newFctType = fctType.cloneObject();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
 
     // Get the id from the global symbols table
     Xid globalFctId = xcodeml.getGlobalSymbolsTable()
-      .get(_fctDefToExtract.getName().getValue());
+        .get(_fctDefToExtract.getName().getValue());
 
     // If the fct is define in the global symbol table, duplicate it
-    if(globalFctId != null){
+    if(globalFctId != null) {
       Xid newFctId = globalFctId.cloneObject();
       newFctId.setType(newFctTypeHash);
       newFctId.setName(newFctName);
@@ -226,7 +233,7 @@ public class LoopExtraction extends Transformation {
     // Find the loop that will be extracted
     Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
 
-    if(XmOption.isDebugOutput()){
+    if(XmOption.isDebugOutput()) {
       System.out.println("loop-extract transformation: " +
           _claw.getPragma().getValue());
       System.out.println("  created subroutine: " +
@@ -251,7 +258,7 @@ public class LoopExtraction extends Transformation {
     // Wrap function call with loop
     Xnode extractedLoop = wrapCallWithLoop(xcodeml, _extractedLoop);
 
-    if(XmOption.isDebugOutput()){
+    if(XmOption.isDebugOutput()) {
       System.out.println("  call wrapped with loop: " +
           _fctCall.findNode(Xcode.NAME).getValue() + " --> " +
           clonedFctDef.getName().getValue());
@@ -268,9 +275,9 @@ public class LoopExtraction extends Transformation {
 
     Utility.debug("  Start to apply mapping: " + _claw.getMappings().size());
 
-    for(ClawMapping mapping : _claw.getMappings()){
+    for(ClawMapping mapping : _claw.getMappings()) {
       Utility.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
-      for(ClawMappingVar var : mapping.getMappedVariables()){
+      for(ClawMappingVar var : mapping.getMappedVariables()) {
         Utility.debug("  Var: " + var);
         Xnode argument = XnodeUtil.findArg(var.getArgMapping(), _fctCall);
         if(argument == null) {
@@ -289,12 +296,12 @@ public class LoopExtraction extends Transformation {
          *    2.2 insert clone of base variable in varRef
          * 3. Create arrayRef element with varRef + arrayIndex
          */
-        if(argument.opcode() == Xcode.VAR){
-          XbasicType type = (XbasicType)xcodeml.getTypeTable().
+        if(argument.opcode() == Xcode.VAR) {
+          XbasicType type = (XbasicType) xcodeml.getTypeTable().
               get(argument.getAttribute(Xattr.TYPE));
 
           // Demotion cannot be applied as type dimension is smaller
-          if(type.getDimensions() < mapping.getMappedDimensions()){
+          if(type.getDimensions() < mapping.getMappedDimensions()) {
             throw new IllegalTransformationException(
                 "mapping dimensions too big. Mapping " + mapping.toString() +
                     " is wrong ...", _claw.getPragma().getLineNo());
@@ -310,14 +317,14 @@ public class LoopExtraction extends Transformation {
           newArg.appendToChildren(varRef, false);
 
           //  create arrayIndex
-          for(ClawMappingVar mappingVar : mapping.getMappingVariables()){
+          for(ClawMappingVar mappingVar : mapping.getMappingVariables()) {
             Xnode arrayIndex = new Xnode(Xcode.ARRAYINDEX, xcodeml);
             // Find the mapping var in the local table (fct scope)
             Xdecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
-            Xnode newMappingVar = new Xnode(Xcode.VAR,xcodeml);
+            Xnode newMappingVar = new Xnode(Xcode.VAR, xcodeml);
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
             newMappingVar.setAttribute(Xattr.TYPE,
                 mappingVarDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
@@ -330,18 +337,18 @@ public class LoopExtraction extends Transformation {
           argument.delete();
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-        else if (argument.opcode() == Xcode.FARRAYREF){
+        else if(argument.opcode() == Xcode.FARRAYREF) {
           // TODO
         }
 
         // Change variable declaration in extracted fct
         Xdecl varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
-        XbasicType varDeclType = (XbasicType)xcodeml.getTypeTable().
+        XbasicType varDeclType = (XbasicType) xcodeml.getTypeTable().
             get(varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
 
         // Case 1: variable is demoted to scalar then take the ref type
-        if(varDeclType.getDimensions() == mapping.getMappedDimensions()){
+        if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {
           Xnode tempName = new Xnode(Xcode.NAME, xcodeml);
           tempName.setValue(var.getFctMapping());
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
@@ -362,23 +369,25 @@ public class LoopExtraction extends Transformation {
     // Adapt array reference in function body
     List<Xnode> arrayReferences =
         XnodeUtil.findAll(Xcode.FARRAYREF, clonedFctDef.getBody());
-    for(Xnode ref : arrayReferences){
-      if(!(ref.find(Xcode.VARREF).getChild(0).opcode() == Xcode.VAR)){
+    for(Xnode ref : arrayReferences) {
+      if(!(ref.find(Xcode.VARREF).getChild(0).opcode() == Xcode.VAR)) {
         continue;
       }
       String mappedVar = ref.find(Xcode.VARREF, Xcode.VAR).getValue();
-      if(_fctMappingMap.containsKey(mappedVar)){
+      if(_fctMappingMap.containsKey(mappedVar)) {
         ClawMapping mapping = _fctMappingMap.get(mappedVar);
 
         boolean changeRef = true;
 
         int mappingIndex = 0;
-        for(Xnode e : ref.getChildren()){
-          if(e.opcode() == Xcode.ARRAYINDEX){
+        for(Xnode e : ref.getChildren()) {
+          if(e.opcode() == Xcode.ARRAYINDEX) {
             List<Xnode> children = e.getChildren();
-            if(children.size() > 0 && children.get(0).opcode() == Xcode.VAR){
+            if(children.size() > 0 && children.get(0).opcode() == Xcode.VAR) {
               String varName = e.find(Xcode.VAR).getValue();
-              if(varName.equals(mapping.getMappingVariables().get(mappingIndex).getFctMapping())){
+              if(varName.equals(mapping.getMappingVariables().
+                  get(mappingIndex).getFctMapping()))
+              {
                 ++mappingIndex;
               } else {
                 changeRef = false;
@@ -386,10 +395,11 @@ public class LoopExtraction extends Transformation {
             }
           }
         }
-        if(changeRef){
+        if(changeRef) {
           // TODO Var ref should be extracted only if the reference can be
           // totally demoted
-          XnodeUtil.insertBefore(ref, ref.find(Xcode.VARREF, Xcode.VAR).cloneObject());
+          XnodeUtil.insertBefore(ref,
+              ref.find(Xcode.VARREF, Xcode.VAR).cloneObject());
           ref.delete();
         }
       }
@@ -411,17 +421,18 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Try to find a do statement matching the range of loop-extract.
+   *
    * @param from Element to search from. Search is performed in its
    *             children.
    * @return A XdoStatement object that match the range of loop-extract.
    * @throws IllegalTransformationException When something goes wrong with loop
-   * detection or iteration matching.
+   *                                        detection or iteration matching.
    */
   private Xnode locateDoStatement(Xnode from)
       throws IllegalTransformationException
   {
     Xnode foundStatement = XnodeUtil.find(Xcode.FDOSTATEMENT, from, true);
-    if(foundStatement == null){
+    if(foundStatement == null) {
       throw new IllegalTransformationException("No loop found in function",
           _claw.getPragma().getLineNo());
     } else {
@@ -430,12 +441,12 @@ public class LoopExtraction extends Transformation {
         do {
           foundStatement =
               XnodeUtil.findNext(Xcode.FDOSTATEMENT, foundStatement);
-        } while (foundStatement != null &&
+        } while(foundStatement != null &&
             !_claw.getRange().equals(foundStatement));
       }
     }
 
-    if(foundStatement == null){
+    if(foundStatement == null) {
       throw new IllegalTransformationException("No loop found in function",
           _claw.getPragma().getLineNo());
     }
@@ -451,6 +462,7 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Wrap a function call with a do statement.
+   *
    * @param xcodeml The XcodeML representation.
    * @param doStmt  Iteration range to be applied to the do statement.
    * @return The created do statement.
@@ -466,18 +478,19 @@ public class LoopExtraction extends Transformation {
     XnodeUtil.insertAfter(_claw.getPragma(), loop);
 
     // Move the call into the loop body
-    loop.getBody().getElement().appendChild(_fctCall.getElement().getParentNode());
+    loop.getBody().getElement().
+        appendChild(_fctCall.getElement().getParentNode());
 
     insertDeclaration(doStmt.find(Xcode.VAR).getValue());
     if(doStmt.find(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
           find(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR).getValue());
     }
-    if(doStmt.find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR) != null){
+    if(doStmt.find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
           find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR).getValue());
     }
-    if(doStmt.find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR) != null){
+    if(doStmt.find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
           find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR).getValue());
     }
@@ -487,25 +500,26 @@ public class LoopExtraction extends Transformation {
 
   /**
    * Insert new declaration in the function definition.
+   *
    * @param id The id used for insertion.
    */
-  private void insertDeclaration(String id){
+  private void insertDeclaration(String id) {
     Xid inductionVarId = _fctDef.getSymbolTable().get(id);
-    if(inductionVarId == null){
+    if(inductionVarId == null) {
       Xid copyId = _fctDefToExtract.getSymbolTable().get(id);
       _fctDef.getSymbolTable().add(copyId);
     }
 
     Xdecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
-    if(inductionVarDecl == null){
+    if(inductionVarDecl == null) {
       Xdecl copyDecl = _fctDefToExtract.getDeclarationTable().get(id);
       _fctDef.getDeclarationTable().add(copyDecl);
     }
   }
 
   /**
-   * @see Transformation#canBeTransformedWith(Transformation)
    * @return Always false as independent transformation are applied one by one.
+   * @see Transformation#canBeTransformedWith(Transformation)
    */
   @Override
   public boolean canBeTransformedWith(Transformation other) {

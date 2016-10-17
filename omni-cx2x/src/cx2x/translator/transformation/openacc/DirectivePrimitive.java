@@ -27,18 +27,20 @@ public class DirectivePrimitive extends Transformation {
 
   /**
    * Constructs a new DirectivePrimitive triggered from a specific pragma.
+   *
    * @param directive The directive that triggered the directive primitive
    *                  transformation.
    */
-  public DirectivePrimitive(ClawLanguage directive){
+  public DirectivePrimitive(ClawLanguage directive) {
     super(directive);
     _claw = directive;
   }
 
   /**
    * Analysis of the transformation.
-   * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @param transformer  The transformer used to applied the transformations.
+   *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
    * @return True always.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
@@ -53,12 +55,13 @@ public class DirectivePrimitive extends Transformation {
 
   /**
    * Apply the directive primitive transformation.
-   * @param xcodeml         The XcodeML on which the transformations are
-   *                        applied.
-   * @param transformer     The transformer used to applied the transformations.
-   * @param transformation  Not used in this transformation
+   *
+   * @param xcodeml        The XcodeML on which the transformations are
+   *                       applied.
+   * @param transformer    The transformer used to applied the transformations.
+   * @param transformation Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
-   * applied.
+   *                                        applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
@@ -67,7 +70,7 @@ public class DirectivePrimitive extends Transformation {
   {
     String prefix = AcceleratorDirective.getPrefix(
         _claw.getAcceleratorGenerator().getDirectiveLanguage());
-    if(prefix == null){
+    if(prefix == null) {
       return;
     }
 

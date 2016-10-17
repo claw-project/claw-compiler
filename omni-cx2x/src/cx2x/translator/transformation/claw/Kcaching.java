@@ -26,11 +26,13 @@ import java.util.List;
  * @author clementval
  */
 public class Kcaching extends Transformation {
+
   private final ClawLanguage _claw;
   private Xnode _doStmt;
 
   /**
    * Constructs a new Kcaching transformation triggered from a specific pragma.
+   *
    * @param directive The directive that triggered the k caching transformation.
    */
   public Kcaching(ClawLanguage directive) {
@@ -44,7 +46,7 @@ public class Kcaching extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     _doStmt = XnodeUtil.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
-    if(_doStmt == null){
+    if(_doStmt == null) {
       xcodeml.addError("The kcache directive is not nested in a do statement",
           _claw.getPragma().getLineNo());
       return false;
@@ -78,15 +80,15 @@ public class Kcaching extends Transformation {
     XfunctionDefinition fctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
 
-    for(String data : _claw.getDataClauseValues()){
+    for(String data : _claw.getDataClauseValues()) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
 
       boolean standardArrayRef = true;
       if(stmt != null) {
-        for (Xnode el : stmt.findNode(Xcode.FARRAYREF).getChildren()) {
-          if (el.opcode() == Xcode.ARRAYINDEX) {
+        for(Xnode el : stmt.findNode(Xcode.FARRAYREF).getChildren()) {
+          if(el.opcode() == Xcode.ARRAYINDEX) {
 
-            if (!(el.findNode(Xcode.VAR) != null ||
+            if(!(el.findNode(Xcode.VAR) != null ||
                 el.findNode(Xcode.FINTCONSTANT) != null)) {
               standardArrayRef = false;
             }
@@ -94,7 +96,7 @@ public class Kcaching extends Transformation {
         }
       }
 
-      if(stmt != null && standardArrayRef){
+      if(stmt != null && standardArrayRef) {
         transformAssignStmt(xcodeml, fctDef, data, stmt, transformer);
       } else {
         transformData(xcodeml, fctDef, data, transformer);
@@ -106,6 +108,7 @@ public class Kcaching extends Transformation {
 
   /**
    * Apply the transformation for the data list.
+   *
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param fctDef      Function/module definition in which the data are nested.
    * @param data        Array identifier on which the caching is done.
@@ -133,11 +136,12 @@ public class Kcaching extends Transformation {
 
   /**
    * Apply the transformation for the LHS array reference.
-   * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @param fctDef       Function/module definition in which the data are nested.
-   * @param data         Array identifier on which the caching is done.
-   * @param stmt         First statement including the array ref on the lhs.
-   * @param transformer  The transformer used to applied the transformations.
+   *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param fctDef      Function/module definition in which the data are nested.
+   * @param data        Array identifier on which the caching is done.
+   * @param stmt        First statement including the array ref on the lhs.
+   * @param transformer The transformer used to applied the transformations.
    * @throws Exception If something prevent the transformation to be done.
    */
   private void transformAssignStmt(XcodeProgram xcodeml,
@@ -163,6 +167,7 @@ public class Kcaching extends Transformation {
 
   /**
    * Apply the init clause if it was part of the kcache directive.
+   *
    * @param xcodeml     Current program in which the transformation is
    *                    performed.
    * @param transformer Current transformer used to store elements information.
@@ -177,10 +182,10 @@ public class Kcaching extends Transformation {
                                Xnode cacheVar, Xnode arrayRef)
   {
 
-    if(_claw.hasInitClause()){
-      ClawTransformer ct = (ClawTransformer)transformer;
+    if(_claw.hasInitClause()) {
+      ClawTransformer ct = (ClawTransformer) transformer;
       Xnode initIfStmt = (Xnode) ct.hasElement(_doStmt);
-      if(initIfStmt == null){
+      if(initIfStmt == null) {
         // If statement has not been created yet so we do it here
         initIfStmt = XnodeUtil.createIfThen(xcodeml);
         XnodeUtil.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
@@ -208,6 +213,7 @@ public class Kcaching extends Transformation {
 
   /**
    * Generate a new variable name with the offsets information.
+   *
    * @param basename The original variable name.
    * @param offsets  The offsets to be applied.
    * @return Original name with offsets information.
@@ -216,10 +222,10 @@ public class Kcaching extends Transformation {
                                             List<Integer> offsets)
   {
     String newName = basename + "_k";
-    for(Integer i : offsets){
+    for(Integer i : offsets) {
       if(i > 0) {
         newName += "p" + i;
-      } else if (i < 0){
+      } else if(i < 0) {
         newName += "m" + Math.abs(i);
       } else {
         newName += "_";
@@ -230,6 +236,7 @@ public class Kcaching extends Transformation {
 
   /**
    * Generate correct offset inferred by the dimension of the variable.
+   *
    * @param xcodeml The current program
    * @param fctDef  The function definition which holds the variable
    *                information.
@@ -243,16 +250,17 @@ public class Kcaching extends Transformation {
       throws IllegalTransformationException
   {
     Xid id = fctDef.getSymbolTable().get(var);
-    if(id == null){
+    if(id == null) {
       throw new IllegalTransformationException("Variable " + var +
           " defined in the data clause has not been found",
           _claw.getPragma().getLineNo()
       );
     }
-    XbasicType basicType = (XbasicType)xcodeml.getTypeTable().get(id.getType());
+    XbasicType basicType =
+        (XbasicType) xcodeml.getTypeTable().get(id.getType());
     int dim = basicType.getDimensions();
     List<Integer> offsets = new ArrayList<>();
-    for(int i = 0; i < dim; ++i){
+    for(int i = 0; i < dim; ++i) {
       offsets.add(0);
     }
     return offsets;
@@ -261,6 +269,7 @@ public class Kcaching extends Transformation {
   /**
    * Generate the necessary intermediate code to create the new cache variable
    * and set its assignment.
+   *
    * @param xcodeml The current program.
    * @param var     The original variable name.
    * @param type    The original variable type.
@@ -270,13 +279,13 @@ public class Kcaching extends Transformation {
    * @return The new created Xvar element.
    */
   private Xnode generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
-                                             String type,
-                                             XfunctionDefinition fctDef,
-                                             Xnode rhs,
-                                             Xnode stmt)
+                                              String type,
+                                              XfunctionDefinition fctDef,
+                                              Xnode rhs,
+                                              Xnode stmt)
   {
     XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
-    if(t.getIntent() != null || t.isAllocatable()){
+    if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneObject();
       type = xcodeml.getTypeTable().generateRealTypeHash();
@@ -284,8 +293,9 @@ public class Kcaching extends Transformation {
       newType.removeIntent();
       newType.removeAllocatable();
 
-      XbasicType ref = (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
-      if(ref != null && (ref.isAllocatable() || ref.hasIntent())){
+      XbasicType ref =
+          (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
+      if(ref != null && (ref.isAllocatable() || ref.hasIntent())) {
         // TODO is there several level to reach ref ? Check if ref is Freal ...
         XbasicType newRef = ref.cloneObject();
         // TODO generate appropriate type
@@ -304,7 +314,7 @@ public class Kcaching extends Transformation {
         generateNameWithOffsetInfo(var, _claw.getOffsets());
 
     // 2.2 inject a new entry in the symbol table
-    if(!fctDef.getSymbolTable().contains(cacheName)){
+    if(!fctDef.getSymbolTable().contains(cacheName)) {
       Xid cacheVarId =
           XnodeUtil.createId(xcodeml, type, Xname.SCLASS_F_LOCAL,
               cacheName);
@@ -312,7 +322,7 @@ public class Kcaching extends Transformation {
     }
 
     // 2.3 inject a new entry in the declaration table
-    if(!fctDef.getDeclarationTable().contains(cacheName)){
+    if(!fctDef.getDeclarationTable().contains(cacheName)) {
       Xdecl cacheVarDecl =
           XnodeUtil.createVarDecl(xcodeml, type, cacheName);
       fctDef.getDeclarationTable().add(cacheVarDecl);
@@ -349,19 +359,19 @@ public class Kcaching extends Transformation {
   }
 
   private List<Xnode> checkOffsetAndGetArrayRefs(XcodeProgram xcodeml,
-                                                     XfunctionDefinition fctDef,
-                                                     String var)
+                                                 XfunctionDefinition fctDef,
+                                                 String var)
       throws IllegalTransformationException
   {
     List<Integer> offsets = _claw.getOffsets();
-    if(offsets.size() == 0){
+    if(offsets.size() == 0) {
       offsets = generateInferredOffsets(xcodeml, fctDef, var);
     }
 
     List<Xnode> arrayRefs =
         XnodeUtil.getAllArrayReferencesByOffsets(_doStmt.getBody(),
             var, offsets);
-    if(arrayRefs.size() == 0){
+    if(arrayRefs.size() == 0) {
       throw new IllegalTransformationException("Variable " + var +
           " defined in the data clause has not been found",
           _claw.getPragma().getLineNo()
@@ -372,11 +382,12 @@ public class Kcaching extends Transformation {
 
   /**
    * Update the array references with the newly created cache variable.
+   *
    * @param arrayRefs The list of array references to be updated.
    * @param cache     The new cache variable.
    */
-  private void updateArrayRefWithCache(List<Xnode> arrayRefs, Xnode cache){
-    for(Xnode ref : arrayRefs){
+  private void updateArrayRefWithCache(List<Xnode> arrayRefs, Xnode cache) {
+    for(Xnode ref : arrayRefs) {
       // Swap arrayRef with the cache variable
       XnodeUtil.insertAfter(ref, cache.cloneObject());
       ref.delete();

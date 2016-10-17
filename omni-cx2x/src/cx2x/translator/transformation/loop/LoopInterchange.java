@@ -49,10 +49,11 @@ public class LoopInterchange extends Transformation {
 
   /**
    * Constructs a new LoopInterchange triggered from a specific pragma.
+   *
    * @param directive The directive that triggered the loop interchange
    *                  transformation.
    */
-  public LoopInterchange(ClawLanguage directive){
+  public LoopInterchange(ClawLanguage directive) {
     super(directive);
     _claw = directive;
     _newOrderOption = directive.getIndexes();
@@ -60,12 +61,13 @@ public class LoopInterchange extends Transformation {
 
   /**
    * Apply the transformation.
+   *
    * @param xcodeml        The XcodeML on which the transformations are applied.
    * @param transformer    The transformer used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
-   * applied.
+   *                                        applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
@@ -87,7 +89,7 @@ public class LoopInterchange extends Transformation {
 
     /* To perform the loop interchange, only the ranges and iteration
      * variables are swapped */
-    if(_loopLevel1 != null && _loopLevel2 == null){
+    if(_loopLevel1 != null && _loopLevel2 == null) {
       // Loop interchange between 2 loops
       XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel1);
     } else {
@@ -95,14 +97,14 @@ public class LoopInterchange extends Transformation {
       computeLoopNewPosition();
       printTransformDebugInfo();
 
-      if(needDoubleSwap()){
+      if(needDoubleSwap()) {
         // Case 201
-        if (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1){
+        if(_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1) {
           printTransformSwapInfo(201);
           XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel2);
           XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel1);
-        // Case 120
-        } else if (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0){
+          // Case 120
+        } else if(_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0) {
           printTransformSwapInfo(120);
           XnodeUtil.swapIterationRange(_loopLevel0, _loopLevel2);
           XnodeUtil.swapIterationRange(_loopLevel1, _loopLevel2);
@@ -111,13 +113,13 @@ public class LoopInterchange extends Transformation {
         // Only one loop swap is needed
         Xnode from = null;
         Xnode to = null;
-        if(_loopNewPos0 == 0){ // Loop 0 stay in place 0
+        if(_loopNewPos0 == 0) { // Loop 0 stay in place 0
           from = _loopLevel1;
           to = _loopLevel2;
-        } else if(_loopNewPos1 == 1){ // Loop 1 stay in place 1
+        } else if(_loopNewPos1 == 1) { // Loop 1 stay in place 1
           from = _loopLevel0;
           to = _loopLevel2;
-        } else if(_loopNewPos2 == 2){ // Loop 2 stay in place 2
+        } else if(_loopNewPos2 == 2) { // Loop 2 stay in place 2
           from = _loopLevel0;
           to = _loopLevel1;
         }
@@ -137,10 +139,11 @@ public class LoopInterchange extends Transformation {
   /**
    * Check whether the transformation needs a single swap transformation or a
    * double swap transformation.
+   *
    * @return True if the transformation needs a double swap. False if a single
    * swap is needed.
    */
-  private boolean needDoubleSwap(){
+  private boolean needDoubleSwap() {
     return (_loopNewPos0 == 2 && _loopNewPos1 == 0 && _loopNewPos2 == 1) ||
         (_loopNewPos0 == 1 && _loopNewPos1 == 2 && _loopNewPos2 == 0);
   }
@@ -149,22 +152,22 @@ public class LoopInterchange extends Transformation {
    * Based on the new ordering option, compute the new position of the different
    * do statement.
    */
-  private void computeLoopNewPosition(){
-    if (_baseLoop0.equals(_newLoop1)){
+  private void computeLoopNewPosition() {
+    if(_baseLoop0.equals(_newLoop1)) {
       _loopNewPos0 = 1;
-    } else if (_baseLoop0.equals(_newLoop2)){
+    } else if(_baseLoop0.equals(_newLoop2)) {
       _loopNewPos0 = 2;
     }
 
-    if (_baseLoop1.equals(_newLoop0)){
+    if(_baseLoop1.equals(_newLoop0)) {
       _loopNewPos1 = 0;
-    } else if (_baseLoop1.equals(_newLoop2)){
+    } else if(_baseLoop1.equals(_newLoop2)) {
       _loopNewPos1 = 2;
     }
 
-    if (_baseLoop2.equals(_newLoop0)){
+    if(_baseLoop2.equals(_newLoop0)) {
       _loopNewPos2 = 0;
-    } else if (_baseLoop2.equals(_newLoop1)){
+    } else if(_baseLoop2.equals(_newLoop1)) {
       _loopNewPos2 = 1;
     }
   }
@@ -173,17 +176,18 @@ public class LoopInterchange extends Transformation {
    * Loop fusion analysis:
    * - Find the different do statement that will be reordered.
    * - Check the validity of the new ordering option.
-   * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @param transformer  The transformer used to applied the transformations.
+   *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
    * @return True if the transformation can be performed. False otherwise.
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer){
+  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     // Find next loop after pragma
     _loopLevel0 =
         XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
 
-    if(_loopLevel0 == null){
+    if(_loopLevel0 == null) {
       xcodeml.addError("top level loop not found",
           _claw.getPragma().getLineNo());
       return false;
@@ -191,19 +195,19 @@ public class LoopInterchange extends Transformation {
 
     _loopLevel1 = XnodeUtil.find(Xcode.FDOSTATEMENT,
         _loopLevel0.getBody(), false);
-    if(_loopLevel1 == null){
+    if(_loopLevel1 == null) {
       return false;
     }
 
-    if(_newOrderOption != null){
-      if(_newOrderOption.size() != 3){
+    if(_newOrderOption != null) {
+      if(_newOrderOption.size() != 3) {
         xcodeml.addError("new-order option has not enough parameters",
             _claw.getPragma().getLineNo());
       }
 
       _loopLevel2 = XnodeUtil.find(Xcode.FDOSTATEMENT,
           _loopLevel1.getBody(), false);
-      if(_loopLevel2 == null){
+      if(_loopLevel2 == null) {
         return false;
       }
 
@@ -211,7 +215,7 @@ public class LoopInterchange extends Transformation {
       _baseLoop1 = _loopLevel1.find(Xcode.VAR).getValue();
       _baseLoop2 = _loopLevel2.find(Xcode.VAR).getValue();
 
-      if(!checkNewOrderOption(xcodeml, _newOrderOption)){
+      if(!checkNewOrderOption(xcodeml, _newOrderOption)) {
         return false;
       }
 
@@ -225,17 +229,17 @@ public class LoopInterchange extends Transformation {
 
   /**
    * Check the validity of the new ordering option.
+   *
    * @param xcodeml The XcodeML object.
    * @param idxs    List containing the induction variables.
    * @return True if the new ordering is valid. False otherwise.
    */
-  private boolean checkNewOrderOption(XcodeProgram xcodeml, List<String> idxs){
-    for(String idx : idxs){
+  private boolean checkNewOrderOption(XcodeProgram xcodeml, List<String> idxs) {
+    for(String idx : idxs) {
       if(!idx.equals(_baseLoop0) && !idx.equals(_baseLoop1)
-        && !idx.equals(_baseLoop2))
-      {
+          && !idx.equals(_baseLoop2)) {
         xcodeml.addError("invalid induction variable in new-order option. "
-          + idx, _claw.getPragma().getLineNo());
+            + idx, _claw.getPragma().getLineNo());
         return false;
       }
     }
@@ -243,11 +247,11 @@ public class LoopInterchange extends Transformation {
   }
 
   /**
-   * @see Transformation#canBeTransformedWith(Transformation)
    * @return Always false as independent transformation are applied one by one.
+   * @see Transformation#canBeTransformedWith(Transformation)
    */
   @Override
-  public boolean canBeTransformedWith(Transformation transformation){
+  public boolean canBeTransformedWith(Transformation transformation) {
     // independent transformation
     return false;
   }
@@ -255,14 +259,14 @@ public class LoopInterchange extends Transformation {
   /**
    * Print some useful debugging information
    */
-  private void printTransformDebugInfo(){
-    if(XmOption.isDebugOutput()){
+  private void printTransformDebugInfo() {
+    if(XmOption.isDebugOutput()) {
       System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
-        + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 + "," +
-        _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
+          + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 +
+          "," + _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
           _loopNewPos2 + ")");
 
-      if(needDoubleSwap()){
+      if(needDoubleSwap()) {
         System.out.println("    double swap required");
       }
     }
@@ -270,13 +274,14 @@ public class LoopInterchange extends Transformation {
 
   /**
    * Print information for double swap cases
+   *
    * @param swapCase Integer representing the new ordering (120 or 201)
    */
   private void printTransformSwapInfo(int swapCase) {
-    if(XmOption.isDebugOutput() && swapCase == 120){
+    if(XmOption.isDebugOutput() && swapCase == 120) {
       System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
       System.out.println("    swap 2: " + _baseLoop1 + " <--> " + _baseLoop0);
-    } else if (XmOption.isDebugOutput() && swapCase == 201){
+    } else if(XmOption.isDebugOutput() && swapCase == 201) {
       System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
       System.out.println("    swap 2: " + _baseLoop2 + " <--> " + _baseLoop1);
     }

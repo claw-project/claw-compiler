@@ -42,6 +42,7 @@ public class Parallelize extends Transformation {
   /**
    * Constructs a new Parallelize transformation triggered from a specific
    * pragma.
+   *
    * @param directive The directive that triggered the define transformation.
    */
   public Parallelize(ClawLanguage directive) {
@@ -59,15 +60,15 @@ public class Parallelize extends Transformation {
 
     // Check for the parent fct/subroutine definition
     _fctDef = XnodeUtil.findParentFunction(_claw.getPragma());
-    if(_fctDef == null){
+    if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
-          "Parallelize directive must be defined in a function/subroutine.",
+              "Parallelize directive must be defined in a function/subroutine.",
           _claw.getPragma().getLineNo());
       return false;
     }
     _fctType = (XfunctionType) xcodeml.getTypeTable().
         get(_fctDef.getName().getAttribute(Xattr.TYPE));
-    if(_fctType == null){
+    if(_fctType == null) {
       xcodeml.addError("Function/subroutine signature cannot be found. ",
           _claw.getPragma().getLineNo());
       return false;
@@ -80,18 +81,19 @@ public class Parallelize extends Transformation {
 
   /**
    * Analyse the defined dimension.
+   *
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyseDimension(XcodeProgram xcodeml){
-    if(!_claw.hasDimensionClause()){
+  private boolean analyseDimension(XcodeProgram xcodeml) {
+    if(!_claw.hasDimensionClause()) {
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().getLineNo());
       return false;
     }
 
-    for(ClawDimension d : _claw.getDimensionValues()){
-      if(_dimensions.containsKey(d.getIdentifier())){
+    for(ClawDimension d : _claw.getDimensionValues()) {
+      if(_dimensions.containsKey(d.getIdentifier())) {
         xcodeml.addError(
             String.format("Dimension with identifier %s already specified.",
                 d.getIdentifier()), _claw.getPragma().getLineNo()
@@ -105,17 +107,18 @@ public class Parallelize extends Transformation {
 
   /**
    * Analyse the information defined in the data clause.
+   *
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyseData(XcodeProgram xcodeml){
+  private boolean analyseData(XcodeProgram xcodeml) {
     /* If there is no data/over clause specified, an automatic deduction for
      * array promotion is performed.
      */
-    if(!_claw.hasOverDataClause()){
-      for(Xdecl decl : _fctDef.getDeclarationTable().getAll()){
-        if(decl.isBuiltInType()){
-          if(XmOption.isDebugOutput()){
+    if(!_claw.hasOverDataClause()) {
+      for(Xdecl decl : _fctDef.getDeclarationTable().getAll()) {
+        if(decl.isBuiltInType()) {
+          if(XmOption.isDebugOutput()) {
             System.out.println("parallelize promotion: Scalar "
                 + decl.find(Xcode.NAME).getValue()
                 + " is candidate for promotion.");
@@ -125,20 +128,19 @@ public class Parallelize extends Transformation {
 
         Xtype type = xcodeml.getTypeTable().
             get(decl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
-        if(type instanceof XbasicType){
-          XbasicType bType = (XbasicType)type;
+        if(type instanceof XbasicType) {
+          XbasicType bType = (XbasicType) type;
           if(((bType.getIntent() == Xintent.IN
               || bType.getIntent() == Xintent.OUT
               || bType.getIntent() == Xintent.INOUT)
-              || bType.isPointer()) && bType.isArray())
-          {
-            if(XmOption.isDebugOutput()){
+              || bType.isPointer()) && bType.isArray()) {
+            if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array " +
                   decl.find(Xcode.NAME).getValue() + " will be promoted.");
             }
             _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
-          } else if (bType.isArray()){
-            if(XmOption.isDebugOutput()){
+          } else if(bType.isArray()) {
+            if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array "
                   + decl.find(Xcode.NAME).getValue()
                   + " is candidate for promotion.");
@@ -157,15 +159,15 @@ public class Parallelize extends Transformation {
      * are actual delcared variables.
      */
     for(List<String> data : _claw.getOverDataClauseValues()) {
-      for (String d : data) {
-        if (!_fctDef.getSymbolTable().contains(d)) {
+      for(String d : data) {
+        if(!_fctDef.getSymbolTable().contains(d)) {
           xcodeml.addError(
               String.format("Data %s is not defined in the current block.", d),
               _claw.getPragma().getLineNo()
           );
           return false;
         }
-        if (!_fctDef.getDeclarationTable().contains(d)) {
+        if(!_fctDef.getDeclarationTable().contains(d)) {
           xcodeml.addError(
               String.format("Data %s is not declared in the current block.", d),
               _claw.getPragma().getLineNo()
@@ -180,31 +182,31 @@ public class Parallelize extends Transformation {
 
   /**
    * Analyse the information defined in the over clause.
+   *
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyseOver(XcodeProgram xcodeml){
-    if(!_claw.hasOverClause()){
+  private boolean analyseOver(XcodeProgram xcodeml) {
+    if(!_claw.hasOverClause()) {
       _overDimensions += _claw.getDimensionValues().size();
       return true;
     }
-    for (List<String> over : _claw.getOverClauseValues()) {
-      if(!over.contains(ClawDimension.BASE_DIM)){
+    for(List<String> over : _claw.getOverClauseValues()) {
+      if(!over.contains(ClawDimension.BASE_DIM)) {
         xcodeml.addError("The column dimension has not been specified in the " +
-            "over clause. Use : to specify it.",
+                "over clause. Use : to specify it.",
             _claw.getPragma().getLineNo());
         return false;
       }
       int baseDimNb = TransformationHelper.baseDimensionNb(over);
-      if(baseDimNb > 2){
+      if(baseDimNb > 2) {
         xcodeml.addError("Too many base dimensions specified in over clause. " +
-            "Maximum two base dimensions can be specified.",
+                "Maximum two base dimensions can be specified.",
             _claw.getPragma().getLineNo());
         return false;
-      } else if(baseDimNb == 2){
+      } else if(baseDimNb == 2) {
         if(!over.get(0).equals(ClawDimension.BASE_DIM)
-            || !over.get(over.size()-1).equals(ClawDimension.BASE_DIM))
-        {
+            || !over.get(over.size() - 1).equals(ClawDimension.BASE_DIM)) {
           xcodeml.addError("Base dimensions structure not supported in over" +
               "clause.", _claw.getPragma().getLineNo());
           return false;
@@ -214,11 +216,11 @@ public class Parallelize extends Transformation {
 
     // Check if over dimensions are defined dimensions
     _overDimensions = _claw.getDimensionValues().size();
-    for(List<String> overLst: _claw.getOverClauseValues()){
+    for(List<String> overLst : _claw.getOverClauseValues()) {
       int usedDimension = 0;
-      for(String o : overLst){
-        if(!o.equals(ClawDimension.BASE_DIM)){
-          if(!_dimensions.containsKey(o)){
+      for(String o : overLst) {
+        if(!o.equals(ClawDimension.BASE_DIM)) {
+          if(!_dimensions.containsKey(o)) {
             xcodeml.addError(
                 String.format(
                     "Dimension %s is not defined. Cannot be used in over " +
@@ -229,7 +231,7 @@ public class Parallelize extends Transformation {
           ++usedDimension;
         }
       }
-      if(usedDimension != _overDimensions){
+      if(usedDimension != _overDimensions) {
         xcodeml.addError("Over clause doesn't use one or more defined " +
             "dimensions", _claw.getPragma().getLineNo());
         return false;
@@ -255,8 +257,8 @@ public class Parallelize extends Transformation {
     promoteFields(xcodeml);
 
     // Adapt array references.
-    if(_claw.hasOverDataClause()){
-      for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i){
+    if(_claw.hasOverDataClause()) {
+      for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         TransformationHelper.adaptArrayReferences(
             _claw.getOverDataClauseValues().get(i), i, _fctDef.getBody(),
             _promotions, _beforeCrt, _inMiddle, _afterCrt, xcodeml);
@@ -271,15 +273,15 @@ public class Parallelize extends Transformation {
     _claw.getPragma().delete();
 
     // Apply specific target transformation
-    if(_claw.getTarget() == Target.GPU){
+    if(_claw.getTarget() == Target.GPU) {
       transformForGPU(xcodeml);
     } else {
       transformForCPU(xcodeml);
     }
 
-    if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
+    if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       XmoduleDefinition modDef = XnodeUtil.findParentModule(_fctDef);
-      if(modDef != null){
+      if(modDef != null) {
         TransformationHelper.updateModuleSignature(xcodeml, _fctDef, _fctType,
             modDef, _claw, transformer, false);
       }
@@ -288,6 +290,7 @@ public class Parallelize extends Transformation {
 
   /**
    * Apply GPU based transformation.
+   *
    * @param xcodeml Current XcodeML program unit.
    */
   private void transformForGPU(XcodeProgram xcodeml)
@@ -306,7 +309,7 @@ public class Parallelize extends Transformation {
      * functions. The newly created (nested) do statements should stop before
      * this contains section if it exists. */
     Xnode contains = _fctDef.getBody().find(Xcode.FCONTAINSSTATEMENT);
-    if(contains != null){
+    if(contains != null) {
       XnodeUtil.shiftStatementsInBody(_fctDef.getBody().getChild(0),
           contains, loops.getInnerStatement().getBody());
       XnodeUtil.insertBefore(contains, loops.getOuterStatement());
@@ -337,6 +340,7 @@ public class Parallelize extends Transformation {
 
   /**
    * Apply CPU based transformations.
+   *
    * @param xcodeml Current XcodeML program unit.
    * @throws IllegalTransformationException If promotion of arrays fails.
    */
@@ -352,31 +356,29 @@ public class Parallelize extends Transformation {
     List<Xnode> assignStatements =
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
-    for(Xnode assign : assignStatements){
+    for(Xnode assign : assignStatements) {
       Xnode lhs = assign.getChild(Xnode.LHS);
       String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.getValue() :
           lhs.find(Xcode.VARREF, Xcode.VAR).getValue();
       NestedDoStatement loops = null;
       if(lhs.opcode() == Xcode.FARRAYREF &&
-          _arrayFieldsInOut.contains(lhsName))
-      {
+          _arrayFieldsInOut.contains(lhsName)) {
         loops = new NestedDoStatement(order, xcodeml);
         XnodeUtil.insertAfter(assign, loops.getOuterStatement());
         loops.getInnerStatement().getBody().appendToChildren(assign, true);
         assign.delete();
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
-          && _scalarFields.contains(lhsName))
-      {
+          && _scalarFields.contains(lhsName)) {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
-        if(shouldBePromoted(assign)){
-          if(!_arrayFieldsInOut.contains(lhsName)){
+        if(shouldBePromoted(assign)) {
+          if(!_arrayFieldsInOut.contains(lhsName)) {
 
             _arrayFieldsInOut.add(lhsName);
             PromotionInfo promotionInfo;
             if(lhs.opcode() == Xcode.VAR) { // Scalar to array
-               promotionInfo =
+              promotionInfo =
                   TransformationHelper.promoteField(lhsName, false, false,
                       0, _overDimensions, _fctDef, _fctType,
                       _claw.getDimensionValues(), _claw, xcodeml, null);
@@ -403,7 +405,7 @@ public class Parallelize extends Transformation {
           assign.delete();
         }
       }
-      if(loops != null){
+      if(loops != null) {
         // Generate the corresponding directive around the loop
         AcceleratorHelper.generateLoopDirectives(_claw, xcodeml,
             loops.getOuterStatement(), loops.getOuterStatement(),
@@ -418,18 +420,19 @@ public class Parallelize extends Transformation {
 
   /**
    * Check whether the LHS variable should be promoted.
+   *
    * @param assignStmt Assign statement node.
    * @return True if the LHS variable should be promoted. False otherwise.
    */
-  private boolean shouldBePromoted(Xnode assignStmt){
+  private boolean shouldBePromoted(Xnode assignStmt) {
     Xnode rhs = assignStmt.getChild(Xnode.RHS);
-    if(rhs == null){
+    if(rhs == null) {
       return false;
     }
     List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
     Set<String> names = XnodeUtil.getNamesFromReferences(vars);
-    for(String n : names){ // TODO better algo
-      if(_arrayFieldsInOut.contains(n)){
+    for(String n : names) { // TODO better algo
+      if(_arrayFieldsInOut.contains(n)) {
         return true;
       }
     }
@@ -439,6 +442,7 @@ public class Parallelize extends Transformation {
   /**
    * Prepare the arrayIndex elements that will be inserted before and after the
    * current indexes in the array references.
+   *
    * @param xcodeml Current XcodeML program unit in which new elements are
    *                created.
    */
@@ -453,22 +457,23 @@ public class Parallelize extends Transformation {
        * before the current indexes and the remaining indexes will be inserted
        * after the current indexes.  */
 
-      for(List<String> over : _claw.getOverClauseValues()){
+      for(List<String> over : _claw.getOverClauseValues()) {
         List<Xnode> beforeCrt = new ArrayList<>();
         List<Xnode> afterCrt = new ArrayList<>();
         List<Xnode> inMiddle = new ArrayList<>();
         List<Xnode> crt = beforeCrt;
 
-        if(TransformationHelper.baseDimensionNb(over) == 2){ // In middle insertion
-          for (String dim : over) {
-            if (!dim.equals(ClawDimension.BASE_DIM)) {
+        // In middle insertion
+        if(TransformationHelper.baseDimensionNb(over) == 2) {
+          for(String dim : over) {
+            if(!dim.equals(ClawDimension.BASE_DIM)) {
               ClawDimension d = _dimensions.get(dim);
               inMiddle.add(d.generateArrayIndex(xcodeml));
             }
           }
         } else {
-          for (String dim : over) {
-            if (dim.equals(ClawDimension.BASE_DIM)) {
+          for(String dim : over) {
+            if(dim.equals(ClawDimension.BASE_DIM)) {
               crt = afterCrt;
             } else {
               ClawDimension d = _dimensions.get(dim);
@@ -488,7 +493,7 @@ public class Parallelize extends Transformation {
        * left of current indexes. */
       List<Xnode> crt = new ArrayList<>();
       List<Xnode> empty = Collections.emptyList();
-      for(ClawDimension dim : _claw.getDimensionValues()){
+      for(ClawDimension dim : _claw.getDimensionValues()) {
         crt.add(dim.generateArrayIndex(xcodeml));
       }
       Collections.reverse(crt);
@@ -502,17 +507,18 @@ public class Parallelize extends Transformation {
   /**
    * Promote all fields declared in the data clause with the additional
    * dimensions.
+   *
    * @param xcodeml Current XcodeML program unit in which the element will be
    *                created.
    * @throws IllegalTransformationException if elements cannot be created or
-   * elements cannot be found.
+   *                                        elements cannot be found.
    */
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(_claw.hasOverDataClause()){
-      for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i){
-        for (String fieldId : _claw.getOverDataClauseValues().get(i)) {
+    if(_claw.hasOverDataClause()) {
+      for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
+        for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
           PromotionInfo promotionInfo =
               TransformationHelper.promoteField(fieldId, true, true, i,
                   _overDimensions, _fctDef, _fctType,
@@ -522,7 +528,7 @@ public class Parallelize extends Transformation {
       }
     } else {
       // Promote all arrays in a similar manner
-      for (String fieldId : _arrayFieldsInOut) {
+      for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo =
             TransformationHelper.promoteField(fieldId, true, true, 0,
                 _overDimensions, _fctDef, _fctType, _claw.getDimensionValues(),
@@ -535,6 +541,7 @@ public class Parallelize extends Transformation {
   /**
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
+   *
    * @param xcodeml Current XcodeML program unit in which the element will be
    *                created.
    * @param ids     List of array identifiers that must be adapted.
@@ -544,19 +551,19 @@ public class Parallelize extends Transformation {
                                                List<String> ids,
                                                int index)
   {
-    for(String id : ids){
+    for(String id : ids) {
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.getBody(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
       XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
 
-      for(Xnode var : vars){
+      for(Xnode var : vars) {
         Xnode ref =
             XnodeUtil.createArrayRef(xcodeml, type, var.cloneObject());
-        for(Xnode ai : _beforeCrt.get(index)){
+        for(Xnode ai : _beforeCrt.get(index)) {
           XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
         }
-        for(Xnode ai : _afterCrt.get(index)){
+        for(Xnode ai : _afterCrt.get(index)) {
           ref.appendToChildren(ai, true);
         }
 
@@ -569,8 +576,9 @@ public class Parallelize extends Transformation {
   /**
    * Insert the declaration of the different variables needed to iterate over
    * the additional dimensions.
-   * @param xcodeml     Current XcodeML program unit in which element are
-   *                    created.
+   *
+   * @param xcodeml Current XcodeML program unit in which element are
+   *                created.
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
@@ -580,9 +588,9 @@ public class Parallelize extends Transformation {
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
-    for(ClawDimension dimension : _claw.getDimensionValues()){
+    for(ClawDimension dimension : _claw.getDimensionValues()) {
       // Create the parameter for the lower bound
-      if(dimension.lowerBoundIsVar()){
+      if(dimension.lowerBoundIsVar()) {
         XnodeUtil.createIdAndDecl(dimension.getLowerBoundId(),
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
@@ -592,7 +600,7 @@ public class Parallelize extends Transformation {
       }
 
       // Create parameter for the upper bound
-      if(dimension.upperBoundIsVar()){
+      if(dimension.upperBoundIsVar()) {
         XnodeUtil.createIdAndDecl(dimension.getUpperBoundId(),
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
 
@@ -608,14 +616,16 @@ public class Parallelize extends Transformation {
 
   /**
    * Get the list of dimensions in order from the parallelize over definition.
+   *
    * @param overIndex Which over clause to use.
    * @return Ordered list of dimension object.
    */
-  private List<ClawDimension> getOrderedDimensionsFromDefinition(int overIndex){
-    if(_claw.hasOverClause()){
+  private List<ClawDimension> getOrderedDimensionsFromDefinition(int overIndex)
+  {
+    if(_claw.hasOverClause()) {
       List<ClawDimension> dimensions = new ArrayList<>();
       for(String o : _claw.getOverClauseValues().get(overIndex)) {
-        if (o.equals(ClawDimension.BASE_DIM)) {
+        if(o.equals(ClawDimension.BASE_DIM)) {
           continue;
         }
         dimensions.add(_dimensions.get(o));

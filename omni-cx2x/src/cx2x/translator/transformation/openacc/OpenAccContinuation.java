@@ -43,18 +43,20 @@ public class OpenAccContinuation extends Transformation {
 
   /**
    * Constructs a new OpenACC continuation triggered from a specific pragma.
+   *
    * @param directive The directive that triggered the OpenACC continuation
    *                  transformation.
    */
-  public OpenAccContinuation(AnalyzedPragma directive){
+  public OpenAccContinuation(AnalyzedPragma directive) {
     super(directive);
   }
 
 
   /**
    * Check if the directive starts with the OpenACC prefix.
-   * @param xcodeml      The XcodeML on which the transformations are applied.
-   * @param transformer  The transformer used to applied the transformations.
+   *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param transformer The transformer used to applied the transformations.
    * @return True the directive starts with the OpenACC prefix.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
@@ -70,12 +72,13 @@ public class OpenAccContinuation extends Transformation {
 
   /**
    * Apply the OpenACC continuation transformation.
-   * @param xcodeml         The XcodeML on which the transformations are
-   *                        applied.
-   * @param transformer     The transformer used to applied the transformations.
-   * @param transformation  Not used in this transformation
+   *
+   * @param xcodeml        The XcodeML on which the transformations are
+   *                       applied.
+   * @param transformer    The transformer used to applied the transformations.
+   * @param transformation Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
-   * applied.
+   *                                        applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
@@ -83,20 +86,19 @@ public class OpenAccContinuation extends Transformation {
       throws IllegalTransformationException
   {
     if(transformer.getMaxColumns() <= 0
-        || getDirective().getPragma().isDeleted())
-    {
+        || getDirective().getPragma().isDeleted()) {
       return;
     }
 
     String allPragma = getDirective().getPragma().getValue();
 
-    if(allPragma.length() > transformer.getMaxColumns()){
+    if(allPragma.length() > transformer.getMaxColumns()) {
       allPragma =
           allPragma.toLowerCase().replace(ClawConstant.OPENACC_PREFIX, "");
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = 0;
       int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
-      while(allPragma.length() > (transformer.getMaxColumns() - addLength)){
+      while(allPragma.length() > (transformer.getMaxColumns() - addLength)) {
         int splitIndex =
             allPragma.substring(0,
                 transformer.getMaxColumns() - addLength).lastIndexOf(" ");
@@ -113,6 +115,7 @@ public class OpenAccContinuation extends Transformation {
 
   /**
    * Create a new pragma node and insert it after the hook.
+   *
    * @param xcodeml   Current XcodeML file unit.
    * @param hook      Hook node. New node will be inserted after this one.
    * @param lineIndex Line index specify the offset of the line number for the
@@ -129,7 +132,7 @@ public class OpenAccContinuation extends Transformation {
     Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
     p.setFile(getDirective().getPragma().getFile());
     p.setLine(getDirective().getPragma().getLineNo() + lineIndex);
-    if(continued){
+    if(continued) {
       p.setValue(ClawConstant.OPENACC_PREFIX + " " + value + " " +
           ClawConstant.CONTINUATION_LINE_SYMBOL);
     } else {

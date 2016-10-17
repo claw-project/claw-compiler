@@ -24,7 +24,7 @@ import java.util.*;
  * The parallelize forward transformation applies the changes in the subroutine
  * signatures to function call and function in which the call is nested if
  * needed.
- *
+ * <p>
  * During the tranformation, a new "CLAW" XcodeML module file is generated
  * if the transformation has to be applied accross several file unit. This
  * file will be located in the same directory as the original XcodeML module
@@ -47,7 +47,7 @@ public class ParallelizeForward extends Transformation {
 
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
-  private final List<String> _promotedVar; // List of promoted array from the call
+  private final List<String> _promotedVar; // Promoted array from the call
   private final List<String> _promotedWithBeforeOver;
   private final List<String> _promotedWithAfterOver;
   private final List<String> _promotedWithMiddleOver;
@@ -59,6 +59,7 @@ public class ParallelizeForward extends Transformation {
   /**
    * Constructs a new Parallelize transformation triggered from a specific
    * pragma.
+   *
    * @param directive The directive that triggered the define transformation.
    */
   public ParallelizeForward(ClawLanguage directive) {
@@ -75,20 +76,19 @@ public class ParallelizeForward extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     Xnode next = XnodeUtil.getNextSibling(_claw.getPragma());
-    if(next == null){
+    if(next == null) {
       xcodeml.addError("Directive is not followed by a valid statement.",
           _claw.getPragma().getLineNo());
       return false;
     }
     if(next.opcode() == Xcode.EXPRSTATEMENT
-        || next.opcode() == Xcode.FASSIGNSTATEMENT)
-    {
+        || next.opcode() == Xcode.FASSIGNSTATEMENT) {
       _isNestedInAssignement = next.opcode() == Xcode.FASSIGNSTATEMENT;
       _fctCall = next.find(Xcode.FUNCTIONCALL);
-      if(_fctCall != null){
+      if(_fctCall != null) {
         return analyzeForward(xcodeml);
       }
-    } else if (next.opcode() == Xcode.FDOSTATEMENT) {
+    } else if(next.opcode() == Xcode.FDOSTATEMENT) {
       _outerDoStatement = next;
       return analyzeForwardWithDo(xcodeml, next);
     }
@@ -99,13 +99,14 @@ public class ParallelizeForward extends Transformation {
 
   /**
    * Analyze the directive when it is used just before a do statement.
+   *
    * @param xcodeml Current XcodeML file unit.
    * @param doStmt  The do statement following the pragma.
    * @return True if the analysis succeed. False otherwise.
    */
-  private boolean analyzeForwardWithDo(XcodeProgram xcodeml, Xnode doStmt){
+  private boolean analyzeForwardWithDo(XcodeProgram xcodeml, Xnode doStmt) {
     _flatten = true;
-    if(doStmt == null){
+    if(doStmt == null) {
       xcodeml.addError("Directive is not followed by do statement.",
           _claw.getPragma().getLineNo());
       return false;
@@ -118,33 +119,32 @@ public class ParallelizeForward extends Transformation {
   /**
    * Recursively analyze nested do statements in order to find the call
    * statements.
+   *
    * @param xcodeml Current XcodeML file unit.
    * @param doStmt  First do statement to start the analyzis.
    * @return True if the analysis succed. False otehrwise.
    */
-  private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt){
+  private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt) {
     _innerDoStatement = doStmt;
     Xnode body = doStmt.find(Xcode.BODY);
-    if(body == null){
+    if(body == null) {
       xcodeml.addError("Cannot locate function call.",
           _claw.getPragma().getLineNo());
       return false;
     }
-    for(Xnode n : body.getChildren()){
-      if(n.opcode() == Xcode.FDOSTATEMENT){
+    for(Xnode n : body.getChildren()) {
+      if(n.opcode() == Xcode.FDOSTATEMENT) {
         return analyzeNestedDoStmts(xcodeml, n);
       } else if(n.opcode() != Xcode.FPRAGMASTATEMENT
-          && n.opcode() != Xcode.EXPRSTATEMENT)
-      {
+          && n.opcode() != Xcode.EXPRSTATEMENT) {
         xcodeml.addError("Only pragmas, comments and function calls allowed " +
                 "in the do statements.",
             _claw.getPragma().getLineNo());
         return false;
-      } else if (n.opcode() == Xcode.EXPRSTATEMENT
-          || n.opcode() == Xcode.FASSIGNSTATEMENT)
-      {
+      } else if(n.opcode() == Xcode.EXPRSTATEMENT
+          || n.opcode() == Xcode.FASSIGNSTATEMENT) {
         _fctCall = n.find(Xcode.FUNCTIONCALL);
-        if(_fctCall != null){
+        if(_fctCall != null) {
           return analyzeForward(xcodeml);
         }
       }
@@ -155,11 +155,12 @@ public class ParallelizeForward extends Transformation {
 
   /**
    * Analyze the directive when it is used just before a function call.
+   *
    * @param xcodeml Current XcodeML file unit.
    * @return True if the analysis succeed. False otherwise.
    */
-  private boolean analyzeForward(XcodeProgram xcodeml){
-    if(_fctCall == null){
+  private boolean analyzeForward(XcodeProgram xcodeml) {
+    if(_fctCall == null) {
       xcodeml.addError("Directive is not followed by a fct call.",
           _claw.getPragma().getLineNo());
       return false;
@@ -173,31 +174,31 @@ public class ParallelizeForward extends Transformation {
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
     XfunctionDefinition parentFctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
-    if(parentFctDef == null){
+    if(parentFctDef == null) {
       xcodeml.addError("Parellilize directive is not nested in a " +
           "function/subroutine.", _claw.getPragma().getLineNo());
       return false;
     }
-    
+
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
 
     String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
-    if(fctType.startsWith(Xtype.PREFIX_PROCEDURE)){
+    if(fctType.startsWith(Xtype.PREFIX_PROCEDURE)) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * find the correct function in the typeTable.
        * TODO if there is a rename.
        * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
-      if(id == null){
+      if(id == null) {
         List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
         uses.addAll(XnodeUtil.getAllUse(parentModule));
-        if(!findInModule(uses)){
+        if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
               _claw.getPragma().getLineNo());
           return false;
         }
       } else {
-        _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
+        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id.getType());
       }
     } else {
       Xtype rawType = xcodeml.getTypeTable().get(fctType);
@@ -216,24 +217,25 @@ public class ParallelizeForward extends Transformation {
      * with no parameters. Thus, we have to find the correct FfunctionType
      * for the same function/subroutine with the same name in the module
      * symbol table. */
-    if(_fctType.getParameterNb() == 0){
+    if(_fctType.getParameterNb() == 0) {
       // If not, try to find the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
 
-      if(id == null){
+      if(id == null) {
         // Function is not located in the current module.
         List<Xdecl> uses = XnodeUtil.getAllUse(parentFctDef);
         uses.addAll(XnodeUtil.getAllUse(parentModule));
-        if(!findInModule(uses)){
+        if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
               _claw.getPragma().getLineNo());
           return false;
         }
       } else {
-        _fctType = (XfunctionType)xcodeml.getTypeTable().get(id.getType());
-        if(_fctType == null){
-          xcodeml.addError("Called function cannot be found in the same module ",
-            _claw.getPragma().getLineNo());
+        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id.getType());
+        if(_fctType == null) {
+          xcodeml.addError(
+              "Called function cannot be found in the same module ",
+              _claw.getPragma().getLineNo());
           return false;
         }
       }
@@ -241,12 +243,12 @@ public class ParallelizeForward extends Transformation {
     // end of workaround
 
     _callingFctName = parentFctDef.getName().getValue();
-    if(_fctType != null && fctDef != null){
+    if(_fctType != null && fctDef != null) {
       _localFct = true;
     } else {
 
       // Has been found already
-      if(_fctType != null && _calledFctName == null){
+      if(_fctType != null && _calledFctName == null) {
         return true;
       }
 
@@ -255,7 +257,7 @@ public class ParallelizeForward extends Transformation {
       uses.addAll(XnodeUtil.getAllUse(parentModule));
 
       // Try to locate the fct in the modules defined in use statements
-      if(findInModule(uses)){
+      if(findInModule(uses)) {
         return true;
       }
 
@@ -265,27 +267,27 @@ public class ParallelizeForward extends Transformation {
     }
 
 
-
     return true;
   }
 
   /**
    * Get all the mapping between local variable and parameter names in the
    * function call.
+   *
    * @param fctCall Fonction call to be analyzed.
    */
-  private void detectParameterMapping(Xnode fctCall){
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL){
+  private void detectParameterMapping(Xnode fctCall) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return;
     }
-    for(Xnode arg : _fctCall.find(Xcode.ARGUMENTS).getChildren()){
-      if(arg.opcode() == Xcode.NAMEDVALUE){
+    for(Xnode arg : _fctCall.find(Xcode.ARGUMENTS).getChildren()) {
+      if(arg.opcode() == Xcode.NAMEDVALUE) {
         String original_name = arg.getAttribute(Xattr.NAME);
         Xnode target_var = XnodeUtil.find(Xcode.VAR, arg, true);
-        if(target_var != null){
+        if(target_var != null) {
           _fctCallMapping.put(original_name, target_var.getValue());
 
-          if(XmOption.isDebugOutput()){
+          if(XmOption.isDebugOutput()) {
             System.out.println("Fct parameter mapping: original_name=" +
                 original_name + " target_name=" + target_var.getValue());
           }
@@ -296,30 +298,31 @@ public class ParallelizeForward extends Transformation {
 
   /**
    * Find a function in modules.
+   *
    * @param useDecls List of all USE statement declarations available for
    *                 search.
    * @return True if the function was found. False otherwise.
    */
-  private boolean findInModule(List<Xdecl> useDecls){
+  private boolean findInModule(List<Xdecl> useDecls) {
     // TODO handle rename
-    for(Xdecl d : useDecls){
+    for(Xdecl d : useDecls) {
 
       // Check whether a CLAW file is available.
       _mod = TransformationHelper.
           locateClawModuleFile(d.getAttribute(Xattr.NAME));
 
-      if(_mod != null){
+      if(_mod != null) {
 
         // debug information
-        if(XmOption.isDebugOutput()){
+        if(XmOption.isDebugOutput()) {
           System.out.println("Reading CLAW module file: " + _mod.getFullPath());
         }
 
-        if(_mod.getIdentifiers().contains(_calledFctName)){
+        if(_mod.getIdentifiers().contains(_calledFctName)) {
           String type = _mod.getIdentifiers().get(_calledFctName).
               getAttribute(Xattr.TYPE);
           _fctType = (XfunctionType) _mod.getTypeTable().get(type);
-          if(_fctType != null){
+          if(_fctType != null) {
             _calledFctName = null;
             return true;
           }
@@ -333,7 +336,7 @@ public class ParallelizeForward extends Transformation {
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other) throws Exception
   {
-    if(_flatten){
+    if(_flatten) {
       transformFlatten(xcodeml, transformer);
     } else {
       transformStd(xcodeml, transformer);
@@ -347,6 +350,7 @@ public class ParallelizeForward extends Transformation {
    * Do the flatten transformation for the forward directive. This
    * transformation adapt the function call nested in the do statements and
    * removes those do statements. The containing subroutine is not adapted.
+   *
    * @param xcodeml     Current XcodeML file unit.
    * @param transformer Current transformer.
    * @throws Exception If something goes wrong.
@@ -363,6 +367,7 @@ public class ParallelizeForward extends Transformation {
    * Do the standard transformation for the forward directive. This
    * transformation adapt the function call and replicates any necessary changes
    * to the containing subroutine.
+   *
    * @param xcodeml     Current XcodeML file unit.
    * @param transformer Current transformer.
    * @throws Exception If something goes wrong.
@@ -371,11 +376,11 @@ public class ParallelizeForward extends Transformation {
       throws Exception
   {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
-    if(fDef == null){
+    if(fDef == null) {
       throw new IllegalTransformationException("Parallelize directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().getLineNo());
     }
-    _parentFctType = (XfunctionType)xcodeml.getTypeTable().
+    _parentFctType = (XfunctionType) xcodeml.getTypeTable().
         get(fDef.getName().getAttribute(Xattr.TYPE));
 
     List<Xnode> params = _fctType.getParams().getAll();
@@ -390,13 +395,12 @@ public class ParallelizeForward extends Transformation {
      */
     int argOffset = 0;
     if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
-        && _fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF))
-    {
+        && _fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
       argOffset = 1;
     }
 
     // 1. Adapt function call with potential new arguments
-    for(int i = 0; i < params.size(); i++){
+    for(int i = 0; i < params.size(); i++) {
       Xnode p = params.get(i);
       String var = p.getValue();
       String type;
@@ -404,12 +408,12 @@ public class ParallelizeForward extends Transformation {
       XbasicType paramType =
           (XbasicType) xcodeml.getTypeTable().get(p.getAttribute(Xattr.TYPE));
 
-      if(!p.getBooleanAttribute(ClawAttr.IS_CLAW.toString())){
+      if(!p.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         continue;
       }
 
-      if(!fDef.getSymbolTable().contains(var)){
-        if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)){
+      if(!fDef.getSymbolTable().contains(var)) {
+        if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
           throw new IllegalTransformationException("Variable " + var + " must" +
               " be locally defined where the last call to parallelize if made.",
               _claw.getPragma().getLineNo());
@@ -430,7 +434,7 @@ public class ParallelizeForward extends Transformation {
 
         /* If flatten mode, we do not add extra parameters to the function
          * definition */
-        if (!_flatten) {
+        if(!_flatten) {
           XnodeUtil.
               createAndAddParamIfNotExists(xcodeml, var, type, _parentFctType);
         }
@@ -446,14 +450,13 @@ public class ParallelizeForward extends Transformation {
     }
 
     // In flatten mode, arguments are demoted if needed.
-    if(_flatten){
+    if(_flatten) {
       Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
-      for(Xnode arg : arguments.getChildren()){
+      for(Xnode arg : arguments.getChildren()) {
         if(arg.opcode() == Xcode.FARRAYREF && arg.findAny(
-            Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
-        {
+            Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null) {
           Xnode var = arg.find(Xcode.VARREF, Xcode.VAR);
-          if(var != null){
+          if(var != null) {
             XnodeUtil.insertAfter(arg, var.cloneObject());
             arg.delete();
           }
@@ -461,20 +464,20 @@ public class ParallelizeForward extends Transformation {
       }
     } else {
       // 2. Adapt function/subroutine in which the function call is nested
-      for(Xnode pBase : _fctType.getParams().getAll()){
+      for(Xnode pBase : _fctType.getParams().getAll()) {
         String original_param = pBase.getValue();
-        if(_fctCallMapping.containsKey(original_param)){
+        if(_fctCallMapping.containsKey(original_param)) {
           original_param = _fctCallMapping.get(original_param);
         }
 
         Xnode pUpdate = null;
-        for(Xnode param : _parentFctType.getParams().getAll()){
-          if(original_param.equals(param.getValue())){
+        for(Xnode param : _parentFctType.getParams().getAll()) {
+          if(original_param.equals(param.getValue())) {
             pUpdate = param;
           }
         }
 
-        if(pUpdate == null){ // field is not a parameter but maybe out field
+        if(pUpdate == null) { // field is not a parameter but maybe out field
           Xdecl d = fDef.getDeclarationTable().get(original_param);
           if(d != null) {
             pUpdate = d.find(Xcode.NAME);
@@ -482,7 +485,7 @@ public class ParallelizeForward extends Transformation {
           // TODO handle deferred shape
         }
 
-        if(pUpdate != null){
+        if(pUpdate != null) {
 
           if(pUpdate.getAttribute(Xattr.TYPE) == null
               || XnodeUtil.isBuiltInType(pUpdate.getAttribute(Xattr.TYPE))) {
@@ -493,7 +496,7 @@ public class ParallelizeForward extends Transformation {
               xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
               (XbasicType) _mod.getTypeTable().
                   get(pBase.getAttribute(Xattr.TYPE));
-          XbasicType typeToUpdate = (XbasicType)xcodeml.getTypeTable().
+          XbasicType typeToUpdate = (XbasicType) xcodeml.getTypeTable().
               get(pUpdate.getAttribute(Xattr.TYPE));
           int targetDim = typeBase.getDimensions();
           int baseDim = typeToUpdate.getDimensions();
@@ -521,11 +524,11 @@ public class ParallelizeForward extends Transformation {
             pUpdate.setAttribute(Xattr.TYPE, type);
 
             Xid id = fDef.getSymbolTable().get(original_param);
-            if (id != null) {
+            if(id != null) {
               id.setAttribute(Xattr.TYPE, type);
             }
             Xdecl varDecl = fDef.getDeclarationTable().get(original_param);
-            if (varDecl != null) {
+            if(varDecl != null) {
               varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
             }
 
@@ -542,12 +545,12 @@ public class ParallelizeForward extends Transformation {
 
       }
 
-      if(!_parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)){
+      if(!_parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
         // 3. Replicate the change in a potential module file
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
         TransformationHelper.updateModuleSignature(xcodeml, fDef,
             _parentFctType, modDef, _claw, transformer, false);
-      } else if(_fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)){
+      } else if(_fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
@@ -560,21 +563,22 @@ public class ParallelizeForward extends Transformation {
 
     updateResultVar(xcodeml);
 
-    propagatePromotion(xcodeml, (ClawTransformer)transformer);
+    propagatePromotion(xcodeml, (ClawTransformer) transformer);
   }
 
   /**
    * Apply promotion to the result return variable of a foward call.
+   *
    * @param xcodeml Current XcodeML program unit.
    * @throws IllegalTransformationException If XcodeML transformation cannot be
-   * done.
+   *                                        done.
    */
   private void updateResultVar(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(_isNestedInAssignement){
+    if(_isNestedInAssignement) {
       Xnode assignment = XnodeUtil.getNextSibling(_claw.getPragma());
-      if(_fctType.hasAttribute(ClawAttr.OVER.toString())){
+      if(_fctType.hasAttribute(ClawAttr.OVER.toString())) {
         OverPosition overPos = OverPosition.fromString(
             _fctType.getAttribute(ClawAttr.OVER.toString()));
         Xnode lhs = assignment.getChild(0);
@@ -583,7 +587,8 @@ public class ParallelizeForward extends Transformation {
 
         List<ClawDimension> dimensions =
             TransformationHelper.findDimensions(_parentFctType);
-        XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
+        XfunctionDefinition parentFctDef =
+            XnodeUtil.findParentFunction(_fctCall);
 
         XbasicType varType = (XbasicType)
             xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
@@ -603,15 +608,15 @@ public class ParallelizeForward extends Transformation {
         }
 
         // Adapte array index to reflect the new return type
-        if(lhs.opcode() == Xcode.FARRAYREF){
-          for(int i = 0; i < promotionInfo.diffDimension(); ++i){
+        if(lhs.opcode() == Xcode.FARRAYREF) {
+          for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
             Xnode indexRange = XnodeUtil.createEmptyAssumedShaped(xcodeml);
             lhs.appendToChildren(indexRange, false);
           }
-        } else if (lhs.opcode() == Xcode.VAR){
+        } else if(lhs.opcode() == Xcode.VAR) {
           // TODO avoid array var without colon notation
-          /* throw new IllegalTransformationException("Use the colon notation " +
-              "for the return variable. This notation is not supported." +
+          /* throw new IllegalTransformationException("Use the colon notation "
+              + "for the return variable. This notation is not supported." +
               _claw.getPragma().getValue()); */
         } else {
           throw new IllegalTransformationException("Unsupported return " +
@@ -627,11 +632,12 @@ public class ParallelizeForward extends Transformation {
 
   /**
    * Save promoted variable name in function of its over information.
+   *
    * @param fieldId Name of the promoted variable.
    * @param overPos Over position value.
    */
-  private void addPromotedVar(String fieldId, OverPosition overPos){
-    switch (overPos){
+  private void addPromotedVar(String fieldId, OverPosition overPos) {
+    switch(overPos) {
       case BEFORE:
         _promotedWithBeforeOver.add(fieldId);
         break;
@@ -647,6 +653,7 @@ public class ParallelizeForward extends Transformation {
   /**
    * Propagate possible promotion in assignements statements in the parent
    * subroutine of the function call.
+   *
    * @param xcodeml     Current XcodeML program unit.
    * @param transformer Current transformer to store information between
    *                    transformation.
@@ -661,7 +668,7 @@ public class ParallelizeForward extends Transformation {
     // Retrieve information of previous forward transformation in the same fct
     Object rawObject = transformer.hasElement(parentFctDef);
     List<String> previouslyPromoted = new ArrayList<>();
-    if(rawObject != null && rawObject instanceof ArrayList){
+    if(rawObject != null && rawObject instanceof ArrayList) {
       previouslyPromoted.addAll((ArrayList) rawObject);
     }
 
@@ -674,7 +681,7 @@ public class ParallelizeForward extends Transformation {
     // Prepare the array index to be inserted in array references.
     List<Xnode> crt = new ArrayList<>();
     List<Xnode> empty = Collections.emptyList();
-    for(ClawDimension dim : dimensions){
+    for(ClawDimension dim : dimensions) {
       crt.add(dim.generateArrayIndex(xcodeml));
     }
     Collections.reverse(crt);
@@ -684,19 +691,18 @@ public class ParallelizeForward extends Transformation {
     emptyInd.add(empty);
 
 
-    for(Xnode assignment : assignments){
+    for(Xnode assignment : assignments) {
       Xnode lhs = assignment.getChild(0);
       Xnode rhs = assignment.getChild(1);
 
       List<Xnode> varsInRhs = XnodeUtil.findAll(Xcode.VAR, rhs);
-      for(Xnode var : varsInRhs){
+      for(Xnode var : varsInRhs) {
         // Check if the assignement statement uses a promoted variable
         if(_promotedVar.contains(var.getValue())
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null
-            && lhs.opcode() == Xcode.FARRAYREF)
-        {
+            && lhs.opcode() == Xcode.FARRAYREF) {
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
-          if(varInLhs == null){
+          if(varInLhs == null) {
             throw new IllegalTransformationException("Unable to propagate " +
                 "promotion. Internal error.", _claw.getPragma().getLineNo());
           }
@@ -711,7 +717,8 @@ public class ParallelizeForward extends Transformation {
           // Generate the do statements and move the assignement statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
-          doStmt.getInnerStatement().getBody().appendToChildren(assignment, false);
+          doStmt.getInnerStatement().getBody().
+              appendToChildren(assignment, false);
 
           PromotionInfo promotionInfo;
           if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
@@ -720,7 +727,7 @@ public class ParallelizeForward extends Transformation {
                 varInLhs.getValue(), true, true, 0, 0, parentFctDef,
                 _parentFctType, dimensions, _claw, xcodeml, null);
             _promotions.put(varInLhs.getValue(), promotionInfo);
-            
+
             // TODO if #38 is implemented, the varibale has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
             _promotedWithBeforeOver.add(varInLhs.getValue());
@@ -758,6 +765,7 @@ public class ParallelizeForward extends Transformation {
 
   /**
    * Adapt potential pointer that are assigned from a promoted variable.
+   *
    * @param varType     Type of the promoted variable.
    * @param fieldId     Name of the promoted variable.
    * @param fctDef      Function definition in which assignement statements are
@@ -773,17 +781,16 @@ public class ParallelizeForward extends Transformation {
                             List<ClawDimension> dimensions)
       throws IllegalTransformationException
   {
-    if(varType.isTarget()){
+    if(varType.isTarget()) {
       List<Xnode> pAssignments =
           XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, fctDef);
-      for(Xnode pAssignment : pAssignments){
+      for(Xnode pAssignment : pAssignments) {
         Xnode pointer = pAssignment.getChild(0);
         Xnode pointee = pAssignment.getChild(1);
 
         // Check if the pointer assignment has the promoted variable
         if(pointee.getValue().toLowerCase().
-            equals(fieldId.toLowerCase()))
-        {
+            equals(fieldId.toLowerCase())) {
           XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().
               get(pointer.getAttribute(Xattr.TYPE));
           XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().
@@ -791,8 +798,7 @@ public class ParallelizeForward extends Transformation {
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()
-              && !_promotions.containsKey(pointer.getValue()))
-          {
+              && !_promotions.containsKey(pointer.getValue())) {
             PromotionInfo promotionInfo = TransformationHelper.promoteField(
                 pointer.getValue(), true, true, 0, dimensions.size(),
                 fctDef, _parentFctType, dimensions, _claw, xcodeml, null);
@@ -810,17 +816,19 @@ public class ParallelizeForward extends Transformation {
 
   /**
    * Get the called fct name.
+   *
    * @return Fct name.
    */
-  public String getCalledFctName(){
+  public String getCalledFctName() {
     return _calledFctName;
   }
 
   /**
    * Get the parent fct name.
+   *
    * @return Fct name.
    */
-  public String getCallingFctName(){
+  public String getCallingFctName() {
     return _callingFctName;
   }
 }

@@ -22,9 +22,9 @@ import java.util.List;
  * @author clementval
  */
 public class ArrayToFctCall extends Transformation {
+
   private final ClawLanguage _claw;
   private XfunctionDefinition _replaceFct;
-
 
   /**
    * ArrayToFctCall ctor.
@@ -33,35 +33,35 @@ public class ArrayToFctCall extends Transformation {
    */
   public ArrayToFctCall(AnalyzedPragma directive) {
     super(directive);
-    _claw = (ClawLanguage)directive;
+    _claw = (ClawLanguage) directive;
   }
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     XfunctionDefinition _fctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
-    if(_fctDef == null){
+    if(_fctDef == null) {
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().getLineNo());
       return false;
     }
 
-    if(!_fctDef.getDeclarationTable().contains(_claw.getArrayName())){
+    if(!_fctDef.getDeclarationTable().contains(_claw.getArrayName())) {
       xcodeml.addError(_claw.getArrayName() +
-          " is not declared in current function/subroutine.",
+              " is not declared in current function/subroutine.",
           _claw.getPragma().getLineNo());
       return false;
     }
 
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
         getFctDefinition(_claw.getFctName());
-    if(_replaceFct == null){
+    if(_replaceFct == null) {
       XmoduleDefinition parentModule =
           XnodeUtil.findParentModule(_claw.getPragma());
       _replaceFct = XnodeUtil.findFunctionDefinitionInModule(parentModule,
           _claw.getFctName());
 
-      if(_replaceFct == null){
+      if(_replaceFct == null) {
         xcodeml.addError("Function " + _claw.getFctName() +
                 " not found in current file.",
             _claw.getPragma().getLineNo());
@@ -91,14 +91,14 @@ public class ArrayToFctCall extends Transformation {
   {
 
     XfunctionType fctType =
-        (XfunctionType)xcodeml.getTypeTable().
+        (XfunctionType) xcodeml.getTypeTable().
             get(_replaceFct.getName().getAttribute(Xattr.TYPE));
 
     // Prepare the function call
     Xnode fctCall = XnodeUtil.createFctCall(xcodeml, fctType.getReturnType(),
         _claw.getFctName(), _replaceFct.getName().getAttribute(Xattr.TYPE));
     Xnode args = fctCall.find(Xcode.ARGUMENTS);
-    for(String arg : _claw.getFctParams()){
+    for(String arg : _claw.getFctParams()) {
       Xnode var =
           XnodeUtil.createVar(Xname.TYPE_F_INT, arg, Xscope.LOCAL, xcodeml);
       args.appendToChildren(var, false);
@@ -108,7 +108,7 @@ public class ArrayToFctCall extends Transformation {
         XnodeUtil.getAllArrayReferencesInSiblings(_claw.getPragma(),
             _claw.getArrayName());
 
-    for(Xnode ref : refs){
+    for(Xnode ref : refs) {
       XnodeUtil.insertAfter(ref, fctCall.cloneObject());
       ref.delete();
     }
