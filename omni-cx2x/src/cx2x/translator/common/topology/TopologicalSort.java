@@ -15,7 +15,7 @@ import java.util.*; // For List, Map.
  * Running a topological sort and then visiting the nodes in the order
  * specified by this sorted order ensures that the necessary values for each
  * node are available before the node is visited.
- *
+ * <p>
  * There are several algorithms for computing topological sorts.  The one used
  * here was first described in "Edge-Disjoint Spanning Trees and Depth-First
  * Search" by Robert Tarjan.  The algorithm is reminiscent of Kosaraju's SCC
@@ -27,7 +27,7 @@ import java.util.*; // For List, Map.
  * expanding out any node.  Since those nodes will be added to the sorted order
  * before the expanded node, we have the desired property of the topological
  * sort.
- *
+ * <p>
  * This process can be augmented to detect a cycle in the original graph.  As
  * we do the search, we'll maintain a set of nodes that we have visited and a
  * set of nodes that we have expanded.  If when doing the DFS we find a node
@@ -40,6 +40,7 @@ import java.util.*; // For List, Map.
  */
 
 public final class TopologicalSort {
+
   /**
    * Given a directed acyclic graph, returns a topological sorting of the
    * nodes in the graph.  If the input graph is not a DAG, throws an
@@ -68,7 +69,7 @@ public final class TopologicalSort {
     Set<T> expanded = new HashSet<>();
 
     // Fire off a DFS from each node in the graph.
-    for (T node: gRev) {
+    for(T node : gRev) {
       explore(node, gRev, result, visited, expanded);
     }
 
@@ -81,19 +82,20 @@ public final class TopologicalSort {
    * Recursively performs a DFS from the specified node, marking all nodes
    * encountered by the search.
    *
-   * @param node The node to begin the search from.
-   * @param g The graph in which to perform the search.
+   * @param node     The node to begin the search from.
+   * @param g        The graph in which to perform the search.
    * @param ordering A list holding the topological sort of the graph.
-   * @param visited A set of nodes that have already been visited.
+   * @param visited  A set of nodes that have already been visited.
    * @param expanded A set of nodes that have been fully expanded.
    */
   private static <T> void explore(T node, DirectedGraph<T> g,
                                   List<T> ordering, Set<T> visited,
-                                  Set<T> expanded) {
+                                  Set<T> expanded)
+  {
     /* Check whether we've been here before.  If so, we should stop the
      * search.
      */
-    if (visited.contains(node)) {
+    if(visited.contains(node)) {
       /* There are two cases to consider.  First, if this node has
        * already been expanded, then it's already been assigned a
        * position in the final topological sort and we don't need to
@@ -102,7 +104,7 @@ public final class TopologicalSort {
        * and therefore is part of a cycle.  In that case, we should
        * report an error.
        */
-      if (expanded.contains(node)) {
+      if(expanded.contains(node)) {
         return;
       }
       throw new IllegalArgumentException("Graph contains a cycle.");
@@ -112,7 +114,7 @@ public final class TopologicalSort {
     visited.add(node);
 
     // Recursively explore all of the node's predecessors.
-    for (T predecessor: g.edgesFrom(node)) {
+    for(T predecessor : g.edgesFrom(node)) {
       explore(predecessor, g, ordering, visited, expanded);
     }
 
@@ -135,15 +137,15 @@ public final class TopologicalSort {
     DirectedGraph<T> result = new DirectedGraph<T>();
 
     // Add all the nodes from the original graph.
-    for (T node: g) {
+    for(T node : g) {
       result.addNode(node);
     }
 
     /* Scan over all the edges in the graph, adding their reverse to the
      * reverse graph.
      */
-    for (T node: g) {
-      for (T endpoint : g.edgesFrom(node)) {
+    for(T node : g) {
+      for(T endpoint : g.edgesFrom(node)) {
         result.addEdge(endpoint, node);
       }
     }

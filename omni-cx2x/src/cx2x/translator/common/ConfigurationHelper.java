@@ -38,9 +38,9 @@ public class ConfigurationHelper {
 
   private static Document document = null;
 
-
   /**
    * read all the group element of the configuration file.
+   *
    * @param path Path to the configuration file.
    * @return A list of String arrays with 3 elements. 0) type, 1) name, 2) class
    * @throws Exception When configuration file cannot be read
@@ -51,13 +51,13 @@ public class ConfigurationHelper {
     List<GroupConfiguration> groups = new ArrayList<>();
     Element root = open(path);
     NodeList groupElements = root.getElementsByTagName(GROUP_ELEMENT);
-    for (int i = 0; i < groupElements.getLength(); ++i){
-      if(groupElements.item(i).getNodeType() == Node.ELEMENT_NODE){
+    for(int i = 0; i < groupElements.getLength(); ++i) {
+      if(groupElements.item(i).getNodeType() == Node.ELEMENT_NODE) {
         Element g = (Element) groupElements.item(i);
         String name = g.getAttribute(NAME_ATTR);
         String type = g.getAttribute(TYPE_ATTR);
         GroupConfiguration.GroupType gType;
-        switch (type) {
+        switch(type) {
           case DEPENDENT_GR_TYPE:
             gType = GroupConfiguration.GroupType.DEPENDENT;
             break;
@@ -68,14 +68,14 @@ public class ConfigurationHelper {
             throw new Exception("Invalid group type specified.");
         }
         String cPath = g.getAttribute(CLASS_ATTR);
-        if(cPath == null || cPath.isEmpty()){
+        if(cPath == null || cPath.isEmpty()) {
           throw new Exception("Invalid group class transformation definition.");
         }
         Class transClass;
         try {
           // Check if class is there
           transClass = Class.forName(cPath);
-        } catch (ClassNotFoundException e) {
+        } catch(ClassNotFoundException e) {
           throw new Exception("Transformation class " + cPath +
               " not available");
         }
@@ -87,6 +87,7 @@ public class ConfigurationHelper {
 
   /**
    * Read the default target from the configuration file.
+   *
    * @param path Path to the configuration file.
    * @return Enum value corresponding to the target. CPU if nothing defined.
    */
@@ -94,13 +95,13 @@ public class ConfigurationHelper {
     try {
       Element root = open(path);
       NodeList targets = root.getElementsByTagName(TARGET_ELEMENT);
-      if(targets.getLength() != 1){
+      if(targets.getLength() != 1) {
         return Target.CPU;
       }
-      Element target = (Element)targets.item(0);
+      Element target = (Element) targets.item(0);
       String defaultTarget = target.getAttribute(DEFAULT_ATTR);
       return Target.fromString(defaultTarget);
-    } catch (Exception ignored){
+    } catch(Exception ignored) {
       return Target.CPU;
     }
   }
@@ -108,6 +109,7 @@ public class ConfigurationHelper {
   /**
    * Read the default accelerator directive language from the configuration
    * file.
+   *
    * @param path Path to the configuration file.
    * @return Enum value corresponding to the directive language. NONE if
    * nothing defined.
@@ -116,19 +118,20 @@ public class ConfigurationHelper {
     try {
       Element root = open(path);
       NodeList targets = root.getElementsByTagName(DIRECTIVE_ELEMENT);
-      if(targets.getLength() != 1){
+      if(targets.getLength() != 1) {
         return AcceleratorDirective.NONE;
       }
-      Element target = (Element)targets.item(0);
+      Element target = (Element) targets.item(0);
       String defaultTarget = target.getAttribute(DEFAULT_ATTR);
       return AcceleratorDirective.fromString(defaultTarget);
-    } catch (Exception ignored){
+    } catch(Exception ignored) {
       return AcceleratorDirective.NONE;
     }
   }
 
   /**
    * Open the configuration file and get the root element.
+   *
    * @param configPath Path to the configuration file.
    * @return The root element.
    * @throws Exception When the XML file cannot be opened.

@@ -11,8 +11,7 @@ package cx2x.translator.common;
  * @author clementval
  */
 public class ClawConstant {
-
-
+  
   public static final String EMPTY_STRING = "";
   public static final String OPENACC_PREFIX = "acc";
   public static final String OPENMP_PREFIX = "omp";

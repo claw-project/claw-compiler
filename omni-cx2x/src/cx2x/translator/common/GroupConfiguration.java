@@ -11,7 +11,8 @@ package cx2x.translator.common;
  * @author clementval
  */
 public class GroupConfiguration {
-  public enum GroupType { DEPENDENT, INDEPENDENT }
+
+  public enum GroupType {DEPENDENT, INDEPENDENT}
 
   private final String _name;
   private final String _cPath;
@@ -20,11 +21,12 @@ public class GroupConfiguration {
 
   /**
    * Constructs a new GroupConfiguration element with all mandatory information.
+   *
    * @param name  User friendly name of the group.
    * @param type  Type of the group.
    * @param cPath Path to the transformation class.
    */
-  public GroupConfiguration(String name, GroupType type, String cPath, Class c){
+  public GroupConfiguration(String name, GroupType type, String cPath, Class c) {
     _name = name;
     _cPath = cPath;
     _type = type;
@@ -33,33 +35,37 @@ public class GroupConfiguration {
 
   /**
    * Get the name value.
+   *
    * @return Name value.
    */
-  public String getName(){
+  public String getName() {
     return _name;
   }
 
   /**
    * Get the class path value.
+   *
    * @return Class path value.
    */
-  public String getTransformationClassName(){
+  public String getTransformationClassName() {
     return _cPath;
   }
 
   /**
    * Get the type value.
+   *
    * @return Type value.
    */
-  public GroupType getType(){
+  public GroupType getType() {
     return _type;
   }
 
   /**
    * Get the transformation class value.
+   *
    * @return Transformation class value.
    */
-  public Class getTransformationClass(){
+  public Class getTransformationClass() {
     return _transformationClass;
   }
 
