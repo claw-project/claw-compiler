@@ -43,6 +43,7 @@ public class TransformationHelper {
   /**
    * Generate corresponding additional transformation according to optional
    * clauses given to the directive.
+   *
    * @param claw        ClawLanguage object that tells encapsulates all
    *                    information about the current directives and its
    *                    clauses.
@@ -65,6 +66,7 @@ public class TransformationHelper {
   /**
    * Generate loop fusion transformation if the clause is present in the
    * directive.
+   *
    * @param claw        ClawLanguage object that tells encapsulates all
    *                    information about the current directives and its
    *                    clauses.
@@ -77,13 +79,13 @@ public class TransformationHelper {
                                         Transformer transformer,
                                         Xnode stmt)
   {
-    if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT){
+    if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
       LoopFusion fusion = new LoopFusion(stmt, l);
       // TODO maybe run analysis
       transformer.addTransformation(fusion);
 
-      if(XmOption.isDebugOutput()){
+      if(XmOption.isDebugOutput()) {
         System.out.println("Loop fusion added: " + claw.getGroupValue());
       }
     }
@@ -92,6 +94,7 @@ public class TransformationHelper {
   /**
    * Generate loop interchange transformation if the clause is present in the
    * directive.
+   *
    * @param claw        ClawLanguage object that tells encapsulates all
    *                    information about the current directives and its
    *                    clauses.
@@ -107,13 +110,13 @@ public class TransformationHelper {
                                              Transformer transformer,
                                              Xnode stmt)
   {
-    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT){
+    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
       XnodeUtil.insertBefore(stmt, p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);
-      if(XmOption.isDebugOutput()){
+      if(XmOption.isDebugOutput()) {
         System.out.println("Loop interchange added: " + claw.getIndexes());
       }
     }
@@ -122,6 +125,7 @@ public class TransformationHelper {
   /**
    * Find the id element in the current function definition or in parent if
    * nested.
+   *
    * @param fctDef Current function definition.
    * @param name   Id name to be searched for.
    * @return The element if found. Null otherwise.
@@ -129,11 +133,11 @@ public class TransformationHelper {
   private static Xid getIdInNestedFctDef(XfunctionDefinition fctDef,
                                          String name)
   {
-    if(fctDef.getSymbolTable().contains(name)){
+    if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getSymbolTable().get(name);
     }
     XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
-    if(upperDef == null){
+    if(upperDef == null) {
       return null;
     }
     return getIdInNestedFctDef(upperDef, name);
@@ -142,18 +146,19 @@ public class TransformationHelper {
   /**
    * Find the declaration element in the current function definition or in
    * parent if nested.
+   *
    * @param fctDef Current function definition.
    * @param name   Declaration name to be searched for.
    * @return The element if found. Null otherwise.
    */
   private static Xdecl getDeclInNestedFctDef(XfunctionDefinition fctDef,
-                                                String name)
+                                             String name)
   {
-    if(fctDef.getSymbolTable().contains(name)){
+    if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getDeclarationTable().get(name);
     }
     XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
-    if(upperDef == null){
+    if(upperDef == null) {
       return null;
     }
     return getDeclInNestedFctDef(upperDef, name);
@@ -162,30 +167,32 @@ public class TransformationHelper {
 
   /**
    * Apply the reshape clause transformation.
+   *
    * @param claw    The claw language object holding the reshape information.
    * @param xcodeml The current XcodeML program.
    * @throws IllegalTransformationException when reshape information are not
-   * valid or an new element cannot be created.
+   *                                        valid or an new element cannot be
+   *                                        created.
    */
   public static void applyReshapeClause(ClawLanguage claw,
                                         XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(!claw.hasReshapeClause()){
+    if(!claw.hasReshapeClause()) {
       return;
     }
     XfunctionDefinition fctDef =
         XnodeUtil.findParentFunction(claw.getPragma());
-    if(fctDef == null){
+    if(fctDef == null) {
       throw new IllegalTransformationException("Cannot apply reshape clause." +
-          "Parent function definition not found.",claw.getPragma().getLineNo());
+          "Parent function definition not found.", claw.getPragma().getLineNo());
     }
 
-    for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()){
+    for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()) {
       Xid id = getIdInNestedFctDef(fctDef, reshapeInfo.getArrayName());
       Xdecl decl = getDeclInNestedFctDef(fctDef, reshapeInfo.getArrayName());
 
-      if(id == null || decl == null){
+      if(id == null || decl == null) {
         throw new IllegalTransformationException("Cannot apply reshape clause."
             + "Variable " + reshapeInfo.getArrayName() + " not found in " +
             "declaration table.", claw.getPragma().getLineNo());
@@ -194,17 +201,17 @@ public class TransformationHelper {
       String crtTypeHash = id.getType();
 
       Xtype rawType = xcodeml.getTypeTable().get(crtTypeHash);
-      if(!(rawType instanceof XbasicType)){
+      if(!(rawType instanceof XbasicType)) {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",
                 reshapeInfo.getArrayName()),
             claw.getPragma().getLineNo()
         );
       }
-      XbasicType crtType = (XbasicType)rawType;
+      XbasicType crtType = (XbasicType) rawType;
 
       // Check dimension
-      if(crtType.getDimensions() < reshapeInfo.getTargetDimension()){
+      if(crtType.getDimensions() < reshapeInfo.getTargetDimension()) {
         throw new IllegalTransformationException(
             String.format(
                 "Reshape variable %s has smaller dimension than requested.",
@@ -216,12 +223,12 @@ public class TransformationHelper {
       // Create new type
       XbasicType newType = crtType.cloneObject();
       newType.setType(xcodeml.getTypeTable().generateRealTypeHash());
-      if(reshapeInfo.getTargetDimension() == 0){ // Demote to scalar
+      if(reshapeInfo.getTargetDimension() == 0) { // Demote to scalar
         newType.resetDimension();
       } else { // Demote to smaller dimension array
 
         if(crtType.getDimensions() - reshapeInfo.getKeptDimensions().size() !=
-            reshapeInfo.getTargetDimension()){
+            reshapeInfo.getTargetDimension()) {
           throw new IllegalTransformationException(
               String.format("Reshape information for %s not valid. " +
                       "Target dimension and kept dimension mismatch.",
@@ -241,8 +248,8 @@ public class TransformationHelper {
           XnodeUtil.getAllArrayReferences(fctDef.getBody(),
               reshapeInfo.getArrayName());
 
-      for(Xnode ref : refs){
-        if(reshapeInfo.getTargetDimension() == 0){
+      for(Xnode ref : refs) {
+        if(reshapeInfo.getTargetDimension() == 0) {
           XnodeUtil.demoteToScalar(ref);
         } else {
           XnodeUtil.demote(ref, reshapeInfo.getKeptDimensions());
@@ -253,15 +260,16 @@ public class TransformationHelper {
 
   /**
    * Locate a module file generated by CLAW translator.
+   *
    * @param modName Name of the module.
    * @return A Xmod object representing the module if found. Null otherwise.
    */
-  public static Xmod locateClawModuleFile(String modName){
-    for(String dir : XcodeMLtools_Fmod.getSearchPath()){
+  public static Xmod locateClawModuleFile(String modName) {
+    for(String dir : XcodeMLtools_Fmod.getSearchPath()) {
       String path = dir + "/" + modName + ClawConstant.CLAW_MOD_SUFFIX +
           XnodeUtil.XMOD_FILE_EXTENSION;
       File f = new File(path);
-      if(f.exists()){
+      if(f.exists()) {
         Document doc = XnodeUtil.readXmlFile(path);
         return doc != null ? new Xmod(doc, modName, dir) : null;
       }
@@ -271,6 +279,7 @@ public class TransformationHelper {
 
   /**
    * Update the function signature in the module file to reflects local changes.
+   *
    * @param xcodeml     Current XcodeML file unit.
    * @param fctDef      Function definition that has been changed.
    * @param fctType     Function type that has been changed.
@@ -278,7 +287,7 @@ public class TransformationHelper {
    * @param claw        Pragma that has triggered the transformation.
    * @param transformer Current transformer object.
    * @throws IllegalTransformationException If the module file or the function
-   * cannot be located
+   *                                        cannot be located
    */
   public static void updateModuleSignature(XcodeProgram xcodeml,
                                            XfunctionDefinition fctDef,
@@ -291,12 +300,12 @@ public class TransformationHelper {
       throws IllegalTransformationException
   {
     Xmod mod;
-    if(transformer.getModCache().isModuleLoaded(modDef.getName())){
+    if(transformer.getModCache().isModuleLoaded(modDef.getName())) {
       mod = transformer.getModCache().get(modDef.getName());
     } else {
       mod = XnodeUtil.findContainingModule(fctDef);
       transformer.getModCache().add(modDef.getName(), mod);
-      if(mod == null){
+      if(mod == null) {
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + modDef.getName(),
             claw.getPragma().getLineNo());
@@ -304,7 +313,7 @@ public class TransformationHelper {
     }
 
     XfunctionType fctTypeMod;
-    if(importFctType){
+    if(importFctType) {
       Node rawNode = mod.getDocument().importNode(fctType.getElement(), true);
       mod.getTypeTable().getElement().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);
@@ -313,8 +322,8 @@ public class TransformationHelper {
       mod.getIdentifiers().add(importedFctTypeId);
 
       // check if params need to be imported as well
-      if(importedFctType.getParameterNb() > 0){
-        for(Xnode param : importedFctType.getParams().getAll()){
+      if(importedFctType.getParameterNb() > 0) {
+        for(Xnode param : importedFctType.getParams().getAll()) {
           XnodeUtil.importType(xcodeml, mod, param.getAttribute(Xattr.TYPE));
         }
       }
@@ -324,7 +333,7 @@ public class TransformationHelper {
           fctDef.getName().getAttribute(Xattr.TYPE));
     }
 
-    if(fctTypeMod == null){
+    if(fctTypeMod == null) {
       /* Workaround for a bug in OMNI Compiler. Look at test case
        * claw/abstraction12. In this test case, the XcodeML/F intermediate
        * representation for the function call points to a FfunctionType element
@@ -337,11 +346,11 @@ public class TransformationHelper {
 
       // If not, try to find the correct FfunctionType in the module definitions
       Xid id = mod.getIdentifiers().get(fctDef.getName().getValue());
-      if(id == null){
+      if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
-      fctTypeMod = (XfunctionType)mod.getTypeTable().get(id.getType());
-      if(fctTypeMod == null){
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id.getType());
+      if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
     }
@@ -355,13 +364,13 @@ public class TransformationHelper {
     List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
 
 
-    if(paramsLocal.size() < paramsMod.size()){
+    if(paramsLocal.size() < paramsMod.size()) {
       throw new IllegalTransformationException(
           "Local function has more parameters than module counterpart.",
           claw.getPragma().getLineNo());
     }
 
-    for(int i = 0; i < paramsLocal.size(); ++i){
+    for(int i = 0; i < paramsLocal.size(); ++i) {
       Xnode pLocal = paramsLocal.get(i);
       // Number of parameters in the module function as been
       if(pLocal.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
@@ -373,10 +382,10 @@ public class TransformationHelper {
         String localType = pLocal.getAttribute(Xattr.TYPE);
         String modType = pMod.getAttribute(Xattr.TYPE);
 
-        if(!localType.equals(modType)){
+        if(!localType.equals(modType)) {
           // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType)xcodeml.getTypeTable().get(localType);
-          XbasicType crtType = (XbasicType)mod.getTypeTable().get(modType);
+          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(localType);
+          XbasicType crtType = (XbasicType) mod.getTypeTable().get(modType);
 
           List<ClawDimension> dimensions =
               TransformationHelper.findDimensions(fctType);
@@ -399,28 +408,30 @@ public class TransformationHelper {
   /**
    * Copy the attribute from one Xnode to another Xnode if it exists in the
    * from node.
+   *
    * @param from Xnode to copy from.
    * @param to   Xnode to copy to.
    * @param attr Attribute code to be copied.
    */
-  private static void copyAttribute(Xnode from, Xnode to, ClawAttr attr){
-    if(from.hasAttribute(attr.toString())){
+  private static void copyAttribute(Xnode from, Xnode to, ClawAttr attr) {
+    if(from.hasAttribute(attr.toString())) {
       to.setAttribute(attr.toString(), from.getAttribute(attr.toString()));
     }
   }
 
   /**
    * Find the dimensions defined by the parallelize transformation.
+   *
    * @param fctType Function type to analyze.
    * @return List of found dimensions.
    */
-  public static List<ClawDimension> findDimensions(XfunctionType fctType){
+  public static List<ClawDimension> findDimensions(XfunctionType fctType) {
     List<ClawDimension> dimensions = new ArrayList<>();
-    if(fctType.getParams() == null){
+    if(fctType.getParams() == null) {
       return dimensions;
     }
-    for(Xnode param : fctType.getParams().getAll()){
-      if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())){
+    for(Xnode param : fctType.getParams().getAll()) {
+      if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         dimensions.add(
             new ClawDimension(
                 ClawConstant.ITER_PREFIX + param.getValue(),
@@ -435,6 +446,7 @@ public class TransformationHelper {
 
   /**
    * Declare induction variables for dimensions if there are not present.
+   *
    * @param dimensions List of dimensions.
    * @param fctDef     Function defintion in which variable are created.
    * @param xcodeml    Current XcodeML program unit.
@@ -443,8 +455,8 @@ public class TransformationHelper {
                                                XfunctionDefinition fctDef,
                                                XcodeML xcodeml)
   {
-    for(ClawDimension dim : dimensions){
-      if(fctDef.getDeclarationTable().get(dim.getIdentifier()) == null){
+    for(ClawDimension dim : dimensions) {
+      if(fctDef.getDeclarationTable().get(dim.getIdentifier()) == null) {
         XnodeUtil.createIdAndDecl(dim.getIdentifier(), Xname.TYPE_F_INT,
             Xname.SCLASS_F_LOCAL, fctDef, xcodeml);
       }
@@ -453,6 +465,7 @@ public class TransformationHelper {
 
   /**
    * Promote a field with the information stored in the defined dimensions.
+   *
    * @param fieldId   Id of the field as defined in the symbol table.
    * @param update    If true, update current type otherwise, create a type from
    *                  scratch.
@@ -480,12 +493,12 @@ public class TransformationHelper {
     String type = xcodeml.getTypeTable().generateArrayTypeHash();
     XbasicType newType;
 
-    if(update){
+    if(update) {
       XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
-      if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())){
+      if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())) {
         throw new IllegalTransformationException("Cannot find type for " +
             fieldId, claw.getPragma().getLineNo());
-      } else if(XnodeUtil.isBuiltInType(id.getType())){
+      } else if(XnodeUtil.isBuiltInType(id.getType())) {
         newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
             Xintent.NONE);
       } else {
@@ -499,54 +512,53 @@ public class TransformationHelper {
     PromotionInfo proInfo = new PromotionInfo(fieldId, newType.getDimensions(),
         newType.getDimensions() + dimensions.size(), type);
 
-    if(assumed){
+    if(assumed) {
       if(newType.isAllAssumedShape()
-          && (fctType.hasParam(fieldId) || newType.isPointer()))
-      {
-        for(int i = 0; i < overDimensions; ++i){
+          && (fctType.hasParam(fieldId) || newType.isPointer())) {
+        for(int i = 0; i < overDimensions; ++i) {
           Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
           newType.addDimension(index, 0);
         }
       } else {
-        if(claw.hasOverClause() || overPos != null){
+        if(claw.hasOverClause() || overPos != null) {
           /* If the directive has an over clause, there is three possibility to
            * insert the newly defined dimensions.
            * 1. Insert the dimensions in the middle on currently existing ones.
            * 2. Insert the dimensions before currently existing ones.
            * 3. Insert the dimensions after currently existing ones. */
-          if(overPos == null){
+          if(overPos == null) {
             overPos = getOverPosition(claw.getOverClauseValues().get(overIndex));
           }
 
-          if(overPos == OverPosition.MIDDLE){
+          if(overPos == OverPosition.MIDDLE) {
             // Insert new dimension in middle (case 1)
             int startIdx = 1;
-            for (ClawDimension dim : dimensions) {
+            for(ClawDimension dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, startIdx++);
             }
-          } else if(overPos == OverPosition.AFTER){
+          } else if(overPos == OverPosition.AFTER) {
             // Insert new dimensions at the end (case 3)
-            for (ClawDimension dim : dimensions) {
+            for(ClawDimension dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, XbasicType.APPEND);
             }
           } else {
             // Insert new dimension at the beginning (case 2)
-            for (ClawDimension dim : dimensions) {
+            for(ClawDimension dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, 0);
             }
           }
         } else {
-          for (ClawDimension dim : dimensions) {
+          for(ClawDimension dim : dimensions) {
             Xnode index = dim.generateIndexRange(xcodeml, false);
             newType.addDimension(index, 0);
           }
         }
       }
     } else {
-      for(ClawDimension dim : dimensions){
+      for(ClawDimension dim : dimensions) {
         Xnode index = dim.generateIndexRange(xcodeml, false);
         newType.addDimension(index, XbasicType.APPEND);
       }
@@ -557,8 +569,8 @@ public class TransformationHelper {
 
 
     // Update params in function type
-    for(Xnode param : fctType.getParams().getAll()){
-      if(param.getValue().equals(fieldId)){
+    for(Xnode param : fctType.getParams().getAll()) {
+      if(param.getValue().equals(fieldId)) {
 
         // Update type with new promoted type
         param.setAttribute(Xattr.TYPE, type);
@@ -571,8 +583,7 @@ public class TransformationHelper {
       }
     }
     if(fctType.hasAttribute(Xattr.RESULT_NAME)
-        && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId))
-    {
+        && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId)) {
       if(claw.hasOverClause()) {
         fctType.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
             claw.getOverClauseValues().get(overIndex)).toString());
@@ -583,15 +594,16 @@ public class TransformationHelper {
 
   /**
    * Get the enum value for the over position.
+   *
    * @param overClause List of values in the over clause.
    * @return Position of the newly inserted dimensions compare the the existing
    * ones.
    */
-  private static OverPosition getOverPosition(List<String> overClause){
+  private static OverPosition getOverPosition(List<String> overClause) {
     if(overClause.get(0).equals(ClawDimension.BASE_DIM) &&
-        overClause.get(overClause.size()-1).equals(ClawDimension.BASE_DIM)) {
+        overClause.get(overClause.size() - 1).equals(ClawDimension.BASE_DIM)) {
       return OverPosition.MIDDLE;
-    } else if (overClause.get(0).equals(ClawDimension.BASE_DIM)){
+    } else if(overClause.get(0).equals(ClawDimension.BASE_DIM)) {
       return OverPosition.AFTER;
     }
     return OverPosition.BEFORE;
@@ -599,13 +611,14 @@ public class TransformationHelper {
 
   /**
    * Get the number of base dimension in an over clause.
+   *
    * @param over Over clause as a list of string element.
    * @return The number of base dimension.
    */
-  public static int baseDimensionNb(List<String> over){
+  public static int baseDimensionNb(List<String> over) {
     int cnt = 0;
-    for(String dim : over){
-      if(dim.equals(ClawDimension.BASE_DIM)){
+    for(String dim : over) {
+      if(dim.equals(ClawDimension.BASE_DIM)) {
         ++cnt;
       }
     }
@@ -615,6 +628,7 @@ public class TransformationHelper {
   /**
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
+   *
    * @param ids   List of array identifiers that must be adapted.
    * @param index Index designing the correct over clause to be used.
    */
@@ -626,8 +640,8 @@ public class TransformationHelper {
                                           List<List<Xnode>> afterCrt,
                                           XcodeProgram xcodeml)
   {
-    for(String data : ids){
-      if(promotions.get(data).wasScalar()){
+    for(String data : ids) {
+      if(promotions.get(data).wasScalar()) {
         List<Xnode> refs =
             XnodeUtil.getAllVarReferences(parent, data);
         for(Xnode ref : refs) {
@@ -639,31 +653,31 @@ public class TransformationHelper {
           XnodeUtil.insertAfter(ref, arrayRef);
           arrayRef.appendToChildren(varRef, false);
           varRef.appendToChildren(ref, false);
-          for (Xnode ai : beforeCrt.get(index)) {
+          for(Xnode ai : beforeCrt.get(index)) {
             arrayRef.appendToChildren(ai, true);
           }
-          for (Xnode ai : afterCrt.get(index)) {
+          for(Xnode ai : afterCrt.get(index)) {
             arrayRef.appendToChildren(ai, true);
           }
         }
       } else {
         List<Xnode> refs =
             XnodeUtil.getAllArrayReferences(parent, data);
-        for(Xnode ref : refs){
+        for(Xnode ref : refs) {
           if(inMiddle.get(index).size() == 0) {
-            for (Xnode ai : beforeCrt.get(index)) {
+            for(Xnode ai : beforeCrt.get(index)) {
               XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
             }
-            for (Xnode ai : afterCrt.get(index)) {
+            for(Xnode ai : afterCrt.get(index)) {
               ref.appendToChildren(ai, true);
             }
           } else {
             Xnode hook =
                 ref.findAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
-            if(hook == null){
+            if(hook == null) {
               hook = ref.getChild(0);
             }
-            for (Xnode ai : inMiddle.get(index)) {
+            for(Xnode ai : inMiddle.get(index)) {
               Xnode clone = ai.cloneObject();
               XnodeUtil.insertAfter(hook, clone);
               hook = clone;

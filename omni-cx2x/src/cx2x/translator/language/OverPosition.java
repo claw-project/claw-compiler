@@ -30,7 +30,7 @@ public enum OverPosition {
     return this.name;
   }
 
-  public static OverPosition fromString(String value){
+  public static OverPosition fromString(String value) {
     return (value == null) ? BEFORE :
         OverPosition.valueOf(value.toUpperCase());
   }

@@ -6,6 +6,7 @@
 package cx2x.translator.language;
 
 import cx2x.translator.misc.Utility;
+
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author clementval
  */
- 
+
 public class ClawMapping {
 
   private List<ClawMappingVar> _mappedVariables = null;
@@ -24,58 +25,65 @@ public class ClawMapping {
    * Constructs an empty ClawMapping object. Normally only used from the
    * CLAW Parser.
    */
-  ClawMapping(){}
+  ClawMapping() {
+  }
 
   /**
    * Get a list of all mapping variables.
+   *
    * @return List of mapping variable as ClawMappingVar.
    */
-  public List<ClawMappingVar> getMappingVariables(){
+  public List<ClawMappingVar> getMappingVariables() {
     return _mappingVariables;
   }
 
   /**
    * Get a list of all mapped variables.
+   *
    * @return List of mapped variable as String.
    */
-  public List<ClawMappingVar> getMappedVariables(){
+  public List<ClawMappingVar> getMappedVariables() {
     return _mappedVariables;
   }
 
 
   /**
    * Set the mapped variable list.
+   *
    * @param mappedVars List of ClawMappingVar that represents the mapped
    *                   variables.
    */
-  void setMappedVariables(List<ClawMappingVar> mappedVars){
+  void setMappedVariables(List<ClawMappingVar> mappedVars) {
     _mappedVariables = mappedVars;
   }
 
   /**
    * Set the mapping variable list.
+   *
    * @param mappingVars List of ClawMappingVar that represents the mapping
    *                    variables.
    */
-  void setMappingVariables(List<ClawMappingVar> mappingVars){
+  void setMappingVariables(List<ClawMappingVar> mappingVars) {
     _mappingVariables = mappingVars;
   }
 
   /**
    * get the number of dimension mapped in this ClawMapping object
+   *
    * @return the number of dimension to be mapped
    */
-  public int getMappedDimensions(){
+  public int getMappedDimensions() {
     return _mappingVariables.size();
   }
 
 
   /**
    * Return a string representation of the object.
+   *
    * @return String representation of the ClawMapping object.
    */
   @Override
-  public String toString(){
+  public String toString() {
     return Utility.join(",", getMappedVariables()) + ":" +
         Utility.join(",", getMappingVariables());
   }

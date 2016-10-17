@@ -29,10 +29,11 @@ public class ClawRange {
 
   /**
    * Constructs a new ClawRange object with all parameters initialization.
-   * @param inductionVar  The induction variable value.
-   * @param lowerBound    The lower bound value.
-   * @param upperBound    The upper bound value.
-   * @param step          The step value.
+   *
+   * @param inductionVar The induction variable value.
+   * @param lowerBound   The lower bound value.
+   * @param upperBound   The upper bound value.
+   * @param step         The step value.
    */
   public ClawRange(String inductionVar, String lowerBound, String upperBound,
                    String step)
@@ -45,6 +46,7 @@ public class ClawRange {
 
   /**
    * Get the induction variable value.
+   *
    * @return The induction variable value. Null if not defined.
    */
   String getInductionVar() {
@@ -53,16 +55,18 @@ public class ClawRange {
 
   /**
    * Set the induction variable value.
+   *
    * @param inductionVar The induction variable value.
    */
   void setInductionVar(String inductionVar) {
-    if(inductionVar != null){
+    if(inductionVar != null) {
       this._inductionVar = inductionVar.trim();
     }
   }
 
   /**
    * Get the lower bound value.
+   *
    * @return The lower bound value. Null if not defined.
    */
   String getLowerBound() {
@@ -71,6 +75,7 @@ public class ClawRange {
 
   /**
    * Set the lower bound value.
+   *
    * @param lowerBound The lower bound value.
    */
   void setLowerBound(String lowerBound) {
@@ -81,6 +86,7 @@ public class ClawRange {
 
   /**
    * Get the upper bound value.
+   *
    * @return The upper bound value. Null if not set.
    */
   String getUpperBound() {
@@ -89,16 +95,18 @@ public class ClawRange {
 
   /**
    * Set the upper bound value.
+   *
    * @param upperBound The upper bound value.
    */
   void setUpperBound(String upperBound) {
-    if(upperBound != null){
+    if(upperBound != null) {
       this._upperBound = upperBound.trim();
     }
   }
 
   /**
    * Get the step value.
+   *
    * @return The step value. Null if not defined.
    */
   public String getStep() {
@@ -107,6 +115,7 @@ public class ClawRange {
 
   /**
    * Set the step value.
+   *
    * @param step The step value.
    */
   public void setStep(String step) {
@@ -117,11 +126,12 @@ public class ClawRange {
 
   /**
    * Compare a ClawRange with a do statement.
+   *
    * @param doStmt The do statement to compare iteration range.
    * @return True if the iteration range share the same property.
    */
   public boolean equals(Xnode doStmt) {
-    if(doStmt.opcode() != Xcode.FDOSTATEMENT){
+    if(doStmt.opcode() != Xcode.FDOSTATEMENT) {
       return false;
     }
 

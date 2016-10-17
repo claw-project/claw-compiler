@@ -23,15 +23,15 @@ public enum Target {
   private static final String gpu = "gpu";
   private static final String mic = "mic";
 
-  public static List<String> availableTargets(){
+  public static List<String> availableTargets() {
     return Arrays.asList(cpu, gpu, mic);
   }
 
-  public static Target fromString(String value){
-    if(value == null){
+  public static Target fromString(String value) {
+    if(value == null) {
       return CPU;
     }
-    switch (value){
+    switch(value) {
       case cpu:
         return CPU;
       case gpu:
