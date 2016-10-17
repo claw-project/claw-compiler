@@ -27,12 +27,13 @@ public class FortranDecompiler {
 
   /**
    * Constructs a new FortranDecompiler object.
+   *
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
   public FortranDecompiler()
       throws XmException
   {
-      _toolFactory = new XmToolFactory("F");
+    _toolFactory = new XmToolFactory("F");
   }
 
   private boolean openXcodeMLFile(String inputFilepath)
@@ -55,6 +56,7 @@ public class FortranDecompiler {
 
   /**
    * Decompile the XcodeML file into Fortran code.
+   *
    * @param outputFilepath Fortran output file path.
    * @param inputFilepath  XcodeML input file path.
    * @param maxColumns     Maximum number of column for the output file.
@@ -64,7 +66,7 @@ public class FortranDecompiler {
   public boolean decompile(String outputFilepath, String inputFilepath,
                            int maxColumns, boolean lineDirectives)
   {
-    if(!lineDirectives){
+    if(!lineDirectives) {
       XmOption.setIsSuppressLineDirective(true);
     }
     XmOption.setCoarrayNoUseStatement(true);
@@ -77,7 +79,7 @@ public class FortranDecompiler {
     PrintWriter writer = null;
     try {
       writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFilepath)));
-    } catch (IOException e) {
+    } catch(IOException e) {
       e.printStackTrace();
     }
 
@@ -95,11 +97,11 @@ public class FortranDecompiler {
         Document xcodeDoc;
         xcodeDoc = builder.parse(inputFilepath);
         decompiler.decompile(context, xcodeDoc, writer);
-      } catch (ParserConfigurationException e) {
+      } catch(ParserConfigurationException e) {
         return false;
-      } catch (SAXException e) {
+      } catch(SAXException e) {
         return false;
-      } catch (IOException e) {
+      } catch(IOException e) {
         return false;
       }
 
@@ -109,14 +111,15 @@ public class FortranDecompiler {
         return false;
       }
       return true;
-    } catch(Exception ex){
-      if(_reader != null){
+    } catch(Exception ex) {
+      if(_reader != null) {
         try {
           _reader.close();
-        } catch (IOException ignored) { }
+        } catch(IOException ignored) {
+        }
       }
 
-      if(writer != null){
+      if(writer != null) {
         writer.close();
       }
     }
