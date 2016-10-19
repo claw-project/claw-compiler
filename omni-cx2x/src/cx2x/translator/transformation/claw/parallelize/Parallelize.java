@@ -25,6 +25,36 @@ import java.util.*;
  * The parallelize transformation transforms the code contained in a
  * subroutine/function by adding necessary dimensions and parallelism to the
  * defined data.
+ * <p>
+ * Transformation for the GPU target: <ul>
+ * <li> Automatic promotion is applied to all arrays with intent in, out or
+ * inout.
+ * <li> Do statements over the additional dimensions is added as an outter
+ * loop and wrap the entire body of the subroutine.
+ * </ul><p>
+ * Transformation for the CPU target: <ul>
+ * <li> Automatic promotion is applied to all arrays with intent in, out or
+ * inout.
+ * <li> Propagated promotion is applied to all scalars or arrays used in an
+ * assign statement at the lhs and where a promotted variable is used on the
+ * rhs.
+ * <li> Do statements over the additional dimensions are added as an inner
+ * loop wrapping each assign statements including promtted variables.
+ * </ul><p>
+ * Generation of OpenACC directives:<ul>
+ * <li> acc routine seq is generated for subroutine called from the parallelized
+ * subroutine if they are located in the same translation unit.
+ * <li> acc data region with corresponding present clause for all promotted
+ * variables with the intent in, out or inout.
+ * <li> acc parallel region is generated to wrap all the body of the subroutine.
+ * <li> acc private clause is added to the parallel directive for all local
+ * variables.
+ * <li> acc loop is generated for the generated do statement.
+ * <li> acc loop seq is generated for already existing do statements.
+ * </ul><p>
+ * Generation of OpenMP directives: <ul>
+ * <li> omp parallel do is generated for each generated do statements.
+ * </ul><p>
  *
  * @author clementval
  */
