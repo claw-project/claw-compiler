@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.parser;
 
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import org.antlr.v4.runtime.BaseErrorListener;
