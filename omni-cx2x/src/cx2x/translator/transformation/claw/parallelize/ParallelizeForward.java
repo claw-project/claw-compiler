@@ -9,7 +9,7 @@ import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.misc.Utility;
+import cx2x.translator.common.Utility;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;

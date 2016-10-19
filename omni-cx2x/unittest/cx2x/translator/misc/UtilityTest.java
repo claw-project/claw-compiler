@@ -8,6 +8,7 @@ package cx2x.translator.misc;
 
 import static org.junit.Assert.*;
 
+import cx2x.translator.common.Utility;
 import org.junit.Test;
 
 import java.util.ArrayList;

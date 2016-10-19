@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.common;
 
-import cx2x.translator.misc.Utility;
+import cx2x.translator.common.Utility;
 
 import java.util.List;
 

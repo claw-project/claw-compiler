@@ -99,6 +99,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
 # translator.common package
   cx2x/translator/common/ClawConstant.java
   cx2x/translator/common/NestedDoStatement.java
+  cx2x/translator/common/Utility.java
   cx2x/translator/common/topology/TopologicalSort.java
   cx2x/translator/common/topology/DirectedGraph.java
 
@@ -138,9 +139,6 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
 
 # translator.language.helper.accelerator package
   cx2x/translator/language/helper/target/Target.java
-
-# translator.misc package
-  cx2x/translator/misc/Utility.java
 
 # translator package
   cx2x/translator/ClawDirectiveKey.java

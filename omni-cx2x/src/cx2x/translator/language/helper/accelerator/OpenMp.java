@@ -6,7 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.misc.Utility;
+import cx2x.translator.common.Utility;
 
 import java.util.List;
 
