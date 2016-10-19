@@ -71,11 +71,12 @@ public class Utility {
 
   /**
    * Convert an object back to a List<String>
+   *
    * @param rawObject Raw object to be converted.
    * @return A list of string values. If the raw object is null or not an
    * original list of string, the returned list will be empty.
    */
-  public static List<String> convertToList(Object rawObject){
+  public static List<String> convertToList(Object rawObject) {
     List<String> strList = new ArrayList<>();
     if(rawObject != null && rawObject instanceof ArrayList) {
       List rawList = (ArrayList) rawObject;

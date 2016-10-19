@@ -5,12 +5,11 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cx2x.xcodeml.helper.*;
 
 /**
  * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
@@ -37,16 +36,14 @@ import cx2x.xcodeml.helper.*;
 
 public class XbasicType extends Xtype {
 
+  public static final int APPEND = -1;
   private boolean _isArray = false;
-
   // Optional elements
   private List<Xnode> _dimensions = null;
   private Xnode _kind = null;
   private Xnode _length = null;
-
   // XbasicType required attributes (type is declared in Xtype)
   private String _ref;
-
   // XbasicType optional attributes
   private boolean _is_public = false;
   private boolean _is_private = false;
@@ -59,8 +56,6 @@ public class XbasicType extends Xtype {
   private boolean _is_parameter = false;
   private boolean _is_allocatable = false;
   private Xintent _intent = null;
-
-  public static final int APPEND = -1;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read

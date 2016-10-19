@@ -95,7 +95,8 @@ public class LoopHoist extends BlockTransformation {
         int ifDepth = XnodeUtil.getDepth(tmpIf);
         int selectDepth = XnodeUtil.getDepth(tmpSelect);
         if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth)
-            && (ifDepth < depth || selectDepth < depth)) {
+            && (ifDepth < depth || selectDepth < depth))
+        {
           crtGroup.setExtraction();
         } else {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
@@ -120,11 +121,13 @@ public class LoopHoist extends BlockTransformation {
                 XnodeUtil.hasSameIndexRangeBesidesLower(master.getDoStmts()[j],
                     next.getDoStmts()[j])
         )
-            ) {
+            )
+        {
           // Iteration range are identical besides lower-bound, if creation
           next.setIfStatement();
         } else if(!XnodeUtil.hasSameIndexRange(master.getDoStmts()[j],
-            next.getDoStmts()[j])) {
+            next.getDoStmts()[j]))
+        {
           // Iteration range are too different, stop analysis
           xcodeml.addError("Iteration range of do statements group " + i +
                   " differs from group 0. Loop hoisting aborted.",
@@ -149,7 +152,8 @@ public class LoopHoist extends BlockTransformation {
 
       for(ClawReshapeInfo r : _startClaw.getReshapeClauseValues()) {
         if(!fctDef.getSymbolTable().contains(r.getArrayName()) ||
-            !fctDef.getDeclarationTable().contains(r.getArrayName())) {
+            !fctDef.getDeclarationTable().contains(r.getArrayName()))
+        {
           // Check in the parent def if present
           if(!checkUpperDefinition(fctDef, r.getArrayName())) {
             xcodeml.addError(String.format("Reshape variable %s not found in " +

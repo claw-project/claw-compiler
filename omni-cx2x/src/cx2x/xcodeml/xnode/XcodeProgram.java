@@ -5,13 +5,12 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cx2x.xcodeml.error.*;
 
 /**
  * The XcodeProgram represents the XcodeProgram (2) element in XcodeML
@@ -31,19 +30,17 @@ import cx2x.xcodeml.error.*;
 
 public class XcodeProgram extends XcodeML {
 
+  private final List<XanalysisError> _errors;
+  private final List<XanalysisError> _warnings;
   // XcodeProgram inner elements
   private XsymbolTable _globalSymbolsTable = null;
   private XglobalDeclTable _globalDeclarationsTable = null;
-
   // XcodeProgram optional attributes
   private String _version = null;
   private String _language = null;
   private String _time = null;
   private String _source = null;
   private String _compilerInfo = null;
-
-  private final List<XanalysisError> _errors;
-  private final List<XanalysisError> _warnings;
 
   /**
    * XcodeProgram base constructor.
@@ -54,6 +51,28 @@ public class XcodeProgram extends XcodeML {
     super(doc);
     _errors = new ArrayList<>();
     _warnings = new ArrayList<>();
+  }
+
+  /**
+   * Create a XcodeProgram object from an XcodeML input file.
+   *
+   * @param input XcodeML input filename or path
+   * @return A XcodeProgram object loaded with the information from the file.
+   * Null if the file couldn't be read.
+   */
+  public static XcodeProgram createFromFile(String input) {
+    Document doc = XnodeUtil.readXmlFile(input);
+    if(doc == null) {
+      System.err.println("Input file does not exists: " + input + "\n");
+      return null;
+    }
+    XcodeProgram program = new XcodeProgram(doc);
+    program.readDocumentInformation();
+    if(!program.isXcodeMLvalid()) {
+      System.err.print("XcodeML file is not valid\n");
+      return null;
+    }
+    return program;
   }
 
   /**
@@ -213,29 +232,6 @@ public class XcodeProgram extends XcodeML {
    */
   public String getCompilerInfo() {
     return _compilerInfo;
-  }
-
-
-  /**
-   * Create a XcodeProgram object from an XcodeML input file.
-   *
-   * @param input XcodeML input filename or path
-   * @return A XcodeProgram object loaded with the information from the file.
-   * Null if the file couldn't be read.
-   */
-  public static XcodeProgram createFromFile(String input) {
-    Document doc = XnodeUtil.readXmlFile(input);
-    if(doc == null) {
-      System.err.println("Input file does not exists: " + input + "\n");
-      return null;
-    }
-    XcodeProgram program = new XcodeProgram(doc);
-    program.readDocumentInformation();
-    if(!program.isXcodeMLvalid()) {
-      System.err.print("XcodeML file is not valid\n");
-      return null;
-    }
-    return program;
   }
 
 }

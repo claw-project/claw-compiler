@@ -20,24 +20,6 @@ public enum Xscope {
   PARAM;
 
   /**
-   * Convert current enum to String value.
-   *
-   * @return Corresponding String value.
-   */
-  public String toString() {
-    switch(this) {
-      case LOCAL:
-        return Xname.SCOPE_LOCAL;
-      case GLOBAL:
-        return Xname.SCOPE_GLOBAL;
-      case PARAM:
-        return Xname.SCOPE_PARAM;
-      default:
-        return "";
-    }
-  }
-
-  /**
    * Convert string value to enum.
    *
    * @param value String value.
@@ -56,6 +38,24 @@ public enum Xscope {
         return PARAM;
     }
     return null;
+  }
+
+  /**
+   * Convert current enum to String value.
+   *
+   * @return Corresponding String value.
+   */
+  public String toString() {
+    switch(this) {
+      case LOCAL:
+        return Xname.SCOPE_LOCAL;
+      case GLOBAL:
+        return Xname.SCOPE_GLOBAL;
+      case PARAM:
+        return Xname.SCOPE_PARAM;
+      default:
+        return "";
+    }
   }
 
 }

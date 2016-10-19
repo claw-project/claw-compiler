@@ -6,12 +6,12 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.common.NestedDoStatement;
-import cx2x.translator.language.common.ClawDimension;
+import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -169,7 +169,8 @@ public class Parallelize extends Transformation {
           if(((bType.getIntent() == Xintent.IN
               || bType.getIntent() == Xintent.OUT
               || bType.getIntent() == Xintent.INOUT)
-              || bType.isPointer()) && bType.isArray()) {
+              || bType.isPointer()) && bType.isArray())
+          {
             if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array " +
                   decl.find(Xcode.NAME).getValue() + " will be promoted.");
@@ -242,7 +243,8 @@ public class Parallelize extends Transformation {
         return false;
       } else if(baseDimNb == 2) {
         if(!over.get(0).equals(ClawDimension.BASE_DIM)
-            || !over.get(over.size() - 1).equals(ClawDimension.BASE_DIM)) {
+            || !over.get(over.size() - 1).equals(ClawDimension.BASE_DIM))
+        {
           xcodeml.addError("Base dimensions structure not supported in over" +
               "clause.", _claw.getPragma().getLineNo());
           return false;
@@ -398,13 +400,15 @@ public class Parallelize extends Transformation {
           lhs.find(Xcode.VARREF, Xcode.VAR).getValue();
       NestedDoStatement loops = null;
       if(lhs.opcode() == Xcode.FARRAYREF &&
-          _arrayFieldsInOut.contains(lhsName)) {
+          _arrayFieldsInOut.contains(lhsName))
+      {
         loops = new NestedDoStatement(order, xcodeml);
         XnodeUtil.insertAfter(assign, loops.getOuterStatement());
         loops.getInnerStatement().getBody().appendToChildren(assign, true);
         assign.delete();
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
-          && _scalarFields.contains(lhsName)) {
+          && _scalarFields.contains(lhsName))
+      {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */

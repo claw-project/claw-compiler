@@ -26,12 +26,12 @@ public enum OverPosition {
     name = s;
   }
 
-  public String toString() {
-    return this.name;
-  }
-
   public static OverPosition fromString(String value) {
     return (value == null) ? BEFORE :
         OverPosition.valueOf(value.toUpperCase());
+  }
+
+  public String toString() {
+    return this.name;
   }
 }

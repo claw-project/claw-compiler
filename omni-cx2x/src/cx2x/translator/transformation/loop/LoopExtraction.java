@@ -8,22 +8,26 @@ package cx2x.translator.transformation.loop;
 // Cx2x import
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
-import cx2x.translator.common.Utility;
-import cx2x.xcodeml.helper.*;
-import cx2x.xcodeml.transformation.*;
-import cx2x.xcodeml.exception.*;
-
-// OMNI import
+import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.transformation.Transformation;
+import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
+// OMNI import
 // Java import
-import java.util.*;
 
 /**
  * A LoopExtraction transformation is an independent transformation. The

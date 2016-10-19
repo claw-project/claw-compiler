@@ -104,20 +104,20 @@ public class IllegalTransformationException extends Exception {
   }
 
   /**
-   * Set the start line of the transformation that triggered the exception.
-   *
-   * @param lineno Line number in the XcodeML that triggered the exception.
-   */
-  public void setStartLine(int lineno) {
-    _transformationStartLine = lineno;
-  }
-
-  /**
    * Get the start line of the transformation that triggered the exception.
    *
    * @return Line number in the XcodeML that triggered the exception.
    */
   public int getStartLine() {
     return _transformationStartLine;
+  }
+
+  /**
+   * Set the start line of the transformation that triggered the exception.
+   *
+   * @param lineno Line number in the XcodeML that triggered the exception.
+   */
+  public void setStartLine(int lineno) {
+    _transformationStartLine = lineno;
   }
 }

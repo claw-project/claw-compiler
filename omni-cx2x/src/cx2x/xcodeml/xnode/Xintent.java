@@ -20,24 +20,6 @@ public enum Xintent {
   NONE;
 
   /**
-   * Convert current enum to String value.
-   *
-   * @return Corresponding String value.
-   */
-  public String toString() {
-    switch(this) {
-      case IN:
-        return Xname.INTENT_IN;
-      case OUT:
-        return Xname.INTENT_OUT;
-      case INOUT:
-        return Xname.INTENT_INOUT;
-      default:
-        return "";
-    }
-  }
-
-  /**
    * Convert string value to enum.
    *
    * @param value String value.
@@ -56,5 +38,23 @@ public enum Xintent {
         return INOUT;
     }
     return NONE;
+  }
+
+  /**
+   * Convert current enum to String value.
+   *
+   * @return Corresponding String value.
+   */
+  public String toString() {
+    switch(this) {
+      case IN:
+        return Xname.INTENT_IN;
+      case OUT:
+        return Xname.INTENT_OUT;
+      case INOUT:
+        return Xname.INTENT_INOUT;
+      default:
+        return "";
+    }
   }
 }

@@ -5,8 +5,8 @@
 
 package cx2x.translator.language.helper.accelerator;
 
-import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.helper.target.Target;
 import xcodeml.util.XmOption;
 
 import java.util.List;

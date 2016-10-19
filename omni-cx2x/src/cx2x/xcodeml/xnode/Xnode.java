@@ -22,9 +22,8 @@ public class Xnode {
 
   public static final int LHS = 0;
   public static final int RHS = 1;
-
-  private boolean _isDeleted = false;
   final Element _baseElement;
+  private boolean _isDeleted = false;
 
   /**
    * Constructs an Xnode object from an element in the AST.
@@ -128,6 +127,15 @@ public class Xnode {
    */
   public String getValue() {
     return _baseElement.getTextContent().trim();
+  }
+
+  /**
+   * Set the element value.
+   *
+   * @param value The element value.
+   */
+  public void setValue(String value) {
+    _baseElement.setTextContent(value);
   }
 
   /**
@@ -275,19 +283,11 @@ public class Xnode {
 
   /**
    * Get the number of children node in the current node.
+   *
    * @return Number of children.
    */
-  public int size(){
+  public int size() {
     return this.getChildren().size();
-  }
-
-  /**
-   * Set the element value.
-   *
-   * @param value The element value.
-   */
-  public void setValue(String value) {
-    _baseElement.setTextContent(value);
   }
 
   /**
@@ -361,15 +361,6 @@ public class Xnode {
   }
 
   /**
-   * Set the file attribute of the element.
-   *
-   * @param value File path.
-   */
-  public void setFile(String value) {
-    setAttribute(Xattr.FILE, value);
-  }
-
-  /**
    * Set the lineno attribute in the element.
    *
    * @param lineno Line number.
@@ -413,6 +404,15 @@ public class Xnode {
   public String getFile() {
     return (_baseElement.hasAttribute(Xattr.FILE.toString())) ?
         _baseElement.getAttribute(Xattr.FILE.toString()) : null;
+  }
+
+  /**
+   * Set the file attribute of the element.
+   *
+   * @param value File path.
+   */
+  public void setFile(String value) {
+    setAttribute(Xattr.FILE, value);
   }
 
 }

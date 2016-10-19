@@ -22,12 +22,12 @@ public enum ClawAttr {
     name = s;
   }
 
-  public String toString() {
-    return this.name;
-  }
-
   public static ClawAttr fromString(String value) {
     return ClawAttr.valueOf(value.toUpperCase().replace("-", "_"));
+  }
+
+  public String toString() {
+    return this.name;
   }
 }
 

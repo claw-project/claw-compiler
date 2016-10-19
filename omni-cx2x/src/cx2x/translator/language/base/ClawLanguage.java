@@ -5,16 +5,16 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.common.ClawDimension;
-import cx2x.translator.language.parser.ClawErrorListener;
 import cx2x.translator.language.ClawLexer;
 import cx2x.translator.language.ClawParser;
+import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.parser.ClawErrorListener;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xnode.Xnode;
@@ -72,21 +72,168 @@ public class ClawLanguage extends AnalyzedPragma {
    * Constructs an empty ClawLanguage section.
    * WARNING: This ctor should only be used by the parser.
    */
-  public ClawLanguage(){
+  public ClawLanguage() {
     resetVariables();
   }
 
   /**
    * Constructs an empty ClawLanguage object with an attached pragma. Used only
    * for transformation that are not CLAW related.
+   *
    * @param pragma The pragma that is attached to the ClawLanguage object.
    */
-  public ClawLanguage(Xnode pragma){
+  public ClawLanguage(Xnode pragma) {
     super(pragma);
     resetVariables();
   }
 
-  private void resetVariables(){
+  /**
+   * Check if the pragma statement starts with the claw keyword.
+   *
+   * @param pragma The raw pragma element object to check.
+   * @return True if the statement starts with claw keyword. False otherwise.
+   */
+  public static boolean startsWithClaw(Xnode pragma) {
+    return !(pragma == null || pragma.getValue() == null)
+        && pragma.getValue().startsWith(PREFIX_CLAW);
+  }
+
+  /**
+   * Analyze a raw string input and match it with the CLAW language definition.
+   *
+   * @param pragma    A raw pragma element object to be analyzed against the
+   *                  CLAW language.
+   * @param generator Accelerator directive generator.
+   * @param target    Target that influences the code transformation.
+   * @return A ClawLanguage object with the corresponding extracted information.
+   * @throws IllegalDirectiveException If directive does not follow the CLAW
+   *                                   language specification.
+   */
+  public static ClawLanguage analyze(Xnode pragma,
+                                     AcceleratorGenerator generator,
+                                     Target target)
+      throws IllegalDirectiveException
+  {
+    ClawLanguage l =
+        analyze(pragma.getValue(), pragma.getLineNo(), generator, target);
+    if(l != null) {
+      l.attachPragma(pragma);
+    }
+    return l;
+  }
+
+  /**
+   * Produce a "naked" pragma.
+   * OMNI compiler keeps the claw prefix when a pragma is defined on several
+   * lines using the continuation symbol '&'. In order to have a simpler
+   * grammar, these multiple occurrences of the prefix are not taken into
+   * account. Therefore, this method remove all the prefix and keeps only the
+   * first one.
+   *
+   * @param rawPragma The original raw pragma statement straight from OMNI
+   *                  compiler representation.
+   * @return A naked pragma statement able to be analyzed by the CLAW parser.
+   */
+  private static String nakenize(String rawPragma) {
+    return PREFIX_CLAW + " " +
+        rawPragma.toLowerCase().replaceAll(PREFIX_CLAW, "");
+  }
+
+  /**
+   * Analyze a raw string input and match it with the CLAW language definition.
+   *
+   * @param rawPragma A raw pragma statement to be analyzed against the CLAW
+   *                  language.
+   * @param lineno    Line number of the pragma statement.
+   * @param generator Accelerator directive generator.
+   * @param target    Target that influences the code transformation.
+   * @return A ClawLanguage object with the corresponding extracted information.
+   * @throws IllegalDirectiveException If directive does not follow the CLAW
+   *                                   language specification.
+   */
+  private static ClawLanguage analyze(String rawPragma,
+                                      int lineno,
+                                      AcceleratorGenerator generator,
+                                      Target target)
+      throws IllegalDirectiveException
+  {
+    // Remove additional claw keyword
+    rawPragma = nakenize(rawPragma);
+
+    // Discard the ignored code after the claw ignore directive
+    if(rawPragma.toLowerCase().contains(IGNORE)) {
+      rawPragma = rawPragma.substring(0,
+          rawPragma.toLowerCase().indexOf(IGNORE) + IGNORE.length());
+    }
+
+    // Instantiate the lexer with the raw string input
+    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(rawPragma));
+
+    // Get a list of matched tokens
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+
+    // Pass the tokens to the parser
+    ClawParser parser = new ClawParser(tokens);
+    parser.setErrorHandler(new BailErrorStrategy());
+    parser.removeErrorListeners();
+    ClawErrorListener cel = new ClawErrorListener();
+    parser.addErrorListener(cel);
+
+    try {
+      // Start the parser analysis from the "analyze" entry point
+      ClawParser.AnalyzeContext ctx = parser.analyze();
+      // Get the ClawLanguage object return by the parser after analysis.
+      ctx.l.setAcceleratorGenerator(generator);
+      ctx.l.setTarget(target);
+      return ctx.l;
+    } catch(ParseCancellationException pcex) {
+      IllegalDirectiveException ex = cel.getLastError();
+      if(ex != null) {
+        throw ex;
+      } else {
+        throw new IllegalDirectiveException(rawPragma,
+            "Unsupported construct", lineno, 0);
+      }
+    }
+  }
+
+  /**
+   * Create an instance of ClawLanguage that correspond to a loop-fusion
+   * directive. Used for dynamically created transformation.
+   *
+   * @param master Base object which initiate the creation of this instance.
+   * @return An instance of ClawLanguage describing a loop-fusion with the
+   * group, collapse clauses and the pragma from the master object.
+   */
+  public static ClawLanguage createLoopFusionLanguage(ClawLanguage master) {
+    ClawLanguage l = new ClawLanguage();
+    l.setDirective(ClawDirective.LOOP_FUSION);
+    l.setGroupClause(master.getGroupValue());
+    l.setCollapseClause(master.getCollapseValue());
+    l.attachPragma(master.getPragma());
+    return l;
+  }
+
+  /**
+   * Create an instance of ClawLanguage that correspond to a loop-interchange
+   * directive. Used for dynamically created transformation.
+   *
+   * @param master Base object which initiate the creation of this instance.
+   * @param pragma Pragma statement located just before the first do stmt.
+   * @return An instance of ClawLanguage describing a loop-interchange with the
+   * indexes from the master object.
+   */
+  public static ClawLanguage createLoopInterchangeLanguage(ClawLanguage master,
+                                                           Xnode pragma)
+  {
+    ClawLanguage l = new ClawLanguage();
+    l.setDirective(ClawDirective.LOOP_INTERCHANGE);
+    l.setIndexes(master.getIndexes());
+    l.attachPragma(pragma);
+    return l;
+  }
+
+  private void resetVariables() {
     // Clauses values members
     _accClausesValue = null;
     _arrayName = null;
@@ -132,125 +279,20 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Check if the pragma statement starts with the claw keyword.
-   * @param pragma The raw pragma element object to check.
-   * @return True if the statement starts with claw keyword. False otherwise.
-   */
-  public static boolean startsWithClaw(Xnode pragma) {
-    return !(pragma == null || pragma.getValue() == null)
-        && pragma.getValue().startsWith(PREFIX_CLAW);
-  }
-
-  /**
-   * Analyze a raw string input and match it with the CLAW language definition.
-   * @param pragma    A raw pragma element object to be analyzed against the
-   *                  CLAW language.
-   * @param generator Accelerator directive generator.
-   * @param target Target that influences the code transformation.
-   * @return A ClawLanguage object with the corresponding extracted information.
-   * @throws IllegalDirectiveException If directive does not follow the CLAW
-   * language specification. 
-   */
-  public static ClawLanguage analyze(Xnode pragma,
-                                     AcceleratorGenerator generator,
-                                     Target target)
-      throws IllegalDirectiveException
-  {
-    ClawLanguage l =
-        analyze(pragma.getValue(), pragma.getLineNo(), generator, target);
-    if(l != null){
-      l.attachPragma(pragma);
-    }
-    return l;
-  }
-
-  /**
-   * Produce a "naked" pragma.
-   * OMNI compiler keeps the claw prefix when a pragma is defined on several
-   * lines using the continuation symbol '&'. In order to have a simpler
-   * grammar, these multiple occurrences of the prefix are not taken into
-   * account. Therefore, this method remove all the prefix and keeps only the
-   * first one.
-   * @param rawPragma The original raw pragma statement straight from OMNI
-   *                  compiler representation.
-   * @return A naked pragma statement able to be analyzed by the CLAW parser.
-   */
-  private static String nakenize(String rawPragma){
-    return PREFIX_CLAW + " " +
-        rawPragma.toLowerCase().replaceAll(PREFIX_CLAW, "");
-  }
-
-  /**
-   * Analyze a raw string input and match it with the CLAW language definition.
-   * @param rawPragma A raw pragma statement to be analyzed against the CLAW
-   *                  language.
-   * @param lineno    Line number of the pragma statement.
-   * @param generator Accelerator directive generator.
-   * @param target    Target that influences the code transformation.
-   * @return A ClawLanguage object with the corresponding extracted information.
-   * @throws IllegalDirectiveException If directive does not follow the CLAW
-   * language specification.
-   */
-  private static ClawLanguage analyze(String rawPragma,
-                                      int lineno,
-                                      AcceleratorGenerator generator,
-                                      Target target)
-      throws IllegalDirectiveException
-  {
-    // Remove additional claw keyword
-    rawPragma = nakenize(rawPragma);
-
-    // Discard the ignored code after the claw ignore directive
-    if(rawPragma.toLowerCase().contains(IGNORE)){
-      rawPragma = rawPragma.substring(0,
-          rawPragma.toLowerCase().indexOf(IGNORE) + IGNORE.length());
-    }
-
-    // Instantiate the lexer with the raw string input
-    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(rawPragma));
-
-    // Get a list of matched tokens
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-    // Pass the tokens to the parser
-    ClawParser parser = new ClawParser(tokens);
-    parser.setErrorHandler(new BailErrorStrategy());
-    parser.removeErrorListeners();
-    ClawErrorListener cel = new ClawErrorListener();
-    parser.addErrorListener(cel);
-
-    try {
-      // Start the parser analysis from the "analyze" entry point
-      ClawParser.AnalyzeContext ctx = parser.analyze();
-      // Get the ClawLanguage object return by the parser after analysis.
-      ctx.l.setAcceleratorGenerator(generator);
-      ctx.l.setTarget(target);
-      return ctx.l;
-    } catch(ParseCancellationException pcex){
-      IllegalDirectiveException ex = cel.getLastError();
-      if(ex != null){
-        throw ex;
-      } else {
-        throw new IllegalDirectiveException(rawPragma,
-            "Unsupported construct", lineno, 0);
-      }
-    }
-  }
-
-
-  /**
    * Check whether a group clause was specified.
+   *
    * @return True if group clause was specified.
    */
-  public boolean hasGroupClause(){
+  public boolean hasGroupClause() {
     return _hasGroupClause;
   }
 
   /**
    * Set the group name and hasGroupClause to true
+   *
    * @param groupName The group name defined in the group clause.
    */
-  public void setGroupClause(String groupName){
+  public void setGroupClause(String groupName) {
     if(groupName != null) {
       _hasGroupClause = true;
       _groupClauseValue = groupName;
@@ -259,35 +301,40 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Get the group name defined in the group clause.
+   *
    * @return The group name as a String value.
    */
-  public String getGroupValue(){
+  public String getGroupValue() {
     return _groupClauseValue;
   }
 
-
   /**
    * Check whether the collapse clause is used.
+   *
    * @return True if the collapse clause if used.
    */
-  public boolean hasCollapseClause(){
+  public boolean hasCollapseClause() {
     return _hasCollapseClause;
   }
 
   /**
    * Set the collapse number and boolean flag.
+   *
    * @param n Number of loop to be collapsed. Will be converted to integer.
    */
-  public void setCollapseClause(String n){
+  public void setCollapseClause(String n) {
     setCollapseClause(Integer.parseInt(n));
   }
+
+  // Loop interchange specific methods
 
   /**
    * Set the collapse number and boolean flag. Flag is enable if n is greater
    * than 1. Otherwise, collapse clause has no impact.
+   *
    * @param n Number of loops to be collapsed.
    */
-  private void setCollapseClause(int n){
+  private void setCollapseClause(int n) {
     if(n > 1) {
       _hasCollapseClause = true;
       _collapseClauseValue = n;
@@ -296,258 +343,281 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Get the collapse clause extracted value.
+   *
    * @return An integer value.
    */
-  public int getCollapseValue(){
+  public int getCollapseValue() {
     return _collapseClauseValue;
-  }
-
-  // Loop interchange specific methods
-
-  /**
-   * Set the list of interchange indexes.
-   * @param indexes List of indexes as string.
-   */
-  public void setIndexes(List<String> indexes){
-    _hasIndexesValue = true;
-    _indexesValues = indexes;
   }
 
   /**
    * Get the loop index list
+   *
    * @return List of loop index
    */
-  public List<String> getIndexes(){
+  public List<String> getIndexes() {
     return _indexesValues;
-  }
-
-  /**
-   * Check whether the interchange directive has indexes values.
-   * @return True if the directive has interchange value.
-   */
-  public boolean hasIndexes(){
-    return _hasIndexesValue;
   }
 
   // Loop extract specific methods
 
   /**
-   * Set the range value.
-   * @param range A ClawRange object.
+   * Set the list of interchange indexes.
+   *
+   * @param indexes List of indexes as string.
    */
-  public void setRange(ClawRange range){
-    _rangeValue = range;
+  public void setIndexes(List<String> indexes) {
+    _hasIndexesValue = true;
+    _indexesValues = indexes;
+  }
+
+  /**
+   * Check whether the interchange directive has indexes values.
+   *
+   * @return True if the directive has interchange value.
+   */
+  public boolean hasIndexes() {
+    return _hasIndexesValue;
   }
 
   /**
    * Get the range extracted value.
+   *
    * @return A ClawRange object.
    */
-  public ClawRange getRange(){
+  public ClawRange getRange() {
     return _rangeValue;
   }
 
   /**
-   * Set the ClawMapping list
-   * @param mappings A list of ClawMapping objects.
+   * Set the range value.
+   *
+   * @param range A ClawRange object.
    */
-  public void setMappings(List<ClawMapping> mappings){
-    _mappingValues = mappings;
+  public void setRange(ClawRange range) {
+    _rangeValue = range;
   }
 
   /**
    * Get the list of extracted ClawMapping objects.
+   *
    * @return List of ClawMapping objects.
    */
-  public List<ClawMapping> getMappings(){
+  public List<ClawMapping> getMappings() {
     return _mappingValues;
+  }
+
+  /**
+   * Set the ClawMapping list
+   *
+   * @param mappings A list of ClawMapping objects.
+   */
+  public void setMappings(List<ClawMapping> mappings) {
+    _mappingValues = mappings;
   }
 
   /**
    * Enable the fusion clause for the current directive.
    */
-  public void setFusionClause(){
+  public void setFusionClause() {
     _hasFusionClause = true;
   }
 
   /**
    * Check whether the current directive has the fusion clause enabled.
+   *
    * @return True if the fusion clause is enabled.
    */
-  public boolean hasFusionClause(){
+  public boolean hasFusionClause() {
     return _hasFusionClause;
   }
 
   /**
    * Enable the parallel clause for the current directive.
    */
-  public void setParallelClause(){
+  public void setParallelClause() {
     _hasParallelClause = true;
   }
 
   /**
    * Check whether the current directive has the parallel clause enabled.
+   *
    * @return True if the parallel clause is enabled.
    */
-  public boolean hasParallelClause(){
+  public boolean hasParallelClause() {
     return _hasParallelClause;
   }
 
   /**
-   * Enable the accelerator clause for the current directive and set the
-   * extracted clauses.
-   * @param clauses Accelerator clauses extracted from the accelerator clause.
-   */
-  public void setAcceleratorClauses(String clauses){
-    _hasAccClause = true;
-    _accClausesValue = clauses;
-  }
-
-  /**
    * Check whether the current directive has the accelerator clause enabled.
+   *
    * @return True if the accelerator clause is enabled.
    */
-  public boolean hasAcceleratorClause(){
+  public boolean hasAcceleratorClause() {
     return _hasAccClause;
   }
 
   /**
    * Get the accelerator clauses extracted from the accelerator clause.
+   *
    * @return Accelerator clauses as a String.
    */
-  public String getAcceleratorClauses(){
+  public String getAcceleratorClauses() {
     return _accClausesValue;
   }
 
   /**
-   * Set the offsets list extracted from the kcache directive.
-   * @param offsets A list of offsets.
+   * Enable the accelerator clause for the current directive and set the
+   * extracted clauses.
+   *
+   * @param clauses Accelerator clauses extracted from the accelerator clause.
    */
-  public void setOffsets(List<Integer> offsets){
-    _offsetValues = offsets;
-  }
-
-  /**
-   * Get the list of offsets.
-   * @return List of offsets.
-   */
-  public List<Integer> getOffsets(){
-    return _offsetValues;
+  public void setAcceleratorClauses(String clauses) {
+    _hasAccClause = true;
+    _accClausesValue = clauses;
   }
 
   // loop hoist clauses
 
   /**
+   * Get the list of offsets.
+   *
+   * @return List of offsets.
+   */
+  public List<Integer> getOffsets() {
+    return _offsetValues;
+  }
+
+  /**
+   * Set the offsets list extracted from the kcache directive.
+   *
+   * @param offsets A list of offsets.
+   */
+  public void setOffsets(List<Integer> offsets) {
+    _offsetValues = offsets;
+  }
+
+  /**
    * Check whether the interchange clause is used.
+   *
    * @return True if the interchange clause if used.
    */
-  public boolean hasInterchangeClause(){
+  public boolean hasInterchangeClause() {
     return _hasInterchangeClause;
   }
 
   /**
    * Set the interchange clause as used.
    */
-  public void setInterchangeClause(){
+  public void setInterchangeClause() {
     _hasInterchangeClause = true;
-  }
-
-  /**
-   * Set the list of induction variables used in the loop-hoist directive.
-   * @param vars List of induction variable.
-   */
-  public void setHoistInductionVars(List<String> vars){
-    _hoistInductionValues = vars;
-  }
-
-  /**
-   * Get the list of induction variables used in the hoist directive.
-   * @return A list of induction variable.
-   */
-  public List<String> getHoistInductionVars(){
-    return _hoistInductionValues;
   }
 
 
   // Directive generic method
 
   /**
-   * Define the current directive of the language section.
-   * @param directive A value of the ClawDirective enumeration.
+   * Get the list of induction variables used in the hoist directive.
+   *
+   * @return A list of induction variable.
    */
-  public void setDirective(ClawDirective directive){
-    _directive = directive;
+  public List<String> getHoistInductionVars() {
+    return _hoistInductionValues;
+  }
+
+  /**
+   * Set the list of induction variables used in the loop-hoist directive.
+   *
+   * @param vars List of induction variable.
+   */
+  public void setHoistInductionVars(List<String> vars) {
+    _hoistInductionValues = vars;
   }
 
   /**
    * Get the current directive of the language section.
+   *
    * @return Value of the current directive.
    */
-  public ClawDirective getDirective(){
+  public ClawDirective getDirective() {
     return _directive;
+  }
+
+  /**
+   * Define the current directive of the language section.
+   *
+   * @param directive A value of the ClawDirective enumeration.
+   */
+  public void setDirective(ClawDirective directive) {
+    _directive = directive;
   }
 
   /**
    * Enable the induction clause for the current directive and set the extracted
    * name value.
+   *
    * @param names List of induction name extracted from the clause.
    */
-  public void setInductionClause(List<String> names){
+  public void setInductionClause(List<String> names) {
     _hasInductionClause = true;
     _inductionClauseValues = names;
   }
 
   /**
    * Check whether the current directive has the induction clause enabled.
+   *
    * @return True if the induction clause is enabled.
    */
-  public boolean hasInductionClause(){
+  public boolean hasInductionClause() {
     return _hasInductionClause;
   }
 
   /**
    * Get the name value extracted from the induction clause.
+   *
    * @return Induction name as a String.
    */
-  public List<String> getInductionValues(){
+  public List<String> getInductionValues() {
     return _inductionClauseValues;
   }
-
-
 
   /**
    * Enable the data clause for the current directive and set the extracted
    * identifiers value.
+   *
    * @param data List of identifiers extracted from the clause.
    */
-  public void setDataClause(List<String> data){
+  public void setDataClause(List<String> data) {
     _hasDataClause = true;
     _dataValues = data;
   }
 
   /**
    * Check whether the current directive has the induction clause enabled.
+   *
    * @return True if the data clause is enabled.
    */
-  public boolean hasDataClause(){
+  public boolean hasDataClause() {
     return _hasDataClause;
   }
 
   /**
    * Get the identifier values extracted from the data clause.
+   *
    * @return Identifier as a String.
    */
-  public List<String> getDataClauseValues(){
+  public List<String> getDataClauseValues() {
     return _dataValues;
   }
 
   /**
    * Enable the over clause for the current directive and set the extracted
    * dimensions value.
+   *
    * @param data List of dimension extracted from the clause.
    */
-  public void setOverClause(List<String> data){
-    if(_overValues == null){
+  public void setOverClause(List<String> data) {
+    if(_overValues == null) {
       _hasOverClause = true;
       _overValues = new ArrayList<>();
     }
@@ -556,26 +626,29 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Check whether the current directive has the over clause enabled.
+   *
    * @return True if the over clause is enabled.
    */
-  public boolean hasOverClause(){
+  public boolean hasOverClause() {
     return _hasOverClause;
   }
 
   /**
    * Get the dimensions values extracted from the over clause.
+   *
    * @return Dimensions identifier or : as a String.
    */
-  public List<List<String>> getOverClauseValues(){
+  public List<List<String>> getOverClauseValues() {
     return _overValues;
   }
 
   /**
    * Enable the data over clause for the current directive.
+   *
    * @param data List of array identifiers extracted from the clause.
    */
-  public void setOverDataClause(List<String> data){
-    if(_overDataValues == null){
+  public void setOverDataClause(List<String> data) {
+    if(_overDataValues == null) {
       _hasOverDataClause = true;
       _overDataValues = new ArrayList<>();
     }
@@ -584,158 +657,172 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Check whether the current directive has the data over clause enabled.
+   *
    * @return True if the data over clause is enabled.
    */
-  public boolean hasOverDataClause(){
+  public boolean hasOverDataClause() {
     return _hasOverDataClause;
   }
 
   /**
    * Get the data values extracted from the data over clause.
+   *
    * @return Array identifier.
    */
-  public List<List<String>> getOverDataClauseValues(){
+  public List<List<String>> getOverDataClauseValues() {
     return _overDataValues;
   }
 
   /**
    * Check whether the init clause is used.
+   *
    * @return True if the init clause is used.
    */
-  public boolean hasInitClause(){
+  public boolean hasInitClause() {
     return _hasInitClause;
   }
 
   /**
    * Set the init clause flag.
    */
-  public void setInitClause(){
+  public void setInitClause() {
     _hasInitClause = true;
   }
 
   /**
    * Check whether the private clause is used.
+   *
    * @return True if the private clause is used.
    */
-  public boolean hasPrivateClause(){
+  public boolean hasPrivateClause() {
     return _hasPrivateClause;
   }
 
   /**
    * Set the private clause flag.
    */
-  public void setPrivateClause(){
+  public void setPrivateClause() {
     _hasPrivateClause = true;
-  }
-
-
-  /**
-   * Set the list of parameters for the fct call of the "call" directive
-   * @param data List of identifiers extracted from the clause.
-   */
-  public void setFctParams(List<String> data){
-    _fctCallParameters = data;
   }
 
   /**
    * Get the list of parameters extracted from the call directive.
+   *
    * @return List of parameters identifier as String value.
    */
-  public List<String> getFctParams(){
+  public List<String> getFctParams() {
     return _fctCallParameters;
   }
 
   /**
-   * Set the array name value.
-   * @param value String value for the array name.
+   * Set the list of parameters for the fct call of the "call" directive
+   *
+   * @param data List of identifiers extracted from the clause.
    */
-  public void setArrayName(String value){
-    _arrayName = value;
+  public void setFctParams(List<String> data) {
+    _fctCallParameters = data;
   }
 
   /**
    * Get the array name extracted from the call directive.
+   *
    * @return Array name from the call directive.
    */
-  public String getArrayName(){
+  public String getArrayName() {
     return _arrayName;
   }
 
   /**
-   * Set the function name value.
-   * @param value String value for the function name.
+   * Set the array name value.
+   *
+   * @param value String value for the array name.
    */
-  public void setFctName(String value){
-    _fctName = value;
+  public void setArrayName(String value) {
+    _arrayName = value;
   }
 
   /**
    * Get the fct name extracted from the call directive.
+   *
    * @return Fct name from the call directive.
    */
-  public String getFctName(){
+  public String getFctName() {
     return _fctName;
   }
 
   /**
-   * Set the reshape clause extracted information.
-   * @param infos List of ClawReshapeInfo objects containing the extracted
+   * Set the function name value.
+   *
+   * @param value String value for the function name.
+   */
+  public void setFctName(String value) {
+    _fctName = value;
+  }
+
+  /**
+   * Get the reshape extracted information.
+   *
+   * @return List of ClawReshapeInfo objects containing the extracted
    * information from the reshape clause.
    */
-  public void setReshapeClauseValues(List<ClawReshapeInfo> infos){
+  public List<ClawReshapeInfo> getReshapeClauseValues() {
+    return _reshapeInfos;
+  }
+
+  /**
+   * Set the reshape clause extracted information.
+   *
+   * @param infos List of ClawReshapeInfo objects containing the extracted
+   *              information from the reshape clause.
+   */
+  public void setReshapeClauseValues(List<ClawReshapeInfo> infos) {
     _hasReshapeClause = true;
     _reshapeInfos = infos;
   }
 
   /**
-   * Get the reshape extracted information.
-   * @return List of ClawReshapeInfo objects containing the extracted
-   * information from the reshape clause.
-   */
-  public List<ClawReshapeInfo> getReshapeClauseValues(){
-    return _reshapeInfos;
-  }
-
-  /**
    * Check whether the reshape clause is used.
+   *
    * @return True if the reshape clause is used.
    */
-  public boolean hasReshapeClause(){
+  public boolean hasReshapeClause() {
     return _hasReshapeClause;
   }
-
 
   /**
    * Set the forward clause.
    */
-  public void setForwardClause(){
+  public void setForwardClause() {
     _hasForward = true;
   }
 
   /**
    * Check whether the forward clause is used.
+   *
    * @return True if the forward clause is used.
    */
-  public boolean hasForwardClause(){
+  public boolean hasForwardClause() {
     return _hasForward;
   }
 
   /**
    * Check whether the dimension clause is used.
+   *
    * @return True if the dimension clause is used.
    */
-  public boolean hasDimensionClause(){
+  public boolean hasDimensionClause() {
     return _hasDimensionClause;
   }
 
   /**
    * Add a new dimension extracted from the directive.
+   *
    * @param dimension ClawDimension object constructed from the value extracted
    *                  in the clause.
    */
-  public void addDimension(ClawDimension dimension){
+  public void addDimension(ClawDimension dimension) {
     _hasDimensionClause = true;
-    if(_dimensions == null){
+    if(_dimensions == null) {
       _dimensions = new ArrayList<>();
     }
     _dimensions.add(dimension);
@@ -743,17 +830,19 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Get the dimensions extracted information.
+   *
    * @return All dimensions extracted from the directive.
    */
-  public List<ClawDimension> getDimensionValues(){
+  public List<ClawDimension> getDimensionValues() {
     return _dimensions;
   }
 
   /**
    * Get the dimensions extracted information in reverse order.
+   *
    * @return All dimensions extracted from the directive in reverse order.
    */
-  public List<ClawDimension> getDimensionValuesReversed(){
+  public List<ClawDimension> getDimensionValuesReversed() {
     List<ClawDimension> tmp = new ArrayList<>(_dimensions);
     Collections.reverse(tmp);
     return tmp;
@@ -761,86 +850,58 @@ public class ClawLanguage extends AnalyzedPragma {
 
   /**
    * Attach the pragma related to this CLAW language analysis.
+   *
    * @param pragma Raw pragma element object.
    */
-  private void attachPragma(Xnode pragma){
+  private void attachPragma(Xnode pragma) {
     _pragma = pragma;
-  }
-
-  /**
-   * Set the accelerator directive generator for pragma generation
-   * @param generator The current accelerator directive generator.
-   */
-  private void setAcceleratorGenerator(AcceleratorGenerator generator){
-    _generator = generator;
   }
 
   /**
    * Get the accelerator generator for the current accelerator directive
    * language associated with the program.
+   *
    * @return Associated accelerator directive generator.
    */
-  public AcceleratorGenerator getAcceleratorGenerator(){
+  public AcceleratorGenerator getAcceleratorGenerator() {
     return _generator;
   }
 
   /**
-   * Set the target for code transformation.
-   * @param target A target value from the enumeration.
+   * Set the accelerator directive generator for pragma generation
+   *
+   * @param generator The current accelerator directive generator.
    */
-  private void setTarget(Target target){
-    _target = target;
+  private void setAcceleratorGenerator(AcceleratorGenerator generator) {
+    _generator = generator;
   }
 
   /**
    * Get the associated target.
+   *
    * @return Target.
    */
-  public Target getTarget(){
+  public Target getTarget() {
     return _target;
   }
 
   /**
+   * Set the target for code transformation.
+   *
+   * @param target A target value from the enumeration.
+   */
+  private void setTarget(Target target) {
+    _target = target;
+  }
+
+  /**
    * Get the current accelerator directive language target.
+   *
    * @return Value of the AcceleratorDirective enumeration.
    */
-  public AcceleratorDirective getDirectiveLanguage(){
+  public AcceleratorDirective getDirectiveLanguage() {
     return (_generator != null) ? _generator.getDirectiveLanguage() :
         AcceleratorDirective.NONE;
-  }
-
-  /**
-   * Create an instance of ClawLanguage that correspond to a loop-fusion
-   * directive. Used for dynamically created transformation.
-   * @param master Base object which initiate the creation of this instance.
-   * @return An instance of ClawLanguage describing a loop-fusion with the
-   * group, collapse clauses and the pragma from the master object.
-   */
-  public static ClawLanguage createLoopFusionLanguage(ClawLanguage master){
-    ClawLanguage l = new ClawLanguage();
-    l.setDirective(ClawDirective.LOOP_FUSION);
-    l.setGroupClause(master.getGroupValue());
-    l.setCollapseClause(master.getCollapseValue());
-    l.attachPragma(master.getPragma());
-    return l;
-  }
-
-  /**
-   * Create an instance of ClawLanguage that correspond to a loop-interchange
-   * directive. Used for dynamically created transformation.
-   * @param master Base object which initiate the creation of this instance.
-   * @param pragma Pragma statement located just before the first do stmt.
-   * @return An instance of ClawLanguage describing a loop-interchange with the
-   * indexes from the master object.
-   */
-  public static ClawLanguage createLoopInterchangeLanguage(ClawLanguage master,
-                                                           Xnode pragma)
-  {
-    ClawLanguage l = new ClawLanguage();
-    l.setDirective(ClawDirective.LOOP_INTERCHANGE);
-    l.setIndexes(master.getIndexes());
-    l.attachPragma(pragma);
-    return l;
   }
 
 

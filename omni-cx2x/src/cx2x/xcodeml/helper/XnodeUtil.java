@@ -8,25 +8,25 @@ package cx2x.xcodeml.helper;
 import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.xnode.ClawAttr;
-import cx2x.xcodeml.exception.*;
-
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import javax.xml.xpath.*;
-
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.util.*;
 
@@ -63,7 +63,8 @@ public class XnodeUtil {
         Xnode dummyFctDef = new Xnode((Element) fctDefNode);
         Xnode fctDefName = dummyFctDef.find(Xcode.NAME);
         if(name != null &&
-            fctDefName.getValue().toLowerCase().equals(name.toLowerCase())) {
+            fctDefName.getValue().toLowerCase().equals(name.toLowerCase()))
+        {
           return new XfunctionDefinition(dummyFctDef.getElement());
         }
       }
@@ -118,7 +119,8 @@ public class XnodeUtil {
         Xnode ref = new Xnode((Element) n);
         Xnode var = ref.find(Xcode.VARREF, Xcode.VAR);
         if(var != null && var.getValue().toLowerCase().
-            equals(arrayName.toLowerCase())) {
+            equals(arrayName.toLowerCase()))
+        {
           references.add(ref);
         }
       }
@@ -404,7 +406,8 @@ public class XnodeUtil {
         Element el = (Element) output.item(i);
         Xnode doStmt = new Xnode(el);
         if(doStmt.getLineNo() != 0 &&
-            doStmt.getLineNo() < endPragma.getLineNo()) {
+            doStmt.getLineNo() < endPragma.getLineNo())
+        {
           doStatements.add(doStmt);
         }
       }
@@ -514,7 +517,8 @@ public class XnodeUtil {
           Element element = (Element) prev;
           if(element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
               && element.getTextContent().toLowerCase().
-              contains(keyword.toLowerCase())) {
+              contains(keyword.toLowerCase()))
+          {
             return new Xnode(element);
           }
         }
@@ -578,7 +582,8 @@ public class XnodeUtil {
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
       if(!((Element) var.getElement().getParentNode()).getTagName().
-          equals(Xcode.ARRAYINDEX.code())) {
+          equals(Xcode.ARRAYINDEX.code()))
+      {
         realReferences.add(var);
       }
     }
@@ -616,7 +621,8 @@ public class XnodeUtil {
     for(Xnode var : vars) {
       if(!((Element) var.getElement().getParentNode()).getTagName().
           equals(Xcode.ARRAYINDEX.code())
-          && var.getValue().toLowerCase().equals(id.toLowerCase())) {
+          && var.getValue().toLowerCase().equals(id.toLowerCase()))
+      {
         realReferences.add(var);
       }
     }
@@ -1088,7 +1094,8 @@ public class XnodeUtil {
     if(originalBody == null || originalBody.getElement() == null
         || extraBody == null || extraBody.getElement() == null
         || originalBody.opcode() != Xcode.BODY
-        || extraBody.opcode() != Xcode.BODY) {
+        || extraBody.opcode() != Xcode.BODY)
+    {
       throw new IllegalTransformationException("One of the body is null.");
     }
 
@@ -1224,7 +1231,8 @@ public class XnodeUtil {
     }
 
     if(idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-        idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
+        idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE))
+    {
       return true;
     }
 
@@ -1271,7 +1279,8 @@ public class XnodeUtil {
     Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
     Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
     if(inductionVar1 == null || inductionVar2 == null ||
-        indexRange1 == null || indexRange2 == null) {
+        indexRange1 == null || indexRange2 == null)
+    {
       throw new IllegalTransformationException("Induction variable or index " +
           "range missing.");
     }
@@ -1819,7 +1828,8 @@ public class XnodeUtil {
     Xtype importedType = new Xtype((Element) rawNode);
     dst.getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
-        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF))) {
+        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
+    {
       XnodeUtil.importType(src, dst, importedType.getAttribute(Xattr.REF));
     }
 
@@ -1921,7 +1931,8 @@ public class XnodeUtil {
       throws IllegalTransformationException
   {
     if(baseBound.opcode() != Xcode.LOWERBOUND
-        && baseBound.opcode() != Xcode.UPPERBOUND) {
+        && baseBound.opcode() != Xcode.UPPERBOUND)
+    {
       throw new IllegalTransformationException("Cannot duplicate bound");
     }
 
@@ -1937,7 +1948,8 @@ public class XnodeUtil {
 
     Xnode bound = new Xnode(baseBound.opcode(), xcodemlDst);
     if(boundChild.opcode() == Xcode.FINTCONSTANT
-        || boundChild.opcode() == Xcode.VAR) {
+        || boundChild.opcode() == Xcode.VAR)
+    {
       bound.appendToChildren(
           importConstOrVar(boundChild, xcodemlSrc, xcodemlDst), false);
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {

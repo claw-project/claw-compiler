@@ -7,9 +7,10 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.xcodeml.helper.*;
-import cx2x.xcodeml.transformation.*;
-import cx2x.xcodeml.exception.*;
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.transformation.Transformation;
+import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -26,11 +27,11 @@ import cx2x.xcodeml.xnode.Xnode;
 
 public class LoopFusion extends Transformation {
 
+  private final ClawLanguage _claw;
   // Contains the value of the group option
   private String _groupLabel = ClawConstant.EMPTY_STRING;
   // The loop statement involved in the Transformation
   private Xnode[] _loops;
-  private final ClawLanguage _claw;
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -145,12 +146,14 @@ public class LoopFusion extends Transformation {
 
     // Apply different transformation if the collapse clause is used
     if(_claw != null && _claw.hasCollapseClause()
-        && _claw.getCollapseValue() > 0) {
+        && _claw.getCollapseValue() > 0)
+    {
       // Merge the most inner loop with the most inner loop of the other fusion
       // unit
       int innerLoopIdx = _claw.getCollapseValue() - 1;
       if(_loops[innerLoopIdx] == null
-          || loopFusionUnit.getLoop(innerLoopIdx) == null) {
+          || loopFusionUnit.getLoop(innerLoopIdx) == null)
+      {
         throw new IllegalTransformationException(
             "Cannot apply transformation, one or both do stmt are invalid.",
             _claw.getPragma().getLineNo()
@@ -214,7 +217,8 @@ public class LoopFusion extends Transformation {
     }
 
     if(_claw != null && _claw.hasCollapseClause()
-        && _claw.getCollapseValue() > 0) {
+        && _claw.getCollapseValue() > 0)
+    {
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
         if(!XnodeUtil.hasSameIndexRange(_loops[i], other.getLoop(i))) {
           return false;
@@ -238,7 +242,8 @@ public class LoopFusion extends Transformation {
    */
   private Xnode getLoop(int depth) {
     if(_claw != null && _claw.hasCollapseClause() &&
-        depth < _claw.getCollapseValue()) {
+        depth < _claw.getCollapseValue())
+    {
       return _loops[depth];
     }
     return _loops[0];

@@ -5,8 +5,8 @@
 
 package cx2x.xcodeml.transformation;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.exception.*;
 import cx2x.xcodeml.xnode.XcodeProgram;
 
 /**
@@ -20,9 +20,9 @@ import cx2x.xcodeml.xnode.XcodeProgram;
 
 public abstract class Transformation {
 
+  private final AnalyzedPragma _directive;
   private boolean _transformed = false;
   private int _startLine = 0;
-  private final AnalyzedPragma _directive;
 
   /**
    * Transformation ctor.

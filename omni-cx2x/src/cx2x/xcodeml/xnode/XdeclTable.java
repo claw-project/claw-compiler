@@ -5,12 +5,11 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.*;
-
-import cx2x.xcodeml.helper.*;
 
 /**
  * The XdeclTable represents the typeTable (5.2) element in XcodeML intermediate
@@ -199,7 +198,8 @@ public class XdeclTable extends Xnode {
         Xnode node = new Xnode((Element) crtNode);
         // Only var declarations can be disordered
         if(node.opcode() == Xcode.VARDECL
-            || node.opcode() == Xcode.FSTRUCTDECL) {
+            || node.opcode() == Xcode.FSTRUCTDECL)
+        {
           decl.add(node);
         }
       }

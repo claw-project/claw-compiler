@@ -49,6 +49,15 @@ public class Xid extends Xnode {
   }
 
   /**
+   * Get the id name value.
+   *
+   * @return Name value.
+   */
+  public String getName() {
+    return (_xname != null) ? _xname.getValue() : null;
+  }
+
+  /**
    * Set id name value.
    *
    * @param value The new name value.
@@ -57,6 +66,15 @@ public class Xid extends Xnode {
     if(_xname != null && value != null) {
       _xname.setValue(value);
     }
+  }
+
+  /**
+   * Get the id type value.
+   *
+   * @return Type value.
+   */
+  public String getType() {
+    return _type;
   }
 
   /**
@@ -72,6 +90,15 @@ public class Xid extends Xnode {
   }
 
   /**
+   * Get the sclass value.
+   *
+   * @return Sclass value.
+   */
+  public String getSclass() {
+    return _sclass;
+  }
+
+  /**
    * Set id sclass value.
    *
    * @param value The new sclass value.
@@ -81,33 +108,6 @@ public class Xid extends Xnode {
       _baseElement.setAttribute(Xname.ATTR_SCLASS, value);
       _sclass = value;
     }
-  }
-
-  /**
-   * Get the id name value.
-   *
-   * @return Name value.
-   */
-  public String getName() {
-    return (_xname != null) ? _xname.getValue() : null;
-  }
-
-  /**
-   * Get the id type value.
-   *
-   * @return Type value.
-   */
-  public String getType() {
-    return _type;
-  }
-
-  /**
-   * Get the sclass value.
-   *
-   * @return Sclass value.
-   */
-  public String getSclass() {
-    return _sclass;
   }
 
   /**

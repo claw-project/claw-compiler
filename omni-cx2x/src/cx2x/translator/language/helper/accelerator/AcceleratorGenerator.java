@@ -19,12 +19,12 @@ import java.util.List;
  */
 public abstract class AcceleratorGenerator {
 
-  private final Target _target;
   static final String COMPILE_GUARD = "claw-guard";
   static final String FORMATPAR = "%s(%s)";
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
+  private final Target _target;
 
   /**
    * Constructs a new object with the given target.

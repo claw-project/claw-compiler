@@ -38,6 +38,16 @@ public class ClawMapping {
   }
 
   /**
+   * Set the mapping variable list.
+   *
+   * @param mappingVars List of ClawMappingVar that represents the mapping
+   *                    variables.
+   */
+  public void setMappingVariables(List<ClawMappingVar> mappingVars) {
+    _mappingVariables = mappingVars;
+  }
+
+  /**
    * Get a list of all mapped variables.
    *
    * @return List of mapped variable as String.
@@ -45,7 +55,6 @@ public class ClawMapping {
   public List<ClawMappingVar> getMappedVariables() {
     return _mappedVariables;
   }
-
 
   /**
    * Set the mapped variable list.
@@ -55,16 +64,6 @@ public class ClawMapping {
    */
   public void setMappedVariables(List<ClawMappingVar> mappedVars) {
     _mappedVariables = mappedVars;
-  }
-
-  /**
-   * Set the mapping variable list.
-   *
-   * @param mappingVars List of ClawMappingVar that represents the mapping
-   *                    variables.
-   */
-  public void setMappingVariables(List<ClawMappingVar> mappingVars) {
-    _mappingVariables = mappingVars;
   }
 
   /**

@@ -5,11 +5,11 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.common.NestedDoStatement;
-import cx2x.translator.language.common.ClawDimension;
+import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.common.Utility;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -36,24 +36,22 @@ import java.util.*;
 public class ParallelizeForward extends Transformation {
 
   private final ClawLanguage _claw;
-  private Xnode _fctCall;
-  private XfunctionType _fctType;
-  private XfunctionType _parentFctType;
-  private Xmod _mod = null;
-  private boolean _localFct = false;
-  private boolean _flatten = false;
-
-  private Xnode _innerDoStatement;
-  private Xnode _outerDoStatement;
-
-  private String _calledFctName;  // For topological sorting
-  private String _callingFctName; // For topological sorting
   private final List<String> _promotedVar; // Promoted array from the call
   private final List<String> _promotedWithBeforeOver;
   private final List<String> _promotedWithAfterOver;
   private final List<String> _promotedWithMiddleOver;
   private final Map<String, PromotionInfo> _promotions; // Info about promotion
   private final Map<String, String> _fctCallMapping; // NamedValue mapping
+  private Xnode _fctCall;
+  private XfunctionType _fctType;
+  private XfunctionType _parentFctType;
+  private Xmod _mod = null;
+  private boolean _localFct = false;
+  private boolean _flatten = false;
+  private Xnode _innerDoStatement;
+  private Xnode _outerDoStatement;
+  private String _calledFctName;  // For topological sorting
+  private String _callingFctName; // For topological sorting
   private boolean _isNestedInAssignement;
 
 
@@ -83,7 +81,8 @@ public class ParallelizeForward extends Transformation {
       return false;
     }
     if(next.opcode() == Xcode.EXPRSTATEMENT
-        || next.opcode() == Xcode.FASSIGNSTATEMENT) {
+        || next.opcode() == Xcode.FASSIGNSTATEMENT)
+    {
       _isNestedInAssignement = next.opcode() == Xcode.FASSIGNSTATEMENT;
       _fctCall = next.find(Xcode.FUNCTIONCALL);
       if(_fctCall != null) {
@@ -137,13 +136,15 @@ public class ParallelizeForward extends Transformation {
       if(n.opcode() == Xcode.FDOSTATEMENT) {
         return analyzeNestedDoStmts(xcodeml, n);
       } else if(n.opcode() != Xcode.FPRAGMASTATEMENT
-          && n.opcode() != Xcode.EXPRSTATEMENT) {
+          && n.opcode() != Xcode.EXPRSTATEMENT)
+      {
         xcodeml.addError("Only pragmas, comments and function calls allowed " +
                 "in the do statements.",
             _claw.getPragma().getLineNo());
         return false;
       } else if(n.opcode() == Xcode.EXPRSTATEMENT
-          || n.opcode() == Xcode.FASSIGNSTATEMENT) {
+          || n.opcode() == Xcode.FASSIGNSTATEMENT)
+      {
         _fctCall = n.find(Xcode.FUNCTIONCALL);
         if(_fctCall != null) {
           return analyzeForward(xcodeml);
@@ -396,7 +397,8 @@ public class ParallelizeForward extends Transformation {
      */
     int argOffset = 0;
     if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
-        && _fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
+        && _fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF))
+    {
       argOffset = 1;
     }
 
@@ -455,7 +457,8 @@ public class ParallelizeForward extends Transformation {
       Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.getChildren()) {
         if(arg.opcode() == Xcode.FARRAYREF && arg.findAny(
-            Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null) {
+            Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
+        {
           Xnode var = arg.find(Xcode.VARREF, Xcode.VAR);
           if(var != null) {
             XnodeUtil.insertAfter(arg, var.cloneObject());
@@ -489,7 +492,8 @@ public class ParallelizeForward extends Transformation {
         if(pUpdate != null) {
 
           if(pUpdate.getAttribute(Xattr.TYPE) == null
-              || XnodeUtil.isBuiltInType(pUpdate.getAttribute(Xattr.TYPE))) {
+              || XnodeUtil.isBuiltInType(pUpdate.getAttribute(Xattr.TYPE)))
+          {
             continue;
           }
 
@@ -703,7 +707,8 @@ public class ParallelizeForward extends Transformation {
         // Check if the assignement statement uses a promoted variable
         if(_promotedVar.contains(var.getValue())
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null
-            && lhs.opcode() == Xcode.FARRAYREF) {
+            && lhs.opcode() == Xcode.FARRAYREF)
+        {
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
           if(varInLhs == null) {
             throw new IllegalTransformationException("Unable to propagate " +
@@ -793,7 +798,8 @@ public class ParallelizeForward extends Transformation {
 
         // Check if the pointer assignment has the promoted variable
         if(pointee.getValue().toLowerCase().
-            equals(fieldId.toLowerCase())) {
+            equals(fieldId.toLowerCase()))
+        {
           XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().
               get(pointer.getAttribute(Xattr.TYPE));
           XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().
@@ -801,7 +807,8 @@ public class ParallelizeForward extends Transformation {
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()
-              && !_promotions.containsKey(pointer.getValue())) {
+              && !_promotions.containsKey(pointer.getValue()))
+          {
             PromotionInfo promotionInfo = TransformationHelper.promoteField(
                 pointer.getValue(), true, true, 0, dimensions.size(),
                 fctDef, _parentFctType, dimensions, _claw, xcodeml, null);

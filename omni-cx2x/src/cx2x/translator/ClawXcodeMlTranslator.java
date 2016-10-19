@@ -8,9 +8,9 @@ package cx2x.translator;
 // Cx2x import
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
+import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
@@ -25,21 +25,25 @@ import cx2x.translator.transformation.openacc.DirectivePrimitive;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.translator.transformation.utility.XcodeMLWorkaround;
-import cx2x.xcodeml.error.*;
-import cx2x.xcodeml.helper.*;
+import cx2x.translator.transformer.ClawTransformer;
+import cx2x.xcodeml.error.XanalysisError;
+import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.exception.*;
-import cx2x.xcodeml.transformation.*;
-import cx2x.translator.transformer.*;
-
-// OMNI import
+import cx2x.xcodeml.transformation.ModuleCache;
+import cx2x.xcodeml.transformation.Transformation;
+import cx2x.xcodeml.transformation.TransformationGroup;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xmod;
 import cx2x.xcodeml.xnode.Xnode;
-import xcodeml.util.*;
+import xcodeml.util.XmOption;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
+
+// OMNI import
 
 
 /**
@@ -54,17 +58,15 @@ public class ClawXcodeMlTranslator {
 
   private static final String ERROR_PREFIX = "claw-error: ";
   private static final String WARNING_PREFIX = "claw warning: ";
+  private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
   private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
+  private final AcceleratorGenerator _generator;
+  private final Target _target;
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
-
   private ClawTransformer _transformer = null;
   private XcodeProgram _program = null;
-  private final AcceleratorGenerator _generator;
-  private final Target _target;
-
-  private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
   /**
    * ClawXcodeMlTranslator ctor.
@@ -113,7 +115,8 @@ public class ClawXcodeMlTranslator {
         }
         // Handle special transformation of OpenACC line continuation
         else if(pragma.getValue().
-            toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX)) {
+            toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX))
+        {
           OpenAccContinuation t =
               new OpenAccContinuation(new AnalyzedPragma(pragma));
           addOrAbort(t);

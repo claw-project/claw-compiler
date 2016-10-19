@@ -11,10 +11,10 @@ import cx2x.translator.config.ConfigurationHelper;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
-import exc.xcodeml.*;
-import xcodeml.util.*;
+import exc.xcodeml.XcodeMLtools_Fmod;
+import xcodeml.util.XmOption;
 
-import java.io.*;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -239,7 +239,8 @@ public class Cx2x {
     // Decompile IR to Fortran
     FortranDecompiler fDecompiler = new FortranDecompiler();
     if(!fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
-        lineDirectives)) {
+        lineDirectives))
+    {
       error("Unable to decompile XcodeML to Fortran");
     }
   }

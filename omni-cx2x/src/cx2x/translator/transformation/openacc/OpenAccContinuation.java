@@ -11,8 +11,8 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
 /**
@@ -86,7 +86,8 @@ public class OpenAccContinuation extends Transformation {
       throws IllegalTransformationException
   {
     if(transformer.getMaxColumns() <= 0
-        || getDirective().getPragma().isDeleted()) {
+        || getDirective().getPragma().isDeleted())
+    {
       return;
     }
 

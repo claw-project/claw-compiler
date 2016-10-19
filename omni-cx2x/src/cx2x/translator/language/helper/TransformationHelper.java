@@ -6,8 +6,8 @@
 package cx2x.translator.language.helper;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
@@ -228,7 +228,8 @@ public class TransformationHelper {
       } else { // Demote to smaller dimension array
 
         if(crtType.getDimensions() - reshapeInfo.getKeptDimensions().size() !=
-            reshapeInfo.getTargetDimension()) {
+            reshapeInfo.getTargetDimension())
+        {
           throw new IllegalTransformationException(
               String.format("Reshape information for %s not valid. " +
                       "Target dimension and kept dimension mismatch.",
@@ -514,7 +515,8 @@ public class TransformationHelper {
 
     if(assumed) {
       if(newType.isAllAssumedShape()
-          && (fctType.hasParam(fieldId) || newType.isPointer())) {
+          && (fctType.hasParam(fieldId) || newType.isPointer()))
+      {
         for(int i = 0; i < overDimensions; ++i) {
           Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
           newType.addDimension(index, 0);
@@ -583,7 +585,8 @@ public class TransformationHelper {
       }
     }
     if(fctType.hasAttribute(Xattr.RESULT_NAME)
-        && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId)) {
+        && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId))
+    {
       if(claw.hasOverClause()) {
         fctType.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
             claw.getOverClauseValues().get(overIndex)).toString());
@@ -601,7 +604,8 @@ public class TransformationHelper {
    */
   private static OverPosition getOverPosition(List<String> overClause) {
     if(overClause.get(0).equals(ClawDimension.BASE_DIM) &&
-        overClause.get(overClause.size() - 1).equals(ClawDimension.BASE_DIM)) {
+        overClause.get(overClause.size() - 1).equals(ClawDimension.BASE_DIM))
+    {
       return OverPosition.MIDDLE;
     } else if(overClause.get(0).equals(ClawDimension.BASE_DIM)) {
       return OverPosition.AFTER;

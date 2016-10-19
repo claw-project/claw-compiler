@@ -142,12 +142,12 @@ public enum Xcode {
     name = s;
   }
 
-  public String toString() {
-    return this.name;
-  }
-
   public static Xcode fromString(String value) {
     return Xcode.valueOf(value.toUpperCase());
+  }
+
+  public String toString() {
+    return this.name;
   }
 
   /**

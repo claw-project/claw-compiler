@@ -12,13 +12,10 @@ package cx2x.translator.config;
  */
 public class GroupConfiguration {
 
-  public enum GroupType {DEPENDENT, INDEPENDENT}
-
   private final String _name;
   private final String _cPath;
   private final GroupType _type;
   private final Class _transformationClass;
-
   /**
    * Constructs a new GroupConfiguration element with all mandatory information.
    *
@@ -68,6 +65,8 @@ public class GroupConfiguration {
   public Class getTransformationClass() {
     return _transformationClass;
   }
+
+  public enum GroupType {DEPENDENT, INDEPENDENT}
 
 
 }

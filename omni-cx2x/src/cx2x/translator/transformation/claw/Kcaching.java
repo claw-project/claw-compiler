@@ -12,7 +12,6 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
-
 import cx2x.xcodeml.xnode.*;
 
 import java.util.ArrayList;
@@ -89,7 +88,8 @@ public class Kcaching extends Transformation {
           if(el.opcode() == Xcode.ARRAYINDEX) {
 
             if(!(el.findNode(Xcode.VAR) != null ||
-                el.findNode(Xcode.FINTCONSTANT) != null)) {
+                el.findNode(Xcode.FINTCONSTANT) != null))
+            {
               standardArrayRef = false;
             }
           }

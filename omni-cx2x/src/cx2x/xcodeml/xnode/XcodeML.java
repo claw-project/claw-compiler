@@ -15,8 +15,8 @@ import org.w3c.dom.Document;
  */
 public class XcodeML extends Xnode {
 
-  private Document _xcodemlDoc = null;
   private final XtypeTable _typeTable;
+  private Document _xcodemlDoc = null;
 
   /**
    * Constructs a basic XcodeML object representing the XcodeML file given in

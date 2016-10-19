@@ -4,8 +4,8 @@ import cx2x.translator.language.common.ClawDimension;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xname;
-import cx2x.xcodeml.xnode.Xscope;
 import cx2x.xcodeml.xnode.Xnode;
+import cx2x.xcodeml.xnode.Xscope;
 
 import java.util.ArrayList;
 import java.util.List;

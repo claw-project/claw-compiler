@@ -5,16 +5,16 @@
 
 package cx2x.translator.transformer;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ClawTransformer stores all transformation groups applied during the
@@ -25,17 +25,13 @@ import org.w3c.dom.Element;
 
 public class ClawTransformer implements Transformer {
 
-  private int _transformationCounter = 0;
-
   // Hold all transformation groups
   private final Map<Class, TransformationGroup> _tGroups;
-
   // Hold cross-transformation elements
   private final Map<Element, Object> _crossTransformationTable;
-
   // Hold the module file cache
   private final ModuleCache _modCache;
-
+  private int _transformationCounter = 0;
   private int _maxColumns;
 
 

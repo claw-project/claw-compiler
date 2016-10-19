@@ -54,12 +54,12 @@ public enum Xattr {
     name = s;
   }
 
-  public String toString() {
-    return this.name;
-  }
-
   public static Xattr fromString(String value) {
     return Xattr.valueOf(value.toUpperCase().replace("-", "_"));
+  }
+
+  public String toString() {
+    return this.name;
   }
 
 }

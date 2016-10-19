@@ -7,10 +7,10 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
-import cx2x.xcodeml.helper.*;
-import cx2x.xcodeml.transformation.*;
-import cx2x.xcodeml.exception.*;
-
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.transformation.Transformation;
+import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -27,25 +27,21 @@ import java.util.List;
 
 public class LoopInterchange extends Transformation {
 
+  private final ClawLanguage _claw;
   private List<String> _newOrderOption = null;
-
   private Xnode _loopLevel0 = null;
   private Xnode _loopLevel1 = null;
   private Xnode _loopLevel2 = null;
-
   private String _baseLoop0 = null;
   private String _baseLoop1 = null;
   private String _baseLoop2 = null;
   private String _newLoop0 = null;
   private String _newLoop1 = null;
   private String _newLoop2 = null;
-
   // New ordering of the loops. Values are initial position.
   private int _loopNewPos0 = 0;
   private int _loopNewPos1 = 1;
   private int _loopNewPos2 = 2;
-
-  private final ClawLanguage _claw;
 
   /**
    * Constructs a new LoopInterchange triggered from a specific pragma.
@@ -237,7 +233,8 @@ public class LoopInterchange extends Transformation {
   private boolean checkNewOrderOption(XcodeProgram xcodeml, List<String> idxs) {
     for(String idx : idxs) {
       if(!idx.equals(_baseLoop0) && !idx.equals(_baseLoop1)
-          && !idx.equals(_baseLoop2)) {
+          && !idx.equals(_baseLoop2))
+      {
         xcodeml.addError("invalid induction variable in new-order option. "
             + idx, _claw.getPragma().getLineNo());
         return false;

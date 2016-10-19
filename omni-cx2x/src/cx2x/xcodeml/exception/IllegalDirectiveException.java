@@ -78,21 +78,21 @@ public class IllegalDirectiveException extends Exception {
   }
 
   /**
-   * Set the line of the code that contains the illegal directive.
-   *
-   * @param lineno Line number in the XcodeML that triggered the exception.
-   */
-  public void setDirectiveLine(int lineno) {
-    _directiveLine = lineno;
-  }
-
-  /**
    * Get the line of the code that contains the illegal directive.
    *
    * @return Line number in the XcodeML that triggered the exception.
    */
   public int getDirectiveLine() {
     return _directiveLine;
+  }
+
+  /**
+   * Set the line of the code that contains the illegal directive.
+   *
+   * @param lineno Line number in the XcodeML that triggered the exception.
+   */
+  public void setDirectiveLine(int lineno) {
+    _directiveLine = lineno;
   }
 
   /**

@@ -26,7 +26,7 @@ public class ClawReshapeInfo {
    *                        this list informs which dimension is preserved.
    */
   public ClawReshapeInfo(String array_name, int dimension,
-                  List<Integer> kept_dimensions)
+                         List<Integer> kept_dimensions)
   {
     _array_name = array_name;
     _target_dimension = dimension;
