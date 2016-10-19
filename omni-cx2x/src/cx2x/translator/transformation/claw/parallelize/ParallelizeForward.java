@@ -584,7 +584,7 @@ public class ParallelizeForward extends Transformation {
       {
         return;
       }
-      
+
       OverPosition overPos = OverPosition.fromString(
           _fctType.getAttribute(ClawAttr.OVER.toString()));
 
