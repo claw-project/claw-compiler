@@ -8,7 +8,7 @@ package cx2x.translator.transformation.loop;
 // Cx2x import
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;

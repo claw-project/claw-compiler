@@ -11,7 +11,7 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.GroupConfiguration;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
-import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;

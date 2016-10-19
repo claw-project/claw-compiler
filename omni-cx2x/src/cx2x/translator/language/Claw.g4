@@ -14,6 +14,7 @@ grammar Claw;
 {
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawDirective;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.*;
 import cx2x.translator.misc.Utility;
 }

@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.claw;
 
-import cx2x.translator.language.ClawLanguage;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;

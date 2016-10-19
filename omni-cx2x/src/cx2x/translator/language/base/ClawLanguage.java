@@ -3,9 +3,12 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.base;
 
-import cx2x.translator.language.base.ClawDirective;
+import cx2x.translator.language.ClawDimension;
+import cx2x.translator.language.ClawErrorListener;
+import cx2x.translator.language.ClawLexer;
+import cx2x.translator.language.ClawParser;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
 import cx2x.translator.language.common.ClawReshapeInfo;
@@ -69,7 +72,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Constructs an empty ClawLanguage section.
    * WARNING: This ctor should only be used by the parser.
    */
-  ClawLanguage(){
+  public ClawLanguage(){
     resetVariables();
   }
 
@@ -247,7 +250,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the group name and hasGroupClause to true
    * @param groupName The group name defined in the group clause.
    */
-  void setGroupClause(String groupName){
+  public void setGroupClause(String groupName){
     if(groupName != null) {
       _hasGroupClause = true;
       _groupClauseValue = groupName;
@@ -275,7 +278,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the collapse number and boolean flag.
    * @param n Number of loop to be collapsed. Will be converted to integer.
    */
-  void setCollapseClause(String n){
+  public void setCollapseClause(String n){
     setCollapseClause(Integer.parseInt(n));
   }
 
@@ -305,7 +308,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the list of interchange indexes.
    * @param indexes List of indexes as string.
    */
-  void setIndexes(List<String> indexes){
+  public void setIndexes(List<String> indexes){
     _hasIndexesValue = true;
     _indexesValues = indexes;
   }
@@ -322,7 +325,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Check whether the interchange directive has indexes values.
    * @return True if the directive has interchange value.
    */
-  boolean hasIndexes(){
+  public boolean hasIndexes(){
     return _hasIndexesValue;
   }
 
@@ -332,7 +335,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the range value.
    * @param range A ClawRange object.
    */
-  void setRange(ClawRange range){
+  public void setRange(ClawRange range){
     _rangeValue = range;
   }
 
@@ -348,7 +351,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the ClawMapping list
    * @param mappings A list of ClawMapping objects.
    */
-  void setMappings(List<ClawMapping> mappings){
+  public void setMappings(List<ClawMapping> mappings){
     _mappingValues = mappings;
   }
 
@@ -363,7 +366,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Enable the fusion clause for the current directive.
    */
-  void setFusionClause(){
+  public void setFusionClause(){
     _hasFusionClause = true;
   }
 
@@ -378,7 +381,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Enable the parallel clause for the current directive.
    */
-  void setParallelClause(){
+  public void setParallelClause(){
     _hasParallelClause = true;
   }
 
@@ -395,7 +398,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * extracted clauses.
    * @param clauses Accelerator clauses extracted from the accelerator clause.
    */
-  void setAcceleratorClauses(String clauses){
+  public void setAcceleratorClauses(String clauses){
     _hasAccClause = true;
     _accClausesValue = clauses;
   }
@@ -420,7 +423,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the offsets list extracted from the kcache directive.
    * @param offsets A list of offsets.
    */
-  void setOffsets(List<Integer> offsets){
+  public void setOffsets(List<Integer> offsets){
     _offsetValues = offsets;
   }
 
@@ -445,7 +448,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Set the interchange clause as used.
    */
-  void setInterchangeClause(){
+  public void setInterchangeClause(){
     _hasInterchangeClause = true;
   }
 
@@ -453,7 +456,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the list of induction variables used in the loop-hoist directive.
    * @param vars List of induction variable.
    */
-  void setHoistInductionVars(List<String> vars){
+  public void setHoistInductionVars(List<String> vars){
     _hoistInductionValues = vars;
   }
 
@@ -489,7 +492,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * name value.
    * @param names List of induction name extracted from the clause.
    */
-  void setInductionClause(List<String> names){
+  public void setInductionClause(List<String> names){
     _hasInductionClause = true;
     _inductionClauseValues = names;
   }
@@ -517,7 +520,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * identifiers value.
    * @param data List of identifiers extracted from the clause.
    */
-  void setDataClause(List<String> data){
+  public void setDataClause(List<String> data){
     _hasDataClause = true;
     _dataValues = data;
   }
@@ -543,7 +546,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * dimensions value.
    * @param data List of dimension extracted from the clause.
    */
-  void setOverClause(List<String> data){
+  public void setOverClause(List<String> data){
     if(_overValues == null){
       _hasOverClause = true;
       _overValues = new ArrayList<>();
@@ -571,7 +574,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Enable the data over clause for the current directive.
    * @param data List of array identifiers extracted from the clause.
    */
-  void setOverDataClause(List<String> data){
+  public void setOverDataClause(List<String> data){
     if(_overDataValues == null){
       _hasOverDataClause = true;
       _overDataValues = new ArrayList<>();
@@ -606,7 +609,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Set the init clause flag.
    */
-  void setInitClause(){
+  public void setInitClause(){
     _hasInitClause = true;
   }
 
@@ -621,7 +624,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Set the private clause flag.
    */
-  void setPrivateClause(){
+  public void setPrivateClause(){
     _hasPrivateClause = true;
   }
 
@@ -630,7 +633,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the list of parameters for the fct call of the "call" directive
    * @param data List of identifiers extracted from the clause.
    */
-  void setFctParams(List<String> data){
+  public void setFctParams(List<String> data){
     _fctCallParameters = data;
   }
 
@@ -646,7 +649,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the array name value.
    * @param value String value for the array name.
    */
-  void setArrayName(String value){
+  public void setArrayName(String value){
     _arrayName = value;
   }
 
@@ -662,7 +665,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * Set the function name value.
    * @param value String value for the function name.
    */
-  void setFctName(String value){
+  public void setFctName(String value){
     _fctName = value;
   }
 
@@ -679,7 +682,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param infos List of ClawReshapeInfo objects containing the extracted
    * information from the reshape clause.
    */
-  void setReshapeClauseValues(List<ClawReshapeInfo> infos){
+  public void setReshapeClauseValues(List<ClawReshapeInfo> infos){
     _hasReshapeClause = true;
     _reshapeInfos = infos;
   }
@@ -705,7 +708,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Set the forward clause.
    */
-  void setForwardClause(){
+  public void setForwardClause(){
     _hasForward = true;
   }
 
@@ -730,7 +733,7 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param dimension ClawDimension object constructed from the value extracted
    *                  in the clause.
    */
-  void addDimension(ClawDimension dimension){
+  public void addDimension(ClawDimension dimension){
     _hasDimensionClause = true;
     if(_dimensions == null){
       _dimensions = new ArrayList<>();
