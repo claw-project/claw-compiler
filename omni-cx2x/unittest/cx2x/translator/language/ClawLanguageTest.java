@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;

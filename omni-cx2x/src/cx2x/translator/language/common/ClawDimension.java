@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.common;
 
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
@@ -14,6 +14,8 @@ import cx2x.xcodeml.xnode.*;
  * @author clementval
  */
 public class ClawDimension {
+
+  public static final String BASE_DIM = ":";
   private final int _lowerBound;
   private final int _upperBound;
   private final String _lowerBoundId;
@@ -22,16 +24,15 @@ public class ClawDimension {
   private String _lowerBoundType;
   private String _upperBoundType;
 
-  public static final String BASE_DIM = ":";
-
   /**
    * Constructs a new dimension object from the extracted information.
-   * @param id          Identifier of the defined dimension.
-   * @param lowerBound  Lower bound of the dimension.
-   * @param upperBound  Upper bound of the dimension.
-   * TODO maybe add step information (in the grammar as well)
+   *
+   * @param id         Identifier of the defined dimension.
+   * @param lowerBound Lower bound of the dimension.
+   * @param upperBound Upper bound of the dimension.
+   *                   TODO maybe add step information (in the grammar as well)
    */
-  public ClawDimension(String id, String lowerBound, String upperBound){
+  public ClawDimension(String id, String lowerBound, String upperBound) {
     _identifier = id;
 
     int tempLb, tempUb;
@@ -39,7 +40,7 @@ public class ClawDimension {
     try {
       tempLb = Integer.parseInt(lowerBound);
       tempLbStr = null;
-    } catch (NumberFormatException ex){
+    } catch(NumberFormatException ex) {
       tempLb = -1;
       tempLbStr = lowerBound;
     }
@@ -47,7 +48,7 @@ public class ClawDimension {
     try {
       tempUb = Integer.parseInt(upperBound);
       tempUbStr = null;
-    } catch (NumberFormatException ex){
+    } catch(NumberFormatException ex) {
       tempUb = -1;
       tempUbStr = upperBound;
     }
@@ -61,69 +62,74 @@ public class ClawDimension {
 
   /**
    * Check whether lower bound is an identifier variable.
+   *
    * @return True if the lower bound is an identifier variable.
    */
-  public boolean lowerBoundIsVar(){
+  public boolean lowerBoundIsVar() {
     return _lowerBoundId != null;
   }
 
   /**
    * Check whether upper bound is an identifier variable.
+   *
    * @return True if the upper bound is an identifier variable.
    */
-  public boolean upperBoundIsVar(){
+  public boolean upperBoundIsVar() {
     return _upperBoundId != null;
   }
 
   /**
    * @return Lower bound value. -1 if lower bound is an identifier variable.
    */
-  public int getLowerBoundInt(){
+  public int getLowerBoundInt() {
     return _lowerBound;
   }
 
   /**
    * @return Upper bound value. -1 if upper bound is an identifier variable.
    */
-  public int getUpperBoundInt(){
+  public int getUpperBoundInt() {
     return _upperBound;
   }
 
   /**
    * @return Lower bound value. Null if lower bound is an integer constant.
    */
-  public String getLowerBoundId(){
+  public String getLowerBoundId() {
     return _lowerBoundId;
   }
 
   /**
    * @return Upper bound value. Null if upper bound is an integer constant.
    */
-  public String getUpperBoundId(){
+  public String getUpperBoundId() {
     return _upperBoundId;
   }
 
   /**
    * Get the identifier for the current dimension.
+   *
    * @return The identifier of the current dimension.
    */
-  public String getIdentifier(){
+  public String getIdentifier() {
     return _identifier;
   }
 
   /**
    * Set the value of upper bound var.
+   *
    * @param value Type value.
    */
-  public void setUpperBoundType(String value){
+  public void setUpperBoundType(String value) {
     _upperBoundType = value;
   }
 
   /**
    * Set the value of lower bound var.
+   *
    * @param value Type value.
    */
-  public void setLowerBoundType(String value){
+  public void setLowerBoundType(String value) {
     _lowerBoundType = value;
   }
 
@@ -131,6 +137,7 @@ public class ClawDimension {
   /**
    * Generate the correct indexRange element with lowerBound, upperBound and
    * step from the current dimension.
+   *
    * @param xcodeml  Current XcodeML program unit in which elements will be
    *                 created.
    * @param withStep IF true, step element is created.
@@ -143,7 +150,7 @@ public class ClawDimension {
     range.appendToChildren(lower, false);
     range.appendToChildren(upper, false);
 
-    if (withStep){
+    if(withStep) {
       Xnode step = new Xnode(Xcode.STEP, xcodeml);
       Xnode stepValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
       stepValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
@@ -153,8 +160,8 @@ public class ClawDimension {
     }
 
     // lower bound
-    if(lowerBoundIsVar()){
-      if(_lowerBoundType == null){
+    if(lowerBoundIsVar()) {
+      if(_lowerBoundType == null) {
         _lowerBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
         XbasicType bType = XnodeUtil.createBasicType(xcodeml, _lowerBoundType,
             Xname.TYPE_F_INT, Xintent.IN);
@@ -171,8 +178,8 @@ public class ClawDimension {
     }
 
     // upper bound
-    if(upperBoundIsVar()){
-      if(_lowerBoundType == null){
+    if(upperBoundIsVar()) {
+      if(_lowerBoundType == null) {
         _upperBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
         XbasicType bType = XnodeUtil.createBasicType(xcodeml, _upperBoundType,
             Xname.TYPE_F_INT, Xintent.IN);
@@ -193,6 +200,7 @@ public class ClawDimension {
   /**
    * Generate the array index that will be placed in the array reference for
    * this additional dimension.
+   *
    * @param xcodeml Current XcodeML program unit in which elements will be
    *                created.
    * @return A new arrayIndex element including a var element with the dimension

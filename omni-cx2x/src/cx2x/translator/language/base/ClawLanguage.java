@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.ClawDimension;
+import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.parser.ClawErrorListener;
 import cx2x.translator.language.ClawLexer;
 import cx2x.translator.language.ClawParser;
