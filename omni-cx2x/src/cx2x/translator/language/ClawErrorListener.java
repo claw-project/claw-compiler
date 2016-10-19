@@ -22,7 +22,8 @@ public class ClawErrorListener extends BaseErrorListener {
   /**
    * Default ctor
    */
-  public ClawErrorListener(){}
+  public ClawErrorListener() {
+  }
 
   @Override
   public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
@@ -34,10 +35,11 @@ public class ClawErrorListener extends BaseErrorListener {
 
   /**
    * Get the last error information.
+   *
    * @return IllegalDirectiveException encapsulating the last error information.
    */
-  IllegalDirectiveException getLastError(){
-      return ex;
-    }
+  public IllegalDirectiveException getLastError() {
+    return ex;
+  }
 
 }
