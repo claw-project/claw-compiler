@@ -5,6 +5,7 @@
 
 package cx2x.translator.language;
 
+import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
 import cx2x.translator.language.common.ClawReshapeInfo;
