@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.common;
 
 /**
  * ClawMappingVar represents the mapping variable used in a loop-extract
@@ -41,7 +41,7 @@ public class ClawMappingVar {
    *
    * @return True if the two mapping are different. False otherwise.
    */
-  boolean hasDifferentMapping() {
+  public boolean hasDifferentMapping() {
     return !_argPart.equals(_fctPart);
   }
 

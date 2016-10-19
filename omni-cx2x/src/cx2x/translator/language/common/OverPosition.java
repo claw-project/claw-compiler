@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.common;
 
 import cx2x.translator.common.ClawConstant;
 

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.common;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.xnode.Xcode;
@@ -49,7 +49,7 @@ public class ClawRange {
    *
    * @return The induction variable value. Null if not defined.
    */
-  String getInductionVar() {
+  public String getInductionVar() {
     return _inductionVar;
   }
 
@@ -58,7 +58,7 @@ public class ClawRange {
    *
    * @param inductionVar The induction variable value.
    */
-  void setInductionVar(String inductionVar) {
+  public void setInductionVar(String inductionVar) {
     if(inductionVar != null) {
       this._inductionVar = inductionVar.trim();
     }
@@ -69,7 +69,7 @@ public class ClawRange {
    *
    * @return The lower bound value. Null if not defined.
    */
-  String getLowerBound() {
+  public String getLowerBound() {
     return _lowerBound;
   }
 
@@ -78,7 +78,7 @@ public class ClawRange {
    *
    * @param lowerBound The lower bound value.
    */
-  void setLowerBound(String lowerBound) {
+  public void setLowerBound(String lowerBound) {
     if(lowerBound != null) {
       this._lowerBound = lowerBound.trim();
     }
@@ -89,7 +89,7 @@ public class ClawRange {
    *
    * @return The upper bound value. Null if not set.
    */
-  String getUpperBound() {
+  public String getUpperBound() {
     return _upperBound;
   }
 
@@ -98,7 +98,7 @@ public class ClawRange {
    *
    * @param upperBound The upper bound value.
    */
-  void setUpperBound(String upperBound) {
+  public void setUpperBound(String upperBound) {
     if(upperBound != null) {
       this._upperBound = upperBound.trim();
     }

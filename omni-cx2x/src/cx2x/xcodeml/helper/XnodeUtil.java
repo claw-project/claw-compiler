@@ -6,7 +6,7 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.language.ClawDimension;
-import cx2x.translator.language.OverPosition;
+import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.*;
 

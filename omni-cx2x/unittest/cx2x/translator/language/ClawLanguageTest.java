@@ -7,6 +7,8 @@ package cx2x.translator.language;
 
 import static org.junit.Assert.*;
 
+import cx2x.translator.language.common.ClawMapping;
+import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;

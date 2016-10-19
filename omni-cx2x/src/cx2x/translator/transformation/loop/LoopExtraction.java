@@ -9,8 +9,8 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.ClawLanguage;
-import cx2x.translator.language.ClawMapping;
-import cx2x.translator.language.ClawMappingVar;
+import cx2x.translator.language.common.ClawMapping;
+import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.misc.Utility;

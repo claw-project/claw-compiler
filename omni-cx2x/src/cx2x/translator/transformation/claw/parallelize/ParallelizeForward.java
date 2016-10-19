@@ -7,7 +7,7 @@ package cx2x.translator.transformation.claw.parallelize;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.language.ClawDimension;
 import cx2x.translator.language.ClawLanguage;
-import cx2x.translator.language.OverPosition;
+import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.misc.Utility;
 import cx2x.translator.transformer.ClawTransformer;

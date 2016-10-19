@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.common;
 
 import cx2x.translator.misc.Utility;
 
@@ -25,7 +25,7 @@ public class ClawMapping {
    * Constructs an empty ClawMapping object. Normally only used from the
    * CLAW Parser.
    */
-  ClawMapping() {
+  public ClawMapping() {
   }
 
   /**
@@ -53,7 +53,7 @@ public class ClawMapping {
    * @param mappedVars List of ClawMappingVar that represents the mapped
    *                   variables.
    */
-  void setMappedVariables(List<ClawMappingVar> mappedVars) {
+  public void setMappedVariables(List<ClawMappingVar> mappedVars) {
     _mappedVariables = mappedVars;
   }
 
@@ -63,7 +63,7 @@ public class ClawMapping {
    * @param mappingVars List of ClawMappingVar that represents the mapping
    *                    variables.
    */
-  void setMappingVariables(List<ClawMappingVar> mappingVars) {
+  public void setMappingVariables(List<ClawMappingVar> mappingVars) {
     _mappingVariables = mappingVars;
   }
 

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language;
+package cx2x.translator.language.common;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class ClawReshapeInfo {
    * @param kept_dimensions Optional, if target dimension is bigger than 0 then
    *                        this list informs which dimension is preserved.
    */
-  ClawReshapeInfo(String array_name, int dimension,
+  public ClawReshapeInfo(String array_name, int dimension,
                   List<Integer> kept_dimensions)
   {
     _array_name = array_name;
