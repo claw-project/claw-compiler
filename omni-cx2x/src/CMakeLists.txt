@@ -109,6 +109,7 @@ add_jar(${OMNI_CX2X_CLAW_NAME}
   cx2x/translator/language/base/ClawLanguage.java
 
 # translator.language.common package
+  cx2x/translator/language/common/ClawDimension.java
   cx2x/translator/language/common/ClawRange.java
   cx2x/translator/language/common/ClawReshapeInfo.java
   cx2x/translator/language/common/ClawMapping.java
