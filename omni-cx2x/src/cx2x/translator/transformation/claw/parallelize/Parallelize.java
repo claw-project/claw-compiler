@@ -31,7 +31,8 @@ import java.util.*;
  * inout.
  * <li> Do statements over the additional dimensions is added as an outter
  * loop and wrap the entire body of the subroutine.
- * </ul><p>
+ * </ul>
+ * <p>
  * Transformation for the CPU target: <ul>
  * <li> Automatic promotion is applied to all arrays with intent in, out or
  * inout.
@@ -40,7 +41,8 @@ import java.util.*;
  * rhs.
  * <li> Do statements over the additional dimensions are added as an inner
  * loop wrapping each assign statements including promtted variables.
- * </ul><p>
+ * </ul>
+ * <p>
  * Generation of OpenACC directives:<ul>
  * <li> acc routine seq is generated for subroutine called from the parallelized
  * subroutine if they are located in the same translation unit.
@@ -51,10 +53,11 @@ import java.util.*;
  * variables.
  * <li> acc loop is generated for the generated do statement.
  * <li> acc loop seq is generated for already existing do statements.
- * </ul><p>
+ * </ul>
+ * <p>
  * Generation of OpenMP directives: <ul>
  * <li> omp parallel do is generated for each generated do statements.
- * </ul><p>
+ * </ul>
  *
  * @author clementval
  */
