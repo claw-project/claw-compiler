@@ -5,8 +5,8 @@
 
 package cx2x.xcodeml.transformation;
 
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.exception.*;
 
 /**
  * An independent transformation group applies each transformation without
