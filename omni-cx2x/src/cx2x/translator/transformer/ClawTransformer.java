@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import cx2x.translator.common.GroupConfiguration;
+import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xnode.Xnode;

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.common;
+package cx2x.translator.config;
 
 /**
  * Class holding group information from configuration.

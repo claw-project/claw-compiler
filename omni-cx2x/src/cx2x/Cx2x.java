@@ -7,8 +7,8 @@ package cx2x;
 
 import cx2x.decompiler.FortranDecompiler;
 import cx2x.translator.ClawXcodeMlTranslator;
-import cx2x.translator.common.ConfigurationHelper;
-import cx2x.translator.common.GroupConfiguration;
+import cx2x.translator.config.ConfigurationHelper;
+import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import exc.xcodeml.*;

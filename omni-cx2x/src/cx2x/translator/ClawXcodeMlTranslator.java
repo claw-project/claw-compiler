@@ -8,7 +8,7 @@ package cx2x.translator;
 // Cx2x import
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.GroupConfiguration;
+import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.translator.language.base.ClawLanguage;
