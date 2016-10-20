@@ -5,8 +5,8 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.ClawLexer;
-import cx2x.translator.language.ClawParser;
+import cx2x.translator.language.parser.ClawLexer;
+import cx2x.translator.language.parser.ClawParser;
 import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
