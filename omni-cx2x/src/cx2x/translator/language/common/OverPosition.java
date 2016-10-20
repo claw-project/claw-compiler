@@ -30,7 +30,7 @@ public enum OverPosition {
    * Get enum value from a string.
    *
    * @param value Code value for the enumeration.
-   * @return The enumeration value if matches. CPU otherwise.
+   * @return The enumeration value if matches. BEFORE otherwise.
    */
   public static OverPosition fromString(String value) {
     if(value == null) {
