@@ -20,18 +20,35 @@ public enum OverPosition {
   MIDDLE(ClawConstant.MIDDLE),
   AFTER(ClawConstant.AFTER);
 
-  private final String name;
+  private final String code;
 
-  OverPosition(String s) {
-    name = s;
+  OverPosition(String code) {
+    this.code = code;
   }
 
+  /**
+   * Get enum value from a string.
+   *
+   * @param value Code value for the enumeration.
+   * @return The enumeration value if matches. CPU otherwise.
+   */
   public static OverPosition fromString(String value) {
-    return (value == null) ? BEFORE :
-        OverPosition.valueOf(value.toUpperCase());
+    if(value == null) {
+      return BEFORE;
+    }
+    switch(value) {
+      case ClawConstant.BEFORE:
+        return BEFORE;
+      case ClawConstant.MIDDLE:
+        return MIDDLE;
+      case ClawConstant.AFTER:
+        return AFTER;
+      default:
+        return BEFORE;
+    }
   }
 
   public String toString() {
-    return this.name;
+    return this.code;
   }
 }
