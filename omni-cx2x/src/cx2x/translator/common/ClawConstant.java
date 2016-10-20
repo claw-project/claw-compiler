@@ -35,4 +35,9 @@ public class ClawConstant {
   public static final String MIDDLE = "middle";
   public static final String AFTER = "after";
 
+  // Available targets
+  public static final String TARGET_CPU = "cpu";
+  public static final String TARGET_GPU = "gpu";
+  public static final String TARGET_MIC = "mic";
+
 }

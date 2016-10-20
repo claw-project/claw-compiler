@@ -5,7 +5,9 @@
 
 package cx2x.translator.language.helper.target;
 
-import java.util.Arrays;
+import cx2x.translator.common.ClawConstant;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,16 +17,22 @@ import java.util.List;
  * @author clementval
  */
 public enum Target {
-  CPU,
-  GPU,
-  MIC;
+  CPU(ClawConstant.TARGET_CPU),
+  GPU(ClawConstant.TARGET_GPU),
+  MIC(ClawConstant.TARGET_MIC);
 
-  private static final String cpu = "cpu";
-  private static final String gpu = "gpu";
-  private static final String mic = "mic";
+  private final String code;
+
+  Target(String code) {
+    this.code = code;
+  }
 
   public static List<String> availableTargets() {
-    return Arrays.asList(cpu, gpu, mic);
+    List<String> codes = new ArrayList<>();
+    for(Target t : Target.values()) {
+      codes.add(t.code);
+    }
+    return codes;
   }
 
   public static Target fromString(String value) {
@@ -32,11 +40,11 @@ public enum Target {
       return CPU;
     }
     switch(value) {
-      case cpu:
+      case ClawConstant.TARGET_CPU:
         return CPU;
-      case gpu:
+      case ClawConstant.TARGET_GPU:
         return GPU;
-      case mic:
+      case ClawConstant.TARGET_MIC:
         return MIC;
       default:
         return CPU;
