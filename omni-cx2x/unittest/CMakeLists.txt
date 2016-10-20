@@ -71,6 +71,7 @@ else()
     helper/TestConstant.java
     helper/XmlHelper.java
     cx2x/translator/misc/UtilityTest.java
+    cx2x/translator/language/ClawEnumTest.java
     cx2x/translator/language/ClawRangeTest.java
     cx2x/translator/language/ClawLanguageTest.java
     cx2x/xcodeml/xnode/XbasicTest.java
@@ -113,6 +114,7 @@ else()
   add_junit_test(junit-translator.language
     CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH} ${UNITTEST_JAR}
     TESTS
+    cx2x.translator.language.ClawEnumTest
     cx2x.translator.language.ClawLanguageTest
     cx2x.translator.language.ClawRangeTest
   )
