@@ -35,6 +35,12 @@ public enum Target {
     return codes;
   }
 
+  /**
+   * Get enum value from a string.
+   *
+   * @param value Code value for the enumeration.
+   * @return The enumeration value if matches. CPU otherwise.
+   */
   public static Target fromString(String value) {
     if(value == null) {
       return CPU;

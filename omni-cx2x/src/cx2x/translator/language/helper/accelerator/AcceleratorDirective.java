@@ -7,7 +7,7 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.common.ClawConstant;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,28 +17,40 @@ import java.util.List;
  * @author clementval
  */
 public enum AcceleratorDirective {
-  NONE,
-  OPENACC,
-  OPENMP;
+  NONE(ClawConstant.DIRECTIVE_NONE),
+  OPENACC(ClawConstant.DIRECTIVE_OPENACC),
+  OPENMP(ClawConstant.DIRECTIVE_OPENMP);
 
-  private static final String none = "none";
-  private static final String openacc = "openacc";
-  private static final String openmp = "openmp";
+  private final String code;
 
-  public static List<String> availableDirectiveLanguage() {
-    return Arrays.asList(none, openacc, openmp);
+  AcceleratorDirective(String code) {
+    this.code = code;
   }
 
+  public static List<String> availableDirectiveLanguage() {
+    List<String> codes = new ArrayList<>();
+    for(AcceleratorDirective t : AcceleratorDirective.values()) {
+      codes.add(t.code);
+    }
+    return codes;
+  }
+
+  /**
+   * Get enum value from a string.
+   *
+   * @param value Code value for the enumeration.
+   * @return The enumeration value if matches. NONE otherwise.
+   */
   public static AcceleratorDirective fromString(String value) {
     if(value == null) {
       return NONE;
     }
     switch(value) {
-      case none:
+      case ClawConstant.DIRECTIVE_NONE:
         return NONE;
-      case openacc:
+      case ClawConstant.DIRECTIVE_OPENACC:
         return OPENACC;
-      case openmp:
+      case ClawConstant.DIRECTIVE_OPENMP:
         return OPENMP;
       default:
         return NONE;
@@ -53,6 +65,9 @@ public enum AcceleratorDirective {
    * @return The corresponding prefix. Null if language is not known.
    */
   public static String getPrefix(AcceleratorDirective directive) {
+    if(directive == null) {
+      return null;
+    }
     switch(directive) {
       case OPENACC:
         return ClawConstant.OPENACC_PREFIX;
