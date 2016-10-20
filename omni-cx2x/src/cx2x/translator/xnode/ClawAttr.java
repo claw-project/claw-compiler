@@ -22,8 +22,23 @@ public enum ClawAttr {
     name = s;
   }
 
+  /**
+   * Get enum value from a string.
+   *
+   * @param value Code value for the enumeration.
+   * @return The enumeration value if matches. Null otherwise.
+   */
   public static ClawAttr fromString(String value) {
-    return ClawAttr.valueOf(value.toUpperCase().replace("-", "_"));
+    if(value == null) {
+      return null;
+    }
+    switch(value) {
+      case ClawConstant.IS_CLAW:
+        return IS_CLAW;
+      case ClawConstant.OVER:
+        return OVER;
+    }
+    return null;
   }
 
   public String toString() {
