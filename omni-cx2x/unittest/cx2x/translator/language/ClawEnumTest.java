@@ -22,13 +22,14 @@ public class ClawEnumTest {
 
   @Test
   public void TargetTest() {
-    assertEquals(Target.CPU, Target.fromString("cpu"));
-    assertEquals(Target.GPU, Target.fromString("gpu"));
-    assertEquals(Target.MIC, Target.fromString("mic"));
+    assertEquals(Target.CPU, Target.fromString(ClawConstant.TARGET_CPU));
+    assertEquals(Target.GPU, Target.fromString(ClawConstant.TARGET_GPU));
+    assertEquals(Target.MIC, Target.fromString(ClawConstant.TARGET_MIC));
     assertEquals(Target.CPU, Target.fromString("unknown"));
     assertEquals(Target.CPU, Target.fromString(null));
     assertEquals(Target.CPU, Target.fromString(""));
-    assertEquals(Arrays.asList("cpu", "gpu", "mic"), Target.availableTargets());
+    assertEquals(Arrays.asList(ClawConstant.TARGET_CPU, ClawConstant.TARGET_GPU,
+        ClawConstant.TARGET_MIC), Target.availableTargets());
   }
 
   @Test
