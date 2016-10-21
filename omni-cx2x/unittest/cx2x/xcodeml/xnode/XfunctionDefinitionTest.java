@@ -49,7 +49,7 @@ public class XfunctionDefinitionTest {
     assertNotNull(fctDef.body());
 
     assertEquals(1, fctDef.lineNo());
-    assertEquals("original_code.f90", fctDef.getFile());
+    assertEquals("original_code.f90", fctDef.filename());
 
 
   }

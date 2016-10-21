@@ -319,12 +319,12 @@ public class Xnode {
   }
 
   /**
-   * Get the file attribute value. This attribute is not defined for every
-   * elements.
+   * Get the file attribute value. This value represents the original filename
+   * from the XcodeML unit. This attribute is not defined for every elements.
    *
    * @return File path. Null if the file attribute is not defined.
    */
-  public String getFile() {
+  public String filename() {
     return (_baseElement.hasAttribute(Xattr.FILE.toString())) ?
         _baseElement.getAttribute(Xattr.FILE.toString()) : null;
   }
@@ -334,7 +334,7 @@ public class Xnode {
    *
    * @param value File path.
    */
-  public void setFile(String value) {
+  public void setFilename(String value) {
     setAttribute(Xattr.FILE, value);
   }
 

@@ -47,7 +47,7 @@ public class XglobalDeclTest {
     assertNull(fDef.getParams());
     assertNotNull(fDef.getSymbolTable());
     assertEquals(917, fDef.lineNo());
-    assertEquals("./src/module.f90", fDef.getFile());
+    assertEquals("./src/module.f90", fDef.filename());
     assertTrue(gdTable.hasDefinition("module"));
     assertFalse(gdTable.hasFunctionDefinition("module"));
     assertTrue(gdTable.hasModuleDefinition("module"));
@@ -55,6 +55,6 @@ public class XglobalDeclTest {
     assertNotNull(mDef);
     assertEquals("module", mDef.getName());
     assertEquals(4, mDef.lineNo());
-    assertEquals("./src/module.f90", mDef.getFile());
+    assertEquals("./src/module.f90", mDef.filename());
   }
 }

@@ -1336,7 +1336,7 @@ public class XnodeUtil {
    */
   public static void copyEnhancedInfo(Xnode base, Xnode target) {
     target.setLine(base.lineNo());
-    target.setFile(base.getFile());
+    target.setFilename(base.filename());
   }
 
   /**
