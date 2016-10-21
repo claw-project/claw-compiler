@@ -20,17 +20,19 @@
 \usepackage{pgfplots}
 \usepackage{CJKutf8}
 \usepackage{glossaries}
+\usepackage{xspace}
 
 \setcounter{secnumdepth}{3}
 
-
-\def\clawfcomp{CLAW FORTRAN Compiler}
-\def\omni{OMNI Compiler Infrastructure}
-\def\ffront{\lstinline!F_Front!}
-\def\fback{\lstinline!F_Back!}
-\def\fpp{\lstinline!FPP!}
-\def\clawfc{\lstinline!clawfc!}
-\def\cx2x{\lstinline!CX2X!}
+\def\fortran{FORTRAN\xspace}
+\def\clawfcomp{CLAW FORTRAN Compiler\xspace}
+\def\omni{OMNI Compiler Infrastructure\xspace}
+\def\xcodeml{XcodeML/F\xspace}
+\def\ffront{\lstinline!F_Front!\xspace}
+\def\fback{\lstinline!F_Back!\xspace}
+\def\fpp{\lstinline!FPP!\xspace}
+\def\clawfc{\lstinline!clawfc!\xspace}
+\def\cx2x{\lstinline!CX2X!\xspace}
 
 \makeglossaries
 
@@ -179,11 +181,11 @@ Version 0.1, Last updated \today
 \section{OMNI Compiler}
 The \clawfcomp is based on the \omni. 
 
-\section{XcodeML/F}
-XcodeML/F is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
+\section{\xcodeml}
+\xcodeml is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
 %TODO add reference to specs.
 
-Listing \ref{fortran1} is a simple FORTRAN program. Its XcodeML/F \gls{ir} will be as shown in Listing \ref{xcodeml1}. A typical XcodeML/F translation unit is composed of the followings sections: 
+Listing \ref{fortran1} is a simple FORTRAN program. Its \xcodeml \gls{ir} will be as shown in Listing \ref{xcodeml1}. A typical \xcodeml translation unit is composed of the followings sections: 
 \begin{itemize}
 \item Type table with all the type definitions used in the translation unit (Listing \ref{xcodeml1} line 6-24).
 \item Global symbol table listing all the symbol at global scope (Listing \ref{xcodeml1} line 25-29).
@@ -192,7 +194,7 @@ Listing \ref{fortran1} is a simple FORTRAN program. Its XcodeML/F \gls{ir} will 
 
 \lstinputlisting[label=fortran1, caption=Basic FORTRAN program, language=Fortran]{code/basic_fortran.f90}
 
-\lstinputlisting[label=xcodeml1, caption=XcodeML/F IR, language=xml]{code/basic_fortran.xml}
+\lstinputlisting[label=xcodeml1, caption=\xcodeml IR, language=xml]{code/basic_fortran.xml}
 
 \section{\clawfcomp}
 
@@ -200,12 +202,12 @@ The \clawfc is the program handed to the end-user. It performs all the needed st
 
 \begin{enumerate}
 \item \textbf{FPP}: The FORTRAN source code is preprocessed by a standard FORTRAN preprocessor. Typically the one provided by the default compiler. 
-\item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed by the OMNI Compiler FORTRAN Front-end to produce the XcodeML/F \gls{ir}.
-\item \textbf{CX2X}: The XcodeML/F is manipulated according to the rules of the CLAW directive language. The output is a valid XcodeML/F \gls{ir}.
-\item \textbf{F\_Back}: The XcodeML/F \gls{ir} is decompiled to produce the transformed FORTRAN code. 
+\item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed by the OMNI Compiler FORTRAN Front-end to produce the \xcodeml \gls{ir}.
+\item \textbf{CX2X}: The \xcodeml is manipulated according to the rules of the CLAW directive language. The output is a valid \xcodeml \gls{ir}.
+\item \textbf{F\_Back}: The \xcodeml \gls{ir} is decompiled to produce the transformed FORTRAN code. 
 \end{enumerate}
 
-\ffront{}, \fback{} are part of the \omni{}, \fpp{} is provided by the installed FORTRAN compiler. The XcodeML/F to XcodeML/F translator \cx2x{} is actively developed as part of the CLAW project.  
+\ffront{}, \fback{} are part of the \omni{}, \fpp{} is provided by the installed FORTRAN compiler. The \xcodeml to \xcodeml translator \cx2x{} is actively developed as part of the CLAW project.  
 
 \begin{figure}[!ht]
   \centering
@@ -214,7 +216,7 @@ The \clawfc is the program handed to the end-user. It performs all the needed st
   \label{fig:clawfc_main_workflow}
 \end{figure}
 
-\section{CLAW XcodeML/F to XcodeML/F translator}
+\section{CLAW \xcodeml to \xcodeml translator}
 
 
 
