@@ -46,7 +46,7 @@ public class XfunctionDefinitionTest {
     assertEquals(0, fctDef.getSymbolTable().count());
     assertEquals(0, fctDef.getDeclarationTable().count());
     assertNull(fctDef.getParams());
-    assertNotNull(fctDef.getBody());
+    assertNotNull(fctDef.body());
 
     assertEquals(1, fctDef.getLineNo());
     assertEquals("original_code.f90", fctDef.getFile());

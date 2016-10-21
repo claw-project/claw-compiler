@@ -78,7 +78,7 @@ public class XfunctionDefinition extends Xnode {
    *
    * @return A Xbody object for the function.
    */
-  public Xnode getBody() {
+  public Xnode body() {
     return _body;
   }
 

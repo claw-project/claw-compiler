@@ -214,7 +214,7 @@ public class LoopHoist extends BlockTransformation {
 
     // Do the hoisting
     LoopHoistDoStmtGroup hoisted = _doGroup.get(0).cloneObjectAndElement();
-    hoisted.getDoStmts()[_nestedLevel - 1].getBody().delete();
+    hoisted.getDoStmts()[_nestedLevel - 1].body().delete();
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
     hoisted.getDoStmts()[_nestedLevel - 1].appendToChildren(newBody, false);
     XnodeUtil.shiftStatementsInBody(_startClaw.getPragma(),
@@ -257,8 +257,8 @@ public class LoopHoist extends BlockTransformation {
     ifStmt.appendToChildren(condition, false);
     ifStmt.appendToChildren(thenBlock, false);
     condition.appendToChildren(cond, false);
-    thenBlock.appendToChildren(g.getDoStmts()[nestedDepth - 1].getBody(), true);
-    g.getDoStmts()[nestedDepth - 1].getBody().delete();
+    thenBlock.appendToChildren(g.getDoStmts()[nestedDepth - 1].body(), true);
+    g.getDoStmts()[nestedDepth - 1].body().delete();
     Xnode body = new Xnode(Xcode.BODY, xcodeml);
     body.appendToChildren(ifStmt, false);
     g.getDoStmts()[nestedDepth - 1].appendToChildren(body, false);
@@ -279,7 +279,7 @@ public class LoopHoist extends BlockTransformation {
     g.getDoStmts()[0] = newStart;
     for(int j = 1; j < g.getDoStmts().length; ++j) {
       Xnode next = XnodeUtil.find(Xcode.FDOSTATEMENT,
-          g.getDoStmts()[j - 1].getBody(), false);
+          g.getDoStmts()[j - 1].body(), false);
       if(next == null) {
         throw new IllegalTransformationException(
             "Unable to matchSeq enough nested do statements",

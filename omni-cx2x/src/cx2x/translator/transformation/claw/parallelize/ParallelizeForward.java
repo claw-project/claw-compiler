@@ -725,7 +725,7 @@ public class ParallelizeForward extends Transformation {
           // Generate the do statements and move the assignement statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
-          doStmt.getInnerStatement().getBody().
+          doStmt.getInnerStatement().body().
               appendToChildren(assignment, false);
 
           PromotionInfo promotionInfo;

@@ -85,7 +85,7 @@ class LoopHoistDoStmtGroup {
     nestedDoStmts[0] = newDoStmt;
     for(int j = 1; j < nestedDoStmts.length; ++j) {
       Xnode next = XnodeUtil.find(Xcode.FDOSTATEMENT,
-          nestedDoStmts[j - 1].getBody(), false);
+          nestedDoStmts[j - 1].body(), false);
       nestedDoStmts[j] = next;
     }
     return new LoopHoistDoStmtGroup(nestedDoStmts);

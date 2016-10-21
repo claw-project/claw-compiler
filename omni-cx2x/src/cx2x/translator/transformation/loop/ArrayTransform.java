@@ -249,7 +249,7 @@ public class ArrayTransform extends BlockTransformation {
       if(i == 0) { // most outer loop goes after the pragma
         XnodeUtil.insertAfter(doStmtGrip, doStmts[i]);
       } else { // others loop go in the previous one
-        doStmts[i - 1].getBody().appendToChildren(doStmts[i], false);
+        doStmts[i - 1].body().appendToChildren(doStmts[i], false);
       }
     }
 
@@ -277,7 +277,7 @@ public class ArrayTransform extends BlockTransformation {
       }
 
       // 4. Move assignment statement inside the most inner loop
-      doStmts[ranges.size() - 1].getBody().appendToChildren(stmt, true);
+      doStmts[ranges.size() - 1].body().appendToChildren(stmt, true);
       stmt.delete();
     }
 

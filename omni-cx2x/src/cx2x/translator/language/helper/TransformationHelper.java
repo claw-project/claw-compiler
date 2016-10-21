@@ -246,7 +246,7 @@ public class TransformationHelper {
 
       // Update array references
       List<Xnode> refs =
-          XnodeUtil.getAllArrayReferences(fctDef.getBody(),
+          XnodeUtil.getAllArrayReferences(fctDef.body(),
               reshapeInfo.getArrayName());
 
       for(Xnode ref : refs) {

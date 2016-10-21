@@ -315,7 +315,7 @@ public class AcceleratorHelper {
 
       if(calledFctDef != null) {
         addPragmaBefore(xcodeml, gen.getRoutineDirective() + " " +
-            gen.getSequentialClause(), calledFctDef.getBody().child(0));
+            gen.getSequentialClause(), calledFctDef.body().child(0));
         if(XmOption.isDebugOutput()) {
           System.out.println("OpenACC: generated routine seq directive for " +
               fctName + " subroutine/function.");

@@ -194,7 +194,7 @@ public class Xnode {
    *
    * @return The body element if found. Null otherwise.
    */
-  public Xnode getBody() {
+  public Xnode body() {
     return matchExactNode(Xcode.BODY);
   }
 

@@ -63,7 +63,7 @@ public class LoopFusion extends Transformation {
       _loops[0] = loop;
       for(int i = 1; i < _claw.getCollapseValue(); ++i) {
         _loops[i] = XnodeUtil.find(Xcode.FDOSTATEMENT,
-            _loops[i - 1].getBody(), false);
+            _loops[i - 1].body(), false);
       }
     } else {
       _loops = new Xnode[]{loop};
@@ -98,7 +98,7 @@ public class LoopFusion extends Transformation {
               XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
         } else { // Find the next i loops
           _loops[i] = XnodeUtil.find(Xcode.FDOSTATEMENT,
-              _loops[i - 1].getBody(), false);
+              _loops[i - 1].body(), false);
         }
         if(_loops[i] == null) {
           xcodeml.addError("Cannot matchSeq loop at depth " + i +
@@ -159,11 +159,11 @@ public class LoopFusion extends Transformation {
             _claw.getPragma().getLineNo()
         );
       }
-      XnodeUtil.appendBody(_loops[innerLoopIdx].getBody(),
-          loopFusionUnit.getLoop(innerLoopIdx).getBody());
+      XnodeUtil.appendBody(_loops[innerLoopIdx].body(),
+          loopFusionUnit.getLoop(innerLoopIdx).body());
     } else {
-      XnodeUtil.appendBody(_loops[0].getBody(),
-          loopFusionUnit.getLoop(0).getBody());
+      XnodeUtil.appendBody(_loops[0].body(),
+          loopFusionUnit.getLoop(0).body());
     }
     loopFusionUnit.finalizeTransformation();
   }

@@ -190,7 +190,7 @@ public class LoopInterchange extends Transformation {
     }
 
     _loopLevel1 = XnodeUtil.find(Xcode.FDOSTATEMENT,
-        _loopLevel0.getBody(), false);
+        _loopLevel0.body(), false);
     if(_loopLevel1 == null) {
       return false;
     }
@@ -202,7 +202,7 @@ public class LoopInterchange extends Transformation {
       }
 
       _loopLevel2 = XnodeUtil.find(Xcode.FDOSTATEMENT,
-          _loopLevel1.getBody(), false);
+          _loopLevel1.body(), false);
       if(_loopLevel2 == null) {
         return false;
       }

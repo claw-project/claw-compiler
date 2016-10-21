@@ -198,7 +198,7 @@ public class Kcaching extends Transformation {
             matchExactNode(Xcode.LOWERBOUND).child(0), true);
 
         initIfStmt.matchExactNode(Xcode.CONDITION).appendToChildren(logEq, false);
-        _doStmt.getBody().insert(initIfStmt, false);
+        _doStmt.body().insert(initIfStmt, false);
         ct.storeElement(_doStmt, initIfStmt);
       }
 
@@ -206,7 +206,7 @@ public class Kcaching extends Transformation {
       initAssignment.appendToChildren(cacheVar, true); // set rhs
       initAssignment.appendToChildren(arrayRef, true); // set lhs
       // Add assignment in the "then" body element
-      initIfStmt.matchExactNode(Xcode.THEN).getBody().
+      initIfStmt.matchExactNode(Xcode.THEN).body().
           appendToChildren(initAssignment, false);
     }
   }
@@ -369,7 +369,7 @@ public class Kcaching extends Transformation {
     }
 
     List<Xnode> arrayRefs =
-        XnodeUtil.getAllArrayReferencesByOffsets(_doStmt.getBody(),
+        XnodeUtil.getAllArrayReferencesByOffsets(_doStmt.body(),
             var, offsets);
     if(arrayRefs.size() == 0) {
       throw new IllegalTransformationException("Variable " + var +

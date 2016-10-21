@@ -894,8 +894,8 @@ public class XnodeUtil {
    */
   public static void copyBody(Xnode from, Xnode to) {
     Node copiedBody = from.cloneNode();
-    if(to.getBody() != null) {
-      to.getBody().delete();
+    if(to.body() != null) {
+      to.body().delete();
     }
     to.getElement().appendChild(copiedBody);
   }

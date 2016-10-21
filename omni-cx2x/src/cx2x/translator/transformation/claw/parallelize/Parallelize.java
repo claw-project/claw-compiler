@@ -298,12 +298,12 @@ public class Parallelize extends Transformation {
     if(_claw.hasOverDataClause()) {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         TransformationHelper.adaptArrayReferences(
-            _claw.getOverDataClauseValues().get(i), i, _fctDef.getBody(),
+            _claw.getOverDataClauseValues().get(i), i, _fctDef.body(),
             _promotions, _beforeCrt, _inMiddle, _afterCrt, xcodeml);
       }
     } else {
       TransformationHelper.adaptArrayReferences(_arrayFieldsInOut, DEFAULT_OVER,
-          _fctDef.getBody(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
+          _fctDef.body(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
           xcodeml);
     }
 
@@ -346,15 +346,15 @@ public class Parallelize extends Transformation {
     /* Subroutine/function can have a contains section with inner subtourines or
      * functions. The newly created (nested) do statements should stop before
      * this contains section if it exists. */
-    Xnode contains = _fctDef.getBody().matchSeq(Xcode.FCONTAINSSTATEMENT);
+    Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
     if(contains != null) {
-      XnodeUtil.shiftStatementsInBody(_fctDef.getBody().child(0),
-          contains, loops.getInnerStatement().getBody());
+      XnodeUtil.shiftStatementsInBody(_fctDef.body().child(0),
+          contains, loops.getInnerStatement().body());
       XnodeUtil.insertBefore(contains, loops.getOuterStatement());
     } else {
       // No contains section, all the body is copied to the do statements.
-      XnodeUtil.copyBody(_fctDef.getBody(), loops.getInnerStatement());
-      _fctDef.getBody().delete();
+      XnodeUtil.copyBody(_fctDef.body(), loops.getInnerStatement());
+      _fctDef.body().delete();
       Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
       newBody.appendToChildren(loops.getOuterStatement(), false);
       _fctDef.appendToChildren(newBody, false);
@@ -392,7 +392,7 @@ public class Parallelize extends Transformation {
      * Use the first over clause to do it. */
     List<ClawDimension> order = getOrderedDimensionsFromDefinition(0);
     List<Xnode> assignStatements =
-        XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
+        XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.body());
 
     for(Xnode assign : assignStatements) {
       Xnode lhs = assign.child(Xnode.LHS);
@@ -404,7 +404,7 @@ public class Parallelize extends Transformation {
       {
         loops = new NestedDoStatement(order, xcodeml);
         XnodeUtil.insertAfter(assign, loops.getOuterStatement());
-        loops.getInnerStatement().getBody().appendToChildren(assign, true);
+        loops.getInnerStatement().body().appendToChildren(assign, true);
         assign.delete();
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
           && _scalarFields.contains(lhsName))
@@ -436,12 +436,12 @@ public class Parallelize extends Transformation {
           } else {
             TransformationHelper.adaptArrayReferences(
                 Collections.singletonList(lhsName), DEFAULT_OVER,
-                _fctDef.getBody(), _promotions, _beforeCrt, _inMiddle,
+                _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
                 _afterCrt, xcodeml);
           }
           loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
-          loops.getInnerStatement().getBody().appendToChildren(assign, true);
+          loops.getInnerStatement().body().appendToChildren(assign, true);
           assign.delete();
         }
       }
@@ -455,7 +455,7 @@ public class Parallelize extends Transformation {
 
     // Generate the parallel region
     AcceleratorHelper.generateParallelClause(_claw, xcodeml,
-        _fctDef.getBody().firstChild(), _fctDef.getBody().lastChild());
+        _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 
   /**
@@ -587,7 +587,7 @@ public class Parallelize extends Transformation {
                                                int index)
   {
     for(String id : ids) {
-      List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.getBody(), id);
+      List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.body(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
       XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
