@@ -192,22 +192,22 @@ public class Kcaching extends Transformation {
         Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
         // Set lhs of equality
-        logEq.appendToChildren(_doStmt.matchExactNode(Xcode.VAR), true);
+        logEq.append(_doStmt.matchExactNode(Xcode.VAR), true);
         // Set rhs of equality
-        logEq.appendToChildren(_doStmt.matchExactNode(Xcode.INDEXRANGE).
+        logEq.append(_doStmt.matchExactNode(Xcode.INDEXRANGE).
             matchExactNode(Xcode.LOWERBOUND).child(0), true);
 
-        initIfStmt.matchExactNode(Xcode.CONDITION).appendToChildren(logEq, false);
+        initIfStmt.matchExactNode(Xcode.CONDITION).append(logEq, false);
         _doStmt.body().insert(initIfStmt, false);
         ct.storeElement(_doStmt, initIfStmt);
       }
 
       Xnode initAssignment = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
-      initAssignment.appendToChildren(cacheVar, true); // set rhs
-      initAssignment.appendToChildren(arrayRef, true); // set lhs
+      initAssignment.append(cacheVar, true); // set rhs
+      initAssignment.append(arrayRef, true); // set lhs
       // Add assignment in the "then" body element
       initIfStmt.matchExactNode(Xcode.THEN).body().
-          appendToChildren(initAssignment, false);
+          append(initAssignment, false);
     }
   }
 
@@ -334,8 +334,8 @@ public class Kcaching extends Transformation {
 
     if(stmt == null) {
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
-      cache1.appendToChildren(cacheVar, false);
-      cache1.appendToChildren(rhs, true);
+      cache1.append(cacheVar, false);
+      cache1.append(rhs, true);
       XnodeUtil.insertAfter(_claw.getPragma(), cache1);
     } else {
       /*
@@ -346,11 +346,11 @@ public class Kcaching extends Transformation {
        * A = cache_A
        */
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
-      cache1.appendToChildren(cacheVar, false);
-      cache1.appendToChildren(stmt.child(1), true);
+      cache1.append(cacheVar, false);
+      cache1.append(stmt.child(1), true);
       Xnode cache2 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
-      cache2.appendToChildren(stmt.child(0), true);
-      cache2.appendToChildren(cacheVar, true);
+      cache2.append(stmt.child(0), true);
+      cache2.append(cacheVar, true);
       XnodeUtil.insertAfter(stmt, cache1);
       XnodeUtil.insertAfter(cache1, cache2);
 

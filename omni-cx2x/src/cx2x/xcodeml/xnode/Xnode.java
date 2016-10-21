@@ -199,55 +199,6 @@ public class Xnode {
   }
 
   /**
-   * Match first child with the given opcode.
-   *
-   * @param opcode Code of the element to be found.
-   * @return Matched element. Null if nothing matches.
-   */
-  public Xnode matchExactNode(Xcode opcode) {
-    List<Xnode> children = children();
-    for(Xnode child : children) {
-      if(child.opcode() == opcode) {
-        return child;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Match any first child with opcode in the given list.
-   *
-   * @param opcodes List of opcodes to be searched.
-   * @return Matched element. Null if nothing matches.
-   */
-  public Xnode matchAny(List<Xcode> opcodes) {
-    List<Xnode> children = children();
-    for(Xnode child : children) {
-      if(opcodes.contains(child.opcode())) {
-        return child;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Match a specific element following the given sequences of opcodes.
-   *
-   * @param opcodes Sequence of opcode to reach the element.
-   * @return Matched elements. Null if nothing matches.
-   */
-  public Xnode matchSeq(Xcode... opcodes) {
-    Xnode tmp = this;
-    for(Xcode opcode : opcodes) {
-      tmp = tmp.matchExactNode(opcode);
-      if(tmp == null) {
-        return null;
-      }
-    }
-    return tmp;
-  }
-
-  /**
    * Get child at position.
    *
    * @param pos Position of the child.
@@ -332,7 +283,7 @@ public class Xnode {
    * @param clone If true, the element is cloned before being appended. If
    *              false, the element is directly appended.
    */
-  public void appendToChildren(Xnode node, boolean clone) {
+  public void append(Xnode node, boolean clone) {
     if(node != null) {
       if(clone) {
         _baseElement.appendChild(node.cloneNode());
@@ -415,4 +366,52 @@ public class Xnode {
     setAttribute(Xattr.FILE, value);
   }
 
+  /**
+   * Match first child with the given opcode.
+   *
+   * @param opcode Code of the element to be found.
+   * @return Matched element. Null if nothing matches.
+   */
+  public Xnode matchExactNode(Xcode opcode) {
+    List<Xnode> children = children();
+    for(Xnode child : children) {
+      if(child.opcode() == opcode) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Match any first child with opcode in the given list.
+   *
+   * @param opcodes List of opcodes to be searched.
+   * @return Matched element. Null if nothing matches.
+   */
+  public Xnode matchAny(List<Xcode> opcodes) {
+    List<Xnode> children = children();
+    for(Xnode child : children) {
+      if(opcodes.contains(child.opcode())) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Match a specific element following the given sequences of opcodes.
+   *
+   * @param opcodes Sequence of opcode to reach the element.
+   * @return Matched elements. Null if nothing matches.
+   */
+  public Xnode matchSeq(Xcode... opcodes) {
+    Xnode tmp = this;
+    for(Xcode opcode : opcodes) {
+      tmp = tmp.matchExactNode(opcode);
+      if(tmp == null) {
+        return null;
+      }
+    }
+    return tmp;
+  }
 }

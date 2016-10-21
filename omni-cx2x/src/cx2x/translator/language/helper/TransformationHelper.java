@@ -655,13 +655,13 @@ public class TransformationHelper {
           varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           XnodeUtil.insertAfter(ref, arrayRef);
-          arrayRef.appendToChildren(varRef, false);
-          varRef.appendToChildren(ref, false);
+          arrayRef.append(varRef, false);
+          varRef.append(ref, false);
           for(Xnode ai : beforeCrt.get(index)) {
-            arrayRef.appendToChildren(ai, true);
+            arrayRef.append(ai, true);
           }
           for(Xnode ai : afterCrt.get(index)) {
-            arrayRef.appendToChildren(ai, true);
+            arrayRef.append(ai, true);
           }
         }
       } else {
@@ -673,7 +673,7 @@ public class TransformationHelper {
               XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneObject());
             }
             for(Xnode ai : afterCrt.get(index)) {
-              ref.appendToChildren(ai, true);
+              ref.append(ai, true);
             }
           } else {
             Xnode hook =

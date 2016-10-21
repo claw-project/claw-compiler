@@ -356,8 +356,8 @@ public class Parallelize extends Transformation {
       XnodeUtil.copyBody(_fctDef.body(), loops.getInnerStatement());
       _fctDef.body().delete();
       Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-      newBody.appendToChildren(loops.getOuterStatement(), false);
-      _fctDef.appendToChildren(newBody, false);
+      newBody.append(loops.getOuterStatement(), false);
+      _fctDef.append(newBody, false);
     }
 
     // Generate the data region
@@ -404,7 +404,7 @@ public class Parallelize extends Transformation {
       {
         loops = new NestedDoStatement(order, xcodeml);
         XnodeUtil.insertAfter(assign, loops.getOuterStatement());
-        loops.getInnerStatement().body().appendToChildren(assign, true);
+        loops.getInnerStatement().body().append(assign, true);
         assign.delete();
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
           && _scalarFields.contains(lhsName))
@@ -441,7 +441,7 @@ public class Parallelize extends Transformation {
           }
           loops = new NestedDoStatement(order, xcodeml);
           XnodeUtil.insertAfter(assign, loops.getOuterStatement());
-          loops.getInnerStatement().body().appendToChildren(assign, true);
+          loops.getInnerStatement().body().append(assign, true);
           assign.delete();
         }
       }
@@ -599,7 +599,7 @@ public class Parallelize extends Transformation {
           XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneObject());
         }
         for(Xnode ai : _afterCrt.get(index)) {
-          ref.appendToChildren(ai, true);
+          ref.append(ai, true);
         }
 
         XnodeUtil.insertAfter(var, ref);

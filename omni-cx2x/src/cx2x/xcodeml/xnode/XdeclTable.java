@@ -93,7 +93,7 @@ public class XdeclTable extends Xnode {
   public void replace(Xdecl decl, String name) {
     Xdecl oldDecl = _table.get(name);
     if(oldDecl == null) {
-      appendToChildren(decl, false);
+      append(decl, false);
     } else {
       XnodeUtil.insertAfter(oldDecl, decl);
       oldDecl.delete();

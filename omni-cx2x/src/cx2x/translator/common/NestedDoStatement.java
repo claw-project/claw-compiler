@@ -39,7 +39,7 @@ public class NestedDoStatement {
       Xnode doSt = XnodeUtil.createDoStmt(xcodeml, induction, range);
       if(_statements.size() != 0) {
         _statements.get(_statements.size() - 1).body().
-            appendToChildren(doSt, false);
+            append(doSt, false);
       }
       _statements.add(doSt);
     }

@@ -446,7 +446,7 @@ public class ParallelizeForward extends Transformation {
       // Add variable in the function call before the optional parameters
       Xnode arg = XnodeUtil.createNamedValue(var, xcodeml);
       Xnode namedValVar = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
-      arg.appendToChildren(namedValVar, false);
+      arg.append(namedValVar, false);
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       Xnode hook = arguments.child((i - 1) - argOffset);
       XnodeUtil.insertAfter(hook, arg);
@@ -622,7 +622,7 @@ public class ParallelizeForward extends Transformation {
       if(lhs.opcode() == Xcode.FARRAYREF) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
           Xnode indexRange = XnodeUtil.createEmptyAssumedShaped(xcodeml);
-          lhs.appendToChildren(indexRange, false);
+          lhs.append(indexRange, false);
         }
       } else if(lhs.opcode() == Xcode.VAR) {
         // TODO avoid array var without colon notation
@@ -726,7 +726,7 @@ public class ParallelizeForward extends Transformation {
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
           doStmt.getInnerStatement().body().
-              appendToChildren(assignment, false);
+              append(assignment, false);
 
           PromotionInfo promotionInfo;
           if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {

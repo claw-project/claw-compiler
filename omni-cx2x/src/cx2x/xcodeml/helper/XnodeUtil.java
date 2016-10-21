@@ -1440,8 +1440,8 @@ public class XnodeUtil {
     fctName.setValue(name);
     fctName.setAttribute(Xattr.TYPE, nameType);
     Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
-    fctCall.appendToChildren(fctName, false);
-    fctCall.appendToChildren(args, false);
+    fctCall.append(fctName, false);
+    fctCall.append(args, false);
     return fctCall;
   }
 
@@ -1461,8 +1461,8 @@ public class XnodeUtil {
     ref.setAttribute(Xattr.TYPE, type.getRef());
     Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
     varRef.setAttribute(Xattr.TYPE, type.getType());
-    varRef.appendToChildren(var, false);
-    ref.appendToChildren(varRef, false);
+    varRef.append(var, false);
+    ref.append(varRef, false);
     return ref;
   }
 
@@ -1482,7 +1482,7 @@ public class XnodeUtil {
     Xnode id = new Xnode(Xcode.ID, xcodeml);
     Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
     internalName.setValue(nameValue);
-    id.appendToChildren(internalName, false);
+    id.append(internalName, false);
     id.setAttribute(Xattr.TYPE, type);
     id.setAttribute(Xattr.SCLASS, sclass);
     return new Xid(id.getElement());
@@ -1528,7 +1528,7 @@ public class XnodeUtil {
     Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
     internalName.setValue(nameValue);
     internalName.setAttribute(Xattr.TYPE, nameType);
-    varD.appendToChildren(internalName, false);
+    varD.append(internalName, false);
     return new Xdecl(varD.getElement());
   }
 
@@ -1581,28 +1581,28 @@ public class XnodeUtil {
     Xnode indexRange = new Xnode(Xcode.INDEXRANGE, xcodeml);
     Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
     Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
-    indexRange.appendToChildren(lower, false);
-    indexRange.appendToChildren(upper, false);
+    indexRange.append(lower, false);
+    indexRange.append(upper, false);
 
     // Lower bound
     Xnode lowerBound = new Xnode(Xcode.FINTCONSTANT, xcodeml);
     lowerBound.setValue(String.valueOf(startIndex));
-    lower.appendToChildren(lowerBound, false);
+    lower.append(lowerBound, false);
 
     // Upper bound
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
-    upper.appendToChildren(fctCall, false);
+    upper.append(fctCall, false);
     fctCall.setAttribute(Xattr.IS_INTRINSIC, Xname.TRUE);
     fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
     Xnode name = new Xnode(Xcode.NAME, xcodeml);
     name.setValue(Xname.INTRINSIC_SIZE);
-    fctCall.appendToChildren(name, false);
+    fctCall.append(name, false);
     Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
-    fctCall.appendToChildren(args, false);
-    args.appendToChildren(arrayVar, true);
+    fctCall.append(args, false);
+    args.append(arrayVar, true);
     Xnode dim = new Xnode(Xcode.FINTCONSTANT, xcodeml);
     dim.setValue(String.valueOf(dimension));
-    args.appendToChildren(dim, false);
+    args.append(dim, false);
     return indexRange;
   }
 
@@ -1618,9 +1618,9 @@ public class XnodeUtil {
     Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
     Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
     Xnode thenBody = new Xnode(Xcode.BODY, xcodeml);
-    thenBlock.appendToChildren(thenBody, false);
-    root.appendToChildren(cond, false);
-    root.appendToChildren(thenBlock, false);
+    thenBlock.append(thenBody, false);
+    root.append(cond, false);
+    root.append(thenBlock, false);
     return root;
   }
 
@@ -1637,10 +1637,10 @@ public class XnodeUtil {
                                    Xnode indexRange)
   {
     Xnode root = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
-    root.appendToChildren(inductionVar, false);
-    root.appendToChildren(indexRange, false);
+    root.append(inductionVar, false);
+    root.append(indexRange, false);
     Xnode body = new Xnode(Xcode.BODY, xcodeml);
-    root.appendToChildren(body, false);
+    root.append(body, false);
     return root;
   }
 
@@ -1892,7 +1892,7 @@ public class XnodeUtil {
 
       for(int i = 0; i < base.getDimensions(); ++i) {
         Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodemlDst);
-        newType.appendToChildren(newDim, false);
+        newType.append(newDim, false);
 
         Xnode baseDim = base.getDimensions(i);
         Xnode lowerBound = baseDim.matchSeq(Xcode.LOWERBOUND);
@@ -1901,12 +1901,12 @@ public class XnodeUtil {
         if(lowerBound != null) {
           Xnode newLowerBound =
               duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
-          newDim.appendToChildren(newLowerBound, false);
+          newDim.append(newLowerBound, false);
         }
         if(upperBound != null) {
           Xnode newUpperBound =
               duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
-          newDim.appendToChildren(newUpperBound, false);
+          newDim.append(newUpperBound, false);
         }
         newType.addDimension(newDim, XbasicType.APPEND);
       }
@@ -1950,16 +1950,16 @@ public class XnodeUtil {
     if(boundChild.opcode() == Xcode.FINTCONSTANT
         || boundChild.opcode() == Xcode.VAR)
     {
-      bound.appendToChildren(
+      bound.append(
           importConstOrVar(boundChild, xcodemlSrc, xcodemlDst), false);
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
       Xnode lhs = boundChild.child(0);
       Xnode rhs = boundChild.child(1);
       Xnode plusExpr = new Xnode(Xcode.PLUSEXPR, xcodemlDst);
-      bound.appendToChildren(plusExpr, false);
-      plusExpr.appendToChildren(
+      bound.append(plusExpr, false);
+      plusExpr.append(
           importConstOrVar(lhs, xcodemlSrc, xcodemlDst), false);
-      plusExpr.appendToChildren(
+      plusExpr.append(
           importConstOrVar(rhs, xcodemlSrc, xcodemlDst), false);
     } else {
       throw new IllegalTransformationException(

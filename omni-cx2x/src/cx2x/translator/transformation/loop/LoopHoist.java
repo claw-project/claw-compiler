@@ -216,7 +216,7 @@ public class LoopHoist extends BlockTransformation {
     LoopHoistDoStmtGroup hoisted = _doGroup.get(0).cloneObjectAndElement();
     hoisted.getDoStmts()[_nestedLevel - 1].body().delete();
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-    hoisted.getDoStmts()[_nestedLevel - 1].appendToChildren(newBody, false);
+    hoisted.getDoStmts()[_nestedLevel - 1].append(newBody, false);
     XnodeUtil.shiftStatementsInBody(_startClaw.getPragma(),
         _endClaw.getPragma(), newBody);
     XnodeUtil.insertAfter(_startClaw.getPragma(), hoisted.getDoStmts()[0]);
@@ -250,18 +250,18 @@ public class LoopHoist extends BlockTransformation {
     XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
     Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
     Xnode inductionVar = XnodeUtil.find(Xcode.VAR, g.getDoStmts()[0], false);
-    cond.appendToChildren(inductionVar, true);
-    cond.appendToChildren(g.getDoStmts()[0].matchExactNode(Xcode.INDEXRANGE).
+    cond.append(inductionVar, true);
+    cond.append(g.getDoStmts()[0].matchExactNode(Xcode.INDEXRANGE).
         matchExactNode(Xcode.LOWERBOUND).child(0), true
     );
-    ifStmt.appendToChildren(condition, false);
-    ifStmt.appendToChildren(thenBlock, false);
-    condition.appendToChildren(cond, false);
-    thenBlock.appendToChildren(g.getDoStmts()[nestedDepth - 1].body(), true);
+    ifStmt.append(condition, false);
+    ifStmt.append(thenBlock, false);
+    condition.append(cond, false);
+    thenBlock.append(g.getDoStmts()[nestedDepth - 1].body(), true);
     g.getDoStmts()[nestedDepth - 1].body().delete();
     Xnode body = new Xnode(Xcode.BODY, xcodeml);
-    body.appendToChildren(ifStmt, false);
-    g.getDoStmts()[nestedDepth - 1].appendToChildren(body, false);
+    body.append(ifStmt, false);
+    g.getDoStmts()[nestedDepth - 1].append(body, false);
   }
 
 

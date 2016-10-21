@@ -79,7 +79,7 @@ public class XsymbolTable extends Xnode {
    *              true the element is cloned.
    */
   public void add(Xid id, boolean clone) {
-    this.appendToChildren(id, clone);
+    this.append(id, clone);
     _table.put(id.getName(), id);
   }
 

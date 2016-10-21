@@ -100,7 +100,7 @@ public class ArrayToFctCall extends Transformation {
     for(String arg : _claw.getFctParams()) {
       Xnode var =
           XnodeUtil.createVar(Xname.TYPE_F_INT, arg, Xscope.LOCAL, xcodeml);
-      args.appendToChildren(var, false);
+      args.append(var, false);
     }
 
     List<Xnode> refs =

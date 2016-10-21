@@ -317,8 +317,8 @@ public class LoopExtraction extends Transformation {
           Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
           varRef.setAttribute(Xattr.TYPE, argument.getAttribute(Xattr.TYPE));
 
-          varRef.appendToChildren(argument, true);
-          newArg.appendToChildren(varRef, false);
+          varRef.append(argument, true);
+          newArg.append(varRef, false);
 
           //  create arrayIndex
           for(ClawMappingVar mappingVar : mapping.getMappingVariables()) {
@@ -333,8 +333,8 @@ public class LoopExtraction extends Transformation {
             newMappingVar.setAttribute(Xattr.TYPE,
                 mappingVarDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
             newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).getValue());
-            arrayIndex.appendToChildren(newMappingVar, false);
-            newArg.appendToChildren(arrayIndex, false);
+            arrayIndex.append(newMappingVar, false);
+            newArg.append(arrayIndex, false);
           }
 
           XnodeUtil.insertAfter(argument, newArg);
@@ -358,7 +358,7 @@ public class LoopExtraction extends Transformation {
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
           Xdecl newVarDecl =
               new Xdecl(new Xnode(Xcode.VARDECL, xcodeml).getElement());
-          newVarDecl.appendToChildren(tempName, false);
+          newVarDecl.append(tempName, false);
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
         } else {

@@ -147,16 +147,16 @@ public class ClawDimension {
     Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
     Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
     Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
-    range.appendToChildren(lower, false);
-    range.appendToChildren(upper, false);
+    range.append(lower, false);
+    range.append(upper, false);
 
     if(withStep) {
       Xnode step = new Xnode(Xcode.STEP, xcodeml);
       Xnode stepValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
       stepValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      step.appendToChildren(stepValue, false);
+      step.append(stepValue, false);
       stepValue.setValue(Xname.DEFAULT_STEP_VALUE);
-      range.appendToChildren(step, false);
+      range.append(step, false);
     }
 
     // lower bound
@@ -169,12 +169,12 @@ public class ClawDimension {
       }
       Xnode lowerBoundValue = XnodeUtil.createVar(_lowerBoundType,
           _lowerBoundId, Xscope.LOCAL, xcodeml);
-      lower.appendToChildren(lowerBoundValue, false);
+      lower.append(lowerBoundValue, false);
     } else {
       Xnode lowerBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
       lowerBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       lowerBoundValue.setValue(String.valueOf(_lowerBound));
-      lower.appendToChildren(lowerBoundValue, false);
+      lower.append(lowerBoundValue, false);
     }
 
     // upper bound
@@ -187,12 +187,12 @@ public class ClawDimension {
       }
       Xnode upperBoundValue = XnodeUtil.createVar(_upperBoundType,
           _upperBoundId, Xscope.LOCAL, xcodeml);
-      upper.appendToChildren(upperBoundValue, false);
+      upper.append(upperBoundValue, false);
     } else {
       Xnode upperBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
       upperBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       upperBoundValue.setValue(String.valueOf(_upperBound));
-      lower.appendToChildren(upperBoundValue, false);
+      lower.append(upperBoundValue, false);
     }
     return range;
   }
@@ -210,7 +210,7 @@ public class ClawDimension {
     Xnode aIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
     Xnode var = XnodeUtil.createVar(Xname.TYPE_F_INT, _identifier,
         Xscope.LOCAL, xcodeml);
-    aIdx.appendToChildren(var, false);
+    aIdx.append(var, false);
     return aIdx;
   }
 
