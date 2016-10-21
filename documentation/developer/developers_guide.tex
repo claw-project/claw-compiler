@@ -234,6 +234,7 @@ Listing \ref{lst:antlr} is a minimalist ANTLR example that support only two dire
 
 In this grammar, there are two important sections, the parser and the lexer sections. The lexer section defined what will be recognized as a token. Here we defined the directives, the clauses but also more complex construct such as the \lstinline|IDENTIFIER| on line 28. It described the possible element to compose an identifier. This \lstinline|IDENTIFIER| can then be used later in the parser rules. 
 The parser rules are defining the actual grammar of the language. In the case of this small example, the grammar says that the directive string must begins with \lstinline|claw| and then be followed by \lstinline|acc| or \lstinline|omp|. The code in \lstinline|{}| is java code that is triggered when the grammar rule is activated. In the example, it sets a value of the object returned after the analysis.
+The \lstinline|@init{}| section allows to execute some Java code before triggering the actual parse. The \lstinline|@header{}| allows to insert Java code before the parser class.
 
 \chapter{Transformation}
 A transformation class is the the basic representation of a manipulation of the \gls{ast} triggered by a directive. Each directive is implemented in its own transformation class. If the directive can be used as a block directive (with a \lstinline|!$end <directive>| directive), the class must inherits from the \lstinline!BlockTransformation!. Otherwise, it can inherits from the baisc \lstinline!Transformation! class.
