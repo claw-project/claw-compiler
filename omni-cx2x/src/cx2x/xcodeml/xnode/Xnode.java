@@ -266,7 +266,7 @@ public class Xnode {
    *
    * @return First child or null if no child exists.
    */
-  public Xnode getFirstChild() {
+  public Xnode firstChild() {
     List<Xnode> children = this.getChildren();
     return children.size() == 0 ? null : children.get(0);
   }
@@ -276,7 +276,7 @@ public class Xnode {
    *
    * @return Last child or null if no child exists.
    */
-  public Xnode getLastChild() {
+  public Xnode lastChild() {
     List<Xnode> children = this.getChildren();
     return children.size() == 0 ? null : children.get(children.size() - 1);
   }
