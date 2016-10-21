@@ -222,6 +222,13 @@ The \xcodeml to \xcodeml translator is the intelligence of the \clawfcomp. It un
 
 
 \chapter{Transformation}
+A transformation class is the the basic representation of a manipulation of the \gls{ast} triggered by a directive. 
+
+\section{Type of transformation}
+Transformations are divided into two distinct group. The independent and the dependent transformation. The first one, as its name implies, is performed independently of any other transformation. The dependent transformation, in the other hand, is applied only when it can be combined with another dependent transformation of the same kind in its group. Most of the transformations are independent. The best example for the dependent transformation is the loop fusion transformation. As shown in Listing \ref{lst:trans_dep}, there are two CLAW directive (line 4 and 9). These directives will trigger two dependent loop fusion transformations. The transformation engine will then analyze if the first one can be transformed with the second one. If so, the transformation will happen. Otherwise, the transformations are ignored.
+
+\lstinputlisting[label=lst:trans_dep, caption=Loop fusion example, language=Fortran]{code/trans_dependent.f90}
+
 \section{Transformation application order}
 
 \section{Add a transformation}
