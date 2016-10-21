@@ -24,8 +24,13 @@
 \setcounter{secnumdepth}{3}
 
 
-\def\clawfc{CLAW FORTRAN Compiler}
+\def\clawfcomp{CLAW FORTRAN Compiler}
 \def\omni{OMNI Compiler Infrastructure}
+\def\ffront{\lstinline!F_Front!}
+\def\fback{\lstinline!F_Back!}
+\def\fpp{\lstinline!FPP!}
+\def\clawfc{\lstinline!clawfc!}
+\def\cx2x{\lstinline!CX2X!}
 
 \makeglossaries
 
@@ -172,7 +177,7 @@ Version 0.1, Last updated \today
 
 \chapter{Architecture}
 \section{OMNI Compiler}
-The \clawfc is based on the \omni. 
+The \clawfcomp is based on the \omni. 
 
 \section{XcodeML/F}
 XcodeML/F is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
@@ -189,9 +194,18 @@ Listing \ref{fortran1} is a simple FORTRAN program. Its XcodeML/F \gls{ir} will 
 
 \lstinputlisting[label=xcodeml1, caption=XcodeML/F IR, language=xml]{code/basic_fortran.xml}
 
-\section{\clawfc}
+\section{\clawfcomp}
 
-The \clawfc is the program handed to the end-user. It performs all the needed step to have a source-to-source translation of a FORTRAN program. As shown in Figure \ref{fig:clawfc_main_workflow}, it is composed by various programs under the hood. 
+The \clawfc is the program handed to the end-user. It performs all the needed step to have a source-to-source translation of a FORTRAN program. As shown in Figure \ref{fig:clawfc_main_workflow}, it is composed by various programs under-the-hood. The complete workflow is devided as follows: 
+
+\begin{enumerate}
+\item \textbf{FPP}: The FORTRAN source code is preprocessed by a standard FORTRAN preprocessor. Typically the one provided by the default compiler. 
+\item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed by the OMNI Compiler FORTRAN Front-end to produce the XcodeML/F \gls{ir}.
+\item \textbf{CX2X}: The XcodeML/F is manipulated according to the rules of the CLAW directive language. The output is a valid XcodeML/F \gls{ir}.
+\item \textbf{F\_Back}: The XcodeML/F \gls{ir} is decompiled to produce the transformed FORTRAN code. 
+\end{enumerate}
+
+\ffront{}, \fback{} are part of the \omni{}, \fpp{} is provided by the installed FORTRAN compiler. The XcodeML/F to XcodeML/F translator \cx2x{} is actively developed as part of the CLAW project.  
 
 \begin{figure}[!ht]
   \centering
@@ -200,7 +214,8 @@ The \clawfc is the program handed to the end-user. It performs all the needed st
   \label{fig:clawfc_main_workflow}
 \end{figure}
 
-\section{CLAW XcodeML to XcodeML translator}
+\section{CLAW XcodeML/F to XcodeML/F translator}
+
 
 
 \chapter{Transformation}
