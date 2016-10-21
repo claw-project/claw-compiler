@@ -233,15 +233,6 @@ public class Xnode {
   }
 
   /**
-   * Get the number of children node in the current node.
-   *
-   * @return Number of children.
-   */
-  public int size() {
-    return this.children().size();
-  }
-
-  /**
    * Delete the stored root element and all its children.
    */
   public void delete() {
