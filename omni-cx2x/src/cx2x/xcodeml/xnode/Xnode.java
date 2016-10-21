@@ -220,7 +220,7 @@ public class Xnode {
    * @param opcodes List of opcodes to be searched.
    * @return The found element. Null if nothing found.
    */
-  public Xnode findAny(List<Xcode> opcodes) {
+  public Xnode matchAny(List<Xcode> opcodes) {
     List<Xnode> children = getChildren();
     for(Xnode child : children) {
       if(opcodes.contains(child.opcode())) {
