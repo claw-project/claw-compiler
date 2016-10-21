@@ -893,7 +893,7 @@ public class XnodeUtil {
    * @param to   The destination of the copied body.
    */
   public static void copyBody(Xnode from, Xnode to) {
-    Node copiedBody = from.cloneNode();
+    Node copiedBody = from.cloneRawNode();
     if(to.body() != null) {
       to.body().delete();
     }

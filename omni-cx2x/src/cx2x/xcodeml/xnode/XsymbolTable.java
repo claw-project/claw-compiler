@@ -108,7 +108,7 @@ public class XsymbolTable extends Xnode {
 
   @Override
   public XsymbolTable cloneObject() {
-    Element clone = (Element) cloneNode();
+    Element clone = (Element) cloneRawNode();
     return new XsymbolTable(clone);
   }
 }

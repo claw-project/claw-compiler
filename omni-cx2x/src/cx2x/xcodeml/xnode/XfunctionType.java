@@ -135,7 +135,7 @@ public class XfunctionType extends Xtype {
    * @return A new XfunctionType that is a clone of the current one.
    */
   public XfunctionType cloneObject() {
-    Node clone = cloneNode();
+    Node clone = cloneRawNode();
     return new XfunctionType((Element) clone);
   }
 

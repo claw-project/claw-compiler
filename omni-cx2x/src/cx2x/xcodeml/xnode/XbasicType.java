@@ -404,7 +404,7 @@ public class XbasicType extends Xtype {
 
   @Override
   public XbasicType cloneObject() {
-    Element element = (Element) cloneNode();
+    Element element = (Element) cloneRawNode();
     return new XbasicType(element);
   }
 }

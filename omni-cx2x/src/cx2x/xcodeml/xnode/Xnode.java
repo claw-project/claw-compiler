@@ -272,7 +272,7 @@ public class Xnode {
    *
    * @return A node representing the root element of the clone.
    */
-  public Node cloneNode() {
+  public Node cloneRawNode() {
     return _baseElement.cloneNode(true);
   }
 
@@ -286,7 +286,7 @@ public class Xnode {
   public void append(Xnode node, boolean clone) {
     if(node != null) {
       if(clone) {
-        _baseElement.appendChild(node.cloneNode());
+        _baseElement.appendChild(node.cloneRawNode());
       } else {
         _baseElement.appendChild(node.getElement());
       }
@@ -302,7 +302,7 @@ public class Xnode {
   public void insert(Xnode node, boolean clone) {
     if(node != null) {
       NodeList children = _baseElement.getChildNodes();
-      Node toInsert = clone ? node.cloneNode() : node.getElement();
+      Node toInsert = clone ? node.cloneRawNode() : node.getElement();
       if(children.getLength() == 0) {
         _baseElement.appendChild(toInsert);
       } else {
@@ -326,7 +326,7 @@ public class Xnode {
    * @return A copy of the current element.
    */
   public Xnode cloneObject() {
-    Node clone = cloneNode();
+    Node clone = cloneRawNode();
     return new Xnode((Element) clone);
   }
 

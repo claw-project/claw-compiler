@@ -106,7 +106,7 @@ public class XdeclTable extends Xnode {
    * @param decl The new declaration object.
    */
   public void add(Xdecl decl) {
-    _baseElement.appendChild(decl.cloneNode());
+    _baseElement.appendChild(decl.cloneRawNode());
     _table.put(decl.matchSeq(Xcode.NAME).getValue(), decl);
   }
 
@@ -229,7 +229,7 @@ public class XdeclTable extends Xnode {
 
   @Override
   public XdeclTable cloneObject() {
-    Element clone = (Element) cloneNode();
+    Element clone = (Element) cloneRawNode();
     return new XdeclTable(clone);
   }
 }

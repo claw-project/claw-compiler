@@ -93,7 +93,7 @@ public class XtypeTable extends Xnode {
    * @param type The new type to be added.
    */
   public void add(Xtype type) {
-    _baseElement.appendChild(type.cloneNode());
+    _baseElement.appendChild(type.cloneRawNode());
     _table.put(type.getAttribute(Xattr.TYPE), type);
   }
 
@@ -223,7 +223,7 @@ public class XtypeTable extends Xnode {
 
   @Override
   public XtypeTable cloneObject() {
-    Element clone = (Element) cloneNode();
+    Element clone = (Element) cloneRawNode();
     return new XtypeTable(clone);
   }
 }
