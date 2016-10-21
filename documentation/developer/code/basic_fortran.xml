@@ -1,0 +1,83 @@
+<XcodeProgram source="basic_fortran.f90"
+              language="Fortran"
+              time="2016-10-21 15:25:40"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FbasicType type="R7fc66b5051e0" ref="Freal">
+      <kind>
+        <FintConstant type="Fint">8</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R7fc66b505380" ref="R7fc66b5051e0"/>
+    <FbasicType type="A7fc66b505450" ref="R7fc66b505380">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">10</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F7fc66b503f10" return_type="Fvoid" is_program="true"/>
+  </typeTable>
+  <globalSymbols>
+    <id type="F7fc66b503f10" sclass="ffunc">
+      <name>xcodeml_sample</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition lineno="1" file="basic_fortran.f90">
+      <name type="F7fc66b503f10">xcodeml_sample</name>
+      <symbols>
+        <id type="Fint" sclass="flocal">
+          <name>my_integer</name>
+        </id>
+        <id type="A7fc66b505450" sclass="flocal">
+          <name>my_double_precision_real_array</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="4" file="basic_fortran.f90">
+          <name type="Fint">my_integer</name>
+        </varDecl>
+        <varDecl lineno="5" file="basic_fortran.f90">
+          <name type="A7fc66b505450">my_double_precision_real_array</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FdoStatement lineno="7" file="basic_fortran.f90">
+          <Var type="Fint" scope="local">my_integer</Var>
+          <indexRange>
+            <lowerBound>
+              <FintConstant type="Fint">1</FintConstant>
+            </lowerBound>
+            <upperBound>
+              <FintConstant type="Fint">10</FintConstant>
+            </upperBound>
+            <step>
+              <FintConstant type="Fint">1</FintConstant>
+            </step>
+          </indexRange>
+          <body>
+            <FassignStatement lineno="8" file="basic_fortran.f90">
+              <FarrayRef type="R7fc66b505380">
+                <varRef type="A7fc66b505450">
+                  <Var type="A7fc66b505450" scope="local">my_double_precision_real_array</Var>
+                </varRef>
+                <arrayIndex>
+                  <Var type="Fint" scope="local">my_integer</Var>
+                </arrayIndex>
+              </FarrayRef>
+              <FpowerExpr type="Fint">
+                <Var type="Fint" scope="local">my_integer</Var>
+                <FintConstant type="Fint">2</FintConstant>
+              </FpowerExpr>
+            </FassignStatement>
+          </body>
+        </FdoStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>
