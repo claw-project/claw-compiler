@@ -60,7 +60,7 @@ public class OpenAccContinuation extends Transformation {
    * @return True the directive starts with the OpenACC prefix.
    */
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    return getDirective().getPragma().getValue().toLowerCase().
+    return getDirective().getPragma().value().toLowerCase().
         startsWith(ClawConstant.OPENACC_PREFIX);
   }
 
@@ -91,7 +91,7 @@ public class OpenAccContinuation extends Transformation {
       return;
     }
 
-    String allPragma = getDirective().getPragma().getValue();
+    String allPragma = getDirective().getPragma().value();
 
     if(allPragma.length() > transformer.getMaxColumns()) {
       allPragma =

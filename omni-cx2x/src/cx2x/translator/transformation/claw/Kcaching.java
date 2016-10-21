@@ -131,7 +131,7 @@ public class Kcaching extends Transformation {
     updateArrayRefWithCache(aRefs, cacheVar);
 
     AcceleratorHelper.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
-        cacheVar.getValue());
+        cacheVar.value());
   }
 
   /**
@@ -161,7 +161,7 @@ public class Kcaching extends Transformation {
     updateArrayRefWithCache(aRefs, cacheVar);
 
     AcceleratorHelper.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
-        cacheVar.getValue());
+        cacheVar.value());
     stmt.delete();
   }
 

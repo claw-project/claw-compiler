@@ -37,10 +37,10 @@ public class XnodeUtilTest {
 
     Xnode loopHoistStart = new Xnode(pragmas.get(1).element());
     assertNotNull(loopHoistStart);
-    assertTrue(loopHoistStart.getValue().contains("loop-hoist"));
+    assertTrue(loopHoistStart.value().contains("loop-hoist"));
     Xnode loopHoistEnd = new Xnode(pragmas.get(2).element());
     assertNotNull(loopHoistEnd);
-    assertTrue(loopHoistEnd.getValue().contains("end loop-hoist"));
+    assertTrue(loopHoistEnd.value().contains("end loop-hoist"));
 
     List<Xnode> stmts =
         XnodeUtil.findDoStatement(loopHoistStart, loopHoistEnd,

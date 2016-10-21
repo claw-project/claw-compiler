@@ -170,7 +170,7 @@ public class ParallelizeForward extends Transformation {
 
     detectParameterMapping(_fctCall);
 
-    _calledFctName = _fctCall.matchSeq(Xcode.NAME).getValue();
+    _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
 
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
@@ -244,7 +244,7 @@ public class ParallelizeForward extends Transformation {
     }
     // end of workaround
 
-    _callingFctName = parentFctDef.getName().getValue();
+    _callingFctName = parentFctDef.getName().value();
     if(_fctType != null && fctDef != null) {
       _localFct = true;
     } else {
@@ -287,11 +287,11 @@ public class ParallelizeForward extends Transformation {
         String original_name = arg.getAttribute(Xattr.NAME);
         Xnode target_var = XnodeUtil.find(Xcode.VAR, arg, true);
         if(target_var != null) {
-          _fctCallMapping.put(original_name, target_var.getValue());
+          _fctCallMapping.put(original_name, target_var.value());
 
           if(XmOption.isDebugOutput()) {
             System.out.println("Fct parameter mapping: original_name=" +
-                original_name + " target_name=" + target_var.getValue());
+                original_name + " target_name=" + target_var.value());
           }
         }
       }
@@ -405,7 +405,7 @@ public class ParallelizeForward extends Transformation {
     // 1. Adapt function call with potential new arguments
     for(int i = 0; i < params.size(); i++) {
       Xnode p = params.get(i);
-      String var = p.getValue();
+      String var = p.value();
       String type;
 
       XbasicType paramType =
@@ -469,14 +469,14 @@ public class ParallelizeForward extends Transformation {
     } else {
       // 2. Adapt function/subroutine in which the function call is nested
       for(Xnode pBase : _fctType.getParams().getAll()) {
-        String original_param = pBase.getValue();
+        String original_param = pBase.value();
         if(_fctCallMapping.containsKey(original_param)) {
           original_param = _fctCallMapping.get(original_param);
         }
 
         Xnode pUpdate = null;
         for(Xnode param : _parentFctType.getParams().getAll()) {
-          if(original_param.equals(param.getValue())) {
+          if(original_param.equals(param.value())) {
             pUpdate = param;
           }
         }
@@ -543,7 +543,7 @@ public class ParallelizeForward extends Transformation {
             addPromotedVar(original_param, overPos);
 
             _promotions.put(original_param, new PromotionInfo(
-                pBase.getValue(), baseDim, targetDim, type));
+                pBase.value(), baseDim, targetDim, type));
           }
         }
 
@@ -605,17 +605,17 @@ public class ParallelizeForward extends Transformation {
           xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
 
       PromotionInfo promotionInfo;
-      if(!_promotions.containsKey(varInLhs.getValue())) {
+      if(!_promotions.containsKey(varInLhs.value())) {
         // Perform the promotion on the variable
         promotionInfo = TransformationHelper.promoteField(
-            varInLhs.getValue(), true, true, 0, 0, parentFctDef,
+            varInLhs.value(), true, true, 0, 0, parentFctDef,
             _parentFctType, dimensions, _claw, xcodeml, overPos);
-        _promotions.put(varInLhs.getValue(), promotionInfo);
+        _promotions.put(varInLhs.value(), promotionInfo);
 
-        addPromotedVar(varInLhs.getValue(), overPos);
+        addPromotedVar(varInLhs.value(), overPos);
 
       } else {
-        promotionInfo = _promotions.get(varInLhs.getValue());
+        promotionInfo = _promotions.get(varInLhs.value());
       }
 
       // Adapte array index to reflect the new return type
@@ -628,14 +628,14 @@ public class ParallelizeForward extends Transformation {
         // TODO avoid array var without colon notation
           /* throw new IllegalTransformationException("Use the colon notation "
               + "for the return variable. This notation is not supported." +
-              _claw.getPragma().getValue()); */
+              _claw.getPragma().value()); */
       } else {
         throw new IllegalTransformationException("Unsupported return " +
             "variable for promotion.", _claw.getPragma().getLineNo());
       }
 
       // If the array is a target, check if we have to promote a pointer
-      adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
+      adpatPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
           promotionInfo, dimensions);
     }
   }
@@ -705,7 +705,7 @@ public class ParallelizeForward extends Transformation {
       List<Xnode> varsInRhs = XnodeUtil.findAll(Xcode.VAR, rhs);
       for(Xnode var : varsInRhs) {
         // Check if the assignement statement uses a promoted variable
-        if(_promotedVar.contains(var.getValue())
+        if(_promotedVar.contains(var.value())
             && XnodeUtil.findParent(Xcode.FUNCTIONCALL, var) == null
             && lhs.opcode() == Xcode.FARRAYREF)
         {
@@ -729,18 +729,18 @@ public class ParallelizeForward extends Transformation {
               append(assignment, false);
 
           PromotionInfo promotionInfo;
-          if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
+          if(!previouslyPromoted.contains(varInLhs.value().toLowerCase())) {
             // Perform the promotion on the variable
             promotionInfo = TransformationHelper.promoteField(
-                varInLhs.getValue(), true, true, 0, 0, parentFctDef,
+                varInLhs.value(), true, true, 0, 0, parentFctDef,
                 _parentFctType, dimensions, _claw, xcodeml, null);
-            _promotions.put(varInLhs.getValue(), promotionInfo);
+            _promotions.put(varInLhs.value(), promotionInfo);
 
             // TODO if #38 is implemented, the varibale has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
-            _promotedWithBeforeOver.add(varInLhs.getValue());
+            _promotedWithBeforeOver.add(varInLhs.value());
           } else {
-            promotionInfo = _promotions.get(varInLhs.getValue());
+            promotionInfo = _promotions.get(varInLhs.value());
           }
 
           // Adapt the reference in the assignement statement
@@ -752,12 +752,12 @@ public class ParallelizeForward extends Transformation {
               assignment, _promotions, emptyInd, emptyInd, induction, xcodeml);
 
           // If the array is a target, check if we have to promote a pointer
-          if(!previouslyPromoted.contains(varInLhs.getValue().toLowerCase())) {
-            adpatPointer(varType, varInLhs.getValue(), parentFctDef, xcodeml,
+          if(!previouslyPromoted.contains(varInLhs.value().toLowerCase())) {
+            adpatPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
                 promotionInfo, dimensions);
 
             // TODO centralized info
-            previouslyPromoted.add(varInLhs.getValue().toLowerCase());
+            previouslyPromoted.add(varInLhs.value().toLowerCase());
           }
 
           break;
@@ -797,7 +797,7 @@ public class ParallelizeForward extends Transformation {
         Xnode pointee = pAssignment.child(1);
 
         // Check if the pointer assignment has the promoted variable
-        if(pointee.getValue().toLowerCase().
+        if(pointee.value().toLowerCase().
             equals(fieldId.toLowerCase()))
         {
           XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().
@@ -807,12 +807,12 @@ public class ParallelizeForward extends Transformation {
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()
-              && !_promotions.containsKey(pointer.getValue()))
+              && !_promotions.containsKey(pointer.value()))
           {
             PromotionInfo promotionInfo = TransformationHelper.promoteField(
-                pointer.getValue(), true, true, 0, dimensions.size(),
+                pointer.value(), true, true, 0, dimensions.size(),
                 fctDef, _parentFctType, dimensions, _claw, xcodeml, null);
-            _promotions.put(pointer.getValue(), promotionInfo);
+            _promotions.put(pointer.value(), promotionInfo);
           }
         }
       }

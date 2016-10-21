@@ -125,7 +125,7 @@ public class Xnode {
    *
    * @return Element value.
    */
-  public String getValue() {
+  public String value() {
     return _baseElement.getTextContent().trim();
   }
 
@@ -156,23 +156,6 @@ public class Xnode {
    */
   public void setAttribute(String attrCode, String value) {
     _baseElement.setAttribute(attrCode, value);
-  }
-
-  /**
-   * Get the list of child elements.
-   *
-   * @return List of children of the current element.
-   */
-  public List<Xnode> children() {
-    List<Xnode> nodes = new ArrayList<>();
-    NodeList children = _baseElement.getChildNodes();
-    for(int i = 0; i < children.getLength(); ++i) {
-      Node child = children.item(i);
-      if(child.getNodeType() == Node.ELEMENT_NODE) {
-        nodes.add(new Xnode((Element) child));
-      }
-    }
-    return nodes;
   }
 
   /**
@@ -210,6 +193,23 @@ public class Xnode {
       return null;
     }
     return children.get(pos);
+  }
+
+  /**
+   * Get the list of child elements.
+   *
+   * @return List of children of the current element.
+   */
+  public List<Xnode> children() {
+    List<Xnode> nodes = new ArrayList<>();
+    NodeList children = _baseElement.getChildNodes();
+    for(int i = 0; i < children.getLength(); ++i) {
+      Node child = children.item(i);
+      if(child.getNodeType() == Node.ELEMENT_NODE) {
+        nodes.add(new Xnode((Element) child));
+      }
+    }
+    return nodes;
   }
 
   /**

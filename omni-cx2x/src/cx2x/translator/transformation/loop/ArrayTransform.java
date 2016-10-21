@@ -65,7 +65,7 @@ public class ArrayTransform extends BlockTransformation {
       // Find assignments with array notation
       List<Xnode> foundAssignments =
           XnodeUtil.getArrayAssignInBlock(_clawBegin.getPragma(),
-              _clawEnd.getPragma().getValue()
+              _clawEnd.getPragma().value()
           );
 
       if(foundAssignments.size() == 0) {
@@ -262,7 +262,7 @@ public class ArrayTransform extends BlockTransformation {
         for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);
           if(el.opcode() == Xcode.INDEXRANGE) {
-            String induction = doStmts[i].matchSeq(Xcode.VAR).getValue();
+            String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
                 XnodeUtil.createVar(Xname.TYPE_F_INT, induction,
                     Xscope.LOCAL, xcodeml);

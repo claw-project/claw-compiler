@@ -110,11 +110,11 @@ public class ClawXcodeMlTranslator {
       // pragma does not start with the CLAW prefix
       if(!ClawLanguage.startsWithClaw(pragma)) {
         // Compile guard removal
-        if(_generator != null && _generator.isCompileGuard(pragma.getValue())) {
+        if(_generator != null && _generator.isCompileGuard(pragma.value())) {
           pragma.delete();
         }
         // Handle special transformation of OpenACC line continuation
-        else if(pragma.getValue().
+        else if(pragma.value().
             toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX))
         {
           OpenAccContinuation t =

@@ -46,10 +46,10 @@ public class XfunctionTypeTest {
 
     // Test parameters
     assertEquals(2, f.getParams().count());
-    assertEquals("a", f.getParams().getAll().get(0).getValue());
+    assertEquals("a", f.getParams().getAll().get(0).value());
     assertEquals("Fint",
         f.getParams().getAll().get(0).getAttribute(Xattr.TYPE));
-    assertEquals("b", f.getParams().getAll().get(1).getValue());
+    assertEquals("b", f.getParams().getAll().get(1).value());
     assertEquals("Fint",
         f.getParams().getAll().get(1).getAttribute(Xattr.TYPE));
   }

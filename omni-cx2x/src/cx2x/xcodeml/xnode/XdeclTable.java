@@ -61,7 +61,7 @@ public class XdeclTable extends Xnode {
         switch(element.getTagName()) {
           case Xname.VAR_DECL:
             Xdecl varDecl = new Xdecl(element);
-            _table.put(varDecl.matchSeq(Xcode.NAME).getValue(), varDecl);
+            _table.put(varDecl.matchSeq(Xcode.NAME).value(), varDecl);
             break;
           case Xname.F_USE_DECL:
           case Xname.F_USE_ONLY_DECL:
@@ -107,7 +107,7 @@ public class XdeclTable extends Xnode {
    */
   public void add(Xdecl decl) {
     _baseElement.appendChild(decl.cloneRawNode());
-    _table.put(decl.matchSeq(Xcode.NAME).getValue(), decl);
+    _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
   }
 
   /**

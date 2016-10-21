@@ -173,7 +173,7 @@ public class AcceleratorHelper {
             || bt.getIntent() == Xintent.OUT
             || bt.getIntent() == Xintent.INOUT))
         {
-          variables.add(name.getValue());
+          variables.add(name.value());
         }
       }
     }
@@ -200,7 +200,7 @@ public class AcceleratorHelper {
         if((bt == null && XnodeUtil.isBuiltInType(type))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
-          variables.add(name.getValue());
+          variables.add(name.value());
         }
       }
     }
@@ -292,7 +292,7 @@ public class AcceleratorHelper {
       }
       Xnode name = fctCall.matchSeq(Xcode.NAME);
       if(name != null) {
-        fctNames.add(name.getValue().toLowerCase());
+        fctNames.add(name.value().toLowerCase());
       }
     }
 
@@ -306,7 +306,7 @@ public class AcceleratorHelper {
         List<Xnode> fctDefs = XnodeUtil.findAll(Xcode.FFUNCTIONDEFINITION, mod);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
-          if(name != null && name.getValue().toLowerCase().equals(fctName)) {
+          if(name != null && name.value().toLowerCase().equals(fctName)) {
             calledFctDef = new XfunctionDefinition(fDef.element());
             break;
           }
@@ -354,7 +354,7 @@ public class AcceleratorHelper {
       xcodeml.addWarning("No parallel construct found to attach private clause",
           claw.getPragma().getLineNo());
     } else {
-      hook.setValue(hook.getValue() + " " +
+      hook.setValue(hook.value() + " " +
           claw.getAcceleratorGenerator().getPrivateClause(var));
     }
   }

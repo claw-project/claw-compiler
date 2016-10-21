@@ -156,10 +156,10 @@ public class Parallelize extends Transformation {
         if(decl.isBuiltInType()) {
           if(XmOption.isDebugOutput()) {
             System.out.println("parallelize promotion: Scalar "
-                + decl.matchSeq(Xcode.NAME).getValue()
+                + decl.matchSeq(Xcode.NAME).value()
                 + " is candidate for promotion.");
           }
-          _scalarFields.add(decl.matchSeq(Xcode.NAME).getValue());
+          _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
         }
 
         Xtype type = xcodeml.getTypeTable().
@@ -173,16 +173,16 @@ public class Parallelize extends Transformation {
           {
             if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array " +
-                  decl.matchSeq(Xcode.NAME).getValue() + " will be promoted.");
+                  decl.matchSeq(Xcode.NAME).value() + " will be promoted.");
             }
-            _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).getValue());
+            _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
           } else if(bType.isArray()) {
             if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array "
-                  + decl.matchSeq(Xcode.NAME).getValue()
+                  + decl.matchSeq(Xcode.NAME).value()
                   + " is candidate for promotion.");
             }
-            _scalarFields.add(decl.matchSeq(Xcode.NAME).getValue());
+            _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
           }
         }
       }
@@ -396,8 +396,8 @@ public class Parallelize extends Transformation {
 
     for(Xnode assign : assignStatements) {
       Xnode lhs = assign.child(Xnode.LHS);
-      String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.getValue() :
-          lhs.matchSeq(Xcode.VARREF, Xcode.VAR).getValue();
+      String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.value() :
+          lhs.matchSeq(Xcode.VARREF, Xcode.VAR).value();
       NestedDoStatement loops = null;
       if(lhs.opcode() == Xcode.FARRAYREF &&
           _arrayFieldsInOut.contains(lhsName))

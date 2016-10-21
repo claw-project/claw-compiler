@@ -76,7 +76,7 @@ public class DirectivePrimitive extends Transformation {
 
     String regex = ClawConstant.CLAW + " *" + prefix;
     getDirective().getPragma().setValue(
-        getDirective().getPragma().getValue().toLowerCase().
+        getDirective().getPragma().value().toLowerCase().
             replaceAll(regex, prefix)
     );
   }

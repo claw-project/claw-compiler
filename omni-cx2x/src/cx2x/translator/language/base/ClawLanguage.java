@@ -94,8 +94,8 @@ public class ClawLanguage extends AnalyzedPragma {
    * @return True if the statement starts with claw keyword. False otherwise.
    */
   public static boolean startsWithClaw(Xnode pragma) {
-    return !(pragma == null || pragma.getValue() == null)
-        && pragma.getValue().startsWith(PREFIX_CLAW);
+    return !(pragma == null || pragma.value() == null)
+        && pragma.value().startsWith(PREFIX_CLAW);
   }
 
   /**
@@ -115,7 +115,7 @@ public class ClawLanguage extends AnalyzedPragma {
       throws IllegalDirectiveException
   {
     ClawLanguage l =
-        analyze(pragma.getValue(), pragma.getLineNo(), generator, target);
+        analyze(pragma.value(), pragma.getLineNo(), generator, target);
     if(l != null) {
       l.attachPragma(pragma);
     }

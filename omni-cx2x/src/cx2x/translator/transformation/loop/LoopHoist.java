@@ -158,7 +158,7 @@ public class LoopHoist extends BlockTransformation {
           if(!checkUpperDefinition(fctDef, r.getArrayName())) {
             xcodeml.addError(String.format("Reshape variable %s not found in " +
                     "the definition of %s", r.getArrayName(),
-                fctDef.getName().getValue()), _startClaw.getPragma().getLineNo()
+                fctDef.getName().value()), _startClaw.getPragma().getLineNo()
             );
             return false;
           }

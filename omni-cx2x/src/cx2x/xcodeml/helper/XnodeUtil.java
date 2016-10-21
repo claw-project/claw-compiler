@@ -54,7 +54,7 @@ public class XnodeUtil {
     if(xcodeml.element() == null) {
       return null;
     }
-    String name = fctCall.matchExactNode(Xcode.NAME).getValue();
+    String name = fctCall.matchExactNode(Xcode.NAME).value();
     NodeList nList = xcodeml.element().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for(int i = 0; i < nList.getLength(); i++) {
@@ -63,7 +63,7 @@ public class XnodeUtil {
         Xnode dummyFctDef = new Xnode((Element) fctDefNode);
         Xnode fctDefName = dummyFctDef.matchSeq(Xcode.NAME);
         if(name != null &&
-            fctDefName.getValue().toLowerCase().equals(name.toLowerCase()))
+            fctDefName.value().toLowerCase().equals(name.toLowerCase()))
         {
           return new XfunctionDefinition(dummyFctDef.element());
         }
@@ -92,7 +92,7 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         XfunctionDefinition fctDef = new XfunctionDefinition((Element) n);
-        if(fctDef.getName().getValue().equals(name)) {
+        if(fctDef.getName().value().equals(name)) {
           return fctDef;
         }
       }
@@ -118,7 +118,7 @@ public class XnodeUtil {
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
         Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR);
-        if(var != null && var.getValue().toLowerCase().
+        if(var != null && var.value().toLowerCase().
             equals(arrayName.toLowerCase()))
         {
           references.add(ref);
@@ -163,7 +163,7 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode var = new Xnode((Element) n);
-        if(var.getValue().toLowerCase().equals(varName.toLowerCase())) {
+        if(var.value().toLowerCase().equals(varName.toLowerCase())) {
           references.add(var);
         }
       }
@@ -602,7 +602,7 @@ public class XnodeUtil {
       if(node.opcode() != Xcode.VAR) {
         continue;
       }
-      names.add(node.getValue().toLowerCase());
+      names.add(node.value().toLowerCase());
     }
     return names;
   }
@@ -621,7 +621,7 @@ public class XnodeUtil {
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
           equals(Xcode.ARRAYINDEX.code())
-          && var.getValue().toLowerCase().equals(id.toLowerCase()))
+          && var.value().toLowerCase().equals(id.toLowerCase()))
       {
         realReferences.add(var);
       }
@@ -1182,7 +1182,7 @@ public class XnodeUtil {
    */
   private static boolean compareValues(Xnode n1, Xnode n2) {
     return !(n1 == null || n2 == null)
-        && n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase());
+        && n1.value().toLowerCase().equals(n2.value().toLowerCase());
   }
 
   /**
@@ -1211,7 +1211,7 @@ public class XnodeUtil {
    */
   private static boolean compareOptionalValues(Xnode n1, Xnode n2) {
     return n1 == null && n2 == null || (n1 != null && n2 != null &&
-        n1.getValue().toLowerCase().equals(n2.getValue().toLowerCase()));
+        n1.value().toLowerCase().equals(n2.value().toLowerCase()));
   }
 
   /**
@@ -1391,7 +1391,7 @@ public class XnodeUtil {
       return null;
     }
     for(Xnode arg : args.children()) {
-      if(value.toLowerCase().equals(arg.getValue().toLowerCase())) {
+      if(value.toLowerCase().equals(arg.value().toLowerCase())) {
         return arg;
       }
     }
@@ -1801,7 +1801,7 @@ public class XnodeUtil {
                                                   XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()) {
-      if(p.getValue().toLowerCase().equals(nameValue.toLowerCase())) {
+      if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
         return;
       }
     }
@@ -1997,7 +1997,7 @@ public class XnodeUtil {
       return importVar(base, xcodemlSrc, xcodemlDst);
     } else {
       Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
-      intConst.setValue(base.getValue());
+      intConst.setValue(base.value());
       return intConst;
     }
   }
@@ -2034,7 +2034,7 @@ public class XnodeUtil {
 
     Xnode var = new Xnode(Xcode.VAR, xcodemlDst);
     var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
-    var.setValue(base.getValue());
+    var.setValue(base.value());
     var.setAttribute(Xattr.TYPE, bType.getAttribute(Xattr.TYPE));
     return var;
   }
@@ -2061,7 +2061,7 @@ public class XnodeUtil {
         }
       } else if(entry.getValue() instanceof XfunctionDefinition) {
         XfunctionDefinition fctDef = (XfunctionDefinition) entry.getValue();
-        if(fctDef.getName().getValue().equals(fctName)) {
+        if(fctDef.getName().value().equals(fctName)) {
           return fctDef;
         }
       }

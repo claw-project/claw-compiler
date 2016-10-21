@@ -44,7 +44,7 @@ public class XtypeTableTest {
     assertTrue(bType1.hasLength());
     assertEquals(Xname.TYPE_F_CHAR, bType1.getRef());
     assertTrue(bType1.getLength().child(0).opcode() == Xcode.FINTCONSTANT);
-    assertEquals("30", bType1.getLength().child(0).getValue());
+    assertEquals("30", bType1.getLength().child(0).value());
 
     assertTrue(typeTable.hasType("F23079f0"));
     Xtype type2 = typeTable.get("F23079f0");

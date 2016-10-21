@@ -152,7 +152,7 @@ public class XfunctionType extends Xtype {
       return false;
     }
     for(Xnode param : _params.getAll()) {
-      if(param.getValue().toLowerCase().equals(paramName.toLowerCase())) {
+      if(param.value().toLowerCase().equals(paramName.toLowerCase())) {
         return true;
       }
     }

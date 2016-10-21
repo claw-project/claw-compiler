@@ -319,7 +319,7 @@ public class TransformationHelper {
       mod.getTypeTable().element().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);
       Xid importedFctTypeId = XnodeUtil.createId(mod, importedFctType.getType(),
-          Xname.SCLASS_F_FUNC, fctDef.getName().getValue());
+          Xname.SCLASS_F_FUNC, fctDef.getName().value());
       mod.getIdentifiers().add(importedFctTypeId);
 
       // check if params need to be imported as well
@@ -341,12 +341,12 @@ public class TransformationHelper {
        * with no parameters. Thus, we have to matchSeq the correct FfunctionType
        * for the same function/subroutine with the same name in the module
        * symbol table. */
-      String errorMsg = "Unable to locate fct " + fctDef.getName().getValue() +
+      String errorMsg = "Unable to locate fct " + fctDef.getName().value() +
           " in module " + modDef.getName();
       int lineNo = claw.getPragma().getLineNo();
 
       // If not, try to matchSeq the correct FfunctionType in the module definitions
-      Xid id = mod.getIdentifiers().get(fctDef.getName().getValue());
+      Xid id = mod.getIdentifiers().get(fctDef.getName().value());
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
@@ -376,7 +376,7 @@ public class TransformationHelper {
       // Number of parameters in the module function as been
       if(pLocal.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         // new parameter
-        XnodeUtil.createAndAddParamIfNotExists(mod, pLocal.getValue(),
+        XnodeUtil.createAndAddParamIfNotExists(mod, pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
       } else {
         Xnode pMod = paramsMod.get(i);
@@ -435,9 +435,9 @@ public class TransformationHelper {
       if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         dimensions.add(
             new ClawDimension(
-                ClawConstant.ITER_PREFIX + param.getValue(),
+                ClawConstant.ITER_PREFIX + param.value(),
                 ClawConstant.DEFUALT_LOWER_BOUND,
-                param.getValue()
+                param.value()
             )
         );
       }
@@ -572,7 +572,7 @@ public class TransformationHelper {
 
     // Update params in function type
     for(Xnode param : fctType.getParams().getAll()) {
-      if(param.getValue().equals(fieldId)) {
+      if(param.value().equals(fieldId)) {
 
         // Update type with new promoted type
         param.setAttribute(Xattr.TYPE, type);

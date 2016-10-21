@@ -37,9 +37,9 @@ public class XvarDeclTest {
     assertEquals("./src/module.f90", varDecl.getFile());
     assertNotNull(varDecl.matchSeq(Xcode.NAME));
     assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).getValue());
+    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).value());
     assertNotNull(varDecl.matchSeq(Xcode.VALUE));
-    assertEquals("10.0", varDecl.matchSeq(Xcode.VALUE).getValue());
+    assertEquals("10.0", varDecl.matchSeq(Xcode.VALUE).value());
   }
 
   @Test
@@ -50,7 +50,7 @@ public class XvarDeclTest {
     assertEquals("./src/module.f90", varDecl.getFile());
     assertNotNull(varDecl.matchSeq(Xcode.NAME));
     assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).getValue());
+    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).value());
     assertNull(varDecl.matchSeq(Xcode.VALUE));
   }
 

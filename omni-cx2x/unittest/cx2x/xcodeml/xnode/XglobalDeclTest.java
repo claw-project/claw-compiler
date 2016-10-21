@@ -41,7 +41,7 @@ public class XglobalDeclTest {
     assertFalse(gdTable.hasModuleDefinition("fct1"));
     XfunctionDefinition fDef = gdTable.getFctDefinition("fct1");
     assertNotNull(fDef);
-    assertEquals("fct1", fDef.getName().getValue());
+    assertEquals("fct1", fDef.getName().value());
     assertNotNull(fDef.body());
     assertNotNull(fDef.getDeclarationTable());
     assertNull(fDef.getParams());

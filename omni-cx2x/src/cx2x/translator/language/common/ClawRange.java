@@ -142,13 +142,13 @@ public class ClawRange {
     Xnode step = indexRange.matchExactNode(Xcode.STEP).child(0);
 
     return !(inductionVar == null || _inductionVar == null
-        || !inductionVar.getValue().equals(_inductionVar))
+        || !inductionVar.value().equals(_inductionVar))
         && !(lower == null || _lowerBound == null
-        || !lower.getValue().equals(_lowerBound))
+        || !lower.value().equals(_lowerBound))
         && !(upper == null || _upperBound == null
-        || !upper.getValue().equals(_upperBound))
+        || !upper.value().equals(_upperBound))
         && (step == null && _step == null
-        || !(step == null || _step == null || !_step.equals(step.getValue())));
+        || !(step == null || _step == null || !_step.equals(step.value())));
   }
 
 }

@@ -81,13 +81,13 @@ public class LoopExtraction extends Transformation {
     for(ClawMapping m : _claw.getMappings()) {
       for(ClawMappingVar mappedVar : m.getMappedVariables()) {
         if(_argMappingMap.containsKey(mappedVar.getArgMapping())) {
-          throw new IllegalDirectiveException(_claw.getPragma().getValue(),
+          throw new IllegalDirectiveException(_claw.getPragma().value(),
               mappedVar + " appears more than once in the mapping");
         } else {
           _argMappingMap.put(mappedVar.getArgMapping(), m);
         }
         if(_fctMappingMap.containsKey(mappedVar.getFctMapping())) {
-          throw new IllegalDirectiveException(_claw.getPragma().getValue(),
+          throw new IllegalDirectiveException(_claw.getPragma().value(),
               mappedVar + " appears more than once in the mapping");
         } else {
           _fctMappingMap.put(mappedVar.getFctMapping(), m);
@@ -155,7 +155,7 @@ public class LoopExtraction extends Transformation {
 
     if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "
-              + _fctCall.matchExactNode(Xcode.NAME).getValue(),
+              + _fctCall.matchExactNode(Xcode.NAME).value(),
           _claw.getPragma().getLineNo());
       return false;
     }
@@ -201,14 +201,14 @@ public class LoopExtraction extends Transformation {
     // Duplicate function definition
     XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
-    String newFctName = clonedFctDef.getName().getValue() +
+    String newFctName = clonedFctDef.getName().value() +
         ClawConstant.EXTRACTION_SUFFIX +
         transformer.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
     clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
-        .get(_fctDefToExtract.getName().getValue());
+        .get(_fctDefToExtract.getName().value());
     fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
 
@@ -221,7 +221,7 @@ public class LoopExtraction extends Transformation {
 
     // Get the id from the global symbols table
     Xid globalFctId = xcodeml.getGlobalSymbolsTable()
-        .get(_fctDefToExtract.getName().getValue());
+        .get(_fctDefToExtract.getName().value());
 
     // If the fct is define in the global symbol table, duplicate it
     if(globalFctId != null) {
@@ -239,9 +239,9 @@ public class LoopExtraction extends Transformation {
 
     if(XmOption.isDebugOutput()) {
       System.out.println("loop-extract transformation: " +
-          _claw.getPragma().getValue());
+          _claw.getPragma().value());
       System.out.println("  created subroutine: " +
-          clonedFctDef.getName().getValue());
+          clonedFctDef.getName().value());
     }
 
     /*
@@ -264,8 +264,8 @@ public class LoopExtraction extends Transformation {
 
     if(XmOption.isDebugOutput()) {
       System.out.println("  call wrapped with loop: " +
-          _fctCall.matchExactNode(Xcode.NAME).getValue() + " --> " +
-          clonedFctDef.getName().getValue());
+          _fctCall.matchExactNode(Xcode.NAME).value() + " --> " +
+          clonedFctDef.getName().value());
     }
 
     // Change called fct name
@@ -332,7 +332,7 @@ public class LoopExtraction extends Transformation {
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
             newMappingVar.setAttribute(Xattr.TYPE,
                 mappingVarDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
-            newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).getValue());
+            newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).value());
             arrayIndex.append(newMappingVar, false);
             newArg.append(arrayIndex, false);
           }
@@ -377,7 +377,7 @@ public class LoopExtraction extends Transformation {
       if(!(ref.matchSeq(Xcode.VARREF).child(0).opcode() == Xcode.VAR)) {
         continue;
       }
-      String mappedVar = ref.matchSeq(Xcode.VARREF, Xcode.VAR).getValue();
+      String mappedVar = ref.matchSeq(Xcode.VARREF, Xcode.VAR).value();
       if(_fctMappingMap.containsKey(mappedVar)) {
         ClawMapping mapping = _fctMappingMap.get(mappedVar);
 
@@ -388,7 +388,7 @@ public class LoopExtraction extends Transformation {
           if(e.opcode() == Xcode.ARRAYINDEX) {
             List<Xnode> children = e.children();
             if(children.size() > 0 && children.get(0).opcode() == Xcode.VAR) {
-              String varName = e.matchSeq(Xcode.VAR).getValue();
+              String varName = e.matchSeq(Xcode.VAR).value();
               if(varName.equals(mapping.getMappingVariables().
                   get(mappingIndex).getFctMapping()))
               {
@@ -485,18 +485,18 @@ public class LoopExtraction extends Transformation {
     loop.body().element().
         appendChild(_fctCall.element().getParentNode());
 
-    insertDeclaration(doStmt.matchSeq(Xcode.VAR).getValue());
+    insertDeclaration(doStmt.matchSeq(Xcode.VAR).value());
     if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
-          matchSeq(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR).getValue());
+          matchSeq(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR).value());
     }
     if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
-          matchSeq(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR).getValue());
+          matchSeq(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR).value());
     }
     if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
-          matchSeq(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR).getValue());
+          matchSeq(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR).value());
     }
 
     return loop;

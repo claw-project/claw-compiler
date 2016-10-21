@@ -41,7 +41,7 @@ public class XfunctionDefinitionTest {
   public void basicFunctionDefinitionTest() {
     XfunctionDefinition fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
-    assertEquals("force_dummy", fctDef.getName().getValue());
+    assertEquals("force_dummy", fctDef.getName().value());
     assertEquals("F7ff951406df0", fctDef.getName().getAttribute(Xattr.TYPE));
     assertEquals(0, fctDef.getSymbolTable().count());
     assertEquals(0, fctDef.getDeclarationTable().count());

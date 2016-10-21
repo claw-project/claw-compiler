@@ -54,7 +54,7 @@ public class Xid extends Xnode {
    * @return Name value.
    */
   public String getName() {
-    return (_xname != null) ? _xname.getValue() : null;
+    return (_xname != null) ? _xname.value() : null;
   }
 
   /**
