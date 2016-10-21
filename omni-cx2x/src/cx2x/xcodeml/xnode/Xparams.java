@@ -76,7 +76,7 @@ public class Xparams extends Xnode {
   }
 
   @Override
-  public Xparams cloneObject() {
+  public Xparams cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new Xparams(clone);
   }

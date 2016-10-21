@@ -222,7 +222,7 @@ public class XtypeTable extends Xnode {
   }
 
   @Override
-  public XtypeTable cloneObject() {
+  public XtypeTable cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new XtypeTable(clone);
   }

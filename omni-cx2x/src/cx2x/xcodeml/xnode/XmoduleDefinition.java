@@ -75,7 +75,7 @@ public class XmoduleDefinition extends Xnode {
   }
 
   @Override
-  public XmoduleDefinition cloneObject() {
+  public XmoduleDefinition cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new XmoduleDefinition(clone);
   }

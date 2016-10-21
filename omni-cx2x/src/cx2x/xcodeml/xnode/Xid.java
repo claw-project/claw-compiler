@@ -113,7 +113,7 @@ public class Xid extends Xnode {
   /**
    * @return A new object Xid that is the clone of the current object.
    */
-  public Xid cloneObject() {
+  public Xid cloneNode() {
     Node clone = cloneRawNode();
     return new Xid((Element) clone);
   }

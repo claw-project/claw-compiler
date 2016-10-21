@@ -199,7 +199,7 @@ public class LoopExtraction extends Transformation {
      */
 
     // Duplicate function definition
-    XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneObject();
+    XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     String newFctName = clonedFctDef.getName().getValue() +
         ClawConstant.EXTRACTION_SUFFIX +
@@ -215,7 +215,7 @@ public class LoopExtraction extends Transformation {
     // Get the fctType in typeTable
     XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
         get(_fctDefToExtract.getName().getAttribute(Xattr.TYPE));
-    XfunctionType newFctType = fctType.cloneObject();
+    XfunctionType newFctType = fctType.cloneNode();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
 
@@ -225,7 +225,7 @@ public class LoopExtraction extends Transformation {
 
     // If the fct is define in the global symbol table, duplicate it
     if(globalFctId != null) {
-      Xid newFctId = globalFctId.cloneObject();
+      Xid newFctId = globalFctId.cloneNode();
       newFctId.setType(newFctTypeHash);
       newFctId.setName(newFctName);
       xcodeml.getGlobalSymbolsTable().add(newFctId);
@@ -403,7 +403,7 @@ public class LoopExtraction extends Transformation {
           // TODO Var ref should be extracted only if the reference can be
           // totally demoted
           XnodeUtil.insertBefore(ref,
-              ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneObject());
+              ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode());
           ref.delete();
         }
       }
@@ -475,8 +475,8 @@ public class LoopExtraction extends Transformation {
   {
     // Create a new empty loop
     Xnode loop = XnodeUtil.createDoStmt(
-        xcodeml, doStmt.matchExactNode(Xcode.VAR).cloneObject(),
-        doStmt.matchExactNode(Xcode.INDEXRANGE).cloneObject());
+        xcodeml, doStmt.matchExactNode(Xcode.VAR).cloneNode(),
+        doStmt.matchExactNode(Xcode.INDEXRANGE).cloneNode());
 
     // Insert the new empty loop just after the pragma
     XnodeUtil.insertAfter(_claw.getPragma(), loop);

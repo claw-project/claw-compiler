@@ -221,7 +221,7 @@ public class TransformationHelper {
       }
 
       // Create new type
-      XbasicType newType = crtType.cloneObject();
+      XbasicType newType = crtType.cloneNode();
       newType.setType(xcodeml.getTypeTable().generateRealTypeHash());
       if(reshapeInfo.getTargetDimension() == 0) { // Demote to scalar
         newType.resetDimension();
@@ -503,7 +503,7 @@ public class TransformationHelper {
         newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
             Xintent.NONE);
       } else {
-        newType = oldType.cloneObject();
+        newType = oldType.cloneNode();
         newType.setType(type);
       }
     } else {
@@ -670,7 +670,7 @@ public class TransformationHelper {
         for(Xnode ref : refs) {
           if(inMiddle.get(index).size() == 0) {
             for(Xnode ai : beforeCrt.get(index)) {
-              XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneObject());
+              XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneNode());
             }
             for(Xnode ai : afterCrt.get(index)) {
               ref.append(ai, true);
@@ -682,7 +682,7 @@ public class TransformationHelper {
               hook = ref.child(0);
             }
             for(Xnode ai : inMiddle.get(index)) {
-              Xnode clone = ai.cloneObject();
+              Xnode clone = ai.cloneNode();
               XnodeUtil.insertAfter(hook, clone);
               hook = clone;
             }

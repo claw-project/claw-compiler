@@ -51,7 +51,7 @@ public class XidTest {
     assertEquals(ALT_TEST_TYPE, element.getType());
     assertEquals(ALT_TEST_SCLASS, element.getSclass());
 
-    Xid clone = element.cloneObject();
+    Xid clone = element.cloneNode();
     assertEquals(ALT_TEST_NAME, clone.getName());
     assertEquals(ALT_TEST_TYPE, clone.getType());
     assertEquals(ALT_TEST_SCLASS, clone.getSclass());

@@ -461,7 +461,7 @@ public class ParallelizeForward extends Transformation {
         {
           Xnode var = arg.matchSeq(Xcode.VARREF, Xcode.VAR);
           if(var != null) {
-            XnodeUtil.insertAfter(arg, var.cloneObject());
+            XnodeUtil.insertAfter(arg, var.cloneNode());
             arg.delete();
           }
         }

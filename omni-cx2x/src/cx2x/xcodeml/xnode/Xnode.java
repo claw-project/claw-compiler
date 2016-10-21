@@ -268,15 +268,6 @@ public class Xnode {
   }
 
   /**
-   * Create an identical copy of the element and its children.
-   *
-   * @return A node representing the root element of the clone.
-   */
-  public Node cloneRawNode() {
-    return _baseElement.cloneNode(true);
-  }
-
-  /**
    * Append an element ot the children of this element.
    *
    * @param node  The element to append.
@@ -321,16 +312,6 @@ public class Xnode {
   }
 
   /**
-   * Clone the current element with all its children.
-   *
-   * @return A copy of the current element.
-   */
-  public Xnode cloneObject() {
-    Node clone = cloneRawNode();
-    return new Xnode((Element) clone);
-  }
-
-  /**
    * Get the lineno attribute value. This attribute is not defined for every
    * elements.
    *
@@ -364,6 +345,25 @@ public class Xnode {
    */
   public void setFile(String value) {
     setAttribute(Xattr.FILE, value);
+  }
+
+  /**
+   * Clone the current element with all its children.
+   *
+   * @return A copy of the current element.
+   */
+  public Xnode cloneNode() {
+    Node clone = cloneRawNode();
+    return new Xnode((Element) clone);
+  }
+
+  /**
+   * Create an identical copy of the element and its children.
+   *
+   * @return A node representing the root element of the clone.
+   */
+  public Node cloneRawNode() {
+    return _baseElement.cloneNode(true);
   }
 
   /**

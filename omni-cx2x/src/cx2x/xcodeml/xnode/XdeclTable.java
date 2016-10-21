@@ -228,7 +228,7 @@ public class XdeclTable extends Xnode {
   }
 
   @Override
-  public XdeclTable cloneObject() {
+  public XdeclTable cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new XdeclTable(clone);
   }

@@ -108,7 +108,7 @@ public class ArrayToFctCall extends Transformation {
             _claw.getArrayName());
 
     for(Xnode ref : refs) {
-      XnodeUtil.insertAfter(ref, fctCall.cloneObject());
+      XnodeUtil.insertAfter(ref, fctCall.cloneNode());
       ref.delete();
     }
 

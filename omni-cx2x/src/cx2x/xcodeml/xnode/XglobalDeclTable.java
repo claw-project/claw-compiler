@@ -145,7 +145,7 @@ public class XglobalDeclTable extends Xnode {
   }
 
   @Override
-  public XglobalDeclTable cloneObject() {
+  public XglobalDeclTable cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new XglobalDeclTable(clone);
   }

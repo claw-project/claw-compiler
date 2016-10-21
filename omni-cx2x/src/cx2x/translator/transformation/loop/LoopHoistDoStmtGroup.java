@@ -80,7 +80,7 @@ class LoopHoistDoStmtGroup {
    * elements.
    */
   LoopHoistDoStmtGroup cloneObjectAndElement() {
-    Xnode newDoStmt = _doStmts[0].cloneObject();
+    Xnode newDoStmt = _doStmts[0].cloneNode();
     Xnode[] nestedDoStmts = new Xnode[_doStmts.length];
     nestedDoStmts[0] = newDoStmt;
     for(int j = 1; j < nestedDoStmts.length; ++j) {

@@ -177,7 +177,7 @@ public class XnodeUtil {
    * @param ref The array reference to be modified.
    */
   public static void demoteToScalar(Xnode ref) {
-    Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneObject();
+    Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode();
     insertAfter(ref, var);
     ref.delete();
   }
@@ -1294,15 +1294,15 @@ public class XnodeUtil {
     Xnode s2 = indexRange2.matchSeq(Xcode.STEP).child(0);
 
     // Set the range of loop2 to loop1
-    XnodeUtil.insertAfter(inductionVar2, inductionVar1.cloneObject());
-    XnodeUtil.insertAfter(low2, low1.cloneObject());
-    XnodeUtil.insertAfter(up2, up1.cloneObject());
-    XnodeUtil.insertAfter(s2, s1.cloneObject());
+    XnodeUtil.insertAfter(inductionVar2, inductionVar1.cloneNode());
+    XnodeUtil.insertAfter(low2, low1.cloneNode());
+    XnodeUtil.insertAfter(up2, up1.cloneNode());
+    XnodeUtil.insertAfter(s2, s1.cloneNode());
 
-    XnodeUtil.insertAfter(inductionVar1, inductionVar2.cloneObject());
-    XnodeUtil.insertAfter(low1, low2.cloneObject());
-    XnodeUtil.insertAfter(up1, up2.cloneObject());
-    XnodeUtil.insertAfter(s1, s2.cloneObject());
+    XnodeUtil.insertAfter(inductionVar1, inductionVar2.cloneNode());
+    XnodeUtil.insertAfter(low1, low2.cloneNode());
+    XnodeUtil.insertAfter(up1, up2.cloneNode());
+    XnodeUtil.insertAfter(s1, s2.cloneNode());
 
     inductionVar1.delete();
     inductionVar2.delete();
@@ -1858,7 +1858,7 @@ public class XnodeUtil {
                                               List<ClawDimension> dimensions)
       throws IllegalTransformationException
   {
-    XbasicType newType = toUpdate.cloneObject();
+    XbasicType newType = toUpdate.cloneNode();
     String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
     newType.setAttribute(Xattr.TYPE, type);
 
@@ -1937,7 +1937,7 @@ public class XnodeUtil {
     }
 
     if(xcodemlSrc == xcodemlDst) {
-      return baseBound.cloneObject();
+      return baseBound.cloneNode();
     }
 
     Xnode boundChild = baseBound.child(0);

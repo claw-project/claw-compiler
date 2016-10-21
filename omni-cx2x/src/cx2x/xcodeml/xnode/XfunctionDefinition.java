@@ -105,7 +105,7 @@ public class XfunctionDefinition extends Xnode {
    *
    * @return A new XfunctionDefinition object that is the clone of this function definition.
    */
-  public XfunctionDefinition cloneObject() {
+  public XfunctionDefinition cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new XfunctionDefinition(clone);
   }

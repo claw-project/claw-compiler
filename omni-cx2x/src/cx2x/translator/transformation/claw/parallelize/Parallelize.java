@@ -594,9 +594,9 @@ public class Parallelize extends Transformation {
 
       for(Xnode var : vars) {
         Xnode ref =
-            XnodeUtil.createArrayRef(xcodeml, type, var.cloneObject());
+            XnodeUtil.createArrayRef(xcodeml, type, var.cloneNode());
         for(Xnode ai : _beforeCrt.get(index)) {
-          XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneObject());
+          XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneNode());
         }
         for(Xnode ai : _afterCrt.get(index)) {
           ref.append(ai, true);

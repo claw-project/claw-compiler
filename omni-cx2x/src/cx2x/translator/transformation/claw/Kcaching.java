@@ -287,7 +287,7 @@ public class Kcaching extends Transformation {
     XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
     if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
-      XbasicType newType = t.cloneObject();
+      XbasicType newType = t.cloneNode();
       type = xcodeml.getTypeTable().generateRealTypeHash();
       newType.setType(type);
       newType.removeIntent();
@@ -297,7 +297,7 @@ public class Kcaching extends Transformation {
           (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
       if(ref != null && (ref.isAllocatable() || ref.hasIntent())) {
         // TODO is there several level to reach ref ? Check if ref is Freal ...
-        XbasicType newRef = ref.cloneObject();
+        XbasicType newRef = ref.cloneNode();
         // TODO generate appropriate type
         String refType = xcodeml.getTypeTable().generateRealTypeHash();
         newRef.setType(refType);
@@ -389,7 +389,7 @@ public class Kcaching extends Transformation {
   private void updateArrayRefWithCache(List<Xnode> arrayRefs, Xnode cache) {
     for(Xnode ref : arrayRefs) {
       // Swap arrayRef with the cache variable
-      XnodeUtil.insertAfter(ref, cache.cloneObject());
+      XnodeUtil.insertAfter(ref, cache.cloneNode());
       ref.delete();
     }
   }

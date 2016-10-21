@@ -242,7 +242,7 @@ public class ArrayTransform extends BlockTransformation {
         // dimension argument of size starts at one
         range = XnodeUtil.createAssumedShapeRange(xcodeml, var, 1, i + 1);
       } else {
-        range = ranges.get(i).cloneObject();
+        range = ranges.get(i).cloneNode();
       }
       doStmts[i] = XnodeUtil.createDoStmt(xcodeml, inductionVar, range);
       XnodeUtil.copyEnhancedInfo(statements.get(0), doStmts[i]);
