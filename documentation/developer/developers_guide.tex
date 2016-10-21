@@ -24,6 +24,9 @@
 \setcounter{secnumdepth}{3}
 
 
+\def\clawfc{CLAW FORTRAN Compiler}
+\def\omni{OMNI Compiler Infrastructure}
+
 \makeglossaries
 
 \newacronym{ir}{IR}{Intermediate Representation}
@@ -169,19 +172,22 @@ Version 0.1, Last updated \today
 
 \chapter{Architecture}
 \section{OMNI Compiler}
-The CLAW FORTRAN Compiler is based on the OMNI Compiler infrastructure. 
+The \clawfc is based on the \omni. 
 
 \section{XcodeML/F}
-XcodeML/F is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of Fortran 2008 programs.
+XcodeML/F is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
 %TODO add reference to specs.
 
-\begin{lstlisting}
-\end{lstlisting}
+Listing \ref{fortran1} is a simple FORTRAN program. Its XcodeML/F \gls{ir} will be as shown in Listing \ref{xcodeml1}. A typical XcodeML/F translation unit is composed of the followings sections: 
+\begin{itemize}
+\item Type table with all the type definitions used in the translation unit (Listing \ref{xcodeml1} line 6-24).
+\item Global symbol table listing all the symbol at global scope (Listing \ref{xcodeml1} line 25-29).
+\item Global declaration section listing the actual function or module declarations (Listing \ref{xcodeml1} line 30-82).
+\end{itemize}
 
-\begin{lstlisting}
-<XcodeProgram>
-</XcodeProgram>
-\end{lstlisting}
+\lstinputlisting[label=fortran1, caption=Basic FORTRAN program, language=Fortran]{code/basic_fortran.f90}
+
+\lstinputlisting[label=xcodeml1, caption=XcodeML/F IR, language=xml]{code/basic_fortran.xml}
 
 \section{CLAW XcodeML to XcodeML translator}
 
