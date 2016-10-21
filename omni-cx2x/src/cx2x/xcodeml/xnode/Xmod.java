@@ -35,7 +35,7 @@ public class Xmod extends XcodeML {
     super(baseElement);
     _name = name;
     _path = path.endsWith("/") ? path : path + "/";
-    _identifiers = new XsymbolTable(matchSeq(Xcode.IDENTIFIERS).getElement());
+    _identifiers = new XsymbolTable(matchSeq(Xcode.IDENTIFIERS).element());
   }
 
   /**

@@ -263,7 +263,7 @@ public class Xnode {
    *
    * @return Element.
    */
-  public Element getElement() {
+  public Element element() {
     return _baseElement;
   }
 
@@ -279,7 +279,7 @@ public class Xnode {
       if(clone) {
         _baseElement.appendChild(node.cloneRawNode());
       } else {
-        _baseElement.appendChild(node.getElement());
+        _baseElement.appendChild(node.element());
       }
     }
   }
@@ -293,7 +293,7 @@ public class Xnode {
   public void insert(Xnode node, boolean clone) {
     if(node != null) {
       NodeList children = _baseElement.getChildNodes();
-      Node toInsert = clone ? node.cloneRawNode() : node.getElement();
+      Node toInsert = clone ? node.cloneRawNode() : node.element();
       if(children.getLength() == 0) {
         _baseElement.appendChild(toInsert);
       } else {

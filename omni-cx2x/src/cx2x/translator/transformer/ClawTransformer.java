@@ -130,8 +130,8 @@ public class ClawTransformer implements Transformer {
    * @return The stored element if present. Null otherwise.
    */
   public Object hasElement(Xnode key) {
-    if(_crossTransformationTable.containsKey(key.getElement())) {
-      return _crossTransformationTable.get(key.getElement());
+    if(_crossTransformationTable.containsKey(key.element())) {
+      return _crossTransformationTable.get(key.element());
     }
     return null;
   }
@@ -144,9 +144,9 @@ public class ClawTransformer implements Transformer {
    * @param value The element to be stored.
    */
   public void storeElement(Xnode key, Object value) {
-    if(_crossTransformationTable.containsKey(key.getElement())) {
-      _crossTransformationTable.remove(key.getElement());
+    if(_crossTransformationTable.containsKey(key.element())) {
+      _crossTransformationTable.remove(key.element());
     }
-    _crossTransformationTable.put(key.getElement(), value);
+    _crossTransformationTable.put(key.element(), value);
   }
 }

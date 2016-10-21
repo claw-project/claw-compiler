@@ -35,10 +35,10 @@ public class XnodeUtilTest {
     List<Xnode> pragmas = XnodeUtil.findAllPragmas(xcodeml);
     assertEquals(4, pragmas.size());
 
-    Xnode loopHoistStart = new Xnode(pragmas.get(1).getElement());
+    Xnode loopHoistStart = new Xnode(pragmas.get(1).element());
     assertNotNull(loopHoistStart);
     assertTrue(loopHoistStart.getValue().contains("loop-hoist"));
-    Xnode loopHoistEnd = new Xnode(pragmas.get(2).getElement());
+    Xnode loopHoistEnd = new Xnode(pragmas.get(2).element());
     assertNotNull(loopHoistEnd);
     assertTrue(loopHoistEnd.getValue().contains("end loop-hoist"));
 

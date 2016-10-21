@@ -148,7 +148,7 @@ public class LoopExtraction extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-    _fctDef = new XfunctionDefinition(fctDef.getElement());
+    _fctDef = new XfunctionDefinition(fctDef.element());
 
     // Find function declaration
     _fctDefToExtract = XnodeUtil.findFunctionDefinition(xcodeml, _fctCall);
@@ -357,7 +357,7 @@ public class LoopExtraction extends Transformation {
           tempName.setValue(var.getFctMapping());
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
           Xdecl newVarDecl =
-              new Xdecl(new Xnode(Xcode.VARDECL, xcodeml).getElement());
+              new Xdecl(new Xnode(Xcode.VARDECL, xcodeml).element());
           newVarDecl.append(tempName, false);
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
@@ -482,8 +482,8 @@ public class LoopExtraction extends Transformation {
     XnodeUtil.insertAfter(_claw.getPragma(), loop);
 
     // Move the call into the loop body
-    loop.body().getElement().
-        appendChild(_fctCall.getElement().getParentNode());
+    loop.body().element().
+        appendChild(_fctCall.element().getParentNode());
 
     insertDeclaration(doStmt.matchSeq(Xcode.VAR).getValue());
     if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR) != null) {

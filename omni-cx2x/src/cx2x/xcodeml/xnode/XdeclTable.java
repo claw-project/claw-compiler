@@ -214,7 +214,7 @@ public class XdeclTable extends Xnode {
     int secondDeclLineNo = decl.get(1).getLineNo();
 
     if(functionLineNo == firstDeclLineNo) {
-      _baseElement.appendChild(decl.get(0).getElement());
+      _baseElement.appendChild(decl.get(0).element());
     } else if(firstDeclLineNo > secondDeclLineNo) {
       Xnode hook = decl.get(1);
       for(int i = 1; i < decl.size(); ++i) {

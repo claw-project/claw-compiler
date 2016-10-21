@@ -178,7 +178,7 @@ public class XcodeProgram extends XcodeML {
    */
   private void readGlobalSymbolsTable() {
     _globalSymbolsTable =
-        new XsymbolTable(matchSeq(Xcode.GLOBALSYMBOLS).getElement());
+        new XsymbolTable(matchSeq(Xcode.GLOBALSYMBOLS).element());
   }
 
   /**
@@ -186,7 +186,7 @@ public class XcodeProgram extends XcodeML {
    */
   private void readGlobalDeclarationsTable() {
     _globalDeclarationsTable =
-        new XglobalDeclTable(matchSeq(Xcode.GLOBALDECLARATIONS).getElement());
+        new XglobalDeclTable(matchSeq(Xcode.GLOBALDECLARATIONS).element());
   }
 
   /**

@@ -284,8 +284,8 @@ public class ArrayTransform extends BlockTransformation {
 
     // Generate accelerator pragmas if needed
     Xnode potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
-        _clawBegin, xcodeml, new Xnode(doStmts[0].getElement()),
-        new Xnode(doStmts[0].getElement()));
+        _clawBegin, xcodeml, new Xnode(doStmts[0].element()),
+        new Xnode(doStmts[0].element()));
 
     // Add any additional transformation defined in the directive clauses
     TransformationHelper.generateAdditionalTransformation(_clawBegin, xcodeml,

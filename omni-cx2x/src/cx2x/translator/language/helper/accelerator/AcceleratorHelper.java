@@ -307,7 +307,7 @@ public class AcceleratorHelper {
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
           if(name != null && name.getValue().toLowerCase().equals(fctName)) {
-            calledFctDef = new XfunctionDefinition(fDef.getElement());
+            calledFctDef = new XfunctionDefinition(fDef.element());
             break;
           }
         }

@@ -51,11 +51,11 @@ public class XnodeUtil {
   public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
                                                            Xnode fctCall)
   {
-    if(xcodeml.getElement() == null) {
+    if(xcodeml.element() == null) {
       return null;
     }
     String name = fctCall.matchExactNode(Xcode.NAME).getValue();
-    NodeList nList = xcodeml.getElement().
+    NodeList nList = xcodeml.element().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for(int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
@@ -65,7 +65,7 @@ public class XnodeUtil {
         if(name != null &&
             fctDefName.getValue().toLowerCase().equals(name.toLowerCase()))
         {
-          return new XfunctionDefinition(dummyFctDef.getElement());
+          return new XfunctionDefinition(dummyFctDef.element());
         }
       }
     }
@@ -83,10 +83,10 @@ public class XnodeUtil {
   public static XfunctionDefinition findFunctionDefinitionInModule(
       XmoduleDefinition module, String name)
   {
-    if(module.getElement() == null) {
+    if(module.element() == null) {
       return null;
     }
-    NodeList nList = module.getElement().
+    NodeList nList = module.element().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
@@ -111,7 +111,7 @@ public class XnodeUtil {
                                                   String arrayName)
   {
     List<Xnode> references = new ArrayList<>();
-    NodeList nList = parent.getElement().
+    NodeList nList = parent.element().
         getElementsByTagName(Xname.F_ARRAY_REF);
     for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
@@ -137,7 +137,7 @@ public class XnodeUtil {
   public static List<XfunctionDefinition> getAllFctDef(XcodeProgram xcodeml)
   {
     List<XfunctionDefinition> definitions = new ArrayList<>();
-    NodeList nList = xcodeml.getElement().
+    NodeList nList = xcodeml.element().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
@@ -157,7 +157,7 @@ public class XnodeUtil {
    */
   public static List<Xnode> getAllVarReferences(Xnode parent, String varName) {
     List<Xnode> references = new ArrayList<>();
-    NodeList nList = parent.getElement().
+    NodeList nList = parent.element().
         getElementsByTagName(Xname.VAR);
     for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
@@ -336,7 +336,7 @@ public class XnodeUtil {
     );
 
     try {
-      NodeList output = evaluateXpath(from.getElement(), s1);
+      NodeList output = evaluateXpath(from.element(), s1);
       if(output.getLength() == 0) {
         return null;
       }
@@ -401,7 +401,7 @@ public class XnodeUtil {
     s1 = s1 + dynamic_part_s1;
     List<Xnode> doStatements = new ArrayList<>();
     try {
-      NodeList output = evaluateXpath(from.getElement(), s1);
+      NodeList output = evaluateXpath(from.element(), s1);
       for(int i = 0; i < output.getLength(); i++) {
         Element el = (Element) output.item(i);
         Xnode doStmt = new Xnode(el);
@@ -506,11 +506,11 @@ public class XnodeUtil {
    * @return The pragma if found. Null otherwise.
    */
   public static Xnode findPreviousPragma(Xnode from, String keyword) {
-    if(from == null || from.getElement() == null) {
+    if(from == null || from.element() == null) {
       return null;
     }
-    Node prev = from.getElement().getPreviousSibling();
-    Node parent = from.getElement();
+    Node prev = from.element().getPreviousSibling();
+    Node parent = from.element();
     do {
       while(prev != null) {
         if(prev.getNodeType() == Node.ELEMENT_NODE) {
@@ -538,11 +538,11 @@ public class XnodeUtil {
    */
   public static List<Xnode> findIndexes(Xnode parent) {
     List<Xnode> indexRanges = new ArrayList<>();
-    if(parent == null || parent.getElement() == null) {
+    if(parent == null || parent.element() == null) {
       return indexRanges;
     }
 
-    Node node = parent.getElement().getFirstChild();
+    Node node = parent.element().getFirstChild();
     while(node != null) {
       if(node.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) node;
@@ -581,7 +581,7 @@ public class XnodeUtil {
     List<Xnode> vars = findAll(Xcode.VAR, parent);
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
-      if(!((Element) var.getElement().getParentNode()).getTagName().
+      if(!((Element) var.element().getParentNode()).getTagName().
           equals(Xcode.ARRAYINDEX.code()))
       {
         realReferences.add(var);
@@ -619,7 +619,7 @@ public class XnodeUtil {
     List<Xnode> vars = findAll(Xcode.VAR, parent);
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
-      if(!((Element) var.getElement().getParentNode()).getTagName().
+      if(!((Element) var.element().getParentNode()).getTagName().
           equals(Xcode.ARRAYINDEX.code())
           && var.getValue().toLowerCase().equals(id.toLowerCase()))
       {
@@ -665,13 +665,13 @@ public class XnodeUtil {
    * @param ref  Element after which statement are shifted.
    */
   public static void extractBody(Xnode loop, Xnode ref) {
-    Element loopElement = loop.getElement();
+    Element loopElement = loop.element();
     Element body = XnodeUtil.findFirstElement(loopElement,
         Xname.BODY);
     if(body == null) {
       return;
     }
-    Node refNode = ref.getElement();
+    Node refNode = ref.element();
     for(Node childNode = body.getFirstChild(); childNode != null; ) {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
@@ -875,11 +875,11 @@ public class XnodeUtil {
   public static void shiftStatementsInBody(Xnode from,
                                            Xnode until, Xnode targetBody)
   {
-    Node currentSibling = from.getElement().getNextSibling();
-    Node firstStatementInBody = targetBody.getElement().getFirstChild();
-    while(currentSibling != null && currentSibling != until.getElement()) {
+    Node currentSibling = from.element().getNextSibling();
+    Node firstStatementInBody = targetBody.element().getFirstChild();
+    while(currentSibling != null && currentSibling != until.element()) {
       Node nextSibling = currentSibling.getNextSibling();
-      targetBody.getElement().insertBefore(currentSibling,
+      targetBody.element().insertBefore(currentSibling,
           firstStatementInBody);
       currentSibling = nextSibling;
     }
@@ -897,7 +897,7 @@ public class XnodeUtil {
     if(to.body() != null) {
       to.body().delete();
     }
-    to.getElement().appendChild(copiedBody);
+    to.element().appendChild(copiedBody);
   }
 
   /**
@@ -934,7 +934,7 @@ public class XnodeUtil {
     if(moduleDef == null) {
       return null;
     }
-    return new XmoduleDefinition(moduleDef.getElement());
+    return new XmoduleDefinition(moduleDef.element());
   }
 
   /**
@@ -948,7 +948,7 @@ public class XnodeUtil {
     if(fctDef == null) {
       return null;
     }
-    return new XfunctionDefinition(fctDef.getElement());
+    return new XfunctionDefinition(fctDef.element());
   }
 
   /**
@@ -963,7 +963,7 @@ public class XnodeUtil {
     if(from == null) {
       return null;
     }
-    Node nextNode = from.getElement().getNextSibling();
+    Node nextNode = from.element().getNextSibling();
     while(nextNode != null) {
       if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) nextNode;
@@ -985,8 +985,8 @@ public class XnodeUtil {
    */
   public static void deleteBetween(Xnode start, Xnode end) {
     List<Element> toDelete = new ArrayList<>();
-    Node node = start.getElement().getNextSibling();
-    while(node != null && node != end.getElement()) {
+    Node node = start.element().getNextSibling();
+    while(node != null && node != end.element()) {
       if(node.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) node;
         toDelete.add(element);
@@ -1006,7 +1006,7 @@ public class XnodeUtil {
    * @param element    The element to be inserted.
    */
   public static void insertAfter(Xnode refElement, Xnode element) {
-    XnodeUtil.insertAfter(refElement.getElement(), element.getElement());
+    XnodeUtil.insertAfter(refElement.element(), element.element());
   }
 
   /**
@@ -1021,9 +1021,9 @@ public class XnodeUtil {
   public static Xnode find(Xcode opcode, Xnode parent, boolean any) {
     Element el;
     if(any) {
-      el = findFirstElement(parent.getElement(), opcode.code());
+      el = findFirstElement(parent.element(), opcode.code());
     } else {
-      el = findFirstChildElement(parent.getElement(), opcode.code());
+      el = findFirstChildElement(parent.element(), opcode.code());
     }
     return (el == null) ? null : new Xnode(el);
   }
@@ -1065,8 +1065,8 @@ public class XnodeUtil {
       return null;
     }
 
-    Node nextNode = down ? from.getElement().getNextSibling() :
-        from.getElement().getParentNode();
+    Node nextNode = down ? from.element().getNextSibling() :
+        from.element().getParentNode();
 
     while(nextNode != null) {
       if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -1091,8 +1091,8 @@ public class XnodeUtil {
   public static void appendBody(Xnode originalBody, Xnode extraBody)
       throws IllegalTransformationException
   {
-    if(originalBody == null || originalBody.getElement() == null
-        || extraBody == null || extraBody.getElement() == null
+    if(originalBody == null || originalBody.element() == null
+        || extraBody == null || extraBody.element() == null
         || originalBody.opcode() != Xcode.BODY
         || extraBody.opcode() != Xcode.BODY)
     {
@@ -1100,12 +1100,12 @@ public class XnodeUtil {
     }
 
     // Append content of loop-body (loop) to this loop-body
-    Node childNode = extraBody.getElement().getFirstChild();
+    Node childNode = extraBody.element().getFirstChild();
     while(childNode != null) {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE) {
-        originalBody.getElement().appendChild(childNode);
+        originalBody.element().appendChild(childNode);
       }
       childNode = nextChild;
     }
@@ -1120,10 +1120,10 @@ public class XnodeUtil {
    * False otherwise.
    */
   public static boolean hasSameParentBlock(Xnode e1, Xnode e2) {
-    return !(e1 == null || e2 == null || e1.getElement() == null
-        || e2.getElement() == null)
-        && e1.getElement().getParentNode() ==
-        e2.getElement().getParentNode();
+    return !(e1 == null || e2 == null || e1.element() == null
+        || e2.element() == null)
+        && e1.element().getParentNode() ==
+        e2.element().getParentNode();
   }
 
   /**
@@ -1321,10 +1321,10 @@ public class XnodeUtil {
    * @return A depth value greater or equal to 0.
    */
   public static int getDepth(Xnode element) {
-    if(element == null || element.getElement() == null) {
+    if(element == null || element.element() == null) {
       return -1;
     }
-    return getDepth(element.getElement());
+    return getDepth(element.element());
   }
 
   /**
@@ -1346,8 +1346,8 @@ public class XnodeUtil {
    * @param insert The element to be inserted.
    */
   public static void insertBefore(Xnode ref, Xnode insert) {
-    ref.getElement().getParentNode().insertBefore(insert.getElement(),
-        ref.getElement());
+    ref.element().getParentNode().insertBefore(insert.element(),
+        ref.element());
   }
 
   /**
@@ -1364,7 +1364,7 @@ public class XnodeUtil {
     List<Xnode> elements = new ArrayList<>();
     try {
       XPathExpression ex = XPathFactory.newInstance().newXPath().compile(query);
-      NodeList output = (NodeList) ex.evaluate(from.getElement(),
+      NodeList output = (NodeList) ex.evaluate(from.element(),
           XPathConstants.NODESET);
       for(int i = 0; i < output.getLength(); i++) {
         Element element = (Element) output.item(i);
@@ -1410,7 +1410,7 @@ public class XnodeUtil {
     if(parent == null) {
       return elements;
     }
-    NodeList nodes = parent.getElement().getElementsByTagName(opcode.code());
+    NodeList nodes = parent.element().getElementsByTagName(opcode.code());
     for(int i = 0; i < nodes.getLength(); i++) {
       Node n = nodes.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
@@ -1485,7 +1485,7 @@ public class XnodeUtil {
     id.append(internalName, false);
     id.setAttribute(Xattr.TYPE, type);
     id.setAttribute(Xattr.SCLASS, sclass);
-    return new Xid(id.getElement());
+    return new Xid(id.element());
   }
 
   /**
@@ -1509,7 +1509,7 @@ public class XnodeUtil {
     if(intent != null) {
       bt.setAttribute(Xattr.INTENT, intent.toString());
     }
-    return new XbasicType(bt.getElement());
+    return new XbasicType(bt.element());
   }
 
   /**
@@ -1529,7 +1529,7 @@ public class XnodeUtil {
     internalName.setValue(nameValue);
     internalName.setAttribute(Xattr.TYPE, nameType);
     varD.append(internalName, false);
-    return new Xdecl(varD.getElement());
+    return new Xdecl(varD.element());
   }
 
   /**
@@ -1824,7 +1824,7 @@ public class XnodeUtil {
     if(type == null) {
       return;
     }
-    Node rawNode = dst.getDocument().importNode(type.getElement(), true);
+    Node rawNode = dst.getDocument().importNode(type.element(), true);
     Xtype importedType = new Xtype((Element) rawNode);
     dst.getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
@@ -2076,7 +2076,7 @@ public class XnodeUtil {
    * @return Next sibling node.
    */
   public static Xnode getNextSibling(Xnode crt) {
-    Node n = crt.getElement().getNextSibling();
+    Node n = crt.element().getNextSibling();
     while(n != null) {
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         return new Xnode((Element) n);
@@ -2130,8 +2130,8 @@ public class XnodeUtil {
    */
   public static void deleteFrom(Xnode start) {
     List<Node> toDelete = new ArrayList<>();
-    toDelete.add(start.getElement());
-    Node sibling = start.getElement().getNextSibling();
+    toDelete.add(start.element());
+    Node sibling = start.element().getNextSibling();
     while(sibling != null) {
       toDelete.add(sibling);
       sibling = sibling.getNextSibling();
