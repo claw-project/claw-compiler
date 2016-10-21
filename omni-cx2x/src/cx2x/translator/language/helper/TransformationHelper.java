@@ -185,7 +185,7 @@ public class TransformationHelper {
         XnodeUtil.findParentFunction(claw.getPragma());
     if(fctDef == null) {
       throw new IllegalTransformationException("Cannot apply reshape clause." +
-          "Parent function definition not found.", claw.getPragma().getLineNo());
+          "Parent function definition not found.", claw.getPragma().lineNo());
     }
 
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()) {
@@ -195,7 +195,7 @@ public class TransformationHelper {
       if(id == null || decl == null) {
         throw new IllegalTransformationException("Cannot apply reshape clause."
             + "Variable " + reshapeInfo.getArrayName() + " not found in " +
-            "declaration table.", claw.getPragma().getLineNo());
+            "declaration table.", claw.getPragma().lineNo());
       }
 
       String crtTypeHash = id.getType();
@@ -205,7 +205,7 @@ public class TransformationHelper {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",
                 reshapeInfo.getArrayName()),
-            claw.getPragma().getLineNo()
+            claw.getPragma().lineNo()
         );
       }
       XbasicType crtType = (XbasicType) rawType;
@@ -216,7 +216,7 @@ public class TransformationHelper {
             String.format(
                 "Reshape variable %s has smaller dimension than requested.",
                 reshapeInfo.getArrayName()
-            ), claw.getPragma().getLineNo()
+            ), claw.getPragma().lineNo()
         );
       }
 
@@ -309,7 +309,7 @@ public class TransformationHelper {
       if(mod == null) {
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + modDef.getName(),
-            claw.getPragma().getLineNo());
+            claw.getPragma().lineNo());
       }
     }
 
@@ -343,7 +343,7 @@ public class TransformationHelper {
        * symbol table. */
       String errorMsg = "Unable to locate fct " + fctDef.getName().value() +
           " in module " + modDef.getName();
-      int lineNo = claw.getPragma().getLineNo();
+      int lineNo = claw.getPragma().lineNo();
 
       // If not, try to matchSeq the correct FfunctionType in the module definitions
       Xid id = mod.getIdentifiers().get(fctDef.getName().value());
@@ -368,7 +368,7 @@ public class TransformationHelper {
     if(paramsLocal.size() < paramsMod.size()) {
       throw new IllegalTransformationException(
           "Local function has more parameters than module counterpart.",
-          claw.getPragma().getLineNo());
+          claw.getPragma().lineNo());
     }
 
     for(int i = 0; i < paramsLocal.size(); ++i) {
@@ -498,7 +498,7 @@ public class TransformationHelper {
       XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
       if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())) {
         throw new IllegalTransformationException("Cannot matchSeq type for " +
-            fieldId, claw.getPragma().getLineNo());
+            fieldId, claw.getPragma().lineNo());
       } else if(XnodeUtil.isBuiltInType(id.getType())) {
         newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
             Xintent.NONE);

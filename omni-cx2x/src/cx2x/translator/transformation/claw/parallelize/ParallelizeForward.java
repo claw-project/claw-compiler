@@ -77,7 +77,7 @@ public class ParallelizeForward extends Transformation {
     Xnode next = XnodeUtil.getNextSibling(_claw.getPragma());
     if(next == null) {
       xcodeml.addError("Directive is not followed by a valid statement.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
     if(next.opcode() == Xcode.EXPRSTATEMENT
@@ -93,7 +93,7 @@ public class ParallelizeForward extends Transformation {
       return analyzeForwardWithDo(xcodeml, next);
     }
     xcodeml.addError("Directive is not followed by a valid statement.",
-        _claw.getPragma().getLineNo());
+        _claw.getPragma().lineNo());
     return false;
   }
 
@@ -108,7 +108,7 @@ public class ParallelizeForward extends Transformation {
     _flatten = true;
     if(doStmt == null) {
       xcodeml.addError("Directive is not followed by do statement.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -129,7 +129,7 @@ public class ParallelizeForward extends Transformation {
     Xnode body = doStmt.matchSeq(Xcode.BODY);
     if(body == null) {
       xcodeml.addError("Cannot locate function call.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
     for(Xnode n : body.children()) {
@@ -140,7 +140,7 @@ public class ParallelizeForward extends Transformation {
       {
         xcodeml.addError("Only pragmas, comments and function calls allowed " +
                 "in the do statements.",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
         return false;
       } else if(n.opcode() == Xcode.EXPRSTATEMENT
           || n.opcode() == Xcode.FASSIGNSTATEMENT)
@@ -151,7 +151,7 @@ public class ParallelizeForward extends Transformation {
         }
       }
     }
-    xcodeml.addError("Function call not found.", _claw.getPragma().getLineNo());
+    xcodeml.addError("Function call not found.", _claw.getPragma().lineNo());
     return false;
   }
 
@@ -164,7 +164,7 @@ public class ParallelizeForward extends Transformation {
   private boolean analyzeForward(XcodeProgram xcodeml) {
     if(_fctCall == null) {
       xcodeml.addError("Directive is not followed by a fct call.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -178,7 +178,7 @@ public class ParallelizeForward extends Transformation {
         XnodeUtil.findParentFunction(_claw.getPragma());
     if(parentFctDef == null) {
       xcodeml.addError("Parellilize directive is not nested in a " +
-          "function/subroutine.", _claw.getPragma().getLineNo());
+          "function/subroutine.", _claw.getPragma().lineNo());
       return false;
     }
 
@@ -196,7 +196,7 @@ public class ParallelizeForward extends Transformation {
         uses.addAll(XnodeUtil.getAllUse(parentModule));
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
-              _claw.getPragma().getLineNo());
+              _claw.getPragma().lineNo());
           return false;
         }
       } else {
@@ -208,7 +208,7 @@ public class ParallelizeForward extends Transformation {
         _fctType = (XfunctionType) rawType;
       } else {
         xcodeml.addError("Unsupported type of XcodeML/F element for the function "
-            + _calledFctName, _claw.getPragma().getLineNo());
+            + _calledFctName, _claw.getPragma().lineNo());
         return false;
       }
     }
@@ -229,7 +229,7 @@ public class ParallelizeForward extends Transformation {
         uses.addAll(XnodeUtil.getAllUse(parentModule));
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
-              _claw.getPragma().getLineNo());
+              _claw.getPragma().lineNo());
           return false;
         }
       } else {
@@ -237,7 +237,7 @@ public class ParallelizeForward extends Transformation {
         if(_fctType == null) {
           xcodeml.addError(
               "Called function cannot be found in the same module ",
-              _claw.getPragma().getLineNo());
+              _claw.getPragma().lineNo());
           return false;
         }
       }
@@ -264,7 +264,7 @@ public class ParallelizeForward extends Transformation {
       }
 
       xcodeml.addError("Function signature not found in the current module.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -380,7 +380,7 @@ public class ParallelizeForward extends Transformation {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
     if(fDef == null) {
       throw new IllegalTransformationException("Parallelize directive is not " +
-          "nested in a function/subroutine.", _claw.getPragma().getLineNo());
+          "nested in a function/subroutine.", _claw.getPragma().lineNo());
     }
     _parentFctType = (XfunctionType) xcodeml.getTypeTable().
         get(fDef.getName().getAttribute(Xattr.TYPE));
@@ -419,7 +419,7 @@ public class ParallelizeForward extends Transformation {
         if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
           throw new IllegalTransformationException("Variable " + var + " must" +
               " be locally defined where the last call to parallelize if made.",
-              _claw.getPragma().getLineNo());
+              _claw.getPragma().lineNo());
         }
         // Size variable have to be declared
         XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
@@ -631,7 +631,7 @@ public class ParallelizeForward extends Transformation {
               _claw.getPragma().value()); */
       } else {
         throw new IllegalTransformationException("Unsupported return " +
-            "variable for promotion.", _claw.getPragma().getLineNo());
+            "variable for promotion.", _claw.getPragma().lineNo());
       }
 
       // If the array is a target, check if we have to promote a pointer
@@ -712,7 +712,7 @@ public class ParallelizeForward extends Transformation {
           Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
           if(varInLhs == null) {
             throw new IllegalTransformationException("Unable to propagate " +
-                "promotion. Internal error.", _claw.getPragma().getLineNo());
+                "promotion. Internal error.", _claw.getPragma().lineNo());
           }
 
           XbasicType varType = (XbasicType)

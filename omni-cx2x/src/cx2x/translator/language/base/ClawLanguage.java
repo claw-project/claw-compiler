@@ -115,7 +115,7 @@ public class ClawLanguage extends AnalyzedPragma {
       throws IllegalDirectiveException
   {
     ClawLanguage l =
-        analyze(pragma.value(), pragma.getLineNo(), generator, target);
+        analyze(pragma.value(), pragma.lineNo(), generator, target);
     if(l != null) {
       l.attachPragma(pragma);
     }

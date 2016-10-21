@@ -28,7 +28,7 @@ public class XmoduleDefinitionTest {
     XmoduleDefinition mod = new XmoduleDefinition(node.element());
     assertNotNull(mod);
     assertEquals("module", mod.getName());
-    assertEquals(4, mod.getLineNo());
+    assertEquals(4, mod.lineNo());
     assertEquals("./src/module.f90", mod.getFile());
     assertNull(mod.getSymbolTable());
     assertNull(mod.getDeclarationTable());

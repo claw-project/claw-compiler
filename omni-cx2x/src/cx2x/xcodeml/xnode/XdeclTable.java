@@ -189,7 +189,7 @@ public class XdeclTable extends Xnode {
    * @param fct Function definition which is checked.
    */
   public void checkOrder(XfunctionDefinition fct) {
-    int functionLineNo = fct.getLineNo();
+    int functionLineNo = fct.lineNo();
     List<Xnode> decl = new ArrayList<>();
 
     Node crtNode = _baseElement.getFirstChild();
@@ -210,15 +210,15 @@ public class XdeclTable extends Xnode {
       return;
     }
 
-    int firstDeclLineNo = decl.get(0).getLineNo();
-    int secondDeclLineNo = decl.get(1).getLineNo();
+    int firstDeclLineNo = decl.get(0).lineNo();
+    int secondDeclLineNo = decl.get(1).lineNo();
 
     if(functionLineNo == firstDeclLineNo) {
       _baseElement.appendChild(decl.get(0).element());
     } else if(firstDeclLineNo > secondDeclLineNo) {
       Xnode hook = decl.get(1);
       for(int i = 1; i < decl.size(); ++i) {
-        if(decl.get(i).getLineNo() > firstDeclLineNo) {
+        if(decl.get(i).lineNo() > firstDeclLineNo) {
           break;
         }
         hook = decl.get(i);

@@ -36,14 +36,14 @@ public class XdeclTableTest {
 
     Xdecl var1 = decl.get("name1");
     assertNotNull(var1);
-    assertEquals(4730, var1.getLineNo());
+    assertEquals(4730, var1.lineNo());
     assertEquals("dummy.f90", var1.getFile());
     assertEquals("name1", var1.matchSeq(Xcode.NAME).value());
     assertEquals("I1241bd0", var1.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
 
     Xdecl var2 = decl.get("name2");
     assertNotNull(var2);
-    assertEquals(4731, var2.getLineNo());
+    assertEquals(4731, var2.lineNo());
     assertEquals("dummy.f90", var2.getFile());
     assertEquals("name2", var2.matchSeq(Xcode.NAME).value());
     assertEquals("I1241c70", var2.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));

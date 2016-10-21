@@ -65,7 +65,7 @@ public class UtilityRemove extends BlockTransformation {
 
       if(_do == null && _if == null && _contains == null) {
         xcodeml.addError("Directive remove without end not followed by a do " +
-            ", if or contains statement", _clawStart.getPragma().getLineNo());
+            ", if or contains statement", _clawStart.getPragma().lineNo());
         return false;
       }
     }

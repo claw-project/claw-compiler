@@ -185,7 +185,7 @@ public class LoopInterchange extends Transformation {
 
     if(_loopLevel0 == null) {
       xcodeml.addError("top level loop not found",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -198,7 +198,7 @@ public class LoopInterchange extends Transformation {
     if(_newOrderOption != null) {
       if(_newOrderOption.size() != 3) {
         xcodeml.addError("new-order option has not enough parameters",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
       }
 
       _loopLevel2 = XnodeUtil.find(Xcode.FDOSTATEMENT,
@@ -236,7 +236,7 @@ public class LoopInterchange extends Transformation {
           && !idx.equals(_baseLoop2))
       {
         xcodeml.addError("invalid induction variable in new-order option. "
-            + idx, _claw.getPragma().getLineNo());
+            + idx, _claw.getPragma().lineNo());
         return false;
       }
     }

@@ -71,7 +71,7 @@ public class ArrayTransform extends BlockTransformation {
       if(foundAssignments.size() == 0) {
         xcodeml.addError(
             "No array notation assignments found in the array-transform block.",
-            _clawBegin.getPragma().getLineNo()
+            _clawBegin.getPragma().lineNo()
         );
         return false;
       }
@@ -113,13 +113,13 @@ public class ArrayTransform extends BlockTransformation {
               _clawBegin.getPragma());
       if(stmt == null) {
         xcodeml.addError("Directive not followed by an assign statement",
-            _clawBegin.getPragma().getLineNo());
+            _clawBegin.getPragma().lineNo());
         return false;
       }
       // Check if we are dealing with an array notation
       if(!(stmt.child(0).opcode() == Xcode.FARRAYREF)) {
         xcodeml.addError("Assign statement is not an array notation",
-            _clawBegin.getPragma().getLineNo());
+            _clawBegin.getPragma().lineNo());
         return false;
       }
 
@@ -131,7 +131,7 @@ public class ArrayTransform extends BlockTransformation {
       }
       if(ranges.size() == 0) {
         xcodeml.addError("Assign statement is not an array notation",
-            _clawBegin.getPragma().getLineNo());
+            _clawBegin.getPragma().lineNo());
         return false;
       }
 

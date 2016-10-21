@@ -48,7 +48,7 @@ public class XfunctionDefinitionTest {
     assertNull(fctDef.getParams());
     assertNotNull(fctDef.body());
 
-    assertEquals(1, fctDef.getLineNo());
+    assertEquals(1, fctDef.lineNo());
     assertEquals("original_code.f90", fctDef.getFile());
 
 

@@ -33,7 +33,7 @@ public class XvarDeclTest {
   public void simpleXvarDeclWithValueTest() {
     Xdecl varDecl = XmlHelper.createXvarDecl(varDecl1);
     assertNotNull(varDecl);
-    assertEquals(946, varDecl.getLineNo());
+    assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.getFile());
     assertNotNull(varDecl.matchSeq(Xcode.NAME));
     assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
@@ -46,7 +46,7 @@ public class XvarDeclTest {
   public void simpleXvarDeclWithoutValueTest() {
     Xdecl varDecl = XmlHelper.createXvarDecl(varDecl2);
     assertNotNull(varDecl);
-    assertEquals(946, varDecl.getLineNo());
+    assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.getFile());
     assertNotNull(varDecl.matchSeq(Xcode.NAME));
     assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));

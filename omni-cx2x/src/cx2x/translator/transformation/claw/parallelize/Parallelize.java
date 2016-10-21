@@ -99,14 +99,14 @@ public class Parallelize extends Transformation {
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
               "Parallelize directive must be defined in a function/subroutine.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
     _fctType = (XfunctionType) xcodeml.getTypeTable().
         get(_fctDef.getName().getAttribute(Xattr.TYPE));
     if(_fctType == null) {
       xcodeml.addError("Function/subroutine signature cannot be found. ",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -124,7 +124,7 @@ public class Parallelize extends Transformation {
   private boolean analyseDimension(XcodeProgram xcodeml) {
     if(!_claw.hasDimensionClause()) {
       xcodeml.addError("No dimension defined for parallelization.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -132,7 +132,7 @@ public class Parallelize extends Transformation {
       if(_dimensions.containsKey(d.getIdentifier())) {
         xcodeml.addError(
             String.format("Dimension with identifier %s already specified.",
-                d.getIdentifier()), _claw.getPragma().getLineNo()
+                d.getIdentifier()), _claw.getPragma().lineNo()
         );
         return false;
       }
@@ -200,14 +200,14 @@ public class Parallelize extends Transformation {
         if(!_fctDef.getSymbolTable().contains(d)) {
           xcodeml.addError(
               String.format("Data %s is not defined in the current block.", d),
-              _claw.getPragma().getLineNo()
+              _claw.getPragma().lineNo()
           );
           return false;
         }
         if(!_fctDef.getDeclarationTable().contains(d)) {
           xcodeml.addError(
               String.format("Data %s is not declared in the current block.", d),
-              _claw.getPragma().getLineNo()
+              _claw.getPragma().lineNo()
           );
           return false;
         }
@@ -232,21 +232,21 @@ public class Parallelize extends Transformation {
       if(!over.contains(ClawDimension.BASE_DIM)) {
         xcodeml.addError("The column dimension has not been specified in the " +
                 "over clause. Use : to specify it.",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
         return false;
       }
       int baseDimNb = TransformationHelper.baseDimensionNb(over);
       if(baseDimNb > 2) {
         xcodeml.addError("Too many base dimensions specified in over clause. " +
                 "Maximum two base dimensions can be specified.",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
         return false;
       } else if(baseDimNb == 2) {
         if(!over.get(0).equals(ClawDimension.BASE_DIM)
             || !over.get(over.size() - 1).equals(ClawDimension.BASE_DIM))
         {
           xcodeml.addError("Base dimensions structure not supported in over" +
-              "clause.", _claw.getPragma().getLineNo());
+              "clause.", _claw.getPragma().lineNo());
           return false;
         }
       }
@@ -262,7 +262,7 @@ public class Parallelize extends Transformation {
             xcodeml.addError(
                 String.format(
                     "Dimension %s is not defined. Cannot be used in over " +
-                        "clause", o), _claw.getPragma().getLineNo()
+                        "clause", o), _claw.getPragma().lineNo()
             );
             return false;
           }
@@ -271,7 +271,7 @@ public class Parallelize extends Transformation {
       }
       if(usedDimension != _overDimensions) {
         xcodeml.addError("Over clause doesn't use one or more defined " +
-            "dimensions", _claw.getPragma().getLineNo());
+            "dimensions", _claw.getPragma().lineNo());
         return false;
       }
     }

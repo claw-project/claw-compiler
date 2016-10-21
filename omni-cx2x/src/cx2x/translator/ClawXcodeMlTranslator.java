@@ -172,7 +172,7 @@ public class ClawXcodeMlTranslator {
             break;
           default:
             _program.addError("Unrecognized CLAW directive",
-                pragma.getLineNo());
+                pragma.lineNo());
             abort();
         }
       } catch(IllegalDirectiveException ex) {
@@ -208,7 +208,7 @@ public class ClawXcodeMlTranslator {
     if(analyzedPragma.isEndPragma()) { // start block directive
       if(!_blockDirectives.containsKey(crtRemoveKey)) {
         _program.addError("Invalid Claw directive (end with no start)",
-            analyzedPragma.getPragma().getLineNo());
+            analyzedPragma.getPragma().lineNo());
         abort();
       } else {
         createBlockDirectiveTransformation(_blockDirectives.get(crtRemoveKey),

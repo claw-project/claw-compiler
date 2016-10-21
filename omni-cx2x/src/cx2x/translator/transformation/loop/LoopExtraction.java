@@ -68,7 +68,7 @@ public class LoopExtraction extends Transformation {
     try {
       extractMappingInformation();
     } catch(IllegalDirectiveException ide) {
-      ide.setDirectiveLine(directive.getPragma().getLineNo());
+      ide.setDirectiveLine(directive.getPragma().lineNo());
       throw ide;
     }
   }
@@ -109,7 +109,7 @@ public class LoopExtraction extends Transformation {
       if(XnodeUtil.findArg(map.getKey(), _fctCall) == null) {
         xcodeml.addError("Mapped variable " + map.getKey() +
                 " not found in function call arguments",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
         return false;
       }
     }
@@ -130,7 +130,7 @@ public class LoopExtraction extends Transformation {
         XnodeUtil.findNext(Xcode.EXPRSTATEMENT, _claw.getPragma());
     if(_exprStmt == null) {
       xcodeml.addError("No function call detected after loop-extract",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -138,14 +138,14 @@ public class LoopExtraction extends Transformation {
     _fctCall = XnodeUtil.find(Xcode.FUNCTIONCALL, _exprStmt, true);
     if(_fctCall == null) {
       xcodeml.addError("No function call detected after loop-extract",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
     Xnode fctDef = XnodeUtil.findParent(Xcode.FFUNCTIONDEFINITION, _fctCall);
     if(fctDef == null) {
       xcodeml.addError("No function around the fct call",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
     _fctDef = new XfunctionDefinition(fctDef.element());
@@ -156,7 +156,7 @@ public class LoopExtraction extends Transformation {
     if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "
               + _fctCall.matchExactNode(Xcode.NAME).value(),
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -165,7 +165,7 @@ public class LoopExtraction extends Transformation {
       _extractedLoop = locateDoStatement(_fctDefToExtract);
     } catch(IllegalTransformationException itex) {
       xcodeml.addError(itex.getMessage(),
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -308,7 +308,7 @@ public class LoopExtraction extends Transformation {
           if(type.getDimensions() < mapping.getMappedDimensions()) {
             throw new IllegalTransformationException(
                 "mapping dimensions too big. Mapping " + mapping.toString() +
-                    " is wrong ...", _claw.getPragma().getLineNo());
+                    " is wrong ...", _claw.getPragma().lineNo());
           }
 
           Xnode newArg = new Xnode(Xcode.FARRAYREF, xcodeml);
@@ -438,7 +438,7 @@ public class LoopExtraction extends Transformation {
     Xnode foundStatement = XnodeUtil.find(Xcode.FDOSTATEMENT, from, true);
     if(foundStatement == null) {
       throw new IllegalTransformationException("No loop found in function",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
     } else {
       if(!_claw.getRange().equals(foundStatement)) {
         // Try to matchSeq another loops that meet the criteria
@@ -452,13 +452,13 @@ public class LoopExtraction extends Transformation {
 
     if(foundStatement == null) {
       throw new IllegalTransformationException("No loop found in function",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
     }
 
     if(!_claw.getRange().equals(foundStatement)) {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
-          _claw.getPragma().getLineNo()
+          _claw.getPragma().lineNo()
       );
     }
     return foundStatement;

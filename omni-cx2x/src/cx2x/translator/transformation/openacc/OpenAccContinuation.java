@@ -132,7 +132,7 @@ public class OpenAccContinuation extends Transformation {
   {
     Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
     p.setFile(getDirective().getPragma().getFile());
-    p.setLine(getDirective().getPragma().getLineNo() + lineIndex);
+    p.setLine(getDirective().getPragma().lineNo() + lineIndex);
     if(continued) {
       p.setValue(ClawConstant.OPENACC_PREFIX + " " + value + " " +
           ClawConstant.CONTINUATION_LINE_SYMBOL);

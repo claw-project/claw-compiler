@@ -41,14 +41,14 @@ public class ArrayToFctCall extends Transformation {
         XnodeUtil.findParentFunction(_claw.getPragma());
     if(_fctDef == null) {
       xcodeml.addError("Cannot locate function definition.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
     if(!_fctDef.getDeclarationTable().contains(_claw.getArrayName())) {
       xcodeml.addError(_claw.getArrayName() +
               " is not declared in current function/subroutine.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -63,7 +63,7 @@ public class ArrayToFctCall extends Transformation {
       if(_replaceFct == null) {
         xcodeml.addError("Function " + _claw.getFctName() +
                 " not found in current file.",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
         return false;
       }
     }
@@ -72,7 +72,7 @@ public class ArrayToFctCall extends Transformation {
    /*if(_replaceFct.getParams().count() != _claw.getFctParams().size()){
       xcodeml.addError("Function " + _claw.getFctName() +
               " parameters mismatch.",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }*/
 

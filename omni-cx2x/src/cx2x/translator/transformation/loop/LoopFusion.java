@@ -73,7 +73,7 @@ public class LoopFusion extends Transformation {
       _groupLabel = ghostDirective.getGroupValue();
     }
     if(_claw.getPragma() != null) {
-      setStartLine(ghostDirective.getPragma().getLineNo());
+      setStartLine(ghostDirective.getPragma().lineNo());
     }
   }
 
@@ -102,7 +102,7 @@ public class LoopFusion extends Transformation {
         }
         if(_loops[i] == null) {
           xcodeml.addError("Cannot matchSeq loop at depth " + i +
-              " after directive", _claw.getPragma().getLineNo());
+              " after directive", _claw.getPragma().lineNo());
           return false;
         }
       }
@@ -114,7 +114,7 @@ public class LoopFusion extends Transformation {
           XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
       if(loop == null) {
         xcodeml.addError("Cannot matchSeq loop after directive",
-            _claw.getPragma().getLineNo());
+            _claw.getPragma().lineNo());
         return false;
       }
       _loops = new Xnode[]{loop};
@@ -140,7 +140,7 @@ public class LoopFusion extends Transformation {
   {
     if(!(transformation instanceof LoopFusion)) {
       throw new IllegalTransformationException("Incompatible transformation",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
     }
     LoopFusion loopFusionUnit = (LoopFusion) transformation;
 
@@ -156,7 +156,7 @@ public class LoopFusion extends Transformation {
       {
         throw new IllegalTransformationException(
             "Cannot apply transformation, one or both do stmt are invalid.",
-            _claw.getPragma().getLineNo()
+            _claw.getPragma().lineNo()
         );
       }
       XnodeUtil.appendBody(_loops[innerLoopIdx].body(),

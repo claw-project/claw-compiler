@@ -308,7 +308,7 @@ public class Xnode {
    *
    * @return Line number. 0 if the attribute is not defined.
    */
-  public int getLineNo() {
+  public int lineNo() {
     if(_baseElement.hasAttribute(Xattr.LINENO.toString())) {
       return Integer.parseInt(
           _baseElement.getAttribute(Xattr.LINENO.toString())

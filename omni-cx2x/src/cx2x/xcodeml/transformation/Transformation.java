@@ -33,7 +33,7 @@ public abstract class Transformation {
     _directive = directive;
 
     if(_directive != null && _directive.getPragma() != null) {
-      _startLine = _directive.getPragma().getLineNo();
+      _startLine = _directive.getPragma().lineNo();
     }
   }
 

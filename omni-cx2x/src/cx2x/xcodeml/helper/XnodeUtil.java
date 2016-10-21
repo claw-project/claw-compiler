@@ -405,8 +405,8 @@ public class XnodeUtil {
       for(int i = 0; i < output.getLength(); i++) {
         Element el = (Element) output.item(i);
         Xnode doStmt = new Xnode(el);
-        if(doStmt.getLineNo() != 0 &&
-            doStmt.getLineNo() < endPragma.getLineNo())
+        if(doStmt.lineNo() != 0 &&
+            doStmt.lineNo() < endPragma.lineNo())
         {
           doStatements.add(doStmt);
         }
@@ -1335,7 +1335,7 @@ public class XnodeUtil {
    * @param target Target element to copy information to.
    */
   public static void copyEnhancedInfo(Xnode base, Xnode target) {
-    target.setLine(base.getLineNo());
+    target.setLine(base.lineNo());
     target.setFile(base.getFile());
   }
 

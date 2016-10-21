@@ -63,7 +63,7 @@ public class LoopHoist extends BlockTransformation {
 
     if(statements.size() == 0) {
       xcodeml.addError("No do statement group meets the criteria of hoisting.",
-          _startClaw.getPragma().getLineNo());
+          _startClaw.getPragma().lineNo());
       return false;
     }
 
@@ -75,7 +75,7 @@ public class LoopHoist extends BlockTransformation {
       } catch(IllegalTransformationException e) {
         xcodeml.addError("Group " + i + " of do statements do not meet the" +
                 " criteria of loop hoisting (Group index starts at 0).",
-            _startClaw.getPragma().getLineNo());
+            _startClaw.getPragma().lineNo());
         return false;
       }
 
@@ -88,7 +88,7 @@ public class LoopHoist extends BlockTransformation {
         if(tmpIf == null && tmpSelect == null) {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting (Group index starts at 0).",
-              _startClaw.getPragma().getLineNo());
+              _startClaw.getPragma().lineNo());
           return false;
         }
 
@@ -102,7 +102,7 @@ public class LoopHoist extends BlockTransformation {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting or depth is too high " +
                   "(Group index starts at 0).",
-              _startClaw.getPragma().getLineNo());
+              _startClaw.getPragma().lineNo());
           return false;
         }
       }
@@ -131,7 +131,7 @@ public class LoopHoist extends BlockTransformation {
           // Iteration range are too different, stop analysis
           xcodeml.addError("Iteration range of do statements group " + i +
                   " differs from group 0. Loop hoisting aborted.",
-              _startClaw.getPragma().getLineNo());
+              _startClaw.getPragma().lineNo());
           return false;
         }
       }
@@ -145,7 +145,7 @@ public class LoopHoist extends BlockTransformation {
       if(fctDef == null) {
         xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
                 "definition including the current directive",
-            _startClaw.getPragma().getLineNo()
+            _startClaw.getPragma().lineNo()
         );
         return false;
       }
@@ -158,7 +158,7 @@ public class LoopHoist extends BlockTransformation {
           if(!checkUpperDefinition(fctDef, r.getArrayName())) {
             xcodeml.addError(String.format("Reshape variable %s not found in " +
                     "the definition of %s", r.getArrayName(),
-                fctDef.getName().value()), _startClaw.getPragma().getLineNo()
+                fctDef.getName().value()), _startClaw.getPragma().lineNo()
             );
             return false;
           }
@@ -283,7 +283,7 @@ public class LoopHoist extends BlockTransformation {
       if(next == null) {
         throw new IllegalTransformationException(
             "Unable to matchSeq enough nested do statements",
-            _startClaw.getPragma().getLineNo()
+            _startClaw.getPragma().lineNo()
         );
       }
       g.getDoStmts()[j] = next;

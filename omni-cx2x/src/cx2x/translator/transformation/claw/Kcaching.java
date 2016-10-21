@@ -47,7 +47,7 @@ public class Kcaching extends Transformation {
     _doStmt = XnodeUtil.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
     if(_doStmt == null) {
       xcodeml.addError("The kcache directive is not nested in a do statement",
-          _claw.getPragma().getLineNo());
+          _claw.getPragma().lineNo());
       return false;
     }
 
@@ -253,7 +253,7 @@ public class Kcaching extends Transformation {
     if(id == null) {
       throw new IllegalTransformationException("Variable " + var +
           " defined in the data clause has not been found",
-          _claw.getPragma().getLineNo()
+          _claw.getPragma().lineNo()
       );
     }
     XbasicType basicType =
@@ -374,7 +374,7 @@ public class Kcaching extends Transformation {
     if(arrayRefs.size() == 0) {
       throw new IllegalTransformationException("Variable " + var +
           " defined in the data clause has not been found",
-          _claw.getPragma().getLineNo()
+          _claw.getPragma().lineNo()
       );
     }
     return arrayRefs;
