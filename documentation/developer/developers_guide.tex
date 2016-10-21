@@ -1,0 +1,217 @@
+\documentclass[a4paper, 11pt]{report}
+\author{Valentin Clement}
+\title{CLAW Fortran Compiler - Developer's Guide}
+
+\usepackage[utf8]{inputenc}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{lastpage}
+\usepackage[top=2cm, bottom=1cm, left=2cm, right=2cm]{geometry}
+\usepackage{color}
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{lipsum}
+\usepackage{pgfplots}
+\usepackage{CJKutf8}
+\usepackage{glossaries}
+
+\setcounter{secnumdepth}{3}
+
+
+\makeglossaries
+
+%font change
+\renewcommand{\familydefault}{\sfdefault}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\nl}{\\[0.1cm]}
+\newcommand{\s}{\vspace{0.3cm}}
+%\newcommand{\emptypage}{\newpage \thispagestyle{empty} \mbox{}\newpage}
+\newcommand{\emptypage}{}
+\newcommand{\smore}{\vspace{0.6cm}}
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+\definecolor{darkgreen}{rgb}{0,0.4,0}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{Gray}{rgb}{0,0,0}
+\definecolor{LightGray}{gray}{0.9}
+
+
+\lstset{
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{orange}, %keywordstyle=\color{MidnightBlue}\bfseries,
+    identifierstyle=\color{black},
+    commentstyle=\color{darkgreen},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\color{Gray}\tiny,
+    frame=bt, %frame=single,
+    rulecolor=\color{Gray},
+    numbersep=7pt,
+    extendedchars=true,
+    captionpos=b,
+    breaklines=true,
+    showspaces=false,
+    showtabs=false,
+    tabsize=2,
+    xleftmargin=20pt,
+    framexleftmargin=20pt,
+    framexrightmargin=0pt,
+    framextopmargin=0pt,
+    framexbottommargin=0pt,
+    showstringspaces=false,
+    aboveskip=20pt,
+    belowskip=20pt
+}
+
+\lstset{
+	emph={parclass, sync, async, broadcast, scatter, gather, reduce, seq, conc, mutex},
+	emphstyle={\color{orange}\bfseries}
+}
+
+\addto\captionsenglish{%
+  \renewcommand{\listfigurename}{List of figures}%
+	\renewcommand\refname{}
+}
+
+%Header and footer
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+
+%Header definition
+\renewcommand{\headrulewidth}{0.5pt}
+\lhead{CLAW FORTRAN Compiler}
+\rhead{Developer's Guide}
+
+%Footer definition
+\renewcommand{\footrulewidth}{0.5pt}
+\lfoot{Version 0.1}
+\rfoot{Page \thepage ~on \pageref{LastPage}}
+
+\definecolor{grey}{rgb}{0.9,0.9,0.9} % Color of the box surrounding the title - these values can be changed to give the box a different color	
+
+%remove indent for paragraph
+\parindent0ex
+
+\begin{document}
+
+\thispagestyle{empty} % Remove page numbering on this page
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+\colorbox{grey}{
+	\parbox[t]{1.0\linewidth}{
+		\centering \fontsize{35pt}{80pt}\selectfont % The first argument for fontsize is the font size of the text and the second is the line spacing - you may need to play with these for your particular title
+		\vspace*{2cm} % Space between the start of the title and the top of the grey box
+		
+		\hfill \textbf{CLAW FORTRAN Compiler} \\
+		\hfill Developer's Guide\par
+		
+		\vspace*{2cm} % Space between the end of the title and the bottom of the grey box
+	}
+}
+
+\vfill
+
+\begin{center}
+\includegraphics[width=4cm]{resources/c2sm_logo.pdf} \\
+\end{center}
+
+\vfill % Space between the title box and author information
+
+\begin{center}
+Version 0.1, Last updated \today
+\end{center}
+\HRule
+
+\clearpage % Whitespace to the end of the page
+
+
+
+\newgeometry{top=3cm,bottom=3cm,right=2cm,left=2cm}
+
+%\emptypage
+%\pagebreak
+%\label{chapter:ack}
+%\begin{center}
+%\textsc{\LARGE Acknowledgment}
+%\end{center}
+%\input{acknowledgment}
+
+%\emptypage
+%\pagebreak
+%\label{chapter:abstract}
+%\begin{center}
+%\textsc{\LARGE Abstract}
+%\end{center}
+
+
+\emptypage
+\pagebreak
+\tableofcontents
+
+
+
+\chapter{Architecture}
+\section{OMNI Compiler}
+The CLAW FORTRAN Compiler is based on the OMNI Compiler infrastructure. 
+
+\section{XcodeML/F}
+XcodeML/F is the intermediate representation (IR) used by the translator in the CLAW FORTRAN Compiler. This IR is based on the XML format and is described in a specification document. It allows to have an high-level representation of Fortran 2008 programs.
+%TODO add reference to specs.
+
+\begin{lstlisting}
+\end{lstlisting}
+
+\begin{lstlisting}
+<XcodeProgram>
+</XcodeProgram>
+\end{lstlisting}
+
+\section{CLAW XcodeML to XcodeML translator}
+
+
+\chapter{Transformation}
+\section{Transformation application order}
+
+\section{Add a transformation}
+A transformation is always triggered by a directive. 
+
+% GLOSSARY
+\pagebreak
+\glsaddall
+\printglossaries
+
+\emptypage
+% FIGURES
+\pagebreak
+\listoffigures
+
+%TABLES
+\pagebreak
+\listoftables
+
+\emptypage
+% LISTINGS
+\pagebreak
+\lstlistoflistings
+
+% REFERENCES
+%\input{references}
+
+%\emptypage
+%\input{appendix}
+
+\end{document}
