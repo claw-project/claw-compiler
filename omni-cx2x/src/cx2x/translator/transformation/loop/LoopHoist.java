@@ -143,7 +143,7 @@ public class LoopHoist extends BlockTransformation {
       XfunctionDefinition fctDef =
           XnodeUtil.findParentFunction(_startClaw.getPragma());
       if(fctDef == null) {
-        xcodeml.addError("Unable to find the function/subroutine/module " +
+        xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
                 "definition including the current directive",
             _startClaw.getPragma().getLineNo()
         );
@@ -251,8 +251,8 @@ public class LoopHoist extends BlockTransformation {
     Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
     Xnode inductionVar = XnodeUtil.find(Xcode.VAR, g.getDoStmts()[0], false);
     cond.appendToChildren(inductionVar, true);
-    cond.appendToChildren(g.getDoStmts()[0].findNode(Xcode.INDEXRANGE).
-        findNode(Xcode.LOWERBOUND).getChild(0), true
+    cond.appendToChildren(g.getDoStmts()[0].matchExactNode(Xcode.INDEXRANGE).
+        matchExactNode(Xcode.LOWERBOUND).getChild(0), true
     );
     ifStmt.appendToChildren(condition, false);
     ifStmt.appendToChildren(thenBlock, false);
@@ -282,7 +282,7 @@ public class LoopHoist extends BlockTransformation {
           g.getDoStmts()[j - 1].getBody(), false);
       if(next == null) {
         throw new IllegalTransformationException(
-            "Unable to find enough nested do statements",
+            "Unable to matchSeq enough nested do statements",
             _startClaw.getPragma().getLineNo()
         );
       }

@@ -45,7 +45,7 @@ public class Xid extends Xnode {
   private void readElementInformation() {
     _type = getAttribute(Xattr.TYPE);
     _sclass = getAttribute(Xattr.SCLASS);
-    _xname = find(Xcode.NAME);
+    _xname = matchSeq(Xcode.NAME);
   }
 
   /**

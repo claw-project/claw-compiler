@@ -156,14 +156,14 @@ public class Parallelize extends Transformation {
         if(decl.isBuiltInType()) {
           if(XmOption.isDebugOutput()) {
             System.out.println("parallelize promotion: Scalar "
-                + decl.find(Xcode.NAME).getValue()
+                + decl.matchSeq(Xcode.NAME).getValue()
                 + " is candidate for promotion.");
           }
-          _scalarFields.add(decl.find(Xcode.NAME).getValue());
+          _scalarFields.add(decl.matchSeq(Xcode.NAME).getValue());
         }
 
         Xtype type = xcodeml.getTypeTable().
-            get(decl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
+            get(decl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType) {
           XbasicType bType = (XbasicType) type;
           if(((bType.getIntent() == Xintent.IN
@@ -173,16 +173,16 @@ public class Parallelize extends Transformation {
           {
             if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array " +
-                  decl.find(Xcode.NAME).getValue() + " will be promoted.");
+                  decl.matchSeq(Xcode.NAME).getValue() + " will be promoted.");
             }
-            _arrayFieldsInOut.add(decl.find(Xcode.NAME).getValue());
+            _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).getValue());
           } else if(bType.isArray()) {
             if(XmOption.isDebugOutput()) {
               System.out.println("parallelize promotion: Array "
-                  + decl.find(Xcode.NAME).getValue()
+                  + decl.matchSeq(Xcode.NAME).getValue()
                   + " is candidate for promotion.");
             }
-            _scalarFields.add(decl.find(Xcode.NAME).getValue());
+            _scalarFields.add(decl.matchSeq(Xcode.NAME).getValue());
           }
         }
       }
@@ -346,7 +346,7 @@ public class Parallelize extends Transformation {
     /* Subroutine/function can have a contains section with inner subtourines or
      * functions. The newly created (nested) do statements should stop before
      * this contains section if it exists. */
-    Xnode contains = _fctDef.getBody().find(Xcode.FCONTAINSSTATEMENT);
+    Xnode contains = _fctDef.getBody().matchSeq(Xcode.FCONTAINSSTATEMENT);
     if(contains != null) {
       XnodeUtil.shiftStatementsInBody(_fctDef.getBody().getChild(0),
           contains, loops.getInnerStatement().getBody());
@@ -397,7 +397,7 @@ public class Parallelize extends Transformation {
     for(Xnode assign : assignStatements) {
       Xnode lhs = assign.getChild(Xnode.LHS);
       String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.getValue() :
-          lhs.find(Xcode.VARREF, Xcode.VAR).getValue();
+          lhs.matchSeq(Xcode.VARREF, Xcode.VAR).getValue();
       NestedDoStatement loops = null;
       if(lhs.opcode() == Xcode.FARRAYREF &&
           _arrayFieldsInOut.contains(lhsName))
@@ -596,7 +596,7 @@ public class Parallelize extends Transformation {
         Xnode ref =
             XnodeUtil.createArrayRef(xcodeml, type, var.cloneObject());
         for(Xnode ai : _beforeCrt.get(index)) {
-          XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+          XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneObject());
         }
         for(Xnode ai : _afterCrt.get(index)) {
           ref.appendToChildren(ai, true);

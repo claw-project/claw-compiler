@@ -195,16 +195,16 @@ public class Xnode {
    * @return The body element if found. Null otherwise.
    */
   public Xnode getBody() {
-    return findNode(Xcode.BODY);
+    return matchExactNode(Xcode.BODY);
   }
 
   /**
-   * Find first child with the given opcode.
+   * Match first child with the given opcode.
    *
    * @param opcode Code of the element to be found.
-   * @return The found element. Null if nothing found.
+   * @return Matched element. Null if nothing matches.
    */
-  public Xnode findNode(Xcode opcode) {
+  public Xnode matchExactNode(Xcode opcode) {
     List<Xnode> children = getChildren();
     for(Xnode child : children) {
       if(child.opcode() == opcode) {
@@ -231,15 +231,15 @@ public class Xnode {
   }
 
   /**
-   * Find a specific element in the children of the current element.
+   * Match a specific element following the given sequences of opcodes.
    *
-   * @param opcodes List of opcode to reach the element.
-   * @return The element if found. Null otherwise.
+   * @param opcodes Sequence of opcode to reach the element.
+   * @return Matched elements. Null if nothing matches.
    */
-  public Xnode find(Xcode... opcodes) {
+  public Xnode matchSeq(Xcode... opcodes) {
     Xnode tmp = this;
     for(Xcode opcode : opcodes) {
-      tmp = tmp.findNode(opcode);
+      tmp = tmp.matchExactNode(opcode);
       if(tmp == null) {
         return null;
       }

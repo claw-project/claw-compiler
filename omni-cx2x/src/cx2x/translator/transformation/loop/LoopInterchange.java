@@ -207,9 +207,9 @@ public class LoopInterchange extends Transformation {
         return false;
       }
 
-      _baseLoop0 = _loopLevel0.find(Xcode.VAR).getValue();
-      _baseLoop1 = _loopLevel1.find(Xcode.VAR).getValue();
-      _baseLoop2 = _loopLevel2.find(Xcode.VAR).getValue();
+      _baseLoop0 = _loopLevel0.matchSeq(Xcode.VAR).getValue();
+      _baseLoop1 = _loopLevel1.matchSeq(Xcode.VAR).getValue();
+      _baseLoop2 = _loopLevel2.matchSeq(Xcode.VAR).getValue();
 
       if(!checkNewOrderOption(xcodeml, _newOrderOption)) {
         return false;

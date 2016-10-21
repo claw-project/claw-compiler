@@ -35,11 +35,11 @@ public class XvarDeclTest {
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/module.f90", varDecl.getFile());
-    assertNotNull(varDecl.find(Xcode.NAME));
-    assertEquals("Ib3f750", varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.find(Xcode.NAME).getValue());
-    assertNotNull(varDecl.find(Xcode.VALUE));
-    assertEquals("10.0", varDecl.find(Xcode.VALUE).getValue());
+    assertNotNull(varDecl.matchSeq(Xcode.NAME));
+    assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
+    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).getValue());
+    assertNotNull(varDecl.matchSeq(Xcode.VALUE));
+    assertEquals("10.0", varDecl.matchSeq(Xcode.VALUE).getValue());
   }
 
   @Test
@@ -48,10 +48,10 @@ public class XvarDeclTest {
     assertNotNull(varDecl);
     assertEquals(946, varDecl.getLineNo());
     assertEquals("./src/module.f90", varDecl.getFile());
-    assertNotNull(varDecl.find(Xcode.NAME));
-    assertEquals("Ib3f750", varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.find(Xcode.NAME).getValue());
-    assertNull(varDecl.find(Xcode.VALUE));
+    assertNotNull(varDecl.matchSeq(Xcode.NAME));
+    assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
+    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).getValue());
+    assertNull(varDecl.matchSeq(Xcode.VALUE));
   }
 
 

@@ -96,7 +96,7 @@ public class ArrayToFctCall extends Transformation {
     // Prepare the function call
     Xnode fctCall = XnodeUtil.createFctCall(xcodeml, fctType.getReturnType(),
         _claw.getFctName(), _replaceFct.getName().getAttribute(Xattr.TYPE));
-    Xnode args = fctCall.find(Xcode.ARGUMENTS);
+    Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()) {
       Xnode var =
           XnodeUtil.createVar(Xname.TYPE_F_INT, arg, Xscope.LOCAL, xcodeml);

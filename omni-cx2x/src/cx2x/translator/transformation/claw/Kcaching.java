@@ -84,11 +84,11 @@ public class Kcaching extends Transformation {
 
       boolean standardArrayRef = true;
       if(stmt != null) {
-        for(Xnode el : stmt.findNode(Xcode.FARRAYREF).getChildren()) {
+        for(Xnode el : stmt.matchExactNode(Xcode.FARRAYREF).getChildren()) {
           if(el.opcode() == Xcode.ARRAYINDEX) {
 
-            if(!(el.findNode(Xcode.VAR) != null ||
-                el.findNode(Xcode.FINTCONSTANT) != null))
+            if(!(el.matchExactNode(Xcode.VAR) != null ||
+                el.matchExactNode(Xcode.FINTCONSTANT) != null))
             {
               standardArrayRef = false;
             }
@@ -150,7 +150,7 @@ public class Kcaching extends Transformation {
                                    Xnode stmt,
                                    Transformer transformer) throws Exception
   {
-    String type = stmt.findNode(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
+    String type = stmt.matchExactNode(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
     List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
     Xnode cacheVar =
@@ -192,12 +192,12 @@ public class Kcaching extends Transformation {
         Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
         // Set lhs of equality
-        logEq.appendToChildren(_doStmt.findNode(Xcode.VAR), true);
+        logEq.appendToChildren(_doStmt.matchExactNode(Xcode.VAR), true);
         // Set rhs of equality
-        logEq.appendToChildren(_doStmt.findNode(Xcode.INDEXRANGE).
-            findNode(Xcode.LOWERBOUND).getChild(0), true);
+        logEq.appendToChildren(_doStmt.matchExactNode(Xcode.INDEXRANGE).
+            matchExactNode(Xcode.LOWERBOUND).getChild(0), true);
 
-        initIfStmt.findNode(Xcode.CONDITION).appendToChildren(logEq, false);
+        initIfStmt.matchExactNode(Xcode.CONDITION).appendToChildren(logEq, false);
         _doStmt.getBody().insert(initIfStmt, false);
         ct.storeElement(_doStmt, initIfStmt);
       }
@@ -206,7 +206,7 @@ public class Kcaching extends Transformation {
       initAssignment.appendToChildren(cacheVar, true); // set rhs
       initAssignment.appendToChildren(arrayRef, true); // set lhs
       // Add assignment in the "then" body element
-      initIfStmt.findNode(Xcode.THEN).getBody().
+      initIfStmt.matchExactNode(Xcode.THEN).getBody().
           appendToChildren(initAssignment, false);
     }
   }

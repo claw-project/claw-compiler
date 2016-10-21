@@ -34,6 +34,6 @@ public class Xdecl extends Xnode {
    */
   public boolean isBuiltInType() {
     return opcode() == Xcode.VARDECL
-        && XnodeUtil.isBuiltInType(find(Xcode.NAME).getAttribute(Xattr.TYPE));
+        && XnodeUtil.isBuiltInType(matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
   }
 }

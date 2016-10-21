@@ -45,7 +45,7 @@ public class XnodeUtil {
    * Find a function definition according to a function call.
    *
    * @param xcodeml The XcodeML program to search in.
-   * @param fctCall The function call used to find the function definition.
+   * @param fctCall The function call used to matchSeq the function definition.
    * @return A function definition element if found. Null otherwise.
    */
   public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
@@ -54,14 +54,14 @@ public class XnodeUtil {
     if(xcodeml.getElement() == null) {
       return null;
     }
-    String name = fctCall.findNode(Xcode.NAME).getValue();
+    String name = fctCall.matchExactNode(Xcode.NAME).getValue();
     NodeList nList = xcodeml.getElement().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for(int i = 0; i < nList.getLength(); i++) {
       Node fctDefNode = nList.item(i);
       if(fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
         Xnode dummyFctDef = new Xnode((Element) fctDefNode);
-        Xnode fctDefName = dummyFctDef.find(Xcode.NAME);
+        Xnode fctDefName = dummyFctDef.matchSeq(Xcode.NAME);
         if(name != null &&
             fctDefName.getValue().toLowerCase().equals(name.toLowerCase()))
         {
@@ -117,7 +117,7 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
-        Xnode var = ref.find(Xcode.VARREF, Xcode.VAR);
+        Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR);
         if(var != null && var.getValue().toLowerCase().
             equals(arrayName.toLowerCase()))
         {
@@ -177,7 +177,7 @@ public class XnodeUtil {
    * @param ref The array reference to be modified.
    */
   public static void demoteToScalar(Xnode ref) {
-    Xnode var = ref.find(Xcode.VARREF, Xcode.VAR).cloneObject();
+    Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneObject();
     insertAfter(ref, var);
     ref.delete();
   }
@@ -1014,7 +1014,7 @@ public class XnodeUtil {
    *
    * @param opcode The XcodeML code of the element to search for.
    * @param parent The root element to search from.
-   * @param any    If true, find in any nested element under parent. If false,
+   * @param any    If true, matchSeq in any nested element under parent. If false,
    *               only direct children are search for.
    * @return first element found. Null if no element is found.
    */
@@ -1236,12 +1236,12 @@ public class XnodeUtil {
       return true;
     }
 
-    Xnode low1 = idx1.find(Xcode.LOWERBOUND);
-    Xnode up1 = idx1.find(Xcode.UPPERBOUND);
-    Xnode low2 = idx2.find(Xcode.LOWERBOUND);
-    Xnode up2 = idx2.find(Xcode.UPPERBOUND);
-    Xnode s1 = idx1.find(Xcode.STEP);
-    Xnode s2 = idx2.find(Xcode.STEP);
+    Xnode low1 = idx1.matchSeq(Xcode.LOWERBOUND);
+    Xnode up1 = idx1.matchSeq(Xcode.UPPERBOUND);
+    Xnode low2 = idx2.matchSeq(Xcode.LOWERBOUND);
+    Xnode up2 = idx2.matchSeq(Xcode.UPPERBOUND);
+    Xnode s1 = idx1.matchSeq(Xcode.STEP);
+    Xnode s2 = idx2.matchSeq(Xcode.STEP);
 
     if(s1 != null) {
       s1 = s1.getChild(0);
@@ -1285,13 +1285,13 @@ public class XnodeUtil {
           "range missing.");
     }
 
-    Xnode low1 = indexRange1.find(Xcode.LOWERBOUND).getChild(0);
-    Xnode up1 = indexRange1.find(Xcode.UPPERBOUND).getChild(0);
-    Xnode s1 = indexRange1.find(Xcode.STEP).getChild(0);
+    Xnode low1 = indexRange1.matchSeq(Xcode.LOWERBOUND).getChild(0);
+    Xnode up1 = indexRange1.matchSeq(Xcode.UPPERBOUND).getChild(0);
+    Xnode s1 = indexRange1.matchSeq(Xcode.STEP).getChild(0);
 
-    Xnode low2 = indexRange2.find(Xcode.LOWERBOUND).getChild(0);
-    Xnode up2 = indexRange2.find(Xcode.UPPERBOUND).getChild(0);
-    Xnode s2 = indexRange2.find(Xcode.STEP).getChild(0);
+    Xnode low2 = indexRange2.matchSeq(Xcode.LOWERBOUND).getChild(0);
+    Xnode up2 = indexRange2.matchSeq(Xcode.UPPERBOUND).getChild(0);
+    Xnode s2 = indexRange2.matchSeq(Xcode.STEP).getChild(0);
 
     // Set the range of loop2 to loop1
     XnodeUtil.insertAfter(inductionVar2, inductionVar1.cloneObject());
@@ -1386,7 +1386,7 @@ public class XnodeUtil {
     if(fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return null;
     }
-    Xnode args = fctCall.find(Xcode.ARGUMENTS);
+    Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
     if(args == null) {
       return null;
     }
@@ -1895,8 +1895,8 @@ public class XnodeUtil {
         newType.appendToChildren(newDim, false);
 
         Xnode baseDim = base.getDimensions(i);
-        Xnode lowerBound = baseDim.find(Xcode.LOWERBOUND);
-        Xnode upperBound = baseDim.find(Xcode.UPPERBOUND);
+        Xnode lowerBound = baseDim.matchSeq(Xcode.LOWERBOUND);
+        Xnode upperBound = baseDim.matchSeq(Xcode.UPPERBOUND);
 
         if(lowerBound != null) {
           Xnode newLowerBound =

@@ -166,7 +166,7 @@ public class AcceleratorHelper {
     Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
-        Xnode name = decl.find(Xcode.NAME);
+        Xnode name = decl.matchSeq(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if(bt != null && (bt.getIntent() == Xintent.IN
@@ -194,7 +194,7 @@ public class AcceleratorHelper {
     Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
-        Xnode name = decl.find(Xcode.NAME);
+        Xnode name = decl.matchSeq(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if((bt == null && XnodeUtil.isBuiltInType(type))
@@ -290,7 +290,7 @@ public class AcceleratorHelper {
       if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
         continue;
       }
-      Xnode name = fctCall.find(Xcode.NAME);
+      Xnode name = fctCall.matchSeq(Xcode.NAME);
       if(name != null) {
         fctNames.add(name.getValue().toLowerCase());
       }
@@ -305,7 +305,7 @@ public class AcceleratorHelper {
         XmoduleDefinition mod = XnodeUtil.findParentModule(fctDef);
         List<Xnode> fctDefs = XnodeUtil.findAll(Xcode.FFUNCTIONDEFINITION, mod);
         for(Xnode fDef : fctDefs) {
-          Xnode name = fDef.find(Xcode.NAME);
+          Xnode name = fDef.matchSeq(Xcode.NAME);
           if(name != null && name.getValue().toLowerCase().equals(fctName)) {
             calledFctDef = new XfunctionDefinition(fDef.getElement());
             break;

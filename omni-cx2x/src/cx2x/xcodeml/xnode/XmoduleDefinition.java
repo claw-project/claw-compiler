@@ -39,9 +39,9 @@ public class XmoduleDefinition extends Xnode {
   public XmoduleDefinition(Element baseElement) {
     super(baseElement);
     _name = getAttribute(Xattr.NAME);
-    Xnode symbols = find(Xcode.SYMBOLS);
+    Xnode symbols = matchSeq(Xcode.SYMBOLS);
     _symbols = (symbols != null) ? new XsymbolTable(symbols.getElement()) : null;
-    Xnode declarations = find(Xcode.DECLARATIONS);
+    Xnode declarations = matchSeq(Xcode.DECLARATIONS);
     _declarations = (declarations != null) ?
         new XdeclTable(declarations.getElement()) : null;
   }

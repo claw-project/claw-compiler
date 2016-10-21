@@ -155,7 +155,7 @@ public class LoopExtraction extends Transformation {
 
     if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "
-              + _fctCall.findNode(Xcode.NAME).getValue(),
+              + _fctCall.matchExactNode(Xcode.NAME).getValue(),
           _claw.getPragma().getLineNo());
       return false;
     }
@@ -264,13 +264,13 @@ public class LoopExtraction extends Transformation {
 
     if(XmOption.isDebugOutput()) {
       System.out.println("  call wrapped with loop: " +
-          _fctCall.findNode(Xcode.NAME).getValue() + " --> " +
+          _fctCall.matchExactNode(Xcode.NAME).getValue() + " --> " +
           clonedFctDef.getName().getValue());
     }
 
     // Change called fct name
-    _fctCall.findNode(Xcode.NAME).setValue(newFctName);
-    _fctCall.findNode(Xcode.NAME).setAttribute(Xattr.TYPE, newFctTypeHash);
+    _fctCall.matchExactNode(Xcode.NAME).setValue(newFctName);
+    _fctCall.matchExactNode(Xcode.NAME).setAttribute(Xattr.TYPE, newFctTypeHash);
 
 
     // Adapt function call parameters and function declaration
@@ -331,8 +331,8 @@ public class LoopExtraction extends Transformation {
             Xnode newMappingVar = new Xnode(Xcode.VAR, xcodeml);
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
             newMappingVar.setAttribute(Xattr.TYPE,
-                mappingVarDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
-            newMappingVar.setValue(mappingVarDecl.find(Xcode.NAME).getValue());
+                mappingVarDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
+            newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).getValue());
             arrayIndex.appendToChildren(newMappingVar, false);
             newArg.appendToChildren(arrayIndex, false);
           }
@@ -349,7 +349,7 @@ public class LoopExtraction extends Transformation {
         Xdecl varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
         XbasicType varDeclType = (XbasicType) xcodeml.getTypeTable().
-            get(varDecl.find(Xcode.NAME).getAttribute(Xattr.TYPE));
+            get(varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {
@@ -374,10 +374,10 @@ public class LoopExtraction extends Transformation {
     List<Xnode> arrayReferences =
         XnodeUtil.findAll(Xcode.FARRAYREF, clonedFctDef.getBody());
     for(Xnode ref : arrayReferences) {
-      if(!(ref.find(Xcode.VARREF).getChild(0).opcode() == Xcode.VAR)) {
+      if(!(ref.matchSeq(Xcode.VARREF).getChild(0).opcode() == Xcode.VAR)) {
         continue;
       }
-      String mappedVar = ref.find(Xcode.VARREF, Xcode.VAR).getValue();
+      String mappedVar = ref.matchSeq(Xcode.VARREF, Xcode.VAR).getValue();
       if(_fctMappingMap.containsKey(mappedVar)) {
         ClawMapping mapping = _fctMappingMap.get(mappedVar);
 
@@ -388,7 +388,7 @@ public class LoopExtraction extends Transformation {
           if(e.opcode() == Xcode.ARRAYINDEX) {
             List<Xnode> children = e.getChildren();
             if(children.size() > 0 && children.get(0).opcode() == Xcode.VAR) {
-              String varName = e.find(Xcode.VAR).getValue();
+              String varName = e.matchSeq(Xcode.VAR).getValue();
               if(varName.equals(mapping.getMappingVariables().
                   get(mappingIndex).getFctMapping()))
               {
@@ -403,7 +403,7 @@ public class LoopExtraction extends Transformation {
           // TODO Var ref should be extracted only if the reference can be
           // totally demoted
           XnodeUtil.insertBefore(ref,
-              ref.find(Xcode.VARREF, Xcode.VAR).cloneObject());
+              ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneObject());
           ref.delete();
         }
       }
@@ -424,7 +424,7 @@ public class LoopExtraction extends Transformation {
   }
 
   /**
-   * Try to find a do statement matching the range of loop-extract.
+   * Try to matchSeq a do statement matching the range of loop-extract.
    *
    * @param from Element to search from. Search is performed in its
    *             children.
@@ -441,7 +441,7 @@ public class LoopExtraction extends Transformation {
           _claw.getPragma().getLineNo());
     } else {
       if(!_claw.getRange().equals(foundStatement)) {
-        // Try to find another loops that meet the criteria
+        // Try to matchSeq another loops that meet the criteria
         do {
           foundStatement =
               XnodeUtil.findNext(Xcode.FDOSTATEMENT, foundStatement);
@@ -475,8 +475,8 @@ public class LoopExtraction extends Transformation {
   {
     // Create a new empty loop
     Xnode loop = XnodeUtil.createDoStmt(
-        xcodeml, doStmt.findNode(Xcode.VAR).cloneObject(),
-        doStmt.findNode(Xcode.INDEXRANGE).cloneObject());
+        xcodeml, doStmt.matchExactNode(Xcode.VAR).cloneObject(),
+        doStmt.matchExactNode(Xcode.INDEXRANGE).cloneObject());
 
     // Insert the new empty loop just after the pragma
     XnodeUtil.insertAfter(_claw.getPragma(), loop);
@@ -485,18 +485,18 @@ public class LoopExtraction extends Transformation {
     loop.getBody().getElement().
         appendChild(_fctCall.getElement().getParentNode());
 
-    insertDeclaration(doStmt.find(Xcode.VAR).getValue());
-    if(doStmt.find(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR) != null) {
+    insertDeclaration(doStmt.matchSeq(Xcode.VAR).getValue());
+    if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
-          find(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR).getValue());
+          matchSeq(Xcode.INDEXRANGE, Xcode.LOWERBOUND, Xcode.VAR).getValue());
     }
-    if(doStmt.find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR) != null) {
+    if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
-          find(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR).getValue());
+          matchSeq(Xcode.INDEXRANGE, Xcode.UPPERBOUND, Xcode.VAR).getValue());
     }
-    if(doStmt.find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR) != null) {
+    if(doStmt.matchSeq(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR) != null) {
       insertDeclaration(doStmt.
-          find(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR).getValue());
+          matchSeq(Xcode.INDEXRANGE, Xcode.STEP, Xcode.VAR).getValue());
     }
 
     return loop;

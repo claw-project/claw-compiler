@@ -82,10 +82,10 @@ public class XbasicType extends Xtype {
     }
 
     // has length ?
-    _length = find(Xcode.LEN);
+    _length = matchSeq(Xcode.LEN);
 
     // has kind ?
-    _kind = find(Xcode.KIND);
+    _kind = matchSeq(Xcode.KIND);
   }
 
   /**

@@ -79,7 +79,7 @@ public class LoopFusion extends Transformation {
 
   /**
    * Loop fusion analysis:
-   * - Without collapse clause: find whether the pragma statement is followed
+   * - Without collapse clause: matchSeq whether the pragma statement is followed
    * by a do statement.
    * - With collapse clause: Find the i loops following the pragma.
    *
@@ -101,7 +101,7 @@ public class LoopFusion extends Transformation {
               _loops[i - 1].getBody(), false);
         }
         if(_loops[i] == null) {
-          xcodeml.addError("Cannot find loop at depth " + i +
+          xcodeml.addError("Cannot matchSeq loop at depth " + i +
               " after directive", _claw.getPragma().getLineNo());
           return false;
         }
@@ -113,7 +113,7 @@ public class LoopFusion extends Transformation {
       Xnode loop =
           XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
       if(loop == null) {
-        xcodeml.addError("Cannot find loop after directive",
+        xcodeml.addError("Cannot matchSeq loop after directive",
             _claw.getPragma().getLineNo());
         return false;
       }

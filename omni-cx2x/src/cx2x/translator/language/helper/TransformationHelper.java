@@ -242,7 +242,7 @@ public class TransformationHelper {
 
       // Update symbol & declaration
       id.setType(newType.getType());
-      decl.find(Xcode.NAME).setAttribute(Xattr.TYPE, newType.getType());
+      decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, newType.getType());
 
       // Update array references
       List<Xnode> refs =
@@ -338,14 +338,14 @@ public class TransformationHelper {
       /* Workaround for a bug in OMNI Compiler. Look at test case
        * claw/abstraction12. In this test case, the XcodeML/F intermediate
        * representation for the function call points to a FfunctionType element
-       * with no parameters. Thus, we have to find the correct FfunctionType
+       * with no parameters. Thus, we have to matchSeq the correct FfunctionType
        * for the same function/subroutine with the same name in the module
        * symbol table. */
       String errorMsg = "Unable to locate fct " + fctDef.getName().getValue() +
           " in module " + modDef.getName();
       int lineNo = claw.getPragma().getLineNo();
 
-      // If not, try to find the correct FfunctionType in the module definitions
+      // If not, try to matchSeq the correct FfunctionType in the module definitions
       Xid id = mod.getIdentifiers().get(fctDef.getName().getValue());
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
@@ -497,7 +497,7 @@ public class TransformationHelper {
     if(update) {
       XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
       if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())) {
-        throw new IllegalTransformationException("Cannot find type for " +
+        throw new IllegalTransformationException("Cannot matchSeq type for " +
             fieldId, claw.getPragma().getLineNo());
       } else if(XnodeUtil.isBuiltInType(id.getType())) {
         newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
@@ -566,7 +566,7 @@ public class TransformationHelper {
       }
     }
     id.setType(type);
-    decl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
+    decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
     xcodeml.getTypeTable().add(newType);
 
 
@@ -670,7 +670,7 @@ public class TransformationHelper {
         for(Xnode ref : refs) {
           if(inMiddle.get(index).size() == 0) {
             for(Xnode ai : beforeCrt.get(index)) {
-              XnodeUtil.insertAfter(ref.find(Xcode.VARREF), ai.cloneObject());
+              XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneObject());
             }
             for(Xnode ai : afterCrt.get(index)) {
               ref.appendToChildren(ai, true);

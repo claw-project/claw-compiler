@@ -84,7 +84,7 @@ public class ParallelizeForward extends Transformation {
         || next.opcode() == Xcode.FASSIGNSTATEMENT)
     {
       _isNestedInAssignement = next.opcode() == Xcode.FASSIGNSTATEMENT;
-      _fctCall = next.find(Xcode.FUNCTIONCALL);
+      _fctCall = next.matchSeq(Xcode.FUNCTIONCALL);
       if(_fctCall != null) {
         return analyzeForward(xcodeml);
       }
@@ -117,7 +117,7 @@ public class ParallelizeForward extends Transformation {
   }
 
   /**
-   * Recursively analyze nested do statements in order to find the call
+   * Recursively analyze nested do statements in order to matchSeq the call
    * statements.
    *
    * @param xcodeml Current XcodeML file unit.
@@ -126,7 +126,7 @@ public class ParallelizeForward extends Transformation {
    */
   private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt) {
     _innerDoStatement = doStmt;
-    Xnode body = doStmt.find(Xcode.BODY);
+    Xnode body = doStmt.matchSeq(Xcode.BODY);
     if(body == null) {
       xcodeml.addError("Cannot locate function call.",
           _claw.getPragma().getLineNo());
@@ -145,7 +145,7 @@ public class ParallelizeForward extends Transformation {
       } else if(n.opcode() == Xcode.EXPRSTATEMENT
           || n.opcode() == Xcode.FASSIGNSTATEMENT)
       {
-        _fctCall = n.find(Xcode.FUNCTIONCALL);
+        _fctCall = n.matchSeq(Xcode.FUNCTIONCALL);
         if(_fctCall != null) {
           return analyzeForward(xcodeml);
         }
@@ -170,7 +170,7 @@ public class ParallelizeForward extends Transformation {
 
     detectParameterMapping(_fctCall);
 
-    _calledFctName = _fctCall.find(Xcode.NAME).getValue();
+    _calledFctName = _fctCall.matchSeq(Xcode.NAME).getValue();
 
     XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
         xcodeml.getGlobalDeclarationsTable(), _calledFctName);
@@ -184,10 +184,10 @@ public class ParallelizeForward extends Transformation {
 
     XmoduleDefinition parentModule = XnodeUtil.findParentModule(parentFctDef);
 
-    String fctType = _fctCall.find(Xcode.NAME).getAttribute(Xattr.TYPE);
+    String fctType = _fctCall.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE);
     if(fctType.startsWith(Xtype.PREFIX_PROCEDURE)) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
-       * find the correct function in the typeTable.
+       * matchSeq the correct function in the typeTable.
        * TODO if there is a rename.
        * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
@@ -216,11 +216,11 @@ public class ParallelizeForward extends Transformation {
     /* Workaround for a bug in OMNI Compiler. Look at test case
      * claw/abstraction10. In this test case, the XcodeML/F intermediate
      * representation for the function call points to a FfunctionType element
-     * with no parameters. Thus, we have to find the correct FfunctionType
+     * with no parameters. Thus, we have to matchSeq the correct FfunctionType
      * for the same function/subroutine with the same name in the module
      * symbol table. */
     if(_fctType.getParameterNb() == 0) {
-      // If not, try to find the correct FfunctionType in the module definitions
+      // If not, try to matchSeq the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
 
       if(id == null) {
@@ -282,7 +282,7 @@ public class ParallelizeForward extends Transformation {
     if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return;
     }
-    for(Xnode arg : _fctCall.find(Xcode.ARGUMENTS).getChildren()) {
+    for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).getChildren()) {
       if(arg.opcode() == Xcode.NAMEDVALUE) {
         String original_name = arg.getAttribute(Xattr.NAME);
         Xnode target_var = XnodeUtil.find(Xcode.VAR, arg, true);
@@ -397,7 +397,7 @@ public class ParallelizeForward extends Transformation {
      */
     int argOffset = 0;
     if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
-        && _fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF))
+        && _fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF))
     {
       argOffset = 1;
     }
@@ -447,19 +447,19 @@ public class ParallelizeForward extends Transformation {
       Xnode arg = XnodeUtil.createNamedValue(var, xcodeml);
       Xnode namedValVar = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
       arg.appendToChildren(namedValVar, false);
-      Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
+      Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       Xnode hook = arguments.getChild((i - 1) - argOffset);
       XnodeUtil.insertAfter(hook, arg);
     }
 
     // In flatten mode, arguments are demoted if needed.
     if(_flatten) {
-      Xnode arguments = _fctCall.find(Xcode.ARGUMENTS);
+      Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.getChildren()) {
         if(arg.opcode() == Xcode.FARRAYREF && arg.matchAny(
             Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {
-          Xnode var = arg.find(Xcode.VARREF, Xcode.VAR);
+          Xnode var = arg.matchSeq(Xcode.VARREF, Xcode.VAR);
           if(var != null) {
             XnodeUtil.insertAfter(arg, var.cloneObject());
             arg.delete();
@@ -484,7 +484,7 @@ public class ParallelizeForward extends Transformation {
         if(pUpdate == null) { // field is not a parameter but maybe out field
           Xdecl d = fDef.getDeclarationTable().get(original_param);
           if(d != null) {
-            pUpdate = d.find(Xcode.NAME);
+            pUpdate = d.matchSeq(Xcode.NAME);
           }
           // TODO handle deferred shape
         }
@@ -534,7 +534,7 @@ public class ParallelizeForward extends Transformation {
             }
             Xdecl varDecl = fDef.getDeclarationTable().get(original_param);
             if(varDecl != null) {
-              varDecl.find(Xcode.NAME).setAttribute(Xattr.TYPE, type);
+              varDecl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
             }
 
             _promotedVar.add(original_param);
@@ -555,7 +555,7 @@ public class ParallelizeForward extends Transformation {
         XmoduleDefinition modDef = XnodeUtil.findParentModule(fDef);
         TransformationHelper.updateModuleSignature(xcodeml, fDef,
             _parentFctType, modDef, _claw, transformer, false);
-      } else if(_fctCall.find(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
+      } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then

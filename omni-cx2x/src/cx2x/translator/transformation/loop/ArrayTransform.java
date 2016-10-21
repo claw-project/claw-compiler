@@ -82,7 +82,7 @@ public class ArrayTransform extends BlockTransformation {
       // 1st group always exists
       _groupedAssignStmts.add(new ArrayList<Xnode>());
       int crtGroup = 0;
-      Xnode refArrayRef = foundAssignments.get(0).find(Xcode.FARRAYREF);
+      Xnode refArrayRef = foundAssignments.get(0).matchSeq(Xcode.FARRAYREF);
       List<Xnode> refRanges =
           XnodeUtil.getIdxRangesFromArrayRef(refArrayRef);
 
@@ -92,7 +92,7 @@ public class ArrayTransform extends BlockTransformation {
 
       for(int i = 1; i < foundAssignments.size(); ++i) {
         Xnode arrayRef =
-            foundAssignments.get(i).find(Xcode.FARRAYREF);
+            foundAssignments.get(i).matchSeq(Xcode.FARRAYREF);
         List<Xnode> ranges =
             XnodeUtil.getIdxRangesFromArrayRef(arrayRef);
 
@@ -205,7 +205,7 @@ public class ArrayTransform extends BlockTransformation {
     String[] inductionVars = new String[ranges.size()];
     Xnode[] doStmts = new Xnode[ranges.size()];
     Xnode var =
-        statements.get(0).find(Xcode.FARRAYREF, Xcode.VARREF, Xcode.VAR);
+        statements.get(0).matchSeq(Xcode.FARRAYREF, Xcode.VARREF, Xcode.VAR);
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
@@ -262,7 +262,7 @@ public class ArrayTransform extends BlockTransformation {
         for(int i = 0; i < arrayRef.getChildren().size() - 1; ++i) {
           Xnode el = arrayRef.getChild(i + 1);
           if(el.opcode() == Xcode.INDEXRANGE) {
-            String induction = doStmts[i].find(Xcode.VAR).getValue();
+            String induction = doStmts[i].matchSeq(Xcode.VAR).getValue();
             Xnode inductionVar =
                 XnodeUtil.createVar(Xname.TYPE_F_INT, induction,
                     Xscope.LOCAL, xcodeml);

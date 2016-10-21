@@ -51,7 +51,7 @@ public class XfunctionType extends Xtype {
    * Read inner element information.
    */
   private void readElementInformation() {
-    Xnode paramsNode = find(Xcode.PARAMS);
+    Xnode paramsNode = matchSeq(Xcode.PARAMS);
     if(paramsNode != null) {
       _params = new Xparams(paramsNode.getElement());
     }
