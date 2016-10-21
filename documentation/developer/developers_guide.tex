@@ -189,6 +189,17 @@ Listing \ref{fortran1} is a simple FORTRAN program. Its XcodeML/F \gls{ir} will 
 
 \lstinputlisting[label=xcodeml1, caption=XcodeML/F IR, language=xml]{code/basic_fortran.xml}
 
+\section{\clawfc}
+
+The \clawfc is the program handed to the end-user. It performs all the needed step to have a source-to-source translation of a FORTRAN program. As shown in Figure \ref{fig:clawfc_main_workflow}, it is composed by various programs under the hood. 
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{resources/clawfc_global_workflow.png} \\
+  \caption{CLAW FORTRAN Compiler main workflow.}
+  \label{fig:clawfc_main_workflow}
+\end{figure}
+
 \section{CLAW XcodeML to XcodeML translator}
 
 
