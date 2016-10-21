@@ -215,10 +215,10 @@ public class Xnode {
   }
 
   /**
-   * Find first child of any given opcodes.
+   * Match any first child with opcode in the given list.
    *
    * @param opcodes List of opcodes to be searched.
-   * @return The found element. Null if nothing found.
+   * @return Matched element. Null if nothing matches.
    */
   public Xnode matchAny(List<Xcode> opcodes) {
     List<Xnode> children = getChildren();
