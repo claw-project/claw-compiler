@@ -84,7 +84,7 @@ public class Kcaching extends Transformation {
 
       boolean standardArrayRef = true;
       if(stmt != null) {
-        for(Xnode el : stmt.matchExactNode(Xcode.FARRAYREF).getChildren()) {
+        for(Xnode el : stmt.matchExactNode(Xcode.FARRAYREF).children()) {
           if(el.opcode() == Xcode.ARRAYINDEX) {
 
             if(!(el.matchExactNode(Xcode.VAR) != null ||

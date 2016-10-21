@@ -124,7 +124,7 @@ public class ArrayTransform extends BlockTransformation {
       }
 
       List<Xnode> ranges = new ArrayList<>();
-      for(Xnode el : stmt.child(0).getChildren()) {
+      for(Xnode el : stmt.child(0).children()) {
         if(el.opcode() == Xcode.INDEXRANGE) {
           ranges.add(el);
         }
@@ -259,7 +259,7 @@ public class ArrayTransform extends BlockTransformation {
       List<Xnode> allArrayRef =
           XnodeUtil.findAll(Xcode.FARRAYREF, stmt);
       for(Xnode arrayRef : allArrayRef) {
-        for(int i = 0; i < arrayRef.getChildren().size() - 1; ++i) {
+        for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);
           if(el.opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).getValue();

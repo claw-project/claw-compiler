@@ -384,9 +384,9 @@ public class LoopExtraction extends Transformation {
         boolean changeRef = true;
 
         int mappingIndex = 0;
-        for(Xnode e : ref.getChildren()) {
+        for(Xnode e : ref.children()) {
           if(e.opcode() == Xcode.ARRAYINDEX) {
-            List<Xnode> children = e.getChildren();
+            List<Xnode> children = e.children();
             if(children.size() > 0 && children.get(0).opcode() == Xcode.VAR) {
               String varName = e.matchSeq(Xcode.VAR).getValue();
               if(varName.equals(mapping.getMappingVariables().

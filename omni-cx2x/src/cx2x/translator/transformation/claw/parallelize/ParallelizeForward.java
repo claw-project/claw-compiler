@@ -132,7 +132,7 @@ public class ParallelizeForward extends Transformation {
           _claw.getPragma().getLineNo());
       return false;
     }
-    for(Xnode n : body.getChildren()) {
+    for(Xnode n : body.children()) {
       if(n.opcode() == Xcode.FDOSTATEMENT) {
         return analyzeNestedDoStmts(xcodeml, n);
       } else if(n.opcode() != Xcode.FPRAGMASTATEMENT
@@ -282,7 +282,7 @@ public class ParallelizeForward extends Transformation {
     if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return;
     }
-    for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).getChildren()) {
+    for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
       if(arg.opcode() == Xcode.NAMEDVALUE) {
         String original_name = arg.getAttribute(Xattr.NAME);
         Xnode target_var = XnodeUtil.find(Xcode.VAR, arg, true);
@@ -455,7 +455,7 @@ public class ParallelizeForward extends Transformation {
     // In flatten mode, arguments are demoted if needed.
     if(_flatten) {
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
-      for(Xnode arg : arguments.getChildren()) {
+      for(Xnode arg : arguments.children()) {
         if(arg.opcode() == Xcode.FARRAYREF && arg.matchAny(
             Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {

@@ -163,7 +163,7 @@ public class Xnode {
    *
    * @return List of children of the current element.
    */
-  public List<Xnode> getChildren() {
+  public List<Xnode> children() {
     List<Xnode> nodes = new ArrayList<>();
     NodeList children = _baseElement.getChildNodes();
     for(int i = 0; i < children.getLength(); ++i) {
@@ -205,7 +205,7 @@ public class Xnode {
    * @return Matched element. Null if nothing matches.
    */
   public Xnode matchExactNode(Xcode opcode) {
-    List<Xnode> children = getChildren();
+    List<Xnode> children = children();
     for(Xnode child : children) {
       if(child.opcode() == opcode) {
         return child;
@@ -221,7 +221,7 @@ public class Xnode {
    * @return Matched element. Null if nothing matches.
    */
   public Xnode matchAny(List<Xcode> opcodes) {
-    List<Xnode> children = getChildren();
+    List<Xnode> children = children();
     for(Xnode child : children) {
       if(opcodes.contains(child.opcode())) {
         return child;
@@ -254,7 +254,7 @@ public class Xnode {
    * @return Child at the corresponding position.
    */
   public Xnode child(int pos) {
-    List<Xnode> children = getChildren();
+    List<Xnode> children = children();
     if(pos < 0 || pos > children.size() - 1) {
       return null;
     }
@@ -267,7 +267,7 @@ public class Xnode {
    * @return First child or null if no child exists.
    */
   public Xnode firstChild() {
-    List<Xnode> children = this.getChildren();
+    List<Xnode> children = this.children();
     return children.size() == 0 ? null : children.get(0);
   }
 
@@ -277,7 +277,7 @@ public class Xnode {
    * @return Last child or null if no child exists.
    */
   public Xnode lastChild() {
-    List<Xnode> children = this.getChildren();
+    List<Xnode> children = this.children();
     return children.size() == 0 ? null : children.get(children.size() - 1);
   }
 
@@ -287,7 +287,7 @@ public class Xnode {
    * @return Number of children.
    */
   public int size() {
-    return this.getChildren().size();
+    return this.children().size();
   }
 
   /**

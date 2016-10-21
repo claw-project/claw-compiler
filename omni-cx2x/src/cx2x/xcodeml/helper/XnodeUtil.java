@@ -190,7 +190,7 @@ public class XnodeUtil {
    *                       at 1.
    */
   public static void demote(Xnode ref, List<Integer> keptDimensions) {
-    for(int i = 1; i < ref.getChildren().size(); ++i) {
+    for(int i = 1; i < ref.children().size(); ++i) {
       if(!keptDimensions.contains(i)) {
         ref.child(i).delete();
       }
@@ -208,7 +208,7 @@ public class XnodeUtil {
     if(arrayRef.opcode() != Xcode.FARRAYREF) {
       return ranges;
     }
-    for(Xnode el : arrayRef.getChildren()) {
+    for(Xnode el : arrayRef.children()) {
       if(el.opcode() == Xcode.INDEXRANGE) {
         ranges.add(el);
       }
@@ -1390,7 +1390,7 @@ public class XnodeUtil {
     if(args == null) {
       return null;
     }
-    for(Xnode arg : args.getChildren()) {
+    for(Xnode arg : args.children()) {
       if(value.toLowerCase().equals(arg.getValue().toLowerCase())) {
         return arg;
       }
