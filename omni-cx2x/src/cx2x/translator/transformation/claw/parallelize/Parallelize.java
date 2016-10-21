@@ -348,7 +348,7 @@ public class Parallelize extends Transformation {
      * this contains section if it exists. */
     Xnode contains = _fctDef.getBody().matchSeq(Xcode.FCONTAINSSTATEMENT);
     if(contains != null) {
-      XnodeUtil.shiftStatementsInBody(_fctDef.getBody().getChild(0),
+      XnodeUtil.shiftStatementsInBody(_fctDef.getBody().child(0),
           contains, loops.getInnerStatement().getBody());
       XnodeUtil.insertBefore(contains, loops.getOuterStatement());
     } else {
@@ -395,7 +395,7 @@ public class Parallelize extends Transformation {
         XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.getBody());
 
     for(Xnode assign : assignStatements) {
-      Xnode lhs = assign.getChild(Xnode.LHS);
+      Xnode lhs = assign.child(Xnode.LHS);
       String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.getValue() :
           lhs.matchSeq(Xcode.VARREF, Xcode.VAR).getValue();
       NestedDoStatement loops = null;
@@ -465,7 +465,7 @@ public class Parallelize extends Transformation {
    * @return True if the LHS variable should be promoted. False otherwise.
    */
   private boolean shouldBePromoted(Xnode assignStmt) {
-    Xnode rhs = assignStmt.getChild(Xnode.RHS);
+    Xnode rhs = assignStmt.child(Xnode.RHS);
     if(rhs == null) {
       return false;
     }

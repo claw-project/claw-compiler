@@ -252,7 +252,7 @@ public class LoopHoist extends BlockTransformation {
     Xnode inductionVar = XnodeUtil.find(Xcode.VAR, g.getDoStmts()[0], false);
     cond.appendToChildren(inductionVar, true);
     cond.appendToChildren(g.getDoStmts()[0].matchExactNode(Xcode.INDEXRANGE).
-        matchExactNode(Xcode.LOWERBOUND).getChild(0), true
+        matchExactNode(Xcode.LOWERBOUND).child(0), true
     );
     ifStmt.appendToChildren(condition, false);
     ifStmt.appendToChildren(thenBlock, false);

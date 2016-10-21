@@ -679,7 +679,7 @@ public class TransformationHelper {
             Xnode hook =
                 ref.matchAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
             if(hook == null) {
-              hook = ref.getChild(0);
+              hook = ref.child(0);
             }
             for(Xnode ai : inMiddle.get(index)) {
               Xnode clone = ai.cloneObject();

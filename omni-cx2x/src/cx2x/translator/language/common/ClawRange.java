@@ -137,9 +137,9 @@ public class ClawRange {
 
     Xnode inductionVar = doStmt.matchExactNode(Xcode.VAR);
     Xnode indexRange = doStmt.matchExactNode(Xcode.INDEXRANGE);
-    Xnode lower = indexRange.matchExactNode(Xcode.LOWERBOUND).getChild(0);
-    Xnode upper = indexRange.matchExactNode(Xcode.UPPERBOUND).getChild(0);
-    Xnode step = indexRange.matchExactNode(Xcode.STEP).getChild(0);
+    Xnode lower = indexRange.matchExactNode(Xcode.LOWERBOUND).child(0);
+    Xnode upper = indexRange.matchExactNode(Xcode.UPPERBOUND).child(0);
+    Xnode step = indexRange.matchExactNode(Xcode.STEP).child(0);
 
     return !(inductionVar == null || _inductionVar == null
         || !inductionVar.getValue().equals(_inductionVar))

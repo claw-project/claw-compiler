@@ -374,7 +374,7 @@ public class LoopExtraction extends Transformation {
     List<Xnode> arrayReferences =
         XnodeUtil.findAll(Xcode.FARRAYREF, clonedFctDef.getBody());
     for(Xnode ref : arrayReferences) {
-      if(!(ref.matchSeq(Xcode.VARREF).getChild(0).opcode() == Xcode.VAR)) {
+      if(!(ref.matchSeq(Xcode.VARREF).child(0).opcode() == Xcode.VAR)) {
         continue;
       }
       String mappedVar = ref.matchSeq(Xcode.VARREF, Xcode.VAR).getValue();

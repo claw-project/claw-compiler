@@ -195,7 +195,7 @@ public class Kcaching extends Transformation {
         logEq.appendToChildren(_doStmt.matchExactNode(Xcode.VAR), true);
         // Set rhs of equality
         logEq.appendToChildren(_doStmt.matchExactNode(Xcode.INDEXRANGE).
-            matchExactNode(Xcode.LOWERBOUND).getChild(0), true);
+            matchExactNode(Xcode.LOWERBOUND).child(0), true);
 
         initIfStmt.matchExactNode(Xcode.CONDITION).appendToChildren(logEq, false);
         _doStmt.getBody().insert(initIfStmt, false);
@@ -347,9 +347,9 @@ public class Kcaching extends Transformation {
        */
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache1.appendToChildren(cacheVar, false);
-      cache1.appendToChildren(stmt.getChild(1), true);
+      cache1.appendToChildren(stmt.child(1), true);
       Xnode cache2 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
-      cache2.appendToChildren(stmt.getChild(0), true);
+      cache2.appendToChildren(stmt.child(0), true);
       cache2.appendToChildren(cacheVar, true);
       XnodeUtil.insertAfter(stmt, cache1);
       XnodeUtil.insertAfter(cache1, cache2);

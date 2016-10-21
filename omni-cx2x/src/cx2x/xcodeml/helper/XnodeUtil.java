@@ -192,7 +192,7 @@ public class XnodeUtil {
   public static void demote(Xnode ref, List<Integer> keptDimensions) {
     for(int i = 1; i < ref.getChildren().size(); ++i) {
       if(!keptDimensions.contains(i)) {
-        ref.getChild(i).delete();
+        ref.child(i).delete();
       }
     }
   }
@@ -1196,8 +1196,8 @@ public class XnodeUtil {
     if(n1 == null || n2 == null) {
       return false;
     }
-    Xnode c1 = n1.getChild(0);
-    Xnode c2 = n2.getChild(0);
+    Xnode c1 = n1.child(0);
+    Xnode c2 = n2.child(0);
     return compareValues(c1, c2);
   }
 
@@ -1244,10 +1244,10 @@ public class XnodeUtil {
     Xnode s2 = idx2.matchSeq(Xcode.STEP);
 
     if(s1 != null) {
-      s1 = s1.getChild(0);
+      s1 = s1.child(0);
     }
     if(s2 != null) {
-      s2 = s2.getChild(0);
+      s2 = s2.child(0);
     }
 
     if(withLowerBound) {
@@ -1285,13 +1285,13 @@ public class XnodeUtil {
           "range missing.");
     }
 
-    Xnode low1 = indexRange1.matchSeq(Xcode.LOWERBOUND).getChild(0);
-    Xnode up1 = indexRange1.matchSeq(Xcode.UPPERBOUND).getChild(0);
-    Xnode s1 = indexRange1.matchSeq(Xcode.STEP).getChild(0);
+    Xnode low1 = indexRange1.matchSeq(Xcode.LOWERBOUND).child(0);
+    Xnode up1 = indexRange1.matchSeq(Xcode.UPPERBOUND).child(0);
+    Xnode s1 = indexRange1.matchSeq(Xcode.STEP).child(0);
 
-    Xnode low2 = indexRange2.matchSeq(Xcode.LOWERBOUND).getChild(0);
-    Xnode up2 = indexRange2.matchSeq(Xcode.UPPERBOUND).getChild(0);
-    Xnode s2 = indexRange2.matchSeq(Xcode.STEP).getChild(0);
+    Xnode low2 = indexRange2.matchSeq(Xcode.LOWERBOUND).child(0);
+    Xnode up2 = indexRange2.matchSeq(Xcode.UPPERBOUND).child(0);
+    Xnode s2 = indexRange2.matchSeq(Xcode.STEP).child(0);
 
     // Set the range of loop2 to loop1
     XnodeUtil.insertAfter(inductionVar2, inductionVar1.cloneObject());
@@ -1940,7 +1940,7 @@ public class XnodeUtil {
       return baseBound.cloneObject();
     }
 
-    Xnode boundChild = baseBound.getChild(0);
+    Xnode boundChild = baseBound.child(0);
     if(boundChild == null) {
       throw new IllegalTransformationException("Cannot duplicate bound as it " +
           "has no children element");
@@ -1953,8 +1953,8 @@ public class XnodeUtil {
       bound.appendToChildren(
           importConstOrVar(boundChild, xcodemlSrc, xcodemlDst), false);
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
-      Xnode lhs = boundChild.getChild(0);
-      Xnode rhs = boundChild.getChild(1);
+      Xnode lhs = boundChild.child(0);
+      Xnode rhs = boundChild.child(1);
       Xnode plusExpr = new Xnode(Xcode.PLUSEXPR, xcodemlDst);
       bound.appendToChildren(plusExpr, false);
       plusExpr.appendToChildren(

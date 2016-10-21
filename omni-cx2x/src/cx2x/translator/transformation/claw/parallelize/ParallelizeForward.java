@@ -448,7 +448,7 @@ public class ParallelizeForward extends Transformation {
       Xnode namedValVar = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
       arg.appendToChildren(namedValVar, false);
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
-      Xnode hook = arguments.getChild((i - 1) - argOffset);
+      Xnode hook = arguments.child((i - 1) - argOffset);
       XnodeUtil.insertAfter(hook, arg);
     }
 
@@ -592,7 +592,7 @@ public class ParallelizeForward extends Transformation {
       OverPosition overPos = OverPosition.fromString(
           _fctType.getAttribute(ClawAttr.OVER.toString()));
 
-      Xnode lhs = assignment.getChild(0);
+      Xnode lhs = assignment.child(0);
       // TODO handle the case when the array ref is a var directly
       Xnode varInLhs = XnodeUtil.find(Xcode.VAR, lhs, true);
 
@@ -699,8 +699,8 @@ public class ParallelizeForward extends Transformation {
 
 
     for(Xnode assignment : assignments) {
-      Xnode lhs = assignment.getChild(0);
-      Xnode rhs = assignment.getChild(1);
+      Xnode lhs = assignment.child(0);
+      Xnode rhs = assignment.child(1);
 
       List<Xnode> varsInRhs = XnodeUtil.findAll(Xcode.VAR, rhs);
       for(Xnode var : varsInRhs) {
@@ -793,8 +793,8 @@ public class ParallelizeForward extends Transformation {
       List<Xnode> pAssignments =
           XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, fctDef);
       for(Xnode pAssignment : pAssignments) {
-        Xnode pointer = pAssignment.getChild(0);
-        Xnode pointee = pAssignment.getChild(1);
+        Xnode pointer = pAssignment.child(0);
+        Xnode pointee = pAssignment.child(1);
 
         // Check if the pointer assignment has the promoted variable
         if(pointee.getValue().toLowerCase().
