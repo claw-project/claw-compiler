@@ -41,7 +41,8 @@ See [INSTALL.md](./INSTALL.md) file.
 To generate the java documentation and the compiler documentation, run the
 following command. The compiler documentation require `pdflatex`.
 
-The compiler documentation is generated in the `/documentation` directory and
+The compiler documentation is generated in the `/documentation` directory, the
+developer's guide is generated in the `/documentation/developer` directory and
 the `javadoc` is generated in the `/documentation/javadoc/` directory.
 
 ```bash
