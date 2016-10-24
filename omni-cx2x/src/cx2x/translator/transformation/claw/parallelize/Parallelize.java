@@ -313,7 +313,7 @@ public class Parallelize extends Transformation {
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU) {
       transformForGPU(xcodeml);
-    } else {
+    } else if(_claw.getTarget() == Target.CPU) {
       transformForCPU(xcodeml);
     }
 
