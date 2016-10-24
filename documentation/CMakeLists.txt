@@ -6,9 +6,9 @@ find_package(LATEX)
 if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
   set(CLAW_DOC_FILE "claw_fortran_compiler")
   add_custom_target(
-    claw-latex
+    claw-compiler-doc
     COMMAND ${PDFLATEX_COMPILER} ${CLAW_DOC_FILE}.tex &>/dev/null
-    COMMENT "Generating documentation"
+    COMMENT "Generating compiler documentation"
     SOURCES ${CLAW_DOC_FILE}.tex
   )
 endif()
@@ -44,7 +44,9 @@ add_custom_target(
 )
 
 if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
-  add_custom_target(doc DEPENDS claw-javadoc claw-latex)
+  add_custom_target(doc DEPENDS claw-javadoc claw-compiler-doc claw-developer-guide)
 else()
   add_custom_target(doc DEPENDS claw-javadoc)
 endif()
+
+add_subdirectory(developer)
