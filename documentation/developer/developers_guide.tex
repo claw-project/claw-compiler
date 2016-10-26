@@ -204,7 +204,7 @@ Listing \ref{fortran1} is a simple FORTRAN program. Its \xcodeml \gls{ir} will b
 \lstinputlisting[label=xcodeml1, caption=\xcodeml IR, language=xml]{code/basic_fortran.xml}
 
 \subsection{The FORTRAN back-end}
-The FORTRAN back-end is the program that decompiles \gls{ir} back to FORTRAN code. It is a simple Java program that implements a visitor patterns across the \gls{ast}.
+The FORTRAN back-end is the program that decompiles \gls{ir} back to FORTRAN code. It is a simple Java program that implements a visitor patterns across the \gls{ast}. It can be called as a standalone program or directly within the translator as it is done in the \clawfcomp.
 
 \section{\clawfcomp}
 
@@ -260,6 +260,14 @@ Transformations are divided into two distinct group. The independent and the dep
 \lstinputlisting[label=lst:trans_dep, caption=Loop fusion example, language=Fortran]{code/trans_dependent.f90}
 
 \section{Transformation application order}
+First step of the transformation of a translation unit (an XcodeML/F file), is the detection of all the CLAW directives. Each directive will trigger the creation of an instance of the transformation class it belongs to. For example, a loop-fusion directive will trigger the creation of a \lstinline|LoopFusion| instance. On this instance, the \lstinline|analyze| method is called in order to determined if the transformation can take place. If the analysis step is successful, the transformation is added to its transformation group. 
+Once all the transformation instances have been analyzed and categorized by groups, the actual code transformation can take place. All transformations in a group are applied one after another in a FIFO order. The order of group, is determined in the configuration file. 
+
+\lstinputlisting[label=lst:config, caption=CLAW default configuration, language=xml]{../../driver/etc/claw-default.xml}
+
+As shown in Figure \ref{lst:config}, the transformation order is specified in an XML file. Each transformation group is defined with its type (dependent or independent), its user-friendly name and its implementation (class that implements the actual code transformation). The order of application is from top to down.
+
+
 
 \section{Add a transformation}
 A transformation in the \clawfc is represented as a class that inherits from the \lstinline|Transformation| base class or the \lstinline|BlockTransformation| class.
