@@ -305,12 +305,12 @@ public class TransformationHelper {
       mod = transformer.getModCache().get(modDef.getName());
     } else {
       mod = XnodeUtil.findContainingModule(fctDef);
-      transformer.getModCache().add(modDef.getName(), mod);
       if(mod == null) {
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + modDef.getName(),
             claw.getPragma().lineNo());
       }
+      transformer.getModCache().add(modDef.getName(), mod);
     }
 
     XfunctionType fctTypeMod;
