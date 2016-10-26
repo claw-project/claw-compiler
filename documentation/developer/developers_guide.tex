@@ -297,6 +297,20 @@ public void transform(XcodeProgram xcodeml, Transformer transformer,
 
 \section{Modify nodes}
 
+\begin{lstlisting}[label=lst:update_node, language=Java, caption=XcodeML update node example]
+public void transform(XcodeProgram xcodeml, Transformer transformer,
+                      Transformation other)
+{                      
+    Xnode pragma = _claw.getPragma();
+    // Get current values from the node
+    String oldValue = pragma.value();
+    int line = pragma.lineNo();
+    // Update the value directly in the AST
+    pragma.setValue("acc routine seq");
+    pragma.setLineNo(line + 1);
+}
+\end{lstlisting}
+
 \section{Delete nodes}
 
 % GLOSSARY
