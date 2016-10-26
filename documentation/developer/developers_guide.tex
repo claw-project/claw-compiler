@@ -268,9 +268,14 @@ Once all the transformation instances have been analyzed and categorized by grou
 As shown in Figure \ref{lst:config}, the transformation order is specified in an XML file. Each transformation group is defined with its type (dependent or independent), its user-friendly name and its implementation (class that implements the actual code transformation). The order of application is from top to down.
 
 
-
 \section{Add a transformation}
 A transformation in the \clawfc is represented as a class that inherits from the \lstinline|Transformation| base class or the \lstinline|BlockTransformation| class.
+
+\begin{enumerate}
+\item Create a new class that inherits from one of the base transformation class.
+\item %TODO
+\item Add it to the configuration file.
+\end{enumerate}
 
 \chapter{\xcodeml and AST manipulation library}
 As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with any language that can read and write XML files. It can even be manipulated by hand depending on the user's knowledge of the \xcodeml \gls{ir} specification. 
@@ -279,6 +284,16 @@ To ease this task, a small manipulation library is included in the \cx2x program
 \section{Traverse the \gls{ast}}
 
 \section{Add nodes}
+
+\begin{lstlisting}[label=lst:add_node, language=Java, caption=XcodeML add node example]
+public void transform(XcodeProgram xcodeml, Transformer transformer,
+                      Transformation other)
+{                      
+    Xnode myNewNode = new Xnode(xcodeml, Xcode.FPRAGMASTATEMENT);
+    myNewNode.setValue("omp parallel");
+    XnodeUtil.insertAfter(_claw.getPragma(), myNewNode);
+}
+\end{lstlisting}
 
 \section{Modify nodes}
 
