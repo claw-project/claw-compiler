@@ -146,7 +146,8 @@
 \vfill % Space between the title box and author information
 
 \begin{center}
-Version 0.1, Last updated \today
+Version 0.1, Last updated \today \\
+Author: Valentin Clement
 \end{center}
 \HRule
 
@@ -180,9 +181,14 @@ Version 0.1, Last updated \today
 
 \chapter{Architecture}
 \section{OMNI Compiler}
-The \clawfcomp is based on the \omni. 
+The \clawfcomp is based on the \omni. The \omni project provides a set of programs to build source-to-source translator for C or FORTRAN.
 
-\section{\xcodeml}
+\subsection{The FORTRAN front-end}
+The FORTRAN front-end is the program that parses FORTRAN source code and that generates the \gls{ir}. Its grammar is written in \lstinline|yacc| and the processing and \gls{ir} generation is written in \lstinline|C|.
+
+%TODO gives a small example of the workflow inside the front-end.
+
+\subsection{\xcodeml}
 \xcodeml is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
 %TODO add reference to specs.
 
@@ -196,6 +202,9 @@ Listing \ref{fortran1} is a simple FORTRAN program. Its \xcodeml \gls{ir} will b
 \lstinputlisting[label=fortran1, caption=Basic FORTRAN program, language=Fortran]{code/basic_fortran.f90}
 
 \lstinputlisting[label=xcodeml1, caption=\xcodeml IR, language=xml]{code/basic_fortran.xml}
+
+\subsection{The FORTRAN back-end}
+The FORTRAN back-end is the program that decompiles \gls{ir} back to FORTRAN code. It is a simple Java program that implements a visitor patterns across the \gls{ast}.
 
 \section{\clawfcomp}
 
@@ -253,7 +262,7 @@ Transformations are divided into two distinct group. The independent and the dep
 \section{Transformation application order}
 
 \section{Add a transformation}
-A transformation is always triggered by a directive. 
+A transformation in the \clawfc is represented as a class that inherits from the \lstinline|Transformation| base class or the \lstinline|BlockTransformation| class.
 
 \chapter{\xcodeml and AST manipulation library}
 As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with any language that can read and write XML files. It can even be manipulated by hand depending on the user's knowledge of the \xcodeml \gls{ir} specification. 
