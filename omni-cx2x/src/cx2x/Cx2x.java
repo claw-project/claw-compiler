@@ -228,6 +228,13 @@ public class Cx2x {
       return;
     }
 
+    /* If no module search path is given, look in the same directory for CLAW
+     * modified module file */
+    if(XcodeMLtools_Fmod.getSearchPath().size() == 0){
+      File inputFile = new File(input);
+      XcodeMLtools_Fmod.
+          addSearchPath(inputFile.getParentFile().getAbsolutePath());
+    }
 
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
         xcodeMlOutput, directive, target, groups, maxColumns);
