@@ -276,10 +276,39 @@ function claw_f_process_dependencies()
       module_file="$moddirname/$module_name.f"
     elif [[ -f $moddirname/$module_name.F ]]
     then
-      module_file="$module_name.F"
+      module_file="$moddirname/$module_name.F"
     else
-      echo "Error: cannot find module file $dep.xmod"
-      exit 1;
+      file_found=false
+      for search_path in "${module_opt[@]}"
+        do
+        if [[ -f "${search_path:2}/$module_name.f90" ]]
+        then
+          module_file="${search_path:2}/$module_name.f90"
+          file_found=true
+          break
+        elif [[ -f ${search_path:2}/$module_name.F90 ]]
+        then
+          module_file="${search_path:2}/$module_name.F90"
+          file_found=true
+          break
+        elif [[ -f ${search_path:2}/$module_name.f ]]
+        then
+          module_file="${search_path:2}/$module_name.f"
+          file_found=true
+          break
+        elif [[ -f ${search_path:2}/$module_name.F ]]
+        then
+          module_file="${search_path:2}/$module_name.F"
+          file_found=true
+          break
+        fi
+      done
+
+      if [ "$file_found" = false ]
+      then
+          echo "Error: cannot find module file $dep.xmod"
+          exit 1;
+      fi
     fi
 
     module_xmod_file="$module_name.xmod"
