@@ -58,8 +58,10 @@ add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
 
 # Build the original code and the transformed code
-add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
-add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
+if(NOT NO_COMPILE)
+  add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
+  add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
+endif()
 
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
