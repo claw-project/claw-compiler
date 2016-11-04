@@ -278,7 +278,7 @@ function claw_f_process_dependencies()
     then
       module_file="$module_name.F"
     else
-      echo "Error: cannot find module file $dep"
+      echo "Error: cannot find module file $dep.xmod"
       exit 1;
     fi
 
