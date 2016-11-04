@@ -234,15 +234,17 @@ function claw_f_print_version()
 function claw_f_process_dependencies()
 {
   dependencies=()
-  module_regex="^[[:space:]]*USE[[:space:]]*([^,]*)"
+  module_regex="^[[:space:]]*(USE|use)[[:space:]]*([^,]*)"
   while IFS= read -r line
   do
     if [[ $line =~ $module_regex ]]
     then
-      module_name="${BASH_REMATCH[1]}"
+      module_name="${BASH_REMATCH[2]}"
       dependencies+=("$module_name")
     fi
   done <$1
+
+  echo ${dependencies[@]}
 
   # Get the directory and use it to look in the same for dependencies
   moddirname=$(dirname $2)
