@@ -39,10 +39,17 @@ else() # without debug option
 endif()
 
 # Target for the transformation
-add_custom_target(
-  transform-${TEST_NAME}
-  DEPENDS ${OUTPUT_FILE} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED}
-)
+if(NOT NO_COMPILE)
+  add_custom_target(
+    transform-${TEST_NAME}
+    DEPENDS ${OUTPUT_FILE} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED}
+  )
+else()
+  add_custom_target(
+    transform-${TEST_NAME}
+    DEPENDS ${OUTPUT_FILE}
+  )
+endif()
 
 # Target to clean the generated file (Output of clawfc)
 add_custom_target(
