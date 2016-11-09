@@ -38,13 +38,17 @@ else() # without debug option
   )
 endif()
 
-# Target for the transformation
 if(NOT NO_COMPILE)
+  # Target for the transformation
   add_custom_target(
     transform-${TEST_NAME}
     DEPENDS ${OUTPUT_FILE} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED}
   )
+  # Build the original code and the transformed code
+  add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
+  add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
 else()
+  # Target for the transformation
   add_custom_target(
     transform-${TEST_NAME}
     DEPENDS ${OUTPUT_FILE}
@@ -63,12 +67,6 @@ add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
 
 # Define additional compilation flags
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
-
-# Build the original code and the transformed code
-if(NOT NO_COMPILE)
-  add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
-  add_executable (${EXECUTABLE_TRANSFORMED} EXCLUDE_FROM_ALL ${OUTPUT_FILE})
-endif()
 
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
