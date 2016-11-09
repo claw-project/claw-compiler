@@ -52,15 +52,15 @@ directive[ClawLanguage l]
   :
 
   // loop-fusion directive
-    LOOPFUSION group_clause_optional[$l] collapse_optional[$l] EOF
+    LOOPFUSION group_clause_optional[$l] collapse_clause_optional[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
-  | LOOPINTERCHANGE indexes_option[$l] parallel_optional[$l] acc_optional[$l] EOF
+  | LOOPINTERCHANGE indexes_option[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive
-  | LOOPEXTRACT range_option mapping_option_list[m] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
+  | LOOPEXTRACT range_option mapping_option_list[m] fusion_clause_optional[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.LOOP_EXTRACT);
       $l.setRange($range_option.r);
@@ -90,7 +90,7 @@ directive[ClawLanguage l]
     }
 
   // Array notation transformation directive
-  | ARRAY_TRANS induction_optional[$l] fusion_optional[$l] parallel_optional[$l] acc_optional[$l] EOF
+  | ARRAY_TRANS induction_optional[$l] fusion_clause_optional[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
     {  $l.setDirective(ClawDirective.ARRAY_TRANSFORM); }
   | END ARRAY_TRANS
     {
@@ -184,20 +184,20 @@ group_clause_optional[ClawLanguage l]:
 ;
 
 // collapse clause
-collapse_optional[ClawLanguage l]:
+collapse_clause_optional[ClawLanguage l]:
     COLLAPSE '(' n=NUMBER ')'
     { $l.setCollapseClause($n.text); }
   | /* empty */
 ;
 
 // fusion clause
-fusion_optional[ClawLanguage l]:
+fusion_clause_optional[ClawLanguage l]:
     FUSION group_clause_optional[$l] { $l.setFusionClause(); }
   | /* empty */
 ;
 
 // parallel clause
-parallel_optional[ClawLanguage l]:
+parallel_clause_optional[ClawLanguage l]:
     PARALLEL { $l.setParallelClause(); }
   | /* empty */
 ;
