@@ -2141,4 +2141,15 @@ public class XnodeUtil {
     }
   }
 
+  /**
+   * Delete a node in the ast.
+   *
+   * @param node Node to be deleted.
+   */
+  public static void safeDelete(Xnode node){
+    if(node != null) {
+      node.delete();
+    }
+  }
+
 }
