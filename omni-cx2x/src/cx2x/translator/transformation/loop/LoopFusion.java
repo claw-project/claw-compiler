@@ -174,14 +174,12 @@ public class LoopFusion extends Transformation {
    */
   private void finalizeTransformation() {
     // Delete the pragma of the transformed loop
-    if(_claw.getPragma() != null) {
-      _claw.getPragma().delete();
-    }
+    XnodeUtil.safeDelete(_claw.getPragma());
 
     // Delete the do statement that was merged with the main one
-    if(_doStmts[0] != null) {
-      _doStmts[0].delete();
-    }
+    XnodeUtil.safeDelete(_doStmts[0]);
+
+    // Set transformation as done.
     this.transformed();
   }
 
