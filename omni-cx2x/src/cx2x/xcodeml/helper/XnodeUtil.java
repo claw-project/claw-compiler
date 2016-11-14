@@ -930,7 +930,7 @@ public class XnodeUtil {
    * @return A XmoduleDefinition object if found. Null otherwise.
    */
   public static XmoduleDefinition findParentModule(Xnode from) {
-    Xnode moduleDef = findParent(Xcode.FMODULEDEFINITION, from);
+    Xnode moduleDef = matchParent(Xcode.FMODULEDEFINITION, from);
     if(moduleDef == null) {
       return null;
     }
@@ -944,7 +944,7 @@ public class XnodeUtil {
    * @return The function definition found. Null if nothing found.
    */
   public static XfunctionDefinition findParentFunction(Xnode from) {
-    Xnode fctDef = findParent(Xcode.FFUNCTIONDEFINITION, from);
+    Xnode fctDef = matchParent(Xcode.FFUNCTIONDEFINITION, from);
     if(fctDef == null) {
       return null;
     }
@@ -1041,13 +1041,13 @@ public class XnodeUtil {
   }
 
   /**
-   * Find an element in the ancestor of the given element.
+   * Find an element in the ancestor of the given node.
    *
    * @param opcode Code of the element to be found.
-   * @param from   Element to start the search from.
-   * @return The element found. Null if nothing found.
+   * @param from   Node to start the search from.
+   * @return The matched node. Null if nothing matched.
    */
-  public static Xnode findParent(Xcode opcode, Xnode from) {
+  public static Xnode matchParent(Xcode opcode, Xnode from) {
     return findInDirection(opcode, from, false);
   }
 

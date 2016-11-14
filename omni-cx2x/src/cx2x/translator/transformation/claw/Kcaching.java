@@ -44,7 +44,7 @@ public class Kcaching extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    _doStmt = XnodeUtil.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
+    _doStmt = XnodeUtil.matchParent(Xcode.FDOSTATEMENT, _claw.getPragma());
     if(_doStmt == null) {
       xcodeml.addError("The kcache directive is not nested in a do statement",
           _claw.getPragma().lineNo());
@@ -71,7 +71,7 @@ public class Kcaching extends Transformation {
                         Transformation other) throws Exception
   {
     // It might have change from the analysis
-    _doStmt = XnodeUtil.findParent(Xcode.FDOSTATEMENT, _claw.getPragma());
+    _doStmt = XnodeUtil.matchParent(Xcode.FDOSTATEMENT, _claw.getPragma());
 
     // Check if there is an assignment
 

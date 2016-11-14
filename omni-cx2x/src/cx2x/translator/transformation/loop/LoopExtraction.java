@@ -142,7 +142,7 @@ public class LoopExtraction extends Transformation {
       return false;
     }
 
-    Xnode fctDef = XnodeUtil.findParent(Xcode.FFUNCTIONDEFINITION, _fctCall);
+    Xnode fctDef = XnodeUtil.matchParent(Xcode.FFUNCTIONDEFINITION, _fctCall);
     if(fctDef == null) {
       xcodeml.addError("No function around the fct call",
           _claw.getPragma().lineNo());
