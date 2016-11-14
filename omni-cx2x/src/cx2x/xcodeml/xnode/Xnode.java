@@ -384,7 +384,45 @@ public class Xnode {
    * @return The matched node. Null if nothing matched.
    */
   public Xnode matchAncestor(Xcode opcode) {
-    return XnodeUtil.universalMatch(opcode, this, false);
+    return universalMatch(opcode, false);
+  }
+
+  /**
+   * Find node with the given opcode in the siblings of the given node.
+   *
+   * @param opcode Opcode of the node to be matched.
+   * @return The matched node. Null if no node found.
+   */
+  public Xnode matchSibling(Xcode opcode) {
+    return universalMatch(opcode, true);
+  }
+
+  /**
+   * Find an element either in the next siblings or in the ancestors.
+   *
+   * @param opcode Opcode of the node to be matched.
+   * @param down   If True, search in the siblings. If false, search in the
+   *               ancestors.
+   * @return The matched node. Null if no node found.
+   */
+  private Xnode universalMatch(Xcode opcode, boolean down) {
+    if(_baseElement == null){
+      return null;
+    }
+
+    Node nextNode = down ? _baseElement.getNextSibling() :
+        _baseElement.getParentNode();
+
+    while(nextNode != null) {
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(opcode.code())) {
+          return new Xnode(element);
+        }
+      }
+      nextNode = down ? nextNode.getNextSibling() : nextNode.getParentNode();
+    }
+    return null;
   }
 
 

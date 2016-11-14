@@ -108,9 +108,7 @@ public class ArrayTransform extends BlockTransformation {
       return true;
     } else { // single transformation
       // pragma must be followed by an assign statement
-      Xnode stmt =
-          XnodeUtil.matchSibling(Xcode.FASSIGNSTATEMENT,
-              _clawBegin.getPragma());
+      Xnode stmt = _clawBegin.getPragma().matchSibling(Xcode.FASSIGNSTATEMENT);
       if(stmt == null) {
         xcodeml.addError("Directive not followed by an assign statement",
             _clawBegin.getPragma().lineNo());

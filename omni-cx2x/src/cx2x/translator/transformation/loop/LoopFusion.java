@@ -97,8 +97,7 @@ public class LoopFusion extends Transformation {
       _doStmts = new Xnode[_claw.getCollapseValue()];
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
         if(i == 0) { // Find the outer do statement from pragma
-          _doStmts[0] =
-              XnodeUtil.matchSibling(Xcode.FDOSTATEMENT, _claw.getPragma());
+          _doStmts[0] = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
         } else { // Find the next i loops
           _doStmts[i] = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
               _doStmts[i - 1].body(), false);
@@ -112,7 +111,7 @@ public class LoopFusion extends Transformation {
       return true;
     } else {
       // Without collapse clause, locate the do statement after the pragma
-      Xnode doStmt = XnodeUtil.matchSibling(Xcode.FDOSTATEMENT, _claw.getPragma());
+      Xnode doStmt = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
       if(doStmt == null) {
         xcodeml.addError("Do statement missing after directive.",
             _claw.getPragma().lineNo());

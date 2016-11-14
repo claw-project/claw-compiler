@@ -180,8 +180,7 @@ public class LoopInterchange extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     // Find next loop after pragma
-    _loopLevel0 =
-        XnodeUtil.matchSibling(Xcode.FDOSTATEMENT, _claw.getPragma());
+    _loopLevel0 = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
 
     if(_loopLevel0 == null) {
       xcodeml.addError("top level loop not found",

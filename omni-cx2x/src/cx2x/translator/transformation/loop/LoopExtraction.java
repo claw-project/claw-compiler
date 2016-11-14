@@ -126,8 +126,7 @@ public class LoopExtraction extends Transformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    Xnode _exprStmt =
-        XnodeUtil.matchSibling(Xcode.EXPRSTATEMENT, _claw.getPragma());
+    Xnode _exprStmt = _claw.getPragma().matchSibling(Xcode.EXPRSTATEMENT);
     if(_exprStmt == null) {
       xcodeml.addError("No function call detected after loop-extract",
           _claw.getPragma().lineNo());
@@ -441,10 +440,9 @@ public class LoopExtraction extends Transformation {
           _claw.getPragma().lineNo());
     } else {
       if(!_claw.getRange().equals(foundStatement)) {
-        // Try to matchSeq another loops that meet the criteria
+        // Try to match another loops that meet the criteria
         do {
-          foundStatement =
-              XnodeUtil.matchSibling(Xcode.FDOSTATEMENT, foundStatement);
+          foundStatement = foundStatement.matchSibling(Xcode.FDOSTATEMENT);
         } while(foundStatement != null &&
             !_claw.getRange().equals(foundStatement));
       }
