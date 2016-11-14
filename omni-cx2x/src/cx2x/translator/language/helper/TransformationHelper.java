@@ -677,7 +677,7 @@ public class TransformationHelper {
             }
           } else {
             Xnode hook =
-                ref.matchAny(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+                ref.matchDirectDescendant(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
             if(hook == null) {
               hook = ref.child(0);
             }

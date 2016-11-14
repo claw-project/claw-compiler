@@ -438,6 +438,40 @@ public class Xnode {
     }
     return null;
   }
+  
+  /**
+   * Find node with one of the given opcodes in the direct descendants
+   * the current node.
+   *
+   * @param opcodes List of opcodes to be searched.
+   * @return The matched node. Null if no node found.
+   */
+  public Xnode matchDirectDescendant(List<Xcode> opcodes) {
+    List<Xnode> children = children();
+    for(Xnode child : children) {
+      if(opcodes.contains(child.opcode())) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Find node with the given path of opcodes from  the current node.
+   *
+   * @param opcodes Sequence of opcode to reach the node.
+   * @return The matched node. Null if no node found.
+   */
+  public Xnode matchSeq(Xcode... opcodes) {
+    Xnode tmp = this;
+    for(Xcode opcode : opcodes) {
+      tmp = tmp.matchDirectDescendant(opcode);
+      if(tmp == null) {
+        return null;
+      }
+    }
+    return tmp;
+  }
 
   /**
    * Find an element either in the next siblings or in the ancestors.
@@ -465,38 +499,5 @@ public class Xnode {
       nextNode = down ? nextNode.getNextSibling() : nextNode.getParentNode();
     }
     return null;
-  }
-
-  /**
-   * Match any first child with opcode in the given list.
-   *
-   * @param opcodes List of opcodes to be searched.
-   * @return Matched element. Null if nothing matches.
-   */
-  public Xnode matchAny(List<Xcode> opcodes) {
-    List<Xnode> children = children();
-    for(Xnode child : children) {
-      if(opcodes.contains(child.opcode())) {
-        return child;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Match a specific element following the given sequences of opcodes.
-   *
-   * @param opcodes Sequence of opcode to reach the element.
-   * @return Matched elements. Null if nothing matches.
-   */
-  public Xnode matchSeq(Xcode... opcodes) {
-    Xnode tmp = this;
-    for(Xcode opcode : opcodes) {
-      tmp = tmp.matchDirectDescendant(opcode);
-      if(tmp == null) {
-        return null;
-      }
-    }
-    return tmp;
   }
 }

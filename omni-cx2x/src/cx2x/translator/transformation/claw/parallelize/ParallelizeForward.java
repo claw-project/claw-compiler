@@ -456,7 +456,7 @@ public class ParallelizeForward extends Transformation {
     if(_flatten) {
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.children()) {
-        if(arg.opcode() == Xcode.FARRAYREF && arg.matchAny(
+        if(arg.opcode() == Xcode.FARRAYREF && arg.matchDirectDescendant(
             Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {
           Xnode var = arg.matchSeq(Xcode.VARREF, Xcode.VAR);
