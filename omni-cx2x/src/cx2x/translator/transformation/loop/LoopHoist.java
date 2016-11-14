@@ -248,7 +248,7 @@ public class LoopHoist extends BlockTransformation {
     Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
     XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
     Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
-    Xnode inductionVar = XnodeUtil.matchDescendant(Xcode.VAR, g.getDoStmts()[0], false);
+    Xnode inductionVar = g.getDoStmts()[0].matchDirectDescendant(Xcode.VAR);
     cond.append(inductionVar, true);
     cond.append(g.getDoStmts()[0].matchExactNode(Xcode.INDEXRANGE).
         matchExactNode(Xcode.LOWERBOUND).child(0), true
@@ -277,8 +277,8 @@ public class LoopHoist extends BlockTransformation {
   {
     g.getDoStmts()[0] = newStart;
     for(int j = 1; j < g.getDoStmts().length; ++j) {
-      Xnode next = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
-          g.getDoStmts()[j - 1].body(), false);
+      Xnode next = g.getDoStmts()[j - 1].body().
+          matchDirectDescendant(Xcode.FDOSTATEMENT);
       if(next == null) {
         throw new IllegalTransformationException(
             "Unable to matchSeq enough nested do statements",

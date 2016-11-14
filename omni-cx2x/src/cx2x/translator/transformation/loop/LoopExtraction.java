@@ -134,7 +134,7 @@ public class LoopExtraction extends Transformation {
     }
 
     // Find function CALL
-    _fctCall = XnodeUtil.matchDescendant(Xcode.FUNCTIONCALL, _exprStmt, true);
+    _fctCall = _exprStmt.matchDescendant(Xcode.FUNCTIONCALL);
     if(_fctCall == null) {
       xcodeml.addError("No function call detected after loop-extract",
           _claw.getPragma().lineNo());
@@ -434,7 +434,7 @@ public class LoopExtraction extends Transformation {
   private Xnode locateDoStatement(Xnode from)
       throws IllegalTransformationException
   {
-    Xnode foundStatement = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT, from, true);
+    Xnode foundStatement = from.matchDescendant(Xcode.FDOSTATEMENT);
     if(foundStatement == null) {
       throw new IllegalTransformationException("No loop found in function",
           _claw.getPragma().lineNo());

@@ -665,14 +665,12 @@ public class XnodeUtil {
    * @param ref  Element after which statement are shifted.
    */
   public static void extractBody(Xnode loop, Xnode ref) {
-    Element loopElement = loop.element();
-    Element body = XnodeUtil.matchAnyDescendant(loopElement,
-        Xname.BODY);
+    Xnode body = loop.matchDescendant(Xcode.BODY);
     if(body == null) {
       return;
     }
     Node refNode = ref.element();
-    for(Node childNode = body.getFirstChild(); childNode != null; ) {
+    for(Node childNode = body.element().getFirstChild(); childNode != null; ) {
       Node nextChild = childNode.getNextSibling();
       // Do something with childNode, including move or delete...
       if(childNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -804,49 +802,6 @@ public class XnodeUtil {
    */
   private static void insertAfter(Node refNode, Node newNode) {
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
-  }
-
-  /**
-   * Find the first element with tag corresponding to elementName nested under
-   * the parent element.
-   *
-   * @param parent      The root element to search from.
-   * @param elementName The tag of the element to search for.
-   * @return The first element found under parent with the corresponding tag.
-   * Null if no element is found.
-   */
-  private static Element matchAnyDescendant(Element parent, String elementName)
-  {
-    NodeList elements = parent.getElementsByTagName(elementName);
-    if(elements.getLength() == 0) {
-      return null;
-    }
-    return (Element) elements.item(0);
-  }
-
-  /**
-   * Find the first element with tag corresponding to elementName in the direct
-   * children of the parent element.
-   *
-   * @param parent      The root element to search from.
-   * @param elementName The tag of the element to search for.
-   * @return The first element found in the direct children of the element
-   * parent with the corresponding tag. Null if no element is found.
-   */
-  private static Element matchInFirstDescendant(Element parent,
-                                                String elementName)
-  {
-    NodeList nodeList = parent.getChildNodes();
-    for(int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(elementName)) {
-          return element;
-        }
-      }
-    }
-    return null;
   }
 
   /**
@@ -990,24 +945,7 @@ public class XnodeUtil {
     XnodeUtil.insertAfter(refElement.element(), element.element());
   }
 
-  /**
-   * Find node with the given opcode in the descendants of the given node.
-   *
-   * @param opcode Opcode of the node to be matched.
-   * @param parent Initial node for the search.
-   * @param any    If true, try to match any descendants from the parent node.
-   *               If flase, only first children are taken into consideration.
-   * @return The matched node. Null if nothing matched.
-   */
-  public static Xnode matchDescendant(Xcode opcode, Xnode parent, boolean any) {
-    Element el;
-    if(any) {
-      el = matchAnyDescendant(parent.element(), opcode.code());
-    } else {
-      el = matchInFirstDescendant(parent.element(), opcode.code());
-    }
-    return (el == null) ? null : new Xnode(el);
-  }
+
 
   /**
    * Insert all the statements from a given body at the end of another body
@@ -1071,10 +1009,10 @@ public class XnodeUtil {
       return false;
     }
 
-    Xnode inductionVar1 = XnodeUtil.matchDescendant(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XnodeUtil.matchDescendant(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e2, false);
+    Xnode inductionVar1 = e1.matchDirectDescendant(Xcode.VAR);
+    Xnode inductionVar2 = e2.matchDirectDescendant(Xcode.VAR);
+    Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEXRANGE);
+    Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEXRANGE);
 
     return compareValues(inductionVar1, inductionVar2) &&
         isIndexRangeIdentical(indexRange1, indexRange2, withLowerBound);
@@ -1203,10 +1141,10 @@ public class XnodeUtil {
       return;
     }
 
-    Xnode inductionVar1 = XnodeUtil.matchDescendant(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XnodeUtil.matchDescendant(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e2, false);
+    Xnode inductionVar1 = e1.matchDirectDescendant(Xcode.VAR);
+    Xnode inductionVar2 = e2.matchDirectDescendant(Xcode.VAR);
+    Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEXRANGE);
+    Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEXRANGE);
     if(inductionVar1 == null || inductionVar2 == null ||
         indexRange1 == null || indexRange2 == null)
     {

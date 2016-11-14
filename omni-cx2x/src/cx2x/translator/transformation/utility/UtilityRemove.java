@@ -56,9 +56,11 @@ public class UtilityRemove extends BlockTransformation {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_clawEnd == null) {
-      _do = _clawStart.getPragma().matchSibling(Xcode.FDOSTATEMENT);
-      _if = _clawStart.getPragma().matchSibling(Xcode.FIFSTATEMENT);
-      _contains = _clawStart.getPragma().matchSibling(Xcode.FCONTAINSSTATEMENT);
+      Xnode next = _clawStart.getPragma().getNextSibling();
+
+      _do = next.opcode() == Xcode.FDOSTATEMENT ? next : null;
+      _if = next.opcode() == Xcode.FIFSTATEMENT ? next : null;
+      _contains = next.opcode() == Xcode.FCONTAINSSTATEMENT ? next : null;
 
       if(_do == null && _if == null && _contains == null) {
         xcodeml.addError("Directive remove without end not followed by a do " +

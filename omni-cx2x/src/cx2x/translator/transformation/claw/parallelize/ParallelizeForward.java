@@ -285,7 +285,7 @@ public class ParallelizeForward extends Transformation {
     for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
       if(arg.opcode() == Xcode.NAMEDVALUE) {
         String original_name = arg.getAttribute(Xattr.NAME);
-        Xnode target_var = XnodeUtil.matchDescendant(Xcode.VAR, arg, true);
+        Xnode target_var = arg.matchDescendant(Xcode.VAR);
         if(target_var != null) {
           _fctCallMapping.put(original_name, target_var.value());
 
@@ -594,7 +594,7 @@ public class ParallelizeForward extends Transformation {
 
       Xnode lhs = assignment.child(0);
       // TODO handle the case when the array ref is a var directly
-      Xnode varInLhs = XnodeUtil.matchDescendant(Xcode.VAR, lhs, true);
+      Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
 
       List<ClawDimension> dimensions =
           TransformationHelper.findDimensions(_parentFctType);
@@ -709,7 +709,7 @@ public class ParallelizeForward extends Transformation {
             && var.matchAncestor(Xcode.FUNCTIONCALL) == null
             && lhs.opcode() == Xcode.FARRAYREF)
         {
-          Xnode varInLhs = XnodeUtil.matchDescendant(Xcode.VAR, lhs, true);
+          Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
           if(varInLhs == null) {
             throw new IllegalTransformationException("Unable to propagate " +
                 "promotion. Internal error.", _claw.getPragma().lineNo());

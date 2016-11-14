@@ -65,8 +65,8 @@ public class LoopFusion extends Transformation {
       _doStmts = new Xnode[_claw.getCollapseValue()];
       _doStmts[0] = loop;
       for(int i = 1; i < _claw.getCollapseValue(); ++i) {
-        _doStmts[i] = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
-            _doStmts[i - 1].body(), false);
+        _doStmts[i] = _doStmts[i - 1].body().
+            matchDirectDescendant(Xcode.FDOSTATEMENT);
       }
     } else {
       _doStmts = new Xnode[]{loop};
@@ -99,8 +99,8 @@ public class LoopFusion extends Transformation {
         if(i == 0) { // Find the outer do statement from pragma
           _doStmts[0] = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
         } else { // Find the next i loops
-          _doStmts[i] = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
-              _doStmts[i - 1].body(), false);
+          _doStmts[i] = _doStmts[i - 1].body().
+              matchDirectDescendant(Xcode.FDOSTATEMENT);
         }
         if(_doStmts[i] == null) {
           xcodeml.addError("Do statement missing at depth " + i +

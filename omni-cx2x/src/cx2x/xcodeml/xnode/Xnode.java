@@ -398,6 +398,48 @@ public class Xnode {
   }
 
   /**
+   * Find node with the given opcode in the descendants of the current node.
+   *
+   * @param opcode Opcode of the node to be matched.
+   * @return The matched node. Null if nothing matched.
+   */
+  public Xnode matchDescendant(Xcode opcode)
+  {
+    if(_baseElement == null){
+      return null;
+    }
+    NodeList elements = _baseElement.getElementsByTagName(opcode.code());
+    if(elements.getLength() == 0) {
+      return null;
+    }
+    return (elements.item(0) == null) ? null :
+        new Xnode((Element) elements.item(0));
+  }
+
+  /**
+   * Find node with the given opcode in the direct descendants the current node.
+   *
+   * @param opcode Opcode of the node to be matched.
+   * @return The matched node. Null if nothing matched.
+   */
+  public Xnode matchDirectDescendant(Xcode opcode) {
+    if(_baseElement == null){
+      return null;
+    }
+    NodeList nodeList = _baseElement.getChildNodes();
+    for(int i = 0; i < nodeList.getLength(); i++) {
+      Node nextNode = nodeList.item(i);
+      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) nextNode;
+        if(element.getTagName().equals(opcode.code())) {
+          return new Xnode(element);
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Find an element either in the next siblings or in the ancestors.
    *
    * @param opcode Opcode of the node to be matched.

@@ -188,8 +188,7 @@ public class LoopInterchange extends Transformation {
       return false;
     }
 
-    _loopLevel1 = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
-        _loopLevel0.body(), false);
+    _loopLevel1 = _loopLevel0.body().matchDirectDescendant(Xcode.FDOSTATEMENT);
     if(_loopLevel1 == null) {
       return false;
     }
@@ -200,8 +199,9 @@ public class LoopInterchange extends Transformation {
             _claw.getPragma().lineNo());
       }
 
-      _loopLevel2 = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
-          _loopLevel1.body(), false);
+      _loopLevel2 =
+          _loopLevel1.body().matchDirectDescendant(Xcode.FDOSTATEMENT);
+
       if(_loopLevel2 == null) {
         return false;
       }
