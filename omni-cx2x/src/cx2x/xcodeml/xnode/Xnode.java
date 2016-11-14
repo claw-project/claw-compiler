@@ -438,7 +438,7 @@ public class Xnode {
     }
     return null;
   }
-  
+
   /**
    * Find node with one of the given opcodes in the direct descendants
    * the current node.
@@ -471,6 +471,27 @@ public class Xnode {
       }
     }
     return tmp;
+  }
+
+  /**
+   * Match all nodes with the given opcode in the subtree.
+   *
+   * @param opcode Opcode of the nodes to be matched.
+   * @return List of all nodes matched in the subtree.
+   */
+  public List<Xnode> matchAll(Xcode opcode) {
+    List<Xnode> elements = new ArrayList<>();
+    if(_baseElement == null) {
+      return elements;
+    }
+    NodeList nodes = _baseElement.getElementsByTagName(opcode.code());
+    for(int i = 0; i < nodes.getLength(); i++) {
+      Node n = nodes.item(i);
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        elements.add(new Xnode((Element) n));
+      }
+    }
+    return elements;
   }
 
   /**

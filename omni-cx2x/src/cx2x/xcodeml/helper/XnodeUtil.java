@@ -566,7 +566,7 @@ public class XnodeUtil {
    * @return A list of all name elements found.
    */
   public static List<Xnode> findAllNames(Xnode parent) {
-    return findAll(Xcode.NAME, parent);
+    return parent.matchAll(Xcode.NAME); // TODO remove
   }
 
 
@@ -578,7 +578,7 @@ public class XnodeUtil {
    * @return A list of all var elements found.
    */
   public static List<Xnode> findAllReferences(Xnode parent) {
-    List<Xnode> vars = findAll(Xcode.VAR, parent);
+    List<Xnode> vars = parent.matchAll(Xcode.VAR);
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
@@ -616,7 +616,7 @@ public class XnodeUtil {
    * @return A list of all var elements found.
    */
   public static List<Xnode> findAllReferences(Xnode parent, String id) {
-    List<Xnode> vars = findAll(Xcode.VAR, parent);
+    List<Xnode> vars = parent.matchAll(Xcode.VAR);
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
@@ -1266,28 +1266,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Find all elements of a given type in the subtree.
-   *
-   * @param opcode Type of the element to be found.
-   * @param parent Root of the subtree.
-   * @return List of all elements found in the subtree.
-   */
-  public static List<Xnode> findAll(Xcode opcode, Xnode parent) {
-    List<Xnode> elements = new ArrayList<>();
-    if(parent == null) {
-      return elements;
-    }
-    NodeList nodes = parent.element().getElementsByTagName(opcode.code());
-    for(int i = 0; i < nodes.getLength(); i++) {
-      Node n = nodes.item(i);
-      if(n.getNodeType() == Node.ELEMENT_NODE) {
-        elements.add(new Xnode((Element) n));
-      }
-    }
-    return elements;
-  }
-
-  /**
    * Create a new FunctionCall element with elements name and arguments as
    * children.
    *
@@ -1701,7 +1679,7 @@ public class XnodeUtil {
     }
 
     // Handle possible type ref in indexRange element
-    List<Xnode> vars = XnodeUtil.findAll(Xcode.VAR, importedType);
+    List<Xnode> vars = importedType.matchAll(Xcode.VAR);
     for(Xnode var : vars) {
       importType(src, dst, var.getAttribute(Xattr.TYPE));
     }

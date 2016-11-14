@@ -392,7 +392,7 @@ public class Parallelize extends Transformation {
      * Use the first over clause to do it. */
     List<ClawDimension> order = getOrderedDimensionsFromDefinition(0);
     List<Xnode> assignStatements =
-        XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, _fctDef.body());
+        _fctDef.body().matchAll(Xcode.FASSIGNSTATEMENT);
 
     for(Xnode assign : assignStatements) {
       Xnode lhs = assign.child(Xnode.LHS);

@@ -254,8 +254,7 @@ public class ArrayTransform extends BlockTransformation {
 
     for(Xnode stmt : statements) {
       // 3. Adapt array reference with induction variables
-      List<Xnode> allArrayRef =
-          XnodeUtil.findAll(Xcode.FARRAYREF, stmt);
+      List<Xnode> allArrayRef = stmt.matchAll(Xcode.FARRAYREF);
       for(Xnode arrayRef : allArrayRef) {
         for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);

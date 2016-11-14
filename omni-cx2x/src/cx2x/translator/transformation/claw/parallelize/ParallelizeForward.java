@@ -679,8 +679,7 @@ public class ParallelizeForward extends Transformation {
     List<String> previouslyPromoted =
         Utility.convertToList(transformer.hasElement(parentFctDef));
 
-    List<Xnode> assignments =
-        XnodeUtil.findAll(Xcode.FASSIGNSTATEMENT, parentFctDef);
+    List<Xnode> assignments = parentFctDef.matchAll(Xcode.FASSIGNSTATEMENT);
     List<ClawDimension> dimensions =
         TransformationHelper.findDimensions(_parentFctType);
 
@@ -702,7 +701,7 @@ public class ParallelizeForward extends Transformation {
       Xnode lhs = assignment.child(0);
       Xnode rhs = assignment.child(1);
 
-      List<Xnode> varsInRhs = XnodeUtil.findAll(Xcode.VAR, rhs);
+      List<Xnode> varsInRhs = rhs.matchAll(Xcode.VAR);
       for(Xnode var : varsInRhs) {
         // Check if the assignement statement uses a promoted variable
         if(_promotedVar.contains(var.value())
@@ -790,8 +789,7 @@ public class ParallelizeForward extends Transformation {
       throws IllegalTransformationException
   {
     if(varType.isTarget()) {
-      List<Xnode> pAssignments =
-          XnodeUtil.findAll(Xcode.FPOINTERASSIGNSTATEMENT, fctDef);
+      List<Xnode> pAssignments = fctDef.matchAll(Xcode.FPOINTERASSIGNSTATEMENT);
       for(Xnode pAssignment : pAssignments) {
         Xnode pointer = pAssignment.child(0);
         Xnode pointee = pAssignment.child(1);

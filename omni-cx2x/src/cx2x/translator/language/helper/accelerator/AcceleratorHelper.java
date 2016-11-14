@@ -41,7 +41,7 @@ public class AcceleratorHelper {
       return;
     }
 
-    List<Xnode> doStmts = XnodeUtil.findAll(Xcode.FDOSTATEMENT, fctDef);
+    List<Xnode> doStmts = fctDef.matchAll(Xcode.FDOSTATEMENT);
     for(Xnode doStmt : doStmts) {
       addPragmaBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE) + " " +
           gen.getSequentialClause(), doStmt);
@@ -284,7 +284,7 @@ public class AcceleratorHelper {
       return;
     }
 
-    List<Xnode> fctCalls = XnodeUtil.findAll(Xcode.FUNCTIONCALL, fctDef);
+    List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTIONCALL);
     Set<String> fctNames = new HashSet<>();
     for(Xnode fctCall : fctCalls) {
       if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
@@ -303,7 +303,7 @@ public class AcceleratorHelper {
           xcodeml.getGlobalDeclarationsTable().getFctDefinition(fctName);
       if(calledFctDef == null) {
         XmoduleDefinition mod = XnodeUtil.findParentModule(fctDef);
-        List<Xnode> fctDefs = XnodeUtil.findAll(Xcode.FFUNCTIONDEFINITION, mod);
+        List<Xnode> fctDefs = mod.matchAll(Xcode.FFUNCTIONDEFINITION);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
           if(name != null && name.value().toLowerCase().equals(fctName)) {
