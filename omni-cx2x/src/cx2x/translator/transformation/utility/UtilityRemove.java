@@ -56,11 +56,11 @@ public class UtilityRemove extends BlockTransformation {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_clawEnd == null) {
-      _do = XnodeUtil.findDirectNext(Xcode.FDOSTATEMENT,
+      _do = XnodeUtil.matchSibling(Xcode.FDOSTATEMENT,
           _clawStart.getPragma());
-      _if = XnodeUtil.findDirectNext(Xcode.FIFSTATEMENT,
+      _if = XnodeUtil.matchSibling(Xcode.FIFSTATEMENT,
           _clawStart.getPragma());
-      _contains = XnodeUtil.findDirectNext(Xcode.FCONTAINSSTATEMENT,
+      _contains = XnodeUtil.matchSibling(Xcode.FCONTAINSSTATEMENT,
           _clawStart.getPragma());
 
       if(_do == null && _if == null && _contains == null) {

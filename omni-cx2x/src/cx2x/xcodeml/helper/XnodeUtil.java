@@ -666,7 +666,7 @@ public class XnodeUtil {
    */
   public static void extractBody(Xnode loop, Xnode ref) {
     Element loopElement = loop.element();
-    Element body = XnodeUtil.findFirstElement(loopElement,
+    Element body = XnodeUtil.matchAnyDescendant(loopElement,
         Xname.BODY);
     if(body == null) {
       return;
@@ -815,7 +815,8 @@ public class XnodeUtil {
    * @return The first element found under parent with the corresponding tag.
    * Null if no element is found.
    */
-  private static Element findFirstElement(Element parent, String elementName) {
+  private static Element matchAnyDescendant(Element parent, String elementName)
+  {
     NodeList elements = parent.getElementsByTagName(elementName);
     if(elements.getLength() == 0) {
       return null;
@@ -832,8 +833,8 @@ public class XnodeUtil {
    * @return The first element found in the direct children of the element
    * parent with the corresponding tag. Null if no element is found.
    */
-  private static Element findFirstChildElement(Element parent,
-                                               String elementName)
+  private static Element matchInFirstDescendant(Element parent,
+                                                String elementName)
   {
     NodeList nodeList = parent.getChildNodes();
     for(int i = 0; i < nodeList.getLength(); i++) {
@@ -930,7 +931,7 @@ public class XnodeUtil {
    * @return A XmoduleDefinition object if found. Null otherwise.
    */
   public static XmoduleDefinition findParentModule(Xnode from) {
-    Xnode moduleDef = matchParent(Xcode.FMODULEDEFINITION, from);
+    Xnode moduleDef = matchAncestor(Xcode.FMODULEDEFINITION, from);
     if(moduleDef == null) {
       return null;
     }
@@ -944,37 +945,11 @@ public class XnodeUtil {
    * @return The function definition found. Null if nothing found.
    */
   public static XfunctionDefinition findParentFunction(Xnode from) {
-    Xnode fctDef = matchParent(Xcode.FFUNCTIONDEFINITION, from);
+    Xnode fctDef = matchAncestor(Xcode.FFUNCTIONDEFINITION, from);
     if(fctDef == null) {
       return null;
     }
     return new XfunctionDefinition(fctDef.element());
-  }
-
-  /**
-   * Find element of the the given type that is directly after the given from
-   * element.
-   *
-   * @param opcode Code of the element to be found.
-   * @param from   Element to start the search from.
-   * @return The element found. Null if no element is found.
-   */
-  public static Xnode findDirectNext(Xcode opcode, Xnode from) {
-    if(from == null) {
-      return null;
-    }
-    Node nextNode = from.element().getNextSibling();
-    while(nextNode != null) {
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.code())) {
-          return new Xnode(element);
-        }
-        return null;
-      }
-      nextNode = nextNode.getNextSibling();
-    }
-    return null;
   }
 
   /**
@@ -1010,57 +985,56 @@ public class XnodeUtil {
   }
 
   /**
-   * Find the first element with tag corresponding to elementName.
+   * Find node with the given opcode in the descendants of the given node.
    *
-   * @param opcode The XcodeML code of the element to search for.
-   * @param parent The root element to search from.
-   * @param any    If true, matchSeq in any nested element under parent. If false,
-   *               only direct children are search for.
-   * @return first element found. Null if no element is found.
+   * @param opcode Opcode of the node to be matched.
+   * @param parent Initial node for the search.
+   * @param any    If true, try to match any descendants from the parent node.
+   *               If flase, only first children are taken into consideration.
+   * @return The matched node. Null if nothing matched.
    */
-  public static Xnode find(Xcode opcode, Xnode parent, boolean any) {
+  public static Xnode matchDescendant(Xcode opcode, Xnode parent, boolean any) {
     Element el;
     if(any) {
-      el = findFirstElement(parent.element(), opcode.code());
+      el = matchAnyDescendant(parent.element(), opcode.code());
     } else {
-      el = findFirstChildElement(parent.element(), opcode.code());
+      el = matchInFirstDescendant(parent.element(), opcode.code());
     }
     return (el == null) ? null : new Xnode(el);
   }
 
   /**
-   * Find element of the the given type that is directly after the given from
-   * element.
+   * Find node with the given opcode in the ancestors of the given node.
    *
-   * @param opcode Code of the element to be found.
-   * @param from   Element to start the search from.
-   * @return The element found. Null if no element is found.
+   * @param opcode Opcode of the node to be matched.
+   * @param from   Initial node for the search.
+   * @return The matched node. Null if nothing matched.
    */
-  public static Xnode findNext(Xcode opcode, Xnode from) {
-    return findInDirection(opcode, from, true);
+  public static Xnode matchAncestor(Xcode opcode, Xnode from) {
+    return universalMatch(opcode, from, false);
   }
 
   /**
-   * Find an element in the ancestor of the given node.
+   * Find node with the given opcode in the siblings of the given node.
    *
-   * @param opcode Code of the element to be found.
-   * @param from   Node to start the search from.
-   * @return The matched node. Null if nothing matched.
+   * @param opcode Opcode of the node to be matched.
+   * @param from   Initial node for the search.
+   * @return The matched node. Null if no node found.
    */
-  public static Xnode matchParent(Xcode opcode, Xnode from) {
-    return findInDirection(opcode, from, false);
+  public static Xnode matchSibling(Xcode opcode, Xnode from) {
+    return universalMatch(opcode, from, true);
   }
 
   /**
    * Find an element either in the next siblings or in the ancestors.
    *
-   * @param opcode Code of the element to be found.
-   * @param from   Element to start the search from.
+   * @param opcode Opcode of the node to be matched.
+   * @param from   Initial node for the search.
    * @param down   If True, search in the siblings. If false, search in the
    *               ancestors.
-   * @return The element found. Null if nothing found.
+   * @return The matched node. Null if no node found.
    */
-  private static Xnode findInDirection(Xcode opcode, Xnode from, boolean down) {
+  private static Xnode universalMatch(Xcode opcode, Xnode from, boolean down) {
     if(from == null) {
       return null;
     }
@@ -1142,10 +1116,10 @@ public class XnodeUtil {
       return false;
     }
 
-    Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
+    Xnode inductionVar1 = XnodeUtil.matchDescendant(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XnodeUtil.matchDescendant(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e2, false);
 
     return compareValues(inductionVar1, inductionVar2) &&
         isIndexRangeIdentical(indexRange1, indexRange2, withLowerBound);
@@ -1274,10 +1248,10 @@ public class XnodeUtil {
       return;
     }
 
-    Xnode inductionVar1 = XnodeUtil.find(Xcode.VAR, e1, false);
-    Xnode inductionVar2 = XnodeUtil.find(Xcode.VAR, e2, false);
-    Xnode indexRange1 = XnodeUtil.find(Xcode.INDEXRANGE, e1, false);
-    Xnode indexRange2 = XnodeUtil.find(Xcode.INDEXRANGE, e2, false);
+    Xnode inductionVar1 = XnodeUtil.matchDescendant(Xcode.VAR, e1, false);
+    Xnode inductionVar2 = XnodeUtil.matchDescendant(Xcode.VAR, e2, false);
+    Xnode indexRange1 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e1, false);
+    Xnode indexRange2 = XnodeUtil.matchDescendant(Xcode.INDEXRANGE, e2, false);
     if(inductionVar1 == null || inductionVar2 == null ||
         indexRange1 == null || indexRange2 == null)
     {

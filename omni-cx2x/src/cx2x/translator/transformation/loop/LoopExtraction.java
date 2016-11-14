@@ -127,7 +127,7 @@ public class LoopExtraction extends Transformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     Xnode _exprStmt =
-        XnodeUtil.findNext(Xcode.EXPRSTATEMENT, _claw.getPragma());
+        XnodeUtil.matchSibling(Xcode.EXPRSTATEMENT, _claw.getPragma());
     if(_exprStmt == null) {
       xcodeml.addError("No function call detected after loop-extract",
           _claw.getPragma().lineNo());
@@ -135,14 +135,14 @@ public class LoopExtraction extends Transformation {
     }
 
     // Find function CALL
-    _fctCall = XnodeUtil.find(Xcode.FUNCTIONCALL, _exprStmt, true);
+    _fctCall = XnodeUtil.matchDescendant(Xcode.FUNCTIONCALL, _exprStmt, true);
     if(_fctCall == null) {
       xcodeml.addError("No function call detected after loop-extract",
           _claw.getPragma().lineNo());
       return false;
     }
 
-    Xnode fctDef = XnodeUtil.matchParent(Xcode.FFUNCTIONDEFINITION, _fctCall);
+    Xnode fctDef = XnodeUtil.matchAncestor(Xcode.FFUNCTIONDEFINITION, _fctCall);
     if(fctDef == null) {
       xcodeml.addError("No function around the fct call",
           _claw.getPragma().lineNo());
@@ -435,7 +435,7 @@ public class LoopExtraction extends Transformation {
   private Xnode locateDoStatement(Xnode from)
       throws IllegalTransformationException
   {
-    Xnode foundStatement = XnodeUtil.find(Xcode.FDOSTATEMENT, from, true);
+    Xnode foundStatement = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT, from, true);
     if(foundStatement == null) {
       throw new IllegalTransformationException("No loop found in function",
           _claw.getPragma().lineNo());
@@ -444,7 +444,7 @@ public class LoopExtraction extends Transformation {
         // Try to matchSeq another loops that meet the criteria
         do {
           foundStatement =
-              XnodeUtil.findNext(Xcode.FDOSTATEMENT, foundStatement);
+              XnodeUtil.matchSibling(Xcode.FDOSTATEMENT, foundStatement);
         } while(foundStatement != null &&
             !_claw.getRange().equals(foundStatement));
       }

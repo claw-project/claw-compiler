@@ -181,7 +181,7 @@ public class LoopInterchange extends Transformation {
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
     // Find next loop after pragma
     _loopLevel0 =
-        XnodeUtil.findNext(Xcode.FDOSTATEMENT, _claw.getPragma());
+        XnodeUtil.matchSibling(Xcode.FDOSTATEMENT, _claw.getPragma());
 
     if(_loopLevel0 == null) {
       xcodeml.addError("top level loop not found",
@@ -189,7 +189,7 @@ public class LoopInterchange extends Transformation {
       return false;
     }
 
-    _loopLevel1 = XnodeUtil.find(Xcode.FDOSTATEMENT,
+    _loopLevel1 = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
         _loopLevel0.body(), false);
     if(_loopLevel1 == null) {
       return false;
@@ -201,7 +201,7 @@ public class LoopInterchange extends Transformation {
             _claw.getPragma().lineNo());
       }
 
-      _loopLevel2 = XnodeUtil.find(Xcode.FDOSTATEMENT,
+      _loopLevel2 = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
           _loopLevel1.body(), false);
       if(_loopLevel2 == null) {
         return false;

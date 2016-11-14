@@ -82,9 +82,9 @@ public class LoopHoist extends BlockTransformation {
       LoopHoistDoStmtGroup crtGroup = new LoopHoistDoStmtGroup(group);
       int depth = XnodeUtil.getDepth(group[0]);
       if(depth != _pragmaDepthLevel) {
-        Xnode tmpIf = XnodeUtil.matchParent(Xcode.FIFSTATEMENT, group[0]);
+        Xnode tmpIf = XnodeUtil.matchAncestor(Xcode.FIFSTATEMENT, group[0]);
         Xnode tmpSelect =
-            XnodeUtil.matchParent(Xcode.FSELECTCASESTATEMENT, group[0]);
+            XnodeUtil.matchAncestor(Xcode.FSELECTCASESTATEMENT, group[0]);
         if(tmpIf == null && tmpSelect == null) {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting (Group index starts at 0).",
@@ -249,7 +249,7 @@ public class LoopHoist extends BlockTransformation {
     Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
     XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
     Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
-    Xnode inductionVar = XnodeUtil.find(Xcode.VAR, g.getDoStmts()[0], false);
+    Xnode inductionVar = XnodeUtil.matchDescendant(Xcode.VAR, g.getDoStmts()[0], false);
     cond.append(inductionVar, true);
     cond.append(g.getDoStmts()[0].matchExactNode(Xcode.INDEXRANGE).
         matchExactNode(Xcode.LOWERBOUND).child(0), true
@@ -278,7 +278,7 @@ public class LoopHoist extends BlockTransformation {
   {
     g.getDoStmts()[0] = newStart;
     for(int j = 1; j < g.getDoStmts().length; ++j) {
-      Xnode next = XnodeUtil.find(Xcode.FDOSTATEMENT,
+      Xnode next = XnodeUtil.matchDescendant(Xcode.FDOSTATEMENT,
           g.getDoStmts()[j - 1].body(), false);
       if(next == null) {
         throw new IllegalTransformationException(
