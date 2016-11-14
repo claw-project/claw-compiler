@@ -560,17 +560,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Find all the name elements in an element.
-   *
-   * @param parent Root element to search from.
-   * @return A list of all name elements found.
-   */
-  public static List<Xnode> findAllNames(Xnode parent) {
-    return parent.matchAll(Xcode.NAME); // TODO remove
-  }
-
-
-  /**
    * Find all the var elements that are real references to a variable. Var
    * element nested in an arrayIndex element are excluded.
    *

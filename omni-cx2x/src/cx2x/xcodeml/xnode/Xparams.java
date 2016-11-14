@@ -32,7 +32,7 @@ public class Xparams extends Xnode {
    */
   public Xparams(Element baseElement) {
     super(baseElement);
-    _parameters = XnodeUtil.findAllNames(this);
+    _parameters = matchAll(Xcode.NAME);
   }
 
   /**
