@@ -706,7 +706,7 @@ public class ParallelizeForward extends Transformation {
       for(Xnode var : varsInRhs) {
         // Check if the assignement statement uses a promoted variable
         if(_promotedVar.contains(var.value())
-            && XnodeUtil.matchAncestor(Xcode.FUNCTIONCALL, var) == null
+            && var.matchAncestor(Xcode.FUNCTIONCALL) == null
             && lhs.opcode() == Xcode.FARRAYREF)
         {
           Xnode varInLhs = XnodeUtil.matchDescendant(Xcode.VAR, lhs, true);

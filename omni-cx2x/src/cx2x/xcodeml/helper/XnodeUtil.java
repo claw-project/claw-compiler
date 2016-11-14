@@ -931,7 +931,10 @@ public class XnodeUtil {
    * @return A XmoduleDefinition object if found. Null otherwise.
    */
   public static XmoduleDefinition findParentModule(Xnode from) {
-    Xnode moduleDef = matchAncestor(Xcode.FMODULEDEFINITION, from);
+    if(from == null){
+      return null;
+    }
+    Xnode moduleDef = from.matchAncestor(Xcode.FMODULEDEFINITION);
     if(moduleDef == null) {
       return null;
     }
@@ -945,7 +948,10 @@ public class XnodeUtil {
    * @return The function definition found. Null if nothing found.
    */
   public static XfunctionDefinition findParentFunction(Xnode from) {
-    Xnode fctDef = matchAncestor(Xcode.FFUNCTIONDEFINITION, from);
+    if(from == null){
+      return null;
+    }
+    Xnode fctDef = from.matchAncestor(Xcode.FFUNCTIONDEFINITION);
     if(fctDef == null) {
       return null;
     }
@@ -1003,16 +1009,7 @@ public class XnodeUtil {
     return (el == null) ? null : new Xnode(el);
   }
 
-  /**
-   * Find node with the given opcode in the ancestors of the given node.
-   *
-   * @param opcode Opcode of the node to be matched.
-   * @param from   Initial node for the search.
-   * @return The matched node. Null if nothing matched.
-   */
-  public static Xnode matchAncestor(Xcode opcode, Xnode from) {
-    return universalMatch(opcode, from, false);
-  }
+
 
   /**
    * Find node with the given opcode in the siblings of the given node.
@@ -1034,7 +1031,7 @@ public class XnodeUtil {
    *               ancestors.
    * @return The matched node. Null if no node found.
    */
-  private static Xnode universalMatch(Xcode opcode, Xnode from, boolean down) {
+  public static Xnode universalMatch(Xcode opcode, Xnode from, boolean down) {
     if(from == null) {
       return null;
     }

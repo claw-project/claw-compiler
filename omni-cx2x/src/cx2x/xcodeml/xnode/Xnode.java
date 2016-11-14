@@ -377,6 +377,16 @@ public class Xnode {
     return null;
   }
 
+  /**
+   * Find node with the given opcode in the ancestors of the current node.
+   *
+   * @param opcode Opcode of the node to be matched.
+   * @return The matched node. Null if nothing matched.
+   */
+  public Xnode matchAncestor(Xcode opcode) {
+    return XnodeUtil.universalMatch(opcode, this, false);
+  }
+
 
   /**
    * Match first child with the given opcode.

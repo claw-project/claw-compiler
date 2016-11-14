@@ -82,9 +82,8 @@ public class LoopHoist extends BlockTransformation {
       LoopHoistDoStmtGroup crtGroup = new LoopHoistDoStmtGroup(group);
       int depth = XnodeUtil.getDepth(group[0]);
       if(depth != _pragmaDepthLevel) {
-        Xnode tmpIf = XnodeUtil.matchAncestor(Xcode.FIFSTATEMENT, group[0]);
-        Xnode tmpSelect =
-            XnodeUtil.matchAncestor(Xcode.FSELECTCASESTATEMENT, group[0]);
+        Xnode tmpIf = group[0].matchAncestor(Xcode.FIFSTATEMENT);
+        Xnode tmpSelect = group[0].matchAncestor(Xcode.FSELECTCASESTATEMENT);
         if(tmpIf == null && tmpSelect == null) {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting (Group index starts at 0).",
