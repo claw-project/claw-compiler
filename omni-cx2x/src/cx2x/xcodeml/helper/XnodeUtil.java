@@ -54,7 +54,7 @@ public class XnodeUtil {
     if(xcodeml.element() == null) {
       return null;
     }
-    String name = fctCall.matchExactNode(Xcode.NAME).value();
+    String name = fctCall.matchDirectDescendant(Xcode.NAME).value();
     NodeList nList = xcodeml.element().
         getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     for(int i = 0; i < nList.getLength(); i++) {

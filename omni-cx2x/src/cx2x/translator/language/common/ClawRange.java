@@ -135,11 +135,11 @@ public class ClawRange {
       return false;
     }
 
-    Xnode inductionVar = doStmt.matchExactNode(Xcode.VAR);
-    Xnode indexRange = doStmt.matchExactNode(Xcode.INDEXRANGE);
-    Xnode lower = indexRange.matchExactNode(Xcode.LOWERBOUND).child(0);
-    Xnode upper = indexRange.matchExactNode(Xcode.UPPERBOUND).child(0);
-    Xnode step = indexRange.matchExactNode(Xcode.STEP).child(0);
+    Xnode inductionVar = doStmt.matchDirectDescendant(Xcode.VAR);
+    Xnode indexRange = doStmt.matchDirectDescendant(Xcode.INDEXRANGE);
+    Xnode lower = indexRange.matchDirectDescendant(Xcode.LOWERBOUND).child(0);
+    Xnode upper = indexRange.matchDirectDescendant(Xcode.UPPERBOUND).child(0);
+    Xnode step = indexRange.matchDirectDescendant(Xcode.STEP).child(0);
 
     return !(inductionVar == null || _inductionVar == null
         || !inductionVar.value().equals(_inductionVar))

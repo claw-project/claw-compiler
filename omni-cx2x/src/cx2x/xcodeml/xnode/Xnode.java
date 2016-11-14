@@ -178,7 +178,7 @@ public class Xnode {
    * @return The body element if found. Null otherwise.
    */
   public Xnode body() {
-    return matchExactNode(Xcode.BODY);
+    return matchDirectDescendant(Xcode.BODY);
   }
 
   /**
@@ -467,23 +467,6 @@ public class Xnode {
     return null;
   }
 
-
-  /**
-   * Match first child with the given opcode.
-   *
-   * @param opcode Code of the element to be found.
-   * @return Matched element. Null if nothing matches.
-   */
-  public Xnode matchExactNode(Xcode opcode) {
-    List<Xnode> children = children();
-    for(Xnode child : children) {
-      if(child.opcode() == opcode) {
-        return child;
-      }
-    }
-    return null;
-  }
-
   /**
    * Match any first child with opcode in the given list.
    *
@@ -509,7 +492,7 @@ public class Xnode {
   public Xnode matchSeq(Xcode... opcodes) {
     Xnode tmp = this;
     for(Xcode opcode : opcodes) {
-      tmp = tmp.matchExactNode(opcode);
+      tmp = tmp.matchDirectDescendant(opcode);
       if(tmp == null) {
         return null;
       }

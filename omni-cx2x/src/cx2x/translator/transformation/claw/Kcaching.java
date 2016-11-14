@@ -84,11 +84,11 @@ public class Kcaching extends Transformation {
 
       boolean standardArrayRef = true;
       if(stmt != null) {
-        for(Xnode el : stmt.matchExactNode(Xcode.FARRAYREF).children()) {
+        for(Xnode el : stmt.matchDirectDescendant(Xcode.FARRAYREF).children()) {
           if(el.opcode() == Xcode.ARRAYINDEX) {
 
-            if(!(el.matchExactNode(Xcode.VAR) != null ||
-                el.matchExactNode(Xcode.FINTCONSTANT) != null))
+            if(!(el.matchDirectDescendant(Xcode.VAR) != null ||
+                el.matchDirectDescendant(Xcode.FINTCONSTANT) != null))
             {
               standardArrayRef = false;
             }
@@ -150,7 +150,8 @@ public class Kcaching extends Transformation {
                                    Xnode stmt,
                                    Transformer transformer) throws Exception
   {
-    String type = stmt.matchExactNode(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
+    String type =
+        stmt.matchDirectDescendant(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
     List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
     Xnode cacheVar =
@@ -192,12 +193,12 @@ public class Kcaching extends Transformation {
         Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
         // Set lhs of equality
-        logEq.append(_doStmt.matchExactNode(Xcode.VAR), true);
+        logEq.append(_doStmt.matchDirectDescendant(Xcode.VAR), true);
         // Set rhs of equality
-        logEq.append(_doStmt.matchExactNode(Xcode.INDEXRANGE).
-            matchExactNode(Xcode.LOWERBOUND).child(0), true);
+        logEq.append(_doStmt.matchDirectDescendant(Xcode.INDEXRANGE).
+            matchDirectDescendant(Xcode.LOWERBOUND).child(0), true);
 
-        initIfStmt.matchExactNode(Xcode.CONDITION).append(logEq, false);
+        initIfStmt.matchDirectDescendant(Xcode.CONDITION).append(logEq, false);
         _doStmt.body().insert(initIfStmt, false);
         ct.storeElement(_doStmt, initIfStmt);
       }
@@ -206,7 +207,7 @@ public class Kcaching extends Transformation {
       initAssignment.append(cacheVar, true); // set rhs
       initAssignment.append(arrayRef, true); // set lhs
       // Add assignment in the "then" body element
-      initIfStmt.matchExactNode(Xcode.THEN).body().
+      initIfStmt.matchDirectDescendant(Xcode.THEN).body().
           append(initAssignment, false);
     }
   }

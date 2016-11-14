@@ -154,7 +154,7 @@ public class LoopExtraction extends Transformation {
 
     if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "
-              + _fctCall.matchExactNode(Xcode.NAME).value(),
+              + _fctCall.matchDirectDescendant(Xcode.NAME).value(),
           _claw.getPragma().lineNo());
       return false;
     }
@@ -263,13 +263,14 @@ public class LoopExtraction extends Transformation {
 
     if(XmOption.isDebugOutput()) {
       System.out.println("  call wrapped with loop: " +
-          _fctCall.matchExactNode(Xcode.NAME).value() + " --> " +
+          _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> " +
           clonedFctDef.getName().value());
     }
 
     // Change called fct name
-    _fctCall.matchExactNode(Xcode.NAME).setValue(newFctName);
-    _fctCall.matchExactNode(Xcode.NAME).setAttribute(Xattr.TYPE, newFctTypeHash);
+    _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);
+    _fctCall.matchDirectDescendant(Xcode.NAME).
+        setAttribute(Xattr.TYPE, newFctTypeHash);
 
 
     // Adapt function call parameters and function declaration
@@ -473,8 +474,8 @@ public class LoopExtraction extends Transformation {
   {
     // Create a new empty loop
     Xnode loop = XnodeUtil.createDoStmt(
-        xcodeml, doStmt.matchExactNode(Xcode.VAR).cloneNode(),
-        doStmt.matchExactNode(Xcode.INDEXRANGE).cloneNode());
+        xcodeml, doStmt.matchDirectDescendant(Xcode.VAR).cloneNode(),
+        doStmt.matchDirectDescendant(Xcode.INDEXRANGE).cloneNode());
 
     // Insert the new empty loop just after the pragma
     XnodeUtil.insertAfter(_claw.getPragma(), loop);
