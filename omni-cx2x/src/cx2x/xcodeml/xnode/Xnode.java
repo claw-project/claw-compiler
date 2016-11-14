@@ -357,6 +357,27 @@ public class Xnode {
     return _baseElement.cloneNode(true);
   }
 
+
+  /**
+   * Get next sibling node.
+   *
+   * @return Next sibling node.
+   */
+  public Xnode getNextSibling() {
+    if(_baseElement == null){
+      return null;
+    }
+    Node n = _baseElement.getNextSibling();
+    while(n != null) {
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        return new Xnode((Element) n);
+      }
+      n = n.getNextSibling();
+    }
+    return null;
+  }
+
+
   /**
    * Match first child with the given opcode.
    *

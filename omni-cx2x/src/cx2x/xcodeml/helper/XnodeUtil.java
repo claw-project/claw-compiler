@@ -2044,23 +2044,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Get next sibling node.
-   *
-   * @param crt Current node.
-   * @return Next sibling node.
-   */
-  public static Xnode getNextSibling(Xnode crt) {
-    Node n = crt.element().getNextSibling();
-    while(n != null) {
-      if(n.getNodeType() == Node.ELEMENT_NODE) {
-        return new Xnode((Element) n);
-      }
-      n = n.getNextSibling();
-    }
-    return null;
-  }
-
-  /**
    * Get all the USE statement declaration in a module definition.
    *
    * @param mod Module definition.
