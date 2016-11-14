@@ -27,9 +27,12 @@ import cx2x.xcodeml.xnode.Xnode;
 
 public class LoopFusion extends Transformation {
 
+  // CLAW directives information
   private final ClawLanguage _claw;
+
   // Contains the value of the group option
   private String _groupClauseLabel = ClawConstant.EMPTY_STRING;
+
   // The loop statement involved in the Transformation
   private Xnode[] _doStmts;
 
