@@ -21,7 +21,7 @@ public abstract class ClawTransformation extends Transformation {
 
   protected ClawLanguage _claw;
 
-  public ClawTransformation(ClawLanguage directive){
+  public ClawTransformation(ClawLanguage directive) {
     super(directive);
     _claw = directive;
   }
