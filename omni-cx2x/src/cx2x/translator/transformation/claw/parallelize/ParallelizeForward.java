@@ -10,6 +10,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -33,9 +34,8 @@ import java.util.*;
  *
  * @author clementval
  */
-public class ParallelizeForward extends Transformation {
+public class ParallelizeForward extends ClawTransformation {
 
-  private final ClawLanguage _claw;
   private final List<String> _promotedVar; // Promoted array from the call
   private final List<String> _promotedWithBeforeOver;
   private final List<String> _promotedWithAfterOver;
@@ -63,7 +63,6 @@ public class ParallelizeForward extends Transformation {
    */
   public ParallelizeForward(ClawLanguage directive) {
     super(directive);
-    _claw = directive; // Keep information about the claw directive here
     _promotedVar = new ArrayList<>();
     _promotedWithBeforeOver = new ArrayList<>();
     _promotedWithAfterOver = new ArrayList<>();

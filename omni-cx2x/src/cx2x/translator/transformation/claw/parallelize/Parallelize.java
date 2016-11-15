@@ -12,6 +12,7 @@ import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -61,11 +62,10 @@ import java.util.*;
  *
  * @author clementval
  */
-public class Parallelize extends Transformation {
+public class Parallelize extends ClawTransformation {
 
   private static final int DEFAULT_OVER = 0;
 
-  private final ClawLanguage _claw;
   private final Map<String, ClawDimension> _dimensions;
   private final Map<String, PromotionInfo> _promotions;
   private final List<String> _arrayFieldsInOut;
@@ -84,7 +84,6 @@ public class Parallelize extends Transformation {
   public Parallelize(ClawLanguage directive) {
     super(directive);
     _overDimensions = 0;
-    _claw = directive; // Keep information about the claw directive here
     _dimensions = new HashMap<>();
     _promotions = new HashMap<>();
     _arrayFieldsInOut = new ArrayList<>();

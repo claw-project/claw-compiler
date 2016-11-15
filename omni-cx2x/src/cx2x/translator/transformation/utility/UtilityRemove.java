@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.utility;
 
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.BlockTransformation;
@@ -21,9 +22,8 @@ import cx2x.xcodeml.xnode.Xnode;
  *
  * @author clementval
  */
-public class UtilityRemove extends BlockTransformation {
+public class UtilityRemove extends ClawBlockTransformation {
 
-  private final ClawLanguage _clawStart, _clawEnd;
   // The loop statement involved in the Transformation
   private Xnode _do = null;
   private Xnode _if = null;
@@ -40,8 +40,6 @@ public class UtilityRemove extends BlockTransformation {
    */
   public UtilityRemove(ClawLanguage startDirective, ClawLanguage endDirective) {
     super(startDirective, endDirective);
-    _clawStart = startDirective;
-    _clawEnd = endDirective;
   }
 
   /**

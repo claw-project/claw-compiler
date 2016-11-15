@@ -7,6 +7,7 @@ package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -24,9 +25,8 @@ import java.util.List;
  *
  * @author clementval
  */
-public class Kcaching extends Transformation {
+public class Kcaching extends ClawTransformation {
 
-  private final ClawLanguage _claw;
   private Xnode _doStmt;
 
   /**
@@ -36,7 +36,6 @@ public class Kcaching extends Transformation {
    */
   public Kcaching(ClawLanguage directive) {
     super(directive);
-    _claw = directive;
   }
 
   /**

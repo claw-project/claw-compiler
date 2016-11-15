@@ -7,6 +7,7 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -25,9 +26,8 @@ import java.util.List;
  * @author clementval
  */
 
-public class LoopInterchange extends Transformation {
+public class LoopInterchange extends ClawTransformation {
 
-  private final ClawLanguage _claw;
   private List<String> _newOrderOption = null;
   private Xnode _loopLevel0 = null;
   private Xnode _loopLevel1 = null;
@@ -51,7 +51,6 @@ public class LoopInterchange extends Transformation {
    */
   public LoopInterchange(ClawLanguage directive) {
     super(directive);
-    _claw = directive;
     _newOrderOption = directive.getIndexes();
   }
 

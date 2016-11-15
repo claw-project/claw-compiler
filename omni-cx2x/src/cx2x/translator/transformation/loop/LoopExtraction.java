@@ -14,6 +14,7 @@ import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -38,9 +39,8 @@ import java.util.Map;
  * @author clementval
  */
 
-public class LoopExtraction extends Transformation {
+public class LoopExtraction extends ClawTransformation {
 
-  private final ClawLanguage _claw;
   private final Map<String, ClawMapping> _fctMappingMap;
   private final Map<String, ClawMapping> _argMappingMap;
   private Xnode _fctCall = null;
@@ -61,7 +61,6 @@ public class LoopExtraction extends Transformation {
       throws IllegalDirectiveException
   {
     super(directive);
-    _claw = directive;
     _argMappingMap = new Hashtable<>();
     _fctMappingMap = new Hashtable<>();
 

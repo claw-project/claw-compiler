@@ -8,6 +8,7 @@ package cx2x.translator.transformation.openacc;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -21,9 +22,7 @@ import cx2x.xcodeml.xnode.XcodeProgram;
  *
  * @author clementval
  */
-public class DirectivePrimitive extends Transformation {
-
-  private final ClawLanguage _claw;
+public class DirectivePrimitive extends ClawTransformation {
 
   /**
    * Constructs a new DirectivePrimitive triggered from a specific pragma.
@@ -33,7 +32,6 @@ public class DirectivePrimitive extends Transformation {
    */
   public DirectivePrimitive(ClawLanguage directive) {
     super(directive);
-    _claw = directive;
   }
 
   /**

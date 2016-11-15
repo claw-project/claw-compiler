@@ -5,6 +5,7 @@
 package cx2x.translator.transformation.utility;
 
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
@@ -18,16 +19,16 @@ import java.util.List;
  *
  * @author clementval
  */
-public class XcodeMLWorkaround extends Transformation {
+public class XcodeMLWorkaround extends ClawTransformation {
 
   /**
    * XcodeMLWorkaround ctor.
    *
-   * @param claw The directive that triggered the transformation. In case of
-   *             this specific transformation, there is no directive.
+   * @param directive The directive that triggered the transformation. In case
+   *                  of this specific transformation, there is no directive.
    */
-  public XcodeMLWorkaround(ClawLanguage claw) {
-    super(claw);
+  public XcodeMLWorkaround(ClawLanguage directive) {
+    super(directive);
   }
 
   @Override

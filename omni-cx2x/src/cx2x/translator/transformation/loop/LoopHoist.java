@@ -8,9 +8,9 @@ package cx2x.translator.transformation.loop;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.Xcode;
@@ -28,10 +28,9 @@ import java.util.List;
  *
  * @author clementval
  */
-public class LoopHoist extends BlockTransformation {
+public class LoopHoist extends ClawBlockTransformation {
 
   private final List<LoopHoistDoStmtGroup> _doGroup;
-  private final ClawLanguage _startClaw, _endClaw;
   private int _nestedLevel;
 
   /**
@@ -43,8 +42,6 @@ public class LoopHoist extends BlockTransformation {
    */
   public LoopHoist(ClawLanguage startDirective, ClawLanguage endDirective) {
     super(startDirective, endDirective);
-    _startClaw = startDirective;
-    _endClaw = endDirective;
     _doGroup = new ArrayList<>();
   }
 
@@ -53,17 +50,17 @@ public class LoopHoist extends BlockTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    int _pragmaDepthLevel = XnodeUtil.getDepth(_startClaw.getPragma());
-    _nestedLevel = _startClaw.getHoistInductionVars().size();
+    int _pragmaDepthLevel = XnodeUtil.getDepth(_clawStart.getPragma());
+    _nestedLevel = _clawStart.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
     List<Xnode> statements =
-        XnodeUtil.findDoStatement(_startClaw.getPragma(),
-            _endClaw.getPragma(), _startClaw.getHoistInductionVars());
+        XnodeUtil.findDoStatement(_clawStart.getPragma(),
+            _clawEnd.getPragma(), _clawStart.getHoistInductionVars());
 
     if(statements.size() == 0) {
       xcodeml.addError("No do statement group meets the criteria of hoisting.",
-          _startClaw.getPragma().lineNo());
+          _clawStart.getPragma().lineNo());
       return false;
     }
 
@@ -75,7 +72,7 @@ public class LoopHoist extends BlockTransformation {
       } catch(IllegalTransformationException e) {
         xcodeml.addError("Group " + i + " of do statements do not meet the" +
                 " criteria of loop hoisting (Group index starts at 0).",
-            _startClaw.getPragma().lineNo());
+            _clawStart.getPragma().lineNo());
         return false;
       }
 
@@ -87,7 +84,7 @@ public class LoopHoist extends BlockTransformation {
         if(tmpIf == null && tmpSelect == null) {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting (Group index starts at 0).",
-              _startClaw.getPragma().lineNo());
+              _clawStart.getPragma().lineNo());
           return false;
         }
 
@@ -101,7 +98,7 @@ public class LoopHoist extends BlockTransformation {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting or depth is too high " +
                   "(Group index starts at 0).",
-              _startClaw.getPragma().lineNo());
+              _clawStart.getPragma().lineNo());
           return false;
         }
       }
@@ -130,7 +127,7 @@ public class LoopHoist extends BlockTransformation {
           // Iteration range are too different, stop analysis
           xcodeml.addError("Iteration range of do statements group " + i +
                   " differs from group 0. Loop hoisting aborted.",
-              _startClaw.getPragma().lineNo());
+              _clawStart.getPragma().lineNo());
           return false;
         }
       }
@@ -138,18 +135,18 @@ public class LoopHoist extends BlockTransformation {
 
 
     // Check reshape mandatory points
-    if(_startClaw.hasReshapeClause()) {
+    if(_clawStart.hasReshapeClause()) {
       XfunctionDefinition fctDef =
-          XnodeUtil.findParentFunction(_startClaw.getPragma());
+          XnodeUtil.findParentFunction(_clawStart.getPragma());
       if(fctDef == null) {
         xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
                 "definition including the current directive",
-            _startClaw.getPragma().lineNo()
+            _clawStart.getPragma().lineNo()
         );
         return false;
       }
 
-      for(ClawReshapeInfo r : _startClaw.getReshapeClauseValues()) {
+      for(ClawReshapeInfo r : _clawStart.getReshapeClauseValues()) {
         if(!fctDef.getSymbolTable().contains(r.getArrayName()) ||
             !fctDef.getDeclarationTable().contains(r.getArrayName()))
         {
@@ -157,7 +154,7 @@ public class LoopHoist extends BlockTransformation {
           if(!checkUpperDefinition(fctDef, r.getArrayName())) {
             xcodeml.addError(String.format("Reshape variable %s not found in " +
                     "the definition of %s", r.getArrayName(),
-                fctDef.getName().value()), _startClaw.getPragma().lineNo()
+                fctDef.getName().value()), _clawStart.getPragma().lineNo()
             );
             return false;
           }
@@ -216,20 +213,20 @@ public class LoopHoist extends BlockTransformation {
     hoisted.getDoStmts()[_nestedLevel - 1].body().delete();
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
     hoisted.getDoStmts()[_nestedLevel - 1].append(newBody, false);
-    XnodeUtil.shiftStatementsInBody(_startClaw.getPragma(),
-        _endClaw.getPragma(), newBody);
-    XnodeUtil.insertAfter(_startClaw.getPragma(), hoisted.getDoStmts()[0]);
+    XnodeUtil.shiftStatementsInBody(_clawStart.getPragma(),
+        _clawEnd.getPragma(), newBody);
+    XnodeUtil.insertAfter(_clawStart.getPragma(), hoisted.getDoStmts()[0]);
 
     // Generate dynamic transformation (interchange)
-    TransformationHelper.generateAdditionalTransformation(_startClaw,
+    TransformationHelper.generateAdditionalTransformation(_clawStart,
         xcodeml, transformer, hoisted.getDoStmts()[0]);
 
     // Apply reshape clause
-    TransformationHelper.applyReshapeClause(_startClaw, xcodeml);
+    TransformationHelper.applyReshapeClause(_clawStart, xcodeml);
 
     // Delete pragmas
-    _startClaw.getPragma().delete();
-    _endClaw.getPragma().delete();
+    _clawStart.getPragma().delete();
+    _clawEnd.getPragma().delete();
   }
 
   /**
@@ -282,7 +279,7 @@ public class LoopHoist extends BlockTransformation {
       if(next == null) {
         throw new IllegalTransformationException(
             "Unable to matchSeq enough nested do statements",
-            _startClaw.getPragma().lineNo()
+            _clawStart.getPragma().lineNo()
         );
       }
       g.getDoStmts()[j] = next;

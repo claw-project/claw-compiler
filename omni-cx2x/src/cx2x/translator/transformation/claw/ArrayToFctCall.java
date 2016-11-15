@@ -6,8 +6,8 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
@@ -20,9 +20,8 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ArrayToFctCall extends Transformation {
+public class ArrayToFctCall extends ClawTransformation {
 
-  private final ClawLanguage _claw;
   private XfunctionDefinition _replaceFct;
 
   /**
@@ -30,9 +29,8 @@ public class ArrayToFctCall extends Transformation {
    *
    * @param directive The directive that triggered the transformation.
    */
-  public ArrayToFctCall(AnalyzedPragma directive) {
+  public ArrayToFctCall(ClawLanguage directive) {
     super(directive);
-    _claw = (ClawLanguage) directive;
   }
 
   @Override

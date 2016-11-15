@@ -7,6 +7,7 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -25,10 +26,7 @@ import cx2x.xcodeml.xnode.Xnode;
  * @author clementval
  */
 
-public class LoopFusion extends Transformation {
-
-  // CLAW directives information
-  private final ClawLanguage _claw;
+public class LoopFusion extends ClawTransformation {
 
   // Contains the value of the group option
   private String _groupClauseLabel = ClawConstant.EMPTY_STRING;
@@ -44,7 +42,6 @@ public class LoopFusion extends Transformation {
    */
   public LoopFusion(ClawLanguage directive) {
     super(directive);
-    _claw = directive;
     if(_claw.hasGroupClause()) {
       _groupClauseLabel = directive.getGroupValue();
     }
@@ -60,7 +57,6 @@ public class LoopFusion extends Transformation {
    */
   public LoopFusion(Xnode loop, ClawLanguage ghostDirective) {
     super(ghostDirective);
-    _claw = ghostDirective;
     if(_claw.hasCollapseClause()) {
       _doStmts = new Xnode[_claw.getCollapseValue()];
       _doStmts[0] = loop;

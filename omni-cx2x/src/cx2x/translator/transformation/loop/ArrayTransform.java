@@ -8,9 +8,8 @@ package cx2x.translator.transformation.loop;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.*;
@@ -34,9 +33,8 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ArrayTransform extends BlockTransformation {
+public class ArrayTransform extends ClawBlockTransformation {
 
-  private final ClawLanguage _clawBegin, _clawEnd;
   private final List<List<Xnode>> _groupIterationRanges;
   private final List<List<Xnode>> _groupedAssignStmts;
 
@@ -48,10 +46,8 @@ public class ArrayTransform extends BlockTransformation {
    * @param end   The directive that close the block transformation.
    *              Can be null.
    */
-  public ArrayTransform(AnalyzedPragma begin, AnalyzedPragma end) {
+  public ArrayTransform(ClawLanguage begin, ClawLanguage end) {
     super(begin, end);
-    _clawBegin = (ClawLanguage) begin;
-    _clawEnd = (ClawLanguage) end;
     _groupedAssignStmts = new ArrayList<>();
     _groupIterationRanges = new ArrayList<>();
   }
@@ -64,14 +60,14 @@ public class ArrayTransform extends BlockTransformation {
 
       // Find assignments with array notation
       List<Xnode> foundAssignments =
-          XnodeUtil.getArrayAssignInBlock(_clawBegin.getPragma(),
+          XnodeUtil.getArrayAssignInBlock(_clawStart.getPragma(),
               _clawEnd.getPragma().value()
           );
 
       if(foundAssignments.size() == 0) {
         xcodeml.addError(
             "No array notation assignments found in the array-transform block.",
-            _clawBegin.getPragma().lineNo()
+            _clawStart.getPragma().lineNo()
         );
         return false;
       }
@@ -108,16 +104,16 @@ public class ArrayTransform extends BlockTransformation {
       return true;
     } else { // single transformation
       // pragma must be followed by an assign statement
-      Xnode stmt = _clawBegin.getPragma().matchSibling(Xcode.FASSIGNSTATEMENT);
+      Xnode stmt = _clawStart.getPragma().matchSibling(Xcode.FASSIGNSTATEMENT);
       if(stmt == null) {
         xcodeml.addError("Directive not followed by an assign statement",
-            _clawBegin.getPragma().lineNo());
+            _clawStart.getPragma().lineNo());
         return false;
       }
       // Check if we are dealing with an array notation
       if(!(stmt.child(0).opcode() == Xcode.FARRAYREF)) {
         xcodeml.addError("Assign statement is not an array notation",
-            _clawBegin.getPragma().lineNo());
+            _clawStart.getPragma().lineNo());
         return false;
       }
 
@@ -129,7 +125,7 @@ public class ArrayTransform extends BlockTransformation {
       }
       if(ranges.size() == 0) {
         xcodeml.addError("Assign statement is not an array notation",
-            _clawBegin.getPragma().lineNo());
+            _clawStart.getPragma().lineNo());
         return false;
       }
 
@@ -163,13 +159,13 @@ public class ArrayTransform extends BlockTransformation {
   {
     // 1. Find the function/module declaration TODO handle module/program ?
     XfunctionDefinition fctDef =
-        XnodeUtil.findParentFunction(_clawBegin.getPragma());
-    Xnode grip = _clawBegin.getPragma();
+        XnodeUtil.findParentFunction(_clawStart.getPragma());
+    Xnode grip = _clawStart.getPragma();
     for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
       grip = generateDoStmtNotation(xcodeml, transformer, fctDef,
           _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
     }
-    _clawBegin.getPragma().delete();
+    _clawStart.getPragma().delete();
     if(_clawEnd != null) {
       _clawEnd.getPragma().delete();
     }
@@ -207,8 +203,8 @@ public class ArrayTransform extends BlockTransformation {
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
-      if(_clawBegin.hasInductionClause()) { // Use user names
-        inductionVars[i] = _clawBegin.getInductionValues().get(i);
+      if(_clawStart.hasInductionClause()) { // Use user names
+        inductionVars[i] = _clawStart.getInductionValues().get(i);
       } else { // generate new names
         inductionVars[i] = "claw_induction_" +
             transformer.getNextTransformationCounter();
@@ -281,11 +277,11 @@ public class ArrayTransform extends BlockTransformation {
 
     // Generate accelerator pragmas if needed
     Xnode potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
-        _clawBegin, xcodeml, new Xnode(doStmts[0].element()),
+        _clawStart, xcodeml, new Xnode(doStmts[0].element()),
         new Xnode(doStmts[0].element()));
 
     // Add any additional transformation defined in the directive clauses
-    TransformationHelper.generateAdditionalTransformation(_clawBegin, xcodeml,
+    TransformationHelper.generateAdditionalTransformation(_clawStart, xcodeml,
         transformer, doStmts[0]);
 
     return potentialGrip == null ? doStmts[0] : potentialGrip;
