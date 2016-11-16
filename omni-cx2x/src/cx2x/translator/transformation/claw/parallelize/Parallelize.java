@@ -148,8 +148,7 @@ public class Parallelize extends ClawTransformation {
    */
   private boolean analyseData(XcodeProgram xcodeml) {
     /* If there is no data/over clause specified, an automatic deduction for
-     * array promotion is performed.
-     */
+     * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
       for(Xdecl decl : _fctDef.getDeclarationTable().getAll()) {
         if(decl.isBuiltInType()) {
@@ -192,8 +191,7 @@ public class Parallelize extends ClawTransformation {
      * rule. The array idenitfiers defined in the data clauses will be used as
      * the list of array to be promoted.
      * In the analysis, we control that all defined arrays in the data clauses
-     * are actual delcared variables.
-     */
+     * are actual delcared variables. */
     for(List<String> data : _claw.getOverDataClauseValues()) {
       for(String d : data) {
         if(!_fctDef.getSymbolTable().contains(d)) {
