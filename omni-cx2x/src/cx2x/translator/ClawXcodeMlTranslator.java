@@ -267,8 +267,7 @@ public class ClawXcodeMlTranslator {
   public void transform() {
     try {
       if(!_canTransform) {
-        XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile,
-            ClawConstant.INDENT_OUTPUT);
+        _program.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
         return;
       }
 
@@ -302,8 +301,7 @@ public class ClawXcodeMlTranslator {
       }
 
       // Write transformed IR to file
-      XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile,
-          ClawConstant.INDENT_OUTPUT);
+      _program.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
     } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }

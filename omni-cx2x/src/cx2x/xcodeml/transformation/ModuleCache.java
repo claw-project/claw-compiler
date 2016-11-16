@@ -74,7 +74,7 @@ public class ModuleCache {
       Xmod module = pair.getValue();
       String newModuleName = module.getPath() + module.getName() +
           ClawConstant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
-      XnodeUtil.writeXcodeML(module, newModuleName, ClawConstant.INDENT_OUTPUT);
+      module.write(newModuleName, ClawConstant.INDENT_OUTPUT);
     }
   }
 }
