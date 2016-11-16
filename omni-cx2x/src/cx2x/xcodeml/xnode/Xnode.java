@@ -364,7 +364,7 @@ public class Xnode {
    *
    * @return Next sibling node.
    */
-  public Xnode getNextSibling() {
+  public Xnode nextSibling() {
     if(_baseElement == null){
       return null;
     }

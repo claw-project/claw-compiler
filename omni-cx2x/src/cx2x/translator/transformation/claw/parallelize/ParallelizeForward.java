@@ -73,7 +73,7 @@ public class ParallelizeForward extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    Xnode next = _claw.getPragma().getNextSibling();
+    Xnode next = _claw.getPragma().nextSibling();
     if(next == null) {
       xcodeml.addError("Directive is not followed by a valid statement.",
           _claw.getPragma().lineNo());
@@ -583,7 +583,7 @@ public class ParallelizeForward extends ClawTransformation {
       throws IllegalTransformationException
   {
     if(_isNestedInAssignement) {
-      Xnode assignment = _claw.getPragma().getNextSibling();
+      Xnode assignment = _claw.getPragma().nextSibling();
       if(assignment == null
           || !_fctType.hasAttribute(ClawAttr.OVER.toString()))
       {

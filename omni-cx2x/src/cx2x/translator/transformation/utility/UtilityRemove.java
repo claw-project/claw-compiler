@@ -9,7 +9,6 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.transformation.BlockTransformation;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.Xcode;
@@ -54,7 +53,7 @@ public class UtilityRemove extends ClawBlockTransformation {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_clawEnd == null) {
-      Xnode next = _clawStart.getPragma().getNextSibling();
+      Xnode next = _clawStart.getPragma().nextSibling();
 
       _do = next.opcode() == Xcode.FDOSTATEMENT ? next : null;
       _if = next.opcode() == Xcode.FIFSTATEMENT ? next : null;
