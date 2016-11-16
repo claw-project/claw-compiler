@@ -370,7 +370,7 @@ public class Xnode {
    * @return Next sibling node.
    */
   public Xnode nextSibling() {
-    if(_baseElement == null){
+    if(_baseElement == null) {
       return null;
     }
     Node n = _baseElement.getNextSibling();
@@ -411,7 +411,7 @@ public class Xnode {
    */
   public Xnode matchDescendant(Xcode opcode)
   {
-    if(_baseElement == null){
+    if(_baseElement == null) {
       return null;
     }
     NodeList elements = _baseElement.getElementsByTagName(opcode.code());
@@ -429,7 +429,7 @@ public class Xnode {
    * @return The matched node. Null if nothing matched.
    */
   public Xnode matchDirectDescendant(Xcode opcode) {
-    if(_baseElement == null){
+    if(_baseElement == null) {
       return null;
     }
     NodeList nodeList = _baseElement.getChildNodes();
@@ -509,7 +509,7 @@ public class Xnode {
    * @return The matched node. Null if no node found.
    */
   private Xnode universalMatch(Xcode opcode, boolean down) {
-    if(_baseElement == null){
+    if(_baseElement == null) {
       return null;
     }
 
@@ -556,7 +556,7 @@ public class Xnode {
    * @param node The node to be inserted before the current one.
    */
   public void insertBefore(Xnode node) {
-    if(_baseElement == null){
+    if(_baseElement == null) {
       return;
     }
     _baseElement.getParentNode().insertBefore(node.element(), _baseElement);
