@@ -171,8 +171,8 @@ public class ParallelizeForward extends ClawTransformation {
 
     _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
 
-    XfunctionDefinition fctDef = XnodeUtil.findFunctionDefinition(
-        xcodeml.getGlobalDeclarationsTable(), _calledFctName);
+    XfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
+        getFunctionDefinition(_calledFctName);
     XfunctionDefinition parentFctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
     if(parentFctDef == null) {
@@ -255,7 +255,9 @@ public class ParallelizeForward extends ClawTransformation {
 
       // Get all the use statements in the fct and module definitions
       List<Xdecl> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
-      uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
+      if(parentModule != null){
+        uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
+      }
 
       // Try to locate the fct in the modules defined in use statements
       if(findInModule(uses)) {

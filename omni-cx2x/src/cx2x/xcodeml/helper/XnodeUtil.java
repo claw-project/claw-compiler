@@ -1653,35 +1653,6 @@ public class XnodeUtil {
     return var;
   }
 
-  /**
-   * Try to locate a function definition in the current declaration table or
-   * recursively in the modules' delcaration tables.
-   *
-   * @param dt      Declaration table to search in.
-   * @param fctName Function's name to be found.
-   * @return The function definition if found. Null otherwise.
-   */
-  public static XfunctionDefinition findFunctionDefinition(XglobalDeclTable dt,
-                                                           String fctName)
-  {
-    Iterator<Map.Entry<String, Xnode>> it = dt.getIterator();
-    while(it.hasNext()) {
-      Map.Entry<String, Xnode> entry = it.next();
-      if(entry.getValue() instanceof XmoduleDefinition) {
-        XmoduleDefinition mod = (XmoduleDefinition) entry.getValue();
-        XfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
-        if(fctDef != null) {
-          return fctDef;
-        }
-      } else if(entry.getValue() instanceof XfunctionDefinition) {
-        XfunctionDefinition fctDef = (XfunctionDefinition) entry.getValue();
-        if(fctDef.getName().value().equals(fctName)) {
-          return fctDef;
-        }
-      }
-    }
-    return null;
-  }
 
   /**
    * Delete all sibling elements from the start element included.

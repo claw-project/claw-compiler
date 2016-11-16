@@ -9,7 +9,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -136,12 +135,28 @@ public class XglobalDeclTable extends Xnode {
   }
 
   /**
-   * Get an iterator over the table.
+   * Retrieve function definition in the current declaration table or
+   * recursively in the modules' delcaration tables.
    *
-   * @return Iterator.
+   * @param fctName Function's name.
+   * @return The function definition if found. Null otherwise.
    */
-  public Iterator<Map.Entry<String, Xnode>> getIterator() {
-    return _table.entrySet().iterator();
+  public XfunctionDefinition getFunctionDefinition(String fctName) {
+    for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
+      if(entry.getValue() instanceof XmoduleDefinition) {
+        XmoduleDefinition mod = (XmoduleDefinition) entry.getValue();
+        XfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
+        if(fctDef != null) {
+          return fctDef;
+        }
+      } else if(entry.getValue() instanceof XfunctionDefinition) {
+        XfunctionDefinition fctDef = (XfunctionDefinition) entry.getValue();
+        if(fctDef.getName().value().equals(fctName)) {
+          return fctDef;
+        }
+      }
+    }
+    return null;
   }
 
   @Override
