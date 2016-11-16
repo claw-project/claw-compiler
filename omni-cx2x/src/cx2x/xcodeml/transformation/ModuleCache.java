@@ -10,7 +10,6 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xmod;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
