@@ -227,6 +227,17 @@ public class XdeclTable extends Xnode {
     }
   }
 
+  /**
+   * Get all the USE statement declaration in the table.
+   *
+   * @return A list of all declaration. Empty list if no USE declaration.
+   */
+  public List<Xdecl> getAllUseStmts() {
+    List<Xdecl> uses = this.getAll(Xcode.FUSEDECL);
+    uses.addAll(this.getAll(Xcode.FUSEONLYDECL));
+    return uses;
+  }
+
   @Override
   public XdeclTable cloneNode() {
     Element clone = (Element) cloneRawNode();

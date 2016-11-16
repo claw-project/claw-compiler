@@ -1684,43 +1684,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Get all the USE statement declaration in a module definition.
-   *
-   * @param mod Module definition.
-   * @return A list of all declaration. Empty list if no USE declaration.
-   */
-  public static List<Xdecl> getAllUse(XmoduleDefinition mod) {
-    return mod == null ? getAllUseFromDeclTable(null) :
-        getAllUseFromDeclTable(mod.getDeclarationTable());
-  }
-
-  /**
-   * Get all the USE statement declaration in a function definition.
-   *
-   * @param fctDef Function definition.
-   * @return A list of all declaration. Empty list if no USE declaration.
-   */
-  public static List<Xdecl> getAllUse(XfunctionDefinition fctDef) {
-    return fctDef == null ? getAllUseFromDeclTable(null) :
-        getAllUseFromDeclTable(fctDef.getDeclarationTable());
-  }
-
-  /**
-   * Get all the USE statement declaration in a declaration table.
-   *
-   * @param dt Declaration table.
-   * @return A list of all declaration. Empty list if no USE declaration.
-   */
-  private static List<Xdecl> getAllUseFromDeclTable(XdeclTable dt) {
-    if(dt == null) {
-      return new ArrayList<Xdecl>();
-    }
-    List<Xdecl> uses = dt.getAll(Xcode.FUSEDECL);
-    uses.addAll(dt.getAll(Xcode.FUSEONLYDECL));
-    return uses;
-  }
-
-  /**
    * Delete all sibling elements from the start element included.
    *
    * @param start Element to start from.
