@@ -29,14 +29,11 @@ import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
-import cx2x.xcodeml.transformation.ModuleCache;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.TransformationGroup;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.Xmod;
 import cx2x.xcodeml.xnode.Xnode;
 import xcodeml.util.XmOption;
 

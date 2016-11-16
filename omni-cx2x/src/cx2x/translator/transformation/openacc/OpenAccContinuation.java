@@ -7,7 +7,6 @@ package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;

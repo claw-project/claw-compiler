@@ -5,7 +5,6 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
