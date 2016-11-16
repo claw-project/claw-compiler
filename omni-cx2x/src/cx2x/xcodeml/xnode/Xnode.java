@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -529,7 +530,7 @@ public class Xnode {
    */
   public int depth() {
     if(_baseElement == null) {
-      return -1;
+      return ClawConstant.UNDEF_DEPTH;
     }
     return XnodeUtil.getDepth(_baseElement);
   }

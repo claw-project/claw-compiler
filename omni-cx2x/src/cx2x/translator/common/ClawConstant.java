@@ -22,6 +22,7 @@ public class ClawConstant {
   public static final String ITER_PREFIX = "iter_";
   public static final String CLAW = "claw";
   public static final int INDENT_OUTPUT = 2; // Number of spaces for indent
+  public static final int UNDEF_DEPTH = -1;
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 

@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
@@ -88,8 +89,11 @@ public class LoopHoist extends ClawBlockTransformation {
           return false;
         }
 
-        int ifDepth = tmpIf.depth();
-        int selectDepth = tmpSelect.depth();
+        int ifDepth =
+            (tmpIf != null) ? tmpIf.depth() : ClawConstant.UNDEF_DEPTH;
+        int selectDepth =
+            (tmpSelect != null) ? tmpSelect.depth() : ClawConstant.UNDEF_DEPTH;
+
         if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth)
             && (ifDepth < depth || selectDepth < depth))
         {
