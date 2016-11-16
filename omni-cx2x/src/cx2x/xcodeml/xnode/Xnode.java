@@ -168,6 +168,11 @@ public class Xnode {
     switch(opcode()) {
       case FDOSTATEMENT:
       case FFUNCTIONDEFINITION:
+      case FDOWHILESTATEMENT:
+      case FCASELABEL:
+      case THEN:
+      case ELSE:
+      case TYPEGUARD:
         return true;
     }
     return false;
