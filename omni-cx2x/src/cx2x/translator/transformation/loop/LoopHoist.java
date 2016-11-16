@@ -179,12 +179,11 @@ public class LoopHoist extends ClawBlockTransformation {
   private boolean checkUpperDefinition(XfunctionDefinition fctDef, String name)
   {
     XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
-    if(upperDef == null) {
-      return false;
-    }
-    return !(!upperDef.getSymbolTable().contains(name)
+    return upperDef != null
+        && (!(!upperDef.getSymbolTable().contains(name)
         || !upperDef.getDeclarationTable().contains(name))
-        || checkUpperDefinition(upperDef, name);
+        || checkUpperDefinition(upperDef, name)
+    );
   }
 
   /**
