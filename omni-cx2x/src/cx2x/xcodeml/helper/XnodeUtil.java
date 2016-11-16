@@ -560,26 +560,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Find all the pragma element in an XcodeML tree.
-   *
-   * @param xcodeml The XcodeML program to search in.
-   * @return A list of all pragmas found in the XcodeML program.
-   */
-  public static List<Xnode> findAllPragmas(XcodeProgram xcodeml) {
-    NodeList pragmaList = xcodeml.getDocument()
-        .getElementsByTagName(Xcode.FPRAGMASTATEMENT.code());
-    List<Xnode> pragmas = new ArrayList<>();
-    for(int i = 0; i < pragmaList.getLength(); i++) {
-      Node pragmaNode = pragmaList.item(i);
-      if(pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) pragmaNode;
-        pragmas.add(new Xnode(element));
-      }
-    }
-    return pragmas;
-  }
-
-  /**
    * Extract the body of a do statement and place it directly after it.
    *
    * @param loop The do statement containing the body to be extracted.

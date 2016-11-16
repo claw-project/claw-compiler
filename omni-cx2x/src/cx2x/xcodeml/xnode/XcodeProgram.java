@@ -265,4 +265,23 @@ public class XcodeProgram extends XcodeML {
     }
     return null;
   }
+
+  /**
+   * Retrieve all the statement of a given type in the XcodeProgram unit.
+   *
+   * @param opcode The opcode of the statement to be found.
+   * @return A list of all statements found in the XcodeProgram unit.
+   */
+  public List<Xnode> getAllStmt(Xcode opcode) {
+    NodeList pragmaList = getDocument().getElementsByTagName(opcode.code());
+    List<Xnode> pragmas = new ArrayList<>();
+    for(int i = 0; i < pragmaList.getLength(); i++) {
+      Node pragmaNode = pragmaList.item(i);
+      if(pragmaNode.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) pragmaNode;
+        pragmas.add(new Xnode(element));
+      }
+    }
+    return pragmas;
+  }
 }

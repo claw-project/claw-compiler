@@ -34,6 +34,7 @@ import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.ModuleCache;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.TransformationGroup;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xmod;
 import cx2x.xcodeml.xnode.Xnode;
@@ -105,7 +106,7 @@ public class ClawXcodeMlTranslator {
     }
 
     // Check all pragma found in the program
-    for(Xnode pragma : XnodeUtil.findAllPragmas(_program)) {
+    for(Xnode pragma : _program.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
 
       // pragma does not start with the CLAW prefix
       if(!ClawLanguage.startsWithClaw(pragma)) {
