@@ -448,7 +448,7 @@ public class ParallelizeForward extends ClawTransformation {
       arg.append(namedValVar, false);
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       Xnode hook = arguments.child((i - 1) - argOffset);
-      XnodeUtil.insertAfter(hook, arg);
+      hook.insertAfter(arg);
     }
 
     // In flatten mode, arguments are demoted if needed.
@@ -460,7 +460,7 @@ public class ParallelizeForward extends ClawTransformation {
         {
           Xnode var = arg.matchSeq(Xcode.VARREF, Xcode.VAR);
           if(var != null) {
-            XnodeUtil.insertAfter(arg, var.cloneNode());
+            arg.insertAfter(var.cloneNode());
             arg.delete();
           }
         }
@@ -722,7 +722,7 @@ public class ParallelizeForward extends ClawTransformation {
 
           // Generate the do statements and move the assignement statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
-          XnodeUtil.insertAfter(assignment, doStmt.getOuterStatement());
+          assignment.insertAfter(doStmt.getOuterStatement());
           doStmt.getInnerStatement().body().
               append(assignment, false);
 

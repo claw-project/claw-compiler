@@ -400,7 +400,7 @@ public class Parallelize extends ClawTransformation {
           _arrayFieldsInOut.contains(lhsName))
       {
         loops = new NestedDoStatement(order, xcodeml);
-        XnodeUtil.insertAfter(assign, loops.getOuterStatement());
+        assign.insertAfter(loops.getOuterStatement());
         loops.getInnerStatement().body().append(assign, true);
         assign.delete();
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
@@ -437,7 +437,7 @@ public class Parallelize extends ClawTransformation {
                 _afterCrt, xcodeml);
           }
           loops = new NestedDoStatement(order, xcodeml);
-          XnodeUtil.insertAfter(assign, loops.getOuterStatement());
+          assign.insertAfter(loops.getOuterStatement());
           loops.getInnerStatement().body().append(assign, true);
           assign.delete();
         }
@@ -593,13 +593,13 @@ public class Parallelize extends ClawTransformation {
         Xnode ref =
             XnodeUtil.createArrayRef(xcodeml, type, var.cloneNode());
         for(Xnode ai : _beforeCrt.get(index)) {
-          XnodeUtil.insertAfter(ref.matchSeq(Xcode.VARREF), ai.cloneNode());
+          ref.matchSeq(Xcode.VARREF).insertAfter(ai.cloneNode());
         }
         for(Xnode ai : _afterCrt.get(index)) {
           ref.append(ai, true);
         }
 
-        XnodeUtil.insertAfter(var, ref);
+        var.insertAfter(ref);
         var.delete();
       }
     }

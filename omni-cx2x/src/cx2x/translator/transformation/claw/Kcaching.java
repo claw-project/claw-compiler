@@ -336,7 +336,7 @@ public class Kcaching extends ClawTransformation {
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache1.append(cacheVar, false);
       cache1.append(rhs, true);
-      XnodeUtil.insertAfter(_claw.getPragma(), cache1);
+      _claw.getPragma().insertAfter(cache1);
     } else {
       /*
        * We replace an assignment of type
@@ -351,8 +351,8 @@ public class Kcaching extends ClawTransformation {
       Xnode cache2 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
       cache2.append(stmt.child(0), true);
       cache2.append(cacheVar, true);
-      XnodeUtil.insertAfter(stmt, cache1);
-      XnodeUtil.insertAfter(cache1, cache2);
+      stmt.insertAfter(cache1);
+      cache1.insertAfter(cache2);
 
     }
     return cacheVar;
@@ -389,7 +389,7 @@ public class Kcaching extends ClawTransformation {
   private void updateArrayRefWithCache(List<Xnode> arrayRefs, Xnode cache) {
     for(Xnode ref : arrayRefs) {
       // Swap arrayRef with the cache variable
-      XnodeUtil.insertAfter(ref, cache.cloneNode());
+      ref.insertAfter(cache.cloneNode());
       ref.delete();
     }
   }

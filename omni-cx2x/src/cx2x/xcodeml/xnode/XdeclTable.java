@@ -95,7 +95,7 @@ public class XdeclTable extends Xnode {
     if(oldDecl == null) {
       append(decl, false);
     } else {
-      XnodeUtil.insertAfter(oldDecl, decl);
+      oldDecl.insertAfter(decl);
       oldDecl.delete();
     }
   }
@@ -223,7 +223,7 @@ public class XdeclTable extends Xnode {
         }
         hook = decl.get(i);
       }
-      XnodeUtil.insertAfter(hook, decl.get(0));
+      hook.insertAfter(decl.get(0));
     }
   }
 

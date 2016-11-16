@@ -114,7 +114,7 @@ public class XnodeUtil {
    */
   public static void demoteToScalar(Xnode ref) {
     Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode();
-    insertAfter(ref, var);
+    ref.insertAfter(var);
     ref.delete();
   }
 
@@ -605,7 +605,7 @@ public class XnodeUtil {
    *                one.
    * @param newNode The new node to be inserted.
    */
-  private static void insertAfter(Node refNode, Node newNode) {
+  public static void insertAfter(Node refNode, Node newNode) {
     refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
   }
 
@@ -739,17 +739,6 @@ public class XnodeUtil {
       delete(e);
     }
   }
-
-  /**
-   * Insert an element just after a reference element.
-   *
-   * @param refElement The reference element.
-   * @param element    The element to be inserted.
-   */
-  public static void insertAfter(Xnode refElement, Xnode element) {
-    XnodeUtil.insertAfter(refElement.element(), element.element());
-  }
-
 
   /**
    * Insert all the statements from a given body at the end of another body
@@ -965,15 +954,15 @@ public class XnodeUtil {
     Xnode s2 = indexRange2.matchSeq(Xcode.STEP).child(0);
 
     // Set the range of loop2 to loop1
-    XnodeUtil.insertAfter(inductionVar2, inductionVar1.cloneNode());
-    XnodeUtil.insertAfter(low2, low1.cloneNode());
-    XnodeUtil.insertAfter(up2, up1.cloneNode());
-    XnodeUtil.insertAfter(s2, s1.cloneNode());
+    inductionVar2.insertAfter(inductionVar1.cloneNode());
+    low2.insertAfter(low1.cloneNode());
+    up2.insertAfter(up1.cloneNode());
+    s2.insertAfter(s1.cloneNode());
 
-    XnodeUtil.insertAfter(inductionVar1, inductionVar2.cloneNode());
-    XnodeUtil.insertAfter(low1, low2.cloneNode());
-    XnodeUtil.insertAfter(up1, up2.cloneNode());
-    XnodeUtil.insertAfter(s1, s2.cloneNode());
+    inductionVar1.insertAfter(inductionVar2.cloneNode());
+    low1.insertAfter(low2.cloneNode());
+    up1.insertAfter(up2.cloneNode());
+    s1.insertAfter(s2.cloneNode());
 
     inductionVar1.delete();
     inductionVar2.delete();

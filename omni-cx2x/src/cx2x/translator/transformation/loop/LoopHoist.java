@@ -215,7 +215,7 @@ public class LoopHoist extends ClawBlockTransformation {
     hoisted.getDoStmts()[_nestedLevel - 1].append(newBody, false);
     XnodeUtil.shiftStatementsInBody(_clawStart.getPragma(),
         _clawEnd.getPragma(), newBody);
-    XnodeUtil.insertAfter(_clawStart.getPragma(), hoisted.getDoStmts()[0]);
+    _clawStart.getPragma().insertAfter(hoisted.getDoStmts()[0]);
 
     // Generate dynamic transformation (interchange)
     TransformationHelper.generateAdditionalTransformation(_clawStart,

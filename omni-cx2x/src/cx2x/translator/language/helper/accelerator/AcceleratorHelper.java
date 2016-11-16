@@ -427,7 +427,7 @@ public class AcceleratorHelper {
     Xnode pragma = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
     pragma.setValue(directive);
     if(after) {
-      XnodeUtil.insertAfter(ref, pragma);
+      ref.insertAfter(pragma);
     } else {
       XnodeUtil.insertBefore(ref, pragma);
     }

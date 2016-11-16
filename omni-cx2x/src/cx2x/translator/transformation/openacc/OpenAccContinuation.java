@@ -139,7 +139,7 @@ public class OpenAccContinuation extends Transformation {
     } else {
       p.setValue(ClawConstant.OPENACC_PREFIX + " " + value);
     }
-    XnodeUtil.insertAfter(hook, p);
+    hook.insertAfter(p);
     getDirective().getPragma().delete();
     return p;
   }

@@ -533,4 +533,14 @@ public class Xnode {
     }
     return XnodeUtil.getDepth(_baseElement);
   }
+
+
+  /**
+   * Insert a node just after this node.
+   *
+   * @param node The node to be inserted after the current one.
+   */
+  public void insertAfter(Xnode node) {
+    XnodeUtil.insertAfter(_baseElement, node.element());
+  }
 }

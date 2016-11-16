@@ -230,7 +230,7 @@ public class LoopExtraction extends ClawTransformation {
     }
 
     // Insert the duplicated function declaration
-    XnodeUtil.insertAfter(_fctDefToExtract, clonedFctDef);
+    _fctDefToExtract.insertAfter(clonedFctDef);
 
     // Find the loop that will be extracted
     Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
@@ -336,7 +336,7 @@ public class LoopExtraction extends ClawTransformation {
             newArg.append(arrayIndex, false);
           }
 
-          XnodeUtil.insertAfter(argument, newArg);
+          argument.insertAfter(newArg);
           argument.delete();
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
@@ -476,7 +476,7 @@ public class LoopExtraction extends ClawTransformation {
         doStmt.matchDirectDescendant(Xcode.INDEXRANGE).cloneNode());
 
     // Insert the new empty loop just after the pragma
-    XnodeUtil.insertAfter(_claw.getPragma(), loop);
+    _claw.getPragma().insertAfter(loop);
 
     // Move the call into the loop body
     loop.body().element().
