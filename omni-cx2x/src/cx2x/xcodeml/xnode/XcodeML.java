@@ -6,9 +6,10 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -16,6 +17,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The XcodeML class represents the basic XcodeML file unit. Both XcodeProgram
@@ -54,6 +57,25 @@ public class XcodeML extends Xnode {
    */
   public XtypeTable getTypeTable() {
     return _typeTable;
+  }
+
+  /**
+   * Retrieve all function definitions in the XcodeProgram unit.
+   *
+   * @return A list of all function definitions in the XcodeProgram unit.
+   */
+  public List<XfunctionDefinition> getAllFctDef()
+  {
+    NodeList stmtList =
+        getDocument().getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
+    List<XfunctionDefinition> definitions = new ArrayList<>();
+    for(int i = 0; i < stmtList.getLength(); i++) {
+      Node stmtNode = stmtList.item(i);
+      if(stmtNode.getNodeType() == Node.ELEMENT_NODE) {
+        definitions.add(new XfunctionDefinition((Element) stmtNode));
+      }
+    }
+    return definitions;
   }
 
   /**

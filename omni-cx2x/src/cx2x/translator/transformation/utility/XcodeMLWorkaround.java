@@ -55,7 +55,7 @@ public class XcodeMLWorkaround extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit.
    */
   private void checkDeclarations(XcodeProgram xcodeml) {
-    List<XfunctionDefinition> definitions = XnodeUtil.getAllFctDef(xcodeml);
+    List<XfunctionDefinition> definitions = xcodeml.getAllFctDef();
     for(XfunctionDefinition fct : definitions) {
       fct.getDeclarationTable().checkOrder(fct);
     }

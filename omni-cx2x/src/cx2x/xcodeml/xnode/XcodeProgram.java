@@ -274,14 +274,14 @@ public class XcodeProgram extends XcodeML {
    */
   public List<Xnode> getAllStmt(Xcode opcode) {
     NodeList stmtList = getDocument().getElementsByTagName(opcode.code());
-    List<Xnode> pragmas = new ArrayList<>();
+    List<Xnode> stmts = new ArrayList<>();
     for(int i = 0; i < stmtList.getLength(); i++) {
       Node stmtNode = stmtList.item(i);
       if(stmtNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) stmtNode;
-        pragmas.add(new Xnode(element));
+        stmts.add(new Xnode((Element) stmtNode));
       }
     }
-    return pragmas;
+    return stmts;
   }
+
 }
