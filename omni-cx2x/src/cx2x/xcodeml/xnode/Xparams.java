@@ -72,7 +72,7 @@ public class Xparams extends Xnode {
   public void addBefore(Xnode ref, Xnode name) {
     int index = _parameters.indexOf(ref);
     _parameters.add(index, name);
-    XnodeUtil.insertBefore(ref, name);
+    ref.insertBefore(name);
   }
 
   @Override

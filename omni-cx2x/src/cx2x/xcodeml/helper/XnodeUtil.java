@@ -987,17 +987,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Insert an element just before a reference element.
-   *
-   * @param ref    The reference element.
-   * @param insert The element to be inserted.
-   */
-  public static void insertBefore(Xnode ref, Xnode insert) {
-    ref.element().getParentNode().insertBefore(insert.element(),
-        ref.element());
-  }
-
-  /**
    * Get a list of T elements from an xpath query executed from the
    * given element.
    *

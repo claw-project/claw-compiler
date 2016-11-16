@@ -383,7 +383,7 @@ public class XbasicType extends Xtype {
       _isArray = true;
     } else {
       Xnode crtPos = _dimensions.get(position);
-      XnodeUtil.insertBefore(crtPos, index);
+      crtPos.insertBefore(index);
       _dimensions.add(position, index);
     }
   }

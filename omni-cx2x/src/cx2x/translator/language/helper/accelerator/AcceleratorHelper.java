@@ -429,7 +429,7 @@ public class AcceleratorHelper {
     if(after) {
       ref.insertAfter(pragma);
     } else {
-      XnodeUtil.insertBefore(ref, pragma);
+      ref.insertBefore(pragma);
     }
     return pragma;
   }

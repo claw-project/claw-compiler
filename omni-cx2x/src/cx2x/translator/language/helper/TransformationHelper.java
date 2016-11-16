@@ -112,7 +112,7 @@ public class TransformationHelper {
   {
     if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
-      XnodeUtil.insertBefore(stmt, p);
+      stmt.insertBefore(p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       transformer.addTransformation(interchange);

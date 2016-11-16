@@ -400,8 +400,7 @@ public class LoopExtraction extends ClawTransformation {
         if(changeRef) {
           // TODO Var ref should be extracted only if the reference can be
           // totally demoted
-          XnodeUtil.insertBefore(ref,
-              ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode());
+          ref.insertBefore(ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode());
           ref.delete();
         }
       }

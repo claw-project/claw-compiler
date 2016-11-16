@@ -544,4 +544,16 @@ public class Xnode {
   public void insertAfter(Xnode node) {
     XnodeUtil.insertAfter(_baseElement, node.element());
   }
+
+  /**
+   * Insert a node just before this node.
+   *
+   * @param node The node to be inserted before the current one.
+   */
+  public void insertBefore(Xnode node) {
+    if(_baseElement == null){
+      return;
+    }
+    _baseElement.getParentNode().insertBefore(node.element(), _baseElement);
+  }
 }

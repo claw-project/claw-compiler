@@ -347,7 +347,7 @@ public class Parallelize extends ClawTransformation {
     if(contains != null) {
       XnodeUtil.shiftStatementsInBody(_fctDef.body().child(0),
           contains, loops.getInnerStatement().body());
-      XnodeUtil.insertBefore(contains, loops.getOuterStatement());
+      contains.insertBefore(loops.getOuterStatement());
     } else {
       // No contains section, all the body is copied to the do statements.
       XnodeUtil.copyBody(_fctDef.body(), loops.getInnerStatement());
