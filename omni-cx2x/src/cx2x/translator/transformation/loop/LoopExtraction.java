@@ -149,7 +149,7 @@ public class LoopExtraction extends ClawTransformation {
     _fctDef = new XfunctionDefinition(fctDef.element());
 
     // Find function declaration
-    _fctDefToExtract = XnodeUtil.findFunctionDefinition(xcodeml, _fctCall);
+    _fctDefToExtract = xcodeml.getFunctionDefinition(_fctCall);
 
     if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "

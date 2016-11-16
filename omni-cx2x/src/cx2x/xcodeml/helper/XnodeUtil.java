@@ -42,65 +42,6 @@ public class XnodeUtil {
   public static final String XMOD_FILE_EXTENSION = ".xmod";
 
   /**
-   * Find a function definition according to a function call.
-   *
-   * @param xcodeml The XcodeML program to search in.
-   * @param fctCall The function call used to matchSeq the function definition.
-   * @return A function definition element if found. Null otherwise.
-   */
-  public static XfunctionDefinition findFunctionDefinition(XcodeProgram xcodeml,
-                                                           Xnode fctCall)
-  {
-    if(xcodeml.element() == null) {
-      return null;
-    }
-    String name = fctCall.matchDirectDescendant(Xcode.NAME).value();
-    NodeList nList = xcodeml.element().
-        getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
-    for(int i = 0; i < nList.getLength(); i++) {
-      Node fctDefNode = nList.item(i);
-      if(fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
-        Xnode dummyFctDef = new Xnode((Element) fctDefNode);
-        Xnode fctDefName = dummyFctDef.matchSeq(Xcode.NAME);
-        if(name != null &&
-            fctDefName.value().toLowerCase().equals(name.toLowerCase()))
-        {
-          return new XfunctionDefinition(dummyFctDef.element());
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find a function definition in a module definition.
-   *
-   * @param module Module definition in which we search for the function
-   *               definition.
-   * @param name   Name of the function to be found.
-   * @return A function definition element if found. Null otherwise.
-   */
-  public static XfunctionDefinition findFunctionDefinitionInModule(
-      XmoduleDefinition module, String name)
-  {
-    if(module.element() == null) {
-      return null;
-    }
-    NodeList nList = module.element().
-        getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
-    for(int i = 0; i < nList.getLength(); i++) {
-      Node n = nList.item(i);
-      if(n.getNodeType() == Node.ELEMENT_NODE) {
-        XfunctionDefinition fctDef = new XfunctionDefinition((Element) n);
-        if(fctDef.getName().value().equals(name)) {
-          return fctDef;
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
    * Find all array references elements in a given body and give var name.
    *
    * @param parent    The body element to search for the array references.
@@ -875,7 +816,7 @@ public class XnodeUtil {
    * @return A XmoduleDefinition object if found. Null otherwise.
    */
   public static XmoduleDefinition findParentModule(Xnode from) {
-    if(from == null){
+    if(from == null) {
       return null;
     }
     Xnode moduleDef = from.matchAncestor(Xcode.FMODULEDEFINITION);
@@ -892,7 +833,7 @@ public class XnodeUtil {
    * @return The function definition found. Null if nothing found.
    */
   public static XfunctionDefinition findParentFunction(Xnode from) {
-    if(from == null){
+    if(from == null) {
       return null;
     }
     Xnode fctDef = from.matchAncestor(Xcode.FFUNCTIONDEFINITION);
@@ -933,7 +874,6 @@ public class XnodeUtil {
   public static void insertAfter(Xnode refElement, Xnode element) {
     XnodeUtil.insertAfter(refElement.element(), element.element());
   }
-
 
 
   /**
@@ -1888,8 +1828,8 @@ public class XnodeUtil {
     while(it.hasNext()) {
       Map.Entry<String, Xnode> entry = it.next();
       if(entry.getValue() instanceof XmoduleDefinition) {
-        XfunctionDefinition fctDef = findFunctionDefinitionInModule(
-            (XmoduleDefinition) entry.getValue(), fctName);
+        XmoduleDefinition mod = (XmoduleDefinition) entry.getValue();
+        XfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
         if(fctDef != null) {
           return fctDef;
         }
@@ -1963,7 +1903,7 @@ public class XnodeUtil {
    *
    * @param node Node to be deleted.
    */
-  public static void safeDelete(Xnode node){
+  public static void safeDelete(Xnode node) {
     if(node != null) {
       node.delete();
     }

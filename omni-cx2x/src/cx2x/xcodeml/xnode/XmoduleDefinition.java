@@ -6,6 +6,8 @@
 package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in
@@ -72,6 +74,30 @@ public class XmoduleDefinition extends Xnode {
    */
   public XdeclTable getDeclarationTable() {
     return _declarations;
+  }
+
+  /**
+   * Retrieve a function definition in a module definition based on its name.
+   *
+   * @param name Name of the function to be found.
+   * @return A function definition element if found. Null otherwise.
+   */
+  public XfunctionDefinition getFunctionDefinition(String name) {
+    if(_baseElement == null || name == null) {
+      return null;
+    }
+    NodeList nList =
+        _baseElement.getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
+    for(int i = 0; i < nList.getLength(); i++) {
+      Node n = nList.item(i);
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        XfunctionDefinition fctDef = new XfunctionDefinition((Element) n);
+        if(fctDef.getName().value().equals(name)) {
+          return fctDef;
+        }
+      }
+    }
+    return null;
   }
 
   @Override

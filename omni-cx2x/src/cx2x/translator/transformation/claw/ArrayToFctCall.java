@@ -55,8 +55,7 @@ public class ArrayToFctCall extends ClawTransformation {
     if(_replaceFct == null) {
       XmoduleDefinition parentModule =
           XnodeUtil.findParentModule(_claw.getPragma());
-      _replaceFct = XnodeUtil.findFunctionDefinitionInModule(parentModule,
-          _claw.getFctName());
+      _replaceFct = parentModule.getFunctionDefinition(_claw.getFctName());
 
       if(_replaceFct == null) {
         xcodeml.addError("Function " + _claw.getFctName() +

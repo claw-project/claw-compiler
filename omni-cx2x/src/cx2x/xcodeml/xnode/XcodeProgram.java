@@ -8,6 +8,9 @@ package cx2x.xcodeml.xnode;
 import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -234,4 +237,32 @@ public class XcodeProgram extends XcodeML {
     return _compilerInfo;
   }
 
+
+  /**
+   * Retrieve a function definition according to a function call.
+   *
+   * @param fctCall The function call used to match the function definition.
+   * @return A function definition element if found. Null otherwise.
+   */
+  public XfunctionDefinition getFunctionDefinition(Xnode fctCall) {
+    if(_baseElement == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
+      return null;
+    }
+    String name = fctCall.matchDirectDescendant(Xcode.NAME).value();
+    NodeList nList = _baseElement.
+        getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
+    for(int i = 0; i < nList.getLength(); i++) {
+      Node fctDefNode = nList.item(i);
+      if(fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
+        Xnode dummyFctDef = new Xnode((Element) fctDefNode);
+        Xnode fctDefName = dummyFctDef.matchSeq(Xcode.NAME);
+        if(name != null &&
+            fctDefName.value().toLowerCase().equals(name.toLowerCase()))
+        {
+          return new XfunctionDefinition(dummyFctDef.element());
+        }
+      }
+    }
+    return null;
+  }
 }
