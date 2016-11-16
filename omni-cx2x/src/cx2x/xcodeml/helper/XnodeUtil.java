@@ -1403,38 +1403,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Import a type description from one XcodeML unit to another one. If the type
-   * id is not present in the source XcodeML unit, nothing is done.
-   *
-   * @param src    Source XcodeML unit.
-   * @param dst    Destination XcodeML unit.
-   * @param typeId Type id to be imported.
-   */
-  public static void importType(XcodeML src, XcodeML dst, String typeId) {
-    if(typeId == null || dst.getTypeTable().hasType(typeId)) {
-      return;
-    }
-    Xtype type = src.getTypeTable().get(typeId);
-    if(type == null) {
-      return;
-    }
-    Node rawNode = dst.getDocument().importNode(type.element(), true);
-    Xtype importedType = new Xtype((Element) rawNode);
-    dst.getTypeTable().add(importedType);
-    if(importedType.hasAttribute(Xattr.REF)
-        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
-    {
-      XnodeUtil.importType(src, dst, importedType.getAttribute(Xattr.REF));
-    }
-
-    // Handle possible type ref in indexRange element
-    List<Xnode> vars = importedType.matchAll(Xcode.VAR);
-    for(Xnode var : vars) {
-      importType(src, dst, var.getAttribute(Xattr.TYPE));
-    }
-  }
-
-  /**
    * Duplicates the type to update and add extra dimensions to match the base
    * type.
    *

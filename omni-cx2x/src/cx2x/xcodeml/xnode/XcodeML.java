@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -141,6 +142,36 @@ public class XcodeML extends Xnode {
     return var;
   }
 
+  /**
+   * Import a type description from one XcodeML unit to the current one. If the
+   * type id is not present in the source XcodeML unit, nothing is done.
+   *
+   * @param src    Source XcodeML unit.
+   * @param typeId Type id to be imported.
+   */
+  public void importType(XcodeML src, String typeId) {
+    if(typeId == null || getTypeTable().hasType(typeId)) {
+      return;
+    }
+    Xtype type = src.getTypeTable().get(typeId);
+    if(type == null) {
+      return;
+    }
+    Node rawNode = getDocument().importNode(type.element(), true);
+    Xtype importedType = new Xtype((Element) rawNode);
+    getTypeTable().add(importedType);
+    if(importedType.hasAttribute(Xattr.REF)
+        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
+    {
+      importType(src, importedType.getAttribute(Xattr.REF));
+    }
+
+    // Handle possible type ref in indexRange element
+    List<Xnode> vars = importedType.matchAll(Xcode.VAR);
+    for(Xnode var : vars) {
+      importType(src, var.getAttribute(Xattr.TYPE));
+    }
+  }
 
   /**
    * Write the XcodeML to file or std out

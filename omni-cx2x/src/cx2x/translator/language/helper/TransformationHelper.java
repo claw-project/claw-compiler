@@ -325,7 +325,7 @@ public class TransformationHelper {
       // check if params need to be imported as well
       if(importedFctType.getParameterNb() > 0) {
         for(Xnode param : importedFctType.getParams().getAll()) {
-          XnodeUtil.importType(xcodeml, mod, param.getAttribute(Xattr.TYPE));
+          mod.importType(xcodeml, param.getAttribute(Xattr.TYPE));
         }
       }
       return;
