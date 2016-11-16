@@ -4,6 +4,9 @@
  */
 package cx2x.xcodeml.transformation;
 
+import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xmod;
 
 import java.util.HashMap;
@@ -64,11 +67,14 @@ public class ModuleCache {
   }
 
   /**
-   * Get an iterator over all the module in the cache.
-   *
-   * @return A map entry iterator.
+   * Write all modules in the cache to files.
    */
-  public Iterator<Map.Entry<String, Xmod>> getIterator() {
-    return _moduleCache.entrySet().iterator();
+  public void write() throws IllegalTransformationException {
+    for(Map.Entry<String, Xmod> pair : _moduleCache.entrySet()) {
+      Xmod module = pair.getValue();
+      String newModuleName = module.getPath() + module.getName() +
+          ClawConstant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
+      XnodeUtil.writeXcodeML(module, newModuleName, ClawConstant.INDENT_OUTPUT);
+    }
   }
 }

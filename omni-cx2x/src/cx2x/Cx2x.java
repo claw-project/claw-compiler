@@ -240,8 +240,7 @@ public class Cx2x {
         xcodeMlOutput, directive, target, groups, maxColumns);
     translator.analyze();
     translator.transform();
-
-    translator.writeModuleCache();
+    translator.flush();
 
     // Decompile IR to Fortran
     FortranDecompiler fDecompiler = new FortranDecompiler();

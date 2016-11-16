@@ -59,7 +59,6 @@ public class ClawXcodeMlTranslator {
 
   private static final String ERROR_PREFIX = "claw-error: ";
   private static final String WARNING_PREFIX = "claw warning: ";
-  private static final int INDENT_OUTPUT = 2; // Number of spaces for indent
   private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
   private final AcceleratorGenerator _generator;
   private final Target _target;
@@ -268,7 +267,8 @@ public class ClawXcodeMlTranslator {
   public void transform() {
     try {
       if(!_canTransform) {
-        XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
+        XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile,
+            ClawConstant.INDENT_OUTPUT);
         return;
       }
 
@@ -302,7 +302,8 @@ public class ClawXcodeMlTranslator {
       }
 
       // Write transformed IR to file
-      XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile, INDENT_OUTPUT);
+      XnodeUtil.writeXcodeML(_program, _xcodemlOutputFile,
+          ClawConstant.INDENT_OUTPUT);
     } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }
@@ -389,23 +390,10 @@ public class ClawXcodeMlTranslator {
   }
 
   /**
-   * Write all modules in the cache to files.
+   * Flush all information stored in the translator.
    */
-  public void writeModuleCache() {
-    ModuleCache cache = _transformer.getModCache();
-    Iterator<Map.Entry<String, Xmod>> it = cache.getIterator();
-    while(it.hasNext()) {
-      Map.Entry<String, Xmod> pair = it.next();
-      Xmod module = pair.getValue();
-      String newModuleName = module.getPath() + module.getName() +
-          ClawConstant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
-      try {
-        XnodeUtil.writeXcodeML(module, newModuleName, INDENT_OUTPUT);
-      } catch(IllegalTransformationException ex) {
-        System.err.println(ex.getMessage());
-        abort();
-      }
-    }
+  public void flush() throws IllegalTransformationException {
+    _transformer.getModCache().write();
   }
 
 }
