@@ -95,6 +95,7 @@ public enum Xcode {
   FPRAGMASTATEMENT(Xname.PRAGMA_STMT),                       // XcodeML/F 6.25
   RENAME(Xname.RENAME),                                      // XcodeML/F 8.8
   RENAMABLE(Xname.RENAMABLE),                                // XcodeML/F 8.9
+  SELECTTYPESTATEMENT(Xname.SELECT_TYPE_STATEMENT),          // XcodeML/F 6.34
   STATEMENTLABEL(Xname.STATEMENT_LABEL),                     // XcodeML/F 6.12
   STEP(Xname.STEP),                                          // XcodeML/F 8.14
   SYMBOLS(Xname.SYMBOLS),                                    // XcodeML/F 4.2
@@ -102,6 +103,7 @@ public enum Xcode {
   TYPEBOUNDGENERICPROCEDURE(Xname.TYPE_BOUND_GENERIC_PROCEDURE), // XcodeML 3.11
   TYPEBOUNDPROCEDURES(Xname.TYPE_BOUND_PROCEDURES),          // XcodeML/F 3.9
   TYPEBOUNDPROCEDURE(Xname.TYPE_BOUND_PROCEDURE),            // XcodeML/F 3.10
+  TYPEGUARD(Xname.TYPE_GUARD),                               // XcodeML/F 6.53
   TYPETABLE(Xname.TYPE_TABLE),                               // XcodeML/F 3.1
   UPPERBOUND(Xname.UPPER_BOUND),                             // XcodeML/F 8.13
   VALUE(Xname.VALUE),                                        // XcodeML/F 8.4

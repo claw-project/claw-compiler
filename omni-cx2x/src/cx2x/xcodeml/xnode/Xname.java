@@ -170,11 +170,13 @@ public class Xname {
   public static final String PRAGMA_STMT = "FpragmaStatement";
   public static final String RENAME = "rename";
   public static final String RENAMABLE = "renamable";
+  public static final String SELECT_TYPE_STATEMENT = "selectTypeStatement";
   public static final String STATEMENT_LABEL = "statementLabel";
   public static final String STEP = "step";
   public static final String SYMBOLS = "symbols";
   public static final String THEN = "then";
   public static final String TYPE_TABLE = "typeTable";
+  public static final String TYPE_GUARD = "typeGuard";
   public static final String TYPE_BOUND_GENERIC_PROCEDURE = "typeBoundGenericProcedure";
   public static final String TYPE_BOUND_PROCEDURE = "typeBoundProcedure";
   public static final String TYPE_BOUND_PROCEDURES = "typeBoundProcedures";
