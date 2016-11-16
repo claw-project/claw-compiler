@@ -1544,17 +1544,14 @@ public class XnodeUtil {
     if(boundChild.opcode() == Xcode.FINTCONSTANT
         || boundChild.opcode() == Xcode.VAR)
     {
-      bound.append(
-          importConstOrVar(boundChild, xcodemlSrc, xcodemlDst), false);
+      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc), false);
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
       Xnode lhs = boundChild.child(0);
       Xnode rhs = boundChild.child(1);
       Xnode plusExpr = new Xnode(Xcode.PLUSEXPR, xcodemlDst);
       bound.append(plusExpr, false);
-      plusExpr.append(
-          importConstOrVar(lhs, xcodemlSrc, xcodemlDst), false);
-      plusExpr.append(
-          importConstOrVar(rhs, xcodemlSrc, xcodemlDst), false);
+      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc), false);
+      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc), false);
     } else {
       throw new IllegalTransformationException(
           String.format("Lower/upper bound type currently not supported (%s)",
@@ -1563,74 +1560,6 @@ public class XnodeUtil {
     }
 
     return bound;
-  }
-
-  /**
-   * Create a copy of a variable element or an integer constant from a XcodeML
-   * unit to another one.
-   *
-   * @param base       Base element to be copied.
-   * @param xcodemlSrc Source XcodeML unit.
-   * @param xcodemlDst Destination XcodeML unit.
-   * @return The newly created element in the destination XcodeML unit.
-   * @throws IllegalTransformationException If the variable element doesn't meet
-   *                                        the criteria.
-   */
-  private static Xnode importConstOrVar(Xnode base, XcodeML xcodemlSrc,
-                                        XcodeML xcodemlDst)
-      throws IllegalTransformationException
-  {
-    if(base.opcode() != Xcode.FINTCONSTANT && base.opcode() != Xcode.VAR) {
-      throw new IllegalTransformationException(
-          String.format("Lower/upper bound type currently not supported (%s)",
-              base.opcode().toString())
-      );
-    }
-
-    if(base.opcode() == Xcode.VAR) {
-      return importVar(base, xcodemlSrc, xcodemlDst);
-    } else {
-      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, xcodemlDst);
-      intConst.setValue(base.value());
-      return intConst;
-    }
-  }
-
-  /**
-   * Create a copy with a new hash type of an integer variable element from one
-   * XcodeML unit to another one.
-   *
-   * @param base       Base variable element to be copied.
-   * @param xcodemlSrc Source XcodeML unit.
-   * @param xcodemlDst Destination XcodeML unit.
-   * @return The newly created element in the destination XcodeML unit.
-   * @throws IllegalTransformationException If the variable element doesn't meet
-   *                                        the criteria.
-   */
-  private static Xnode importVar(Xnode base, XcodeML xcodemlSrc,
-                                 XcodeML xcodemlDst)
-      throws IllegalTransformationException
-  {
-    String typeValue = base.getAttribute(Xattr.TYPE);
-    if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
-      throw new IllegalTransformationException("Only integer variable are " +
-          "supported as lower/upper bound value for promotted arrays.");
-    }
-
-    XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
-    Xnode bType = new Xnode(Xcode.FBASICTYPE, xcodemlDst);
-    bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
-    bType.setAttribute(Xattr.TYPE,
-        xcodemlDst.getTypeTable().generateIntegerTypeHash());
-    if(type != null && type.getIntent() != Xintent.NONE) {
-      bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
-    }
-
-    Xnode var = new Xnode(Xcode.VAR, xcodemlDst);
-    var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
-    var.setValue(base.value());
-    var.setAttribute(Xattr.TYPE, bType.getAttribute(Xattr.TYPE));
-    return var;
   }
 
 
