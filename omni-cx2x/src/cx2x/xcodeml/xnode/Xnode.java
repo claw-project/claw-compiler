@@ -521,4 +521,16 @@ public class Xnode {
     }
     return null;
   }
+
+  /**
+   * Get the depth of the node in the AST.
+   *
+   * @return A depth value greater or equal to 0.
+   */
+  public int depth() {
+    if(_baseElement == null) {
+      return -1;
+    }
+    return XnodeUtil.getDepth(_baseElement);
+  }
 }

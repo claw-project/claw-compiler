@@ -720,7 +720,7 @@ public class XnodeUtil {
    * @param element XML element for which the depth is computed.
    * @return A depth value greater or equal to 0.
    */
-  private static int getDepth(Element element) {
+  public static int getDepth(Element element) {
     Node parent = element.getParentNode();
     int depth = 0;
     while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
@@ -1088,19 +1088,6 @@ public class XnodeUtil {
     low2.delete();
     up2.delete();
     s2.delete();
-  }
-
-  /**
-   * Get the depth of an element in the AST.
-   *
-   * @param element The element for which the depth is computed.
-   * @return A depth value greater or equal to 0.
-   */
-  public static int getDepth(Xnode element) {
-    if(element == null || element.element() == null) {
-      return -1;
-    }
-    return getDepth(element.element());
   }
 
   /**

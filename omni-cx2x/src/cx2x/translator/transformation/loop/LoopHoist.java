@@ -50,7 +50,7 @@ public class LoopHoist extends ClawBlockTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
-    int _pragmaDepthLevel = XnodeUtil.getDepth(_clawStart.getPragma());
+    int _pragmaDepthLevel = _clawStart.getPragma().depth();
     _nestedLevel = _clawStart.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
@@ -77,7 +77,7 @@ public class LoopHoist extends ClawBlockTransformation {
       }
 
       LoopHoistDoStmtGroup crtGroup = new LoopHoistDoStmtGroup(group);
-      int depth = XnodeUtil.getDepth(group[0]);
+      int depth = group[0].depth();
       if(depth != _pragmaDepthLevel) {
         Xnode tmpIf = group[0].matchAncestor(Xcode.FIFSTATEMENT);
         Xnode tmpSelect = group[0].matchAncestor(Xcode.FSELECTCASESTATEMENT);
@@ -88,8 +88,8 @@ public class LoopHoist extends ClawBlockTransformation {
           return false;
         }
 
-        int ifDepth = XnodeUtil.getDepth(tmpIf);
-        int selectDepth = XnodeUtil.getDepth(tmpSelect);
+        int ifDepth = tmpIf.depth();
+        int selectDepth = tmpSelect.depth();
         if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth)
             && (ifDepth < depth || selectDepth < depth))
         {
