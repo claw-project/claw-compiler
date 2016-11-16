@@ -23,7 +23,10 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -665,7 +668,6 @@ public class XnodeUtil {
   /* XNODE SECTION */
 
 
-
   /**
    * Find function definition in the ancestor of the give element.
    *
@@ -1187,6 +1189,19 @@ public class XnodeUtil {
 
   /**
    * Create a new FifStatement element with an empty then body.
+   * <p>
+   * <pre>
+   * {@code
+   *
+   * <FifStatement>
+   *   <condition></condition>
+   *   <then>
+   *     <body></body>
+   *   </then>
+   * </FifStatement>
+   *
+   * }
+   * </pre>
    *
    * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
@@ -1205,6 +1220,18 @@ public class XnodeUtil {
 
   /**
    * Create a new FdoStatement element with an empty body.
+   * <p>
+   * <pre>
+   * {@code
+   *
+   * <FdoStatement>
+   *   <Var></Var> <!-- provided as argument -->
+   *   <indexRange></indexRange> <!-- provided as argument -->
+   *   <body></body>
+   * </FdoStatement>
+   *
+   * }
+   * </pre>
    *
    * @param xcodeml      Current XcodeML file unit in which the element is
    *                     created.
@@ -1225,6 +1252,10 @@ public class XnodeUtil {
 
   /**
    * Create a new var element.
+   * <p>
+   * {@code
+   * <Var type="" scope="">value</Var>
+   * }
    *
    * @param type    Value of the type attribute.
    * @param value   Value of the var.
