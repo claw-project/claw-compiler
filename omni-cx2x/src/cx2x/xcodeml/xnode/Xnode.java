@@ -561,4 +561,15 @@ public class Xnode {
     }
     _baseElement.getParentNode().insertBefore(node.element(), _baseElement);
   }
+
+  /**
+   * Find module definition node in which the current node is nested if any.
+   *
+   * @return A XmoduleDefinition node if found. Null otherwise.
+   */
+  public XmoduleDefinition findParentModule() {
+    Xnode moduleDef = matchAncestor(Xcode.FMODULEDEFINITION);
+    return (moduleDef != null) ?
+        new XmoduleDefinition(moduleDef.element()) : null;
+  }
 }

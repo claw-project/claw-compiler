@@ -302,7 +302,7 @@ public class AcceleratorHelper {
       XfunctionDefinition calledFctDef =
           xcodeml.getGlobalDeclarationsTable().getFctDefinition(fctName);
       if(calledFctDef == null) {
-        XmoduleDefinition mod = XnodeUtil.findParentModule(fctDef);
+        XmoduleDefinition mod = fctDef.findParentModule();
         List<Xnode> fctDefs = mod.matchAll(Xcode.FFUNCTIONDEFINITION);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);

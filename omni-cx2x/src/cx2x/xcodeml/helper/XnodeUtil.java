@@ -664,22 +664,7 @@ public class XnodeUtil {
 
   /* XNODE SECTION */
 
-  /**
-   * Find module definition element in which the child is included if any.
-   *
-   * @param from The child element to search from.
-   * @return A XmoduleDefinition object if found. Null otherwise.
-   */
-  public static XmoduleDefinition findParentModule(Xnode from) {
-    if(from == null) {
-      return null;
-    }
-    Xnode moduleDef = from.matchAncestor(Xcode.FMODULEDEFINITION);
-    if(moduleDef == null) {
-      return null;
-    }
-    return new XmoduleDefinition(moduleDef.element());
-  }
+
 
   /**
    * Find function definition in the ancestor of the give element.
@@ -1268,21 +1253,6 @@ public class XnodeUtil {
     Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, xcodeml);
     namedValue.setAttribute(Xattr.NAME, value);
     return namedValue;
-  }
-
-  /**
-   * Find module containing the function and read its .xmod file.
-   *
-   * @param fctDef Function definition nested in the module.
-   * @return Xmod object if the module has been found and read. Null otherwise.
-   */
-  public static Xmod findContainingModule(XfunctionDefinition fctDef) {
-    XmoduleDefinition mod = findParentModule(fctDef);
-    if(mod == null) {
-      return null;
-    }
-    String modName = mod.getAttribute(Xattr.NAME);
-    return findModule(modName);
   }
 
   /**

@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 
 /**
@@ -108,5 +109,19 @@ public class XfunctionDefinition extends Xnode {
   public XfunctionDefinition cloneNode() {
     Element clone = (Element) cloneRawNode();
     return new XfunctionDefinition(clone);
+  }
+
+  /**
+   * Find module containing the function and read its .xmod file.
+   *
+   * @return Xmod object if the module has been found and read. Null otherwise.
+   */
+  public Xmod findContainingModule() {
+    XmoduleDefinition mod = findParentModule();
+    if(mod == null) {
+      return null;
+    }
+    String modName = mod.getAttribute(Xattr.NAME);
+    return XnodeUtil.findModule(modName);
   }
 }
