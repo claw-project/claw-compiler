@@ -613,7 +613,7 @@ public class Parallelize extends ClawTransformation {
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
-    XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
+    XbasicType intTypeIntentIn = xcodeml.createBasicType(
         xcodeml.getTypeTable().generateIntegerTypeHash(),
         Xname.TYPE_F_INT, Xintent.IN);
     xcodeml.getTypeTable().add(intTypeIntentIn);

@@ -1002,30 +1002,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Constructs a new basicType element with the given information.
-   *
-   * @param xcodeml The current XcodeML file unit in which the elements
-   *                are created.
-   * @param type    Type hash.
-   * @param ref     Reference type.
-   * @param intent  Optional intent information.
-   * @return The newly created element.
-   */
-  public static XbasicType createBasicType(XcodeML xcodeml, String type,
-                                           String ref, Xintent intent)
-  {
-    Xnode bt = new Xnode(Xcode.FBASICTYPE, xcodeml);
-    bt.setAttribute(Xattr.TYPE, type);
-    if(ref != null) {
-      bt.setAttribute(Xattr.REF, ref);
-    }
-    if(intent != null) {
-      bt.setAttribute(Xattr.INTENT, intent.toString());
-    }
-    return new XbasicType(bt.element());
-  }
-
-  /**
    * Create an empty assumed shape indexRange element.
    *
    * @param xcodeml Current XcodeML file unit in which the element is

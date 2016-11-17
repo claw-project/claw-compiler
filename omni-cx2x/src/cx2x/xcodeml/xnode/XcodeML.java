@@ -409,4 +409,24 @@ public class XcodeML extends Xnode {
     varD.append(internalName, false);
     return new Xdecl(varD.element());
   }
+
+  /**
+   * Constructs a new basicType node with attributes.
+   *
+   * @param type   Type attribute value.
+   * @param ref    Reference attribute value.
+   * @param intent Optional intent value.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public XbasicType createBasicType(String type, String ref, Xintent intent) {
+    Xnode bt = new Xnode(Xcode.FBASICTYPE, this);
+    bt.setAttribute(Xattr.TYPE, type);
+    if(ref != null) {
+      bt.setAttribute(Xattr.REF, ref);
+    }
+    if(intent != null) {
+      bt.setAttribute(Xattr.INTENT, intent.toString());
+    }
+    return new XbasicType(bt.element());
+  }
 }

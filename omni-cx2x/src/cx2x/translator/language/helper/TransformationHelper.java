@@ -356,9 +356,9 @@ public class TransformationHelper {
       }
     }
 
-    XbasicType modIntTypeIntentIn = XnodeUtil.createBasicType(mod,
-        mod.getTypeTable().generateIntegerTypeHash(),
-        Xname.TYPE_F_INT, Xintent.IN);
+    XbasicType modIntTypeIntentIn = mod.createBasicType(
+        mod.getTypeTable().generateIntegerTypeHash(), Xname.TYPE_F_INT,
+        Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
     List<Xnode> paramsLocal = fctType.getParams().getAll();
@@ -500,15 +500,13 @@ public class TransformationHelper {
         throw new IllegalTransformationException("Cannot matchSeq type for " +
             fieldId, claw.getPragma().lineNo());
       } else if(XnodeUtil.isBuiltInType(id.getType())) {
-        newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
-            Xintent.NONE);
+        newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
         newType = oldType.cloneNode();
         newType.setType(type);
       }
     } else {
-      newType = XnodeUtil.createBasicType(xcodeml, type, id.getType(),
-          Xintent.NONE);
+      newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
     }
     PromotionInfo proInfo = new PromotionInfo(fieldId, newType.getDimensions(),
         newType.getDimensions() + dimensions.size(), type);

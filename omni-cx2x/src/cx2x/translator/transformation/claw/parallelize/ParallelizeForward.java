@@ -423,7 +423,7 @@ public class ParallelizeForward extends ClawTransformation {
               _claw.getPragma().lineNo());
         }
         // Size variable have to be declared
-        XbasicType intTypeIntentIn = XnodeUtil.createBasicType(xcodeml,
+        XbasicType intTypeIntentIn = xcodeml.createBasicType(
             xcodeml.getTypeTable().generateIntegerTypeHash(),
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(intTypeIntentIn);

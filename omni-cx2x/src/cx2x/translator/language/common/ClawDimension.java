@@ -5,7 +5,6 @@
 
 package cx2x.translator.language.common;
 
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
 
 /**
@@ -163,7 +162,7 @@ public class ClawDimension {
     if(lowerBoundIsVar()) {
       if(_lowerBoundType == null) {
         _lowerBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
-        XbasicType bType = XnodeUtil.createBasicType(xcodeml, _lowerBoundType,
+        XbasicType bType = xcodeml.createBasicType(_lowerBoundType,
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
       }
@@ -181,7 +180,7 @@ public class ClawDimension {
     if(upperBoundIsVar()) {
       if(_lowerBoundType == null) {
         _upperBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
-        XbasicType bType = XnodeUtil.createBasicType(xcodeml, _upperBoundType,
+        XbasicType bType = xcodeml.createBasicType(_upperBoundType,
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
       }
