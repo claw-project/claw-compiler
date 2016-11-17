@@ -569,8 +569,6 @@ public class XcodeML extends Xnode {
     } else {
       fctType.getParams().addBefore(hook, newParam);
     }
-    // TODO move method to TransformationHelper
-    newParam.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
     return newParam;
   }
 
@@ -583,14 +581,14 @@ public class XcodeML extends Xnode {
    * @param fctType   Function type in which the node will be added as a
    *                  parameter.
    */
-  public void createAndAddParamIfNotExists(String nameValue, String type,
+  public Xnode createAndAddParamIfNotExists(String nameValue, String type,
                                            XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()) {
       if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
-        return;
+        return null;
       }
     }
-    createAndAddParam(nameValue, type, fctType);
+    return createAndAddParam(nameValue, type, fctType);
   }
 }

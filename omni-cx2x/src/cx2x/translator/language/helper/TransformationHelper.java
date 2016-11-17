@@ -376,8 +376,11 @@ public class TransformationHelper {
       // Number of parameters in the module function as been
       if(pLocal.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         // new parameter
-        mod.createAndAddParamIfNotExists(pLocal.value(),
+        Xnode param = mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
+        if(param != null) {
+          param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+        }
       } else {
         Xnode pMod = paramsMod.get(i);
         String localType = pLocal.getAttribute(Xattr.TYPE);
