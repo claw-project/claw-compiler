@@ -1026,26 +1026,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a new Xdecl object with all the underlying elements for a varDecl.
-   *
-   * @param xcodeml   The current XcodeML file unit in which the elements
-   *                  are created.
-   * @param nameType  Value for the attribute type of the name element.
-   * @param nameValue Value of the name inner element.
-   * @return The newly created element.
-   */
-  public static Xdecl createVarDecl(XcodeML xcodeml, String nameType,
-                                    String nameValue)
-  {
-    Xnode varD = new Xnode(Xcode.VARDECL, xcodeml);
-    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
-    internalName.setValue(nameValue);
-    internalName.setAttribute(Xattr.TYPE, nameType);
-    varD.append(internalName, false);
-    return new Xdecl(varD.element());
-  }
-
-  /**
    * Create an empty assumed shape indexRange element.
    *
    * @param xcodeml Current XcodeML file unit in which the element is

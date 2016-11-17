@@ -302,7 +302,7 @@ public class XcodeML extends Xnode {
   {
     Xid id = createId(type, sclass, name);
     fctDef.getSymbolTable().add(id);
-    Xdecl decl = XnodeUtil.createVarDecl(this, type, name);
+    Xdecl decl = createVarDecl(type, name);
     fctDef.getDeclarationTable().add(decl);
   }
 
@@ -382,7 +382,7 @@ public class XcodeML extends Xnode {
    * @param type      Value for the attribute type.
    * @param sclass    Value for the attribute sclass.
    * @param nameValue Value of the name inner element.
-   * @return The newly created element.
+   * @return The newly created node dettached in the current XcodeML unit.
    */
   public Xid createId(String type, String sclass, String nameValue) {
     Xnode id = new Xnode(Xcode.ID, this);
@@ -392,5 +392,21 @@ public class XcodeML extends Xnode {
     id.setAttribute(Xattr.TYPE, type);
     id.setAttribute(Xattr.SCLASS, sclass);
     return new Xid(id.element());
+  }
+
+  /**
+   * Create a new varDecl node with all the mandatory nodes.
+   *
+   * @param nameType  Value for the attribute type of the name node.
+   * @param nameValue Value of the name inner node.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xdecl createVarDecl(String nameType, String nameValue) {
+    Xnode varD = new Xnode(Xcode.VARDECL, this);
+    Xnode internalName = new Xnode(Xcode.NAME, this);
+    internalName.setValue(nameValue);
+    internalName.setAttribute(Xattr.TYPE, nameType);
+    varD.append(internalName, false);
+    return new Xdecl(varD.element());
   }
 }
