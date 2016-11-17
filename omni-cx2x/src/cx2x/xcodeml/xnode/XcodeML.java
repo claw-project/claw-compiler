@@ -265,4 +265,26 @@ public class XcodeML extends Xnode {
     return nodeType == Node.ELEMENT_NODE || nodeType == Node.CDATA_SECTION_NODE
         || nodeType == Node.COMMENT_NODE;
   }
+
+
+  /*
+   * Node creation section
+   */
+
+  /**
+   * Constructs a new name node with name value and optional type.
+   *
+   * @param name Name value.
+   * @param type Optional type value.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createName(String name, String type)
+  {
+    Xnode n = new Xnode(Xcode.NAME, this);
+    n.setValue(name);
+    if(type != null) {
+      n.setAttribute(Xattr.TYPE, type);
+    }
+    return n;
+  }
 }

@@ -1114,25 +1114,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Constructs a new name element with name value and optional type.
-   *
-   * @param xcodeml Current XcodeML file unit in which the element is
-   *                created.
-   * @param name    Name value.
-   * @param type    Optional type value.
-   * @return The newly created element.
-   */
-  private static Xnode createName(XcodeML xcodeml, String name, String type)
-  {
-    Xnode n = new Xnode(Xcode.NAME, xcodeml);
-    n.setValue(name);
-    if(type != null) {
-      n.setAttribute(Xattr.TYPE, type);
-    }
-    return n;
-  }
-
-  /**
    * Create an empty assumed shape indexRange element.
    *
    * @param xcodeml Current XcodeML file unit in which the element is
@@ -1360,7 +1341,7 @@ public class XnodeUtil {
   public static Xnode createAndAddParam(XcodeML xcodeml, String nameValue,
                                         String type, XfunctionType fctType)
   {
-    Xnode newParam = XnodeUtil.createName(xcodeml, nameValue, type);
+    Xnode newParam = xcodeml.createName(nameValue, type);
     Xnode hook = null;
     // Newly created parameter must be added before any optional parameter
     for(Xnode param : fctType.getParams().getAll()) {
