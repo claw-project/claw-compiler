@@ -626,8 +626,8 @@ public class Parallelize extends ClawTransformation {
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef);
 
         // Add parameter to the local type table
-        XnodeUtil.createAndAddParam(xcodeml,
-            dimension.getLowerBoundId(), intTypeIntentIn.getType(), _fctType);
+        xcodeml.createAndAddParam(dimension.getLowerBoundId(),
+            intTypeIntentIn.getType(), _fctType);
       }
 
       // Create parameter for the upper bound
@@ -636,8 +636,8 @@ public class Parallelize extends ClawTransformation {
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef);
 
         // Add parameter to the local type table
-        XnodeUtil.createAndAddParam(xcodeml,
-            dimension.getUpperBoundId(), intTypeIntentIn.getType(), _fctType);
+        xcodeml.createAndAddParam(dimension.getUpperBoundId(),
+            intTypeIntentIn.getType(), _fctType);
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,

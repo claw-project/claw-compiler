@@ -1043,41 +1043,6 @@ public class XnodeUtil {
 
   /**
    * Create a name element and adds it as a parameter of the given function
-   * type. If the function has optional parameters, the newly created parameter
-   * is added before the optional ones.
-   *
-   * @param xcodeml   Current XcodeML file unit.
-   * @param nameValue Value of the name element to create.
-   * @param type      Type of the name element to create.
-   * @param fctType   Function type in which the element will be added as a
-   *                  parameter.
-   */
-  public static Xnode createAndAddParam(XcodeML xcodeml, String nameValue,
-                                        String type, XfunctionType fctType)
-  {
-    Xnode newParam = xcodeml.createName(nameValue, type);
-    Xnode hook = null;
-    // Newly created parameter must be added before any optional parameter
-    for(Xnode param : fctType.getParams().getAll()) {
-      XbasicType paramType = (XbasicType) xcodeml.
-          getTypeTable().get(param.getAttribute(Xattr.TYPE));
-      if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
-        hook = param;
-        break;
-      }
-    }
-    if(hook == null) {
-      fctType.getParams().add(newParam);
-    } else {
-      fctType.getParams().addBefore(hook, newParam);
-    }
-    // TODO move method to TransformationHelper
-    newParam.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
-    return newParam;
-  }
-
-  /**
-   * Create a name element and adds it as a parameter of the given function
    * type if this parameter is does not exist yet.
    *
    * @param xcodeml   Current XcodeML file unit.
@@ -1095,7 +1060,7 @@ public class XnodeUtil {
         return;
       }
     }
-    createAndAddParam(xcodeml, nameValue, type, fctType);
+    xcodeml.createAndAddParam(nameValue, type, fctType);
   }
 
   /**

@@ -430,7 +430,7 @@ public class ParallelizeForward extends ClawTransformation {
         xcodeml.createIdAndDecl(var, intTypeIntentIn.getType(),
             Xname.SCLASS_F_PARAM, fDef);
         type = intTypeIntentIn.getType();
-        XnodeUtil.createAndAddParam(xcodeml, var, type, _parentFctType);
+        xcodeml.createAndAddParam(var, type, _parentFctType);
       } else {
 
         // Var exists already. Add to the parameters if not here.

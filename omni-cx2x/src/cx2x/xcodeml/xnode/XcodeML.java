@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
@@ -537,5 +538,39 @@ public class XcodeML extends Xnode {
     dim.setValue(String.valueOf(dimension));
     args.append(dim, false);
     return indexRange;
+  }
+
+  /**
+   * Create a name element and adds it as a parameter of the given function
+   * type. If the function has optional parameters, the newly created parameter
+   * is added before the optional ones.
+   *
+   * @param nameValue Value of the name element to create.
+   * @param type      Type of the name element to create.
+   * @param fctType   Function type in which the element will be added as a
+   *                  parameter.
+   */
+  public Xnode createAndAddParam(String nameValue, String type,
+                                 XfunctionType fctType)
+  {
+    Xnode newParam = createName(nameValue, type);
+    Xnode hook = null;
+    // Newly created parameter must be added before any optional parameter
+    for(Xnode param : fctType.getParams().getAll()) {
+      XbasicType paramType =
+          (XbasicType) getTypeTable().get(param.getAttribute(Xattr.TYPE));
+      if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
+        hook = param;
+        break;
+      }
+    }
+    if(hook == null) {
+      fctType.getParams().add(newParam);
+    } else {
+      fctType.getParams().addBefore(hook, newParam);
+    }
+    // TODO move method to TransformationHelper
+    newParam.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+    return newParam;
   }
 }
