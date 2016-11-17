@@ -1042,28 +1042,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a name element and adds it as a parameter of the given function
-   * type if this parameter is does not exist yet.
-   *
-   * @param xcodeml   Current XcodeML file unit.
-   * @param nameValue Value of the name element to create.
-   * @param type      Type of the name element to create.
-   * @param fctType   Function type in which the element will be added as a
-   *                  parameter.
-   */
-  public static void createAndAddParamIfNotExists(XcodeML xcodeml,
-                                                  String nameValue, String type,
-                                                  XfunctionType fctType)
-  {
-    for(Xnode p : fctType.getParams().getAll()) {
-      if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
-        return;
-      }
-    }
-    xcodeml.createAndAddParam(nameValue, type, fctType);
-  }
-
-  /**
    * Duplicates the type to update and add extra dimensions to match the base
    * type.
    *

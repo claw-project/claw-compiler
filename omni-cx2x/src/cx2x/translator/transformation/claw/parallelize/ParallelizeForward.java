@@ -439,8 +439,7 @@ public class ParallelizeForward extends ClawTransformation {
         /* If flatten mode, we do not add extra parameters to the function
          * definition */
         if(!_flatten) {
-          XnodeUtil.
-              createAndAddParamIfNotExists(xcodeml, var, type, _parentFctType);
+          xcodeml.createAndAddParamIfNotExists(var, type, _parentFctType);
         }
       }
 

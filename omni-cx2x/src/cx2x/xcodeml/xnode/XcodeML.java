@@ -573,4 +573,24 @@ public class XcodeML extends Xnode {
     newParam.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
     return newParam;
   }
+
+  /**
+   * Create a name element and adds it as a parameter of the given function
+   * type if this parameter is does not exist yet.
+   *
+   * @param nameValue Value of the name element to create.
+   * @param type      Type of the name element to create.
+   * @param fctType   Function type in which the element will be added as a
+   *                  parameter.
+   */
+  public void createAndAddParamIfNotExists(String nameValue, String type,
+                                           XfunctionType fctType)
+  {
+    for(Xnode p : fctType.getParams().getAll()) {
+      if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
+        return;
+      }
+    }
+    createAndAddParam(nameValue, type, fctType);
+  }
 }

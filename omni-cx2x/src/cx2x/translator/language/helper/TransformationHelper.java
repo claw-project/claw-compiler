@@ -376,7 +376,7 @@ public class TransformationHelper {
       // Number of parameters in the module function as been
       if(pLocal.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         // new parameter
-        XnodeUtil.createAndAddParamIfNotExists(mod, pLocal.value(),
+        mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
       } else {
         Xnode pMod = paramsMod.get(i);
