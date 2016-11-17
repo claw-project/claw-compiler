@@ -212,9 +212,8 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])) {
-        Xid inductionVarId = XnodeUtil.createId(xcodeml,
-            Xname.TYPE_F_INT, Xname.SCLASS_F_LOCAL,
-            inductionVars[i]);
+        Xid inductionVarId = xcodeml.createId(Xname.TYPE_F_INT,
+            Xname.SCLASS_F_LOCAL, inductionVars[i]);
         fctDef.getSymbolTable().add(inductionVarId, false);
       }
 

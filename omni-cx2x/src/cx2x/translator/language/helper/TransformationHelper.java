@@ -318,7 +318,7 @@ public class TransformationHelper {
       Node rawNode = mod.getDocument().importNode(fctType.element(), true);
       mod.getTypeTable().element().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);
-      Xid importedFctTypeId = XnodeUtil.createId(mod, importedFctType.getType(),
+      Xid importedFctTypeId = mod.createId(importedFctType.getType(),
           Xname.SCLASS_F_FUNC, fctDef.getName().value());
       mod.getIdentifiers().add(importedFctTypeId);
 

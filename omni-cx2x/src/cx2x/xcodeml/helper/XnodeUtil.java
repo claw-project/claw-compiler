@@ -1001,32 +1001,6 @@ public class XnodeUtil {
     return null;
   }
 
-
-
-
-
-  /**
-   * Create a new Id element with all the underlying needed elements.
-   *
-   * @param xcodeml   The current XcodeML program unit in which the elements
-   *                  are created.
-   * @param type      Value for the attribute type.
-   * @param sclass    Value for the attribute sclass.
-   * @param nameValue Value of the name inner element.
-   * @return The newly created element.
-   */
-  public static Xid createId(XcodeML xcodeml, String type, String sclass,
-                             String nameValue)
-  {
-    Xnode id = new Xnode(Xcode.ID, xcodeml);
-    Xnode internalName = new Xnode(Xcode.NAME, xcodeml);
-    internalName.setValue(nameValue);
-    id.append(internalName, false);
-    id.setAttribute(Xattr.TYPE, type);
-    id.setAttribute(Xattr.SCLASS, sclass);
-    return new Xid(id.element());
-  }
-
   /**
    * Constructs a new basicType element with the given information.
    *
