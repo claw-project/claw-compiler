@@ -590,8 +590,7 @@ public class Parallelize extends ClawTransformation {
       XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
 
       for(Xnode var : vars) {
-        Xnode ref =
-            XnodeUtil.createArrayRef(xcodeml, type, var.cloneNode());
+        Xnode ref = xcodeml.createArrayRef(type, var.cloneNode());
         for(Xnode ai : _beforeCrt.get(index)) {
           ref.matchSeq(Xcode.VARREF).insertAfter(ai.cloneNode());
         }

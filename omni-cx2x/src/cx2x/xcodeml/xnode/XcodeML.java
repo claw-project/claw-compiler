@@ -357,4 +357,22 @@ public class XcodeML extends Xnode {
     fctCall.append(args, false);
     return fctCall;
   }
+
+  /**
+   * Create a new FarrayRef node with varRef node as a child with the
+   * given Var element.
+   *
+   * @param type Value of the type attribute for the FarrayRef node.
+   * @param var  Var node nested in the varRef element.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createArrayRef(XbasicType type, Xnode var) {
+    Xnode ref = new Xnode(Xcode.FARRAYREF, this);
+    ref.setAttribute(Xattr.TYPE, type.getRef());
+    Xnode varRef = new Xnode(Xcode.VARREF, this);
+    varRef.setAttribute(Xattr.TYPE, type.getType());
+    varRef.append(var, false);
+    ref.append(varRef, false);
+    return ref;
+  }
 }

@@ -1003,26 +1003,7 @@ public class XnodeUtil {
 
 
 
-  /**
-   * Create a new FarrayRef element with varRef element as a child with the
-   * given Var element.
-   *
-   * @param xcodeml The current XcodeML unit in which the elements are created.
-   * @param type    Value of the type attribute for the FarrayRef element.
-   * @param var     Var element nested in the varRef element.
-   * @return The newly created element.
-   */
-  public static Xnode createArrayRef(XcodeML xcodeml, XbasicType type,
-                                     Xnode var)
-  {
-    Xnode ref = new Xnode(Xcode.FARRAYREF, xcodeml);
-    ref.setAttribute(Xattr.TYPE, type.getRef());
-    Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
-    varRef.setAttribute(Xattr.TYPE, type.getType());
-    varRef.append(var, false);
-    ref.append(varRef, false);
-    return ref;
-  }
+
 
   /**
    * Create a new Id element with all the underlying needed elements.
