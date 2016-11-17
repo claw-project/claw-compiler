@@ -1001,18 +1001,7 @@ public class XnodeUtil {
     return null;
   }
 
-  /**
-   * Create an empty assumed shape indexRange element.
-   *
-   * @param xcodeml Current XcodeML file unit in which the element is
-   *                created.
-   * @return The newly created element.
-   */
-  public static Xnode createEmptyAssumedShaped(XcodeML xcodeml) {
-    Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
-    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
-    return range;
-  }
+
 
   /**
    * Create an indexRange element to loop over an assumed shape array.
@@ -1242,7 +1231,7 @@ public class XnodeUtil {
       int additionalDimensions =
           base.getDimensions() - toUpdate.getDimensions();
       for(int i = 0; i < additionalDimensions; ++i) {
-        Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodemlDst);
+        Xnode index = xcodemlDst.createEmptyAssumedShaped();
         newType.addDimension(index, 0);
       }
     } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {

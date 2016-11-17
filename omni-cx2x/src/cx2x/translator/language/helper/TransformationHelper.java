@@ -516,7 +516,7 @@ public class TransformationHelper {
           && (fctType.hasParam(fieldId) || newType.isPointer()))
       {
         for(int i = 0; i < overDimensions; ++i) {
-          Xnode index = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+          Xnode index = xcodeml.createEmptyAssumedShaped();
           newType.addDimension(index, 0);
         }
       } else {

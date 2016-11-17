@@ -429,4 +429,15 @@ public class XcodeML extends Xnode {
     }
     return new XbasicType(bt.element());
   }
+
+  /**
+   * Create an empty assumed shape indexRange node.
+   *
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createEmptyAssumedShaped() {
+    Xnode range = new Xnode(Xcode.INDEXRANGE, this);
+    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
+    return range;
+  }
 }

@@ -622,7 +622,7 @@ public class ParallelizeForward extends ClawTransformation {
       // Adapte array index to reflect the new return type
       if(lhs.opcode() == Xcode.FARRAYREF) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
-          Xnode indexRange = XnodeUtil.createEmptyAssumedShaped(xcodeml);
+          Xnode indexRange = xcodeml.createEmptyAssumedShaped();
           lhs.append(indexRange, false);
         }
       } else if(lhs.opcode() == Xcode.VAR) {
