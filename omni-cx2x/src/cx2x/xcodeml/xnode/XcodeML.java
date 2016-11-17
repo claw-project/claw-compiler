@@ -468,4 +468,33 @@ public class XcodeML extends Xnode {
     root.append(body, false);
     return root;
   }
+
+  /**
+   * Create a new FifStatement node with an empty condition and then body.
+   * <p>
+   * <pre>
+   * {@code
+   *
+   * <FifStatement>
+   *   <condition></condition>
+   *   <then>
+   *     <body></body>
+   *   </then>
+   * </FifStatement>
+   *
+   * }
+   * </pre>
+   *
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createIfThen() {
+    Xnode root = new Xnode(Xcode.FIFSTATEMENT, this);
+    Xnode cond = new Xnode(Xcode.CONDITION, this);
+    Xnode thenBlock = new Xnode(Xcode.THEN, this);
+    Xnode thenBody = new Xnode(Xcode.BODY, this);
+    thenBlock.append(thenBody, false);
+    root.append(cond, false);
+    root.append(thenBlock, false);
+    return root;
+  }
 }

@@ -1046,37 +1046,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a new FifStatement element with an empty then body.
-   * <p>
-   * <pre>
-   * {@code
-   *
-   * <FifStatement>
-   *   <condition></condition>
-   *   <then>
-   *     <body></body>
-   *   </then>
-   * </FifStatement>
-   *
-   * }
-   * </pre>
-   *
-   * @param xcodeml Current XcodeML file unit in which the element is
-   *                created.
-   * @return The newly created element.
-   */
-  public static Xnode createIfThen(XcodeML xcodeml) {
-    Xnode root = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
-    Xnode cond = new Xnode(Xcode.CONDITION, xcodeml);
-    Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
-    Xnode thenBody = new Xnode(Xcode.BODY, xcodeml);
-    thenBlock.append(thenBody, false);
-    root.append(cond, false);
-    root.append(thenBlock, false);
-    return root;
-  }
-
-  /**
    * Find module by name.
    *
    * @param moduleName Name of the module.

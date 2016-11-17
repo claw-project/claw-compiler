@@ -187,7 +187,7 @@ public class Kcaching extends ClawTransformation {
       Xnode initIfStmt = (Xnode) ct.hasElement(_doStmt);
       if(initIfStmt == null) {
         // If statement has not been created yet so we do it here
-        initIfStmt = XnodeUtil.createIfThen(xcodeml);
+        initIfStmt = xcodeml.createIfThen();
         XnodeUtil.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
         Xnode logEq = new Xnode(Xcode.LOGEQEXPR, xcodeml);
 
