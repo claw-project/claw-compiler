@@ -470,8 +470,8 @@ public class LoopExtraction extends ClawTransformation {
   private Xnode wrapCallWithLoop(XcodeProgram xcodeml, Xnode doStmt)
   {
     // Create a new empty loop
-    Xnode loop = XnodeUtil.createDoStmt(
-        xcodeml, doStmt.matchDirectDescendant(Xcode.VAR).cloneNode(),
+    Xnode loop = xcodeml.createDoStmt(
+        doStmt.matchDirectDescendant(Xcode.VAR).cloneNode(),
         doStmt.matchDirectDescendant(Xcode.INDEXRANGE).cloneNode());
 
     // Insert the new empty loop just after the pragma

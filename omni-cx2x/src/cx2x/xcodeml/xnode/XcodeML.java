@@ -440,4 +440,32 @@ public class XcodeML extends Xnode {
     range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
     return range;
   }
+
+  /**
+   * Create a new FdoStatement node with an empty body.
+   * <p>
+   * <pre>
+   * {@code
+   *
+   * <FdoStatement>
+   *   <Var></Var> <!-- provided as argument -->
+   *   <indexRange></indexRange> <!-- provided as argument -->
+   *   <body></body>
+   * </FdoStatement>
+   *
+   * }
+   * </pre>
+   *
+   * @param inductionVar Var element for the induction variable.
+   * @param indexRange   indexRange element for the iteration range.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createDoStmt(Xnode inductionVar, Xnode indexRange) {
+    Xnode root = new Xnode(Xcode.FDOSTATEMENT, this);
+    root.append(inductionVar, false);
+    root.append(indexRange, false);
+    Xnode body = new Xnode(Xcode.BODY, this);
+    root.append(body, false);
+    return root;
+  }
 }

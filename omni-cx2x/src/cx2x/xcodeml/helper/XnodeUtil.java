@@ -1077,38 +1077,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a new FdoStatement element with an empty body.
-   * <p>
-   * <pre>
-   * {@code
-   *
-   * <FdoStatement>
-   *   <Var></Var> <!-- provided as argument -->
-   *   <indexRange></indexRange> <!-- provided as argument -->
-   *   <body></body>
-   * </FdoStatement>
-   *
-   * }
-   * </pre>
-   *
-   * @param xcodeml      Current XcodeML file unit in which the element is
-   *                     created.
-   * @param inductionVar Var element for the induction variable.
-   * @param indexRange   indexRange element for the iteration range.
-   * @return The newly created element.
-   */
-  public static Xnode createDoStmt(XcodeML xcodeml, Xnode inductionVar,
-                                   Xnode indexRange)
-  {
-    Xnode root = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
-    root.append(inductionVar, false);
-    root.append(indexRange, false);
-    Xnode body = new Xnode(Xcode.BODY, xcodeml);
-    root.append(body, false);
-    return root;
-  }
-
-  /**
    * Find module by name.
    *
    * @param moduleName Name of the module.
