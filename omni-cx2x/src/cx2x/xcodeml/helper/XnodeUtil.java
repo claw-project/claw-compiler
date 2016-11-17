@@ -1001,30 +1001,7 @@ public class XnodeUtil {
     return null;
   }
 
-  /**
-   * Create a new FunctionCall element with elements name and arguments as
-   * children.
-   *
-   * @param xcodeml    The current XcodeML unit in which the elements are
-   *                   created.
-   * @param returnType Value of the type attribute for the functionCall element.
-   * @param name       Value of the name element.
-   * @param nameType   Value of the type attribute for the name element.
-   * @return The newly created element.
-   */
-  public static Xnode createFctCall(XcodeML xcodeml, String returnType,
-                                    String name, String nameType)
-  {
-    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
-    fctCall.setAttribute(Xattr.TYPE, returnType);
-    Xnode fctName = new Xnode(Xcode.NAME, xcodeml);
-    fctName.setValue(name);
-    fctName.setAttribute(Xattr.TYPE, nameType);
-    Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
-    fctCall.append(fctName, false);
-    fctCall.append(args, false);
-    return fctCall;
-  }
+
 
   /**
    * Create a new FarrayRef element with varRef element as a child with the

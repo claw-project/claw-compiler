@@ -337,4 +337,24 @@ public class XcodeML extends Xnode {
     var.setValue(value);
     return var;
   }
+
+  /**
+   * Create a new FunctionCall node with name and arguments as children nodes.
+   *
+   * @param returnType Value of the type attribute for the functionCall node.
+   * @param name       Value of the name node.
+   * @param nameType   Value of the type attribute for the name node.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createFctCall(String returnType, String name, String nameType) {
+    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
+    fctCall.setAttribute(Xattr.TYPE, returnType);
+    Xnode fctName = new Xnode(Xcode.NAME, this);
+    fctName.setValue(name);
+    fctName.setAttribute(Xattr.TYPE, nameType);
+    Xnode args = new Xnode(Xcode.ARGUMENTS, this);
+    fctCall.append(fctName, false);
+    fctCall.append(args, false);
+    return fctCall;
+  }
 }
