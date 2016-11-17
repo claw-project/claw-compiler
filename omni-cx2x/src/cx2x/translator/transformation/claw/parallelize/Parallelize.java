@@ -623,8 +623,8 @@ public class Parallelize extends ClawTransformation {
     for(ClawDimension dimension : _claw.getDimensionValues()) {
       // Create the parameter for the lower bound
       if(dimension.lowerBoundIsVar()) {
-        XnodeUtil.createIdAndDecl(dimension.getLowerBoundId(),
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
+        xcodeml.createIdAndDecl(dimension.getLowerBoundId(),
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef);
 
         // Add parameter to the local type table
         XnodeUtil.createAndAddParam(xcodeml,
@@ -633,16 +633,16 @@ public class Parallelize extends ClawTransformation {
 
       // Create parameter for the upper bound
       if(dimension.upperBoundIsVar()) {
-        XnodeUtil.createIdAndDecl(dimension.getUpperBoundId(),
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, xcodeml);
+        xcodeml.createIdAndDecl(dimension.getUpperBoundId(),
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef);
 
         // Add parameter to the local type table
         XnodeUtil.createAndAddParam(xcodeml,
             dimension.getUpperBoundId(), intTypeIntentIn.getType(), _fctType);
       }
       // Create induction variable declaration
-      XnodeUtil.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
-          Xname.SCLASS_F_LOCAL, _fctDef, xcodeml);
+      xcodeml.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
+          Xname.SCLASS_F_LOCAL, _fctDef);
     }
   }
 

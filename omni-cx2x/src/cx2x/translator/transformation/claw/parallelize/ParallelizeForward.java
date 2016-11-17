@@ -427,8 +427,8 @@ public class ParallelizeForward extends ClawTransformation {
             xcodeml.getTypeTable().generateIntegerTypeHash(),
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(intTypeIntentIn);
-        XnodeUtil.createIdAndDecl(var, intTypeIntentIn.getType(),
-            Xname.SCLASS_F_PARAM, fDef, xcodeml);
+        xcodeml.createIdAndDecl(var, intTypeIntentIn.getType(),
+            Xname.SCLASS_F_PARAM, fDef);
         type = intTypeIntentIn.getType();
         XnodeUtil.createAndAddParam(xcodeml, var, type, _parentFctType);
       } else {

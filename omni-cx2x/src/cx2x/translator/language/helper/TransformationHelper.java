@@ -458,8 +458,8 @@ public class TransformationHelper {
   {
     for(ClawDimension dim : dimensions) {
       if(fctDef.getDeclarationTable().get(dim.getIdentifier()) == null) {
-        XnodeUtil.createIdAndDecl(dim.getIdentifier(), Xname.TYPE_F_INT,
-            Xname.SCLASS_F_LOCAL, fctDef, xcodeml);
+        xcodeml.createIdAndDecl(dim.getIdentifier(), Xname.TYPE_F_INT,
+            Xname.SCLASS_F_LOCAL, fctDef);
       }
     }
   }

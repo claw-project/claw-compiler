@@ -287,4 +287,22 @@ public class XcodeML extends Xnode {
     }
     return n;
   }
+
+  /**
+   * Create the id and varDecl nodes and add them to the symbol/declaration
+   * table.
+   *
+   * @param name   Name of the variable.
+   * @param type   Type of the variable.
+   * @param sclass Scope class of the variable (from Xname).
+   * @param fctDef Function definition in which id and decl are created.
+   */
+  public void createIdAndDecl(String name, String type, String sclass,
+                              XfunctionDefinition fctDef)
+  {
+    Xid id = XnodeUtil.createId(this, type, sclass, name);
+    fctDef.getSymbolTable().add(id);
+    Xdecl decl = XnodeUtil.createVarDecl(this, type, name);
+    fctDef.getDeclarationTable().add(decl);
+  }
 }
