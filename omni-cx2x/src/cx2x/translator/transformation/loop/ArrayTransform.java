@@ -231,7 +231,7 @@ public class ArrayTransform extends ClawBlockTransformation {
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
         // Allocatable array
         // dimension argument of size starts at one
-        range = XnodeUtil.createAssumedShapeRange(xcodeml, var, 1, i + 1);
+        range = xcodeml.createRangeForAssumedShapeArray(var, 1, i + 1);
       } else {
         range = ranges.get(i).cloneNode();
       }

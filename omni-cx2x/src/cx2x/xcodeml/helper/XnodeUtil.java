@@ -1001,50 +1001,6 @@ public class XnodeUtil {
     return null;
   }
 
-
-
-  /**
-   * Create an indexRange element to loop over an assumed shape array.
-   *
-   * @param xcodeml    Current XcodeML file unit in which the element is
-   *                   created.
-   * @param arrayVar   Var element representing the array variable.
-   * @param startIndex Lower bound index value.
-   * @param dimension  Dimension index for the upper bound value.
-   * @return The newly created element.
-   */
-  public static Xnode createAssumedShapeRange(XcodeML xcodeml, Xnode arrayVar,
-                                              int startIndex, int dimension)
-  {
-    // Base structure
-    Xnode indexRange = new Xnode(Xcode.INDEXRANGE, xcodeml);
-    Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
-    Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
-    indexRange.append(lower, false);
-    indexRange.append(upper, false);
-
-    // Lower bound
-    Xnode lowerBound = new Xnode(Xcode.FINTCONSTANT, xcodeml);
-    lowerBound.setValue(String.valueOf(startIndex));
-    lower.append(lowerBound, false);
-
-    // Upper bound
-    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, xcodeml);
-    upper.append(fctCall, false);
-    fctCall.setAttribute(Xattr.IS_INTRINSIC, Xname.TRUE);
-    fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-    Xnode name = new Xnode(Xcode.NAME, xcodeml);
-    name.setValue(Xname.INTRINSIC_SIZE);
-    fctCall.append(name, false);
-    Xnode args = new Xnode(Xcode.ARGUMENTS, xcodeml);
-    fctCall.append(args, false);
-    args.append(arrayVar, true);
-    Xnode dim = new Xnode(Xcode.FINTCONSTANT, xcodeml);
-    dim.setValue(String.valueOf(dimension));
-    args.append(dim, false);
-    return indexRange;
-  }
-
   /**
    * Find module by name.
    *

@@ -497,4 +497,45 @@ public class XcodeML extends Xnode {
     root.append(thenBlock, false);
     return root;
   }
+
+  /**
+   * Create an indexRange element to loop over an assumed shape array.
+   *
+   * @param arrayVar   Var element representing the array variable.
+   * @param startIndex Lower bound index value.
+   * @param dimension  Dimension index for the upper bound value.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createRangeForAssumedShapeArray(Xnode arrayVar,
+                                                      int startIndex,
+                                                      int dimension)
+  {
+    // Base structure
+    Xnode indexRange = new Xnode(Xcode.INDEXRANGE, this);
+    Xnode lower = new Xnode(Xcode.LOWERBOUND, this);
+    Xnode upper = new Xnode(Xcode.UPPERBOUND, this);
+    indexRange.append(lower, false);
+    indexRange.append(upper, false);
+
+    // Lower bound
+    Xnode lowerBound = new Xnode(Xcode.FINTCONSTANT, this);
+    lowerBound.setValue(String.valueOf(startIndex));
+    lower.append(lowerBound, false);
+
+    // Upper bound
+    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
+    upper.append(fctCall, false);
+    fctCall.setAttribute(Xattr.IS_INTRINSIC, Xname.TRUE);
+    fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+    Xnode name = new Xnode(Xcode.NAME, this);
+    name.setValue(Xname.INTRINSIC_SIZE);
+    fctCall.append(name, false);
+    Xnode args = new Xnode(Xcode.ARGUMENTS, this);
+    fctCall.append(args, false);
+    args.append(arrayVar, true);
+    Xnode dim = new Xnode(Xcode.FINTCONSTANT, this);
+    dim.setValue(String.valueOf(dimension));
+    args.append(dim, false);
+    return indexRange;
+  }
 }
