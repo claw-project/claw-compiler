@@ -445,7 +445,7 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       // Add variable in the function call before the optional parameters
-      Xnode arg = XnodeUtil.createNamedValue(var, xcodeml);
+      Xnode arg = xcodeml.createNamedValue(var);
       Xnode namedValVar = XnodeUtil.createVar(type, var, Xscope.LOCAL, xcodeml);
       arg.append(namedValVar, false);
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);

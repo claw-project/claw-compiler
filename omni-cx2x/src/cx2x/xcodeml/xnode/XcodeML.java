@@ -305,4 +305,16 @@ public class XcodeML extends Xnode {
     Xdecl decl = XnodeUtil.createVarDecl(this, type, name);
     fctDef.getDeclarationTable().add(decl);
   }
+
+  /**
+   * Create a new namedValue node with its attribute.
+   *
+   * @param value Value of the name attribute.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createNamedValue(String value) {
+    Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, this);
+    namedValue.setAttribute(Xattr.NAME, value);
+    return namedValue;
+  }
 }

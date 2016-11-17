@@ -1255,19 +1255,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a new namedValue element with its attribute.
-   *
-   * @param value   Value of the name attribute.
-   * @param xcodeml Current XcodeML file unit in which the element is created.
-   * @return The newly created element.
-   */
-  public static Xnode createNamedValue(String value, XcodeML xcodeml) {
-    Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, xcodeml);
-    namedValue.setAttribute(Xattr.NAME, value);
-    return namedValue;
-  }
-
-  /**
    * Find module by name.
    *
    * @param moduleName Name of the module.
