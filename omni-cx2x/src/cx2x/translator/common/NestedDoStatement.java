@@ -1,7 +1,6 @@
 package cx2x.translator.common;
 
 import cx2x.translator.language.common.ClawDimension;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xname;
 import cx2x.xcodeml.xnode.Xnode;

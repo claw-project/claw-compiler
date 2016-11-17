@@ -508,8 +508,8 @@ public class XcodeML extends Xnode {
    * @return The newly created node dettached in the current XcodeML unit.
    */
   public Xnode createRangeForAssumedShapeArray(Xnode arrayVar,
-                                                      int startIndex,
-                                                      int dimension)
+                                               int startIndex,
+                                               int dimension)
   {
     // Base structure
     Xnode indexRange = new Xnode(Xcode.INDEXRANGE, this);
