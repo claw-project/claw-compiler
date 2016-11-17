@@ -541,13 +541,13 @@ public class XcodeML extends Xnode {
   }
 
   /**
-   * Create a name element and adds it as a parameter of the given function
+   * Create a name node and adds it as a parameter of the given function
    * type. If the function has optional parameters, the newly created parameter
    * is added before the optional ones.
    *
-   * @param nameValue Value of the name element to create.
-   * @param type      Type of the name element to create.
-   * @param fctType   Function type in which the element will be added as a
+   * @param nameValue Value of the name node to create.
+   * @param type      Type of the name node to create.
+   * @param fctType   Function type in which the node will be added as a
    *                  parameter.
    */
   public Xnode createAndAddParam(String nameValue, String type,
@@ -575,12 +575,12 @@ public class XcodeML extends Xnode {
   }
 
   /**
-   * Create a name element and adds it as a parameter of the given function
-   * type if this parameter is does not exist yet.
+   * Create a name node and adds it as a parameter of the given function
+   * type if this parameter does not exist yet.
    *
-   * @param nameValue Value of the name element to create.
-   * @param type      Type of the name element to create.
-   * @param fctType   Function type in which the element will be added as a
+   * @param nameValue Value of the name node to create.
+   * @param type      Type of the name node to create.
+   * @param fctType   Function type in which the node will be added as a
    *                  parameter.
    */
   public void createAndAddParamIfNotExists(String nameValue, String type,
