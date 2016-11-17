@@ -317,4 +317,24 @@ public class XcodeML extends Xnode {
     namedValue.setAttribute(Xattr.NAME, value);
     return namedValue;
   }
+
+  /**
+   * Create a new var node.
+   * <p>
+   * {@code
+   * <Var type="" scope="">value</Var>
+   * }
+   *
+   * @param type  Value of the type attribute.
+   * @param value Value of the var.
+   * @param scope Value of the scope attribute.
+   * @return The newly created node dettached in the current XcodeML unit.
+   */
+  public Xnode createVar(String type, String value, Xscope scope) {
+    Xnode var = new Xnode(Xcode.VAR, this);
+    var.setAttribute(Xattr.TYPE, type);
+    var.setAttribute(Xattr.SCOPE, scope.toString());
+    var.setValue(value);
+    return var;
+  }
 }

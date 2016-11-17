@@ -33,8 +33,8 @@ public class NestedDoStatement {
   {
     _statements = new ArrayList<>();
     for(ClawDimension dim : dimensions) {
-      Xnode induction = XnodeUtil.createVar(Xname.TYPE_F_INT,
-          dim.getIdentifier(), Xscope.LOCAL, xcodeml);
+      Xnode induction = xcodeml.createVar(Xname.TYPE_F_INT, dim.getIdentifier(),
+          Xscope.LOCAL);
       Xnode range = dim.generateIndexRange(xcodeml, true);
       Xnode doSt = XnodeUtil.createDoStmt(xcodeml, induction, range);
       if(_statements.size() != 0) {

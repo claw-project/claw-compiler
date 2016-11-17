@@ -227,9 +227,8 @@ public class ArrayTransform extends ClawBlockTransformation {
       }
 
       // 2.4 create do statements
-      Xnode inductionVar =
-          XnodeUtil.createVar(Xname.TYPE_F_INT, inductionVars[i],
-              Xscope.LOCAL, xcodeml);
+      Xnode inductionVar = xcodeml.createVar(Xname.TYPE_F_INT, inductionVars[i],
+              Xscope.LOCAL);
       Xnode range;
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
         // Allocatable array
@@ -257,8 +256,7 @@ public class ArrayTransform extends ClawBlockTransformation {
           if(el.opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
-                XnodeUtil.createVar(Xname.TYPE_F_INT, induction,
-                    Xscope.LOCAL, xcodeml);
+                xcodeml.createVar(Xname.TYPE_F_INT, induction, Xscope.LOCAL);
 
             Xnode arrayIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
             arrayIdx.append(inductionVar, false);

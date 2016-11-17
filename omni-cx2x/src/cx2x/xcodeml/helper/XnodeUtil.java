@@ -1232,29 +1232,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Create a new var element.
-   * <p>
-   * {@code
-   * <Var type="" scope="">value</Var>
-   * }
-   *
-   * @param type    Value of the type attribute.
-   * @param value   Value of the var.
-   * @param scope   Value of the scope attribute.
-   * @param xcodeml Current XcodeML file unit in which the element is created.
-   * @return The newly created element.
-   */
-  public static Xnode createVar(String type, String value, Xscope scope,
-                                XcodeML xcodeml)
-  {
-    Xnode var = new Xnode(Xcode.VAR, xcodeml);
-    var.setAttribute(Xattr.TYPE, type);
-    var.setAttribute(Xattr.SCOPE, scope.toString());
-    var.setValue(value);
-    return var;
-  }
-
-  /**
    * Find module by name.
    *
    * @param moduleName Name of the module.

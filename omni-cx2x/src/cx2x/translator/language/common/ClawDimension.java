@@ -167,8 +167,8 @@ public class ClawDimension {
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
       }
-      Xnode lowerBoundValue = XnodeUtil.createVar(_lowerBoundType,
-          _lowerBoundId, Xscope.LOCAL, xcodeml);
+      Xnode lowerBoundValue = xcodeml.createVar(_lowerBoundType, _lowerBoundId,
+          Xscope.LOCAL);
       lower.append(lowerBoundValue, false);
     } else {
       Xnode lowerBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
@@ -185,8 +185,8 @@ public class ClawDimension {
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
       }
-      Xnode upperBoundValue = XnodeUtil.createVar(_upperBoundType,
-          _upperBoundId, Xscope.LOCAL, xcodeml);
+      Xnode upperBoundValue = xcodeml.createVar(_upperBoundType, _upperBoundId,
+          Xscope.LOCAL);
       upper.append(upperBoundValue, false);
     } else {
       Xnode upperBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
@@ -208,8 +208,7 @@ public class ClawDimension {
    */
   public Xnode generateArrayIndex(XcodeProgram xcodeml) {
     Xnode aIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
-    Xnode var = XnodeUtil.createVar(Xname.TYPE_F_INT, _identifier,
-        Xscope.LOCAL, xcodeml);
+    Xnode var = xcodeml.createVar(Xname.TYPE_F_INT, _identifier, Xscope.LOCAL);
     aIdx.append(var, false);
     return aIdx;
   }

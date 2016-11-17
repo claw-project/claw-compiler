@@ -329,8 +329,7 @@ public class Kcaching extends ClawTransformation {
     }
 
     // 2.4 Prepare the new variable that is used for caching
-    Xnode cacheVar =
-        XnodeUtil.createVar(type, cacheName, Xscope.LOCAL, xcodeml);
+    Xnode cacheVar = xcodeml.createVar(type, cacheName, Xscope.LOCAL);
 
     if(stmt == null) {
       Xnode cache1 = new Xnode(Xcode.FASSIGNSTATEMENT, xcodeml);
