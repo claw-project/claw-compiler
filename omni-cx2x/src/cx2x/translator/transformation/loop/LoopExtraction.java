@@ -340,9 +340,9 @@ public class LoopExtraction extends ClawTransformation {
           argument.delete();
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-        else if(argument.opcode() == Xcode.FARRAYREF) {
+        /*else if(argument.opcode() == Xcode.FARRAYREF) {
           // TODO
-        }
+        }*/
 
         // Change variable declaration in extracted fct
         Xdecl varDecl = fctDeclarations.get(var.getFctMapping());

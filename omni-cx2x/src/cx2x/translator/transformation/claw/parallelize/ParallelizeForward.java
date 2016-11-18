@@ -629,7 +629,7 @@ public class ParallelizeForward extends ClawTransformation {
           Xnode indexRange = xcodeml.createEmptyAssumedShaped();
           lhs.append(indexRange, false);
         }
-      } else if(lhs.opcode() == Xcode.VAR) {
+      /*} else if(lhs.opcode() == Xcode.VAR) {
         // TODO avoid array var without colon notation
           /* throw new IllegalTransformationException("Use the colon notation "
               + "for the return variable. This notation is not supported." +
