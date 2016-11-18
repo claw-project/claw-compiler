@@ -23,6 +23,7 @@ OMNI Compiler is packaged and built together with the CLAW Compiler.
 
 To build the and install the CLAW Fortran Compiler, use the followings commands.
 
+In source build:
 ```bash
 git clone git@github.com:C2SM-RCM/claw-compiler.git
 cd claw-compiler
@@ -32,6 +33,20 @@ cmake -DCMAKE_INSTALL_PREFIX=<install_path> .
 make
 make install
 ```
+
+Out-of-source build:
+```bash
+git clone git@github.com:C2SM-RCM/claw-compiler.git
+cd claw-compiler
+git submodule init
+git submodule update --remote
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=<install_path> ..
+make
+make install
+```
+
 
 #### Test your installation with an example
 ##### Source code
