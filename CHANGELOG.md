@@ -1,8 +1,8 @@
 # Change Log
-All notable changes to the CLAW Fortran Compiler project will be documented in
+All notable changes to the CLAW FORTRAN Compiler project will be documented in
 this file.
 
-## [0.3a Unreleased]
+## [0.3 Unreleased]
 New features:
 * Option `--target=<target>` or `-t=<target>` allows to choose the target for
   code transformation.
@@ -12,12 +12,14 @@ New features:
   default configuration file is available in
   `<INSTALL_DIR>/etc/claw-default.xml`.
 
-New transformation:
-* `array-transform`
-* `kcache`
-* `call`
-* `loop-hoist`
-* `parallelize`
+New available transformations:
+* Low-level:
+  * `array-transform`
+  * `kcache`
+  * `call`
+  * `loop-hoist`
+* High abstraction:
+  * `parallelize`
 
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
@@ -25,7 +27,8 @@ Modification:
 General:
 * OMNI Compiler is switched to a dedicated forked version including F2003
   parsing enhancements as well as latest change from the original OMNI
-  repository.
+  repository. It will be switched back to official version once all the
+  new features are back to the master.
 
 ## [0.1.0] - 2016-02-05
 ### First release
