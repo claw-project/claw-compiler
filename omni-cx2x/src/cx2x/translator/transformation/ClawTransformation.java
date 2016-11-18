@@ -19,7 +19,7 @@ import cx2x.xcodeml.transformation.Transformation;
 
 public abstract class ClawTransformation extends Transformation {
 
-  protected ClawLanguage _claw;
+  protected final ClawLanguage _claw;
 
   public ClawTransformation(ClawLanguage directive) {
     super(directive);

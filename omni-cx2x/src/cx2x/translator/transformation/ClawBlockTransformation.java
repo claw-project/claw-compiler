@@ -17,7 +17,7 @@ import cx2x.xcodeml.transformation.BlockTransformation;
  */
 public abstract class ClawBlockTransformation extends BlockTransformation {
 
-  protected ClawLanguage _clawStart, _clawEnd;
+  protected final ClawLanguage _clawStart, _clawEnd;
 
   protected ClawBlockTransformation(ClawLanguage startDirective,
                                     ClawLanguage endDirective)
