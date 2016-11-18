@@ -236,6 +236,8 @@ The \xcodeml to \xcodeml translator is the intelligence of the \clawfcomp. It un
   \label{fig:cx2x_stack}
 \end{figure}
 
+Figure \ref{fig:cx2x_stack} shows the stack of libraries used in the the CLAW \xcodeml to \xcodeml translator. The two first layers from the bottom are explained in more details in chapter \ref{chapter:astmanip}. The three last layers are explained in chapter \ref{chapter:transformation}.
+
 
 \chapter{CLAW directive language}
 %TODO add ref for the document
@@ -260,6 +262,7 @@ javac -classpath <antlr_jar> org.antlr.v4.Tool -o . -package cx2x.translator.lan
 The full CLAW ANTLR grammar is defined in the following file: \lstinline|omni-cx2x/src/cx2x/translator/language/parser/Claw.g4|
 
 \chapter{Transformation}
+\label{chapter:transformation}
 A transformation class is the the basic representation of a manipulation of the \gls{ast} triggered by a directive. Each directive is implemented in its own transformation class. If the directive can be used as a block directive (with a \lstinline|!$end <directive>| directive), the class must inherits from the \lstinline!BlockTransformation!. Otherwise, it can inherits from the baisc \lstinline!Transformation! class.
 
 \section{Type of transformation}
@@ -286,6 +289,7 @@ A transformation in the \clawfc is represented as a class that inherits from the
 \end{enumerate}
 
 \chapter{\xcodeml and AST manipulation library}
+\label{chapter:astmanip}
 As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with any language that can read and write XML files. It can even be manipulated by hand depending on the user's knowledge of the \xcodeml \gls{ir} specification. 
 To ease this task, a small manipulation library is included in the \cx2x program. This library helps to traverse the \gls{ast}, add, modify or delete node.
 
