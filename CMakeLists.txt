@@ -8,12 +8,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(clawfc)
 
-find_package(Java REQUIRED)
-
 enable_language(Fortran)
 enable_testing()
 
-include(UseJava)         # To compile Java code and create Jars
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
+find_package(Ant REQUIRED)
+
 include(ExternalProject) # For autotools based compilation (OMNI Compiler)
 
 # Recover the last commit hash from git to add it to the version
