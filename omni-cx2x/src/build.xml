@@ -35,7 +35,7 @@
     <pathelement location="${ivy.dir}/antlr4-4.5.3.jar" />
   </path>
 
-  <import file="../common-task.xml" as="common"/>
+  <import file="../common-targets.xml" as="common"/>
 
   <target name="init" depends="common.bootstrap">
     <!-- Create the time stamp -->

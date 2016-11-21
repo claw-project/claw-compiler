@@ -28,7 +28,7 @@
   </path>
 
   <!-- Import the file with common targets -->
-  <import file="../common-task.xml" as="common"/>
+  <import file="../common-targets.xml" as="common"/>
 
   <!-- Initialization step -->
   <target name="init" depends="common.bootstrap">
