@@ -12,6 +12,7 @@ import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import exc.xcodeml.XcodeMLtools_Fmod;
+import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
 
 import java.io.File;
@@ -38,29 +39,9 @@ public class Cx2x {
    * Print program usage.
    */
   private static void usage() {
-    final String[] lines = {
-        "arguments: options",
-        "           <input XcodeML file>",
-        "           -o <output reconstructed XcodeML file>",
-        "           -f <output reconstructed Fortran file>",
-        "",
-        "  -h, --help              display program usage.",
-        "  -l                      suppress line directive in decompiled code.",
-        "  -w <int>                number of character per line in decompiled code.",
-        "  -M dir                  specify where to search for .xmod files",
-        "  --target-list           list all target available for code transformation.",
-        "  --target=<target>       specify the target for the code transformation.",
-        "  --directive-list        list all accelerator directive language available for code generation.",
-        "  --directive=<directive> specify the accelerator directive language for code generation.",
-        "  --config=<target>       specify an alternative configuration for the translator.",
-        "",
-        " Debug Options:",
-        "  -d                      enable output debug message.",
-    };
-
-    for(String line : lines) {
-      System.err.println(line);
-    }
+    Options options = prepareOptions();
+    HelpFormatter formatter = new HelpFormatter();
+    formatter.printHelp("clawfc", options);
     System.exit(1);
   }
 
@@ -112,80 +93,120 @@ public class Cx2x {
   }
 
   /**
+   * Prepare the set of available options.
+   *
+   * @return Options object.
+   */
+  private static Options prepareOptions() {
+    Options options = new Options();
+    options.addOption("h", "help", false, "display program usage.");
+    options.addOption("l", false, "suppress line directive in decompiled code.");
+    options.addOption("c", "config", true, "specify an alternative configuration for the translator.");
+    options.addOption("t", "target", true, "specify the target for the code transformation.");
+    options.addOption("dir", "directive", true, "list all accelerator directive language available for code generation.");
+    options.addOption("d", "debug", false, "enable output debug message.");
+    options.addOption("f", true, "specify FORTRAN decompiled output file.");
+    options.addOption("w", true, "number of character per line in decompiled code.");
+    options.addOption("o", true, "specify XcodeML/F output file.");
+    options.addOption("M", true, "specify where to search for .xmod files");
+    options.addOption("tl", "target-list", false, "list all target available for code transformation.");
+    options.addOption("dl", "directive-list", false, "list all available directive language to be generated.");
+    options.addOption("sc", "show-config", false, "display the current configuration.");
+    return options;
+  }
+
+  /**
+   * Parse the arguments passed to the program.
+   *
+   * @param args Arguments passed to the program.
+   * @return Parsed command line object.
+   * @throws ParseException If one or several arguments are not found.
+   */
+  private static CommandLine processCommandArgs(String[] args)
+      throws ParseException
+  {
+    Options options = prepareOptions();
+    CommandLineParser parser = new DefaultParser();
+    return parser.parse(options, args);
+  }
+
+  /**
    * Main point of entry of the program.
    *
    * @param args Arguments of the program.
    * @throws Exception if translation failed.
    */
   public static void main(String[] args) throws Exception {
-    String input = null;
+    String input;
     String xcodeMlOutput = null;
     String fortranOutput = null;
     String target_option = null;
     String directive_option = null;
     String configuration_path = null;
-    boolean show_configuration = false;
-    boolean lineDirectives = false;
     int maxColumns = 0;
 
-    for(int i = 0; i < args.length; ++i) {
-      String arg = args[i];
-      String narg = (i < args.length - 1) ? args[i + 1] : null;
+    CommandLine cmd;
+    try {
+      cmd = processCommandArgs(args);
+    } catch(ParseException pex) {
+      error(pex.getMessage());
+      return;
+    }
 
-      if(arg.equals("-h") || arg.equals("--help")) {
-        usage();
-      } else if(arg.equals("-l")) {
-        XmOption.setIsSuppressLineDirective(true);
-      } else if(arg.equals("-d")) {
-        XmOption.setDebugOutput(true);
-      } else if(arg.equals("-o")) {
-        if(narg == null)
-          error("needs argument after -o");
-        xcodeMlOutput = narg;
-        ++i;
-      } else if(arg.equals("-f")) {
-        if(narg == null)
-          error("needs argument after -f");
-        fortranOutput = narg;
-        ++i;
-      } else if(arg.startsWith("-M")) {
-        if(arg.equals("-M")) {
-          if(narg == null)
-            error("needs argument after -M");
-          XcodeMLtools_Fmod.addSearchPath(narg);
-          ++i;
-        } else {
-          XcodeMLtools_Fmod.addSearchPath(arg.substring(2));
-        }
-      } else if(arg.startsWith("-w")) {
-        if(narg == null) {
-          error("needs argument after -w");
-        }
-        maxColumns = Integer.parseInt(narg);
-        ++i;
-      } else if(arg.startsWith("-l")) {
-        lineDirectives = false;
-      } else if(arg.startsWith("--target-list")) {
-        listTarget();
-        return;
-      } else if(arg.startsWith("--target=")) {
-        target_option = arg.replace("--target=", "");
-      } else if(arg.startsWith("--directive-list")) {
-        listDirectiveLanguage();
-        return;
-      } else if(arg.startsWith("--directive=")) {
-        directive_option = arg.replace("--directive=", "");
-      } else if(arg.startsWith("--config=")) {
-        configuration_path = arg.replace("--config=", "");
-      } else if(arg.startsWith("--show-config")) {
-        show_configuration = true;
-      } else if(arg.startsWith("-")) {
-        error("unknown option " + arg);
-      } else if(input == null) {
-        input = arg;
-      } else {
-        error("too many arguments");
-      }
+    // Help option
+    if(cmd.hasOption("h")) {
+      usage();
+      return;
+    }
+
+    // Display target list option
+    if(cmd.hasOption("tl")) {
+      listTarget();
+      return;
+    }
+
+    // Display directive list option
+    if(cmd.hasOption("dl")) {
+      listDirectiveLanguage();
+      return;
+    }
+
+    // Target option
+    if(cmd.hasOption("t")) {
+      target_option = cmd.getOptionValue("t");
+    }
+
+    // Directive option
+    if(cmd.hasOption("dir")) {
+      directive_option = cmd.getOptionValue("dir");
+    }
+
+    // Suppressing line directive option
+    if(cmd.hasOption("l")) {
+      XmOption.setIsSuppressLineDirective(true);
+    }
+
+    // Debug option
+    if(cmd.hasOption("d")) {
+      XmOption.setDebugOutput(true);
+    }
+
+    // XcodeML/F output file option
+    if(cmd.hasOption("o")) {
+      xcodeMlOutput = cmd.getOptionValue("o");
+    }
+
+    // FORTRAN output file option
+    if(cmd.hasOption("f")) {
+      fortranOutput = cmd.getOptionValue("f");
+    }
+
+    if(cmd.hasOption("w")) {
+      maxColumns = Integer.parseInt(cmd.getOptionValue("w"));
+    }
+
+    if(cmd.hasOption("c")) {
+      configuration_path = cmd.getOptionValue("c");
     }
 
     // Check that configuration file exists
@@ -196,28 +217,38 @@ public class Cx2x {
     File config = new File(configuration_path);
     if(!config.exists()) {
       error("Configuration file not found. " + configuration_path);
-      return;
     }
 
-    if(show_configuration) {
+    if(cmd.hasOption("sc")) {
       showConfig(configuration_path);
       return;
     }
 
-    // Read default target from config if not set by user
-    AcceleratorDirective directive;
-    if(directive_option == null) {
-      directive = ConfigurationHelper.readDefaultDirective(configuration_path);
+    if(cmd.getArgs().length == 0) {
+      error("no input file");
+      return;
     } else {
-      directive = AcceleratorDirective.fromString(directive_option);
+      input = cmd.getArgs()[0];
     }
 
-    Target target;
-    if(target_option == null) {
-      target = ConfigurationHelper.readDefaultTarget(configuration_path);
+    // Module search path options
+    if(cmd.hasOption("M")) {
+      for(String value : cmd.getOptionValues("M")) {
+        XcodeMLtools_Fmod.addSearchPath(value);
+      }
     } else {
-      target = Target.fromString(target_option);
+      /* If no module search path is given, look in the same directory for CLAW
+       * modified module file */
+      File inputFile = new File(input);
+      XcodeMLtools_Fmod.
+          addSearchPath(inputFile.getParentFile().getAbsolutePath());
     }
+
+
+    // Read default target from config if not set by user
+    AcceleratorDirective directive =
+        getDirective(configuration_path, directive_option);
+    Target target = getTarget(configuration_path, target_option);
 
     // Read transformation group configuration
     List<GroupConfiguration> groups;
@@ -228,28 +259,55 @@ public class Cx2x {
       return;
     }
 
-    /* If no module search path is given, look in the same directory for CLAW
-     * modified module file */
-    if(XcodeMLtools_Fmod.getSearchPath().size() == 0){
-      File inputFile = new File(input);
-      XcodeMLtools_Fmod.
-          addSearchPath(inputFile.getParentFile().getAbsolutePath());
-    }
-
+    // Call the translator to apply transformation on XcodeML/F
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
         xcodeMlOutput, directive, target, groups, maxColumns);
     translator.analyze();
     translator.transform();
     translator.flush();
 
-    // Decompile IR to Fortran
-    FortranDecompiler fDecompiler = new FortranDecompiler();
-    if(!fDecompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
-        lineDirectives))
+    // Decompile XcodeML/F to Fortran
+    FortranDecompiler decompiler = new FortranDecompiler();
+    if(!decompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
+        XmOption.isSuppressLineDirective()))
     {
       error("Unable to decompile XcodeML to Fortran");
     }
   }
 
+  /**
+   * Get target information from argument or from default configuration.
+   *
+   * @param config Configuration file path.
+   * @param option Option passed as argument. Has priority over configuration
+   *               file.
+   * @return The target enum value extracted from the given information.
+   */
+  private static Target getTarget(String config, String option) {
+    if(option == null) {
+      return ConfigurationHelper.readDefaultTarget(config);
+    } else {
+      return Target.fromString(option);
+    }
+  }
+
+  /**
+   * Get directive language information from the argument or from the default
+   * configuration.
+   *
+   * @param config Configuration file path.
+   * @param option Option passed as argument. Has priority over configuration
+   *               file.
+   * @return The directive language enum value extracted from the given
+   * information.
+   */
+  private static AcceleratorDirective getDirective(String config, String option)
+  {
+    if(option == null) {
+      return ConfigurationHelper.readDefaultDirective(config);
+    } else {
+      return AcceleratorDirective.fromString(option);
+    }
+  }
 
 }
