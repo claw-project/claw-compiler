@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/
 # Enable needed modules and languages
 enable_language(Fortran)
 enable_testing()
-find_package(Ant REQUIRED)
+find_package(Ant 1.7.1 REQUIRED)
 include(ExternalProject)
 
 # Recover the last commit hash from git to add it to the version
