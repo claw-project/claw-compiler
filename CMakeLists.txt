@@ -8,13 +8,14 @@ cmake_minimum_required(VERSION 2.8)
 
 project("CLAW FORTRAN Compiler")
 
+# Set up the local module path
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
+
+# Enable needed modules and languages
 enable_language(Fortran)
 enable_testing()
-
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
 find_package(Ant REQUIRED)
-
-include(ExternalProject) # For autotools based compilation (OMNI Compiler)
+include(ExternalProject)
 
 # Recover the last commit hash from git to add it to the version
 execute_process(
