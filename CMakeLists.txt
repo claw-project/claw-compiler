@@ -42,7 +42,8 @@ set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
 set(OMNI_CX2X_CLAW_NAME om-cx2x-claw)
 set(OMNI_CX2X_XCODEML_NAME om-cx2x-xcodeml)
-set(ANTLR_NAME antlr-4.5.2-complete)
+set(ANTLR_NAME antlr4-4.5.3)
+set(COMMON_CLI_NAME commons-cli-1.3.1)
 
 # Define OMNI Compiler executables and jar archives install location.
 set(OMNI_F_FRONT "${OMNI_HOME}/bin/F_Front")
@@ -72,6 +73,8 @@ set(OMNI_CX2X_CONFIG_DEFAULT "${CMAKE_INSTALL_PREFIX}/etc/${CLAW_CONFIG_FILE}")
 
 # Define ANTLR jar archive install location.
 set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
+
+set(COMMON_CLI "${CMAKE_INSTALL_PREFIX}/share/cx2x/${COMMON_CLI_NAME}.jar")
 
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
