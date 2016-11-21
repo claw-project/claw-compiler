@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(clawfc)
+project("CLAW FORTRAN Compiler")
 
 enable_language(Fortran)
 enable_testing()
