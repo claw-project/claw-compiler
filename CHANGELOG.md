@@ -24,6 +24,11 @@ New available transformations:
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
 
+Architecture:
+* All Java libraries now compiled with Ant.
+* Execution of JUnit test cases is driven by Ant.
+* Program arguments of cx2x.Cx2x is now using Common CLI. 
+
 General:
 * OMNI Compiler is switched to a dedicated forked version including F2003
   parsing enhancements as well as latest change from the original OMNI
