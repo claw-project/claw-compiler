@@ -1,0 +1,84 @@
+<!-- CX2X build process -->
+<project name="cx2x" default="main" basedir=".">
+  <description>
+  	Build CX2X libraries
+  </description>
+
+  <!-- Java sources -->
+  <property name="src.xcodeml" location="cx2x/xcodeml" />
+  <property name="src.translator" location="cx2x/translator" />
+  <property name="src.translator.parser" location="${src.translator}/language/parser" />
+
+  <property name="cx2x.xcodeml.jar" location="om-cx2x-xcodeml.jar" />
+  <property name="cx2x.translator.jar" location="om-cx2x-claw.jar" />
+
+  <!-- Java classes -->
+  <property name="build.dir.xcodeml" location="bin/xcodeml" />
+  <property name="build.dir.translator" location="bin/translator" />
+
+  <!-- Output, Jar -->
+  <property name="dist.dir" location="../../build" />
+  <property name="omni.dir" location="../../omni-compiler" />
+  <property name="omni.exec.dir" location="${omni.dir}/XcodeML-Exc-Tools/build" />
+  <property name="omni.common.dir" location="${omni.dir}/XcodeML-Common/build" />
+  <property name="omni.backend.dir" location="${omni.dir}/F-BackEnd/build" />
+  <property name="ivy.dir" location="lib" />
+
+  <path id="build.path.xcodeml">
+    <pathelement location="${omni.exec.dir}/om-exc-tools.jar" />
+  </path>
+
+  <path id="build.path.translator">
+    <pathelement location="${build.dir.xcodeml}" />
+    <pathelement location="${omni.common.dir}/om-common.jar" />
+    <pathelement location="${omni.exec.dir}/om-exc-tools.jar" />
+    <pathelement location="${ivy.dir}/antlr4-4.5.3.jar" />
+  </path>
+
+  <import file="../common-task.xml" as="common"/>
+
+  <target name="init" depends="common.bootstrap">
+    <!-- Create the time stamp -->
+    <tstamp />
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.dir.xcodeml}" />
+    <mkdir dir="${build.dir.translator}" />
+  </target>
+
+  <!-- Generate the CLAW parser from the ANTLR grammar file -->
+  <target name="antlr" depends="common.resolve">
+    <java classname="org.antlr.v4.Tool" fork="true" failonerror="true" dir="${src.translator.parser}" classpathref="build.path.translator">
+      <arg value="-o"/>
+      <arg value="${src.translator.parser}"/>
+      <arg value="-package"/>
+      <arg value="cx2x.translator.language.parser"/>
+      <arg line="${src.translator.parser}/Claw.g4"/>
+    </java>
+  </target>
+
+  <!-- Compile the java code for the two libraries -->
+  <target name="compile" depends="common.resolve, antlr" description="compile the source ">
+    <javac includeantruntime="false" srcdir="${src.xcodeml}" destdir="${build.dir.xcodeml}" classpathref="build.path.xcodeml" />
+    <javac includeantruntime="false" srcdir="${src.translator}" destdir="${build.dir.translator}" classpathref="build.path.translator" />
+  </target>
+
+  <!-- Pacakge compiled files into their own library -->
+  <target name="dist" depends="compile" description="package, output to JAR">
+    <mkdir dir="${dist.dir}" />
+    <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir.xcodeml}" />
+    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir.translator}" >
+      <manifest>
+        <attribute name="Main-Class" value="cx2x.Cx2x" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="clean" description="clean up">
+    <delete dir="${build.dir.xcodeml}" />
+    <delete dir="${build.dir.translator}" />
+    <delete dir="${dist.dir}" />
+  </target>
+
+  <!-- Default target -->
+  <target name="main" depends="compile, dist" />
+</project>
