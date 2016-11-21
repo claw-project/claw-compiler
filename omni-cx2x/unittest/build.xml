@@ -1,6 +1,6 @@
 <project name="cx2x-test" default="main" basedir=".">
   <description>Build CX2X unit tests</description>
-  <import file="../common-targets.xml" as="common"/>
+  <import file="../common-targets.xml"/>
   <property file="../claw.properties"/>
 
   <!-- Java sources directory -->

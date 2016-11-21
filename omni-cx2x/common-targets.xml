@@ -1,5 +1,5 @@
 <!-- Common target for Java build in CX2X project -->
-<project xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
   <!-- Check whether ivy is present already -->
   <target name="check-ivy">
     <available file="${user.home}/.ant/lib/ivy.jar" property="ivy.present"/>
