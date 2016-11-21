@@ -1,7 +1,5 @@
 <project name="cx2x-test" default="main" basedir=".">
-  <description>
-  	Build CX2X unit tests
-  </description>
+  <description>Build CX2X unit tests</description>
 
   <!-- Java sources directory -->
   <property name="src.dir" location="." />
@@ -21,10 +19,10 @@
 
   <!-- Classpath for dependencies -->
   <path id="build.path">
-    <pathelement location="${ivy.dir}/junit-4.12.jar" />
-    <pathelement location="${ivy.dir}/hamcrest-core-1.3.jar" />
-    <pathelement location="${dist.dir}/om-cx2x-claw.jar" />
-    <pathelement location="${dist.dir}/om-cx2x-xcodeml.jar" />
+    <pathelement path="${ivy.dir}/junit-4.12.jar" />
+    <pathelement path="${ivy.dir}/hamcrest-core-1.3.jar" />
+    <pathelement path="${dist.dir}/om-cx2x-claw.jar" />
+    <pathelement path="${dist.dir}/om-cx2x-xcodeml.jar" />
   </path>
 
   <!-- Import the file with common targets -->
