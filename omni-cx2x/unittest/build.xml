@@ -51,6 +51,7 @@
   <target name="clean" description="clean up">
     <delete dir="${build.dir}" />
     <delete dir="${ivy.dir}" />
+    <delete file="${dist.dir}/omni-cx2x-unittest.jar" />
   </target>
 
   <!-- Execution of JUnit tests -->
@@ -62,7 +63,7 @@
       <classpath location="${dist.dir}/om-cx2x-claw.jar" />
       <classpath location="${dist.dir}/om-cx2x-xcodeml.jar" />
 
-      <formatter type="plain" usefile="false" /> <!-- to screen -->
+      <formatter type="plain" usefile="false" />
 
       <batchtest>
         <fileset dir="${build.dir}">
