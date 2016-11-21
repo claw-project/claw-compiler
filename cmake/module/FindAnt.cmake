@@ -28,3 +28,39 @@ include(FindPackageHandleStandardArgs)
 find_program(Ant_EXECUTABLE NAMES ant PATHS $ENV{ANT_HOME}/bin)
 find_package_handle_standard_args(Ant DEFAULT_MSG Ant_EXECUTABLE)
 mark_as_advanced(Ant_EXECUTABLE)
+
+if(Ant_EXECUTABLE)
+  execute_process(COMMAND ${Ant_EXECUTABLE} -version
+    RESULT_VARIABLE res
+    OUTPUT_VARIABLE var
+    ERROR_VARIABLE var
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+  )
+
+  if( res )
+    if(${Ant_FIND_REQUIRED})
+      message( FATAL_ERROR "Error executing ant -version" )
+    else()
+      message( STATUS "Warning, could not run ant -version")
+    endif()
+  else()
+    message(${var})
+    # extract major/minor version and patch level from "ant -version" output
+    #if(var MATCHES "Apache Ant\(TM\) version ([0-9]+\\.[0-9]+\\.[0-9_.]+.*) compiled on .*")
+    if(var MATCHES "Apache Ant(.*)version ([0-9]+\\.[0-9]+\\.[0-9_.])(.*)")
+      set(Ant_VERSION_STRING "${CMAKE_MATCH_2}")
+      message(${Ant_VERSION_STRING})
+    endif()
+    string( REGEX REPLACE "([0-9]+).*" "\\1" Ant_VERSION_MAJOR "${Ant_VERSION_STRING}" )
+    string( REGEX REPLACE "[0-9]+\\.([0-9]+).*" "\\1" Ant_VERSION_MINOR "${Ant_VERSION_STRING}" )
+    string( REGEX REPLACE "[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" Ant_VERSION_PATCH "${Ant_VERSION_STRING}" )
+    set(Ant_VERSION ${Ant_VERSION_MAJOR}.${Ant_VERSION_MINOR}.${Ant_VERSION_PATCH})
+  endif()
+
+  if(Ant_FIND_VERSION)
+    if("${Ant_VERSION}" VERSION_LESS "${Ant_FIND_VERSION}")
+      message(FATAL_ERROR "Ant version is too old. Required: ${Ant_FIND_VERSION}, Found: ${Ant_VERSION}")
+    endif()
+  endif()
+endif()
