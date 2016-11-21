@@ -1,53 +1,65 @@
 <!-- CX2X build process -->
 <project name="cx2x" default="main" basedir=".">
-  <description>
-  	Build CX2X libraries
-  </description>
+  <description>Build CX2X libraries</description>
+  <import file="../common-targets.xml" as="common"/>
 
-  <!-- Java sources -->
-  <property name="src.xcodeml" location="cx2x/xcodeml" />
-  <property name="src.translator" location="cx2x/translator" />
-  <property name="src.translator.parser" location="${src.translator}/language/parser" />
-
-  <property name="cx2x.xcodeml.jar" location="om-cx2x-xcodeml.jar" />
-  <property name="cx2x.translator.jar" location="om-cx2x-claw.jar" />
-
-  <!-- Java classes -->
-  <property name="build.dir.xcodeml" location="bin/xcodeml" />
-  <property name="build.dir.translator" location="bin/translator" />
-
-  <!-- Output, Jar -->
-  <property name="dist.dir" location="../../build" />
+  <!-- Classpath directories -->
   <property name="omni.dir" location="../../omni-compiler" />
   <property name="omni.exec.dir" location="${omni.dir}/XcodeML-Exc-Tools/build" />
   <property name="omni.common.dir" location="${omni.dir}/XcodeML-Common/build" />
   <property name="omni.backend.dir" location="${omni.dir}/F-BackEnd/build" />
   <property name="ivy.dir" location="lib" />
 
+  <!-- Java sources -->
+  <property name="src.xcodeml" location="cx2x/xcodeml" />
+  <property name="src.translator" location="cx2x/translator" />
+  <property name="src.translator.parser" value="${src.translator}/language/parser" />
+
+  <!-- Name of generated libraries -->
+  <property name="cx2x.xcodeml.jar" value="om-cx2x-xcodeml.jar" />
+  <property name="cx2x.translator.jar" value="om-cx2x-claw.jar" />
+
+  <!-- OMNI compiler dependencies -->
+  <property name="omni.common.jar" value="om-common.jar" />
+  <property name="omni.exec.jar" value="om-exc-tools.jar" />
+
+  <property name="omni.common.dep" value="${omni.common.dir}/${omni.common.jar}" />
+  <property name="omni.exec.dep" value="${omni.exec.dir}/${omni.exec.jar}" />
+
+  <!-- External dependencies -->
+  <property name="antlr.jar" value="antlr4-4.5.3.jar" />
+  <property name="antlr.dep" value="${ivy.dir}/${antlr.jar}" />
+
+  <!-- Java classes -->
+  <property name="build.dir.xcodeml" location="bin/xcodeml" />
+  <property name="build.dir.translator" location="bin/translator" />
+
+  <!-- Libraries destination directory -->
+  <property name="dist.dir" location="../../build" />
+
+  <!-- Classpath for the CX2X XcodeML library -->
   <path id="build.path.xcodeml">
-    <pathelement location="${omni.exec.dir}/om-exc-tools.jar" />
+    <pathelement path="${omni.exec.dep}" />
   </path>
 
+  <!-- Classpath for the CX2X Translator library -->
   <path id="build.path.translator">
-    <pathelement location="${build.dir.xcodeml}" />
-    <pathelement location="${omni.common.dir}/om-common.jar" />
-    <pathelement location="${omni.exec.dir}/om-exc-tools.jar" />
-    <pathelement location="${ivy.dir}/antlr4-4.5.3.jar" />
+    <pathelement path="${build.dir.xcodeml}" />
+    <pathelement path="${omni.common.dep}" />
+    <pathelement path="${omni.exec.dep}" />
+    <pathelement path="${antlr.dep}" />
   </path>
 
-  <import file="../common-targets.xml" as="common"/>
-
-  <target name="init" depends="common.bootstrap">
-    <!-- Create the time stamp -->
+  <!-- Initialization step -->
+  <target name="init" depends="common.bootstrap" description="Initialize build directories">
     <tstamp />
-    <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build.dir.xcodeml}" />
     <mkdir dir="${build.dir.translator}" />
   </target>
 
   <!-- Generate the CLAW parser from the ANTLR grammar file -->
   <target name="antlr" depends="common.resolve">
-    <java classname="org.antlr.v4.Tool" fork="true" failonerror="true" dir="${src.translator.parser}" classpathref="build.path.translator">
+    <java classname="org.antlr.v4.Tool" fork="true" failonerror="true" dir="${src.translator.parser}" classpath="${antlr.dep}">
       <arg value="-o"/>
       <arg value="${src.translator.parser}"/>
       <arg value="-package"/>
