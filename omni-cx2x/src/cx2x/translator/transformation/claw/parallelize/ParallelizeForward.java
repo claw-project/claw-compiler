@@ -4,6 +4,7 @@
  */
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
@@ -318,7 +319,7 @@ public class ParallelizeForward extends ClawTransformation {
 
         // debug information
         if(XmOption.isDebugOutput()) {
-          System.out.println("Reading CLAW module file: " + _mod.getFullPath());
+          System.out.println("Reading CLAW module file: " + _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
         }
 
         if(_mod.getIdentifiers().contains(_calledFctName)) {
@@ -526,10 +527,10 @@ public class ParallelizeForward extends ClawTransformation {
                 pBase.getAttribute(ClawAttr.OVER.toString()));
 
             String type = _localFct ?
-                XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
-                    xcodeml, xcodeml, overPos, dimensions)
-                : XnodeUtil.duplicateWithDimension(typeBase, typeToUpdate,
-                xcodeml, _mod, overPos, dimensions);
+                TransformationHelper.duplicateWithDimension(typeBase,
+                    typeToUpdate, xcodeml, xcodeml, overPos, dimensions)
+                : TransformationHelper.duplicateWithDimension(typeBase,
+                typeToUpdate, xcodeml, _mod, overPos, dimensions);
 
             pUpdate.setAttribute(Xattr.TYPE, type);
 

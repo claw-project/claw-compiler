@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.helper;
 
-import cx2x.translator.language.common.ClawDimension;
-import cx2x.translator.language.common.OverPosition;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -1041,83 +1039,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Duplicates the type to update and add extra dimensions to match the base
-   * type.
-   *
-   * @param base       Base type.
-   * @param toUpdate   Type to update.
-   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
-   * @param xcodemlSrc Source XcodeML unit. Contains base dimension.
-   * @return The new type hash generated.
-   */
-  public static String duplicateWithDimension(XbasicType base,
-                                              XbasicType toUpdate,
-                                              XcodeML xcodemlDst,
-                                              XcodeML xcodemlSrc,
-                                              OverPosition overPos,
-                                              List<ClawDimension> dimensions)
-      throws IllegalTransformationException
-  {
-    XbasicType newType = toUpdate.cloneNode();
-    String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
-    newType.setAttribute(Xattr.TYPE, type);
-
-    if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {
-      int additionalDimensions =
-          base.getDimensions() - toUpdate.getDimensions();
-      for(int i = 0; i < additionalDimensions; ++i) {
-        Xnode index = xcodemlDst.createEmptyAssumedShaped();
-        newType.addDimension(index, 0);
-      }
-    } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {
-      switch(overPos) {
-        case BEFORE:
-          // TODO control and validate the before/after
-          for(ClawDimension dim : dimensions) {
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false),
-                XbasicType.APPEND);
-          }
-          break;
-        case AFTER:
-          for(ClawDimension dim : dimensions) {
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
-          }
-          break;
-        case MIDDLE:
-          throw new IllegalTransformationException("Not supported yet. " +
-              "Insertion in middle for duplicated array type.", 0);
-      }
-    } else {
-      newType.resetDimension();
-
-      for(int i = 0; i < base.getDimensions(); ++i) {
-        Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodemlDst);
-        newType.append(newDim, false);
-
-        Xnode baseDim = base.getDimensions(i);
-        Xnode lowerBound = baseDim.matchSeq(Xcode.LOWERBOUND);
-        Xnode upperBound = baseDim.matchSeq(Xcode.UPPERBOUND);
-
-        if(lowerBound != null) {
-          Xnode newLowerBound =
-              duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
-          newDim.append(newLowerBound, false);
-        }
-        if(upperBound != null) {
-          Xnode newUpperBound =
-              duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
-          newDim.append(newUpperBound, false);
-        }
-        newType.addDimension(newDim, XbasicType.APPEND);
-      }
-
-    }
-
-    xcodemlDst.getTypeTable().add(newType);
-    return type;
-  }
-
-  /**
    * Duplicate a lower or an upper bound between two different XcodeML units.
    *
    * @param baseBound  Base bound to be duplicated.
@@ -1126,7 +1047,7 @@ public class XnodeUtil {
    * @return The newly duplicated bound element.
    * @throws IllegalTransformationException If bound cannot be duplicated.
    */
-  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst,
+  public static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst,
                                       XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {

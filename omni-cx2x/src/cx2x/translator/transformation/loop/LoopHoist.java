@@ -90,9 +90,9 @@ public class LoopHoist extends ClawBlockTransformation {
         }
 
         int ifDepth =
-            (tmpIf != null) ? tmpIf.depth() : ClawConstant.UNDEF_DEPTH;
+            (tmpIf != null) ? tmpIf.depth() : Xnode.UNDEF_DEPTH;
         int selectDepth =
-            (tmpSelect != null) ? tmpSelect.depth() : ClawConstant.UNDEF_DEPTH;
+            (tmpSelect != null) ? tmpSelect.depth() : Xnode.UNDEF_DEPTH;
 
         if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth)
             && (ifDepth < depth || selectDepth < depth))

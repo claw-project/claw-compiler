@@ -4,7 +4,6 @@
  */
 package cx2x.xcodeml.transformation;
 
-import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xmod;
@@ -67,13 +66,18 @@ public class ModuleCache {
 
   /**
    * Write all modules in the cache to files.
+   *
+   * @param suffix Optional suffix to be placed between module name and .xmod
+   * @param ident  Number of spaces used to indent the XML file.
    */
-  public void write() throws IllegalTransformationException {
+  public void write(String suffix, int ident)
+      throws IllegalTransformationException
+  {
     for(Map.Entry<String, Xmod> pair : _moduleCache.entrySet()) {
       Xmod module = pair.getValue();
       String newModuleName = module.getPath() + module.getName() +
-          ClawConstant.CLAW_MOD_SUFFIX + XnodeUtil.XMOD_FILE_EXTENSION;
-      module.write(newModuleName, ClawConstant.INDENT_OUTPUT);
+          suffix + XnodeUtil.XMOD_FILE_EXTENSION;
+      module.write(newModuleName, ident);
     }
   }
 }

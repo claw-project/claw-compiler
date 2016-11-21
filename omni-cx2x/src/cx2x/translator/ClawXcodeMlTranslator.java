@@ -388,7 +388,8 @@ public class ClawXcodeMlTranslator {
    * Flush all information stored in the translator.
    */
   public void flush() throws IllegalTransformationException {
-    _transformer.getModCache().write();
+    _transformer.getModCache().write(ClawConstant.CLAW_MOD_SUFFIX,
+        ClawConstant.INDENT_OUTPUT);
   }
 
 }
