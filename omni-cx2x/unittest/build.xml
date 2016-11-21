@@ -1,0 +1,79 @@
+<project name="cx2x-test" default="main" basedir=".">
+  <description>
+  	Build CX2X unit tests
+  </description>
+
+  <!-- Java sources -->
+  <property name="src.dir" location="." />
+
+  <!-- Java classes -->
+  <property name="build.dir" location="bin" />
+
+  <property name="report.dir" location="report" />
+
+  <!-- Output, Jar -->
+  <property name="dist.dir" location="../../build" />
+  <property name="omni.dir" location="../../omni-compiler" />
+  <property name="omni.exec.dir" location="${omni.dir}/XcodeML-Exc-Tools/build" />
+  <property name="omni.common.dir" location="${omni.dir}/XcodeML-Common/build" />
+  <property name="omni.backend.dir" location="${omni.dir}/F-BackEnd/build" />
+  <property name="ivy.dir" location="lib" />
+
+  <!-- Class path added during the build -->
+  <path id="build.path">
+    <pathelement location="${ivy.dir}/junit-4.12.jar" />
+    <pathelement location="${ivy.dir}/hamcrest-core-1.3.jar" />
+    <pathelement location="${dist.dir}/om-cx2x-claw.jar" />
+    <pathelement location="${dist.dir}/om-cx2x-xcodeml.jar" />
+  </path>
+
+  <import file="../common-task.xml" as="common"/>
+
+  <!-- Initialization step -->
+  <target name="init" depends="common.bootstrap">
+    <tstamp />
+    <mkdir dir="${build.dir}" />
+  </target>
+
+  <!-- Compile the java code for the two libraries -->
+  <target name="compile" depends="common.resolve" description="compile the source ">
+    <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="build.path" />
+  </target>
+
+  <!-- Pacakge compiled files into their own library -->
+  <target name="dist" depends="compile" description="package, output to JAR">
+    <mkdir dir="${dist.dir}" />
+    <jar jarfile="${dist.dir}/omni-cx2x-unittest.jar" basedir="${build.dir}" />
+  </target>
+
+  <!-- Clean build -->
+  <target name="clean" description="clean up">
+    <delete dir="${build.dir}" />
+    <delete dir="${dist.dir}" />
+  </target>
+
+  <!-- Default target -->
+  <target name="main" depends="compile, dist" />
+
+
+  <target name="junit" depends="compile, dist">
+    <junit haltonfailure="yes" haltonerror="on">
+      <classpath location="${dist.dir}/omni-cx2x-unittest.jar" />
+      <classpath location="${ivy.dir}/junit-4.12.jar" />
+      <classpath location="${ivy.dir}/hamcrest-core-1.3.jar" />
+      <classpath location="${dist.dir}/om-cx2x-claw.jar" />
+      <classpath location="${dist.dir}/om-cx2x-xcodeml.jar" />
+
+      <formatter type="plain" usefile="false" /> <!-- to screen -->
+
+      <batchtest>
+        <fileset dir="${build.dir}">
+          <include name="**/*Test*.class"/>
+          <exclude name="**/TestConstant.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+
+</project>

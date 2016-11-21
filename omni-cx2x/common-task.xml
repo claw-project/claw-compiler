@@ -1,0 +1,17 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant">
+  <!-- Check whether ivy is present already -->
+  <target name="check-ivy">
+    <available file="${user.home}/.ant/lib/ivy.jar" property="ivy.present"/>
+  </target>
+
+  <!-- Get the ivy jar to be able to resolve dependencies -->
+  <target name="bootstrap" depends="check-ivy" unless="ivy.present" description="Install ivy jar if not present">
+      <mkdir dir="${user.home}/.ant/lib"/>
+      <get dest="${user.home}/.ant/lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar"/>
+  </target>
+
+  <!-- Resolve the dependencies described in ivy.xml -->
+  <target name="resolve" description="--> retrieve dependencies with ivy">
+    <ivy:retrieve />
+  </target>
+</project>
