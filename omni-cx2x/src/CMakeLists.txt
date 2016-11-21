@@ -7,7 +7,7 @@
 add_custom_target(omni-cx2x ALL)
 add_custom_command(
   TARGET omni-cx2x
-  COMMAND ant
+  COMMAND ${Ant_EXECUTABLE}
   -Dcx2x.xcodeml.jar="${OMNI_CX2X_XCODEML_NAME}.jar"
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr.jar="${ANTLR_NAME}.jar"

@@ -15,4 +15,4 @@ add_custom_target(omni-cx2x-unittest ALL)
 add_custom_command(TARGET omni-cx2x-unittest COMMAND ant)
 
 # Add test cases
-add_test(NAME junit COMMAND ant junit)
+add_test(NAME junit COMMAND ${Ant_EXECUTABLE} junit)
