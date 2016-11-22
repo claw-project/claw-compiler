@@ -42,7 +42,7 @@
   </target>
 
   <!-- Execution of JUnit tests -->
-  <target name="junit" depends="compile, dist">
+  <target name="junit" depends="compile, jar">
     <junit haltonfailure="yes" haltonerror="on">
       <classpath path="${cx2x.unittest.dep}" />
       <classpath path="${junit.dep}" />
