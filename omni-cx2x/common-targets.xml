@@ -1,14 +1,21 @@
 <!-- Common target for Java build in CX2X project -->
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
+  <!-- Needed for older version of ANT -->
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+    <classpath>
+      <pathelement location="./lib/ivy.jar"/>
+    </classpath>
+  </taskdef>
+
   <!-- Check whether ivy is present already -->
   <target name="check-ivy">
-    <available file="${user.home}/.ant/lib/ivy.jar" property="ivy.present"/>
+    <available file="./lib/ivy.jar" property="ivy.present"/>
   </target>
 
   <!-- Get the ivy jar to be able to resolve dependencies -->
   <target name="bootstrap" depends="check-ivy" unless="ivy.present" description="Install ivy jar if not present">
-      <mkdir dir="${user.home}/.ant/lib"/>
-      <get dest="${user.home}/.ant/lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar"/>
+      <mkdir dir="./lib"/>
+      <get dest="./lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.2.0/ivy-2.2.0.jar"/>
   </target>
 
   <!-- Resolve the dependencies described in ivy.xml -->
