@@ -6,8 +6,8 @@
 
   <!-- Java sources -->
   <property name="src.xcodeml" location="cx2x/xcodeml" />
-  <property name="src.translator" location="cx2x/translator" />
-  <property name="src.translator.parser" value="${src.translator}/language/parser" />
+  <property name="src.translator" location="cx2x" />
+  <property name="src.translator.parser" value="${src.translator}/translator/language/parser" />
 
   <!-- Java classes -->
   <property name="build.dir.xcodeml" location="bin/xcodeml" />
@@ -24,6 +24,7 @@
     <pathelement path="${omni.common.dep}" />
     <pathelement path="${omni.exec.dep}" />
     <pathelement path="${antlr.dep}" />
+    <pathelement path="${commoncli.dep}" />
   </path>
 
   <!-- Initialization step -->
@@ -45,20 +46,16 @@
   </target>
 
   <!-- Compile the java code for the two libraries -->
-  <target name="compile" depends="common.resolve, antlr" description="compile the source ">
+  <target name="compile" depends="common.resolve, antlr" description="compile the source">
     <javac includeantruntime="false" srcdir="${src.xcodeml}" destdir="${build.dir.xcodeml}" classpathref="build.path.xcodeml" />
-    <javac includeantruntime="false" srcdir="${src.translator}" destdir="${build.dir.translator}" classpathref="build.path.translator" />
+    <javac includeantruntime="false" srcdir="${src.translator}" destdir="${build.dir.translator}" classpathref="build.path.translator" excludes="xcodeml/**"/>
   </target>
 
   <!-- Pacakge compiled files into their own library -->
   <target name="jar" depends="compile" description="package, output to JAR">
     <mkdir dir="${dist.dir}" />
     <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir.xcodeml}" />
-    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir.translator}" >
-      <manifest>
-        <attribute name="Main-Class" value="cx2x.Cx2x" />
-      </manifest>
-    </jar>
+    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir.translator}" />
   </target>
 
   <target name="clean" description="clean up">
