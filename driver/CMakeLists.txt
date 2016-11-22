@@ -4,11 +4,6 @@
 # This CMake file define the configuration and the installation steps of the
 # claw compiler driver
 
-find_package(Java)
-#if(NOT Java_Runtime_FOUND)
-#  message(FATAL_ERROR "Java not found")
-#endif()
-
 # Define variables needed to configure the files
 set(OMNI_HOME ${CMAKE_INSTALL_PREFIX})
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
@@ -51,7 +46,7 @@ file(
 )
 
 
-# Installatin steps
+# Installatoin steps
 install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}
   PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ
@@ -74,7 +69,7 @@ install(
 )
 
 
-# Only to run test, we use the local build
+# Only to run tests, we use the local build
 set(OMNI_HOME "${CMAKE_SOURCE_DIR}/omni-compiler")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/Driver/libexec")
 set(OMNI_BIN_DIR "${OMNI_HOME}/F-FrontEnd/src")
