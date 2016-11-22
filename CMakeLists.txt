@@ -75,37 +75,20 @@ set(OMNI_CX2X_CONFIG_DEFAULT "${CMAKE_INSTALL_PREFIX}/etc/${CLAW_CONFIG_FILE}")
 # Define ANTLR jar archive install location.
 set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
 
+# Define Common CLI archive install location.
 set(COMMON_CLI "${CMAKE_INSTALL_PREFIX}/share/cx2x/${COMMON_CLI_NAME}.jar")
 
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
 if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
-  # For Cray Compiler
-  set(FPPFLAGS "-e P")              # for preprocessing only
-  set(FPP_REDIRECT false)           # cannot use redirection > to save file
-  set(CLAW_TEST_FFP_FLAGS "-e Z")   # for preprocessing and compilation
-  set(TEST_BASE_FLAGS "-h noacc,noomp") # Unactivate OpenACC and OpenMP
-  set(OPENACC_FLAGS "-h acc,noomp") # flags to compile with OpenACC support
-  set(OPENMP_FLAGS "-h noacc,omp")  # flags to compile with OpenMP support
-  set(OMNI_TARGET "--target=Cray-linux-gnu")
+  message(STATUS "Configure preprocessor with Cray compiler.")
+  include(compiler/cray.cmake)
 elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
-  # For PGI compiler
-  set(FPPFLAGS "-E")                       # for preprocessing only
-  set(FPP_REDIRECT true)                   # use redirection > to save file
-  set(CLAW_TEST_FFP_FLAGS "-Mpreprocess")  # force preprocessing
-  set(TEST_BASE_FLAGS "")           # Base flags for test case compilation
-  set(OPENACC_FLAGS "-acc")         # flags to compile with OpenACC support
-                                    # TODO maybe need -ta=<target>
-  set(OPENMP_FLAGS "-mp")           # flags to compile with OpenMP support
-  set(OMNI_CONF_OPTION ${OMNI_CONF_OPTION} "CPP=pgcc -E")
+  message(STATUS "Configure preprocessor with PGI compiler.")
+  include(compiler/pgi.cmake)
 else()
-  # Std option for gfortran
-  set(FPPFLAGS "-E -cpp")           # for preprocessing only
-  set(FPP_REDIRECT true)            # use redirection > to save file
-  set(CLAW_TEST_FFP_FLAGS "-cpp")   # force preprocessing
-  set(TEST_BASE_FLAGS "")           # Base flags for test case compilation
-  set(OPENACC_FLAGS "")             # flags to compile with OpenACC support
-  set(OPENMP_FLAGS "-fopenmp")      # flags to compile with OpenMP support
+  message(STATUS "Configure preprocessor with GNU compiler.")
+  include(compiler/gnu.cmake)
 endif()
 
 # Build OMNI compiler
