@@ -29,7 +29,7 @@
   </target>
 
   <!-- Package compiled files into their own library -->
-  <target name="dist" depends="compile" description="package, output to JAR">
+  <target name="jar" depends="compile" description="package, output to JAR">
     <mkdir dir="${dist.dir}" />
     <jar jarfile="${dist.dir}/omni-cx2x-unittest.jar" basedir="${build.dir}" />
   </target>
@@ -62,5 +62,5 @@
   </target>
 
   <!-- Default target -->
-  <target name="main" depends="compile, dist" />
+  <target name="main" depends="compile, jar" />
 </project>
