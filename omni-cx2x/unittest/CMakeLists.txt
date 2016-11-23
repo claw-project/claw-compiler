@@ -12,11 +12,14 @@ configure_file(
 
 # Bootstrap the compilation process
 add_custom_target(omni-cx2x-ut-init ALL)
-add_custom_command(TARGET omni-cx2x-ut-init COMMAND ${Ant_EXECUTABLE} init)
+add_custom_command(
+  TARGET omni-cx2x-ut-init
+  COMMAND ${Ant_EXECUTABLE} ${ANT_FLAGS} init
+)
 
 # Add target for the compilation of JUnit test cases with ANT
 add_custom_target(omni-cx2x-ut ALL)
-add_custom_command(TARGET omni-cx2x-ut COMMAND ant)
+add_custom_command(TARGET omni-cx2x-ut COMMAND ${Ant_EXECUTABLE} ${ANT_FLAGS})
 add_dependencies(omni-cx2x-ut omni-cx2x-ut-init)
 
 # Add test cases

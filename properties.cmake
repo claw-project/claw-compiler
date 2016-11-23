@@ -6,6 +6,7 @@
 
 # Define build variables
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
+set(ANT_FLAGS "-silent")
 
 # Define CX2X libraries names
 set(OMNI_CX2X_CLAW_NAME "om-cx2x-claw")
@@ -51,8 +52,6 @@ set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/bu
 set(LOCAL_OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
 set(LOCAL_OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
 set(LOCAL_OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
-
-
 
 # Define third-party dependency names
 set(ANTLR_NAME "antlr4")
