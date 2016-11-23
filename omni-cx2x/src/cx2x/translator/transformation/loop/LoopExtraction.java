@@ -360,11 +360,11 @@ public class LoopExtraction extends ClawTransformation {
           newVarDecl.append(tempName, false);
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
-        } else {
+        }/* else {
           // Case 2: variable is not totally demoted then create new type
           // TODO
 
-        }
+        }*/
       } // Loop mapped variables
     } // Loop over mapping clauses
 

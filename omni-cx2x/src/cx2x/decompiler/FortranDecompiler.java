@@ -97,11 +97,7 @@ public class FortranDecompiler {
         Document xcodeDoc;
         xcodeDoc = builder.parse(inputFilepath);
         decompiler.decompile(context, xcodeDoc, writer);
-      } catch(ParserConfigurationException e) {
-        return false;
-      } catch(SAXException e) {
-        return false;
-      } catch(IOException e) {
+      } catch(ParserConfigurationException | SAXException | IOException e) {
         return false;
       }
 

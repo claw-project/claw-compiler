@@ -5,7 +5,6 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
