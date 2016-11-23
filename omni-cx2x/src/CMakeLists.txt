@@ -15,6 +15,7 @@ add_custom_command(
   -Dcx2x.xcodeml.jar="${OMNI_CX2X_XCODEML_NAME}.jar"
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr.jar="${ANTLR_NAME}.jar"
+  -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
 )
 add_dependencies(omni-cx2x omni-cx2x-init)
 

@@ -44,8 +44,10 @@ set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
 set(OMNI_CX2X_CLAW_NAME om-cx2x-claw)
 set(OMNI_CX2X_XCODEML_NAME om-cx2x-xcodeml)
-set(ANTLR_NAME antlr4-4.5.3)
-set(COMMON_CLI_NAME commons-cli-1.3.1)
+
+# Define dependencies names
+set(ANTLR_NAME antlr4)
+set(COMMON_CLI_NAME commons-cli)
 
 # Define OMNI Compiler executables and jar archives install location.
 set(OMNI_F_FRONT "${OMNI_HOME}/bin/F_Front")
