@@ -1,4 +1,44 @@
-*.aux
-*.log
+# Generated pdfs
 *.pdf
+!resources/*.pdf
+
+# Javadoc generated folder
 javadoc
+
+## Core latex/pdflatex auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+
+# glossaries
+*.acn
+*.acr
+*.glg
+*.glo
+*.gls
+*.glsdefs
+
+# makeidx
+*.idx
+*.ilg
+*.ind
+*.ist
+
+# listings
+*.lol
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
