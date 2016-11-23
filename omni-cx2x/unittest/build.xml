@@ -52,6 +52,7 @@ See LICENSE file for more information
       <classpath path="${cx2x.unittest.dep}" />
       <classpath path="${junit.dep}" />
       <classpath path="${hamcrest.dep}" />
+      <classpath path="${antlr.dep}" />
       <classpath path="${cx2x.translator.dep}" />
       <classpath path="${cx2x.xcodeml.dep}" />
 

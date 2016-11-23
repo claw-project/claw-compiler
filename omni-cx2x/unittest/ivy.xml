@@ -4,5 +4,6 @@
   <info organisation="claw" module="cx2x-test"/>
   <dependencies>
     <dependency org="junit" name="junit" rev="4.12"/>
+    <dependency org="org.antlr" name="antlr4" rev="4.5.3"/>
   </dependencies>
 </ivy-module>
