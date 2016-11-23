@@ -3,7 +3,11 @@
 
 # CLAW XcodeML manipulation library and translator library
 
-# Compile libraries with ANT
+# Bootstrap the compilation process
+add_custom_target(omni-cx2x-init ALL)
+add_custom_command(TARGET omni-cx2x-init COMMAND ${Ant_EXECUTABLE} init)
+
+# Compile the CX2X libraries
 add_custom_target(omni-cx2x ALL)
 add_custom_command(
   TARGET omni-cx2x
@@ -12,6 +16,7 @@ add_custom_command(
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr.jar="${ANTLR_NAME}.jar"
 )
+add_dependencies(omni-cx2x omni-cx2x-init)
 
 # Install libraries
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
