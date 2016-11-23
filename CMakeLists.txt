@@ -15,6 +15,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/
 enable_language(Fortran)
 enable_testing()
 find_package(Ant 1.7.1 REQUIRED)
+find_package(Java 1.7 REQUIRED)
 include(ExternalProject)
 
 # Recover the last commit hash from git to add it to the version
