@@ -18,6 +18,9 @@ find_package(Ant 1.7.1 REQUIRED)
 find_package(Java 1.7 REQUIRED)
 include(ExternalProject)
 
+# Load all variables from file
+include(properties.cmake)
+
 # Recover the last commit hash from git to add it to the version
 execute_process(
   COMMAND git log -1 --format=%h
@@ -37,49 +40,6 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 # Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
 # specific version of OMNI Compiler at the moment.
 option(BUILD_OMNI "Build OMNI Compiler" ON)
-
-# Define the OMNI installation directory
-set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}")
-set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
-set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
-set(OMNI_CX2X_CLAW_NAME om-cx2x-claw)
-set(OMNI_CX2X_XCODEML_NAME om-cx2x-xcodeml)
-
-# Define dependencies names
-set(ANTLR_NAME antlr4)
-set(COMMON_CLI_NAME commons-cli)
-
-# Define OMNI Compiler executables and jar archives install location.
-set(OMNI_F_FRONT "${OMNI_HOME}/bin/F_Front")
-set(OMNI_C_FRONT "${OMNI_HOME}/bin/C_Front")
-set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-exc-tools.jar")
-set(OMNI_JAR_COMMON "${OMNI_CLASSPATH}/om-common.jar")
-set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
-set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
-
-# Define OMNI Compiler jar archives build location.
-set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
-set(LOCAL_OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
-set(LOCAL_OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
-set(LOCAL_OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
-
-# Define CLAW jar archives build location.
-set(OMNI_BUILD_JAR_CX2X_CLAW "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_BUILD_JAR_CX2X_XCODEML "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
-
-# Define CLAW jar archives install location.
-set(OMNI_JAR_CX2X_CLAW "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_JAR_CX2X_XCODEML "${CMAKE_INSTALL_PREFIX}/share/cx2x/${OMNI_CX2X_XCODEML_NAME}.jar")
-
-# Define default configuration path.
-set(CLAW_CONFIG_FILE "claw-default.xml")
-set(OMNI_CX2X_CONFIG_DEFAULT "${CMAKE_INSTALL_PREFIX}/etc/${CLAW_CONFIG_FILE}")
-
-# Define ANTLR jar archive install location.
-set(ANTLR "${CMAKE_INSTALL_PREFIX}/share/cx2x/${ANTLR_NAME}.jar")
-
-# Define Common CLI archive install location.
-set(COMMON_CLI "${CMAKE_INSTALL_PREFIX}/share/cx2x/${COMMON_CLI_NAME}.jar")
 
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.

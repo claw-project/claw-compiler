@@ -4,21 +4,6 @@
 # This CMake file define the configuration and the installation steps of the
 # claw compiler driver
 
-# Define variables needed to configure the files
-set(OMNI_HOME ${CMAKE_INSTALL_PREFIX})
-set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
-set(OMNI_INCLUDE_DIR "${OMNI_HOME}/include")
-set(OMNI_BIN_DIR "${OMNI_HOME}/bin")
-set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
-set(OM_CX2X_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
-set(JAVA_OPT "-Xmx200m -Xms200m")
-set(OMNI_F2X_FLAGS "")
-set(FPP "${CMAKE_Fortran_COMPILER}")
-set(CPP_OPT "${FPPFLAGS}")
-set(CLAW_CONF_FILE "claw_f.conf")
-set(CLAW_COMPILER_FILE "clawfc")
-set(CLAW_LIB_SH "claw_f_lib.sh")
-
 # Configure files with variables information
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in
