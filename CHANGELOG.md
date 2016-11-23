@@ -27,7 +27,9 @@ Modification:
 Architecture:
 * All Java libraries now compiled with Ant.
 * Execution of JUnit test cases is driven by Ant.
-* Program arguments of cx2x.Cx2x is now using Common CLI. 
+* Program arguments of cx2x.Cx2x is now using Common CLI.
+* Preprocessor specific configurations are now stored in
+  `compiler/<compiler_id>.cmake` files.
 
 General:
 * OMNI Compiler is switched to a dedicated forked version including F2003
