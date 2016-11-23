@@ -6,7 +6,7 @@
 
 # Define build variables
 set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
-set(ANT_FLAGS "-silent")
+set(ANT_FLAGS "-quiet")
 
 # Define CX2X libraries names
 set(OMNI_CX2X_CLAW_NAME "om-cx2x-claw")
