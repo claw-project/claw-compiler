@@ -51,3 +51,8 @@ omni-cx2x/unittest/helper/TestConstant.java
 .idea
 .project
 *.iml
+
+# Ant files
+.ant-targets-build.xml
+omni-cx2x/lib
+bin

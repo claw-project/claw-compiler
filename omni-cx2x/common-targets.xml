@@ -20,6 +20,6 @@
 
   <!-- Resolve the dependencies described in ivy.xml -->
   <target name="resolve" description="--> retrieve dependencies with ivy">
-    <ivy:retrieve log="quiet" />
+    <ivy:retrieve log="quiet" file="../ivy.xml" pattern="../lib/[artifact](-[classifier]).[ext]"/>
   </target>
 </project>
