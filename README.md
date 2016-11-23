@@ -9,10 +9,8 @@ CLAW language definition.
 [CLAW language definition](https://github.com/C2SM-RCM/claw-language-definition)
 
 ### Status of implementation
-We are currently implementing the version `v0.2` of the CLAW language
-specification this reference compiler.
-
-This language specification is not not finished yet.
+We are currently implementing the version `v0.3a` of the CLAW language
+specification in this reference compiler.
 
 ### Versioning convention
 The versioning convention for the CLAW Compiler follows the versioning of the
