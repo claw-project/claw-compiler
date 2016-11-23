@@ -71,5 +71,5 @@ See LICENSE file for more information
   </target>
 
   <!-- Default target -->
-  <target name="main" depends="compile, jar" />
+  <target name="main" depends="init, compile, jar" />
 </project>
