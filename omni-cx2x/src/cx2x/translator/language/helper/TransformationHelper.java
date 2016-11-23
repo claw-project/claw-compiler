@@ -498,19 +498,22 @@ public class TransformationHelper {
     XbasicType newType;
 
     if(update) {
-      XbasicType oldType = (XbasicType) xcodeml.getTypeTable().get(id.getType());
-      if(oldType == null && !XnodeUtil.isBuiltInType(id.getType())) {
-        throw new IllegalTransformationException("Cannot matchSeq type for " +
-            fieldId, claw.getPragma().lineNo());
-      } else if(XnodeUtil.isBuiltInType(id.getType())) {
+      if(XnodeUtil.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
-        newType = oldType.cloneNode();
-        newType.setType(type);
+        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id.getType());
+        if(old == null) {
+          throw new IllegalTransformationException("Cannot matchSeq type for " +
+              fieldId, claw.getPragma().lineNo());
+        } else {
+          newType = old.cloneNode();
+          newType.setType(type);
+        }
       }
     } else {
       newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
     }
+
     PromotionInfo proInfo = new PromotionInfo(fieldId, newType.getDimensions(),
         newType.getDimensions() + dimensions.size(), type);
 
