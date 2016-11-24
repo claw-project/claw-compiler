@@ -4,9 +4,9 @@
 # This CMakeLists.txt file is the entry point for the configuration and the
 # compilation of the CLAW Fortran compiler.
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
-project("CLAW FORTRAN Compiler")
+project("CLAW FORTRAN Compiler" VERSION 0.3.0)
 
 # Set up the local module path
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
@@ -29,8 +29,8 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Define CLAW compiler version
-set(CLAWFC_VERSION "0.3a rev. ${GIT_COMMIT_HASH}")
+# Define CLAW repository last commit hash
+set(CLAWFC_GIT_HASH "${GIT_COMMIT_HASH}")
 
 # Set the default install directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

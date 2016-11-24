@@ -226,7 +226,7 @@ function claw_f_set_parameters()
 
 function claw_f_print_version()
 {
-  echo "CLAW Fortran compiler @CLAWFC_VERSION@"
+  echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@"
 }
 
 # Process dependencies file trough the frontend
