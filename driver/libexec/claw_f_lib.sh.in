@@ -65,6 +65,9 @@ function get_target()
 
 function claw_f_set_parameters()
 {
+  # Add the current working directory
+  module_opt+=("-M$PWD")
+
   while [ -n "$1" ]; do
     case "$1" in
       *.f90|*.f|*.F90|*.F)
@@ -209,12 +212,6 @@ function claw_f_set_parameters()
     shift
   done
 
-  # If no user specified search path, add current working dir
-  if [ ${#module_opt[@]} -eq 0 ]
-  then
-    module_opt+=("-M$PWD")
-  fi
-
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
   if [ "${directive_opt[0]}" == "openacc" ]
@@ -302,7 +299,7 @@ function claw_f_process_dependencies()
           found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]
           then
-            echo "Error: cannot locate file for module $module_name"
+            echo "Error1: cannot locate file for module $module_name"
             exit 1
           else
             potential_module_file=${found_file[0]}
@@ -322,7 +319,7 @@ function claw_f_process_dependencies()
 
       if [[ $module_file_found == false ]]
       then
-        echo "Error: cannot locate file for module $module_name"
+        echo "Error2: cannot locate file for module $module_name"
         exit 1;
       fi
     fi
