@@ -161,9 +161,7 @@ public class Parallelize extends ClawTransformation {
           _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
         }
 
-        if(decl.opcode() == Xcode.FUSEDECL
-            || decl.opcode() == Xcode.FUSEONLYDECL)
-        {
+        if(decl.opcode() != Xcode.VARDECL) {
           continue;
         }
 
