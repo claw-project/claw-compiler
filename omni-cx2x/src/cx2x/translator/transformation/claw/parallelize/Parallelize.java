@@ -161,6 +161,12 @@ public class Parallelize extends ClawTransformation {
           _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
         }
 
+        if(decl.opcode() == Xcode.FUSEDECL
+            || decl.opcode() == Xcode.FUSEONLYDECL)
+        {
+          continue;
+        }
+
         Xtype type = xcodeml.getTypeTable().
             get(decl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType) {
