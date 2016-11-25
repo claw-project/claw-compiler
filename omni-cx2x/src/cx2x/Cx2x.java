@@ -236,14 +236,7 @@ public class Cx2x {
       for(String value : cmd.getOptionValues("M")) {
         XcodeMLtools_Fmod.addSearchPath(value);
       }
-    } else {
-      /* If no module search path is given, look in the same directory for CLAW
-       * modified module file */
-      File inputFile = new File(input);
-      XcodeMLtools_Fmod.
-          addSearchPath(inputFile.getParentFile().getAbsolutePath());
     }
-
 
     // Read default target from config if not set by user
     AcceleratorDirective directive =

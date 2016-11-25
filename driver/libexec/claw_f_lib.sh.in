@@ -209,6 +209,12 @@ function claw_f_set_parameters()
     shift
   done
 
+  # If no user specified search path, add current working dir
+  if [ ${#module_opt[@]} -eq 0 ]
+  then
+    module_opt+=("-M$PWD")
+  fi
+
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
   if [ "${directive_opt[0]}" == "openacc" ]
@@ -257,7 +263,6 @@ function claw_f_process_dependencies()
 
     # Add current dir to potential search paths
     module_search_path=()
-    module_search_path+=(".")
     module_search_path+=("$moddirname")
 
     # Add user given search paths (-J option)
