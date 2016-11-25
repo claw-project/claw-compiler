@@ -259,7 +259,7 @@ function claw_f_process_dependencies()
     module_file="" # Holder variable for the module file when found
 
     # FORTRAN file extensions used for the search
-    fortran_ext=".f90 .F90 .f .F .f95 .f03"
+    fortran_ext=(".f90" ".F90" ".f" ".F" ".f95" ".f03")
 
     # Add current dir to potential search paths
     module_search_path=()
@@ -274,7 +274,7 @@ function claw_f_process_dependencies()
     # Try to locate the module file
     for directory in ${module_search_path[@]}
     do
-      for ext in $fortran_ext
+      for ext in ${fortran_ext[@]}
       do
         module_file="$directory/$module_name$ext"
         if [[ -f $module_file ]]
@@ -289,10 +289,41 @@ function claw_f_process_dependencies()
       fi
     done
 
+
     if [[ $module_file_found == false ]]
     then
-      echo "Error: cannot find module file $dep.xmod"
-      exit 1;
+      # Could not locate a module file with same name. Try to find module file
+      # with regular expression
+      for directory in ${module_search_path[@]}
+      do
+        for ext in ${fortran_ext[@]}
+        do
+          found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
+          if [ ${#found_file[@]} -gt 1 ]
+          then
+            echo "Error: cannot locate file for module $module_name"
+            exit 1
+          else
+            potential_module_file=${found_file[0]}
+            if [ ${#potential_module_file} -gt 0 ]
+            then
+              module_file=$potential_module_file
+              module_file_found=true
+              break
+            fi
+          fi
+        done
+        if [[ $module_file_found == true ]]
+        then
+          break
+        fi
+      done
+
+      if [[ $module_file_found == false ]]
+      then
+        echo "Error: cannot locate file for module $module_name"
+        exit 1;
+      fi
     fi
 
     module_xmod_file="$module_name.xmod"
