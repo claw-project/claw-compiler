@@ -246,69 +246,48 @@ function claw_f_process_dependencies()
 
   # Get the directory and use it to look in the same for dependencies
   moddirname=$(dirname $2)
-
   for dep in "${dependencies[@]}"
   do
-    module_name=${dep// }
+    module_name=${dep// } # Remove all spaces
     module_name=${module_name%% }
-    module_file=""
-    if [[ -f $module_name.f90 ]]
-    then
-      module_file="$module_name.f90"
-    elif [[ -f $module_name.F90 ]]
-    then
-      module_file="$module_name.F90"
-    elif [[ -f $module_name.f ]]
-    then
-      module_file="$module_name.f"
-    elif [[ -f $module_name.F ]]
-    then
-      module_file="$module_name.F"
-    # Dependencies not found in the current dir. Try to check in the same dir.
-    elif [[ -f "$moddirname/$module_name.f90" ]]
-    then
-      module_file="$moddirname/$module_name.f90"
-    elif [[ -f $moddirname/$module_name.F90 ]]
-    then
-      module_file="$moddirname/$module_name.F90"
-    elif [[ -f $moddirname/$module_name.f ]]
-    then
-      module_file="$moddirname/$module_name.f"
-    elif [[ -f $moddirname/$module_name.F ]]
-    then
-      module_file="$moddirname/$module_name.F"
-    else
-      file_found=false
-      for search_path in "${module_opt[@]}"
-        do
-        if [[ -f "${search_path:2}/$module_name.f90" ]]
+    module_file="" # Holder variable for the module file when found
+
+    # FORTRAN file extensions used for the search
+    fortran_ext=".f90 .F90 .f .F .f95 .f03"
+
+    # Add current dir to potential search paths
+    module_search_path=()
+    module_search_path+=(".")
+    module_search_path+=("$moddirname")
+
+    # Add user given search paths (-J option)
+    for search_path in "${module_opt[@]}"
+    do
+      module_search_path+=(${search_path:2})
+    done
+
+    # Try to locate the module file
+    for directory in ${module_search_path[@]}
+    do
+      for ext in $fortran_ext
+      do
+        module_file="$directory/$module_name$ext"
+        if [[ -f $module_file ]]
         then
-          module_file="${search_path:2}/$module_name.f90"
-          file_found=true
-          break
-        elif [[ -f ${search_path:2}/$module_name.F90 ]]
-        then
-          module_file="${search_path:2}/$module_name.F90"
-          file_found=true
-          break
-        elif [[ -f ${search_path:2}/$module_name.f ]]
-        then
-          module_file="${search_path:2}/$module_name.f"
-          file_found=true
-          break
-        elif [[ -f ${search_path:2}/$module_name.F ]]
-        then
-          module_file="${search_path:2}/$module_name.F"
-          file_found=true
+          module_file_found=true
           break
         fi
       done
-
-      if [ "$file_found" = false ]
+      if [[ $module_file_found == true ]]
       then
-          echo "Error: cannot find module file $dep.xmod"
-          exit 1;
+        break
       fi
+    done
+
+    if [[ $module_file_found == false ]]
+    then
+      echo "Error: cannot find module file $dep.xmod"
+      exit 1;
     fi
 
     module_xmod_file="$module_name.xmod"
