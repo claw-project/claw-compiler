@@ -5,6 +5,9 @@ See LICENSE file for more information
 
 <project name="cx2x-test" default="main" basedir=".">
   <description>Build CX2X unit tests</description>
+
+  <dirname property="antfile.dir" file="${ant.file}"/>
+
   <import file="../common-targets.xml"/>
   <property file="../claw.properties"/>
 

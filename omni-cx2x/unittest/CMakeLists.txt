@@ -14,16 +14,29 @@ configure_file(
 add_custom_target(omni-cx2x-ut-init ALL)
 add_custom_command(
   TARGET omni-cx2x-ut-init
-  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml ${ANT_FLAGS} init
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  ${ANT_FLAGS}
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  init
 )
 
 # Add target for the compilation of JUnit test cases with ANT
 add_custom_target(omni-cx2x-ut ALL)
 add_custom_command(
-  TARGET omni-cx2x-ut 
-  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml ${ANT_FLAGS}
+  TARGET omni-cx2x-ut
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  ${ANT_FLAGS}
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
 )
 add_dependencies(omni-cx2x-ut omni-cx2x-ut-init)
 
 # Add test cases
-add_test(NAME junit COMMAND ${Ant_EXECUTABLE} junit)
+add_test(
+  NAME junit
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  junit
+)
