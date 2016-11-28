@@ -33,6 +33,9 @@ matrix:
             - g++-5
       env: COMPILER=g++-5
 
+before_install:
+  openssl aes-256-cbc -K $encrypted_df55ab7ee3a4_key -iv $encrypted_df55ab7ee3a4_iv -in github_omni-compiler-mch-deploy_key.enc -out github_omni-compiler-mch-deploy_key -d
+
 script:
   - mkdir build
   - cd build
