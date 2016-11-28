@@ -15,12 +15,12 @@ matrix:
           - g++-4.9
           - gfortran-4.9
       env:
-        - CXX=g++-4.9
-        - CC=gcc-4.9
-        - FC=gfortran-4.9
+        - CXX_COMPILER=g++-4.9
+        - CC_COMPILER=gcc-4.9
+        - FC_COMPILER=gfortran-4.9
 
 script:
   - mkdir build
   - cd build
-  - cmake .. && make
+  - FC=$FC_COMPILER CC=$CC_COMPILER CXX=$CXX_COMPILER cmake .. && make
   - make clean-transformation transformation test
