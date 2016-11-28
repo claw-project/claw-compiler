@@ -7,14 +7,14 @@
 add_custom_target(omni-cx2x-init ALL)
 add_custom_command(
   TARGET omni-cx2x-init
-  COMMAND ${Ant_EXECUTABLE} ${ANT_FLAGS} init
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml ${ANT_FLAGS} init
 )
 
 # Compile the CX2X libraries
 add_custom_target(omni-cx2x ALL)
 add_custom_command(
   TARGET omni-cx2x
-  COMMAND ${Ant_EXECUTABLE} ${ANT_FLAGS}
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml ${ANT_FLAGS}
   -Dcx2x.xcodeml.jar="${OMNI_CX2X_XCODEML_NAME}.jar"
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr.jar="${ANTLR_NAME}.jar"
