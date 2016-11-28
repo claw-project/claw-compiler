@@ -38,5 +38,5 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake .. && make
+  - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make clean-transformation transformation test
