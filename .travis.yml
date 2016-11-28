@@ -19,17 +19,18 @@ matrix:
     - compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
+        sources: ['ubuntu-toolchain-r-test']
+        packages:
+          - gcc-4.9
+          - g++-4.9
+          - gfortran-4.9
       env:
-        - CXX_COMPILER=g++-4.9
-        - CC_COMPILER=gcc-4.9
-        - FC_COMPILER=gfortran-4.9
+        - CXX=g++-4.9
+        - CC=gcc-4.9
+        - FC=gfortran-4.9
 
 script:
   - mkdir build
   - cd build
-  - CC=$CC_COMPILER CXX=$CXX_COMPILER FC=$FC_COMPILER cmake .. && make
+  - cmake .. && make
   - make clean-transformation transformation test
