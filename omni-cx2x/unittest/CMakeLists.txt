@@ -33,4 +33,10 @@ add_custom_command(
 add_dependencies(omni-cx2x-ut omni-cx2x-ut-init)
 
 # Add test cases
-add_test(NAME junit COMMAND ${Ant_EXECUTABLE} junit)
+add_test(
+  NAME junit
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  junit
+)
