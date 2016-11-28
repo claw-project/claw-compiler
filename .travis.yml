@@ -36,4 +36,5 @@ matrix:
 script:
   - mkdir build
   - cd build
-  - cmake .. && make all transformation test
+  - cmake .. && make
+  - make clean-transformation transformation test
