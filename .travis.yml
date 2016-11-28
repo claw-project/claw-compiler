@@ -19,6 +19,14 @@ matrix:
             - g++-4.9
             - gfortran-4.9
 
+before_script:
+  - wget --no-check-certificate https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz
+  - tar -zxf openmpi-2.0.1.tar.gz
+  - cd openmpi-2.0.1
+  - sh ./configure --prefix=$HOME/openmpi > /dev/null
+  - make -j > /dev/null
+  - sudo make install > /dev/null
+
 script:
   - mkdir build
   - cd build
