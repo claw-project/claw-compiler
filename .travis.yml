@@ -28,6 +28,7 @@ before_script:
   - sh ./configure --prefix=$HOME/openmpi > /dev/null
   - make -j > /dev/null
   - sudo make install > /dev/null
+  - export PATH=$PATH:$HOME/openmpi/bin
   - popd
 
 # Build CLAW FORTRAN Compiler and execute the test suite
