@@ -21,6 +21,9 @@ matrix:
 
 # Install OpenMPI for OMNI Compiler
 before_script:
+  - export FC=$FC_COMPILER
+  - export CC=$CC_COMPILER
+  - export CXX=$CXX_COMPILER
   - pushd $(pwd)
   - wget --no-check-certificate https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz
   - tar -zxf openmpi-2.0.1.tar.gz
@@ -35,8 +38,5 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - export FC=$FC_COMPILER
-  - export CC=$CC_COMPILER
-  - export CXX=$CXX_COMPILER
   - cmake .. && make
   - make clean-transformation transformation test
