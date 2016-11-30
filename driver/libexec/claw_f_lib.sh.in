@@ -299,7 +299,7 @@ function claw_f_process_dependencies()
           found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]
           then
-            echo "Error1: cannot locate file for module $module_name"
+            echo "Error: cannot locate file for module $module_name"
             exit 1
           else
             potential_module_file=${found_file[0]}
@@ -319,7 +319,7 @@ function claw_f_process_dependencies()
 
       if [[ $module_file_found == false ]]
       then
-        echo "Error2: cannot locate file for module $module_name"
+        echo "Error: cannot locate file for module $module_name"
         exit 1;
       fi
     fi
