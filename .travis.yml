@@ -1,0 +1,51 @@
+# Ubuntu 14.04 Trusty support
+sudo: required
+dist: trusty
+language: cpp
+
+# Disable the default submodule logic
+git:
+  submodules: false
+
+# Conifguration matrix
+matrix:
+  include:
+    - compiler: gcc
+      env:
+        - CXX_COMPILER=g++-4.9
+        - CC_COMPILER=gcc-4.9
+        - FC_COMPILER=gfortran-4.9
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages:
+            - gcc-4.9
+            - g++-4.9
+            - gfortran-4.9
+
+# Fetch submodule for omni-compiler repository
+before_install:
+  - git submodule init
+  - git submodule update --remote
+
+# Install OpenMPI for OMNI Compiler
+before_script:
+  - export FC=$FC_COMPILER
+  - export CC=$CC_COMPILER
+  - export CXX=$CXX_COMPILER
+  - pushd $(pwd)
+  - wget --no-check-certificate https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz
+  - tar -zxf openmpi-2.0.1.tar.gz
+  - cd openmpi-2.0.1
+  - sh ./configure --prefix=$HOME/openmpi > /dev/null
+  - make -j > /dev/null
+  - sudo make install > /dev/null
+  - export PATH=$PATH:$HOME/openmpi/bin
+  - popd
+
+# Build CLAW FORTRAN Compiler and execute the test suite
+script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
+  - make clean-transformation transformation test

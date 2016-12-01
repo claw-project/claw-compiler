@@ -1,5 +1,7 @@
 # CLAW Fortran Compiler (omni-cx2x)
 
+[![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
+
 ![CLAW logo](resource/claw_image.png)
 
 ### language specification
