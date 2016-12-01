@@ -22,6 +22,7 @@
 \usepackage{glossaries}
 \usepackage{xspace}
 
+
 \setcounter{secnumdepth}{3}
 
 \def\fortran{FORTRAN\xspace}
@@ -181,7 +182,7 @@ Author: Valentin Clement
 
 \chapter{Architecture}
 \section{OMNI Compiler}
-The \clawfcomp is based on the \omni. The \omni project provides a set of programs to build source-to-source translator for C or FORTRAN.
+The \clawfcomp is based on the \omni\cite{omni:website}. The \omni project provides a set of programs to build source-to-source translator for C or FORTRAN.
 
 \subsection{The FORTRAN front-end}
 The FORTRAN front-end is the program that parses FORTRAN source code and that generates the \gls{ir}. Its grammar is written in \lstinline|yacc| and the processing and \gls{ir} generation is written in \lstinline|C|.
@@ -189,7 +190,7 @@ The FORTRAN front-end is the program that parses FORTRAN source code and that ge
 %TODO gives a small example of the workflow inside the front-end.
 
 \subsection{\xcodeml}
-\xcodeml is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
+\xcodeml\cite{omni:xcodemlf95,omni:xcodemlf2008} is the \gls{ir} used by the translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML format and is described in a specification document. It allows to have an high-level representation of FORTRAN 2008 programs.
 %TODO add reference to specs.
 
 Listing \ref{fortran1} is a simple FORTRAN program. Its \xcodeml \gls{ir} will be as shown in Listing \ref{xcodeml1}. A typical \xcodeml translation unit is composed of the followings sections: 
@@ -245,7 +246,7 @@ The CLAW directive language is specified in the "CLAW directive language specifi
 
 \section{CLAW directive language parser}
 %TODO add ref to ANTLR
-The CLAW directive language parser is based on the ANTLR project. ANTLR is a parser generator. From a grammar file, ANTLR generates a parser that is then used in the CLAW \xcodeml to \xcodeml translator to interpret the directives. 
+The CLAW directive language parser is based on the ANTLR project\cite{Parr:2013:DAR:2501720}. ANTLR is a parser generator. From a grammar file, ANTLR generates a parser that is then used in the CLAW \xcodeml to \xcodeml translator to interpret the directives. 
 
 \lstinputlisting[label=lst:antlr, language=Java, caption=ANTLR Grammar Example]{code/clawp.g4}
 
@@ -354,7 +355,9 @@ public void transform(XcodeProgram xcodeml, Transformer transformer,
 \lstlistoflistings
 
 % REFERENCES
-%\input{references}
+\bibliography{developers_guide} 
+\bibliographystyle{ieeetr}
+
 
 %\emptypage
 %\input{appendix}
