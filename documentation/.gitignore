@@ -42,3 +42,7 @@ javadoc
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+
+# bibtex
+*.bbl
+*.blg
