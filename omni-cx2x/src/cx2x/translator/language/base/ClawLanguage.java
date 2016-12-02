@@ -282,8 +282,8 @@ public class ClawLanguage extends AnalyzedPragma {
     _pragma = null;
 
     // Data Movement Direction
-    _copyClauseValue = ClawDMD.BOTH;
-    _updateClauseValue = ClawDMD.BOTH;
+    _copyClauseValue = null;
+    _updateClauseValue = null;
   }
 
   /**
