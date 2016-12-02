@@ -390,6 +390,25 @@ define_option[ClawLanguage l]:
     }
 ;
 
+copy_clause_optional[ClawLanguage l]:
+    /* empty */
+  | COPY
+    //{ $l.setCopyClause(BOTH); }
+  | COPY '(' IN ')'
+    //{ $l.setCopyClause(IN); }
+  | COPY '(' OUT ')'
+    //{ $l.setCopyClause(OUT); }
+;
+
+update_clause_optional[ClawLanguage l]:
+    /* empty */
+  | UPDATE
+    //{ $l.setUpdateClause(BOTH); }
+  | UPDATE '(' IN ')'
+    //{ $l.setUpdateClause(IN); }
+  | UPDATE '(' OUT ')'
+    //{ $l.setUpdateClause(OUT); }
+;
 
 /*----------------------------------------------------------------------------
  * LEXER RULES
@@ -416,6 +435,7 @@ VERBATIM        : 'verbatim';
 
 // CLAW Clauses
 COLLAPSE     : 'collapse';
+COPY         : 'copy';
 DATA         : 'data';
 DIMENSION    : 'dimension';
 FORWARD      : 'forward';
@@ -431,6 +451,11 @@ PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
+UPDATE       : 'update';
+
+// data copy/update clause keywords
+IN           : 'in';
+OUT          : 'out';
 
 // Directive primitive clause
 ACC          : 'acc';
