@@ -249,7 +249,14 @@ function claw_f_process_dependencies()
 
   # Get the directory and use it to look in the same for dependencies
   moddirname=$(dirname $2)
-  module_file_found=false
+  xmod_file_found=false
+
+  # If no dependencies, just abord dependency resolution
+  if [[ -z "${dependencies[@]}" ]]
+  then
+    return
+  fi
+
   for dep in "${dependencies[@]}"
   do
     module_name=${dep// } # Remove all spaces
@@ -269,7 +276,25 @@ function claw_f_process_dependencies()
       module_search_path+=(${search_path:2})
     done
 
-    # Try to locate the module file
+    # Try to locate the fortran source file
+    for directory in ${module_search_path[@]}
+    do
+      xmod_file="$directory/$module_name.xmod"
+      if [[ -f $xmod_file ]]
+      then
+        xmod_file_found=true
+        break
+      fi
+    done
+
+    # .xmod file is already present
+    if [[ $xmod_file_found == true ]]
+    then
+      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $xmod_file."
+      continue # Skip when .xmod file already exists
+    fi
+
+    # Try to locate the fortran source file
     for directory in ${module_search_path[@]}
     do
       for ext in ${fortran_ext[@]}
@@ -286,7 +311,6 @@ function claw_f_process_dependencies()
         break
       fi
     done
-
 
     if [[ $module_file_found == false ]]
     then
@@ -322,13 +346,6 @@ function claw_f_process_dependencies()
         echo "Error: cannot locate file for module $module_name"
         exit 1;
       fi
-    fi
-
-    module_xmod_file="$module_name.xmod"
-    if [[ -f $module_xmod_file && $module_xmod_file -nt $module_file ]]
-    then
-      [ $VERBOSE = true ] && echo "Module dependency $module_file skipped. OMNI mod file already present $module_xmod_file."
-      continue # Skip when .xmod file already exists
     fi
 
     ### Preprocess file ###

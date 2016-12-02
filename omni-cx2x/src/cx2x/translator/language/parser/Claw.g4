@@ -13,8 +13,7 @@ grammar Claw;
 @header
 {
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.base.ClawDirective;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.*;
 import cx2x.translator.language.common.*;
 import cx2x.translator.common.Utility;
 }
@@ -119,11 +118,11 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_over_clause[$l]*
+   | define_option[$l]* PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
-   | PARALLELIZE FORWARD
+   | PARALLELIZE FORWARD parallelize_clauses[$l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setForwardClause();
@@ -390,6 +389,31 @@ define_option[ClawLanguage l]:
     }
 ;
 
+// Allow to switch order
+parallelize_clauses[ClawLanguage l]:
+    copy_clause_optional[$l] update_clause_optional[$l]
+  | update_clause_optional[$l] copy_clause_optional[$l]
+;
+
+copy_clause_optional[ClawLanguage l]:
+    /* empty */
+  | COPY
+    { $l.setCopyClauseValue(ClawDMD.BOTH); }
+  | COPY '(' IN ')'
+    { $l.setCopyClauseValue(ClawDMD.IN); }
+  | COPY '(' OUT ')'
+    { $l.setCopyClauseValue(ClawDMD.OUT); }
+;
+
+update_clause_optional[ClawLanguage l]:
+    /* empty */
+  | UPDATE
+    { $l.setUpdateClauseValue(ClawDMD.BOTH); }
+  | UPDATE '(' IN ')'
+    { $l.setUpdateClauseValue(ClawDMD.IN); }
+  | UPDATE '(' OUT ')'
+    { $l.setUpdateClauseValue(ClawDMD.OUT); }
+;
 
 /*----------------------------------------------------------------------------
  * LEXER RULES
@@ -416,6 +440,7 @@ VERBATIM        : 'verbatim';
 
 // CLAW Clauses
 COLLAPSE     : 'collapse';
+COPY         : 'copy';
 DATA         : 'data';
 DIMENSION    : 'dimension';
 FORWARD      : 'forward';
@@ -431,6 +456,11 @@ PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
+UPDATE       : 'update';
+
+// data copy/update clause keywords
+IN           : 'in';
+OUT          : 'out';
 
 // Directive primitive clause
 ACC          : 'acc';
