@@ -122,7 +122,7 @@ directive[ClawLanguage l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
-   | PARALLELIZE FORWARD
+   | PARALLELIZE FORWARD parallelize_clauses[$l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setForwardClause();
