@@ -13,8 +13,7 @@ grammar Claw;
 @header
 {
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.base.ClawDirective;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.*;
 import cx2x.translator.language.common.*;
 import cx2x.translator.common.Utility;
 }
@@ -393,21 +392,21 @@ define_option[ClawLanguage l]:
 copy_clause_optional[ClawLanguage l]:
     /* empty */
   | COPY
-    //{ $l.setCopyClause(BOTH); }
+    { $l.setCopyClauseValue(ClawDMD.BOTH); }
   | COPY '(' IN ')'
-    //{ $l.setCopyClause(IN); }
+    { $l.setCopyClauseValue(ClawDMD.IN); }
   | COPY '(' OUT ')'
-    //{ $l.setCopyClause(OUT); }
+    { $l.setCopyClauseValue(ClawDMD.OUT); }
 ;
 
 update_clause_optional[ClawLanguage l]:
     /* empty */
   | UPDATE
-    //{ $l.setUpdateClause(BOTH); }
+    { $l.setUpdateClauseValue(ClawDMD.BOTH); }
   | UPDATE '(' IN ')'
-    //{ $l.setUpdateClause(IN); }
+    { $l.setUpdateClauseValue(ClawDMD.IN); }
   | UPDATE '(' OUT ')'
-    //{ $l.setUpdateClause(OUT); }
+    { $l.setUpdateClauseValue(ClawDMD.OUT); }
 ;
 
 /*----------------------------------------------------------------------------
