@@ -168,6 +168,9 @@ public class AcceleratorHelper {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
+        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+          continue; // Only check basic type
+        }
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
@@ -196,6 +199,9 @@ public class AcceleratorHelper {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
+        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+          continue; // Only check basic type
+        }
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if((bt == null && XnodeUtil.isBuiltInType(type))
             || (bt != null && bt.getIntent() == Xintent.NONE))
