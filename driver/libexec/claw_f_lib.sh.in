@@ -249,6 +249,7 @@ function claw_f_process_dependencies()
 
   # Get the directory and use it to look in the same for dependencies
   moddirname=$(dirname $2)
+  module_file_found=false
   xmod_file_found=false
 
   # If no dependencies, just abord dependency resolution
