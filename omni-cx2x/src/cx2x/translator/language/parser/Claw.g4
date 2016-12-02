@@ -118,7 +118,7 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_over_clause[$l]*
+   | define_option[$l]* PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l]
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
@@ -387,6 +387,12 @@ define_option[ClawLanguage l]:
       ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
       $l.addDimension(cd);
     }
+;
+
+// Allow to switch order
+parallelize_clauses[ClawLanguage l]:
+    copy_clause_optional[$l] update_clause_optional[$l]
+  | update_clause_optional[$l] copy_clause_optional[$l]
 ;
 
 copy_clause_optional[ClawLanguage l]:
