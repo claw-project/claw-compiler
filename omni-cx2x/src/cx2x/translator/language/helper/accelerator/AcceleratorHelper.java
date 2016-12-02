@@ -199,7 +199,9 @@ public class AcceleratorHelper {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         String type = name.getAttribute(Xattr.TYPE);
-        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+        if(!XnodeUtil.isBuiltInType(type)
+            && !(xcodeml.getTypeTable().get(type) instanceof XbasicType))
+        {
           continue; // Only check basic type
         }
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
