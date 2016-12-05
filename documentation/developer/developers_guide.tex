@@ -179,7 +179,23 @@ Author: Valentin Clement
 \tableofcontents
 
 \chapter*{Introduction}
-This document is a technical manual aiming to gives enough information to develop new transformation in the \clawfcomp.
+This document describes the internal and external components of the \clawfcomp. It gives an in-depth overview of the architecture of the compiler as well as the implementation of new transformations. 
+
+\section*{Conventions used in this document}
+
+Keywords and punctuation that are part of the actual specification will appear in typewriter font: \\
+
+\lstinline|!$claw|\\
+
+Italic font is used where a keyword or other name must be used: \\
+
+\lstinline|!$claw| \textit{directive-name}\\
+
+Optional syntax is enclosed in square brackets; an option that may be repeated more than once is
+followed by ellipses:\\
+
+\lstinline|!$claw| \textit{directive-name} [\textit{clause} [[,] \textit{clause}]. . . ]
+
 
 \chapter{Architecture}
 \section{OMNI Compiler}
