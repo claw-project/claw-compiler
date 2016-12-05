@@ -4,9 +4,9 @@
 
 ![CLAW logo](resource/claw_image.png)
 
-### language specification
+### CLAW Directive language specifications
 The directives that control the transformation flow are defined in the
-CLAW language definition.
+CLAW directive language specification.
 
 [CLAW language definition](https://github.com/C2SM-RCM/claw-language-definition)
 

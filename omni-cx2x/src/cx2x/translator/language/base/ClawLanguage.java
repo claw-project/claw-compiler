@@ -5,8 +5,6 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.parser.ClawLexer;
-import cx2x.translator.language.parser.ClawParser;
 import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
@@ -15,6 +13,8 @@ import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.language.parser.ClawErrorListener;
+import cx2x.translator.language.parser.ClawLexer;
+import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xnode.Xnode;
@@ -59,6 +59,8 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<ClawDimension> _dimensions;
   private List<List<String>> _overValues;
   private List<List<String>> _overDataValues;
+  private ClawDMD _copyClauseValue;
+  private ClawDMD _updateClauseValue;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
@@ -66,7 +68,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasIndexesValue, _hasInductionClause, _hasInitClause;
   private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
-  private boolean _hasOverDataClause;
+  private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -256,6 +258,7 @@ public class ClawLanguage extends AnalyzedPragma {
     // Clauses flags members
     _hasAccClause = false;
     _hasCollapseClause = false;
+    _hasCopyClause = false;
     _hasDimensionClause = false;
     _hasFusionClause = false;
     _hasForward = false;
@@ -269,6 +272,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasParallelClause = false;
     _hasPrivateClause = false;
     _hasReshapeClause = false;
+    _hasUpdateClause = false;
 
     // General members
     _directive = null;
@@ -276,6 +280,10 @@ public class ClawLanguage extends AnalyzedPragma {
 
     // super class members
     _pragma = null;
+
+    // Data Movement Direction
+    _copyClauseValue = null;
+    _updateClauseValue = null;
   }
 
   /**
@@ -826,6 +834,62 @@ public class ClawLanguage extends AnalyzedPragma {
       _dimensions = new ArrayList<>();
     }
     _dimensions.add(dimension);
+  }
+
+  /**
+   * Check whether the copy clause is used.
+   *
+   * @return True if the copy clause is used.
+   */
+  public boolean hasCopyClause() {
+    return _hasCopyClause;
+  }
+
+  /**
+   * Get the copy clause value.
+   *
+   * @return Copy clause value as a ClawDMD enum value.
+   */
+  public ClawDMD getCopyClauseValue() {
+    return _copyClauseValue;
+  }
+
+  /**
+   * Set the copy clause value and the copy clause usage flag to true.
+   *
+   * @param value New copy clause value.
+   */
+  public void setCopyClauseValue(ClawDMD value) {
+    _hasCopyClause = true;
+    _copyClauseValue = value;
+  }
+
+  /**
+   * Check whether the update clause is used.
+   *
+   * @return True if the update clause is used.
+   */
+  public boolean hasUpdateClause() {
+    return _hasUpdateClause;
+  }
+
+  /**
+   * Get the update clause value.
+   *
+   * @return Update clause value as a ClawDMD enum value.
+   */
+  public ClawDMD getUpdateClauseValue() {
+    return _updateClauseValue;
+  }
+
+  /**
+   * Set the update clause value and the update clause usage flag to true.
+   *
+   * @param value New update clause value.
+   */
+  public void setUpdateClauseValue(ClawDMD value) {
+    _hasUpdateClause = true;
+    _updateClauseValue = value;
   }
 
   /**

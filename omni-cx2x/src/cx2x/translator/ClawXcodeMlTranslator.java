@@ -249,8 +249,7 @@ public class ClawXcodeMlTranslator {
    *
    * @param t The transformation to be analyzed and added.
    */
-  private void addOrAbort(Transformation t)
-  {
+  private void addOrAbort(Transformation t) {
     if(t.analyze(_program, _transformer)) {
       _transformer.addTransformation(t);
     } else {
