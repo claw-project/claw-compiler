@@ -1,12 +1,5 @@
 <!-- Common target for Java build in CX2X project -->
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
-  <!-- Needed for older version of ANT -->
-  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
-    <classpath>
-      <pathelement location="../lib/ivy.jar"/>
-    </classpath>
-  </taskdef>
-
   <!-- Check whether ivy is present already -->
   <target name="check-ivy">
     <available file="../lib/ivy.jar" property="ivy.present"/>
@@ -19,7 +12,13 @@
   </target>
 
   <!-- Resolve the dependencies described in ivy.xml -->
-  <target name="resolve" description="--> retrieve dependencies with ivy">
+  <target name="resolve" description="--> retrieve dependencies with ivy" if="ivy.present">
+    <!-- Needed for older version of ANT -->
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+      <classpath>
+        <pathelement location="../lib/ivy.jar"/>
+      </classpath>
+    </taskdef>
     <ivy:retrieve log="quiet" file="../ivy.xml" pattern="../lib/[artifact](-[classifier]).[ext]"/>
   </target>
 </project>
