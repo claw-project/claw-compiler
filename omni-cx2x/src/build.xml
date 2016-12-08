@@ -6,44 +6,42 @@
 <!-- CX2X build process -->
 <project name="cx2x" default="main" basedir=".">
   <description>Build CX2X libraries</description>
+
+  <dirname property="antfile.dir" file="${ant.file}"/>
+
   <import file="../common-targets.xml"/>
   <property file="../claw.properties"/>
 
   <!-- Java sources -->
-  <property name="src.xcodeml" location="cx2x/xcodeml" />
-  <property name="src.translator" location="cx2x" />
-  <property name="src.translator.parser" value="${src.translator}/translator/language/parser" />
+  <property name="src.translator.parser" value="cx2x/translator/language/parser" />
+  <property name="src.base" value="."/>
 
   <!-- Java classes -->
-  <property name="build.dir.xcodeml" location="bin/xcodeml" />
-  <property name="build.dir.translator" location="bin/translator" />
-
-  <!-- Classpath for the CX2X XcodeML library -->
-  <path id="build.path.xcodeml">
-    <pathelement path="${omni.exec.dep}" />
-  </path>
+  <property name="build.dir" location="bin" />
 
   <!-- Classpath for the CX2X Translator library -->
-  <path id="build.path.translator">
-    <pathelement path="${build.dir.xcodeml}" />
+  <path id="build.path">
     <pathelement path="${omni.common.dep}" />
     <pathelement path="${omni.exec.dep}" />
     <pathelement path="${antlr.dep}" />
     <pathelement path="${commoncli.dep}" />
+    <pathelement path="${omni.exec.dep}" />
   </path>
 
   <!-- Initialization step -->
   <target name="init" depends="common.bootstrap" description="Initialize build directories">
     <tstamp />
-    <mkdir dir="${build.dir.xcodeml}" />
-    <mkdir dir="${build.dir.translator}" />
+    <mkdir dir="${build.dir}" />
   </target>
 
+  <!-- Check if parser is up-to-date or need to be re-generated -->
+  <uptodate property="antlr.required" targetfile="${src.translator.parser}/Claw.g4" >
+     <srcfiles dir= "${src.translator.parser}" includes="*.java"/>
+  </uptodate>
+
   <!-- Generate the CLAW parser from the ANTLR grammar file -->
-  <target name="antlr" depends="common.resolve">
-    <java classname="org.antlr.v4.Tool" fork="true" failonerror="true" dir="${src.translator.parser}" classpath="${antlr.dep}">
-      <arg value="-o"/>
-      <arg value="${src.translator.parser}"/>
+  <target name="antlr" depends="common.resolve" if="antlr.required" description="Generate the parser from ANTLR grammar file">
+    <java classname="org.antlr.v4.Tool" fork="true" failonerror="true" classpath="${antlr.dep}">
       <arg value="-package"/>
       <arg value="cx2x.translator.language.parser"/>
       <arg line="${src.translator.parser}/Claw.g4"/>
@@ -52,20 +50,18 @@
 
   <!-- Compile the java code for the two libraries -->
   <target name="compile" depends="common.resolve, antlr" description="compile the source">
-    <javac includeantruntime="false" srcdir="${src.xcodeml}" destdir="${build.dir.xcodeml}" classpathref="build.path.xcodeml" />
-    <javac includeantruntime="false" srcdir="${src.translator}" destdir="${build.dir.translator}" classpathref="build.path.translator" excludes="xcodeml/**"/>
+    <javac includeantruntime="false" srcdir="${src.base}" destdir="${build.dir}" classpathref="build.path" />
   </target>
 
   <!-- Pacakge compiled files into their own library -->
   <target name="jar" depends="compile" description="package, output to JAR">
     <mkdir dir="${dist.dir}" />
-    <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir.xcodeml}" />
-    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir.translator}" />
+    <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir}" includes="cx2x/xcodeml/**"/>
+    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir}" includes="cx2x/Cx2x.class cx2x/translator/** cx2x/decompiler/**"/>
   </target>
 
   <target name="clean" description="clean up">
-    <delete dir="${build.dir.xcodeml}" />
-    <delete dir="${build.dir.translator}" />
+    <delete dir="${build.dir}" />
     <delete file="${dist.dir}/${cx2x.xcodeml.jar}" />
     <delete file="${dist.dir}/${cx2x.translator.jar}" />
   </target>
