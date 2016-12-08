@@ -249,8 +249,6 @@ function claw_f_process_dependencies()
 
   # Get the directory and use it to look in the same for dependencies
   moddirname=$(dirname $2)
-  module_file_found=false
-  xmod_file_found=false
 
   # If no dependencies, just abord dependency resolution
   if [[ -z "${dependencies[@]}" ]]
@@ -260,6 +258,11 @@ function claw_f_process_dependencies()
 
   for dep in "${dependencies[@]}"
   do
+    # Reset the control variables
+    xmod_file_found=false
+    module_file_found=false
+
+
     module_name=${dep// } # Remove all spaces
     module_name=${module_name%% }
     module_file="" # Holder variable for the module file when found
@@ -291,7 +294,7 @@ function claw_f_process_dependencies()
     # .xmod file is already present
     if [[ $xmod_file_found == true ]]
     then
-      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $xmod_file."
+      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $xmod_file"
       continue # Skip when .xmod file already exists
     fi
 
