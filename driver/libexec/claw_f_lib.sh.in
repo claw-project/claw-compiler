@@ -302,13 +302,6 @@ function claw_f_process_dependencies()
       fi
     done
 
-    # .xmod file is already present
-    if [[ $compiled_mod_file_found == true ]]
-    then
-      [ $VERBOSE = true ] && echo "Module dependency resolution skipped for $module_name. OMNI Compiler xmod file already present $compiled_mod_file"
-      continue # Skip when .xmod file already exists
-    fi
-
     # Try to locate the fortran source file
     for directory in ${module_search_path[@]}
     do
@@ -338,8 +331,7 @@ function claw_f_process_dependencies()
           found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]
           then
-            echo "Error: cannot locate any source file for module $module_name"
-            exit 1
+            break
           else
             potential_module_file=${found_file[0]}
             if [ ${#potential_module_file} -gt 0 ]
@@ -355,12 +347,30 @@ function claw_f_process_dependencies()
           break
         fi
       done
+    fi
 
-      if [[ $source_mod_file_found == false ]]
+    # .xmod file is already present
+    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == true ]]
+    then
+      [ $VERBOSE = true ] && echo "Warning: only module file found for $module_name. Might be out-of-date"
+      echo "Warning: only module file found for $module_name. Might be out-of-date"
+      continue
+    elif [[ $source_mod_file_found == true ]] && [[ $compiled_mod_file_found == true ]]
+    then
+      if [[ $compiled_mod_file -nt $source_mod_file ]]
       then
-        echo "Error: cannot locate any source file for module $module_name"
-        exit 1;
+        [ $VERBOSE = true ] && echo "Info: module file for $module_name seems up-to-date"
+        echo "Info: module file for $module_name seems up-to-date"
+        continue
       fi
+    fi
+
+    # No files found. Cannot go any further
+    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == false ]]
+    then
+      echo "Error: cannot locate any source file or module file for module $module_name"
+      echo "       try providing source directory in module search path"
+      exit 1;
     fi
 
     ### Preprocess file ###
