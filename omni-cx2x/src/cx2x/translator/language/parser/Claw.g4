@@ -51,15 +51,15 @@ directive[ClawLanguage l]
   :
 
   // loop-fusion directive
-    LOOPFUSION group_clause_optional[$l] collapse_clause_optional[$l] EOF
+    LOOP_FUSION group_clause_optional[$l] collapse_clause_optional[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
-  | LOOPINTERCHANGE indexes_option[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
+  | LOOP_INTERCHANGE indexes_option[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive
-  | LOOPEXTRACT range_option mapping_option_list[m] fusion_clause_optional[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
+  | LOOP_EXTRACT range_option mapping_option_list[m] fusion_clause_optional[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
     {
       $l.setDirective(ClawDirective.LOOP_EXTRACT);
       $l.setRange($range_option.r);
@@ -98,12 +98,12 @@ directive[ClawLanguage l]
     }
 
   // loop-hoist directive
-  | LOOPHOIST '(' ids_list[o] ')' reshape_optional[$l] interchange_optional[$l] EOF
+  | LOOP_HOIST '(' ids_list[o] ')' reshape_optional[$l] interchange_optional[$l] EOF
     {
       $l.setHoistInductionVars(o);
       $l.setDirective(ClawDirective.LOOP_HOIST);
     }
-  | END LOOPHOIST EOF
+  | END LOOP_HOIST EOF
     {
       $l.setDirective(ClawDirective.LOOP_HOIST);
       $l.setEndPragma();
@@ -423,19 +423,19 @@ update_clause_optional[ClawLanguage l]:
 CLAW         : 'claw';
 
 // CLAW Directives
-ARRAY_TRANS     : 'array-transform';
-ARRAY_TO_CALL   : 'call';
-DEFINE          : 'define';
-END             : 'end';
-KCACHE          : 'kcache';
-LOOPEXTRACT     : 'loop-extract';
-LOOPFUSION      : 'loop-fusion';
-LOOPHOIST       : 'loop-hoist';
-LOOPINTERCHANGE : 'loop-interchange';
-PARALLELIZE     : 'parallelize';
-REMOVE          : 'remove';
-IGNORE          : 'ignore';
-VERBATIM        : 'verbatim';
+ARRAY_TRANS      : 'array-transform';
+ARRAY_TO_CALL    : 'call';
+DEFINE           : 'define';
+END              : 'end';
+KCACHE           : 'kcache';
+LOOP_EXTRACT     : 'loop-extract';
+LOOP_FUSION      : 'loop-fusion';
+LOOP_HOIST       : 'loop-hoist';
+LOOP_INTERCHANGE : 'loop-interchange';
+PARALLELIZE      : 'parallelize';
+REMOVE           : 'remove';
+IGNORE           : 'ignore';
+VERBATIM         : 'verbatim';
 
 
 // CLAW Clauses
