@@ -9,3 +9,4 @@ add_subdirectory(target1) # check automatic passing of _OPENACC macro
 add_subdirectory(target2) # check automatic passing of _OPENMP macro
 add_subdirectory(verbatim1) # test the verbatim directive (driver directive)
 add_subdirectory(dependencies1)
+add_subdirectory(dependencies2)
