@@ -365,12 +365,8 @@ function claw_f_process_dependencies()
     # Recurse to get dependencies in the right order
     claw_f_process_dependencies $FILE_PP $FILE
 
-    FILE_IN_X=${TEMP_DIR}/"dummy.xml"
-
     # Pass the module in the front-end to get the .xmod file
-    omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
-
-    rm -f $FILE_IN_X
+    omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" > /dev/null
 
   done
 }
