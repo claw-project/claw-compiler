@@ -1,0 +1,13 @@
+<OmniFortranModule version="1.0">
+  <name>imaginary_module</name>
+  <depends>
+  </depends>
+  <typeTable>
+  </typeTable>
+  <identifiers>
+  </identifiers>
+  <interfaceDecls>
+  </interfaceDecls>
+  <aux_info>
+  </aux_info>
+</OmniFortranModule>
