@@ -65,9 +65,6 @@ function get_target()
 
 function claw_f_set_parameters()
 {
-  # Add the current working directory
-  module_opt+=("-M$PWD")
-
   while [ -n "$1" ]; do
     case "$1" in
       *.f90|*.f|*.F90|*.F)
@@ -212,6 +209,9 @@ function claw_f_set_parameters()
     shift
   done
 
+  # Add the current working directory
+  module_opt+=("-M$PWD")
+
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
   if [ "${directive_opt[0]}" == "openacc" ]
@@ -249,8 +249,6 @@ function claw_f_process_dependencies()
 
   # Get the directory and use it to look in the same for dependencies
   moddirname=$(dirname $2)
-  module_file_found=false
-  xmod_file_found=false
 
   # If no dependencies, just abord dependency resolution
   if [[ -z "${dependencies[@]}" ]]
@@ -260,6 +258,11 @@ function claw_f_process_dependencies()
 
   for dep in "${dependencies[@]}"
   do
+    # Reset the control variables
+    xmod_file_found=false
+    module_file_found=false
+
+
     module_name=${dep// } # Remove all spaces
     module_name=${module_name%% }
     module_file="" # Holder variable for the module file when found
@@ -291,7 +294,7 @@ function claw_f_process_dependencies()
     # .xmod file is already present
     if [[ $xmod_file_found == true ]]
     then
-      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $xmod_file."
+      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $xmod_file"
       continue # Skip when .xmod file already exists
     fi
 
@@ -362,12 +365,8 @@ function claw_f_process_dependencies()
     # Recurse to get dependencies in the right order
     claw_f_process_dependencies $FILE_PP $FILE
 
-    FILE_IN_X=${TEMP_DIR}/"dummy.xml"
-
     # Pass the module in the front-end to get the .xmod file
-    omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
-
-    rm -f $FILE_IN_X
+    omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" > /dev/null
 
   done
 }
