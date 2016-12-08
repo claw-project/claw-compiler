@@ -65,9 +65,6 @@ function get_target()
 
 function claw_f_set_parameters()
 {
-  # Add the current working directory
-  module_opt+=("-M$PWD")
-
   while [ -n "$1" ]; do
     case "$1" in
       *.f90|*.f|*.F90|*.F)
@@ -211,6 +208,9 @@ function claw_f_set_parameters()
     esac
     shift
   done
+
+  # Add the current working directory
+  module_opt+=("-M$PWD")
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
