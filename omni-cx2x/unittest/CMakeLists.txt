@@ -19,6 +19,7 @@ add_custom_command(
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   init
+  COMMENT "Resolving dependencies for the build"
 )
 
 # Add target for the compilation of JUnit test cases with ANT
@@ -29,6 +30,7 @@ add_custom_command(
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
 add_dependencies(omni-cx2x-ut omni-cx2x-ut-init)
 

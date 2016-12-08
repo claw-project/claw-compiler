@@ -12,6 +12,7 @@ add_custom_command(
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   init
+  COMMENT "Resolving dependencies for the build"
 )
 
 # Compile the CX2X libraries
@@ -26,6 +27,7 @@ add_custom_command(
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr.jar="${ANTLR_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
+  COMMENT "Building CLAW XcodeML/F to XcodeML/F libraries"
 )
 add_dependencies(omni-cx2x omni-cx2x-init)
 
