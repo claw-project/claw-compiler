@@ -6,6 +6,9 @@
 <!-- CX2X build process -->
 <project name="cx2x" default="main" basedir=".">
   <description>Build CX2X libraries</description>
+
+  <dirname property="antfile.dir" file="${ant.file}"/>
+
   <import file="../common-targets.xml"/>
   <property file="../claw.properties"/>
 
