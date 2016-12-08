@@ -236,6 +236,17 @@ function claw_f_print_version()
 # $1 must be set to the file to process dependencies
 function claw_f_process_dependencies()
 {
+  # Dependency resolution work as follows:
+  # TODO
+  # The following variables are used:
+  # module_name:       Name of the module as declared in the FORTRAN source code.
+  # compiled_mod_file: OMNI Compiler XcodeML/F module file.
+  #                    filename: <module_name>.xmod (OMNI Convention)
+  # source_mod_file:   FORTRAN source code file containing the module
+  #                    declaration.
+  #                    filename: <any>.<fortran-extentions>
+  # current_src_dir:   Directory in which the current processed file is located
+
   dependencies=()
   module_regex="^[[:space:]]*(USE|use)[[:space:]]*([^,]*)"
   while IFS= read -r line
@@ -248,7 +259,7 @@ function claw_f_process_dependencies()
   done <$1
 
   # Get the directory and use it to look in the same for dependencies
-  moddirname=$(dirname $2)
+  current_src_dir=$(dirname $2)
 
   # If no dependencies, just abord dependency resolution
   if [[ -z "${dependencies[@]}" ]]
@@ -259,20 +270,20 @@ function claw_f_process_dependencies()
   for dep in "${dependencies[@]}"
   do
     # Reset the control variables
-    xmod_file_found=false
-    module_file_found=false
+    compiled_mod_file_found=false
+    source_mod_file_found=false
 
 
     module_name=${dep// } # Remove all spaces
     module_name=${module_name%% }
-    module_file="" # Holder variable for the module file when found
+    source_mod_file="" # Holder variable for the module file when found
 
     # FORTRAN file extensions used for the search
     fortran_ext=(".f90" ".F90" ".f" ".F" ".f95" ".f03")
 
     # Add current dir to potential search paths
     module_search_path=()
-    module_search_path+=("$moddirname")
+    module_search_path+=("$current_src_dir")
 
     # Add user given search paths (-J option)
     for search_path in "${module_opt[@]}"
@@ -283,40 +294,33 @@ function claw_f_process_dependencies()
     # Try to locate the fortran source file
     for directory in ${module_search_path[@]}
     do
-      xmod_file="$directory/$module_name.xmod"
-      if [[ -f $xmod_file ]]
+      compiled_mod_file="$directory/$module_name.xmod"
+      if [[ -f $compiled_mod_file ]]
       then
-        xmod_file_found=true
+        compiled_mod_file_found=true
         break
       fi
     done
-
-    # .xmod file is already present
-    if [[ $xmod_file_found == true ]]
-    then
-      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $xmod_file"
-      continue # Skip when .xmod file already exists
-    fi
 
     # Try to locate the fortran source file
     for directory in ${module_search_path[@]}
     do
       for ext in ${fortran_ext[@]}
       do
-        module_file="$directory/$module_name$ext"
-        if [[ -f $module_file ]]
+        source_mod_file="$directory/$module_name$ext"
+        if [[ -f $source_mod_file ]]
         then
-          module_file_found=true
+          source_mod_file_found=true
           break
         fi
       done
-      if [[ $module_file_found == true ]]
+      if [[ $source_mod_file_found == true ]]
       then
         break
       fi
     done
 
-    if [[ $module_file_found == false ]]
+    if [[ $source_mod_file_found == false ]]
     then
       # Could not locate a module file with same name. Try to find module file
       # with regular expression
@@ -327,33 +331,48 @@ function claw_f_process_dependencies()
           found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]
           then
-            echo "Error: cannot locate file for module $module_name"
-            exit 1
+            break
           else
             potential_module_file=${found_file[0]}
             if [ ${#potential_module_file} -gt 0 ]
             then
-              module_file=$potential_module_file
-              module_file_found=true
+              source_mod_file=$potential_module_file
+              source_mod_file_found=true
               break
             fi
           fi
         done
-        if [[ $module_file_found == true ]]
+        if [[ $source_mod_file_found == true ]]
         then
           break
         fi
       done
+    fi
 
-      if [[ $module_file_found == false ]]
+    # .xmod file is already present
+    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == true ]]
+    then
+      [ $VERBOSE = true ] && echo "Warning: only module file found for $module_name. Might be out-of-date"
+      continue
+    elif [[ $source_mod_file_found == true ]] && [[ $compiled_mod_file_found == true ]]
+    then
+      if [[ $compiled_mod_file -nt $source_mod_file ]]
       then
-        echo "Error: cannot locate file for module $module_name"
-        exit 1;
+        [ $VERBOSE = true ] && echo "Info: module file for $module_name seems up-to-date"
+        continue
       fi
     fi
 
+    # No files found. Cannot go any further
+    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == false ]]
+    then
+      echo "Error: cannot locate any source file or module file for module $module_name"
+      echo "       try providing source directory in module search path"
+      exit 1;
+    fi
+
     ### Preprocess file ###
-    FILE=$module_file
+    FILE=$source_mod_file
     FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
     EXT=${file##*.}
     local FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}

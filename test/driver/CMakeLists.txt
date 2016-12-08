@@ -11,3 +11,6 @@ add_subdirectory(verbatim1) # test the verbatim directive (driver directive)
 add_subdirectory(dependencies1)
 add_subdirectory(dependencies2)
 add_subdirectory(dependencies3)
+add_subdirectory(dependencies4)
+add_subdirectory(dependencies5)
+
