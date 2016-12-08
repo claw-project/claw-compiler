@@ -353,14 +353,12 @@ function claw_f_process_dependencies()
     if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == true ]]
     then
       [ $VERBOSE = true ] && echo "Warning: only module file found for $module_name. Might be out-of-date"
-      echo "Warning: only module file found for $module_name. Might be out-of-date"
       continue
     elif [[ $source_mod_file_found == true ]] && [[ $compiled_mod_file_found == true ]]
     then
       if [[ $compiled_mod_file -nt $source_mod_file ]]
       then
         [ $VERBOSE = true ] && echo "Info: module file for $module_name seems up-to-date"
-        echo "Info: module file for $module_name seems up-to-date"
         continue
       fi
     fi
