@@ -305,7 +305,7 @@ function claw_f_process_dependencies()
     # .xmod file is already present
     if [[ $compiled_mod_file_found == true ]]
     then
-      [ $VERBOSE = true ] && echo "Module dependency $module_name skipped. OMNI Compiler xmod file already present $compiled_mod_file"
+      [ $VERBOSE = true ] && echo "Module dependency resolution skipped for $module_name. OMNI Compiler xmod file already present $compiled_mod_file"
       continue # Skip when .xmod file already exists
     fi
 
@@ -338,7 +338,7 @@ function claw_f_process_dependencies()
           found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]
           then
-            echo "Error: cannot locate file for module $module_name"
+            echo "Error: cannot locate any source file for module $module_name"
             exit 1
           else
             potential_module_file=${found_file[0]}
@@ -358,7 +358,7 @@ function claw_f_process_dependencies()
 
       if [[ $source_mod_file_found == false ]]
       then
-        echo "Error: cannot locate file for module $module_name"
+        echo "Error: cannot locate any source file for module $module_name"
         exit 1;
       fi
     fi
