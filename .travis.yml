@@ -49,3 +49,7 @@ script:
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make clean-transformation transformation test
+
+# Notification settings
+notifications:
+  slack: meteoswiss-apn:FFUYLitE3BsncqECl4RqlfHP
