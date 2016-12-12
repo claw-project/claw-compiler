@@ -3,7 +3,6 @@
  * See LICENSE file for more information
  */
 
-
 package cx2x.translator.config;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -55,6 +54,7 @@ public class Configuration {
   private final Document _document;
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
+  private final OpenAccConfiguration _openacc;
 
   /**
    * Constructs a new configuration object from the give configuration file.
@@ -72,7 +72,7 @@ public class Configuration {
 
     try {
       validate(schemaPath);
-    } catch(Exception e){
+    } catch(Exception e) {
       throw new Exception("Error: Configuration file is not well formatted: "
           + e.getMessage());
     }
@@ -85,10 +85,13 @@ public class Configuration {
 
     readParameters(global);
     readGroups(groups);
+
+    _openacc = new OpenAccConfiguration(_parameters);
   }
 
   /**
    * Validate the configuration file with the XSD schema.
+   *
    * @param xsdPath Path to the XSD schema.
    * @throws Exception If configuration file is not valid.
    */
@@ -114,6 +117,14 @@ public class Configuration {
   }
 
   /**
+   * Get the OpenACC specific configuration information.
+   * @return The OpenACC configuration object.
+   */
+  public OpenAccConfiguration openACC(){
+    return _openacc;
+  }
+
+  /**
    * Get all the group configuration information.
    *
    * @return List of group configuration.
@@ -122,11 +133,19 @@ public class Configuration {
     return _groups;
   }
 
-  public AcceleratorDirective getDefaultDirective(){
+  /**
+   * Get the default accelerator directive defined in the configuration.
+   * @return Default accelerator value.
+   */
+  public AcceleratorDirective getDefaultDirective() {
     return AcceleratorDirective.fromString(getParameter(DEFAULT_DIRECTIVE));
   }
 
-  public Target getDefaultTarget(){
+  /**
+   * Get the default target defined in the configuration.
+   * @return Default target value.
+   */
+  public Target getDefaultTarget() {
     return Target.fromString(getParameter(DEFAULT_TARGET));
   }
 
