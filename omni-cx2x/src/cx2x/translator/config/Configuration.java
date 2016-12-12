@@ -36,8 +36,8 @@ import java.util.Map;
 public class Configuration {
 
   // Specific keys
-  public static final String DEFAULT_TARGET = "default_target";
-  public static final String DEFAULT_DIRECTIVE = "default_directive";
+  private static final String DEFAULT_TARGET = "default_target";
+  private static final String DEFAULT_DIRECTIVE = "default_directive";
   // Element and attribute names
   private static final String GLOBAL_ELEMENT = "global";
   private static final String GROUPS_ELEMENT = "groups";
@@ -201,6 +201,30 @@ public class Configuration {
         }
         _groups.add(new GroupConfiguration(name, gType, cPath, transClass));
       }
+    }
+  }
+
+  /**
+   * Set the user defined target in the configuration.
+   *
+   * @param option Option passed as argument. Has priority over configuration
+   *               file.
+   */
+  public void setUserDefinedTarget(String option) {
+    if(option != null) {
+      _parameters.put(DEFAULT_TARGET, option);
+    }
+  }
+
+  /**
+   * Set the user defined directive in the configuration.
+   *
+   * @param option Option passed as argument. Has priority over configuration
+   *               file.
+   */
+  public void setUserDefineDirective(String option) {
+    if(option != null) {
+      _parameters.put(DEFAULT_DIRECTIVE, option);
     }
   }
 }

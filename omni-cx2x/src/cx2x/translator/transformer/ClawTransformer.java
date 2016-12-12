@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformer;
 
+import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.xcodeml.transformation.*;
@@ -13,7 +14,6 @@ import org.w3c.dom.Element;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +29,8 @@ public class ClawTransformer implements Transformer {
   private final Map<Class, TransformationGroup> _tGroups;
   // Hold cross-transformation elements
   private final Map<Element, Object> _crossTransformationTable;
+  // Hold configuration information
+  private final Configuration _configuration;
   // Hold the module file cache
   private final ModuleCache _modCache;
   private int _transformationCounter = 0;
@@ -39,17 +41,16 @@ public class ClawTransformer implements Transformer {
    * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
    *
-   * @param groups List of transformation groups that define the transformation
-   *               order.
+   * @param config Configuration information object.
    * @param max    Maximum number of columns.
    */
-  public ClawTransformer(List<GroupConfiguration> groups, int max) {
+  public ClawTransformer(Configuration config, int max){
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
      */
     _tGroups = new LinkedHashMap<>();
-    for(GroupConfiguration g : groups) {
+    for(GroupConfiguration g : config.getGroups()) {
       switch(g.getType()) {
         case DEPENDENT:
           _tGroups.put(g.getTransformationClass(),
@@ -71,6 +72,8 @@ public class ClawTransformer implements Transformer {
     _modCache = new ModuleCache();
 
     _maxColumns = max;
+
+    _configuration = config;
   }
 
   /**
@@ -87,6 +90,11 @@ public class ClawTransformer implements Transformer {
    */
   public Map<Class, TransformationGroup> getGroups() {
     return _tGroups;
+  }
+
+  // TODO move it to Transformer
+  public Configuration getConfiguration(){
+    return _configuration;
   }
 
   /**

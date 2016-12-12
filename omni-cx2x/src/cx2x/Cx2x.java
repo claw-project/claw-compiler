@@ -69,7 +69,7 @@ public class Cx2x {
    * Read the configuration file and output the information for user.
    *
    * @param configPath Path to the configuration file.
-   * @param configPath Path to the XSD schema for configuration file validation.
+   * @param schemaPath Path to the XSD schema for configuration file validation.
    */
   private static void showConfig(String configPath, String schemaPath) {
     try {
@@ -245,23 +245,12 @@ public class Cx2x {
 
     // Read the configuration file
     Configuration config = new Configuration(configuration_path, schema_path);
-
-    // Read default target from config if not set by user
-    AcceleratorDirective directive =  getDirective(config, directive_option);
-    Target target = getTarget(config, target_option);
-
-    // Read transformation group configuration
-    List<GroupConfiguration> groups;
-    try {
-      groups = config.getGroups();
-    } catch(Exception ex) {
-      error(ex.getMessage());
-      return;
-    }
+    config.setUserDefinedTarget(target_option);
+    config.setUserDefineDirective(directive_option);
 
     // Call the translator to apply transformation on XcodeML/F
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
-        xcodeMlOutput, directive, target, groups, maxColumns);
+        xcodeMlOutput, config, maxColumns);
     translator.analyze();
     translator.transform();
     translator.flush();
@@ -274,41 +263,4 @@ public class Cx2x {
       error("Unable to decompile XcodeML to Fortran");
     }
   }
-
-  /**
-   * Get target information from argument or from default configuration.
-   *
-   * @param config Configuration object.
-   * @param option Option passed as argument. Has priority over configuration
-   *               file.
-   * @return The target enum value extracted from the given information.
-   */
-  private static Target getTarget(Configuration config, String option) {
-    if(option == null) {
-      return config.getDefaultTarget();
-    } else {
-      return Target.fromString(option);
-    }
-  }
-
-  /**
-   * Get directive language information from the argument or from the default
-   * configuration.
-   *
-   * @param config Configuration object.
-   * @param option Option passed as argument. Has priority over configuration
-   *               file.
-   * @return The directive language enum value extracted from the given
-   * information.
-   */
-  private static AcceleratorDirective getDirective(Configuration config,
-                                                   String option)
-  {
-    if(option == null) {
-      return config.getDefaultDirective();
-    } else {
-      return AcceleratorDirective.fromString(option);
-    }
-  }
-
 }
