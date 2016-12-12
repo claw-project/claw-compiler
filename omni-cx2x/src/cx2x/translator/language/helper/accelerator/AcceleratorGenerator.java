@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.helper.accelerator;
 
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.config.Configuration;
 
 import java.util.List;
 
@@ -24,24 +24,24 @@ public abstract class AcceleratorGenerator {
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
-  private final Target _target;
+  private final Configuration _configuration;
 
   /**
    * Constructs a new object with the given target.
    *
-   * @param target Target for which the directive must be generated.
+   * @param config Configuration information object.
    */
-  AcceleratorGenerator(Target target) {
-    _target = target;
+  AcceleratorGenerator(Configuration config) {
+    _configuration = config;
   }
 
   /**
-   * Get the associated target.
+   * Get the associated configuration information.
    *
-   * @return Target.
+   * @return Configuration object.
    */
-  Target getTarget() {
-    return _target;
+  Configuration getConfiguration() {
+    return _configuration;
   }
 
   /**

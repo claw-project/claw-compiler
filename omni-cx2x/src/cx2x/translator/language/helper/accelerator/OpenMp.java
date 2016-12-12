@@ -6,6 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.common.Utility;
+import cx2x.translator.config.Configuration;
 import cx2x.translator.language.helper.target.Target;
 
 import java.util.List;
@@ -29,10 +30,10 @@ class OpenMp extends AcceleratorGenerator {
   /**
    * Constructs a new object with the given target.
    *
-   * @param target Target for which the directive must be generated.
+   * @param config Configuration information object.
    */
-  OpenMp(Target target) {
-    super(target);
+  OpenMp(Configuration config) {
+    super(config);
   }
 
   @Override
@@ -42,7 +43,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartParallelDirective() {
-    if(getTarget() == Target.CPU) {
+    if(getConfiguration().getDefaultTarget() == Target.CPU) {
       //!$omp parallel
       return String.format(FORMAT2,
           OPENMP_PREFIX, OPENMP_PARALLEL);
@@ -55,7 +56,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getEndParallelDirective() {
-    if(getTarget() == Target.CPU) {
+    if(getConfiguration().getDefaultTarget() == Target.CPU) {
       //!$omp end parallel
       return String.format(FORMAT3,
           OPENMP_PREFIX, OPENMP_END, OPENMP_PARALLEL);

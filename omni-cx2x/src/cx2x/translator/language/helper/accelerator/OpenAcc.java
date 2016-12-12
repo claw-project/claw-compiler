@@ -6,7 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.common.Utility;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.config.Configuration;
 import xcodeml.util.XmOption;
 
 import java.util.List;
@@ -32,10 +32,10 @@ class OpenAcc extends AcceleratorGenerator {
   /**
    * Constructs a new object with the given target.
    *
-   * @param target Target for which the directive must be generated.
+   * @param config Configuration information object.
    */
-  OpenAcc(Target target) {
-    super(target);
+  OpenAcc(Configuration config) {
+    super(config);
   }
 
   @Override
@@ -45,7 +45,7 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String getStartParallelDirective() {
-    //!$acc parallel
+    //!$acc parallel [vector_length()] [num_gang()] [num_worker()]
     return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL);
   }
 

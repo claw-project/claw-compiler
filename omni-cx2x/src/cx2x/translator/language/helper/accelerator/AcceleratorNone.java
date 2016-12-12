@@ -5,6 +5,7 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import cx2x.translator.config.Configuration;
 import cx2x.translator.language.helper.target.Target;
 
 import java.util.List;
@@ -19,10 +20,10 @@ class AcceleratorNone extends AcceleratorGenerator {
   /**
    * Constructs a new object with the given target.
    *
-   * @param target Target for which the directive must be generated.
+   * @param config Configuration information object.
    */
-  AcceleratorNone(Target target) {
-    super(target);
+  AcceleratorNone(Configuration config) {
+    super(config);
   }
 
   @Override

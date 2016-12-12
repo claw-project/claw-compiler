@@ -379,11 +379,11 @@ public class AcceleratorHelper {
   {
     switch(config.getDefaultDirective()) {
       case OPENACC:
-        return new OpenAcc(config.getDefaultTarget());
+        return new OpenAcc(config);
       case OPENMP:
-        return new OpenMp(config.getDefaultTarget());
+        return new OpenMp(config);
     }
-    return new AcceleratorNone(config.getDefaultTarget());
+    return new AcceleratorNone(config);
   }
 
   /**

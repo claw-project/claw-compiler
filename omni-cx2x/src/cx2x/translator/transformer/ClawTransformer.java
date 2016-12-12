@@ -44,7 +44,7 @@ public class ClawTransformer implements Transformer {
    * @param config Configuration information object.
    * @param max    Maximum number of columns.
    */
-  public ClawTransformer(Configuration config, int max){
+  public ClawTransformer(Configuration config, int max) {
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
@@ -77,6 +77,15 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
+   * Get the configuration object sotred in the transformer.
+   *
+   * @return Configuration object.
+   */
+  public Configuration getConfiguration() {
+    return _configuration;
+  }
+
+  /**
    * @see Transformer#addTransformation(Transformation)
    */
   public void addTransformation(Transformation t) {
@@ -90,11 +99,6 @@ public class ClawTransformer implements Transformer {
    */
   public Map<Class, TransformationGroup> getGroups() {
     return _tGroups;
-  }
-
-  // TODO move it to Transformer
-  public Configuration getConfiguration(){
-    return _configuration;
   }
 
   /**
