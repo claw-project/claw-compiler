@@ -107,9 +107,9 @@ fi
 ### Set correct configuration file info ###
 if [ $CONFIG = true ]
 then
-  OMNI_CX2X_CONFIG_OPT="--config=$config_opt"
+  OMNI_CX2X_CONFIG_OPT="--config=$config_opt --schema=$OMNI_CX2X_CONFIG_XSD"
 else
-  OMNI_CX2X_CONFIG_OPT="--config=$OMNI_CX2X_CONFIG_DEFAULT"
+  OMNI_CX2X_CONFIG_OPT="--config=$OMNI_CX2X_CONFIG_DEFAULT --schema=$OMNI_CX2X_CONFIG_XSD"
 fi
 
 # Set the correct target option for the translator
