@@ -7,7 +7,7 @@ package cx2x;
 
 import cx2x.decompiler.FortranDecompiler;
 import cx2x.translator.ClawXcodeMlTranslator;
-import cx2x.translator.config.ConfigurationHelper;
+import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
@@ -72,12 +72,10 @@ public class Cx2x {
    */
   private static void showConfig(String configPath) {
     try {
-      List<GroupConfiguration> groups =
-          ConfigurationHelper.readGroups(configPath);
-      AcceleratorDirective directive =
-          ConfigurationHelper.readDefaultDirective(configPath);
-      Target target =
-          ConfigurationHelper.readDefaultTarget(configPath);
+      Configuration config = new Configuration(configPath);
+      List<GroupConfiguration> groups = config.getGroups();
+      AcceleratorDirective directive = config.getDefaultDirective();
+      Target target = config.getDefaultTarget();
       System.out.println("- CLAW translator configuration -\n");
       System.out.println("Default accelerator directive: " + directive + "\n");
       System.out.println("Default target: " + target + "\n");
@@ -214,8 +212,8 @@ public class Cx2x {
       error("Configuration file missing.");
       return;
     }
-    File config = new File(configuration_path);
-    if(!config.exists()) {
+    File configFile = new File(configuration_path);
+    if(!configFile.exists()) {
       error("Configuration file not found. " + configuration_path);
     }
 
@@ -238,15 +236,17 @@ public class Cx2x {
       }
     }
 
+    // Read the configuration file
+    Configuration config = new Configuration(configuration_path);
+
     // Read default target from config if not set by user
-    AcceleratorDirective directive =
-        getDirective(configuration_path, directive_option);
-    Target target = getTarget(configuration_path, target_option);
+    AcceleratorDirective directive =  getDirective(config, directive_option);
+    Target target = getTarget(config, target_option);
 
     // Read transformation group configuration
     List<GroupConfiguration> groups;
     try {
-      groups = ConfigurationHelper.readGroups(configuration_path);
+      groups = config.getGroups();
     } catch(Exception ex) {
       error(ex.getMessage());
       return;
@@ -271,14 +271,14 @@ public class Cx2x {
   /**
    * Get target information from argument or from default configuration.
    *
-   * @param config Configuration file path.
+   * @param config Configuration object.
    * @param option Option passed as argument. Has priority over configuration
    *               file.
    * @return The target enum value extracted from the given information.
    */
-  private static Target getTarget(String config, String option) {
+  private static Target getTarget(Configuration config, String option) {
     if(option == null) {
-      return ConfigurationHelper.readDefaultTarget(config);
+      return config.getDefaultTarget();
     } else {
       return Target.fromString(option);
     }
@@ -288,16 +288,17 @@ public class Cx2x {
    * Get directive language information from the argument or from the default
    * configuration.
    *
-   * @param config Configuration file path.
+   * @param config Configuration object.
    * @param option Option passed as argument. Has priority over configuration
    *               file.
    * @return The directive language enum value extracted from the given
    * information.
    */
-  private static AcceleratorDirective getDirective(String config, String option)
+  private static AcceleratorDirective getDirective(Configuration config,
+                                                   String option)
   {
     if(option == null) {
-      return ConfigurationHelper.readDefaultDirective(config);
+      return config.getDefaultDirective();
     } else {
       return AcceleratorDirective.fromString(option);
     }
