@@ -57,7 +57,7 @@ public class Configuration {
   private final List<GroupConfiguration> _groups;
 
   /**
-   * Contructs a new configuration object from the give configuration file.
+   * Constructs a new configuration object from the give configuration file.
    *
    * @param configPath Path to the configuration file.
    * @param schemaPath Path to the XSD schema for validation.
