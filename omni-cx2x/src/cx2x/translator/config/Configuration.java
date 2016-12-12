@@ -13,8 +13,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,16 +59,23 @@ public class Configuration {
   /**
    * Contructs a new configuration object from the give configuration file.
    *
-   * @param path Path to the configuration file.
+   * @param configPath Path to the configuration file.
+   * @param schemaPath Path to the XSD schema for validation.
    */
-  public Configuration(String path) throws Exception {
+  public Configuration(String configPath, String schemaPath) throws Exception {
     _parameters = new HashMap<>();
     _groups = new ArrayList<>();
     DocumentBuilderFactory factory =
         DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
-    _document = builder.parse(path);
-    // TODO XSD validation
+    _document = builder.parse(configPath);
+
+    try {
+      validate(schemaPath);
+    } catch(Exception e){
+      throw new Exception("Error: Configuration file is not well formatted: "
+          + e.getMessage());
+    }
 
     Element root = _document.getDocumentElement();
     Element global =
@@ -70,6 +85,22 @@ public class Configuration {
 
     readParameters(global);
     readGroups(groups);
+  }
+
+  /**
+   * Validate the configuration file with the XSD schema.
+   * @param xsdPath Path to the XSD schema.
+   * @throws Exception If configuration file is not valid.
+   */
+  private void validate(String xsdPath)
+      throws Exception
+  {
+    SchemaFactory factory =
+        SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    Source schemaFile = new StreamSource(new File(xsdPath));
+    Schema schema = factory.newSchema(schemaFile);
+    Validator validator = schema.newValidator();
+    validator.validate(new DOMSource(_document));
   }
 
   /**
