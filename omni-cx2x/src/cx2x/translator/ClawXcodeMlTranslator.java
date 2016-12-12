@@ -81,7 +81,7 @@ public class ClawXcodeMlTranslator {
     _xcodemlOutputFile = xcodemlOutputFile;
     _transformer = new ClawTransformer(config, maxColumns);
     _blockDirectives = new Hashtable<>();
-    _target = config.getDefaultTarget();
+    _target = config.getCurrentTarget();
     _generator = AcceleratorHelper.createAcceleratorGenerator(config);
   }
 

@@ -377,7 +377,7 @@ public class AcceleratorHelper {
   public static AcceleratorGenerator createAcceleratorGenerator(
       Configuration config)
   {
-    switch(config.getDefaultDirective()) {
+    switch(config.getCurrentDirective()) {
       case OPENACC:
         return new OpenAcc(config);
       case OPENMP:

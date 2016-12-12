@@ -43,7 +43,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartParallelDirective() {
-    if(getConfiguration().getDefaultTarget() == Target.CPU) {
+    if(getConfiguration().getCurrentTarget() == Target.CPU) {
       //!$omp parallel
       return String.format(FORMAT2,
           OPENMP_PREFIX, OPENMP_PARALLEL);
@@ -56,7 +56,7 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getEndParallelDirective() {
-    if(getConfiguration().getDefaultTarget() == Target.CPU) {
+    if(getConfiguration().getCurrentTarget() == Target.CPU) {
       //!$omp end parallel
       return String.format(FORMAT3,
           OPENMP_PREFIX, OPENMP_END, OPENMP_PARALLEL);

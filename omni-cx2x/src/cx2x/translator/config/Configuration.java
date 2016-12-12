@@ -134,18 +134,20 @@ public class Configuration {
   }
 
   /**
-   * Get the default accelerator directive defined in the configuration.
-   * @return Default accelerator value.
+   * Get the current accelerator directive defined in the configuration.
+   * @return Current accelerator value.
    */
-  public AcceleratorDirective getDefaultDirective() {
+  public AcceleratorDirective getCurrentDirective() {
     return AcceleratorDirective.fromString(getParameter(DEFAULT_DIRECTIVE));
   }
 
   /**
-   * Get the default target defined in the configuration.
-   * @return Default target value.
+   * Get the current target defined in the configuration or by the user on
+   * the command line.
+   *
+   * @return Current target value.
    */
-  public Target getDefaultTarget() {
+  public Target getCurrentTarget() {
     return Target.fromString(getParameter(DEFAULT_TARGET));
   }
 

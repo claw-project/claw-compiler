@@ -16,7 +16,6 @@ import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Cx2x is the entry point of any CLAW XcodeML/F translation.
@@ -74,17 +73,15 @@ public class Cx2x {
   private static void showConfig(String configPath, String schemaPath) {
     try {
       Configuration config = new Configuration(configPath, schemaPath);
-      List<GroupConfiguration> groups = config.getGroups();
-      AcceleratorDirective directive = config.getDefaultDirective();
-      Target target = config.getDefaultTarget();
       System.out.println("- CLAW translator configuration -\n");
-      System.out.println("Default accelerator directive: " + directive + "\n");
-      System.out.println("Default target: " + target + "\n");
+      System.out.println("Default accelerator directive: " +
+          config.getCurrentDirective() + "\n");
+      System.out.println("Default target: " + config.getCurrentTarget() + "\n");
       System.out.println("Current transformation order:");
-      for(int i = 0; i < groups.size(); ++i) {
-        GroupConfiguration g = groups.get(i);
+      int i = 0;
+      for(GroupConfiguration g : config.getGroups()) {
         System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
-            i, g.getName(), g.getType(), g.getTransformationClassName());
+            i++, g.getName(), g.getType(), g.getTransformationClassName());
       }
     } catch(Exception e) {
       error("Could not read the configuration file.\n" + e.getMessage());
@@ -210,7 +207,7 @@ public class Cx2x {
       configuration_path = cmd.getOptionValue("c");
     }
 
-    if(cmd.hasOption("s")){
+    if(cmd.hasOption("s")) {
       schema_path = cmd.getOptionValue("s");
     }
 
