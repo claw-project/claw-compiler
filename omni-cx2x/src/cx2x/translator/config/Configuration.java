@@ -90,6 +90,20 @@ public class Configuration {
   }
 
   /**
+   * Constructs basid configuration object.
+   * @param dir    Accelerator directive language.
+   * @param target Target architecture.
+   */
+  public Configuration(AcceleratorDirective dir, Target target){
+    _parameters = new HashMap<>();
+    _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
+    _parameters.put(DEFAULT_TARGET, target.toString());
+    _document = null;
+    _openacc = new OpenAccConfiguration(_parameters);
+    _groups = new ArrayList<>();
+  }
+
+  /**
    * Validate the configuration file with the XSD schema.
    *
    * @param xsdPath Path to the XSD schema.
