@@ -8,9 +8,9 @@
 
     <!-- OpenACC default information -->
     <!-- Define the default values to be used for the clauses -->
-    <parameter key="openacc_vector_length" value="16"/>
-    <parameter key="openacc_num_gang" value="8"/>
-    <parameter key="openacc_num_worker" value="8"/>
+    <parameter key="openacc_vector_length" value="16"/> <!-- vector_length(16) -->
+    <parameter key="openacc_num_gangs" value="8"/>      <!-- num_gangs(8) -->
+    <parameter key="openacc_num_workers" value="8"/>    <!-- num_workers(8) -->
     <!-- Specify the order of generation of clauses when nested loops are generated -->
     <!-- possible values are vector_gang, gang_vector, vector, gang, vector_gang_worker TODO to be refined -->
     <parameter key="openacc_execution_mode" value="vector_gang"/>
