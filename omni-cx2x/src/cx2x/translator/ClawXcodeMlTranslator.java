@@ -10,9 +10,8 @@ package cx2x.translator;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
-import cx2x.translator.config.GroupConfiguration;
+import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
@@ -70,26 +69,20 @@ public class ClawXcodeMlTranslator {
    *
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
-   * @param directive         Accelerator directive language for code
-   *                          generation.
-   * @param target            Target influencing code transformation.
-   * @param groups            Transformation groups configuration list.
+   * @param config            Configuration information object.
    * @param maxColumns        Maximum number of columns.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
-                               AcceleratorDirective directive,
-                               Target target,
-                               List<GroupConfiguration> groups,
+                               Configuration config,
                                int maxColumns)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(groups, maxColumns);
+    _transformer = new ClawTransformer(config, maxColumns);
     _blockDirectives = new Hashtable<>();
-    _target = target;
-    _generator =
-        AcceleratorHelper.createAcceleratorGenerator(directive, target);
+    _target = config.getCurrentTarget();
+    _generator = AcceleratorHelper.createAcceleratorGenerator(config);
   }
 
   /**

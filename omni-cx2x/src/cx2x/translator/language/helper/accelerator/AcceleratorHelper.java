@@ -5,8 +5,8 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
@@ -371,21 +371,19 @@ public class AcceleratorHelper {
    * Constructs the correct AcceleratorGenerator object regarding the enum
    * value passed.
    *
-   * @param directive Enum value that define the generator to be created.
-   * @param target    Target for which the directives will be generated.
+   * @param config Configuration information object.
    * @return A specific implementation of an AcceleratorGenerator.
    */
   public static AcceleratorGenerator createAcceleratorGenerator(
-      AcceleratorDirective directive,
-      Target target)
+      Configuration config)
   {
-    switch(directive) {
+    switch(config.getCurrentDirective()) {
       case OPENACC:
-        return new OpenAcc(target);
+        return new OpenAcc(config);
       case OPENMP:
-        return new OpenMp(target);
+        return new OpenMp(config);
     }
-    return new AcceleratorNone(target);
+    return new AcceleratorNone(config);
   }
 
   /**

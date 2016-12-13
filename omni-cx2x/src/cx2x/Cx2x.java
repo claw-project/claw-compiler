@@ -16,7 +16,6 @@ import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Cx2x is the entry point of any CLAW XcodeML/F translation.
@@ -69,22 +68,20 @@ public class Cx2x {
    * Read the configuration file and output the information for user.
    *
    * @param configPath Path to the configuration file.
-   * @param configPath Path to the XSD schema for configuration file validation.
+   * @param schemaPath Path to the XSD schema for configuration file validation.
    */
   private static void showConfig(String configPath, String schemaPath) {
     try {
       Configuration config = new Configuration(configPath, schemaPath);
-      List<GroupConfiguration> groups = config.getGroups();
-      AcceleratorDirective directive = config.getDefaultDirective();
-      Target target = config.getDefaultTarget();
       System.out.println("- CLAW translator configuration -\n");
-      System.out.println("Default accelerator directive: " + directive + "\n");
-      System.out.println("Default target: " + target + "\n");
+      System.out.println("Default accelerator directive: " +
+          config.getCurrentDirective() + "\n");
+      System.out.println("Default target: " + config.getCurrentTarget() + "\n");
       System.out.println("Current transformation order:");
-      for(int i = 0; i < groups.size(); ++i) {
-        GroupConfiguration g = groups.get(i);
+      int i = 0;
+      for(GroupConfiguration g : config.getGroups()) {
         System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
-            i, g.getName(), g.getType(), g.getTransformationClassName());
+            i++, g.getName(), g.getType(), g.getTransformationClassName());
       }
     } catch(Exception e) {
       error("Could not read the configuration file.\n" + e.getMessage());
@@ -210,7 +207,7 @@ public class Cx2x {
       configuration_path = cmd.getOptionValue("c");
     }
 
-    if(cmd.hasOption("s")){
+    if(cmd.hasOption("s")) {
       schema_path = cmd.getOptionValue("s");
     }
 
@@ -245,23 +242,12 @@ public class Cx2x {
 
     // Read the configuration file
     Configuration config = new Configuration(configuration_path, schema_path);
-
-    // Read default target from config if not set by user
-    AcceleratorDirective directive =  getDirective(config, directive_option);
-    Target target = getTarget(config, target_option);
-
-    // Read transformation group configuration
-    List<GroupConfiguration> groups;
-    try {
-      groups = config.getGroups();
-    } catch(Exception ex) {
-      error(ex.getMessage());
-      return;
-    }
+    config.setUserDefinedTarget(target_option);
+    config.setUserDefineDirective(directive_option);
 
     // Call the translator to apply transformation on XcodeML/F
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
-        xcodeMlOutput, directive, target, groups, maxColumns);
+        xcodeMlOutput, config, maxColumns);
     translator.analyze();
     translator.transform();
     translator.flush();
@@ -274,41 +260,4 @@ public class Cx2x {
       error("Unable to decompile XcodeML to Fortran");
     }
   }
-
-  /**
-   * Get target information from argument or from default configuration.
-   *
-   * @param config Configuration object.
-   * @param option Option passed as argument. Has priority over configuration
-   *               file.
-   * @return The target enum value extracted from the given information.
-   */
-  private static Target getTarget(Configuration config, String option) {
-    if(option == null) {
-      return config.getDefaultTarget();
-    } else {
-      return Target.fromString(option);
-    }
-  }
-
-  /**
-   * Get directive language information from the argument or from the default
-   * configuration.
-   *
-   * @param config Configuration object.
-   * @param option Option passed as argument. Has priority over configuration
-   *               file.
-   * @return The directive language enum value extracted from the given
-   * information.
-   */
-  private static AcceleratorDirective getDirective(Configuration config,
-                                                   String option)
-  {
-    if(option == null) {
-      return config.getDefaultDirective();
-    } else {
-      return AcceleratorDirective.fromString(option);
-    }
-  }
-
 }

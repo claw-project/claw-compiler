@@ -46,7 +46,8 @@ public abstract class Transformation {
    * @param transformer The transformer used to applied the transformations.
    * @return True if analysis succeeded. False otherwise.
    */
-  public abstract boolean analyze(XcodeProgram xcodeml, Transformer transformer);
+  public abstract boolean analyze(XcodeProgram xcodeml,
+                                  Transformer transformer);
 
   /**
    * Check whether the current transformation can be transformed together with
@@ -71,7 +72,6 @@ public abstract class Transformation {
    */
   public abstract void transform(XcodeProgram xcodeml, Transformer transformer,
                                  Transformation other) throws Exception;
-
 
   /**
    * Get the directive that triggered the transformation.

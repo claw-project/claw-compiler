@@ -3,7 +3,6 @@
  * See LICENSE file for more information
  */
 
-
 package cx2x.translator.config;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -37,8 +36,8 @@ import java.util.Map;
 public class Configuration {
 
   // Specific keys
-  public static final String DEFAULT_TARGET = "default_target";
-  public static final String DEFAULT_DIRECTIVE = "default_directive";
+  private static final String DEFAULT_TARGET = "default_target";
+  private static final String DEFAULT_DIRECTIVE = "default_directive";
   // Element and attribute names
   private static final String GLOBAL_ELEMENT = "global";
   private static final String GROUPS_ELEMENT = "groups";
@@ -55,9 +54,10 @@ public class Configuration {
   private final Document _document;
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
+  private final OpenAccConfiguration _openacc;
 
   /**
-   * Contructs a new configuration object from the give configuration file.
+   * Constructs a new configuration object from the give configuration file.
    *
    * @param configPath Path to the configuration file.
    * @param schemaPath Path to the XSD schema for validation.
@@ -72,7 +72,7 @@ public class Configuration {
 
     try {
       validate(schemaPath);
-    } catch(Exception e){
+    } catch(Exception e) {
       throw new Exception("Error: Configuration file is not well formatted: "
           + e.getMessage());
     }
@@ -85,10 +85,27 @@ public class Configuration {
 
     readParameters(global);
     readGroups(groups);
+
+    _openacc = new OpenAccConfiguration(_parameters);
+  }
+
+  /**
+   * Constructs basid configuration object.
+   * @param dir    Accelerator directive language.
+   * @param target Target architecture.
+   */
+  public Configuration(AcceleratorDirective dir, Target target){
+    _parameters = new HashMap<>();
+    _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
+    _parameters.put(DEFAULT_TARGET, target.toString());
+    _document = null;
+    _openacc = new OpenAccConfiguration(_parameters);
+    _groups = new ArrayList<>();
   }
 
   /**
    * Validate the configuration file with the XSD schema.
+   *
    * @param xsdPath Path to the XSD schema.
    * @throws Exception If configuration file is not valid.
    */
@@ -114,6 +131,14 @@ public class Configuration {
   }
 
   /**
+   * Get the OpenACC specific configuration information.
+   * @return The OpenACC configuration object.
+   */
+  public OpenAccConfiguration openACC(){
+    return _openacc;
+  }
+
+  /**
    * Get all the group configuration information.
    *
    * @return List of group configuration.
@@ -122,11 +147,21 @@ public class Configuration {
     return _groups;
   }
 
-  public AcceleratorDirective getDefaultDirective(){
+  /**
+   * Get the current accelerator directive defined in the configuration.
+   * @return Current accelerator value.
+   */
+  public AcceleratorDirective getCurrentDirective() {
     return AcceleratorDirective.fromString(getParameter(DEFAULT_DIRECTIVE));
   }
 
-  public Target getDefaultTarget(){
+  /**
+   * Get the current target defined in the configuration or by the user on
+   * the command line.
+   *
+   * @return Current target value.
+   */
+  public Target getCurrentTarget() {
     return Target.fromString(getParameter(DEFAULT_TARGET));
   }
 
@@ -182,6 +217,30 @@ public class Configuration {
         }
         _groups.add(new GroupConfiguration(name, gType, cPath, transClass));
       }
+    }
+  }
+
+  /**
+   * Set the user defined target in the configuration.
+   *
+   * @param option Option passed as argument. Has priority over configuration
+   *               file.
+   */
+  public void setUserDefinedTarget(String option) {
+    if(option != null) {
+      _parameters.put(DEFAULT_TARGET, option);
+    }
+  }
+
+  /**
+   * Set the user defined directive in the configuration.
+   *
+   * @param option Option passed as argument. Has priority over configuration
+   *               file.
+   */
+  public void setUserDefineDirective(String option) {
+    if(option != null) {
+      _parameters.put(DEFAULT_DIRECTIVE, option);
     }
   }
 }
