@@ -44,22 +44,28 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getStartParallelDirective() {
+  protected String[] getStartParallelDirective(String clauses) {
     //!$acc parallel [vector_length()] [num_gang()] [num_worker()]
-    return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL);
+    return new String[]{
+        String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL) + " " +
+            clauses
+    };
   }
 
   @Override
-  protected String getEndParallelDirective() {
+  protected String[] getEndParallelDirective() {
     //!$acc end parallel
-    return String.format(FORMAT3,
-        OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL);
+    return new String[]{
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL)
+    };
   }
 
   @Override
-  protected String getSingleDirective(String clause) {
+  protected String[] getSingleDirective(String clause) {
     //!$acc <clause>
-    return String.format(FORMAT2, OPENACC_PREFIX, clause);
+    return new String[]{
+        String.format(FORMAT2, OPENACC_PREFIX, clause)
+    };
   }
 
   @Override
@@ -97,9 +103,12 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getRoutineDirective() {
+  protected String[] getRoutineDirective(boolean seq) {
     //!$acc routine
-    return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE);
+    return new String[]{
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_ROUTINE,
+            seq ? getSequentialClause() : "")
+    };
   }
 
   @Override
@@ -114,15 +123,19 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  public String getStartDataRegion() {
+  public String[] getStartDataRegion(String clauses) {
     //!$acc data
-    return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_DATA);
+    return new String[]{
+        String.format(FORMAT2, OPENACC_PREFIX, OPENACC_DATA) + " " + clauses
+    };
   }
 
   @Override
-  public String getEndDataRegion() {
+  public String[] getEndDataRegion() {
     //!$acc end data
-    return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_DATA);
+    return new String[]{
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_DATA)
+    };
   }
 
   @Override
@@ -131,19 +144,25 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getStartLoopDirective(int value) {
+  protected String[] getStartLoopDirective(int value, boolean seq) {
     if(value > 1) {
       //!$acc loop collapse(<value>)
-      return String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
-          String.format("%s(%d)", OPENACC_COLLAPSE, value));
+      return new String[]{
+          String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+              seq ? getSequentialClause() : "",
+              String.format("%s(%d)", OPENACC_COLLAPSE, value))
+      };
     } else {
       //!$acc loop
-      return String.format(FORMAT2, OPENACC_PREFIX, OPENACC_LOOP);
+      return new String[]{
+          String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
+              seq ? getSequentialClause() : "")
+      };
     }
   }
 
   @Override
-  protected String getEndLoopDirective() {
+  protected String[] getEndLoopDirective() {
     return null;
   }
 }
