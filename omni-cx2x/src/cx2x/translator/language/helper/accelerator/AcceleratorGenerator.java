@@ -56,30 +56,31 @@ public abstract class AcceleratorGenerator {
    *
    * @return String value that represents the pragma.
    */
-  protected abstract String getStartParallelDirective();
-
-  /**
-   * Get the formatted directive to start the parallelization of a loop.
-   *
-   * @param value Collapse value. if greater than 0, a collapse clause will be
-   *              added to the construct.
-   * @return String value that represents the start of a parallelized loop.
-   */
-  protected abstract String getStartLoopDirective(int value);
-
-  /**
-   * Get the formatted directive to end the parallelization of a loop.
-   *
-   * @return String value that represents the start of a parallelized loop.
-   */
-  protected abstract String getEndLoopDirective();
+  protected abstract String[] getStartParallelDirective(String clauses);
 
   /**
    * Get the end pragma to define a parallel accelerated region.
    *
    * @return String value that represents the pragma.
    */
-  protected abstract String getEndParallelDirective();
+  protected abstract String[] getEndParallelDirective();
+
+  /**
+   * Get the formatted directive to start the parallelization of a loop.
+   *
+   * @param value Collapse value. if greater than 0, a collapse clause will be
+   *              added to the construct.
+   * @param seq   If true, loop should be executed in a sequential mode.
+   * @return String value that represents the start of a parallelized loop.
+   */
+  protected abstract String[] getStartLoopDirective(int value, boolean seq);
+
+  /**
+   * Get the formatted directive to end the parallelization of a loop.
+   *
+   * @return String value that represents the start of a parallelized loop.
+   */
+  protected abstract String[] getEndLoopDirective();
 
   /**
    * Get formatted pragma defined by the accelerator directive prefix and the
@@ -88,7 +89,7 @@ public abstract class AcceleratorGenerator {
    * @param clause Clauses to append to the accelerator directive prefix
    * @return String value that represents the pragma.
    */
-  protected abstract String getSingleDirective(String clause);
+  protected abstract String[] getSingleDirective(String clause);
 
   /**
    * Get the parallel keyword for a given accelerator language.
@@ -130,9 +131,10 @@ public abstract class AcceleratorGenerator {
    * Return the formatted directive to be inserted in a subroutine/function
    * definition.
    *
+   * @param seq Apply sequential mode to the routine directive
    * @return Routine directive.
    */
-  protected abstract String getRoutineDirective();
+  protected abstract String[] getRoutineDirective(boolean seq);
 
 
   /**
@@ -156,14 +158,14 @@ public abstract class AcceleratorGenerator {
    *
    * @return String value that represents the pragma.
    */
-  public abstract String getStartDataRegion();
+  public abstract String[] getStartDataRegion(String clauses);
 
   /**
    * Get the end pragma to define the end of an accelerator data region.
    *
    * @return String value that represents the pragma.
    */
-  public abstract String getEndDataRegion();
+  public abstract String[] getEndDataRegion();
 
   /**
    * Get the corresponding clause to have a sequential execution of an

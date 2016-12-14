@@ -6,7 +6,6 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.helper.target.Target;
 
 import java.util.List;
 
@@ -32,27 +31,27 @@ class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getStartParallelDirective() {
+  protected String[] getStartParallelDirective(String clauses) {
     return null;
   }
 
   @Override
-  protected String getStartLoopDirective(int value) {
+  protected String[] getEndParallelDirective() {
     return null;
   }
 
   @Override
-  protected String getEndLoopDirective() {
+  protected String[] getStartLoopDirective(int value, boolean seq) {
     return null;
   }
 
   @Override
-  protected String getEndParallelDirective() {
+  protected String[] getEndLoopDirective() {
     return null;
   }
 
   @Override
-  protected String getSingleDirective(String clause) {
+  protected String[] getSingleDirective(String clause) {
     return null;
   }
 
@@ -77,7 +76,7 @@ class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getRoutineDirective() {
+  protected String[] getRoutineDirective(boolean seq) {
     return null;
   }
 
@@ -92,12 +91,12 @@ class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
-  public String getStartDataRegion() {
+  public String[] getStartDataRegion(String clauses) {
     return null;
   }
 
   @Override
-  public String getEndDataRegion() {
+  public String[] getEndDataRegion() {
     return null;
   }
 
