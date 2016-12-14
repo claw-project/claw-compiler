@@ -105,7 +105,7 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String[] getRoutineDirective(boolean seq) {
     //!$acc routine
-    if(seq){
+    if(seq) {
       return new String[]{
           String.format(FORMAT3, OPENACC_PREFIX, OPENACC_ROUTINE,
               getSequentialClause())
@@ -153,17 +153,32 @@ class OpenAcc extends AcceleratorGenerator {
   protected String[] getStartLoopDirective(int value, boolean seq) {
     if(value > 1) {
       //!$acc loop collapse(<value>)
-      return new String[]{
-          String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-              seq ? getSequentialClause() : "",
-              String.format("%s(%d)", OPENACC_COLLAPSE, value))
-      };
+      // TODO do it differently
+      if(seq) {
+        return new String[]{
+            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+                getSequentialClause(),
+                String.format("%s(%d)", OPENACC_COLLAPSE, value))
+        };
+      } else {
+        return new String[]{
+            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
+                String.format("%s(%d)", OPENACC_COLLAPSE, value))
+        };
+      }
     } else {
       //!$acc loop
-      return new String[]{
-          String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
-              seq ? getSequentialClause() : "")
-      };
+      if(seq) {
+        return new String[]{
+            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
+                getSequentialClause())
+        };
+      } else {
+        return new String[]{
+            String.format(FORMAT2, OPENACC_PREFIX, OPENACC_LOOP)
+        };
+      }
+
     }
   }
 
