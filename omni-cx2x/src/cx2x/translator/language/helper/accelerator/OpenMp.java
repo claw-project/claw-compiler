@@ -43,27 +43,27 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   protected String getStartParallelDirective() {
-    if(getConfiguration().getCurrentTarget() == Target.CPU) {
+    if(getConfiguration().getCurrentTarget() == Target.GPU) {
+      //!$omp target parallel
+      return String.format(FORMAT3,
+          OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL);
+    } else {
       //!$omp parallel
       return String.format(FORMAT2,
           OPENMP_PREFIX, OPENMP_PARALLEL);
-    } else {
-      //!$omp target parallel do
-      return String.format(FORMAT3,
-          OPENMP_PREFIX, OPENMP_TARGET, OPENMP_PARALLEL);
     }
   }
 
   @Override
   public String getEndParallelDirective() {
-    if(getConfiguration().getCurrentTarget() == Target.CPU) {
+    if(getConfiguration().getCurrentTarget() == Target.GPU) {
+      //!$omp end target parallel
+      return String.format(FORMAT4,
+          OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL);
+    } else {
       //!$omp end parallel
       return String.format(FORMAT3,
           OPENMP_PREFIX, OPENMP_END, OPENMP_PARALLEL);
-    } else {
-      //!$omp end target parallel do
-      return String.format(FORMAT4,
-          OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_PARALLEL);
     }
   }
 
@@ -115,17 +115,17 @@ class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String getStartDataRegion() {
-    return null; // TODO OpenMP
+    return null; // TODO OpenMP 4.5
   }
 
   @Override
   public String getEndDataRegion() {
-    return null; // TODO OpenMP
+    return null; // TODO OpenMP 4.5
   }
 
   @Override
   public String getSequentialClause() {
-    return null; // TODO OpenMP if makes sense
+    return null; // TODO OpenMP 4.5
   }
 
   @Override
