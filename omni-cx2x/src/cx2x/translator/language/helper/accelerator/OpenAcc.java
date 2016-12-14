@@ -46,6 +46,11 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String[] getStartParallelDirective(String clauses) {
     //!$acc parallel [vector_length()] [num_gang()] [num_worker()]
+    if(clauses == null || clauses.isEmpty()){
+      return new String[]{
+          String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL)
+      };
+    }
     return new String[]{
         String.format(FORMAT2, OPENACC_PREFIX, OPENACC_PARALLEL) + " " +
             clauses
