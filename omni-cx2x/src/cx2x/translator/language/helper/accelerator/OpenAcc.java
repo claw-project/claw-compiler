@@ -105,10 +105,16 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String[] getRoutineDirective(boolean seq) {
     //!$acc routine
-    return new String[]{
-        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_ROUTINE,
-            seq ? getSequentialClause() : "")
-    };
+    if(seq){
+      return new String[]{
+          String.format(FORMAT3, OPENACC_PREFIX, OPENACC_ROUTINE,
+              getSequentialClause())
+      };
+    } else {
+      return new String[]{
+          String.format(FORMAT2, OPENACC_PREFIX, OPENACC_ROUTINE)
+      };
+    }
   }
 
   @Override
