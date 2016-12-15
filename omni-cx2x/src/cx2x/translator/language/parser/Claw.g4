@@ -438,10 +438,10 @@ loop_interchange_clauses[ClawLanguage l]:
 // Possible permutation of clauses for the loop-extract directive
 loop_extract_clauses[ClawLanguage l]:
   (
-      { !$l.hasFusionClause() }?      fusion_clause[$l]
-    | { !$l.hasParallelClause() }?    parallel_clause[$l]
-    | { !$l.hasAcceleratorClause() }? acc_clause[$l]
-    | { !$l.hasTargetClause() }?      target_clause[$l]
+    { !$l.hasFusionClause() }?      fusion_clause[$l]
+  | { !$l.hasParallelClause() }?    parallel_clause[$l]
+  | { !$l.hasAcceleratorClause() }? acc_clause[$l]
+  | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
 
@@ -470,6 +470,7 @@ kcache_clauses[ClawLanguage l]
   )*
 ;
 
+// Possible permutation of clauses for the loop-hoist directive
 loop_hoist_clauses[ClawLanguage l]:
   (
     { !$l.hasReshapeClause() }?     reshape_clause[$l]
