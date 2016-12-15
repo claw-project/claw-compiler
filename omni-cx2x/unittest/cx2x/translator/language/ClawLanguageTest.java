@@ -252,9 +252,18 @@ public class ClawLanguageTest {
   @Test
   public void RemoveTest() {
     // Valid directives
-    analyzeValidSimpleClaw("claw remove", ClawDirective.REMOVE, false);
-    analyzeValidSimpleClaw("claw end remove", ClawDirective.REMOVE, true);
-    analyzeValidSimpleClaw("claw   end   remove  ", ClawDirective.REMOVE, true);
+    analyzeValidSimpleClaw("claw remove", ClawDirective.REMOVE, false, null);
+    analyzeValidSimpleClaw("claw end remove", ClawDirective.REMOVE, true, null);
+    analyzeValidSimpleClaw("claw   end   remove  ", ClawDirective.REMOVE, true,
+        null);
+
+    analyzeValidSimpleClaw("claw remove target(cpu)", ClawDirective.REMOVE,
+        false, Collections.singletonList(Target.CPU));
+    analyzeValidSimpleClaw("claw remove target(mic)", ClawDirective.REMOVE,
+        false, Collections.singletonList(Target.MIC));
+    analyzeValidSimpleClaw("claw remove target(gpu,mic)", ClawDirective.REMOVE,
+        false, Arrays.asList(Target.GPU, Target.MIC));
+
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw");
@@ -269,7 +278,7 @@ public class ClawLanguageTest {
    * @param directive Directive to be match.
    */
   private void analyzeValidSimpleClaw(String raw, ClawDirective directive,
-                                      boolean isEnd)
+                                      boolean isEnd, List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -285,6 +294,7 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.isEndPragma());
       }
+      assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       fail();
     }
@@ -299,7 +309,7 @@ public class ClawLanguageTest {
     // Valid directives
     ClawLanguage l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j)", "i", "istart",
-        "iend", null);
+        "iend", null, null);
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
@@ -315,7 +325,7 @@ public class ClawLanguageTest {
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend,2) map(i:j)", "i", "istart",
-        "iend", "2");
+        "iend", "2", null);
     assertNotNull(l);
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
@@ -328,7 +338,7 @@ public class ClawLanguageTest {
     assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract("claw loop-extract range(i=1,10) map(i:j)",
-        "i", "1", "10", null);
+        "i", "1", "10", null, null);
     assertNotNull(l);
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
@@ -341,7 +351,8 @@ public class ClawLanguageTest {
     assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
 
     l = analyzeValidClawLoopExtract(
-        "claw loop-extract range(i=1,10,2) map(i:j) parallel", "i", "1", "10", "2");
+        "claw loop-extract range(i=1,10,2) map(i:j) parallel",
+        "i", "1", "10", "2", null);
     assertNotNull(l);
     map = l.getMappings().get(0);
     assertTrue(l.hasParallelClause());
@@ -356,7 +367,7 @@ public class ClawLanguageTest {
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion", "i", "istart",
-        "iend", null);
+        "iend", null, null);
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
@@ -376,7 +387,7 @@ public class ClawLanguageTest {
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1)",
-        "i", "istart", "iend", null);
+        "i", "istart", "iend", null, null);
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
@@ -395,7 +406,7 @@ public class ClawLanguageTest {
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
-            "acc(loop gang vector)", "i", "istart", "iend", null);
+            "acc(loop gang vector)", "i", "istart", "iend", null, null);
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
@@ -420,7 +431,7 @@ public class ClawLanguageTest {
             "map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3) " +
             "map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) " +
             "fusion group(coeth-j1) parallel acc(loop gang vector)",
-        "j1", "ki1sc", "ki1ec", null);
+        "j1", "ki1sc", "ki1ec", null, null);
     assertNotNull(l);
     assertEquals(4, l.getMappings().size());
 
@@ -500,6 +511,19 @@ public class ClawLanguageTest {
     assertTrue(l.hasAcceleratorClause());
     assertEquals("loop gang vector", l.getAcceleratorClauses());
 
+
+    analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend) map(i:j) target(gpu) fusion " +
+            "group(j1)",
+        "i", "istart", "iend", null, Collections.singletonList(Target.GPU));
+
+    analyzeValidClawLoopExtract(
+        "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
+            "target(gpu)",
+        "i", "istart", "iend", null, Collections.singletonList(Target.GPU));
+
+
+
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-extract");
     analyzeUnvalidClawLanguage("claw loop   -   extract ");
@@ -516,7 +540,8 @@ public class ClawLanguageTest {
    */
   private ClawLanguage analyzeValidClawLoopExtract(String raw, String induction,
                                                    String lower, String upper,
-                                                   String step)
+                                                   String step,
+                                                   List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -533,6 +558,7 @@ public class ClawLanguageTest {
       if(step != null) {
         assertEquals(step, l.getRange().getStep());
       }
+      assertTargets(l, targets);
       return l;
     } catch(IllegalDirectiveException idex) {
       System.err.println(idex.getMessage());
@@ -660,44 +686,65 @@ public class ClawLanguageTest {
   public void ArrayTransformTest() {
     // Valid directives
     analyzeValidArrayTransform("claw array-transform", false, null, false,
-        null, null);
+        null, null, null);
     analyzeValidArrayTransform("claw array-transform fusion", true, null, false,
-        null, null);
+        null, null, null);
     analyzeValidArrayTransform("claw array-transform fusion group(j1)", true,
-        "j1", false, null, null);
+        "j1", false, null, null, null);
     analyzeValidArrayTransform("claw array-transform fusion parallel", true,
-        null, true, null, null);
+        null, true, null, null, null);
     analyzeValidArrayTransform("claw array-transform fusion parallel acc(loop)",
-        true, null, true, "loop", null);
+        true, null, true, "loop", null, null);
     analyzeValidArrayTransform("claw array-transform fusion acc(loop)", true,
-        null, false, "loop", null);
+        null, false, "loop", null, null);
     analyzeValidArrayTransform(
         "claw array-transform fusion parallel acc(loop gang vector)", true,
-        null, true, "loop gang vector", null);
+        null, true, "loop gang vector", null, null);
     analyzeValidArrayTransform(
         "claw array-transform fusion group(j1) parallel acc(loop gang vector)",
-        true, "j1", true, "loop gang vector", null);
+        true, "j1", true, "loop gang vector", null, null);
     analyzeValidArrayTransform(
         "claw array-transform parallel acc(loop gang vector)",
-        false, null, true, "loop gang vector", null);
+        false, null, true, "loop gang vector", null, null);
     analyzeValidArrayTransform("claw array-transform parallel", false, null,
-        true, null, null);
+        true, null, null, null);
     analyzeValidArrayTransform("claw array-transform acc(loop gang vector)",
-        false, null, false, "loop gang vector", null);
+        false, null, false, "loop gang vector", null, null);
 
     analyzeValidArrayTransform("claw array-transform induction(j1,j3)",
-        false, null, false, null, Arrays.asList("j1", "j3"));
+        false, null, false, null, Arrays.asList("j1", "j3"), null);
     analyzeValidArrayTransform("claw array-transform induction(j1)",
-        false, null, false, null, Collections.singletonList("j1"));
+        false, null, false, null, Collections.singletonList("j1"), null);
     analyzeValidArrayTransform("claw array-transform induction(i,j,k)",
-        false, null, false, null, Arrays.asList("i", "j", "k"));
+        false, null, false, null, Arrays.asList("i", "j", "k"), null);
     analyzeUnvalidClawLanguage("claw array-transform induction()");
     analyzeUnvalidClawLanguage("claw array-transform induction");
 
+
+    analyzeValidArrayTransform("claw array-transform target(cpu)", false, null,
+        false, null, null, Collections.singletonList(Target.CPU));
+    analyzeValidArrayTransform("claw array-transform target(gpu)", false, null,
+        false, null, null, Collections.singletonList(Target.GPU));
+    analyzeValidArrayTransform("claw array-transform target(cpu, gpu)", false,
+        null, false, null, null, Arrays.asList(Target.CPU, Target.GPU));
+
+    analyzeValidArrayTransform(
+        "claw array-transform target(cpu) fusion parallel acc(loop)",
+        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
+    analyzeValidArrayTransform(
+        "claw array-transform fusion target(cpu) parallel acc(loop)",
+        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
+    analyzeValidArrayTransform(
+        "claw array-transform fusion parallel target(cpu) acc(loop)",
+        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
+    analyzeValidArrayTransform(
+        "claw array-transform fusion parallel acc(loop) target(cpu)",
+        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
+
     analyzeValidSimpleClaw("claw end array-transform",
-        ClawDirective.ARRAY_TRANSFORM, true);
+        ClawDirective.ARRAY_TRANSFORM, true, null);
     analyzeValidSimpleClaw("claw   end   array-transform  ",
-        ClawDirective.ARRAY_TRANSFORM, true);
+        ClawDirective.ARRAY_TRANSFORM, true, null);
   }
 
   /**
@@ -711,7 +758,8 @@ public class ClawLanguageTest {
    */
   private void analyzeValidArrayTransform(String raw, boolean fusion,
                                           String fusionGroup, boolean parallel,
-                                          String acc, List<String> inducNames)
+                                          String acc, List<String> inducNames,
+                                          List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -749,6 +797,7 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasInductionClause());
       }
+      assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       System.err.print(idex.getMessage());
       fail();
@@ -763,11 +812,12 @@ public class ClawLanguageTest {
   public void LoopHoistTest() {
     // Valid directives
     analyzeValidLoopHoist("claw loop-hoist(i,j)",
-        Arrays.asList("i", "j"), false, null, false, null);
+        Arrays.asList("i", "j"), false, null, false, null, null);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange",
-        Arrays.asList("i", "j"), true, null, false, null);
+        Arrays.asList("i", "j"), true, null, false, null, null);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange(j,i)",
-        Arrays.asList("i", "j"), true, Arrays.asList("j", "i"), false, null);
+        Arrays.asList("i", "j"), true, Arrays.asList("j", "i"), false, null,
+        null);
 
     List<Integer> empty = Collections.emptyList();
     ClawReshapeInfo info1 = new ClawReshapeInfo("zmd", 0, empty);
@@ -775,7 +825,20 @@ public class ClawLanguageTest {
         new ClawReshapeInfo("zsediflux", 1, Collections.singletonList(2));
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
-        Arrays.asList(info1, info2));
+        Arrays.asList(info1, info2), null);
+
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) target(cpu) interchange",
+        Arrays.asList("i", "j"), true, null, false, null,
+        Collections.singletonList(Target.CPU));
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) interchange target(cpu, gpu)",
+        Arrays.asList("i", "j"), true, null, false, null,
+        Arrays.asList(Target.CPU, Target.GPU));
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) target(mic)",
+        Arrays.asList("i", "j"), false, null, false, null,
+        Collections.singletonList(Target.MIC));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-hoist");
@@ -783,9 +846,9 @@ public class ClawLanguageTest {
     analyzeUnvalidClawLanguage("claw loop-hoist(i,j) interchange()");
 
     analyzeValidSimpleClaw("claw end loop-hoist",
-        ClawDirective.LOOP_HOIST, true);
+        ClawDirective.LOOP_HOIST, true, null);
     analyzeValidSimpleClaw("claw   end   loop-hoist  ",
-        ClawDirective.LOOP_HOIST, true);
+        ClawDirective.LOOP_HOIST, true, null);
   }
 
   /**
@@ -797,7 +860,8 @@ public class ClawLanguageTest {
   private void analyzeValidLoopHoist(String raw, List<String> inductions,
                                      boolean interchange, List<String> indexes,
                                      boolean reshape,
-                                     List<ClawReshapeInfo> infos)
+                                     List<ClawReshapeInfo> infos,
+                                     List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -845,7 +909,7 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasReshapeClause());
       }
-
+      assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       System.err.print(idex.getMessage());
       fail();
@@ -859,13 +923,22 @@ public class ClawLanguageTest {
   public void ArrayToFctCallTest() {
     // Valid directives
     analyzeValidArrayToFctCall("claw call var1=f_var1(i,j)", "var1", "f_var1",
-        Arrays.asList("i", "j"));
+        Arrays.asList("i", "j"), null);
 
     analyzeValidArrayToFctCall("claw call var1=f_var1(i)", "var1", "f_var1",
-        Collections.singletonList("i"));
+        Collections.singletonList("i"), null);
 
     analyzeValidArrayToFctCall("claw call v=f(i,j)", "v", "f",
-        Arrays.asList("i", "j"));
+        Arrays.asList("i", "j"), null);
+
+    analyzeValidArrayToFctCall("claw call v=f(i,j) target(cpu)", "v", "f",
+        Arrays.asList("i", "j"), Collections.singletonList(Target.CPU));
+
+    analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic)", "v", "f",
+        Arrays.asList("i", "j"), Arrays.asList(Target.MIC));
+
+    analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic, gpu)", "v", "f",
+        Arrays.asList("i", "j"), Arrays.asList(Target.MIC, Target.GPU));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw call ");
@@ -882,7 +955,8 @@ public class ClawLanguageTest {
    * @param params    List of parameters identifier to be checked.
    */
   private void analyzeValidArrayToFctCall(String raw, String arrayName,
-                                          String fctName, List<String> params)
+                                          String fctName, List<String> params,
+                                          List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -901,6 +975,7 @@ public class ClawLanguageTest {
 
       assertEquals(arrayName, l.getArrayName());
       assertEquals(fctName, l.getFctName());
+      assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       System.err.print(idex.getMessage());
       fail();
@@ -1135,6 +1210,10 @@ public class ClawLanguageTest {
   public void ContinuationTest() {
     String continuedPragma = "claw loop-fusion   claw collapse(2)";
     analyzeValidClawLoopFusion(continuedPragma, null, true, 2, null);
+
+    String continuedPragma2 = "claw loop-fusion   claw collapse(2) target(cpu)";
+    analyzeValidClawLoopFusion(continuedPragma2, null, true, 2,
+        Collections.singletonList(Target.CPU));
   }
 
 }
