@@ -55,7 +55,7 @@ directive[ClawLanguage l]
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
-  | LOOP_INTERCHANGE indexes_option[$l] loop_interchange_clauses[$l] EOF
+  | LOOP_INTERCHANGE loop_interchange_clauses[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive
@@ -427,9 +427,11 @@ loop_fusion_clauses[ClawLanguage l]:
 
 // Possible permutation of clauses for the loop-interchange directive
 loop_interchange_clauses[ClawLanguage l]:
+  indexes_option[$l]
   (
     { !$l.hasParallelClause() }?    parallel_clause[$l]
   | { !$l.hasAcceleratorClause() }? acc_clause[$l]
+  | { !$l.hasTargetClause() }?   target_clause[$l]
   )*
 ;
 
