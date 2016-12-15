@@ -47,7 +47,6 @@ directive[ClawLanguage l]
     List<ClawMapping> m = new ArrayList<>();
     List<String> o = new ArrayList<>();
     List<String> s = new ArrayList<>();
-    List<Integer> i = new ArrayList<>();
   }
   :
 
@@ -56,11 +55,11 @@ directive[ClawLanguage l]
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
-  | LOOP_INTERCHANGE indexes_option[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
+  | LOOP_INTERCHANGE indexes_option[$l] loop_interchange_clauses[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive
-  | LOOP_EXTRACT range_option mapping_option_list[m] fusion_clause_optional[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
+  | LOOP_EXTRACT range_option mapping_option_list[m] loop_extract_clauses[$l] EOF
     {
       $l.setDirective(ClawDirective.LOOP_EXTRACT);
       $l.setRange($range_option.r);
@@ -77,20 +76,13 @@ directive[ClawLanguage l]
     }
 
   // Kcache directive
-  | KCACHE data_clause[$l] offset_list_optional[i] private_optional[$l] EOF
+  | KCACHE data_clause[$l] kcache_clauses[$l] EOF
     {
       $l.setDirective(ClawDirective.KCACHE);
-      $l.setOffsets(i);
-    }
-  | KCACHE data_clause[$l] offset_list_optional[i] INIT private_optional[$l] EOF
-    {
-      $l.setDirective(ClawDirective.KCACHE);
-      $l.setOffsets(i);
-      $l.setInitClause();
     }
 
   // Array notation transformation directive
-  | ARRAY_TRANS induction_optional[$l] fusion_clause_optional[$l] parallel_clause_optional[$l] acc_optional[$l] EOF
+  | ARRAY_TRANS array_transform_clauses[$l] EOF
     {  $l.setDirective(ClawDirective.ARRAY_TRANSFORM); }
   | END ARRAY_TRANS
     {
@@ -99,7 +91,7 @@ directive[ClawLanguage l]
     }
 
   // loop-hoist directive
-  | LOOP_HOIST '(' ids_list[o] ')' reshape_optional[$l] interchange_optional[$l] EOF
+  | LOOP_HOIST '(' ids_list[o] ')' loop_hoist_clauses[$l] EOF
     {
       $l.setHoistInductionVars(o);
       $l.setDirective(ClawDirective.LOOP_HOIST);
@@ -189,45 +181,36 @@ collapse_clause[ClawLanguage l]:
 ;
 
 // fusion clause
-fusion_clause_optional[ClawLanguage l]:
-    FUSION group_clause[$l] { $l.setFusionClause(); }
-  | FUSION { $l.setFusionClause(); }
-  | /* empty */
+fusion_clause[ClawLanguage l]:
+    FUSION (group_clause[$l])? { $l.setFusionClause(); }
 ;
 
 // parallel clause
-parallel_clause_optional[ClawLanguage l]:
+parallel_clause[ClawLanguage l]:
     PARALLEL { $l.setParallelClause(); }
-  | /* empty */
 ;
 
 // acc clause
-acc_optional[ClawLanguage l]
+acc_clause[ClawLanguage l]
   @init{
     List<String> tempAcc = new ArrayList<>();
   }
   :
     ACC '(' identifiers[tempAcc] ')' { $l.setAcceleratorClauses(Utility.join(" ", tempAcc)); }
-  | /* empty */
 ;
 
 // interchange clause
-interchange_optional[ClawLanguage l]:
-    INTERCHANGE indexes_option[$l]
-    {
-      $l.setInterchangeClause();
-    }
-  | /* empty */
+interchange_clause[ClawLanguage l]:
+    INTERCHANGE indexes_option[$l] { $l.setInterchangeClause(); }
 ;
 
 // induction clause
-induction_optional[ClawLanguage l]
+induction_clause[ClawLanguage l]
   @init{
     List<String> temp = new ArrayList<>();
   }
   :
     INDUCTION '(' ids_list[temp] ')' { $l.setInductionClause(temp); }
-  | /* empty */
 ;
 
 // data clause
@@ -240,20 +223,18 @@ data_clause[ClawLanguage l]
 ;
 
 // private clause
-private_optional[ClawLanguage l]:
+private_clause[ClawLanguage l]:
     PRIVATE { $l.setPrivateClause(); }
-  | /* empty */
 ;
 
 // reshape clause
-reshape_optional[ClawLanguage l]
+reshape_clause[ClawLanguage l]
   @init{
     List<ClawReshapeInfo> r = new ArrayList();
   }
   :
     RESHAPE '(' reshape_list[r] ')'
     { $l.setReshapeClauseValues(r); }
-  | /* empty */
 ;
 
 // reshape clause
@@ -301,9 +282,8 @@ indexes_option[ClawLanguage l]
   | /* empty */
 ;
 
-offset_list_optional[List<Integer> offsets]:
+offset_clause[List<Integer> offsets]:
     OFFSET '(' offset_list[$offsets] ')'
-  | /* empty */
 ;
 
 offset_list[List<Integer> offsets]:
@@ -323,16 +303,16 @@ range_option returns [ClawRange r]
     $r = new ClawRange();
   }
   :
-    RANGE '(' induction=IDENTIFIER '=' lower=range_id ',' upper=range_id ')'
+    RANGE '(' induction_var=IDENTIFIER '=' lower=range_id ',' upper=range_id ')'
     {
-      $r.setInductionVar($induction.text);
+      $r.setInductionVar($induction_var.text);
       $r.setLowerBound($lower.text);
       $r.setUpperBound($upper.text);
       $r.setStep(ClawConstant.DEFAULT_STEP_VALUE);
     }
-  | RANGE '(' induction=IDENTIFIER '=' lower=range_id ',' upper=range_id ',' step=range_id ')'
+  | RANGE '(' induction_var=IDENTIFIER '=' lower=range_id ',' upper=range_id ',' step=range_id ')'
     {
-      $r.setInductionVar($induction.text);
+      $r.setInductionVar($induction_var.text);
       $r.setLowerBound($lower.text);
       $r.setUpperBound($upper.text);
       $r.setStep($step.text);
@@ -436,7 +416,7 @@ target returns [Target t]:
   | MIC { $t = Target.MIC; }
 ;
 
-
+// Possible permutation of clauses for the loop-fusion directive
 loop_fusion_clauses[ClawLanguage l]:
   (
     { !$l.hasGroupClause() }?    group_clause[$l]
@@ -445,6 +425,52 @@ loop_fusion_clauses[ClawLanguage l]:
   )*
 ;
 
+// Possible permutation of clauses for the loop-interchange directive
+loop_interchange_clauses[ClawLanguage l]:
+  (
+    { !$l.hasParallelClause() }?    parallel_clause[$l]
+  | { !$l.hasAcceleratorClause() }? acc_clause[$l]
+  )*
+;
+
+// Possible permutation of clauses for the loop-extract directive
+loop_extract_clauses[ClawLanguage l]:
+  (
+      { !$l.hasFusionClause() }?      fusion_clause[$l]
+    | { !$l.hasParallelClause() }?    parallel_clause[$l]
+    | { !$l.hasAcceleratorClause() }? acc_clause[$l]
+  )*
+;
+
+// Possible permutation of clauses for the array-transform directive
+array_transform_clauses[ClawLanguage l]:
+  (
+    { !$l.hasFusionClause() }?      fusion_clause[$l]
+  | { !$l.hasParallelClause() }?    parallel_clause[$l]
+  | { !$l.hasAcceleratorClause() }? acc_clause[$l]
+  | { !$l.hasInductionClause() }?   induction_clause[$l]
+  )*
+;
+
+// Possible permutation of clauses for the kcache directive
+kcache_clauses[ClawLanguage l]
+@init{
+    List<Integer> i = new ArrayList<>();
+}
+:
+  (
+    { $l.getOffsets() == null }? offset_clause[i] { $l.setOffsets(i); }
+  | { !$l.hasInitClause() }?     INIT { $l.setInitClause(); }
+  | { !$l.hasPrivateClause() }?  private_clause[$l]
+  )*
+;
+
+loop_hoist_clauses[ClawLanguage l]:
+  (
+    { !$l.hasReshapeClause() }? reshape_clause[$l]
+  | { !$l.hasInterchangeClause() }? interchange_clause[$l]
+  )*
+;
 
 
 /*----------------------------------------------------------------------------
