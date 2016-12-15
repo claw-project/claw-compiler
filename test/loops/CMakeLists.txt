@@ -11,6 +11,7 @@ add_subdirectory(fusion3)
 add_subdirectory(fusion4)
 add_subdirectory(fusion5)
 add_subdirectory(fusion6)
+add_subdirectory(fusion7) # with target clause
 add_subdirectory(hoist1)
 add_subdirectory(hoist2)
 add_subdirectory(interchange1)
