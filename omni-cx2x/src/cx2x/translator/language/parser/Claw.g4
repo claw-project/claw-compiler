@@ -431,7 +431,7 @@ loop_interchange_clauses[ClawLanguage l]:
   (
     { !$l.hasParallelClause() }?    parallel_clause[$l]
   | { !$l.hasAcceleratorClause() }? acc_clause[$l]
-  | { !$l.hasTargetClause() }?   target_clause[$l]
+  | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
 
@@ -464,6 +464,7 @@ kcache_clauses[ClawLanguage l]
     { $l.getOffsets() == null }? offset_clause[i] { $l.setOffsets(i); }
   | { !$l.hasInitClause() }?     INIT { $l.setInitClause(); }
   | { !$l.hasPrivateClause() }?  private_clause[$l]
+  | { !$l.hasTargetClause() }?   target_clause[$l]
   )*
 ;
 
