@@ -109,7 +109,7 @@ public class ClawXcodeMlTranslator {
         {
           OpenAccContinuation t =
               new OpenAccContinuation(new AnalyzedPragma(pragma));
-          addOrAbort(t, null);
+          addOrAbort(t);
         }
 
         // Not CLAW pragma, we do nothing
@@ -123,19 +123,19 @@ public class ClawXcodeMlTranslator {
         // Create transformation object based on the directive
         switch(analyzedPragma.getDirective()) {
           case ARRAY_TO_CALL:
-            addOrAbort(new ArrayToFctCall(analyzedPragma), analyzedPragma);
+            addOrAbort(new ArrayToFctCall(analyzedPragma));
             break;
           case KCACHE:
-            addOrAbort(new Kcaching(analyzedPragma), analyzedPragma);
+            addOrAbort(new Kcaching(analyzedPragma));
             break;
           case LOOP_FUSION:
-            addOrAbort(new LoopFusion(analyzedPragma), analyzedPragma);
+            addOrAbort(new LoopFusion(analyzedPragma));
             break;
           case LOOP_INTERCHANGE:
-            addOrAbort(new LoopInterchange(analyzedPragma), analyzedPragma);
+            addOrAbort(new LoopInterchange(analyzedPragma));
             break;
           case LOOP_EXTRACT:
-            addOrAbort(new LoopExtraction(analyzedPragma), analyzedPragma);
+            addOrAbort(new LoopExtraction(analyzedPragma));
             break;
           case LOOP_HOIST:
             HandleBlockDirective(analyzedPragma);
@@ -148,13 +148,13 @@ public class ClawXcodeMlTranslator {
             break;
           case PARALLELIZE:
             if(analyzedPragma.hasForwardClause()) {
-              addOrAbort(new ParallelizeForward(analyzedPragma), analyzedPragma);
+              addOrAbort(new ParallelizeForward(analyzedPragma));
             } else {
-              addOrAbort(new Parallelize(analyzedPragma), analyzedPragma);
+              addOrAbort(new Parallelize(analyzedPragma));
             }
             break;
           case PRIMITIVE:
-            addOrAbort(new DirectivePrimitive(analyzedPragma), analyzedPragma);
+            addOrAbort(new DirectivePrimitive(analyzedPragma));
             break;
           // driver handled directives
           case IGNORE:
@@ -178,8 +178,7 @@ public class ClawXcodeMlTranslator {
     }
 
     // Add utility transformation
-    ClawLanguage languageProg = new ClawLanguage(_program);
-    addOrAbort(new XcodeMLWorkaround(languageProg), languageProg);
+    addOrAbort(new XcodeMLWorkaround(new ClawLanguage(_program)));
 
     // Analysis done, the transformation can be performed.
     _canTransform = true;
@@ -229,13 +228,13 @@ public class ClawXcodeMlTranslator {
     }
     switch(begin.getDirective()) {
       case REMOVE:
-        addOrAbort(new UtilityRemove(begin, end), begin);
+        addOrAbort(new UtilityRemove(begin, end));
         break;
       case ARRAY_TRANSFORM:
-        addOrAbort(new ArrayTransform(begin, end), begin);
+        addOrAbort(new ArrayTransform(begin, end));
         break;
       case LOOP_HOIST:
-        addOrAbort(new LoopHoist(begin, end), begin);
+        addOrAbort(new LoopHoist(begin, end));
         break;
     }
   }
@@ -246,9 +245,11 @@ public class ClawXcodeMlTranslator {
    *
    * @param t The transformation to be analyzed and added.
    */
-  private void addOrAbort(Transformation t, ClawLanguage l) {
-
-    if(l != null && !l.isApplicableToCurrentTarget()) {
+  private void addOrAbort(Transformation t) {
+    if(t.getDirective() != null
+        && t.getDirective() instanceof ClawLanguage
+        && !((ClawLanguage) t.getDirective()).isApplicableToCurrentTarget())
+    {
       return;
     }
     if(t.analyze(_program, _transformer)) {
