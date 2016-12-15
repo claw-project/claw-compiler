@@ -549,27 +549,50 @@ public class ClawLanguageTest {
 
     // data clause + offsets
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1)",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,-1,0)",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0)",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) private",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true, null);
     analyzeValidKcache("claw kcache data(var1,var2) private",
-        Arrays.asList("var1", "var2"), null, false, true);
+        Arrays.asList("var1", "var2"), null, false, true, null);
+
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0,1) target(cpu)",
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false,
+        Collections.singletonList(Target.CPU));
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0,1) target(gpu)",
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false,
+        Collections.singletonList(Target.GPU));
+    analyzeValidKcache("claw kcache data(var1,var2) offset(0,1) " +
+            "target(cpu,gpu)", Arrays.asList("var1", "var2"),
+        Arrays.asList(0, 1), false, false,
+        Arrays.asList(Target.CPU, Target.GPU));
 
     // offset + init clause
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), true, false);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, 1), true, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,-1,0) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) init private",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true, null);
     analyzeValidKcache("claw kcache data(var1,var2) init private",
-        Arrays.asList("var1", "var2"), null, true, true);
+        Arrays.asList("var1", "var2"), null, true, true, null);
+
+    analyzeValidKcache("claw kcache data(var1,var2) init target(cpu) private",
+        Arrays.asList("var1", "var2"), null, true, true,
+        Collections.singletonList(Target.CPU));
+
+    analyzeValidKcache("claw kcache data(var1,var2) target(gpu) init private",
+        Arrays.asList("var1", "var2"), null, true, true,
+        Collections.singletonList(Target.GPU));
+
+    analyzeValidKcache("claw kcache data(var1,var2) init private target(gpu)",
+        Arrays.asList("var1", "var2"), null, true, true,
+        Collections.singletonList(Target.GPU));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw k cache ");
@@ -587,7 +610,7 @@ public class ClawLanguageTest {
    */
   private void analyzeValidKcache(String raw, List<String> data,
                                   List<Integer> offsets, boolean init,
-                                  boolean hasPrivate)
+                                  boolean hasPrivate, List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -623,6 +646,7 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasPrivateClause());
       }
+      assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       System.err.print(idex.getMessage());
       fail();
