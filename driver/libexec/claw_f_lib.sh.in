@@ -191,6 +191,8 @@ function claw_f_set_parameters()
         shift; max_columns=("$1");;
       -l)
         LINE_DIRECTIVE=true;;
+      --dump-cx2x-args)
+        DUMP_CX2X_ARGS=true;;
 #	    --openmp|-omp)
 #		ENABLE_OPENMP=true;;
 #	    --xcalableacc|-xacc)
