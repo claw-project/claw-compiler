@@ -67,7 +67,7 @@ directive[ClawLanguage l]
     }
 
   // remove directive
-  | REMOVE EOF
+  | REMOVE (target_clause[$l])? EOF
     { $l.setDirective(ClawDirective.REMOVE); }
   | END REMOVE EOF
     {
@@ -441,6 +441,7 @@ loop_extract_clauses[ClawLanguage l]:
       { !$l.hasFusionClause() }?      fusion_clause[$l]
     | { !$l.hasParallelClause() }?    parallel_clause[$l]
     | { !$l.hasAcceleratorClause() }? acc_clause[$l]
+    | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
 
@@ -451,6 +452,7 @@ array_transform_clauses[ClawLanguage l]:
   | { !$l.hasParallelClause() }?    parallel_clause[$l]
   | { !$l.hasAcceleratorClause() }? acc_clause[$l]
   | { !$l.hasInductionClause() }?   induction_clause[$l]
+  | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
 
@@ -470,8 +472,9 @@ kcache_clauses[ClawLanguage l]
 
 loop_hoist_clauses[ClawLanguage l]:
   (
-    { !$l.hasReshapeClause() }? reshape_clause[$l]
+    { !$l.hasReshapeClause() }?     reshape_clause[$l]
   | { !$l.hasInterchangeClause() }? interchange_clause[$l]
+  | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
 
