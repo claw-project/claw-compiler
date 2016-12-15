@@ -102,7 +102,7 @@ directive[ClawLanguage l]
       $l.setEndPragma();
     }
   // on the fly directive
-  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')'
+  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')' (target_clause[$l])?
     {
       $l.setDirective(ClawDirective.ARRAY_TO_CALL);
       $l.setFctParams(o);
