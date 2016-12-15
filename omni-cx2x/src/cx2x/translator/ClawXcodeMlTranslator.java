@@ -120,6 +120,16 @@ public class ClawXcodeMlTranslator {
         ClawLanguage analyzedPragma =
             ClawLanguage.analyze(pragma, _generator, _target);
 
+        // Transformation applicable for current target?
+        if(!analyzedPragma.isApplicableToCurrentTarget()){
+          if(XmOption.isDebugOutput()){
+            System.err.println(String.format("%s %s, line: %d", WARNING_PREFIX,
+                "Transformation not application to current target",
+                analyzedPragma.getPragma().lineNo()));
+          }
+          continue; // Not for current target, skip
+        }
+
         // Create transformation object based on the directive
         switch(analyzedPragma.getDirective()) {
           case ARRAY_TO_CALL:
