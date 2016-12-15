@@ -72,7 +72,7 @@ public class ClawLanguageTest {
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu,mic)", null,
         false, 0, Arrays.asList(Target.CPU, Target.GPU, Target.MIC));
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu) collapse(3) " +
-            "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU));
+        "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU));
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-fusiongroup(g1)");
@@ -114,15 +114,7 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasCollapseClause());
       }
-      if(targets != null){
-        assertTrue(l.hasTargetClause());
-        assertEquals(targets.size(), l.getTargetClauseValues().size());
-        for(Target t : targets){
-          assertTrue(l.getTargetClauseValues().contains(t));
-        }
-      } else {
-        assertFalse(l.hasTargetClause());
-      }
+      assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       fail();
     }
@@ -155,20 +147,32 @@ public class ClawLanguageTest {
   @Test
   public void InterchangeTest() {
     // Valid directives
-    analyzeValidClawLoopInterchange("claw loop-interchange", null, false, null);
+    analyzeValidClawLoopInterchange("claw loop-interchange", null, false, null,
+        null);
     analyzeValidClawLoopInterchange("claw loop-interchange (i,j,k)",
-        Arrays.asList("i", "j", "k"), false, null);
+        Arrays.asList("i", "j", "k"), false, null, null);
     analyzeValidClawLoopInterchange("claw loop-interchange (  i,j,k  ) ",
-        Arrays.asList("i", "j", "k"), false, null);
+        Arrays.asList("i", "j", "k"), false, null, null);
 
     analyzeValidClawLoopInterchange("claw loop-interchange parallel",
-        null, true, null);
+        null, true, null, null);
     analyzeValidClawLoopInterchange("claw loop-interchange parallel acc(loop)",
-        null, true, "loop");
+        null, true, "loop", null);
+    analyzeValidClawLoopInterchange("claw loop-interchange acc(loop) parallel",
+        null, true, "loop", null);
     analyzeValidClawLoopInterchange("claw loop-interchange acc(loop)", null,
-        false, "loop");
+        false, "loop", null);
     analyzeValidClawLoopInterchange("claw loop-interchange (j,k,i) parallel",
-        Arrays.asList("j", "k", "i"), true, null);
+        Arrays.asList("j", "k", "i"), true, null, null);
+
+
+    analyzeValidClawLoopInterchange("claw loop-interchange target(cpu)",
+        null, false, null, Collections.singletonList(Target.CPU));
+    analyzeValidClawLoopInterchange("claw loop-interchange target(cpu,mic)",
+        null, false, null, Arrays.asList(Target.CPU, Target.MIC));
+    analyzeValidClawLoopInterchange("claw loop-interchange target(cpu) " +
+            "parallel acc(loop)", null, true, "loop",
+        Collections.singletonList(Target.CPU));
 
 
     // Unvalid directives
@@ -184,8 +188,8 @@ public class ClawLanguageTest {
    */
   private void analyzeValidClawLoopInterchange(String raw,
                                                List<String> indexes,
-                                               boolean parallel,
-                                               String acc)
+                                               boolean parallel, String acc,
+                                               List<Target> targets)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -218,8 +222,27 @@ public class ClawLanguageTest {
         assertNull(l.getAcceleratorClauses());
       }
 
+      assertTargets(l, targets);
+
     } catch(IllegalDirectiveException idex) {
       fail();
+    }
+  }
+
+  /**
+   * Assert the information sorted in the target list.
+   * @param l       The current ClawLanguage object.
+   * @param targets List of expected targets.
+   */
+  private void assertTargets(ClawLanguage l, List<Target> targets){
+    if(targets != null) {
+      assertTrue(l.hasTargetClause());
+      assertEquals(targets.size(), l.getTargetClauseValues().size());
+      for(Target t : targets) {
+        assertTrue(l.getTargetClauseValues().contains(t));
+      }
+    } else {
+      assertFalse(l.hasTargetClause());
     }
   }
 
