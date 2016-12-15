@@ -15,6 +15,7 @@ grammar Claw;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.*;
 import cx2x.translator.language.common.*;
+import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.common.Utility;
 }
 
@@ -51,7 +52,7 @@ directive[ClawLanguage l]
   :
 
   // loop-fusion directive
-    LOOP_FUSION group_clause_optional[$l] collapse_clause_optional[$l] EOF
+    LOOP_FUSION loop_fusion_clauses[$l] EOF
     { $l.setDirective(ClawDirective.LOOP_FUSION); }
 
   // loop-interchange directive
@@ -176,22 +177,21 @@ data_over_clause[ClawLanguage l]
 ;
 
 // group clause
-group_clause_optional[ClawLanguage l]:
+group_clause[ClawLanguage l]:
     GROUP '(' group_name=IDENTIFIER ')'
     { $l.setGroupClause($group_name.text); }
-  | /* empty */
 ;
 
 // collapse clause
-collapse_clause_optional[ClawLanguage l]:
+collapse_clause[ClawLanguage l]:
     COLLAPSE '(' n=NUMBER ')'
     { $l.setCollapseClause($n.text); }
-  | /* empty */
 ;
 
 // fusion clause
 fusion_clause_optional[ClawLanguage l]:
-    FUSION group_clause_optional[$l] { $l.setFusionClause(); }
+    FUSION group_clause[$l] { $l.setFusionClause(); }
+  | FUSION { $l.setFusionClause(); }
   | /* empty */
 ;
 
@@ -415,6 +415,38 @@ update_clause_optional[ClawLanguage l]:
     { $l.setUpdateClauseValue(ClawDMD.OUT); }
 ;
 
+target_clause[ClawLanguage l]
+  @init{
+    List<Target> targets = new ArrayList<>();
+  }
+  :
+    TARGET '(' target_list[targets] ')'
+    { $l.setTargetClauseValue(targets); }
+;
+
+target_list[List<Target> targets]:
+    target { if(!$targets.contains($target.t)) { $targets.add($target.t); } }
+  | target { if(!$targets.contains($target.t)) { $targets.add($target.t); } } ',' target_list[$targets]
+;
+
+
+target returns [Target t]:
+    CPU { $t = Target.CPU; }
+  | GPU { $t = Target.GPU; }
+  | MIC { $t = Target.MIC; }
+;
+
+
+loop_fusion_clauses[ClawLanguage l]:
+  (
+    { !$l.hasGroupClause() }?    group_clause[$l]
+  | { !$l.hasCollapseClause() }? collapse_clause[$l]
+  | { !$l.hasTargetClause() }?   target_clause[$l]
+  )*
+;
+
+
+
 /*----------------------------------------------------------------------------
  * LEXER RULES
  *----------------------------------------------------------------------------*/
@@ -456,6 +488,7 @@ PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
+TARGET       : 'target';
 UPDATE       : 'update';
 
 // data copy/update clause keywords
@@ -465,6 +498,11 @@ OUT          : 'out';
 // Directive primitive clause
 ACC          : 'acc';
 OMP          : 'omp';
+
+// Target for the target clause
+CPU          : 'cpu';
+GPU          : 'gpu';
+MIC          : 'mic';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;
