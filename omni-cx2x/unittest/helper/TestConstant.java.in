@@ -14,4 +14,5 @@ public class TestConstant {
   // Path is relative to the test directory
   public static final String TEST_DATA = "@CMAKE_CURRENT_SOURCE_DIR@/data/basic.xml";
   public static final String TEST_PROGRAM = "@CMAKE_CURRENT_SOURCE_DIR@/data/program.xml";
+  public static final String TEST_DEPENDENCE = "@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence.xml";
 }
