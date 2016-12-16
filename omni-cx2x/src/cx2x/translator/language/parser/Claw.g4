@@ -468,6 +468,11 @@ kcache_clauses[ClawLanguage l]
   | { !$l.hasPrivateClause() }?  private_clause[$l]
   | { !$l.hasTargetClause() }?   target_clause[$l]
   )*
+  {
+    if($l.getOffsets() == null) {
+      $l.setOffsets(i); // Set default offset if not specified
+    }
+  }
 ;
 
 // Possible permutation of clauses for the loop-hoist directive
