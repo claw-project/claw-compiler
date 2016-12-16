@@ -61,6 +61,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<List<String>> _overDataValues;
   private ClawDMD _copyClauseValue;
   private ClawDMD _updateClauseValue;
+  private List<Target> _targetClauseValues;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
@@ -69,6 +70,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
   private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
+  private boolean _hasTargetClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -254,6 +256,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _overDataValues = null;
     _rangeValue = null;
     _reshapeInfos = null;
+    _targetClauseValues = null;
 
     // Clauses flags members
     _hasAccClause = false;
@@ -273,6 +276,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasPrivateClause = false;
     _hasReshapeClause = false;
     _hasUpdateClause = false;
+    _hasTargetClause = false;
 
     // General members
     _directive = null;
@@ -893,6 +897,34 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
+   * Check whether the target clause is used.
+   *
+   * @return True if the target clause is used.
+   */
+  public boolean hasTargetClause() {
+    return _hasTargetClause;
+  }
+
+  /**
+   * Get the target clause value.
+   *
+   * @return Target clause value as a list of Target enum value.
+   */
+  public List<Target> getTargetClauseValues() {
+    return _targetClauseValues;
+  }
+
+  /**
+   * Set the target clause value and the update clause usage flag to true.
+   *
+   * @param values New target clause values.
+   */
+  public void setTargetClauseValue(List<Target> values) {
+    _hasTargetClause = true;
+    _targetClauseValues = values;
+  }
+
+  /**
    * Get the dimensions extracted information.
    *
    * @return All dimensions extracted from the directive.
@@ -956,6 +988,18 @@ public class ClawLanguage extends AnalyzedPragma {
    */
   private void setTarget(Target target) {
     _target = target;
+  }
+
+  /**
+   * Check if the current transformation target (defined by user) match with the
+   * target defined in the clause.
+   *
+   * @return True if the targets matches.
+   */
+  public boolean isApplicableToCurrentTarget() {
+    return _targetClauseValues == null
+        || _targetClauseValues.size() == 0
+        || _targetClauseValues.contains(_target);
   }
 
   /**

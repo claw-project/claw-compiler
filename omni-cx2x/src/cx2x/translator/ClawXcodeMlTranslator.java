@@ -223,6 +223,9 @@ public class ClawXcodeMlTranslator {
   private void createBlockDirectiveTransformation(ClawLanguage begin,
                                                   ClawLanguage end)
   {
+    if(!begin.isApplicableToCurrentTarget()) {
+      return;
+    }
     switch(begin.getDirective()) {
       case REMOVE:
         addOrAbort(new UtilityRemove(begin, end));
@@ -243,6 +246,12 @@ public class ClawXcodeMlTranslator {
    * @param t The transformation to be analyzed and added.
    */
   private void addOrAbort(Transformation t) {
+    if(t.getDirective() != null
+        && t.getDirective() instanceof ClawLanguage
+        && !((ClawLanguage) t.getDirective()).isApplicableToCurrentTarget())
+    {
+      return;
+    }
     if(t.analyze(_program, _transformer)) {
       _transformer.addTransformation(t);
     } else {

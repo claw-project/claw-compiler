@@ -7,6 +7,7 @@ add_subdirectory(array5) # Block transformation without dependency, allocatable
 add_subdirectory(array6) # Lower/upper bounds with offset
 add_subdirectory(array7) # Induction clause
 add_subdirectory(array8) # Block transformation with different index ranges
+add_subdirectory(array10) # With target clause
 #add_subdirectory(array9) # Block transformation with dependency
 add_subdirectory(continuation)
 add_subdirectory(primitive1)
