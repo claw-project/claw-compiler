@@ -993,6 +993,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Check if the current transformation target (defined by user) match with the
    * target defined in the clause.
+   *
    * @return True if the targets matches.
    */
   public boolean isApplicableToCurrentTarget() {
