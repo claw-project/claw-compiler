@@ -5,6 +5,7 @@ add_subdirectory(extract3)
 add_subdirectory(extract4)
 add_subdirectory(extract5)
 add_subdirectory(extract6)
+add_subdirectory(extract7)     # with target clause
 add_subdirectory(fusion1)
 add_subdirectory(fusion2)
 add_subdirectory(fusion3)
