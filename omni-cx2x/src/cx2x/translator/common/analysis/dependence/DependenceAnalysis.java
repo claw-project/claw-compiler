@@ -22,11 +22,9 @@ public class DependenceAnalysis {
   private DependenceDirection _directionVector;
   private Integer _distanceVector;
   private String _inductionVariable;
-  private int _depth;
 
   public DependenceAnalysis(Xnode loop) {
     _mainLoop = loop;
-    _depth = loop.depth();
   }
 
   public void analyze() throws Exception {
@@ -84,8 +82,18 @@ public class DependenceAnalysis {
     return _directionVector == DependenceDirection.NONE && _distanceVector == 0;
   }
 
-  public int getLoopDepth() {
-    return _depth;
+  public Xnode getDoStmt(){
+    return _mainLoop;
+  }
+
+  public String getInfoMsg(){
+
+
+    String msg = isIndependent() ? ", Loop is parallelizable over "
+        : (_directionVector == DependenceDirection.BACKWARD)
+        ? ", Loop carried backward dependence over "
+        : ", Loop carried forward dependence over ";
+    return _mainLoop.lineNo() + msg + _inductionVariable;
   }
 
 

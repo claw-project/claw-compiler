@@ -79,18 +79,8 @@ public class DependenceAnalysisTest {
     assertTrue(dependencies.get(8).isIndependent());
     assertTrue(dependencies.get(9).isIndependent());
 
-
-    for(int i = 0; i < dependencies.size(); ++i) {
-      DependenceAnalysis dep = dependencies.get(i);
-
-      if(dep.isIndependent()) {
-        System.out.println(i + ": Loop can be parallelized: " +
-            dep.getInductionVariable() + " - " + dep.getLoopDepth());
-      } else {
-        System.out.println(i + ": Loop-carried dependencies: " +
-            dep.getInductionVariable() + " - " + dep.getDirectionVector()
-            + " - " + dep.getLoopDepth());
-      }
+    for(DependenceAnalysis dep : dependencies) {
+      System.out.println(dep.getInfoMsg());
     }
   }
 }
