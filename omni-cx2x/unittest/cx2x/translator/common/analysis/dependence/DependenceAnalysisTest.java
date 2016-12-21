@@ -40,15 +40,12 @@ public class DependenceAnalysisTest {
     assertEquals(10, loops.size());
 
     List<DependenceAnalysis> dependencies = new ArrayList<>();
-
     for(Xnode loop : loops) {
-      DependenceAnalysis dep = new DependenceAnalysis(loop);
       try {
-        dep.analyze();
+        dependencies.add(new DependenceAnalysis(loop));
       } catch(Exception e) {
         fail();
       }
-      dependencies.add(dep);
     }
 
     assertTrue(dependencies.get(0).isIndependent());
