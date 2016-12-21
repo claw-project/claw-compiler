@@ -6,6 +6,17 @@
 
 package cx2x.translator.common.analysis.dependence;
 
+import cx2x.translator.config.Configuration;
+import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.transformation.loop.LoopFusion;
+import cx2x.translator.transformer.ClawTransformer;
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.transformation.DependentTransformationGroup;
+import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -33,6 +44,22 @@ public class DependenceAnalysisTest {
     assertNotNull(xcodeml);
     List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
     assertEquals(2, functions.size());
+
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    assertEquals(1, pragmas.size());
+
+    Configuration configuration =
+        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
+    ClawTransformer transformer = new ClawTransformer(configuration, 80);
+    AcceleratorGenerator generator =
+        AcceleratorHelper.createAcceleratorGenerator(configuration);
+    ClawLanguage main = null;
+    try {
+      main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
+    } catch(Exception e){
+      fail();
+    }
+
 
     Xnode lw_solver_noscat = functions.get(0);
 
@@ -76,8 +103,21 @@ public class DependenceAnalysisTest {
     assertTrue(dependencies.get(8).isIndependent());
     assertTrue(dependencies.get(9).isIndependent());
 
-    for(DependenceAnalysis dep : dependencies) {
-      System.out.println(dep.getInfoMsg());
+    try {
+      IterationSpace is = new IterationSpace(loops);
+      is.tryFusion(xcodeml, transformer, main);
+      is.printDebug(true);
+
+      loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
+      assertEquals(7, loops.size());
+
+      is.reload(loops);
+      is.printDebug(true);
+
+    } catch(Exception e) {
+      fail();
     }
+
+
   }
 }
