@@ -12,11 +12,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformer.ClawTransformer;
-import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.transformation.DependentTransformationGroup;
-import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -56,7 +52,7 @@ public class DependenceAnalysisTest {
     ClawLanguage main = null;
     try {
       main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
-    } catch(Exception e){
+    } catch(Exception e) {
       fail();
     }
 
