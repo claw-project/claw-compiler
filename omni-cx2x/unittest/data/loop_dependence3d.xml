@@ -1770,8 +1770,6 @@
                 </FdoStatement>
               </body>
             </FdoStatement>
-            <FpragmaStatement lineno="154" file="mo_lw_solver_gpu.F90">ACC end parallel</FpragmaStatement>
-            <FpragmaStatement lineno="155" file="mo_lw_solver_gpu.F90">ACC end data</FpragmaStatement>
           </body>
         </FfunctionDefinition>
         <FfunctionDefinition lineno="158" file="mo_lw_solver_gpu.F90">
@@ -1811,7 +1809,6 @@
             </varDecl>
           </declarations>
           <body>
-            <FpragmaStatement lineno="162" file="mo_lw_solver_gpu.F90">ACC routine seq</FpragmaStatement>
             <FassignStatement lineno="171" file="mo_lw_solver_gpu.F90">
               <Var type="R25ca790" scope="local">lay_emission</Var>
               <functionCall type="R25c9f20" is_intrinsic="true">
