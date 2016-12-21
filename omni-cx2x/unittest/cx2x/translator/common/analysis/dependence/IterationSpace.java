@@ -4,7 +4,12 @@
  */
 package cx2x.translator.common.analysis.dependence;
 
+import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.loop.LoopFusion;
+import cx2x.xcodeml.transformation.DependentTransformationGroup;
+import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
 import java.util.ArrayList;
@@ -28,6 +33,15 @@ public class IterationSpace {
    */
   public IterationSpace(List<Xnode> doStatements) throws Exception {
     _levels = new ArrayList<>();
+    load(doStatements);
+  }
+
+  public void reload(List<Xnode> doStatements) throws Exception {
+    _levels.clear();
+    load(doStatements);
+  }
+
+  private void load(List<Xnode> doStatements) throws Exception {
     _levels.add(0, new ArrayList<DependenceAnalysis>()); // Init the level 0
     DependenceAnalysis baseLoopLevel0 = null;
     for(Xnode doStmt : doStatements) {
@@ -97,11 +111,36 @@ public class IterationSpace {
   }
 
 
-  public void printDebug() {
+  public void printDebug(boolean inner) {
     System.out.println("Iteration space:");
     for(int i = 0; i < _levels.size(); ++i) {
       List<DependenceAnalysis> loopsAtLevel = _levels.get(i);
-      System.out.println("Level: " + i + " Number of loops: " + loopsAtLevel.size());
+      System.out.println("Level: " + i + " Number of loops: " +
+          loopsAtLevel.size());
+      if(inner){
+        for(DependenceAnalysis dep : loopsAtLevel){
+          System.out.println(dep.getInfoMsg());
+        }
+      }
+    }
+  }
+
+  public void tryFusion(XcodeProgram xcodeml, Transformer transformer,
+                        ClawLanguage master)
+      throws Exception
+  {
+    for(int i = _levels.size() -1 ; i >= 0; --i){
+      List<DependenceAnalysis> loopsAtLevel = getLevel(i);
+      DependentTransformationGroup fusions =
+          new DependentTransformationGroup("parallelize-fusion");
+      for(DependenceAnalysis dep : loopsAtLevel){
+        if(dep.isIndependent()) {
+          ClawLanguage l = ClawLanguage.createLoopFusionLanguage(master);
+          LoopFusion fusion = new LoopFusion(dep.getDoStmt(), l);
+          fusions.add(fusion);
+        }
+      }
+      fusions.applyTranslations(xcodeml, transformer);
     }
   }
 
