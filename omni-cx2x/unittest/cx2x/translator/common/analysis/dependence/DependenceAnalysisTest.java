@@ -114,4 +114,50 @@ public class DependenceAnalysisTest {
     }
 
   }
+
+  @Test
+  public void analyzeTest3d() {
+    File f = new File(TestConstant.TEST_DEPENDENCE_3D);
+    assertTrue(f.exists());
+    XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE_3D);
+    assertNotNull(xcodeml);
+    List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
+    assertEquals(2, functions.size());
+
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    assertEquals(1, pragmas.size());
+
+    Configuration configuration =
+        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
+    ClawTransformer transformer = new ClawTransformer(configuration, 80);
+    AcceleratorGenerator generator =
+        AcceleratorHelper.createAcceleratorGenerator(configuration);
+    ClawLanguage main = null;
+    try {
+      main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
+    } catch(Exception e) {
+      fail();
+    }
+
+
+    Xnode lw_solver_noscat = functions.get(0);
+
+    List<Xnode> loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
+    assertEquals(11, loops.size());
+
+    try {
+      IterationSpace is = new IterationSpace(loops);
+      is.tryFusion(xcodeml, transformer, main);
+      is.printDebug(true);
+
+      loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
+      assertEquals(8, loops.size());
+
+      is.reload(loops);
+      is.printDebug(true);
+    } catch(Exception e) {
+      fail();
+    }
+
+  }
 }
