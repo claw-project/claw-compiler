@@ -113,11 +113,9 @@ public class DependenceAnalysisTest {
 
       is.reload(loops);
       is.printDebug(true);
-
     } catch(Exception e) {
       fail();
     }
-
 
   }
 }

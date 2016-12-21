@@ -36,11 +36,24 @@ public class IterationSpace {
     load(doStatements);
   }
 
+  /**
+   * Operation needed after a fusion. Reload and re-analyze all the do
+   * statements and their dependencies.
+   *
+   * @param doStatements New list of do statements.
+   * @throws Exception If a node is not a do statement.
+   */
   public void reload(List<Xnode> doStatements) throws Exception {
     _levels.clear();
     load(doStatements);
   }
 
+  /**
+   * Create and categorize do statements based on their nesting level.
+   *
+   * @param doStatements List of do statements to categorize.
+   * @throws Exception If a node is not a do statement.
+   */
   private void load(List<Xnode> doStatements) throws Exception {
     _levels.add(0, new ArrayList<DependenceAnalysis>()); // Init the level 0
     DependenceAnalysis baseLoopLevel0 = null;
@@ -110,30 +123,43 @@ public class IterationSpace {
     return (_levels.size() > level) ? _levels.get(level) : null;
   }
 
-
+  /**
+   * Print some debugging information about the iteration space.
+   *
+   * @param inner If true, DependenceAnalysis information are printed too.
+   */
   public void printDebug(boolean inner) {
     System.out.println("Iteration space:");
     for(int i = 0; i < _levels.size(); ++i) {
       List<DependenceAnalysis> loopsAtLevel = _levels.get(i);
       System.out.println("Level: " + i + " Number of loops: " +
           loopsAtLevel.size());
-      if(inner){
-        for(DependenceAnalysis dep : loopsAtLevel){
+      if(inner) {
+        for(DependenceAnalysis dep : loopsAtLevel) {
           System.out.println(dep.getInfoMsg());
         }
       }
     }
   }
 
+  /**
+   * Analyze the dependece information at each level and try to merge
+   * independent do statements.
+   *
+   * @param xcodeml     Current XcodeML/F program unit.
+   * @param transformer Current transformer.
+   * @param master      ClawLanguage that triggered this transformation.
+   * @throws Exception If the fusion fails.
+   */
   public void tryFusion(XcodeProgram xcodeml, Transformer transformer,
                         ClawLanguage master)
       throws Exception
   {
-    for(int i = _levels.size() -1 ; i >= 0; --i){
+    for(int i = _levels.size() - 1; i >= 0; --i) {
       List<DependenceAnalysis> loopsAtLevel = getLevel(i);
       DependentTransformationGroup fusions =
           new DependentTransformationGroup("parallelize-fusion");
-      for(DependenceAnalysis dep : loopsAtLevel){
+      for(DependenceAnalysis dep : loopsAtLevel) {
         if(dep.isIndependent()) {
           ClawLanguage l = ClawLanguage.createLoopFusionLanguage(master);
           LoopFusion fusion = new LoopFusion(dep.getDoStmt(), l);
@@ -143,6 +169,5 @@ public class IterationSpace {
       fusions.applyTranslations(xcodeml, transformer);
     }
   }
-
 
 }
