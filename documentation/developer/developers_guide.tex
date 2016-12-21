@@ -230,9 +230,10 @@ The \clawfc is the program handed to the end-user. It performs all the needed st
 
 \begin{enumerate}
 \item \textbf{FPP}: The FORTRAN source code is preprocessed by a standard FORTRAN preprocessor. Typically the one provided by the default compiler. 
-\item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed by the OMNI Compiler FORTRAN Front-end to produce the \xcodeml \gls{ir}.
-\item \textbf{CX2X}: The \xcodeml is manipulated according to the rules of the CLAW directive language. The output is a valid \xcodeml \gls{ir}.
-\item \textbf{F\_Back}: The \xcodeml \gls{ir} is decompiled to produce the transformed FORTRAN code. 
+The \lstinline|FC| environment variable is used by the CMake build system to determine it.
+\item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed by the OMNI Compiler FORTRAN Front-end to produce the input \xcodeml \gls{ir}.
+\item \textbf{CX2X}: The input \xcodeml \gls{ir} is manipulated according to the rules of the CLAW directive language. It produces the output \xcodeml \gls{ir}.
+\item \textbf{F\_Back}: The output \xcodeml \gls{ir} is analyzed to produce the transformed FORTRAN code. 
 \end{enumerate}
 
 \ffront{}, \fback{} are part of the \omni{}, \fpp{} is provided by the installed FORTRAN compiler. The \xcodeml to \xcodeml translator \cx2x{} is actively developed as part of the CLAW project.  
