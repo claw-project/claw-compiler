@@ -1,0 +1,1542 @@
+<XcodeProgram source="../src/mo_lw_solver.F90"
+              language="Fortran"
+              time="2016-12-16 13:42:06"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FbasicType type="I1cd4400" intent="in" ref="Fint"/>
+    <FbasicType type="I1cd44d0" intent="in" ref="Fint"/>
+    <FbasicType type="L1cd4c60" intent="in" ref="Flogical"/>
+    <FbasicType type="I1cd6b40" is_parameter="true" ref="Fint"/>
+    <FbasicType type="R1cd5680" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cd5750" ref="R1cd5680"/>
+    <FbasicType type="A1cd5820" ref="R1cd5750">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd4400" scope="local">nlay</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A1cd58f0" intent="in" ref="R1cd5750">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd4400" scope="local">nlay</Var>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cd6280" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cd6350" ref="R1cd6280"/>
+    <FbasicType type="A1cd6420" intent="in" ref="R1cd6350">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cee410" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cee4e0" ref="R1cee410"/>
+    <FbasicType type="A1cee5b0" ref="R1cee4e0">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd4400" scope="local">nlay</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A1cee680" intent="in" ref="R1cee4e0">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd4400" scope="local">nlay</Var>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cef1a0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cef270" ref="R1cef1a0"/>
+    <FbasicType type="A1cef340" ref="R1cef270">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A1cef410" intent="in" ref="R1cef270">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1ceff50" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cf0020" ref="R1ceff50"/>
+    <FbasicType type="A1cf00f0" ref="R1cf0020">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A1cf01c0" intent="in" ref="R1cf0020">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cf0b50" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cf0c20" ref="R1cf0b50"/>
+    <FbasicType type="A1cf0cf0" intent="in" ref="R1cf0c20">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cf1680" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cf1750" ref="R1cf1680"/>
+    <FbasicType type="A1cf1820" intent="in" ref="R1cf1750">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cf2540" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cf2610" ref="R1cf2540"/>
+    <FbasicType type="A1cf26e0" ref="R1cf2610">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A1cf27b0" intent="out" ref="R1cf2610">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cf2880" ref="R1cf2540"/>
+    <FbasicType type="A1cf2950" ref="R1cf2880">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A1cf2a20" intent="out" ref="R1cf2880">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I1cd4400">
+            <Var type="I1cd4400" scope="local">nlay</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd44d0" scope="local">ngpt</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cf3c30" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cf3dd0" ref="R1cf3c30"/>
+    <FbasicType type="A1cf3ea0" ref="R1cf3dd0">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd4400" scope="local">nlay</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R1cf4040" ref="R1cf3c30"/>
+    <FbasicType type="A1cf4110" ref="R1cf4040">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I1cd4400" scope="local">nlay</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="F1cfef00" ref="R1cd5750"/>
+    <FbasicType type="R1cfe9c0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="F1cfeb80" ref="R1cfe9c0"/>
+    <FbasicType type="F1d018e0" ref="R1cf3dd0"/>
+    <FbasicType type="R1cfe7c0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d08290" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="FnumericAll" ref="FnumericAll"/>
+    <FbasicType type="R1d13090" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d1b1d0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d232b0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d2de30" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d35ef0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I1ce8820" is_parameter="true" ref="Fint"/>
+    <FbasicType type="R1ce1f80" ref="Freal">
+      <kind>
+        <Var type="I1ce8820" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1ce1eb0" is_parameter="true" ref="R1ce1f80"/>
+    <FbasicType type="R1ce3c00" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1ce3da0" is_parameter="true" ref="R1ce3c00"/>
+    <FbasicType type="R1d39e30" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d3e7b0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d3e880" ref="R1d3e7b0"/>
+    <FbasicType type="R1d3de70" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d3df40" intent="in" ref="R1d3de70"/>
+    <FbasicType type="R1d3e010" intent="in" ref="R1d3de70"/>
+    <FbasicType type="R1d3e0e0" intent="in" ref="R1d3de70"/>
+    <FbasicType type="R1d3e1b0" intent="in" ref="R1d3de70"/>
+    <FbasicType type="F1d422c0" ref="R1d3e010"/>
+    <FbasicType type="R1d41bf0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="F1d41db0" ref="R1d41bf0"/>
+    <FbasicType type="R1d40d50" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d410c0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d41310" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d41890" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1d41990" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1ce2cb0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1ce2e50" is_parameter="true" ref="R1ce2cb0"/>
+    <FbasicType type="R1cd0740" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cd0870" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="R1cd0ac0" ref="Freal">
+      <kind>
+        <Var type="I1cd6b40" scope="local">wp</Var>
+      </kind>
+    </FbasicType>
+    <FfunctionType type="F1cd2b00" return_type="Fvoid">
+      <params>
+        <name type="I1cd4400">nlay</name>
+        <name type="I1cd44d0">ngpt</name>
+        <name type="L1cd4c60">top_is_1</name>
+        <name type="A1cd58f0">tau</name>
+        <name type="A1cd6420">mu</name>
+        <name type="A1cee680">lay_source</name>
+        <name type="A1cef410">lev_source_inc</name>
+        <name type="A1cf01c0">lev_source_dec</name>
+        <name type="A1cf0cf0">sfc_emis</name>
+        <name type="A1cf1820">sfc_src</name>
+        <name type="A1cf27b0">radn_up</name>
+        <name type="A1cf2a20">radn_dn</name>
+      </params>
+    </FfunctionType>
+    <FfunctionType type="F1cfefd0" return_type="R1cd5750" is_intrinsic="true"/>
+    <FfunctionType type="F1cfec50" return_type="R1cfe9c0" is_intrinsic="true"/>
+    <FfunctionType type="F1d019b0" return_type="R1cf3dd0" is_intrinsic="true"/>
+    <FfunctionType type="F1d3cc40" return_type="R1d3e880" is_elemental="true">
+      <params>
+        <name type="R1d3df40">lay_src</name>
+        <name type="R1d3e010">lev_src</name>
+        <name type="R1d3e0e0">tau</name>
+        <name type="R1d3e1b0">trans</name>
+      </params>
+    </FfunctionType>
+    <FfunctionType type="F1d42390" return_type="R1d3e010" is_intrinsic="true"/>
+    <FfunctionType type="F1d41e80" return_type="R1d41bf0" is_intrinsic="true"/>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mo_lw_solver</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="mo_lw_solver" lineno="22" file="../src/mo_lw_solver.F90">
+      <symbols>
+        <id type="I1cd6b40" sclass="flocal" declared_in="mo_rrtmgp_kind">
+          <name>wp</name>
+        </id>
+        <id type="R1ce1eb0" sclass="flocal" declared_in="mo_rrtmgp_constants">
+          <name>pi</name>
+        </id>
+        <id type="R1ce2e50" sclass="flocal">
+          <name>default_diffusivity_angle</name>
+        </id>
+        <id type="R1ce3da0" sclass="flocal">
+          <name>quad_wt</name>
+        </id>
+      </symbols>
+      <declarations>
+        <FuseOnlyDecl name="mo_rrtmgp_kind" lineno="23" file="../src/mo_lw_solver.F90">
+          <renamable use_name="wp"/>
+        </FuseOnlyDecl>
+        <FuseOnlyDecl name="mo_rrtmgp_constants" lineno="24" file="../src/mo_lw_solver.F90">
+          <renamable use_name="pi"/>
+        </FuseOnlyDecl>
+        <varDecl lineno="27" file="../src/mo_lw_solver.F90">
+          <name type="R1ce2e50">default_diffusivity_angle</name>
+          <value>
+            <divExpr type="R1cd0740">
+              <FrealConstant type="R1cd0740" kind="wp">1.</FrealConstant>
+              <FrealConstant type="R1cd0870" kind="wp">1.66</FrealConstant>
+            </divExpr>
+          </value>
+        </varDecl>
+        <varDecl lineno="28" file="../src/mo_lw_solver.F90">
+          <name type="R1ce3da0">quad_wt</name>
+          <value>
+            <FrealConstant type="R1cd0ac0" kind="wp">0.5</FrealConstant>
+          </value>
+        </varDecl>
+      </declarations>
+      <FcontainsStatement lineno="29" file="../src/mo_lw_solver.F90">
+        <FfunctionDefinition lineno="36" file="../src/mo_lw_solver.F90">
+          <name type="F1cd2b00">lw_solver_noscat</name>
+          <symbols>
+            <id type="F1cd2b00" sclass="ffunc">
+              <name>lw_solver_noscat</name>
+            </id>
+            <id type="I1cd4400" sclass="fparam">
+              <name>nlay</name>
+            </id>
+            <id type="I1cd44d0" sclass="fparam">
+              <name>ngpt</name>
+            </id>
+            <id type="L1cd4c60" sclass="fparam">
+              <name>top_is_1</name>
+            </id>
+            <id type="A1cd58f0" sclass="fparam">
+              <name>tau</name>
+            </id>
+            <id type="A1cd6420" sclass="fparam">
+              <name>mu</name>
+            </id>
+            <id type="A1cee680" sclass="fparam">
+              <name>lay_source</name>
+            </id>
+            <id type="A1cef410" sclass="fparam">
+              <name>lev_source_inc</name>
+            </id>
+            <id type="A1cf01c0" sclass="fparam">
+              <name>lev_source_dec</name>
+            </id>
+            <id type="A1cf0cf0" sclass="fparam">
+              <name>sfc_emis</name>
+            </id>
+            <id type="A1cf1820" sclass="fparam">
+              <name>sfc_src</name>
+            </id>
+            <id type="A1cf27b0" sclass="fparam">
+              <name>radn_up</name>
+            </id>
+            <id type="A1cf2a20" sclass="fparam">
+              <name>radn_dn</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>sfclev</name>
+            </id>
+            <id type="A1cf3ea0" sclass="flocal">
+              <name>tau_loc</name>
+            </id>
+            <id type="A1cf4110" sclass="flocal">
+              <name>trans</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>ilev</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>igpt</name>
+            </id>
+          </symbols>
+          <declarations>
+            <varDecl lineno="38" file="../src/mo_lw_solver.F90">
+              <name type="I1cd4400">nlay</name>
+            </varDecl>
+            <varDecl lineno="38" file="../src/mo_lw_solver.F90">
+              <name type="I1cd44d0">ngpt</name>
+            </varDecl>
+            <varDecl lineno="39" file="../src/mo_lw_solver.F90">
+              <name type="L1cd4c60">top_is_1</name>
+            </varDecl>
+            <varDecl lineno="40" file="../src/mo_lw_solver.F90">
+              <name type="A1cd58f0">tau</name>
+            </varDecl>
+            <varDecl lineno="41" file="../src/mo_lw_solver.F90">
+              <name type="A1cd6420">mu</name>
+            </varDecl>
+            <varDecl lineno="42" file="../src/mo_lw_solver.F90">
+              <name type="A1cee680">lay_source</name>
+            </varDecl>
+            <varDecl lineno="43" file="../src/mo_lw_solver.F90">
+              <name type="A1cef410">lev_source_inc</name>
+            </varDecl>
+            <varDecl lineno="47" file="../src/mo_lw_solver.F90">
+              <name type="A1cf01c0">lev_source_dec</name>
+            </varDecl>
+            <varDecl lineno="50" file="../src/mo_lw_solver.F90">
+              <name type="A1cf0cf0">sfc_emis</name>
+            </varDecl>
+            <varDecl lineno="51" file="../src/mo_lw_solver.F90">
+              <name type="A1cf1820">sfc_src</name>
+            </varDecl>
+            <varDecl lineno="52" file="../src/mo_lw_solver.F90">
+              <name type="A1cf27b0">radn_up</name>
+            </varDecl>
+            <varDecl lineno="52" file="../src/mo_lw_solver.F90">
+              <name type="A1cf2a20">radn_dn</name>
+            </varDecl>
+            <varDecl lineno="56" file="../src/mo_lw_solver.F90">
+              <name type="Fint">sfclev</name>
+            </varDecl>
+            <varDecl lineno="57" file="../src/mo_lw_solver.F90">
+              <name type="A1cf3ea0">tau_loc</name>
+            </varDecl>
+            <varDecl lineno="57" file="../src/mo_lw_solver.F90">
+              <name type="A1cf4110">trans</name>
+            </varDecl>
+            <varDecl lineno="63" file="../src/mo_lw_solver.F90">
+              <name type="Fint">ilev</name>
+            </varDecl>
+            <varDecl lineno="63" file="../src/mo_lw_solver.F90">
+              <name type="Fint">igpt</name>
+            </varDecl>
+          </declarations>
+          <body>
+            <FpragmaStatement lineno="65" file="../src/mo_lw_solver.F90">claw define dimension col(1:ncol) claw parallelize</FpragmaStatement>
+            <FifStatement lineno="70" file="../src/mo_lw_solver.F90">
+              <condition>
+                <Var type="L1cd4c60" scope="local">top_is_1</Var>
+              </condition>
+              <then>
+                <body>
+                  <FassignStatement lineno="71" file="../src/mo_lw_solver.F90">
+                    <Var type="Fint" scope="local">sfclev</Var>
+                    <plusExpr type="I1cd4400">
+                      <Var type="I1cd4400" scope="local">nlay</Var>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </plusExpr>
+                  </FassignStatement>
+                </body>
+              </then>
+              <else>
+                <body>
+                  <FassignStatement lineno="75" file="../src/mo_lw_solver.F90">
+                    <Var type="Fint" scope="local">sfclev</Var>
+                    <FintConstant type="Fint">1</FintConstant>
+                  </FassignStatement>
+                </body>
+              </else>
+            </FifStatement>
+            <FdoStatement lineno="80" file="../src/mo_lw_solver.F90">
+              <Var type="Fint" scope="local">igpt</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="I1cd44d0" scope="local">ngpt</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FdoStatement lineno="83" file="../src/mo_lw_solver.F90">
+                  <Var type="Fint" scope="local">ilev</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <Var type="I1cd4400" scope="local">nlay</Var>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="84" file="../src/mo_lw_solver.F90">
+                      <FarrayRef type="R1cf3dd0">
+                        <varRef type="A1cf3ea0">
+                          <Var type="A1cf3ea0" scope="local">tau_loc</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">ilev</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <functionCall type="R1cd5750" is_intrinsic="true">
+                        <name>max</name>
+                        <arguments>
+                          <divExpr type="R1cd5750">
+                            <FarrayRef type="R1cd5750">
+                              <varRef type="A1cd58f0">
+                                <Var type="A1cd58f0" scope="local">tau</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">ilev</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">igpt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <FarrayRef type="R1cd6350">
+                              <varRef type="A1cd6420">
+                                <Var type="A1cd6420" scope="local">mu</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">igpt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                          </divExpr>
+                          <mulExpr type="R1cfe7c0">
+                            <FrealConstant type="R1cfe7c0" kind="wp">2.</FrealConstant>
+                            <functionCall type="R1cfe9c0" is_intrinsic="true">
+                              <name>tiny</name>
+                              <arguments>
+                                <FrealConstant type="R1cfe9c0" kind="wp">1.</FrealConstant>
+                              </arguments>
+                            </functionCall>
+                          </mulExpr>
+                        </arguments>
+                      </functionCall>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+                <FdoStatement lineno="88" file="../src/mo_lw_solver.F90">
+                  <Var type="Fint" scope="local">ilev</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <Var type="I1cd4400" scope="local">nlay</Var>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="89" file="../src/mo_lw_solver.F90">
+                      <FarrayRef type="R1cf4040">
+                        <varRef type="A1cf4110">
+                          <Var type="A1cf4110" scope="local">trans</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">ilev</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <functionCall type="R1cf3dd0" is_intrinsic="true">
+                        <name>exp</name>
+                        <arguments>
+                          <unaryMinusExpr type="R1cf3dd0">
+                            <FarrayRef type="R1cf3dd0">
+                              <varRef type="A1cf3ea0">
+                                <Var type="A1cf3ea0" scope="local">tau_loc</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">ilev</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                          </unaryMinusExpr>
+                        </arguments>
+                      </functionCall>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+                <FifStatement lineno="97" file="../src/mo_lw_solver.F90">
+                  <condition>
+                    <Var type="L1cd4c60" scope="local">top_is_1</Var>
+                  </condition>
+                  <then>
+                    <body>
+                      <FdoStatement lineno="102" file="../src/mo_lw_solver.F90">
+                        <Var type="Fint" scope="local">ilev</Var>
+                        <indexRange>
+                          <lowerBound>
+                            <FintConstant type="Fint">2</FintConstant>
+                          </lowerBound>
+                          <upperBound>
+                            <plusExpr type="I1cd4400">
+                              <Var type="I1cd4400" scope="local">nlay</Var>
+                              <FintConstant type="Fint">1</FintConstant>
+                            </plusExpr>
+                          </upperBound>
+                          <step>
+                            <FintConstant type="Fint">1</FintConstant>
+                          </step>
+                        </indexRange>
+                        <body>
+                          <FassignStatement lineno="103" file="../src/mo_lw_solver.F90">
+                            <FarrayRef type="R1cf2880">
+                              <varRef type="A1cf2a20">
+                                <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">ilev</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">igpt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <plusExpr type="R1cf4040">
+                              <mulExpr type="R1cf4040">
+                                <FarrayRef type="R1cf4040">
+                                  <varRef type="A1cf4110">
+                                    <Var type="A1cf4110" scope="local">trans</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <minusExpr type="Fint">
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                      <FintConstant type="Fint">1</FintConstant>
+                                    </minusExpr>
+                                  </arrayIndex>
+                                </FarrayRef>
+                                <FarrayRef type="R1cf2880">
+                                  <varRef type="A1cf2a20">
+                                    <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <minusExpr type="Fint">
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                      <FintConstant type="Fint">1</FintConstant>
+                                    </minusExpr>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">igpt</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                              </mulExpr>
+                              <mulExpr type="R1d08290">
+                                <minusExpr type="R1d08290">
+                                  <FrealConstant type="R1d08290" kind="wp">1.</FrealConstant>
+                                  <FarrayRef type="R1cf4040">
+                                    <varRef type="A1cf4110">
+                                      <Var type="A1cf4110" scope="local">trans</Var>
+                                    </varRef>
+                                    <arrayIndex>
+                                      <minusExpr type="Fint">
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                        <FintConstant type="Fint">1</FintConstant>
+                                      </minusExpr>
+                                    </arrayIndex>
+                                  </FarrayRef>
+                                </minusExpr>
+                                <functionCall type="FnumericAll">
+                                  <name type="F1d3cc40">lay_emission</name>
+                                  <arguments>
+                                    <FarrayRef type="R1cee4e0">
+                                      <varRef type="A1cee680">
+                                        <Var type="A1cee680" scope="local">lay_source</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <minusExpr type="Fint">
+                                          <Var type="Fint" scope="local">ilev</Var>
+                                          <FintConstant type="Fint">1</FintConstant>
+                                        </minusExpr>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf0020">
+                                      <varRef type="A1cf01c0">
+                                        <Var type="A1cf01c0" scope="local">lev_source_dec</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf3dd0">
+                                      <varRef type="A1cf3ea0">
+                                        <Var type="A1cf3ea0" scope="local">tau_loc</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <minusExpr type="Fint">
+                                          <Var type="Fint" scope="local">ilev</Var>
+                                          <FintConstant type="Fint">1</FintConstant>
+                                        </minusExpr>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf4040">
+                                      <varRef type="A1cf4110">
+                                        <Var type="A1cf4110" scope="local">trans</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <minusExpr type="Fint">
+                                          <Var type="Fint" scope="local">ilev</Var>
+                                          <FintConstant type="Fint">1</FintConstant>
+                                        </minusExpr>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                  </arguments>
+                                </functionCall>
+                              </mulExpr>
+                            </plusExpr>
+                          </FassignStatement>
+                        </body>
+                      </FdoStatement>
+                    </body>
+                  </then>
+                  <else>
+                    <body>
+                      <FdoStatement lineno="112" file="../src/mo_lw_solver.F90">
+                        <Var type="Fint" scope="local">ilev</Var>
+                        <indexRange>
+                          <lowerBound>
+                            <Var type="I1cd4400" scope="local">nlay</Var>
+                          </lowerBound>
+                          <upperBound>
+                            <FintConstant type="Fint">1</FintConstant>
+                          </upperBound>
+                          <step>
+                            <FintConstant type="Fint">-1</FintConstant>
+                          </step>
+                        </indexRange>
+                        <body>
+                          <FassignStatement lineno="113" file="../src/mo_lw_solver.F90">
+                            <FarrayRef type="R1cf2880">
+                              <varRef type="A1cf2a20">
+                                <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">ilev</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">igpt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <plusExpr type="R1cf4040">
+                              <mulExpr type="R1cf4040">
+                                <FarrayRef type="R1cf4040">
+                                  <varRef type="A1cf4110">
+                                    <Var type="A1cf4110" scope="local">trans</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">ilev</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                                <FarrayRef type="R1cf2880">
+                                  <varRef type="A1cf2a20">
+                                    <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <plusExpr type="Fint">
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                      <FintConstant type="Fint">1</FintConstant>
+                                    </plusExpr>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">igpt</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                              </mulExpr>
+                              <mulExpr type="R1d13090">
+                                <minusExpr type="R1d13090">
+                                  <FrealConstant type="R1d13090" kind="wp">1.</FrealConstant>
+                                  <FarrayRef type="R1cf4040">
+                                    <varRef type="A1cf4110">
+                                      <Var type="A1cf4110" scope="local">trans</Var>
+                                    </varRef>
+                                    <arrayIndex>
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                    </arrayIndex>
+                                  </FarrayRef>
+                                </minusExpr>
+                                <functionCall type="FnumericAll">
+                                  <name type="F1d3cc40">lay_emission</name>
+                                  <arguments>
+                                    <FarrayRef type="R1cee4e0">
+                                      <varRef type="A1cee680">
+                                        <Var type="A1cee680" scope="local">lay_source</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf0020">
+                                      <varRef type="A1cf01c0">
+                                        <Var type="A1cf01c0" scope="local">lev_source_dec</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf3dd0">
+                                      <varRef type="A1cf3ea0">
+                                        <Var type="A1cf3ea0" scope="local">tau_loc</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf4040">
+                                      <varRef type="A1cf4110">
+                                        <Var type="A1cf4110" scope="local">trans</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                  </arguments>
+                                </functionCall>
+                              </mulExpr>
+                            </plusExpr>
+                          </FassignStatement>
+                        </body>
+                      </FdoStatement>
+                    </body>
+                  </else>
+                </FifStatement>
+                <FassignStatement lineno="122" file="../src/mo_lw_solver.F90">
+                  <FarrayRef type="R1cf2610">
+                    <varRef type="A1cf27b0">
+                      <Var type="A1cf27b0" scope="local">radn_up</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">sfclev</Var>
+                    </arrayIndex>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">igpt</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                  <plusExpr type="R1cf2880">
+                    <mulExpr type="R1cf2880">
+                      <FarrayRef type="R1cf2880">
+                        <varRef type="A1cf2a20">
+                          <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">sfclev</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">igpt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <minusExpr type="R1d1b1d0">
+                        <FrealConstant type="R1d1b1d0" kind="wp">1.</FrealConstant>
+                        <FarrayRef type="R1cf0c20">
+                          <varRef type="A1cf0cf0">
+                            <Var type="A1cf0cf0" scope="local">sfc_emis</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">igpt</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                      </minusExpr>
+                    </mulExpr>
+                    <mulExpr type="R1cf1750">
+                      <FarrayRef type="R1cf1750">
+                        <varRef type="A1cf1820">
+                          <Var type="A1cf1820" scope="local">sfc_src</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">igpt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <FarrayRef type="R1cf0c20">
+                        <varRef type="A1cf0cf0">
+                          <Var type="A1cf0cf0" scope="local">sfc_emis</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">igpt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                    </mulExpr>
+                  </plusExpr>
+                </FassignStatement>
+                <FifStatement lineno="126" file="../src/mo_lw_solver.F90">
+                  <condition>
+                    <Var type="L1cd4c60" scope="local">top_is_1</Var>
+                  </condition>
+                  <then>
+                    <body>
+                      <FdoStatement lineno="129" file="../src/mo_lw_solver.F90">
+                        <Var type="Fint" scope="local">ilev</Var>
+                        <indexRange>
+                          <lowerBound>
+                            <Var type="I1cd4400" scope="local">nlay</Var>
+                          </lowerBound>
+                          <upperBound>
+                            <FintConstant type="Fint">1</FintConstant>
+                          </upperBound>
+                          <step>
+                            <FintConstant type="Fint">-1</FintConstant>
+                          </step>
+                        </indexRange>
+                        <body>
+                          <FassignStatement lineno="130" file="../src/mo_lw_solver.F90">
+                            <FarrayRef type="R1cf2610">
+                              <varRef type="A1cf27b0">
+                                <Var type="A1cf27b0" scope="local">radn_up</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">ilev</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">igpt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <plusExpr type="R1cf4040">
+                              <mulExpr type="R1cf4040">
+                                <FarrayRef type="R1cf4040">
+                                  <varRef type="A1cf4110">
+                                    <Var type="A1cf4110" scope="local">trans</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">ilev</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                                <FarrayRef type="R1cf2610">
+                                  <varRef type="A1cf27b0">
+                                    <Var type="A1cf27b0" scope="local">radn_up</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <plusExpr type="Fint">
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                      <FintConstant type="Fint">1</FintConstant>
+                                    </plusExpr>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">igpt</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                              </mulExpr>
+                              <mulExpr type="R1d232b0">
+                                <minusExpr type="R1d232b0">
+                                  <FrealConstant type="R1d232b0" kind="wp">1.</FrealConstant>
+                                  <FarrayRef type="R1cf4040">
+                                    <varRef type="A1cf4110">
+                                      <Var type="A1cf4110" scope="local">trans</Var>
+                                    </varRef>
+                                    <arrayIndex>
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                    </arrayIndex>
+                                  </FarrayRef>
+                                </minusExpr>
+                                <functionCall type="FnumericAll">
+                                  <name type="F1d3cc40">lay_emission</name>
+                                  <arguments>
+                                    <FarrayRef type="R1cee4e0">
+                                      <varRef type="A1cee680">
+                                        <Var type="A1cee680" scope="local">lay_source</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cef270">
+                                      <varRef type="A1cef410">
+                                        <Var type="A1cef410" scope="local">lev_source_inc</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf3dd0">
+                                      <varRef type="A1cf3ea0">
+                                        <Var type="A1cf3ea0" scope="local">tau_loc</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf4040">
+                                      <varRef type="A1cf4110">
+                                        <Var type="A1cf4110" scope="local">trans</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                  </arguments>
+                                </functionCall>
+                              </mulExpr>
+                            </plusExpr>
+                          </FassignStatement>
+                        </body>
+                      </FdoStatement>
+                    </body>
+                  </then>
+                  <else>
+                    <body>
+                      <FdoStatement lineno="139" file="../src/mo_lw_solver.F90">
+                        <Var type="Fint" scope="local">ilev</Var>
+                        <indexRange>
+                          <lowerBound>
+                            <FintConstant type="Fint">2</FintConstant>
+                          </lowerBound>
+                          <upperBound>
+                            <plusExpr type="I1cd4400">
+                              <Var type="I1cd4400" scope="local">nlay</Var>
+                              <FintConstant type="Fint">1</FintConstant>
+                            </plusExpr>
+                          </upperBound>
+                          <step>
+                            <FintConstant type="Fint">1</FintConstant>
+                          </step>
+                        </indexRange>
+                        <body>
+                          <FassignStatement lineno="140" file="../src/mo_lw_solver.F90">
+                            <FarrayRef type="R1cf2610">
+                              <varRef type="A1cf27b0">
+                                <Var type="A1cf27b0" scope="local">radn_up</Var>
+                              </varRef>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">ilev</Var>
+                              </arrayIndex>
+                              <arrayIndex>
+                                <Var type="Fint" scope="local">igpt</Var>
+                              </arrayIndex>
+                            </FarrayRef>
+                            <plusExpr type="R1cf4040">
+                              <mulExpr type="R1cf4040">
+                                <FarrayRef type="R1cf4040">
+                                  <varRef type="A1cf4110">
+                                    <Var type="A1cf4110" scope="local">trans</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <minusExpr type="Fint">
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                      <FintConstant type="Fint">1</FintConstant>
+                                    </minusExpr>
+                                  </arrayIndex>
+                                </FarrayRef>
+                                <FarrayRef type="R1cf2610">
+                                  <varRef type="A1cf27b0">
+                                    <Var type="A1cf27b0" scope="local">radn_up</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <minusExpr type="Fint">
+                                      <Var type="Fint" scope="local">ilev</Var>
+                                      <FintConstant type="Fint">1</FintConstant>
+                                    </minusExpr>
+                                  </arrayIndex>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">igpt</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                              </mulExpr>
+                              <mulExpr type="R1d2de30">
+                                <minusExpr type="R1d2de30">
+                                  <FrealConstant type="R1d2de30" kind="wp">1.</FrealConstant>
+                                  <FarrayRef type="R1cf4040">
+                                    <varRef type="A1cf4110">
+                                      <Var type="A1cf4110" scope="local">trans</Var>
+                                    </varRef>
+                                    <arrayIndex>
+                                      <minusExpr type="Fint">
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                        <FintConstant type="Fint">1</FintConstant>
+                                      </minusExpr>
+                                    </arrayIndex>
+                                  </FarrayRef>
+                                </minusExpr>
+                                <functionCall type="FnumericAll">
+                                  <name type="F1d3cc40">lay_emission</name>
+                                  <arguments>
+                                    <FarrayRef type="R1cee4e0">
+                                      <varRef type="A1cee680">
+                                        <Var type="A1cee680" scope="local">lay_source</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <minusExpr type="Fint">
+                                          <Var type="Fint" scope="local">ilev</Var>
+                                          <FintConstant type="Fint">1</FintConstant>
+                                        </minusExpr>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cef270">
+                                      <varRef type="A1cef410">
+                                        <Var type="A1cef410" scope="local">lev_source_inc</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">ilev</Var>
+                                      </arrayIndex>
+                                      <arrayIndex>
+                                        <Var type="Fint" scope="local">igpt</Var>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf3dd0">
+                                      <varRef type="A1cf3ea0">
+                                        <Var type="A1cf3ea0" scope="local">tau_loc</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <minusExpr type="Fint">
+                                          <Var type="Fint" scope="local">ilev</Var>
+                                          <FintConstant type="Fint">1</FintConstant>
+                                        </minusExpr>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                    <FarrayRef type="R1cf4040">
+                                      <varRef type="A1cf4110">
+                                        <Var type="A1cf4110" scope="local">trans</Var>
+                                      </varRef>
+                                      <arrayIndex>
+                                        <minusExpr type="Fint">
+                                          <Var type="Fint" scope="local">ilev</Var>
+                                          <FintConstant type="Fint">1</FintConstant>
+                                        </minusExpr>
+                                      </arrayIndex>
+                                    </FarrayRef>
+                                  </arguments>
+                                </functionCall>
+                              </mulExpr>
+                            </plusExpr>
+                          </FassignStatement>
+                        </body>
+                      </FdoStatement>
+                    </body>
+                  </else>
+                </FifStatement>
+              </body>
+            </FdoStatement>
+            <FdoStatement lineno="150" file="../src/mo_lw_solver.F90">
+              <Var type="Fint" scope="local">igpt</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="I1cd44d0" scope="local">ngpt</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FdoStatement lineno="151" file="../src/mo_lw_solver.F90">
+                  <Var type="Fint" scope="local">ilev</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <plusExpr type="I1cd4400">
+                        <Var type="I1cd4400" scope="local">nlay</Var>
+                        <FintConstant type="Fint">1</FintConstant>
+                      </plusExpr>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="152" file="../src/mo_lw_solver.F90">
+                      <FarrayRef type="R1cf2610">
+                        <varRef type="A1cf27b0">
+                          <Var type="A1cf27b0" scope="local">radn_up</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">ilev</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">igpt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <mulExpr type="R1d35ef0">
+                        <mulExpr type="R1d35ef0">
+                          <mulExpr type="R1d35ef0">
+                            <FrealConstant type="R1d35ef0" kind="wp">2.</FrealConstant>
+                            <Var type="R1ce1eb0" scope="local">pi</Var>
+                          </mulExpr>
+                          <Var type="R1ce3da0" scope="local">quad_wt</Var>
+                        </mulExpr>
+                        <FarrayRef type="R1cf2610">
+                          <varRef type="A1cf27b0">
+                            <Var type="A1cf27b0" scope="local">radn_up</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">ilev</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">igpt</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                      </mulExpr>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+                <FdoStatement lineno="155" file="../src/mo_lw_solver.F90">
+                  <Var type="Fint" scope="local">ilev</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <plusExpr type="I1cd4400">
+                        <Var type="I1cd4400" scope="local">nlay</Var>
+                        <FintConstant type="Fint">1</FintConstant>
+                      </plusExpr>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="156" file="../src/mo_lw_solver.F90">
+                      <FarrayRef type="R1cf2880">
+                        <varRef type="A1cf2a20">
+                          <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">ilev</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">igpt</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <mulExpr type="R1d39e30">
+                        <mulExpr type="R1d39e30">
+                          <mulExpr type="R1d39e30">
+                            <FrealConstant type="R1d39e30" kind="wp">2.</FrealConstant>
+                            <Var type="R1ce1eb0" scope="local">pi</Var>
+                          </mulExpr>
+                          <Var type="R1ce3da0" scope="local">quad_wt</Var>
+                        </mulExpr>
+                        <FarrayRef type="R1cf2880">
+                          <varRef type="A1cf2a20">
+                            <Var type="A1cf2a20" scope="local">radn_dn</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">ilev</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">igpt</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                      </mulExpr>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+              </body>
+            </FdoStatement>
+          </body>
+        </FfunctionDefinition>
+        <FfunctionDefinition lineno="166" file="../src/mo_lw_solver.F90">
+          <name type="F1d3cc40">lay_emission</name>
+          <symbols>
+            <id type="F1d3cc40" sclass="ffunc">
+              <name>lay_emission</name>
+            </id>
+            <id type="R1d3df40" sclass="fparam">
+              <name>lay_src</name>
+            </id>
+            <id type="R1d3e010" sclass="fparam">
+              <name>lev_src</name>
+            </id>
+            <id type="R1d3e0e0" sclass="fparam">
+              <name>tau</name>
+            </id>
+            <id type="R1d3e1b0" sclass="fparam">
+              <name>trans</name>
+            </id>
+          </symbols>
+          <declarations>
+            <varDecl lineno="166" file="../src/mo_lw_solver.F90">
+              <name type="F1d3cc40">lay_emission</name>
+            </varDecl>
+            <varDecl lineno="167" file="../src/mo_lw_solver.F90">
+              <name type="R1d3df40">lay_src</name>
+            </varDecl>
+            <varDecl lineno="167" file="../src/mo_lw_solver.F90">
+              <name type="R1d3e010">lev_src</name>
+            </varDecl>
+            <varDecl lineno="167" file="../src/mo_lw_solver.F90">
+              <name type="R1d3e0e0">tau</name>
+            </varDecl>
+            <varDecl lineno="167" file="../src/mo_lw_solver.F90">
+              <name type="R1d3e1b0">trans</name>
+            </varDecl>
+          </declarations>
+          <body>
+            <FassignStatement lineno="178" file="../src/mo_lw_solver.F90">
+              <Var type="R1d3e880" scope="local">lay_emission</Var>
+              <functionCall type="R1d3e010" is_intrinsic="true">
+                <name>merge</name>
+                <arguments>
+                  <plusExpr type="R1d3e010">
+                    <Var type="R1d3e010" scope="local">lev_src</Var>
+                    <mulExpr type="R1d40d50">
+                      <mulExpr type="R1d40d50">
+                        <FrealConstant type="R1d40d50" kind="wp">2.</FrealConstant>
+                        <minusExpr type="R1d3df40">
+                          <Var type="R1d3df40" scope="local">lay_src</Var>
+                          <Var type="R1d3e010" scope="local">lev_src</Var>
+                        </minusExpr>
+                      </mulExpr>
+                      <minusExpr type="R1d410c0">
+                        <divExpr type="R1d410c0">
+                          <FrealConstant type="R1d410c0" kind="wp">1.</FrealConstant>
+                          <Var type="R1d3e0e0" scope="local">tau</Var>
+                        </divExpr>
+                        <divExpr type="R1d3e1b0">
+                          <Var type="R1d3e1b0" scope="local">trans</Var>
+                          <minusExpr type="R1d41310">
+                            <FrealConstant type="R1d41310" kind="wp">1.</FrealConstant>
+                            <Var type="R1d3e1b0" scope="local">trans</Var>
+                          </minusExpr>
+                        </divExpr>
+                      </minusExpr>
+                    </mulExpr>
+                  </plusExpr>
+                  <FrealConstant type="R1d41890" kind="wp">0.</FrealConstant>
+                  <logLTExpr type="Flogical">
+                    <Var type="R1d3e1b0" scope="local">trans</Var>
+                    <minusExpr type="R1d41990">
+                      <FrealConstant type="R1d41990" kind="wp">1.</FrealConstant>
+                      <functionCall type="R1d41bf0" is_intrinsic="true">
+                        <name>spacing</name>
+                        <arguments>
+                          <FrealConstant type="R1d41bf0" kind="wp">1.</FrealConstant>
+                        </arguments>
+                      </functionCall>
+                    </minusExpr>
+                  </logLTExpr>
+                </arguments>
+              </functionCall>
+            </FassignStatement>
+          </body>
+        </FfunctionDefinition>
+      </FcontainsStatement>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>

@@ -572,4 +572,22 @@ public class Xnode {
     return (moduleDef != null) ?
         new XmoduleDefinition(moduleDef.element()) : null;
   }
+
+  /**
+   * Check whether a node is nested into another one.
+   *
+   * @param ancestor Node in which the current node is supposed to be nested.
+   * @return True if the current node is nested in the ancestor node. False
+   * otherwise.
+   */
+  public boolean isNestedIn(Xnode ancestor) {
+    Node possibleAncestor = element().getParentNode();
+    while(possibleAncestor != null) {
+      if(possibleAncestor == ancestor.element()) {
+        return true;
+      }
+      possibleAncestor = possibleAncestor.getParentNode();
+    }
+    return false;
+  }
 }
