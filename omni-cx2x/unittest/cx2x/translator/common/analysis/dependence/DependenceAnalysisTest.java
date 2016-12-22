@@ -26,42 +26,39 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Test the various features of the DependenceAnalysis class.
+ * Test the various features of the DependenceAnalysis class and the
+ * IterationSpace class.
  *
  * @author clementval
  */
 public class DependenceAnalysisTest {
 
+  /**
+   * Test the analysis feature of the DependenceAnalysis class.
+   */
   @Test
   public void analyzeTest() {
+    // Load test data file
     File f = new File(TestConstant.TEST_DEPENDENCE);
     assertTrue(f.exists());
     XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE);
     assertNotNull(xcodeml);
+
+    // Match all the function definitions
     List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
     assertEquals(2, functions.size());
 
+    // Match all the pargma
     List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
     assertEquals(1, pragmas.size());
 
-    Configuration configuration =
-        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
-    ClawTransformer transformer = new ClawTransformer(configuration, 80);
-    AcceleratorGenerator generator =
-        AcceleratorHelper.createAcceleratorGenerator(configuration);
-    ClawLanguage main = null;
-    try {
-      main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
-    } catch(Exception e) {
-      fail();
-    }
+    // Get the function definition that interests us
+    Xnode fctDef = functions.get(0);
 
-
-    Xnode lw_solver_noscat = functions.get(0);
-
-    List<Xnode> loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
+    List<Xnode> loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
     assertEquals(10, loops.size());
 
+    // Create dependence analysis object for each do statement
     List<DependenceAnalysis> dependencies = new ArrayList<>();
     for(Xnode loop : loops) {
       try {
@@ -71,6 +68,7 @@ public class DependenceAnalysisTest {
       }
     }
 
+    // Assert the information for each do statement
     assertTrue(dependencies.get(0).isIndependent());
     assertTrue(dependencies.get(1).isIndependent());
     assertTrue(dependencies.get(2).isIndependent());
@@ -98,35 +96,28 @@ public class DependenceAnalysisTest {
     assertTrue(dependencies.get(7).isIndependent());
     assertTrue(dependencies.get(8).isIndependent());
     assertTrue(dependencies.get(9).isIndependent());
-
-    try {
-      IterationSpace is = new IterationSpace(loops);
-      is.tryFusion(xcodeml, transformer, main);
-      is.printDebug(true);
-
-      loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
-      assertEquals(7, loops.size());
-
-      is.reload(loops);
-      is.printDebug(true);
-    } catch(Exception e) {
-      fail();
-    }
-
   }
 
+  /**
+   * Test the IterationSpace feature of fusion and check the results.
+   */
   @Test
   public void analyzeTest3d() {
+    // Load test data file
     File f = new File(TestConstant.TEST_DEPENDENCE_3D);
     assertTrue(f.exists());
     XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE_3D);
     assertNotNull(xcodeml);
+
+    // Match all the function definitions
     List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
     assertEquals(2, functions.size());
 
+    // Match all the pragmas
     List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
     assertEquals(1, pragmas.size());
 
+    // Analyze the pragma
     Configuration configuration =
         new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
     ClawTransformer transformer = new ClawTransformer(configuration, 80);
@@ -139,18 +130,20 @@ public class DependenceAnalysisTest {
       fail();
     }
 
+    // Get the function definition that interests us
+    Xnode fctDef = functions.get(0);
 
-    Xnode lw_solver_noscat = functions.get(0);
-
-    List<Xnode> loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
+    // Match all the do statements in the function
+    List<Xnode> loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
     assertEquals(11, loops.size());
 
+    // Create an iteration space
     try {
       IterationSpace is = new IterationSpace(loops);
       is.tryFusion(xcodeml, transformer, main);
       is.printDebug(true);
 
-      loops = lw_solver_noscat.matchAll(Xcode.FDOSTATEMENT);
+      loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
       assertEquals(8, loops.size());
 
       is.reload(loops);
@@ -158,6 +151,5 @@ public class DependenceAnalysisTest {
     } catch(Exception e) {
       fail();
     }
-
   }
 }
