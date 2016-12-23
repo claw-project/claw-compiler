@@ -1048,7 +1048,7 @@ public class XnodeUtil {
    * @throws IllegalTransformationException If bound cannot be duplicated.
    */
   public static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst,
-                                      XcodeML xcodemlSrc)
+                                     XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
     if(baseBound.opcode() != Xcode.LOWERBOUND
@@ -1116,6 +1116,33 @@ public class XnodeUtil {
   public static void safeDelete(Xnode node) {
     if(node != null) {
       node.delete();
+    }
+  }
+
+  /**
+   * Remove the "pure" attribute from the function type. Issue a warning.
+   *
+   * @param fctDef  Function definition node where the pure attribute must be
+   *                removed.
+   * @param fctType Function type node where the pure attribute must be
+   *                removed.
+   * @param warning If true, a warning message is written to stdout.
+   */
+  public static void removePure(Xnode fctDef, Xnode fctType, boolean warning) {
+    if(fctType.opcode() != Xcode.FFUNCTIONTYPE ||
+        fctDef.opcode() != Xcode.FFUNCTIONDEFINITION)
+    {
+      return;
+    }
+
+    if(fctType.getBooleanAttribute(Xattr.IS_PURE)) {
+      fctType.setAttribute(Xattr.IS_PURE, Xname.FALSE);
+      if(warning) {
+        String fctName = fctDef.matchDirectDescendant(Xcode.NAME).value();
+        System.out.println("Warning: PURE specifier removed from function " +
+            fctName + " at line " + fctDef.lineNo() + ". Transformation and " +
+            "code generation applied to it.");
+      }
     }
   }
 
