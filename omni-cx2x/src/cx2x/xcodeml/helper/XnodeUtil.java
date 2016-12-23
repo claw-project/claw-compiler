@@ -1126,24 +1126,20 @@ public class XnodeUtil {
    *                removed.
    * @param fctType Function type node where the pure attribute must be
    *                removed.
-   * @param warning If true, a warning message is written to stdout.
+   * @return True if the PURE specifier had to be removed false otherwise.
    */
-  public static void removePure(Xnode fctDef, Xnode fctType, boolean warning) {
+  public static boolean removePure(Xnode fctDef, Xnode fctType) {
     if(fctType.opcode() != Xcode.FFUNCTIONTYPE ||
         fctDef.opcode() != Xcode.FFUNCTIONDEFINITION)
     {
-      return;
+      return false;
     }
 
     if(fctType.getBooleanAttribute(Xattr.IS_PURE)) {
       fctType.setAttribute(Xattr.IS_PURE, Xname.FALSE);
-      if(warning) {
-        String fctName = fctDef.matchDirectDescendant(Xcode.NAME).value();
-        System.out.println("Warning: PURE specifier removed from function " +
-            fctName + " at line " + fctDef.lineNo() + ". Transformation and " +
-            "code generation applied to it.");
-      }
+      return true;
     }
+    return false;
   }
 
 }

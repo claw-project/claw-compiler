@@ -13,6 +13,7 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -281,11 +282,25 @@ public class Parallelize extends ClawTransformation {
     return true;
   }
 
+
   @Override
   public void transform(XcodeProgram xcodeml, Transformer transformer,
                         Transformation other)
       throws Exception
   {
+
+    // Handle PURE function / subroutine
+    ClawTransformer trans = (ClawTransformer) transformer;
+    boolean pureRemoved = XnodeUtil.removePure(_fctDef, _fctType);
+    if(trans.getConfiguration().isForcePure() && pureRemoved) {
+      throw new IllegalTransformationException(
+          "PURE specifier cannot be removed", _fctDef.lineNo());
+    } else if(pureRemoved) {
+      String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
+      System.out.println("Warning: PURE specifier removed from function " +
+          fctName + " at line " + _fctDef.lineNo() + ". Transformation and " +
+          "code generation applied to it.");
+    }
 
     // Prepare the array index that will be added to the array references.
     prepareArrayIndexes(xcodeml);
