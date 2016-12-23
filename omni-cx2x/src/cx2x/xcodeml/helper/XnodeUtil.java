@@ -1142,4 +1142,32 @@ public class XnodeUtil {
     return false;
   }
 
+  /**
+   * Check whether the end node is a direct sibling of the start node. If other
+   * nodes are between the two nodes and their opcode is not listed in the
+   * skippedNodes list, the nodes are not direct siblings.
+   *
+   * @param start        First node in the tree.
+   * @param end          Node to be check to be a direct sibling.
+   * @param skippedNodes List of opcode that are allowed between the two nodes.
+   * @return True if the nodes are direct siblings.
+   */
+  public static boolean isDirectSibling(Xnode start, Xnode end, List<Xcode> skippedNodes) {
+    if(start == null || end == null) {
+      return false;
+    }
+
+    Xnode nextSibling = start.nextSibling();
+    while(nextSibling != null) {
+      if(nextSibling.equals(end)){
+        return true;
+      }
+      if(skippedNodes.contains(nextSibling.opcode())){
+        nextSibling = nextSibling.nextSibling();
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
 }
