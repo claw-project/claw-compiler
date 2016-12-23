@@ -1048,7 +1048,7 @@ public class XnodeUtil {
    * @throws IllegalTransformationException If bound cannot be duplicated.
    */
   public static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst,
-                                      XcodeML xcodemlSrc)
+                                     XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
     if(baseBound.opcode() != Xcode.LOWERBOUND
@@ -1117,6 +1117,29 @@ public class XnodeUtil {
     if(node != null) {
       node.delete();
     }
+  }
+
+  /**
+   * Remove the "pure" attribute from the function type. Issue a warning.
+   *
+   * @param fctDef  Function definition node where the pure attribute must be
+   *                removed.
+   * @param fctType Function type node where the pure attribute must be
+   *                removed.
+   * @return True if the PURE specifier had to be removed false otherwise.
+   */
+  public static boolean removePure(Xnode fctDef, Xnode fctType) {
+    if(fctType.opcode() != Xcode.FFUNCTIONTYPE ||
+        fctDef.opcode() != Xcode.FFUNCTIONDEFINITION)
+    {
+      return false;
+    }
+
+    if(fctType.getBooleanAttribute(Xattr.IS_PURE)) {
+      fctType.setAttribute(Xattr.IS_PURE, Xname.FALSE);
+      return true;
+    }
+    return false;
   }
 
 }

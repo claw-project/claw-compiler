@@ -67,6 +67,7 @@ public class Xname {
   public static final String ATTR_IS_PRIVATE = "is_private";
   public static final String ATTR_IS_PROGRAM = "is_program";
   public static final String ATTR_IS_PUBLIC = "is_public";
+  public static final String ATTR_IS_PURE = "is_pure";
   public static final String ATTR_IS_RECURSIVE = "is_recursive";
   public static final String ATTR_IS_SAVE = "is_save";
   public static final String ATTR_IS_TARGET = "is_target";

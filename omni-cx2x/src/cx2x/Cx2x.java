@@ -109,6 +109,7 @@ public class Cx2x {
     options.addOption("tl", "target-list", false, "list all target available for code transformation.");
     options.addOption("dl", "directive-list", false, "list all available directive language to be generated.");
     options.addOption("sc", "show-config", false, "display the current configuration.");
+    options.addOption("fp", "force-pure", false, "exit the translator if a PURE subroutine/function has to be transformed.");
     return options;
   }
 
@@ -142,6 +143,7 @@ public class Cx2x {
     String configuration_path = null;
     String schema_path = null;
     int maxColumns = 0;
+    boolean forcePure = false;
 
     CommandLine cmd;
     try {
@@ -244,6 +246,11 @@ public class Cx2x {
     Configuration config = new Configuration(configuration_path, schema_path);
     config.setUserDefinedTarget(target_option);
     config.setUserDefineDirective(directive_option);
+
+    // Force pure option
+    if(cmd.hasOption("fp")) {
+      config.setForcePure();
+    }
 
     // Call the translator to apply transformation on XcodeML/F
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,

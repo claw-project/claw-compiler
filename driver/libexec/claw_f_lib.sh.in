@@ -24,6 +24,7 @@ CLAW Fortran compiler options:
    --show-env                 : show environment variables.
    --no-dep                   : don't generate .mod or .xmod file for dependencies.
    -f,--force                 : force the translation of files without directives.
+   --force-pure               : force compiler to exit when transformation applied to PURE subroutine/function.
    --debug                    : save intermediate files in __omni_tmp__.
    --stop-pp                  : save intermediate files and stop after preprocess.
    --stop-dependencies        : save intermediate files and stop after dependencies resolution.
@@ -193,6 +194,8 @@ function claw_f_set_parameters()
         LINE_DIRECTIVE=true;;
       --dump-cx2x-args)
         DUMP_CX2X_ARGS=true;;
+      --force-pure)
+        FORCE_PURE=true;;
 #	    --openmp|-omp)
 #		ENABLE_OPENMP=true;;
 #	    --xcalableacc|-xacc)

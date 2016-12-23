@@ -55,6 +55,7 @@ public class Configuration {
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
   private final OpenAccConfiguration _openacc;
+  private boolean _forcePure = false;
 
   /**
    * Constructs a new configuration object from the give configuration file.
@@ -91,10 +92,11 @@ public class Configuration {
 
   /**
    * Constructs basid configuration object.
+   *
    * @param dir    Accelerator directive language.
    * @param target Target architecture.
    */
-  public Configuration(AcceleratorDirective dir, Target target){
+  public Configuration(AcceleratorDirective dir, Target target) {
     _parameters = new HashMap<>();
     _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
     _parameters.put(DEFAULT_TARGET, target.toString());
@@ -132,9 +134,10 @@ public class Configuration {
 
   /**
    * Get the OpenACC specific configuration information.
+   *
    * @return The OpenACC configuration object.
    */
-  public OpenAccConfiguration openACC(){
+  public OpenAccConfiguration openACC() {
     return _openacc;
   }
 
@@ -149,6 +152,7 @@ public class Configuration {
 
   /**
    * Get the current accelerator directive defined in the configuration.
+   *
    * @return Current accelerator value.
    */
   public AcceleratorDirective getCurrentDirective() {
@@ -242,5 +246,21 @@ public class Configuration {
     if(option != null) {
       _parameters.put(DEFAULT_DIRECTIVE, option);
     }
+  }
+
+  /**
+   * Enable the force pure option.
+   */
+  public void setForcePure() {
+    _forcePure = true;
+  }
+
+  /**
+   * Check whether the force pure option is enabled or not.
+   *
+   * @return If true, the function is enabled. Disabled otherwise.
+   */
+  public boolean isForcePure() {
+    return _forcePure;
   }
 }

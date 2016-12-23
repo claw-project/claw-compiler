@@ -24,7 +24,8 @@ public class GroupConfiguration {
    * @param type  Type of the group.
    * @param cPath Path to the transformation class.
    */
-  public GroupConfiguration(String name, GroupType type, String cPath, Class c) {
+  public GroupConfiguration(String name, GroupType type, String cPath, Class c)
+  {
     _name = name;
     _cPath = cPath;
     _type = type;

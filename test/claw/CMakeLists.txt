@@ -24,7 +24,8 @@ add_subdirectory(abstraction22) # parallelize with automatic promotion placed
 add_subdirectory(abstraction23) # parallelize with promotion of result var
 add_subdirectory(abstraction24) # parallelize forward with namedValue
 add_subdirectory(abstraction25) # parallelize forward non fct field
-add_subdirectory(abstraction26) # parallelize forward with scalra to 1d propagation
+add_subdirectory(abstraction26) # parallelize forward with scalar to 1d propagation
+add_subdirectory(abstraction27) # pure keyword
 
 add_subdirectory(call1)
 add_subdirectory(call2)   # with target clause
