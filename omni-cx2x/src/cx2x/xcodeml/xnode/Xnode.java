@@ -590,4 +590,10 @@ public class Xnode {
     }
     return false;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    return !(obj == null || !(obj instanceof Xnode))
+        && element() == ((Xnode) obj).element();
+  }
 }

@@ -16,6 +16,8 @@ import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
+import java.util.Collections;
+
 /**
  * A LoopFusion transformation is a dependent transformation. If two LoopFusion
  * transformation units shared the same fusion group and the same loop iteration
@@ -209,6 +211,12 @@ public class LoopFusion extends ClawTransformation {
 
     // Loops can only be merged if they are at the same level
     if(!XnodeUtil.hasSameParentBlock(_doStmts[0], other.getDoStmtAtIndex(0))) {
+      return false;
+    }
+
+    if(!XnodeUtil.isDirectSibling(_doStmts[0], other.getDoStmtAtIndex(0),
+        Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
+    {
       return false;
     }
 
