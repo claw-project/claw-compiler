@@ -253,12 +253,12 @@ function claw_f_process_dependencies()
   # current_src_dir:   Directory in which the current processed file is located
 
   dependencies=()
-  module_regex="^[[:space:]]*(USE|use)[[:space:]]*([^,|^ |^!]*)"
+  module_regex="^[[:space:]]*(USE|use)[[:space:]]+(, *INTRINSIC *::|, *intrinsic *::)?[[:space:]]*([^,|^ |^!]*)"
   while IFS= read -r line
   do
     if [[ $line =~ $module_regex ]]
     then
-      module_name="${BASH_REMATCH[2]}"
+      module_name="${BASH_REMATCH[3]}"
       dependencies+=("$module_name")
     fi
   done <$1
