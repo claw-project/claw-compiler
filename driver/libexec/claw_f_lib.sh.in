@@ -258,7 +258,7 @@ function claw_f_process_dependencies()
   do
     if [[ $line =~ $module_regex ]]
     then
-      module_name="${BASH_REMATCH[2]}"
+      module_name="${BASH_REMATCH[3]}"
       dependencies+=("$module_name")
     fi
   done <$1
