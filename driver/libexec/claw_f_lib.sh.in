@@ -253,7 +253,7 @@ function claw_f_process_dependencies()
   # current_src_dir:   Directory in which the current processed file is located
 
   dependencies=()
-  module_regex="^[[:space:]]*(USE|use)[[:space:]]*([^,|^ |^!]*)"
+  module_regex="^[[:space:]]*(USE|use)(, *INTRINSIC *::|, *intrinsic *::)?[[:space:]]*([^,|^ |^!]*)"
   while IFS= read -r line
   do
     if [[ $line =~ $module_regex ]]
