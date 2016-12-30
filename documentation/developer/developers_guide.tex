@@ -460,17 +460,55 @@ inheriting from \lstinline|ClawTransformation| or
 on the AST). The order of application is from top to down.
 
 
-\section{Add a transformation}
+\section{Add a new transformation}
 A transformation in the \clawfc is represented as a class that inherits from 
-the \lstinline|Transformation| base class or the 
-\lstinline|BlockTransformation| class.
+the \lstinline|ClawTranformation| or \lstinline|ClawBlockTransformation| 
+base class. In order to add a new transformation into the the CLAW Compiler, 
+the following steps must be done.
 
 \begin{enumerate}
 \item Create a new class that inherits from one of the base transformation 
-class.
-\item %TODO
-\item Add it to the configuration file.
+      class.
+\item Define the directive that will trigger the transformation and add it 
+      to the CLAW language parser.
+\item Detect and categorize the new transformation.      
+\item Add the transformation to the configuration file.
 \end{enumerate}
+
+As an example, the next 4 subsection describe those steps with more details. 
+
+\subsection{New transformation class}
+The transformation created at this step will be a simple independent 
+transformation. It will then inherits for \lstinline|ClawTransformation| class.
+
+\lstinputlisting
+  [
+    label=lst:myfirsttransformation.java, 
+    caption=MyFirstTransformation.java, 
+    language=java
+  ]{code/MyFirstTransformation.java}
+
+The transformation class shown in Listing \ref{lst:myfirsttransformation.java}
+is really simple. It just inherits from \lstinline|ClawTransformation| on line
+16. Therefore, it has to implements the \lstinline|analyze|, 
+\lstinline|transform| and \lstinline|canBeTransformedWith| methods as they are 
+abstract in the base class. 
+
+The \lstinline|analyze| method does not perform any check and just return 
+\lstinline|true| to tell the transformation engine that the actual 
+transformation can occur. 
+
+The \lstinline|transform| method is pretty simple. It delete the pragma that 
+triggered the transformation from the \gls{ast}. It will then not be in the 
+resulting transformed code.
+
+\subsection{Directive and CLAW language parser}
+
+\subsection{Detection and categorization}
+
+\subsection{Enable the new transformation}
+
+
 
 \chapter{\xcodeml and AST manipulation library}
 \label{chapter:astmanip}
