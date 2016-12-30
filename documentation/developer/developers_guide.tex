@@ -605,6 +605,23 @@ switch(analyzedPragma.getDirective()) {
 
 
 \subsection{Enable the new transformation}
+Finally, the new transformation needs to be enabled by adding it to the 
+configuration file. 
+
+Listing \ref{lst:exampleconfig} shows the new added line for the new 
+transformation class.
+
+\begin{lstlisting}[label=lst:exampleconfig, caption=claw-default.xml, language=xml]
+<!-- CLAW default configuration. This file should not be edited ! -->
+<claw version="0.3">
+  <!-- Part of file is omitted -->
+  <groups>
+    <!-- Part of file is omitted -->
+    <group type="independent" name="example-directive"
+      class="cx2x.translator.transformation.MyFirstTransformation" />
+  </groups>
+</claw>
+\end{lstlisting}
 
 
 
