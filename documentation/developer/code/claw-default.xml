@@ -1,0 +1,39 @@
+<!-- CLAW default configuration. This file should not be edited ! -->
+<claw version="0.3">
+  <!-- Transformation parameters -->
+  <global>
+    <!-- Default general values -->
+    <parameter key="default_target" value="gpu"/>
+    <parameter key="default_directive" value="openacc"/>
+  </global>
+  <!-- Transformation groups -->
+  <groups>
+    <!-- Low-level transformations -->
+    <group type="independent" name="xcodeml"
+      class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
+    <group type="independent" name="remove"
+      class="cx2x.translator.transformation.utility.UtilityRemove" />
+    <group type="independent" name="primitive"
+      class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
+    <group type="independent" name="array-transform"
+      class="cx2x.translator.transformation.loop.ArrayTransform" />
+    <group type="independent" name="loop-extract"
+      class="cx2x.translator.transformation.loop.LoopExtraction" />
+    <group type="dependent"   name="loop-fusion"
+      class="cx2x.translator.transformation.loop.LoopFusion" />
+    <group type="independent" name="loop-hoist"
+      class="cx2x.translator.transformation.loop.LoopHoist" />
+    <group type="independent" name="loop-interchange"
+      class="cx2x.translator.transformation.loop.LoopInterchange" />
+    <group type="independent" name="on-the-fly"
+      class="cx2x.translator.transformation.claw.ArrayToFctCall" />
+    <group type="independent" name="kcache"
+      class="cx2x.translator.transformation.claw.Kcaching" />
+      
+    <!-- High-level transformations -->
+    <group type="independent" name="parallelize"
+      class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
+    <group type="independent" name="parallelize-forward"
+      class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+  </groups>
+</claw>
