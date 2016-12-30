@@ -503,6 +503,83 @@ triggered the transformation from the \gls{ast}. It will then not be in the
 resulting transformed code.
 
 \subsection{Directive and CLAW language parser}
+Once we have a transformation class, we need a directive to trigger it. Listing
+\ref{lst:mydirective} is the directive that is used in this example.
+
+\begin{lstlisting}[label=lst:mydirective, caption=Example directive, language=fortran]
+!$claw mydirective
+\end{lstlisting}
+
+To parse this directive, two file need to be modified. First, the new directive
+needs to be added to the \lstinline|ClawDirective| enumeration. It is added as 
+the last element of the enumeration in the Listing \ref{lst:clawdirective}.
+
+\begin{lstlisting}[label=lst:clawdirective, caption=ClawDirective.java, language=java]
+package cx2x.translator.language.base;
+
+public enum ClawDirective {
+  ARRAY_TRANSFORM,
+  ARRAY_TO_CALL,
+  DEFINE,
+  IGNORE,
+  KCACHE,
+  LOOP_FUSION,
+  LOOP_INTERCHANGE,
+  LOOP_HOIST,
+  LOOP_EXTRACT,
+  PRIMITIVE,
+  PARALLELIZE,
+  REMOVE,
+  VERBATIM,
+  MYDIRECTIVE
+}
+\end{lstlisting}
+
+Then, the CLAW language parser has to be modified to understand this new 
+directive and return the correct value from the enumeration. 
+
+\begin{lstlisting}[label=lst:clawdirectiveantlr, caption=Claw.g4, language=java]
+grammar Claw;
+
+@header
+{
+import cx2x.translator.common.ClawConstant;
+import cx2x.translator.language.base.*;
+import cx2x.translator.language.common.*;
+import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.common.Utility;
+}
+
+/*----------------------------------------------------------------------------
+ * PARSER RULES
+ *----------------------------------------------------------------------------*/
+ 
+// Entry point of the parsing
+analyze returns [ClawLanguage l]
+  @init{ $l = new ClawLanguage(); }:
+  CLAW directive[$l] EOF
+;     
+ 
+directive[ClawLanguage l]:
+  // The new directive
+  MYDIRECTIVE { $l.setDirective(ClawDirective.MYDIRETIVE); }
+;
+
+/*----------------------------------------------------------------------------
+ * LEXER RULES
+ *----------------------------------------------------------------------------*/
+
+// Start point
+CLAW         : 'claw';
+MYDIRECTIVE  : 'mydirective';
+\end{lstlisting}
+
+In Listing \ref{lst:clawdirectiveantlr}, there is a minimal version of the 
+ANTLR grammar file of the CLAW language parser. The token 
+\lstinline|mydirective| is added in the lexer rules (line 33) and is then 
+used in the parser rules (line 24). ANTLR grammar file accepts Java code
+to be inserted during the parsing. On line 24, the enumeration value for 
+the new directive is set in the analyzed pragma object. 
 
 \subsection{Detection and categorization}
 
