@@ -582,6 +582,27 @@ to be inserted during the parsing. On line 24, the enumeration value for
 the new directive is set in the analyzed pragma object. 
 
 \subsection{Detection and categorization}
+The new directive has its transformation class and can be analyzed by the 
+CLAW language parser. 
+
+Now, it need to be detected in order to create the transformation instance. 
+This happens in the \lstinline|ClawXcodeMlTranslator| class. The 
+\lstinline|analyze| method detects all the pragmas in the translation unit
+and categorize them. 
+
+As shown in Listing \ref{lst:categorization}, a new case is added to the switch
+statement that categorize the transformation. Here, a new instance of 
+\lstinline|MyFirstTransformation| transformation is created and added to the
+correct group as long as its analysis step succeed.
+
+\begin{lstlisting}[label=lst:categorization, caption=ClawXcodeMlTranslator.java, language=java]
+switch(analyzedPragma.getDirective()) {
+  case MYDIRECTIVE:
+    addOrAbort(new MyFirstTransformation(analyzedPragma));
+    break;
+}
+\end{lstlisting}
+
 
 \subsection{Enable the new transformation}
 
