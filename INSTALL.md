@@ -4,11 +4,12 @@
 
 The CLAW Fortran compiler has the followings dependencies:
 * Java 1.7 or greater
-* yacc, lex
-* C/C++ compiler (supports C99)
-* Fortran compiler (supports Fortran 90)
-- MPI-2 or over
-* libxml2
+* Ant 1.7.1 or greater
+* yacc, lex (For OMNI Compiler)
+* C/C++ compiler (supports C99) (For OMNI Compiler)
+* Fortran compiler (supports Fortran 90) (For OMNI Compiler)
+* MPI-2 or greater (For OMNI Compiler)
+* libxml2 (For OMNI Compiler)
 * cmake and make
 
 
