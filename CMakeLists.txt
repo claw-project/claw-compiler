@@ -62,7 +62,7 @@ if(BUILD_OMNI)
     SOURCE_DIR ${OMNIC_DIR}
     CONFIGURE_COMMAND touch ${OMNIC_DIR}/configure.ac ${OMNIC_DIR}/aclocal.m4
     ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in
-    && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
+    && ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION} ${OMNI_MPI_CC} ${OMNI_MPI_FC}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
   )
