@@ -1,11 +1,12 @@
 PROGRAM test_abstraction14
  USE mo_column , ONLY: compute
- REAL :: q ( 1 : 20 , 1 : 60 , 1 : 2 )
  REAL :: t ( 1 : 60 , 1 : 20 )
  INTEGER :: nproma
  INTEGER :: nz
  INTEGER :: p
  INTEGER :: b
+ REAL :: q ( 1 : 20 , 1 : 60 , 1 : 2 )
+
 
  nproma = 20
  nz = 60
