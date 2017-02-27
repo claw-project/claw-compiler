@@ -1,7 +1,7 @@
 MODULE mo_column
 
 CONTAINS
- PURE SUBROUTINE compute_column ( nz , q , t , nproma )
+ SUBROUTINE compute_column ( nz , q , t , nproma )
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
@@ -10,6 +10,7 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
+
 
 !$acc data present(t,q,nproma,nz)
 !$acc parallel private(k,proma,c)

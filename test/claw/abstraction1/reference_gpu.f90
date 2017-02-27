@@ -7,8 +7,10 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
+
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
+
 
 !$acc data present(t,q,nproma,nz)
 !$acc parallel private(k,proma,c)

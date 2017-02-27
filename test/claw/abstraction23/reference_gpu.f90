@@ -11,6 +11,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
+
 !$acc data present(t,q,nproma,nz)
 !$acc parallel private(k,res,proma,c)
 !$acc loop
@@ -37,8 +38,10 @@ CONTAINS
   REAL , POINTER :: zp ( : , : )
   REAL , TARGET :: res ( 1 : nz , 1 : nproma )
   REAL , POINTER :: res_p ( : , : )
+
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
+
 
   DO k = 1 , nz , 1
    DO iter_nproma = 1 , nproma , 1
