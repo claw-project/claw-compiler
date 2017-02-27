@@ -4,11 +4,12 @@
 
 The CLAW Fortran compiler has the followings dependencies:
 * Java 1.7 or greater
-* yacc, lex
-* C/C++ compiler (supports C99)
-* Fortran compiler (supports Fortran 90)
-- MPI-2 or over
-* libxml2
+* Ant 1.7.1 or greater
+* yacc, lex (For OMNI Compiler)
+* C/C++ compiler (supports C99) (For OMNI Compiler)
+* Fortran compiler (supports Fortran 90) (For OMNI Compiler)
+* MPI-2 or greater (For OMNI Compiler)
+* libxml2 (For OMNI Compiler)
 * cmake and make
 
 
@@ -46,6 +47,32 @@ cmake -DCMAKE_INSTALL_PREFIX=<install_path> ..
 make
 make install
 ```
+
+##### Specific steps for Piz Daint
+On Piz Daint, specific steps as to be performed in order to have a successful
+compilation.
+
+First of all, Ant is not available on Piz Daint. To install it, follow the
+instruction [here](./INSTALL_Ant.md).
+
+On Piz Daint, the Cray MPI wrapper must be used regardless of the selected
+programming environment. So if you are compiling with PGI or GNU, use the
+following commands:
+
+```bash
+git clone git@github.com:C2SM-RCM/claw-compiler.git
+cd claw-compiler
+git submodule init
+git submodule update --remote
+mkdir build
+cd build
+FC=ftn CC=cc CXX=CC cmake -DCMAKE_INSTALL_PREFIX=<install_path> -DOMNI_MPI_FC="MPI_FC=ftn" -DOMNI_MPI_CC="MPI_CC=cc" ..
+make
+make install
+```
+
+It will use the PGI compiler or the GNU compiler going through the Cray MPI
+wrapper.
 
 
 #### Test your installation with an example
