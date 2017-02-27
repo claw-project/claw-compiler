@@ -1,4 +1,5 @@
 # List of test directories
+set(TEST_SET claw-abstraction)
 add_subdirectory(abstraction1) # simple 1d
 add_subdirectory(abstraction2) # simple 2d
 add_subdirectory(abstraction3) # openmp

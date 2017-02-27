@@ -8,6 +8,22 @@ set(CLEAN_TEST_TARGET clean-transformation)
 add_custom_target(${BUILD_TEST_TARGET})
 add_custom_target(${CLEAN_TEST_TARGET})
 
+# Define some test case sets
+add_custom_target(${BUILD_TEST_TARGET}-claw-directive)
+add_custom_target(${CLEAN_TEST_TARGET}-claw-directive)
+add_custom_target(${BUILD_TEST_TARGET}-claw-abstraction)
+add_custom_target(${CLEAN_TEST_TARGET}-claw-abstraction)
+add_custom_target(${BUILD_TEST_TARGET}-driver)
+add_custom_target(${CLEAN_TEST_TARGET}-driver)
+add_custom_target(${BUILD_TEST_TARGET}-loops)
+add_custom_target(${CLEAN_TEST_TARGET}-loops)
+add_custom_target(${BUILD_TEST_TARGET}-openacc)
+add_custom_target(${CLEAN_TEST_TARGET}-openacc)
+add_custom_target(${BUILD_TEST_TARGET}-openmp)
+add_custom_target(${CLEAN_TEST_TARGET}-openmp)
+add_custom_target(${BUILD_TEST_TARGET}-utilities)
+add_custom_target(${CLEAN_TEST_TARGET}-utilities)
+
 # List of test directories
 add_subdirectory(claw)
 add_subdirectory(driver)
