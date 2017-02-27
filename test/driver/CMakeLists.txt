@@ -1,4 +1,5 @@
 # List of test cases targeting the driver
+set(TEST_SET driver)
 add_subdirectory(force)   # --force option
 add_subdirectory(ignore1) # test the ignore directive (driver directive)
 add_subdirectory(ignore2) # test the ignore directive (driver directive)
@@ -13,4 +14,3 @@ add_subdirectory(dependencies2)
 add_subdirectory(dependencies3)
 add_subdirectory(dependencies4)
 add_subdirectory(dependencies5)
-

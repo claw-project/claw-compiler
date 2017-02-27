@@ -1,4 +1,5 @@
 # List of test directories to be executed
+set(TEST_SET loops)
 add_subdirectory(extract1)
 add_subdirectory(extract2)
 add_subdirectory(extract3)

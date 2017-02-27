@@ -1,4 +1,5 @@
 # List of test directories to be executed
+set(TEST_SET openacc)
 add_subdirectory(array1) # simple transformation with 1 dimension
 add_subdirectory(array2) # simple transformation with 2 dimension
 #add_subdirectory(array3) # on hold for the moment
