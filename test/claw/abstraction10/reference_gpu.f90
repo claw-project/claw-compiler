@@ -1,4 +1,6 @@
 MODULE mo_column
+ PRIVATE :: compute_column
+ PUBLIC :: compute_column_public
 
 CONTAINS
  SUBROUTINE compute_column ( nz , q , t , nproma )
@@ -7,8 +9,10 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
+
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
+
 
 !$acc data present(t,q,nproma,nz)
 !$acc parallel private(k,proma,c)
@@ -30,7 +34,9 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+
   INTEGER , INTENT(IN) :: nproma
+
 
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_column_public
