@@ -9,20 +9,10 @@ add_custom_target(${BUILD_TEST_TARGET})
 add_custom_target(${CLEAN_TEST_TARGET})
 
 # Define some test case sets
-add_custom_target(${BUILD_TEST_TARGET}-claw-directive)
-add_custom_target(${CLEAN_TEST_TARGET}-claw-directive)
-add_custom_target(${BUILD_TEST_TARGET}-claw-abstraction)
-add_custom_target(${CLEAN_TEST_TARGET}-claw-abstraction)
-add_custom_target(${BUILD_TEST_TARGET}-driver)
-add_custom_target(${CLEAN_TEST_TARGET}-driver)
-add_custom_target(${BUILD_TEST_TARGET}-loops)
-add_custom_target(${CLEAN_TEST_TARGET}-loops)
-add_custom_target(${BUILD_TEST_TARGET}-openacc)
-add_custom_target(${CLEAN_TEST_TARGET}-openacc)
-add_custom_target(${BUILD_TEST_TARGET}-openmp)
-add_custom_target(${CLEAN_TEST_TARGET}-openmp)
-add_custom_target(${BUILD_TEST_TARGET}-utilities)
-add_custom_target(${CLEAN_TEST_TARGET}-utilities)
+foreach(TCSET claw-directive claw-abstraction driver loops openacc openmp utilities)
+  add_custom_target(${BUILD_TEST_TARGET}-${TCSET})
+  add_custom_target(${CLEAN_TEST_TARGET}-${TCSET})
+endforeach()
 
 # List of test directories
 add_subdirectory(claw)
@@ -31,7 +21,6 @@ add_subdirectory(loops)
 add_subdirectory(utilities)
 add_subdirectory(openacc)
 add_subdirectory(openmp)
-
 
 # Custom target to run the full transformation test suite
 add_custom_target(test-suite
