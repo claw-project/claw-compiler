@@ -1,24 +1,22 @@
 MODULE mo_column
  TYPE :: ty_column
- CONTAINS
-  PROCEDURE , PASS :: compute_column => compute_column
+  CONTAINS
+  PROCEDURE :: compute_column
  END TYPE ty_column
 
 CONTAINS
  SUBROUTINE compute_column ( this , nz , q , t , nproma )
-  CLASS ( ty_column ) :: this
+  CLASS(ty_column) :: this
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
-!$acc data present(q,nproma,nz,t)
-!$acc parallel private(k,proma,c,this)
+!$acc data present(t,q,nproma,nz)
+!$acc parallel private(this,k,proma,c)
 !$acc loop
   DO proma = 1 , nproma , 1
    c = 5.345

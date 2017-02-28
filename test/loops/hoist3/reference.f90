@@ -1,6 +1,5 @@
 PROGRAM loop_fusion
 
-
  CALL clawloop ( )
 END PROGRAM loop_fusion
 
@@ -11,8 +10,6 @@ SUBROUTINE clawloop ( )
  INTEGER :: jend = 4
  INTEGER :: kend = 2
  INTEGER :: k
-
-
 
  DO i = 0 , iend , 1
 !$claw loop-hoist(j,k) target(cpu)

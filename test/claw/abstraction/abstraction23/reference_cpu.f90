@@ -11,7 +11,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
   c = 5.345
   DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
@@ -36,10 +35,8 @@ CONTAINS
   REAL , POINTER :: zp ( : , : )
   REAL , TARGET :: res ( 1 : nz , 1 : nproma )
   REAL , POINTER :: res_p ( : , : )
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
-
 
   DO k = 1 , nz , 1
    DO iter_nproma = 1 , nproma , 1

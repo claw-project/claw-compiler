@@ -1,6 +1,5 @@
 PROGRAM array4_test
 
-
  CALL claw_test ( )
 END PROGRAM array4_test
 
@@ -10,10 +9,8 @@ SUBROUTINE claw_test ( )
  INTEGER :: vec3 ( 0 : 10 )
  INTEGER :: vec4 ( 0 : 20 )
  INTEGER :: vec5 ( 0 : 20 )
-
  INTEGER :: claw_induction_0
  INTEGER :: claw_induction_1
-
 
  vec1 ( 0 : 10 ) = 0
  vec2 ( 0 : 10 ) = 100

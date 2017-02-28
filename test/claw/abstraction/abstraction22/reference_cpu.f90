@@ -8,10 +8,8 @@ CONTAINS
   REAL , TARGET :: z ( 1 : nproma , 1 : nz )
   INTEGER :: k
   REAL , POINTER :: zp ( : , : )
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
-
 
   DO k = 1 , nz , 1
    DO iter_nproma = 1 , nproma , 1
@@ -28,10 +26,8 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1

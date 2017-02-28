@@ -75,7 +75,6 @@ public class Xname {
   public static final String ATTR_LANGUAGE = "language";
   public static final String ATTR_LINENO = "lineno";
   public static final String ATTR_LOCAL_NAME = "local_name";
-  public static final String ATTR_MEMBER = "member";
   public static final String ATTR_NAME = "name";
   public static final String ATTR_REPEAT_COUNT = "repeat_count";
   public static final String ATTR_REF = "ref";

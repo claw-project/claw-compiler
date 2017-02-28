@@ -5,9 +5,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-
   INTEGER , INTENT(IN) :: nproma
-
 
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute
@@ -18,10 +16,8 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
 !$acc data present(t,q,nproma,nz)
 !$acc parallel private(k,proma,c)

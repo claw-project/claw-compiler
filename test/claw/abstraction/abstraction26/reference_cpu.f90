@@ -6,9 +6,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   REAL , INTENT(INOUT) :: z ( : )
-
   INTEGER , INTENT(IN) :: nproma
-
 
   CALL compute_column ( nz , q , t , z , nproma = nproma )
  END SUBROUTINE compute
@@ -20,10 +18,8 @@ CONTAINS
   REAL , INTENT(INOUT) :: z ( : )
   INTEGER :: k
   REAL :: c
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1

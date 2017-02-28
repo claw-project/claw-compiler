@@ -1,7 +1,7 @@
 MODULE mo_column
 
 CONTAINS
- SUBROUTINE compute_column ( nz , q , t , nproma )
+ PURE SUBROUTINE compute_column ( nz , q , t , nproma )
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
@@ -10,7 +10,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1

@@ -1,6 +1,5 @@
 PROGRAM testverbatim
 
-
 IF (.FALSE.) THEN
  PRINT * ,"These lines"
  PRINT * ,"are not printed"

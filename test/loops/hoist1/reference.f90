@@ -1,6 +1,5 @@
 PROGRAM loop_fusion
 
-
  CALL clawloop ( )
 END PROGRAM loop_fusion
 
@@ -11,8 +10,6 @@ SUBROUTINE clawloop ( )
  INTEGER :: jend = 4
  INTEGER :: kend = 2
  INTEGER :: k
-
-
 
  DO i = 0 , iend , 1
   DO j = 0 , jend , 1

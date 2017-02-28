@@ -170,13 +170,7 @@ public class ParallelizeForward extends ClawTransformation {
 
     detectParameterMapping(_fctCall);
 
-    boolean isTypeBoundProcedure = false;
-    if(_fctCall.firstChild().opcode() == Xcode.FMEMBERREF){
-      isTypeBoundProcedure = true;
-      _calledFctName = _fctCall.firstChild().getAttribute(Xattr.MEMBER);
-    } else {
-      _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
-    }
+    _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
 
     XfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_calledFctName);
@@ -190,10 +184,11 @@ public class ParallelizeForward extends ClawTransformation {
 
     XmoduleDefinition parentModule = parentFctDef.findParentModule();
 
-    if(isTypeBoundProcedure) {
+    String fctType = _fctCall.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE);
+    if(fctType.startsWith(Xtype.PREFIX_PROCEDURE)) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * matchSeq the correct function in the typeTable.
-       * TODO if there is a rename.<
+       * TODO if there is a rename.
        * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       if(id == null) {
@@ -208,7 +203,6 @@ public class ParallelizeForward extends ClawTransformation {
         _fctType = (XfunctionType) xcodeml.getTypeTable().get(id.getType());
       }
     } else {
-      String fctType = _fctCall.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE);
       Xtype rawType = xcodeml.getTypeTable().get(fctType);
       if(rawType instanceof XfunctionType) {
         _fctType = (XfunctionType) rawType;
@@ -398,10 +392,14 @@ public class ParallelizeForward extends ClawTransformation {
     /* Compute the position of the first new arguments. In the case of a
      * type-bound procedure call, the first parameter declared in the procedure
      * is not actually passed as an argument. In this case, we add an offset of
-     * one to the starting arguments. */
+     * one to the starting arguments.
+     * TODO the check might be change to fit with the XcodeML/F2008 specs. The
+     * TODO cont: attribute data_ref will probably be gone and replaced by a
+     * TODO cont: FmemberRef element
+     */
     int argOffset = 0;
     if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
-        && _fctCall.firstChild().opcode().equals(Xcode.FMEMBERREF))
+        && _fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF))
     {
       argOffset = 1;
     }
