@@ -1,13 +1,10 @@
 PROGRAM loop_fusion
 
-
  CALL clawloop ( )
 END PROGRAM loop_fusion
 
 SUBROUTINE clawloop ( )
  INTEGER :: i
-
-
 
 !$claw loop-fusion group(g1)
  DO i = 1 , 5 , 1

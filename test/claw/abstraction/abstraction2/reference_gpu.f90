@@ -8,12 +8,10 @@ CONTAINS
   INTEGER :: k
   REAL :: c
   REAL :: d
-
   INTEGER , INTENT(IN) :: nx
   INTEGER :: i
   INTEGER , INTENT(IN) :: ny
   INTEGER :: j
-
 
 !$acc data present(q,nz,ny,nx,t)
 !$acc parallel private(k,j,i,d,c)

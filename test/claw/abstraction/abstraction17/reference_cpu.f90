@@ -7,10 +7,8 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1
@@ -28,7 +26,6 @@ CONTAINS
  CONTAINS
   FUNCTION test_contains ( )
    INTEGER :: test_contains
-
 
    test_contains = 10
   END FUNCTION test_contains

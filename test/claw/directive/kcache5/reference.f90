@@ -4,7 +4,6 @@ PROGRAM claw_test
  INTEGER :: jstart = 0
  INTEGER :: jend = 20
 
-
  CALL kcache ( istart , iend , jstart , jend )
 END PROGRAM claw_test
 
@@ -20,10 +19,8 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  REAL ( KIND= 8 ) :: array8 ( istart : iend , istart : iend )
  REAL ( KIND= 8 ) :: array9 ( istart : iend , istart : iend )
  REAL ( KIND= 8 ) :: array10 ( istart : iend , istart : iend )
-
  REAL ( KIND= 8 ) :: array8_k_m1
  REAL ( KIND= 8 ) :: array9_k_m1
-
 
  DO i = istart , iend , 1
   array6 ( i , 1 ) = 1.0

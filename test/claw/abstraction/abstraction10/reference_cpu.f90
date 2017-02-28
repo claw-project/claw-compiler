@@ -1,6 +1,4 @@
 MODULE mo_column
- PRIVATE :: compute_column
- PUBLIC :: compute_column_public
 
 CONTAINS
  SUBROUTINE compute_column ( nz , q , t , nproma )
@@ -9,10 +7,8 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: k
   REAL :: c
-
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1
@@ -32,9 +28,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-
   INTEGER , INTENT(IN) :: nproma
-
 
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_column_public

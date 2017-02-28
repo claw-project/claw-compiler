@@ -1,7 +1,6 @@
 PROGRAM testignore
 
 
-
   REAL :: real_var_1, &
           real_var_2, &
           real_var_3, &

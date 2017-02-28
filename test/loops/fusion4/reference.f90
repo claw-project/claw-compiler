@@ -1,6 +1,5 @@
 PROGRAM loop_fusion
 
-
  CALL clawloop ( )
 END PROGRAM loop_fusion
 
@@ -8,8 +7,6 @@ SUBROUTINE clawloop ( )
  INTEGER :: i
  INTEGER :: j
  INTEGER :: k
-
-
 
 !$claw loop-fusion collapse(3)
  DO i = 1 , 5 , 1
