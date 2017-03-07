@@ -581,7 +581,7 @@ public class XcodeML extends Xnode {
    *                  parameter.
    */
   public Xnode createAndAddParamIfNotExists(String nameValue, String type,
-                                           XfunctionType fctType)
+                                            XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()) {
       if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {

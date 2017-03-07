@@ -1159,10 +1159,10 @@ public class XnodeUtil {
 
     Xnode nextSibling = start.nextSibling();
     while(nextSibling != null) {
-      if(nextSibling.equals(end)){
+      if(nextSibling.equals(end)) {
         return true;
       }
-      if(skippedNodes.contains(nextSibling.opcode())){
+      if(skippedNodes.contains(nextSibling.opcode())) {
         nextSibling = nextSibling.nextSibling();
       } else {
         return false;

@@ -226,7 +226,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       // 2.4 create do statements
       Xnode inductionVar = xcodeml.createVar(Xname.TYPE_F_INT, inductionVars[i],
-              Xscope.LOCAL);
+          Xscope.LOCAL);
       Xnode range;
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
         // Allocatable array

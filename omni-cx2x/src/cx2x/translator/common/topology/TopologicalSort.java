@@ -4,7 +4,10 @@
  */
 package cx2x.translator.common.topology;
 
-import java.util.*; // For List, Map.
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A linear-time algorithm for computing a topological sort of a directed

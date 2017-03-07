@@ -256,7 +256,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       // Get all the use statements in the fct and module definitions
       List<Xdecl> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
-      if(parentModule != null){
+      if(parentModule != null) {
         uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
       }
 
@@ -443,7 +443,7 @@ public class ParallelizeForward extends ClawTransformation {
         if(!_flatten) {
           Xnode param =
               xcodeml.createAndAddParamIfNotExists(var, type, _parentFctType);
-          if(param != null){
+          if(param != null) {
             param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
           }
         }
