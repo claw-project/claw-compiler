@@ -144,7 +144,7 @@ public class IterationSpace {
   }
 
   /**
-   * Analyze the dependece information at each level and try to merge
+   * Analyze the dependence information at each level and try to merge
    * independent do statements.
    *
    * @param xcodeml     Current XcodeML/F program unit.

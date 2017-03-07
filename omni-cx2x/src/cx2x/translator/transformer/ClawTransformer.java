@@ -77,7 +77,7 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * Get the configuration object sotred in the transformer.
+   * Get the configuration object stored in the transformer.
    *
    * @return Configuration object.
    */

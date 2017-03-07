@@ -452,7 +452,7 @@ public class TransformationHelper {
    * Declare induction variables for dimensions if there are not present.
    *
    * @param dimensions List of dimensions.
-   * @param fctDef     Function defintion in which variable are created.
+   * @param fctDef     Function definition in which variable are created.
    * @param xcodeml    Current XcodeML program unit.
    */
   public static void declareInductionVariables(List<ClawDimension> dimensions,

@@ -48,7 +48,7 @@ public class DependenceAnalysisTest {
     List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
     assertEquals(2, functions.size());
 
-    // Match all the pargma
+    // Match all the pragma
     List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
     assertEquals(1, pragmas.size());
 
