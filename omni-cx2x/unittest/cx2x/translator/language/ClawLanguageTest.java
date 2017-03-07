@@ -935,7 +935,7 @@ public class ClawLanguageTest {
         Arrays.asList("i", "j"), Collections.singletonList(Target.CPU));
 
     analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic)", "v", "f",
-        Arrays.asList("i", "j"), Arrays.asList(Target.MIC));
+        Arrays.asList("i", "j"), Collections.singletonList(Target.MIC));
 
     analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic, gpu)", "v", "f",
         Arrays.asList("i", "j"), Arrays.asList(Target.MIC, Target.GPU));
