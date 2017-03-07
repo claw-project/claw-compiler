@@ -5,7 +5,7 @@
 
 package cx2x.translator.common.topology;
 
-import java.util.*; // For HashMap, HashSet
+import java.util.*;
 
 /**
  * A class representing a directed graph.  Internally, the class is represented

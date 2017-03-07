@@ -141,7 +141,7 @@ public class XfunctionType extends Xtype {
 
 
   /**
-   * Check if a parameter is part of the function defintion.
+   * Check if a parameter is part of the function definition.
    *
    * @param paramName Parameter's name.
    * @return True if the parameter is found in the function definition. False

@@ -115,7 +115,7 @@ public class LoopFusion extends ClawTransformation {
             _claw.getPragma().lineNo());
         return false;
       }
-      _doStmts = new Xnode[]{ doStmt };
+      _doStmts = new Xnode[]{doStmt};
       return true;
     }
   }

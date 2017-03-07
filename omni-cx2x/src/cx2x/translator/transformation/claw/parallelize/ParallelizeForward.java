@@ -28,8 +28,8 @@ import java.util.*;
  * signatures to function call and function in which the call is nested if
  * needed.
  * <p>
- * During the tranformation, a new "CLAW" XcodeML module file is generated
- * if the transformation has to be applied accross several file unit. This
+ * During the transformation, a new "CLAW" XcodeML module file is generated
+ * if the transformation has to be applied across several file unit. This
  * file will be located in the same directory as the original XcodeML module
  * file and has the following naming structure: module_name.claw.xmod
  *
@@ -53,7 +53,7 @@ public class ParallelizeForward extends ClawTransformation {
   private Xnode _outerDoStatement;
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
-  private boolean _isNestedInAssignement;
+  private boolean _isNestedInAssignment;
 
 
   /**
@@ -83,7 +83,7 @@ public class ParallelizeForward extends ClawTransformation {
     if(next.opcode() == Xcode.EXPRSTATEMENT
         || next.opcode() == Xcode.FASSIGNSTATEMENT)
     {
-      _isNestedInAssignement = next.opcode() == Xcode.FASSIGNSTATEMENT;
+      _isNestedInAssignment = next.opcode() == Xcode.FASSIGNSTATEMENT;
       _fctCall = next.matchSeq(Xcode.FUNCTIONCALL);
       if(_fctCall != null) {
         return analyzeForward(xcodeml);
@@ -121,8 +121,8 @@ public class ParallelizeForward extends ClawTransformation {
    * statements.
    *
    * @param xcodeml Current XcodeML file unit.
-   * @param doStmt  First do statement to start the analyzis.
-   * @return True if the analysis succed. False otehrwise.
+   * @param doStmt  First do statement to start the analysis.
+   * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt) {
     _innerDoStatement = doStmt;
@@ -177,7 +177,7 @@ public class ParallelizeForward extends ClawTransformation {
     XfunctionDefinition parentFctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
     if(parentFctDef == null) {
-      xcodeml.addError("Parellilize directive is not nested in a " +
+      xcodeml.addError("Parallelize directive is not nested in a " +
           "function/subroutine.", _claw.getPragma().lineNo());
       return false;
     }
@@ -256,7 +256,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       // Get all the use statements in the fct and module definitions
       List<Xdecl> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
-      if(parentModule != null){
+      if(parentModule != null) {
         uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
       }
 
@@ -278,7 +278,7 @@ public class ParallelizeForward extends ClawTransformation {
    * Get all the mapping between local variable and parameter names in the
    * function call.
    *
-   * @param fctCall Fonction call to be analyzed.
+   * @param fctCall Function call to be analyzed.
    */
   private void detectParameterMapping(Xnode fctCall) {
     if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
@@ -443,7 +443,7 @@ public class ParallelizeForward extends ClawTransformation {
         if(!_flatten) {
           Xnode param =
               xcodeml.createAndAddParamIfNotExists(var, type, _parentFctType);
-          if(param != null){
+          if(param != null) {
             param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
           }
         }
@@ -578,7 +578,7 @@ public class ParallelizeForward extends ClawTransformation {
   }
 
   /**
-   * Apply promotion to the result return variable of a foward call.
+   * Apply promotion to the result return variable of a forward call.
    *
    * @param xcodeml Current XcodeML program unit.
    * @throws IllegalTransformationException If XcodeML transformation cannot be
@@ -587,7 +587,7 @@ public class ParallelizeForward extends ClawTransformation {
   private void updateResultVar(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(_isNestedInAssignement) {
+    if(_isNestedInAssignment) {
       Xnode assignment = _claw.getPragma().nextSibling();
       if(assignment == null
           || !_fctType.hasAttribute(ClawAttr.OVER.toString()))
@@ -624,7 +624,7 @@ public class ParallelizeForward extends ClawTransformation {
         promotionInfo = _promotions.get(varInLhs.value());
       }
 
-      // Adapte array index to reflect the new return type
+      // Adapt array index to reflect the new return type
       if(lhs.opcode() == Xcode.FARRAYREF) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
           Xnode indexRange = xcodeml.createEmptyAssumedShaped();
@@ -641,7 +641,7 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       // If the array is a target, check if we have to promote a pointer
-      adpatPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
+      adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
           promotionInfo, dimensions);
     }
   }
@@ -667,7 +667,7 @@ public class ParallelizeForward extends ClawTransformation {
   }
 
   /**
-   * Propagate possible promotion in assignements statements in the parent
+   * Propagate possible promotion in assignments statements in the parent
    * subroutine of the function call.
    *
    * @param xcodeml     Current XcodeML program unit.
@@ -678,7 +678,7 @@ public class ParallelizeForward extends ClawTransformation {
                                   ClawTransformer transformer)
       throws IllegalTransformationException
   {
-    // Get all the assignement statements in the function definiton
+    // Get all the assignment statements in the function definition
     XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
 
     // Retrieve information of previous forward transformation in the same fct
@@ -709,7 +709,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       List<Xnode> varsInRhs = rhs.matchAll(Xcode.VAR);
       for(Xnode var : varsInRhs) {
-        // Check if the assignement statement uses a promoted variable
+        // Check if the assignment statement uses a promoted variable
         if(_promotedVar.contains(var.value())
             && var.matchAncestor(Xcode.FUNCTIONCALL) == null
             && lhs.opcode() == Xcode.FARRAYREF)
@@ -727,7 +727,7 @@ public class ParallelizeForward extends ClawTransformation {
           TransformationHelper.declareInductionVariables(dimensions,
               parentFctDef, xcodeml);
 
-          // Generate the do statements and move the assignement statement in
+          // Generate the do statements and move the assignment statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           assignment.insertAfter(doStmt.getOuterStatement());
           doStmt.getInnerStatement().body().
@@ -741,14 +741,14 @@ public class ParallelizeForward extends ClawTransformation {
                 _parentFctType, dimensions, _claw, xcodeml, null);
             _promotions.put(varInLhs.value(), promotionInfo);
 
-            // TODO if #38 is implemented, the varibale has to be put either in
+            // TODO if #38 is implemented, the variable has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
             _promotedWithBeforeOver.add(varInLhs.value());
           } else {
             promotionInfo = _promotions.get(varInLhs.value());
           }
 
-          // Adapt the reference in the assignement statement
+          // Adapt the reference in the assignment statement
           TransformationHelper.adaptArrayReferences(_promotedWithBeforeOver, 0,
               assignment, _promotions, induction, emptyInd, emptyInd, xcodeml);
           TransformationHelper.adaptArrayReferences(_promotedWithMiddleOver, 0,
@@ -758,7 +758,7 @@ public class ParallelizeForward extends ClawTransformation {
 
           // If the array is a target, check if we have to promote a pointer
           if(!previouslyPromoted.contains(varInLhs.value().toLowerCase())) {
-            adpatPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
+            adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
                 promotionInfo, dimensions);
 
             // TODO centralized info
@@ -766,8 +766,8 @@ public class ParallelizeForward extends ClawTransformation {
           }
 
           break;
-          /* if one var in the rhs of the assignement statement was
-           * promoted it's enough and we can switch to the next assignement
+          /* if one var in the rhs of the assignment statement was
+           * promoted it's enough and we can switch to the next assignment
            * statement. */
         }
       }
@@ -781,14 +781,14 @@ public class ParallelizeForward extends ClawTransformation {
    *
    * @param varType     Type of the promoted variable.
    * @param fieldId     Name of the promoted variable.
-   * @param fctDef      Function definition in which assignement statements are
+   * @param fctDef      Function definition in which assignment statements are
    *                    checked.
    * @param xcodeml     Current XcodeML program unit.
    * @param pointeeInfo PromotionInformation about the promoted variable.
    * @param dimensions  List of dimensions to add.
    * @throws IllegalTransformationException If XcodeML modifications failed.
    */
-  private void adpatPointer(XbasicType varType, String fieldId,
+  private void adaptPointer(XbasicType varType, String fieldId,
                             XfunctionDefinition fctDef, XcodeProgram xcodeml,
                             PromotionInfo pointeeInfo,
                             List<ClawDimension> dimensions)

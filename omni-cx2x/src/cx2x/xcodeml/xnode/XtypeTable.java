@@ -37,7 +37,7 @@ public class XtypeTable extends Xnode {
   private static final String INT_HASH_PREFIX = "I";
   private static final String LOGICAL_HASH_PREFIX = "L";
   private static final String REAL_HASH_PREFIX = "R";
-  
+
   private final Map<String, Xtype> _table;
 
   /**

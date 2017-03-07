@@ -5,12 +5,6 @@
 
 package cx2x.translator.config;
 
-import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.helper.target.Target;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Define the possible execution mode for OpenACC.
  *

@@ -91,7 +91,7 @@ public class Configuration {
   }
 
   /**
-   * Constructs basid configuration object.
+   * Constructs basic configuration object.
    *
    * @param dir    Accelerator directive language.
    * @param target Target architecture.
@@ -183,7 +183,7 @@ public class Configuration {
   }
 
   /**
-   * Read all the group element and store theie information in a list of
+   * Read all the group element and store their information in a list of
    * GroupConfiguration objects.
    *
    * @param groupsNode Parent element "groups" for the group elements.

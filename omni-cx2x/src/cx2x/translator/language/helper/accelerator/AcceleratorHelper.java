@@ -32,7 +32,8 @@ public class AcceleratorHelper {
    *                enable and where the start pragma is located.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
-   * @param fctDef  Function definiton in which do statements will be decorated.
+   * @param fctDef  Function definition in which do statements will be
+   *                decorated.
    */
   public static void generateLoopSeq(ClawLanguage claw, XcodeProgram xcodeml,
                                      XfunctionDefinition fctDef)
@@ -158,14 +159,14 @@ public class AcceleratorHelper {
   }
 
   /**
-   * Get all the function variables that are input/ouput parameters.
+   * Get all the function variables that are input/output parameters.
    *
    * @param xcodeml Current XcodeML program unit.
    * @param fctDef  Function definition to look in.
    * @return List of variables names that are function input/output.
    */
-  public static List<String> getPresentVariabes(XcodeProgram xcodeml,
-                                                XfunctionDefinition fctDef)
+  public static List<String> getPresentVariables(XcodeProgram xcodeml,
+                                                 XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
     Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();

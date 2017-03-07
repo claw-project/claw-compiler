@@ -40,16 +40,16 @@ import java.util.*;
  * <li> Automatic promotion is applied to all arrays with intent in, out or
  * inout.
  * <li> Propagated promotion is applied to all scalars or arrays used in an
- * assign statement at the lhs and where a promotted variable is used on the
+ * assign statement at the lhs and where a promoted variable is used on the
  * rhs.
  * <li> Do statements over the additional dimensions are added as an inner
- * loop wrapping each assign statements including promtted variables.
+ * loop wrapping each assign statements including promoted variables.
  * </ul>
  * <p>
  * Generation of OpenACC directives:<ul>
  * <li> acc routine seq is generated for subroutine called from the parallelized
  * subroutine if they are located in the same translation unit.
- * <li> acc data region with corresponding present clause for all promotted
+ * <li> acc data region with corresponding present clause for all promoted
  * variables with the intent in, out or inout.
  * <li> acc parallel region is generated to wrap all the body of the subroutine.
  * <li> acc private clause is added to the parallel directive for all local
@@ -194,10 +194,10 @@ public class Parallelize extends ClawTransformation {
     }
 
     /* If the data clause if defined at least once, manual promotion is the
-     * rule. The array idenitfiers defined in the data clauses will be used as
+     * rule. The array identifiers defined in the data clauses will be used as
      * the list of array to be promoted.
      * In the analysis, we control that all defined arrays in the data clauses
-     * are actual delcared variables. */
+     * are actual declared variables. */
     for(List<String> data : _claw.getOverDataClauseValues()) {
       for(String d : data) {
         if(!_fctDef.getSymbolTable().contains(d)) {
@@ -360,7 +360,7 @@ public class Parallelize extends ClawTransformation {
     NestedDoStatement loops =
         new NestedDoStatement(getOrderedDimensionsFromDefinition(0), xcodeml);
 
-    /* Subroutine/function can have a contains section with inner subtourines or
+    /* Subroutine/function can have a contains section with inner subroutines or
      * functions. The newly created (nested) do statements should stop before
      * this contains section if it exists. */
     Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
@@ -379,7 +379,7 @@ public class Parallelize extends ClawTransformation {
 
     // Generate the data region
     List<String> presents =
-        AcceleratorHelper.getPresentVariabes(xcodeml, _fctDef);
+        AcceleratorHelper.getPresentVariables(xcodeml, _fctDef);
     AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents,
         loops.getOuterStatement(), loops.getOuterStatement());
 

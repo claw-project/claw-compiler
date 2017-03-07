@@ -136,7 +136,7 @@ public class XglobalDeclTable extends Xnode {
 
   /**
    * Retrieve function definition in the current declaration table or
-   * recursively in the modules' delcaration tables.
+   * recursively in the modules' declaration tables.
    *
    * @param fctName Function's name.
    * @return The function definition if found. Null otherwise.

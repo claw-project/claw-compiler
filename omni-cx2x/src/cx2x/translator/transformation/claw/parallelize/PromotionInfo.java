@@ -19,7 +19,7 @@ public class PromotionInfo {
 
 
   /**
-   * Contructs a new PromotionInfo object with all its information.
+   * Constructs a new PromotionInfo object with all its information.
    *
    * @param id              Identifier of the promoted variable.
    * @param baseDimension   Number of dimensions before the promotion.

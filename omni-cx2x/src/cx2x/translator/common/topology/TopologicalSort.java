@@ -4,7 +4,10 @@
  */
 package cx2x.translator.common.topology;
 
-import java.util.*; // For List, Map.
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A linear-time algorithm for computing a topological sort of a directed
@@ -22,7 +25,7 @@ import java.util.*; // For List, Map.
  * algorithm.  We begin by constructing the reverse graph G^{rev} from the
  * source graph, then running a depth-first search from each node in the graph.
  * Whenever we finish expanding a node, we add it to a list of visited nodes.
- * The intution behind this algorithm is that a DFS in the reverse graph will
+ * The intuition behind this algorithm is that a DFS in the reverse graph will
  * visit every node that is an ancestor of the given node before it finishes
  * expanding out any node.  Since those nodes will be added to the sorted order
  * before the expanded node, we have the desired property of the topological

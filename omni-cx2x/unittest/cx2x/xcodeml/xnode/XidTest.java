@@ -5,10 +5,10 @@
 
 package cx2x.xcodeml.xnode;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
 import helper.XmlHelper;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test the features of the Xid class

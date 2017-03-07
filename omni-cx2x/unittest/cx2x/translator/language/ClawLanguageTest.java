@@ -231,10 +231,11 @@ public class ClawLanguageTest {
 
   /**
    * Assert the information sorted in the target list.
+   *
    * @param l       The current ClawLanguage object.
    * @param targets List of expected targets.
    */
-  private void assertTargets(ClawLanguage l, List<Target> targets){
+  private void assertTargets(ClawLanguage l, List<Target> targets) {
     if(targets != null) {
       assertTrue(l.hasTargetClause());
       assertEquals(targets.size(), l.getTargetClauseValues().size());
@@ -521,7 +522,6 @@ public class ClawLanguageTest {
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
             "target(gpu)",
         "i", "istart", "iend", null, Collections.singletonList(Target.GPU));
-
 
 
     // Unvalid directives
@@ -935,7 +935,7 @@ public class ClawLanguageTest {
         Arrays.asList("i", "j"), Collections.singletonList(Target.CPU));
 
     analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic)", "v", "f",
-        Arrays.asList("i", "j"), Arrays.asList(Target.MIC));
+        Arrays.asList("i", "j"), Collections.singletonList(Target.MIC));
 
     analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic, gpu)", "v", "f",
         Arrays.asList("i", "j"), Arrays.asList(Target.MIC, Target.GPU));

@@ -124,7 +124,7 @@ public class XcodeML extends Xnode {
     String typeValue = base.getAttribute(Xattr.TYPE);
     if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
       throw new IllegalTransformationException("Only integer variable are " +
-          "supported as lower/upper bound value for promotted arrays.");
+          "supported as lower/upper bound value for promoted arrays.");
     }
 
     XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
@@ -276,7 +276,7 @@ public class XcodeML extends Xnode {
    *
    * @param name Name value.
    * @param type Optional type value.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createName(String name, String type)
   {
@@ -310,7 +310,7 @@ public class XcodeML extends Xnode {
    * Create a new namedValue node with its attribute.
    *
    * @param value Value of the name attribute.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createNamedValue(String value) {
     Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, this);
@@ -328,7 +328,7 @@ public class XcodeML extends Xnode {
    * @param type  Value of the type attribute.
    * @param value Value of the var.
    * @param scope Value of the scope attribute.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createVar(String type, String value, Xscope scope) {
     Xnode var = new Xnode(Xcode.VAR, this);
@@ -344,7 +344,7 @@ public class XcodeML extends Xnode {
    * @param returnType Value of the type attribute for the functionCall node.
    * @param name       Value of the name node.
    * @param nameType   Value of the type attribute for the name node.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createFctCall(String returnType, String name, String nameType) {
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
@@ -364,7 +364,7 @@ public class XcodeML extends Xnode {
    *
    * @param type Value of the type attribute for the FarrayRef node.
    * @param var  Var node nested in the varRef element.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createArrayRef(XbasicType type, Xnode var) {
     Xnode ref = new Xnode(Xcode.FARRAYREF, this);
@@ -382,7 +382,7 @@ public class XcodeML extends Xnode {
    * @param type      Value for the attribute type.
    * @param sclass    Value for the attribute sclass.
    * @param nameValue Value of the name inner element.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xid createId(String type, String sclass, String nameValue) {
     Xnode id = new Xnode(Xcode.ID, this);
@@ -399,7 +399,7 @@ public class XcodeML extends Xnode {
    *
    * @param nameType  Value for the attribute type of the name node.
    * @param nameValue Value of the name inner node.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xdecl createVarDecl(String nameType, String nameValue) {
     Xnode varD = new Xnode(Xcode.VARDECL, this);
@@ -416,7 +416,7 @@ public class XcodeML extends Xnode {
    * @param type   Type attribute value.
    * @param ref    Reference attribute value.
    * @param intent Optional intent value.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public XbasicType createBasicType(String type, String ref, Xintent intent) {
     Xnode bt = new Xnode(Xcode.FBASICTYPE, this);
@@ -433,7 +433,7 @@ public class XcodeML extends Xnode {
   /**
    * Create an empty assumed shape indexRange node.
    *
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createEmptyAssumedShaped() {
     Xnode range = new Xnode(Xcode.INDEXRANGE, this);
@@ -458,7 +458,7 @@ public class XcodeML extends Xnode {
    *
    * @param inductionVar Var element for the induction variable.
    * @param indexRange   indexRange element for the iteration range.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createDoStmt(Xnode inductionVar, Xnode indexRange) {
     Xnode root = new Xnode(Xcode.FDOSTATEMENT, this);
@@ -485,7 +485,7 @@ public class XcodeML extends Xnode {
    * }
    * </pre>
    *
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createIfThen() {
     Xnode root = new Xnode(Xcode.FIFSTATEMENT, this);
@@ -504,7 +504,7 @@ public class XcodeML extends Xnode {
    * @param arrayVar   Var element representing the array variable.
    * @param startIndex Lower bound index value.
    * @param dimension  Dimension index for the upper bound value.
-   * @return The newly created node dettached in the current XcodeML unit.
+   * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createRangeForAssumedShapeArray(Xnode arrayVar,
                                                int startIndex,
@@ -581,7 +581,7 @@ public class XcodeML extends Xnode {
    *                  parameter.
    */
   public Xnode createAndAddParamIfNotExists(String nameValue, String type,
-                                           XfunctionType fctType)
+                                            XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()) {
       if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
