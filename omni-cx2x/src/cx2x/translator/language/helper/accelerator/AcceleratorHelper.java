@@ -164,8 +164,8 @@ public class AcceleratorHelper {
    * @param fctDef  Function definition to look in.
    * @return List of variables names that are function input/output.
    */
-  public static List<String> getPresentVariabes(XcodeProgram xcodeml,
-                                                XfunctionDefinition fctDef)
+  public static List<String> getPresentVariables(XcodeProgram xcodeml,
+                                                 XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
     Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
