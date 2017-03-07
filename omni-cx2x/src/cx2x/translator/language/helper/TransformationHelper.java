@@ -439,7 +439,7 @@ public class TransformationHelper {
         dimensions.add(
             new ClawDimension(
                 ClawConstant.ITER_PREFIX + param.value(),
-                ClawConstant.DEFUALT_LOWER_BOUND,
+                ClawConstant.DEFAULT_LOWER_BOUND,
                 param.value()
             )
         );
