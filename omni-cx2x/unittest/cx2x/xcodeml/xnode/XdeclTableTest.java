@@ -8,7 +8,8 @@ package cx2x.xcodeml.xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test the features of the XdeclTable class.

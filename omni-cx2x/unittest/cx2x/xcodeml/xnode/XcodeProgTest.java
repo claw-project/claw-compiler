@@ -5,12 +5,12 @@
 
 package cx2x.xcodeml.xnode;
 
+import helper.TestConstant;
+import org.junit.Test;
+
 import java.io.File;
 
 import static org.junit.Assert.*;
-
-import helper.TestConstant;
-import org.junit.Test;
 
 /**
  * Test the features of the XcodeProgram class

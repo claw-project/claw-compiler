@@ -63,7 +63,7 @@ public class ClawEnumTest {
   }
 
   @Test
-  public void OverPositionTest(){
+  public void OverPositionTest() {
     assertEquals(OverPosition.BEFORE,
         OverPosition.fromString(ClawConstant.BEFORE));
     assertEquals(OverPosition.MIDDLE,
@@ -77,7 +77,7 @@ public class ClawEnumTest {
 
 
   @Test
-  public void ClawAttrTest(){
+  public void ClawAttrTest() {
     assertEquals(ClawAttr.IS_CLAW, ClawAttr.fromString(ClawConstant.IS_CLAW));
     assertEquals(ClawAttr.OVER, ClawAttr.fromString(ClawConstant.OVER));
     assertEquals(null, ClawAttr.fromString(null));
