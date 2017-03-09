@@ -341,6 +341,7 @@ for file in "${f_files_transformation[@]}"; do
     FILE_OUT_F=${output_dir}/${FILE}
   fi
 
+  # Dump the arguments pass to the translator for easier debugging
   if [ $DUMP_CX2X_ARGS = true ]
   then
     echo "-- [DEBUG] Arguments for omni-cx2x:"
