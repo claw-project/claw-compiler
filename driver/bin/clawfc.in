@@ -263,7 +263,7 @@ done
 ### Apply ignore directive
 for file in "${f_files_transformation[@]}"; do
   FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"` # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}") # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
@@ -280,7 +280,7 @@ then
   do
     [ $VERBOSE = true ] && echo "Dependencies resolution ..."
     FILE=("${file}")
-    FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+    FILE_NAME=$(omni_f_norm_file_name "${FILE}")     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
     EXT=${file##*.}
 
     if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
@@ -298,7 +298,7 @@ fi
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "Fortran to XcodeML ..."
   FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
 
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
@@ -320,7 +320,7 @@ fi
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "XcodeML to XcodeML translation ..."
   FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
