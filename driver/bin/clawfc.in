@@ -201,7 +201,7 @@ do
   if ! [ $FORCE_TRANSLATION == true ]
   then
     NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${FILE}")
-    if [ $NUM_DIRECTIVES = "0" ]
+    if [ "$NUM_DIRECTIVES" = "0" ]
     then
       echo "Warning: file ${FILE} does not contains any code transformation. Skip ..."
       if [ "${#output_dir}" != "0" ]
@@ -228,8 +228,8 @@ done
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "Prepocessing ..."
   FILE=("${file}")
-  BASENAME=`basename ${FILE%.*}`
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+  BASENAME=$(basename ${FILE%.*})
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
   EXT=${file##*.}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
@@ -357,8 +357,8 @@ for file in "${f_files_transformation[@]}"; do
   then
     FILE_OUT_F=${output_dir}/${FILE}
   fi
-  revertIgnore $FILE_OUT_F
-  applyVerbatim $FILE_OUT_F
+  revertIgnore "$FILE_OUT_F"
+  applyVerbatim "$FILE_OUT_F"
 done
 
 ### Delete temporal directory ###
