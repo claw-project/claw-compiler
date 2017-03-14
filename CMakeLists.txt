@@ -21,16 +21,27 @@ include(ExternalProject)
 # Load all variables from file
 include(properties.cmake)
 
-# Recover the last commit hash from git to add it to the version
+# Recover commit hash for the CLAW Compiler main repo
 execute_process(
   COMMAND git log -1 --format=%h
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   OUTPUT_VARIABLE GIT_COMMIT_HASH
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+message(STATUS "CLAW Compiler version ${GIT_COMMIT_HASH}")
+
+# Recover commit hash for the OMNI Compiler subumodule
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/omni-compiler/
+  OUTPUT_VARIABLE GIT_OMNI_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+message(STATUS "OMNI Compiler version ${GIT_OMNI_COMMIT_HASH}")
 
 # Define CLAW repository last commit hash
 set(CLAWFC_GIT_HASH "${GIT_COMMIT_HASH}")
+set(OMNI_GIT_HASH "${GIT_OMNI_COMMIT_HASH}")
 
 # Set the default install directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -44,13 +55,13 @@ option(BUILD_OMNI "Build OMNI Compiler" ON)
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
 if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
-  message(STATUS "Configure preprocessor with Cray compiler.")
+  message(STATUS "Configure preprocessor with Cray compiler")
   include(compiler/cray.cmake)
 elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
-  message(STATUS "Configure preprocessor with PGI compiler.")
+  message(STATUS "Configure preprocessor with PGI compiler")
   include(compiler/pgi.cmake)
 else()
-  message(STATUS "Configure preprocessor with GNU compiler.")
+  message(STATUS "Configure preprocessor with GNU compiler")
   include(compiler/gnu.cmake)
 endif()
 
