@@ -130,7 +130,6 @@ public class IterationSpace {
    * @param inner If true, DependenceAnalysis information are printed too.
    */
   public void printDebug(boolean inner) {
-    System.out.println("Iteration space:");
     for(int i = 0; i < _levels.size(); ++i) {
       List<DependenceAnalysis> loopsAtLevel = _levels.get(i);
       Utility.printWithIdent(i * 2, "Level: " + i + " / Number of loops: " +
