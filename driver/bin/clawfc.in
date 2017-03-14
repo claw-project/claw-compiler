@@ -242,11 +242,11 @@ do
     # instead of "omni_exec"
     if [ $FPP_REDIRECT == true ]
     then
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" "$OMNI_FPP_OPT" "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" "$OMNI_FPP_OPT" "${other_args[@]}" "${FILE}" > "${FILE_PP}"
+      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
+      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
     else
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" "$OMNI_FPP_OPT" "${other_args[@]}" "${FILE}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" "$OMNI_FPP_OPT" "${other_args[@]}" "${FILE}"
+      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
+      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
       mv "${BASENAME}.i" "${FILE_PP}"
     fi
 
