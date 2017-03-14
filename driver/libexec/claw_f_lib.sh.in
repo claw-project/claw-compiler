@@ -234,7 +234,7 @@ function claw_f_set_parameters()
 
 function claw_f_print_version()
 {
-  echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@"
+  echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@ (@CMAKE_Fortran_COMPILER_ID@ Preprocessor)"
 }
 
 # Process dependencies file trough the frontend
