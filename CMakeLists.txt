@@ -55,15 +55,13 @@ option(BUILD_OMNI "Build OMNI Compiler" ON)
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
 if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
-  message(STATUS "Configure preprocessor with Cray compiler")
   include(compiler/cray.cmake)
 elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
-  message(STATUS "Configure preprocessor with PGI compiler")
   include(compiler/pgi.cmake)
 else()
-  message(STATUS "Configure preprocessor with GNU compiler")
   include(compiler/gnu.cmake)
 endif()
+message(STATUS "Configure preprocessor with ${CMAKE_Fortran_COMPILER_ID} compiler")
 
 # Build OMNI compiler
 if(BUILD_OMNI)
