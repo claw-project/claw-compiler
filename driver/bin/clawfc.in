@@ -54,17 +54,19 @@ DUMP_CX2X_ARGS=false
 FORCE_PURE=false
 
 ### Set options ###
-# e.g.) clawfc -I/usr/lib a.f b.F c.f90 d.F90 e.o --tmp --Wlfoo lib.a -omp -o a.out
+# e.g.) clawfc -I/usr/lib myfile.f90
 #
-#  output_file="a.out"              # Output file
-#  f_files="a.f b.F c.f90 d.F90"    # All fortran files
-#  archive_files="lib.a"            # Archive files
-#  obj_files="e.o"                  # Object files
-#  other_args="-I/usr/lib"          # Options for Preprocessor, Compiler, and Linker
+#  output_file="a.out"           # Output file
+#  f_files="a.f b.F c.f90 d.F90" # All fortran files
+#  archive_files="lib.a"         # Archive files
+#  obj_files="e.o"               # Object files
+#  other_args="-I/usr/lib"       # Options for Preprocessor, Compiler, and
+#                                # Linker
 #
-#  Note that "-omp" is extracted by xmpf90_set_parameters, and set "ENABLE_OPENMP".
+# To deal with space-separator in options, the following variables are defined
+# as an array
 #
-# To deal with space-separator in options, the following variables are defined as an array
+
 output_file=()
 output_dir=()
 f_files=()
@@ -201,9 +203,9 @@ do
   if ! [ $FORCE_TRANSLATION == true ]
   then
     NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${FILE}")
-    if [ $NUM_DIRECTIVES = "0" ]
+    if [ "$NUM_DIRECTIVES" = "0" ]
     then
-      echo "Warning: file ${FILE} does not contains any code transformation. Skip ..."
+      echo "Warning: file ${FILE} does not contains \$claw. Skip ..."
       if [ "${#output_dir}" != "0" ]
       then
         cp ${FILE} ${output_dir}/${FILE}
@@ -225,26 +227,32 @@ done
 ### Preprocessor ###
 [ $ONLY_PP = true -a -f "${output_file}" ] && omni_exec rm "${output_file}"
 [ $ENABLE_CPP = true ] && OMNI_FPP_OPT="$OMNI_FPP_OPT $CPP_OPT"
-for file in "${f_files_transformation[@]}"; do
+for file in "${f_files_transformation[@]}"
+do
   [ $VERBOSE = true ] && echo "Prepocessing ..."
   FILE=("${file}")
-  BASENAME=`basename ${FILE%.*}`
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+  BASENAME=$(basename ${FILE%.*})
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
   EXT=${file##*.}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
-  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
-    # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run" instead of "omni_exec".
+  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]
+  then
+    # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
+    # instead of "omni_exec"
     if [ $FPP_REDIRECT == true ]
     then
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
+      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
+      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
     else
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
+      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
+      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
       mv "${BASENAME}.i" "${FILE_PP}"
     fi
-    # AIX compiler cannot output file with ".i" suffix. So, ">" is used.
 
     if [ $ONLY_PP = true ]; then
       if [ "${output_file}" = "" ]; then
@@ -257,13 +265,13 @@ for file in "${f_files_transformation[@]}"; do
   fi
 done
 [ $STOP_PP = true ] && exit 0;
-[ $ONLY_PP = true -a $ENABLE_DEBUG = true ] && exit 0;            # xmpf90 -E --debug hoge.c (save $TMP_DIR)
-[ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }  # xmpf90 -E hoge.c
+[ $ONLY_PP = true -a $ENABLE_DEBUG = true ] && exit 0;
+[ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }
 
 ### Apply ignore directive
 for file in "${f_files_transformation[@]}"; do
   FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"` # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
   EXT=${file##*.}
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
@@ -280,7 +288,7 @@ then
   do
     [ $VERBOSE = true ] && echo "Dependencies resolution ..."
     FILE=("${file}")
-    FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+    FILE_NAME=$(omni_f_norm_file_name "${FILE}")
     EXT=${file##*.}
 
     if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
@@ -298,7 +306,7 @@ fi
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "Fortran to XcodeML ..."
   FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F90 -> hoge_2f_fuga_2f_a
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
   EXT=${file##*.}
 
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
@@ -307,7 +315,11 @@ for file in "${f_files_transformation[@]}"; do
     FILE_PP="${FILE}"
   fi
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
-  omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
+
+  # Call F_Front with the correct arguments
+  omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" \
+    "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
+
 done
 [ $STOP_FRONTEND = true ] && exit 0;
 
@@ -320,7 +332,7 @@ fi
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "XcodeML to XcodeML translation ..."
   FILE=("${file}")
-  FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.f90 -> hoge_2f_fuga_2f_a
+  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
   EXT=${file##*.}
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
@@ -333,13 +345,22 @@ for file in "${f_files_transformation[@]}"; do
     FILE_OUT_F=${output_dir}/${FILE}
   fi
 
+  # Dump the arguments pass to the translator for easier debugging
   if [ $DUMP_CX2X_ARGS = true ]
   then
     echo "-- [DEBUG] Arguments for omni-cx2x:"
-    echo "$TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT $OMNI_CX2X_CONFIG_OPT $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT ${xcode_translator_add_opt[@]} ${module_opt[@]} ${trans_module_opt[@]} -o $(PWD)/${FILE_OUT_X} -f $(PWD)/${FILE_OUT_F} $(PWD)/${FILE_IN_X}"
+    echo '$TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT' \
+      '$OMNI_CX2X_CONFIG_OPT $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT' \
+      '${xcode_translator_add_opt[@]} ${module_opt[@]} ${trans_module_opt[@]}' \
+      '-o $(PWD)/${FILE_OUT_X} -f $(PWD)/${FILE_OUT_F} $(PWD)/${FILE_IN_X}'
   fi
 
-  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT $OMNI_CX2X_CONFIG_OPT $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT "${xcode_translator_add_opt[@]}" "${module_opt[@]}" "${trans_module_opt[@]}" -o "${FILE_OUT_X}" -f "${FILE_OUT_F}" "${FILE_IN_X}"
+  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION \
+    $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT $OMNI_CX2X_CONFIG_OPT \
+    $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT \
+    "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+    "${trans_module_opt[@]}" -o ${FILE_OUT_X} -f ${FILE_OUT_F} \
+    ${FILE_IN_X}
 
   # also create ${TEMP_DIR}/${FILE_NAME}_${EXT}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
@@ -357,8 +378,8 @@ for file in "${f_files_transformation[@]}"; do
   then
     FILE_OUT_F=${output_dir}/${FILE}
   fi
-  revertIgnore $FILE_OUT_F
-  applyVerbatim $FILE_OUT_F
+  revertIgnore "$FILE_OUT_F"
+  applyVerbatim "$FILE_OUT_F"
 done
 
 ### Delete temporal directory ###

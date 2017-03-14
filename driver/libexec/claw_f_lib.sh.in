@@ -88,24 +88,10 @@ function claw_f_set_parameters()
           current_dir=$(pwd)
           module_opt+=("-M$current_dir/${module_dir[0]}")
         fi
-        #target=`get_target`
-        #if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]
-        #then
-        #  other_args+=("${OMNI_MODINC}${module_dir}")
-        #else
-        #  other_args+=("${OMNI_MODINC}" "${module_dir}")
-        #fi;;
         ;;
       -J?*)
         module_dir=("${1#-J}")
         module_opt+=("-M${module_dir[0]}")
-        #target=`get_target`
-        #if [ "$target" = "Kcomputer-linux-gnu" -o "$target" = "FX10-linux-gnu" ]
-        #then
-        #  other_args+=("${OMNI_MODINC}${module_dir}")
-        #else
-        #  other_args+=("${OMNI_MODINC}" "${module_dir}")
-        #fi;;
         ;;
       -I)
         shift;
@@ -118,8 +104,6 @@ function claw_f_set_parameters()
         other_args+=("$1")
         module_dir=("${1#-I}")
         trans_module_opt+=("-M${module_dir[0]}");;
-#      -c) # Option disable for clawfc
-#        ENABLE_LINKER=false;;
       -E)
         ONLY_PP=true;;
       -cpp)
@@ -196,18 +180,6 @@ function claw_f_set_parameters()
         DUMP_CX2X_ARGS=true;;
       --force-pure)
         FORCE_PURE=true;;
-#	    --openmp|-omp)
-#		ENABLE_OPENMP=true;;
-#	    --xcalableacc|-xacc)
-#		ENABLE_XACC=true;;
-#	    --scalasca-all)
-#		ENABLE_SCALASCA_ALL=true;;
-#	    --scalasca)
-#		ENABLE_SCALASCA=true;;
-#	    --tlog-all)
-#		ENABLE_TLOG_ALL=true;;
-#	    --tlog)
-#		ENABLE_TLOG=true;;
       *)
         other_args+=("$1");;
     esac
