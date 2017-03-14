@@ -103,16 +103,4 @@ public class Utility {
     }
     return false;
   }
-
-  /**
-   * Print a string with a specified indentation at the beginning.
-   * @param indent Number of spaces to indent.
-   * @param value  Text value to be printed.
-   */
-  public static void printWithIdent(int indent, String value){
-    for(int i = 0; i < indent; ++i) {
-      System.out.print(" ");
-    }
-    System.out.println(value);
-  }
 }
