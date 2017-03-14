@@ -141,12 +141,16 @@ public class DependenceAnalysisTest {
     try {
       IterationSpace is = new IterationSpace(loops);
       is.tryFusion(xcodeml, transformer, main);
+      System.out.println();
+      System.out.println("Iteration space before fusion");
       is.printDebug(true);
 
       loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
       assertEquals(8, loops.size());
 
       is.reload(loops);
+      System.out.println();
+      System.out.println("Iteration space after fusion");
       is.printDebug(true);
     } catch(Exception e) {
       fail();

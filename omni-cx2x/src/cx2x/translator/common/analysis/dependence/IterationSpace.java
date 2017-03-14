@@ -4,6 +4,7 @@
  */
 package cx2x.translator.common.analysis.dependence;
 
+import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.xcodeml.transformation.DependentTransformationGroup;
@@ -129,14 +130,13 @@ public class IterationSpace {
    * @param inner If true, DependenceAnalysis information are printed too.
    */
   public void printDebug(boolean inner) {
-    System.out.println("Iteration space:");
     for(int i = 0; i < _levels.size(); ++i) {
       List<DependenceAnalysis> loopsAtLevel = _levels.get(i);
-      System.out.println("Level: " + i + " Number of loops: " +
+      Utility.printWithIdent(i * 2, "Level: " + i + " / Number of loops: " +
           loopsAtLevel.size());
       if(inner) {
         for(DependenceAnalysis dep : loopsAtLevel) {
-          System.out.println(dep.getInfoMsg());
+          Utility.printWithIdent(i * 2, dep.getInfoMsg());
         }
       }
     }
