@@ -48,10 +48,6 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
-# Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
-# specific version of OMNI Compiler at the moment.
-option(BUILD_OMNI "Build OMNI Compiler" ON)
-
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
 if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
@@ -62,6 +58,10 @@ else()
   include(compiler/gnu.cmake)
 endif()
 message(STATUS "Configure preprocessor with ${CMAKE_Fortran_COMPILER_ID} compiler")
+
+# Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
+# specific version of OMNI Compiler at the moment.
+option(BUILD_OMNI "Build OMNI Compiler" ON)
 
 # Build OMNI compiler
 if(BUILD_OMNI)
