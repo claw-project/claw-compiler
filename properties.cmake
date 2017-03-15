@@ -42,7 +42,7 @@ set(CLAW_LIB_SH "claw_f_lib.sh")
 
 # Define CLAW jar archives build location.
 set(OMNI_BUILD_JAR_CX2X_CLAW "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_BUILD_JAR_CX2X_XCODEML "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
+set(OMNI_BUILD_JAR_CX2X_XCODEML "${BUILD_DIR}/${OMNI_CX2X_XCODEML_NAME}.jar")
 
 # Define CLAW jar archives install location.
 set(CX2X_JAR_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/share/cx2x")
