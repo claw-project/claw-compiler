@@ -17,6 +17,7 @@ import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -248,7 +249,8 @@ public class LoopFusion extends ClawTransformation {
       }
     } else {
       xcodeml.addWarning("Unconstrained loop-fusion generated",
-          _claw.getPragma().lineNo());
+          Arrays.asList(_claw.getPragma().lineNo(),
+              other.getLanguageInfo().getPragma().lineNo()));
     }
 
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {

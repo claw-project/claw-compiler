@@ -378,8 +378,8 @@ public class ClawXcodeMlTranslator {
         System.err.println(String.format("%s %s, line: undefined", prefix,
             message.getMessage()));
       } else {
-        System.err.println(String.format("%s %s, line: %d", prefix,
-            message.getMessage(), message.getLine()));
+        System.err.println(String.format("%s %s, line: %s", prefix,
+            message.getMessage(), message.getConcatLines()));
       }
     }
     messages.clear();

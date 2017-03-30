@@ -123,6 +123,16 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
+   * Add a warning.
+   *
+   * @param msg    Warning message.
+   * @param lineno Line numbers that triggered the warning.
+   */
+  public void addWarning(String msg, List<Integer> lineno) {
+    _warnings.add(new XanalysisError(msg, lineno));
+  }
+
+  /**
    * Get all the warnings.
    *
    * @return A list containing all the warnings.
