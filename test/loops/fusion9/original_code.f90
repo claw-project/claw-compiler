@@ -4,11 +4,13 @@ program test
 
   ldo = .true.
 
+  !$claw loop-fusion group(g1) constraint(none)
+  do i = 1, 10
+    print*,'Loop body #1'
+  end do
+
   if ( ldo ) then
-    !$claw loop-fusion group(g1) constraint(none)
-    do i = 1, 10
-      print*,'Loop body #1'
-    end do
+    print*,'I did'
   end if
 
   !$claw loop-fusion group(g1) constraint(none)
