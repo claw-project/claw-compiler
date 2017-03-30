@@ -1,0 +1,5 @@
+set(TEST_NAME hoist4)
+set(TEST_DEBUG ON)
+set(OUTPUT_TEST OFF)
+set(IGNORE_TEST OFF)
+include(${CMAKE_SOURCE_DIR}/test/base_test.cmake)

@@ -18,6 +18,7 @@ add_subdirectory(fusion8)      # impossible fusion because of assignment
 add_subdirectory(hoist1)
 add_subdirectory(hoist2)
 add_subdirectory(hoist3)       # with target clause
+add_subdirectory(hoist4)       # issue 122
 add_subdirectory(interchange1)
 add_subdirectory(interchange2)
 add_subdirectory(interchange3) # with target clause
