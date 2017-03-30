@@ -519,10 +519,12 @@ public class LoopExtraction extends ClawTransformation {
 
   /**
    * @return Always false as independent transformation are applied one by one.
-   * @see Transformation#canBeTransformedWith(Transformation)
+   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
    */
   @Override
-  public boolean canBeTransformedWith(Transformation other) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation other)
+  {
     // independent transformation
     return false;
   }

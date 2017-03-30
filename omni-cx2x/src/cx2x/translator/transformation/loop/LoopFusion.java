@@ -194,7 +194,9 @@ public class LoopFusion extends ClawTransformation {
    * @return True if the two loop fusion unit can be merge together.
    */
   @Override
-  public boolean canBeTransformedWith(Transformation transformation) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation transformation)
+  {
     if(!(transformation instanceof LoopFusion)) {
       return false;
     }
@@ -244,6 +246,9 @@ public class LoopFusion extends ClawTransformation {
       {
         return false;
       }
+    } else {
+      xcodeml.addWarning("Unconstrained loop-fusion generated",
+          _claw.getPragma().lineNo());
     }
 
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {

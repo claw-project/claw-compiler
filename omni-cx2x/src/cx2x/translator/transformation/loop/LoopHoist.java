@@ -186,10 +186,13 @@ public class LoopHoist extends ClawBlockTransformation {
   }
 
   /**
-   * @see Transformation#canBeTransformedWith(Transformation)
+   * @return Always false as independent transformation are applied one by one.
+   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
    */
   @Override
-  public boolean canBeTransformedWith(Transformation transformation) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation transformation)
+  {
     return false;
   }
 

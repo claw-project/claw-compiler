@@ -243,10 +243,12 @@ public class LoopInterchange extends ClawTransformation {
 
   /**
    * @return Always false as independent transformation are applied one by one.
-   * @see Transformation#canBeTransformedWith(Transformation)
+   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
    */
   @Override
-  public boolean canBeTransformedWith(Transformation transformation) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation transformation)
+  {
     // independent transformation
     return false;
   }
