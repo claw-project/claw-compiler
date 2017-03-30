@@ -26,4 +26,12 @@ public abstract class ClawTransformation extends Transformation {
     _claw = directive;
   }
 
+  /**
+   * Get the language information object.
+   * @return ClawLanguage with information gathered at parsing time.
+   */
+  public ClawLanguage getLanguageInfo(){
+    return _claw;
+  }
+
 }
