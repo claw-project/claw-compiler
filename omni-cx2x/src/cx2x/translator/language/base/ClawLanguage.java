@@ -255,7 +255,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _rangeValue = null;
     _reshapeInfos = null;
     _targetClauseValues = null;
-    _constraintClauseValue = ClawConstraint.BLOCK;
+    _constraintClauseValue = ClawConstraint.DIRECT;
 
     // Clauses flags members
     _hasAccClause = false;

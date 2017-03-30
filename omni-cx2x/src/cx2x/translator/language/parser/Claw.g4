@@ -407,8 +407,8 @@ target_clause[ClawLanguage l]
 constraint_clause[ClawLanguage l]:
     CONSTRAINT '(' NONE ')'
     { $l.setConstraintClauseValue(ClawConstraint.NONE); }
-  | CONSTRAINT '(' BLOCK ')'
-    { $l.setConstraintClauseValue(ClawConstraint.BLOCK); }
+  | CONSTRAINT '(' DIRECT ')'
+    { $l.setConstraintClauseValue(ClawConstraint.DIRECT); }
 ;
 
 target_list[List<Target> targets]:
@@ -552,7 +552,7 @@ GPU          : 'gpu';
 MIC          : 'mic';
 
 // Constraint clause value
-BLOCK        : 'block';
+DIRECT       : 'direct';
 NONE         : 'none';
 
 // Special elements

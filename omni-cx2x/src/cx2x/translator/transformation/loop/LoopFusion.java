@@ -213,7 +213,7 @@ public class LoopFusion extends ClawTransformation {
       return false;
     }
 
-    ClawConstraint currentConstraint = ClawConstraint.BLOCK;
+    ClawConstraint currentConstraint = ClawConstraint.DIRECT;
     if(_claw.hasConstraintClause()
         && other.getLanguageInfo().hasConstraintClause())
     {
@@ -235,12 +235,7 @@ public class LoopFusion extends ClawTransformation {
 
     // Following constraint are used only in default mode. If constraint clause
     // is set to none, there are note checked.
-    if(currentConstraint == ClawConstraint.BLOCK) {
-      // Loops can only be merged if they are at the same level
-      if(!XnodeUtil.hasSameParentBlock(_doStmts[0], other.getDoStmtAtIndex(0))) {
-        return false;
-      }
-
+    if(currentConstraint == ClawConstraint.DIRECT) {
       // Only pragma statement can be between the two loops.
       if(!XnodeUtil.isDirectSibling(_doStmts[0], other.getDoStmtAtIndex(0),
           Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
@@ -251,6 +246,11 @@ public class LoopFusion extends ClawTransformation {
       xcodeml.addWarning("Unconstrained loop-fusion generated",
           Arrays.asList(_claw.getPragma().lineNo(),
               other.getLanguageInfo().getPragma().lineNo()));
+    }
+
+    // Loops can only be merged if they are at the same level
+    if(!XnodeUtil.hasSameParentBlock(_doStmts[0], other.getDoStmtAtIndex(0))) {
+      return false;
     }
 
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {

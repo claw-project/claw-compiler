@@ -12,5 +12,5 @@ package cx2x.translator.language.common;
  */
 public enum ClawConstraint {
   NONE,
-  BLOCK
+  DIRECT
 }

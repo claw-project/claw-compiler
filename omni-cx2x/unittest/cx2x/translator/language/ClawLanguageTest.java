@@ -77,11 +77,11 @@ public class ClawLanguageTest {
 
     // Constraint clause
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(block)",
-        "g1", false, 0, null, ClawConstraint.BLOCK);
+        "g1", false, 0, null, ClawConstraint.DIRECT);
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(none)",
         "g1", false, 0, null, ClawConstraint.NONE);
     analyzeValidClawLoopFusion("claw loop-fusion constraint(block)",
-        null, false, 0, null, ClawConstraint.BLOCK);
+        null, false, 0, null, ClawConstraint.DIRECT);
     analyzeValidClawLoopFusion("claw loop-fusion constraint(none)",
         null, false, 0, null, ClawConstraint.NONE);
 
