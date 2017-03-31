@@ -5,10 +5,7 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.common.ClawDimension;
-import cx2x.translator.language.common.ClawMapping;
-import cx2x.translator.language.common.ClawRange;
-import cx2x.translator.language.common.ClawReshapeInfo;
+import cx2x.translator.language.common.*;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
@@ -62,6 +59,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private ClawDMD _copyClauseValue;
   private ClawDMD _updateClauseValue;
   private List<Target> _targetClauseValues;
+  private ClawConstraint _constraintClauseValue;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
@@ -70,7 +68,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
   private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
-  private boolean _hasTargetClause;
+  private boolean _hasTargetClause, _hasConstraintClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -257,6 +255,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _rangeValue = null;
     _reshapeInfos = null;
     _targetClauseValues = null;
+    _constraintClauseValue = ClawConstraint.DIRECT;
 
     // Clauses flags members
     _hasAccClause = false;
@@ -277,6 +276,7 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasReshapeClause = false;
     _hasUpdateClause = false;
     _hasTargetClause = false;
+    _hasConstraintClause = false;
 
     // General members
     _directive = null;
@@ -922,6 +922,34 @@ public class ClawLanguage extends AnalyzedPragma {
   public void setTargetClauseValue(List<Target> values) {
     _hasTargetClause = true;
     _targetClauseValues = values;
+  }
+
+  /**
+   * Check whether the constraint clause is used.
+   *
+   * @return True if the constraint clause is used.
+   */
+  public boolean hasConstraintClause() {
+    return _hasConstraintClause;
+  }
+
+  /**
+   * Get the constraint clause value.
+   *
+   * @return Constraint clause value as an enum value.
+   */
+  public ClawConstraint getConstraintClauseValue() {
+    return _constraintClauseValue;
+  }
+
+  /**
+   * Set the constraint clause value and the update clause usage flag to true.
+   *
+   * @param value New constraint clause value.
+   */
+  public void setConstraintClauseValue(ClawConstraint value) {
+    _hasConstraintClause = true;
+    _constraintClauseValue = value;
   }
 
   /**

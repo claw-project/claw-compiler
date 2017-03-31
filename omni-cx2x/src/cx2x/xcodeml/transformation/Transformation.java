@@ -53,12 +53,14 @@ public abstract class Transformation {
    * Check whether the current transformation can be transformed together with
    * the given transformation. Useful only for dependent transformation.
    *
+   * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param other The other transformation part of the dependent transformation.
    * @return True if the two transformation can be transform together. False
    * otherwise.
    * @see DependentTransformationGroup
    */
-  public abstract boolean canBeTransformedWith(Transformation other);
+  public abstract boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                               Transformation other);
 
   /**
    * Apply the actual transformation.

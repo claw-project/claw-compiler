@@ -9,6 +9,7 @@ import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawReshapeInfo;
@@ -40,39 +41,49 @@ public class ClawLanguageTest {
   @Test
   public void FusionTest() {
     // Valid directives
-    analyzeValidClawLoopFusion("claw loop-fusion", null, false, 0, null);
+    analyzeValidClawLoopFusion("claw loop-fusion", null, false, 0, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion group(g1)", "g1", false, 0,
-        null);
+        null, null);
     analyzeValidClawLoopFusion("claw loop-fusion group( g1 )", "g1", false, 0,
-        null);
+        null, null);
     analyzeValidClawLoopFusion("claw loop-fusion group ( g1   ) ", "g1",
-        false, 0, null);
+        false, 0, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) collapse(2)", "g1",
-        true, 2, null);
+        true, 2, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) collapse(3)", "g1",
-        true, 3, null);
+        true, 3, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion collapse(3) group(g1)", "g1",
-        true, 3, null);
+        true, 3, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion collapse(2)", null,
-        true, 2, null);
+        true, 2, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion collapse(3)", null,
-        true, 3, null);
+        true, 3, null, null);
 
     // With target clause
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu)", null, false, 0,
-        Collections.singletonList(Target.CPU));
+        Collections.singletonList(Target.CPU), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(gpu)", null, false, 0,
-        Collections.singletonList(Target.GPU));
+        Collections.singletonList(Target.GPU), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(mic)", null, false, 0,
-        Collections.singletonList(Target.MIC));
+        Collections.singletonList(Target.MIC), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,cpu)", null, false,
-        0, Collections.singletonList(Target.CPU));
+        0, Collections.singletonList(Target.CPU), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu)", null, false,
-        0, Arrays.asList(Target.CPU, Target.GPU));
+        0, Arrays.asList(Target.CPU, Target.GPU), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu,mic)", null,
-        false, 0, Arrays.asList(Target.CPU, Target.GPU, Target.MIC));
+        false, 0, Arrays.asList(Target.CPU, Target.GPU, Target.MIC), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu) collapse(3) " +
-        "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU));
+        "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU), null);
+
+    // Constraint clause
+    analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(direct)",
+        "g1", false, 0, null, ClawConstraint.DIRECT);
+    analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(none)",
+        "g1", false, 0, null, ClawConstraint.NONE);
+    analyzeValidClawLoopFusion("claw loop-fusion constraint(direct)",
+        null, false, 0, null, ClawConstraint.DIRECT);
+    analyzeValidClawLoopFusion("claw loop-fusion constraint(none)",
+        null, false, 0, null, ClawConstraint.NONE);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-fusiongroup(g1)");
@@ -90,7 +101,8 @@ public class ClawLanguageTest {
    */
   private void analyzeValidClawLoopFusion(String raw, String groupName,
                                           boolean collapse, int n,
-                                          List<Target> targets)
+                                          List<Target> targets,
+                                          ClawConstraint constraint)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -114,6 +126,13 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasCollapseClause());
       }
+      if(constraint != null){
+        assertTrue(l.hasConstraintClause());
+        assertEquals(constraint, l.getConstraintClauseValue());
+      } else {
+        assertFalse(l.hasConstraintClause());
+      }
+
       assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
       fail();
@@ -1209,11 +1228,11 @@ public class ClawLanguageTest {
   @Test
   public void ContinuationTest() {
     String continuedPragma = "claw loop-fusion   claw collapse(2)";
-    analyzeValidClawLoopFusion(continuedPragma, null, true, 2, null);
+    analyzeValidClawLoopFusion(continuedPragma, null, true, 2, null, null);
 
     String continuedPragma2 = "claw loop-fusion   claw collapse(2) target(cpu)";
     analyzeValidClawLoopFusion(continuedPragma2, null, true, 2,
-        Collections.singletonList(Target.CPU));
+        Collections.singletonList(Target.CPU), null);
   }
 
 }

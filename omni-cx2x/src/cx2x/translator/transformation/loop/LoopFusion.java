@@ -7,6 +7,7 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -16,6 +17,7 @@ import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -193,7 +195,9 @@ public class LoopFusion extends ClawTransformation {
    * @return True if the two loop fusion unit can be merge together.
    */
   @Override
-  public boolean canBeTransformedWith(Transformation transformation) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation transformation)
+  {
     if(!(transformation instanceof LoopFusion)) {
       return false;
     }
@@ -209,20 +213,47 @@ public class LoopFusion extends ClawTransformation {
       return false;
     }
 
+    ClawConstraint currentConstraint = ClawConstraint.DIRECT;
+    if(_claw.hasConstraintClause()
+        && other.getLanguageInfo().hasConstraintClause())
+    {
+      // Check the constraint clause. Must be identical if set.
+      if(_claw.getConstraintClauseValue() !=
+          other.getLanguageInfo().getConstraintClauseValue())
+      {
+        return false;
+      }
+      currentConstraint = _claw.getConstraintClauseValue();
+    } else {
+      if(_claw.hasConstraintClause()
+          || other.getLanguageInfo().hasConstraintClause())
+      {
+        // Constraint are not consistent
+        return false;
+      }
+    }
+
+    // Following constraint are used only in default mode. If constraint clause
+    // is set to none, there are note checked.
+    if(currentConstraint == ClawConstraint.DIRECT) {
+      // Only pragma statement can be between the two loops.
+      if(!XnodeUtil.isDirectSibling(_doStmts[0], other.getDoStmtAtIndex(0),
+          Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
+      {
+        return false;
+      }
+    } else {
+      xcodeml.addWarning("Unconstrained loop-fusion generated",
+          Arrays.asList(_claw.getPragma().lineNo(),
+              other.getLanguageInfo().getPragma().lineNo()));
+    }
+
     // Loops can only be merged if they are at the same level
     if(!XnodeUtil.hasSameParentBlock(_doStmts[0], other.getDoStmtAtIndex(0))) {
       return false;
     }
 
-    if(!XnodeUtil.isDirectSibling(_doStmts[0], other.getDoStmtAtIndex(0),
-        Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
-    {
-      return false;
-    }
-
-    if(_claw != null && _claw.hasCollapseClause()
-        && _claw.getCollapseValue() > 0)
-    {
+    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
         if(!XnodeUtil.hasSameIndexRange(_doStmts[i],
             other.getDoStmtAtIndex(i)))

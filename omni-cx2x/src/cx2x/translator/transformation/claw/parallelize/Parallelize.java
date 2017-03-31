@@ -689,9 +689,14 @@ public class Parallelize extends ClawTransformation {
     }
   }
 
-
+  /**
+   * @return Always false as independent transformation are applied one by one.
+   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
+   */
   @Override
-  public boolean canBeTransformedWith(Transformation other) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation other)
+  {
     return false; // This is an independent transformation
   }
 }

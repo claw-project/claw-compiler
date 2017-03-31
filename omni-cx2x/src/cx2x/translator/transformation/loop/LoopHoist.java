@@ -81,7 +81,8 @@ public class LoopHoist extends ClawBlockTransformation {
       if(depth != _pragmaDepthLevel) {
         Xnode tmpIf = group[0].matchAncestor(Xcode.FIFSTATEMENT);
         Xnode tmpSelect = group[0].matchAncestor(Xcode.FSELECTCASESTATEMENT);
-        if(tmpIf == null && tmpSelect == null) {
+        Xnode tmpDo = group[0].matchAncestor(Xcode.FDOSTATEMENT);
+        if(tmpIf == null && tmpSelect == null && tmpDo == null) {
           xcodeml.addError("Group " + i + " is nested in an unsupported " +
                   "statement for loop hoisting (Group index starts at 0).",
               _clawStart.getPragma().lineNo());
@@ -92,9 +93,12 @@ public class LoopHoist extends ClawBlockTransformation {
             (tmpIf != null) ? tmpIf.depth() : Xnode.UNDEF_DEPTH;
         int selectDepth =
             (tmpSelect != null) ? tmpSelect.depth() : Xnode.UNDEF_DEPTH;
+        int doDepth =
+            (tmpDo != null) ? tmpDo.depth() : Xnode.UNDEF_DEPTH;
 
-        if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth)
-            && (ifDepth < depth || selectDepth < depth))
+        if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth
+            || _pragmaDepthLevel <= doDepth)
+            && (ifDepth < depth || selectDepth < depth || doDepth < depth))
         {
           crtGroup.setExtraction();
         } else {
@@ -186,10 +190,13 @@ public class LoopHoist extends ClawBlockTransformation {
   }
 
   /**
-   * @see Transformation#canBeTransformedWith(Transformation)
+   * @return Always false as independent transformation are applied one by one.
+   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
    */
   @Override
-  public boolean canBeTransformedWith(Transformation transformation) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation transformation)
+  {
     return false;
   }
 

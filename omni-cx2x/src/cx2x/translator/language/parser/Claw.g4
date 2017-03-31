@@ -404,6 +404,13 @@ target_clause[ClawLanguage l]
     { $l.setTargetClauseValue(targets); }
 ;
 
+constraint_clause[ClawLanguage l]:
+    CONSTRAINT '(' NONE ')'
+    { $l.setConstraintClauseValue(ClawConstraint.NONE); }
+  | CONSTRAINT '(' DIRECT ')'
+    { $l.setConstraintClauseValue(ClawConstraint.DIRECT); }
+;
+
 target_list[List<Target> targets]:
     target { if(!$targets.contains($target.t)) { $targets.add($target.t); } }
   | target { if(!$targets.contains($target.t)) { $targets.add($target.t); } } ',' target_list[$targets]
@@ -419,9 +426,10 @@ target returns [Target t]:
 // Possible permutation of clauses for the loop-fusion directive
 loop_fusion_clauses[ClawLanguage l]:
   (
-    { !$l.hasGroupClause() }?    group_clause[$l]
-  | { !$l.hasCollapseClause() }? collapse_clause[$l]
-  | { !$l.hasTargetClause() }?   target_clause[$l]
+    { !$l.hasGroupClause() }?      group_clause[$l]
+  | { !$l.hasCollapseClause() }?   collapse_clause[$l]
+  | { !$l.hasTargetClause() }?     target_clause[$l]
+  | { !$l.hasConstraintClause() }? constraint_clause[$l]
   )*
 ;
 
@@ -510,6 +518,7 @@ VERBATIM         : 'verbatim';
 
 // CLAW Clauses
 COLLAPSE     : 'collapse';
+CONSTRAINT   : 'constraint';
 COPY         : 'copy';
 DATA         : 'data';
 DIMENSION    : 'dimension';
@@ -541,6 +550,10 @@ OMP          : 'omp';
 CPU          : 'cpu';
 GPU          : 'gpu';
 MIC          : 'mic';
+
+// Constraint clause value
+DIRECT       : 'direct';
+NONE         : 'none';
 
 // Special elements
 IDENTIFIER      : [a-zA-Z_$] [a-zA-Z_$0-9-]* ;
