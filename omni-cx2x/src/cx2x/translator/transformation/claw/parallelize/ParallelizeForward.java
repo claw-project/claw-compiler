@@ -312,14 +312,16 @@ public class ParallelizeForward extends ClawTransformation {
     for(Xdecl d : useDecls) {
 
       // Check whether a CLAW file is available.
-      _mod = TransformationHelper.
-          locateClawModuleFile(d.getAttribute(Xattr.NAME));
+      _mod = TransformationHelper.locateClawModuleFile(_claw.getTarget(),
+          _claw.getAcceleratorGenerator().getDirectiveLanguage(),
+          d.getAttribute(Xattr.NAME));
 
       if(_mod != null) {
 
         // debug information
         if(XmOption.isDebugOutput()) {
-          System.out.println("Reading CLAW module file: " + _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
+          System.out.println("Reading CLAW module file: " +
+              _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
         }
 
         if(_mod.getIdentifiers().contains(_calledFctName)) {

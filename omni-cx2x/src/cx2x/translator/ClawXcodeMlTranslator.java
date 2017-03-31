@@ -8,6 +8,7 @@ package cx2x.translator;
 // Cx2x import
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.Utility;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.translator.config.Configuration;
@@ -387,10 +388,15 @@ public class ClawXcodeMlTranslator {
 
   /**
    * Flush all information stored in the translator.
+   *
+   * @param config Current configuration.
    */
-  public void flush() throws IllegalTransformationException {
-    _transformer.getModCache().write(ClawConstant.CLAW_MOD_SUFFIX,
-        ClawConstant.INDENT_OUTPUT);
+  public void flush(Configuration config)
+      throws IllegalTransformationException
+  {
+    String modPrefix = Utility.formattedModuleFilePrefix(
+        config.getCurrentTarget(), config.getCurrentDirective());
+    _transformer.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
   }
 
 }
