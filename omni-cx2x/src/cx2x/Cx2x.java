@@ -257,7 +257,7 @@ public class Cx2x {
         xcodeMlOutput, config, maxColumns);
     translator.analyze();
     translator.transform();
-    translator.flush();
+    translator.flush(config);
 
     // Decompile XcodeML/F to Fortran
     FortranDecompiler decompiler = new FortranDecompiler();

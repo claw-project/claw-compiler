@@ -5,6 +5,7 @@
 
 package cx2x.translator.config;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import org.w3c.dom.Document;
@@ -263,4 +264,5 @@ public class Configuration {
   public boolean isForcePure() {
     return _forcePure;
   }
+
 }

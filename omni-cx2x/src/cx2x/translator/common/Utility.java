@@ -5,6 +5,9 @@
 
 package cx2x.translator.common;
 
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.helper.target.Target;
 import xcodeml.util.XmOption;
 
 import java.util.*;
@@ -115,4 +118,24 @@ public class Utility {
     }
     System.out.println(value);
   }
+
+  /**
+   * Get a formatted suffix for the CLAW module file including the directive
+   * and target of the current transformation.
+   *
+   * .<directive>.<target>.claw
+   *
+   * @param target    The current transformation target.
+   * @param directive The current accelerator directive used in transformation.
+   * @return A formatted string for the CLAW module file name.
+   */
+  public static String formattedModuleFilePrefix(Target target,
+                                                 AcceleratorDirective directive)
+  {
+    return "." + directive.toString() +
+        "." + target.toString() +
+        ClawConstant.CLAW_MOD_SUFFIX;
+  }
+
+
 }

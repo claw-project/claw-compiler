@@ -56,3 +56,6 @@ omni-cx2x/unittest/helper/TestConstant.java
 .ant-targets-build.xml
 omni-cx2x/lib
 omni-cx2x/**/bin
+
+# Default install path
+install
