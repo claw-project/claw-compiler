@@ -19,7 +19,6 @@ PROGRAM loop_opt
    sum = 0
   END DO
   DO i = 1 , iend , 1
-!$claw loop-fusion group(g2) constraint(none)
    DO k = 1 , kend , 1
     sum = sum + i
     d = sum + d

@@ -167,6 +167,7 @@ public class LoopFusion extends ClawTransformation {
           other.getDoStmtAtIndex(0).body());
     }
     other.finalizeTransformation();
+    XnodeUtil.safeDelete(_claw.getPragma()); // Delete the pragma statement
   }
 
   /**

@@ -8,7 +8,6 @@ SUBROUTINE clawloop ( )
  INTEGER :: j
  INTEGER :: k
 
-!$claw loop-fusion collapse(3)
  DO i = 1 , 5 , 1
   DO j = 1 , 4 , 1
    DO k = 1 , 2 , 1

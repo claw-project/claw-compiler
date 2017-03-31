@@ -6,7 +6,6 @@ END PROGRAM loop_fusion
 SUBROUTINE clawloop ( )
  INTEGER :: i
 
-!$claw loop-fusion
  DO i = 1 , 10 , 1
   PRINT * ,"First loop body:" , i
   PRINT * ,"Second loop body:" , i
