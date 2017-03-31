@@ -76,11 +76,11 @@ public class ClawLanguageTest {
         "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU), null);
 
     // Constraint clause
-    analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(block)",
+    analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(direct)",
         "g1", false, 0, null, ClawConstraint.DIRECT);
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(none)",
         "g1", false, 0, null, ClawConstraint.NONE);
-    analyzeValidClawLoopFusion("claw loop-fusion constraint(block)",
+    analyzeValidClawLoopFusion("claw loop-fusion constraint(direct)",
         null, false, 0, null, ClawConstraint.DIRECT);
     analyzeValidClawLoopFusion("claw loop-fusion constraint(none)",
         null, false, 0, null, ClawConstraint.NONE);
