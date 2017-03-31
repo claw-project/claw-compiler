@@ -15,12 +15,13 @@ add_subdirectory(fusion5)
 add_subdirectory(fusion6)
 add_subdirectory(fusion7)      # with target clause
 add_subdirectory(fusion8)      # impossible fusion because of assignment
-add_subdirectory(fusion9)
-add_subdirectory(fusion10)
+add_subdirectory(fusion9)      # issue 121 (release constraint)
+add_subdirectory(fusion10)     # issue 121 + hoist
 add_subdirectory(hoist1)
 add_subdirectory(hoist2)
 add_subdirectory(hoist3)       # with target clause
-add_subdirectory(hoist4)       # issue 122
+add_subdirectory(hoist4)       # issue 122 (nested in do stmt)
+add_subdirectory(hoist5)       # issue 122 + interchange test
 add_subdirectory(interchange1)
 add_subdirectory(interchange2)
 add_subdirectory(interchange3) # with target clause
