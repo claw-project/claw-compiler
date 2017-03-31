@@ -14,7 +14,6 @@ SUBROUTINE clawloop ( )
  DO i = 1 , 10 , 1
   PRINT * ,"Second loop body:" , i
  END DO
-!$claw loop-fusion
  DO i = 1 , 10 , 1
   PRINT * ,"Third loop body:" , i
   PRINT * ,"Fourth loop body:" , i

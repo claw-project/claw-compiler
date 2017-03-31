@@ -20,7 +20,6 @@ PROGRAM loop_opt
   END DO
   DO k = 1 , kend , 1
    DO i = 1 , iend , 1
-!$claw loop-fusion group(g2) constraint(none)
     sum = sum + i
     d = sum + d
     IF ( flag ) THEN
