@@ -57,7 +57,7 @@
   <target name="jar" depends="compile" description="package, output to JAR">
     <mkdir dir="${dist.dir}" />
     <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir}" includes="cx2x/xcodeml/**"/>
-    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir}" includes="cx2x/Cx2x.class cx2x/translator/** cx2x/decompiler/**"/>
+    <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir}" includes="cx2x/Cx2x.class cx2x/ClawVersion.class cx2x/translator/** cx2x/decompiler/**"/>
   </target>
 
   <target name="clean" description="clean up">
