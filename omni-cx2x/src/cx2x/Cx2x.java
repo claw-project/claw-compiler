@@ -243,9 +243,15 @@ public class Cx2x {
     }
 
     // Read the configuration file
-    Configuration config = new Configuration(configuration_path, schema_path);
-    config.setUserDefinedTarget(target_option);
-    config.setUserDefineDirective(directive_option);
+    Configuration config;
+    try {
+      config = new Configuration(configuration_path, schema_path);
+      config.setUserDefinedTarget(target_option);
+      config.setUserDefineDirective(directive_option);
+    } catch(Exception ex) {
+      error(ex.getMessage());
+      return;
+    }
 
     // Force pure option
     if(cmd.hasOption("fp")) {

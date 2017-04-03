@@ -5,7 +5,7 @@
 
 package cx2x.translator.config;
 
-import cx2x.translator.common.ClawConstant;
+import cx2x.ClawVersion;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import org.w3c.dom.Document;
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Configuration class is used to read the configuration file and expose its
@@ -49,6 +51,7 @@ public class Configuration {
   private static final String TYPE_ATTR = "type";
   private static final String KEY_ATTR = "key";
   private static final String VALUE_ATTR = "value";
+  private static final String VERSION_ATTR = "version";
   // Specific values
   private static final String DEPENDENT_GR_TYPE = "dependent";
   private static final String INDEPENDENT_GR_TYPE = "independent";
@@ -80,6 +83,12 @@ public class Configuration {
     }
 
     Element root = _document.getDocumentElement();
+
+
+    String version = root.getAttribute(VERSION_ATTR);
+    checkVersion(version);
+
+
     Element global =
         (Element) root.getElementsByTagName(GLOBAL_ELEMENT).item(0);
     Element groups =
@@ -265,4 +274,45 @@ public class Configuration {
     return _forcePure;
   }
 
+
+  /**
+   * Check whether the configuration file version is high enough with the
+   * compiler version.
+   *
+   * @param configVersion Version string from the configuration file.
+   * @throws Exception If the configuration version is not high enough.
+   */
+  private void checkVersion(String configVersion) throws Exception {
+    int[] configMajMin = getMajorMinor(configVersion);
+    int[] compilerMajMin = getMajorMinor(ClawVersion.getVersion());
+
+    if(configMajMin[0] < compilerMajMin[0]
+        || (configMajMin[0] == compilerMajMin[0]
+        && configMajMin[1] < compilerMajMin[1]))
+    {
+      throw new Exception("Configuration version is too small compared to " +
+          "CLAW FORTRAN Compiler version: >= " + compilerMajMin[0] + "." +
+          compilerMajMin[1]);
+    }
+  }
+
+  /**
+   * Extract major and minor version number from the full version String.
+   *
+   * @param version Full version String. <major>.<minor>.<fixes>
+   * @return Two dimensional array with the major number at index 0 and the
+   * minor at index 1.
+   * @throws Exception If the version String is not of the correct format.
+   */
+  private int[] getMajorMinor(String version) throws Exception {
+    Pattern p = Pattern.compile("^(\\d+)\\.(\\d+)\\.?(\\d+)?");
+    Matcher m = p.matcher(version);
+    if(!m.matches()) {
+      throw new Exception("Configuration version not well formatted");
+    }
+
+    int major = Integer.parseInt(m.group(1));
+    int minor = Integer.parseInt(m.group(2));
+    return new int[]{major, minor};
+  }
 }
