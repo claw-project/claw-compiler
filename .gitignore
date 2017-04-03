@@ -46,6 +46,7 @@ ClawParser.java
 
 # CMake configured file
 omni-cx2x/unittest/helper/TestConstant.java
+omni-cx2x/src/cx2x/ClawVersion.java
 
 # IDE files
 .idea
