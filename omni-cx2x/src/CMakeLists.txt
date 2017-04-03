@@ -3,6 +3,7 @@
 
 # CLAW XcodeML manipulation library and translator library
 
+# Generate file with version number for Configuration check
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/cx2x/ClawVersion.java.in
   ${CMAKE_CURRENT_SOURCE_DIR}/cx2x/ClawVersion.java
