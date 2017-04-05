@@ -369,36 +369,33 @@ public class XnodeUtil {
                                                            String identifier,
                                                            List<Integer> offsets)
   {
-    String offsetXpath = "";
+    StringBuilder offsetXpath = new StringBuilder();
     for(int i = 0; i < offsets.size(); ++i) {
       if(offsets.get(i) == 0) {
-        offsetXpath +=
-            String.format("%s[position()=%s and %s]",
-                Xname.ARRAY_INDEX,
-                i + 1,
-                Xname.VAR
-            );
+        offsetXpath.append(String.format("%s[position()=%s and %s]",
+            Xname.ARRAY_INDEX,
+            i + 1,
+            Xname.VAR
+        ));
       } else if(offsets.get(i) > 0) {
-        offsetXpath +=
-            String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
-                Xname.ARRAY_INDEX,
-                i + 1,
-                Xname.MINUS_EXPR,
-                Xname.VAR,
-                Xname.F_INT_CONST,
-                offsets.get(i));
+        offsetXpath.append(String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
+            Xname.ARRAY_INDEX,
+            i + 1,
+            Xname.MINUS_EXPR,
+            Xname.VAR,
+            Xname.F_INT_CONST,
+            offsets.get(i)));
       } else {
-        offsetXpath +=
-            String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
-                Xname.ARRAY_INDEX,
-                i + 1,
-                Xname.MINUS_EXPR,
-                Xname.VAR,
-                Xname.F_INT_CONST,
-                Math.abs(offsets.get(i)));
+        offsetXpath.append(String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
+            Xname.ARRAY_INDEX,
+            i + 1,
+            Xname.MINUS_EXPR,
+            Xname.VAR,
+            Xname.F_INT_CONST,
+            Math.abs(offsets.get(i))));
       }
       if(i != offsets.size() - 1) {
-        offsetXpath += " and ";
+        offsetXpath.append(" and ");
       }
     }
 
@@ -408,7 +405,7 @@ public class XnodeUtil {
         Xname.VAR_REF,
         Xname.VAR,
         identifier,
-        offsetXpath
+        offsetXpath.toString()
     );
 
     return getFromXpath(from, xpathQuery);

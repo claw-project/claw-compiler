@@ -224,17 +224,17 @@ public class Kcaching extends ClawTransformation {
   private String generateNameWithOffsetInfo(String basename,
                                             List<Integer> offsets)
   {
-    String newName = basename + "_k";
+    StringBuilder newName = new StringBuilder(basename + "_k");
     for(Integer i : offsets) {
       if(i > 0) {
-        newName += "p" + i;
+        newName.append("p").append(i);
       } else if(i < 0) {
-        newName += "m" + Math.abs(i);
+        newName.append("m").append(Math.abs(i));
       } else {
-        newName += "_";
+        newName.append("_");
       }
     }
-    return newName;
+    return newName.toString();
   }
 
   /**
