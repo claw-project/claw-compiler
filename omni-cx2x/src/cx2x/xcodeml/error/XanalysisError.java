@@ -42,7 +42,7 @@ public class XanalysisError {
    */
   public XanalysisError(String msg, List<Integer> lineno) {
     _errorMsg = msg;
-    if(lineno == null){
+    if(lineno == null) {
       _errorLineNumbers = new ArrayList<>();
     } else {
       _errorLineNumbers = lineno;
@@ -73,6 +73,7 @@ public class XanalysisError {
 
   /**
    * String concatenation of the lines present in the error/warning.
+   *
    * @return String value of the line numbers.
    */
   public String getConcatLines() {
