@@ -71,16 +71,14 @@ public class ClawXcodeMlTranslator {
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
    * @param config            Configuration information object.
-   * @param maxColumns        Maximum number of columns.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
-                               Configuration config,
-                               int maxColumns)
+                               Configuration config)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(config, maxColumns);
+    _transformer = new ClawTransformer(config);
     _blockDirectives = new Hashtable<>();
     _target = config.getCurrentTarget();
     _generator = AcceleratorHelper.createAcceleratorGenerator(config);

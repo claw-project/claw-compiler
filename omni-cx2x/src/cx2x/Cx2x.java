@@ -249,6 +249,7 @@ public class Cx2x {
       config = new Configuration(configuration_path, schema_path);
       config.setUserDefinedTarget(target_option);
       config.setUserDefineDirective(directive_option);
+      config.setMaxColumns(maxColumns);
     } catch(Exception ex) {
       error(ex.getMessage());
       return;
@@ -261,7 +262,7 @@ public class Cx2x {
 
     // Call the translator to apply transformation on XcodeML/F
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
-        xcodeMlOutput, config, maxColumns);
+        xcodeMlOutput, config);
     translator.analyze();
     translator.transform();
     translator.flush(config);
