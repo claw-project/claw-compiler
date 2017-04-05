@@ -318,18 +318,20 @@ public class Configuration {
   }
 
   /**
+   * Get the defined max column parameter.
    *
-   * @return
+   * @return Int value representing the max column.
    */
-  public int getMaxColumns(){
+  public int getMaxColumns() {
     return _maxColumns;
   }
 
   /**
+   * Set the max column value.
    *
-   * @param value
+   * @param value New value of the max column parameter.
    */
-  public void setMaxColumns(int value){
+  public void setMaxColumns(int value) {
     _maxColumns = value;
   }
 
