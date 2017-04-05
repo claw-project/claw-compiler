@@ -6,7 +6,6 @@
 package cx2x.translator.common;
 
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
-import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
 import xcodeml.util.XmOption;
 
@@ -109,10 +108,11 @@ public class Utility {
 
   /**
    * Print a string with a specified indentation at the beginning.
+   *
    * @param indent Number of spaces to indent.
    * @param value  Text value to be printed.
    */
-  public static void printWithIdent(int indent, String value){
+  public static void printWithIdent(int indent, String value) {
     for(int i = 0; i < indent; ++i) {
       System.out.print(" ");
     }
@@ -122,8 +122,7 @@ public class Utility {
   /**
    * Get a formatted suffix for the CLAW module file including the directive
    * and target of the current transformation.
-   *
-   * .<directive>.<target>.claw
+   * .[directive].[target].claw
    *
    * @param target    The current transformation target.
    * @param directive The current accelerator directive used in transformation.
