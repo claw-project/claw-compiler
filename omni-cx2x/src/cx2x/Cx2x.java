@@ -110,6 +110,7 @@ public class Cx2x {
     options.addOption("dl", "directive-list", false, "list all available directive language to be generated.");
     options.addOption("sc", "show-config", false, "display the current configuration.");
     options.addOption("fp", "force-pure", false, "exit the translator if a PURE subroutine/function has to be transformed.");
+    options.addOption("r", "report", false, "generate the transformation report.");
     return options;
   }
 

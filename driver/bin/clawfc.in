@@ -52,6 +52,7 @@ LINE_DIRECTIVE=false
 MAX_COLUMN=false
 DUMP_CX2X_ARGS=false
 FORCE_PURE=false
+REPORT=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -150,6 +151,11 @@ if [ $FORCE_PURE = true ]
 then
   TRANSLATOR_OPTION="$TRANSLATOR_OPTION --force-pure"
   echo "OPTION: >>>>> $TRANSLATOR_OPTION"
+fi
+
+if [ $REPORT = true ]
+then
+  TRANSLATOR_OPTION="$TRANSLATOR_OPTION --report"
 fi
 
 # Module search path option
