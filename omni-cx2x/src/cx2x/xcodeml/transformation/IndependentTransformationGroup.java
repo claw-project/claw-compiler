@@ -35,6 +35,9 @@ public class IndependentTransformationGroup extends TransformationGroup {
     for(Transformation trans : getTransformations()) {
       try {
         trans.transform(xcodeml, transformer, null);
+        if(trans.isTransformed()) {
+          incrAppliedTransformation();
+        }
       } catch(IllegalTransformationException itex) {
         // Catch the exception to add line information and rethrow it
         if(itex.getStartLine() == 0) {
