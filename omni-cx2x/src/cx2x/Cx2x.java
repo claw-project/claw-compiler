@@ -11,6 +11,7 @@ import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.report.ClawTransformationReport;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
@@ -266,6 +267,12 @@ public class Cx2x {
     translator.analyze();
     translator.transform();
     translator.flush(config);
+
+    // Produce report
+    if(cmd.hasOption("r")) {
+      ClawTransformationReport report = new ClawTransformationReport();
+      report.generate(config, args);
+    }
 
     // Decompile XcodeML/F to Fortran
     FortranDecompiler decompiler = new FortranDecompiler();
