@@ -7,7 +7,6 @@ package cx2x.translator.report;
 import cx2x.ClawVersion;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.transformation.TransformationGroup;
 
@@ -43,8 +42,8 @@ public class ClawTransformationReport {
   /**
    * Generate the report to file.
    *
-   * @param config Current configuration used during the transformation.
-   * @param args   Arguments passed to the translator.
+   * @param config      Current configuration used during the transformation.
+   * @param args        Arguments passed to the translator.
    * @param transformer Current transformer used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
@@ -121,17 +120,19 @@ public class ClawTransformationReport {
   {
     printTitle("Transformation information");
 
-    Map<Class, TransformationGroup> groups = transformer.getGroups();
-
+    // Print column header
+    String format = "%-7s %-50s %-10s %-10s";
+    printLine(String.format(format,
+        "Order", "Transformation name", "Nb trans.", "Nb applied"));
+    printLine(String.format(format,
+        "-----", "-------------------", "---------", "----------"));
     int index = 1;
-
     for(Map.Entry<Class, TransformationGroup> entry :
-        transformer.getGroups().entrySet()){
-      printLine(String.format("%d) %s\t %d", index++,
-          entry.getValue().transformationName(), entry.getValue().count()));
+        transformer.getGroups().entrySet()) {
+      printLine(String.format(format, index++,
+          entry.getValue().transformationName(), entry.getValue().count(), "0"));
     }
   }
-
 
   /**
    * Write information in a formatted way: title : value
