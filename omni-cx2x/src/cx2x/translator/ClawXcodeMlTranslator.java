@@ -404,4 +404,13 @@ public class ClawXcodeMlTranslator {
     return _transformer;
   }
 
+  /**
+   * Get the XcodeProgram object representing the Fortran code translated.
+   *
+   * @return Current XcodeProgram object.
+   */
+  public XcodeProgram getProgram() {
+    return _program;
+  }
+
 }

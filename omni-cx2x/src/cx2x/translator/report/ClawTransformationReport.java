@@ -5,6 +5,7 @@
 package cx2x.translator.report;
 
 import cx2x.ClawVersion;
+import cx2x.translator.ClawXcodeMlTranslator;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.transformer.ClawTransformer;
@@ -44,15 +45,15 @@ public class ClawTransformationReport {
    *
    * @param config      Current configuration used during the transformation.
    * @param args        Arguments passed to the translator.
-   * @param transformer Current transformer used during the transformation.
+   * @param translator  Current translator used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
   public void generate(Configuration config, String[] args,
-                       ClawTransformer transformer) throws Exception
+                       ClawXcodeMlTranslator translator) throws Exception
   {
     printHeader("CLAW Transformation Report");
-    printMainInfo(config, args);
-    printTransformationOrderInfo(transformer);
+    printMainInfo(translator, config, args);
+    printTransformationOrderInfo(translator.getTransformer());
     _report.flush();
   }
 
@@ -73,11 +74,13 @@ public class ClawTransformationReport {
    * Write the header of the report. Contains information driving the
    * transformation.
    *
+   * @param translator  Current translator used during the transformation.
    * @param config Used configuration for the transformation.
    * @param args   Arguments passed to the translator.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  private void printMainInfo(Configuration config, String[] args)
+  private void printMainInfo(ClawXcodeMlTranslator translator,
+                             Configuration config, String[] args)
       throws Exception
   {
     printTitle("Information");
@@ -87,7 +90,7 @@ public class ClawTransformationReport {
 
     List<String[]> infos = new ArrayList<>();
 
-    infos.add(new String[]{"File", ""});
+    infos.add(new String[]{"File", translator.getProgram().getSource()});
     infos.add(new String[]{"Transformed", dateFormat.format(date)});
     infos.add(new String[]{"Compiler", ClawVersion.getVersion()});
     infos.add(new String[]{"Target", config.getCurrentTarget().toString()});

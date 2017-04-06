@@ -271,7 +271,7 @@ public class Cx2x {
     // Produce report
     if(cmd.hasOption("r")) {
       ClawTransformationReport report = new ClawTransformationReport();
-      report.generate(config, args, translator.getTransformer());
+      report.generate(config, args, translator);
     }
 
     // Decompile XcodeML/F to Fortran
