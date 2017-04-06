@@ -8,6 +8,8 @@ import cx2x.ClawVersion;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
+import cx2x.translator.transformer.ClawTransformer;
+import cx2x.xcodeml.transformation.TransformationGroup;
 
 import java.io.FileWriter;
 import java.text.DateFormat;
@@ -15,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generation of the transformation report. Report includes information about
@@ -42,12 +45,15 @@ public class ClawTransformationReport {
    *
    * @param config Current configuration used during the transformation.
    * @param args   Arguments passed to the translator.
+   * @param transformer Current transformer used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  public void generate(Configuration config, String[] args) throws Exception {
+  public void generate(Configuration config, String[] args,
+                       ClawTransformer transformer) throws Exception
+  {
     printHeader("CLAW Transformation Report");
     printMainInfo(config, args);
-    printTransformationOrderInfo(config);
+    printTransformationOrderInfo(transformer);
     _report.flush();
   }
 
@@ -107,17 +113,22 @@ public class ClawTransformationReport {
    * Print information about the transformations group and their application
    * order.
    *
-   * @param config Current configuration used during the transformation.
+   * @param transformer Current transformer used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  private void printTransformationOrderInfo(Configuration config)
+  private void printTransformationOrderInfo(ClawTransformer transformer)
       throws Exception
   {
     printTitle("Transformation information");
 
+    Map<Class, TransformationGroup> groups = transformer.getGroups();
+
     int index = 1;
-    for(GroupConfiguration group : config.getGroups()) {
-      printLine(String.format("%d) %s\t %d", index++, group.getName(), 10));
+
+    for(Map.Entry<Class, TransformationGroup> entry :
+        transformer.getGroups().entrySet()){
+      printLine(String.format("%d) %s\t %d", index++,
+          entry.getValue().transformationName(), entry.getValue().count()));
     }
   }
 
