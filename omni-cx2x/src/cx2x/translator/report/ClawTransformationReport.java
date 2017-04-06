@@ -130,7 +130,8 @@ public class ClawTransformationReport {
     for(Map.Entry<Class, TransformationGroup> entry :
         transformer.getGroups().entrySet()) {
       printLine(String.format(format, index++,
-          entry.getValue().transformationName(), entry.getValue().count(), "0"));
+          entry.getValue().transformationName(), entry.getValue().count(),
+          entry.getValue().getAppliedTransformationCount()));
     }
   }
 
