@@ -41,8 +41,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-// OMNI import
-
 
 /**
  * ClawXcodeMlTranslator is the class driving the translation. It analyzes the
