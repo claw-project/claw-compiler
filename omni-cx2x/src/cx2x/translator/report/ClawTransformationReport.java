@@ -85,13 +85,16 @@ public class ClawTransformationReport {
   {
     printTitle("Information");
 
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Date date = new Date();
 
     List<String[]> infos = new ArrayList<>();
 
     infos.add(new String[]{"File", translator.getProgram().getSource()});
     infos.add(new String[]{"Transformed", dateFormat.format(date)});
+    infos.add(new String[]{"Fortran to IR", translator.getProgram().getTime()});
+    infos.add(new String[]{"Front-end", translator.getProgram().getCompilerInfo()});
+    infos.add(new String[]{"XcodeML/F", translator.getProgram().getVersion()});
     infos.add(new String[]{"Compiler", ClawVersion.getVersion()});
     infos.add(new String[]{"Target", config.getCurrentTarget().toString()});
     infos.add(new String[]{"Directive", config.getCurrentDirective().toString()});
