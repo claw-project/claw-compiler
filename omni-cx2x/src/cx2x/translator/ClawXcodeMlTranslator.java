@@ -397,4 +397,13 @@ public class ClawXcodeMlTranslator {
     _transformer.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
   }
 
+  /**
+   * Get the current transformer associated with this translation.
+   *
+   * @return Get the current transformer.
+   */
+  public ClawTransformer getTransformer() {
+    return _transformer;
+  }
+
 }
