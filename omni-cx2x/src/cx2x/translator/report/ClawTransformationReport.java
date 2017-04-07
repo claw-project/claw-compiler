@@ -54,6 +54,7 @@ public class ClawTransformationReport {
     printHeader("CLAW Transformation Report");
     printMainInfo(translator, config, args);
     printTransformationOrderInfo(translator.getTransformer());
+    printTransformationInfo();
     _report.flush();
   }
 
@@ -93,12 +94,14 @@ public class ClawTransformationReport {
     infos.add(new String[]{"File", translator.getProgram().getSource()});
     infos.add(new String[]{"Transformed", dateFormat.format(date)});
     infos.add(new String[]{"Fortran to IR", translator.getProgram().getTime()});
-    infos.add(new String[]{"Front-end", translator.getProgram().getCompilerInfo()});
+    infos.add(new String[]{"OMNI Front-end",
+        translator.getProgram().getCompilerInfo()});
     infos.add(new String[]{"XcodeML/F", translator.getProgram().getVersion()});
-    infos.add(new String[]{"Compiler", ClawVersion.getVersion()});
+    infos.add(new String[]{"CLAW Compiler", ClawVersion.getVersion()});
     infos.add(new String[]{"Target", config.getCurrentTarget().toString()});
-    infos.add(new String[]{"Directive", config.getCurrentDirective().toString()});
-    infos.add(new String[]{"Driver command", ""});
+    infos.add(new String[]{"Directive",
+        config.getCurrentDirective().toString()});
+    infos.add(new String[]{"Driver command", ""}); // TODO
     infos.add(new String[]{"Translator command", Utility.join(" ", args)});
 
 
@@ -141,6 +144,11 @@ public class ClawTransformationReport {
     }
   }
 
+  private void printTransformationInfo() throws Exception {
+    printTitle("Transformation");
+    // TODO
+  }
+
   /**
    * Write information in a formatted way: title : value
    *
@@ -172,7 +180,7 @@ public class ClawTransformationReport {
    * @throws Exception If file cannot be created or cannot be written.
    */
   private void printDashedLine() throws Exception {
-    printLine(getDashedLine(MAX_COL));
+    printLine(generateStr(MAX_COL, '-'));
   }
 
   /**
@@ -185,18 +193,8 @@ public class ClawTransformationReport {
   private void printTitle(String title) throws Exception {
     printLine("");
     printLine(title);
-    printLine(getDashedLine(title.length()));
+    printLine(generateStr(title.length(), '-'));
     printLine("");
-  }
-
-  /**
-   * Generate a string with dash of the given size.
-   *
-   * @param size Length of the dashed line.
-   * @return A dashed line string of the given size.
-   */
-  private String getDashedLine(int size) {
-    return generateStr(size, '-');
   }
 
   /**
