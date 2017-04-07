@@ -32,12 +32,13 @@ public class ClawTransformationReport {
   private FileWriter _report;
 
   /**
-   * Contructs a transformation report object.
+   * Constructs a transformation report object.
    *
+   * @param reportPath Path of the report file.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  public ClawTransformationReport() throws Exception {
-    _report = new FileWriter("report.lst");
+  public ClawTransformationReport(String reportPath) throws Exception {
+    _report = new FileWriter(reportPath);
   }
 
   /**

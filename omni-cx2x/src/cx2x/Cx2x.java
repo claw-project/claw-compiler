@@ -111,7 +111,7 @@ public class Cx2x {
     options.addOption("dl", "directive-list", false, "list all available directive language to be generated.");
     options.addOption("sc", "show-config", false, "display the current configuration.");
     options.addOption("fp", "force-pure", false, "exit the translator if a PURE subroutine/function has to be transformed.");
-    options.addOption("r", "report", false, "generate the transformation report.");
+    options.addOption("r", "report", true, "generate the transformation report.");
     return options;
   }
 
@@ -270,7 +270,8 @@ public class Cx2x {
 
     // Produce report
     if(cmd.hasOption("r")) {
-      ClawTransformationReport report = new ClawTransformationReport();
+      ClawTransformationReport report =
+          new ClawTransformationReport(cmd.getOptionValue("r"));
       report.generate(config, args, translator);
     }
 
