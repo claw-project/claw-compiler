@@ -25,6 +25,7 @@ CLAW Fortran compiler options:
    --no-dep                   : don't generate .mod or .xmod file for dependencies.
    -f,--force                 : force the translation of files without directives.
    --force-pure               : force compiler to exit when transformation applied to PURE subroutine/function.
+   -r,--report                : generate the tranformation report.
    --debug                    : save intermediate files in __omni_tmp__.
    --stop-pp                  : save intermediate files and stop after preprocess.
    --stop-dependencies        : save intermediate files and stop after dependencies resolution.
@@ -180,6 +181,8 @@ function claw_f_set_parameters()
         DUMP_CX2X_ARGS=true;;
       --force-pure)
         FORCE_PURE=true;;
+      -r|--report)
+        REPORT=true;;
       *)
         other_args+=("$1");;
     esac

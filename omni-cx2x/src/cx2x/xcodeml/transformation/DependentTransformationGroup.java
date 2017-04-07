@@ -46,6 +46,9 @@ public class DependentTransformationGroup extends TransformationGroup {
         if(base.canBeTransformedWith(xcodeml, candidate)) {
           try {
             base.transform(xcodeml, transformer, candidate);
+            if(candidate.isTransformed()){
+              incrAppliedTransformation();
+            }
           } catch(IllegalTransformationException itex) {
             // Catch the exception to add line information and rethrow it
             if(itex.getStartLine() == 0) {
@@ -54,6 +57,9 @@ public class DependentTransformationGroup extends TransformationGroup {
             throw itex;
           }
         }
+      }
+      if(base.isTransformed()){
+        incrAppliedTransformation();
       }
     }
   }

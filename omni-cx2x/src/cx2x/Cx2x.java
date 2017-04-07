@@ -11,6 +11,7 @@ import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.report.ClawTransformationReport;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
@@ -110,6 +111,7 @@ public class Cx2x {
     options.addOption("dl", "directive-list", false, "list all available directive language to be generated.");
     options.addOption("sc", "show-config", false, "display the current configuration.");
     options.addOption("fp", "force-pure", false, "exit the translator if a PURE subroutine/function has to be transformed.");
+    options.addOption("r", "report", true, "generate the transformation report.");
     return options;
   }
 
@@ -248,6 +250,7 @@ public class Cx2x {
       config = new Configuration(configuration_path, schema_path);
       config.setUserDefinedTarget(target_option);
       config.setUserDefineDirective(directive_option);
+      config.setMaxColumns(maxColumns);
     } catch(Exception ex) {
       error(ex.getMessage());
       return;
@@ -260,10 +263,17 @@ public class Cx2x {
 
     // Call the translator to apply transformation on XcodeML/F
     ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
-        xcodeMlOutput, config, maxColumns);
+        xcodeMlOutput, config);
     translator.analyze();
     translator.transform();
     translator.flush(config);
+
+    // Produce report
+    if(cmd.hasOption("r")) {
+      ClawTransformationReport report =
+          new ClawTransformationReport(cmd.getOptionValue("r"));
+      report.generate(config, args, translator);
+    }
 
     // Decompile XcodeML/F to Fortran
     FortranDecompiler decompiler = new FortranDecompiler();
