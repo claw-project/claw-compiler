@@ -150,7 +150,6 @@ fi
 if [ $FORCE_PURE = true ]
 then
   TRANSLATOR_OPTION="$TRANSLATOR_OPTION --force-pure"
-  echo "OPTION: >>>>> $TRANSLATOR_OPTION"
 fi
 
 if [ $REPORT = true ]
