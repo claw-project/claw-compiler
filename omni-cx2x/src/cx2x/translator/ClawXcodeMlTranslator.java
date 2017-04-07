@@ -41,8 +41,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-// OMNI import
-
 
 /**
  * ClawXcodeMlTranslator is the class driving the translation. It analyzes the
@@ -71,16 +69,14 @@ public class ClawXcodeMlTranslator {
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
    * @param config            Configuration information object.
-   * @param maxColumns        Maximum number of columns.
    */
   public ClawXcodeMlTranslator(String xcodemlInputFile,
                                String xcodemlOutputFile,
-                               Configuration config,
-                               int maxColumns)
+                               Configuration config)
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
-    _transformer = new ClawTransformer(config, maxColumns);
+    _transformer = new ClawTransformer(config);
     _blockDirectives = new Hashtable<>();
     _target = config.getCurrentTarget();
     _generator = AcceleratorHelper.createAcceleratorGenerator(config);
@@ -397,6 +393,24 @@ public class ClawXcodeMlTranslator {
     String modPrefix = Utility.formattedModuleFilePrefix(
         config.getCurrentTarget(), config.getCurrentDirective());
     _transformer.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
+  }
+
+  /**
+   * Get the current transformer associated with this translation.
+   *
+   * @return Get the current transformer.
+   */
+  public ClawTransformer getTransformer() {
+    return _transformer;
+  }
+
+  /**
+   * Get the XcodeProgram object representing the Fortran code translated.
+   *
+   * @return Current XcodeProgram object.
+   */
+  public XcodeProgram getProgram() {
+    return _program;
   }
 
 }

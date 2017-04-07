@@ -60,6 +60,7 @@ public class Configuration {
   private final List<GroupConfiguration> _groups;
   private final OpenAccConfiguration _openacc;
   private boolean _forcePure = false;
+  private int _maxColumns; // Max column for code formatting
 
   /**
    * Constructs a new configuration object from the give configuration file.
@@ -315,4 +316,23 @@ public class Configuration {
     int minor = Integer.parseInt(m.group(2));
     return new int[]{major, minor};
   }
+
+  /**
+   * Get the defined max column parameter.
+   *
+   * @return Int value representing the max column.
+   */
+  public int getMaxColumns() {
+    return _maxColumns;
+  }
+
+  /**
+   * Set the max column value.
+   *
+   * @param value New value of the max column parameter.
+   */
+  public void setMaxColumns(int value) {
+    _maxColumns = value;
+  }
+
 }

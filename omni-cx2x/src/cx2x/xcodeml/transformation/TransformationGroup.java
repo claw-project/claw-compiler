@@ -23,6 +23,7 @@ public abstract class TransformationGroup {
 
   private final String _name;
   private List<Transformation> _transformations;
+  private int _appliedTransformation;
 
   /**
    * TransformationGroup ctor.
@@ -77,6 +78,22 @@ public abstract class TransformationGroup {
    */
   public String transformationName() {
     return _name;
+  }
+
+  /**
+   * Return the number of transformation actually applied in the group.
+   *
+   * @return Number of applied transformation.
+   */
+  public int getAppliedTransformationCount() {
+    return _appliedTransformation;
+  }
+
+  /**
+   * Increment the applied transformation counter.
+   */
+  public void incrAppliedTransformation() {
+    ++_appliedTransformation;
   }
 
   /**

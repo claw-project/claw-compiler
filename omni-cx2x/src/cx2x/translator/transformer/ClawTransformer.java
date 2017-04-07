@@ -34,7 +34,6 @@ public class ClawTransformer implements Transformer {
   // Hold the module file cache
   private final ModuleCache _modCache;
   private int _transformationCounter = 0;
-  private int _maxColumns;
 
 
   /**
@@ -42,9 +41,8 @@ public class ClawTransformer implements Transformer {
    * transformation and order the accordingly to their interpretation order.
    *
    * @param config Configuration information object.
-   * @param max    Maximum number of columns.
    */
-  public ClawTransformer(Configuration config, int max) {
+  public ClawTransformer(Configuration config) {
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
@@ -70,8 +68,6 @@ public class ClawTransformer implements Transformer {
     _crossTransformationTable = new HashMap<>();
 
     _modCache = new ModuleCache();
-
-    _maxColumns = max;
 
     _configuration = config;
   }
@@ -123,7 +119,7 @@ public class ClawTransformer implements Transformer {
    */
   @Override
   public int getMaxColumns() {
-    return _maxColumns;
+    return _configuration.getMaxColumns();
   }
 
   /**
@@ -132,7 +128,7 @@ public class ClawTransformer implements Transformer {
    */
   @Override
   public void setMaxColumns(int max) {
-    _maxColumns = max;
+    _configuration.setMaxColumns(max);
   }
 
   /**

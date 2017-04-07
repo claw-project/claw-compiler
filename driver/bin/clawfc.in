@@ -52,6 +52,7 @@ LINE_DIRECTIVE=false
 MAX_COLUMN=false
 DUMP_CX2X_ARGS=false
 FORCE_PURE=false
+REPORT=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -149,7 +150,6 @@ fi
 if [ $FORCE_PURE = true ]
 then
   TRANSLATOR_OPTION="$TRANSLATOR_OPTION --force-pure"
-  echo "OPTION: >>>>> $TRANSLATOR_OPTION"
 fi
 
 # Module search path option
@@ -345,6 +345,14 @@ for file in "${f_files_transformation[@]}"; do
     FILE_OUT_F=${output_dir}/${FILE}
   fi
 
+  # Define report file output
+  if [ $REPORT = true ]
+  then
+    FILE_OUT_R="${FILE_OUT_F%.*}"
+    FILE_OUT_R="${FILE_OUT_R}.lst"
+    TRANSLATOR_OPTION="$TRANSLATOR_OPTION --report=${FILE_OUT_R}"
+  fi
+
   # Dump the arguments pass to the translator for easier debugging
   if [ $DUMP_CX2X_ARGS = true ]
   then
@@ -352,7 +360,7 @@ for file in "${f_files_transformation[@]}"; do
     echo '$TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT' \
       '$OMNI_CX2X_CONFIG_OPT $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT' \
       '${xcode_translator_add_opt[@]} ${module_opt[@]} ${trans_module_opt[@]}' \
-      '-o $(PWD)/${FILE_OUT_X} -f $(PWD)/${FILE_OUT_F} $(PWD)/${FILE_IN_X}'
+      '-o ${FILE_OUT_X} -f ${FILE_OUT_F} ${FILE_IN_X}'
   fi
 
   omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION \

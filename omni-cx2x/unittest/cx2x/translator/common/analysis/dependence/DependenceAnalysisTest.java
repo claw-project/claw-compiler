@@ -120,7 +120,8 @@ public class DependenceAnalysisTest {
     // Analyze the pragma
     Configuration configuration =
         new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
-    ClawTransformer transformer = new ClawTransformer(configuration, 80);
+    configuration.setMaxColumns(80);
+    ClawTransformer transformer = new ClawTransformer(configuration);
     AcceleratorGenerator generator =
         AcceleratorHelper.createAcceleratorGenerator(configuration);
     ClawLanguage main = null;
