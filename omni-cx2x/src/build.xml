@@ -24,8 +24,10 @@
     <path id="build.path">
         <pathelement path="${omni.common.dep}"/>
         <pathelement path="${omni.exec.dep}"/>
+        <pathelement path="${st4.dep}"/>
         <pathelement path="${antlr.dep}"/>
-        <pathelement path="${antlr.runtime.dep}"/>
+        <pathelement path="${antlr4.dep}"/>
+        <pathelement path="${antlr4.runtime.dep}"/>
         <pathelement path="${commoncli.dep}"/>
         <pathelement path="${omni.exec.dep}"/>
     </path>
