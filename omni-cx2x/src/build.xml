@@ -25,8 +25,16 @@
         <pathelement path="${omni.common.dep}"/>
         <pathelement path="${omni.exec.dep}"/>
         <pathelement path="${antlr.dep}"/>
+        <pathelement path="${antlr.runtime.dep}"/>
         <pathelement path="${commoncli.dep}"/>
         <pathelement path="${omni.exec.dep}"/>
+    </path>
+
+    <path id="antlr.path">
+        <pathelement path="${st4.dep}"/>
+        <pathelement path="${antlr.dep}"/>
+        <pathelement path="${antlr4.dep}"/>
+        <pathelement path="${antlr4.runtime.dep}"/>
     </path>
 
     <!-- Initialization step -->
@@ -46,7 +54,7 @@
     <target name="antlr" depends="common.resolve" if="antlr.required"
             description="Generate the parser from ANTLR grammar file">
         <java classname="org.antlr.v4.Tool" fork="true" failonerror="true"
-              classpath="${antlr.dep}">
+              classpathref="antlr.path">
             <arg value="-package"/>
             <arg value="cx2x.translator.language.parser"/>
             <arg line="${src.translator.parser}/Claw.g4"/>
