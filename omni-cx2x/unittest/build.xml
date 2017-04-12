@@ -20,8 +20,10 @@
   <!-- Classpath for dependencies -->
   <path id="build.path">
     <pathelement path="${junit.dep}" />
+    <pathelement path="${st4.dep}"/>
     <pathelement path="${antlr.dep}"/>
-    <pathelement path="${antlr.runtime.dep}"/>
+    <pathelement path="${antlr4.dep}"/>
+    <pathelement path="${antlr4.runtime.dep}"/>
     <pathelement path="${hamcrest.dep}" />
     <pathelement path="${cx2x.xcodeml.dep}" />
     <pathelement path="${cx2x.translator.dep}" />
@@ -58,6 +60,8 @@
       <classpath path="${junit.dep}" />
       <classpath path="${hamcrest.dep}" />
       <classpath path="${antlr.dep}" />
+      <classpath path="${antlr4.dep}" />
+      <classpath path="${antlr4.runtime.dep}" />
       <classpath path="${cx2x.translator.dep}" />
       <classpath path="${cx2x.xcodeml.dep}" />
 
