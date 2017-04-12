@@ -56,7 +56,12 @@ set(LOCAL_OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/
 set(LOCAL_OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
 
 # Define third-party dependency names
-set(ANTLR_NAME "antlr4")
+set(ANTLR4_NAME "antlr4")
+set(ANTLR4_RUNTIME_NAME "antlr4-runtime")
+set(ANTLR_RUNTIME_NAME "antlr-runtime")
+
+set(ANTLR4 "${CX2X_JAR_INSTALL_LOCATION}/${ANTLR4_NAME}.jar")
+set(ANTLR4_RUNTIME "${CX2X_JAR_INSTALL_LOCATION}/${ANTLR4_RUNTIME_NAME}.jar")
+
 set(COMMON_CLI_NAME "commons-cli")
-set(ANTLR "${CX2X_JAR_INSTALL_LOCATION}/${ANTLR_NAME}.jar")
 set(COMMON_CLI "${CX2X_JAR_INSTALL_LOCATION}/${COMMON_CLI_NAME}.jar")
