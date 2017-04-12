@@ -20,6 +20,8 @@
   <!-- Classpath for dependencies -->
   <path id="build.path">
     <pathelement path="${junit.dep}" />
+    <pathelement path="${antlr.dep}"/>
+    <pathelement path="${antlr.runtime.dep}"/>
     <pathelement path="${hamcrest.dep}" />
     <pathelement path="${cx2x.xcodeml.dep}" />
     <pathelement path="${cx2x.translator.dep}" />
