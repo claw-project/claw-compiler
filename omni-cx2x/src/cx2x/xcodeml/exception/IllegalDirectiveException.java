@@ -113,7 +113,7 @@ public class IllegalDirectiveException extends Exception {
     } else {
       errorMessage += "-:" + _charPos;
     }
-    errorMessage += " : " + super.getMessage();
+    errorMessage += ": " + super.getMessage();
     return errorMessage;
   }
 }
