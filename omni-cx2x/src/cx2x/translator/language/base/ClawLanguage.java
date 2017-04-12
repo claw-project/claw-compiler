@@ -15,10 +15,9 @@ import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xnode.Xnode;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -169,7 +168,7 @@ public class ClawLanguage extends AnalyzedPragma {
     }
 
     // Instantiate the lexer with the raw string input
-    ClawLexer lexer = new ClawLexer(new ANTLRInputStream(rawPragma));
+    ClawLexer lexer = new ClawLexer(CharStreams.fromString(rawPragma));
 
     // Get a list of matched tokens
     CommonTokenStream tokens = new CommonTokenStream(lexer);
