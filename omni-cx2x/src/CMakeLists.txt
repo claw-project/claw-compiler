@@ -32,7 +32,7 @@ add_custom_command(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dcx2x.xcodeml.jar="${OMNI_CX2X_XCODEML_NAME}.jar"
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
-  -Dantlr.jar="${ANTLR_NAME}.jar"
+  -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   COMMENT "Building CLAW XcodeML/F to XcodeML/F libraries"
 )
