@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.exception;
 
+import org.antlr.v4.runtime.Token;
+
 /**
  * Exception thrown during the analysis of a directive.
  *
@@ -15,6 +17,7 @@ public class IllegalDirectiveException extends Exception {
   private int _directiveLine = 0;
   private int _charPos = 0;
   private String _directive;
+  private Token _offendingToken = null;
 
   /**
    * Constructs a new exception with a specific detail message and clause.
@@ -25,6 +28,20 @@ public class IllegalDirectiveException extends Exception {
   public IllegalDirectiveException(String directive, String message) {
     super(message);
     _directive = directive;
+  }
+
+  /**
+   * Constructs a new exception with an offending token and a list of expecting
+   * ones.
+   *
+   * @param offendingToken Token that break the parsing.
+   */
+  public IllegalDirectiveException(Token offendingToken, int lineno,
+                                   int charPos)
+  {
+    _offendingToken = offendingToken;
+    _directiveLine = lineno;
+    _charPos = charPos;
   }
 
   /**
@@ -106,14 +123,44 @@ public class IllegalDirectiveException extends Exception {
 
   @Override
   public String getMessage() {
-    String errorMessage = "Illegal directive ";
+    return (_offendingToken != null) ? getExpectingTokenMsg() : getStdMsg();
+  }
 
+  /**
+   * Get the standard error message if no offending token is provided.
+   *
+   * @return Standard error message.
+   */
+  private String getStdMsg() {
+    String errorMessage = getMsgPrefix();
+    errorMessage += ": " + super.getMessage();
+    return errorMessage;
+  }
+
+  /**
+   * Get a specific error message when an offending token is provided.
+   *
+   * @return Specific error message including offending and expecting tokens.
+   */
+  private String getExpectingTokenMsg() {
+    String errorMessage = getMsgPrefix();
+    errorMessage += ": Expected X but found \"" +
+        _offendingToken.getText() + "\"";
+    return errorMessage;
+  }
+
+  /**
+   * Get the standard prefix for the illegal directive error message.
+   *
+   * @return Standard error message prefix.
+   */
+  private String getMsgPrefix() {
+    String errorMessage = "Illegal directive ";
     if(_directiveLine > 0) {
       errorMessage += _directiveLine + ":" + _charPos;
     } else {
       errorMessage += "-:" + _charPos;
     }
-    errorMessage += ": " + super.getMessage();
     return errorMessage;
   }
 }
