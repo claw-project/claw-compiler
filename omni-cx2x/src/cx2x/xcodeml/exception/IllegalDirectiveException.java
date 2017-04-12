@@ -121,6 +121,16 @@ public class IllegalDirectiveException extends Exception {
     return _charPos;
   }
 
+
+  /**
+   * Get the offending token that triggered the Exception.
+   *
+   * @return Offending token (ANTLR object).
+   */
+  public Token getOffendingToken() {
+    return _offendingToken;
+  }
+
   @Override
   public String getMessage() {
     return (_offendingToken != null) ? getExpectingTokenMsg() : getStdMsg();
