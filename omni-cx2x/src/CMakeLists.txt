@@ -32,7 +32,7 @@ add_custom_command(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dcx2x.xcodeml.jar="${OMNI_CX2X_XCODEML_NAME}.jar"
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
-  -Dantlr.jar="${ANTLR_NAME}.jar"
+  -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   COMMENT "Building CLAW XcodeML/F to XcodeML/F libraries"
 )
@@ -41,5 +41,7 @@ add_dependencies(omni-cx2x omni-cx2x-init)
 # Install libraries
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
 install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${COMMON_CLI_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
