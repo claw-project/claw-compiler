@@ -187,22 +187,13 @@ public class ClawLanguage extends AnalyzedPragma {
     } catch(ParseCancellationException pcex) {
       if(pcex.getCause() instanceof InputMismatchException) {
         InputMismatchException imex = (InputMismatchException) pcex.getCause();
-        IntervalSet set = imex.getExpectedTokens();
-        List<String> expectedTokens = new ArrayList<>();
-        for(int tokenId : set.toList()) {
-          expectedTokens.add(parser.getVocabulary().getLiteralName(tokenId));
-        }
-        throw new IllegalDirectiveException(expectedTokens, lineno,
+        throw new IllegalDirectiveException(
+            getTokens(imex.getExpectedTokens(), parser), lineno,
             imex.getOffendingToken().getCharPositionInLine());
       } else if(pcex.getCause() instanceof NoViableAltException) {
         NoViableAltException nvex = (NoViableAltException) pcex.getCause();
-        IntervalSet set = nvex.getExpectedTokens();
-        List<String> expectedTokens = new ArrayList<>();
-        for(int tokenId : set.toList()) {
-          expectedTokens.add(parser.getVocabulary().getLiteralName(tokenId));
-        }
         throw new IllegalDirectiveException(nvex.getOffendingToken(),
-            expectedTokens, lineno,
+            getTokens(nvex.getExpectedTokens(), parser), lineno,
             nvex.getOffendingToken().getCharPositionInLine());
       }
       throw new IllegalDirectiveException(rawPragma,
@@ -244,6 +235,25 @@ public class ClawLanguage extends AnalyzedPragma {
     l.setIndexes(master.getIndexes());
     l.attachPragma(pragma);
     return l;
+  }
+
+  /**
+   * Get a readable list of token found in an IntervalSet.
+   *
+   * @param set    Set of tokens to be found.
+   * @param parser Current parser instance.
+   * @return List of human readable tokens.
+   */
+  private static List<String> getTokens(IntervalSet set, ClawParser parser) {
+    List<String> tokens = new ArrayList<>();
+    for(int tokenId : set.toList()) {
+      if(parser.getVocabulary().getLiteralName(tokenId) == null) {
+        tokens.add(parser.getVocabulary().getDisplayName(tokenId));
+      } else {
+        tokens.add(parser.getVocabulary().getLiteralName(tokenId));
+      }
+    }
+    return tokens;
   }
 
   private void resetVariables() {
