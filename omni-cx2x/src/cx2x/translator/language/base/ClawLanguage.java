@@ -9,15 +9,14 @@ import cx2x.translator.language.common.*;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.language.parser.ClawErrorListener;
 import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xnode.Xnode;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,8 +176,6 @@ public class ClawLanguage extends AnalyzedPragma {
     ClawParser parser = new ClawParser(tokens);
     parser.setErrorHandler(new BailErrorStrategy());
     parser.removeErrorListeners();
-    ClawErrorListener cel = new ClawErrorListener();
-    parser.addErrorListener(cel);
 
     try {
       // Start the parser analysis from the "analyze" entry point
@@ -188,13 +185,28 @@ public class ClawLanguage extends AnalyzedPragma {
       ctx.l.setTarget(target);
       return ctx.l;
     } catch(ParseCancellationException pcex) {
-      IllegalDirectiveException ex = cel.getLastError();
-      if(ex != null) {
-        throw ex;
-      } else {
-        throw new IllegalDirectiveException(rawPragma,
-            "Unsupported construct", lineno, 0);
+      if(pcex.getCause() instanceof InputMismatchException) {
+        InputMismatchException imex = (InputMismatchException) pcex.getCause();
+        IntervalSet set = imex.getExpectedTokens();
+        List<String> expectedTokens = new ArrayList<>();
+        for(int tokenId : set.toList()) {
+          expectedTokens.add(parser.getVocabulary().getLiteralName(tokenId));
+        }
+        throw new IllegalDirectiveException(expectedTokens, lineno,
+            imex.getOffendingToken().getCharPositionInLine());
+      } else if(pcex.getCause() instanceof NoViableAltException) {
+        NoViableAltException nvex = (NoViableAltException) pcex.getCause();
+        IntervalSet set = nvex.getExpectedTokens();
+        List<String> expectedTokens = new ArrayList<>();
+        for(int tokenId : set.toList()) {
+          expectedTokens.add(parser.getVocabulary().getLiteralName(tokenId));
+        }
+        throw new IllegalDirectiveException(nvex.getOffendingToken(),
+            expectedTokens, lineno,
+            nvex.getOffendingToken().getCharPositionInLine());
       }
+      throw new IllegalDirectiveException(rawPragma,
+          "Unsupported construct", lineno, 0);
     }
   }
 
