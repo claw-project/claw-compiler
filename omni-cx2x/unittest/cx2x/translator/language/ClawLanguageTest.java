@@ -316,6 +316,7 @@ public class ClawLanguageTest {
       }
       assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
+      System.err.println(idex.getMessage());
       fail();
     }
   }
@@ -1260,5 +1261,13 @@ public class ClawLanguageTest {
     }
   }
 
+  @Test
+  public void PrimitiveTest() {
+    analyzeValidSimpleClaw("claw omp do", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw   omp end do", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw acc parallel", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw acc end parallel", ClawDirective.PRIMITIVE, false, null);
+  }
+  
 }
 
