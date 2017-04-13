@@ -38,13 +38,16 @@ public class IllegalDirectiveException extends Exception {
    * Constructs a new exception with an offending token.
    *
    * @param offendingToken Token that break the parsing.
+   * @param expectedTokens Set of expected tokens.
    * @param lineno         Line number where the parsing error occurred.
    * @param charPos        Char position where the parsing error occurred.
    */
-  public IllegalDirectiveException(Token offendingToken, int lineno,
+  public IllegalDirectiveException(Token offendingToken,
+                                   List<String> expectedTokens, int lineno,
                                    int charPos)
   {
     _offendingToken = offendingToken;
+    _expectedTokens = expectedTokens;
     _directiveLine = lineno;
     _charPos = charPos;
   }
@@ -162,7 +165,7 @@ public class IllegalDirectiveException extends Exception {
 
   @Override
   public String getMessage() {
-    if(_expectedTokens != null) {
+    if(_expectedTokens != null && _offendingToken == null) {
       return getExpectingTokenMsg();
     } else if(_offendingToken != null) {
       return getExpectingByFoundTokenMsg();
@@ -187,10 +190,8 @@ public class IllegalDirectiveException extends Exception {
    * @return Specific error message including offending and expecting tokens.
    */
   private String getExpectingByFoundTokenMsg() {
-    String errorMessage = getMsgPrefix();
-    errorMessage += ": Expected X but found \"" +
-        _offendingToken.getText() + "\"";
-    return errorMessage;
+    return String.format("%s Expected %s but found '%s'", getMsgPrefix(),
+        Utility.join(",", _expectedTokens), _offendingToken.getText());
   }
 
   /**
@@ -200,7 +201,7 @@ public class IllegalDirectiveException extends Exception {
    */
   private String getExpectingTokenMsg() {
     String errorMessage = getMsgPrefix();
-    errorMessage += ": Expecting " + Utility.join(",", _expectedTokens);
+    errorMessage += ": Expecting " + Utility.join(", ", _expectedTokens);
     return errorMessage;
   }
 
@@ -210,12 +211,16 @@ public class IllegalDirectiveException extends Exception {
    * @return Standard error message prefix.
    */
   private String getMsgPrefix() {
-    String errorMessage = "Illegal directive ";
+    StringBuilder str = new StringBuilder();
+    str.append("Illegal directive ");
     if(_directiveLine > 0) {
-      errorMessage += _directiveLine + ":" + _charPos;
+      str.append(_directiveLine);
     } else {
-      errorMessage += "-:" + _charPos;
+      str.append("-");
     }
-    return errorMessage;
+    str.append(":");
+    str.append(_charPos);
+    str.append(":");
+    return str.toString();
   }
 }
