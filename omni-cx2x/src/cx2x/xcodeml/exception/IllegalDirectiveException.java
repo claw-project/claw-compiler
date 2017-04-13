@@ -5,7 +5,10 @@
 
 package cx2x.xcodeml.exception;
 
+import cx2x.translator.common.Utility;
 import org.antlr.v4.runtime.Token;
+
+import java.util.List;
 
 /**
  * Exception thrown during the analysis of a directive.
@@ -18,6 +21,7 @@ public class IllegalDirectiveException extends Exception {
   private int _charPos = 0;
   private String _directive;
   private Token _offendingToken = null;
+  private List<String> _expectedTokens = null;
 
   /**
    * Constructs a new exception with a specific detail message and clause.
@@ -31,10 +35,11 @@ public class IllegalDirectiveException extends Exception {
   }
 
   /**
-   * Constructs a new exception with an offending token and a list of expecting
-   * ones.
+   * Constructs a new exception with an offending token.
    *
    * @param offendingToken Token that break the parsing.
+   * @param lineno         Line number where the parsing error occurred.
+   * @param charPos        Char position where the parsing error occurred.
    */
   public IllegalDirectiveException(Token offendingToken, int lineno,
                                    int charPos)
@@ -45,11 +50,26 @@ public class IllegalDirectiveException extends Exception {
   }
 
   /**
+   * Constructs a new exception with a set of expected tokens.
+   *
+   * @param expectedTokens Set of expected tokens.
+   * @param lineno         Line number where the parsing error occurred.
+   * @param charPos        Char position where the parsing error occurred.
+   */
+  public IllegalDirectiveException(List<String> expectedTokens, int lineno,
+                                   int charPos)
+  {
+    _expectedTokens = expectedTokens;
+    _directiveLine = lineno;
+    _charPos = charPos;
+  }
+
+  /**
    * Constructs a new exception with a specific detail message and line number.
    *
    * @param directive Illegal directive
    * @param message   Specific exception message.
-   * @param lineno    Line number of the directive.
+   * @param lineno    Line number where the parsing error occurred.
    */
   public IllegalDirectiveException(String directive, String message, int lineno)
   {
@@ -64,8 +84,8 @@ public class IllegalDirectiveException extends Exception {
    *
    * @param directive Illegal directive
    * @param message   Specific exception message.
-   * @param lineno    Line number of the directive.
-   * @param charPos   Character position where the directive error happened.
+   * @param lineno    Line number where the parsing error occurred.
+   * @param charPos   Char position where the parsing error occurred.
    */
   public IllegalDirectiveException(String directive, String message, int lineno,
                                    int charPos)
@@ -131,9 +151,23 @@ public class IllegalDirectiveException extends Exception {
     return _offendingToken;
   }
 
+  /**
+   * Get the list of expected token.
+   *
+   * @return List of expected tokens or NULL.
+   */
+  public List<String> getExpectedTokens() {
+    return _expectedTokens;
+  }
+
   @Override
   public String getMessage() {
-    return (_offendingToken != null) ? getExpectingTokenMsg() : getStdMsg();
+    if(_expectedTokens != null) {
+      return getExpectingTokenMsg();
+    } else if(_offendingToken != null) {
+      return getExpectingByFoundTokenMsg();
+    }
+    return getStdMsg();
   }
 
   /**
@@ -152,10 +186,21 @@ public class IllegalDirectiveException extends Exception {
    *
    * @return Specific error message including offending and expecting tokens.
    */
-  private String getExpectingTokenMsg() {
+  private String getExpectingByFoundTokenMsg() {
     String errorMessage = getMsgPrefix();
     errorMessage += ": Expected X but found \"" +
         _offendingToken.getText() + "\"";
+    return errorMessage;
+  }
+
+  /**
+   * Get a specific error message when an offending token is provided.
+   *
+   * @return Specific error message including offending and expecting tokens.
+   */
+  private String getExpectingTokenMsg() {
+    String errorMessage = getMsgPrefix();
+    errorMessage += ": Expecting " + Utility.join(",", _expectedTokens);
     return errorMessage;
   }
 
