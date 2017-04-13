@@ -34,12 +34,6 @@ analyze returns [ClawLanguage l]
   }
   :
     CLAW directive[$l] EOF
-  | CLAW VERBATIM // this directive accept anything after the verbatim
-    { $l.setDirective(ClawDirective.VERBATIM); }
-  | CLAW ACC // this directive accept anything after the acc
-    { $l.setDirective(ClawDirective.PRIMITIVE); }
-  | CLAW OMP // this directive accept anything after the omp
-    { $l.setDirective(ClawDirective.PRIMITIVE); }
 ;
 
 directive[ClawLanguage l]
@@ -136,6 +130,16 @@ directive[ClawLanguage l]
        $l.setDirective(ClawDirective.IGNORE);
        $l.setEndPragma();
      }
+
+
+   // Special directives
+
+   | VERBATIM REMAINING// this directive accept anything after the verbatim
+     { $l.setDirective(ClawDirective.VERBATIM); }
+   | ACC REMAINING // this directive accept anything after the acc
+     { $l.setDirective(ClawDirective.PRIMITIVE); }
+   | OMP REMAINING // this directive accept anything after the omp
+     { $l.setDirective(ClawDirective.PRIMITIVE); }
 ;
 
 // Comma-separated identifiers list
@@ -562,3 +566,5 @@ fragment DIGIT  : [0-9] ;
 
 // Skip whitspaces
 WHITESPACE   : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ { skip(); };
+
+REMAINING : .*?;
