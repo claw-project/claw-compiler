@@ -49,6 +49,7 @@ script:
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make clean-transformation transformation test
+  - make install # Test install steps as well, avoid missing jars of files.
 
 # Notification settings
 notifications:
