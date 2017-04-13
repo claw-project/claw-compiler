@@ -39,7 +39,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW loop fusion directive.
    */
   @Test
-  public void FusionTest() {
+  public void fusionTest() {
     // Valid directives
     analyzeValidClawLoopFusion("claw loop-fusion", null, false, 0, null, null);
     analyzeValidClawLoopFusion("claw loop-fusion group(g1)", "g1", false, 0,
@@ -164,7 +164,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW loop interchange directive.
    */
   @Test
-  public void InterchangeTest() {
+  public void interchangeTest() {
     // Valid directives
     analyzeValidClawLoopInterchange("claw loop-interchange", null, false, null,
         null);
@@ -270,7 +270,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW remove directive.
    */
   @Test
-  public void RemoveTest() {
+  public void removeTest() {
     // Valid directives
     analyzeValidSimpleClaw("claw remove", ClawDirective.REMOVE, false, null);
     analyzeValidSimpleClaw("claw end remove", ClawDirective.REMOVE, true, null);
@@ -326,7 +326,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW loop extract directive.
    */
   @Test
-  public void ExtractTest() {
+  public void extractTest() {
     // Valid directives
     ClawLanguage l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j)", "i", "istart",
@@ -591,7 +591,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW kcache directive.
    */
   @Test
-  public void KcacheTest() {
+  public void kcacheTest() {
 
     // data clause + offsets
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1)",
@@ -703,7 +703,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW array-transform directive.
    */
   @Test
-  public void ArrayTransformTest() {
+  public void arrayTransformTest() {
     // Valid directives
     analyzeValidArrayTransform("claw array-transform", false, null, false,
         null, null, null);
@@ -829,7 +829,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW loop-hoist directive.
    */
   @Test
-  public void LoopHoistTest() {
+  public void loopHoistTest() {
     // Valid directives
     analyzeValidLoopHoist("claw loop-hoist(i,j)",
         Arrays.asList("i", "j"), false, null, false, null, null);
@@ -940,7 +940,7 @@ public class ClawLanguageTest {
    * Test various input for the CLAW call directive.
    */
   @Test
-  public void ArrayToFctCallTest() {
+  public void arrayToFctCallTest() {
     // Valid directives
     analyzeValidArrayToFctCall("claw call var1=f_var1(i,j)", "var1", "f_var1",
         Arrays.asList("i", "j"), null);
@@ -1227,7 +1227,7 @@ public class ClawLanguageTest {
   }
 
   @Test
-  public void ContinuationTest() {
+  public void continuationTest() {
     String continuedPragma = "claw loop-fusion   claw collapse(2)";
     analyzeValidClawLoopFusion(continuedPragma, null, true, 2, null, null);
 
@@ -1237,7 +1237,7 @@ public class ClawLanguageTest {
   }
 
   @Test
-  public void ErrorHandlingTest() {
+  public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
     analyzeErrors("claw loop", 15);
@@ -1262,12 +1262,25 @@ public class ClawLanguageTest {
   }
 
   @Test
-  public void PrimitiveTest() {
+  public void primitiveTest() {
     analyzeValidSimpleClaw("claw omp do", ClawDirective.PRIMITIVE, false, null);
-    analyzeValidSimpleClaw("claw   omp end do", ClawDirective.PRIMITIVE, false, null);
-    analyzeValidSimpleClaw("claw acc parallel", ClawDirective.PRIMITIVE, false, null);
-    analyzeValidSimpleClaw("claw acc end parallel", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw   omp end do", ClawDirective.PRIMITIVE, false,
+        null);
+    analyzeValidSimpleClaw("claw acc parallel", ClawDirective.PRIMITIVE, false,
+        null);
+    analyzeValidSimpleClaw("claw acc end parallel", ClawDirective.PRIMITIVE,
+        false, null);
   }
-  
+
+  @Test
+  public void verbatimTest() {
+    analyzeValidSimpleClaw("claw verbatim if (test) then",
+        ClawDirective.VERBATIM, false, null);
+    analyzeValidSimpleClaw("claw verbatim end if",
+        ClawDirective.VERBATIM, false, null);
+    analyzeValidSimpleClaw("claw verbatim print*,'test'",
+        ClawDirective.VERBATIM, false, null);
+  }
+
 }
 
