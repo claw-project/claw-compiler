@@ -33,13 +33,7 @@ analyze returns [ClawLanguage l]
     $l = new ClawLanguage();
   }
   :
-    CLAW directive[$l] EOF
-  | CLAW VERBATIM // this directive accept anything after the verbatim
-    { $l.setDirective(ClawDirective.VERBATIM); }
-  | CLAW ACC // this directive accept anything after the acc
-    { $l.setDirective(ClawDirective.PRIMITIVE); }
-  | CLAW OMP // this directive accept anything after the omp
-    { $l.setDirective(ClawDirective.PRIMITIVE); }
+    CLAW directive[$l]
 ;
 
 directive[ClawLanguage l]
@@ -102,7 +96,7 @@ directive[ClawLanguage l]
       $l.setEndPragma();
     }
   // on the fly directive
-  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')' (target_clause[$l])?
+  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')' (target_clause[$l])? EOF
     {
       $l.setDirective(ClawDirective.ARRAY_TO_CALL);
       $l.setFctParams(o);
@@ -111,31 +105,44 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l]
+   | define_option[$l]* PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
-   | PARALLELIZE FORWARD parallelize_clauses[$l]
+   | PARALLELIZE FORWARD parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setForwardClause();
      }
-   | END PARALLELIZE
+   | END PARALLELIZE EOF
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
        $l.setEndPragma();
      }
 
    // ignore directive
-   | IGNORE
+   | IGNORE EOF
      {
        $l.setDirective(ClawDirective.IGNORE);
      }
-   | END IGNORE
+   | END IGNORE EOF
      {
        $l.setDirective(ClawDirective.IGNORE);
        $l.setEndPragma();
      }
+
+
+   // Special directives
+
+   | VERBATIM // this directive accept anything after the verbatim
+     { $l.setDirective(ClawDirective.VERBATIM); }
+     REMAINING*
+   | ACC  // this directive accept anything after the acc
+     { $l.setDirective(ClawDirective.PRIMITIVE);  }
+     REMAINING*
+   | OMP // this directive accept anything after the omp
+     { $l.setDirective(ClawDirective.PRIMITIVE); }
+     REMAINING*
 ;
 
 // Comma-separated identifiers list
@@ -562,3 +569,5 @@ fragment DIGIT  : [0-9] ;
 
 // Skip whitspaces
 WHITESPACE   : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+ { skip(); };
+
+REMAINING : .*? { skip(); };

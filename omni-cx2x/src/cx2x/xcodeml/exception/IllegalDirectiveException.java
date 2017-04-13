@@ -5,6 +5,11 @@
 
 package cx2x.xcodeml.exception;
 
+import cx2x.translator.common.Utility;
+import org.antlr.v4.runtime.Token;
+
+import java.util.List;
+
 /**
  * Exception thrown during the analysis of a directive.
  *
@@ -15,6 +20,8 @@ public class IllegalDirectiveException extends Exception {
   private int _directiveLine = 0;
   private int _charPos = 0;
   private String _directive;
+  private Token _offendingToken = null;
+  private List<String> _expectedTokens = null;
 
   /**
    * Constructs a new exception with a specific detail message and clause.
@@ -28,11 +35,44 @@ public class IllegalDirectiveException extends Exception {
   }
 
   /**
+   * Constructs a new exception with an offending token.
+   *
+   * @param offendingToken Token that break the parsing.
+   * @param expectedTokens Set of expected tokens.
+   * @param lineno         Line number where the parsing error occurred.
+   * @param charPos        Char position where the parsing error occurred.
+   */
+  public IllegalDirectiveException(Token offendingToken,
+                                   List<String> expectedTokens, int lineno,
+                                   int charPos)
+  {
+    _offendingToken = offendingToken;
+    _expectedTokens = expectedTokens;
+    _directiveLine = lineno;
+    _charPos = charPos;
+  }
+
+  /**
+   * Constructs a new exception with a set of expected tokens.
+   *
+   * @param expectedTokens Set of expected tokens.
+   * @param lineno         Line number where the parsing error occurred.
+   * @param charPos        Char position where the parsing error occurred.
+   */
+  public IllegalDirectiveException(List<String> expectedTokens, int lineno,
+                                   int charPos)
+  {
+    _expectedTokens = expectedTokens;
+    _directiveLine = lineno;
+    _charPos = charPos;
+  }
+
+  /**
    * Constructs a new exception with a specific detail message and line number.
    *
    * @param directive Illegal directive
    * @param message   Specific exception message.
-   * @param lineno    Line number of the directive.
+   * @param lineno    Line number where the parsing error occurred.
    */
   public IllegalDirectiveException(String directive, String message, int lineno)
   {
@@ -47,8 +87,8 @@ public class IllegalDirectiveException extends Exception {
    *
    * @param directive Illegal directive
    * @param message   Specific exception message.
-   * @param lineno    Line number of the directive.
-   * @param charPos   Character position where the directive error happened.
+   * @param lineno    Line number where the parsing error occurred.
+   * @param charPos   Char position where the parsing error occurred.
    */
   public IllegalDirectiveException(String directive, String message, int lineno,
                                    int charPos)
@@ -104,16 +144,82 @@ public class IllegalDirectiveException extends Exception {
     return _charPos;
   }
 
+
+  /**
+   * Get the offending token that triggered the Exception.
+   *
+   * @return Offending token (ANTLR object).
+   */
+  public Token getOffendingToken() {
+    return _offendingToken;
+  }
+
+  /**
+   * Get the list of expected token.
+   *
+   * @return List of expected tokens or NULL.
+   */
+  public List<String> getExpectedTokens() {
+    return _expectedTokens;
+  }
+
   @Override
   public String getMessage() {
-    String errorMessage = "Illegal directive ";
-
-    if(_directiveLine > 0) {
-      errorMessage += _directiveLine + ":" + _charPos;
-    } else {
-      errorMessage += "-:" + _charPos;
+    if(_expectedTokens != null && _offendingToken == null) {
+      return getExpectingTokenMsg();
+    } else if(_offendingToken != null) {
+      return getExpectingByFoundTokenMsg();
     }
-    errorMessage += " : " + super.getMessage();
+    return getStdMsg();
+  }
+
+  /**
+   * Get the standard error message if no offending token is provided.
+   *
+   * @return Standard error message.
+   */
+  private String getStdMsg() {
+    String errorMessage = getMsgPrefix();
+    errorMessage += ": " + super.getMessage();
     return errorMessage;
+  }
+
+  /**
+   * Get a specific error message when an offending token is provided.
+   *
+   * @return Specific error message including offending and expecting tokens.
+   */
+  private String getExpectingByFoundTokenMsg() {
+    return String.format("%s Expected %s but found '%s'", getMsgPrefix(),
+        Utility.join(",", _expectedTokens), _offendingToken.getText());
+  }
+
+  /**
+   * Get a specific error message when an offending token is provided.
+   *
+   * @return Specific error message including offending and expecting tokens.
+   */
+  private String getExpectingTokenMsg() {
+    return String.format("%s Expecting %s", getMsgPrefix(),
+        Utility.join(", ", _expectedTokens));
+  }
+
+  /**
+   * Get the standard prefix for the illegal directive error message.
+   *
+   * @return Standard error message prefix.
+   */
+  private String getMsgPrefix() {
+    StringBuilder str = new StringBuilder();
+    str.append("Illegal directive ");
+    if(_directiveLine > 0) {
+      str.append(_directiveLine);
+    } else {
+      str.append("-");
+    }
+    str.append(":");
+    str.append(_charPos);
+    str.append(":");
+    return str.toString();
   }
 }

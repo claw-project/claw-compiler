@@ -9,15 +9,14 @@ import cx2x.translator.language.common.*;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.language.parser.ClawErrorListener;
 import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.xnode.Xnode;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,8 +176,6 @@ public class ClawLanguage extends AnalyzedPragma {
     ClawParser parser = new ClawParser(tokens);
     parser.setErrorHandler(new BailErrorStrategy());
     parser.removeErrorListeners();
-    ClawErrorListener cel = new ClawErrorListener();
-    parser.addErrorListener(cel);
 
     try {
       // Start the parser analysis from the "analyze" entry point
@@ -188,13 +185,19 @@ public class ClawLanguage extends AnalyzedPragma {
       ctx.l.setTarget(target);
       return ctx.l;
     } catch(ParseCancellationException pcex) {
-      IllegalDirectiveException ex = cel.getLastError();
-      if(ex != null) {
-        throw ex;
-      } else {
-        throw new IllegalDirectiveException(rawPragma,
-            "Unsupported construct", lineno, 0);
+      if(pcex.getCause() instanceof InputMismatchException) {
+        InputMismatchException imex = (InputMismatchException) pcex.getCause();
+        throw new IllegalDirectiveException(
+            getTokens(imex.getExpectedTokens(), parser), lineno,
+            imex.getOffendingToken().getCharPositionInLine());
+      } else if(pcex.getCause() instanceof NoViableAltException) {
+        NoViableAltException nvex = (NoViableAltException) pcex.getCause();
+        throw new IllegalDirectiveException(nvex.getOffendingToken(),
+            getTokens(nvex.getExpectedTokens(), parser), lineno,
+            nvex.getOffendingToken().getCharPositionInLine());
       }
+      throw new IllegalDirectiveException(rawPragma,
+          "Unsupported construct", lineno, 0);
     }
   }
 
@@ -232,6 +235,25 @@ public class ClawLanguage extends AnalyzedPragma {
     l.setIndexes(master.getIndexes());
     l.attachPragma(pragma);
     return l;
+  }
+
+  /**
+   * Get a readable list of token found in an IntervalSet.
+   *
+   * @param set    Set of tokens to be found.
+   * @param parser Current parser instance.
+   * @return List of human readable tokens.
+   */
+  private static List<String> getTokens(IntervalSet set, ClawParser parser) {
+    List<String> tokens = new ArrayList<>();
+    for(int tokenId : set.toList()) {
+      if(parser.getVocabulary().getLiteralName(tokenId) == null) {
+        tokens.add(parser.getVocabulary().getDisplayName(tokenId));
+      } else {
+        tokens.add(parser.getVocabulary().getLiteralName(tokenId));
+      }
+    }
+    return tokens;
   }
 
   private void resetVariables() {

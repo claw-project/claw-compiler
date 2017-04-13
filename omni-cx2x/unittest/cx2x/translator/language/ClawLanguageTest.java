@@ -126,7 +126,7 @@ public class ClawLanguageTest {
       } else {
         assertFalse(l.hasCollapseClause());
       }
-      if(constraint != null){
+      if(constraint != null) {
         assertTrue(l.hasConstraintClause());
         assertEquals(constraint, l.getConstraintClauseValue());
       } else {
@@ -316,6 +316,7 @@ public class ClawLanguageTest {
       }
       assertTargets(l, targets);
     } catch(IllegalDirectiveException idex) {
+      System.err.println(idex.getMessage());
       fail();
     }
   }
@@ -1235,5 +1236,38 @@ public class ClawLanguageTest {
         Collections.singletonList(Target.CPU), null);
   }
 
+  @Test
+  public void ErrorHandlingTest() {
+    analyzeErrors("claw loop-fusion group(g", 1);
+    analyzeErrors("claw loop-fusion group", 1);
+    analyzeErrors("claw loop", 15);
+  }
+
+  private void analyzeErrors(String pragma, int nbExpectedToken) {
+    Xnode p = XmlHelper.createXpragma();
+    p.setValue(pragma);
+    p.setLine(1);
+    Configuration configuration =
+        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
+    AcceleratorGenerator generator =
+        AcceleratorHelper.createAcceleratorGenerator(configuration);
+    try {
+      ClawLanguage.analyze(p, generator, Target.GPU);
+    } catch(IllegalDirectiveException e) {
+      if(nbExpectedToken != 0) {
+        assertEquals(nbExpectedToken, e.getExpectedTokens().size());
+      }
+      assertNotNull(e.getMessage());
+    }
+  }
+
+  @Test
+  public void PrimitiveTest() {
+    analyzeValidSimpleClaw("claw omp do", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw   omp end do", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw acc parallel", ClawDirective.PRIMITIVE, false, null);
+    analyzeValidSimpleClaw("claw acc end parallel", ClawDirective.PRIMITIVE, false, null);
+  }
+  
 }
 
