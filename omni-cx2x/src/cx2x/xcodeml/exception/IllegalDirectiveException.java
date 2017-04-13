@@ -200,9 +200,8 @@ public class IllegalDirectiveException extends Exception {
    * @return Specific error message including offending and expecting tokens.
    */
   private String getExpectingTokenMsg() {
-    String errorMessage = getMsgPrefix();
-    errorMessage += ": Expecting " + Utility.join(", ", _expectedTokens);
-    return errorMessage;
+    return String.format("%s Expecting %s", getMsgPrefix(),
+        Utility.join(", ", _expectedTokens));
   }
 
   /**
