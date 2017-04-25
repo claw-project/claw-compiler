@@ -170,7 +170,13 @@ public class ParallelizeForward extends ClawTransformation {
 
     detectParameterMapping(_fctCall);
 
-    _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
+    boolean isTypeBoundProcedure = false;
+    if(_fctCall.firstChild().opcode() == Xcode.FMEMBERREF){
+      isTypeBoundProcedure = true;
+      _calledFctName = _fctCall.firstChild().getAttribute(Xattr.MEMBER);
+    } else {
+      _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
+    }
 
     XfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_calledFctName);
@@ -184,8 +190,7 @@ public class ParallelizeForward extends ClawTransformation {
 
     XmoduleDefinition parentModule = parentFctDef.findParentModule();
 
-    String fctType = _fctCall.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE);
-    if(fctType.startsWith(Xtype.PREFIX_PROCEDURE)) {
+    if(isTypeBoundProcedure) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * matchSeq the correct function in the typeTable.
        * TODO if there is a rename.
@@ -203,6 +208,7 @@ public class ParallelizeForward extends ClawTransformation {
         _fctType = (XfunctionType) xcodeml.getTypeTable().get(id.getType());
       }
     } else {
+      String fctType = _fctCall.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE);
       Xtype rawType = xcodeml.getTypeTable().get(fctType);
       if(rawType instanceof XfunctionType) {
         _fctType = (XfunctionType) rawType;
@@ -401,7 +407,7 @@ public class ParallelizeForward extends ClawTransformation {
      */
     int argOffset = 0;
     if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
-        && _fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF))
+        && _fctCall.firstChild().opcode().equals(Xcode.FMEMBERREF))
     {
       argOffset = 1;
     }
