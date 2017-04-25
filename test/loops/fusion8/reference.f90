@@ -2,6 +2,7 @@ PROGRAM test
  INTEGER :: i
  INTEGER :: j
 
+
 !$claw loop-fusion
  DO i = 1 , 10 , 1
   j = i
