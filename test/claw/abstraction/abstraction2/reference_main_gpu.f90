@@ -8,6 +8,7 @@ PROGRAM test_abstraction2
  INTEGER :: i
  INTEGER :: j
 
+
  nx = 10
  ny = 10
  nz = 60
