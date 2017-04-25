@@ -12,6 +12,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
+
 !$acc data present(q,nproma,nz,b,t)
 !$acc parallel private(r,k,proma,c)
 !$acc loop
@@ -34,7 +35,9 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma , 1 : 2 )
   INTEGER :: result
+
   INTEGER , INTENT(IN) :: nproma
+
 
   result = compute_column ( nz , b , q , t , nproma = nproma )
  END SUBROUTINE compute
