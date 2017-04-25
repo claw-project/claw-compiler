@@ -6,6 +6,7 @@ PROGRAM test_abstraction1
  INTEGER :: nz
  INTEGER :: p
 
+
  nproma = 20
  nz = 60
  DO p = 1 , nproma , 1
