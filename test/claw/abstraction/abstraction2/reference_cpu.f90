@@ -8,10 +8,12 @@ CONTAINS
   INTEGER :: k
   REAL :: c
   REAL :: d ( 1 : nx , 1 : ny )
+
   INTEGER , INTENT(IN) :: nx
   INTEGER :: i
   INTEGER , INTENT(IN) :: ny
   INTEGER :: j
+
 
   c = 5.345
   DO k = 2 , nz , 1

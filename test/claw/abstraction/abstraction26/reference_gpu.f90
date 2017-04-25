@@ -6,7 +6,9 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   REAL , INTENT(INOUT) :: z ( : )
+
   INTEGER , INTENT(IN) :: nproma
+
 
   CALL compute_column ( nz , q , t , z , nproma = nproma )
  END SUBROUTINE compute
@@ -18,10 +20,12 @@ CONTAINS
   REAL , INTENT(INOUT) :: z ( : )
   INTEGER :: k
   REAL :: c
+
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-!$acc data present(t,q,nproma,z,nz)
+
+!$acc data present(q,nproma,nz,z,t)
 !$acc parallel private(k,proma,c)
 !$acc loop
   DO proma = 1 , nproma , 1
