@@ -1,5 +1,6 @@
 PROGRAM loop_interchange
 
+
  CALL clawloop ( )
 END PROGRAM loop_interchange
 
@@ -13,6 +14,8 @@ SUBROUTINE clawloop ( )
  INTEGER :: x
  INTEGER :: y
  INTEGER :: z
+
+
 
  DO k = 1 , 2 , 1
   DO i = 1 , 4 , 1
