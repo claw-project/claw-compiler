@@ -10,17 +10,19 @@ configure_file(
   @ONLY
 )
 
-# Bootstrap the compilation process
-add_custom_target(omni-cx2x-ut-init ALL)
-add_custom_command(
-  TARGET omni-cx2x-ut-init
-  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  ${ANT_FLAGS}
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  init
-  COMMENT "Resolving dependencies for the build"
-)
+if(NOT OFFLINE)
+  # Bootstrap the compilation process
+  add_custom_target(omni-cx2x-ut-init ALL)
+  add_custom_command(
+    TARGET omni-cx2x-ut-init
+    COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+    ${ANT_FLAGS}
+    -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+    -Ddist.dir=${CMAKE_BINARY_DIR}/build
+    init
+    COMMENT "Resolving dependencies for the build"
+  )
+endif()
 
 # Add target for the compilation of JUnit test cases with ANT
 add_custom_target(omni-cx2x-ut ALL)
@@ -32,7 +34,9 @@ add_custom_command(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
-add_dependencies(omni-cx2x-ut omni-cx2x-ut-init)
+if(NOT OFFLINE)
+  add_dependencies(omni-cx2x-ut omni-cx2x-ut-init)
+endif()
 
 # Add test cases
 add_test(

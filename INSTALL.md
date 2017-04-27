@@ -48,6 +48,48 @@ make
 make install
 ```
 
+##### Offline build steps
+If your system has no network connection to the Internet, you need to get the
+submodule and the ANT dependencies for the repository. In order to gather all
+the dependencies for offline build, you can use the following command:
+
+```bash
+cd claw-compiler
+./scripts/offline.sh
+```
+
+Once you have all the dependencies for the repository, you can copy all the data
+to your target system and add `OFFLINE` as a CMake option as follows:
+
+```bash
+cmake -DOFFLINE=ON .
+```
+
+##### Switch git submodule from `https` to `ssh`
+OMNI Compiler is referenced to this repository as a git submodule. The link
+to the repository is the `https` link to the official OMNI repository. If your
+network only allow ssh connection, you should change the `.gitmodules` file at
+the root of this repo.
+
+Git submodule configuration with `https` link to the OMNI Compiler repository:
+```
+[submodule "omni-compiler"]
+	path = omni-compiler
+	url = https://github.com/omni-compiler/omni-compiler.git
+	branch = master
+```
+
+Git submodule configuration with `ssh` link to the OMNI Compiler repository:
+```
+[submodule "omni-compiler"]
+	path = omni-compiler
+	url = git@github.com:omni-compiler/omni-compiler.git
+	branch = master
+```
+
+This must be done before the execution of the `git submodule` commands.
+
+
 ##### Specific steps for Piz Daint
 On Piz Daint, specific steps as to be performed in order to have a successful
 compilation.
