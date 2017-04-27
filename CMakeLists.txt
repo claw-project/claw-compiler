@@ -48,6 +48,11 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
+# Set ant to be verbose
+if(ANT_VERBOSE)
+  set(ANT_FLAGS "-v")
+endif()
+
 # Define preprocessor information used in the driver and tests
 # The driver uses preprocessed files only but the tests compile the code.
 if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
