@@ -35,6 +35,7 @@ add_custom_command(
   -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
+  ${DISABLE_RESOLVE}
   COMMENT "Building CLAW XcodeML/F to XcodeML/F libraries"
 )
 if(NOT OFFLINE)
