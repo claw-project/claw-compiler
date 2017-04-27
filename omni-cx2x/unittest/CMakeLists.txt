@@ -32,6 +32,7 @@ add_custom_command(
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  ${DISABLE_RESOLVE}
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
 if(NOT OFFLINE)

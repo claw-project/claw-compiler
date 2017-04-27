@@ -3,3 +3,7 @@
 
 add_subdirectory(src)
 add_subdirectory(unittest)
+
+if(OFFLINE)
+  set(DISABLE_RESOLVE "-Doffline=true")
+endif()
