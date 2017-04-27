@@ -21,6 +21,10 @@ include(ExternalProject)
 # Load all variables from file
 include(properties.cmake)
 
+if(OFFLINE)
+  message(STATUS "CLAW Compiler offline compilation enabled")
+endif()
+
 # Recover commit hash for the CLAW Compiler main repo
 execute_process(
   COMMAND git log -1 --format=%h
