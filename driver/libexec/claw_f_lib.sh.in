@@ -192,6 +192,9 @@ function claw_f_set_parameters()
   # Add the current working directory
   module_opt+=("-M$PWD")
 
+  # Add the generic modules paths
+  module_opt+=("-M$XMOD_GENERIC")
+
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
   if [ "${directive_opt[0]}" == "openacc" ]
