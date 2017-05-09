@@ -1,11 +1,23 @@
+
 module openacc
 
   interface acc_copyin
     module procedure &
+      ! subroutine acc_copyin( a )
       acc_copyin_i_1d, acc_copyin_i_2d, acc_copyin_i_3d, acc_copyin_i_4d, &
       acc_copyin_r_1d, acc_copyin_r_2d, acc_copyin_r_3d, acc_copyin_r_4d, &
-      acc_copyin_l_1d, acc_copyin_l_2d, acc_copyin_l_3d, acc_copyin_l_4d
+      acc_copyin_l_1d, acc_copyin_l_2d, acc_copyin_l_3d, acc_copyin_l_4d, &
+      ! subroutine acc_copyin( a , len )
+      acc_copyin_i_1d_l, acc_copyin_i_2d_l, acc_copyin_i_3d_l, acc_copyin_i_4d_l
   end interface
+
+  ! TODO subroutine acc_copyin_async( a, async )
+  ! TODO subroutine acc_copyin_async( a, len, async )
+
+  ! TODO subroutine acc_create( a )
+  ! TODO subroutine acc_create( a, len )
+  ! TODO subroutine acc_create_async( a, async )
+  ! TODO subroutine acc_create_async( a, len, async )
 
 contains
 integer function acc_get_num_devices( devicetype )
@@ -85,8 +97,7 @@ logical function acc_on_device( devicetype )
   integer ::  devicetype
 end function acc_on_device
 
-
-
+! subroutine acc_copyin( a )
 subroutine acc_copyin_i_1d( a )
   integer, dimension(:) :: a
 end subroutine acc_copyin_i_1d
@@ -134,5 +145,26 @@ end subroutine acc_copyin_l_3d
 subroutine acc_copyin_l_4d( a )
   logical, dimension(:,:,:,:) :: a
 end subroutine acc_copyin_l_4d
+
+! subroutine acc_copyin( a, len )
+subroutine acc_copyin_i_1d_l( a , len )
+  integer, dimension(:) :: a
+  integer :: len
+end subroutine acc_copyin_i_1d_l
+
+subroutine acc_copyin_i_2d_l( a , len )
+  integer, dimension(:,:) :: a
+  integer :: len
+end subroutine acc_copyin_i_2d_l
+
+subroutine acc_copyin_i_3d_l( a , len )
+  integer, dimension(:,:,:) :: a
+  integer :: len
+end subroutine acc_copyin_i_3d_l
+
+subroutine acc_copyin_i_4d_l( a , len )
+  integer, dimension(:,:,:,:) :: a
+  integer :: len
+end subroutine acc_copyin_i_4d_l
 
 end module openacc
