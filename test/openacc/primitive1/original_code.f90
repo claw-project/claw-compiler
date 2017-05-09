@@ -1,4 +1,5 @@
 PROGRAM test_primitive
+  USE openacc
 
   INTEGER :: i
 
