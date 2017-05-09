@@ -1,14 +1,24 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 
+! @author clementval
+! @brief  This file is used as a signatutre only module to generate .xmod file.
+!         These files are needed during a full parse with the OMNI Compiler.
 module openacc
 
   interface acc_copyin
     module procedure &
-      ! subroutine acc_copyin( a )
+      ! subroutine acc_copyin ( a )
       acc_copyin_i_1d, acc_copyin_i_2d, acc_copyin_i_3d, acc_copyin_i_4d, &
       acc_copyin_r_1d, acc_copyin_r_2d, acc_copyin_r_3d, acc_copyin_r_4d, &
       acc_copyin_l_1d, acc_copyin_l_2d, acc_copyin_l_3d, acc_copyin_l_4d, &
+      ! TODO complex/char?
       ! subroutine acc_copyin( a , len )
-      acc_copyin_i_1d_l, acc_copyin_i_2d_l, acc_copyin_i_3d_l, acc_copyin_i_4d_l
+      acc_copyin_i_1d_l, acc_copyin_i_2d_l, acc_copyin_i_3d_l, acc_copyin_i_4d_l, &
+      acc_copyin_r_1d_l, acc_copyin_r_2d_l, acc_copyin_r_3d_l, acc_copyin_r_4d_l, &
+      acc_copyin_l_1d_l, acc_copyin_l_2d_l, acc_copyin_l_3d_l, acc_copyin_l_4d_l
   end interface
 
   ! TODO subroutine acc_copyin_async( a, async )
@@ -167,4 +177,43 @@ subroutine acc_copyin_i_4d_l( a , len )
   integer :: len
 end subroutine acc_copyin_i_4d_l
 
+subroutine acc_copyin_r_1d_l( a , len )
+  real, dimension(:) :: a
+  integer :: len
+end subroutine acc_copyin_r_1d_l
+
+subroutine acc_copyin_r_2d_l( a , len )
+  real, dimension(:,:) :: a
+  integer :: len
+end subroutine acc_copyin_r_2d_l
+
+subroutine acc_copyin_r_3d_l( a , len )
+  real, dimension(:,:,:) :: a
+  integer :: len
+end subroutine acc_copyin_r_3d_l
+
+subroutine acc_copyin_r_4d_l( a , len )
+  real, dimension(:,:,:,:) :: a
+  integer :: len
+end subroutine acc_copyin_r_4d_l
+
+subroutine acc_copyin_l_1d_l( a , len )
+  logical, dimension(:) :: a
+  integer :: len
+end subroutine acc_copyin_l_1d_l
+
+subroutine acc_copyin_l_2d_l( a , len )
+  logical, dimension(:,:) :: a
+  integer :: len
+end subroutine acc_copyin_l_2d_l
+
+subroutine acc_copyin_l_3d_l( a , len )
+  logical, dimension(:,:,:) :: a
+  integer :: len
+end subroutine acc_copyin_l_3d_l
+
+subroutine acc_copyin_l_4d_l( a , len )
+  logical, dimension(:,:,:,:) :: a
+  integer :: len
+end subroutine acc_copyin_l_4d_l
 end module openacc
