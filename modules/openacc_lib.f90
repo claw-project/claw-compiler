@@ -7,7 +7,7 @@
 ! @brief  This file is used as a signatutre only module to generate .xmod file.
 !         These files are needed during a full parse with the OMNI Compiler.
 module openacc
-  
+
   ! Automatically generated signatures for acc_copyin
   interface acc_copyin
     module procedure &
@@ -406,6 +406,31 @@ module openacc
       acc_update_self_async_r_l_p3, &
       acc_update_self_async_l_l_p3, &
       acc_update_self_async_c_l_p3
+  end interface
+
+  ! Automatically generated signatures for acc_is_present
+  interface acc_is_present
+    module procedure &
+      acc_is_present_i_1d_p1, &
+      acc_is_present_i_2d_p1, &
+      acc_is_present_i_3d_p1, &
+      acc_is_present_i_4d_p1, &
+      acc_is_present_r_1d_p1, &
+      acc_is_present_r_2d_p1, &
+      acc_is_present_r_3d_p1, &
+      acc_is_present_r_4d_p1, &
+      acc_is_present_l_1d_p1, &
+      acc_is_present_l_2d_p1, &
+      acc_is_present_l_3d_p1, &
+      acc_is_present_l_4d_p1, &
+      acc_is_present_c_1d_p1, &
+      acc_is_present_c_2d_p1, &
+      acc_is_present_c_3d_p1, &
+      acc_is_present_c_4d_p1, &
+      acc_is_present_i_l_p2, &
+      acc_is_present_r_l_p2, &
+      acc_is_present_l_l_p2, &
+      acc_is_present_c_l_p2
   end interface
 
 contains
@@ -2040,5 +2065,91 @@ subroutine acc_update_self_async_c_l_p3( a, len, async )
   integer :: len
   integer :: async
 end subroutine acc_update_self_async_c_l_p3
+
+! Automatically generated signatures for acc_is_present
+logical function acc_is_present_i_1d_p1( a )
+  integer, dimension(:) :: a
+end function acc_is_present_i_1d_p1
+
+logical function acc_is_present_i_2d_p1( a )
+  integer, dimension(:,:) :: a
+end function acc_is_present_i_2d_p1
+
+logical function acc_is_present_i_3d_p1( a )
+  integer, dimension(:,:,:) :: a
+end function acc_is_present_i_3d_p1
+
+logical function acc_is_present_i_4d_p1( a )
+  integer, dimension(:,:,:,:) :: a
+end function acc_is_present_i_4d_p1
+
+logical function acc_is_present_r_1d_p1( a )
+  real, dimension(:) :: a
+end function acc_is_present_r_1d_p1
+
+logical function acc_is_present_r_2d_p1( a )
+  real, dimension(:,:) :: a
+end function acc_is_present_r_2d_p1
+
+logical function acc_is_present_r_3d_p1( a )
+  real, dimension(:,:,:) :: a
+end function acc_is_present_r_3d_p1
+
+logical function acc_is_present_r_4d_p1( a )
+  real, dimension(:,:,:,:) :: a
+end function acc_is_present_r_4d_p1
+
+logical function acc_is_present_l_1d_p1( a )
+  logical, dimension(:) :: a
+end function acc_is_present_l_1d_p1
+
+logical function acc_is_present_l_2d_p1( a )
+  logical, dimension(:,:) :: a
+end function acc_is_present_l_2d_p1
+
+logical function acc_is_present_l_3d_p1( a )
+  logical, dimension(:,:,:) :: a
+end function acc_is_present_l_3d_p1
+
+logical function acc_is_present_l_4d_p1( a )
+  logical, dimension(:,:,:,:) :: a
+end function acc_is_present_l_4d_p1
+
+logical function acc_is_present_c_1d_p1( a )
+  character, dimension(:) :: a
+end function acc_is_present_c_1d_p1
+
+logical function acc_is_present_c_2d_p1( a )
+  character, dimension(:,:) :: a
+end function acc_is_present_c_2d_p1
+
+logical function acc_is_present_c_3d_p1( a )
+  character, dimension(:,:,:) :: a
+end function acc_is_present_c_3d_p1
+
+logical function acc_is_present_c_4d_p1( a )
+  character, dimension(:,:,:,:) :: a
+end function acc_is_present_c_4d_p1
+
+! Automatically generated signatures for acc_is_present
+logical function acc_is_present_i_l_p2( a, len )
+  integer :: a
+  integer :: len
+end function acc_is_present_i_l_p2
+
+logical function acc_is_present_r_l_p2( a, len )
+  real :: a
+  integer :: len
+end function acc_is_present_r_l_p2
+
+logical function acc_is_present_l_l_p2( a, len )
+  logical :: a
+  integer :: len
+end function acc_is_present_l_l_p2
+
+logical function acc_is_present_c_l_p2( a, len )
+  character :: a
+  integer :: len
+end function acc_is_present_c_l_p2
 
 end module openacc
