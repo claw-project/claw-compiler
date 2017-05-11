@@ -83,5 +83,7 @@ public class DirectivePrimitive extends ClawTransformation {
         getDirective().getPragma().value().toLowerCase().
             replaceAll(regex, prefix)
     );
+
+    transformer.addTransformation(new OpenAccContinuation(getDirective()));
   }
 }
