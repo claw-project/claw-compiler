@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+ 
 package cx2x.decompiler;
 
 import org.w3c.dom.Document;

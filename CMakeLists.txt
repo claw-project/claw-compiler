@@ -92,6 +92,9 @@ add_subdirectory(omni-cx2x)
 # compiler driver
 add_subdirectory(driver)
 
+# generate generic .xmod files
+add_subdirectory(modules)
+
 # Build functional test
 add_subdirectory(test)
 

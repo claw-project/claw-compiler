@@ -12,3 +12,4 @@ add_subdirectory(array10) # With target clause
 #add_subdirectory(array9) # Block transformation with dependency
 add_subdirectory(continuation)
 add_subdirectory(primitive1)
+add_subdirectory(primitive2)
