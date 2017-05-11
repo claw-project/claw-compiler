@@ -136,5 +136,24 @@ public class Utility {
         ClawConstant.CLAW_MOD_SUFFIX;
   }
 
+  /**
+   * Count the number of occurrences of pattern in source string.
+   * @param source  String in which the pattern is search for.
+   * @param pattern Pattern to be found.
+   * @return Number of occurrences.
+   */
+  public static int countOccurrences(String source, String pattern) {
+    int lastIndex = 0;
+    int count = 0;
+    while(lastIndex != -1) {
+      lastIndex = source.indexOf(pattern, lastIndex);
+      if(lastIndex != -1) {
+        count++;
+        lastIndex += pattern.length();
+      }
+    }
+    return count;
+  }
+
 
 }
