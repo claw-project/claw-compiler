@@ -4,6 +4,7 @@ add_custom_command(
   TARGET xmod-openacc
   COMMAND ${CMAKE_SOURCE_DIR}/omni-compiler/F-FrontEnd/src/F_Front
     ${CMAKE_CURRENT_SOURCE_DIR}/openacc_lib.f90 > /dev/null
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/openacc_lib.f90
   COMMENT "Generating .xmod file for OpenACC runtime library"
 )
 install(

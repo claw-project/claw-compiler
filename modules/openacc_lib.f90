@@ -2,10 +2,12 @@
 ! This file is released under terms of BSD license
 ! See LICENSE file for more information
 !
-
+!
 ! @author clementval
 ! @brief  This file is used as a signatutre only module to generate .xmod file.
 !         These files are needed during a full parse with the OMNI Compiler.
+!         This file is partially automatically generated.
+
 module openacc
 
   ! Automatically generated signatures for acc_copyin
