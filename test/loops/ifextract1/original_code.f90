@@ -13,4 +13,4 @@ program ifextract1
     END IF
   END DO
 
-END
+end program ifextract1
