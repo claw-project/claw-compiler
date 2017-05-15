@@ -1240,7 +1240,7 @@ public class ClawLanguageTest {
   public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
-    analyzeErrors("claw loop", 15);
+    analyzeErrors("claw loop", 16);
   }
 
   private void analyzeErrors(String pragma, int nbExpectedToken) {
@@ -1280,6 +1280,12 @@ public class ClawLanguageTest {
         ClawDirective.VERBATIM, false, null);
     analyzeValidSimpleClaw("claw verbatim print*,'test'",
         ClawDirective.VERBATIM, false, null);
+  }
+
+  @Test
+  public void ifExtractTest() {
+    analyzeValidSimpleClaw("claw if-extract", ClawDirective.IF_EXTRACT,
+        false, null);
   }
 
 }
