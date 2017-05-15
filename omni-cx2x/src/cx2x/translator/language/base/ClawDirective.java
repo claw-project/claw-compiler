@@ -16,6 +16,7 @@ public enum ClawDirective {
   ARRAY_TO_CALL,
   DEFINE,
   IGNORE,
+  IF_EXTRACT,
   KCACHE,
   LOOP_FUSION,
   LOOP_INTERCHANGE,
