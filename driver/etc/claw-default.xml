@@ -28,6 +28,7 @@
     <group type="independent" name="loop-interchange"    class="cx2x.translator.transformation.loop.LoopInterchange" />
     <group type="independent" name="on-the-fly"          class="cx2x.translator.transformation.claw.ArrayToFctCall" />
     <group type="independent" name="kcache"              class="cx2x.translator.transformation.claw.Kcaching" />
+    <group type="independent" name="if-extract"          class="cx2x.translator.transformation.loop.IfExtract" />
     <!-- High-level transformations -->
     <group type="independent" name="parallelize"         class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
     <group type="independent" name="parallelize-forward" class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
