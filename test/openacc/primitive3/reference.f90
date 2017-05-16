@@ -2,10 +2,10 @@ PROGRAM test_primitive
  INTEGER :: i
 
 
-!$acc acc data present(q, &
-!$acc  p, &
-!$acc  h) &
-!$acc  create(pt)
+!$acc data present(q, &
+!$acc p, &
+!$acc h) &
+!$acc create(pt)
 !$acc parallel
  DO i = 1 , 10 , 1
   PRINT * , i
