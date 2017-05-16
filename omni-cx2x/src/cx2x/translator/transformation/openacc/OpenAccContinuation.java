@@ -191,10 +191,13 @@ public class OpenAccContinuation extends Transformation {
     p.setFilename(getDirective().getPragma().filename());
     p.setLine(getDirective().getPragma().lineNo() + lineIndex);
     if(continued) {
-      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value + " " +
+      if(value.contains(ClawConstant.OPENACC_PREFIX)) {
+        value = value.replace(ClawConstant.OPENACC_PREFIX, "");
+      }
+      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim() + " " +
           ClawConstant.CONTINUATION_LINE_SYMBOL);
     } else {
-      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value);
+      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim());
     }
     hook.insertAfter(p);
     getDirective().getPragma().delete();
