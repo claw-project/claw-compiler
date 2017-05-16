@@ -153,6 +153,9 @@ public class ClawXcodeMlTranslator {
           case PRIMITIVE:
             addOrAbort(new DirectivePrimitive(analyzedPragma));
             break;
+          case IF_EXTRACT:
+            addOrAbort(new IfExtract(analyzedPragma));
+            break;
           // driver handled directives
           case IGNORE:
           case VERBATIM:

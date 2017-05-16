@@ -131,6 +131,10 @@ directive[ClawLanguage l]
        $l.setEndPragma();
      }
 
+   |
+     IF_EXTRACT EOF
+     { $l.setDirective(ClawDirective.IF_EXTRACT); }
+
 
    // Special directives
 
@@ -512,6 +516,7 @@ ARRAY_TRANS      : 'array-transform';
 ARRAY_TO_CALL    : 'call';
 DEFINE           : 'define';
 END              : 'end';
+IF_EXTRACT       : 'if-extract';
 KCACHE           : 'kcache';
 LOOP_EXTRACT     : 'loop-extract';
 LOOP_FUSION      : 'loop-fusion';
