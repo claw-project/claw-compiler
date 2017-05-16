@@ -87,6 +87,7 @@ public class IfExtract extends ClawTransformation {
     for(Xnode n : newThen.body().children()) {
       n.delete();
     }
+
     // Add the new if statement after the do statement
     XnodeUtil.insertAfter(_doStmt.element(), newIfStmt.element());
 
