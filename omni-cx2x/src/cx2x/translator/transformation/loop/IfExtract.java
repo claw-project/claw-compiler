@@ -81,12 +81,14 @@ public class IfExtract extends ClawTransformation {
     Xnode then = _ifStmt.matchDirectDescendant(Xcode.THEN);
     XnodeUtil.appendBody(_doStmt.body(), then.body());
 
+
     // Copy the if statement and clean its body
     Xnode newIfStmt = _ifStmt.cloneNode();
     Xnode newThen = newIfStmt.matchDirectDescendant(Xcode.THEN);
     for(Xnode n : newThen.body().children()) {
       n.delete();
     }
+    _ifStmt.delete();
 
     // Add the new if statement after the do statement
     XnodeUtil.insertAfter(_doStmt.element(), newIfStmt.element());
@@ -95,7 +97,6 @@ public class IfExtract extends ClawTransformation {
     newThen.body().insert(_doStmt, true);
 
     // Delete the old statements and pragma
-    _ifStmt.delete();
     _doStmt.delete();
     _claw.getPragma().delete();
   }
