@@ -16,8 +16,11 @@
 ### Read configration file and library ###
 OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
 OM_CX2X_DRIVER_LIB_DIR=@OM_CX2X_DRIVER_LIB_DIR@
+# shellcheck source=../etc/claw_f.conf.in
 . ${OM_CX2X_DRIVER_CONF_DIR}/@CLAW_CONF_FILE@
+# shellcheck source=../../../omni-compiler/driver/libexec/omni_common_lib.sh
 . ${OMNI_DRIVER_DIR}/omni_common_lib.sh
+# shellcheck source=../libexec/claw_f_lib.sh.in
 . ${OM_CX2X_DRIVER_LIB_DIR}@CLAW_LIB_SH@
 
 ### Directory for saving intermediate files ###
@@ -27,11 +30,11 @@ DEBUG_TEMP_DIR="__omni_tmp__"
 
 ### Default options ###
 FPP_REDIRECT=@FPP_REDIRECT@
-ENABLE_LINKER=false
 ONLY_PP=false
 ENABLE_CPP=true
 VERBOSE=false
 ENABLE_DEBUG=false
+ENABLE_DEBUG_OMNI=false
 OUTPUT_TEMPORAL=true
 RESOLVE_DEPENDENCIES=true
 DRY_RUN=false
@@ -187,7 +190,7 @@ fi
 
 
 ### Create temporal directory ###
-[ $ENABLE_DEBUG = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
+[ $ENABLE_DEBUG = true || $ENABLE_DEBUG_OMNI = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
 # Note that, if TEMP_DIR exists, the TEMP_DIR is not deleted (KAGEMAI #379)
 
 omni_exec mkdir -p $TEMP_DIR
@@ -391,6 +394,6 @@ for file in "${f_files_transformation[@]}"; do
 done
 
 ### Delete temporal directory ###
-[ $ENABLE_DEBUG = false ] && omni_exec rm -rf $TEMP_DIR
+[ $ENABLE_DEBUG = false && $ENABLE_DEBUG_OMNI = false ] && omni_exec rm -rf $TEMP_DIR
 
 exit 0
