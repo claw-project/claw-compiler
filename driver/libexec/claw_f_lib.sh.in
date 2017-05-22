@@ -127,6 +127,8 @@ function claw_f_set_parameters()
         DRY_RUN=true;;
       --debug)
         ENABLE_DEBUG=true;;
+      --debug-omni)
+        ENABLE_DEBUG_OMNI=true;;
       --stop-pp)
         VERBOSE=true; STOP_PP=true;;
       --stop-frontend)
