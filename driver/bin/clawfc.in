@@ -190,7 +190,7 @@ fi
 
 
 ### Create temporal directory ###
-[ $ENABLE_DEBUG = true || $ENABLE_DEBUG_OMNI = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
+[ $ENABLE_DEBUG = true ] || [ $ENABLE_DEBUG_OMNI = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
 # Note that, if TEMP_DIR exists, the TEMP_DIR is not deleted (KAGEMAI #379)
 
 omni_exec mkdir -p $TEMP_DIR
@@ -394,6 +394,6 @@ for file in "${f_files_transformation[@]}"; do
 done
 
 ### Delete temporal directory ###
-[ $ENABLE_DEBUG = false && $ENABLE_DEBUG_OMNI = false ] && omni_exec rm -rf $TEMP_DIR
+[ $ENABLE_DEBUG = false ] && [ $ENABLE_DEBUG_OMNI = false ] && omni_exec rm -rf $TEMP_DIR
 
 exit 0
