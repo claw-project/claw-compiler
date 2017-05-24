@@ -399,7 +399,7 @@ for file in "${f_files_transformation[@]}"; do
 done
 
 ### Delete temporal directory ###
-if [ $ENABLE_DEBUG_OMNI = false ] || [ $ENABLE_DEBUG = false ]
+if [ $ENABLE_DEBUG_OMNI = false ] && [ $ENABLE_DEBUG = false ]
 then
   omni_exec rm -rf $TEMP_DIR
 fi
