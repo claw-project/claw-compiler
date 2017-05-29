@@ -1,6 +1,6 @@
 ! Simple program to test the if-extract directive
 
-program ifextract1
+program ifextract2
   integer :: i
   logical :: test
 
@@ -9,8 +9,10 @@ program ifextract1
   !$claw if-extract
   DO i = 1, 10
     IF (test) THEN
-      PRINT *, 'First loop body:', i
+      PRINT *, 'Then body:', i
+    ELSE
+      PRINT *, 'Else body:', i
     END IF
   END DO
 
-end program ifextract1
+end program ifextract2
