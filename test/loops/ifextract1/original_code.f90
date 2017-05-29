@@ -1,4 +1,4 @@
-! Simple program to test the loop-fusion directive
+! Simple program to test the if-extract directive
 
 program ifextract1
   integer :: i
