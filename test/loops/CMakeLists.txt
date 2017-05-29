@@ -25,4 +25,5 @@ add_subdirectory(hoist5)       # issue 122 + interchange test
 add_subdirectory(interchange1)
 add_subdirectory(interchange2)
 add_subdirectory(interchange3) # with target clause
-add_subdirectory(ifextract1)
+add_subdirectory(ifextract1)   # if-then block
+add_subdirectory(ifextract2)   # if-then-else block
