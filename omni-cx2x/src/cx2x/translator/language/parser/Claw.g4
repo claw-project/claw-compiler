@@ -193,7 +193,15 @@ collapse_clause[ClawLanguage l]:
 
 // fusion clause
 fusion_clause[ClawLanguage l]:
-    FUSION (group_clause[$l])? { $l.setFusionClause(); }
+    FUSION { $l.setFusionClause(); }
+    fusion_options[$l]
+;
+
+fusion_options[ClawLanguage l]:
+  (
+      { !$l.hasGroupClause() }?      group_clause[$l]
+    | { !$l.hasCollapseClause() }?   collapse_clause[$l]
+  )*
 ;
 
 // parallel clause
@@ -500,7 +508,6 @@ loop_hoist_clauses[ClawLanguage l]:
     { !$l.hasReshapeClause() }?     reshape_clause[$l]
   | { !$l.hasInterchangeClause() }? interchange_clause[$l]
   | { !$l.hasFusionClause() }?      fusion_clause[$l]
-  | { !$l.hasCollapseClause() }?    collapse_clause[$l]
   | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
