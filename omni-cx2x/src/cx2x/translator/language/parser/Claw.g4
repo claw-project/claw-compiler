@@ -499,6 +499,8 @@ loop_hoist_clauses[ClawLanguage l]:
   (
     { !$l.hasReshapeClause() }?     reshape_clause[$l]
   | { !$l.hasInterchangeClause() }? interchange_clause[$l]
+  | { !$l.hasFusionClause() }?      fusion_clause[$l]
+  | { !$l.hasCollapseClause() }?    collapse_clause[$l]
   | { !$l.hasTargetClause() }?      target_clause[$l]
   )*
 ;
