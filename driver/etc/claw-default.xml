@@ -23,8 +23,8 @@
     <group type="independent" name="primitive"           class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
     <group type="independent" name="array-transform"     class="cx2x.translator.transformation.loop.ArrayTransform" />
     <group type="independent" name="loop-extract"        class="cx2x.translator.transformation.loop.LoopExtraction" />
-    <group type="dependent"   name="loop-fusion"         class="cx2x.translator.transformation.loop.LoopFusion" />
     <group type="independent" name="loop-hoist"          class="cx2x.translator.transformation.loop.LoopHoist" />
+    <group type="dependent"   name="loop-fusion"         class="cx2x.translator.transformation.loop.LoopFusion" />
     <group type="independent" name="loop-interchange"    class="cx2x.translator.transformation.loop.LoopInterchange" />
     <group type="independent" name="on-the-fly"          class="cx2x.translator.transformation.claw.ArrayToFctCall" />
     <group type="independent" name="kcache"              class="cx2x.translator.transformation.claw.Kcaching" />
