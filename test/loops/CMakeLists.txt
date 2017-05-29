@@ -22,6 +22,7 @@ add_subdirectory(hoist2)
 add_subdirectory(hoist3)       # with target clause
 add_subdirectory(hoist4)       # issue 122 (nested in do stmt)
 add_subdirectory(hoist5)       # issue 122 + interchange test
+add_subdirectory(hoist6)       # with fusion group clauses
 add_subdirectory(interchange1)
 add_subdirectory(interchange2)
 add_subdirectory(interchange3) # with target clause
