@@ -41,11 +41,6 @@ public class IfExtract extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-    if(_ifStmt.matchDirectDescendant(Xcode.ELSE) != null) {
-      xcodeml.addError("If extraction works only with IF-THEN block.",
-          _claw.getPragma().lineNo());
-      return false;
-    }
     int counterIfStmt = 0;
     for(Xnode n : _doStmt.body().children()) {
       if(n.opcode() != Xcode.FIFSTATEMENT
@@ -78,9 +73,9 @@ public class IfExtract extends ClawTransformation {
                         Transformation other) throws Exception
   {
     // Copy the body of the if statement inside the body of the do statement
-    Xnode then = _ifStmt.matchDirectDescendant(Xcode.THEN);
-    XnodeUtil.appendBody(_doStmt.body(), then.body());
-
+    Xnode thenBlock = _ifStmt.matchDirectDescendant(Xcode.THEN);
+    Xnode thenDoStmt = _doStmt.cloneNode();
+    XnodeUtil.appendBody(thenDoStmt.body(), thenBlock.body());
 
     // Copy the if statement and clean its body
     Xnode newIfStmt = _ifStmt.cloneNode();
@@ -88,16 +83,32 @@ public class IfExtract extends ClawTransformation {
     for(Xnode n : newThen.body().children()) {
       n.delete();
     }
-    _ifStmt.delete();
 
     // Add the new if statement after the do statement
     XnodeUtil.insertAfter(_doStmt.element(), newIfStmt.element());
 
-    // Insert the do statement in the new if statement
-    newThen.body().insert(_doStmt, true);
+    // Insert the do statement in the new if-then statement
+    newThen.body().insert(thenDoStmt, false);
+
+    Xnode elseBlock = _ifStmt.matchDirectDescendant(Xcode.ELSE);
+    if(elseBlock != null) {
+      Xnode elseDoStmt = _doStmt.cloneNode();
+      XnodeUtil.appendBody(elseDoStmt.body(), elseBlock.body());
+      Xnode newElse = newIfStmt.matchDirectDescendant(Xcode.ELSE);
+      for(Xnode n : newElse.body().children()) {
+        n.delete();
+      }
+      newElse.body().insert(elseDoStmt, false);
+      Xnode duplicateIf = elseDoStmt.body().matchDirectDescendant(Xcode.FIFSTATEMENT);
+      XnodeUtil.safeDelete(duplicateIf);
+    }
 
     // Delete the old statements and pragma
-    _doStmt.delete();
-    _claw.getPragma().delete();
+    Xnode duplicateIf =
+        thenDoStmt.body().matchDirectDescendant(Xcode.FIFSTATEMENT);
+    duplicateIf.delete();
+    XnodeUtil.safeDelete(_ifStmt);
+    XnodeUtil.safeDelete(_doStmt);
+    XnodeUtil.safeDelete(_claw.getPragma());
   }
 }
