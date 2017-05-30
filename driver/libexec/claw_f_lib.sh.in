@@ -443,3 +443,27 @@ function applyVerbatim()
   sed -i.bak -e "s/\!\$claw verbatim //" $1
   rm -f $1.bak
 }
+
+# Apply workaround for the GNU Fotran preprocessor
+# backslash at the end of a comment are considered as a line continuation for
+# the preprocessor and this cause some problems.
+function applyPreprocessorPass()
+{
+  TMP_FILE="$1".preproc
+  POTENTIAL_PROBLEM=$(grep --count -E "\\\\$" "$1")
+  if [[ $POTENTIAL_PROBLEM -gt 0 ]]
+  then
+    while IFS= read -r line
+    do
+      if [[ $line =~ \\$ ]] && [[ $line =~ .*!.* ]]
+      then
+        echo "$line" | sed 's/\\//g' >> "$TMP_FILE"
+      else
+        echo "$line" >> "$TMP_FILE"
+      fi
+    done < $1
+    mv "$TMP_FILE" "$1"
+  fi
+
+
+}
