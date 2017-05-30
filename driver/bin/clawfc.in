@@ -248,6 +248,9 @@ do
   then
     # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
     # instead of "omni_exec"
+
+    applyPreprocessorPass "${FILE}"
+
     if [ $FPP_REDIRECT == true ]
     then
       omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
