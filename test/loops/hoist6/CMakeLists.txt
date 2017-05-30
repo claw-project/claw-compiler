@@ -1,5 +1,4 @@
-set(TEST_NAME fusion10)
-set(OPTIONAL_FLAGS "--config=fusion_first.xml")
+set(TEST_NAME hoist6)
 set(TEST_DEBUG OFF)
 set(OUTPUT_TEST OFF)
 set(IGNORE_TEST OFF)

@@ -832,12 +832,12 @@ public class ClawLanguageTest {
   public void loopHoistTest() {
     // Valid directives
     analyzeValidLoopHoist("claw loop-hoist(i,j)",
-        Arrays.asList("i", "j"), false, null, false, null, null);
+        Arrays.asList("i", "j"), false, null, false, null, null, false, null, 0);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange",
-        Arrays.asList("i", "j"), true, null, false, null, null);
+        Arrays.asList("i", "j"), true, null, false, null, null, false, null, 0);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange(j,i)",
         Arrays.asList("i", "j"), true, Arrays.asList("j", "i"), false, null,
-        null);
+        null, false, null, 0);
 
     List<Integer> empty = Collections.emptyList();
     ClawReshapeInfo info1 = new ClawReshapeInfo("zmd", 0, empty);
@@ -845,20 +845,29 @@ public class ClawLanguageTest {
         new ClawReshapeInfo("zsediflux", 1, Collections.singletonList(2));
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
-        Arrays.asList(info1, info2), null);
+        Arrays.asList(info1, info2), null, false, null, 0);
 
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) target(cpu) interchange",
         Arrays.asList("i", "j"), true, null, false, null,
-        Collections.singletonList(Target.CPU));
+        Collections.singletonList(Target.CPU), false, null, 0);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange target(cpu, gpu)",
         Arrays.asList("i", "j"), true, null, false, null,
-        Arrays.asList(Target.CPU, Target.GPU));
+        Arrays.asList(Target.CPU, Target.GPU), false, null, 0);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) target(mic)",
         Arrays.asList("i", "j"), false, null, false, null,
-        Collections.singletonList(Target.MIC));
+        Collections.singletonList(Target.MIC), false, null, 0);
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) fusion",
+        Arrays.asList("i", "j"), false, null, false, null, null, true, null, 0);
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) fusion group(j1)",
+        Arrays.asList("i", "j"), false, null, false, null, null, true, "j1", 0);
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) fusion collapse(2)",
+        Arrays.asList("i", "j"), false, null, false, null, null, true, null, 2);
 
     // Unvalid directives
     analyzeUnvalidClawLanguage("claw loop-hoist");
@@ -874,14 +883,23 @@ public class ClawLanguageTest {
   /**
    * Assert the result for valid CLAW loop-hoist directive
    *
-   * @param raw        Raw string value of the CLAW directive to be analyzed.
-   * @param inductions List of induction variables to be checked.
+   * @param raw         Raw string value of the CLAW directive to be analyzed.
+   * @param inductions  List of induction variables to be checked.
+   * @param interchange If true, the interchange clause is set.
+   * @param indexes     Interchange indexes values.
+   * @param reshape     If true, the reshape clause is set.
+   * @param infos       Reshape clause values.
+   * @param targets     Target clause values. Null if not set.
+   * @param fusion      If true, the fusion clause is set.
+   * @param group       Group clause value. Null if not set.
+   * @param collapse    Collapse clause value. 0 if not set.
    */
   private void analyzeValidLoopHoist(String raw, List<String> inductions,
                                      boolean interchange, List<String> indexes,
                                      boolean reshape,
                                      List<ClawReshapeInfo> infos,
-                                     List<Target> targets)
+                                     List<Target> targets, boolean fusion,
+                                     String group, int collapse)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -930,6 +948,23 @@ public class ClawLanguageTest {
         assertFalse(l.hasReshapeClause());
       }
       assertTargets(l, targets);
+
+      assertEquals(fusion, l.hasFusionClause());
+
+      if(group != null) {
+        assertTrue(l.hasGroupClause());
+        assertEquals(group, l.getGroupValue());
+      } else {
+        assertFalse(l.hasGroupClause());
+      }
+
+      if(collapse > 0) {
+        assertTrue(l.hasCollapseClause());
+        assertEquals(collapse, l.getCollapseValue());
+      } else {
+        assertFalse(l.hasCollapseClause());
+      }
+
     } catch(IllegalDirectiveException idex) {
       System.err.print(idex.getMessage());
       fail();
