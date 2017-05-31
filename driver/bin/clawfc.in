@@ -225,7 +225,7 @@ done
 
 
 ### Preprocessor ###
-[ $ONLY_PP = true -a -f "${output_file}" ] && omni_exec rm "${output_file}"
+[ $ONLY_PP = true ] && [ -f "${output_file}" ] && omni_exec rm "${output_file}"
 [ $ENABLE_CPP = true ] && OMNI_FPP_OPT="$OMNI_FPP_OPT $CPP_OPT"
 for input_file in "${f_files_transformation[@]}"
 do
@@ -236,7 +236,7 @@ do
   FILE_PP1=${TEMP_DIR}/"${FILE_NAME}".PP.${EXT}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
-  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]
+  if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]
   then
     # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
     # instead of "omni_exec"
@@ -268,14 +268,14 @@ do
   fi
 done
 [ $STOP_PP = true ] && exit 0;
-[ $ONLY_PP = true -a $ENABLE_DEBUG = true ] && exit 0;
+[ $ONLY_PP = true ] && [ $ENABLE_DEBUG = true ] && exit 0;
 [ $ONLY_PP = true ] && { omni_exec rm -rf $TEMP_DIR; exit 0; }
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
   FILE_NAME=$(omni_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
-  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
+  if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
   else
     FILE_PP="${input_file}"
@@ -292,7 +292,7 @@ then
     FILE_NAME=$(omni_f_norm_file_name "${input_file}")
     EXT=${input_file##*.}
 
-    if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
+    if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]; then
       FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
     else
       FILE_PP="${input_file}"
@@ -309,7 +309,7 @@ for input_file in "${f_files_transformation[@]}"; do
   FILE_NAME=$(omni_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
 
-  if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
+  if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
   else
     FILE_PP="${input_file}"
