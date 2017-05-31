@@ -53,6 +53,10 @@ DUMP_CX2X_ARGS=false
 FORCE_PURE=false
 REPORT=false
 
+# Unused variables needed by underlying omni_common_lib.sh
+# shellcheck disable=SC2034
+DRY_RUN=false
+
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
 #
