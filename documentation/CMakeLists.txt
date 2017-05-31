@@ -1,18 +1,6 @@
 # This file is released under terms of BSD license
 # See LICENSE file for more information
 
-# Generate documentation
-find_package(LATEX)
-if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
-  set(CLAW_DOC_FILE "claw_fortran_compiler")
-  add_custom_target(
-    claw-compiler-doc
-    COMMAND ${PDFLATEX_COMPILER} ${CLAW_DOC_FILE}.tex &>/dev/null
-    COMMENT "Generating compiler documentation"
-    SOURCES ${CLAW_DOC_FILE}.tex
-  )
-endif()
-
 # Build the javadoc
 set (JAVADOC_TITLE "OMNI CLAW XcodeML to XcodeML translator (omni-cx2x)")
 add_custom_target(
@@ -50,3 +38,4 @@ else()
 endif()
 
 add_subdirectory(developer)
+add_subdirectory(manual)
