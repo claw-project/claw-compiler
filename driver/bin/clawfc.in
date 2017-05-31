@@ -208,9 +208,9 @@ do
       echo "Warning: file ${input_file} does not contains \$claw. Skip ..."
       if [ "${output_dir}" != "" ]
       then
-        cp ${FILE} ${output_dir}/${input_file}
+        cp ${input_file} ${output_dir}/${input_file}
       else
-        cp ${FILE} ${output_file}
+        cp ${input_file} ${output_file}
       fi
     else
       f_files_transformation+=("${input_file}")
