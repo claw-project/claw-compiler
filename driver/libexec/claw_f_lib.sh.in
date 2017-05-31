@@ -1,3 +1,7 @@
+#!/bin/bash
+# shellcheck disable=SC2034
+# disable as most variable are defined in ../bin/clawfc.in
+
 # This file is released under terms of BSD license
 # See LICENSE file for more information
 
@@ -41,20 +45,25 @@ Process Options
    --Wp[option] : Add preprocessor option.
    --Wf[option] : Add frontend option.
    --Wx[option] : Add Xcode translator option.
-   --Wb[option] : Add backend option.
 EOF
 }
 
 function claw_f_show_env()
 {
-  CONF_FILE=$OM_CX2X_DRIVER_CONF_DIR/claw_f.conf
-  if [ -f $CONF_FILE ]; then
-    for val in `sed '/^[[:space:]]*$/d' ${CONF_FILE} | grep -v '^#' | awk -F= '{print $1}'`
+  claw_env_file=$OM_CX2X_DRIVER_CONF_DIR/claw_f.conf
+  empty_line_regex="^[[:space:]]*$"
+  comment_line_regex="^[[:space:]]*#"
+
+  if [ -f "$CONF_FILE" ]; then
+    while IFS= read -r line
     do
-      echo -n ${val}=\"
-      eval echo -n \"\$$val\"
-      echo \"
-    done
+      if ! [[ $line =~ $empty_line_regex ]] && ! [[ $line =~ $comment_line_regex ]]
+      then
+        echo -n "${line}=\""
+        eval echo -n \"\$"$line"\"
+        echo \"
+      fi
+    done < "$claw_env_file"
   else
     omni_error_exit "$CONF_FILE not exist."
   fi
@@ -71,17 +80,14 @@ function claw_f_set_parameters()
     case "$1" in
       *.f90|*.f|*.F90|*.F)
         f_files+=("$1");;
-      *.a)
-        archive_files+=("$1");;
-      *.o)
-        obj_files+=("$1");;
       -o)
-        shift; output_file=("$1");;
+        shift; output_file="$1";;
       -D)
-        shift; output_dir=("$1");;
+        shift; output_dir="$1";;
       -J)
         shift;
-        module_dir=("${1#-J}")
+        module_dir="${1#-J}"
+        # shellcheck disable=SC1001
         if [[ $module_dir == \/* ]]
         then
           module_opt+=("-M${module_dir[0]}")
@@ -114,17 +120,13 @@ function claw_f_set_parameters()
       --version)
         claw_f_print_version; exit 0;;
       -h|--help)
-        claw_f_print_help `basename $0`; exit 0;;
+        claw_f_print_help "$(basename "$0")"; exit 0;;
       --show-env)
         claw_f_show_env; exit 0;;
       -f|--force)
         FORCE_TRANSLATION=true;;
       --no-dep)
         RESOLVE_DEPENDENCIES=false;;
-      --tmp)
-        OUTPUT_TEMPORAL=true;;
-      --dry)
-        DRY_RUN=true;;
       --debug)
         ENABLE_DEBUG=true;;
       --debug-omni)
@@ -137,46 +139,36 @@ function claw_f_set_parameters()
         VERBOSE=true; STOP_DEPENDENCIES=true;;
       --stop-translator)
         VERBOSE=true; STOP_TRANSLATOR=true;;
-      --stop-backend)
-        VERBOSE=true; STOP_BACKEND=true;;
-      --stop-compile)
-        VERBOSE=true; STOP_COMPILE=true;;
       --Wp*)
         pp_add_opt+=("${1#--Wp}");;
       --Wf*)
         frontend_add_opt+=("${1#--Wf}");;
       --Wx*)
         xcode_translator_add_opt+=("${1#--Wx}");;
-      --Wn*)
-        native_add_opt+=("${1#--Wn}");;
-      --Wb*)
-        backend_add_opt+=("${1#--Wb}");;
-      --Wl*)
-        linker_add_opt+=("${1#--Wl}");;
       --target-list)
         LIST_TARGET=true;;
       --show-config)
         SHOW_CONFIG=true;;
       -t=*)
         TARGET=true;
-        target_opt+=("${1#-t=}");;
+        target_opt="${1#-t=}";;
       --target=*)
         TARGET=true;
-        target_opt+=("${1#--target=}");;
+        target_opt="${1#--target=}";;
       --directive-list)
         LIST_DIRECTIVE=true;;
       -d=*)
         DIRECTIVE=true;
-        directive_opt+=("${1#-d=}");;
+        directive_opt="${1#-d=}";;
       --directive=*)
         DIRECTIVE=true;
-        directive_opt+=("${1#--directive=}");;
+        directive_opt="${1#--directive=}";;
       --config=*)
         CONFIG=true;
-        config_opt+=("${1#--config=}");;
+        config_opt="${1#--config=}";;
       -w)
         MAX_COLUMN=true;
-        shift; max_columns=("$1");;
+        shift; max_columns="$1";;
       -l)
         LINE_DIRECTIVE=true;;
       --dump-cx2x-args)
@@ -206,10 +198,6 @@ function claw_f_set_parameters()
   then
     pp_add_opt+=("-D_OPENMP")
   fi
-
-  if test $OUTPUT_TEMPORAL = true -a $DRY_RUN = true; then
-    omni_error_exit "cannot use both --tmp and --dry options at the same time."
-  fi
 }
 
 function claw_f_print_version()
@@ -222,7 +210,7 @@ function claw_f_print_version()
 function claw_f_process_dependencies()
 {
   # Dependency resolution work as follows:
-  # TODO
+  #
   # The following variables are used:
   # module_name:       Name of the module as declared in the FORTRAN source code.
   # compiled_mod_file: OMNI Compiler XcodeML/F module file.
@@ -241,13 +229,13 @@ function claw_f_process_dependencies()
       module_name="${BASH_REMATCH[3]}"
       dependencies+=("$module_name")
     fi
-  done <$1
+  done < "$1"
 
   # Get the directory and use it to look in the same for dependencies
-  current_src_dir=$(dirname $2)
+  current_src_dir=$(dirname "$2")
 
   # If no dependencies, just abord dependency resolution
-  if [[ -z "${dependencies[@]}" ]]
+  if [[ "${#dependencies[@]}" == 0 ]]
   then
     return
   fi
@@ -277,7 +265,7 @@ function claw_f_process_dependencies()
     done
 
     # Try to locate the fortran source file
-    for directory in ${module_search_path[@]}
+    for directory in "${module_search_path[@]}"
     do
       compiled_mod_file="$directory/$module_name.xmod"
       if [[ -f $compiled_mod_file ]]
@@ -288,9 +276,9 @@ function claw_f_process_dependencies()
     done
 
     # Try to locate the fortran source file
-    for directory in ${module_search_path[@]}
+    for directory in "${module_search_path[@]}"
     do
-      for ext in ${fortran_ext[@]}
+      for ext in "${fortran_ext[@]}"
       do
         source_mod_file="$directory/$module_name$ext"
         if [[ -f $source_mod_file ]]
@@ -309,11 +297,11 @@ function claw_f_process_dependencies()
     then
       # Could not locate a module file with same name. Try to find module file
       # with regular expression
-      for directory in ${module_search_path[@]}
+      for directory in "${module_search_path[@]}"
       do
-        for ext in ${fortran_ext[@]}
+        for ext in "${fortran_ext[@]}"
         do
-          found_file=($(grep -s -l -i "^ *MODULE *$module_name" $directory/*$ext | grep -v ".*\.claw\..*"))
+          found_file=($(grep -s -l -i "^ *MODULE *$module_name" "$directory"/*"$ext" | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]
           then
             break
@@ -357,29 +345,33 @@ function claw_f_process_dependencies()
     fi
 
     ### Preprocess file ###
-    FILE=$source_mod_file
-    DEP_BASENAME=`basename ${FILE%.*}`
-    FILE_NAME=`omni_f_norm_file_name "${FILE}"`     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
-    EXT=${file##*.}
+    base_file=$source_mod_file
+    DEP_BASENAME=$(basename "${base_file%.*}")
+    FILE_NAME=$(omni_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+    EXT=${base_file##*.}
     local FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
-    if [ $FPP_REDIRECT == true ]
+    if [ "$FPP_REDIRECT" == true ]
     then
       # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run" instead of "omni_exec".
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
+      # shellcheck disable=SC2086
+      omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" ">" "${FILE_PP}"
+      # shellcheck disable=SC2086
+      omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${FILE_PP}"
     else
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
+      # shellcheck disable=SC2086
+      omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
+      # shellcheck disable=SC2086
+      omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
       mv "${DEP_BASENAME}.i" "${FILE_PP}"
     fi
 
     # Recurse to get dependencies in the right order
-    claw_f_process_dependencies $FILE_PP $FILE
+    claw_f_process_dependencies "$FILE_PP" "$base_file"
 
     # Pass the module in the front-end to get the .xmod file
-    omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" > /dev/null
-
+    # shellcheck disable=SC2086
+    omni_exec "$OMNI_F2X_CMD" "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}"
   done
 }
 
@@ -390,9 +382,9 @@ function claw_f_process_dependencies()
 function applyIgnore()
 {
   # Retrieve the ignore start directives in the file
-  local startarray=( $(grep -n "\s*\!\$claw ignore" $1 | cut -f1 -d:) )
+  local startarray=( $(grep -n "\s*\!\$claw ignore" "$1" | cut -f1 -d:) )
   # Retrieve the ignore end directives in the file
-  local endarray=( $(grep -n "\s*\!\$claw end ignore" $1 | cut -f1 -d:) )
+  local endarray=( $(grep -n "\s*\!\$claw end ignore" "$1" | cut -f1 -d:) )
 
   # Check that we have the same number of start and end directives
   local startlen=${#startarray[*]}
@@ -402,7 +394,7 @@ function applyIgnore()
     exit 1
   fi
 
-  for (( i=0; i<=$(( $startlen -1 )); i++ ))
+  for (( i=0; i<=$((startlen-1)); i++ ))
   do
     local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
@@ -414,11 +406,11 @@ function applyIgnore()
     fi
 
     # Insert directive as prefix of each line in the block
-    sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" $1
+    sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" "$1"
 
     # Hide continuation line in the ignored block. If we keep them, the
     # front-end will merge the lines together.
-    sed -i.bak -e "$sedstart,$sedend s/&/__CLAWAMP__/" $1
+    sed -i.bak -e "$sedstart,$sedend s/&/__CLAWAMP__/" "$1"
   done
 }
 
@@ -428,20 +420,20 @@ function applyIgnore()
 # $1 : file path
 function revertIgnore()
 {
-  sed -i.bak -e "s/\!\$claw ignore//" $1
-  sed -i.bak -e "s/\!\$claw end ignore//" $1
+  sed -i.bak -e "s/\!\$claw ignore//" "$1"
+  sed -i.bak -e "s/\!\$claw end ignore//" "$1"
 
   # Revert the hidden continuation line.
-  sed -i.bak -e "s/__CLAWAMP__/\&/" $1
-  rm -f $1.bak
+  sed -i.bak -e "s/__CLAWAMP__/\&/" "$1"
+  rm -f "$1.bak"
 }
 
 # Apply the verbatim directive
 # Remove all the !$claw verbatim from lines
 function applyVerbatim()
 {
-  sed -i.bak -e "s/\!\$claw verbatim //" $1
-  rm -f $1.bak
+  sed -i.bak -e "s/\!\$claw verbatim //" "$1"
+  rm -f "$1.bak"
 }
 
 # Apply workaround for the GNU Fotran preprocessor
@@ -457,14 +449,15 @@ function applyPreprocessorPass()
     do
       if [[ $line =~ \\$ ]] && [[ $line =~ .*!.* ]]
       then
-        echo "$line" | sed 's/\\//g' >> "$2"
-        echo "$file:$line_no:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
+        echo "${line//\\/}" >> "$2"
+        #echo "$line" | sed 's/\\//g' >> "$2"
+        echo "$1:$line_no:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
       else
         echo "$line" >> "$2"
       fi
       let line_no=line_no+1
-    done < $1
+    done < "$1"
   else
-    cp $1 $2
+    cp "$1" "$2"
   fi
 }

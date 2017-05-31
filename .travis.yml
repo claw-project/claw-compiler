@@ -22,6 +22,7 @@ matrix:
             - gcc-4.9
             - g++-4.9
             - gfortran-4.9
+            - shellcheck
 
 # Fetch submodule for omni-compiler repository
 before_install:
@@ -50,6 +51,8 @@ script:
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make clean-transformation transformation test
   - make install # Test install steps as well, avoid missing jars of files.
+  - cd -
+  - ./scripts/run.shellcheck.sh
 
 # Notification settings
 notifications:
