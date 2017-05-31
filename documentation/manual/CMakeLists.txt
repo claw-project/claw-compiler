@@ -8,8 +8,9 @@ if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
   add_custom_target(
     claw-compiler-doc
     COMMAND ${PDFLATEX_COMPILER} ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_DOC_FILE}.tex &>/dev/null
-    COMMENT "Generating compiler documentation"
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_DOC_FILE}.tex
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating compiler documentation"
   )
   add_dependencies(doc claw-compiler-doc)
 endif()

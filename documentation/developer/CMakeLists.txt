@@ -11,9 +11,9 @@ if(NOT ${PDFLATEX_COMPILER} STREQUAL "" AND NOT ${BIBTEX_COMPILER} STREQUAL "")
     COMMAND ${BIBTEX_COMPILER} ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_DOC_FILE} &>/dev/null
     COMMAND ${PDFLATEX_COMPILER} ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_DOC_FILE}.tex &>/dev/null
     COMMAND ${PDFLATEX_COMPILER} ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_DOC_FILE}.tex &>/dev/null
-    COMMENT "Generating developer's guide"
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${CLAW_DOC_FILE}.tex
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating developer's guide"
   )
   add_dependencies(doc claw-developer-guide)
 endif()
