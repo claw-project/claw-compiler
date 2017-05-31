@@ -449,21 +449,22 @@ function applyVerbatim()
 # the preprocessor and this cause some problems.
 function applyPreprocessorPass()
 {
-  TMP_FILE="$1".preproc
-  POTENTIAL_PROBLEM=$(grep --count -E "\\\\$" "$1")
-  if [[ $POTENTIAL_PROBLEM -gt 0 ]]
+  potential_problem=$(grep --count -E "\\\\$" "$1")
+  line_no=1
+  if [[ $potential_problem -gt 0 ]]
   then
     while IFS= read -r line
     do
       if [[ $line =~ \\$ ]] && [[ $line =~ .*!.* ]]
       then
-        echo "$line" | sed 's/\\//g' >> "$TMP_FILE"
+        echo "$line" | sed 's/\\//g' >> "$2"
+        echo "$file:$line_no:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
       else
-        echo "$line" >> "$TMP_FILE"
+        echo "$line" >> "$2"
       fi
+      let line_no=line_no+1
     done < $1
-    mv "$TMP_FILE" "$1"
+  else
+    cp $1 $2
   fi
-
-
 }

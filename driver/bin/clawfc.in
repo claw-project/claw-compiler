@@ -242,6 +242,7 @@ do
   BASENAME=$(basename ${FILE%.*})
   FILE_NAME=$(omni_f_norm_file_name "${FILE}")
   EXT=${file##*.}
+  FILE_PP1=${TEMP_DIR}/"${FILE_NAME}".PP.${EXT}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]
@@ -249,19 +250,19 @@ do
     # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
     # instead of "omni_exec"
 
-    applyPreprocessorPass "${FILE}"
+    applyPreprocessorPass "${FILE}" "${FILE_PP1}"
 
     if [ $FPP_REDIRECT == true ]
     then
       omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" ">" "${FILE_PP}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}" ">" "${FILE_PP}"
       omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}" > "${FILE_PP}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}" > "${FILE_PP}"
     else
       omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}"
       omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}"
       mv "${BASENAME}.i" "${FILE_PP}"
     fi
 
