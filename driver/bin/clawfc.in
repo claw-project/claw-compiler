@@ -196,13 +196,12 @@ omni_set_trap
 ### Bypass file without code transformation ###
 for file in "${f_files[@]}"
 do
-  FILE=("${file}")
   if ! [ $FORCE_TRANSLATION == true ]
   then
-    NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${FILE}")
+    NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${file}")
     if [ "$NUM_DIRECTIVES" = "0" ]
     then
-      echo "Warning: file ${FILE} does not contains \$claw. Skip ..."
+      echo "Warning: file ${file} does not contains \$claw. Skip ..."
       if [ "${#output_dir}" != "0" ]
       then
         cp ${FILE} ${output_dir}/${FILE}
@@ -210,10 +209,10 @@ do
         cp ${FILE} ${output_file}
       fi
     else
-      f_files_transformation+=("${FILE}")
+      f_files_transformation+=("${file}")
     fi
   else
-    f_files_transformation+=("${FILE}")
+    f_files_transformation+=("${file}")
   fi
 done
 
