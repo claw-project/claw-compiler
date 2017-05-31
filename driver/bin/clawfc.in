@@ -70,7 +70,7 @@ DRY_RUN=false
 #
 
 output_file=()
-output_dir=()
+output_dir=""
 f_files=()
 f_files_transformation=()
 other_args=()
@@ -168,12 +168,12 @@ fi
 omni_f_check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
-if [ ${#f_files[@]} -gt 1 ] && [ ${#output_dir[@]} = 0 ]
+if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]
 then
   # Error: multiple files without output directory specified
   echo "Error: output directory not specified"
   exit 1
-elif [ ${#output_file[@]} != 0 ] && [ ${#output_dir[@]} != 0 ]
+elif [ ${#output_file[@]} != 0 ] && [ "${output_dir}" != "" ]
 then
   # Error: output file and output directory defined at the same time
   echo "Error: output directory and output file cannot be specified together"
@@ -206,9 +206,9 @@ do
     if [ "$NUM_DIRECTIVES" = "0" ]
     then
       echo "Warning: file ${input_file} does not contains \$claw. Skip ..."
-      if [ "${#output_dir}" != "0" ]
+      if [ "${output_dir}" != "" ]
       then
-        cp ${FILE} ${output_dir}/${FILE}
+        cp ${FILE} ${output_dir}/${input_file}
       else
         cp ${FILE} ${output_file}
       fi
@@ -322,6 +322,7 @@ for input_file in "${f_files_transformation[@]}"; do
 done
 [ $STOP_FRONTEND = true ] && exit 0;
 
+# Add debug flag for the translator options
 if [ $ENABLE_DEBUG = true ]
 then
   TRANSLATOR_OPTION="$TRANSLATOR_OPTION -d"
@@ -338,7 +339,7 @@ for input_file in "${f_files_transformation[@]}"; do
   if [ "${#output_file}" != "0" ]
   then
     FILE_OUT_F=${output_file}
-  elif [ "${#output_dir}" != "0" ]
+  elif [ "${output_dir}" != "" ]
   then
     FILE_OUT_F=${output_dir}/${input_file}
   fi
@@ -379,7 +380,7 @@ for input_file in "${f_files_transformation[@]}"; do
   if [ "${#output_file}" != "0" ]
   then
     FILE_OUT_F=${output_file}
-  elif [ "${#output_dir}" != "0" ]
+  elif [ "${output_dir}" != "" ]
   then
     FILE_OUT_F=${output_dir}/${input_file}
   fi

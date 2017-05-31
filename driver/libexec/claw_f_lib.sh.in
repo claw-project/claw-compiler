@@ -73,7 +73,7 @@ function claw_f_set_parameters()
       -o)
         shift; output_file=("$1");;
       -D)
-        shift; output_dir=("$1");;
+        shift; output_dir="$1";;
       -J)
         shift;
         module_dir=("${1#-J}")
