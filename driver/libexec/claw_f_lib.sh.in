@@ -1,9 +1,14 @@
 #!/bin/bash
 # shellcheck disable=SC2034
-# disable as most variable are defined in ../bin/clawfc.in
-
+#
 # This file is released under terms of BSD license
 # See LICENSE file for more information
+#
+# claw_f_lib input file. It contains the common function used in the clawfc
+# driver
+#
+# author: clementval
+#
 
 function claw_f_print_help()
 {
