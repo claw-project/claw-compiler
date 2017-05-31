@@ -89,7 +89,7 @@ config_opt=""
 directive_opt=""
 max_columns=""
 
-claw_f_set_parameters ${@+"$@"}
+claw_f_set_parameters "${@+"$@"}"
 
 ### List target ###
 if [ $LIST_TARGET = true ]
@@ -317,6 +317,7 @@ for input_file in "${f_files_transformation[@]}"; do
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
 
   # Call F_Front with the correct arguments
+  # shellcheck disable=SC2153
   omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" \
     "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
 done
@@ -356,10 +357,10 @@ for input_file in "${f_files_transformation[@]}"; do
   if [ $DUMP_CX2X_ARGS = true ]
   then
     echo "-- [DEBUG] Arguments for omni-cx2x:"
-    echo $TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT \
+    echo "$TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT \
       $OMNI_CX2X_CONFIG_OPT $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT \
-      ${xcode_translator_add_opt[@]} ${module_opt[@]} ${trans_module_opt[@]} \
-      -o ${FILE_OUT_X} -f ${FILE_OUT_F} ${FILE_IN_X}
+      ${xcode_translator_add_opt*} ${module_opt*} ${trans_module_opt*} \
+      -o ${FILE_OUT_X} -f ${FILE_OUT_F} ${FILE_IN_X}"
   fi
 
   omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION \
