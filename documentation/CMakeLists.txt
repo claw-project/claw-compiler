@@ -32,7 +32,7 @@ add_custom_target(
 )
 
 if(NOT ${PDFLATEX_COMPILER} STREQUAL "")
-  add_custom_target(doc DEPENDS claw-javadoc claw-compiler-doc claw-developer-guide)
+  add_custom_target(doc DEPENDS claw-javadoc claw-compiler-manual claw-developer-guide)
 else()
   add_custom_target(doc DEPENDS claw-javadoc)
 endif()
