@@ -2,7 +2,7 @@
 All notable changes to the CLAW FORTRAN Compiler project will be documented in
 this file.
 
-## [0.3 Unreleased]
+## [0.4 Unreleased]
 New features:
 * Option `--target=<target>` or `-t=<target>` allows to choose the target for
   code transformation.
@@ -18,6 +18,9 @@ New available transformations:
   * `kcache`
   * `call`
   * `loop-hoist`
+  * `if-extract`
+  * `verbatim`
+  * `ignore`
 * High abstraction:
   * `parallelize`
 
@@ -30,12 +33,13 @@ Architecture:
 * Program arguments of cx2x.Cx2x is now using Common CLI.
 * Preprocessor specific configurations are now stored in
   `compiler/<compiler_id>.cmake` files.
+* Some transformations are implemented as driver transformations as they have
+  to be performed before the parsing step.
 
 General:
-* OMNI Compiler is switched to a dedicated forked version including F2003
-  parsing enhancements as well as latest change from the original OMNI
-  repository. It will be switched back to official version once all the
-  new features are back to the master.
+* OMNI Compiler submodule points to the official OMNI Compiler repository. The
+  state of the repository is updated only when the latest changes are tested
+  and validate.
 
 ## [0.1.0] - 2016-02-05
 ### First release
