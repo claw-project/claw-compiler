@@ -74,11 +74,6 @@ function claw_f_show_env()
   fi
 }
 
-function get_target()
-{
-  clawfc --show-env | grep TARGET | sed 's/TARGET=//' | sed "s/\"//g"
-}
-
 function claw_f_set_parameters()
 {
   while [ -n "$1" ]; do
@@ -129,9 +124,9 @@ function claw_f_set_parameters()
       --show-env)
         claw_f_show_env; exit 0;;
       -f|--force)
-        FORCE_TRANSLATION=true;;
+        force_translation=true;;
       --no-dep)
-        RESOLVE_DEPENDENCIES=false;;
+        resolve_dependencies=false;;
       --debug)
         ENABLE_DEBUG=true;;
       --debug-omni)
@@ -151,37 +146,37 @@ function claw_f_set_parameters()
       --Wx*)
         xcode_translator_add_opt+=("${1#--Wx}");;
       --target-list)
-        LIST_TARGET=true;;
+        list_target=true;;
       --show-config)
         SHOW_CONFIG=true;;
       -t=*)
-        TARGET=true;
+        user_target=true;
         target_opt="${1#-t=}";;
       --target=*)
-        TARGET=true;
+        user_target=true;
         target_opt="${1#--target=}";;
       --directive-list)
-        LIST_DIRECTIVE=true;;
+        list_directive=true;;
       -d=*)
-        DIRECTIVE=true;
+        user_directive=true;
         directive_opt="${1#-d=}";;
       --directive=*)
-        DIRECTIVE=true;
+        user_directive=true;
         directive_opt="${1#--directive=}";;
       --config=*)
-        CONFIG=true;
+        user_config=true;
         config_opt="${1#--config=}";;
       -w)
-        MAX_COLUMN=true;
+        decompiler_max_column=true;
         shift; max_columns="$1";;
       -l)
-        LINE_DIRECTIVE=true;;
+        line_directive=true;;
       --dump-cx2x-args)
-        DUMP_CX2X_ARGS=true;;
+        dump_cx2x_args=true;;
       --force-pure)
-        FORCE_PURE=true;;
+        force_pure=true;;
       -r|--report)
-        REPORT=true;;
+        report=true;;
       *)
         other_args+=("$1");;
     esac
