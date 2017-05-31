@@ -95,14 +95,16 @@ claw_f_set_parameters "${@+"$@"}"
 ### List target ###
 if [ $LIST_TARGET = true ]
 then
-  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --target-list
+  # shellcheck disable=SC2086
+  omni_exec "$OMNI_FX2X_CMD" $OMNI_FX2X_OPT --target-list
   exit 0
 fi
 
 ### List directive ###
 if [ $LIST_DIRECTIVE = true ]
 then
-  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --directive-list
+   # shellcheck disable=SC2086
+  omni_exec "$OMNI_FX2X_CMD" $OMNI_FX2X_OPT --directive-list
   exit 0
 fi
 
@@ -162,7 +164,8 @@ fi
 ### Show config ###
 if [ $SHOW_CONFIG = true ]
 then
-  omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT --show-config $OMNI_CX2X_CONFIG_OPT
+  # shellcheck disable=SC2086
+  omni_exec "$OMNI_FX2X_CMD" $OMNI_FX2X_OPT --show-config $OMNI_CX2X_CONFIG_OPT
   exit 0
 fi
 
@@ -209,9 +212,9 @@ do
       echo "Warning: file ${input_file} does not contains \$claw. Skip ..."
       if [ "${output_dir}" != "" ]
       then
-        cp ${input_file} ${output_dir}/${input_file}
+        cp "${input_file}" "${output_dir}"/"${input_file}"
       else
-        cp ${input_file} ${output_file}
+        cp "${input_file}" "${output_file}"
       fi
     else
       f_files_transformation+=("${input_file}")
@@ -221,9 +224,7 @@ do
   fi
 done
 
-
 ### TODO check if f_files_transformation has any files in ...
-
 
 ### Preprocessor ###
 [ $ONLY_PP = true ] && [ -f "${output_file}" ] && omni_exec rm "${output_file}"
@@ -231,13 +232,13 @@ done
 for input_file in "${f_files_transformation[@]}"
 do
   [ $VERBOSE = true ] && echo "Prepocessing ..."
-  BASENAME=$(basename ${input_file%.*})
+  BASENAME=$(basename "${input_file%.*}")
   FILE_NAME=$(omni_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
   FILE_PP1=${TEMP_DIR}/"${FILE_NAME}".PP.${EXT}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
-  if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]
+  if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]
   then
     # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
     # instead of "omni_exec"
@@ -246,14 +247,18 @@ do
 
     if [ $FPP_REDIRECT == true ]
     then
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+      # shellcheck disable=SC2086
+      omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
         $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}" ">" "${FILE_PP}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+      # shellcheck disable=SC2086
+      omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
         $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}" > "${FILE_PP}"
     else
-      omni_exec_echo $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+      # shellcheck disable=SC2086
+      omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
         $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}"
-      omni_exec_run  $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
+      # shellcheck disable=SC2086
+      omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
         $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}"
       mv "${BASENAME}.i" "${FILE_PP}"
     fi
@@ -276,12 +281,12 @@ done
 for input_file in "${f_files_transformation[@]}"; do
   FILE_NAME=$(omni_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
-  if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]; then
+  if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
   else
     FILE_PP="${input_file}"
   fi
-  applyIgnore $FILE_PP
+  applyIgnore "$FILE_PP"
 done
 
 ### dependencies resolution ###
@@ -293,13 +298,13 @@ then
     FILE_NAME=$(omni_f_norm_file_name "${input_file}")
     EXT=${input_file##*.}
 
-    if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]; then
+    if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
       FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
     else
       FILE_PP="${input_file}"
     fi
 
-    claw_f_process_dependencies $FILE_PP ${input_file}
+    claw_f_process_dependencies "$FILE_PP" "${input_file}"
   done
   [ $STOP_DEPENDENCIES = true ] && exit 0;
 fi
@@ -310,7 +315,7 @@ for input_file in "${f_files_transformation[@]}"; do
   FILE_NAME=$(omni_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
 
-  if [ $EXT = "F90" ] || [ $EXT = "F" ] || [ $ENABLE_CPP = true ]; then
+  if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
   else
     FILE_PP="${input_file}"
@@ -318,8 +323,8 @@ for input_file in "${f_files_transformation[@]}"; do
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
 
   # Call F_Front with the correct arguments
-  # shellcheck disable=SC2153
-  omni_exec $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" \
+  # shellcheck disable=SC2153,SC2086
+  omni_exec "$OMNI_F2X_CMD" "${include_opt[@]}" "${module_opt[@]}" \
     "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
 done
 [ $STOP_FRONTEND = true ] && exit 0;
@@ -364,12 +369,13 @@ for input_file in "${f_files_transformation[@]}"; do
       -o ${FILE_OUT_X} -f ${FILE_OUT_F} ${FILE_IN_X}"
   fi
 
+  # shellcheck disable=SC2086
   omni_exec $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION \
     $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT $OMNI_CX2X_CONFIG_OPT \
     $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT \
     "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-    "${trans_module_opt[@]}" -o ${FILE_OUT_X} -f ${FILE_OUT_F} \
-    ${FILE_IN_X}
+    "${trans_module_opt[@]}" -o "${FILE_OUT_X}" -f "${FILE_OUT_F}" \
+    "${FILE_IN_X}"
 
   # also create ${TEMP_DIR}/${FILE_NAME}_${EXT}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
