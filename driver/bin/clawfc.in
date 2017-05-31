@@ -69,7 +69,7 @@ DRY_RUN=false
 # as an array
 #
 
-output_file=()
+output_file=""
 output_dir=""
 f_files=()
 f_files_transformation=()
@@ -173,7 +173,7 @@ then
   # Error: multiple files without output directory specified
   echo "Error: output directory not specified"
   exit 1
-elif [ ${#output_file[@]} != 0 ] && [ "${output_dir}" != "" ]
+elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]
 then
   # Error: output file and output directory defined at the same time
   echo "Error: output directory and output file cannot be specified together"
@@ -336,7 +336,7 @@ for input_file in "${f_files_transformation[@]}"; do
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
   FILE_OUT_F=${TEMP_DIR}/"${input_file}"
-  if [ "${#output_file}" != "0" ]
+  if [ "${output_file}" != "" ]
   then
     FILE_OUT_F=${output_file}
   elif [ "${output_dir}" != "" ]
@@ -377,7 +377,7 @@ done
 
 ### Revert ignore prefix and apply verbatim
 for input_file in "${f_files_transformation[@]}"; do
-  if [ "${#output_file}" != "0" ]
+  if [ "${output_file}" != "" ]
   then
     FILE_OUT_F=${output_file}
   elif [ "${output_dir}" != "" ]

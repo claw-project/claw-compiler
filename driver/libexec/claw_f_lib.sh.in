@@ -71,7 +71,7 @@ function claw_f_set_parameters()
       *.f90|*.f|*.F90|*.F)
         f_files+=("$1");;
       -o)
-        shift; output_file=("$1");;
+        shift; output_file="$1";;
       -D)
         shift; output_dir="$1";;
       -J)
