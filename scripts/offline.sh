@@ -15,7 +15,7 @@ git submodule init
 git submodule update --remote
 
 # Initiate ANT dependency resolution
-cd omni-cx2x/src
-ant -Dantfile.dir=$(pwd) common.bootstrap
-ant -Dantfile.dir=$(pwd) common.resolve
-cd -
+cd omni-cx2x/src || exit 1
+ant -Dantfile.dir="$(pwd)" common.bootstrap
+ant -Dantfile.dir="$(pwd)" common.resolve
+cd - || exit 1

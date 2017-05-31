@@ -55,18 +55,18 @@ echo "- Dest dir: $CLAW_RELEASE_DIR"
 echo "- Version: $CLAW_VERSION"
 echo ""
 
-rm -rf $CLAW_VERSION_NAME # Make sure destination doesn't exists
-git clone --depth 1 -b $CLAW_BRANCH $CLAW_MAIN_REPO $CLAW_VERSION_NAME
-cd $CLAW_VERSION_NAME
+rm -rf "$CLAW_VERSION_NAME" # Make sure destination doesn't exists
+git clone --depth 1 -b "$CLAW_BRANCH" $CLAW_MAIN_REPO "$CLAW_VERSION_NAME"
+cd "$CLAW_VERSION_NAME" || exit 1
 git submodule init
 git submodule update --remote
 # TODO update version number in CMakeLists.txt
-cd $CLAW_ANT_ROOT
-ant -Dantfile.dir=$(pwd) common.bootstrap
-ant -Dantfile.dir=$(pwd) common.resolve
-cd ../../..
-rm -f $CLAW_VERSION_NAME.tar*
-tar cvf $CLAW_VERSION_NAME.tar $CLAW_VERSION_NAME/*
-gzip $CLAW_VERSION_NAME.tar
-[[ $CLAW_RELEASE_DIR ]] && mv $CLAW_VERSION_NAME.tar.gz $CLAW_RELEASE_DIR
-rm -rf $CLAW_VERSION_NAME
+cd $CLAW_ANT_ROOT || exit 1
+ant -Dantfile.dir="$(pwd)" common.bootstrap
+ant -Dantfile.dir="$(pwd)" common.resolve
+cd ../../.. || exit 1
+rm -f "$CLAW_VERSION_NAME".tar*
+tar cvf "$CLAW_VERSION_NAME".tar "$CLAW_VERSION_NAME"/*
+gzip "$CLAW_VERSION_NAME".tar
+[[ $CLAW_RELEASE_DIR ]] && mv "$CLAW_VERSION_NAME".tar.gz "$CLAW_RELEASE_DIR"
+rm -rf "$CLAW_VERSION_NAME"
