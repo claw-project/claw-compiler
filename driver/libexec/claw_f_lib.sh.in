@@ -140,24 +140,24 @@ function claw_f_set_parameters()
         SHOW_CONFIG=true;;
       -t=*)
         TARGET=true;
-        target_opt+=("${1#-t=}");;
+        target_opt="${1#-t=}";;
       --target=*)
         TARGET=true;
-        target_opt+=("${1#--target=}");;
+        target_opt="${1#--target=}";;
       --directive-list)
         LIST_DIRECTIVE=true;;
       -d=*)
         DIRECTIVE=true;
-        directive_opt+=("${1#-d=}");;
+        directive_opt="${1#-d=}";;
       --directive=*)
         DIRECTIVE=true;
-        directive_opt+=("${1#--directive=}");;
+        directive_opt="${1#--directive=}";;
       --config=*)
         CONFIG=true;
-        config_opt+=("${1#--config=}");;
+        config_opt="${1#--config=}";;
       -w)
         MAX_COLUMN=true;
-        shift; max_columns=("$1");;
+        shift; max_columns="$1";;
       -l)
         LINE_DIRECTIVE=true;;
       --dump-cx2x-args)

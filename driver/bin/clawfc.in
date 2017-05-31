@@ -80,10 +80,10 @@ trans_module_opt=()
 include_opt=()
 
 # CLAW special options
-target_opt=()
-config_opt=()
-directive_opt=()
-max_columns=()
+target_opt=""
+config_opt=""
+directive_opt=""
+max_columns=""
 
 claw_f_set_parameters ${@+"$@"}
 
