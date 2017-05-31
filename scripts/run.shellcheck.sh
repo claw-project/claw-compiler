@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+#
+# Continuous integration script to check all the bash scripts of the project.
+# It uses shellcheck to check the consitency of the scripts.
+#
+# author: clementval
+#
 
 shellcheck offline.sh
 shellcheck pack_release.sh

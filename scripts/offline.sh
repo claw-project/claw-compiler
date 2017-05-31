@@ -3,6 +3,11 @@
 # This file is released under terms of BSD license
 # See LICENSE file for more information
 #
+# Helper script to fetch all the git submodules and the Java dependencies for an
+# offine build and installation
+#
+# author: clementval
+#
 
 echo ""
 echo "=================================="
