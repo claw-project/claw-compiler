@@ -15,7 +15,7 @@
 
 \title{CLAW Fortran Compiler Documentation}
 \author{Valentin Clement}
-\date{February 05, 2016\\\vspace{1em}v0.1}
+\date{\today\\\vspace{1em}v0.4}
 
 \setlength\parindent{0pt}
 \setlength{\parskip}{1em}
@@ -26,9 +26,9 @@
 CLAW Fortran Compiler is a source-to-source compiler interpreting the CLAW
 directive language.
 
-The CLAW Fortran Compiler is based on the OMNI Compiler. For more information 
+The CLAW Fortran Compiler is based on the OMNI Compiler. For more information
 about the OMNI Compiler project, visit http://omni-compiler.org.
- 
+
 OMNI Compiler user manual can be found here: http://omni-compiler.org/manual.html
 
 For more information about the CLAW directive language, visit
@@ -41,76 +41,80 @@ usage: clawfc_test <OPTIONS> <INPUTFILE> ...
 
 CLAW Fortran compiler options:
 
-   -o <file>                  : place the output into <file>.
-   -I <dir>                   : add the directory dir to the list 
-                                of directories to be searched for 
-                                header files.
-   -J <dir>                   : specify where to put .mod and .xmod 
-                                files for compiled modules.
-   -D <dir>                   : specify output directory for 
-                                transformed files
-   -t=,--target=<target>      : specify the type of accelerator 
-                                directive language for code 
-                                generation.
-   --target-list              : list the available type of 
-                                accelerator directive language 
-                                supported.
-   -d=,--directive=<dir-lang> : specify the type of accelerator 
-                                directive language for code 
-                                generation.
-   --directive-list           : list the available type of 
-                                accelerator directive language 
-                                supported.
-   --config=<config_file>     : specify a different configuration 
-                                for the translator.
-   --show-config              : list the current configuration 
-                                information. If used with --config, 
-                                list the information from the 
-                                specific configuration.
-   -v,--verbose               : print processing status.
-   --version                  : print version.
-   -h,--help                  : print usage.
-   --show-env                 : show environment variables.
-   --no-dep                   : don't generate .mod or .xmod file 
-                                for dependencies.
-   -f,--force                 : force the translation of files 
-                                without directives.
-   --debug                    : save intermediate files in 
-                                __omni_tmp__.
-   --stop-pp                  : save intermediate files and stop 
-                                after preprocess.
-   --stop-dependencies        : save intermediate files and stop 
-                                after dependencies resolution.
-   --stop-frontend            : save intermediate files and stop 
-                                after frontend.
-   --stop-translator          : save intermediate files and stop 
-                                after translator.
+  -o <file>                  : place the output into <file>.
+  -I <dir>                   : add the directory dir to the list of
+                               directories to be searched for header
+                               files.
+  -J <dir>                   : specify where to put .mod and .xmod
+                               files for compiled modules.
+  -D <dir>                   : specify output directory for
+                               transformed files
+  -t=,--target=<target>      : specify the type of accelerator
+                               directive language for code
+                               generation.
+  --target-list              : list the available type of
+                               accelerator directive language
+                               supported.
+  -d=,--directive=<dir-lang> : specify the type of accelerator
+                               directive language for code
+                               generation.
+  --directive-list           : list the available type of
+                               accelerator directive language
+                               supported.
+  --config=<config_file>     : specify a different configuration for
+                               the translator.
+  --show-config              : list the current configuration
+                               information. If used with --config,
+                               list the information from the
+                               specific configuration.
+  -v,--verbose               : print processing status.
+  --version                  : print version.
+  -h,--help                  : print usage.
+  --show-env                 : show environment variables.
+  --no-dep                   : don't generate .mod or .xmod file for
+                               dependencies.
+  -f,--force                 : force the translation of files
+                               without directives.
+  --force-pure               : force compiler to exit when
+                               transformation applied to PURE
+                               subroutine/function.
+  -r,--report                : generate the tranformation report.
+  --debug                    : save intermediate files in
+                               __omni_tmp__.
+  --stop-pp                  : save intermediate files and stop
+                               after preprocess.
+  --stop-dependencies        : save intermediate files and stop
+                               after dependencies resolution.
+  --stop-frontend            : save intermediate files and stop
+                               after frontend.
+  --stop-translator          : save intermediate files and stop
+                               after translator.
 
 Decompiler options:
-   -w <integer>               : Set the number of columns for the 
-                                output Fortran file (default: 80).
-   -l                         : Add preprocessor line directives 
-                                in the output Fortran file.
+  -w <integer>               : Set the number of columns for the
+                               output Fortran file (default: 80).
+  -l                         : Add preprocessor line directives
+                               in the output Fortran file.
 
 Process Options
 
-   --Wp[option] : Add preprocessor option.
-   --Wf[option] : Add frontend option.
-   --Wx[option] : Add Xcode translator option.
-   --Wb[option] : Add backend option.
+  --Wp[option] : Add preprocessor option.
+  --Wf[option] : Add frontend option.
+  --Wx[option] : Add Xcode translator option.
+  --Wb[option] : Add backend option.
 \end{lstlisting}
 
 \subsection{Options for the output}
 These options affect how the CLAW compiler writes the output files.
 
 \textbf{\texttt{-o}}\\
-The output file can be specified with the \texttt{-o} option. 
+The output file can be specified with the \texttt{-o} option.
 \begin{lstlisting}
 $ clawfc -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{-D}}\\
-The option \texttt{-D} can be used to specify an output directory. If defined, all the files 
+The option \texttt{-D} can be used to specify an output directory. If defined, all the files
 will be written in the specified directory.
 
 \begin{lstlisting}
@@ -135,16 +139,16 @@ $ clawfc -J xmod/ -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \subsection{Options to affect the workflow}
-These options affect the workflow of the compiler. 
+These options affect the workflow of the compiler.
 
 \textbf{\texttt{--no-dep}}\\
-Do not generate module file (\texttt{.xmod}) for the dependencies. By default, module file for the dependencies are generated automatically. 
+Do not generate module file (\texttt{.xmod}) for the dependencies. By default, module file for the dependencies are generated automatically.
 \begin{lstlisting}
 $ clawfc --no-dep -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{-f,--force}}\\
-Force the compilation of files that do not have CLAW directives. By default, files without CLAW directives are ignored and just copied to the destination file. 
+Force the compilation of files that do not have CLAW directives. By default, files without CLAW directives are ignored and just copied to the destination file.
 \begin{lstlisting}
 $ clawfc --force -o transformed_code.f90 original_code.f90
 \end{lstlisting}
@@ -156,19 +160,19 @@ $ clawfc --stop-pp -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{--stop-dependencies}}\\
-Stop the compiler after the dependencies resolution. Module files are generated but nothing is done with the input file. 
+Stop the compiler after the dependencies resolution. Module files are generated but nothing is done with the input file.
 \begin{lstlisting}
 $ clawfc --stop-dependencies -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{--stop-frontend}}\\
-Stop the compiler after the front-end. Input XcodeML file is generated. 
+Stop the compiler after the front-end. Input XcodeML file is generated.
 \begin{lstlisting}
 $ clawfc --stop-frontend -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{--stop-translator}}\\
-Stop the compiler after the translation. Output XcodeML file is generated from the input XcodeML file with applied translation. 
+Stop the compiler after the translation. Output XcodeML file is generated from the input XcodeML file with applied translation.
 \begin{lstlisting}
 $ clawfc --stop-translator -o transformed_code.f90 original_code.f90
 \end{lstlisting}
@@ -187,15 +191,15 @@ These options affect the way the code generation is performed depending on the t
 
 \textbf{\texttt{-t=,--target=<target>}}\\
 Allow to specify the type of accelerator directive language for code generation.
-   
+
 \textbf{\texttt{--target-list}}\\
 Print the list of available type of accelerator directive language supported.
 
 \subsection{Options for the global configuration}
 Default target and directive language as well as transformation order are specified
-by a configuration file. 
-A default file is generated an installed with the CLAW compiler. An option allows to 
-use a different configuration while using the compiler. 
+by a configuration file.
+A default file is generated an installed with the CLAW compiler. An option allows to
+use a different configuration while using the compiler.
 
 \begin{lstlisting}
 <!-- CLAW default configuration. -->
@@ -231,46 +235,46 @@ Set the number of columns for the output Fortran file (default: 80).
 Add preprocessor line directives in the output Fortran file.
 
 \subsection{Options for debugging}
-These options affect the output at the command line and give information about the process. 
+These options affect the output at the command line and give information about the process.
 
 \textbf{\texttt{-v,--verbose}}\\
-Print the inner commands run during the compilation process. 
+Print the inner commands run during the compilation process.
 
 \textbf{\texttt{--version}}\\
-Print the version of the compiler. 
+Print the version of the compiler.
 
 \textbf{\texttt{-h,--help}}\\
-Print help about the compiler. 
+Print help about the compiler.
 
 \textbf{\texttt{--show-env}}\\
-Show all the environment variables used in the compiler workflow. 
+Show all the environment variables used in the compiler workflow.
 
 \textbf{\texttt{--debug}}\\
-Print process information and store all the intermediate files in \_\_omni\_tmp\_\_ directory. 
+Print process information and store all the intermediate files in \_\_omni\_tmp\_\_ directory.
 
 \subsection{Options for subprocesses}
-These options affect the different process part of the CLAW compiler. 
+These options affect the different process part of the CLAW compiler.
 
 \textbf{\texttt{--Wp}}\\
-Pass options to the underlying preprocessor. 
+Pass options to the underlying preprocessor.
 \begin{lstlisting}
 $ clawfc --Wp-D_OPENACC -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{--Wf}}\\
-Pass options to the underlying front-end. 
+Pass options to the underlying front-end.
 \begin{lstlisting}
 $ clawfc --Wf-no-module-cache -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{--Wd}}\\
-Pass options to the underlying translator. 
+Pass options to the underlying translator.
 \begin{lstlisting}
 $ clawfc --Wd-d -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \textbf{\texttt{--Wb}}\\
-Pass options to the underlying preprocessor. 
+Pass options to the underlying preprocessor.
 \begin{lstlisting}
 $ clawfc --Wb-w80 -o transformed_code.f90 original_code.f90
 \end{lstlisting}
