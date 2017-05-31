@@ -59,7 +59,7 @@ function claw_f_show_env()
   empty_line_regex="^[[:space:]]*$"
   comment_line_regex="^[[:space:]]*#"
 
-  if [ -f "$CONF_FILE" ]; then
+  if [ -f "$claw_env_file" ]; then
     while IFS= read -r line
     do
       if ! [[ $line =~ $empty_line_regex ]] && ! [[ $line =~ $comment_line_regex ]]
@@ -70,7 +70,7 @@ function claw_f_show_env()
       fi
     done < "$claw_env_file"
   else
-    omni_error_exit "$CONF_FILE not exist."
+    omni_error_exit "$claw_env_file not exist."
   fi
 }
 
