@@ -41,7 +41,6 @@ Process Options
    --Wp[option] : Add preprocessor option.
    --Wf[option] : Add frontend option.
    --Wx[option] : Add Xcode translator option.
-   --Wb[option] : Add backend option.
 EOF
 }
 
@@ -71,10 +70,6 @@ function claw_f_set_parameters()
     case "$1" in
       *.f90|*.f|*.F90|*.F)
         f_files+=("$1");;
-      *.a)
-        archive_files+=("$1");;
-      *.o)
-        obj_files+=("$1");;
       -o)
         shift; output_file=("$1");;
       -D)
@@ -121,10 +116,6 @@ function claw_f_set_parameters()
         FORCE_TRANSLATION=true;;
       --no-dep)
         RESOLVE_DEPENDENCIES=false;;
-      --tmp)
-        OUTPUT_TEMPORAL=true;;
-      --dry)
-        DRY_RUN=true;;
       --debug)
         ENABLE_DEBUG=true;;
       --debug-omni)
@@ -137,22 +128,12 @@ function claw_f_set_parameters()
         VERBOSE=true; STOP_DEPENDENCIES=true;;
       --stop-translator)
         VERBOSE=true; STOP_TRANSLATOR=true;;
-      --stop-backend)
-        VERBOSE=true; STOP_BACKEND=true;;
-      --stop-compile)
-        VERBOSE=true; STOP_COMPILE=true;;
       --Wp*)
         pp_add_opt+=("${1#--Wp}");;
       --Wf*)
         frontend_add_opt+=("${1#--Wf}");;
       --Wx*)
         xcode_translator_add_opt+=("${1#--Wx}");;
-      --Wn*)
-        native_add_opt+=("${1#--Wn}");;
-      --Wb*)
-        backend_add_opt+=("${1#--Wb}");;
-      --Wl*)
-        linker_add_opt+=("${1#--Wl}");;
       --target-list)
         LIST_TARGET=true;;
       --show-config)
@@ -205,10 +186,6 @@ function claw_f_set_parameters()
   elif [ "${directive_opt[0]}" == "openmp" ]
   then
     pp_add_opt+=("-D_OPENMP")
-  fi
-
-  if test $OUTPUT_TEMPORAL = true -a $DRY_RUN = true; then
-    omni_error_exit "cannot use both --tmp and --dry options at the same time."
   fi
 }
 

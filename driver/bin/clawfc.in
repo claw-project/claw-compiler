@@ -35,14 +35,10 @@ ENABLE_CPP=true
 VERBOSE=false
 ENABLE_DEBUG=false
 ENABLE_DEBUG_OMNI=false
-OUTPUT_TEMPORAL=true
 RESOLVE_DEPENDENCIES=true
-DRY_RUN=false
 STOP_PP=false
 STOP_FRONTEND=false
 STOP_TRANSLATOR=false
-STOP_BACKEND=false
-STOP_COMPILE=false
 STOP_DEPENDENCIES=false
 FORCE_TRANSLATION=false
 LIST_TARGET=false
@@ -62,8 +58,6 @@ REPORT=false
 #
 #  output_file="a.out"           # Output file
 #  f_files="a.f b.F c.f90 d.F90" # All fortran files
-#  archive_files="lib.a"         # Archive files
-#  obj_files="e.o"               # Object files
 #  other_args="-I/usr/lib"       # Options for Preprocessor, Compiler, and
 #                                # Linker
 #
@@ -75,17 +69,12 @@ output_file=()
 output_dir=()
 f_files=()
 f_files_transformation=()
-archive_files=()
-obj_files=()
 other_args=()
 
 # Additional options defined by command line (e.g. --Wl..)
 pp_add_opt=()
 frontend_add_opt=()
 xcode_translator_add_opt=()
-native_add_opt=()
-backend_add_opt=()
-linker_add_opt=()
 module_opt=()
 trans_module_opt=()
 include_opt=()
