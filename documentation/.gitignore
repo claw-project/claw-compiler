@@ -1,6 +1,6 @@
 # Generated pdfs
 *.pdf
-!resources/*.pdf
+!developer/resources/*.pdf
 
 # Javadoc generated folder
 javadoc
