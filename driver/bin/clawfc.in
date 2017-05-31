@@ -18,7 +18,8 @@ OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
 OM_CX2X_DRIVER_LIB_DIR=@OM_CX2X_DRIVER_LIB_DIR@
 # shellcheck source=../etc/claw_f.conf.in
 . ${OM_CX2X_DRIVER_CONF_DIR}/@CLAW_CONF_FILE@
-# shellcheck source=../../../omni-compiler/driver/libexec/omni_common_lib.sh
+# Do not check the consitency of the OMNI bash scripts.
+# shellcheck disable=SC1090
 . ${OMNI_DRIVER_DIR}/omni_common_lib.sh
 # shellcheck source=../libexec/claw_f_lib.sh.in
 . ${OM_CX2X_DRIVER_LIB_DIR}@CLAW_LIB_SH@
