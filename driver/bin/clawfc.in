@@ -226,9 +226,8 @@ done
 for file in "${f_files_transformation[@]}"
 do
   [ $VERBOSE = true ] && echo "Prepocessing ..."
-  FILE=("${file}")
-  BASENAME=$(basename ${FILE%.*})
-  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
+  BASENAME=$(basename ${file%.*})
+  FILE_NAME=$(omni_f_norm_file_name "${file}")
   EXT=${file##*.}
   FILE_PP1=${TEMP_DIR}/"${FILE_NAME}".PP.${EXT}
   FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
@@ -238,7 +237,7 @@ do
     # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
     # instead of "omni_exec"
 
-    applyPreprocessorPass "${FILE}" "${FILE_PP1}"
+    applyPreprocessorPass "${file}" "${FILE_PP1}"
 
     if [ $FPP_REDIRECT == true ]
     then
@@ -270,13 +269,12 @@ done
 
 ### Apply ignore directive
 for file in "${f_files_transformation[@]}"; do
-  FILE=("${file}")
-  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
+  FILE_NAME=$(omni_f_norm_file_name "${file}")
   EXT=${file##*.}
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
   else
-    FILE_PP="${FILE}"
+    FILE_PP="${file}"
   fi
   applyIgnore $FILE_PP
 done
@@ -287,14 +285,13 @@ then
   for file in "${f_files_transformation[@]}"
   do
     [ $VERBOSE = true ] && echo "Dependencies resolution ..."
-    FILE=("${file}")
-    FILE_NAME=$(omni_f_norm_file_name "${FILE}")
+    FILE_NAME=$(omni_f_norm_file_name "${file}")
     EXT=${file##*.}
 
     if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
       FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
     else
-      FILE_PP="${FILE}"
+      FILE_PP="${file}"
     fi
 
     claw_f_process_dependencies $FILE_PP ${file}
@@ -305,14 +302,13 @@ fi
 ### Frontend ###
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "Fortran to XcodeML ..."
-  FILE=("${file}")
-  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
+  FILE_NAME=$(omni_f_norm_file_name "${file}")
   EXT=${file##*.}
 
   if [ $EXT = "F90" -o $EXT = "F" -o $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
   else
-    FILE_PP="${FILE}"
+    FILE_PP="${file}"
   fi
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
 
@@ -331,18 +327,17 @@ fi
 ### Translator ###
 for file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "XcodeML to XcodeML translation ..."
-  FILE=("${file}")
-  FILE_NAME=$(omni_f_norm_file_name "${FILE}")
+  FILE_NAME=$(omni_f_norm_file_name "${file}")
   EXT=${file##*.}
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
-  FILE_OUT_F=${TEMP_DIR}/"${FILE}"
+  FILE_OUT_F=${TEMP_DIR}/"${file}"
   if [ "${#output_file}" != "0" ]
   then
     FILE_OUT_F=${output_file}
   elif [ "${#output_dir}" != "0" ]
   then
-    FILE_OUT_F=${output_dir}/${FILE}
+    FILE_OUT_F=${output_dir}/${file}
   fi
 
   # Define report file output
@@ -378,13 +373,12 @@ done
 
 ### Revert ignore prefix and apply verbatim
 for file in "${f_files_transformation[@]}"; do
-  FILE=("${file}")
   if [ "${#output_file}" != "0" ]
   then
     FILE_OUT_F=${output_file}
   elif [ "${#output_dir}" != "0" ]
   then
-    FILE_OUT_F=${output_dir}/${FILE}
+    FILE_OUT_F=${output_dir}/${file}
   fi
   revertIgnore "$FILE_OUT_F"
   applyVerbatim "$FILE_OUT_F"
