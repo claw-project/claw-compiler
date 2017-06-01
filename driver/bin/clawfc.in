@@ -233,40 +233,41 @@ done
 for input_file in "${f_files_transformation[@]}"
 do
   [ $VERBOSE = true ] && echo "Prepocessing ..."
-  BASENAME=$(basename "${input_file%.*}")
-  FILE_NAME=$(omni_f_norm_file_name "${input_file}")
+
+  file_name=$(omni_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
-  FILE_PP1=${TEMP_DIR}/"${FILE_NAME}".PP.${EXT}
-  FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+  file_pp1=${TEMP_DIR}/"${file_name}".PP.${EXT}
+  file_pp=${TEMP_DIR}/"${file_name}".${EXT}
 
   if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]
   then
     # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run"
     # instead of "omni_exec"
 
-    applyPreprocessorPass "${input_file}" "${FILE_PP1}"
+    applyPreprocessorPass "${input_file}" "${file_pp1}"
+    preprocessor_output=$(basename "${file_pp1%.*}")
 
     if [ $FPP_REDIRECT == true ]
     then
       # shellcheck disable=SC2086
       omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}" ">" "${FILE_PP}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${file_pp1}" ">" "${file_pp}"
       # shellcheck disable=SC2086
       omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}" > "${FILE_PP}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${file_pp1}" > "${file_pp}"
     else
       # shellcheck disable=SC2086
       omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${file_pp1}"
       # shellcheck disable=SC2086
       omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${FILE_PP1}"
-      mv "${BASENAME}.i" "${FILE_PP}"
+        $OMNI_FPP_OPT "${other_args[@]}" "${file_pp1}"
+      mv "${preprocessor_output}.i" "${file_pp}"
     fi
 
     if [ $ONLY_PP = true ]; then
       if [ "${output_file}" = "" ]; then
-        omni_exec cat "${FILE_PP}"
+        omni_exec cat "${file_pp}"
       else
         omni_exec_echo cat "${FILE_PP_I}" ">>" "${output_file}"
         omni_exec_run  cat "${FILE_PP_I}" >> "${output_file}"
