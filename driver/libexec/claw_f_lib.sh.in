@@ -353,16 +353,11 @@ function claw_f_process_dependencies()
 
     if [ "$FPP_REDIRECT" == true ]
     then
-      # When ">" or ">>" is used, please use "omni_exec_echo" and "omni_exec_run" instead of "omni_exec".
       # shellcheck disable=SC2086
-      omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" ">" "${FILE_PP}"
-      # shellcheck disable=SC2086
-      omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${FILE_PP}"
+      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${FILE_PP}"
     else
       # shellcheck disable=SC2086
-      omni_exec_echo "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
-      # shellcheck disable=SC2086
-      omni_exec_run  "$OMNI_FPP_CMD" "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
+      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
       mv "${DEP_BASENAME}.i" "${FILE_PP}"
     fi
 
