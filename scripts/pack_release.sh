@@ -1,7 +1,13 @@
 #!/bin/bash
-
+#
 # This file is released under terms of BSD license
 # See LICENSE file for more information
+#
+# Helper script to pack a release with all the git submodule fetched and the
+# Java dependencies resolved.
+#
+# author: clementval
+#
 
 function show_help(){
   echo "$0 -v <version_number> [-o <output_dir>] [-b <branch-name>]"
@@ -13,11 +19,11 @@ function show_help(){
 }
 
 # Define local variable
-CLAW_BRANCH="master"
-CLAW_MAIN_REPO="git@github.com:C2SM-RCM/claw-compiler.git"
-CLAW_RELEASE_DIR=""
-CLAW_ANT_ROOT="omni-cx2x/src"
-CLAW_VERSION=""
+claw_branch="master"
+claw_main_repo="git@github.com:C2SM-RCM/claw-compiler.git"
+claw_release_dir=""
+claw_ant_root="omni-cx2x/src"
+claw_version=""
 
 while getopts "hb:o:v:" opt; do
   case "$opt" in
@@ -26,47 +32,47 @@ while getopts "hb:o:v:" opt; do
     exit 0
     ;;
   o)
-    CLAW_RELEASE_DIR=$OPTARG
+    claw_release_dir=$OPTARG
     ;;
   b)
-    CLAW_BRANCH=$OPTARG
+    claw_branch=$OPTARG
     ;;
   v)
-    CLAW_VERSION=$OPTARG
+    claw_version=$OPTARG
   esac
 done
 
-if [[ ! $CLAW_VERSION ]]
+if [[ ! ${claw_version} ]]
 then
   echo "Error: version is mandatory"
   show_help
   exit 1
 fi
 
-CLAW_VERSION_NAME="claw-compiler-$CLAW_VERSION"
+claw_version_name="claw-compiler-${claw_version}"
 
 echo ""
 echo "================================================="
 echo "CLAW FORTRAN Compiler release archive information"
 echo "================================================="
-echo "- Repo: $CLAW_MAIN_REPO"
-echo "- Branch: $CLAW_BRANCH"
-echo "- Dest dir: $CLAW_RELEASE_DIR"
-echo "- Version: $CLAW_VERSION"
+echo "- Repo: ${claw_main_repo}}"
+echo "- Branch: ${claw_branch}}"
+echo "- Dest dir: ${claw_release_dir}"
+echo "- Version: ${claw_version}"
 echo ""
 
-rm -rf "$CLAW_VERSION_NAME" # Make sure destination doesn't exists
-git clone --depth 1 -b "$CLAW_BRANCH" $CLAW_MAIN_REPO "$CLAW_VERSION_NAME"
-cd "$CLAW_VERSION_NAME" || exit 1
+rm -rf "${claw_version_name}" # Make sure destination doesn't exists
+git clone --depth 1 -b "${claw_branch}}" ${claw_main_repo} "${claw_version_name}"
+cd "${claw_version_name}" || exit 1
 git submodule init
 git submodule update --remote
 # TODO update version number in CMakeLists.txt
-cd $CLAW_ANT_ROOT || exit 1
+cd ${claw_ant_root} || exit 1
 ant -Dantfile.dir="$(pwd)" common.bootstrap
 ant -Dantfile.dir="$(pwd)" common.resolve
 cd ../../.. || exit 1
-rm -f "$CLAW_VERSION_NAME".tar*
-tar cvf "$CLAW_VERSION_NAME".tar "$CLAW_VERSION_NAME"/*
-gzip "$CLAW_VERSION_NAME".tar
-[[ $CLAW_RELEASE_DIR ]] && mv "$CLAW_VERSION_NAME".tar.gz "$CLAW_RELEASE_DIR"
-rm -rf "$CLAW_VERSION_NAME"
+rm -f "${claw_version_name}".tar*
+tar cvf "${claw_version_name}".tar "${claw_version_name}"/*
+gzip "${claw_version_name}".tar
+[[ ${claw_release_dir} ]] && mv "${claw_version_name}".tar.gz "${claw_release_dir}"
+rm -rf "${claw_version_name}"

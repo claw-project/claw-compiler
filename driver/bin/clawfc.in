@@ -1,15 +1,16 @@
 #!/bin/bash
-
+#
 # This file is released under terms of BSD license
 # See LICENSE file for more information
-
-###
-### clawfc
-### Compiler driver for the claw language translation for Fortran language.
-### This driver is based on the xmpf90 compiler driver from the OMNI Compiler
-### project.
-### https://github.com/omni-compiler/omni-compiler/blob/master/Driver/bin/xmpf90.in
-###
+#
+# clawfc
+# Compiler driver for the claw language translation for Fortran language.
+# This driver is based on the xmpf90 compiler driver from the OMNI Compiler
+# project.
+# https://github.com/omni-compiler/omni-compiler/blob/master/Driver/bin/xmpf90.in
+#
+# author: clementval
+#
 
 ## TODO cp original file in case of error
 
@@ -36,23 +37,23 @@ ENABLE_CPP=true
 VERBOSE=false
 ENABLE_DEBUG=false
 ENABLE_DEBUG_OMNI=false
-RESOLVE_DEPENDENCIES=true
+resolve_dependencies=true
 STOP_PP=false
 STOP_FRONTEND=false
 STOP_TRANSLATOR=false
 STOP_DEPENDENCIES=false
-FORCE_TRANSLATION=false
-LIST_TARGET=false
-LIST_DIRECTIVE=false
+force_translation=false
+list_target=false
+list_directive=false
 SHOW_CONFIG=false
-TARGET=false
-CONFIG=false
-DIRECTIVE=false
-LINE_DIRECTIVE=false
-MAX_COLUMN=false
-DUMP_CX2X_ARGS=false
-FORCE_PURE=false
-REPORT=false
+user_target=false
+user_config=false
+user_directive=false
+line_directive=false
+decompiler_max_column=false
+dump_cx2x_args=false
+force_pure=false
+report=false
 
 # Unused variables needed by underlying omni_common_lib.sh
 # shellcheck disable=SC2034
@@ -93,7 +94,7 @@ max_columns=""
 claw_f_set_parameters "${@+"$@"}"
 
 ### List target ###
-if [ $LIST_TARGET = true ]
+if [ ${list_target} = true ]
 then
   # shellcheck disable=SC2086
   omni_exec "$OMNI_FX2X_CMD" $OMNI_FX2X_OPT --target-list
@@ -101,7 +102,7 @@ then
 fi
 
 ### List directive ###
-if [ $LIST_DIRECTIVE = true ]
+if [ ${list_directive} = true ]
 then
    # shellcheck disable=SC2086
   omni_exec "$OMNI_FX2X_CMD" $OMNI_FX2X_OPT --directive-list
@@ -109,7 +110,7 @@ then
 fi
 
 ### Set correct configuration file info ###
-if [ $CONFIG = true ]
+if [ ${user_config} = true ]
 then
   OMNI_CX2X_CONFIG_OPT="--config=$config_opt --schema=$OMNI_CX2X_CONFIG_XSD"
 else
@@ -118,21 +119,21 @@ fi
 
 # Set the correct target option for the translator
 OMNI_CX2X_TARGET_OPT=""
-if [ $TARGET = true ]
+if [ ${user_target} = true ]
 then
   OMNI_CX2X_TARGET_OPT="--target=$target_opt"
 fi
 
 # Set the correct directive option for the translator
 OMNI_CX2X_DIRECTIVE_OPT=""
-if [ $DIRECTIVE = true ]
+if [ ${user_directive} = true ]
 then
   OMNI_CX2X_DIRECTIVE_OPT="--directive=$directive_opt"
 fi
 
 # Set the correct column option for the decompiler
 OMNI_CX2X_MAX_COLUMN_OPT=""
-if [ $MAX_COLUMN = true ]
+if [ ${decompiler_max_column} = true ]
 then
   OMNI_CX2X_MAX_COLUMN_OPT="-w $max_columns"
 else
@@ -141,12 +142,12 @@ fi
 
 # Set the correct line directive option for the decompiler
 OMNI_CX2X_LINE_OPT="-l"
-if [ $LINE_DIRECTIVE = true ]
+if [ ${line_directive} = true ]
 then
   OMNI_CX2X_LINE_OPT=""
 fi
 
-if [ $FORCE_PURE = true ]
+if [ $force_pure = true ]
 then
   TRANSLATOR_OPTION="$TRANSLATOR_OPTION --force-pure"
 fi
@@ -204,7 +205,7 @@ omni_set_trap
 ### Bypass file without code transformation ###
 for input_file in "${f_files[@]}"
 do
-  if ! [ $FORCE_TRANSLATION == true ]
+  if ! [ ${force_translation} == true ]
   then
     NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${input_file}")
     if [ "$NUM_DIRECTIVES" = "0" ]
@@ -290,7 +291,7 @@ for input_file in "${f_files_transformation[@]}"; do
 done
 
 ### dependencies resolution ###
-if [ $RESOLVE_DEPENDENCIES ]
+if [ ${resolve_dependencies} ]
 then
   for input_file in "${f_files_transformation[@]}"
   do
@@ -352,7 +353,7 @@ for input_file in "${f_files_transformation[@]}"; do
   fi
 
   # Define report file output
-  if [ $REPORT = true ]
+  if [ ${report} = true ]
   then
     FILE_OUT_R="${FILE_OUT_F%.*}"
     FILE_OUT_R="${FILE_OUT_R}.lst"
@@ -360,7 +361,7 @@ for input_file in "${f_files_transformation[@]}"; do
   fi
 
   # Dump the arguments pass to the translator for easier debugging
-  if [ $DUMP_CX2X_ARGS = true ]
+  if [ ${dump_cx2x_args} = true ]
   then
     echo "-- [DEBUG] Arguments for omni-cx2x:"
     echo "$TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT \

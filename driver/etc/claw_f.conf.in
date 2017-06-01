@@ -1,8 +1,14 @@
 #!/bin/bash
 # shellcheck disable=SC2034
-
+#
 # This file is released under terms of BSD license
 # See LICENSE file for more information
+#
+# clawfc configuration input file. This file is configured at build time and
+# contains all the necessary variable to run the clawfc driver.
+#
+# author: clementval
+#
 
 OMNI_HOME="@OMNI_HOME@"
 OMNI_DRIVER_DIR="@OMNI_DRIVER_DIR@"
