@@ -7,12 +7,7 @@ package cx2x.decompiler;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import xcodeml.XmException;
-import xcodeml.util.XmDecompiler;
-import xcodeml.util.XmDecompilerContext;
-import xcodeml.util.XmOption;
-import xcodeml.util.XmToolFactory;
-
+import xcodeml.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
