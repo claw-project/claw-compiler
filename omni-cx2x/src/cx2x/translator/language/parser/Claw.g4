@@ -201,6 +201,7 @@ fusion_options[ClawLanguage l]:
   (
       { !$l.hasGroupClause() }?      group_clause[$l]
     | { !$l.hasCollapseClause() }?   collapse_clause[$l]
+    | { !$l.hasConstraintClause() }? constraint_clause[$l]
   )*
 ;
 
