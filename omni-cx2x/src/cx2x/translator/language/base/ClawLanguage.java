@@ -212,8 +212,15 @@ public class ClawLanguage extends AnalyzedPragma {
   public static ClawLanguage createLoopFusionLanguage(ClawLanguage master) {
     ClawLanguage l = new ClawLanguage();
     l.setDirective(ClawDirective.LOOP_FUSION);
-    l.setGroupClause(master.getGroupValue());
-    l.setCollapseClause(master.getCollapseValue());
+    if(master.hasGroupClause()) {
+      l.setGroupClause(master.getGroupValue());
+    }
+    if(master.hasCollapseClause()) {
+      l.setCollapseClause(master.getCollapseValue());
+    }
+    if(master.hasConstraintClause()) {
+      l.setConstraintClauseValue(master.getConstraintClauseValue());
+    }
     l.attachPragma(master.getPragma());
     return l;
   }
