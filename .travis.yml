@@ -52,7 +52,8 @@ script:
   - make clean-transformation transformation test
   - make install # Test install steps as well, avoid missing jars of files.
   - cd -
-  - ./scripts/run.shellcheck.sh
+  - cd scripts
+  - ./run.shellcheck.sh
 
 # Notification settings
 notifications:
