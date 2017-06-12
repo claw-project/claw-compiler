@@ -9,6 +9,7 @@
 # author: clementval
 #
 
+shellcheck -V
 shellcheck offline.sh
 shellcheck pack_release.sh
 cd ../driver/bin || exit 1
