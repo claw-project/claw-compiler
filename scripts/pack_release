@@ -9,6 +9,13 @@
 # author: clementval
 #
 
+#######################################
+# Show the available options
+# Arguments:
+#   None
+# Returns:
+#   None
+#######################################
 function show_help(){
   echo "$0 -v <version_number> [-o <output_dir>] [-b <branch-name>]"
   echo ""

@@ -10,6 +10,11 @@
 # author: clementval
 #
 
+###################################################################
+# Print the help for the CLAW FORTRAN Compiler
+# Arguments:
+#   $1: program name
+###################################################################
 function claw_f_print_help()
 {
 cat <<EOF
@@ -53,6 +58,13 @@ Process Options
 EOF
 }
 
+
+###################################################################
+# Display all the environment variables related to the CLAW FORTRAN
+# Compiler
+# Global:
+#   OM_CX2X_DRIVER_CONF_DIR
+###################################################################
 function claw_f_show_env()
 {
   claw_env_file=$OM_CX2X_DRIVER_CONF_DIR/claw_f.conf
@@ -60,10 +72,9 @@ function claw_f_show_env()
   comment_line_regex="^[[:space:]]*#"
 
   if [ -f "$claw_env_file" ]; then
-    while IFS= read -r line
-    do
-      if ! [[ $line =~ $empty_line_regex ]] && ! [[ $line =~ $comment_line_regex ]]
-      then
+    while IFS= read -r line; do
+      if ! [[ $line =~ $empty_line_regex ]] \
+        && ! [[ $line =~ $comment_line_regex ]]; then
         echo -n "${line}=\""
         eval echo -n \"\$"$line"\"
         echo \"
@@ -74,6 +85,21 @@ function claw_f_show_env()
   fi
 }
 
+
+###################################################################
+# Process input parameters and set variables accordingly
+# Global:
+#   f_files, output_file, output_dir, module_dir, module_opt,
+#   include_opt, other_args, module_dir, trans_module_opt, only_pp,
+#   enable_cpp, verbose, force_translation, resolve_dependencies,
+#   enable_debug, enable_debug_omni, stop_pp, stop_frontend,
+#   stop_dependencies, stop_translator, pp_add_opt,
+#   frontend_add_opt, xcode_translator_add_opt, list_target,
+#   show_config, user_target, target_opt, list_directive,
+#   user_directive, directive_opt, user_config, config_opt,
+#   decompiler_max_column, max_columns, line_directive,
+#   dump_cx2x_args, force_pure, report
+###################################################################
 function claw_f_set_parameters()
 {
   while [ -n "$1" ]; do
@@ -88,8 +114,7 @@ function claw_f_set_parameters()
         shift;
         module_dir="${1#-J}"
         # shellcheck disable=SC1001
-        if [[ $module_dir == \/* ]]
-        then
+        if [[ $module_dir == \/* ]]; then
           module_opt+=("-M${module_dir[0]}")
         else
           current_dir=$(pwd)
@@ -112,11 +137,11 @@ function claw_f_set_parameters()
         module_dir=("${1#-I}")
         trans_module_opt+=("-M${module_dir[0]}");;
       -E)
-        ONLY_PP=true;;
+        only_pp=true;;
       -cpp)
-        ENABLE_CPP=true;;
+        enable_cpp=true;;
       -v|--verbose)
-        VERBOSE=true;;
+        verbose=true;;
       --version)
         claw_f_print_version; exit 0;;
       -h|--help)
@@ -128,17 +153,17 @@ function claw_f_set_parameters()
       --no-dep)
         resolve_dependencies=false;;
       --debug)
-        ENABLE_DEBUG=true;;
+        enable_debug=true;;
       --debug-omni)
-        ENABLE_DEBUG_OMNI=true;;
+        enable_debug_omni=true;;
       --stop-pp)
-        VERBOSE=true; STOP_PP=true;;
+        verbose=true; stop_pp=true;;
       --stop-frontend)
-        VERBOSE=true; STOP_FRONTEND=true;;
+        verbose=true; stop_frontend=true;;
       --stop-dependencies)
-        VERBOSE=true; STOP_DEPENDENCIES=true;;
+        verbose=true; stop_dependencies=true;;
       --stop-translator)
-        VERBOSE=true; STOP_TRANSLATOR=true;;
+        verbose=true; stop_translator=true;;
       --Wp*)
         pp_add_opt+=("${1#--Wp}");;
       --Wf*)
@@ -148,7 +173,7 @@ function claw_f_set_parameters()
       --target-list)
         list_target=true;;
       --show-config)
-        SHOW_CONFIG=true;;
+        show_config=true;;
       -t=*)
         user_target=true;
         target_opt="${1#-t=}";;
@@ -191,21 +216,31 @@ function claw_f_set_parameters()
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
-  if [ "${directive_opt[0]}" == "openacc" ]
-  then
+  if [ "${directive_opt[0]}" == "openacc" ]; then
     pp_add_opt+=("-D_OPENACC")
-  elif [ "${directive_opt[0]}" == "openmp" ]
-  then
+  elif [ "${directive_opt[0]}" == "openmp" ]; then
     pp_add_opt+=("-D_OPENMP")
   fi
 }
 
+
+###################################################################
+# Get the CLAW FORTRAN Compiler version
+# Returns:
+#   Formatted version string
+###################################################################
 function claw_f_print_version()
 {
   echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@ (@CMAKE_Fortran_COMPILER_ID@ Preprocessor) (OMNI Compiler @OMNI_GIT_HASH@)"
 }
 
-# Display error message and exit the driver
+
+###################################################################
+# Check existence of input files
+# ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
+# Arguments:
+#   $1: Error message
+###################################################################
 function claw_error_exit()
 {
     echo "$0: error: $1"
@@ -213,19 +248,30 @@ function claw_error_exit()
     exit 1
 }
 
-# Check existence of files given at input
+
+###################################################################
+# Check existence of input files
+# ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
+# Global:
+#   f_files
+###################################################################
 function claw_f_check_file_exist()
 {
   [ ${#f_files[@]} -eq 0 ] && claw_error_exit "no input files."
 
-  for fortran_file in "${f_files[@]}"
-  do
+  for fortran_file in "${f_files[@]}"; do
     [ ! -f "${fortran_file}" ] && claw_error_exit "file ${fortran_file} not found."
   done
 }
 
-# Norm the file
+###################################################################
+# Normalize the filename and path
 # ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
+# Arguments:
+#   $1: file path
+# Returns:
+#   Normalize file path
+###################################################################
 function claw_f_norm_file_name()
 {
     # TODO possibly extend to other FORTRAN extensions
@@ -266,8 +312,13 @@ function claw_f_norm_file_name()
     echo "${norm_name}"
 }
 
-# Process dependencies file trough the frontend
-# $1 must be set to the file to process dependencies
+
+###################################################################
+# Process dependencies file trough the frontend.
+# Arguments:
+#   $1: preprocessed file
+#   $2: original file
+###################################################################
 function claw_f_process_dependencies()
 {
   # Dependency resolution work as follows:
@@ -283,10 +334,8 @@ function claw_f_process_dependencies()
 
   dependencies=()
   module_regex="^[[:space:]]*(USE|use)[[:space:]]+(, *INTRINSIC *::|, *intrinsic *::)?[[:space:]]*([^,|^ |^!]*)"
-  while IFS= read -r line
-  do
-    if [[ $line =~ $module_regex ]]
-    then
+  while IFS= read -r line; do
+    if [[ $line =~ $module_regex ]]; then
       module_name="${BASH_REMATCH[3]}"
       dependencies+=("$module_name")
     fi
@@ -296,17 +345,14 @@ function claw_f_process_dependencies()
   current_src_dir=$(dirname "$2")
 
   # If no dependencies, just abord dependency resolution
-  if [[ "${#dependencies[@]}" == 0 ]]
-  then
+  if [[ "${#dependencies[@]}" == 0 ]]; then
     return
   fi
 
-  for dep in "${dependencies[@]}"
-  do
+  for dep in "${dependencies[@]}"; do
     # Reset the control variables
     compiled_mod_file_found=false
     source_mod_file_found=false
-
 
     module_name=${dep// } # Remove all spaces
     module_name=${module_name%% }
@@ -320,86 +366,69 @@ function claw_f_process_dependencies()
     module_search_path+=("$current_src_dir")
 
     # Add user given search paths (-J option)
-    for search_path in "${module_opt[@]}"
-    do
+    for search_path in "${module_opt[@]}"; do
       module_search_path+=(${search_path:2})
     done
 
     # Try to locate the fortran source file
-    for directory in "${module_search_path[@]}"
-    do
+    for directory in "${module_search_path[@]}"; do
       compiled_mod_file="$directory/$module_name.xmod"
-      if [[ -f $compiled_mod_file ]]
-      then
+      if [[ -f $compiled_mod_file ]]; then
         compiled_mod_file_found=true
         break
       fi
     done
 
     # Try to locate the fortran source file
-    for directory in "${module_search_path[@]}"
-    do
-      for ext in "${fortran_ext[@]}"
-      do
+    for directory in "${module_search_path[@]}"; do
+      for ext in "${fortran_ext[@]}"; do
         source_mod_file="$directory/$module_name$ext"
-        if [[ -f $source_mod_file ]]
-        then
+        if [[ -f $source_mod_file ]]; then
           source_mod_file_found=true
           break
         fi
       done
-      if [[ $source_mod_file_found == true ]]
-      then
+      if [[ $source_mod_file_found == true ]]; then
         break
       fi
     done
 
-    if [[ $source_mod_file_found == false ]]
-    then
+    if [[ $source_mod_file_found == false ]]; then
       # Could not locate a module file with same name. Try to find module file
       # with regular expression
-      for directory in "${module_search_path[@]}"
-      do
-        for ext in "${fortran_ext[@]}"
-        do
+      for directory in "${module_search_path[@]}"; do
+        for ext in "${fortran_ext[@]}"; do
           found_file=($(grep -s -l -i "^ *MODULE *$module_name" "$directory"/*"$ext" | grep -v ".*\.claw\..*"))
-          if [ ${#found_file[@]} -gt 1 ]
-          then
+          if [ ${#found_file[@]} -gt 1 ]; then
             break
           else
             potential_module_file=${found_file[0]}
-            if [ ${#potential_module_file} -gt 0 ]
-            then
+            if [ ${#potential_module_file} -gt 0 ]; then
               source_mod_file=$potential_module_file
               source_mod_file_found=true
               break
             fi
           fi
         done
-        if [[ $source_mod_file_found == true ]]
-        then
+        if [[ $source_mod_file_found == true ]]; then
           break
         fi
       done
     fi
 
     # .xmod file is already present
-    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == true ]]
-    then
-      [ $VERBOSE = true ] && echo "Warning: only module file found for $module_name. Might be out-of-date"
+    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == true ]]; then
+      [ $verbose = true ] && echo "Warning: only module file found for $module_name. Might be out-of-date"
       continue
-    elif [[ $source_mod_file_found == true ]] && [[ $compiled_mod_file_found == true ]]
-    then
-      if [[ $compiled_mod_file -nt $source_mod_file ]]
-      then
-        [ $VERBOSE = true ] && echo "Info: module file for $module_name seems up-to-date"
+    elif [[ $source_mod_file_found == true ]] && [[ $compiled_mod_file_found == true ]]; then
+      if [[ $compiled_mod_file -nt $source_mod_file ]]; then
+        [ $verbose = true ] && echo "Info: module file for $module_name seems up-to-date"
         continue
       fi
     fi
 
     # No files found. Cannot go any further
-    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == false ]]
-    then
+    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == false ]]; then
       echo "Error: cannot locate any source file or module file for module $module_name"
       echo "       try providing source directory in module search path"
       exit 1;
@@ -412,8 +441,7 @@ function claw_f_process_dependencies()
     ext=${base_file##*.}
     local FILE_PP=${TEMP_DIR}/"${file_name}".${ext}
 
-    if [ "$FPP_REDIRECT" == true ]
-    then
+    if [ "$FPP_REDIRECT" == true ]; then
       # shellcheck disable=SC2086
       $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${FILE_PP}"
     else
@@ -431,10 +459,13 @@ function claw_f_process_dependencies()
   done
 }
 
+
+###################################################################
 # Apply the ignore directive. All lines between `!$claw ignore` and
 # `!$claw end ignore` are prefixed with the `!$claw ignore` prefix.
-# Parameters:
-# $1 : input file path edited in place
+# Arguments:
+#   $1: input file path edited in place
+###################################################################
 function applyIgnore()
 {
   # Retrieve the ignore start directives in the file
@@ -450,13 +481,11 @@ function applyIgnore()
     exit 1
   fi
 
-  for (( i=0; i<=$((startlen-1)); i++ ))
-  do
+  for (( i=0; i<=$((startlen-1)); i++ )); do
     local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
 
-    if [ "$sedstart" -gt "$sedend" ]
-    then
+    if [ "$sedstart" -gt "$sedend" ]; then
       echo "claw-error: inverted start-end in ignore directive. ($sedstart:$sedend)"
       exit 1
     fi
@@ -470,10 +499,14 @@ function applyIgnore()
   done
 }
 
-# Revert the lines saved by the ignore directive
-# All lines starting with !$claw ignore will be modified. The directive is
-# removed and the text after is kept.
-# $1 : file path
+
+###################################################################
+# Revert the lines saved by the ignore directive.
+# All lines starting with !$claw ignore will be modified. The
+# directive is removed and the text after is kept.
+# Arguments:
+#   $1: input file path edited in place
+###################################################################
 function revertIgnore()
 {
   sed -i.bak -e "s/\!\$claw ignore//" "$1"
@@ -484,27 +517,35 @@ function revertIgnore()
   rm -f "$1.bak"
 }
 
+
+###################################################################
 # Apply the verbatim directive
 # Remove all the !$claw verbatim from lines
+# Arguments:
+#   $1: input file path edited in place
+###################################################################
 function applyVerbatim()
 {
   sed -i.bak -e "s/\!\$claw verbatim //" "$1"
   rm -f "$1.bak"
 }
 
-# Apply workaround for the GNU Fotran preprocessor
-# backslash at the end of a comment are considered as a line continuation for
+
+###################################################################
+# Apply workaround for the GNU Fotran preprocessor backslash at
+# the end of a comment are considered as a line continuation for
 # the preprocessor and this cause some problems.
+# Arguments:
+#   $1: input file
+#   $2: output file
+###################################################################
 function applyPreprocessorPass()
 {
   potential_problem=$(grep --count -E "\\\\$" "$1")
   line_no=1
-  if [[ $potential_problem -gt 0 ]]
-  then
-    while IFS= read -r line
-    do
-      if [[ $line =~ \\$ ]] && [[ $line =~ .*!.* ]]
-      then
+  if [[ $potential_problem -gt 0 ]]; then
+    while IFS= read -r line; do
+      if [[ $line =~ \\$ ]] && [[ $line =~ .*!.* ]]; then
         echo "${line//\\/}" >> "$2"
         #echo "$line" | sed 's/\\//g' >> "$2"
         echo "$1:$line_no:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
