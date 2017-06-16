@@ -70,7 +70,7 @@ function claw_f_show_env()
       fi
     done < "$claw_env_file"
   else
-    omni_error_exit "$claw_env_file not exist."
+    claw_error_exit "$claw_env_file not exist."
   fi
 }
 
@@ -408,7 +408,7 @@ function claw_f_process_dependencies()
     ### Preprocess file ###
     base_file=$source_mod_file
     DEP_BASENAME=$(basename "${base_file%.*}")
-    FILE_NAME=$(omni_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+    FILE_NAME=$(claw_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
     EXT=${base_file##*.}
     local FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
 
@@ -427,7 +427,7 @@ function claw_f_process_dependencies()
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
-    omni_exec "$OMNI_F2X_CMD" "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}"
+    $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}"
   done
 }
 
