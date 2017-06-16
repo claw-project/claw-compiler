@@ -10,6 +10,8 @@
 #
 
 shellcheck -V
+
+# Check basic scripts
 if ! shellcheck offline.sh
 then
   exit 1
@@ -18,6 +20,8 @@ if ! shellcheck pack_release.sh
 then
   exit 1
 fi
+
+# Check driver scripts
 cd ../driver/bin || exit 1
 if ! shellcheck ../etc/claw_f.conf
 then
@@ -32,3 +36,10 @@ then
   exit 1
 fi
 cd - || exit 1
+
+# Check test driver scripts
+cd ../test/driver/lib/ || exit 1
+if ! shellcheck  test.claw_f_lib.sh ../../../driver/libexec/claw_f_lib.sh.in
+then
+  exit 1
+fi
