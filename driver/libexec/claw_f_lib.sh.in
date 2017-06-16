@@ -255,7 +255,8 @@ function claw_f_norm_file_name()
           local hex
           hex=$(printf "%x" "$ix")
           local char
-          char=$(printf "\x%x" "${hex}")
+          # shellcheck disable=SC2059
+          char=$(printf "\x${hex}")
           local code
           code=\'$char
           NORM_NAME="$NORM_NAME"$(printf "_%x_\n" "$code")
