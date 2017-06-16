@@ -71,17 +71,17 @@ function claw_f_show_env()
   empty_line_regex="^[[:space:]]*$"
   comment_line_regex="^[[:space:]]*#"
 
-  if [ -f "$claw_env_file" ]; then
+  if [ -f "${claw_env_file}" ]; then
     while IFS= read -r line; do
-      if ! [[ $line =~ $empty_line_regex ]] \
-        && ! [[ $line =~ $comment_line_regex ]]; then
+      if ! [[ ${line} =~ ${empty_line_regex} ]] \
+        && ! [[ ${line} =~ ${comment_line_regex} ]]; then
         echo -n "${line}=\""
         eval echo -n \"\$"$line"\"
         echo \"
       fi
-    done < "$claw_env_file"
+    done < "${claw_env_file}"
   else
-    claw_error_exit "$claw_env_file not exist."
+    claw_error_exit "${claw_env_file} not exist."
   fi
 }
 
@@ -105,13 +105,12 @@ function claw_f_set_parameters()
   while [ -n "$1" ]; do
     case "$1" in
       *.f90|*.f|*.F90|*.F)
-        f_files+=("$1");;
-      -o)
-        shift; output_file="$1";;
-      -D)
-        shift; output_dir="$1";;
+        f_files+=("$1")
+        ;;
+      -o) shift; output_file="$1" ;;
+      -D) shift; output_dir="$1" ;;
       -J)
-        shift;
+        shift
         module_dir="${1#-J}"
         # shellcheck disable=SC1001
         if [[ $module_dir == \/* ]]; then
@@ -130,89 +129,58 @@ function claw_f_set_parameters()
         include_opt+=("-I$1")
         other_args+=("-I$1")
         module_dir=("${1#-I}")
-        trans_module_opt+=("-M${module_dir[0]}");;
+        trans_module_opt+=("-M${module_dir[0]}")
+        ;;
       -I?*)
         include_opt+=("$1")
         other_args+=("$1")
         module_dir=("${1#-I}")
-        trans_module_opt+=("-M${module_dir[0]}");;
-      -E)
-        only_pp=true;;
-      -cpp)
-        enable_cpp=true;;
-      -v|--verbose)
-        verbose=true;;
-      --version)
-        claw_f_print_version; exit 0;;
-      -h|--help)
-        claw_f_print_help "$(basename "$0")"; exit 0;;
-      --show-env)
-        claw_f_show_env; exit 0;;
-      -f|--force)
-        force_translation=true;;
-      --no-dep)
-        resolve_dependencies=false;;
-      --debug)
-        enable_debug=true;;
-      --debug-omni)
-        enable_debug_omni=true;;
-      --stop-pp)
-        verbose=true; stop_pp=true;;
-      --stop-frontend)
-        verbose=true; stop_frontend=true;;
-      --stop-dependencies)
-        verbose=true; stop_dependencies=true;;
-      --stop-translator)
-        verbose=true; stop_translator=true;;
-      --Wp*)
-        pp_add_opt+=("${1#--Wp}");;
-      --Wf*)
-        frontend_add_opt+=("${1#--Wf}");;
-      --Wx*)
-        xcode_translator_add_opt+=("${1#--Wx}");;
-      --target-list)
-        list_target=true;;
-      --show-config)
-        show_config=true;;
-      -t=*)
-        user_target=true;
-        target_opt="${1#-t=}";;
-      --target=*)
-        user_target=true;
-        target_opt="${1#--target=}";;
-      --directive-list)
-        list_directive=true;;
-      -d=*)
-        user_directive=true;
-        directive_opt="${1#-d=}";;
-      --directive=*)
-        user_directive=true;
-        directive_opt="${1#--directive=}";;
-      --config=*)
-        user_config=true;
-        config_opt="${1#--config=}";;
+        trans_module_opt+=("-M${module_dir[0]}")
+        ;;
+      -E) only_pp=true ;;
+      -cpp) enable_cpp=true ;;
+      -v|--verbose) verbose=true ;;
+      --version) claw_f_print_version; exit 0 ;;
+      -h|--help) claw_f_print_help "$(basename "$0")"; exit 0 ;;
+      --show-env) claw_f_show_env; exit 0 ;;
+      -f|--force) force_translation=true ;;
+      --no-dep) resolve_dependencies=false ;;
+      --debug) enable_debug=true ;;
+      --debug-omni) enable_debug_omni=true ;;
+      --stop-pp) verbose=true; stop_pp=true ;;
+      --stop-frontend) verbose=true; stop_frontend=true ;;
+      --stop-dependencies) verbose=true; stop_dependencies=true ;;
+      --stop-translator) verbose=true; stop_translator=true ;;
+      --Wp*) pp_add_opt+=("${1#--Wp}") ;;
+      --Wf*) frontend_add_opt+=("${1#--Wf}") ;;
+      --Wx*) xcode_translator_add_opt+=("${1#--Wx}") ;;
+      --target-list) list_target=true ;;
+      --show-config) show_config=true ;;
+      -t=*) user_target=true; target_opt="${1#-t=}" ;;
+      --target=*) user_target=true; target_opt="${1#--target=}" ;;
+      --directive-list) list_directive=true ;;
+      -d=*) user_directive=true; directive_opt="${1#-d=}" ;;
+      --directive=*) user_directive=true; directive_opt="${1#--directive=}" ;;
+      --config=*) user_config=true; config_opt="${1#--config=}" ;;
       -w)
         decompiler_max_column=true;
-        shift; max_columns="$1";;
-      -l)
-        line_directive=true;;
-      --dump-cx2x-args)
-        dump_cx2x_args=true;;
-      --force-pure)
-        force_pure=true;;
-      -r|--report)
-        report=true;;
-      *)
-        other_args+=("$1");;
+        shift
+        max_columns="$1"
+        ;;
+      -l) line_directive=true ;;
+      --dump-cx2x-args) dump_cx2x_args=true ;;
+      --force-pure) force_pure=true ;;
+      -r|--report) report=true ;;
+      *) other_args+=("$1") ;;
     esac
     shift
   done
 
   # Add the current working directory
-  module_opt+=("-M$PWD")
+  module_opt+=("-M${PWD}")
 
   # Add the generic modules paths
-  module_opt+=("-M$XMOD_GENERIC")
+  module_opt+=("-M${XMOD_GENERIC}")
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
