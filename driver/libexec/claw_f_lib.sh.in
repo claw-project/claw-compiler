@@ -224,6 +224,40 @@ function claw_f_check_file_exist()
   done
 }
 
+# Norm the file
+# ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
+function claw_f_norm_file_name()
+{
+    # TODO possibly extend to other FORTRAN extensions
+    local filename=`basename "$1" .f90`          # ./hoge/fuga-a.f90 -> fuga-a
+    filename=`basename "$filename" .F90`
+    filename=`basename "$filename" .f`
+    filename=`basename "$filename" .F`
+    filename=`dirname "$1"`/${filename}          #  -> ./hoge/fuga-a
+    filename=`echo $filename | sed 's/^\.\///'`  #  -> hoge/fuga-a
+
+    local len=${#filename}
+    local NORM_NAME=""
+    for i in `seq 1 $len`; do                    #  -> hoge_2f_fuga_2d_a
+        c=`echo $filename | cut -c $i`
+        ix=$(printf "%d" \'$c)
+        if [ $ix -ge 48 -a $ix -le 57 ]; then    # '0' <= $ix <= '9'
+            NORM_NAME="$NORM_NAME"$c
+        elif [ $ix -ge 65 -a $ix -le 90 ]; then  # 'A' <= $ix <= 'Z'
+            NORM_NAME="$NORM_NAME"$c
+        elif [ $ix -ge 97 -a $ix -le 122 ]; then # 'a' <= $ix <= 'z'
+            NORM_NAME="$NORM_NAME"$c
+        else
+            local hex=$(printf "%x" $ix )
+            local char=$(printf "\x${hex}")
+            local code=\'$char
+            NORM_NAME="$NORM_NAME"`printf "_%x_\n" $code`
+        fi
+    done
+
+    echo "${NORM_NAME}"
+}
+
 # Process dependencies file trough the frontend
 # $1 must be set to the file to process dependencies
 function claw_f_process_dependencies()

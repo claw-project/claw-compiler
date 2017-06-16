@@ -199,9 +199,6 @@ ERROR_LOG=$TEMP_DIR/error_log
 mkdir -p $TEMP_DIR
 [ $VERBOSE = true ] && echo "Create ${TEMP_DIR}/"
 
-### Clean temporal directory before exit ###
-#omni_set_trap
-
 ### Bypass file without code transformation ###
 for input_file in "${f_files[@]}"
 do
@@ -234,7 +231,7 @@ for input_file in "${f_files_transformation[@]}"
 do
   [ $VERBOSE = true ] && echo "Prepocessing ..."
 
-  file_name=$(omni_f_norm_file_name "${input_file}")
+  file_name=$(claw_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
   file_pp1=${TEMP_DIR}/"${file_name}".PP.${EXT}
   file_pp=${TEMP_DIR}/"${file_name}".${EXT}
@@ -272,7 +269,7 @@ done
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
-  FILE_NAME=$(omni_f_norm_file_name "${input_file}")
+  FILE_NAME=$(claw_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
   if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
     FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
@@ -288,7 +285,7 @@ then
   for input_file in "${f_files_transformation[@]}"
   do
     [ $VERBOSE = true ] && echo "Dependencies resolution ..."
-    FILE_NAME=$(omni_f_norm_file_name "${input_file}")
+    FILE_NAME=$(claw_f_norm_file_name "${input_file}")
     EXT=${input_file##*.}
 
     if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
@@ -305,7 +302,7 @@ fi
 ### Frontend ###
 for input_file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "Fortran to XcodeML ..."
-  FILE_NAME=$(omni_f_norm_file_name "${input_file}")
+  FILE_NAME=$(claw_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
 
   if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
@@ -331,7 +328,7 @@ fi
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
   [ $VERBOSE = true ] && echo "XcodeML to XcodeML translation ..."
-  FILE_NAME=$(omni_f_norm_file_name "${input_file}")
+  FILE_NAME=$(claw_f_norm_file_name "${input_file}")
   EXT=${input_file##*.}
   FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
   FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
