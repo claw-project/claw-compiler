@@ -52,10 +52,10 @@ script:
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make clean-transformation transformation test
-  - make install # Test install steps as well, avoid missing jars of files.
+  - make install # Test install steps as well, avoid missing jars or files.
   - cd -
   - cd scripts
-  - ./run.shellcheck.sh
+  - ./run.shellcheck.sh # Check shell scripts with shellcheck
 
 # Notification settings
 notifications:

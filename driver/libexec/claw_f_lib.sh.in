@@ -70,7 +70,7 @@ function claw_f_show_env()
       fi
     done < "$claw_env_file"
   else
-    omni_error_exit "$claw_env_file not exist."
+    claw_error_exit "$claw_env_file not exist."
   fi
 }
 
@@ -203,6 +203,67 @@ function claw_f_set_parameters()
 function claw_f_print_version()
 {
   echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@ (@CMAKE_Fortran_COMPILER_ID@ Preprocessor) (OMNI Compiler @OMNI_GIT_HASH@)"
+}
+
+# Display error message and exit the driver
+function claw_error_exit()
+{
+    echo "$0: error: $1"
+    echo "compilation aborted."
+    exit 1
+}
+
+# Check existence of files given at input
+function claw_f_check_file_exist()
+{
+  [ ${#f_files[@]} -eq 0 ] && claw_error_exit "no input files."
+
+  for fortran_file in "${f_files[@]}"
+  do
+    [ ! -f "${fortran_file}" ] && claw_error_exit "file ${fortran_file} not found."
+  done
+}
+
+# Norm the file
+# ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
+function claw_f_norm_file_name()
+{
+    # TODO possibly extend to other FORTRAN extensions
+    local filename
+    filename=$(basename "$1" .f90)                 # ./hoge/fuga-a.f90 -> fuga-a
+    filename=$(basename "$filename" .F90)
+    filename=$(basename "$filename" .f)
+    filename=$(basename "$filename" .F)
+    filename=$(dirname "$1")/${filename}           #  -> ./hoge/fuga-a
+    filename=$(echo "$filename" | sed 's/^\.\///') #  -> hoge/fuga-a
+
+    local len=${#filename}
+    local norm_name=""
+    for i in $(seq 1 "$len"); do                   #  -> hoge_2f_fuga_2d_a
+        c=$(echo "$filename" | cut -c "$i")
+        ix=$(printf "%d" \'"$c")
+        if [ "$ix" -ge 48 ] && [ "$ix" -le 57 ]    # '0' <= $ix <= '9'
+        then
+            norm_name="$norm_name"$c
+        elif [ "$ix" -ge 65 ] && [ "$ix" -le 90 ]  # 'A' <= $ix <= 'Z'
+        then
+            norm_name="$norm_name"$c
+        elif [ "$ix" -ge 97 ] && [ "$ix" -le 122 ] # 'a' <= $ix <= 'z'
+        then
+            norm_name="$norm_name"$c
+        else
+          local hex
+          hex=$(printf "%x" "$ix")
+          local char
+          # shellcheck disable=SC2059
+          char=$(printf "\x${hex}")
+          local code
+          code=\'$char
+          norm_name="$norm_name"$(printf "_%x_\n" "$code")
+        fi
+    done
+
+    echo "${norm_name}"
 }
 
 # Process dependencies file trough the frontend
@@ -346,10 +407,10 @@ function claw_f_process_dependencies()
 
     ### Preprocess file ###
     base_file=$source_mod_file
-    DEP_BASENAME=$(basename "${base_file%.*}")
-    FILE_NAME=$(omni_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
-    EXT=${base_file##*.}
-    local FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+    dep_basename=$(basename "${base_file%.*}")
+    file_name=$(claw_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+    ext=${base_file##*.}
+    local FILE_PP=${TEMP_DIR}/"${file_name}".${ext}
 
     if [ "$FPP_REDIRECT" == true ]
     then
@@ -358,7 +419,7 @@ function claw_f_process_dependencies()
     else
       # shellcheck disable=SC2086
       $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
-      mv "${DEP_BASENAME}.i" "${FILE_PP}"
+      mv "${dep_basename}.i" "${FILE_PP}"
     fi
 
     # Recurse to get dependencies in the right order
@@ -366,7 +427,7 @@ function claw_f_process_dependencies()
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
-    omni_exec "$OMNI_F2X_CMD" "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}"
+    $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}"
   done
 }
 
