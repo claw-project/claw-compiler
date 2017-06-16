@@ -205,6 +205,25 @@ function claw_f_print_version()
   echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@ (@CMAKE_Fortran_COMPILER_ID@ Preprocessor) (OMNI Compiler @OMNI_GIT_HASH@)"
 }
 
+# Display error message and exit the driver
+function claw_error_exit()
+{
+    echo "$0: error: $1"
+    echo "compilation aborted."
+    exit 1
+}
+
+# Check existence of files given at input
+function claw_f_check_file_exist()
+{
+  [ ${#f_files[@]} -eq 0 ] && claw_error_exit "no input files."
+
+  for fortran_file in "${f_files[@]}"
+  do
+    [ ! -f "${fortran_file}" ] && claw_error_exit "file ${fortran_file} not found."
+  done
+}
+
 # Process dependencies file trough the frontend
 # $1 must be set to the file to process dependencies
 function claw_f_process_dependencies()

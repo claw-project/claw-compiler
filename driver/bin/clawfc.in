@@ -170,7 +170,7 @@ then
   exit 0
 fi
 
-omni_f_check_file_exist
+claw_f_check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
 if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]
