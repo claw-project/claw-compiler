@@ -229,29 +229,36 @@ function claw_f_check_file_exist()
 function claw_f_norm_file_name()
 {
     # TODO possibly extend to other FORTRAN extensions
-    local filename=`basename "$1" .f90`          # ./hoge/fuga-a.f90 -> fuga-a
-    filename=`basename "$filename" .F90`
-    filename=`basename "$filename" .f`
-    filename=`basename "$filename" .F`
-    filename=`dirname "$1"`/${filename}          #  -> ./hoge/fuga-a
-    filename=`echo $filename | sed 's/^\.\///'`  #  -> hoge/fuga-a
+    local filename
+    filename=$(basename "$1" .f90)                 # ./hoge/fuga-a.f90 -> fuga-a
+    filename=$(basename "$filename" .F90)
+    filename=$(basename "$filename" .f)
+    filename=$(basename "$filename" .F)
+    filename=$(dirname "$1")/${filename}           #  -> ./hoge/fuga-a
+    filename=$(echo "$filename" | sed 's/^\.\///') #  -> hoge/fuga-a
 
     local len=${#filename}
     local NORM_NAME=""
-    for i in `seq 1 $len`; do                    #  -> hoge_2f_fuga_2d_a
-        c=`echo $filename | cut -c $i`
-        ix=$(printf "%d" \'$c)
-        if [ $ix -ge 48 -a $ix -le 57 ]; then    # '0' <= $ix <= '9'
+    for i in $(seq 1 "$len"); do                   #  -> hoge_2f_fuga_2d_a
+        c=$(echo "$filename" | cut -c "$i")
+        ix=$(printf "%d" \'"$c")
+        if [ "$ix" -ge 48 ] && [ "$ix" -le 57 ]    # '0' <= $ix <= '9'
+        then
             NORM_NAME="$NORM_NAME"$c
-        elif [ $ix -ge 65 -a $ix -le 90 ]; then  # 'A' <= $ix <= 'Z'
+        elif [ "$ix" -ge 65 ] && [ "$ix" -le 90 ]  # 'A' <= $ix <= 'Z'
+        then
             NORM_NAME="$NORM_NAME"$c
-        elif [ $ix -ge 97 -a $ix -le 122 ]; then # 'a' <= $ix <= 'z'
+        elif [ "$ix" -ge 97 ] && [ "$ix" -le 122 ] # 'a' <= $ix <= 'z'
+        then
             NORM_NAME="$NORM_NAME"$c
         else
-            local hex=$(printf "%x" $ix )
-            local char=$(printf "\x${hex}")
-            local code=\'$char
-            NORM_NAME="$NORM_NAME"`printf "_%x_\n" $code`
+          local hex
+          hex=$(printf "%x" "$ix")
+          local char
+          char=$(printf "\x%x" "${hex}")
+          local code
+          code=\'$char
+          NORM_NAME="$NORM_NAME"$(printf "_%x_\n" "$code")
         fi
     done
 
