@@ -231,7 +231,7 @@ for input_file in "${f_files_transformation[@]}"; do
       if [ "${output_file}" = "" ]; then
         cat "${file_pp}"
       else
-        cat "${file_pp_i}" >> "${output_file}" # TODO debug here
+        cat "${file_pp}" >> "${output_file}" # TODO debug here
       fi
     fi
   fi
