@@ -222,7 +222,7 @@ function claw::print_version()
   version_str="${version_str} @CLAWFC_GIT_HASH@"
   version_str="${version_str} (@CMAKE_Fortran_COMPILER_ID@ Preprocessor)"
   version_str="${version_str} (OMNI Compiler @OMNI_GIT_HASH@)"
-  echo ${version_str}
+  echo "${version_str}"
 }
 
 
