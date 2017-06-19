@@ -72,7 +72,7 @@ function claw::show_env()
   empty_line_regex="^[[:space:]]*$"
   comment_line_regex="^[[:space:]]*#"
 
-  if [ -f "${claw_env_file}" ]; then
+  if [[ -f "${claw_env_file}" ]]; then
     while IFS= read -r line; do
       if ! [[ ${line} =~ ${empty_line_regex} ]] \
         && ! [[ ${line} =~ ${comment_line_regex} ]]; then
@@ -103,7 +103,7 @@ function claw::show_env()
 ###################################################################
 function claw::set_parameters()
 {
-  while [ -n "$1" ]; do
+  while [[ -n "$1" ]]; do
     case "$1" in
       *.f90|*.f|*.F90|*.F)
         f_files+=("$1")
@@ -185,9 +185,9 @@ function claw::set_parameters()
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
-  if [ "${directive_opt[0]}" == "openacc" ]; then
+  if [[ "${directive_opt[0]}" == "openacc" ]]; then
     pp_add_opt+=("-D_OPENACC")
-  elif [ "${directive_opt[0]}" == "openmp" ]; then
+  elif [[ "${directive_opt[0]}" == "openmp" ]]; then
     pp_add_opt+=("-D_OPENMP")
   fi
 }
@@ -226,10 +226,10 @@ function claw::error_exit()
 ###################################################################
 function claw::check_file_exist()
 {
-  [ ${#f_files[@]} -eq 0 ] && claw::error_exit "no input files."
+  [[ ${#f_files[@]} -eq 0 ]] && claw::error_exit "no input files."
 
   for fortran_file in "${f_files[@]}"; do
-    [ ! -f "${fortran_file}" ] && claw::error_exit "file ${fortran_file} not found."
+    [[ ! -f "${fortran_file}" ]] && claw::error_exit "file ${fortran_file} not found."
   done
 }
 
@@ -258,13 +258,13 @@ function claw::norm_file_name()
         c=$(echo "${filename}" | cut -c "${i}")
         ix=$(printf "%d" \'"${c}")
         # '0' <= ${ix} <= '9'
-        if [ "${ix}" -ge 48 ] && [ "${ix}" -le 57 ]; then
+        if [[ "${ix}" -ge 48 ]] && [[ "${ix}" -le 57 ]]; then
             norm_name="${norm_name}"${c}
         # 'A' <= ${ix} <= 'Z'
-        elif [ "${ix}" -ge 65 ] && [ "${ix}" -le 90 ]; then
+        elif [[ "${ix}" -ge 65 ]] && [[ "${ix}" -le 90 ]]; then
             norm_name="${norm_name}"${c}
         # 'a' <= ${ix} <= 'z'
-        elif [ "${ix}" -ge 97 ] && [ "${ix}" -le 122 ]; then
+        elif [[ "${ix}" -ge 97 ]] && [[ "${ix}" -le 122 ]]; then
             norm_name="${norm_name}"${c}
         else
           local hex
@@ -368,11 +368,11 @@ function claw::process_dependencies()
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
           found_file=($(grep -s -l -i "^ *MODULE *${module_name}" "${directory}"/*"${ext}" | grep -v ".*\.claw\..*"))
-          if [ ${#found_file[@]} -gt 1 ]; then
+          if [[ ${#found_file[@]} -gt 1 ]]; then
             break
           else
             potential_module_file=${found_file[0]}
-            if [ ${#potential_module_file} -gt 0 ]; then
+            if [[ ${#potential_module_file} -gt 0 ]]; then
               source_mod_file=${potential_module_file}
               source_mod_file_found=true
               break
@@ -387,11 +387,11 @@ function claw::process_dependencies()
 
     # .xmod file is already present
     if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == true ]]; then
-      [ ${verbose} = true ] && echo "Warning: only module file found for ${module_name}. Might be out-of-date"
+      [[ ${verbose} == true ]] && echo "Warning: only module file found for ${module_name}. Might be out-of-date"
       continue
     elif [[ ${source_mod_file_found} == true ]] && [[ ${compiled_mod_file_found} == true ]]; then
       if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then
-        [ ${verbose} = true ] && echo "Info: module file for ${module_name} seems up-to-date"
+        [[ ${verbose} == true ]] && echo "Info: module file for ${module_name} seems up-to-date"
         continue
       fi
     fi
@@ -412,7 +412,7 @@ function claw::process_dependencies()
     local file_pp=${temp_dir}/"${file_name}".${ext}
 
     # shellcheck disable=SC2154
-    if [ "${fpp_redirect}" == true ]; then
+    if [[ "${fpp_redirect}" == true ]]; then
       # shellcheck disable=SC2086
       ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} "${other_args[@]}" "${base_file}" > "${file_pp}"
     else
@@ -447,7 +447,7 @@ function claw::applyIgnore()
   # Check that we have the same number of start and end directives
   local startlen=${#startarray[*]}
   local endlen=${#endarray[*]}
-  if [ "${#startlen[@]}" -ne "${#endlen[@]}" ]; then
+  if [[ "${#startlen[@]}" -ne "${#endlen[@]}" ]]; then
     echo "Missing directives"
     exit 1
   fi
@@ -456,7 +456,7 @@ function claw::applyIgnore()
     local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
 
-    if [ "${sedstart}" -gt "${sedend}" ]; then
+    if [[ "${sedstart}" -gt "${sedend}" ]]; then
       echo "claw-error: inverted start-end in ignore directive. (${sedstart}:${sedend})"
       exit 1
     fi
