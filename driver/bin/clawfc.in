@@ -236,7 +236,7 @@ for input_file in "${f_files_transformation[@]}"; do
     fi
   fi
 done
-[ ${stop_pp{} = true ] && exit 0;
+[ ${stop_pp} = true ] && exit 0;
 [ ${only_pp} = true ] && [ ${enable_debug} = true ] && exit 0;
 [ ${only_pp} = true ] && { rm -rf ${temp_dir}; exit 0; }
 
