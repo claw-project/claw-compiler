@@ -220,11 +220,24 @@ function claw::error_exit()
 ###################################################################
 # Display warning message
 # Arguments:
-#   $1: Warning message
+#   $1: filename
+#   $2: line number
+#   $3: Warning message
 ###################################################################
 function claw::warning()
 {
-  echo "$0: warning: $1"
+  echo "$1:$2 warning: $3"
+}
+
+
+###################################################################
+# Display verbose message if activated
+# Arguments:
+#   $1: verbose message
+###################################################################
+function claw::verbose()
+{
+  [[ ${verbose} == true ]] && echo "$1"
 }
 
 
@@ -397,11 +410,11 @@ function claw::process_dependencies()
 
     # .xmod file is already present
     if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == true ]]; then
-      [[ ${verbose} == true ]] && claw::warning "only module file found for ${module_name}. Might be out-of-date"
+      claw::warning $1 "-" "only module file found for ${module_name}. Might be out-of-date"
       continue
     elif [[ ${source_mod_file_found} == true ]] && [[ ${compiled_mod_file_found} == true ]]; then
       if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then
-        [[ ${verbose} == true ]] && echo "Info: module file for ${module_name} seems up-to-date"
+        claw::verbose "Info: module file for ${module_name} seems up-to-date"
         continue
       fi
     fi
@@ -525,7 +538,7 @@ function claw::applyPreprocessorPass()
     while IFS= read -r line; do
       if [[ ${line} =~ \\$ ]] && [[ ${line} =~ .*!.* ]]; then
         echo "${line//\\/}" >> "$2"
-        echo "$1:${line_no}:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
+        claw::warning $1 ${line_no} "'\' symbol at the end of a comment line. Possible preprocessing error."
       else
         echo "${line}" >> "$2"
       fi
