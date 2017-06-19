@@ -15,12 +15,12 @@
 ## TODO cp original file in case of error
 
 ### Read configration file and library ###
-OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
-OM_CX2X_DRIVER_LIB_DIR=@OM_CX2X_DRIVER_LIB_DIR@
+om_cx2x_driver_conf_dir=@OM_CX2X_DRIVER_CONF_DIR@
+om_cx2x_driver_lib_dir=@OM_CX2X_DRIVER_LIB_DIR@
 # shellcheck source=../etc/claw_f.conf.in
-. ${OM_CX2X_DRIVER_CONF_DIR}/@CLAW_CONF_FILE@
+. ${om_cx2x_driver_conf_dir}/@CLAW_CONF_FILE@
 # shellcheck source=../libexec/claw_f_lib.sh.in
-. ${OM_CX2X_DRIVER_LIB_DIR}@CLAW_LIB_SH@
+. ${om_cx2x_driver_lib_dir}/@CLAW_LIB_SH@
 
 ### Directory for saving intermediate files ###
 current_pid=$$
@@ -28,7 +28,7 @@ temp_dir=/tmp/__omni_tmp__${current_pid}
 debug_temp_dir="__omni_tmp__"
 
 ### Default options ###
-FPP_REDIRECT=@FPP_REDIRECT@
+fpp_redirect=@FPP_REDIRECT@
 only_pp=false
 enable_cpp=true
 verbose=false
@@ -216,7 +216,7 @@ for input_file in "${f_files_transformation[@]}"; do
     applyPreprocessorPass "${input_file}" "${file_pp1}"
     preprocessor_output=$(basename "${file_pp1%.*}")
 
-    if [ ${FPP_REDIRECT} == true ]; then
+    if [ ${fpp_redirect} == true ]; then
       # shellcheck disable=SC2086
       ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
         ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}" > "${file_pp}"

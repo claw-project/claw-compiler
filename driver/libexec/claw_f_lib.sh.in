@@ -63,11 +63,11 @@ EOF
 # Display all the environment variables related to the CLAW FORTRAN
 # Compiler
 # Global:
-#   OM_CX2X_DRIVER_CONF_DIR
+#   om_cx2x_driver_conf_dir
 ###################################################################
 function claw_f_show_env()
 {
-  claw_env_file=$OM_CX2X_DRIVER_CONF_DIR/claw_f.conf
+  claw_env_file=${om_cx2x_driver_conf_dir}/claw_f.conf
   empty_line_regex="^[[:space:]]*$"
   comment_line_regex="^[[:space:]]*#"
 
@@ -409,7 +409,7 @@ function claw_f_process_dependencies()
     ext=${base_file##*.}
     local FILE_PP=${TEMP_DIR}/"${file_name}".${ext}
 
-    if [ "$FPP_REDIRECT" == true ]; then
+    if [ "${fpp_redirect}" == true ]; then
       # shellcheck disable=SC2086
       $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${FILE_PP}"
     else
