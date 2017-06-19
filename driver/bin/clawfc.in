@@ -112,21 +112,21 @@ readonly force_pure
 readonly report
 
 ### List target ###
-if [ ${list_target} = true ]; then
+if [[ ${list_target} = true ]]; then
   # shellcheck disable=SC2086
   ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --target-list
   exit 0
 fi
 
 ### List directive ###
-if [ ${list_directive} = true ]; then
+if [[ ${list_directive} = true ]]; then
    # shellcheck disable=SC2086
   ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --directive-list
   exit 0
 fi
 
 ### Set correct configuration file info ###
-if [ ${user_config} = true ]; then
+if [[ ${user_config} = true ]]; then
   OMNI_CX2X_CONFIG_OPT="--config=${config_opt} --schema=${OMNI_CX2X_CONFIG_XSD}"
 else
   OMNI_CX2X_CONFIG_OPT="--config=${OMNI_CX2X_CONFIG_DEFAULT} --schema=${OMNI_CX2X_CONFIG_XSD}"
@@ -134,19 +134,19 @@ fi
 
 # Set the correct target option for the translator
 OMNI_CX2X_TARGET_OPT=""
-if [ ${user_target} = true ]; then
+if [[ ${user_target} = true ]]; then
   OMNI_CX2X_TARGET_OPT="--target=${target_opt}"
 fi
 
 # Set the correct directive option for the translator
 OMNI_CX2X_DIRECTIVE_OPT=""
-if [ ${user_directive} = true ]; then
+if [[ ${user_directive} = true ]]; then
   OMNI_CX2X_DIRECTIVE_OPT="--directive=${directive_opt}"
 fi
 
 # Set the correct column option for the decompiler
 OMNI_CX2X_MAX_COLUMN_OPT=""
-if [ ${decompiler_max_column} = true ]; then
+if [[ ${decompiler_max_column} = true ]]; then
   OMNI_CX2X_MAX_COLUMN_OPT="-w ${max_columns}"
 else
   OMNI_CX2X_MAX_COLUMN_OPT="-w 80"
@@ -154,24 +154,24 @@ fi
 
 # Set the correct line directive option for the decompiler
 OMNI_CX2X_LINE_OPT="-l"
-if [ ${line_directive} = true ]; then
+if [[ ${line_directive} = true ]]; then
   OMNI_CX2X_LINE_OPT=""
 fi
 
-if [ ${force_pure} = true ]; then
+if [[ ${force_pure} = true ]]; then
   TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --force-pure"
 fi
 
 # Module search path option
 OMNI_CX2X_MOD_OPT=""
-if [ ${#module_opt[@]} -ne 0 ]; then
+if [[ ${#module_opt[@]} -ne 0 ]]; then
   for mod in "${module_opt[@]}"; do
     OMNI_CX2X_MOD_OPT="${OMNI_CX2X_MOD_OPT} ${mod}"
   done
 fi
 
 ### Show config ###
-if [ ${show_config} = true ]; then
+if [[ ${show_config} = true ]]; then
   # shellcheck disable=SC2086
   ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --show-config ${OMNI_CX2X_CONFIG_OPT}
   exit 0
@@ -193,16 +193,10 @@ fi
 
 
 ### Create temporal directory ###
-[ ${enable_debug} = true ] && temp_dir=${debug_temp_dir}
-[ ${enable_debug_omni} = true ] && temp_dir=${debug_temp_dir}
-command_log=${temp_dir}/command_log # TODO can be deleted
-error_log=${temp_dir}/error_log     # TODO can be deleted
-[ ${enable_debug} = true ] && rm -f ${command_log} ${error_log}
-[ ${enable_debug_omni} = true ] && rm -f ${command_log} ${error_log}
-# Note that, if temp_dir exists, the temp_dir is not deleted (KAGEMAI #379)
-
+[[ ${enable_debug} = true ]] && temp_dir=${debug_temp_dir}
+[[ ${enable_debug_omni} = true ]] && temp_dir=${debug_temp_dir}
 mkdir -p ${temp_dir}
-[ ${verbose} = true ] && echo "Create ${temp_dir}/"
+[[ ${verbose} = true ]] && echo "Create ${temp_dir}/"
 
 ### Bypass file without code transformation ###
 for input_file in "${f_files[@]}"; do
