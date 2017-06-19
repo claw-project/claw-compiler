@@ -212,8 +212,8 @@ function claw::print_version()
 ###################################################################
 function claw::error_exit()
 {
-    echo "$0: error: $1"
-    echo "compilation aborted."
+    echo "$0: error: $1" >&2
+    echo "compilation aborted." >&2
     exit 1
 }
 
@@ -398,9 +398,8 @@ function claw::process_dependencies()
 
     # No files found. Cannot go any further
     if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == false ]]; then
-      echo "Error: cannot locate any source file or module file for module ${module_name}"
-      echo "       try providing source directory in module search path"
-      exit 1;
+      claw::error_exit "Error: cannot locate any source file or module file for module ${module_name}\n" \
+        "       try providing source directory in module search path"
     fi
 
     ### Preprocess file ###
@@ -448,8 +447,7 @@ function claw::applyIgnore()
   local startlen=${#startarray[*]}
   local endlen=${#endarray[*]}
   if [[ "${#startlen[@]}" -ne "${#endlen[@]}" ]]; then
-    echo "Missing directives"
-    exit 1
+    claw::error_exit "Missing directives"
   fi
 
   for (( i=0; i<=$((startlen-1)); i++ )); do
@@ -457,8 +455,7 @@ function claw::applyIgnore()
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
 
     if [[ "${sedstart}" -gt "${sedend}" ]]; then
-      echo "claw-error: inverted start-end in ignore directive. (${sedstart}:${sedend})"
-      exit 1
+      claw::error_exit "inverted start-end in ignore directive. (${sedstart}:${sedend})"
     fi
 
     # Insert directive as prefix of each line in the block

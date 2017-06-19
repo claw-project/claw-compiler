@@ -182,12 +182,10 @@ claw::check_file_exist
 ## Check if multiple file, output_dir must be specified and output_file not
 if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]; then
   # Error: multiple files without output directory specified
-  echo "Error: output directory not specified"
-  exit 1
+  claw::error_exit "Error: output directory not specified"
 elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
   # Error: output file and output directory defined at the same time
-  echo "Error: output directory and output file cannot be specified together"
-  exit 1
+  claw::error_exit "Error: output directory and output file cannot be specified together"
 fi
 
 
