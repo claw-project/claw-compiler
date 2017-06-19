@@ -77,7 +77,7 @@ function claw_f_show_env()
       if ! [[ ${line} =~ ${empty_line_regex} ]] \
         && ! [[ ${line} =~ ${comment_line_regex} ]]; then
         echo -n "${line}=\""
-        eval echo -n \"\$"$line"\"
+        eval echo -n \"\$"${line}"\"
         echo \"
       fi
     done < "${claw_env_file}"
@@ -114,11 +114,11 @@ function claw_f_set_parameters()
         shift
         module_dir="${1#-J}"
         # shellcheck disable=SC1001
-        if [[ $module_dir == \/* ]]; then
+        if [[ ${module_dir} == \/* ]]; then
           module_opt+=("-M${module_dir[0]}")
         else
           current_dir=$(pwd)
-          module_opt+=("-M$current_dir/${module_dir[0]}")
+          module_opt+=("-M${current_dir}/${module_dir[0]}")
         fi
         ;;
       -J?*)
@@ -246,35 +246,35 @@ function claw_f_norm_file_name()
     # TODO possibly extend to other FORTRAN extensions
     local filename
     filename=$(basename "$1" .f90)                 # ./hoge/fuga-a.f90 -> fuga-a
-    filename=$(basename "$filename" .F90)
-    filename=$(basename "$filename" .f)
-    filename=$(basename "$filename" .F)
-    filename=$(dirname "$1")/${filename}           #  -> ./hoge/fuga-a
-    filename=$(echo "$filename" | sed 's/^\.\///') #  -> hoge/fuga-a
+    filename=$(basename "${filename}" .F90)
+    filename=$(basename "${filename}" .f)
+    filename=$(basename "${filename}" .F)
+    filename=$(dirname "$1")/${filename}             #  -> ./hoge/fuga-a
+    filename=$(echo "${filename}" | sed 's/^\.\///') #  -> hoge/fuga-a
 
     local len=${#filename}
     local norm_name=""
-    for i in $(seq 1 "$len"); do                   #  -> hoge_2f_fuga_2d_a
-        c=$(echo "$filename" | cut -c "$i")
-        ix=$(printf "%d" \'"$c")
-        if [ "$ix" -ge 48 ] && [ "$ix" -le 57 ]    # '0' <= $ix <= '9'
+    for i in $(seq 1 "${len}"); do                   #  -> hoge_2f_fuga_2d_a
+        c=$(echo "${filename}" | cut -c "${i}")
+        ix=$(printf "%d" \'"${c}")
+        if [ "${ix}" -ge 48 ] && [ "${ix}" -le 57 ]    # '0' <= ${ix} <= '9'
         then
-            norm_name="$norm_name"$c
-        elif [ "$ix" -ge 65 ] && [ "$ix" -le 90 ]  # 'A' <= $ix <= 'Z'
+            norm_name="${norm_name}"${c}
+        elif [ "${ix}" -ge 65 ] && [ "${ix}" -le 90 ]  # 'A' <= ${ix} <= 'Z'
         then
-            norm_name="$norm_name"$c
-        elif [ "$ix" -ge 97 ] && [ "$ix" -le 122 ] # 'a' <= $ix <= 'z'
+            norm_name="${norm_name}"${c}
+        elif [ "${ix}" -ge 97 ] && [ "${ix}" -le 122 ] # 'a' <= ${ix} <= 'z'
         then
-            norm_name="$norm_name"$c
+            norm_name="${norm_name}"${c}
         else
           local hex
-          hex=$(printf "%x" "$ix")
+          hex=$(printf "%x" "${ix}")
           local char
           # shellcheck disable=SC2059
           char=$(printf "\x${hex}")
           local code
-          code=\'$char
-          norm_name="$norm_name"$(printf "_%x_\n" "$code")
+          code=\'${char}
+          norm_name="${norm_name}"$(printf "_%x_\n" "${code}")
         fi
     done
 
@@ -304,9 +304,9 @@ function claw_f_process_dependencies()
   dependencies=()
   module_regex="^[[:space:]]*(USE|use)[[:space:]]+(, *INTRINSIC *::|, *intrinsic *::)?[[:space:]]*([^,|^ |^!]*)"
   while IFS= read -r line; do
-    if [[ $line =~ $module_regex ]]; then
+    if [[ ${line} =~ ${module_regex} ]]; then
       module_name="${BASH_REMATCH[3]}"
-      dependencies+=("$module_name")
+      dependencies+=("${module_name}")
     fi
   done < "$1"
 
@@ -332,7 +332,7 @@ function claw_f_process_dependencies()
 
     # Add current dir to potential search paths
     module_search_path=()
-    module_search_path+=("$current_src_dir")
+    module_search_path+=("${current_src_dir}")
 
     # Add user given search paths (-J option)
     for search_path in "${module_opt[@]}"; do
@@ -341,8 +341,8 @@ function claw_f_process_dependencies()
 
     # Try to locate the fortran source file
     for directory in "${module_search_path[@]}"; do
-      compiled_mod_file="$directory/$module_name.xmod"
-      if [[ -f $compiled_mod_file ]]; then
+      compiled_mod_file="${directory}/${module_name}.xmod"
+      if [[ -f ${compiled_mod_file} ]]; then
         compiled_mod_file_found=true
         break
       fi
@@ -351,60 +351,60 @@ function claw_f_process_dependencies()
     # Try to locate the fortran source file
     for directory in "${module_search_path[@]}"; do
       for ext in "${fortran_ext[@]}"; do
-        source_mod_file="$directory/$module_name$ext"
-        if [[ -f $source_mod_file ]]; then
+        source_mod_file="${directory}/${module_name}${ext}"
+        if [[ -f ${source_mod_file} ]]; then
           source_mod_file_found=true
           break
         fi
       done
-      if [[ $source_mod_file_found == true ]]; then
+      if [[ ${source_mod_file_found} == true ]]; then
         break
       fi
     done
 
-    if [[ $source_mod_file_found == false ]]; then
+    if [[ ${source_mod_file_found} == false ]]; then
       # Could not locate a module file with same name. Try to find module file
       # with regular expression
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
-          found_file=($(grep -s -l -i "^ *MODULE *$module_name" "$directory"/*"$ext" | grep -v ".*\.claw\..*"))
+          found_file=($(grep -s -l -i "^ *MODULE *${module_name}" "${directory}"/*"${ext}" | grep -v ".*\.claw\..*"))
           if [ ${#found_file[@]} -gt 1 ]; then
             break
           else
             potential_module_file=${found_file[0]}
             if [ ${#potential_module_file} -gt 0 ]; then
-              source_mod_file=$potential_module_file
+              source_mod_file=${potential_module_file}
               source_mod_file_found=true
               break
             fi
           fi
         done
-        if [[ $source_mod_file_found == true ]]; then
+        if [[ ${source_mod_file_found} == true ]]; then
           break
         fi
       done
     fi
 
     # .xmod file is already present
-    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == true ]]; then
-      [ $verbose = true ] && echo "Warning: only module file found for $module_name. Might be out-of-date"
+    if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == true ]]; then
+      [ ${verbose} = true ] && echo "Warning: only module file found for ${module_name}. Might be out-of-date"
       continue
-    elif [[ $source_mod_file_found == true ]] && [[ $compiled_mod_file_found == true ]]; then
-      if [[ $compiled_mod_file -nt $source_mod_file ]]; then
-        [ $verbose = true ] && echo "Info: module file for $module_name seems up-to-date"
+    elif [[ ${source_mod_file_found} == true ]] && [[ ${compiled_mod_file_found} == true ]]; then
+      if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then
+        [ ${verbose} = true ] && echo "Info: module file for ${module_name} seems up-to-date"
         continue
       fi
     fi
 
     # No files found. Cannot go any further
-    if [[ $source_mod_file_found == false ]] && [[ $compiled_mod_file_found == false ]]; then
-      echo "Error: cannot locate any source file or module file for module $module_name"
+    if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == false ]]; then
+      echo "Error: cannot locate any source file or module file for module ${module_name}"
       echo "       try providing source directory in module search path"
       exit 1;
     fi
 
     ### Preprocess file ###
-    base_file=$source_mod_file
+    base_file=${source_mod_file}
     dep_basename=$(basename "${base_file%.*}")
     file_name=$(claw_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
     ext=${base_file##*.}
@@ -414,19 +414,19 @@ function claw_f_process_dependencies()
     # shellcheck disable=SC2154
     if [ "${fpp_redirect}" == true ]; then
       # shellcheck disable=SC2086
-      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${file_pp}"
+      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} "${other_args[@]}" "${base_file}" > "${file_pp}"
     else
       # shellcheck disable=SC2086
-      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
+      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} "${other_args[@]}" "${base_file}"
       mv "${dep_basename}.i" "${file_pp}"
     fi
 
     # Recurse to get dependencies in the right order
-    claw_f_process_dependencies "$file_pp" "$base_file"
+    claw_f_process_dependencies "${file_pp}" "${base_file}"
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
-    $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${file_pp}"
+    ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}"
   done
 }
 
@@ -456,17 +456,17 @@ function applyIgnore()
     local sedstart=$((${startarray[$i]} + 1)) # Compute the start line
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
 
-    if [ "$sedstart" -gt "$sedend" ]; then
-      echo "claw-error: inverted start-end in ignore directive. ($sedstart:$sedend)"
+    if [ "${sedstart}" -gt "${sedend}" ]; then
+      echo "claw-error: inverted start-end in ignore directive. (${sedstart}:${sedend})"
       exit 1
     fi
 
     # Insert directive as prefix of each line in the block
-    sed -i.bak -e "$sedstart,$sedend s/^/!\$claw ignore/" "$1"
+    sed -i.bak -e "${sedstart},${sedend} s/^/!\$claw ignore/" "$1"
 
     # Hide continuation line in the ignored block. If we keep them, the
     # front-end will merge the lines together.
-    sed -i.bak -e "$sedstart,$sedend s/&/__CLAWAMP__/" "$1"
+    sed -i.bak -e "${sedstart},${sedend} s/&/__CLAWAMP__/" "$1"
   done
 }
 
@@ -514,14 +514,13 @@ function applyPreprocessorPass()
 {
   potential_problem=$(grep --count -E "\\\\$" "$1")
   line_no=1
-  if [[ $potential_problem -gt 0 ]]; then
+  if [[ ${potential_problem} -gt 0 ]]; then
     while IFS= read -r line; do
-      if [[ $line =~ \\$ ]] && [[ $line =~ .*!.* ]]; then
+      if [[ ${line} =~ \\$ ]] && [[ ${line} =~ .*!.* ]]; then
         echo "${line//\\/}" >> "$2"
-        #echo "$line" | sed 's/\\//g' >> "$2"
-        echo "$1:$line_no:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
+        echo "$1:${line_no}:${#line} warning: '\' symbol at the end of a comment line. Possible preprocessing error."
       else
-        echo "$line" >> "$2"
+        echo "${line}" >> "$2"
       fi
       let line_no=line_no+1
     done < "$1"
