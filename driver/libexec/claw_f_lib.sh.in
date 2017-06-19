@@ -257,14 +257,14 @@ function claw_f_norm_file_name()
     for i in $(seq 1 "${len}"); do                   #  -> hoge_2f_fuga_2d_a
         c=$(echo "${filename}" | cut -c "${i}")
         ix=$(printf "%d" \'"${c}")
-        if [ "${ix}" -ge 48 ] && [ "${ix}" -le 57 ]    # '0' <= ${ix} <= '9'
-        then
+        # '0' <= ${ix} <= '9'
+        if [ "${ix}" -ge 48 ] && [ "${ix}" -le 57 ]; then
             norm_name="${norm_name}"${c}
-        elif [ "${ix}" -ge 65 ] && [ "${ix}" -le 90 ]  # 'A' <= ${ix} <= 'Z'
-        then
+        # 'A' <= ${ix} <= 'Z'
+        elif [ "${ix}" -ge 65 ] && [ "${ix}" -le 90 ]; then
             norm_name="${norm_name}"${c}
-        elif [ "${ix}" -ge 97 ] && [ "${ix}" -le 122 ] # 'a' <= ${ix} <= 'z'
-        then
+        # 'a' <= ${ix} <= 'z'
+        elif [ "${ix}" -ge 97 ] && [ "${ix}" -le 122 ]; then
             norm_name="${norm_name}"${c}
         else
           local hex
