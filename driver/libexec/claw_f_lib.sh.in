@@ -407,23 +407,23 @@ function claw_f_process_dependencies()
     dep_basename=$(basename "${base_file%.*}")
     file_name=$(claw_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
     ext=${base_file##*.}
-    local FILE_PP=${TEMP_DIR}/"${file_name}".${ext}
+    local file_pp=${temp_dir}/"${file_name}".${ext}
 
     if [ "${fpp_redirect}" == true ]; then
       # shellcheck disable=SC2086
-      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${FILE_PP}"
+      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}" > "${file_pp}"
     else
       # shellcheck disable=SC2086
       $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" $OMNI_FPP_OPT "${other_args[@]}" "${base_file}"
-      mv "${dep_basename}.i" "${FILE_PP}"
+      mv "${dep_basename}.i" "${file_pp}"
     fi
 
     # Recurse to get dependencies in the right order
-    claw_f_process_dependencies "$FILE_PP" "$base_file"
+    claw_f_process_dependencies "$file_pp" "$base_file"
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
-    $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}"
+    $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${file_pp}"
   done
 }
 
