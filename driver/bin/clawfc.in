@@ -86,6 +86,31 @@ max_columns=""
 
 claw::set_parameters "${@+"$@"}"
 
+# Set parameter variables as readonly after the set_parameters fct
+readonly fpp_redirect
+readonly only_pp
+readonly enable_cpp
+readonly verbose
+readonly enable_debug
+readonly enable_debug_omni
+readonly resolve_dependencies
+readonly stop_pp
+readonly stop_frontend
+readonly stop_translator
+readonly stop_dependencies
+readonly force_translation
+readonly list_target
+readonly list_directive
+readonly show_config
+readonly user_target
+readonly user_config
+readonly user_directive
+readonly line_directive
+readonly decompiler_max_column
+readonly dump_cx2x_args
+readonly force_pure
+readonly report
+
 ### List target ###
 if [ ${list_target} = true ]; then
   # shellcheck disable=SC2086
