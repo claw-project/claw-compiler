@@ -200,7 +200,12 @@ function claw::set_parameters()
 ###################################################################
 function claw::print_version()
 {
-  echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@ (@CMAKE_Fortran_COMPILER_ID@ Preprocessor) (OMNI Compiler @OMNI_GIT_HASH@)"
+  local version_str
+  version_str="@PROJECT_NAME@ @PROJECT_VERSION@"
+  version_str="${version_str} @CLAWFC_GIT_HASH@"
+  version_str="${version_str} (@CMAKE_Fortran_COMPILER_ID@ Preprocessor)"
+  version_str="${version_str} (OMNI Compiler @OMNI_GIT_HASH@)"
+  echo ${version_str}
 }
 
 
@@ -252,7 +257,8 @@ function claw::check_file_exist()
   [[ ${#f_files[@]} -eq 0 ]] && claw::error_exit "no input files."
 
   for fortran_file in "${f_files[@]}"; do
-    [[ ! -f "${fortran_file}" ]] && claw::error_exit "file ${fortran_file} not found."
+    [[ ! -f "${fortran_file}" ]] && claw::error_exit \
+      "file ${fortran_file} not found."
   done
 }
 
@@ -316,7 +322,7 @@ function claw::process_dependencies()
   # Dependency resolution work as follows:
   #
   # The following variables are used:
-  # module_name:       Name of the module as declared in the FORTRAN source code.
+  # module_name:       Name of the module declared in the FORTRAN source code.
   # compiled_mod_file: OMNI Compiler XcodeML/F module file.
   #                    filename: <module_name>.xmod (OMNI Convention)
   # source_mod_file:   FORTRAN source code file containing the module
@@ -325,7 +331,8 @@ function claw::process_dependencies()
   # current_src_dir:   Directory in which the current processed file is located
 
   dependencies=()
-  module_regex="^[[:space:]]*(USE|use)[[:space:]]+(, *INTRINSIC *::|, *intrinsic *::)?[[:space:]]*([^,|^ |^!]*)"
+  local module_regex="^[[:space:]]*(USE|use)[[:space:]]+(, *INTRINSIC *::|, "
+  module_regex="${module_regex}*intrinsic *::)?[[:space:]]*([^,|^ |^!]*)"
   while IFS= read -r line; do
     if [[ ${line} =~ ${module_regex} ]]; then
       module_name="${BASH_REMATCH[3]}"
@@ -390,7 +397,8 @@ function claw::process_dependencies()
       # with regular expression
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
-          found_file=($(grep -s -l -i "^ *MODULE *${module_name}" "${directory}"/*"${ext}" | grep -v ".*\.claw\..*"))
+          found_file=($(grep -s -l -i "^ *MODULE *${module_name}" \
+            "${directory}"/*"${ext}" | grep -v ".*\.claw\..*"))
           if [[ ${#found_file[@]} -gt 1 ]]; then
             break
           else
@@ -409,10 +417,13 @@ function claw::process_dependencies()
     fi
 
     # .xmod file is already present
-    if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == true ]]; then
-      claw::warning $1 "-" "only module file found for ${module_name}. Might be out-of-date"
+    if [[ ${source_mod_file_found} == false ]] \
+      && [[ ${compiled_mod_file_found} == true ]]; then
+      claw::warning "$1" "-" \
+        "only module file found for ${module_name}. Might be out-of-date"
       continue
-    elif [[ ${source_mod_file_found} == true ]] && [[ ${compiled_mod_file_found} == true ]]; then
+    elif [[ ${source_mod_file_found} == true ]] \
+      && [[ ${compiled_mod_file_found} == true ]]; then
       if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then
         claw::verbose "Info: module file for ${module_name} seems up-to-date"
         continue
@@ -420,15 +431,16 @@ function claw::process_dependencies()
     fi
 
     # No files found. Cannot go any further
-    if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == false ]]; then
-      claw::error_exit "Error: cannot locate any source file or module file for module ${module_name}\n" \
+    if [[ ${source_mod_file_found} == false ]] \
+      && [[ ${compiled_mod_file_found} == false ]]; then
+      claw::error_exit "cannot locate any source file or module file for module ${module_name}\n" \
         "       try providing source directory in module search path"
     fi
 
     ### Preprocess file ###
     base_file=${source_mod_file}
     dep_basename=$(basename "${base_file%.*}")
-    file_name=$(claw::norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+    file_name=$(claw::norm_file_name "${base_file}")
     ext=${base_file##*.}
     # shellcheck disable=SC2154
     local file_pp=${temp_dir}/"${file_name}".${ext}
@@ -436,10 +448,12 @@ function claw::process_dependencies()
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then
       # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} "${other_args[@]}" "${base_file}" > "${file_pp}"
+      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} \
+        "${other_args[@]}" "${base_file}" > "${file_pp}"
     else
       # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} "${other_args[@]}" "${base_file}"
+      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} \
+        "${other_args[@]}" "${base_file}"
       mv "${dep_basename}.i" "${file_pp}"
     fi
 
@@ -448,7 +462,8 @@ function claw::process_dependencies()
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
-    ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}"
+    ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+      "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}"
   done
 }
 
@@ -478,7 +493,8 @@ function claw::applyIgnore()
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
 
     if [[ "${sedstart}" -gt "${sedend}" ]]; then
-      claw::error_exit "inverted start-end in ignore directive. (${sedstart}:${sedend})"
+      claw::error_exit \
+        "inverted start-end in ignore directive. (${sedstart}:${sedend})"
     fi
 
     # Insert directive as prefix of each line in the block
@@ -534,11 +550,13 @@ function claw::applyPreprocessorPass()
 {
   potential_problem=$(grep --count -E "\\\\$" "$1")
   line_no=1
+  local input_file=$1
   if [[ ${potential_problem} -gt 0 ]]; then
     while IFS= read -r line; do
       if [[ ${line} =~ \\$ ]] && [[ ${line} =~ .*!.* ]]; then
         echo "${line//\\/}" >> "$2"
-        claw::warning $1 ${line_no} "'\' symbol at the end of a comment line. Possible preprocessing error."
+        claw::warning "${input_file}" "${line_no}" \
+        "'\' symbol at the end of a comment line. Possible preprocessing error."
       else
         echo "${line}" >> "$2"
       fi
