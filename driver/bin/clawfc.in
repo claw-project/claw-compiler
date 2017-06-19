@@ -84,7 +84,7 @@ config_opt=""
 directive_opt=""
 max_columns=""
 
-claw_f_set_parameters "${@+"$@"}"
+claw::set_parameters "${@+"$@"}"
 
 ### List target ###
 if [ ${list_target} = true ]; then
@@ -152,7 +152,7 @@ if [ ${show_config} = true ]; then
   exit 0
 fi
 
-claw_f_check_file_exist
+claw::check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
 if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]; then
@@ -206,14 +206,14 @@ done
 for input_file in "${f_files_transformation[@]}"; do
   [ ${verbose} = true ] && echo "Prepocessing ..."
 
-  file_name=$(claw_f_norm_file_name "${input_file}")
+  file_name=$(claw::norm_file_name "${input_file}")
   ext=${input_file##*.}
   file_pp1=${temp_dir}/"${file_name}".pp.${ext}
   file_pp=${temp_dir}/"${file_name}".${ext}
 
   if [ "${ext}" = "F90" ] || [ "${ext}" = "F" ] || [ ${enable_cpp} = true ]; then
 
-    applyPreprocessorPass "${input_file}" "${file_pp1}"
+    claw::applyPreprocessorPass "${input_file}" "${file_pp1}"
     preprocessor_output=$(basename "${file_pp1%.*}")
 
     if [ ${fpp_redirect} == true ]; then
@@ -242,21 +242,21 @@ done
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
-  file_name=$(claw_f_norm_file_name "${input_file}")
+  file_name=$(claw::norm_file_name "${input_file}")
   ext=${input_file##*.}
   if [ "${ext}" = "F90" ] || [ "${ext}" = "F" ] || [ ${enable_cpp} = true ]; then
     file_pp=${temp_dir}/"${file_name}".${ext}
   else
     file_pp="${input_file}"
   fi
-  applyIgnore "${file_pp}"
+  claw::applyIgnore "${file_pp}"
 done
 
 ### dependencies resolution ###
 if [ ${resolve_dependencies} ]; then
   for input_file in "${f_files_transformation[@]}"; do
     [ ${verbose} = true ] && echo "Dependencies resolution ..."
-    file_name=$(claw_f_norm_file_name "${input_file}")
+    file_name=$(claw::norm_file_name "${input_file}")
     ext=${input_file##*.}
 
     if [ "${ext}" = "F90" ] || [ "${ext}" = "F" ] || [ ${enable_cpp} = true ]; then
@@ -265,7 +265,7 @@ if [ ${resolve_dependencies} ]; then
       file_pp="${input_file}"
     fi
 
-    claw_f_process_dependencies "${file_pp}" "${input_file}"
+    claw::process_dependencies "${file_pp}" "${input_file}"
   done
   [ ${stop_dependencies} = true ] && exit 0;
 fi
@@ -273,7 +273,7 @@ fi
 ### Frontend ###
 for input_file in "${f_files_transformation[@]}"; do
   [ ${verbose} = true ] && echo "Fortran to XcodeML ..."
-  file_name=$(claw_f_norm_file_name "${input_file}")
+  file_name=$(claw::norm_file_name "${input_file}")
   ext=${input_file##*.}
 
   if [ "${ext}" = "F90" ] || [ "${ext}" = "F" ] || [ ${enable_cpp} = true ]; then
@@ -298,7 +298,7 @@ fi
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
   [ ${verbose} = true ] && echo "XcodeML to XcodeML translation ..."
-  file_name=$(claw_f_norm_file_name "${input_file}")
+  file_name=$(claw::norm_file_name "${input_file}")
   ext=${input_file##*.}
   file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
   file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
@@ -346,8 +346,8 @@ for input_file in "${f_files_transformation[@]}"; do
   elif [ "${output_dir}" != "" ]; then
     file_out_f=${output_dir}/${input_file}
   fi
-  revertIgnore "${file_out_f}"
-  applyVerbatim "${file_out_f}"
+  claw::revertIgnore "${file_out_f}"
+  claw::applyVerbatim "${file_out_f}"
 done
 
 ### Delete temporal directory ###

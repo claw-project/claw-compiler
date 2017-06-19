@@ -15,7 +15,7 @@
 # Arguments:
 #   $1: program name
 ###################################################################
-function claw_f_print_help()
+function claw::print_help()
 {
 cat <<EOF
 usage: $1 <OPTIONS> <INPUTFILE> ...
@@ -65,7 +65,7 @@ EOF
 # Global:
 #   om_cx2x_driver_conf_dir
 ###################################################################
-function claw_f_show_env()
+function claw::show_env()
 {
   # shellcheck disable=SC2154
   claw_env_file=${om_cx2x_driver_conf_dir}/claw_f.conf
@@ -82,7 +82,7 @@ function claw_f_show_env()
       fi
     done < "${claw_env_file}"
   else
-    claw_error_exit "${claw_env_file} not exist."
+    claw::error_exit "${claw_env_file} not exist."
   fi
 }
 
@@ -101,7 +101,7 @@ function claw_f_show_env()
 #   decompiler_max_column, max_columns, line_directive,
 #   dump_cx2x_args, force_pure, report
 ###################################################################
-function claw_f_set_parameters()
+function claw::set_parameters()
 {
   while [ -n "$1" ]; do
     case "$1" in
@@ -141,9 +141,9 @@ function claw_f_set_parameters()
       -E) only_pp=true ;;
       -cpp) enable_cpp=true ;;
       -v|--verbose) verbose=true ;;
-      --version) claw_f_print_version; exit 0 ;;
-      -h|--help) claw_f_print_help "$(basename "$0")"; exit 0 ;;
-      --show-env) claw_f_show_env; exit 0 ;;
+      --version) claw::print_version; exit 0 ;;
+      -h|--help) claw::print_help "$(basename "$0")"; exit 0 ;;
+      --show-env) claw::show_env; exit 0 ;;
       -f|--force) force_translation=true ;;
       --no-dep) resolve_dependencies=false ;;
       --debug) enable_debug=true ;;
@@ -198,7 +198,7 @@ function claw_f_set_parameters()
 # Returns:
 #   Formatted version string
 ###################################################################
-function claw_f_print_version()
+function claw::print_version()
 {
   echo "@PROJECT_NAME@ @PROJECT_VERSION@ @CLAWFC_GIT_HASH@ (@CMAKE_Fortran_COMPILER_ID@ Preprocessor) (OMNI Compiler @OMNI_GIT_HASH@)"
 }
@@ -210,7 +210,7 @@ function claw_f_print_version()
 # Arguments:
 #   $1: Error message
 ###################################################################
-function claw_error_exit()
+function claw::error_exit()
 {
     echo "$0: error: $1"
     echo "compilation aborted."
@@ -224,12 +224,12 @@ function claw_error_exit()
 # Global:
 #   f_files
 ###################################################################
-function claw_f_check_file_exist()
+function claw::check_file_exist()
 {
-  [ ${#f_files[@]} -eq 0 ] && claw_error_exit "no input files."
+  [ ${#f_files[@]} -eq 0 ] && claw::error_exit "no input files."
 
   for fortran_file in "${f_files[@]}"; do
-    [ ! -f "${fortran_file}" ] && claw_error_exit "file ${fortran_file} not found."
+    [ ! -f "${fortran_file}" ] && claw::error_exit "file ${fortran_file} not found."
   done
 }
 
@@ -241,7 +241,7 @@ function claw_f_check_file_exist()
 # Returns:
 #   Normalize file path
 ###################################################################
-function claw_f_norm_file_name()
+function claw::norm_file_name()
 {
     # TODO possibly extend to other FORTRAN extensions
     local filename
@@ -288,7 +288,7 @@ function claw_f_norm_file_name()
 #   $1: preprocessed file
 #   $2: original file
 ###################################################################
-function claw_f_process_dependencies()
+function claw::process_dependencies()
 {
   # Dependency resolution work as follows:
   #
@@ -406,7 +406,7 @@ function claw_f_process_dependencies()
     ### Preprocess file ###
     base_file=${source_mod_file}
     dep_basename=$(basename "${base_file%.*}")
-    file_name=$(claw_f_norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
+    file_name=$(claw::norm_file_name "${base_file}")     # ./hoge/fuga.F -> hoge_2f_fuga_2f_a
     ext=${base_file##*.}
     # shellcheck disable=SC2154
     local file_pp=${temp_dir}/"${file_name}".${ext}
@@ -422,7 +422,7 @@ function claw_f_process_dependencies()
     fi
 
     # Recurse to get dependencies in the right order
-    claw_f_process_dependencies "${file_pp}" "${base_file}"
+    claw::process_dependencies "${file_pp}" "${base_file}"
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
@@ -437,7 +437,7 @@ function claw_f_process_dependencies()
 # Arguments:
 #   $1: input file path edited in place
 ###################################################################
-function applyIgnore()
+function claw::applyIgnore()
 {
   # Retrieve the ignore start directives in the file
   local startarray=( $(grep -n "\s*\!\$claw ignore" "$1" | cut -f1 -d:) )
@@ -478,7 +478,7 @@ function applyIgnore()
 # Arguments:
 #   $1: input file path edited in place
 ###################################################################
-function revertIgnore()
+function claw::revertIgnore()
 {
   sed -i.bak -e "s/\!\$claw ignore//" "$1"
   sed -i.bak -e "s/\!\$claw end ignore//" "$1"
@@ -495,7 +495,7 @@ function revertIgnore()
 # Arguments:
 #   $1: input file path edited in place
 ###################################################################
-function applyVerbatim()
+function claw::applyVerbatim()
 {
   sed -i.bak -e "s/\!\$claw verbatim //" "$1"
   rm -f "$1.bak"
@@ -510,7 +510,7 @@ function applyVerbatim()
 #   $1: input file
 #   $2: output file
 ###################################################################
-function applyPreprocessorPass()
+function claw::applyPreprocessorPass()
 {
   potential_problem=$(grep --count -E "\\\\$" "$1")
   line_no=1
