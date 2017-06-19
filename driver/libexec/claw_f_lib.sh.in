@@ -205,8 +205,7 @@ function claw::print_version()
 
 
 ###################################################################
-# Check existence of input files
-# ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
+# Display error message on stderr and exit
 # Arguments:
 #   $1: Error message
 ###################################################################
@@ -215,6 +214,17 @@ function claw::error_exit()
     echo "$0: error: $1" >&2
     echo "compilation aborted." >&2
     exit 1
+}
+
+
+###################################################################
+# Display warning message
+# Arguments:
+#   $1: Warning message
+###################################################################
+function claw::warning()
+{
+  echo "$0: warning: $1"
 }
 
 
@@ -387,7 +397,7 @@ function claw::process_dependencies()
 
     # .xmod file is already present
     if [[ ${source_mod_file_found} == false ]] && [[ ${compiled_mod_file_found} == true ]]; then
-      [[ ${verbose} == true ]] && echo "Warning: only module file found for ${module_name}. Might be out-of-date"
+      [[ ${verbose} == true ]] && claw::warning "only module file found for ${module_name}. Might be out-of-date"
       continue
     elif [[ ${source_mod_file_found} == true ]] && [[ ${compiled_mod_file_found} == true ]]; then
       if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then

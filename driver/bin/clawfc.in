@@ -201,7 +201,7 @@ for input_file in "${f_files[@]}"; do
   if ! [[ ${force_translation} == true ]]; then
     num_directives=$(grep --count --ignore-case "!\$claw" "${input_file}")
     if [[ "${num_directives}" == "0" ]]; then
-      echo "Warning: file ${input_file} does not contains \$claw. Skip ..."
+      claw::warning "file ${input_file} does not contains \$claw. Skip ..."
       if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
       else
