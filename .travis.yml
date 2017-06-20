@@ -55,7 +55,7 @@ script:
   - make install # Test install steps as well, avoid missing jars or files.
   - cd -
   - cd scripts
-  - ./run.shellcheck.sh # Check shell scripts with shellcheck
+  - ./run.shellcheck # Check shell scripts with shellcheck
 
 # Notification settings
 notifications:

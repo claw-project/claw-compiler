@@ -19,6 +19,6 @@ add_subdirectory(verbatim1) # test the verbatim directive (driver directive)
 
 add_test(
   NAME library-test-claw_f_lib
-  COMMAND ./test.claw_f_lib.sh
+  COMMAND ./test.claw_f_lib
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )

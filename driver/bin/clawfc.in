@@ -7,7 +7,8 @@
 # Compiler driver for the claw language translation for Fortran language.
 # This driver is based on the xmpf90 compiler driver from the OMNI Compiler
 # project.
-# https://github.com/omni-compiler/omni-compiler/blob/master/Driver/bin/xmpf90.in
+# https://github.com/omni-compiler/omni-compiler/blob/master/Driver/bin/
+#   xmpf90.in
 #
 # author: clementval
 #
@@ -15,34 +16,34 @@
 ## TODO cp original file in case of error
 
 ### Read configration file and library ###
-OM_CX2X_DRIVER_CONF_DIR=@OM_CX2X_DRIVER_CONF_DIR@
-OM_CX2X_DRIVER_LIB_DIR=@OM_CX2X_DRIVER_LIB_DIR@
+om_cx2x_driver_conf_dir=@OM_CX2X_DRIVER_CONF_DIR@
+om_cx2x_driver_lib_dir=@OM_CX2X_DRIVER_LIB_DIR@
 # shellcheck source=../etc/claw_f.conf.in
-. ${OM_CX2X_DRIVER_CONF_DIR}/@CLAW_CONF_FILE@
+. ${om_cx2x_driver_conf_dir}/@CLAW_CONF_FILE@
 # shellcheck source=../libexec/claw_f_lib.sh.in
-. ${OM_CX2X_DRIVER_LIB_DIR}@CLAW_LIB_SH@
+. ${om_cx2x_driver_lib_dir}/@CLAW_LIB_SH@
 
 ### Directory for saving intermediate files ###
-PID=$$
-TEMP_DIR=/tmp/__omni_tmp__${PID}
-DEBUG_TEMP_DIR="__omni_tmp__"
+current_pid=$$
+temp_dir=/tmp/__omni_tmp__${current_pid}
+debug_temp_dir="__omni_tmp__"
 
 ### Default options ###
-FPP_REDIRECT=@FPP_REDIRECT@
-ONLY_PP=false
-ENABLE_CPP=true
-VERBOSE=false
-ENABLE_DEBUG=false
-ENABLE_DEBUG_OMNI=false
+fpp_redirect=@FPP_REDIRECT@
+only_pp=false
+enable_cpp=true
+verbose=false
+enable_debug=false
+enable_debug_omni=false
 resolve_dependencies=true
-STOP_PP=false
-STOP_FRONTEND=false
-STOP_TRANSLATOR=false
-STOP_DEPENDENCIES=false
+stop_pp=false
+stop_frontend=false
+stop_translator=false
+stop_dependencies=false
 force_translation=false
 list_target=false
 list_directive=false
-SHOW_CONFIG=false
+show_config=false
 user_target=false
 user_config=false
 user_directive=false
@@ -84,125 +85,127 @@ config_opt=""
 directive_opt=""
 max_columns=""
 
-claw_f_set_parameters "${@+"$@"}"
+claw::set_parameters "${@+"$@"}"
+
+# Set parameter variables as readonly after the set_parameters fct
+readonly fpp_redirect
+readonly only_pp
+readonly enable_cpp
+readonly verbose
+readonly enable_debug
+readonly enable_debug_omni
+readonly resolve_dependencies
+readonly stop_pp
+readonly stop_frontend
+readonly stop_translator
+readonly stop_dependencies
+readonly force_translation
+readonly list_target
+readonly list_directive
+readonly show_config
+readonly user_target
+readonly user_config
+readonly user_directive
+readonly line_directive
+readonly decompiler_max_column
+readonly dump_cx2x_args
+readonly force_pure
+readonly report
 
 ### List target ###
-if [ ${list_target} = true ]
-then
+if [[ ${list_target} == true ]]; then
   # shellcheck disable=SC2086
-  $OMNI_FX2X_CMD $OMNI_FX2X_OPT --target-list
+  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --target-list
   exit 0
 fi
 
 ### List directive ###
-if [ ${list_directive} = true ]
-then
+if [[ ${list_directive} == true ]]; then
    # shellcheck disable=SC2086
-  $OMNI_FX2X_CMD $OMNI_FX2X_OPT --directive-list
+  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --directive-list
   exit 0
 fi
 
 ### Set correct configuration file info ###
-if [ ${user_config} = true ]
-then
-  OMNI_CX2X_CONFIG_OPT="--config=$config_opt --schema=$OMNI_CX2X_CONFIG_XSD"
+if [[ ${user_config} == true ]]; then
+  OMNI_CX2X_CONFIG_OPT="--config=${config_opt} --schema=${OMNI_CX2X_CONFIG_XSD}"
 else
-  OMNI_CX2X_CONFIG_OPT="--config=$OMNI_CX2X_CONFIG_DEFAULT --schema=$OMNI_CX2X_CONFIG_XSD"
+  OMNI_CX2X_CONFIG_OPT="--config=${OMNI_CX2X_CONFIG_DEFAULT}"
+  OMNI_CX2X_CONFIG_OPT="$OMNI_CX2X_CONFIG_OPT --schema=${OMNI_CX2X_CONFIG_XSD}"
 fi
 
 # Set the correct target option for the translator
 OMNI_CX2X_TARGET_OPT=""
-if [ ${user_target} = true ]
-then
-  OMNI_CX2X_TARGET_OPT="--target=$target_opt"
+if [[ ${user_target} == true ]]; then
+  OMNI_CX2X_TARGET_OPT="--target=${target_opt}"
 fi
 
 # Set the correct directive option for the translator
 OMNI_CX2X_DIRECTIVE_OPT=""
-if [ ${user_directive} = true ]
-then
-  OMNI_CX2X_DIRECTIVE_OPT="--directive=$directive_opt"
+if [[ ${user_directive} == true ]]; then
+  OMNI_CX2X_DIRECTIVE_OPT="--directive=${directive_opt}"
 fi
 
 # Set the correct column option for the decompiler
 OMNI_CX2X_MAX_COLUMN_OPT=""
-if [ ${decompiler_max_column} = true ]
-then
-  OMNI_CX2X_MAX_COLUMN_OPT="-w $max_columns"
+if [[ ${decompiler_max_column} == true ]]; then
+  OMNI_CX2X_MAX_COLUMN_OPT="-w ${max_columns}"
 else
   OMNI_CX2X_MAX_COLUMN_OPT="-w 80"
 fi
 
 # Set the correct line directive option for the decompiler
 OMNI_CX2X_LINE_OPT="-l"
-if [ ${line_directive} = true ]
-then
+if [[ ${line_directive} == true ]]; then
   OMNI_CX2X_LINE_OPT=""
 fi
 
-if [ $force_pure = true ]
-then
-  TRANSLATOR_OPTION="$TRANSLATOR_OPTION --force-pure"
+if [[ ${force_pure} == true ]]; then
+  TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --force-pure"
 fi
 
 # Module search path option
 OMNI_CX2X_MOD_OPT=""
-if [ ${#module_opt[@]} -ne 0 ]
-then
-  for mod in "${module_opt[@]}"
-  do
-    OMNI_CX2X_MOD_OPT="$OMNI_CX2X_MOD_OPT $mod"
+if [[ ${#module_opt[@]} -ne 0 ]]; then
+  for mod in "${module_opt[@]}"; do
+    OMNI_CX2X_MOD_OPT="${OMNI_CX2X_MOD_OPT} ${mod}"
   done
 fi
 
 ### Show config ###
-if [ $SHOW_CONFIG = true ]
-then
+if [[ ${show_config} == true ]]; then
   # shellcheck disable=SC2086
-  $OMNI_FX2X_CMD $OMNI_FX2X_OPT --show-config $OMNI_CX2X_CONFIG_OPT
+  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --show-config ${OMNI_CX2X_CONFIG_OPT}
   exit 0
 fi
 
-claw_f_check_file_exist
+claw::check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
-if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]
-then
+if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]; then
   # Error: multiple files without output directory specified
-  echo "Error: output directory not specified"
-  exit 1
-elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]
-then
+  claw::error_exit "Error: output directory not specified"
+elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
   # Error: output file and output directory defined at the same time
-  echo "Error: output directory and output file cannot be specified together"
-  exit 1
+  claw::error_exit \
+    "Error: output directory and output file cannot be specified together"
 fi
 
 
 
 ### Create temporal directory ###
-[ $ENABLE_DEBUG = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
-[ $ENABLE_DEBUG_OMNI = true ] && TEMP_DIR=$DEBUG_TEMP_DIR
-COMMAMD_LOG=$TEMP_DIR/command_log
-ERROR_LOG=$TEMP_DIR/error_log
-[ $ENABLE_DEBUG = true ] && rm -f $COMMAMD_LOG $ERROR_LOG
-[ $ENABLE_DEBUG_OMNI = true ] && rm -f $COMMAMD_LOG $ERROR_LOG
-# Note that, if TEMP_DIR exists, the TEMP_DIR is not deleted (KAGEMAI #379)
-
-mkdir -p $TEMP_DIR
-[ $VERBOSE = true ] && echo "Create ${TEMP_DIR}/"
+[[ ${enable_debug} == true ]] && temp_dir=${debug_temp_dir}
+[[ ${enable_debug_omni} == true ]] && temp_dir=${debug_temp_dir}
+mkdir -p ${temp_dir}
+claw::verbose "Create ${temp_dir}/"
 
 ### Bypass file without code transformation ###
-for input_file in "${f_files[@]}"
-do
-  if ! [ ${force_translation} == true ]
-  then
-    NUM_DIRECTIVES=$(grep --count --ignore-case "!\$claw" "${input_file}")
-    if [ "$NUM_DIRECTIVES" = "0" ]
-    then
-      echo "Warning: file ${input_file} does not contains \$claw. Skip ..."
-      if [ "${output_dir}" != "" ]
-      then
+for input_file in "${f_files[@]}"; do
+  if ! [[ ${force_translation} == true ]]; then
+    num_directives="$(grep --count --ignore-case "!\$claw" "${input_file}")"
+    if [[ "${num_directives}" == "0" ]]; then
+      claw::warning "${input_file}" "-" "file does not contains \$claw. Skip..."
+      if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
       else
         cp "${input_file}" "${output_file}"
@@ -218,171 +221,163 @@ done
 ### TODO check if f_files_transformation has any files in ...
 
 ### Preprocessor ###
-[ $ONLY_PP = true ] && [ -f "${output_file}" ] && rm "${output_file}"
-[ $ENABLE_CPP = true ] && OMNI_FPP_OPT="$OMNI_FPP_OPT $CPP_OPT"
-for input_file in "${f_files_transformation[@]}"
-do
-  [ $VERBOSE = true ] && echo "Prepocessing ..."
+[[ ${only_pp} == true ]] && [[ -f "${output_file}" ]] && rm "${output_file}"
+[[ ${enable_cpp} == true ]] && OMNI_FPP_OPT="${OMNI_FPP_OPT} ${CPP_OPT}"
+for input_file in "${f_files_transformation[@]}"; do
+  claw::verbose "Prepocessing ..."
 
-  file_name=$(claw_f_norm_file_name "${input_file}")
-  EXT=${input_file##*.}
-  file_pp1=${TEMP_DIR}/"${file_name}".PP.${EXT}
-  file_pp=${TEMP_DIR}/"${file_name}".${EXT}
+  file_name="$(claw::norm_file_name "${input_file}")"
+  ext=${input_file##*.}
+  file_pp1=${temp_dir}/"${file_name}".pp.${ext}
+  file_pp=${temp_dir}/"${file_name}".${ext}
 
-  if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]
-  then
+  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
+    || [[ ${enable_cpp} == true ]]; then
 
-    applyPreprocessorPass "${input_file}" "${file_pp1}"
-    preprocessor_output=$(basename "${file_pp1%.*}")
+    claw::applyPreprocessorPass "${input_file}" "${file_pp1}"
+    preprocessor_output="$(basename "${file_pp1%.*}")"
 
-    if [ $FPP_REDIRECT == true ]
-    then
+    if [[ ${fpp_redirect} == true ]]; then
       # shellcheck disable=SC2086
-      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${file_pp1}" > "${file_pp}"
+      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
+        ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}" > "${file_pp}"
     else
       # shellcheck disable=SC2086
-      $OMNI_FPP_CMD "${include_opt[@]}" "${pp_add_opt[@]}" \
-        $OMNI_FPP_OPT "${other_args[@]}" "${file_pp1}"
+      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
+        ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}"
       mv "${preprocessor_output}.i" "${file_pp}"
     fi
 
-    if [ $ONLY_PP = true ]; then
-      if [ "${output_file}" = "" ]; then
+    if [[ ${only_pp} == true ]]; then
+      if [[ "${output_file}" = "" ]]; then
         cat "${file_pp}"
       else
-        cat "${FILE_PP_I}" >> "${output_file}"
+        cat "${file_pp}" >> "${output_file}" # TODO debug here
       fi
     fi
   fi
 done
-[ $STOP_PP = true ] && exit 0;
-[ $ONLY_PP = true ] && [ $ENABLE_DEBUG = true ] && exit 0;
-[ $ONLY_PP = true ] && { rm -rf $TEMP_DIR; exit 0; }
+[[ ${stop_pp} == true ]] && exit 0;
+[[ ${only_pp} == true ]] && [[ ${enable_debug} == true ]] && exit 0;
+[[ ${only_pp} == true ]] && { rm -rf ${temp_dir}; exit 0; }
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
-  FILE_NAME=$(claw_f_norm_file_name "${input_file}")
-  EXT=${input_file##*.}
-  if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
-    FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+  file_name="$(claw::norm_file_name "${input_file}")"
+  ext=${input_file##*.}
+  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
+    || [[ ${enable_cpp} == true ]]; then
+    file_pp=${temp_dir}/"${file_name}".${ext}
   else
-    FILE_PP="${input_file}"
+    file_pp="${input_file}"
   fi
-  applyIgnore "$FILE_PP"
+  claw::applyIgnore "${file_pp}"
 done
 
 ### dependencies resolution ###
-if [ ${resolve_dependencies} ]
-then
-  for input_file in "${f_files_transformation[@]}"
-  do
-    [ $VERBOSE = true ] && echo "Dependencies resolution ..."
-    FILE_NAME=$(claw_f_norm_file_name "${input_file}")
-    EXT=${input_file##*.}
+if [[ ${resolve_dependencies} ]]; then
+  for input_file in "${f_files_transformation[@]}"; do
+    claw::verbose "Dependencies resolution ..."
+    file_name="$(claw::norm_file_name "${input_file}")"
+    ext=${input_file##*.}
 
-    if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
-      FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+    if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
+      || [[ ${enable_cpp} == true ]]; then
+      file_pp=${temp_dir}/"${file_name}".${ext}
     else
-      FILE_PP="${input_file}"
+      file_pp="${input_file}"
     fi
 
-    claw_f_process_dependencies "$FILE_PP" "${input_file}"
+    claw::process_dependencies "${file_pp}" "${input_file}"
   done
-  [ $STOP_DEPENDENCIES = true ] && exit 0;
+  [[ ${stop_dependencies} == true ]] && exit 0;
 fi
 
 ### Frontend ###
 for input_file in "${f_files_transformation[@]}"; do
-  [ $VERBOSE = true ] && echo "Fortran to XcodeML ..."
-  FILE_NAME=$(claw_f_norm_file_name "${input_file}")
-  EXT=${input_file##*.}
+  claw::verbose "Fortran to XcodeML ..."
+  file_name="$(claw::norm_file_name "${input_file}")"
+  ext=${input_file##*.}
 
-  if [ "$EXT" = "F90" ] || [ "$EXT" = "F" ] || [ $ENABLE_CPP = true ]; then
-    FILE_PP=${TEMP_DIR}/"${FILE_NAME}".${EXT}
+  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
+    || [[ ${enable_cpp} == true ]]; then
+    file_pp=${temp_dir}/"${file_name}".${ext}
   else
-    FILE_PP="${input_file}"
+    file_pp="${input_file}"
   fi
-  FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
+  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
 
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
-  $OMNI_F2X_CMD "${include_opt[@]}" "${module_opt[@]}" \
-    "${frontend_add_opt[@]}" $OMNI_F2X_OPT "${FILE_PP}" -o "${FILE_IN_X}"
+  ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
 done
-[ $STOP_FRONTEND = true ] && exit 0;
+[[ ${stop_frontend} == true ]] && exit 0;
 
 # Add debug flag for the translator options
-if [ $ENABLE_DEBUG = true ]
-then
-  TRANSLATOR_OPTION="$TRANSLATOR_OPTION -d"
+if [[ ${enable_debug} == true ]]; then
+  TRANSLATOR_OPTION="${TRANSLATOR_OPTION} -d"
 fi
 
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
-  [ $VERBOSE = true ] && echo "XcodeML to XcodeML translation ..."
-  FILE_NAME=$(claw_f_norm_file_name "${input_file}")
-  EXT=${input_file##*.}
-  FILE_IN_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_in.xml
-  FILE_OUT_X=${TEMP_DIR}/"${FILE_NAME}"_${EXT}_out.xml
-  FILE_OUT_F=${TEMP_DIR}/"${input_file}"
-  if [ "${output_file}" != "" ]
-  then
-    FILE_OUT_F=${output_file}
-  elif [ "${output_dir}" != "" ]
-  then
-    FILE_OUT_F=${output_dir}/${input_file}
+  claw::verbose "XcodeML to XcodeML translation ..."
+  file_name="$(claw::norm_file_name "${input_file}")"
+  ext=${input_file##*.}
+  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
+  file_out_f=${temp_dir}/"${input_file}"
+  if [[ "${output_file}" != "" ]]; then
+    file_out_f=${output_file}
+  elif [[ "${output_dir}" != "" ]]; then
+    file_out_f=${output_dir}/${input_file}
   fi
 
   # Define report file output
-  if [ ${report} = true ]
-  then
-    FILE_OUT_R="${FILE_OUT_F%.*}"
-    FILE_OUT_R="${FILE_OUT_R}.lst"
-    TRANSLATOR_OPTION="$TRANSLATOR_OPTION --report=${FILE_OUT_R}"
+  if [ ${report} == true ]; then
+    file_out_r="${file_out_f%.*}"
+    file_out_r="${file_out_r}.lst"
+    TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --report=${file_out_r}"
   fi
 
   # Dump the arguments pass to the translator for easier debugging
-  if [ ${dump_cx2x_args} = true ]
-  then
+  if [[ ${dump_cx2x_args} == true ]]; then
     echo "-- [DEBUG] Arguments for omni-cx2x:"
-    echo "$TRANSLATOR_OPTION $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT \
-      $OMNI_CX2X_CONFIG_OPT $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT \
+    echo "${TRANSLATOR_OPTION} ${OMNI_CX2X_TARGET_OPT} \
+      ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
+      ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
       ${xcode_translator_add_opt*} ${module_opt*} ${trans_module_opt*} \
-      -o ${FILE_OUT_X} -f ${FILE_OUT_F} ${FILE_IN_X}"
+      -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
   fi
 
   # shellcheck disable=SC2086
-  $OMNI_FX2X_CMD $OMNI_FX2X_OPT $TRANSLATOR_OPTION \
-    $OMNI_CX2X_TARGET_OPT $OMNI_CX2X_DIRECTIVE_OPT $OMNI_CX2X_CONFIG_OPT \
-    $OMNI_CX2X_MAX_COLUMN_OPT $OMNI_CX2X_LINE_OPT \
+  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
+    ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
+    ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
     "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-    "${trans_module_opt[@]}" -o "${FILE_OUT_X}" -f "${FILE_OUT_F}" \
-    "${FILE_IN_X}"
+    "${trans_module_opt[@]}" -o "${file_out_x}" -f "${file_out_f}" \
+    "${file_in_x}"
 
-  # also create ${TEMP_DIR}/${FILE_NAME}_${EXT}_in.F90
+  # also create ${temp_dir}/${file_name}_${ext}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
   # So that remains .F90 extention after process of the native compilier.
 done
-[ $STOP_TRANSLATOR = true ] && exit 0;
+[[ ${stop_translator} == true ]] && exit 0;
 
 ### Revert ignore prefix and apply verbatim
 for input_file in "${f_files_transformation[@]}"; do
-  if [ "${output_file}" != "" ]
-  then
-    FILE_OUT_F=${output_file}
-  elif [ "${output_dir}" != "" ]
-  then
-    FILE_OUT_F=${output_dir}/${input_file}
+  if [[ "${output_file}" != "" ]]; then
+    file_out_f=${output_file}
+  elif [[ "${output_dir}" != "" ]]; then
+    file_out_f=${output_dir}/${input_file}
   fi
-  revertIgnore "$FILE_OUT_F"
-  applyVerbatim "$FILE_OUT_F"
+  claw::revertIgnore "${file_out_f}"
+  claw::applyVerbatim "${file_out_f}"
 done
 
 ### Delete temporal directory ###
-if [ $ENABLE_DEBUG_OMNI = false ] && [ $ENABLE_DEBUG = false ]
-then
-  rm -rf $TEMP_DIR
+if [[ ${enable_debug_omni} == false ]] && [[ ${enable_debug} == false ]]; then
+  rm -rf ${temp_dir}
 fi
 
 exit 0

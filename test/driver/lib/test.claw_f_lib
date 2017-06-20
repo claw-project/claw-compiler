@@ -3,8 +3,8 @@
 # source the library
 . ../../../driver/libexec/claw_f_lib.sh.in
 
-# Test the claw_f_norm_file_name function
-function test_claw_f_norm_file_name()
+# Test the claw::norm_file_name function
+function test_claw::norm_file_name()
 {
   # Array of input values
   test_inputs=()
@@ -26,10 +26,10 @@ function test_claw_f_norm_file_name()
 
   for ((i=0;i<${#test_inputs[@]};++i))
   do
-    test_result=$(claw_f_norm_file_name "${test_inputs[i]}")
+    test_result=$(claw::norm_file_name "${test_inputs[i]}")
     if [ "$test_result" != "${expected_outputs[i]}" ]
     then
-      echo "Error: claw_f_norm_file_name: $test_result != ${expected_outputs[i]}"
+      echo "Error: claw::norm_file_name: $test_result != ${expected_outputs[i]}"
       exit 1
     fi
   done
@@ -37,4 +37,4 @@ function test_claw_f_norm_file_name()
 
 
 # Execute test cases
-test_claw_f_norm_file_name
+test_claw::norm_file_name
