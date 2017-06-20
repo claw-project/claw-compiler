@@ -3,6 +3,22 @@
 Useful information about the development of the CLAW Fortran Compiler are given
 on this page.
 
+### Coding Style Guide
+Indent with spaces. NO tabs!
+
+#### Java code
+* An IDEA format configuration is available here:
+./omni-cx2x/config/claw_code_style_idea.xml
+
+#### Bash scripts
+In general, all bash scripts written for the CLAW FORTRAN Compiler projects
+follow those guidelines: https://google.github.io/styleguide/shell.xml
+
+In addition, all scripts are tested with `shellcheck` and must pass the tested
+without errors or warnings. So warnings might be disable where it make sense
+for the correctness of the script.
+
+The main word is: `Use common sense and BE CONSISTENT.`
 
 ### Testing
 
@@ -49,7 +65,7 @@ clawfc --dump-cx2x-args <other_args>
    --config=/claw-compiler/driver/etc/claw-default.xml --schema=/claw-compiler/driver/etc/claw_config.xsd -w 80 -l  -M/claw-compiler/test/loops/fusion1  -o /tmp/__omni_tmp__65319/original_5f_code_f90_out.xml -f transformed_code.f90 /tmp/__omni_tmp__65319/original_5f_code_f90_in.xml
 ```
 
-It is recommended to use the `CLAW FORTRAN Compiler` with the `--debug` option in order to keep the intermediate files and ease the development/debugging of the translator. 
+It is recommended to use the `CLAW FORTRAN Compiler` with the `--debug` option in order to keep the intermediate files and ease the development/debugging of the translator.
 
 ### Driver
 
