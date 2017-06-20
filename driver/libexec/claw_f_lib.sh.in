@@ -134,7 +134,7 @@ function claw::set_parameters()
         if [[ ${module_dir} == \/* ]]; then
           module_opt+=("-M${module_dir[0]}")
         else
-          current_dir=$(pwd)
+          current_dir="$(pwd)"
           module_opt+=("-M${current_dir}/${module_dir[0]}")
         fi
         ;;
@@ -291,18 +291,18 @@ function claw::norm_file_name()
 {
     # TODO possibly extend to other FORTRAN extensions
     local filename
-    filename=$(basename "$1" .f90)                 # ./hoge/fuga-a.f90 -> fuga-a
-    filename=$(basename "${filename}" .F90)
-    filename=$(basename "${filename}" .f)
-    filename=$(basename "${filename}" .F)
-    filename=$(dirname "$1")/${filename}             #  -> ./hoge/fuga-a
-    filename=$(echo "${filename}" | sed 's/^\.\///') #  -> hoge/fuga-a
+    filename="$(basename "$1" .f90)"               # ./hoge/fuga-a.f90 -> fuga-a
+    filename="$(basename "${filename}" .F90)"
+    filename="$(basename "${filename}" .f)"
+    filename="$(basename "${filename}" .F)"
+    filename="$(dirname "$1")"/"${filename}"           #  -> ./hoge/fuga-a
+    filename="$(echo "${filename}" | sed 's/^\.\///')" #  -> hoge/fuga-a
 
     local len=${#filename}
     local norm_name=""
     for i in $(seq 1 "${len}"); do                   #  -> hoge_2f_fuga_2d_a
-        c=$(echo "${filename}" | cut -c "${i}")
-        ix=$(printf "%d" \'"${c}")
+        c="$(echo "${filename}" | cut -c "${i}")"
+        ix="$(printf "%d" \'"${c}")"
         # '0' <= ${ix} <= '9'
         if [[ "${ix}" -ge 48 ]] && [[ "${ix}" -le 57 ]]; then
             norm_name="${norm_name}"${c}
@@ -314,13 +314,13 @@ function claw::norm_file_name()
             norm_name="${norm_name}"${c}
         else
           local hex
-          hex=$(printf "%x" "${ix}")
+          hex="$(printf "%x" "${ix}")"
           local char
           # shellcheck disable=SC2059
-          char=$(printf "\x${hex}")
+          char="$(printf "\x${hex}")"
           local code
           code=\'${char}
-          norm_name="${norm_name}"$(printf "_%x_\n" "${code}")
+          norm_name="${norm_name}""$(printf "_%x_\n" "${code}")"
         fi
     done
 
@@ -358,7 +358,7 @@ function claw::process_dependencies()
   done < "$1"
 
   # Get the directory and use it to look in the same for dependencies
-  current_src_dir=$(dirname "$2")
+  current_src_dir="$(dirname "$2")"
 
   # If no dependencies, just abord dependency resolution
   if [[ "${#dependencies[@]}" == 0 ]]; then
@@ -414,8 +414,8 @@ function claw::process_dependencies()
       # with regular expression
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
-          found_file=($(grep -s -l -i "^ *MODULE *${module_name}" \
-            "${directory}"/*"${ext}" | grep -v ".*\.claw\..*"))
+          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}" \
+            "${directory}"/*"${ext}" | grep -v ".*\.claw\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
             break
           else
@@ -459,8 +459,8 @@ function claw::process_dependencies()
 
     ### Preprocess file ###
     base_file=${source_mod_file}
-    dep_basename=$(basename "${base_file%.*}")
-    file_name=$(claw::norm_file_name "${base_file}")
+    dep_basename="$(basename "${base_file%.*}")"
+    file_name="$(claw::norm_file_name "${base_file}")"
     ext=${base_file##*.}
     # shellcheck disable=SC2154
     local file_pp=${temp_dir}/"${file_name}".${ext}
@@ -568,7 +568,7 @@ function claw::applyVerbatim()
 ###################################################################
 function claw::applyPreprocessorPass()
 {
-  potential_problem=$(grep --count -E "\\\\$" "$1")
+  potential_problem="$(grep --count -E "\\\\$" "$1")"
   line_no=1
   local input_file=$1
   if [[ ${potential_problem} -gt 0 ]]; then
