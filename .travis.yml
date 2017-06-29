@@ -4,6 +4,7 @@ dist: trusty
 language: java
 jdk:
   - oraclejdk7
+  - openjdk7
 
 # Disable the default submodule logic
 git:
