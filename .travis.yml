@@ -52,6 +52,7 @@ script:
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make clean-transformation transformation test
+  - ctest --verbose # just to debug new travis image
   - make install # Test install steps as well, avoid missing jars or files.
   - cd -
   - cd scripts
