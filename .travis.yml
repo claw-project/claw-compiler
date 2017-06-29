@@ -48,6 +48,7 @@ before_script:
 
 # Build CLAW FORTRAN Compiler and execute the test suite
 script:
+  - java -version
   - mkdir build
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
