@@ -2,6 +2,7 @@
 sudo: required
 dist: trusty
 language: cpp
+group: deprecated-2017Q2
 
 # Disable the default submodule logic
 git:
@@ -55,7 +56,6 @@ script:
   - make
   - make install
   - make clean-transformation transformation test
-  - ctest --verbose # just to debug new travis image
   - cd -
   - cd scripts
   - ./run.shellcheck # Check shell scripts with shellcheck
