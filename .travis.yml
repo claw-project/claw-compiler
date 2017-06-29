@@ -1,7 +1,7 @@
 # Ubuntu 14.04 Trusty support
 sudo: required
 dist: trusty
-language: cpp
+language: java
 
 # Disable the default submodule logic
 git:
@@ -24,6 +24,7 @@ matrix:
             - gcc-4.9
             - g++-4.9
             - gfortran-4.9
+            - ant-junit
             - shellcheck
 
 # Fetch submodule for omni-compiler repository
