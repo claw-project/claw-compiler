@@ -1,6 +1,6 @@
 # Ubuntu 14.04 Trusty support
 sudo: required
-dist: xenial
+dist: trusty
 language: java
 jdk:
   - oraclejdk7
