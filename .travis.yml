@@ -1,10 +1,7 @@
 # Ubuntu 14.04 Trusty support
 sudo: required
 dist: trusty
-language: java
-jdk:
-  - oraclejdk7
-  - openjdk7
+language: cpp
 
 # Disable the default submodule logic
 git:
