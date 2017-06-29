@@ -24,7 +24,7 @@ matrix:
             - gcc-4.9
             - g++-4.9
             - gfortran-4.9
-            - ant-junit
+            - ant
             - shellcheck
 
 # Fetch submodule for omni-compiler repository
