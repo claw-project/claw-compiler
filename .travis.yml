@@ -20,7 +20,7 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-#            - debian-sid
+            - debian-sid
           packages:
             - gcc-4.9
             - g++-4.9
