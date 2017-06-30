@@ -34,7 +34,7 @@ before_install:
   - git submodule update
 
 install:
-  travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
+  - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
 
 # Install OpenMPI for OMNI Compiler
 before_script:
