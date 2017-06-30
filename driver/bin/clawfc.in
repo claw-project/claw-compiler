@@ -307,6 +307,12 @@ for input_file in "${f_files_transformation[@]}"; do
   fi
   file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
 
+  # Check that input file produced by preprocessing pass exists.
+  if [[ ! -f ${file_pp} ]]; then
+    claw::error_exit \
+      "Input file not preprocessed correctly. Parsing cannot be done."
+  fi
+
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
@@ -325,6 +331,13 @@ for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+
+  # Check that input file produced by parsing pass exists.
+  if [[ ! -f ${file_in_x} ]]; then
+    claw::error_exit \
+      "Input file not parsed correctly. Translation cannot be done."
+  fi
+
   file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
   file_out_f=${temp_dir}/"${input_file}"
   if [[ "${output_file}" != "" ]]; then
