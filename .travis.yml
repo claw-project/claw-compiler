@@ -22,19 +22,19 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - debian-sid
           packages:
             - gcc-4.9
             - g++-4.9
             - gfortran-4.9
             - ant
-            - shellcheck
+            - cabal-install
 
 # Fetch submodule for omni-compiler repository and install dependencies
 before_install:
   - git submodule init
   - git submodule update
   - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
+  - cabal update && cabal install ShellCheck && shellcheck --version
 
 # Export compiler variables
 before_script:
