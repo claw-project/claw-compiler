@@ -30,6 +30,7 @@ matrix:
             - cabal-install
             - ghc
 
+# Save shellcheck installation in cache
 cache:
   directories:
     - $HOME/.ghc
