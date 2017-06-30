@@ -1,7 +1,6 @@
 # Ubuntu 14.04 Trusty support
 sudo: required
 dist: trusty
-group: deprecated-2017Q2 # Until we can use new image
 language: cpp
 
 # Disable the default submodule logic
