@@ -22,20 +22,29 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            #- debian-sid
           packages:
             - gcc-4.9
             - g++-4.9
             - gfortran-4.9
             - ant
+            - cabal-install
+            - ghc
+
+# Save shellcheck installation in cache
+cache:
+  directories:
+    - $HOME/.ghc
+    - $HOME/.cabal
+    - $HOME/.stack
 
 # Fetch submodule for omni-compiler repository and install dependencies
 before_install:
   - git submodule init
   - git submodule update
-  - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
-  - sudo apt-get update -q
   - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
+  - cabal update && cabal install ShellCheck
+  - export PATH=$PATH:$HOME/.cabal/bin
+  - shellcheck --version
 
 # Export compiler variables
 before_script:
@@ -54,9 +63,8 @@ script:
   - make install
   - make clean-transformation transformation test
   - cd -
-#  - cd scripts
-#  - ./run.shellcheck # Check shell scripts with shellcheck
-# disable until shellcheck 0.4.5 available
+  - cd scripts
+  - ./run.shellcheck # Check shell scripts with shellcheck
 
 # Notification settings
 notifications:
