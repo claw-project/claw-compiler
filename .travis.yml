@@ -33,8 +33,9 @@ matrix:
 before_install:
   - git submodule init
   - git submodule update
-
-install:
+  - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
+  - sudo apt-get update -q
+  - sudo apt-get install shellcheck -y
   - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
 
 # Install OpenMPI for OMNI Compiler
