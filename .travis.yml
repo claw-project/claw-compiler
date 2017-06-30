@@ -27,7 +27,10 @@ matrix:
             - g++-4.9
             - gfortran-4.9
             - ant
-            - shellcheck
+            - openmpi-bin
+            - openmpi-checkpoint
+            - openmpi-common
+            - openmpi-doc
 
 # Fetch submodule for omni-compiler repository
 before_install:
@@ -39,15 +42,15 @@ before_script:
   - export FC=$FC_COMPILER
   - export CC=$CC_COMPILER
   - export CXX=$CXX_COMPILER
-  - pushd $(pwd)
-  - wget --no-check-certificate https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz
-  - tar -zxf openmpi-2.0.1.tar.gz
-  - cd openmpi-2.0.1
-  - sh ./configure --prefix=$HOME/openmpi > /dev/null
-  - make -j > /dev/null
-  - sudo make install > /dev/null
-  - export PATH=$PATH:$HOME/openmpi/bin
-  - popd
+  #- pushd $(pwd)
+  #- wget --no-check-certificate https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz
+  #- tar -zxf openmpi-2.0.1.tar.gz
+  #- cd openmpi-2.0.1
+  #- sh ./configure --prefix=$HOME/openmpi > /dev/null
+  #- make -j > /dev/null
+  #- sudo make install > /dev/null
+  #- export PATH=$PATH:$HOME/openmpi/bin
+  #- popd
 
 # Build CLAW FORTRAN Compiler and execute the test suite
 script:
