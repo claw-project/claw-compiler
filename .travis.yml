@@ -30,9 +30,6 @@ matrix:
             - cabal-install
             - ghc
 
-env:
-  - PATH=$PATH:~/.cabal/bin/
-
 cache:
   directories:
     - $HOME/.ghc
@@ -44,7 +41,9 @@ before_install:
   - git submodule init
   - git submodule update
   - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
-  - cabal update && cabal install ShellCheck && shellcheck --version
+  - cabal update && cabal install ShellCheck
+  - export PATH=$PATH:$HOME/.cabal/bin
+  - shellcheck --version
 
 # Export compiler variables
 before_script:
