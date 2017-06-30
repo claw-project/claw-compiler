@@ -36,7 +36,6 @@ before_install:
 
 install:
   - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
-  - export PATH=$PATH:/usr/lib/openmpi/bin
 
 # Install OpenMPI for OMNI Compiler
 before_script:
