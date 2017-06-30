@@ -28,6 +28,7 @@ matrix:
             - gfortran-4.9
             - ant
             - cabal-install
+            - ghc
 
 # Fetch submodule for omni-compiler repository and install dependencies
 before_install:
