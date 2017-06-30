@@ -30,6 +30,15 @@ matrix:
             - cabal-install
             - ghc
 
+env:
+  - PATH=$PATH:~/.cabal/bin/
+
+cache:
+  directories:
+    - $HOME/.ghc
+    - $HOME/.cabal
+    - $HOME/.stack
+
 # Fetch submodule for omni-compiler repository and install dependencies
 before_install:
   - git submodule init
