@@ -16,8 +16,8 @@ matrix:
         - CXX_COMPILER=g++-4.9
         - CC_COMPILER=gcc-4.9
         - FC_COMPILER=gfortran-4.9
-        - OMPI_CC=gfortran-4.9
-        - OMPI_FC=gcc-4.9
+        - OMPI_CC=gcc-4.9
+        - OMPI_FC=gfortran-4.9
       addons:
         apt:
           sources:
