@@ -21,7 +21,9 @@ readonly XMOD_GENERIC="@XMOD_GENERIC@"
 readonly CPP_OPT="@CPP_OPT@"
 readonly OMNI_FPP_CMD="@FPP@"
 readonly OMNI_FPP_MUST_OPT="-I${OMNI_INCLUDE_DIR}"
-readonly OMNI_FPP_OPT="@FPPFLAGS@ ${OMNI_FPP_MUST_OPT}"
+# Can be drop once Travis has shellcheck 0.4.4+
+# shellcheck disable=SC2034
+OMNI_FPP_OPT="@FPPFLAGS@ ${OMNI_FPP_MUST_OPT}"
 
 # FrontEnd
 readonly OMNI_F2X_CMD="${OMNI_BIN_DIR}/F_Front"
