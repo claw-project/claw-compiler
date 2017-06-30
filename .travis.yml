@@ -29,31 +29,21 @@ matrix:
             - gfortran-4.9
             - ant
 
-# Fetch submodule for omni-compiler repository
+# Fetch submodule for omni-compiler repository and install dependencies
 before_install:
   - git submodule init
   - git submodule update
   - echo "deb http://archive.ubuntu.com/ubuntu/ wily universe" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -q
-  - sudo apt-get install shellcheck -y
   - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
 
-# Install OpenMPI for OMNI Compiler
+# Export compiler variables
 before_script:
   - export FC=$FC_COMPILER
   - export CC=$CC_COMPILER
   - export CXX=$CXX_COMPILER
   - export OMPI_CC
   - export OMPI_FC
-  #- pushd $(pwd)
-  #- wget --no-check-certificate https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz
-  #- tar -zxf openmpi-2.0.1.tar.gz
-  #- cd openmpi-2.0.1
-  #- sh ./configure --prefix=$HOME/openmpi > /dev/null
-  #- make -j > /dev/null
-  #- sudo make install > /dev/null
-  #- export PATH=$PATH:$HOME/openmpi/bin
-  #- popd
 
 # Build CLAW FORTRAN Compiler and execute the test suite
 script:
@@ -64,8 +54,9 @@ script:
   - make install
   - make clean-transformation transformation test
   - cd -
-  - cd scripts
-  - ./run.shellcheck # Check shell scripts with shellcheck
+#  - cd scripts
+#  - ./run.shellcheck # Check shell scripts with shellcheck
+# disable until shellcheck 0.4.5 available
 
 # Notification settings
 notifications:
