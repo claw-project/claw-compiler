@@ -307,6 +307,12 @@ for input_file in "${f_files_transformation[@]}"; do
   fi
   file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
 
+  # Check that input file produced by preprocessing pass exists.
+  if [[ ! -f ${file_pp} ]]; then
+    claw::error_exit \
+      "Input file not preprocessed correctly. Parsing cannot be done."
+  fi
+
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
@@ -325,6 +331,13 @@ for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+
+  # Check that input file produced by parsing pass exists.
+  if [[ ! -f ${file_in_x} ]]; then
+    claw::error_exit \
+      "Input file not parsed correctly. Translation cannot be done."
+  fi
+
   file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
   file_out_f=${temp_dir}/"${input_file}"
   if [[ "${output_file}" != "" ]]; then
@@ -357,6 +370,16 @@ for input_file in "${f_files_transformation[@]}"; do
     "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
     "${trans_module_opt[@]}" -o "${file_out_x}" -f "${file_out_f}" \
     "${file_in_x}"
+
+  # Check that translation output a file
+  if [[ ! -f ${file_out_x} ]]; then
+    claw::error_exit "Translation failed."
+  fi
+
+  # Check that decompiler output a file
+  if [[ ! -f ${file_out_f} ]]; then
+    claw::error_exit "Decompiler failed."
+  fi
 
   # also create ${temp_dir}/${file_name}_${ext}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
