@@ -371,6 +371,16 @@ for input_file in "${f_files_transformation[@]}"; do
     "${trans_module_opt[@]}" -o "${file_out_x}" -f "${file_out_f}" \
     "${file_in_x}"
 
+  # Check that translation output a file
+  if [[ ! -f ${file_out_x} ]]; then
+    claw::error_exit "Translation failed."
+  fi
+
+  # Check that decompiler output a file
+  if [[ ! -f ${file_out_f} ]]; then
+    claw::error_exit "Decompiler failed."
+  fi
+
   # also create ${temp_dir}/${file_name}_${ext}_in.F90
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
   # So that remains .F90 extention after process of the native compilier.
