@@ -238,10 +238,25 @@ for input_file in "${f_files_transformation[@]}"; do
     preprocessor_output="$(basename "${file_pp1%.*}")"
 
     if [[ ${fpp_redirect} == true ]]; then
+      # Debug output
+      [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Preprocessing"
+      [[ ${enable_debug} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
+        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp1} > \
+        ${file_pp}"
+
+      # Call to the preprocessor
       # shellcheck disable=SC2086
       ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
         ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}" > "${file_pp}"
     else
+      # Debug output
+      [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Preprocessing"
+      [[ ${enable_debug} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
+        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp1}"
+      [[ ${enable_debug} == true ]] && echo "mv ${preprocessor_output}.i \
+        ${file_pp}"
+
+      # Call to the preprocessor
       # shellcheck disable=SC2086
       ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
         ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}"
@@ -313,6 +328,13 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not preprocessed correctly. Parsing cannot be done."
   fi
 
+  # Debug output
+  [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Front-end"
+  # shellcheck disable=SC2153,SC2086
+  [[ ${enable_debug} == true ]] && echo "${OMNI_F2X_CMD} ${include_opt[*]} \
+    ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_OPT} ${file_pp} -o  \
+    ${file_in_x}"
+
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
@@ -359,10 +381,19 @@ for input_file in "${f_files_transformation[@]}"; do
     echo "${TRANSLATOR_OPTION} ${OMNI_CX2X_TARGET_OPT} \
       ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
       ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
-      ${xcode_translator_add_opt*} ${module_opt*} ${trans_module_opt*} \
+      ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} \
       -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
   fi
 
+  # Debug output
+  [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Translation + backend"
+  [[ ${enable_debug} == true ]] && echo "${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} \
+    ${TRANSLATOR_OPTION} ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} \
+    ${OMNI_CX2X_CONFIG_OPT} ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+    ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} -o \
+    ${file_out_x} -f ${file_out_f} ${file_in_x}"
+
+  # Call to the translator
   # shellcheck disable=SC2086
   ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
     ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
