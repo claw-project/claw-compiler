@@ -12,10 +12,12 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.claw.parallelize.Parallelize;
@@ -24,7 +26,6 @@ import cx2x.translator.transformation.loop.*;
 import cx2x.translator.transformation.openacc.DirectivePrimitive;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
-import cx2x.translator.transformation.utility.XcodeMLWorkaround;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
@@ -39,6 +40,7 @@ import xcodeml.util.XmOption;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 
@@ -177,8 +179,25 @@ public class ClawXcodeMlTranslator {
       createBlockDirectiveTransformation(entry.getValue(), null);
     }
 
-    // Add utility transformation
-    addOrAbort(new XcodeMLWorkaround(new ClawLanguage(_program)));
+    // Generate transformation for translation_unit trigger type
+    for(GroupConfiguration group :
+        _transformer.getConfiguration().getGroups()) {
+      if(group.getTriggerType() ==
+          GroupConfiguration.TriggerType.TRANSLATION_UNIT)
+      {
+        try {
+          Constructor<?> ctor =
+              group.getTransformationClass().getConstructor(ClawLanguage.class);
+          ClawTransformation transformation =
+              (ClawTransformation) ctor.newInstance(new ClawLanguage(_program));
+          addOrAbort(transformation);
+        } catch(Exception ex) {
+          System.err.println("Cannot generate transformation " +
+              group.getName());
+          abort();
+        }
+      }
+    }
 
     // Analysis done, the transformation can be performed.
     _canTransform = true;
