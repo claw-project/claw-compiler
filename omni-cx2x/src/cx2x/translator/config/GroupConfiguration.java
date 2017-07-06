@@ -15,20 +15,25 @@ public class GroupConfiguration {
   private final String _name;
   private final String _cPath;
   private final GroupType _type;
+  private final TriggerType _trigger;
   private final Class _transformationClass;
 
   /**
    * Constructs a new GroupConfiguration element with all mandatory information.
    *
-   * @param name  User friendly name of the group.
-   * @param type  Type of the group.
-   * @param cPath Path to the transformation class.
+   * @param name    User friendly name of the group.
+   * @param type    Type of the group.
+   * @param trigger Type of the trigger action.
+   * @param cPath   Path to the transformation class.
+   * @param c       Actual class of the transformation.
    */
-  public GroupConfiguration(String name, GroupType type, String cPath, Class c)
+  public GroupConfiguration(String name, GroupType type, TriggerType trigger,
+                            String cPath, Class c)
   {
     _name = name;
     _cPath = cPath;
     _type = type;
+    _trigger = trigger;
     _transformationClass = c;
   }
 
@@ -59,6 +64,16 @@ public class GroupConfiguration {
     return _type;
   }
 
+
+  /**
+   * Get the trigger type.
+   *
+   * @return Trigger type.
+   */
+  public TriggerType getTriggerType() {
+    return _trigger;
+  }
+
   /**
    * Get the transformation class value.
    *
@@ -70,5 +85,6 @@ public class GroupConfiguration {
 
   public enum GroupType {DEPENDENT, INDEPENDENT}
 
+  public enum TriggerType {DIRECTIVE, TRANSLATION_UNIT}
 
 }

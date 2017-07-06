@@ -8,18 +8,18 @@
     <parameter key="openacc_execution_mode" value="vector_gang"/>
   </global>
   <groups>
-    <group type="independent" name="internal-xcodeml"    class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
-    <group type="independent" name="remove"              class="cx2x.translator.transformation.utility.UtilityRemove" />
-    <group type="independent" name="primitive"           class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
-    <group type="independent" name="array-transform"     class="cx2x.translator.transformation.loop.ArrayTransform" />
-    <group type="independent" name="loop-extract"        class="cx2x.translator.transformation.loop.LoopExtraction" />
-    <group type="dependent"   name="loop-fusion"         class="cx2x.translator.transformation.loop.LoopFusion" />
-    <group type="independent" name="loop-hoist"          class="cx2x.translator.transformation.loop.LoopHoist" />
-    <group type="independent" name="loop-interchange"    class="cx2x.translator.transformation.loop.LoopInterchange" />
-    <group type="independent" name="on-the-fly"          class="cx2x.translator.transformation.claw.ArrayToFctCall" />
-    <group type="independent" name="kcache"              class="cx2x.translator.transformation.claw.Kcaching" />
-    <group type="independent" name="if-extract"          class="cx2x.translator.transformation.loop.IfExtract" />
-    <group type="independent" name="parallelize"         class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
-    <group type="independent" name="parallelize-forward" class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+    <group type="independent" name="internal-xcodeml"    trigger="translation_unit" class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
+    <group type="independent" name="remove"              trigger="directive"        class="cx2x.translator.transformation.utility.UtilityRemove" />
+    <group type="independent" name="primitive"           trigger="directive"        class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
+    <group type="independent" name="array-transform"     trigger="directive"        class="cx2x.translator.transformation.loop.ArrayTransform" />
+    <group type="independent" name="loop-extract"        trigger="directive"        class="cx2x.translator.transformation.loop.LoopExtraction" />
+    <group type="dependent"   name="loop-fusion"         trigger="directive"        class="cx2x.translator.transformation.loop.LoopFusion" />
+    <group type="independent" name="loop-hoist"          trigger="directive"        class="cx2x.translator.transformation.loop.LoopHoist" />
+    <group type="independent" name="loop-interchange"    trigger="directive"        class="cx2x.translator.transformation.loop.LoopInterchange" />
+    <group type="independent" name="on-the-fly"          trigger="directive"        class="cx2x.translator.transformation.claw.ArrayToFctCall" />
+    <group type="independent" name="kcache"              trigger="directive"        class="cx2x.translator.transformation.claw.Kcaching" />
+    <group type="independent" name="if-extract"          trigger="directive"        class="cx2x.translator.transformation.loop.IfExtract" />
+    <group type="independent" name="parallelize"         trigger="directive"        class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
+    <group type="independent" name="parallelize-forward" trigger="directive"        class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
   </groups>
 </claw>

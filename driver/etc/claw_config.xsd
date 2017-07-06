@@ -6,6 +6,12 @@
       <xs:enumeration value="dependent"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="trigger_type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="directive"/>
+      <xs:enumeration value="translation_unit"/>
+    </xs:restriction>
+  </xs:simpleType>
   <!-- Schema from root -->
   <xs:element name="claw">
     <xs:complexType>
@@ -35,6 +41,7 @@
                     <xs:extension base="xs:string">
                       <xs:attribute type="group_type" name="type" use="required"/>
                       <xs:attribute type="xs:string" name="name" use="required"/>
+                      <xs:attribute type="trigger_type" name="trigger" use="required"/>
                       <xs:attribute type="xs:string" name="class" use="required"/>
                     </xs:extension>
                   </xs:simpleContent>
