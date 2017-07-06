@@ -8,6 +8,8 @@ package cx2x.translator.config;
 import cx2x.ClawVersion;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.transformation.ClawBlockTransformation;
+import cx2x.xcodeml.transformation.BlockTransformation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -210,6 +212,7 @@ public class Configuration {
         Element g = (Element) groupElements.item(i);
         String name = g.getAttribute(NAME_ATTR);
         String type = g.getAttribute(TYPE_ATTR);
+        // Read group type
         GroupConfiguration.GroupType gType;
         switch(type) {
           case DEPENDENT_GR_TYPE:
@@ -221,18 +224,12 @@ public class Configuration {
           default:
             throw new Exception("Invalid group type specified.");
         }
+        // Read transformation class path
         String cPath = g.getAttribute(CLASS_ATTR);
         if(cPath == null || cPath.isEmpty()) {
           throw new Exception("Invalid group class transformation definition.");
         }
-        Class transClass;
-        try {
-          // Check if class is there
-          transClass = Class.forName(cPath);
-        } catch(ClassNotFoundException e) {
-          throw new Exception("Transformation class " + cPath +
-              " not available");
-        }
+        // Read trigger type
         String trigger_type = g.getAttribute(TRIGGER_ATTR);
         GroupConfiguration.TriggerType triggerType;
         switch(trigger_type) {
@@ -245,6 +242,26 @@ public class Configuration {
           default:
             throw new Exception("Invalid trigger type specified.");
         }
+        // Find actual class
+        Class transClass;
+        try {
+          // Check if class is there
+          transClass = Class.forName(cPath);
+        } catch(ClassNotFoundException e) {
+          throw new Exception("Transformation class " + cPath +
+              " not available");
+        }
+
+        // Check that translation unit trigger type are not block transformation
+        if(triggerType == GroupConfiguration.TriggerType.TRANSLATION_UNIT
+            && (transClass.getSuperclass() == BlockTransformation.class
+            || transClass.getSuperclass() == ClawBlockTransformation.class))
+        {
+          throw new Exception("Translation unit trigger cannot be block " +
+              "transformation");
+        }
+
+        // Store group configuration
         _groups.add(new GroupConfiguration(name, gType, triggerType, cPath,
             transClass));
       }
