@@ -26,6 +26,7 @@ New available transformations:
 
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
+* Group configuration must now specify trigger type (translation_unit, directive) 
 
 Architecture:
 * All Java libraries now compiled with Ant.
