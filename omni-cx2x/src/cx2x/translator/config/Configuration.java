@@ -52,9 +52,12 @@ public class Configuration {
   private static final String KEY_ATTR = "key";
   private static final String VALUE_ATTR = "value";
   private static final String VERSION_ATTR = "version";
+  private static final String TRIGGER_ATTR = "trigger";
   // Specific values
   private static final String DEPENDENT_GR_TYPE = "dependent";
   private static final String INDEPENDENT_GR_TYPE = "independent";
+  private static final String DIRECTIVE_TR_TYPE = "directive";
+  private static final String TRANSLATION_UNIT_TR_TYPE = "translation_unit";
   private final Document _document;
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
@@ -230,7 +233,20 @@ public class Configuration {
           throw new Exception("Transformation class " + cPath +
               " not available");
         }
-        _groups.add(new GroupConfiguration(name, gType, cPath, transClass));
+        String trigger_type = g.getAttribute(TRIGGER_ATTR);
+        GroupConfiguration.TriggerType triggerType;
+        switch(trigger_type) {
+          case DIRECTIVE_TR_TYPE:
+            triggerType = GroupConfiguration.TriggerType.DIRECTIVE;
+            break;
+          case TRANSLATION_UNIT_TR_TYPE:
+            triggerType = GroupConfiguration.TriggerType.TRANSLATION_UNIT;
+            break;
+          default:
+            throw new Exception("Invalid trigger type specified.");
+        }
+        _groups.add(new GroupConfiguration(name, gType, triggerType, cPath,
+            transClass));
       }
     }
   }
