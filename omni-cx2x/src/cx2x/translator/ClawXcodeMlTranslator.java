@@ -187,9 +187,9 @@ public class ClawXcodeMlTranslator {
       {
         try {
           Class<?> groupClass = group.getTransformationClass();
-          Constructor<?> ctor = groupClass.getConstructor(ClawLanguage.class);
+          Constructor<?> ctor = groupClass.getConstructor();
           ClawTransformation transformation =
-              (ClawTransformation) ctor.newInstance(new ClawLanguage(_program));
+              (ClawTransformation) ctor.newInstance();
           addOrAbort(transformation);
         } catch(Exception ex) {
           System.err.println("Cannot generate transformation " +
