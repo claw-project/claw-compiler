@@ -20,17 +20,17 @@ import java.io.*;
  *
  * @author clementval
  */
-public class FortranDecompiler {
+public class XcodeMlToFortranDecompiler {
 
   private BufferedReader _reader;
   private XmToolFactory _toolFactory;
 
   /**
-   * Constructs a new FortranDecompiler object.
+   * Constructs a new XcodeMlToFortranDecompiler object.
    *
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
-  public FortranDecompiler()
+  public XcodeMlToFortranDecompiler()
       throws XmException
   {
     _toolFactory = new XmToolFactory("F");
