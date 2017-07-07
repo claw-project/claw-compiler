@@ -186,8 +186,8 @@ public class ClawXcodeMlTranslator {
           GroupConfiguration.TriggerType.TRANSLATION_UNIT)
       {
         try {
-          Constructor<?> ctor =
-              group.getTransformationClass().getConstructor(ClawLanguage.class);
+          Class<?> groupClass = group.getTransformationClass();
+          Constructor<?> ctor = groupClass.getConstructor(ClawLanguage.class);
           ClawTransformation transformation =
               (ClawTransformation) ctor.newInstance(new ClawLanguage(_program));
           addOrAbort(transformation);
