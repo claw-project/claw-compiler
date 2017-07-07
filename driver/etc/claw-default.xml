@@ -2,6 +2,8 @@
 <claw version="0.3">
   <!-- Transformation parameters -->
   <global>
+    <parameter key="transformer" value="cx2x.translator.transformer.ClawTransformer"/>
+
     <!-- Default general values -->
     <parameter key="default_target" value="gpu"/>
     <parameter key="default_directive" value="openacc"/>
