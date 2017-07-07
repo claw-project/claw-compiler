@@ -84,6 +84,7 @@ public class DirectivePrimitive extends ClawTransformation {
             replaceAll(regex, prefix)
     );
 
-    transformer.addTransformation(new OpenAccContinuation(getDirective()));
+    transformer.addTransformation(xcodeml,
+        new OpenAccContinuation(getDirective()));
   }
 }
