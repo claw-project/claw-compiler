@@ -5,6 +5,10 @@
 
 package cx2x.xcodeml.transformation;
 
+import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.Xnode;
+
 import java.util.Map;
 
 /**
@@ -18,11 +22,33 @@ import java.util.Map;
 public interface Transformer {
 
   /**
-   * Add a transformation in a transformation group stored in the transformer.
+   * Generate transformation according to the pragma.
    *
-   * @param t The transformation to be added.
+   * @param pragma Pragma that can trigger a transformation.
    */
-  void addTransformation(Transformation t);
+  void generateTransformation(XcodeProgram xcodeml, Xnode pragma)
+      throws IllegalDirectiveException;
+
+  /**
+   * Add a transformation to the transformer.
+   *
+   * @param xcodeml Current translation unit.
+   * @param t       Transformation to add.
+   */
+  void addTransformation(XcodeProgram xcodeml, Transformation t);
+
+  /**
+   * Check if the given pragma can be handled by the current transformer.
+   *
+   * @param pragma Pragma statement node.
+   * @return True if the transformer can handle the pragma. False otherwise.
+   */
+  boolean isHandledPragma(Xnode pragma);
+
+  /**
+   * Perform last tasks before applying transformations.
+   */
+  void finalize(XcodeProgram xcodeml);
 
   /**
    * Get all transformation groups stored in this transformer.
