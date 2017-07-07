@@ -21,11 +21,18 @@ public abstract class ClawTransformation extends Transformation {
 
   protected final ClawLanguage _claw;
 
+  /**
+   * Default ctor for translation_unit transformation.
+   */
   public ClawTransformation() {
     super();
     _claw = null;
   }
 
+  /**
+   * Ctor for directive triggered transformation.
+   * @param directive Directive that trigger the transformation.
+   */
   public ClawTransformation(ClawLanguage directive) {
     super(directive);
     _claw = directive;

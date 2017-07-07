@@ -21,13 +21,10 @@ import java.util.List;
 public class XcodeMLWorkaround extends ClawTransformation {
 
   /**
-   * XcodeMLWorkaround ctor.
-   *
-   * @param directive The directive that triggered the transformation. In case
-   *                  of this specific transformation, there is no directive.
+   * Default ctor as this is a translation_unit triggered transformation.
    */
-  public XcodeMLWorkaround(ClawLanguage directive) {
-    super(directive);
+  public XcodeMLWorkaround(){
+    super();
   }
 
   @Override
