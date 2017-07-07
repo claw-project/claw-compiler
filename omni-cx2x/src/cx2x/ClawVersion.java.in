@@ -6,7 +6,8 @@
 package cx2x;
 
 /**
- * Class holding version number for configuration checking.
+ * Class holding version number for configuration checking. File edited
+ * automatically by the build system.
  *
  * @author clementval
  */
