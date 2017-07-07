@@ -5,7 +5,7 @@
 
 package cx2x;
 
-import cx2x.decompiler.FortranDecompiler;
+import cx2x.decompiler.XcodeMlToFortranDecompiler;
 import cx2x.translator.ClawXcodeMlTranslator;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
@@ -28,10 +28,16 @@ public class Cx2x {
   /**
    * Print an error message an abort.
    *
-   * @param s Error message.
+   * @param filename   Filename in which error occurred.
+   * @param lineNumber Line number of the error, if known.
+   * @param charPos    Character position of the error, if known.
+   * @param msg        Error message.
    */
-  private static void error(String s) {
-    System.err.println(s);
+  private static void error(String filename, int lineNumber,
+                            int charPos, String msg)
+  {
+    System.err.println(String.format("%s:%d:%d error: %s",
+        filename, lineNumber, charPos, msg));
     System.exit(1);
   }
 
@@ -85,7 +91,7 @@ public class Cx2x {
             i++, g.getName(), g.getType(), g.getTransformationClassName());
       }
     } catch(Exception e) {
-      error("Could not read the configuration file.\n" + e.getMessage());
+      error("internal", 0, 0, "Could not read the configuration file.\n" + e.getMessage());
     }
   }
 
@@ -151,7 +157,7 @@ public class Cx2x {
     try {
       cmd = processCommandArgs(args);
     } catch(ParseException pex) {
-      error(pex.getMessage());
+      error("internal", 0, 0, pex.getMessage());
       return;
     }
 
@@ -217,12 +223,13 @@ public class Cx2x {
 
     // Check that configuration file exists
     if(configuration_path == null) {
-      error("Configuration file missing.");
+      error("internal", 0, 0, "Configuration file missing.");
       return;
     }
     File configFile = new File(configuration_path);
     if(!configFile.exists()) {
-      error("Configuration file not found. " + configuration_path);
+      error("internal", 0, 0, "Configuration file not found. "
+          + configuration_path);
     }
 
     if(cmd.hasOption("sc")) {
@@ -231,7 +238,7 @@ public class Cx2x {
     }
 
     if(cmd.getArgs().length == 0) {
-      error("no input file");
+      error("internal", 0, 0, "no input file");
       return;
     } else {
       input = cmd.getArgs()[0];
@@ -252,7 +259,7 @@ public class Cx2x {
       config.setUserDefineDirective(directive_option);
       config.setMaxColumns(maxColumns);
     } catch(Exception ex) {
-      error(ex.getMessage());
+      error("internal", 0, 0, ex.getMessage());
       return;
     }
 
@@ -276,11 +283,11 @@ public class Cx2x {
     }
 
     // Decompile XcodeML/F to Fortran
-    FortranDecompiler decompiler = new FortranDecompiler();
+    XcodeMlToFortranDecompiler decompiler = new XcodeMlToFortranDecompiler();
     if(!decompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
-      error("Unable to decompile XcodeML to Fortran");
+      error(input, 0, 0, "Unable to decompile XcodeML to Fortran");
     }
   }
 }
