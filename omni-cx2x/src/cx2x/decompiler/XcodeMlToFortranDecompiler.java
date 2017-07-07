@@ -2,12 +2,13 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
- 
+
 package cx2x.decompiler;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import xcodeml.util.*;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
