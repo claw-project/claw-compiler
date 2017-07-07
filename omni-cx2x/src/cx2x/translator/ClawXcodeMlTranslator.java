@@ -382,7 +382,9 @@ public class ClawXcodeMlTranslator {
    * displaying.
    */
   private void displayWarnings() {
-    displayMessages(WARNING_PREFIX, _program.getWarnings());
+    if(_program != null) {
+      displayMessages(WARNING_PREFIX, _program.getWarnings());
+    }
   }
 
   /**
