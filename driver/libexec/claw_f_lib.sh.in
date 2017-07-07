@@ -233,7 +233,8 @@ function claw::print_version()
 ###################################################################
 function claw::error_exit()
 {
-    echo "$0: error: $1" >&2
+  #TODO message
+    echo "internal:0:0: error: $1" >&2
     echo "compilation aborted." >&2
     exit 1
 }
