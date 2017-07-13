@@ -258,9 +258,9 @@ for input_file in "${f_files_transformation[@]}"; do
         ${file_pp}"
 
       # Call to the preprocessor
-      # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
-        ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}" > "${file_pp}"
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp1}" > "${file_pp}"
     else
       # Debug output
       [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Preprocessing"
@@ -270,9 +270,9 @@ for input_file in "${f_files_transformation[@]}"; do
         ${file_pp}"
 
       # Call to the preprocessor
-      # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" \
-        ${OMNI_FPP_OPT} "${other_args[@]}" "${file_pp1}"
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp1}"
       mv "${preprocessor_output}.i" "${file_pp}"
     fi
 
