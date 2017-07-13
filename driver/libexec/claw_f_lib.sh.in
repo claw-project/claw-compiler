@@ -27,7 +27,7 @@ CLAW FORTRAN Compiler options:
                                 to be searched for header files.
    -J <dir>                   : specify where to put .mod and .xmod files for
                                 compiled modules.
-   -D <dir>                   : specify output directory for transformed files.
+   -O <dir>                   : specify output directory for transformed files.
    -t=,--target=<target>      : specify the type of accelerator directive
                                 language for code generation.
    --target-list              : list the available type of accelerator directive
@@ -126,7 +126,10 @@ function claw::set_parameters()
         f_files+=("$1")
         ;;
       -o) shift; output_file="$1" ;;
-      -D) shift; output_dir="$1" ;;
+      -O) shift; output_dir="$1" ;;
+      -D*)
+        pp_add_opt+="$1 "
+        ;;
       -J)
         shift
         module_dir="${1#-J}"
