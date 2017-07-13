@@ -25,7 +25,14 @@ public abstract class Transformation {
   private int _startLine = 0;
 
   /**
-   * Transformation ctor.
+   * Transformation ctor for translation_unit triggered transformation.
+   */
+  protected Transformation() {
+    _directive = null;
+  }
+
+  /**
+   * Transformation ctor for directive triggered transformation.
    *
    * @param directive The directive that triggered the transformation.
    */

@@ -128,11 +128,24 @@ fi
 
 ### Set correct configuration file info ###
 if [[ ${user_config} == true ]]; then
-  OMNI_CX2X_CONFIG_OPT="--config=${config_opt} --schema=${OMNI_CX2X_CONFIG_XSD}"
+  OMNI_CX2X_CONFIG_OPT="--config=${config_opt}"
 else
-  OMNI_CX2X_CONFIG_OPT="--config=${OMNI_CX2X_CONFIG_DEFAULT}"
-  OMNI_CX2X_CONFIG_OPT="$OMNI_CX2X_CONFIG_OPT --schema=${OMNI_CX2X_CONFIG_XSD}"
+  # Is configuration set through env variable
+#  if [[ -z ${CLAW_CONF+x} ]]; then
+#    OMNI_CX2X_CONFIG_OPT="--config=${CLAW_CONF_FILE}"
+#  else
+    # Use the default configuration
+    OMNI_CX2X_CONFIG_OPT="--config=${OMNI_CX2X_CONFIG_DEFAULT}"
+#  fi
 fi
+OMNI_CX2X_CONFIG_OPT="$OMNI_CX2X_CONFIG_OPT --schema=${OMNI_CX2X_CONFIG_XSD}"
+
+# Set the correct JARs for transformations
+#if [[ -z ${CLAW_TRANS_PATH+x} ]]; then
+#  OMNI_CX2X_TRANS_PATH_OPT="--trans=${CLAW_TRANS_PATH}"
+#else
+#  OMNI_CX2X_TRANS_PATH_OPT="--trans=${OMNI_CX2X_TRANS_DEFAULT}"
+#fi
 
 # Set the correct target option for the translator
 OMNI_CX2X_TARGET_OPT=""

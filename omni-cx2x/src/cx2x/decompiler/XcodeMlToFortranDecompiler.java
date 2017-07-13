@@ -2,12 +2,13 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
- 
+
 package cx2x.decompiler;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import xcodeml.util.*;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,17 +21,17 @@ import java.io.*;
  *
  * @author clementval
  */
-public class FortranDecompiler {
+public class XcodeMlToFortranDecompiler {
 
   private BufferedReader _reader;
   private XmToolFactory _toolFactory;
 
   /**
-   * Constructs a new FortranDecompiler object.
+   * Constructs a new XcodeMlToFortranDecompiler object.
    *
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
-  public FortranDecompiler()
+  public XcodeMlToFortranDecompiler()
       throws XmException
   {
     _toolFactory = new XmToolFactory("F");

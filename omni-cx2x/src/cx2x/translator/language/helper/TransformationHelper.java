@@ -61,7 +61,7 @@ public class TransformationHelper {
                                                       Xnode stmt)
   {
     // Order doesn't matter
-    applyFusionClause(claw, transformer, stmt);
+    applyFusionClause(claw, xcodeml, transformer, stmt);
     applyInterchangeClause(claw, xcodeml, transformer, stmt);
   }
 
@@ -73,12 +73,14 @@ public class TransformationHelper {
    * @param claw        ClawLanguage object that tells encapsulates all
    *                    information about the current directives and its
    *                    clauses.
+   * @param xcodeml     Current XcodeML program.
    * @param transformer Transformer object in which new transformation are
    *                    added.
    * @param stmt        Statement on which the transformation is attached. Must
    *                    be a FdoStatement for the loop fusion transformation.
    */
   private static void applyFusionClause(ClawLanguage claw,
+                                        XcodeProgram xcodeml,
                                         Transformer transformer,
                                         Xnode stmt)
   {
@@ -86,7 +88,7 @@ public class TransformationHelper {
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
       LoopFusion fusion = new LoopFusion(stmt, l);
       // TODO maybe run analysis
-      transformer.addTransformation(fusion);
+      transformer.addTransformation(xcodeml, fusion);
 
       if(XmOption.isDebugOutput()) {
         System.out.println("Loop fusion added: " + claw.getGroupValue());
@@ -118,7 +120,7 @@ public class TransformationHelper {
       stmt.insertBefore(p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
-      transformer.addTransformation(interchange);
+      transformer.addTransformation(xcodeml, interchange);
       if(XmOption.isDebugOutput()) {
         System.out.println("Loop interchange added: " + claw.getIndexes());
       }

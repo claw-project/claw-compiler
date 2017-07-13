@@ -7,6 +7,8 @@ package cx2x.translator.config;
 
 import cx2x.ClawVersion;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.transformation.BlockTransformation;
@@ -41,8 +43,9 @@ import java.util.regex.Pattern;
 public class Configuration {
 
   // Specific keys
-  private static final String DEFAULT_TARGET = "default_target";
-  private static final String DEFAULT_DIRECTIVE = "default_directive";
+  public static final String DEFAULT_TARGET = "default_target";
+  public static final String DEFAULT_DIRECTIVE = "default_directive";
+  public static final String TRANSFORMER = "transformer";
   // Element and attribute names
   private static final String GLOBAL_ELEMENT = "global";
   private static final String GROUPS_ELEMENT = "groups";
@@ -66,6 +69,8 @@ public class Configuration {
   private final OpenAccConfiguration _openacc;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
+
+  private AcceleratorGenerator _generator;
 
   /**
    * Constructs a new configuration object from the give configuration file.
@@ -366,6 +371,17 @@ public class Configuration {
    */
   public void setMaxColumns(int value) {
     _maxColumns = value;
+  }
+
+  /**
+   * Get the associated accelerator generator.
+   * @return Accelerator generator.
+   */
+  public AcceleratorGenerator getAcceleratorGenerator(){
+    if(_generator == null){
+      _generator = AcceleratorHelper.createAcceleratorGenerator(this);
+    }
+    return _generator;
   }
 
 }
