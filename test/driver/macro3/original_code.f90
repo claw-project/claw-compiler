@@ -1,12 +1,17 @@
-PROGRAM testmacro
+! Small test case to test macro passing to the preprocessor by the CLAW driver
+program testmacro
 
-#ifdef CLAW_ONLY
-  PRINT*,'These lines'
-  PRINT*,'are not ignored'
-  PRINT*,'by the preprocessor.'
+#ifdef USER_MACRO1
+  print*, 'These lines'
+  print*, 'are not ignored'
+  print*, 'by the preprocessor.'
 #else
-  PRINT*,'These lines'
-  PRINT*,'are ignored by the preprocessor.'
+  print*, 'These lines'
+  print*, 'are ignored by the preprocessor.'
 #endif
 
-END PROGRAM testmacro
+#ifdef USER_MACRO2
+  print*, 'This is in.'
+#endif
+
+end program testmacro
