@@ -245,7 +245,7 @@ for input_file in "${f_files_transformation[@]}"; do
   file_pp1=${temp_dir}/"${file_name}".pp1.${ext} # temp file for preprocessing 1
   file_pp2=${temp_dir}/"${file_name}".pp2.${ext} # temp file for preprocessing 2
   file_pp=${temp_dir}/"${base_name}" # preprocessed file with original name
-  preprocessor_output="$(basename "${file_pp1%.*}")"
+  preprocessor_output="$(basename "${file_pp%.*}")"
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
