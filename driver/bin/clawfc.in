@@ -240,39 +240,46 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Prepocessing ..."
 
   file_name="$(claw::norm_file_name "${input_file}")"
+  base_name="$(basename "${input_file}")"
   ext=${input_file##*.}
-  file_pp1=${temp_dir}/"${file_name}".pp.${ext}
-  file_pp=${temp_dir}/"${file_name}".${ext}
+  file_pp1=${temp_dir}/"${file_name}".pp1.${ext} # temp file for preprocessing 1
+  file_pp2=${temp_dir}/"${file_name}".pp2.${ext} # temp file for preprocessing 2
+  file_pp=${temp_dir}/"${base_name}" # preprocessed file with original name
+  preprocessor_output="$(basename "${file_pp1%.*}")"
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
 
+    # Apply pre preprocessor pass to avoid ending backslash error
     claw::applyPreprocessorPass "${input_file}" "${file_pp1}"
-    preprocessor_output="$(basename "${file_pp1%.*}")"
+    mv "${file_pp1}" "${file_pp}"
 
     if [[ ${fpp_redirect} == true ]]; then
       # Debug output
       [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Preprocessing"
       [[ ${enable_debug} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
-        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp1} > \
-        ${file_pp}"
+        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp} > \
+        ${file_pp2}"
 
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp1}" > "${file_pp}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > "${file_pp2}"
+
+      mv "${file_pp2}" "${file_pp}"
     else
       # Debug output
       [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Preprocessing"
       [[ ${enable_debug} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
-        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp1}"
+        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp2}"
       [[ ${enable_debug} == true ]] && echo "mv ${preprocessor_output}.i \
         ${file_pp}"
 
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp1}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp2}"
+
       mv "${preprocessor_output}.i" "${file_pp}"
     fi
 
@@ -293,10 +300,12 @@ done
 for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
+  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${file_name}".${ext}
+    file_pp=${temp_dir}/"${base_name}"
   else
+    # TODO not correct file name as iignore is applied in place
     file_pp="${input_file}"
   fi
   claw::applyIgnore "${file_pp}"
@@ -308,10 +317,10 @@ if [[ ${resolve_dependencies} ]]; then
     claw::verbose "Dependencies resolution ..."
     file_name="$(claw::norm_file_name "${input_file}")"
     ext=${input_file##*.}
-
+    base_name="$(basename "${input_file}")"
     if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
       || [[ ${enable_cpp} == true ]]; then
-      file_pp=${temp_dir}/"${file_name}".${ext}
+      file_pp=${temp_dir}/"${base_name}"
     else
       file_pp="${input_file}"
     fi
@@ -326,10 +335,10 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Fortran to XcodeML ..."
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
-
+  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${file_name}".${ext}
+    file_pp=${temp_dir}/"${base_name}"
   else
     file_pp="${input_file}"
   fi
