@@ -271,14 +271,14 @@ for input_file in "${f_files_transformation[@]}"; do
       # Debug output
       [[ ${enable_debug} == true ]] && echo "CLAW DRIVER: Preprocessing"
       [[ ${enable_debug} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
-        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp2}"
+        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp}"
       [[ ${enable_debug} == true ]] && echo "mv ${preprocessor_output}.i \
         ${file_pp}"
 
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp2}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}"
 
       mv "${preprocessor_output}.i" "${file_pp}"
     fi
