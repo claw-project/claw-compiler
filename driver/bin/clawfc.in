@@ -242,7 +242,7 @@ for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   file_pp1=${temp_dir}/"${file_name}".pp.${ext}
-  file_pp=${temp_dir}/"${file_name}".${ext}
+  file_pp=${temp_dir}/"${input_file}"
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
@@ -295,8 +295,9 @@ for input_file in "${f_files_transformation[@]}"; do
   ext=${input_file##*.}
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${file_name}".${ext}
+    file_pp=${temp_dir}/"${input_file}"
   else
+    # TODO not correct file name as iignore is applied in place
     file_pp="${input_file}"
   fi
   claw::applyIgnore "${file_pp}"
@@ -311,7 +312,7 @@ if [[ ${resolve_dependencies} ]]; then
 
     if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
       || [[ ${enable_cpp} == true ]]; then
-      file_pp=${temp_dir}/"${file_name}".${ext}
+      file_pp=${temp_dir}/"${input_file}"
     else
       file_pp="${input_file}"
     fi
@@ -329,7 +330,7 @@ for input_file in "${f_files_transformation[@]}"; do
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
     || [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${file_name}".${ext}
+    file_pp=${temp_dir}/"${input_file}"
   else
     file_pp="${input_file}"
   fi
