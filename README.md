@@ -2,7 +2,17 @@
 
 [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
 
-![CLAW logo](resource/claw_image.png)
+> Who is in charge here?
+>
+> The CLAW!
+>
+> The CLAW is our master.
+>
+> The CLAW chooses who will go and who will stay.
+>
+> -- <cite>Buzz Lightyear & Two Green Aliens in the UFO Catcher.</cite>
+
+
 
 ### CLAW Directive language specifications
 The directives that control the transformation flow are defined in the
