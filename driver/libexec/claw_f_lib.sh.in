@@ -201,7 +201,8 @@ function claw::set_parameters()
   module_opt+=("-M${PWD}")
 
   # Add the generic modules paths
-  module_opt+=("-M${XMOD_GENERIC}")
+  module_opt+=("-M${CLAW_XMOD_GENERIC}")
+  module_opt+=("-M${OMNI_XMOD_GENERIC}")
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
@@ -440,8 +441,15 @@ function claw::process_dependencies()
     # .xmod file is already present
     if [[ ${source_mod_file_found} == false ]] \
       && [[ ${compiled_mod_file_found} == true ]]; then
-      claw::warning "$2" "-" \
-        "only module file found for ${module_name}. Might be out-of-date"
+      # Do not print warning for intrinsic
+      if [[ "${module_name}" != "iso_c_binding" ]] &&
+         [[ "${module_name}" != "iso_fortran_env" ]] &&
+         [[ "${module_name}" != "ieee_features" ]] &&
+         [[ "${module_name}" != "ieee_exceptions" ]] &&
+         [[ "${module_name}" != "ieee_arithmetic" ]]; then
+         claw::warning "$2" "-" \
+           "only module file found for ${module_name}. Might be out-of-date"
+      fi
       continue
     elif [[ ${source_mod_file_found} == true ]] \
       && [[ ${compiled_mod_file_found} == true ]]; then
