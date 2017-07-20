@@ -312,7 +312,7 @@ for input_file in "${f_files_transformation[@]}"; do
 done
 
 ### dependencies resolution ###
-if [[ ${resolve_dependencies} ]]; then
+if [[ ${resolve_dependencies} == true ]]; then
   for input_file in "${f_files_transformation[@]}"; do
     claw::verbose "Dependencies resolution ..."
     file_name="$(claw::norm_file_name "${input_file}")"

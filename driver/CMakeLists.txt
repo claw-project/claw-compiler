@@ -76,7 +76,8 @@ set(OMNI_CX2X_CONFIG_XSD "${CMAKE_SOURCE_DIR}/driver/etc/${CLAW_CONFIG_XSD}")
 set(ANTLR4 "${CMAKE_SOURCE_DIR}/omni-cx2x/lib/${ANTLR4_NAME}.jar")
 set(ANTLR4_RUNTIME "${CMAKE_SOURCE_DIR}/omni-cx2x/lib/${ANTLR4_RUNTIME_NAME}.jar")
 set(COMMON_CLI "${CMAKE_SOURCE_DIR}/omni-cx2x/lib/${COMMON_CLI_NAME}.jar")
-set(XMOD_GENERIC "${CMAKE_BINARY_DIR}/modules/")
+set(CLAW_XMOD_GENERIC "${CMAKE_BINARY_DIR}/modules/")
+set(OMNI_XMOD_GENERIC "${OMNI_HOME}/F-FrontEnd/src/fincludes/")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in

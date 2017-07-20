@@ -49,7 +49,10 @@ set(OMNI_GIT_HASH "${GIT_OMNI_COMMIT_HASH}")
 
 # Set the default install directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set (CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "default install path" FORCE)
+  set (
+    CMAKE_INSTALL_PREFIX "/usr/local"
+    CACHE PATH "default install path" FORCE
+  )
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 # Set ant to be verbose
@@ -66,7 +69,11 @@ elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "PGI")
 else()
   include(compiler/gnu.cmake)
 endif()
-message(STATUS "Configure preprocessor with ${CMAKE_Fortran_COMPILER_ID} compiler")
+
+message(
+  STATUS
+  "Configure preprocessor with ${CMAKE_Fortran_COMPILER_ID} compiler"
+)
 
 # Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
 # specific version of OMNI Compiler at the moment.
@@ -79,8 +86,11 @@ if(BUILD_OMNI)
     omni-compiler
     SOURCE_DIR ${OMNIC_DIR}
     CONFIGURE_COMMAND touch ${OMNIC_DIR}/configure.ac ${OMNIC_DIR}/aclocal.m4
-    ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in
-    && CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} FC=${CMAKE_Fortran_COMPILER} ${OMNIC_DIR}/configure --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION} ${OMNI_MPI_CC} ${OMNI_MPI_FC}
+      ${OMNIC_DIR}/configure ${OMNIC_DIR}/Makefile.am ${OMNIC_DIR}/Makefile.in
+      && CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+      FC=${CMAKE_Fortran_COMPILER} ${OMNIC_DIR}/configure
+      --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
+      ${OMNI_MPI_CC} ${OMNI_MPI_FC}
     BUILD_COMMAND make
     BUILD_IN_SOURCE 1
   )
