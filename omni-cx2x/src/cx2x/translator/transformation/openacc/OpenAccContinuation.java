@@ -120,8 +120,12 @@ public class OpenAccContinuation extends Transformation {
         int splitIndex =
             allPragma.substring(0,
                 transformer.getMaxColumns() - addLength).lastIndexOf(" ");
+        // Cannot cut as it should. Take first possible cutting point.
+        if(splitIndex == -1) {
+          splitIndex = allPragma.indexOf(" ");
+        }
         String splittedPragma = allPragma.substring(0, splitIndex);
-        allPragma = allPragma.substring(splitIndex, allPragma.length());
+        allPragma = allPragma.substring(splitIndex, allPragma.length()).trim();
         newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
             splittedPragma, true);
       }
