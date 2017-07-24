@@ -10,3 +10,5 @@ add_subdirectory(kcache4) # assign cache with init, data and private clauses
 add_subdirectory(kcache5) # with target clause
 add_subdirectory(compile-guard1) # Check removal of the compile guard OpenACC
 add_subdirectory(compile-guard2) # Check removal of the compile guard OpenMP
+add_subdirectory(compile-guard3) # Compile guard without other claw directives
+add_subdirectory(compile-guard4) # Compile guard without other claw directives
