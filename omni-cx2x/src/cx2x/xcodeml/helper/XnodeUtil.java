@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.helper;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -1135,7 +1136,7 @@ public class XnodeUtil {
       Xnode toDelete = null;
 
       for(String p : previous) {
-        if(pragma.contains(p)) {
+        if(!pragma.startsWith(ClawConstant.CLAW) && pragma.contains(p)) {
           toDelete = node.prevSibling();
           break;
         }
@@ -1151,7 +1152,7 @@ public class XnodeUtil {
       Xnode toDelete = null;
 
       for(String n : next) {
-        if(pragma.contains(n)) {
+        if(!pragma.startsWith(ClawConstant.CLAW) && pragma.contains(n)) {
           toDelete = node.nextSibling();
           break;
         }
