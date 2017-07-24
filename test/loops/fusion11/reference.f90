@@ -21,12 +21,10 @@ PROGRAM ecmwf_case1
   END DO
   PRINT * ,"5th jl loop body"
  END DO
-!$acc loop
 !$claw loop-fusion group(g3)
  DO jm = 1 , 10 , 1
   PRINT * ,"3rd jm loop body"
  END DO
-!$acc loop
 !$acc end kernels
 END PROGRAM ecmwf_case1
 
