@@ -52,7 +52,9 @@ CLAW FORTRAN Compiler options:
    --force-pure               : force compiler to exit when transformation
                                 applied to PURE subroutine/function.
    -r,--report                : generate the tranformation report.
-   --debug                    : save intermediate files in __omni_tmp__.
+   --debug                    : display transformation debug information.
+   --debug-omni               : save intermediate files in __omni_tmp__ and
+                                display driver information.
    --stop-pp                  : save intermediate files and stop after
                                 preprocess.
    --stop-dependencies        : save intermediate files and stop after
@@ -189,7 +191,7 @@ function claw::set_parameters()
         max_columns="$1"
         ;;
       -l) line_directive=true ;;
-      --dump-cx2x-args) dump_cx2x_args=true ;;
+      --dump-cx2x-args) dump_cx2x_args=true; enable_debug_omni=true ;;
       --force-pure) force_pure=true ;;
       -r|--report) report=true ;;
       *) other_args+=("$1") ;;
