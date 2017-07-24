@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.helper;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -1113,6 +1114,57 @@ public class XnodeUtil {
   public static void safeDelete(Xnode node) {
     if(node != null) {
       node.delete();
+    }
+  }
+
+  /**
+   * Clean up extra pragma that have no more sense after transformation.
+   *
+   * @param node     Do statement that will be removed.
+   * @param previous List of pragma to be removed before the do statement.
+   * @param next     List of pragmas to be removed after the do statement.
+   */
+  public static void cleanPragmas(Xnode node, String[] previous, String[] next)
+  {
+    if(node.opcode() != Xcode.FDOSTATEMENT) {
+      return;
+    }
+
+    Xnode doStatment = node;
+
+    while(node.prevSibling() != null
+        && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT)
+    {
+      String pragma = node.prevSibling().value().toLowerCase();
+      Xnode toDelete = null;
+
+      for(String p : previous) {
+        if(!pragma.startsWith(ClawConstant.CLAW) && pragma.contains(p)) {
+          toDelete = node.prevSibling();
+          break;
+        }
+      }
+
+      node = node.prevSibling();
+      safeDelete(toDelete);
+    }
+
+    node = doStatment; // Reset node to the initial position.
+    while(node.nextSibling() != null
+        && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT)
+    {
+      String pragma = node.nextSibling().value().toLowerCase();
+      Xnode toDelete = null;
+
+      for(String n : next) {
+        if(!pragma.startsWith(ClawConstant.CLAW) && pragma.contains(n)) {
+          toDelete = node.nextSibling();
+          break;
+        }
+      }
+
+      node = node.nextSibling();
+      safeDelete(toDelete);
     }
   }
 

@@ -384,6 +384,25 @@ public class Xnode {
   }
 
   /**
+   * Get previous sibling node.
+   *
+   * @return Previous sibling node.
+   */
+  public Xnode prevSibling() {
+    if(_baseElement == null) {
+      return null;
+    }
+    Node n = _baseElement.getPreviousSibling();
+    while(n != null) {
+      if(n.getNodeType() == Node.ELEMENT_NODE) {
+        return new Xnode((Element) n);
+      }
+      n = n.getPreviousSibling();
+    }
+    return null;
+  }
+
+  /**
    * Find node with the given opcode in the ancestors of the current node.
    *
    * @param opcode Opcode of the node to be matched.

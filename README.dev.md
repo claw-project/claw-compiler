@@ -8,7 +8,9 @@ Indent with spaces. NO tabs!
 
 #### Java code
 * An IDEA format configuration is available here:
-./omni-cx2x/config/claw_code_style_idea.xml
+[claw_code_style_idea.xml](./omni-cx2x/config/claw_code_style_idea.xml)
+If IDEA IntelliJ is not used, the coding style should reflect this
+configuration.
 
 #### Bash scripts
 In general, all bash scripts written for the CLAW FORTRAN Compiler projects

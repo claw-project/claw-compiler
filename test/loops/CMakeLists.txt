@@ -18,6 +18,8 @@ add_subdirectory(fusion8)      # impossible fusion because of assignment
 add_subdirectory(fusion9)      # issue 121 (release constraint)
 add_subdirectory(fusion10)     # issue 121 + hoist
 add_subdirectory(fusion11)     # test case for ECMWFC cloudsc
+add_subdirectory(fusion12)     # Behavior with other directives (OpenACC)
+add_subdirectory(fusion13)     # Behavior with other directives (OpenMP)
 add_subdirectory(hoist1)
 add_subdirectory(hoist2)
 add_subdirectory(hoist3)       # with target clause
