@@ -39,7 +39,7 @@ public class LoopFusion extends ClawTransformation {
   private Xnode[] _doStmts;
 
   private static final String[] prevTodelete = { "acc loop", "omp do" };
-  private static final String[] nextToDelete = { "end omp do" };
+  private static final String[] nextToDelete = { "omp end do" };
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
