@@ -23,7 +23,9 @@ endif()
 if(${TEST_DEBUG}) # with debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --debug -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    COMMAND
+      ${CLAWFC} ${OPTIONAL_FLAGS} --debug-omni --debug -J ${XMOD_DIR}
+      -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "Translating CLAW directive with ${CLAWFC}"
@@ -31,7 +33,9 @@ if(${TEST_DEBUG}) # with debug option
 else() # without debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} -J ${XMOD_DIR} -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+    COMMAND
+      ${CLAWFC} ${OPTIONAL_FLAGS} -J ${XMOD_DIR}
+      -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "Translating CLAW directive with ${CLAWFC}"
@@ -72,9 +76,18 @@ set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
 
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
-  add_test(NAME ast-transform-${TEST_NAME} COMMAND "${CMAKE_COMMAND}"  --build ${CMAKE_BINARY_DIR} --target transform-${TEST_NAME})
-  add_test(NAME ast-compare-${TEST_NAME} COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE})
-  set_tests_properties(ast-compare-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
+  add_test(
+    NAME ast-transform-${TEST_NAME}
+    COMMAND
+      "${CMAKE_COMMAND}"  --build ${CMAKE_BINARY_DIR}
+      --target transform-${TEST_NAME}
+  )
+  add_test(
+    NAME ast-compare-${TEST_NAME}
+    COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE}
+  )
+  set_tests_properties(ast-compare-${TEST_NAME}
+    PROPERTIES DEPENDS ast-transform-${TEST_NAME})
 
   # Compare the output of both executable
   if(OUTPUT_TEST)

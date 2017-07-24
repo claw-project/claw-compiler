@@ -38,7 +38,7 @@ endif()
 
 # Create intermediate representation in XcodeML Fortran format
 if(${TEST_DEBUG}) # with debug option
-  set(DEBUG_FLAG --debug)
+  set(DEBUG_FLAG --debug --debug-omni)
 endif()
 
 # Execute the CLAW compiler for CPU target
