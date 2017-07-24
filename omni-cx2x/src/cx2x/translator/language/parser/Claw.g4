@@ -12,6 +12,11 @@ grammar Claw;
 
 @header
 {
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.*;
 import cx2x.translator.language.common.*;

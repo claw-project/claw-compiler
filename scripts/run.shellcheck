@@ -12,34 +12,31 @@
 shellcheck -V
 
 # Check basic scripts
-if ! shellcheck offline
-then
+if ! shellcheck offline; then
   exit 1
 fi
-if ! shellcheck pack_release
-then
+if ! shellcheck pack_release; then
+  exit 1
+fi
+if ! shellcheck check_license; then
   exit 1
 fi
 
 # Check driver scripts
 cd ../driver/bin || exit 1
-if ! shellcheck ../etc/claw_f.conf
-then
+if ! shellcheck ../etc/claw_f.conf; then
   exit 1
 fi
-if ! shellcheck ../libexec/claw_f_lib.sh.in
-then
+if ! shellcheck ../libexec/claw_f_lib.sh.in; then
   exit 1
 fi
-if ! shellcheck clawfc.in ../libexec/claw_f_lib.sh.in ../etc/claw_f.conf.in
-then
+if ! shellcheck clawfc.in ../libexec/claw_f_lib.sh.in ../etc/claw_f.conf.in; then
   exit 1
 fi
 cd - || exit 1
 
 # Check test driver scripts
 cd ../test/driver/lib/ || exit 1
-if ! shellcheck  test.claw_f_lib ../../../driver/libexec/claw_f_lib.sh.in
-then
+if ! shellcheck  test.claw_f_lib ../../../driver/libexec/claw_f_lib.sh.in; then
   exit 1
 fi
