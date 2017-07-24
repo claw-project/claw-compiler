@@ -38,6 +38,9 @@ public class LoopFusion extends ClawTransformation {
   // The loop statement involved in the Transformation
   private Xnode[] _doStmts;
 
+  private static final String[] prevTodelete = { "acc loop", "omp do" };
+  private static final String[] nextToDelete = { "end omp do" };
+
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
    *
@@ -178,6 +181,9 @@ public class LoopFusion extends ClawTransformation {
   private void finalizeTransformation() {
     // Delete the pragma of the transformed loop
     XnodeUtil.safeDelete(_claw.getPragma());
+
+    // Delete any acc loop / omp do pragma before/after the do statements.
+    XnodeUtil.cleanPragmas(_doStmts[0], prevTodelete, nextToDelete);
 
     // Delete the do statement that was merged with the main one
     XnodeUtil.safeDelete(_doStmts[0]);

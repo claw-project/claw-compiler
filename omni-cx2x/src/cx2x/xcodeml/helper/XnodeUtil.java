@@ -1117,6 +1117,52 @@ public class XnodeUtil {
   }
 
   /**
+   * Clean up extra pragma that have no more sense after transformation.
+   *
+   * @param node     Do statement that will be removed.
+   * @param previous List of pragma to be removed before the do statement.
+   * @param next     List of pragmas to be removed after the do statement.
+   */
+  public static void cleanPragmas(Xnode node, String[] previous, String[] next)
+  {
+    if(node.opcode() != Xcode.FDOSTATEMENT) {
+      return;
+    }
+
+    while(node.prevSibling() != null &&
+        node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
+      String pragma = node.prevSibling().value().toLowerCase();
+      Xnode toDelete = null;
+
+      for(String p : previous) {
+        if(pragma.contains(p)) {
+          toDelete = node.prevSibling();
+          break;
+        }
+      }
+
+      node = node.prevSibling();
+      safeDelete(toDelete);
+    }
+
+    while(node.nextSibling() != null &&
+        node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
+      String pragma = node.nextSibling().value().toLowerCase();
+      Xnode toDelete = null;
+
+      for(String n : next) {
+        if(pragma.contains(n)) {
+          toDelete = node.nextSibling();
+          break;
+        }
+      }
+
+      node = node.nextSibling();
+      safeDelete(toDelete);
+    }
+  }
+
+  /**
    * Remove the "pure" attribute from the function type. Issue a warning.
    *
    * @param fctDef  Function definition node where the pure attribute must be
