@@ -17,7 +17,7 @@ if ! ./scripts/check_license; then
 fi
 
 # Run shellcheck
-cd scripts || exit 1
+cd scripts || exit 1
 if ! ./run.shellcheck; then
   echo "One of your bash script does not comply with shellcheck!"
   exit 1
