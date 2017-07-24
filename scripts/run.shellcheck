@@ -22,6 +22,11 @@ if ! shellcheck check_license; then
   exit 1
 fi
 
+# Git hooks
+if ! shellcheck ./git_hooks/pre-commit; then
+  exit 1
+fi
+
 # Check driver scripts
 cd ../driver/bin || exit 1
 if ! shellcheck ../etc/claw_f.conf; then

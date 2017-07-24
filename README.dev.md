@@ -22,6 +22,18 @@ for the correctness of the script.
 
 The main word is: `Use common sense and BE CONSISTENT.`
 
+### Git hooks
+* Git hooks present in the `./scripts/git_hooks/` directory should be enabled
+  in your local checkout. To enable them, you have to symlink them in the
+  `./.git/hooks/` directory.
+
+```bash
+cd .git/hooks
+ln -s ../../scripts/pre-commit pre-commit
+```
+
+Make sure the the file is executable.
+
 ### Testing
 
 #### Unit test with JUnit
