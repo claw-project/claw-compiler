@@ -1,0 +1,15 @@
+<!--
+This file describe all high-level transformations included in the CLAW
+language specifications.
+
+More information: https://github.com/C2SM-RCM/claw-language-specification
+-->
+<transformations>
+  <transformation name="parallelize"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
+
+  <transformation name="parallelize-forward"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+</transformations>
