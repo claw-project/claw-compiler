@@ -1,0 +1,47 @@
+<!--
+This file describe all low-level transformations included in the CLAW
+language specifications.
+
+More information: https://github.com/C2SM-RCM/claw-language-specification
+-->
+<transformations>
+  <transformation name="remove"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.utility.UtilityRemove" />
+
+  <transformation name="primitive"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
+
+  <transformation name="array-transform"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.loop.ArrayTransform" />
+
+  <transformation name="loop-extract"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.loop.LoopExtraction" />
+
+  <transformation name="loop-hoist"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.loop.LoopHoist" />
+
+  <transformation name="loop-fusion"
+    type="dependent" trigger="directive"
+    class="cx2x.translator.transformation.loop.LoopFusion" />
+
+  <transformation name="loop-interchange"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.loop.LoopInterchange" />
+
+  <transformation name="on-the-fly"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.claw.ArrayToFctCall" />
+
+  <transformation name="kcache"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.claw.Kcaching" />
+
+  <transformation name="if-extract"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.loop.IfExtract" />
+</transformations>
