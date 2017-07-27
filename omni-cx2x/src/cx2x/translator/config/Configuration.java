@@ -27,6 +27,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,14 +43,20 @@ import java.util.regex.Pattern;
  */
 public class Configuration {
 
-  // Specific keys
-  public static final String DEFAULT_TARGET = "default_target";
-  public static final String DEFAULT_DIRECTIVE = "default_directive";
   public static final String TRANSFORMER = "transformer";
+  // Specific keys
+  private static final String DEFAULT_TARGET = "default_target";
+  private static final String DEFAULT_DIRECTIVE = "default_directive";
+  private static final String DEFAULT_CONFIG_FILE = "claw-default.xml";
+  private static final String XML_EXT = ".xml";
+  private static final String CONFIG_XSD = "claw_config.xsd";
+  private static final String SET_XSD = "claw_transformation_set.xsd";
   // Element and attribute names
   private static final String GLOBAL_ELEMENT = "global";
   private static final String GROUPS_ELEMENT = "groups";
   private static final String GROUP_ELEMENT = "group";
+  private static final String SETS_ELEMENT = "sets";
+  private static final String SET_ELEMENT = "set";
   private static final String PARAMETER_ELEMENT = "parameter";
   private static final String CLASS_ATTR = "class";
   private static final String NAME_ATTR = "name";
@@ -58,14 +65,21 @@ public class Configuration {
   private static final String VALUE_ATTR = "value";
   private static final String VERSION_ATTR = "version";
   private static final String TRIGGER_ATTR = "trigger";
+  private static final String EXT_CONF_TYPE = "extension";
+
+  // Transformation set
+  private static final String TRANSFORMATION_ELEMENT = "transformation";
+
   // Specific values
   private static final String DEPENDENT_GR_TYPE = "dependent";
   private static final String INDEPENDENT_GR_TYPE = "independent";
   private static final String DIRECTIVE_TR_TYPE = "directive";
   private static final String TRANSLATION_UNIT_TR_TYPE = "translation_unit";
-  private final Document _document;
+
+  private final String _configuration_path;
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
+  private final Map<String, GroupConfiguration> _availableGroups;
   private final OpenAccConfiguration _openacc;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
@@ -75,38 +89,41 @@ public class Configuration {
   /**
    * Constructs a new configuration object from the give configuration file.
    *
-   * @param configPath Path to the configuration file.
-   * @param schemaPath Path to the XSD schema for validation.
+   * @param configPath     Path to the configuration files and XSD schemas.
+   * @param userConfigFile Path to the alternative configuration.
    */
-  public Configuration(String configPath, String schemaPath) throws Exception {
+  public Configuration(String configPath, String userConfigFile)
+      throws Exception
+  {
+    _configuration_path = configPath;
     _parameters = new HashMap<>();
     _groups = new ArrayList<>();
-    DocumentBuilderFactory factory =
-        DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    _document = builder.parse(configPath);
+    _availableGroups = new HashMap<>();
+    boolean readDefault = true;
+    Document userConf = null;
 
-    try {
-      validate(schemaPath);
-    } catch(Exception e) {
-      throw new Exception("Error: Configuration file is not well formatted: "
-          + e.getMessage());
+    // Configuration has been given by the user. Read it first.
+    if(userConfigFile != null) {
+      File userConfiguration = Paths.get(userConfigFile).toFile();
+      userConf = validateConfiguration(userConfiguration);
+      readDefault = isExtension(userConf);
     }
 
-    Element root = _document.getDocumentElement();
 
-
-    String version = root.getAttribute(VERSION_ATTR);
-    checkVersion(version);
-
-
-    Element global =
-        (Element) root.getElementsByTagName(GLOBAL_ELEMENT).item(0);
-    Element groups =
-        (Element) root.getElementsByTagName(GROUPS_ELEMENT).item(0);
-
-    readParameters(global);
-    readGroups(groups);
+    if(readDefault) {
+      // There is no user defined configuration or it is just an extension.
+      File defaultConfigFile =
+          Paths.get(_configuration_path, DEFAULT_CONFIG_FILE).toFile();
+      Document defaultConf = validateConfiguration(defaultConfigFile);
+      readConfiguration(defaultConf, false);
+      if(userConf != null) { // Read extension
+        readConfiguration(userConf, true);
+      }
+    } else {
+      // User defined configuration is a full configuration.
+      // Then the default one is not read.
+      readConfiguration(userConf, false);
+    }
 
     _openacc = new OpenAccConfiguration(_parameters);
   }
@@ -121,26 +138,130 @@ public class Configuration {
     _parameters = new HashMap<>();
     _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
     _parameters.put(DEFAULT_TARGET, target.toString());
-    _document = null;
     _openacc = new OpenAccConfiguration(_parameters);
     _groups = new ArrayList<>();
+    _availableGroups = new HashMap<>();
+    _configuration_path = null;
+  }
+
+  /**
+   * Check whether the configuration file is an extension of the defualt
+   * configuration or if it is a standalone configuration.
+   *
+   * @param configurationDocument XML document representing the configuration
+   *                              file.
+   * @return True if the configuration is an extension. False otherwise.
+   */
+  private boolean isExtension(Document configurationDocument) {
+    Element root = configurationDocument.getDocumentElement();
+    Element global =
+        (Element) root.getElementsByTagName(GLOBAL_ELEMENT).item(0);
+    return global != null && global.hasAttribute(TYPE_ATTR)
+        && global.getAttribute(TYPE_ATTR).equals(EXT_CONF_TYPE);
+  }
+
+  /**
+   * Validate configuration file against its XSD schema.
+   *
+   * @param configurationFile File object representing the configuration file.
+   * @return XML Document of the configuration file.
+   * @throws Exception If the configuration file cannot be validated.
+   */
+  private Document validateConfiguration(File configurationFile)
+      throws Exception
+  {
+    File configurationSchema =
+        Paths.get(_configuration_path, CONFIG_XSD).toFile();
+
+    Document doc = parseAndValidate(configurationFile, configurationSchema);
+    Element root = doc.getDocumentElement();
+    checkVersion(root.getAttribute(VERSION_ATTR));
+    return doc;
+  }
+
+  /**
+   * Read different parts of the configuration file.
+   *
+   * @param configurationDocument XML document representing the configuration
+   *                              file.
+   * @param isExtension           Flag stating if the configuration is an
+   *                              extension.
+   * @throws Exception If the configuration has errors.
+   */
+  private void readConfiguration(Document configurationDocument,
+                                 boolean isExtension) throws Exception
+  {
+    Element root = configurationDocument.getDocumentElement();
+    // Read the global parameters
+    Element global =
+        (Element) root.getElementsByTagName(GLOBAL_ELEMENT).item(0);
+    readParameters(global, isExtension);
+
+    // Read the used transformation sets
+    Element sets =
+        (Element) root.getElementsByTagName(SETS_ELEMENT).item(0);
+    if(isExtension) { // Sets are overridden by extension
+      if(sets != null) {
+        _availableGroups.clear();
+      }
+    } else {
+      // For standalone configuration, the sets element is mandatory.
+      if(sets == null) {
+        throw new Exception("Root configuration must have sets element!");
+      }
+      readSets(sets);
+    }
+
+    // Read the transformation groups definition and order
+    Element groups =
+        (Element) root.getElementsByTagName(GROUPS_ELEMENT).item(0);
+    if(isExtension && groups != null) { // Groups are overridden by extension
+      _groups.clear();
+    }
+    readGroups(groups);
+  }
+
+  /**
+   * Parse the configuration file as an XML document and validate it againt its
+   * XSD schema.
+   *
+   * @param xmlFile   File object pointing to the configuration file.
+   * @param xsdSchema File object pointing to the XSD schema.
+   * @return XML document representing the configuration file.
+   * @throws Exception If the configuration file does not validate.
+   */
+  private Document parseAndValidate(File xmlFile, File xsdSchema)
+      throws Exception
+  {
+    DocumentBuilderFactory factory =
+        DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    Document document = builder.parse(xmlFile);
+
+    try {
+      validate(document, xsdSchema);
+    } catch(Exception e) {
+      throw new Exception("Error: Configuration file " + xmlFile.getName()
+          + " is not well formatted: " + e.getMessage());
+    }
+    return document;
   }
 
   /**
    * Validate the configuration file with the XSD schema.
    *
-   * @param xsdPath Path to the XSD schema.
+   * @param xsd File representing the XSD schema.
    * @throws Exception If configuration file is not valid.
    */
-  private void validate(String xsdPath)
+  private void validate(Document document, File xsd)
       throws Exception
   {
     SchemaFactory factory =
         SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    Source schemaFile = new StreamSource(new File(xsdPath));
+    Source schemaFile = new StreamSource(xsd);
     Schema schema = factory.newSchema(schemaFile);
     Validator validator = schema.newValidator();
-    validator.validate(new DOMSource(_document));
+    validator.validate(new DOMSource(document));
   }
 
   /**
@@ -191,30 +312,63 @@ public class Configuration {
   }
 
   /**
+   * Read all the transformation sets.
+   *
+   * @param sets Parent element "sets" for the transformation set.
+   * @throws Exception If transformation set file does not exist or not well
+   *                   formatted.
+   */
+  private void readSets(Element sets) throws Exception {
+    File xsdSchema = Paths.get(_configuration_path, SET_XSD).toFile();
+
+    NodeList transformation_sets = sets.getElementsByTagName(SET_ELEMENT);
+    for(int i = 0; i < transformation_sets.getLength(); ++i) {
+      Element e = (Element) transformation_sets.item(i);
+      String setName = e.getAttribute(NAME_ATTR);
+      File setFile = Paths.get(_configuration_path, setName + XML_EXT).toFile();
+      if(!setFile.exists()) {
+        throw new Exception("Transformation set " + setName
+            + " cannot be found!");
+      }
+
+      Document setDocument = parseAndValidate(setFile, xsdSchema);
+      Element root = setDocument.getDocumentElement();
+      readTransformations(setName, root);
+    }
+  }
+
+
+  /**
    * Read all the parameter element and store their key/value pair in the map.
    *
    * @param globalElement Parent element "global" for the parameters.
    */
-  private void readParameters(Element globalElement) {
+  private void readParameters(Element globalElement, boolean overwrite) {
     NodeList parameters = globalElement.getElementsByTagName(PARAMETER_ELEMENT);
     for(int i = 0; i < parameters.getLength(); ++i) {
       Element e = (Element) parameters.item(i);
-      _parameters.put(e.getAttribute(KEY_ATTR), e.getAttribute(VALUE_ATTR));
+      String key = e.getAttribute(KEY_ATTR);
+      if(overwrite && _parameters.containsKey(key)) { // Parameter overwritten
+        _parameters.remove(key);
+      }
+      _parameters.put(key, e.getAttribute(VALUE_ATTR));
     }
   }
 
   /**
-   * Read all the group element and store their information in a list of
-   * GroupConfiguration objects.
+   * Read all the transformation element and store their information in a list
+   * of available GroupConfiguration objects.
    *
-   * @param groupsNode Parent element "groups" for the group elements.
+   * @param transformationsNode Parent element "groups" for the group elements.
    * @throws Exception Group information not valid.
    */
-  private void readGroups(Element groupsNode) throws Exception {
-    NodeList groupElements = groupsNode.getElementsByTagName(GROUP_ELEMENT);
-    for(int i = 0; i < groupElements.getLength(); ++i) {
-      if(groupElements.item(i).getNodeType() == Node.ELEMENT_NODE) {
-        Element g = (Element) groupElements.item(i);
+  private void readTransformations(String setName, Element transformationsNode) throws Exception
+  {
+    NodeList transformationElements =
+        transformationsNode.getElementsByTagName(TRANSFORMATION_ELEMENT);
+    for(int i = 0; i < transformationElements.getLength(); ++i) {
+      if(transformationElements.item(i).getNodeType() == Node.ELEMENT_NODE) {
+        Element g = (Element) transformationElements.item(i);
         String name = g.getAttribute(NAME_ATTR);
         String type = g.getAttribute(TYPE_ATTR);
         // Read group type
@@ -267,8 +421,40 @@ public class Configuration {
         }
 
         // Store group configuration
-        _groups.add(new GroupConfiguration(name, gType, triggerType, cPath,
-            transClass));
+        if(_availableGroups.containsKey(name)) {
+          throw new Exception("Transformation " + name + " has name conflict!");
+        }
+        _availableGroups.put(name, new GroupConfiguration(setName, name, gType,
+            triggerType, cPath, transClass));
+      }
+    }
+  }
+
+  /**
+   * Read defined transformation groups in configuration. Order determines
+   * application order of transformation.
+   *
+   * @param groupsNode The "groups" element of the configuration.
+   * @throws Exception If the group name is not an available in any
+   *                   transformation set.
+   */
+  private void readGroups(Element groupsNode) throws Exception {
+    NodeList groupElements = groupsNode.getElementsByTagName(GROUP_ELEMENT);
+    for(int i = 0; i < groupElements.getLength(); ++i) {
+      if(groupElements.item(i).getNodeType() == Node.ELEMENT_NODE) {
+        Element g = (Element) groupElements.item(i);
+        String name = g.getAttribute(NAME_ATTR);
+        if(_availableGroups.containsKey(name)) {
+          GroupConfiguration gc = _availableGroups.get(name);
+          if(_groups.contains(gc)) {
+            throw new Exception("Duplicated transformation group creation: "
+                + name);
+          }
+          _groups.add(_availableGroups.get(name));
+        } else {
+          throw new Exception("No transformation found for " + name
+              + " in available transformation sets!");
+        }
       }
     }
   }
@@ -375,13 +561,31 @@ public class Configuration {
 
   /**
    * Get the associated accelerator generator.
+   *
    * @return Accelerator generator.
    */
-  public AcceleratorGenerator getAcceleratorGenerator(){
-    if(_generator == null){
+  public AcceleratorGenerator getAcceleratorGenerator() {
+    if(_generator == null) {
       _generator = AcceleratorHelper.createAcceleratorGenerator(this);
     }
     return _generator;
+  }
+
+  /**
+   * Display the loaded configuration.
+   */
+  public void displayConfig() {
+    System.out.println("- CLAW translator configuration -\n");
+    System.out.println("Default accelerator directive: " +
+        getCurrentDirective() + "\n");
+    System.out.println("Default target: " + getCurrentTarget() + "\n");
+    System.out.println("Current transformation order:");
+    int i = 0;
+    for(GroupConfiguration g : getGroups()) {
+      System.out.printf("  %2d) %-20s %-20s - type:%-15s, class:%-60s\n",
+          i++, g.getSetName(), g.getName(), g.getType(),
+          g.getTransformationClassName());
+    }
   }
 
 }

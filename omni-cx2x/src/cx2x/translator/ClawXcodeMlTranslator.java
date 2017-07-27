@@ -94,7 +94,7 @@ public class ClawXcodeMlTranslator {
     // Check all pragma found in the program
     for(Xnode pragma : _program.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
 
-      // Pragma can be hanlde by the transformer so let it do its job.
+      // Pragma can be handled by the transformer so let it do its job.
       if(_transformer.isHandledPragma(pragma)) {
         try {
           _transformer.generateTransformation(_program, pragma);

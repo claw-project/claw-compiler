@@ -12,6 +12,7 @@ package cx2x.translator.config;
  */
 public class GroupConfiguration {
 
+  private final String _setName;
   private final String _name;
   private final String _cPath;
   private final GroupType _type;
@@ -27,9 +28,10 @@ public class GroupConfiguration {
    * @param cPath   Path to the transformation class.
    * @param c       Actual class of the transformation.
    */
-  public GroupConfiguration(String name, GroupType type, TriggerType trigger,
+  public GroupConfiguration(String setName, String name, GroupType type, TriggerType trigger,
                             String cPath, Class c)
   {
+    _setName = setName;
     _name = name;
     _cPath = cPath;
     _type = type;
@@ -44,6 +46,15 @@ public class GroupConfiguration {
    */
   public String getName() {
     return _name;
+  }
+
+  /**
+   * Get the set name where this group configuration belongs to.
+   *
+   * @return Set name value.
+   */
+  public String getSetName() {
+    return _setName;
   }
 
   /**
