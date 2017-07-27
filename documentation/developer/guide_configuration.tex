@@ -1,0 +1,29 @@
+\chapter{CLAW FORTRAN Compiler configuration}
+\section{Transformation set configuration}
+A transformation set is a group of transformations that are packed together and
+that can be used during the translation. Each transformation set must be
+described in a tranformation set configuration file.
+
+\lstinputlisting
+  [
+    label=lst:internal_set_conf,
+    caption=CLAW internal transformation set configuration,
+    language=XML
+  ]{code/claw-internal-set.xml}
+
+A transformation set configuration defines several point of a transformation:
+\begin{itemize}
+  \item name: A unique name given to the transformation. This name is used when
+        defining the application order of the transformations
+  \item type: Type of the transformation as describe in section
+        \ref{section:trans_type}. Only two values are possible
+        \lstinline|dependent| or \lstinline|independent|.
+  \item trigger: How the transformation is triggered as descrived in section
+        \ref{section:trans_trigger}. Only two values are possible
+        \lstinline|directive| or \lstinline|translation_unit|.
+  \item class: Fully qualified class name implementing the transformation.
+\end{itemize}
+
+\section{Main configuration}
+\subsection{Default configuration}
+\subsection{User defined configuration}
