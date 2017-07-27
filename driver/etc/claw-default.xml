@@ -3,7 +3,7 @@ CLAW default configuration. This file should not be edited!
 For more information about the configuration file and its extension, please
 refer to the developer's guide
 -->
-<claw version="0.3">
+<claw version="0.4">
   <!-- Global transformation parameters -->
   <global type="root">
     <!-- Define the transformer to be used. -->
