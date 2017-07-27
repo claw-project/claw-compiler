@@ -27,10 +27,10 @@
             <xs:attribute type="xs:string" name="type" use="required"/>
           </xs:complexType>
         </xs:element>
-        <xs:element name="sets">
+        <xs:element name="sets" minOccurs="0" maxOccurs="1">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="set" maxOccurs="unbounded" minOccurs="1">
+              <xs:element name="set" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
                   <xs:simpleContent>
                     <xs:extension base="xs:string">
