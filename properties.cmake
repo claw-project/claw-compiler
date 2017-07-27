@@ -15,6 +15,10 @@ set(OMNI_CX2X_XCODEML_NAME "om-cx2x-xcodeml")
 # Define default configuration path.
 set(CLAW_CONFIG_FILE "claw-default.xml")
 set(CLAW_CONFIG_XSD "claw_config.xsd")
+set(CLAW_CONFIG_SET_XSD "claw_transformation_set.xsd")
+set(CLAW_TRANS_SET_INTERNAL "claw-internal-set.xml")
+set(CLAW_TRANS_SET_LOW "claw-low-level-set.xml")
+set(CLAW_TRANS_SET_HIGH "claw-high-level-set.xml")
 set(OMNI_CX2X_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/etc/")
 
 # Driver variables
