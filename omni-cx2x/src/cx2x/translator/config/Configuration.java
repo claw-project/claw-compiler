@@ -65,6 +65,7 @@ public class Configuration {
   private static final String VALUE_ATTR = "value";
   private static final String VERSION_ATTR = "version";
   private static final String TRIGGER_ATTR = "trigger";
+  private static final String DIRECTIVE_ATTR = "directive";
   private static final String EXT_CONF_TYPE = "extension";
 
   // Transformation set
@@ -401,6 +402,14 @@ public class Configuration {
           default:
             throw new Exception("Invalid trigger type specified.");
         }
+        String directive = null;
+        if(triggerType == GroupConfiguration.TriggerType.DIRECTIVE) {
+          directive = g.getAttribute(DIRECTIVE_ATTR);
+          if(directive == null) {
+            throw new Exception("Transformation with trigger type directive " +
+                "must have the directive attribute.");
+          }
+        }
         // Find actual class
         Class transClass;
         try {
@@ -425,7 +434,7 @@ public class Configuration {
           throw new Exception("Transformation " + name + " has name conflict!");
         }
         _availableGroups.put(name, new GroupConfiguration(setName, name, gType,
-            triggerType, cPath, transClass));
+            triggerType, cPath, directive, transClass));
       }
     }
   }
@@ -575,16 +584,21 @@ public class Configuration {
    * Display the loaded configuration.
    */
   public void displayConfig() {
-    System.out.println("- CLAW translator configuration -\n");
+    System.out.println("- CLAW FORTRAN Compiler configuration -\n");
     System.out.println("Default accelerator directive: " +
         getCurrentDirective() + "\n");
     System.out.println("Default target: " + getCurrentTarget() + "\n");
     System.out.println("Current transformation order:");
     int i = 0;
+    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s\n",
+        "Id", "set", "name", "type", "trigger", "directive", "class");
+    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s\n",
+        "--", "---", "----", "----", "-------", "---------", "-----");
     for(GroupConfiguration g : getGroups()) {
-      System.out.printf("  %2d) %-20s %-20s - type:%-15s, class:%-60s\n",
-          i++, g.getSetName(), g.getName(), g.getType(),
-          g.getTransformationClassName());
+      System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s\n",
+          i++, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
+          g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
+              ? g.getDirective() : "-", g.getTransformationClassName());
     }
   }
 
