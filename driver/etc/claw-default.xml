@@ -33,6 +33,7 @@ refer to the developer's guide
 
   <!-- Transformation groups and order -->
   <groups>
+    <!-- internal applied at the beginning -->
     <group name="internal-xcodeml" />
     <!-- Low-level transformations -->
     <group name="remove" />
@@ -48,5 +49,7 @@ refer to the developer's guide
     <!-- High-level transformations -->
     <group name="parallelize" />
     <group name="parallelize-forward" />
+    <!-- internal applied at the end -->
+    <group name="openacc-continuation" />
   </groups>
 </claw>

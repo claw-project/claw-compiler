@@ -12,12 +12,11 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.language.AnalyzedPragma;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.TransformationGroup;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
@@ -71,11 +70,11 @@ public class ClawXcodeMlTranslator {
       throw new Exception("Transformer not set in configuration");
     }
 
-    Class<?> transformerClass;
     try {
       // Check if class is there
-      transformerClass = Class.forName(transformerClassPath);
-      Constructor<?> ctor = transformerClass.getConstructor(Configuration.class);
+      Class<?> transformerClass = Class.forName(transformerClassPath);
+      Constructor<?> ctor =
+          transformerClass.getConstructor(Configuration.class);
       _transformer = (ClawTransformer) ctor.newInstance(config);
     } catch(ClassNotFoundException e) {
       throw new Exception("Cannot create transformer");
@@ -91,7 +90,7 @@ public class ClawXcodeMlTranslator {
       abort();
     }
 
-    // Check all pragma found in the program
+    // Check all pragma found in the translation unit
     for(Xnode pragma : _program.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
 
       // Pragma can be handled by the transformer so let it do its job.
@@ -103,19 +102,22 @@ public class ClawXcodeMlTranslator {
           abort();
         }
       } else {
-        // Compile guard removal
+        // Check if the pragma is a compile guard
         if(_transformer.getConfiguration().getAcceleratorGenerator().
             isCompileGuard(pragma.value()))
         {
           pragma.delete();
-        }
-        // Handle special transformation of OpenACC line continuation
-        else if(pragma.value().
-            toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX))
-        {
-          OpenAccContinuation t =
-              new OpenAccContinuation(new AnalyzedPragma(pragma));
-          _transformer.addTransformation(_program, t);
+        } else {
+          // Handle special transformation of OpenACC line continuation
+          for(GroupConfiguration gc :
+              _transformer.getConfiguration().getGroups())
+          {
+            if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
+                && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
+            {
+              generateTransformation(gc, pragma);
+            }
+          }
         }
       }
     }
@@ -123,23 +125,12 @@ public class ClawXcodeMlTranslator {
     _transformer.finalize(_program);
 
     // Generate transformation for translation_unit trigger type
-    for(GroupConfiguration group :
+    for(GroupConfiguration gc :
         _transformer.getConfiguration().getGroups()) {
-      if(group.getTriggerType() ==
+      if(gc.getTriggerType() ==
           GroupConfiguration.TriggerType.TRANSLATION_UNIT)
       {
-        try {
-          Class<?> groupClass = group.getTransformationClass();
-          Constructor<?> ctor = groupClass.getConstructor();
-          ClawTransformation transformation =
-              (ClawTransformation) ctor.newInstance();
-          _transformer.addTransformation(_program, transformation);
-        } catch(Exception ex) {
-          System.err.println("Cannot generate transformation " +
-              group.getName());
-          System.err.println(ex.getMessage());
-          abort();
-        }
+        generateTransformation(gc, null);
       }
     }
 
@@ -147,6 +138,30 @@ public class ClawXcodeMlTranslator {
     _canTransform = true;
   }
 
+  /**
+   * Instantiate correct transformation class from group configuration.
+   *
+   * @param gc     Group configuration for the
+   * @param pragma Pragma associated with the transformation.
+   */
+  private void generateTransformation(GroupConfiguration gc, Xnode pragma) {
+    try {
+      Class<?> groupClass = gc.getTransformationClass();
+      ClawTransformation transformation;
+      if(pragma != null) {
+        Constructor<?> ctor = groupClass.getConstructor(Xnode.class);
+        transformation = (ClawTransformation) ctor.newInstance(pragma);
+      } else {
+        Constructor<?> ctor = groupClass.getConstructor();
+        transformation = (ClawTransformation) ctor.newInstance();
+      }
+      _transformer.addTransformation(_program, transformation);
+    } catch(Exception ex) {
+      System.err.println("Cannot generate transformation " + gc.getName());
+      System.err.println(ex.getMessage());
+      abort();
+    }
+  }
 
   /**
    * Apply all the transformation in the pipeline.
