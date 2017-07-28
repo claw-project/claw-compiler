@@ -310,9 +310,6 @@ public class ClawLanguage extends AnalyzedPragma {
     _directive = null;
     _generator = null;
 
-    // super class members
-    _pragma = null;
-
     // Data Movement Direction
     _copyClauseValue = null;
     _updateClauseValue = null;

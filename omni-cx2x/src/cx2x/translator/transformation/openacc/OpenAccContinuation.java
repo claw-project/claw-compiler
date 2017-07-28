@@ -7,6 +7,8 @@ package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
@@ -39,7 +41,7 @@ import cx2x.xcodeml.xnode.Xnode;
  *
  * @author clementval
  */
-public class OpenAccContinuation extends Transformation {
+public class OpenAccContinuation extends ClawTransformation {
 
 
   /**
@@ -48,7 +50,7 @@ public class OpenAccContinuation extends Transformation {
    * @param directive The directive that triggered the OpenACC continuation
    *                  transformation.
    */
-  public OpenAccContinuation(AnalyzedPragma directive) {
+  public OpenAccContinuation(ClawLanguage directive) {
     super(directive);
   }
 

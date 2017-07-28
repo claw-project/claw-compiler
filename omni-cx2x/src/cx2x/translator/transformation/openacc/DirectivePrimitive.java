@@ -85,6 +85,6 @@ public class DirectivePrimitive extends ClawTransformation {
     );
 
     transformer.addTransformation(xcodeml,
-        new OpenAccContinuation(getDirective()));
+        new OpenAccContinuation((ClawLanguage) getDirective()));
   }
 }
