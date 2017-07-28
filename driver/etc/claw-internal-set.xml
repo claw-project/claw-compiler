@@ -7,6 +7,6 @@ This file describes CLAW internal transformation not triggered by the user.
     class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
 
   <transformation name="openacc-continuation"
-    type="independent" trigger="directive"
+    type="independent" trigger="directive" directive="acc"
     class="cx2x.translator.transformation.openacc.OpenAccContinuation" />
 </transformations>
