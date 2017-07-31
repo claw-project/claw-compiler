@@ -10,7 +10,6 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Transformer;
 import cx2x.xcodeml.xnode.Xcode;

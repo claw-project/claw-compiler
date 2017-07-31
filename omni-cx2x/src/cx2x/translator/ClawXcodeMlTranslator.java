@@ -18,7 +18,6 @@ import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.TransformationGroup;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;

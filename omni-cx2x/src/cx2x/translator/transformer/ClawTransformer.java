@@ -19,7 +19,6 @@ import cx2x.translator.transformation.openacc.DirectivePrimitive;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
-import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
