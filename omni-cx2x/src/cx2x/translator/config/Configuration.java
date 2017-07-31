@@ -27,6 +27,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +70,7 @@ public class Configuration {
   private static final String TRIGGER_ATTR = "trigger";
   private static final String DIRECTIVE_ATTR = "directive";
   private static final String EXT_CONF_TYPE = "extension";
+  private static final String JAR_ATTR = "jar";
 
   // Transformation set
   private static final String TRANSFORMATION_ELEMENT = "transformation";
@@ -81,11 +85,11 @@ public class Configuration {
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
 
   private final String _configuration_path;
-  private String[] _transSetPaths;
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
   private final Map<String, GroupConfiguration> _availableGroups;
   private final OpenAccConfiguration _openacc;
+  private String[] _transSetPaths;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
 
@@ -110,7 +114,7 @@ public class Configuration {
     // Read the environment variable for external transformation sets
     _transSetPaths = new String[0];
 
-    if (System.getenv(CLAW_TRANS_SET_PATH) != null) {
+    if(System.getenv(CLAW_TRANS_SET_PATH) != null) {
       _transSetPaths = System.getenv(CLAW_TRANS_SET_PATH).split(";");
     }
 
@@ -343,12 +347,45 @@ public class Configuration {
             + " cannot be found!");
       }
 
+
       Document setDocument = parseAndValidate(setFile, xsdSchema);
       Element root = setDocument.getDocumentElement();
-      readTransformations(setName, root);
+      boolean isExternal = root.hasAttribute(JAR_ATTR);
+
+      // Try to locate the external jar
+      if(isExternal) {
+        String externalJar = root.getAttribute(JAR_ATTR);
+        URLClassLoader loader = loadExternalJar(externalJar);
+        readTransformations(setName, root, loader);
+      } else {
+        readTransformations(setName, root, null);
+      }
     }
   }
 
+  /**
+   * Load the give jar file if located in one of the defined CLAW_TRANS_SET_PATH
+   *
+   * @param jarFile Name of the jar file to load with .jar extension.
+   * @return The URLClassLoader associated with the jar file if found. Null
+   * otherwise.
+   * @throws Exception If no path defined
+   */
+  private URLClassLoader loadExternalJar(String jarFile) throws Exception {
+    if(_transSetPaths.length == 0) {
+      throw new Exception("No path defined in " + CLAW_TRANS_SET_PATH);
+    }
+    URLClassLoader external;
+    for(String path : _transSetPaths) {
+      Path jar = Paths.get(path, jarFile);
+      if(jar.toFile().exists()) {
+        external = new URLClassLoader(new URL[]{new URL(jar.toString())},
+            this.getClass().getClassLoader());
+        return external;
+      }
+    }
+    throw new Exception("Cannot find jar file " + jarFile);
+  }
 
   /**
    * Read all the parameter element and store their key/value pair in the map.
@@ -374,7 +411,8 @@ public class Configuration {
    * @param transformationsNode Parent element "groups" for the group elements.
    * @throws Exception Group information not valid.
    */
-  private void readTransformations(String setName, Element transformationsNode) throws Exception
+  private void readTransformations(String setName, Element transformationsNode,
+                                   URLClassLoader loader) throws Exception
   {
     NodeList transformationElements =
         transformationsNode.getElementsByTagName(TRANSFORMATION_ELEMENT);
@@ -425,7 +463,11 @@ public class Configuration {
         Class transClass;
         try {
           // Check if class is there
-          transClass = Class.forName(cPath);
+          if(loader != null){
+            transClass = Class.forName(cPath, true, loader);
+          } else {
+            transClass = Class.forName(cPath);
+          }
         } catch(ClassNotFoundException e) {
           throw new Exception("Transformation class " + cPath +
               " not available");
