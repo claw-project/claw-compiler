@@ -1,4 +1,3 @@
-
 \chapter{Transformation}
 \label{chapter:transformation}
 A transformation class is the the basic representation of a manipulation of the
@@ -112,14 +111,15 @@ triggered the transformation from the \gls{ast}. It will then not be in the
 resulting transformed code.
 
 \subsection{Directive and CLAW language parser}
-Once we have a transformation class, we need a directive to trigger it. Listing
-\ref{lst:mydirective} is the directive that is used in this example.
+If the new transformation class is triggered by a directive, it needs to
+be set up in the language parser in order to be instantiated. Listing
+\ref{lst:mydirective} is the directive that is used in the current example.
 
 \begin{lstlisting}[label=lst:mydirective, caption=Example directive, language=fortran]
 !$claw mydirective
 \end{lstlisting}
 
-To parse this directive, two file need to be modified. First, the new directive
+To parse the directive, two files need to be modified. First, the new directive
 needs to be added to the \lstinline|ClawDirective| enumeration. It is added as
 the last element of the enumeration in the Listing \ref{lst:clawdirective}.
 
