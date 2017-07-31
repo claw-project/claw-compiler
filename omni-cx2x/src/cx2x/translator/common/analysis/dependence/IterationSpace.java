@@ -132,11 +132,11 @@ public class IterationSpace {
   public void printDebug(boolean inner) {
     for(int i = 0; i < _levels.size(); ++i) {
       List<DependenceAnalysis> loopsAtLevel = _levels.get(i);
-      Utility.printWithIdent(i * 2, "Level: " + i + " / Number of loops: " +
+      Utility.printWithIndent(i * 2, "Level: " + i + " / Number of loops: " +
           loopsAtLevel.size());
       if(inner) {
         for(DependenceAnalysis dep : loopsAtLevel) {
-          Utility.printWithIdent(i * 2, dep.getInfoMsg());
+          Utility.printWithIndent(i * 2, dep.getInfoMsg());
         }
       }
     }

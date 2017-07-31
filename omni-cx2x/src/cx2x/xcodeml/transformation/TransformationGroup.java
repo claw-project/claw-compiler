@@ -92,7 +92,7 @@ public abstract class TransformationGroup {
   /**
    * Increment the applied transformation counter.
    */
-  public void incrAppliedTransformation() {
+  public void incrementAppliedTransformation() {
     ++_appliedTransformation;
   }
 

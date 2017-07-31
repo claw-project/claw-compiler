@@ -85,12 +85,12 @@ public class ClawLanguageTest {
     analyzeValidClawLoopFusion("claw loop-fusion constraint(none)",
         null, false, 0, null, ClawConstraint.NONE);
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw loop-fusiongroup(g1)");
-    analyzeUnvalidClawLanguage("claw loop-fusion group");
-    analyzeUnvalidClawLanguage("claw loop-fusion (i,j,k)");
-    analyzeUnvalidClawLanguage("claw loop-fusion group()");
-    analyzeUnvalidClawLanguage("claw loop-fusion group(   )");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw loop-fusiongroup(g1)");
+    analyzeInvalidClawLanguage("claw loop-fusion group");
+    analyzeInvalidClawLanguage("claw loop-fusion (i,j,k)");
+    analyzeInvalidClawLanguage("claw loop-fusion group()");
+    analyzeInvalidClawLanguage("claw loop-fusion group(   )");
   }
 
   /**
@@ -140,11 +140,11 @@ public class ClawLanguageTest {
   }
 
   /**
-   * Assert any unvalid claw raw input
+   * Assert any invalid claw raw input
    *
    * @param raw Raw string value of the CLAW directive to be analyzed.
    */
-  private void analyzeUnvalidClawLanguage(String raw) {
+  private void analyzeInvalidClawLanguage(String raw) {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
@@ -194,9 +194,9 @@ public class ClawLanguageTest {
         Collections.singletonList(Target.CPU));
 
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw loop-interchange ()");
-    analyzeUnvalidClawLanguage("claw loop-interchange (i,j,k) group");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw loop-interchange ()");
+    analyzeInvalidClawLanguage("claw loop-interchange (i,j,k) group");
   }
 
   /**
@@ -285,10 +285,10 @@ public class ClawLanguageTest {
         false, Arrays.asList(Target.GPU, Target.MIC));
 
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw");
-    analyzeUnvalidClawLanguage("claw dummy");
-    analyzeUnvalidClawLanguage("claw end re move");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw");
+    analyzeInvalidClawLanguage("claw dummy");
+    analyzeInvalidClawLanguage("claw end re move");
   }
 
   /**
@@ -544,9 +544,9 @@ public class ClawLanguageTest {
         "i", "istart", "iend", null, Collections.singletonList(Target.GPU));
 
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw loop-extract");
-    analyzeUnvalidClawLanguage("claw loop   -   extract ");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw loop-extract");
+    analyzeInvalidClawLanguage("claw loop   -   extract ");
   }
 
   /**
@@ -640,9 +640,9 @@ public class ClawLanguageTest {
         Arrays.asList("var1", "var2"), null, true, true,
         Collections.singletonList(Target.GPU));
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw k cache ");
-    analyzeUnvalidClawLanguage("claw k-cache");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw k cache ");
+    analyzeInvalidClawLanguage("claw k-cache");
   }
 
   /**
@@ -737,8 +737,8 @@ public class ClawLanguageTest {
         false, null, false, null, Collections.singletonList("j1"), null);
     analyzeValidArrayTransform("claw array-transform induction(i,j,k)",
         false, null, false, null, Arrays.asList("i", "j", "k"), null);
-    analyzeUnvalidClawLanguage("claw array-transform induction()");
-    analyzeUnvalidClawLanguage("claw array-transform induction");
+    analyzeInvalidClawLanguage("claw array-transform induction()");
+    analyzeInvalidClawLanguage("claw array-transform induction");
 
 
     analyzeValidArrayTransform("claw array-transform target(cpu)", false, null,
@@ -869,10 +869,10 @@ public class ClawLanguageTest {
     analyzeValidLoopHoist("claw loop-hoist(i,j) fusion collapse(2)",
         Arrays.asList("i", "j"), false, null, false, null, null, true, null, 2);
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw loop-hoist");
-    analyzeUnvalidClawLanguage("claw loop-hoist()");
-    analyzeUnvalidClawLanguage("claw loop-hoist(i,j) interchange()");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw loop-hoist");
+    analyzeInvalidClawLanguage("claw loop-hoist()");
+    analyzeInvalidClawLanguage("claw loop-hoist(i,j) interchange()");
 
     analyzeValidSimpleClaw("claw end loop-hoist",
         ClawDirective.LOOP_HOIST, true, null);
@@ -995,10 +995,10 @@ public class ClawLanguageTest {
     analyzeValidArrayToFctCall("claw call v=f(i,j) target(mic, gpu)", "v", "f",
         Arrays.asList("i", "j"), Arrays.asList(Target.MIC, Target.GPU));
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw call ");
-    analyzeUnvalidClawLanguage("claw call v=");
-    analyzeUnvalidClawLanguage("claw call v=()");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw call ");
+    analyzeInvalidClawLanguage("claw call v=");
+    analyzeInvalidClawLanguage("claw call v=()");
   }
 
   /**
@@ -1156,11 +1156,11 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize data(t) over (i,:) data(q) " +
         "over(:,i)", dataLst2, over4, null, null, null);
 
-    // Unvalid directives
-    analyzeUnvalidClawLanguage("claw parallelize data over ");
-    analyzeUnvalidClawLanguage("claw parallelize data");
-    analyzeUnvalidClawLanguage("claw parallelize over");
-    analyzeUnvalidClawLanguage("claw parallelite data() over ()");
+    // Invalid directives
+    analyzeInvalidClawLanguage("claw parallelize data over ");
+    analyzeInvalidClawLanguage("claw parallelize data");
+    analyzeInvalidClawLanguage("claw parallelize over");
+    analyzeInvalidClawLanguage("claw parallelite data() over ()");
   }
 
   /**

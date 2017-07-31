@@ -146,7 +146,7 @@ public class Configuration {
   }
 
   /**
-   * Check whether the configuration file is an extension of the defualt
+   * Check whether the configuration file is an extension of the default
    * configuration or if it is a standalone configuration.
    *
    * @param configurationDocument XML document representing the configuration
@@ -223,7 +223,7 @@ public class Configuration {
   }
 
   /**
-   * Parse the configuration file as an XML document and validate it againt its
+   * Parse the configuration file as an XML document and validate it against its
    * XSD schema.
    *
    * @param xmlFile   File object pointing to the configuration file.

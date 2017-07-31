@@ -47,7 +47,7 @@ public class DependentTransformationGroup extends TransformationGroup {
           try {
             base.transform(xcodeml, transformer, candidate);
             if(candidate.isTransformed()){
-              incrAppliedTransformation();
+              incrementAppliedTransformation();
             }
           } catch(IllegalTransformationException itex) {
             // Catch the exception to add line information and rethrow it
@@ -59,7 +59,7 @@ public class DependentTransformationGroup extends TransformationGroup {
         }
       }
       if(base.isTransformed()){
-        incrAppliedTransformation();
+        incrementAppliedTransformation();
       }
     }
   }

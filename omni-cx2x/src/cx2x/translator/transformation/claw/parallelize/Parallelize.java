@@ -32,7 +32,7 @@ import java.util.*;
  * Transformation for the GPU target: <ul>
  * <li> Automatic promotion is applied to all arrays with intent in, out or
  * inout.
- * <li> Do statements over the additional dimensions is added as an outter
+ * <li> Do statements over the additional dimensions is added as an outer
  * loop and wrap the entire body of the subroutine.
  * </ul>
  * <p>

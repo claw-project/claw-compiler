@@ -4,7 +4,7 @@
 -->
 
 <!-- Dependencies for CX2X -->
-<!-- If dependencies are upgraded, cmake varibales must be adapted accordingly -->
+<!-- If dependencies are upgraded, cmake variables must be adapted accordingly -->
 <ivy-module version="2.0">
   <info organisation="claw" module="cx2x"/>
   <dependencies>

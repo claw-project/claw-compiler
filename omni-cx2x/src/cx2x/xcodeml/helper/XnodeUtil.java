@@ -1130,7 +1130,7 @@ public class XnodeUtil {
       return;
     }
 
-    Xnode doStatment = node;
+    Xnode doStatement = node;
 
     while(node.prevSibling() != null
         && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
@@ -1148,7 +1148,7 @@ public class XnodeUtil {
       safeDelete(toDelete);
     }
 
-    node = doStatment; // Reset node to the initial position.
+    node = doStatement; // Reset node to the initial position.
     while(node.nextSibling() != null
         && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
       String pragma = node.nextSibling().value().toLowerCase();
