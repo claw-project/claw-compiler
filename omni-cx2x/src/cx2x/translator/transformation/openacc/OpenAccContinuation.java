@@ -57,7 +57,7 @@ public class OpenAccContinuation extends ClawTransformation {
   /**
    * Check if the directive starts with the OpenACC prefix.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True the directive starts with the OpenACC prefix.
    */
@@ -83,7 +83,7 @@ public class OpenAccContinuation extends ClawTransformation {
    *
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
@@ -105,8 +105,8 @@ public class OpenAccContinuation extends ClawTransformation {
   /**
    * Split the line by its length and add continuation symbols.
    *
-   * @param xcodeml     The XcodeML on which the transformations are
-   *                    applied.
+   * @param xcodeml    The XcodeML on which the transformations are
+   *                   applied.
    * @param translator The translator used to applied the transformations.
    */
   private void splitByLength(XcodeProgram xcodeml, Translator translator) {
