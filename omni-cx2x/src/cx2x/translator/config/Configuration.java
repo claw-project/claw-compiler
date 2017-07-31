@@ -373,13 +373,15 @@ public class Configuration {
    */
   private URLClassLoader loadExternalJar(String jarFile) throws Exception {
     if(_transSetPaths.length == 0) {
-      throw new Exception("No path defined in " + CLAW_TRANS_SET_PATH);
+      throw new Exception("No path defined in " + CLAW_TRANS_SET_PATH
+          + ". Unable to load transformation set: " + jarFile);
     }
     URLClassLoader external;
     for(String path : _transSetPaths) {
       Path jar = Paths.get(path, jarFile);
       if(jar.toFile().exists()) {
-        external = new URLClassLoader(new URL[]{new URL(jar.toString())},
+        external = new URLClassLoader(new URL[]{
+            new URL("file://" + jar.toString())},
             this.getClass().getClassLoader());
         return external;
       }
