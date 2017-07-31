@@ -30,9 +30,9 @@ public class DependentTransformationGroup extends TransformationGroup {
   }
 
   /**
-   * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
+   * @see TransformationGroup#applyTranslations(XcodeProgram, Translator)
    */
-  public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
+  public void applyTranslations(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
     List<Transformation> transformations = getTransformations();
@@ -45,7 +45,7 @@ public class DependentTransformationGroup extends TransformationGroup {
         }
         if(base.canBeTransformedWith(xcodeml, candidate)) {
           try {
-            base.transform(xcodeml, transformer, candidate);
+            base.transform(xcodeml, translator, candidate);
             if(candidate.isTransformed()){
               incrementAppliedTransformation();
             }

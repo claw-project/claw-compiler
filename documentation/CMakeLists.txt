@@ -22,7 +22,6 @@ add_custom_target(
     cx2x.translator.transformation.loop
     cx2x.translator.transformation.openacc
     cx2x.translator.transformation.utility
-    cx2x.translator.transformer
     cx2x.xcodeml.error
     cx2x.xcodeml.exception
     cx2x.xcodeml.helper

@@ -6,8 +6,8 @@ refer to the developer's guide
 <claw version="0.4">
   <!-- Global transformation parameters -->
   <global type="root">
-    <!-- Define the transformer to be used. -->
-    <parameter key="transformer" value="cx2x.translator.transformer.ClawTransformer" />
+    <!-- Define the translator to be used. -->
+    <parameter key="translator" value="cx2x.translator.ClawTranslator" />
 
     <!-- Default general values -->
     <parameter key="default_target" value="gpu" />

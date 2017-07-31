@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  */
 public class Configuration {
 
-  public static final String TRANSFORMER = "transformer";
+  public static final String TRANSLATOR = "translator";
   // Specific keys
   private static final String DEFAULT_TARGET = "default_target";
   private static final String DEFAULT_DIRECTIVE = "default_directive";
@@ -77,7 +77,11 @@ public class Configuration {
   private static final String DIRECTIVE_TR_TYPE = "directive";
   private static final String TRANSLATION_UNIT_TR_TYPE = "translation_unit";
 
+  // env var
+  private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
+
   private final String _configuration_path;
+  private String[] _transSetPaths;
   private final Map<String, String> _parameters;
   private final List<GroupConfiguration> _groups;
   private final Map<String, GroupConfiguration> _availableGroups;
@@ -102,6 +106,13 @@ public class Configuration {
     _availableGroups = new HashMap<>();
     boolean readDefault = true;
     Document userConf = null;
+
+    // Read the environment variable for external transformation sets
+    _transSetPaths = new String[0];
+
+    if (System.getenv(CLAW_TRANS_SET_PATH) != null) {
+      _transSetPaths = System.getenv(CLAW_TRANS_SET_PATH).split(";");
+    }
 
     // Configuration has been given by the user. Read it first.
     if(userConfigFile != null) {

@@ -8,7 +8,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -28,7 +28,7 @@ public class IfExtract extends ClawTransformation {
   }
 
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     _doStmt = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
     if(_doStmt == null) {
       xcodeml.addError("Do statement missing after directive.",
@@ -69,7 +69,7 @@ public class IfExtract extends ClawTransformation {
   }
 
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
     // Copy the body of the if statement inside the body of the do statement

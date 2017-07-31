@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformer;
+package cx2x.translator;
 
 import cx2x.translator.language.base.ClawDirective;
 

@@ -19,7 +19,7 @@ import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
@@ -120,11 +120,11 @@ public class LoopExtraction extends ClawTransformation {
    * Check whether the transformation can be applied.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @return True if the transformation analysis succeeded. False otherwise.
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     Xnode _exprStmt = _claw.getPragma().matchSibling(Xcode.EXPRSTATEMENT);
     if(_exprStmt == null) {
       xcodeml.addError("No function call detected after loop-extract",
@@ -181,14 +181,14 @@ public class LoopExtraction extends ClawTransformation {
    * queue.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param transformer    The transformer used to applied the transformations.
+   * @param translator    The translator used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation) throws Exception
   {
 
@@ -201,7 +201,7 @@ public class LoopExtraction extends ClawTransformation {
     String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
     String newFctName = clonedFctDef.getName().value() +
         ClawConstant.EXTRACTION_SUFFIX +
-        transformer.getNextTransformationCounter();
+        translator.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
     clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);
     // Update the symbol table in the fct definition
@@ -414,7 +414,7 @@ public class LoopExtraction extends ClawTransformation {
 
     // Add any additional transformation defined in the directive clauses
     TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
-        transformer, extractedLoop);
+        translator, extractedLoop);
 
     _claw.getPragma().delete();
     this.transformed();

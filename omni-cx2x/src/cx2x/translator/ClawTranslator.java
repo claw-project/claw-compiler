@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformer;
+package cx2x.translator;
 
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
@@ -27,13 +27,13 @@ import org.w3c.dom.Element;
 import java.util.*;
 
 /**
- * ClawTransformer stores all transformation groups applied during the
+ * ClawTranslator stores all transformation groups applied during the
  * translation.
  *
  * @author clementval
  */
 
-public class ClawTransformer implements Transformer {
+public class ClawTranslator implements Translator {
 
   // Hold all transformation groups
   private final Map<Class, TransformationGroup> _tGroups;
@@ -48,12 +48,12 @@ public class ClawTransformer implements Transformer {
 
 
   /**
-   * ClawTransformer ctor. Creates the transformation groups needed for the CLAW
+   * ClawTranslator ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
    *
    * @param config Configuration information object.
    */
-  public ClawTransformer(Configuration config) {
+  public ClawTranslator(Configuration config) {
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
@@ -86,7 +86,7 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * Get the configuration object stored in the transformer.
+   * Get the configuration object stored in the translator.
    *
    * @return Configuration object.
    */
@@ -296,7 +296,7 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * @see Transformer#getGroups()
+   * @see Translator#getGroups()
    */
   public Map<Class, TransformationGroup> getGroups() {
     return _tGroups;
@@ -312,7 +312,7 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * @see Transformer#getModCache()
+   * @see Translator#getModCache()
    */
   @Override
   public ModuleCache getModCache() {
@@ -320,7 +320,7 @@ public class ClawTransformer implements Transformer {
   }
 
   /**
-   * @see Transformer#getMaxColumns()
+   * @see Translator#getMaxColumns()
    */
   @Override
   public int getMaxColumns() {
@@ -329,7 +329,7 @@ public class ClawTransformer implements Transformer {
 
   /**
    * @param max Max number of columns.
-   * @see Transformer#setMaxColumns(int)
+   * @see Translator#setMaxColumns(int)
    */
   @Override
   public void setMaxColumns(int max) {

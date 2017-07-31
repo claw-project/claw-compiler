@@ -9,7 +9,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class ArrayToFctCall extends ClawTransformation {
   }
 
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     XfunctionDefinition _fctDef =
         XnodeUtil.findParentFunction(_claw.getPragma());
     if(_fctDef == null) {
@@ -87,7 +87,7 @@ public class ArrayToFctCall extends ClawTransformation {
   }
 
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
 

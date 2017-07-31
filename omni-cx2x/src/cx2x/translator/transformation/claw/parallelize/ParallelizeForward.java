@@ -4,6 +4,7 @@
  */
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
@@ -12,12 +13,11 @@ import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformer.ClawTransformer;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
@@ -73,7 +73,7 @@ public class ParallelizeForward extends ClawTransformation {
   }
 
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     Xnode next = _claw.getPragma().nextSibling();
     if(next == null) {
       xcodeml.addError("Directive is not followed by a valid statement.",
@@ -171,7 +171,7 @@ public class ParallelizeForward extends ClawTransformation {
     detectParameterMapping(_fctCall);
 
     boolean isTypeBoundProcedure = false;
-    if(_fctCall.firstChild().opcode() == Xcode.FMEMBERREF){
+    if(_fctCall.firstChild().opcode() == Xcode.FMEMBERREF) {
       isTypeBoundProcedure = true;
       _calledFctName = _fctCall.firstChild().getAttribute(Xattr.MEMBER);
     } else {
@@ -345,13 +345,13 @@ public class ParallelizeForward extends ClawTransformation {
   }
 
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
     if(_flatten) {
-      transformFlatten(xcodeml, transformer);
+      transformFlatten(xcodeml, translator);
     } else {
-      transformStd(xcodeml, transformer);
+      transformStd(xcodeml, translator);
     }
 
     // Delete pragma
@@ -363,16 +363,16 @@ public class ParallelizeForward extends ClawTransformation {
    * transformation adapt the function call nested in the do statements and
    * removes those do statements. The containing subroutine is not adapted.
    *
-   * @param xcodeml     Current XcodeML file unit.
-   * @param transformer Current transformer.
+   * @param xcodeml    Current XcodeML file unit.
+   * @param translator Current translator.
    * @throws Exception If something goes wrong.
    */
-  private void transformFlatten(XcodeProgram xcodeml, Transformer transformer)
+  private void transformFlatten(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
     XnodeUtil.extractBody(_innerDoStatement, _outerDoStatement);
     _outerDoStatement.delete();
-    transformStd(xcodeml, transformer);
+    transformStd(xcodeml, translator);
   }
 
   /**
@@ -380,11 +380,11 @@ public class ParallelizeForward extends ClawTransformation {
    * transformation adapt the function call and replicates any necessary changes
    * to the containing subroutine.
    *
-   * @param xcodeml     Current XcodeML file unit.
-   * @param transformer Current transformer.
+   * @param xcodeml    Current XcodeML file unit.
+   * @param translator Current translator.
    * @throws Exception If something goes wrong.
    */
-  private void transformStd(XcodeProgram xcodeml, Transformer transformer)
+  private void transformStd(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
     XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
@@ -568,7 +568,7 @@ public class ParallelizeForward extends ClawTransformation {
         // 3. Replicate the change in a potential module file
         XmoduleDefinition modDef = fDef.findParentModule();
         TransformationHelper.updateModuleSignature(xcodeml, fDef,
-            _parentFctType, modDef, _claw, transformer, false);
+            _parentFctType, modDef, _claw, translator, false);
       } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
@@ -576,13 +576,13 @@ public class ParallelizeForward extends ClawTransformation {
          * we can update it. */
         XmoduleDefinition modDef = fDef.findParentModule();
         TransformationHelper.updateModuleSignature(xcodeml, fDef,
-            _parentFctType, modDef, _claw, transformer, true);
+            _parentFctType, modDef, _claw, translator, true);
       }
     }
 
     updateResultVar(xcodeml);
 
-    propagatePromotion(xcodeml, (ClawTransformer) transformer);
+    propagatePromotion(xcodeml, (ClawTranslator) translator);
   }
 
   /**
@@ -678,12 +678,12 @@ public class ParallelizeForward extends ClawTransformation {
    * Propagate possible promotion in assignments statements in the parent
    * subroutine of the function call.
    *
-   * @param xcodeml     Current XcodeML program unit.
-   * @param transformer Current transformer to store information between
-   *                    transformation.
+   * @param xcodeml    Current XcodeML program unit.
+   * @param translator Current translator to store information between
+   *                   transformation.
    */
   private void propagatePromotion(XcodeProgram xcodeml,
-                                  ClawTransformer transformer)
+                                  ClawTranslator translator)
       throws IllegalTransformationException
   {
     // Get all the assignment statements in the function definition
@@ -691,7 +691,7 @@ public class ParallelizeForward extends ClawTransformation {
 
     // Retrieve information of previous forward transformation in the same fct
     List<String> previouslyPromoted =
-        Utility.convertToList(transformer.hasElement(parentFctDef));
+        Utility.convertToList(translator.hasElement(parentFctDef));
 
     List<Xnode> assignments = parentFctDef.matchAll(Xcode.FASSIGNSTATEMENT);
     List<ClawDimension> dimensions =
@@ -781,7 +781,7 @@ public class ParallelizeForward extends ClawTransformation {
       }
     }
 
-    transformer.storeElement(parentFctDef, previouslyPromoted);
+    translator.storeElement(parentFctDef, previouslyPromoted);
   }
 
   /**

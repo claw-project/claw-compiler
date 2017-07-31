@@ -6,7 +6,7 @@ package cx2x.translator.transformation.utility;
 
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.XfunctionDefinition;
 
@@ -27,7 +27,7 @@ public class XcodeMLWorkaround extends ClawTransformation {
   }
 
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     return true;
   }
 
@@ -43,7 +43,7 @@ public class XcodeMLWorkaround extends ClawTransformation {
   }
 
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
     // Apply declaration reordering transformation

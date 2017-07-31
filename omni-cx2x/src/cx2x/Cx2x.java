@@ -6,7 +6,7 @@
 package cx2x;
 
 import cx2x.decompiler.XcodeMlToFortranDecompiler;
-import cx2x.translator.ClawXcodeMlTranslator;
+import cx2x.translator.ClawTranslatorDriver;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
@@ -251,18 +251,18 @@ public class Cx2x {
       config.setForcePure();
     }
 
-    // Call the translator to apply transformation on XcodeML/F
-    ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
-        xcodeMlOutput, config);
-    translator.analyze();
-    translator.transform();
-    translator.flush(config);
+    // Call the translator driver to apply transformation on XcodeML/F
+    ClawTranslatorDriver translatorDriver =
+        new ClawTranslatorDriver(input, xcodeMlOutput, config);
+    translatorDriver.analyze();
+    translatorDriver.transform();
+    translatorDriver.flush(config);
 
     // Produce report
     if(cmd.hasOption("r")) {
       ClawTransformationReport report =
           new ClawTransformationReport(cmd.getOptionValue("r"));
-      report.generate(config, args, translator);
+      report.generate(config, args, translatorDriver);
     }
 
     // Decompile XcodeML/F to Fortran

@@ -11,7 +11,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class ArrayTransform extends ClawBlockTransformation {
   }
 
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     if(_clawEnd != null) { // Block transformation
 
       // TODO Analyse dependency between assignments. cf array9 example.
@@ -151,13 +151,13 @@ public class ArrayTransform extends ClawBlockTransformation {
    * Transform an assignment using array notation to a do statement.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @param other       Only for dependent transformation. The other
    *                    transformation part of the transformation.
    * @throws Exception If the transformation cannot be applied.
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
     // 1. Find the function/module declaration TODO handle module/program ?
@@ -165,7 +165,7 @@ public class ArrayTransform extends ClawBlockTransformation {
         XnodeUtil.findParentFunction(_clawStart.getPragma());
     Xnode grip = _clawStart.getPragma();
     for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
-      grip = generateDoStmtNotation(xcodeml, transformer, fctDef,
+      grip = generateDoStmtNotation(xcodeml, translator, fctDef,
           _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
     }
     _clawStart.getPragma().delete();
@@ -181,7 +181,7 @@ public class ArrayTransform extends ClawBlockTransformation {
    * are computed with array dimensions.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @param fctDef      The function definition in which the array notation is
    *                    nested.
    * @param ranges      The list of iteration ranges to be applied to the
@@ -193,7 +193,7 @@ public class ArrayTransform extends ClawBlockTransformation {
    * @return The last stmt created to be used as a grip for next insertion.
    */
   private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
-                                       Transformer transformer,
+                                       Translator translator,
                                        XfunctionDefinition fctDef,
                                        List<Xnode> ranges,
                                        List<Xnode> statements,
@@ -210,7 +210,7 @@ public class ArrayTransform extends ClawBlockTransformation {
         inductionVars[i] = _clawStart.getInductionValues().get(i);
       } else { // generate new names
         inductionVars[i] = "claw_induction_" +
-            transformer.getNextTransformationCounter();
+            translator.getNextTransformationCounter();
       }
 
       // 2.2 inject a new entry in the symbol table
@@ -281,7 +281,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
     // Add any additional transformation defined in the directive clauses
     TransformationHelper.generateAdditionalTransformation(_clawStart, xcodeml,
-        transformer, doStmts[0]);
+        translator, doStmts[0]);
 
     return potentialGrip == null ? doStmts[0] : potentialGrip;
   }

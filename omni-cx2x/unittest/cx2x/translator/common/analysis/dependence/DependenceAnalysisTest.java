@@ -12,7 +12,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.transformer.ClawTransformer;
+import cx2x.translator.ClawTranslator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -121,7 +121,7 @@ public class DependenceAnalysisTest {
     Configuration configuration =
         new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
     configuration.setMaxColumns(80);
-    ClawTransformer transformer = new ClawTransformer(configuration);
+    ClawTranslator translator = new ClawTranslator(configuration);
     AcceleratorGenerator generator =
         AcceleratorHelper.createAcceleratorGenerator(configuration);
     ClawLanguage main = null;
@@ -141,7 +141,7 @@ public class DependenceAnalysisTest {
     // Create an iteration space
     try {
       IterationSpace is = new IterationSpace(loops);
-      is.tryFusion(xcodeml, transformer, main);
+      is.tryFusion(xcodeml, translator, main);
       System.out.println();
       System.out.println("Iteration space before fusion");
       is.printDebug(true);

@@ -10,7 +10,7 @@ import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -45,11 +45,11 @@ public class UtilityRemove extends ClawBlockTransformation {
    * Check whether the transformation can be applied or not.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @return True if the transformation can be applied.
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     // if there is no end directive, the following statement must be a if or
     // do statement
     if(_clawEnd == null) {
@@ -72,12 +72,12 @@ public class UtilityRemove extends ClawBlockTransformation {
    * Delete the corresponding elements.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param transformer    The transformer used to applied the transformations.
+   * @param translator    The translator used to applied the transformations.
    * @param transformation Not used for independent transformation.
    * @throws IllegalTransformationException If transformation cannot be applied.
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation)
       throws IllegalTransformationException
   {

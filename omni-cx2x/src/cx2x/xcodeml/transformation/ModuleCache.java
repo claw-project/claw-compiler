@@ -13,9 +13,9 @@ import java.util.Map;
 
 
 /**
- * Transformer interface
+ * Translator interface
  * <p>
- * Transformer stores all the transformation to be applied by a translator.
+ * Translator stores all the transformation to be applied by a translator.
  *
  * @author clementval
  */

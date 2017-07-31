@@ -50,11 +50,11 @@ public abstract class Transformation {
    * be able to apply the transformation in when calling #transform.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @return True if analysis succeeded. False otherwise.
    */
   public abstract boolean analyze(XcodeProgram xcodeml,
-                                  Transformer transformer);
+                                  Translator translator);
 
   /**
    * Check whether the current transformation can be transformed together with
@@ -73,13 +73,13 @@ public abstract class Transformation {
    * Apply the actual transformation.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @param other       Only for dependent transformation. The other
    *                    transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */
-  public abstract void transform(XcodeProgram xcodeml, Transformer transformer,
+  public abstract void transform(XcodeProgram xcodeml, Translator translator,
                                  Transformation other) throws Exception;
 
   /**

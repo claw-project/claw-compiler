@@ -13,7 +13,6 @@ import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -32,86 +31,88 @@ import java.util.Map;
 
 
 /**
- * ClawXcodeMlTranslator is the class driving the translation. It analyzes the
- * CLAW directives and applies the corresponding transformation to the XcodeML/F
- * intermediate representation.
+ * ClawTranslatorDriver is the class driving the translation. It creates the
+ * translator and pass to it all the directives it can manage.
+ * It is also in charge of decompiling the XcodeML/F after the translation took
+ * place.
  *
  * @author clementval
  */
 
-public class ClawXcodeMlTranslator {
+public class ClawTranslatorDriver {
 
   private static final String ERROR_PREFIX = "claw-error: ";
   private static final String WARNING_PREFIX = "claw warning: ";
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
-  private ClawTransformer _transformer = null;
-  private XcodeProgram _program = null;
+  private ClawTranslator _translator = null;
+  private XcodeProgram _translationUnit = null;
 
   /**
-   * ClawXcodeMlTranslator ctor.
+   * ClawTranslatorDriver ctor.
    *
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
    * @param config            Configuration information object.
    */
-  public ClawXcodeMlTranslator(String xcodemlInputFile,
-                               String xcodemlOutputFile,
-                               Configuration config)
+  public ClawTranslatorDriver(String xcodemlInputFile,
+                              String xcodemlOutputFile,
+                              Configuration config)
       throws Exception
   {
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
 
-    // Create transformer
-    String transformerClassPath =
-        config.getParameter(Configuration.TRANSFORMER);
-    if(transformerClassPath == null || transformerClassPath.equals("")) {
-      throw new Exception("Transformer not set in configuration");
+    // Create translator
+    String translatorClassPath =
+        config.getParameter(Configuration.TRANSLATOR);
+    if(translatorClassPath == null || translatorClassPath.equals("")) {
+      throw new Exception("Translator not set in configuration");
     }
 
     try {
       // Check if class is there
-      Class<?> transformerClass = Class.forName(transformerClassPath);
+      Class<?> translatorClass = Class.forName(translatorClassPath);
       Constructor<?> ctor =
-          transformerClass.getConstructor(Configuration.class);
-      _transformer = (ClawTransformer) ctor.newInstance(config);
+          translatorClass.getConstructor(Configuration.class);
+      _translator = (ClawTranslator) ctor.newInstance(config);
     } catch(ClassNotFoundException e) {
-      throw new Exception("Cannot create transformer");
+      throw new Exception("Cannot create translator");
     }
   }
 
   /**
-   * Analysis the XcodeML code and produce a list of applicable transformation.
+   * Analysis the XcodeML/F directives and categorized them in corresponding
+   * transformation with the help of the translator.
    */
   public void analyze() {
-    _program = XcodeProgram.createFromFile(_xcodemlInputFile);
-    if(_program == null) {
+    _translationUnit = XcodeProgram.createFromFile(_xcodemlInputFile);
+    if(_translationUnit == null) {
       abort();
     }
 
     // Check all pragma found in the translation unit
-    for(Xnode pragma : _program.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
+    for(Xnode pragma : _translationUnit.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
 
-      // Pragma can be handled by the transformer so let it do its job.
-      if(_transformer.isHandledPragma(pragma)) {
+      // Pragma can be handled by the translator so let it do its job.
+      if(_translator.isHandledPragma(pragma)) {
         try {
-          _transformer.generateTransformation(_program, pragma);
+          _translator.generateTransformation(_translationUnit, pragma);
         } catch(IllegalDirectiveException e) {
-          _program.addError(e.getMessage(), e.getDirectiveLine());
+          _translationUnit.addError(e.getMessage(), e.getDirectiveLine());
           abort();
         }
       } else {
         // Check if the pragma is a compile guard
-        if(_transformer.getConfiguration().getAcceleratorGenerator().
+        if(_translator.getConfiguration().getAcceleratorGenerator().
             isCompileGuard(pragma.value()))
         {
           pragma.delete();
         } else {
           // Handle special transformation of OpenACC line continuation
           for(GroupConfiguration gc :
-              _transformer.getConfiguration().getGroups())
+              _translator.getConfiguration().getGroups())
           {
             if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
                 && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
@@ -123,11 +124,11 @@ public class ClawXcodeMlTranslator {
       }
     }
 
-    _transformer.finalize(_program);
+    _translator.finalize(_translationUnit);
 
     // Generate transformation for translation_unit trigger type
     for(GroupConfiguration gc :
-        _transformer.getConfiguration().getGroups()) {
+        _translator.getConfiguration().getGroups()) {
       if(gc.getTriggerType() ==
           GroupConfiguration.TriggerType.TRANSLATION_UNIT)
       {
@@ -158,7 +159,7 @@ public class ClawXcodeMlTranslator {
         Constructor<?> ctor = groupClass.getConstructor();
         transformation = (ClawTransformation) ctor.newInstance();
       }
-      _transformer.addTransformation(_program, transformation);
+      _translator.addTransformation(_translationUnit, transformation);
     } catch(Exception ex) {
       System.err.println("Cannot generate transformation " + gc.getName());
       System.err.println(ex.getMessage());
@@ -172,12 +173,12 @@ public class ClawXcodeMlTranslator {
   public void transform() {
     try {
       if(!_canTransform) {
-        _program.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+        _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
         return;
       }
 
       for(Map.Entry<Class, TransformationGroup> entry :
-          _transformer.getGroups().entrySet()) {
+          _translator.getGroups().entrySet()) {
         if(XmOption.isDebugOutput()) {
           System.out.println("Apply transformation: " +
               entry.getValue().transformationName() + " - " +
@@ -186,25 +187,25 @@ public class ClawXcodeMlTranslator {
         }
 
         try {
-          entry.getValue().applyTranslations(_program, _transformer);
+          entry.getValue().applyTranslations(_translationUnit, _translator);
           displayWarnings();
         } catch(IllegalTransformationException itex) {
-          _program.addError(itex.getMessage(), itex.getStartLine());
+          _translationUnit.addError(itex.getMessage(), itex.getStartLine());
           abort();
         } catch(Exception ex) {
           ex.printStackTrace();
-          _program.addError("Unexpected error: " + ex.getMessage(), 0);
+          _translationUnit.addError("Unexpected error: " + ex.getMessage(), 0);
           if(XmOption.isDebugOutput()) {
             StringWriter errors = new StringWriter();
             ex.printStackTrace(new PrintWriter(errors));
-            _program.addError(errors.toString(), 0);
+            _translationUnit.addError(errors.toString(), 0);
           }
           abort();
         }
       }
 
       // Write transformed IR to file
-      _program.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
     } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }
@@ -215,8 +216,8 @@ public class ClawXcodeMlTranslator {
    * Print all the errors stored in the XcodeML object and abort the program.
    */
   private void abort() {
-    if(_program != null) {
-      displayMessages(ERROR_PREFIX, _program.getErrors());
+    if(_translationUnit != null) {
+      displayMessages(ERROR_PREFIX, _translationUnit.getErrors());
     }
     System.exit(1);
   }
@@ -226,8 +227,8 @@ public class ClawXcodeMlTranslator {
    * displaying.
    */
   private void displayWarnings() {
-    if(_program != null) {
-      displayMessages(WARNING_PREFIX, _program.getWarnings());
+    if(_translationUnit != null) {
+      displayMessages(WARNING_PREFIX, _translationUnit.getWarnings());
     }
   }
 
@@ -260,16 +261,16 @@ public class ClawXcodeMlTranslator {
   {
     String modPrefix = Utility.formattedModuleFilePrefix(
         config.getCurrentTarget(), config.getCurrentDirective());
-    _transformer.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
+    _translator.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
   }
 
   /**
-   * Get the current transformer associated with this translation.
+   * Get the current translator associated with this translation.
    *
-   * @return Get the current transformer.
+   * @return Get the current translator.
    */
-  public ClawTransformer getTransformer() {
-    return _transformer;
+  public ClawTranslator getTranslator() {
+    return _translator;
   }
 
   /**
@@ -278,7 +279,7 @@ public class ClawXcodeMlTranslator {
    * @return Current XcodeProgram object.
    */
   public XcodeProgram getProgram() {
-    return _program;
+    return _translationUnit;
   }
 
 }

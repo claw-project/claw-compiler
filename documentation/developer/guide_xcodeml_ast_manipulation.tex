@@ -12,7 +12,7 @@ node.
 \section{Add nodes}
 
 \begin{lstlisting}[label=lst:add_node, language=Java, caption=XcodeML/F add node example]
-public void transform(XcodeProgram xcodeml, Transformer transformer,
+public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
     Xnode myNewNode = new Xnode(xcodeml, Xcode.FPRAGMASTATEMENT);
@@ -24,7 +24,7 @@ public void transform(XcodeProgram xcodeml, Transformer transformer,
 \section{Modify nodes}
 
 \begin{lstlisting}[label=lst:update_node, language=Java, caption=XcodeML/F update node example]
-public void transform(XcodeProgram xcodeml, Transformer transformer,
+public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
     Xnode pragma = _claw.getPragma();
@@ -39,7 +39,7 @@ public void transform(XcodeProgram xcodeml, Transformer transformer,
 
 \section{Delete nodes}
 \begin{lstlisting}[label=lst:delete_node, language=Java, caption=XcodeML/F delete node example]
-public void transform(XcodeProgram xcodeml, Transformer transformer,
+public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
     Xnode pragma = _claw.getPragma();
