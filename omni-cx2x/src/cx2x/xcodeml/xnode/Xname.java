@@ -54,6 +54,7 @@ public class Xname {
   public static final String ATTR_CONSTRUCT_NAME = "construct_name";
   public static final String ATTR_DATAREF = "data_ref";
   public static final String ATTR_FILE = "file";
+  public static final String ATTR_FORMAT = "format";
   public static final String ATTR_INTENT = "intent";
   public static final String ATTR_IS_ASSUMED_SHAPE = "is_assumed_shape";
   public static final String ATTR_IS_ALLOCATABLE = "is_allocatable";
