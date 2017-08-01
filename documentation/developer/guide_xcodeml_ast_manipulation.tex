@@ -1,0 +1,48 @@
+\chapter{\xcodeml and AST manipulation library}
+\label{chapter:astmanip}
+As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with
+any language that can read and write XML files. It can even be manipulated by
+hand depending on the user's knowledge of the \xcodeml \gls{ir} specification.
+To ease this task, a small manipulation library is included in the \cx2x
+program. This library helps to traverse the \gls{ast}, add, modify or delete
+node.
+
+\section{Traverse the \gls{ast}}
+
+\section{Add nodes}
+
+\begin{lstlisting}[label=lst:add_node, language=Java, caption=XcodeML/F add node example]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+    Xnode myNewNode = new Xnode(xcodeml, Xcode.FPRAGMASTATEMENT);
+    myNewNode.setValue("omp parallel");
+    XnodeUtil.insertAfter(_claw.getPragma(), myNewNode);
+}
+\end{lstlisting}
+
+\section{Modify nodes}
+
+\begin{lstlisting}[label=lst:update_node, language=Java, caption=XcodeML/F update node example]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+    Xnode pragma = _claw.getPragma();
+    // Get current values from the node
+    String oldValue = pragma.value();
+    int line = pragma.lineNo();
+    // Update the value directly in the AST
+    pragma.setValue("acc routine seq");
+    pragma.setLineNo(line + 1);
+}
+\end{lstlisting}
+
+\section{Delete nodes}
+\begin{lstlisting}[label=lst:delete_node, language=Java, caption=XcodeML/F delete node example]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+    Xnode pragma = _claw.getPragma();
+    pragma.delete(); // Delete the node in the AST
+}
+\end{lstlisting}

@@ -1,51 +1,55 @@
-<!-- CLAW default configuration. This file should not be edited ! -->
-<claw version="0.3">
-  <!-- Transformation parameters -->
-  <global>
-    <parameter key="transformer" value="cx2x.translator.transformer.ClawTransformer"/>
+<!--
+CLAW default configuration. This file should not be edited!
+For more information about the configuration file and its extension, please
+refer to the developer's guide
+-->
+<claw version="0.4">
+  <!-- Global transformation parameters -->
+  <global type="root">
+    <!-- Define the translator to be used. -->
+    <parameter key="translator" value="cx2x.translator.ClawTranslator" />
 
     <!-- Default general values -->
-    <parameter key="default_target" value="gpu"/>
-    <parameter key="default_directive" value="openacc"/>
+    <parameter key="default_target" value="gpu" />
+    <parameter key="default_directive" value="openacc" />
+
 
     <!-- OpenACC default information -->
     <!-- Define the default values to be used for the clauses. If value set to 0, compiler default value used. -->
-    <parameter key="openacc_vector_length" value="128"/> <!-- vector_length(128) -->
-    <parameter key="openacc_num_gangs" value="8"/>       <!-- num_gangs(8) -->
-    <parameter key="openacc_num_workers" value="8"/>     <!-- num_workers(8) -->
+    <parameter key="openacc_vector_length" value="128" /> <!-- vector_length(128) -->
+    <parameter key="openacc_num_gangs" value="8" />       <!-- num_gangs(8) -->
+    <parameter key="openacc_num_workers" value="8" />     <!-- num_workers(8) -->
     <!-- Specify the order of generation of clauses when nested loops are generated -->
     <!-- possible values are vector_gang, gang_vector, vector, gang, none -->
-    <parameter key="openacc_execution_mode" value="vector_gang"/>
+    <parameter key="openacc_execution_mode" value="vector_gang" />
   </global>
-  <!-- Transformation groups -->
+
+  <!-- Transformation sets -->
+  <sets>
+    <set name="claw-internal-set" />
+    <set name="claw-low-level-set" />
+    <set name="claw-high-level-set" />
+  </sets>
+
+  <!-- Transformation groups and order -->
   <groups>
+    <!-- internal applied at the beginning -->
+    <group name="internal-xcodeml" />
     <!-- Low-level transformations -->
-    <group type="independent" name="internal-xcodeml"    trigger="translation_unit"
-           class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
-    <group type="independent" name="remove"              trigger="directive"
-           class="cx2x.translator.transformation.utility.UtilityRemove" />
-    <group type="independent" name="primitive"           trigger="directive"
-           class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
-    <group type="independent" name="array-transform"     trigger="directive"
-           class="cx2x.translator.transformation.loop.ArrayTransform" />
-    <group type="independent" name="loop-extract"        trigger="directive"
-           class="cx2x.translator.transformation.loop.LoopExtraction" />
-    <group type="independent" name="loop-hoist"          trigger="directive"
-           class="cx2x.translator.transformation.loop.LoopHoist" />
-    <group type="dependent"   name="loop-fusion"         trigger="directive"
-           class="cx2x.translator.transformation.loop.LoopFusion" />
-    <group type="independent" name="loop-interchange"    trigger="directive"
-           class="cx2x.translator.transformation.loop.LoopInterchange" />
-    <group type="independent" name="on-the-fly"          trigger="directive"
-           class="cx2x.translator.transformation.claw.ArrayToFctCall" />
-    <group type="independent" name="kcache"              trigger="directive"
-           class="cx2x.translator.transformation.claw.Kcaching" />
-    <group type="independent" name="if-extract"          trigger="directive"
-           class="cx2x.translator.transformation.loop.IfExtract" />
+    <group name="remove" />
+    <group name="primitive" />
+    <group name="array-transform" />
+    <group name="loop-extract" />
+    <group name="loop-hoist" />
+    <group name="loop-fusion" />
+    <group name="loop-interchange" />
+    <group name="on-the-fly" />
+    <group name="kcache" />
+    <group name="if-extract" />
     <!-- High-level transformations -->
-    <group type="independent" name="parallelize"         trigger="directive"
-           class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
-    <group type="independent" name="parallelize-forward" trigger="directive"
-           class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+    <group name="parallelize" />
+    <group name="parallelize-forward" />
+    <!-- internal applied at the end -->
+    <group name="openacc-continuation" />
   </groups>
 </claw>

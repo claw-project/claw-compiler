@@ -11,7 +11,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.XcodeProgram;
 
 /**
@@ -38,10 +38,10 @@ public class DirectivePrimitive extends ClawTransformation {
    * Analysis of the transformation.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @return True always.
    */
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     return true;
   }
 
@@ -62,13 +62,13 @@ public class DirectivePrimitive extends ClawTransformation {
    *
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
-   * @param transformer    The transformer used to applied the transformations.
+   * @param translator    The translator used to applied the transformations.
    * @param transformation Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation)
       throws IllegalTransformationException
   {
@@ -84,7 +84,7 @@ public class DirectivePrimitive extends ClawTransformation {
             replaceAll(regex, prefix)
     );
 
-    transformer.addTransformation(xcodeml,
-        new OpenAccContinuation(getDirective()));
+    translator.addTransformation(xcodeml,
+        new OpenAccContinuation((ClawLanguage) getDirective()));
   }
 }

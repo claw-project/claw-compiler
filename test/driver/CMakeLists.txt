@@ -27,6 +27,8 @@ add_subdirectory(target2)   # check automatic passing of _OPENMP macro
 
 add_subdirectory(verbatim1) # test the verbatim directive (driver directive)
 
+add_subdirectory(external1) # external transformation set
+
 # Test for bash library functions
 add_test(
   NAME library-test-claw_f_lib

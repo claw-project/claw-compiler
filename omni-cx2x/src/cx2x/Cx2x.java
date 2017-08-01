@@ -6,9 +6,8 @@
 package cx2x;
 
 import cx2x.decompiler.XcodeMlToFortranDecompiler;
-import cx2x.translator.ClawXcodeMlTranslator;
+import cx2x.translator.ClawTranslatorDriver;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.report.ClawTransformationReport;
@@ -72,30 +71,6 @@ public class Cx2x {
   }
 
   /**
-   * Read the configuration file and output the information for user.
-   *
-   * @param configPath Path to the configuration file.
-   * @param schemaPath Path to the XSD schema for configuration file validation.
-   */
-  private static void showConfig(String configPath, String schemaPath) {
-    try {
-      Configuration config = new Configuration(configPath, schemaPath);
-      System.out.println("- CLAW translator configuration -\n");
-      System.out.println("Default accelerator directive: " +
-          config.getCurrentDirective() + "\n");
-      System.out.println("Default target: " + config.getCurrentTarget() + "\n");
-      System.out.println("Current transformation order:");
-      int i = 0;
-      for(GroupConfiguration g : config.getGroups()) {
-        System.out.printf("  %1d) %-20s - type:%-15s, class:%-60s\n",
-            i++, g.getName(), g.getType(), g.getTransformationClassName());
-      }
-    } catch(Exception e) {
-      error("internal", 0, 0, "Could not read the configuration file.\n" + e.getMessage());
-    }
-  }
-
-  /**
    * Prepare the set of available options.
    *
    * @return Options object.
@@ -104,7 +79,8 @@ public class Cx2x {
     Options options = new Options();
     options.addOption("h", "help", false, "display program usage.");
     options.addOption("l", false, "suppress line directive in decompiled code.");
-    options.addOption("c", "config", true, "specify an alternative configuration for the translator.");
+    options.addOption("cp", "config-path", true, "specify the configuration directory");
+    options.addOption("c", "config", true, "specify the configuration for the translator.");
     options.addOption("s", "schema", true, "specify the XSD schema location to validate the configuration.");
     options.addOption("t", "target", true, "specify the target for the code transformation.");
     options.addOption("dir", "directive", true, "list all accelerator directive language available for code generation.");
@@ -148,8 +124,8 @@ public class Cx2x {
     String fortranOutput = null;
     String target_option = null;
     String directive_option = null;
+    String configuration_file = null;
     String configuration_path = null;
-    String schema_path = null;
     int maxColumns = 0;
     boolean forcePure = false;
 
@@ -214,26 +190,33 @@ public class Cx2x {
     }
 
     if(cmd.hasOption("c")) {
-      configuration_path = cmd.getOptionValue("c");
+      configuration_file = cmd.getOptionValue("c");
     }
 
-    if(cmd.hasOption("s")) {
-      schema_path = cmd.getOptionValue("s");
+    if(cmd.hasOption("cp")) {
+      configuration_path = cmd.getOptionValue("cp");
+    }
+
+    // Check that configuration path exists
+    if(configuration_path == null) {
+      error("internal", 0, 0, "Configuration path missing.");
+      return;
     }
 
     // Check that configuration file exists
-    if(configuration_path == null) {
-      error("internal", 0, 0, "Configuration file missing.");
-      return;
-    }
-    File configFile = new File(configuration_path);
-    if(!configFile.exists()) {
-      error("internal", 0, 0, "Configuration file not found. "
-          + configuration_path);
+    if(configuration_file != null) {
+      File configFile = new File(configuration_file);
+      if(!configFile.exists()) {
+        error("internal", 0, 0, "Configuration file not found. "
+            + configuration_path);
+      }
     }
 
+    // --show-config option
     if(cmd.hasOption("sc")) {
-      showConfig(configuration_path, schema_path);
+      Configuration config =
+          new Configuration(configuration_path, configuration_file);
+      config.displayConfig();
       return;
     }
 
@@ -254,7 +237,7 @@ public class Cx2x {
     // Read the configuration file
     Configuration config;
     try {
-      config = new Configuration(configuration_path, schema_path);
+      config = new Configuration(configuration_path, configuration_file);
       config.setUserDefinedTarget(target_option);
       config.setUserDefineDirective(directive_option);
       config.setMaxColumns(maxColumns);
@@ -268,18 +251,18 @@ public class Cx2x {
       config.setForcePure();
     }
 
-    // Call the translator to apply transformation on XcodeML/F
-    ClawXcodeMlTranslator translator = new ClawXcodeMlTranslator(input,
-        xcodeMlOutput, config);
-    translator.analyze();
-    translator.transform();
-    translator.flush(config);
+    // Call the translator driver to apply transformation on XcodeML/F
+    ClawTranslatorDriver translatorDriver =
+        new ClawTranslatorDriver(input, xcodeMlOutput, config);
+    translatorDriver.analyze();
+    translatorDriver.transform();
+    translatorDriver.flush(config);
 
     // Produce report
     if(cmd.hasOption("r")) {
       ClawTransformationReport report =
           new ClawTransformationReport(cmd.getOptionValue("r"));
-      report.generate(config, args, translator);
+      report.generate(config, args, translatorDriver);
     }
 
     // Decompile XcodeML/F to Fortran

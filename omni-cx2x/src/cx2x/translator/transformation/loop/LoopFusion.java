@@ -12,7 +12,7 @@ import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -38,7 +38,7 @@ public class LoopFusion extends ClawTransformation {
   // The loop statement involved in the Transformation
   private Xnode[] _doStmts;
 
-  private static final String[] prevTodelete = { "acc loop", "omp do" };
+  private static final String[] prevToDelete = { "acc loop", "omp do" };
   private static final String[] nextToDelete = { "omp end do" };
 
   /**
@@ -90,11 +90,11 @@ public class LoopFusion extends ClawTransformation {
    * - With collapse clause: Find the n do statements following the pragma.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     // With collapse clause
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
       _doStmts = new Xnode[_claw.getCollapseValue()];
@@ -130,14 +130,14 @@ public class LoopFusion extends ClawTransformation {
    *
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
-   * @param transformer    The transformer used to applied the transformations.
+   * @param translator    The translator used to applied the transformations.
    * @param transformation The other loop fusion unit to be merge with this
    *                       one.
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation)
       throws IllegalTransformationException
   {
@@ -183,7 +183,7 @@ public class LoopFusion extends ClawTransformation {
     XnodeUtil.safeDelete(_claw.getPragma());
 
     // Delete any acc loop / omp do pragma before/after the do statements.
-    XnodeUtil.cleanPragmas(_doStmts[0], prevTodelete, nextToDelete);
+    XnodeUtil.cleanPragmas(_doStmts[0], prevToDelete, nextToDelete);
 
     // Delete the do statement that was merged with the main one
     XnodeUtil.safeDelete(_doStmts[0]);

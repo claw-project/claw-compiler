@@ -12,14 +12,14 @@ import cx2x.xcodeml.xnode.Xnode;
 import java.util.Map;
 
 /**
- * Transformer interface
+ * Translator interface
  * <p>
- * Transformer stores all the transformation to be applied by a translator.
+ * Translator stores all the transformation to be applied by a translator.
  *
  * @author clementval
  */
 
-public interface Transformer {
+public interface Translator {
 
   /**
    * Generate transformation according to the pragma.
@@ -30,7 +30,7 @@ public interface Transformer {
       throws IllegalDirectiveException;
 
   /**
-   * Add a transformation to the transformer.
+   * Add a transformation to the translator.
    *
    * @param xcodeml Current translation unit.
    * @param t       Transformation to add.
@@ -38,10 +38,10 @@ public interface Transformer {
   void addTransformation(XcodeProgram xcodeml, Transformation t);
 
   /**
-   * Check if the given pragma can be handled by the current transformer.
+   * Check if the given pragma can be handled by the current translator.
    *
    * @param pragma Pragma statement node.
-   * @return True if the transformer can handle the pragma. False otherwise.
+   * @return True if the translator can handle the pragma. False otherwise.
    */
   boolean isHandledPragma(Xnode pragma);
 
@@ -51,7 +51,7 @@ public interface Transformer {
   void finalize(XcodeProgram xcodeml);
 
   /**
-   * Get all transformation groups stored in this transformer.
+   * Get all transformation groups stored in this translator.
    *
    * @return A list of all transformation groups.
    */

@@ -13,12 +13,12 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformer.ClawTransformer;
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
@@ -32,7 +32,7 @@ import java.util.*;
  * Transformation for the GPU target: <ul>
  * <li> Automatic promotion is applied to all arrays with intent in, out or
  * inout.
- * <li> Do statements over the additional dimensions is added as an outter
+ * <li> Do statements over the additional dimensions is added as an outer
  * loop and wrap the entire body of the subroutine.
  * </ul>
  * <p>
@@ -93,7 +93,7 @@ public class Parallelize extends ClawTransformation {
   }
 
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
 
     // Check for the parent fct/subroutine definition
     _fctDef = XnodeUtil.findParentFunction(_claw.getPragma());
@@ -284,13 +284,13 @@ public class Parallelize extends ClawTransformation {
 
 
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
       throws Exception
   {
 
     // Handle PURE function / subroutine
-    ClawTransformer trans = (ClawTransformer) transformer;
+    ClawTranslator trans = (ClawTranslator) translator;
     boolean pureRemoved = XnodeUtil.removePure(_fctDef, _fctType);
     if(trans.getConfiguration().isForcePure() && pureRemoved) {
       throw new IllegalTransformationException(
@@ -338,7 +338,7 @@ public class Parallelize extends ClawTransformation {
       XmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
         TransformationHelper.updateModuleSignature(xcodeml, _fctDef, _fctType,
-            modDef, _claw, transformer, false);
+            modDef, _claw, translator, false);
       }
     }
   }

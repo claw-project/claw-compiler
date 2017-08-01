@@ -12,7 +12,7 @@ import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.XfunctionDefinition;
@@ -46,10 +46,10 @@ public class LoopHoist extends ClawBlockTransformation {
   }
 
   /**
-   * @see Transformation#analyze(XcodeProgram, Transformer)
+   * @see Transformation#analyze(XcodeProgram, Translator)
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     int _pragmaDepthLevel = _clawStart.getPragma().depth();
     _nestedLevel = _clawStart.getHoistInductionVars().size();
 
@@ -201,10 +201,10 @@ public class LoopHoist extends ClawBlockTransformation {
   }
 
   /**
-   * @see Transformation#transform(XcodeProgram, Transformer, Transformation)
+   * @see Transformation#transform(XcodeProgram, Translator, Transformation)
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation) throws Exception
   {
 
@@ -228,7 +228,7 @@ public class LoopHoist extends ClawBlockTransformation {
 
     // Generate dynamic transformation (interchange)
     TransformationHelper.generateAdditionalTransformation(_clawStart,
-        xcodeml, transformer, hoisted.getDoStmts()[0]);
+        xcodeml, translator, hoisted.getDoStmts()[0]);
 
     // Apply reshape clause
     TransformationHelper.applyReshapeClause(_clawStart, xcodeml);

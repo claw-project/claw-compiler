@@ -8,7 +8,7 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.xcodeml.transformation.DependentTransformationGroup;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -132,11 +132,11 @@ public class IterationSpace {
   public void printDebug(boolean inner) {
     for(int i = 0; i < _levels.size(); ++i) {
       List<DependenceAnalysis> loopsAtLevel = _levels.get(i);
-      Utility.printWithIdent(i * 2, "Level: " + i + " / Number of loops: " +
+      Utility.printWithIndent(i * 2, "Level: " + i + " / Number of loops: " +
           loopsAtLevel.size());
       if(inner) {
         for(DependenceAnalysis dep : loopsAtLevel) {
-          Utility.printWithIdent(i * 2, dep.getInfoMsg());
+          Utility.printWithIndent(i * 2, dep.getInfoMsg());
         }
       }
     }
@@ -147,11 +147,11 @@ public class IterationSpace {
    * independent do statements.
    *
    * @param xcodeml     Current XcodeML/F program unit.
-   * @param transformer Current transformer.
+   * @param translator Current translator.
    * @param master      ClawLanguage that triggered this transformation.
    * @throws Exception If the fusion fails.
    */
-  public void tryFusion(XcodeProgram xcodeml, Transformer transformer,
+  public void tryFusion(XcodeProgram xcodeml, Translator translator,
                         ClawLanguage master)
       throws Exception
   {
@@ -166,7 +166,7 @@ public class IterationSpace {
           fusions.add(fusion);
         }
       }
-      fusions.applyTranslations(xcodeml, transformer);
+      fusions.applyTranslations(xcodeml, translator);
     }
   }
 

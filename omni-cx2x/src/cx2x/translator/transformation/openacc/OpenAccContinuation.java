@@ -7,10 +7,11 @@ package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -39,7 +40,7 @@ import cx2x.xcodeml.xnode.Xnode;
  *
  * @author clementval
  */
-public class OpenAccContinuation extends Transformation {
+public class OpenAccContinuation extends ClawTransformation {
 
 
   /**
@@ -48,7 +49,7 @@ public class OpenAccContinuation extends Transformation {
    * @param directive The directive that triggered the OpenACC continuation
    *                  transformation.
    */
-  public OpenAccContinuation(AnalyzedPragma directive) {
+  public OpenAccContinuation(ClawLanguage directive) {
     super(directive);
   }
 
@@ -56,11 +57,11 @@ public class OpenAccContinuation extends Transformation {
   /**
    * Check if the directive starts with the OpenACC prefix.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
+   * @param translator The translator used to applied the transformations.
    * @return True the directive starts with the OpenACC prefix.
    */
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     return getDirective().getPragma().value().toLowerCase().
         startsWith(ClawConstant.OPENACC_PREFIX);
   }
@@ -82,44 +83,44 @@ public class OpenAccContinuation extends Transformation {
    *
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
-   * @param transformer    The transformer used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation)
       throws IllegalTransformationException
   {
     if(isFromPrimitive()) {
       splitByCont(xcodeml);
-    } else if(transformer.getMaxColumns() > 0
+    } else if(translator.getMaxColumns() > 0
         && !getDirective().getPragma().isDeleted())
     {
-      splitByLength(xcodeml, transformer);
+      splitByLength(xcodeml, translator);
     }
   }
 
   /**
    * Split the line by its length and add continuation symbols.
    *
-   * @param xcodeml     The XcodeML on which the transformations are
-   *                    applied.
-   * @param transformer The transformer used to applied the transformations.
+   * @param xcodeml    The XcodeML on which the transformations are
+   *                   applied.
+   * @param translator The translator used to applied the transformations.
    */
-  private void splitByLength(XcodeProgram xcodeml, Transformer transformer) {
+  private void splitByLength(XcodeProgram xcodeml, Translator translator) {
     String allPragma = getDirective().getPragma().value();
-    if(allPragma.length() > transformer.getMaxColumns()) {
+    if(allPragma.length() > translator.getMaxColumns()) {
       allPragma =
           allPragma.toLowerCase().replace(ClawConstant.OPENACC_PREFIX, "");
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = 0;
       int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
-      while(allPragma.length() > (transformer.getMaxColumns() - addLength)) {
+      while(allPragma.length() > (translator.getMaxColumns() - addLength)) {
         int splitIndex =
             allPragma.substring(0,
-                transformer.getMaxColumns() - addLength).lastIndexOf(" ");
+                translator.getMaxColumns() - addLength).lastIndexOf(" ");
         // Cannot cut as it should. Take first possible cutting point.
         if(splitIndex == -1) {
           splitIndex = allPragma.indexOf(" ");

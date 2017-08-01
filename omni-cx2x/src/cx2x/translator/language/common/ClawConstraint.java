@@ -6,7 +6,7 @@
 package cx2x.translator.language.common;
 
 /**
- * Define the value of the conatrsint clause
+ * Define the value of the constraint clause
  *
  * @author clementval
  */

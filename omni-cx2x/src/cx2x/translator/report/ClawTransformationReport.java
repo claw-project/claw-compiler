@@ -5,10 +5,10 @@
 package cx2x.translator.report;
 
 import cx2x.ClawVersion;
-import cx2x.translator.ClawXcodeMlTranslator;
+import cx2x.translator.ClawTranslator;
+import cx2x.translator.ClawTranslatorDriver;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.transformer.ClawTransformer;
 import cx2x.xcodeml.transformation.TransformationGroup;
 
 import java.io.FileWriter;
@@ -44,17 +44,17 @@ public class ClawTransformationReport {
   /**
    * Generate the report to file.
    *
-   * @param config      Current configuration used during the transformation.
-   * @param args        Arguments passed to the translator.
-   * @param translator  Current translator used during the transformation.
+   * @param config     Current configuration used during the transformation.
+   * @param args       Arguments passed to the translator.
+   * @param translator Current translator used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
   public void generate(Configuration config, String[] args,
-                       ClawXcodeMlTranslator translator) throws Exception
+                       ClawTranslatorDriver translator) throws Exception
   {
     printHeader("CLAW Transformation Report");
     printMainInfo(translator, config, args);
-    printTransformationOrderInfo(translator.getTransformer());
+    printTransformationOrderInfo(translator.getTranslator());
     printTransformationInfo();
     _report.flush();
   }
@@ -76,12 +76,12 @@ public class ClawTransformationReport {
    * Write the header of the report. Contains information driving the
    * transformation.
    *
-   * @param translator  Current translator used during the transformation.
-   * @param config Used configuration for the transformation.
-   * @param args   Arguments passed to the translator.
+   * @param translator Current translator used during the transformation.
+   * @param config     Used configuration for the transformation.
+   * @param args       Arguments passed to the translator.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  private void printMainInfo(ClawXcodeMlTranslator translator,
+  private void printMainInfo(ClawTranslatorDriver translator,
                              Configuration config, String[] args)
       throws Exception
   {
@@ -122,10 +122,10 @@ public class ClawTransformationReport {
    * Print information about the transformations group and their application
    * order.
    *
-   * @param transformer Current transformer used during the transformation.
+   * @param translator Current translator used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  private void printTransformationOrderInfo(ClawTransformer transformer)
+  private void printTransformationOrderInfo(ClawTranslator translator)
       throws Exception
   {
     printTitle("Transformation information");
@@ -138,7 +138,7 @@ public class ClawTransformationReport {
         "-----", "-------------------", "---------", "----------"));
     int index = 1;
     for(Map.Entry<Class, TransformationGroup> entry :
-        transformer.getGroups().entrySet()) {
+        translator.getGroups().entrySet()) {
       printLine(String.format(format, index++,
           entry.getValue().transformationName(), entry.getValue().count(),
           entry.getValue().getAppliedTransformationCount()));

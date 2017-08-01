@@ -71,7 +71,7 @@ public enum Xcode {
   FRETURNSTATEMENT(Xname.F_RETURN_STATEMENT),                // XcodeML/F 6.10
   FREWINDSTATEMENT(Xname.F_REWIND_STATEMENT),                // XcodeML/F 6.17.3
   FSELECTCASESTATEMENT(Xname.F_SELECT_CASE_STATEMENT),       // XcodeML/F 6.13
-  FSTOPSTATEMENT(Xname.F_STOP_STATEMENT),                    // XcoceML 6.16
+  FSTOPSTATEMENT(Xname.F_STOP_STATEMENT),                    // XcodeML/F 6.16
   FSTRUCTCONSTRUCTOR(Xname.F_STRUCT_CONSTRUCTOR),            // XcodeML/F 7.3.1
   FSTRUCTDECL(Xname.F_STRUCT_DECL),                          // XcodeML/F 5.5
   FSTRUCTTYPE(Xname.F_STRUCT_TYPE),                          // XcodeML/F 3.5

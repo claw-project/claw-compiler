@@ -1130,11 +1130,10 @@ public class XnodeUtil {
       return;
     }
 
-    Xnode doStatment = node;
+    Xnode doStatement = node;
 
     while(node.prevSibling() != null
-        && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT)
-    {
+        && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
       String pragma = node.prevSibling().value().toLowerCase();
       Xnode toDelete = null;
 
@@ -1149,10 +1148,9 @@ public class XnodeUtil {
       safeDelete(toDelete);
     }
 
-    node = doStatment; // Reset node to the initial position.
+    node = doStatement; // Reset node to the initial position.
     while(node.nextSibling() != null
-        && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT)
-    {
+        && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
       String pragma = node.nextSibling().value().toLowerCase();
       Xnode toDelete = null;
 
@@ -1218,5 +1216,19 @@ public class XnodeUtil {
       }
     }
     return false;
+  }
+
+  /**
+   * Return the directive prefix.
+   *
+   * @param pragma The pragma node.
+   * @return Directive prefix.
+   */
+  public static String getPragmaPrefix(Xnode pragma) {
+    if(pragma.opcode() != Xcode.FPRAGMASTATEMENT) {
+      return "";
+    }
+    return pragma.value().toLowerCase().
+        substring(0, pragma.value().indexOf(" "));
   }
 }

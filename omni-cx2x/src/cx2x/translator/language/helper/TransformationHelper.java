@@ -19,7 +19,7 @@ import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
@@ -51,18 +51,18 @@ public class TransformationHelper {
    *                    information about the current directives and its
    *                    clauses.
    * @param xcodeml     Current XcodeML program.
-   * @param transformer Transformer object in which new transformation are
+   * @param translator Translator object in which new transformation are
    *                    added.
    * @param stmt        Statement on which the transformation is attached.
    */
   public static void generateAdditionalTransformation(ClawLanguage claw,
                                                       XcodeProgram xcodeml,
-                                                      Transformer transformer,
+                                                      Translator translator,
                                                       Xnode stmt)
   {
     // Order doesn't matter
-    applyFusionClause(claw, xcodeml, transformer, stmt);
-    applyInterchangeClause(claw, xcodeml, transformer, stmt);
+    applyFusionClause(claw, xcodeml, translator, stmt);
+    applyInterchangeClause(claw, xcodeml, translator, stmt);
   }
 
 
@@ -74,21 +74,21 @@ public class TransformationHelper {
    *                    information about the current directives and its
    *                    clauses.
    * @param xcodeml     Current XcodeML program.
-   * @param transformer Transformer object in which new transformation are
+   * @param translator Translator object in which new transformation are
    *                    added.
    * @param stmt        Statement on which the transformation is attached. Must
    *                    be a FdoStatement for the loop fusion transformation.
    */
   private static void applyFusionClause(ClawLanguage claw,
                                         XcodeProgram xcodeml,
-                                        Transformer transformer,
+                                        Translator translator,
                                         Xnode stmt)
   {
     if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
       LoopFusion fusion = new LoopFusion(stmt, l);
       // TODO maybe run analysis
-      transformer.addTransformation(xcodeml, fusion);
+      translator.addTransformation(xcodeml, fusion);
 
       if(XmOption.isDebugOutput()) {
         System.out.println("Loop fusion added: " + claw.getGroupValue());
@@ -104,7 +104,7 @@ public class TransformationHelper {
    *                    information about the current directives and its
    *                    clauses.
    * @param xcodeml     Current XcodeML program.
-   * @param transformer Transformer object in which new transformation are
+   * @param translator Translator object in which new transformation are
    *                    added.
    * @param stmt        Statement on which the transformation is attached. Must
    *                    be a FdoStatement for the loop interchange
@@ -112,7 +112,7 @@ public class TransformationHelper {
    */
   private static void applyInterchangeClause(ClawLanguage claw,
                                              XcodeProgram xcodeml,
-                                             Transformer transformer,
+                                             Translator translator,
                                              Xnode stmt)
   {
     if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
@@ -120,7 +120,7 @@ public class TransformationHelper {
       stmt.insertBefore(p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
-      transformer.addTransformation(xcodeml, interchange);
+      translator.addTransformation(xcodeml, interchange);
       if(XmOption.isDebugOutput()) {
         System.out.println("Loop interchange added: " + claw.getIndexes());
       }
@@ -295,7 +295,7 @@ public class TransformationHelper {
    * @param fctType     Function type that has been changed.
    * @param modDef      Module definition holding the function definition.
    * @param claw        Pragma that has triggered the transformation.
-   * @param transformer Current transformer object.
+   * @param translator Current translator object.
    * @throws IllegalTransformationException If the module file or the function
    *                                        cannot be located
    */
@@ -304,14 +304,13 @@ public class TransformationHelper {
                                            XfunctionType fctType,
                                            XmoduleDefinition modDef,
                                            ClawLanguage claw,
-                                           cx2x.xcodeml.transformation.
-                                               Transformer transformer,
+                                           Translator translator,
                                            boolean importFctType)
       throws IllegalTransformationException
   {
     Xmod mod;
-    if(transformer.getModCache().isModuleLoaded(modDef.getName())) {
-      mod = transformer.getModCache().get(modDef.getName());
+    if(translator.getModCache().isModuleLoaded(modDef.getName())) {
+      mod = translator.getModCache().get(modDef.getName());
     } else {
       mod = fctDef.findContainingModule();
       if(mod == null) {
@@ -319,7 +318,7 @@ public class TransformationHelper {
             "Unable to locate module file for: " + modDef.getName(),
             claw.getPragma().lineNo());
       }
-      transformer.getModCache().add(modDef.getName(), mod);
+      translator.getModCache().add(modDef.getName(), mod);
     }
 
     XfunctionType fctTypeMod;

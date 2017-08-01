@@ -1,0 +1,9 @@
+<transformations>
+  <transformation name="internal-xcodeml"
+    type="independent" trigger="translation_unit"
+    class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
+
+  <transformation name="openacc-continuation"
+    type="independent" trigger="directive"
+    class="cx2x.translator.transformation.openacc.OpenAccContinuation" />
+</transformations>

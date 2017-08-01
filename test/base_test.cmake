@@ -23,7 +23,7 @@ endif()
 if(${TEST_DEBUG}) # with debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
-    COMMAND
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
       ${CLAWFC} ${OPTIONAL_FLAGS} --debug-omni --debug -J ${XMOD_DIR}
       -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -33,7 +33,7 @@ if(${TEST_DEBUG}) # with debug option
 else() # without debug option
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE}
-    COMMAND
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
       ${CLAWFC} ${OPTIONAL_FLAGS} -J ${XMOD_DIR}
       -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

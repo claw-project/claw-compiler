@@ -590,4 +590,39 @@ public class XcodeML extends Xnode {
     }
     return createAndAddParam(nameValue, type, fctType);
   }
+
+  /**
+   * Create a print statement with the given char constants.
+   * @param format        Format for the print statement.
+   * @param charConstants Array of char constants to be created.
+   * @return The print statement node created.
+   */
+  public Xnode createPrintStatement(String format, String[] charConstants) {
+    Xnode printStatement = new Xnode(Xcode.FPRINTSTATEMENT, this);
+    printStatement.setAttribute(Xattr.FORMAT, format);
+
+    Xnode valueList = new Xnode(Xcode.VALUELIST, this);
+    for(String charConstant : charConstants) {
+      // Create the char constant type
+      String charTypeHash = getTypeTable().generateCharTypeHash();
+      Xtype charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
+      Xnode len = new Xnode(Xcode.LEN, this);
+      Xnode intConstant = new Xnode(Xcode.FINTCONSTANT, this);
+      intConstant.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+      intConstant.setValue(charConstant.length()+"");
+      len.append(intConstant, false);
+      charType.append(len, false);
+      getTypeTable().add(charType);
+
+      // Create the value element to be added to the list
+      Xnode valueElement = new Xnode(Xcode.VALUE, this);
+      Xnode fCharElement = new Xnode(Xcode.FCHARACTERCONSTANT, this);
+      fCharElement.setAttribute(Xattr.TYPE, charTypeHash);
+      fCharElement.setValue(charConstant);
+      valueElement.append(fCharElement, false);
+      valueList.append(valueElement, false);
+    }
+    printStatement.append(valueList, false);
+    return printStatement;
+  }
 }

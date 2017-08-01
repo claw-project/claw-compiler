@@ -8,11 +8,11 @@ package cx2x.translator.transformation.claw;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformer.ClawTransformer;
+import cx2x.translator.ClawTranslator;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Transformer;
+import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 
 import java.util.ArrayList;
@@ -39,10 +39,10 @@ public class Kcaching extends ClawTransformation {
   }
 
   /**
-   * @see Transformation#analyze(XcodeProgram, Transformer)
+   * @see Transformation#analyze(XcodeProgram, Translator)
    */
   @Override
-  public boolean analyze(XcodeProgram xcodeml, Transformer transformer) {
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     _doStmt = _claw.getPragma().matchAncestor(Xcode.FDOSTATEMENT);
     if(_doStmt == null) {
       xcodeml.addError("The kcache directive is not nested in a do statement",
@@ -66,10 +66,10 @@ public class Kcaching extends ClawTransformation {
   }
 
   /**
-   * @see Transformation#transform(XcodeProgram, Transformer, Transformation)
+   * @see Transformation#transform(XcodeProgram, Translator, Transformation)
    */
   @Override
-  public void transform(XcodeProgram xcodeml, Transformer transformer,
+  public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
     // It might have change from the analysis
@@ -99,9 +99,9 @@ public class Kcaching extends ClawTransformation {
       }
 
       if(stmt != null && standardArrayRef) {
-        transformAssignStmt(xcodeml, fctDef, data, stmt, transformer);
+        transformAssignStmt(xcodeml, fctDef, data, stmt, translator);
       } else {
-        transformData(xcodeml, fctDef, data, transformer);
+        transformData(xcodeml, fctDef, data, translator);
       }
 
     }
@@ -114,12 +114,12 @@ public class Kcaching extends ClawTransformation {
    * @param xcodeml     The XcodeML on which the transformations are applied.
    * @param fctDef      Function/module definition in which the data are nested.
    * @param data        Array identifier on which the caching is done.
-   * @param transformer Current instance of the transformer.
+   * @param translator Current instance of the translator.
    * @throws Exception If something prevent the transformation to be done.
    */
   private void transformData(XcodeProgram xcodeml, XfunctionDefinition fctDef,
                              String data,
-                             Transformer transformer)
+                             Translator translator)
       throws Exception
   {
 
@@ -143,14 +143,14 @@ public class Kcaching extends ClawTransformation {
    * @param fctDef      Function/module definition in which the data are nested.
    * @param data        Array identifier on which the caching is done.
    * @param stmt        First statement including the array ref on the lhs.
-   * @param transformer The transformer used to applied the transformations.
+   * @param translator The translator used to applied the transformations.
    * @throws Exception If something prevent the transformation to be done.
    */
   private void transformAssignStmt(XcodeProgram xcodeml,
                                    XfunctionDefinition fctDef,
                                    String data,
                                    Xnode stmt,
-                                   Transformer transformer) throws Exception
+                                   Translator translator) throws Exception
   {
     String type =
         stmt.matchDirectDescendant(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
@@ -159,7 +159,7 @@ public class Kcaching extends ClawTransformation {
     Xnode cacheVar =
         generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef, stmt, stmt);
 
-    applyInitClause(xcodeml, transformer, cacheVar, aRefs.get(0));
+    applyInitClause(xcodeml, translator, cacheVar, aRefs.get(0));
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
@@ -173,7 +173,7 @@ public class Kcaching extends ClawTransformation {
    *
    * @param xcodeml     Current program in which the transformation is
    *                    performed.
-   * @param transformer Current transformer used to store elements information.
+   * @param translator Current translator used to store elements information.
    * @param cacheVar    Newly created cache variable that will be used for the
    *                    initialization (rhs of the assign statement). Element
    *                    will be cloned before insertion.
@@ -181,12 +181,12 @@ public class Kcaching extends ClawTransformation {
    *                    used for the initialization (lhs of the assign
    *                    statement). Element will be cloned before insertion.
    */
-  private void applyInitClause(XcodeProgram xcodeml, Transformer transformer,
+  private void applyInitClause(XcodeProgram xcodeml, Translator translator,
                                Xnode cacheVar, Xnode arrayRef)
   {
 
     if(_claw.hasInitClause()) {
-      ClawTransformer ct = (ClawTransformer) transformer;
+      ClawTranslator ct = (ClawTranslator) translator;
       Xnode initIfStmt = (Xnode) ct.hasElement(_doStmt);
       if(initIfStmt == null) {
         // If statement has not been created yet so we do it here

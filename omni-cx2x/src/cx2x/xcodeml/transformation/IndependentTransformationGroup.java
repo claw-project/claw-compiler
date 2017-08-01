@@ -27,16 +27,16 @@ public class IndependentTransformationGroup extends TransformationGroup {
   }
 
   /**
-   * @see TransformationGroup#applyTranslations(XcodeProgram, Transformer)
+   * @see TransformationGroup#applyTranslations(XcodeProgram, Translator)
    */
-  public void applyTranslations(XcodeProgram xcodeml, Transformer transformer)
+  public void applyTranslations(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
     for(Transformation trans : getTransformations()) {
       try {
-        trans.transform(xcodeml, transformer, null);
+        trans.transform(xcodeml, translator, null);
         if(trans.isTransformed()) {
-          incrAppliedTransformation();
+          incrementAppliedTransformation();
         }
       } catch(IllegalTransformationException itex) {
         // Catch the exception to add line information and rethrow it

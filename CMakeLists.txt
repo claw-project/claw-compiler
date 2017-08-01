@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project("CLAW FORTRAN Compiler" VERSION 0.3.0)
+project("CLAW FORTRAN Compiler" VERSION 0.4.0)
 
 # Set up the local module path
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
