@@ -10,14 +10,16 @@
 # author: clementval
 #
 
+GIT_ROOT=$(git rev-parse --show-toplevel)
+
 # Run license checker
-if ! ./scripts/check_license; then
+if ! "${GIT_ROOT}"/scripts/check_license; then
   echo "One of your source code files does not have license information!"
   exit 1
 fi
 
 # Run shellcheck
-cd scripts || exit 1
+cd "${GIT_ROOT}"/scripts || exit 1
 if ! ./run.shellcheck; then
   echo "One of your bash script does not comply with shellcheck!"
   exit 1
