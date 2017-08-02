@@ -198,16 +198,16 @@ public class XnodeUtil {
      * the "from" element */
     String s1 = String.format(
         "following-sibling::%s[%s]",
-        Xname.F_ASSIGN_STMT,
+        Xname.F_ASSIGN_STATEMENT,
         Xname.F_ARRAY_REF
     );
     /* Define all the assign element with array refs which are previous siblings
      * of the end pragma element */
     String s2 = String.format(
         "following-sibling::%s[text()=\"%s\"]/preceding-sibling::%s[%s]",
-        Xname.PRAGMA_STMT,
+        Xname.F_PRAGMA_STMT,
         endPragma,
-        Xname.F_ASSIGN_STMT,
+        Xname.F_ASSIGN_STATEMENT,
         Xname.F_ARRAY_REF
     );
     // Use the Kaysian method to express the intersect operator
@@ -245,7 +245,7 @@ public class XnodeUtil {
   public static Xnode getFirstArrayAssign(Xnode from, String arrayName) {
     String s1 = String.format(
         "following::%s[%s[%s[%s[text()=\"%s\"]] and position()=1]]",
-        Xname.F_ASSIGN_STMT,
+        Xname.F_ASSIGN_STATEMENT,
         Xname.F_ARRAY_REF,
         Xname.VAR_REF,
         Xname.VAR,
