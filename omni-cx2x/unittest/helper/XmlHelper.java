@@ -118,8 +118,8 @@ public class XmlHelper {
   }
 
   public static Xnode createXpragma() {
-    String xml = "<" + Xname.PRAGMA_STMT + "></" +
-        Xname.PRAGMA_STMT + ">";
+    String xml = "<" + Xname.F_PRAGMA_STMT + "></" +
+        Xname.F_PRAGMA_STMT + ">";
     Element el = XmlHelper.getElementFromString(xml);
     return new Xnode(el);
   }

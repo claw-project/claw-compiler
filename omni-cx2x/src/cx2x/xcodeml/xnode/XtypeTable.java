@@ -61,7 +61,7 @@ public class XtypeTable extends Xnode {
       if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
         Element el = (Element) crtNode;
         switch(el.getTagName()) {
-          case Xname.BASIC_TYPE:
+          case Xname.F_BASIC_TYPE:
             XbasicType bt = new XbasicType(el);
             _table.put(bt.getType(), bt);
             break;
