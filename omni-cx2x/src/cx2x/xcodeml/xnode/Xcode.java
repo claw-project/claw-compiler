@@ -6,30 +6,38 @@
 package cx2x.xcodeml.xnode;
 
 /**
- * XcodeML/F element code from the specification 0.91J
+ * XcodeML/F element code from the specification 1.0
+ *
+ * All enum value are written without underscore. All String value are defined
+ * in Xname.
  *
  * @author clementval
  */
 public enum Xcode {
   ALLOC(Xname.ALLOC),                                        // XcodeML/F 6.30
+  ALLOCOPT(Xname.ALLOC_OPT),                                 // XcodeML/F 6.31
   ARGUMENTS(Xname.ARGUMENTS),                                // XcodeML/F 7.5.2
   ARRAYINDEX(Xname.ARRAY_INDEX),                             // XcodeML/F 8.10
-  FBASICTYPE(Xname.BASIC_TYPE),                              // XcodeML/F 3.3
+  ASSOCIATESTATEMENT(Xname.ASSOCIATE_STATEMENT),             // XcodeML/F 6.42
+  BINDING(Xname.BINDING),                                    // XcodeML/F 3.13
+  BLOCKSTATEMENT(Xname.BLOCK_STATEMENT),                     // XcodeML/F 6.43
   BODY(Xname.BODY),                                          // XcodeML/F 8.7
   CONDITION(Xname.CONDITION),                                // XcodeML/F 6.27
   CONTINUESTATEMENT(Xname.CONTINUE_STATEMENT),               // XcodeML/F 6.7
   COSHAPE(Xname.CO_SHAPE),                                   // XcodeML/F 3.2
+  CRITICALSTATEMENT(Xname.CRITICAL_STATEMENT),               // XcodeML/F 6.41
   DECLARATIONS(Xname.DECLARATIONS),                          // XcodeML/F 5.2
   DEPENDS(Xname.DEPENDS),                                    // Xmod file
   ELSE(Xname.ELSE),                                          // XcodeML/F 6.29
-  EXPRSTATEMENT(Xname.EXPR_STMT),                            // XcodeML/F 6.2
+  EXPRSTATEMENT(Xname.EXPR_STATEMENT),                       // XcodeML/F 6.2
   EXTERNDECL(Xname.EXTERN_DECL),                             // XcodeML/F 5.6
   FUNCTIONCALL(Xname.FUNCTION_CALL),                         // XcodeML/F 7.5.1
   FALLOCATESTATEMENT(Xname.F_ALLOCATE_STATEMENT),            // XcodeML/F 6.24.1
   FARRAYCONSTRUCTOR(Xname.F_ARRAY_CONSTRUCTOR),              // XcodeML/F 7.2.1
   FARRAYREF(Xname.F_ARRAY_REF),                              // XcodeML/F 7.4.4
-  FASSIGNSTATEMENT(Xname.F_ASSIGN_STMT),                     // XcodeML/F 6.1
+  FASSIGNSTATEMENT(Xname.F_ASSIGN_STATEMENT),                // XcodeML/F 6.1
   FBACKSPACESTATEMENT(Xname.F_BACKSPACE_STATEMENT),          // XcodeML/F 6.17.3
+  FBASICTYPE(Xname.F_BASIC_TYPE),                            // XcodeML/F 3.13
   FCASELABEL(Xname.F_CASE_LABEL),                            // XcodeML/F 6.14
   FCHARACTERREF(Xname.F_CHAR_REF),                           // XcodeML/F 7.4.5
   FCLOSESTATEMENT(Xname.F_CLOSE_STATEMENT),                  // XcodeML/F 6.17.5
@@ -39,13 +47,16 @@ public enum Xcode {
   FCYCLESTATEMENT(Xname.F_CYCLE_STATEMENT),                  // XcodeML/F 6.8
   FDATADECL(Xname.F_DATA_DECL),                              // XcodeML/F 6.19
   FDEALLOCATESTATEMENT(Xname.F_DEALLOCATE_STATEMENT),        // XcodeML/F 6.24.2
+  FDOCONCURRENTSTATEMENT(Xname.F_DO_CONCURRENT_STATEMENT),   // XcodeML/F 6.33
   FDOLOOP(Xname.F_DO_LOOP),                                  // XcodeML/F 8.15
   FDOSTATEMENT(Xname.F_DO_STATEMENT),                        // XcodeML/F 6.5
   FDOWHILESTATEMENT(Xname.F_DO_WHILE_STATEMENT),             // XcodeML/F 6.6
   FENDFILESTATEMENT(Xname.F_ENDFILE_STATEMENT),              // XcodeML/F 6.17.3
   FENTRYDECL(Xname.F_ENTRY_DECL),                            // XcodeML/F 6.23
+  FENUMTYPE(Xname.F_ENUM_TYPE),                              // XcodeML/F 3.14
   FEQUIVALENCEDECL(Xname.F_EQUIVALENCE_DECL),                // XcodeML/F 6.21
   FEXITSTATEMENT(Xname.F_EXIT_STATEMENT),                    // XcodeML/F 6.9
+  FFLUSHSTATEMENT(Xname.F_FLUSH_STATEMENT),                  // XcodeML/F 6.17.8
   FFORMATDECL(Xname.F_FORMAT_DECL),                          // XcodeML/F 6.18
   FFUNCTIONDEFINITION(Xname.F_FUNCTION_DEFINITION),          // XcodeML/F 5.3
   FFUNCTIONTYPE(Xname.F_FUNCTION_TYPE),                      // XcodeML/F 3.4
@@ -65,8 +76,10 @@ public enum Xcode {
   FNAMELISTDECL(Xname.F_NAMELIST_DECL),                      // XcodeML/F 6.20
   FNULLIFYSTATEMENT(Xname.F_NULLIFY_STATEMENT),              // XcodeML/F 6.24.3
   FOPENSTATEMENT(Xname.F_OPEN_STATEMENT),                    // XcodeML/F 6.17.4
+  FORALLSTATEMENT(Xname.FOR_ALL_STATEMENT),                  // XcodeML/F 6.32
   FPOINTERASSIGNSTATEMENT(Xname.F_POINTER_ASSIGN_STATEMENT), // XcodeML/F 6.3
   FPRINTSTATEMENT(Xname.F_PRINT_STATEMENT),                  // XcodeML/F 6.17.2
+  FPROCEDUREDECL(Xname.F_PROCEDURE_DECL),                    // XcodeML/F 5.13
   FREADSTATEMENT(Xname.F_READ_STATEMENT),                    // XcodeML/F 6.17.1
   FRETURNSTATEMENT(Xname.F_RETURN_STATEMENT),                // XcodeML/F 6.10
   FREWINDSTATEMENT(Xname.F_REWIND_STATEMENT),                // XcodeML/F 6.17.3
@@ -77,6 +90,7 @@ public enum Xcode {
   FSTRUCTTYPE(Xname.F_STRUCT_TYPE),                          // XcodeML/F 3.5
   FUSEDECL(Xname.F_USE_DECL),                                // XcodeML/F 5.8
   FUSEONLYDECL(Xname.F_USE_ONLY_DECL),                       // XcodeML/F 5.9
+  FWAITSTATEMENT(Xname.F_WAIT_STATEMENT),                    // XcodeML/F 6.17.7
   FWHERESTATEMENT(Xname.F_WHERE_STATEMENT),                  // XcodeML/F 6.15
   FWRITESTATEMENT(Xname.F_WRITE_STATEMENT),                  // XcodeML/F 6.17.1
   GLOBALDECLARATIONS(Xname.GLOBAL_DECLARATIONS),             // XcodeML/F 5.1
@@ -87,24 +101,33 @@ public enum Xcode {
   INDEXRANGE(Xname.INDEX_RANGE),                             // XcodeML/F 8.11
   KIND(Xname.KIND),                                          // XcodeML/F 8.1
   LEN(Xname.LENGTH),                                         // XcodeML/F 8.6
+  LOCKSTATEMENT(Xname.LOCK_STATEMENT),                       // XcodeML/F 6.39
   LOWERBOUND(Xname.LOWER_BOUND),                             // XcodeML/F 8.12
   NAME(Xname.NAME),                                          // XcodeML/F 8.3
   NAMEDVALUE(Xname.NAMED_VALUE),                             // XcodeML/F 8.16
   NAMEDVALUELIST(Xname.NAMED_VALUE_LIST),                    // XcodeML/F 8.17
   PARAMS(Xname.PARAMS),                                      // XcodeML/F 8.5
-  FPRAGMASTATEMENT(Xname.PRAGMA_STMT),                       // XcodeML/F 6.25
+  FPRAGMASTATEMENT(Xname.F_PRAGMA_STMT),                     // XcodeML/F 6.25
   RENAME(Xname.RENAME),                                      // XcodeML/F 8.8
   RENAMABLE(Xname.RENAMABLE),                                // XcodeML/F 8.9
   SELECTTYPESTATEMENT(Xname.SELECT_TYPE_STATEMENT),          // XcodeML/F 6.34
   STATEMENTLABEL(Xname.STATEMENT_LABEL),                     // XcodeML/F 6.12
   STEP(Xname.STEP),                                          // XcodeML/F 8.14
   SYMBOLS(Xname.SYMBOLS),                                    // XcodeML/F 4.2
+  SYNCALLSTATEMENT(Xname.SYNC_ALL_STATEMENT),                // XcodeML/F 6.36
+  SYNCIMAGESSTATEMENT(Xname.SYNC_IMAGES_STATEMENT),          // XcodeML/F 6.37
+  SYNCMEMORYSTATEMENT(Xname.SYNC_MEMORY_STATEMENT),          // XcodeML/F 6.38
+  SYNCSTAT(Xname.SYNC_STAT),                                 // XcodeML/F 6.40
   THEN(Xname.THEN),                                          // XcodeML/F 6.28
   TYPEBOUNDGENERICPROCEDURE(Xname.TYPE_BOUND_GENERIC_PROCEDURE), // XcodeML 3.11
   TYPEBOUNDPROCEDURES(Xname.TYPE_BOUND_PROCEDURES),          // XcodeML/F 3.9
   TYPEBOUNDPROCEDURE(Xname.TYPE_BOUND_PROCEDURE),            // XcodeML/F 3.10
   TYPEGUARD(Xname.TYPE_GUARD),                               // XcodeML/F 6.53
+  TYPEPARAM(Xname.TYPE_PARAM),                               // XcodeML/F 3.7
+  TYPEPARAMS(Xname.TYPE_PARAMS),                             // XcodeML/F 3.6
+  TYPEPARAMVALUE(Xname.TYPE_PARAM_VALUE),                    // XcodeML/F 3.8
   TYPETABLE(Xname.TYPE_TABLE),                               // XcodeML/F 3.1
+  UNLOCKSTATEMENT(Xname.UNLOCK_STATEMENT),                   // XcodeML/F 6.39
   UPPERBOUND(Xname.UPPER_BOUND),                             // XcodeML/F 8.13
   VALUE(Xname.VALUE),                                        // XcodeML/F 8.4
   VALUELIST(Xname.VALUE_LIST),                               // XcodeML/F 8.18
