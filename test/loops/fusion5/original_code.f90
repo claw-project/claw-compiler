@@ -5,8 +5,10 @@ PROGRAM LOOP_FUSION
 END
 
 SUBROUTINE clawloop
+  IMPLICIT NONE
   INTEGER :: i
   INTEGER :: j
+  INTEGER :: k
 
   !$claw loop-fusion collapse(2)
   DO i=1,5

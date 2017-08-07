@@ -16,6 +16,8 @@ SUBROUTINE claw_hoist2 ( )
  REAL :: var3
  REAL :: var4
  REAL :: var5
+ REAL :: time_step_len
+ REAL :: zsedtend
  TYPE :: dummy
   REAL :: value1
   REAL :: value2
@@ -28,8 +30,6 @@ SUBROUTINE claw_hoist2 ( )
  REAL :: array3d_1 ( 1 : 10 , 1 : 100 , 1 : 2 )
  REAL :: array3d_2 ( 1 : 10 , 1 : 100 , 1 : 2 )
  TYPE ( dummy ) :: tdum
- REAL :: zsedtend
- REAL :: time_step_len
 
 
 

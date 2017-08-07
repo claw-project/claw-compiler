@@ -5,8 +5,10 @@ program loop_hoist6
 end program loop_hoist6
 
 subroutine clawloop
+  IMPLICIT NONE
   INTEGER :: i
   INTEGER :: j
+  INTEGER :: k
   INTEGER :: iend = 2
   INTEGER :: jend = 4
   INTEGER :: kend = 2

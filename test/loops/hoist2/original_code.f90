@@ -9,8 +9,9 @@ END PROGRAM claw_test
 
 
 SUBROUTINE claw_hoist2
+  IMPLICIT NONE
   INTEGER :: jt,i,j,ntrac,klev,kproma
-  REAL :: var1,var2,var3,var4,var5
+  REAL :: var1,var2,var3,var4,var5,time_step_len,zsedtend
   REAL, DIMENSION(10,100) :: array2d_1, array2d_2, array2d_3, array2d_4, &
                              array2d_5
   REAL, DIMENSION(10,100,2) :: array3d_1, array3d_2
