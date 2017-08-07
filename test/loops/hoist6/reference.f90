@@ -7,10 +7,10 @@ END PROGRAM loop_hoist6
 SUBROUTINE clawloop ( )
  INTEGER :: i
  INTEGER :: j
+ INTEGER :: k
  INTEGER :: iend = 2
  INTEGER :: jend = 4
  INTEGER :: kend = 2
- INTEGER :: k
 
 
 
