@@ -123,7 +123,8 @@ public class OpenAccContinuation extends ClawTransformation {
                 translator.getMaxColumns() - addLength).lastIndexOf(" ");
         // Cannot cut as it should. Take first possible cutting point.
         if(splitIndex == -1) {
-          splitIndex = allPragma.indexOf(" ");
+          splitIndex = (allPragma.contains(" "))
+              ? allPragma.indexOf(" ") : allPragma.length();
         }
         String splittedPragma = allPragma.substring(0, splitIndex);
         allPragma = allPragma.substring(splitIndex, allPragma.length()).trim();
