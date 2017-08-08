@@ -2,13 +2,13 @@ PROGRAM testignore
 
 
 
-  !$claw remove
-  PRINT*,'These lines'
-  PRINT*,'are ignored'
-  PRINT*,'by the CLAW compiler'
-  PRINT*,'but kept in the final transformed code'
-  PRINT*,'with the remove directives.'
-  !$claw end remove
+!$claw remove
+  print*,"These lines"
+  print*,"are ignored"
+  print*,"by the CLAW compiler"
+  print*,"but kept in the final transformed code"
+  print*,"with the remove directives."
+!$claw end remove
 
 END PROGRAM testignore
 
