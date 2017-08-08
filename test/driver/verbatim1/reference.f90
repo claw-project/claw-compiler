@@ -1,11 +1,11 @@
 PROGRAM testverbatim
 
 
-IF (.FALSE.) THEN
+if (.false.) then
  PRINT * ,"These lines"
  PRINT * ,"are not printed"
  PRINT * ,"if the the CLAW compiler has processed"
  PRINT * ,"the file."
-END IF
+end if
 END PROGRAM testverbatim
 
