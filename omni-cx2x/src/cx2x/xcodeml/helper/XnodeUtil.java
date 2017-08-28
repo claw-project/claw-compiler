@@ -1183,7 +1183,7 @@ public class XnodeUtil {
     }
 
     if(fctType.getBooleanAttribute(Xattr.IS_PURE)) {
-      fctType.setAttribute(Xattr.IS_PURE, Xname.FALSE);
+      fctType.element().removeAttribute(Xattr.IS_PURE.toString());
       return true;
     }
     return false;

@@ -12,7 +12,7 @@ PROGRAM test
  DO i = 1 , 10 , 1
   IF ( j < 15 ) THEN
    j = i
-   PRINT * ,"HERE"
+   PRINT * , "HERE"
   END IF
  END DO
 END PROGRAM test

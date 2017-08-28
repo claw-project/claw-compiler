@@ -25,7 +25,7 @@ PROGRAM loop_opt
     d = sum + d
    END DO
    IF ( flag ) THEN
-    PRINT * ,"I did it"
+    PRINT * , "I did it"
    END IF
   END DO
  END DO

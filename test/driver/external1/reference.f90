@@ -12,7 +12,7 @@ CONTAINS
 
 
   CALL sub1 ( )
-  PRINT * ,"Call function" ,"sub1"
+  PRINT * , "Call function" , "sub1"
  END SUBROUTINE sub2
 
 END MODULE mod1
