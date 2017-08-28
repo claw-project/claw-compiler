@@ -31,14 +31,14 @@ SUBROUTINE clawloop ( value1 , value2 )
 
 
  DO j = 1 , 10 , 2
-  PRINT * ,"j" , j
+  PRINT * , "j" , j
  END DO
  DO i = istart , iend , 1
-  PRINT * ,"value1: " , value1 ( i )
-  PRINT * ,"value2: " , value2 ( i )
+  PRINT * , "value1: " , value1 ( i )
+  PRINT * , "value2: " , value2 ( i )
  END DO
  DO k = 1 , 10 , 3
-  PRINT * ,"k" , k
+  PRINT * , "k" , k
  END DO
 END SUBROUTINE clawloop
 
@@ -54,12 +54,12 @@ SUBROUTINE clawloop_extracted0 ( value1 , value2 )
 
 
  DO j = 1 , 10 , 2
-  PRINT * ,"j" , j
+  PRINT * , "j" , j
  END DO
- PRINT * ,"value1: " , value1
- PRINT * ,"value2: " , value2
+ PRINT * , "value1: " , value1
+ PRINT * , "value2: " , value2
  DO k = 1 , 10 , 3
-  PRINT * ,"k" , k
+  PRINT * , "k" , k
  END DO
 END SUBROUTINE clawloop_extracted0
 

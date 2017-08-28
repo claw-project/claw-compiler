@@ -13,7 +13,7 @@ PROGRAM loop_extract
  END DO
  DO i = istart , iend , 1
   CALL clawloop_extracted0 ( value1 ( i ) , value2 ( i ) )
-  PRINT * ,"dummy loop"
+  PRINT * , "dummy loop"
  END DO
 END PROGRAM loop_extract
 
@@ -27,8 +27,8 @@ SUBROUTINE clawloop ( value1 , value2 )
 
 
  DO i = istart , iend , 1
-  PRINT * ,"value1: " , value1 ( i )
-  PRINT * ,"value2: " , value2 ( i )
+  PRINT * , "value1: " , value1 ( i )
+  PRINT * , "value2: " , value2 ( i )
  END DO
 END SUBROUTINE clawloop
 
@@ -41,7 +41,7 @@ SUBROUTINE clawloop_extracted0 ( value1 , value2 )
 
 
 
- PRINT * ,"value1: " , value1
- PRINT * ,"value2: " , value2
+ PRINT * , "value1: " , value1
+ PRINT * , "value2: " , value2
 END SUBROUTINE clawloop_extracted0
 
