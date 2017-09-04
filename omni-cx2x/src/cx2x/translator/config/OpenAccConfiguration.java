@@ -14,6 +14,7 @@ public class OpenAccConfiguration {
 
   public static final String EXEC_MODE_NONE = "none";
   public static final String EXEC_MODE_VECTOR = "vector";
+  public static final String EXEC_MODE_GANG = "gang";
   public static final String EXEC_MODE_VECTOR_GANG = "vector_gang";
   public static final String EXEC_MODE_GANG_VECTOR = "gang_vector";
   private static final String OPENACC_NUM_WORKERS = "openacc_num_workers";
@@ -81,6 +82,28 @@ public class OpenAccConfiguration {
    */
   public OpenAccExecutionMode getMode() {
     return _mode;
+  }
+
+
+  /**
+   * Get string version of the execution mode.
+   *
+   * @return OpenACC clause according to the execution mode.
+   */
+  public String getFormattedExecutionMode() {
+    switch(_mode){
+      case NONE:
+        return "";
+      case GANG_VECTOR:
+        return "gang vector";
+      case VECTOR_GANG:
+        return "vector gang";
+      case GANG:
+        return "gang";
+      case VECTOR:
+        return "vector";
+    }
+    return "";
   }
 
 }

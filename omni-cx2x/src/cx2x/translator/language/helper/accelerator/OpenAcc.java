@@ -7,6 +7,7 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.config.OpenAccExecutionMode;
 import xcodeml.util.XmOption;
 
 import java.util.List;
@@ -169,8 +170,9 @@ class OpenAcc extends AcceleratorGenerator {
         };
       } else {
         return new String[]{
-            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
-                String.format("%s(%d)", OPENACC_COLLAPSE, value))
+            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+                String.format("%s(%d)", OPENACC_COLLAPSE, value),
+                getConfiguration().openACC().getFormattedExecutionMode())
         };
       }
     } else {
@@ -182,7 +184,8 @@ class OpenAcc extends AcceleratorGenerator {
         };
       } else {
         return new String[]{
-            String.format(FORMAT2, OPENACC_PREFIX, OPENACC_LOOP)
+            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
+                getConfiguration().openACC().getFormattedExecutionMode())
         };
       }
 
