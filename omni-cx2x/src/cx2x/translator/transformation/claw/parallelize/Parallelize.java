@@ -152,6 +152,10 @@ public class Parallelize extends ClawTransformation {
     /* If there is no data/over clause specified, an automatic deduction for
      * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
+      if(XmOption.isDebugOutput()){
+        System.out.println("parallelize promotion infos for subroutine " +
+            _fctDef.getName().value());
+      }
       for(Xdecl decl : _fctDef.getDeclarationTable().getAll()) {
         if(decl.isBuiltInType()) {
           if(XmOption.isDebugOutput()) {
