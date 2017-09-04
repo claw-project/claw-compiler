@@ -21,7 +21,7 @@ refer to the developer's guide
     <parameter key="openacc_num_workers" value="8" />     <!-- num_workers(8) -->
     <!-- Specify the order of generation of clauses when nested loops are generated -->
     <!-- possible values are vector_gang, gang_vector, vector, gang, none -->
-    <parameter key="openacc_execution_mode" value="vector_gang" />
+    <parameter key="openacc_execution_mode" value="gang_vector" />
   </global>
 
   <!-- Transformation sets -->
