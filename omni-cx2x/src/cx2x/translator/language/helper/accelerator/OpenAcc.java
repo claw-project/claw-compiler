@@ -29,6 +29,8 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
 
+  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
+
   /**
    * Constructs a new object with the given target.
    *
@@ -89,7 +91,7 @@ class OpenAcc extends AcceleratorGenerator {
       return "";
     }
     if(XmOption.isDebugOutput()) {
-      System.out.println("OpenACC: generate private clause for: " +
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: " +
           Utility.join(",", vars));
     }
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
@@ -101,7 +103,7 @@ class OpenAcc extends AcceleratorGenerator {
       return "";
     }
     if(XmOption.isDebugOutput()) {
-      System.out.println("OpenACC: generate present clause for: " +
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: " +
           Utility.join(",", vars));
     }
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));

@@ -50,8 +50,8 @@ public class AcceleratorHelper {
     }
 
     if(XmOption.isDebugOutput()) {
-      System.out.println("OpenACC: generated loop seq directive for " +
-          doStmts.size() + " loops");
+      System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
+          "generated loop seq directive for " + doStmts.size() + " loops");
     }
   }
 
@@ -332,8 +332,9 @@ public class AcceleratorHelper {
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
         if(XmOption.isDebugOutput()) {
-          System.out.println("OpenACC: generated routine seq directive for " +
-              fctName + " subroutine/function.");
+          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX
+              + "generated routine seq directive for " + fctName
+              + " subroutine/function.");
         }
       }
     }
