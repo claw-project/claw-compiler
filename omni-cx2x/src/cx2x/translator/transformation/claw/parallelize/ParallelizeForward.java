@@ -473,9 +473,6 @@ public class ParallelizeForward extends ClawTransformation {
         if(arg.opcode() == Xcode.FARRAYREF && arg.matchDirectDescendant(
             Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {
-          if(arg.matchDescendant(Xcode.FINTCONSTANT) != null) {
-            continue;
-          }
           Xnode var = arg.matchSeq(Xcode.VARREF, Xcode.VAR);
           if(var != null) {
             arg.insertAfter(var.cloneNode());
