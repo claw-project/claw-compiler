@@ -17,7 +17,7 @@ CONTAINS
 
 !$acc data present(q,nz,ny,nx,t)
 !$acc parallel private(k,j,i,d,c)
-!$acc loop collapse(2)
+!$acc loop collapse(2) gang vector
   DO j = 1 , ny , 1
    DO i = 1 , nx , 1
     c = 5.345
