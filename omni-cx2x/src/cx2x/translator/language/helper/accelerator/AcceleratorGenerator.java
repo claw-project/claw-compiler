@@ -71,9 +71,12 @@ public abstract class AcceleratorGenerator {
    * @param value Collapse value. if greater than 0, a collapse clause will be
    *              added to the construct.
    * @param seq   If true, loop should be executed in a sequential mode.
+   * @param naked If true, simple directive is generated without special
+   *              clauses.
    * @return String value that represents the start of a parallelized loop.
    */
-  protected abstract String[] getStartLoopDirective(int value, boolean seq);
+  protected abstract String[] getStartLoopDirective(int value, boolean seq,
+                                                    boolean naked);
 
   /**
    * Get the formatted directive to end the parallelization of a loop.

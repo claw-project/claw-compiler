@@ -6,7 +6,9 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
@@ -45,14 +47,51 @@ public class AcceleratorHelper {
 
     List<Xnode> doStmts = fctDef.matchAll(Xcode.FDOSTATEMENT);
     for(Xnode doStmt : doStmts) {
-      addPragmasBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE, true),
-          doStmt);
+      // Check if the nodep directive decorates the loop
+      Xnode noDependency = isDecoratedWithNoDependency(doStmt);
+      addPragmasBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE,
+          noDependency == null, true), doStmt);
+      XnodeUtil.safeDelete(noDependency);
+
+      // Debug logging
+      if(XmOption.isDebugOutput()) {
+        if(noDependency != null) {
+          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
+              "generated loop directive for loop at line: " + doStmt.lineNo());
+        } else {
+          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
+              "generated loop seq directive for loop at line: "
+              + doStmt.lineNo());
+        }
+      }
+    }
+  }
+
+  /**
+   * Check if there is a !$claw nodep directive before the do statement.
+   *
+   * @param doStmt Do statement to be checked.
+   * @return True if the directive is present. False otherwise.
+   */
+  private static Xnode isDecoratedWithNoDependency(Xnode doStmt) {
+    if(doStmt.opcode() != Xcode.FDOSTATEMENT) {
+      return null;
     }
 
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-          "generated loop seq directive for " + doStmts.size() + " loops");
+    Xnode sibling = doStmt.prevSibling();
+    while(sibling != null && sibling.opcode() == Xcode.FPRAGMASTATEMENT) {
+      try {
+        ClawLanguage pragma = ClawLanguage.analyze(sibling, null, null);
+        if(pragma.getDirective() == ClawDirective.NO_DEP) {
+          return sibling;
+        }
+      } catch(IllegalDirectiveException ex) {
+        // do not care about the error
+      } finally {
+        sibling = sibling.prevSibling();
+      }
     }
+    return null;
   }
 
   /**
@@ -106,7 +145,7 @@ public class AcceleratorHelper {
     addPragmasBefore(xcodeml,
         gen.getStartParallelDirective(gen.getPrivateClause(privates)),
         startStmt);
-    addPragmasBefore(xcodeml, gen.getStartLoopDirective(collapse, false),
+    addPragmasBefore(xcodeml, gen.getStartLoopDirective(collapse, false, false),
         startStmt);
     addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
@@ -132,7 +171,8 @@ public class AcceleratorHelper {
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
-        gen.getStartLoopDirective(collapse, false), gen.getEndLoopDirective());
+        gen.getStartLoopDirective(collapse, false, false),
+        gen.getEndLoopDirective());
   }
 
   /**
