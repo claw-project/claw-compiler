@@ -1038,6 +1038,25 @@ public class ClawLanguageTest {
   }
 
   /**
+   * Test !$claw nodep directive
+   */
+  @Test
+  public void nodepTest(){
+    try {
+      Xnode p = XmlHelper.createXpragma();
+      p.setValue("claw nodep");
+      Configuration configuration =
+          new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.createAcceleratorGenerator(configuration);
+      ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
+      assertEquals(ClawDirective.NO_DEP, l.getDirective());
+    } catch(Exception e){
+      fail();
+    }
+  }
+
+  /**
    * Test various input for the CLAW parallelize directive.
    */
   @Test
@@ -1275,7 +1294,7 @@ public class ClawLanguageTest {
   public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
-    analyzeErrors("claw loop", 16);
+    analyzeErrors("claw loop", 17);
   }
 
   private void analyzeErrors(String pragma, int nbExpectedToken) {

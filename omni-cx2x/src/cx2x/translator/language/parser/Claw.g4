@@ -140,6 +140,8 @@ directive[ClawLanguage l]
      IF_EXTRACT EOF
      { $l.setDirective(ClawDirective.IF_EXTRACT); }
 
+   | NODEP
+     { $l.setDirective(ClawDirective.NO_DEP); }
 
    // Special directives
 
@@ -564,6 +566,7 @@ RANGE        : 'range';
 RESHAPE      : 'reshape';
 TARGET       : 'target';
 UPDATE       : 'update';
+NODEP        : 'nodep';
 
 // data copy/update clause keywords
 IN           : 'in';
