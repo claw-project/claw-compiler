@@ -145,6 +145,7 @@ public class ClawTranslator implements Translator {
       // driver handled directives
       case IGNORE:
       case VERBATIM:
+      case NO_DEP:
         break;
       default:
         throw new IllegalDirectiveException(null, "Unrecognized CLAW directive",
