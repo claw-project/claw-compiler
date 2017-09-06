@@ -220,8 +220,9 @@ public class AcceleratorHelper {
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
-            || bt.getIntent() == Xintent.INOUT))
+            || bt.getIntent() == Xintent.INOUT) && bt.isArray())
         {
+
           variables.add(name.value());
         }
       }
