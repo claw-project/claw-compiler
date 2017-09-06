@@ -12,7 +12,7 @@ CONTAINS
   INTEGER :: proma
 
 
-!$acc data present(t,q,nproma,nz)
+!$acc data present(t,q)
 !$acc parallel private(k,res,proma,c)
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
