@@ -222,7 +222,6 @@ public class AcceleratorHelper {
             || bt.getIntent() == Xintent.OUT
             || bt.getIntent() == Xintent.INOUT) && bt.isArray())
         {
-
           variables.add(name.value());
         }
       }
