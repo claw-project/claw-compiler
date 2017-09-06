@@ -36,6 +36,8 @@ public enum OpenAccExecutionMode {
         return VECTOR_GANG;
       case OpenAccConfiguration.EXEC_MODE_GANG_VECTOR:
         return GANG_VECTOR;
+      case OpenAccConfiguration.EXEC_MODE_NONE:
+        return NONE;
       default:
         return NONE;
     }

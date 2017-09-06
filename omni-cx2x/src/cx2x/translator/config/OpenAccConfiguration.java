@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class OpenAccConfiguration {
 
-  public static final String EXEC_MODE_NONE = "none";
+  static final String EXEC_MODE_NONE = "none";
   static final String EXEC_MODE_VECTOR = "vector";
   static final String EXEC_MODE_GANG = "gang";
   static final String EXEC_MODE_VECTOR_GANG = "vector_gang";
