@@ -388,9 +388,7 @@ public class Parallelize extends ClawTransformation {
         loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region
-    // TODO tune the way private variables are decided.
-    List<String> privates =
-        AcceleratorHelper.getLocalVariables(xcodeml, _fctDef);
+    List<String> privates = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());

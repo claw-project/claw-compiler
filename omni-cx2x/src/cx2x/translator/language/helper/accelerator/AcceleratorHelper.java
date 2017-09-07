@@ -260,6 +260,34 @@ public class AcceleratorHelper {
   }
 
   /**
+   * Get all the local variables in the function definition.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @param fctDef  Function definition to look in.
+   * @return List of variables names that are function local.
+   */
+  public static List<String> getLocalArrays(XcodeProgram xcodeml,
+                                            XfunctionDefinition fctDef)
+  {
+    List<String> variables = new ArrayList<>();
+    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    for(Xdecl decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL) {
+        Xnode name = decl.matchSeq(Xcode.NAME);
+        String type = name.getAttribute(Xattr.TYPE);
+        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+          continue; // Only check basic type
+        }
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()) {
+          variables.add(name.value());
+        }
+      }
+    }
+    return variables;
+  }
+
+  /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
    *
    * @param claw      ClawLanguage object that tells if the parallel clause is

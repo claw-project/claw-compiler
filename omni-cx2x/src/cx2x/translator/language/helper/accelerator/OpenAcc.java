@@ -139,7 +139,7 @@ class OpenAcc extends AcceleratorGenerator {
   public String[] getStartDataRegion(String clauses) {
     //!$acc data
     return new String[]{
-        String.format(FORMAT2, OPENACC_PREFIX, OPENACC_DATA) + " " + clauses
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA, clauses).trim()
     };
   }
 
@@ -166,8 +166,8 @@ class OpenAcc extends AcceleratorGenerator {
       if(seq) {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause(),
-                String.format("%s(%d)", OPENACC_COLLAPSE, value), clauses)
+                getSequentialClause(), String.format("%s(%d)",
+                    OPENACC_COLLAPSE, value), clauses).trim()
         };
       } else {
         return new String[]{
@@ -175,7 +175,7 @@ class OpenAcc extends AcceleratorGenerator {
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
                 naked ? "" :
                     getConfiguration().openACC().getFormattedExecutionMode(),
-                clauses)
+                clauses).trim()
         };
       }
     } else {
@@ -183,14 +183,14 @@ class OpenAcc extends AcceleratorGenerator {
       if(seq) {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause(), clauses)
+                getSequentialClause(), clauses).trim()
         };
       } else {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
                 naked ? "" :
                     getConfiguration().openACC().getFormattedExecutionMode(),
-                clauses)
+                clauses).trim()
         };
       }
 
