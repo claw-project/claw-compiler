@@ -24,6 +24,7 @@ public abstract class AcceleratorGenerator {
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
+  static final String FORMAT5 = "%s %s %s %s %s";
   private final Configuration _configuration;
 
   /**
@@ -76,7 +77,8 @@ public abstract class AcceleratorGenerator {
    * @return String value that represents the start of a parallelized loop.
    */
   protected abstract String[] getStartLoopDirective(int value, boolean seq,
-                                                    boolean naked);
+                                                    boolean naked,
+                                                    String clauses);
 
   /**
    * Get the formatted directive to end the parallelization of a loop.

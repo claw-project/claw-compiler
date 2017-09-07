@@ -42,7 +42,7 @@ class AcceleratorNone extends AcceleratorGenerator {
 
   @Override
   protected String[] getStartLoopDirective(int value, boolean seq,
-                                           boolean naked)
+                                           boolean naked, String clauses)
   {
     return null;
   }

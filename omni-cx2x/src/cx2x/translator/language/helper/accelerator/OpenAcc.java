@@ -158,37 +158,39 @@ class OpenAcc extends AcceleratorGenerator {
 
   @Override
   protected String[] getStartLoopDirective(int value, boolean seq,
-                                           boolean naked)
+                                           boolean naked, String clauses)
   {
     if(value > 1) {
       //!$acc loop collapse(<value>)
       // TODO do it differently
       if(seq) {
         return new String[]{
-            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+            String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 getSequentialClause(),
-                String.format("%s(%d)", OPENACC_COLLAPSE, value))
+                String.format("%s(%d)", OPENACC_COLLAPSE, value), clauses)
         };
       } else {
         return new String[]{
-            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+            String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
                 naked ? "" :
-                    getConfiguration().openACC().getFormattedExecutionMode())
+                    getConfiguration().openACC().getFormattedExecutionMode(),
+                clauses)
         };
       }
     } else {
       //!$acc loop
       if(seq) {
         return new String[]{
-            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause())
+            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+                getSequentialClause(), clauses)
         };
       } else {
         return new String[]{
-            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
+            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
                 naked ? "" :
-                    getConfiguration().openACC().getFormattedExecutionMode())
+                    getConfiguration().openACC().getFormattedExecutionMode(),
+                clauses)
         };
       }
 

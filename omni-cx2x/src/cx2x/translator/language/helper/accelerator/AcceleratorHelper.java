@@ -50,7 +50,7 @@ public class AcceleratorHelper {
       // Check if the nodep directive decorates the loop
       Xnode noDependency = isDecoratedWithNoDependency(doStmt);
       addPragmasBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE,
-          noDependency == null, true), doStmt);
+          noDependency == null, true, ""), doStmt);
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
@@ -142,11 +142,9 @@ public class AcceleratorHelper {
       return;
     }
 
-    addPragmasBefore(xcodeml,
-        gen.getStartParallelDirective(gen.getPrivateClause(privates)),
-        startStmt);
-    addPragmasBefore(xcodeml, gen.getStartLoopDirective(collapse, false, false),
-        startStmt);
+    addPragmasBefore(xcodeml, gen.getStartParallelDirective(null), startStmt);
+    addPragmasBefore(xcodeml, gen.getStartLoopDirective(collapse, false, false,
+        gen.getPrivateClause(privates)), startStmt);
     addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
   }
@@ -171,7 +169,7 @@ public class AcceleratorHelper {
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
-        gen.getStartLoopDirective(collapse, false, false),
+        gen.getStartLoopDirective(collapse, false, false, ""),
         gen.getEndLoopDirective());
   }
 
