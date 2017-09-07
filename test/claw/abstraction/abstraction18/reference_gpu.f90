@@ -39,7 +39,7 @@ CONTAINS
 
 
 !$acc data present(t,q)
-!$acc parallel private(k,proma,c)
+!$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
    c = 5.345
