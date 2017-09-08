@@ -22,6 +22,7 @@ public enum ClawDirective {
   LOOP_INTERCHANGE,
   LOOP_HOIST,
   LOOP_EXTRACT,
+  NO_DEP,
   PRIMITIVE,
   PARALLELIZE,
   REMOVE,

@@ -47,7 +47,7 @@ if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
       ${CMAKE_SOURCE_DIR}/omni-compiler/F-FrontEnd/src/F_Front
       ${CMAKE_CURRENT_BINARY_DIR}/ieee_features.i
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ieee_features.f90
-    COMMENT "Generating .xmod file for IEEE_ARITHMETIC intrinsic module"
+    COMMENT "Generating .xmod file for IEEE_FEATURES intrinsic module"
   )
 else()
   add_custom_command(
@@ -73,7 +73,7 @@ else()
       ${CMAKE_CURRENT_SOURCE_DIR}/ieee_features.f90 |
       ${CMAKE_SOURCE_DIR}/omni-compiler/F-FrontEnd/src/F_Front > /dev/null
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ieee_features.f90
-    COMMENT "Generating .xmod file for IEEE_ARITHMETIC intrinsic module"
+    COMMENT "Generating .xmod file for IEEE_FEATURES intrinsic module"
   )
 endif()
 add_dependencies(xmod-ieee_arithmetic xmod-ieee_exceptions)

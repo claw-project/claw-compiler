@@ -12,20 +12,19 @@ CONTAINS
   INTEGER :: proma
 
 
-!$acc data present(t,q)
-!$acc parallel
-!$acc loop gang vector
-  DO proma = 1 , nproma , 1
-   c = 5.345
-!$acc loop seq
-   DO k = 2 , nz , 1
+  c = 5.345
+!$claw nodep
+  DO k = 2 , nz , 1
+   DO proma = 1 , nproma , 1
     t ( proma , k ) = c * k
-    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
    END DO
+   DO proma = 1 , nproma , 1
+    q ( proma , k ) = q ( proma , k ) + t ( proma , k ) * c
+   END DO
+  END DO
+  DO proma = 1 , nproma , 1
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO
-!$acc end parallel
-!$acc end data
  END SUBROUTINE compute_column
 
 END MODULE mo_column

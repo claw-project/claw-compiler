@@ -24,6 +24,7 @@ public abstract class AcceleratorGenerator {
   static final String FORMAT2 = "%s %s";
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
+  static final String FORMAT5 = "%s %s %s %s %s";
   private final Configuration _configuration;
 
   /**
@@ -71,9 +72,13 @@ public abstract class AcceleratorGenerator {
    * @param value Collapse value. if greater than 0, a collapse clause will be
    *              added to the construct.
    * @param seq   If true, loop should be executed in a sequential mode.
+   * @param naked If true, simple directive is generated without special
+   *              clauses.
    * @return String value that represents the start of a parallelized loop.
    */
-  protected abstract String[] getStartLoopDirective(int value, boolean seq);
+  protected abstract String[] getStartLoopDirective(int value, boolean seq,
+                                                    boolean naked,
+                                                    String clauses);
 
   /**
    * Get the formatted directive to end the parallelization of a loop.

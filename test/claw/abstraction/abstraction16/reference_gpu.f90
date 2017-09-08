@@ -17,9 +17,9 @@ CONTAINS
   INTEGER :: proma
 
 
-!$acc data present(q,nproma,nz,t)
-!$acc parallel private(k,proma,c,this)
-!$acc loop
+!$acc data present(q,t)
+!$acc parallel
+!$acc loop gang vector
   DO proma = 1 , nproma , 1
    c = 5.345
 !$acc loop seq

@@ -152,6 +152,10 @@ public class Parallelize extends ClawTransformation {
     /* If there is no data/over clause specified, an automatic deduction for
      * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
+      if(XmOption.isDebugOutput()){
+        System.out.println("parallelize promotion infos for subroutine " +
+            _fctDef.getName().value());
+      }
       for(Xdecl decl : _fctDef.getDeclarationTable().getAll()) {
         if(decl.isBuiltInType()) {
           if(XmOption.isDebugOutput()) {
@@ -384,8 +388,7 @@ public class Parallelize extends ClawTransformation {
         loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region
-    List<String> privates =
-        AcceleratorHelper.getLocalVariables(xcodeml, _fctDef);
+    List<String> privates = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());

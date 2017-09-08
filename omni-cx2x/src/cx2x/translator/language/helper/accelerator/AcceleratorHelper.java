@@ -6,7 +6,9 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
@@ -45,14 +47,51 @@ public class AcceleratorHelper {
 
     List<Xnode> doStmts = fctDef.matchAll(Xcode.FDOSTATEMENT);
     for(Xnode doStmt : doStmts) {
-      addPragmasBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE, true),
-          doStmt);
+      // Check if the nodep directive decorates the loop
+      Xnode noDependency = isDecoratedWithNoDependency(doStmt);
+      addPragmasBefore(xcodeml, gen.getStartLoopDirective(NO_COLLAPSE,
+          noDependency == null, true, ""), doStmt);
+      XnodeUtil.safeDelete(noDependency);
+
+      // Debug logging
+      if(XmOption.isDebugOutput()) {
+        if(noDependency != null) {
+          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
+              "generated loop directive for loop at line: " + doStmt.lineNo());
+        } else {
+          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
+              "generated loop seq directive for loop at line: "
+              + doStmt.lineNo());
+        }
+      }
+    }
+  }
+
+  /**
+   * Check if there is a !$claw nodep directive before the do statement.
+   *
+   * @param doStmt Do statement to be checked.
+   * @return True if the directive is present. False otherwise.
+   */
+  private static Xnode isDecoratedWithNoDependency(Xnode doStmt) {
+    if(doStmt.opcode() != Xcode.FDOSTATEMENT) {
+      return null;
     }
 
-    if(XmOption.isDebugOutput()) {
-      System.out.println("OpenACC: generated loop seq directive for " +
-          doStmts.size() + " loops");
+    Xnode sibling = doStmt.prevSibling();
+    while(sibling != null && sibling.opcode() == Xcode.FPRAGMASTATEMENT) {
+      try {
+        ClawLanguage pragma = ClawLanguage.analyze(sibling, null, null);
+        if(pragma.getDirective() == ClawDirective.NO_DEP) {
+          return sibling;
+        }
+      } catch(IllegalDirectiveException ex) {
+        // do not care about the error
+      } finally {
+        sibling = sibling.prevSibling();
+      }
     }
+    return null;
   }
 
   /**
@@ -103,11 +142,9 @@ public class AcceleratorHelper {
       return;
     }
 
-    addPragmasBefore(xcodeml,
-        gen.getStartParallelDirective(gen.getPrivateClause(privates)),
-        startStmt);
-    addPragmasBefore(xcodeml, gen.getStartLoopDirective(collapse, false),
-        startStmt);
+    addPragmasBefore(xcodeml, gen.getStartParallelDirective(null), startStmt);
+    addPragmasBefore(xcodeml, gen.getStartLoopDirective(collapse, false, false,
+        gen.getPrivateClause(privates)), startStmt);
     addPragmaAfter(xcodeml, gen.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, gen.getEndLoopDirective(), endStmt);
   }
@@ -132,7 +169,8 @@ public class AcceleratorHelper {
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
-        gen.getStartLoopDirective(collapse, false), gen.getEndLoopDirective());
+        gen.getStartLoopDirective(collapse, false, false, ""),
+        gen.getEndLoopDirective());
   }
 
   /**
@@ -180,7 +218,7 @@ public class AcceleratorHelper {
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
-            || bt.getIntent() == Xintent.INOUT))
+            || bt.getIntent() == Xintent.INOUT) && bt.isArray())
         {
           variables.add(name.value());
         }
@@ -214,6 +252,34 @@ public class AcceleratorHelper {
         if((bt == null && XnodeUtil.isBuiltInType(type))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
+          variables.add(name.value());
+        }
+      }
+    }
+    return variables;
+  }
+
+  /**
+   * Get all the local variables in the function definition.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @param fctDef  Function definition to look in.
+   * @return List of variables names that are function local.
+   */
+  public static List<String> getLocalArrays(XcodeProgram xcodeml,
+                                            XfunctionDefinition fctDef)
+  {
+    List<String> variables = new ArrayList<>();
+    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    for(Xdecl decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL) {
+        Xnode name = decl.matchSeq(Xcode.NAME);
+        String type = name.getAttribute(Xattr.TYPE);
+        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+          continue; // Only check basic type
+        }
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()) {
           variables.add(name.value());
         }
       }
@@ -332,8 +398,9 @@ public class AcceleratorHelper {
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
         if(XmOption.isDebugOutput()) {
-          System.out.println("OpenACC: generated routine seq directive for " +
-              fctName + " subroutine/function.");
+          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX
+              + "generated routine seq directive for " + fctName
+              + " subroutine/function.");
         }
       }
     }

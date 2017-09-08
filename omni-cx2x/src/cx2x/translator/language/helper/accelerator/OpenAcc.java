@@ -29,6 +29,8 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
 
+  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
+
   /**
    * Constructs a new object with the given target.
    *
@@ -89,7 +91,7 @@ class OpenAcc extends AcceleratorGenerator {
       return "";
     }
     if(XmOption.isDebugOutput()) {
-      System.out.println("OpenACC: generate private clause for: " +
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: " +
           Utility.join(",", vars));
     }
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
@@ -101,7 +103,7 @@ class OpenAcc extends AcceleratorGenerator {
       return "";
     }
     if(XmOption.isDebugOutput()) {
-      System.out.println("OpenACC: generate present clause for: " +
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: " +
           Utility.join(",", vars));
     }
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
@@ -137,7 +139,7 @@ class OpenAcc extends AcceleratorGenerator {
   public String[] getStartDataRegion(String clauses) {
     //!$acc data
     return new String[]{
-        String.format(FORMAT2, OPENACC_PREFIX, OPENACC_DATA) + " " + clauses
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA, clauses).trim()
     };
   }
 
@@ -155,32 +157,40 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getStartLoopDirective(int value, boolean seq) {
+  protected String[] getStartLoopDirective(int value, boolean seq,
+                                           boolean naked, String clauses)
+  {
     if(value > 1) {
       //!$acc loop collapse(<value>)
       // TODO do it differently
       if(seq) {
         return new String[]{
-            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause(),
-                String.format("%s(%d)", OPENACC_COLLAPSE, value))
+            String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
+                getSequentialClause(), String.format("%s(%d)",
+                    OPENACC_COLLAPSE, value), clauses).trim()
         };
       } else {
         return new String[]{
-            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
-                String.format("%s(%d)", OPENACC_COLLAPSE, value))
+            String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
+                String.format("%s(%d)", OPENACC_COLLAPSE, value),
+                naked ? "" :
+                    getConfiguration().openACC().getFormattedExecutionMode(),
+                clauses).trim()
         };
       }
     } else {
       //!$acc loop
       if(seq) {
         return new String[]{
-            String.format(FORMAT3, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause())
+            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+                getSequentialClause(), clauses).trim()
         };
       } else {
         return new String[]{
-            String.format(FORMAT2, OPENACC_PREFIX, OPENACC_LOOP)
+            String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
+                naked ? "" :
+                    getConfiguration().openACC().getFormattedExecutionMode(),
+                clauses).trim()
         };
       }
 
