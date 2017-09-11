@@ -11,7 +11,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
   c = 5.345
 !$claw nodep
   DO k = 2 , nz , 1

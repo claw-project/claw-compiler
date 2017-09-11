@@ -1,6 +1,5 @@
 PROGRAM vector_loop
 
-
  CALL claw ( )
 END PROGRAM vector_loop
 
@@ -12,7 +11,6 @@ SUBROUTINE claw ( )
 
  INTEGER :: claw_induction_0
  INTEGER :: claw_induction_1
-
 
  vec1 = 0
  vec2 = 100

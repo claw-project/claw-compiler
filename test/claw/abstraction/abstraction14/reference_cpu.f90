@@ -12,7 +12,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
   c = 5.345
   DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
@@ -35,7 +34,6 @@ CONTAINS
   INTEGER :: result
 
   INTEGER , INTENT(IN) :: nproma
-
 
   result = compute_column ( nz , b , q , t , nproma = nproma )
  END SUBROUTINE compute

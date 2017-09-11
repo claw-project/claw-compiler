@@ -11,7 +11,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
 !$acc data present(t,q)
 !$acc parallel
 !$acc loop gang vector

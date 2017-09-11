@@ -9,7 +9,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
 
-
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute
 

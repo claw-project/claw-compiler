@@ -5,7 +5,6 @@ PROGRAM test_abstraction25
  INTEGER :: p
  REAL :: q ( 1 : 20 , 1 : 60 )
 
-
  nproma = 20
  nz = 60
  DO p = 1 , nproma , 1

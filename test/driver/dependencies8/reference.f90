@@ -3,6 +3,5 @@ PROGRAM original_code
  USE ieee_exceptions
  USE ieee_arithmetic
 
-
 END PROGRAM original_code
 

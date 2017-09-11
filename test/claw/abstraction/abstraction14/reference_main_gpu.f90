@@ -7,7 +7,6 @@ PROGRAM test_abstraction14
  INTEGER :: b
  REAL :: q ( 1 : 20 , 1 : 60 , 1 : 2 )
 
-
  nproma = 20
  nz = 60
  b = 20

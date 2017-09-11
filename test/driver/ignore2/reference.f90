@@ -1,7 +1,6 @@
 PROGRAM testignore
 
 
-
   !$claw remove
   PRINT*,'These lines'
   PRINT*,'are ignored'

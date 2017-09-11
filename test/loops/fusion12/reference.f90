@@ -1,13 +1,11 @@
 PROGRAM loop_fusion
 
-
  CALL clawloop ( )
 END PROGRAM loop_fusion
 
 SUBROUTINE clawloop ( )
  INTEGER :: i
  INTEGER :: k
-
 
 
 !$ACC parallel

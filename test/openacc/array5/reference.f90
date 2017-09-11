@@ -1,6 +1,5 @@
 PROGRAM array4_test
 
-
  CALL claw_test ( )
 END PROGRAM array4_test
 
@@ -10,7 +9,6 @@ SUBROUTINE claw_test ( )
 
  INTEGER :: claw_induction_0
  INTEGER :: claw_induction_1
-
 
  ALLOCATE ( vec1 ( 10 , 20 ) )
  ALLOCATE ( vec2 ( 10 , 20 ) )

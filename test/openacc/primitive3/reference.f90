@@ -1,7 +1,6 @@
 PROGRAM test_primitive
  INTEGER :: i
 
-
 !$acc data present(q, &
 !$acc p, &
 !$acc h) &

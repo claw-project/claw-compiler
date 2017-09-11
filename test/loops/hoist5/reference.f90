@@ -9,7 +9,6 @@ PROGRAM loop_opt
  LOGICAL :: flag
  INTEGER :: sum
 
-
  iend = 20
  jend = 40
  kend = 30

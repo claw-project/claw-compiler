@@ -2,7 +2,6 @@ PROGRAM ifextract2
  INTEGER :: i
  LOGICAL :: test
 
-
  test = .TRUE.
  IF ( test ) THEN
   DO i = 1 , 10 , 1

@@ -12,7 +12,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
 
-
   DO k = 1 , nz , 1
    DO iter_nproma = 1 , nproma , 1
     z ( iter_nproma , k ) = t ( k , iter_nproma ) + q ( iter_nproma , k )
@@ -31,7 +30,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
 !$acc data present(t,q)
 !$acc parallel

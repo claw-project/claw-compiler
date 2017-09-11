@@ -11,7 +11,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
 !$acc data present(t,q)
 !$acc parallel
 !$acc loop gang vector
@@ -35,7 +34,6 @@ CONTAINS
   INTEGER :: result
 
   INTEGER , INTENT(IN) :: nproma
-
 
   result = compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute

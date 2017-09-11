@@ -1,12 +1,10 @@
 PROGRAM loop_fusion
 
-
  CALL clawloop ( )
 END PROGRAM loop_fusion
 
 SUBROUTINE clawloop ( )
  INTEGER :: i
-
 
 
 !$claw loop-fusion target(cpu)
