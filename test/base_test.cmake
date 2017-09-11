@@ -84,7 +84,7 @@ if(NOT IGNORE_TEST)
   )
   add_test(
     NAME ast-compare-${TEST_NAME}
-    COMMAND diff ${OUTPUT_FILE} ${REFERENCE_FILE}
+    COMMAND diff --ignore-blank-lines ${OUTPUT_FILE} ${REFERENCE_FILE}
   )
   set_tests_properties(ast-compare-${TEST_NAME}
     PROPERTIES DEPENDS ast-transform-${TEST_NAME})
