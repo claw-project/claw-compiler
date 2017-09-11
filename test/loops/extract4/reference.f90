@@ -6,7 +6,6 @@ PROGRAM loop_extract
  INTEGER :: istart = 1
  INTEGER :: iend = 10
 
-
  DO j = 1 , 10 , 1
   value1 ( j ) = j
   value2 ( j ) = j
@@ -27,7 +26,6 @@ SUBROUTINE clawloop ( value1 , value2 )
  INTEGER :: iend = 10
 
 
-
  DO i = istart , iend , 1
   PRINT * , "value1: " , value1 ( i )
   PRINT * , "value2: " , value2 ( i )
@@ -40,7 +38,6 @@ SUBROUTINE clawloop_extracted0 ( value1 , value2 )
  INTEGER :: i
  INTEGER :: istart = 1
  INTEGER :: iend = 10
-
 
 
  PRINT * , "value1: " , value1

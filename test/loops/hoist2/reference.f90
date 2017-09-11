@@ -1,6 +1,5 @@
 PROGRAM claw_test
 
-
  CALL claw_hoist2 ( )
 END PROGRAM claw_test
 
@@ -30,7 +29,6 @@ SUBROUTINE claw_hoist2 ( )
  REAL :: array3d_1 ( 1 : 10 , 1 : 100 , 1 : 2 )
  REAL :: array3d_2 ( 1 : 10 , 1 : 100 , 1 : 2 )
  TYPE ( dummy ) :: tdum
-
 
 
  zsedtend = 1.0

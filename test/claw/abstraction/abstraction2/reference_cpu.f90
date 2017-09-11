@@ -14,7 +14,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: ny
   INTEGER :: j
 
-
   c = 5.345
   DO k = 2 , nz , 1
    DO j = 1 , ny , 1

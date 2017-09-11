@@ -7,7 +7,6 @@ PROGRAM test_abstraction12
  INTEGER :: p
  INTEGER :: b
 
-
  nproma = 20
  nz = 60
  b = 20

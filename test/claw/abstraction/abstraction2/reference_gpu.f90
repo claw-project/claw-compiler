@@ -14,7 +14,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: ny
   INTEGER :: j
 
-
 !$acc data present(q,t)
 !$acc parallel
 !$acc loop collapse(2) gang vector

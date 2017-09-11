@@ -12,7 +12,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
 
-
   DO k = 1 , nz , 1
    DO iter_nproma = 1 , nproma , 1
     z ( iter_nproma , k ) = t ( iter_nproma , k ) + q ( iter_nproma , k )
@@ -36,7 +35,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1

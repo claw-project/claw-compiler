@@ -4,11 +4,9 @@ CONTAINS
  SUBROUTINE sub1 ( )
 
 
-
  END SUBROUTINE sub1
 
  SUBROUTINE sub2 ( )
-
 
 
   CALL sub1 ( )

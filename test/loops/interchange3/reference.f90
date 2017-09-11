@@ -1,13 +1,11 @@
 PROGRAM loop_interchange
 
-
  CALL clawloop ( )
 END PROGRAM loop_interchange
 
 SUBROUTINE clawloop ( )
  INTEGER :: i
  INTEGER :: j
-
 
 
  DO j = 1 , 2 , 1

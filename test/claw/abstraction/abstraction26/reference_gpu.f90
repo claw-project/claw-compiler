@@ -9,7 +9,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
 
-
   CALL compute_column ( nz , q , t , z , nproma = nproma )
  END SUBROUTINE compute
 
@@ -23,7 +22,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
 !$acc data present(q,z,t)
 !$acc parallel

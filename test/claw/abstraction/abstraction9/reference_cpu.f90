@@ -10,7 +10,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
 
-
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_column_public
 
@@ -23,7 +22,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1

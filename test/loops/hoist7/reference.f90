@@ -1,6 +1,5 @@
 PROGRAM loop_hoist7
 
-
  CALL clawloop ( )
 END PROGRAM loop_hoist7
 
@@ -11,7 +10,6 @@ SUBROUTINE clawloop ( )
  INTEGER :: iend = 2
  INTEGER :: jend = 4
  INTEGER :: kend = 2
-
 
 
  DO i = 0 , iend , 1

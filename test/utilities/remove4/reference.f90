@@ -1,6 +1,5 @@
 PROGRAM remove4
 
-
  CALL dummy ( )
 END PROGRAM remove4
 
@@ -10,7 +9,6 @@ SUBROUTINE dummy ( )
  INTEGER :: z
  INTEGER :: kend = 5
  INTEGER :: iend = 10
-
 
 
  DO k = 1 , kend , 1

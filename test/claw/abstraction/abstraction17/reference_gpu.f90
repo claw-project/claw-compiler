@@ -11,7 +11,6 @@ CONTAINS
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
   c = 5.345
 !$acc data present(t,q)
 !$acc parallel
@@ -30,7 +29,6 @@ CONTAINS
  CONTAINS
   FUNCTION test_contains ( )
    INTEGER :: test_contains
-
 
    test_contains = 10
   END FUNCTION test_contains

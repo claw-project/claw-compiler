@@ -1,6 +1,5 @@
 PROGRAM openacc_cont
 
-
 !$ACC parallel
 !$ACC end parallel
 !$acc data  present ( pti,pdp,pclc,pwv,psw,pqlwc,pqiwc,pduco2,pduo3  ) &

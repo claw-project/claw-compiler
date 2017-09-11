@@ -2,7 +2,6 @@ PROGRAM ecmwf_case1
  INTEGER :: jl
  INTEGER :: jm
 
-
 !$acc kernels
 !$acc loop
  DO jl = 1 , 10 , 1
