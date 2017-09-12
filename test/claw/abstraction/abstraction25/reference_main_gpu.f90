@@ -1,9 +1,9 @@
 PROGRAM test_abstraction25
  USE mo_column , ONLY: compute
+ REAL :: q ( 1 : 20 , 1 : 60 )
  INTEGER :: nproma
  INTEGER :: nz
  INTEGER :: p
- REAL :: q ( 1 : 20 , 1 : 60 )
 
  nproma = 20
  nz = 60
