@@ -271,6 +271,7 @@ public class Cx2x {
         XmOption.isSuppressLineDirective()))
     {
       error(input, 0, 0, "Unable to decompile XcodeML to Fortran");
+      System.exit(1);
     }
   }
 }
