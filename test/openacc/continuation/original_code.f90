@@ -40,4 +40,19 @@ PROGRAM openacc_cont
   !$acc if (lzacc)
 
   !$acc end data
+
+
+  !$acc data &
+  !---- Comment
+  !$acc present ( aaaa,bbbb,ddd                               ) &
+  !---- Comment
+  !$acc present ( zzzzz,yyyy,f,l_ggg                          ) &
+  !---- Comment
+  !$acc create  ( datri_vec,y_vec,agdd_vec,ggg_vec,hhhh_gvec  ) &
+  !$acc create  ( gdbcjd_vec,dgdvbs_vec,dummyy                ) &
+  !$acc if (lxxxx)
+
+
+  !$acc end data
+
 END PROGRAM openacc_cont
