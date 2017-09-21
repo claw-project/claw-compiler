@@ -195,13 +195,16 @@ public class OpenAccContinuation extends ClawTransformation {
     p.setFilename(getDirective().getPragma().filename());
     p.setLine(getDirective().getPragma().lineNo() + lineIndex);
     if(continued) {
-      if(value.contains(ClawConstant.OPENACC_PREFIX)) {
-        value = value.replace(ClawConstant.OPENACC_PREFIX, "");
+      if(!value.trim().toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX)) {
+        p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim() + " " +
+            ClawConstant.CONTINUATION_LINE_SYMBOL);
+      } else {
+        p.setValue(value.trim() + " " + ClawConstant.CONTINUATION_LINE_SYMBOL);
       }
-      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim() + " " +
-          ClawConstant.CONTINUATION_LINE_SYMBOL);
     } else {
-      p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim());
+      if(!value.trim().toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX)) {
+        p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim());
+      }
     }
     hook.insertAfter(p);
     getDirective().getPragma().delete();
