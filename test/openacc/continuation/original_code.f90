@@ -27,4 +27,32 @@ PROGRAM openacc_cont
   !$acc present ( pfltd_dp,pfltu_dp,pflsd_dp,pflsu_dp,pflsp_dp   ) &
   !$acc present ( pflpar_dp,pflsu_par_dp,pflsd_par_dp            ) &
   !$acc present ( pflsp_par_dp                                   )
+
+  !$acc end data
+
+  !$acc data &
+  !---- Some comment 1
+  !$acc present(var1, var2) &
+  !---- Some comment 2
+  !$acc present(var3, var4) &
+  !---- Some comment 3
+  !$acc create(var5, varacc) &
+  !$acc if (lzacc)
+
+  !$acc end data
+
+
+  !$acc data &
+  !---- Comment
+  !$acc present ( aaaa,bbbb,ddd                               ) &
+  !---- Comment
+  !$acc present ( zzzzz,yyyy,f,l_ggg                          ) &
+  !---- Comment
+  !$acc create  ( datri_vec,y_vec,agdd_vec,ggg_vec,hhhh_gvec  ) &
+  !$acc create  ( gdbcjd_vec,dgdvbs_vec,dummyy                ) &
+  !$acc if (lxxxx)
+
+
+  !$acc end data
+
 END PROGRAM openacc_cont

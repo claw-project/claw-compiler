@@ -15,5 +15,14 @@ PROGRAM openacc_cont
 !$acc pfltd_dp,pfltu_dp,pflsd_dp,pflsu_dp,pflsp_dp   )  present ( &
 !$acc pflpar_dp,pflsu_par_dp,pflsd_par_dp            )  present ( &
 !$acc pflsp_par_dp                                   )
+!$ACC end data
+!$acc data  present(var1, var2)  present(var3, var4)  create(var5, &
+!$acc varacc)  if (lzacc)
+!$ACC end data
+!$acc data  present ( aaaa,bbbb,ddd                               ) &
+!$acc present ( zzzzz,yyyy,f,l_ggg                          )  create  ( &
+!$acc datri_vec,y_vec,agdd_vec,ggg_vec,hhhh_gvec  )  create  ( &
+!$acc gdbcjd_vec,dgdvbs_vec,dummyy                )  if (lxxxx)
+!$ACC end data
 END PROGRAM openacc_cont
 
