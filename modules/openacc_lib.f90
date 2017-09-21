@@ -10,7 +10,7 @@
 
 module openacc
 
-  integer, parameter :: acc_device_nvidia = 0
+  integer(kind=8), parameter :: acc_device_nvidia = 0
 
   ! Automatically generated signatures for acc_copyin
   interface acc_copyin
