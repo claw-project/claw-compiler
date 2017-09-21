@@ -6,7 +6,6 @@
 package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -93,13 +92,7 @@ public class OpenAccContinuation extends ClawTransformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
-    if(isFromPrimitive()) {
-      splitByCont(xcodeml);
-    } else if(translator.getMaxColumns() > 0
-        && !getDirective().getPragma().isDeleted())
-    {
-      splitByLength(xcodeml, translator);
-    }
+    splitByLength(xcodeml, translator);
   }
 
   /**
@@ -110,10 +103,8 @@ public class OpenAccContinuation extends ClawTransformation {
    * @param translator The translator used to applied the transformations.
    */
   private void splitByLength(XcodeProgram xcodeml, Translator translator) {
-    String allPragma = getDirective().getPragma().value();
+    String allPragma = getDirective().getPragma().value().toLowerCase();
     if(allPragma.length() > translator.getMaxColumns()) {
-      allPragma =
-          allPragma.toLowerCase().replace(ClawConstant.OPENACC_PREFIX, "");
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = 0;
       int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
@@ -135,46 +126,6 @@ public class OpenAccContinuation extends ClawTransformation {
           allPragma, false);
       getDirective().getPragma().delete();
     }
-  }
-
-  /**
-   * Split the line by its previous continuation mark.
-   *
-   * @param xcodeml The XcodeML on which the transformations are
-   *                applied.
-   */
-  private void splitByCont(XcodeProgram xcodeml) {
-    String allPragma = getDirective().getPragma().value();
-    int lineIndex = getDirective().getPragma().lineNo();
-    String splitter = ClawConstant.OPENACC_PREFIX;
-    if(allPragma.contains(ClawConstant.OPENACC_PREFIX_CONT)) {
-      splitter = ClawConstant.OPENACC_PREFIX_CONT;
-    }
-
-    Xnode newlyInserted = getDirective().getPragma();
-    String[] lines = allPragma.split(splitter);
-    for(int i = 0; i < lines.length - 1; ++i) {
-      newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex++,
-          lines[i], true);
-    }
-    createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
-        lines[lines.length - 1], false);
-  }
-
-  /**
-   * Check if the pragma was already continued. Can happen when using the !$claw
-   * primitive directive
-   *
-   * @return True if the pragma was previously continued.
-   */
-  private boolean isFromPrimitive() {
-    if(getDirective().getPragma().isDeleted()) {
-      return false;
-    }
-    String allPragma = getDirective().getPragma().value();
-    return allPragma.contains(ClawConstant.OPENACC_PREFIX_CONT) ||
-        Utility.countOccurrences(allPragma,
-            ClawConstant.OPENACC_PREFIX + " ") > 1;
   }
 
   /**
