@@ -24,5 +24,10 @@ PROGRAM openacc_cont
 !$acc datri_vec,y_vec,agdd_vec,ggg_vec,hhhh_gvec  )  create  ( &
 !$acc gdbcjd_vec,dgdvbs_vec,dummyy                )  if (lxxxx)
 !$ACC end data
+!$acc data  coypin  ( shdhsahd, djsakj, asdsdsa, asdasdd, sdjsa, djahdj, &
+!$acc dsajhdjk)  present ( qweqwq, asdsads, addsa,ppkmi, sss, dfjassaa, &
+!$acc sdsdfsfssadaa )  present ( uikj,   fdhjkd, ujnh,   lokm,  dfds,ztzrtt, &
+!$acc asjdsadsddhjdh )  copyin  ( dfdjfj, dksflkdsfl, sdjsadhfjds )
+!$ACC end data
 END PROGRAM openacc_cont
 
