@@ -112,6 +112,7 @@ public class OpenAccContinuation extends ClawTransformation {
   private void splitByLength(XcodeProgram xcodeml, Translator translator) {
     String allPragma = getDirective().getPragma().value().toLowerCase();
     if(allPragma.length() > translator.getMaxColumns()) {
+      allPragma = Utility.dropEndingComment(allPragma);
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = 0;
       int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
