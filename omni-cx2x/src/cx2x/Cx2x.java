@@ -270,7 +270,7 @@ public class Cx2x {
     if(!decompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
-      error(input, 0, 0, "Unable to decompile XcodeML to Fortran");
+      error(xcodeMlOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
       System.exit(1);
     }
   }
