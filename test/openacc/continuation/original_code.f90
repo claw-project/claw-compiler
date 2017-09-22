@@ -52,6 +52,17 @@ PROGRAM openacc_cont
   !$acc create  ( gdbcjd_vec,dgdvbs_vec,dummyy                ) &
   !$acc if (lxxxx)
 
+  !$acc end data
+
+  !$acc data &
+  ! Comment line 1
+  ! Comment line 2
+  ! Comment line 3
+  !!$acc coypin  ( fnodivc,rhqsond,rhtsond,rhvsond
+  !$acc coypin  ( shdhsahd, djsakj, asdsdsa, asdasdd, sdjsa, djahdj, dsajhdjk) &
+  !$acc present ( qweqwq, asdsads, addsa,ppkmi, sss, dfjassaa, sdsdfsfssadaa ) &
+  !$acc present ( uikj,   fdhjkd, ujnh,   lokm,  dfds,ztzrtt, asjdsadsddhjdh ) &
+  !$acc copyin  ( dfdjfj, dksflkdsfl, sdjsadhfjds ) ! both only of dimension (4)
 
   !$acc end data
 
