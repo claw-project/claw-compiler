@@ -57,8 +57,6 @@ refer to the developer's guide
 
   <!-- Transformation groups and order -->
   <groups>
-    <!-- internal applied at the beginning -->
-    <group name="internal-xcodeml" />
     <!-- Low-level transformations -->
     <group name="remove" />
     <group name="primitive" />
