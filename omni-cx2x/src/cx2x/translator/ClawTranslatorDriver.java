@@ -87,7 +87,11 @@ public class ClawTranslatorDriver {
    * transformation with the help of the translator.
    */
   public void analyze() {
-    _translationUnit = XcodeProgram.createFromFile(_xcodemlInputFile);
+
+    _translationUnit = (_xcodemlInputFile == null) ?
+        XcodeProgram.createFromStdInput() :
+        XcodeProgram.createFromFile(_xcodemlInputFile);
+
     if(_translationUnit == null) {
       abort();
     }

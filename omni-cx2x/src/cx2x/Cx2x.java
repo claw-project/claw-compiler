@@ -221,8 +221,7 @@ public class Cx2x {
     }
 
     if(cmd.getArgs().length == 0) {
-      error("internal", 0, 0, "no input file");
-      return;
+      input = null; // Input data piped from System.in
     } else {
       input = cmd.getArgs()[0];
     }

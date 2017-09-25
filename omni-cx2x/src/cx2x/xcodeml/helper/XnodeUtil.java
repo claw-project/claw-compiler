@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -1029,6 +1030,27 @@ public class XnodeUtil {
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
       Document doc = dBuilder.parse(fXmlFile);
+      doc.getDocumentElement().normalize();
+      return doc;
+    } catch(Exception ignored) {
+    }
+    return null;
+  }
+
+  /**
+   * Read XML from stream.
+   *
+   * @param input Xml file path.
+   * @return Document if the XML stream could be read. Null otherwise.
+   */
+  public static Document readXmlStream(InputStream input) {
+    try {
+      if(input == null) {
+        return null;
+      }
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(input);
       doc.getDocumentElement().normalize();
       return doc;
     } catch(Exception ignored) {
