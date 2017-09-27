@@ -7,9 +7,39 @@ To ease this task, a small manipulation library is included in the \cx2x
 program. This library helps to traverse the \gls{ast}, add, modify or delete
 node.
 
+This section is currently very simple but will be enhanced in the future version
+of this manual.
+
 \section{Traverse the \gls{ast}}
+Listing \ref{lst:ast_next_sib} shows a simple way to go from a pragma and visit 
+its next siblings.
+
+\begin{lstlisting}[label=lst:ast_next_sib, language=Java, caption=XcodeML/F AST traverse]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+    Xnode crt = _claw.getPragma();
+    while(crt != null){
+      System.out.println("Current node: " + crt.opcode());
+      crt = crt.nextSibling();          
+    }
+}
+\end{lstlisting}
 
 \section{Add nodes}
+A new node can be easily added in the AST as shown in the Listing 
+\ref{lst:add_node}. On line 4, the new "node" object is created by
+passing the current translation unit and the "opcode" of the node. This code
+refers the the XcodeML/F specification defined in the \lstinline!Xcode! 
+enumeration.
+
+On line 5, a new value is assigned to the node. \lstinline!FpragmaStatement! 
+node accept text values.
+
+Finally, on line 6, the node is inserted in the AST. The \lstinline!XnodeUtil!
+class contains several static helper methods to ease the manipulation and 
+creation of node in the AST. In this case, the \lstinline!insertAfter! 
+will add the new node after the reference node passed as first argument.
 
 \begin{lstlisting}[label=lst:add_node, language=Java, caption=XcodeML/F add node example]
 public void transform(XcodeProgram xcodeml, Translator translator,
@@ -43,6 +73,8 @@ public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
     Xnode pragma = _claw.getPragma();
-    pragma.delete(); // Delete the node in the AST
+    Xnodeutil.safeDelete(pragma); // Delete the node in the AST
 }
 \end{lstlisting}
+
+%TODO more complex example.
