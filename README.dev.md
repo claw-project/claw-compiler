@@ -3,6 +3,9 @@
 Useful information about the development of the CLAW Fortran Compiler are given
 on this page.
 
+### Developer's guide
+A guide is available under `documentation/developer`.
+
 ### Coding Style Guide
 Indent with spaces. NO tabs!
 
