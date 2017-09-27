@@ -209,7 +209,9 @@ public class ClawTranslatorDriver {
       }
 
       // Write transformed IR to file
-      _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      if(_xcodemlOutputFile != null) {
+        _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      }
     } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }
