@@ -1,0 +1,18 @@
+<claw version="0.4">
+  <global type="extension"/>
+  <groups>
+    <group name="internal-xcodeml"/>
+    <group name="remove"/>
+    <group name="primitive"/>
+    <group name="array-transform"/>
+    <group name="loop-extract"/>
+    <group name="loop-fusion"/>
+    <group name="loop-hoist"/>
+    <group name="loop-interchange"/>
+    <group name="on-the-fly"/>
+    <group name="kcache"/>
+    <group name="if-extract"/>
+    <group name="parallelize"/>
+    <group name="parallelize-forward"/>
+  </groups>
+</claw>
