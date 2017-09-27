@@ -22,7 +22,8 @@ usage: $1 <OPTIONS> <INPUTFILE> ...
 
 CLAW FORTRAN Compiler options:
 
-   -o <file>                  : place the output into <file>.
+   -o <file>                  : output file for the transformed FORTRAN code.
+                                If omitted, code output on the standard output.s
    -I <dir>                   : add the directory dir to the list of directories
                                 to be searched for header files.
    -J <dir>                   : specify where to put .mod and .xmod files for
