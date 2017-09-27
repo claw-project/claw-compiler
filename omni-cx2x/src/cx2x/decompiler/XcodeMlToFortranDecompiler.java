@@ -59,27 +59,31 @@ public class XcodeMlToFortranDecompiler {
    * Decompile the XcodeML file into Fortran code.
    *
    * @param outputFilepath Fortran output file path.
-   * @param inputFilepath  XcodeML input file path.
+   * @param xcodeml        XcodeML document.
    * @param maxColumns     Maximum number of column for the output file.
    * @param lineDirectives If true, preprocessor line directives are added.
    * @return True if the decompilation succeeded. False otherwise.
    */
-  public boolean decompile(String outputFilepath, String inputFilepath,
+  public boolean decompile(String outputFilepath, Document xcodeml,
                            int maxColumns, boolean lineDirectives)
   {
     if(!lineDirectives) {
       XmOption.setIsSuppressLineDirective(true);
     }
-    XmOption.setCoarrayNoUseStatement(true);
-    XmOption.setDebugOutput(false);
 
-    if(!openXcodeMLFile(inputFilepath)) {
-      return false;
-    }
+    // Avoid insertion of USE xmpf_coarray statement
+    XmOption.setCoarrayNoUseStatement(true);
+
+    XmOption.setDebugOutput(false);
 
     PrintWriter writer = null;
     try {
-      writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFilepath)));
+      if(outputFilepath == null || outputFilepath.isEmpty()) {
+        writer = new PrintWriter(System.out);
+      } else {
+        writer = new PrintWriter(new BufferedWriter(new
+            FileWriter(outputFilepath)));
+      }
     } catch(IOException e) {
       e.printStackTrace();
     }
@@ -89,18 +93,11 @@ public class XcodeMlToFortranDecompiler {
       XmDecompilerContext context = _toolFactory.createDecompilerContext();
 
       if(maxColumns > 0) {
-        context.setProperty(XmDecompilerContext.KEY_MAX_COLUMNS, "" + maxColumns);
+        context.setProperty(XmDecompilerContext.KEY_MAX_COLUMNS, "" +
+            maxColumns);
       }
 
-      try {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = docFactory.newDocumentBuilder();
-        Document xcodeDoc;
-        xcodeDoc = builder.parse(inputFilepath);
-        decompiler.decompile(context, xcodeDoc, writer);
-      } catch(ParserConfigurationException | SAXException | IOException e) {
-        return false;
-      }
+      decompiler.decompile(context, xcodeml, writer);
 
       if(writer != null) {
         writer.flush();
@@ -121,6 +118,33 @@ public class XcodeMlToFortranDecompiler {
       }
     }
     return false;
+  }
+
+  /**
+   * Decompile the XcodeML file into Fortran code.
+   *
+   * @param outputFilepath Fortran output file path.
+   * @param inputFilepath  XcodeML input file path.
+   * @param maxColumns     Maximum number of column for the output file.
+   * @param lineDirectives If true, preprocessor line directives are added.
+   * @return True if the decompilation succeeded. False otherwise.
+   */
+  public boolean decompileFromFile(String outputFilepath, String inputFilepath,
+                                   int maxColumns, boolean lineDirectives)
+  {
+    if(!openXcodeMLFile(inputFilepath)) {
+      return false;
+    }
+
+    try {
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = docFactory.newDocumentBuilder();
+      Document xcodeml = builder.parse(inputFilepath);
+      decompile(outputFilepath, xcodeml, maxColumns, lineDirectives);
+      return true;
+    } catch(ParserConfigurationException | SAXException | IOException e) {
+      return false;
+    }
   }
 
 }
