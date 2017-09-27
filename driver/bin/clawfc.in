@@ -52,6 +52,7 @@ decompiler_max_column=false
 dump_cx2x_args=false
 force_pure=false
 report=false
+pipe_workflow=true
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -111,6 +112,10 @@ readonly decompiler_max_column
 readonly dump_cx2x_args
 readonly force_pure
 readonly report
+readonly pipe_workflow
+
+### Add additional parameters needed for cx2x ###
+claw::format_cx2x_params
 
 ### List target ###
 if [[ ${list_target} == true ]]; then
@@ -126,52 +131,6 @@ if [[ ${list_directive} == true ]]; then
   exit 0
 fi
 
-# Set configuraions directory
-OMNI_CX2X_CONFIG_OPT="--config-path=${OMNI_CX2X_CONFIG_PATH}"
-
-# Set user defined configuration
-if [[ ${user_config} == true ]]; then
-  OMNI_CX2X_CONFIG_OPT="${OMNI_CX2X_CONFIG_OPT} --config=${config_opt}"
-fi
-
-# Set the correct target option for the translator
-OMNI_CX2X_TARGET_OPT=""
-if [[ ${user_target} == true ]]; then
-  OMNI_CX2X_TARGET_OPT="--target=${target_opt}"
-fi
-
-# Set the correct directive option for the translator
-OMNI_CX2X_DIRECTIVE_OPT=""
-if [[ ${user_directive} == true ]]; then
-  OMNI_CX2X_DIRECTIVE_OPT="--directive=${directive_opt}"
-fi
-
-# Set the correct column option for the decompiler
-OMNI_CX2X_MAX_COLUMN_OPT=""
-if [[ ${decompiler_max_column} == true ]]; then
-  OMNI_CX2X_MAX_COLUMN_OPT="-w ${max_columns}"
-else
-  OMNI_CX2X_MAX_COLUMN_OPT="-w 80"
-fi
-
-# Set the correct line directive option for the decompiler
-OMNI_CX2X_LINE_OPT="-l"
-if [[ ${line_directive} == true ]]; then
-  OMNI_CX2X_LINE_OPT=""
-fi
-
-if [[ ${force_pure} == true ]]; then
-  TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --force-pure"
-fi
-
-# Module search path option
-OMNI_CX2X_MOD_OPT=""
-if [[ ${#module_opt[@]} -ne 0 ]]; then
-  for mod in "${module_opt[@]}"; do
-    OMNI_CX2X_MOD_OPT="${OMNI_CX2X_MOD_OPT} ${mod}"
-  done
-fi
-
 ### Show config ###
 if [[ ${show_config} == true ]]; then
   # shellcheck disable=SC2086
@@ -179,6 +138,7 @@ if [[ ${show_config} == true ]]; then
   exit 0
 fi
 
+## Check that input file exits
 claw::check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
@@ -191,6 +151,10 @@ elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
     "Error: output directory and output file cannot be specified together"
 fi
 
+## No output file specifed so define a default one
+if [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
+  output_file="a.f90"
+fi
 
 
 ### Create temporal directory ###
@@ -222,6 +186,36 @@ for input_file in "${f_files[@]}"; do
 done
 
 ### TODO check if f_files_transformation has any files in ...
+
+if [[ ${pipe_workflow} == true ]]; then
+  for input_file in "${f_files_transformation[@]}"; do
+    file_out_f=""
+    if [[ "${output_file}" != "" ]]; then
+      file_out_f=${output_file}
+    elif [[ "${output_dir}" != "" ]]; then
+      file_out_f=${output_dir}/${input_file}
+    fi
+
+    if [[ ${fpp_redirect} == true ]]; then
+      # preprocessorpass
+      # preprocessor FPP
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
+        ${OMNI_FPP_OPT} ${other_args[@]} "${input_file}" | \
+        ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} | \
+        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
+        ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
+        ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+        "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+        "${trans_module_opt[@]}" -f "${file_out_f}"
+    else
+      echo "FPP breaks pipe mode"
+    fi
+
+  done
+  exit 0
+fi
 
 ### Preprocessor ###
 [[ ${only_pp} == true ]] && [[ -f "${output_file}" ]] && rm "${output_file}"
