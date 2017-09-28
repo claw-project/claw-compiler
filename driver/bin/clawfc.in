@@ -317,6 +317,10 @@ if [[ ${pipe_workflow} == true ]]; then
         ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
         "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
         "${trans_module_opt[@]}" -f "${file_out_f}"
+
+      # TODO push in the pipe workflow
+      claw::revertIgnore "${file_out_f}"
+      claw::applyVerbatim "${file_out_f}"
     else
       echo "FPP breaks pipe mode"
     fi
