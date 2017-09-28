@@ -187,36 +187,6 @@ done
 
 ### TODO check if f_files_transformation has any files in ...
 
-if [[ ${pipe_workflow} == true ]]; then
-  for input_file in "${f_files_transformation[@]}"; do
-    file_out_f=""
-    if [[ "${output_file}" != "" ]]; then
-      file_out_f=${output_file}
-    elif [[ "${output_dir}" != "" ]]; then
-      file_out_f=${output_dir}/${input_file}
-    fi
-
-    if [[ ${fpp_redirect} == true ]]; then
-      # preprocessorpass
-      # preprocessor FPP
-      # shellcheck disable=SC2086,SC2068
-      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${input_file}" | \
-        ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} | \
-        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
-        ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
-        ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
-        "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-        "${trans_module_opt[@]}" -f "${file_out_f}"
-    else
-      echo "FPP breaks pipe mode"
-    fi
-
-  done
-  exit 0
-fi
-
 ### Preprocessor ###
 [[ ${only_pp} == true ]] && [[ -f "${output_file}" ]] && rm "${output_file}"
 [[ ${enable_cpp} == true ]] && OMNI_FPP_OPT="${OMNI_FPP_OPT} ${CPP_OPT}"
@@ -313,6 +283,49 @@ if [[ ${resolve_dependencies} == true ]]; then
   done
   [[ ${stop_dependencies} == true ]] && exit 0;
 fi
+
+
+if [[ ${pipe_workflow} == true ]]; then
+  for input_file in "${f_files_transformation[@]}"; do
+    file_out_f=""
+    if [[ "${output_file}" != "" ]]; then
+      file_out_f=${output_file}
+    elif [[ "${output_dir}" != "" ]]; then
+      file_out_f=${output_dir}/${input_file}
+    fi
+
+    if [[ ${fpp_redirect} == true ]]; then
+
+      file_name="$(claw::norm_file_name "${input_file}")"
+      ext=${input_file##*.}
+      base_name="$(basename "${input_file}")"
+      if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
+        || [[ ${enable_cpp} == true ]]; then
+        file_pp=${temp_dir}/"${base_name}"
+      else
+        file_pp="${input_file}"
+      fi
+
+
+      # TODO missing preprocessor pass, dependency analysis, ignore/verbatim
+
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" | \
+        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
+        ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
+        ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+        "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+        "${trans_module_opt[@]}" -f "${file_out_f}"
+    else
+      echo "FPP breaks pipe mode"
+    fi
+
+  done
+  exit 0
+fi
+
+
 
 ### Frontend ###
 for input_file in "${f_files_transformation[@]}"; do
