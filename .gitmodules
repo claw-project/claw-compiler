@@ -1,4 +1,4 @@
 [submodule "omni-compiler"]
 	path = omni-compiler
-	url = https://github.com/omni-compiler/omni-compiler.git
-	branch = master
+	url = https://github.com/clementval/omni-compiler-1.git
+	branch = merged
