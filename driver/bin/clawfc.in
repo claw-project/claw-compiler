@@ -306,9 +306,6 @@ if [[ ${pipe_workflow} == true ]]; then
         file_pp="${input_file}"
       fi
 
-
-      # TODO missing preprocessor pass, dependency analysis, ignore/verbatim
-
       # shellcheck disable=SC2086,SC2068
       ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
         "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" | \
@@ -319,12 +316,6 @@ if [[ ${pipe_workflow} == true ]]; then
         "${trans_module_opt[@]}" | \
         sed -e "s/\!\$claw ignore//" | sed -e "s/\!\$claw end ignore//" | \
         sed -e "s/__CLAWAMP__/\&/" | sed -e "s/\!\$claw verbatim //" > "${file_out_f}"
-
-      # TODO push in the pipe workflow
-      #claw::revertIgnore "${file_out_f}"
-
-      #claw::applyVerbatim "${file_out_f}"
-      # sed -e "s/\!\$claw verbatim //"
     else
       echo "FPP breaks pipe mode"
     fi
