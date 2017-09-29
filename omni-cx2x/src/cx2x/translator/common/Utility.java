@@ -67,7 +67,7 @@ public class Utility {
    */
   public static void debug(String value) {
     if(XmOption.isDebugOutput()) {
-      System.out.println(value);
+      System.err.println(value);
     }
   }
 

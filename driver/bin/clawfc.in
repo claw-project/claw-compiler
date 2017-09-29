@@ -321,7 +321,9 @@ if [[ ${pipe_workflow} == true ]]; then
 
       # TODO push in the pipe workflow
       #claw::revertIgnore "${file_out_f}"
+
       claw::applyVerbatim "${file_out_f}"
+      # sed -e "s/\!\$claw verbatim //"
     else
       echo "FPP breaks pipe mode"
     fi

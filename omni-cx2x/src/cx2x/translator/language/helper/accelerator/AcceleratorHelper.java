@@ -5,13 +5,13 @@
 
 package cx2x.translator.language.helper.accelerator;
 
+import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -54,15 +54,13 @@ public class AcceleratorHelper {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      if(XmOption.isDebugOutput()) {
-        if(noDependency != null) {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-              "generated loop directive for loop at line: " + doStmt.lineNo());
-        } else {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-              "generated loop seq directive for loop at line: "
-              + doStmt.lineNo());
-        }
+      if(noDependency != null) {
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+            "generated loop directive for loop at line: " + doStmt.lineNo());
+      } else {
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+            "generated loop seq directive for loop at line: "
+            + doStmt.lineNo());
       }
     }
   }
@@ -397,11 +395,10 @@ public class AcceleratorHelper {
 
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
-        if(XmOption.isDebugOutput()) {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX
-              + "generated routine seq directive for " + fctName
-              + " subroutine/function.");
-        }
+
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX
+            + "generated routine seq directive for " + fctName
+            + " subroutine/function.");
       }
     }
   }

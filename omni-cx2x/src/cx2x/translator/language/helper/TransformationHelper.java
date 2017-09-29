@@ -25,7 +25,6 @@ import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import xcodeml.util.XmOption;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,13 +46,13 @@ public class TransformationHelper {
    * Generate corresponding additional transformation according to optional
    * clauses given to the directive.
    *
-   * @param claw        ClawLanguage object that tells encapsulates all
-   *                    information about the current directives and its
-   *                    clauses.
-   * @param xcodeml     Current XcodeML program.
+   * @param claw       ClawLanguage object that tells encapsulates all
+   *                   information about the current directives and its
+   *                   clauses.
+   * @param xcodeml    Current XcodeML program.
    * @param translator Translator object in which new transformation are
-   *                    added.
-   * @param stmt        Statement on which the transformation is attached.
+   *                   added.
+   * @param stmt       Statement on which the transformation is attached.
    */
   public static void generateAdditionalTransformation(ClawLanguage claw,
                                                       XcodeProgram xcodeml,
@@ -70,14 +69,14 @@ public class TransformationHelper {
    * Generate loop fusion transformation if the clause is present in the
    * directive.
    *
-   * @param claw        ClawLanguage object that tells encapsulates all
-   *                    information about the current directives and its
-   *                    clauses.
-   * @param xcodeml     Current XcodeML program.
+   * @param claw       ClawLanguage object that tells encapsulates all
+   *                   information about the current directives and its
+   *                   clauses.
+   * @param xcodeml    Current XcodeML program.
    * @param translator Translator object in which new transformation are
-   *                    added.
-   * @param stmt        Statement on which the transformation is attached. Must
-   *                    be a FdoStatement for the loop fusion transformation.
+   *                   added.
+   * @param stmt       Statement on which the transformation is attached. Must
+   *                   be a FdoStatement for the loop fusion transformation.
    */
   private static void applyFusionClause(ClawLanguage claw,
                                         XcodeProgram xcodeml,
@@ -90,9 +89,7 @@ public class TransformationHelper {
       // TODO maybe run analysis
       translator.addTransformation(xcodeml, fusion);
 
-      if(XmOption.isDebugOutput()) {
-        System.out.println("Loop fusion added: " + claw.getGroupValue());
-      }
+      Utility.debug("Loop fusion added: " + claw.getGroupValue());
     }
   }
 
@@ -100,15 +97,15 @@ public class TransformationHelper {
    * Generate loop interchange transformation if the clause is present in the
    * directive.
    *
-   * @param claw        ClawLanguage object that tells encapsulates all
-   *                    information about the current directives and its
-   *                    clauses.
-   * @param xcodeml     Current XcodeML program.
+   * @param claw       ClawLanguage object that tells encapsulates all
+   *                   information about the current directives and its
+   *                   clauses.
+   * @param xcodeml    Current XcodeML program.
    * @param translator Translator object in which new transformation are
-   *                    added.
-   * @param stmt        Statement on which the transformation is attached. Must
-   *                    be a FdoStatement for the loop interchange
-   *                    transformation.
+   *                   added.
+   * @param stmt       Statement on which the transformation is attached. Must
+   *                   be a FdoStatement for the loop interchange
+   *                   transformation.
    */
   private static void applyInterchangeClause(ClawLanguage claw,
                                              XcodeProgram xcodeml,
@@ -121,9 +118,8 @@ public class TransformationHelper {
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       translator.addTransformation(xcodeml, interchange);
-      if(XmOption.isDebugOutput()) {
-        System.out.println("Loop interchange added: " + claw.getIndexes());
-      }
+
+      Utility.debug("Loop interchange added: " + claw.getIndexes());
     }
   }
 
@@ -290,11 +286,11 @@ public class TransformationHelper {
   /**
    * Update the function signature in the module file to reflects local changes.
    *
-   * @param xcodeml     Current XcodeML file unit.
-   * @param fctDef      Function definition that has been changed.
-   * @param fctType     Function type that has been changed.
-   * @param modDef      Module definition holding the function definition.
-   * @param claw        Pragma that has triggered the transformation.
+   * @param xcodeml    Current XcodeML file unit.
+   * @param fctDef     Function definition that has been changed.
+   * @param fctType    Function type that has been changed.
+   * @param modDef     Module definition holding the function definition.
+   * @param claw       Pragma that has triggered the transformation.
    * @param translator Current translator object.
    * @throws IllegalTransformationException If the module file or the function
    *                                        cannot be located

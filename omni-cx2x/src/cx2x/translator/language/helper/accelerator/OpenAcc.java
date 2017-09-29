@@ -7,7 +7,6 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
-import xcodeml.util.XmOption;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ import java.util.List;
  */
 class OpenAcc extends AcceleratorGenerator {
 
+  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
   private static final String OPENACC_COLLAPSE = "collapse";
   private static final String OPENACC_DATA = "data";
   private static final String OPENACC_END = "end";
@@ -28,8 +28,6 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PRESENT = "present";
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
-
-  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
 
   /**
    * Constructs a new object with the given target.
@@ -90,10 +88,9 @@ class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: " +
-          Utility.join(",", vars));
-    }
+
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate private clause for: " +
+        Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
 
@@ -102,10 +99,8 @@ class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: " +
-          Utility.join(",", vars));
-    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate present clause for: " +
+        Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
   }
 

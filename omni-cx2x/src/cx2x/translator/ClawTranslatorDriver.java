@@ -116,8 +116,7 @@ public class ClawTranslatorDriver {
         } else {
           // Handle special transformation of OpenACC line continuation
           for(GroupConfiguration gc :
-              _translator.getConfiguration().getGroups())
-          {
+              _translator.getConfiguration().getGroups()) {
             if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
                 && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
             {
@@ -183,12 +182,11 @@ public class ClawTranslatorDriver {
 
       for(Map.Entry<Class, TransformationGroup> entry :
           _translator.getGroups().entrySet()) {
-        if(XmOption.isDebugOutput()) {
-          System.out.println("Apply transformation: " +
-              entry.getValue().transformationName() + " - " +
-              entry.getValue().count()
-          );
-        }
+
+        Utility.debug("Apply transformation: " +
+            entry.getValue().transformationName() + " - " +
+            entry.getValue().count());
+
 
         try {
           entry.getValue().applyTranslations(_translationUnit, _translator);
