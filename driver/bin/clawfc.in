@@ -317,12 +317,13 @@ if [[ ${pipe_workflow} == true ]]; then
         ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
         "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
         "${trans_module_opt[@]}" | \
-        sed -e "s/\!\$claw ignore//" | sed -e "s/\!\$claw end ignore//" | sed -e "s/__CLAWAMP__/\&/" > "${file_out_f}"
+        sed -e "s/\!\$claw ignore//" | sed -e "s/\!\$claw end ignore//" | \
+        sed -e "s/__CLAWAMP__/\&/" | sed -e "s/\!\$claw verbatim //" > "${file_out_f}"
 
       # TODO push in the pipe workflow
       #claw::revertIgnore "${file_out_f}"
 
-      claw::applyVerbatim "${file_out_f}"
+      #claw::applyVerbatim "${file_out_f}"
       # sed -e "s/\!\$claw verbatim //"
     else
       echo "FPP breaks pipe mode"
