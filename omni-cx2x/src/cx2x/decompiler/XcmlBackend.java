@@ -21,29 +21,29 @@ import java.io.*;
  *
  * @author clementval
  */
-public class XcodeMlDecompiler {
+public class XcmlBackend {
 
   private BufferedReader _reader;
   private XmToolFactory _toolFactory;
 
-  public enum BackendLanguage {
-    C_LANGUAGE,
-    FORTRAN_LANGUAGE
+  public enum Lang {
+    C,
+    FORTRAN
   }
 
   /**
-   * Constructs a new XcodeMlDecompiler object.
+   * Constructs a new XcmlBackend object.
    *
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
-  public XcodeMlDecompiler(BackendLanguage lang)
+  public XcmlBackend(Lang lang)
       throws XmException
   {
     switch(lang){
-      case FORTRAN_LANGUAGE:
+      case FORTRAN:
         _toolFactory = new XmToolFactory("F");
         break;
-      case C_LANGUAGE:
+      case C:
         _toolFactory = new XmToolFactory("C");
         break;
     }

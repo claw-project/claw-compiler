@@ -5,7 +5,7 @@
 
 package cx2x;
 
-import cx2x.decompiler.XcodeMlDecompiler;
+import cx2x.decompiler.XcmlBackend;
 import cx2x.translator.ClawTranslatorDriver;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -266,8 +266,7 @@ public class Cx2x {
     }
 
     // Decompile XcodeML/F to Fortran
-    XcodeMlDecompiler decompiler = new XcodeMlDecompiler(
-        XcodeMlDecompiler.BackendLanguage.FORTRAN_LANGUAGE);
+    XcmlBackend decompiler = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
     if(!decompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
