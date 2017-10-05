@@ -19,7 +19,8 @@ import java.util.List;
 public enum Target {
   CPU(ClawConstant.TARGET_CPU),
   GPU(ClawConstant.TARGET_GPU),
-  MIC(ClawConstant.TARGET_MIC);
+  MIC(ClawConstant.TARGET_MIC),
+  FPGA(ClawConstant.TARGET_FPGA);
 
   private final String code;
 
@@ -52,6 +53,8 @@ public enum Target {
         return GPU;
       case ClawConstant.TARGET_MIC:
         return MIC;
+      case ClawConstant.TARGET_FPGA:
+        return FPGA;
       default:
         return CPU;
     }

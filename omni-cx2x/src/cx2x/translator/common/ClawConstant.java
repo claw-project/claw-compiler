@@ -41,6 +41,7 @@ public class ClawConstant {
   public static final String TARGET_CPU = "cpu";
   public static final String TARGET_GPU = "gpu";
   public static final String TARGET_MIC = "mic";
+  public static final String TARGET_FPGA = "fpga";
 
   // Available accelerator directive primitives
   public static final String DIRECTIVE_NONE = "none";
