@@ -87,7 +87,11 @@ public class ClawTranslatorDriver {
    * transformation with the help of the translator.
    */
   public void analyze() {
-    _translationUnit = XcodeProgram.createFromFile(_xcodemlInputFile);
+
+    _translationUnit = (_xcodemlInputFile == null) ?
+        XcodeProgram.createFromStdInput() :
+        XcodeProgram.createFromFile(_xcodemlInputFile);
+
     if(_translationUnit == null) {
       abort();
     }
@@ -112,8 +116,7 @@ public class ClawTranslatorDriver {
         } else {
           // Handle special transformation of OpenACC line continuation
           for(GroupConfiguration gc :
-              _translator.getConfiguration().getGroups())
-          {
+              _translator.getConfiguration().getGroups()) {
             if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
                 && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
             {
@@ -179,12 +182,11 @@ public class ClawTranslatorDriver {
 
       for(Map.Entry<Class, TransformationGroup> entry :
           _translator.getGroups().entrySet()) {
-        if(XmOption.isDebugOutput()) {
-          System.out.println("Apply transformation: " +
-              entry.getValue().transformationName() + " - " +
-              entry.getValue().count()
-          );
-        }
+
+        Utility.debug("Apply transformation: " +
+            entry.getValue().transformationName() + " - " +
+            entry.getValue().count());
+
 
         try {
           entry.getValue().applyTranslations(_translationUnit, _translator);
@@ -205,7 +207,9 @@ public class ClawTranslatorDriver {
       }
 
       // Write transformed IR to file
-      _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      if(_xcodemlOutputFile != null) {
+        _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      }
     } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }

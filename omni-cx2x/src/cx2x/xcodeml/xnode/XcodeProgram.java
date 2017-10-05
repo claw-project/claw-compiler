@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.BufferedInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,25 +58,49 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
-   * Create a XcodeProgram object from an XcodeML input file.
+   * Create a XcodeProgram object from the standard input. Used when connected
+   * through pipe.
    *
-   * @param input XcodeML input filename or path
-   * @return A XcodeProgram object loaded with the information from the file.
+   * @return An XcodeProgram object loaded with the information from the std
+   * input. Null if the std input couldn't be read.
+   */
+  public static XcodeProgram createFromStdInput() {
+    BufferedInputStream bis = new BufferedInputStream(System.in);
+    Document doc = XnodeUtil.readXmlStream(bis);
+    return createFromDocument(doc);
+  }
+
+  /**
+   * Create an XcodeProgram object from an XML document.
+   *
+   * @param doc Input DOM document.
+   * @return An XcodeProgram object loaded with the information from the file.
    * Null if the file couldn't be read.
    */
-  public static XcodeProgram createFromFile(String input) {
-    Document doc = XnodeUtil.readXmlFile(input);
+  private static XcodeProgram createFromDocument(Document doc){
     if(doc == null) {
-      System.err.println("Input file does not exists: " + input + "\n");
+      System.err.println("Unable to read document");
       return null;
     }
     XcodeProgram program = new XcodeProgram(doc);
     program.readDocumentInformation();
     if(!program.isXcodeMLvalid()) {
-      System.err.print("XcodeML file is not valid\n");
+      System.err.print("XcodeML file is not valid");
       return null;
     }
     return program;
+  }
+
+  /**
+   * Create a XcodeProgram object from an XcodeML input file.
+   *
+   * @param input XcodeML input filename or path
+   * @return An XcodeProgram object loaded with the information from the file.
+   * Null if the file couldn't be read.
+   */
+  public static XcodeProgram createFromFile(String input) {
+    Document doc = XnodeUtil.readXmlFile(input);
+    return createFromDocument(doc);
   }
 
   /**

@@ -21,7 +21,6 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -119,7 +118,7 @@ public class LoopExtraction extends ClawTransformation {
   /**
    * Check whether the transformation can be applied.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if the transformation analysis succeeded. False otherwise.
    */
@@ -181,7 +180,7 @@ public class LoopExtraction extends ClawTransformation {
    * queue.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
@@ -235,12 +234,8 @@ public class LoopExtraction extends ClawTransformation {
     // Find the loop that will be extracted
     Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
 
-    if(XmOption.isDebugOutput()) {
-      System.out.println("loop-extract transformation: " +
-          _claw.getPragma().value());
-      System.out.println("  created subroutine: " +
-          clonedFctDef.getName().value());
-    }
+    Utility.debug("loop-extract transformation: " + _claw.getPragma().value());
+    Utility.debug("  created subroutine: " + clonedFctDef.getName().value());
 
     /*
      * REMOVE BODY FROM THE LOOP AND DELETE THE LOOP
@@ -260,11 +255,9 @@ public class LoopExtraction extends ClawTransformation {
     // Wrap function call with loop
     Xnode extractedLoop = wrapCallWithLoop(xcodeml, _extractedLoop);
 
-    if(XmOption.isDebugOutput()) {
-      System.out.println("  call wrapped with loop: " +
-          _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> " +
-          clonedFctDef.getName().value());
-    }
+    Utility.debug("  call wrapped with loop: " +
+        _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> " +
+        clonedFctDef.getName().value());
 
     // Change called fct name
     _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);

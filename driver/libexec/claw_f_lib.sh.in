@@ -22,7 +22,8 @@ usage: $1 <OPTIONS> <INPUTFILE> ...
 
 CLAW FORTRAN Compiler options:
 
-   -o <file>                  : place the output into <file>.
+   -o <file>                  : output file for the transformed FORTRAN code.
+                                If omitted, code output on the standard output.s
    -I <dir>                   : add the directory dir to the list of directories
                                 to be searched for header files.
    -J <dir>                   : specify where to put .mod and .xmod files for
@@ -169,11 +170,11 @@ function claw::set_parameters()
       -f|--force) force_translation=true ;;
       --no-dep) resolve_dependencies=false ;;
       --debug) enable_debug=true ;;
-      --debug-omni) enable_debug_omni=true ;;
-      --stop-pp) verbose=true; stop_pp=true ;;
-      --stop-frontend) verbose=true; stop_frontend=true ;;
-      --stop-dependencies) verbose=true; stop_dependencies=true ;;
-      --stop-translator) verbose=true; stop_translator=true ;;
+      --debug-omni) enable_debug_omni=true; pipe_workflow=false ;;
+      --stop-pp) verbose=true; stop_pp=true; pipe_workflow=false ;;
+      --stop-frontend) verbose=true; stop_frontend=true; pipe_workflow=false ;;
+      --stop-dependencies) verbose=true; stop_dependencies=true; pipe_workflow=false ;;
+      --stop-translator) verbose=true; stop_translator=true; pipe_workflow=false ;;
       --Wp*) pp_add_opt+=("${1#--Wp}") ;;
       --Wf*) frontend_add_opt+=("${1#--Wf}") ;;
       --Wx*) xcode_translator_add_opt+=("${1#--Wx}") ;;
@@ -239,10 +240,9 @@ function claw::print_version()
 ###################################################################
 function claw::error_exit()
 {
-  #TODO message
-    echo "internal:0:0: error: $1" >&2
-    echo "compilation aborted." >&2
-    exit 1
+  (>&2 echo "internal:0:0: error: $1")
+  (>&2 echo "compilation aborted.")
+  exit 1
 }
 
 
@@ -255,7 +255,7 @@ function claw::error_exit()
 ###################################################################
 function claw::warning()
 {
-  echo "$1:$2 warning: $3"
+  (>&2 echo "$1:$2 warning: $3")
 }
 
 
@@ -266,7 +266,7 @@ function claw::warning()
 ###################################################################
 function claw::verbose()
 {
-  [[ ${verbose} == true ]] && echo "$1"
+  [[ ${verbose} == true ]] && (>&2 echo "$1")
 }
 
 
@@ -598,5 +598,64 @@ function claw::applyPreprocessorPass()
     done < "$1"
   else
     cp "$1" "$2"
+  fi
+}
+
+###################################################################
+# Prepare the variables that are passed as CX2X arguments
+# Arguments: None
+# Global: OMNI_CX2X_CONFIG_OPT, OMNI_CX2X_TARGET_OPT,
+#         OMNI_CX2X_DIRECTIVE_OPT, OMNI_CX2X_MAX_COLUMN_OPT,
+#         OMNI_CX2X_LINE_OPT, TRANSLATOR_OPTION, OMNI_CX2X_MOD_OPT,
+#         user_config, config_opt, user_target, target_opt,
+#         user_directive, directive_opt, decompiler_max_column,
+#         max_columns, line_directive, force_pure, module_opt
+###################################################################
+function claw::format_cx2x_params()
+{
+  # Set configuraions directory
+  OMNI_CX2X_CONFIG_OPT="--config-path=${OMNI_CX2X_CONFIG_PATH}"
+
+  # Set user defined configuration
+  if [[ ${user_config} == true ]]; then
+    OMNI_CX2X_CONFIG_OPT="${OMNI_CX2X_CONFIG_OPT} --config=${config_opt}"
+  fi
+
+  # Set the correct target option for the translator
+  OMNI_CX2X_TARGET_OPT=""
+  if [[ ${user_target} == true ]]; then
+    OMNI_CX2X_TARGET_OPT="--target=${target_opt}"
+  fi
+
+  # Set the correct directive option for the translator
+  OMNI_CX2X_DIRECTIVE_OPT=""
+  if [[ ${user_directive} == true ]]; then
+    OMNI_CX2X_DIRECTIVE_OPT="--directive=${directive_opt}"
+  fi
+
+  # Set the correct column option for the decompiler
+  OMNI_CX2X_MAX_COLUMN_OPT=""
+  if [[ ${decompiler_max_column} == true ]]; then
+    OMNI_CX2X_MAX_COLUMN_OPT="-w ${max_columns}"
+  else
+    OMNI_CX2X_MAX_COLUMN_OPT="-w 80"
+  fi
+
+  # Set the correct line directive option for the decompiler
+  OMNI_CX2X_LINE_OPT="-l"
+  if [[ ${line_directive} == true ]]; then
+    OMNI_CX2X_LINE_OPT=""
+  fi
+
+  if [[ ${force_pure} == true ]]; then
+    TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --force-pure"
+  fi
+
+  # Module search path option
+  OMNI_CX2X_MOD_OPT=""
+  if [[ ${#module_opt[@]} -ne 0 ]]; then
+    for mod in "${module_opt[@]}"; do
+      OMNI_CX2X_MOD_OPT="${OMNI_CX2X_MOD_OPT} ${mod}"
+    done
   fi
 }

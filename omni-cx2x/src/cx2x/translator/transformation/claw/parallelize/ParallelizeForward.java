@@ -19,7 +19,6 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -297,10 +296,8 @@ public class ParallelizeForward extends ClawTransformation {
         if(target_var != null) {
           _fctCallMapping.put(original_name, target_var.value());
 
-          if(XmOption.isDebugOutput()) {
-            System.out.println("Fct parameter mapping: original_name=" +
-                original_name + " target_name=" + target_var.value());
-          }
+          Utility.debug("Fct parameter mapping: original_name=" +
+              original_name + " target_name=" + target_var.value());
         }
       }
     }
@@ -324,11 +321,8 @@ public class ParallelizeForward extends ClawTransformation {
 
       if(_mod != null) {
 
-        // debug information
-        if(XmOption.isDebugOutput()) {
-          System.out.println("Reading CLAW module file: " +
-              _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
-        }
+        Utility.debug("Reading CLAW module file: " +
+            _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
 
         if(_mod.getIdentifiers().contains(_calledFctName)) {
           String type = _mod.getIdentifiers().get(_calledFctName).

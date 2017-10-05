@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
@@ -13,14 +14,12 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.ClawTranslator;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -152,17 +151,15 @@ public class Parallelize extends ClawTransformation {
     /* If there is no data/over clause specified, an automatic deduction for
      * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
-      if(XmOption.isDebugOutput()){
-        System.out.println("parallelize promotion infos for subroutine " +
-            _fctDef.getName().value());
-      }
+
+      Utility.debug("parallelize promotion infos for subroutine " +
+          _fctDef.getName().value());
+
       for(Xdecl decl : _fctDef.getDeclarationTable().getAll()) {
         if(decl.isBuiltInType()) {
-          if(XmOption.isDebugOutput()) {
-            System.out.println("parallelize promotion: Scalar "
-                + decl.matchSeq(Xcode.NAME).value()
-                + " is candidate for promotion.");
-          }
+          Utility.debug("parallelize promotion: Scalar "
+              + decl.matchSeq(Xcode.NAME).value()
+              + " is candidate for promotion.");
           _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
         }
 
@@ -179,17 +176,13 @@ public class Parallelize extends ClawTransformation {
               || bType.getIntent() == Xintent.INOUT)
               || bType.isPointer()) && bType.isArray())
           {
-            if(XmOption.isDebugOutput()) {
-              System.out.println("parallelize promotion: Array " +
-                  decl.matchSeq(Xcode.NAME).value() + " will be promoted.");
-            }
+            Utility.debug("parallelize promotion: Array " +
+                decl.matchSeq(Xcode.NAME).value() + " will be promoted.");
             _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
           } else if(bType.isArray()) {
-            if(XmOption.isDebugOutput()) {
-              System.out.println("parallelize promotion: Array "
-                  + decl.matchSeq(Xcode.NAME).value()
-                  + " is candidate for promotion.");
-            }
+            Utility.debug("parallelize promotion: Array "
+                + decl.matchSeq(Xcode.NAME).value()
+                + " is candidate for promotion.");
             _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
           }
         }
@@ -301,7 +294,7 @@ public class Parallelize extends ClawTransformation {
           "PURE specifier cannot be removed", _fctDef.lineNo());
     } else if(pureRemoved) {
       String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      System.out.println("Warning: PURE specifier removed from function " +
+      System.err.println("Warning: PURE specifier removed from function " +
           fctName + " at line " + _fctDef.lineNo() + ". Transformation and " +
           "code generation applied to it.");
     }

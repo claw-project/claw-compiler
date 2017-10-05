@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
+import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
@@ -15,7 +16,6 @@ import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
-import xcodeml.util.XmOption;
 
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class LoopInterchange extends ClawTransformation {
    * Apply the transformation.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
@@ -73,12 +73,12 @@ public class LoopInterchange extends ClawTransformation {
     analyze(xcodeml, translator);
 
     // TODO
-  /*  if(XmOption.isDebugOutput()){
-      System.out.println("loop-interchange transformation");
-      System.out.println("  loop 0: " + _loopLevel0.getFormattedRange());
-      System.out.println("  loop 1: " + _loopLevel1.getFormattedRange());
+    /*  if(XmOption.isDebugOutput()){
+      Utility.debug("loop-interchange transformation");
+      Utility.debug("  loop 0: " + _loopLevel0.getFormattedRange());
+      Utility.debug("  loop 1: " + _loopLevel1.getFormattedRange());
       if(_loopLevel2 != null){
-        System.out.println("  loop 2: " + _loopLevel2.getFormattedRange());
+        Utility.debug("  loop 2: " + _loopLevel2.getFormattedRange());
       }
     }*/
 
@@ -172,7 +172,7 @@ public class LoopInterchange extends ClawTransformation {
    * - Find the different do statement that will be reordered.
    * - Check the validity of the new ordering option.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if the transformation can be performed. False otherwise.
    */
@@ -257,15 +257,13 @@ public class LoopInterchange extends ClawTransformation {
    * Print some useful debugging information
    */
   private void printTransformDebugInfo() {
-    if(XmOption.isDebugOutput()) {
-      System.out.println("  transform from " + _baseLoop0 + "," + _baseLoop1
-          + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 +
-          "," + _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
-          _loopNewPos2 + ")");
+    Utility.debug("  transform from " + _baseLoop0 + "," + _baseLoop1
+        + "," + _baseLoop2 + " (012) to " + _newLoop0 + "," + _newLoop1 +
+        "," + _newLoop2 + " (" + _loopNewPos0 + _loopNewPos1 +
+        _loopNewPos2 + ")");
 
-      if(needDoubleSwap()) {
-        System.out.println("    double swap required");
-      }
+    if(needDoubleSwap()) {
+      Utility.debug("    double swap required");
     }
   }
 
@@ -275,12 +273,12 @@ public class LoopInterchange extends ClawTransformation {
    * @param swapCase Integer representing the new ordering (120 or 201)
    */
   private void printTransformSwapInfo(int swapCase) {
-    if(XmOption.isDebugOutput() && swapCase == 120) {
-      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
-      System.out.println("    swap 2: " + _baseLoop1 + " <--> " + _baseLoop0);
-    } else if(XmOption.isDebugOutput() && swapCase == 201) {
-      System.out.println("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
-      System.out.println("    swap 2: " + _baseLoop2 + " <--> " + _baseLoop1);
+    if(swapCase == 120) {
+      Utility.debug("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
+      Utility.debug("    swap 2: " + _baseLoop1 + " <--> " + _baseLoop0);
+    } else if(swapCase == 201) {
+      Utility.debug("    swap 1: " + _baseLoop0 + " <--> " + _baseLoop2);
+      Utility.debug("    swap 2: " + _baseLoop2 + " <--> " + _baseLoop1);
     }
   }
 

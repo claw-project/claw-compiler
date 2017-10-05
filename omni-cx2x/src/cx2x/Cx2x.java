@@ -221,8 +221,7 @@ public class Cx2x {
     }
 
     if(cmd.getArgs().length == 0) {
-      error("internal", 0, 0, "no input file");
-      return;
+      input = null; // Input data piped from System.in
     } else {
       input = cmd.getArgs()[0];
     }
@@ -267,11 +266,21 @@ public class Cx2x {
 
     // Decompile XcodeML/F to Fortran
     XcodeMlToFortranDecompiler decompiler = new XcodeMlToFortranDecompiler();
-    if(!decompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
-        XmOption.isSuppressLineDirective()))
-    {
-      error(xcodeMlOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
-      System.exit(1);
+    if(xcodeMlOutput == null) { // XcodeML output not written to file. Use pipe.
+      if(!decompiler.decompile(fortranOutput,
+          translatorDriver.getProgram().getDocument(), maxColumns,
+          XmOption.isSuppressLineDirective()))
+      {
+        error(fortranOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
+        System.exit(1);
+      }
+    } else {
+      if(!decompiler.decompileFromFile(fortranOutput, xcodeMlOutput, maxColumns,
+          XmOption.isSuppressLineDirective()))
+      {
+        error(xcodeMlOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
+        System.exit(1);
+      }
     }
   }
 }
