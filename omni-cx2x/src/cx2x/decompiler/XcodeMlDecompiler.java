@@ -21,20 +21,32 @@ import java.io.*;
  *
  * @author clementval
  */
-public class XcodeMlToFortranDecompiler {
+public class XcodeMlDecompiler {
 
   private BufferedReader _reader;
   private XmToolFactory _toolFactory;
 
+  public enum BackendLanguage {
+    C_LANGUAGE,
+    FORTRAN_LANGUAGE
+  }
+
   /**
-   * Constructs a new XcodeMlToFortranDecompiler object.
+   * Constructs a new XcodeMlDecompiler object.
    *
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
-  public XcodeMlToFortranDecompiler()
+  public XcodeMlDecompiler(BackendLanguage lang)
       throws XmException
   {
-    _toolFactory = new XmToolFactory("F");
+    switch(lang){
+      case FORTRAN_LANGUAGE:
+        _toolFactory = new XmToolFactory("F");
+        break;
+      case C_LANGUAGE:
+        _toolFactory = new XmToolFactory("C");
+        break;
+    }
   }
 
   private boolean openXcodeMLFile(String inputFilepath)
