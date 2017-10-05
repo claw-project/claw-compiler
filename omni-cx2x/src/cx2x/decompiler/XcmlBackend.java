@@ -26,11 +26,6 @@ public class XcmlBackend {
   private BufferedReader _reader;
   private XmToolFactory _toolFactory;
 
-  public enum Lang {
-    C,
-    FORTRAN
-  }
-
   /**
    * Constructs a new XcmlBackend object.
    *
@@ -39,7 +34,7 @@ public class XcmlBackend {
   public XcmlBackend(Lang lang)
       throws XmException
   {
-    switch(lang){
+    switch(lang) {
       case FORTRAN:
         _toolFactory = new XmToolFactory("F");
         break;
@@ -133,6 +128,11 @@ public class XcmlBackend {
       }
     }
     return false;
+  }
+
+  public enum Lang {
+    C,
+    FORTRAN
   }
 
 }
