@@ -265,8 +265,15 @@ public class Cx2x {
       report.generate(config, args, translatorDriver);
     }
 
-    // Decompile XcodeML/F to Fortran
-    XcmlBackend decompiler = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
+    // Decompile XcodeML/F to target language
+    XcmlBackend decompiler;
+    if(config.getCurrentTarget() == Target.FPGA) {
+      // TODO remove when supported
+      error(xcmlOuput, 0, 0, "FPGA target is not supported yet");
+      decompiler = new XcmlBackend(XcmlBackend.Lang.C);
+    } else {
+      decompiler = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
+    }
     if(!decompiler.decompile(targetLangOutput, xcmlOuput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
