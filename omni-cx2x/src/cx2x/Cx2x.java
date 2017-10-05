@@ -120,8 +120,8 @@ public class Cx2x {
    */
   public static void main(String[] args) throws Exception {
     String input;
-    String xcodeMlOutput = null;
-    String fortranOutput = null;
+    String xcmlOuput = null;
+    String targetLangOutput = null;
     String target_option = null;
     String directive_option = null;
     String configuration_file = null;
@@ -177,12 +177,12 @@ public class Cx2x {
 
     // XcodeML/F output file option
     if(cmd.hasOption("o")) {
-      xcodeMlOutput = cmd.getOptionValue("o");
+      xcmlOuput = cmd.getOptionValue("o");
     }
 
     // FORTRAN output file option
     if(cmd.hasOption("f")) {
-      fortranOutput = cmd.getOptionValue("f");
+      targetLangOutput = cmd.getOptionValue("f");
     }
 
     if(cmd.hasOption("w")) {
@@ -253,7 +253,7 @@ public class Cx2x {
 
     // Call the translator driver to apply transformation on XcodeML/F
     ClawTranslatorDriver translatorDriver =
-        new ClawTranslatorDriver(input, xcodeMlOutput, config);
+        new ClawTranslatorDriver(input, xcmlOuput, config);
     translatorDriver.analyze();
     translatorDriver.transform();
     translatorDriver.flush(config);
@@ -267,10 +267,10 @@ public class Cx2x {
 
     // Decompile XcodeML/F to Fortran
     XcmlBackend decompiler = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
-    if(!decompiler.decompile(fortranOutput, xcodeMlOutput, maxColumns,
+    if(!decompiler.decompile(targetLangOutput, xcmlOuput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
-      error(xcodeMlOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
+      error(xcmlOuput, 0, 0, "Unable to decompile XcodeML to target language");
       System.exit(1);
     }
   }
