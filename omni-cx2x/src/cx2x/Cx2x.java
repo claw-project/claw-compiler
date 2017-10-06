@@ -266,15 +266,15 @@ public class Cx2x {
     }
 
     // Decompile XcodeML/F to target language
-    XcmlBackend decompiler;
+    XcmlBackend backend;
     if(config.getCurrentTarget() == Target.FPGA) {
       // TODO remove when supported
       error(xcmlOuput, 0, 0, "FPGA target is not supported yet");
-      decompiler = new XcmlBackend(XcmlBackend.Lang.C);
+      backend = new XcmlBackend(XcmlBackend.Lang.C);
     } else {
-      decompiler = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
+      backend = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
     }
-    if(!decompiler.decompile(targetLangOutput, xcmlOuput, maxColumns,
+    if(!backend.decompile(targetLangOutput, xcmlOuput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
       error(xcmlOuput, 0, 0, "Unable to decompile XcodeML to target language");
