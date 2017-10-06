@@ -5,8 +5,10 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.helper.XnodeUtil;
 import helper.TestConstant;
+import helper.XmlHelper;
 import org.junit.Test;
 
 import java.io.File;
@@ -47,5 +49,35 @@ public class XnodeUtilTest {
     assertEquals(3, stmts.size());
 
 
+  }
+
+  @Test
+  public void getPragmaPrefixTest(){
+    XcodeProgram xp = XmlHelper.getDummyXcodeProgram();
+
+    Xnode p1 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    p1.setValue(ClawConstant.OPENACC_PREFIX);
+    assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p1));
+
+    Xnode p2 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    p2.setValue(ClawConstant.OPENMP_PREFIX);
+    assertEquals(ClawConstant.OPENMP_PREFIX, XnodeUtil.getPragmaPrefix(p2));
+
+    Xnode p3 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    p3.setValue("");
+    assertEquals("", XnodeUtil.getPragmaPrefix(p3));
+
+    Xnode p4 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    assertEquals("", XnodeUtil.getPragmaPrefix(p4));
+
+    Xnode p5 = new Xnode(Xcode.FDOSTATEMENT, xp);
+    p5.setValue("acc");
+    assertEquals("", XnodeUtil.getPragmaPrefix(p5));
+
+    assertEquals("", XnodeUtil.getPragmaPrefix(null));
+
+    Xnode p6 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    p6.setValue(ClawConstant.OPENACC_PREFIX + " loop private(a)");
+    assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p6));
   }
 }
