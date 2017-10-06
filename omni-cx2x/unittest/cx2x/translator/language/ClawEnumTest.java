@@ -31,7 +31,8 @@ public class ClawEnumTest {
     assertEquals(Target.CPU, Target.fromString(null));
     assertEquals(Target.CPU, Target.fromString(""));
     assertEquals(Arrays.asList(ClawConstant.TARGET_CPU, ClawConstant.TARGET_GPU,
-        ClawConstant.TARGET_MIC), Target.availableTargets());
+        ClawConstant.TARGET_MIC, ClawConstant.TARGET_FPGA),
+        Target.availableTargets());
   }
 
   @Test
