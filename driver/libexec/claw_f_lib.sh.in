@@ -443,14 +443,16 @@ function claw::process_dependencies()
     # .xmod file is already present
     if [[ ${source_mod_file_found} == false ]] \
       && [[ ${compiled_mod_file_found} == true ]]; then
-      # Do not print warning for intrinsic
-      if [[ "${module_name}" != "iso_c_binding" ]] &&
+      # Do not print warning for intrinsic / OpenACC & OpenMP
+      if [[ "${module_name}" != "omp_lib" ]] &&
+         [[ "${module_name}" != "openacc" ]] &&
+         [[ "${module_name}" != "iso_c_binding" ]] &&
          [[ "${module_name}" != "iso_fortran_env" ]] &&
          [[ "${module_name}" != "ieee_features" ]] &&
          [[ "${module_name}" != "ieee_exceptions" ]] &&
          [[ "${module_name}" != "ieee_arithmetic" ]]; then
          claw::warning "$2" "-" \
-           "only module file found for ${module_name}. Might be out-of-date"
+           "only module file found for ${module_name}. Might be out-of-date..."
       fi
       continue
     elif [[ ${source_mod_file_found} == true ]] \
