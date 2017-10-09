@@ -1222,12 +1222,19 @@ public class XnodeUtil {
    * Return the directive prefix.
    *
    * @param pragma The pragma node.
-   * @return Directive prefix.
+   * @return Directive prefix if any. Empty string otherwise.
    */
   public static String getPragmaPrefix(Xnode pragma) {
-    if(pragma.opcode() != Xcode.FPRAGMASTATEMENT) {
+    if(pragma == null || pragma.opcode() != Xcode.FPRAGMASTATEMENT
+        || pragma.value().isEmpty())
+    {
       return "";
     }
+
+    if(!pragma.value().contains(" ")) {
+      return pragma.value().toLowerCase();
+    }
+
     return pragma.value().toLowerCase().
         substring(0, pragma.value().indexOf(" "));
   }
