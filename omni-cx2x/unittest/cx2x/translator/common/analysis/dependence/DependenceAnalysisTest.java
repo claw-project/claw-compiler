@@ -6,13 +6,13 @@
 
 package cx2x.translator.common.analysis.dependence;
 
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.ClawTranslator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -41,7 +41,8 @@ public class DependenceAnalysisTest {
     // Load test data file
     File f = new File(TestConstant.TEST_DEPENDENCE);
     assertTrue(f.exists());
-    XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE);
+    XcodeProgram xcodeml =
+        XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE);
     assertNotNull(xcodeml);
 
     // Match all the function definitions
@@ -106,7 +107,8 @@ public class DependenceAnalysisTest {
     // Load test data file
     File f = new File(TestConstant.TEST_DEPENDENCE_3D);
     assertTrue(f.exists());
-    XcodeProgram xcodeml = XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE_3D);
+    XcodeProgram xcodeml =
+        XcodeProgram.createFromFile(TestConstant.TEST_DEPENDENCE_3D);
     assertNotNull(xcodeml);
 
     // Match all the function definitions
@@ -153,6 +155,56 @@ public class DependenceAnalysisTest {
       System.out.println();
       System.out.println("Iteration space after fusion");
       is.printDebug(true);
+    } catch(Exception e) {
+      fail();
+    }
+  }
+
+  @Test
+  public void perfectlyNestedNoDependencyTest() {
+    // Load test data file
+    File f = new File(TestConstant.TEST_PERFECTLY_NESTED_NO_DEP);
+    assertTrue(f.exists());
+    XcodeProgram xcodeml =
+        XcodeProgram.createFromFile(f.getPath());
+    assertNotNull(xcodeml);
+
+    // Match all the function definitions
+    List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
+    assertEquals(1, functions.size());
+
+    // Match all the pragmas
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    assertEquals(1, pragmas.size());
+
+    // Analyze the pragma
+    Configuration configuration =
+        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
+    configuration.setMaxColumns(80);
+    ClawTranslator translator = new ClawTranslator(configuration);
+    AcceleratorGenerator generator =
+        AcceleratorHelper.createAcceleratorGenerator(configuration);
+    ClawLanguage main = null;
+    try {
+      main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
+    } catch(Exception e) {
+      fail();
+    }
+
+    // Get the function definition that interests us
+    Xnode fctDef = functions.get(0);
+
+    // Match all the do statements in the function
+    List<Xnode> loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
+    assertEquals(2, loops.size());
+
+    // Create an iteration space
+    try {
+      IterationSpace is = new IterationSpace(loops);
+      System.out.println();
+      assertEquals(2, is.getNbLevel());
+      is.printDebug(true);
+      assertTrue(is.isPerfectlyNested());
     } catch(Exception e) {
       fail();
     }
