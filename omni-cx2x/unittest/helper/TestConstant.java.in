@@ -20,4 +20,6 @@ public class TestConstant {
     "@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence.xml";
   public static final String TEST_DEPENDENCE_3D =
     "@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence3d.xml";
+  public static final String TEST_PERFECTLY_NESTED_NO_DEP =
+    "@CMAKE_CURRENT_SOURCE_DIR@/data/perfectly_nested.xml";
 }
