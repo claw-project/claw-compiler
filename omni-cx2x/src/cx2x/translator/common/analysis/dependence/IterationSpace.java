@@ -146,9 +146,9 @@ public class IterationSpace {
    * Analyze the dependence information at each level and try to merge
    * independent do statements.
    *
-   * @param xcodeml     Current XcodeML/F program unit.
+   * @param xcodeml    Current XcodeML/F program unit.
    * @param translator Current translator.
-   * @param master      ClawLanguage that triggered this transformation.
+   * @param master     ClawLanguage that triggered this transformation.
    * @throws Exception If the fusion fails.
    */
   public void tryFusion(XcodeProgram xcodeml, Translator translator,
@@ -168,6 +168,39 @@ public class IterationSpace {
       }
       fusions.applyTranslations(xcodeml, translator);
     }
+  }
+
+  /**
+   * Check if the iteration space is perfectly nested.
+   *
+   * @return True if it is perfectly nested.
+   */
+  public boolean isPerfectlyNested() {
+    List<Xnode> doStmts = new ArrayList<>();
+    for(int i = 0; i < getNbLevel(); ++i) {
+      List<DependenceAnalysis> crtLevel = getLevel(i);
+      if(crtLevel.size() > 1) {
+        return false;
+      }
+      doStmts.add(crtLevel.get(0).getDoStmt());
+    }
+
+    for(int i = 0; i < doStmts.size() - 1; ++i) {
+      Xnode parentDoStmt = doStmts.get(i);
+      Xnode childDoStmt = doStmts.get(i + 1);
+      for(Xnode n : parentDoStmt.body().children()) {
+        if(n.opcode() != Xcode.FPRAGMASTATEMENT
+            && n.opcode() != Xcode.FDOSTATEMENT)
+        {
+          return false;
+        }
+        if(n == childDoStmt) {
+          break;
+        }
+      }
+    }
+
+    return true;
   }
 
 }

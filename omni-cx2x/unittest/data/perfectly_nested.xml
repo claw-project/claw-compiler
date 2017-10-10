@@ -1,0 +1,234 @@
+<XcodeProgram source="original_code.f90"
+              language="Fortran"
+              time="2017-10-09 13:31:00"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FfunctionType type="F7f98d24082e0" return_type="Fvoid">
+      <params>
+        <name type="I7f98d24099e0">n1</name>
+        <name type="I7f98d2409b00">n2</name>
+        <name type="A7f98d240ad40">var1</name>
+        <name type="A7f98d240a9e0">var2</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I7f98d24099e0" intent="in" ref="Fint"/>
+    <FbasicType type="I7f98d2409b00" intent="in" ref="Fint"/>
+    <FbasicType type="A7f98d240ac20" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I7f98d2409b00">
+            <Var type="I7f98d2409b00" scope="local">n2</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7f98d240ad40" intent="inout" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I7f98d2409b00">
+            <Var type="I7f98d2409b00" scope="local">n2</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I7f98d24099e0" scope="local">n1</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7f98d240a8c0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I7f98d2409b00">
+            <Var type="I7f98d2409b00" scope="local">n2</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A7f98d240a9e0" intent="inout" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <plusExpr type="I7f98d2409b00">
+            <Var type="I7f98d2409b00" scope="local">n2</Var>
+            <FintConstant type="Fint">1</FintConstant>
+          </plusExpr>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <Var type="I7f98d24099e0" scope="local">n1</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>m1</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="m1" lineno="1" file="original_code.f90">
+      <symbols>
+        <id type="F7f98d24082e0" sclass="ffunc">
+          <name>s1</name>
+        </id>
+      </symbols>
+      <declarations>
+      </declarations>
+      <FcontainsStatement lineno="2" file="original_code.f90">
+        <FfunctionDefinition lineno="3" file="original_code.f90">
+          <name type="F7f98d24082e0">s1</name>
+          <symbols>
+            <id type="F7f98d24082e0" sclass="ffunc">
+              <name>s1</name>
+            </id>
+            <id type="I7f98d24099e0" sclass="fparam">
+              <name>n1</name>
+            </id>
+            <id type="I7f98d2409b00" sclass="fparam">
+              <name>n2</name>
+            </id>
+            <id type="A7f98d240ad40" sclass="fparam">
+              <name>var1</name>
+            </id>
+            <id type="A7f98d240a9e0" sclass="fparam">
+              <name>var2</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>i1</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>i2</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>ngpt</name>
+            </id>
+          </symbols>
+          <declarations>
+            <varDecl lineno="3" file="original_code.f90">
+              <name type="F7f98d24082e0">s1</name>
+            </varDecl>
+            <varDecl lineno="4" file="original_code.f90">
+              <name type="I7f98d24099e0">n1</name>
+            </varDecl>
+            <varDecl lineno="4" file="original_code.f90">
+              <name type="I7f98d2409b00">n2</name>
+            </varDecl>
+            <varDecl lineno="5" file="original_code.f90">
+              <name type="A7f98d240a9e0">var2</name>
+            </varDecl>
+            <varDecl lineno="5" file="original_code.f90">
+              <name type="A7f98d240ad40">var1</name>
+            </varDecl>
+            <varDecl lineno="6" file="original_code.f90">
+              <name type="Fint">i1</name>
+            </varDecl>
+            <varDecl lineno="6" file="original_code.f90">
+              <name type="Fint">i2</name>
+            </varDecl>
+            <varDecl>
+              <name type="Fint">ngpt</name>
+            </varDecl>
+          </declarations>
+          <body>
+            <FpragmaStatement lineno="8" file="original_code.f90">claw define dimension icol(1:ncol) claw parallelize</FpragmaStatement>
+            <FdoStatement lineno="11" file="original_code.f90">
+              <Var type="Fint" scope="local">i2</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <plusExpr type="I7f98d2409b00">
+                    <Var type="I7f98d2409b00" scope="local">n2</Var>
+                    <FintConstant type="Fint">1</FintConstant>
+                  </plusExpr>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FdoStatement lineno="12" file="original_code.f90">
+                  <Var type="Fint" scope="local">i1</Var>
+                  <indexRange>
+                    <lowerBound>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </lowerBound>
+                    <upperBound>
+                      <Var type="Fint" scope="local">ngpt</Var>
+                    </upperBound>
+                    <step>
+                      <FintConstant type="Fint">1</FintConstant>
+                    </step>
+                  </indexRange>
+                  <body>
+                    <FassignStatement lineno="13" file="original_code.f90">
+                      <FarrayRef type="Freal">
+                        <varRef type="A7f98d240a9e0">
+                          <Var type="A7f98d240a9e0" scope="local">var2</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">i2</Var>
+                        </arrayIndex>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">i1</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <plusExpr type="Freal">
+                        <FarrayRef type="Freal">
+                          <varRef type="A7f98d240a9e0">
+                            <Var type="A7f98d240a9e0" scope="local">var2</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">i2</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">i1</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                        <FarrayRef type="Freal">
+                          <varRef type="A7f98d240ad40">
+                            <Var type="A7f98d240ad40" scope="local">var1</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">i2</Var>
+                          </arrayIndex>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">i1</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                      </plusExpr>
+                    </FassignStatement>
+                  </body>
+                </FdoStatement>
+              </body>
+            </FdoStatement>
+          </body>
+        </FfunctionDefinition>
+      </FcontainsStatement>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>
