@@ -36,6 +36,14 @@ public class XfunctionDefinition extends Xnode {
   private final Xnode _name;
 
   /**
+   * Xnode ctor. Delegate construction to the Element ctor.
+   * @param node Xnode element.
+   */
+  public XfunctionDefinition(Xnode node) {
+    this(node.element());
+  }
+
+  /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
