@@ -8,6 +8,9 @@ package cx2x.xcodeml.xnode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The XfunctionType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
@@ -118,6 +121,19 @@ public class XfunctionType extends Xtype {
    */
   public Xparams getParams() {
     return _params;
+  }
+
+  /**
+   * Get a list of string representing the function parameters.
+   *
+   * @return List of string.
+   */
+  public List<String> getParamsNames() {
+    List<String> parameters = new ArrayList<>();
+    for(Xnode n : _params.getAll()) {
+      parameters.add(n.value().toLowerCase());
+    }
+    return parameters;
   }
 
   /**
