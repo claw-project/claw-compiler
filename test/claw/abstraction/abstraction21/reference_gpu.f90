@@ -6,14 +6,14 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   LOGICAL , OPTIONAL :: o
   REAL :: c
   INTEGER :: r
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-!$acc data present(q,t)
+!$acc data present(t,q)
 !$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
@@ -30,13 +30,13 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute ( nz , b , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  INTEGER :: result
-
   INTEGER , INTENT(IN) :: nproma
+  INTEGER :: result
 
   result = compute_column ( nz , b , q , t , nproma = nproma , o = .TRUE. )
  END SUBROUTINE compute

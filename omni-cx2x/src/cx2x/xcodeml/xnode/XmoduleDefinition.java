@@ -33,6 +33,14 @@ public class XmoduleDefinition extends Xnode {
   private final XdeclTable _declarations;
 
   /**
+   * Xnode ctor. Delegate construction to the Element ctor.
+   * @param node Xnode element.
+   */
+  public XmoduleDefinition(Xnode node){
+    this(node.element());
+  }
+
+  /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *

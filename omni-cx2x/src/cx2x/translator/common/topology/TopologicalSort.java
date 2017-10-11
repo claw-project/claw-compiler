@@ -137,7 +137,7 @@ public final class TopologicalSort {
    * @return The reverse of that graph.
    */
   public static <T> DirectedGraph<T> reverseGraph(DirectedGraph<T> g) {
-    DirectedGraph<T> result = new DirectedGraph<T>();
+    DirectedGraph<T> result = new DirectedGraph<>();
 
     // Add all the nodes from the original graph.
     for(T node : g) {

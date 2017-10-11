@@ -58,7 +58,7 @@ public class LoopInterchange extends ClawTransformation {
    * Apply the transformation.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
@@ -172,7 +172,7 @@ public class LoopInterchange extends ClawTransformation {
    * - Find the different do statement that will be reordered.
    * - Check the validity of the new ordering option.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if the transformation can be performed. False otherwise.
    */

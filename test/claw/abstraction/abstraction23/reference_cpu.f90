@@ -5,10 +5,10 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
   REAL :: res ( 1 : nz , 1 : nproma )
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
   c = 5.345
@@ -27,16 +27,16 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute_all ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   REAL , TARGET :: z ( 1 : nproma , 1 : nz )
   INTEGER :: k
   REAL , POINTER :: zp ( : , : )
   REAL , TARGET :: res ( 1 : nz , 1 : nproma )
   REAL , POINTER :: res_p ( : , : )
-
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
 
   DO k = 1 , nz , 1

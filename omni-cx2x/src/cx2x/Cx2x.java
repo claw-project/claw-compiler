@@ -120,7 +120,7 @@ public class Cx2x {
    */
   public static void main(String[] args) throws Exception {
     String input;
-    String xcmlOuput = null;
+    String xcmlOutput = null;
     String targetLangOutput = null;
     String target_option = null;
     String directive_option = null;
@@ -177,7 +177,7 @@ public class Cx2x {
 
     // XcodeML/F output file option
     if(cmd.hasOption("o")) {
-      xcmlOuput = cmd.getOptionValue("o");
+      xcmlOutput = cmd.getOptionValue("o");
     }
 
     // FORTRAN output file option
@@ -253,7 +253,7 @@ public class Cx2x {
 
     // Call the translator driver to apply transformation on XcodeML/F
     ClawTranslatorDriver translatorDriver =
-        new ClawTranslatorDriver(input, xcmlOuput, config);
+        new ClawTranslatorDriver(input, xcmlOutput, config);
     translatorDriver.analyze();
     translatorDriver.transform();
     translatorDriver.flush(config);
@@ -269,15 +269,15 @@ public class Cx2x {
     XcmlBackend backend;
     if(config.getCurrentTarget() == Target.FPGA) {
       // TODO remove when supported
-      error(xcmlOuput, 0, 0, "FPGA target is not supported yet");
+      error(xcmlOutput, 0, 0, "FPGA target is not supported yet");
       backend = new XcmlBackend(XcmlBackend.Lang.C);
     } else {
       backend = new XcmlBackend(XcmlBackend.Lang.FORTRAN);
     }
-    if(!backend.decompile(targetLangOutput, xcmlOuput, maxColumns,
+    if(!backend.decompile(targetLangOutput, xcmlOutput, maxColumns,
         XmOption.isSuppressLineDirective()))
     {
-      error(xcmlOuput, 0, 0, "Unable to decompile XcodeML to target language");
+      error(xcmlOutput, 0, 0, "Unable to decompile XcodeML to target language");
       System.exit(1);
     }
   }

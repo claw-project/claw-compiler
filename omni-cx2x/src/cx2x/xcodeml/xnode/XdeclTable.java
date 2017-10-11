@@ -34,7 +34,9 @@ import java.util.*;
 
 public class XdeclTable extends Xnode {
 
-  private final Hashtable<String, Xdecl> _table;
+  /* Some transformation needs to know the order of the declarations. Therefore,
+   * we use a LinkedHashMap to be able to give back the table with its order. */
+  private final LinkedHashMap<String, Xdecl> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -44,7 +46,7 @@ public class XdeclTable extends Xnode {
    */
   public XdeclTable(Element baseElement) {
     super(baseElement);
-    _table = new Hashtable<>();
+    _table = new LinkedHashMap<>();
     readTable();
   }
 
@@ -52,35 +54,34 @@ public class XdeclTable extends Xnode {
    * Read the declaration table.
    */
   private void readTable() {
-    Node crtNode = _baseElement.getFirstChild();
-    while(crtNode != null) {
-      if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) crtNode;
-
-        switch(element.getTagName()) {
-          case Xname.VAR_DECL:
-            Xdecl varDecl = new Xdecl(element);
-            _table.put(varDecl.matchSeq(Xcode.NAME).value(), varDecl);
-            break;
-          case Xname.F_USE_DECL:
-          case Xname.F_USE_ONLY_DECL:
-            Xdecl useDecl = new Xdecl(element);
-            _table.put(useDecl.getAttribute(Xattr.NAME), useDecl);
-            break;
-
-
-          // TODO read FstructDecl elements
-          // TODO read externDecl elements
-          // TODO read FuseOnlyDecl elements
-          // TODO read FinterfaceDecl elements
-          // TODO read FnamelistDecl elements
-          // TODO read FequivalenceDecl elements
-          // TODO read FcommonDecl elements
-
-        }
+    List<Xnode> declarations = children();
+    for(Xnode n : declarations) {
+      Xdecl decl = new Xdecl(n);
+      String key = "";
+      switch(n.opcode()) {
+        case EXTERNDECL:
+        case FSTRUCTDECL:
+        case VARDECL:
+          key = decl.matchSeq(Xcode.NAME).value();
+          break;
+        case FUSEDECL:
+        case FUSEONLYDECL:
+        case FINTERFACEDECL:
+          key = decl.getAttribute(Xattr.NAME);
+          break;
+        case FNAMELISTDECL:
+          key = decl.matchSeq(Xcode.VARLIST).getAttribute(Xattr.NAME);
+          break;
+        case FCOMMONDECL:
+          key = Xcode.FCOMMONDECL.toString() + UUID.randomUUID();
+          break;
+        case FEQUIVALENCEDECL:
+          key = Xcode.FEQUIVALENCEDECL.toString() + UUID.randomUUID();
+          break;
       }
-      crtNode = crtNode.getNextSibling();
+      _table.put(key, decl);
     }
+
   }
 
   /**
@@ -127,8 +128,12 @@ public class XdeclTable extends Xnode {
    *
    * @return All elements stored in the table.
    */
-  public Collection<Xdecl> getAll() {
-    return _table.values();
+  public List<Xdecl> values() {
+    List<Xdecl> orderedDeclarations = new ArrayList<>();
+    for(Map.Entry<String, Xdecl> entry : _table.entrySet()) {
+      orderedDeclarations.add(entry.getValue());
+    }
+    return orderedDeclarations;
   }
 
   /**
@@ -137,8 +142,7 @@ public class XdeclTable extends Xnode {
    * @param decl Kind of elements to return.
    * @return A list of all declarations of this kind.
    */
-  public List<Xdecl> getAll(Xcode decl) {
-
+  public List<Xdecl> values(Xcode decl) {
     switch(decl) {
       case VARDECL:
       case FUSEDECL:
@@ -149,15 +153,13 @@ public class XdeclTable extends Xnode {
       case FNAMELISTDECL:
       case FEQUIVALENCEDECL:
       case FCOMMONDECL:
-        Iterator<Map.Entry<String, Xdecl>> it = _table.entrySet().iterator();
-        List<Xdecl> decls = new ArrayList<>();
-        while(it.hasNext()) {
-          Map.Entry<String, Xdecl> entry = it.next();
+        List<Xdecl> orderedFilteredDeclarations = new ArrayList<>();
+        for(Map.Entry<String, Xdecl> entry : _table.entrySet()) {
           if(entry.getValue().opcode() == decl) {
-            decls.add(entry.getValue());
+            orderedFilteredDeclarations.add(entry.getValue());
           }
         }
-        return decls;
+        return orderedFilteredDeclarations;
       default:
         throw new IllegalArgumentException("Not a member of the decl table");
     }
@@ -232,8 +234,8 @@ public class XdeclTable extends Xnode {
    * @return A list of all declaration. Empty list if no USE declaration.
    */
   public List<Xdecl> getAllUseStmts() {
-    List<Xdecl> uses = this.getAll(Xcode.FUSEDECL);
-    uses.addAll(this.getAll(Xcode.FUSEONLYDECL));
+    List<Xdecl> uses = this.values(Xcode.FUSEDECL);
+    uses.addAll(this.values(Xcode.FUSEONLYDECL));
     return uses;
   }
 

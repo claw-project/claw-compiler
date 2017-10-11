@@ -1,0 +1,152 @@
+<XcodeProgram source="decl.f90"
+              language="Fortran"
+              time="2017-10-11 09:53:27"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+    <typeTable>
+        <FfunctionType type="F7ffb7bc0a130" return_type="Fvoid">
+            <params>
+            </params>
+        </FfunctionType>
+        <FfunctionType type="F7ffb7bc0b8e0" return_type="Freal"
+                       is_external="true"/>
+        <FbasicType type="N7ffb7bc0aad0" ref="Fnamelist"/>
+        <FfunctionType type="F7ffb7bc087a0" return_type="Fvoid">
+            <params>
+            </params>
+        </FfunctionType>
+        <FfunctionType type="F7ffb7bc09550" return_type="Fvoid"/>
+        <FstructType type="S7ffb7bc076d0">
+            <symbols>
+            </symbols>
+        </FstructType>
+    </typeTable>
+    <globalSymbols>
+        <id sclass="ffunc">
+            <name>mod1</name>
+        </id>
+    </globalSymbols>
+    <globalDeclarations>
+        <FmoduleDefinition name="mod1" lineno="1" file="decl.f90">
+            <symbols>
+                <id type="S7ffb7bc076d0" sclass="ftype_name" declared_in="mod1">
+                    <name>t</name>
+                </id>
+                <id type="F7ffb7bc09550" sclass="ffunc">
+                    <name>dummy</name>
+                </id>
+                <id type="F7ffb7bc087a0" sclass="ffunc">
+                    <name>xx</name>
+                </id>
+                <id type="F7ffb7bc0a130" sclass="ffunc">
+                    <name>sub1</name>
+                </id>
+            </symbols>
+            <declarations>
+                <FstructDecl lineno="2" file="decl.f90">
+                    <name type="S7ffb7bc076d0">t</name>
+                </FstructDecl>
+                <FinterfaceDecl name="dummy" lineno="5" file="decl.f90">
+                    <FfunctionDecl lineno="6" file="decl.f90">
+                        <name type="F7ffb7bc087a0">xx</name>
+                        <symbols>
+                            <id type="F7ffb7bc087a0" sclass="ffunc">
+                                <name>xx</name>
+                            </id>
+                        </symbols>
+                        <declarations>
+                            <varDecl lineno="6" file="decl.f90">
+                                <name type="F7ffb7bc087a0">xx</name>
+                            </varDecl>
+                        </declarations>
+                    </FfunctionDecl>
+                </FinterfaceDecl>
+            </declarations>
+            <FcontainsStatement lineno="5" file="decl.f90">
+                <FfunctionDefinition lineno="12" file="decl.f90">
+                    <name type="F7ffb7bc0a130">sub1</name>
+                    <symbols>
+                        <id type="F7ffb7bc0a130" sclass="ffunc">
+                            <name>sub1</name>
+                        </id>
+                        <id type="F7ffb7bc0b8e0" sclass="ffunc">
+                            <name>ex1</name>
+                        </id>
+                        <id type="N7ffb7bc0aad0" sclass="fnamelist_name">
+                            <name>case</name>
+                        </id>
+                        <id type="Freal" sclass="fcommon">
+                            <name>v</name>
+                        </id>
+                        <id type="Fint" sclass="fcommon">
+                            <name>m</name>
+                        </id>
+                        <id sclass="fcommon_name">
+                            <name>_____BLANK_COMMON_____</name>
+                        </id>
+                    </symbols>
+                    <declarations>
+                        <varDecl lineno="12" file="decl.f90">
+                            <name type="F7ffb7bc0a130">sub1</name>
+                        </varDecl>
+                        <varDecl>
+                            <name type="F7ffb7bc0b8e0">ex1</name>
+                        </varDecl>
+                        <FnamelistDecl lineno="14" file="decl.f90">
+                            <varList name="case">
+                                <varRef>
+                                    <Var scope="local">sample</Var>
+                                </varRef>
+                            </varList>
+                        </FnamelistDecl>
+                        <varDecl>
+                            <name type="Freal">v</name>
+                        </varDecl>
+                        <varDecl>
+                            <name type="Fint">m</name>
+                        </varDecl>
+                        <FcommonDecl>
+                            <varList>
+                                <varRef>
+                                    <Var scope="local">v</Var>
+                                </varRef>
+                                <varRef>
+                                    <Var scope="local">m</Var>
+                                </varRef>
+                            </varList>
+                        </FcommonDecl>
+                        <FuseDecl name="mod4" lineno="15" file="decl.f90">
+                        </FuseDecl>
+                        <FuseOnlyDecl name="mod5" lineno="16"
+                                      file="decl.F90">
+                            <renamable use_name="wp"/>
+                        </FuseOnlyDecl>
+                        <FequivalenceDecl lineno="17" file="decl.F90">
+                            <varRef>
+                                <Var>int_equiv_variable1</Var>
+                            </varRef>
+                            <varList>
+                                <varRef>
+                                    <Var>int_equiv_variable2</Var>
+                                </varRef>
+                            </varList>
+                            <varRef>
+                                <Var>int_equiv_variable3</Var>
+                            </varRef>
+                            <varList>
+                                <varRef>
+                                    <Var>int_equiv_variable4</Var>
+                                </varRef>
+                            </varList>
+                        </FequivalenceDecl>
+                        <externDecl lineno="18" file="decl.F90">
+                            <name>interface_sub</name>
+                        </externDecl>
+                    </declarations>
+                    <body>
+                    </body>
+                </FfunctionDefinition>
+            </FcontainsStatement>
+        </FmoduleDefinition>
+    </globalDeclarations>
+</XcodeProgram>

@@ -2,14 +2,14 @@ MODULE mo_column
 
 CONTAINS
  SUBROUTINE compute_all ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   REAL , TARGET :: z ( 1 : nproma , 1 : nz )
   INTEGER :: k
   REAL , POINTER :: zp ( : , : )
-
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: iter_nproma
 
   DO k = 1 , nz , 1
@@ -22,13 +22,13 @@ CONTAINS
  END SUBROUTINE compute_all
 
  SUBROUTINE compute_column ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
-
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
 !$acc data present(t,q)

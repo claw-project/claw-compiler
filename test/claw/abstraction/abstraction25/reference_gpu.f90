@@ -5,10 +5,10 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( 1 : nz , 1 : nproma )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
   INTEGER :: r
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
 !$acc data present(t,q)
@@ -28,12 +28,12 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute ( nz , q , nproma )
+
   INTEGER , INTENT(IN) :: nz
+  INTEGER , INTENT(IN) :: nproma
   REAL :: t ( 1 : nz , 1 : nproma )
   REAL , INTENT(INOUT) :: q ( : , : )
   INTEGER :: result
-
-  INTEGER , INTENT(IN) :: nproma
 
   result = compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute

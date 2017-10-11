@@ -7,10 +7,10 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
   REAL , INTENT(INOUT) :: z ( : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
   INTEGER :: r
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
   c = 5.345
@@ -31,14 +31,14 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute ( nz , b , q , t , z , nproma )
+
   INTEGER , INTENT(IN) :: nz
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
   REAL , INTENT(INOUT) :: z ( : )
-  INTEGER :: result
-
   INTEGER , INTENT(IN) :: nproma
+  INTEGER :: result
 
   result = compute_column ( nz , b , q , t , z , nproma = nproma )
  END SUBROUTINE compute

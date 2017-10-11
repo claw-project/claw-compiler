@@ -1049,7 +1049,7 @@ public class ClawLanguage extends AnalyzedPragma {
    *
    * @return True if the targets matches.
    */
-  public boolean isApplicableToCurrentTarget() {
+  public boolean  isApplicableToCurrentTarget() {
     return _targetClauseValues == null
         || _targetClauseValues.size() == 0
         || _targetClauseValues.contains(_target);
