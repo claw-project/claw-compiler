@@ -161,6 +161,7 @@ public class Xname {
   public static final String F_DO_WHILE_STATEMENT = "FdoWhileStatement";
   public static final String F_ENDFILE_STATEMENT = "FendFileStatement";
   public static final String F_ENTRY_DECL = "FentryDecl";
+  public static final String F_ENUM_DECL = "FenumDecl";
   public static final String F_ENUM_TYPE = "FenumType";
   public static final String F_EQUIVALENCE_DECL = "FequivalenceDecl";
   public static final String F_EXIT_STATEMENT = "FexitStatement";
