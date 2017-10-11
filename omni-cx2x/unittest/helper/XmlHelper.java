@@ -108,7 +108,7 @@ public class XmlHelper {
   public static Xdecl createXvarDecl(String xml) {
     Element el = XmlHelper.getElementFromString(xml);
     assertNotNull(el);
-    return new Xdecl(el);
+    return new Xdecl(new Xnode(el));
   }
 
   public static XdeclTable createXdeclTable(String xml) {

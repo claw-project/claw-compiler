@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
@@ -13,7 +14,6 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.ClawTranslator;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -111,8 +111,8 @@ public class Parallelize extends ClawTransformation {
       return false;
     }
 
-    return analyseDimension(xcodeml) && analyseData(xcodeml) &&
-        analyseOver(xcodeml);
+    return analyzeDimension(xcodeml) && analyzeData(xcodeml) &&
+        analyzeOver(xcodeml);
   }
 
 
@@ -122,7 +122,7 @@ public class Parallelize extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyseDimension(XcodeProgram xcodeml) {
+  private boolean analyzeDimension(XcodeProgram xcodeml) {
     if(!_claw.hasDimensionClause()) {
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().lineNo());
@@ -148,15 +148,16 @@ public class Parallelize extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyseData(XcodeProgram xcodeml) {
+  private boolean analyzeData(XcodeProgram xcodeml) {
     /* If there is no data/over clause specified, an automatic deduction for
      * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
-      if(XmOption.isDebugOutput()){
+      if(XmOption.isDebugOutput()) {
         System.out.println("parallelize promotion infos for subroutine " +
             _fctDef.getName().value());
       }
-      for(Xdecl decl : _fctDef.getDeclarationTable().getAll()) {
+      List<Xdecl> declarations = _fctDef.getDeclarationTable().values();
+      for(Xdecl decl : declarations) {
         if(decl.isBuiltInType()) {
           if(XmOption.isDebugOutput()) {
             System.out.println("parallelize promotion: Scalar "
@@ -230,7 +231,7 @@ public class Parallelize extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyseOver(XcodeProgram xcodeml) {
+  private boolean analyzeOver(XcodeProgram xcodeml) {
     if(!_claw.hasOverClause()) {
       _overDimensions += _claw.getDimensionValues().size();
       return true;
@@ -646,7 +647,7 @@ public class Parallelize extends ClawTransformation {
       // Create the parameter for the lower bound
       if(dimension.lowerBoundIsVar()) {
         xcodeml.createIdAndDecl(dimension.getLowerBoundId(),
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef);
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(dimension.getLowerBoundId(),
@@ -657,7 +658,7 @@ public class Parallelize extends ClawTransformation {
       // Create parameter for the upper bound
       if(dimension.upperBoundIsVar()) {
         xcodeml.createIdAndDecl(dimension.getUpperBoundId(),
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef);
+            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(dimension.getUpperBoundId(),
@@ -666,7 +667,7 @@ public class Parallelize extends ClawTransformation {
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
-          Xname.SCLASS_F_LOCAL, _fctDef);
+          Xname.SCLASS_F_LOCAL, _fctDef, false);
     }
   }
 

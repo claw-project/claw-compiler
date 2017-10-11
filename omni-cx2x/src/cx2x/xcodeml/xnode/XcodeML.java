@@ -292,18 +292,50 @@ public class XcodeML extends Xnode {
    * Create the id and varDecl nodes and add them to the symbol/declaration
    * table.
    *
-   * @param name   Name of the variable.
-   * @param type   Type of the variable.
-   * @param sclass Scope class of the variable (from Xname).
-   * @param fctDef Function definition in which id and decl are created.
+   * @param name           Name of the variable.
+   * @param type           Type of the variable.
+   * @param sclass         Scope class of the variable (from Xname).
+   * @param fctDef         Function definition in which id and decl are created.
+   * @param afterDummyArgs If true, the new variable is declared just after the
+   *                       dummy argument. If false, the variable is append at
+   *                       the end.
    */
   public void createIdAndDecl(String name, String type, String sclass,
-                              XfunctionDefinition fctDef)
+                              XfunctionDefinition fctDef,
+                              boolean afterDummyArgs)
   {
     Xid id = createId(type, sclass, name);
     fctDef.getSymbolTable().add(id);
     Xdecl decl = createVarDecl(type, name);
-    fctDef.getDeclarationTable().add(decl);
+    Xnode hook = null;
+
+    // Check where is the last dummy arguments in the declaration
+    if(afterDummyArgs) {
+      String fctTypeHash = fctDef.getName().getAttribute(Xattr.TYPE);
+      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctTypeHash);
+      List<String> parameters = fctType.getParamsNames();
+
+      for(Xnode n : fctDef.getDeclarationTable().values()) {
+        if(n.opcode() == Xcode.VARDECL) {
+          String varId = n.matchDirectDescendant(Xcode.NAME).value();
+          if(varId.toLowerCase().equals(fctDef.getName().value())) {
+            continue;
+          }
+          if(parameters.contains(varId.toLowerCase())) {
+            hook = n;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+
+    // Insert the new declaration
+    if(hook == null) {
+      fctDef.getDeclarationTable().add(decl);
+    } else {
+      hook.insertAfter(decl);
+    }
   }
 
   /**
@@ -407,7 +439,7 @@ public class XcodeML extends Xnode {
     internalName.setValue(nameValue);
     internalName.setAttribute(Xattr.TYPE, nameType);
     varD.append(internalName, false);
-    return new Xdecl(varD.element());
+    return new Xdecl(varD);
   }
 
   /**
@@ -593,6 +625,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a print statement with the given char constants.
+   *
    * @param format        Format for the print statement.
    * @param charConstants Array of char constants to be created.
    * @return The print statement node created.
@@ -609,7 +642,7 @@ public class XcodeML extends Xnode {
       Xnode len = new Xnode(Xcode.LEN, this);
       Xnode intConstant = new Xnode(Xcode.FINTCONSTANT, this);
       intConstant.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      intConstant.setValue(charConstant.length()+"");
+      intConstant.setValue(charConstant.length() + "");
       len.append(intConstant, false);
       charType.append(len, false);
       getTypeTable().add(charType);

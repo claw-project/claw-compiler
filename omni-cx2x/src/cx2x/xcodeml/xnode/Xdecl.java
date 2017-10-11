@@ -20,10 +20,10 @@ public class Xdecl extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node The raw node.
    */
-  public Xdecl(Element baseElement) {
-    super(baseElement);
+  public Xdecl(Xnode node) {
+    super(node.element());
   }
 
   /**

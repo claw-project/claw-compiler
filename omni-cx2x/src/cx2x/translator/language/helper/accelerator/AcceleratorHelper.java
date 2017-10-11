@@ -13,7 +13,10 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The class AcceleratorHelper contains only static method to help the
@@ -207,7 +210,7 @@ public class AcceleratorHelper {
                                                  XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
-    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    List<Xdecl> declarations = fctDef.getDeclarationTable().values();
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
@@ -238,7 +241,7 @@ public class AcceleratorHelper {
                                                XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
-    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    List<Xdecl> declarations = fctDef.getDeclarationTable().values();
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
@@ -270,7 +273,7 @@ public class AcceleratorHelper {
                                             XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
-    Collection<Xdecl> declarations = fctDef.getDeclarationTable().getAll();
+    List<Xdecl> declarations = fctDef.getDeclarationTable().values();
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);

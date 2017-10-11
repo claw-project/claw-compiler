@@ -356,7 +356,7 @@ public class LoopExtraction extends ClawTransformation {
           tempName.setValue(var.getFctMapping());
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
           Xdecl newVarDecl =
-              new Xdecl(new Xnode(Xcode.VARDECL, xcodeml).element());
+              new Xdecl(new Xnode(Xcode.VARDECL, xcodeml));
           newVarDecl.append(tempName, false);
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
