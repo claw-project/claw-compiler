@@ -152,7 +152,7 @@ public class Utility {
    * Remove any trailing comment from a pragma string.
    *
    * @param pragma Original pragma string.
-   * @return Pargma string without the trailing comment if any.
+   * @return Pragma string without the trailing comment if any.
    */
   public static String dropEndingComment(String pragma) {
     if(pragma != null && pragma.indexOf("!") > 0) {

@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.helper.XnodeUtil;
-import org.w3c.dom.Element;
 
 /**
  * Xdecl is the base class for element in the XdeclTable
