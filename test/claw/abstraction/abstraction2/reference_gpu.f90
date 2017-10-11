@@ -2,19 +2,19 @@ MODULE mo_column
 
 CONTAINS
  SUBROUTINE compute_column ( nz , q , t , nx , ny )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : , : )
   REAL , INTENT(INOUT) :: q ( : , : , : )
+  INTEGER , INTENT(IN) :: ny
+  INTEGER , INTENT(IN) :: nx
   INTEGER :: k
   REAL :: c
   REAL :: d
-
-  INTEGER , INTENT(IN) :: nx
   INTEGER :: i
-  INTEGER , INTENT(IN) :: ny
   INTEGER :: j
 
-!$acc data present(q,t)
+!$acc data present(t,q)
 !$acc parallel
 !$acc loop collapse(2) gang vector
   DO j = 1 , ny , 1

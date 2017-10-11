@@ -2,23 +2,23 @@ MODULE mo_column
 
 CONTAINS
  SUBROUTINE compute_solver ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-
   INTEGER , INTENT(IN) :: nproma
 
   CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_solver
 
  SUBROUTINE compute_column ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
-
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
 !$acc data present(t,q)
