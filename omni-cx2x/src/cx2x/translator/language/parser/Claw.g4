@@ -179,11 +179,13 @@ data_over_clause[ClawLanguage l]
     List<String> dataLst = new ArrayList<>();
   }
 :
-  DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
-  {
-    $l.setOverDataClause(dataLst);
-    $l.setOverClause(overLst);
-  }
+    SCALAR '(' ids_list[dataLst] ')'
+    { $l.setScalarClause(dataLst); }
+  | DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
+    {
+      $l.setOverDataClause(dataLst);
+      $l.setOverClause(overLst);
+    }
 ;
 
 // group clause
@@ -564,6 +566,7 @@ PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
+SCALAR       : 'scalar';
 TARGET       : 'target';
 UPDATE       : 'update';
 NODEP        : 'nodep';
