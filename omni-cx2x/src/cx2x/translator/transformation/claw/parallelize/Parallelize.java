@@ -189,10 +189,6 @@ public class Parallelize extends ClawTransformation {
 
       List<Xdecl> declarations = _fctDef.getDeclarationTable().values();
       for(Xdecl decl : declarations) {
-        if(decl.isBuiltInType()) {
-          scalars.add(decl.matchSeq(Xcode.NAME).value());
-        }
-
         if(decl.opcode() != Xcode.VARDECL) {
           continue;
         }
@@ -201,14 +197,17 @@ public class Parallelize extends ClawTransformation {
             get(decl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType) {
           XbasicType bType = (XbasicType) type;
-          if(((bType.getIntent() == Xintent.IN
-              || bType.getIntent() == Xintent.OUT
-              || bType.getIntent() == Xintent.INOUT)
-              || bType.isPointer()) && bType.isArray())
-          {
-            _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
-          } else if(bType.isArray()) {
-            candidateArrays.add(decl.matchSeq(Xcode.NAME).value());
+
+          if(bType.isArray()) {
+            if(bType.hasIntent() || bType.isPointer()) {
+              _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
+            } else {
+              candidateArrays.add(decl.matchSeq(Xcode.NAME).value());
+            }
+          } else {
+            if(!bType.isParameter() && bType.hasIntent()) {
+              scalars.add(decl.matchSeq(Xcode.NAME).value());
+            }
           }
         }
       }
