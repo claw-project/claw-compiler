@@ -92,6 +92,38 @@ public class Parallelize extends ClawTransformation {
     _scalarFields = new ArrayList<>();
   }
 
+  /**
+   * Print information about promoted arrays, candidate for promotion arrays and
+   * scalars.
+   *
+   * @param name            Name of the subroutine.
+   * @param promoted        List of promoted array variables.
+   * @param candidateArrays List of candidate array variables for promotion.
+   * @param scalars         List of candidate scalar variables for promotion.
+   */
+  private void printDebugPromotionInfos(String name, List<String> promoted,
+                                        List<String> candidateArrays,
+                                        List<String> scalars)
+  {
+    if(XmOption.isDebugOutput()) {
+      System.out.println("==========================================");
+      System.out.println("Parallelize promotion infos for subroutine " + name);
+      System.out.println("  - Promoted arrays(" + promoted.size() + "):");
+      for(String array : promoted) {
+        System.out.println("      " + array);
+      }
+      System.out.println("  - Candidate arrays(" + candidateArrays.size() + "):");
+      for(String array : candidateArrays) {
+        System.out.println("      " + array);
+      }
+      System.out.println("  - Candidate scalars(" + scalars.size() + "):");
+      for(String array : scalars) {
+        System.out.println("      " + array);
+      }
+      System.out.println("==========================================");
+    }
+  }
+
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
 
@@ -114,7 +146,6 @@ public class Parallelize extends ClawTransformation {
     return analyzeDimension(xcodeml) && analyzeData(xcodeml) &&
         analyzeOver(xcodeml);
   }
-
 
   /**
    * Analyse the defined dimension.
@@ -152,19 +183,14 @@ public class Parallelize extends ClawTransformation {
     /* If there is no data/over clause specified, an automatic deduction for
      * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
-      if(XmOption.isDebugOutput()) {
-        System.out.println("parallelize promotion infos for subroutine " +
-            _fctDef.getName().value());
-      }
+
+      List<String> scalars = new ArrayList<>();
+      List<String> candidateArrays = new ArrayList<>();
+
       List<Xdecl> declarations = _fctDef.getDeclarationTable().values();
       for(Xdecl decl : declarations) {
         if(decl.isBuiltInType()) {
-          if(XmOption.isDebugOutput()) {
-            System.out.println("parallelize promotion: Scalar "
-                + decl.matchSeq(Xcode.NAME).value()
-                + " is candidate for promotion.");
-          }
-          _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
+          scalars.add(decl.matchSeq(Xcode.NAME).value());
         }
 
         if(decl.opcode() != Xcode.VARDECL) {
@@ -180,21 +206,18 @@ public class Parallelize extends ClawTransformation {
               || bType.getIntent() == Xintent.INOUT)
               || bType.isPointer()) && bType.isArray())
           {
-            if(XmOption.isDebugOutput()) {
-              System.out.println("parallelize promotion: Array " +
-                  decl.matchSeq(Xcode.NAME).value() + " will be promoted.");
-            }
             _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
           } else if(bType.isArray()) {
-            if(XmOption.isDebugOutput()) {
-              System.out.println("parallelize promotion: Array "
-                  + decl.matchSeq(Xcode.NAME).value()
-                  + " is candidate for promotion.");
-            }
-            _scalarFields.add(decl.matchSeq(Xcode.NAME).value());
+            candidateArrays.add(decl.matchSeq(Xcode.NAME).value());
           }
         }
       }
+      _scalarFields.addAll(scalars);
+      _scalarFields.addAll(candidateArrays);
+
+      printDebugPromotionInfos(_fctDef.getName().value(), _arrayFieldsInOut,
+          candidateArrays, scalars);
+
       return true;
     }
 
@@ -286,7 +309,6 @@ public class Parallelize extends ClawTransformation {
 
     return true;
   }
-
 
   @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
@@ -558,7 +580,6 @@ public class Parallelize extends ClawTransformation {
       _inMiddle.add(empty);
     }
   }
-
 
   /**
    * Promote all fields declared in the data clause with the additional
