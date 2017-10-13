@@ -14,9 +14,7 @@ import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The class AcceleratorHelper contains only static method to help the
@@ -367,26 +365,29 @@ public class AcceleratorHelper {
       return;
     }
 
+    // Find all fct call in the current transformed fct
     List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTIONCALL);
-    Set<String> fctNames = new HashSet<>();
     for(Xnode fctCall : fctCalls) {
+      // Do nothing for intrinsic fct
       if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
         continue;
       }
-      Xnode name = fctCall.matchSeq(Xcode.NAME);
-      if(name != null) {
-        fctNames.add(name.value().toLowerCase());
+      Xnode nameNode = fctCall.matchSeq(Xcode.NAME);
+      String fctName;
+      if(nameNode != null) {
+        fctName = nameNode.value().toLowerCase();
+      } else {
+        continue;
       }
-    }
-
-    // TODO: check that the directive is not present yet.
-
-    for(String fctName : fctNames) {
       XfunctionDefinition calledFctDef =
           xcodeml.getGlobalDeclarationsTable().getFctDefinition(fctName);
       if(calledFctDef == null) {
-        XmoduleDefinition mod = fctDef.findParentModule();
-        List<Xnode> fctDefs = mod.matchAll(Xcode.FFUNCTIONDEFINITION);
+        Xnode meaningfulParentNode = fctDef.findParentModule();
+        if(meaningfulParentNode == null) { // fct is not a module child
+          meaningfulParentNode = fctDef.matchAncestor(Xcode.GLOBALDECLARATIONS);
+        }
+        List<Xnode> fctDefs =
+            meaningfulParentNode.matchAll(Xcode.FFUNCTIONDEFINITION);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
           if(name != null && name.value().toLowerCase().equals(fctName)) {
@@ -397,7 +398,7 @@ public class AcceleratorHelper {
       }
 
       if(calledFctDef != null) {
-
+        // TODO: check that the directive is not present yet.
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
         if(XmOption.isDebugOutput()) {
@@ -405,6 +406,11 @@ public class AcceleratorHelper {
               + "generated routine seq directive for " + fctName
               + " subroutine/function.");
         }
+      } else {
+        // Could not generate directive for called function.
+        xcodeml.addWarning(fctName + " has not been found. " +
+                "Automatic routine directive generation could not be done.",
+            fctCall.lineNo());
       }
     }
   }
