@@ -54,6 +54,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<ClawDimension> _dimensions;
   private List<List<String>> _overValues;
   private List<List<String>> _overDataValues;
+  private List<String> _scalarValues;
   private ClawDMD _copyClauseValue;
   private ClawDMD _updateClauseValue;
   private List<Target> _targetClauseValues;
@@ -66,7 +67,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
   private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
-  private boolean _hasTargetClause, _hasConstraintClause;
+  private boolean _hasTargetClause, _hasConstraintClause, _hasScalarClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -711,6 +712,34 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
+   * Enable scalar clause for the current directive and stores the data.
+   *
+   * @param data List of identifier declared in the scalar clause.
+   */
+  public void setScalarClause(List<String> data) {
+    _hasScalarClause = true;
+    _scalarValues = data;
+  }
+
+  /**
+   * Check whether the current directly has the scalar clause enabled.
+   *
+   * @return True if the scalar clause is enabled.
+   */
+  public boolean hasScalarClause() {
+    return _hasScalarClause;
+  }
+
+  /**
+   * Get the data clause values extracted from the scalar clause.
+   *
+   * @return List of identifier declared in the scalar clause.
+   */
+  public List<String> getScalarClauseValues() {
+    return _scalarValues;
+  }
+
+  /**
    * Check whether the init clause is used.
    *
    * @return True if the init clause is used.
@@ -1049,7 +1078,7 @@ public class ClawLanguage extends AnalyzedPragma {
    *
    * @return True if the targets matches.
    */
-  public boolean  isApplicableToCurrentTarget() {
+  public boolean isApplicableToCurrentTarget() {
     return _targetClauseValues == null
         || _targetClauseValues.size() == 0
         || _targetClauseValues.contains(_target);

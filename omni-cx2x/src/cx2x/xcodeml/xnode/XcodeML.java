@@ -318,7 +318,9 @@ public class XcodeML extends Xnode {
       for(Xnode n : fctDef.getDeclarationTable().values()) {
         if(n.opcode() == Xcode.VARDECL) {
           String varId = n.matchDirectDescendant(Xcode.NAME).value();
-          if(varId.toLowerCase().equals(fctDef.getName().value())) {
+          if(n.lineNo() == 0
+              || varId.toLowerCase().equals(fctDef.getName().value()))
+          {
             continue;
           }
           if(parameters.contains(varId.toLowerCase())) {
