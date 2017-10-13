@@ -206,7 +206,9 @@ public class Parallelize extends ClawTransformation {
               candidateArrays.add(decl.matchSeq(Xcode.NAME).value());
             }
           } else {
-            scalars.add(decl.matchSeq(Xcode.NAME).value());
+            if(!bType.isParameter()) {
+              scalars.add(decl.matchSeq(Xcode.NAME).value());
+            }
           }
         }
       }
