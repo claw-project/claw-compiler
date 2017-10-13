@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.helper.XnodeUtil;
-
 /**
  * Xdecl is the base class for element in the XdeclTable
  *
@@ -23,16 +21,5 @@ public class Xdecl extends Xnode {
    */
   public Xdecl(Xnode node) {
     super(node.element());
-  }
-
-  /**
-   * Check whether the var declaration is using a built-in type or a type
-   * defined in the type table.
-   *
-   * @return True if the type is built-in. False otherwise.
-   */
-  public boolean isBuiltInType() {
-    return opcode() == Xcode.VARDECL
-        && XnodeUtil.isBuiltInType(matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
   }
 }
