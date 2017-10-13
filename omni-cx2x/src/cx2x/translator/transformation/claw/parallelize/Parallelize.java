@@ -196,17 +196,23 @@ public class Parallelize extends ClawTransformation {
         Xtype type = xcodeml.getTypeTable().
             get(decl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
         if(type instanceof XbasicType) {
+          String varName = decl.matchSeq(Xcode.NAME).value();
           XbasicType bType = (XbasicType) type;
 
           if(bType.isArray()) {
             if(bType.hasIntent() || bType.isPointer()) {
-              _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
+              _arrayFieldsInOut.add(varName);
             } else {
-              candidateArrays.add(decl.matchSeq(Xcode.NAME).value());
+              candidateArrays.add(varName);
             }
           } else {
+            if(_claw.hasScalarClause() &&
+                _claw.getScalarClauseValues().contains(varName))
+            {
+              _arrayFieldsInOut.add(varName);
+            }
             if(!bType.isParameter() && bType.hasIntent()) {
-              scalars.add(decl.matchSeq(Xcode.NAME).value());
+              scalars.add(varName);
             }
           }
         }
