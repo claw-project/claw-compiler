@@ -198,7 +198,6 @@ public class Parallelize extends ClawTransformation {
         if(type instanceof XbasicType) {
           XbasicType bType = (XbasicType) type;
 
-
           if(bType.isArray()) {
             if(bType.hasIntent() || bType.isPointer()) {
               _arrayFieldsInOut.add(decl.matchSeq(Xcode.NAME).value());
@@ -206,7 +205,7 @@ public class Parallelize extends ClawTransformation {
               candidateArrays.add(decl.matchSeq(Xcode.NAME).value());
             }
           } else {
-            if(!bType.isParameter()) {
+            if(!bType.isParameter() && bType.hasIntent()) {
               scalars.add(decl.matchSeq(Xcode.NAME).value());
             }
           }
