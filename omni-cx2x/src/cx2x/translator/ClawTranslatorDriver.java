@@ -91,40 +91,41 @@ public class ClawTranslatorDriver {
     if(_translationUnit == null) {
       abort();
     }
-
-    // Check all pragma found in the translation unit
-    for(Xnode pragma : _translationUnit.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
-
-      // Pragma can be handled by the translator so let it do its job.
-      if(_translator.isHandledPragma(pragma)) {
-        try {
+    try {
+      // Check all pragma found in the translation unit
+      for(Xnode pragma : _translationUnit.getAllStmt(Xcode.FPRAGMASTATEMENT)) {
+        // Pragma can be handled by the translator so let it do its job.
+        if(_translator.isHandledPragma(pragma)) {
           _translator.generateTransformation(_translationUnit, pragma);
-        } catch(IllegalDirectiveException e) {
-          _translationUnit.addError(e.getMessage(), e.getDirectiveLine());
-          abort();
-        }
-      } else {
-        // Check if the pragma is a compile guard
-        if(_translator.getConfiguration().getAcceleratorGenerator().
-            isCompileGuard(pragma.value()))
-        {
-          pragma.delete();
         } else {
-          // Handle special transformation of OpenACC line continuation
-          for(GroupConfiguration gc :
-              _translator.getConfiguration().getGroups())
+          // Check if the pragma is a compile guard
+          if(_translator.getConfiguration().getAcceleratorGenerator().
+              isCompileGuard(pragma.value()))
           {
-            if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
-                && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
-            {
-              generateTransformation(gc, new ClawLanguage(pragma));
+            pragma.delete();
+          } else {
+            // Handle special transformation of OpenACC line continuation
+            for(GroupConfiguration gc :
+                _translator.getConfiguration().getGroups()) {
+              if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
+                  && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
+              {
+                generateTransformation(gc, new ClawLanguage(pragma));
+              }
             }
           }
         }
       }
-    }
 
-    _translator.finalize(_translationUnit);
+      _translator.finalize(_translationUnit);
+
+    } catch(IllegalDirectiveException e) {
+      _translationUnit.addError(e.getMessage(), e.getDirectiveLine());
+      abort();
+    } catch(IllegalTransformationException e) {
+      _translationUnit.addError(e.getMessage(), e.getStartLine());
+      abort();
+    }
 
     // Generate transformation for translation_unit trigger type
     for(GroupConfiguration gc :

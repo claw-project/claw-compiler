@@ -9,6 +9,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawBlockTransformation;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
@@ -150,10 +151,10 @@ public class ArrayTransform extends ClawBlockTransformation {
   /**
    * Transform an assignment using array notation to a do statement.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
-   * @param other       Only for dependent transformation. The other
-   *                    transformation part of the transformation.
+   * @param other      Only for dependent transformation. The other
+   *                   transformation part of the transformation.
    * @throws Exception If the transformation cannot be applied.
    */
   @Override
@@ -180,16 +181,16 @@ public class ArrayTransform extends ClawBlockTransformation {
    * statement is generated per dimension of the arrays. Iteration index range
    * are computed with array dimensions.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
-   * @param fctDef      The function definition in which the array notation is
-   *                    nested.
-   * @param ranges      The list of iteration ranges to be applied to the
-   *                    created do statements.
-   * @param statements  The list of assign statements (array notation) that will
-   *                    be included in the nested do statements.
-   * @param doStmtGrip  Grip for the code insertion. Do statements will be
-   *                    inserted after the grip element.
+   * @param fctDef     The function definition in which the array notation is
+   *                   nested.
+   * @param ranges     The list of iteration ranges to be applied to the
+   *                   created do statements.
+   * @param statements The list of assign statements (array notation) that will
+   *                   be included in the nested do statements.
+   * @param doStmtGrip Grip for the code insertion. Do statements will be
+   *                   inserted after the grip element.
    * @return The last stmt created to be used as a grip for next insertion.
    */
   private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
@@ -198,6 +199,7 @@ public class ArrayTransform extends ClawBlockTransformation {
                                        List<Xnode> ranges,
                                        List<Xnode> statements,
                                        Xnode doStmtGrip)
+      throws IllegalTransformationException
   {
     String[] inductionVars = new String[ranges.size()];
     Xnode[] doStmts = new Xnode[ranges.size()];

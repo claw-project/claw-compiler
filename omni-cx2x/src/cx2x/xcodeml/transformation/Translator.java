@@ -6,6 +6,7 @@
 package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 
@@ -27,7 +28,7 @@ public interface Translator {
    * @param pragma Pragma that can trigger a transformation.
    */
   void generateTransformation(XcodeProgram xcodeml, Xnode pragma)
-      throws IllegalDirectiveException;
+      throws IllegalDirectiveException, IllegalTransformationException;
 
   /**
    * Add a transformation to the translator.
@@ -35,7 +36,7 @@ public interface Translator {
    * @param xcodeml Current translation unit.
    * @param t       Transformation to add.
    */
-  void addTransformation(XcodeProgram xcodeml, Transformation t);
+  void addTransformation(XcodeProgram xcodeml, Transformation t) throws IllegalTransformationException;
 
   /**
    * Check if the given pragma can be handled by the current translator.
@@ -48,7 +49,7 @@ public interface Translator {
   /**
    * Perform last tasks before applying transformations.
    */
-  void finalize(XcodeProgram xcodeml);
+  void finalize(XcodeProgram xcodeml) throws IllegalTransformationException;
 
   /**
    * Get all transformation groups stored in this translator.

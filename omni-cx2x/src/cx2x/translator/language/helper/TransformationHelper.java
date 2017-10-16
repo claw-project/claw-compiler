@@ -59,6 +59,7 @@ public class TransformationHelper {
                                                       XcodeProgram xcodeml,
                                                       Translator translator,
                                                       Xnode stmt)
+      throws IllegalTransformationException
   {
     // Order doesn't matter
     applyFusionClause(claw, xcodeml, translator, stmt);
@@ -83,6 +84,7 @@ public class TransformationHelper {
                                         XcodeProgram xcodeml,
                                         Translator translator,
                                         Xnode stmt)
+      throws IllegalTransformationException
   {
     if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
@@ -114,6 +116,7 @@ public class TransformationHelper {
                                              XcodeProgram xcodeml,
                                              Translator translator,
                                              Xnode stmt)
+      throws IllegalTransformationException
   {
     if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
