@@ -249,7 +249,7 @@ public class ClawTranslator implements Translator {
       if(_tGroups.containsKey(t.getClass())) {
         _tGroups.get(t.getClass()).add(t);
       }
-    } else {
+    } else if(t.abortOnFailedAnalysis()) {
       throw new IllegalTransformationException(
           "Analysis for transformation failed. " +
               "See errors for more information.",
