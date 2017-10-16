@@ -43,11 +43,6 @@ else() # without debug option
 endif()
 
 add_custom_target(
-  compile-${TEST_NAME}
-  DEPENDS ${EXECUTABLE_ORIGINAL}
-)
-
-add_custom_target(
   transform-${TEST_NAME}
   DEPENDS ${OUTPUT_FILE}
 )
@@ -62,9 +57,7 @@ add_custom_target(
 )
 
 # Add target to the global build/clean target
-add_dependencies(${BUILD_TEST_TARGET} compile-${TEST_NAME})
 add_dependencies(${CLEAN_TEST_TARGET} clean-${TEST_NAME})
-add_dependencies(${BUILD_TEST_TARGET}-${TEST_SET} compile-${TEST_NAME})
 add_dependencies(${CLEAN_TEST_TARGET}-${TEST_SET} clean-${TEST_NAME})
 
 # Define additional compilation flags
