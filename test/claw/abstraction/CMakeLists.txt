@@ -28,3 +28,4 @@ add_subdirectory(abstraction25) # parallelize forward non fct field
 add_subdirectory(abstraction26) # parallelize forward with scalar to 1d propagation
 add_subdirectory(abstraction27) # pure keyword
 add_subdirectory(abstraction29) # claw nodep on k loop
+add_subdirectory(abstraction30) # unsupported statement
