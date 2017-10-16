@@ -8,7 +8,9 @@ package cx2x.translator.language.helper.accelerator;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.helper.target.Target;
+import cx2x.xcodeml.xnode.Xcode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -161,5 +163,10 @@ class OpenMp extends AcceleratorGenerator {
     return new String[]{
         String.format(FORMAT3, OPENMP_PREFIX, OPENMP_END, OPENMP_DO)
     };
+  }
+
+  @Override
+  public List<Xcode> getUnsupportedStatements() {
+    return new ArrayList<>(); // TODO fill the list
   }
 }
