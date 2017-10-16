@@ -58,6 +58,15 @@ public class XbasicType extends Xtype {
   private Xintent _intent = null;
 
   /**
+   * Basic ctor from Xnode.
+   *
+   * @param node Xnode object.
+   */
+  public XbasicType(Xnode node) {
+    this(node.element());
+  }
+
+  /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *

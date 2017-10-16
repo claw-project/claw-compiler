@@ -40,6 +40,15 @@ public class XfunctionType extends Xtype {
   private boolean _isInternal = false;
 
   /**
+   * Basic ctor from Xnode.
+   *
+   * @param node Xnode object.
+   */
+  public XfunctionType(Xnode node) {
+    this(node.element());
+  }
+
+  /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
