@@ -8,6 +8,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
   REAL :: z ( 1 : nproma )
+  REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
   REAL :: c
   INTEGER :: r
