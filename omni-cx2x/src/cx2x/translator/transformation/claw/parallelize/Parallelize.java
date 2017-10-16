@@ -112,7 +112,8 @@ public class Parallelize extends ClawTransformation {
       for(String array : promoted) {
         System.out.println("      " + array);
       }
-      System.out.println("  - Candidate arrays(" + candidateArrays.size() + "):");
+      System.out.println("  - Candidate arrays(" +
+          candidateArrays.size() + "):");
       for(String array : candidateArrays) {
         System.out.println("      " + array);
       }

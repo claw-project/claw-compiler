@@ -428,7 +428,7 @@ public class ParallelizeForward extends ClawTransformation {
       if(!fDef.getSymbolTable().contains(var)) {
         if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
           throw new IllegalTransformationException("Variable " + var + " must" +
-              " be locally defined where the last call to parallelize if made.",
+              " be locally defined where the last call to parallelize is made.",
               _claw.getPragma().lineNo());
         }
         // Size variable have to be declared

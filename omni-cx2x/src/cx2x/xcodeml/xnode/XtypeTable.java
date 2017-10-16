@@ -6,12 +6,8 @@
 package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
@@ -56,25 +52,21 @@ public class XtypeTable extends Xnode {
    * Read the type table.
    */
   private void readTable() {
-    Node crtNode = _baseElement.getFirstChild();
-    while(crtNode != null) {
-      if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) crtNode;
-        switch(el.getTagName()) {
-          case Xname.F_BASIC_TYPE:
-            XbasicType bt = new XbasicType(el);
-            _table.put(bt.getType(), bt);
-            break;
-          case Xname.F_FUNCTION_TYPE:
-            XfunctionType ft = new XfunctionType(el);
-            _table.put(ft.getType(), ft);
-            break;
-          case Xname.F_STRUCT_TYPE:
-            // TODO create XstructType object and insert it in the table
-            break;
-        }
+    List<Xnode> elements = children();
+    for(Xnode n : elements) {
+      switch(n.opcode()) {
+        case FBASICTYPE:
+          XbasicType bt = new XbasicType(n);
+          _table.put(bt.getType(), bt);
+          break;
+        case FFUNCTIONTYPE:
+          XfunctionType ft = new XfunctionType(n);
+          _table.put(ft.getType(), ft);
+          break;
+        case FSTRUCTTYPE:
+          // TODO create XstructType object and insert it in the table
+          break;
       }
-      crtNode = crtNode.getNextSibling();
     }
   }
 
