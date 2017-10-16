@@ -36,7 +36,8 @@ public interface Translator {
    * @param xcodeml Current translation unit.
    * @param t       Transformation to add.
    */
-  void addTransformation(XcodeProgram xcodeml, Transformation t) throws IllegalTransformationException;
+  void addTransformation(XcodeProgram xcodeml, Transformation t)
+      throws IllegalTransformationException;
 
   /**
    * Check if the given pragma can be handled by the current translator.
