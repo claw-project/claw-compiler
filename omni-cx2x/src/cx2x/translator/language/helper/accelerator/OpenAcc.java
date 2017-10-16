@@ -7,8 +7,10 @@ package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.xcodeml.xnode.Xcode;
 import xcodeml.util.XmOption;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,6 +20,7 @@ import java.util.List;
  */
 class OpenAcc extends AcceleratorGenerator {
 
+  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
   private static final String OPENACC_COLLAPSE = "collapse";
   private static final String OPENACC_DATA = "data";
   private static final String OPENACC_END = "end";
@@ -28,8 +31,6 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PRESENT = "present";
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
-
-  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
 
   /**
    * Constructs a new object with the given target.
@@ -200,5 +201,12 @@ class OpenAcc extends AcceleratorGenerator {
   @Override
   protected String[] getEndLoopDirective() {
     return null;
+  }
+
+  @Override
+  public List<Xcode> getUnsupportedStatements() {
+    return Arrays.asList(
+        Xcode.FALLOCATESTATEMENT, Xcode.FDEALLOCATESTATEMENT
+    );
   }
 }

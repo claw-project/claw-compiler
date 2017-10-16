@@ -6,7 +6,9 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.xcodeml.xnode.Xcode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -105,5 +107,10 @@ class AcceleratorNone extends AcceleratorGenerator {
   @Override
   public String getSequentialClause() {
     return null;
+  }
+
+  @Override
+  public List<Xcode> getUnsupportedStatements() {
+    return new ArrayList<>();
   }
 }

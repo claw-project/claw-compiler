@@ -6,6 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.xcodeml.xnode.Xcode;
 
 import java.util.List;
 
@@ -179,5 +180,12 @@ public abstract class AcceleratorGenerator {
    * @return String value that represents the clause.
    */
   public abstract String getSequentialClause();
+
+  /**
+   * Get the list of unsupported statements in an accelerator region.
+   *
+   * @return List of Xcode opcode of unsupported statements.
+   */
+  public abstract List<Xcode> getUnsupportedStatements();
 
 }
