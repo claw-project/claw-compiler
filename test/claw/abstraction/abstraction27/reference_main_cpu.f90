@@ -13,7 +13,8 @@ PROGRAM test_abstraction27
   t ( p , 1 ) = 0.0
  END DO
 !$ACC data copyin(q,t) copyout(q,t)
- CALL compute_column ( nz , q , t , nproma = nproma )
+ CALL compute_column ( nz , q ( : , 1 : 60 ) , t ( : , 1 : 60 ) , nproma =&
+  nproma )
 !$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
