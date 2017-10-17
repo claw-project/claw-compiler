@@ -615,6 +615,9 @@ public class AcceleratorHelper {
     Xnode last = functionDefinition.body().lastChild();
     if(from != null) { // Start from given element
       last = from;
+      if(last.opcode() == Xcode.FCONTAINSSTATEMENT) {
+        last = last.prevSibling();
+      }
     }
     if(generator.getSkippedStatementsInEpilogue().isEmpty()) {
       return last;
