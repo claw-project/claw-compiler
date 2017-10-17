@@ -43,15 +43,4 @@ public class UtilityTest {
     assertEquals("a", Utility.join(",", b));
   }
 
-  @Test
-  public void PragmaCommentTest() {
-    String p1 = "acc parallel";
-    assertEquals(p1, XnodeUtil.dropEndingComment(p1));
-    String p2 = "acc parallel ! Start parallel region";
-    assertEquals(p1, XnodeUtil.dropEndingComment(p2));
-    String p3 = "acc parallel !!! Start parallel region";
-    assertEquals(p1, XnodeUtil.dropEndingComment(p3));
-    assertEquals(null, XnodeUtil.dropEndingComment(null));
-    assertEquals("", XnodeUtil.dropEndingComment(""));
-  }
 }
