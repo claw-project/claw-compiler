@@ -6,7 +6,6 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;

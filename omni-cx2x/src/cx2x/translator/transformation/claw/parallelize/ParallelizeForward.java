@@ -6,7 +6,6 @@ package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.OverPosition;
@@ -14,6 +13,7 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.transformation.Transformation;

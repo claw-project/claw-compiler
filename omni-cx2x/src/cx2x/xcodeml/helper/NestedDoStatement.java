@@ -3,9 +3,8 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.common;
+package cx2x.xcodeml.helper;
 
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
 
