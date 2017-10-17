@@ -49,8 +49,9 @@ public class ParallelizeForward extends ClawTransformation {
   private Xmod _mod = null;
   private boolean _localFct = false;
   private boolean _flatten = false;
-  private Xnode _innerDoStatement;
-  private Xnode _outerDoStatement;
+
+  private NestedDoStatement _doStatements;
+
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
   private boolean _isNestedInAssignment;
@@ -89,7 +90,7 @@ public class ParallelizeForward extends ClawTransformation {
         return analyzeForward(xcodeml);
       }
     } else if(next.opcode() == Xcode.FDOSTATEMENT) {
-      _outerDoStatement = next;
+      _doStatements = new NestedDoStatement(next);
       return analyzeForwardWithDo(xcodeml, next);
     }
     xcodeml.addError("Directive is not followed by a valid statement.",
@@ -125,32 +126,33 @@ public class ParallelizeForward extends ClawTransformation {
    * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt) {
-    _innerDoStatement = doStmt;
-    Xnode body = doStmt.matchSeq(Xcode.BODY);
-    if(body == null) {
-      xcodeml.addError("Cannot locate function call.",
-          _claw.getPragma().lineNo());
-      return false;
-    }
-    for(Xnode n : body.children()) {
-      if(n.opcode() == Xcode.FDOSTATEMENT) {
-        return analyzeNestedDoStmts(xcodeml, n);
-      } else if(n.opcode() != Xcode.FPRAGMASTATEMENT
-          && n.opcode() != Xcode.EXPRSTATEMENT)
-      {
-        xcodeml.addError("Only pragmas, comments and function calls allowed " +
-                "in the do statements.",
-            _claw.getPragma().lineNo());
-        return false;
-      } else if(n.opcode() == Xcode.EXPRSTATEMENT
-          || n.opcode() == Xcode.FASSIGNSTATEMENT)
-      {
-        _fctCall = n.matchSeq(Xcode.FUNCTIONCALL);
-        if(_fctCall != null) {
-          return analyzeForward(xcodeml);
+    for(int i = 0; i < _doStatements.getGroupSize(); ++i) {
+      if(i == _doStatements.getGroupSize() - 1) {
+        if(_doStatements.get(i).body() == null) {
+          xcodeml.addError("Cannot locate function call.",
+              _claw.getPragma().lineNo());
+          return false;
+        }
+      }
+      for(Xnode n : _doStatements.get(i).body().children()) {
+        if(n.opcode() != Xcode.FPRAGMASTATEMENT
+            && n.opcode() != Xcode.EXPRSTATEMENT)
+        {
+          xcodeml.addError("Only pragmas, comments and function calls allowed " +
+                  "in the do statements.",
+              _claw.getPragma().lineNo());
+          return false;
+        } else if(n.opcode() == Xcode.EXPRSTATEMENT
+            || n.opcode() == Xcode.FASSIGNSTATEMENT)
+        {
+          _fctCall = n.matchSeq(Xcode.FUNCTIONCALL);
+          if(_fctCall != null) {
+            return analyzeForward(xcodeml);
+          }
         }
       }
     }
+
     xcodeml.addError("Function call not found.", _claw.getPragma().lineNo());
     return false;
   }
@@ -370,8 +372,8 @@ public class ParallelizeForward extends ClawTransformation {
   private void transformFlatten(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
-    XnodeUtil.extractBody(_innerDoStatement, _outerDoStatement);
-    _outerDoStatement.delete();
+    XnodeUtil.extractBody(_doStatements);
+    _doStatements.getOuterStatement().delete();
     transformStd(xcodeml, translator);
   }
 
@@ -473,11 +475,31 @@ public class ParallelizeForward extends ClawTransformation {
         if(arg.opcode() == Xcode.FARRAYREF && arg.matchDirectDescendant(
             Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
         {
-          Xnode var = arg.matchSeq(Xcode.VARREF, Xcode.VAR);
-          if(var != null) {
+          List<Xnode> arrayIndexes = arg.matchAll(Xcode.ARRAYINDEX);
+          for(Xnode n : arrayIndexes) {
+            if(XnodeUtil.isInductionIndex(n,
+                _doStatements.getInductionVariables()))
+            {
+              n.insertAfter(xcodeml.createEmptyAssumedShaped());
+              XnodeUtil.safeDelete(n);
+            }
+          }
+          /*if(var != null) {
             arg.insertAfter(var.cloneNode());
             arg.delete();
-          }
+          } else {
+            Xnode memberRef = arg.matchSeq(Xcode.VARREF, Xcode.FMEMBERREF);
+
+            if(memberRef != null) { // type member array to deal with
+              Xnode arrayIndex = arg.matchDirectDescendant(Xcode.ARRAYINDEX);
+              if(XnodeUtil.isInductionIndex(arrayIndex,
+                  _doStatements.getInductionVariables()))
+              {
+                // replace it with assumed shape indexRange
+
+              }
+            }
+          }*/
         }
       }
     } else {
