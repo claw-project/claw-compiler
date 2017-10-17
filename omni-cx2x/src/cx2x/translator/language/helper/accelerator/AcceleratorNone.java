@@ -73,11 +73,6 @@ class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getPresentClause(List<String> vars) {
-    return "";
-  }
-
-  @Override
   protected String[] getRoutineDirective(boolean seq) {
     return null;
   }

@@ -29,6 +29,7 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PREFIX = "acc";
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_PRESENT = "present";
+  private static final String OPENACC_PCREATE = "pcreate";
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
 
@@ -92,8 +93,8 @@ class OpenAcc extends AcceleratorGenerator {
       return "";
     }
     if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: " +
-          Utility.join(",", vars));
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: "
+          + Utility.join(",", vars));
     }
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
@@ -104,10 +105,22 @@ class OpenAcc extends AcceleratorGenerator {
       return "";
     }
     if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: " +
-          Utility.join(",", vars));
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: "
+          + Utility.join(",", vars));
     }
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
+  }
+
+  @Override
+  protected String getCreateClause(List<String> vars) {
+    if(vars == null || vars.size() == 0) {
+      return "";
+    }
+    if(XmOption.isDebugOutput()) {
+      System.out.println(OPENACC_DEBUG_PREFIX + "generate pcreate clause for: "
+          + Utility.join(",", vars));
+    }
+    return String.format(FORMATPAR, OPENACC_PCREATE, Utility.join(",", vars));
   }
 
   @Override

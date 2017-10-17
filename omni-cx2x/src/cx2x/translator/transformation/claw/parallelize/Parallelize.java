@@ -459,7 +459,7 @@ public class Parallelize extends ClawTransformation {
     // Generate the data region
     List<String> presents =
         AcceleratorHelper.getPresentVariables(xcodeml, _fctDef);
-    AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents,
+    AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents, null,
         loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region

@@ -132,7 +132,19 @@ public abstract class AcceleratorGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  protected abstract String getPresentClause(List<String> vars);
+  protected String getPresentClause(List<String> vars) { return ""; }
+
+  /**
+   * Return construction of the clause for a list of created variables.
+   *
+   * @param vars List of variables name that will be inserted in the generated
+   *             clause.
+   * @return An accelerator language specific create clause with the list of
+   * variables. If the list is null or empty, the implementation returns an
+   * empty string.
+   */
+  protected String getCreateClause(List<String> vars) { return ""; }
+
 
   /**
    * Return the formatted directive to be inserted in a subroutine/function

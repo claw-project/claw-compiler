@@ -103,11 +103,6 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getPresentClause(List<String> vars) {
-    return ""; // TODO OpenMP
-  }
-
-  @Override
   protected String[] getRoutineDirective(boolean seq) {
     // TODO check
     return new String[]{

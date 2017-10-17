@@ -181,7 +181,8 @@ public class AcceleratorHelper {
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
-   * @param presents  List of variables to be set presents.
+   * @param presents  List of variables to be set as present.
+   * @param creates   List of variables to be created.
    * @param startStmt Start statement representing the beginning of the data
    *                  region.
    * @param endStmt   End statement representing the end of the data region.
@@ -189,6 +190,7 @@ public class AcceleratorHelper {
   public static void generateDataRegionClause(ClawLanguage claw,
                                               XcodeProgram xcodeml,
                                               List<String> presents,
+                                              List<String> creates,
                                               Xnode startStmt, Xnode endStmt)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
