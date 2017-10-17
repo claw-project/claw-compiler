@@ -8,6 +8,7 @@ package cx2x.translator.language.helper.accelerator;
 import cx2x.translator.config.Configuration;
 import cx2x.xcodeml.xnode.Xcode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -186,6 +187,26 @@ public abstract class AcceleratorGenerator {
    *
    * @return List of Xcode opcode of unsupported statements.
    */
-  public abstract List<Xcode> getUnsupportedStatements();
+  public List<Xcode> getUnsupportedStatements() {
+    return new ArrayList<>();
+  }
+
+  /**
+   * Get the list of skipped statements before accelerator region.
+   *
+   * @return List of Xcode opcode of supported statements that are skipped.
+   */
+  public List<Xcode> getSkippedStatementsInPreamble() {
+    return new ArrayList<>();
+  }
+
+  /**
+   * Get the list of skipped statements after accelerator region.
+   *
+   * @return List of Xcode opcode of supported statements that are skipped.
+   */
+  public List<Xcode> getSkippedStatementsInEpilogue() {
+    return new ArrayList<>();
+  }
 
 }
