@@ -209,4 +209,18 @@ class OpenAcc extends AcceleratorGenerator {
         Xcode.FALLOCATESTATEMENT, Xcode.FDEALLOCATESTATEMENT
     );
   }
+
+  @Override
+  public List<Xcode> getSkippedStatementsInPreamble() {
+    return Arrays.asList(
+        Xcode.FALLOCATESTATEMENT, Xcode.FPRAGMASTATEMENT
+    );
+  }
+
+  @Override
+  public List<Xcode> getSkippedStatementsInEpilogue() {
+    return Arrays.asList(
+        Xcode.FDEALLOCATESTATEMENT, Xcode.FPRAGMASTATEMENT
+    );
+  }
 }

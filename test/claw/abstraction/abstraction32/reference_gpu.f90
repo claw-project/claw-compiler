@@ -1,17 +1,31 @@
 MODULE mo_column
 
 CONTAINS
- SUBROUTINE compute_column ( nz , q , t , nproma )
+ SUBROUTINE compute ( nz , q , t , z , nproma )
 
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  REAL , INTENT(INOUT) :: z ( : )
   INTEGER , INTENT(IN) :: nproma
+
+  CALL compute_column ( nz , q , t , z , nproma = nproma )
+ END SUBROUTINE compute
+
+ SUBROUTINE compute_column ( nz , q , t , z , nproma )
+
+  INTEGER , INTENT(IN) :: nz
+  REAL , INTENT(INOUT) :: t ( : , : )
+  REAL , INTENT(INOUT) :: q ( : , : )
+  REAL , INTENT(INOUT) :: z ( : )
+  INTEGER , INTENT(IN) :: nproma
+  REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
   REAL :: c
   INTEGER :: proma
 
-!$acc data present(t,q)
+  ALLOCATE ( y ( nz ) )
+!$acc data present(t,q,z)
 !$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
@@ -25,14 +39,7 @@ CONTAINS
   END DO
 !$acc end parallel
 !$acc end data
-
- CONTAINS
-  FUNCTION test_contains ( )
-   INTEGER :: test_contains
-
-   test_contains = 10
-  END FUNCTION test_contains
-
+  DEALLOCATE ( y )
  END SUBROUTINE compute_column
 
 END MODULE mo_column

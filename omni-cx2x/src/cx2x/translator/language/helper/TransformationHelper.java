@@ -8,7 +8,6 @@ package cx2x.translator.language.helper;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -19,6 +18,7 @@ import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -402,7 +402,7 @@ public class TransformationHelper {
           XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(localType);
           XbasicType crtType = (XbasicType) mod.getTypeTable().get(modType);
 
-          List<ClawDimension> dimensions =
+          List<DimensionDefinition> dimensions =
               TransformationHelper.findDimensions(fctType);
           OverPosition overPos = OverPosition.fromString(
               pLocal.getAttribute(ClawAttr.OVER.toString()));
@@ -440,15 +440,15 @@ public class TransformationHelper {
    * @param fctType Function type to analyze.
    * @return List of found dimensions.
    */
-  public static List<ClawDimension> findDimensions(XfunctionType fctType) {
-    List<ClawDimension> dimensions = new ArrayList<>();
+  public static List<DimensionDefinition> findDimensions(XfunctionType fctType) {
+    List<DimensionDefinition> dimensions = new ArrayList<>();
     if(fctType.getParams() == null) {
       return dimensions;
     }
     for(Xnode param : fctType.getParams().getAll()) {
       if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         dimensions.add(
-            new ClawDimension(
+            new DimensionDefinition(
                 ClawConstant.ITER_PREFIX + param.value(),
                 ClawConstant.DEFAULT_LOWER_BOUND,
                 param.value()
@@ -466,11 +466,11 @@ public class TransformationHelper {
    * @param fctDef     Function definition in which variable are created.
    * @param xcodeml    Current XcodeML program unit.
    */
-  public static void declareInductionVariables(List<ClawDimension> dimensions,
+  public static void declareInductionVariables(List<DimensionDefinition> dimensions,
                                                XfunctionDefinition fctDef,
                                                XcodeML xcodeml)
   {
-    for(ClawDimension dim : dimensions) {
+    for(DimensionDefinition dim : dimensions) {
       if(fctDef.getDeclarationTable().get(dim.getIdentifier()) == null) {
         xcodeml.createIdAndDecl(dim.getIdentifier(), Xname.TYPE_F_INT,
             Xname.SCLASS_F_LOCAL, fctDef, false);
@@ -497,7 +497,7 @@ public class TransformationHelper {
                                            int overDimensions,
                                            XfunctionDefinition fctDef,
                                            XfunctionType fctType,
-                                           List<ClawDimension> dimensions,
+                                           List<DimensionDefinition> dimensions,
                                            ClawLanguage claw,
                                            XcodeProgram xcodeml,
                                            OverPosition overPos)
@@ -550,32 +550,32 @@ public class TransformationHelper {
           if(overPos == OverPosition.MIDDLE) {
             // Insert new dimension in middle (case 1)
             int startIdx = 1;
-            for(ClawDimension dim : dimensions) {
+            for(DimensionDefinition dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, startIdx++);
             }
           } else if(overPos == OverPosition.AFTER) {
             // Insert new dimensions at the end (case 3)
-            for(ClawDimension dim : dimensions) {
+            for(DimensionDefinition dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, XbasicType.APPEND);
             }
           } else {
             // Insert new dimension at the beginning (case 2)
-            for(ClawDimension dim : dimensions) {
+            for(DimensionDefinition dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
               newType.addDimension(index, 0);
             }
           }
         } else {
-          for(ClawDimension dim : dimensions) {
+          for(DimensionDefinition dim : dimensions) {
             Xnode index = dim.generateIndexRange(xcodeml, false);
             newType.addDimension(index, 0);
           }
         }
       }
     } else {
-      for(ClawDimension dim : dimensions) {
+      for(DimensionDefinition dim : dimensions) {
         Xnode index = dim.generateIndexRange(xcodeml, false);
         newType.addDimension(index, XbasicType.APPEND);
       }
@@ -618,11 +618,11 @@ public class TransformationHelper {
    * ones.
    */
   private static OverPosition getOverPosition(List<String> overClause) {
-    if(overClause.get(0).equals(ClawDimension.BASE_DIM) &&
-        overClause.get(overClause.size() - 1).equals(ClawDimension.BASE_DIM))
+    if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
+        overClause.get(overClause.size() - 1).equals(DimensionDefinition.BASE_DIM))
     {
       return OverPosition.MIDDLE;
-    } else if(overClause.get(0).equals(ClawDimension.BASE_DIM)) {
+    } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
       return OverPosition.AFTER;
     }
     return OverPosition.BEFORE;
@@ -637,7 +637,7 @@ public class TransformationHelper {
   public static int baseDimensionNb(List<String> over) {
     int cnt = 0;
     for(String dim : over) {
-      if(dim.equals(ClawDimension.BASE_DIM)) {
+      if(dim.equals(DimensionDefinition.BASE_DIM)) {
         ++cnt;
       }
     }
@@ -723,7 +723,7 @@ public class TransformationHelper {
                                               XcodeML xcodemlDst,
                                               XcodeML xcodemlSrc,
                                               OverPosition overPos,
-                                              List<ClawDimension> dimensions)
+                                              List<DimensionDefinition> dimensions)
       throws IllegalTransformationException
   {
     XbasicType newType = toUpdate.cloneNode();
@@ -741,13 +741,13 @@ public class TransformationHelper {
       switch(overPos) {
         case BEFORE:
           // TODO control and validate the before/after
-          for(ClawDimension dim : dimensions) {
+          for(DimensionDefinition dim : dimensions) {
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false),
                 XbasicType.APPEND);
           }
           break;
         case AFTER:
-          for(ClawDimension dim : dimensions) {
+          for(DimensionDefinition dim : dimensions) {
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
           }
           break;

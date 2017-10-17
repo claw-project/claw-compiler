@@ -115,7 +115,7 @@ public class OpenAccContinuation extends ClawTransformation {
   private void splitByLength(XcodeProgram xcodeml, Translator translator) {
     String allPragma = getDirective().getPragma().value().toLowerCase();
     if(allPragma.length() > translator.getMaxColumns()) {
-      allPragma = Utility.dropEndingComment(allPragma);
+      allPragma = XnodeUtil.dropEndingComment(allPragma);
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = getDirective().getPragma().lineNo();
       List<String> splittedPragmas = XnodeUtil.splitByLength(allPragma,

@@ -3,10 +3,9 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.common;
+package cx2x.xcodeml.helper;
 
-import cx2x.translator.language.common.ClawDimension;
-import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
 
 import java.util.ArrayList;
@@ -47,11 +46,11 @@ public class NestedDoStatement {
    * @param xcodeml    The current XcodeML program unit in which the elements
    *                   will be created.
    */
-  public NestedDoStatement(List<ClawDimension> dimensions,
+  public NestedDoStatement(List<DimensionDefinition> dimensions,
                            XcodeProgram xcodeml)
   {
     _statements = new ArrayList<>();
-    for(ClawDimension dim : dimensions) {
+    for(DimensionDefinition dim : dimensions) {
       Xnode induction = xcodeml.createVar(Xname.TYPE_F_INT, dim.getIdentifier(),
           Xscope.LOCAL);
       Xnode range = dim.generateIndexRange(xcodeml, true);

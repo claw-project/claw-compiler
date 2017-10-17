@@ -10,7 +10,6 @@ import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawConstraint;
-import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -18,6 +17,7 @@ import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -1063,7 +1063,7 @@ public class ClawLanguageTest {
   public void parallelizeTest() {
 
     // Valid directives
-    ClawDimension d1 = new ClawDimension("i", "1", "nx");
+    DimensionDefinition d1 = new DimensionDefinition("i", "1", "nx");
     List<String> data1 = Arrays.asList("t", "qc", "qv");
     List<List<String>> dataLst1 = Collections.singletonList(data1);
     List<String> ijc = Arrays.asList("i", "j", ":");
@@ -1077,27 +1077,27 @@ public class ClawLanguageTest {
             " parallelize data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d1), null, null, null);
 
-    ClawDimension d2 = new ClawDimension("j", "1", "ny");
+    DimensionDefinition d2 = new DimensionDefinition("j", "1", "ny");
     analyzeValidParallelize("claw define dimension j(1:ny)" +
             "parallelize data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d2), null, null, null);
 
-    ClawDimension d3 = new ClawDimension("j", "1", "10");
+    DimensionDefinition d3 = new DimensionDefinition("j", "1", "10");
     analyzeValidParallelize("claw define dimension j(1:10) " +
             "parallelize data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d3), null, null, null);
 
-    ClawDimension d4 = new ClawDimension("j", "jstart", "10");
+    DimensionDefinition d4 = new DimensionDefinition("j", "jstart", "10");
     analyzeValidParallelize("claw define dimension j(jstart:10) " +
             "parallelize data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d4), null, null, null);
 
-    ClawDimension d5 = new ClawDimension("j", "jstart", "ny");
+    DimensionDefinition d5 = new DimensionDefinition("j", "jstart", "ny");
     analyzeValidParallelize("claw define dimension j(jstart:ny) " +
             "parallelize data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d5), null, null, null);
 
-    ClawDimension d6 = new ClawDimension("j", "jstart", "ny");
+    DimensionDefinition d6 = new DimensionDefinition("j", "jstart", "ny");
     analyzeValidParallelize("claw define dimension j(jstart:ny) parallelize",
         null, null, Collections.singletonList(d6), null, null, null);
 
@@ -1130,7 +1130,7 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
         "copy(out)", dataLst1, over2, null, ClawDMD.OUT, null, null);
 
-    ClawDimension d7 = new ClawDimension("c", "1", "nc");
+    DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize copy",
         null, null, Collections.singletonList(d7), ClawDMD.BOTH, null, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
@@ -1201,7 +1201,7 @@ public class ClawLanguageTest {
    */
   private void analyzeValidParallelize(String raw, List<List<String>> data,
                                        List<List<String>> over,
-                                       List<ClawDimension> dimensions,
+                                       List<DimensionDefinition> dimensions,
                                        ClawDMD copyClause, ClawDMD updateClause,
                                        List<String> scalarData)
   {

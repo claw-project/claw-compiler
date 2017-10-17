@@ -558,4 +558,77 @@ public class AcceleratorHelper {
     return end != null ? end : begin;
   }
 
+  /**
+   * Skip elements in preamble and find the first element that will be included
+   * in the parallel region.
+   *
+   * @param generator          Current accelerator generator.
+   * @param functionDefinition Function definition in which body checked.
+   * @param from               Optional element to start from. If null, starts
+   *                           from first element in function's body.
+   * @return First element for the parallel region.
+   */
+  public static Xnode findParallelRegionStart(AcceleratorGenerator generator,
+                                              Xnode functionDefinition,
+                                              Xnode from)
+  {
+    if(generator == null
+        || functionDefinition.opcode() != Xcode.FFUNCTIONDEFINITION)
+    {
+      return null;
+    }
+    Xnode first = functionDefinition.body().firstChild();
+    if(from != null) { // Start from given element
+      first = from;
+    }
+    if(generator.getSkippedStatementsInPreamble().isEmpty()) {
+      return first;
+    } else {
+      while(first.nextSibling() != null
+          && generator.getSkippedStatementsInPreamble().
+          contains(first.opcode())) {
+        first = first.nextSibling();
+      }
+    }
+    return first;
+  }
+
+  /**
+   * Skip elements in epilogue and find the last element that will be included
+   * in the parallel region.
+   *
+   * @param generator          Current accelerator generator.
+   * @param functionDefinition Function definition in which body checked.
+   * @param from               Optional element to start from. If null, starts
+   *                           from last element in function's body.
+   * @return Last element for the parallel region.
+   */
+  public static Xnode findParallelRegionEnd(AcceleratorGenerator generator,
+                                            Xnode functionDefinition,
+                                            Xnode from)
+  {
+    if(generator == null
+        || functionDefinition.opcode() != Xcode.FFUNCTIONDEFINITION)
+    {
+      return null;
+    }
+    Xnode last = functionDefinition.body().lastChild();
+    if(from != null) { // Start from given element
+      last = from;
+      if(last.opcode() == Xcode.FCONTAINSSTATEMENT) {
+        last = last.prevSibling();
+      }
+    }
+    if(generator.getSkippedStatementsInEpilogue().isEmpty()) {
+      return last;
+    } else {
+      while(last.prevSibling() != null
+          && generator.getSkippedStatementsInEpilogue().
+          contains(last.opcode())) {
+        last = last.prevSibling();
+      }
+    }
+    return last;
+  }
+
 }

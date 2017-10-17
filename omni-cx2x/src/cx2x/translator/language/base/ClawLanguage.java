@@ -5,7 +5,10 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.common.*;
+import cx2x.translator.language.common.ClawConstraint;
+import cx2x.translator.language.common.ClawMapping;
+import cx2x.translator.language.common.ClawRange;
+import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
@@ -13,6 +16,7 @@ import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
+import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.Xnode;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -51,7 +55,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ClawReshapeInfo> _reshapeInfos;
-  private List<ClawDimension> _dimensions;
+  private List<DimensionDefinition> _dimensions;
   private List<List<String>> _overValues;
   private List<List<String>> _overDataValues;
   private List<String> _scalarValues;
@@ -883,10 +887,10 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Add a new dimension extracted from the directive.
    *
-   * @param dimension ClawDimension object constructed from the value extracted
+   * @param dimension DimensionDefinition object constructed from the value extracted
    *                  in the clause.
    */
-  public void addDimension(ClawDimension dimension) {
+  public void addDimension(DimensionDefinition dimension) {
     _hasDimensionClause = true;
     if(_dimensions == null) {
       _dimensions = new ArrayList<>();
@@ -1011,7 +1015,7 @@ public class ClawLanguage extends AnalyzedPragma {
    *
    * @return All dimensions extracted from the directive.
    */
-  public List<ClawDimension> getDimensionValues() {
+  public List<DimensionDefinition> getDimensionValues() {
     return _dimensions;
   }
 
@@ -1020,8 +1024,8 @@ public class ClawLanguage extends AnalyzedPragma {
    *
    * @return All dimensions extracted from the directive in reverse order.
    */
-  public List<ClawDimension> getDimensionValuesReversed() {
-    List<ClawDimension> tmp = new ArrayList<>(_dimensions);
+  public List<DimensionDefinition> getDimensionValuesReversed() {
+    List<DimensionDefinition> tmp = new ArrayList<>(_dimensions);
     Collections.reverse(tmp);
     return tmp;
   }

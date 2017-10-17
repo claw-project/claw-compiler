@@ -6,8 +6,6 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.NestedDoStatement;
-import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -648,16 +646,24 @@ public class XnodeUtil {
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
    */
-  public static void shiftStatementsInBody(Xnode from,
-                                           Xnode until, Xnode targetBody)
+  public static void shiftStatementsInBody(Xnode from, Xnode until,
+                                           Xnode targetBody, boolean included)
   {
-    Node currentSibling = from.element().getNextSibling();
+    Node currentSibling = from.element();
+    if(!included) {
+      currentSibling = from.element().getNextSibling();
+    }
+
     Node firstStatementInBody = targetBody.element().getFirstChild();
     while(currentSibling != null && currentSibling != until.element()) {
       Node nextSibling = currentSibling.getNextSibling();
       targetBody.element().insertBefore(currentSibling,
           firstStatementInBody);
       currentSibling = nextSibling;
+    }
+    if(included && currentSibling == until.element()) {
+      targetBody.element().insertBefore(currentSibling,
+          firstStatementInBody);
     }
   }
 
@@ -690,6 +696,29 @@ public class XnodeUtil {
     }
     for(Xcode opcode : statements) {
       unsupportedStatements.addAll(root.matchAll(opcode));
+    }
+    return unsupportedStatements;
+  }
+
+  /**
+   * Get given statements in between from and to included.
+   *
+   * @param from       Node from.
+   * @param to         Node to.
+   * @param statements List of statements to look for.
+   * @return List of statement found.
+   */
+  public static List<Xnode> getStatements(Xnode from, Xnode to,
+                                          List<Xcode> statements)
+  {
+    List<Xnode> unsupportedStatements = new ArrayList<>();
+    Xnode crt = from;
+    while(crt != null && crt.element() != to.element()) {
+      if(statements.contains(crt.opcode())){
+        unsupportedStatements.add(crt);
+      }
+      unsupportedStatements.addAll(getStatements(crt, statements));
+      crt = crt.nextSibling();
     }
     return unsupportedStatements;
   }
@@ -1324,7 +1353,7 @@ public class XnodeUtil {
     List<String> splittedPragmas = new ArrayList<>();
     fullPragma = fullPragma.toLowerCase();
     if(fullPragma.length() > maxColumns) {
-      fullPragma = Utility.dropEndingComment(fullPragma);
+      fullPragma = XnodeUtil.dropEndingComment(fullPragma);
       int addLength = pragmaPrefix.length() + 5; // "!$<prefix> PRAGMA &"
       while(fullPragma.length() > (maxColumns - addLength)) {
         int splitIndex =
@@ -1351,5 +1380,18 @@ public class XnodeUtil {
       splittedPragmas.add(fullPragma);
     }
     return splittedPragmas;
+  }
+
+  /**
+   * Remove any trailing comment from a pragma string.
+   *
+   * @param pragma Original pragma string.
+   * @return Pragma string without the trailing comment if any.
+   */
+  public static String dropEndingComment(String pragma) {
+    if(pragma != null && pragma.indexOf("!") > 0) {
+      return pragma.substring(0, pragma.indexOf("!")).trim();
+    }
+    return pragma;
   }
 }

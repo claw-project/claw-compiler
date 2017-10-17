@@ -22,6 +22,7 @@ import cx2x.translator.language.base.*;
 import cx2x.translator.language.common.*;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.common.Utility;
+import cx2x.xcodeml.language.*;
 }
 
 /*----------------------------------------------------------------------------
@@ -393,7 +394,7 @@ mapping_option_list[List<ClawMapping> mappings]:
 define_option[ClawLanguage l]:
     DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ':' upper=range_id ')'
     {
-      ClawDimension cd = new ClawDimension($id.text, $lower.text, $upper.text);
+      DimensionDefinition cd = new DimensionDefinition($id.text, $lower.text, $upper.text);
       $l.addDimension(cd);
     }
 ;

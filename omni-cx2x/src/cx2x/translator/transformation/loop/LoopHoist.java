@@ -223,7 +223,7 @@ public class LoopHoist extends ClawBlockTransformation {
     Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
     hoisted.getDoStmts()[_nestedLevel - 1].append(newBody, false);
     XnodeUtil.shiftStatementsInBody(_clawStart.getPragma(),
-        _clawEnd.getPragma(), newBody);
+        _clawEnd.getPragma(), newBody, false);
     _clawStart.getPragma().insertAfter(hoisted.getDoStmts()[0]);
 
     // Generate dynamic transformation (interchange)
