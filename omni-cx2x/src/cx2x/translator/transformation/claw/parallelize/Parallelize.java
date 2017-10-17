@@ -151,10 +151,16 @@ public class Parallelize extends ClawTransformation {
     if(_claw.getTarget() == Target.GPU
         && _claw.getDirectiveLanguage() == AcceleratorDirective.OPENACC)
     {
+      Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
+      Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
+          _claw.getAcceleratorGenerator(), _fctDef, null);
+      Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
+          _claw.getAcceleratorGenerator(), _fctDef, contains);
 
       List<Xnode> unsupportedStatements =
-          XnodeUtil.getStatements(_fctDef.body(),
+          XnodeUtil.getStatements(parallelRegionStart, parallelRegionEnd,
               _claw.getAcceleratorGenerator().getUnsupportedStatements());
+
       if(unsupportedStatements.size() > 0) {
         for(Xnode statement : unsupportedStatements) {
           xcodeml.addError("Unsupported statement in parallel region",
@@ -427,10 +433,6 @@ public class Parallelize extends ClawTransformation {
       XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
-      //XnodeUtil.shiftStatementsInBody(_fctDef.body().child(0),
-      //    contains, loops.getInnerStatement().body());
-
-
       contains.insertBefore(loops.getOuterStatement());
     } else {
       // No contains section, all the body is copied to the do statements.
@@ -442,8 +444,6 @@ public class Parallelize extends ClawTransformation {
 
       XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
-
-      //XnodeUtil.copyBody(_fctDef.body(), loops.getInnerStatement());
 
       _fctDef.body().delete();
       Xnode newBody = new Xnode(Xcode.BODY, xcodeml);

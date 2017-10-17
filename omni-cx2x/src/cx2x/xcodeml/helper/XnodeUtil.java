@@ -701,6 +701,29 @@ public class XnodeUtil {
   }
 
   /**
+   * Get given statements in between from and to included.
+   *
+   * @param from       Node from.
+   * @param to         Node to.
+   * @param statements List of statements to look for.
+   * @return List of statement found.
+   */
+  public static List<Xnode> getStatements(Xnode from, Xnode to,
+                                          List<Xcode> statements)
+  {
+    List<Xnode> unsupportedStatements = new ArrayList<>();
+    Xnode crt = from;
+    while(crt != null && crt.element() != to.element()) {
+      if(statements.contains(crt.opcode())){
+        unsupportedStatements.add(crt);
+      }
+      unsupportedStatements.addAll(getStatements(crt, statements));
+      crt = crt.nextSibling();
+    }
+    return unsupportedStatements;
+  }
+
+  /**
    * Check whether the given type is a built-in type or is a type defined in the
    * type table.
    *
