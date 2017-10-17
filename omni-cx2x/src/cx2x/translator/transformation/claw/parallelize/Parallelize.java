@@ -151,6 +151,7 @@ public class Parallelize extends ClawTransformation {
     if(_claw.getTarget() == Target.GPU
         && _claw.getDirectiveLanguage() == AcceleratorDirective.OPENACC)
     {
+
       List<Xnode> unsupportedStatements =
           XnodeUtil.getStatements(_fctDef.body(),
               _claw.getAcceleratorGenerator().getUnsupportedStatements());
@@ -417,12 +418,33 @@ public class Parallelize extends ClawTransformation {
      * this contains section if it exists. */
     Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
     if(contains != null) {
-      XnodeUtil.shiftStatementsInBody(_fctDef.body().child(0),
-          contains, loops.getInnerStatement().body());
+
+      Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
+          _claw.getAcceleratorGenerator(), _fctDef, null);
+      Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
+          _claw.getAcceleratorGenerator(), _fctDef, contains);
+
+      XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
+          loops.getInnerStatement().body(), true);
+
+      //XnodeUtil.shiftStatementsInBody(_fctDef.body().child(0),
+      //    contains, loops.getInnerStatement().body());
+
+
       contains.insertBefore(loops.getOuterStatement());
     } else {
       // No contains section, all the body is copied to the do statements.
-      XnodeUtil.copyBody(_fctDef.body(), loops.getInnerStatement());
+
+      Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
+          _claw.getAcceleratorGenerator(), _fctDef, null);
+      Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
+          _claw.getAcceleratorGenerator(), _fctDef, null);
+
+      XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
+          loops.getInnerStatement().body(), true);
+
+      //XnodeUtil.copyBody(_fctDef.body(), loops.getInnerStatement());
+
       _fctDef.body().delete();
       Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
       newBody.append(loops.getOuterStatement(), false);

@@ -91,7 +91,7 @@ public class ParallelizeForward extends ClawTransformation {
       }
     } else if(next.opcode() == Xcode.FDOSTATEMENT) {
       _doStatements = new NestedDoStatement(next);
-      return analyzeForwardWithDo(xcodeml, next);
+      return analyzeForwardWithDo(xcodeml);
     }
     xcodeml.addError("Directive is not followed by a valid statement.",
         _claw.getPragma().lineNo());
@@ -102,19 +102,18 @@ public class ParallelizeForward extends ClawTransformation {
    * Analyze the directive when it is used just before a do statement.
    *
    * @param xcodeml Current XcodeML file unit.
-   * @param doStmt  The do statement following the pragma.
    * @return True if the analysis succeed. False otherwise.
    */
-  private boolean analyzeForwardWithDo(XcodeProgram xcodeml, Xnode doStmt) {
+  private boolean analyzeForwardWithDo(XcodeProgram xcodeml) {
     _flatten = true;
-    if(doStmt == null) {
+    if(_doStatements == null) {
       xcodeml.addError("Directive is not followed by do statement.",
           _claw.getPragma().lineNo());
       return false;
     }
 
     // Try to locate the fct call inside of the do statements. Can be nested.
-    return analyzeNestedDoStmts(xcodeml, doStmt);
+    return analyzeNestedDoStmts(xcodeml);
   }
 
   /**
@@ -122,10 +121,9 @@ public class ParallelizeForward extends ClawTransformation {
    * statements.
    *
    * @param xcodeml Current XcodeML file unit.
-   * @param doStmt  First do statement to start the analysis.
    * @return True if the analysis succeed. False otherwise.
    */
-  private boolean analyzeNestedDoStmts(XcodeProgram xcodeml, Xnode doStmt) {
+  private boolean analyzeNestedDoStmts(XcodeProgram xcodeml) {
     for(int i = 0; i < _doStatements.getGroupSize(); ++i) {
       if(i == _doStatements.getGroupSize() - 1) {
         if(_doStatements.get(i).body() == null) {

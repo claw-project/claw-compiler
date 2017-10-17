@@ -6,7 +6,6 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -647,16 +646,24 @@ public class XnodeUtil {
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
    */
-  public static void shiftStatementsInBody(Xnode from,
-                                           Xnode until, Xnode targetBody)
+  public static void shiftStatementsInBody(Xnode from, Xnode until,
+                                           Xnode targetBody, boolean included)
   {
-    Node currentSibling = from.element().getNextSibling();
+    Node currentSibling = from.element();
+    if(!included) {
+      currentSibling = from.element().getNextSibling();
+    }
+
     Node firstStatementInBody = targetBody.element().getFirstChild();
     while(currentSibling != null && currentSibling != until.element()) {
       Node nextSibling = currentSibling.getNextSibling();
       targetBody.element().insertBefore(currentSibling,
           firstStatementInBody);
       currentSibling = nextSibling;
+    }
+    if(included && currentSibling == until.element()) {
+      targetBody.element().insertBefore(currentSibling,
+          firstStatementInBody);
     }
   }
 
