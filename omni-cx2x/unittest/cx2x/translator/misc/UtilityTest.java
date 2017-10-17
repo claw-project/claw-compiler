@@ -7,6 +7,7 @@ package cx2x.translator.misc;
 
 
 import cx2x.translator.common.Utility;
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -45,12 +46,12 @@ public class UtilityTest {
   @Test
   public void PragmaCommentTest() {
     String p1 = "acc parallel";
-    assertEquals(p1, Utility.dropEndingComment(p1));
+    assertEquals(p1, XnodeUtil.dropEndingComment(p1));
     String p2 = "acc parallel ! Start parallel region";
-    assertEquals(p1, Utility.dropEndingComment(p2));
+    assertEquals(p1, XnodeUtil.dropEndingComment(p2));
     String p3 = "acc parallel !!! Start parallel region";
-    assertEquals(p1, Utility.dropEndingComment(p3));
-    assertEquals(null, Utility.dropEndingComment(null));
-    assertEquals("", Utility.dropEndingComment(""));
+    assertEquals(p1, XnodeUtil.dropEndingComment(p3));
+    assertEquals(null, XnodeUtil.dropEndingComment(null));
+    assertEquals("", XnodeUtil.dropEndingComment(""));
   }
 }

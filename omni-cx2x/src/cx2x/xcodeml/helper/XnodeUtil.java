@@ -1323,7 +1323,7 @@ public class XnodeUtil {
     List<String> splittedPragmas = new ArrayList<>();
     fullPragma = fullPragma.toLowerCase();
     if(fullPragma.length() > maxColumns) {
-      fullPragma = Utility.dropEndingComment(fullPragma);
+      fullPragma = XnodeUtil.dropEndingComment(fullPragma);
       int addLength = pragmaPrefix.length() + 5; // "!$<prefix> PRAGMA &"
       while(fullPragma.length() > (maxColumns - addLength)) {
         int splitIndex =
@@ -1350,5 +1350,18 @@ public class XnodeUtil {
       splittedPragmas.add(fullPragma);
     }
     return splittedPragmas;
+  }
+
+  /**
+   * Remove any trailing comment from a pragma string.
+   *
+   * @param pragma Original pragma string.
+   * @return Pragma string without the trailing comment if any.
+   */
+  public static String dropEndingComment(String pragma) {
+    if(pragma != null && pragma.indexOf("!") > 0) {
+      return pragma.substring(0, pragma.indexOf("!")).trim();
+    }
+    return pragma;
   }
 }

@@ -148,17 +148,4 @@ public class Utility {
     return ((source.length() - newStr.length())) / pattern.length();
   }
 
-  /**
-   * Remove any trailing comment from a pragma string.
-   *
-   * @param pragma Original pragma string.
-   * @return Pragma string without the trailing comment if any.
-   */
-  public static String dropEndingComment(String pragma) {
-    if(pragma != null && pragma.indexOf("!") > 0) {
-      return pragma.substring(0, pragma.indexOf("!")).trim();
-    }
-    return pragma;
-  }
-
 }
