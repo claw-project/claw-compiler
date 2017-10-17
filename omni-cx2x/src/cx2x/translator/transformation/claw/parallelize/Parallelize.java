@@ -442,13 +442,23 @@ public class Parallelize extends ClawTransformation {
       Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, null);
 
+      Xnode hook = parallelRegionEnd.nextSibling();
+
+
       XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
-      _fctDef.body().delete();
-      Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-      newBody.append(loops.getOuterStatement(), false);
-      _fctDef.append(newBody, false);
+      //_fctDef.body().delete();
+      //Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
+
+      if(hook == null) {
+        _fctDef.body().append(loops.getOuterStatement(), false);
+      } else {
+        hook.insertBefore(loops.getOuterStatement());
+      }
+
+      //newBody.append(loops.getOuterStatement(), false);
+      //_fctDef.append(newBody, false);
     }
 
     // Generate the data region
