@@ -135,6 +135,9 @@ public class ParallelizeForward extends ClawTransformation {
         }
       }
       for(Xnode n : _doStatements.get(i).body().children()) {
+        if(n.opcode() == Xcode.FDOSTATEMENT) {
+          continue;
+        }
         if(n.opcode() != Xcode.FPRAGMASTATEMENT
             && n.opcode() != Xcode.EXPRSTATEMENT)
         {
@@ -484,22 +487,6 @@ public class ParallelizeForward extends ClawTransformation {
               XnodeUtil.safeDelete(n);
             }
           }
-          /*if(var != null) {
-            arg.insertAfter(var.cloneNode());
-            arg.delete();
-          } else {
-            Xnode memberRef = arg.matchSeq(Xcode.VARREF, Xcode.FMEMBERREF);
-
-            if(memberRef != null) { // type member array to deal with
-              Xnode arrayIndex = arg.matchDirectDescendant(Xcode.ARRAYINDEX);
-              if(XnodeUtil.isInductionIndex(arrayIndex,
-                  _doStatements.getInductionVariables()))
-              {
-                // replace it with assumed shape indexRange
-
-              }
-            }
-          }*/
         }
       }
     } else {
