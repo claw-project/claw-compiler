@@ -1282,8 +1282,14 @@ public class XnodeUtil {
                 maxColumns - addLength).lastIndexOf(" ");
         // Cannot cut as it should. Take first possible cutting point.
         if(splitIndex == -1) {
-          splitIndex = (fullPragma.contains(" "))
-              ? fullPragma.indexOf(" ") : fullPragma.length();
+          splitIndex = fullPragma.substring(0,
+              maxColumns - addLength).lastIndexOf(",");
+          if(splitIndex == -1) {
+            splitIndex =
+                (fullPragma.contains(" ")) ? fullPragma.lastIndexOf(" ") :
+                    (fullPragma.contains(",")) ? fullPragma.lastIndexOf(",") :
+                        fullPragma.length();
+          }
         }
         String splittedPragma = fullPragma.substring(0, splitIndex);
         fullPragma =
