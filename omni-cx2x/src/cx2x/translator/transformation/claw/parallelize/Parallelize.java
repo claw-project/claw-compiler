@@ -9,7 +9,6 @@ import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
@@ -18,6 +17,7 @@ import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
@@ -69,7 +69,7 @@ public class Parallelize extends ClawTransformation {
 
   private static final int DEFAULT_OVER = 0;
 
-  private final Map<String, ClawDimension> _dimensions;
+  private final Map<String, DimensionDefinition> _dimensions;
   private final Map<String, PromotionInfo> _promotions;
   private final List<String> _arrayFieldsInOut;
   private final List<String> _scalarFields;
@@ -180,7 +180,7 @@ public class Parallelize extends ClawTransformation {
       return false;
     }
 
-    for(ClawDimension d : _claw.getDimensionValues()) {
+    for(DimensionDefinition d : _claw.getDimensionValues()) {
       if(_dimensions.containsKey(d.getIdentifier())) {
         xcodeml.addError(
             String.format("Dimension with identifier %s already specified.",
@@ -285,7 +285,7 @@ public class Parallelize extends ClawTransformation {
       return true;
     }
     for(List<String> over : _claw.getOverClauseValues()) {
-      if(!over.contains(ClawDimension.BASE_DIM)) {
+      if(!over.contains(DimensionDefinition.BASE_DIM)) {
         xcodeml.addError("The column dimension has not been specified in the " +
                 "over clause. Use : to specify it.",
             _claw.getPragma().lineNo());
@@ -298,8 +298,8 @@ public class Parallelize extends ClawTransformation {
             _claw.getPragma().lineNo());
         return false;
       } else if(baseDimNb == 2) {
-        if(!over.get(0).equals(ClawDimension.BASE_DIM)
-            || !over.get(over.size() - 1).equals(ClawDimension.BASE_DIM))
+        if(!over.get(0).equals(DimensionDefinition.BASE_DIM)
+            || !over.get(over.size() - 1).equals(DimensionDefinition.BASE_DIM))
         {
           xcodeml.addError("Base dimensions structure not supported in over" +
               "clause.", _claw.getPragma().lineNo());
@@ -313,7 +313,7 @@ public class Parallelize extends ClawTransformation {
     for(List<String> overLst : _claw.getOverClauseValues()) {
       int usedDimension = 0;
       for(String o : overLst) {
-        if(!o.equals(ClawDimension.BASE_DIM)) {
+        if(!o.equals(DimensionDefinition.BASE_DIM)) {
           if(!_dimensions.containsKey(o)) {
             xcodeml.addError(
                 String.format(
@@ -458,7 +458,7 @@ public class Parallelize extends ClawTransformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-    List<ClawDimension> order = getOrderedDimensionsFromDefinition(0);
+    List<DimensionDefinition> order = getOrderedDimensionsFromDefinition(0);
     List<Xnode> assignStatements =
         _fctDef.body().matchAll(Xcode.FASSIGNSTATEMENT);
 
@@ -569,17 +569,17 @@ public class Parallelize extends ClawTransformation {
         // In middle insertion
         if(TransformationHelper.baseDimensionNb(over) == 2) {
           for(String dim : over) {
-            if(!dim.equals(ClawDimension.BASE_DIM)) {
-              ClawDimension d = _dimensions.get(dim);
+            if(!dim.equals(DimensionDefinition.BASE_DIM)) {
+              DimensionDefinition d = _dimensions.get(dim);
               inMiddle.add(d.generateArrayIndex(xcodeml));
             }
           }
         } else {
           for(String dim : over) {
-            if(dim.equals(ClawDimension.BASE_DIM)) {
+            if(dim.equals(DimensionDefinition.BASE_DIM)) {
               crt = afterCrt;
             } else {
-              ClawDimension d = _dimensions.get(dim);
+              DimensionDefinition d = _dimensions.get(dim);
               crt.add(d.generateArrayIndex(xcodeml));
             }
           }
@@ -596,7 +596,7 @@ public class Parallelize extends ClawTransformation {
        * left of current indexes. */
       List<Xnode> crt = new ArrayList<>();
       List<Xnode> empty = Collections.emptyList();
-      for(ClawDimension dim : _claw.getDimensionValues()) {
+      for(DimensionDefinition dim : _claw.getDimensionValues()) {
         crt.add(dim.generateArrayIndex(xcodeml));
       }
       Collections.reverse(crt);
@@ -689,7 +689,7 @@ public class Parallelize extends ClawTransformation {
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
-    for(ClawDimension dimension : _claw.getDimensionValues()) {
+    for(DimensionDefinition dimension : _claw.getDimensionValues()) {
       // Create the parameter for the lower bound
       if(dimension.lowerBoundIsVar()) {
         xcodeml.createIdAndDecl(dimension.getLowerBoundId(),
@@ -723,12 +723,12 @@ public class Parallelize extends ClawTransformation {
    * @param overIndex Which over clause to use.
    * @return Ordered list of dimension object.
    */
-  private List<ClawDimension> getOrderedDimensionsFromDefinition(int overIndex)
+  private List<DimensionDefinition> getOrderedDimensionsFromDefinition(int overIndex)
   {
     if(_claw.hasOverClause()) {
-      List<ClawDimension> dimensions = new ArrayList<>();
+      List<DimensionDefinition> dimensions = new ArrayList<>();
       for(String o : _claw.getOverClauseValues().get(overIndex)) {
-        if(o.equals(ClawDimension.BASE_DIM)) {
+        if(o.equals(DimensionDefinition.BASE_DIM)) {
           continue;
         }
         dimensions.add(_dimensions.get(o));

@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.common;
+package cx2x.xcodeml.language;
 
 import cx2x.xcodeml.xnode.*;
 
@@ -12,7 +12,7 @@ import cx2x.xcodeml.xnode.*;
  *
  * @author clementval
  */
-public class ClawDimension {
+public class DimensionDefinition {
 
   public static final String BASE_DIM = ":";
   private final int _lowerBound;
@@ -31,7 +31,7 @@ public class ClawDimension {
    * @param upperBound Upper bound of the dimension.
    *                   TODO maybe add step information (in the grammar as well)
    */
-  public ClawDimension(String id, String lowerBound, String upperBound) {
+  public DimensionDefinition(String id, String lowerBound, String upperBound) {
     _identifier = id;
 
     int tempLb, tempUb;

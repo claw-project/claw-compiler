@@ -9,13 +9,13 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
@@ -141,9 +141,8 @@ public class ParallelizeForward extends ClawTransformation {
         if(n.opcode() != Xcode.FPRAGMASTATEMENT
             && n.opcode() != Xcode.EXPRSTATEMENT)
         {
-          xcodeml.addError("Only pragmas, comments and function calls allowed " +
-                  "in the do statements.",
-              _claw.getPragma().lineNo());
+          xcodeml.addError("Only pragmas, comments and function calls allowed "
+              + "in the do statements.", _claw.getPragma().lineNo());
           return false;
         } else if(n.opcode() == Xcode.EXPRSTATEMENT
             || n.opcode() == Xcode.FASSIGNSTATEMENT)
@@ -538,7 +537,7 @@ public class ParallelizeForward extends ClawTransformation {
               continue;
             }*/
 
-            List<ClawDimension> dimensions =
+            List<DimensionDefinition> dimensions =
                 TransformationHelper.findDimensions(_fctType);
             OverPosition overPos = OverPosition.fromString(
                 pBase.getAttribute(ClawAttr.OVER.toString()));
@@ -619,7 +618,7 @@ public class ParallelizeForward extends ClawTransformation {
       // TODO handle the case when the array ref is a var directly
       Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
 
-      List<ClawDimension> dimensions =
+      List<DimensionDefinition> dimensions =
           TransformationHelper.findDimensions(_parentFctType);
       XfunctionDefinition parentFctDef =
           XnodeUtil.findParentFunction(_fctCall);
@@ -703,14 +702,14 @@ public class ParallelizeForward extends ClawTransformation {
         Utility.convertToList(translator.hasElement(parentFctDef));
 
     List<Xnode> assignments = parentFctDef.matchAll(Xcode.FASSIGNSTATEMENT);
-    List<ClawDimension> dimensions =
+    List<DimensionDefinition> dimensions =
         TransformationHelper.findDimensions(_parentFctType);
 
 
     // Prepare the array index to be inserted in array references.
     List<Xnode> crt = new ArrayList<>();
     List<Xnode> empty = Collections.emptyList();
-    for(ClawDimension dim : dimensions) {
+    for(DimensionDefinition dim : dimensions) {
       crt.add(dim.generateArrayIndex(xcodeml));
     }
     Collections.reverse(crt);
@@ -808,7 +807,7 @@ public class ParallelizeForward extends ClawTransformation {
   private void adaptPointer(XbasicType varType, String fieldId,
                             XfunctionDefinition fctDef, XcodeProgram xcodeml,
                             PromotionInfo pointeeInfo,
-                            List<ClawDimension> dimensions)
+                            List<DimensionDefinition> dimensions)
       throws IllegalTransformationException
   {
     if(varType.isTarget()) {
