@@ -11,6 +11,7 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawDimension;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawTransformation;
@@ -142,6 +143,24 @@ public class Parallelize extends ClawTransformation {
       xcodeml.addError("Function/subroutine signature cannot be found. ",
           _claw.getPragma().lineNo());
       return false;
+    }
+
+
+    // Check if unsupported statements are located in the future parallel
+    // region.
+    if(_claw.getTarget() == Target.GPU
+        && _claw.getDirectiveLanguage() == AcceleratorDirective.OPENACC)
+    {
+      List<Xnode> unsupportedStatements =
+          XnodeUtil.getStatements(_fctDef.body(),
+              _claw.getAcceleratorGenerator().getUnsupportedStatements());
+      if(unsupportedStatements.size() > 0) {
+        for(Xnode statement : unsupportedStatements) {
+          xcodeml.addError("Unsupported statement in parallel region",
+              statement.lineNo());
+        }
+        return false;
+      }
     }
 
     return analyzeDimension(xcodeml) && analyzeData(xcodeml) &&

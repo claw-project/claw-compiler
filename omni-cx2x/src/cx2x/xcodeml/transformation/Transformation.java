@@ -70,6 +70,16 @@ public abstract class Transformation {
                                                Transformation other);
 
   /**
+   * Tells whether the transformation should abort the translation if the
+   * analysis fails. Default behavior is to abort.
+   *
+   * @return True if it aborts. False otherwise.
+   */
+  public boolean abortOnFailedAnalysis() {
+    return true;
+  }
+
+  /**
    * Apply the actual transformation.
    *
    * @param xcodeml     The XcodeML on which the transformations are applied.

@@ -211,4 +211,9 @@ public class OpenAccContinuation extends ClawTransformation {
     getDirective().getPragma().delete();
     return p;
   }
+
+  @Override
+  public boolean abortOnFailedAnalysis() {
+    return false;
+  }
 }

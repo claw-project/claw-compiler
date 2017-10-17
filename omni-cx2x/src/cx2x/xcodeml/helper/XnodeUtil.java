@@ -640,6 +640,24 @@ public class XnodeUtil {
   }
 
   /**
+   * Get given statements in the subtree.
+   *
+   * @param root       Root of the subtree.
+   * @param statements List of statements to look for.
+   * @return List of statement found.
+   */
+  public static List<Xnode> getStatements(Xnode root, List<Xcode> statements) {
+    List<Xnode> unsupportedStatements = new ArrayList<>();
+    if(root == null) {
+      return unsupportedStatements;
+    }
+    for(Xcode opcode : statements) {
+      unsupportedStatements.addAll(root.matchAll(opcode));
+    }
+    return unsupportedStatements;
+  }
+
+  /**
    * Check whether the given type is a built-in type or is a type defined in the
    * type table.
    *

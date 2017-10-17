@@ -19,6 +19,7 @@ import cx2x.translator.transformation.openacc.DirectivePrimitive;
 import cx2x.translator.transformation.openacc.OpenAccContinuation;
 import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.*;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -96,7 +97,7 @@ public class ClawTranslator implements Translator {
 
   @Override
   public void generateTransformation(XcodeProgram xcodeml, Xnode pragma)
-      throws IllegalDirectiveException
+      throws IllegalTransformationException, IllegalDirectiveException
   {
     // Analyze the raw pragma with the CLAW language parser
     ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma,
@@ -154,7 +155,9 @@ public class ClawTranslator implements Translator {
   }
 
   @Override
-  public void finalize(XcodeProgram xcodeml) {
+  public void finalize(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
     // Clean up block transformation map
     for(Map.Entry<ClawDirectiveKey, ClawLanguage> entry :
         _blockDirectives.entrySet()) {
@@ -173,7 +176,7 @@ public class ClawTranslator implements Translator {
    */
   private void HandleBlockDirective(XcodeProgram xcodeml,
                                     ClawLanguage analyzedPragma)
-      throws IllegalDirectiveException
+      throws IllegalDirectiveException, IllegalTransformationException
   {
     int depth = analyzedPragma.getPragma().depth();
     ClawDirectiveKey crtRemoveKey =
@@ -209,6 +212,7 @@ public class ClawTranslator implements Translator {
   private void createBlockDirectiveTransformation(XcodeProgram xcodeml,
                                                   ClawLanguage begin,
                                                   ClawLanguage end)
+      throws IllegalTransformationException
   {
     if(begin == null || !begin.isApplicableToCurrentTarget()) {
       return;
@@ -232,7 +236,9 @@ public class ClawTranslator implements Translator {
    * @param xcodeml Current translation unit.
    * @param t       Transformation to be added.
    */
-  public void addTransformation(XcodeProgram xcodeml, Transformation t) {
+  public void addTransformation(XcodeProgram xcodeml, Transformation t)
+      throws IllegalTransformationException
+  {
     if(t.getDirective() != null
         && t.getDirective() instanceof ClawLanguage
         && !((ClawLanguage) t.getDirective()).isApplicableToCurrentTarget())
@@ -243,6 +249,11 @@ public class ClawTranslator implements Translator {
       if(_tGroups.containsKey(t.getClass())) {
         _tGroups.get(t.getClass()).add(t);
       }
+    } else if(t.abortOnFailedAnalysis()) {
+      throw new IllegalTransformationException(
+          "Analysis for transformation failed. " +
+              "See errors for more information.",
+          t.getDirective().getPragma().lineNo());
     }
   }
 
