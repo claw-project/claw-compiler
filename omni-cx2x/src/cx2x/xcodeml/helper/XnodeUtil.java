@@ -1264,7 +1264,8 @@ public class XnodeUtil {
    * The split is done on spaces or commas.
    *
    * @param fullPragma   The original full pragma value.
-   * @param maxColumns   Maximum number of columns.
+   * @param maxColumns   Maximum number of columns. This length take into
+   *                     account the added prefix and continuation symbol.
    * @param pragmaPrefix Prefix used by the pragma.
    * @return A list of chunks from the original pragma.
    */
