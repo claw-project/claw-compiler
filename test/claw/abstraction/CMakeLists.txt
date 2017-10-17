@@ -29,3 +29,4 @@ add_subdirectory(abstraction26) # parallelize forward with scalar to 1d propagat
 add_subdirectory(abstraction27) # pure keyword
 add_subdirectory(abstraction29) # claw nodep on k loop
 add_subdirectory(abstraction30) # unsupported statement
+add_subdirectory(abstraction31) # parallelize forward with type%member slicing

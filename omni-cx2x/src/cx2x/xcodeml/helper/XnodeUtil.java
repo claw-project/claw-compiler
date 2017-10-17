@@ -6,6 +6,7 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.NestedDoStatement;
 import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
@@ -540,6 +541,41 @@ public class XnodeUtil {
    */
   public static void extractBody(Xnode loop) {
     extractBody(loop, loop);
+  }
+
+  /**
+   * Extract the body of the inner do statement and place it directly after the
+   * outer do statement.
+   *
+   * @param nest Nest do statement group.
+   */
+  public static void extractBody(NestedDoStatement nest) {
+    extractBody(nest.getInnerStatement(), nest.getOuterStatement());
+  }
+
+
+  /**
+   * Check wether the index of an arrayIndex element is an induction variable
+   * given in the list.
+   *
+   * @param arrayIndex         arrayIndex to be checked.
+   * @param inductionVariables List of potential induction variables.
+   * @return True if the arrayIndex uses a var from induction variables list.
+   * False in any other cases.
+   */
+  public static boolean isInductionIndex(Xnode arrayIndex,
+                                         List<String> inductionVariables)
+  {
+    if(arrayIndex == null || arrayIndex.opcode() != Xcode.ARRAYINDEX
+        || inductionVariables == null || inductionVariables.isEmpty())
+    {
+      return false;
+    }
+
+    Xnode var = arrayIndex.matchDirectDescendant(Xcode.VAR);
+
+    return var != null
+        && inductionVariables.contains(var.value().toLowerCase());
   }
 
   /**
@@ -1258,6 +1294,19 @@ public class XnodeUtil {
         substring(0, pragma.value().indexOf(" "));
   }
 
+  /**
+   * Get the string representation of the induction variable of a do statement.
+   *
+   * @param doStatement Do statement to extract the induction variable.
+   * @return The string value of the induction variable. Empty string if the
+   * passed Xnode is not a FdoStatement element.
+   */
+  public static String extractInductionVariable(Xnode doStatement) {
+    if(doStatement.opcode() != Xcode.FDOSTATEMENT) {
+      return "";
+    }
+    return doStatement.matchDirectDescendant(Xcode.VAR).value().toLowerCase();
+  }
 
   /**
    * Split a long pragma into chunk depending on the maxColumns sepcified.

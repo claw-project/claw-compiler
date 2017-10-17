@@ -6,10 +6,8 @@
 package cx2x.translator.common;
 
 import cx2x.translator.language.common.ClawDimension;
-import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.Xname;
-import cx2x.xcodeml.xnode.Xnode;
-import cx2x.xcodeml.xnode.Xscope;
+import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.xcodeml.xnode.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +20,23 @@ import java.util.List;
 public class NestedDoStatement {
 
   private final List<Xnode> _statements;
+  private List<String> _inductionVariables = null;
+
+  /**
+   * Constructs a group of nested do statements from the outer statement.
+   *
+   * @param outerDoStatement Do statement on the outer level.
+   */
+  public NestedDoStatement(Xnode outerDoStatement) {
+    _statements = new ArrayList<>();
+    if(outerDoStatement.opcode() == Xcode.FDOSTATEMENT) {
+      _statements.add(outerDoStatement);
+      List<Xnode> childDoStatements =
+          outerDoStatement.matchAll(Xcode.FDOSTATEMENT);
+      _statements.addAll(childDoStatements);
+      // TODO do only truly nested group
+    }
+  }
 
   /**
    * Constructs a group of nested do statements from a list of dimension
@@ -56,6 +71,31 @@ public class NestedDoStatement {
    */
   public Xnode getOuterStatement() {
     return _statements.isEmpty() ? null : _statements.get(0);
+  }
+
+  /**
+   * Get statement at level i
+   *
+   * @param i Level index starts at 0 for outer do statement.
+   * @return The do statement at level i.
+   */
+  public Xnode get(int i) {
+    return _statements.get(i);
+  }
+
+  /**
+   * Get all the induction variable in the nested do statement group.
+   *
+   * @return List of induction variable as string.
+   */
+  public List<String> getInductionVariables() {
+    if(_inductionVariables == null) {
+      _inductionVariables = new ArrayList<>();
+      for(Xnode doStmt : _statements) {
+        _inductionVariables.add(XnodeUtil.extractInductionVariable(doStmt));
+      }
+    }
+    return _inductionVariables;
   }
 
   /**
