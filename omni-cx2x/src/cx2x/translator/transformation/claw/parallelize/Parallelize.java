@@ -442,23 +442,18 @@ public class Parallelize extends ClawTransformation {
       Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, null);
 
+      // Define a hook from where we can insert the new do statement
       Xnode hook = parallelRegionEnd.nextSibling();
-
-
       XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
-      //_fctDef.body().delete();
-      //Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-
+      // Hook is null then we append the do statement to the current fct body
       if(hook == null) {
         _fctDef.body().append(loops.getOuterStatement(), false);
       } else {
+        // Insert new do statement before the hook element
         hook.insertBefore(loops.getOuterStatement());
       }
-
-      //newBody.append(loops.getOuterStatement(), false);
-      //_fctDef.append(newBody, false);
     }
 
     // Generate the data region
