@@ -6,6 +6,7 @@
 package cx2x.xcodeml.helper;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -1255,5 +1256,51 @@ public class XnodeUtil {
 
     return pragma.value().toLowerCase().
         substring(0, pragma.value().indexOf(" "));
+  }
+
+
+  /**
+   * Split a long pragma into chunk depending on the maxColumns sepcified.
+   * The split is done on spaces or commas.
+   *
+   * @param fullPragma   The original full pragma value.
+   * @param maxColumns   Maximum number of columns. This length take into
+   *                     account the added prefix and continuation symbol.
+   * @param pragmaPrefix Prefix used by the pragma.
+   * @return A list of chunks from the original pragma.
+   */
+  public static List<String> splitByLength(String fullPragma, int maxColumns,
+                                           String pragmaPrefix)
+  {
+    List<String> splittedPragmas = new ArrayList<>();
+    fullPragma = fullPragma.toLowerCase();
+    if(fullPragma.length() > maxColumns) {
+      fullPragma = Utility.dropEndingComment(fullPragma);
+      int addLength = pragmaPrefix.length() + 5; // "!$<prefix> PRAGMA &"
+      while(fullPragma.length() > (maxColumns - addLength)) {
+        int splitIndex =
+            fullPragma.substring(0,
+                maxColumns - addLength).lastIndexOf(" ");
+        // Cannot cut as it should. Take first possible cutting point.
+        if(splitIndex == -1) {
+          splitIndex = fullPragma.substring(0,
+              maxColumns - addLength).lastIndexOf(",");
+          if(splitIndex == -1) {
+            splitIndex =
+                (fullPragma.contains(" ")) ? fullPragma.lastIndexOf(" ") :
+                    (fullPragma.contains(",")) ? fullPragma.lastIndexOf(",") :
+                        fullPragma.length();
+          }
+        }
+        String splittedPragma = fullPragma.substring(0, splitIndex);
+        fullPragma =
+            fullPragma.substring(splitIndex, fullPragma.length()).trim();
+        splittedPragmas.add(splittedPragma);
+      }
+    }
+    if(fullPragma.length() > 0) {
+      splittedPragmas.add(fullPragma);
+    }
+    return splittedPragmas;
   }
 }

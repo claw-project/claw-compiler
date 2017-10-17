@@ -10,11 +10,14 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -114,24 +117,16 @@ public class OpenAccContinuation extends ClawTransformation {
     if(allPragma.length() > translator.getMaxColumns()) {
       allPragma = Utility.dropEndingComment(allPragma);
       Xnode newlyInserted = getDirective().getPragma();
-      int lineIndex = 0;
-      int addLength = ClawConstant.OPENACC_PREFIX_LENGTH + 2; // Prefix + " &"
-      while(allPragma.length() > (translator.getMaxColumns() - addLength)) {
-        int splitIndex =
-            allPragma.substring(0,
-                translator.getMaxColumns() - addLength).lastIndexOf(" ");
-        // Cannot cut as it should. Take first possible cutting point.
-        if(splitIndex == -1) {
-          splitIndex = (allPragma.contains(" "))
-              ? allPragma.indexOf(" ") : allPragma.length();
-        }
-        String splittedPragma = allPragma.substring(0, splitIndex);
-        allPragma = allPragma.substring(splitIndex, allPragma.length()).trim();
+      int lineIndex = getDirective().getPragma().lineNo();
+      List<String> splittedPragmas = XnodeUtil.splitByLength(allPragma,
+          translator.getMaxColumns(), ClawConstant.OPENACC_PREFIX);
+
+      for(int i = 0; i < splittedPragmas.size(); ++i) {
+        // Create pragma with continuation symbol unless for the last item.
         newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
-            splittedPragma, true);
+            splittedPragmas.get(i), i != splittedPragmas.size() - 1);
       }
-      createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
-          allPragma, false);
+      // Delete original unsplitted pragma.
       getDirective().getPragma().delete();
     }
   }

@@ -52,7 +52,7 @@ public class XnodeUtilTest {
   }
 
   @Test
-  public void getPragmaPrefixTest(){
+  public void getPragmaPrefixTest() {
     XcodeProgram xp = XmlHelper.getDummyXcodeProgram();
 
     Xnode p1 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
@@ -79,5 +79,37 @@ public class XnodeUtilTest {
     Xnode p6 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
     p6.setValue(ClawConstant.OPENACC_PREFIX + " loop private(a)");
     assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p6));
+  }
+
+  @Test
+  public void splitByLengthTest() {
+    String p1 = "acc data present(var1,var2,var3,var4,var5,var6,var7,var8," +
+        "var10,var11,var12,var13,var14,var15,var16)";
+    int maxCol = 40;
+
+    // Just commas
+    List<String> splitted =
+        XnodeUtil.splitByLength(p1, maxCol, ClawConstant.OPENACC_PREFIX);
+    checkSplitted(splitted, 5, maxCol);
+
+    // Just spaces
+    p1 = "acc data present(var1, var2, var3, var4, var5, var6, var7, " +
+        "var8, var10, var11, var12, var13, var14, var15, var16)";
+    splitted = XnodeUtil.splitByLength(p1, maxCol, ClawConstant.OPENACC_PREFIX);
+    checkSplitted(splitted, 4, maxCol);
+
+    // Mixed spaces and commas
+    p1 = "acc data present(var1, var2,var3,var4, var5, var6, var7, " +
+        "var8,var10,var11, var12,var13,var14, var15,var16, var17, var18)";
+    splitted = XnodeUtil.splitByLength(p1, maxCol, ClawConstant.OPENACC_PREFIX);
+    checkSplitted(splitted, 5, maxCol);
+  }
+
+  // Checks for the splitByLengthTest
+  private void checkSplitted(List<String> splitted, int nb, int maxColumns) {
+    assertEquals(nb, splitted.size());
+    for(String chunk : splitted) {
+      assertTrue(chunk.length() <= maxColumns);
+    }
   }
 }
