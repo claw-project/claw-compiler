@@ -11,11 +11,11 @@ CONTAINS
   REAL :: c
   INTEGER :: proma
 
-  c = 5.345
 !$acc data present(t,q)
 !$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
+   c = 5.345
 !$acc loop seq
    DO k = 2 , nz , 1
     t ( proma , k ) = c * k
