@@ -1188,6 +1188,77 @@ public class ClawLanguageTest {
     analyzeInvalidClawLanguage("claw parallelite data() over ()");
   }
 
+  @Test
+  public void parallelizeDataMgtTest() {
+
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create",
+        null, null, true);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+        "update", ClawDMD.BOTH, null, true);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+        "update(in)", ClawDMD.IN, null, true);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+        "update(out)", ClawDMD.OUT, null, true);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+        "copy", null, ClawDMD.BOTH, true);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+        "copy(in)", null, ClawDMD.IN, true);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+        "copy(out)", null, ClawDMD.OUT, true);
+
+    analyzeValidParallelizeDataMgtString("claw parallelize forward update",
+        ClawDMD.BOTH, null, false);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward update(in)",
+        ClawDMD.IN, null, false);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward update(out)",
+        ClawDMD.OUT, null, false);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward copy", null,
+        ClawDMD.BOTH, false);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward copy(in)",
+        null, ClawDMD.IN, false);
+    analyzeValidParallelizeDataMgtString("claw parallelize forward copy(out)",
+        null, ClawDMD.OUT, false);
+
+  }
+
+  /**
+   * Assert the result for valid CLAW parallelize directive
+   */
+  private void analyzeValidParallelizeDataMgtString(String raw, ClawDMD update,
+                                                    ClawDMD copy,
+                                                    boolean createClause)
+  {
+    try {
+      Xnode p = XmlHelper.createXpragma();
+      p.setValue(raw);
+      Configuration configuration =
+          new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.createAcceleratorGenerator(configuration);
+      ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
+      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+
+
+      assertEquals(createClause, l.hasCreateClause());
+      if(update != null) {
+        assertTrue(l.hasUpdateClause());
+        assertEquals(update, l.getUpdateClauseValue());
+      } else {
+        assertFalse(l.hasUpdateClause());
+      }
+      if(copy != null) {
+        assertTrue(l.hasCopyClause());
+        assertEquals(copy, l.getCopyClauseValue());
+      } else {
+        assertFalse(l.hasCopyClause());
+      }
+
+    } catch(IllegalDirectiveException idex) {
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
   /**
    * Assert the result for valid CLAW parallelize directive
    *
