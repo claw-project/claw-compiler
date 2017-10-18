@@ -10,7 +10,7 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.translator.transformation.loop.LoopFusion;

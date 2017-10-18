@@ -13,7 +13,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;

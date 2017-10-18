@@ -3,10 +3,11 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.helper.accelerator;
+package cx2x.translator.language.accelerator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 import xcodeml.util.XmOption;
 
@@ -32,6 +33,9 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PCREATE = "pcreate";
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
+  private static final String OPENACC_UPDATE = "update";
+  private static final String OPENACC_DEVICE = "device";
+  private static final String OPENACC_HOST = "host";
 
   /**
    * Constructs a new object with the given target.
@@ -150,10 +154,11 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  public String[] getStartDataRegion(String clauses) {
+  public String[] getStartDataRegion(List<String> clauses) {
     //!$acc data
     return new String[]{
-        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA, clauses).trim()
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA,
+            Utility.join(" ",clauses)).trim()
     };
   }
 
@@ -235,5 +240,18 @@ class OpenAcc extends AcceleratorGenerator {
     return Arrays.asList(
         Xcode.FDEALLOCATESTATEMENT, Xcode.FPRAGMASTATEMENT
     );
+  }
+
+  @Override
+  public String[] getUpdateClause(ClawDMD direction, List<String> vars) {
+    //!$acc update host/device(<vars>)
+    if(vars == null || vars.isEmpty()) {
+      return null;
+    }
+    String updates = String.format(FORMATPAR, direction == ClawDMD.DEVICE ?
+        OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
+    return new String[]{
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_UPDATE, updates)
+    };
   }
 }

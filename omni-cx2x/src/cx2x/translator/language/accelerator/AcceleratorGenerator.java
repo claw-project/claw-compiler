@@ -3,9 +3,10 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.helper.accelerator;
+package cx2x.translator.language.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 
 import java.util.ArrayList;
@@ -177,7 +178,7 @@ public abstract class AcceleratorGenerator {
    *
    * @return String value that represents the pragma.
    */
-  public abstract String[] getStartDataRegion(String clauses);
+  public abstract String[] getStartDataRegion(List<String> clauses);
 
   /**
    * Get the end pragma to define the end of an accelerator data region.
@@ -221,4 +222,16 @@ public abstract class AcceleratorGenerator {
     return new ArrayList<>();
   }
 
+  /**
+   * Get directive for updating accelerator or host memory with the given
+   * variables.
+   *
+   * @param direction Direction of the update.
+   * @param vars      List of variables.
+   * @return String value that represents the directive. Null if no directive
+   * generated.
+   */
+  public String[] getUpdateClause(ClawDMD direction, List<String> vars) {
+    return null;
+  }
 }

@@ -5,7 +5,7 @@
 
 package cx2x.translator.common;
 
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 import xcodeml.util.XmOption;
 

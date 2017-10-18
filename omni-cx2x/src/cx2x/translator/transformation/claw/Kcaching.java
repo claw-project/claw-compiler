@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.claw;
 
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.ClawTranslator;
 import cx2x.xcodeml.exception.IllegalTransformationException;

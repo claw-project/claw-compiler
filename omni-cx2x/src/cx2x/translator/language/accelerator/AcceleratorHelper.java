@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.helper.accelerator;
+package cx2x.translator.language.accelerator;
 
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawDMD;
@@ -15,6 +15,7 @@ import cx2x.xcodeml.xnode.*;
 import xcodeml.util.XmOption;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -70,18 +71,40 @@ public class AcceleratorHelper {
   }
 
   /**
-   * TODO
+   * Generate update directives for device and host data transfer.
    *
-   * @param claw
-   * @param xcodeml
-   * @param hook
-   * @return
+   * @param claw    ClawLanguage object that tells if the parallel clause is
+   *                enable and where the start pragma is located.
+   * @param xcodeml Object representation of the current XcodeML
+   *                representation in which the pragmas will be generated.
+   * @param hook    Node used as a hook for insertion. Update device are
+   *                generated before the hook and update host after the hook.
+   * @return Last inserted pragma.
    */
   public static Xnode generateUpdate(ClawLanguage claw, XcodeProgram xcodeml,
-                                     Xnode hook)
+                                     Xnode hook, List<String> vars)
   {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE
+        || !claw.hasUpdateClause())
+    {
+      return null;
+    }
+
     ClawDMD direction = claw.getUpdateClauseValue();
-    return null;
+    Xnode p = null;
+    if(direction == ClawDMD.DEVICE || direction == ClawDMD.BOTH) {
+      p = addPragmasBefore(xcodeml,
+          gen.getUpdateClause(direction == ClawDMD.BOTH ?
+              ClawDMD.DEVICE : direction, vars), hook);
+    }
+    if(direction == ClawDMD.HOST || direction == ClawDMD.BOTH) {
+
+      p = addPragmaAfter(xcodeml,
+          gen.getUpdateClause(direction == ClawDMD.BOTH ?
+              ClawDMD.HOST : direction, vars), hook);
+    }
+    return p;
   }
 
   /**
@@ -211,7 +234,8 @@ public class AcceleratorHelper {
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
-        gen.getStartDataRegion(gen.getPresentClause(presents)),
+        gen.getStartDataRegion(Arrays.asList(gen.getPresentClause(presents),
+            gen.getCreateClause(creates))),
         gen.getEndDataRegion());
   }
 

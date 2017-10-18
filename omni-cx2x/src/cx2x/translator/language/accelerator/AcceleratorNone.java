@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.helper.accelerator;
+package cx2x.translator.language.accelerator;
 
 import cx2x.translator.config.Configuration;
 
@@ -88,7 +88,7 @@ class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
-  public String[] getStartDataRegion(String clauses) {
+  public String[] getStartDataRegion(List<String> clauses) {
     return null;
   }
 
