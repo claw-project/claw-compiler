@@ -15,7 +15,7 @@ import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.base.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.Xnode;

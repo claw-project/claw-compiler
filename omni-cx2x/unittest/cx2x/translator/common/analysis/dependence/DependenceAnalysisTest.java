@@ -12,7 +12,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.base.Target;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;

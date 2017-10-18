@@ -9,7 +9,7 @@ import cx2x.ClawVersion;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.base.Target;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.transformation.BlockTransformation;
 import org.w3c.dom.Document;
