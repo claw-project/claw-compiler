@@ -13,10 +13,8 @@ PROGRAM test_abstraction4
  DO p = 1 , nproma , 1
   q ( p , 1 ) = 0.0
  END DO
-!$ACC data copyin(q,t) copyout(q,t)
  CALL compute ( nz , q ( : , 1 : 60 ) , t ( : , 1 : 60 ) , z ( : ) , nproma =&
   nproma )
-!$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction4
