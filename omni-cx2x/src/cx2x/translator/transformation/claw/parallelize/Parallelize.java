@@ -7,6 +7,7 @@ package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Utility;
+import cx2x.translator.config.OpenAccLocalStrategy;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
@@ -347,7 +348,6 @@ public class Parallelize extends ClawTransformation {
                         Transformation other)
       throws Exception
   {
-
     // Handle PURE function / subroutine
     ClawTranslator trans = (ClawTranslator) translator;
     boolean pureRemoved = XnodeUtil.removePure(_fctDef, _fctType);
@@ -388,7 +388,7 @@ public class Parallelize extends ClawTransformation {
 
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU) {
-      transformForGPU(xcodeml);
+      transformForGPU(xcodeml, trans);
     } else if(_claw.getTarget() == Target.CPU) {
       transformForCPU(xcodeml);
     }
@@ -405,9 +405,10 @@ public class Parallelize extends ClawTransformation {
   /**
    * Apply GPU based transformation.
    *
-   * @param xcodeml Current XcodeML program unit.
+   * @param xcodeml    Current XcodeML program unit.
+   * @param translator Current translator.
    */
-  private void transformForGPU(XcodeProgram xcodeml)
+  private void transformForGPU(XcodeProgram xcodeml, ClawTranslator translator)
   {
 
     AcceleratorHelper.generateLoopSeq(_claw, xcodeml, _fctDef);
@@ -459,11 +460,18 @@ public class Parallelize extends ClawTransformation {
     // Generate the data region
     List<String> presents =
         AcceleratorHelper.getPresentVariables(xcodeml, _fctDef);
+
+    List<String> privates = Collections.emptyList();
+    if(translator.getConfiguration().openACC().getLocalStrategy()
+        == OpenAccLocalStrategy.PRIVATE)
+    {
+      // TODO handle PROMOTE strategy
+      privates = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
+    }
     AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents, null,
         loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region
-    List<String> privates = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());
