@@ -13,8 +13,8 @@ import java.util.List;
 
 /**
  * Class holding information about nested do statements.
- * <p>
- * Created by clementval on 20/05/16.
+ *
+ * @author clementval
  */
 public class NestedDoStatement {
 
