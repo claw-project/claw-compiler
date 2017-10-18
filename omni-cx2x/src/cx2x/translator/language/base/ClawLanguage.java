@@ -10,7 +10,7 @@ import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;

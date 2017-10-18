@@ -7,7 +7,7 @@ package cx2x.translator.config;
 
 import cx2x.ClawVersion;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.accelerator.AcceleratorGenerator;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.helper.target.Target;
 import cx2x.translator.transformation.ClawBlockTransformation;

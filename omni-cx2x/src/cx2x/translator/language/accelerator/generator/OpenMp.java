@@ -3,10 +3,11 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator;
+package cx2x.translator.language.accelerator.generator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.helper.target.Target;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  *
  * @author clementval
  */
-class OpenMp extends AcceleratorGenerator {
+public class OpenMp extends AcceleratorGenerator {
 
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "declare";
@@ -32,17 +33,17 @@ class OpenMp extends AcceleratorGenerator {
    *
    * @param config Configuration information object.
    */
-  OpenMp(Configuration config) {
+  public OpenMp(Configuration config) {
     super(config);
   }
 
   @Override
-  protected String getPrefix() {
+  public String getPrefix() {
     return OPENMP_PREFIX;
   }
 
   @Override
-  protected String[] getStartParallelDirective(String clauses) {
+  public String[] getStartParallelDirective(String clauses) {
     // TODO handle possible clauses
     if(getConfiguration().getCurrentTarget() == Target.GPU) {
       //!$omp target
@@ -85,17 +86,17 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getParallelKeyword() {
+  public String getParallelKeyword() {
     return OPENMP_PARALLEL;
   }
 
   @Override
-  protected String getPrivateClause(String var) {
+  public String getPrivateClause(String var) {
     return String.format(FORMATPAR, OPENMP_PRIVATE, var);
   }
 
   @Override
-  protected String getPrivateClause(List<String> vars) {
+  public String getPrivateClause(List<String> vars) {
     if(vars == null || vars.size() == 0) {
       return "";
     }
@@ -103,7 +104,7 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getRoutineDirective(boolean seq) {
+  public String[] getRoutineDirective(boolean seq) {
     // TODO check
     return new String[]{
         String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET)
@@ -137,7 +138,7 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getStartLoopDirective(int value, boolean seq,
+  public String[] getStartLoopDirective(int value, boolean seq,
                                            boolean naked, String clauses)
   {
     // TODO CPU/GPU difference
@@ -150,7 +151,7 @@ class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getEndLoopDirective() {
+  public String[] getEndLoopDirective() {
     // TODO CPU/GPU difference
     //!$omp end do
     return new String[]{

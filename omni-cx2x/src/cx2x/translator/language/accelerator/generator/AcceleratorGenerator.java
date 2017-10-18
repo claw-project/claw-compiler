@@ -3,9 +3,10 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator;
+package cx2x.translator.language.accelerator.generator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 
@@ -35,7 +36,7 @@ public abstract class AcceleratorGenerator {
    *
    * @param config Configuration information object.
    */
-  AcceleratorGenerator(Configuration config) {
+  public AcceleratorGenerator(Configuration config) {
     _configuration = config;
   }
 
@@ -53,21 +54,21 @@ public abstract class AcceleratorGenerator {
    *
    * @return Language prefix.
    */
-  protected abstract String getPrefix();
+  public abstract String getPrefix();
 
   /**
    * Get the start pragma to define a parallel accelerated region.
    *
    * @return String value that represents the pragma.
    */
-  protected abstract String[] getStartParallelDirective(String clauses);
+  public abstract String[] getStartParallelDirective(String clauses);
 
   /**
    * Get the end pragma to define a parallel accelerated region.
    *
    * @return String value that represents the pragma.
    */
-  protected abstract String[] getEndParallelDirective();
+  public abstract String[] getEndParallelDirective();
 
   /**
    * Get the formatted directive to start the parallelization of a loop.
@@ -79,7 +80,7 @@ public abstract class AcceleratorGenerator {
    *              clauses.
    * @return String value that represents the start of a parallelized loop.
    */
-  protected abstract String[] getStartLoopDirective(int value, boolean seq,
+  public abstract String[] getStartLoopDirective(int value, boolean seq,
                                                     boolean naked,
                                                     String clauses);
 
@@ -88,7 +89,7 @@ public abstract class AcceleratorGenerator {
    *
    * @return String value that represents the start of a parallelized loop.
    */
-  protected abstract String[] getEndLoopDirective();
+  public abstract String[] getEndLoopDirective();
 
   /**
    * Get formatted pragma defined by the accelerator directive prefix and the
@@ -97,14 +98,14 @@ public abstract class AcceleratorGenerator {
    * @param clause Clauses to append to the accelerator directive prefix
    * @return String value that represents the pragma.
    */
-  protected abstract String[] getSingleDirective(String clause);
+  public abstract String[] getSingleDirective(String clause);
 
   /**
    * Get the parallel keyword for a given accelerator language.
    *
    * @return The corresponding parallel keyword.
    */
-  protected abstract String getParallelKeyword();
+  public abstract String getParallelKeyword();
 
   /**
    * Return construction of the clause for a private variable.
@@ -112,7 +113,7 @@ public abstract class AcceleratorGenerator {
    * @param var Variable name that will be inserted in the generated clause.
    * @return An accelerator language specific private clause with the var.
    */
-  protected abstract String getPrivateClause(String var);
+  public abstract String getPrivateClause(String var);
 
   /**
    * Return construction of the clause for a list of private variables.
@@ -122,7 +123,7 @@ public abstract class AcceleratorGenerator {
    * @return An accelerator language specific private clause with the list of
    * variables.
    */
-  protected abstract String getPrivateClause(List<String> vars);
+  public abstract String getPrivateClause(List<String> vars);
 
   /**
    * Return construction of the clause for a list of present variables.
@@ -133,7 +134,7 @@ public abstract class AcceleratorGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  protected String getPresentClause(List<String> vars) { return ""; }
+  public String getPresentClause(List<String> vars) { return ""; }
 
   /**
    * Return construction of the clause for a list of created variables.
@@ -144,7 +145,7 @@ public abstract class AcceleratorGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  protected String getCreateClause(List<String> vars) { return ""; }
+  public String getCreateClause(List<String> vars) { return ""; }
 
 
   /**
@@ -154,7 +155,7 @@ public abstract class AcceleratorGenerator {
    * @param seq Apply sequential mode to the routine directive
    * @return Routine directive.
    */
-  protected abstract String[] getRoutineDirective(boolean seq);
+  public abstract String[] getRoutineDirective(boolean seq);
 
 
   /**

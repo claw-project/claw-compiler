@@ -6,6 +6,10 @@
 package cx2x.translator.language.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.translator.language.accelerator.generator.AcceleratorNone;
+import cx2x.translator.language.accelerator.generator.OpenAcc;
+import cx2x.translator.language.accelerator.generator.OpenMp;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;

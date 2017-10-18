@@ -3,10 +3,11 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator;
+package cx2x.translator.language.accelerator.generator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 import xcodeml.util.XmOption;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author clementval
  */
-class OpenAcc extends AcceleratorGenerator {
+public class OpenAcc extends AcceleratorGenerator {
 
   public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
   private static final String OPENACC_COLLAPSE = "collapse";
@@ -42,17 +43,17 @@ class OpenAcc extends AcceleratorGenerator {
    *
    * @param config Configuration information object.
    */
-  OpenAcc(Configuration config) {
+  public OpenAcc(Configuration config) {
     super(config);
   }
 
   @Override
-  protected String getPrefix() {
+  public String getPrefix() {
     return OPENACC_PREFIX;
   }
 
   @Override
-  protected String[] getStartParallelDirective(String clauses) {
+  public String[] getStartParallelDirective(String clauses) {
     //!$acc parallel [vector_length()] [num_gang()] [num_worker()]
     if(clauses == null || clauses.isEmpty()) {
       return new String[]{
@@ -66,7 +67,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getEndParallelDirective() {
+  public String[] getEndParallelDirective() {
     //!$acc end parallel
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL)
@@ -74,7 +75,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getSingleDirective(String clause) {
+  public String[] getSingleDirective(String clause) {
     //!$acc <clause>
     return new String[]{
         String.format(FORMAT2, OPENACC_PREFIX, clause)
@@ -82,17 +83,17 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getParallelKeyword() {
+  public String getParallelKeyword() {
     return OPENACC_PARALLEL;
   }
 
   @Override
-  protected String getPrivateClause(String var) {
+  public String getPrivateClause(String var) {
     return String.format(FORMATPAR, OPENACC_PRIVATE, var);
   }
 
   @Override
-  protected String getPrivateClause(List<String> vars) {
+  public String getPrivateClause(List<String> vars) {
     if(vars == null || vars.size() == 0) {
       return "";
     }
@@ -104,7 +105,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getPresentClause(List<String> vars) {
+  public String getPresentClause(List<String> vars) {
     if(vars == null || vars.size() == 0) {
       return "";
     }
@@ -116,7 +117,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getCreateClause(List<String> vars) {
+  public String getCreateClause(List<String> vars) {
     if(vars == null || vars.size() == 0) {
       return "";
     }
@@ -128,7 +129,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getRoutineDirective(boolean seq) {
+  public String[] getRoutineDirective(boolean seq) {
     //!$acc routine
     if(seq) {
       return new String[]{
@@ -176,7 +177,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getStartLoopDirective(int value, boolean seq,
+  public String[] getStartLoopDirective(int value, boolean seq,
                                            boolean naked, String clauses)
   {
     if(value > 1) {
@@ -217,7 +218,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getEndLoopDirective() {
+  public String[] getEndLoopDirective() {
     return null;
   }
 
