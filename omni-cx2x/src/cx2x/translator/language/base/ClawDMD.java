@@ -13,6 +13,6 @@ package cx2x.translator.language.base;
  */
 public enum ClawDMD {
   BOTH,
-  IN,
-  OUT
+  DEVICE,
+  HOST
 }

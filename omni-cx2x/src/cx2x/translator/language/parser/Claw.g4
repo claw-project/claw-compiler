@@ -412,18 +412,18 @@ copy_clause[ClawLanguage l]:
     COPY
     { $l.setCopyClauseValue(ClawDMD.BOTH); }
   | COPY '(' IN ')'
-    { $l.setCopyClauseValue(ClawDMD.IN); }
+    { $l.setCopyClauseValue(ClawDMD.DEVICE); }
   | COPY '(' OUT ')'
-    { $l.setCopyClauseValue(ClawDMD.OUT); }
+    { $l.setCopyClauseValue(ClawDMD.HOST); }
 ;
 
 update_clause[ClawLanguage l]:
     UPDATE
     { $l.setUpdateClauseValue(ClawDMD.BOTH); }
   | UPDATE '(' IN ')'
-    { $l.setUpdateClauseValue(ClawDMD.IN); }
+    { $l.setUpdateClauseValue(ClawDMD.DEVICE); }
   | UPDATE '(' OUT ')'
-    { $l.setUpdateClauseValue(ClawDMD.OUT); }
+    { $l.setUpdateClauseValue(ClawDMD.HOST); }
 ;
 
 create_clause[ClawLanguage l]:

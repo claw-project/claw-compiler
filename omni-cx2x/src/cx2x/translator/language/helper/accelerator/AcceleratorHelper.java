@@ -6,6 +6,7 @@
 package cx2x.translator.language.helper.accelerator;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
@@ -66,6 +67,21 @@ public class AcceleratorHelper {
         }
       }
     }
+  }
+
+  /**
+   * TODO
+   *
+   * @param claw
+   * @param xcodeml
+   * @param hook
+   * @return
+   */
+  public static Xnode generateUpdate(ClawLanguage claw, XcodeProgram xcodeml,
+                                     Xnode hook)
+  {
+    ClawDMD direction = claw.getUpdateClauseValue();
+    return null;
   }
 
   /**

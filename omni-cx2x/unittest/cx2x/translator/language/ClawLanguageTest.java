@@ -1126,49 +1126,49 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
         "copy", dataLst1, over2, null, ClawDMD.BOTH, null, null);
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "copy(in)", dataLst1, over2, null, ClawDMD.IN, null, null);
+        "copy(in)", dataLst1, over2, null, ClawDMD.DEVICE, null, null);
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "copy(out)", dataLst1, over2, null, ClawDMD.OUT, null, null);
+        "copy(out)", dataLst1, over2, null, ClawDMD.HOST, null, null);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize copy",
         null, null, Collections.singletonList(d7), ClawDMD.BOTH, null, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize copy(in)", null, null, Collections.singletonList(d7),
-        ClawDMD.IN, null, null);
+        ClawDMD.DEVICE, null, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize copy(out)", null, null, Collections.singletonList(d7),
-        ClawDMD.OUT, null, null);
+        ClawDMD.HOST, null, null);
 
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
         "update", dataLst1, over2, null, null, ClawDMD.BOTH, null);
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "update(in)", dataLst1, over2, null, null, ClawDMD.IN, null);
+        "update(in)", dataLst1, over2, null, null, ClawDMD.DEVICE, null);
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "update(out)", dataLst1, over2, null, null, ClawDMD.OUT, null);
+        "update(out)", dataLst1, over2, null, null, ClawDMD.HOST, null);
 
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize update",
         null, null, Collections.singletonList(d7), null, ClawDMD.BOTH, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize update(in)", null, null, Collections.singletonList(d7),
-        null, ClawDMD.IN, null);
+        null, ClawDMD.DEVICE, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize update(out)", null, null, Collections.singletonList(d7),
-        null, ClawDMD.OUT, null);
+        null, ClawDMD.HOST, null);
 
     analyzeValidParallelize("claw parallelize forward copy",
         null, null, null, ClawDMD.BOTH, null, null);
     analyzeValidParallelize("claw parallelize forward copy(in)",
-        null, null, null, ClawDMD.IN, null, null);
+        null, null, null, ClawDMD.DEVICE, null, null);
     analyzeValidParallelize("claw parallelize forward copy(out)",
-        null, null, null, ClawDMD.OUT, null, null);
+        null, null, null, ClawDMD.HOST, null, null);
 
     analyzeValidParallelize("claw parallelize forward update",
         null, null, null, null, ClawDMD.BOTH, null);
     analyzeValidParallelize("claw parallelize forward update(in)",
-        null, null, null, null, ClawDMD.IN, null);
+        null, null, null, null, ClawDMD.DEVICE, null);
     analyzeValidParallelize("claw parallelize forward update(out)",
-        null, null, null, null, ClawDMD.OUT, null);
+        null, null, null, null, ClawDMD.HOST, null);
 
     List<String> data2 = Collections.singletonList("t");
     List<String> data3 = Collections.singletonList("q");
@@ -1196,28 +1196,28 @@ public class ClawLanguageTest {
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
         "update", ClawDMD.BOTH, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "update(in)", ClawDMD.IN, null, true);
+        "update(in)", ClawDMD.DEVICE, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "update(out)", ClawDMD.OUT, null, true);
+        "update(out)", ClawDMD.HOST, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
         "copy", null, ClawDMD.BOTH, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "copy(in)", null, ClawDMD.IN, true);
+        "copy(in)", null, ClawDMD.DEVICE, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "copy(out)", null, ClawDMD.OUT, true);
+        "copy(out)", null, ClawDMD.HOST, true);
 
     analyzeValidParallelizeDataMgtString("claw parallelize forward update",
         ClawDMD.BOTH, null, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward update(in)",
-        ClawDMD.IN, null, false);
+        ClawDMD.DEVICE, null, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward update(out)",
-        ClawDMD.OUT, null, false);
+        ClawDMD.HOST, null, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward copy", null,
         ClawDMD.BOTH, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward copy(in)",
-        null, ClawDMD.IN, false);
+        null, ClawDMD.DEVICE, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward copy(out)",
-        null, ClawDMD.OUT, false);
+        null, ClawDMD.HOST, false);
 
   }
 
