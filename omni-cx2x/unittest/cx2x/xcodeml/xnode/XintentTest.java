@@ -62,30 +62,35 @@ public class XintentTest {
     assertTrue(intent3.isIntent());
     assertFalse(intent4.isIntent());
 
+    assertTrue(intent1.isCompatible(intent1));
     assertFalse(intent1.isCompatible(intent2));
     assertTrue(intent1.isCompatible(intent3));
     assertFalse(intent1.isCompatible(intent4));
     assertTrue(intent1.isCompatible(any));
 
     assertFalse(intent2.isCompatible(intent1));
+    assertTrue(intent2.isCompatible(intent2));
     assertTrue(intent2.isCompatible(intent3));
     assertFalse(intent2.isCompatible(intent4));
     assertTrue(intent2.isCompatible(any));
 
     assertTrue(intent3.isCompatible(intent1));
     assertTrue(intent3.isCompatible(intent2));
+    assertTrue(intent3.isCompatible(intent3));
     assertFalse(intent3.isCompatible(intent4));
     assertTrue(intent3.isCompatible(any));
 
     assertFalse(intent4.isCompatible(intent1));
     assertFalse(intent4.isCompatible(intent2));
     assertFalse(intent4.isCompatible(intent3));
+    assertTrue(intent4.isCompatible(intent4));
     assertTrue(intent4.isCompatible(any));
 
     assertTrue(any.isCompatible(intent1));
     assertTrue(any.isCompatible(intent2));
     assertTrue(any.isCompatible(intent3));
     assertTrue(any.isCompatible(intent4));
+    assertTrue(any.isCompatible(any));
 
     assertFalse(intent1.isCompatible(null));
     assertFalse(intent2.isCompatible(null));
