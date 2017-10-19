@@ -677,4 +677,71 @@ public class Xnode {
         return "";
     }
   }
+
+  /**
+   * Construct string representation of the node. Only for variable or constant.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  public String constructRepresentation(boolean withNamedValue)
+  {
+    switch(opcode()) {
+      case FINTCONSTANT:
+      case FPRAGMASTATEMENT:
+      case VAR:
+        return value();
+      case ARRAYINDEX:
+      case LOWERBOUND:
+      case UPPERBOUND:
+      case VARREF: {
+        Xnode n = firstChild();
+        return (n != null) ? n.constructRepresentation(withNamedValue) : "";
+      }
+      case INDEXRANGE:
+        if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
+          return ":";
+        }
+        Xnode child0 = child(0);
+        Xnode child1 = child(1);
+        return ((child0 != null) ?
+            child0.constructRepresentation(withNamedValue) : "") + ":" +
+            ((child1 != null) ?
+                child1.constructRepresentation(withNamedValue) : "");
+      case FARRAYREF:
+        List<Xnode> childs = children();
+        if(childs.size() == 1) {
+          return childs.get(0).constructRepresentation(withNamedValue);
+        } else {
+          StringBuilder str = new StringBuilder();
+          str.append(childs.get(0).constructRepresentation(withNamedValue));
+          str.append("(");
+          for(int i = 1; i < childs.size(); ++i) {
+            str.append(childs.get(i).constructRepresentation(withNamedValue));
+            if(i != childs.size() - 1) {
+              str.append(",");
+            }
+          }
+          str.append(")");
+          return str.toString();
+        }
+      case FMEMBERREF: {
+        Xnode n = firstChild();
+        return ((n != null) ?
+            n.constructRepresentation(withNamedValue) + "%" +
+                getAttribute(Xattr.MEMBER) : "");
+      }
+      case NAMEDVALUE: {
+        Xnode n = firstChild();
+        if(withNamedValue) {
+          return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
+              n.constructRepresentation(true) : "");
+        }
+        return (n != null) ? n.constructRepresentation(false) : "";
+      }
+      default:
+        return "";
+    }
+  }
 }
