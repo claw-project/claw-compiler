@@ -623,8 +623,14 @@ public class Xnode {
    */
   public String getType() {
     switch(opcode()) {
-      case FALLOCATESTATEMENT:
       case FARRAYREF:
+        String type = getAttribute(Xattr.TYPE);
+        if(XnodeUtil.isBuiltInType(type)){
+          Xnode child = firstChild();
+          return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
+        }
+        return type;
+      case FALLOCATESTATEMENT:
       case FBASICTYPE:
       case FCHARACTERCONSTANT:
       case FCHARACTERREF:
@@ -667,6 +673,9 @@ public class Xnode {
       case LOGNOTEXPR:
       case USERUNARYEXPR:
         return getAttribute(Xattr.TYPE);
+      case NAMEDVALUE:
+        Xnode child = firstChild();
+        return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
       case FFUNCTIONDEFINITION:
       case FUNCTIONCALL:
       case VARDECL:
