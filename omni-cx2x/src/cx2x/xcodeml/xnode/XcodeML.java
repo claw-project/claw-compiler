@@ -311,8 +311,7 @@ public class XcodeML extends Xnode {
 
     // Check where is the last dummy arguments in the declaration
     if(afterDummyArgs) {
-      String fctTypeHash = fctDef.getType();
-      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctTypeHash);
+      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctDef);
       List<String> parameters = fctType.getParamsNames();
 
       for(Xnode n : fctDef.getDeclarationTable().values()) {
@@ -591,7 +590,7 @@ public class XcodeML extends Xnode {
     // Newly created parameter must be added before any optional parameter
     for(Xnode param : fctType.getParams().getAll()) {
       XbasicType paramType =
-          (XbasicType) getTypeTable().get(param.getType());
+          (XbasicType) getTypeTable().get(param);
       if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
         break;

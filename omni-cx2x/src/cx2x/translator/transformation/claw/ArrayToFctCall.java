@@ -92,7 +92,7 @@ public class ArrayToFctCall extends ClawTransformation {
   {
 
     XfunctionType fctType =
-        (XfunctionType) xcodeml.getTypeTable().get(_replaceFct.getType());
+        (XfunctionType) xcodeml.getTypeTable().get(_replaceFct);
 
     // Prepare the function call
     Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),

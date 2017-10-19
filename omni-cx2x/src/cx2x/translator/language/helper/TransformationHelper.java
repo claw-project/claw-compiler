@@ -206,9 +206,7 @@ public class TransformationHelper {
             "declaration table.", claw.getPragma().lineNo());
       }
 
-      String crtTypeHash = id.getType();
-
-      Xtype rawType = xcodeml.getTypeTable().get(crtTypeHash);
+      Xtype rawType = xcodeml.getTypeTable().get(id);
       if(!(rawType instanceof XbasicType)) {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",
@@ -341,7 +339,7 @@ public class TransformationHelper {
       }
       return;
     } else {
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(fctDef.getType());
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(fctDef);
     }
 
     if(fctTypeMod == null) {
@@ -360,7 +358,7 @@ public class TransformationHelper {
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id.getType());
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id);
       if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
@@ -398,8 +396,8 @@ public class TransformationHelper {
 
         if(!localType.equals(modType)) {
           // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(localType);
-          XbasicType crtType = (XbasicType) mod.getTypeTable().get(modType);
+          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(pLocal);
+          XbasicType crtType = (XbasicType) mod.getTypeTable().get(pMod);
 
           List<DimensionDefinition> dimensions =
               TransformationHelper.findDimensions(fctType);
@@ -511,7 +509,7 @@ public class TransformationHelper {
       if(XnodeUtil.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
-        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id.getType());
+        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id);
         if(old == null) {
           throw new IllegalTransformationException("Cannot matchSeq type for " +
               fieldId, claw.getPragma().lineNo());

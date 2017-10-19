@@ -258,11 +258,10 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = decl.getType();
-        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
             || bt.getIntent() == Xintent.INOUT) && bt.isArray())
@@ -289,14 +288,13 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = decl.getType();
-        if(!XnodeUtil.isBuiltInType(type)
-            && !(xcodeml.getTypeTable().get(type) instanceof XbasicType))
+        if(!XnodeUtil.isBuiltInType(decl.getType())
+            && !(xcodeml.getTypeTable().get(decl) instanceof XbasicType))
         {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
-        if((bt == null && XnodeUtil.isBuiltInType(type))
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        if((bt == null && XnodeUtil.isBuiltInType(decl.getType()))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
           variables.add(name.value());
@@ -321,11 +319,10 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = decl.getType();
-        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
         if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()
             && !bt.isAllocatable())
         {

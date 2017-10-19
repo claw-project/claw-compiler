@@ -212,7 +212,7 @@ public class LoopExtraction extends ClawTransformation {
 
     // Get the fctType in typeTable
     XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
-        get(_fctDefToExtract.getType());
+        get(_fctDefToExtract);
     XfunctionType newFctType = fctType.cloneNode();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
@@ -300,8 +300,7 @@ public class LoopExtraction extends ClawTransformation {
          * 3. Create arrayRef element with varRef + arrayIndex
          */
         if(argument.opcode() == Xcode.VAR) {
-          XbasicType type = (XbasicType) xcodeml.getTypeTable().
-              get(argument.getType());
+          XbasicType type = (XbasicType) xcodeml.getTypeTable().get(argument);
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()) {
@@ -347,7 +346,7 @@ public class LoopExtraction extends ClawTransformation {
         Xdecl varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
         XbasicType varDeclType = (XbasicType) xcodeml.getTypeTable().
-            get(varDecl.getType());
+            get(varDecl);
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {

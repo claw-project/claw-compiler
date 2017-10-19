@@ -258,8 +258,7 @@ public class Kcaching extends ClawTransformation {
           _claw.getPragma().lineNo()
       );
     }
-    XbasicType basicType =
-        (XbasicType) xcodeml.getTypeTable().get(id.getType());
+    XbasicType basicType = (XbasicType) xcodeml.getTypeTable().get(id);
     int dim = basicType.getDimensions();
     List<Integer> offsets = new ArrayList<>();
     for(int i = 0; i < dim; ++i) {
@@ -286,7 +285,7 @@ public class Kcaching extends ClawTransformation {
                                               Xnode rhs,
                                               Xnode stmt)
   {
-    XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type);
+    XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type); // TODO getType
     if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneNode();

@@ -92,6 +92,16 @@ public class XtypeTable extends Xnode {
   }
 
   /**
+   * Get type associated with node if any.
+   *
+   * @param node Node to retrieve the type.
+   * @return Xtype element if found. Null otherwise.
+   */
+  public Xtype get(Xnode node) {
+    return node == null ? null : get(node.getType());
+  }
+
+  /**
    * Get an element from the type table.
    *
    * @param type Type of the element to be returned.
