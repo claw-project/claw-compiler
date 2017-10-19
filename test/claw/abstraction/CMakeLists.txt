@@ -30,4 +30,4 @@ add_subdirectory(abstraction27) # pure keyword
 add_subdirectory(abstraction29) # claw nodep on k loop
 add_subdirectory(abstraction30) # unsupported statement
 add_subdirectory(abstraction31) # parallelize forward with type%member slicing
-add_subdirectory(abstraction32) # parallel region start/end after/before unsupported
+#add_subdirectory(abstraction32) # parallel region start/end after/before unsupported
