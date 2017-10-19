@@ -74,8 +74,7 @@ public class XnodeUtil {
    */
   public static List<Xnode> getAllVarReferences(Xnode parent, String varName) {
     List<Xnode> references = new ArrayList<>();
-    NodeList nList = parent.element().
-        getElementsByTagName(Xname.VAR);
+    NodeList nList = parent.element().getElementsByTagName(Xname.VAR);
     for(int i = 0; i < nList.getLength(); i++) {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
@@ -714,7 +713,7 @@ public class XnodeUtil {
     List<Xnode> unsupportedStatements = new ArrayList<>();
     Xnode crt = from;
     while(crt != null && crt.element() != to.element()) {
-      if(statements.contains(crt.opcode())){
+      if(statements.contains(crt.opcode())) {
         unsupportedStatements.add(crt);
       }
       unsupportedStatements.addAll(getStatements(crt, statements));
@@ -1283,7 +1282,9 @@ public class XnodeUtil {
    * @param skippedNodes List of opcode that are allowed between the two nodes.
    * @return True if the nodes are direct siblings.
    */
-  public static boolean isDirectSibling(Xnode start, Xnode end, List<Xcode> skippedNodes) {
+  public static boolean isDirectSibling(Xnode start, Xnode end,
+                                        List<Xcode> skippedNodes)
+  {
     if(start == null || end == null) {
       return false;
     }
@@ -1394,4 +1395,67 @@ public class XnodeUtil {
     }
     return pragma;
   }
+
+  /**
+   * Gather arguments of a function call.
+   *
+   * @param xcodeml   Current XcodeML translation unit.
+   * @param fctCall   functionCall node in which the arguments are retrieved.
+   * @param intent    Intent to use for gathering.
+   * @param arrayOnly If true, gather only arrays arguments.
+   * @return List of arguments as their string representation.
+   */
+  public static List<String> gatherArguments(XcodeProgram xcodeml,
+                                             Xnode fctCall, Xintent intent,
+                                             boolean arrayOnly)
+  {
+    List<String> gatheredArguments = new ArrayList<>();
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
+      return gatheredArguments;
+    }
+    Xnode argumentsNode = fctCall.matchDescendant(Xcode.ARGUMENTS);
+    if(argumentsNode == null) {
+      return gatheredArguments;
+    }
+
+    // Retrieve function type to check intents and types of parameters
+    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().get(fctCall);
+    List<Xnode> parameters = fctType.getParams().getAll();
+    List<Xnode> arguments = argumentsNode.children();
+
+    for(int i = 0; i < parameters.size(); ++i) {
+      // TODO handle optional arguments, named value args
+      Xnode parameter = parameters.get(i);
+      Xnode arg = arguments.get(i);
+      Xtype typeParameter = xcodeml.getTypeTable().get(parameter);
+      Xtype typeArg = xcodeml.getTypeTable().get(arg);
+
+      String rep = "";
+      if(isBuiltInType(arg.getType()) && !arrayOnly
+          && typeParameter instanceof XbasicType)
+      {
+        XbasicType btParameter = (XbasicType) typeParameter;
+        if(!intent.isCompatible(btParameter.getIntent())) {
+          continue;
+        }
+        rep = arg.constructRepresentation(false);
+      } else if(typeParameter instanceof XbasicType
+          && typeArg instanceof XbasicType)
+      {
+        XbasicType btParameter = (XbasicType) typeParameter;
+        XbasicType btArg = (XbasicType) typeArg;
+        if((arrayOnly && !btArg.isArray())
+            || !intent.isCompatible(btParameter.getIntent()))
+        {
+          continue;
+        }
+        rep = arg.constructRepresentation(false);
+      }
+      if(rep != null && !rep.isEmpty()) {
+        gatheredArguments.add(rep);
+      }
+    }
+    return gatheredArguments;
+  }
+
 }
