@@ -80,8 +80,7 @@ public class DirectivePrimitive extends ClawTransformation {
 
     String regex = ClawConstant.CLAW + " *" + prefix;
     getDirective().getPragma().setValue(
-        getDirective().getPragma().value().toLowerCase().
-            replaceAll(regex, prefix)
+        getDirective().getPragma().value().replaceAll(regex, prefix)
     );
 
     translator.addTransformation(xcodeml,

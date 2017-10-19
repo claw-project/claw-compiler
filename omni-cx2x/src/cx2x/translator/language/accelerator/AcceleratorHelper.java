@@ -420,7 +420,7 @@ public class AcceleratorHelper {
       Xnode nameNode = fctCall.matchSeq(Xcode.NAME);
       String fctName;
       if(nameNode != null) {
-        fctName = nameNode.value().toLowerCase();
+        fctName = nameNode.value();
       } else {
         continue;
       }
@@ -435,7 +435,7 @@ public class AcceleratorHelper {
             meaningfulParentNode.matchAll(Xcode.FFUNCTIONDEFINITION);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
-          if(name != null && name.value().toLowerCase().equals(fctName)) {
+          if(name != null && name.value().equals(fctName)) {
             calledFctDef = new XfunctionDefinition(fDef.element());
             break;
           }

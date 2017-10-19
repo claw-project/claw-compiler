@@ -55,9 +55,7 @@ public class XnodeUtil {
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
         Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR);
-        if(var != null && var.value().toLowerCase().
-            equals(arrayName.toLowerCase()))
-        {
+        if(var != null && var.value().equals(arrayName.toLowerCase())) {
           references.add(ref);
         }
       }
@@ -79,7 +77,7 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode var = new Xnode((Element) n);
-        if(var.value().toLowerCase().equals(varName.toLowerCase())) {
+        if(var.value().equals(varName.toLowerCase())) {
           references.add(var);
         }
       }
@@ -504,7 +502,7 @@ public class XnodeUtil {
       if(node.opcode() != Xcode.VAR) {
         continue;
       }
-      names.add(node.value().toLowerCase());
+      names.add(node.value());
     }
     return names;
   }
@@ -523,7 +521,7 @@ public class XnodeUtil {
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
           equals(Xcode.ARRAYINDEX.code())
-          && var.value().toLowerCase().equals(id.toLowerCase()))
+          && var.value().equals(id.toLowerCase()))
       {
         realReferences.add(var);
       }
@@ -571,8 +569,7 @@ public class XnodeUtil {
 
     Xnode var = arrayIndex.matchDirectDescendant(Xcode.VAR);
 
-    return var != null
-        && inductionVariables.contains(var.value().toLowerCase());
+    return var != null && inductionVariables.contains(var.value());
   }
 
   /**
@@ -886,8 +883,7 @@ public class XnodeUtil {
    * @return True if the values are identical. False otherwise.
    */
   private static boolean compareValues(Xnode n1, Xnode n2) {
-    return !(n1 == null || n2 == null)
-        && n1.value().toLowerCase().equals(n2.value().toLowerCase());
+    return !(n1 == null || n2 == null) && n1.value().equals(n2.value());
   }
 
   /**
@@ -916,7 +912,7 @@ public class XnodeUtil {
    */
   private static boolean compareOptionalValues(Xnode n1, Xnode n2) {
     return n1 == null && n2 == null || (n1 != null && n2 != null &&
-        n1.value().toLowerCase().equals(n2.value().toLowerCase()));
+        n1.value().toLowerCase().equals(n2.value()));
   }
 
   /**
@@ -1072,7 +1068,7 @@ public class XnodeUtil {
       return null;
     }
     for(Xnode arg : args.children()) {
-      if(value.toLowerCase().equals(arg.value().toLowerCase())) {
+      if(value.toLowerCase().equals(arg.value())) {
         return arg;
       }
     }
@@ -1217,7 +1213,7 @@ public class XnodeUtil {
 
     while(node.prevSibling() != null
         && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
-      String pragma = node.prevSibling().value().toLowerCase();
+      String pragma = node.prevSibling().value();
       Xnode toDelete = null;
 
       for(String p : previous) {
@@ -1234,7 +1230,7 @@ public class XnodeUtil {
     node = doStatement; // Reset node to the initial position.
     while(node.nextSibling() != null
         && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
-      String pragma = node.nextSibling().value().toLowerCase();
+      String pragma = node.nextSibling().value();
       Xnode toDelete = null;
 
       for(String n : next) {
@@ -1317,11 +1313,10 @@ public class XnodeUtil {
     }
 
     if(!pragma.value().contains(" ")) {
-      return pragma.value().toLowerCase();
+      return pragma.value();
     }
 
-    return pragma.value().toLowerCase().
-        substring(0, pragma.value().indexOf(" "));
+    return pragma.value().substring(0, pragma.value().indexOf(" "));
   }
 
   /**
@@ -1335,7 +1330,7 @@ public class XnodeUtil {
     if(doStatement.opcode() != Xcode.FDOSTATEMENT) {
       return "";
     }
-    return doStatement.matchDirectDescendant(Xcode.VAR).value().toLowerCase();
+    return doStatement.matchDirectDescendant(Xcode.VAR).value();
   }
 
   /**

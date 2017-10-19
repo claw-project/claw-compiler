@@ -617,7 +617,7 @@ public class XcodeML extends Xnode {
                                             XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()) {
-      if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
+      if(p.value().equals(nameValue.toLowerCase())) {
         return null;
       }
     }

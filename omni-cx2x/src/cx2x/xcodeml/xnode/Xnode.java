@@ -127,7 +127,7 @@ public class Xnode {
    * @return Element value.
    */
   public String value() {
-    return _baseElement.getTextContent().trim();
+    return _baseElement.getTextContent().trim().toLowerCase();
   }
 
   /**
