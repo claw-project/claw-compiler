@@ -320,34 +320,6 @@
           </functionCall>
         </exprStatement>
         <FpragmaStatement file="__omni_tmp__/main.f90" lineno="27">ACC end data</FpragmaStatement>
-        <FprintStatement file="__omni_tmp__/main.f90" format="*" lineno="29">
-          <valueList>
-            <value>
-              <functionCall is_intrinsic="true" type="Freal">
-                <name>sum</name>
-                <arguments>
-                  <Var scope="local" type="A7fe453d0a0a0">q</Var>
-                </arguments>
-              </functionCall>
-            </value>
-          </valueList>
-        </FprintStatement>
-        <FprintStatement file="__omni_tmp__/main.f90" format="*" lineno="30">
-          <valueList>
-            <value>
-              <functionCall is_intrinsic="true" type="Freal">
-                <name>sum</name>
-                <arguments>
-                  <FmemberRef member="y" type="A7fe453d18f70">
-                    <varRef type="S7fe453d0b480">
-                      <Var scope="local" type="S7fe453d0b480">ty</Var>
-                    </varRef>
-                  </FmemberRef>
-                </arguments>
-              </functionCall>
-            </value>
-          </valueList>
-        </FprintStatement>
         <FdeallocateStatement file="__omni_tmp__/main.f90" lineno="32">
           <alloc>
             <FmemberRef member="y" type="A7fe453d1a0b0">
