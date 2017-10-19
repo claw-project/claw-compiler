@@ -24,4 +24,6 @@ public class TestConstant {
     "@CMAKE_CURRENT_SOURCE_DIR@/data/perfectly_nested.xml";
   public static final String TEST_DECLARATIONS =
     "@CMAKE_CURRENT_SOURCE_DIR@/data/declarations.xml";
+  public static final String TEST_ARGUMENTS =
+    "@CMAKE_CURRENT_SOURCE_DIR@/data/arguments.xml";
 }
