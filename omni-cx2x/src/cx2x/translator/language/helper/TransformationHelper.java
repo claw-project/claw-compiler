@@ -336,13 +336,12 @@ public class TransformationHelper {
       // check if params need to be imported as well
       if(importedFctType.getParameterNb() > 0) {
         for(Xnode param : importedFctType.getParams().getAll()) {
-          mod.importType(xcodeml, param.getAttribute(Xattr.TYPE));
+          mod.importType(xcodeml, param.getType());
         }
       }
       return;
     } else {
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(
-          fctDef.getName().getAttribute(Xattr.TYPE));
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(fctDef.getType());
     }
 
     if(fctTypeMod == null) {
@@ -394,8 +393,8 @@ public class TransformationHelper {
         }
       } else {
         Xnode pMod = paramsMod.get(i);
-        String localType = pLocal.getAttribute(Xattr.TYPE);
-        String modType = pMod.getAttribute(Xattr.TYPE);
+        String localType = pLocal.getType();
+        String modType = pMod.getType();
 
         if(!localType.equals(modType)) {
           // Param has been update so have to replicate the change to mod file
@@ -666,7 +665,7 @@ public class TransformationHelper {
         for(Xnode ref : refs) {
           Xnode arrayRef = new Xnode(Xcode.FARRAYREF, xcodeml);
           Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
-          arrayRef.setAttribute(Xattr.TYPE, ref.getAttribute(Xattr.TYPE));
+          arrayRef.setAttribute(Xattr.TYPE, ref.getType());
           varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.insertAfter(arrayRef);

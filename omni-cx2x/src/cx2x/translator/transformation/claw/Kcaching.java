@@ -5,10 +5,10 @@
 
 package cx2x.translator.transformation.claw;
 
-import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.ClawTranslator;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -111,9 +111,9 @@ public class Kcaching extends ClawTransformation {
   /**
    * Apply the transformation for the data list.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param fctDef      Function/module definition in which the data are nested.
-   * @param data        Array identifier on which the caching is done.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
+   * @param fctDef     Function/module definition in which the data are nested.
+   * @param data       Array identifier on which the caching is done.
    * @param translator Current instance of the translator.
    * @throws Exception If something prevent the transformation to be done.
    */
@@ -126,7 +126,7 @@ public class Kcaching extends ClawTransformation {
     List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
     // Generate the cache variable and its assignment
-    String type = aRefs.get(0).getAttribute(Xattr.TYPE);
+    String type = aRefs.get(0).getType();
     Xnode cacheVar = generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef,
         aRefs.get(0), null);
 
@@ -139,10 +139,10 @@ public class Kcaching extends ClawTransformation {
   /**
    * Apply the transformation for the LHS array reference.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
-   * @param fctDef      Function/module definition in which the data are nested.
-   * @param data        Array identifier on which the caching is done.
-   * @param stmt        First statement including the array ref on the lhs.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
+   * @param fctDef     Function/module definition in which the data are nested.
+   * @param data       Array identifier on which the caching is done.
+   * @param stmt       First statement including the array ref on the lhs.
    * @param translator The translator used to applied the transformations.
    * @throws Exception If something prevent the transformation to be done.
    */
@@ -152,8 +152,7 @@ public class Kcaching extends ClawTransformation {
                                    Xnode stmt,
                                    Translator translator) throws Exception
   {
-    String type =
-        stmt.matchDirectDescendant(Xcode.FARRAYREF).getAttribute(Xattr.TYPE);
+    String type = stmt.matchDirectDescendant(Xcode.FARRAYREF).getType();
     List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
 
     Xnode cacheVar =
@@ -171,15 +170,15 @@ public class Kcaching extends ClawTransformation {
   /**
    * Apply the init clause if it was part of the kcache directive.
    *
-   * @param xcodeml     Current program in which the transformation is
-   *                    performed.
+   * @param xcodeml    Current program in which the transformation is
+   *                   performed.
    * @param translator Current translator used to store elements information.
-   * @param cacheVar    Newly created cache variable that will be used for the
-   *                    initialization (rhs of the assign statement). Element
-   *                    will be cloned before insertion.
-   * @param arrayRef    Array reference to be modified that will be
-   *                    used for the initialization (lhs of the assign
-   *                    statement). Element will be cloned before insertion.
+   * @param cacheVar   Newly created cache variable that will be used for the
+   *                   initialization (rhs of the assign statement). Element
+   *                   will be cloned before insertion.
+   * @param arrayRef   Array reference to be modified that will be
+   *                   used for the initialization (lhs of the assign
+   *                   statement). Element will be cloned before insertion.
    */
   private void applyInitClause(XcodeProgram xcodeml, Translator translator,
                                Xnode cacheVar, Xnode arrayRef)

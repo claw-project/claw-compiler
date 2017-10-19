@@ -24,8 +24,6 @@ import org.w3c.dom.Node;
 
 public class Xid extends Xnode {
 
-  private String _type = null;
-  private String _sclass = null;
   private Xnode _xname;
 
   /**
@@ -36,15 +34,6 @@ public class Xid extends Xnode {
    */
   public Xid(Element baseElement) {
     super(baseElement);
-    readElementInformation();
-  }
-
-  /**
-   * Read inner element information.
-   */
-  private void readElementInformation() {
-    _type = getAttribute(Xattr.TYPE);
-    _sclass = getAttribute(Xattr.SCLASS);
     _xname = matchSeq(Xcode.NAME);
   }
 
@@ -69,15 +58,6 @@ public class Xid extends Xnode {
   }
 
   /**
-   * Get the id type value.
-   *
-   * @return Type value.
-   */
-  public String getType() {
-    return _type;
-  }
-
-  /**
    * Set id type value.
    *
    * @param value The new type value.
@@ -85,7 +65,6 @@ public class Xid extends Xnode {
   public void setType(String value) {
     if(_baseElement != null && value != null) {
       _baseElement.setAttribute(Xname.ATTR_TYPE, value);
-      _type = value;
     }
   }
 
@@ -95,7 +74,7 @@ public class Xid extends Xnode {
    * @return Sclass value.
    */
   public String getSclass() {
-    return _sclass;
+    return getAttribute(Xattr.SCLASS);
   }
 
   /**
@@ -106,7 +85,6 @@ public class Xid extends Xnode {
   public void setSclass(String value) {
     if(_baseElement != null && value != null) {
       _baseElement.setAttribute(Xname.ATTR_SCLASS, value);
-      _sclass = value;
     }
   }
 

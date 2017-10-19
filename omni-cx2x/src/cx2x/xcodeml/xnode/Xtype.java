@@ -42,15 +42,6 @@ public class Xtype extends Xnode {
   }
 
   /**
-   * Get type value.
-   *
-   * @return Type value.
-   */
-  public String getType() {
-    return getAttribute(Xattr.TYPE);
-  }
-
-  /**
    * Set type value.
    *
    * @param value New type value.

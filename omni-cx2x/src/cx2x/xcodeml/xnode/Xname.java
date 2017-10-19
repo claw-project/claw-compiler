@@ -150,6 +150,7 @@ public class Xname {
   public static final String F_COARRAY_REF = "FcoArrayRef";
   public static final String F_COMMON_DECL = "FcommonDecl";
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
+  public static final String F_COMPLEX_PART_REF = "FcomplexPartRef";
   public static final String F_CONTAINS_STATEMENT = "FcontainsStatement";
   public static final String F_CYCLE_STATEMENT = "FcycleStatement";
   public static final String F_DATA_DECL = "FdataDecl";

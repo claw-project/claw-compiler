@@ -615,4 +615,66 @@ public class Xnode {
     return !(obj == null || !(obj instanceof Xnode))
         && element() == ((Xnode) obj).element();
   }
+
+  /**
+   * Return type hash associated with this node if any.
+   *
+   * @return Type hash. Empty string if there is no type hash associated.
+   */
+  public String getType() {
+    switch(opcode()) {
+      case FALLOCATESTATEMENT:
+      case FARRAYREF:
+      case FBASICTYPE:
+      case FCHARACTERCONSTANT:
+      case FCHARACTERREF:
+      case FCOMPLEXCONSTANT:
+      case FCOMPLEXPARTREF:
+      case FCOARRAYREF:
+      case FDOCONCURRENTSTATEMENT:
+      case FENUMDECL:
+      case FFUNCTIONTYPE:
+      case FINTCONSTANT:
+      case FLOGICALCONSTANT:
+      case FMEMBERREF:
+      case FORALLSTATEMENT:
+      case FREALCONSTANT:
+      case FSTRUCTCONSTRUCTOR:
+      case FSTRUCTTYPE:
+      case ID:
+      case NAME:
+      case TYPEPARAM:
+      case VAR:
+      case VARREF:
+      case PLUSEXPR:
+      case MINUSEXPR:
+      case MULEXPR:
+      case DIVEXPR:
+      case FPOWEREXPR:
+      case FCONCATEXPR:
+      case LOGEQEXPR:
+      case LOGNEQEXPR:
+      case LOGGEEXPR:
+      case LOGGTEXPR:
+      case LOGLEEXPR:
+      case LOGLTEXPR:
+      case LOGANDEXPR:
+      case LOGOREXPR:
+      case LOGEQVEXPR:
+      case LOGNEWVEXPR:
+      case USERBINARYEXPR:
+      case UNARYMINUSEXPR:
+      case LOGNOTEXPR:
+      case USERUNARYEXPR:
+        return getAttribute(Xattr.TYPE);
+      case FFUNCTIONDEFINITION:
+      case FUNCTIONCALL:
+      case VARDECL:
+        // functionCall has a type attribute but it's the return type
+        Xnode name = matchDirectDescendant(Xcode.NAME);
+        return (name != null) ? name.getAttribute(Xattr.TYPE) : "";
+      default:
+        return "";
+    }
+  }
 }

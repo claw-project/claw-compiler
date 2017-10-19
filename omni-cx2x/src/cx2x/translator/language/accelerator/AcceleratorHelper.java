@@ -258,7 +258,7 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = name.getAttribute(Xattr.TYPE);
+        String type = decl.getType();
         if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
           continue; // Only check basic type
         }
@@ -289,7 +289,7 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = name.getAttribute(Xattr.TYPE);
+        String type = decl.getType();
         if(!XnodeUtil.isBuiltInType(type)
             && !(xcodeml.getTypeTable().get(type) instanceof XbasicType))
         {
@@ -321,7 +321,7 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = name.getAttribute(Xattr.TYPE);
+        String type = decl.getType();
         if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
           continue; // Only check basic type
         }
