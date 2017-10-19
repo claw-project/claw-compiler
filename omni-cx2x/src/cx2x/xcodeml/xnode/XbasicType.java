@@ -17,10 +17,10 @@ import java.util.List;
  * <p>
  * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:
- * - kind (Xkind)
- * - len (Xlength)
- * - arrayIndex (XarrayIndex)
- * - indexRange (XindexRange)
+ * - kind
+ * - len
+ * - arrayIndex
+ * - indexRange
  * - coShape TODO not needed for the moment
  * Attributes:
  * - Required: type (text), ref (text)
