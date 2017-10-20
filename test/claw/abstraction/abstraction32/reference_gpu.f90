@@ -6,7 +6,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  REAL , INTENT(INOUT) :: z ( : )
+  REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
 
   CALL compute_column ( nz , q , t , z , nproma = nproma )
@@ -17,7 +17,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  REAL , INTENT(INOUT) :: z ( : )
+  REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
   REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
