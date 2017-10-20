@@ -29,7 +29,7 @@ public enum Xscope {
     if(value == null) {
       return null;
     }
-    switch(value) {
+    switch(value.toLowerCase()) {
       case Xname.SCOPE_LOCAL:
         return LOCAL;
       case Xname.SCOPE_GLOBAL:
