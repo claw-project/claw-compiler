@@ -10,7 +10,6 @@ import cx2x.translator.config.Configuration;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
-import xcodeml.util.XmOption;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,10 +96,8 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: "
-          + Utility.join(",", vars));
-    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate private clause for: "
+        + Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
 
@@ -109,10 +106,8 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: "
-          + Utility.join(",", vars));
-    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate present clause for: "
+        + Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
   }
 
@@ -121,10 +116,8 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate pcreate clause for: "
-          + Utility.join(",", vars));
-    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate pcreate clause for: "
+        + Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PCREATE, Utility.join(",", vars));
   }
 
@@ -159,7 +152,7 @@ public class OpenAcc extends AcceleratorGenerator {
     //!$acc data
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA,
-            Utility.join(" ",clauses)).trim()
+            Utility.join(" ", clauses)).trim()
     };
   }
 
@@ -178,7 +171,7 @@ public class OpenAcc extends AcceleratorGenerator {
 
   @Override
   public String[] getStartLoopDirective(int value, boolean seq,
-                                           boolean naked, String clauses)
+                                        boolean naked, String clauses)
   {
     if(value > 1) {
       //!$acc loop collapse(<value>)
@@ -249,6 +242,9 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.isEmpty()) {
       return null;
     }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate update " +
+        (direction == ClawDMD.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
+        "clause for: " + Utility.join(",", vars));
     String updates = String.format(FORMATPAR, direction == ClawDMD.DEVICE ?
         OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
     return new String[]{

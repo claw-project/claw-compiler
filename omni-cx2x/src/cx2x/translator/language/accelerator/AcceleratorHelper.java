@@ -5,6 +5,7 @@
 
 package cx2x.translator.language.accelerator;
 
+import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.generator.AcceleratorNone;
@@ -16,7 +17,6 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,15 +61,13 @@ public class AcceleratorHelper {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      if(XmOption.isDebugOutput()) {
-        if(noDependency != null) {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-              "generated loop directive for loop at line: " + doStmt.lineNo());
-        } else {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-              "generated loop seq directive for loop at line: "
-              + doStmt.lineNo());
-        }
+      if(noDependency != null) {
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+            "generated loop directive for loop at line: " + doStmt.lineNo());
+      } else {
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+            "generated loop seq directive for loop at line: "
+            + doStmt.lineNo());
       }
     }
   }
@@ -86,7 +84,8 @@ public class AcceleratorHelper {
    * @return Last inserted pragma.
    */
   public static Xnode generateUpdate(ClawLanguage claw, XcodeProgram xcodeml,
-                                     Xnode hook, List<String> vars)
+                                     Xnode hook, List<String> vars,
+                                     ClawDMD direction)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE
@@ -95,7 +94,6 @@ public class AcceleratorHelper {
       return null;
     }
 
-    ClawDMD direction = claw.getUpdateClauseValue();
     Xnode p = null;
     if(direction == ClawDMD.DEVICE || direction == ClawDMD.BOTH) {
       p = addPragmasBefore(xcodeml,
@@ -103,7 +101,6 @@ public class AcceleratorHelper {
               ClawDMD.DEVICE : direction, vars), hook);
     }
     if(direction == ClawDMD.HOST || direction == ClawDMD.BOTH) {
-
       p = addPragmaAfter(xcodeml,
           gen.getUpdateClause(direction == ClawDMD.BOTH ?
               ClawDMD.HOST : direction, vars), hook);
@@ -446,11 +443,9 @@ public class AcceleratorHelper {
         // TODO: check that the directive is not present yet.
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
-        if(XmOption.isDebugOutput()) {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX
-              + "generated routine seq directive for " + fctName
-              + " subroutine/function.");
-        }
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX
+            + "generated routine seq directive for " + fctName
+            + " subroutine/function.");
       } else {
         // Could not generate directive for called function.
         xcodeml.addWarning(fctName + " has not been found. " +
