@@ -6,7 +6,6 @@
 package cx2x.translator.language.accelerator;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.xcodeml.xnode.Xname;
 
 import java.util.ArrayList;
 import java.util.List;
