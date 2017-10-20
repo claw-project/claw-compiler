@@ -387,7 +387,7 @@ public class TransformationHelper {
         Xnode param = mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
         if(param != null) {
-          param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+          param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
         }
       } else {
         Xnode pMod = paramsMod.get(i);

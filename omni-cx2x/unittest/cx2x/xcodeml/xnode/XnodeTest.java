@@ -8,8 +8,7 @@ package cx2x.xcodeml.xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Test methods of the Xnode class
@@ -142,5 +141,26 @@ public class XnodeTest {
 
     Xnode n2 = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
     assertEquals("", n2.constructRepresentation(false));
+  }
+
+  @Test
+  public void hasBodyTest(){
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode n1 = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
+    Xnode n2 = new Xnode(Xcode.FFUNCTIONDEFINITION, xcodeml);
+    Xnode n3 = new Xnode(Xcode.FDOWHILESTATEMENT, xcodeml);
+    Xnode n4 = new Xnode(Xcode.FCASELABEL, xcodeml);
+    Xnode n5 = new Xnode(Xcode.THEN, xcodeml);
+    Xnode n6 = new Xnode(Xcode.ELSE, xcodeml);
+    Xnode n7 = new Xnode(Xcode.TYPEGUARD, xcodeml);
+    Xnode n8 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    assertTrue(n1.hasBody());
+    assertTrue(n2.hasBody());
+    assertTrue(n3.hasBody());
+    assertTrue(n4.hasBody());
+    assertTrue(n5.hasBody());
+    assertTrue(n6.hasBody());
+    assertTrue(n7.hasBody());
+    assertFalse(n8.hasBody());
   }
 }

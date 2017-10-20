@@ -15,10 +15,11 @@ package cx2x.xcodeml.xnode;
 public class Xname {
 
   // helpers
-  public static final String TRUE = "true";
-  public static final String FALSE = "false";
-  public static final String SUPPORTED_VERSION = "1.0";
-  public static final String SUPPORTED_LANGUAGE = "Fortran";
+  static final String TRUE = "true";
+  static final String FALSE = "false";
+  static final String SUPPORTED_VERSION = "1.0";
+  static final String SUPPORTED_LANGUAGE = "Fortran";
+  
   public static final String DEFAULT_STEP_VALUE = "1";
 
   // Base type (XcodeML/F 0.91J 9.1)

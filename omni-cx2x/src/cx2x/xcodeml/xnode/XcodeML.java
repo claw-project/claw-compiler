@@ -470,7 +470,7 @@ public class XcodeML extends Xnode {
    */
   public Xnode createEmptyAssumedShaped() {
     Xnode range = new Xnode(Xcode.INDEXRANGE, this);
-    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
+    range.setBooleanAttribute(Xattr.IS_ASSUMED_SHAPE, true);
     return range;
   }
 
@@ -558,7 +558,7 @@ public class XcodeML extends Xnode {
     // Upper bound
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
     upper.append(fctCall, false);
-    fctCall.setAttribute(Xattr.IS_INTRINSIC, Xname.TRUE);
+    fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
     Xnode name = new Xnode(Xcode.NAME, this);
     name.setValue(Xname.INTRINSIC_SIZE);

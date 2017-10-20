@@ -139,6 +139,31 @@ public class Xnode {
     _baseElement.setTextContent(value);
   }
 
+
+  /**
+   * Set the value of a boolean attribute.
+   *
+   * @param attrCode Attribute code.
+   * @param value    Boolean value to set.
+   */
+  public void setBooleanAttribute(Xattr attrCode, boolean value) {
+    setBooleanAttribute(attrCode.toString(), value);
+  }
+
+  /**
+   * Set the value of a boolean attribute.
+   *
+   * @param attrCode Attribute code.
+   * @param value    Boolean value to set.
+   */
+  public void setBooleanAttribute(String attrCode, boolean value) {
+    if(value) {
+      setAttribute(attrCode, Xname.TRUE);
+    } else {
+      setAttribute(attrCode, Xname.FALSE);
+    }
+  }
+
   /**
    * Set attribute value.
    *
@@ -160,9 +185,20 @@ public class Xnode {
   }
 
   /**
-   * Check whether the current element has a body element.
+   * Remove an attribute from the node.
    *
-   * @return True if the element has a body. False otherwise.
+   * @param attrCode Attribute code.
+   */
+  public void removeAttribute(Xattr attrCode) {
+    if(_baseElement != null && _baseElement.hasAttribute(attrCode.toString())) {
+      _baseElement.removeAttribute(attrCode.toString());
+    }
+  }
+
+  /**
+   * Check whether the current element is an element with body element.
+   *
+   * @return True if the element should have a body. False otherwise.
    */
   public boolean hasBody() {
     switch(opcode()) {
@@ -625,7 +661,7 @@ public class Xnode {
     switch(opcode()) {
       case FARRAYREF:
         String type = getAttribute(Xattr.TYPE);
-        if(XnodeUtil.isBuiltInType(type)){
+        if(XnodeUtil.isBuiltInType(type)) {
           Xnode child = firstChild();
           return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
         }

@@ -291,8 +291,8 @@ public class Kcaching extends ClawTransformation {
       XbasicType newType = t.cloneNode();
       type = xcodeml.getTypeTable().generateRealTypeHash();
       newType.setType(type);
-      newType.removeIntent();
-      newType.removeAllocatable();
+      newType.removeAttribute(Xattr.INTENT);
+      newType.removeAttribute(Xattr.IS_ALLOCATABLE);
 
       XbasicType ref =
           (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
@@ -302,8 +302,8 @@ public class Kcaching extends ClawTransformation {
         // TODO generate appropriate type
         String refType = xcodeml.getTypeTable().generateRealTypeHash();
         newRef.setType(refType);
-        newRef.removeIntent();
-        newRef.removeAllocatable();
+        newRef.removeAttribute(Xattr.INTENT);
+        newRef.removeAttribute(Xattr.IS_ALLOCATABLE);
         newType.setRef(refType);
         xcodeml.getTypeTable().add(newRef);
       }

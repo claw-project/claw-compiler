@@ -8,6 +8,8 @@ package cx2x.xcodeml.xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
+import java.util.Collections;
+
 import static org.junit.Assert.*;
 
 /**
@@ -15,31 +17,54 @@ import static org.junit.Assert.*;
  */
 public class XbasicTypeTest {
 
-  private static final String type1 =
-      "<FbasicType type=\"TYPE_NAME\" ref=\"Fint\">\n" +
-          "<kind>8</kind>" +
-          "</FbasicType>";
+  private static final String type1 = "<FbasicType type=\"TYPE_NAME\" " +
+      "ref=\"Fint\"><kind>8</kind></FbasicType>";
 
-  private static final String type2 =
-      "<FbasicType type=\"TYPE_NAME\" ref=\"Fcharacter\"> <len>\n" +
-          "<FintConstant type=\"Fint\">10</FintConstant> </len>\n" +
-          "</FbasicType>";
+  private static final String type2 = "<FbasicType type=\"TYPE_NAME\" " +
+      "ref=\"Fcharacter\"> <len>" +
+      "<FintConstant type=\"Fint\">10</FintConstant> </len></FbasicType>";
 
-  private static final String type3 =
-      "<FbasicType type=\"TYPE_NAME\" ref=\"Fint\">" +
-          "<arrayIndex>" +
-          "<FintConstant type=\"Fint\">10</FintConstant>" +
-          "</arrayIndex>" +
-          "<indexRange>" +
-          "<lowerBound>" +
-          "<FintConstant type=\"Fint\">1</FintConstant>" +
-          "</lowerBound>" +
-          "<upperBound>" +
-          "<FintConstant type=\"Fint\">10</FintConstant>" +
-          "</upperBound>" +
-          "</indexRange>" +
-          "</FbasicType>";
+  private static final String type3 = "<FbasicType type=\"TYPE_NAME\" " +
+      "ref=\"Fint\"><arrayIndex>" +
+      "<FintConstant type=\"Fint\">10</FintConstant></arrayIndex>" +
+      "<indexRange><lowerBound><FintConstant type=\"Fint\">1</FintConstant>" +
+      "</lowerBound><upperBound>" +
+      "<FintConstant type=\"Fint\">10</FintConstant></upperBound>" +
+      "</indexRange></FbasicType>";
 
+  /**
+   * Test setter for FbasicType
+   */
+  @Test
+  public void setterTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode n1 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    XbasicType bt1 = new XbasicType(n1);
+    Xnode n2 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    XbasicType bt2 = new XbasicType(n2);
+    String typeHash1 = xcodeml.getTypeTable().generateIntegerTypeHash();
+    String typeHash2 = xcodeml.getTypeTable().generateIntegerTypeHash();
+    bt1.setType(typeHash1);
+    bt2.setType(typeHash2);
+    bt1.setRef(typeHash2);
+    bt2.setRef(Xname.TYPE_F_INT);
+    assertEquals(Xname.TYPE_F_INT, bt2.getRef());
+    assertEquals(typeHash2, bt1.getRef());
+    assertFalse(bt1.hasIntent());
+    bt1.setIntent(Xintent.IN);
+    assertTrue(bt1.hasIntent());
+    assertEquals(Xintent.IN, bt1.getIntent());
+    bt1.removeAttribute(Xattr.INTENT);
+    assertEquals(Xintent.NONE, bt1.getIntent());
+    assertFalse(bt1.hasIntent());
+    assertFalse(bt1.isArray());
+    assertFalse(bt2.isArray());
+
+    bt1.setBooleanAttribute(Xattr.IS_ALLOCATABLE, true);
+    assertTrue(bt1.isAllocatable());
+    bt1.removeAttribute(Xattr.IS_ALLOCATABLE);
+    assertFalse(bt1.isAllocatable());
+  }
 
   /**
    * Test for a simple integer type
@@ -160,5 +185,46 @@ public class XbasicTypeTest {
 
     assertEquals("Fint", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
+
+    assertEquals(2, b.getDimensions());
+    assertFalse(b.isAllAssumedShape());
+    b.removeDimension(Collections.singletonList(1));
+    assertEquals(1, b.getDimensions());
+    b.resetDimension();
+    assertEquals(0, b.getDimensions());
+    assertFalse(b.isArray());
+    assertFalse(b.isAllAssumedShape());
+  }
+
+  @Test
+  public void dimTest() {
+    XbasicType b = XmlHelper.createXbasicTypeFromString(type3);
+    b.removeDimension(Collections.<Integer>emptyList());
+    assertEquals(0, b.getDimensions());
+    assertFalse(b.isArray());
+    assertFalse(b.isAllAssumedShape());
+  }
+
+  @Test
+  public void cloneTest() {
+    XbasicType b = XmlHelper.createXbasicTypeFromString(type3);
+    XbasicType b2 = b.cloneNode();
+    assertEquals(b.isAllAssumedShape(), b2.isAllAssumedShape());
+    assertEquals(b.isArray(), b2.isArray());
+    assertEquals(b.isAllocatable(), b2.isAllocatable());
+    assertEquals(b.isPointer(), b2.isPointer());
+    assertEquals(b.isParameter(), b2.isParameter());
+    assertEquals(b.isTarget(), b2.isTarget());
+    assertEquals(b.isExternal(), b2.isExternal());
+    assertEquals(b.isIntrinsic(), b2.isIntrinsic());
+    assertEquals(b.isOptional(), b2.isOptional());
+    assertEquals(b.isPrivate(), b2.isPrivate());
+    assertEquals(b.isPublic(), b2.isPublic());
+    assertEquals(b.isSave(), b2.isSave());
+    assertEquals(b.hasIntent(), b2.hasIntent());
+    assertEquals(b.hasKind(), b2.hasKind());
+    assertEquals(b.hasLength(), b2.hasLength());
+    assertEquals(b.getDimensions(), b2.getDimensions());
+    assertEquals(b.getIntent(), b2.getIntent());
   }
 }
