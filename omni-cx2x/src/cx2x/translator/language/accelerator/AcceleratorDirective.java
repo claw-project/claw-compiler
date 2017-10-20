@@ -6,6 +6,7 @@
 package cx2x.translator.language.accelerator;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.xnode.Xname;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public enum AcceleratorDirective {
     if(value == null) {
       return NONE;
     }
-    switch(value) {
+    switch(value.toLowerCase()) {
       case ClawConstant.DIRECTIVE_NONE:
         return NONE;
       case ClawConstant.DIRECTIVE_OPENACC:
@@ -75,6 +76,22 @@ public enum AcceleratorDirective {
         return ClawConstant.OPENMP_PREFIX;
       default:
         return null;
+    }
+  }
+
+  /**
+   * Convert current enum to String value.
+   *
+   * @return Corresponding String value.
+   */
+  public String toString() {
+    switch(this) {
+      case OPENACC:
+        return ClawConstant.DIRECTIVE_OPENACC;
+      case OPENMP:
+        return ClawConstant.DIRECTIVE_OPENMP;
+      default:
+        return ClawConstant.DIRECTIVE_NONE;
     }
   }
 }

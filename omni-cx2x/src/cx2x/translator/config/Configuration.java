@@ -571,7 +571,7 @@ public class Configuration {
    * @param configVersion Version string from the configuration file.
    * @throws Exception If the configuration version is not high enough.
    */
-  private void checkVersion(String configVersion) throws Exception {
+  protected void checkVersion(String configVersion) throws Exception {
     int[] configMajMin = getMajorMinor(configVersion);
     int[] compilerMajMin = getMajorMinor(ClawVersion.getVersion());
 
@@ -593,7 +593,7 @@ public class Configuration {
    * minor at index 1.
    * @throws Exception If the version String is not of the correct format.
    */
-  private int[] getMajorMinor(String version) throws Exception {
+  protected int[] getMajorMinor(String version) throws Exception {
     Pattern p = Pattern.compile("^(\\d+)\\.(\\d+)\\.?(\\d+)?");
     Matcher m = p.matcher(version);
     if(!m.matches()) {
