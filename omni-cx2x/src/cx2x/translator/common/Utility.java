@@ -131,9 +131,7 @@ public class Utility {
   public static String formattedModuleFilePrefix(Target target,
                                                  AcceleratorDirective directive)
   {
-    return "." + directive.toString() +
-        "." + target.toString() +
-        ClawConstant.CLAW_MOD_SUFFIX;
+    return "." + directive + "." + target + ClawConstant.CLAW_MOD_SUFFIX;
   }
 
   /**
