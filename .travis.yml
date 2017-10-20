@@ -61,7 +61,8 @@ script:
   - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
   - make
   - make install
-  - make clean-transformation transformation test
+  - make clean-transformation transformation
+  - ctest --verbose
   - cd -
   - ./scripts/check_license # Check license header in sources files
   - cd scripts
