@@ -3,15 +3,12 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.accelerator;
+package cx2x.translator.language.accelerator;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.xcodeml.xnode.Xintent;
-import cx2x.xcodeml.xnode.Xname;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test method of the AcceleratorDirective class
@@ -21,7 +18,7 @@ import static org.junit.Assert.*;
 public class AcceleratorDirectiveTest {
 
   @Test
-  public void ctorTest(){
+  public void ctorTest() {
     assertEquals(AcceleratorDirective.OPENMP,
         AcceleratorDirective.fromString("openmp"));
     assertEquals(AcceleratorDirective.OPENACC,
