@@ -146,14 +146,20 @@ public class XnodeTest {
   @Test
   public void hasBodyTest(){
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
-    Xnode n2 = new Xnode(Xcode.FFUNCTIONDEFINITION, xcodeml);
-    Xnode n3 = new Xnode(Xcode.FDOWHILESTATEMENT, xcodeml);
-    Xnode n4 = new Xnode(Xcode.FCASELABEL, xcodeml);
-    Xnode n5 = new Xnode(Xcode.THEN, xcodeml);
-    Xnode n6 = new Xnode(Xcode.ELSE, xcodeml);
-    Xnode n7 = new Xnode(Xcode.TYPEGUARD, xcodeml);
-    Xnode n8 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    Xnode n1 = new Xnode(Xcode.ASSOCIATESTATEMENT, xcodeml);
+    Xnode n2 = new Xnode(Xcode.BLOCKSTATEMENT, xcodeml);
+    Xnode n3 = new Xnode(Xcode.CRITICALSTATEMENT, xcodeml);
+    Xnode n4 = new Xnode(Xcode.ELSE, xcodeml);
+    Xnode n5 = new Xnode(Xcode.FCASELABEL, xcodeml);
+    Xnode n6 = new Xnode(Xcode.FDOCONCURRENTSTATEMENT, xcodeml);
+    Xnode n7 = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
+    Xnode n8 = new Xnode(Xcode.FDOWHILESTATEMENT, xcodeml);
+    Xnode n9 = new Xnode(Xcode.FFUNCTIONDEFINITION, xcodeml);
+    Xnode n10 = new Xnode(Xcode.FORALLSTATEMENT, xcodeml);
+    Xnode n11 = new Xnode(Xcode.THEN, xcodeml);
+    Xnode n12 = new Xnode(Xcode.TYPEGUARD, xcodeml);
+    Xnode n13 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+
     assertTrue(n1.hasBody());
     assertTrue(n2.hasBody());
     assertTrue(n3.hasBody());
@@ -161,6 +167,11 @@ public class XnodeTest {
     assertTrue(n5.hasBody());
     assertTrue(n6.hasBody());
     assertTrue(n7.hasBody());
-    assertFalse(n8.hasBody());
+    assertTrue(n8.hasBody());
+    assertTrue(n9.hasBody());
+    assertTrue(n10.hasBody());
+    assertTrue(n11.hasBody());
+    assertTrue(n12.hasBody());
+    assertFalse(n13.hasBody());
   }
 }

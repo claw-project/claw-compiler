@@ -202,12 +202,17 @@ public class Xnode {
    */
   public boolean hasBody() {
     switch(opcode()) {
-      case FDOSTATEMENT:
-      case FFUNCTIONDEFINITION:
-      case FDOWHILESTATEMENT:
-      case FCASELABEL:
-      case THEN:
+      case ASSOCIATESTATEMENT:
+      case BLOCKSTATEMENT:
+      case CRITICALSTATEMENT:
       case ELSE:
+      case FCASELABEL:
+      case FDOCONCURRENTSTATEMENT:
+      case FDOSTATEMENT:
+      case FDOWHILESTATEMENT:
+      case FFUNCTIONDEFINITION:
+      case FORALLSTATEMENT:
+      case THEN:
       case TYPEGUARD:
         return true;
     }
