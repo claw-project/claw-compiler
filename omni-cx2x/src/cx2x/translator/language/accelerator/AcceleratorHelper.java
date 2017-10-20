@@ -3,17 +3,23 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.helper.accelerator;
+package cx2x.translator.language.accelerator;
 
+import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.translator.language.accelerator.generator.AcceleratorNone;
+import cx2x.translator.language.accelerator.generator.OpenAcc;
+import cx2x.translator.language.accelerator.generator.OpenMp;
+import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -55,17 +61,51 @@ public class AcceleratorHelper {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      if(XmOption.isDebugOutput()) {
-        if(noDependency != null) {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-              "generated loop directive for loop at line: " + doStmt.lineNo());
-        } else {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX +
-              "generated loop seq directive for loop at line: "
-              + doStmt.lineNo());
-        }
+      if(noDependency != null) {
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+            "generated loop directive for loop at line: " + doStmt.lineNo());
+      } else {
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+            "generated loop seq directive for loop at line: "
+            + doStmt.lineNo());
       }
     }
+  }
+
+  /**
+   * Generate update directives for device and host data transfer.
+   *
+   * @param claw    ClawLanguage object that tells if the parallel clause is
+   *                enable and where the start pragma is located.
+   * @param xcodeml Object representation of the current XcodeML
+   *                representation in which the pragmas will be generated.
+   * @param hook    Node used as a hook for insertion. Update device are
+   *                generated before the hook and update host after the hook.
+   * @return Last inserted pragma.
+   */
+  public static Xnode generateUpdate(ClawLanguage claw, XcodeProgram xcodeml,
+                                     Xnode hook, List<String> vars,
+                                     ClawDMD direction)
+  {
+    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE
+        || !claw.hasUpdateClause())
+    {
+      return null;
+    }
+
+    Xnode p = null;
+    if(direction == ClawDMD.DEVICE || direction == ClawDMD.BOTH) {
+      p = addPragmasBefore(xcodeml,
+          gen.getUpdateClause(direction == ClawDMD.BOTH ?
+              ClawDMD.DEVICE : direction, vars), hook);
+    }
+    if(direction == ClawDMD.HOST || direction == ClawDMD.BOTH) {
+      p = addPragmaAfter(xcodeml,
+          gen.getUpdateClause(direction == ClawDMD.BOTH ?
+              ClawDMD.HOST : direction, vars), hook);
+    }
+    return p;
   }
 
   /**
@@ -181,7 +221,8 @@ public class AcceleratorHelper {
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
-   * @param presents  List of variables to be set presents.
+   * @param presents  List of variables to be set as present.
+   * @param creates   List of variables to be created.
    * @param startStmt Start statement representing the beginning of the data
    *                  region.
    * @param endStmt   End statement representing the end of the data region.
@@ -189,11 +230,13 @@ public class AcceleratorHelper {
   public static void generateDataRegionClause(ClawLanguage claw,
                                               XcodeProgram xcodeml,
                                               List<String> presents,
+                                              List<String> creates,
                                               Xnode startStmt, Xnode endStmt)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
-        gen.getStartDataRegion(gen.getPresentClause(presents)),
+        gen.getStartDataRegion(Arrays.asList(gen.getPresentClause(presents),
+            gen.getCreateClause(creates))),
         gen.getEndDataRegion());
   }
 
@@ -212,11 +255,10 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = name.getAttribute(Xattr.TYPE);
-        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
             || bt.getIntent() == Xintent.INOUT) && bt.isArray())
@@ -243,14 +285,13 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = name.getAttribute(Xattr.TYPE);
-        if(!XnodeUtil.isBuiltInType(type)
-            && !(xcodeml.getTypeTable().get(type) instanceof XbasicType))
+        if(!XnodeUtil.isBuiltInType(decl.getType())
+            && !(xcodeml.getTypeTable().get(decl) instanceof XbasicType))
         {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
-        if((bt == null && XnodeUtil.isBuiltInType(type))
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        if((bt == null && XnodeUtil.isBuiltInType(decl.getType()))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
           variables.add(name.value());
@@ -275,11 +316,10 @@ public class AcceleratorHelper {
     for(Xdecl decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        String type = name.getAttribute(Xattr.TYPE);
-        if(!(xcodeml.getTypeTable().get(type) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(type);
+        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
         if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()
             && !bt.isAllocatable())
         {
@@ -377,7 +417,7 @@ public class AcceleratorHelper {
       Xnode nameNode = fctCall.matchSeq(Xcode.NAME);
       String fctName;
       if(nameNode != null) {
-        fctName = nameNode.value().toLowerCase();
+        fctName = nameNode.value();
       } else {
         continue;
       }
@@ -392,7 +432,7 @@ public class AcceleratorHelper {
             meaningfulParentNode.matchAll(Xcode.FFUNCTIONDEFINITION);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
-          if(name != null && name.value().toLowerCase().equals(fctName)) {
+          if(name != null && name.value().equals(fctName)) {
             calledFctDef = new XfunctionDefinition(fDef.element());
             break;
           }
@@ -403,11 +443,9 @@ public class AcceleratorHelper {
         // TODO: check that the directive is not present yet.
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
-        if(XmOption.isDebugOutput()) {
-          System.out.println(OpenAcc.OPENACC_DEBUG_PREFIX
-              + "generated routine seq directive for " + fctName
-              + " subroutine/function.");
-        }
+        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX
+            + "generated routine seq directive for " + fctName
+            + " subroutine/function.");
       } else {
         // Could not generate directive for called function.
         xcodeml.addWarning(fctName + " has not been found. " +

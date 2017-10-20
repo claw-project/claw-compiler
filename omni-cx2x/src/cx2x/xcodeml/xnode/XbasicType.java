@@ -17,10 +17,10 @@ import java.util.List;
  * <p>
  * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:
- * - kind (Xkind)
- * - len (Xlength)
- * - arrayIndex (XarrayIndex)
- * - indexRange (XindexRange)
+ * - kind
+ * - len
+ * - arrayIndex
+ * - indexRange
  * - coShape TODO not needed for the moment
  * Attributes:
  * - Required: type (text), ref (text)
@@ -42,20 +42,6 @@ public class XbasicType extends Xtype {
   private List<Xnode> _dimensions = null;
   private Xnode _kind = null;
   private Xnode _length = null;
-  // XbasicType required attributes (type is declared in Xtype)
-  private String _ref;
-  // XbasicType optional attributes
-  private boolean _is_public = false;
-  private boolean _is_private = false;
-  private boolean _is_pointer = false;
-  private boolean _is_target = false;
-  private boolean _is_external = false;
-  private boolean _is_intrinsic = false;
-  private boolean _is_optional = false;
-  private boolean _is_save = false;
-  private boolean _is_parameter = false;
-  private boolean _is_allocatable = false;
-  private Xintent _intent = null;
 
   /**
    * Basic ctor from Xnode.
@@ -81,9 +67,6 @@ public class XbasicType extends Xtype {
    * Read inner element information.
    */
   private void readBasicTypeInformation() {
-    readRequiredAttributes();
-    readOptionalAttributes();
-
     _dimensions = XnodeUtil.findIndexes(this);
     // is array ?
     if(_dimensions.size() > 0) {
@@ -97,30 +80,6 @@ public class XbasicType extends Xtype {
     _kind = matchSeq(Xcode.KIND);
   }
 
-  /**
-   * Read all required attributes.
-   */
-  private void readRequiredAttributes() {
-    // Attribute type is read in Xtype
-    _ref = getAttribute(Xattr.REF);
-  }
-
-  /**
-   * Read all optional attributes
-   */
-  private void readOptionalAttributes() {
-    _is_public = getBooleanAttribute(Xattr.IS_PUBLIC);
-    _is_private = getBooleanAttribute(Xattr.IS_PRIVATE);
-    _is_pointer = getBooleanAttribute(Xattr.IS_POINTER);
-    _is_target = getBooleanAttribute(Xattr.IS_TARGET);
-    _is_external = getBooleanAttribute(Xattr.IS_EXTERNAL);
-    _is_intrinsic = getBooleanAttribute(Xattr.IS_INTRINSIC);
-    _is_optional = getBooleanAttribute(Xattr.IS_OPTIONAL);
-    _is_save = getBooleanAttribute(Xattr.IS_SAVE);
-    _is_parameter = getBooleanAttribute(Xattr.IS_PARAMETER);
-    _is_allocatable = getBooleanAttribute(Xattr.IS_ALLOCATABLE);
-    _intent = Xintent.fromString(getAttribute(Xattr.INTENT));
-  }
 
   /**
    * Get the indexRange object for the given dimension.
@@ -197,7 +156,7 @@ public class XbasicType extends Xtype {
    * @return The ref attribute value as String.
    */
   public String getRef() {
-    return _ref;
+    return getAttribute(Xattr.REF);
   }
 
   /**
@@ -215,7 +174,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is public. False otherwise.
    */
   public boolean isPublic() {
-    return _is_public;
+    return getBooleanAttribute(Xattr.IS_PUBLIC);
   }
 
   /**
@@ -224,7 +183,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is private. False otherwise.
    */
   public boolean isPrivate() {
-    return _is_private;
+    return getBooleanAttribute(Xattr.IS_PRIVATE);
   }
 
   /**
@@ -233,7 +192,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is a pointer. False otherwise.
    */
   public boolean isPointer() {
-    return _is_pointer;
+    return getBooleanAttribute(Xattr.IS_POINTER);
   }
 
   /**
@@ -242,7 +201,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is a target. False otherwise.
    */
   public boolean isTarget() {
-    return _is_target;
+    return getBooleanAttribute(Xattr.IS_TARGET);
   }
 
   /**
@@ -251,7 +210,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is external. False otherwise.
    */
   public boolean isExternal() {
-    return _is_external;
+    return getBooleanAttribute(Xattr.IS_EXTERNAL);
   }
 
   /**
@@ -260,7 +219,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is intrinsic. False otherwise.
    */
   public boolean isIntrinsic() {
-    return _is_intrinsic;
+    return getBooleanAttribute(Xattr.IS_INTRINSIC);
   }
 
   /**
@@ -269,7 +228,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is optional. False otherwise.
    */
   public boolean isOptional() {
-    return _is_optional;
+    return getBooleanAttribute(Xattr.IS_OPTIONAL);
   }
 
   /**
@@ -278,7 +237,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is save. False otherwise.
    */
   public boolean isSave() {
-    return _is_save;
+    return getBooleanAttribute(Xattr.IS_SAVE);
   }
 
   /**
@@ -287,7 +246,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is a parameter. False otherwise.
    */
   public boolean isParameter() {
-    return _is_parameter;
+    return getBooleanAttribute(Xattr.IS_PARAMETER);
   }
 
   /**
@@ -296,7 +255,7 @@ public class XbasicType extends Xtype {
    * @return True if the type is allocatable. False otherwise.
    */
   public boolean isAllocatable() {
-    return _is_allocatable;
+    return getBooleanAttribute(Xattr.IS_ALLOCATABLE);
   }
 
   /**
@@ -305,7 +264,7 @@ public class XbasicType extends Xtype {
    * @return True if the type has an intent. False otherwise.
    */
   public boolean hasIntent() {
-    return _intent != Xintent.NONE;
+    return Xintent.fromString(getAttribute(Xattr.INTENT)) != Xintent.NONE;
   }
 
   /**
@@ -314,7 +273,7 @@ public class XbasicType extends Xtype {
    * @return Intent. Null if the type has no intent.
    */
   public Xintent getIntent() {
-    return _intent;
+    return Xintent.fromString(getAttribute(Xattr.INTENT));
   }
 
   /**
@@ -324,27 +283,6 @@ public class XbasicType extends Xtype {
    */
   public void setIntent(Xintent value) {
     setAttribute(Xattr.INTENT, value.toString());
-    _intent = value;
-  }
-
-  /**
-   * Remove intent attribute from the element.
-   */
-  public void removeIntent() {
-    if(hasIntent()) {
-      _baseElement.removeAttribute(Xname.ATTR_INTENT);
-      _intent = null;
-    }
-  }
-
-  /**
-   * Remove is_allocatable attribute from the element.
-   */
-  public void removeAllocatable() {
-    if(isAllocatable()) {
-      _baseElement.removeAttribute(Xname.ATTR_IS_ALLOCATABLE);
-      _is_allocatable = false;
-    }
   }
 
   /**
@@ -403,6 +341,9 @@ public class XbasicType extends Xtype {
    * @return True if all current dimensions are deferred. False otherwise.
    */
   public boolean isAllAssumedShape() {
+    if(!isArray()) {
+      return false;
+    }
     for(Xnode dim : _dimensions) {
       if(!dim.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
         return false;

@@ -17,13 +17,9 @@ import static org.junit.Assert.*;
  */
 public class XfunctionTypeTest {
 
-  private static final String fctType1 =
-      "<FfunctionType type=\"F0\" return_type=\"Freal\">" +
-          "<params>" +
-          "<name type=\"Fint\">a</name>" +
-          "<name type=\"Fint\">b</name>" +
-          "</params>" +
-          "</FfunctionType>";
+  private static final String fctType1 = "<FfunctionType type=\"F0\" " +
+      "return_type=\"Freal\"><params><name type=\"Fint\">a</name>" +
+      "<name type=\"Fint\">b</name></params></FfunctionType>";
 
   /**
    * Test simple fct type
@@ -36,7 +32,6 @@ public class XfunctionTypeTest {
     XfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
     assertNotNull(f);
 
-
     assertEquals("Freal", f.getReturnType());
     assertNull(f.getResultName());
     assertFalse(f.isRecursive());
@@ -47,11 +42,9 @@ public class XfunctionTypeTest {
     // Test parameters
     assertEquals(2, f.getParams().count());
     assertEquals("a", f.getParams().getAll().get(0).value());
-    assertEquals("Fint",
-        f.getParams().getAll().get(0).getAttribute(Xattr.TYPE));
+    assertEquals("Fint", f.getParams().getAll().get(0).getType());
     assertEquals("b", f.getParams().getAll().get(1).value());
-    assertEquals("Fint",
-        f.getParams().getAll().get(1).getAttribute(Xattr.TYPE));
+    assertEquals("Fint", f.getParams().getAll().get(1).getType());
   }
 
 }

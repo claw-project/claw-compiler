@@ -7,9 +7,11 @@ package cx2x.translator.transformation.claw.parallelize;
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -207,11 +209,10 @@ public class ParallelizeForward extends ClawTransformation {
           return false;
         }
       } else {
-        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id.getType());
+        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id);
       }
     } else {
-      String fctType = _fctCall.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE);
-      Xtype rawType = xcodeml.getTypeTable().get(fctType);
+      Xtype rawType = xcodeml.getTypeTable().get(_fctCall);
       if(rawType instanceof XfunctionType) {
         _fctType = (XfunctionType) rawType;
       } else {
@@ -241,7 +242,7 @@ public class ParallelizeForward extends ClawTransformation {
           return false;
         }
       } else {
-        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id.getType());
+        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id);
         if(_fctType == null) {
           xcodeml.addError(
               "Called function cannot be found in the same module ",
@@ -333,9 +334,8 @@ public class ParallelizeForward extends ClawTransformation {
         }
 
         if(_mod.getIdentifiers().contains(_calledFctName)) {
-          String type = _mod.getIdentifiers().get(_calledFctName).
-              getAttribute(Xattr.TYPE);
-          _fctType = (XfunctionType) _mod.getTypeTable().get(type);
+          Xid id = _mod.getIdentifiers().get(_calledFctName);
+          _fctType = (XfunctionType) _mod.getTypeTable().get(id);
           if(_fctType != null) {
             _calledFctName = null;
             return true;
@@ -394,8 +394,7 @@ public class ParallelizeForward extends ClawTransformation {
       throw new IllegalTransformationException("Parallelize directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().lineNo());
     }
-    _parentFctType = (XfunctionType) xcodeml.getTypeTable().
-        get(fDef.getName().getAttribute(Xattr.TYPE));
+    _parentFctType = (XfunctionType) xcodeml.getTypeTable().get(fDef);
 
     List<Xnode> params = _fctType.getParams().getAll();
 
@@ -408,7 +407,7 @@ public class ParallelizeForward extends ClawTransformation {
      * TODO cont: FmemberRef element
      */
     int argOffset = 0;
-    if(params.get(0).getAttribute(Xattr.TYPE).startsWith(Xtype.PREFIX_STRUCT)
+    if(params.get(0).getType().startsWith(Xtype.PREFIX_STRUCT)
         && _fctCall.firstChild().opcode().equals(Xcode.FMEMBERREF))
     {
       argOffset = 1;
@@ -420,8 +419,7 @@ public class ParallelizeForward extends ClawTransformation {
       String var = p.value();
       String type;
 
-      XbasicType paramType =
-          (XbasicType) xcodeml.getTypeTable().get(p.getAttribute(Xattr.TYPE));
+      XbasicType paramType = (XbasicType) xcodeml.getTypeTable().get(p);
 
       if(!p.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         continue;
@@ -442,7 +440,7 @@ public class ParallelizeForward extends ClawTransformation {
             Xname.SCLASS_F_PARAM, fDef, true);
         type = intTypeIntentIn.getType();
         Xnode param = xcodeml.createAndAddParam(var, type, _parentFctType);
-        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+        param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       } else {
 
         // Var exists already. Add to the parameters if not here.
@@ -454,7 +452,7 @@ public class ParallelizeForward extends ClawTransformation {
           Xnode param =
               xcodeml.createAndAddParamIfNotExists(var, type, _parentFctType);
           if(param != null) {
-            param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+            param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
           }
         }
       }
@@ -511,21 +509,20 @@ public class ParallelizeForward extends ClawTransformation {
 
         if(pUpdate != null) {
 
-          if(pUpdate.getAttribute(Xattr.TYPE) == null
-              || XnodeUtil.isBuiltInType(pUpdate.getAttribute(Xattr.TYPE)))
+          if(pUpdate.getType() == null
+              || XnodeUtil.isBuiltInType(pUpdate.getType()))
           {
             continue;
           }
 
-          XbasicType typeBase = (_localFct) ? (XbasicType)
-              xcodeml.getTypeTable().get(pBase.getAttribute(Xattr.TYPE)) :
-              (XbasicType) _mod.getTypeTable().
-                  get(pBase.getAttribute(Xattr.TYPE));
-          XbasicType typeToUpdate = (XbasicType) xcodeml.getTypeTable().
-              get(pUpdate.getAttribute(Xattr.TYPE));
+          XbasicType typeBase = (_localFct) ?
+              (XbasicType) xcodeml.getTypeTable().get(pBase)
+              : (XbasicType) _mod.getTypeTable().get(pBase);
+          XbasicType typeToUpdate =
+              (XbasicType) xcodeml.getTypeTable().get(pUpdate);
+
           int targetDim = typeBase.getDimensions();
           int baseDim = typeToUpdate.getDimensions();
-
 
           // Types have different dimensions
           if(typeBase.getDimensions() > typeToUpdate.getDimensions()) {
@@ -589,6 +586,32 @@ public class ParallelizeForward extends ClawTransformation {
     updateResultVar(xcodeml);
 
     propagatePromotion(xcodeml, (ClawTranslator) translator);
+
+    Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPRSTATEMENT);
+    if(_claw.hasCreateClause()) {
+      List<String> creates =
+          XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.INOUT, true);
+      AcceleratorHelper.generateDataRegionClause(_claw, xcodeml,
+          Collections.<String>emptyList(), creates, exprStmt, exprStmt);
+    }
+
+    if(_claw.hasUpdateClause()) {
+      if(_claw.getUpdateClauseValue() == ClawDMD.BOTH ||
+          _claw.getUpdateClauseValue() == ClawDMD.DEVICE) {
+        List<String> out =
+            XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.IN, true);
+        AcceleratorHelper.generateUpdate(_claw, xcodeml, exprStmt, out,
+            ClawDMD.DEVICE);
+      }
+
+      if(_claw.getUpdateClauseValue() == ClawDMD.BOTH ||
+          _claw.getUpdateClauseValue() == ClawDMD.HOST) {
+        List<String> out =
+            XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.OUT, true);
+        AcceleratorHelper.generateUpdate(_claw, xcodeml, exprStmt, out,
+            ClawDMD.HOST);
+      }
+    }
   }
 
   /**
@@ -621,8 +644,7 @@ public class ParallelizeForward extends ClawTransformation {
       XfunctionDefinition parentFctDef =
           XnodeUtil.findParentFunction(_fctCall);
 
-      XbasicType varType = (XbasicType)
-          xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
+      XbasicType varType = (XbasicType) xcodeml.getTypeTable().get(varInLhs);
 
       PromotionInfo promotionInfo;
       if(!_promotions.containsKey(varInLhs.value())) {
@@ -734,8 +756,8 @@ public class ParallelizeForward extends ClawTransformation {
                 "promotion. Internal error.", _claw.getPragma().lineNo());
           }
 
-          XbasicType varType = (XbasicType)
-              xcodeml.getTypeTable().get(varInLhs.getAttribute(Xattr.TYPE));
+          XbasicType varType =
+              (XbasicType) xcodeml.getTypeTable().get(varInLhs);
 
           // Declare the induction variable if they are not present
           TransformationHelper.declareInductionVariables(dimensions,
@@ -748,7 +770,7 @@ public class ParallelizeForward extends ClawTransformation {
               append(assignment, false);
 
           PromotionInfo promotionInfo;
-          if(!previouslyPromoted.contains(varInLhs.value().toLowerCase())) {
+          if(!previouslyPromoted.contains(varInLhs.value())) {
             // Perform the promotion on the variable
             promotionInfo = TransformationHelper.promoteField(
                 varInLhs.value(), true, true, 0, 0, parentFctDef,
@@ -771,12 +793,12 @@ public class ParallelizeForward extends ClawTransformation {
               assignment, _promotions, emptyInd, emptyInd, induction, xcodeml);
 
           // If the array is a target, check if we have to promote a pointer
-          if(!previouslyPromoted.contains(varInLhs.value().toLowerCase())) {
+          if(!previouslyPromoted.contains(varInLhs.value())) {
             adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
                 promotionInfo, dimensions);
 
             // TODO centralized info
-            previouslyPromoted.add(varInLhs.value().toLowerCase());
+            previouslyPromoted.add(varInLhs.value());
           }
 
           break;
@@ -815,13 +837,12 @@ public class ParallelizeForward extends ClawTransformation {
         Xnode pointee = pAssignment.child(1);
 
         // Check if the pointer assignment has the promoted variable
-        if(pointee.value().toLowerCase().
-            equals(fieldId.toLowerCase()))
-        {
-          XbasicType pointerType = (XbasicType) xcodeml.getTypeTable().
-              get(pointer.getAttribute(Xattr.TYPE));
-          XbasicType pointeeType = (XbasicType) xcodeml.getTypeTable().
-              get(pointeeInfo.getTargetType());
+        if(pointee.value().equals(fieldId)) {
+          XbasicType pointerType =
+              (XbasicType) xcodeml.getTypeTable().get(pointer);
+          XbasicType pointeeType =
+              (XbasicType) xcodeml.getTypeTable().
+                  get(pointeeInfo.getTargetType());
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()

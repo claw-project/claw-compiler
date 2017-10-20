@@ -20,7 +20,7 @@ grammar Claw;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.*;
 import cx2x.translator.language.common.*;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.base.Target;
 import cx2x.translator.common.Utility;
 import cx2x.xcodeml.language.*;
 }
@@ -401,28 +401,34 @@ define_option[ClawLanguage l]:
 
 // Allow to switch order
 parallelize_clauses[ClawLanguage l]:
-    copy_clause_optional[$l] update_clause_optional[$l]
-  | update_clause_optional[$l] copy_clause_optional[$l]
+  (
+    { !$l.hasCopyClause() }?   copy_clause[$l]
+  | { !$l.hasUpdateClause() }? update_clause[$l]
+  | { !$l.hasCreateClause() }? create_clause[$l]
+  )*
 ;
 
-copy_clause_optional[ClawLanguage l]:
-    /* empty */
-  | COPY
+copy_clause[ClawLanguage l]:
+    COPY
     { $l.setCopyClauseValue(ClawDMD.BOTH); }
   | COPY '(' IN ')'
-    { $l.setCopyClauseValue(ClawDMD.IN); }
+    { $l.setCopyClauseValue(ClawDMD.DEVICE); }
   | COPY '(' OUT ')'
-    { $l.setCopyClauseValue(ClawDMD.OUT); }
+    { $l.setCopyClauseValue(ClawDMD.HOST); }
 ;
 
-update_clause_optional[ClawLanguage l]:
-    /* empty */
-  | UPDATE
+update_clause[ClawLanguage l]:
+    UPDATE
     { $l.setUpdateClauseValue(ClawDMD.BOTH); }
   | UPDATE '(' IN ')'
-    { $l.setUpdateClauseValue(ClawDMD.IN); }
+    { $l.setUpdateClauseValue(ClawDMD.DEVICE); }
   | UPDATE '(' OUT ')'
-    { $l.setUpdateClauseValue(ClawDMD.OUT); }
+    { $l.setUpdateClauseValue(ClawDMD.HOST); }
+;
+
+create_clause[ClawLanguage l]:
+    CREATE
+    { $l.setCreateClause(); }
 ;
 
 target_clause[ClawLanguage l]
@@ -552,6 +558,7 @@ VERBATIM         : 'verbatim';
 COLLAPSE     : 'collapse';
 CONSTRAINT   : 'constraint';
 COPY         : 'copy';
+CREATE       : 'create';
 DATA         : 'data';
 DIMENSION    : 'dimension';
 FORWARD      : 'forward';

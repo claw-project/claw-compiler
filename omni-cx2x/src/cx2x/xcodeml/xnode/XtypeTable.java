@@ -85,8 +85,20 @@ public class XtypeTable extends Xnode {
    * @param type The new type to be added.
    */
   public void add(Xtype type) {
-    _baseElement.appendChild(type.cloneRawNode());
-    _table.put(type.getAttribute(Xattr.TYPE), type);
+    if(!type.getType().isEmpty()) {
+      _baseElement.appendChild(type.cloneRawNode());
+      _table.put(type.getType(), type);
+    }
+  }
+
+  /**
+   * Get type associated with node if any.
+   *
+   * @param node Node to retrieve the type.
+   * @return Xtype element if found. Null otherwise.
+   */
+  public Xtype get(Xnode node) {
+    return node == null ? null : get(node.getType());
   }
 
   /**

@@ -9,9 +9,8 @@ import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
 import cx2x.translator.language.common.ClawReshapeInfo;
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
-import cx2x.translator.language.helper.accelerator.AcceleratorGenerator;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
@@ -72,6 +71,7 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
   private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
   private boolean _hasTargetClause, _hasConstraintClause, _hasScalarClause;
+  private boolean _hasCreateClause;
 
   /**
    * Constructs an empty ClawLanguage section.
@@ -310,6 +310,8 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasUpdateClause = false;
     _hasTargetClause = false;
     _hasConstraintClause = false;
+    _hasScalarClause = false;
+    _hasCreateClause = false;
 
     // General members
     _directive = null;
@@ -1098,5 +1100,20 @@ public class ClawLanguage extends AnalyzedPragma {
         AcceleratorDirective.NONE;
   }
 
+  /**
+   * Check whether the create clause is used.
+   *
+   * @return True if the create clause is used.
+   */
+  public boolean hasCreateClause() {
+    return _hasCreateClause;
+  }
 
+
+  /**
+   * Enable the create clause.
+   */
+  public void setCreateClause() {
+    _hasCreateClause = true;
+  }
 }

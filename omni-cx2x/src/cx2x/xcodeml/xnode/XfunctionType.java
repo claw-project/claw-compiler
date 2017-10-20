@@ -140,7 +140,7 @@ public class XfunctionType extends Xtype {
   public List<String> getParamsNames() {
     List<String> parameters = new ArrayList<>();
     for(Xnode n : _params.getAll()) {
-      parameters.add(n.value().toLowerCase());
+      parameters.add(n.value());
     }
     return parameters;
   }
@@ -177,7 +177,7 @@ public class XfunctionType extends Xtype {
       return false;
     }
     for(Xnode param : _params.getAll()) {
-      if(param.value().toLowerCase().equals(paramName.toLowerCase())) {
+      if(param.value().equals(paramName.toLowerCase())) {
         return true;
       }
     }

@@ -266,9 +266,7 @@ public class XcodeProgram extends XcodeML {
       if(fctDefNode.getNodeType() == Node.ELEMENT_NODE) {
         Xnode dummyFctDef = new Xnode((Element) fctDefNode);
         Xnode fctDefName = dummyFctDef.matchSeq(Xcode.NAME);
-        if(name != null &&
-            fctDefName.value().toLowerCase().equals(name.toLowerCase()))
-        {
+        if(name != null && fctDefName.value().equals(name.toLowerCase())) {
           return new XfunctionDefinition(dummyFctDef.element());
         }
       }

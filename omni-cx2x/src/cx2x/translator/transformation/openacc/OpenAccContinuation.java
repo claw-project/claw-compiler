@@ -65,7 +65,7 @@ public class OpenAccContinuation extends ClawTransformation {
    * @return True the directive starts with the OpenACC prefix.
    */
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    return getDirective().getPragma().value().toLowerCase().
+    return getDirective().getPragma().value().
         startsWith(ClawConstant.OPENACC_PREFIX);
   }
 

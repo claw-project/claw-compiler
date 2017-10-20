@@ -7,7 +7,7 @@ package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.Transformation;
@@ -80,8 +80,7 @@ public class DirectivePrimitive extends ClawTransformation {
 
     String regex = ClawConstant.CLAW + " *" + prefix;
     getDirective().getPragma().setValue(
-        getDirective().getPragma().value().toLowerCase().
-            replaceAll(regex, prefix)
+        getDirective().getPragma().value().replaceAll(regex, prefix)
     );
 
     translator.addTransformation(xcodeml,

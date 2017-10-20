@@ -10,8 +10,8 @@ import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.base.Target;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -206,9 +206,7 @@ public class TransformationHelper {
             "declaration table.", claw.getPragma().lineNo());
       }
 
-      String crtTypeHash = id.getType();
-
-      Xtype rawType = xcodeml.getTypeTable().get(crtTypeHash);
+      Xtype rawType = xcodeml.getTypeTable().get(id);
       if(!(rawType instanceof XbasicType)) {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",
@@ -336,13 +334,12 @@ public class TransformationHelper {
       // check if params need to be imported as well
       if(importedFctType.getParameterNb() > 0) {
         for(Xnode param : importedFctType.getParams().getAll()) {
-          mod.importType(xcodeml, param.getAttribute(Xattr.TYPE));
+          mod.importType(xcodeml, param.getType());
         }
       }
       return;
     } else {
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(
-          fctDef.getName().getAttribute(Xattr.TYPE));
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(fctDef);
     }
 
     if(fctTypeMod == null) {
@@ -361,7 +358,7 @@ public class TransformationHelper {
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id.getType());
+      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id);
       if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
@@ -390,17 +387,17 @@ public class TransformationHelper {
         Xnode param = mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
         if(param != null) {
-          param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+          param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
         }
       } else {
         Xnode pMod = paramsMod.get(i);
-        String localType = pLocal.getAttribute(Xattr.TYPE);
-        String modType = pMod.getAttribute(Xattr.TYPE);
+        String localType = pLocal.getType();
+        String modType = pMod.getType();
 
         if(!localType.equals(modType)) {
           // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(localType);
-          XbasicType crtType = (XbasicType) mod.getTypeTable().get(modType);
+          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(pLocal);
+          XbasicType crtType = (XbasicType) mod.getTypeTable().get(pMod);
 
           List<DimensionDefinition> dimensions =
               TransformationHelper.findDimensions(fctType);
@@ -512,7 +509,7 @@ public class TransformationHelper {
       if(XnodeUtil.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
-        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id.getType());
+        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id);
         if(old == null) {
           throw new IllegalTransformationException("Cannot matchSeq type for " +
               fieldId, claw.getPragma().lineNo());
@@ -666,7 +663,7 @@ public class TransformationHelper {
         for(Xnode ref : refs) {
           Xnode arrayRef = new Xnode(Xcode.FARRAYREF, xcodeml);
           Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
-          arrayRef.setAttribute(Xattr.TYPE, ref.getAttribute(Xattr.TYPE));
+          arrayRef.setAttribute(Xattr.TYPE, ref.getType());
           varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.insertAfter(arrayRef);

@@ -3,12 +3,13 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.helper.accelerator;
+package cx2x.translator.language.accelerator.generator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
-import xcodeml.util.XmOption;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author clementval
  */
-class OpenAcc extends AcceleratorGenerator {
+public class OpenAcc extends AcceleratorGenerator {
 
   public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
   private static final String OPENACC_COLLAPSE = "collapse";
@@ -29,25 +30,29 @@ class OpenAcc extends AcceleratorGenerator {
   private static final String OPENACC_PREFIX = "acc";
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_PRESENT = "present";
+  private static final String OPENACC_PCREATE = "pcreate";
   private static final String OPENACC_ROUTINE = "routine";
   private static final String OPENACC_SEQUENTIAL = "seq";
+  private static final String OPENACC_UPDATE = "update";
+  private static final String OPENACC_DEVICE = "device";
+  private static final String OPENACC_HOST = "host";
 
   /**
    * Constructs a new object with the given target.
    *
    * @param config Configuration information object.
    */
-  OpenAcc(Configuration config) {
+  public OpenAcc(Configuration config) {
     super(config);
   }
 
   @Override
-  protected String getPrefix() {
+  public String getPrefix() {
     return OPENACC_PREFIX;
   }
 
   @Override
-  protected String[] getStartParallelDirective(String clauses) {
+  public String[] getStartParallelDirective(String clauses) {
     //!$acc parallel [vector_length()] [num_gang()] [num_worker()]
     if(clauses == null || clauses.isEmpty()) {
       return new String[]{
@@ -61,7 +66,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getEndParallelDirective() {
+  public String[] getEndParallelDirective() {
     //!$acc end parallel
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_END, OPENACC_PARALLEL)
@@ -69,7 +74,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getSingleDirective(String clause) {
+  public String[] getSingleDirective(String clause) {
     //!$acc <clause>
     return new String[]{
         String.format(FORMAT2, OPENACC_PREFIX, clause)
@@ -77,41 +82,47 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String getParallelKeyword() {
+  public String getParallelKeyword() {
     return OPENACC_PARALLEL;
   }
 
   @Override
-  protected String getPrivateClause(String var) {
+  public String getPrivateClause(String var) {
     return String.format(FORMATPAR, OPENACC_PRIVATE, var);
   }
 
   @Override
-  protected String getPrivateClause(List<String> vars) {
+  public String getPrivateClause(List<String> vars) {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate private clause for: " +
-          Utility.join(",", vars));
-    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate private clause for: "
+        + Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
 
   @Override
-  protected String getPresentClause(List<String> vars) {
+  public String getPresentClause(List<String> vars) {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    if(XmOption.isDebugOutput()) {
-      System.out.println(OPENACC_DEBUG_PREFIX + "generate present clause for: " +
-          Utility.join(",", vars));
-    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate present clause for: "
+        + Utility.join(",", vars));
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
   }
 
   @Override
-  protected String[] getRoutineDirective(boolean seq) {
+  public String getCreateClause(List<String> vars) {
+    if(vars == null || vars.size() == 0) {
+      return "";
+    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate pcreate clause for: "
+        + Utility.join(",", vars));
+    return String.format(FORMATPAR, OPENACC_PCREATE, Utility.join(",", vars));
+  }
+
+  @Override
+  public String[] getRoutineDirective(boolean seq) {
     //!$acc routine
     if(seq) {
       return new String[]{
@@ -137,10 +148,11 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  public String[] getStartDataRegion(String clauses) {
+  public String[] getStartDataRegion(List<String> clauses) {
     //!$acc data
     return new String[]{
-        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA, clauses).trim()
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA,
+            Utility.join(" ", clauses)).trim()
     };
   }
 
@@ -158,8 +170,8 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getStartLoopDirective(int value, boolean seq,
-                                           boolean naked, String clauses)
+  public String[] getStartLoopDirective(int value, boolean seq,
+                                        boolean naked, String clauses)
   {
     if(value > 1) {
       //!$acc loop collapse(<value>)
@@ -199,7 +211,7 @@ class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  protected String[] getEndLoopDirective() {
+  public String[] getEndLoopDirective() {
     return null;
   }
 
@@ -222,5 +234,21 @@ class OpenAcc extends AcceleratorGenerator {
     return Arrays.asList(
         Xcode.FDEALLOCATESTATEMENT, Xcode.FPRAGMASTATEMENT
     );
+  }
+
+  @Override
+  public String[] getUpdateClause(ClawDMD direction, List<String> vars) {
+    //!$acc update host/device(<vars>)
+    if(vars == null || vars.isEmpty()) {
+      return null;
+    }
+    Utility.debug(OPENACC_DEBUG_PREFIX + "generate update " +
+        (direction == ClawDMD.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
+        " clause for: " + Utility.join(",", vars));
+    String updates = String.format(FORMATPAR, direction == ClawDMD.DEVICE ?
+        OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
+    return new String[]{
+        String.format(FORMAT3, OPENACC_PREFIX, OPENACC_UPDATE, updates)
+    };
   }
 }

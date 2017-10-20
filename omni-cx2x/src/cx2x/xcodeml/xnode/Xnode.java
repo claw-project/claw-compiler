@@ -127,7 +127,7 @@ public class Xnode {
    * @return Element value.
    */
   public String value() {
-    return _baseElement.getTextContent().trim();
+    return _baseElement.getTextContent().trim().toLowerCase();
   }
 
   /**
@@ -137,6 +137,31 @@ public class Xnode {
    */
   public void setValue(String value) {
     _baseElement.setTextContent(value);
+  }
+
+
+  /**
+   * Set the value of a boolean attribute.
+   *
+   * @param attrCode Attribute code.
+   * @param value    Boolean value to set.
+   */
+  public void setBooleanAttribute(Xattr attrCode, boolean value) {
+    setBooleanAttribute(attrCode.toString(), value);
+  }
+
+  /**
+   * Set the value of a boolean attribute.
+   *
+   * @param attrCode Attribute code.
+   * @param value    Boolean value to set.
+   */
+  public void setBooleanAttribute(String attrCode, boolean value) {
+    if(value) {
+      setAttribute(attrCode, Xname.TRUE);
+    } else {
+      setAttribute(attrCode, Xname.FALSE);
+    }
   }
 
   /**
@@ -160,18 +185,34 @@ public class Xnode {
   }
 
   /**
-   * Check whether the current element has a body element.
+   * Remove an attribute from the node.
    *
-   * @return True if the element has a body. False otherwise.
+   * @param attrCode Attribute code.
+   */
+  public void removeAttribute(Xattr attrCode) {
+    if(_baseElement != null && _baseElement.hasAttribute(attrCode.toString())) {
+      _baseElement.removeAttribute(attrCode.toString());
+    }
+  }
+
+  /**
+   * Check whether the current element is an element with body element.
+   *
+   * @return True if the element should have a body. False otherwise.
    */
   public boolean hasBody() {
     switch(opcode()) {
-      case FDOSTATEMENT:
-      case FFUNCTIONDEFINITION:
-      case FDOWHILESTATEMENT:
-      case FCASELABEL:
-      case THEN:
+      case ASSOCIATESTATEMENT:
+      case BLOCKSTATEMENT:
+      case CRITICALSTATEMENT:
       case ELSE:
+      case FCASELABEL:
+      case FDOCONCURRENTSTATEMENT:
+      case FDOSTATEMENT:
+      case FDOWHILESTATEMENT:
+      case FFUNCTIONDEFINITION:
+      case FORALLSTATEMENT:
+      case THEN:
       case TYPEGUARD:
         return true;
     }
@@ -614,5 +655,143 @@ public class Xnode {
   public boolean equals(Object obj) {
     return !(obj == null || !(obj instanceof Xnode))
         && element() == ((Xnode) obj).element();
+  }
+
+  /**
+   * Return type hash associated with this node if any.
+   *
+   * @return Type hash. Empty string if there is no type hash associated.
+   */
+  public String getType() {
+    switch(opcode()) {
+      case FARRAYREF:
+        String type = getAttribute(Xattr.TYPE);
+        if(XnodeUtil.isBuiltInType(type)) {
+          Xnode child = firstChild();
+          return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
+        }
+        return type;
+      case FALLOCATESTATEMENT:
+      case FBASICTYPE:
+      case FCHARACTERCONSTANT:
+      case FCHARACTERREF:
+      case FCOMPLEXCONSTANT:
+      case FCOMPLEXPARTREF:
+      case FCOARRAYREF:
+      case FDOCONCURRENTSTATEMENT:
+      case FENUMDECL:
+      case FFUNCTIONTYPE:
+      case FINTCONSTANT:
+      case FLOGICALCONSTANT:
+      case FMEMBERREF:
+      case FORALLSTATEMENT:
+      case FREALCONSTANT:
+      case FSTRUCTCONSTRUCTOR:
+      case FSTRUCTTYPE:
+      case ID:
+      case NAME:
+      case TYPEPARAM:
+      case VAR:
+      case VARREF:
+      case PLUSEXPR:
+      case MINUSEXPR:
+      case MULEXPR:
+      case DIVEXPR:
+      case FPOWEREXPR:
+      case FCONCATEXPR:
+      case LOGEQEXPR:
+      case LOGNEQEXPR:
+      case LOGGEEXPR:
+      case LOGGTEXPR:
+      case LOGLEEXPR:
+      case LOGLTEXPR:
+      case LOGANDEXPR:
+      case LOGOREXPR:
+      case LOGEQVEXPR:
+      case LOGNEWVEXPR:
+      case USERBINARYEXPR:
+      case UNARYMINUSEXPR:
+      case LOGNOTEXPR:
+      case USERUNARYEXPR:
+        return getAttribute(Xattr.TYPE);
+      case NAMEDVALUE:
+        Xnode child = firstChild();
+        return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
+      case FFUNCTIONDEFINITION:
+      case FUNCTIONCALL:
+      case VARDECL:
+        // functionCall has a type attribute but it's the return type
+        Xnode name = matchDirectDescendant(Xcode.NAME);
+        return (name != null) ? name.getAttribute(Xattr.TYPE) : "";
+      default:
+        return "";
+    }
+  }
+
+  /**
+   * Construct string representation of the node. Only for variable or constant.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  public String constructRepresentation(boolean withNamedValue)
+  {
+    switch(opcode()) {
+      case FINTCONSTANT:
+      case FPRAGMASTATEMENT:
+      case VAR:
+        return value();
+      case ARRAYINDEX:
+      case LOWERBOUND:
+      case UPPERBOUND:
+      case VARREF: {
+        Xnode n = firstChild();
+        return (n != null) ? n.constructRepresentation(withNamedValue) : "";
+      }
+      case INDEXRANGE:
+        if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
+          return ":";
+        }
+        Xnode child0 = child(0);
+        Xnode child1 = child(1);
+        return ((child0 != null) ?
+            child0.constructRepresentation(withNamedValue) : "") + ":" +
+            ((child1 != null) ?
+                child1.constructRepresentation(withNamedValue) : "");
+      case FARRAYREF:
+        List<Xnode> childs = children();
+        if(childs.size() == 1) {
+          return childs.get(0).constructRepresentation(withNamedValue);
+        } else {
+          StringBuilder str = new StringBuilder();
+          str.append(childs.get(0).constructRepresentation(withNamedValue));
+          str.append("(");
+          for(int i = 1; i < childs.size(); ++i) {
+            str.append(childs.get(i).constructRepresentation(withNamedValue));
+            if(i != childs.size() - 1) {
+              str.append(",");
+            }
+          }
+          str.append(")");
+          return str.toString();
+        }
+      case FMEMBERREF: {
+        Xnode n = firstChild();
+        return ((n != null) ?
+            n.constructRepresentation(withNamedValue) + "%" +
+                getAttribute(Xattr.MEMBER) : "");
+      }
+      case NAMEDVALUE: {
+        Xnode n = firstChild();
+        if(withNamedValue) {
+          return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
+              n.constructRepresentation(true) : "");
+        }
+        return (n != null) ? n.constructRepresentation(false) : "";
+      }
+      default:
+        return "";
+    }
   }
 }

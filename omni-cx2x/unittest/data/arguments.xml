@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XcodeProgram compiler-info="XcodeML/Fortran-FrontEnd" language="Fortran" source="__omni_tmp__/main.f90" time="2017-10-17 15:15:18" version="1.0">
+  <typeTable>
+    <FfunctionType is_program="true" return_type="Fvoid" type="F7fe453c075f0"/>
+    <FstructType type="S7fe453d06d60">
+      <symbols>
+        <id type="A7fe453d07340">
+          <name>y</name>
+        </id>
+      </symbols>
+    </FstructType>
+    <FbasicType is_allocatable="true" ref="Freal" type="R7fe453d07700"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d07700" type="R7fe453d075c0"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d075c0" type="A7fe453d07480">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d075c0" type="A7fe453d07340">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FfunctionType return_type="Fvoid" type="F7fe453d07140">
+      <params>
+        <name type="I7fe453d07ba0">nz</name>
+        <name type="A7fe453d07f00">q</name>
+        <name type="A7fe453d084e0">t</name>
+        <name type="R7fe453d08ac0">z</name>
+        <name type="I7fe453d07ba0">nproma</name>
+      </params>
+    </FfunctionType>
+    <FbasicType intent="in" ref="Fint" type="I7fe453d07ba0"/>
+    <FbasicType intent="inout" ref="Freal" type="R7fe453d08180"/>
+    <FbasicType intent="inout" ref="R7fe453d08180" type="R7fe453d08040"/>
+    <FbasicType intent="inout" ref="R7fe453d08040" type="A7fe453d07f00">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType intent="inout" ref="Freal" type="R7fe453d08760"/>
+    <FbasicType intent="inout" ref="R7fe453d08760" type="R7fe453d08620"/>
+    <FbasicType intent="inout" ref="R7fe453d08620" type="A7fe453d084e0">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType intent="inout" ref="Freal" type="R7fe453d08ac0"/>
+    <FfunctionType return_type="Fvoid" type="F7fe453d07020">
+      <params>
+        <name type="I7fe453d07ba0">nz</name>
+        <name type="A7fe453d07f00">q</name>
+        <name type="A7fe453d084e0">t</name>
+        <name type="R7fe453d08ac0">z</name>
+        <name type="I7fe453d07ba0">nproma</name>
+      </params>
+    </FfunctionType>
+    <FbasicType ref="Freal" type="A7fe453d09e10">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">20</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType ref="Freal" type="A7fe453d0a0a0">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">20</FintConstant>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">60</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType ref="Freal" type="A7fe453d0ac60">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">20</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType ref="S7fe453d06d60" type="S7fe453d0b280"/>
+    <FbasicType ref="S7fe453d0b280" type="S7fe453d0b480"/>
+    <FfunctionType return_type="Freal" type="F7fe453d191c0"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d075c0" type="R7fe453d10940"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d10940" type="A7fe453d10a60">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d10940" type="A7fe453d10b80">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType ref="Freal" type="A7fe453d14710">
+      <indexRange>
+        <lowerBound>
+          <FintConstant type="Fint">1</FintConstant>
+        </lowerBound>
+        <upperBound>
+          <FintConstant type="Fint">60</FintConstant>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType ref="Fint" type="A7fe453d13340">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d075c0" type="R7fe453d15570"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d15570" type="A7fe453d16430">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d15570" type="A7fe453d15690">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d15570" type="A7fe453d157b0">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType ref="Fint" type="A7fe453d15c80">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d075c0" type="R7fe453d18d30"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d18d30" type="A7fe453d18e50">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d18d30" type="A7fe453d18f70">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d075c0" type="R7fe453d19e70"/>
+    <FbasicType is_allocatable="true" ref="R7fe453d19e70" type="A7fe453d19f90">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType is_allocatable="true" ref="R7fe453d19e70" type="A7fe453d1a0b0">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc" type="F7fe453c075f0">
+      <name>test_abstraction4</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition file="__omni_tmp__/main.f90" lineno="2">
+      <name type="F7fe453c075f0">test_abstraction4</name>
+      <symbols>
+        <id declared_in="mo_column" sclass="ftype_name" type="S7fe453d06d60">
+          <name>t1</name>
+        </id>
+        <id declared_in="mo_column" sclass="ffunc" type="F7fe453d07140">
+          <name>compute</name>
+        </id>
+        <id sclass="flocal" type="A7fe453d0a0a0">
+          <name>q</name>
+        </id>
+        <id sclass="flocal" type="A7fe453d0ac60">
+          <name>z</name>
+        </id>
+        <id sclass="flocal" type="S7fe453d0b480">
+          <name>ty</name>
+        </id>
+        <id sclass="flocal" type="Fint">
+          <name>nproma</name>
+        </id>
+        <id sclass="flocal" type="Fint">
+          <name>nz</name>
+        </id>
+        <id sclass="flocal" type="Fint">
+          <name>p</name>
+        </id>
+      </symbols>
+      <declarations>
+        <FuseOnlyDecl file="__omni_tmp__/main.f90" lineno="3" name="mo_column">
+          <renamable use_name="compute"/>
+          <renamable use_name="t1"/>
+        </FuseOnlyDecl>
+        <varDecl file="__omni_tmp__/main.f90" lineno="4">
+          <name type="A7fe453d0a0a0">q</name>
+        </varDecl>
+        <varDecl file="__omni_tmp__/main.f90" lineno="5">
+          <name type="A7fe453d0ac60">z</name>
+        </varDecl>
+        <varDecl file="__omni_tmp__/main.f90" lineno="6">
+          <name type="S7fe453d0b480">ty</name>
+        </varDecl>
+        <varDecl file="__omni_tmp__/main.f90" lineno="7">
+          <name type="Fint">nproma</name>
+        </varDecl>
+        <varDecl file="__omni_tmp__/main.f90" lineno="7">
+          <name type="Fint">nz</name>
+        </varDecl>
+        <varDecl file="__omni_tmp__/main.f90" lineno="8">
+          <name type="Fint">p</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FassignStatement file="__omni_tmp__/main.f90" lineno="10">
+          <Var scope="local" type="Fint">nproma</Var>
+          <FintConstant type="Fint">20</FintConstant>
+        </FassignStatement>
+        <FassignStatement file="__omni_tmp__/main.f90" lineno="11">
+          <Var scope="local" type="Fint">nz</Var>
+          <FintConstant type="Fint">60</FintConstant>
+        </FassignStatement>
+        <FassignStatement file="__omni_tmp__/main.f90" lineno="12">
+          <Var scope="local" type="A7fe453d0ac60">z</Var>
+          <FrealConstant type="Freal">10.0</FrealConstant>
+        </FassignStatement>
+        <FdoStatement file="__omni_tmp__/main.f90" lineno="14">
+          <Var scope="local" type="Fint">p</Var>
+          <indexRange>
+            <lowerBound>
+              <FintConstant type="Fint">1</FintConstant>
+            </lowerBound>
+            <upperBound>
+              <Var scope="local" type="Fint">nproma</Var>
+            </upperBound>
+            <step>
+              <FintConstant type="Fint">1</FintConstant>
+            </step>
+          </indexRange>
+          <body>
+            <FassignStatement file="__omni_tmp__/main.f90" lineno="15">
+              <FarrayRef type="Freal">
+                <varRef type="A7fe453d0a0a0">
+                  <Var scope="local" type="A7fe453d0a0a0">q</Var>
+                </varRef>
+                <arrayIndex>
+                  <Var scope="local" type="Fint">p</Var>
+                </arrayIndex>
+                <arrayIndex>
+                  <FintConstant type="Fint">1</FintConstant>
+                </arrayIndex>
+              </FarrayRef>
+              <FrealConstant type="Freal">0.0</FrealConstant>
+            </FassignStatement>
+          </body>
+        </FdoStatement>
+        <FallocateStatement file="__omni_tmp__/main.f90" lineno="18">
+          <alloc>
+            <FmemberRef member="y" type="A7fe453d10b80">
+              <varRef type="S7fe453d0b480">
+                <Var scope="local" type="S7fe453d0b480">ty</Var>
+              </varRef>
+            </FmemberRef>
+            <arrayIndex>
+              <Var scope="local" type="Fint">nproma</Var>
+            </arrayIndex>
+            <arrayIndex>
+              <Var scope="local" type="Fint">nz</Var>
+            </arrayIndex>
+          </alloc>
+        </FallocateStatement>
+        <FpragmaStatement file="__omni_tmp__/main.f90" lineno="20">ACC data copyin(q,t) copyout(q,t)</FpragmaStatement>
+        <exprStatement file="__omni_tmp__/main.f90" lineno="24">
+          <functionCall type="Fvoid">
+            <name type="F7fe453d07140">compute</name>
+            <arguments>
+              <Var scope="local" type="Fint">nz</Var>
+              <FarrayRef type="A7fe453d14710">
+                <varRef type="A7fe453d0a0a0">
+                  <Var scope="local" type="A7fe453d0a0a0">q</Var>
+                </varRef>
+                <indexRange is_assumed_shape="true"/>
+                <indexRange>
+                  <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                  </lowerBound>
+                  <upperBound>
+                    <FintConstant type="Fint">60</FintConstant>
+                  </upperBound>
+                </indexRange>
+              </FarrayRef>
+              <FarrayRef type="A7fe453d16430">
+                <varRef type="A7fe453d157b0">
+                  <FmemberRef member="y" type="A7fe453d157b0">
+                    <varRef type="S7fe453d0b480">
+                      <Var scope="local" type="S7fe453d0b480">ty</Var>
+                    </varRef>
+                  </FmemberRef>
+                </varRef>
+                <indexRange is_assumed_shape="true"/>
+                <indexRange is_assumed_shape="true">
+                    </indexRange>
+              </FarrayRef>
+              <FarrayRef type="Freal">
+                <varRef type="A7fe453d0ac60">
+                  <Var scope="local" type="A7fe453d0ac60">z</Var>
+                </varRef>
+                <indexRange is_assumed_shape="true"/>
+              </FarrayRef>
+              <namedValue name="nproma">
+                <Var scope="local" type="Fint">nproma</Var>
+              </namedValue>
+            </arguments>
+          </functionCall>
+        </exprStatement>
+        <FpragmaStatement file="__omni_tmp__/main.f90" lineno="27">ACC end data</FpragmaStatement>
+        <FdeallocateStatement file="__omni_tmp__/main.f90" lineno="32">
+          <alloc>
+            <FmemberRef member="y" type="A7fe453d1a0b0">
+              <varRef type="S7fe453d0b480">
+                <Var scope="local" type="S7fe453d0b480">ty</Var>
+              </varRef>
+            </FmemberRef>
+          </alloc>
+        </FdeallocateStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>

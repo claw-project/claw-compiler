@@ -6,7 +6,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  REAL , INTENT(INOUT) :: z ( : )
+  REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
@@ -36,7 +36,7 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  REAL , INTENT(INOUT) :: z ( : )
+  REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
   INTEGER :: result
 

@@ -13,7 +13,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -212,7 +212,7 @@ public class LoopExtraction extends ClawTransformation {
 
     // Get the fctType in typeTable
     XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
-        get(_fctDefToExtract.getName().getAttribute(Xattr.TYPE));
+        get(_fctDefToExtract);
     XfunctionType newFctType = fctType.cloneNode();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
@@ -300,8 +300,7 @@ public class LoopExtraction extends ClawTransformation {
          * 3. Create arrayRef element with varRef + arrayIndex
          */
         if(argument.opcode() == Xcode.VAR) {
-          XbasicType type = (XbasicType) xcodeml.getTypeTable().
-              get(argument.getAttribute(Xattr.TYPE));
+          XbasicType type = (XbasicType) xcodeml.getTypeTable().get(argument);
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()) {
@@ -314,7 +313,7 @@ public class LoopExtraction extends ClawTransformation {
           newArg.setAttribute(Xattr.TYPE, type.getRef());
 
           Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
-          varRef.setAttribute(Xattr.TYPE, argument.getAttribute(Xattr.TYPE));
+          varRef.setAttribute(Xattr.TYPE, argument.getType());
 
           varRef.append(argument, true);
           newArg.append(varRef, false);
@@ -329,8 +328,7 @@ public class LoopExtraction extends ClawTransformation {
             // Add to arrayIndex
             Xnode newMappingVar = new Xnode(Xcode.VAR, xcodeml);
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
-            newMappingVar.setAttribute(Xattr.TYPE,
-                mappingVarDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
+            newMappingVar.setAttribute(Xattr.TYPE, mappingVarDecl.getType());
             newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).value());
             arrayIndex.append(newMappingVar, false);
             newArg.append(arrayIndex, false);
@@ -348,7 +346,7 @@ public class LoopExtraction extends ClawTransformation {
         Xdecl varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
         XbasicType varDeclType = (XbasicType) xcodeml.getTypeTable().
-            get(varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
+            get(varDecl);
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {

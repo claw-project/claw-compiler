@@ -121,7 +121,7 @@ public class XcodeML extends Xnode {
   private Xnode importVar(Xnode base, XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
-    String typeValue = base.getAttribute(Xattr.TYPE);
+    String typeValue = base.getType();
     if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
       throw new IllegalTransformationException("Only integer variable are " +
           "supported as lower/upper bound value for promoted arrays.");
@@ -138,7 +138,7 @@ public class XcodeML extends Xnode {
     Xnode var = new Xnode(Xcode.VAR, this);
     var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
     var.setValue(base.value());
-    var.setAttribute(Xattr.TYPE, bType.getAttribute(Xattr.TYPE));
+    var.setAttribute(Xattr.TYPE, bType.getType());
     return var;
   }
 
@@ -169,7 +169,7 @@ public class XcodeML extends Xnode {
     // Handle possible type ref in indexRange element
     List<Xnode> vars = importedType.matchAll(Xcode.VAR);
     for(Xnode var : vars) {
-      importType(src, var.getAttribute(Xattr.TYPE));
+      importType(src, var.getType());
     }
   }
 
@@ -311,8 +311,7 @@ public class XcodeML extends Xnode {
 
     // Check where is the last dummy arguments in the declaration
     if(afterDummyArgs) {
-      String fctTypeHash = fctDef.getName().getAttribute(Xattr.TYPE);
-      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctTypeHash);
+      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctDef);
       List<String> parameters = fctType.getParamsNames();
 
       for(Xnode n : fctDef.getDeclarationTable().values()) {
@@ -471,7 +470,7 @@ public class XcodeML extends Xnode {
    */
   public Xnode createEmptyAssumedShaped() {
     Xnode range = new Xnode(Xcode.INDEXRANGE, this);
-    range.setAttribute(Xattr.IS_ASSUMED_SHAPE, Xname.TRUE);
+    range.setBooleanAttribute(Xattr.IS_ASSUMED_SHAPE, true);
     return range;
   }
 
@@ -559,7 +558,7 @@ public class XcodeML extends Xnode {
     // Upper bound
     Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
     upper.append(fctCall, false);
-    fctCall.setAttribute(Xattr.IS_INTRINSIC, Xname.TRUE);
+    fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
     Xnode name = new Xnode(Xcode.NAME, this);
     name.setValue(Xname.INTRINSIC_SIZE);
@@ -591,7 +590,7 @@ public class XcodeML extends Xnode {
     // Newly created parameter must be added before any optional parameter
     for(Xnode param : fctType.getParams().getAll()) {
       XbasicType paramType =
-          (XbasicType) getTypeTable().get(param.getAttribute(Xattr.TYPE));
+          (XbasicType) getTypeTable().get(param);
       if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
         break;
@@ -618,7 +617,7 @@ public class XcodeML extends Xnode {
                                             XfunctionType fctType)
   {
     for(Xnode p : fctType.getParams().getAll()) {
-      if(p.value().toLowerCase().equals(nameValue.toLowerCase())) {
+      if(p.value().equals(nameValue.toLowerCase())) {
         return null;
       }
     }

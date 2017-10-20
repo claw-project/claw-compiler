@@ -68,6 +68,7 @@ public enum Xcode {
   FINQUIRESTATEMENT(Xname.F_INQUIRE_STATEMENT),              // XcodeML/F 6.17.6
   FREALCONSTANT(Xname.F_REAL_CONST),                         // XcodeML/F 7.1.2
   FCOMPLEXCONSTANT(Xname.F_COMPLEX_CONST),                   // XcodeML/F 7.1.1
+  FCOMPLEXPARTREF(Xname.F_COMPLEX_PART_REF),                 // XcodeML/F 7.4.7
   FCHARACTERCONSTANT(Xname.F_CHAR_CONST),                    // XcodeML/F 7.1.1
   FFUNCTIONDECL(Xname.F_FUNCTION_DECL),                      // XcodeML/F 5.12
   FLOGICALCONSTANT(Xname.F_LOGICAL_CONST),                   // XcodeML/F 7.1.1

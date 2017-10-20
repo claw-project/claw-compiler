@@ -14,10 +14,11 @@ package cx2x.xcodeml.xnode;
  * @author clementval
  */
 public enum Xintent {
+  NONE,
   IN,
   OUT,
   INOUT,
-  NONE;
+  ANY; // Represents any intent as well as no intent.
 
   /**
    * Convert string value to enum.
@@ -29,7 +30,7 @@ public enum Xintent {
     if(value == null) {
       return NONE;
     }
-    switch(value) {
+    switch(value.toLowerCase()) {
       case Xname.INTENT_IN:
         return IN;
       case Xname.INTENT_OUT:
@@ -56,5 +57,47 @@ public enum Xintent {
       default:
         return "";
     }
+  }
+
+  /**
+   * Check if it is an in intent.
+   *
+   * @return True if IN or INOUT. False otherwise.
+   */
+  public boolean isIntentIn() {
+    return this == IN || this == INOUT;
+  }
+
+  /**
+   * Check if it is an out intent.
+   *
+   * @return True if OUT or INOUT. False otherwise.
+   */
+  public boolean isIntentOut() {
+    return this == OUT || this == INOUT;
+  }
+
+  /**
+   * Check whether an intent is specified
+   *
+   * @return True if IN, OUT or INOUT. False otherwise.
+   */
+  public boolean isIntent() {
+    return isIntentIn() || isIntentOut();
+  }
+
+
+  /**
+   * Check if intent is compatible with the given one.
+   *
+   * @param intent Intent to check with.
+   * @return True if intents are compatible.
+   */
+  public boolean isCompatible(Xintent intent) {
+    return intent != null && (this == ANY || (intent == ANY)
+        || (isIntentIn() && intent.isIntentIn())
+        || (isIntentOut() && intent.isIntentOut())
+        || (this == NONE && intent == NONE));
+
   }
 }

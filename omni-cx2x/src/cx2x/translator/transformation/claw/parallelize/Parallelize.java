@@ -7,11 +7,12 @@ package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Utility;
+import cx2x.translator.config.OpenAccLocalStrategy;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.language.helper.accelerator.AcceleratorDirective;
-import cx2x.translator.language.helper.accelerator.AcceleratorHelper;
-import cx2x.translator.language.helper.target.Target;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.language.base.Target;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -137,8 +138,7 @@ public class Parallelize extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-    _fctType = (XfunctionType) xcodeml.getTypeTable().
-        get(_fctDef.getName().getAttribute(Xattr.TYPE));
+    _fctType = (XfunctionType) xcodeml.getTypeTable().get(_fctDef);
     if(_fctType == null) {
       xcodeml.addError("Function/subroutine signature cannot be found. ",
           _claw.getPragma().lineNo());
@@ -220,8 +220,7 @@ public class Parallelize extends ClawTransformation {
           continue;
         }
 
-        Xtype type = xcodeml.getTypeTable().
-            get(decl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
+        Xtype type = xcodeml.getTypeTable().get(decl);
         if(type instanceof XbasicType) {
           String varName = decl.matchSeq(Xcode.NAME).value();
           XbasicType bType = (XbasicType) type;
@@ -347,7 +346,6 @@ public class Parallelize extends ClawTransformation {
                         Transformation other)
       throws Exception
   {
-
     // Handle PURE function / subroutine
     ClawTranslator trans = (ClawTranslator) translator;
     boolean pureRemoved = XnodeUtil.removePure(_fctDef, _fctType);
@@ -388,7 +386,7 @@ public class Parallelize extends ClawTransformation {
 
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU) {
-      transformForGPU(xcodeml);
+      transformForGPU(xcodeml, trans);
     } else if(_claw.getTarget() == Target.CPU) {
       transformForCPU(xcodeml);
     }
@@ -405,9 +403,10 @@ public class Parallelize extends ClawTransformation {
   /**
    * Apply GPU based transformation.
    *
-   * @param xcodeml Current XcodeML program unit.
+   * @param xcodeml    Current XcodeML program unit.
+   * @param translator Current translator.
    */
-  private void transformForGPU(XcodeProgram xcodeml)
+  private void transformForGPU(XcodeProgram xcodeml, ClawTranslator translator)
   {
 
     AcceleratorHelper.generateLoopSeq(_claw, xcodeml, _fctDef);
@@ -442,33 +441,35 @@ public class Parallelize extends ClawTransformation {
       Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, null);
 
+      // Define a hook from where we can insert the new do statement
       Xnode hook = parallelRegionEnd.nextSibling();
-
-
       XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
-      //_fctDef.body().delete();
-      //Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-
+      // Hook is null then we append the do statement to the current fct body
       if(hook == null) {
         _fctDef.body().append(loops.getOuterStatement(), false);
       } else {
+        // Insert new do statement before the hook element
         hook.insertBefore(loops.getOuterStatement());
       }
-
-      //newBody.append(loops.getOuterStatement(), false);
-      //_fctDef.append(newBody, false);
     }
 
     // Generate the data region
     List<String> presents =
         AcceleratorHelper.getPresentVariables(xcodeml, _fctDef);
-    AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents,
+
+    List<String> privates = Collections.emptyList();
+    if(translator.getConfiguration().openACC().getLocalStrategy()
+        == OpenAccLocalStrategy.PRIVATE)
+    {
+      // TODO handle PROMOTE strategy
+      privates = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
+    }
+    AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presents, null,
         loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region
-    List<String> privates = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privates,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.getGroupSize());
@@ -689,7 +690,7 @@ public class Parallelize extends ClawTransformation {
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.body(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
-      XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId.getType());
+      XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId);
 
       for(Xnode var : vars) {
         Xnode ref = xcodeml.createArrayRef(type, var.cloneNode());
@@ -730,7 +731,7 @@ public class Parallelize extends ClawTransformation {
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(dimension.getLowerBoundId(),
             intTypeIntentIn.getType(), _fctType);
-        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+        param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }
 
       // Create parameter for the upper bound
@@ -741,7 +742,7 @@ public class Parallelize extends ClawTransformation {
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(dimension.getUpperBoundId(),
             intTypeIntentIn.getType(), _fctType);
-        param.setAttribute(ClawAttr.IS_CLAW.toString(), Xname.TRUE);
+        param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,

@@ -17,17 +17,12 @@ import static org.junit.Assert.*;
  */
 public class XvarDeclTest {
 
-  private static final String varDecl1 =
-      "<varDecl lineno=\"946\" file=\"./src/module.f90\">" +
-          "<name type=\"Ib3f750\">testVar</name>" +
-          "<value>10.0</value>" +
-          "</varDecl>";
-
-
-  private static final String varDecl2 =
-      "<varDecl lineno=\"946\" file=\"./src/module.f90\">" +
-          "<name type=\"Ib3f750\">testVar</name>" +
-          "</varDecl>";
+  private static final String varDecl1 = "<varDecl lineno=\"946\" " +
+      "file=\"./src/module.f90\"><name type=\"Ib3f750\">testvar</name>" +
+      "<value>10.0</value></varDecl>";
+  private static final String varDecl2 = "<varDecl lineno=\"946\" " +
+      "file=\"./src/module.f90\"><name type=\"Ib3f750\">testvar</name>" +
+      "</varDecl>";
 
   @Test
   public void simpleXvarDeclWithValueTest() {
@@ -36,8 +31,8 @@ public class XvarDeclTest {
     assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.filename());
     assertNotNull(varDecl.matchSeq(Xcode.NAME));
-    assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).value());
+    assertEquals("Ib3f750", varDecl.getType());
+    assertEquals("testvar", varDecl.matchSeq(Xcode.NAME).value());
     assertNotNull(varDecl.matchSeq(Xcode.VALUE));
     assertEquals("10.0", varDecl.matchSeq(Xcode.VALUE).value());
   }
@@ -49,8 +44,8 @@ public class XvarDeclTest {
     assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.filename());
     assertNotNull(varDecl.matchSeq(Xcode.NAME));
-    assertEquals("Ib3f750", varDecl.matchSeq(Xcode.NAME).getAttribute(Xattr.TYPE));
-    assertEquals("testVar", varDecl.matchSeq(Xcode.NAME).value());
+    assertEquals("Ib3f750", varDecl.getType());
+    assertEquals("testvar", varDecl.matchSeq(Xcode.NAME).value());
     assertNull(varDecl.matchSeq(Xcode.VALUE));
   }
 

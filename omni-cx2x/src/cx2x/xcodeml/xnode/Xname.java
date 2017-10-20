@@ -15,10 +15,11 @@ package cx2x.xcodeml.xnode;
 public class Xname {
 
   // helpers
-  public static final String TRUE = "true";
-  public static final String FALSE = "false";
-  public static final String SUPPORTED_VERSION = "1.0";
-  public static final String SUPPORTED_LANGUAGE = "Fortran";
+  static final String TRUE = "true";
+  static final String FALSE = "false";
+  static final String SUPPORTED_VERSION = "1.0";
+  static final String SUPPORTED_LANGUAGE = "Fortran";
+
   public static final String DEFAULT_STEP_VALUE = "1";
 
   // Base type (XcodeML/F 0.91J 9.1)
@@ -150,6 +151,7 @@ public class Xname {
   public static final String F_COARRAY_REF = "FcoArrayRef";
   public static final String F_COMMON_DECL = "FcommonDecl";
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
+  public static final String F_COMPLEX_PART_REF = "FcomplexPartRef";
   public static final String F_CONTAINS_STATEMENT = "FcontainsStatement";
   public static final String F_CYCLE_STATEMENT = "FcycleStatement";
   public static final String F_DATA_DECL = "FdataDecl";
