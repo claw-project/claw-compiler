@@ -244,7 +244,7 @@ public class OpenAcc extends AcceleratorGenerator {
     }
     Utility.debug(OPENACC_DEBUG_PREFIX + "generate update " +
         (direction == ClawDMD.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
-        "clause for: " + Utility.join(",", vars));
+        " clause for: " + Utility.join(",", vars));
     String updates = String.format(FORMATPAR, direction == ClawDMD.DEVICE ?
         OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
     return new String[]{
