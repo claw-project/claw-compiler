@@ -24,7 +24,9 @@ CONTAINS
   REAL :: c
   INTEGER :: proma
 
-  ALLOCATE ( y ( nz ) )
+  IF ( ( .NOT. allocated ( y ) ) ) THEN
+   ALLOCATE ( y ( nz ) )
+  END IF
 !$acc data present(t,q,z)
 !$acc parallel
 !$acc loop gang vector
@@ -39,7 +41,9 @@ CONTAINS
   END DO
 !$acc end parallel
 !$acc end data
-  DEALLOCATE ( y )
+  IF ( allocated ( y ) ) THEN
+   DEALLOCATE ( y )
+  END IF
  END SUBROUTINE compute_column
 
 END MODULE mo_column
