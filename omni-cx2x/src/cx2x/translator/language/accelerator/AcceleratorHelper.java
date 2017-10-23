@@ -251,8 +251,8 @@ public class AcceleratorHelper {
                                                  XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
-    List<Xdecl> declarations = fctDef.getDeclarationTable().values();
-    for(Xdecl decl : declarations) {
+    List<Xnode> declarations = fctDef.getDeclarationTable().values();
+    for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
@@ -281,8 +281,8 @@ public class AcceleratorHelper {
                                                XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
-    List<Xdecl> declarations = fctDef.getDeclarationTable().values();
-    for(Xdecl decl : declarations) {
+    List<Xnode> declarations = fctDef.getDeclarationTable().values();
+    for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!XnodeUtil.isBuiltInType(decl.getType())
@@ -312,8 +312,8 @@ public class AcceleratorHelper {
                                             XfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
-    List<Xdecl> declarations = fctDef.getDeclarationTable().values();
-    for(Xdecl decl : declarations) {
+    List<Xnode> declarations = fctDef.getDeclarationTable().values();
+    for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {

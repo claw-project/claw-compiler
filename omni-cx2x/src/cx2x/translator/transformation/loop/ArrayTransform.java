@@ -224,7 +224,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])) {
-        Xdecl inductionVarDecl =
+        Xnode inductionVarDecl =
             xcodeml.createVarDecl(Xname.TYPE_F_INT, inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);
       }

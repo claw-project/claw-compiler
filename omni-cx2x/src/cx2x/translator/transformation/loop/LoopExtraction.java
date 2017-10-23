@@ -322,7 +322,7 @@ public class LoopExtraction extends ClawTransformation {
           for(ClawMappingVar mappingVar : mapping.getMappingVariables()) {
             Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
             // Find the mapping var in the local table (fct scope)
-            Xdecl mappingVarDecl =
+            Xnode mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
@@ -343,7 +343,7 @@ public class LoopExtraction extends ClawTransformation {
         }*/
 
         // Change variable declaration in extracted fct
-        Xdecl varDecl = fctDeclarations.get(var.getFctMapping());
+        Xnode varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
         XbasicType varDeclType = (XbasicType) xcodeml.getTypeTable().
             get(varDecl);
@@ -353,7 +353,7 @@ public class LoopExtraction extends ClawTransformation {
           Xnode tempName = xcodeml.createNode(Xcode.NAME);
           tempName.setValue(var.getFctMapping());
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
-          Xdecl newVarDecl = new Xdecl(xcodeml.createNode(Xcode.VARDECL));
+          Xnode newVarDecl = xcodeml.createNode(Xcode.VARDECL);
           newVarDecl.append(tempName);
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
@@ -507,9 +507,9 @@ public class LoopExtraction extends ClawTransformation {
       _fctDef.getSymbolTable().add(copyId);
     }
 
-    Xdecl inductionVarDecl = _fctDef.getDeclarationTable().get(id);
+    Xnode inductionVarDecl = _fctDef.getDeclarationTable().get(id);
     if(inductionVarDecl == null) {
-      Xdecl copyDecl = _fctDefToExtract.getDeclarationTable().get(id);
+      Xnode copyDecl = _fctDefToExtract.getDeclarationTable().get(id);
       _fctDef.getDeclarationTable().add(copyDecl);
     }
   }

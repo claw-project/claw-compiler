@@ -36,7 +36,7 @@ public class XdeclTable extends Xnode {
 
   /* Some transformation needs to know the order of the declarations. Therefore,
    * we use a LinkedHashMap to be able to give back the table with its order. */
-  private final LinkedHashMap<String, Xdecl> _table;
+  private final LinkedHashMap<String, Xnode> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -56,21 +56,20 @@ public class XdeclTable extends Xnode {
   private void readTable() {
     List<Xnode> declarations = children();
     for(Xnode n : declarations) {
-      Xdecl decl = new Xdecl(n);
       String key = "";
       switch(n.opcode()) {
         case EXTERNDECL:
         case FSTRUCTDECL:
         case VARDECL:
-          key = decl.matchSeq(Xcode.NAME).value();
+          key = n.matchSeq(Xcode.NAME).value();
           break;
         case FUSEDECL:
         case FUSEONLYDECL:
         case FINTERFACEDECL:
-          key = decl.getAttribute(Xattr.NAME);
+          key = n.getAttribute(Xattr.NAME);
           break;
         case FNAMELISTDECL:
-          key = decl.matchSeq(Xcode.VARLIST).getAttribute(Xattr.NAME);
+          key = n.matchSeq(Xcode.VARLIST).getAttribute(Xattr.NAME);
           break;
         case FCOMMONDECL:
           key = Xcode.FCOMMONDECL.toString() + UUID.randomUUID();
@@ -79,7 +78,7 @@ public class XdeclTable extends Xnode {
           key = Xcode.FEQUIVALENCEDECL.toString() + UUID.randomUUID();
           break;
       }
-      _table.put(key, decl);
+      _table.put(key, n);
     }
 
   }
@@ -90,8 +89,8 @@ public class XdeclTable extends Xnode {
    * @param decl The new declaration to be inserted.
    * @param name Name describing the declaration in the table.
    */
-  public void replace(Xdecl decl, String name) {
-    Xdecl oldDecl = _table.get(name);
+  public void replace(Xnode decl, String name) {
+    Xnode oldDecl = _table.get(name);
     if(oldDecl == null) {
       append(decl);
     } else {
@@ -105,7 +104,7 @@ public class XdeclTable extends Xnode {
    *
    * @param decl The new declaration object.
    */
-  public void add(Xdecl decl) {
+  public void add(Xnode decl) {
     _baseElement.appendChild(decl.cloneRawNode());
     _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
   }
@@ -116,7 +115,7 @@ public class XdeclTable extends Xnode {
    * @param key The name of the declaration to be returned.
    * @return A XvarDecl object if key is found. Null otherwise.
    */
-  public Xdecl get(String key) {
+  public Xnode get(String key) {
     if(_table.containsKey(key)) {
       return _table.get(key);
     }
@@ -128,9 +127,9 @@ public class XdeclTable extends Xnode {
    *
    * @return All elements stored in the table.
    */
-  public List<Xdecl> values() {
-    List<Xdecl> orderedDeclarations = new ArrayList<>();
-    for(Map.Entry<String, Xdecl> entry : _table.entrySet()) {
+  public List<Xnode> values() {
+    List<Xnode> orderedDeclarations = new ArrayList<>();
+    for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
       orderedDeclarations.add(entry.getValue());
     }
     return orderedDeclarations;
@@ -142,7 +141,7 @@ public class XdeclTable extends Xnode {
    * @param decl Kind of elements to return.
    * @return A list of all declarations of this kind.
    */
-  public List<Xdecl> values(Xcode decl) {
+  public List<Xnode> values(Xcode decl) {
     switch(decl) {
       case VARDECL:
       case FUSEDECL:
@@ -153,8 +152,8 @@ public class XdeclTable extends Xnode {
       case FNAMELISTDECL:
       case FEQUIVALENCEDECL:
       case FCOMMONDECL:
-        List<Xdecl> orderedFilteredDeclarations = new ArrayList<>();
-        for(Map.Entry<String, Xdecl> entry : _table.entrySet()) {
+        List<Xnode> orderedFilteredDeclarations = new ArrayList<>();
+        for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
           if(entry.getValue().opcode() == decl) {
             orderedFilteredDeclarations.add(entry.getValue());
           }
@@ -233,8 +232,8 @@ public class XdeclTable extends Xnode {
    *
    * @return A list of all declaration. Empty list if no USE declaration.
    */
-  public List<Xdecl> getAllUseStmts() {
-    List<Xdecl> uses = this.values(Xcode.FUSEDECL);
+  public List<Xnode> getAllUseStmts() {
+    List<Xnode> uses = this.values(Xcode.FUSEDECL);
     uses.addAll(this.values(Xcode.FUSEONLYDECL));
     return uses;
   }
