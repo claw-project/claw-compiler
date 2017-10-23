@@ -59,4 +59,25 @@ public enum Target {
         return CPU;
     }
   }
+
+  /**
+   * Convert current enum to String value.
+   *
+   * @return Corresponding String value.
+   */
+  @Override
+  public String toString() {
+    switch(this) {
+      case GPU:
+        return ClawConstant.TARGET_GPU;
+      case CPU:
+        return ClawConstant.TARGET_CPU;
+      case MIC:
+        return ClawConstant.TARGET_MIC;
+      case FPGA:
+        return ClawConstant.TARGET_FPGA;
+      default:
+        return "";
+    }
+  }
 }

@@ -550,7 +550,7 @@ public class XnodeUtil {
 
 
   /**
-   * Check wether the index of an arrayIndex element is an induction variable
+   * Check whether the index of an arrayIndex element is an induction variable
    * given in the list.
    *
    * @param arrayIndex         arrayIndex to be checked.
