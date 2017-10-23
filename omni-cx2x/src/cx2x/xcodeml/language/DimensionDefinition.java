@@ -200,8 +200,7 @@ public class DimensionDefinition {
    * Generate the array index that will be placed in the array reference for
    * this additional dimension.
    *
-   * @param xcodeml Current XcodeML program unit in which elements will be
-   *                created.
+   * @param xcodeml Current XcodeML program unit.
    * @return A new arrayIndex element including a var element with the dimension
    * identifier.
    */
@@ -210,6 +209,27 @@ public class DimensionDefinition {
     Xnode var = xcodeml.createVar(Xname.TYPE_F_INT, _identifier, Xscope.LOCAL);
     aIdx.append(var);
     return aIdx;
+  }
+
+  /**
+   * Generate additional node to be inserted in the allocate statement
+   * arrayIndex based on the dimension definition.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @return New node to be inserted in arrayIndex of allocate statement.
+   */
+  public Xnode generateAllocateNode(XcodeProgram xcodeml) {
+    // TODO handle special size with lowerBound != 1
+    Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
+    if(upperBoundIsVar()) {
+      Xnode var =
+          xcodeml.createVar(_upperBoundType, _upperBoundId, Xscope.LOCAL);
+      arrayIndex.append(var);
+    } else {
+      Xnode intConst = xcodeml.createIntConstant(_upperBound);
+      arrayIndex.append(intConst);
+    }
+    return arrayIndex;
   }
 
 }

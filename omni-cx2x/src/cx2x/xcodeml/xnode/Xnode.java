@@ -336,7 +336,7 @@ public class Xnode {
   /**
    * Insert as first child.
    *
-   * @param node  Element to be inserted.
+   * @param node  Node to be inserted.
    * @param clone Clone or not the element before insertion.
    */
   public void insert(Xnode node, boolean clone) {
@@ -349,6 +349,15 @@ public class Xnode {
         _baseElement.insertBefore(toInsert, children.item(0));
       }
     }
+  }
+
+  /**
+   * Insert as first child.
+   *
+   * @param node Node to be inserted.
+   */
+  public void insert(Xnode node) {
+    insert(node, false);
   }
 
   /**

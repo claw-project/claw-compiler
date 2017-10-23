@@ -669,4 +669,17 @@ public class XcodeML extends Xnode {
     printStatement.append(valueList);
     return printStatement;
   }
+
+  /**
+   * Create a FintConstant node with the given value.
+   *
+   * @param value Value assigned to the int constant.
+   * @return Newly created node.
+   */
+  public Xnode createIntConstant(int value) {
+    Xnode n = createNode(Xcode.FINTCONSTANT);
+    n.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+    n.setValue(String.valueOf(value));
+    return n;
+  }
 }

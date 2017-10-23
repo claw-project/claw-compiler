@@ -7,11 +7,11 @@ package cx2x.translator.language.helper;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.Target;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.base.Target;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.translator.transformation.loop.LoopInterchange;
@@ -511,7 +511,7 @@ public class TransformationHelper {
       } else {
         XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id);
         if(old == null) {
-          throw new IllegalTransformationException("Cannot matchSeq type for " +
+          throw new IllegalTransformationException("Cannot find type for " +
               fieldId, claw.getPragma().lineNo());
         } else {
           newType = old.cloneNode();
@@ -542,9 +542,10 @@ public class TransformationHelper {
            * 2. Insert the dimensions before currently existing ones.
            * 3. Insert the dimensions after currently existing ones. */
           if(overPos == null) {
-            overPos = getOverPosition(claw.getOverClauseValues().get(overIndex));
+            overPos =
+                getOverPosition(claw.getOverClauseValues().get(overIndex));
           }
-
+          proInfo.setOverPosition(overPos);
           if(overPos == OverPosition.MIDDLE) {
             // Insert new dimension in middle (case 1)
             int startIdx = 1;
@@ -617,7 +618,8 @@ public class TransformationHelper {
    */
   private static OverPosition getOverPosition(List<String> overClause) {
     if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
-        overClause.get(overClause.size() - 1).equals(DimensionDefinition.BASE_DIM))
+        overClause.get(overClause.size() - 1).
+            equals(DimensionDefinition.BASE_DIM))
     {
       return OverPosition.MIDDLE;
     } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
@@ -640,6 +642,37 @@ public class TransformationHelper {
       }
     }
     return cnt;
+  }
+
+  /**
+   */
+  public static void adaptAllocate(PromotionInfo promotionInfo, Xnode parent,
+                                   ClawLanguage clawInfo, int overIndex,
+                                   XcodeProgram xcodeml)
+  {
+    String arrayName = promotionInfo.getIdentifier();
+    // Look through all allocate statements
+    for(Xnode allocatedStmt : parent.matchAll(Xcode.FALLOCATESTATEMENT)) {
+      for(Xnode alloc : allocatedStmt.matchAll(Xcode.ALLOC)) {
+        Xnode var = alloc.matchDirectDescendant(Xcode.VAR);
+        if(var != null && var.value().equals(arrayName)) {
+          DimensionDefinition dim =
+              clawInfo.getDimensionValues().get(overIndex);
+          switch(promotionInfo.getOverPosition()) {
+            case BEFORE:
+              alloc.insert(dim.generateAllocateNode(xcodeml));
+              break;
+            case MIDDLE:
+              alloc.firstChild().
+                  insertAfter(dim.generateAllocateNode(xcodeml));
+              break;
+            case AFTER:
+              alloc.append(dim.generateAllocateNode(xcodeml));
+              break;
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -689,8 +722,8 @@ public class TransformationHelper {
               ref.append(ai, true);
             }
           } else {
-            Xnode hook =
-                ref.matchDirectDescendant(Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+            Xnode hook = ref.matchDirectDescendant(
+                Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
             if(hook == null) {
               hook = ref.child(0);
             }
@@ -702,7 +735,6 @@ public class TransformationHelper {
           }
         }
       }
-
     }
   }
 

@@ -539,6 +539,8 @@ public class Parallelize extends ClawTransformation {
                 Collections.singletonList(lhsName), DEFAULT_OVER,
                 _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
                 _afterCrt, xcodeml);
+            TransformationHelper.adaptAllocate(_promotions.get(lhsName),
+                _fctDef.body(), _claw, DEFAULT_OVER, xcodeml);
           }
           loops = new NestedDoStatement(order, xcodeml);
           assign.insertAfter(loops.getOuterStatement());
