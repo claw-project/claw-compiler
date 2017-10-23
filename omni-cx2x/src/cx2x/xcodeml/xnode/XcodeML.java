@@ -45,6 +45,16 @@ public class XcodeML extends Xnode {
   }
 
   /**
+   * Create a new node in the current translation unit.
+   *
+   * @param opcode Opcode of the new node.
+   * @return Newly created node.
+   */
+  public Xnode createNode(Xcode opcode) {
+    return new Xnode(opcode, this);
+  }
+
+  /**
    * @return The XML Document representing the XcodeML file.
    */
   public Document getDocument() {
@@ -102,7 +112,7 @@ public class XcodeML extends Xnode {
     if(base.opcode() == Xcode.VAR) {
       return importVar(base, xcodemlSrc);
     } else {
-      Xnode intConst = new Xnode(Xcode.FINTCONSTANT, this);
+      Xnode intConst = createNode(Xcode.FINTCONSTANT);
       intConst.setValue(base.value());
       return intConst;
     }
@@ -128,14 +138,14 @@ public class XcodeML extends Xnode {
     }
 
     XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
-    Xnode bType = new Xnode(Xcode.FBASICTYPE, this);
+    Xnode bType = createNode(Xcode.FBASICTYPE);
     bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
     bType.setAttribute(Xattr.TYPE, getTypeTable().generateIntegerTypeHash());
     if(type != null && type.getIntent() != Xintent.NONE) {
       bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
     }
 
-    Xnode var = new Xnode(Xcode.VAR, this);
+    Xnode var = createNode(Xcode.VAR);
     var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
     var.setValue(base.value());
     var.setAttribute(Xattr.TYPE, bType.getType());
@@ -280,7 +290,7 @@ public class XcodeML extends Xnode {
    */
   public Xnode createName(String name, String type)
   {
-    Xnode n = new Xnode(Xcode.NAME, this);
+    Xnode n = createNode(Xcode.NAME);
     n.setValue(name);
     if(type != null) {
       n.setAttribute(Xattr.TYPE, type);
@@ -346,7 +356,7 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createNamedValue(String value) {
-    Xnode namedValue = new Xnode(Xcode.NAMEDVALUE, this);
+    Xnode namedValue = createNode(Xcode.NAMEDVALUE);
     namedValue.setAttribute(Xattr.NAME, value);
     return namedValue;
   }
@@ -364,7 +374,7 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createVar(String type, String value, Xscope scope) {
-    Xnode var = new Xnode(Xcode.VAR, this);
+    Xnode var = createNode(Xcode.VAR);
     var.setAttribute(Xattr.TYPE, type);
     var.setAttribute(Xattr.SCOPE, scope.toString());
     var.setValue(value);
@@ -380,14 +390,14 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createFctCall(String returnType, String name, String nameType) {
-    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
+    Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
     fctCall.setAttribute(Xattr.TYPE, returnType);
-    Xnode fctName = new Xnode(Xcode.NAME, this);
+    Xnode fctName = createNode(Xcode.NAME);
     fctName.setValue(name);
     fctName.setAttribute(Xattr.TYPE, nameType);
-    Xnode args = new Xnode(Xcode.ARGUMENTS, this);
-    fctCall.append(fctName, false);
-    fctCall.append(args, false);
+    Xnode args = createNode(Xcode.ARGUMENTS);
+    fctCall.append(fctName);
+    fctCall.append(args);
     return fctCall;
   }
 
@@ -400,12 +410,12 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createArrayRef(XbasicType type, Xnode var) {
-    Xnode ref = new Xnode(Xcode.FARRAYREF, this);
+    Xnode ref = createNode(Xcode.FARRAYREF);
     ref.setAttribute(Xattr.TYPE, type.getRef());
-    Xnode varRef = new Xnode(Xcode.VARREF, this);
+    Xnode varRef = createNode(Xcode.VARREF);
     varRef.setAttribute(Xattr.TYPE, type.getType());
-    varRef.append(var, false);
-    ref.append(varRef, false);
+    varRef.append(var);
+    ref.append(varRef);
     return ref;
   }
 
@@ -418,10 +428,10 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xid createId(String type, String sclass, String nameValue) {
-    Xnode id = new Xnode(Xcode.ID, this);
-    Xnode internalName = new Xnode(Xcode.NAME, this);
+    Xnode id = createNode(Xcode.ID);
+    Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
-    id.append(internalName, false);
+    id.append(internalName);
     id.setAttribute(Xattr.TYPE, type);
     id.setAttribute(Xattr.SCLASS, sclass);
     return new Xid(id.element());
@@ -435,11 +445,11 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xdecl createVarDecl(String nameType, String nameValue) {
-    Xnode varD = new Xnode(Xcode.VARDECL, this);
-    Xnode internalName = new Xnode(Xcode.NAME, this);
+    Xnode varD = createNode(Xcode.VARDECL);
+    Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
     internalName.setAttribute(Xattr.TYPE, nameType);
-    varD.append(internalName, false);
+    varD.append(internalName);
     return new Xdecl(varD);
   }
 
@@ -452,7 +462,7 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public XbasicType createBasicType(String type, String ref, Xintent intent) {
-    Xnode bt = new Xnode(Xcode.FBASICTYPE, this);
+    Xnode bt = createNode(Xcode.FBASICTYPE);
     bt.setAttribute(Xattr.TYPE, type);
     if(ref != null) {
       bt.setAttribute(Xattr.REF, ref);
@@ -469,7 +479,7 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createEmptyAssumedShaped() {
-    Xnode range = new Xnode(Xcode.INDEXRANGE, this);
+    Xnode range = createNode(Xcode.INDEXRANGE);
     range.setBooleanAttribute(Xattr.IS_ASSUMED_SHAPE, true);
     return range;
   }
@@ -494,11 +504,11 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createDoStmt(Xnode inductionVar, Xnode indexRange) {
-    Xnode root = new Xnode(Xcode.FDOSTATEMENT, this);
-    root.append(inductionVar, false);
-    root.append(indexRange, false);
-    Xnode body = new Xnode(Xcode.BODY, this);
-    root.append(body, false);
+    Xnode root = createNode(Xcode.FDOSTATEMENT);
+    root.append(inductionVar);
+    root.append(indexRange);
+    Xnode body = createNode(Xcode.BODY);
+    root.append(body);
     return root;
   }
 
@@ -521,13 +531,13 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createIfThen() {
-    Xnode root = new Xnode(Xcode.FIFSTATEMENT, this);
-    Xnode cond = new Xnode(Xcode.CONDITION, this);
-    Xnode thenBlock = new Xnode(Xcode.THEN, this);
-    Xnode thenBody = new Xnode(Xcode.BODY, this);
-    thenBlock.append(thenBody, false);
-    root.append(cond, false);
-    root.append(thenBlock, false);
+    Xnode root = createNode(Xcode.FIFSTATEMENT);
+    Xnode cond = createNode(Xcode.CONDITION);
+    Xnode thenBlock = createNode(Xcode.THEN);
+    Xnode thenBody = createNode(Xcode.BODY);
+    thenBlock.append(thenBody);
+    root.append(cond);
+    root.append(thenBlock);
     return root;
   }
 
@@ -544,31 +554,31 @@ public class XcodeML extends Xnode {
                                                int dimension)
   {
     // Base structure
-    Xnode indexRange = new Xnode(Xcode.INDEXRANGE, this);
-    Xnode lower = new Xnode(Xcode.LOWERBOUND, this);
-    Xnode upper = new Xnode(Xcode.UPPERBOUND, this);
-    indexRange.append(lower, false);
-    indexRange.append(upper, false);
+    Xnode indexRange = createNode(Xcode.INDEXRANGE);
+    Xnode lower = createNode(Xcode.LOWERBOUND);
+    Xnode upper = createNode(Xcode.UPPERBOUND);
+    indexRange.append(lower);
+    indexRange.append(upper);
 
     // Lower bound
-    Xnode lowerBound = new Xnode(Xcode.FINTCONSTANT, this);
+    Xnode lowerBound = createNode(Xcode.FINTCONSTANT);
     lowerBound.setValue(String.valueOf(startIndex));
-    lower.append(lowerBound, false);
+    lower.append(lowerBound);
 
     // Upper bound
-    Xnode fctCall = new Xnode(Xcode.FUNCTIONCALL, this);
-    upper.append(fctCall, false);
+    Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
+    upper.append(fctCall);
     fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-    Xnode name = new Xnode(Xcode.NAME, this);
+    Xnode name = createNode(Xcode.NAME);
     name.setValue(Xname.INTRINSIC_SIZE);
-    fctCall.append(name, false);
-    Xnode args = new Xnode(Xcode.ARGUMENTS, this);
-    fctCall.append(args, false);
+    fctCall.append(name);
+    Xnode args = createNode(Xcode.ARGUMENTS);
+    fctCall.append(args);
     args.append(arrayVar, true);
-    Xnode dim = new Xnode(Xcode.FINTCONSTANT, this);
+    Xnode dim = createNode(Xcode.FINTCONSTANT);
     dim.setValue(String.valueOf(dimension));
-    args.append(dim, false);
+    args.append(dim);
     return indexRange;
   }
 
@@ -632,31 +642,31 @@ public class XcodeML extends Xnode {
    * @return The print statement node created.
    */
   public Xnode createPrintStatement(String format, String[] charConstants) {
-    Xnode printStatement = new Xnode(Xcode.FPRINTSTATEMENT, this);
+    Xnode printStatement = createNode(Xcode.FPRINTSTATEMENT);
     printStatement.setAttribute(Xattr.FORMAT, format);
 
-    Xnode valueList = new Xnode(Xcode.VALUELIST, this);
+    Xnode valueList = createNode(Xcode.VALUELIST);
     for(String charConstant : charConstants) {
       // Create the char constant type
       String charTypeHash = getTypeTable().generateCharTypeHash();
       Xtype charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
-      Xnode len = new Xnode(Xcode.LEN, this);
-      Xnode intConstant = new Xnode(Xcode.FINTCONSTANT, this);
+      Xnode len = createNode(Xcode.LEN);
+      Xnode intConstant = createNode(Xcode.FINTCONSTANT);
       intConstant.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       intConstant.setValue(charConstant.length() + "");
-      len.append(intConstant, false);
-      charType.append(len, false);
+      len.append(intConstant);
+      charType.append(len);
       getTypeTable().add(charType);
 
       // Create the value element to be added to the list
-      Xnode valueElement = new Xnode(Xcode.VALUE, this);
-      Xnode fCharElement = new Xnode(Xcode.FCHARACTERCONSTANT, this);
+      Xnode valueElement = createNode(Xcode.VALUE);
+      Xnode fCharElement = createNode(Xcode.FCHARACTERCONSTANT);
       fCharElement.setAttribute(Xattr.TYPE, charTypeHash);
       fCharElement.setValue(charConstant);
-      valueElement.append(fCharElement, false);
-      valueList.append(valueElement, false);
+      valueElement.append(fCharElement);
+      valueList.append(valueElement);
     }
-    printStatement.append(valueList, false);
+    printStatement.append(valueList);
     return printStatement;
   }
 }

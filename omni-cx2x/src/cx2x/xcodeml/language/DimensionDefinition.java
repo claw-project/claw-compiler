@@ -143,19 +143,19 @@ public class DimensionDefinition {
    * @return A new indexRange elements.
    */
   public Xnode generateIndexRange(XcodeML xcodeml, boolean withStep) {
-    Xnode range = new Xnode(Xcode.INDEXRANGE, xcodeml);
-    Xnode lower = new Xnode(Xcode.LOWERBOUND, xcodeml);
-    Xnode upper = new Xnode(Xcode.UPPERBOUND, xcodeml);
-    range.append(lower, false);
-    range.append(upper, false);
+    Xnode range = xcodeml.createNode(Xcode.INDEXRANGE);
+    Xnode lower = xcodeml.createNode(Xcode.LOWERBOUND);
+    Xnode upper = xcodeml.createNode(Xcode.UPPERBOUND);
+    range.append(lower);
+    range.append(upper);
 
     if(withStep) {
-      Xnode step = new Xnode(Xcode.STEP, xcodeml);
-      Xnode stepValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      Xnode step = xcodeml.createNode(Xcode.STEP);
+      Xnode stepValue = xcodeml.createNode(Xcode.FINTCONSTANT);
       stepValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      step.append(stepValue, false);
+      step.append(stepValue);
       stepValue.setValue(Xname.DEFAULT_STEP_VALUE);
-      range.append(step, false);
+      range.append(step);
     }
 
     // lower bound
@@ -168,12 +168,12 @@ public class DimensionDefinition {
       }
       Xnode lowerBoundValue = xcodeml.createVar(_lowerBoundType, _lowerBoundId,
           Xscope.LOCAL);
-      lower.append(lowerBoundValue, false);
+      lower.append(lowerBoundValue);
     } else {
-      Xnode lowerBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      Xnode lowerBoundValue = xcodeml.createNode(Xcode.FINTCONSTANT);
       lowerBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       lowerBoundValue.setValue(String.valueOf(_lowerBound));
-      lower.append(lowerBoundValue, false);
+      lower.append(lowerBoundValue);
     }
 
     // upper bound
@@ -186,12 +186,12 @@ public class DimensionDefinition {
       }
       Xnode upperBoundValue = xcodeml.createVar(_upperBoundType, _upperBoundId,
           Xscope.LOCAL);
-      upper.append(upperBoundValue, false);
+      upper.append(upperBoundValue);
     } else {
-      Xnode upperBoundValue = new Xnode(Xcode.FINTCONSTANT, xcodeml);
+      Xnode upperBoundValue = xcodeml.createNode(Xcode.FINTCONSTANT);
       upperBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       upperBoundValue.setValue(String.valueOf(_upperBound));
-      lower.append(upperBoundValue, false);
+      lower.append(upperBoundValue);
     }
     return range;
   }
@@ -206,9 +206,9 @@ public class DimensionDefinition {
    * identifier.
    */
   public Xnode generateArrayIndex(XcodeProgram xcodeml) {
-    Xnode aIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
+    Xnode aIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
     Xnode var = xcodeml.createVar(Xname.TYPE_F_INT, _identifier, Xscope.LOCAL);
-    aIdx.append(var, false);
+    aIdx.append(var);
     return aIdx;
   }
 

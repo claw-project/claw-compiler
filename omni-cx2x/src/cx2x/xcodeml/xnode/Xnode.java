@@ -42,7 +42,7 @@ public class Xnode {
    * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    */
-  public Xnode(Xcode opcode, XcodeML xcodeml) {
+  protected Xnode(Xcode opcode, XcodeML xcodeml) {
     _baseElement = xcodeml.getDocument().createElement(opcode.code());
   }
 
@@ -319,6 +319,17 @@ public class Xnode {
       } else {
         _baseElement.appendChild(node.element());
       }
+    }
+  }
+
+  /**
+   * Append an element ot the children of this element. Node is not cloned.
+   *
+   * @param node The element to append.
+   */
+  public void append(Xnode node) {
+    if(node != null) {
+      _baseElement.appendChild(node.element());
     }
   }
 

@@ -220,8 +220,8 @@ public class LoopHoist extends ClawBlockTransformation {
     // Do the hoisting
     LoopHoistDoStmtGroup hoisted = _doGroup.get(0).cloneObjectAndElement();
     hoisted.getDoStmts()[_nestedLevel - 1].body().delete();
-    Xnode newBody = new Xnode(Xcode.BODY, xcodeml);
-    hoisted.getDoStmts()[_nestedLevel - 1].append(newBody, false);
+    Xnode newBody = xcodeml.createNode(Xcode.BODY);
+    hoisted.getDoStmts()[_nestedLevel - 1].append(newBody);
     XnodeUtil.shiftStatementsInBody(_clawStart.getPragma(),
         _clawEnd.getPragma(), newBody, false);
     _clawStart.getPragma().insertAfter(hoisted.getDoStmts()[0]);
@@ -249,24 +249,24 @@ public class LoopHoist extends ClawBlockTransformation {
                                               LoopHoistDoStmtGroup g)
   {
     int nestedDepth = g.getDoStmts().length;
-    Xnode ifStmt = new Xnode(Xcode.FIFSTATEMENT, xcodeml);
-    Xnode condition = new Xnode(Xcode.CONDITION, xcodeml);
-    Xnode thenBlock = new Xnode(Xcode.THEN, xcodeml);
+    Xnode ifStmt = xcodeml.createNode(Xcode.FIFSTATEMENT);
+    Xnode condition = xcodeml.createNode(Xcode.CONDITION);
+    Xnode thenBlock = xcodeml.createNode(Xcode.THEN);
     XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
-    Xnode cond = new Xnode(Xcode.LOGGEEXPR, xcodeml);
+    Xnode cond = xcodeml.createNode(Xcode.LOGGEEXPR);
     Xnode inductionVar = g.getDoStmts()[0].matchDirectDescendant(Xcode.VAR);
     cond.append(inductionVar, true);
     cond.append(g.getDoStmts()[0].matchDirectDescendant(Xcode.INDEXRANGE).
         matchDirectDescendant(Xcode.LOWERBOUND).child(0), true
     );
-    ifStmt.append(condition, false);
-    ifStmt.append(thenBlock, false);
-    condition.append(cond, false);
+    ifStmt.append(condition);
+    ifStmt.append(thenBlock);
+    condition.append(cond);
     thenBlock.append(g.getDoStmts()[nestedDepth - 1].body(), true);
     g.getDoStmts()[nestedDepth - 1].body().delete();
-    Xnode body = new Xnode(Xcode.BODY, xcodeml);
-    body.append(ifStmt, false);
-    g.getDoStmts()[nestedDepth - 1].append(body, false);
+    Xnode body = xcodeml.createNode(Xcode.BODY);
+    body.append(ifStmt);
+    g.getDoStmts()[nestedDepth - 1].append(body);
   }
 
 

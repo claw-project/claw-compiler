@@ -448,7 +448,7 @@ public class Parallelize extends ClawTransformation {
 
       // Hook is null then we append the do statement to the current fct body
       if(hook == null) {
-        _fctDef.body().append(loops.getOuterStatement(), false);
+        _fctDef.body().append(loops.getOuterStatement());
       } else {
         // Insert new do statement before the hook element
         hook.insertBefore(loops.getOuterStatement());

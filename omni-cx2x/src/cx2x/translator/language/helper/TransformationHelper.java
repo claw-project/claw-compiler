@@ -119,7 +119,7 @@ public class TransformationHelper {
       throws IllegalTransformationException
   {
     if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
-      Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
       stmt.insertBefore(p);
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
@@ -661,14 +661,14 @@ public class TransformationHelper {
         List<Xnode> refs =
             XnodeUtil.getAllVarReferences(parent, data);
         for(Xnode ref : refs) {
-          Xnode arrayRef = new Xnode(Xcode.FARRAYREF, xcodeml);
-          Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+          Xnode arrayRef = xcodeml.createNode(Xcode.FARRAYREF);
+          Xnode varRef = xcodeml.createNode(Xcode.VARREF);
           arrayRef.setAttribute(Xattr.TYPE, ref.getType());
           varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
           ref.insertAfter(arrayRef);
-          arrayRef.append(varRef, false);
-          varRef.append(ref, false);
+          arrayRef.append(varRef);
+          varRef.append(ref);
           for(Xnode ai : beforeCrt.get(index)) {
             arrayRef.append(ai, true);
           }
@@ -756,8 +756,8 @@ public class TransformationHelper {
       newType.resetDimension();
 
       for(int i = 0; i < base.getDimensions(); ++i) {
-        Xnode newDim = new Xnode(Xcode.INDEXRANGE, xcodemlDst);
-        newType.append(newDim, false);
+        Xnode newDim = xcodemlDst.createNode(Xcode.INDEXRANGE);
+        newType.append(newDim);
 
         Xnode baseDim = base.getDimensions(i);
         Xnode lowerBound = baseDim.matchSeq(Xcode.LOWERBOUND);
@@ -766,12 +766,12 @@ public class TransformationHelper {
         if(lowerBound != null) {
           Xnode newLowerBound =
               XnodeUtil.duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
-          newDim.append(newLowerBound, false);
+          newDim.append(newLowerBound);
         }
         if(upperBound != null) {
           Xnode newUpperBound =
               XnodeUtil.duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
-          newDim.append(newUpperBound, false);
+          newDim.append(newUpperBound);
         }
         newType.addDimension(newDim, XbasicType.APPEND);
       }

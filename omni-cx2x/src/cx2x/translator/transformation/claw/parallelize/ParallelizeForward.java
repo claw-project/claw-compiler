@@ -460,7 +460,7 @@ public class ParallelizeForward extends ClawTransformation {
       // Add variable in the function call before the optional parameters
       Xnode arg = xcodeml.createNamedValue(var);
       Xnode namedValVar = xcodeml.createVar(type, var, Xscope.LOCAL);
-      arg.append(namedValVar, false);
+      arg.append(namedValVar);
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       Xnode hook = arguments.child((i - 1) - argOffset);
       hook.insertAfter(arg);
@@ -664,7 +664,7 @@ public class ParallelizeForward extends ClawTransformation {
       if(lhs.opcode() == Xcode.FARRAYREF) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
           Xnode indexRange = xcodeml.createEmptyAssumedShaped();
-          lhs.append(indexRange, false);
+          lhs.append(indexRange);
         }
       /*} else if(lhs.opcode() == Xcode.VAR) {
         // TODO avoid array var without colon notation
@@ -766,8 +766,7 @@ public class ParallelizeForward extends ClawTransformation {
           // Generate the do statements and move the assignment statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
           assignment.insertAfter(doStmt.getOuterStatement());
-          doStmt.getInnerStatement().body().
-              append(assignment, false);
+          doStmt.getInnerStatement().body().append(assignment);
 
           PromotionInfo promotionInfo;
           if(!previouslyPromoted.contains(varInLhs.value())) {

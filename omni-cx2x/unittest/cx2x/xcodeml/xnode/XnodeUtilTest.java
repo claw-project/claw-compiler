@@ -53,30 +53,30 @@ public class XnodeUtilTest {
 
   @Test
   public void getPragmaPrefixTest() {
-    XcodeProgram xp = XmlHelper.getDummyXcodeProgram();
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
 
-    Xnode p1 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    Xnode p1 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     p1.setValue(ClawConstant.OPENACC_PREFIX);
     assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p1));
 
-    Xnode p2 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    Xnode p2 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     p2.setValue(ClawConstant.OPENMP_PREFIX);
     assertEquals(ClawConstant.OPENMP_PREFIX, XnodeUtil.getPragmaPrefix(p2));
 
-    Xnode p3 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    Xnode p3 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     p3.setValue("");
     assertEquals("", XnodeUtil.getPragmaPrefix(p3));
 
-    Xnode p4 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    Xnode p4 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     assertEquals("", XnodeUtil.getPragmaPrefix(p4));
 
-    Xnode p5 = new Xnode(Xcode.FDOSTATEMENT, xp);
+    Xnode p5 = xcodeml.createNode(Xcode.FDOSTATEMENT);
     p5.setValue("acc");
     assertEquals("", XnodeUtil.getPragmaPrefix(p5));
 
     assertEquals("", XnodeUtil.getPragmaPrefix(null));
 
-    Xnode p6 = new Xnode(Xcode.FPRAGMASTATEMENT, xp);
+    Xnode p6 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     p6.setValue(ClawConstant.OPENACC_PREFIX + " loop private(a)");
     assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p6));
   }
