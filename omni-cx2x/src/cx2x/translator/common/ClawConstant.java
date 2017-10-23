@@ -25,7 +25,7 @@ public class ClawConstant {
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 
-  public static final String CLAW_MOD_SUFFIX = ".claw";
+  public static final String CLAW_MOD_SUFFIX = "claw";
 
   // CLAW attribute
   public static final String IS_CLAW = "is_claw";

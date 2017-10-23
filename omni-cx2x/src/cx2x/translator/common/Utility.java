@@ -131,18 +131,36 @@ public class Utility {
   public static String formattedModuleFilePrefix(Target target,
                                                  AcceleratorDirective directive)
   {
-    return "." + directive + "." + target + ClawConstant.CLAW_MOD_SUFFIX;
+    StringBuilder str = new StringBuilder();
+    str.append(".");
+    if(directive != null) {
+      str.append(directive).append(".");
+    }
+    if(target != null)
+    {
+      str.append(target).append(".");
+    }
+    str.append(ClawConstant.CLAW_MOD_SUFFIX);
+
+    return str.toString();
+    //return "." + directive + "." + target + ClawConstant.CLAW_MOD_SUFFIX;
   }
 
   /**
    * Count the number of occurrences of pattern in source string.
+   * Case insensitive.
    *
    * @param source  String in which the pattern is search for.
    * @param pattern Pattern to be found.
    * @return Number of occurrences.
    */
   public static int countOccurrences(String source, String pattern) {
-    String newStr = source.replace(pattern, "");
+    if(source == null || source.isEmpty()
+        || pattern == null || pattern.isEmpty())
+    {
+      return 0;
+    }
+    String newStr = source.toLowerCase().replace(pattern.toLowerCase(), "");
     return ((source.length() - newStr.length())) / pattern.length();
   }
 
