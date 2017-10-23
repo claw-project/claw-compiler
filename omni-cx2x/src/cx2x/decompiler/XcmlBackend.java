@@ -86,7 +86,9 @@ public class XcmlBackend {
 
     PrintWriter writer = null;
     try {
-      writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFilepath)));
+      File outputFile = new File(outputFilepath);
+      outputFile.getParentFile().mkdir();
+      writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
     } catch(IOException e) {
       e.printStackTrace();
     }
