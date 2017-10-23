@@ -42,7 +42,7 @@ public class Xnode {
    * @param xcodeml Current XcodeML file unit in which the element is
    *                created.
    */
-  protected Xnode(Xcode opcode, XcodeML xcodeml) {
+  Xnode(Xcode opcode, XcodeML xcodeml) {
     _baseElement = xcodeml.getDocument().createElement(opcode.code());
   }
 

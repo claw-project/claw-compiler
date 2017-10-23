@@ -38,7 +38,7 @@ public class XcodeML extends Xnode {
    *
    * @param baseElement Document representing the XcodeML file.
    */
-  public XcodeML(Document baseElement) {
+  XcodeML(Document baseElement) {
     super(baseElement.getDocumentElement());
     _typeTable = new XtypeTable(matchSeq(Xcode.TYPETABLE).element());
     _xcodemlDoc = baseElement;
