@@ -805,4 +805,16 @@ public class Xnode {
         return "";
     }
   }
+
+  /**
+   * Return a brief description of the Xnode.
+   *
+   * @return String description of the Xnode as "Opcode (children: n)".
+   */
+  @Override
+  public String toString() {
+    return String.format("%s (children: %d)", opcode().code(),
+        children().size());
+
+  }
 }
