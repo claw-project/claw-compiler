@@ -214,8 +214,8 @@ public class Parallelize extends ClawTransformation {
       List<String> scalars = new ArrayList<>();
       List<String> candidateArrays = new ArrayList<>();
 
-      List<Xdecl> declarations = _fctDef.getDeclarationTable().values();
-      for(Xdecl decl : declarations) {
+      List<Xnode> declarations = _fctDef.getDeclarationTable().values();
+      for(Xnode decl : declarations) {
         if(decl.opcode() != Xcode.VARDECL) {
           continue;
         }

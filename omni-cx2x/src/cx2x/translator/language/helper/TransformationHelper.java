@@ -159,7 +159,7 @@ public class TransformationHelper {
    * @param name   Declaration name to be searched for.
    * @return The element if found. Null otherwise.
    */
-  private static Xdecl getDeclInNestedFctDef(XfunctionDefinition fctDef,
+  private static Xnode getDeclInNestedFctDef(XfunctionDefinition fctDef,
                                              String name)
   {
     if(fctDef.getSymbolTable().contains(name)) {
@@ -198,7 +198,7 @@ public class TransformationHelper {
 
     for(ClawReshapeInfo reshapeInfo : claw.getReshapeClauseValues()) {
       Xid id = getIdInNestedFctDef(fctDef, reshapeInfo.getArrayName());
-      Xdecl decl = getDeclInNestedFctDef(fctDef, reshapeInfo.getArrayName());
+      Xnode decl = getDeclInNestedFctDef(fctDef, reshapeInfo.getArrayName());
 
       if(id == null || decl == null) {
         throw new IllegalTransformationException("Cannot apply reshape clause."
@@ -501,7 +501,7 @@ public class TransformationHelper {
       throws IllegalTransformationException
   {
     Xid id = fctDef.getSymbolTable().get(fieldId);
-    Xdecl decl = fctDef.getDeclarationTable().get(fieldId);
+    Xnode decl = fctDef.getDeclarationTable().get(fieldId);
     String type = xcodeml.getTypeTable().generateArrayTypeHash();
     XbasicType newType;
 

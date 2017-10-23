@@ -322,7 +322,7 @@ public class Kcaching extends ClawTransformation {
 
     // 2.3 inject a new entry in the declaration table
     if(!fctDef.getDeclarationTable().contains(cacheName)) {
-      Xdecl cacheVarDecl = xcodeml.createVarDecl(type, cacheName);
+      Xnode cacheVarDecl = xcodeml.createVarDecl(type, cacheName);
       fctDef.getDeclarationTable().add(cacheVarDecl);
     }
 

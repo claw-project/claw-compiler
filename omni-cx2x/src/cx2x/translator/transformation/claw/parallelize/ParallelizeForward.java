@@ -201,7 +201,7 @@ public class ParallelizeForward extends ClawTransformation {
        * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       if(id == null) {
-        List<Xdecl> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
+        List<Xnode> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
         uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
@@ -234,7 +234,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       if(id == null) {
         // Function is not located in the current module.
-        List<Xdecl> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
+        List<Xnode> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
         uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
@@ -264,7 +264,7 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       // Get all the use statements in the fct and module definitions
-      List<Xdecl> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
+      List<Xnode> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
       if(parentModule != null) {
         uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
       }
@@ -316,9 +316,9 @@ public class ParallelizeForward extends ClawTransformation {
    *                 search.
    * @return True if the function was found. False otherwise.
    */
-  private boolean findInModule(List<Xdecl> useDecls) {
+  private boolean findInModule(List<Xnode> useDecls) {
     // TODO handle rename
-    for(Xdecl d : useDecls) {
+    for(Xnode d : useDecls) {
 
       // Check whether a CLAW file is available.
       _mod = TransformationHelper.locateClawModuleFile(_claw.getTarget(),
@@ -500,7 +500,7 @@ public class ParallelizeForward extends ClawTransformation {
         }
 
         if(pUpdate == null) { // field is not a parameter but maybe out field
-          Xdecl d = fDef.getDeclarationTable().get(original_param);
+          Xnode d = fDef.getDeclarationTable().get(original_param);
           if(d != null) {
             pUpdate = d.matchSeq(Xcode.NAME);
           }
@@ -549,7 +549,7 @@ public class ParallelizeForward extends ClawTransformation {
             if(id != null) {
               id.setAttribute(Xattr.TYPE, type);
             }
-            Xdecl varDecl = fDef.getDeclarationTable().get(original_param);
+            Xnode varDecl = fDef.getDeclarationTable().get(original_param);
             if(varDecl != null) {
               varDecl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
             }

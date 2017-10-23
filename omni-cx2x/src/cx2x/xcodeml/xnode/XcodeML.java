@@ -316,7 +316,7 @@ public class XcodeML extends Xnode {
   {
     Xid id = createId(type, sclass, name);
     fctDef.getSymbolTable().add(id);
-    Xdecl decl = createVarDecl(type, name);
+    Xnode decl = createVarDecl(type, name);
     Xnode hook = null;
 
     // Check where is the last dummy arguments in the declaration
@@ -444,13 +444,13 @@ public class XcodeML extends Xnode {
    * @param nameValue Value of the name inner node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xdecl createVarDecl(String nameType, String nameValue) {
+  public Xnode createVarDecl(String nameType, String nameValue) {
     Xnode varD = createNode(Xcode.VARDECL);
     Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
     internalName.setAttribute(Xattr.TYPE, nameType);
     varD.append(internalName);
-    return new Xdecl(varD);
+    return varD;
   }
 
   /**

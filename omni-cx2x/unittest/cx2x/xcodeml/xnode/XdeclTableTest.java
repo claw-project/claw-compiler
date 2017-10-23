@@ -34,14 +34,14 @@ public class XdeclTableTest {
     assertNotNull(decl);
     assertEquals(2, decl.count());
 
-    Xdecl var1 = decl.get("name1");
+    Xnode var1 = decl.get("name1");
     assertNotNull(var1);
     assertEquals(4730, var1.lineNo());
     assertEquals("dummy.f90", var1.filename());
     assertEquals("name1", var1.matchSeq(Xcode.NAME).value());
     assertEquals("I1241bd0", var1.getType());
 
-    Xdecl var2 = decl.get("name2");
+    Xnode var2 = decl.get("name2");
     assertNotNull(var2);
     assertEquals(4731, var2.lineNo());
     assertEquals("dummy.f90", var2.filename());
@@ -63,12 +63,12 @@ public class XdeclTableTest {
     XmoduleDefinition mod = new XmoduleDefinition(modules.get(0));
     XdeclTable modDecl = mod.getDeclarationTable();
     assertNotNull(modDecl);
-    List<Xdecl> modDeclarations = modDecl.values();
+    List<Xnode> modDeclarations = modDecl.values();
     assertEquals(2, modDeclarations.size());
     assertEquals(Xcode.FSTRUCTDECL, modDeclarations.get(0).opcode());
     assertEquals(Xcode.FINTERFACEDECL, modDeclarations.get(1).opcode());
 
-    Xdecl interface1 = modDecl.get("dummy");
+    Xnode interface1 = modDecl.get("dummy");
     assertNotNull(interface1);
     assertEquals(Xcode.FINTERFACEDECL, interface1.opcode());
 
@@ -80,7 +80,7 @@ public class XdeclTableTest {
     XfunctionDefinition fctDef = new XfunctionDefinition(functions.get(0));
     XdeclTable fctDecl = fctDef.getDeclarationTable();
     assertNotNull(fctDecl);
-    List<Xdecl> fctDeclarations = fctDecl.values();
+    List<Xnode> fctDeclarations = fctDecl.values();
     assertEquals(10, fctDeclarations.size());
     assertEquals(Xcode.VARDECL, fctDeclarations.get(0).opcode());
     assertEquals(Xcode.VARDECL, fctDeclarations.get(1).opcode());
@@ -93,23 +93,23 @@ public class XdeclTableTest {
     assertEquals(Xcode.FEQUIVALENCEDECL, fctDeclarations.get(8).opcode());
     assertEquals(Xcode.EXTERNDECL, fctDeclarations.get(9).opcode());
 
-    Xdecl varDecl1 = fctDecl.get("sub1");
+    Xnode varDecl1 = fctDecl.get("sub1");
     assertNotNull(varDecl1);
     assertEquals(Xcode.VARDECL, varDecl1.opcode());
 
-    Xdecl namelist = fctDecl.get("case");
+    Xnode namelist = fctDecl.get("case");
     assertNotNull(namelist);
     assertEquals(Xcode.FNAMELISTDECL, namelist.opcode());
 
-    Xdecl useDecl = fctDecl.get("mod4");
+    Xnode useDecl = fctDecl.get("mod4");
     assertNotNull(useDecl);
     assertEquals(Xcode.FUSEDECL, useDecl.opcode());
 
-    Xdecl useOnlyDecl = fctDecl.get("mod5");
+    Xnode useOnlyDecl = fctDecl.get("mod5");
     assertNotNull(useOnlyDecl);
     assertEquals(Xcode.FUSEONLYDECL, useOnlyDecl.opcode());
 
-    Xdecl externDecl = fctDecl.get("interface_sub");
+    Xnode externDecl = fctDecl.get("interface_sub");
     assertNotNull(externDecl);
     assertEquals(Xcode.EXTERNDECL, externDecl.opcode());
 

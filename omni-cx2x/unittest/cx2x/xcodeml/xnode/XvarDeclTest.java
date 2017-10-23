@@ -26,7 +26,7 @@ public class XvarDeclTest {
 
   @Test
   public void simpleXvarDeclWithValueTest() {
-    Xdecl varDecl = XmlHelper.createXvarDecl(varDecl1);
+    Xnode varDecl = XmlHelper.createXvarDecl(varDecl1);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.filename());
@@ -39,7 +39,7 @@ public class XvarDeclTest {
 
   @Test
   public void simpleXvarDeclWithoutValueTest() {
-    Xdecl varDecl = XmlHelper.createXvarDecl(varDecl2);
+    Xnode varDecl = XmlHelper.createXvarDecl(varDecl2);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.filename());
