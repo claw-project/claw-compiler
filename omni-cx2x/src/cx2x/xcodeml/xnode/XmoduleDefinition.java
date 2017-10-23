@@ -34,9 +34,10 @@ public class XmoduleDefinition extends Xnode {
 
   /**
    * Xnode ctor. Delegate construction to the Element ctor.
+   *
    * @param node Xnode element.
    */
-  public XmoduleDefinition(Xnode node){
+  public XmoduleDefinition(Xnode node) {
     this(node.element());
   }
 
@@ -64,7 +65,6 @@ public class XmoduleDefinition extends Xnode {
   public String getName() {
     return _name;
   }
-
 
   /**
    * Get the module's symbols table.

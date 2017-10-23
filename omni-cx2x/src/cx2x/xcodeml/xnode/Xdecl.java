@@ -14,8 +14,7 @@ package cx2x.xcodeml.xnode;
 public class Xdecl extends Xnode {
 
   /**
-   * Element standard ctor. Pass the base element to the base class and read
-   * inner information (elements and attributes).
+   * Xnode standard ctor. Pass the Xnode.
    *
    * @param node The raw node.
    */

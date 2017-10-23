@@ -96,4 +96,16 @@ public class Xid extends Xnode {
     return new Xid((Element) clone);
   }
 
+  /**
+   * Return a brief description of the Xid.
+   *
+   * @return String description of the Xid as
+   * "name-value (type=type-value, sclass=sclass-value)".
+   */
+  @Override
+  public String toString() {
+    return String.format("%s (type=%s, sclass=%s)", getName(),
+        getType(), getSclass());
+  }
+
 }

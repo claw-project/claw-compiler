@@ -357,4 +357,15 @@ public class XbasicType extends Xtype {
     Element element = (Element) cloneRawNode();
     return new XbasicType(element);
   }
+
+  /**
+   * Return a brief description of the XbasicType.
+   *
+   * @return String description of the XbasicType as
+   * "FbasicType (type=type-value, ref=ref-value)".
+   */
+  @Override
+  public String toString() {
+    return String.format("FbasicType (type=%s, ref=%s)", getType(), getRef());
+  }
 }
