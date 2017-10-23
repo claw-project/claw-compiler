@@ -1,23 +1,21 @@
 MODULE mo_column
 
 CONTAINS
- SUBROUTINE compute ( nz , q , t , z , nproma )
+ SUBROUTINE compute ( nz , q , t , nproma )
 
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
 
-  CALL compute_column ( nz , q , t , z , nproma = nproma )
+  CALL compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute
 
- SUBROUTINE compute_column ( nz , q , t , z , nproma )
+ SUBROUTINE compute_column ( nz , q , t , nproma )
 
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
   REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
@@ -27,7 +25,7 @@ CONTAINS
   IF ( ( .NOT. allocated ( y ) ) ) THEN
    ALLOCATE ( y ( nz ) )
   END IF
-!$acc data present(t,q,z)
+!$acc data present(t,q)
 !$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
@@ -35,7 +33,8 @@ CONTAINS
 !$acc loop seq
    DO k = 2 , nz , 1
     t ( proma , k ) = c * k
-    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
+    y ( k ) = t ( proma , k )
+    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c + y ( k )
    END DO
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO

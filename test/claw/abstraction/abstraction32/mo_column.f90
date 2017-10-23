@@ -2,28 +2,26 @@ MODULE mo_column
   IMPLICIT NONE
 CONTAINS
 
-  SUBROUTINE compute(nz, q, t, z)
+  SUBROUTINE compute(nz, q, t)
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)   :: nz   ! Size of the array field
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: z    ! Field declared as scalar
 
     !$claw parallelize forward
-    CALL compute_column(nz, q, t, z)
+    CALL compute_column(nz, q, t)
 
   END SUBROUTINE compute
 
 
   ! Compute only one column
-  SUBROUTINE compute_column(nz, q, t, z)
+  SUBROUTINE compute_column(nz, q, t)
     IMPLICIT NONE
 
     INTEGER, INTENT(IN)   :: nz   ! Size of the array field
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: z    ! Field declared as scalar
     REAL, DIMENSION(:), ALLOCATABLE :: y
     INTEGER :: k                  ! Loop index
     REAL :: c                     ! Coefficient
@@ -35,7 +33,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize data(t,q,z) over(proma,:)
+    !$claw parallelize
 
     IF(.NOT. ALLOCATED(y)) ALLOCATE(y(nz))
 
@@ -44,7 +42,8 @@ CONTAINS
     c = 5.345
     DO k = 2, nz
       t(k) = c * k
-      q(k) = q(k - 1)  + t(k) * c
+      y(k) = t(k)
+      q(k) = q(k - 1)  + t(k) * c + y(k)
     END DO
     q(nz) = q(nz) * c
 

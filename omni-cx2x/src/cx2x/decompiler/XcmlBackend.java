@@ -98,11 +98,13 @@ public class XcmlBackend {
       XmDecompilerContext context = _toolFactory.createDecompilerContext();
 
       if(maxColumns > 0) {
-        context.setProperty(XmDecompilerContext.KEY_MAX_COLUMNS, "" + maxColumns);
+        context.setProperty(XmDecompilerContext.KEY_MAX_COLUMNS, "" +
+            maxColumns);
       }
 
       try {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory docFactory =
+            DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = docFactory.newDocumentBuilder();
         Document xcodeDoc;
         xcodeDoc = builder.parse(inputFilepath);

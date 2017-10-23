@@ -5,6 +5,8 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.language.common.OverPosition;
+
 /**
  * Hold various information about the promotion of variable.
  *
@@ -16,6 +18,7 @@ public class PromotionInfo {
   private final int _baseDimension;
   private final int _targetDimension;
   private final String _targetType;
+  private OverPosition _overPosition;
 
 
   /**
@@ -33,6 +36,34 @@ public class PromotionInfo {
     _baseDimension = baseDimension;
     _targetDimension = targetDimension;
     _targetType = targetType;
+    _overPosition = OverPosition.BEFORE; // Default behavior
+  }
+
+  /**
+   * Get the associated identifier.
+   *
+   * @return Identifier.
+   */
+  public String getIdentifier() {
+    return _identifier;
+  }
+
+  /**
+   * Get associated OverPosition.
+   *
+   * @return OverPosition value.
+   */
+  public OverPosition getOverPosition() {
+    return _overPosition;
+  }
+
+  /**
+   * Set the OverPosition value.
+   *
+   * @param overPosition New OverPosition value.
+   */
+  public void setOverPosition(OverPosition overPosition) {
+    _overPosition = overPosition;
   }
 
   /**
