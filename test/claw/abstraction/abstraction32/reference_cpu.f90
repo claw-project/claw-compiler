@@ -24,7 +24,9 @@ CONTAINS
   REAL :: c
   INTEGER :: proma
 
-  ALLOCATE ( y ( nz ) )
+  IF ( ( .NOT. allocated ( y ) ) ) THEN
+   ALLOCATE ( y ( nz ) )
+  END IF
   c = 5.345
   DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
@@ -37,7 +39,9 @@ CONTAINS
   DO proma = 1 , nproma , 1
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO
-  DEALLOCATE ( y )
+  IF ( allocated ( y ) ) THEN
+   DEALLOCATE ( y )
+  END IF
  END SUBROUTINE compute_column
 
 END MODULE mo_column

@@ -624,7 +624,17 @@ public class AcceleratorHelper {
     } else {
       while(first.nextSibling() != null
           && generator.getSkippedStatementsInPreamble().
-          contains(first.opcode())) {
+          contains(first.opcode()))
+      {
+        if(first.hasBody()) {
+          for(Xnode child : first.body().children()) {
+            if(!generator.getSkippedStatementsInPreamble().
+                contains(child.opcode()))
+            {
+              return first;
+            }
+          }
+        }
         first = first.nextSibling();
       }
     }
@@ -662,7 +672,17 @@ public class AcceleratorHelper {
     } else {
       while(last.prevSibling() != null
           && generator.getSkippedStatementsInEpilogue().
-          contains(last.opcode())) {
+          contains(last.opcode()))
+      {
+        if(last.hasBody()) {
+          for(Xnode child : last.body().children()) {
+            if(!generator.getSkippedStatementsInEpilogue().
+                contains(child.opcode()))
+            {
+              return last;
+            }
+          }
+        }
         last = last.prevSibling();
       }
     }

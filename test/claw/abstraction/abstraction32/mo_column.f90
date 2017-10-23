@@ -37,7 +37,7 @@ CONTAINS
     !$claw define dimension proma(1:nproma) &
     !$claw parallelize data(t,q,z) over(proma,:)
 
-    ALLOCATE(y(nz))
+    IF(.NOT. ALLOCATED(y)) ALLOCATE(y(nz))
 
     ! claw parallel region should start from here
 
@@ -50,6 +50,6 @@ CONTAINS
 
     ! claw parallel region should end here
 
-    DEALLOCATE(y)
+    IF(ALLOCATED(y)) DEALLOCATE(y)
   END SUBROUTINE compute_column
 END MODULE mo_column
