@@ -60,3 +60,4 @@ omni-cx2x/**/bin
 
 # Default install path
 install
+test/claw/abstraction/abstraction32/dummy.f90
