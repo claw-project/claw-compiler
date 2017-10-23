@@ -527,7 +527,8 @@ public class TransformationHelper {
 
     if(assumed) {
       if(newType.isAllAssumedShape()
-          && (fctType.hasParam(fieldId) || newType.isPointer()))
+          && (fctType.hasParam(fieldId) || newType.isAllocatable()
+          || newType.isPointer()))
       {
         for(int i = 0; i < overDimensions; ++i) {
           Xnode index = xcodeml.createEmptyAssumedShaped();
