@@ -187,7 +187,7 @@ public class OpenAccContinuation extends ClawTransformation {
                                       int lineIndex, String value,
                                       boolean continued)
   {
-    Xnode p = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     p.setFilename(getDirective().getPragma().filename());
     p.setLine(getDirective().getPragma().lineNo() + lineIndex);
     if(continued) {

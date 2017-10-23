@@ -59,7 +59,7 @@ public class Xparams extends Xnode {
    */
   public void add(Xnode name) {
     _parameters.add(name);
-    append(name, false);
+    append(name);
   }
 
   /**

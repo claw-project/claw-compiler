@@ -245,7 +245,7 @@ public class ArrayTransform extends ClawBlockTransformation {
       if(i == 0) { // most outer loop goes after the pragma
         doStmtGrip.insertAfter(doStmts[i]);
       } else { // others loop go in the previous one
-        doStmts[i - 1].body().append(doStmts[i], false);
+        doStmts[i - 1].body().append(doStmts[i]);
       }
     }
 
@@ -261,8 +261,8 @@ public class ArrayTransform extends ClawBlockTransformation {
             Xnode inductionVar =
                 xcodeml.createVar(Xname.TYPE_F_INT, induction, Xscope.LOCAL);
 
-            Xnode arrayIdx = new Xnode(Xcode.ARRAYINDEX, xcodeml);
-            arrayIdx.append(inductionVar, false);
+            Xnode arrayIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
+            arrayIdx.append(inductionVar);
 
             el.insertAfter(arrayIdx);
             el.delete();

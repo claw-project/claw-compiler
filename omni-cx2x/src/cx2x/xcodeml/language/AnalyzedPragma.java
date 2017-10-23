@@ -22,7 +22,7 @@ public class AnalyzedPragma {
   /**
    * Default ctor.
    */
-  public AnalyzedPragma() {
+  protected AnalyzedPragma() {
     _isEndPragma = false;
   }
 
@@ -32,7 +32,7 @@ public class AnalyzedPragma {
    *
    * @param rawPragma Pragma object to be attached.
    */
-  public AnalyzedPragma(Xnode rawPragma) {
+  protected AnalyzedPragma(Xnode rawPragma) {
     _pragma = rawPragma;
     _isEndPragma = false;
   }

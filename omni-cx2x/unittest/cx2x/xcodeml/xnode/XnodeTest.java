@@ -136,29 +136,29 @@ public class XnodeTest {
     assertEquals("q", arg10Node.constructRepresentation(false));
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+    Xnode n1 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
     assertEquals("", n1.constructRepresentation(false));
 
-    Xnode n2 = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
+    Xnode n2 = xcodeml.createNode(Xcode.FDOSTATEMENT);
     assertEquals("", n2.constructRepresentation(false));
   }
 
   @Test
   public void hasBodyTest(){
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = new Xnode(Xcode.ASSOCIATESTATEMENT, xcodeml);
-    Xnode n2 = new Xnode(Xcode.BLOCKSTATEMENT, xcodeml);
-    Xnode n3 = new Xnode(Xcode.CRITICALSTATEMENT, xcodeml);
-    Xnode n4 = new Xnode(Xcode.ELSE, xcodeml);
-    Xnode n5 = new Xnode(Xcode.FCASELABEL, xcodeml);
-    Xnode n6 = new Xnode(Xcode.FDOCONCURRENTSTATEMENT, xcodeml);
-    Xnode n7 = new Xnode(Xcode.FDOSTATEMENT, xcodeml);
-    Xnode n8 = new Xnode(Xcode.FDOWHILESTATEMENT, xcodeml);
-    Xnode n9 = new Xnode(Xcode.FFUNCTIONDEFINITION, xcodeml);
-    Xnode n10 = new Xnode(Xcode.FORALLSTATEMENT, xcodeml);
-    Xnode n11 = new Xnode(Xcode.THEN, xcodeml);
-    Xnode n12 = new Xnode(Xcode.TYPEGUARD, xcodeml);
-    Xnode n13 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    Xnode n1 = xcodeml.createNode(Xcode.ASSOCIATESTATEMENT);
+    Xnode n2 = xcodeml.createNode(Xcode.BLOCKSTATEMENT);
+    Xnode n3 = xcodeml.createNode(Xcode.CRITICALSTATEMENT);
+    Xnode n4 = xcodeml.createNode(Xcode.ELSE);
+    Xnode n5 = xcodeml.createNode(Xcode.FCASELABEL);
+    Xnode n6 = xcodeml.createNode(Xcode.FDOCONCURRENTSTATEMENT);
+    Xnode n7 = xcodeml.createNode(Xcode.FDOSTATEMENT);
+    Xnode n8 = xcodeml.createNode(Xcode.FDOWHILESTATEMENT);
+    Xnode n9 = xcodeml.createNode(Xcode.FFUNCTIONDEFINITION);
+    Xnode n10 = xcodeml.createNode(Xcode.FORALLSTATEMENT);
+    Xnode n11 = xcodeml.createNode(Xcode.THEN);
+    Xnode n12 = xcodeml.createNode(Xcode.TYPEGUARD);
+    Xnode n13 = xcodeml.createNode(Xcode.FBASICTYPE);
 
     assertTrue(n1.hasBody());
     assertTrue(n2.hasBody());

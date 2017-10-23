@@ -1144,18 +1144,18 @@ public class XnodeUtil {
           "has no children element");
     }
 
-    Xnode bound = new Xnode(baseBound.opcode(), xcodemlDst);
+    Xnode bound = xcodemlDst.createNode(baseBound.opcode());
     if(boundChild.opcode() == Xcode.FINTCONSTANT
         || boundChild.opcode() == Xcode.VAR)
     {
-      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc), false);
+      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
       Xnode lhs = boundChild.child(0);
       Xnode rhs = boundChild.child(1);
-      Xnode plusExpr = new Xnode(Xcode.PLUSEXPR, xcodemlDst);
-      bound.append(plusExpr, false);
-      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc), false);
-      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc), false);
+      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUSEXPR);
+      bound.append(plusExpr);
+      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
+      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
     } else {
       throw new IllegalTransformationException(
           String.format("Lower/upper bound type currently not supported (%s)",

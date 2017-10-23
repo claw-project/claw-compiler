@@ -555,7 +555,7 @@ public class AcceleratorHelper {
     }
     Xnode pragma = null;
     for(String directive : directives) {
-      pragma = new Xnode(Xcode.FPRAGMASTATEMENT, xcodeml);
+      pragma = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
       pragma.setValue(directive);
       if(after) {
         ref.insertAfter(pragma);

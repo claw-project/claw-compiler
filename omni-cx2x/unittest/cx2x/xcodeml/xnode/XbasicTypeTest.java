@@ -38,9 +38,9 @@ public class XbasicTypeTest {
   @Test
   public void setterTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    Xnode n1 = xcodeml.createNode(Xcode.FBASICTYPE);
     XbasicType bt1 = new XbasicType(n1);
-    Xnode n2 = new Xnode(Xcode.FBASICTYPE, xcodeml);
+    Xnode n2 = xcodeml.createNode(Xcode.FBASICTYPE);
     XbasicType bt2 = new XbasicType(n2);
     String typeHash1 = xcodeml.getTypeTable().generateIntegerTypeHash();
     String typeHash2 = xcodeml.getTypeTable().generateIntegerTypeHash();

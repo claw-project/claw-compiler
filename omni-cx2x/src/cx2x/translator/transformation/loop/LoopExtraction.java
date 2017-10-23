@@ -309,29 +309,29 @@ public class LoopExtraction extends ClawTransformation {
                     " is wrong ...", _claw.getPragma().lineNo());
           }
 
-          Xnode newArg = new Xnode(Xcode.FARRAYREF, xcodeml);
+          Xnode newArg = xcodeml.createNode(Xcode.FARRAYREF);
           newArg.setAttribute(Xattr.TYPE, type.getRef());
 
-          Xnode varRef = new Xnode(Xcode.VARREF, xcodeml);
+          Xnode varRef = xcodeml.createNode(Xcode.VARREF);
           varRef.setAttribute(Xattr.TYPE, argument.getType());
 
           varRef.append(argument, true);
-          newArg.append(varRef, false);
+          newArg.append(varRef);
 
           //  create arrayIndex
           for(ClawMappingVar mappingVar : mapping.getMappingVariables()) {
-            Xnode arrayIndex = new Xnode(Xcode.ARRAYINDEX, xcodeml);
+            Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
             // Find the mapping var in the local table (fct scope)
             Xdecl mappingVarDecl =
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
-            Xnode newMappingVar = new Xnode(Xcode.VAR, xcodeml);
+            Xnode newMappingVar = xcodeml.createNode(Xcode.VAR);
             newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
             newMappingVar.setAttribute(Xattr.TYPE, mappingVarDecl.getType());
             newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).value());
-            arrayIndex.append(newMappingVar, false);
-            newArg.append(arrayIndex, false);
+            arrayIndex.append(newMappingVar);
+            newArg.append(arrayIndex);
           }
 
           argument.insertAfter(newArg);
@@ -350,12 +350,11 @@ public class LoopExtraction extends ClawTransformation {
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {
-          Xnode tempName = new Xnode(Xcode.NAME, xcodeml);
+          Xnode tempName = xcodeml.createNode(Xcode.NAME);
           tempName.setValue(var.getFctMapping());
           tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
-          Xdecl newVarDecl =
-              new Xdecl(new Xnode(Xcode.VARDECL, xcodeml));
-          newVarDecl.append(tempName, false);
+          Xdecl newVarDecl = new Xdecl(xcodeml.createNode(Xcode.VARDECL));
+          newVarDecl.append(tempName);
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
         }/* else {
