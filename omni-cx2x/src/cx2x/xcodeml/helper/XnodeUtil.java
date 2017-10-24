@@ -768,21 +768,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Check if the two element are direct children of the same parent element.
-   *
-   * @param e1 First element.
-   * @param e2 Second element.
-   * @return True if the two element are direct children of the same parent.
-   * False otherwise.
-   */
-  public static boolean hasSameParentBlock(Xnode e1, Xnode e2) {
-    return !(e1 == null || e2 == null || e1.element() == null
-        || e2.element() == null)
-        && e1.element().getParentNode() ==
-        e2.element().getParentNode();
-  }
-
-  /**
    * Compare the iteration range of two do statements.
    *
    * @param e1             First do statement.

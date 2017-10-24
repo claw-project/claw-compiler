@@ -827,14 +827,26 @@ public class Xnode {
   }
 
   /**
-   * Copy the enhanced information from the current element to a target element.
+   * Copy the enhanced information from the current node to a target node.
    * Enhanced information include line number and original file name.
    *
-   * @param target Target element to copy information to.
+   * @param target Target node to copy information to.
    */
   public void copyEnhancedInfo(Xnode target) {
     target.setLine(lineNo());
     target.setFilename(filename());
+  }
+
+  /**
+   * Check if the given node is direct children of the same parent node.
+   *
+   * @param n Node to be compared to.
+   * @return True if the given node is direct children of the same parent. False
+   * otherwise.
+   */
+  public boolean hasSameParentBlock(Xnode n) {
+    return !(n == null || element() == null || n.element() == null)
+        && element().getParentNode() == n.element().getParentNode();
   }
 
   /**
