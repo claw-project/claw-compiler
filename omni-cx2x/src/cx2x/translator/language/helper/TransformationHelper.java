@@ -556,7 +556,7 @@ public class TransformationHelper {
             // Insert new dimensions at the end (case 3)
             for(DimensionDefinition dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
-              newType.addDimension(index, XbasicType.APPEND);
+              newType.addDimension(index);
             }
           } else {
             // Insert new dimension at the beginning (case 2)
@@ -575,7 +575,7 @@ public class TransformationHelper {
     } else {
       for(DimensionDefinition dim : dimensions) {
         Xnode index = dim.generateIndexRange(xcodeml, false);
-        newType.addDimension(index, XbasicType.APPEND);
+        newType.addDimension(index);
       }
     }
     id.setType(type);
@@ -771,8 +771,7 @@ public class TransformationHelper {
         case BEFORE:
           // TODO control and validate the before/after
           for(DimensionDefinition dim : dimensions) {
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false),
-                XbasicType.APPEND);
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
           }
           break;
         case AFTER:
@@ -805,7 +804,7 @@ public class TransformationHelper {
               XnodeUtil.duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
           newDim.append(newUpperBound);
         }
-        newType.addDimension(newDim, XbasicType.APPEND);
+        newType.addDimension(newDim);
       }
 
     }
