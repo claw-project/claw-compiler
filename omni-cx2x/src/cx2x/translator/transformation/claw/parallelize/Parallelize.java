@@ -138,7 +138,7 @@ public class Parallelize extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-    _fctType = (XfunctionType) xcodeml.getTypeTable().get(_fctDef);
+    _fctType = xcodeml.getTypeTable().getFunctionType(_fctDef);
     if(_fctType == null) {
       xcodeml.addError("Function/subroutine signature cannot be found. ",
           _claw.getPragma().lineNo());
@@ -220,10 +220,9 @@ public class Parallelize extends ClawTransformation {
           continue;
         }
 
-        Xnode type = xcodeml.getTypeTable().get(decl);
-        if(type instanceof XbasicType) {
+        if(xcodeml.getTypeTable().isBasicType(decl)) {
           String varName = decl.matchSeq(Xcode.NAME).value();
-          XbasicType bType = (XbasicType) type;
+          XbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
 
           if(bType.isArray()) {
             if(bType.hasIntent() || bType.isPointer()) {
@@ -713,7 +712,7 @@ public class Parallelize extends ClawTransformation {
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.body(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
-      XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId);
+      XbasicType type = xcodeml.getTypeTable().getBasicType(sId);
 
       for(Xnode var : vars) {
         Xnode ref = xcodeml.createArrayRef(type, var.cloneNode());

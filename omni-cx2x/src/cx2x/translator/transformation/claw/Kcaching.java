@@ -257,7 +257,7 @@ public class Kcaching extends ClawTransformation {
           _claw.getPragma().lineNo()
       );
     }
-    XbasicType basicType = (XbasicType) xcodeml.getTypeTable().get(id);
+    XbasicType basicType = xcodeml.getTypeTable().getBasicType(id);
     int dim = basicType.getDimensions();
     List<Integer> offsets = new ArrayList<>();
     for(int i = 0; i < dim; ++i) {
@@ -284,7 +284,7 @@ public class Kcaching extends ClawTransformation {
                                               Xnode rhs,
                                               Xnode stmt)
   {
-    XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type); // TODO getType
+    XbasicType t = xcodeml.getTypeTable().getBasicType(type); // TODO getType
     if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneNode();
@@ -293,8 +293,7 @@ public class Kcaching extends ClawTransformation {
       newType.removeAttribute(Xattr.INTENT);
       newType.removeAttribute(Xattr.IS_ALLOCATABLE);
 
-      XbasicType ref =
-          (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
+      XbasicType ref = xcodeml.getTypeTable().getBasicType(newType.getRef());
       if(ref != null && (ref.isAllocatable() || ref.hasIntent())) {
         // TODO is there several level to reach ref ? Check if ref is Freal ...
         XbasicType newRef = ref.cloneNode();

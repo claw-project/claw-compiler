@@ -208,12 +208,11 @@ public class ParallelizeForward extends ClawTransformation {
           return false;
         }
       } else {
-        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id);
+        _fctType = xcodeml.getTypeTable().getFunctionType(id);
       }
     } else {
-      Xnode rawType = xcodeml.getTypeTable().get(_fctCall);
-      if(rawType instanceof XfunctionType) {
-        _fctType = (XfunctionType) rawType;
+      if(xcodeml.getTypeTable().isFunctionType(_fctCall)) {
+        _fctType = xcodeml.getTypeTable().getFunctionType(_fctCall);
       } else {
         xcodeml.addError("Unsupported type of XcodeML/F element for the function "
             + _calledFctName, _claw.getPragma().lineNo());
@@ -241,7 +240,7 @@ public class ParallelizeForward extends ClawTransformation {
           return false;
         }
       } else {
-        _fctType = (XfunctionType) xcodeml.getTypeTable().get(id);
+        _fctType = xcodeml.getTypeTable().getFunctionType(id);
         if(_fctType == null) {
           xcodeml.addError(
               "Called function cannot be found in the same module ",
@@ -334,7 +333,7 @@ public class ParallelizeForward extends ClawTransformation {
 
         if(_mod.getIdentifiers().contains(_calledFctName)) {
           Xid id = _mod.getIdentifiers().get(_calledFctName);
-          _fctType = (XfunctionType) _mod.getTypeTable().get(id);
+          _fctType = _mod.getTypeTable().getFunctionType(id);
           if(_fctType != null) {
             _calledFctName = null;
             return true;
@@ -393,7 +392,7 @@ public class ParallelizeForward extends ClawTransformation {
       throw new IllegalTransformationException("Parallelize directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().lineNo());
     }
-    _parentFctType = (XfunctionType) xcodeml.getTypeTable().get(fDef);
+    _parentFctType = xcodeml.getTypeTable().getFunctionType(fDef);
 
     List<Xnode> params = _fctType.getParams().getAll();
 
@@ -418,7 +417,7 @@ public class ParallelizeForward extends ClawTransformation {
       String var = p.value();
       String type;
 
-      XbasicType paramType = (XbasicType) xcodeml.getTypeTable().get(p);
+      XbasicType paramType = xcodeml.getTypeTable().getBasicType(p);
 
       if(!p.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
         continue;
@@ -515,10 +514,10 @@ public class ParallelizeForward extends ClawTransformation {
           }
 
           XbasicType typeBase = (_localFct) ?
-              (XbasicType) xcodeml.getTypeTable().get(pBase)
-              : (XbasicType) _mod.getTypeTable().get(pBase);
-          XbasicType typeToUpdate =
-              (XbasicType) xcodeml.getTypeTable().get(pUpdate);
+              xcodeml.getTypeTable().getBasicType(pBase)
+              : _mod.getTypeTable().getBasicType(pBase);
+
+          XbasicType typeToUpdate = xcodeml.getTypeTable().getBasicType(pUpdate);
 
           int targetDim = typeBase.getDimensions();
           int baseDim = typeToUpdate.getDimensions();
@@ -644,7 +643,7 @@ public class ParallelizeForward extends ClawTransformation {
           TransformationHelper.findDimensions(_parentFctType);
       XfunctionDefinition parentFctDef = _fctCall.findParentFunction();
 
-      XbasicType varType = (XbasicType) xcodeml.getTypeTable().get(varInLhs);
+      XbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
 
       PromotionInfo promotionInfo;
       if(!_promotions.containsKey(varInLhs.value())) {
@@ -756,8 +755,7 @@ public class ParallelizeForward extends ClawTransformation {
                 "promotion. Internal error.", _claw.getPragma().lineNo());
           }
 
-          XbasicType varType =
-              (XbasicType) xcodeml.getTypeTable().get(varInLhs);
+          XbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
 
           // Declare the induction variable if they are not present
           TransformationHelper.declareInductionVariables(dimensions,
@@ -837,11 +835,9 @@ public class ParallelizeForward extends ClawTransformation {
 
         // Check if the pointer assignment has the promoted variable
         if(pointee.value().equals(fieldId)) {
-          XbasicType pointerType =
-              (XbasicType) xcodeml.getTypeTable().get(pointer);
-          XbasicType pointeeType =
-              (XbasicType) xcodeml.getTypeTable().
-                  get(pointeeInfo.getTargetType());
+          XbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
+          XbasicType pointeeType = xcodeml.getTypeTable().
+                  getBasicType(pointeeInfo.getTargetType());
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()

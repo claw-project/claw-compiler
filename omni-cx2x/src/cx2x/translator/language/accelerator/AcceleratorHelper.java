@@ -255,10 +255,10 @@ public class AcceleratorHelper {
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
             || bt.getIntent() == Xintent.INOUT) && bt.isArray())
@@ -286,11 +286,11 @@ public class AcceleratorHelper {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!XcodeType.isBuiltInType(decl.getType())
-            && !(xcodeml.getTypeTable().get(decl) instanceof XbasicType))
+            && !(xcodeml.getTypeTable().isBasicType(decl)))
         {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
         if((bt == null && XcodeType.isBuiltInType(decl.getType()))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
@@ -316,10 +316,10 @@ public class AcceleratorHelper {
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
         if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()
             && bt.isAllocatable())
         {

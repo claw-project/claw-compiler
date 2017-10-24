@@ -205,15 +205,14 @@ public class TransformationHelper {
             "declaration table.", claw.getPragma().lineNo());
       }
 
-      Xnode rawType = xcodeml.getTypeTable().get(id);
-      if(!(rawType instanceof XbasicType)) {
+      if(!(xcodeml.getTypeTable().isBasicType(id))) {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",
                 reshapeInfo.getArrayName()),
             claw.getPragma().lineNo()
         );
       }
-      XbasicType crtType = (XbasicType) rawType;
+      XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
 
       // Check dimension
       if(crtType.getDimensions() < reshapeInfo.getTargetDimension()) {
@@ -338,7 +337,7 @@ public class TransformationHelper {
       }
       return;
     } else {
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(fctDef);
+      fctTypeMod = mod.getTypeTable().getFunctionType(fctDef);
     }
 
     if(fctTypeMod == null) {
@@ -357,7 +356,7 @@ public class TransformationHelper {
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id);
+      fctTypeMod = mod.getTypeTable().getFunctionType(id);
       if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
@@ -395,8 +394,8 @@ public class TransformationHelper {
 
         if(!localType.equals(modType)) {
           // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(pLocal);
-          XbasicType crtType = (XbasicType) mod.getTypeTable().get(pMod);
+          XbasicType lType = xcodeml.getTypeTable().getBasicType(pLocal);
+          XbasicType crtType = mod.getTypeTable().getBasicType(pMod);
 
           List<DimensionDefinition> dimensions =
               TransformationHelper.findDimensions(fctType);
@@ -508,7 +507,7 @@ public class TransformationHelper {
       if(XcodeType.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
-        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id);
+        XbasicType old = xcodeml.getTypeTable().getBasicType(id);
         if(old == null) {
           throw new IllegalTransformationException("Cannot find type for " +
               fieldId, claw.getPragma().lineNo());

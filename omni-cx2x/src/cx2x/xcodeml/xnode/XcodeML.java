@@ -137,7 +137,7 @@ public class XcodeML extends Xnode {
           "supported as lower/upper bound value for promoted arrays.");
     }
 
-    XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
+    XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
     Xnode bType = createNode(Xcode.FBASICTYPE);
     bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
     bType.setAttribute(Xattr.TYPE,
@@ -322,7 +322,7 @@ public class XcodeML extends Xnode {
 
     // Check where is the last dummy arguments in the declaration
     if(afterDummyArgs) {
-      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctDef);
+      XfunctionType fctType = getTypeTable().getFunctionType(fctDef);
       List<String> parameters = fctType.getParamsNames();
 
       for(Xnode n : fctDef.getDeclarationTable().values()) {
@@ -600,8 +600,7 @@ public class XcodeML extends Xnode {
     Xnode hook = null;
     // Newly created parameter must be added before any optional parameter
     for(Xnode param : fctType.getParams().getAll()) {
-      XbasicType paramType =
-          (XbasicType) getTypeTable().get(param);
+      XbasicType paramType = getTypeTable().getBasicType(param);
       if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
         break;

@@ -1302,7 +1302,7 @@ public class XnodeUtil {
     }
 
     // Retrieve function type to check intents and types of parameters
-    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().get(fctCall);
+    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
     List<Xnode> parameters = fctType.getParams().getAll();
     List<Xnode> arguments = argumentsNode.children();
 
@@ -1310,23 +1310,21 @@ public class XnodeUtil {
       // TODO handle optional arguments, named value args
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
-      Xnode typeParameter = xcodeml.getTypeTable().get(parameter);
-      Xnode typeArg = xcodeml.getTypeTable().get(arg);
 
       String rep = "";
       if(XcodeType.isBuiltInType(arg.getType()) && !arrayOnly
-          && typeParameter instanceof XbasicType)
+          && xcodeml.getTypeTable().isBasicType(parameter))
       {
-        XbasicType btParameter = (XbasicType) typeParameter;
+        XbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
         rep = arg.constructRepresentation(false);
-      } else if(typeParameter instanceof XbasicType
-          && typeArg instanceof XbasicType)
+      } else if(xcodeml.getTypeTable().isBasicType(parameter)
+          && xcodeml.getTypeTable().isBasicType(arg))
       {
-        XbasicType btParameter = (XbasicType) typeParameter;
-        XbasicType btArg = (XbasicType) typeArg;
+        XbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        XbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
         if((arrayOnly && !btArg.isArray())
             || !intent.isCompatible(btParameter.getIntent()))
         {

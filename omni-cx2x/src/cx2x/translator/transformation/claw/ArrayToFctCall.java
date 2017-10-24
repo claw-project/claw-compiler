@@ -90,8 +90,7 @@ public class ArrayToFctCall extends ClawTransformation {
                         Transformation other) throws Exception
   {
 
-    XfunctionType fctType =
-        (XfunctionType) xcodeml.getTypeTable().get(_replaceFct);
+    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
     // Prepare the function call
     Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),

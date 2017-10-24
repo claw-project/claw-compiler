@@ -7,7 +7,10 @@ package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
@@ -60,6 +63,34 @@ public class XtypeTable extends Xnode {
     }
   }
 
+  public boolean isBasicType(Xnode node) {
+    return isBasicType(node.getType());
+  }
+
+  public boolean isBasicType(String hash) {
+    return isType(XbasicType.class, hash);
+  }
+
+  public boolean isFunctionType(Xnode node) {
+    return isFunctionType(node.getType());
+  }
+
+  public boolean isFunctionType(String hash) {
+    return isType(XfunctionType.class, hash);
+  }
+
+  public boolean isStructType(String hash) {
+    return false; // TODO
+  }
+
+  private boolean isType(Class typeClass, String type) {
+    if(type == null || type.isEmpty()) {
+      return false;
+    }
+    Xnode t = get(type);
+    return t != null && typeClass.isInstance(t);
+  }
+
   /**
    * Get number of elements in the type table.
    *
@@ -81,14 +112,26 @@ public class XtypeTable extends Xnode {
     }
   }
 
-  /**
-   * Get type associated with node if any.
-   *
-   * @param node Node to retrieve the type.
-   * @return Xnode element if found. Null otherwise.
-   */
-  public Xnode get(Xnode node) {
-    return node == null ? null : get(node.getType());
+  public XbasicType getBasicType(Xnode node) {
+    return getBasicType(node.getType());
+  }
+
+  public XbasicType getBasicType(String hash) {
+    if(isBasicType(hash)) {
+      return (XbasicType) get(hash);
+    }
+    return null;
+  }
+
+  public XfunctionType getFunctionType(Xnode node) {
+    return getFunctionType(node.getType());
+  }
+
+  public XfunctionType getFunctionType(String hash) {
+    if(isFunctionType(hash)) {
+      return (XfunctionType) get(hash);
+    }
+    return null;
   }
 
   /**
@@ -97,7 +140,7 @@ public class XtypeTable extends Xnode {
    * @param type Type of the element to be returned.
    * @return Xnode object if found in the table. Null otherwise.
    */
-  public Xnode get(String type) {
+  protected Xnode get(String type) {
     if(_table.containsKey(type)) {
       return _table.get(type);
     }
