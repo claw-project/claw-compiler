@@ -587,11 +587,9 @@ public class XnodeUtil {
       return;
     }
     Xnode refNode = ref;
-    Xnode childNode = body.firstChild();
-    while(childNode != null) {
-      refNode.insertAfter(childNode);
-      refNode = childNode;
-      childNode = childNode.nextSibling();
+    for(Xnode child : body.children()) {
+      refNode.insertAfter(child);
+      refNode = child;
     }
   }
 
