@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -112,9 +111,7 @@ public class XcodeML extends Xnode {
     if(base.opcode() == Xcode.VAR) {
       return importVar(base, xcodemlSrc);
     } else {
-      Xnode intConst = createNode(Xcode.FINTCONSTANT);
-      intConst.setValue(base.value());
-      return intConst;
+      return createIntConstant(Integer.parseInt(base.value()));
     }
   }
 
@@ -562,9 +559,7 @@ public class XcodeML extends Xnode {
     indexRange.append(upper);
 
     // Lower bound
-    Xnode lowerBound = createNode(Xcode.FINTCONSTANT);
-    lowerBound.setValue(String.valueOf(startIndex));
-    lower.append(lowerBound);
+    lower.append(createIntConstant(startIndex));
 
     // Upper bound
     Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
@@ -577,9 +572,7 @@ public class XcodeML extends Xnode {
     Xnode args = createNode(Xcode.ARGUMENTS);
     fctCall.append(args);
     args.append(arrayVar, true);
-    Xnode dim = createNode(Xcode.FINTCONSTANT);
-    dim.setValue(String.valueOf(dimension));
-    args.append(dim);
+    args.append(createIntConstant(dimension));
     return indexRange;
   }
 
@@ -651,10 +644,7 @@ public class XcodeML extends Xnode {
       String charTypeHash = getTypeTable().generateHash(XcodeType.CHARACTER);
       Xnode charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
       Xnode len = createNode(Xcode.LEN);
-      Xnode intConstant = createNode(Xcode.FINTCONSTANT);
-      intConstant.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      intConstant.setValue(charConstant.length() + "");
-      len.append(intConstant);
+      len.append(createIntConstant(charConstant.length()));
       charType.append(len);
       getTypeTable().add(charType);
 
@@ -682,4 +672,5 @@ public class XcodeML extends Xnode {
     n.setValue(String.valueOf(value));
     return n;
   }
+
 }

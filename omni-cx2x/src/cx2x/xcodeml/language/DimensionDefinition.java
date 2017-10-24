@@ -15,6 +15,7 @@ import cx2x.xcodeml.xnode.*;
 public class DimensionDefinition {
 
   public static final String BASE_DIM = ":";
+  private static final int DEFAULT_STEP_VALUE = 1;
 
   private final BoundDefinition _lowerBound;
   private final BoundDefinition _upperBound;
@@ -79,10 +80,7 @@ public class DimensionDefinition {
     range.append(_upperBound.generate(xcodeml));
     if(withStep) {
       Xnode step = xcodeml.createNode(Xcode.STEP);
-      Xnode stepValue = xcodeml.createNode(Xcode.FINTCONSTANT);
-      stepValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      step.append(stepValue);
-      stepValue.setValue(Xname.DEFAULT_STEP_VALUE);
+      step.append(xcodeml.createIntConstant(DEFAULT_STEP_VALUE));
       range.append(step);
     }
     return range;

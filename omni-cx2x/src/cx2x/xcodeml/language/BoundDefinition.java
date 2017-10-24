@@ -101,10 +101,7 @@ public class BoundDefinition {
       }
       return xcodeml.createVar(_boundTypeHash, _strBoundValue, Xscope.LOCAL);
     } else {
-      Xnode boundValue = xcodeml.createNode(Xcode.FINTCONSTANT);
-      boundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      boundValue.setValue(String.valueOf(_intBoundValue));
-      return boundValue;
+      return xcodeml.createIntConstant(_intBoundValue);
     }
   }
 
