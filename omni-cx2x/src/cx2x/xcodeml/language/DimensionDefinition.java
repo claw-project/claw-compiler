@@ -30,19 +30,30 @@ public class DimensionDefinition {
    */
   public DimensionDefinition(String id, String lowerBound, String upperBound) {
     _identifier = id;
-    _lowerBound = new BoundDefinition(lowerBound);
-    _upperBound = new BoundDefinition(upperBound);
+    _lowerBound =
+        new BoundDefinition(lowerBound, BoundDefinition.BoundType.LOWER);
+    _upperBound =
+        new BoundDefinition(upperBound, BoundDefinition.BoundType.UPPER);
   }
 
+  /**
+   * Get lower bound definition.
+   *
+   * @return lower bound definition.
+   */
   public BoundDefinition getLowerBound() {
     return _lowerBound;
   }
 
+  /**
+   * Get upper bound definition.
+   *
+   * @return upper bound definition.
+   */
   public BoundDefinition getUpperBound() {
     return _upperBound;
   }
-
-
+  
   /**
    * Get the identifier for the current dimension.
    *
@@ -64,11 +75,8 @@ public class DimensionDefinition {
    */
   public Xnode generateIndexRange(XcodeML xcodeml, boolean withStep) {
     Xnode range = xcodeml.createNode(Xcode.INDEXRANGE);
-    Xnode lower = xcodeml.createNode(Xcode.LOWERBOUND);
-    Xnode upper = xcodeml.createNode(Xcode.UPPERBOUND);
-    range.append(lower);
-    range.append(upper);
-
+    range.append(_lowerBound.generate(xcodeml));
+    range.append(_upperBound.generate(xcodeml));
     if(withStep) {
       Xnode step = xcodeml.createNode(Xcode.STEP);
       Xnode stepValue = xcodeml.createNode(Xcode.FINTCONSTANT);
@@ -77,9 +85,6 @@ public class DimensionDefinition {
       stepValue.setValue(Xname.DEFAULT_STEP_VALUE);
       range.append(step);
     }
-
-    lower.append(_lowerBound.generate(xcodeml));
-    upper.append(_upperBound.generate(xcodeml));
     return range;
   }
 
@@ -108,7 +113,7 @@ public class DimensionDefinition {
   public Xnode generateAllocateNode(XcodeProgram xcodeml) {
     // TODO handle special size with lowerBound != 1
     Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
-    arrayIndex.append(_upperBound.generate(xcodeml));
+    arrayIndex.append(_upperBound.generateValueNode(xcodeml));
     return arrayIndex;
   }
 

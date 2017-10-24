@@ -13,12 +13,19 @@ import cx2x.xcodeml.xnode.*;
  */
 class BoundDefinition {
 
-  private String _boundType = null;
+  private String _boundTypeHash = null;
   private String _strBoundValue = null;
   private int _intBoundValue;
+  private BoundType _boundType = BoundType.LOWER;
 
-
-  BoundDefinition(String boundValue) {
+  /**
+   * Constructs a BoundDefinition from String value. Detects if bound is an
+   * integer constant or a var.
+   *
+   * @param boundValue String representation of the bound value.
+   */
+  BoundDefinition(String boundValue, BoundType type) {
+    _boundType = type;
     try {
       _intBoundValue = Integer.parseInt(boundValue);
       _strBoundValue = null;
@@ -28,28 +35,62 @@ class BoundDefinition {
     }
   }
 
+  /**
+   * Check whether the bound is a var.
+   *
+   * @return True if the bound is a var.
+   */
   public boolean isVar() {
     return _strBoundValue != null;
   }
 
+  /**
+   * Set type associated with the bound
+   *
+   * @param value Type hash value.
+   */
   public void setType(String value) {
-    _boundType = value;
+    _boundTypeHash = value;
   }
 
+  /**
+   * Generate the corresponding node to represent the bound.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @return Newly created node (lowerBound or upperBound).
+   */
   public Xnode generate(XcodeML xcodeml) {
+    Xcode opcode = _boundType == BoundType.LOWER ?
+        Xcode.LOWERBOUND : Xcode.UPPERBOUND;
+    Xnode bound = xcodeml.createNode(opcode);
+    bound.append(generateValueNode(xcodeml));
+    return bound;
+  }
+
+  /**
+   * Generate the corresponding node to represent the bound value.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @return Newly created value node (Var or FintConstant).
+   */
+  Xnode generateValueNode(XcodeML xcodeml) {
     if(isVar()) {
       if(_boundType == null) {
-        _boundType = xcodeml.getTypeTable().generateIntegerTypeHash();
-        XbasicType bType = xcodeml.createBasicType(_boundType, Xname.TYPE_F_INT,
-            Xintent.IN);
+        _boundTypeHash = xcodeml.getTypeTable().generateIntegerTypeHash();
+        XbasicType bType = xcodeml.createBasicType(_boundTypeHash,
+            Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
       }
-      return xcodeml.createVar(_boundType, _strBoundValue, Xscope.LOCAL);
+      return xcodeml.createVar(_boundTypeHash, _strBoundValue, Xscope.LOCAL);
     } else {
       Xnode boundValue = xcodeml.createNode(Xcode.FINTCONSTANT);
       boundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
       boundValue.setValue(String.valueOf(_intBoundValue));
       return boundValue;
     }
+  }
+
+  public enum BoundType {
+    LOWER, UPPER
   }
 }
