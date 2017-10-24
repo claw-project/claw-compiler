@@ -151,10 +151,22 @@ public class XtypeTable extends Xnode {
     }
   }
 
+  /**
+   * Get the XbasicType associated with the node if any.
+   *
+   * @param node Node to look for type.
+   * @return XbasicType if associated. Null otherwise.
+   */
   public XbasicType getBasicType(Xnode node) {
     return getBasicType(node.getType());
   }
 
+  /**
+   * Get the XbasicType associated with the given hash value.
+   *
+   * @param hash Hash value to check for.
+   * @return XbasicType if associated. Null otherwise.
+   */
   public XbasicType getBasicType(String hash) {
     if(isBasicType(hash)) {
       return (XbasicType) get(hash);
@@ -162,10 +174,22 @@ public class XtypeTable extends Xnode {
     return null;
   }
 
+  /**
+   * Get the XfunctionType associated with the node if any.
+   *
+   * @param node Node to look for type.
+   * @return XfunctionType if associated. Null otherwise.
+   */
   public XfunctionType getFunctionType(Xnode node) {
     return getFunctionType(node.getType());
   }
 
+  /**
+   * Get the XfunctionType associated with the given hash value.
+   *
+   * @param hash Hash value to check for.
+   * @return XfunctionType if associated. Null otherwise.
+   */
   public XfunctionType getFunctionType(String hash) {
     if(isFunctionType(hash)) {
       return (XfunctionType) get(hash);
@@ -173,10 +197,22 @@ public class XtypeTable extends Xnode {
     return null;
   }
 
+  /**
+   * Get the XstructType associated with the node if any.
+   *
+   * @param node Node to look for type.
+   * @return XstructType if associated. Null otherwise.
+   */
   public XstructType getStructType(Xnode node) {
     return getStructType(node.getType());
   }
 
+  /**
+   * Get the XstructType associated with the given hash value.
+   *
+   * @param hash Hash value to check for.
+   * @return XstructType if associated. Null otherwise.
+   */
   public XstructType getStructType(String hash) {
     if(isStructType(hash)) {
       return (XstructType) get(hash);
