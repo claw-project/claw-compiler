@@ -241,7 +241,7 @@ public class ArrayTransform extends ClawBlockTransformation {
         range = ranges.get(i).cloneNode();
       }
       doStmts[i] = xcodeml.createDoStmt(inductionVar, range);
-      XnodeUtil.copyEnhancedInfo(statements.get(0), doStmts[i]);
+      statements.get(0).copyEnhancedInfo(doStmts[i]);
       if(i == 0) { // most outer loop goes after the pragma
         doStmtGrip.insertAfter(doStmts[i]);
       } else { // others loop go in the previous one

@@ -252,7 +252,7 @@ public class LoopHoist extends ClawBlockTransformation {
     Xnode ifStmt = xcodeml.createNode(Xcode.FIFSTATEMENT);
     Xnode condition = xcodeml.createNode(Xcode.CONDITION);
     Xnode thenBlock = xcodeml.createNode(Xcode.THEN);
-    XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
+    g.getDoStmts()[0].copyEnhancedInfo(ifStmt);
     Xnode cond = xcodeml.createNode(Xcode.LOGGEEXPR);
     Xnode inductionVar = g.getDoStmts()[0].matchDirectDescendant(Xcode.VAR);
     cond.append(inductionVar, true);

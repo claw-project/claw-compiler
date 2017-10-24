@@ -827,6 +827,17 @@ public class Xnode {
   }
 
   /**
+   * Copy the enhanced information from the current element to a target element.
+   * Enhanced information include line number and original file name.
+   *
+   * @param target Target element to copy information to.
+   */
+  public void copyEnhancedInfo(Xnode target) {
+    target.setLine(lineNo());
+    target.setFilename(filename());
+  }
+
+  /**
    * Return a brief description of the Xnode.
    *
    * @return String description of the Xnode as "Opcode (children: n)".

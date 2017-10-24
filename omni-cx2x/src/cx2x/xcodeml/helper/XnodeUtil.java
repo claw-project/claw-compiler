@@ -970,18 +970,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Copy the enhanced information from an element to a target element.
-   * Enhanced information include line number and original file name.
-   *
-   * @param base   Base element to copy information from.
-   * @param target Target element to copy information to.
-   */
-  public static void copyEnhancedInfo(Xnode base, Xnode target) {
-    target.setLine(base.lineNo());
-    target.setFilename(base.filename());
-  }
-
-  /**
    * Get a list of T elements from an xpath query executed from the
    * given element.
    *
