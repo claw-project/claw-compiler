@@ -85,7 +85,7 @@ public class IfExtract extends ClawTransformation {
     }
 
     // Add the new if statement after the do statement
-    XnodeUtil.insertAfter(_doStmt.element(), newIfStmt.element());
+    _doStmt.insertAfter(newIfStmt);
 
     // Insert the do statement in the new if-then statement
     newThen.body().insert(thenDoStmt, false);

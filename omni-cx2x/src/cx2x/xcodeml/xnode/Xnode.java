@@ -637,7 +637,8 @@ public class Xnode {
    * @param node The node to be inserted after the current one.
    */
   public void insertAfter(Xnode node) {
-    XnodeUtil.insertAfter(_baseElement, node.element());
+    _baseElement.getParentNode().insertBefore(node.element(),
+        _baseElement.getNextSibling());
   }
 
   /**

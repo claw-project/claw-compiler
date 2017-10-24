@@ -579,32 +579,23 @@ public class XnodeUtil {
    * @param ref  Element after which statement are shifted.
    */
   public static void extractBody(Xnode loop, Xnode ref) {
-    Xnode body = loop.matchDescendant(Xcode.BODY);
+    if(loop.opcode() != Xcode.FDOSTATEMENT) {
+      return;
+    }
+    Xnode body = loop.body();
     if(body == null) {
       return;
     }
-    Node refNode = ref.element();
-    for(Node childNode = body.element().getFirstChild(); childNode != null; ) {
-      Node nextChild = childNode.getNextSibling();
-      // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE) {
-        insertAfter(refNode, childNode);
-        refNode = childNode;
-      }
-      childNode = nextChild;
+    Xnode refNode = ref;
+    Xnode childNode = body.firstChild();
+    while(childNode != null) {
+      refNode.insertAfter(childNode);
+      refNode = childNode;
+      childNode = childNode.nextSibling();
     }
   }
 
-  /**
-   * Insert a node directly after a reference node.
-   *
-   * @param refNode The reference node. New node will be inserted after this
-   *                one.
-   * @param newNode The new node to be inserted.
-   */
-  public static void insertAfter(Node refNode, Node newNode) {
-    refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
-  }
+
 
   /**
    * Shift all statements from the first siblings of the "from" element until
