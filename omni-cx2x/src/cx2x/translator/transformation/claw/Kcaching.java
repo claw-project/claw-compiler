@@ -78,8 +78,7 @@ public class Kcaching extends ClawTransformation {
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
-    XfunctionDefinition fctDef =
-        XnodeUtil.findParentFunction(_claw.getPragma());
+    XfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
 
     for(String data : _claw.getDataClauseValues()) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);

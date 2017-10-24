@@ -144,7 +144,7 @@ public class TransformationHelper {
     if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getSymbolTable().get(name);
     }
-    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    XfunctionDefinition upperDef = fctDef.findParentFunction();
     if(upperDef == null) {
       return null;
     }
@@ -165,7 +165,7 @@ public class TransformationHelper {
     if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getDeclarationTable().get(name);
     }
-    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    XfunctionDefinition upperDef = fctDef.findParentFunction();
     if(upperDef == null) {
       return null;
     }
@@ -189,8 +189,7 @@ public class TransformationHelper {
     if(!claw.hasReshapeClause()) {
       return;
     }
-    XfunctionDefinition fctDef =
-        XnodeUtil.findParentFunction(claw.getPragma());
+    XfunctionDefinition fctDef = claw.getPragma().findParentFunction();
     if(fctDef == null) {
       throw new IllegalTransformationException("Cannot apply reshape clause." +
           "Parent function definition not found.", claw.getPragma().lineNo());

@@ -850,6 +850,19 @@ public class Xnode {
   }
 
   /**
+   * Find function definition in the ancestor of the current node.
+   *
+   * @return The function definition found. Null if nothing found.
+   */
+  public XfunctionDefinition findParentFunction() {
+    Xnode fctDef = matchAncestor(Xcode.FFUNCTIONDEFINITION);
+    if(fctDef == null) {
+      return null;
+    }
+    return new XfunctionDefinition(fctDef.element());
+  }
+
+  /**
    * Return a brief description of the Xnode.
    *
    * @return String description of the Xnode as "Opcode (children: n)".

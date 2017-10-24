@@ -7,11 +7,11 @@ package cx2x.translator.transformation.claw.parallelize;
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -184,8 +184,7 @@ public class ParallelizeForward extends ClawTransformation {
 
     XfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_calledFctName);
-    XfunctionDefinition parentFctDef =
-        XnodeUtil.findParentFunction(_claw.getPragma());
+    XfunctionDefinition parentFctDef = _claw.getPragma().findParentFunction();
     if(parentFctDef == null) {
       xcodeml.addError("Parallelize directive is not nested in a " +
           "function/subroutine.", _claw.getPragma().lineNo());
@@ -389,7 +388,7 @@ public class ParallelizeForward extends ClawTransformation {
   private void transformStd(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
-    XfunctionDefinition fDef = XnodeUtil.findParentFunction(_claw.getPragma());
+    XfunctionDefinition fDef = _claw.getPragma().findParentFunction();
     if(fDef == null) {
       throw new IllegalTransformationException("Parallelize directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().lineNo());
@@ -597,7 +596,8 @@ public class ParallelizeForward extends ClawTransformation {
 
     if(_claw.hasUpdateClause()) {
       if(_claw.getUpdateClauseValue() == ClawDMD.BOTH ||
-          _claw.getUpdateClauseValue() == ClawDMD.DEVICE) {
+          _claw.getUpdateClauseValue() == ClawDMD.DEVICE)
+      {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.IN, true);
         AcceleratorHelper.generateUpdate(_claw, xcodeml, exprStmt, out,
@@ -605,7 +605,8 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       if(_claw.getUpdateClauseValue() == ClawDMD.BOTH ||
-          _claw.getUpdateClauseValue() == ClawDMD.HOST) {
+          _claw.getUpdateClauseValue() == ClawDMD.HOST)
+      {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.OUT, true);
         AcceleratorHelper.generateUpdate(_claw, xcodeml, exprStmt, out,
@@ -641,8 +642,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       List<DimensionDefinition> dimensions =
           TransformationHelper.findDimensions(_parentFctType);
-      XfunctionDefinition parentFctDef =
-          XnodeUtil.findParentFunction(_fctCall);
+      XfunctionDefinition parentFctDef = _fctCall.findParentFunction();
 
       XbasicType varType = (XbasicType) xcodeml.getTypeTable().get(varInLhs);
 
@@ -715,7 +715,7 @@ public class ParallelizeForward extends ClawTransformation {
       throws IllegalTransformationException
   {
     // Get all the assignment statements in the function definition
-    XfunctionDefinition parentFctDef = XnodeUtil.findParentFunction(_fctCall);
+    XfunctionDefinition parentFctDef = _fctCall.findParentFunction();
 
     // Retrieve information of previous forward transformation in the same fct
     List<String> previouslyPromoted =

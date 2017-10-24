@@ -699,24 +699,6 @@ public class XnodeUtil {
 
   /* XNODE SECTION */
 
-
-  /**
-   * Find function definition in the ancestor of the give element.
-   *
-   * @param from Element to start search from.
-   * @return The function definition found. Null if nothing found.
-   */
-  public static XfunctionDefinition findParentFunction(Xnode from) {
-    if(from == null) {
-      return null;
-    }
-    Xnode fctDef = from.matchAncestor(Xcode.FFUNCTIONDEFINITION);
-    if(fctDef == null) {
-      return null;
-    }
-    return new XfunctionDefinition(fctDef.element());
-  }
-
   /**
    * Delete all the elements between the two given elements.
    *

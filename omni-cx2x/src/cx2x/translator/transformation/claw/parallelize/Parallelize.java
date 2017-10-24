@@ -131,7 +131,7 @@ public class Parallelize extends ClawTransformation {
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
 
     // Check for the parent fct/subroutine definition
-    _fctDef = XnodeUtil.findParentFunction(_claw.getPragma());
+    _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
               "Parallelize directive must be defined in a function/subroutine.",

@@ -162,8 +162,7 @@ public class ArrayTransform extends ClawBlockTransformation {
                         Transformation other) throws Exception
   {
     // 1. Find the function/module declaration TODO handle module/program ?
-    XfunctionDefinition fctDef =
-        XnodeUtil.findParentFunction(_clawStart.getPragma());
+    XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
     Xnode grip = _clawStart.getPragma();
     for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
       grip = generateDoStmtNotation(xcodeml, translator, fctDef,

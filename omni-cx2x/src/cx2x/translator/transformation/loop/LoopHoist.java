@@ -143,8 +143,7 @@ public class LoopHoist extends ClawBlockTransformation {
 
     // Check reshape mandatory points
     if(_clawStart.hasReshapeClause()) {
-      XfunctionDefinition fctDef =
-          XnodeUtil.findParentFunction(_clawStart.getPragma());
+      XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
         xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
                 "definition including the current directive",
@@ -181,7 +180,7 @@ public class LoopHoist extends ClawBlockTransformation {
    */
   private boolean checkUpperDefinition(XfunctionDefinition fctDef, String name)
   {
-    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    XfunctionDefinition upperDef = fctDef.findParentFunction();
     return upperDef != null
         && (!(!upperDef.getSymbolTable().contains(name)
         || !upperDef.getDeclarationTable().contains(name))
