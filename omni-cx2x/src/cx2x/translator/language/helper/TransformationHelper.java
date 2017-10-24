@@ -42,7 +42,6 @@ import java.util.Map;
  */
 public class TransformationHelper {
 
-
   /**
    * Generate corresponding additional transformation according to optional
    * clauses given to the directive.
@@ -65,7 +64,6 @@ public class TransformationHelper {
     applyFusionClause(claw, xcodeml, translator, stmt);
     applyInterchangeClause(claw, xcodeml, translator, stmt);
   }
-
 
   /**
    * Generate loop fusion transformation if the clause is present in the
@@ -171,7 +169,6 @@ public class TransformationHelper {
     }
     return getDeclInNestedFctDef(upperDef, name);
   }
-
 
   /**
    * Apply the reshape clause transformation.
@@ -369,7 +366,6 @@ public class TransformationHelper {
 
     List<Xnode> paramsLocal = fctType.getParams().getAll();
     List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
-
 
     if(paramsLocal.size() < paramsMod.size()) {
       throw new IllegalTransformationException(
@@ -581,7 +577,6 @@ public class TransformationHelper {
     decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
     xcodeml.getTypeTable().add(newType);
 
-
     // Update params in function type
     for(Xnode param : fctType.getParams().getAll()) {
       if(param.value().equals(fieldId)) {
@@ -615,15 +610,7 @@ public class TransformationHelper {
    * ones.
    */
   private static OverPosition getOverPosition(List<String> overClause) {
-    if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
-        overClause.get(overClause.size() - 1).
-            equals(DimensionDefinition.BASE_DIM))
-    {
-      return OverPosition.MIDDLE;
-    } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
-      return OverPosition.AFTER;
-    }
-    return OverPosition.BEFORE;
+    return OverPosition.fromList(overClause);
   }
 
   /**

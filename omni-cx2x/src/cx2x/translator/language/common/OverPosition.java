@@ -6,6 +6,9 @@
 package cx2x.translator.language.common;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.language.DimensionDefinition;
+
+import java.util.List;
 
 /**
  * CLAW over position enumeration. Three possible positions.
@@ -46,6 +49,37 @@ public enum OverPosition {
       default:
         return BEFORE;
     }
+  }
+
+  /**
+   * Get the enum value for the over list value.
+   *
+   * @param overClause List of values in the over clause.
+   * @return Position of the newly inserted dimensions compare the the existing
+   * ones.
+   */
+  public static OverPosition fromList(List<String> overClause) {
+    // Default place for insertion of new dimension in promotion.
+    if(overClause == null || overClause.size() <= 1) {
+      return BEFORE;
+    }
+
+    // (:,col) or (col,:)
+    if(overClause.size() == 2) {
+      return overClause.get(0).equals(DimensionDefinition.BASE_DIM) ?
+          BEFORE : AFTER;
+    }
+
+    // over(:,col,:)
+    if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
+        overClause.get(overClause.size() - 1).
+            equals(DimensionDefinition.BASE_DIM))
+    {
+      return MIDDLE;
+    } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
+      return AFTER;
+    }
+    return OverPosition.BEFORE;
   }
 
   public String toString() {

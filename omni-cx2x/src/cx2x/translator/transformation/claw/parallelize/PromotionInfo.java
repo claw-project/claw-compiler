@@ -8,7 +8,7 @@ package cx2x.translator.transformation.claw.parallelize;
 import cx2x.translator.language.common.OverPosition;
 
 /**
- * Hold various information about the promotion of variable.
+ * Hold various information about the promotion of a variable.
  *
  * @author clementval
  */
@@ -18,8 +18,8 @@ public class PromotionInfo {
   private final int _baseDimension;
   private final int _targetDimension;
   private final String _targetType;
-  private OverPosition _overPosition;
-
+  private OverPosition _overPosition = OverPosition.BEFORE; // Default
+  private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
 
   /**
    * Constructs a new PromotionInfo object with all its information.
@@ -36,7 +36,6 @@ public class PromotionInfo {
     _baseDimension = baseDimension;
     _targetDimension = targetDimension;
     _targetType = targetType;
-    _overPosition = OverPosition.BEFORE; // Default behavior
   }
 
   /**
@@ -84,7 +83,6 @@ public class PromotionInfo {
     return _targetType;
   }
 
-
   /**
    * Get the number of dimension between the base and the target.
    *
@@ -93,5 +91,26 @@ public class PromotionInfo {
   public int diffDimension() {
     return _targetDimension - _baseDimension;
   }
+
+  /**
+   * Get the promotion type.
+   *
+   * @return Current promotion type value.
+   */
+  public PromotionType getPromotionType() {
+    return _promotionType;
+  }
+
+  /**
+   * Set the promotion type value.
+   *
+   * @param promotionType New promotion type value.
+   */
+  public void setPromotionType(PromotionType promotionType) {
+    _promotionType = promotionType;
+  }
+
+
+  public enum PromotionType {SCALAR_TO_ARRAY, ARRAY_TO_ARRAY}
 
 }
