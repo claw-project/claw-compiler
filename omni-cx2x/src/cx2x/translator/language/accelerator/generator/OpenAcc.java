@@ -96,8 +96,9 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    Utility.debug(OPENACC_DEBUG_PREFIX + "generate private clause for: "
-        + Utility.join(",", vars));
+    Utility.debug(String.format(
+        "%s generate private clause for (%d variables): %s",
+        OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
   }
 
@@ -106,8 +107,9 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    Utility.debug(OPENACC_DEBUG_PREFIX + "generate present clause for: "
-        + Utility.join(",", vars));
+    Utility.debug(String.format(
+        "%s generate present clause for (%d variables): %s",
+        OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
   }
 
@@ -116,8 +118,9 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    Utility.debug(OPENACC_DEBUG_PREFIX + "generate pcreate clause for: "
-        + Utility.join(",", vars));
+    Utility.debug(String.format(
+        "%s generate pcreate clause for (%d variables): %s",
+        OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENACC_PCREATE, Utility.join(",", vars));
   }
 
