@@ -178,7 +178,8 @@ public class XcodeProgram extends XcodeML {
    * Read the XcodeML global symbols table
    */
   private void readGlobalSymbolsTable() {
-
+    _globalSymbolsTable =
+        new XsymbolTable(matchSeq(Xcode.GLOBALSYMBOLS).element());
   }
 
   /**
