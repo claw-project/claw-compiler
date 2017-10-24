@@ -7,7 +7,6 @@ package cx2x.translator.config;
 
 import cx2x.ClawVersion;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
-
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.base.Target;
@@ -220,9 +219,10 @@ public class Configuration {
     if(isExtension) { // Sets are overridden by extension
       if(sets != null) {
         _availableGroups.clear();
+        readSets(sets);
       }
     } else {
-      // For standalone configuration, the sets element is mandatory.
+      // For root configuration, the sets element is mandatory.
       if(sets == null) {
         throw new Exception("Root configuration must have sets element!");
       }
@@ -232,10 +232,19 @@ public class Configuration {
     // Read the transformation groups definition and order
     Element groups =
         (Element) root.getElementsByTagName(GROUPS_ELEMENT).item(0);
-    if(isExtension && groups != null) { // Groups are overridden by extension
-      _groups.clear();
+
+    if(isExtension) {
+      if(groups != null) { // Groups are overridden by extension
+        _groups.clear();
+        readGroups(groups);
+      }
+    } else {
+      // For root configuration, the groups element is mandatory.
+      if(groups == null) {
+        throw new Exception("Root configuration must have groups element!");
+      }
+      readGroups(groups);
     }
-    readGroups(groups);
   }
 
   /**
@@ -466,7 +475,7 @@ public class Configuration {
         Class transClass;
         try {
           // Check if class is there
-          if(loader != null){
+          if(loader != null) {
             transClass = Class.forName(cPath, true, loader);
           } else {
             transClass = Class.forName(cPath);

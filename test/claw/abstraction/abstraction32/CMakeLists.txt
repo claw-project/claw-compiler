@@ -1,4 +1,5 @@
 set(TEST_NAME abstraction32)
+set(OPTIONAL_FLAGS "--config=${CMAKE_CURRENT_SOURCE_DIR}/promote.xml")
 set(TEST_DEBUG ON)    # If ON, clawfc is executed with the debig flag
 set(OUTPUT_TEST OFF)   # If ON, test the output of executables with original
 set(IGNORE_TEST OFF)   # If ON, ignore all test targets

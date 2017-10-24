@@ -321,7 +321,7 @@ public class AcceleratorHelper {
         }
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
         if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()
-            && !bt.isAllocatable())
+            && bt.isAllocatable())
         {
           variables.add(name.value());
         }
