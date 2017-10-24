@@ -285,13 +285,13 @@ public class AcceleratorHelper {
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!XnodeUtil.isBuiltInType(decl.getType())
+        if(!XcodeType.isBuiltInType(decl.getType())
             && !(xcodeml.getTypeTable().get(decl) instanceof XbasicType))
         {
           continue; // Only check basic type
         }
         XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
-        if((bt == null && XnodeUtil.isBuiltInType(decl.getType()))
+        if((bt == null && XcodeType.isBuiltInType(decl.getType()))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
           variables.add(name.value());

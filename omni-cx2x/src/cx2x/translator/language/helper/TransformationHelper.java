@@ -227,7 +227,7 @@ public class TransformationHelper {
 
       // Create new type
       XbasicType newType = crtType.cloneNode();
-      newType.setType(xcodeml.getTypeTable().generateRealTypeHash());
+      newType.setType(xcodeml.getTypeTable().generateHash(XcodeType.REAL));
       if(reshapeInfo.getTargetDimension() == 0) { // Demote to scalar
         newType.resetDimension();
       } else { // Demote to smaller dimension array
@@ -364,7 +364,7 @@ public class TransformationHelper {
     }
 
     XbasicType modIntTypeIntentIn = mod.createBasicType(
-        mod.getTypeTable().generateIntegerTypeHash(), Xname.TYPE_F_INT,
+        mod.getTypeTable().generateHash(XcodeType.INTEGER), Xname.TYPE_F_INT,
         Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
@@ -501,11 +501,11 @@ public class TransformationHelper {
   {
     Xid id = fctDef.getSymbolTable().get(fieldId);
     Xnode decl = fctDef.getDeclarationTable().get(fieldId);
-    String type = xcodeml.getTypeTable().generateArrayTypeHash();
+    String type = xcodeml.getTypeTable().generateHash(XcodeType.ARRAY);
     XbasicType newType;
 
     if(update) {
-      if(XnodeUtil.isBuiltInType(id.getType())) {
+      if(XcodeType.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
         XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id);
@@ -756,7 +756,7 @@ public class TransformationHelper {
       throws IllegalTransformationException
   {
     XbasicType newType = toUpdate.cloneNode();
-    String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
+    String type = xcodemlDst.getTypeTable().generateHash(XcodeType.ARRAY);
     newType.setAttribute(Xattr.TYPE, type);
 
     if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {

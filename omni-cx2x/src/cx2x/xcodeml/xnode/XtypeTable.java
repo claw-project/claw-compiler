@@ -24,16 +24,6 @@ import java.util.*;
 
 public class XtypeTable extends Xnode {
 
-  private static final int HASH_LENGTH = 12;
-
-  private static final String ARRAY_HASH_PREFIX = "A";
-  private static final String CHAR_HASH_PREFIX = "C";
-  private static final String COMPLEX_HASH_PREFIX = "P";
-  private static final String FCT_HASH_PREFIX = "F";
-  private static final String INT_HASH_PREFIX = "I";
-  private static final String LOGICAL_HASH_PREFIX = "L";
-  private static final String REAL_HASH_PREFIX = "R";
-
   private final Map<String, Xtype> _table;
 
   /**
@@ -125,95 +115,17 @@ public class XtypeTable extends Xnode {
   }
 
   /**
-   * Get a new unique function hash for the type table.
+   * Generate a unique hash in the current type table.
    *
-   * @return New unique fct type hash.
-   */
-  public String generateFctTypeHash() {
-    return generateHash(FCT_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique integer hash for the type table.
-   *
-   * @return New unique integer type hash.
-   */
-  public String generateIntegerTypeHash() {
-    return generateHash(INT_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique real hash for the type table.
-   *
-   * @return New unique real type hash.
-   */
-  public String generateRealTypeHash() {
-    return generateHash(REAL_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique array hash for the type table.
-   *
-   * @return New unique array type hash.
-   */
-  public String generateArrayTypeHash() {
-    return generateHash(ARRAY_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique character hash for the type table.
-   *
-   * @return New unique character type hash.
-   */
-  public String generateCharTypeHash() {
-    return generateHash(CHAR_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique logical hash for the type table.
-   *
-   * @return New unique logical type hash.
-   */
-  public String generateLogicalTypeHash() {
-    return generateHash(LOGICAL_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique complex hash for the type table.
-   *
-   * @return New unique complex type hash.
-   */
-  public String generateComplexTypeHash() {
-    return generateHash(COMPLEX_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique hash for the type table with the given prefix.
-   *
-   * @param prefix Prefix added to the hash string.
+   * @param type Type to generate the hash.
    * @return New unique hash.
    */
-  private String generateHash(String prefix) {
+  public String generateHash(XcodeType type) {
     String hash;
     do {
-      hash = prefix + generateHash(HASH_LENGTH);
-    } while(_table.containsKey(hash));
+      hash = type.generateHash();
+    } while(hasType(hash));
     return hash;
-  }
-
-  /**
-   * Generate a new unique type hash for the table.
-   *
-   * @param length Length of the hash string to be generated.
-   * @return The new unique hash.
-   */
-  private String generateHash(int length) {
-    Random r = new Random();
-    StringBuilder sb = new StringBuilder();
-    while(sb.length() < length) {
-      sb.append(Integer.toHexString(r.nextInt()));
-    }
-    return sb.toString().substring(0, length);
   }
 
   /**

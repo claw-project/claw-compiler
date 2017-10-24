@@ -132,7 +132,7 @@ public class XcodeML extends Xnode {
       throws IllegalTransformationException
   {
     String typeValue = base.getType();
-    if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
+    if(!XcodeType.INTEGER.isOfType(typeValue)) {
       throw new IllegalTransformationException("Only integer variable are " +
           "supported as lower/upper bound value for promoted arrays.");
     }
@@ -140,7 +140,8 @@ public class XcodeML extends Xnode {
     XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
     Xnode bType = createNode(Xcode.FBASICTYPE);
     bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
-    bType.setAttribute(Xattr.TYPE, getTypeTable().generateIntegerTypeHash());
+    bType.setAttribute(Xattr.TYPE,
+        getTypeTable().generateHash(XcodeType.INTEGER));
     if(type != null && type.getIntent() != Xintent.NONE) {
       bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
     }
@@ -171,7 +172,7 @@ public class XcodeML extends Xnode {
     Xtype importedType = new Xtype((Element) rawNode);
     getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
-        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
+        && !XcodeType.isBuiltInType(importedType.getAttribute(Xattr.REF)))
     {
       importType(src, importedType.getAttribute(Xattr.REF));
     }
@@ -648,7 +649,7 @@ public class XcodeML extends Xnode {
     Xnode valueList = createNode(Xcode.VALUELIST);
     for(String charConstant : charConstants) {
       // Create the char constant type
-      String charTypeHash = getTypeTable().generateCharTypeHash();
+      String charTypeHash = getTypeTable().generateHash(XcodeType.CHARACTER);
       Xtype charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
       Xnode len = createNode(Xcode.LEN);
       Xnode intConstant = createNode(Xcode.FINTCONSTANT);

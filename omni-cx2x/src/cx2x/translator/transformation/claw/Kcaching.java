@@ -288,7 +288,7 @@ public class Kcaching extends ClawTransformation {
     if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneNode();
-      type = xcodeml.getTypeTable().generateRealTypeHash();
+      type = xcodeml.getTypeTable().generateHash(XcodeType.REAL);
       newType.setType(type);
       newType.removeAttribute(Xattr.INTENT);
       newType.removeAttribute(Xattr.IS_ALLOCATABLE);
@@ -299,7 +299,7 @@ public class Kcaching extends ClawTransformation {
         // TODO is there several level to reach ref ? Check if ref is Freal ...
         XbasicType newRef = ref.cloneNode();
         // TODO generate appropriate type
-        String refType = xcodeml.getTypeTable().generateRealTypeHash();
+        String refType = xcodeml.getTypeTable().generateHash(XcodeType.REAL);
         newRef.setType(refType);
         newRef.removeAttribute(Xattr.INTENT);
         newRef.removeAttribute(Xattr.IS_ALLOCATABLE);

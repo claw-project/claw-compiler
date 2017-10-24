@@ -697,7 +697,7 @@ public class Xnode {
     switch(opcode()) {
       case FARRAYREF:
         String type = getAttribute(Xattr.TYPE);
-        if(XnodeUtil.isBuiltInType(type)) {
+        if(XcodeType.isBuiltInType(type)) {
           Xnode child = firstChild();
           return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
         }
@@ -757,6 +757,13 @@ public class Xnode {
       default:
         return "";
     }
+  }
+
+  /**
+   *
+   */
+  public void setType(String value) {
+    setAttribute(Xattr.TYPE, value);
   }
 
   /**

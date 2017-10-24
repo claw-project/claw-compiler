@@ -198,7 +198,8 @@ public class LoopExtraction extends ClawTransformation {
 
     // Duplicate function definition
     XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
-    String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
+    String newFctTypeHash =
+        xcodeml.getTypeTable().generateHash(XcodeType.FUNCTION);
     String newFctName = clonedFctDef.getName().value() +
         ClawConstant.EXTRACTION_SUFFIX +
         translator.getNextTransformationCounter();

@@ -406,7 +406,7 @@ public class ParallelizeForward extends ClawTransformation {
      * TODO cont: FmemberRef element
      */
     int argOffset = 0;
-    if(params.get(0).getType().startsWith(Xtype.PREFIX_STRUCT)
+    if(XcodeType.STRUCT.isOfType(params.get(0).getType())
         && _fctCall.firstChild().opcode().equals(Xcode.FMEMBERREF))
     {
       argOffset = 1;
@@ -432,7 +432,7 @@ public class ParallelizeForward extends ClawTransformation {
         }
         // Size variable have to be declared
         XbasicType intTypeIntentIn = xcodeml.createBasicType(
-            xcodeml.getTypeTable().generateIntegerTypeHash(),
+            xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
             Xname.TYPE_F_INT, Xintent.IN);
         xcodeml.getTypeTable().add(intTypeIntentIn);
         xcodeml.createIdAndDecl(var, intTypeIntentIn.getType(),
@@ -509,7 +509,7 @@ public class ParallelizeForward extends ClawTransformation {
         if(pUpdate != null) {
 
           if(pUpdate.getType() == null
-              || XnodeUtil.isBuiltInType(pUpdate.getType()))
+              || XcodeType.isBuiltInType(pUpdate.getType()))
           {
             continue;
           }

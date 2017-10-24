@@ -676,27 +676,6 @@ public class XnodeUtil {
     return unsupportedStatements;
   }
 
-  /**
-   * Check whether the given type is a built-in type or is a type defined in the
-   * type table.
-   *
-   * @param type Type to check.
-   * @return True if the type is built-in. False otherwise.
-   */
-  public static boolean isBuiltInType(String type) {
-    switch(type) {
-      case Xname.TYPE_F_CHAR:
-      case Xname.TYPE_F_COMPLEX:
-      case Xname.TYPE_F_INT:
-      case Xname.TYPE_F_LOGICAL:
-      case Xname.TYPE_F_REAL:
-      case Xname.TYPE_F_VOID:
-        return true;
-      default:
-        return false;
-    }
-  }
-
   /* XNODE SECTION */
 
   /**
@@ -1335,7 +1314,7 @@ public class XnodeUtil {
       Xtype typeArg = xcodeml.getTypeTable().get(arg);
 
       String rep = "";
-      if(isBuiltInType(arg.getType()) && !arrayOnly
+      if(XcodeType.isBuiltInType(arg.getType()) && !arrayOnly
           && typeParameter instanceof XbasicType)
       {
         XbasicType btParameter = (XbasicType) typeParameter;
