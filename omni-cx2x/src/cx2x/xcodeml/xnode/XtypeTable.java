@@ -57,37 +57,76 @@ public class XtypeTable extends Xnode {
           _table.put(ft.getType(), ft);
           break;
         case FSTRUCTTYPE:
-          // TODO create XstructType object and insert it in the table
+          XstructType st = new XstructType(n);
+          _table.put(st.getType(), st);
           break;
       }
     }
   }
 
+  /**
+   * Check if the node is of type XbasicType.
+   *
+   * @param node Node to check.
+   * @return True if the node is of type XbasicType.
+   */
   public boolean isBasicType(Xnode node) {
     return isBasicType(node.getType());
   }
 
+  /**
+   * Check if the hash correspond to a XbasicType.
+   *
+   * @param hash Hash of type to check.
+   * @return True if the hash correspond to a XbasicType.
+   */
   public boolean isBasicType(String hash) {
     return isType(XbasicType.class, hash);
   }
 
+  /**
+   * Check if the node is of type XfunctionType.
+   *
+   * @param node Node to check.
+   * @return True if the node is of type XfunctionType.
+   */
   public boolean isFunctionType(Xnode node) {
     return isFunctionType(node.getType());
   }
 
+  /**
+   * Check if the hash correspond to a XfunctionType.
+   *
+   * @param hash Hash of type to check.
+   * @return True if the hash correspond to a XfunctionType.
+   */
   public boolean isFunctionType(String hash) {
     return isType(XfunctionType.class, hash);
   }
 
+  /**
+   * Check if the hash correspond to a XstructType.
+   *
+   * @param hash Hash of type to check.
+   * @return True if the hash correspond to a XstructType.
+   */
   public boolean isStructType(String hash) {
-    return false; // TODO
+    return isType(XstructType.class, hash);
   }
 
-  private boolean isType(Class typeClass, String type) {
-    if(type == null || type.isEmpty()) {
+  /**
+   * Check if the corresponding type node is of given type.
+   *
+   * @param typeClass Class type to check against.
+   * @param hash      Hash of type to retrieved.
+   * @return True of the type is retrieved and is of given type. False in any
+   * other case.
+   */
+  private boolean isType(Class typeClass, String hash) {
+    if(hash == null || hash.isEmpty()) {
       return false;
     }
-    Xnode t = get(type);
+    Xnode t = get(hash);
     return t != null && typeClass.isInstance(t);
   }
 
@@ -134,15 +173,26 @@ public class XtypeTable extends Xnode {
     return null;
   }
 
+  public XstructType getStructType(Xnode node) {
+    return getStructType(node.getType());
+  }
+
+  public XstructType getStructType(String hash) {
+    if(isStructType(hash)) {
+      return (XstructType) get(hash);
+    }
+    return null;
+  }
+
   /**
    * Get an element from the type table.
    *
-   * @param type Type of the element to be returned.
+   * @param hash Hash of type node to be retrieved.
    * @return Xnode object if found in the table. Null otherwise.
    */
-  protected Xnode get(String type) {
-    if(_table.containsKey(type)) {
-      return _table.get(type);
+  protected Xnode get(String hash) {
+    if(_table.containsKey(hash)) {
+      return _table.get(hash);
     }
     return null;
   }
@@ -150,11 +200,11 @@ public class XtypeTable extends Xnode {
   /**
    * Check if a type is present in the type table
    *
-   * @param type Type of the element to be checked.
+   * @param hash Hash of type node to be checked.
    * @return True if the element is present. False otherwise.
    */
-  public boolean hasType(String type) {
-    return _table.containsKey(type);
+  public boolean hasType(String hash) {
+    return _table.containsKey(hash);
   }
 
   /**
