@@ -1,0 +1,6 @@
+<claw version="0.4">
+  <global type="extension">
+    <!-- Override default behavior -->
+    <parameter key="openacc_local_strategy" value="promote" />
+  </global>
+</claw>
