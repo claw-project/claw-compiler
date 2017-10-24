@@ -530,6 +530,27 @@ public class XnodeUtil {
   }
 
   /**
+   * Extract the body of a do statement and place it after the reference node.
+   *
+   * @param loop The do statement containing the body to be extracted.
+   * @param ref  Element after which statement are shifted.
+   */
+  public static void extractBody(Xnode loop, Xnode ref) {
+    if(loop.opcode() != Xcode.FDOSTATEMENT) {
+      return;
+    }
+    Xnode body = loop.body();
+    if(body == null) {
+      return;
+    }
+    Xnode refNode = ref;
+    for(Xnode child : body.children()) {
+      refNode.insertAfter(child);
+      refNode = child;
+    }
+  }
+
+  /**
    * Extract the body of a do statement and place it directly after it.
    *
    * @param loop The do statement containing the body to be extracted.
@@ -547,7 +568,6 @@ public class XnodeUtil {
   public static void extractBody(NestedDoStatement nest) {
     extractBody(nest.getInnerStatement(), nest.getOuterStatement());
   }
-
 
   /**
    * Check whether the index of an arrayIndex element is an induction variable
@@ -569,27 +589,6 @@ public class XnodeUtil {
 
     Xnode var = arrayIndex.matchDirectDescendant(Xcode.VAR);
     return var != null && inductionVariables.contains(var.value());
-  }
-
-  /**
-   * Extract the body of a do statement and place it after the reference node.
-   *
-   * @param loop The do statement containing the body to be extracted.
-   * @param ref  Element after which statement are shifted.
-   */
-  public static void extractBody(Xnode loop, Xnode ref) {
-    if(loop.opcode() != Xcode.FDOSTATEMENT) {
-      return;
-    }
-    Xnode body = loop.body();
-    if(body == null) {
-      return;
-    }
-    Xnode refNode = ref;
-    for(Xnode child : body.children()) {
-      refNode.insertAfter(child);
-      refNode = child;
-    }
   }
 
   /**
