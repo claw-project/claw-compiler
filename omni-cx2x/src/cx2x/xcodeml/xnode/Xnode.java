@@ -620,7 +620,14 @@ public class Xnode {
     if(_baseElement == null) {
       return Xnode.UNDEF_DEPTH;
     }
-    return XnodeUtil.getDepth(_baseElement);
+
+    Node parent = _baseElement.getParentNode();
+    int depth = 0;
+    while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
+      ++depth;
+      parent = parent.getParentNode();
+    }
+    return depth;
   }
 
 
