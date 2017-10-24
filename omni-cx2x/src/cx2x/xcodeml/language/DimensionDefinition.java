@@ -15,13 +15,10 @@ import cx2x.xcodeml.xnode.*;
 public class DimensionDefinition {
 
   public static final String BASE_DIM = ":";
-  private final int _lowerBound;
-  private final int _upperBound;
-  private final String _lowerBoundId;
-  private final String _upperBoundId;
+
+  private final BoundDefinition _lowerBound;
+  private final BoundDefinition _upperBound;
   private final String _identifier;
-  private String _lowerBoundType;
-  private String _upperBoundType;
 
   /**
    * Constructs a new dimension object from the extracted information.
@@ -33,77 +30,18 @@ public class DimensionDefinition {
    */
   public DimensionDefinition(String id, String lowerBound, String upperBound) {
     _identifier = id;
-
-    int tempLb, tempUb;
-    String tempLbStr, tempUbStr;
-    try {
-      tempLb = Integer.parseInt(lowerBound);
-      tempLbStr = null;
-    } catch(NumberFormatException ex) {
-      tempLb = -1;
-      tempLbStr = lowerBound;
-    }
-
-    try {
-      tempUb = Integer.parseInt(upperBound);
-      tempUbStr = null;
-    } catch(NumberFormatException ex) {
-      tempUb = -1;
-      tempUbStr = upperBound;
-    }
-
-    _lowerBound = tempLb;
-    _upperBound = tempUb;
-    _lowerBoundId = tempLbStr;
-    _upperBoundId = tempUbStr;
+    _lowerBound = new BoundDefinition(lowerBound);
+    _upperBound = new BoundDefinition(upperBound);
   }
 
-
-  /**
-   * Check whether lower bound is an identifier variable.
-   *
-   * @return True if the lower bound is an identifier variable.
-   */
-  public boolean lowerBoundIsVar() {
-    return _lowerBoundId != null;
-  }
-
-  /**
-   * Check whether upper bound is an identifier variable.
-   *
-   * @return True if the upper bound is an identifier variable.
-   */
-  public boolean upperBoundIsVar() {
-    return _upperBoundId != null;
-  }
-
-  /**
-   * @return Lower bound value. -1 if lower bound is an identifier variable.
-   */
-  public int getLowerBoundInt() {
+  public BoundDefinition getLowerBound() {
     return _lowerBound;
   }
 
-  /**
-   * @return Upper bound value. -1 if upper bound is an identifier variable.
-   */
-  public int getUpperBoundInt() {
+  public BoundDefinition getUpperBound() {
     return _upperBound;
   }
 
-  /**
-   * @return Lower bound value. Null if lower bound is an integer constant.
-   */
-  public String getLowerBoundId() {
-    return _lowerBoundId;
-  }
-
-  /**
-   * @return Upper bound value. Null if upper bound is an integer constant.
-   */
-  public String getUpperBoundId() {
-    return _upperBoundId;
-  }
 
   /**
    * Get the identifier for the current dimension.
@@ -112,24 +50,6 @@ public class DimensionDefinition {
    */
   public String getIdentifier() {
     return _identifier;
-  }
-
-  /**
-   * Set the value of upper bound var.
-   *
-   * @param value Type value.
-   */
-  public void setUpperBoundType(String value) {
-    _upperBoundType = value;
-  }
-
-  /**
-   * Set the value of lower bound var.
-   *
-   * @param value Type value.
-   */
-  public void setLowerBoundType(String value) {
-    _lowerBoundType = value;
   }
 
 
@@ -158,41 +78,8 @@ public class DimensionDefinition {
       range.append(step);
     }
 
-    // lower bound
-    if(lowerBoundIsVar()) {
-      if(_lowerBoundType == null) {
-        _lowerBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
-        XbasicType bType = xcodeml.createBasicType(_lowerBoundType,
-            Xname.TYPE_F_INT, Xintent.IN);
-        xcodeml.getTypeTable().add(bType);
-      }
-      Xnode lowerBoundValue = xcodeml.createVar(_lowerBoundType, _lowerBoundId,
-          Xscope.LOCAL);
-      lower.append(lowerBoundValue);
-    } else {
-      Xnode lowerBoundValue = xcodeml.createNode(Xcode.FINTCONSTANT);
-      lowerBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      lowerBoundValue.setValue(String.valueOf(_lowerBound));
-      lower.append(lowerBoundValue);
-    }
-
-    // upper bound
-    if(upperBoundIsVar()) {
-      if(_lowerBoundType == null) {
-        _upperBoundType = xcodeml.getTypeTable().generateIntegerTypeHash();
-        XbasicType bType = xcodeml.createBasicType(_upperBoundType,
-            Xname.TYPE_F_INT, Xintent.IN);
-        xcodeml.getTypeTable().add(bType);
-      }
-      Xnode upperBoundValue = xcodeml.createVar(_upperBoundType, _upperBoundId,
-          Xscope.LOCAL);
-      upper.append(upperBoundValue);
-    } else {
-      Xnode upperBoundValue = xcodeml.createNode(Xcode.FINTCONSTANT);
-      upperBoundValue.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      upperBoundValue.setValue(String.valueOf(_upperBound));
-      lower.append(upperBoundValue);
-    }
+    lower.append(_lowerBound.generate(xcodeml));
+    upper.append(_upperBound.generate(xcodeml));
     return range;
   }
 
@@ -221,14 +108,7 @@ public class DimensionDefinition {
   public Xnode generateAllocateNode(XcodeProgram xcodeml) {
     // TODO handle special size with lowerBound != 1
     Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
-    if(upperBoundIsVar()) {
-      Xnode var =
-          xcodeml.createVar(_upperBoundType, _upperBoundId, Xscope.LOCAL);
-      arrayIndex.append(var);
-    } else {
-      Xnode intConst = xcodeml.createIntConstant(_upperBound);
-      arrayIndex.append(intConst);
-    }
+    arrayIndex.append(_upperBound.generate(xcodeml));
     return arrayIndex;
   }
 
