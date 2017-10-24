@@ -32,11 +32,11 @@ public class XfunctionDefinition extends Xnode {
   private final XsymbolTable _symbolTable;
   private final Xnode _params;
   private final XdeclTable _declTable;
-  private final Xnode _body;
   private final Xnode _name;
 
   /**
    * Xnode ctor. Delegate construction to the Element ctor.
+   *
    * @param node Xnode element.
    */
   public XfunctionDefinition(Xnode node) {
@@ -58,10 +58,9 @@ public class XfunctionDefinition extends Xnode {
     assert (declarations != null);
     _declTable = new XdeclTable(declarations.element());
     _params = matchSeq(Xcode.PARAMS);
-    _body = matchSeq(Xcode.BODY);
     _name = matchSeq(Xcode.NAME);
     assert (_name != null);
-    assert (_body != null);
+    assert (body() != null);
   }
 
   /**
@@ -83,15 +82,6 @@ public class XfunctionDefinition extends Xnode {
   }
 
   /**
-   * Get the function's body.
-   *
-   * @return A Xbody object for the function.
-   */
-  public Xnode body() {
-    return _body;
-  }
-
-  /**
    * Get the function name.
    *
    * @return Name of the function as an Xname object.
@@ -110,16 +100,6 @@ public class XfunctionDefinition extends Xnode {
   }
 
   /**
-   * Create an identical copy of the current function definition.
-   *
-   * @return A new XfunctionDefinition object that is the clone of this function definition.
-   */
-  public XfunctionDefinition cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XfunctionDefinition(clone);
-  }
-
-  /**
    * Find module containing the function and read its .xmod file.
    *
    * @return Xmod object if the module has been found and read. Null otherwise.
@@ -132,4 +112,16 @@ public class XfunctionDefinition extends Xnode {
     String modName = mod.getAttribute(Xattr.NAME);
     return XnodeUtil.findModule(modName);
   }
+
+  /**
+   * Create an identical copy of the current function definition.
+   *
+   * @return A new XfunctionDefinition object that is the clone of this function definition.
+   */
+  @Override
+  public XfunctionDefinition cloneNode() {
+    Element clone = (Element) cloneRawNode();
+    return new XfunctionDefinition(clone);
+  }
+
 }
