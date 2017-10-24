@@ -568,7 +568,6 @@ public class XnodeUtil {
     }
 
     Xnode var = arrayIndex.matchDirectDescendant(Xcode.VAR);
-
     return var != null && inductionVariables.contains(var.value());
   }
 
@@ -592,8 +591,6 @@ public class XnodeUtil {
       refNode = child;
     }
   }
-
-
 
   /**
    * Shift all statements from the first siblings of the "from" element until
