@@ -16,7 +16,7 @@ CONTAINS
 
 !$acc data present(t,q)
 !$acc parallel
-!$acc loop gang vector private(z)
+!$acc loop gang vector private(y)
   DO proma = 1 , nproma , 1
    c = 5.345
 !$acc loop seq
@@ -44,4 +44,3 @@ CONTAINS
  END SUBROUTINE compute
 
 END MODULE mo_column
-
