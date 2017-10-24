@@ -143,11 +143,8 @@ public class XcodeML extends Xnode {
       bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
     }
 
-    Xnode var = createNode(Xcode.VAR);
-    var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
-    var.setValue(base.value());
-    var.setAttribute(Xattr.TYPE, bType.getType());
-    return var;
+    return createVar(bType.getType(), base.value(),
+        Xscope.fromString(base.getAttribute(Xattr.SCOPE)));
   }
 
   /**

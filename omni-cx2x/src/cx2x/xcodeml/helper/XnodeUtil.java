@@ -1038,8 +1038,8 @@ public class XnodeUtil {
     {
       bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
-      Xnode lhs = boundChild.child(0);
-      Xnode rhs = boundChild.child(1);
+      Xnode lhs = boundChild.child(Xnode.LHS);
+      Xnode rhs = boundChild.child(Xnode.RHS);
       Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUSEXPR);
       bound.append(plusExpr);
       plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
@@ -1050,7 +1050,6 @@ public class XnodeUtil {
               boundChild.opcode().toString())
       );
     }
-
     return bound;
   }
 
