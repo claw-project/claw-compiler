@@ -11,7 +11,7 @@ import cx2x.xcodeml.xnode.*;
  *
  * @author clementval
  */
-class BoundDefinition {
+public class BoundDefinition {
 
   private String _boundTypeHash = null;
   private String _strBoundValue = null;
@@ -54,6 +54,24 @@ class BoundDefinition {
   }
 
   /**
+   * Get integer value of the bound object.
+   *
+   * @return Integer value. -1 if not set.
+   */
+  public int getIntValue() {
+    return _intBoundValue;
+  }
+
+  /**
+   * Get string value of the bound object.
+   *
+   * @return String value. null if not set.
+   */
+  public String getValue() {
+    return _strBoundValue;
+  }
+
+  /**
    * Generate the corresponding node to represent the bound.
    *
    * @param xcodeml Current XcodeML translation unit.
@@ -90,6 +108,7 @@ class BoundDefinition {
     }
   }
 
+  // Enum representing the type of bound
   public enum BoundType {
     LOWER, UPPER
   }

@@ -747,23 +747,25 @@ public class Parallelize extends ClawTransformation {
     // For each dimension defined in the directive
     for(DimensionDefinition dimension : _claw.getDimensionValues()) {
       // Create the parameter for the lower bound
-      if(dimension.lowerBoundIsVar()) {
-        xcodeml.createIdAndDecl(dimension.getLowerBoundId(),
+      if(dimension.getLowerBound().isVar()) {
+        xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(dimension.getLowerBoundId(),
+        Xnode param = xcodeml.createAndAddParam(
+            dimension.getLowerBound().getValue(),
             intTypeIntentIn.getType(), _fctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }
 
       // Create parameter for the upper bound
-      if(dimension.upperBoundIsVar()) {
-        xcodeml.createIdAndDecl(dimension.getUpperBoundId(),
+      if(dimension.getUpperBound().isVar()) {
+        xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(dimension.getUpperBoundId(),
+        Xnode param = xcodeml.createAndAddParam(
+            dimension.getUpperBound().getValue(),
             intTypeIntentIn.getType(), _fctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }

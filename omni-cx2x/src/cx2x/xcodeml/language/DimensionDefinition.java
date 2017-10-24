@@ -53,7 +53,7 @@ public class DimensionDefinition {
   public BoundDefinition getUpperBound() {
     return _upperBound;
   }
-  
+
   /**
    * Get the identifier for the current dimension.
    *
@@ -116,5 +116,4 @@ public class DimensionDefinition {
     arrayIndex.append(_upperBound.generateValueNode(xcodeml));
     return arrayIndex;
   }
-
 }

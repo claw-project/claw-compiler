@@ -1317,18 +1317,18 @@ public class ClawLanguageTest {
         for(int i = 0; i < dimensions.size(); ++i) {
           assertEquals(dimensions.get(i).getIdentifier(),
               l.getDimensionValues().get(i).getIdentifier());
-          assertEquals(dimensions.get(i).lowerBoundIsVar(),
-              l.getDimensionValues().get(i).lowerBoundIsVar());
-          assertEquals(dimensions.get(i).upperBoundIsVar(),
-              l.getDimensionValues().get(i).upperBoundIsVar());
-          assertEquals(dimensions.get(i).getLowerBoundInt(),
-              l.getDimensionValues().get(i).getLowerBoundInt());
-          assertEquals(dimensions.get(i).getUpperBoundInt(),
-              l.getDimensionValues().get(i).getUpperBoundInt());
-          assertEquals(dimensions.get(i).getLowerBoundId(),
-              l.getDimensionValues().get(i).getLowerBoundId());
-          assertEquals(dimensions.get(i).getUpperBoundId(),
-              l.getDimensionValues().get(i).getUpperBoundId());
+          assertEquals(dimensions.get(i).getLowerBound().isVar(),
+              l.getDimensionValues().get(i).getLowerBound().isVar());
+          assertEquals(dimensions.get(i).getUpperBound().isVar(),
+              l.getDimensionValues().get(i).getUpperBound().isVar());
+          assertEquals(dimensions.get(i).getLowerBound().getIntValue(),
+              l.getDimensionValues().get(i).getLowerBound().getIntValue());
+          assertEquals(dimensions.get(i).getUpperBound().getIntValue(),
+              l.getDimensionValues().get(i).getUpperBound().getIntValue());
+          assertEquals(dimensions.get(i).getLowerBound().getValue(),
+              l.getDimensionValues().get(i).getLowerBound().getValue());
+          assertEquals(dimensions.get(i).getUpperBound().getValue(),
+              l.getDimensionValues().get(i).getUpperBound().getValue());
         }
       }
 
