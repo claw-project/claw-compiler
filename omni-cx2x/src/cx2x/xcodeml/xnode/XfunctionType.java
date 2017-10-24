@@ -26,7 +26,7 @@ import java.util.List;
  * @author clementval
  */
 
-public class XfunctionType extends Xtype {
+public class XfunctionType extends Xnode {
 
   private Xparams _params = null;
 

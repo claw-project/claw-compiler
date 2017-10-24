@@ -164,12 +164,12 @@ public class XcodeML extends Xnode {
     if(typeId == null || getTypeTable().hasType(typeId)) {
       return;
     }
-    Xtype type = src.getTypeTable().get(typeId);
+    Xnode type = src.getTypeTable().get(typeId);
     if(type == null) {
       return;
     }
     Node rawNode = getDocument().importNode(type.element(), true);
-    Xtype importedType = new Xtype((Element) rawNode);
+    Xnode importedType = new Xnode((Element) rawNode);
     getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
         && !XcodeType.isBuiltInType(importedType.getAttribute(Xattr.REF)))
@@ -650,7 +650,7 @@ public class XcodeML extends Xnode {
     for(String charConstant : charConstants) {
       // Create the char constant type
       String charTypeHash = getTypeTable().generateHash(XcodeType.CHARACTER);
-      Xtype charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
+      Xnode charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
       Xnode len = createNode(Xcode.LEN);
       Xnode intConstant = createNode(Xcode.FINTCONSTANT);
       intConstant.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);

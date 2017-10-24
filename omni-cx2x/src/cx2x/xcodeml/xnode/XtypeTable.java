@@ -24,7 +24,7 @@ import java.util.*;
 
 public class XtypeTable extends Xnode {
 
-  private final Map<String, Xtype> _table;
+  private final Map<String, Xnode> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -74,7 +74,7 @@ public class XtypeTable extends Xnode {
    *
    * @param type The new type to be added.
    */
-  public void add(Xtype type) {
+  public void add(Xnode type) {
     if(!type.getType().isEmpty()) {
       _baseElement.appendChild(type.cloneRawNode());
       _table.put(type.getType(), type);
@@ -85,9 +85,9 @@ public class XtypeTable extends Xnode {
    * Get type associated with node if any.
    *
    * @param node Node to retrieve the type.
-   * @return Xtype element if found. Null otherwise.
+   * @return Xnode element if found. Null otherwise.
    */
-  public Xtype get(Xnode node) {
+  public Xnode get(Xnode node) {
     return node == null ? null : get(node.getType());
   }
 
@@ -95,9 +95,9 @@ public class XtypeTable extends Xnode {
    * Get an element from the type table.
    *
    * @param type Type of the element to be returned.
-   * @return Xtype object if found in the table. Null otherwise.
+   * @return Xnode object if found in the table. Null otherwise.
    */
-  public Xtype get(String type) {
+  public Xnode get(String type) {
     if(_table.containsKey(type)) {
       return _table.get(type);
     }
@@ -133,7 +133,7 @@ public class XtypeTable extends Xnode {
    *
    * @return A view of the values contained in this map
    */
-  public Collection<Xtype> values() {
+  public Collection<Xnode> values() {
     return _table.values();
   }
 

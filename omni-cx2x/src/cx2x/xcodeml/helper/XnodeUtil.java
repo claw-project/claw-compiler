@@ -1310,8 +1310,8 @@ public class XnodeUtil {
       // TODO handle optional arguments, named value args
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
-      Xtype typeParameter = xcodeml.getTypeTable().get(parameter);
-      Xtype typeArg = xcodeml.getTypeTable().get(arg);
+      Xnode typeParameter = xcodeml.getTypeTable().get(parameter);
+      Xnode typeArg = xcodeml.getTypeTable().get(arg);
 
       String rep = "";
       if(XcodeType.isBuiltInType(arg.getType()) && !arrayOnly

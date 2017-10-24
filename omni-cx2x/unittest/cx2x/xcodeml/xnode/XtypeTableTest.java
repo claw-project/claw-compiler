@@ -34,7 +34,7 @@ public class XtypeTableTest {
     assertNotNull(typeTable);
     assertEquals(2, typeTable.count());
     assertTrue(typeTable.hasType("C2307e50"));
-    Xtype type1 = typeTable.get("C2307e50");
+    Xnode type1 = typeTable.get("C2307e50");
     assertNotNull(type1);
     assertTrue(type1 instanceof XbasicType);
     XbasicType bType1 = (XbasicType) type1;
@@ -47,7 +47,7 @@ public class XtypeTableTest {
     assertEquals("30", bType1.getLength().child(0).value());
 
     assertTrue(typeTable.hasType("F23079f0"));
-    Xtype type2 = typeTable.get("F23079f0");
+    Xnode type2 = typeTable.get("F23079f0");
     assertNotNull(type2);
     assertTrue(type2 instanceof XfunctionType);
     XfunctionType fType2 = (XfunctionType) type2;

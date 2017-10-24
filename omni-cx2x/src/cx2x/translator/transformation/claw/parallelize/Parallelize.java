@@ -220,7 +220,7 @@ public class Parallelize extends ClawTransformation {
           continue;
         }
 
-        Xtype type = xcodeml.getTypeTable().get(decl);
+        Xnode type = xcodeml.getTypeTable().get(decl);
         if(type instanceof XbasicType) {
           String varName = decl.matchSeq(Xcode.NAME).value();
           XbasicType bType = (XbasicType) type;

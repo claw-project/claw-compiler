@@ -205,7 +205,7 @@ public class TransformationHelper {
             "declaration table.", claw.getPragma().lineNo());
       }
 
-      Xtype rawType = xcodeml.getTypeTable().get(id);
+      Xnode rawType = xcodeml.getTypeTable().get(id);
       if(!(rawType instanceof XbasicType)) {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",

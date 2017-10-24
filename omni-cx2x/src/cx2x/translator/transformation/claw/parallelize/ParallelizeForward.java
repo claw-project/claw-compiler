@@ -211,7 +211,7 @@ public class ParallelizeForward extends ClawTransformation {
         _fctType = (XfunctionType) xcodeml.getTypeTable().get(id);
       }
     } else {
-      Xtype rawType = xcodeml.getTypeTable().get(_fctCall);
+      Xnode rawType = xcodeml.getTypeTable().get(_fctCall);
       if(rawType instanceof XfunctionType) {
         _fctType = (XfunctionType) rawType;
       } else {

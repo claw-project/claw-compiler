@@ -32,7 +32,7 @@ import java.util.List;
  * @author clementval
  */
 
-public class XbasicType extends Xtype {
+public class XbasicType extends Xnode {
 
   private static final int APPEND = -1;
   private boolean _isArray = false;
