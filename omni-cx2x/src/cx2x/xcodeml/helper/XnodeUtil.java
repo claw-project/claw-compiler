@@ -596,18 +596,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Delete an element for the tree.
-   *
-   * @param element Element to be deleted.
-   */
-  public static void delete(Node element) {
-    if(element == null || element.getParentNode() == null) {
-      return;
-    }
-    element.getParentNode().removeChild(element);
-  }
-
-  /**
    * Insert a node directly after a reference node.
    *
    * @param refNode The reference node. New node will be inserted after this
@@ -767,18 +755,15 @@ public class XnodeUtil {
    * @param end   The end element. Deletion end just before this element.
    */
   public static void deleteBetween(Xnode start, Xnode end) {
-    List<Element> toDelete = new ArrayList<>();
-    Node node = start.element().getNextSibling();
-    while(node != null && node != end.element()) {
-      if(node.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) node;
-        toDelete.add(element);
-      }
-      node = node.getNextSibling();
+    List<Xnode> toDelete = new ArrayList<>();
+    Xnode node = start.nextSibling();
+    while(node != null && node.element() != end.element()) {
+      toDelete.add(node);
+      node = node.nextSibling();
     }
 
-    for(Element e : toDelete) {
-      delete(e);
+    for(Xnode n : toDelete) {
+      n.delete();
     }
   }
 
@@ -1173,15 +1158,15 @@ public class XnodeUtil {
    * @param start Element to start from.
    */
   public static void deleteFrom(Xnode start) {
-    List<Node> toDelete = new ArrayList<>();
-    toDelete.add(start.element());
-    Node sibling = start.element().getNextSibling();
+    List<Xnode> toDelete = new ArrayList<>();
+    toDelete.add(start);
+    Xnode sibling = start.nextSibling();
     while(sibling != null) {
       toDelete.add(sibling);
-      sibling = sibling.getNextSibling();
+      sibling = sibling.nextSibling();
     }
-    for(Node n : toDelete) {
-      XnodeUtil.delete(n);
+    for(Xnode n : toDelete) {
+      n.delete();
     }
   }
 

@@ -284,7 +284,10 @@ public class Xnode {
    */
   public void delete() {
     _isDeleted = true;
-    XnodeUtil.delete(_baseElement);
+    if(_baseElement == null || _baseElement.getParentNode() == null) {
+      return;
+    }
+    _baseElement.getParentNode().removeChild(_baseElement);
   }
 
   /**
