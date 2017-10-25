@@ -135,11 +135,10 @@ public class XcodeML extends Xnode {
     }
 
     XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
-    Xnode bType = createNode(Xcode.FBASICTYPE);
-    bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
-    bType.setType(getTypeTable().generateHash(XcodeType.INTEGER));
-    if(type != null && type.getIntent() != Xintent.NONE) {
-      bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
+    XbasicType bType = createBasicType(getTypeTable().
+        generateHash(XcodeType.INTEGER), Xname.TYPE_F_INT, Xintent.NONE);
+    if(type != null) {
+      bType.setIntent(type.getIntent());
     }
 
     return createVar(bType.getType(), base.value(),
@@ -456,15 +455,15 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public XbasicType createBasicType(String type, String ref, Xintent intent) {
-    Xnode bt = createNode(Xcode.FBASICTYPE);
+    XbasicType bt = new XbasicType(createNode(Xcode.FBASICTYPE));
     bt.setType(type);
-    if(ref != null) {
-      bt.setAttribute(Xattr.REF, ref);
+    if(ref != null && !ref.isEmpty()) {
+      bt.setRef(ref);
     }
-    if(intent != null) {
+    if(intent != null && intent != Xintent.NONE) {
       bt.setAttribute(Xattr.INTENT, intent.toString());
     }
-    return new XbasicType(bt.element());
+    return bt;
   }
 
   /**
