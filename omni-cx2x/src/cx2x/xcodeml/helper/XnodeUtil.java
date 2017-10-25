@@ -530,6 +530,27 @@ public class XnodeUtil {
   }
 
   /**
+   * Extract the body of a do statement and place it after the reference node.
+   *
+   * @param loop The do statement containing the body to be extracted.
+   * @param ref  Element after which statement are shifted.
+   */
+  public static void extractBody(Xnode loop, Xnode ref) {
+    if(loop.opcode() != Xcode.FDOSTATEMENT) {
+      return;
+    }
+    Xnode body = loop.body();
+    if(body == null) {
+      return;
+    }
+    Xnode refNode = ref;
+    for(Xnode child : body.children()) {
+      refNode.insertAfter(child);
+      refNode = child;
+    }
+  }
+
+  /**
    * Extract the body of a do statement and place it directly after it.
    *
    * @param loop The do statement containing the body to be extracted.
@@ -547,7 +568,6 @@ public class XnodeUtil {
   public static void extractBody(NestedDoStatement nest) {
     extractBody(nest.getInnerStatement(), nest.getOuterStatement());
   }
-
 
   /**
    * Check whether the index of an arrayIndex element is an induction variable
@@ -568,70 +588,7 @@ public class XnodeUtil {
     }
 
     Xnode var = arrayIndex.matchDirectDescendant(Xcode.VAR);
-
     return var != null && inductionVariables.contains(var.value());
-  }
-
-  /**
-   * Extract the body of a do statement and place it after the reference node.
-   *
-   * @param loop The do statement containing the body to be extracted.
-   * @param ref  Element after which statement are shifted.
-   */
-  public static void extractBody(Xnode loop, Xnode ref) {
-    Xnode body = loop.matchDescendant(Xcode.BODY);
-    if(body == null) {
-      return;
-    }
-    Node refNode = ref.element();
-    for(Node childNode = body.element().getFirstChild(); childNode != null; ) {
-      Node nextChild = childNode.getNextSibling();
-      // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE) {
-        insertAfter(refNode, childNode);
-        refNode = childNode;
-      }
-      childNode = nextChild;
-    }
-  }
-
-  /**
-   * Delete an element for the tree.
-   *
-   * @param element Element to be deleted.
-   */
-  public static void delete(Node element) {
-    if(element == null || element.getParentNode() == null) {
-      return;
-    }
-    element.getParentNode().removeChild(element);
-  }
-
-  /**
-   * Insert a node directly after a reference node.
-   *
-   * @param refNode The reference node. New node will be inserted after this
-   *                one.
-   * @param newNode The new node to be inserted.
-   */
-  public static void insertAfter(Node refNode, Node newNode) {
-    refNode.getParentNode().insertBefore(newNode, refNode.getNextSibling());
-  }
-
-  /**
-   * Get the depth of an element in the AST.
-   *
-   * @param element XML element for which the depth is computed.
-   * @return A depth value greater or equal to 0.
-   */
-  public static int getDepth(Element element) {
-    Node parent = element.getParentNode();
-    int depth = 0;
-    while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
-      ++depth;
-      parent = parent.getParentNode();
-    }
-    return depth;
   }
 
   /**
@@ -719,46 +676,7 @@ public class XnodeUtil {
     return unsupportedStatements;
   }
 
-  /**
-   * Check whether the given type is a built-in type or is a type defined in the
-   * type table.
-   *
-   * @param type Type to check.
-   * @return True if the type is built-in. False otherwise.
-   */
-  public static boolean isBuiltInType(String type) {
-    switch(type) {
-      case Xname.TYPE_F_CHAR:
-      case Xname.TYPE_F_COMPLEX:
-      case Xname.TYPE_F_INT:
-      case Xname.TYPE_F_LOGICAL:
-      case Xname.TYPE_F_REAL:
-      case Xname.TYPE_F_VOID:
-        return true;
-      default:
-        return false;
-    }
-  }
-
   /* XNODE SECTION */
-
-
-  /**
-   * Find function definition in the ancestor of the give element.
-   *
-   * @param from Element to start search from.
-   * @return The function definition found. Null if nothing found.
-   */
-  public static XfunctionDefinition findParentFunction(Xnode from) {
-    if(from == null) {
-      return null;
-    }
-    Xnode fctDef = from.matchAncestor(Xcode.FFUNCTIONDEFINITION);
-    if(fctDef == null) {
-      return null;
-    }
-    return new XfunctionDefinition(fctDef.element());
-  }
 
   /**
    * Delete all the elements between the two given elements.
@@ -767,18 +685,15 @@ public class XnodeUtil {
    * @param end   The end element. Deletion end just before this element.
    */
   public static void deleteBetween(Xnode start, Xnode end) {
-    List<Element> toDelete = new ArrayList<>();
-    Node node = start.element().getNextSibling();
-    while(node != null && node != end.element()) {
-      if(node.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) node;
-        toDelete.add(element);
-      }
-      node = node.getNextSibling();
+    List<Xnode> toDelete = new ArrayList<>();
+    Xnode node = start.nextSibling();
+    while(node != null && node.element() != end.element()) {
+      toDelete.add(node);
+      node = node.nextSibling();
     }
 
-    for(Element e : toDelete) {
-      delete(e);
+    for(Xnode n : toDelete) {
+      n.delete();
     }
   }
 
@@ -811,21 +726,6 @@ public class XnodeUtil {
       }
       childNode = nextChild;
     }
-  }
-
-  /**
-   * Check if the two element are direct children of the same parent element.
-   *
-   * @param e1 First element.
-   * @param e2 Second element.
-   * @return True if the two element are direct children of the same parent.
-   * False otherwise.
-   */
-  public static boolean hasSameParentBlock(Xnode e1, Xnode e2) {
-    return !(e1 == null || e2 == null || e1.element() == null
-        || e2.element() == null)
-        && e1.element().getParentNode() ==
-        e2.element().getParentNode();
   }
 
   /**
@@ -1016,18 +916,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Copy the enhanced information from an element to a target element.
-   * Enhanced information include line number and original file name.
-   *
-   * @param base   Base element to copy information from.
-   * @param target Target element to copy information to.
-   */
-  public static void copyEnhancedInfo(Xnode base, Xnode target) {
-    target.setLine(base.lineNo());
-    target.setFilename(base.filename());
-  }
-
-  /**
    * Get a list of T elements from an xpath query executed from the
    * given element.
    *
@@ -1150,8 +1038,8 @@ public class XnodeUtil {
     {
       bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
     } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
-      Xnode lhs = boundChild.child(0);
-      Xnode rhs = boundChild.child(1);
+      Xnode lhs = boundChild.child(Xnode.LHS);
+      Xnode rhs = boundChild.child(Xnode.RHS);
       Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUSEXPR);
       bound.append(plusExpr);
       plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
@@ -1162,7 +1050,6 @@ public class XnodeUtil {
               boundChild.opcode().toString())
       );
     }
-
     return bound;
   }
 
@@ -1173,15 +1060,15 @@ public class XnodeUtil {
    * @param start Element to start from.
    */
   public static void deleteFrom(Xnode start) {
-    List<Node> toDelete = new ArrayList<>();
-    toDelete.add(start.element());
-    Node sibling = start.element().getNextSibling();
+    List<Xnode> toDelete = new ArrayList<>();
+    toDelete.add(start);
+    Xnode sibling = start.nextSibling();
     while(sibling != null) {
       toDelete.add(sibling);
-      sibling = sibling.getNextSibling();
+      sibling = sibling.nextSibling();
     }
-    for(Node n : toDelete) {
-      XnodeUtil.delete(n);
+    for(Xnode n : toDelete) {
+      n.delete();
     }
   }
 
@@ -1243,29 +1130,6 @@ public class XnodeUtil {
       node = node.nextSibling();
       safeDelete(toDelete);
     }
-  }
-
-  /**
-   * Remove the "pure" attribute from the function type. Issue a warning.
-   *
-   * @param fctDef  Function definition node where the pure attribute must be
-   *                removed.
-   * @param fctType Function type node where the pure attribute must be
-   *                removed.
-   * @return True if the PURE specifier had to be removed false otherwise.
-   */
-  public static boolean removePure(Xnode fctDef, Xnode fctType) {
-    if(fctType.opcode() != Xcode.FFUNCTIONTYPE ||
-        fctDef.opcode() != Xcode.FFUNCTIONDEFINITION)
-    {
-      return false;
-    }
-
-    if(fctType.getBooleanAttribute(Xattr.IS_PURE)) {
-      fctType.element().removeAttribute(Xattr.IS_PURE.toString());
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -1414,7 +1278,7 @@ public class XnodeUtil {
     }
 
     // Retrieve function type to check intents and types of parameters
-    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().get(fctCall);
+    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
     List<Xnode> parameters = fctType.getParams().getAll();
     List<Xnode> arguments = argumentsNode.children();
 
@@ -1422,23 +1286,21 @@ public class XnodeUtil {
       // TODO handle optional arguments, named value args
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
-      Xtype typeParameter = xcodeml.getTypeTable().get(parameter);
-      Xtype typeArg = xcodeml.getTypeTable().get(arg);
 
       String rep = "";
-      if(isBuiltInType(arg.getType()) && !arrayOnly
-          && typeParameter instanceof XbasicType)
+      if(XcodeType.isBuiltInType(arg.getType()) && !arrayOnly
+          && xcodeml.getTypeTable().isBasicType(parameter))
       {
-        XbasicType btParameter = (XbasicType) typeParameter;
+        XbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
         rep = arg.constructRepresentation(false);
-      } else if(typeParameter instanceof XbasicType
-          && typeArg instanceof XbasicType)
+      } else if(xcodeml.getTypeTable().isBasicType(parameter)
+          && xcodeml.getTypeTable().isBasicType(arg))
       {
-        XbasicType btParameter = (XbasicType) typeParameter;
-        XbasicType btArg = (XbasicType) typeArg;
+        XbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        XbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
         if((arrayOnly && !btArg.isArray())
             || !intent.isCompatible(btParameter.getIntent()))
         {

@@ -131,14 +131,14 @@ public class Parallelize extends ClawTransformation {
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
 
     // Check for the parent fct/subroutine definition
-    _fctDef = XnodeUtil.findParentFunction(_claw.getPragma());
+    _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
               "Parallelize directive must be defined in a function/subroutine.",
           _claw.getPragma().lineNo());
       return false;
     }
-    _fctType = (XfunctionType) xcodeml.getTypeTable().get(_fctDef);
+    _fctType = xcodeml.getTypeTable().getFunctionType(_fctDef);
     if(_fctType == null) {
       xcodeml.addError("Function/subroutine signature cannot be found. ",
           _claw.getPragma().lineNo());
@@ -220,10 +220,9 @@ public class Parallelize extends ClawTransformation {
           continue;
         }
 
-        Xtype type = xcodeml.getTypeTable().get(decl);
-        if(type instanceof XbasicType) {
+        if(xcodeml.getTypeTable().isBasicType(decl)) {
           String varName = decl.matchSeq(Xcode.NAME).value();
-          XbasicType bType = (XbasicType) type;
+          XbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
 
           if(bType.isArray()) {
             if(bType.hasIntent() || bType.isPointer()) {
@@ -348,7 +347,8 @@ public class Parallelize extends ClawTransformation {
   {
     // Handle PURE function / subroutine
     ClawTranslator trans = (ClawTranslator) translator;
-    boolean pureRemoved = XnodeUtil.removePure(_fctDef, _fctType);
+    boolean pureRemoved = _fctType.isPure();
+    _fctType.removeAttribute(Xattr.IS_PURE);
     if(trans.getConfiguration().isForcePure() && pureRemoved) {
       throw new IllegalTransformationException(
           "PURE specifier cannot be removed", _fctDef.lineNo());
@@ -710,10 +710,11 @@ public class Parallelize extends ClawTransformation {
                                                int index)
   {
     for(String id : ids) {
+      // TODO refactor -> move to TransformationHelper
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.body(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
-      XbasicType type = (XbasicType) xcodeml.getTypeTable().get(sId);
+      XbasicType type = xcodeml.getTypeTable().getBasicType(sId);
 
       for(Xnode var : vars) {
         Xnode ref = xcodeml.createArrayRef(type, var.cloneNode());
@@ -740,30 +741,32 @@ public class Parallelize extends ClawTransformation {
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
     XbasicType intTypeIntentIn = xcodeml.createBasicType(
-        xcodeml.getTypeTable().generateIntegerTypeHash(),
+        xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
         Xname.TYPE_F_INT, Xintent.IN);
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
     for(DimensionDefinition dimension : _claw.getDimensionValues()) {
       // Create the parameter for the lower bound
-      if(dimension.lowerBoundIsVar()) {
-        xcodeml.createIdAndDecl(dimension.getLowerBoundId(),
+      if(dimension.getLowerBound().isVar()) {
+        xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(dimension.getLowerBoundId(),
+        Xnode param = xcodeml.createAndAddParam(
+            dimension.getLowerBound().getValue(),
             intTypeIntentIn.getType(), _fctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }
 
       // Create parameter for the upper bound
-      if(dimension.upperBoundIsVar()) {
-        xcodeml.createIdAndDecl(dimension.getUpperBoundId(),
+      if(dimension.getUpperBound().isVar()) {
+        xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
             intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(dimension.getUpperBoundId(),
+        Xnode param = xcodeml.createAndAddParam(
+            dimension.getUpperBound().getValue(),
             intTypeIntentIn.getType(), _fctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }

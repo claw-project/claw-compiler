@@ -32,14 +32,12 @@ import java.util.Collections;
 
 public class LoopFusion extends ClawTransformation {
 
+  private static final String[] prevToDelete = {"acc loop", "omp do"};
+  private static final String[] nextToDelete = {"omp end do"};
   // Contains the value of the group option
   private String _groupClauseLabel = ClawConstant.EMPTY_STRING;
-
   // The loop statement involved in the Transformation
   private Xnode[] _doStmts;
-
-  private static final String[] prevToDelete = { "acc loop", "omp do" };
-  private static final String[] nextToDelete = { "omp end do" };
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -89,7 +87,7 @@ public class LoopFusion extends ClawTransformation {
    * by a do statement.
    * - With collapse clause: Find the n do statements following the pragma.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if a do statement is found. False otherwise.
    */
@@ -130,7 +128,7 @@ public class LoopFusion extends ClawTransformation {
    *
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation The other loop fusion unit to be merge with this
    *                       one.
    * @throws IllegalTransformationException if the transformation cannot be
@@ -256,7 +254,7 @@ public class LoopFusion extends ClawTransformation {
     }
 
     // Loops can only be merged if they are at the same level
-    if(!XnodeUtil.hasSameParentBlock(_doStmts[0], other.getDoStmtAtIndex(0))) {
+    if(!_doStmts[0].hasSameParentBlock(other.getDoStmtAtIndex(0))) {
       return false;
     }
 

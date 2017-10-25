@@ -35,8 +35,7 @@ public class ArrayToFctCall extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    XfunctionDefinition _fctDef =
-        XnodeUtil.findParentFunction(_claw.getPragma());
+    XfunctionDefinition _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().lineNo());
@@ -91,8 +90,7 @@ public class ArrayToFctCall extends ClawTransformation {
                         Transformation other) throws Exception
   {
 
-    XfunctionType fctType =
-        (XfunctionType) xcodeml.getTypeTable().get(_replaceFct);
+    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
     // Prepare the function call
     Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),

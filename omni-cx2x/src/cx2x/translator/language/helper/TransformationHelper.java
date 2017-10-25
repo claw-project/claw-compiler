@@ -42,7 +42,6 @@ import java.util.Map;
  */
 public class TransformationHelper {
 
-
   /**
    * Generate corresponding additional transformation according to optional
    * clauses given to the directive.
@@ -65,7 +64,6 @@ public class TransformationHelper {
     applyFusionClause(claw, xcodeml, translator, stmt);
     applyInterchangeClause(claw, xcodeml, translator, stmt);
   }
-
 
   /**
    * Generate loop fusion transformation if the clause is present in the
@@ -144,7 +142,7 @@ public class TransformationHelper {
     if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getSymbolTable().get(name);
     }
-    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    XfunctionDefinition upperDef = fctDef.findParentFunction();
     if(upperDef == null) {
       return null;
     }
@@ -165,13 +163,12 @@ public class TransformationHelper {
     if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getDeclarationTable().get(name);
     }
-    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    XfunctionDefinition upperDef = fctDef.findParentFunction();
     if(upperDef == null) {
       return null;
     }
     return getDeclInNestedFctDef(upperDef, name);
   }
-
 
   /**
    * Apply the reshape clause transformation.
@@ -189,8 +186,7 @@ public class TransformationHelper {
     if(!claw.hasReshapeClause()) {
       return;
     }
-    XfunctionDefinition fctDef =
-        XnodeUtil.findParentFunction(claw.getPragma());
+    XfunctionDefinition fctDef = claw.getPragma().findParentFunction();
     if(fctDef == null) {
       throw new IllegalTransformationException("Cannot apply reshape clause." +
           "Parent function definition not found.", claw.getPragma().lineNo());
@@ -206,15 +202,14 @@ public class TransformationHelper {
             "declaration table.", claw.getPragma().lineNo());
       }
 
-      Xtype rawType = xcodeml.getTypeTable().get(id);
-      if(!(rawType instanceof XbasicType)) {
+      if(!(xcodeml.getTypeTable().isBasicType(id))) {
         throw new IllegalTransformationException(
             String.format("Reshape variable %s is not a basic type.",
                 reshapeInfo.getArrayName()),
             claw.getPragma().lineNo()
         );
       }
-      XbasicType crtType = (XbasicType) rawType;
+      XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
 
       // Check dimension
       if(crtType.getDimensions() < reshapeInfo.getTargetDimension()) {
@@ -228,7 +223,7 @@ public class TransformationHelper {
 
       // Create new type
       XbasicType newType = crtType.cloneNode();
-      newType.setType(xcodeml.getTypeTable().generateRealTypeHash());
+      newType.setType(xcodeml.getTypeTable().generateHash(XcodeType.REAL));
       if(reshapeInfo.getTargetDimension() == 0) { // Demote to scalar
         newType.resetDimension();
       } else { // Demote to smaller dimension array
@@ -248,7 +243,7 @@ public class TransformationHelper {
 
       // Update symbol & declaration
       id.setType(newType.getType());
-      decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, newType.getType());
+      decl.matchSeq(Xcode.NAME).setType(newType.getType());
 
       // Update array references
       List<Xnode> refs =
@@ -339,7 +334,7 @@ public class TransformationHelper {
       }
       return;
     } else {
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(fctDef);
+      fctTypeMod = mod.getTypeTable().getFunctionType(fctDef);
     }
 
     if(fctTypeMod == null) {
@@ -358,20 +353,19 @@ public class TransformationHelper {
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
-      fctTypeMod = (XfunctionType) mod.getTypeTable().get(id);
+      fctTypeMod = mod.getTypeTable().getFunctionType(id);
       if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }
     }
 
     XbasicType modIntTypeIntentIn = mod.createBasicType(
-        mod.getTypeTable().generateIntegerTypeHash(), Xname.TYPE_F_INT,
+        mod.getTypeTable().generateHash(XcodeType.INTEGER), Xname.TYPE_F_INT,
         Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
     List<Xnode> paramsLocal = fctType.getParams().getAll();
     List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
-
 
     if(paramsLocal.size() < paramsMod.size()) {
       throw new IllegalTransformationException(
@@ -396,8 +390,8 @@ public class TransformationHelper {
 
         if(!localType.equals(modType)) {
           // Param has been update so have to replicate the change to mod file
-          XbasicType lType = (XbasicType) xcodeml.getTypeTable().get(pLocal);
-          XbasicType crtType = (XbasicType) mod.getTypeTable().get(pMod);
+          XbasicType lType = xcodeml.getTypeTable().getBasicType(pLocal);
+          XbasicType crtType = mod.getTypeTable().getBasicType(pMod);
 
           List<DimensionDefinition> dimensions =
               TransformationHelper.findDimensions(fctType);
@@ -407,7 +401,7 @@ public class TransformationHelper {
           if(lType.isArray()) {
             String newType = TransformationHelper.duplicateWithDimension(lType,
                 crtType, mod, xcodeml, overPos, dimensions);
-            pMod.setAttribute(Xattr.TYPE, newType);
+            pMod.setType(newType);
           }
         }
 
@@ -502,14 +496,14 @@ public class TransformationHelper {
   {
     Xid id = fctDef.getSymbolTable().get(fieldId);
     Xnode decl = fctDef.getDeclarationTable().get(fieldId);
-    String type = xcodeml.getTypeTable().generateArrayTypeHash();
+    String type = xcodeml.getTypeTable().generateHash(XcodeType.ARRAY);
     XbasicType newType;
 
     if(update) {
-      if(XnodeUtil.isBuiltInType(id.getType())) {
+      if(XcodeType.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
-        XbasicType old = (XbasicType) xcodeml.getTypeTable().get(id);
+        XbasicType old = xcodeml.getTypeTable().getBasicType(id);
         if(old == null) {
           throw new IllegalTransformationException("Cannot find type for " +
               fieldId, claw.getPragma().lineNo());
@@ -542,8 +536,8 @@ public class TransformationHelper {
            * 2. Insert the dimensions before currently existing ones.
            * 3. Insert the dimensions after currently existing ones. */
           if(overPos == null) {
-            overPos =
-                getOverPosition(claw.getOverClauseValues().get(overIndex));
+            overPos = OverPosition.fromList(
+                claw.getOverClauseValues().get(overIndex));
           }
           proInfo.setOverPosition(overPos);
           if(overPos == OverPosition.MIDDLE) {
@@ -557,7 +551,7 @@ public class TransformationHelper {
             // Insert new dimensions at the end (case 3)
             for(DimensionDefinition dim : dimensions) {
               Xnode index = dim.generateIndexRange(xcodeml, false);
-              newType.addDimension(index, XbasicType.APPEND);
+              newType.addDimension(index);
             }
           } else {
             // Insert new dimension at the beginning (case 2)
@@ -576,24 +570,23 @@ public class TransformationHelper {
     } else {
       for(DimensionDefinition dim : dimensions) {
         Xnode index = dim.generateIndexRange(xcodeml, false);
-        newType.addDimension(index, XbasicType.APPEND);
+        newType.addDimension(index);
       }
     }
     id.setType(type);
-    decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
+    decl.matchSeq(Xcode.NAME).setType(type);
     xcodeml.getTypeTable().add(newType);
-
 
     // Update params in function type
     for(Xnode param : fctType.getParams().getAll()) {
       if(param.value().equals(fieldId)) {
 
         // Update type with new promoted type
-        param.setAttribute(Xattr.TYPE, type);
+        param.setType(type);
 
         // Save the over clause for parallelize forward transformation
         if(claw.hasOverClause()) {
-          param.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
+          param.setAttribute(ClawAttr.OVER.toString(), OverPosition.fromList(
               claw.getOverClauseValues().get(overIndex)).toString());
         }
       }
@@ -602,30 +595,11 @@ public class TransformationHelper {
         && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId))
     {
       if(claw.hasOverClause()) {
-        fctType.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
+        fctType.setAttribute(ClawAttr.OVER.toString(), OverPosition.fromList(
             claw.getOverClauseValues().get(overIndex)).toString());
       }
     }
     return proInfo;
-  }
-
-  /**
-   * Get the enum value for the over position.
-   *
-   * @param overClause List of values in the over clause.
-   * @return Position of the newly inserted dimensions compare the the existing
-   * ones.
-   */
-  private static OverPosition getOverPosition(List<String> overClause) {
-    if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
-        overClause.get(overClause.size() - 1).
-            equals(DimensionDefinition.BASE_DIM))
-    {
-      return OverPosition.MIDDLE;
-    } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
-      return OverPosition.AFTER;
-    }
-    return OverPosition.BEFORE;
   }
 
   /**
@@ -697,9 +671,9 @@ public class TransformationHelper {
         for(Xnode ref : refs) {
           Xnode arrayRef = xcodeml.createNode(Xcode.FARRAYREF);
           Xnode varRef = xcodeml.createNode(Xcode.VARREF);
-          arrayRef.setAttribute(Xattr.TYPE, ref.getType());
-          varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
-          ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
+          arrayRef.setType(ref.getType());
+          varRef.setType(promotions.get(data).getTargetType());
+          ref.setType(promotions.get(data).getTargetType());
           ref.insertAfter(arrayRef);
           arrayRef.append(varRef);
           varRef.append(ref);
@@ -757,8 +731,8 @@ public class TransformationHelper {
       throws IllegalTransformationException
   {
     XbasicType newType = toUpdate.cloneNode();
-    String type = xcodemlDst.getTypeTable().generateArrayTypeHash();
-    newType.setAttribute(Xattr.TYPE, type);
+    String type = xcodemlDst.getTypeTable().generateHash(XcodeType.ARRAY);
+    newType.setType(type);
 
     if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {
       int additionalDimensions =
@@ -772,8 +746,7 @@ public class TransformationHelper {
         case BEFORE:
           // TODO control and validate the before/after
           for(DimensionDefinition dim : dimensions) {
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false),
-                XbasicType.APPEND);
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
           }
           break;
         case AFTER:
@@ -806,7 +779,7 @@ public class TransformationHelper {
               XnodeUtil.duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
           newDim.append(newUpperBound);
         }
-        newType.addDimension(newDim, XbasicType.APPEND);
+        newType.addDimension(newDim);
       }
 
     }

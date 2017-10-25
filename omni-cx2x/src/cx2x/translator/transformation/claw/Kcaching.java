@@ -78,8 +78,7 @@ public class Kcaching extends ClawTransformation {
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
-    XfunctionDefinition fctDef =
-        XnodeUtil.findParentFunction(_claw.getPragma());
+    XfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
 
     for(String data : _claw.getDataClauseValues()) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
@@ -190,7 +189,7 @@ public class Kcaching extends ClawTransformation {
       if(initIfStmt == null) {
         // If statement has not been created yet so we do it here
         initIfStmt = xcodeml.createIfThen();
-        XnodeUtil.copyEnhancedInfo(_claw.getPragma(), initIfStmt);
+        _claw.getPragma().copyEnhancedInfo(initIfStmt);
         Xnode logEq = xcodeml.createNode(Xcode.LOGEQEXPR);
 
         // Set lhs of equality
@@ -258,7 +257,7 @@ public class Kcaching extends ClawTransformation {
           _claw.getPragma().lineNo()
       );
     }
-    XbasicType basicType = (XbasicType) xcodeml.getTypeTable().get(id);
+    XbasicType basicType = xcodeml.getTypeTable().getBasicType(id);
     int dim = basicType.getDimensions();
     List<Integer> offsets = new ArrayList<>();
     for(int i = 0; i < dim; ++i) {
@@ -285,22 +284,21 @@ public class Kcaching extends ClawTransformation {
                                               Xnode rhs,
                                               Xnode stmt)
   {
-    XbasicType t = (XbasicType) xcodeml.getTypeTable().get(type); // TODO getType
+    XbasicType t = xcodeml.getTypeTable().getBasicType(type); // TODO getType
     if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
       XbasicType newType = t.cloneNode();
-      type = xcodeml.getTypeTable().generateRealTypeHash();
+      type = xcodeml.getTypeTable().generateHash(XcodeType.REAL);
       newType.setType(type);
       newType.removeAttribute(Xattr.INTENT);
       newType.removeAttribute(Xattr.IS_ALLOCATABLE);
 
-      XbasicType ref =
-          (XbasicType) xcodeml.getTypeTable().get(newType.getRef());
+      XbasicType ref = xcodeml.getTypeTable().getBasicType(newType.getRef());
       if(ref != null && (ref.isAllocatable() || ref.hasIntent())) {
         // TODO is there several level to reach ref ? Check if ref is Freal ...
         XbasicType newRef = ref.cloneNode();
         // TODO generate appropriate type
-        String refType = xcodeml.getTypeTable().generateRealTypeHash();
+        String refType = xcodeml.getTypeTable().generateHash(XcodeType.REAL);
         newRef.setType(refType);
         newRef.removeAttribute(Xattr.INTENT);
         newRef.removeAttribute(Xattr.IS_ALLOCATABLE);

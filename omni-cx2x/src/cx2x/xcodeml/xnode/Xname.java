@@ -20,8 +20,6 @@ public class Xname {
   static final String SUPPORTED_VERSION = "1.0";
   static final String SUPPORTED_LANGUAGE = "Fortran";
 
-  public static final String DEFAULT_STEP_VALUE = "1";
-
   // Base type (XcodeML/F 0.91J 9.1)
   public static final String TYPE_F_INT = "Fint";
   public static final String TYPE_F_REAL = "Freal";

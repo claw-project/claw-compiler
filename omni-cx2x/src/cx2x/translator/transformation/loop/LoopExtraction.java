@@ -9,11 +9,11 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.language.helper.TransformationHelper;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -119,7 +119,7 @@ public class LoopExtraction extends ClawTransformation {
   /**
    * Check whether the transformation can be applied.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if the transformation analysis succeeded. False otherwise.
    */
@@ -181,7 +181,7 @@ public class LoopExtraction extends ClawTransformation {
    * queue.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Only for dependent transformation. The other
    *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
@@ -198,12 +198,13 @@ public class LoopExtraction extends ClawTransformation {
 
     // Duplicate function definition
     XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
-    String newFctTypeHash = xcodeml.getTypeTable().generateFctTypeHash();
+    String newFctTypeHash =
+        xcodeml.getTypeTable().generateHash(XcodeType.FUNCTION);
     String newFctName = clonedFctDef.getName().value() +
         ClawConstant.EXTRACTION_SUFFIX +
         translator.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
-    clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);
+    clonedFctDef.getName().setType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
         .get(_fctDefToExtract.getName().value());
@@ -211,8 +212,8 @@ public class LoopExtraction extends ClawTransformation {
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
-    XfunctionType fctType = (XfunctionType) xcodeml.getTypeTable().
-        get(_fctDefToExtract);
+    XfunctionType fctType =
+        xcodeml.getTypeTable().getFunctionType(_fctDefToExtract);
     XfunctionType newFctType = fctType.cloneNode();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
@@ -268,9 +269,7 @@ public class LoopExtraction extends ClawTransformation {
 
     // Change called fct name
     _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);
-    _fctCall.matchDirectDescendant(Xcode.NAME).
-        setAttribute(Xattr.TYPE, newFctTypeHash);
-
+    _fctCall.matchDirectDescendant(Xcode.NAME).setType(newFctTypeHash);
 
     // Adapt function call parameters and function declaration
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
@@ -300,7 +299,7 @@ public class LoopExtraction extends ClawTransformation {
          * 3. Create arrayRef element with varRef + arrayIndex
          */
         if(argument.opcode() == Xcode.VAR) {
-          XbasicType type = (XbasicType) xcodeml.getTypeTable().get(argument);
+          XbasicType type = xcodeml.getTypeTable().getBasicType(argument);
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()) {
@@ -310,10 +309,10 @@ public class LoopExtraction extends ClawTransformation {
           }
 
           Xnode newArg = xcodeml.createNode(Xcode.FARRAYREF);
-          newArg.setAttribute(Xattr.TYPE, type.getRef());
+          newArg.setType(type.getRef());
 
           Xnode varRef = xcodeml.createNode(Xcode.VARREF);
-          varRef.setAttribute(Xattr.TYPE, argument.getType());
+          varRef.setType(argument.getType());
 
           varRef.append(argument, true);
           newArg.append(varRef);
@@ -326,10 +325,9 @@ public class LoopExtraction extends ClawTransformation {
                 _fctDef.getDeclarationTable().get(mappingVar.getArgMapping());
 
             // Add to arrayIndex
-            Xnode newMappingVar = xcodeml.createNode(Xcode.VAR);
-            newMappingVar.setAttribute(Xattr.SCLASS, Xscope.LOCAL.toString());
-            newMappingVar.setAttribute(Xattr.TYPE, mappingVarDecl.getType());
-            newMappingVar.setValue(mappingVarDecl.matchSeq(Xcode.NAME).value());
+            Xnode newMappingVar =
+                xcodeml.createVar(mappingVarDecl.getType(),
+                    mappingVarDecl.matchSeq(Xcode.NAME).value(), Xscope.LOCAL);
             arrayIndex.append(newMappingVar);
             newArg.append(arrayIndex);
           }
@@ -345,16 +343,13 @@ public class LoopExtraction extends ClawTransformation {
         // Change variable declaration in extracted fct
         Xnode varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
-        XbasicType varDeclType = (XbasicType) xcodeml.getTypeTable().
-            get(varDecl);
+        XbasicType varDeclType = xcodeml.getTypeTable().getBasicType(varDecl);
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {
-          Xnode tempName = xcodeml.createNode(Xcode.NAME);
-          tempName.setValue(var.getFctMapping());
-          tempName.setAttribute(Xattr.TYPE, varDeclType.getRef());
           Xnode newVarDecl = xcodeml.createNode(Xcode.VARDECL);
-          newVarDecl.append(tempName);
+          newVarDecl.append(xcodeml.createName(var.getFctMapping(),
+              varDeclType.getRef()));
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
         }/* else {

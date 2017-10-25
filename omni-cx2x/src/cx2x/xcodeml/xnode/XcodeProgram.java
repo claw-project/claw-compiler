@@ -38,12 +38,6 @@ public class XcodeProgram extends XcodeML {
   // XcodeProgram inner elements
   private XsymbolTable _globalSymbolsTable = null;
   private XglobalDeclTable _globalDeclarationsTable = null;
-  // XcodeProgram optional attributes
-  private String _version = null;
-  private String _language = null;
-  private String _time = null;
-  private String _source = null;
-  private String _compilerInfo = null;
 
   /**
    * XcodeProgram base constructor.
@@ -83,12 +77,6 @@ public class XcodeProgram extends XcodeML {
    * compiler info.
    */
   private void readDocumentInformation() {
-    _version = getAttribute(Xattr.VERSION);
-    _language = getAttribute(Xattr.LANGUAGE);
-    _time = getAttribute(Xattr.TIME);
-    _source = getAttribute(Xattr.SOURCE);
-    _compilerInfo = getAttribute(Xattr.COMPILER_INFO);
-
     readGlobalSymbolsTable();
     readGlobalDeclarationsTable();
   }
@@ -208,7 +196,7 @@ public class XcodeProgram extends XcodeML {
    * @return XcodeML version attribute value.
    */
   public String getVersion() {
-    return _version;
+    return getAttribute(Xattr.VERSION);
   }
 
   /**
@@ -217,7 +205,7 @@ public class XcodeProgram extends XcodeML {
    * @return XcodeML language attribute value.
    */
   public String getLanguage() {
-    return _language;
+    return getAttribute(Xattr.LANGUAGE);
   }
 
   /**
@@ -226,7 +214,7 @@ public class XcodeProgram extends XcodeML {
    * @return XcodeML time attribute value.
    */
   public String getTime() {
-    return _time;
+    return getAttribute(Xattr.TIME);
   }
 
   /**
@@ -235,7 +223,7 @@ public class XcodeProgram extends XcodeML {
    * @return Source file attribute value.
    */
   public String getSource() {
-    return _source;
+    return getAttribute(Xattr.SOURCE);
   }
 
   /**
@@ -244,7 +232,7 @@ public class XcodeProgram extends XcodeML {
    * @return Compiler information attribute value.
    */
   public String getCompilerInfo() {
-    return _compilerInfo;
+    return getAttribute(Xattr.COMPILER_INFO);
   }
 
 

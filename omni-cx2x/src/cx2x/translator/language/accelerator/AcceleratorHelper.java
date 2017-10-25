@@ -255,10 +255,10 @@ public class AcceleratorHelper {
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
         if(bt != null && (bt.getIntent() == Xintent.IN
             || bt.getIntent() == Xintent.OUT
             || bt.getIntent() == Xintent.INOUT) && bt.isArray())
@@ -285,13 +285,13 @@ public class AcceleratorHelper {
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!XnodeUtil.isBuiltInType(decl.getType())
-            && !(xcodeml.getTypeTable().get(decl) instanceof XbasicType))
+        if(!XcodeType.isBuiltInType(decl.getType())
+            && !(xcodeml.getTypeTable().isBasicType(decl)))
         {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
-        if((bt == null && XnodeUtil.isBuiltInType(decl.getType()))
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if((bt == null && XcodeType.isBuiltInType(decl.getType()))
             || (bt != null && bt.getIntent() == Xintent.NONE))
         {
           variables.add(name.value());
@@ -316,10 +316,10 @@ public class AcceleratorHelper {
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VARDECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!(xcodeml.getTypeTable().get(decl) instanceof XbasicType)) {
+        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
-        XbasicType bt = (XbasicType) xcodeml.getTypeTable().get(decl);
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
         if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()
             && bt.isAllocatable())
         {

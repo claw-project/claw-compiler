@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -284,7 +283,10 @@ public class Xnode {
    */
   public void delete() {
     _isDeleted = true;
-    XnodeUtil.delete(_baseElement);
+    if(_baseElement == null || _baseElement.getParentNode() == null) {
+      return;
+    }
+    _baseElement.getParentNode().removeChild(_baseElement);
   }
 
   /**
@@ -617,7 +619,14 @@ public class Xnode {
     if(_baseElement == null) {
       return Xnode.UNDEF_DEPTH;
     }
-    return XnodeUtil.getDepth(_baseElement);
+
+    Node parent = _baseElement.getParentNode();
+    int depth = 0;
+    while(parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
+      ++depth;
+      parent = parent.getParentNode();
+    }
+    return depth;
   }
 
 
@@ -627,7 +636,8 @@ public class Xnode {
    * @param node The node to be inserted after the current one.
    */
   public void insertAfter(Xnode node) {
-    XnodeUtil.insertAfter(_baseElement, node.element());
+    _baseElement.getParentNode().insertBefore(node.element(),
+        _baseElement.getNextSibling());
   }
 
   /**
@@ -686,7 +696,7 @@ public class Xnode {
     switch(opcode()) {
       case FARRAYREF:
         String type = getAttribute(Xattr.TYPE);
-        if(XnodeUtil.isBuiltInType(type)) {
+        if(XcodeType.isBuiltInType(type)) {
           Xnode child = firstChild();
           return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
         }
@@ -746,6 +756,13 @@ public class Xnode {
       default:
         return "";
     }
+  }
+
+  /**
+   *
+   */
+  public void setType(String value) {
+    setAttribute(Xattr.TYPE, value);
   }
 
   /**
@@ -813,6 +830,42 @@ public class Xnode {
       default:
         return "";
     }
+  }
+
+  /**
+   * Copy the enhanced information from the current node to a target node.
+   * Enhanced information include line number and original file name.
+   *
+   * @param target Target node to copy information to.
+   */
+  public void copyEnhancedInfo(Xnode target) {
+    target.setLine(lineNo());
+    target.setFilename(filename());
+  }
+
+  /**
+   * Check if the given node is direct children of the same parent node.
+   *
+   * @param n Node to be compared to.
+   * @return True if the given node is direct children of the same parent. False
+   * otherwise.
+   */
+  public boolean hasSameParentBlock(Xnode n) {
+    return !(n == null || element() == null || n.element() == null)
+        && element().getParentNode() == n.element().getParentNode();
+  }
+
+  /**
+   * Find function definition in the ancestor of the current node.
+   *
+   * @return The function definition found. Null if nothing found.
+   */
+  public XfunctionDefinition findParentFunction() {
+    Xnode fctDef = matchAncestor(Xcode.FFUNCTIONDEFINITION);
+    if(fctDef == null) {
+      return null;
+    }
+    return new XfunctionDefinition(fctDef.element());
   }
 
   /**

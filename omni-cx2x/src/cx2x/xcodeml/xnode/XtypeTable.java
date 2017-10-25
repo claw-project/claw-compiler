@@ -7,7 +7,10 @@ package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
@@ -24,17 +27,7 @@ import java.util.*;
 
 public class XtypeTable extends Xnode {
 
-  private static final int HASH_LENGTH = 12;
-
-  private static final String ARRAY_HASH_PREFIX = "A";
-  private static final String CHAR_HASH_PREFIX = "C";
-  private static final String COMPLEX_HASH_PREFIX = "P";
-  private static final String FCT_HASH_PREFIX = "F";
-  private static final String INT_HASH_PREFIX = "I";
-  private static final String LOGICAL_HASH_PREFIX = "L";
-  private static final String REAL_HASH_PREFIX = "R";
-
-  private final Map<String, Xtype> _table;
+  private final Map<String, Xnode> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -64,10 +57,77 @@ public class XtypeTable extends Xnode {
           _table.put(ft.getType(), ft);
           break;
         case FSTRUCTTYPE:
-          // TODO create XstructType object and insert it in the table
+          XstructType st = new XstructType(n);
+          _table.put(st.getType(), st);
           break;
       }
     }
+  }
+
+  /**
+   * Check if the node is of type XbasicType.
+   *
+   * @param node Node to check.
+   * @return True if the node is of type XbasicType.
+   */
+  public boolean isBasicType(Xnode node) {
+    return isBasicType(node.getType());
+  }
+
+  /**
+   * Check if the hash correspond to a XbasicType.
+   *
+   * @param hash Hash of type to check.
+   * @return True if the hash correspond to a XbasicType.
+   */
+  public boolean isBasicType(String hash) {
+    return isType(XbasicType.class, hash);
+  }
+
+  /**
+   * Check if the node is of type XfunctionType.
+   *
+   * @param node Node to check.
+   * @return True if the node is of type XfunctionType.
+   */
+  public boolean isFunctionType(Xnode node) {
+    return isFunctionType(node.getType());
+  }
+
+  /**
+   * Check if the hash correspond to a XfunctionType.
+   *
+   * @param hash Hash of type to check.
+   * @return True if the hash correspond to a XfunctionType.
+   */
+  public boolean isFunctionType(String hash) {
+    return isType(XfunctionType.class, hash);
+  }
+
+  /**
+   * Check if the hash correspond to a XstructType.
+   *
+   * @param hash Hash of type to check.
+   * @return True if the hash correspond to a XstructType.
+   */
+  public boolean isStructType(String hash) {
+    return isType(XstructType.class, hash);
+  }
+
+  /**
+   * Check if the corresponding type node is of given type.
+   *
+   * @param typeClass Class type to check against.
+   * @param hash      Hash of type to retrieved.
+   * @return True of the type is retrieved and is of given type. False in any
+   * other case.
+   */
+  private boolean isType(Class typeClass, String hash) {
+    if(hash == null || hash.isEmpty()) {
+      return false;
+    }
+    Xnode t = get(hash);
+    return t != null && typeClass.isInstance(t);
   }
 
   /**
@@ -84,7 +144,7 @@ public class XtypeTable extends Xnode {
    *
    * @param type The new type to be added.
    */
-  public void add(Xtype type) {
+  public void add(Xnode type) {
     if(!type.getType().isEmpty()) {
       _baseElement.appendChild(type.cloneRawNode());
       _table.put(type.getType(), type);
@@ -92,24 +152,83 @@ public class XtypeTable extends Xnode {
   }
 
   /**
-   * Get type associated with node if any.
+   * Get the XbasicType associated with the node if any.
    *
-   * @param node Node to retrieve the type.
-   * @return Xtype element if found. Null otherwise.
+   * @param node Node to look for type.
+   * @return XbasicType if associated. Null otherwise.
    */
-  public Xtype get(Xnode node) {
-    return node == null ? null : get(node.getType());
+  public XbasicType getBasicType(Xnode node) {
+    return getBasicType(node.getType());
+  }
+
+  /**
+   * Get the XbasicType associated with the given hash value.
+   *
+   * @param hash Hash value to check for.
+   * @return XbasicType if associated. Null otherwise.
+   */
+  public XbasicType getBasicType(String hash) {
+    if(isBasicType(hash)) {
+      return (XbasicType) get(hash);
+    }
+    return null;
+  }
+
+  /**
+   * Get the XfunctionType associated with the node if any.
+   *
+   * @param node Node to look for type.
+   * @return XfunctionType if associated. Null otherwise.
+   */
+  public XfunctionType getFunctionType(Xnode node) {
+    return getFunctionType(node.getType());
+  }
+
+  /**
+   * Get the XfunctionType associated with the given hash value.
+   *
+   * @param hash Hash value to check for.
+   * @return XfunctionType if associated. Null otherwise.
+   */
+  public XfunctionType getFunctionType(String hash) {
+    if(isFunctionType(hash)) {
+      return (XfunctionType) get(hash);
+    }
+    return null;
+  }
+
+  /**
+   * Get the XstructType associated with the node if any.
+   *
+   * @param node Node to look for type.
+   * @return XstructType if associated. Null otherwise.
+   */
+  public XstructType getStructType(Xnode node) {
+    return getStructType(node.getType());
+  }
+
+  /**
+   * Get the XstructType associated with the given hash value.
+   *
+   * @param hash Hash value to check for.
+   * @return XstructType if associated. Null otherwise.
+   */
+  public XstructType getStructType(String hash) {
+    if(isStructType(hash)) {
+      return (XstructType) get(hash);
+    }
+    return null;
   }
 
   /**
    * Get an element from the type table.
    *
-   * @param type Type of the element to be returned.
-   * @return Xtype object if found in the table. Null otherwise.
+   * @param hash Hash of type node to be retrieved.
+   * @return Xnode object if found in the table. Null otherwise.
    */
-  public Xtype get(String type) {
-    if(_table.containsKey(type)) {
-      return _table.get(type);
+  protected Xnode get(String hash) {
+    if(_table.containsKey(hash)) {
+      return _table.get(hash);
     }
     return null;
   }
@@ -117,103 +236,25 @@ public class XtypeTable extends Xnode {
   /**
    * Check if a type is present in the type table
    *
-   * @param type Type of the element to be checked.
+   * @param hash Hash of type node to be checked.
    * @return True if the element is present. False otherwise.
    */
-  public boolean hasType(String type) {
-    return _table.containsKey(type);
+  public boolean hasType(String hash) {
+    return _table.containsKey(hash);
   }
 
   /**
-   * Get a new unique function hash for the type table.
+   * Generate a unique hash in the current type table.
    *
-   * @return New unique fct type hash.
-   */
-  public String generateFctTypeHash() {
-    return generateHash(FCT_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique integer hash for the type table.
-   *
-   * @return New unique integer type hash.
-   */
-  public String generateIntegerTypeHash() {
-    return generateHash(INT_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique real hash for the type table.
-   *
-   * @return New unique real type hash.
-   */
-  public String generateRealTypeHash() {
-    return generateHash(REAL_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique array hash for the type table.
-   *
-   * @return New unique array type hash.
-   */
-  public String generateArrayTypeHash() {
-    return generateHash(ARRAY_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique character hash for the type table.
-   *
-   * @return New unique character type hash.
-   */
-  public String generateCharTypeHash() {
-    return generateHash(CHAR_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique logical hash for the type table.
-   *
-   * @return New unique logical type hash.
-   */
-  public String generateLogicalTypeHash() {
-    return generateHash(LOGICAL_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique complex hash for the type table.
-   *
-   * @return New unique complex type hash.
-   */
-  public String generateComplexTypeHash() {
-    return generateHash(COMPLEX_HASH_PREFIX);
-  }
-
-  /**
-   * Get a new unique hash for the type table with the given prefix.
-   *
-   * @param prefix Prefix added to the hash string.
+   * @param type Type to generate the hash.
    * @return New unique hash.
    */
-  private String generateHash(String prefix) {
+  public String generateHash(XcodeType type) {
     String hash;
     do {
-      hash = prefix + generateHash(HASH_LENGTH);
-    } while(_table.containsKey(hash));
+      hash = type.generateHash();
+    } while(hasType(hash));
     return hash;
-  }
-
-  /**
-   * Generate a new unique type hash for the table.
-   *
-   * @param length Length of the hash string to be generated.
-   * @return The new unique hash.
-   */
-  private String generateHash(int length) {
-    Random r = new Random();
-    StringBuilder sb = new StringBuilder();
-    while(sb.length() < length) {
-      sb.append(Integer.toHexString(r.nextInt()));
-    }
-    return sb.toString().substring(0, length);
   }
 
   /**
@@ -221,7 +262,7 @@ public class XtypeTable extends Xnode {
    *
    * @return A view of the values contained in this map
    */
-  public Collection<Xtype> values() {
+  public Collection<Xnode> values() {
     return _table.values();
   }
 

@@ -21,23 +21,15 @@ import java.util.List;
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
- * is_internal (bool)
+ * is_internal (bool), is_elemental (bool), is_pure (bool), bind (text),
+ * bind_name (text)
  *
  * @author clementval
  */
 
-public class XfunctionType extends Xtype {
+public class XfunctionType extends Xnode {
 
-  // Elements
   private Xparams _params = null;
-
-  private String _returnType = null;
-
-  // optional attributes
-  private String _resultName = null;
-  private boolean _isRecursive = false;
-  private boolean _isProgram = false;
-  private boolean _isInternal = false;
 
   /**
    * Basic ctor from Xnode.
@@ -67,14 +59,6 @@ public class XfunctionType extends Xtype {
     if(paramsNode != null) {
       _params = new Xparams(paramsNode.element());
     }
-    _returnType = getAttribute(Xattr.RETURN_TYPE);
-    _isProgram = getBooleanAttribute(Xattr.IS_PROGRAM);
-
-    // read optional attributes
-    _resultName = getAttribute(Xattr.RESULT_NAME);
-    _isRecursive = getBooleanAttribute(Xattr.IS_RECURSIVE);
-    _isProgram = getBooleanAttribute(Xattr.IS_PROGRAM);
-    _isInternal = getBooleanAttribute(Xattr.IS_INTERNAL);
   }
 
   /**
@@ -83,7 +67,7 @@ public class XfunctionType extends Xtype {
    * @return Result name value.
    */
   public String getResultName() {
-    return _resultName;
+    return getAttribute(Xattr.RESULT_NAME);
   }
 
   /**
@@ -92,7 +76,7 @@ public class XfunctionType extends Xtype {
    * @return True if the function is recursive. False otherwise.
    */
   public boolean isRecursive() {
-    return _isRecursive;
+    return getBooleanAttribute(Xattr.IS_RECURSIVE);
   }
 
   /**
@@ -101,7 +85,7 @@ public class XfunctionType extends Xtype {
    * @return True if the function is internal. False otherwise.
    */
   public boolean isInternal() {
-    return _isInternal;
+    return getBooleanAttribute(Xattr.IS_INTERNAL);
   }
 
   /**
@@ -110,7 +94,7 @@ public class XfunctionType extends Xtype {
    * @return The function's return type as String.
    */
   public String getReturnType() {
-    return _returnType;
+    return getAttribute(Xattr.RETURN_TYPE);
   }
 
   /**
@@ -119,7 +103,27 @@ public class XfunctionType extends Xtype {
    * @return True if the function is the program function. False otherwise.
    */
   public boolean isProgram() {
-    return _isProgram;
+    return getBooleanAttribute(Xattr.IS_PROGRAM);
+  }
+
+  /**
+   * Check whether function has the pure attribute set to true.
+   *
+   * @return True if the function has the pure attribute set to true.
+   * False otherwise.
+   */
+  public boolean isPure() {
+    return getBooleanAttribute(Xattr.IS_PURE);
+  }
+
+  /**
+   * Check whether function has the elemental attribute set to true.
+   *
+   * @return True if the function has the elemental attribute set to true.
+   * False otherwise.
+   */
+  public boolean isElemental() {
+    return getBooleanAttribute(Xattr.IS_ELEMENTAL);
   }
 
 

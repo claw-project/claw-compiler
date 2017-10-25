@@ -143,8 +143,7 @@ public class LoopHoist extends ClawBlockTransformation {
 
     // Check reshape mandatory points
     if(_clawStart.hasReshapeClause()) {
-      XfunctionDefinition fctDef =
-          XnodeUtil.findParentFunction(_clawStart.getPragma());
+      XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
         xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
                 "definition including the current directive",
@@ -181,7 +180,7 @@ public class LoopHoist extends ClawBlockTransformation {
    */
   private boolean checkUpperDefinition(XfunctionDefinition fctDef, String name)
   {
-    XfunctionDefinition upperDef = XnodeUtil.findParentFunction(fctDef);
+    XfunctionDefinition upperDef = fctDef.findParentFunction();
     return upperDef != null
         && (!(!upperDef.getSymbolTable().contains(name)
         || !upperDef.getDeclarationTable().contains(name))
@@ -252,7 +251,7 @@ public class LoopHoist extends ClawBlockTransformation {
     Xnode ifStmt = xcodeml.createNode(Xcode.FIFSTATEMENT);
     Xnode condition = xcodeml.createNode(Xcode.CONDITION);
     Xnode thenBlock = xcodeml.createNode(Xcode.THEN);
-    XnodeUtil.copyEnhancedInfo(g.getDoStmts()[0], ifStmt);
+    g.getDoStmts()[0].copyEnhancedInfo(ifStmt);
     Xnode cond = xcodeml.createNode(Xcode.LOGGEEXPR);
     Xnode inductionVar = g.getDoStmts()[0].matchDirectDescendant(Xcode.VAR);
     cond.append(inductionVar, true);

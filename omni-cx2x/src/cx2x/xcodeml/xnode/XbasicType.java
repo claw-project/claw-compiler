@@ -28,15 +28,13 @@ import java.util.List;
  * is_target (bool), is_external (bool),is_intrinsic (bool),
  * is_optional (bool), is_save (bool), is_parameter (bool),
  * is_allocatable (bool), intent (text: in, out, inout)
- * <p>
- * The type attribute is defined in the Xtype base class.
  *
  * @author clementval
  */
 
-public class XbasicType extends Xtype {
+public class XbasicType extends Xnode {
 
-  public static final int APPEND = -1;
+  private static final int APPEND = -1;
   private boolean _isArray = false;
   // Optional elements
   private List<Xnode> _dimensions = null;
@@ -314,6 +312,11 @@ public class XbasicType extends Xtype {
       _isArray = false;
     }
     _dimensions = keptDim;
+  }
+
+
+  public void addDimension(Xnode index) {
+    addDimension(index, APPEND);
   }
 
   /**

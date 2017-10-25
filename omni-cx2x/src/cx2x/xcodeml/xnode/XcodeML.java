@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -112,9 +111,7 @@ public class XcodeML extends Xnode {
     if(base.opcode() == Xcode.VAR) {
       return importVar(base, xcodemlSrc);
     } else {
-      Xnode intConst = createNode(Xcode.FINTCONSTANT);
-      intConst.setValue(base.value());
-      return intConst;
+      return createIntConstant(Integer.parseInt(base.value()));
     }
   }
 
@@ -132,24 +129,20 @@ public class XcodeML extends Xnode {
       throws IllegalTransformationException
   {
     String typeValue = base.getType();
-    if(!typeValue.startsWith(Xtype.PREFIX_INTEGER)) {
+    if(!XcodeType.INTEGER.isOfType(typeValue)) {
       throw new IllegalTransformationException("Only integer variable are " +
           "supported as lower/upper bound value for promoted arrays.");
     }
 
-    XbasicType type = (XbasicType) xcodemlSrc.getTypeTable().get(typeValue);
-    Xnode bType = createNode(Xcode.FBASICTYPE);
-    bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
-    bType.setAttribute(Xattr.TYPE, getTypeTable().generateIntegerTypeHash());
-    if(type != null && type.getIntent() != Xintent.NONE) {
-      bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
+    XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
+    XbasicType bType = createBasicType(getTypeTable().
+        generateHash(XcodeType.INTEGER), Xname.TYPE_F_INT, Xintent.NONE);
+    if(type != null) {
+      bType.setIntent(type.getIntent());
     }
 
-    Xnode var = createNode(Xcode.VAR);
-    var.setAttribute(Xattr.SCOPE, base.getAttribute(Xattr.SCOPE));
-    var.setValue(base.value());
-    var.setAttribute(Xattr.TYPE, bType.getType());
-    return var;
+    return createVar(bType.getType(), base.value(),
+        Xscope.fromString(base.getAttribute(Xattr.SCOPE)));
   }
 
   /**
@@ -163,15 +156,15 @@ public class XcodeML extends Xnode {
     if(typeId == null || getTypeTable().hasType(typeId)) {
       return;
     }
-    Xtype type = src.getTypeTable().get(typeId);
+    Xnode type = src.getTypeTable().get(typeId);
     if(type == null) {
       return;
     }
     Node rawNode = getDocument().importNode(type.element(), true);
-    Xtype importedType = new Xtype((Element) rawNode);
+    Xnode importedType = new Xnode((Element) rawNode);
     getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
-        && !XnodeUtil.isBuiltInType(importedType.getAttribute(Xattr.REF)))
+        && !XcodeType.isBuiltInType(importedType.getAttribute(Xattr.REF)))
     {
       importType(src, importedType.getAttribute(Xattr.REF));
     }
@@ -293,7 +286,7 @@ public class XcodeML extends Xnode {
     Xnode n = createNode(Xcode.NAME);
     n.setValue(name);
     if(type != null) {
-      n.setAttribute(Xattr.TYPE, type);
+      n.setType(type);
     }
     return n;
   }
@@ -321,7 +314,7 @@ public class XcodeML extends Xnode {
 
     // Check where is the last dummy arguments in the declaration
     if(afterDummyArgs) {
-      XfunctionType fctType = (XfunctionType) getTypeTable().get(fctDef);
+      XfunctionType fctType = getTypeTable().getFunctionType(fctDef);
       List<String> parameters = fctType.getParamsNames();
 
       for(Xnode n : fctDef.getDeclarationTable().values()) {
@@ -375,7 +368,7 @@ public class XcodeML extends Xnode {
    */
   public Xnode createVar(String type, String value, Xscope scope) {
     Xnode var = createNode(Xcode.VAR);
-    var.setAttribute(Xattr.TYPE, type);
+    var.setType(type);
     var.setAttribute(Xattr.SCOPE, scope.toString());
     var.setValue(value);
     return var;
@@ -391,10 +384,10 @@ public class XcodeML extends Xnode {
    */
   public Xnode createFctCall(String returnType, String name, String nameType) {
     Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
-    fctCall.setAttribute(Xattr.TYPE, returnType);
+    fctCall.setType(returnType);
     Xnode fctName = createNode(Xcode.NAME);
     fctName.setValue(name);
-    fctName.setAttribute(Xattr.TYPE, nameType);
+    fctName.setType(nameType);
     Xnode args = createNode(Xcode.ARGUMENTS);
     fctCall.append(fctName);
     fctCall.append(args);
@@ -411,9 +404,9 @@ public class XcodeML extends Xnode {
    */
   public Xnode createArrayRef(XbasicType type, Xnode var) {
     Xnode ref = createNode(Xcode.FARRAYREF);
-    ref.setAttribute(Xattr.TYPE, type.getRef());
+    ref.setType(type.getRef());
     Xnode varRef = createNode(Xcode.VARREF);
-    varRef.setAttribute(Xattr.TYPE, type.getType());
+    varRef.setType(type.getType());
     varRef.append(var);
     ref.append(varRef);
     return ref;
@@ -432,7 +425,7 @@ public class XcodeML extends Xnode {
     Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
     id.append(internalName);
-    id.setAttribute(Xattr.TYPE, type);
+    id.setType(type);
     id.setAttribute(Xattr.SCLASS, sclass);
     return new Xid(id.element());
   }
@@ -448,7 +441,7 @@ public class XcodeML extends Xnode {
     Xnode varD = createNode(Xcode.VARDECL);
     Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
-    internalName.setAttribute(Xattr.TYPE, nameType);
+    internalName.setType(nameType);
     varD.append(internalName);
     return varD;
   }
@@ -462,15 +455,15 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public XbasicType createBasicType(String type, String ref, Xintent intent) {
-    Xnode bt = createNode(Xcode.FBASICTYPE);
-    bt.setAttribute(Xattr.TYPE, type);
-    if(ref != null) {
-      bt.setAttribute(Xattr.REF, ref);
+    XbasicType bt = new XbasicType(createNode(Xcode.FBASICTYPE));
+    bt.setType(type);
+    if(ref != null && !ref.isEmpty()) {
+      bt.setRef(ref);
     }
-    if(intent != null) {
+    if(intent != null && intent != Xintent.NONE) {
       bt.setAttribute(Xattr.INTENT, intent.toString());
     }
-    return new XbasicType(bt.element());
+    return bt;
   }
 
   /**
@@ -561,24 +554,20 @@ public class XcodeML extends Xnode {
     indexRange.append(upper);
 
     // Lower bound
-    Xnode lowerBound = createNode(Xcode.FINTCONSTANT);
-    lowerBound.setValue(String.valueOf(startIndex));
-    lower.append(lowerBound);
+    lower.append(createIntConstant(startIndex));
 
     // Upper bound
     Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
     upper.append(fctCall);
     fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
-    fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+    fctCall.setType(Xname.TYPE_F_INT);
     Xnode name = createNode(Xcode.NAME);
     name.setValue(Xname.INTRINSIC_SIZE);
     fctCall.append(name);
     Xnode args = createNode(Xcode.ARGUMENTS);
     fctCall.append(args);
     args.append(arrayVar, true);
-    Xnode dim = createNode(Xcode.FINTCONSTANT);
-    dim.setValue(String.valueOf(dimension));
-    args.append(dim);
+    args.append(createIntConstant(dimension));
     return indexRange;
   }
 
@@ -599,8 +588,7 @@ public class XcodeML extends Xnode {
     Xnode hook = null;
     // Newly created parameter must be added before any optional parameter
     for(Xnode param : fctType.getParams().getAll()) {
-      XbasicType paramType =
-          (XbasicType) getTypeTable().get(param);
+      XbasicType paramType = getTypeTable().getBasicType(param);
       if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
         break;
@@ -648,20 +636,17 @@ public class XcodeML extends Xnode {
     Xnode valueList = createNode(Xcode.VALUELIST);
     for(String charConstant : charConstants) {
       // Create the char constant type
-      String charTypeHash = getTypeTable().generateCharTypeHash();
-      Xtype charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
+      String charTypeHash = getTypeTable().generateHash(XcodeType.CHARACTER);
+      Xnode charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
       Xnode len = createNode(Xcode.LEN);
-      Xnode intConstant = createNode(Xcode.FINTCONSTANT);
-      intConstant.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
-      intConstant.setValue(charConstant.length() + "");
-      len.append(intConstant);
+      len.append(createIntConstant(charConstant.length()));
       charType.append(len);
       getTypeTable().add(charType);
 
       // Create the value element to be added to the list
       Xnode valueElement = createNode(Xcode.VALUE);
       Xnode fCharElement = createNode(Xcode.FCHARACTERCONSTANT);
-      fCharElement.setAttribute(Xattr.TYPE, charTypeHash);
+      fCharElement.setType(charTypeHash);
       fCharElement.setValue(charConstant);
       valueElement.append(fCharElement);
       valueList.append(valueElement);
@@ -678,8 +663,9 @@ public class XcodeML extends Xnode {
    */
   public Xnode createIntConstant(int value) {
     Xnode n = createNode(Xcode.FINTCONSTANT);
-    n.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+    n.setType(Xname.TYPE_F_INT);
     n.setValue(String.valueOf(value));
     return n;
   }
+
 }
