@@ -97,6 +97,7 @@ public class BoundDefinition {
         XbasicType bType =
             xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
+        _boundTypeHash = bType.getType();
       }
       return xcodeml.createVar(_boundTypeHash, _strBoundValue, Xscope.LOCAL);
     } else {

@@ -371,6 +371,7 @@ public class XbasicType extends Xnode {
    */
   @Override
   public String toString() {
-    return String.format("FbasicType (type=%s, ref=%s)", getType(), getRef());
+    return String.format("FbasicType (type=\"%s\", ref=\"%s\", intent=\"%s\")",
+        getType(), getRef(), getIntent().toString());
   }
 }

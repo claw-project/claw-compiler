@@ -167,8 +167,7 @@ public enum Xcode {
   private final boolean _hasBody;
 
   Xcode(String s) {
-    _name = s;
-    _hasBody = false;
+    this(s, false);
   }
 
   Xcode(String s, boolean hasBody) {
