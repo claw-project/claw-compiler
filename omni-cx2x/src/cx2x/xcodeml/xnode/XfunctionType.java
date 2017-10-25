@@ -21,7 +21,8 @@ import java.util.List;
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
- * is_internal (bool)
+ * is_internal (bool), is_elemental (bool), is_pure (bool), bind (text),
+ * bind_name (text)
  *
  * @author clementval
  */
@@ -103,6 +104,26 @@ public class XfunctionType extends Xnode {
    */
   public boolean isProgram() {
     return getBooleanAttribute(Xattr.IS_PROGRAM);
+  }
+
+  /**
+   * Check whether function has the pure attribute set to true.
+   *
+   * @return True if the function has the pure attribute set to true.
+   * False otherwise.
+   */
+  public boolean isPure() {
+    return getBooleanAttribute(Xattr.IS_PURE);
+  }
+
+  /**
+   * Check whether function has the elemental attribute set to true.
+   *
+   * @return True if the function has the elemental attribute set to true.
+   * False otherwise.
+   */
+  public boolean isElemental() {
+    return getBooleanAttribute(Xattr.IS_ELEMENTAL);
   }
 
 
