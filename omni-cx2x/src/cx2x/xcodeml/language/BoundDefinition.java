@@ -13,7 +13,6 @@ import cx2x.xcodeml.xnode.*;
  */
 public class BoundDefinition {
 
-  private String _boundTypeHash = null;
   private String _strBoundValue = null;
   private int _intBoundValue;
   private BoundType _boundType = BoundType.LOWER;
@@ -42,15 +41,6 @@ public class BoundDefinition {
    */
   public boolean isVar() {
     return _strBoundValue != null;
-  }
-
-  /**
-   * Set type associated with the bound
-   *
-   * @param value Type hash value.
-   */
-  public void setType(String value) {
-    _boundTypeHash = value;
   }
 
   /**
@@ -93,13 +83,9 @@ public class BoundDefinition {
    */
   Xnode generateValueNode(XcodeML xcodeml) {
     if(isVar()) {
-      if(_boundTypeHash == null) {
-        XbasicType bType =
-            xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
-        xcodeml.getTypeTable().add(bType);
-        _boundTypeHash = bType.getType();
-      }
-      return xcodeml.createVar(_boundTypeHash, _strBoundValue, Xscope.LOCAL);
+      XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
+      xcodeml.getTypeTable().add(bt);
+      return xcodeml.createVar(bt.getType(), _strBoundValue, Xscope.LOCAL);
     } else {
       return xcodeml.createIntConstant(_intBoundValue);
     }
