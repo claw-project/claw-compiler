@@ -8,7 +8,7 @@ package cx2x.xcodeml.xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Test the features of the Xid class
@@ -38,6 +38,8 @@ public class XidTest {
     assertEquals(TEST_NAME, simpleId.getName());
     assertEquals(TEST_TYPE, simpleId.getType());
     assertEquals(TEST_SCLASS, simpleId.getSclass());
+    assertNotNull(simpleId.toString());
+    assertFalse(simpleId.toString().isEmpty());
   }
 
   @Test

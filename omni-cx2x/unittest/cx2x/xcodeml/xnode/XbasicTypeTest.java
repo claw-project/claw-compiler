@@ -19,11 +19,9 @@ public class XbasicTypeTest {
 
   private static final String type1 = "<FbasicType type=\"TYPE_NAME\" " +
       "ref=\"Fint\"><kind>8</kind></FbasicType>";
-
   private static final String type2 = "<FbasicType type=\"TYPE_NAME\" " +
       "ref=\"Fcharacter\"> <len>" +
       "<FintConstant type=\"Fint\">10</FintConstant> </len></FbasicType>";
-
   private static final String type3 = "<FbasicType type=\"TYPE_NAME\" " +
       "ref=\"Fint\"><arrayIndex>" +
       "<FintConstant type=\"Fint\">10</FintConstant></arrayIndex>" +
@@ -31,6 +29,11 @@ public class XbasicTypeTest {
       "</lowerBound><upperBound>" +
       "<FintConstant type=\"Fint\">10</FintConstant></upperBound>" +
       "</indexRange></FbasicType>";
+  private static final String type4 = "<FbasicType type=\"TYPE_NAME\" " +
+      "ref=\"Fint\">" +
+      "<indexRange is_assumed_shape=\"true\"></indexRange>" +
+      "<indexRange is_assumed_shape=\"true\"></indexRange>" +
+      "</FbasicType>";
 
   /**
    * Test setter for FbasicType
@@ -201,6 +204,42 @@ public class XbasicTypeTest {
     assertEquals(0, b.getDimensions());
     assertFalse(b.isArray());
     assertFalse(b.isAllAssumedShape());
+
+    XbasicType b2 = XmlHelper.createXbasicTypeFromString(type4);
+    assertNotNull(b2);
+    assertTrue(b2.isAllAssumedShape());
+
+    assertNotNull(b2.toString());
+    assertFalse(b2.toString().isEmpty());
+  }
+
+  @Test
+  public void addDimensionTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    XbasicType bt = xcodeml.createBasicType(
+        xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
+        Xname.TYPE_F_INT, Xintent.NONE);
+    assertEquals(0, bt.getDimensions());
+    assertFalse(bt.isArray());
+    assertFalse(bt.isAllAssumedShape());
+    Xnode d1 = xcodeml.createEmptyAssumedShaped();
+    bt.addDimension(d1);
+    assertEquals(1, bt.getDimensions());
+    Xnode d2= xcodeml.createEmptyAssumedShaped();
+    bt.addDimension(d2);
+    assertEquals(2, bt.getDimensions());
+    assertTrue(bt.isAllAssumedShape());
+    Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
+    arrayIndex.append(xcodeml.createIntConstant(10));
+    bt.addDimension(arrayIndex, 0);
+    assertEquals(3, bt.getDimensions());
+    assertEquals(Xcode.ARRAYINDEX, bt.getDimensions(0).opcode());
+    assertEquals(Xcode.INDEXRANGE, bt.getDimensions(1).opcode());
+    assertEquals(Xcode.INDEXRANGE, bt.getDimensions(2).opcode());
+    assertTrue(bt.getDimensions(1).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE));
+    assertTrue(bt.getDimensions(2).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE));
+    assertFalse(bt.isAllAssumedShape());
+    assertTrue(bt.isArray());
   }
 
   @Test

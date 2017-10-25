@@ -222,7 +222,7 @@ public final class Xname {
   public static final String TYPE_GUARD = "typeGuard";
   public static final String TYPE_PARAM = "typeParam";
   public static final String TYPE_PARAMS = "typeParams";
-  public static final String TYPE_PARAM_VALUE = "typeParamValues";
+  public static final String TYPE_PARAM_VALUES = "typeParamValues";
   public static final String TYPE_TABLE = "typeTable";
   public static final String UNLOCK_STATEMENT = "unlockStatement";
   public static final String UPPER_BOUND = "upperBound";

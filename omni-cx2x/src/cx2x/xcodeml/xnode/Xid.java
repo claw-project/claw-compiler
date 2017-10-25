@@ -107,5 +107,4 @@ public class Xid extends Xnode {
     return String.format("%s (type=%s, sclass=%s)", getName(),
         getType(), getSclass());
   }
-
 }
