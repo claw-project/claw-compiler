@@ -347,7 +347,8 @@ public class Parallelize extends ClawTransformation {
   {
     // Handle PURE function / subroutine
     ClawTranslator trans = (ClawTranslator) translator;
-    boolean pureRemoved = XnodeUtil.removePure(_fctDef, _fctType);
+    boolean pureRemoved = _fctType.isPure();
+    _fctType.removeAttribute(Xattr.IS_PURE);
     if(trans.getConfiguration().isForcePure() && pureRemoved) {
       throw new IllegalTransformationException(
           "PURE specifier cannot be removed", _fctDef.lineNo());
@@ -709,6 +710,7 @@ public class Parallelize extends ClawTransformation {
                                                int index)
   {
     for(String id : ids) {
+      // TODO refactor -> move to TransformationHelper
       List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.body(), id);
 
       Xid sId = _fctDef.getSymbolTable().get(id);
