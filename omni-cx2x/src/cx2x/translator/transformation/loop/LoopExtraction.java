@@ -204,7 +204,7 @@ public class LoopExtraction extends ClawTransformation {
         ClawConstant.EXTRACTION_SUFFIX +
         translator.getNextTransformationCounter();
     clonedFctDef.getName().setValue(newFctName);
-    clonedFctDef.getName().setAttribute(Xattr.TYPE, newFctTypeHash);
+    clonedFctDef.getName().setType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
         .get(_fctDefToExtract.getName().value());
@@ -269,9 +269,7 @@ public class LoopExtraction extends ClawTransformation {
 
     // Change called fct name
     _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);
-    _fctCall.matchDirectDescendant(Xcode.NAME).
-        setAttribute(Xattr.TYPE, newFctTypeHash);
-
+    _fctCall.matchDirectDescendant(Xcode.NAME).setType(newFctTypeHash);
 
     // Adapt function call parameters and function declaration
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
@@ -311,10 +309,10 @@ public class LoopExtraction extends ClawTransformation {
           }
 
           Xnode newArg = xcodeml.createNode(Xcode.FARRAYREF);
-          newArg.setAttribute(Xattr.TYPE, type.getRef());
+          newArg.setType(type.getRef());
 
           Xnode varRef = xcodeml.createNode(Xcode.VARREF);
-          varRef.setAttribute(Xattr.TYPE, argument.getType());
+          varRef.setType(argument.getType());
 
           varRef.append(argument, true);
           newArg.append(varRef);

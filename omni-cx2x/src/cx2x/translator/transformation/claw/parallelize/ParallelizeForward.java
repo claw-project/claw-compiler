@@ -541,15 +541,15 @@ public class ParallelizeForward extends ClawTransformation {
                 : TransformationHelper.duplicateWithDimension(typeBase,
                 typeToUpdate, xcodeml, _mod, overPos, dimensions);
 
-            pUpdate.setAttribute(Xattr.TYPE, type);
+            pUpdate.setType(type);
 
             Xid id = fDef.getSymbolTable().get(original_param);
             if(id != null) {
-              id.setAttribute(Xattr.TYPE, type);
+              id.setType(type);
             }
             Xnode varDecl = fDef.getDeclarationTable().get(original_param);
             if(varDecl != null) {
-              varDecl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
+              varDecl.matchSeq(Xcode.NAME).setType(type);
             }
 
             _promotedVar.add(original_param);

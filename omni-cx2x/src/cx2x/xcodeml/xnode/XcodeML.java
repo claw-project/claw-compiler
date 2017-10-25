@@ -137,8 +137,7 @@ public class XcodeML extends Xnode {
     XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
     Xnode bType = createNode(Xcode.FBASICTYPE);
     bType.setAttribute(Xattr.REF, Xname.TYPE_F_INT);
-    bType.setAttribute(Xattr.TYPE,
-        getTypeTable().generateHash(XcodeType.INTEGER));
+    bType.setType(getTypeTable().generateHash(XcodeType.INTEGER));
     if(type != null && type.getIntent() != Xintent.NONE) {
       bType.setAttribute(Xattr.INTENT, type.getIntent().toString());
     }
@@ -288,7 +287,7 @@ public class XcodeML extends Xnode {
     Xnode n = createNode(Xcode.NAME);
     n.setValue(name);
     if(type != null) {
-      n.setAttribute(Xattr.TYPE, type);
+      n.setType(type);
     }
     return n;
   }
@@ -370,7 +369,7 @@ public class XcodeML extends Xnode {
    */
   public Xnode createVar(String type, String value, Xscope scope) {
     Xnode var = createNode(Xcode.VAR);
-    var.setAttribute(Xattr.TYPE, type);
+    var.setType(type);
     var.setAttribute(Xattr.SCOPE, scope.toString());
     var.setValue(value);
     return var;
@@ -386,10 +385,10 @@ public class XcodeML extends Xnode {
    */
   public Xnode createFctCall(String returnType, String name, String nameType) {
     Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
-    fctCall.setAttribute(Xattr.TYPE, returnType);
+    fctCall.setType(returnType);
     Xnode fctName = createNode(Xcode.NAME);
     fctName.setValue(name);
-    fctName.setAttribute(Xattr.TYPE, nameType);
+    fctName.setType(nameType);
     Xnode args = createNode(Xcode.ARGUMENTS);
     fctCall.append(fctName);
     fctCall.append(args);
@@ -406,9 +405,9 @@ public class XcodeML extends Xnode {
    */
   public Xnode createArrayRef(XbasicType type, Xnode var) {
     Xnode ref = createNode(Xcode.FARRAYREF);
-    ref.setAttribute(Xattr.TYPE, type.getRef());
+    ref.setType(type.getRef());
     Xnode varRef = createNode(Xcode.VARREF);
-    varRef.setAttribute(Xattr.TYPE, type.getType());
+    varRef.setType(type.getType());
     varRef.append(var);
     ref.append(varRef);
     return ref;
@@ -427,7 +426,7 @@ public class XcodeML extends Xnode {
     Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
     id.append(internalName);
-    id.setAttribute(Xattr.TYPE, type);
+    id.setType(type);
     id.setAttribute(Xattr.SCLASS, sclass);
     return new Xid(id.element());
   }
@@ -443,7 +442,7 @@ public class XcodeML extends Xnode {
     Xnode varD = createNode(Xcode.VARDECL);
     Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
-    internalName.setAttribute(Xattr.TYPE, nameType);
+    internalName.setType(nameType);
     varD.append(internalName);
     return varD;
   }
@@ -458,7 +457,7 @@ public class XcodeML extends Xnode {
    */
   public XbasicType createBasicType(String type, String ref, Xintent intent) {
     Xnode bt = createNode(Xcode.FBASICTYPE);
-    bt.setAttribute(Xattr.TYPE, type);
+    bt.setType(type);
     if(ref != null) {
       bt.setAttribute(Xattr.REF, ref);
     }
@@ -562,7 +561,7 @@ public class XcodeML extends Xnode {
     Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
     upper.append(fctCall);
     fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
-    fctCall.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+    fctCall.setType(Xname.TYPE_F_INT);
     Xnode name = createNode(Xcode.NAME);
     name.setValue(Xname.INTRINSIC_SIZE);
     fctCall.append(name);
@@ -648,7 +647,7 @@ public class XcodeML extends Xnode {
       // Create the value element to be added to the list
       Xnode valueElement = createNode(Xcode.VALUE);
       Xnode fCharElement = createNode(Xcode.FCHARACTERCONSTANT);
-      fCharElement.setAttribute(Xattr.TYPE, charTypeHash);
+      fCharElement.setType(charTypeHash);
       fCharElement.setValue(charConstant);
       valueElement.append(fCharElement);
       valueList.append(valueElement);
@@ -665,7 +664,7 @@ public class XcodeML extends Xnode {
    */
   public Xnode createIntConstant(int value) {
     Xnode n = createNode(Xcode.FINTCONSTANT);
-    n.setAttribute(Xattr.TYPE, Xname.TYPE_F_INT);
+    n.setType(Xname.TYPE_F_INT);
     n.setValue(String.valueOf(value));
     return n;
   }

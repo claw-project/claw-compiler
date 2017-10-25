@@ -243,7 +243,7 @@ public class TransformationHelper {
 
       // Update symbol & declaration
       id.setType(newType.getType());
-      decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, newType.getType());
+      decl.matchSeq(Xcode.NAME).setType(newType.getType());
 
       // Update array references
       List<Xnode> refs =
@@ -401,7 +401,7 @@ public class TransformationHelper {
           if(lType.isArray()) {
             String newType = TransformationHelper.duplicateWithDimension(lType,
                 crtType, mod, xcodeml, overPos, dimensions);
-            pMod.setAttribute(Xattr.TYPE, newType);
+            pMod.setType(newType);
           }
         }
 
@@ -574,7 +574,7 @@ public class TransformationHelper {
       }
     }
     id.setType(type);
-    decl.matchSeq(Xcode.NAME).setAttribute(Xattr.TYPE, type);
+    decl.matchSeq(Xcode.NAME).setType(type);
     xcodeml.getTypeTable().add(newType);
 
     // Update params in function type
@@ -582,7 +582,7 @@ public class TransformationHelper {
       if(param.value().equals(fieldId)) {
 
         // Update type with new promoted type
-        param.setAttribute(Xattr.TYPE, type);
+        param.setType(type);
 
         // Save the over clause for parallelize forward transformation
         if(claw.hasOverClause()) {
@@ -671,9 +671,9 @@ public class TransformationHelper {
         for(Xnode ref : refs) {
           Xnode arrayRef = xcodeml.createNode(Xcode.FARRAYREF);
           Xnode varRef = xcodeml.createNode(Xcode.VARREF);
-          arrayRef.setAttribute(Xattr.TYPE, ref.getType());
-          varRef.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
-          ref.setAttribute(Xattr.TYPE, promotions.get(data).getTargetType());
+          arrayRef.setType(ref.getType());
+          varRef.setType(promotions.get(data).getTargetType());
+          ref.setType(promotions.get(data).getTargetType());
           ref.insertAfter(arrayRef);
           arrayRef.append(varRef);
           varRef.append(ref);
@@ -732,7 +732,7 @@ public class TransformationHelper {
   {
     XbasicType newType = toUpdate.cloneNode();
     String type = xcodemlDst.getTypeTable().generateHash(XcodeType.ARRAY);
-    newType.setAttribute(Xattr.TYPE, type);
+    newType.setType(type);
 
     if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {
       int additionalDimensions =
