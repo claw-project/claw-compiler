@@ -610,7 +610,15 @@ public class TransformationHelper {
    * ones.
    */
   private static OverPosition getOverPosition(List<String> overClause) {
-    return OverPosition.fromList(overClause);
+    if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
+        overClause.get(overClause.size() - 1).
+            equals(DimensionDefinition.BASE_DIM))
+    {
+      return OverPosition.MIDDLE;
+    } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
+      return OverPosition.AFTER;
+    }
+    return OverPosition.BEFORE;
   }
 
   /**
