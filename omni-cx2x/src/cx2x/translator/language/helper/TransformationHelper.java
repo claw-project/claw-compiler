@@ -536,8 +536,8 @@ public class TransformationHelper {
            * 2. Insert the dimensions before currently existing ones.
            * 3. Insert the dimensions after currently existing ones. */
           if(overPos == null) {
-            overPos =
-                getOverPosition(claw.getOverClauseValues().get(overIndex));
+            overPos = OverPosition.fromList(
+                claw.getOverClauseValues().get(overIndex));
           }
           proInfo.setOverPosition(overPos);
           if(overPos == OverPosition.MIDDLE) {
@@ -586,7 +586,7 @@ public class TransformationHelper {
 
         // Save the over clause for parallelize forward transformation
         if(claw.hasOverClause()) {
-          param.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
+          param.setAttribute(ClawAttr.OVER.toString(), OverPosition.fromList(
               claw.getOverClauseValues().get(overIndex)).toString());
         }
       }
@@ -595,30 +595,11 @@ public class TransformationHelper {
         && fctType.getAttribute(Xattr.RESULT_NAME).equals(fieldId))
     {
       if(claw.hasOverClause()) {
-        fctType.setAttribute(ClawAttr.OVER.toString(), getOverPosition(
+        fctType.setAttribute(ClawAttr.OVER.toString(), OverPosition.fromList(
             claw.getOverClauseValues().get(overIndex)).toString());
       }
     }
     return proInfo;
-  }
-
-  /**
-   * Get the enum value for the over position.
-   *
-   * @param overClause List of values in the over clause.
-   * @return Position of the newly inserted dimensions compare the the existing
-   * ones.
-   */
-  private static OverPosition getOverPosition(List<String> overClause) {
-    if(overClause.get(0).equals(DimensionDefinition.BASE_DIM) &&
-        overClause.get(overClause.size() - 1).
-            equals(DimensionDefinition.BASE_DIM))
-    {
-      return OverPosition.MIDDLE;
-    } else if(overClause.get(0).equals(DimensionDefinition.BASE_DIM)) {
-      return OverPosition.AFTER;
-    }
-    return OverPosition.BEFORE;
   }
 
   /**
