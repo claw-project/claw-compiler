@@ -94,9 +94,8 @@ public class BoundDefinition {
   Xnode generateValueNode(XcodeML xcodeml) {
     if(isVar()) {
       if(_boundTypeHash == null) {
-        _boundTypeHash = xcodeml.getTypeTable().generateHash(XcodeType.INTEGER);
-        XbasicType bType = xcodeml.createBasicType(_boundTypeHash,
-            Xname.TYPE_F_INT, Xintent.IN);
+        XbasicType bType =
+            xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
         xcodeml.getTypeTable().add(bType);
       }
       return xcodeml.createVar(_boundTypeHash, _strBoundValue, Xscope.LOCAL);

@@ -314,7 +314,7 @@ public class Kcaching extends ClawTransformation {
 
     // 2.2 inject a new entry in the symbol table
     if(!fctDef.getSymbolTable().contains(cacheName)) {
-      Xid cacheVarId = xcodeml.createId(type, Xname.SCLASS_F_LOCAL, cacheName);
+      Xid cacheVarId = xcodeml.createId(type, XstorageClass.F_LOCAL, cacheName);
       fctDef.getSymbolTable().add(cacheVarId, false);
     }
 

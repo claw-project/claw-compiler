@@ -430,12 +430,11 @@ public class ParallelizeForward extends ClawTransformation {
               _claw.getPragma().lineNo());
         }
         // Size variable have to be declared
-        XbasicType intTypeIntentIn = xcodeml.createBasicType(
-            xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
-            Xname.TYPE_F_INT, Xintent.IN);
+        XbasicType intTypeIntentIn =
+            xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
         xcodeml.getTypeTable().add(intTypeIntentIn);
-        xcodeml.createIdAndDecl(var, intTypeIntentIn.getType(),
-            Xname.SCLASS_F_PARAM, fDef, true);
+        xcodeml.createIdAndDecl(var, XbuiltInType.INT,
+            XstorageClass.F_PARAM, fDef, true);
         type = intTypeIntentIn.getType();
         Xnode param = xcodeml.createAndAddParam(var, type, _parentFctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
@@ -835,7 +834,7 @@ public class ParallelizeForward extends ClawTransformation {
         if(pointee.value().equals(fieldId)) {
           XbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
           XbasicType pointeeType = xcodeml.getTypeTable().
-                  getBasicType(pointeeInfo.getTargetType());
+              getBasicType(pointeeInfo.getTargetType());
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()

@@ -216,9 +216,7 @@ public class XbasicTypeTest {
   @Test
   public void addDimensionTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    XbasicType bt = xcodeml.createBasicType(
-        xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
-        Xname.TYPE_F_INT, Xintent.NONE);
+    XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.NONE);
     assertEquals(0, bt.getDimensions());
     assertFalse(bt.isArray());
     assertFalse(bt.isAllAssumedShape());

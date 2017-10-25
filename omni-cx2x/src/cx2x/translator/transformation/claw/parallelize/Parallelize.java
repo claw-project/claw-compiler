@@ -740,9 +740,8 @@ public class Parallelize extends ClawTransformation {
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
-    XbasicType intTypeIntentIn = xcodeml.createBasicType(
-        xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
-        Xname.TYPE_F_INT, Xintent.IN);
+    XbasicType intTypeIntentIn =
+        xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
     xcodeml.getTypeTable().add(intTypeIntentIn);
 
     // For each dimension defined in the directive
@@ -750,7 +749,7 @@ public class Parallelize extends ClawTransformation {
       // Create the parameter for the lower bound
       if(dimension.getLowerBound().isVar()) {
         xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
+            XbuiltInType.INT, XstorageClass.F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(
@@ -762,7 +761,7 @@ public class Parallelize extends ClawTransformation {
       // Create parameter for the upper bound
       if(dimension.getUpperBound().isVar()) {
         xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
-            intTypeIntentIn.getType(), Xname.SCLASS_F_PARAM, _fctDef, true);
+            XbuiltInType.INT, XstorageClass.F_PARAM, _fctDef, true);
 
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(
@@ -771,8 +770,8 @@ public class Parallelize extends ClawTransformation {
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       }
       // Create induction variable declaration
-      xcodeml.createIdAndDecl(dimension.getIdentifier(), Xname.TYPE_F_INT,
-          Xname.SCLASS_F_LOCAL, _fctDef, false);
+      xcodeml.createIdAndDecl(dimension.getIdentifier(), XbuiltInType.INT,
+          XstorageClass.F_LOCAL, _fctDef, false);
     }
   }
 

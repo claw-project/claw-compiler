@@ -323,7 +323,7 @@ public class TransformationHelper {
       mod.getTypeTable().element().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);
       Xid importedFctTypeId = mod.createId(importedFctType.getType(),
-          Xname.SCLASS_F_FUNC, fctDef.getName().value());
+          XstorageClass.F_FUNC, fctDef.getName().value());
       mod.getIdentifiers().add(importedFctTypeId);
 
       // check if params need to be imported as well
@@ -359,9 +359,8 @@ public class TransformationHelper {
       }
     }
 
-    XbasicType modIntTypeIntentIn = mod.createBasicType(
-        mod.getTypeTable().generateHash(XcodeType.INTEGER), Xname.TYPE_F_INT,
-        Xintent.IN);
+    XbasicType modIntTypeIntentIn =
+        mod.createBasicType(XbuiltInType.INT, Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
     List<Xnode> paramsLocal = fctType.getParams().getAll();
@@ -463,8 +462,8 @@ public class TransformationHelper {
   {
     for(DimensionDefinition dim : dimensions) {
       if(fctDef.getDeclarationTable().get(dim.getIdentifier()) == null) {
-        xcodeml.createIdAndDecl(dim.getIdentifier(), Xname.TYPE_F_INT,
-            Xname.SCLASS_F_LOCAL, fctDef, false);
+        xcodeml.createIdAndDecl(dim.getIdentifier(), XbuiltInType.INT,
+            XstorageClass.F_LOCAL, fctDef, false);
       }
     }
   }

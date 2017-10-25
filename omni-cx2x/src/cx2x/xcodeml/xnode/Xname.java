@@ -15,30 +15,7 @@ package cx2x.xcodeml.xnode;
  */
 
 public final class Xname {
-  // Base type (XcodeML/F 0.91J 9.1)
-  public static final String TYPE_F_INT = "Fint";
-  public static final String TYPE_F_REAL = "Freal";
-  public static final String TYPE_F_COMPLEX = "Fcomplex";
-  public static final String TYPE_F_LOGICAL = "Flogical";
-  public static final String TYPE_F_CHAR = "Fcharacter";
-  public static final String TYPE_F_VOID = "Fvoid";
-  // Storage class (part of Id - XcodeML/F 0.91J 8.2)
-  public static final String SCLASS_AUTO = "auto";
-  public static final String SCLASS_EXTERN = "extern";
-  public static final String SCLASS_EXTERN_DEF = "extern_def";
-  public static final String SCLASS_F_LOCAL = "flocal";
-  public static final String SCLASS_F_FUNC = "ffunc";
-  public static final String SCLASS_F_PARAM = "fparam";
-  public static final String SCLASS_LABEL = "label";
-  public static final String SCLASS_PARAM = "param";
-  // Scope (part of Var - XcodeML/F 0.91J 7.4.1)
-  public static final String SCOPE_LOCAL = "local";
-  public static final String SCOPE_GLOBAL = "global";
-  public static final String SCOPE_PARAM = "param";
-  // Intent (part of FbasicType - XcodeML/F 0.91J 3.3)
-  public static final String INTENT_IN = "in";
-  public static final String INTENT_OUT = "out";
-  public static final String INTENT_INOUT = "inout";
+
   // Element attributes
   public static final String ATTR_ATTR = "attr";
   public static final String ATTR_BIND = "bind";
@@ -173,7 +150,8 @@ public final class Xname {
   public static final String F_NULLIFY_STATEMENT = "FnullifyStatement";
   public static final String F_OPEN_STATEMENT = "FopenStatement";
   public static final String FOR_ALL_STATEMENT = "forallStatement";
-  public static final String F_POINTER_ASSIGN_STATEMENT = "FpointerAssignStatement";
+  public static final String F_POINTER_ASSIGN_STATEMENT =
+      "FpointerAssignStatement";
   public static final String F_PRAGMA_STMT = "FpragmaStatement";
   public static final String F_PRINT_STATEMENT = "FprintStatement";
   public static final String F_PROCEDURE_DECL = "FprocedureDecl";
@@ -216,7 +194,8 @@ public final class Xname {
   public static final String SYNC_MEMORY_STATEMENT = "syncMemoryStatement";
   public static final String SYNC_STAT = "syncStat";
   public static final String THEN = "then";
-  public static final String TYPE_BOUND_GENERIC_PROCEDURE = "typeBoundGenericProcedure";
+  public static final String TYPE_BOUND_GENERIC_PROCEDURE =
+      "typeBoundGenericProcedure";
   public static final String TYPE_BOUND_PROCEDURE = "typeBoundProcedure";
   public static final String TYPE_BOUND_PROCEDURES = "typeBoundProcedures";
   public static final String TYPE_GUARD = "typeGuard";
@@ -260,6 +239,30 @@ public final class Xname {
   public static final String USER_UNARY_EXPR = "userUnaryExpr";
   // Intrinsic function
   public static final String INTRINSIC_SIZE = "size";
+  // Base type (XcodeML/F 0.91J 9.1)
+  static final String TYPE_F_INT = "Fint";
+  static final String TYPE_F_REAL = "Freal";
+  static final String TYPE_F_COMPLEX = "Fcomplex";
+  static final String TYPE_F_LOGICAL = "Flogical";
+  static final String TYPE_F_CHAR = "Fcharacter";
+  static final String TYPE_F_VOID = "Fvoid";
+  // Storage class (part of Id - XcodeML/F 0.91J 8.2)
+  static final String SCLASS_AUTO = "auto";
+  static final String SCLASS_EXTERN = "extern";
+  static final String SCLASS_EXTERN_DEF = "extern_def";
+  static final String SCLASS_F_LOCAL = "flocal";
+  static final String SCLASS_F_FUNC = "ffunc";
+  static final String SCLASS_F_PARAM = "fparam";
+  static final String SCLASS_LABEL = "label";
+  static final String SCLASS_PARAM = "param";
+  // Scope (part of Var - XcodeML/F 0.91J 7.4.1)
+  static final String SCOPE_LOCAL = "local";
+  static final String SCOPE_GLOBAL = "global";
+  static final String SCOPE_PARAM = "param";
+  // Intent (part of FbasicType - XcodeML/F 0.91J 3.3)
+  static final String INTENT_IN = "in";
+  static final String INTENT_OUT = "out";
+  static final String INTENT_INOUT = "inout";
   // helpers
   static final String TRUE = "true";
   static final String FALSE = "false";
