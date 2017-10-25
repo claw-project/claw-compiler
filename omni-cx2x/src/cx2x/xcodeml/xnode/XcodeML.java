@@ -135,8 +135,7 @@ public class XcodeML extends Xnode {
     }
 
     XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
-    XbasicType bType = createBasicType(getTypeTable().
-        generateHash(XcodeType.INTEGER), Xname.TYPE_F_INT, Xintent.NONE);
+    XbasicType bType = createBasicType(XbuiltInType.INT, Xintent.NONE);
     if(type != null) {
       bType.setIntent(type.getIntent());
     }
@@ -303,7 +302,27 @@ public class XcodeML extends Xnode {
    *                       dummy argument. If false, the variable is append at
    *                       the end.
    */
-  public void createIdAndDecl(String name, String type, String sclass,
+  public void createIdAndDecl(String name, XbuiltInType type,
+                              XstorageClass sclass,
+                              XfunctionDefinition fctDef,
+                              boolean afterDummyArgs)
+  {
+    createIdAndDecl(name, type.toString(), sclass, fctDef, afterDummyArgs);
+  }
+
+  /**
+   * Create the id and varDecl nodes and add them to the symbol/declaration
+   * table.
+   *
+   * @param name           Name of the variable.
+   * @param type           Type of the variable.
+   * @param sclass         Scope class of the variable (from Xname).
+   * @param fctDef         Function definition in which id and decl are created.
+   * @param afterDummyArgs If true, the new variable is declared just after the
+   *                       dummy argument. If false, the variable is append at
+   *                       the end.
+   */
+  public void createIdAndDecl(String name, String type, XstorageClass sclass,
                               XfunctionDefinition fctDef,
                               boolean afterDummyArgs)
   {
@@ -352,6 +371,22 @@ public class XcodeML extends Xnode {
     Xnode namedValue = createNode(Xcode.NAMEDVALUE);
     namedValue.setAttribute(Xattr.NAME, value);
     return namedValue;
+  }
+
+  /**
+   * Create a new var node.
+   * <p>
+   * {@code
+   * <Var type="" scope="">value</Var>
+   * }
+   *
+   * @param type  Value of the type attribute.
+   * @param value Value of the var.
+   * @param scope Value of the scope attribute.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public Xnode createVar(XbuiltInType type, String value, Xscope scope) {
+    return createVar(type.toString(), value, scope);
   }
 
   /**
@@ -420,14 +455,38 @@ public class XcodeML extends Xnode {
    * @param nameValue Value of the name inner element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xid createId(String type, String sclass, String nameValue) {
+  public Xid createId(XbuiltInType type, XstorageClass sclass, String nameValue)
+  {
+    return createId(type.toString(), sclass, nameValue);
+  }
+
+  /**
+   * Create a new Id node with all the underlying needed node and attributes.
+   *
+   * @param type      Value for the attribute type.
+   * @param sclass    Value for the attribute sclass.
+   * @param nameValue Value of the name inner element.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public Xid createId(String type, XstorageClass sclass, String nameValue) {
     Xnode id = createNode(Xcode.ID);
     Xnode internalName = createNode(Xcode.NAME);
     internalName.setValue(nameValue);
     id.append(internalName);
     id.setType(type);
-    id.setAttribute(Xattr.SCLASS, sclass);
+    id.setAttribute(Xattr.SCLASS, sclass.toString());
     return new Xid(id.element());
+  }
+
+  /**
+   * Create a new varDecl node with all the mandatory nodes.
+   *
+   * @param nameType  Value for the attribute type of the name node.
+   * @param nameValue Value of the name inner node.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public Xnode createVarDecl(XbuiltInType nameType, String nameValue) {
+    return createVarDecl(nameType.toString(), nameValue);
   }
 
   /**
@@ -444,6 +503,19 @@ public class XcodeML extends Xnode {
     internalName.setType(nameType);
     varD.append(internalName);
     return varD;
+  }
+
+  /**
+   * Constructs a new basicType node with attributes.
+   *
+   * @param type   Reference built-in type.
+   * @param intent Optional intent value.
+   * @return Newly create FbasicType with a corresponding generated type hash
+   * value.
+   */
+  public XbasicType createBasicType(XbuiltInType type, Xintent intent) {
+    String typeHash = getTypeTable().generateHash(type);
+    return createBasicType(typeHash, type.toString(), intent);
   }
 
   /**
@@ -636,8 +708,7 @@ public class XcodeML extends Xnode {
     Xnode valueList = createNode(Xcode.VALUELIST);
     for(String charConstant : charConstants) {
       // Create the char constant type
-      String charTypeHash = getTypeTable().generateHash(XcodeType.CHARACTER);
-      Xnode charType = createBasicType(charTypeHash, Xname.F_CHAR_REF, null);
+      Xnode charType = createBasicType(XbuiltInType.CHAR, Xintent.NONE);
       Xnode len = createNode(Xcode.LEN);
       len.append(createIntConstant(charConstant.length()));
       charType.append(len);
@@ -646,7 +717,7 @@ public class XcodeML extends Xnode {
       // Create the value element to be added to the list
       Xnode valueElement = createNode(Xcode.VALUE);
       Xnode fCharElement = createNode(Xcode.FCHARACTERCONSTANT);
-      fCharElement.setType(charTypeHash);
+      fCharElement.setType(charType.getType());
       fCharElement.setValue(charConstant);
       valueElement.append(fCharElement);
       valueList.append(valueElement);

@@ -51,7 +51,7 @@ public class NestedDoStatement {
   {
     _statements = new ArrayList<>();
     for(DimensionDefinition dim : dimensions) {
-      Xnode induction = xcodeml.createVar(Xname.TYPE_F_INT, dim.getIdentifier(),
+      Xnode induction = xcodeml.createVar(XbuiltInType.INT, dim.getIdentifier(),
           Xscope.LOCAL);
       Xnode range = dim.generateIndexRange(xcodeml, true);
       Xnode doSt = xcodeml.createDoStmt(induction, range);

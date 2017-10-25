@@ -8,6 +8,10 @@ package cx2x.xcodeml.xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -144,34 +148,62 @@ public class XnodeTest {
   }
 
   @Test
-  public void hasBodyTest(){
-    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = xcodeml.createNode(Xcode.ASSOCIATESTATEMENT);
-    Xnode n2 = xcodeml.createNode(Xcode.BLOCKSTATEMENT);
-    Xnode n3 = xcodeml.createNode(Xcode.CRITICALSTATEMENT);
-    Xnode n4 = xcodeml.createNode(Xcode.ELSE);
-    Xnode n5 = xcodeml.createNode(Xcode.FCASELABEL);
-    Xnode n6 = xcodeml.createNode(Xcode.FDOCONCURRENTSTATEMENT);
-    Xnode n7 = xcodeml.createNode(Xcode.FDOSTATEMENT);
-    Xnode n8 = xcodeml.createNode(Xcode.FDOWHILESTATEMENT);
-    Xnode n9 = xcodeml.createNode(Xcode.FFUNCTIONDEFINITION);
-    Xnode n10 = xcodeml.createNode(Xcode.FORALLSTATEMENT);
-    Xnode n11 = xcodeml.createNode(Xcode.THEN);
-    Xnode n12 = xcodeml.createNode(Xcode.TYPEGUARD);
-    Xnode n13 = xcodeml.createNode(Xcode.FBASICTYPE);
+  public void hasBodyTest() {
 
-    assertTrue(n1.hasBody());
-    assertTrue(n2.hasBody());
-    assertTrue(n3.hasBody());
-    assertTrue(n4.hasBody());
-    assertTrue(n5.hasBody());
-    assertTrue(n6.hasBody());
-    assertTrue(n7.hasBody());
-    assertTrue(n8.hasBody());
-    assertTrue(n9.hasBody());
-    assertTrue(n10.hasBody());
-    assertTrue(n11.hasBody());
-    assertTrue(n12.hasBody());
-    assertFalse(n13.hasBody());
+    List<Xcode> expectedNodeWithBody = new ArrayList<>(Arrays.asList(
+        Xcode.ASSOCIATESTATEMENT,
+        Xcode.BLOCKSTATEMENT,
+        Xcode.CRITICALSTATEMENT,
+        Xcode.ELSE,
+        Xcode.FCASELABEL,
+        Xcode.FDOCONCURRENTSTATEMENT,
+        Xcode.FDOSTATEMENT,
+        Xcode.FDOWHILESTATEMENT,
+        Xcode.FFUNCTIONDEFINITION,
+        Xcode.FORALLSTATEMENT,
+        Xcode.THEN,
+        Xcode.TYPEGUARD
+    ));
+
+    for(Xcode x : expectedNodeWithBody) {
+      assertTrue(x.hasBody());
+    }
+
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    for(Xcode opcode : Xcode.values()) {
+      Xnode n = xcodeml.createNode(opcode);
+      if(expectedNodeWithBody.contains(n.opcode())) {
+        assertTrue(n.opcode().hasBody());
+        assertTrue(n.hasBody());
+      } else {
+        assertFalse(n.opcode().hasBody());
+        assertFalse(n.hasBody());
+      }
+    }
+  }
+
+  @Test
+  public void deletedTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode n1 = xcodeml.createNode(Xcode.FBASICTYPE);
+    assertFalse(n1.isDeleted());
+    n1.delete();
+    assertTrue(n1.isDeleted());
+  }
+
+  @Test
+  public void enhancedInfoTest() {
+    String filename = "dummy.f90";
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode n1 = xcodeml.createNode(Xcode.VARDECL);
+    n1.setLine(1);
+    n1.setFilename(filename);
+    assertEquals(1, n1.lineNo());
+    assertEquals(filename, n1.filename());
+
+    Xnode n2 = xcodeml.createNode(Xcode.VARDECL);
+    n1.copyEnhancedInfo(n2);
+    assertEquals(1, n2.lineNo());
+    assertEquals(filename, n2.filename());
   }
 }

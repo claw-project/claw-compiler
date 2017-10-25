@@ -15,9 +15,14 @@ package cx2x.xcodeml.xnode;
  */
 
 public enum Xscope {
-  LOCAL,
-  GLOBAL,
-  PARAM;
+  LOCAL(Xname.SCOPE_LOCAL),
+  GLOBAL(Xname.SCOPE_GLOBAL),
+  PARAM(Xname.SCOPE_PARAM);
+
+  private final String _value;
+  Xscope(String value) {
+    _value = value;
+  }
 
   /**
    * Convert string value to enum.
@@ -47,16 +52,7 @@ public enum Xscope {
    */
   @Override
   public String toString() {
-    switch(this) {
-      case LOCAL:
-        return Xname.SCOPE_LOCAL;
-      case GLOBAL:
-        return Xname.SCOPE_GLOBAL;
-      case PARAM:
-        return Xname.SCOPE_PARAM;
-      default:
-        return "";
-    }
+    return _value;
   }
 
 }

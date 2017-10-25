@@ -96,7 +96,7 @@ public class DimensionDefinition {
    */
   public Xnode generateArrayIndex(XcodeProgram xcodeml) {
     Xnode aIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
-    Xnode var = xcodeml.createVar(Xname.TYPE_F_INT, _identifier, Xscope.LOCAL);
+    Xnode var = xcodeml.createVar(XbuiltInType.INT, _identifier, Xscope.LOCAL);
     aIdx.append(var);
     return aIdx;
   }

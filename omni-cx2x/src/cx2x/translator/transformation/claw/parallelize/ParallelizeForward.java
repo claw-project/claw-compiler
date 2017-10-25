@@ -430,13 +430,11 @@ public class ParallelizeForward extends ClawTransformation {
               _claw.getPragma().lineNo());
         }
         // Size variable have to be declared
-        XbasicType intTypeIntentIn = xcodeml.createBasicType(
-            xcodeml.getTypeTable().generateHash(XcodeType.INTEGER),
-            Xname.TYPE_F_INT, Xintent.IN);
-        xcodeml.getTypeTable().add(intTypeIntentIn);
-        xcodeml.createIdAndDecl(var, intTypeIntentIn.getType(),
-            Xname.SCLASS_F_PARAM, fDef, true);
-        type = intTypeIntentIn.getType();
+        XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
+        xcodeml.getTypeTable().add(bt);
+        xcodeml.createIdAndDecl(var, bt.getType(),
+            XstorageClass.F_PARAM, fDef, true);
+        type = bt.getType();
         Xnode param = xcodeml.createAndAddParam(var, type, _parentFctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       } else {
@@ -561,8 +559,6 @@ public class ParallelizeForward extends ClawTransformation {
                 pBase.value(), baseDim, targetDim, type));
           }
         }
-
-
       }
 
       if(!_parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
@@ -570,7 +566,7 @@ public class ParallelizeForward extends ClawTransformation {
         XmoduleDefinition modDef = fDef.findParentModule();
         TransformationHelper.updateModuleSignature(xcodeml, fDef,
             _parentFctType, modDef, _claw, translator, false);
-      } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
+      } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
@@ -837,7 +833,7 @@ public class ParallelizeForward extends ClawTransformation {
         if(pointee.value().equals(fieldId)) {
           XbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
           XbasicType pointeeType = xcodeml.getTypeTable().
-                  getBasicType(pointeeInfo.getTargetType());
+              getBasicType(pointeeInfo.getTargetType());
 
           // Check if their dimensions differ
           if(pointeeType.getDimensions() != pointerType.getDimensions()

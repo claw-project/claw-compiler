@@ -258,6 +258,28 @@ public class XtypeTable extends Xnode {
   }
 
   /**
+   * Generate a unique hash in the current type table.
+   *
+   * @param type Built-in type to generate the hash.
+   * @return New unique hash.
+   */
+  protected String generateHash(XbuiltInType type) {
+    switch(type) {
+      case INT:
+        return generateHash(XcodeType.INTEGER);
+      case REAL:
+        return generateHash(XcodeType.REAL);
+      case COMPLEX:
+        return generateHash(XcodeType.COMPLEX);
+      case LOGICAL:
+        return generateHash(XcodeType.LOGICAL);
+      case CHAR:
+        return generateHash(XcodeType.CHARACTER);
+    }
+    return null;
+  }
+
+  /**
    * Returns a Collection view of the values contained in this XtypeTable.
    *
    * @return A view of the values contained in this map

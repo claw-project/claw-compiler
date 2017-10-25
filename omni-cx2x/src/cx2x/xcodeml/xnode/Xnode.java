@@ -200,22 +200,7 @@ public class Xnode {
    * @return True if the element should have a body. False otherwise.
    */
   public boolean hasBody() {
-    switch(opcode()) {
-      case ASSOCIATESTATEMENT:
-      case BLOCKSTATEMENT:
-      case CRITICALSTATEMENT:
-      case ELSE:
-      case FCASELABEL:
-      case FDOCONCURRENTSTATEMENT:
-      case FDOSTATEMENT:
-      case FDOWHILESTATEMENT:
-      case FFUNCTIONDEFINITION:
-      case FORALLSTATEMENT:
-      case THEN:
-      case TYPEGUARD:
-        return true;
-    }
-    return false;
+    return opcode().hasBody();
   }
 
   /**
@@ -877,6 +862,5 @@ public class Xnode {
   public String toString() {
     return String.format("%s (children: %d)", opcode().code(),
         children().size());
-
   }
 }
