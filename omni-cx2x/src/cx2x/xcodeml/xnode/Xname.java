@@ -8,18 +8,13 @@ package cx2x.xcodeml.xnode;
 /**
  * Xname class contains all element and attributes values that can be
  * found in the XcodeML/F intermediate representation language.
+ * <p>
+ * All members of this class are immutable.
  *
  * @author clementval
  */
 
-public class Xname {
-
-  // helpers
-  static final String TRUE = "true";
-  static final String FALSE = "false";
-  static final String SUPPORTED_VERSION = "1.0";
-  static final String SUPPORTED_LANGUAGE = "Fortran";
-
+public final class Xname {
   // Base type (XcodeML/F 0.91J 9.1)
   public static final String TYPE_F_INT = "Fint";
   public static final String TYPE_F_REAL = "Freal";
@@ -27,7 +22,6 @@ public class Xname {
   public static final String TYPE_F_LOGICAL = "Flogical";
   public static final String TYPE_F_CHAR = "Fcharacter";
   public static final String TYPE_F_VOID = "Fvoid";
-
   // Storage class (part of Id - XcodeML/F 0.91J 8.2)
   public static final String SCLASS_AUTO = "auto";
   public static final String SCLASS_EXTERN = "extern";
@@ -37,17 +31,14 @@ public class Xname {
   public static final String SCLASS_F_PARAM = "fparam";
   public static final String SCLASS_LABEL = "label";
   public static final String SCLASS_PARAM = "param";
-
   // Scope (part of Var - XcodeML/F 0.91J 7.4.1)
   public static final String SCOPE_LOCAL = "local";
   public static final String SCOPE_GLOBAL = "global";
   public static final String SCOPE_PARAM = "param";
-
   // Intent (part of FbasicType - XcodeML/F 0.91J 3.3)
   public static final String INTENT_IN = "in";
   public static final String INTENT_OUT = "out";
   public static final String INTENT_INOUT = "inout";
-
   // Element attributes
   public static final String ATTR_ATTR = "attr";
   public static final String ATTR_BIND = "bind";
@@ -55,8 +46,8 @@ public class Xname {
   public static final String ATTR_CODE = "code";
   public static final String ATTR_COMPILER_INFO = "compiler-info";
   public static final String ATTR_CONSTRUCT_NAME = "construct_name";
-  public static final String ATTR_EXTEND = "extends";
-  public static final String ATTR_DATAREF = "data_ref";
+  public static final String ATTR_EXTENDS = "extends";
+  public static final String ATTR_DATA_REF = "data_ref";
   public static final String ATTR_FILE = "file";
   public static final String ATTR_FORMAT = "format";
   public static final String ATTR_INTENT = "intent";
@@ -118,7 +109,6 @@ public class Xname {
   public static final String ATTR_USE_NAME = "use_name";
   public static final String ATTR_VALUE = "value";
   public static final String ATTR_VERSION = "version";
-
   // Element names
   public static final String ALLOC = "alloc";
   public static final String ALLOC_OPT = "allocOpt";
@@ -243,11 +233,9 @@ public class Xname {
   public static final String VAR_LIST = "varList";
   public static final String VAR_REF = "varRef";
   public static final String X_CODE_PROGRAM = "XcodeProgram";
-
   // Xmod files
   public static final String DEPENDS = "depends";
   public static final String IDENTIFIERS = "identifiers";
-
   // Binary expression element
   public static final String DIV_EXPR = "divExpr";
   public static final String F_CONCAT_EXPR = "FconcatExpr";
@@ -266,12 +254,15 @@ public class Xname {
   public static final String MUL_EXPR = "mulExpr";
   public static final String PLUS_EXPR = "plusExpr";
   public static final String USER_BINARY_EXPR = "userBinaryExpr";
-
   // Unary expression element
   public static final String LOG_NOT_EXPR = "logNotExpr";
   public static final String UNARY_MINUS_EXPR = "unaryMinusExpr";
   public static final String USER_UNARY_EXPR = "userUnaryExpr";
-
   // Intrinsic function
   public static final String INTRINSIC_SIZE = "size";
+  // helpers
+  static final String TRUE = "true";
+  static final String FALSE = "false";
+  static final String SUPPORTED_VERSION = "1.0";
+  static final String SUPPORTED_LANGUAGE = "Fortran";
 }

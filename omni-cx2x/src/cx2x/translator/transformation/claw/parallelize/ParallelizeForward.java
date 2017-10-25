@@ -561,8 +561,6 @@ public class ParallelizeForward extends ClawTransformation {
                 pBase.value(), baseDim, targetDim, type));
           }
         }
-
-
       }
 
       if(!_parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
@@ -570,7 +568,7 @@ public class ParallelizeForward extends ClawTransformation {
         XmoduleDefinition modDef = fDef.findParentModule();
         TransformationHelper.updateModuleSignature(xcodeml, fDef,
             _parentFctType, modDef, _claw, translator, false);
-      } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATAREF)) {
+      } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then

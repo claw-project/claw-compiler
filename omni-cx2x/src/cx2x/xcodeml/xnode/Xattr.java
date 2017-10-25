@@ -17,8 +17,8 @@ public enum Xattr {
   CODE(Xname.ATTR_CODE),
   COMPILER_INFO(Xname.ATTR_COMPILER_INFO),
   CONSTRUCT_NAME(Xname.ATTR_CONSTRUCT_NAME),
-  EXTEND(Xname.ATTR_EXTEND),
-  DATAREF(Xname.ATTR_DATAREF),
+  EXTENDS(Xname.ATTR_EXTENDS),
+  DATA_REF(Xname.ATTR_DATA_REF),
   FILE(Xname.ATTR_FILE),
   FORMAT(Xname.ATTR_FORMAT),
   INTENT(Xname.ATTR_INTENT),
@@ -81,18 +81,19 @@ public enum Xattr {
   VALUE(Xname.ATTR_VALUE),
   VERSION(Xname.ATTR_VERSION);
 
-  private final String name;
+  private final String _name;
 
   Xattr(String s) {
-    name = s;
+    _name = s;
   }
 
   public static Xattr fromString(String value) {
     return Xattr.valueOf(value.toUpperCase().replace("-", "_"));
   }
 
+  @Override
   public String toString() {
-    return this.name;
+    return _name;
   }
 
 }

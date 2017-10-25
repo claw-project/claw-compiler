@@ -47,7 +47,7 @@ public class XstructType extends Xnode {
    * @return True if the struct type is an extension. False otherwise.
    */
   public boolean isExtend() {
-    return hasAttribute(Xattr.EXTEND);
+    return hasAttribute(Xattr.EXTENDS);
   }
 
   /**
@@ -56,7 +56,7 @@ public class XstructType extends Xnode {
    * @return String value of the extend attribute.
    */
   public String getExtend() {
-    return getAttribute(Xattr.EXTEND);
+    return getAttribute(Xattr.EXTENDS);
   }
 
   /**
