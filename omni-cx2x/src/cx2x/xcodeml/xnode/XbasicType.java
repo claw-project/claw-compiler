@@ -280,7 +280,9 @@ public class XbasicType extends Xnode {
    * @param value Intent value to be set.
    */
   public void setIntent(Xintent value) {
-    setAttribute(Xattr.INTENT, value.toString());
+    if(value != null && value != Xintent.NONE) {
+      setAttribute(Xattr.INTENT, value.toString());
+    }
   }
 
   /**
