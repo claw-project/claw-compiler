@@ -21,9 +21,9 @@ public class OverPositionTest {
     assertEquals(OverPosition.BEFORE, OverPosition.fromList(null));
     assertEquals(OverPosition.BEFORE,
         OverPosition.fromList(Collections.<String>emptyList()));
-    assertEquals(OverPosition.BEFORE,
-        OverPosition.fromList(Arrays.asList(":", "col")));
     assertEquals(OverPosition.AFTER,
+        OverPosition.fromList(Arrays.asList(":", "col")));
+    assertEquals(OverPosition.BEFORE,
         OverPosition.fromList(Arrays.asList("col", ":")));
     assertEquals(OverPosition.MIDDLE,
         OverPosition.fromList(Arrays.asList(":", "col", ":")));

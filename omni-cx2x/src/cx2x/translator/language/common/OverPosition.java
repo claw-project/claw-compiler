@@ -67,7 +67,7 @@ public enum OverPosition {
     // (:,col) or (col,:)
     if(overClause.size() == 2) {
       return overClause.get(0).equals(DimensionDefinition.BASE_DIM) ?
-          BEFORE : AFTER;
+          AFTER : BEFORE;
     }
 
     // over(:,col,:)
