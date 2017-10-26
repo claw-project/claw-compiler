@@ -319,6 +319,7 @@ public class TransformationHelper {
 
     XfunctionType fctTypeMod;
     if(importFctType) {
+      // TODO should be part of XcodeML
       Node rawNode = mod.getDocument().importNode(fctType.element(), true);
       mod.getTypeTable().element().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);

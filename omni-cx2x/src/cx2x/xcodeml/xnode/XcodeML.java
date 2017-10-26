@@ -275,16 +275,20 @@ public class XcodeML extends Xnode {
 
   /**
    * Constructs a new name node with name value and optional type.
+   * <p>
+   * {@code
+   * <name type="type">value</name>
+   * }
    *
-   * @param name Name value.
-   * @param type Optional type value.
+   * @param value Name value.
+   * @param type  Optional type value.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createName(String name, String type)
+  public Xnode createName(String value, String type)
   {
     Xnode n = createNode(Xcode.NAME);
-    n.setValue(name);
-    if(type != null) {
+    n.setValue(value);
+    if(type != null && !type.isEmpty()) {
       n.setType(type);
     }
     return n;
@@ -363,6 +367,10 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new namedValue node with its attribute.
+   * <p>
+   * {@code
+   * <namedValue name="value"></namedValue>
+   * }
    *
    * @param value Value of the name attribute.
    * @return The newly created node detached in the current XcodeML unit.
@@ -377,7 +385,7 @@ public class XcodeML extends Xnode {
    * Create a new var node.
    * <p>
    * {@code
-   * <Var type="" scope="">value</Var>
+   * <Var type="type" scope="scope">value</Var>
    * }
    *
    * @param type  Value of the type attribute.
@@ -393,7 +401,7 @@ public class XcodeML extends Xnode {
    * Create a new var node.
    * <p>
    * {@code
-   * <Var type="" scope="">value</Var>
+   * <Var type="type" scope="scope">value</Var>
    * }
    *
    * @param type  Value of the type attribute.
@@ -411,27 +419,43 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new FunctionCall node with name and arguments as children nodes.
+   * <p>
+   * {@code
+   * <functionCall type="returnType">
+   * <name type="fctType">fctName</name>
+   * <arguments></arguments>
+   * </functionCall>
+   * }
    *
    * @param returnType Value of the type attribute for the functionCall node.
-   * @param name       Value of the name node.
-   * @param nameType   Value of the type attribute for the name node.
+   * @param fctName    Value of the name node.
+   * @param fctType    Value of the type attribute for the name node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createFctCall(String returnType, String name, String nameType) {
+  public Xnode createFctCall(String returnType, String fctName,
+                             String fctType)
+  {
     Xnode fctCall = createNode(Xcode.FUNCTIONCALL);
     fctCall.setType(returnType);
-    Xnode fctName = createNode(Xcode.NAME);
-    fctName.setValue(name);
-    fctName.setType(nameType);
-    Xnode args = createNode(Xcode.ARGUMENTS);
-    fctCall.append(fctName);
-    fctCall.append(args);
+    Xnode fctNameNode = createNode(Xcode.NAME);
+    fctNameNode.setValue(fctName);
+    fctNameNode.setType(fctType);
+    fctCall.append(fctNameNode);
+    fctCall.append(createNode(Xcode.ARGUMENTS));
     return fctCall;
   }
 
   /**
    * Create a new FarrayRef node with varRef node as a child with the
    * given Var element.
+   * <p>
+   * {@code
+   * <FarrayRef type="type">
+   * <varRef type="">
+   * <Var/> <!-- var argument -->
+   * </varRef>
+   * </FarrayRef>
+   * }
    *
    * @param type Value of the type attribute for the FarrayRef node.
    * @param var  Var node nested in the varRef element.
@@ -449,29 +473,37 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new Id node with all the underlying needed node and attributes.
+   * <p>
+   * {@code
+   * <id type="type" sclass="sclass">idValue</id>
+   * }
    *
-   * @param type      Value for the attribute type.
-   * @param sclass    Value for the attribute sclass.
-   * @param nameValue Value of the name inner element.
+   * @param type    Value for the attribute type.
+   * @param sclass  Value for the attribute sclass.
+   * @param idValue Value of the name inner element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xid createId(XbuiltInType type, XstorageClass sclass, String nameValue)
+  public Xid createId(XbuiltInType type, XstorageClass sclass, String idValue)
   {
-    return createId(type.toString(), sclass, nameValue);
+    return createId(type.toString(), sclass, idValue);
   }
 
   /**
    * Create a new Id node with all the underlying needed node and attributes.
+   * <p>
+   * {@code
+   * <id type="type" sclass="sclass">idValue</id>
+   * }
    *
-   * @param type      Value for the attribute type.
-   * @param sclass    Value for the attribute sclass.
-   * @param nameValue Value of the name inner element.
+   * @param type    Value for the attribute type.
+   * @param sclass  Value for the attribute sclass.
+   * @param idValue Value of the name inner element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xid createId(String type, XstorageClass sclass, String nameValue) {
+  public Xid createId(String type, XstorageClass sclass, String idValue) {
     Xnode id = createNode(Xcode.ID);
     Xnode internalName = createNode(Xcode.NAME);
-    internalName.setValue(nameValue);
+    internalName.setValue(idValue);
     id.append(internalName);
     id.setType(type);
     id.setAttribute(Xattr.SCLASS, sclass.toString());
@@ -480,6 +512,12 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new varDecl node with all the mandatory nodes.
+   * <p>
+   * {@code
+   * <varDecl>
+   * <name type="varType">varId</name>
+   * </varDecl>
+   * }
    *
    * @param nameType  Value for the attribute type of the name node.
    * @param nameValue Value of the name inner node.
@@ -491,22 +529,32 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new varDecl node with all the mandatory nodes.
+   * <p>
+   * {@code
+   * <varDecl>
+   * <name type="varType">varId</name>
+   * </varDecl>
+   * }
    *
-   * @param nameType  Value for the attribute type of the name node.
-   * @param nameValue Value of the name inner node.
+   * @param varType Value for the attribute type of the name node.
+   * @param varId   Value of the name inner node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createVarDecl(String nameType, String nameValue) {
-    Xnode varD = createNode(Xcode.VARDECL);
-    Xnode internalName = createNode(Xcode.NAME);
-    internalName.setValue(nameValue);
-    internalName.setType(nameType);
-    varD.append(internalName);
-    return varD;
+  public Xnode createVarDecl(String varType, String varId) {
+    Xnode varDecl = createNode(Xcode.VARDECL);
+    Xnode nameNode = createNode(Xcode.NAME);
+    nameNode.setValue(varId);
+    nameNode.setType(varType);
+    varDecl.append(nameNode);
+    return varDecl;
   }
 
   /**
    * Constructs a new basicType node with attributes.
+   * <p>
+   * {@code
+   * <FbasicType type="type" ref="ref" intent="intent"/>
+   * }
    *
    * @param type   Reference built-in type.
    * @param intent Optional intent value.
@@ -520,6 +568,10 @@ public class XcodeML extends Xnode {
 
   /**
    * Constructs a new basicType node with attributes.
+   * <p>
+   * {@code
+   * <FbasicType type="type" ref="ref" intent="intent"/>
+   * }
    *
    * @param type   Type attribute value.
    * @param ref    Reference attribute value.
@@ -540,6 +592,10 @@ public class XcodeML extends Xnode {
 
   /**
    * Create an empty assumed shape indexRange node.
+   * <p>
+   * {@code
+   * <indexRange is_assumed_shape="true"></indexRange>
+   * }
    *
    * @return The newly created node detached in the current XcodeML unit.
    */
@@ -554,13 +610,11 @@ public class XcodeML extends Xnode {
    * <p>
    * <pre>
    * {@code
-   *
    * <FdoStatement>
-   *   <Var></Var> <!-- provided as argument -->
-   *   <indexRange></indexRange> <!-- provided as argument -->
-   *   <body></body>
+   * <Var></Var> <!-- provided as argument -->
+   * <indexRange></indexRange> <!-- provided as argument -->
+   * <body></body>
    * </FdoStatement>
-   *
    * }
    * </pre>
    *
@@ -569,12 +623,11 @@ public class XcodeML extends Xnode {
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createDoStmt(Xnode inductionVar, Xnode indexRange) {
-    Xnode root = createNode(Xcode.FDOSTATEMENT);
-    root.append(inductionVar);
-    root.append(indexRange);
-    Xnode body = createNode(Xcode.BODY);
-    root.append(body);
-    return root;
+    Xnode doStatementNode = createNode(Xcode.FDOSTATEMENT);
+    doStatementNode.append(inductionVar);
+    doStatementNode.append(indexRange);
+    doStatementNode.append(createNode(Xcode.BODY));
+    return doStatementNode;
   }
 
   /**
@@ -582,28 +635,24 @@ public class XcodeML extends Xnode {
    * <p>
    * <pre>
    * {@code
-   *
    * <FifStatement>
-   *   <condition></condition>
-   *   <then>
-   *     <body></body>
-   *   </then>
+   * <condition></condition>
+   * <then>
+   * <body></body>
+   * </then>
    * </FifStatement>
-   *
    * }
    * </pre>
    *
    * @return The newly created node detached in the current XcodeML unit.
    */
   public Xnode createIfThen() {
-    Xnode root = createNode(Xcode.FIFSTATEMENT);
-    Xnode cond = createNode(Xcode.CONDITION);
-    Xnode thenBlock = createNode(Xcode.THEN);
-    Xnode thenBody = createNode(Xcode.BODY);
-    thenBlock.append(thenBody);
-    root.append(cond);
-    root.append(thenBlock);
-    return root;
+    Xnode ifNode = createNode(Xcode.FIFSTATEMENT);
+    Xnode thenNode = createNode(Xcode.THEN);
+    thenNode.append(createNode(Xcode.BODY));
+    ifNode.append(createNode(Xcode.CONDITION));
+    ifNode.append(thenNode);
+    return ifNode;
   }
 
   /**
@@ -696,6 +745,17 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a print statement with the given char constants.
+   * <p>
+   * {@code
+   * <FprintStatement format="format">
+   * <valueList>
+   * <value> <!-- a value node by element in charConstants -->
+   * <!-- FcharacterConstant type are created on the fly -->
+   * <FcharacterConstant type="cType">charConstants</FcharacterConstant>
+   * </value>
+   * </valueList>
+   * </FprintStatement>
+   * }
    *
    * @param format        Format for the print statement.
    * @param charConstants Array of char constants to be created.
@@ -728,6 +788,10 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a FintConstant node with the given value.
+   * <p>
+   * {@code
+   * <FintConstant type="Fint">value</FintConstant>
+   * }
    *
    * @param value Value assigned to the int constant.
    * @return Newly created node.
