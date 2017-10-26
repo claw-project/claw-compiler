@@ -379,6 +379,8 @@ function claw::process_dependencies()
 
     module_name=${dep// } # Remove all spaces
     module_name=${module_name%% }
+    # Get module name in lower case
+    module_name=$(echo "$module_name" | tr '[:upper:]' '[:lower:]')
     source_mod_file="" # Holder variable for the module file when found
 
     # FORTRAN file extensions used for the search
