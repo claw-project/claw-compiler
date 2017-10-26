@@ -414,7 +414,8 @@ public class ParallelizeForward extends ClawTransformation {
     // 1. Adapt function call with potential new arguments
     for(int i = 0; i < params.size(); i++) {
       Xnode p = params.get(i);
-      String var = p.value();
+      //String var = p.value();
+      String varId = p.value();
       String type;
 
       XbasicType paramType = xcodeml.getTypeTable().getBasicType(p);
@@ -423,30 +424,30 @@ public class ParallelizeForward extends ClawTransformation {
         continue;
       }
 
-      if(!fDef.getSymbolTable().contains(var)) {
+      if(!fDef.getSymbolTable().contains(varId)) {
         if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
-          throw new IllegalTransformationException("Variable " + var + " must" +
-              " be locally defined where the last call to parallelize is made.",
-              _claw.getPragma().lineNo());
+          throw new IllegalTransformationException("Variable " + varId +
+              " must be locally defined where the last call to parallelize " +
+              "is made.", _claw.getPragma().lineNo());
         }
         // Size variable have to be declared
         XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
         xcodeml.getTypeTable().add(bt);
-        xcodeml.createIdAndDecl(var, bt.getType(),
+        xcodeml.createIdAndDecl(varId, bt.getType(),
             XstorageClass.F_PARAM, fDef, true);
         type = bt.getType();
-        Xnode param = xcodeml.createAndAddParam(var, type, _parentFctType);
+        Xnode param = xcodeml.createAndAddParam(varId, type, _parentFctType);
         param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
       } else {
 
         // Var exists already. Add to the parameters if not here.
-        type = fDef.getSymbolTable().get(var).getType();
+        type = fDef.getSymbolTable().get(varId).getType();
 
         /* If flatten mode, we do not add extra parameters to the function
          * definition */
         if(!_flatten) {
           Xnode param =
-              xcodeml.createAndAddParamIfNotExists(var, type, _parentFctType);
+              xcodeml.createAndAddParamIfNotExists(varId, type, _parentFctType);
           if(param != null) {
             param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
           }
@@ -454,9 +455,8 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       // Add variable in the function call before the optional parameters
-      Xnode arg = xcodeml.createNamedValue(var);
-      Xnode namedValVar = xcodeml.createVar(type, var, Xscope.LOCAL);
-      arg.append(namedValVar);
+      Xnode arg = xcodeml.createNamedValue(varId);
+      arg.append(xcodeml.createVar(type, varId, Xscope.LOCAL));
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       Xnode hook = arguments.child((i - 1) - argOffset);
       hook.insertAfter(arg);
