@@ -455,6 +455,7 @@ public class AcceleratorHelper {
     }
   }
 
+
   /**
    * Generate the correct clauses for private variable on accelerator.
    *
@@ -553,18 +554,20 @@ public class AcceleratorHelper {
     if(directives == null) {
       return null;
     }
-    Xnode pragma = null;
     for(String directive : directives) {
-      pragma = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-      pragma.setValue(directive);
-      if(after) {
-        ref.insertAfter(pragma);
-        ref = pragma; // Insert pragma sequentially one after another
-      } else {
-        ref.insertBefore(pragma);
+      List<Xnode> pragmas = xcodeml.createPragma(directive);
+      for(Xnode pragma : pragmas) {
+        if(after) {
+          ref.insertAfter(pragma);
+          ref = pragma; // Insert pragma sequentially one after another
+        } else {
+          ref.insertBefore(pragma); // Only the first chunk needs to be inserted
+          after = true;
+          ref = pragma;
+        }
       }
     }
-    return pragma;
+    return ref;
   }
 
   /**
@@ -624,8 +627,7 @@ public class AcceleratorHelper {
     } else {
       while(first.nextSibling() != null
           && generator.getSkippedStatementsInPreamble().
-          contains(first.opcode()))
-      {
+          contains(first.opcode())) {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!generator.getSkippedStatementsInPreamble().
@@ -672,8 +674,7 @@ public class AcceleratorHelper {
     } else {
       while(last.prevSibling() != null
           && generator.getSkippedStatementsInEpilogue().
-          contains(last.opcode()))
-      {
+          contains(last.opcode())) {
         if(last.hasBody()) {
           for(Xnode child : last.body().children()) {
             if(!generator.getSkippedStatementsInEpilogue().
