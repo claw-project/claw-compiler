@@ -832,6 +832,7 @@ public class XcodeML extends Xnode {
       prefix = ClawConstant.CLAW;
     }
 
+    // TODO retrieve correct max col
     List<String> chunks = XnodeUtil.splitByLength(value, 80, prefix);
     for(int i = 0; i < chunks.size(); ++i) {
       String chunk = chunks.get(i).trim();
