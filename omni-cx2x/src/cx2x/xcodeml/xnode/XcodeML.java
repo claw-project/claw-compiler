@@ -814,10 +814,11 @@ public class XcodeML extends Xnode {
    * <p>
    * Supports acc, omp and claw prefix
    *
-   * @param value Value of the FpragmaStatement.
+   * @param value     Value of the FpragmaStatement.
+   * @param maxColumn Maximum column value. Split is based on this value.
    * @return List of FpragmaStatement representing the splitted value.
    */
-  public List<Xnode> createPragma(String value) {
+  public List<Xnode> createPragma(String value, int maxColumn) {
     if(value == null || value.isEmpty()) {
       return Collections.emptyList();
     }
@@ -832,8 +833,7 @@ public class XcodeML extends Xnode {
       prefix = ClawConstant.CLAW;
     }
 
-    // TODO retrieve correct max col
-    List<String> chunks = XnodeUtil.splitByLength(value, 80, prefix);
+    List<String> chunks = XnodeUtil.splitByLength(value, maxColumn, prefix);
     for(int i = 0; i < chunks.size(); ++i) {
       String chunk = chunks.get(i).trim();
       Xnode p = createNode(Xcode.FPRAGMASTATEMENT);

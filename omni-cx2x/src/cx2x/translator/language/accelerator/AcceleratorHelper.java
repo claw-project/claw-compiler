@@ -495,19 +495,17 @@ public class AcceleratorHelper {
    * Constructs the correct AcceleratorGenerator object regarding the enum
    * value passed.
    *
-   * @param config Configuration information object.
    * @return A specific implementation of an AcceleratorGenerator.
    */
-  public static AcceleratorGenerator createAcceleratorGenerator(
-      Configuration config)
+  public static AcceleratorGenerator createAcceleratorGenerator()
   {
-    switch(config.getCurrentDirective()) {
+    switch(Configuration.get().getCurrentDirective()) {
       case OPENACC:
-        return new OpenAcc(config);
+        return new OpenAcc();
       case OPENMP:
-        return new OpenMp(config);
+        return new OpenMp();
     }
-    return new AcceleratorNone(config);
+    return new AcceleratorNone();
   }
 
   /**
@@ -555,7 +553,8 @@ public class AcceleratorHelper {
       return null;
     }
     for(String directive : directives) {
-      List<Xnode> pragmas = xcodeml.createPragma(directive);
+      List<Xnode> pragmas = xcodeml.createPragma(directive,
+          Configuration.get().getMaxColumns());
       for(Xnode pragma : pragmas) {
         if(after) {
           ref.insertAfter(pragma);

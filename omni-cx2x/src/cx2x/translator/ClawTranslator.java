@@ -40,8 +40,6 @@ public class ClawTranslator implements Translator {
   private final Map<Class, TransformationGroup> _tGroups;
   // Hold cross-transformation elements
   private final Map<Element, Object> _crossTransformationTable;
-  // Hold configuration information
-  private final Configuration _configuration;
   // Hold the module file cache
   private final ModuleCache _modCache;
   private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
@@ -51,16 +49,14 @@ public class ClawTranslator implements Translator {
   /**
    * ClawTranslator ctor. Creates the transformation groups needed for the CLAW
    * transformation and order the accordingly to their interpretation order.
-   *
-   * @param config Configuration information object.
    */
-  public ClawTranslator(Configuration config) {
+  public ClawTranslator() {
     /*
      * Use LinkedHashMap to be able to iterate through the map
      * entries with the insertion order.
      */
     _tGroups = new LinkedHashMap<>();
-    for(GroupConfiguration g : config.getGroups()) {
+    for(GroupConfiguration g : Configuration.get().getGroups()) {
       switch(g.getType()) {
         case DEPENDENT:
           _tGroups.put(g.getTransformationClass(),
@@ -81,18 +77,7 @@ public class ClawTranslator implements Translator {
 
     _modCache = new ModuleCache();
 
-    _configuration = config;
-
     _blockDirectives = new Hashtable<>();
-  }
-
-  /**
-   * Get the configuration object stored in the translator.
-   *
-   * @return Configuration object.
-   */
-  public Configuration getConfiguration() {
-    return _configuration;
   }
 
   @Override
@@ -101,8 +86,8 @@ public class ClawTranslator implements Translator {
   {
     // Analyze the raw pragma with the CLAW language parser
     ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma,
-        _configuration.getAcceleratorGenerator(),
-        _configuration.getCurrentTarget());
+        Configuration.get().getAcceleratorGenerator(),
+        Configuration.get().getCurrentTarget());
 
     // Create transformation object based on the directive
     switch(analyzedPragma.getDirective()) {
@@ -336,7 +321,7 @@ public class ClawTranslator implements Translator {
    */
   @Override
   public int getMaxColumns() {
-    return _configuration.getMaxColumns();
+    return Configuration.get().getMaxColumns();
   }
 
   /**
@@ -345,7 +330,7 @@ public class ClawTranslator implements Translator {
    */
   @Override
   public void setMaxColumns(int max) {
-    _configuration.setMaxColumns(max);
+    Configuration.get().setMaxColumns(max);
   }
 
   /**

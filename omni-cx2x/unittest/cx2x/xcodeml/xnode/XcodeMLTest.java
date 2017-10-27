@@ -28,20 +28,20 @@ public class XcodeMLTest {
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
 
-    List<Xnode> p1 = xcodeml.createPragma(null);
+    List<Xnode> p1 = xcodeml.createPragma(null, 80);
     assertNotNull(p1);
     assertTrue(p1.isEmpty());
 
-    List<Xnode> p2 = xcodeml.createPragma("");
+    List<Xnode> p2 = xcodeml.createPragma("", 80);
     assertNotNull(p2);
     assertTrue(p2.isEmpty());
 
-    List<Xnode> p3 = xcodeml.createPragma(shortPragma);
+    List<Xnode> p3 = xcodeml.createPragma(shortPragma, 80);
     assertNotNull(p3);
     assertEquals(1, p3.size());
     assertEquals(shortPragma, p3.get(0).value());
 
-    List<Xnode> p4 = xcodeml.createPragma(longPragma);
+    List<Xnode> p4 = xcodeml.createPragma(longPragma, 80);
     assertNotNull(p4);
     assertEquals(4, p4.size());
     assertEquals("acc data &", p4.get(0).value());

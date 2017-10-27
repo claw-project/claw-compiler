@@ -71,24 +71,21 @@ public class Configuration {
   private static final String DIRECTIVE_ATTR = "directive";
   private static final String EXT_CONF_TYPE = "extension";
   private static final String JAR_ATTR = "jar";
-
   // Transformation set
   private static final String TRANSFORMATION_ELEMENT = "transformation";
-
   // Specific values
   private static final String DEPENDENT_GR_TYPE = "dependent";
   private static final String INDEPENDENT_GR_TYPE = "independent";
   private static final String DIRECTIVE_TR_TYPE = "directive";
   private static final String TRANSLATION_UNIT_TR_TYPE = "translation_unit";
-
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
-
-  private final String _configuration_path;
-  private final Map<String, String> _parameters;
-  private final List<GroupConfiguration> _groups;
-  private final Map<String, GroupConfiguration> _availableGroups;
-  private final OpenAccConfiguration _openacc;
+  private static Configuration instance = null;
+  private String _configuration_path;
+  private Map<String, String> _parameters;
+  private List<GroupConfiguration> _groups;
+  private Map<String, GroupConfiguration> _availableGroups;
+  private OpenAccConfiguration _openacc;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
@@ -96,12 +93,46 @@ public class Configuration {
   private AcceleratorGenerator _generator;
 
   /**
+   * private ctor
+   */
+  private Configuration() {
+  }
+
+  /**
+   * Constructs basic configuration object.
+   *
+   * @param dir    Accelerator directive language.
+   * @param target Target architecture.
+   */
+  public void init(AcceleratorDirective dir, Target target) {
+    _parameters = new HashMap<>();
+    _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
+    _parameters.put(DEFAULT_TARGET, target.toString());
+    _openacc = new OpenAccConfiguration(_parameters);
+    _groups = new ArrayList<>();
+    _availableGroups = new HashMap<>();
+    _configuration_path = null;
+  }
+
+  /**
+   * Get the unique instance.
+   *
+   * @return Unique Configuration instance.
+   */
+  public static Configuration get() {
+    if(instance == null) {
+      instance = new Configuration();
+    }
+    return instance;
+  }
+
+  /**
    * Constructs a new configuration object from the give configuration file.
    *
    * @param configPath     Path to the configuration files and XSD schemas.
    * @param userConfigFile Path to the alternative configuration.
    */
-  public Configuration(String configPath, String userConfigFile)
+  public void load(String configPath, String userConfigFile)
       throws Exception
   {
     _configuration_path = configPath;
@@ -142,22 +173,6 @@ public class Configuration {
     }
 
     _openacc = new OpenAccConfiguration(_parameters);
-  }
-
-  /**
-   * Constructs basic configuration object.
-   *
-   * @param dir    Accelerator directive language.
-   * @param target Target architecture.
-   */
-  public Configuration(AcceleratorDirective dir, Target target) {
-    _parameters = new HashMap<>();
-    _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
-    _parameters.put(DEFAULT_TARGET, target.toString());
-    _openacc = new OpenAccConfiguration(_parameters);
-    _groups = new ArrayList<>();
-    _availableGroups = new HashMap<>();
-    _configuration_path = null;
   }
 
   /**
@@ -640,7 +655,7 @@ public class Configuration {
    */
   public AcceleratorGenerator getAcceleratorGenerator() {
     if(_generator == null) {
-      _generator = AcceleratorHelper.createAcceleratorGenerator(this);
+      _generator = AcceleratorHelper.createAcceleratorGenerator();
     }
     return _generator;
   }

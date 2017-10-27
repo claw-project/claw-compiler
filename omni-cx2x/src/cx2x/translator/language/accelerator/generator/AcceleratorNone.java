@@ -5,7 +5,6 @@
 
 package cx2x.translator.language.accelerator.generator;
 
-import cx2x.translator.config.Configuration;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 
 import java.util.List;
@@ -19,11 +18,9 @@ public class AcceleratorNone extends AcceleratorGenerator {
 
   /**
    * Constructs a new object with the given target.
-   *
-   * @param config Configuration information object.
    */
-  public AcceleratorNone(Configuration config) {
-    super(config);
+  public AcceleratorNone() {
+    super();
   }
 
   @Override
@@ -43,7 +40,7 @@ public class AcceleratorNone extends AcceleratorGenerator {
 
   @Override
   public String[] getStartLoopDirective(int value, boolean seq,
-                                           boolean naked, String clauses)
+                                        boolean naked, String clauses)
   {
     return null;
   }

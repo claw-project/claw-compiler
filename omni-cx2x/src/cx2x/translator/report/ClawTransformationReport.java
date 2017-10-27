@@ -44,16 +44,15 @@ public class ClawTransformationReport {
   /**
    * Generate the report to file.
    *
-   * @param config     Current configuration used during the transformation.
    * @param args       Arguments passed to the translator.
    * @param translator Current translator used during the transformation.
    * @throws Exception If file cannot be created or cannot be written.
    */
-  public void generate(Configuration config, String[] args,
+  public void generate(String[] args,
                        ClawTranslatorDriver translator) throws Exception
   {
     printHeader("CLAW Transformation Report");
-    printMainInfo(translator, config, args);
+    printMainInfo(translator, args);
     printTransformationOrderInfo(translator.getTranslator());
     printTransformationInfo();
     _report.flush();
@@ -77,12 +76,11 @@ public class ClawTransformationReport {
    * transformation.
    *
    * @param translator Current translator used during the transformation.
-   * @param config     Used configuration for the transformation.
    * @param args       Arguments passed to the translator.
    * @throws Exception If file cannot be created or cannot be written.
    */
   private void printMainInfo(ClawTranslatorDriver translator,
-                             Configuration config, String[] args)
+                             String[] args)
       throws Exception
   {
     printTitle("Information");
@@ -99,9 +97,10 @@ public class ClawTransformationReport {
         translator.getProgram().getCompilerInfo()});
     infos.add(new String[]{"XcodeML/F", translator.getProgram().getVersion()});
     infos.add(new String[]{"CLAW Compiler", ClawVersion.getVersion()});
-    infos.add(new String[]{"Target", config.getCurrentTarget().toString()});
+    infos.add(new String[]{"Target",
+        Configuration.get().getCurrentTarget().toString()});
     infos.add(new String[]{"Directive",
-        config.getCurrentDirective().toString()});
+        Configuration.get().getCurrentDirective().toString()});
     infos.add(new String[]{"Driver command", ""}); // TODO
     infos.add(new String[]{"Translator command", Utility.join(" ", args)});
 

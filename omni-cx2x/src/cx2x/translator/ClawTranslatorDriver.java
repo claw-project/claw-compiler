@@ -54,11 +54,9 @@ public class ClawTranslatorDriver {
    *
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
-   * @param config            Configuration information object.
    */
   public ClawTranslatorDriver(String xcodemlInputFile,
-                              String xcodemlOutputFile,
-                              Configuration config)
+                              String xcodemlOutputFile)
       throws Exception
   {
     _xcodemlInputFile = xcodemlInputFile;
@@ -66,7 +64,7 @@ public class ClawTranslatorDriver {
 
     // Create translator
     String translatorClassPath =
-        config.getParameter(Configuration.TRANSLATOR);
+        Configuration.get().getParameter(Configuration.TRANSLATOR);
     if(translatorClassPath == null || translatorClassPath.equals("")) {
       throw new Exception("Translator not set in configuration");
     }
@@ -74,9 +72,8 @@ public class ClawTranslatorDriver {
     try {
       // Check if class is there
       Class<?> translatorClass = Class.forName(translatorClassPath);
-      Constructor<?> ctor =
-          translatorClass.getConstructor(Configuration.class);
-      _translator = (ClawTranslator) ctor.newInstance(config);
+      Constructor<?> ctor = translatorClass.getConstructor();
+      _translator = (ClawTranslator) ctor.newInstance();
     } catch(ClassNotFoundException e) {
       throw new Exception("Cannot create translator");
     }
@@ -99,14 +96,13 @@ public class ClawTranslatorDriver {
           _translator.generateTransformation(_translationUnit, pragma);
         } else {
           // Check if the pragma is a compile guard
-          if(_translator.getConfiguration().getAcceleratorGenerator().
+          if(Configuration.get().getAcceleratorGenerator().
               isCompileGuard(pragma.value()))
           {
             pragma.delete();
           } else {
             // Handle special transformation of OpenACC line continuation
-            for(GroupConfiguration gc :
-                _translator.getConfiguration().getGroups()) {
+            for(GroupConfiguration gc : Configuration.get().getGroups()) {
               if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
                   && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
               {
@@ -128,8 +124,7 @@ public class ClawTranslatorDriver {
     }
 
     // Generate transformation for translation_unit trigger type
-    for(GroupConfiguration gc :
-        _translator.getConfiguration().getGroups()) {
+    for(GroupConfiguration gc : Configuration.get().getGroups()) {
       if(gc.getTriggerType() ==
           GroupConfiguration.TriggerType.TRANSLATION_UNIT)
       {
@@ -254,14 +249,13 @@ public class ClawTranslatorDriver {
 
   /**
    * Flush all information stored in the translator.
-   *
-   * @param config Current configuration.
    */
-  public void flush(Configuration config)
+  public void flush()
       throws IllegalTransformationException
   {
     String modPrefix = Utility.formattedModuleFilePrefix(
-        config.getCurrentTarget(), config.getCurrentDirective());
+        Configuration.get().getCurrentTarget(),
+        Configuration.get().getCurrentDirective());
     _translator.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
   }
 

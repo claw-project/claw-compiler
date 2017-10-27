@@ -127,7 +127,7 @@ public class Cx2x {
     String configuration_file = null;
     String configuration_path = null;
     int maxColumns = 0;
-    boolean forcePure = false;
+    //boolean forcePure = false;
 
     CommandLine cmd;
     try {
@@ -214,9 +214,8 @@ public class Cx2x {
 
     // --show-config option
     if(cmd.hasOption("sc")) {
-      Configuration config =
-          new Configuration(configuration_path, configuration_file);
-      config.displayConfig();
+      Configuration.get().load(configuration_path, configuration_file);
+      Configuration.get().displayConfig();
       return;
     }
 
@@ -235,12 +234,12 @@ public class Cx2x {
     }
 
     // Read the configuration file
-    Configuration config;
+
     try {
-      config = new Configuration(configuration_path, configuration_file);
-      config.setUserDefinedTarget(target_option);
-      config.setUserDefineDirective(directive_option);
-      config.setMaxColumns(maxColumns);
+      Configuration.get().load(configuration_path, configuration_file);
+      Configuration.get().setUserDefinedTarget(target_option);
+      Configuration.get().setUserDefineDirective(directive_option);
+      Configuration.get().setMaxColumns(maxColumns);
     } catch(Exception ex) {
       error("internal", 0, 0, ex.getMessage());
       return;
@@ -248,26 +247,26 @@ public class Cx2x {
 
     // Force pure option
     if(cmd.hasOption("fp")) {
-      config.setForcePure();
+      Configuration.get().setForcePure();
     }
 
     // Call the translator driver to apply transformation on XcodeML/F
     ClawTranslatorDriver translatorDriver =
-        new ClawTranslatorDriver(input, xcmlOutput, config);
+        new ClawTranslatorDriver(input, xcmlOutput);
     translatorDriver.analyze();
     translatorDriver.transform();
-    translatorDriver.flush(config);
+    translatorDriver.flush();
 
     // Produce report
     if(cmd.hasOption("r")) {
       ClawTransformationReport report =
           new ClawTransformationReport(cmd.getOptionValue("r"));
-      report.generate(config, args, translatorDriver);
+      report.generate(args, translatorDriver);
     }
 
     // Decompile XcodeML/F to target language
     XcmlBackend backend;
-    if(config.getCurrentTarget() == Target.FPGA) {
+    if(Configuration.get().getCurrentTarget() == Target.FPGA) {
       // TODO remove when supported
       error(xcmlOutput, 0, 0, "FPGA target is not supported yet");
       backend = new XcmlBackend(XcmlBackend.Lang.C);
