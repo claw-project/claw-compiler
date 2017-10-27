@@ -8,10 +8,10 @@ package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
@@ -120,12 +120,11 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Configuration configuration =
-        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
-    configuration.setMaxColumns(80);
-    ClawTranslator translator = new ClawTranslator(configuration);
+    Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+    Configuration.get().setMaxColumns(80);
+    ClawTranslator translator = new ClawTranslator();
     AcceleratorGenerator generator =
-        AcceleratorHelper.createAcceleratorGenerator(configuration);
+        AcceleratorHelper.createAcceleratorGenerator();
     ClawLanguage main = null;
     try {
       main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
@@ -178,15 +177,12 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Configuration configuration =
-        new Configuration(AcceleratorDirective.OPENACC, Target.GPU);
-    configuration.setMaxColumns(80);
-    ClawTranslator translator = new ClawTranslator(configuration);
+    Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+    Configuration.get().setMaxColumns(80);
     AcceleratorGenerator generator =
-        AcceleratorHelper.createAcceleratorGenerator(configuration);
-    ClawLanguage main = null;
+        AcceleratorHelper.createAcceleratorGenerator();
     try {
-      main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
+      ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
     } catch(Exception e) {
       fail();
     }

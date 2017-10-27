@@ -5,7 +5,9 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,6 +20,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -801,6 +804,56 @@ public class XcodeML extends Xnode {
     n.setType(Xname.TYPE_F_INT);
     n.setValue(String.valueOf(value));
     return n;
+  }
+
+
+  /**
+   * Create a list of FpragmaStatement with correct line continuation symbols.
+   * Initial value is splitted according to the max column information. This is
+   * done as the OMNI Compiler backend doesn't split the FpragmaElement.
+   * <p>
+   * Supports acc, omp and claw prefix
+   *
+   * @param value     Value of the FpragmaStatement.
+   * @param maxColumn Maximum column value. Split is based on this value.
+   * @return List of FpragmaStatement representing the splitted value.
+   */
+  public List<Xnode> createPragma(String value, int maxColumn) {
+    if(value == null || value.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<Xnode> pragmas = new ArrayList<>();
+    value = value.trim().toLowerCase();
+    String prefix = "";
+    if(value.startsWith(ClawConstant.OPENACC_PREFIX)) {
+      prefix = ClawConstant.OPENACC_PREFIX;
+    } else if(value.startsWith(ClawConstant.OPENMP_PREFIX)) {
+      prefix = ClawConstant.OPENMP_PREFIX;
+    } else if(value.startsWith(ClawConstant.CLAW)) {
+      prefix = ClawConstant.CLAW;
+    }
+
+    List<String> chunks = XnodeUtil.splitByLength(value, maxColumn, prefix);
+    for(int i = 0; i < chunks.size(); ++i) {
+      String chunk = chunks.get(i).trim();
+      Xnode p = createNode(Xcode.FPRAGMASTATEMENT);
+      if(i == chunks.size() - 1) { // Last chunk
+        if(!chunk.startsWith(prefix)) {
+          p.setValue(prefix + " " + chunk);
+        } else {
+          p.setValue(chunk);
+        }
+      } else {
+        if(!chunk.startsWith(prefix)) {
+          p.setValue(prefix + " " + chunk + " " +
+              ClawConstant.CONTINUATION_LINE_SYMBOL);
+        } else {
+          p.setValue(chunk + " " + ClawConstant.CONTINUATION_LINE_SYMBOL);
+        }
+      }
+      pragmas.add(p);
+    }
+    return pragmas;
   }
 
 }

@@ -72,18 +72,4 @@ public interface Translator {
    * @return Module cache.
    */
   ModuleCache getModCache();
-
-  /**
-   * Get the maximum number of columns.
-   *
-   * @return Max number of columns.
-   */
-  int getMaxColumns();
-
-  /**
-   * Set the maximum number of columns.
-   *
-   * @param max Max number of columns.
-   */
-  void setMaxColumns(int max);
 }

@@ -455,6 +455,7 @@ public class AcceleratorHelper {
     }
   }
 
+
   /**
    * Generate the correct clauses for private variable on accelerator.
    *
@@ -494,19 +495,17 @@ public class AcceleratorHelper {
    * Constructs the correct AcceleratorGenerator object regarding the enum
    * value passed.
    *
-   * @param config Configuration information object.
    * @return A specific implementation of an AcceleratorGenerator.
    */
-  public static AcceleratorGenerator createAcceleratorGenerator(
-      Configuration config)
+  public static AcceleratorGenerator createAcceleratorGenerator()
   {
-    switch(config.getCurrentDirective()) {
+    switch(Configuration.get().getCurrentDirective()) {
       case OPENACC:
-        return new OpenAcc(config);
+        return new OpenAcc();
       case OPENMP:
-        return new OpenMp(config);
+        return new OpenMp();
     }
-    return new AcceleratorNone(config);
+    return new AcceleratorNone();
   }
 
   /**
@@ -553,18 +552,21 @@ public class AcceleratorHelper {
     if(directives == null) {
       return null;
     }
-    Xnode pragma = null;
     for(String directive : directives) {
-      pragma = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-      pragma.setValue(directive);
-      if(after) {
-        ref.insertAfter(pragma);
-        ref = pragma; // Insert pragma sequentially one after another
-      } else {
-        ref.insertBefore(pragma);
+      List<Xnode> pragmas = xcodeml.createPragma(directive,
+          Configuration.get().getMaxColumns());
+      for(Xnode pragma : pragmas) {
+        if(after) {
+          ref.insertAfter(pragma);
+          ref = pragma; // Insert pragma sequentially one after another
+        } else {
+          ref.insertBefore(pragma); // Only the first chunk needs to be inserted
+          after = true;
+          ref = pragma;
+        }
       }
     }
-    return pragma;
+    return ref;
   }
 
   /**
@@ -624,8 +626,7 @@ public class AcceleratorHelper {
     } else {
       while(first.nextSibling() != null
           && generator.getSkippedStatementsInPreamble().
-          contains(first.opcode()))
-      {
+          contains(first.opcode())) {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!generator.getSkippedStatementsInPreamble().
@@ -672,8 +673,7 @@ public class AcceleratorHelper {
     } else {
       while(last.prevSibling() != null
           && generator.getSkippedStatementsInEpilogue().
-          contains(last.opcode()))
-      {
+          contains(last.opcode())) {
         if(last.hasBody()) {
           for(Xnode child : last.body().children()) {
             if(!generator.getSkippedStatementsInEpilogue().

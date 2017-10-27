@@ -30,11 +30,9 @@ public class OpenMp extends AcceleratorGenerator {
 
   /**
    * Constructs a new object with the given target.
-   *
-   * @param config Configuration information object.
    */
-  public OpenMp(Configuration config) {
-    super(config);
+  public OpenMp() {
+    super();
   }
 
   @Override
@@ -45,7 +43,7 @@ public class OpenMp extends AcceleratorGenerator {
   @Override
   public String[] getStartParallelDirective(String clauses) {
     // TODO handle possible clauses
-    if(getConfiguration().getCurrentTarget() == Target.GPU) {
+    if(Configuration.get().getCurrentTarget() == Target.GPU) {
       //!$omp target
       //!$omp parallel
       return new String[]{
@@ -62,7 +60,7 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String[] getEndParallelDirective() {
-    if(getConfiguration().getCurrentTarget() == Target.GPU) {
+    if(Configuration.get().getCurrentTarget() == Target.GPU) {
       //!$omp end parallel
       //!$omp end target
       return new String[]{

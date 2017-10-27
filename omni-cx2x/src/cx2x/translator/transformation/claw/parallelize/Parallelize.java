@@ -7,6 +7,7 @@ package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Utility;
+import cx2x.translator.config.Configuration;
 import cx2x.translator.config.OpenAccLocalStrategy;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
@@ -349,7 +350,7 @@ public class Parallelize extends ClawTransformation {
     ClawTranslator trans = (ClawTranslator) translator;
     boolean pureRemoved = _fctType.isPure();
     _fctType.removeAttribute(Xattr.IS_PURE);
-    if(trans.getConfiguration().isForcePure() && pureRemoved) {
+    if(Configuration.get().isForcePure() && pureRemoved) {
       throw new IllegalTransformationException(
           "PURE specifier cannot be removed", _fctDef.lineNo());
     } else if(pureRemoved) {
@@ -462,11 +463,11 @@ public class Parallelize extends ClawTransformation {
         AcceleratorHelper.getPresentVariables(xcodeml, _fctDef);
     List<String> privateList = Collections.emptyList();
     List<String> createList = Collections.emptyList();
-    if(translator.getConfiguration().openACC().getLocalStrategy()
+    if(Configuration.get().openACC().getLocalStrategy()
         == OpenAccLocalStrategy.PRIVATE)
     {
       privateList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
-    } else if(translator.getConfiguration().openACC().getLocalStrategy()
+    } else if(Configuration.get().openACC().getLocalStrategy()
         == OpenAccLocalStrategy.PROMOTE)
     {
       createList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);

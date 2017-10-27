@@ -5,7 +5,6 @@
 
 package cx2x.translator.language.accelerator.generator;
 
-import cx2x.translator.config.Configuration;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
@@ -29,24 +28,11 @@ public abstract class AcceleratorGenerator {
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
   static final String FORMAT5 = "%s %s %s %s %s";
-  private final Configuration _configuration;
 
   /**
    * Constructs a new object with the given target.
-   *
-   * @param config Configuration information object.
    */
-  public AcceleratorGenerator(Configuration config) {
-    _configuration = config;
-  }
-
-  /**
-   * Get the associated configuration information.
-   *
-   * @return Configuration object.
-   */
-  Configuration getConfiguration() {
-    return _configuration;
+  public AcceleratorGenerator() {
   }
 
   /**
@@ -81,8 +67,8 @@ public abstract class AcceleratorGenerator {
    * @return String value that represents the start of a parallelized loop.
    */
   public abstract String[] getStartLoopDirective(int value, boolean seq,
-                                                    boolean naked,
-                                                    String clauses);
+                                                 boolean naked,
+                                                 String clauses);
 
   /**
    * Get the formatted directive to end the parallelization of a loop.
@@ -134,7 +120,9 @@ public abstract class AcceleratorGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  public String getPresentClause(List<String> vars) { return ""; }
+  public String getPresentClause(List<String> vars) {
+    return "";
+  }
 
   /**
    * Return construction of the clause for a list of created variables.
@@ -145,7 +133,9 @@ public abstract class AcceleratorGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  public String getCreateClause(List<String> vars) { return ""; }
+  public String getCreateClause(List<String> vars) {
+    return "";
+  }
 
 
   /**

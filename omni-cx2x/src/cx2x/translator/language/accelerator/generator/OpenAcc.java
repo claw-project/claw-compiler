@@ -39,11 +39,9 @@ public class OpenAcc extends AcceleratorGenerator {
 
   /**
    * Constructs a new object with the given target.
-   *
-   * @param config Configuration information object.
    */
-  public OpenAcc(Configuration config) {
-    super(config);
+  public OpenAcc() {
+    super();
   }
 
   @Override
@@ -190,7 +188,7 @@ public class OpenAcc extends AcceleratorGenerator {
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
                 naked ? "" :
-                    getConfiguration().openACC().getFormattedExecutionMode(),
+                    Configuration.get().openACC().getFormattedExecutionMode(),
                 clauses).trim()
         };
       }
@@ -205,7 +203,7 @@ public class OpenAcc extends AcceleratorGenerator {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
                 naked ? "" :
-                    getConfiguration().openACC().getFormattedExecutionMode(),
+                    Configuration.get().openACC().getFormattedExecutionMode(),
                 clauses).trim()
         };
       }
