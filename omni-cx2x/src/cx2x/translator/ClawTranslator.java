@@ -315,23 +315,7 @@ public class ClawTranslator implements Translator {
   public ModuleCache getModCache() {
     return _modCache;
   }
-
-  /**
-   * @see Translator#getMaxColumns()
-   */
-  @Override
-  public int getMaxColumns() {
-    return Configuration.get().getMaxColumns();
-  }
-
-  /**
-   * @param max Max number of columns.
-   * @see Translator#setMaxColumns(int)
-   */
-  @Override
-  public void setMaxColumns(int max) {
-    Configuration.get().setMaxColumns(max);
-  }
+  
 
   /**
    * Get a stored element from a previous transformation.

@@ -7,6 +7,7 @@ package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
+import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -98,7 +99,7 @@ public class OpenAccContinuation extends ClawTransformation {
   {
     if(isFromPrimitive()) {
       splitByCont(xcodeml);
-    } else if(translator.getMaxColumns() > 0
+    } else if(Configuration.get().getMaxColumns() > 0
         && !getDirective().getPragma().isDeleted())
     {
       splitByLength(xcodeml, translator);
@@ -114,12 +115,12 @@ public class OpenAccContinuation extends ClawTransformation {
    */
   private void splitByLength(XcodeProgram xcodeml, Translator translator) {
     String allPragma = getDirective().getPragma().value().toLowerCase();
-    if(allPragma.length() > translator.getMaxColumns()) {
+    if(allPragma.length() > Configuration.get().getMaxColumns()) {
       allPragma = XnodeUtil.dropEndingComment(allPragma);
       Xnode newlyInserted = getDirective().getPragma();
       int lineIndex = getDirective().getPragma().lineNo();
       List<String> splittedPragmas = XnodeUtil.splitByLength(allPragma,
-          translator.getMaxColumns(), ClawConstant.OPENACC_PREFIX);
+          Configuration.get().getMaxColumns(), ClawConstant.OPENACC_PREFIX);
 
       for(int i = 0; i < splittedPragmas.size(); ++i) {
         // Create pragma with continuation symbol unless for the last item.
