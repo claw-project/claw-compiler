@@ -48,9 +48,9 @@ public class NestedDoStatement {
 
     Xnode crtDoStatement = outerDoStatement;
     while(crtDoStatement != null) {
+      _statements.add(crtDoStatement);
       crtDoStatement = crtDoStatement.body().
           matchDirectDescendant(Xcode.FDOSTATEMENT);
-      _statements.add(crtDoStatement);
       if(_statements.size() == nb) {
         break;
       }
