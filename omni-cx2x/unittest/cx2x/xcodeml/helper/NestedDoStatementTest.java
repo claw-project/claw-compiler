@@ -15,6 +15,8 @@ import static org.junit.Assert.*;
 
 /**
  * Test class NestedDoStatement
+ *
+ * @author clementval 
  */
 public class NestedDoStatementTest {
 
