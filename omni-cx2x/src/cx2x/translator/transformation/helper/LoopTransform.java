@@ -18,6 +18,7 @@ import java.util.List;
 /**
  * Low-level transformation applied on do statements. This included:
  * - loop fusion (merge)
+ * - loop reorder
  *
  * @author clementval
  */
