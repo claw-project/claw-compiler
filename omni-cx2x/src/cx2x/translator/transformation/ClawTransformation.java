@@ -51,7 +51,7 @@ public abstract class ClawTransformation extends Transformation {
   /**
    * Delete the associated pragma statement.
    */
-  public void removePragma() {
+  protected void removePragma() {
     if(_claw != null && _claw.getPragma() != null) {
       _claw.getPragma().delete();
     }

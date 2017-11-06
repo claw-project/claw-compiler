@@ -104,7 +104,7 @@ public class Kcaching extends ClawTransformation {
       }
 
     }
-    _claw.getPragma().delete();
+    removePragma();
   }
 
   /**

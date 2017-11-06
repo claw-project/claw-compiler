@@ -408,8 +408,8 @@ public class LoopExtraction extends ClawTransformation {
     TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
         translator, extractedLoop);
 
-    _claw.getPragma().delete();
-    this.transformed();
+    removePragma();
+    transformed();
   }
 
   /**

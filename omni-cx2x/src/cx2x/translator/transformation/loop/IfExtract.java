@@ -109,6 +109,6 @@ public class IfExtract extends ClawTransformation {
     duplicateIf.delete();
     XnodeUtil.safeDelete(_ifStmt);
     XnodeUtil.safeDelete(_doStmt);
-    XnodeUtil.safeDelete(_claw.getPragma());
+    removePragma();
   }
 }

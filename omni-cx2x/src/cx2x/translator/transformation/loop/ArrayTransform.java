@@ -144,8 +144,7 @@ public class ArrayTransform extends ClawBlockTransformation {
   public boolean canBeTransformedWith(XcodeProgram xcodeml,
                                       Transformation other)
   {
-    // independent transformation
-    return false;
+    return false; // independent transformation
   }
 
   /**
@@ -168,11 +167,8 @@ public class ArrayTransform extends ClawBlockTransformation {
       grip = generateDoStmtNotation(xcodeml, translator, fctDef,
           _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
     }
-    _clawStart.getPragma().delete();
-    if(_clawEnd != null) {
-      _clawEnd.getPragma().delete();
-    }
-    this.transformed();
+    removePragma();
+    transformed();
   }
 
   /**

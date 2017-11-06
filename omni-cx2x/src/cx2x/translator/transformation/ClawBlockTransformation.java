@@ -26,4 +26,16 @@ public abstract class ClawBlockTransformation extends BlockTransformation {
     _clawStart = startDirective;
     _clawEnd = endDirective;
   }
+
+  /**
+   * Delete the associated pragma statement(s).
+   */
+  public void removePragma() {
+    if(_clawStart != null && _clawStart.getPragma() != null) {
+      _clawStart.getPragma().delete();
+    }
+    if(_clawEnd != null && _clawEnd.getPragma() != null) {
+      _clawEnd.getPragma().delete();
+    }
+  }
 }

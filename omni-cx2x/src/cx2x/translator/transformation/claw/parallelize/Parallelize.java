@@ -381,9 +381,8 @@ public class Parallelize extends ClawTransformation {
           _fctDef.body(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
           xcodeml);
     }
-
-    // Delete the pragma
-    _claw.getPragma().delete();
+    
+    removePragma();
 
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU) {

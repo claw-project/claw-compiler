@@ -110,7 +110,7 @@ public class ArrayToFctCall extends ClawTransformation {
     }
 
     fctCall.delete();
-    _claw.getPragma().delete();
-    this.transformed();
+    removePragma();
+    transformed();
   }
 }

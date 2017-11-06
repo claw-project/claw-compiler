@@ -196,7 +196,7 @@ public class LoopHoist extends ClawBlockTransformation {
   public boolean canBeTransformedWith(XcodeProgram xcodeml,
                                       Transformation transformation)
   {
-    return false;
+    return false; // Independent transformation
   }
 
   /**
@@ -232,9 +232,7 @@ public class LoopHoist extends ClawBlockTransformation {
     // Apply reshape clause
     TransformationHelper.applyReshapeClause(_clawStart, xcodeml);
 
-    // Delete pragmas
-    _clawStart.getPragma().delete();
-    _clawEnd.getPragma().delete();
+    removePragma();
   }
 
   /**

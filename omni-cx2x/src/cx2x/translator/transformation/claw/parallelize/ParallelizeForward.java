@@ -354,8 +354,7 @@ public class ParallelizeForward extends ClawTransformation {
       transformStd(xcodeml, translator);
     }
 
-    // Delete pragma
-    _claw.getPragma().delete();
+    removePragma();
   }
 
   /**

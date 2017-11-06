@@ -53,8 +53,7 @@ public class DirectivePrimitive extends ClawTransformation {
   public boolean canBeTransformedWith(XcodeProgram xcodeml,
                                       Transformation other)
   {
-    // independent transformation
-    return false;
+    return false; // independent transformation
   }
 
   /**
