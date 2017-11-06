@@ -5,7 +5,6 @@
 
 package cx2x.xcodeml.helper;
 
-import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -859,61 +858,6 @@ public class XnodeUtil {
     }
   }
 
-  /**
-   * Swap the iteration range information of two do statement.
-   *
-   * @param e1 First do statement.
-   * @param e2 Second do statement.
-   * @throws IllegalTransformationException if necessary elements are missing
-   *                                        to apply the transformation.
-   */
-  public static void swapIterationRange(Xnode e1, Xnode e2)
-      throws IllegalTransformationException
-  {
-    // The two nodes must be do statement
-    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
-      return;
-    }
-
-    Xnode inductionVar1 = e1.matchDirectDescendant(Xcode.VAR);
-    Xnode inductionVar2 = e2.matchDirectDescendant(Xcode.VAR);
-    Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEXRANGE);
-    Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEXRANGE);
-    if(inductionVar1 == null || inductionVar2 == null ||
-        indexRange1 == null || indexRange2 == null)
-    {
-      throw new IllegalTransformationException("Induction variable or index " +
-          "range missing.");
-    }
-
-    Xnode low1 = indexRange1.matchSeq(Xcode.LOWERBOUND).child(0);
-    Xnode up1 = indexRange1.matchSeq(Xcode.UPPERBOUND).child(0);
-    Xnode s1 = indexRange1.matchSeq(Xcode.STEP).child(0);
-
-    Xnode low2 = indexRange2.matchSeq(Xcode.LOWERBOUND).child(0);
-    Xnode up2 = indexRange2.matchSeq(Xcode.UPPERBOUND).child(0);
-    Xnode s2 = indexRange2.matchSeq(Xcode.STEP).child(0);
-
-    // Set the range of loop2 to loop1
-    inductionVar2.insertAfter(inductionVar1.cloneNode());
-    low2.insertAfter(low1.cloneNode());
-    up2.insertAfter(up1.cloneNode());
-    s2.insertAfter(s1.cloneNode());
-
-    inductionVar1.insertAfter(inductionVar2.cloneNode());
-    low1.insertAfter(low2.cloneNode());
-    up1.insertAfter(up2.cloneNode());
-    s1.insertAfter(s2.cloneNode());
-
-    inductionVar1.delete();
-    inductionVar2.delete();
-    low1.delete();
-    up1.delete();
-    s1.delete();
-    low2.delete();
-    up2.delete();
-    s2.delete();
-  }
 
   /**
    * Get a list of T elements from an xpath query executed from the
@@ -1145,7 +1089,7 @@ public class XnodeUtil {
     if(doStatement.opcode() != Xcode.FDOSTATEMENT) {
       return "";
     }
-    return doStatement.matchDirectDescendant(Xcode.VAR).value();
+    return doStatement.matchDirectDescendant(Xcode.VAR).value().toLowerCase();
   }
 
   /**

@@ -9,6 +9,8 @@ import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -16,25 +18,32 @@ import static org.junit.Assert.*;
 /**
  * Test class NestedDoStatement
  *
- * @author clementval 
+ * @author clementval
  */
 public class NestedDoStatementTest {
-
-  //"<FdoStatement><body></body></FdoStatement>";
 
   private static final String group1 = "<FdoStatement>" +
       "<body></body>" +
       "</FdoStatement>";
-
   private static final String group2 = "<FdoStatement>" +
       "<body><FdoStatement><body></body></FdoStatement></body>" +
       "</FdoStatement>";
-
   private static final String group3 = "<FdoStatement>" +
       "<body>" +
       "<FdoStatement>" +
       "<body>" +
       "<FdoStatement>" +
+      "<body></body>" +
+      "</FdoStatement>" +
+      "</body>" +
+      "</FdoStatement>" +
+      "</body>" +
+      "</FdoStatement>";
+  private static final String swapNodes = "<FdoStatement><Var>i</Var>" +
+      "<body>" +
+      "<FdoStatement><Var>j</Var>" +
+      "<body>" +
+      "<FdoStatement><Var>k</Var>" +
       "<body></body>" +
       "</FdoStatement>" +
       "</body>" +
@@ -72,7 +81,7 @@ public class NestedDoStatementTest {
     assertEquals(ndo3.get(2), ndo3.getInnerStatement());
     assertNotEquals(ndo3.getOuterStatement(), ndo3.getInnerStatement());
 
-    // Only two do statements in a potiential 3 nested group one
+    // Only two do statements in a potential 3 nested group one
     NestedDoStatement ndo3_only2 = new NestedDoStatement(do3, 2);
     assertNotNull(ndo3_only2);
     assertEquals(2, ndo3_only2.size());
@@ -80,5 +89,43 @@ public class NestedDoStatementTest {
     assertEquals(ndo3_only2.get(1), ndo3_only2.getInnerStatement());
     List<Xnode> doStmts = do3.matchAll(Xcode.FDOSTATEMENT);
     assertEquals(2, doStmts.size());
+  }
+
+  @Test
+  public void computeSwappingIndicesTest() {
+    Xnode swap = XmlHelper.createXnode(swapNodes);
+    assertNotNull(swap);
+    NestedDoStatement ndostmt = new NestedDoStatement(swap);
+    
+    assertEquals(12,
+        ndostmt.computeSwappingIndices(Arrays.asList("i", "j", "k")));
+    assertEquals(21,
+        ndostmt.computeSwappingIndices(Arrays.asList("i", "k", "j")));
+    assertEquals(210,
+        ndostmt.computeSwappingIndices(Arrays.asList("k", "j", "i")));
+    assertEquals(102,
+        ndostmt.computeSwappingIndices(Arrays.asList("j", "i", "k")));
+    assertEquals(201,
+        ndostmt.computeSwappingIndices(Arrays.asList("j", "k", "i")));
+    assertEquals(120,
+        ndostmt.computeSwappingIndices(Arrays.asList("k", "i", "j")));
+
+    assertEquals(12,
+        ndostmt.computeSwappingIndices(Arrays.asList("I", "J", "K")));
+    assertEquals(21,
+        ndostmt.computeSwappingIndices(Arrays.asList("I", "K", "J")));
+    assertEquals(210,
+        ndostmt.computeSwappingIndices(Arrays.asList("K", "J", "I")));
+    assertEquals(102,
+        ndostmt.computeSwappingIndices(Arrays.asList("J", "I", "K")));
+    assertEquals(201,
+        ndostmt.computeSwappingIndices(Arrays.asList("J", "K", "I")));
+    assertEquals(120,
+        ndostmt.computeSwappingIndices(Arrays.asList("K", "I", "J")));
+
+    assertEquals(0,
+        ndostmt.computeSwappingIndices(Collections.<String>emptyList()));
+    assertEquals(0,
+        ndostmt.computeSwappingIndices(Arrays.asList("i", "j")));
   }
 }

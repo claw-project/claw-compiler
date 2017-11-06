@@ -117,6 +117,39 @@ public class NestedDoStatement {
   }
 
   /**
+   * Compute the swapping indices for the new ordering. Gives new position
+   * position of the xth index from right to left.
+   * E.g. current to new position: i,j,k -> k,i,j = 120 i goes to pos 1, j goes
+   * to pos 2 and k goes to pos 0.
+   *
+   * @param newInductionVarOrder List of induction variable in their new order.
+   * @return Computed new position indices.
+   */
+  public int computeSwappingIndices(List<String> newInductionVarOrder) {
+    int swapIndices = 0;
+    if(newInductionVarOrder.size() != size()) {
+      return swapIndices;
+    }
+
+    for(int i = 0; i < newInductionVarOrder.size(); ++i) {
+      newInductionVarOrder.set(i, newInductionVarOrder.get(i).toLowerCase());
+    }
+
+    int crtShift = (int) Math.pow(10, newInductionVarOrder.size() - 1);
+    List<String> crtInductionVarOrder = getInductionVariables();
+    for(String inductionVar : crtInductionVarOrder) {
+      int pos = newInductionVarOrder.indexOf(inductionVar.toLowerCase());
+      if(pos >= 0) {
+        swapIndices += pos * crtShift;
+      }
+      if(crtShift != 0) {
+        crtShift = crtShift / 10;
+      }
+    }
+    return swapIndices;
+  }
+
+  /**
    * Get the inner do statements. Last do statement in the nested group.
    *
    * @return XdoStatement holding information about the inner do statement.
@@ -134,5 +167,4 @@ public class NestedDoStatement {
   public int size() {
     return _statements.size();
   }
-
 }
