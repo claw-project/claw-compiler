@@ -381,7 +381,7 @@ public class Parallelize extends ClawTransformation {
           _fctDef.body(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
           xcodeml);
     }
-    
+
     removePragma();
 
     // Apply specific target transformation
