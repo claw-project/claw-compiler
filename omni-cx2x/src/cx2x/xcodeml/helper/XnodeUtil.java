@@ -1084,55 +1084,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Clean up extra pragma that have no more sense after transformation.
-   *
-   * @param node     Do statement that will be removed.
-   * @param previous List of pragma to be removed before the do statement.
-   * @param next     List of pragmas to be removed after the do statement.
-   */
-  public static void cleanPragmas(Xnode node, String[] previous, String[] next)
-  {
-    if(node.opcode() != Xcode.FDOSTATEMENT) {
-      return;
-    }
-
-    Xnode doStatement = node;
-
-    while(node.prevSibling() != null
-        && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
-      String pragma = node.prevSibling().value();
-      Xnode toDelete = null;
-
-      for(String p : previous) {
-        if(!pragma.startsWith(ClawConstant.CLAW) && pragma.contains(p)) {
-          toDelete = node.prevSibling();
-          break;
-        }
-      }
-
-      node = node.prevSibling();
-      safeDelete(toDelete);
-    }
-
-    node = doStatement; // Reset node to the initial position.
-    while(node.nextSibling() != null
-        && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
-      String pragma = node.nextSibling().value();
-      Xnode toDelete = null;
-
-      for(String n : next) {
-        if(!pragma.startsWith(ClawConstant.CLAW) && pragma.contains(n)) {
-          toDelete = node.nextSibling();
-          break;
-        }
-      }
-
-      node = node.nextSibling();
-      safeDelete(toDelete);
-    }
-  }
-
-  /**
    * Check whether the end node is a direct sibling of the start node. If other
    * nodes are between the two nodes and their opcode is not listed in the
    * skippedNodes list, the nodes are not direct siblings.

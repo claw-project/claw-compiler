@@ -99,6 +99,18 @@ public class Configuration {
   }
 
   /**
+   * Get the unique instance.
+   *
+   * @return Unique Configuration instance.
+   */
+  public static Configuration get() {
+    if(instance == null) {
+      instance = new Configuration();
+    }
+    return instance;
+  }
+
+  /**
    * Constructs basic configuration object.
    *
    * @param dir    Accelerator directive language.
@@ -112,18 +124,6 @@ public class Configuration {
     _groups = new ArrayList<>();
     _availableGroups = new HashMap<>();
     _configuration_path = null;
-  }
-
-  /**
-   * Get the unique instance.
-   *
-   * @return Unique Configuration instance.
-   */
-  public static Configuration get() {
-    if(instance == null) {
-      instance = new Configuration();
-    }
-    return instance;
   }
 
   /**

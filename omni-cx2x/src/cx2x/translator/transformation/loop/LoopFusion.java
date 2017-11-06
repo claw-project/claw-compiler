@@ -9,7 +9,9 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.helper.LoopTransform;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
@@ -32,12 +34,11 @@ import java.util.Collections;
 
 public class LoopFusion extends ClawTransformation {
 
-  private static final String[] prevToDelete = {"acc loop", "omp do"};
-  private static final String[] nextToDelete = {"omp end do"};
+
   // Contains the value of the group option
   private String _groupClauseLabel = ClawConstant.EMPTY_STRING;
   // The loop statement involved in the Transformation
-  private Xnode[] _doStmts;
+  private NestedDoStatement _doStmt;
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -50,7 +51,6 @@ public class LoopFusion extends ClawTransformation {
     if(_claw.hasGroupClause()) {
       _groupClauseLabel = directive.getGroupValue();
     }
-    _doStmts = new Xnode[0];
   }
 
   /**
@@ -62,17 +62,7 @@ public class LoopFusion extends ClawTransformation {
    */
   public LoopFusion(Xnode loop, ClawLanguage ghostDirective) {
     super(ghostDirective);
-    if(_claw.hasCollapseClause()) {
-      _doStmts = new Xnode[_claw.getCollapseValue()];
-      _doStmts[0] = loop;
-      for(int i = 1; i < _claw.getCollapseValue(); ++i) {
-        _doStmts[i] = _doStmts[i - 1].body().
-            matchDirectDescendant(Xcode.FDOSTATEMENT);
-      }
-    } else {
-      _doStmts = new Xnode[]{loop};
-    }
-
+    _doStmt = new NestedDoStatement(loop, 1);
     if(_claw.hasGroupClause()) {
       _groupClauseLabel = ghostDirective.getGroupValue();
     }
@@ -93,34 +83,24 @@ public class LoopFusion extends ClawTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    // With collapse clause
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
-      _doStmts = new Xnode[_claw.getCollapseValue()];
-      for(int i = 0; i < _claw.getCollapseValue(); ++i) {
-        if(i == 0) { // Find the outer do statement from pragma
-          _doStmts[0] = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
-        } else { // Find the next i loops
-          _doStmts[i] = _doStmts[i - 1].body().
-              matchDirectDescendant(Xcode.FDOSTATEMENT);
-        }
-        if(_doStmts[i] == null) {
-          xcodeml.addError("Do statement missing at depth " + i +
-              " after directive.", _claw.getPragma().lineNo());
-          return false;
-        }
-      }
-      return true;
-    } else {
-      // Without collapse clause, locate the do statement after the pragma
-      Xnode doStmt = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
-      if(doStmt == null) {
-        xcodeml.addError("Do statement missing after directive.",
-            _claw.getPragma().lineNo());
-        return false;
-      }
-      _doStmts = new Xnode[]{doStmt};
-      return true;
+    Xnode outerLoop = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
+    if(outerLoop == null) {
+      xcodeml.addError("Do statement missing after directive.",
+          _claw.getPragma().lineNo());
+      return false;
     }
+    _doStmt = new NestedDoStatement(outerLoop, _claw.getCollapseValue());
+
+    // With collapse clause
+    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0
+        && _claw.getCollapseValue() > _doStmt.size())
+    {
+
+      xcodeml.addError("not enough do statements for collapse value",
+          _claw.getPragma().lineNo());
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -151,43 +131,22 @@ public class LoopFusion extends ClawTransformation {
     {
       // Merge the most inner loop with the most inner loop of the other fusion
       // unit
-      int innerDoStmtIdx = _claw.getCollapseValue() - 1;
-      if(_doStmts[innerDoStmtIdx] == null
-          || other.getDoStmtAtIndex(innerDoStmtIdx) == null)
-      {
+      if(_claw.getCollapseValue() > _doStmt.size()) {
         throw new IllegalTransformationException(
             "Cannot apply transformation, one or both do stmt are invalid.",
             _claw.getPragma().lineNo()
         );
       }
-      XnodeUtil.appendBody(_doStmts[innerDoStmtIdx].body(),
-          other.getDoStmtAtIndex(innerDoStmtIdx).body());
-    } else {
-      // Without collapse clause, only first do statements are considered.
-      XnodeUtil.appendBody(_doStmts[0].body(),
-          other.getDoStmtAtIndex(0).body());
     }
-    other.finalizeTransformation();
-    XnodeUtil.safeDelete(_claw.getPragma()); // Delete the pragma statement
-  }
 
-  /**
-   * Call by the transform method of the master loop fusion unit on the slave
-   * loop fusion unit to finalize the transformation. Pragma and loop of the
-   * slave loop fusion unit are deleted.
-   */
-  private void finalizeTransformation() {
-    // Delete the pragma of the transformed loop
-    XnodeUtil.safeDelete(_claw.getPragma());
+    // Actual merge happens here
+    LoopTransform.merge(_doStmt, other.getNestedDoStmt());
 
-    // Delete any acc loop / omp do pragma before/after the do statements.
-    XnodeUtil.cleanPragmas(_doStmts[0], prevToDelete, nextToDelete);
+    // Clean up
+    other.removePragma();
+    this.removePragma();
 
-    // Delete the do statement that was merged with the main one
-    XnodeUtil.safeDelete(_doStmts[0]);
-
-    // Set transformation as done.
-    this.transformed();
+    other.transformed();
   }
 
   /**
@@ -242,7 +201,8 @@ public class LoopFusion extends ClawTransformation {
     // is set to none, there are note checked.
     if(currentConstraint == ClawConstraint.DIRECT) {
       // Only pragma statement can be between the two loops.
-      if(!XnodeUtil.isDirectSibling(_doStmts[0], other.getDoStmtAtIndex(0),
+      if(!XnodeUtil.isDirectSibling(_doStmt.getOuterStatement(),
+          other.getNestedDoStmt().getOuterStatement(),
           Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
       {
         return false;
@@ -254,14 +214,16 @@ public class LoopFusion extends ClawTransformation {
     }
 
     // Loops can only be merged if they are at the same level
-    if(!_doStmts[0].hasSameParentBlock(other.getDoStmtAtIndex(0))) {
+    if(!_doStmt.getOuterStatement().hasSameParentBlock(
+        other.getNestedDoStmt().getOuterStatement()))
+    {
       return false;
     }
 
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
-        if(!XnodeUtil.hasSameIndexRange(_doStmts[i],
-            other.getDoStmtAtIndex(i)))
+        if(!XnodeUtil.hasSameIndexRange(_doStmt.get(i),
+            other.getNestedDoStmt().get(i)))
         {
           return false;
         }
@@ -269,8 +231,8 @@ public class LoopFusion extends ClawTransformation {
       return true;
     } else {
       // Loop must share the same iteration range
-      return XnodeUtil.hasSameIndexRange(_doStmts[0],
-          other.getDoStmtAtIndex(0));
+      return XnodeUtil.hasSameIndexRange(_doStmt.getOuterStatement(),
+          other.getNestedDoStmt().getOuterStatement());
     }
   }
 
@@ -278,17 +240,10 @@ public class LoopFusion extends ClawTransformation {
    * Return the do statement associated with this loop fusion unit at given
    * depth.
    *
-   * @param depth Integer value representing the depth of the loop from the
-   *              pragma statement.
    * @return A do statement.
    */
-  private Xnode getDoStmtAtIndex(int depth) {
-    if(_claw != null && _claw.hasCollapseClause() &&
-        depth < _claw.getCollapseValue())
-    {
-      return _doStmts[depth];
-    }
-    return _doStmts[0];
+  private NestedDoStatement getNestedDoStmt() {
+    return _doStmt;
   }
 
   /**
