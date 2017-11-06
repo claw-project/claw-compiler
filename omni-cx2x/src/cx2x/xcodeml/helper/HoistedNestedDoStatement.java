@@ -8,8 +8,8 @@ package cx2x.xcodeml.helper;
 import cx2x.xcodeml.xnode.Xnode;
 
 /**
- * Class holding information about a group of nested loop in the loop-hoist
- * transformation
+ * Class holding information about a group of nested loop in a do statement
+ * hoisting transformation.
  *
  * @author clementval
  */
