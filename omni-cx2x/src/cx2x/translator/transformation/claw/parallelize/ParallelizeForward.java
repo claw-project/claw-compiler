@@ -836,10 +836,12 @@ public class ParallelizeForward extends ClawTransformation {
               && !_promotions.containsKey(pointer.value()))
           {
             PromotionInfo promotionInfo = new PromotionInfo(pointer.value());
+            promotionInfo.setDimensions(pointeeInfo.getDimensions());
             if(_claw.hasOverClause()) {
               promotionInfo.setOverPosition(OverPosition.
                   fromList(_claw.getOverClauseValues().get(0)));
             }
+            FieldTransform.promote(promotionInfo, fctDef, xcodeml);
             _promotions.put(pointer.value(), promotionInfo);
           }
         }
