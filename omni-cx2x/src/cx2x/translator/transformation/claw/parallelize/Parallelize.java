@@ -13,8 +13,10 @@ import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
+import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.helper.FieldTransform;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
@@ -145,7 +147,6 @@ public class Parallelize extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-
 
     // Check if unsupported statements are located in the future parallel
     // region.
@@ -472,11 +473,13 @@ public class Parallelize extends ClawTransformation {
       createList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
       for(String arrayIdentifier : createList) {
         _arrayFieldsInOut.add(arrayIdentifier);
-        PromotionInfo promotionInfo =
-            TransformationHelper.promoteField(arrayIdentifier, true, true,
-                DEFAULT_OVER, _overDimensions, _fctDef, _fctType,
-                _claw.getDimensionValues(), _claw, xcodeml, null);
+        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier);
+        promotionInfo.setOverPosition(OverPosition.
+            fromList(_claw.getOverClauseValues().get(DEFAULT_OVER)));
+        promotionInfo.setDimensions(_claw.getDimensionValues());
+        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
+
         TransformationHelper.adaptArrayReferences(
             Collections.singletonList(arrayIdentifier), DEFAULT_OVER,
             _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
@@ -536,20 +539,9 @@ public class Parallelize extends ClawTransformation {
          * switch to an array reference */
         if(shouldBePromoted(assign)) {
           if(!_arrayFieldsInOut.contains(lhsName)) {
-
             _arrayFieldsInOut.add(lhsName);
-            PromotionInfo promotionInfo;
-            if(lhs.opcode() == Xcode.VAR) { // Scalar to array
-              promotionInfo =
-                  TransformationHelper.promoteField(lhsName, false, false,
-                      DEFAULT_OVER, _overDimensions, _fctDef, _fctType,
-                      _claw.getDimensionValues(), _claw, xcodeml, null);
-            } else { // Array to array
-              promotionInfo =
-                  TransformationHelper.promoteField(lhsName, true, true,
-                      DEFAULT_OVER, _overDimensions, _fctDef, _fctType,
-                      _claw.getDimensionValues(), _claw, xcodeml, null);
-            }
+            PromotionInfo promotionInfo = new PromotionInfo(lhsName, _claw);
+            FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
             _promotions.put(lhsName, promotionInfo);
           }
           if(lhs.opcode() == Xcode.VAR) {
@@ -677,20 +669,17 @@ public class Parallelize extends ClawTransformation {
     if(_claw.hasOverDataClause()) {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
-          PromotionInfo promotionInfo =
-              TransformationHelper.promoteField(fieldId, true, true, i,
-                  _overDimensions, _fctDef, _fctType,
-                  _claw.getDimensionValues(), _claw, xcodeml, null);
+          PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw, i);
+          FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
       }
     } else {
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
-        PromotionInfo promotionInfo =
-            TransformationHelper.promoteField(fieldId, true, true, DEFAULT_OVER,
-                _overDimensions, _fctDef, _fctType, _claw.getDimensionValues(),
-                _claw, xcodeml, null);
+        PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw);
+        promotionInfo.setDimensions(_claw.getDimensionValues());
+        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }
     }

@@ -13,6 +13,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.helper.FieldTransform;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
@@ -57,7 +58,6 @@ public class ParallelizeForward extends ClawTransformation {
   private String _calledFctName;  // For topological sorting
   private String _callingFctName; // For topological sorting
   private boolean _isNestedInAssignment;
-
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -276,7 +276,6 @@ public class ParallelizeForward extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-
 
     return true;
   }
@@ -551,7 +550,6 @@ public class ParallelizeForward extends ClawTransformation {
 
             _promotedVar.add(original_param);
 
-
             addPromotedVar(original_param, overPos);
 
             _promotions.put(original_param, new PromotionInfo(
@@ -643,9 +641,10 @@ public class ParallelizeForward extends ClawTransformation {
       PromotionInfo promotionInfo;
       if(!_promotions.containsKey(varInLhs.value())) {
         // Perform the promotion on the variable
-        promotionInfo = TransformationHelper.promoteField(
-            varInLhs.value(), true, true, 0, 0, parentFctDef,
-            _parentFctType, dimensions, _claw, xcodeml, overPos);
+
+        promotionInfo = new PromotionInfo(varInLhs.value(), _claw);
+        FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
+
         _promotions.put(varInLhs.value(), promotionInfo);
 
         addPromotedVar(varInLhs.value(), overPos);
@@ -719,7 +718,6 @@ public class ParallelizeForward extends ClawTransformation {
     List<DimensionDefinition> dimensions =
         TransformationHelper.findDimensions(_parentFctType);
 
-
     // Prepare the array index to be inserted in array references.
     List<Xnode> crt = new ArrayList<>();
     List<Xnode> empty = Collections.emptyList();
@@ -731,7 +729,6 @@ public class ParallelizeForward extends ClawTransformation {
     List<List<Xnode>> emptyInd = new ArrayList<>();
     induction.add(crt);
     emptyInd.add(empty);
-
 
     for(Xnode assignment : assignments) {
       Xnode lhs = assignment.child(0);
@@ -764,10 +761,8 @@ public class ParallelizeForward extends ClawTransformation {
           PromotionInfo promotionInfo;
           if(!previouslyPromoted.contains(varInLhs.value())) {
             // Perform the promotion on the variable
-            promotionInfo = TransformationHelper.promoteField(
-                varInLhs.value(), true, true, 0, 0, parentFctDef,
-                _parentFctType, dimensions, _claw, xcodeml, null);
-            _promotions.put(varInLhs.value(), promotionInfo);
+            promotionInfo = new PromotionInfo(varInLhs.value(), _claw);
+            FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
             // TODO if #38 is implemented, the variable has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
@@ -838,9 +833,9 @@ public class ParallelizeForward extends ClawTransformation {
           if(pointeeType.getDimensions() != pointerType.getDimensions()
               && !_promotions.containsKey(pointer.value()))
           {
-            PromotionInfo promotionInfo = TransformationHelper.promoteField(
-                pointer.value(), true, true, 0, dimensions.size(),
-                fctDef, _parentFctType, dimensions, _claw, xcodeml, null);
+            PromotionInfo promotionInfo = new PromotionInfo(pointer.value());
+            promotionInfo.setOverPosition(OverPosition.
+                fromList(_claw.getOverClauseValues().get(0)));
             _promotions.put(pointer.value(), promotionInfo);
           }
         }

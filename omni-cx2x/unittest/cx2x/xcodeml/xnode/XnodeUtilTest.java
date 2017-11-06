@@ -6,6 +6,7 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import helper.TestConstant;
 import helper.XmlHelper;
@@ -42,8 +43,8 @@ public class XnodeUtilTest {
     assertNotNull(loopHoistEnd);
     assertTrue(loopHoistEnd.value().contains("end loop-hoist"));
 
-    List<Xnode> stmts =
-        XnodeUtil.findDoStatement(loopHoistStart, loopHoistEnd,
+    List<HoistedNestedDoStatement> stmts =
+        XnodeUtil.findDoStatementForHoisting(loopHoistStart, loopHoistEnd,
             Arrays.asList("j", "i"));
 
     assertEquals(3, stmts.size());

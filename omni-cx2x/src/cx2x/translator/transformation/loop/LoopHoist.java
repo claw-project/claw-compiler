@@ -102,7 +102,7 @@ public class LoopHoist extends ClawBlockTransformation {
       }
       _hoistedGroups.add(hoistedNestedDoStmt);
     }
-    
+
     HoistedNestedDoStatement master = _hoistedGroups.get(0);
     for(int i = 1; i < _hoistedGroups.size(); ++i) {
       HoistedNestedDoStatement next = _hoistedGroups.get(i);

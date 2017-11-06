@@ -64,7 +64,6 @@ public class DimensionDefinition {
     return _identifier;
   }
 
-
   /**
    * Generate the correct indexRange element with lowerBound, upperBound and
    * step from the current dimension.

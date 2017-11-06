@@ -5,7 +5,11 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.OverPosition;
+import cx2x.xcodeml.language.DimensionDefinition;
+
+import java.util.List;
 
 /**
  * Hold various information about the promotion of a variable.
@@ -15,11 +19,48 @@ import cx2x.translator.language.common.OverPosition;
 public class PromotionInfo {
 
   private final String _identifier;
-  private final int _baseDimension;
-  private final int _targetDimension;
-  private final String _targetType;
+  private int _baseDimension;
+  private int _targetDimension;
+  private String _targetType;
+  private List<DimensionDefinition> _dimensions;
   private OverPosition _overPosition = OverPosition.BEFORE; // Default
   private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
+
+  /**
+   * Constructs a new PromotionInfo object with the identifier of the
+   * field associated with this promotion object.
+   *
+   * @param id Field identifier.
+   */
+  public PromotionInfo(String id) {
+    _identifier = id.toLowerCase();
+  }
+
+  /**
+   * Constructs a new PromotionInfo object with an identifier and information
+   * extracted from the ClawLanguage directive.
+   *
+   * @param id   Field identifier.
+   * @param claw Current CLAW language directive information.
+   */
+  public PromotionInfo(String id, ClawLanguage claw) {
+    this(id, claw, 0);
+  }
+
+  /**
+   * Constructs a new PromotionInfo object with an identifier and information
+   * extracted from the ClawLanguage directive.
+   *
+   * @param id        Field identifier.
+   * @param claw      Current CLAW language directive information.
+   * @param overIndex Over clause to be used. Index starts at 0.
+   */
+  public PromotionInfo(String id, ClawLanguage claw, int overIndex) {
+    _identifier = id.toLowerCase();
+    _dimensions = claw.getDimensionValues();
+    _overPosition =
+        OverPosition.fromList(claw.getOverClauseValues().get(overIndex));
+  }
 
   /**
    * Constructs a new PromotionInfo object with all its information.
@@ -36,6 +77,22 @@ public class PromotionInfo {
     _baseDimension = baseDimension;
     _targetDimension = targetDimension;
     _targetType = targetType;
+  }
+
+  public void setBaseDimension(int value) {
+    _baseDimension = value;
+  }
+
+  public void setTargetDimension(int value) {
+    _targetDimension = value;
+  }
+
+  public List<DimensionDefinition> getDimensions() {
+    return _dimensions;
+  }
+
+  public void setDimensions(List<DimensionDefinition> dimensions) {
+    _dimensions = dimensions;
   }
 
   /**
@@ -83,6 +140,10 @@ public class PromotionInfo {
     return _targetType;
   }
 
+  public void setTargetType(String value) {
+    _targetType = value;
+  }
+
   /**
    * Get the number of dimension between the base and the target.
    *
@@ -109,7 +170,6 @@ public class PromotionInfo {
   public void setPromotionType(PromotionType promotionType) {
     _promotionType = promotionType;
   }
-
 
   public enum PromotionType {SCALAR_TO_ARRAY, ARRAY_TO_ARRAY}
 
