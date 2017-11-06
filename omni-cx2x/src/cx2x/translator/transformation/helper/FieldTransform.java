@@ -40,7 +40,8 @@ public final class FieldTransform {
     Xid id = fctDef.getSymbolTable().get(fieldInfo.getIdentifier());
     Xnode decl = fctDef.getDeclarationTable().get(fieldInfo.getIdentifier());
     XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
-    if(crtType == null) {
+
+    if(!XcodeType.isBuiltInType(id.getType()) && crtType == null) {
       throw new IllegalTransformationException("Basic type of field " +
           fieldInfo.getIdentifier() + " could not be found");
     }
@@ -60,7 +61,7 @@ public final class FieldTransform {
 
     String type = xcodeml.getTypeTable().generateHash(XcodeType.ARRAY);
     XbasicType newType;
-    if(crtType.isArray()) {
+    if(crtType != null && crtType.isArray()) {
       if(XcodeType.isBuiltInType(id.getType())) {
         newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
       } else {
@@ -74,8 +75,8 @@ public final class FieldTransform {
         }
       }
     } else {
-      newType =
-          xcodeml.createBasicType(type, id.getType(), crtType.getIntent());
+      Xintent newIntent = crtType != null ? crtType.getIntent() : Xintent.NONE;
+      newType = xcodeml.createBasicType(type, id.getType(), newIntent);
     }
 
     fieldInfo.setBaseDimension(newType.getDimensions());
@@ -83,7 +84,7 @@ public final class FieldTransform {
         fieldInfo.getDimensions().size());
     fieldInfo.setTargetType(type);
 
-    if(crtType.isArray()) {
+    if(crtType != null && crtType.isArray()) {
       if(newType.isAllAssumedShape()
           && (fctType.hasParam(fieldInfo.getIdentifier())
           || newType.isAllocatable()
@@ -162,5 +163,4 @@ public final class FieldTransform {
       }
     }
   }
-
 }
