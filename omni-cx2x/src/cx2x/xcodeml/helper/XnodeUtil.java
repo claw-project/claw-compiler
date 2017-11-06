@@ -272,8 +272,8 @@ public class XnodeUtil {
    * @return List of do statements elements (outer most loops for each nested
    * group) found between the "from" element and the end pragma.
    */
-  public static List<Xnode> findDoStatement(Xnode from, Xnode endPragma,
-                                            List<String> inductionVars)
+  public static List<HoistedNestedDoStatement> findDoStatementForHoisting(
+      Xnode from, Xnode endPragma, List<String> inductionVars)
   {
 
     /* s1 is selecting all the nested do statement groups that meet the criteria
@@ -312,7 +312,7 @@ public class XnodeUtil {
       dynamic_part_s1 = tempQuery;
     }
     s1 = s1 + dynamic_part_s1;
-    List<Xnode> doStatements = new ArrayList<>();
+    List<HoistedNestedDoStatement> doStatements = new ArrayList<>();
     try {
       NodeList output = evaluateXpath(from.element(), s1);
       for(int i = 0; i < output.getLength(); i++) {
@@ -321,7 +321,8 @@ public class XnodeUtil {
         if(doStmt.lineNo() != 0 &&
             doStmt.lineNo() < endPragma.lineNo())
         {
-          doStatements.add(doStmt);
+          doStatements.add(new HoistedNestedDoStatement(doStmt,
+              inductionVars.size()));
         }
       }
     } catch(XPathExpressionException ignored) {

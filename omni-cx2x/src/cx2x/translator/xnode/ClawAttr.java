@@ -41,6 +41,7 @@ public enum ClawAttr {
     return null;
   }
 
+  @Override
   public String toString() {
     return this.name;
   }

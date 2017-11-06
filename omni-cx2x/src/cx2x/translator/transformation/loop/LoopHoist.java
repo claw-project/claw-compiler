@@ -51,11 +51,10 @@ public class LoopHoist extends ClawBlockTransformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     int _pragmaDepthLevel = _clawStart.getPragma().depth();
-    int nestedLevel = _clawStart.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
-    List<Xnode> statements =
-        XnodeUtil.findDoStatement(_clawStart.getPragma(),
+    List<HoistedNestedDoStatement> statements =
+        XnodeUtil.findDoStatementForHoisting(_clawStart.getPragma(),
             _clawEnd.getPragma(), _clawStart.getHoistInductionVars());
 
     if(statements.size() == 0) {
@@ -64,10 +63,7 @@ public class LoopHoist extends ClawBlockTransformation {
       return false;
     }
 
-    for(Xnode doStmt : statements) {
-      HoistedNestedDoStatement hoistedNestedDoStmt =
-          new HoistedNestedDoStatement(doStmt, nestedLevel);
-
+    for(HoistedNestedDoStatement hoistedNestedDoStmt : statements) {
       int depth = hoistedNestedDoStmt.getOuterStatement().depth();
       if(depth != _pragmaDepthLevel) {
         Xnode tmpIf = hoistedNestedDoStmt.getOuterStatement().
@@ -106,8 +102,7 @@ public class LoopHoist extends ClawBlockTransformation {
       }
       _hoistedGroups.add(hoistedNestedDoStmt);
     }
-
-    //LoopHoistDoStmtGroup master = _doGroup.get(0);
+    
     HoistedNestedDoStatement master = _hoistedGroups.get(0);
     for(int i = 1; i < _hoistedGroups.size(); ++i) {
       HoistedNestedDoStatement next = _hoistedGroups.get(i);
