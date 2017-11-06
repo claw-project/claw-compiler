@@ -642,7 +642,8 @@ public class ParallelizeForward extends ClawTransformation {
       if(!_promotions.containsKey(varInLhs.value())) {
         // Perform the promotion on the variable
 
-        promotionInfo = new PromotionInfo(varInLhs.value(), _claw);
+        promotionInfo = new PromotionInfo(varInLhs.value());
+        promotionInfo.setDimensions(dimensions);
         FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
         _promotions.put(varInLhs.value(), promotionInfo);
@@ -762,9 +763,7 @@ public class ParallelizeForward extends ClawTransformation {
           if(!previouslyPromoted.contains(varInLhs.value())) {
             // Perform the promotion on the variable
             promotionInfo = new PromotionInfo(varInLhs.value());
-            //promotionInfo.setOverPosition();
             promotionInfo.setDimensions(dimensions);
-
             FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
             // TODO if #38 is implemented, the variable has to be put either in

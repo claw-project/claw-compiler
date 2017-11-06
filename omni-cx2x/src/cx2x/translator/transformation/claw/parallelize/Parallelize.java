@@ -473,10 +473,7 @@ public class Parallelize extends ClawTransformation {
       createList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
       for(String arrayIdentifier : createList) {
         _arrayFieldsInOut.add(arrayIdentifier);
-        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier);
-        promotionInfo.setOverPosition(OverPosition.
-            fromList(_claw.getOverClauseValues().get(DEFAULT_OVER)));
-        promotionInfo.setDimensions(_claw.getDimensionValues());
+        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier, _claw);
         FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
