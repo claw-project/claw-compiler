@@ -126,8 +126,8 @@ public class ParallelizeForward extends ClawTransformation {
    * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeNestedDoStmts(XcodeProgram xcodeml) {
-    for(int i = 0; i < _doStatements.getGroupSize(); ++i) {
-      if(i == _doStatements.getGroupSize() - 1) {
+    for(int i = 0; i < _doStatements.size(); ++i) {
+      if(i == _doStatements.size() - 1) {
         if(_doStatements.get(i).body() == null) {
           xcodeml.addError("Cannot locate function call.",
               _claw.getPragma().lineNo());

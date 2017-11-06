@@ -27,13 +27,33 @@ public class NestedDoStatement {
    * @param outerDoStatement Do statement on the outer level.
    */
   public NestedDoStatement(Xnode outerDoStatement) {
+    this(outerDoStatement, 0);
+  }
+
+  /**
+   * Constructs a group of nested do statements from the outer statement with
+   * maximum Nb do statements.
+   *
+   * @param outerDoStatement Do statement node to start the nested group.
+   * @param nb               Number of do statements. If nb <= 0 match all
+   *                         possible nested do statement.
+   */
+  public NestedDoStatement(Xnode outerDoStatement, int nb) {
     _statements = new ArrayList<>();
-    if(outerDoStatement.opcode() == Xcode.FDOSTATEMENT) {
-      _statements.add(outerDoStatement);
-      List<Xnode> childDoStatements =
-          outerDoStatement.matchAll(Xcode.FDOSTATEMENT);
-      _statements.addAll(childDoStatements);
-      // TODO do only truly nested group
+    if(outerDoStatement == null
+        || outerDoStatement.opcode() != Xcode.FDOSTATEMENT)
+    {
+      return;
+    }
+
+    Xnode crtDoStatement = outerDoStatement;
+    while(crtDoStatement != null) {
+      crtDoStatement = crtDoStatement.body().
+          matchDirectDescendant(Xcode.FDOSTATEMENT);
+      _statements.add(crtDoStatement);
+      if(_statements.size() == nb) {
+        break;
+      }
     }
   }
 
@@ -111,7 +131,7 @@ public class NestedDoStatement {
    *
    * @return Size of the group.
    */
-  public int getGroupSize() {
+  public int size() {
     return _statements.size();
   }
 

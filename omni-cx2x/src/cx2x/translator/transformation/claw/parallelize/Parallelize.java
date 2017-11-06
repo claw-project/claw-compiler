@@ -494,7 +494,7 @@ public class Parallelize extends ClawTransformation {
     // Generate the parallel region
     AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privateList,
         loops.getOuterStatement(), loops.getOuterStatement(),
-        loops.getGroupSize());
+        loops.size());
 
     AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, _fctDef);
   }
