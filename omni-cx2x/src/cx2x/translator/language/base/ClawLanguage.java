@@ -272,7 +272,7 @@ public class ClawLanguage extends AnalyzedPragma {
     // Clauses values members
     _accClausesValue = null;
     _arrayName = null;
-    _collapseClauseValue = 0;
+    _collapseClauseValue = 1;
     _dataValues = null;
     _dimensions = null;
     _fctCallParameters = null;
@@ -388,7 +388,7 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Get the collapse clause extracted value.
    *
-   * @return An integer value.
+   * @return An integer value. Default is 1.
    */
   public int getCollapseValue() {
     return _collapseClauseValue;
