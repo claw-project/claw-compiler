@@ -58,8 +58,11 @@ public class PromotionInfo {
   public PromotionInfo(String id, ClawLanguage claw, int overIndex) {
     _identifier = id.toLowerCase();
     _dimensions = claw.getDimensionValues();
-    _overPosition =
-        OverPosition.fromList(claw.getOverClauseValues().get(overIndex));
+
+    if(claw.hasOverClause()) {
+      _overPosition =
+          OverPosition.fromList(claw.getOverClauseValues().get(overIndex));
+    }
   }
 
   /**
