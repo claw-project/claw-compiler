@@ -671,7 +671,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       // If the array is a target, check if we have to promote a pointer
       adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
-          promotionInfo, dimensions);
+          promotionInfo);
     }
   }
 
@@ -786,7 +786,7 @@ public class ParallelizeForward extends ClawTransformation {
           // If the array is a target, check if we have to promote a pointer
           if(!previouslyPromoted.contains(varInLhs.value())) {
             adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
-                promotionInfo, dimensions);
+                promotionInfo);
 
             // TODO centralized info
             previouslyPromoted.add(varInLhs.value());
@@ -812,13 +812,11 @@ public class ParallelizeForward extends ClawTransformation {
    *                    checked.
    * @param xcodeml     Current XcodeML program unit.
    * @param pointeeInfo PromotionInformation about the promoted variable.
-   * @param dimensions  List of dimensions to add.
    * @throws IllegalTransformationException If XcodeML modifications failed.
    */
   private void adaptPointer(XbasicType varType, String fieldId,
                             XfunctionDefinition fctDef, XcodeProgram xcodeml,
-                            PromotionInfo pointeeInfo,
-                            List<DimensionDefinition> dimensions)
+                            PromotionInfo pointeeInfo)
       throws IllegalTransformationException
   {
     if(varType.isTarget()) {
