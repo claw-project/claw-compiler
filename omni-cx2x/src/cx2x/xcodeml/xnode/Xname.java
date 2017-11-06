@@ -13,7 +13,6 @@ package cx2x.xcodeml.xnode;
  *
  * @author clementval
  */
-
 public final class Xname {
 
   // Element attributes
