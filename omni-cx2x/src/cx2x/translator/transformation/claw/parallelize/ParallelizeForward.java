@@ -644,6 +644,7 @@ public class ParallelizeForward extends ClawTransformation {
 
         promotionInfo = new PromotionInfo(varInLhs.value());
         promotionInfo.setDimensions(dimensions);
+        promotionInfo.setOverPosition(overPos);
         FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
         _promotions.put(varInLhs.value(), promotionInfo);
