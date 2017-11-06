@@ -31,6 +31,7 @@ public abstract class ClawTransformation extends Transformation {
 
   /**
    * Ctor for directive triggered transformation.
+   *
    * @param directive Directive that trigger the transformation.
    */
   public ClawTransformation(ClawLanguage directive) {
@@ -47,4 +48,12 @@ public abstract class ClawTransformation extends Transformation {
     return _claw;
   }
 
+  /**
+   * Delete the associated pragma statement.
+   */
+  public void removePragma() {
+    if(_claw != null && _claw.getPragma() != null) {
+      _claw.getPragma().delete();
+    }
+  }
 }
