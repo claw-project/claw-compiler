@@ -9,7 +9,8 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawBlockTransformation;
-import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.translator.transformation.helper.LoopTransform;
+import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
@@ -30,8 +31,7 @@ import java.util.List;
  */
 public class LoopHoist extends ClawBlockTransformation {
 
-  private final List<LoopHoistDoStmtGroup> _doGroup;
-  private int _nestedLevel;
+  private final List<HoistedNestedDoStatement> _hoistedGroups;
 
   /**
    * Constructs a new LoopHoist triggered from a specific directive.
@@ -42,7 +42,7 @@ public class LoopHoist extends ClawBlockTransformation {
    */
   public LoopHoist(ClawLanguage startDirective, ClawLanguage endDirective) {
     super(startDirective, endDirective);
-    _doGroup = new ArrayList<>();
+    _hoistedGroups = new ArrayList<>();
   }
 
   /**
@@ -51,7 +51,7 @@ public class LoopHoist extends ClawBlockTransformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     int _pragmaDepthLevel = _clawStart.getPragma().depth();
-    _nestedLevel = _clawStart.getHoistInductionVars().size();
+    int nestedLevel = _clawStart.getHoistInductionVars().size();
 
     // Find all the group of nested loops that can be part of the hoisting
     List<Xnode> statements =
@@ -64,27 +64,22 @@ public class LoopHoist extends ClawBlockTransformation {
       return false;
     }
 
-    for(int i = 0; i < statements.size(); i++) {
-      Xnode[] group = new Xnode[_nestedLevel];
-      LoopHoistDoStmtGroup g = new LoopHoistDoStmtGroup(group);
-      try {
-        reloadDoStmts(g, statements.get(i));
-      } catch(IllegalTransformationException e) {
-        xcodeml.addError("Group " + i + " of do statements do not meet the" +
-                " criteria of loop hoisting (Group index starts at 0).",
-            _clawStart.getPragma().lineNo());
-        return false;
-      }
+    for(Xnode doStmt : statements) {
+      HoistedNestedDoStatement hoistedNestedDoStmt =
+          new HoistedNestedDoStatement(doStmt, nestedLevel);
 
-      LoopHoistDoStmtGroup crtGroup = new LoopHoistDoStmtGroup(group);
-      int depth = group[0].depth();
+      int depth = hoistedNestedDoStmt.getOuterStatement().depth();
       if(depth != _pragmaDepthLevel) {
-        Xnode tmpIf = group[0].matchAncestor(Xcode.FIFSTATEMENT);
-        Xnode tmpSelect = group[0].matchAncestor(Xcode.FSELECTCASESTATEMENT);
-        Xnode tmpDo = group[0].matchAncestor(Xcode.FDOSTATEMENT);
+        Xnode tmpIf = hoistedNestedDoStmt.getOuterStatement().
+            matchAncestor(Xcode.FIFSTATEMENT);
+        Xnode tmpSelect = hoistedNestedDoStmt.getOuterStatement().
+            matchAncestor(Xcode.FSELECTCASESTATEMENT);
+        Xnode tmpDo = hoistedNestedDoStmt.getOuterStatement().
+            matchAncestor(Xcode.FDOSTATEMENT);
+
         if(tmpIf == null && tmpSelect == null && tmpDo == null) {
-          xcodeml.addError("Group " + i + " is nested in an unsupported " +
-                  "statement for loop hoisting (Group index starts at 0).",
+          xcodeml.addError("A nested group is nested in an unsupported " +
+                  "statement for loop hoisting.",
               _clawStart.getPragma().lineNo());
           return false;
         }
@@ -100,37 +95,31 @@ public class LoopHoist extends ClawBlockTransformation {
             || _pragmaDepthLevel <= doDepth)
             && (ifDepth < depth || selectDepth < depth || doDepth < depth))
         {
-          crtGroup.setExtraction();
+          hoistedNestedDoStmt.setExtraction();
         } else {
-          xcodeml.addError("Group " + i + " is nested in an unsupported " +
+          xcodeml.addError("Group is nested in an unsupported " +
                   "statement for loop hoisting or depth is too high " +
                   "(Group index starts at 0).",
               _clawStart.getPragma().lineNo());
           return false;
         }
       }
-      _doGroup.add(crtGroup);
+      _hoistedGroups.add(hoistedNestedDoStmt);
     }
 
-    LoopHoistDoStmtGroup master = _doGroup.get(0);
-    for(int i = 1; i < _doGroup.size(); ++i) {
-      LoopHoistDoStmtGroup next = _doGroup.get(i);
-      for(int j = 0; j < master.getDoStmts().length; ++j) {
+    //LoopHoistDoStmtGroup master = _doGroup.get(0);
+    HoistedNestedDoStatement master = _hoistedGroups.get(0);
+    for(int i = 1; i < _hoistedGroups.size(); ++i) {
+      HoistedNestedDoStatement next = _hoistedGroups.get(i);
+      for(int j = 0; j < master.size(); ++j) {
         // Iteration range are identical, just merge
-        if(j == 0
-            && (
-            !XnodeUtil.hasSameIndexRange(master.getDoStmts()[j],
-                next.getDoStmts()[j]) &&
-                XnodeUtil.hasSameIndexRangeBesidesLower(master.getDoStmts()[j],
-                    next.getDoStmts()[j])
-        )
-            )
+        if(j == 0 && (!XnodeUtil.hasSameIndexRange(master.get(j), next.get(j))
+            && XnodeUtil.hasSameIndexRangeBesidesLower(master.get(j),
+            next.get(j))))
         {
           // Iteration range are identical besides lower-bound, if creation
           next.setIfStatement();
-        } else if(!XnodeUtil.hasSameIndexRange(master.getDoStmts()[j],
-            next.getDoStmts()[j]))
-        {
+        } else if(!XnodeUtil.hasSameIndexRange(master.get(j), next.get(j))) {
           // Iteration range are too different, stop analysis
           xcodeml.addError("Iteration range of do statements group " + i +
                   " differs from group 0. Loop hoisting aborted.",
@@ -139,7 +128,6 @@ public class LoopHoist extends ClawBlockTransformation {
         }
       }
     }
-
 
     // Check reshape mandatory points
     if(_clawStart.hasReshapeClause()) {
@@ -206,89 +194,16 @@ public class LoopHoist extends ClawBlockTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation) throws Exception
   {
-
-    // Perform IF extraction and IF creation for lower-bound
-    for(LoopHoistDoStmtGroup g : _doGroup) {
-      if(g.needIfStatement()) {
-        createIfStatementForLowerBound(xcodeml, g);
-      }
-      XnodeUtil.extractBody(g.getDoStmts()[_nestedLevel - 1], g.getDoStmts()[0]);
-      g.getDoStmts()[0].delete();
-    }
-
-    // Do the hoisting
-    LoopHoistDoStmtGroup hoisted = _doGroup.get(0).cloneObjectAndElement();
-    hoisted.getDoStmts()[_nestedLevel - 1].body().delete();
-    Xnode newBody = xcodeml.createNode(Xcode.BODY);
-    hoisted.getDoStmts()[_nestedLevel - 1].append(newBody);
-    XnodeUtil.shiftStatementsInBody(_clawStart.getPragma(),
-        _clawEnd.getPragma(), newBody, false);
-    _clawStart.getPragma().insertAfter(hoisted.getDoStmts()[0]);
+    HoistedNestedDoStatement hoisted = LoopTransform.hoist(_hoistedGroups,
+        _clawStart.getPragma(), _clawEnd.getPragma(), xcodeml);
 
     // Generate dynamic transformation (interchange)
     TransformationHelper.generateAdditionalTransformation(_clawStart,
-        xcodeml, translator, hoisted.getDoStmts()[0]);
+        xcodeml, translator, hoisted.getOuterStatement());
 
     // Apply reshape clause
     TransformationHelper.applyReshapeClause(_clawStart, xcodeml);
 
     removePragma();
-  }
-
-  /**
-   * Create an IF statement surrounding the entire most inner do statement body.
-   * Condition if made from the lower bound (if(induction_var >= lower_bound).
-   *
-   * @param xcodeml Current XcodeML program
-   * @param g       The group of do statements.
-   */
-  private void createIfStatementForLowerBound(XcodeProgram xcodeml,
-                                              LoopHoistDoStmtGroup g)
-  {
-    int nestedDepth = g.getDoStmts().length;
-    Xnode ifStmt = xcodeml.createNode(Xcode.FIFSTATEMENT);
-    Xnode condition = xcodeml.createNode(Xcode.CONDITION);
-    Xnode thenBlock = xcodeml.createNode(Xcode.THEN);
-    g.getDoStmts()[0].copyEnhancedInfo(ifStmt);
-    Xnode cond = xcodeml.createNode(Xcode.LOGGEEXPR);
-    Xnode inductionVar = g.getDoStmts()[0].matchDirectDescendant(Xcode.VAR);
-    cond.append(inductionVar, true);
-    cond.append(g.getDoStmts()[0].matchDirectDescendant(Xcode.INDEXRANGE).
-        matchDirectDescendant(Xcode.LOWERBOUND).child(0), true
-    );
-    ifStmt.append(condition);
-    ifStmt.append(thenBlock);
-    condition.append(cond);
-    thenBlock.append(g.getDoStmts()[nestedDepth - 1].body(), true);
-    g.getDoStmts()[nestedDepth - 1].body().delete();
-    Xnode body = xcodeml.createNode(Xcode.BODY);
-    body.append(ifStmt);
-    g.getDoStmts()[nestedDepth - 1].append(body);
-  }
-
-
-  /**
-   * Relocated nested do statement inside a group of do statement.
-   *
-   * @param g        The group of do statement.
-   * @param newStart The new outer do statement.
-   * @throws IllegalTransformationException If the nested group doesn't match
-   *                                        the correct size.
-   */
-  private void reloadDoStmts(LoopHoistDoStmtGroup g, Xnode newStart)
-      throws IllegalTransformationException
-  {
-    g.getDoStmts()[0] = newStart;
-    for(int j = 1; j < g.getDoStmts().length; ++j) {
-      Xnode next = g.getDoStmts()[j - 1].body().
-          matchDirectDescendant(Xcode.FDOSTATEMENT);
-      if(next == null) {
-        throw new IllegalTransformationException(
-            "Unable to matchSeq enough nested do statements",
-            _clawStart.getPragma().lineNo()
-        );
-      }
-      g.getDoStmts()[j] = next;
-    }
   }
 }

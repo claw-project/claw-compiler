@@ -7,9 +7,11 @@ package cx2x.translator.transformation.helper;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xcode;
+import cx2x.xcodeml.xnode.XcodeML;
 import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Node;
 
@@ -128,6 +130,69 @@ public class LoopTransform {
       throw new IllegalTransformationException("Currently unsupported " +
           "reorder operation.");
     }
+  }
+
+  /**
+   * Perform a loop hoisting on the given nested do statements.
+   *
+   * @param hoistedGroups List of groups that will be hoisted.
+   * @param start         Starting point of the hoisted loop.
+   * @param end           Ending point of the hoisted loop.
+   * @param xcodeml       Current XcodeML translation unit for node creation.
+   * @return Hoisted nested do statement group.
+   */
+  public static HoistedNestedDoStatement hoist(List<HoistedNestedDoStatement>
+                                                   hoistedGroups,
+                                               Xnode start, Xnode end,
+                                               XcodeML xcodeml)
+  {
+    // Perform IF extraction and IF creation for lower-bound
+    for(HoistedNestedDoStatement g : hoistedGroups) {
+      if(g.needIfStatement()) {
+        createIfStatementForLowerBound(xcodeml, g);
+      }
+      XnodeUtil.extractBody(g.getInnerStatement(), g.getOuterStatement());
+      g.getOuterStatement().delete();
+    }
+
+    // Do the hoisting
+    HoistedNestedDoStatement hoisted = hoistedGroups.get(0).clone();
+    hoisted.getInnerStatement().body().delete();
+    Xnode newBody = xcodeml.createNode(Xcode.BODY);
+    hoisted.getInnerStatement().append(newBody);
+    XnodeUtil.shiftStatementsInBody(start, end, newBody, false);
+    start.insertAfter(hoisted.getOuterStatement());
+    return hoisted;
+  }
+
+  /**
+   * Create an IF statement surrounding the entire most inner do statement body.
+   * Condition if made from the lower bound (if(induction_var >= lower_bound).
+   *
+   * @param xcodeml Current XcodeML program
+   * @param g       The group of do statements.
+   */
+  private static void createIfStatementForLowerBound(XcodeML xcodeml,
+                                                     HoistedNestedDoStatement g)
+  {
+    Xnode ifStmt = xcodeml.createNode(Xcode.FIFSTATEMENT);
+    Xnode condition = xcodeml.createNode(Xcode.CONDITION);
+    Xnode thenBlock = xcodeml.createNode(Xcode.THEN);
+    g.getOuterStatement().copyEnhancedInfo(ifStmt);
+    Xnode cond = xcodeml.createNode(Xcode.LOGGEEXPR);
+    Xnode inductionVar = g.getOuterStatement().matchDirectDescendant(Xcode.VAR);
+    cond.append(inductionVar, true);
+    cond.append(g.getOuterStatement().matchDirectDescendant(Xcode.INDEXRANGE).
+        matchDirectDescendant(Xcode.LOWERBOUND).child(0), true
+    );
+    ifStmt.append(condition);
+    ifStmt.append(thenBlock);
+    condition.append(cond);
+    thenBlock.append(g.getInnerStatement().body(), true);
+    g.getInnerStatement().body().delete();
+    Xnode body = xcodeml.createNode(Xcode.BODY);
+    body.append(ifStmt);
+    g.getInnerStatement().append(body);
   }
 
   /**

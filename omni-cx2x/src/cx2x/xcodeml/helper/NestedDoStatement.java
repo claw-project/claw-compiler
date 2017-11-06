@@ -167,4 +167,14 @@ public class NestedDoStatement {
   public int size() {
     return _statements.size();
   }
+
+  /**
+   * Clone current nested group with all its elements.
+   *
+   * @return Newly created nested do statements group.
+   */
+  public NestedDoStatement clone() {
+    Xnode newDoStmt = _statements.get(0).cloneNode();
+    return new NestedDoStatement(newDoStmt, size());
+  }
 }
