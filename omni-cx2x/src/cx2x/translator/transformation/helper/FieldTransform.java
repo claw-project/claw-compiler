@@ -48,14 +48,14 @@ public final class FieldTransform {
     XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef);
     if(fctType == null) {
       throw new IllegalTransformationException("Function type " +
-          fctDef.getType() + " could not be found");
+          fctDef.getType() + " could not be found", fctDef.lineNo());
     }
 
     if(fieldInfo.getDimensions() == null
         || fieldInfo.getDimensions().size() == 0)
     {
       throw new IllegalTransformationException("Promotion information has not " +
-          "enough information. Dimension empty!");
+          "enough information. Dimension empty!", decl.lineNo());
     }
 
     String type = xcodeml.getTypeTable().generateHash(XcodeType.ARRAY);
@@ -67,7 +67,7 @@ public final class FieldTransform {
         XbasicType old = xcodeml.getTypeTable().getBasicType(id);
         if(old == null) {
           throw new IllegalTransformationException("Cannot find type for " +
-              fieldInfo.getIdentifier(), 0); // TODO lineno
+              fieldInfo.getIdentifier(), decl.lineNo());
         } else {
           newType = old.cloneNode();
           newType.setType(type);
