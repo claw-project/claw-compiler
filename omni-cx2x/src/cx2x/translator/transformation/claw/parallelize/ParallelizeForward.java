@@ -761,12 +761,16 @@ public class ParallelizeForward extends ClawTransformation {
           PromotionInfo promotionInfo;
           if(!previouslyPromoted.contains(varInLhs.value())) {
             // Perform the promotion on the variable
-            promotionInfo = new PromotionInfo(varInLhs.value(), _claw);
+            promotionInfo = new PromotionInfo(varInLhs.value());
+            //promotionInfo.setOverPosition();
+            promotionInfo.setDimensions(dimensions);
+
             FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
             // TODO if #38 is implemented, the variable has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
             _promotedWithBeforeOver.add(varInLhs.value());
+            _promotions.put(promotionInfo.getIdentifier(), promotionInfo);
           } else {
             promotionInfo = _promotions.get(varInLhs.value());
           }
@@ -834,8 +838,10 @@ public class ParallelizeForward extends ClawTransformation {
               && !_promotions.containsKey(pointer.value()))
           {
             PromotionInfo promotionInfo = new PromotionInfo(pointer.value());
-            promotionInfo.setOverPosition(OverPosition.
-                fromList(_claw.getOverClauseValues().get(0)));
+            if(_claw.hasOverClause()) {
+              promotionInfo.setOverPosition(OverPosition.
+                  fromList(_claw.getOverClauseValues().get(0)));
+            }
             _promotions.put(pointer.value(), promotionInfo);
           }
         }
