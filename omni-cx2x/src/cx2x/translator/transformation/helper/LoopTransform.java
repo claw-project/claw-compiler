@@ -37,7 +37,7 @@ public class LoopTransform {
    * @throws IllegalTransformationException If given node are null or not
    *                                        FdoStatement nodes.
    */
-  public static void merge(Xnode masterDoStmt, Xnode slaveDoStmt)
+  private static void merge(Xnode masterDoStmt, Xnode slaveDoStmt)
       throws IllegalTransformationException
   {
     if(masterDoStmt == null || slaveDoStmt == null
