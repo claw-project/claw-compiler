@@ -6,7 +6,6 @@ package cx2x.translator.transformation.helper;
 
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
-import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
@@ -151,7 +150,7 @@ public final class FieldTransform {
 
         // Save the over clause for parallelize forward transformation
         if(fieldInfo.getOverPosition() != OverPosition.BEFORE) {
-          param.setAttribute(ClawAttr.OVER.toString(),
+          param.setAttribute(Xattr.CLAW_OVER,
               fieldInfo.getOverPosition().toString());
         }
       }
@@ -161,7 +160,7 @@ public final class FieldTransform {
         equals(fieldInfo.getIdentifier()))
     {
       if(fieldInfo.getOverPosition() != OverPosition.BEFORE) {
-        fctType.setAttribute(ClawAttr.OVER.toString(),
+        fctType.setAttribute(Xattr.CLAW_OVER,
             fieldInfo.getOverPosition().toString());
       }
     }

@@ -14,7 +14,6 @@ import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.helper.FieldTransform;
-import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -418,7 +417,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       XbasicType paramType = xcodeml.getTypeTable().getBasicType(p);
 
-      if(!p.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
+      if(!p.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
         continue;
       }
 
@@ -435,7 +434,7 @@ public class ParallelizeForward extends ClawTransformation {
             XstorageClass.F_PARAM, fDef, true);
         type = bt.getType();
         Xnode param = xcodeml.createAndAddParam(varId, type, _parentFctType);
-        param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
+        param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
       } else {
 
         // Var exists already. Add to the parameters if not here.
@@ -447,7 +446,7 @@ public class ParallelizeForward extends ClawTransformation {
           Xnode param =
               xcodeml.createAndAddParamIfNotExists(varId, type, _parentFctType);
           if(param != null) {
-            param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
+            param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
           }
         }
       }
@@ -529,7 +528,7 @@ public class ParallelizeForward extends ClawTransformation {
             List<DimensionDefinition> dimensions =
                 TransformationHelper.findDimensions(_fctType);
             OverPosition overPos = OverPosition.fromString(
-                pBase.getAttribute(ClawAttr.OVER.toString()));
+                pBase.getAttribute(Xattr.CLAW_OVER));
 
             String type = _localFct ?
                 TransformationHelper.duplicateWithDimension(typeBase,
@@ -619,14 +618,12 @@ public class ParallelizeForward extends ClawTransformation {
   {
     if(_isNestedInAssignment) {
       Xnode assignment = _claw.getPragma().nextSibling();
-      if(assignment == null
-          || !_fctType.hasAttribute(ClawAttr.OVER.toString()))
-      {
+      if(assignment == null || !_fctType.hasAttribute(Xattr.CLAW_OVER)) {
         return;
       }
 
-      OverPosition overPos = OverPosition.fromString(
-          _fctType.getAttribute(ClawAttr.OVER.toString()));
+      OverPosition overPos =
+          OverPosition.fromString(_fctType.getAttribute(Xattr.CLAW_OVER));
 
       Xnode lhs = assignment.child(0);
       // TODO handle the case when the array ref is a var directly

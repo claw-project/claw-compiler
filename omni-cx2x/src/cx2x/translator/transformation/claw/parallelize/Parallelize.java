@@ -16,7 +16,6 @@ import cx2x.translator.language.base.Target;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.helper.FieldTransform;
-import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -743,7 +742,7 @@ public class Parallelize extends ClawTransformation {
         Xnode param = xcodeml.createAndAddParam(
             dimension.getLowerBound().getValue(),
             bt.getType(), _fctType);
-        param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
+        param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
       }
 
       // Create parameter for the upper bound
@@ -755,7 +754,7 @@ public class Parallelize extends ClawTransformation {
         Xnode param = xcodeml.createAndAddParam(
             dimension.getUpperBound().getValue(),
             bt.getType(), _fctType);
-        param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
+        param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), XbuiltInType.INT,

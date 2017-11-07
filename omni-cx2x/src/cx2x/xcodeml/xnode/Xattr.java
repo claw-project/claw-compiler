@@ -79,7 +79,12 @@ public enum Xattr {
   TYPE(Xname.ATTR_TYPE),
   USE_NAME(Xname.ATTR_USE_NAME),
   VALUE(Xname.ATTR_VALUE),
-  VERSION(Xname.ATTR_VERSION);
+  VERSION(Xname.ATTR_VERSION),
+
+  // CLAW specific attribute used in Xmod file
+  CLAW_PROMOTED(Xname.ATTR_CLAW_PROMOTED),
+  CLAW_OVER(Xname.ATTR_CLAW_OVER)
+  ;
 
   private final String _name;
 

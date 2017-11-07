@@ -13,7 +13,6 @@ import cx2x.translator.language.base.Target;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
-import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
@@ -287,12 +286,12 @@ public class TransformationHelper {
     for(int i = 0; i < paramsLocal.size(); ++i) {
       Xnode pLocal = paramsLocal.get(i);
       // Number of parameters in the module function as been
-      if(pLocal.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
+      if(pLocal.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
         // new parameter
         Xnode param = mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
         if(param != null) {
-          param.setBooleanAttribute(ClawAttr.IS_CLAW.toString(), true);
+          param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
         }
       } else {
         Xnode pMod = paramsMod.get(i);
@@ -307,7 +306,7 @@ public class TransformationHelper {
           List<DimensionDefinition> dimensions =
               TransformationHelper.findDimensions(fctType);
           OverPosition overPos = OverPosition.fromString(
-              pLocal.getAttribute(ClawAttr.OVER.toString()));
+              pLocal.getAttribute(Xattr.CLAW_OVER));
 
           if(lType.isArray()) {
             String newType = TransformationHelper.duplicateWithDimension(lType,
@@ -317,7 +316,7 @@ public class TransformationHelper {
         }
 
         // Propagate the over attribute
-        copyAttribute(pLocal, pMod, ClawAttr.OVER);
+        copyAttribute(pLocal, pMod, Xattr.CLAW_OVER);
       }
     }
   }
@@ -330,9 +329,9 @@ public class TransformationHelper {
    * @param to   Xnode to copy to.
    * @param attr Attribute code to be copied.
    */
-  private static void copyAttribute(Xnode from, Xnode to, ClawAttr attr) {
-    if(from.hasAttribute(attr.toString())) {
-      to.setAttribute(attr.toString(), from.getAttribute(attr.toString()));
+  private static void copyAttribute(Xnode from, Xnode to, Xattr attr) {
+    if(from.hasAttribute(attr)) {
+      to.setAttribute(attr, from.getAttribute(attr));
     }
   }
 
@@ -349,7 +348,7 @@ public class TransformationHelper {
       return dimensions;
     }
     for(Xnode param : fctType.getParams().getAll()) {
-      if(param.getBooleanAttribute(ClawAttr.IS_CLAW.toString())) {
+      if(param.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
         dimensions.add(
             new DimensionDefinition(
                 ClawConstant.ITER_PREFIX + param.value(),

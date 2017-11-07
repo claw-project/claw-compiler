@@ -85,6 +85,11 @@ public final class Xname {
   public static final String ATTR_USE_NAME = "use_name";
   public static final String ATTR_VALUE = "value";
   public static final String ATTR_VERSION = "version";
+
+  // CLAW specific attribute used in Xmod files
+  public static final String ATTR_CLAW_PROMOTED = "claw_promoted";
+  public static final String ATTR_CLAW_OVER = "claw_over";
+
   // Element names
   public static final String ALLOC = "alloc";
   public static final String ALLOC_OPT = "allocOpt";
