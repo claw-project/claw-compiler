@@ -70,7 +70,7 @@ public class Xnode {
    * @param attrCode Attribute code.
    * @return True if the element has the corresponding attribute.
    */
-  public boolean hasAttribute(String attrCode) {
+  private boolean hasAttribute(String attrCode) {
     return _baseElement != null
         && _baseElement.hasAttribute(attrCode);
   }
@@ -91,7 +91,7 @@ public class Xnode {
    * @param attrCode Attribute code.
    * @return Attribute's value.
    */
-  public String getAttribute(String attrCode) {
+  private String getAttribute(String attrCode) {
     if(_baseElement.hasAttribute(attrCode)) {
       return _baseElement.getAttribute(attrCode);
     } else {
@@ -115,7 +115,7 @@ public class Xnode {
    * @param attrCode Attribute code.
    * @return Attribute's value. False if attribute doesn't exist.
    */
-  public boolean getBooleanAttribute(String attrCode) {
+  private boolean getBooleanAttribute(String attrCode) {
     return _baseElement.hasAttribute(attrCode) &&
         _baseElement.getAttribute(attrCode).equals(Xname.TRUE);
   }
@@ -155,7 +155,7 @@ public class Xnode {
    * @param attrCode Attribute code.
    * @param value    Boolean value to set.
    */
-  public void setBooleanAttribute(String attrCode, boolean value) {
+  private void setBooleanAttribute(String attrCode, boolean value) {
     if(value) {
       setAttribute(attrCode, Xname.TRUE);
     } else {
@@ -179,7 +179,7 @@ public class Xnode {
    * @param attrCode Attribute code.
    * @param value    Value of the attribute.
    */
-  public void setAttribute(String attrCode, String value) {
+  private void setAttribute(String attrCode, String value) {
     _baseElement.setAttribute(attrCode, value);
   }
 
