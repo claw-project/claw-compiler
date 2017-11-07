@@ -20,11 +20,15 @@ import java.util.List;
 /**
  * Low-level transformation applied on do statements. This included:
  * - loop fusion (merge)
- * - loop reorder
+ * - loop reorder (reorder)
+ * - loop hoisting (hoist)
  *
  * @author clementval
  */
-public class LoopTransform {
+public final class LoopTransform {
+
+  // Avoid potential instantiation of this class
+  private LoopTransform() {}
 
   private static final String[] prevToDelete = {"acc loop", "omp do"};
   private static final String[] nextToDelete = {"omp end do"};

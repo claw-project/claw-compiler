@@ -12,6 +12,9 @@ import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
 
 /**
+ * Low-level transformation applied fields. This included:
+ * - Scalar and array promotion (promote)
+ *
  * @author clementval
  */
 public final class FieldTransform {

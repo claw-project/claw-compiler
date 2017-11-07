@@ -48,7 +48,6 @@ public class XnodeUtilTest {
             Arrays.asList("j", "i"));
 
     assertEquals(3, stmts.size());
-
   }
 
   @Test
