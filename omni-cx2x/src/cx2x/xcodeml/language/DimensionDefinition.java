@@ -93,7 +93,7 @@ public class DimensionDefinition {
    * @return A new arrayIndex element including a var element with the dimension
    * identifier.
    */
-  public Xnode generateArrayIndex(XcodeProgram xcodeml) {
+  public Xnode generateArrayIndex(XcodeML xcodeml) {
     Xnode aIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
     aIdx.append(xcodeml.createVar(XbuiltInType.INT, _identifier, Xscope.LOCAL));
     return aIdx;

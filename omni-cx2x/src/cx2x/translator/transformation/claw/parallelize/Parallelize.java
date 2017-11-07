@@ -695,24 +695,8 @@ public class Parallelize extends ClawTransformation {
                                                int index)
   {
     for(String id : ids) {
-      // TODO refactor -> move to TransformationHelper
-      List<Xnode> vars = XnodeUtil.findAllReferences(_fctDef.body(), id);
-
-      Xid sId = _fctDef.getSymbolTable().get(id);
-      XbasicType type = xcodeml.getTypeTable().getBasicType(sId);
-
-      for(Xnode var : vars) {
-        Xnode ref = xcodeml.createArrayRef(type, var.cloneNode());
-        for(Xnode ai : _beforeCrt.get(index)) {
-          ref.matchSeq(Xcode.VARREF).insertAfter(ai.cloneNode());
-        }
-        for(Xnode ai : _afterCrt.get(index)) {
-          ref.append(ai, true);
-        }
-
-        var.insertAfter(ref);
-        var.delete();
-      }
+      FieldTransform.adaptScalarRefToArrayRef(id, _fctDef,
+          _claw.getDimensionValues(), xcodeml);
     }
   }
 

@@ -7,8 +7,12 @@ package cx2x.translator.transformation.helper;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Low-level transformation applied fields. This included:
@@ -163,6 +167,40 @@ public final class FieldTransform {
         fctType.setAttribute(Xattr.CLAW_OVER,
             fieldInfo.getOverPosition().toString());
       }
+    }
+  }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   *
+   * @param identifier List of array identifiers that must be adapted.
+   * @param fctDef     Function definition in which reference are changed.
+   * @param dims       Dimension definition to use for array index generation.
+   * @param xcodeml    Current XcodeML program unit in which the element will be
+   *                   created.
+   */
+  public static void adaptScalarRefToArrayRef(String identifier,
+                                              XfunctionDefinition fctDef,
+                                              List<DimensionDefinition> dims,
+                                              XcodeML xcodeml)
+  {
+    List<Xnode> vars = XnodeUtil.findAllReferences(fctDef.body(), identifier);
+    Xid sId = fctDef.getSymbolTable().get(identifier);
+    XbasicType type = xcodeml.getTypeTable().getBasicType(sId);
+
+    List<Xnode> arrayIndexes = new ArrayList<>();
+    for(DimensionDefinition d : dims) {
+      arrayIndexes.add(d.generateArrayIndex(xcodeml));
+    }
+
+    for(Xnode var : vars) {
+      Xnode ref = xcodeml.createArrayRef(type, var.cloneNode());
+      for(Xnode ai : arrayIndexes) {
+        ref.append(ai, true);
+      }
+      var.insertAfter(ref);
+      var.delete();
     }
   }
 
