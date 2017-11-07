@@ -5,6 +5,7 @@
 
 package cx2x.translator;
 
+import cx2x.translator.common.Utility;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.translator.config.Configuration;
@@ -21,6 +22,7 @@ import cx2x.translator.transformation.utility.UtilityRemove;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.*;
+import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Element;
@@ -44,7 +46,6 @@ public class ClawTranslator implements Translator {
   private final ModuleCache _modCache;
   private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
   private int _transformationCounter = 0;
-
 
   /**
    * ClawTranslator ctor. Creates the transformation groups needed for the CLAW
@@ -151,7 +152,6 @@ public class ClawTranslator implements Translator {
 
     reorderTransformations();
   }
-
 
   /**
    * Associate correctly the start and end directive to form blocks.
@@ -293,6 +293,73 @@ public class ClawTranslator implements Translator {
   }
 
   /**
+   * Generate corresponding additional transformation according to optional
+   * clauses given to the directive.
+   *
+   * @param claw    ClawLanguage object that tells encapsulates all
+   *                information about the current directives and its
+   *                clauses.
+   * @param xcodeml Current XcodeML program.
+   * @param stmt    Statement on which the transformation is attached.
+   */
+  public void generateAdditionalTransformation(ClawLanguage claw,
+                                               XcodeProgram xcodeml, Xnode stmt)
+      throws IllegalTransformationException
+  {
+    // Order doesn't matter
+    applyFusionClause(claw, xcodeml, stmt);
+    applyInterchangeClause(claw, xcodeml, stmt);
+  }
+
+  /**
+   * Generate loop interchange transformation if the clause is present in the
+   * directive.
+   *
+   * @param claw    ClawLanguage object that tells encapsulates all
+   *                information about the current directives and its
+   *                clauses.
+   * @param xcodeml Current XcodeML program.
+   * @param stmt    Statement on which the transformation is attached. Must
+   *                be a FdoStatement for the loop interchange
+   *                transformation.
+   */
+  private void applyInterchangeClause(ClawLanguage claw, XcodeProgram xcodeml,
+                                      Xnode stmt)
+      throws IllegalTransformationException
+  {
+    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
+      Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+      stmt.insertBefore(p);
+      ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
+      LoopInterchange interchange = new LoopInterchange(l);
+      addTransformation(xcodeml, interchange);
+      Utility.debug("Loop interchange added: " + claw.getIndexes());
+    }
+  }
+
+  /**
+   * Generate loop fusion transformation if the clause is present in the
+   * directive.
+   *
+   * @param claw    ClawLanguage object that tells encapsulates all
+   *                information about the current directives and its
+   *                clauses.
+   * @param xcodeml Current XcodeML program.
+   * @param stmt    Statement on which the transformation is attached. Must
+   *                be a FdoStatement for the loop fusion transformation.
+   */
+  private void applyFusionClause(ClawLanguage claw, XcodeProgram xcodeml,
+                                 Xnode stmt)
+      throws IllegalTransformationException
+  {
+    if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
+      ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
+      addTransformation(xcodeml, new LoopFusion(stmt, l));
+      Utility.debug("Loop fusion added: " + claw.getGroupValue());
+    }
+  }
+
+  /**
    * @see Translator#getGroups()
    */
   public Map<Class, TransformationGroup> getGroups() {
@@ -315,7 +382,6 @@ public class ClawTranslator implements Translator {
   public ModuleCache getModCache() {
     return _modCache;
   }
-  
 
   /**
    * Get a stored element from a previous transformation.

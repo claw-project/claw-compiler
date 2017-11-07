@@ -5,6 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
@@ -189,12 +190,14 @@ public class LoopHoist extends ClawBlockTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation) throws Exception
   {
+    ClawTranslator ct = (ClawTranslator) translator;
+
     HoistedNestedDoStatement hoisted = LoopTransform.hoist(_hoistedGroups,
         _clawStart.getPragma(), _clawEnd.getPragma(), xcodeml);
 
     // Generate dynamic transformation (interchange)
-    TransformationHelper.generateAdditionalTransformation(_clawStart,
-        xcodeml, translator, hoisted.getOuterStatement());
+    ct.generateAdditionalTransformation(_clawStart, xcodeml,
+        hoisted.getOuterStatement());
 
     // Apply reshape clause
     TransformationHelper.applyReshapeClause(_clawStart, xcodeml);

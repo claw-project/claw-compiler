@@ -5,9 +5,9 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -160,11 +160,13 @@ public class ArrayTransform extends ClawBlockTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
+    ClawTranslator ct = (ClawTranslator) translator;
+
     // 1. Find the function/module declaration TODO handle module/program ?
     XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
     Xnode grip = _clawStart.getPragma();
     for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
-      grip = generateDoStmtNotation(xcodeml, translator, fctDef,
+      grip = generateDoStmtNotation(xcodeml, ct, fctDef,
           _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
     }
     removePragma();
@@ -189,7 +191,7 @@ public class ArrayTransform extends ClawBlockTransformation {
    * @return The last stmt created to be used as a grip for next insertion.
    */
   private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
-                                       Translator translator,
+                                       ClawTranslator translator,
                                        XfunctionDefinition fctDef,
                                        List<Xnode> ranges,
                                        List<Xnode> statements,
@@ -244,7 +246,6 @@ public class ArrayTransform extends ClawBlockTransformation {
       }
     }
 
-
     for(Xnode stmt : statements) {
       // 3. Adapt array reference with induction variables
       List<Xnode> allArrayRef = stmt.matchAll(Xcode.FARRAYREF);
@@ -270,16 +271,14 @@ public class ArrayTransform extends ClawBlockTransformation {
       stmt.delete();
     }
 
-
     // Generate accelerator pragmas if needed
     Xnode potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
         _clawStart, xcodeml, new Xnode(doStmts[0].element()),
         new Xnode(doStmts[0].element()));
 
     // Add any additional transformation defined in the directive clauses
-    TransformationHelper.generateAdditionalTransformation(_clawStart, xcodeml,
-        translator, doStmts[0]);
-
+    translator.generateAdditionalTransformation(_clawStart, xcodeml,
+        doStmts[0]);
     return potentialGrip == null ? doStmts[0] : potentialGrip;
   }
 }

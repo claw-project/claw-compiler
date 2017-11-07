@@ -13,8 +13,6 @@ import cx2x.translator.language.base.Target;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
-import cx2x.translator.transformation.loop.LoopFusion;
-import cx2x.translator.transformation.loop.LoopInterchange;
 import cx2x.translator.xnode.ClawAttr;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -25,7 +23,6 @@ import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import xcodeml.util.XmOption;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,92 +38,6 @@ import java.util.Map;
  * @author clementval
  */
 public class TransformationHelper {
-
-  /**
-   * Generate corresponding additional transformation according to optional
-   * clauses given to the directive.
-   *
-   * @param claw       ClawLanguage object that tells encapsulates all
-   *                   information about the current directives and its
-   *                   clauses.
-   * @param xcodeml    Current XcodeML program.
-   * @param translator Translator object in which new transformation are
-   *                   added.
-   * @param stmt       Statement on which the transformation is attached.
-   */
-  public static void generateAdditionalTransformation(ClawLanguage claw,
-                                                      XcodeProgram xcodeml,
-                                                      Translator translator,
-                                                      Xnode stmt)
-      throws IllegalTransformationException
-  {
-    // Order doesn't matter
-    applyFusionClause(claw, xcodeml, translator, stmt);
-    applyInterchangeClause(claw, xcodeml, translator, stmt);
-  }
-
-  /**
-   * Generate loop fusion transformation if the clause is present in the
-   * directive.
-   *
-   * @param claw       ClawLanguage object that tells encapsulates all
-   *                   information about the current directives and its
-   *                   clauses.
-   * @param xcodeml    Current XcodeML program.
-   * @param translator Translator object in which new transformation are
-   *                   added.
-   * @param stmt       Statement on which the transformation is attached. Must
-   *                   be a FdoStatement for the loop fusion transformation.
-   */
-  private static void applyFusionClause(ClawLanguage claw,
-                                        XcodeProgram xcodeml,
-                                        Translator translator,
-                                        Xnode stmt)
-      throws IllegalTransformationException
-  {
-    if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
-      ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
-      LoopFusion fusion = new LoopFusion(stmt, l);
-      // TODO maybe run analysis
-      translator.addTransformation(xcodeml, fusion);
-
-      if(XmOption.isDebugOutput()) {
-        System.out.println("Loop fusion added: " + claw.getGroupValue());
-      }
-    }
-  }
-
-  /**
-   * Generate loop interchange transformation if the clause is present in the
-   * directive.
-   *
-   * @param claw       ClawLanguage object that tells encapsulates all
-   *                   information about the current directives and its
-   *                   clauses.
-   * @param xcodeml    Current XcodeML program.
-   * @param translator Translator object in which new transformation are
-   *                   added.
-   * @param stmt       Statement on which the transformation is attached. Must
-   *                   be a FdoStatement for the loop interchange
-   *                   transformation.
-   */
-  private static void applyInterchangeClause(ClawLanguage claw,
-                                             XcodeProgram xcodeml,
-                                             Translator translator,
-                                             Xnode stmt)
-      throws IllegalTransformationException
-  {
-    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
-      Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-      stmt.insertBefore(p);
-      ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
-      LoopInterchange interchange = new LoopInterchange(l);
-      translator.addTransformation(xcodeml, interchange);
-      if(XmOption.isDebugOutput()) {
-        System.out.println("Loop interchange added: " + claw.getIndexes());
-      }
-    }
-  }
 
   /**
    * Find the id element in the current function definition or in parent if
@@ -431,7 +342,8 @@ public class TransformationHelper {
    * @param fctType Function type to analyze.
    * @return List of found dimensions.
    */
-  public static List<DimensionDefinition> findDimensions(XfunctionType fctType) {
+  public static List<DimensionDefinition> findDimensions(XfunctionType fctType)
+  {
     List<DimensionDefinition> dimensions = new ArrayList<>();
     if(fctType.getParams() == null) {
       return dimensions;

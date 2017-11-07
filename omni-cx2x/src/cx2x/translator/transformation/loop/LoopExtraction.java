@@ -7,13 +7,13 @@ package cx2x.translator.transformation.loop;
 
 // Cx2x import
 
+import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
-import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -47,7 +47,6 @@ public class LoopExtraction extends ClawTransformation {
   private Xnode _extractedLoop = null;
   private XfunctionDefinition _fctDef = null; // Fct holding the fct call
   private XfunctionDefinition _fctDefToExtract = null;
-
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
@@ -191,6 +190,8 @@ public class LoopExtraction extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation) throws Exception
   {
+
+    ClawTranslator ct = (ClawTranslator) translator;
 
     /*
      * DUPLICATE THE FUNCTION
@@ -360,7 +361,6 @@ public class LoopExtraction extends ClawTransformation {
       } // Loop mapped variables
     } // Loop over mapping clauses
 
-
     // Adapt array reference in function body
     List<Xnode> arrayReferences = clonedFctDef.body().matchAll(Xcode.FARRAYREF);
     for(Xnode ref : arrayReferences) {
@@ -405,8 +405,7 @@ public class LoopExtraction extends ClawTransformation {
     //AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 
     // Add any additional transformation defined in the directive clauses
-    TransformationHelper.generateAdditionalTransformation(_claw, xcodeml,
-        translator, extractedLoop);
+    ct.generateAdditionalTransformation(_claw, xcodeml, extractedLoop);
 
     removePragma();
     transformed();
