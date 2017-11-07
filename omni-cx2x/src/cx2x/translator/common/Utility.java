@@ -16,7 +16,11 @@ import java.util.*;
  *
  * @author clementval
  */
-public class Utility {
+public final class Utility {
+
+  // Avoid potential instantiation of this class
+  private Utility() {
+  }
 
   /**
    * Join an array of String elements into a single String.

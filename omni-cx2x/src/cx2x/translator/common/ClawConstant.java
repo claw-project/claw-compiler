@@ -27,10 +27,6 @@ public class ClawConstant {
 
   public static final String CLAW_MOD_SUFFIX = "claw";
 
-  // CLAW attribute
-  public static final String IS_CLAW = "is_claw";
-  public static final String OVER = "over";
-
   // Over position constant value
   public static final String BEFORE = "before";
   public static final String MIDDLE = "middle";

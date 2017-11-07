@@ -17,6 +17,10 @@ import java.util.List;
  */
 public final class Message {
 
+  // Avoid potential instantiation of this class
+  private Message() {
+  }
+
   private static final String ERROR_PREFIX = "claw-error: ";
   private static final String WARNING_PREFIX = "claw warning: ";
 
