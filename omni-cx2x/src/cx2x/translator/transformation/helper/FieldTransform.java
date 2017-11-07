@@ -166,4 +166,43 @@ public final class FieldTransform {
       }
     }
   }
+
+  /**
+   * Adapt allocate statement with given dimension.
+   *
+   * @param promotionInfo Promotion information. Must contains identifier and
+   *                      dimensions.
+   * @param parent        Root node from which allocate statements are looked
+   *                      for.
+   * @param dimension     Dimension definition used to adapt the allocate
+   *                      statement.
+   * @param xcodeml       Current XcodeML translation unit.
+   */
+  public static void adaptAllocate(PromotionInfo promotionInfo, Xnode parent,
+                                   DimensionDefinition dimension,
+                                   XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    String arrayName = promotionInfo.getIdentifier();
+    // Look through all allocate statements
+    for(Xnode allocatedStmt : parent.matchAll(Xcode.FALLOCATESTATEMENT)) {
+      for(Xnode alloc : allocatedStmt.matchAll(Xcode.ALLOC)) {
+        Xnode var = alloc.matchDirectDescendant(Xcode.VAR);
+        if(var != null && var.value().equals(arrayName)) {
+          switch(promotionInfo.getOverPosition()) {
+            case BEFORE:
+              alloc.insert(dimension.generateAllocateNode(xcodeml));
+              break;
+            case MIDDLE:
+              alloc.firstChild().
+                  insertAfter(dimension.generateAllocateNode(xcodeml));
+              break;
+            case AFTER:
+              alloc.append(dimension.generateAllocateNode(xcodeml));
+              break;
+          }
+        }
+      }
+    }
+  }
 }

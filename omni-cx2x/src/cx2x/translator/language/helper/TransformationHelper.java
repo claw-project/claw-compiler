@@ -398,37 +398,6 @@ public class TransformationHelper {
   }
 
   /**
-   */
-  public static void adaptAllocate(PromotionInfo promotionInfo, Xnode parent,
-                                   ClawLanguage clawInfo, int overIndex,
-                                   XcodeProgram xcodeml)
-  {
-    String arrayName = promotionInfo.getIdentifier();
-    // Look through all allocate statements
-    for(Xnode allocatedStmt : parent.matchAll(Xcode.FALLOCATESTATEMENT)) {
-      for(Xnode alloc : allocatedStmt.matchAll(Xcode.ALLOC)) {
-        Xnode var = alloc.matchDirectDescendant(Xcode.VAR);
-        if(var != null && var.value().equals(arrayName)) {
-          DimensionDefinition dim =
-              clawInfo.getDimensionValues().get(overIndex);
-          switch(promotionInfo.getOverPosition()) {
-            case BEFORE:
-              alloc.insert(dim.generateAllocateNode(xcodeml));
-              break;
-            case MIDDLE:
-              alloc.firstChild().
-                  insertAfter(dim.generateAllocateNode(xcodeml));
-              break;
-            case AFTER:
-              alloc.append(dim.generateAllocateNode(xcodeml));
-              break;
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *

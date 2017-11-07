@@ -28,10 +28,14 @@ import java.util.List;
  *
  * @author clementval
  */
-public class AcceleratorHelper {
+public final class AcceleratorHelper {
 
   public static final int NO_COLLAPSE = 0;
   private static final String NO_CLAUSES = "";
+
+  // Avoid potential instantiation of this class
+  private AcceleratorHelper() {
+  }
 
   /**
    * Generate loop seq directives on the top of loops in the given function
@@ -454,7 +458,6 @@ public class AcceleratorHelper {
       }
     }
   }
-
 
   /**
    * Generate the correct clauses for private variable on accelerator.
