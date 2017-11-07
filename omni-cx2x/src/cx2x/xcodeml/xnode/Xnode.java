@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
@@ -137,7 +136,6 @@ public class Xnode {
   public void setValue(String value) {
     _baseElement.setTextContent(value);
   }
-
 
   /**
    * Set the value of a boolean attribute.
@@ -411,7 +409,6 @@ public class Xnode {
     return _baseElement.cloneNode(true);
   }
 
-
   /**
    * Get next sibling node.
    *
@@ -613,7 +610,6 @@ public class Xnode {
     }
     return depth;
   }
-
 
   /**
    * Insert a node just after this node.

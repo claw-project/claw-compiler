@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.accelerator;
 
-import cx2x.translator.common.Utility;
+import cx2x.translator.common.Message;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.generator.AcceleratorNone;
@@ -66,10 +66,10 @@ public final class AcceleratorHelper {
 
       // Debug logging
       if(noDependency != null) {
-        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
             "generated loop directive for loop at line: " + doStmt.lineNo());
       } else {
-        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
+        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
             "generated loop seq directive for loop at line: "
             + doStmt.lineNo());
       }
@@ -447,7 +447,7 @@ public final class AcceleratorHelper {
         // TODO: check that the directive is not present yet.
         addPragmasBefore(xcodeml, gen.getRoutineDirective(true),
             calledFctDef.body().child(0));
-        Utility.debug(OpenAcc.OPENACC_DEBUG_PREFIX
+        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX
             + "generated routine seq directive for " + fctName
             + " subroutine/function.");
       } else {

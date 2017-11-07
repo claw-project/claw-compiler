@@ -5,6 +5,7 @@
 
 package cx2x.translator.language.accelerator.generator;
 
+import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
@@ -94,7 +95,7 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    Utility.debug(String.format(
+    Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
         OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
@@ -105,7 +106,7 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    Utility.debug(String.format(
+    Message.debug(String.format(
         "%s generate present clause for (%d variables): %s",
         OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
@@ -116,7 +117,7 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
-    Utility.debug(String.format(
+    Message.debug(String.format(
         "%s generate pcreate clause for (%d variables): %s",
         OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENACC_PCREATE, Utility.join(",", vars));
@@ -243,7 +244,7 @@ public class OpenAcc extends AcceleratorGenerator {
     if(vars == null || vars.isEmpty()) {
       return null;
     }
-    Utility.debug(OPENACC_DEBUG_PREFIX + "generate update " +
+    Message.debug(OPENACC_DEBUG_PREFIX + "generate update " +
         (direction == ClawDMD.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
         " clause for: " + Utility.join(",", vars));
     String updates = String.format(FORMATPAR, direction == ClawDMD.DEVICE ?

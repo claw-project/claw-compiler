@@ -7,7 +7,6 @@ package cx2x.translator.common;
 
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.Target;
-import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -58,17 +57,6 @@ public class Utility {
       }
     }
     return ret.toString();
-  }
-
-  /**
-   * Print debugging information on the standard output if option is active.
-   *
-   * @param value Value to be printed.
-   */
-  public static void debug(String value) {
-    if(XmOption.isDebugOutput()) {
-      System.out.println(value);
-    }
   }
 
   /**
@@ -136,14 +124,11 @@ public class Utility {
     if(directive != null) {
       str.append(directive).append(".");
     }
-    if(target != null)
-    {
+    if(target != null) {
       str.append(target).append(".");
     }
     str.append(ClawConstant.CLAW_MOD_SUFFIX);
-
     return str.toString();
-    //return "." + directive + "." + target + ClawConstant.CLAW_MOD_SUFFIX;
   }
 
   /**
@@ -163,5 +148,4 @@ public class Utility {
     String newStr = source.toLowerCase().replace(pattern.toLowerCase(), "");
     return ((source.length() - newStr.length())) / pattern.length();
   }
-
 }

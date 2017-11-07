@@ -9,7 +9,7 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.Utility;
+import cx2x.translator.common.Message;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
@@ -21,7 +21,6 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -237,12 +236,8 @@ public class LoopExtraction extends ClawTransformation {
     // Find the loop that will be extracted
     Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
 
-    if(XmOption.isDebugOutput()) {
-      System.out.println("loop-extract transformation: " +
-          _claw.getPragma().value());
-      System.out.println("  created subroutine: " +
-          clonedFctDef.getName().value());
-    }
+    Message.debug("loop-extract transformation: " + _claw.getPragma().value());
+    Message.debug("  created subroutine: " + clonedFctDef.getName().value());
 
     /*
      * REMOVE BODY FROM THE LOOP AND DELETE THE LOOP
@@ -262,11 +257,9 @@ public class LoopExtraction extends ClawTransformation {
     // Wrap function call with loop
     Xnode extractedLoop = wrapCallWithLoop(xcodeml, _extractedLoop);
 
-    if(XmOption.isDebugOutput()) {
-      System.out.println("  call wrapped with loop: " +
-          _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> " +
-          clonedFctDef.getName().value());
-    }
+    Message.debug("  call wrapped with loop: " +
+        _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> " +
+        clonedFctDef.getName().value());
 
     // Change called fct name
     _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);
@@ -276,12 +269,12 @@ public class LoopExtraction extends ClawTransformation {
     XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
     XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
 
-    Utility.debug("  Start to apply mapping: " + _claw.getMappings().size());
+    Message.debug("  Start to apply mapping: " + _claw.getMappings().size());
 
     for(ClawMapping mapping : _claw.getMappings()) {
-      Utility.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
+      Message.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
       for(ClawMappingVar var : mapping.getMappedVariables()) {
-        Utility.debug("  Var: " + var);
+        Message.debug("  Var: " + var);
         Xnode argument = XnodeUtil.findArg(var.getArgMapping(), _fctCall);
         if(argument == null) {
           continue;

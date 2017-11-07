@@ -6,6 +6,7 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
+import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.OpenAccLocalStrategy;
@@ -23,7 +24,6 @@ import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -108,24 +108,21 @@ public class Parallelize extends ClawTransformation {
                                         List<String> candidateArrays,
                                         List<String> scalars)
   {
-    if(XmOption.isDebugOutput()) {
-      System.out.println("==========================================");
-      System.out.println("Parallelize promotion infos for subroutine " + name);
-      System.out.println("  - Promoted arrays(" + promoted.size() + "):");
-      for(String array : promoted) {
-        System.out.println("      " + array);
-      }
-      System.out.println("  - Candidate arrays(" +
-          candidateArrays.size() + "):");
-      for(String array : candidateArrays) {
-        System.out.println("      " + array);
-      }
-      System.out.println("  - Candidate scalars(" + scalars.size() + "):");
-      for(String array : scalars) {
-        System.out.println("      " + array);
-      }
-      System.out.println("==========================================");
+    Message.debug("==========================================");
+    Message.debug("Parallelize promotion infos for subroutine " + name);
+    Message.debug("  - Promoted arrays(" + promoted.size() + "):");
+    for(String array : promoted) {
+      Message.debug("      " + array);
     }
+    Message.debug("  - Candidate arrays(" + candidateArrays.size() + "):");
+    for(String array : candidateArrays) {
+      Message.debug("      " + array);
+    }
+    Message.debug("  - Candidate scalars(" + scalars.size() + "):");
+    for(String array : scalars) {
+      Message.debug("      " + array);
+    }
+    Message.debug("==========================================");
   }
 
   @Override
@@ -354,9 +351,9 @@ public class Parallelize extends ClawTransformation {
           "PURE specifier cannot be removed", _fctDef.lineNo());
     } else if(pureRemoved) {
       String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      System.out.println("Warning: PURE specifier removed from function " +
-          fctName + " at line " + _fctDef.lineNo() + ". Transformation and " +
-          "code generation applied to it.");
+      xcodeml.addWarning("Warning: PURE specifier removed from function " +
+              fctName + ". Transformation and code generation applied to it.",
+          _fctDef.lineNo());
     }
 
     // Prepare the array index that will be added to the array references.

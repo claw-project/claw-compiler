@@ -6,6 +6,7 @@ package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawDMD;
@@ -21,7 +22,6 @@ import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import xcodeml.util.XmOption;
 
 import java.util.*;
 
@@ -296,10 +296,8 @@ public class ParallelizeForward extends ClawTransformation {
         if(target_var != null) {
           _fctCallMapping.put(original_name, target_var.value());
 
-          if(XmOption.isDebugOutput()) {
-            System.out.println("Fct parameter mapping: original_name=" +
-                original_name + " target_name=" + target_var.value());
-          }
+          Message.debug("Fct parameter mapping: original_name=" +
+              original_name + " target_name=" + target_var.value());
         }
       }
     }
@@ -322,12 +320,8 @@ public class ParallelizeForward extends ClawTransformation {
           d.getAttribute(Xattr.NAME));
 
       if(_mod != null) {
-
-        // debug information
-        if(XmOption.isDebugOutput()) {
-          System.out.println("Reading CLAW module file: " +
-              _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
-        }
+        Message.debug("Reading CLAW module file: " +
+            _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
 
         if(_mod.getIdentifiers().contains(_calledFctName)) {
           Xid id = _mod.getIdentifiers().get(_calledFctName);

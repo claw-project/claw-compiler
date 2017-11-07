@@ -5,7 +5,7 @@
 
 package cx2x.translator;
 
-import cx2x.translator.common.Utility;
+import cx2x.translator.common.Message;
 import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.translator.config.Configuration;
@@ -333,7 +333,7 @@ public class ClawTranslator implements Translator {
       ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       addTransformation(xcodeml, interchange);
-      Utility.debug("Loop interchange added: " + claw.getIndexes());
+      Message.debug("Loop interchange added: " + claw.getIndexes());
     }
   }
 
@@ -355,7 +355,7 @@ public class ClawTranslator implements Translator {
     if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
       addTransformation(xcodeml, new LoopFusion(stmt, l));
-      Utility.debug("Loop fusion added: " + claw.getGroupValue());
+      Message.debug("Loop fusion added: " + claw.getGroupValue());
     }
   }
 

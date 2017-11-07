@@ -5,7 +5,7 @@
 package cx2x.translator.transformation.helper;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.Utility;
+import cx2x.translator.common.Message;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.NestedDoStatement;
@@ -27,11 +27,11 @@ import java.util.List;
  */
 public final class LoopTransform {
 
-  // Avoid potential instantiation of this class
-  private LoopTransform() {}
-
   private static final String[] prevToDelete = {"acc loop", "omp do"};
   private static final String[] nextToDelete = {"omp end do"};
+  // Avoid potential instantiation of this class
+  private LoopTransform() {
+  }
 
   /**
    * Merge two do statements together. Body of the slave do statement will be
@@ -105,11 +105,11 @@ public final class LoopTransform {
     if(nestedGroup.size() == 2) { // simple swap
       swapIterationRange(nestedGroup.getOuterStatement(),
           nestedGroup.getInnerStatement());
-      Utility.debug("Loop reordering: single swap operation");
+      Message.debug("Loop reordering: single swap operation");
     } else if(nestedGroup.size() == 3) {
       int newPosition =
           nestedGroup.computeSwappingIndices(newInductionVarOrder);
-      Utility.debug("Loop reordering: potential double swap operation " +
+      Message.debug("Loop reordering: potential double swap operation " +
           newPosition);
       switch(newPosition) {
         case 201: // Double swap: i,j,k -> j,k,i

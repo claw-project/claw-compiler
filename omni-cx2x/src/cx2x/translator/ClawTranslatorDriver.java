@@ -5,12 +5,12 @@
 package cx2x.translator;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.xcodeml.error.XanalysisError;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -23,7 +23,6 @@ import xcodeml.util.XmOption;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,8 +35,6 @@ import java.util.Map;
  */
 public class ClawTranslatorDriver {
 
-  private static final String ERROR_PREFIX = "claw-error: ";
-  private static final String WARNING_PREFIX = "claw warning: ";
   private String _xcodemlInputFile = null;
   private String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
@@ -170,16 +167,14 @@ public class ClawTranslatorDriver {
 
       for(Map.Entry<Class, TransformationGroup> entry :
           _translator.getGroups().entrySet()) {
-        if(XmOption.isDebugOutput()) {
-          System.out.println("Apply transformation: " +
-              entry.getValue().transformationName() + " - " +
-              entry.getValue().count()
-          );
-        }
+        Message.debug("Apply transformation: " +
+            entry.getValue().transformationName() + " - " +
+            entry.getValue().count()
+        );
 
         try {
           entry.getValue().applyTranslations(_translationUnit, _translator);
-          displayWarnings();
+          Message.warnings(_translationUnit);
         } catch(IllegalTransformationException itex) {
           _translationUnit.addError(itex.getMessage(), itex.getStartLine());
           abort();
@@ -206,39 +201,8 @@ public class ClawTranslatorDriver {
    * Print all the errors stored in the XcodeML object and abort the program.
    */
   private void abort() {
-    if(_translationUnit != null) {
-      displayMessages(ERROR_PREFIX, _translationUnit.getErrors());
-    }
+    Message.errors(_translationUnit);
     System.exit(1);
-  }
-
-  /**
-   * Print all the warnings stored in the XcodeML object and purge them after
-   * displaying.
-   */
-  private void displayWarnings() {
-    if(_translationUnit != null) {
-      displayMessages(WARNING_PREFIX, _translationUnit.getWarnings());
-    }
-  }
-
-  /**
-   * Print all messages in the given list with the prefix.
-   *
-   * @param prefix   Prefix for the message.
-   * @param messages List of messages to display.
-   */
-  private void displayMessages(String prefix, List<XanalysisError> messages) {
-    for(XanalysisError message : messages) {
-      if(message.getLine() == 0) {
-        System.err.println(String.format("%s %s, line: undefined", prefix,
-            message.getMessage()));
-      } else {
-        System.err.println(String.format("%s %s, line: %s", prefix,
-            message.getMessage(), message.getConcatLines()));
-      }
-    }
-    messages.clear();
   }
 
   /**
