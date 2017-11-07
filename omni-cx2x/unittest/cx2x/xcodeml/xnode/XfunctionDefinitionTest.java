@@ -36,7 +36,6 @@ public class XfunctionDefinitionTest {
           "</body>" +
           "</FfunctionDefinition>";
 
-
   @Test
   public void basicFunctionDefinitionTest() {
     XfunctionDefinition fctDef = XmlHelper.createXfunctionDefinitionFromString(basicFDef);
@@ -50,7 +49,6 @@ public class XfunctionDefinitionTest {
 
     assertEquals(1, fctDef.lineNo());
     assertEquals("original_code.f90", fctDef.filename());
-
 
   }
 }

@@ -5,7 +5,6 @@
 
 package cx2x.translator.misc;
 
-
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.Target;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-
 
 /**
  * Join utility test

@@ -3,7 +3,6 @@
  * See LICENSE file for more information
  */
 
-
 package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.ClawTranslator;

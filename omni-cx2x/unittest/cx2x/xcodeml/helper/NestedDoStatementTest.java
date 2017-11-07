@@ -96,7 +96,7 @@ public class NestedDoStatementTest {
     Xnode swap = XmlHelper.createXnode(swapNodes);
     assertNotNull(swap);
     NestedDoStatement ndostmt = new NestedDoStatement(swap);
-    
+
     assertEquals(12,
         ndostmt.computeSwappingIndices(Arrays.asList("i", "j", "k")));
     assertEquals(21,

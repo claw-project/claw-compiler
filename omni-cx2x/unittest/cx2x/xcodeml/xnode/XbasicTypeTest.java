@@ -134,7 +134,6 @@ public class XbasicTypeTest {
     assertEquals("10", b.getLength().child(0).value());
   }
 
-
   /**
    * Test for a more complex integer type with dimension
    * <p>
@@ -223,7 +222,7 @@ public class XbasicTypeTest {
     Xnode d1 = xcodeml.createEmptyAssumedShaped();
     bt.addDimension(d1);
     assertEquals(1, bt.getDimensions());
-    Xnode d2= xcodeml.createEmptyAssumedShaped();
+    Xnode d2 = xcodeml.createEmptyAssumedShaped();
     bt.addDimension(d2);
     assertEquals(2, bt.getDimensions());
     assertTrue(bt.isAllAssumedShape());

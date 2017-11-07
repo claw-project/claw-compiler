@@ -5,20 +5,18 @@
 
 package helper;
 
-import static org.junit.Assert.*;
-
 import cx2x.xcodeml.xnode.*;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-
-import java.io.File;
-import java.io.StringReader;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.io.StringReader;
 
-import org.xml.sax.InputSource;
-
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Helper class containing static methods for the unit tests.
@@ -123,7 +121,6 @@ public class XmlHelper {
     Element el = XmlHelper.getElementFromString(xml);
     return new Xnode(el);
   }
-
 
   public static Xnode createXnode(String xml) {
     Element el = XmlHelper.getElementFromString(xml);

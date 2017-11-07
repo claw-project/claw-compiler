@@ -59,5 +59,4 @@ public class XidTest {
     assertEquals(ALT_TEST_SCLASS, clone.getSclass());
   }
 
-
 }

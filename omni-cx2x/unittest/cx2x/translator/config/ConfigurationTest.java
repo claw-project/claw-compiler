@@ -5,12 +5,7 @@
 
 package cx2x.translator.config;
 
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.base.Target;
-import helper.TestConstant;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Test method of the Configuration class
@@ -18,7 +13,6 @@ import static org.junit.Assert.*;
  * @author clementval
  */
 public class ConfigurationTest {
-
 
   @Test
   public void readConfigTest() {
@@ -72,6 +66,5 @@ public class ConfigurationTest {
       fail();
     }*/
   }
-
 
 }

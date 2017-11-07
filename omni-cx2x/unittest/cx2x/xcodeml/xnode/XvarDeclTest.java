@@ -49,5 +49,4 @@ public class XvarDeclTest {
     assertNull(varDecl.matchSeq(Xcode.VALUE));
   }
 
-
 }

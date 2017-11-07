@@ -6,16 +6,16 @@
 package cx2x.translator.language;
 
 import cx2x.translator.config.Configuration;
+import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.Target;
 import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawReshapeInfo;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.base.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.Xnode;
@@ -182,7 +182,6 @@ public class ClawLanguageTest {
     analyzeValidClawLoopInterchange("claw loop-interchange (j,k,i) parallel",
         Arrays.asList("j", "k", "i"), true, null, null);
 
-
     analyzeValidClawLoopInterchange("claw loop-interchange target(cpu)",
         null, false, null, Collections.singletonList(Target.CPU));
     analyzeValidClawLoopInterchange("claw loop-interchange target(cpu,mic)",
@@ -190,7 +189,6 @@ public class ClawLanguageTest {
     analyzeValidClawLoopInterchange("claw loop-interchange target(cpu) " +
             "parallel acc(loop)", null, true, "loop",
         Collections.singletonList(Target.CPU));
-
 
     // Invalid directives
     analyzeInvalidClawLanguage("claw loop-interchange ()");
@@ -281,7 +279,6 @@ public class ClawLanguageTest {
     analyzeValidSimpleClaw("claw remove target(gpu,mic)", ClawDirective.REMOVE,
         false, Arrays.asList(Target.GPU, Target.MIC));
 
-
     // Invalid directives
     analyzeInvalidClawLanguage("claw");
     analyzeInvalidClawLanguage("claw dummy");
@@ -316,7 +313,6 @@ public class ClawLanguageTest {
       fail();
     }
   }
-
 
   /**
    * Test various input for the CLAW loop extract directive.
@@ -400,7 +396,6 @@ public class ClawLanguageTest {
     assertEquals("j", map.getMappingVariables().get(0).getArgMapping());
     assertEquals("j", map.getMappingVariables().get(0).getFctMapping());
     assertFalse(map.getMappingVariables().get(0).hasDifferentMapping());
-
 
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1)",
@@ -528,7 +523,6 @@ public class ClawLanguageTest {
     assertTrue(l.hasAcceleratorClause());
     assertEquals("loop gang vector", l.getAcceleratorClauses());
 
-
     analyzeValidClawLoopExtract(
         "claw loop-extract range(i=istart,iend) map(i:j) target(gpu) fusion " +
             "group(j1)",
@@ -538,7 +532,6 @@ public class ClawLanguageTest {
         "claw loop-extract range(i=istart,iend) map(i:j) fusion group(j1) " +
             "target(gpu)",
         "i", "istart", "iend", null, Collections.singletonList(Target.GPU));
-
 
     // Invalid directives
     analyzeInvalidClawLanguage("claw loop-extract");
@@ -734,7 +727,6 @@ public class ClawLanguageTest {
     analyzeInvalidClawLanguage("claw array-transform induction()");
     analyzeInvalidClawLanguage("claw array-transform induction");
 
-
     analyzeValidArrayTransform("claw array-transform target(cpu)", false, null,
         false, null, null, Collections.singletonList(Target.CPU));
     analyzeValidArrayTransform("claw array-transform target(gpu)", false, null,
@@ -817,7 +809,6 @@ public class ClawLanguageTest {
     }
   }
 
-
   /**
    * Test various input for the CLAW loop-hoist directive.
    */
@@ -839,7 +830,6 @@ public class ClawLanguageTest {
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
         Arrays.asList(info1, info2), null, false, null, 0);
-
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) target(cpu) interchange",
         Arrays.asList("i", "j"), true, null, false, null,
@@ -1096,7 +1086,6 @@ public class ClawLanguageTest {
         null, null, Collections.singletonList(d1), null, null,
         Arrays.asList("s1", "s2"));
 
-
     analyzeValidParallelize("claw parallelize forward",
         null, null, null, null, null, null);
 
@@ -1111,7 +1100,6 @@ public class ClawLanguageTest {
 
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j)",
         dataLst1, over2, null, null, null, null);
-
 
     analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
         "copy", dataLst1, over2, null, ClawDMD.BOTH, null, null);
@@ -1226,7 +1214,6 @@ public class ClawLanguageTest {
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
-
 
       assertEquals(createClause, l.hasCreateClause());
       if(update != null) {

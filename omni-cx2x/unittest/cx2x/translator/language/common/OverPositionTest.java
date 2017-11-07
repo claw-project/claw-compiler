@@ -47,7 +47,7 @@ public class OverPositionTest {
   }
 
   @Test
-  public void toStringTest(){
+  public void toStringTest() {
     assertEquals(ClawConstant.BEFORE, OverPosition.BEFORE.toString());
     assertEquals(ClawConstant.MIDDLE, OverPosition.MIDDLE.toString());
     assertEquals(ClawConstant.AFTER, OverPosition.AFTER.toString());

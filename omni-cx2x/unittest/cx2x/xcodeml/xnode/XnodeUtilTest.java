@@ -49,7 +49,6 @@ public class XnodeUtilTest {
 
     assertEquals(3, stmts.size());
 
-
   }
 
   @Test

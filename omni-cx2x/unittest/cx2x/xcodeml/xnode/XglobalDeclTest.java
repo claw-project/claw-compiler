@@ -30,7 +30,6 @@ public class XglobalDeclTest {
           "</FfunctionDefinition>" +
           "</globalDeclarations>";
 
-
   @Test
   public void simpleGlobalDeclarationTest() {
     XglobalDeclTable gdTable = XmlHelper.createGlobalDeclTable(simpleGlobDecl);

@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class XcodeTypeTest {
 
-
   @Test
   public void isBuiltInTypeTest() {
     assertTrue(XcodeType.isBuiltInType(Xname.TYPE_F_INT));
@@ -31,7 +30,7 @@ public class XcodeTypeTest {
   }
 
   @Test
-  public void isOfTypeTest(){
+  public void isOfTypeTest() {
     assertTrue(XcodeType.ARRAY.isOfType("A1234567"));
     assertTrue(XcodeType.INTEGER.isOfType(XcodeType.INTEGER.generateHash()));
     assertTrue(XcodeType.REAL.isOfType(XcodeType.REAL.generateHash()));
