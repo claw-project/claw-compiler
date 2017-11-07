@@ -173,7 +173,7 @@ public class NestedDoStatement {
    *
    * @return Newly created nested do statements group.
    */
-  public NestedDoStatement clone() {
+  public NestedDoStatement cloneNestedGroup() {
     Xnode newDoStmt = _statements.get(0).cloneNode();
     return new NestedDoStatement(newDoStmt, size());
   }

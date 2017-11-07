@@ -156,7 +156,7 @@ public class LoopTransform {
     }
 
     // Do the hoisting
-    HoistedNestedDoStatement hoisted = hoistedGroups.get(0).clone();
+    HoistedNestedDoStatement hoisted = hoistedGroups.get(0).cloneNestedGroup();
     hoisted.getInnerStatement().body().delete();
     Xnode newBody = xcodeml.createNode(Xcode.BODY);
     hoisted.getInnerStatement().append(newBody);

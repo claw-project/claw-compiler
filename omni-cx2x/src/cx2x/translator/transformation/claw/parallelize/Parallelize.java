@@ -13,7 +13,6 @@ import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
-import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.helper.FieldTransform;

@@ -61,7 +61,7 @@ public class HoistedNestedDoStatement extends NestedDoStatement {
    *
    * @return Newly created nested do statements group.
    */
-  public HoistedNestedDoStatement clone() {
+  public HoistedNestedDoStatement cloneNestedGroup() {
     Xnode newDoStmt = get(0).cloneNode();
     return new HoistedNestedDoStatement(newDoStmt, size());
   }
