@@ -539,8 +539,8 @@ public class Parallelize extends ClawTransformation {
             _promotions.put(lhsName, promotionInfo);
           }
           if(lhs.opcode() == Xcode.VAR) {
-            adaptScalarRefToArrayReferences(xcodeml,
-                Collections.singletonList(lhsName), DEFAULT_OVER);
+            FieldTransform.adaptScalarRefToArrayRef(lhsName, _fctDef,
+                _claw.getDimensionValues(), xcodeml);
           } else {
             TransformationHelper.adaptArrayReferences(
                 Collections.singletonList(lhsName), DEFAULT_OVER,
@@ -680,26 +680,7 @@ public class Parallelize extends ClawTransformation {
       }
     }
   }
-
-  /**
-   * Adapt all the array references of the variable in the data clause in the
-   * current function/subroutine definition.
-   *
-   * @param xcodeml Current XcodeML program unit in which the element will be
-   *                created.
-   * @param ids     List of array identifiers that must be adapted.
-   * @param index   Index designing the correct over clause to be used.
-   */
-  private void adaptScalarRefToArrayReferences(XcodeProgram xcodeml,
-                                               List<String> ids,
-                                               int index)
-  {
-    for(String id : ids) {
-      FieldTransform.adaptScalarRefToArrayRef(id, _fctDef,
-          _claw.getDimensionValues(), xcodeml);
-    }
-  }
-
+  
   /**
    * Insert the declaration of the different variables needed to iterate over
    * the additional dimensions.
