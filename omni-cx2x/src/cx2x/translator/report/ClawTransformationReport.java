@@ -90,12 +90,15 @@ public class ClawTransformationReport {
 
     List<String[]> infos = new ArrayList<>();
 
-    infos.add(new String[]{"File", translator.getProgram().getSource()});
+    infos.add(new String[]{"File",
+        translator.getTranslationUnit().getSource()});
     infos.add(new String[]{"Transformed", dateFormat.format(date)});
-    infos.add(new String[]{"Fortran to IR", translator.getProgram().getTime()});
+    infos.add(new String[]{"Fortran to IR",
+        translator.getTranslationUnit().getTime()});
     infos.add(new String[]{"OMNI Front-end",
-        translator.getProgram().getCompilerInfo()});
-    infos.add(new String[]{"XcodeML/F", translator.getProgram().getVersion()});
+        translator.getTranslationUnit().getCompilerInfo()});
+    infos.add(new String[]{"XcodeML/F",
+        translator.getTranslationUnit().getVersion()});
     infos.add(new String[]{"CLAW Compiler", ClawVersion.getVersion()});
     infos.add(new String[]{"Target",
         Configuration.get().getCurrentTarget().toString()});

@@ -2,10 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator;
-
-// Cx2x import
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
@@ -29,7 +26,6 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * ClawTranslatorDriver is the class driving the translation. It creates the
  * translator and pass to it all the directives it can manage.
@@ -38,7 +34,6 @@ import java.util.Map;
  *
  * @author clementval
  */
-
 public class ClawTranslatorDriver {
 
   private static final String ERROR_PREFIX = "claw-error: ";
@@ -207,7 +202,6 @@ public class ClawTranslatorDriver {
     }
   }
 
-
   /**
    * Print all the errors stored in the XcodeML object and abort the program.
    */
@@ -273,8 +267,7 @@ public class ClawTranslatorDriver {
    *
    * @return Current XcodeProgram object.
    */
-  public XcodeProgram getProgram() {
+  public XcodeProgram getTranslationUnit() {
     return _translationUnit;
   }
-
 }
