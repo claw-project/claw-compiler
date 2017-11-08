@@ -666,6 +666,9 @@ public class Parallelize extends ClawTransformation {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
           PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw, i);
+
+
+
           FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
@@ -680,7 +683,7 @@ public class Parallelize extends ClawTransformation {
       }
     }
   }
-  
+
   /**
    * Insert the declaration of the different variables needed to iterate over
    * the additional dimensions.

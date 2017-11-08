@@ -126,7 +126,6 @@ public class XfunctionType extends Xnode {
     return getBooleanAttribute(Xattr.IS_ELEMENTAL);
   }
 
-
   /**
    * Get the params element.
    *
@@ -167,7 +166,6 @@ public class XfunctionType extends Xnode {
     Node clone = cloneRawNode();
     return new XfunctionType((Element) clone);
   }
-
 
   /**
    * Check if a parameter is part of the function definition.

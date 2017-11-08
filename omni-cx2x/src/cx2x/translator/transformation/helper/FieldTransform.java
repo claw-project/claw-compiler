@@ -171,6 +171,142 @@ public final class FieldTransform {
   }
 
   /**
+   * Promote a field with the information stored in the defined dimensions.
+   *
+   * @param fieldInfo Promotion information. Must contains identifier and
+   *                  dimensions.
+   * @param fctDef    Function definition node in which the promotion is
+   *                  performed.
+   * @param xcodeml   Current XcodeML translation unit.
+   * @throws IllegalTransformationException If promotion information are not
+   *                                        sufficient. If types cannot be found
+   *                                        in typeTable.
+   */
+  public static void promote2(PromotionInfo fieldInfo,
+                              XfunctionDefinition fctDef,
+                              XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xid id = fctDef.getSymbolTable().get(fieldInfo.getIdentifier());
+    Xnode decl = fctDef.getDeclarationTable().get(fieldInfo.getIdentifier());
+    XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
+
+    if(!XcodeType.isBuiltInType(id.getType()) && crtType == null) {
+      throw new IllegalTransformationException("Basic type of field " +
+          fieldInfo.getIdentifier() + " could not be found");
+    }
+
+    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef);
+    if(fctType == null) {
+      throw new IllegalTransformationException("Function type " +
+          fctDef.getType() + " could not be found", fctDef.lineNo());
+    }
+
+    if(fieldInfo.getDimensions() == null
+        || fieldInfo.getDimensions().size() == 0)
+    {
+      throw new IllegalTransformationException("Promotion information has not "
+          + "enough information. Dimension empty!", decl.lineNo());
+    }
+
+    String type = xcodeml.getTypeTable().generateHash(XcodeType.ARRAY);
+    XbasicType newType;
+    if(crtType != null && crtType.isArray()) {
+      fieldInfo.setPromotionType(PromotionInfo.PromotionType.ARRAY_TO_ARRAY);
+      if(XcodeType.isBuiltInType(id.getType())) {
+        newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
+      } else {
+        XbasicType old = xcodeml.getTypeTable().getBasicType(id);
+        if(old == null) {
+          throw new IllegalTransformationException("Cannot find type for " +
+              fieldInfo.getIdentifier(), decl.lineNo());
+        } else {
+          newType = old.cloneNode();
+          newType.setType(type);
+        }
+      }
+    } else {
+      fieldInfo.setPromotionType(PromotionInfo.PromotionType.SCALAR_TO_ARRAY);
+      Xintent newIntent = crtType != null ? crtType.getIntent() : Xintent.NONE;
+      newType = xcodeml.createBasicType(type, id.getType(), newIntent);
+    }
+
+    // Save promotion information (base dimensions, target dimensions, type)
+    fieldInfo.setBaseDimension(newType.getDimensions());
+    fieldInfo.setTargetDimension(newType.getDimensions() +
+        fieldInfo.getDimensions().size());
+    fieldInfo.setTargetType(type);
+
+    if(fieldInfo.getPromotionType() ==
+        PromotionInfo.PromotionType.ARRAY_TO_ARRAY)
+    {
+      if(newType.isAllAssumedShape()
+          && (fctType.hasParam(fieldInfo.getIdentifier())
+          || newType.isAllocatable() || newType.isPointer()))
+      {
+        for(int i = 0; i < fieldInfo.diffDimension(); ++i) {
+          Xnode index = xcodeml.createEmptyAssumedShaped();
+          newType.addDimension(index, 0);
+        }
+      } else {
+        int beforePositionIndex = 0;
+        int inMiddlePositionIndex = 1;
+
+        for(DimensionDefinition dim : fieldInfo.getDimensions()) {
+          switch(dim.getInsertionPosition()) {
+            case BEFORE:
+              newType.addDimension(dim.generateIndexRange(xcodeml, false),
+                  beforePositionIndex++);
+              inMiddlePositionIndex++; // Update index to insert in middle
+              break;
+            case IN_MIDDLE:
+              newType.addDimension(dim.generateIndexRange(xcodeml, false),
+                  inMiddlePositionIndex++);
+              break;
+            case AFTER:
+              newType.addDimension(dim.generateIndexRange(xcodeml, false));
+              break;
+          }
+        }
+      }
+    } else { // SCALAR to ARRAY promotion
+      for(DimensionDefinition dim : fieldInfo.getDimensions()) {
+        Xnode index = dim.generateIndexRange(xcodeml, false);
+        newType.addDimension(index);
+      }
+    }
+
+    // Set type hash to id and declaration node
+    id.setType(type);
+    decl.matchSeq(Xcode.NAME).setType(type);
+    xcodeml.getTypeTable().add(newType);
+
+    // Update params in function type with correct type hash
+    for(Xnode param : fctType.getParams().getAll()) {
+      if(param.value().equals(fieldInfo.getIdentifier())) {
+
+        // Update type with new promoted type
+        param.setType(type);
+
+        // Save the over clause for parallelize forward transformation
+        if(fieldInfo.getOverPosition() != OverPosition.BEFORE) {
+          param.setAttribute(Xattr.CLAW_OVER, fieldInfo.getOverPosition().toString());
+        }
+      }
+    }
+
+    if(fctType.hasAttribute(Xattr.RESULT_NAME)
+        && fctType.getAttribute(Xattr.RESULT_NAME).
+        equals(fieldInfo.getIdentifier()))
+    {
+      if(fieldInfo.getOverPosition() != OverPosition.BEFORE) {
+        fctType.setAttribute(Xattr.CLAW_OVER,
+            fieldInfo.getOverPosition().toString());
+      }
+    }
+  }
+
+  /**
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *

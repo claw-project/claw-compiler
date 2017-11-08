@@ -26,5 +26,7 @@ public class TestConstant {
     "@CMAKE_CURRENT_SOURCE_DIR@/data/declarations.xml";
   public static final String TEST_ARGUMENTS =
     "@CMAKE_CURRENT_SOURCE_DIR@/data/arguments.xml";
+  public static final String TEST_PROMOTION =
+    "@CMAKE_CURRENT_SOURCE_DIR@/data/promotion.xml";
   public static final String TEST_CONFIG = "@CMAKE_SOURCE_DIR@/driver/etc/";
 }

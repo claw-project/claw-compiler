@@ -19,12 +19,14 @@ public class DimensionDefinition {
 
   private final BoundDefinition _lowerBound;
   private final BoundDefinition _upperBound;
-  private final String _identifier;
+  private final String _identifier; // Used as array index
+  private InsertionPosition _insertionPosition = InsertionPosition.BEFORE;
 
   /**
    * Constructs a new dimension object from the extracted information.
    *
-   * @param id         Identifier of the defined dimension.
+   * @param id         Identifier of the defined dimension. Will be used as the
+   *                   array index variable.
    * @param lowerBound Lower bound of the dimension.
    * @param upperBound Upper bound of the dimension.
    *                   TODO maybe add step information (in the grammar as well)
@@ -62,6 +64,20 @@ public class DimensionDefinition {
    */
   public String getIdentifier() {
     return _identifier;
+  }
+
+  /**
+   * @return
+   */
+  public InsertionPosition getInsertionPosition() {
+    return _insertionPosition;
+  }
+
+  /**
+   * @param position
+   */
+  public void setInsertionPosition(InsertionPosition position) {
+    _insertionPosition = position;
   }
 
   /**
