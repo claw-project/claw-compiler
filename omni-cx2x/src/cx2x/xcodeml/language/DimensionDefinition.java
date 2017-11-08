@@ -22,6 +22,14 @@ public class DimensionDefinition {
   private final String _identifier; // Used as array index
   private InsertionPosition _insertionPosition = InsertionPosition.BEFORE;
 
+  private DimensionDefinition(String id, BoundDefinition lowerBound,
+                              BoundDefinition upperBound)
+  {
+    _identifier = id;
+    _lowerBound = lowerBound;
+    _upperBound = upperBound;
+  }
+
   /**
    * Constructs a new dimension object from the extracted information.
    *
@@ -127,5 +135,9 @@ public class DimensionDefinition {
     Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
     arrayIndex.append(_upperBound.generateValueNode(xcodeml));
     return arrayIndex;
+  }
+
+  public DimensionDefinition copy() {
+    return new DimensionDefinition(_identifier, _lowerBound, _upperBound);
   }
 }

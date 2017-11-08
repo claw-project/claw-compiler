@@ -111,7 +111,7 @@ directive[ClawLanguage l]
     }
 
    // parallelize directive
-   | define_option[$l]* PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l] EOF
+   | define_option[$l]+ PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
      }
@@ -184,8 +184,9 @@ data_over_clause[ClawLanguage l]
     { $l.setScalarClause(dataLst); }
   | DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
     {
-      $l.setOverDataClause(dataLst);
-      $l.setOverClause(overLst);
+      $l.setOverDataClause(dataLst); // TODO remove
+      $l.setOverClause(overLst); // TODO remove
+      $l.processDataOverClauses(dataLst, overLst);
     }
 ;
 

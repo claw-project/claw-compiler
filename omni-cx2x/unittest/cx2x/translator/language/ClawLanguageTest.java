@@ -18,6 +18,7 @@ import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.DimensionDefinition;
+import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -1040,6 +1041,152 @@ public class ClawLanguageTest {
    * Test various input for the CLAW parallelize directive.
    */
   @Test
+  public void parallelizeOverClauseTest() {
+    DimensionDefinition d1 = new DimensionDefinition("i", "1", "ni");
+    DimensionDefinition d2 = new DimensionDefinition("j", "1", "nj");
+    List<String> data1 = Arrays.asList("a", "b", "c");
+    List<List<String>> data1Lst = Collections.singletonList(data1);
+
+    d1.setInsertionPosition(InsertionPosition.BEFORE);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "parallelize " +
+            "data(a,b,c) over (i,:)", data1Lst,
+        Collections.singletonList(Collections.singletonList(d1)));
+
+    d1.setInsertionPosition(InsertionPosition.AFTER);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "parallelize " +
+            "data(a,b,c) over (:,i)", data1Lst,
+        Collections.singletonList(Collections.singletonList(d1)));
+
+    d1.setInsertionPosition(InsertionPosition.BEFORE);
+    d2.setInsertionPosition(InsertionPosition.BEFORE);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b,c) over (i,j,:)", data1Lst,
+        Collections.singletonList(Arrays.asList(d1, d2)));
+
+    d1.setInsertionPosition(InsertionPosition.AFTER);
+    d2.setInsertionPosition(InsertionPosition.AFTER);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b,c) over (:,i,j)", data1Lst,
+        Collections.singletonList(Arrays.asList(d1, d2)));
+
+    d1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    d2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b,c) over (:,i,j,:)", data1Lst,
+        Collections.singletonList(Arrays.asList(d1, d2)));
+
+    d1.setInsertionPosition(InsertionPosition.BEFORE);
+    d2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b,c) over (i,:,j,:)", data1Lst,
+        Collections.singletonList(Arrays.asList(d1, d2)));
+
+    d1.setInsertionPosition(InsertionPosition.BEFORE);
+    d2.setInsertionPosition(InsertionPosition.AFTER);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b,c) over (i,:,j)", data1Lst,
+        Collections.singletonList(Arrays.asList(d1, d2)));
+
+    d1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    d2.setInsertionPosition(InsertionPosition.AFTER);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b,c) over (:,i,:,j)", data1Lst,
+        Collections.singletonList(Arrays.asList(d1, d2)));
+
+    d1.setInsertionPosition(InsertionPosition.BEFORE);
+    d2.setInsertionPosition(InsertionPosition.AFTER);
+    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) " +
+            "parallelize " +
+            "data(a,b) over (i,:)" +
+            "data(c) over (:,j)",
+        Arrays.asList(Arrays.asList("a", "b"), Collections.singletonList("c")),
+        Arrays.asList(Collections.singletonList(d1),
+            Collections.singletonList(d2)));
+  }
+
+  /**
+   * Assert the result for valid CLAW parallelize directive with data over
+   * clause.
+   *
+   * @param raw        Raw string value of the CLAW directive to be analyzed.
+   * @param datas      Reference list for the data clause values.
+   * @param dimensions Reference list of dimensions.
+   */
+  private void analyzeValidOverParallelize(String raw,
+                                           List<List<String>> datas,
+                                           List<List<DimensionDefinition>>
+                                               dimensions)
+  {
+    try {
+      Xnode p = XmlHelper.createXpragma();
+      p.setValue(raw);
+      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      AcceleratorGenerator generator =
+          AcceleratorHelper.createAcceleratorGenerator();
+      ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
+      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+
+      if(datas != null) {
+        assertEquals(datas.size(), dimensions.size());
+        assertTrue(l.hasOverDataClause());
+
+        for(int j = 0; j < datas.size(); ++j) {
+          List<String> data = datas.get(j);
+          List<DimensionDefinition> dimension = dimensions.get(j);
+
+          for(String id : data) {
+            assertNotNull(l.getDimensionsForData(id));
+            List<DimensionDefinition> dims = l.getDimensionsForData(id);
+            assertEquals(dimension.size(), dims.size());
+            for(int i = 0; i < dimension.size(); ++i) {
+              assertEquals(dimension.get(i).getIdentifier(),
+                  dims.get(i).getIdentifier());
+              assertEquals(dimension.get(i).getInsertionPosition(),
+                  dims.get(i).getInsertionPosition());
+
+              assertEquals(dimension.get(i).getLowerBound().isVar(),
+                  dims.get(i).getLowerBound().isVar());
+              assertEquals(dimension.get(i).getLowerBound().getValue(),
+                  dims.get(i).getLowerBound().getValue());
+              assertEquals(dimension.get(i).getLowerBound().getIntValue(),
+                  dims.get(i).getLowerBound().getIntValue());
+
+              assertEquals(dimension.get(i).getUpperBound().isVar(),
+                  dims.get(i).getUpperBound().isVar());
+              assertEquals(dimension.get(i).getUpperBound().getValue(),
+                  dims.get(i).getUpperBound().getValue());
+              assertEquals(dimension.get(i).getUpperBound().getIntValue(),
+                  dims.get(i).getUpperBound().getIntValue());
+            }
+          }
+        }
+
+      }
+    } catch(IllegalDirectiveException idex) {
+      System.err.print(idex.getMessage());
+      fail();
+    }
+  }
+
+  /**
+   * Test various input for the CLAW parallelize directive.
+   */
+  @Test
   public void parallelizeTest() {
 
     // Valid directives
@@ -1089,24 +1236,48 @@ public class ClawLanguageTest {
     analyzeValidParallelize("claw parallelize forward",
         null, null, null, null, null, null);
 
-    analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, null, null, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t,qc,qv) over (i,j,:)",
+        dataLst1, over1, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw parallelize data(t,qc,qv) over (:,i,j)",
-        dataLst1, over3, null, null, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t,qc,qv) over (:,i,j)",
+        dataLst1, over3, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw parallelize data(t,qc,qv) over (i,:,j)",
-        dataLst1, over2, null, null, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t,qc,qv) over (i,:,j)",
+        dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j)",
-        dataLst1, over2, null, null, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j)",
+        dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "copy", dataLst1, over2, null, ClawDMD.BOTH, null, null);
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "copy(in)", dataLst1, over2, null, ClawDMD.DEVICE, null, null);
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "copy(out)", dataLst1, over2, null, ClawDMD.HOST, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "copy", dataLst1, over2, Arrays.asList(d1, d2),
+        ClawDMD.BOTH, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "copy(in)", dataLst1, over2, Arrays.asList(d1, d2),
+        ClawDMD.DEVICE, null, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "copy(out)", dataLst1, over2, Arrays.asList(d1, d2),
+        ClawDMD.HOST, null, null);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize copy",
@@ -1118,12 +1289,24 @@ public class ClawLanguageTest {
             "parallelize copy(out)", null, null, Collections.singletonList(d7),
         ClawDMD.HOST, null, null);
 
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "update", dataLst1, over2, null, null, ClawDMD.BOTH, null);
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "update(in)", dataLst1, over2, null, null, ClawDMD.DEVICE, null);
-    analyzeValidParallelize("claw parallelize data(t , qc , qv) over (i,:,j) " +
-        "update(out)", dataLst1, over2, null, null, ClawDMD.HOST, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "update", dataLst1, over2, Arrays.asList(d1, d2),
+        null, ClawDMD.BOTH, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "update(in)", dataLst1, over2, Arrays.asList(d1, d2),
+        null, ClawDMD.DEVICE, null);
+    analyzeValidParallelize("claw " +
+            "define dimension i(1:nx) " +
+            "define dimension j(1:ny) " +
+            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "update(out)", dataLst1, over2, Arrays.asList(d1, d2),
+        null, ClawDMD.HOST, null);
 
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize update",
         null, null, Collections.singletonList(d7), null, ClawDMD.BOTH, null);
@@ -1156,8 +1339,9 @@ public class ClawLanguageTest {
     List<String> ci = Arrays.asList(":", "i");
     List<List<String>> over4 = Arrays.asList(ic, ci);
 
-    analyzeValidParallelize("claw parallelize data(t) over (i,:) data(q) " +
-        "over(:,i)", dataLst2, over4, null, null, null, null);
+    analyzeValidParallelize("claw  define dimension i(1:nx) " +
+            "parallelize data(t) over (i,:) data(q) over(:,i)",
+        dataLst2, over4, Collections.singletonList(d1), null, null, null);
 
     // Invalid directives
     analyzeInvalidClawLanguage("claw parallelize data over ");
@@ -1168,7 +1352,6 @@ public class ClawLanguageTest {
 
   @Test
   public void parallelizeDataMgtTest() {
-
     analyzeValidParallelizeDataMgtString("claw parallelize forward create",
         null, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +

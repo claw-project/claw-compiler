@@ -5,25 +5,25 @@
 
 package cx2x.translator.language.base;
 
+import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
 import cx2x.translator.language.common.ClawReshapeInfo;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.AnalyzedPragma;
 import cx2x.xcodeml.language.DimensionDefinition;
+import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.xnode.Xnode;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.misc.IntervalSet;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * ClawLanguage class represent an analyzed pragma statement.
@@ -55,6 +55,8 @@ public class ClawLanguage extends AnalyzedPragma {
   private ClawRange _rangeValue;
   private List<ClawReshapeInfo> _reshapeInfos;
   private List<DimensionDefinition> _dimensions;
+  private Map<String, DimensionDefinition> _dimensionsMap;
+  private Map<String, List<DimensionDefinition>> _specializedDimensionsMap;
   private List<List<String>> _overValues;
   private List<List<String>> _overDataValues;
   private List<String> _scalarValues;
@@ -275,6 +277,8 @@ public class ClawLanguage extends AnalyzedPragma {
     _collapseClauseValue = 1;
     _dataValues = null;
     _dimensions = null;
+    _dimensionsMap = null;
+    _specializedDimensionsMap = null;
     _fctCallParameters = null;
     _fctName = null;
     _groupClauseValue = null;
@@ -557,7 +561,6 @@ public class ClawLanguage extends AnalyzedPragma {
     _hasInterchangeClause = true;
   }
 
-
   // Directive generic method
 
   /**
@@ -666,6 +669,63 @@ public class ClawLanguage extends AnalyzedPragma {
       _overValues = new ArrayList<>();
     }
     _overValues.add(data);
+  }
+
+  public void processDataOverClauses(List<String> data, List<String> over)
+  //throws Exception
+  {
+    List<DimensionDefinition> specializedDimensions = new ArrayList<>();
+    InsertionPosition crt = InsertionPosition.BEFORE;
+
+    if(_specializedDimensionsMap == null) {
+      _specializedDimensionsMap = new HashMap<>();
+    }
+
+    int baseDimOccurrence = 0;
+    for(String d : over) {
+      if(d.equals(":")) {
+        ++baseDimOccurrence;
+      }
+    }
+
+    if(baseDimOccurrence == 0) {
+      //throw new Exception("Base dimension \":\" is not specified");
+    }
+
+    boolean hasMiddleInsertion = baseDimOccurrence > 1;
+
+    for(String d : over) {
+      if(d.equals(":")) {
+        if(hasMiddleInsertion && crt == InsertionPosition.BEFORE) {
+          crt = InsertionPosition.IN_MIDDLE;
+        } else if(crt == InsertionPosition.BEFORE) {
+          crt = InsertionPosition.AFTER;
+        } else if(crt == InsertionPosition.IN_MIDDLE) {
+          crt = InsertionPosition.AFTER;
+        }
+      } else {
+        DimensionDefinition dim = _dimensionsMap.get(d);
+        if(dim != null) {
+
+          DimensionDefinition newDimension = dim.copy();
+          newDimension.setInsertionPosition(crt);
+          specializedDimensions.add(newDimension);
+        } else {
+          //throw new Exception("Dimension " + d + " is not defined");
+        }
+      }
+    }
+
+    for(String d : data) {
+      _specializedDimensionsMap.put(d, specializedDimensions);
+    }
+  }
+
+  public List<DimensionDefinition> getDimensionsForData(String identifier) {
+    if(_specializedDimensionsMap.containsKey(identifier.toLowerCase())) {
+      return _specializedDimensionsMap.get(identifier.toLowerCase());
+    }
+    return _dimensions;
   }
 
   /**
@@ -889,15 +949,19 @@ public class ClawLanguage extends AnalyzedPragma {
   /**
    * Add a new dimension extracted from the directive.
    *
-   * @param dimension DimensionDefinition object constructed from the value extracted
-   *                  in the clause.
+   * @param dimension DimensionDefinition object constructed from the value
+   *                  extracted in the clause.
    */
   public void addDimension(DimensionDefinition dimension) {
     _hasDimensionClause = true;
     if(_dimensions == null) {
       _dimensions = new ArrayList<>();
     }
+    if(_dimensionsMap == null) {
+      _dimensionsMap = new HashMap<>();
+    }
     _dimensions.add(dimension);
+    _dimensionsMap.put(dimension.getIdentifier(), dimension);
   }
 
   /**
@@ -1108,7 +1172,6 @@ public class ClawLanguage extends AnalyzedPragma {
   public boolean hasCreateClause() {
     return _hasCreateClause;
   }
-
 
   /**
    * Enable the create clause.
