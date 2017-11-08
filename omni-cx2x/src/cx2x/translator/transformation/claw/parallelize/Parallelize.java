@@ -666,9 +666,7 @@ public class Parallelize extends ClawTransformation {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
           PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw, i);
-
-
-
+          // PromotionInfo promotionInfo = new PromotionInfo(fieldId);
           FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
@@ -676,9 +674,12 @@ public class Parallelize extends ClawTransformation {
     } else {
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
-        PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw);
-        promotionInfo.setDimensions(_claw.getDimensionValues());
-        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+        //PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw);
+        //promotionInfo.setDimensions(_claw.getDimensionValues());
+        PromotionInfo promotionInfo = new PromotionInfo(fieldId);
+        promotionInfo.setDimensions(_claw.getDimensionsForData(fieldId));
+        //FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+        FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }
     }
