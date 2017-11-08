@@ -4,6 +4,8 @@
  */
 package cx2x.xcodeml.language;
 
+import cx2x.translator.common.ClawConstant;
+
 /**
  * Describe the different insertion position used for field promotion.
  *
@@ -12,5 +14,36 @@ package cx2x.xcodeml.language;
 public enum InsertionPosition {
   BEFORE,
   IN_MIDDLE,
-  AFTER
+  AFTER;
+
+  public static InsertionPosition fromString(String value) {
+    if(value == null) {
+      return BEFORE;
+    }
+    switch(value.toLowerCase()) {
+      case ClawConstant.BEFORE:
+        return BEFORE;
+      case ClawConstant.MIDDLE:
+        return IN_MIDDLE;
+      case ClawConstant.AFTER:
+        return AFTER;
+      default:
+        return BEFORE;
+    }
+  }
+
+  @Override
+  public String toString() {
+    switch(this) {
+      case BEFORE:
+        return ClawConstant.BEFORE;
+      case IN_MIDDLE:
+        return ClawConstant.MIDDLE;
+      case AFTER:
+        return ClawConstant.AFTER;
+      default:
+        return ClawConstant.BEFORE;
+    }
+  }
+
 }

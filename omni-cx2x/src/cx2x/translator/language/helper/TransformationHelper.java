@@ -11,11 +11,11 @@ import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.language.common.ClawReshapeInfo;
-import cx2x.translator.language.common.OverPosition;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
+import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -299,18 +299,18 @@ public class TransformationHelper {
         String modType = pMod.getType();
 
         if(!localType.equals(modType)) {
-          // Param has been update so have to replicate the change to mod file
+          // Param has been updated so have to replicate the change to mod file
           XbasicType lType = xcodeml.getTypeTable().getBasicType(pLocal);
           XbasicType crtType = mod.getTypeTable().getBasicType(pMod);
 
+          InsertionPosition insPos = InsertionPosition.fromString(pLocal.getAttribute(Xattr.CLAW_OVER));
+
           List<DimensionDefinition> dimensions =
-              TransformationHelper.findDimensions(fctType);
-          OverPosition overPos = OverPosition.fromString(
-              pLocal.getAttribute(Xattr.CLAW_OVER));
+              TransformationHelper.findDimensions(fctType, insPos);
 
           if(lType.isArray()) {
             String newType = TransformationHelper.duplicateWithDimension(lType,
-                crtType, mod, xcodeml, overPos, dimensions);
+                crtType, mod, xcodeml, dimensions);
             pMod.setType(newType);
           }
         }
@@ -341,7 +341,8 @@ public class TransformationHelper {
    * @param fctType Function type to analyze.
    * @return List of found dimensions.
    */
-  public static List<DimensionDefinition> findDimensions(XfunctionType fctType)
+  public static List<DimensionDefinition> findDimensions(XfunctionType fctType,
+                                                         InsertionPosition pos)
   {
     List<DimensionDefinition> dimensions = new ArrayList<>();
     if(fctType.getParams() == null) {
@@ -349,13 +350,13 @@ public class TransformationHelper {
     }
     for(Xnode param : fctType.getParams().getAll()) {
       if(param.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
-        dimensions.add(
-            new DimensionDefinition(
-                ClawConstant.ITER_PREFIX + param.value(),
-                ClawConstant.DEFAULT_LOWER_BOUND,
-                param.value()
-            )
+        DimensionDefinition dim = new DimensionDefinition(
+            ClawConstant.ITER_PREFIX + param.value(),
+            ClawConstant.DEFAULT_LOWER_BOUND,
+            param.value()
         );
+        dim.setInsertionPosition(pos);
+        dimensions.add(dim);
       }
     }
     return dimensions;
@@ -473,7 +474,6 @@ public class TransformationHelper {
                                               XbasicType toUpdate,
                                               XcodeML xcodemlDst,
                                               XcodeML xcodemlSrc,
-                                              OverPosition overPos,
                                               List<DimensionDefinition> dimensions)
       throws IllegalTransformationException
   {
@@ -489,21 +489,19 @@ public class TransformationHelper {
         newType.addDimension(index, 0);
       }
     } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {
-      switch(overPos) {
-        case BEFORE:
-          // TODO control and validate the before/after
-          for(DimensionDefinition dim : dimensions) {
+      for(DimensionDefinition dim : dimensions) {
+        switch(dim.getInsertionPosition()) {
+          case BEFORE:
+            // TODO control and validate the before/after
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
-          }
-          break;
-        case AFTER:
-          for(DimensionDefinition dim : dimensions) {
+            break;
+          case AFTER:
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
-          }
-          break;
-        case MIDDLE:
-          throw new IllegalTransformationException("Not supported yet. " +
-              "Insertion in middle for duplicated array type.", 0);
+            break;
+          case IN_MIDDLE:
+            throw new IllegalTransformationException("Not supported yet. " +
+                "Insertion in middle for duplicated array type.", 0);
+        }
       }
     } else {
       newType.resetDimension();

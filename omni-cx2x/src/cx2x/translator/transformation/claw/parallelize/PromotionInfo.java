@@ -5,8 +5,6 @@
 
 package cx2x.translator.transformation.claw.parallelize;
 
-import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.common.OverPosition;
 import cx2x.xcodeml.language.DimensionDefinition;
 
 import java.util.List;
@@ -23,7 +21,6 @@ public class PromotionInfo {
   private int _targetDimension;
   private String _targetType;
   private List<DimensionDefinition> _dimensions;
-  private OverPosition _overPosition = OverPosition.BEFORE; // TODO to be removed after refactoting
   private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
 
   /**
@@ -47,35 +44,6 @@ public class PromotionInfo {
   public PromotionInfo(String id, List<DimensionDefinition> dimensions) {
     _identifier = id;
     _dimensions = dimensions;
-  }
-
-  /**
-   * Constructs a new PromotionInfo object with an identifier and information
-   * extracted from the ClawLanguage directive.
-   *
-   * @param id   Field identifier.
-   * @param claw Current CLAW language directive information.
-   */
-  public PromotionInfo(String id, ClawLanguage claw) {
-    this(id, claw, 0);
-  }
-
-  /**
-   * Constructs a new PromotionInfo object with an identifier and information
-   * extracted from the ClawLanguage directive.
-   *
-   * @param id        Field identifier.
-   * @param claw      Current CLAW language directive information.
-   * @param overIndex Over clause to be used. Index starts at 0.
-   */
-  public PromotionInfo(String id, ClawLanguage claw, int overIndex) {
-    _identifier = id.toLowerCase();
-    _dimensions = claw.getDimensionValues();
-
-    if(claw.hasOverClause()) {
-      _overPosition =
-          OverPosition.fromList(claw.getOverClauseValues().get(overIndex));
-    }
   }
 
   /**
@@ -120,24 +88,6 @@ public class PromotionInfo {
    */
   public String getIdentifier() {
     return _identifier;
-  }
-
-  /**
-   * Get associated OverPosition.
-   *
-   * @return OverPosition value.
-   */
-  public OverPosition getOverPosition() {
-    return _overPosition;
-  }
-
-  /**
-   * Set the OverPosition value.
-   *
-   * @param overPosition New OverPosition value.
-   */
-  public void setOverPosition(OverPosition overPosition) {
-    _overPosition = overPosition;
   }
 
   /**

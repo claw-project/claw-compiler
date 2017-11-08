@@ -140,4 +140,13 @@ public class DimensionDefinition {
   public DimensionDefinition copy() {
     return new DimensionDefinition(_identifier, _lowerBound, _upperBound);
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s(%s:%s)", _identifier,
+        _lowerBound.isVar() ?
+            _lowerBound.getValue() : _lowerBound.getIntValue(),
+        _upperBound.isVar() ?
+            _upperBound.getValue() : _upperBound.getIntValue());
+  }
 }

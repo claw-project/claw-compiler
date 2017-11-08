@@ -7,7 +7,6 @@ package cx2x.translator.language;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.Target;
-import cx2x.translator.language.common.OverPosition;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -60,18 +59,5 @@ public class ClawEnumTest {
     assertEquals(null,
         AcceleratorDirective.getPrefix(AcceleratorDirective.NONE));
     assertEquals(null, AcceleratorDirective.getPrefix(null));
-  }
-
-  @Test
-  public void OverPositionTest() {
-    assertEquals(OverPosition.BEFORE,
-        OverPosition.fromString(ClawConstant.BEFORE));
-    assertEquals(OverPosition.MIDDLE,
-        OverPosition.fromString(ClawConstant.MIDDLE));
-    assertEquals(OverPosition.AFTER,
-        OverPosition.fromString(ClawConstant.AFTER));
-    assertEquals(OverPosition.BEFORE, OverPosition.fromString(null));
-    assertEquals(OverPosition.BEFORE, OverPosition.fromString(""));
-    assertEquals(OverPosition.BEFORE, OverPosition.fromString("unknown"));
   }
 }
