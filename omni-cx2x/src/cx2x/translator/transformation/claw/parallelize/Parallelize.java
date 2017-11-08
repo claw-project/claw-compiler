@@ -665,9 +665,9 @@ public class Parallelize extends ClawTransformation {
     if(_claw.hasOverDataClause()) {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
-          PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw, i);
-          // PromotionInfo promotionInfo = new PromotionInfo(fieldId);
-          FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+          PromotionInfo promotionInfo = new PromotionInfo(fieldId,
+              _claw.getDimensionsForData(fieldId));
+          FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
       }
