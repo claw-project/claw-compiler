@@ -470,7 +470,7 @@ public class Parallelize extends ClawTransformation {
         _arrayFieldsInOut.add(arrayIdentifier);
         PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
             _claw.getDimensionsForData(arrayIdentifier));
-        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+        FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
         TransformationHelper.adaptArrayReferences(
