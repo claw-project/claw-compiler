@@ -37,6 +37,19 @@ public class PromotionInfo {
   }
 
   /**
+   * Constructs a new PromotionInfo object with the identifier of the field
+   * associated with this promotion and the DimensionDefiniton used for
+   * promotion.
+   *
+   * @param id         Field identifier.
+   * @param dimensions List of dimension definitions to use for the promotion.
+   */
+  public PromotionInfo(String id, List<DimensionDefinition> dimensions) {
+    _identifier = id;
+    _dimensions = dimensions;
+  }
+
+  /**
    * Constructs a new PromotionInfo object with an identifier and information
    * extracted from the ClawLanguage directive.
    *

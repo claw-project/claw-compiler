@@ -674,11 +674,8 @@ public class Parallelize extends ClawTransformation {
     } else {
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
-        //PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw);
-        //promotionInfo.setDimensions(_claw.getDimensionValues());
-        PromotionInfo promotionInfo = new PromotionInfo(fieldId);
-        promotionInfo.setDimensions(_claw.getDimensionsForData(fieldId));
-        //FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+        PromotionInfo promotionInfo = new PromotionInfo(fieldId,
+            _claw.getDimensionsForData(fieldId));
         FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }

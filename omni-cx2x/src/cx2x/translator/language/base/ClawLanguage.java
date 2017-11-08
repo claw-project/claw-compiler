@@ -722,7 +722,9 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   public List<DimensionDefinition> getDimensionsForData(String identifier) {
-    if(_specializedDimensionsMap.containsKey(identifier.toLowerCase())) {
+    if(_specializedDimensionsMap != null &&
+        _specializedDimensionsMap.containsKey(identifier.toLowerCase()))
+    {
       return _specializedDimensionsMap.get(identifier.toLowerCase());
     }
     return _dimensions;
