@@ -468,7 +468,8 @@ public class Parallelize extends ClawTransformation {
       createList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
       for(String arrayIdentifier : createList) {
         _arrayFieldsInOut.add(arrayIdentifier);
-        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier, _claw);
+        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
+            _claw.getDimensionsForData(arrayIdentifier));
         FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
@@ -534,8 +535,9 @@ public class Parallelize extends ClawTransformation {
         if(shouldBePromoted(assign)) {
           if(!_arrayFieldsInOut.contains(lhsName)) {
             _arrayFieldsInOut.add(lhsName);
-            PromotionInfo promotionInfo = new PromotionInfo(lhsName, _claw);
-            FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+            PromotionInfo promotionInfo =
+                new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
+            FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
             _promotions.put(lhsName, promotionInfo);
           }
           if(lhs.opcode() == Xcode.VAR) {
