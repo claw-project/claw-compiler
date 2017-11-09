@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.transformation.helper;
+package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -14,15 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Low-level transformation applied fields. This included:
- * - Scalar and array promotion (promote)
+ * Primitive transformation applied fields. This included:
+ * - Scalar and array promotion (promote).
+ * - Adaptation of scalar reference to array reference for promoted scalar.
+ * - Adaptation of allocation statement for promoted field.
  *
  * @author clementval
  */
-public final class FieldTransform {
+public final class Field {
 
   // Avoid potential instantiation of this class
-  private FieldTransform() {
+  private Field() {
   }
 
   /**
@@ -38,8 +40,8 @@ public final class FieldTransform {
    *                                        in typeTable.
    */
   public static void promote(PromotionInfo fieldInfo,
-                              XfunctionDefinition fctDef,
-                              XcodeProgram xcodeml)
+                             XfunctionDefinition fctDef,
+                             XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
     Xid id = fctDef.getSymbolTable().get(fieldInfo.getIdentifier());

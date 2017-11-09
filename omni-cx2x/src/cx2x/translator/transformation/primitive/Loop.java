@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.transformation.helper;
+package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
@@ -13,24 +13,24 @@ import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeML;
 import cx2x.xcodeml.xnode.Xnode;
-import org.w3c.dom.Node;
 
 import java.util.List;
 
 /**
- * Low-level transformation applied on do statements. This included:
+ * Primitive transformation applied on do statements. This included:
  * - loop fusion (merge)
  * - loop reorder (reorder)
  * - loop hoisting (hoist)
  *
  * @author clementval
  */
-public final class LoopTransform {
+public final class Loop {
 
   private static final String[] prevToDelete = {"acc loop", "omp do"};
   private static final String[] nextToDelete = {"omp end do"};
+
   // Avoid potential instantiation of this class
-  private LoopTransform() {
+  private Loop() {
   }
 
   /**
@@ -56,7 +56,7 @@ public final class LoopTransform {
     }
 
     // Merge slave body into the master body
-    appendBody(masterDoStmt.body(), slaveDoStmt.body());
+    Body.append(masterDoStmt.body(), slaveDoStmt.body());
 
     // Delete any acc loop / omp do pragma before/after the do statements.
     cleanPragmas(slaveDoStmt, prevToDelete, nextToDelete);
@@ -256,32 +256,6 @@ public final class LoopTransform {
     s2.delete();
   }
 
-  /**
-   * Append the slave body to the master body.
-   *
-   * @param masterBody Master body node.
-   * @param slaveBody  Slave body bode.
-   * @throws IllegalTransformationException If given nodes are null or not body
-   *                                        nodes.
-   */
-  private static void appendBody(Xnode masterBody, Xnode slaveBody)
-      throws IllegalTransformationException
-  {
-    if(masterBody == null || masterBody.element() == null
-        || slaveBody == null || slaveBody.element() == null
-        || masterBody.opcode() != Xcode.BODY
-        || slaveBody.opcode() != Xcode.BODY)
-    {
-      throw new IllegalTransformationException("Unable to append body.");
-    }
-
-    // Append content of slave body master body
-    Xnode crtNode = slaveBody.firstChild();
-    while(crtNode != null) {
-      masterBody.append(crtNode, true);
-      crtNode = crtNode.nextSibling();
-    }
-  }
 
   /**
    * Clean up extra pragma that have no more sense after transformation.

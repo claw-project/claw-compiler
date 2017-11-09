@@ -10,7 +10,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawBlockTransformation;
-import cx2x.translator.transformation.helper.LoopTransform;
+import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -192,7 +192,7 @@ public class LoopHoist extends ClawBlockTransformation {
   {
     ClawTranslator ct = (ClawTranslator) translator;
 
-    HoistedNestedDoStatement hoisted = LoopTransform.hoist(_hoistedGroups,
+    HoistedNestedDoStatement hoisted = Loop.hoist(_hoistedGroups,
         _clawStart.getPragma(), _clawEnd.getPragma(), xcodeml);
 
     // Generate dynamic transformation (interchange)

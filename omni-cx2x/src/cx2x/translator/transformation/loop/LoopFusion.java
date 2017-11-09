@@ -9,7 +9,7 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformation.helper.LoopTransform;
+import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -140,7 +140,7 @@ public class LoopFusion extends ClawTransformation {
     }
 
     // Actual merge happens here
-    LoopTransform.merge(_doStmt, other.getNestedDoStmt());
+    Loop.merge(_doStmt, other.getNestedDoStmt());
 
     // Clean up
     other.removePragma();

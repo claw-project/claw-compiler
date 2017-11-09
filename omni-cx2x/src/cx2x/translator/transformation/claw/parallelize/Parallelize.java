@@ -16,7 +16,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
-import cx2x.translator.transformation.helper.FieldTransform;
+import cx2x.translator.transformation.primitive.Field;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -470,7 +470,7 @@ public class Parallelize extends ClawTransformation {
         _arrayFieldsInOut.add(arrayIdentifier);
         PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
             _claw.getDimensionsForData(arrayIdentifier));
-        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+        Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
         TransformationHelper.adaptArrayReferences(
@@ -478,7 +478,7 @@ public class Parallelize extends ClawTransformation {
             _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
             _afterCrt, xcodeml);
 
-        FieldTransform.adaptAllocate(_promotions.get(arrayIdentifier),
+        Field.adaptAllocate(_promotions.get(arrayIdentifier),
             _fctDef.body(), _claw.getDimensionValues().get(DEFAULT_OVER),
             xcodeml);
       }
@@ -537,11 +537,11 @@ public class Parallelize extends ClawTransformation {
             _arrayFieldsInOut.add(lhsName);
             PromotionInfo promotionInfo =
                 new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
-            FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+            Field.promote(promotionInfo, _fctDef, xcodeml);
             _promotions.put(lhsName, promotionInfo);
           }
           if(lhs.opcode() == Xcode.VAR) {
-            FieldTransform.adaptScalarRefToArrayRef(lhsName, _fctDef,
+            Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
                 _claw.getDimensionValues(), xcodeml);
           } else {
             TransformationHelper.adaptArrayReferences(
@@ -549,7 +549,7 @@ public class Parallelize extends ClawTransformation {
                 _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
                 _afterCrt, xcodeml);
 
-            FieldTransform.adaptAllocate(_promotions.get(lhsName),
+            Field.adaptAllocate(_promotions.get(lhsName),
                 _fctDef.body(), _claw.getDimensionValues().get(DEFAULT_OVER),
                 xcodeml);
           }
@@ -669,7 +669,7 @@ public class Parallelize extends ClawTransformation {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
           PromotionInfo promotionInfo = new PromotionInfo(fieldId,
               _claw.getDimensionsForData(fieldId));
-          FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+          Field.promote(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
       }
@@ -678,7 +678,7 @@ public class Parallelize extends ClawTransformation {
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getDimensionsForData(fieldId));
-        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
+        Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }
     }

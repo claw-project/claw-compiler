@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.transformation.helper;
+package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -20,11 +20,11 @@ import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
 
 /**
- * Test methods of FieldTransform class.
+ * Test methods of Field class.
  *
  * @author clementval
  */
-public class FieldTransformTest {
+public class FieldTest {
 
   @Test
   public void promoteTest() {
@@ -154,7 +154,7 @@ public class FieldTransformTest {
       }
 
       // Perform the promotion
-      FieldTransform.promote(promotionInfo, fctDef, xcodeml);
+      Field.promote(promotionInfo, fctDef, xcodeml);
       decl = fctDef.getDeclarationTable().get(id);
       assertNotNull(decl);
       bt = xcodeml.getTypeTable().getBasicType(decl);
