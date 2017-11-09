@@ -698,37 +698,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Insert all the statements from a given body at the end of another body
-   *
-   * @param originalBody The body in which the extra body will be appended
-   * @param extraBody    The body that will be appended to the original body
-   * @throws IllegalTransformationException if one of the body or their base
-   *                                        element is null.
-   */
-  public static void appendBody(Xnode originalBody, Xnode extraBody)
-      throws IllegalTransformationException
-  {
-    if(originalBody == null || originalBody.element() == null
-        || extraBody == null || extraBody.element() == null
-        || originalBody.opcode() != Xcode.BODY
-        || extraBody.opcode() != Xcode.BODY)
-    {
-      throw new IllegalTransformationException("One of the body is null.");
-    }
-
-    // Append content of loop-body (loop) to this loop-body
-    Node childNode = extraBody.element().getFirstChild();
-    while(childNode != null) {
-      Node nextChild = childNode.getNextSibling();
-      // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE) {
-        originalBody.element().appendChild(childNode);
-      }
-      childNode = nextChild;
-    }
-  }
-
-  /**
    * Compare the iteration range of two do statements.
    *
    * @param e1             First do statement.

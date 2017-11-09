@@ -6,6 +6,7 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.primitive.Body;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
@@ -75,7 +76,7 @@ public class IfExtract extends ClawTransformation {
     // Copy the body of the if statement inside the body of the do statement
     Xnode thenBlock = _ifStmt.matchDirectDescendant(Xcode.THEN);
     Xnode thenDoStmt = _doStmt.cloneNode();
-    XnodeUtil.appendBody(thenDoStmt.body(), thenBlock.body());
+    Body.append(thenDoStmt.body(), thenBlock.body());
 
     // Copy the if statement and clean its body
     Xnode newIfStmt = _ifStmt.cloneNode();
@@ -93,7 +94,7 @@ public class IfExtract extends ClawTransformation {
     Xnode elseBlock = _ifStmt.matchDirectDescendant(Xcode.ELSE);
     if(elseBlock != null) {
       Xnode elseDoStmt = _doStmt.cloneNode();
-      XnodeUtil.appendBody(elseDoStmt.body(), elseBlock.body());
+      Body.append(elseDoStmt.body(), elseBlock.body());
       Xnode newElse = newIfStmt.matchDirectDescendant(Xcode.ELSE);
       for(Xnode n : newElse.body().children()) {
         n.delete();
