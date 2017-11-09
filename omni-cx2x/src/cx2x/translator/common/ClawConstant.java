@@ -25,8 +25,6 @@ public class ClawConstant {
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 
-  public static final String CLAW_MOD_SUFFIX = "claw";
-
   // Over position constant value
   public static final String BEFORE = "before";
   public static final String MIDDLE = "middle";
@@ -37,6 +35,7 @@ public class ClawConstant {
   public static final String TARGET_GPU = "gpu";
   public static final String TARGET_MIC = "mic";
   public static final String TARGET_FPGA = "fpga";
+  public static final String TARGET_NONE = "none";
 
   // Available accelerator directive primitives
   public static final String DIRECTIVE_NONE = "none";

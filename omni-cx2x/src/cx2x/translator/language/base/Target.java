@@ -19,7 +19,8 @@ public enum Target {
   CPU(ClawConstant.TARGET_CPU),
   GPU(ClawConstant.TARGET_GPU),
   MIC(ClawConstant.TARGET_MIC),
-  FPGA(ClawConstant.TARGET_FPGA);
+  FPGA(ClawConstant.TARGET_FPGA),
+  NONE(ClawConstant.TARGET_NONE);
 
   private final String code;
 
@@ -43,7 +44,7 @@ public enum Target {
    */
   public static Target fromString(String value) {
     if(value == null) {
-      return CPU;
+      return NONE;
     }
     switch(value) {
       case ClawConstant.TARGET_CPU:
@@ -55,7 +56,7 @@ public enum Target {
       case ClawConstant.TARGET_FPGA:
         return FPGA;
       default:
-        return CPU;
+        return NONE;
     }
   }
 
@@ -76,7 +77,7 @@ public enum Target {
       case FPGA:
         return ClawConstant.TARGET_FPGA;
       default:
-        return "";
+        return ClawConstant.TARGET_NONE;
     }
   }
 }

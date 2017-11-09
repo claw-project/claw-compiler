@@ -111,30 +111,6 @@ public final class Utility {
   }
 
   /**
-   * Get a formatted suffix for the CLAW module file including the directive
-   * and target of the current transformation.
-   * .[directive].[target].claw
-   *
-   * @param target    The current transformation target.
-   * @param directive The current accelerator directive used in transformation.
-   * @return A formatted string for the CLAW module file name.
-   */
-  public static String formattedModuleFilePrefix(Target target,
-                                                 AcceleratorDirective directive)
-  {
-    StringBuilder str = new StringBuilder();
-    str.append(".");
-    if(directive != null) {
-      str.append(directive).append(".");
-    }
-    if(target != null) {
-      str.append(target).append(".");
-    }
-    str.append(ClawConstant.CLAW_MOD_SUFFIX);
-    return str.toString();
-  }
-
-  /**
    * Count the number of occurrences of pattern in source string.
    * Case insensitive.
    *

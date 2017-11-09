@@ -118,8 +118,12 @@ public class Configuration {
    */
   public void init(AcceleratorDirective dir, Target target) {
     _parameters = new HashMap<>();
-    _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
-    _parameters.put(DEFAULT_TARGET, target.toString());
+    if(dir != null) {
+      _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
+    }
+    if(target != null) {
+      _parameters.put(DEFAULT_TARGET, target.toString());
+    }
     _openacc = new OpenAccConfiguration(_parameters);
     _groups = new ArrayList<>();
     _availableGroups = new HashMap<>();
@@ -155,7 +159,6 @@ public class Configuration {
       userConf = validateConfiguration(userConfiguration);
       readDefault = isExtension(userConf);
     }
-
 
     if(readDefault) {
       // There is no user defined configuration or it is just an extension.
@@ -372,7 +375,6 @@ public class Configuration {
             + " cannot be found!");
       }
 
-
       Document setDocument = parseAndValidate(setFile, xsdSchema);
       Element root = setDocument.getDocumentElement();
       boolean isExternal = root.hasAttribute(JAR_ATTR);
@@ -587,7 +589,6 @@ public class Configuration {
   public boolean isForcePure() {
     return _forcePure;
   }
-
 
   /**
    * Check whether the configuration file version is high enough with the

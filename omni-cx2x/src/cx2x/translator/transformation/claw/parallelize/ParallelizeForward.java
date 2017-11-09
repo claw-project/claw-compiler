@@ -5,7 +5,6 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
-import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
@@ -15,6 +14,7 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Field;
 import cx2x.translator.transformation.primitive.Loop;
+import cx2x.translator.transformation.primitive.Module;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -314,16 +314,11 @@ public class ParallelizeForward extends ClawTransformation {
   private boolean findInModule(List<Xnode> useDecls) {
     // TODO handle rename
     for(Xnode d : useDecls) {
-
       // Check whether a CLAW file is available.
-      _mod = TransformationHelper.locateClawModuleFile(_claw.getTarget(),
-          _claw.getAcceleratorGenerator().getDirectiveLanguage(),
-          d.getAttribute(Xattr.NAME));
+      _mod = Module.findClaw(d.getAttribute(Xattr.NAME));
 
       if(_mod != null) {
-        Message.debug("Reading CLAW module file: " +
-            _mod.getFullPath(ClawConstant.CLAW_MOD_SUFFIX));
-
+        Message.debug("Reading CLAW module file: " + _mod.getFullPath());
         if(_mod.getIdentifiers().contains(_calledFctName)) {
           Xid id = _mod.getIdentifiers().get(_calledFctName);
           _fctType = _mod.getTypeTable().getFunctionType(id);
@@ -716,7 +711,6 @@ public class ParallelizeForward extends ClawTransformation {
     // TODO promote: insertion position should be found
     List<DimensionDefinition> dimensions = TransformationHelper.
         findDimensions(_parentFctType, InsertionPosition.BEFORE);
-
 
     // Prepare the array index to be inserted in array references.
     List<Xnode> crt = new ArrayList<>();
