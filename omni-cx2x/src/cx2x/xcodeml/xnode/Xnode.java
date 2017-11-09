@@ -935,6 +935,18 @@ public class Xnode {
   }
 
   /**
+   * Copy the attribute from the current node to the given node.
+   *
+   * @param to   Xnode to copy to.
+   * @param attr Attribute code to be copied.
+   */
+  public void copyAttribute(Xnode to, Xattr attr) {
+    if(hasAttribute(attr)) {
+      to.setAttribute(attr, getAttribute(attr));
+    }
+  }
+
+  /**
    * Return a brief description of the Xnode.
    *
    * @return String description of the Xnode as "Opcode (children: n)".

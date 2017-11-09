@@ -18,6 +18,7 @@ import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Body;
 import cx2x.translator.transformation.primitive.Field;
+import cx2x.translator.transformation.primitive.Module;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -391,8 +392,8 @@ public class Parallelize extends ClawTransformation {
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       XmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
-        TransformationHelper.updateModuleSignature(xcodeml, _fctDef, _fctType,
-            modDef, _claw, translator, false);
+        Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
+            _claw, translator.getModCache(), false);
       }
     }
   }
