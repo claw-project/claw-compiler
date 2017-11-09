@@ -5,8 +5,10 @@
 package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
+import cx2x.xcodeml.xnode.XfunctionDefinition;
 import cx2x.xcodeml.xnode.Xnode;
 import helper.XmlHelper;
 import org.junit.Assert;
@@ -15,6 +17,8 @@ import org.junit.Test;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -98,4 +102,23 @@ public class PragmaTest {
     assertEquals("", Pragma.dropEndingComment(""));
   }
 
+  @Test
+  public void splitByContTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
+    assertTrue(fctDefs.size() > 0);
+    XfunctionDefinition fd = fctDefs.get(0);
+    assertNotNull(fd.body());
+    List<Xnode> previous = fd.matchAll(Xcode.FPRAGMASTATEMENT);
+    Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    fd.body().append(p);
+    p.setValue("acc data present(q,acc& p,acc& h)acc& create(pt)");
+    try {
+      Pragma.splitByCont(p, ClawConstant.OPENACC_PREFIX, xcodeml);
+      List<Xnode> splittedPragma = fd.matchAll(Xcode.FPRAGMASTATEMENT);
+      assertEquals(previous.size() + 4, splittedPragma.size());
+    } catch(IllegalTransformationException e) {
+      fail();
+    }
+  }
 }

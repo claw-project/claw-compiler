@@ -14,6 +14,7 @@ import cx2x.translator.language.accelerator.generator.OpenMp;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.xnode.*;
@@ -481,7 +482,7 @@ public final class AcceleratorHelper {
       return;
     }
 
-    Xnode hook = XnodeUtil.findPreviousPragma(stmt,
+    Xnode hook = Pragma.findPrevious(stmt,
         claw.getAcceleratorGenerator().getParallelKeyword());
     // TODO do it with loop as well if hook is null
 

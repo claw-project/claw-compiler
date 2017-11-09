@@ -9,6 +9,7 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
+import cx2x.translator.transformation.primitive.Field;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
@@ -156,9 +157,9 @@ public class TransformationHelper {
 
       for(Xnode ref : refs) {
         if(reshapeInfo.getTargetDimension() == 0) {
-          XnodeUtil.demoteToScalar(ref);
+          Field.demoteToScalar(ref);
         } else {
-          XnodeUtil.demote(ref, reshapeInfo.getKeptDimensions());
+          Field.demote(ref, reshapeInfo.getKeptDimensions());
         }
       }
     }

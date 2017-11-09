@@ -4,6 +4,7 @@
  */
 package cx2x.translator.transformation.primitive;
 
+import cx2x.translator.common.ClawConstant;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -229,6 +230,43 @@ public final class Field {
               break;
           }
         }
+      }
+    }
+  }
+
+  /**
+   * Demote an array reference to a var reference.
+   *
+   * @param arrayRef The array reference to be modified.
+   */
+  public static void demoteToScalar(Xnode arrayRef)
+      throws IllegalTransformationException
+  {
+    if(arrayRef == null || arrayRef.opcode() != Xcode.FARRAYREF) {
+      throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
+    }
+
+    Xnode var = arrayRef.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode();
+    arrayRef.insertAfter(var);
+    arrayRef.delete();
+  }
+
+  /**
+   * Demote an array reference to a reference with fewer dimensions.
+   *
+   * @param arrayRef       The array reference to be modified.
+   * @param keptDimensions List of dimensions to be kept. Dimension index starts
+   *                       at 1.
+   */
+  public static void demote(Xnode arrayRef, List<Integer> keptDimensions)
+      throws IllegalTransformationException
+  {
+    if(arrayRef == null || arrayRef.opcode() != Xcode.FARRAYREF) {
+      throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
+    }
+    for(int i = 1; i < arrayRef.children().size(); ++i) {
+      if(!keptDimensions.contains(i)) {
+        arrayRef.child(i).delete();
       }
     }
   }

@@ -11,6 +11,8 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -155,6 +157,7 @@ public final class Pragma {
     }
     createAndInsertPragma(xcodeml, newlyInserted, pragma.filename(), lineIndex,
         lines[lines.length - 1], false);
+    pragma.delete();
   }
 
   /**
@@ -221,5 +224,37 @@ public final class Pragma {
     }
     hook.insertAfter(p);
     return p;
+  }
+
+  /**
+   * Find a pragma element in the previous nodes containing a given keyword.
+   *
+   * @param from    Element to start from.
+   * @param keyword Keyword to be found in the pragma.
+   * @return The pragma if found. Null otherwise.
+   */
+  public static Xnode findPrevious(Xnode from, String keyword) {
+    if(from == null || from.element() == null) {
+      return null;
+    }
+    Node prev = from.element().getPreviousSibling();
+    Node parent = from.element();
+    do {
+      while(prev != null) {
+        if(prev.getNodeType() == Node.ELEMENT_NODE) {
+          Element element = (Element) prev;
+          if(element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
+              && element.getTextContent().toLowerCase().
+              contains(keyword.toLowerCase()))
+          {
+            return new Xnode(element);
+          }
+        }
+        prev = prev.getPreviousSibling();
+      }
+      parent = parent.getParentNode();
+      prev = parent;
+    } while(parent != null);
+    return null;
   }
 }

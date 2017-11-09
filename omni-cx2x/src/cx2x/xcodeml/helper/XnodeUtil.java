@@ -82,32 +82,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Demote an array reference to a var reference.
-   *
-   * @param ref The array reference to be modified.
-   */
-  public static void demoteToScalar(Xnode ref) {
-    Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode();
-    ref.insertAfter(var);
-    ref.delete();
-  }
-
-  /**
-   * Demote an array reference to a reference with fewer dimensions.
-   *
-   * @param ref            The array reference to be modified.
-   * @param keptDimensions List of dimensions to be kept. Dimension index starts
-   *                       at 1.
-   */
-  public static void demote(Xnode ref, List<Integer> keptDimensions) {
-    for(int i = 1; i < ref.children().size(); ++i) {
-      if(!keptDimensions.contains(i)) {
-        ref.child(i).delete();
-      }
-    }
-  }
-
-  /**
    * Retrieve the index ranges of an array notation.
    *
    * @param arrayRef The array reference statements to extract the ranges from.
@@ -125,8 +99,6 @@ public class XnodeUtil {
     }
     return ranges;
   }
-
-
 
   /**
    * <pre>
@@ -385,38 +357,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Find a pragma element in the previous nodes containing a given keyword.
-   *
-   * @param from    Element to start from.
-   * @param keyword Keyword to be found in the pragma.
-   * @return The pragma if found. Null otherwise.
-   */
-  public static Xnode findPreviousPragma(Xnode from, String keyword) {
-    if(from == null || from.element() == null) {
-      return null;
-    }
-    Node prev = from.element().getPreviousSibling();
-    Node parent = from.element();
-    do {
-      while(prev != null) {
-        if(prev.getNodeType() == Node.ELEMENT_NODE) {
-          Element element = (Element) prev;
-          if(element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
-              && element.getTextContent().toLowerCase().
-              contains(keyword.toLowerCase()))
-          {
-            return new Xnode(element);
-          }
-        }
-        prev = prev.getPreviousSibling();
-      }
-      parent = parent.getParentNode();
-      prev = parent;
-    } while(parent != null);
-    return null;
-  }
-
-  /**
    * Find all the index elements (arrayIndex and indexRange) in an element.
    *
    * @param parent Root element to search from.
@@ -587,9 +527,6 @@ public class XnodeUtil {
       n.delete();
     }
   }
-
-
-
 
   /**
    * Get a list of T elements from an xpath query executed from the
