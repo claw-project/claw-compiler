@@ -16,6 +16,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.primitive.Body;
 import cx2x.translator.transformation.primitive.Field;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
@@ -426,7 +427,7 @@ public class Parallelize extends ClawTransformation {
       Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, contains);
 
-      XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
+      Body.shiftStatementsIn(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
       contains.insertBefore(loops.getOuterStatement());
@@ -440,7 +441,7 @@ public class Parallelize extends ClawTransformation {
 
       // Define a hook from where we can insert the new do statement
       Xnode hook = parallelRegionEnd.nextSibling();
-      XnodeUtil.shiftStatementsInBody(parallelRegionStart, parallelRegionEnd,
+      Body.shiftStatementsIn(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
       // Hook is null then we append the do statement to the current fct body

@@ -51,8 +51,7 @@ public final class Loop {
         || masterDoStmt.opcode() != Xcode.FDOSTATEMENT
         || slaveDoStmt.opcode() != Xcode.FDOSTATEMENT)
     {
-      throw new IllegalTransformationException(
-          "Incompatible node to perform a merge");
+      throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
 
     // Merge slave body into the master body
@@ -149,13 +148,14 @@ public final class Loop {
                                                    hoistedGroups,
                                                Xnode start, Xnode end,
                                                XcodeML xcodeml)
+      throws IllegalTransformationException
   {
     // Perform IF extraction and IF creation for lower-bound
     for(HoistedNestedDoStatement g : hoistedGroups) {
       if(g.needIfStatement()) {
         createIfStatementForLowerBound(xcodeml, g);
       }
-      XnodeUtil.extractBody(g.getInnerStatement(), g.getOuterStatement());
+      Loop.extractBody(g.getInnerStatement(), g.getOuterStatement());
       g.getOuterStatement().delete();
     }
 
@@ -164,7 +164,7 @@ public final class Loop {
     hoisted.getInnerStatement().body().delete();
     Xnode newBody = xcodeml.createNode(Xcode.BODY);
     hoisted.getInnerStatement().append(newBody);
-    XnodeUtil.shiftStatementsInBody(start, end, newBody, false);
+    Body.shiftStatementsIn(start, end, newBody, false);
     start.insertAfter(hoisted.getOuterStatement());
     return hoisted;
   }
@@ -256,7 +256,6 @@ public final class Loop {
     s2.delete();
   }
 
-
   /**
    * Clean up extra pragma that have no more sense after transformation.
    *
@@ -305,4 +304,61 @@ public final class Loop {
       XnodeUtil.safeDelete(toDelete);
     }
   }
+
+  /**
+   * Extract the body of a do statement and place it after the reference node.
+   *
+   * @param loop The do statement containing the body to be extracted.
+   * @param ref  Element after which statement are shifted.
+   * @throws IllegalTransformationException If node passed as arguments are
+   *                                        incompatible with the
+   *                                        transformation.
+   */
+  public static void extractBody(Xnode loop, Xnode ref)
+      throws IllegalTransformationException
+  {
+    if(loop == null || ref == null || loop.opcode() != Xcode.FDOSTATEMENT) {
+      throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
+    }
+    Xnode body = loop.body();
+    if(body == null) {
+      return;
+    }
+    Xnode refNode = ref;
+    for(Xnode child : body.children()) {
+      refNode.insertAfter(child);
+      refNode = child;
+    }
+  }
+
+  /**
+   * Extract the body of a do statement and place it directly after it.
+   *
+   * @param loop The do statement containing the body to be extracted.
+   * @throws IllegalTransformationException If node passed as arguments are
+   *                                        incompatible with the
+   *                                        transformation.
+   */
+  public static void extractBody(Xnode loop)
+      throws IllegalTransformationException
+  {
+    extractBody(loop, loop);
+  }
+
+  /**
+   * Extract the body of the inner do statement and place it directly after the
+   * outer do statement.
+   *
+   * @param nest Nest do statement group.
+   * @throws IllegalTransformationException If node passed as arguments are
+   *                                        incompatible with the
+   *                                        transformation.
+   */
+  public static void extractBody(NestedDoStatement nest)
+      throws IllegalTransformationException
+  {
+    extractBody(nest.getInnerStatement(), nest.getOuterStatement());
+  }
+
+
 }

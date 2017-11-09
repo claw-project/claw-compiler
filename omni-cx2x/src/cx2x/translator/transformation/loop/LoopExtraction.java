@@ -15,6 +15,7 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -244,7 +245,7 @@ public class LoopExtraction extends ClawTransformation {
      */
 
     // 1. append body into fct body after loop
-    XnodeUtil.extractBody(loopInClonedFct);
+    Loop.extractBody(loopInClonedFct);
     // 2. delete loop
     loopInClonedFct.delete();
 

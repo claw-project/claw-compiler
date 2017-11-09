@@ -43,4 +43,7 @@ public class ClawConstant {
   public static final String DIRECTIVE_OPENACC = "openacc";
   public static final String DIRECTIVE_OPENMP = "openmp";
 
+  public static final String ERROR_INCOMPATIBLE =
+      "Incompatible node passed as arguments";
+
 }
