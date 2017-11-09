@@ -744,8 +744,14 @@ public class ParallelizeForward extends ClawTransformation {
           XbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
 
           // Declare the induction variable if they are not present
-          TransformationHelper.declareInductionVariables(dimensions,
-              parentFctDef, xcodeml);
+          for(DimensionDefinition dim : dimensions) {
+            if(parentFctDef.getDeclarationTable().get(dim.getIdentifier())
+                == null)
+            {
+              xcodeml.createIdAndDecl(dim.getIdentifier(), XbuiltInType.INT,
+                  XstorageClass.F_LOCAL, parentFctDef, false);
+            }
+          }
 
           // Generate the do statements and move the assignment statement in
           NestedDoStatement doStmt = new NestedDoStatement(dimensions, xcodeml);
@@ -768,12 +774,12 @@ public class ParallelizeForward extends ClawTransformation {
           }
 
           // Adapt the reference in the assignment statement
-          TransformationHelper.adaptArrayReferences(_promotedWithBeforeOver, 0,
-              assignment, _promotions, induction, emptyInd, emptyInd, xcodeml);
-          TransformationHelper.adaptArrayReferences(_promotedWithMiddleOver, 0,
-              assignment, _promotions, emptyInd, induction, emptyInd, xcodeml);
-          TransformationHelper.adaptArrayReferences(_promotedWithAfterOver, 0,
-              assignment, _promotions, emptyInd, emptyInd, induction, xcodeml);
+          Field.adaptArrayReferences(_promotedWithBeforeOver, 0, assignment,
+              _promotions, induction, emptyInd, emptyInd, xcodeml);
+          Field.adaptArrayReferences(_promotedWithMiddleOver, 0, assignment,
+              _promotions, emptyInd, induction, emptyInd, xcodeml);
+          Field.adaptArrayReferences(_promotedWithAfterOver, 0, assignment,
+              _promotions, emptyInd, emptyInd, induction, xcodeml);
 
           // If the array is a target, check if we have to promote a pointer
           if(!previouslyPromoted.contains(varInLhs.value())) {

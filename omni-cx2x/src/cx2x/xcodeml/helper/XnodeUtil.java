@@ -554,30 +554,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Find specific argument in a function call.
-   *
-   * @param value   Value of the argument to be found.
-   * @param fctCall Function call to search from.
-   * @return The argument if found. Null otherwise.
-   */
-  public static Xnode findArg(String value, Xnode fctCall) {
-    // TODO move in Function
-    if(fctCall.opcode() != Xcode.FUNCTIONCALL) {
-      return null;
-    }
-    Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
-    if(args == null) {
-      return null;
-    }
-    for(Xnode arg : args.children()) {
-      if(value.toLowerCase().equals(arg.value())) {
-        return arg;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Read XML file.
    *
    * @param input Xml file path.

@@ -5,6 +5,7 @@
 package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -12,7 +13,9 @@ import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Primitive transformation and test applied to fields. This included:
@@ -268,6 +271,175 @@ public final class Field {
       if(!keptDimensions.contains(i)) {
         arrayRef.child(i).delete();
       }
+    }
+  }
+
+  /**
+   * Reshape field in function definition.
+   *
+   * @param fctDef      Function definition.
+   * @param reshapeInfo Reshape information.
+   * @param xcodeml     Current XcodeML/F translation unit.
+   * @throws IllegalTransformationException If reshape cannot be done.
+   */
+  public static void reshape(XfunctionDefinition fctDef,
+                             ClawReshapeInfo reshapeInfo,
+                             XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    Xid id = Function.findId(fctDef, reshapeInfo.getArrayName());
+    Xnode decl = Function.findDecl(fctDef, reshapeInfo.getArrayName());
+
+    if(id == null || decl == null) {
+      throw new IllegalTransformationException("Cannot apply reshape clause."
+          + "Variable " + reshapeInfo.getArrayName() + " not found in " +
+          "declaration table.");
+    }
+
+    if(!(xcodeml.getTypeTable().isBasicType(id))) {
+      throw new IllegalTransformationException(
+          String.format("Reshape variable %s is not a basic type.",
+              reshapeInfo.getArrayName())
+      );
+    }
+    XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
+
+    // Check dimension
+    if(crtType.getDimensions() < reshapeInfo.getTargetDimension()) {
+      throw new IllegalTransformationException(
+          String.format(
+              "Reshape variable %s has smaller dimension than requested.",
+              reshapeInfo.getArrayName()
+          )
+      );
+    }
+
+    // Create new type
+    XbasicType newType = crtType.cloneNode();
+    newType.setType(xcodeml.getTypeTable().generateHash(XcodeType.REAL));
+    if(reshapeInfo.getTargetDimension() == 0) { // Demote to scalar
+      newType.resetDimension();
+    } else { // Demote to smaller dimension array
+
+      if(crtType.getDimensions() - reshapeInfo.getKeptDimensions().size() !=
+          reshapeInfo.getTargetDimension())
+      {
+        throw new IllegalTransformationException(
+            String.format("Reshape information for %s not valid. " +
+                    "Target dimension and kept dimension mismatch.",
+                reshapeInfo.getArrayName())
+        );
+      }
+      newType.removeDimension(reshapeInfo.getKeptDimensions());
+    }
+    xcodeml.getTypeTable().add(newType);
+
+    // Update symbol & declaration
+    id.setType(newType.getType());
+    decl.matchSeq(Xcode.NAME).setType(newType.getType());
+
+    // Update array references
+    List<Xnode> refs =
+        XnodeUtil.getAllArrayReferences(fctDef.body(),
+            reshapeInfo.getArrayName());
+
+    for(Xnode ref : refs) {
+      if(reshapeInfo.getTargetDimension() == 0) {
+        Field.demoteToScalar(ref);
+      } else {
+        Field.demote(ref, reshapeInfo.getKeptDimensions());
+      }
+    }
+  }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   *
+   * @param id    Array identifier that must be adapted.
+   * @param index Index designing the correct over clause to be used.
+   */
+  public static void adaptArrayReferences(String id, int index,
+                                          Xnode parent,
+                                          Map<String, PromotionInfo> promotions,
+                                          List<List<Xnode>> beforeCrt,
+                                          List<List<Xnode>> inMiddle,
+                                          List<List<Xnode>> afterCrt,
+                                          XcodeProgram xcodeml)
+  {
+    // TODO get rid of beforeCrt, inMiddle and afterCrt. Should be read from
+    // promotion info
+
+    if(!promotions.containsKey(id.toLowerCase())) {
+      return;
+    }
+
+    if(promotions.get(id).wasScalar()) {
+      List<Xnode> refs =
+          XnodeUtil.getAllVarReferences(parent, id);
+      for(Xnode ref : refs) {
+        Xnode arrayRef = xcodeml.createNode(Xcode.FARRAYREF);
+        Xnode varRef = xcodeml.createNode(Xcode.VARREF);
+        arrayRef.setType(ref.getType());
+        varRef.setType(promotions.get(id).getTargetType());
+        ref.setType(promotions.get(id).getTargetType());
+        ref.insertAfter(arrayRef);
+        arrayRef.append(varRef);
+        varRef.append(ref);
+        for(Xnode ai : beforeCrt.get(index)) {
+          arrayRef.append(ai, true);
+        }
+        for(Xnode ai : afterCrt.get(index)) {
+          arrayRef.append(ai, true);
+        }
+      }
+    } else {
+      List<Xnode> refs =
+          XnodeUtil.getAllArrayReferences(parent, id);
+      for(Xnode ref : refs) {
+        if(inMiddle.get(index).size() == 0) {
+          for(Xnode ai : beforeCrt.get(index)) {
+            ref.matchSeq(Xcode.VARREF).insertAfter(ai.cloneNode());
+          }
+          for(Xnode ai : afterCrt.get(index)) {
+            ref.append(ai, true);
+          }
+        } else {
+          Xnode hook = ref.matchDirectDescendant(
+              Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+          if(hook == null) {
+            hook = ref.child(0);
+          }
+          for(Xnode ai : inMiddle.get(index)) {
+            Xnode clone = ai.cloneNode();
+            hook.insertAfter(clone);
+            hook = clone;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   *
+   * @param ids   List of array identifiers that must be adapted.
+   * @param index Index designing the correct over clause to be used.
+   */
+  public static void adaptArrayReferences(List<String> ids, int index,
+                                          Xnode parent,
+                                          Map<String, PromotionInfo> promotions,
+                                          List<List<Xnode>> beforeCrt,
+                                          List<List<Xnode>> inMiddle,
+                                          List<List<Xnode>> afterCrt,
+                                          XcodeProgram xcodeml)
+  {
+    // TODO get rid of beforeCrt, inMiddle and afterCrt. Should be read from
+    // promotion info
+    for(String id : ids) {
+      adaptArrayReferences(id, index, parent, promotions, beforeCrt,
+          inMiddle, afterCrt, xcodeml);
     }
   }
 }

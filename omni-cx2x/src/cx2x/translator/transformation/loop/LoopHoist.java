@@ -8,9 +8,10 @@ package cx2x.translator.transformation.loop;
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawReshapeInfo;
-import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawBlockTransformation;
+import cx2x.translator.transformation.primitive.Field;
 import cx2x.translator.transformation.primitive.Loop;
+import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -200,7 +201,18 @@ public class LoopHoist extends ClawBlockTransformation {
         hoisted.getOuterStatement());
 
     // Apply reshape clause
-    TransformationHelper.applyReshapeClause(_clawStart, xcodeml);
+    if(_clawStart.hasReshapeClause()) {
+      XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
+      if(fctDef == null) {
+        throw new IllegalTransformationException("Cannot apply reshape clause." +
+            "Parent function definition not found.",
+            _clawStart.getPragma().lineNo());
+      }
+
+      for(ClawReshapeInfo reshapeInfo : _clawStart.getReshapeClauseValues()) {
+        Field.reshape(fctDef, reshapeInfo, xcodeml);
+      }
+    }
 
     removePragma();
   }

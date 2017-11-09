@@ -15,10 +15,10 @@ import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.primitive.Function;
 import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
@@ -104,7 +104,7 @@ public class LoopExtraction extends ClawTransformation {
    */
   private boolean checkMappingInformation(XcodeProgram xcodeml) {
     for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()) {
-      if(XnodeUtil.findArg(map.getKey(), _fctCall) == null) {
+      if(Function.findArg(_fctCall, map.getKey()) == null) {
         xcodeml.addError("Mapped variable " + map.getKey() +
                 " not found in function call arguments",
             _claw.getPragma().lineNo());
@@ -276,7 +276,7 @@ public class LoopExtraction extends ClawTransformation {
       Message.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
       for(ClawMappingVar var : mapping.getMappedVariables()) {
         Message.debug("  Var: " + var);
-        Xnode argument = XnodeUtil.findArg(var.getArgMapping(), _fctCall);
+        Xnode argument = Function.findArg(_fctCall, var.getArgMapping());
         if(argument == null) {
           continue;
         }

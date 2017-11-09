@@ -370,12 +370,12 @@ public class Parallelize extends ClawTransformation {
     // Adapt array references.
     if(_claw.hasOverDataClause()) {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
-        TransformationHelper.adaptArrayReferences(
+        Field.adaptArrayReferences(
             _claw.getOverDataClauseValues().get(i), i, _fctDef.body(),
             _promotions, _beforeCrt, _inMiddle, _afterCrt, xcodeml);
       }
     } else {
-      TransformationHelper.adaptArrayReferences(_arrayFieldsInOut, DEFAULT_OVER,
+      Field.adaptArrayReferences(_arrayFieldsInOut, DEFAULT_OVER,
           _fctDef.body(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
           xcodeml);
     }
@@ -475,8 +475,7 @@ public class Parallelize extends ClawTransformation {
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
-        TransformationHelper.adaptArrayReferences(
-            Collections.singletonList(arrayIdentifier), DEFAULT_OVER,
+        Field.adaptArrayReferences(arrayIdentifier, DEFAULT_OVER,
             _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
             _afterCrt, xcodeml);
 
@@ -546,7 +545,7 @@ public class Parallelize extends ClawTransformation {
             Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
                 _claw.getDimensionValues(), xcodeml);
           } else {
-            TransformationHelper.adaptArrayReferences(
+            Field.adaptArrayReferences(
                 Collections.singletonList(lhsName), DEFAULT_OVER,
                 _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
                 _afterCrt, xcodeml);
