@@ -221,7 +221,7 @@ public class LoopFusion extends ClawTransformation {
 
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
-        if(!XnodeUtil.hasSameIndexRange(_doStmt.get(i),
+        if(!Loop.hasSameIndexRange(_doStmt.get(i),
             other.getNestedDoStmt().get(i)))
         {
           return false;
@@ -230,7 +230,7 @@ public class LoopFusion extends ClawTransformation {
       return true;
     } else {
       // Loop must share the same iteration range
-      return XnodeUtil.hasSameIndexRange(_doStmt.getOuterStatement(),
+      return Loop.hasSameIndexRange(_doStmt.getOuterStatement(),
           other.getNestedDoStmt().getOuterStatement());
     }
   }

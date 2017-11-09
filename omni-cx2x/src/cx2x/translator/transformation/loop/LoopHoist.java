@@ -109,13 +109,13 @@ public class LoopHoist extends ClawBlockTransformation {
       HoistedNestedDoStatement next = _hoistedGroups.get(i);
       for(int j = 0; j < master.size(); ++j) {
         // Iteration range are identical, just merge
-        if(j == 0 && (!XnodeUtil.hasSameIndexRange(master.get(j), next.get(j))
-            && XnodeUtil.hasSameIndexRangeBesidesLower(master.get(j),
+        if(j == 0 && (!Loop.hasSameIndexRange(master.get(j), next.get(j))
+            && Loop.hasSameIndexRangeBesidesLower(master.get(j),
             next.get(j))))
         {
           // Iteration range are identical besides lower-bound, if creation
           next.setIfStatement();
-        } else if(!XnodeUtil.hasSameIndexRange(master.get(j), next.get(j))) {
+        } else if(!Loop.hasSameIndexRange(master.get(j), next.get(j))) {
           // Iteration range are too different, stop analysis
           xcodeml.addError("Iteration range of do statements group " + i +
                   " differs from group 0. Loop hoisting aborted.",

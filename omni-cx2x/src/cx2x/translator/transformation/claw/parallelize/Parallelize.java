@@ -427,7 +427,7 @@ public class Parallelize extends ClawTransformation {
       Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, contains);
 
-      Body.shiftStatementsIn(parallelRegionStart, parallelRegionEnd,
+      Body.shiftIn(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
       contains.insertBefore(loops.getOuterStatement());
@@ -441,7 +441,7 @@ public class Parallelize extends ClawTransformation {
 
       // Define a hook from where we can insert the new do statement
       Xnode hook = parallelRegionEnd.nextSibling();
-      Body.shiftStatementsIn(parallelRegionStart, parallelRegionEnd,
+      Body.shiftIn(parallelRegionStart, parallelRegionEnd,
           loops.getInnerStatement().body(), true);
 
       // Hook is null then we append the do statement to the current fct body

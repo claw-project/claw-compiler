@@ -9,6 +9,7 @@ import cx2x.translator.ClawTranslator;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawBlockTransformation;
+import cx2x.translator.transformation.primitive.Range;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -94,7 +95,7 @@ public class ArrayTransform extends ClawBlockTransformation {
             XnodeUtil.getIdxRangesFromArrayRef(arrayRef);
 
         // ranges are not identical so
-        if(!XnodeUtil.compareIndexRanges(refRanges, ranges)) {
+        if(!Range.compare(refRanges, ranges)) {
           refRanges = ranges;
           ++crtGroup;
           _groupedAssignStmts.add(new ArrayList<Xnode>());

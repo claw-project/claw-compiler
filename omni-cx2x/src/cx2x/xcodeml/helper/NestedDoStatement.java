@@ -5,6 +5,7 @@
 
 package cx2x.xcodeml.helper;
 
+import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.xnode.*;
 
@@ -110,7 +111,7 @@ public class NestedDoStatement {
     if(_inductionVariables == null) {
       _inductionVariables = new ArrayList<>();
       for(Xnode doStmt : _statements) {
-        _inductionVariables.add(XnodeUtil.extractInductionVariable(doStmt));
+        _inductionVariables.add(Loop.extractInductionVariable(doStmt));
       }
     }
     return _inductionVariables;

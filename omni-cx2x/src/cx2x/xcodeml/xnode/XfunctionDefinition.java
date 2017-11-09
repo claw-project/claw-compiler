@@ -5,7 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.xcodeml.helper.XnodeUtil;
+import cx2x.translator.transformation.primitive.Module;
 import org.w3c.dom.Element;
 
 /**
@@ -109,8 +109,7 @@ public class XfunctionDefinition extends Xnode {
     if(mod == null) {
       return null;
     }
-    String modName = mod.getAttribute(Xattr.NAME);
-    return XnodeUtil.findModule(modName);
+    return Module.find(mod.getAttribute(Xattr.NAME));
   }
 
   /**

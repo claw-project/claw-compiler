@@ -11,7 +11,7 @@ import cx2x.xcodeml.xnode.Xnode;
 import org.w3c.dom.Node;
 
 /**
- * Primitive transformation applied on body node. This included:
+ * Primitive transformation and test applied on body node. This included:
  * - append a body sub-tree to another one.
  *
  * @author clementval
@@ -58,8 +58,8 @@ public final class Body {
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
    */
-  public static void shiftStatementsIn(Xnode from, Xnode until,
-                                       Xnode targetBody, boolean included)
+  public static void shiftIn(Xnode from, Xnode until, Xnode targetBody,
+                             boolean included)
       throws IllegalTransformationException
   {
     if(from == null || until == null || targetBody == null

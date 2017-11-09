@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Primitive transformation applied fields. This included:
+ * Primitive transformation and test applied to fields. This included:
  * - Scalar and array promotion (promote).
  * - Adaptation of scalar reference to array reference for promoted scalar.
  * - Adaptation of allocation statement for promoted field.

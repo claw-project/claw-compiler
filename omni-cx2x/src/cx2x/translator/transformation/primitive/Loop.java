@@ -17,7 +17,7 @@ import cx2x.xcodeml.xnode.Xnode;
 import java.util.List;
 
 /**
- * Primitive transformation applied on do statements. This included:
+ * Primitive transformation and test applied on FdoStatement. This included:
  * - loop fusion (merge)
  * - loop reorder (reorder)
  * - loop hoisting (hoist)
@@ -164,7 +164,7 @@ public final class Loop {
     hoisted.getInnerStatement().body().delete();
     Xnode newBody = xcodeml.createNode(Xcode.BODY);
     hoisted.getInnerStatement().append(newBody);
-    Body.shiftStatementsIn(start, end, newBody, false);
+    Body.shiftIn(start, end, newBody, false);
     start.insertAfter(hoisted.getOuterStatement());
     return hoisted;
   }
@@ -360,5 +360,70 @@ public final class Loop {
     extractBody(nest.getInnerStatement(), nest.getOuterStatement());
   }
 
+  /**
+   * Get the string representation of the induction variable of a do statement.
+   *
+   * @param doStatement Do statement to extract the induction variable.
+   * @return The string value of the induction variable. Empty string if the
+   * passed Xnode is not a FdoStatement node or has no Var node.
+   */
+  public static String extractInductionVariable(Xnode doStatement) {
+    if(doStatement == null || doStatement.opcode() != Xcode.FDOSTATEMENT) {
+      return "";
+    }
+    Xnode var = doStatement.matchDirectDescendant(Xcode.VAR);
+    if(var == null) {
+      return "";
+    }
+    return var.value().toLowerCase();
+  }
 
+  /**
+   * Compare the iteration range of two do statements.
+   *
+   * @param l1             First do statement.
+   * @param l2             Second do statement.
+   * @param withLowerBound Compare lower bound or not.
+   * @return True if the iteration range are identical.
+   */
+  private static boolean compareIndexRanges(Xnode l1, Xnode l2,
+                                            boolean withLowerBound)
+  {
+    // The two nodes must be do statement
+    if(l1 == null || l2 == null || l1.opcode() != Xcode.FDOSTATEMENT
+        || l2.opcode() != Xcode.FDOSTATEMENT)
+    {
+      return false;
+    }
+
+    Xnode inductionVar1 = l1.matchDirectDescendant(Xcode.VAR);
+    Xnode inductionVar2 = l2.matchDirectDescendant(Xcode.VAR);
+    Xnode indexRange1 = l1.matchDirectDescendant(Xcode.INDEXRANGE);
+    Xnode indexRange2 = l2.matchDirectDescendant(Xcode.INDEXRANGE);
+
+    return inductionVar1.compareValues(inductionVar2) &&
+        Range.compare(indexRange1, indexRange2, withLowerBound);
+  }
+
+  /**
+   * Compare the iteration range of two do statements.
+   *
+   * @param l1 First do statement.
+   * @param l2 Second do statement.
+   * @return True if the iteration range are identical.
+   */
+  public static boolean hasSameIndexRange(Xnode l1, Xnode l2) {
+    return compareIndexRanges(l1, l2, true);
+  }
+
+  /**
+   * Compare the iteration range of two do statements.
+   *
+   * @param l1 First do statement.
+   * @param l2 Second do statement.
+   * @return True if the iteration range are identical besides the lower bound.
+   */
+  public static boolean hasSameIndexRangeBesidesLower(Xnode l1, Xnode l2) {
+    return compareIndexRanges(l1, l2, false);
+  }
 }

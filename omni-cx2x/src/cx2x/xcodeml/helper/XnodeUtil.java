@@ -34,8 +34,6 @@ import java.util.Set;
 
 public class XnodeUtil {
 
-  public static final String XMOD_FILE_EXTENSION = ".xmod";
-
   /**
    * Find all array references elements in a given body and give var name.
    *
@@ -129,28 +127,7 @@ public class XnodeUtil {
     return ranges;
   }
 
-  /**
-   * Compare two list of indexRange.
-   *
-   * @param list1 First list of indexRange.
-   * @param list2 Second list of indexRange.
-   * @return True if the indexRange at the same position in the two list are all
-   * identical. False otherwise.
-   */
-  public static boolean compareIndexRanges(List<Xnode> list1,
-                                           List<Xnode> list2)
-  {
-    if(list1.size() != list2.size()) {
-      return false;
-    }
 
-    for(int i = 0; i < list1.size(); ++i) {
-      if(!isIndexRangeIdentical(list1.get(i), list2.get(i), true)) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   /**
    * <pre>
@@ -612,102 +589,8 @@ public class XnodeUtil {
     }
   }
 
-  /**
-   * Compare the iteration range of two do statements.
-   *
-   * @param e1             First do statement.
-   * @param e2             Second do statement.
-   * @param withLowerBound Compare lower bound or not.
-   * @return True if the iteration range are identical.
-   */
-  private static boolean compareIndexRanges(Xnode e1, Xnode e2,
-                                            boolean withLowerBound)
-  {
-    // TODO move to Loop
-    // The two nodes must be do statement
-    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
-      return false;
-    }
 
-    Xnode inductionVar1 = e1.matchDirectDescendant(Xcode.VAR);
-    Xnode inductionVar2 = e2.matchDirectDescendant(Xcode.VAR);
-    Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEXRANGE);
-    Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEXRANGE);
 
-    return inductionVar1.compareValues(inductionVar2) &&
-        isIndexRangeIdentical(indexRange1, indexRange2, withLowerBound);
-  }
-
-  /**
-   * Compare the iteration range of two do statements.
-   *
-   * @param e1 First do statement.
-   * @param e2 Second do statement.
-   * @return True if the iteration range are identical.
-   */
-  public static boolean hasSameIndexRange(Xnode e1, Xnode e2) {
-    // TODO move to Loop
-    return compareIndexRanges(e1, e2, true);
-  }
-
-  /**
-   * Compare the iteration range of two do statements.
-   *
-   * @param e1 First do statement.
-   * @param e2 Second do statement.
-   * @return True if the iteration range are identical besides the lower bound.
-   */
-  public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2) {
-    // TODO move to Loop
-    return compareIndexRanges(e1, e2, false);
-  }
-
-  /**
-   * Compare the iteration range of two do statements
-   *
-   * @param idx1           First do statement.
-   * @param idx2           Second do statement.
-   * @param withLowerBound If true, compare lower bound. If false, lower bound
-   *                       is not compared.
-   * @return True if the index range are identical.
-   */
-  private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2,
-                                               boolean withLowerBound)
-  {
-    // TODO move to Loop
-    if(idx1.opcode() != Xcode.INDEXRANGE || idx2.opcode() != Xcode.INDEXRANGE) {
-      return false;
-    }
-
-    if(idx1.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE) &&
-        idx2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE))
-    {
-      return true;
-    }
-
-    Xnode low1 = idx1.matchSeq(Xcode.LOWERBOUND);
-    Xnode up1 = idx1.matchSeq(Xcode.UPPERBOUND);
-    Xnode low2 = idx2.matchSeq(Xcode.LOWERBOUND);
-    Xnode up2 = idx2.matchSeq(Xcode.UPPERBOUND);
-    Xnode s1 = idx1.matchSeq(Xcode.STEP);
-    Xnode s2 = idx2.matchSeq(Xcode.STEP);
-
-    if(s1 != null) {
-      s1 = s1.child(0);
-    }
-    if(s2 != null) {
-      s2 = s2.child(0);
-    }
-
-    if(withLowerBound) {
-      return low1.compareFirstChildValues(low2) &&
-          up1.compareFirstChildValues(up2)
-          && (s1 == null || s1.compareOptionalValues(s2));
-    } else {
-      return up1.compareFirstChildValues(up2)
-          && (s1 == null || s1.compareOptionalValues(s2));
-    }
-  }
 
   /**
    * Get a list of T elements from an xpath query executed from the
@@ -753,25 +636,6 @@ public class XnodeUtil {
     for(Xnode arg : args.children()) {
       if(value.toLowerCase().equals(arg.value())) {
         return arg;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find module by name.
-   *
-   * @param moduleName Name of the module.
-   * @return Module object if found. Null otherwise.
-   */
-  public static Xmod findModule(String moduleName) {
-    // TODO move in Module
-    for(String dir : XcodeMLtools_Fmod.getSearchPath()) {
-      String path = dir + "/" + moduleName + XMOD_FILE_EXTENSION;
-      File f = new File(path);
-      if(f.exists()) {
-        Document doc = readXmlFile(path);
-        return doc != null ? new Xmod(doc, moduleName, dir) : null;
       }
     }
     return null;
@@ -880,21 +744,6 @@ public class XnodeUtil {
     }
 
     return pragma.value().substring(0, pragma.value().indexOf(" "));
-  }
-
-  /**
-   * Get the string representation of the induction variable of a do statement.
-   *
-   * @param doStatement Do statement to extract the induction variable.
-   * @return The string value of the induction variable. Empty string if the
-   * passed Xnode is not a FdoStatement element.
-   */
-  public static String extractInductionVariable(Xnode doStatement) {
-    // TODO move in Loop
-    if(doStatement.opcode() != Xcode.FDOSTATEMENT) {
-      return "";
-    }
-    return doStatement.matchDirectDescendant(Xcode.VAR).value().toLowerCase();
   }
 
   /**
