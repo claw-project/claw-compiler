@@ -13,9 +13,7 @@ import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
-import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.Xnode;
 
 /**
  * <pre>

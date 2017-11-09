@@ -6,10 +6,7 @@
 package cx2x.translator.language.helper;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.Utility;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
 import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.base.Target;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -18,12 +15,9 @@ import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.*;
-import exc.xcodeml.XcodeMLtools_Fmod;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

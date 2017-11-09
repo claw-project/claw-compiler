@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import cx2x.translator.common.ClawConstant;
-import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import helper.TestConstant;

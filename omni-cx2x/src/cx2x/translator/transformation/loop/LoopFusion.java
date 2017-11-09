@@ -12,7 +12,6 @@ import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;

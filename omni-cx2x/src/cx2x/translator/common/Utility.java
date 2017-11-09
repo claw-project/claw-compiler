@@ -4,9 +4,6 @@
  */
 package cx2x.translator.common;
 
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.base.Target;
-
 import java.util.*;
 
 /**

@@ -7,7 +7,6 @@ package cx2x.xcodeml.helper;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.*;
-import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
