@@ -45,6 +45,22 @@ public class Xnode {
   }
 
   /**
+   * Delete this nodes with all its siblings.
+   */
+  public void deleteWithSiblings() {
+    List<Xnode> toDelete = new ArrayList<>();
+    toDelete.add(this);
+    Xnode sibling = nextSibling();
+    while(sibling != null) {
+      toDelete.add(sibling);
+      sibling = sibling.nextSibling();
+    }
+    for(Xnode n : toDelete) {
+      n.delete();
+    }
+  }
+
+  /**
    * Get the element opcode.
    *
    * @return Opcode.
@@ -448,6 +464,34 @@ public class Xnode {
   }
 
   /**
+   * Check whether the end node is a direct sibling of this node. If other
+   * nodes are between the two nodes and their opcode is not listed in the
+   * skippedNodes list, the nodes are not direct siblings.
+   *
+   * @param end          Node to be check to be a direct sibling.
+   * @param skippedNodes List of opcode that are allowed between the two nodes.
+   * @return True if the nodes are direct siblings.
+   */
+  public boolean isDirectSibling(Xnode end, List<Xcode> skippedNodes) {
+    if(end == null) {
+      return false;
+    }
+
+    Xnode nextSibling = nextSibling();
+    while(nextSibling != null) {
+      if(nextSibling.equals(end)) {
+        return true;
+      }
+      if(skippedNodes.contains(nextSibling.opcode())) {
+        nextSibling = nextSibling.nextSibling();
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Find node with the given opcode in the ancestors of the current node.
    *
    * @param opcode Opcode of the node to be matched.
@@ -619,6 +663,47 @@ public class Xnode {
   public void insertAfter(Xnode node) {
     _baseElement.getParentNode().insertBefore(node.element(),
         _baseElement.getNextSibling());
+  }
+
+  /**
+   * Compare the inner value of the first child of two nodes.
+   *
+   * @param other Node to compare with
+   * @return True if the value if first childs are identical. False otherwise.
+   */
+  public boolean compareFirstChildValues(Xnode other) {
+    if(other == null) {
+      return false;
+    }
+
+    Xnode c1 = child(0);
+    Xnode c2 = other.child(0);
+    if(c1 == null || c2 == null) {
+      return false;
+    }
+    return c1.compareValues(c2);
+  }
+
+  /**
+   * Compare the inner values of two optional nodes.
+   *
+   * @param other Node to compare with
+   * @return True if the values are identical or elements are null. False
+   * otherwise.
+   */
+  public boolean compareOptionalValues(Xnode other) {
+    return other == null ||
+        value().toLowerCase().equals(other.value().toLowerCase());
+  }
+
+  /**
+   * Compare the inner values of two nodes.
+   *
+   * @param other Node to compare with
+   * @return True if the values are identical. False otherwise.
+   */
+  public boolean compareValues(Xnode other) {
+    return !(other == null) && value().equals(other.value());
   }
 
   /**

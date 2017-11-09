@@ -34,7 +34,6 @@ import java.util.Collections;
 
 public class LoopFusion extends ClawTransformation {
 
-
   // Contains the value of the group option
   private String _groupClauseLabel = ClawConstant.EMPTY_STRING;
   // The loop statement involved in the Transformation
@@ -201,7 +200,7 @@ public class LoopFusion extends ClawTransformation {
     // is set to none, there are note checked.
     if(currentConstraint == ClawConstraint.DIRECT) {
       // Only pragma statement can be between the two loops.
-      if(!XnodeUtil.isDirectSibling(_doStmt.getOuterStatement(),
+      if(!_doStmt.getOuterStatement().isDirectSibling(
           other.getNestedDoStmt().getOuterStatement(),
           Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
       {

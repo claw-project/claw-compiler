@@ -87,7 +87,7 @@ public class UtilityRemove extends ClawBlockTransformation {
       } else if(_if != null) {
         _if.delete();
       } else if(_contains != null) {
-        XnodeUtil.deleteFrom(_contains);
+        _contains.deleteWithSiblings();
       }
       _clawStart.getPragma().delete();
     } else {

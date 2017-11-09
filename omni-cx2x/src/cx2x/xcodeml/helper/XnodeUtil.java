@@ -129,7 +129,6 @@ public class XnodeUtil {
     return ranges;
   }
 
-
   /**
    * Compare two list of indexRange.
    *
@@ -530,46 +529,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Extract the body of a do statement and place it after the reference node.
-   *
-   * @param loop The do statement containing the body to be extracted.
-   * @param ref  Element after which statement are shifted.
-   */
-  public static void extractBody(Xnode loop, Xnode ref) {
-    if(loop.opcode() != Xcode.FDOSTATEMENT) {
-      return;
-    }
-    Xnode body = loop.body();
-    if(body == null) {
-      return;
-    }
-    Xnode refNode = ref;
-    for(Xnode child : body.children()) {
-      refNode.insertAfter(child);
-      refNode = child;
-    }
-  }
-
-  /**
-   * Extract the body of a do statement and place it directly after it.
-   *
-   * @param loop The do statement containing the body to be extracted.
-   */
-  public static void extractBody(Xnode loop) {
-    extractBody(loop, loop);
-  }
-
-  /**
-   * Extract the body of the inner do statement and place it directly after the
-   * outer do statement.
-   *
-   * @param nest Nest do statement group.
-   */
-  public static void extractBody(NestedDoStatement nest) {
-    extractBody(nest.getInnerStatement(), nest.getOuterStatement());
-  }
-
-  /**
    * Check whether the index of an arrayIndex element is an induction variable
    * given in the list.
    *
@@ -589,50 +548,6 @@ public class XnodeUtil {
 
     Xnode var = arrayIndex.matchDirectDescendant(Xcode.VAR);
     return var != null && inductionVariables.contains(var.value());
-  }
-
-  /**
-   * Shift all statements from the first siblings of the "from" element until
-   * the "until" element (not included).
-   *
-   * @param from       Start element for the swifting.
-   * @param until      End element for the swifting.
-   * @param targetBody Body element in which statements are inserted.
-   */
-  public static void shiftStatementsInBody(Xnode from, Xnode until,
-                                           Xnode targetBody, boolean included)
-  {
-    Node currentSibling = from.element();
-    if(!included) {
-      currentSibling = from.element().getNextSibling();
-    }
-
-    Node firstStatementInBody = targetBody.element().getFirstChild();
-    while(currentSibling != null && currentSibling != until.element()) {
-      Node nextSibling = currentSibling.getNextSibling();
-      targetBody.element().insertBefore(currentSibling,
-          firstStatementInBody);
-      currentSibling = nextSibling;
-    }
-    if(included && currentSibling == until.element()) {
-      targetBody.element().insertBefore(currentSibling,
-          firstStatementInBody);
-    }
-  }
-
-  /**
-   * Copy the whole body element into the destination one. Destination is
-   * overwritten.
-   *
-   * @param from The body to be copied.
-   * @param to   The destination of the copied body.
-   */
-  public static void copyBody(Xnode from, Xnode to) {
-    Node copiedBody = from.cloneRawNode();
-    if(to.body() != null) {
-      to.body().delete();
-    }
-    to.element().appendChild(copiedBody);
   }
 
   /**
@@ -708,6 +623,7 @@ public class XnodeUtil {
   private static boolean compareIndexRanges(Xnode e1, Xnode e2,
                                             boolean withLowerBound)
   {
+    // TODO move to Loop
     // The two nodes must be do statement
     if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
       return false;
@@ -718,7 +634,7 @@ public class XnodeUtil {
     Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEXRANGE);
     Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEXRANGE);
 
-    return compareValues(inductionVar1, inductionVar2) &&
+    return inductionVar1.compareValues(inductionVar2) &&
         isIndexRangeIdentical(indexRange1, indexRange2, withLowerBound);
   }
 
@@ -730,6 +646,7 @@ public class XnodeUtil {
    * @return True if the iteration range are identical.
    */
   public static boolean hasSameIndexRange(Xnode e1, Xnode e2) {
+    // TODO move to Loop
     return compareIndexRanges(e1, e2, true);
   }
 
@@ -741,47 +658,8 @@ public class XnodeUtil {
    * @return True if the iteration range are identical besides the lower bound.
    */
   public static boolean hasSameIndexRangeBesidesLower(Xnode e1, Xnode e2) {
+    // TODO move to Loop
     return compareIndexRanges(e1, e2, false);
-  }
-
-  /**
-   * Compare the inner values of two nodes.
-   *
-   * @param n1 First node.
-   * @param n2 Second node.
-   * @return True if the values are identical. False otherwise.
-   */
-  private static boolean compareValues(Xnode n1, Xnode n2) {
-    return !(n1 == null || n2 == null) && n1.value().equals(n2.value());
-  }
-
-  /**
-   * Compare the inner value of the first child of two nodes.
-   *
-   * @param n1 First node.
-   * @param n2 Second node.
-   * @return True if the value are identical. False otherwise.
-   */
-  private static boolean compareFirstChildValues(Xnode n1, Xnode n2) {
-    if(n1 == null || n2 == null) {
-      return false;
-    }
-    Xnode c1 = n1.child(0);
-    Xnode c2 = n2.child(0);
-    return compareValues(c1, c2);
-  }
-
-  /**
-   * Compare the inner values of two optional nodes.
-   *
-   * @param n1 First node.
-   * @param n2 Second node.
-   * @return True if the values are identical or elements are null. False
-   * otherwise.
-   */
-  private static boolean compareOptionalValues(Xnode n1, Xnode n2) {
-    return n1 == null && n2 == null || (n1 != null && n2 != null &&
-        n1.value().toLowerCase().equals(n2.value()));
   }
 
   /**
@@ -796,6 +674,7 @@ public class XnodeUtil {
   private static boolean isIndexRangeIdentical(Xnode idx1, Xnode idx2,
                                                boolean withLowerBound)
   {
+    // TODO move to Loop
     if(idx1.opcode() != Xcode.INDEXRANGE || idx2.opcode() != Xcode.INDEXRANGE) {
       return false;
     }
@@ -821,13 +700,14 @@ public class XnodeUtil {
     }
 
     if(withLowerBound) {
-      return compareFirstChildValues(low1, low2) &&
-          compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
+      return low1.compareFirstChildValues(low2) &&
+          up1.compareFirstChildValues(up2)
+          && (s1 == null || s1.compareOptionalValues(s2));
     } else {
-      return compareFirstChildValues(up1, up2) && compareOptionalValues(s1, s2);
+      return up1.compareFirstChildValues(up2)
+          && (s1 == null || s1.compareOptionalValues(s2));
     }
   }
-
 
   /**
    * Get a list of T elements from an xpath query executed from the
@@ -862,6 +742,7 @@ public class XnodeUtil {
    * @return The argument if found. Null otherwise.
    */
   public static Xnode findArg(String value, Xnode fctCall) {
+    // TODO move in Function
     if(fctCall.opcode() != Xcode.FUNCTIONCALL) {
       return null;
     }
@@ -884,6 +765,7 @@ public class XnodeUtil {
    * @return Module object if found. Null otherwise.
    */
   public static Xmod findModule(String moduleName) {
+    // TODO move in Module
     for(String dir : XcodeMLtools_Fmod.getSearchPath()) {
       String path = dir + "/" + moduleName + XMOD_FILE_EXTENSION;
       File f = new File(path);
@@ -967,25 +849,6 @@ public class XnodeUtil {
     return bound;
   }
 
-
-  /**
-   * Delete all sibling elements from the start element included.
-   *
-   * @param start Element to start from.
-   */
-  public static void deleteFrom(Xnode start) {
-    List<Xnode> toDelete = new ArrayList<>();
-    toDelete.add(start);
-    Xnode sibling = start.nextSibling();
-    while(sibling != null) {
-      toDelete.add(sibling);
-      sibling = sibling.nextSibling();
-    }
-    for(Xnode n : toDelete) {
-      n.delete();
-    }
-  }
-
   /**
    * Delete a node in the ast.
    *
@@ -998,43 +861,14 @@ public class XnodeUtil {
   }
 
   /**
-   * Check whether the end node is a direct sibling of the start node. If other
-   * nodes are between the two nodes and their opcode is not listed in the
-   * skippedNodes list, the nodes are not direct siblings.
-   *
-   * @param start        First node in the tree.
-   * @param end          Node to be check to be a direct sibling.
-   * @param skippedNodes List of opcode that are allowed between the two nodes.
-   * @return True if the nodes are direct siblings.
-   */
-  public static boolean isDirectSibling(Xnode start, Xnode end,
-                                        List<Xcode> skippedNodes)
-  {
-    if(start == null || end == null) {
-      return false;
-    }
-
-    Xnode nextSibling = start.nextSibling();
-    while(nextSibling != null) {
-      if(nextSibling.equals(end)) {
-        return true;
-      }
-      if(skippedNodes.contains(nextSibling.opcode())) {
-        nextSibling = nextSibling.nextSibling();
-      } else {
-        return false;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Return the directive prefix.
    *
    * @param pragma The pragma node.
    * @return Directive prefix if any. Empty string otherwise.
    */
   public static String getPragmaPrefix(Xnode pragma) {
+    // TODO move in Pragma
+
     if(pragma == null || pragma.opcode() != Xcode.FPRAGMASTATEMENT
         || pragma.value().isEmpty())
     {
@@ -1056,6 +890,7 @@ public class XnodeUtil {
    * passed Xnode is not a FdoStatement element.
    */
   public static String extractInductionVariable(Xnode doStatement) {
+    // TODO move in Loop
     if(doStatement.opcode() != Xcode.FDOSTATEMENT) {
       return "";
     }
@@ -1075,6 +910,8 @@ public class XnodeUtil {
   public static List<String> splitByLength(String fullPragma, int maxColumns,
                                            String pragmaPrefix)
   {
+    // TODO move in Pragma
+
     List<String> splittedPragmas = new ArrayList<>();
     fullPragma = fullPragma.toLowerCase();
     if(fullPragma.length() > maxColumns) {
@@ -1114,6 +951,7 @@ public class XnodeUtil {
    * @return Pragma string without the trailing comment if any.
    */
   public static String dropEndingComment(String pragma) {
+    // TODO move in Pragma
     if(pragma != null && pragma.indexOf("!") > 0) {
       return pragma.substring(0, pragma.indexOf("!")).trim();
     }
