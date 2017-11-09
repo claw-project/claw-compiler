@@ -37,7 +37,7 @@ public final class FieldTransform {
    *                                        sufficient. If types cannot be found
    *                                        in typeTable.
    */
-  public static void promote2(PromotionInfo fieldInfo,
+  public static void promote(PromotionInfo fieldInfo,
                               XfunctionDefinition fctDef,
                               XcodeProgram xcodeml)
       throws IllegalTransformationException

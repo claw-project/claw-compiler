@@ -82,7 +82,7 @@ public enum Xattr {
   VERSION(Xname.ATTR_VERSION),
 
   // CLAW specific attribute used in Xmod file
-  CLAW_PROMOTED(Xname.ATTR_CLAW_PROMOTED),
+  CLAW_INSERTED(Xname.ATTR_CLAW_INSERTED),
   CLAW_OVER(Xname.ATTR_CLAW_OVER)
   ;
 

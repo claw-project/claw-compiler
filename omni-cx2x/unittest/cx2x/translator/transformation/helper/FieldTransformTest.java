@@ -154,7 +154,7 @@ public class FieldTransformTest {
       }
 
       // Perform the promotion
-      FieldTransform.promote2(promotionInfo, fctDef, xcodeml);
+      FieldTransform.promote(promotionInfo, fctDef, xcodeml);
       decl = fctDef.getDeclarationTable().get(id);
       assertNotNull(decl);
       bt = xcodeml.getTypeTable().getBasicType(decl);

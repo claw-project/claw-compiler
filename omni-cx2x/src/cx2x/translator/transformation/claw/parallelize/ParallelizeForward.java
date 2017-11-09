@@ -411,7 +411,7 @@ public class ParallelizeForward extends ClawTransformation {
 
       XbasicType paramType = xcodeml.getTypeTable().getBasicType(p);
 
-      if(!p.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
+      if(!p.getBooleanAttribute(Xattr.CLAW_INSERTED)) {
         continue;
       }
 
@@ -428,7 +428,7 @@ public class ParallelizeForward extends ClawTransformation {
             XstorageClass.F_PARAM, fDef, true);
         type = bt.getType();
         Xnode param = xcodeml.createAndAddParam(varId, type, _parentFctType);
-        param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
+        param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
       } else {
 
         // Var exists already. Add to the parameters if not here.
@@ -440,7 +440,7 @@ public class ParallelizeForward extends ClawTransformation {
           Xnode param =
               xcodeml.createAndAddParamIfNotExists(varId, type, _parentFctType);
           if(param != null) {
-            param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
+            param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
           }
         }
       }
@@ -635,7 +635,7 @@ public class ParallelizeForward extends ClawTransformation {
         // Perform the promotion on the variable
 
         promotionInfo = new PromotionInfo(varInLhs.value(), dimensions);
-        FieldTransform.promote2(promotionInfo, parentFctDef, xcodeml);
+        FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
         _promotions.put(varInLhs.value(), promotionInfo);
 
@@ -762,7 +762,7 @@ public class ParallelizeForward extends ClawTransformation {
             // Perform the promotion on the variable
             promotionInfo = new PromotionInfo(varInLhs.value(), dimensions);
             //promotionInfo.setDimensions(dimensions);
-            FieldTransform.promote2(promotionInfo, parentFctDef, xcodeml);
+            FieldTransform.promote(promotionInfo, parentFctDef, xcodeml);
 
             // TODO if #38 is implemented, the variable has to be put either in
             // TODO _promotedWithBeforeOver or _promotedWithAfterOver
@@ -834,7 +834,7 @@ public class ParallelizeForward extends ClawTransformation {
           {
             PromotionInfo promotionInfo =
                 new PromotionInfo(pointer.value(), pointeeInfo.getDimensions());
-            FieldTransform.promote2(promotionInfo, fctDef, xcodeml);
+            FieldTransform.promote(promotionInfo, fctDef, xcodeml);
             _promotions.put(pointer.value(), promotionInfo);
           }
         }

@@ -470,7 +470,7 @@ public class Parallelize extends ClawTransformation {
         _arrayFieldsInOut.add(arrayIdentifier);
         PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
             _claw.getDimensionsForData(arrayIdentifier));
-        FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
+        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
         TransformationHelper.adaptArrayReferences(
@@ -537,7 +537,7 @@ public class Parallelize extends ClawTransformation {
             _arrayFieldsInOut.add(lhsName);
             PromotionInfo promotionInfo =
                 new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
-            FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
+            FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
             _promotions.put(lhsName, promotionInfo);
           }
           if(lhs.opcode() == Xcode.VAR) {
@@ -669,7 +669,7 @@ public class Parallelize extends ClawTransformation {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
           PromotionInfo promotionInfo = new PromotionInfo(fieldId,
               _claw.getDimensionsForData(fieldId));
-          FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
+          FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
       }
@@ -678,7 +678,7 @@ public class Parallelize extends ClawTransformation {
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getDimensionsForData(fieldId));
-        FieldTransform.promote2(promotionInfo, _fctDef, xcodeml);
+        FieldTransform.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }
     }
@@ -707,7 +707,7 @@ public class Parallelize extends ClawTransformation {
         Xnode param = xcodeml.createAndAddParam(
             dimension.getLowerBound().getValue(),
             bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
+        param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
       }
 
       // Create parameter for the upper bound
@@ -719,7 +719,7 @@ public class Parallelize extends ClawTransformation {
         Xnode param = xcodeml.createAndAddParam(
             dimension.getUpperBound().getValue(),
             bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
+        param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), XbuiltInType.INT,

@@ -286,12 +286,12 @@ public class TransformationHelper {
     for(int i = 0; i < paramsLocal.size(); ++i) {
       Xnode pLocal = paramsLocal.get(i);
       // Number of parameters in the module function as been
-      if(pLocal.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
+      if(pLocal.getBooleanAttribute(Xattr.CLAW_INSERTED)) {
         // new parameter
         Xnode param = mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
         if(param != null) {
-          param.setBooleanAttribute(Xattr.CLAW_PROMOTED, true);
+          param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
         }
       } else {
         Xnode pMod = paramsMod.get(i);
@@ -349,7 +349,7 @@ public class TransformationHelper {
       return dimensions;
     }
     for(Xnode param : fctType.getParams().getAll()) {
-      if(param.getBooleanAttribute(Xattr.CLAW_PROMOTED)) {
+      if(param.getBooleanAttribute(Xattr.CLAW_INSERTED)) {
         DimensionDefinition dim = new DimensionDefinition(
             ClawConstant.ITER_PREFIX + param.value(),
             ClawConstant.DEFAULT_LOWER_BOUND,

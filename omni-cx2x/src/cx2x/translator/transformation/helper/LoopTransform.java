@@ -44,7 +44,7 @@ public final class LoopTransform {
    * @throws IllegalTransformationException If given node are null or not
    *                                        FdoStatement nodes.
    */
-  private static void merge(Xnode masterDoStmt, Xnode slaveDoStmt)
+  public static void merge(Xnode masterDoStmt, Xnode slaveDoStmt)
       throws IllegalTransformationException
   {
     if(masterDoStmt == null || slaveDoStmt == null
@@ -276,14 +276,10 @@ public final class LoopTransform {
     }
 
     // Append content of slave body master body
-    Node childNode = slaveBody.element().getFirstChild();
-    while(childNode != null) {
-      Node nextChild = childNode.getNextSibling();
-      // Do something with childNode, including move or delete...
-      if(childNode.getNodeType() == Node.ELEMENT_NODE) {
-        masterBody.element().appendChild(childNode);
-      }
-      childNode = nextChild;
+    Xnode crtNode = slaveBody.firstChild();
+    while(crtNode != null) {
+      masterBody.append(crtNode, true);
+      crtNode = crtNode.nextSibling();
     }
   }
 
