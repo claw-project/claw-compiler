@@ -6,8 +6,8 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -806,7 +806,6 @@ public class XcodeML extends Xnode {
     return n;
   }
 
-
   /**
    * Create a list of FpragmaStatement with correct line continuation symbols.
    * Initial value is splitted according to the max column information. This is
@@ -833,7 +832,7 @@ public class XcodeML extends Xnode {
       prefix = ClawConstant.CLAW;
     }
 
-    List<String> chunks = XnodeUtil.splitByLength(value, maxColumn, prefix);
+    List<String> chunks = Pragma.split(value, maxColumn, prefix);
     for(int i = 0; i < chunks.size(); ++i) {
       String chunk = chunks.get(i).trim();
       Xnode p = createNode(Xcode.FPRAGMASTATEMENT);

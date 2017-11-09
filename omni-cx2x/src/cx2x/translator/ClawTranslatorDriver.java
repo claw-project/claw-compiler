@@ -6,11 +6,12 @@ package cx2x.translator;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
-import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.GroupConfiguration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.primitive.Module;
+import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -96,7 +97,7 @@ public class ClawTranslatorDriver {
             // Handle special transformation of OpenACC line continuation
             for(GroupConfiguration gc : Configuration.get().getGroups()) {
               if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
-                  && XnodeUtil.getPragmaPrefix(pragma).equals(gc.getDirective()))
+                  && Pragma.getPrefix(pragma).equals(gc.getDirective()))
               {
                 generateTransformation(gc, new ClawLanguage(pragma));
               }
@@ -211,10 +212,7 @@ public class ClawTranslatorDriver {
   public void flush()
       throws IllegalTransformationException
   {
-    String modPrefix = Utility.formattedModuleFilePrefix(
-        Configuration.get().getCurrentTarget(),
-        Configuration.get().getCurrentDirective());
-    _translator.getModCache().write(modPrefix, ClawConstant.INDENT_OUTPUT);
+    _translator.getModCache().write(ClawConstant.INDENT_OUTPUT);
   }
 
   /**

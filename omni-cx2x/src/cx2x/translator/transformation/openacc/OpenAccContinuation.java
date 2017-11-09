@@ -6,19 +6,16 @@
 package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
+import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
-
-import java.util.List;
 
 /**
  * <pre>
@@ -46,7 +43,6 @@ import java.util.List;
  */
 public class OpenAccContinuation extends ClawTransformation {
 
-
   /**
    * Constructs a new OpenACC continuation triggered from a specific pragma.
    *
@@ -56,7 +52,6 @@ public class OpenAccContinuation extends ClawTransformation {
   public OpenAccContinuation(ClawLanguage directive) {
     super(directive);
   }
-
 
   /**
    * Check if the directive starts with the OpenACC prefix.
@@ -97,115 +92,15 @@ public class OpenAccContinuation extends ClawTransformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
-    if(isFromPrimitive()) {
-      splitByCont(xcodeml);
+    if(Pragma.fromClawPrimitive(getDirective().getPragma())) {
+      Pragma.splitByCont(getDirective().getPragma(),
+          ClawConstant.OPENACC_PREFIX, xcodeml);
     } else if(Configuration.get().getMaxColumns() > 0
         && !getDirective().getPragma().isDeleted())
     {
-      splitByLength(xcodeml, translator);
+      Pragma.splitByLength(getDirective().getPragma(), xcodeml,
+          ClawConstant.OPENACC_PREFIX);
     }
-  }
-
-  /**
-   * Split the line by its length and add continuation symbols.
-   *
-   * @param xcodeml    The XcodeML on which the transformations are
-   *                   applied.
-   * @param translator The translator used to applied the transformations.
-   */
-  private void splitByLength(XcodeProgram xcodeml, Translator translator) {
-    String allPragma = getDirective().getPragma().value().toLowerCase();
-    if(allPragma.length() > Configuration.get().getMaxColumns()) {
-      allPragma = XnodeUtil.dropEndingComment(allPragma);
-      Xnode newlyInserted = getDirective().getPragma();
-      int lineIndex = getDirective().getPragma().lineNo();
-      List<String> splittedPragmas = XnodeUtil.splitByLength(allPragma,
-          Configuration.get().getMaxColumns(), ClawConstant.OPENACC_PREFIX);
-
-      for(int i = 0; i < splittedPragmas.size(); ++i) {
-        // Create pragma with continuation symbol unless for the last item.
-        newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
-            splittedPragmas.get(i), i != splittedPragmas.size() - 1);
-      }
-      // Delete original unsplitted pragma.
-      getDirective().getPragma().delete();
-    }
-  }
-
-  /**
-   * Split the line by its previous continuation mark.
-   *
-   * @param xcodeml The XcodeML on which the transformations are
-   *                applied.
-   */
-  private void splitByCont(XcodeProgram xcodeml) {
-    String allPragma = getDirective().getPragma().value();
-    int lineIndex = getDirective().getPragma().lineNo();
-    String splitter = ClawConstant.OPENACC_PREFIX;
-    if(allPragma.contains(ClawConstant.OPENACC_PREFIX_CONT)) {
-      splitter = ClawConstant.OPENACC_PREFIX_CONT;
-    }
-
-    Xnode newlyInserted = getDirective().getPragma();
-    String[] lines = allPragma.split(splitter);
-    for(int i = 0; i < lines.length - 1; ++i) {
-      newlyInserted = createAndInsertPragma(xcodeml, newlyInserted, lineIndex++,
-          lines[i], true);
-    }
-    createAndInsertPragma(xcodeml, newlyInserted, lineIndex,
-        lines[lines.length - 1], false);
-  }
-
-  /**
-   * Check if the pragma was already continued. Can happen when using the !$claw
-   * primitive directive
-   *
-   * @return True if the pragma was previously continued.
-   */
-  private boolean isFromPrimitive() {
-    if(getDirective().getPragma().isDeleted()) {
-      return false;
-    }
-    String allPragma = getDirective().getPragma().value();
-    return allPragma.contains(ClawConstant.OPENACC_PREFIX_CONT) ||
-        Utility.countOccurrences(allPragma,
-            ClawConstant.OPENACC_PREFIX + " ") > 1;
-  }
-
-  /**
-   * Create a new pragma node and insert it after the hook.
-   *
-   * @param xcodeml   Current XcodeML file unit.
-   * @param hook      Hook node. New node will be inserted after this one.
-   * @param lineIndex Line index specify the offset of the line number for the
-   *                  new node from the original pragma node.
-   * @param value     Value of the pragma node.
-   * @param continued If true, continuation symbol is added at the end of the
-   *                  line.
-   * @return The newly created node to be able to insert after it.
-   */
-  private Xnode createAndInsertPragma(XcodeProgram xcodeml, Xnode hook,
-                                      int lineIndex, String value,
-                                      boolean continued)
-  {
-    Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    p.setFilename(getDirective().getPragma().filename());
-    p.setLine(getDirective().getPragma().lineNo() + lineIndex);
-    if(continued) {
-      if(!value.trim().toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX)) {
-        p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim() + " " +
-            ClawConstant.CONTINUATION_LINE_SYMBOL);
-      } else {
-        p.setValue(value.trim() + " " + ClawConstant.CONTINUATION_LINE_SYMBOL);
-      }
-    } else {
-      if(!value.trim().toLowerCase().startsWith(ClawConstant.OPENACC_PREFIX)) {
-        p.setValue(ClawConstant.OPENACC_PREFIX + " " + value.trim());
-      }
-    }
-    hook.insertAfter(p);
-    getDirective().getPragma().delete();
-    return p;
   }
 
   @Override

@@ -6,10 +6,10 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.helper.HoistedNestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
 import helper.TestConstant;
-import helper.XmlHelper;
 import org.junit.Test;
 
 import java.io.File;
@@ -48,80 +48,6 @@ public class XnodeUtilTest {
             Arrays.asList("j", "i"));
 
     assertEquals(3, stmts.size());
-  }
-
-  @Test
-  public void getPragmaPrefixTest() {
-    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-
-    Xnode p1 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    p1.setValue(ClawConstant.OPENACC_PREFIX);
-    assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p1));
-
-    Xnode p2 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    p2.setValue(ClawConstant.OPENMP_PREFIX);
-    assertEquals(ClawConstant.OPENMP_PREFIX, XnodeUtil.getPragmaPrefix(p2));
-
-    Xnode p3 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    p3.setValue("");
-    assertEquals("", XnodeUtil.getPragmaPrefix(p3));
-
-    Xnode p4 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    assertEquals("", XnodeUtil.getPragmaPrefix(p4));
-
-    Xnode p5 = xcodeml.createNode(Xcode.FDOSTATEMENT);
-    p5.setValue("acc");
-    assertEquals("", XnodeUtil.getPragmaPrefix(p5));
-
-    assertEquals("", XnodeUtil.getPragmaPrefix(null));
-
-    Xnode p6 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    p6.setValue(ClawConstant.OPENACC_PREFIX + " loop private(a)");
-    assertEquals(ClawConstant.OPENACC_PREFIX, XnodeUtil.getPragmaPrefix(p6));
-  }
-
-  @Test
-  public void splitByLengthTest() {
-    String p1 = "acc data present(var1,var2,var3,var4,var5,var6,var7,var8," +
-        "var10,var11,var12,var13,var14,var15,var16)";
-    int maxCol = 40;
-
-    // Just commas
-    List<String> splitted =
-        XnodeUtil.splitByLength(p1, maxCol, ClawConstant.OPENACC_PREFIX);
-    checkSplitted(splitted, 5, maxCol);
-
-    // Just spaces
-    p1 = "acc data present(var1, var2, var3, var4, var5, var6, var7, " +
-        "var8, var10, var11, var12, var13, var14, var15, var16)";
-    splitted = XnodeUtil.splitByLength(p1, maxCol, ClawConstant.OPENACC_PREFIX);
-    checkSplitted(splitted, 4, maxCol);
-
-    // Mixed spaces and commas
-    p1 = "acc data present(var1, var2,var3,var4, var5, var6, var7, " +
-        "var8,var10,var11, var12,var13,var14, var15,var16, var17, var18)";
-    splitted = XnodeUtil.splitByLength(p1, maxCol, ClawConstant.OPENACC_PREFIX);
-    checkSplitted(splitted, 5, maxCol);
-  }
-
-  // Checks for the splitByLengthTest
-  private void checkSplitted(List<String> splitted, int nb, int maxColumns) {
-    assertEquals(nb, splitted.size());
-    for(String chunk : splitted) {
-      assertTrue(chunk.length() <= maxColumns);
-    }
-  }
-
-  @Test
-  public void PragmaCommentTest() {
-    String p1 = "acc parallel";
-    assertEquals(p1, XnodeUtil.dropEndingComment(p1));
-    String p2 = "acc parallel ! Start parallel region";
-    assertEquals(p1, XnodeUtil.dropEndingComment(p2));
-    String p3 = "acc parallel !!! Start parallel region";
-    assertEquals(p1, XnodeUtil.dropEndingComment(p3));
-    assertEquals(null, XnodeUtil.dropEndingComment(null));
-    assertEquals("", XnodeUtil.dropEndingComment(""));
   }
 
   @Test
