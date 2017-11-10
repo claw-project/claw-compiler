@@ -576,56 +576,6 @@ public class XnodeUtil {
   }
 
   /**
-   * Duplicate a lower or an upper bound between two different XcodeML units.
-   *
-   * @param baseBound  Base bound to be duplicated.
-   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
-   * @param xcodemlSrc Source XcodeML unit. Contains base bound.
-   * @return The newly duplicated bound element.
-   * @throws IllegalTransformationException If bound cannot be duplicated.
-   */
-  public static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlDst,
-                                     XcodeML xcodemlSrc)
-      throws IllegalTransformationException
-  {
-    if(baseBound.opcode() != Xcode.LOWERBOUND
-        && baseBound.opcode() != Xcode.UPPERBOUND)
-    {
-      throw new IllegalTransformationException("Cannot duplicate bound");
-    }
-
-    if(xcodemlSrc == xcodemlDst) {
-      return baseBound.cloneNode();
-    }
-
-    Xnode boundChild = baseBound.child(0);
-    if(boundChild == null) {
-      throw new IllegalTransformationException("Cannot duplicate bound as it " +
-          "has no children element");
-    }
-
-    Xnode bound = xcodemlDst.createNode(baseBound.opcode());
-    if(boundChild.opcode() == Xcode.FINTCONSTANT
-        || boundChild.opcode() == Xcode.VAR)
-    {
-      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
-    } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
-      Xnode lhs = boundChild.child(Xnode.LHS);
-      Xnode rhs = boundChild.child(Xnode.RHS);
-      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUSEXPR);
-      bound.append(plusExpr);
-      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
-      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
-    } else {
-      throw new IllegalTransformationException(
-          String.format("Lower/upper bound type currently not supported (%s)",
-              boundChild.opcode().toString())
-      );
-    }
-    return bound;
-  }
-
-  /**
    * Delete a node in the ast.
    *
    * @param node Node to be deleted.

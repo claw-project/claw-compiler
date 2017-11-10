@@ -6,8 +6,8 @@
 package cx2x.translator.language.helper;
 
 import cx2x.translator.common.ClawConstant;
+import cx2x.translator.transformation.primitive.Range;
 import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.xnode.*;
@@ -123,12 +123,12 @@ public class TransformationHelper {
 
         if(lowerBound != null) {
           Xnode newLowerBound =
-              XnodeUtil.duplicateBound(lowerBound, xcodemlDst, xcodemlSrc);
+              Range.duplicateBound(lowerBound, xcodemlSrc, xcodemlDst);
           newDim.append(newLowerBound);
         }
         if(upperBound != null) {
           Xnode newUpperBound =
-              XnodeUtil.duplicateBound(upperBound, xcodemlDst, xcodemlSrc);
+              Range.duplicateBound(upperBound, xcodemlSrc, xcodemlDst);
           newDim.append(newUpperBound);
         }
         newType.addDimension(newDim);
