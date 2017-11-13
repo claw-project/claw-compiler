@@ -137,7 +137,7 @@ public class OpenMp extends AcceleratorGenerator {
 
   @Override
   public String[] getStartLoopDirective(int value, boolean seq,
-                                           boolean naked, String clauses)
+                                        boolean naked, String clauses)
   {
     // TODO CPU/GPU difference
     // TODO handle seq argument

@@ -144,7 +144,6 @@ public class IllegalDirectiveException extends Exception {
     return _charPos;
   }
 
-
   /**
    * Get the offending token that triggered the Exception.
    *

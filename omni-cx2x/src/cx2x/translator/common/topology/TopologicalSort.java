@@ -80,7 +80,6 @@ public final class TopologicalSort {
     return result;
   }
 
-
   /**
    * Recursively performs a DFS from the specified node, marking all nodes
    * encountered by the search.

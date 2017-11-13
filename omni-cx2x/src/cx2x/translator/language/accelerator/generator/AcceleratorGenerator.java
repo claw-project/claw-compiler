@@ -137,7 +137,6 @@ public abstract class AcceleratorGenerator {
     return "";
   }
 
-
   /**
    * Return the formatted directive to be inserted in a subroutine/function
    * definition.
@@ -146,7 +145,6 @@ public abstract class AcceleratorGenerator {
    * @return Routine directive.
    */
   public abstract String[] getRoutineDirective(boolean seq);
-
 
   /**
    * Check whether the raw directive is a CLAW compile guard that must be

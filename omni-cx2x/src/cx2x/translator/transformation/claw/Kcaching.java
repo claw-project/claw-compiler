@@ -308,7 +308,6 @@ public class Kcaching extends ClawTransformation {
       xcodeml.getTypeTable().add(newType);
     }
 
-
     String cacheName =
         generateNameWithOffsetInfo(var, _claw.getOffsets());
 

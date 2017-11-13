@@ -63,7 +63,6 @@ public class XanalysisError {
     return _errorLineNumbers.get(0);
   }
 
-
   /**
    * @return The line numbers that triggered the error.
    */

@@ -100,7 +100,7 @@ public abstract class TransformationGroup {
    * Apply all transformation stored in this group. Method transform from each
    * transformation is called.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @throws IllegalTransformationException if transformation cannot be applied.
    * @see Transformation#transform(XcodeProgram, Translator, Transformation)
@@ -108,6 +108,5 @@ public abstract class TransformationGroup {
   public abstract void applyTranslations(XcodeProgram xcodeml,
                                          Translator translator)
       throws Exception;
-
 
 }

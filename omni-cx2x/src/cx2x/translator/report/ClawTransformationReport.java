@@ -107,7 +107,6 @@ public class ClawTransformationReport {
     infos.add(new String[]{"Driver command", ""}); // TODO
     infos.add(new String[]{"Translator command", Utility.join(" ", args)});
 
-
     int indentCol = 0;
     for(String[] info : infos) {
       if(info[0].length() > indentCol) {

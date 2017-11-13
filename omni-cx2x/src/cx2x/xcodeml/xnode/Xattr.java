@@ -83,8 +83,7 @@ public enum Xattr {
 
   // CLAW specific attribute used in Xmod file
   CLAW_INSERTED(Xname.ATTR_CLAW_INSERTED),
-  CLAW_OVER(Xname.ATTR_CLAW_OVER)
-  ;
+  CLAW_OVER(Xname.ATTR_CLAW_OVER);
 
   private final String _name;
 

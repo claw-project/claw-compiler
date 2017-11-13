@@ -79,7 +79,6 @@ public class GroupConfiguration {
     return _type;
   }
 
-
   /**
    * Get the trigger type.
    *

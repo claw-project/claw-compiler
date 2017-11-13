@@ -75,7 +75,6 @@ public class ClawMapping {
     return _mappingVariables.size();
   }
 
-
   /**
    * Return a string representation of the object.
    *

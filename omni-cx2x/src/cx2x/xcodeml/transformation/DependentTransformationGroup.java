@@ -46,7 +46,7 @@ public class DependentTransformationGroup extends TransformationGroup {
         if(base.canBeTransformedWith(xcodeml, candidate)) {
           try {
             base.transform(xcodeml, translator, candidate);
-            if(candidate.isTransformed()){
+            if(candidate.isTransformed()) {
               incrementAppliedTransformation();
             }
           } catch(IllegalTransformationException itex) {
@@ -58,7 +58,7 @@ public class DependentTransformationGroup extends TransformationGroup {
           }
         }
       }
-      if(base.isTransformed()){
+      if(base.isTransformed()) {
         incrementAppliedTransformation();
       }
     }

@@ -6,8 +6,8 @@
 package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.Transformation;
@@ -37,7 +37,7 @@ public class DirectivePrimitive extends ClawTransformation {
   /**
    * Analysis of the transformation.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True always.
    */
@@ -61,7 +61,7 @@ public class DirectivePrimitive extends ClawTransformation {
    *
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Not used in this transformation
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.

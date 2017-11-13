@@ -23,8 +23,7 @@ public enum XcodeType {
   LOGICAL('L', Xname.TYPE_F_LOGICAL),
   STRUCT('S', ""),
   VOID('V', Xname.TYPE_F_VOID),
-  NONE('N', "")
-  ;
+  NONE('N', "");
 
   private static final int HASH_LENGTH = 12;
   private final char _prefix;
@@ -60,6 +59,34 @@ public enum XcodeType {
   }
 
   /**
+   * Get type from XcodeML/F IR value.
+   *
+   * @param value Type value from XcodeML/F IR.
+   * @return Corresponding enum value. NONE if value corresponds to nothing.
+   */
+  public static XcodeType fromString(String value) {
+    if(value == null) {
+      return NONE;
+    }
+    switch(value) {
+      case Xname.TYPE_F_INT:
+        return INTEGER;
+      case Xname.TYPE_F_REAL:
+        return REAL;
+      case Xname.TYPE_F_COMPLEX:
+        return COMPLEX;
+      case Xname.TYPE_F_LOGICAL:
+        return LOGICAL;
+      case Xname.TYPE_F_CHAR:
+        return CHARACTER;
+      case Xname.TYPE_F_VOID:
+        return VOID;
+      default:
+        return NONE;
+    }
+  }
+
+  /**
    * Get a new unique hash with the current XcodeType prefix.
    *
    * @return New unique hash.
@@ -91,34 +118,6 @@ public enum XcodeType {
    */
   public boolean isOfType(String hash) {
     return hash != null && !hash.isEmpty() && hash.charAt(0) == _prefix;
-  }
-
-  /**
-   * Get type from XcodeML/F IR value.
-   *
-   * @param value Type value from XcodeML/F IR.
-   * @return Corresponding enum value. NONE if value corresponds to nothing.
-   */
-  public static XcodeType fromString(String value) {
-    if(value == null) {
-      return NONE;
-    }
-    switch(value) {
-      case Xname.TYPE_F_INT:
-        return INTEGER;
-      case Xname.TYPE_F_REAL:
-        return REAL;
-      case Xname.TYPE_F_COMPLEX:
-        return COMPLEX;
-      case Xname.TYPE_F_LOGICAL:
-        return LOGICAL;
-      case Xname.TYPE_F_CHAR:
-        return CHARACTER;
-      case Xname.TYPE_F_VOID:
-        return VOID;
-      default:
-        return NONE;
-    }
   }
 
   @Override

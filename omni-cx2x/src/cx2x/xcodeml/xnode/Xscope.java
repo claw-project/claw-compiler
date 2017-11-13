@@ -20,6 +20,7 @@ public enum Xscope {
   PARAM(Xname.SCOPE_PARAM);
 
   private final String _value;
+
   Xscope(String value) {
     _value = value;
   }

@@ -44,7 +44,7 @@ public class UtilityRemove extends ClawBlockTransformation {
   /**
    * Check whether the transformation can be applied or not.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if the transformation can be applied.
    */
@@ -72,7 +72,7 @@ public class UtilityRemove extends ClawBlockTransformation {
    * Delete the corresponding elements.
    *
    * @param xcodeml        The XcodeML on which the transformations are applied.
-   * @param translator    The translator used to applied the transformations.
+   * @param translator     The translator used to applied the transformations.
    * @param transformation Not used for independent transformation.
    * @throws IllegalTransformationException If transformation cannot be applied.
    */

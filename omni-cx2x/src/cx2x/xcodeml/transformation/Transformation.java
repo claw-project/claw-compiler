@@ -44,12 +44,11 @@ public abstract class Transformation {
     }
   }
 
-
   /**
    * Analyze the possibility to apply the transformation. Gather information to
    * be able to apply the transformation in when calling #transform.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
    * @return True if analysis succeeded. False otherwise.
    */
@@ -82,10 +81,10 @@ public abstract class Transformation {
   /**
    * Apply the actual transformation.
    *
-   * @param xcodeml     The XcodeML on which the transformations are applied.
+   * @param xcodeml    The XcodeML on which the transformations are applied.
    * @param translator The translator used to applied the transformations.
-   * @param other       Only for dependent transformation. The other
-   *                    transformation part of the transformation.
+   * @param other      Only for dependent transformation. The other
+   *                   transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */

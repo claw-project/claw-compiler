@@ -87,7 +87,6 @@ public enum Xintent {
     return isIntentIn() || isIntentOut();
   }
 
-
   /**
    * Check if intent is compatible with the given one.
    *

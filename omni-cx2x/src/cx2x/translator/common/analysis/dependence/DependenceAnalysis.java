@@ -139,5 +139,4 @@ public class DependenceAnalysis {
     return _mainLoop.lineNo() + msg + getInductionVariable();
   }
 
-
 }
