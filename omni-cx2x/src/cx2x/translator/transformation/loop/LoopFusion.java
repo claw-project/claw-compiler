@@ -93,7 +93,6 @@ public class LoopFusion extends ClawTransformation {
     if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0
         && _claw.getCollapseValue() > _doStmt.size())
     {
-
       xcodeml.addError("not enough do statements for collapse value",
           _claw.getPragma().lineNo());
       return false;
@@ -266,5 +265,4 @@ public class LoopFusion extends ClawTransformation {
         ? getGroupClauseLabel() == null
         : otherLoopUnit.getGroupClauseLabel().equals(getGroupClauseLabel()));
   }
-
 }

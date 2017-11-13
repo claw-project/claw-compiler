@@ -14,7 +14,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
-
 /**
  * Wrapper class to call the Fortran decompiler of OMNI Compiler directly
  * from Java instead of calling it as a separated program.
