@@ -138,7 +138,7 @@ public class XcodeML extends Xnode {
     }
 
     XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
-    XbasicType bType = createBasicType(XbuiltInType.INT, Xintent.NONE);
+    XbasicType bType = createBasicType(XcodeType.INTEGER, Xintent.NONE);
     if(type != null) {
       bType.setIntent(type.getIntent());
     }
@@ -564,7 +564,7 @@ public class XcodeML extends Xnode {
    * @return Newly create FbasicType with a corresponding generated type hash
    * value.
    */
-  public XbasicType createBasicType(XbuiltInType type, Xintent intent) {
+  public XbasicType createBasicType(XcodeType type, Xintent intent) {
     String typeHash = getTypeTable().generateHash(type);
     return createBasicType(typeHash, type.toString(), intent);
   }
@@ -771,7 +771,7 @@ public class XcodeML extends Xnode {
     Xnode valueList = createNode(Xcode.VALUELIST);
     for(String charConstant : charConstants) {
       // Create the char constant type
-      Xnode charType = createBasicType(XbuiltInType.CHAR, Xintent.NONE);
+      Xnode charType = createBasicType(XcodeType.CHARACTER, Xintent.NONE);
       Xnode len = createNode(Xcode.LEN);
       len.append(createIntConstant(charConstant.length()));
       charType.append(len);

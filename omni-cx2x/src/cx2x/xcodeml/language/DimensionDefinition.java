@@ -75,14 +75,18 @@ public class DimensionDefinition {
   }
 
   /**
-   * @return
+   * Get the insertion position value for this dimension definition.
+   *
+   * @return InsertionPosition enum value.
    */
   public InsertionPosition getInsertionPosition() {
     return _insertionPosition;
   }
 
   /**
-   * @param position
+   * Set the insertion position value for this dimension definition.
+   *
+   * @param position InsertionPosition enum value.
    */
   public void setInsertionPosition(InsertionPosition position) {
     _insertionPosition = position;
@@ -137,6 +141,11 @@ public class DimensionDefinition {
     return arrayIndex;
   }
 
+  /**
+   * Create a new copy of the current dimension definition.
+   *
+   * @return A newly created copy of this dimension definition.
+   */
   public DimensionDefinition copy() {
     return new DimensionDefinition(_identifier, _lowerBound, _upperBound);
   }

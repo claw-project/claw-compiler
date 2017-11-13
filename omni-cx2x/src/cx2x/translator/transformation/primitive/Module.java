@@ -181,7 +181,7 @@ public final class Module {
     }
 
     XbasicType modIntTypeIntentIn =
-        mod.createBasicType(XbuiltInType.INT, Xintent.IN);
+        mod.createBasicType(XcodeType.INTEGER, Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
     List<Xnode> paramsLocal = fctType.getParams().getAll();

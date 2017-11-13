@@ -418,7 +418,7 @@ public class ParallelizeForward extends ClawTransformation {
               "is made.", _claw.getPragma().lineNo());
         }
         // Size variable have to be declared
-        XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
+        XbasicType bt = xcodeml.createBasicType(XcodeType.INTEGER, Xintent.IN);
         xcodeml.getTypeTable().add(bt);
         xcodeml.createIdAndDecl(varId, bt.getType(),
             XstorageClass.F_PARAM, fDef, true);

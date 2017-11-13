@@ -35,8 +35,6 @@ public enum InsertionPosition {
   @Override
   public String toString() {
     switch(this) {
-      case BEFORE:
-        return ClawConstant.BEFORE;
       case IN_MIDDLE:
         return ClawConstant.MIDDLE;
       case AFTER:
@@ -45,5 +43,4 @@ public enum InsertionPosition {
         return ClawConstant.BEFORE;
     }
   }
-
 }

@@ -39,12 +39,18 @@ public class XtypeTableTest {
     XtypeTable typeTable = XmlHelper.createXtypeTableFromString(basicTypeTable);
     assertNotNull(typeTable);
     assertEquals(4, typeTable.count());
+    assertEquals(4, typeTable.values().size());
 
     // FbasicType test
+    assertFalse(typeTable.isBasicType((String) null));
+    assertFalse(typeTable.isBasicType(""));
+
     assertTrue(typeTable.hasType(basicTypeHash));
+    assertTrue(typeTable.isBasicType(basicTypeHash));
     XbasicType type1 = typeTable.getBasicType(basicTypeHash);
     assertNotNull(type1);
     assertTrue(typeTable.isBasicType(basicTypeHash));
+    assertTrue(typeTable.isBasicType(type1));
     assertFalse(type1.hasIntent());
     assertEquals(Xintent.NONE, type1.getIntent());
     assertFalse(type1.hasKind());
@@ -53,28 +59,89 @@ public class XtypeTableTest {
     assertTrue(type1.getLength().child(0).opcode() == Xcode.FINTCONSTANT);
     assertEquals("30", type1.getLength().child(0).value());
 
+    assertNull(typeTable.getFunctionType(basicTypeHash));
+    assertNull(typeTable.getFunctionType(type1));
+    assertNull(typeTable.getStructType(basicTypeHash));
+    assertNull(typeTable.getStructType(type1));
+
     // FfunctionType test
     assertTrue(typeTable.hasType(fctTypeHash));
+    assertTrue(typeTable.isFunctionType(fctTypeHash));
     XfunctionType type2 = typeTable.getFunctionType(fctTypeHash);
     assertNotNull(type2);
     assertTrue(typeTable.isFunctionType(fctTypeHash));
+    assertTrue(typeTable.isFunctionType(type2));
     assertEquals(Xname.TYPE_F_VOID, type2.getReturnType());
     assertTrue(type2.isProgram());
     assertFalse(type2.isInternal());
     assertFalse(type2.isRecursive());
     assertNull(type2.getResultName());
 
+    assertNull(typeTable.getBasicType(fctTypeHash));
+    assertNull(typeTable.getStructType(fctTypeHash));
+    assertNull(typeTable.getBasicType(type2));
+    assertNull(typeTable.getStructType(type2));
+
     // FstructType tests
     assertTrue(typeTable.hasType(structTypeHash1));
+    assertTrue(typeTable.isStructType(structTypeHash1));
     assertTrue(typeTable.hasType(structTypeHash2));
+    assertTrue(typeTable.isStructType(structTypeHash2));
     XstructType structType1 = typeTable.getStructType(structTypeHash1);
     XstructType structType2 = typeTable.getStructType(structTypeHash2);
     assertNotNull(structType1);
     assertNotNull(structType2);
     assertTrue(typeTable.isStructType(structTypeHash1));
     assertTrue(typeTable.isStructType(structTypeHash2));
+    assertTrue(typeTable.isStructType(structType1));
+    assertTrue(typeTable.isStructType(structType2));
     assertFalse(structType1.isExtend());
     assertTrue(structType2.isExtend());
     assertEquals(structTypeHash1, structType2.getExtend());
+
+    assertNull(typeTable.getBasicType(structTypeHash1));
+    assertNull(typeTable.getFunctionType(structTypeHash1));
+    assertNull(typeTable.getBasicType(structTypeHash2));
+    assertNull(typeTable.getFunctionType(structTypeHash2));
+    assertNull(typeTable.getBasicType(structType1));
+    assertNull(typeTable.getFunctionType(structType1));
+    assertNull(typeTable.getBasicType(structType2));
+    assertNull(typeTable.getFunctionType(structType2));
+
+    // Clone
+    XtypeTable clone = typeTable.cloneNode();
+    assertNotNull(clone);
+    assertNotEquals(typeTable.element(), clone.element());
+    assertEquals(4, clone.values().size());
+    assertEquals(4, clone.count());
+  }
+
+
+  @Test
+  public void hashTest() {
+    XtypeTable typeTable = XmlHelper.createXtypeTableFromString(basicTypeTable);
+    assertNotNull(typeTable);
+
+    assertEquals("", typeTable.generateHash(null));
+
+    String intHash = typeTable.generateHash(XcodeType.INTEGER);
+    assertEquals(13, intHash.length());
+    assertTrue(intHash.startsWith("I"));
+
+    String realHash = typeTable.generateHash(XcodeType.REAL);
+    assertEquals(13, realHash.length());
+    assertTrue(realHash.startsWith("R"));
+
+    String complexHash = typeTable.generateHash(XcodeType.COMPLEX);
+    assertEquals(13, complexHash.length());
+    assertTrue(complexHash.startsWith("P"));
+
+    String logicalHash = typeTable.generateHash(XcodeType.LOGICAL);
+    assertEquals(13, logicalHash.length());
+    assertTrue(logicalHash.startsWith("L"));
+
+    String charHash = typeTable.generateHash(XcodeType.CHARACTER);
+    assertEquals(13, charHash.length());
+    assertTrue(charHash.startsWith("C"));
   }
 }

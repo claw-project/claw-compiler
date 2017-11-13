@@ -115,6 +115,16 @@ public class XtypeTable extends Xnode {
   }
 
   /**
+   * Check if the hash correspond to a XstructType.
+   *
+   * @param node Node to check.
+   * @return True if the hash correspond to a XstructType.
+   */
+  public boolean isStructType(Xnode node) {
+    return isStructType(node.getType());
+  }
+
+  /**
    * Check if the corresponding type node is of given type.
    *
    * @param typeClass Class type to check against.
@@ -250,33 +260,14 @@ public class XtypeTable extends Xnode {
    * @return New unique hash.
    */
   public String generateHash(XcodeType type) {
+    if(type == null) {
+      return "";
+    }
     String hash;
     do {
       hash = type.generateHash();
     } while(hasType(hash));
     return hash;
-  }
-
-  /**
-   * Generate a unique hash in the current type table.
-   *
-   * @param type Built-in type to generate the hash.
-   * @return New unique hash.
-   */
-  protected String generateHash(XbuiltInType type) {
-    switch(type) {
-      case INT:
-        return generateHash(XcodeType.INTEGER);
-      case REAL:
-        return generateHash(XcodeType.REAL);
-      case COMPLEX:
-        return generateHash(XcodeType.COMPLEX);
-      case LOGICAL:
-        return generateHash(XcodeType.LOGICAL);
-      case CHAR:
-        return generateHash(XcodeType.CHARACTER);
-    }
-    return null;
   }
 
   /**

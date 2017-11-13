@@ -5,6 +5,8 @@
 
 package cx2x.xcodeml.xnode;
 
+import cx2x.translator.common.ClawConstant;
+import cx2x.xcodeml.language.InsertionPosition;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -189,5 +191,25 @@ public class XenumTest {
       Xcode code = Xcode.fromString(rep);
       assertEquals(opcode, code);
     }
+  }
+
+  @Test
+  public void insertionPositionTest() {
+    assertEquals(InsertionPosition.BEFORE,
+        InsertionPosition.fromString(null));
+    assertEquals(InsertionPosition.BEFORE,
+        InsertionPosition.fromString(""));
+    assertEquals(InsertionPosition.BEFORE,
+        InsertionPosition.fromString("dummy"));
+    assertEquals(InsertionPosition.BEFORE,
+        InsertionPosition.fromString("before"));
+    assertEquals(InsertionPosition.IN_MIDDLE,
+        InsertionPosition.fromString("middle"));
+    assertEquals(InsertionPosition.AFTER,
+        InsertionPosition.fromString("after"));
+
+    assertEquals(ClawConstant.BEFORE, InsertionPosition.BEFORE.toString());
+    assertEquals(ClawConstant.MIDDLE, InsertionPosition.IN_MIDDLE.toString());
+    assertEquals(ClawConstant.AFTER, InsertionPosition.AFTER.toString());
   }
 }

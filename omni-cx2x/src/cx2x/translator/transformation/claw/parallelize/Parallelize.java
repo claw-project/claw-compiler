@@ -694,7 +694,7 @@ public class Parallelize extends ClawTransformation {
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
-    XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
+    XbasicType bt = xcodeml.createBasicType(XcodeType.INTEGER, Xintent.IN);
     xcodeml.getTypeTable().add(bt);
 
     // For each dimension defined in the directive

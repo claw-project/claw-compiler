@@ -83,7 +83,7 @@ public class BoundDefinition {
    */
   Xnode generateValueNode(XcodeML xcodeml) {
     if(isVar()) {
-      XbasicType bt = xcodeml.createBasicType(XbuiltInType.INT, Xintent.IN);
+      XbasicType bt = xcodeml.createBasicType(XcodeType.INTEGER, Xintent.IN);
       xcodeml.getTypeTable().add(bt);
       return xcodeml.createVar(bt.getType(), _strBoundValue, Xscope.LOCAL);
     } else {
