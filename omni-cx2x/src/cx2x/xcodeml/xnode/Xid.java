@@ -5,9 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 /**
  * The Xid represents the id (8.2) element in XcodeML intermediate
  * representation.
@@ -30,10 +27,10 @@ public class Xid extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public Xid(Element baseElement) {
-    super(baseElement);
+  public Xid(Xnode node) {
+    super(node == null ? null : node.element());
     _xname = matchSeq(Xcode.NAME);
   }
 
@@ -92,8 +89,7 @@ public class Xid extends Xnode {
    * @return A new object Xid that is the clone of the current object.
    */
   public Xid cloneNode() {
-    Node clone = cloneRawNode();
-    return new Xid((Element) clone);
+    return new Xid(super.cloneNode());
   }
 
   /**

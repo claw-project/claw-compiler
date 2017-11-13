@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.translator.transformation.primitive.Module;
-import org.w3c.dom.Element;
 
 /**
  * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -35,28 +34,18 @@ public class XfunctionDefinition extends Xnode {
   private final Xnode _name;
 
   /**
-   * Xnode ctor. Delegate construction to the Element ctor.
+   * Constructs new XfunctionDefinition instance.
    *
-   * @param node Xnode element.
+   * @param node Raw node.
    */
   public XfunctionDefinition(Xnode node) {
-    this(node.element());
-  }
-
-  /**
-   * Element standard ctor. Pass the base element to the base class and read
-   * inner information (elements and attributes).
-   *
-   * @param baseElement The root of the element.
-   */
-  public XfunctionDefinition(Element baseElement) {
-    super(baseElement);
+    super(node == null ? null : node.element());
     Xnode symbols = matchSeq(Xcode.SYMBOLS);
     assert (symbols != null);
-    _symbolTable = new XsymbolTable(symbols.element());
+    _symbolTable = new XsymbolTable(symbols);
     Xnode declarations = matchSeq(Xcode.DECLARATIONS);
     assert (declarations != null);
-    _declTable = new XdeclTable(declarations.element());
+    _declTable = new XdeclTable(declarations);
     _params = matchSeq(Xcode.PARAMS);
     _name = matchSeq(Xcode.NAME);
     assert (_name != null);
@@ -128,8 +117,6 @@ public class XfunctionDefinition extends Xnode {
    */
   @Override
   public XfunctionDefinition cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XfunctionDefinition(clone);
+    return new XfunctionDefinition(super.cloneNode());
   }
-
 }

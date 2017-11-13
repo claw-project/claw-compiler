@@ -145,10 +145,12 @@ public class LoopExtraction extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-    _fctDef = new XfunctionDefinition(fctDef.element());
+    _fctDef = new XfunctionDefinition(fctDef);
 
     // Find function declaration
-    _fctDefToExtract = xcodeml.getFunctionDefinition(_fctCall);
+    String fctName = _fctCall.matchDirectDescendant(Xcode.NAME).value();
+    _fctDefToExtract =
+        xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
 
     if(_fctDefToExtract == null) {
       xcodeml.addError("Could not locate the function definition for: "

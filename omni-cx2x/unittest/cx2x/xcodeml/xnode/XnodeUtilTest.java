@@ -31,7 +31,7 @@ public class XnodeUtilTest {
         XcodeProgram.createFromFile(TestConstant.TEST_PROGRAM);
     assertNotNull(xcodeml);
 
-    List<Xnode> pragmas = xcodeml.getAllStmt(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
     assertEquals(4, pragmas.size());
 
     Xnode loopHoistStart = new Xnode(pragmas.get(1).element());

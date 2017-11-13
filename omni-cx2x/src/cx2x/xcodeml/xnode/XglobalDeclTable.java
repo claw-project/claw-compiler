@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -32,10 +30,10 @@ public class XglobalDeclTable extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public XglobalDeclTable(Element baseElement) {
-    super(baseElement);
+  public XglobalDeclTable(Xnode node) {
+    super(node == null ? null : node.element());
     _table = new Hashtable<>();
     readTable();
   }
@@ -44,14 +42,13 @@ public class XglobalDeclTable extends Xnode {
    * Read the declaration table
    */
   private void readTable() {
-
     Xnode crt = firstChild();
     while(crt != null) {
       if(crt.opcode() == Xcode.FFUNCTIONDEFINITION) {
-        XfunctionDefinition fctDef = new XfunctionDefinition(crt.element());
+        XfunctionDefinition fctDef = new XfunctionDefinition(crt);
         _table.put(fctDef.getName(), fctDef);
       } else if(crt.opcode() == Xcode.FMODULEDEFINITION) {
-        XmoduleDefinition moduleDef = new XmoduleDefinition(crt.element());
+        XmoduleDefinition moduleDef = new XmoduleDefinition(crt);
         _table.put(moduleDef.getName(), moduleDef);
       }
       crt = crt.nextSibling();
@@ -144,8 +141,6 @@ public class XglobalDeclTable extends Xnode {
 
   @Override
   public XglobalDeclTable cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XglobalDeclTable(clone);
+    return new XglobalDeclTable(super.cloneNode());
   }
-
 }

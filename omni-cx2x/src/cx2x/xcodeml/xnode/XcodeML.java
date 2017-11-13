@@ -11,7 +11,6 @@ import cx2x.xcodeml.exception.IllegalTransformationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -42,7 +41,7 @@ public class XcodeML extends Xnode {
    */
   XcodeML(Document baseElement) {
     super(baseElement.getDocumentElement());
-    _typeTable = new XtypeTable(matchSeq(Xcode.TYPETABLE).element());
+    _typeTable = new XtypeTable(matchSeq(Xcode.TYPETABLE));
     _xcodemlDoc = baseElement;
   }
 
@@ -53,8 +52,7 @@ public class XcodeML extends Xnode {
    * @return Newly created node.
    */
   public Xnode createNode(Xcode opcode) {
-    Element baseElement = getDocument().createElement(opcode.code());
-    return new Xnode(baseElement);
+    return new Xnode(getDocument().createElement(opcode.code()));
   }
 
   /**
@@ -80,14 +78,10 @@ public class XcodeML extends Xnode {
    */
   public List<XfunctionDefinition> getAllFctDef()
   {
-    NodeList stmtList =
-        getDocument().getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
     List<XfunctionDefinition> definitions = new ArrayList<>();
-    for(int i = 0; i < stmtList.getLength(); i++) {
-      Node stmtNode = stmtList.item(i);
-      if(stmtNode.getNodeType() == Node.ELEMENT_NODE) {
-        definitions.add(new XfunctionDefinition((Element) stmtNode));
-      }
+    List<Xnode> nodes = matchAll(Xcode.FFUNCTIONDEFINITION);
+    for(Xnode fctDef : nodes) {
+      definitions.add(new XfunctionDefinition(fctDef));
     }
     return definitions;
   }
@@ -511,7 +505,7 @@ public class XcodeML extends Xnode {
     id.append(internalName);
     id.setType(type);
     id.setAttribute(Xattr.SCLASS, sclass.toString());
-    return new Xid(id.element());
+    return new Xid(id);
   }
 
   /**

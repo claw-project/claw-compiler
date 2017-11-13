@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-
 import java.util.List;
 
 /**
@@ -27,10 +25,10 @@ public class Xparams extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public Xparams(Element baseElement) {
-    super(baseElement);
+  public Xparams(Xnode node) {
+    super(node == null ? null : node.element());
     _parameters = matchAll(Xcode.NAME);
   }
 
@@ -76,7 +74,6 @@ public class Xparams extends Xnode {
 
   @Override
   public Xparams cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new Xparams(clone);
+    return new Xparams(super.cloneNode());
   }
 }

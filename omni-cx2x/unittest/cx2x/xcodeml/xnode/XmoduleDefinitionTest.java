@@ -25,7 +25,7 @@ public class XmoduleDefinitionTest {
   @Test
   public void simpleModuleDefinitionTest() {
     Xnode node = XmlHelper.createXnode(module1);
-    XmoduleDefinition mod = new XmoduleDefinition(node.element());
+    XmoduleDefinition mod = new XmoduleDefinition(node);
     assertNotNull(mod);
     assertEquals("module", mod.getName());
     assertEquals(4, mod.lineNo());

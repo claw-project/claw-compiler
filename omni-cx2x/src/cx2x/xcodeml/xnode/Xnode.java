@@ -723,8 +723,7 @@ public class Xnode {
    */
   public XmoduleDefinition findParentModule() {
     Xnode moduleDef = matchAncestor(Xcode.FMODULEDEFINITION);
-    return (moduleDef != null) ?
-        new XmoduleDefinition(moduleDef.element()) : null;
+    return (moduleDef != null) ? new XmoduleDefinition(moduleDef) : null;
   }
 
   /**
@@ -886,7 +885,7 @@ public class Xnode {
     if(fctDef == null) {
       return null;
     }
-    return new XfunctionDefinition(fctDef.element());
+    return new XfunctionDefinition(fctDef);
   }
 
   /**

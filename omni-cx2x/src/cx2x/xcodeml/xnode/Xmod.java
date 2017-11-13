@@ -7,6 +7,7 @@ package cx2x.xcodeml.xnode;
 
 import cx2x.translator.transformation.primitive.Module;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * The Xmod represents the module information produced by the Fortran front-end
@@ -34,7 +35,7 @@ public class Xmod extends XcodeML {
     super(baseElement);
     _name = name;
     _path = path.endsWith("/") ? path : path + "/";
-    _identifiers = new XsymbolTable(matchSeq(Xcode.IDENTIFIERS).element());
+    _identifiers = new XsymbolTable(matchSeq(Xcode.IDENTIFIERS));
   }
 
   /**
@@ -71,5 +72,15 @@ public class Xmod extends XcodeML {
    */
   public XsymbolTable getIdentifiers() {
     return _identifiers;
+  }
+
+  /**
+   * Import node to current XcodeML translation unit.
+   *
+   * @param node Node to import.
+   * @return Imported node.
+   */
+  public Xnode importNode(Xnode node) {
+    return new Xnode((Element) getDocument().importNode(node.element(), true));
   }
 }

@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-
 import java.util.Hashtable;
 
 /**
@@ -28,10 +26,10 @@ public class XsymbolTable extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public XsymbolTable(Element baseElement) {
-    super(baseElement);
+  public XsymbolTable(Xnode node) {
+    super(node == null ? null : node.element());
     _table = new Hashtable<>();
     readTable();
   }
@@ -42,7 +40,7 @@ public class XsymbolTable extends Xnode {
   private void readTable() {
     Xnode crt = firstChild();
     while(crt != null) {
-      Xid id = new Xid(crt.element());
+      Xid id = new Xid(crt);
       _table.put(id.getName(), id);
       crt = crt.nextSibling();
     }
@@ -103,7 +101,6 @@ public class XsymbolTable extends Xnode {
 
   @Override
   public XsymbolTable cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XsymbolTable(clone);
+    return new XsymbolTable(super.cloneNode());
   }
 }

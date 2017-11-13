@@ -5,9 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,20 +31,10 @@ public class XfunctionType extends Xnode {
   /**
    * Basic ctor from Xnode.
    *
-   * @param node Xnode object.
+   * @param node Raw node.
    */
   public XfunctionType(Xnode node) {
-    this(node.element());
-  }
-
-  /**
-   * Element standard ctor. Pass the base element to the base class and read
-   * inner information (elements and attributes).
-   *
-   * @param baseElement The root of the element.
-   */
-  public XfunctionType(Element baseElement) {
-    super(baseElement);
+    super(node == null ? null : node.element());
     readElementInformation();
   }
 
@@ -57,7 +44,7 @@ public class XfunctionType extends Xnode {
   private void readElementInformation() {
     Xnode paramsNode = matchSeq(Xcode.PARAMS);
     if(paramsNode != null) {
-      _params = new Xparams(paramsNode.element());
+      _params = new Xparams(paramsNode);
     }
   }
 
@@ -163,8 +150,7 @@ public class XfunctionType extends Xnode {
    * @return A new XfunctionType that is a clone of the current one.
    */
   public XfunctionType cloneNode() {
-    Node clone = cloneRawNode();
-    return new XfunctionType((Element) clone);
+    return new XfunctionType(super.cloneNode());
   }
 
   /**

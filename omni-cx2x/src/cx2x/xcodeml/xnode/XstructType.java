@@ -4,8 +4,6 @@
  */
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-
 /**
  * The XstructType class represents the FstructType (3.5) element in XcodeML/F.
  * <p>
@@ -28,17 +26,7 @@ public class XstructType extends Xnode {
    * @param node Xnode object.
    */
   public XstructType(Xnode node) {
-    this(node.element());
-  }
-
-  /**
-   * Element standard ctor. Pass the base element to the base class and read
-   * inner information (elements and attributes).
-   *
-   * @param baseElement The root of the element.
-   */
-  public XstructType(Element baseElement) {
-    super(baseElement);
+    super(node == null ? null : node.element());
   }
 
   /**

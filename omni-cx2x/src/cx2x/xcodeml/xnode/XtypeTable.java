@@ -5,8 +5,6 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,7 +22,6 @@ import java.util.Map;
  *
  * @author clementval
  */
-
 public class XtypeTable extends Xnode {
 
   private final Map<String, Xnode> _table;
@@ -33,10 +30,10 @@ public class XtypeTable extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public XtypeTable(Element baseElement) {
-    super(baseElement);
+  public XtypeTable(Xnode node) {
+    super(node == null ? null : node.element());
     _table = new LinkedHashMap<>();
     readTable();
   }
@@ -156,6 +153,7 @@ public class XtypeTable extends Xnode {
    */
   public void add(Xnode type) {
     if(!type.getType().isEmpty()) {
+      // TODO should be cloned?
       _baseElement.appendChild(type.cloneRawNode());
       _table.put(type.getType(), type);
     }
@@ -281,7 +279,6 @@ public class XtypeTable extends Xnode {
 
   @Override
   public XtypeTable cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XtypeTable(clone);
+    return new XtypeTable(super.cloneNode());
   }
 }

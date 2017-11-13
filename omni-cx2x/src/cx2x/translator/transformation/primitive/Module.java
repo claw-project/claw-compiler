@@ -15,8 +15,6 @@ import cx2x.xcodeml.transformation.ModuleCache;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.io.File;
 import java.util.List;
@@ -139,9 +137,10 @@ public final class Module {
     XfunctionType fctTypeMod;
     if(importFctType) {
       // TODO should be part of XcodeML
-      Node rawNode = mod.getDocument().importNode(fctType.element(), true);
-      mod.getTypeTable().element().appendChild(rawNode);
-      XfunctionType importedFctType = new XfunctionType((Element) rawNode);
+      //Node rawNode = mod.getDocument().importNode(fctType.element(), true);
+      Xnode importedNode = mod.importNode(fctType);
+      mod.getTypeTable().append(importedNode);
+      XfunctionType importedFctType = new XfunctionType(importedNode);
       Xid importedFctTypeId = mod.createId(importedFctType.getType(),
           XstorageClass.F_FUNC, fctDef.getName());
       mod.getIdentifiers().add(importedFctTypeId);

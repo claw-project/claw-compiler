@@ -5,9 +5,7 @@
 
 package cx2x.xcodeml.xnode;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.List;
 
 /**
  * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in
@@ -33,28 +31,19 @@ public class XmoduleDefinition extends Xnode {
   private final XdeclTable _declarations;
 
   /**
-   * Xnode ctor. Delegate construction to the Element ctor.
-   *
-   * @param node Xnode element.
-   */
-  public XmoduleDefinition(Xnode node) {
-    this(node.element());
-  }
-
-  /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public XmoduleDefinition(Element baseElement) {
-    super(baseElement);
+  public XmoduleDefinition(Xnode node) {
+    super(node == null ? null : node.element());
     _name = getAttribute(Xattr.NAME);
     Xnode symbols = matchSeq(Xcode.SYMBOLS);
-    _symbols = (symbols != null) ? new XsymbolTable(symbols.element()) : null;
+    _symbols = (symbols != null) ? new XsymbolTable(symbols) : null;
     Xnode declarations = matchSeq(Xcode.DECLARATIONS);
     _declarations = (declarations != null) ?
-        new XdeclTable(declarations.element()) : null;
+        new XdeclTable(declarations) : null;
   }
 
   /**
@@ -91,18 +80,14 @@ public class XmoduleDefinition extends Xnode {
    * @return A function definition element if found. Null otherwise.
    */
   public XfunctionDefinition getFunctionDefinition(String name) {
-    if(_baseElement == null || name == null) {
+    if(name == null || name.isEmpty()) {
       return null;
     }
-    NodeList nList =
-        _baseElement.getElementsByTagName(Xname.F_FUNCTION_DEFINITION);
-    for(int i = 0; i < nList.getLength(); i++) {
-      Node n = nList.item(i);
-      if(n.getNodeType() == Node.ELEMENT_NODE) {
-        XfunctionDefinition fctDef = new XfunctionDefinition((Element) n);
-        if(fctDef.getName().equals(name)) {
-          return fctDef;
-        }
+    List<Xnode> fctDefs = matchAll(Xcode.FFUNCTIONDEFINITION);
+    for(Xnode n : fctDefs) {
+      XfunctionDefinition fctDef = new XfunctionDefinition(n);
+      if(fctDef.getName().equals(name)) {
+        return fctDef;
       }
     }
     return null;
@@ -110,7 +95,6 @@ public class XmoduleDefinition extends Xnode {
 
   @Override
   public XmoduleDefinition cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XmoduleDefinition(clone);
+    return new XmoduleDefinition(super.cloneNode());
   }
 }

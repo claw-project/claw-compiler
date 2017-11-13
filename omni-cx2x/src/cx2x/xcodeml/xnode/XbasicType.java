@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import cx2x.xcodeml.helper.XnodeUtil;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.List;
  *
  * @author clementval
  */
-
 public class XbasicType extends Xnode {
 
   private static final int APPEND = -1;
@@ -42,22 +40,13 @@ public class XbasicType extends Xnode {
   private Xnode _length = null;
 
   /**
-   * Basic ctor from Xnode.
-   *
-   * @param node Xnode object.
-   */
-  public XbasicType(Xnode node) {
-    this(node.element());
-  }
-
-  /**
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public XbasicType(Element baseElement) {
-    super(baseElement);
+  public XbasicType(Xnode node) {
+    super(node == null ? null : node.element());
     readBasicTypeInformation();
   }
 
@@ -77,7 +66,6 @@ public class XbasicType extends Xnode {
     // has kind ?
     _kind = matchSeq(Xcode.KIND);
   }
-
 
   /**
    * Get the indexRange object for the given dimension.
@@ -316,7 +304,6 @@ public class XbasicType extends Xnode {
     _dimensions = keptDim;
   }
 
-
   public void addDimension(Xnode index) {
     addDimension(index, APPEND);
   }
@@ -359,8 +346,7 @@ public class XbasicType extends Xnode {
 
   @Override
   public XbasicType cloneNode() {
-    Element element = (Element) cloneRawNode();
-    return new XbasicType(element);
+    return new XbasicType(super.cloneNode());
   }
 
   /**

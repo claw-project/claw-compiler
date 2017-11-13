@@ -42,10 +42,10 @@ public class XdeclTable extends Xnode {
    * Element standard ctor. Pass the base element to the base class and read
    * inner information (elements and attributes).
    *
-   * @param baseElement The root of the element.
+   * @param node Raw node.
    */
-  public XdeclTable(Element baseElement) {
-    super(baseElement);
+  public XdeclTable(Xnode node) {
+    super(node == null ? null : node.element());
     _table = new LinkedHashMap<>();
     readTable();
   }
@@ -192,6 +192,7 @@ public class XdeclTable extends Xnode {
     int functionLineNo = fct.lineNo();
     List<Xnode> decl = new ArrayList<>();
 
+    // TODO DOM element
     Node crtNode = _baseElement.getFirstChild();
     while(crtNode != null) {
       if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -240,7 +241,6 @@ public class XdeclTable extends Xnode {
 
   @Override
   public XdeclTable cloneNode() {
-    Element clone = (Element) cloneRawNode();
-    return new XdeclTable(clone);
+    return new XdeclTable(super.cloneNode());
   }
 }
