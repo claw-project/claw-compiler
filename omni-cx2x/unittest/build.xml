@@ -19,6 +19,8 @@
 
   <!-- Classpath for dependencies -->
   <path id="build.path">
+    <pathelement path="${omni.common.dep}" />
+    <pathelement path="${omni.exec.dep}"/>
     <pathelement path="${junit.dep}" />
     <pathelement path="${st4.dep}"/>
     <pathelement path="${antlr.dep}"/>
@@ -64,6 +66,8 @@
       <classpath path="${antlr4.runtime.dep}" />
       <classpath path="${cx2x.translator.dep}" />
       <classpath path="${cx2x.xcodeml.dep}" />
+      <classpath path="${omni.common.dep}" />
+      <classpath path="${omni.exec.dep}"/>
 
       <formatter type="plain" usefile="false" />
 
