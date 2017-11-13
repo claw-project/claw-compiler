@@ -166,7 +166,7 @@ public enum Xcode {
   // Special opcode for unknown node
   NONE(Xname.NONE);
 
-  private final String _name;
+  private final String _irVAlue;
   private final boolean _hasBody;
 
   Xcode(String s) {
@@ -174,7 +174,7 @@ public enum Xcode {
   }
 
   Xcode(String s, boolean hasBody) {
-    _name = s;
+    _irVAlue = s;
     _hasBody = hasBody;
   }
 
@@ -184,21 +184,19 @@ public enum Xcode {
 
   @Override
   public String toString() {
-    return _name;
+    return _irVAlue;
   }
 
   /**
-   * Get the XcodeML original code.
+   * Get the XcodeML IR original code.
    *
    * @return XcodeML code.
    */
   public String code() {
-    return _name;
+    return _irVAlue;
   }
 
   public boolean hasBody() {
     return _hasBody;
   }
-
-
 }

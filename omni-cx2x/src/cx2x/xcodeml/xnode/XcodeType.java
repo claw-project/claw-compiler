@@ -28,11 +28,11 @@ public enum XcodeType {
 
   private static final int HASH_LENGTH = 12;
   private final char _prefix;
-  private final String _type;
+  private final String _irVAlue;
 
   XcodeType(char prefix, String type) {
     _prefix = prefix;
-    _type = type;
+    _irVAlue = type;
   }
 
   /**
@@ -123,6 +123,6 @@ public enum XcodeType {
 
   @Override
   public String toString() {
-    return _type.isEmpty() ? null : _type;
+    return _irVAlue.isEmpty() ? null : _irVAlue;
   }
 }
