@@ -14,29 +14,49 @@ import java.util.Random;
 public enum XcodeType {
 
   // Type prefix from OMNI Compiler. Taken for the F-output-xcodeml.c file.
-  ARRAY('A'),
-  CHARACTER('C'),
-  COMPLEX('P'),
-  DCOMPLEX('P'),
-  DREAL('R'),
-  ENUM('E'),
-  FUNCTION('F'),
-  GENERIC('V'),
-  GNUMERIC('U'),
-  GNUMERIC_ALL('V'),
-  INTEGER('I'),
-  LHS('V'),
-  LOGICAL('L'),
-  NAMELIST('N'),
-  REAL('R'),
-  STRUCT('S'),
-  SUBROUTINE('F');
+  ARRAY('A', ""),
+  CHARACTER('C', Xname.TYPE_F_CHAR),
+  COMPLEX('P', Xname.TYPE_F_COMPLEX),
+  FUNCTION('F', ""),
+  INTEGER('I', Xname.TYPE_F_INT),
+  REAL('R', Xname.TYPE_F_REAL),
+  LOGICAL('L', Xname.TYPE_F_LOGICAL),
+  STRUCT('S', ""),
+  VOID('V', Xname.TYPE_F_VOID),
+  NONE('N', "")
+  ;
 
   private static final int HASH_LENGTH = 12;
   private final char _prefix;
+  private final String _type;
 
-  XcodeType(char prefix) {
+  XcodeType(char prefix, String type) {
     _prefix = prefix;
+    _type = type;
+  }
+
+  /**
+   * Check whether the given type is a built-in type or is a type defined in the
+   * type table.
+   *
+   * @param type Type to check.
+   * @return True if the type is built-in. False otherwise.
+   */
+  public static boolean isBuiltInType(String type) {
+    if(type == null) {
+      return false;
+    }
+    switch(type) {
+      case Xname.TYPE_F_CHAR:
+      case Xname.TYPE_F_COMPLEX:
+      case Xname.TYPE_F_INT:
+      case Xname.TYPE_F_LOGICAL:
+      case Xname.TYPE_F_REAL:
+      case Xname.TYPE_F_VOID:
+        return true;
+      default:
+        return false;
+    }
   }
 
   /**
@@ -74,27 +94,35 @@ public enum XcodeType {
   }
 
   /**
-   * Check whether the given type is a built-in type or is a type defined in the
-   * type table.
+   * Get type from XcodeML/F IR value.
    *
-   * @param type Type to check.
-   * @return True if the type is built-in. False otherwise.
+   * @param value Type value from XcodeML/F IR.
+   * @return Corresponding enum value. NONE if value corresponds to nothing.
    */
-  public static boolean isBuiltInType(String type) {
-    if(type == null) {
-      return false;
+  public static XcodeType fromString(String value) {
+    if(value == null) {
+      return NONE;
     }
-    switch(type) {
-      case Xname.TYPE_F_CHAR:
-      case Xname.TYPE_F_COMPLEX:
+    switch(value) {
       case Xname.TYPE_F_INT:
-      case Xname.TYPE_F_LOGICAL:
+        return INTEGER;
       case Xname.TYPE_F_REAL:
+        return REAL;
+      case Xname.TYPE_F_COMPLEX:
+        return COMPLEX;
+      case Xname.TYPE_F_LOGICAL:
+        return LOGICAL;
+      case Xname.TYPE_F_CHAR:
+        return CHARACTER;
       case Xname.TYPE_F_VOID:
-        return true;
+        return VOID;
       default:
-        return false;
+        return NONE;
     }
   }
 
+  @Override
+  public String toString() {
+    return _type.isEmpty() ? null : _type;
+  }
 }

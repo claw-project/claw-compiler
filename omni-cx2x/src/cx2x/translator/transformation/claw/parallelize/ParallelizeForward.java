@@ -748,7 +748,7 @@ public class ParallelizeForward extends ClawTransformation {
             if(parentFctDef.getDeclarationTable().get(dim.getIdentifier())
                 == null)
             {
-              xcodeml.createIdAndDecl(dim.getIdentifier(), XbuiltInType.INT,
+              xcodeml.createIdAndDecl(dim.getIdentifier(), XcodeType.INTEGER,
                   XstorageClass.F_LOCAL, parentFctDef, false);
             }
           }

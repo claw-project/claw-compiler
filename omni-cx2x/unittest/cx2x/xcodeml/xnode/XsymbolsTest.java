@@ -41,7 +41,7 @@ public class XsymbolsTest {
     XsymbolTable table = xcodeml.getGlobalSymbolsTable();
     assertNotNull(table);
 
-    Xid id1 = xcodeml.createId(XbuiltInType.INT, XstorageClass.F_LOCAL, "id1");
+    Xid id1 = xcodeml.createId(XcodeType.INTEGER, XstorageClass.F_LOCAL, "id1");
     table.add(id1);
     assertTrue(table.contains("id1"));
   }

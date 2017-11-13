@@ -149,8 +149,8 @@ public class FieldTest {
         assertTrue(bt.isArray());
         assertEquals(base, bt.getDimensions());
       } else {
-        assertEquals(XbuiltInType.REAL,
-            XbuiltInType.fromString(decl.getType()));
+        assertEquals(XcodeType.REAL,
+            XcodeType.fromString(decl.getType()));
       }
 
       // Perform the promotion

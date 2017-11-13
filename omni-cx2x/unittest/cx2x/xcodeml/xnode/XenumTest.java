@@ -12,7 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Testing methods from various enum class. Xattr, XbuiltInType, Xcode, Xintent,
+ * Testing methods from various enum class. Xattr, XcodeType, Xcode, Xintent,
  * Xscope.
  *
  * @author clementval
@@ -129,28 +129,28 @@ public class XenumTest {
   }
 
   @Test
-  public void xBuiltInTypeCtorTest() {
-    assertEquals(XbuiltInType.NONE, XbuiltInType.fromString(null));
-    assertEquals(XbuiltInType.NONE, XbuiltInType.fromString(""));
-    assertEquals(XbuiltInType.INT,
-        XbuiltInType.fromString(Xname.TYPE_F_INT));
-    assertEquals(XbuiltInType.REAL,
-        XbuiltInType.fromString(Xname.TYPE_F_REAL));
-    assertEquals(XbuiltInType.COMPLEX,
-        XbuiltInType.fromString(Xname.TYPE_F_COMPLEX));
-    assertEquals(XbuiltInType.LOGICAL,
-        XbuiltInType.fromString(Xname.TYPE_F_LOGICAL));
-    assertEquals(XbuiltInType.CHAR,
-        XbuiltInType.fromString(Xname.TYPE_F_CHAR));
-    assertEquals(XbuiltInType.VOID,
-        XbuiltInType.fromString(Xname.TYPE_F_VOID));
+  public void xCodeTypeCtorTest() {
+    assertEquals(XcodeType.NONE, XcodeType.fromString(null));
+    assertEquals(XcodeType.NONE, XcodeType.fromString(""));
+    assertEquals(XcodeType.INTEGER,
+        XcodeType.fromString(Xname.TYPE_F_INT));
+    assertEquals(XcodeType.REAL,
+        XcodeType.fromString(Xname.TYPE_F_REAL));
+    assertEquals(XcodeType.COMPLEX,
+        XcodeType.fromString(Xname.TYPE_F_COMPLEX));
+    assertEquals(XcodeType.LOGICAL,
+        XcodeType.fromString(Xname.TYPE_F_LOGICAL));
+    assertEquals(XcodeType.CHARACTER,
+        XcodeType.fromString(Xname.TYPE_F_CHAR));
+    assertEquals(XcodeType.VOID,
+        XcodeType.fromString(Xname.TYPE_F_VOID));
 
-    assertEquals(Xname.TYPE_F_INT, XbuiltInType.INT.toString());
-    assertEquals(Xname.TYPE_F_REAL, XbuiltInType.REAL.toString());
-    assertEquals(Xname.TYPE_F_COMPLEX, XbuiltInType.COMPLEX.toString());
-    assertEquals(Xname.TYPE_F_LOGICAL, XbuiltInType.LOGICAL.toString());
-    assertEquals(Xname.TYPE_F_CHAR, XbuiltInType.CHAR.toString());
-    assertEquals(Xname.TYPE_F_VOID, XbuiltInType.VOID.toString());
+    assertEquals(Xname.TYPE_F_INT, XcodeType.INTEGER.toString());
+    assertEquals(Xname.TYPE_F_REAL, XcodeType.REAL.toString());
+    assertEquals(Xname.TYPE_F_COMPLEX, XcodeType.COMPLEX.toString());
+    assertEquals(Xname.TYPE_F_LOGICAL, XcodeType.LOGICAL.toString());
+    assertEquals(Xname.TYPE_F_CHAR, XcodeType.CHARACTER.toString());
+    assertEquals(Xname.TYPE_F_VOID, XcodeType.VOID.toString());
   }
 
   @Test

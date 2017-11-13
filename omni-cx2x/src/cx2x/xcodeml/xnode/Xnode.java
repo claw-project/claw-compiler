@@ -34,17 +34,6 @@ public class Xnode {
   }
 
   /**
-   * Constructs a new element in the AST.
-   *
-   * @param opcode  Code of the new element.
-   * @param xcodeml Current XcodeML file unit in which the element is
-   *                created.
-   */
-  Xnode(Xcode opcode, XcodeML xcodeml) {
-    _baseElement = xcodeml.getDocument().createElement(opcode.code());
-  }
-
-  /**
    * Delete this nodes with all its siblings.
    */
   public void deleteWithSiblings() {
@@ -66,6 +55,9 @@ public class Xnode {
    * @return Opcode.
    */
   public Xcode opcode() {
+    if(_baseElement == null) {
+      return Xcode.NONE;
+    }
     return Xcode.valueOf(_baseElement.getTagName().toUpperCase());
   }
 
@@ -86,8 +78,7 @@ public class Xnode {
    * @return True if the element has the corresponding attribute.
    */
   private boolean hasAttribute(String attrCode) {
-    return _baseElement != null
-        && _baseElement.hasAttribute(attrCode);
+    return _baseElement != null && _baseElement.hasAttribute(attrCode);
   }
 
   /**
@@ -131,7 +122,7 @@ public class Xnode {
    * @return Attribute's value. False if attribute doesn't exist.
    */
   private boolean getBooleanAttribute(String attrCode) {
-    return _baseElement.hasAttribute(attrCode) &&
+    return hasAttribute(attrCode) &&
         _baseElement.getAttribute(attrCode).equals(Xname.TRUE);
   }
 
@@ -141,7 +132,8 @@ public class Xnode {
    * @return Element value.
    */
   public String value() {
-    return _baseElement.getTextContent().trim().toLowerCase();
+    return _baseElement == null ? "" :
+        _baseElement.getTextContent().trim().toLowerCase();
   }
 
   /**
@@ -150,7 +142,9 @@ public class Xnode {
    * @param value The element value.
    */
   public void setValue(String value) {
-    _baseElement.setTextContent(value);
+    if(_baseElement != null) {
+      _baseElement.setTextContent(value);
+    }
   }
 
   /**
@@ -289,7 +283,6 @@ public class Xnode {
       return;
     }
     _baseElement.getParentNode().removeChild(_baseElement);
-    _baseElement = null;
   }
 
   /**
@@ -298,7 +291,7 @@ public class Xnode {
    * @return True if the node has been deleted. False otherwise.
    */
   public boolean isDeleted() {
-    return _isDeleted;
+    return _isDeleted || _baseElement == null;
   }
 
   /**
@@ -641,7 +634,7 @@ public class Xnode {
    * @return A depth value greater or equal to 0.
    */
   public int depth() {
-    if(_baseElement == null) {
+    if(isDeleted()) {
       return Xnode.UNDEF_DEPTH;
     }
 
@@ -660,11 +653,12 @@ public class Xnode {
    * @param node The node to be inserted after the current one.
    */
   public void insertAfter(Xnode node) {
-    if(_baseElement == null) {
-      return;
+    if(_baseElement != null && node != null) {
+      Node parent = _baseElement.getParentNode();
+      if(parent != null) {
+        parent.insertBefore(node.element(), _baseElement.getNextSibling());
+      }
     }
-    _baseElement.getParentNode().insertBefore(node.element(),
-        _baseElement.getNextSibling());
   }
 
   /**
@@ -714,10 +708,12 @@ public class Xnode {
    * @param node The node to be inserted before the current one.
    */
   public void insertBefore(Xnode node) {
-    if(_baseElement == null) {
-      return;
+    if(_baseElement != null && node != null) {
+      Node parent = _baseElement.getParentNode();
+      if(parent != null) {
+        parent.insertBefore(node.element(), _baseElement);
+      }
     }
-    _baseElement.getParentNode().insertBefore(node.element(), _baseElement);
   }
 
   /**
@@ -784,7 +780,7 @@ public class Xnode {
   }
 
   /**
-   *
+   * Set the type of the current node.
    */
   public void setType(String value) {
     setAttribute(Xattr.TYPE, value);

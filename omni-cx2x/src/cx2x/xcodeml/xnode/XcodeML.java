@@ -53,7 +53,8 @@ public class XcodeML extends Xnode {
    * @return Newly created node.
    */
   public Xnode createNode(Xcode opcode) {
-    return new Xnode(opcode, this);
+    Element baseElement = getDocument().createElement(opcode.code());
+    return new Xnode(baseElement);
   }
 
   /**
@@ -309,7 +310,7 @@ public class XcodeML extends Xnode {
    *                       dummy argument. If false, the variable is append at
    *                       the end.
    */
-  public void createIdAndDecl(String name, XbuiltInType type,
+  public void createIdAndDecl(String name, XcodeType type,
                               XstorageClass sclass,
                               XfunctionDefinition fctDef,
                               boolean afterDummyArgs)
@@ -396,7 +397,7 @@ public class XcodeML extends Xnode {
    * @param scope Value of the scope attribute.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createVar(XbuiltInType type, String value, Xscope scope) {
+  public Xnode createVar(XcodeType type, String value, Xscope scope) {
     return createVar(type.toString(), value, scope);
   }
 
@@ -486,7 +487,7 @@ public class XcodeML extends Xnode {
    * @param idValue Value of the name inner element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xid createId(XbuiltInType type, XstorageClass sclass, String idValue)
+  public Xid createId(XcodeType type, XstorageClass sclass, String idValue)
   {
     return createId(type.toString(), sclass, idValue);
   }
@@ -526,7 +527,7 @@ public class XcodeML extends Xnode {
    * @param nameValue Value of the name inner node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createVarDecl(XbuiltInType nameType, String nameValue) {
+  public Xnode createVarDecl(XcodeType nameType, String nameValue) {
     return createVarDecl(nameType.toString(), nameValue);
   }
 

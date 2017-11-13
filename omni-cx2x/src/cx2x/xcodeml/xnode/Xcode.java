@@ -161,7 +161,10 @@ public enum Xcode {
   // Unary expression element
   LOGNOTEXPR(Xname.LOG_NOT_EXPR),                            // XcodeML/F 7.7
   UNARYMINUSEXPR(Xname.UNARY_MINUS_EXPR),                    // XcodeML/F 7.7
-  USERUNARYEXPR(Xname.USER_UNARY_EXPR);                      // XcodeML/F 7.7
+  USERUNARYEXPR(Xname.USER_UNARY_EXPR),                      // XcodeML/F 7.7
+
+  // Special opcode for unknown node
+  NONE(Xname.NONE);
 
   private final String _name;
   private final boolean _hasBody;

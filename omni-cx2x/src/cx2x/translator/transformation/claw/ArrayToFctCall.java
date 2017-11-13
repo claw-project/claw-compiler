@@ -97,7 +97,7 @@ public class ArrayToFctCall extends ClawTransformation {
         _claw.getFctName(), _replaceFct.getType());
     Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()) {
-      args.append(xcodeml.createVar(XbuiltInType.INT, arg, Xscope.LOCAL));
+      args.append(xcodeml.createVar(XcodeType.INTEGER, arg, Xscope.LOCAL));
     }
 
     List<Xnode> refs =

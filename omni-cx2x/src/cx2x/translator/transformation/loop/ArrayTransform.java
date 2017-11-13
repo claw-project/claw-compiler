@@ -215,7 +215,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])) {
-        Xid inductionVarId = xcodeml.createId(XbuiltInType.INT,
+        Xid inductionVarId = xcodeml.createId(XcodeType.INTEGER,
             XstorageClass.F_LOCAL, inductionVars[i]);
         fctDef.getSymbolTable().add(inductionVarId, false);
       }
@@ -223,12 +223,12 @@ public class ArrayTransform extends ClawBlockTransformation {
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])) {
         Xnode inductionVarDecl =
-            xcodeml.createVarDecl(XbuiltInType.INT, inductionVars[i]);
+            xcodeml.createVarDecl(XcodeType.INTEGER, inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);
       }
 
       // 2.4 create do statements
-      Xnode inductionVar = xcodeml.createVar(XbuiltInType.INT, inductionVars[i],
+      Xnode inductionVar = xcodeml.createVar(XcodeType.INTEGER, inductionVars[i],
           Xscope.LOCAL);
       Xnode range;
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
@@ -256,7 +256,7 @@ public class ArrayTransform extends ClawBlockTransformation {
           if(el.opcode() == Xcode.INDEXRANGE) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
-                xcodeml.createVar(XbuiltInType.INT, induction, Xscope.LOCAL);
+                xcodeml.createVar(XcodeType.INTEGER, induction, Xscope.LOCAL);
 
             Xnode arrayIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
             arrayIdx.append(inductionVar);

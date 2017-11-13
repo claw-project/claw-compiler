@@ -184,6 +184,7 @@ public final class Xname {
   public static final String NAME = "name";
   public static final String NAMED_VALUE = "namedValue";
   public static final String NAMED_VALUE_LIST = "namedValueList";
+  public static final String NONE = "none";
   public static final String PARAMS = "params";
   public static final String RENAMABLE = "renamable";
   public static final String RENAME = "rename";

@@ -123,7 +123,8 @@ public class DimensionDefinition {
    */
   public Xnode generateArrayIndex(XcodeML xcodeml) {
     Xnode aIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
-    aIdx.append(xcodeml.createVar(XbuiltInType.INT, _identifier, Xscope.LOCAL));
+    aIdx.append(xcodeml.createVar(XcodeType.INTEGER,
+        _identifier, Xscope.LOCAL));
     return aIdx;
   }
 

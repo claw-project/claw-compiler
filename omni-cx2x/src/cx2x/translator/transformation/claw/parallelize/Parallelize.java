@@ -723,7 +723,7 @@ public class Parallelize extends ClawTransformation {
         param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
       }
       // Create induction variable declaration
-      xcodeml.createIdAndDecl(dimension.getIdentifier(), XbuiltInType.INT,
+      xcodeml.createIdAndDecl(dimension.getIdentifier(), XcodeType.INTEGER,
           XstorageClass.F_LOCAL, _fctDef, false);
     }
   }

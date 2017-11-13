@@ -31,7 +31,6 @@ public class XcodeTypeTest {
 
   @Test
   public void isOfTypeTest() {
-    assertTrue(XcodeType.ARRAY.isOfType("A1234567"));
     assertTrue(XcodeType.INTEGER.isOfType(XcodeType.INTEGER.generateHash()));
     assertTrue(XcodeType.REAL.isOfType(XcodeType.REAL.generateHash()));
     assertFalse(XcodeType.REAL.isOfType(null));
