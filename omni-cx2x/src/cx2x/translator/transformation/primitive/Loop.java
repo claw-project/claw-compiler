@@ -57,8 +57,8 @@ public final class Loop {
     // Merge slave body into the master body
     Body.append(masterDoStmt.body(), slaveDoStmt.body());
 
-    // Delete any acc loop / omp do pragma before/after the do statements.
-    cleanPragmas(slaveDoStmt, prevToDelete, nextToDelete);
+    // Delete any acc loop / omp do pragma before/after the slave do statement
+    Loop.cleanPragmas(slaveDoStmt, prevToDelete, nextToDelete);
     slaveDoStmt.delete();
   }
 

@@ -33,8 +33,7 @@ public final class Body {
   public static void append(Xnode masterBody, Xnode slaveBody)
       throws IllegalTransformationException
   {
-    if(masterBody == null || masterBody.element() == null
-        || slaveBody == null || slaveBody.element() == null
+    if(masterBody == null || slaveBody == null
         || masterBody.opcode() != Xcode.BODY
         || slaveBody.opcode() != Xcode.BODY)
     {
