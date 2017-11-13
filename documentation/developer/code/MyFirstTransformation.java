@@ -29,7 +29,7 @@ public class MyFirstTransformation extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other) throws Exception
   {
-    _claw.delete();
+    removePragma();
   }
 
   // Only used by dependent transformation
