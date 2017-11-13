@@ -76,8 +76,7 @@ public class XcodeML extends Xnode {
    *
    * @return A list of all function definitions in the XcodeProgram unit.
    */
-  public List<XfunctionDefinition> getAllFctDef()
-  {
+  public List<XfunctionDefinition> getAllFctDef() {
     List<XfunctionDefinition> definitions = new ArrayList<>();
     List<Xnode> nodes = matchAll(Xcode.FFUNCTIONDEFINITION);
     for(Xnode fctDef : nodes) {
@@ -157,8 +156,9 @@ public class XcodeML extends Xnode {
     if(type == null) {
       return;
     }
-    Node rawNode = getDocument().importNode(type.element(), true);
-    Xnode importedType = new Xnode((Element) rawNode);
+    //Node rawNode = getDocument().importNode(type.element(), true);
+    //Xnode importedType = new Xnode((Element) rawNode);
+    Xnode importedType = importNode(type);
     getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
         && !XcodeType.isBuiltInType(importedType.getAttribute(Xattr.REF)))
@@ -171,6 +171,16 @@ public class XcodeML extends Xnode {
     for(Xnode var : vars) {
       importType(src, var.getType());
     }
+  }
+
+  /**
+   * Import node to current XcodeML translation unit.
+   *
+   * @param node Node to import.
+   * @return Imported node.
+   */
+  public Xnode importNode(Xnode node) {
+    return new Xnode((Element) getDocument().importNode(node.element(), true));
   }
 
   /**
