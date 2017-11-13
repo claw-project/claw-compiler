@@ -100,7 +100,7 @@ public class XmoduleDefinition extends Xnode {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         XfunctionDefinition fctDef = new XfunctionDefinition((Element) n);
-        if(fctDef.getName().value().equals(name)) {
+        if(fctDef.getName().equals(name)) {
           return fctDef;
         }
       }

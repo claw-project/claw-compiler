@@ -6,8 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.Hashtable;
 
@@ -42,14 +40,11 @@ public class XsymbolTable extends Xnode {
    * Read the symbols table.
    */
   private void readTable() {
-    NodeList nodeList = _baseElement.getElementsByTagName(Xname.ID);
-    for(int i = 0; i < nodeList.getLength(); i++) {
-      Node idNode = nodeList.item(i);
-      if(idNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element idElement = (Element) idNode;
-        Xid id = new Xid(idElement);
-        _table.put(id.getName(), id);
-      }
+    Xnode crt = firstChild();
+    while(crt != null) {
+      Xid id = new Xid(crt.element());
+      _table.put(id.getName(), id);
+      crt = crt.nextSibling();
     }
   }
 
@@ -58,7 +53,7 @@ public class XsymbolTable extends Xnode {
    *
    * @return Number of symbols.
    */
-  public int count() {
+  public int size() {
     return _table.size();
   }
 

@@ -427,7 +427,7 @@ public final class AcceleratorHelper {
         continue;
       }
       XfunctionDefinition calledFctDef =
-          xcodeml.getGlobalDeclarationsTable().getFctDefinition(fctName);
+          xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
       if(calledFctDef == null) {
         Xnode meaningfulParentNode = fctDef.findParentModule();
         if(meaningfulParentNode == null) { // fct is not a module child

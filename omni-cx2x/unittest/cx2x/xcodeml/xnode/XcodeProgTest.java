@@ -31,9 +31,9 @@ public class XcodeProgTest {
     assertNotNull(xcodeml.getVersion());
     assertNotNull(xcodeml.getLanguage());
     assertNotNull(xcodeml.getSource());
-    assertEquals(8, xcodeml.getTypeTable().count());
-    assertEquals(2, xcodeml.getGlobalSymbolsTable().count());
-    assertEquals(2, xcodeml.getGlobalDeclarationsTable().count());
+    assertEquals(8, xcodeml.getTypeTable().size());
+    assertEquals(2, xcodeml.getGlobalSymbolsTable().size());
+    assertEquals(2, xcodeml.getGlobalDeclarationsTable().size());
   }
 
 }

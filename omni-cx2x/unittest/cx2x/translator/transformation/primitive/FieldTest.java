@@ -42,7 +42,7 @@ public class FieldTest {
     assertEquals(1, fctDefs.size());
 
     XfunctionDefinition fctDef = fctDefs.get(0);
-    assertEquals("sub1", fctDef.getName().value());
+    assertEquals("sub1", fctDef.getName());
 
     // Scalar to array promotion with 1 additional dimension
     dim1.setInsertionPosition(InsertionPosition.BEFORE);

@@ -38,7 +38,7 @@ public class XtypeTableTest {
     // Base typeTable tests
     XtypeTable typeTable = XmlHelper.createXtypeTableFromString(basicTypeTable);
     assertNotNull(typeTable);
-    assertEquals(4, typeTable.count());
+    assertEquals(4, typeTable.size());
     assertEquals(4, typeTable.values().size());
 
     // FbasicType test
@@ -113,7 +113,7 @@ public class XtypeTableTest {
     assertNotNull(clone);
     assertNotEquals(typeTable.element(), clone.element());
     assertEquals(4, clone.values().size());
-    assertEquals(4, clone.count());
+    assertEquals(4, clone.size());
   }
 
 

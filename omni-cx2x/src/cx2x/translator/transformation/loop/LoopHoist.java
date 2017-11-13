@@ -145,7 +145,7 @@ public class LoopHoist extends ClawBlockTransformation {
           if(!checkUpperDefinition(fctDef, r.getArrayName())) {
             xcodeml.addError(String.format("Reshape variable %s not found in " +
                     "the definition of %s", r.getArrayName(),
-                fctDef.getName().value()), _clawStart.getPragma().lineNo()
+                fctDef.getName()), _clawStart.getPragma().lineNo()
             );
             return false;
           }

@@ -50,7 +50,7 @@ public class XsymbolsTest {
   public void simpleGlobalSymbolsTest() {
     XsymbolTable table = XmlHelper.createXglobalSymbolFromString(gSym1);
     assertNotNull(table);
-    assertEquals(1, table.count());
+    assertEquals(1, table.size());
 
     Xid id1 = table.get("radiation_rg");
     assertNotNull(id1);
@@ -73,7 +73,7 @@ public class XsymbolsTest {
 
   private void assertTable(XsymbolTable table) {
     assertNotNull(table);
-    assertEquals(2, table.count());
+    assertEquals(2, table.size());
 
     Xid id1 = table.get("dp");
     assertNotNull(id1);

@@ -86,7 +86,16 @@ public class XfunctionDefinition extends Xnode {
    *
    * @return Name of the function as an Xname object.
    */
-  public Xnode getName() {
+  public String getName() {
+    return _name.value();
+  }
+
+  /**
+   * Get the name node.
+   *
+   * @return name node of the FfunctionDefinition.
+   */
+  public Xnode name() {
     return _name;
   }
 

@@ -244,7 +244,7 @@ public class Parallelize extends ClawTransformation {
       _scalarFields.addAll(scalars);
       _scalarFields.addAll(candidateArrays);
 
-      printDebugPromotionInfos(_fctDef.getName().value(), _arrayFieldsInOut,
+      printDebugPromotionInfos(_fctDef.getName(), _arrayFieldsInOut,
           candidateArrays, scalars);
 
       return true;

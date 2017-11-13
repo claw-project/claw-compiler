@@ -143,7 +143,7 @@ public final class Module {
       mod.getTypeTable().element().appendChild(rawNode);
       XfunctionType importedFctType = new XfunctionType((Element) rawNode);
       Xid importedFctTypeId = mod.createId(importedFctType.getType(),
-          XstorageClass.F_FUNC, fctDef.getName().value());
+          XstorageClass.F_FUNC, fctDef.getName());
       mod.getIdentifiers().add(importedFctTypeId);
 
       // check if params need to be imported as well
@@ -164,13 +164,13 @@ public final class Module {
        * with no parameters. Thus, we have to matchSeq the correct FfunctionType
        * for the same function/subroutine with the same name in the module
        * symbol table. */
-      String errorMsg = "Unable to locate fct " + fctDef.getName().value() +
+      String errorMsg = "Unable to locate fct " + fctDef.getName() +
           " in module " + moduleName;
       int lineNo = claw.getPragma().lineNo();
 
       /* If not, try to matchSeq the correct FfunctionType in the module
        * definitions */
-      Xid id = mod.getIdentifiers().get(fctDef.getName().value());
+      Xid id = mod.getIdentifiers().get(fctDef.getName());
       if(id == null) {
         throw new IllegalTransformationException(errorMsg, lineNo);
       }

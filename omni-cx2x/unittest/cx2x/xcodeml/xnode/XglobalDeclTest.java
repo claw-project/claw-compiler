@@ -34,13 +34,13 @@ public class XglobalDeclTest {
   public void simpleGlobalDeclarationTest() {
     XglobalDeclTable gdTable = XmlHelper.createGlobalDeclTable(simpleGlobDecl);
     assertNotNull(gdTable);
-    assertEquals(2, gdTable.count());
+    assertEquals(2, gdTable.size());
     assertTrue(gdTable.hasDefinition("fct1"));
     assertTrue(gdTable.hasFunctionDefinition("fct1"));
     assertFalse(gdTable.hasModuleDefinition("fct1"));
-    XfunctionDefinition fDef = gdTable.getFctDefinition("fct1");
+    XfunctionDefinition fDef = gdTable.getFunctionDefinition("fct1");
     assertNotNull(fDef);
-    assertEquals("fct1", fDef.getName().value());
+    assertEquals("fct1", fDef.getName());
     assertNotNull(fDef.body());
     assertNotNull(fDef.getDeclarationTable());
     assertNull(fDef.getParams());

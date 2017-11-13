@@ -6,7 +6,6 @@
 package cx2x.xcodeml.xnode;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -45,36 +44,27 @@ public class XglobalDeclTable extends Xnode {
    * Read the declaration table
    */
   private void readTable() {
-    Node currentNode = _baseElement.getFirstChild();
-    while(currentNode != null) {
-      if(currentNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element el = (Element) currentNode;
-        if(el.getTagName().equals(Xname.F_FUNCTION_DEFINITION)) {
-          XfunctionDefinition fctDef = new XfunctionDefinition(el);
-          _table.put(fctDef.getName().value(), fctDef);
-        } else if(el.getTagName().equals(Xname.F_MODULE_DEFINITION)) {
-          XmoduleDefinition moduleDef = new XmoduleDefinition(el);
-          _table.put(moduleDef.getName(), moduleDef);
-        }
+
+    Xnode crt = firstChild();
+    while(crt != null) {
+      if(crt.opcode() == Xcode.FFUNCTIONDEFINITION) {
+        XfunctionDefinition fctDef = new XfunctionDefinition(crt.element());
+        _table.put(fctDef.getName(), fctDef);
+      } else if(crt.opcode() == Xcode.FMODULEDEFINITION) {
+        XmoduleDefinition moduleDef = new XmoduleDefinition(crt.element());
+        _table.put(moduleDef.getName(), moduleDef);
       }
-      currentNode = currentNode.getNextSibling();
+      crt = crt.nextSibling();
     }
   }
 
   /**
-   * Get a specific function declaration based on its name.
+   * Get the number of declarations in the table.
    *
-   * @param name The name of the function to be returned.
-   * @return A XfunctionDefinition object if key is found. Null otherwise.
+   * @return The number of declarations in the table.
    */
-  public XfunctionDefinition getFctDefinition(String name) {
-    if(_table.containsKey(name)) {
-      Xnode el = _table.get(name);
-      if(el instanceof XfunctionDefinition) {
-        return (XfunctionDefinition) el;
-      }
-    }
-    return null;
+  public int size() {
+    return _table.size();
   }
 
   /**
@@ -94,13 +84,30 @@ public class XglobalDeclTable extends Xnode {
   }
 
   /**
-   * Check if there is a definition for the given name.
+   * Retrieve function definition in the current declaration table or
+   * recursively in the modules' declaration tables.
    *
-   * @param name Name to be searched.
-   * @return True if there is a definition. False otherwise.
+   * @param fctName Function's name.
+   * @return The function definition if found. Null otherwise.
    */
-  public boolean hasDefinition(String name) {
-    return _table.containsKey(name);
+  public XfunctionDefinition getFunctionDefinition(String fctName) {
+    if(_table.containsKey(fctName)) {
+      Xnode el = _table.get(fctName);
+      if(el instanceof XfunctionDefinition) {
+        return (XfunctionDefinition) el;
+      }
+    } else {
+      for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
+        if(entry.getValue() instanceof XmoduleDefinition) {
+          XmoduleDefinition mod = (XmoduleDefinition) entry.getValue();
+          XfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
+          if(fctDef != null) {
+            return fctDef;
+          }
+        }
+      }
+    }
+    return null;
   }
 
   /**
@@ -126,37 +133,13 @@ public class XglobalDeclTable extends Xnode {
   }
 
   /**
-   * Get the number of declarations in the table.
+   * Check if there is a definition for the given name.
    *
-   * @return The number of declarations in the table.
+   * @param name Name to be searched.
+   * @return True if there is a definition. False otherwise.
    */
-  public int count() {
-    return _table.size();
-  }
-
-  /**
-   * Retrieve function definition in the current declaration table or
-   * recursively in the modules' declaration tables.
-   *
-   * @param fctName Function's name.
-   * @return The function definition if found. Null otherwise.
-   */
-  public XfunctionDefinition getFunctionDefinition(String fctName) {
-    for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
-      if(entry.getValue() instanceof XmoduleDefinition) {
-        XmoduleDefinition mod = (XmoduleDefinition) entry.getValue();
-        XfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
-        if(fctDef != null) {
-          return fctDef;
-        }
-      } else if(entry.getValue() instanceof XfunctionDefinition) {
-        XfunctionDefinition fctDef = (XfunctionDefinition) entry.getValue();
-        if(fctDef.getName().value().equals(fctName)) {
-          return fctDef;
-        }
-      }
-    }
-    return null;
+  public boolean hasDefinition(String name) {
+    return _table.containsKey(name);
   }
 
   @Override

@@ -251,7 +251,7 @@ public class ParallelizeForward extends ClawTransformation {
     }
     // end of workaround
 
-    _callingFctName = parentFctDef.getName().value();
+    _callingFctName = parentFctDef.getName();
     if(_fctType != null && fctDef != null) {
       _localFct = true;
     } else {

@@ -201,14 +201,14 @@ public class LoopExtraction extends ClawTransformation {
     XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
     String newFctTypeHash =
         xcodeml.getTypeTable().generateHash(XcodeType.FUNCTION);
-    String newFctName = clonedFctDef.getName().value() +
+    String newFctName = clonedFctDef.getName() +
         ClawConstant.EXTRACTION_SUFFIX +
         translator.getNextTransformationCounter();
-    clonedFctDef.getName().setValue(newFctName);
-    clonedFctDef.getName().setType(newFctTypeHash);
+    clonedFctDef.name().setValue(newFctName);
+    clonedFctDef.name().setType(newFctTypeHash);
     // Update the symbol table in the fct definition
     Xid fctId = clonedFctDef.getSymbolTable()
-        .get(_fctDefToExtract.getName().value());
+        .get(_fctDefToExtract.getName());
     fctId.setType(newFctTypeHash);
     fctId.setName(newFctName);
 
@@ -221,7 +221,7 @@ public class LoopExtraction extends ClawTransformation {
 
     // Get the id from the global symbols table
     Xid globalFctId = xcodeml.getGlobalSymbolsTable()
-        .get(_fctDefToExtract.getName().value());
+        .get(_fctDefToExtract.getName());
 
     // If the fct is define in the global symbol table, duplicate it
     if(globalFctId != null) {
@@ -238,7 +238,7 @@ public class LoopExtraction extends ClawTransformation {
     Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
 
     Message.debug("loop-extract transformation: " + _claw.getPragma().value());
-    Message.debug("  created subroutine: " + clonedFctDef.getName().value());
+    Message.debug("  created subroutine: " + clonedFctDef.getName());
 
     /*
      * REMOVE BODY FROM THE LOOP AND DELETE THE LOOP
@@ -260,7 +260,7 @@ public class LoopExtraction extends ClawTransformation {
 
     Message.debug("  call wrapped with loop: " +
         _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> " +
-        clonedFctDef.getName().value());
+        clonedFctDef.getName());
 
     // Change called fct name
     _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);

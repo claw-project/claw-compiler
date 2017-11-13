@@ -145,7 +145,7 @@ public class XtypeTable extends Xnode {
    *
    * @return Number of elements in the table.
    */
-  public int count() {
+  public int size() {
     return _table.size();
   }
 

@@ -50,7 +50,7 @@ public class ArrayToFctCall extends ClawTransformation {
     }
 
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
-        getFctDefinition(_claw.getFctName());
+        getFunctionDefinition(_claw.getFctName());
     if(_replaceFct == null) {
       XmoduleDefinition parentModule = _claw.getPragma().findParentModule();
       _replaceFct = parentModule.getFunctionDefinition(_claw.getFctName());

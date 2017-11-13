@@ -348,7 +348,7 @@ public class XcodeML extends Xnode {
         if(n.opcode() == Xcode.VARDECL) {
           String varId = n.matchDirectDescendant(Xcode.NAME).value();
           if(n.lineNo() == 0
-              || varId.toLowerCase().equals(fctDef.getName().value()))
+              || varId.toLowerCase().equals(fctDef.getName()))
           {
             continue;
           }
