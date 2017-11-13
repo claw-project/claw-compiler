@@ -22,7 +22,7 @@ public class XcodeMLWorkaround extends ClawTransformation {
   /**
    * Default ctor as this is a translation_unit triggered transformation.
    */
-  public XcodeMLWorkaround(){
+  public XcodeMLWorkaround() {
     super();
   }
 

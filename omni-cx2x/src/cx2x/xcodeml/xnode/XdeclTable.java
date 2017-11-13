@@ -142,26 +142,32 @@ public class XdeclTable extends Xnode {
    * @return A list of all declarations of this kind.
    */
   public List<Xnode> values(Xcode decl) {
-    switch(decl) {
-      case VARDECL:
-      case FUSEDECL:
-      case FUSEONLYDECL:
-      case FSTRUCTDECL:
-      case EXTERNDECL:
-      case FINTERFACEDECL:
-      case FNAMELISTDECL:
-      case FEQUIVALENCEDECL:
-      case FCOMMONDECL:
-        List<Xnode> orderedFilteredDeclarations = new ArrayList<>();
-        for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
-          if(entry.getValue().opcode() == decl) {
-            orderedFilteredDeclarations.add(entry.getValue());
-          }
-        }
-        return orderedFilteredDeclarations;
-      default:
-        throw new IllegalArgumentException("Not a member of the decl table");
+    return values(Collections.singletonList(decl));
+  }
+
+  /**
+   * Get all declarations of a specific kind of elements.
+   *
+   * @param declarations Kind of elements to return.
+   * @return A list of all declarations of this kind.
+   */
+  public List<Xnode> values(List<Xcode> declarations) {
+    List<Xnode> orderedFilteredDeclarations = new ArrayList<>();
+    for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
+      if(declarations.contains(entry.getValue().opcode())) {
+        orderedFilteredDeclarations.add(entry.getValue());
+      }
     }
+    return orderedFilteredDeclarations;
+  }
+
+  /**
+   * Get all the use and use only declaration in the table.
+   *
+   * @return List of FuseDecl and FuseOnlyDecl nodes.
+   */
+  public List<Xnode> uses() {
+    return values(Arrays.asList(Xcode.FUSEDECL, Xcode.FUSEONLYDECL));
   }
 
   /**
@@ -226,17 +232,6 @@ public class XdeclTable extends Xnode {
       }
       hook.insertAfter(decl.get(0));
     }
-  }
-
-  /**
-   * Get all the USE statement declaration in the table.
-   *
-   * @return A list of all declaration. Empty list if no USE declaration.
-   */
-  public List<Xnode> getAllUseStmts() {
-    List<Xnode> uses = this.values(Xcode.FUSEDECL);
-    uses.addAll(this.values(Xcode.FUSEONLYDECL));
-    return uses;
   }
 
   @Override

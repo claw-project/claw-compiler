@@ -200,8 +200,8 @@ public class ParallelizeForward extends ClawTransformation {
        * TODO generic call */
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
       if(id == null) {
-        List<Xnode> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
-        uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
+        List<Xnode> uses = parentFctDef.getDeclarationTable().uses();
+        uses.addAll(parentModule.getDeclarationTable().uses());
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
               _claw.getPragma().lineNo());
@@ -232,8 +232,8 @@ public class ParallelizeForward extends ClawTransformation {
 
       if(id == null) {
         // Function is not located in the current module.
-        List<Xnode> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
-        uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
+        List<Xnode> uses = parentFctDef.getDeclarationTable().uses();
+        uses.addAll(parentModule.getDeclarationTable().uses());
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition not found in module ",
               _claw.getPragma().lineNo());
@@ -262,9 +262,9 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       // Get all the use statements in the fct and module definitions
-      List<Xnode> uses = parentFctDef.getDeclarationTable().getAllUseStmts();
+      List<Xnode> uses = parentFctDef.getDeclarationTable().uses();
       if(parentModule != null) {
-        uses.addAll(parentModule.getDeclarationTable().getAllUseStmts());
+        uses.addAll(parentModule.getDeclarationTable().uses());
       }
 
       // Try to locate the fct in the modules defined in use statements
