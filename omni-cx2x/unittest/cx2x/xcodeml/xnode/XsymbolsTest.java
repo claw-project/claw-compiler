@@ -35,6 +35,18 @@ public class XsymbolsTest {
           "</symbols>";
 
   @Test
+  public void addToTableTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    assertNotNull(xcodeml);
+    XsymbolTable table = xcodeml.getGlobalSymbolsTable();
+    assertNotNull(table);
+
+    Xid id1 = xcodeml.createId(XbuiltInType.INT, XstorageClass.F_LOCAL, "id1");
+    table.add(id1);
+    assertTrue(table.contains("id1"));
+  }
+
+  @Test
   public void simpleGlobalSymbolsTest() {
     XsymbolTable table = XmlHelper.createXglobalSymbolFromString(gSym1);
     assertNotNull(table);
@@ -44,11 +56,22 @@ public class XsymbolsTest {
     assertNotNull(id1);
     assertEquals("ffunc", id1.getSclass());
     assertNull(id1.getType());
+
+    assertFalse(table.contains("dummy"));
+    assertNull(table.get("dummy"));
   }
 
   @Test
   public void simpleSymbolsTest() {
     XsymbolTable table = XmlHelper.createXSymbolTableFromString(sym2);
+    assertTable(table);
+
+    XsymbolTable clone = table.cloneNode();
+    assertNotEquals(clone.element(), table.element());
+    assertTable(clone);
+  }
+
+  private void assertTable(XsymbolTable table) {
     assertNotNull(table);
     assertEquals(2, table.count());
 

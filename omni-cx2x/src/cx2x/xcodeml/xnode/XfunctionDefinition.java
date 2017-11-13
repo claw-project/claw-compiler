@@ -104,7 +104,7 @@ public class XfunctionDefinition extends Xnode {
    *
    * @return Xmod object if the module has been found and read. Null otherwise.
    */
-  public Xmod findContainingModule() {
+  public Xmod findContainingXmod() {
     XmoduleDefinition mod = findParentModule();
     if(mod == null) {
       return null;

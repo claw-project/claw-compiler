@@ -127,7 +127,7 @@ public final class Module {
     if(moduleCache.isModuleLoaded(moduleName)) {
       mod = moduleCache.get(moduleName);
     } else {
-      mod = fctDef.findContainingModule();
+      mod = fctDef.findContainingXmod();
       if(mod == null) {
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + moduleName,

@@ -85,11 +85,9 @@ public final class Xname {
   public static final String ATTR_USE_NAME = "use_name";
   public static final String ATTR_VALUE = "value";
   public static final String ATTR_VERSION = "version";
-
   // CLAW specific attribute used in Xmod files
   public static final String ATTR_CLAW_INSERTED = "claw_inserted";
   public static final String ATTR_CLAW_OVER = "claw_over";
-
   // Element names
   public static final String ALLOC = "alloc";
   public static final String ALLOC_OPT = "allocOpt";
@@ -272,4 +270,8 @@ public final class Xname {
   static final String FALSE = "false";
   static final String SUPPORTED_VERSION = "1.0";
   static final String SUPPORTED_LANGUAGE = "Fortran";
+
+  // Avoid instantiation of this class
+  private Xname() {
+  }
 }

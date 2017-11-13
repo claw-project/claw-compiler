@@ -21,7 +21,7 @@ public class Xnode {
   public static final int LHS = 0;
   public static final int RHS = 1;
   public static final int UNDEF_DEPTH = -1;
-  final Element _baseElement;
+  Element _baseElement;
   private boolean _isDeleted = false;
 
   /**
@@ -247,6 +247,9 @@ public class Xnode {
    */
   public List<Xnode> children() {
     List<Xnode> nodes = new ArrayList<>();
+    if(_baseElement == null) {
+      return nodes;
+    }
     NodeList children = _baseElement.getChildNodes();
     for(int i = 0; i < children.getLength(); ++i) {
       Node child = children.item(i);
@@ -286,6 +289,7 @@ public class Xnode {
       return;
     }
     _baseElement.getParentNode().removeChild(_baseElement);
+    _baseElement = null;
   }
 
   /**
@@ -314,7 +318,7 @@ public class Xnode {
    *              false, the element is directly appended.
    */
   public void append(Xnode node, boolean clone) {
-    if(node != null) {
+    if(node != null && _baseElement != null) {
       if(clone) {
         _baseElement.appendChild(node.cloneRawNode());
       } else {
@@ -329,9 +333,7 @@ public class Xnode {
    * @param node The element to append.
    */
   public void append(Xnode node) {
-    if(node != null) {
-      _baseElement.appendChild(node.element());
-    }
+    append(node, false);
   }
 
   /**
@@ -341,11 +343,11 @@ public class Xnode {
    * @param clone Clone or not the element before insertion.
    */
   public void insert(Xnode node, boolean clone) {
-    if(node != null) {
+    if(node != null && _baseElement != null) {
       NodeList children = _baseElement.getChildNodes();
       Node toInsert = clone ? node.cloneRawNode() : node.element();
       if(children.getLength() == 0) {
-        _baseElement.appendChild(toInsert);
+        append(node, clone);
       } else {
         _baseElement.insertBefore(toInsert, children.item(0));
       }
@@ -377,24 +379,18 @@ public class Xnode {
    * @return Line number. 0 if the attribute is not defined.
    */
   public int lineNo() {
-    if(_baseElement.hasAttribute(Xattr.LINENO.toString())) {
-      return Integer.parseInt(
-          _baseElement.getAttribute(Xattr.LINENO.toString())
-      );
-    } else {
-      return 0;
-    }
+    return hasAttribute(Xattr.LINENO) ?
+        Integer.parseInt(getAttribute(Xattr.LINENO)) : 0;
   }
 
   /**
    * Get the file attribute value. This value represents the original filename
    * from the XcodeML unit. This attribute is not defined for every elements.
    *
-   * @return File path. Null if the file attribute is not defined.
+   * @return File path. Empty string if the file attribute is not defined.
    */
   public String filename() {
-    return (_baseElement.hasAttribute(Xattr.FILE.toString())) ?
-        _baseElement.getAttribute(Xattr.FILE.toString()) : null;
+    return hasAttribute(Xattr.FILE) ? getAttribute(Xattr.FILE) : "";
   }
 
   /**
@@ -422,6 +418,9 @@ public class Xnode {
    * @return A node representing the root element of the clone.
    */
   public Node cloneRawNode() {
+    if(_baseElement == null) {
+      return null;
+    }
     return _baseElement.cloneNode(true);
   }
 
@@ -661,6 +660,9 @@ public class Xnode {
    * @param node The node to be inserted after the current one.
    */
   public void insertAfter(Xnode node) {
+    if(_baseElement == null) {
+      return;
+    }
     _baseElement.getParentNode().insertBefore(node.element(),
         _baseElement.getNextSibling());
   }
@@ -767,49 +769,6 @@ public class Xnode {
           return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
         }
         return type;
-      case FALLOCATESTATEMENT:
-      case FBASICTYPE:
-      case FCHARACTERCONSTANT:
-      case FCHARACTERREF:
-      case FCOMPLEXCONSTANT:
-      case FCOMPLEXPARTREF:
-      case FCOARRAYREF:
-      case FDOCONCURRENTSTATEMENT:
-      case FENUMDECL:
-      case FFUNCTIONTYPE:
-      case FINTCONSTANT:
-      case FLOGICALCONSTANT:
-      case FMEMBERREF:
-      case FORALLSTATEMENT:
-      case FREALCONSTANT:
-      case FSTRUCTCONSTRUCTOR:
-      case FSTRUCTTYPE:
-      case ID:
-      case NAME:
-      case TYPEPARAM:
-      case VAR:
-      case VARREF:
-      case PLUSEXPR:
-      case MINUSEXPR:
-      case MULEXPR:
-      case DIVEXPR:
-      case FPOWEREXPR:
-      case FCONCATEXPR:
-      case LOGEQEXPR:
-      case LOGNEQEXPR:
-      case LOGGEEXPR:
-      case LOGGTEXPR:
-      case LOGLEEXPR:
-      case LOGLTEXPR:
-      case LOGANDEXPR:
-      case LOGOREXPR:
-      case LOGEQVEXPR:
-      case LOGNEWVEXPR:
-      case USERBINARYEXPR:
-      case UNARYMINUSEXPR:
-      case LOGNOTEXPR:
-      case USERUNARYEXPR:
-        return getAttribute(Xattr.TYPE);
       case NAMEDVALUE:
         Xnode child = firstChild();
         return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
@@ -820,7 +779,7 @@ public class Xnode {
         Xnode name = matchDirectDescendant(Xcode.NAME);
         return (name != null) ? name.getAttribute(Xattr.TYPE) : "";
       default:
-        return "";
+        return getAttribute(Xattr.TYPE);
     }
   }
 

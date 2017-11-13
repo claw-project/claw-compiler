@@ -8,6 +8,9 @@ package cx2x.xcodeml.xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -30,6 +33,19 @@ public class XfunctionTypeTest {
   @Test
   public void simpleFctTypeTest() {
     XfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
+    assertFunctionType(f);
+
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode emptyFctTypeNode = xcodeml.createNode(Xcode.FFUNCTIONTYPE);
+    XfunctionType emptyFctType = new XfunctionType(emptyFctTypeNode);
+    assertFalse(emptyFctType.hasParam("a"));
+
+    XfunctionType clone = f.cloneNode();
+    assertNotEquals(clone.element(), f.element());
+    assertFunctionType(clone);
+  }
+
+  private void assertFunctionType(XfunctionType f) {
     assertNotNull(f);
 
     assertEquals("Freal", f.getReturnType());
@@ -37,14 +53,26 @@ public class XfunctionTypeTest {
     assertFalse(f.isRecursive());
     assertFalse(f.isProgram());
     assertFalse(f.isInternal());
+    assertFalse(f.isPure());
+    assertFalse(f.isElemental());
     assertEquals("F0", f.getType());
 
     // Test parameters
+    assertEquals(2, f.getParameterNb());
     assertEquals(2, f.getParams().count());
     assertEquals("a", f.getParams().getAll().get(0).value());
     assertEquals("Fint", f.getParams().getAll().get(0).getType());
     assertEquals("b", f.getParams().getAll().get(1).value());
     assertEquals("Fint", f.getParams().getAll().get(1).getType());
+
+    List<String> names = f.getParamsNames();
+    List<String> expected = Arrays.asList("a", "b");
+    assertEquals(expected.size(), names.size());
+    for(int i = 0; i < names.size(); ++i) {
+      assertEquals(expected.get(i), names.get(i));
+    }
+    assertTrue(f.hasParam("a"));
+    assertFalse(f.hasParam("z"));
   }
 
 }

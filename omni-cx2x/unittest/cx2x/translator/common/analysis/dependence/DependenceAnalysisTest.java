@@ -154,6 +154,7 @@ public class DependenceAnalysisTest {
       System.out.println("Iteration space after fusion");
       is.printDebug(true);
     } catch(Exception e) {
+      e.printStackTrace();
       fail();
     }
   }

@@ -57,6 +57,11 @@ public class XdeclTableTest {
         XcodeProgram.createFromFile(TestConstant.TEST_DECLARATIONS);
     assertNotNull(xcodeml);
 
+    XglobalDeclTable global = xcodeml.getGlobalDeclarationsTable();
+    assertNotNull(global);
+    assertNull(global.getFctDefinition("unknown"));
+    assertNull(global.getModuleDefinition("unknown"));
+
     List<Xnode> modules = xcodeml.matchAll(Xcode.FMODULEDEFINITION);
     assertEquals(1, modules.size());
 

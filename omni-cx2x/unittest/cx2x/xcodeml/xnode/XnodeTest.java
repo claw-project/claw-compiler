@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -148,8 +149,77 @@ public class XnodeTest {
   }
 
   @Test
-  public void hasBodyTest() {
+  public void utilityMethodTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    assertNotNull(xcodeml);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    assertTrue(pragmas.size() > 0);
+    Xnode p = pragmas.get(0);
 
+    assertNotNull(p.findParentFunction());
+    assertNull(p.findParentFunction().findParentFunction());
+
+    Xnode p2 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    p.copyAttribute(p2, Xattr.LINENO);
+    assertEquals("FpragmaStatement (children: 0)", p2.toString());
+
+    // No first child
+    assertFalse(p.compareFirstChildValues(null));
+    assertFalse(p.compareFirstChildValues(p2));
+
+    // Depth
+    assertTrue(p.depth() > 0);
+
+    // Test attributes query and set
+    assertNull(p2.child(10));
+    p2.setBooleanAttribute(Xattr.IS_ASSUMED_SHAPE, false);
+    assertFalse(p2.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE));
+    p2.removeAttribute(Xattr.IS_ASSUMED_SHAPE);
+    assertFalse(p2.hasAttribute(Xattr.IS_ASSUMED_SHAPE));
+
+    // Append/insert
+    Xnode intConst = xcodeml.createIntConstant(10);
+    XfunctionDefinition fctDef = p.findParentFunction();
+    Xnode clone = intConst.cloneNode();
+    assertNotNull(clone);
+    assertNotEquals(clone.element(), intConst.element());
+
+    fctDef.body().append(intConst);
+    fctDef.body().append(clone);
+    assertTrue(intConst.isDirectSibling(clone, Collections.<Xcode>emptyList()));
+
+    fctDef.body().append(null);
+    fctDef.body().insert(intConst, true);
+    fctDef.body().insert(intConst);
+    fctDef.body().insert(null);
+
+    Xnode crt = intConst;
+    while(crt != null) {
+      assertNotNull(crt);
+      crt = crt.prevSibling();
+    }
+
+    assertNotNull(fctDef.body().matchDirectDescendant(Xcode.FPRAGMASTATEMENT));
+    assertNull(p.matchDirectDescendant(Xcode.FPRAGMASTATEMENT));
+
+    // Methods should not crash on deleted node
+    p.delete();
+    assertTrue(p.depth() < 0);
+    p.insertAfter(p2);
+    p.insertBefore(p2);
+    p.matchDescendant(Xcode.FDOSTATEMENT);
+    p.matchDirectDescendant(Xcode.FDOSTATEMENT);
+    p.matchDirectDescendant(Arrays.asList(Xcode.FDOSTATEMENT,
+        Xcode.FDOWHILESTATEMENT));
+    assertNull(p.nextSibling());
+    assertNull(p.prevSibling());
+    assertNull(p.matchSibling(Xcode.FDOSTATEMENT));
+    assertTrue(p.matchAll(Xcode.FPRAGMASTATEMENT).size() == 0);
+    assertFalse(p.isDirectSibling(null, Collections.<Xcode>emptyList()));
+  }
+
+  @Test
+  public void hasBodyTest() {
     List<Xcode> expectedNodeWithBody = new ArrayList<>(Arrays.asList(
         Xcode.ASSOCIATESTATEMENT,
         Xcode.BLOCKSTATEMENT,
