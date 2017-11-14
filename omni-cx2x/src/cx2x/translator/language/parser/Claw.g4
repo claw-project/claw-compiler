@@ -32,17 +32,17 @@ import cx2x.xcodeml.language.*;
 
 /*
  * Entry point for the analyzis of a CLAW directive.
- * Return a CLawLanguage object with all needed information.
+ * Return a ClawPragma object with all needed information.
  */
-analyze returns [ClawLanguage l]
+analyze returns [ClawPragma l]
   @init{
-    $l = new ClawLanguage();
+    $l = new ClawPragma();
   }
   :
     CLAW directive[$l]
 ;
 
-directive[ClawLanguage l]
+directive[ClawPragma l]
   @init{
     List<ClawMapping> m = new ArrayList<>();
     List<String> o = new ArrayList<>();
@@ -174,7 +174,7 @@ ids_or_colon_list[List<String> ids]
 ;
 
 // data over clause used in parallelize directive
-data_over_clause[ClawLanguage l]
+data_over_clause[ClawPragma l]
   @init{
     List<String> overLst = new ArrayList<>();
     List<String> dataLst = new ArrayList<>();
@@ -191,24 +191,24 @@ data_over_clause[ClawLanguage l]
 ;
 
 // group clause
-group_clause[ClawLanguage l]:
+group_clause[ClawPragma l]:
     GROUP '(' group_name=IDENTIFIER ')'
     { $l.setGroupClause($group_name.text); }
 ;
 
 // collapse clause
-collapse_clause[ClawLanguage l]:
+collapse_clause[ClawPragma l]:
     COLLAPSE '(' n=NUMBER ')'
     { $l.setCollapseClause($n.text); }
 ;
 
 // fusion clause
-fusion_clause[ClawLanguage l]:
+fusion_clause[ClawPragma l]:
     FUSION { $l.setFusionClause(); }
     fusion_options[$l]
 ;
 
-fusion_options[ClawLanguage l]:
+fusion_options[ClawPragma l]:
   (
       { !$l.hasGroupClause() }?      group_clause[$l]
     | { !$l.hasCollapseClause() }?   collapse_clause[$l]
@@ -217,12 +217,12 @@ fusion_options[ClawLanguage l]:
 ;
 
 // parallel clause
-parallel_clause[ClawLanguage l]:
+parallel_clause[ClawPragma l]:
     PARALLEL { $l.setParallelClause(); }
 ;
 
 // acc clause
-acc_clause[ClawLanguage l]
+acc_clause[ClawPragma l]
   @init{
     List<String> tempAcc = new ArrayList<>();
   }
@@ -231,12 +231,12 @@ acc_clause[ClawLanguage l]
 ;
 
 // interchange clause
-interchange_clause[ClawLanguage l]:
+interchange_clause[ClawPragma l]:
     INTERCHANGE indexes_option[$l] { $l.setInterchangeClause(); }
 ;
 
 // induction clause
-induction_clause[ClawLanguage l]
+induction_clause[ClawPragma l]
   @init{
     List<String> temp = new ArrayList<>();
   }
@@ -245,7 +245,7 @@ induction_clause[ClawLanguage l]
 ;
 
 // data clause
-data_clause[ClawLanguage l]
+data_clause[ClawPragma l]
   @init {
     List<String> temp = new ArrayList<>();
   }
@@ -254,12 +254,12 @@ data_clause[ClawLanguage l]
 ;
 
 // private clause
-private_clause[ClawLanguage l]:
+private_clause[ClawPragma l]:
     PRIVATE { $l.setPrivateClause(); }
 ;
 
 // reshape clause
-reshape_clause[ClawLanguage l]
+reshape_clause[ClawPragma l]
   @init{
     List<ClawReshapeInfo> r = new ArrayList();
   }
@@ -304,7 +304,7 @@ integers_list[List<Integer> ints]:
   | i=NUMBER { $ints.add(Integer.parseInt($i.text)); } ',' integers[$ints]
 ;
 
-indexes_option[ClawLanguage l]
+indexes_option[ClawPragma l]
   @init{
     List<String> indexes = new ArrayList();
   }
@@ -392,7 +392,7 @@ mapping_option_list[List<ClawMapping> mappings]:
 ;
 
 
-define_option[ClawLanguage l]:
+define_option[ClawPragma l]:
     DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ':' upper=range_id ')'
     {
       DimensionDefinition cd = new DimensionDefinition($id.text, $lower.text, $upper.text);
@@ -401,7 +401,7 @@ define_option[ClawLanguage l]:
 ;
 
 // Allow to switch order
-parallelize_clauses[ClawLanguage l]:
+parallelize_clauses[ClawPragma l]:
   (
     { !$l.hasCopyClause() }?   copy_clause[$l]
   | { !$l.hasUpdateClause() }? update_clause[$l]
@@ -409,7 +409,7 @@ parallelize_clauses[ClawLanguage l]:
   )*
 ;
 
-copy_clause[ClawLanguage l]:
+copy_clause[ClawPragma l]:
     COPY
     { $l.setCopyClauseValue(ClawDMD.BOTH); }
   | COPY '(' IN ')'
@@ -418,7 +418,7 @@ copy_clause[ClawLanguage l]:
     { $l.setCopyClauseValue(ClawDMD.HOST); }
 ;
 
-update_clause[ClawLanguage l]:
+update_clause[ClawPragma l]:
     UPDATE
     { $l.setUpdateClauseValue(ClawDMD.BOTH); }
   | UPDATE '(' IN ')'
@@ -427,12 +427,12 @@ update_clause[ClawLanguage l]:
     { $l.setUpdateClauseValue(ClawDMD.HOST); }
 ;
 
-create_clause[ClawLanguage l]:
+create_clause[ClawPragma l]:
     CREATE
     { $l.setCreateClause(); }
 ;
 
-target_clause[ClawLanguage l]
+target_clause[ClawPragma l]
   @init{
     List<Target> targets = new ArrayList<>();
   }
@@ -441,7 +441,7 @@ target_clause[ClawLanguage l]
     { $l.setTargetClauseValue(targets); }
 ;
 
-constraint_clause[ClawLanguage l]:
+constraint_clause[ClawPragma l]:
     CONSTRAINT '(' NONE ')'
     { $l.setConstraintClauseValue(ClawConstraint.NONE); }
   | CONSTRAINT '(' DIRECT ')'
@@ -461,7 +461,7 @@ target returns [Target t]:
 ;
 
 // Possible permutation of clauses for the loop-fusion directive
-loop_fusion_clauses[ClawLanguage l]:
+loop_fusion_clauses[ClawPragma l]:
   (
     { !$l.hasGroupClause() }?      group_clause[$l]
   | { !$l.hasCollapseClause() }?   collapse_clause[$l]
@@ -471,7 +471,7 @@ loop_fusion_clauses[ClawLanguage l]:
 ;
 
 // Possible permutation of clauses for the loop-interchange directive
-loop_interchange_clauses[ClawLanguage l]:
+loop_interchange_clauses[ClawPragma l]:
   indexes_option[$l]
   (
     { !$l.hasParallelClause() }?    parallel_clause[$l]
@@ -481,7 +481,7 @@ loop_interchange_clauses[ClawLanguage l]:
 ;
 
 // Possible permutation of clauses for the loop-extract directive
-loop_extract_clauses[ClawLanguage l]:
+loop_extract_clauses[ClawPragma l]:
   (
     { !$l.hasFusionClause() }?      fusion_clause[$l]
   | { !$l.hasParallelClause() }?    parallel_clause[$l]
@@ -491,7 +491,7 @@ loop_extract_clauses[ClawLanguage l]:
 ;
 
 // Possible permutation of clauses for the array-transform directive
-array_transform_clauses[ClawLanguage l]:
+array_transform_clauses[ClawPragma l]:
   (
     { !$l.hasFusionClause() }?      fusion_clause[$l]
   | { !$l.hasParallelClause() }?    parallel_clause[$l]
@@ -502,7 +502,7 @@ array_transform_clauses[ClawLanguage l]:
 ;
 
 // Possible permutation of clauses for the kcache directive
-kcache_clauses[ClawLanguage l]
+kcache_clauses[ClawPragma l]
 @init{
     List<Integer> i = new ArrayList<>();
 }
@@ -521,7 +521,7 @@ kcache_clauses[ClawLanguage l]
 ;
 
 // Possible permutation of clauses for the loop-hoist directive
-loop_hoist_clauses[ClawLanguage l]:
+loop_hoist_clauses[ClawPragma l]:
   (
     { !$l.hasReshapeClause() }?     reshape_clause[$l]
   | { !$l.hasInterchangeClause() }? interchange_clause[$l]

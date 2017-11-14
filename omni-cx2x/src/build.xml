@@ -76,7 +76,7 @@
         <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir}"
              includes="cx2x/xcodeml/**"/>
         <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir}"
-             includes="cx2x/Cx2x.class cx2x/ClawVersion.class cx2x/translator/** cx2x/decompiler/**"/>
+             includes="cx2x/Cx2x.class cx2x/ClawVersion.class cx2x/translator/** cx2x/decompiler/** cx2x/configuration/**"/>
         <jar jarfile="${dist.dir}/${external.jar}" basedir="${build.dir}"
              includes="external/**"/>
     </target>
