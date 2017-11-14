@@ -79,8 +79,8 @@ public class Cx2x {
     Options options = new Options();
     options.addOption("h", "help", false, "display program usage.");
     options.addOption("l", false, "suppress line directive in decompiled code.");
-    options.addOption("cp", "configuration-path", true, "specify the configuration directory");
-    options.addOption("c", "configuration", true, "specify the configuration for the translator.");
+    options.addOption("cp", "config-path", true, "specify the configuration directory");
+    options.addOption("c", "config", true, "specify the configuration for the translator.");
     options.addOption("s", "schema", true, "specify the XSD schema location to validate the configuration.");
     options.addOption("t", "target", true, "specify the target for the code transformation.");
     options.addOption("dir", "directive", true, "list all directive directive language available for code generation.");
@@ -91,7 +91,7 @@ public class Cx2x {
     options.addOption("M", true, "specify where to search for .xmod files");
     options.addOption("tl", "target-list", false, "list all target available for code transformation.");
     options.addOption("dl", "directive-list", false, "list all available directive language to be generated.");
-    options.addOption("sc", "show-configuration", false, "display the current configuration.");
+    options.addOption("sc", "show-config", false, "display the current configuration.");
     options.addOption("fp", "force-pure", false, "exit the translator if a PURE subroutine/function has to be transformed.");
     options.addOption("r", "report", true, "generate the transformation report.");
     return options;
