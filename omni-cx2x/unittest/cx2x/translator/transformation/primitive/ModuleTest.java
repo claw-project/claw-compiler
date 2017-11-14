@@ -23,7 +23,7 @@ public class ModuleTest {
     Configuration config = Configuration.get();
     config.init(CompilerDirective.OPENACC, Target.GPU);
     // .[directive].[target].claw
-    assertEquals(".internal.gpu.claw.xmod", Module.getSuffix());
+    assertEquals(".openacc.gpu.claw.xmod", Module.getSuffix());
     config.init(CompilerDirective.OPENMP, Target.CPU);
     assertEquals(".openmp.cpu.claw.xmod", Module.getSuffix());
     config.init(CompilerDirective.NONE, Target.CPU);
@@ -33,7 +33,7 @@ public class ModuleTest {
     config.init(CompilerDirective.NONE, Target.FPGA);
     assertEquals(".none.fpga.claw.xmod", Module.getSuffix());
     config.init(CompilerDirective.OPENACC, null);
-    assertEquals(".internal.none.claw.xmod", Module.getSuffix());
+    assertEquals(".openacc.none.claw.xmod", Module.getSuffix());
     config.init(null, null);
     assertEquals(".none.none.claw.xmod", Module.getSuffix());
     config.init(CompilerDirective.NONE, Target.GPU);

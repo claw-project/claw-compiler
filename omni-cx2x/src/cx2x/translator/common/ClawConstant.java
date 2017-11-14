@@ -39,7 +39,7 @@ public class ClawConstant {
 
   // Available directive directive primitives
   public static final String DIRECTIVE_NONE = "none";
-  public static final String DIRECTIVE_OPENACC = "internal";
+  public static final String DIRECTIVE_OPENACC = "openacc";
   public static final String DIRECTIVE_OPENMP = "openmp";
 
   public static final String ERROR_INCOMPATIBLE =
