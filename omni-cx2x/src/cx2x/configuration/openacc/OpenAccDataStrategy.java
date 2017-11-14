@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.configuration;
+package cx2x.configuration.openacc;
 
 /**
  * Define the enum values for the data strategy for OpenACC
