@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.ClawTranslator;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.translator.transformation.primitive.Field;
@@ -42,7 +42,7 @@ public class LoopHoist extends ClawBlockTransformation {
    *                       transformation.
    * @param endDirective   The directive that end the structured block.
    */
-  public LoopHoist(ClawLanguage startDirective, ClawLanguage endDirective) {
+  public LoopHoist(ClawPragma startDirective, ClawPragma endDirective) {
     super(startDirective, endDirective);
     _hoistedGroups = new ArrayList<>();
   }

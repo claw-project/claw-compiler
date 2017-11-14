@@ -10,7 +10,7 @@ import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.GroupConfiguration;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.claw.ArrayToFctCall;
 import cx2x.translator.transformation.claw.Kcaching;
 import cx2x.translator.transformation.claw.parallelize.Parallelize;
@@ -44,7 +44,7 @@ public class ClawTranslator implements Translator {
   private final Map<Element, Object> _crossTransformationTable;
   // Hold the module file cache
   private final ModuleCache _modCache;
-  private final Map<ClawDirectiveKey, ClawLanguage> _blockDirectives;
+  private final Map<ClawDirectiveKey, ClawPragma> _blockDirectives;
   private int _transformationCounter = 0;
 
   /**
@@ -86,7 +86,7 @@ public class ClawTranslator implements Translator {
       throws IllegalTransformationException, IllegalDirectiveException
   {
     // Analyze the raw pragma with the CLAW language parser
-    ClawLanguage analyzedPragma = ClawLanguage.analyze(pragma,
+    ClawPragma analyzedPragma = ClawPragma.analyze(pragma,
         Configuration.get().getAcceleratorGenerator(),
         Configuration.get().getCurrentTarget());
 
@@ -145,7 +145,7 @@ public class ClawTranslator implements Translator {
       throws IllegalTransformationException
   {
     // Clean up block transformation map
-    for(Map.Entry<ClawDirectiveKey, ClawLanguage> entry :
+    for(Map.Entry<ClawDirectiveKey, ClawPragma> entry :
         _blockDirectives.entrySet()) {
       createBlockDirectiveTransformation(xcodeml, entry.getValue(), null);
     }
@@ -160,7 +160,7 @@ public class ClawTranslator implements Translator {
    * @param analyzedPragma Analyzed pragma object to be handle.
    */
   private void HandleBlockDirective(XcodeProgram xcodeml,
-                                    ClawLanguage analyzedPragma)
+                                    ClawPragma analyzedPragma)
       throws IllegalDirectiveException, IllegalTransformationException
   {
     int depth = analyzedPragma.getPragma().depth();
@@ -195,8 +195,8 @@ public class ClawTranslator implements Translator {
    * @param end     End directive which ends the block.
    */
   private void createBlockDirectiveTransformation(XcodeProgram xcodeml,
-                                                  ClawLanguage begin,
-                                                  ClawLanguage end)
+                                                  ClawPragma begin,
+                                                  ClawPragma end)
       throws IllegalTransformationException
   {
     if(begin == null || !begin.isApplicableToCurrentTarget()) {
@@ -225,8 +225,8 @@ public class ClawTranslator implements Translator {
       throws IllegalTransformationException
   {
     if(t.getDirective() != null
-        && t.getDirective() instanceof ClawLanguage
-        && !((ClawLanguage) t.getDirective()).isApplicableToCurrentTarget())
+        && t.getDirective() instanceof ClawPragma
+        && !((ClawPragma) t.getDirective()).isApplicableToCurrentTarget())
     {
       return;
     }
@@ -244,7 +244,7 @@ public class ClawTranslator implements Translator {
 
   @Override
   public boolean isHandledPragma(Xnode pragma) {
-    return ClawLanguage.startsWithClaw(pragma);
+    return ClawPragma.startsWithClaw(pragma);
   }
 
   /**
@@ -296,13 +296,13 @@ public class ClawTranslator implements Translator {
    * Generate corresponding additional transformation according to optional
    * clauses given to the directive.
    *
-   * @param claw    ClawLanguage object that tells encapsulates all
+   * @param claw    ClawPragma object that tells encapsulates all
    *                information about the current directives and its
    *                clauses.
    * @param xcodeml Current XcodeML program.
    * @param stmt    Statement on which the transformation is attached.
    */
-  public void generateAdditionalTransformation(ClawLanguage claw,
+  public void generateAdditionalTransformation(ClawPragma claw,
                                                XcodeProgram xcodeml, Xnode stmt)
       throws IllegalTransformationException
   {
@@ -315,7 +315,7 @@ public class ClawTranslator implements Translator {
    * Generate loop interchange transformation if the clause is present in the
    * directive.
    *
-   * @param claw    ClawLanguage object that tells encapsulates all
+   * @param claw    ClawPragma object that tells encapsulates all
    *                information about the current directives and its
    *                clauses.
    * @param xcodeml Current XcodeML program.
@@ -323,14 +323,14 @@ public class ClawTranslator implements Translator {
    *                be a FdoStatement for the loop interchange
    *                transformation.
    */
-  private void applyInterchangeClause(ClawLanguage claw, XcodeProgram xcodeml,
+  private void applyInterchangeClause(ClawPragma claw, XcodeProgram xcodeml,
                                       Xnode stmt)
       throws IllegalTransformationException
   {
     if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
       Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
       stmt.insertBefore(p);
-      ClawLanguage l = ClawLanguage.createLoopInterchangeLanguage(claw, p);
+      ClawPragma l = ClawPragma.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       addTransformation(xcodeml, interchange);
       Message.debug("Loop interchange added: " + claw.getIndexes());
@@ -341,19 +341,19 @@ public class ClawTranslator implements Translator {
    * Generate loop fusion transformation if the clause is present in the
    * directive.
    *
-   * @param claw    ClawLanguage object that tells encapsulates all
+   * @param claw    ClawPragma object that tells encapsulates all
    *                information about the current directives and its
    *                clauses.
    * @param xcodeml Current XcodeML program.
    * @param stmt    Statement on which the transformation is attached. Must
    *                be a FdoStatement for the loop fusion transformation.
    */
-  private void applyFusionClause(ClawLanguage claw, XcodeProgram xcodeml,
+  private void applyFusionClause(ClawPragma claw, XcodeProgram xcodeml,
                                  Xnode stmt)
       throws IllegalTransformationException
   {
     if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
-      ClawLanguage l = ClawLanguage.createLoopFusionLanguage(claw);
+      ClawPragma l = ClawPragma.createLoopFusionLanguage(claw);
       addTransformation(xcodeml, new LoopFusion(stmt, l));
       Message.debug("Loop fusion added: " + claw.getGroupValue());
     }

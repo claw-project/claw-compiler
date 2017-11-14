@@ -11,9 +11,9 @@ import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.openacc.OpenAccLocalStrategy;
-import cx2x.translator.directive.CompilerDirective;
-import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.base.Target;
+import cx2x.configuration.CompilerDirective;
+import cx2x.translator.language.base.ClawPragma;
+import cx2x.configuration.Target;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Body;
@@ -88,7 +88,7 @@ public class Parallelize extends ClawTransformation {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public Parallelize(ClawLanguage directive) {
+  public Parallelize(ClawPragma directive) {
     super(directive);
     _overDimensions = 0;
     _dimensions = new HashMap<>();

@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.claw;
 
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.transformation.Transformation;
@@ -29,7 +29,7 @@ public class ArrayToFctCall extends ClawTransformation {
    *
    * @param directive The directive that triggered the transformation.
    */
-  public ArrayToFctCall(ClawLanguage directive) {
+  public ArrayToFctCall(ClawPragma directive) {
     super(directive);
   }
 

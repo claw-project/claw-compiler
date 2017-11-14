@@ -7,7 +7,7 @@ package cx2x.translator.transformation.claw;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -34,7 +34,7 @@ public class Kcaching extends ClawTransformation {
    *
    * @param directive The directive that triggered the k caching transformation.
    */
-  public Kcaching(ClawLanguage directive) {
+  public Kcaching(ClawPragma directive) {
     super(directive);
   }
 

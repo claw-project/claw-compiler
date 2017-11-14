@@ -8,7 +8,7 @@ package cx2x.translator.directive.generator;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
-import cx2x.translator.directive.CompilerDirective;
+import cx2x.configuration.CompilerDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 

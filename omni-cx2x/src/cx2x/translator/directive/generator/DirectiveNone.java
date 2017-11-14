@@ -5,7 +5,7 @@
 
 package cx2x.translator.directive.generator;
 
-import cx2x.translator.directive.CompilerDirective;
+import cx2x.configuration.CompilerDirective;
 
 import java.util.List;
 

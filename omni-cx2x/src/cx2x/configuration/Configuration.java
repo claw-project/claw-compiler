@@ -7,10 +7,8 @@ package cx2x.configuration;
 
 import cx2x.ClawVersion;
 import cx2x.configuration.openacc.OpenAccConfiguration;
-import cx2x.translator.directive.CompilerDirective;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.translator.language.base.Target;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.transformation.BlockTransformation;
 import org.w3c.dom.Document;

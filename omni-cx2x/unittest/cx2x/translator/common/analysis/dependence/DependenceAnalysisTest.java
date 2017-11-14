@@ -7,11 +7,11 @@ package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.configuration.Configuration;
-import cx2x.translator.directive.CompilerDirective;
+import cx2x.configuration.CompilerDirective;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.translator.language.base.ClawLanguage;
-import cx2x.translator.language.base.Target;
+import cx2x.translator.language.base.ClawPragma;
+import cx2x.configuration.Target;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
 import cx2x.xcodeml.xnode.Xnode;
@@ -124,9 +124,9 @@ public class DependenceAnalysisTest {
     ClawTranslator translator = new ClawTranslator();
     DirectiveGenerator generator =
         Directive.createAcceleratorGenerator();
-    ClawLanguage main = null;
+    ClawPragma main = null;
     try {
-      main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
+      main = ClawPragma.analyze(pragmas.get(0), generator, Target.GPU);
     } catch(Exception e) {
       fail();
     }
@@ -182,7 +182,7 @@ public class DependenceAnalysisTest {
     DirectiveGenerator generator =
         Directive.createAcceleratorGenerator();
     try {
-      ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
+      ClawPragma.analyze(pragmas.get(0), generator, Target.GPU);
     } catch(Exception e) {
       fail();
     }

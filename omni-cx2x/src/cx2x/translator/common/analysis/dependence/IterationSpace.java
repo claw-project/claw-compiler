@@ -5,7 +5,7 @@
 package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.common.Utility;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.loop.LoopFusion;
 import cx2x.xcodeml.transformation.DependentTransformationGroup;
 import cx2x.xcodeml.transformation.Translator;
@@ -148,11 +148,11 @@ public class IterationSpace {
    *
    * @param xcodeml    Current XcodeML/F program unit.
    * @param translator Current translator.
-   * @param master     ClawLanguage that triggered this transformation.
+   * @param master     ClawPragma that triggered this transformation.
    * @throws Exception If the fusion fails.
    */
   public void tryFusion(XcodeProgram xcodeml, Translator translator,
-                        ClawLanguage master)
+                        ClawPragma master)
       throws Exception
   {
     for(int i = _levels.size() - 1; i >= 0; --i) {
@@ -161,7 +161,7 @@ public class IterationSpace {
           new DependentTransformationGroup("parallelize-fusion");
       for(DependenceAnalysis dep : loopsAtLevel) {
         if(dep.isIndependent()) {
-          ClawLanguage l = ClawLanguage.createLoopFusionLanguage(master);
+          ClawPragma l = ClawPragma.createLoopFusionLanguage(master);
           LoopFusion fusion = new LoopFusion(dep.getDoStmt(), l);
           fusions.add(fusion);
         }

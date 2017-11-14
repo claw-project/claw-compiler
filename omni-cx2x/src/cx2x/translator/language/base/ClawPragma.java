@@ -5,8 +5,9 @@
 
 package cx2x.translator.language.base;
 
-import cx2x.translator.language.accelerator.AcceleratorDirective;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.configuration.Target;
+import cx2x.configuration.CompilerDirective;
+import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawRange;
@@ -26,16 +27,16 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import java.util.*;
 
 /**
- * ClawLanguage class represent an analyzed pragma statement.
+ * ClawPragma class represent an analyzed pragma statement.
  *
  * @author clementval
  */
-public class ClawLanguage extends AnalyzedPragma {
+public class ClawPragma extends AnalyzedPragma {
 
   private static final String PREFIX_CLAW = "claw";
   private static final String IGNORE = "ignore";
 
-  private AcceleratorGenerator _generator;
+  private DirectiveGenerator _generator;
   private Target _target;
   private ClawDirective _directive;
 
@@ -76,20 +77,20 @@ public class ClawLanguage extends AnalyzedPragma {
   private boolean _hasCreateClause;
 
   /**
-   * Constructs an empty ClawLanguage section.
+   * Constructs an empty ClawPragma section.
    * WARNING: This ctor should only be used by the parser.
    */
-  public ClawLanguage() {
+  public ClawPragma() {
     resetVariables();
   }
 
   /**
-   * Constructs an empty ClawLanguage object with an attached pragma. Used only
+   * Constructs an empty ClawPragma object with an attached pragma. Used only
    * for transformation that are not CLAW related.
    *
-   * @param pragma The pragma that is attached to the ClawLanguage object.
+   * @param pragma The pragma that is attached to the ClawPragma object.
    */
-  public ClawLanguage(Xnode pragma) {
+  public ClawPragma(Xnode pragma) {
     super(pragma);
     resetVariables();
   }
@@ -112,16 +113,16 @@ public class ClawLanguage extends AnalyzedPragma {
    *                  CLAW language.
    * @param generator Accelerator directive generator.
    * @param target    Target that influences the code transformation.
-   * @return A ClawLanguage object with the corresponding extracted information.
+   * @return A ClawPragma object with the corresponding extracted information.
    * @throws IllegalDirectiveException If directive does not follow the CLAW
    *                                   language specification.
    */
-  public static ClawLanguage analyze(Xnode pragma,
-                                     AcceleratorGenerator generator,
-                                     Target target)
+  public static ClawPragma analyze(Xnode pragma,
+                                   DirectiveGenerator generator,
+                                   Target target)
       throws IllegalDirectiveException
   {
-    ClawLanguage l =
+    ClawPragma l =
         analyze(pragma.value(), pragma.lineNo(), generator, target);
     if(l != null) {
       l.attachPragma(pragma);
@@ -154,14 +155,14 @@ public class ClawLanguage extends AnalyzedPragma {
    * @param lineno    Line number of the pragma statement.
    * @param generator Accelerator directive generator.
    * @param target    Target that influences the code transformation.
-   * @return A ClawLanguage object with the corresponding extracted information.
+   * @return A ClawPragma object with the corresponding extracted information.
    * @throws IllegalDirectiveException If directive does not follow the CLAW
    *                                   language specification.
    */
-  private static ClawLanguage analyze(String rawPragma,
-                                      int lineno,
-                                      AcceleratorGenerator generator,
-                                      Target target)
+  private static ClawPragma analyze(String rawPragma,
+                                    int lineno,
+                                    DirectiveGenerator generator,
+                                    Target target)
       throws IllegalDirectiveException
   {
     // Remove additional claw keyword
@@ -187,7 +188,7 @@ public class ClawLanguage extends AnalyzedPragma {
     try {
       // Start the parser analysis from the "analyze" entry point
       ClawParser.AnalyzeContext ctx = parser.analyze();
-      // Get the ClawLanguage object return by the parser after analysis.
+      // Get the ClawPragma object return by the parser after analysis.
       ctx.l.setAcceleratorGenerator(generator);
       ctx.l.setTarget(target);
       return ctx.l;
@@ -209,15 +210,15 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Create an instance of ClawLanguage that correspond to a loop-fusion
+   * Create an instance of ClawPragma that correspond to a loop-fusion
    * directive. Used for dynamically created transformation.
    *
    * @param master Base object which initiate the creation of this instance.
-   * @return An instance of ClawLanguage describing a loop-fusion with the
+   * @return An instance of ClawPragma describing a loop-fusion with the
    * group, collapse clauses and the pragma from the master object.
    */
-  public static ClawLanguage createLoopFusionLanguage(ClawLanguage master) {
-    ClawLanguage l = new ClawLanguage();
+  public static ClawPragma createLoopFusionLanguage(ClawPragma master) {
+    ClawPragma l = new ClawPragma();
     l.setDirective(ClawDirective.LOOP_FUSION);
     if(master.hasGroupClause()) {
       l.setGroupClause(master.getGroupValue());
@@ -233,18 +234,18 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Create an instance of ClawLanguage that correspond to a loop-interchange
+   * Create an instance of ClawPragma that correspond to a loop-interchange
    * directive. Used for dynamically created transformation.
    *
    * @param master Base object which initiate the creation of this instance.
    * @param pragma Pragma statement located just before the first do stmt.
-   * @return An instance of ClawLanguage describing a loop-interchange with the
+   * @return An instance of ClawPragma describing a loop-interchange with the
    * indexes from the master object.
    */
-  public static ClawLanguage createLoopInterchangeLanguage(ClawLanguage master,
-                                                           Xnode pragma)
+  public static ClawPragma createLoopInterchangeLanguage(ClawPragma master,
+                                                         Xnode pragma)
   {
-    ClawLanguage l = new ClawLanguage();
+    ClawPragma l = new ClawPragma();
     l.setDirective(ClawDirective.LOOP_INTERCHANGE);
     l.setIndexes(master.getIndexes());
     l.attachPragma(pragma);
@@ -497,16 +498,16 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Check whether the current directive has the accelerator clause enabled.
+   * Check whether the current directive has the directive clause enabled.
    *
-   * @return True if the accelerator clause is enabled.
+   * @return True if the directive clause is enabled.
    */
   public boolean hasAcceleratorClause() {
     return _hasAccClause;
   }
 
   /**
-   * Get the accelerator clauses extracted from the accelerator clause.
+   * Get the directive clauses extracted from the directive clause.
    *
    * @return Accelerator clauses as a String.
    */
@@ -515,10 +516,10 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Enable the accelerator clause for the current directive and set the
+   * Enable the directive clause for the current directive and set the
    * extracted clauses.
    *
-   * @param clauses Accelerator clauses extracted from the accelerator clause.
+   * @param clauses Accelerator clauses extracted from the directive clause.
    */
   public void setAcceleratorClauses(String clauses) {
     _hasAccClause = true;
@@ -689,7 +690,7 @@ public class ClawLanguage extends AnalyzedPragma {
     }
 
     if(baseDimOccurrence == 0) {
-      //throw new Exception("Base dimension \":\" is not specified");
+      // TODO 1.0 throw new Exception("Base dimension \":\" is not specified");
     }
 
     boolean hasMiddleInsertion = baseDimOccurrence > 1;
@@ -711,7 +712,7 @@ public class ClawLanguage extends AnalyzedPragma {
           newDimension.setInsertionPosition(crt);
           specializedDimensions.add(newDimension);
         } else {
-          //throw new Exception("Dimension " + d + " is not defined");
+          // TODO 1.0 throw new Exception("Dimension " + d + " is not defined");
         }
       }
     }
@@ -1108,21 +1109,21 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Get the accelerator generator for the current accelerator directive
+   * Get the directive generator for the current directive directive
    * language associated with the program.
    *
-   * @return Associated accelerator directive generator.
+   * @return Associated directive directive generator.
    */
-  public AcceleratorGenerator getAcceleratorGenerator() {
+  public DirectiveGenerator getAcceleratorGenerator() {
     return _generator;
   }
 
   /**
-   * Set the accelerator directive generator for pragma generation
+   * Set the directive directive generator for pragma generation
    *
-   * @param generator The current accelerator directive generator.
+   * @param generator The current directive directive generator.
    */
-  private void setAcceleratorGenerator(AcceleratorGenerator generator) {
+  private void setAcceleratorGenerator(DirectiveGenerator generator) {
     _generator = generator;
   }
 
@@ -1157,13 +1158,13 @@ public class ClawLanguage extends AnalyzedPragma {
   }
 
   /**
-   * Get the current accelerator directive language target.
+   * Get the current directive directive language target.
    *
-   * @return Value of the AcceleratorDirective enumeration.
+   * @return Value of the CompilerDirective enumeration.
    */
-  public AcceleratorDirective getDirectiveLanguage() {
+  public CompilerDirective getDirectiveLanguage() {
     return (_generator != null) ? _generator.getDirectiveLanguage() :
-        AcceleratorDirective.NONE;
+        CompilerDirective.NONE;
   }
 
   /**

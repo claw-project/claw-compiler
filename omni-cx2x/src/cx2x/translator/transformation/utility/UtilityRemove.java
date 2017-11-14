@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.utility;
 
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -37,7 +37,7 @@ public class UtilityRemove extends ClawBlockTransformation {
    *                       Can be null if the start directive is used before a
    *                       do statement or an if statement.
    */
-  public UtilityRemove(ClawLanguage startDirective, ClawLanguage endDirective) {
+  public UtilityRemove(ClawPragma startDirective, ClawPragma endDirective) {
     super(startDirective, endDirective);
   }
 

@@ -5,8 +5,8 @@
 package cx2x.translator.language;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.directive.CompilerDirective;
-import cx2x.translator.language.base.Target;
+import cx2x.configuration.CompilerDirective;
+import cx2x.configuration.Target;
 import org.junit.Test;
 
 import java.util.Arrays;

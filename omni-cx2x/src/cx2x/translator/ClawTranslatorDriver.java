@@ -8,7 +8,7 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.GroupConfiguration;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
@@ -97,7 +97,7 @@ public class ClawTranslatorDriver {
               if(gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
                   && Pragma.getPrefix(pragma).equals(gc.getDirective()))
               {
-                generateTransformation(gc, new ClawLanguage(pragma));
+                generateTransformation(gc, new ClawPragma(pragma));
               }
             }
           }
@@ -134,13 +134,13 @@ public class ClawTranslatorDriver {
    * @param pragma Pragma associated with the transformation.
    */
   private void generateTransformation(GroupConfiguration gc,
-                                      ClawLanguage pragma)
+                                      ClawPragma pragma)
   {
     try {
       Class<?> groupClass = gc.getTransformationClass();
       ClawTransformation transformation;
       if(pragma != null) {
-        Constructor<?> ctor = groupClass.getConstructor(ClawLanguage.class);
+        Constructor<?> ctor = groupClass.getConstructor(ClawPragma.class);
         transformation = (ClawTransformation) ctor.newInstance(pragma);
       } else {
         Constructor<?> ctor = groupClass.getConstructor();

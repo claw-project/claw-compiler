@@ -11,7 +11,7 @@ import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
 import cx2x.translator.transformation.ClawTransformation;
@@ -56,7 +56,7 @@ public class LoopExtraction extends ClawTransformation {
    * @throws IllegalDirectiveException if something is wrong in the directive's
    *                                   options
    */
-  public LoopExtraction(ClawLanguage directive)
+  public LoopExtraction(ClawPragma directive)
       throws IllegalDirectiveException
   {
     super(directive);

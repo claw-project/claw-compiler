@@ -5,6 +5,7 @@
 
 package cx2x.translator.directive;
 
+import cx2x.configuration.CompilerDirective;
 import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.common.Message;
 import cx2x.configuration.Configuration;
@@ -13,7 +14,7 @@ import cx2x.translator.directive.generator.OpenAcc;
 import cx2x.translator.directive.generator.OpenMp;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -42,14 +43,14 @@ public final class Directive {
    * Generate loop seq directives on the top of loops in the given function
    * definition.
    *
-   * @param claw    ClawLanguage object that tells if the parallel clause is
+   * @param claw    ClawPragma object that tells if the parallel clause is
    *                enable and where the start pragma is located.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
    * @param fctDef  Function definition in which do statements will be
    *                decorated.
    */
-  public static void generateLoopSeq(ClawLanguage claw, XcodeProgram xcodeml,
+  public static void generateLoopSeq(ClawPragma claw, XcodeProgram xcodeml,
                                      XfunctionDefinition fctDef)
   {
     DirectiveGenerator gen = claw.getAcceleratorGenerator();
@@ -80,7 +81,7 @@ public final class Directive {
   /**
    * Generate update directives for device and host data transfer.
    *
-   * @param claw    ClawLanguage object that tells if the parallel clause is
+   * @param claw    ClawPragma object that tells if the parallel clause is
    *                enable and where the start pragma is located.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
@@ -88,7 +89,7 @@ public final class Directive {
    *                generated before the hook and update host after the hook.
    * @return Last inserted pragma.
    */
-  public static Xnode generateUpdate(ClawLanguage claw, XcodeProgram xcodeml,
+  public static Xnode generateUpdate(ClawPragma claw, XcodeProgram xcodeml,
                                      Xnode hook, List<String> vars,
                                      ClawDMD direction)
   {
@@ -127,7 +128,7 @@ public final class Directive {
     Xnode sibling = doStmt.prevSibling();
     while(sibling != null && sibling.opcode() == Xcode.FPRAGMASTATEMENT) {
       try {
-        ClawLanguage pragma = ClawLanguage.analyze(sibling, null, null);
+        ClawPragma pragma = ClawPragma.analyze(sibling, null, null);
         if(pragma.getDirective() == ClawDirective.NO_DEP) {
           return sibling;
         }
@@ -144,7 +145,7 @@ public final class Directive {
    * Generate corresponding pragmas to surround the code with a parallel
    * accelerated region.
    *
-   * @param claw      ClawLanguage object that tells if the parallel clause is
+   * @param claw      ClawPragma object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -153,7 +154,7 @@ public final class Directive {
    * @param endStmt   End statement representing the end of the parallel region.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  public static Xnode generateParallelClause(ClawLanguage claw,
+  public static Xnode generateParallelClause(ClawPragma claw,
                                              XcodeProgram xcodeml,
                                              Xnode startStmt, Xnode endStmt)
   {
@@ -166,7 +167,7 @@ public final class Directive {
   /**
    * Generate directive directive for a parallel loop.
    *
-   * @param claw      ClawLanguage object that tells if the parallel clause is
+   * @param claw      ClawPragma object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -177,7 +178,7 @@ public final class Directive {
    * @param collapse  If value bigger than 0, a corresponding collapse
    *                  constructs can be generated.
    */
-  public static void generateParallelLoopClause(ClawLanguage claw,
+  public static void generateParallelLoopClause(ClawPragma claw,
                                                 XcodeProgram xcodeml,
                                                 List<String> privates,
                                                 Xnode startStmt, Xnode endStmt,
@@ -198,7 +199,7 @@ public final class Directive {
   /**
    * Generates directive directive for a loop region.
    *
-   * @param claw      ClawLanguage object that tells if the parallel clause is
+   * @param claw      ClawPragma object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -208,7 +209,7 @@ public final class Directive {
    * @param collapse  If value bigger than 0, a corresponding collapse
    *                  constructs can be generated.
    */
-  public static void generateLoopDirectives(ClawLanguage claw,
+  public static void generateLoopDirectives(ClawPragma claw,
                                             XcodeProgram xcodeml,
                                             Xnode startStmt, Xnode endStmt,
                                             int collapse)
@@ -222,7 +223,7 @@ public final class Directive {
   /**
    * Generate directive directive for a data region.
    *
-   * @param claw      ClawLanguage object that tells if the parallel clause is
+   * @param claw      ClawPragma object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -232,7 +233,7 @@ public final class Directive {
    *                  region.
    * @param endStmt   End statement representing the end of the data region.
    */
-  public static void generateDataRegionClause(ClawLanguage claw,
+  public static void generateDataRegionClause(ClawPragma claw,
                                               XcodeProgram xcodeml,
                                               List<String> presents,
                                               List<String> creates,
@@ -338,7 +339,7 @@ public final class Directive {
   /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
    *
-   * @param claw      ClawLanguage object that tells if the parallel clause is
+   * @param claw      ClawPragma object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
    * @param startStmt Start statement representing the beginning of the parallel
    *                  region.
@@ -347,7 +348,7 @@ public final class Directive {
    * @return Last stmt inserted or null if nothing is inserted.
    */
   private static Xnode generateAcceleratorClause(
-      ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt)
+      ClawPragma claw, XcodeProgram xcodeml, Xnode startStmt)
   {
     if(claw.hasAcceleratorClause()) {
       /* TODO
@@ -363,7 +364,7 @@ public final class Directive {
   /**
    * Generate all corresponding pragmas to be applied for directive.
    *
-   * @param claw      ClawLanguage object that tells which directive pragmas
+   * @param claw      ClawPragma object that tells which directive pragmas
    *                  are enabled.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -373,7 +374,7 @@ public final class Directive {
    * @return Last stmt inserted.
    */
   public static Xnode generateAdditionalDirectives(
-      ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
+      ClawPragma claw, XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
   {
     if(claw.getDirectiveLanguage() == CompilerDirective.NONE) {
       return null;
@@ -396,14 +397,14 @@ public final class Directive {
    * Generate all corresponding pragmas to be applied to an accelerated
    * function/subroutine.
    *
-   * @param claw    ClawLanguage object that tells which directive pragmas
+   * @param claw    ClawPragma object that tells which directive pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
    * @param fctDef  Function/subroutine in which directive directives are
    *                generated.
    */
-  public static void generateRoutineDirectives(ClawLanguage claw,
+  public static void generateRoutineDirectives(ClawPragma claw,
                                                XcodeProgram xcodeml,
                                                XfunctionDefinition fctDef)
   {
@@ -463,7 +464,7 @@ public final class Directive {
   /**
    * Generate the correct clauses for private variable on directive.
    *
-   * @param claw    ClawLanguage object that tells which directive pragmas
+   * @param claw    ClawPragma object that tells which directive pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
@@ -471,7 +472,7 @@ public final class Directive {
    *                append private clauses.
    * @param var     Variable to generate the private clause.
    */
-  public static void generatePrivateClause(ClawLanguage claw,
+  public static void generatePrivateClause(ClawPragma claw,
                                            XcodeProgram xcodeml,
                                            Xnode stmt,
                                            String var)
@@ -577,7 +578,7 @@ public final class Directive {
    * Generate corresponding pragmas to surround the code with a parallel
    * accelerated region.
    *
-   * @param claw           ClawLanguage object that tells if the parallel clause
+   * @param claw           ClawPragma object that tells if the parallel clause
    *                       is enable and where the start pragma is located.
    * @param xcodeml        Current XcodeML program unit.
    *                       representation in which the pragmas will be
@@ -588,7 +589,7 @@ public final class Directive {
    * @param endDirective   String value of the end directive.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static Xnode insertPragmas(ClawLanguage claw, XcodeProgram xcodeml,
+  private static Xnode insertPragmas(ClawPragma claw, XcodeProgram xcodeml,
                                      Xnode startStmt, Xnode endStmt,
                                      String[] startDirective,
                                      String[] endDirective)

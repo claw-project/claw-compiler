@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation;
 
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.xcodeml.transformation.Transformation;
 
 /**
@@ -19,7 +19,7 @@ import cx2x.xcodeml.transformation.Transformation;
 
 public abstract class ClawTransformation extends Transformation {
 
-  protected final ClawLanguage _claw;
+  protected final ClawPragma _claw;
 
   /**
    * Default ctor for translation_unit transformation.
@@ -34,7 +34,7 @@ public abstract class ClawTransformation extends Transformation {
    *
    * @param directive Directive that trigger the transformation.
    */
-  public ClawTransformation(ClawLanguage directive) {
+  public ClawTransformation(ClawPragma directive) {
     super(directive);
     _claw = directive;
   }
@@ -42,9 +42,9 @@ public abstract class ClawTransformation extends Transformation {
   /**
    * Get the language information object.
    *
-   * @return ClawLanguage with information gathered at parsing time.
+   * @return ClawPragma with information gathered at parsing time.
    */
-  public ClawLanguage getLanguageInfo() {
+  public ClawPragma getLanguageInfo() {
     return _claw;
   }
 

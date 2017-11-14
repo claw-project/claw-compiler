@@ -6,8 +6,8 @@
 package cx2x.translator.transformation.openacc;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.directive.CompilerDirective;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.configuration.CompilerDirective;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.transformation.Transformation;
@@ -30,7 +30,7 @@ public class DirectivePrimitive extends ClawTransformation {
    * @param directive The directive that triggered the directive primitive
    *                  transformation.
    */
-  public DirectivePrimitive(ClawLanguage directive) {
+  public DirectivePrimitive(ClawPragma directive) {
     super(directive);
   }
 
@@ -83,6 +83,6 @@ public class DirectivePrimitive extends ClawTransformation {
     );
 
     translator.addTransformation(xcodeml,
-        new OpenAccContinuation((ClawLanguage) getDirective()));
+        new OpenAccContinuation((ClawPragma) getDirective()));
   }
 }

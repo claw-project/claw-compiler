@@ -5,6 +5,7 @@
 
 package cx2x.translator.directive;
 
+import cx2x.configuration.CompilerDirective;
 import cx2x.translator.common.ClawConstant;
 import org.junit.Test;
 

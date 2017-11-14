@@ -9,7 +9,7 @@ import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.language.base.ClawDMD;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Field;
@@ -65,7 +65,7 @@ public class ParallelizeForward extends ClawTransformation {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public ParallelizeForward(ClawLanguage directive) {
+  public ParallelizeForward(ClawPragma directive) {
     super(directive);
     _promotedVar = new ArrayList<>();
     _promotedWithBeforeOver = new ArrayList<>();

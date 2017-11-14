@@ -4,7 +4,7 @@
  */
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Body;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -24,7 +24,7 @@ public class IfExtract extends ClawTransformation {
   private Xnode _doStmt = null;
   private Xnode _ifStmt = null;
 
-  public IfExtract(ClawLanguage directive) {
+  public IfExtract(ClawPragma directive) {
     super(directive);
   }
 

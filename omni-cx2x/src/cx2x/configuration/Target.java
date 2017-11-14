@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.language.base;
+package cx2x.configuration;
 
 import cx2x.translator.common.ClawConstant;
 

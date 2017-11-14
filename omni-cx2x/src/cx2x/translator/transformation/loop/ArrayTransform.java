@@ -7,7 +7,7 @@ package cx2x.translator.transformation.loop;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.translator.transformation.primitive.Range;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -48,7 +48,7 @@ public class ArrayTransform extends ClawBlockTransformation {
    * @param end   The directive that close the block transformation.
    *              Can be null.
    */
-  public ArrayTransform(ClawLanguage begin, ClawLanguage end) {
+  public ArrayTransform(ClawPragma begin, ClawPragma end) {
     super(begin, end);
     _groupedAssignStmts = new ArrayList<>();
     _groupIterationRanges = new ArrayList<>();

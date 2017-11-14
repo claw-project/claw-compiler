@@ -4,7 +4,7 @@
  */
 package cx2x.translator.transformation;
 
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.xcodeml.transformation.BlockTransformation;
 
 /**
@@ -17,10 +17,10 @@ import cx2x.xcodeml.transformation.BlockTransformation;
  */
 public abstract class ClawBlockTransformation extends BlockTransformation {
 
-  protected final ClawLanguage _clawStart, _clawEnd;
+  protected final ClawPragma _clawStart, _clawEnd;
 
-  protected ClawBlockTransformation(ClawLanguage startDirective,
-                                    ClawLanguage endDirective)
+  protected ClawBlockTransformation(ClawPragma startDirective,
+                                    ClawPragma endDirective)
   {
     super(startDirective, endDirective);
     _clawStart = startDirective;

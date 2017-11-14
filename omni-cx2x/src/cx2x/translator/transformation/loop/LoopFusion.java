@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.language.common.ClawConstraint;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Loop;
@@ -44,7 +44,7 @@ public class LoopFusion extends ClawTransformation {
    * @param directive The directive that triggered the loop fusion
    *                  transformation.
    */
-  public LoopFusion(ClawLanguage directive) {
+  public LoopFusion(ClawPragma directive) {
     super(directive);
     if(_claw.hasGroupClause()) {
       _groupClauseLabel = directive.getGroupValue();
@@ -58,7 +58,7 @@ public class LoopFusion extends ClawTransformation {
    * @param ghostDirective The generated directive that will be used for the
    *                       loop-fusion transformation.
    */
-  public LoopFusion(Xnode loop, ClawLanguage ghostDirective) {
+  public LoopFusion(Xnode loop, ClawPragma ghostDirective) {
     super(ghostDirective);
     _doStmt = new NestedDoStatement(loop, 1);
     if(_claw.hasGroupClause()) {

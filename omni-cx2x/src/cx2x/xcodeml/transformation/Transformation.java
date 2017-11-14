@@ -94,7 +94,7 @@ public abstract class Transformation {
   /**
    * Get the directive that triggered the transformation.
    *
-   * @return The analyzed directive as a ClawLanguage object.
+   * @return The analyzed directive as a ClawPragma object.
    */
   public AnalyzedPragma getDirective() {
     return _directive;

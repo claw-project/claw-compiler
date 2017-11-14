@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.directive.Directive;
-import cx2x.translator.language.base.ClawLanguage;
+import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Loop;
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -36,7 +36,7 @@ public class LoopInterchange extends ClawTransformation {
    * @param directive The directive that triggered the loop interchange
    *                  transformation.
    */
-  public LoopInterchange(ClawLanguage directive) {
+  public LoopInterchange(ClawPragma directive) {
     super(directive);
   }
 
