@@ -18,8 +18,7 @@ grammar Claw;
  */
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.base.*;
-import cx2x.translator.language.common.*;
+import cx2x.translator.language.*;
 import cx2x.configuration.Target;
 import cx2x.translator.common.Utility;
 import cx2x.xcodeml.language.*;
