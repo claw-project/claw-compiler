@@ -5,15 +5,15 @@
 
 package cx2x.translator.transformation.claw.one_column;
 
+import cx2x.configuration.CompilerDirective;
+import cx2x.configuration.Configuration;
+import cx2x.configuration.Target;
+import cx2x.configuration.openacc.OpenAccLocalStrategy;
 import cx2x.translator.ClawTranslator;
-import cx2x.translator.directive.Directive;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
-import cx2x.configuration.Configuration;
-import cx2x.configuration.openacc.OpenAccLocalStrategy;
-import cx2x.configuration.CompilerDirective;
+import cx2x.translator.directive.Directive;
 import cx2x.translator.language.ClawPragma;
-import cx2x.configuration.Target;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Body;
@@ -157,7 +157,7 @@ public class Parallelize extends ClawTransformation {
           _claw.getAcceleratorGenerator(), _fctDef, contains);
 
       List<Xnode> unsupportedStatements =
-          XnodeUtil.getStatements(parallelRegionStart, parallelRegionEnd,
+          XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
               _claw.getAcceleratorGenerator().getUnsupportedStatements());
 
       if(unsupportedStatements.size() > 0) {

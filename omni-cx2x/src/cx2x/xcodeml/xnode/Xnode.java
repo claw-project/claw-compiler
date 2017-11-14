@@ -588,18 +588,18 @@ public class Xnode {
    * @return List of all nodes matched in the subtree.
    */
   public List<Xnode> matchAll(Xcode opcode) {
-    List<Xnode> elements = new ArrayList<>();
+    List<Xnode> nodes = new ArrayList<>();
     if(_baseElement == null) {
-      return elements;
+      return nodes;
     }
-    NodeList nodes = _baseElement.getElementsByTagName(opcode.code());
-    for(int i = 0; i < nodes.getLength(); i++) {
-      Node n = nodes.item(i);
+    NodeList rawNodes = _baseElement.getElementsByTagName(opcode.code());
+    for(int i = 0; i < rawNodes.getLength(); i++) {
+      Node n = rawNodes.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
-        elements.add(new Xnode((Element) n));
+        nodes.add(new Xnode((Element) n));
       }
     }
-    return elements;
+    return nodes;
   }
 
   /**

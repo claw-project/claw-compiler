@@ -32,6 +32,8 @@ import java.util.Set;
 
 public class XnodeUtil {
 
+  // TODO 1.0 move method to specific primitives or classes and delete this class
+
   /**
    * Find all array references elements in a given body and give var name.
    *
@@ -468,16 +470,16 @@ public class XnodeUtil {
   /**
    * Get given statements in the subtree.
    *
-   * @param root       Root of the subtree.
-   * @param statements List of statements to look for.
+   * @param root        Root of the subtree.
+   * @param nodeOpcodes List of statements to look for.
    * @return List of statement found.
    */
-  public static List<Xnode> getStatements(Xnode root, List<Xcode> statements) {
+  public static List<Xnode> getNodes(Xnode root, List<Xcode> nodeOpcodes) {
     List<Xnode> unsupportedStatements = new ArrayList<>();
     if(root == null) {
       return unsupportedStatements;
     }
-    for(Xcode opcode : statements) {
+    for(Xcode opcode : nodeOpcodes) {
       unsupportedStatements.addAll(root.matchAll(opcode));
     }
     return unsupportedStatements;
@@ -486,21 +488,22 @@ public class XnodeUtil {
   /**
    * Get given statements in between from and to included.
    *
-   * @param from       Node from.
-   * @param to         Node to.
-   * @param statements List of statements to look for.
+   * @param from        Node from.
+   * @param to          Node to.
+   * @param nodeOpcodes List of statements to look for.
    * @return List of statement found.
    */
-  public static List<Xnode> getStatements(Xnode from, Xnode to,
-                                          List<Xcode> statements)
+  public static List<Xnode> getNodes(Xnode from, Xnode to,
+                                     List<Xcode> nodeOpcodes)
   {
     List<Xnode> unsupportedStatements = new ArrayList<>();
     Xnode crt = from;
     while(crt != null && crt.element() != to.element()) {
-      if(statements.contains(crt.opcode())) {
+      if(nodeOpcodes.contains(crt.opcode())) {
         unsupportedStatements.add(crt);
       }
-      unsupportedStatements.addAll(getStatements(crt, statements));
+      // Get all nodes matching in the subtree
+      unsupportedStatements.addAll(getNodes(crt, nodeOpcodes));
       crt = crt.nextSibling();
     }
     return unsupportedStatements;

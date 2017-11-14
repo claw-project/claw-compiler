@@ -5,11 +5,11 @@
 
 package cx2x.translator.language;
 
-import cx2x.configuration.Configuration;
 import cx2x.configuration.CompilerDirective;
+import cx2x.configuration.Configuration;
+import cx2x.configuration.Target;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.configuration.Target;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.language.InsertionPosition;

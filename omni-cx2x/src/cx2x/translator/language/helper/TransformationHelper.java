@@ -24,6 +24,8 @@ import java.util.List;
  */
 public class TransformationHelper {
 
+  // TODO 1.0 move method to specific primitives or classes and delete this class
+
   /**
    * Find the dimensions defined by the one_column transformation.
    *
