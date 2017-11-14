@@ -8,7 +8,7 @@ package cx2x.translator.language.accelerator.generator;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 
@@ -145,8 +145,8 @@ public class OpenAcc extends AcceleratorGenerator {
   }
 
   @Override
-  public AcceleratorDirective getDirectiveLanguage() {
-    return AcceleratorDirective.OPENACC;
+  public CompilerDirective getDirectiveLanguage() {
+    return CompilerDirective.OPENACC;
   }
 
   @Override

@@ -5,7 +5,7 @@
 package cx2x.translator.language;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.base.Target;
 import org.junit.Test;
 
@@ -36,29 +36,29 @@ public class ClawEnumTest {
 
   @Test
   public void AcceleratorDirectiveTest() {
-    assertEquals(AcceleratorDirective.NONE,
-        AcceleratorDirective.fromString(ClawConstant.DIRECTIVE_NONE));
-    assertEquals(AcceleratorDirective.OPENACC,
-        AcceleratorDirective.fromString(ClawConstant.DIRECTIVE_OPENACC));
-    assertEquals(AcceleratorDirective.OPENMP,
-        AcceleratorDirective.fromString(ClawConstant.DIRECTIVE_OPENMP));
+    assertEquals(CompilerDirective.NONE,
+        CompilerDirective.fromString(ClawConstant.DIRECTIVE_NONE));
+    assertEquals(CompilerDirective.OPENACC,
+        CompilerDirective.fromString(ClawConstant.DIRECTIVE_OPENACC));
+    assertEquals(CompilerDirective.OPENMP,
+        CompilerDirective.fromString(ClawConstant.DIRECTIVE_OPENMP));
 
-    assertEquals(AcceleratorDirective.NONE,
-        AcceleratorDirective.fromString("unknown"));
-    assertEquals(AcceleratorDirective.NONE,
-        AcceleratorDirective.fromString(null));
-    assertEquals(AcceleratorDirective.NONE,
-        AcceleratorDirective.fromString(""));
+    assertEquals(CompilerDirective.NONE,
+        CompilerDirective.fromString("unknown"));
+    assertEquals(CompilerDirective.NONE,
+        CompilerDirective.fromString(null));
+    assertEquals(CompilerDirective.NONE,
+        CompilerDirective.fromString(""));
     assertEquals(Arrays.asList(ClawConstant.DIRECTIVE_NONE,
         ClawConstant.DIRECTIVE_OPENACC, ClawConstant.DIRECTIVE_OPENMP),
-        AcceleratorDirective.availableDirectiveLanguage());
+        CompilerDirective.availableDirectiveLanguage());
 
     assertEquals(ClawConstant.OPENACC_PREFIX,
-        AcceleratorDirective.getPrefix(AcceleratorDirective.OPENACC));
+        CompilerDirective.getPrefix(CompilerDirective.OPENACC));
     assertEquals(ClawConstant.OPENMP_PREFIX,
-        AcceleratorDirective.getPrefix(AcceleratorDirective.OPENMP));
+        CompilerDirective.getPrefix(CompilerDirective.OPENMP));
     assertEquals(null,
-        AcceleratorDirective.getPrefix(AcceleratorDirective.NONE));
-    assertEquals(null, AcceleratorDirective.getPrefix(null));
+        CompilerDirective.getPrefix(CompilerDirective.NONE));
+    assertEquals(null, CompilerDirective.getPrefix(null));
   }
 }

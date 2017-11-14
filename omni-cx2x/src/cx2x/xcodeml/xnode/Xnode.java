@@ -127,9 +127,9 @@ public class Xnode {
   }
 
   /**
-   * Get the element's value.
+   * Get raw node value.
    *
-   * @return Element value.
+   * @return Raw value.
    */
   public String value() {
     return _baseElement == null ? "" :

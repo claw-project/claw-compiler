@@ -53,7 +53,7 @@ public final class AcceleratorHelper {
                                      XfunctionDefinition fctDef)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
+    if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return;
     }
 
@@ -93,7 +93,7 @@ public final class AcceleratorHelper {
                                      ClawDMD direction)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE
+    if(gen.getDirectiveLanguage() == CompilerDirective.NONE
         || !claw.hasUpdateClause())
     {
       return null;
@@ -184,7 +184,7 @@ public final class AcceleratorHelper {
                                                 int collapse)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
+    if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return;
     }
 
@@ -375,7 +375,7 @@ public final class AcceleratorHelper {
   public static Xnode generateAdditionalDirectives(
       ClawLanguage claw, XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
   {
-    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE) {
+    if(claw.getDirectiveLanguage() == CompilerDirective.NONE) {
       return null;
     }
 
@@ -408,7 +408,7 @@ public final class AcceleratorHelper {
                                                XfunctionDefinition fctDef)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
+    if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return;
     }
 
@@ -476,7 +476,7 @@ public final class AcceleratorHelper {
                                            Xnode stmt,
                                            String var)
   {
-    if(claw.getDirectiveLanguage() == AcceleratorDirective.NONE
+    if(claw.getDirectiveLanguage() == CompilerDirective.NONE
         || !claw.hasPrivateClause())
     {
       return;
@@ -594,7 +594,7 @@ public final class AcceleratorHelper {
                                      String[] endDirective)
   {
     AcceleratorGenerator gen = claw.getAcceleratorGenerator();
-    if(gen.getDirectiveLanguage() == AcceleratorDirective.NONE) {
+    if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return null;
     }
     Xnode begin = addPragmasBefore(xcodeml, startDirective, startStmt);

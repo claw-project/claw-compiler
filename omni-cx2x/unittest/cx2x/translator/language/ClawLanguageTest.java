@@ -6,7 +6,7 @@
 package cx2x.translator.language;
 
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.base.ClawDMD;
@@ -108,7 +108,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -148,7 +148,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage.analyze(p, generator, Target.GPU);
@@ -210,7 +210,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -298,7 +298,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -556,7 +556,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -650,7 +650,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -771,7 +771,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -888,7 +888,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -999,7 +999,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -1027,7 +1027,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue("claw nodep");
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -1135,7 +1135,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -1392,7 +1392,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -1438,7 +1438,7 @@ public class ClawLanguageTest {
     try {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
-      Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       AcceleratorGenerator generator =
           AcceleratorHelper.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
@@ -1545,7 +1545,7 @@ public class ClawLanguageTest {
     Xnode p = XmlHelper.createXpragma();
     p.setValue(pragma);
     p.setLine(1);
-    Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+    Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
     AcceleratorGenerator generator =
         AcceleratorHelper.createAcceleratorGenerator();
     try {

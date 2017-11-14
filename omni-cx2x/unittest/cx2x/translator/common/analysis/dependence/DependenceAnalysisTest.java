@@ -7,7 +7,7 @@ package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.base.ClawLanguage;
@@ -119,7 +119,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+    Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
     Configuration.get().setMaxColumns(80);
     ClawTranslator translator = new ClawTranslator();
     AcceleratorGenerator generator =
@@ -177,7 +177,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Configuration.get().init(AcceleratorDirective.OPENACC, Target.GPU);
+    Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
     Configuration.get().setMaxColumns(80);
     AcceleratorGenerator generator =
         AcceleratorHelper.createAcceleratorGenerator();

@@ -56,9 +56,9 @@ public class ConfigurationTest {
       config.setUserDefinedTarget(Target.CPU.toString());
       assertEquals(Target.CPU, config.getCurrentTarget());
 
-      assertEquals(AcceleratorDirective.OPENACC, config.getCurrentDirective());
-      config.setUserDefineDirective(AcceleratorDirective.OPENMP.toString());
-      assertEquals(AcceleratorDirective.OPENMP, config.getCurrentDirective());
+      assertEquals(CompilerDirective.OPENACC, config.getCurrentDirective());
+      config.setUserDefineDirective(CompilerDirective.OPENMP.toString());
+      assertEquals(CompilerDirective.OPENMP, config.getCurrentDirective());
 
       config.displayConfig();
 

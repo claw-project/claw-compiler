@@ -16,20 +16,20 @@ import java.util.List;
  *
  * @author clementval
  */
-public enum AcceleratorDirective {
+public enum CompilerDirective {
   NONE(ClawConstant.DIRECTIVE_NONE),
   OPENACC(ClawConstant.DIRECTIVE_OPENACC),
   OPENMP(ClawConstant.DIRECTIVE_OPENMP);
 
   private final String code;
 
-  AcceleratorDirective(String code) {
+  CompilerDirective(String code) {
     this.code = code;
   }
 
   public static List<String> availableDirectiveLanguage() {
     List<String> codes = new ArrayList<>();
-    for(AcceleratorDirective t : AcceleratorDirective.values()) {
+    for(CompilerDirective t : CompilerDirective.values()) {
       codes.add(t.code);
     }
     return codes;
@@ -41,7 +41,7 @@ public enum AcceleratorDirective {
    * @param value Code value for the enumeration.
    * @return The enumeration value if matches. NONE otherwise.
    */
-  public static AcceleratorDirective fromString(String value) {
+  public static CompilerDirective fromString(String value) {
     if(value == null) {
       return NONE;
     }
@@ -64,7 +64,7 @@ public enum AcceleratorDirective {
    * @param directive Current directive primitive language.
    * @return The corresponding prefix. Null if language is not known.
    */
-  public static String getPrefix(AcceleratorDirective directive) {
+  public static String getPrefix(CompilerDirective directive) {
     if(directive == null) {
       return null;
     }

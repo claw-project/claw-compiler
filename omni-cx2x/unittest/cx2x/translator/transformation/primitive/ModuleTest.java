@@ -5,7 +5,7 @@
 package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.base.Target;
 import org.junit.Test;
 
@@ -21,22 +21,22 @@ public class ModuleTest {
   @Test
   public void getSuffixTest() {
     Configuration config = Configuration.get();
-    config.init(AcceleratorDirective.OPENACC, Target.GPU);
+    config.init(CompilerDirective.OPENACC, Target.GPU);
     // .[directive].[target].claw
     assertEquals(".openacc.gpu.claw.xmod", Module.getSuffix());
-    config.init(AcceleratorDirective.OPENMP, Target.CPU);
+    config.init(CompilerDirective.OPENMP, Target.CPU);
     assertEquals(".openmp.cpu.claw.xmod", Module.getSuffix());
-    config.init(AcceleratorDirective.NONE, Target.CPU);
+    config.init(CompilerDirective.NONE, Target.CPU);
     assertEquals(".none.cpu.claw.xmod", Module.getSuffix());
-    config.init(AcceleratorDirective.OPENMP, Target.MIC);
+    config.init(CompilerDirective.OPENMP, Target.MIC);
     assertEquals(".openmp.mic.claw.xmod", Module.getSuffix());
-    config.init(AcceleratorDirective.NONE, Target.FPGA);
+    config.init(CompilerDirective.NONE, Target.FPGA);
     assertEquals(".none.fpga.claw.xmod", Module.getSuffix());
-    config.init(AcceleratorDirective.OPENACC, null);
+    config.init(CompilerDirective.OPENACC, null);
     assertEquals(".openacc.none.claw.xmod", Module.getSuffix());
     config.init(null, null);
     assertEquals(".none.none.claw.xmod", Module.getSuffix());
-    config.init(AcceleratorDirective.NONE, Target.GPU);
+    config.init(CompilerDirective.NONE, Target.GPU);
     assertEquals(".none.gpu.claw.xmod", Module.getSuffix());
   }
 }

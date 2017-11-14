@@ -6,7 +6,7 @@
 package cx2x.translator.config;
 
 import cx2x.ClawVersion;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.base.Target;
@@ -116,7 +116,7 @@ public class Configuration {
    * @param dir    Accelerator directive language.
    * @param target Target architecture.
    */
-  public void init(AcceleratorDirective dir, Target target) {
+  public void init(CompilerDirective dir, Target target) {
     _parameters = new HashMap<>();
     if(dir != null) {
       _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
@@ -341,8 +341,8 @@ public class Configuration {
    *
    * @return Current accelerator value.
    */
-  public AcceleratorDirective getCurrentDirective() {
-    return AcceleratorDirective.fromString(getParameter(DEFAULT_DIRECTIVE));
+  public CompilerDirective getCurrentDirective() {
+    return CompilerDirective.fromString(getParameter(DEFAULT_DIRECTIVE));
   }
 
   /**

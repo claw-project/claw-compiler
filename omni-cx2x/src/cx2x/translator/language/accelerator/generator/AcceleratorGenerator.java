@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.accelerator.generator;
 
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 
@@ -160,7 +160,7 @@ public abstract class AcceleratorGenerator {
    *
    * @return Current target as an accelerator directive enumeration value.
    */
-  public abstract AcceleratorDirective getDirectiveLanguage();
+  public abstract CompilerDirective getDirectiveLanguage();
 
   /**
    * Get the start pragma to define the start of an accelerator data region.

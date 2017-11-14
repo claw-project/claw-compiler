@@ -5,7 +5,7 @@
 
 package cx2x.translator.language.accelerator.generator;
 
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 
 import java.util.List;
 
@@ -81,8 +81,8 @@ public class AcceleratorNone extends AcceleratorGenerator {
   }
 
   @Override
-  public AcceleratorDirective getDirectiveLanguage() {
-    return AcceleratorDirective.NONE;
+  public CompilerDirective getDirectiveLanguage() {
+    return CompilerDirective.NONE;
   }
 
   @Override

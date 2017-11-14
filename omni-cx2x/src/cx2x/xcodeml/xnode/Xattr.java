@@ -85,10 +85,10 @@ public enum Xattr {
   CLAW_INSERTED(Xname.ATTR_CLAW_INSERTED),
   CLAW_OVER(Xname.ATTR_CLAW_OVER);
 
-  private final String _name;
+  private final String _irValue;
 
   Xattr(String s) {
-    _name = s;
+    _irValue = s;
   }
 
   public static Xattr fromString(String value) {
@@ -97,7 +97,7 @@ public enum Xattr {
 
   @Override
   public String toString() {
-    return _name;
+    return _irValue;
   }
 
 }

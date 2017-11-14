@@ -19,10 +19,10 @@ public enum Xscope {
   GLOBAL(Xname.SCOPE_GLOBAL),
   PARAM(Xname.SCOPE_PARAM);
 
-  private final String _value;
+  private final String _irValue;
 
   Xscope(String value) {
-    _value = value;
+    _irValue = value;
   }
 
   /**
@@ -53,7 +53,6 @@ public enum Xscope {
    */
   @Override
   public String toString() {
-    return _value;
+    return _irValue;
   }
-
 }

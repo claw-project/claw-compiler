@@ -8,7 +8,7 @@ package cx2x;
 import cx2x.decompiler.XcmlBackend;
 import cx2x.translator.ClawTranslatorDriver;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.report.ClawTransformationReport;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -65,7 +65,7 @@ public class Cx2x {
    */
   private static void listDirectiveLanguage() {
     System.out.println("- CLAW accelerator directive language -");
-    for(String d : AcceleratorDirective.availableDirectiveLanguage()) {
+    for(String d : CompilerDirective.availableDirectiveLanguage()) {
       System.out.println("  - " + d);
     }
   }

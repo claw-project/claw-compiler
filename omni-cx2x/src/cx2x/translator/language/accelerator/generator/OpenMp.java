@@ -7,7 +7,7 @@ package cx2x.translator.language.accelerator.generator;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.base.Target;
 
 import java.util.List;
@@ -116,8 +116,8 @@ public class OpenMp extends AcceleratorGenerator {
   }
 
   @Override
-  public AcceleratorDirective getDirectiveLanguage() {
-    return AcceleratorDirective.OPENMP;
+  public CompilerDirective getDirectiveLanguage() {
+    return CompilerDirective.OPENMP;
   }
 
   @Override

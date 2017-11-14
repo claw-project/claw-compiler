@@ -10,7 +10,7 @@ import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.config.Configuration;
 import cx2x.translator.config.OpenAccLocalStrategy;
-import cx2x.translator.language.accelerator.AcceleratorDirective;
+import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
@@ -148,7 +148,7 @@ public class Parallelize extends ClawTransformation {
     // Check if unsupported statements are located in the future parallel
     // region.
     if(_claw.getTarget() == Target.GPU
-        && _claw.getDirectiveLanguage() == AcceleratorDirective.OPENACC)
+        && _claw.getDirectiveLanguage() == CompilerDirective.OPENACC)
     {
       Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
       Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
