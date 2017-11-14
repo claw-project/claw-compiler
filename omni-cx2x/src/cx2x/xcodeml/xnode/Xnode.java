@@ -21,7 +21,7 @@ public class Xnode {
   public static final int LHS = 0;
   public static final int RHS = 1;
   public static final int UNDEF_DEPTH = -1;
-  Element _baseElement;
+  final Element _baseElement;
   private boolean _isDeleted = false;
 
   /**
@@ -98,7 +98,7 @@ public class Xnode {
    * @return Attribute's value.
    */
   private String getAttribute(String attrCode) {
-    if(_baseElement.hasAttribute(attrCode)) {
+    if(_baseElement != null && _baseElement.hasAttribute(attrCode)) {
       return _baseElement.getAttribute(attrCode);
     } else {
       return null;
@@ -188,7 +188,9 @@ public class Xnode {
    * @param value    Value of the attribute.
    */
   private void setAttribute(String attrCode, String value) {
-    _baseElement.setAttribute(attrCode, value);
+    if(_baseElement != null && value != null) {
+      _baseElement.setAttribute(attrCode, value);
+    }
   }
 
   /**
@@ -674,10 +676,7 @@ public class Xnode {
 
     Xnode c1 = child(0);
     Xnode c2 = other.child(0);
-    if(c1 == null || c2 == null) {
-      return false;
-    }
-    return c1.compareValues(c2);
+    return c1 != null && c2 != null && c1.compareValues(c2);
   }
 
   /**
