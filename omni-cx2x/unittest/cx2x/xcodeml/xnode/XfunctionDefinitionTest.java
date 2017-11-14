@@ -68,6 +68,7 @@ public class XfunctionDefinitionTest {
     assertTrue(f.exists());
     XcodeProgram xcodeml =
         XcodeProgram.createFromFile(TestConstant.TEST_DECLARATIONS);
+    assertNotNull(xcodeml);
     List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
     for(XfunctionDefinition fctDef : fctDefs) {
       // Search paths is not set so module cannot be found.
