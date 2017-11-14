@@ -12,7 +12,7 @@ import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.openacc.OpenAccLocalStrategy;
 import cx2x.configuration.CompilerDirective;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.configuration.Target;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;

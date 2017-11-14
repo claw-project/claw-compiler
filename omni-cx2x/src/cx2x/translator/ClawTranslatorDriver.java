@@ -8,7 +8,7 @@ import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.GroupConfiguration;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalDirectiveException;

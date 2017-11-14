@@ -8,8 +8,8 @@ import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.directive.Directive;
-import cx2x.translator.language.base.ClawDMD;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawDataMovement;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Field;
@@ -577,22 +577,22 @@ public class ParallelizeForward extends ClawTransformation {
     }
 
     if(_claw.hasUpdateClause()) {
-      if(_claw.getUpdateClauseValue() == ClawDMD.BOTH ||
-          _claw.getUpdateClauseValue() == ClawDMD.DEVICE)
+      if(_claw.getUpdateClauseValue() == ClawDataMovement.BOTH ||
+          _claw.getUpdateClauseValue() == ClawDataMovement.DEVICE)
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.IN, true);
         Directive.generateUpdate(_claw, xcodeml, exprStmt, out,
-            ClawDMD.DEVICE);
+            ClawDataMovement.DEVICE);
       }
 
-      if(_claw.getUpdateClauseValue() == ClawDMD.BOTH ||
-          _claw.getUpdateClauseValue() == ClawDMD.HOST)
+      if(_claw.getUpdateClauseValue() == ClawDataMovement.BOTH ||
+          _claw.getUpdateClauseValue() == ClawDataMovement.HOST)
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.OUT, true);
         Directive.generateUpdate(_claw, xcodeml, exprStmt, out,
-            ClawDMD.HOST);
+            ClawDataMovement.HOST);
       }
     }
   }

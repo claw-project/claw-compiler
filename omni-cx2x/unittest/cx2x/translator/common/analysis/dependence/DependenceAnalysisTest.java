@@ -10,7 +10,7 @@ import cx2x.configuration.Configuration;
 import cx2x.configuration.CompilerDirective;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.configuration.Target;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;

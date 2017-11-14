@@ -7,7 +7,7 @@ package cx2x.translator.transformation.claw.caching;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;

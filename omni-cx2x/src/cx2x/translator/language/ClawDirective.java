@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.base;
+package cx2x.translator.language;
 
 /**
  * ClawDirective enumeration represents the different directives available in

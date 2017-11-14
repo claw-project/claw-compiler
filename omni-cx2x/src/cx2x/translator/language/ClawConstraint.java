@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.common;
+package cx2x.translator.language;
 
 /**
  * Define the value of the constraint clause

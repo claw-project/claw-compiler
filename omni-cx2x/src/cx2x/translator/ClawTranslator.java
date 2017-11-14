@@ -10,7 +10,7 @@ import cx2x.translator.common.topology.DirectedGraph;
 import cx2x.translator.common.topology.TopologicalSort;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.GroupConfiguration;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.claw.utility.ArrayToFctCall;
 import cx2x.translator.transformation.claw.caching.Kcaching;
 import cx2x.translator.transformation.claw.one_column.Parallelize;

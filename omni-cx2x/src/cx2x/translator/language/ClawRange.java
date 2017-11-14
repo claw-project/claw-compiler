@@ -3,14 +3,14 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.common;
+package cx2x.translator.language;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.Xnode;
 
 /**
- * Store the information from a range option in a CLAW directives.
+ * Store the information from a range clause in a CLAW directives.
  *
  * @author clementval
  */

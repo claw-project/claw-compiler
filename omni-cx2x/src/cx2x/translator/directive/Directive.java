@@ -12,9 +12,9 @@ import cx2x.configuration.Configuration;
 import cx2x.translator.directive.generator.DirectiveNone;
 import cx2x.translator.directive.generator.OpenAcc;
 import cx2x.translator.directive.generator.OpenMp;
-import cx2x.translator.language.base.ClawDMD;
-import cx2x.translator.language.base.ClawDirective;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawDataMovement;
+import cx2x.translator.language.ClawDirective;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.primitive.Pragma;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -91,7 +91,7 @@ public final class Directive {
    */
   public static Xnode generateUpdate(ClawPragma claw, XcodeProgram xcodeml,
                                      Xnode hook, List<String> vars,
-                                     ClawDMD direction)
+                                     ClawDataMovement direction)
   {
     DirectiveGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == CompilerDirective.NONE
@@ -101,15 +101,15 @@ public final class Directive {
     }
 
     Xnode p = null;
-    if(direction == ClawDMD.DEVICE || direction == ClawDMD.BOTH) {
+    if(direction == ClawDataMovement.DEVICE || direction == ClawDataMovement.BOTH) {
       p = addPragmasBefore(xcodeml,
-          gen.getUpdateClause(direction == ClawDMD.BOTH ?
-              ClawDMD.DEVICE : direction, vars), hook);
+          gen.getUpdateClause(direction == ClawDataMovement.BOTH ?
+              ClawDataMovement.DEVICE : direction, vars), hook);
     }
-    if(direction == ClawDMD.HOST || direction == ClawDMD.BOTH) {
+    if(direction == ClawDataMovement.HOST || direction == ClawDataMovement.BOTH) {
       p = addPragmaAfter(xcodeml,
-          gen.getUpdateClause(direction == ClawDMD.BOTH ?
-              ClawDMD.HOST : direction, vars), hook);
+          gen.getUpdateClause(direction == ClawDataMovement.BOTH ?
+              ClawDataMovement.HOST : direction, vars), hook);
     }
     return p;
   }

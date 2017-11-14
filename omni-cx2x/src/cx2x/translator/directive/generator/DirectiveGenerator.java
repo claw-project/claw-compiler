@@ -6,7 +6,7 @@
 package cx2x.translator.directive.generator;
 
 import cx2x.configuration.CompilerDirective;
-import cx2x.translator.language.base.ClawDMD;
+import cx2x.translator.language.ClawDataMovement;
 import cx2x.xcodeml.xnode.Xcode;
 
 import java.util.ArrayList;
@@ -220,7 +220,7 @@ public abstract class DirectiveGenerator {
    * @return String value that represents the directive. Null if no directive
    * generated.
    */
-  public String[] getUpdateClause(ClawDMD direction, List<String> vars) {
+  public String[] getUpdateClause(ClawDataMovement direction, List<String> vars) {
     return null;
   }
 }

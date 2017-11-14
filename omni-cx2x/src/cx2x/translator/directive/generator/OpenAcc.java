@@ -9,7 +9,7 @@ import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.CompilerDirective;
-import cx2x.translator.language.base.ClawDMD;
+import cx2x.translator.language.ClawDataMovement;
 import cx2x.xcodeml.xnode.Xcode;
 
 import java.util.Arrays;
@@ -239,15 +239,15 @@ public class OpenAcc extends DirectiveGenerator {
   }
 
   @Override
-  public String[] getUpdateClause(ClawDMD direction, List<String> vars) {
+  public String[] getUpdateClause(ClawDataMovement direction, List<String> vars) {
     //!$acc update host/device(<vars>)
     if(vars == null || vars.isEmpty()) {
       return null;
     }
     Message.debug(OPENACC_DEBUG_PREFIX + "generate update " +
-        (direction == ClawDMD.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
+        (direction == ClawDataMovement.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
         " clause for: " + Utility.join(",", vars));
-    String updates = String.format(FORMATPAR, direction == ClawDMD.DEVICE ?
+    String updates = String.format(FORMATPAR, direction == ClawDataMovement.DEVICE ?
         OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_UPDATE, updates)

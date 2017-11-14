@@ -7,7 +7,7 @@ package cx2x.translator.transformation.claw.loop;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.translator.transformation.primitive.Range;
 import cx2x.xcodeml.exception.IllegalTransformationException;

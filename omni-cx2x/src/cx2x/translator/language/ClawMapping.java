@@ -3,14 +3,14 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.common;
+package cx2x.translator.language;
 
 import cx2x.translator.common.Utility;
 
 import java.util.List;
 
 /**
- * A ClawMapping object holds the loop-extract mapping option representation
+ * A ClawMapping object holds the loop-extract mapping clause representation
  * var_list:mapping_list
  *
  * @author clementval

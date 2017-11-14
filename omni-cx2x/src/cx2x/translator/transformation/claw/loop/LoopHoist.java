@@ -6,8 +6,8 @@
 package cx2x.translator.transformation.claw.loop;
 
 import cx2x.translator.ClawTranslator;
-import cx2x.translator.language.base.ClawPragma;
-import cx2x.translator.language.common.ClawReshapeInfo;
+import cx2x.translator.language.ClawPragma;
+import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.translator.transformation.primitive.Field;
 import cx2x.translator.transformation.primitive.Loop;

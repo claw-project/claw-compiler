@@ -5,7 +5,7 @@
 package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.common.Utility;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.claw.loop.LoopFusion;
 import cx2x.xcodeml.transformation.DependentTransformationGroup;
 import cx2x.xcodeml.transformation.Translator;

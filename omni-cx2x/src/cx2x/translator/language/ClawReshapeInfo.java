@@ -3,12 +3,12 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.common;
+package cx2x.translator.language;
 
 import java.util.List;
 
 /**
- * Store the information from a reshape option in a CLAW directives.
+ * Store the information from a reshape clause in a CLAW directives.
  *
  * @author clementval
  */

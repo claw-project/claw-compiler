@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.common;
+package cx2x.translator.language;
 
 /**
  * ClawMappingVar represents the mapping variable used in a loop-extract

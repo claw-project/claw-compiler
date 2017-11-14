@@ -7,7 +7,7 @@ package cx2x.translator.transformation.claw.directive;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.configuration.CompilerDirective;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.internal.OpenAccContinuation;
 import cx2x.xcodeml.exception.IllegalTransformationException;

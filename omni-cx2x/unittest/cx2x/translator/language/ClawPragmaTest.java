@@ -9,13 +9,7 @@ import cx2x.configuration.Configuration;
 import cx2x.configuration.CompilerDirective;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.translator.language.base.ClawDMD;
-import cx2x.translator.language.base.ClawDirective;
-import cx2x.translator.language.base.ClawPragma;
 import cx2x.configuration.Target;
-import cx2x.translator.language.common.ClawConstraint;
-import cx2x.translator.language.common.ClawMapping;
-import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.language.InsertionPosition;
@@ -1265,71 +1259,71 @@ public class ClawPragmaTest {
             "define dimension j(1:ny) " +
             "parallelize data(t , qc , qv) over (i,:,j) " +
             "copy", dataLst1, over2, Arrays.asList(d1, d2),
-        ClawDMD.BOTH, null, null);
+        ClawDataMovement.BOTH, null, null);
     analyzeValidParallelize("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "parallelize data(t , qc , qv) over (i,:,j) " +
             "copy(in)", dataLst1, over2, Arrays.asList(d1, d2),
-        ClawDMD.DEVICE, null, null);
+        ClawDataMovement.DEVICE, null, null);
     analyzeValidParallelize("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "parallelize data(t , qc , qv) over (i,:,j) " +
             "copy(out)", dataLst1, over2, Arrays.asList(d1, d2),
-        ClawDMD.HOST, null, null);
+        ClawDataMovement.HOST, null, null);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize copy",
-        null, null, Collections.singletonList(d7), ClawDMD.BOTH, null, null);
+        null, null, Collections.singletonList(d7), ClawDataMovement.BOTH, null, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize copy(in)", null, null, Collections.singletonList(d7),
-        ClawDMD.DEVICE, null, null);
+        ClawDataMovement.DEVICE, null, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize copy(out)", null, null, Collections.singletonList(d7),
-        ClawDMD.HOST, null, null);
+        ClawDataMovement.HOST, null, null);
 
     analyzeValidParallelize("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "parallelize data(t , qc , qv) over (i,:,j) " +
             "update", dataLst1, over2, Arrays.asList(d1, d2),
-        null, ClawDMD.BOTH, null);
+        null, ClawDataMovement.BOTH, null);
     analyzeValidParallelize("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "parallelize data(t , qc , qv) over (i,:,j) " +
             "update(in)", dataLst1, over2, Arrays.asList(d1, d2),
-        null, ClawDMD.DEVICE, null);
+        null, ClawDataMovement.DEVICE, null);
     analyzeValidParallelize("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "parallelize data(t , qc , qv) over (i,:,j) " +
             "update(out)", dataLst1, over2, Arrays.asList(d1, d2),
-        null, ClawDMD.HOST, null);
+        null, ClawDataMovement.HOST, null);
 
     analyzeValidParallelize("claw define dimension c(1:nc) parallelize update",
-        null, null, Collections.singletonList(d7), null, ClawDMD.BOTH, null);
+        null, null, Collections.singletonList(d7), null, ClawDataMovement.BOTH, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize update(in)", null, null, Collections.singletonList(d7),
-        null, ClawDMD.DEVICE, null);
+        null, ClawDataMovement.DEVICE, null);
     analyzeValidParallelize("claw define dimension c(1:nc) " +
             "parallelize update(out)", null, null, Collections.singletonList(d7),
-        null, ClawDMD.HOST, null);
+        null, ClawDataMovement.HOST, null);
 
     analyzeValidParallelize("claw parallelize forward copy",
-        null, null, null, ClawDMD.BOTH, null, null);
+        null, null, null, ClawDataMovement.BOTH, null, null);
     analyzeValidParallelize("claw parallelize forward copy(in)",
-        null, null, null, ClawDMD.DEVICE, null, null);
+        null, null, null, ClawDataMovement.DEVICE, null, null);
     analyzeValidParallelize("claw parallelize forward copy(out)",
-        null, null, null, ClawDMD.HOST, null, null);
+        null, null, null, ClawDataMovement.HOST, null, null);
 
     analyzeValidParallelize("claw parallelize forward update",
-        null, null, null, null, ClawDMD.BOTH, null);
+        null, null, null, null, ClawDataMovement.BOTH, null);
     analyzeValidParallelize("claw parallelize forward update(in)",
-        null, null, null, null, ClawDMD.DEVICE, null);
+        null, null, null, null, ClawDataMovement.DEVICE, null);
     analyzeValidParallelize("claw parallelize forward update(out)",
-        null, null, null, null, ClawDMD.HOST, null);
+        null, null, null, null, ClawDataMovement.HOST, null);
 
     List<String> data2 = Collections.singletonList("t");
     List<String> data3 = Collections.singletonList("q");
@@ -1355,38 +1349,37 @@ public class ClawPragmaTest {
     analyzeValidParallelizeDataMgtString("claw parallelize forward create",
         null, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "update", ClawDMD.BOTH, null, true);
+        "update", ClawDataMovement.BOTH, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "update(in)", ClawDMD.DEVICE, null, true);
+        "update(in)", ClawDataMovement.DEVICE, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "update(out)", ClawDMD.HOST, null, true);
+        "update(out)", ClawDataMovement.HOST, null, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "copy", null, ClawDMD.BOTH, true);
+        "copy", null, ClawDataMovement.BOTH, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "copy(in)", null, ClawDMD.DEVICE, true);
+        "copy(in)", null, ClawDataMovement.DEVICE, true);
     analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
-        "copy(out)", null, ClawDMD.HOST, true);
+        "copy(out)", null, ClawDataMovement.HOST, true);
 
     analyzeValidParallelizeDataMgtString("claw parallelize forward update",
-        ClawDMD.BOTH, null, false);
+        ClawDataMovement.BOTH, null, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward update(in)",
-        ClawDMD.DEVICE, null, false);
+        ClawDataMovement.DEVICE, null, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward update(out)",
-        ClawDMD.HOST, null, false);
+        ClawDataMovement.HOST, null, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward copy", null,
-        ClawDMD.BOTH, false);
+        ClawDataMovement.BOTH, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward copy(in)",
-        null, ClawDMD.DEVICE, false);
+        null, ClawDataMovement.DEVICE, false);
     analyzeValidParallelizeDataMgtString("claw parallelize forward copy(out)",
-        null, ClawDMD.HOST, false);
-
+        null, ClawDataMovement.HOST, false);
   }
 
   /**
    * Assert the result for valid CLAW parallelize directive
    */
-  private void analyzeValidParallelizeDataMgtString(String raw, ClawDMD update,
-                                                    ClawDMD copy,
+  private void analyzeValidParallelizeDataMgtString(String raw, ClawDataMovement update,
+                                                    ClawDataMovement copy,
                                                     boolean createClause)
   {
     try {
@@ -1432,7 +1425,7 @@ public class ClawPragmaTest {
   private void analyzeValidParallelize(String raw, List<List<String>> data,
                                        List<List<String>> over,
                                        List<DimensionDefinition> dimensions,
-                                       ClawDMD copyClause, ClawDMD updateClause,
+                                       ClawDataMovement copyClause, ClawDataMovement updateClause,
                                        List<String> scalarData)
   {
     try {
@@ -1584,6 +1577,4 @@ public class ClawPragmaTest {
     analyzeValidSimpleClaw("claw if-extract", ClawDirective.IF_EXTRACT,
         false, null);
   }
-
 }
-

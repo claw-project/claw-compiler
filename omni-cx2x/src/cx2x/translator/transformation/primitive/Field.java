@@ -5,7 +5,7 @@
 package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.common.ClawReshapeInfo;
+import cx2x.translator.language.ClawReshapeInfo;
 import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;

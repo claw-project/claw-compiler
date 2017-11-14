@@ -5,7 +5,7 @@
 package cx2x.translator.transformation.primitive;
 
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.base.ClawPragma;
+import cx2x.translator.language.ClawPragma;
 import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;

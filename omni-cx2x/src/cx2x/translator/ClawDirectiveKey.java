@@ -5,7 +5,7 @@
 
 package cx2x.translator;
 
-import cx2x.translator.language.base.ClawDirective;
+import cx2x.translator.language.ClawDirective;
 
 /**
  * Class used as a composite key for the block transformation handling.

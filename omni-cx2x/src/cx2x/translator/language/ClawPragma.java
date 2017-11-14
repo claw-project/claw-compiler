@@ -3,15 +3,11 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.base;
+package cx2x.translator.language;
 
 import cx2x.configuration.Target;
 import cx2x.configuration.CompilerDirective;
 import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.translator.language.common.ClawConstraint;
-import cx2x.translator.language.common.ClawMapping;
-import cx2x.translator.language.common.ClawRange;
-import cx2x.translator.language.common.ClawReshapeInfo;
 import cx2x.translator.language.parser.ClawLexer;
 import cx2x.translator.language.parser.ClawParser;
 import cx2x.xcodeml.exception.IllegalDirectiveException;
@@ -61,8 +57,8 @@ public class ClawPragma extends AnalyzedPragma {
   private List<List<String>> _overValues;
   private List<List<String>> _overDataValues;
   private List<String> _scalarValues;
-  private ClawDMD _copyClauseValue;
-  private ClawDMD _updateClauseValue;
+  private ClawDataMovement _copyClauseValue;
+  private ClawDataMovement _updateClauseValue;
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
 
@@ -979,9 +975,9 @@ public class ClawPragma extends AnalyzedPragma {
   /**
    * Get the copy clause value.
    *
-   * @return Copy clause value as a ClawDMD enum value.
+   * @return Copy clause value as a ClawDataMovement enum value.
    */
-  public ClawDMD getCopyClauseValue() {
+  public ClawDataMovement getCopyClauseValue() {
     return _copyClauseValue;
   }
 
@@ -990,7 +986,7 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @param value New copy clause value.
    */
-  public void setCopyClauseValue(ClawDMD value) {
+  public void setCopyClauseValue(ClawDataMovement value) {
     _hasCopyClause = true;
     _copyClauseValue = value;
   }
@@ -1007,9 +1003,9 @@ public class ClawPragma extends AnalyzedPragma {
   /**
    * Get the update clause value.
    *
-   * @return Update clause value as a ClawDMD enum value.
+   * @return Update clause value as a ClawDataMovement enum value.
    */
-  public ClawDMD getUpdateClauseValue() {
+  public ClawDataMovement getUpdateClauseValue() {
     return _updateClauseValue;
   }
 
@@ -1018,7 +1014,7 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @param value New update clause value.
    */
-  public void setUpdateClauseValue(ClawDMD value) {
+  public void setUpdateClauseValue(ClawDataMovement value) {
     _hasUpdateClause = true;
     _updateClauseValue = value;
   }
