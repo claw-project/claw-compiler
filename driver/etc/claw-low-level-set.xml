@@ -7,41 +7,41 @@ More information: https://github.com/C2SM-RCM/claw-language-specification
 <transformations>
   <transformation name="remove"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.utility.UtilityRemove" />
+    class="cx2x.translator.transformation.claw.utility.UtilityRemove" />
 
   <transformation name="primitive"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
+    class="cx2x.translator.transformation.claw.directive.DirectivePrimitive" />
 
   <transformation name="array-transform"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.loop.ArrayTransform" />
+    class="cx2x.translator.transformation.claw.loop.ArrayTransform" />
 
   <transformation name="loop-extract"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.loop.LoopExtraction" />
+    class="cx2x.translator.transformation.claw.loop.LoopExtraction" />
 
   <transformation name="loop-hoist"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.loop.LoopHoist" />
+    class="cx2x.translator.transformation.claw.loop.LoopHoist" />
 
   <transformation name="loop-fusion"
     type="dependent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.loop.LoopFusion" />
+    class="cx2x.translator.transformation.claw.loop.LoopFusion" />
 
   <transformation name="loop-interchange"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.loop.LoopInterchange" />
+    class="cx2x.translator.transformation.claw.loop.LoopInterchange" />
 
   <transformation name="on-the-fly"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.ArrayToFctCall" />
+    class="cx2x.translator.transformation.claw.utility.ArrayToFctCall" />
 
   <transformation name="kcache"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.Kcaching" />
+    class="cx2x.translator.transformation.claw.caching.Kcaching" />
 
   <transformation name="if-extract"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.loop.IfExtract" />
+    class="cx2x.translator.transformation.claw.loop.IfExtract" />
 </transformations>
