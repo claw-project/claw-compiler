@@ -21,7 +21,7 @@ package cx2x.xcodeml.xnode;
 
 public class Xid extends Xnode {
 
-  private Xnode _xname;
+  private final Xnode _xname;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -60,9 +60,7 @@ public class Xid extends Xnode {
    * @param value The new type value.
    */
   public void setType(String value) {
-    if(_baseElement != null && value != null) {
-      _baseElement.setAttribute(Xname.ATTR_TYPE, value);
-    }
+    setAttribute(Xattr.TYPE, value);
   }
 
   /**
@@ -80,9 +78,7 @@ public class Xid extends Xnode {
    * @param value The new sclass value.
    */
   public void setSclass(String value) {
-    if(_baseElement != null && value != null) {
-      _baseElement.setAttribute(Xname.ATTR_SCLASS, value);
-    }
+    setAttribute(Xattr.SCLASS, value);
   }
 
   /**
