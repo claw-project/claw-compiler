@@ -51,7 +51,7 @@ public final class Pragma {
   }
 
   /**
-   * Split a long pragma into chunk depending on the maxColumns sepcified.
+   * Split a long pragma into chunk depending on the maxColumns specified.
    * The split is done on spaces or commas.
    *
    * @param fullPragma   The original full pragma value.

@@ -35,7 +35,7 @@ public class PromotionInfo {
 
   /**
    * Constructs a new PromotionInfo object with the identifier of the field
-   * associated with this promotion and the DimensionDefiniton used for
+   * associated with this promotion and the dimension definition used for
    * promotion.
    *
    * @param id         Field identifier.

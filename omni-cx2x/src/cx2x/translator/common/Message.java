@@ -11,7 +11,7 @@ import xcodeml.util.XmOption;
 import java.util.List;
 
 /**
- * Centralized compiler ouput messages.
+ * Centralized compiler output messages.
  *
  * @author clementval
  */
