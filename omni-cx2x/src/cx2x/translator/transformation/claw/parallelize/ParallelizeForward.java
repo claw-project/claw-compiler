@@ -7,7 +7,7 @@ package cx2x.translator.transformation.claw.parallelize;
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.directive.Directive;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.helper.TransformationHelper;
@@ -572,7 +572,7 @@ public class ParallelizeForward extends ClawTransformation {
     if(_claw.hasCreateClause()) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.INOUT, true);
-      AcceleratorHelper.generateDataRegionClause(_claw, xcodeml,
+      Directive.generateDataRegionClause(_claw, xcodeml,
           Collections.<String>emptyList(), creates, exprStmt, exprStmt);
     }
 
@@ -582,7 +582,7 @@ public class ParallelizeForward extends ClawTransformation {
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.IN, true);
-        AcceleratorHelper.generateUpdate(_claw, xcodeml, exprStmt, out,
+        Directive.generateUpdate(_claw, xcodeml, exprStmt, out,
             ClawDMD.DEVICE);
       }
 
@@ -591,7 +591,7 @@ public class ParallelizeForward extends ClawTransformation {
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.OUT, true);
-        AcceleratorHelper.generateUpdate(_claw, xcodeml, exprStmt, out,
+        Directive.generateUpdate(_claw, xcodeml, exprStmt, out,
             ClawDMD.HOST);
       }
     }

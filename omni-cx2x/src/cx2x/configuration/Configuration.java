@@ -6,9 +6,10 @@
 package cx2x.configuration;
 
 import cx2x.ClawVersion;
-import cx2x.translator.language.accelerator.CompilerDirective;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.configuration.openacc.OpenAccConfiguration;
+import cx2x.translator.directive.CompilerDirective;
+import cx2x.translator.directive.Directive;
+import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.xcodeml.transformation.BlockTransformation;
@@ -90,7 +91,7 @@ public class Configuration {
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
 
-  private AcceleratorGenerator _generator;
+  private DirectiveGenerator _generator;
 
   /**
    * private ctor
@@ -337,9 +338,9 @@ public class Configuration {
   }
 
   /**
-   * Get the current accelerator directive defined in the configuration.
+   * Get the current directive directive defined in the configuration.
    *
-   * @return Current accelerator value.
+   * @return Current directive value.
    */
   public CompilerDirective getCurrentDirective() {
     return CompilerDirective.fromString(getParameter(DEFAULT_DIRECTIVE));
@@ -650,13 +651,13 @@ public class Configuration {
   }
 
   /**
-   * Get the associated accelerator generator.
+   * Get the associated directive generator.
    *
    * @return Accelerator generator.
    */
-  public AcceleratorGenerator getAcceleratorGenerator() {
+  public DirectiveGenerator getAcceleratorGenerator() {
     if(_generator == null) {
-      _generator = AcceleratorHelper.createAcceleratorGenerator();
+      _generator = Directive.createAcceleratorGenerator();
     }
     return _generator;
   }
@@ -666,7 +667,7 @@ public class Configuration {
    */
   public void displayConfig() {
     System.out.println("- CLAW FORTRAN Compiler configuration -\n");
-    System.out.println("Default accelerator directive: " +
+    System.out.println("Default directive directive: " +
         getCurrentDirective() + "\n");
     System.out.println("Default target: " + getCurrentTarget() + "\n");
     System.out.println("Current transformation order:");

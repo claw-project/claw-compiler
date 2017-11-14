@@ -7,9 +7,9 @@ package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.accelerator.CompilerDirective;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.translator.directive.CompilerDirective;
+import cx2x.translator.directive.Directive;
+import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
 import cx2x.xcodeml.xnode.Xcode;
@@ -122,8 +122,8 @@ public class DependenceAnalysisTest {
     Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
     Configuration.get().setMaxColumns(80);
     ClawTranslator translator = new ClawTranslator();
-    AcceleratorGenerator generator =
-        AcceleratorHelper.createAcceleratorGenerator();
+    DirectiveGenerator generator =
+        Directive.createAcceleratorGenerator();
     ClawLanguage main = null;
     try {
       main = ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
@@ -179,8 +179,8 @@ public class DependenceAnalysisTest {
     // Analyze the pragma
     Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
     Configuration.get().setMaxColumns(80);
-    AcceleratorGenerator generator =
-        AcceleratorHelper.createAcceleratorGenerator();
+    DirectiveGenerator generator =
+        Directive.createAcceleratorGenerator();
     try {
       ClawLanguage.analyze(pragmas.get(0), generator, Target.GPU);
     } catch(Exception e) {

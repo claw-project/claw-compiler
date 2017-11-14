@@ -3,9 +3,9 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator.generator;
+package cx2x.translator.directive.generator;
 
-import cx2x.translator.language.accelerator.CompilerDirective;
+import cx2x.translator.directive.CompilerDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 
@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interface for accelerator directive generator.
+ * Interface for directive directive generator.
  * <p>
  * TODO interface might need some refinements when we have a better idea of
  * TODO OpenACC vs OpenMP
  *
  * @author clementval
  */
-public abstract class AcceleratorGenerator {
+public abstract class DirectiveGenerator {
 
   static final String COMPILE_GUARD = "claw-guard";
   static final String FORMATPAR = "%s(%s)";
@@ -32,11 +32,11 @@ public abstract class AcceleratorGenerator {
   /**
    * Constructs a new object with the given target.
    */
-  public AcceleratorGenerator() {
+  public DirectiveGenerator() {
   }
 
   /**
-   * Get the prefix for the current accelerator language.
+   * Get the prefix for the current directive language.
    *
    * @return Language prefix.
    */
@@ -78,16 +78,16 @@ public abstract class AcceleratorGenerator {
   public abstract String[] getEndLoopDirective();
 
   /**
-   * Get formatted pragma defined by the accelerator directive prefix and the
+   * Get formatted pragma defined by the directive directive prefix and the
    * given clauses.
    *
-   * @param clause Clauses to append to the accelerator directive prefix
+   * @param clause Clauses to append to the directive directive prefix
    * @return String value that represents the pragma.
    */
   public abstract String[] getSingleDirective(String clause);
 
   /**
-   * Get the parallel keyword for a given accelerator language.
+   * Get the parallel keyword for a given directive language.
    *
    * @return The corresponding parallel keyword.
    */
@@ -97,7 +97,7 @@ public abstract class AcceleratorGenerator {
    * Return construction of the clause for a private variable.
    *
    * @param var Variable name that will be inserted in the generated clause.
-   * @return An accelerator language specific private clause with the var.
+   * @return An directive language specific private clause with the var.
    */
   public abstract String getPrivateClause(String var);
 
@@ -106,7 +106,7 @@ public abstract class AcceleratorGenerator {
    *
    * @param vars List of variables name that will be inserted in the generated
    *             clause.
-   * @return An accelerator language specific private clause with the list of
+   * @return An directive language specific private clause with the list of
    * variables.
    */
   public abstract String getPrivateClause(List<String> vars);
@@ -116,7 +116,7 @@ public abstract class AcceleratorGenerator {
    *
    * @param vars List of variables name that will be inserted in the generated
    *             clause.
-   * @return An accelerator language specific present clause with the list of
+   * @return An directive language specific present clause with the list of
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
@@ -129,7 +129,7 @@ public abstract class AcceleratorGenerator {
    *
    * @param vars List of variables name that will be inserted in the generated
    *             clause.
-   * @return An accelerator language specific create clause with the list of
+   * @return An directive language specific create clause with the list of
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
@@ -158,19 +158,19 @@ public abstract class AcceleratorGenerator {
   /**
    * Get the target of the current generator.
    *
-   * @return Current target as an accelerator directive enumeration value.
+   * @return Current target as an directive directive enumeration value.
    */
   public abstract CompilerDirective getDirectiveLanguage();
 
   /**
-   * Get the start pragma to define the start of an accelerator data region.
+   * Get the start pragma to define the start of an directive data region.
    *
    * @return String value that represents the pragma.
    */
   public abstract String[] getStartDataRegion(List<String> clauses);
 
   /**
-   * Get the end pragma to define the end of an accelerator data region.
+   * Get the end pragma to define the end of an directive data region.
    *
    * @return String value that represents the pragma.
    */
@@ -185,7 +185,7 @@ public abstract class AcceleratorGenerator {
   public abstract String getSequentialClause();
 
   /**
-   * Get the list of unsupported statements in an accelerator region.
+   * Get the list of unsupported statements in an directive region.
    *
    * @return List of Xcode opcode of unsupported statements.
    */
@@ -194,7 +194,7 @@ public abstract class AcceleratorGenerator {
   }
 
   /**
-   * Get the list of skipped statements before accelerator region.
+   * Get the list of skipped statements before directive region.
    *
    * @return List of Xcode opcode of supported statements that are skipped.
    */
@@ -203,7 +203,7 @@ public abstract class AcceleratorGenerator {
   }
 
   /**
-   * Get the list of skipped statements after accelerator region.
+   * Get the list of skipped statements after directive region.
    *
    * @return List of Xcode opcode of supported statements that are skipped.
    */
@@ -212,7 +212,7 @@ public abstract class AcceleratorGenerator {
   }
 
   /**
-   * Get directive for updating accelerator or host memory with the given
+   * Get directive for updating directive or host memory with the given
    * variables.
    *
    * @param direction Direction of the update.

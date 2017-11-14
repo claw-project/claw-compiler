@@ -3,22 +3,22 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator.generator;
+package cx2x.translator.directive.generator;
 
 import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.accelerator.CompilerDirective;
+import cx2x.translator.directive.CompilerDirective;
 import cx2x.translator.language.base.Target;
 
 import java.util.List;
 
 /**
- * OpenMP base accelerator directive generator. Implements everything that is
+ * OpenMP base directive directive generator. Implements everything that is
  * common for host and device target.
  *
  * @author clementval
  */
-public class OpenMp extends AcceleratorGenerator {
+public class OpenMp extends DirectiveGenerator {
 
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "declare";

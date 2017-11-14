@@ -6,7 +6,7 @@
 package cx2x.translator.transformation.loop;
 
 import cx2x.translator.ClawTranslator;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.directive.Directive;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawBlockTransformation;
 import cx2x.translator.transformation.primitive.Range;
@@ -272,8 +272,8 @@ public class ArrayTransform extends ClawBlockTransformation {
       stmt.delete();
     }
 
-    // Generate accelerator pragmas if needed
-    Xnode potentialGrip = AcceleratorHelper.generateAdditionalDirectives(
+    // Generate directive pragmas if needed
+    Xnode potentialGrip = Directive.generateAdditionalDirectives(
         _clawStart, xcodeml, new Xnode(doStmts[0].element()),
         new Xnode(doStmts[0].element()));
 

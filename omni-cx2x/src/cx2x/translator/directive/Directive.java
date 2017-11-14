@@ -3,14 +3,14 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator;
+package cx2x.translator.directive;
 
+import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.common.Message;
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
-import cx2x.translator.language.accelerator.generator.AcceleratorNone;
-import cx2x.translator.language.accelerator.generator.OpenAcc;
-import cx2x.translator.language.accelerator.generator.OpenMp;
+import cx2x.translator.directive.generator.DirectiveNone;
+import cx2x.translator.directive.generator.OpenAcc;
+import cx2x.translator.directive.generator.OpenMp;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
@@ -24,18 +24,18 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The class AcceleratorHelper contains only static method to help the
- * generation of the accelerator related pragma during code transformations.
+ * The class Directive contains only static method to help the
+ * generation of the directive related pragma during code transformations.
  *
  * @author clementval
  */
-public final class AcceleratorHelper {
+public final class Directive {
 
   public static final int NO_COLLAPSE = 0;
   private static final String NO_CLAUSES = "";
 
   // Avoid potential instantiation of this class
-  private AcceleratorHelper() {
+  private Directive() {
   }
 
   /**
@@ -52,7 +52,7 @@ public final class AcceleratorHelper {
   public static void generateLoopSeq(ClawLanguage claw, XcodeProgram xcodeml,
                                      XfunctionDefinition fctDef)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return;
     }
@@ -92,7 +92,7 @@ public final class AcceleratorHelper {
                                      Xnode hook, List<String> vars,
                                      ClawDMD direction)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == CompilerDirective.NONE
         || !claw.hasUpdateClause())
     {
@@ -157,14 +157,14 @@ public final class AcceleratorHelper {
                                              XcodeProgram xcodeml,
                                              Xnode startStmt, Xnode endStmt)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     return insertPragmas(claw, xcodeml, startStmt, endStmt,
         gen.getStartParallelDirective(NO_CLAUSES),
         gen.getEndParallelDirective());
   }
 
   /**
-   * Generate accelerator directive for a parallel loop.
+   * Generate directive directive for a parallel loop.
    *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
@@ -183,7 +183,7 @@ public final class AcceleratorHelper {
                                                 Xnode startStmt, Xnode endStmt,
                                                 int collapse)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return;
     }
@@ -196,7 +196,7 @@ public final class AcceleratorHelper {
   }
 
   /**
-   * Generates accelerator directive for a loop region.
+   * Generates directive directive for a loop region.
    *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
@@ -213,14 +213,14 @@ public final class AcceleratorHelper {
                                             Xnode startStmt, Xnode endStmt,
                                             int collapse)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
         gen.getStartLoopDirective(collapse, false, false, ""),
         gen.getEndLoopDirective());
   }
 
   /**
-   * Generate accelerator directive for a data region.
+   * Generate directive directive for a data region.
    *
    * @param claw      ClawLanguage object that tells if the parallel clause is
    *                  enable and where the start pragma is located.
@@ -238,7 +238,7 @@ public final class AcceleratorHelper {
                                               List<String> creates,
                                               Xnode startStmt, Xnode endStmt)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     insertPragmas(claw, xcodeml, startStmt, endStmt,
         gen.getStartDataRegion(Arrays.asList(gen.getPresentClause(presents),
             gen.getCreateClause(creates))),
@@ -361,9 +361,9 @@ public final class AcceleratorHelper {
   }
 
   /**
-   * Generate all corresponding pragmas to be applied for accelerator.
+   * Generate all corresponding pragmas to be applied for directive.
    *
-   * @param claw      ClawLanguage object that tells which accelerator pragmas
+   * @param claw      ClawLanguage object that tells which directive pragmas
    *                  are enabled.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -396,18 +396,18 @@ public final class AcceleratorHelper {
    * Generate all corresponding pragmas to be applied to an accelerated
    * function/subroutine.
    *
-   * @param claw    ClawLanguage object that tells which accelerator pragmas
+   * @param claw    ClawLanguage object that tells which directive pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
-   * @param fctDef  Function/subroutine in which accelerator directives are
+   * @param fctDef  Function/subroutine in which directive directives are
    *                generated.
    */
   public static void generateRoutineDirectives(ClawLanguage claw,
                                                XcodeProgram xcodeml,
                                                XfunctionDefinition fctDef)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return;
     }
@@ -461,9 +461,9 @@ public final class AcceleratorHelper {
   }
 
   /**
-   * Generate the correct clauses for private variable on accelerator.
+   * Generate the correct clauses for private variable on directive.
    *
-   * @param claw    ClawLanguage object that tells which accelerator pragmas
+   * @param claw    ClawLanguage object that tells which directive pragmas
    *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
@@ -496,12 +496,12 @@ public final class AcceleratorHelper {
   }
 
   /**
-   * Constructs the correct AcceleratorGenerator object regarding the enum
+   * Constructs the correct DirectiveGenerator object regarding the enum
    * value passed.
    *
-   * @return A specific implementation of an AcceleratorGenerator.
+   * @return A specific implementation of an DirectiveGenerator.
    */
-  public static AcceleratorGenerator createAcceleratorGenerator()
+  public static DirectiveGenerator createAcceleratorGenerator()
   {
     switch(Configuration.get().getCurrentDirective()) {
       case OPENACC:
@@ -509,7 +509,7 @@ public final class AcceleratorHelper {
       case OPENMP:
         return new OpenMp();
     }
-    return new AcceleratorNone();
+    return new DirectiveNone();
   }
 
   /**
@@ -593,7 +593,7 @@ public final class AcceleratorHelper {
                                      String[] startDirective,
                                      String[] endDirective)
   {
-    AcceleratorGenerator gen = claw.getAcceleratorGenerator();
+    DirectiveGenerator gen = claw.getAcceleratorGenerator();
     if(gen.getDirectiveLanguage() == CompilerDirective.NONE) {
       return null;
     }
@@ -606,13 +606,13 @@ public final class AcceleratorHelper {
    * Skip elements in preamble and find the first element that will be included
    * in the parallel region.
    *
-   * @param generator          Current accelerator generator.
+   * @param generator          Current directive generator.
    * @param functionDefinition Function definition in which body checked.
    * @param from               Optional element to start from. If null, starts
    *                           from first element in function's body.
    * @return First element for the parallel region.
    */
-  public static Xnode findParallelRegionStart(AcceleratorGenerator generator,
+  public static Xnode findParallelRegionStart(DirectiveGenerator generator,
                                               Xnode functionDefinition,
                                               Xnode from)
   {
@@ -650,13 +650,13 @@ public final class AcceleratorHelper {
    * Skip elements in epilogue and find the last element that will be included
    * in the parallel region.
    *
-   * @param generator          Current accelerator generator.
+   * @param generator          Current directive generator.
    * @param functionDefinition Function definition in which body checked.
    * @param from               Optional element to start from. If null, starts
    *                           from last element in function's body.
    * @return Last element for the parallel region.
    */
-  public static Xnode findParallelRegionEnd(AcceleratorGenerator generator,
+  public static Xnode findParallelRegionEnd(DirectiveGenerator generator,
                                             Xnode functionDefinition,
                                             Xnode from)
   {

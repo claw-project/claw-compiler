@@ -8,7 +8,7 @@ package cx2x;
 import cx2x.decompiler.XcmlBackend;
 import cx2x.translator.ClawTranslatorDriver;
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.accelerator.CompilerDirective;
+import cx2x.translator.directive.CompilerDirective;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.report.ClawTransformationReport;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -51,7 +51,7 @@ public class Cx2x {
   }
 
   /**
-   * List all accelerator target available for code generation.
+   * List all directive target available for code generation.
    */
   private static void listTarget() {
     System.out.println("- CLAW available targets -");
@@ -61,10 +61,10 @@ public class Cx2x {
   }
 
   /**
-   * List all accelerator directive language available for code generation.
+   * List all directive directive language available for code generation.
    */
   private static void listDirectiveLanguage() {
-    System.out.println("- CLAW accelerator directive language -");
+    System.out.println("- CLAW directive directive language -");
     for(String d : CompilerDirective.availableDirectiveLanguage()) {
       System.out.println("  - " + d);
     }
@@ -83,7 +83,7 @@ public class Cx2x {
     options.addOption("c", "configuration", true, "specify the configuration for the translator.");
     options.addOption("s", "schema", true, "specify the XSD schema location to validate the configuration.");
     options.addOption("t", "target", true, "specify the target for the code transformation.");
-    options.addOption("dir", "directive", true, "list all accelerator directive language available for code generation.");
+    options.addOption("dir", "directive", true, "list all directive directive language available for code generation.");
     options.addOption("d", "debug", false, "enable output debug message.");
     options.addOption("f", true, "specify FORTRAN decompiled output file.");
     options.addOption("w", true, "number of character per line in decompiled code.");

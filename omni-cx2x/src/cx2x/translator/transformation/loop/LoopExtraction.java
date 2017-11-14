@@ -8,9 +8,9 @@ package cx2x.translator.transformation.loop;
 // Cx2x import
 
 import cx2x.translator.ClawTranslator;
+import cx2x.translator.directive.Directive;
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Message;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.common.ClawMapping;
 import cx2x.translator.language.common.ClawMappingVar;
@@ -394,11 +394,11 @@ public class LoopExtraction extends ClawTransformation {
       }
     }
 
-    // Generate accelerator pragmas if needed
-    AcceleratorHelper.generateAdditionalDirectives(_claw, xcodeml,
+    // Generate directive pragmas if needed
+    Directive.generateAdditionalDirectives(_claw, xcodeml,
         extractedLoop, extractedLoop);
     // TODO must be triggered by a clause
-    //AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
+    //Directive.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 
     // Add any additional transformation defined in the directive clauses
     ct.generateAdditionalTransformation(_claw, xcodeml, extractedLoop);

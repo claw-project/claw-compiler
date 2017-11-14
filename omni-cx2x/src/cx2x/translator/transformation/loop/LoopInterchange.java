@@ -5,7 +5,7 @@
 
 package cx2x.translator.transformation.loop;
 
-import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.translator.directive.Directive;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Loop;
@@ -60,8 +60,8 @@ public class LoopInterchange extends ClawTransformation {
 
     Loop.reorder(_doStmts, _claw.getIndexes());
 
-    // Generate accelerator pragmas if needed
-    AcceleratorHelper.generateAdditionalDirectives(_claw, xcodeml,
+    // Generate directive pragmas if needed
+    Directive.generateAdditionalDirectives(_claw, xcodeml,
         _doStmts.getOuterStatement(), _doStmts.getOuterStatement());
 
     removePragma();

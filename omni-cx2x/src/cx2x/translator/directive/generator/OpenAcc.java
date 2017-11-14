@@ -3,12 +3,12 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator.generator;
+package cx2x.translator.directive.generator;
 
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.accelerator.CompilerDirective;
+import cx2x.translator.directive.CompilerDirective;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.xcodeml.xnode.Xcode;
 
@@ -16,11 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * OpenACC specific accelerator directive generator.
+ * OpenACC specific directive directive generator.
  *
  * @author clementval
  */
-public class OpenAcc extends AcceleratorGenerator {
+public class OpenAcc extends DirectiveGenerator {
 
   public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
   private static final String OPENACC_COLLAPSE = "collapse";

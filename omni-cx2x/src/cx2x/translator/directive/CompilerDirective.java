@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator;
+package cx2x.translator.directive;
 
 import cx2x.translator.common.ClawConstant;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Enumeration that define the possible accelerator directive supported.
+ * Enumeration that define the possible directive directive supported.
  * Currently OpenACC, OpenMP and NONE are available.
  *
  * @author clementval

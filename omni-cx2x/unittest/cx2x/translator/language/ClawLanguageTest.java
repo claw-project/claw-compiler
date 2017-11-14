@@ -6,9 +6,9 @@
 package cx2x.translator.language;
 
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.accelerator.CompilerDirective;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
-import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
+import cx2x.translator.directive.CompilerDirective;
+import cx2x.translator.directive.Directive;
+import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.language.base.ClawDMD;
 import cx2x.translator.language.base.ClawDirective;
 import cx2x.translator.language.base.ClawLanguage;
@@ -109,8 +109,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.LOOP_FUSION, l.getDirective());
       if(groupName != null) {
@@ -149,8 +149,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage.analyze(p, generator, Target.GPU);
       fail();
     } catch(IllegalDirectiveException pex) {
@@ -211,8 +211,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.LOOP_INTERCHANGE, l.getDirective());
       if(indexes != null) {
@@ -299,8 +299,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(directive, l.getDirective());
       if(isEnd) {
@@ -557,8 +557,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.LOOP_EXTRACT, l.getDirective());
       assertEquals(induction, l.getRange().getInductionVar());
@@ -651,8 +651,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.KCACHE, l.getDirective());
       if(data != null) {
@@ -772,8 +772,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.ARRAY_TRANSFORM, l.getDirective());
       if(fusion) {
@@ -889,8 +889,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.LOOP_HOIST, l.getDirective());
 
@@ -1000,8 +1000,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.ARRAY_TO_CALL, l.getDirective());
 
@@ -1028,8 +1028,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue("claw nodep");
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.NO_DEP, l.getDirective());
     } catch(Exception e) {
@@ -1136,8 +1136,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
@@ -1393,8 +1393,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
@@ -1439,8 +1439,8 @@ public class ClawLanguageTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      AcceleratorGenerator generator =
-          AcceleratorHelper.createAcceleratorGenerator();
+      DirectiveGenerator generator =
+          Directive.createAcceleratorGenerator();
       ClawLanguage l = ClawLanguage.analyze(p, generator, Target.GPU);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
@@ -1546,8 +1546,8 @@ public class ClawLanguageTest {
     p.setValue(pragma);
     p.setLine(1);
     Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-    AcceleratorGenerator generator =
-        AcceleratorHelper.createAcceleratorGenerator();
+    DirectiveGenerator generator =
+        Directive.createAcceleratorGenerator();
     try {
       ClawLanguage.analyze(p, generator, Target.GPU);
     } catch(IllegalDirectiveException e) {

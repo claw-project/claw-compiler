@@ -3,23 +3,23 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator.generator;
+package cx2x.translator.directive.generator;
 
-import cx2x.translator.language.accelerator.CompilerDirective;
+import cx2x.translator.directive.CompilerDirective;
 
 import java.util.List;
 
 /**
- * Dummy accelerator directive generator. Generates nothing.
+ * Dummy directive directive generator. Generates nothing.
  *
  * @author clementval
  */
-public class AcceleratorNone extends AcceleratorGenerator {
+public class DirectiveNone extends DirectiveGenerator {
 
   /**
    * Constructs a new object with the given target.
    */
-  public AcceleratorNone() {
+  public DirectiveNone() {
     super();
   }
 

@@ -6,12 +6,12 @@
 package cx2x.translator.transformation.claw.parallelize;
 
 import cx2x.translator.ClawTranslator;
+import cx2x.translator.directive.Directive;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.configuration.Configuration;
-import cx2x.configuration.OpenAccLocalStrategy;
-import cx2x.translator.language.accelerator.CompilerDirective;
-import cx2x.translator.language.accelerator.AcceleratorHelper;
+import cx2x.configuration.openacc.OpenAccLocalStrategy;
+import cx2x.translator.directive.CompilerDirective;
 import cx2x.translator.language.base.ClawLanguage;
 import cx2x.translator.language.base.Target;
 import cx2x.translator.language.helper.TransformationHelper;
@@ -151,9 +151,9 @@ public class Parallelize extends ClawTransformation {
         && _claw.getDirectiveLanguage() == CompilerDirective.OPENACC)
     {
       Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
-      Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
+      Xnode parallelRegionStart = Directive.findParallelRegionStart(
           _claw.getAcceleratorGenerator(), _fctDef, null);
-      Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
+      Xnode parallelRegionEnd = Directive.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, contains);
 
       List<Xnode> unsupportedStatements =
@@ -408,7 +408,7 @@ public class Parallelize extends ClawTransformation {
       throws IllegalTransformationException
   {
 
-    AcceleratorHelper.generateLoopSeq(_claw, xcodeml, _fctDef);
+    Directive.generateLoopSeq(_claw, xcodeml, _fctDef);
 
     /* Create a nested loop with the new defined dimensions and wrap it around
      * the whole subroutine's body. This is for the moment a really naive
@@ -423,9 +423,9 @@ public class Parallelize extends ClawTransformation {
     Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
     if(contains != null) {
 
-      Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
+      Xnode parallelRegionStart = Directive.findParallelRegionStart(
           _claw.getAcceleratorGenerator(), _fctDef, null);
-      Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
+      Xnode parallelRegionEnd = Directive.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, contains);
 
       Body.shiftIn(parallelRegionStart, parallelRegionEnd,
@@ -435,9 +435,9 @@ public class Parallelize extends ClawTransformation {
     } else {
       // No contains section, all the body is copied to the do statements.
 
-      Xnode parallelRegionStart = AcceleratorHelper.findParallelRegionStart(
+      Xnode parallelRegionStart = Directive.findParallelRegionStart(
           _claw.getAcceleratorGenerator(), _fctDef, null);
-      Xnode parallelRegionEnd = AcceleratorHelper.findParallelRegionEnd(
+      Xnode parallelRegionEnd = Directive.findParallelRegionEnd(
           _claw.getAcceleratorGenerator(), _fctDef, null);
 
       // Define a hook from where we can insert the new do statement
@@ -457,17 +457,17 @@ public class Parallelize extends ClawTransformation {
     // Prepare variables list for present/pcreate clauses and handle
     // promotion/privatize local strategy
     List<String> presentList =
-        AcceleratorHelper.getPresentVariables(xcodeml, _fctDef);
+        Directive.getPresentVariables(xcodeml, _fctDef);
     List<String> privateList = Collections.emptyList();
     List<String> createList = Collections.emptyList();
     if(Configuration.get().openACC().getLocalStrategy()
         == OpenAccLocalStrategy.PRIVATE)
     {
-      privateList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
+      privateList = Directive.getLocalArrays(xcodeml, _fctDef);
     } else if(Configuration.get().openACC().getLocalStrategy()
         == OpenAccLocalStrategy.PROMOTE)
     {
-      createList = AcceleratorHelper.getLocalArrays(xcodeml, _fctDef);
+      createList = Directive.getLocalArrays(xcodeml, _fctDef);
       for(String arrayIdentifier : createList) {
         _arrayFieldsInOut.add(arrayIdentifier);
         PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
@@ -486,15 +486,15 @@ public class Parallelize extends ClawTransformation {
     }
 
     // Generate the data region
-    AcceleratorHelper.generateDataRegionClause(_claw, xcodeml, presentList,
+    Directive.generateDataRegionClause(_claw, xcodeml, presentList,
         createList, loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region
-    AcceleratorHelper.generateParallelLoopClause(_claw, xcodeml, privateList,
+    Directive.generateParallelLoopClause(_claw, xcodeml, privateList,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.size());
 
-    AcceleratorHelper.generateRoutineDirectives(_claw, xcodeml, _fctDef);
+    Directive.generateRoutineDirectives(_claw, xcodeml, _fctDef);
   }
 
   /**
@@ -562,14 +562,14 @@ public class Parallelize extends ClawTransformation {
       }
       if(loops != null) {
         // Generate the corresponding directive around the loop
-        AcceleratorHelper.generateLoopDirectives(_claw, xcodeml,
+        Directive.generateLoopDirectives(_claw, xcodeml,
             loops.getOuterStatement(), loops.getOuterStatement(),
-            AcceleratorHelper.NO_COLLAPSE);
+            Directive.NO_COLLAPSE);
       }
     }
 
     // Generate the parallel region
-    AcceleratorHelper.generateParallelClause(_claw, xcodeml,
+    Directive.generateParallelClause(_claw, xcodeml,
         _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 

@@ -37,7 +37,7 @@ public class ClawConstant {
   public static final String TARGET_FPGA = "fpga";
   public static final String TARGET_NONE = "none";
 
-  // Available accelerator directive primitives
+  // Available directive directive primitives
   public static final String DIRECTIVE_NONE = "none";
   public static final String DIRECTIVE_OPENACC = "openacc";
   public static final String DIRECTIVE_OPENMP = "openmp";

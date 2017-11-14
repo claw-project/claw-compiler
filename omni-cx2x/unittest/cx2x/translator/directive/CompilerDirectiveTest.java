@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.language.accelerator;
+package cx2x.translator.directive;
 
 import cx2x.translator.common.ClawConstant;
 import org.junit.Test;
