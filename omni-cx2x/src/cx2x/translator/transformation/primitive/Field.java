@@ -6,7 +6,7 @@ package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.language.common.ClawReshapeInfo;
-import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
+import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
@@ -149,7 +149,7 @@ public final class Field {
         // Update type with new promoted type
         param.setType(type);
 
-        // Save the over clause for parallelize forward transformation
+        // Save the over clause for one_column forward transformation
         param.setAttribute(Xattr.CLAW_OVER,
             fieldInfo.getDimensions().get(0).getInsertionPosition().toString());
       }

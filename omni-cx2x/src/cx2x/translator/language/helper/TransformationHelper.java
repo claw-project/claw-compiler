@@ -25,7 +25,7 @@ import java.util.List;
 public class TransformationHelper {
 
   /**
-   * Find the dimensions defined by the parallelize transformation.
+   * Find the dimensions defined by the one_column transformation.
    *
    * @param fctType Function type to analyze.
    * @return List of found dimensions.

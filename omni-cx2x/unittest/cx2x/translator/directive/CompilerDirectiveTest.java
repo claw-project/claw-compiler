@@ -23,7 +23,7 @@ public class CompilerDirectiveTest {
     assertEquals(CompilerDirective.OPENMP,
         CompilerDirective.fromString("openmp"));
     assertEquals(CompilerDirective.OPENACC,
-        CompilerDirective.fromString("openacc"));
+        CompilerDirective.fromString("internal"));
 
     assertEquals(CompilerDirective.OPENMP,
         CompilerDirective.fromString("OPENMP"));

@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.transformation.loop;
+package cx2x.translator.transformation.claw.loop;
 
 import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;

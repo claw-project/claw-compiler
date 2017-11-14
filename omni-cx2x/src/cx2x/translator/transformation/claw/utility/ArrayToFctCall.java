@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation.claw;
+package cx2x.translator.transformation.claw.utility;
 
 import cx2x.translator.language.base.ClawPragma;
 import cx2x.translator.transformation.ClawTransformation;

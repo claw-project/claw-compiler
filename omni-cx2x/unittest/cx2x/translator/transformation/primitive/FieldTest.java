@@ -4,7 +4,7 @@
  */
 package cx2x.translator.transformation.primitive;
 
-import cx2x.translator.transformation.claw.parallelize.PromotionInfo;
+import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.language.InsertionPosition;

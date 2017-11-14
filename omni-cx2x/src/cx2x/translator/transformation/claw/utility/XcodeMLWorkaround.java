@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.transformation.utility;
+package cx2x.translator.transformation.claw.utility;
 
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.xcodeml.transformation.Transformation;

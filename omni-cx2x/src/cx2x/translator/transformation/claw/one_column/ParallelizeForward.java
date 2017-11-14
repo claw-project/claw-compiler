@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.translator.transformation.claw.parallelize;
+package cx2x.translator.transformation.claw.one_column;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Message;
@@ -27,7 +27,7 @@ import cx2x.xcodeml.xnode.*;
 import java.util.*;
 
 /**
- * The parallelize forward transformation applies the changes in the subroutine
+ * The one_column forward transformation applies the changes in the subroutine
  * signatures to function call and function in which the call is nested if
  * needed.
  * <p>
@@ -414,7 +414,7 @@ public class ParallelizeForward extends ClawTransformation {
       if(!fDef.getSymbolTable().contains(varId)) {
         if(_flatten && !paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
           throw new IllegalTransformationException("Variable " + varId +
-              " must be locally defined where the last call to parallelize " +
+              " must be locally defined where the last call to one_column " +
               "is made.", _claw.getPragma().lineNo());
         }
         // Size variable have to be declared

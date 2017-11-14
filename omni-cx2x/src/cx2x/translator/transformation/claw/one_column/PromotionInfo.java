@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation.claw.parallelize;
+package cx2x.translator.transformation.claw.one_column;
 
 import cx2x.xcodeml.language.DimensionDefinition;
 

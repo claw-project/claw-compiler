@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation.claw;
+package cx2x.translator.transformation.claw.caching;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;

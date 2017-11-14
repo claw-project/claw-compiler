@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation.openacc;
+package cx2x.translator.transformation.internal;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.configuration.Configuration;

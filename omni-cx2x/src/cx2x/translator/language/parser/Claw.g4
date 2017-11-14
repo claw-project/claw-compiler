@@ -110,7 +110,7 @@ directive[ClawPragma l]
       $l.setArrayName($array_name.text);
     }
 
-   // parallelize directive
+   // one_column directive
    | define_option[$l]+ PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.PARALLELIZE);
@@ -173,7 +173,7 @@ ids_or_colon_list[List<String> ids]
   | ':' { $ids.add(":"); } ',' ids_or_colon_list[$ids]
 ;
 
-// data over clause used in parallelize directive
+// data over clause used in one_column directive
 data_over_clause[ClawPragma l]
   @init{
     List<String> overLst = new ArrayList<>();

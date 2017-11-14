@@ -6,7 +6,7 @@ package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.common.Utility;
 import cx2x.translator.language.base.ClawPragma;
-import cx2x.translator.transformation.loop.LoopFusion;
+import cx2x.translator.transformation.claw.loop.LoopFusion;
 import cx2x.xcodeml.transformation.DependentTransformationGroup;
 import cx2x.xcodeml.transformation.Translator;
 import cx2x.xcodeml.xnode.Xcode;
@@ -158,7 +158,7 @@ public class IterationSpace {
     for(int i = _levels.size() - 1; i >= 0; --i) {
       List<DependenceAnalysis> loopsAtLevel = getLevel(i);
       DependentTransformationGroup fusions =
-          new DependentTransformationGroup("parallelize-fusion");
+          new DependentTransformationGroup("one_column-fusion");
       for(DependenceAnalysis dep : loopsAtLevel) {
         if(dep.isIndependent()) {
           ClawPragma l = ClawPragma.createLoopFusionLanguage(master);

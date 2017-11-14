@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.transformation.claw.parallelize;
+package cx2x.translator.transformation.claw.one_column;
 
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.directive.Directive;
@@ -30,7 +30,7 @@ import cx2x.xcodeml.xnode.*;
 import java.util.*;
 
 /**
- * The parallelize transformation transforms the code contained in a
+ * The one_column transformation transforms the code contained in a
  * subroutine/function by adding necessary dimensions and parallelism to the
  * defined data.
  * <p>
@@ -729,7 +729,7 @@ public class Parallelize extends ClawTransformation {
   }
 
   /**
-   * Get the list of dimensions in order from the parallelize over definition.
+   * Get the list of dimensions in order from the one_column over definition.
    *
    * @param overIndex Which over clause to use.
    * @return Ordered list of dimension object.
