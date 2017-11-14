@@ -410,20 +410,20 @@ parallelize_clauses[ClawPragma l]:
 
 copy_clause[ClawPragma l]:
     COPY
-    { $l.setCopyClauseValue(ClawDMD.BOTH); }
+    { $l.setCopyClauseValue(ClawDataMovement.BOTH); }
   | COPY '(' IN ')'
-    { $l.setCopyClauseValue(ClawDMD.DEVICE); }
+    { $l.setCopyClauseValue(ClawDataMovement.DEVICE); }
   | COPY '(' OUT ')'
-    { $l.setCopyClauseValue(ClawDMD.HOST); }
+    { $l.setCopyClauseValue(ClawDataMovement.HOST); }
 ;
 
 update_clause[ClawPragma l]:
     UPDATE
-    { $l.setUpdateClauseValue(ClawDMD.BOTH); }
+    { $l.setUpdateClauseValue(ClawDataMovement.BOTH); }
   | UPDATE '(' IN ')'
-    { $l.setUpdateClauseValue(ClawDMD.DEVICE); }
+    { $l.setUpdateClauseValue(ClawDataMovement.DEVICE); }
   | UPDATE '(' OUT ')'
-    { $l.setUpdateClauseValue(ClawDMD.HOST); }
+    { $l.setUpdateClauseValue(ClawDataMovement.HOST); }
 ;
 
 create_clause[ClawPragma l]:
