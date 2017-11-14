@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.config;
+package cx2x.configuration;
 
 import cx2x.ClawVersion;
 import cx2x.translator.language.accelerator.CompilerDirective;

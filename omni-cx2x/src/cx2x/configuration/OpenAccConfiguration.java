@@ -3,7 +3,7 @@
  * See LICENSE file for more information
  */
 
-package cx2x.translator.config;
+package cx2x.configuration;
 
 import java.util.Map;
 

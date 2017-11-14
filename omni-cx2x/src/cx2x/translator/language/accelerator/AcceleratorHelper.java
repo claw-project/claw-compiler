@@ -6,7 +6,7 @@
 package cx2x.translator.language.accelerator;
 
 import cx2x.translator.common.Message;
-import cx2x.translator.config.Configuration;
+import cx2x.configuration.Configuration;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;
 import cx2x.translator.language.accelerator.generator.AcceleratorNone;
 import cx2x.translator.language.accelerator.generator.OpenAcc;

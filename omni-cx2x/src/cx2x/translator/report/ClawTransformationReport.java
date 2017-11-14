@@ -8,7 +8,7 @@ import cx2x.ClawVersion;
 import cx2x.translator.ClawTranslator;
 import cx2x.translator.ClawTranslatorDriver;
 import cx2x.translator.common.Utility;
-import cx2x.translator.config.Configuration;
+import cx2x.configuration.Configuration;
 import cx2x.xcodeml.transformation.TransformationGroup;
 
 import java.io.FileWriter;

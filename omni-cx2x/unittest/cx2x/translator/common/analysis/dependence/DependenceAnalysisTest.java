@@ -6,7 +6,7 @@
 package cx2x.translator.common.analysis.dependence;
 
 import cx2x.translator.ClawTranslator;
-import cx2x.translator.config.Configuration;
+import cx2x.configuration.Configuration;
 import cx2x.translator.language.accelerator.CompilerDirective;
 import cx2x.translator.language.accelerator.AcceleratorHelper;
 import cx2x.translator.language.accelerator.generator.AcceleratorGenerator;

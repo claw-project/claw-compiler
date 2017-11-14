@@ -6,7 +6,7 @@ package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.common.ClawConstant;
 import cx2x.translator.common.Utility;
-import cx2x.translator.config.Configuration;
+import cx2x.configuration.Configuration;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.xnode.Xcode;
 import cx2x.xcodeml.xnode.XcodeProgram;
