@@ -151,7 +151,7 @@ public final class Field {
         param.setType(type);
 
         // Save the over clause for one_column forward transformation
-        param.setAttribute(Xattr.CLAW_OVER, fieldInfo.getFormattedDimensions());
+        param.setAttribute(Xattr.PROMOTION_INFO, fieldInfo.getFormattedDimensions());
       }
     }
 
@@ -159,7 +159,7 @@ public final class Field {
         && fctType.getAttribute(Xattr.RESULT_NAME).
         equals(fieldInfo.getIdentifier()))
     {
-      fctType.setAttribute(Xattr.CLAW_OVER, fieldInfo.getFormattedDimensions());
+      fctType.setAttribute(Xattr.PROMOTION_INFO, fieldInfo.getFormattedDimensions());
     }
   }
 
@@ -204,12 +204,9 @@ public final class Field {
    *                      dimensions.
    * @param parent        Root node from which allocate statements are looked
    *                      for.
-   * @param dimension     Dimension definition used to adapt the allocate
-   *                      statement.
    * @param xcodeml       Current XcodeML translation unit.
    */
   public static void adaptAllocate(PromotionInfo promotionInfo, Xnode parent,
-                                   DimensionDefinition dimension,
                                    XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
@@ -219,17 +216,29 @@ public final class Field {
       for(Xnode alloc : allocatedStmt.matchAll(Xcode.ALLOC)) {
         Xnode var = alloc.matchDirectDescendant(Xcode.VAR);
         if(var != null && var.value().equals(arrayName)) {
-          switch(dimension.getInsertionPosition()) {
-            case BEFORE:
-              alloc.insert(dimension.generateAllocateNode(xcodeml));
-              break;
-            case IN_MIDDLE:
-              alloc.firstChild().
-                  insertAfter(dimension.generateAllocateNode(xcodeml));
-              break;
-            case AFTER:
-              alloc.append(dimension.generateAllocateNode(xcodeml));
-              break;
+          int beforePositionIndex = 0; // First arrayIndex after varRef at pos 0
+          int inMiddlePositionIndex = 1;
+          for(DimensionDefinition dim : promotionInfo.getDimensions()) {
+            switch(dim.getInsertionPosition()) {
+              case BEFORE:
+                if(beforePositionIndex == 0) {
+                  alloc.insert(dim.generateAllocateNode(xcodeml));
+                } else {
+                  alloc.child(beforePositionIndex).
+                      insertBefore(dim.generateArrayIndex(xcodeml));
+                }
+                ++beforePositionIndex;
+                ++inMiddlePositionIndex;
+                break;
+              case IN_MIDDLE:
+                alloc.child(inMiddlePositionIndex).
+                    insertAfter(dim.generateArrayIndex(xcodeml));
+                ++inMiddlePositionIndex;
+                break;
+              case AFTER:
+                alloc.append(dim.generateArrayIndex(xcodeml));
+                break;
+            }
           }
         }
       }
@@ -347,73 +356,6 @@ public final class Field {
         Field.demoteToScalar(ref);
       } else {
         Field.demote(ref, reshapeInfo.getKeptDimensions());
-      }
-    }
-  }
-
-  /**
-   * Adapt all the array references of the variable in the data clause in the
-   * current function/subroutine definition.
-   *
-   * @param id    Array identifier that must be adapted.
-   * @param index Index designing the correct over clause to be used.
-   */
-  public static void adaptArrayRef(String id, int index, Xnode parent,
-                                   Map<String, PromotionInfo> promotions,
-                                   List<List<Xnode>> beforeCrt,
-                                   List<List<Xnode>> inMiddle,
-                                   List<List<Xnode>> afterCrt,
-                                   XcodeProgram xcodeml)
-  {
-    // TODO get rid of beforeCrt, inMiddle and afterCrt. Should be read from
-    // promotion info
-
-    if(!promotions.containsKey(id.toLowerCase())) {
-      return;
-    }
-
-    if(promotions.get(id).wasScalar()) {
-      List<Xnode> refs =
-          XnodeUtil.getAllVarReferences(parent, id);
-      for(Xnode ref : refs) {
-        Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
-        Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
-        arrayRef.setType(ref.getType());
-        varRef.setType(promotions.get(id).getTargetType());
-        ref.setType(promotions.get(id).getTargetType());
-        ref.insertAfter(arrayRef);
-        arrayRef.append(varRef);
-        varRef.append(ref);
-        for(Xnode ai : beforeCrt.get(index)) {
-          arrayRef.append(ai, true);
-        }
-        for(Xnode ai : afterCrt.get(index)) {
-          arrayRef.append(ai, true);
-        }
-      }
-    } else {
-      List<Xnode> refs =
-          XnodeUtil.getAllArrayReferences(parent, id);
-      for(Xnode ref : refs) {
-        if(inMiddle.get(index).size() == 0) {
-          for(Xnode ai : beforeCrt.get(index)) {
-            ref.matchSeq(Xcode.VAR_REF).insertAfter(ai.cloneNode());
-          }
-          for(Xnode ai : afterCrt.get(index)) {
-            ref.append(ai, true);
-          }
-        } else {
-          Xnode hook = ref.matchDirectDescendant(
-              Arrays.asList(Xcode.ARRAY_INDEX, Xcode.INDEX_RANGE));
-          if(hook == null) {
-            hook = ref.child(0);
-          }
-          for(Xnode ai : inMiddle.get(index)) {
-            Xnode clone = ai.cloneNode();
-            hook.insertAfter(clone);
-            hook = clone;
-          }
-        }
       }
     }
   }

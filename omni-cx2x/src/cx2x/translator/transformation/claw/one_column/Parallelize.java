@@ -8,12 +8,10 @@ import cx2x.configuration.CompilerDirective;
 import cx2x.configuration.Configuration;
 import cx2x.configuration.Target;
 import cx2x.configuration.openacc.OpenAccLocalStrategy;
-import cx2x.translator.ClawTranslator;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
 import cx2x.translator.directive.Directive;
 import cx2x.translator.language.ClawPragma;
-import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Body;
 import cx2x.translator.transformation.primitive.Field;
@@ -70,8 +68,6 @@ import java.util.*;
  */
 public class Parallelize extends ClawTransformation {
 
-  private static final int DEFAULT_OVER = 0;
-
   private final Map<String, DimensionDefinition> _dimensions;
   private final Map<String, PromotionInfo> _promotions;
   private final List<String> _arrayFieldsInOut;
@@ -79,7 +75,6 @@ public class Parallelize extends ClawTransformation {
   private int _overDimensions;
   private XfunctionDefinition _fctDef;
   private XfunctionType _fctType;
-  private List<List<Xnode>> _beforeCrt, _inMiddle, _afterCrt;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -144,8 +139,8 @@ public class Parallelize extends ClawTransformation {
       return false;
     }
 
-    // Check if unsupported statements are located in the future parallel
-    // region.
+    /* Check if unsupported statements are located in the future parallel
+     * region. */
     if(_claw.getTarget() == Target.GPU
         && _claw.getDirectiveLanguage() == CompilerDirective.OPENACC)
     {
@@ -287,29 +282,6 @@ public class Parallelize extends ClawTransformation {
       _overDimensions += _claw.getDimensionValues().size();
       return true;
     }
-    for(List<String> over : _claw.getOverClauseValues()) {
-      if(!over.contains(DimensionDefinition.BASE_DIM)) {
-        xcodeml.addError("The column dimension has not been specified in the " +
-                "over clause. Use : to specify it.",
-            _claw.getPragma().lineNo());
-        return false;
-      }
-      int baseDimNb = TransformationHelper.baseDimensionNb(over);
-      if(baseDimNb > 2) {
-        xcodeml.addError("Too many base dimensions specified in over clause. " +
-                "Maximum two base dimensions can be specified.",
-            _claw.getPragma().lineNo());
-        return false;
-      } else if(baseDimNb == 2) {
-        if(!over.get(0).equals(DimensionDefinition.BASE_DIM)
-            || !over.get(over.size() - 1).equals(DimensionDefinition.BASE_DIM))
-        {
-          xcodeml.addError("Base dimensions structure not supported in over" +
-              "clause.", _claw.getPragma().lineNo());
-          return false;
-        }
-      }
-    }
 
     // Check if over dimensions are defined dimensions
     _overDimensions = _claw.getDimensionValues().size();
@@ -344,7 +316,6 @@ public class Parallelize extends ClawTransformation {
       throws Exception
   {
     // Handle PURE function / subroutine
-    ClawTranslator trans = (ClawTranslator) translator;
     boolean pureRemoved = _fctType.isPure();
     _fctType.removeAttribute(Xattr.IS_PURE);
     if(Configuration.get().isForcePure() && pureRemoved) {
@@ -357,9 +328,6 @@ public class Parallelize extends ClawTransformation {
           _fctDef.lineNo());
     }
 
-    // Prepare the array index that will be added to the array references.
-    prepareArrayIndexes(xcodeml);
-
     // Insert the declarations of variables to iterate over the new dimensions.
     insertVariableToIterateOverDimension(xcodeml);
 
@@ -369,21 +337,21 @@ public class Parallelize extends ClawTransformation {
     // Adapt array references.
     if(_claw.hasOverDataClause()) {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
-        Field.adaptArrayReferences(
-            _claw.getOverDataClauseValues().get(i), i, _fctDef.body(),
-            _promotions, _beforeCrt, _inMiddle, _afterCrt, xcodeml);
+        for(String id : _claw.getOverDataClauseValues().get(i)) {
+          Field.adaptArrayRef(_promotions.get(id), _fctDef.body(), xcodeml);
+        }
       }
     } else {
-      Field.adaptArrayReferences(_arrayFieldsInOut, DEFAULT_OVER,
-          _fctDef.body(), _promotions, _beforeCrt, _inMiddle, _afterCrt,
-          xcodeml);
+      for(String id : _arrayFieldsInOut) {
+        Field.adaptArrayRef(_promotions.get(id), _fctDef.body(), xcodeml);
+      }
     }
 
     removePragma();
 
     // Apply specific target transformation
     if(_claw.getTarget() == Target.GPU) {
-      transformForGPU(xcodeml, trans);
+      transformForGPU(xcodeml);
     } else if(_claw.getTarget() == Target.CPU) {
       transformForCPU(xcodeml);
     }
@@ -400,10 +368,9 @@ public class Parallelize extends ClawTransformation {
   /**
    * Apply GPU based transformation.
    *
-   * @param xcodeml    Current XcodeML program unit.
-   * @param translator Current translator.
+   * @param xcodeml Current XcodeML program unit.
    */
-  private void transformForGPU(XcodeProgram xcodeml, ClawTranslator translator)
+  private void transformForGPU(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
 
@@ -414,7 +381,7 @@ public class Parallelize extends ClawTransformation {
      * transformation idea but it is our start point.
      * Use the first over clause to create it. */
     NestedDoStatement loops =
-        new NestedDoStatement(getOrderedDimensionsFromDefinition(0), xcodeml);
+        new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
 
     /* Subroutine/function can have a contains section with inner subroutines or
      * functions. The newly created (nested) do statements should stop before
@@ -474,13 +441,8 @@ public class Parallelize extends ClawTransformation {
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(arrayIdentifier, promotionInfo);
 
-        Field.adaptArrayReferences(arrayIdentifier, DEFAULT_OVER,
-            _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
-            _afterCrt, xcodeml);
-
-        Field.adaptAllocate(_promotions.get(arrayIdentifier),
-            _fctDef.body(), _claw.getDimensionValues().get(DEFAULT_OVER),
-            xcodeml);
+        Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
+        Field.adaptAllocate(promotionInfo, _fctDef.body(), xcodeml);
       }
     }
 
@@ -510,7 +472,6 @@ public class Parallelize extends ClawTransformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-    List<DimensionDefinition> order = getOrderedDimensionsFromDefinition(0);
     List<Xnode> assignStatements =
         _fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT);
 
@@ -522,7 +483,8 @@ public class Parallelize extends ClawTransformation {
       if(lhs.opcode() == Xcode.F_ARRAY_REF &&
           _arrayFieldsInOut.contains(lhsName))
       {
-        loops = new NestedDoStatement(order, xcodeml);
+        loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
+            xcodeml);
         assign.insertAfter(loops.getOuterStatement());
         loops.getInnerStatement().body().append(assign, true);
         assign.delete();
@@ -544,16 +506,13 @@ public class Parallelize extends ClawTransformation {
             Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
                 _claw.getDimensionValues(), xcodeml);
           } else {
-            Field.adaptArrayReferences(
-                Collections.singletonList(lhsName), DEFAULT_OVER,
-                _fctDef.body(), _promotions, _beforeCrt, _inMiddle,
-                _afterCrt, xcodeml);
-
-            Field.adaptAllocate(_promotions.get(lhsName),
-                _fctDef.body(), _claw.getDimensionValues().get(DEFAULT_OVER),
+            Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(),
+                xcodeml);
+            Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
                 xcodeml);
           }
-          loops = new NestedDoStatement(order, xcodeml);
+          loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
+              xcodeml);
           assign.insertAfter(loops.getOuterStatement());
           loops.getInnerStatement().body().append(assign, true);
           assign.delete();
@@ -586,70 +545,6 @@ public class Parallelize extends ClawTransformation {
     List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
     Set<String> names = XnodeUtil.getNamesFromReferences(vars);
     return Utility.hasIntersection(names, _arrayFieldsInOut);
-  }
-
-  /**
-   * Prepare the arrayIndex elements that will be inserted before and after the
-   * current indexes in the array references.
-   *
-   * @param xcodeml Current XcodeML program unit in which new elements are
-   *                created.
-   */
-  private void prepareArrayIndexes(XcodeProgram xcodeml) {
-    _beforeCrt = new ArrayList<>();
-    _afterCrt = new ArrayList<>();
-    _inMiddle = new ArrayList<>();
-
-    if(_claw.hasOverClause()) {
-      /* If the over clause is specified, the indexes respect the definition of
-       * the over clause. Indexes before the "colon" symbol will be inserted
-       * before the current indexes and the remaining indexes will be inserted
-       * after the current indexes.  */
-
-      for(List<String> over : _claw.getOverClauseValues()) {
-        List<Xnode> beforeCrt = new ArrayList<>();
-        List<Xnode> afterCrt = new ArrayList<>();
-        List<Xnode> inMiddle = new ArrayList<>();
-        List<Xnode> crt = beforeCrt;
-
-        // In middle insertion
-        if(TransformationHelper.baseDimensionNb(over) == 2) {
-          for(String dim : over) {
-            if(!dim.equals(DimensionDefinition.BASE_DIM)) {
-              DimensionDefinition d = _dimensions.get(dim);
-              inMiddle.add(d.generateArrayIndex(xcodeml));
-            }
-          }
-        } else {
-          for(String dim : over) {
-            if(dim.equals(DimensionDefinition.BASE_DIM)) {
-              crt = afterCrt;
-            } else {
-              DimensionDefinition d = _dimensions.get(dim);
-              crt.add(d.generateArrayIndex(xcodeml));
-            }
-          }
-        }
-
-        Collections.reverse(beforeCrt);
-        _beforeCrt.add(beforeCrt);
-        _afterCrt.add(afterCrt);
-        _inMiddle.add(inMiddle);
-      }
-    } else {
-      /* If no over clause, the indexes are inserted in order from the first
-       * defined dimensions from left to right. Everything is inserted on the
-       * left of current indexes. */
-      List<Xnode> crt = new ArrayList<>();
-      List<Xnode> empty = Collections.emptyList();
-      for(DimensionDefinition dim : _claw.getDimensionValues()) {
-        crt.add(dim.generateArrayIndex(xcodeml));
-      }
-      Collections.reverse(crt);
-      _beforeCrt.add(crt);
-      _afterCrt.add(empty);
-      _inMiddle.add(empty);
-    }
   }
 
   /**
@@ -707,7 +602,7 @@ public class Parallelize extends ClawTransformation {
         Xnode param = xcodeml.createAndAddParam(
             dimension.getLowerBound().getValue(),
             bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
+        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
       }
 
       // Create parameter for the upper bound
@@ -719,34 +614,11 @@ public class Parallelize extends ClawTransformation {
         Xnode param = xcodeml.createAndAddParam(
             dimension.getUpperBound().getValue(),
             bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
+        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), XcodeType.INTEGER,
           XstorageClass.F_LOCAL, _fctDef, false);
-    }
-  }
-
-  /**
-   * Get the list of dimensions in order from the one_column over definition.
-   *
-   * @param overIndex Which over clause to use.
-   * @return Ordered list of dimension object.
-   */
-  private List<DimensionDefinition> getOrderedDimensionsFromDefinition(
-      int overIndex)
-  {
-    if(_claw.hasOverClause()) {
-      List<DimensionDefinition> dimensions = new ArrayList<>();
-      for(String o : _claw.getOverClauseValues().get(overIndex)) {
-        if(o.equals(DimensionDefinition.BASE_DIM)) {
-          continue;
-        }
-        dimensions.add(_dimensions.get(o));
-      }
-      return dimensions;
-    } else {
-      return _claw.getDimensionValuesReversed();
     }
   }
 

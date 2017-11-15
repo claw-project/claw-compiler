@@ -99,8 +99,8 @@ public final class Function {
   {
     PromotionInfo defaultInfo = new PromotionInfo();
     for(Xnode param : fctType.getParams().getAll()) {
-      if(param.hasAttribute(Xattr.CLAW_OVER)) {
-        defaultInfo.readDimensionsFromString(param.getAttribute(Xattr.CLAW_OVER));
+      if(param.hasAttribute(Xattr.PROMOTION_INFO)) {
+        defaultInfo.readDimensionsFromString(param.getAttribute(Xattr.PROMOTION_INFO));
         break;
       }
     }

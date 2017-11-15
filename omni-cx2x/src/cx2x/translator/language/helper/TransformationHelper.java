@@ -4,14 +4,8 @@
  */
 package cx2x.translator.language.helper;
 
-import cx2x.translator.common.ClawConstant;
-import cx2x.translator.transformation.primitive.Range;
-import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.language.DimensionDefinition;
-import cx2x.xcodeml.language.InsertionPosition;
-import cx2x.xcodeml.xnode.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -84,8 +84,8 @@ public enum Xattr {
   VERSION(Xname.ATTR_VERSION),
 
   // Xmod extension to share promotion information
-  CLAW_INSERTED(Xname.ATTR_CLAW_INSERTED),
-  CLAW_OVER(Xname.ATTR_CLAW_OVER);
+  IS_INSERTED(Xname.ATTR_IS_INSERTED),
+  PROMOTION_INFO(Xname.ATTR_PROMOTION_INFO);
 
   private static final Map<String, Xattr> _stringToEnum = new HashMap<>();
 

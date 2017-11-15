@@ -17,8 +17,6 @@ public class ClawConstant {
   public static final String OPENMP_PREFIX = "omp";
   public static final String CONTINUATION_LINE_SYMBOL = "&";
   public static final String DEFAULT_STEP_VALUE = "1";
-  public static final String DEFAULT_LOWER_BOUND = "1";
-  public static final String ITER_PREFIX = "iter_";
   public static final String CLAW = "claw";
   public static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 

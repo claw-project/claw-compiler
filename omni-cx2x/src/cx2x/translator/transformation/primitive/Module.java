@@ -197,12 +197,12 @@ public final class Module {
     for(int i = 0; i < paramsLocal.size(); ++i) {
       Xnode pLocal = paramsLocal.get(i);
       // Number of parameters in the module function as been
-      if(pLocal.getBooleanAttribute(Xattr.CLAW_INSERTED)) {
+      if(pLocal.getBooleanAttribute(Xattr.IS_INSERTED)) {
         // new parameter
         Xnode param = mod.createAndAddParamIfNotExists(pLocal.value(),
             modIntTypeIntentIn.getType(), fctTypeMod);
         if(param != null) {
-          param.setBooleanAttribute(Xattr.CLAW_INSERTED, true);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
         }
       } else {
         Xnode pMod = paramsMod.get(i);
@@ -214,12 +214,10 @@ public final class Module {
           XbasicType lType = xcodeml.getTypeTable().getBasicType(pLocal);
           XbasicType crtType = mod.getTypeTable().getBasicType(pMod);
 
-          // TODO promotion change dummy
-
-          if(pLocal.hasAttribute(Xattr.CLAW_OVER)) {
-            PromotionInfo promotionInfo = new PromotionInfo("dummy");
+          if(pLocal.hasAttribute(Xattr.PROMOTION_INFO)) {
+            PromotionInfo promotionInfo = new PromotionInfo();
             promotionInfo.readDimensionsFromString(
-                pLocal.getAttribute(Xattr.CLAW_OVER));
+                pLocal.getAttribute(Xattr.PROMOTION_INFO));
 
             if(lType.isArray()) {
               String newType = Type.duplicateWithDimension(lType, crtType,
@@ -229,14 +227,13 @@ public final class Module {
           }
         }
         String dummy;
-        if(pLocal.hasAttribute(Xattr.CLAW_OVER)) {
-           dummy = pLocal.getAttribute(Xattr.CLAW_OVER);
-          pLocal.setAttribute(Xattr.CLAW_OVER, dummy);
+        if(pLocal.hasAttribute(Xattr.PROMOTION_INFO)) {
+           dummy = pLocal.getAttribute(Xattr.PROMOTION_INFO);
+          pLocal.setAttribute(Xattr.PROMOTION_INFO, dummy);
         }
 
-        // Propagate the over attribute
-
-        pLocal.copyAttribute(pMod, Xattr.CLAW_OVER);
+        // Copy the promotion information
+        pLocal.copyAttribute(pMod, Xattr.PROMOTION_INFO);
       }
     }
   }
