@@ -1,0 +1,143 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+package cx2x.translator.transformation.primitive;
+
+import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.language.DimensionDefinition;
+import cx2x.xcodeml.xnode.*;
+
+import java.util.List;
+
+/**
+ * @author clementval
+ */
+public class Type {
+
+  // Avoid instantiation of
+  private Type() {
+  }
+
+
+  /**
+   * Duplicates the type to update and add extra dimensions to match the base
+   * type.
+   *
+   * @param base       Base type.
+   * @param toUpdate   Type to update.
+   * @param xcodemlSrc Source XcodeML unit. Contains base dimension.
+   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
+   * @return The new type hash generated.
+   */
+  public static String duplicateWithDimension(XbasicType base,
+                                              XbasicType toUpdate,
+                                              XcodeML xcodemlSrc,
+                                              XcodeML xcodemlDst,
+                                              List<DimensionDefinition> dimensions)
+      throws IllegalTransformationException
+  {
+    XbasicType newType = toUpdate.cloneNode();
+    String type = xcodemlDst.getTypeTable().generateHash(XcodeType.ARRAY);
+    newType.setType(type);
+
+    if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {
+      int additionalDimensions =
+          base.getDimensions() - toUpdate.getDimensions();
+      for(int i = 0; i < additionalDimensions; ++i) {
+        Xnode index = xcodemlDst.createEmptyAssumedShaped();
+        newType.addDimension(index, 0);
+      }
+    } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {
+      for(DimensionDefinition dim : dimensions) {
+        switch(dim.getInsertionPosition()) {
+          case BEFORE:
+            // TODO control and validate the before/after
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
+            break;
+          case AFTER:
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
+            break;
+          case IN_MIDDLE:
+            throw new IllegalTransformationException("Not supported yet. " +
+                "Insertion in middle for duplicated array type.", 0);
+        }
+      }
+    } else {
+      newType.resetDimension();
+      for(int i = 0; i < base.getDimensions(); ++i) {
+        Xnode newDim = xcodemlDst.createNode(Xcode.INDEX_RANGE);
+        newType.append(newDim);
+
+        Xnode baseDim = base.getDimensions(i);
+        Xnode lowerBound = baseDim.matchSeq(Xcode.LOWER_BOUND);
+        Xnode upperBound = baseDim.matchSeq(Xcode.UPPER_BOUND);
+
+        if(lowerBound != null) {
+          Xnode newLowerBound =
+              Type.duplicateBound(lowerBound, xcodemlSrc, xcodemlDst);
+          newDim.append(newLowerBound);
+        }
+        if(upperBound != null) {
+          Xnode newUpperBound =
+              Type.duplicateBound(upperBound, xcodemlSrc, xcodemlDst);
+          newDim.append(newUpperBound);
+        }
+        newType.addDimension(newDim);
+      }
+    }
+
+    xcodemlDst.getTypeTable().add(newType);
+    return type;
+  }
+
+  /**
+   * Duplicate a lower or an upper bound between two different XcodeML units.
+   *
+   * @param baseBound  Base bound to be duplicated.
+   * @param xcodemlSrc Source XcodeML unit. Contains base bound.
+   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
+   * @return The newly duplicated bound element.
+   * @throws IllegalTransformationException If bound cannot be duplicated.
+   */
+  private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlSrc,
+                                     XcodeML xcodemlDst)
+      throws IllegalTransformationException
+  {
+    if(baseBound == null || (baseBound.opcode() != Xcode.LOWER_BOUND
+        && baseBound.opcode() != Xcode.UPPER_BOUND))
+    {
+      throw new IllegalTransformationException("Cannot duplicate bound");
+    }
+
+    if(xcodemlSrc == xcodemlDst) {
+      return baseBound.cloneNode();
+    }
+
+    Xnode boundChild = baseBound.child(0);
+    if(boundChild == null) {
+      throw new IllegalTransformationException("Cannot duplicate bound as it " +
+          "has no children element");
+    }
+
+    Xnode bound = xcodemlDst.createNode(baseBound.opcode());
+    if(boundChild.opcode() == Xcode.F_INT_CONSTANT
+        || boundChild.opcode() == Xcode.VAR)
+    {
+      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
+    } else if(boundChild.opcode() == Xcode.PLUS_EXPR) {
+      Xnode lhs = boundChild.child(Xnode.LHS);
+      Xnode rhs = boundChild.child(Xnode.RHS);
+      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUS_EXPR);
+      bound.append(plusExpr);
+      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
+      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
+    } else {
+      throw new IllegalTransformationException(
+          String.format("Lower/upper bound type currently not supported (%s)",
+              boundChild.opcode().toString())
+      );
+    }
+    return bound;
+  }
+}

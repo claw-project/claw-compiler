@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * Primitive transformation and test on Ranges.
  * - comparison of indexRange and list of indexRanges.
+ * -
  *
  * @author clementval
  */
@@ -91,55 +92,5 @@ public final class Range {
       return up1.compareFirstChildValues(up2)
           && (s1 == null || s1.compareOptionalValues(s2));
     }
-  }
-
-  /**
-   * Duplicate a lower or an upper bound between two different XcodeML units.
-   *
-   * @param baseBound  Base bound to be duplicated.
-   * @param xcodemlSrc Source XcodeML unit. Contains base bound.
-   * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
-   * @return The newly duplicated bound element.
-   * @throws IllegalTransformationException If bound cannot be duplicated.
-   */
-  public static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlSrc,
-                                     XcodeML xcodemlDst)
-      throws IllegalTransformationException
-  {
-    if(baseBound == null || (baseBound.opcode() != Xcode.LOWER_BOUND
-        && baseBound.opcode() != Xcode.UPPER_BOUND))
-    {
-      throw new IllegalTransformationException("Cannot duplicate bound");
-    }
-
-    if(xcodemlSrc == xcodemlDst) {
-      return baseBound.cloneNode();
-    }
-
-    Xnode boundChild = baseBound.child(0);
-    if(boundChild == null) {
-      throw new IllegalTransformationException("Cannot duplicate bound as it " +
-          "has no children element");
-    }
-
-    Xnode bound = xcodemlDst.createNode(baseBound.opcode());
-    if(boundChild.opcode() == Xcode.F_INT_CONSTANT
-        || boundChild.opcode() == Xcode.VAR)
-    {
-      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
-    } else if(boundChild.opcode() == Xcode.PLUS_EXPR) {
-      Xnode lhs = boundChild.child(Xnode.LHS);
-      Xnode rhs = boundChild.child(Xnode.RHS);
-      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUS_EXPR);
-      bound.append(plusExpr);
-      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
-      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
-    } else {
-      throw new IllegalTransformationException(
-          String.format("Lower/upper bound type currently not supported (%s)",
-              boundChild.opcode().toString())
-      );
-    }
-    return bound;
   }
 }

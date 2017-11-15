@@ -25,6 +25,7 @@ import java.util.List;
  * - Locate module file and load it into Xmod object.
  * - Locate CLAW enhanced module file and load it into Xmod object.
  * - Format specific suffix for module writing and search.
+ * - Update signature of a function type in a module file.
  *
  * @author clementval
  */
@@ -219,8 +220,8 @@ public final class Module {
               TransformationHelper.findDimensions(fctType, insPos);
 
           if(lType.isArray()) {
-            String newType = TransformationHelper.duplicateWithDimension(lType,
-                crtType, mod, xcodeml, dimensions);
+            String newType = Type.duplicateWithDimension(lType, crtType,
+                xcodeml, mod, dimensions);
             pMod.setType(newType);
           }
         }

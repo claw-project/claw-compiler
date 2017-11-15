@@ -15,6 +15,7 @@ import cx2x.translator.transformation.ClawTransformation;
 import cx2x.translator.transformation.primitive.Field;
 import cx2x.translator.transformation.primitive.Loop;
 import cx2x.translator.transformation.primitive.Module;
+import cx2x.translator.transformation.primitive.Type;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.NestedDoStatement;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -521,11 +522,10 @@ public class ParallelizeForward extends ClawTransformation {
             List<DimensionDefinition> dimensions =
                 TransformationHelper.findDimensions(_fctType, insPos);
 
-            String type = _localFct ?
-                TransformationHelper.duplicateWithDimension(typeBase,
-                    typeToUpdate, xcodeml, xcodeml, dimensions)
-                : TransformationHelper.duplicateWithDimension(typeBase,
-                typeToUpdate, xcodeml, _mod, dimensions);
+            String type = _localFct ? Type.duplicateWithDimension(typeBase,
+                typeToUpdate, xcodeml, xcodeml, dimensions)
+                : Type.duplicateWithDimension(typeBase, typeToUpdate, _mod,
+                xcodeml, dimensions);
 
             pUpdate.setType(type);
 

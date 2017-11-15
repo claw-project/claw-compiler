@@ -12,7 +12,8 @@ import org.w3c.dom.Node;
 
 /**
  * Primitive transformation and test applied on body node. This included:
- * - append a body sub-tree to another one.
+ * - Append a body sub-tree to another one.
+ * - Shift statements into a body.
  *
  * @author clementval
  */

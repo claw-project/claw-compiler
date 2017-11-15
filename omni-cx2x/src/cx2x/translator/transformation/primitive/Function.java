@@ -13,6 +13,7 @@ import cx2x.xcodeml.xnode.Xnode;
  * Primitive transformation, test and utility for Function related action.
  * This includes:
  * - Find arguments in function call.
+ * - Find id in function definition or in ancestor.
  *
  * @author clementval
  */

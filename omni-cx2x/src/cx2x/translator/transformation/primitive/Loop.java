@@ -21,6 +21,8 @@ import java.util.List;
  * - loop fusion (merge)
  * - loop reorder (reorder)
  * - loop hoisting (hoist)
+ * - extract body of a loop
+ * - check iteration range
  *
  * @author clementval
  */

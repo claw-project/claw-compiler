@@ -20,7 +20,9 @@ import java.util.List;
 /**
  * Primitive transformation and test applied to FpragmaStatement. This included:
  * - Extract directive prefix of a FpragmaStatement.
- * -
+ * - Split long pragma into continued pragma.
+ * - Remove comment from a pragma
+ * - Find pragma into previous siblings.
  *
  * @author clementval
  */

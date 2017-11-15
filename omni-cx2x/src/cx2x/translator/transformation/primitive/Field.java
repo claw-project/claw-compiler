@@ -21,7 +21,8 @@ import java.util.Map;
  * Primitive transformation and test applied to fields. This included:
  * - Scalar and array promotion (promote).
  * - Adaptation of scalar reference to array reference for promoted scalar.
- * - Adaptation of allocation statement for promoted field.
+ * - Adaptation of allocate statement for promoted field.
+ * - Demote array reference to fewer dimension or scalar.
  *
  * @author clementval
  */
