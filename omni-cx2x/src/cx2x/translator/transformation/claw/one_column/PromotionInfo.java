@@ -18,12 +18,19 @@ import java.util.List;
  */
 public class PromotionInfo {
 
-  private final String _identifier;
+  private String _identifier;
   private int _baseDimension;
   private int _targetDimension;
   private String _targetType;
   private List<DimensionDefinition> _dimensions;
   private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
+
+  /**
+   * Default ctor. Used for global promotion information not attached to a
+   * field.
+   */
+  public PromotionInfo() {
+  }
 
   /**
    * Constructs a new PromotionInfo object with the identifier of the

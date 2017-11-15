@@ -4,10 +4,10 @@
  */
 package cx2x.translator.transformation.primitive;
 
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.XfunctionDefinition;
-import cx2x.xcodeml.xnode.Xid;
-import cx2x.xcodeml.xnode.Xnode;
+import cx2x.translator.transformation.claw.one_column.PromotionInfo;
+import cx2x.xcodeml.language.DimensionDefinition;
+import cx2x.xcodeml.language.InsertionPosition;
+import cx2x.xcodeml.xnode.*;
 
 /**
  * Primitive transformation, test and utility for Function related action.
@@ -86,5 +86,29 @@ public final class Function {
       return null;
     }
     return findDecl(upperDef, name);
+  }
+
+  /**
+   * @param fctType
+   * @param insertionPosition
+   * @return
+   */
+  public static PromotionInfo readPromotionInfo(XfunctionType fctType,
+                                                InsertionPosition
+                                                    insertionPosition)
+  {
+    PromotionInfo defaultInfo = new PromotionInfo();
+    for(Xnode param : fctType.getParams().getAll()) {
+      if(param.hasAttribute(Xattr.CLAW_OVER)) {
+        defaultInfo.readDimensionsFromString(param.getAttribute(Xattr.CLAW_OVER));
+        break;
+      }
+    }
+    if(insertionPosition != null && defaultInfo.getDimensions() != null) {
+      for(DimensionDefinition dim : defaultInfo.getDimensions()) {
+        dim.setInsertionPosition(insertionPosition);
+      }
+    }
+    return defaultInfo;
   }
 }

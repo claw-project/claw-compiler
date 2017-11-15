@@ -170,4 +170,9 @@ public class XfunctionType extends Xnode {
     }
     return false;
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s type=\"%s\"", opcode(), getType());
+  }
 }

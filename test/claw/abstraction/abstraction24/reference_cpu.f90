@@ -37,11 +37,11 @@ CONTAINS
   REAL , POINTER :: zp ( : , : )
   REAL , TARGET :: res ( 1 : nz , 1 : nproma )
   REAL , POINTER :: res_p ( : , : )
-  INTEGER :: iter_nproma
+  INTEGER :: proma
 
   DO k = 1 , nz , 1
-   DO iter_nproma = 1 , nproma , 1
-    z ( iter_nproma , k ) = val ( k , iter_nproma ) + q ( iter_nproma , k )
+   DO proma = 1 , nproma , 1
+    z ( proma , k ) = val ( k , proma ) + q ( proma , k )
    END DO
   END DO
   zp => z
@@ -50,4 +50,3 @@ CONTAINS
  END SUBROUTINE compute_all
 
 END MODULE mo_column
-

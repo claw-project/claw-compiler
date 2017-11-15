@@ -7,6 +7,7 @@ package cx2x.translator.transformation.primitive;
 import cx2x.configuration.Configuration;
 import cx2x.translator.language.ClawPragma;
 import cx2x.translator.language.helper.TransformationHelper;
+import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
 import cx2x.xcodeml.language.DimensionDefinition;
@@ -213,20 +214,28 @@ public final class Module {
           XbasicType lType = xcodeml.getTypeTable().getBasicType(pLocal);
           XbasicType crtType = mod.getTypeTable().getBasicType(pMod);
 
-          InsertionPosition insPos = InsertionPosition.
-              fromString(pLocal.getAttribute(Xattr.CLAW_OVER));
+          // TODO promotion change dummy
 
-          List<DimensionDefinition> dimensions =
-              TransformationHelper.findDimensions(fctType, insPos);
+          if(pLocal.hasAttribute(Xattr.CLAW_OVER)) {
+            PromotionInfo promotionInfo = new PromotionInfo("dummy");
+            promotionInfo.readDimensionsFromString(
+                pLocal.getAttribute(Xattr.CLAW_OVER));
 
-          if(lType.isArray()) {
-            String newType = Type.duplicateWithDimension(lType, crtType,
-                xcodeml, mod, dimensions);
-            pMod.setType(newType);
+            if(lType.isArray()) {
+              String newType = Type.duplicateWithDimension(lType, crtType,
+                  xcodeml, mod, promotionInfo.getDimensions());
+              pMod.setType(newType);
+            }
           }
+        }
+        String dummy;
+        if(pLocal.hasAttribute(Xattr.CLAW_OVER)) {
+           dummy = pLocal.getAttribute(Xattr.CLAW_OVER);
+          pLocal.setAttribute(Xattr.CLAW_OVER, dummy);
         }
 
         // Propagate the over attribute
+
         pLocal.copyAttribute(pMod, Xattr.CLAW_OVER);
       }
     }

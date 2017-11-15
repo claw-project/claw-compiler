@@ -151,8 +151,7 @@ public final class Field {
         param.setType(type);
 
         // Save the over clause for one_column forward transformation
-        param.setAttribute(Xattr.CLAW_OVER,
-            fieldInfo.getDimensions().get(0).getInsertionPosition().toString());
+        param.setAttribute(Xattr.CLAW_OVER, fieldInfo.getFormattedDimensions());
       }
     }
 
@@ -160,8 +159,7 @@ public final class Field {
         && fctType.getAttribute(Xattr.RESULT_NAME).
         equals(fieldInfo.getIdentifier()))
     {
-      fctType.setAttribute(Xattr.CLAW_OVER,
-          fieldInfo.getDimensions().get(0).getInsertionPosition().toString());
+      fctType.setAttribute(Xattr.CLAW_OVER, fieldInfo.getFormattedDimensions());
     }
   }
 
@@ -360,13 +358,12 @@ public final class Field {
    * @param id    Array identifier that must be adapted.
    * @param index Index designing the correct over clause to be used.
    */
-  public static void adaptArrayReferences(String id, int index,
-                                          Xnode parent,
-                                          Map<String, PromotionInfo> promotions,
-                                          List<List<Xnode>> beforeCrt,
-                                          List<List<Xnode>> inMiddle,
-                                          List<List<Xnode>> afterCrt,
-                                          XcodeProgram xcodeml)
+  public static void adaptArrayRef(String id, int index, Xnode parent,
+                                   Map<String, PromotionInfo> promotions,
+                                   List<List<Xnode>> beforeCrt,
+                                   List<List<Xnode>> inMiddle,
+                                   List<List<Xnode>> afterCrt,
+                                   XcodeProgram xcodeml)
   {
     // TODO get rid of beforeCrt, inMiddle and afterCrt. Should be read from
     // promotion info
@@ -425,6 +422,68 @@ public final class Field {
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *
+   * @param promotionInfo Promotion information used for the promotion of the
+   *                      field.
+   * @param parent        Root node of the tree in which the adaptation is done.
+   * @param xcodeml       Current XcodeML translation unit.
+   */
+  public static void adaptArrayRef(PromotionInfo promotionInfo, Xnode parent,
+                                   XcodeProgram xcodeml)
+  {
+    // Scalar to array reference
+    if(promotionInfo.wasScalar()) {
+      List<Xnode> refs =
+          XnodeUtil.getAllVarReferences(parent, promotionInfo.getIdentifier());
+      for(Xnode ref : refs) {
+        Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
+        Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
+        arrayRef.setType(ref.getType());
+        varRef.setType(promotionInfo.getTargetType());
+        ref.setType(promotionInfo.getTargetType());
+        ref.insertAfter(arrayRef);
+        arrayRef.append(varRef);
+        varRef.append(ref);
+
+        // Simply generate all arrayIndex in order
+        for(DimensionDefinition dim : promotionInfo.getDimensions()) {
+          arrayRef.append(dim.generateArrayIndex(xcodeml));
+        }
+      }
+    } else { // Array reference to array reference
+      List<Xnode> refs = XnodeUtil.getAllArrayReferences(parent,
+          promotionInfo.getIdentifier());
+      for(Xnode ref : refs) {
+        if(ref.matchAncestor(Xcode.F_ALLOCATE_STATEMENT) != null) {
+          continue;
+        }
+        int beforePositionIndex = 0; // First arrayIndex after varRef at pos 0
+        int inMiddlePositionIndex = 1;
+        for(DimensionDefinition dim : promotionInfo.getDimensions()) {
+          switch(dim.getInsertionPosition()) {
+            case BEFORE:
+              ref.child(beforePositionIndex).
+                  insertAfter(dim.generateArrayIndex(xcodeml));
+              ++beforePositionIndex;
+              ++inMiddlePositionIndex;
+              break;
+            case IN_MIDDLE:
+              ref.child(inMiddlePositionIndex).
+                  insertAfter(dim.generateArrayIndex(xcodeml));
+              ++inMiddlePositionIndex;
+              break;
+            case AFTER:
+              ref.append(dim.generateArrayIndex(xcodeml));
+              break;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Adapt all the array references of the variable in the data clause in the
+   * current function/subroutine definition.
+   *
    * @param ids   List of array identifiers that must be adapted.
    * @param index Index designing the correct over clause to be used.
    */
@@ -439,8 +498,8 @@ public final class Field {
     // TODO get rid of beforeCrt, inMiddle and afterCrt. Should be read from
     // promotion info
     for(String id : ids) {
-      adaptArrayReferences(id, index, parent, promotions, beforeCrt,
-          inMiddle, afterCrt, xcodeml);
+      PromotionInfo promotionInfo = promotions.get(id);
+      Field.adaptArrayRef(promotionInfo, parent, xcodeml);
     }
   }
 }

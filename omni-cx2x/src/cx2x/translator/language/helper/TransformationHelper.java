@@ -26,33 +26,6 @@ public class TransformationHelper {
   // TODO 1.0 move method to specific primitives or classes and delete this class
 
   /**
-   * Find the dimensions defined by the one_column transformation.
-   *
-   * @param fctType Function type to analyze.
-   * @return List of found dimensions.
-   */
-  public static List<DimensionDefinition> findDimensions(XfunctionType fctType,
-                                                         InsertionPosition pos)
-  {
-    List<DimensionDefinition> dimensions = new ArrayList<>();
-    if(fctType.getParams() == null) {
-      return dimensions;
-    }
-    for(Xnode param : fctType.getParams().getAll()) {
-      if(param.getBooleanAttribute(Xattr.CLAW_INSERTED)) {
-        DimensionDefinition dim = new DimensionDefinition(
-            ClawConstant.ITER_PREFIX + param.value(),
-            ClawConstant.DEFAULT_LOWER_BOUND,
-            param.value()
-        );
-        dim.setInsertionPosition(pos);
-        dimensions.add(dim);
-      }
-    }
-    return dimensions;
-  }
-
-  /**
    * Get the number of base dimension in an over clause.
    *
    * @param over Over clause as a list of string element.
