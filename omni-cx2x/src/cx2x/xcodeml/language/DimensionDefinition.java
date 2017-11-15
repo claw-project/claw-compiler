@@ -13,6 +13,7 @@ import cx2x.xcodeml.xnode.*;
  */
 public class DimensionDefinition {
 
+  public static final String SEPARATOR = ",";
   public static final String BASE_DIM = ":";
   private static final int DEFAULT_STEP_VALUE = 1;
 

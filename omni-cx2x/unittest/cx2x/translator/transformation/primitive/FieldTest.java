@@ -6,6 +6,7 @@ package cx2x.translator.transformation.primitive;
 
 import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
+import cx2x.xcodeml.language.BoundDefinition;
 import cx2x.xcodeml.language.DimensionDefinition;
 import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.xnode.*;
@@ -25,6 +26,135 @@ import static org.junit.Assert.*;
  * @author clementval
  */
 public class FieldTest {
+
+  @Test
+  public void readFromFormattedDimensionTest() {
+    DimensionDefinition dim1 = new DimensionDefinition("dim1", "1", "30");
+    DimensionDefinition dim2 = new DimensionDefinition("dim2", "1", "nproma");
+    PromotionInfo p1 = new PromotionInfo("a");
+
+    p1.readDimensionsFromString("dim1(1:30),:");
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    assertEquals(1, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+
+    p1.readDimensionsFromString(":,dim1(1:30)");
+    dim1.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(1, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+
+    p1.readDimensionsFromString(":,dim1(1:30),:");
+    dim1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    assertEquals(1, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+
+    p1.readDimensionsFromString("dim1(1:30),dim2(1:nproma),:");
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    dim2.setInsertionPosition(InsertionPosition.BEFORE);
+    assertEquals(2, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+    assertDimensionEquals(dim2, p1.getDimensions().get(1));
+
+    p1.readDimensionsFromString(":,dim1(1:30),dim2(1:nproma),:");
+    dim1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    dim2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    assertEquals(2, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+    assertDimensionEquals(dim2, p1.getDimensions().get(1));
+
+    p1.readDimensionsFromString(":,dim1(1:30),dim2(1:nproma)");
+    dim1.setInsertionPosition(InsertionPosition.AFTER);
+    dim2.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(2, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+    assertDimensionEquals(dim2, p1.getDimensions().get(1));
+
+    p1.readDimensionsFromString("dim1(1:30),:,dim2(1:nproma)");
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    dim2.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(2, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+    assertDimensionEquals(dim2, p1.getDimensions().get(1));
+
+    p1.readDimensionsFromString("dim1(1:30),:,dim2(1:nproma),:");
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    dim2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    assertEquals(2, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+    assertDimensionEquals(dim2, p1.getDimensions().get(1));
+
+    p1.readDimensionsFromString(":,dim1(1:30),:,dim2(1:nproma)");
+    dim1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    dim2.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(2, p1.getDimensions().size());
+    assertDimensionEquals(dim1, p1.getDimensions().get(0));
+    assertDimensionEquals(dim2, p1.getDimensions().get(1));
+  }
+
+  private void assertDimensionEquals(DimensionDefinition d1,
+                                     DimensionDefinition d2)
+  {
+    assertEquals(d1.getIdentifier(), d2.getIdentifier());
+    assertBoundEquals(d1.getLowerBound(), d2.getLowerBound());
+    assertBoundEquals(d1.getUpperBound(), d2.getUpperBound());
+    assertEquals(d1.getInsertionPosition(), d2.getInsertionPosition());
+  }
+
+  private void assertBoundEquals(BoundDefinition b1, BoundDefinition b2) {
+    assertEquals(b1.isVar(), b2.isVar());
+    if(b1.isVar()) {
+      assertEquals(b1.getValue(), b2.getValue());
+    } else {
+      assertEquals(b1.getIntValue(), b2.getIntValue());
+    }
+  }
+
+  @Test
+  public void formattedDimensionsTest() {
+    DimensionDefinition dim1 = new DimensionDefinition("dim1", "1", "30");
+    DimensionDefinition dim2 = new DimensionDefinition("dim2", "1", "40");
+    List<DimensionDefinition> dimensions1 = Collections.singletonList(dim1);
+    List<DimensionDefinition> dimensions2 = Arrays.asList(dim1, dim2);
+
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    PromotionInfo p1 = new PromotionInfo("a", dimensions1);
+    assertEquals("dim1(1:30),:", p1.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    assertEquals(":,dim1(1:30),:", p1.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(":,dim1(1:30)", p1.getFormattedDimensions());
+
+    PromotionInfo p2 = new PromotionInfo("a", dimensions2);
+
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    dim2.setInsertionPosition(InsertionPosition.BEFORE);
+    assertEquals("dim1(1:30),dim2(1:40),:", p2.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.AFTER);
+    dim2.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(":,dim1(1:30),dim2(1:40)", p2.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    dim2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    assertEquals(":,dim1(1:30),dim2(1:40),:", p2.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    dim2.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals("dim1(1:30),:,dim2(1:40)", p2.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    dim2.setInsertionPosition(InsertionPosition.AFTER);
+    assertEquals(":,dim1(1:30),:,dim2(1:40)", p2.getFormattedDimensions());
+
+    dim1.setInsertionPosition(InsertionPosition.BEFORE);
+    dim2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
+    assertEquals("dim1(1:30),:,dim2(1:40),:", p2.getFormattedDimensions());
+
+    PromotionInfo p3 = new PromotionInfo("c");
+    assertEquals("", p3.getFormattedDimensions());
+  }
 
   @Test
   public void promoteTest() {

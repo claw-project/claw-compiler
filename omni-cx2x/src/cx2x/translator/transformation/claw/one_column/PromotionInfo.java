@@ -5,7 +5,10 @@
 package cx2x.translator.transformation.claw.one_column;
 
 import cx2x.xcodeml.language.DimensionDefinition;
+import cx2x.xcodeml.language.InsertionPosition;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -177,6 +180,83 @@ public class PromotionInfo {
    */
   public void setPromotionType(PromotionType promotionType) {
     _promotionType = promotionType;
+  }
+
+  /**
+   * Get a formatted String representing the dimensions used in this promotion
+   * information object. String is formatted as follows:
+   * <p>
+   * - Dimension: dimension_id(lower_bound:upper_bound)
+   * <p>
+   * - Existing dimensions are represented with :
+   * <p>
+   * So a promotion information with 1 additional dimension will be
+   * formatted like:
+   * - New dimension before: "dimension_id(lower_bound:upper_bound),:"
+   * - New dimension in middle: ":,dimension_id(lower_bound:upper_bound),:"
+   * - New dimension after: ":,dimension_id(lower_bound:upper_bound)"
+   *
+   * @return Dimensions information in a formatted string.
+   */
+  public String getFormattedDimensions() {
+    if(_dimensions == null || _dimensions.size() == 0) {
+      return "";
+    }
+    StringBuilder str = new StringBuilder();
+    InsertionPosition crtPos = InsertionPosition.BEFORE;
+    for(int i = 0; i < _dimensions.size(); ++i) {
+      DimensionDefinition dim = _dimensions.get(i);
+      if(dim.getInsertionPosition() != crtPos) {
+        str.append(DimensionDefinition.BASE_DIM);
+        str.append(DimensionDefinition.SEPARATOR);
+        crtPos = dim.getInsertionPosition();
+      }
+      str.append(dim.toString());
+      if(i != _dimensions.size() - 1) {
+        str.append(DimensionDefinition.SEPARATOR);
+      }
+    }
+    if(crtPos != InsertionPosition.AFTER) {
+      str.append(DimensionDefinition.SEPARATOR);
+      str.append(DimensionDefinition.BASE_DIM);
+    }
+    return str.toString();
+  }
+
+  /**
+   * @param rawValue
+   */
+  public void readDimensionsFromString(String rawValue) {
+    _dimensions = new ArrayList<>();
+    List<String> rawDimensions =
+        Arrays.asList(rawValue.split(DimensionDefinition.SEPARATOR));
+
+    int baseDimOccurrence = 0;
+    for(String d : rawDimensions) {
+      if(d.equals(DimensionDefinition.BASE_DIM)) {
+        ++baseDimOccurrence;
+      }
+    }
+    boolean hasMiddleInsertion = baseDimOccurrence > 1;
+    InsertionPosition crtPos = InsertionPosition.BEFORE;
+    for(String rawDim : rawDimensions) {
+      if(rawDim.equals(DimensionDefinition.BASE_DIM)) {
+        if(hasMiddleInsertion && crtPos == InsertionPosition.BEFORE) {
+          crtPos = InsertionPosition.IN_MIDDLE;
+        } else if(crtPos == InsertionPosition.BEFORE) {
+          crtPos = InsertionPosition.AFTER;
+        } else if(crtPos == InsertionPosition.IN_MIDDLE) {
+          crtPos = InsertionPosition.AFTER;
+        }
+      } else {
+        String dimensionId = rawDim.substring(0, rawDim.indexOf('('));
+        String lowerBound = rawDim.substring(rawDim.indexOf('(') + 1, rawDim.indexOf(':'));
+        String upperBound = rawDim.substring(rawDim.indexOf(':') + 1, rawDim.indexOf(')'));
+        DimensionDefinition dim = new DimensionDefinition(dimensionId, lowerBound, upperBound);
+        dim.setInsertionPosition(crtPos);
+        _dimensions.add(dim);
+      }
+    }
   }
 
   // Type of promotion
