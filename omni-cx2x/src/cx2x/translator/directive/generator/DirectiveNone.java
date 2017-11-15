@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator.directive.generator;
 
 import cx2x.configuration.CompilerDirective;
@@ -99,5 +98,4 @@ public class DirectiveNone extends DirectiveGenerator {
   public String getSequentialClause() {
     return null;
   }
-
 }

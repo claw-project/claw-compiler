@@ -69,5 +69,4 @@ public class AnalyzedPragma {
   public void setEndPragma() {
     _isEndPragma = true;
   }
-
 }

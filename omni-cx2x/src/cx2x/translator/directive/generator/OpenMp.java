@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator.directive.generator;
 
 import cx2x.translator.common.Utility;
@@ -156,5 +155,4 @@ public class OpenMp extends DirectiveGenerator {
         String.format(FORMAT3, OPENMP_PREFIX, OPENMP_END, OPENMP_DO)
     };
   }
-
 }

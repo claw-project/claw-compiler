@@ -50,5 +50,4 @@ class ClawDirectiveKey {
   public int hashCode() {
     return _directive.hashCode() + _depth;
   }
-
 }

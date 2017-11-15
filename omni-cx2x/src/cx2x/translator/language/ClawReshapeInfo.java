@@ -60,5 +60,4 @@ public class ClawReshapeInfo {
   public List<Integer> getKeptDimensions() {
     return _kept_dimensions;
   }
-
 }

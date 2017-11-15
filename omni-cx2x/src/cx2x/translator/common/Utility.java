@@ -101,10 +101,12 @@ public final class Utility {
    * @param value  Text value to be printed.
    */
   public static void printWithIndent(int indent, String value) {
+    StringBuilder str = new StringBuilder();
     for(int i = 0; i < indent; ++i) {
-      System.out.print(" ");
+      str.append(" ");
     }
-    System.out.println(value);
+    str.append(value);
+    System.out.println(str.toString());
   }
 
   /**

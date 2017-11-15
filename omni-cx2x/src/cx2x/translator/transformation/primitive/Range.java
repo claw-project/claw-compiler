@@ -142,5 +142,4 @@ public final class Range {
     }
     return bound;
   }
-
 }

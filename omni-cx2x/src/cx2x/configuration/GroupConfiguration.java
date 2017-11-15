@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.configuration;
 
 /**
@@ -109,5 +108,4 @@ public class GroupConfiguration {
   public enum GroupType {DEPENDENT, INDEPENDENT}
 
   public enum TriggerType {DIRECTIVE, TRANSLATION_UNIT}
-
 }

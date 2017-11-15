@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.helper;
 
 import cx2x.xcodeml.xnode.*;
@@ -647,5 +646,4 @@ public class XnodeUtil {
     }
     return gatheredArguments;
   }
-
 }

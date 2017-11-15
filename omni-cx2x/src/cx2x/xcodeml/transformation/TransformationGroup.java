@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.transformation;
 
 import cx2x.xcodeml.exception.IllegalTransformationException;
@@ -108,5 +107,4 @@ public abstract class TransformationGroup {
   public abstract void applyTranslations(XcodeProgram xcodeml,
                                          Translator translator)
       throws Exception;
-
 }

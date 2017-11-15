@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.configuration.openacc;
 
 import java.util.Map;
@@ -143,5 +142,4 @@ public class OpenAccConfiguration {
     }
     return "";
   }
-
 }

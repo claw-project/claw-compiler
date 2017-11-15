@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator.language;
 
 /**
@@ -75,5 +74,4 @@ public class ClawMappingVar {
     }
     return getArgMapping();
   }
-
 }
