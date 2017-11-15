@@ -81,7 +81,8 @@ public class LoopInterchange extends ClawTransformation {
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     // Find next loop after pragma
     //_loopLevel0 = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
-    Xnode outerDoStatement = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
+    Xnode outerDoStatement =
+        _claw.getPragma().matchSibling(Xcode.F_DO_STATEMENT);
     if(outerDoStatement == null) {
       xcodeml.addError("top level loop not found",
           _claw.getPragma().lineNo());

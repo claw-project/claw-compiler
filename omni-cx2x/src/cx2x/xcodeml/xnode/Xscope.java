@@ -5,6 +5,9 @@
 
 package cx2x.xcodeml.xnode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The Xscope represents the possible value for the scope attribute in XcodeML
  * intermediate representation.
@@ -19,6 +22,14 @@ public enum Xscope {
   GLOBAL(Xname.SCOPE_GLOBAL),
   PARAM(Xname.SCOPE_PARAM);
 
+  private static final Map<String, Xscope> _stringToEnum = new HashMap<>();
+
+  static {
+    for(Xscope scope : values()) {
+      _stringToEnum.put(scope.toString().toLowerCase(), scope);
+    }
+  }
+
   private final String _irValue;
 
   Xscope(String value) {
@@ -29,21 +40,11 @@ public enum Xscope {
    * Convert string value to enum.
    *
    * @param value String value.
-   * @return Corresponding enum value.
+   * @return Corresponding enum value. Null if no match found.
    */
   public static Xscope fromString(String value) {
-    if(value == null) {
-      return null;
-    }
-    switch(value.toLowerCase()) {
-      case Xname.SCOPE_LOCAL:
-        return LOCAL;
-      case Xname.SCOPE_GLOBAL:
-        return GLOBAL;
-      case Xname.SCOPE_PARAM:
-        return PARAM;
-    }
-    return null;
+    return (value == null || !_stringToEnum.containsKey(value.toLowerCase())) ?
+        null : _stringToEnum.get(value.toLowerCase());
   }
 
   /**

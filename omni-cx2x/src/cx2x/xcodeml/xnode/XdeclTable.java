@@ -58,24 +58,24 @@ public class XdeclTable extends Xnode {
     for(Xnode n : declarations) {
       String key = "";
       switch(n.opcode()) {
-        case EXTERNDECL:
-        case FSTRUCTDECL:
-        case VARDECL:
+        case EXTERN_DECL:
+        case F_STRUCT_DECL:
+        case VAR_DECL:
           key = n.matchSeq(Xcode.NAME).value();
           break;
-        case FUSEDECL:
-        case FUSEONLYDECL:
-        case FINTERFACEDECL:
+        case F_USE_DECL:
+        case F_USE_ONLY_DECL:
+        case F_INTERFACE_DECL:
           key = n.getAttribute(Xattr.NAME);
           break;
-        case FNAMELISTDECL:
-          key = n.matchSeq(Xcode.VARLIST).getAttribute(Xattr.NAME);
+        case F_NAMELIST_DECL:
+          key = n.matchSeq(Xcode.VAR_LIST).getAttribute(Xattr.NAME);
           break;
-        case FCOMMONDECL:
-          key = Xcode.FCOMMONDECL.toString() + UUID.randomUUID();
+        case F_COMMON_DECL:
+          key = Xcode.F_COMMON_DECL.toString() + UUID.randomUUID();
           break;
-        case FEQUIVALENCEDECL:
-          key = Xcode.FEQUIVALENCEDECL.toString() + UUID.randomUUID();
+        case F_EQUIVALENCE_DECL:
+          key = Xcode.F_EQUIVALENCE_DECL.toString() + UUID.randomUUID();
           break;
       }
       _table.put(key, n);
@@ -167,7 +167,7 @@ public class XdeclTable extends Xnode {
    * @return List of FuseDecl and FuseOnlyDecl nodes.
    */
   public List<Xnode> uses() {
-    return values(Arrays.asList(Xcode.FUSEDECL, Xcode.FUSEONLYDECL));
+    return values(Arrays.asList(Xcode.F_USE_DECL, Xcode.F_USE_ONLY_DECL));
   }
 
   /**
@@ -204,8 +204,8 @@ public class XdeclTable extends Xnode {
       if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
         Xnode node = new Xnode((Element) crtNode);
         // Only var declarations can be disordered
-        if(node.opcode() == Xcode.VARDECL
-            || node.opcode() == Xcode.FSTRUCTDECL)
+        if(node.opcode() == Xcode.VAR_DECL
+            || node.opcode() == Xcode.F_STRUCT_DECL)
         {
           decl.add(node);
         }

@@ -40,7 +40,7 @@ public class DependenceAnalysis {
    * @throws Exception If the given node is null or is not a do statement node.
    */
   private void analyze() throws Exception {
-    if(_mainLoop == null || _mainLoop.opcode() != Xcode.FDOSTATEMENT) {
+    if(_mainLoop == null || _mainLoop.opcode() != Xcode.F_DO_STATEMENT) {
       throw new Exception("Analysis only on FdoStatement node");
     }
 
@@ -48,15 +48,15 @@ public class DependenceAnalysis {
     _inductionVariable = inductionVarNode.value();
 
     Xnode body = _mainLoop.matchDescendant(Xcode.BODY);
-    List<Xnode> arrayRefs = body.matchAll(Xcode.FARRAYREF);
+    List<Xnode> arrayRefs = body.matchAll(Xcode.F_ARRAY_REF);
 
     _distanceVector = 0;
     _directionVector = DependenceDirection.NONE;
     for(Xnode arrayRef : arrayRefs) {
-      List<Xnode> arrayIndexes = arrayRef.matchAll(Xcode.ARRAYINDEX);
+      List<Xnode> arrayIndexes = arrayRef.matchAll(Xcode.ARRAY_INDEX);
       for(Xnode arrayIndex : arrayIndexes) {
-        if(arrayIndex.firstChild().opcode() == Xcode.MINUSEXPR
-            || arrayIndex.firstChild().opcode() == Xcode.PLUSEXPR)
+        if(arrayIndex.firstChild().opcode() == Xcode.MINUS_EXPR
+            || arrayIndex.firstChild().opcode() == Xcode.PLUS_EXPR)
         {
           Xnode expr = arrayIndex.firstChild();
           Xnode var = expr.firstChild();
@@ -64,10 +64,10 @@ public class DependenceAnalysis {
           if(var.value().endsWith(_inductionVariable)) {
             _distanceVector = Integer.parseInt(intConst.value());
             switch(arrayIndex.firstChild().opcode()) {
-              case MINUSEXPR:
+              case MINUS_EXPR:
                 _directionVector = DependenceDirection.BACKWARD;
                 break;
-              case PLUSEXPR:
+              case PLUS_EXPR:
                 _directionVector = DependenceDirection.FORWARD;
                 break;
             }

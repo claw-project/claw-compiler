@@ -81,7 +81,7 @@ public class ClawTranslatorDriver {
     }
     try {
       // Check all pragma found in the translation unit
-      for(Xnode pragma : _translationUnit.matchAll(Xcode.FPRAGMASTATEMENT)) {
+      for(Xnode pragma : _translationUnit.matchAll(Xcode.F_PRAGMA_STATEMENT)) {
         // Pragma can be handled by the translator so let it do its job.
         if(_translator.isHandledPragma(pragma)) {
           _translator.generateTransformation(_translationUnit, pragma);

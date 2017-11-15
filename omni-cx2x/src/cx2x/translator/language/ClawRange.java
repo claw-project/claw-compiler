@@ -131,14 +131,14 @@ public class ClawRange {
    * @return True if the iteration range share the same property.
    */
   public boolean equals(Xnode doStmt) {
-    if(doStmt.opcode() != Xcode.FDOSTATEMENT) {
+    if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
       return false;
     }
 
     Xnode inductionVar = doStmt.matchDirectDescendant(Xcode.VAR);
-    Xnode indexRange = doStmt.matchDirectDescendant(Xcode.INDEXRANGE);
-    Xnode lower = indexRange.matchDirectDescendant(Xcode.LOWERBOUND).child(0);
-    Xnode upper = indexRange.matchDirectDescendant(Xcode.UPPERBOUND).child(0);
+    Xnode indexRange = doStmt.matchDirectDescendant(Xcode.INDEX_RANGE);
+    Xnode lower = indexRange.matchDirectDescendant(Xcode.LOWER_BOUND).child(0);
+    Xnode upper = indexRange.matchDirectDescendant(Xcode.UPPER_BOUND).child(0);
     Xnode step = indexRange.matchDirectDescendant(Xcode.STEP).child(0);
 
     return !(inductionVar == null || _inductionVar == null
@@ -150,5 +150,4 @@ public class ClawRange {
         && (step == null && _step == null
         || !(step == null || _step == null || !_step.equals(step.value())));
   }
-
 }

@@ -41,27 +41,27 @@ public class DimensionTest {
 
     Xnode indexRange = dimDef.generateIndexRange(xcodeml, false);
     assertNotNull(indexRange);
-    assertEquals(Xcode.INDEXRANGE, indexRange.opcode());
+    assertEquals(Xcode.INDEX_RANGE, indexRange.opcode());
     assertEquals(2, indexRange.children().size());
-    assertEquals(Xcode.LOWERBOUND, indexRange.firstChild().opcode());
-    assertEquals(Xcode.UPPERBOUND, indexRange.lastChild().opcode());
+    assertEquals(Xcode.LOWER_BOUND, indexRange.firstChild().opcode());
+    assertEquals(Xcode.UPPER_BOUND, indexRange.lastChild().opcode());
 
     Xnode indexRangeStep = dimDef.generateIndexRange(xcodeml, true);
     assertNotNull(indexRangeStep);
-    assertEquals(Xcode.INDEXRANGE, indexRangeStep.opcode());
+    assertEquals(Xcode.INDEX_RANGE, indexRangeStep.opcode());
     assertEquals(3, indexRangeStep.children().size());
-    assertEquals(Xcode.LOWERBOUND, indexRangeStep.firstChild().opcode());
-    assertEquals(Xcode.UPPERBOUND, indexRangeStep.child(1).opcode());
+    assertEquals(Xcode.LOWER_BOUND, indexRangeStep.firstChild().opcode());
+    assertEquals(Xcode.UPPER_BOUND, indexRangeStep.child(1).opcode());
     assertEquals(Xcode.STEP, indexRangeStep.lastChild().opcode());
 
     Xnode arrayIndex = dimDef.generateArrayIndex(xcodeml);
     assertNotNull(arrayIndex);
-    assertEquals(Xcode.ARRAYINDEX, arrayIndex.opcode());
+    assertEquals(Xcode.ARRAY_INDEX, arrayIndex.opcode());
     assertEquals(Xcode.VAR, arrayIndex.firstChild().opcode());
     assertEquals(dimDef.getIdentifier(), arrayIndex.firstChild().value());
 
     Xnode allocateNode = dimDef.generateAllocateNode(xcodeml);
-    assertEquals(Xcode.ARRAYINDEX, allocateNode.opcode());
+    assertEquals(Xcode.ARRAY_INDEX, allocateNode.opcode());
     assertEquals(Xcode.VAR, allocateNode.firstChild().opcode());
     assertEquals(dimDef.getUpperBound().getValue(),
         allocateNode.firstChild().value());
@@ -84,7 +84,7 @@ public class DimensionTest {
     Xnode lowerNode = lowerBound.generate(xcodeml);
     assertNotNull(lowerNode);
     assertNotNull(lowerNode.firstChild());
-    assertEquals(Xcode.FINTCONSTANT, lowerNode.firstChild().opcode());
+    assertEquals(Xcode.F_INT_CONSTANT, lowerNode.firstChild().opcode());
     assertEquals("1", lowerNode.firstChild().value());
     Xnode upperNode = upperBound.generate(xcodeml);
     assertNotNull(upperNode);

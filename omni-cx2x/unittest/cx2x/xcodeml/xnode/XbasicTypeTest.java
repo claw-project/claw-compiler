@@ -41,8 +41,8 @@ public class XbasicTypeTest {
   @Test
   public void setterTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    XbasicType bt1 = new XbasicType(xcodeml.createNode(Xcode.FBASICTYPE));
-    XbasicType bt2 = new XbasicType(xcodeml.createNode(Xcode.FBASICTYPE));
+    XbasicType bt1 = new XbasicType(xcodeml.createNode(Xcode.F_BASIC_TYPE));
+    XbasicType bt2 = new XbasicType(xcodeml.createNode(Xcode.F_BASIC_TYPE));
     String typeHash1 = xcodeml.getTypeTable().generateHash(XcodeType.INTEGER);
     String typeHash2 = xcodeml.getTypeTable().generateHash(XcodeType.INTEGER);
     bt1.setType(typeHash1);
@@ -130,7 +130,7 @@ public class XbasicTypeTest {
 
     assertEquals("Fcharacter", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
-    assertTrue(b.getLength().child(0).opcode() == Xcode.FINTCONSTANT);
+    assertTrue(b.getLength().child(0).opcode() == Xcode.F_INT_CONSTANT);
     assertEquals("10", b.getLength().child(0).value());
   }
 
@@ -168,20 +168,20 @@ public class XbasicTypeTest {
     Xnode dim0 = b.getDimensions(0);
     Xnode dim1 = b.getDimensions(1);
 
-    assertTrue(dim0.opcode() == Xcode.ARRAYINDEX);
-    assertTrue(dim1.opcode() == Xcode.INDEXRANGE);
+    assertTrue(dim0.opcode() == Xcode.ARRAY_INDEX);
+    assertTrue(dim1.opcode() == Xcode.INDEX_RANGE);
 
-    assertTrue(dim0.child(0).opcode() == Xcode.FINTCONSTANT);
+    assertTrue(dim0.child(0).opcode() == Xcode.F_INT_CONSTANT);
     assertEquals("10", dim0.child(0).value());
 
-    assertNotNull(dim1.matchSeq(Xcode.LOWERBOUND));
-    assertNotNull(dim1.matchSeq(Xcode.UPPERBOUND));
-    assertTrue(dim1.matchSeq(Xcode.LOWERBOUND).child(0).opcode()
-        == Xcode.FINTCONSTANT);
-    assertEquals("1", dim1.matchSeq(Xcode.LOWERBOUND).child(0).value());
-    assertTrue(dim1.matchSeq(Xcode.LOWERBOUND).child(0).opcode()
-        == Xcode.FINTCONSTANT);
-    assertEquals("10", dim1.matchSeq(Xcode.UPPERBOUND).child(0).value());
+    assertNotNull(dim1.matchSeq(Xcode.LOWER_BOUND));
+    assertNotNull(dim1.matchSeq(Xcode.UPPER_BOUND));
+    assertTrue(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode()
+        == Xcode.F_INT_CONSTANT);
+    assertEquals("1", dim1.matchSeq(Xcode.LOWER_BOUND).child(0).value());
+    assertTrue(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode()
+        == Xcode.F_INT_CONSTANT);
+    assertEquals("10", dim1.matchSeq(Xcode.UPPER_BOUND).child(0).value());
 
     assertEquals("Fint", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
@@ -226,13 +226,13 @@ public class XbasicTypeTest {
     bt.addDimension(d2);
     assertEquals(2, bt.getDimensions());
     assertTrue(bt.isAllAssumedShape());
-    Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
+    Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAY_INDEX);
     arrayIndex.append(xcodeml.createIntConstant(10));
     bt.addDimension(arrayIndex, 0);
     assertEquals(3, bt.getDimensions());
-    assertEquals(Xcode.ARRAYINDEX, bt.getDimensions(0).opcode());
-    assertEquals(Xcode.INDEXRANGE, bt.getDimensions(1).opcode());
-    assertEquals(Xcode.INDEXRANGE, bt.getDimensions(2).opcode());
+    assertEquals(Xcode.ARRAY_INDEX, bt.getDimensions(0).opcode());
+    assertEquals(Xcode.INDEX_RANGE, bt.getDimensions(1).opcode());
+    assertEquals(Xcode.INDEX_RANGE, bt.getDimensions(2).opcode());
     assertTrue(bt.getDimensions(1).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE));
     assertTrue(bt.getDimensions(2).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE));
     assertFalse(bt.isAllAssumedShape());

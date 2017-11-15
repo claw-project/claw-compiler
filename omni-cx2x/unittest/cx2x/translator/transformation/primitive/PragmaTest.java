@@ -32,28 +32,28 @@ public class PragmaTest {
   public void getPragmaPrefixTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
 
-    Xnode p1 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p1 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p1.setValue(ClawConstant.OPENACC_PREFIX);
     assertEquals(ClawConstant.OPENACC_PREFIX, Pragma.getPrefix(p1));
 
-    Xnode p2 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p2 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p2.setValue(ClawConstant.OPENMP_PREFIX);
     assertEquals(ClawConstant.OPENMP_PREFIX, Pragma.getPrefix(p2));
 
-    Xnode p3 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p3 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p3.setValue("");
     assertEquals("", Pragma.getPrefix(p3));
 
-    Xnode p4 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p4 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     assertEquals("", Pragma.getPrefix(p4));
 
-    Xnode p5 = xcodeml.createNode(Xcode.FDOSTATEMENT);
+    Xnode p5 = xcodeml.createNode(Xcode.F_DO_STATEMENT);
     p5.setValue("acc");
     assertEquals("", Pragma.getPrefix(p5));
 
     assertEquals("", Pragma.getPrefix(null));
 
-    Xnode p6 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p6 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p6.setValue(ClawConstant.OPENACC_PREFIX + " loop private(a)");
     assertEquals(ClawConstant.OPENACC_PREFIX, Pragma.getPrefix(p6));
   }
@@ -109,13 +109,13 @@ public class PragmaTest {
     assertTrue(fctDefs.size() > 0);
     XfunctionDefinition fd = fctDefs.get(0);
     assertNotNull(fd.body());
-    List<Xnode> previous = fd.matchAll(Xcode.FPRAGMASTATEMENT);
-    Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
+    Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     fd.body().append(p);
     p.setValue("acc data present(q,acc& p,acc& h)acc& create(pt)");
     try {
       Pragma.splitByCont(p, ClawConstant.OPENACC_PREFIX, xcodeml);
-      List<Xnode> splittedPragma = fd.matchAll(Xcode.FPRAGMASTATEMENT);
+      List<Xnode> splittedPragma = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
       assertEquals(previous.size() + 4, splittedPragma.size());
     } catch(IllegalTransformationException e) {
       fail();

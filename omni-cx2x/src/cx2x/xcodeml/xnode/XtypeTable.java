@@ -45,15 +45,15 @@ public class XtypeTable extends Xnode {
     List<Xnode> elements = children();
     for(Xnode n : elements) {
       switch(n.opcode()) {
-        case FBASICTYPE:
+        case F_BASIC_TYPE:
           XbasicType bt = new XbasicType(n);
           _table.put(bt.getType(), bt);
           break;
-        case FFUNCTIONTYPE:
+        case F_FUNCTION_TYPE:
           XfunctionType ft = new XfunctionType(n);
           _table.put(ft.getType(), ft);
           break;
-        case FSTRUCTTYPE:
+        case F_STRUCT_TYPE:
           XstructType st = new XstructType(n);
           _table.put(st.getType(), st);
           break;

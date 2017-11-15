@@ -154,7 +154,7 @@ public class XcodeProgram extends XcodeML {
       return false;
     }
 
-    if(opcode() != Xcode.XCODEPROGRAM) {
+    if(opcode() != Xcode.XCODE_PROGRAM) {
       return false;
     }
 
@@ -175,7 +175,7 @@ public class XcodeProgram extends XcodeML {
    * Read the XcodeML global symbols table
    */
   private void readGlobalSymbolsTable() {
-    _globalSymbolsTable = new XsymbolTable(matchSeq(Xcode.GLOBALSYMBOLS));
+    _globalSymbolsTable = new XsymbolTable(matchSeq(Xcode.GLOBAL_SYMBOLS));
   }
 
   /**
@@ -183,7 +183,7 @@ public class XcodeProgram extends XcodeML {
    */
   private void readGlobalDeclarationsTable() {
     _globalDeclarationsTable =
-        new XglobalDeclTable(matchSeq(Xcode.GLOBALDECLARATIONS));
+        new XglobalDeclTable(matchSeq(Xcode.GLOBAL_DECLARATIONS));
   }
 
   /**

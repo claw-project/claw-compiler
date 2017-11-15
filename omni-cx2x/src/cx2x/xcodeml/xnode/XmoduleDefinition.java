@@ -83,7 +83,7 @@ public class XmoduleDefinition extends Xnode {
     if(name == null || name.isEmpty()) {
       return null;
     }
-    List<Xnode> fctDefs = matchAll(Xcode.FFUNCTIONDEFINITION);
+    List<Xnode> fctDefs = matchAll(Xcode.F_FUNCTION_DEFINITION);
     for(Xnode n : fctDefs) {
       XfunctionDefinition fctDef = new XfunctionDefinition(n);
       if(fctDef.getName().equals(name)) {

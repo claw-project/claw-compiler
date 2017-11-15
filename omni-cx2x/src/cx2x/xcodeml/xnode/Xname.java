@@ -214,7 +214,7 @@ public final class Xname {
   public static final String VAR_DECL = "varDecl";
   public static final String VAR_LIST = "varList";
   public static final String VAR_REF = "varRef";
-  public static final String X_CODE_PROGRAM = "XcodeProgram";
+  public static final String XCODE_PROGRAM = "XcodeProgram";
   // Xmod files
   public static final String DEPENDS = "depends";
   public static final String IDENTIFIERS = "identifiers";

@@ -57,8 +57,8 @@ public final class Range {
    */
   public static boolean compare(Xnode idx1, Xnode idx2, boolean withLowerBound)
   {
-    if(idx1 == null || idx2 == null || idx1.opcode() != Xcode.INDEXRANGE
-        || idx2.opcode() != Xcode.INDEXRANGE)
+    if(idx1 == null || idx2 == null || idx1.opcode() != Xcode.INDEX_RANGE
+        || idx2.opcode() != Xcode.INDEX_RANGE)
     {
       return false;
     }
@@ -69,10 +69,10 @@ public final class Range {
       return true;
     }
 
-    Xnode low1 = idx1.matchSeq(Xcode.LOWERBOUND);
-    Xnode up1 = idx1.matchSeq(Xcode.UPPERBOUND);
-    Xnode low2 = idx2.matchSeq(Xcode.LOWERBOUND);
-    Xnode up2 = idx2.matchSeq(Xcode.UPPERBOUND);
+    Xnode low1 = idx1.matchSeq(Xcode.LOWER_BOUND);
+    Xnode up1 = idx1.matchSeq(Xcode.UPPER_BOUND);
+    Xnode low2 = idx2.matchSeq(Xcode.LOWER_BOUND);
+    Xnode up2 = idx2.matchSeq(Xcode.UPPER_BOUND);
     Xnode s1 = idx1.matchSeq(Xcode.STEP);
     Xnode s2 = idx2.matchSeq(Xcode.STEP);
 
@@ -106,8 +106,8 @@ public final class Range {
                                      XcodeML xcodemlDst)
       throws IllegalTransformationException
   {
-    if(baseBound == null || (baseBound.opcode() != Xcode.LOWERBOUND
-        && baseBound.opcode() != Xcode.UPPERBOUND))
+    if(baseBound == null || (baseBound.opcode() != Xcode.LOWER_BOUND
+        && baseBound.opcode() != Xcode.UPPER_BOUND))
     {
       throw new IllegalTransformationException("Cannot duplicate bound");
     }
@@ -123,14 +123,14 @@ public final class Range {
     }
 
     Xnode bound = xcodemlDst.createNode(baseBound.opcode());
-    if(boundChild.opcode() == Xcode.FINTCONSTANT
+    if(boundChild.opcode() == Xcode.F_INT_CONSTANT
         || boundChild.opcode() == Xcode.VAR)
     {
       bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
-    } else if(boundChild.opcode() == Xcode.PLUSEXPR) {
+    } else if(boundChild.opcode() == Xcode.PLUS_EXPR) {
       Xnode lhs = boundChild.child(Xnode.LHS);
       Xnode rhs = boundChild.child(Xnode.RHS);
-      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUSEXPR);
+      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUS_EXPR);
       bound.append(plusExpr);
       plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
       plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));

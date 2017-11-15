@@ -5,6 +5,9 @@
 
 package cx2x.xcodeml.xnode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * XcodeML element attributes code.
  *
@@ -85,6 +88,14 @@ public enum Xattr {
   CLAW_INSERTED(Xname.ATTR_CLAW_INSERTED),
   CLAW_OVER(Xname.ATTR_CLAW_OVER);
 
+  private static final Map<String, Xattr> _stringToEnum = new HashMap<>();
+
+  static {
+    for(Xattr attr : values()) {
+      _stringToEnum.put(attr.toString().toLowerCase(), attr);
+    }
+  }
+
   private final String _irValue;
 
   Xattr(String s) {
@@ -92,7 +103,8 @@ public enum Xattr {
   }
 
   public static Xattr fromString(String value) {
-    return Xattr.valueOf(value.toUpperCase().replace("-", "_"));
+    return (value == null || !_stringToEnum.containsKey(value.toLowerCase())) ?
+        null : _stringToEnum.get(value.toLowerCase());
   }
 
   @Override

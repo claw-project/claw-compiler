@@ -195,15 +195,15 @@ public class FieldTest {
   private void assertDimension(Xnode dimension, int lowerBound, int upperBound)
   {
     assertNotNull(dimension);
-    assertEquals(Xcode.INDEXRANGE, dimension.opcode());
+    assertEquals(Xcode.INDEX_RANGE, dimension.opcode());
     Xnode lowerBoundNode = dimension.firstChild();
     assertNotNull(lowerBoundNode);
     Xnode upperBoundNode = dimension.lastChild();
     assertNotNull(upperBoundNode);
-    assertEquals(Xcode.FINTCONSTANT, lowerBoundNode.firstChild().opcode());
+    assertEquals(Xcode.F_INT_CONSTANT, lowerBoundNode.firstChild().opcode());
     assertEquals(String.valueOf(lowerBound),
         lowerBoundNode.firstChild().value());
-    assertEquals(Xcode.FINTCONSTANT, upperBoundNode.firstChild().opcode());
+    assertEquals(Xcode.F_INT_CONSTANT, upperBoundNode.firstChild().opcode());
     assertEquals(String.valueOf(upperBound),
         upperBoundNode.firstChild().value());
   }

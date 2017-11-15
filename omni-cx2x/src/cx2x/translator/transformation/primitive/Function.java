@@ -30,7 +30,7 @@ public final class Function {
    * @return The argument if found. Null otherwise.
    */
   public static Xnode findArg(Xnode fctCall, String argName) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
       return null;
     }
     Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);

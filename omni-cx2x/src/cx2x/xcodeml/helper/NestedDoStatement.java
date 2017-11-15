@@ -42,7 +42,7 @@ public class NestedDoStatement {
   public NestedDoStatement(Xnode outerDoStatement, int nb) {
     _statements = new ArrayList<>();
     if(outerDoStatement == null
-        || outerDoStatement.opcode() != Xcode.FDOSTATEMENT)
+        || outerDoStatement.opcode() != Xcode.F_DO_STATEMENT)
     {
       return;
     }
@@ -51,7 +51,7 @@ public class NestedDoStatement {
     while(crtDoStatement != null) {
       _statements.add(crtDoStatement);
       crtDoStatement = crtDoStatement.body().
-          matchDirectDescendant(Xcode.FDOSTATEMENT);
+          matchDirectDescendant(Xcode.F_DO_STATEMENT);
       if(_statements.size() == nb) {
         break;
       }

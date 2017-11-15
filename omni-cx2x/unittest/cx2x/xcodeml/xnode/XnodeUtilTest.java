@@ -31,7 +31,7 @@ public class XnodeUtilTest {
         XcodeProgram.createFromFile(TestConstant.TEST_PROGRAM);
     assertNotNull(xcodeml);
 
-    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.F_PRAGMA_STATEMENT);
     assertEquals(4, pragmas.size());
 
     Xnode loopHoistStart = new Xnode(pragmas.get(1).element());
@@ -62,11 +62,11 @@ public class XnodeUtilTest {
         XcodeProgram.createFromFile(TestConstant.TEST_ARGUMENTS);
     assertNotNull(xcodeml);
 
-    List<Xnode> functionCalls = xcodeml.matchAll(Xcode.FUNCTIONCALL);
+    List<Xnode> functionCalls = xcodeml.matchAll(Xcode.FUNCTION_CALL);
     assertEquals(1, functionCalls.size());
 
     Xnode fctCall = functionCalls.get(0);
-    assertTrue(fctCall.opcode() == Xcode.FUNCTIONCALL);
+    assertTrue(fctCall.opcode() == Xcode.FUNCTION_CALL);
 
     List<String> allArguments =
         XnodeUtil.gatherArguments(xcodeml, fctCall, Xintent.ANY, false);

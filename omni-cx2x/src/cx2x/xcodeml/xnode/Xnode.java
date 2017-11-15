@@ -58,7 +58,7 @@ public class Xnode {
     if(_baseElement == null) {
       return Xcode.NONE;
     }
-    return Xcode.valueOf(_baseElement.getTagName().toUpperCase());
+    return Xcode.fromString(_baseElement.getTagName().toLowerCase());
   }
 
   /**
@@ -721,7 +721,7 @@ public class Xnode {
    * @return A XmoduleDefinition node if found. Null otherwise.
    */
   public XmoduleDefinition findParentModule() {
-    Xnode moduleDef = matchAncestor(Xcode.FMODULEDEFINITION);
+    Xnode moduleDef = matchAncestor(Xcode.F_MODULE_DEFINITION);
     return (moduleDef != null) ? new XmoduleDefinition(moduleDef) : null;
   }
 
@@ -756,19 +756,19 @@ public class Xnode {
    */
   public String getType() {
     switch(opcode()) {
-      case FARRAYREF:
+      case F_ARRAY_REF:
         String type = getAttribute(Xattr.TYPE);
         if(XcodeType.isBuiltInType(type)) {
           Xnode child = firstChild();
           return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
         }
         return type;
-      case NAMEDVALUE:
+      case NAMED_VALUE:
         Xnode child = firstChild();
         return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
-      case FFUNCTIONDEFINITION:
-      case FUNCTIONCALL:
-      case VARDECL:
+      case F_FUNCTION_DEFINITION:
+      case FUNCTION_CALL:
+      case VAR_DECL:
         // functionCall has a type attribute but it's the return type
         Xnode name = matchDirectDescendant(Xcode.NAME);
         return (name != null) ? name.getAttribute(Xattr.TYPE) : "";
@@ -794,18 +794,18 @@ public class Xnode {
   public String constructRepresentation(boolean withNamedValue)
   {
     switch(opcode()) {
-      case FINTCONSTANT:
-      case FPRAGMASTATEMENT:
+      case F_INT_CONSTANT:
+      case F_PRAGMA_STATEMENT:
       case VAR:
         return value();
-      case ARRAYINDEX:
-      case LOWERBOUND:
-      case UPPERBOUND:
-      case VARREF: {
+      case ARRAY_INDEX:
+      case LOWER_BOUND:
+      case UPPER_BOUND:
+      case VAR_REF: {
         Xnode n = firstChild();
         return (n != null) ? n.constructRepresentation(withNamedValue) : "";
       }
-      case INDEXRANGE:
+      case INDEX_RANGE:
         if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
           return ":";
         }
@@ -815,7 +815,7 @@ public class Xnode {
             child0.constructRepresentation(withNamedValue) : "") + ":" +
             ((child1 != null) ?
                 child1.constructRepresentation(withNamedValue) : "");
-      case FARRAYREF:
+      case F_ARRAY_REF:
         List<Xnode> childs = children();
         if(childs.size() == 1) {
           return childs.get(0).constructRepresentation(withNamedValue);
@@ -832,13 +832,13 @@ public class Xnode {
           str.append(")");
           return str.toString();
         }
-      case FMEMBERREF: {
+      case F_MEMBER_REF: {
         Xnode n = firstChild();
         return ((n != null) ?
             n.constructRepresentation(withNamedValue) + "%" +
                 getAttribute(Xattr.MEMBER) : "");
       }
-      case NAMEDVALUE: {
+      case NAMED_VALUE: {
         Xnode n = firstChild();
         if(withNamedValue) {
           return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
@@ -880,7 +880,7 @@ public class Xnode {
    * @return The function definition found. Null if nothing found.
    */
   public XfunctionDefinition findParentFunction() {
-    Xnode fctDef = matchAncestor(Xcode.FFUNCTIONDEFINITION);
+    Xnode fctDef = matchAncestor(Xcode.F_FUNCTION_DEFINITION);
     if(fctDef == null) {
       return null;
     }

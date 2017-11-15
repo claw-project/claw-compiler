@@ -141,10 +141,10 @@ public class XnodeTest {
     assertEquals("q", arg10Node.constructRepresentation(false));
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode n1 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     assertEquals("", n1.constructRepresentation(false));
 
-    Xnode n2 = xcodeml.createNode(Xcode.FDOSTATEMENT);
+    Xnode n2 = xcodeml.createNode(Xcode.F_DO_STATEMENT);
     assertEquals("", n2.constructRepresentation(false));
   }
 
@@ -152,14 +152,14 @@ public class XnodeTest {
   public void utilityMethodTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     assertNotNull(xcodeml);
-    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.F_PRAGMA_STATEMENT);
     assertTrue(pragmas.size() > 0);
     Xnode p = pragmas.get(0);
 
     assertNotNull(p.findParentFunction());
     assertNull(p.findParentFunction().findParentFunction());
 
-    Xnode p2 = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p2 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p.copyAttribute(p2, Xattr.LINENO);
     assertEquals("FpragmaStatement (children: 0)", p2.toString());
 
@@ -199,40 +199,40 @@ public class XnodeTest {
       crt = crt.prevSibling();
     }
 
-    assertNotNull(fctDef.body().matchDirectDescendant(Xcode.FPRAGMASTATEMENT));
-    assertNull(p.matchDirectDescendant(Xcode.FPRAGMASTATEMENT));
+    assertNotNull(fctDef.body().matchDirectDescendant(Xcode.F_PRAGMA_STATEMENT));
+    assertNull(p.matchDirectDescendant(Xcode.F_PRAGMA_STATEMENT));
 
     // Methods should not crash on deleted node
     p.delete();
     assertTrue(p.depth() < 0);
     p.insertAfter(p2);
     p.insertBefore(p2);
-    p.matchDescendant(Xcode.FDOSTATEMENT);
-    p.matchDirectDescendant(Xcode.FDOSTATEMENT);
-    p.matchDirectDescendant(Arrays.asList(Xcode.FDOSTATEMENT,
-        Xcode.FDOWHILESTATEMENT));
+    p.matchDescendant(Xcode.F_DO_STATEMENT);
+    p.matchDirectDescendant(Xcode.F_DO_STATEMENT);
+    p.matchDirectDescendant(Arrays.asList(Xcode.F_DO_STATEMENT,
+        Xcode.F_DO_WHILE_STATEMENT));
     assertNull(p.nextSibling());
     assertNull(p.prevSibling());
-    assertNull(p.matchSibling(Xcode.FDOSTATEMENT));
-    assertTrue(p.matchAll(Xcode.FPRAGMASTATEMENT).size() == 0);
+    assertNull(p.matchSibling(Xcode.F_DO_STATEMENT));
+    assertTrue(p.matchAll(Xcode.F_PRAGMA_STATEMENT).size() == 0);
     assertFalse(p.isDirectSibling(null, Collections.<Xcode>emptyList()));
   }
 
   @Test
   public void hasBodyTest() {
     List<Xcode> expectedNodeWithBody = new ArrayList<>(Arrays.asList(
-        Xcode.ASSOCIATESTATEMENT,
-        Xcode.BLOCKSTATEMENT,
-        Xcode.CRITICALSTATEMENT,
+        Xcode.ASSOCIATE_STATEMENT,
+        Xcode.BLOCK_STATEMENT,
+        Xcode.CRITICAL_STATEMENT,
         Xcode.ELSE,
-        Xcode.FCASELABEL,
-        Xcode.FDOCONCURRENTSTATEMENT,
-        Xcode.FDOSTATEMENT,
-        Xcode.FDOWHILESTATEMENT,
-        Xcode.FFUNCTIONDEFINITION,
-        Xcode.FORALLSTATEMENT,
+        Xcode.F_CASE_LABEL,
+        Xcode.F_DO_CONCURRENT_STATEMENT,
+        Xcode.F_DO_STATEMENT,
+        Xcode.F_DO_WHILE_STATEMENT,
+        Xcode.F_FUNCTION_DEFINITION,
+        Xcode.FOR_ALL_STATEMENT,
         Xcode.THEN,
-        Xcode.TYPEGUARD
+        Xcode.TYPE_GUARD
     ));
 
     for(Xcode x : expectedNodeWithBody) {
@@ -255,7 +255,7 @@ public class XnodeTest {
   @Test
   public void deletedTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = xcodeml.createNode(Xcode.FBASICTYPE);
+    Xnode n1 = xcodeml.createNode(Xcode.F_BASIC_TYPE);
     assertFalse(n1.isDeleted());
     n1.delete();
     assertTrue(n1.isDeleted());
@@ -265,13 +265,13 @@ public class XnodeTest {
   public void enhancedInfoTest() {
     String filename = "dummy.f90";
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    Xnode n1 = xcodeml.createNode(Xcode.VARDECL);
+    Xnode n1 = xcodeml.createNode(Xcode.VAR_DECL);
     n1.setLine(1);
     n1.setFilename(filename);
     assertEquals(1, n1.lineNo());
     assertEquals(filename, n1.filename());
 
-    Xnode n2 = xcodeml.createNode(Xcode.VARDECL);
+    Xnode n2 = xcodeml.createNode(Xcode.VAR_DECL);
     n1.copyEnhancedInfo(n2);
     assertEquals(1, n2.lineNo());
     assertEquals(filename, n2.filename());

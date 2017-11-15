@@ -5,6 +5,9 @@
 
 package cx2x.xcodeml.xnode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The Xintent represents the possible value for the intent attribute in XcodeML
  * intermediate representation.
@@ -20,6 +23,16 @@ public enum Xintent {
   INOUT,
   ANY; // Represents any intent as well as no intent.
 
+  private static final Map<String, Xintent> _stringToEnum = new HashMap<>();
+
+  static {
+    for(Xintent intent : values()) {
+      if(intent != ANY && intent != NONE) {
+        _stringToEnum.put(intent.toString().toLowerCase(), intent);
+      }
+    }
+  }
+
   /**
    * Convert string value to enum.
    *
@@ -27,18 +40,8 @@ public enum Xintent {
    * @return Corresponding enum value.
    */
   public static Xintent fromString(String value) {
-    if(value == null) {
-      return NONE;
-    }
-    switch(value.toLowerCase()) {
-      case Xname.INTENT_IN:
-        return IN;
-      case Xname.INTENT_OUT:
-        return OUT;
-      case Xname.INTENT_INOUT:
-        return INOUT;
-    }
-    return NONE;
+    return (value == null || !_stringToEnum.containsKey(value.toLowerCase())) ?
+        NONE : _stringToEnum.get(value.toLowerCase());
   }
 
   /**

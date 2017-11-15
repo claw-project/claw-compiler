@@ -26,6 +26,8 @@ public class XenumTest {
       Xattr attr = Xattr.fromString(rep);
       assertEquals(attrCode, attr);
     }
+    assertNull(Xattr.fromString(null));
+    assertNull(Xattr.fromString("dummy"));
   }
 
   @Test

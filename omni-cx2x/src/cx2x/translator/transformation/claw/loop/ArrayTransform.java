@@ -80,7 +80,7 @@ public class ArrayTransform extends ClawBlockTransformation {
       // 1st group always exists
       _groupedAssignStmts.add(new ArrayList<Xnode>());
       int crtGroup = 0;
-      Xnode refArrayRef = foundAssignments.get(0).matchSeq(Xcode.FARRAYREF);
+      Xnode refArrayRef = foundAssignments.get(0).matchSeq(Xcode.F_ARRAY_REF);
       List<Xnode> refRanges =
           XnodeUtil.getIdxRangesFromArrayRef(refArrayRef);
 
@@ -90,7 +90,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       for(int i = 1; i < foundAssignments.size(); ++i) {
         Xnode arrayRef =
-            foundAssignments.get(i).matchSeq(Xcode.FARRAYREF);
+            foundAssignments.get(i).matchSeq(Xcode.F_ARRAY_REF);
         List<Xnode> ranges =
             XnodeUtil.getIdxRangesFromArrayRef(arrayRef);
 
@@ -106,14 +106,15 @@ public class ArrayTransform extends ClawBlockTransformation {
       return true;
     } else { // single transformation
       // pragma must be followed by an assign statement
-      Xnode stmt = _clawStart.getPragma().matchSibling(Xcode.FASSIGNSTATEMENT);
+      Xnode stmt =
+          _clawStart.getPragma().matchSibling(Xcode.F_ASSIGN_STATEMENT);
       if(stmt == null) {
         xcodeml.addError("Directive not followed by an assign statement",
             _clawStart.getPragma().lineNo());
         return false;
       }
       // Check if we are dealing with an array notation
-      if(!(stmt.child(0).opcode() == Xcode.FARRAYREF)) {
+      if(!(stmt.child(0).opcode() == Xcode.F_ARRAY_REF)) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
         return false;
@@ -121,7 +122,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       List<Xnode> ranges = new ArrayList<>();
       for(Xnode el : stmt.child(0).children()) {
-        if(el.opcode() == Xcode.INDEXRANGE) {
+        if(el.opcode() == Xcode.INDEX_RANGE) {
           ranges.add(el);
         }
       }
@@ -202,7 +203,7 @@ public class ArrayTransform extends ClawBlockTransformation {
     String[] inductionVars = new String[ranges.size()];
     Xnode[] doStmts = new Xnode[ranges.size()];
     Xnode var =
-        statements.get(0).matchSeq(Xcode.FARRAYREF, Xcode.VARREF, Xcode.VAR);
+        statements.get(0).matchSeq(Xcode.F_ARRAY_REF, Xcode.VAR_REF, Xcode.VAR);
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
@@ -249,16 +250,16 @@ public class ArrayTransform extends ClawBlockTransformation {
 
     for(Xnode stmt : statements) {
       // 3. Adapt array reference with induction variables
-      List<Xnode> allArrayRef = stmt.matchAll(Xcode.FARRAYREF);
+      List<Xnode> allArrayRef = stmt.matchAll(Xcode.F_ARRAY_REF);
       for(Xnode arrayRef : allArrayRef) {
         for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);
-          if(el.opcode() == Xcode.INDEXRANGE) {
+          if(el.opcode() == Xcode.INDEX_RANGE) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
                 xcodeml.createVar(XcodeType.INTEGER, induction, Xscope.LOCAL);
 
-            Xnode arrayIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
+            Xnode arrayIdx = xcodeml.createNode(Xcode.ARRAY_INDEX);
             arrayIdx.append(inductionVar);
 
             el.insertAfter(arrayIdx);

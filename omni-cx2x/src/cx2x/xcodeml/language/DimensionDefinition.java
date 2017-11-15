@@ -102,7 +102,7 @@ public class DimensionDefinition {
    * @return A new indexRange elements.
    */
   public Xnode generateIndexRange(XcodeML xcodeml, boolean withStep) {
-    Xnode range = xcodeml.createNode(Xcode.INDEXRANGE);
+    Xnode range = xcodeml.createNode(Xcode.INDEX_RANGE);
     range.append(_lowerBound.generate(xcodeml));
     range.append(_upperBound.generate(xcodeml));
     if(withStep) {
@@ -122,7 +122,7 @@ public class DimensionDefinition {
    * identifier.
    */
   public Xnode generateArrayIndex(XcodeML xcodeml) {
-    Xnode aIdx = xcodeml.createNode(Xcode.ARRAYINDEX);
+    Xnode aIdx = xcodeml.createNode(Xcode.ARRAY_INDEX);
     aIdx.append(xcodeml.createVar(XcodeType.INTEGER,
         _identifier, Xscope.LOCAL));
     return aIdx;
@@ -137,7 +137,7 @@ public class DimensionDefinition {
    */
   public Xnode generateAllocateNode(XcodeProgram xcodeml) {
     // TODO handle special size with lowerBound != 1
-    Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAYINDEX);
+    Xnode arrayIndex = xcodeml.createNode(Xcode.ARRAY_INDEX);
     arrayIndex.append(_upperBound.generateValueNode(xcodeml));
     return arrayIndex;
   }

@@ -56,7 +56,7 @@ public class XtypeTableTest {
     assertFalse(type1.hasKind());
     assertTrue(type1.hasLength());
     assertEquals(Xname.TYPE_F_CHAR, type1.getRef());
-    assertTrue(type1.getLength().child(0).opcode() == Xcode.FINTCONSTANT);
+    assertTrue(type1.getLength().child(0).opcode() == Xcode.F_INT_CONSTANT);
     assertEquals("30", type1.getLength().child(0).value());
 
     assertNull(typeTable.getFunctionType(basicTypeHash));

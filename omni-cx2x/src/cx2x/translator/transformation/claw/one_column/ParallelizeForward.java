@@ -83,15 +83,15 @@ public class ParallelizeForward extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-    if(next.opcode() == Xcode.EXPRSTATEMENT
-        || next.opcode() == Xcode.FASSIGNSTATEMENT)
+    if(next.opcode() == Xcode.EXPR_STATEMENT
+        || next.opcode() == Xcode.F_ASSIGN_STATEMENT)
     {
-      _isNestedInAssignment = next.opcode() == Xcode.FASSIGNSTATEMENT;
-      _fctCall = next.matchSeq(Xcode.FUNCTIONCALL);
+      _isNestedInAssignment = next.opcode() == Xcode.F_ASSIGN_STATEMENT;
+      _fctCall = next.matchSeq(Xcode.FUNCTION_CALL);
       if(_fctCall != null) {
         return analyzeForward(xcodeml);
       }
-    } else if(next.opcode() == Xcode.FDOSTATEMENT) {
+    } else if(next.opcode() == Xcode.F_DO_STATEMENT) {
       _doStatements = new NestedDoStatement(next);
       return analyzeForwardWithDo(xcodeml);
     }
@@ -135,19 +135,19 @@ public class ParallelizeForward extends ClawTransformation {
         }
       }
       for(Xnode n : _doStatements.get(i).body().children()) {
-        if(n.opcode() == Xcode.FDOSTATEMENT) {
+        if(n.opcode() == Xcode.F_DO_STATEMENT) {
           continue;
         }
-        if(n.opcode() != Xcode.FPRAGMASTATEMENT
-            && n.opcode() != Xcode.EXPRSTATEMENT)
+        if(n.opcode() != Xcode.F_PRAGMA_STATEMENT
+            && n.opcode() != Xcode.EXPR_STATEMENT)
         {
           xcodeml.addError("Only pragmas, comments and function calls allowed "
               + "in the do statements.", _claw.getPragma().lineNo());
           return false;
-        } else if(n.opcode() == Xcode.EXPRSTATEMENT
-            || n.opcode() == Xcode.FASSIGNSTATEMENT)
+        } else if(n.opcode() == Xcode.EXPR_STATEMENT
+            || n.opcode() == Xcode.F_ASSIGN_STATEMENT)
         {
-          _fctCall = n.matchSeq(Xcode.FUNCTIONCALL);
+          _fctCall = n.matchSeq(Xcode.FUNCTION_CALL);
           if(_fctCall != null) {
             return analyzeForward(xcodeml);
           }
@@ -175,7 +175,7 @@ public class ParallelizeForward extends ClawTransformation {
     detectParameterMapping(_fctCall);
 
     boolean isTypeBoundProcedure = false;
-    if(_fctCall.firstChild().opcode() == Xcode.FMEMBERREF) {
+    if(_fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF) {
       isTypeBoundProcedure = true;
       _calledFctName = _fctCall.firstChild().getAttribute(Xattr.MEMBER);
     } else {
@@ -287,11 +287,11 @@ public class ParallelizeForward extends ClawTransformation {
    * @param fctCall Function call to be analyzed.
    */
   private void detectParameterMapping(Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
       return;
     }
     for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
-      if(arg.opcode() == Xcode.NAMEDVALUE) {
+      if(arg.opcode() == Xcode.NAMED_VALUE) {
         String original_name = arg.getAttribute(Xattr.NAME);
         Xnode target_var = arg.matchDescendant(Xcode.VAR);
         if(target_var != null) {
@@ -393,7 +393,7 @@ public class ParallelizeForward extends ClawTransformation {
      */
     int argOffset = 0;
     if(XcodeType.STRUCT.isOfType(params.get(0).getType())
-        && _fctCall.firstChild().opcode().equals(Xcode.FMEMBERREF))
+        && _fctCall.firstChild().opcode().equals(Xcode.F_MEMBER_REF))
     {
       argOffset = 1;
     }
@@ -453,10 +453,10 @@ public class ParallelizeForward extends ClawTransformation {
     if(_flatten) {
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.children()) {
-        if(arg.opcode() == Xcode.FARRAYREF && arg.matchDirectDescendant(
-            Arrays.asList(Xcode.INDEXRANGE, Xcode.ARRAYINDEX)) != null)
+        if(arg.opcode() == Xcode.F_ARRAY_REF && arg.matchDirectDescendant(
+            Arrays.asList(Xcode.INDEX_RANGE, Xcode.ARRAY_INDEX)) != null)
         {
-          List<Xnode> arrayIndexes = arg.matchAll(Xcode.ARRAYINDEX);
+          List<Xnode> arrayIndexes = arg.matchAll(Xcode.ARRAY_INDEX);
           for(Xnode n : arrayIndexes) {
             if(XnodeUtil.isInductionIndex(n,
                 _doStatements.getInductionVariables()))
@@ -568,7 +568,7 @@ public class ParallelizeForward extends ClawTransformation {
 
     propagatePromotion(xcodeml, (ClawTranslator) translator);
 
-    Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPRSTATEMENT);
+    Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
     if(_claw.hasCreateClause()) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.INOUT, true);
@@ -644,7 +644,7 @@ public class ParallelizeForward extends ClawTransformation {
       }
 
       // Adapt array index to reflect the new return type
-      if(lhs.opcode() == Xcode.FARRAYREF) {
+      if(lhs.opcode() == Xcode.F_ARRAY_REF) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
           Xnode indexRange = xcodeml.createEmptyAssumedShaped();
           lhs.append(indexRange);
@@ -706,7 +706,7 @@ public class ParallelizeForward extends ClawTransformation {
     List<String> previouslyPromoted =
         Utility.convertToList(translator.hasElement(parentFctDef));
 
-    List<Xnode> assignments = parentFctDef.matchAll(Xcode.FASSIGNSTATEMENT);
+    List<Xnode> assignments = parentFctDef.matchAll(Xcode.F_ASSIGN_STATEMENT);
 
     // TODO promote: insertion position should be found
     List<DimensionDefinition> dimensions = TransformationHelper.
@@ -732,8 +732,8 @@ public class ParallelizeForward extends ClawTransformation {
       for(Xnode var : varsInRhs) {
         // Check if the assignment statement uses a promoted variable
         if(_promotedVar.contains(var.value())
-            && var.matchAncestor(Xcode.FUNCTIONCALL) == null
-            && lhs.opcode() == Xcode.FARRAYREF)
+            && var.matchAncestor(Xcode.FUNCTION_CALL) == null
+            && lhs.opcode() == Xcode.F_ARRAY_REF)
         {
           Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
           if(varInLhs == null) {
@@ -818,7 +818,8 @@ public class ParallelizeForward extends ClawTransformation {
       throws IllegalTransformationException
   {
     if(varType.isTarget()) {
-      List<Xnode> pAssignments = fctDef.matchAll(Xcode.FPOINTERASSIGNSTATEMENT);
+      List<Xnode> pAssignments =
+          fctDef.matchAll(Xcode.F_POINTER_ASSIGN_STATEMENT);
       for(Xnode pAssignment : pAssignments) {
         Xnode pointer = pAssignment.child(0);
         Xnode pointee = pAssignment.child(1);

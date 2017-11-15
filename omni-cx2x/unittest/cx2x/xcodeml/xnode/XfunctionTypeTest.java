@@ -37,7 +37,7 @@ public class XfunctionTypeTest {
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     XfunctionType emptyFctType =
-        new XfunctionType(xcodeml.createNode(Xcode.FFUNCTIONTYPE));
+        new XfunctionType(xcodeml.createNode(Xcode.F_FUNCTION_TYPE));
     assertFalse(emptyFctType.hasParam("a"));
 
     XfunctionType clone = f.cloneNode();

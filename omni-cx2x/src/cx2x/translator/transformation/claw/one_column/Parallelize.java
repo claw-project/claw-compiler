@@ -150,7 +150,7 @@ public class Parallelize extends ClawTransformation {
     if(_claw.getTarget() == Target.GPU
         && _claw.getDirectiveLanguage() == CompilerDirective.OPENACC)
     {
-      Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
+      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
       Xnode parallelRegionStart = Directive.findParallelRegionStart(
           _claw.getAcceleratorGenerator(), _fctDef, null);
       Xnode parallelRegionEnd = Directive.findParallelRegionEnd(
@@ -215,7 +215,7 @@ public class Parallelize extends ClawTransformation {
 
       List<Xnode> declarations = _fctDef.getDeclarationTable().values();
       for(Xnode decl : declarations) {
-        if(decl.opcode() != Xcode.VARDECL) {
+        if(decl.opcode() != Xcode.VAR_DECL) {
           continue;
         }
 
@@ -420,7 +420,7 @@ public class Parallelize extends ClawTransformation {
     /* Subroutine/function can have a contains section with inner subroutines or
      * functions. The newly created (nested) do statements should stop before
      * this contains section if it exists. */
-    Xnode contains = _fctDef.body().matchSeq(Xcode.FCONTAINSSTATEMENT);
+    Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
     if(contains != null) {
 
       Xnode parallelRegionStart = Directive.findParallelRegionStart(
@@ -513,21 +513,21 @@ public class Parallelize extends ClawTransformation {
      * Use the first over clause to do it. */
     List<DimensionDefinition> order = getOrderedDimensionsFromDefinition(0);
     List<Xnode> assignStatements =
-        _fctDef.body().matchAll(Xcode.FASSIGNSTATEMENT);
+        _fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT);
 
     for(Xnode assign : assignStatements) {
       Xnode lhs = assign.child(Xnode.LHS);
       String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.value() :
-          lhs.matchSeq(Xcode.VARREF, Xcode.VAR).value();
+          lhs.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
       NestedDoStatement loops = null;
-      if(lhs.opcode() == Xcode.FARRAYREF &&
+      if(lhs.opcode() == Xcode.F_ARRAY_REF &&
           _arrayFieldsInOut.contains(lhsName))
       {
         loops = new NestedDoStatement(order, xcodeml);
         assign.insertAfter(loops.getOuterStatement());
         loops.getInnerStatement().body().append(assign, true);
         assign.delete();
-      } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.FARRAYREF
+      } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
           && _scalarFields.contains(lhsName))
       {
         /* If the assignment is in the column loop and is composed with some

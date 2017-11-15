@@ -30,13 +30,13 @@ public class IfExtract extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    _doStmt = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
+    _doStmt = _claw.getPragma().matchSibling(Xcode.F_DO_STATEMENT);
     if(_doStmt == null) {
       xcodeml.addError("Do statement missing after directive.",
           _claw.getPragma().lineNo());
       return false;
     }
-    _ifStmt = _doStmt.body().matchDirectDescendant(Xcode.FIFSTATEMENT);
+    _ifStmt = _doStmt.body().matchDirectDescendant(Xcode.F_IF_STATEMENT);
     if(_ifStmt == null) {
       xcodeml.addError("If statement not found in the do statement.",
           _claw.getPragma().lineNo());
@@ -44,13 +44,13 @@ public class IfExtract extends ClawTransformation {
     }
     int counterIfStmt = 0;
     for(Xnode n : _doStmt.body().children()) {
-      if(n.opcode() != Xcode.FIFSTATEMENT
-          && n.opcode() != Xcode.FPRAGMASTATEMENT)
+      if(n.opcode() != Xcode.F_IF_STATEMENT
+          && n.opcode() != Xcode.F_PRAGMA_STATEMENT)
       {
         xcodeml.addError("If statement is not purely nested in the do statement",
             _claw.getPragma().lineNo());
         return false;
-      } else if(n.opcode() == Xcode.FIFSTATEMENT) {
+      } else if(n.opcode() == Xcode.F_IF_STATEMENT) {
         ++counterIfStmt;
       }
     }
@@ -100,13 +100,14 @@ public class IfExtract extends ClawTransformation {
         n.delete();
       }
       newElse.body().insert(elseDoStmt, false);
-      Xnode duplicateIf = elseDoStmt.body().matchDirectDescendant(Xcode.FIFSTATEMENT);
+      Xnode duplicateIf =
+          elseDoStmt.body().matchDirectDescendant(Xcode.F_IF_STATEMENT);
       XnodeUtil.safeDelete(duplicateIf);
     }
 
     // Delete the old statements and pragma
     Xnode duplicateIf =
-        thenDoStmt.body().matchDirectDescendant(Xcode.FIFSTATEMENT);
+        thenDoStmt.body().matchDirectDescendant(Xcode.F_IF_STATEMENT);
     duplicateIf.delete();
     XnodeUtil.safeDelete(_ifStmt);
     XnodeUtil.safeDelete(_doStmt);

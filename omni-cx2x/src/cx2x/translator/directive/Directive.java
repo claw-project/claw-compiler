@@ -6,9 +6,9 @@
 package cx2x.translator.directive;
 
 import cx2x.configuration.CompilerDirective;
-import cx2x.translator.directive.generator.DirectiveGenerator;
-import cx2x.translator.common.Message;
 import cx2x.configuration.Configuration;
+import cx2x.translator.common.Message;
+import cx2x.translator.directive.generator.DirectiveGenerator;
 import cx2x.translator.directive.generator.DirectiveNone;
 import cx2x.translator.directive.generator.OpenAcc;
 import cx2x.translator.directive.generator.OpenMp;
@@ -58,7 +58,7 @@ public final class Directive {
       return;
     }
 
-    List<Xnode> doStmts = fctDef.matchAll(Xcode.FDOSTATEMENT);
+    List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
       Xnode noDependency = isDecoratedWithNoDependency(doStmt);
@@ -121,12 +121,12 @@ public final class Directive {
    * @return True if the directive is present. False otherwise.
    */
   private static Xnode isDecoratedWithNoDependency(Xnode doStmt) {
-    if(doStmt.opcode() != Xcode.FDOSTATEMENT) {
+    if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
       return null;
     }
 
     Xnode sibling = doStmt.prevSibling();
-    while(sibling != null && sibling.opcode() == Xcode.FPRAGMASTATEMENT) {
+    while(sibling != null && sibling.opcode() == Xcode.F_PRAGMA_STATEMENT) {
       try {
         ClawPragma pragma = ClawPragma.analyze(sibling, null, null);
         if(pragma.getDirective() == ClawDirective.NO_DEP) {
@@ -259,7 +259,7 @@ public final class Directive {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
     for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL) {
+      if(decl.opcode() == Xcode.VAR_DECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
@@ -289,7 +289,7 @@ public final class Directive {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
     for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL) {
+      if(decl.opcode() == Xcode.VAR_DECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!XcodeType.isBuiltInType(decl.getType())
             && !(xcodeml.getTypeTable().isBasicType(decl)))
@@ -320,7 +320,7 @@ public final class Directive {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
     for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL) {
+      if(decl.opcode() == Xcode.VAR_DECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
@@ -414,7 +414,7 @@ public final class Directive {
     }
 
     // Find all fct call in the current transformed fct
-    List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTIONCALL);
+    List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL);
     for(Xnode fctCall : fctCalls) {
       // Do nothing for intrinsic fct
       if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
@@ -432,10 +432,11 @@ public final class Directive {
       if(calledFctDef == null) {
         Xnode meaningfulParentNode = fctDef.findParentModule();
         if(meaningfulParentNode == null) { // fct is not a module child
-          meaningfulParentNode = fctDef.matchAncestor(Xcode.GLOBALDECLARATIONS);
+          meaningfulParentNode =
+              fctDef.matchAncestor(Xcode.GLOBAL_DECLARATIONS);
         }
         List<Xnode> fctDefs =
-            meaningfulParentNode.matchAll(Xcode.FFUNCTIONDEFINITION);
+            meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION);
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
           if(name != null && name.value().equals(fctName)) {
@@ -618,7 +619,7 @@ public final class Directive {
                                               Xnode from)
   {
     if(generator == null
-        || functionDefinition.opcode() != Xcode.FFUNCTIONDEFINITION)
+        || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
     {
       return null;
     }
@@ -662,14 +663,14 @@ public final class Directive {
                                             Xnode from)
   {
     if(generator == null
-        || functionDefinition.opcode() != Xcode.FFUNCTIONDEFINITION)
+        || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
     {
       return null;
     }
     Xnode last = functionDefinition.body().lastChild();
     if(from != null) { // Start from given element
       last = from;
-      if(last.opcode() == Xcode.FCONTAINSSTATEMENT) {
+      if(last.opcode() == Xcode.F_CONTAINS_STATEMENT) {
         last = last.prevSibling();
       }
     }

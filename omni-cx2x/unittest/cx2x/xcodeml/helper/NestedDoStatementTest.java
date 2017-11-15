@@ -87,7 +87,7 @@ public class NestedDoStatementTest {
     assertEquals(2, ndo3_only2.size());
     assertEquals(ndo3_only2.get(0), ndo3_only2.getOuterStatement());
     assertEquals(ndo3_only2.get(1), ndo3_only2.getInnerStatement());
-    List<Xnode> doStmts = do3.matchAll(Xcode.FDOSTATEMENT);
+    List<Xnode> doStmts = do3.matchAll(Xcode.F_DO_STATEMENT);
     assertEquals(2, doStmts.size());
   }
 

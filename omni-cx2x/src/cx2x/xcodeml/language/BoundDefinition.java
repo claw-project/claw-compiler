@@ -69,7 +69,7 @@ public class BoundDefinition {
    */
   public Xnode generate(XcodeML xcodeml) {
     Xcode opcode = _boundType == BoundType.LOWER ?
-        Xcode.LOWERBOUND : Xcode.UPPERBOUND;
+        Xcode.LOWER_BOUND : Xcode.UPPER_BOUND;
     Xnode bound = xcodeml.createNode(opcode);
     bound.append(generateValueNode(xcodeml));
     return bound;

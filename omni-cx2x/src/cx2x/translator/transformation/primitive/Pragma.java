@@ -37,7 +37,7 @@ public final class Pragma {
    * @return Directive prefix if any. Empty string otherwise.
    */
   public static String getPrefix(Xnode pragma) {
-    if(pragma == null || pragma.opcode() != Xcode.FPRAGMASTATEMENT
+    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT
         || pragma.value().isEmpty())
     {
       return "";
@@ -105,7 +105,7 @@ public final class Pragma {
                                    String prefix)
       throws IllegalTransformationException
   {
-    if(pragma == null || pragma.opcode() != Xcode.FPRAGMASTATEMENT) {
+    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
       throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
     String allPragma = pragma.value().toLowerCase();
@@ -137,7 +137,7 @@ public final class Pragma {
                                  XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(pragma == null || pragma.opcode() != Xcode.FPRAGMASTATEMENT) {
+    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
       throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
     String allPragma = pragma.value();
@@ -180,7 +180,7 @@ public final class Pragma {
    * @return True if the pragma was previously continued.
    */
   public static boolean fromClawPrimitive(Xnode pragma) {
-    if(pragma == null || pragma.opcode() != Xcode.FPRAGMASTATEMENT) {
+    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
       return false;
     }
     String allPragma = pragma.value().toLowerCase();
@@ -207,7 +207,7 @@ public final class Pragma {
                                              int lineNo, String value,
                                              boolean continued)
   {
-    Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p.setFilename(filename);
     p.setLine(lineNo);
     if(continued) {
@@ -237,13 +237,14 @@ public final class Pragma {
     if(from == null || from.element() == null) {
       return null;
     }
+    // TODO use Xnode infra
     Node prev = from.element().getPreviousSibling();
     Node parent = from.element();
     do {
       while(prev != null) {
         if(prev.getNodeType() == Node.ELEMENT_NODE) {
           Element element = (Element) prev;
-          if(element.getTagName().equals(Xcode.FPRAGMASTATEMENT.code())
+          if(element.getTagName().equals(Xcode.F_PRAGMA_STATEMENT.code())
               && element.getTextContent().toLowerCase().
               contains(keyword.toLowerCase()))
           {

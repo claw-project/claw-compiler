@@ -6,41 +6,48 @@ package cx2x.xcodeml.language;
 
 import cx2x.translator.common.ClawConstant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Describe the different insertion position used for field promotion.
  *
  * @author clementval
  */
 public enum InsertionPosition {
-  BEFORE,
-  IN_MIDDLE,
-  AFTER;
+  BEFORE(ClawConstant.BEFORE),
+  IN_MIDDLE(ClawConstant.MIDDLE),
+  AFTER(ClawConstant.AFTER);
 
+  private static final Map<String, InsertionPosition> _stringToEnum =
+      new HashMap<>();
+
+  static {
+    for(InsertionPosition position : values()) {
+      _stringToEnum.put(position.toString().toLowerCase(), position);
+    }
+  }
+
+  private final String _value;
+
+  InsertionPosition(String value) {
+    _value = value;
+  }
+
+  /**
+   * Get enum value from String representation.
+   *
+   * @param value String value to evaluate.
+   * @return Enum value matching the String representation. If no match, BEFORE
+   * is returned.
+   */
   public static InsertionPosition fromString(String value) {
-    if(value == null) {
-      return BEFORE;
-    }
-    switch(value.toLowerCase()) {
-      case ClawConstant.BEFORE:
-        return BEFORE;
-      case ClawConstant.MIDDLE:
-        return IN_MIDDLE;
-      case ClawConstant.AFTER:
-        return AFTER;
-      default:
-        return BEFORE;
-    }
+    return (value == null || !_stringToEnum.containsKey(value.toLowerCase())) ?
+        BEFORE : _stringToEnum.get(value.toLowerCase());
   }
 
   @Override
   public String toString() {
-    switch(this) {
-      case IN_MIDDLE:
-        return ClawConstant.MIDDLE;
-      case AFTER:
-        return ClawConstant.AFTER;
-      default:
-        return ClawConstant.BEFORE;
-    }
+    return _value;
   }
 }

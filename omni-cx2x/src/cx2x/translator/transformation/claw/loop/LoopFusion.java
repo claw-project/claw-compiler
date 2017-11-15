@@ -81,7 +81,7 @@ public class LoopFusion extends ClawTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    Xnode outerLoop = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
+    Xnode outerLoop = _claw.getPragma().matchSibling(Xcode.F_DO_STATEMENT);
     if(outerLoop == null) {
       xcodeml.addError("Do statement missing after directive.",
           _claw.getPragma().lineNo());
@@ -200,7 +200,7 @@ public class LoopFusion extends ClawTransformation {
       // Only pragma statement can be between the two loops.
       if(!_doStmt.getOuterStatement().isDirectSibling(
           other.getNestedDoStmt().getOuterStatement(),
-          Collections.singletonList(Xcode.FPRAGMASTATEMENT)))
+          Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
       {
         return false;
       }

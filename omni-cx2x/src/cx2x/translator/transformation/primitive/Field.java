@@ -216,7 +216,7 @@ public final class Field {
   {
     String arrayName = promotionInfo.getIdentifier();
     // Look through all allocate statements
-    for(Xnode allocatedStmt : parent.matchAll(Xcode.FALLOCATESTATEMENT)) {
+    for(Xnode allocatedStmt : parent.matchAll(Xcode.F_ALLOCATE_STATEMENT)) {
       for(Xnode alloc : allocatedStmt.matchAll(Xcode.ALLOC)) {
         Xnode var = alloc.matchDirectDescendant(Xcode.VAR);
         if(var != null && var.value().equals(arrayName)) {
@@ -245,11 +245,11 @@ public final class Field {
   public static void demoteToScalar(Xnode arrayRef)
       throws IllegalTransformationException
   {
-    if(arrayRef == null || arrayRef.opcode() != Xcode.FARRAYREF) {
+    if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
       throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
 
-    Xnode var = arrayRef.matchSeq(Xcode.VARREF, Xcode.VAR).cloneNode();
+    Xnode var = arrayRef.matchSeq(Xcode.VAR_REF, Xcode.VAR).cloneNode();
     arrayRef.insertAfter(var);
     arrayRef.delete();
   }
@@ -264,7 +264,7 @@ public final class Field {
   public static void demote(Xnode arrayRef, List<Integer> keptDimensions)
       throws IllegalTransformationException
   {
-    if(arrayRef == null || arrayRef.opcode() != Xcode.FARRAYREF) {
+    if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
       throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
     for(int i = 1; i < arrayRef.children().size(); ++i) {
@@ -378,8 +378,8 @@ public final class Field {
       List<Xnode> refs =
           XnodeUtil.getAllVarReferences(parent, id);
       for(Xnode ref : refs) {
-        Xnode arrayRef = xcodeml.createNode(Xcode.FARRAYREF);
-        Xnode varRef = xcodeml.createNode(Xcode.VARREF);
+        Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
+        Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
         arrayRef.setType(ref.getType());
         varRef.setType(promotions.get(id).getTargetType());
         ref.setType(promotions.get(id).getTargetType());
@@ -399,14 +399,14 @@ public final class Field {
       for(Xnode ref : refs) {
         if(inMiddle.get(index).size() == 0) {
           for(Xnode ai : beforeCrt.get(index)) {
-            ref.matchSeq(Xcode.VARREF).insertAfter(ai.cloneNode());
+            ref.matchSeq(Xcode.VAR_REF).insertAfter(ai.cloneNode());
           }
           for(Xnode ai : afterCrt.get(index)) {
             ref.append(ai, true);
           }
         } else {
           Xnode hook = ref.matchDirectDescendant(
-              Arrays.asList(Xcode.ARRAYINDEX, Xcode.INDEXRANGE));
+              Arrays.asList(Xcode.ARRAY_INDEX, Xcode.INDEX_RANGE));
           if(hook == null) {
             hook = ref.child(0);
           }

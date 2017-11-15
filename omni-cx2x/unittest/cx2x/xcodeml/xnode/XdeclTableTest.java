@@ -62,7 +62,7 @@ public class XdeclTableTest {
     assertNull(global.getFunctionDefinition("unknown"));
     assertNull(global.getModuleDefinition("unknown"));
 
-    List<Xnode> modules = xcodeml.matchAll(Xcode.FMODULEDEFINITION);
+    List<Xnode> modules = xcodeml.matchAll(Xcode.F_MODULE_DEFINITION);
     assertEquals(1, modules.size());
 
     XmoduleDefinition mod = new XmoduleDefinition(modules.get(0));
@@ -70,16 +70,16 @@ public class XdeclTableTest {
     assertNotNull(modDecl);
     List<Xnode> modDeclarations = modDecl.values();
     assertEquals(2, modDeclarations.size());
-    assertEquals(Xcode.FSTRUCTDECL, modDeclarations.get(0).opcode());
-    assertEquals(Xcode.FINTERFACEDECL, modDeclarations.get(1).opcode());
+    assertEquals(Xcode.F_STRUCT_DECL, modDeclarations.get(0).opcode());
+    assertEquals(Xcode.F_INTERFACE_DECL, modDeclarations.get(1).opcode());
 
     Xnode interface1 = modDecl.get("dummy");
     assertNotNull(interface1);
-    assertEquals(Xcode.FINTERFACEDECL, interface1.opcode());
+    assertEquals(Xcode.F_INTERFACE_DECL, interface1.opcode());
 
-    assertEquals(1, modDecl.values(Xcode.FINTERFACEDECL).size());
+    assertEquals(1, modDecl.values(Xcode.F_INTERFACE_DECL).size());
 
-    List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
+    List<Xnode> functions = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
     assertEquals(1, functions.size());
 
     XfunctionDefinition fctDef = new XfunctionDefinition(functions.get(0));
@@ -87,42 +87,42 @@ public class XdeclTableTest {
     assertNotNull(fctDecl);
     List<Xnode> fctDeclarations = fctDecl.values();
     assertEquals(10, fctDeclarations.size());
-    assertEquals(Xcode.VARDECL, fctDeclarations.get(0).opcode());
-    assertEquals(Xcode.VARDECL, fctDeclarations.get(1).opcode());
-    assertEquals(Xcode.FNAMELISTDECL, fctDeclarations.get(2).opcode());
-    assertEquals(Xcode.VARDECL, fctDeclarations.get(3).opcode());
-    assertEquals(Xcode.VARDECL, fctDeclarations.get(4).opcode());
-    assertEquals(Xcode.FCOMMONDECL, fctDeclarations.get(5).opcode());
-    assertEquals(Xcode.FUSEDECL, fctDeclarations.get(6).opcode());
-    assertEquals(Xcode.FUSEONLYDECL, fctDeclarations.get(7).opcode());
-    assertEquals(Xcode.FEQUIVALENCEDECL, fctDeclarations.get(8).opcode());
-    assertEquals(Xcode.EXTERNDECL, fctDeclarations.get(9).opcode());
+    assertEquals(Xcode.VAR_DECL, fctDeclarations.get(0).opcode());
+    assertEquals(Xcode.VAR_DECL, fctDeclarations.get(1).opcode());
+    assertEquals(Xcode.F_NAMELIST_DECL, fctDeclarations.get(2).opcode());
+    assertEquals(Xcode.VAR_DECL, fctDeclarations.get(3).opcode());
+    assertEquals(Xcode.VAR_DECL, fctDeclarations.get(4).opcode());
+    assertEquals(Xcode.F_COMMON_DECL, fctDeclarations.get(5).opcode());
+    assertEquals(Xcode.F_USE_DECL, fctDeclarations.get(6).opcode());
+    assertEquals(Xcode.F_USE_ONLY_DECL, fctDeclarations.get(7).opcode());
+    assertEquals(Xcode.F_EQUIVALENCE_DECL, fctDeclarations.get(8).opcode());
+    assertEquals(Xcode.EXTERN_DECL, fctDeclarations.get(9).opcode());
 
     Xnode varDecl1 = fctDecl.get("sub1");
     assertNotNull(varDecl1);
-    assertEquals(Xcode.VARDECL, varDecl1.opcode());
+    assertEquals(Xcode.VAR_DECL, varDecl1.opcode());
 
     Xnode namelist = fctDecl.get("case");
     assertNotNull(namelist);
-    assertEquals(Xcode.FNAMELISTDECL, namelist.opcode());
+    assertEquals(Xcode.F_NAMELIST_DECL, namelist.opcode());
 
     Xnode useDecl = fctDecl.get("mod4");
     assertNotNull(useDecl);
-    assertEquals(Xcode.FUSEDECL, useDecl.opcode());
+    assertEquals(Xcode.F_USE_DECL, useDecl.opcode());
 
     Xnode useOnlyDecl = fctDecl.get("mod5");
     assertNotNull(useOnlyDecl);
-    assertEquals(Xcode.FUSEONLYDECL, useOnlyDecl.opcode());
+    assertEquals(Xcode.F_USE_ONLY_DECL, useOnlyDecl.opcode());
 
     Xnode externDecl = fctDecl.get("interface_sub");
     assertNotNull(externDecl);
-    assertEquals(Xcode.EXTERNDECL, externDecl.opcode());
+    assertEquals(Xcode.EXTERN_DECL, externDecl.opcode());
 
-    assertEquals(4, fctDecl.values(Xcode.VARDECL).size());
-    assertEquals(1, fctDecl.values(Xcode.FUSEDECL).size());
-    assertEquals(1, fctDecl.values(Xcode.FUSEONLYDECL).size());
-    assertEquals(1, fctDecl.values(Xcode.FNAMELISTDECL).size());
-    assertEquals(1, fctDecl.values(Xcode.FEQUIVALENCEDECL).size());
-    assertEquals(1, fctDecl.values(Xcode.EXTERNDECL).size());
+    assertEquals(4, fctDecl.values(Xcode.VAR_DECL).size());
+    assertEquals(1, fctDecl.values(Xcode.F_USE_DECL).size());
+    assertEquals(1, fctDecl.values(Xcode.F_USE_ONLY_DECL).size());
+    assertEquals(1, fctDecl.values(Xcode.F_NAMELIST_DECL).size());
+    assertEquals(1, fctDecl.values(Xcode.F_EQUIVALENCE_DECL).size());
+    assertEquals(1, fctDecl.values(Xcode.EXTERN_DECL).size());
   }
 }

@@ -48,8 +48,8 @@ public final class Loop {
       throws IllegalTransformationException
   {
     if(masterDoStmt == null || slaveDoStmt == null
-        || masterDoStmt.opcode() != Xcode.FDOSTATEMENT
-        || slaveDoStmt.opcode() != Xcode.FDOSTATEMENT)
+        || masterDoStmt.opcode() != Xcode.F_DO_STATEMENT
+        || slaveDoStmt.opcode() != Xcode.F_DO_STATEMENT)
     {
       throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
@@ -179,15 +179,15 @@ public final class Loop {
   private static void createIfStatementForLowerBound(XcodeML xcodeml,
                                                      HoistedNestedDoStatement g)
   {
-    Xnode ifStmt = xcodeml.createNode(Xcode.FIFSTATEMENT);
+    Xnode ifStmt = xcodeml.createNode(Xcode.F_IF_STATEMENT);
     Xnode condition = xcodeml.createNode(Xcode.CONDITION);
     Xnode thenBlock = xcodeml.createNode(Xcode.THEN);
     g.getOuterStatement().copyEnhancedInfo(ifStmt);
-    Xnode cond = xcodeml.createNode(Xcode.LOGGEEXPR);
+    Xnode cond = xcodeml.createNode(Xcode.LOG_GE_EXPR);
     Xnode inductionVar = g.getOuterStatement().matchDirectDescendant(Xcode.VAR);
     cond.append(inductionVar, true);
-    cond.append(g.getOuterStatement().matchDirectDescendant(Xcode.INDEXRANGE).
-        matchDirectDescendant(Xcode.LOWERBOUND).child(0), true
+    cond.append(g.getOuterStatement().matchDirectDescendant(Xcode.INDEX_RANGE).
+        matchDirectDescendant(Xcode.LOWER_BOUND).child(0), true
     );
     ifStmt.append(condition);
     ifStmt.append(thenBlock);
@@ -211,15 +211,17 @@ public final class Loop {
       throws IllegalTransformationException
   {
     // The two nodes must be do statement
-    if(e1.opcode() != Xcode.FDOSTATEMENT || e2.opcode() != Xcode.FDOSTATEMENT) {
+    if(e1.opcode() != Xcode.F_DO_STATEMENT
+        || e2.opcode() != Xcode.F_DO_STATEMENT)
+    {
       throw new IllegalTransformationException("Only two do statement can be " +
           "swap iteration ranges.");
     }
 
     Xnode inductionVar1 = e1.matchDirectDescendant(Xcode.VAR);
     Xnode inductionVar2 = e2.matchDirectDescendant(Xcode.VAR);
-    Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEXRANGE);
-    Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEXRANGE);
+    Xnode indexRange1 = e1.matchDirectDescendant(Xcode.INDEX_RANGE);
+    Xnode indexRange2 = e2.matchDirectDescendant(Xcode.INDEX_RANGE);
     if(inductionVar1 == null || inductionVar2 == null ||
         indexRange1 == null || indexRange2 == null)
     {
@@ -227,12 +229,12 @@ public final class Loop {
           "range missing.");
     }
 
-    Xnode low1 = indexRange1.matchSeq(Xcode.LOWERBOUND).child(0);
-    Xnode up1 = indexRange1.matchSeq(Xcode.UPPERBOUND).child(0);
+    Xnode low1 = indexRange1.matchSeq(Xcode.LOWER_BOUND).child(0);
+    Xnode up1 = indexRange1.matchSeq(Xcode.UPPER_BOUND).child(0);
     Xnode s1 = indexRange1.matchSeq(Xcode.STEP).child(0);
 
-    Xnode low2 = indexRange2.matchSeq(Xcode.LOWERBOUND).child(0);
-    Xnode up2 = indexRange2.matchSeq(Xcode.UPPERBOUND).child(0);
+    Xnode low2 = indexRange2.matchSeq(Xcode.LOWER_BOUND).child(0);
+    Xnode up2 = indexRange2.matchSeq(Xcode.UPPER_BOUND).child(0);
     Xnode s2 = indexRange2.matchSeq(Xcode.STEP).child(0);
 
     // Set the range of loop2 to loop1
@@ -265,14 +267,14 @@ public final class Loop {
    */
   private static void cleanPragmas(Xnode node, String[] previous, String[] next)
   {
-    if(node.opcode() != Xcode.FDOSTATEMENT) {
+    if(node.opcode() != Xcode.F_DO_STATEMENT) {
       return;
     }
 
     Xnode doStatement = node;
 
     while(node.prevSibling() != null
-        && node.prevSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
+        && node.prevSibling().opcode() == Xcode.F_PRAGMA_STATEMENT) {
       String pragma = node.prevSibling().value();
       Xnode toDelete = null;
 
@@ -289,7 +291,7 @@ public final class Loop {
 
     node = doStatement; // Reset node to the initial position.
     while(node.nextSibling() != null
-        && node.nextSibling().opcode() == Xcode.FPRAGMASTATEMENT) {
+        && node.nextSibling().opcode() == Xcode.F_PRAGMA_STATEMENT) {
       String pragma = node.nextSibling().value();
       Xnode toDelete = null;
 
@@ -317,7 +319,7 @@ public final class Loop {
   public static void extractBody(Xnode loop, Xnode ref)
       throws IllegalTransformationException
   {
-    if(loop == null || ref == null || loop.opcode() != Xcode.FDOSTATEMENT) {
+    if(loop == null || ref == null || loop.opcode() != Xcode.F_DO_STATEMENT) {
       throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
     }
     Xnode body = loop.body();
@@ -368,7 +370,7 @@ public final class Loop {
    * passed Xnode is not a FdoStatement node or has no Var node.
    */
   public static String extractInductionVariable(Xnode doStatement) {
-    if(doStatement == null || doStatement.opcode() != Xcode.FDOSTATEMENT) {
+    if(doStatement == null || doStatement.opcode() != Xcode.F_DO_STATEMENT) {
       return "";
     }
     Xnode var = doStatement.matchDirectDescendant(Xcode.VAR);
@@ -390,16 +392,16 @@ public final class Loop {
                                             boolean withLowerBound)
   {
     // The two nodes must be do statement
-    if(l1 == null || l2 == null || l1.opcode() != Xcode.FDOSTATEMENT
-        || l2.opcode() != Xcode.FDOSTATEMENT)
+    if(l1 == null || l2 == null || l1.opcode() != Xcode.F_DO_STATEMENT
+        || l2.opcode() != Xcode.F_DO_STATEMENT)
     {
       return false;
     }
 
     Xnode inductionVar1 = l1.matchDirectDescendant(Xcode.VAR);
     Xnode inductionVar2 = l2.matchDirectDescendant(Xcode.VAR);
-    Xnode indexRange1 = l1.matchDirectDescendant(Xcode.INDEXRANGE);
-    Xnode indexRange2 = l2.matchDirectDescendant(Xcode.INDEXRANGE);
+    Xnode indexRange1 = l1.matchDirectDescendant(Xcode.INDEX_RANGE);
+    Xnode indexRange2 = l2.matchDirectDescendant(Xcode.INDEX_RANGE);
 
     return inductionVar1.compareValues(inductionVar2) &&
         Range.compare(indexRange1, indexRange2, withLowerBound);

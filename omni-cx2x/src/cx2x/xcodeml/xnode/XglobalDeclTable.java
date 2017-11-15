@@ -44,10 +44,10 @@ public class XglobalDeclTable extends Xnode {
   private void readTable() {
     Xnode crt = firstChild();
     while(crt != null) {
-      if(crt.opcode() == Xcode.FFUNCTIONDEFINITION) {
+      if(crt.opcode() == Xcode.F_FUNCTION_DEFINITION) {
         XfunctionDefinition fctDef = new XfunctionDefinition(crt);
         _table.put(fctDef.getName(), fctDef);
-      } else if(crt.opcode() == Xcode.FMODULEDEFINITION) {
+      } else if(crt.opcode() == Xcode.F_MODULE_DEFINITION) {
         XmoduleDefinition moduleDef = new XmoduleDefinition(crt);
         _table.put(moduleDef.getName(), moduleDef);
       }

@@ -5,10 +5,10 @@
 
 package cx2x.translator.directive.generator;
 
+import cx2x.configuration.CompilerDirective;
+import cx2x.configuration.Configuration;
 import cx2x.translator.common.Message;
 import cx2x.translator.common.Utility;
-import cx2x.configuration.Configuration;
-import cx2x.configuration.CompilerDirective;
 import cx2x.translator.language.ClawDataMovement;
 import cx2x.xcodeml.xnode.Xcode;
 
@@ -220,21 +220,23 @@ public class OpenAcc extends DirectiveGenerator {
   @Override
   public List<Xcode> getUnsupportedStatements() {
     return Arrays.asList(
-        Xcode.FALLOCATESTATEMENT, Xcode.FDEALLOCATESTATEMENT
+        Xcode.F_ALLOCATE_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT
     );
   }
 
   @Override
   public List<Xcode> getSkippedStatementsInPreamble() {
     return Arrays.asList(
-        Xcode.FIFSTATEMENT, Xcode.FALLOCATESTATEMENT, Xcode.FPRAGMASTATEMENT
+        Xcode.F_IF_STATEMENT, Xcode.F_ALLOCATE_STATEMENT,
+        Xcode.F_PRAGMA_STATEMENT
     );
   }
 
   @Override
   public List<Xcode> getSkippedStatementsInEpilogue() {
     return Arrays.asList(
-        Xcode.FIFSTATEMENT, Xcode.FDEALLOCATESTATEMENT, Xcode.FPRAGMASTATEMENT
+        Xcode.F_IF_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT,
+        Xcode.F_PRAGMA_STATEMENT
     );
   }
 

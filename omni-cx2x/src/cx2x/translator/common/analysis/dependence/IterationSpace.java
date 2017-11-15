@@ -59,7 +59,7 @@ public class IterationSpace {
     _levels.add(0, new ArrayList<DependenceAnalysis>()); // Init the level 0
     DependenceAnalysis baseLoopLevel0 = null;
     for(Xnode doStmt : doStatements) {
-      if(doStmt.opcode() != Xcode.FDOSTATEMENT) {
+      if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
         throw new Exception("Only do statements node can be part of an " +
             "iteration space");
       }
@@ -189,8 +189,8 @@ public class IterationSpace {
       Xnode parentDoStmt = doStmts.get(i);
       Xnode childDoStmt = doStmts.get(i + 1);
       for(Xnode n : parentDoStmt.body().children()) {
-        if(n.opcode() != Xcode.FPRAGMASTATEMENT
-            && n.opcode() != Xcode.FDOSTATEMENT)
+        if(n.opcode() != Xcode.F_PRAGMA_STATEMENT
+            && n.opcode() != Xcode.F_DO_STATEMENT)
         {
           return false;
         }

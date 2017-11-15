@@ -45,17 +45,17 @@ public class DependenceAnalysisTest {
     assertNotNull(xcodeml);
 
     // Match all the function definitions
-    List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
+    List<Xnode> functions = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
     assertEquals(2, functions.size());
 
     // Match all the pragma
-    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.F_PRAGMA_STATEMENT);
     assertEquals(1, pragmas.size());
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);
 
-    List<Xnode> loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
+    List<Xnode> loops = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     assertEquals(10, loops.size());
 
     // Create dependence analysis object for each do statement
@@ -111,11 +111,11 @@ public class DependenceAnalysisTest {
     assertNotNull(xcodeml);
 
     // Match all the function definitions
-    List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
+    List<Xnode> functions = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
     assertEquals(2, functions.size());
 
     // Match all the pragmas
-    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.F_PRAGMA_STATEMENT);
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
@@ -135,7 +135,7 @@ public class DependenceAnalysisTest {
     Xnode fctDef = functions.get(0);
 
     // Match all the do statements in the function
-    List<Xnode> loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
+    List<Xnode> loops = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     assertEquals(11, loops.size());
 
     // Create an iteration space
@@ -146,7 +146,7 @@ public class DependenceAnalysisTest {
       System.out.println("Iteration space before fusion");
       is.printDebug(true);
 
-      loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
+      loops = fctDef.matchAll(Xcode.F_DO_STATEMENT);
       assertEquals(8, loops.size());
 
       is.reload(loops);
@@ -169,11 +169,11 @@ public class DependenceAnalysisTest {
     assertNotNull(xcodeml);
 
     // Match all the function definitions
-    List<Xnode> functions = xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION);
+    List<Xnode> functions = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
     assertEquals(1, functions.size());
 
     // Match all the pragmas
-    List<Xnode> pragmas = xcodeml.matchAll(Xcode.FPRAGMASTATEMENT);
+    List<Xnode> pragmas = xcodeml.matchAll(Xcode.F_PRAGMA_STATEMENT);
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
@@ -191,7 +191,7 @@ public class DependenceAnalysisTest {
     Xnode fctDef = functions.get(0);
 
     // Match all the do statements in the function
-    List<Xnode> loops = fctDef.matchAll(Xcode.FDOSTATEMENT);
+    List<Xnode> loops = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     assertEquals(2, loops.size());
 
     // Create an iteration space

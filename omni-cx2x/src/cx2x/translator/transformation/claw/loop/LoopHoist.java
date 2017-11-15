@@ -69,11 +69,11 @@ public class LoopHoist extends ClawBlockTransformation {
       int depth = hoistedNestedDoStmt.getOuterStatement().depth();
       if(depth != _pragmaDepthLevel) {
         Xnode tmpIf = hoistedNestedDoStmt.getOuterStatement().
-            matchAncestor(Xcode.FIFSTATEMENT);
+            matchAncestor(Xcode.F_IF_STATEMENT);
         Xnode tmpSelect = hoistedNestedDoStmt.getOuterStatement().
-            matchAncestor(Xcode.FSELECTCASESTATEMENT);
+            matchAncestor(Xcode.F_SELECT_CASE_STATEMENT);
         Xnode tmpDo = hoistedNestedDoStmt.getOuterStatement().
-            matchAncestor(Xcode.FDOSTATEMENT);
+            matchAncestor(Xcode.F_DO_STATEMENT);
 
         if(tmpIf == null && tmpSelect == null && tmpDo == null) {
           xcodeml.addError("A nested group is nested in an unsupported " +

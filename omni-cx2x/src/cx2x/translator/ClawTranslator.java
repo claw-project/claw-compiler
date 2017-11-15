@@ -327,8 +327,8 @@ public class ClawTranslator implements Translator {
                                       Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
-      Xnode p = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.F_DO_STATEMENT) {
+      Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
       stmt.insertBefore(p);
       ClawPragma l = ClawPragma.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
@@ -352,7 +352,7 @@ public class ClawTranslator implements Translator {
                                  Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasFusionClause() && stmt.opcode() == Xcode.FDOSTATEMENT) {
+    if(claw.hasFusionClause() && stmt.opcode() == Xcode.F_DO_STATEMENT) {
       ClawPragma l = ClawPragma.createLoopFusionLanguage(claw);
       addTransformation(xcodeml, new LoopFusion(stmt, l));
       Message.debug("Loop fusion added: " + claw.getGroupValue());

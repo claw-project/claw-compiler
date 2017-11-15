@@ -65,7 +65,7 @@ public class AddPrint extends ClawTransformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
-    for(Xnode fctDef : xcodeml.matchAll(Xcode.FFUNCTIONDEFINITION)) {
+    for(Xnode fctDef : xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION)) {
       Xnode printStatement = xcodeml.createPrintStatement("*",
           new String[]{
               "Call function",

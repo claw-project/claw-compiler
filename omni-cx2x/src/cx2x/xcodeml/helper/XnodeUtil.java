@@ -51,7 +51,7 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
-        Xnode var = ref.matchSeq(Xcode.VARREF, Xcode.VAR);
+        Xnode var = ref.matchSeq(Xcode.VAR_REF, Xcode.VAR);
         if(var != null && var.value().equals(arrayName.toLowerCase())) {
           references.add(ref);
         }
@@ -90,11 +90,11 @@ public class XnodeUtil {
    */
   public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef) {
     List<Xnode> ranges = new ArrayList<>();
-    if(arrayRef.opcode() != Xcode.FARRAYREF) {
+    if(arrayRef.opcode() != Xcode.F_ARRAY_REF) {
       return ranges;
     }
     for(Xnode el : arrayRef.children()) {
-      if(el.opcode() == Xcode.INDEXRANGE) {
+      if(el.opcode() == Xcode.INDEX_RANGE) {
         ranges.add(el);
       }
     }
@@ -398,7 +398,7 @@ public class XnodeUtil {
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAYINDEX.code()))
+          equals(Xcode.ARRAY_INDEX.code()))
       {
         realReferences.add(var);
       }
@@ -436,7 +436,7 @@ public class XnodeUtil {
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAYINDEX.code())
+          equals(Xcode.ARRAY_INDEX.code())
           && var.value().equals(id.toLowerCase()))
       {
         realReferences.add(var);
@@ -457,7 +457,7 @@ public class XnodeUtil {
   public static boolean isInductionIndex(Xnode arrayIndex,
                                          List<String> inductionVariables)
   {
-    if(arrayIndex == null || arrayIndex.opcode() != Xcode.ARRAYINDEX
+    if(arrayIndex == null || arrayIndex.opcode() != Xcode.ARRAY_INDEX
         || inductionVariables == null || inductionVariables.isEmpty())
     {
       return false;
@@ -602,7 +602,7 @@ public class XnodeUtil {
                                              boolean arrayOnly)
   {
     List<String> gatheredArguments = new ArrayList<>();
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTIONCALL) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
       return gatheredArguments;
     }
     Xnode argumentsNode = fctCall.matchDescendant(Xcode.ARGUMENTS);

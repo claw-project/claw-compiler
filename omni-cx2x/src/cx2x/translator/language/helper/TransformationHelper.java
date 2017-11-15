@@ -116,12 +116,12 @@ public class TransformationHelper {
       newType.resetDimension();
 
       for(int i = 0; i < base.getDimensions(); ++i) {
-        Xnode newDim = xcodemlDst.createNode(Xcode.INDEXRANGE);
+        Xnode newDim = xcodemlDst.createNode(Xcode.INDEX_RANGE);
         newType.append(newDim);
 
         Xnode baseDim = base.getDimensions(i);
-        Xnode lowerBound = baseDim.matchSeq(Xcode.LOWERBOUND);
-        Xnode upperBound = baseDim.matchSeq(Xcode.UPPERBOUND);
+        Xnode lowerBound = baseDim.matchSeq(Xcode.LOWER_BOUND);
+        Xnode upperBound = baseDim.matchSeq(Xcode.UPPER_BOUND);
 
         if(lowerBound != null) {
           Xnode newLowerBound =
