@@ -5,14 +5,12 @@ language specifications.
 More information: https://github.com/C2SM-RCM/claw-language-specification
 -->
 <transformations>
-  <transformation name="remove"
-    type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.utility.UtilityRemove" />
-
-  <transformation name="primitive"
+  <!-- Directive -->
+  <transformation name="directive-primitive"
     type="independent" trigger="directive" directive="claw"
     class="cx2x.translator.transformation.claw.directive.DirectivePrimitive" />
 
+  <!-- Loop -->
   <transformation name="array-transform"
     type="independent" trigger="directive" directive="claw"
     class="cx2x.translator.transformation.claw.loop.ArrayTransform" />
@@ -33,15 +31,21 @@ More information: https://github.com/C2SM-RCM/claw-language-specification
     type="independent" trigger="directive" directive="claw"
     class="cx2x.translator.transformation.claw.loop.LoopInterchange" />
 
+  <transformation name="if-extract"
+    type="independent" trigger="directive" directive="claw"
+    class="cx2x.translator.transformation.claw.loop.IfExtract" />
+
+  <!-- Utility -->
   <transformation name="on-the-fly"
     type="independent" trigger="directive" directive="claw"
     class="cx2x.translator.transformation.claw.utility.ArrayToFctCall" />
 
+  <transformation name="remove"
+    type="independent" trigger="directive" directive="claw"
+    class="cx2x.translator.transformation.claw.utility.UtilityRemove" />
+
+  <!-- Caching -->
   <transformation name="kcache"
     type="independent" trigger="directive" directive="claw"
     class="cx2x.translator.transformation.claw.caching.Kcaching" />
-
-  <transformation name="if-extract"
-    type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.IfExtract" />
 </transformations>
