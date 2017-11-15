@@ -1,7 +1,6 @@
 # CLAW FORTRAN Compiler
 
 [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
-[![Slack Status](https://claw-compiler.herokuapp.com/badge.svg)](https://claw-compiler.herokuapp.com)  
 
 > Who is in charge here?
 >
