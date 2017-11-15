@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import java.util.HashMap;
@@ -111,5 +110,4 @@ public enum Xattr {
   public String toString() {
     return _irValue;
   }
-
 }

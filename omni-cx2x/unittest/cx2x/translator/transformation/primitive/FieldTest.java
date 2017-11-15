@@ -207,5 +207,4 @@ public class FieldTest {
     assertEquals(String.valueOf(upperBound),
         upperBoundNode.firstChild().value());
   }
-
 }

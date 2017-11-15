@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.configuration;
 
 import org.junit.Test;
@@ -66,5 +65,4 @@ public class ConfigurationTest {
       fail();
     }*/
   }
-
 }

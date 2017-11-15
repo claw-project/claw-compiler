@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
@@ -48,5 +47,4 @@ public class XvarDeclTest {
     assertEquals("testvar", varDecl.matchSeq(Xcode.NAME).value());
     assertNull(varDecl.matchSeq(Xcode.VALUE));
   }
-
 }

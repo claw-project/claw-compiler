@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator.transformation.claw.one_column;
 
 import cx2x.xcodeml.language.DimensionDefinition;
@@ -184,5 +183,4 @@ public class PromotionInfo {
   public enum PromotionType {
     SCALAR_TO_ARRAY, ARRAY_TO_ARRAY
   }
-
 }

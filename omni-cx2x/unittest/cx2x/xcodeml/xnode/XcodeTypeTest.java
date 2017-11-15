@@ -36,5 +36,4 @@ public class XcodeTypeTest {
     assertFalse(XcodeType.REAL.isOfType(null));
     assertFalse(XcodeType.REAL.isOfType(""));
   }
-
 }

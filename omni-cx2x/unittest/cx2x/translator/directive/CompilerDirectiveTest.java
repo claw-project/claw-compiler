@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator.directive;
 
 import cx2x.configuration.CompilerDirective;
@@ -47,5 +46,4 @@ public class CompilerDirectiveTest {
     assertEquals(ClawConstant.OPENACC_PREFIX,
         CompilerDirective.getPrefix(CompilerDirective.OPENACC));
   }
-
 }

@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
@@ -85,5 +84,4 @@ public class XsymbolsTest {
     assertEquals("flocal", id2.getSclass());
     assertEquals("I7fcbf3409ec0", id2.getType());
   }
-
 }

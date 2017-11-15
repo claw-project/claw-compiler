@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
@@ -37,5 +36,4 @@ public class XbasicTest {
     assertEquals(Xname.TYPE_F_INT, name.getType());
     assertEquals("a", name.value());
   }
-
 }

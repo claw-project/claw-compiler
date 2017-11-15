@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import helper.XmlHelper;
@@ -98,6 +97,12 @@ public class XtypeTableTest {
     assertFalse(structType1.isExtend());
     assertTrue(structType2.isExtend());
     assertEquals(structTypeHash1, structType2.getExtend());
+    assertFalse(structType1.isSequence());
+    assertFalse(structType1.isInternalPrivate());
+    assertFalse(structType1.isAbstract());
+    assertFalse(structType1.isPrivate());
+    assertFalse(structType1.isPublic());
+    assertNull(structType1.getBind());
 
     assertNull(typeTable.getBasicType(structTypeHash1));
     assertNull(typeTable.getFunctionType(structTypeHash1));

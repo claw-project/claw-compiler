@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.translator.transformation.claw.utility;
 
 import cx2x.translator.language.ClawPragma;
@@ -107,5 +106,4 @@ public class UtilityRemove extends ClawBlockTransformation {
   {
     return true; // Always true as independent transformation
   }
-
 }

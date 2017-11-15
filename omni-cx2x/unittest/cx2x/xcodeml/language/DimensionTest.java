@@ -92,5 +92,4 @@ public class DimensionTest {
     assertEquals(Xcode.VAR, upperNode.firstChild().opcode());
     assertEquals("nend", upperNode.firstChild().value());
   }
-
 }

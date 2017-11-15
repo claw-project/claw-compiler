@@ -2,7 +2,6 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package cx2x.xcodeml.xnode;
 
 import helper.TestConstant;
@@ -46,6 +45,7 @@ public class XfunctionDefinitionTest {
         XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
     assertEquals("force_dummy", fctDef.getName());
+    assertEquals("force_dummy", fctDef.name().value());
     assertEquals("F7ff951406df0", fctDef.getType());
     assertEquals(0, fctDef.getSymbolTable().size());
     assertEquals(0, fctDef.getDeclarationTable().count());
@@ -60,6 +60,7 @@ public class XfunctionDefinitionTest {
     XfunctionDefinition clone = fctDef.cloneNode();
     assertNotNull(clone);
     assertEquals("force_dummy", fctDef.getName());
+    assertEquals("force_dummy", fctDef.name().value());
   }
 
   @Test

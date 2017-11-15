@@ -43,5 +43,4 @@ public class ClawConstant {
 
   public static final String ERROR_INCOMPATIBLE =
       "Incompatible node passed as arguments";
-
 }
