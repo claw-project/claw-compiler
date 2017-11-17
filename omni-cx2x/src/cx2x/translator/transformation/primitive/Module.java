@@ -6,12 +6,9 @@ package cx2x.translator.transformation.primitive;
 
 import cx2x.configuration.Configuration;
 import cx2x.translator.language.ClawPragma;
-import cx2x.translator.language.helper.TransformationHelper;
 import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
-import cx2x.xcodeml.language.DimensionDefinition;
-import cx2x.xcodeml.language.InsertionPosition;
 import cx2x.xcodeml.transformation.ModuleCache;
 import cx2x.xcodeml.xnode.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
@@ -228,7 +225,7 @@ public final class Module {
         }
         String dummy;
         if(pLocal.hasAttribute(Xattr.PROMOTION_INFO)) {
-           dummy = pLocal.getAttribute(Xattr.PROMOTION_INFO);
+          dummy = pLocal.getAttribute(Xattr.PROMOTION_INFO);
           pLocal.setAttribute(Xattr.PROMOTION_INFO, dummy);
         }
 
