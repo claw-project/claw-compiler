@@ -5,7 +5,6 @@
 package cx2x.translator.transformation.primitive;
 
 import cx2x.configuration.Configuration;
-import cx2x.translator.language.ClawPragma;
 import cx2x.translator.transformation.claw.one_column.PromotionInfo;
 import cx2x.xcodeml.exception.IllegalTransformationException;
 import cx2x.xcodeml.helper.XnodeUtil;
@@ -108,14 +107,13 @@ public final class Module {
    * @param xcodeml     Current XcodeML file unit.
    * @param fctDef      Function definition that has been changed.
    * @param fctType     Function type that has been changed.
-   * @param claw        Pragma that has triggered the transformation.
    * @param moduleCache Current module cache.
    * @throws IllegalTransformationException If the module file or the function
    *                                        cannot be located
    */
   public static void updateSignature(String moduleName, XcodeProgram xcodeml,
                                      XfunctionDefinition fctDef,
-                                     XfunctionType fctType, ClawPragma claw,
+                                     XfunctionType fctType,
                                      ModuleCache moduleCache,
                                      boolean importFctType)
       throws IllegalTransformationException
@@ -127,8 +125,7 @@ public final class Module {
       mod = fctDef.findContainingXmod();
       if(mod == null) {
         throw new IllegalTransformationException(
-            "Unable to locate module file for: " + moduleName,
-            claw.getPragma().lineNo());
+            "Unable to locate module file for: " + moduleName);
       }
       moduleCache.add(moduleName, mod);
     }
@@ -164,17 +161,16 @@ public final class Module {
        * symbol table. */
       String errorMsg = "Unable to locate fct " + fctDef.getName() +
           " in module " + moduleName;
-      int lineNo = claw.getPragma().lineNo();
 
       /* If not, try to matchSeq the correct FfunctionType in the module
        * definitions */
       Xid id = mod.getIdentifiers().get(fctDef.getName());
       if(id == null) {
-        throw new IllegalTransformationException(errorMsg, lineNo);
+        throw new IllegalTransformationException(errorMsg);
       }
       fctTypeMod = mod.getTypeTable().getFunctionType(id);
       if(fctTypeMod == null) {
-        throw new IllegalTransformationException(errorMsg, lineNo);
+        throw new IllegalTransformationException(errorMsg);
       }
     }
 
@@ -187,8 +183,7 @@ public final class Module {
 
     if(paramsLocal.size() < paramsMod.size()) {
       throw new IllegalTransformationException(
-          "Local function has more parameters than module counterpart.",
-          claw.getPragma().lineNo());
+          "Local function has more parameters than module counterpart.");
     }
 
     for(int i = 0; i < paramsLocal.size(); ++i) {
