@@ -360,7 +360,7 @@ public class Parallelize extends ClawTransformation {
       XmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
         Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
-            _claw, translator.getModCache(), false);
+            translator.getModCache(), false);
       }
     }
   }

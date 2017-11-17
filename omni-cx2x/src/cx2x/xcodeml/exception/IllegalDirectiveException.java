@@ -5,7 +5,6 @@
 package cx2x.xcodeml.exception;
 
 import cx2x.translator.common.Utility;
-import org.antlr.v4.runtime.Token;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class IllegalDirectiveException extends Exception {
   private int _directiveLine = 0;
   private int _charPos = 0;
   private String _directive;
-  private Token _offendingToken = null;
+  private String _offendingToken = null;
   private List<String> _expectedTokens = null;
 
   /**
@@ -41,7 +40,7 @@ public class IllegalDirectiveException extends Exception {
    * @param lineno         Line number where the parsing error occurred.
    * @param charPos        Char position where the parsing error occurred.
    */
-  public IllegalDirectiveException(Token offendingToken,
+  public IllegalDirectiveException(String offendingToken,
                                    List<String> expectedTokens, int lineno,
                                    int charPos)
   {
@@ -148,7 +147,7 @@ public class IllegalDirectiveException extends Exception {
    *
    * @return Offending token (ANTLR object).
    */
-  public Token getOffendingToken() {
+  public String getOffendingToken() {
     return _offendingToken;
   }
 
@@ -189,7 +188,7 @@ public class IllegalDirectiveException extends Exception {
    */
   private String getExpectingByFoundTokenMsg() {
     return String.format("%s Expected %s but found '%s'", getMsgPrefix(),
-        Utility.join(",", _expectedTokens), _offendingToken.getText());
+        Utility.join(",", _expectedTokens), _offendingToken);
   }
 
   /**

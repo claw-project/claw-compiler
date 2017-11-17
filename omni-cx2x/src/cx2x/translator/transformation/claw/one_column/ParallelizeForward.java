@@ -535,7 +535,7 @@ public class ParallelizeForward extends ClawTransformation {
         // 3. Replicate the change in a potential module file
         XmoduleDefinition modDef = fDef.findParentModule();
         Module.updateSignature(modDef.getName(), xcodeml, fDef,
-            parentFctType, _claw, translator.getModCache(), false);
+            parentFctType, translator.getModCache(), false);
       } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
@@ -543,7 +543,7 @@ public class ParallelizeForward extends ClawTransformation {
          * we can update it. */
         XmoduleDefinition modDef = fDef.findParentModule();
         Module.updateSignature(modDef.getName(), xcodeml, fDef,
-            parentFctType, _claw, translator.getModCache(), true);
+            parentFctType, translator.getModCache(), true);
       }
     }
 
