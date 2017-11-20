@@ -4,13 +4,13 @@
  */
 package external.transformation;
 
-import cx2x.translator.transformation.ClawTransformation;
-import cx2x.xcodeml.exception.IllegalTransformationException;
-import cx2x.xcodeml.transformation.Transformation;
-import cx2x.xcodeml.transformation.Translator;
-import cx2x.xcodeml.xnode.Xcode;
-import cx2x.xcodeml.xnode.XcodeProgram;
-import cx2x.xcodeml.xnode.Xnode;
+import claw.wani.transformation.ClawTransformation;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.shenron.transformation.Transformation;
+import claw.shenron.translator.Translator;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 /**
  * Simple transformation that add print call before function call. This serves

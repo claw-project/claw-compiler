@@ -4,7 +4,9 @@
  */
 package helper;
 
-import cx2x.xcodeml.xnode.*;
+import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 

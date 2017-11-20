@@ -7,7 +7,7 @@ refer to the developer's guide
   <!-- Global transformation parameters -->
   <global type="root">
     <!-- Define the translator to be used. -->
-    <parameter key="translator" value="cx2x.translator.ClawTranslator" />
+    <parameter key="translator" value="claw.wani.x2t.translator.ClawTranslator" />
 
     <!-- Default general values -->
     <parameter key="default_target" value="gpu" />

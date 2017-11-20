@@ -3,8 +3,8 @@
  See LICENSE file for more information
 -->
 
-<project name="cx2x-test" default="main" basedir=".">
-  <description>Build CX2X unit tests</description>
+<project name="claw-test" default="main" basedir=".">
+  <description>Build CLAWX2T unit tests</description>
 
   <dirname property="antfile.dir" file="${ant.file}"/>
 
@@ -27,8 +27,8 @@
     <pathelement path="${antlr4.dep}"/>
     <pathelement path="${antlr4.runtime.dep}"/>
     <pathelement path="${hamcrest.dep}" />
-    <pathelement path="${cx2x.xcodeml.dep}" />
-    <pathelement path="${cx2x.translator.dep}" />
+    <pathelement path="${claw.xcodeml.dep}" />
+    <pathelement path="${claw.translator.dep}" />
   </path>
 
   <!-- Initialization step -->
@@ -52,20 +52,20 @@
   <target name="clean" description="clean up">
     <delete dir="${build.dir}" />
     <delete dir="${ivy.dir}" />
-    <delete file="${dist.dir}/${cx2x.unittest.jar}" />
+    <delete file="${dist.dir}/${claw.unittest.jar}" />
   </target>
 
   <!-- Execution of JUnit tests -->
   <target name="junit" depends="compile, jar">
     <junit haltonfailure="yes" haltonerror="on">
-      <classpath path="${cx2x.unittest.dep}" />
+      <classpath path="${claw.unittest.dep}" />
       <classpath path="${junit.dep}" />
       <classpath path="${hamcrest.dep}" />
       <classpath path="${antlr.dep}" />
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
-      <classpath path="${cx2x.translator.dep}" />
-      <classpath path="${cx2x.xcodeml.dep}" />
+      <classpath path="${claw.translator.dep}" />
+      <classpath path="${claw.xcodeml.dep}" />
       <classpath path="${omni.common.dep}" />
       <classpath path="${omni.exec.dep}"/>
 

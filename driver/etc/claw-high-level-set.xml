@@ -7,9 +7,9 @@ More information: https://github.com/C2SM-RCM/claw-language-specification
 <transformations>
   <transformation name="parallelize"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.one_column.Parallelize" />
+    class="claw.wani.transformation.sca.Parallelize" />
 
   <transformation name="parallelize-forward"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.one_column.ParallelizeForward" />
+    class="claw.wani.transformation.sca.ParallelizeForward" />
 </transformations>

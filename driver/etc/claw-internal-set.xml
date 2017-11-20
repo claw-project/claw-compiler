@@ -4,9 +4,9 @@ This file describes CLAW internal transformation not triggered by the user.
 <transformations>
   <transformation name="internal-xcodeml"
     type="independent" trigger="translation_unit"
-    class="cx2x.translator.transformation.internal.XcodeMLWorkaround" />
+    class="claw.wani.transformation.internal.XcodeMLWorkaround" />
 
   <transformation name="openacc-continuation"
     type="independent" trigger="directive" directive="acc"
-    class="cx2x.translator.transformation.internal.OpenAccContinuation" />
+    class="claw.wani.transformation.internal.OpenAccContinuation" />
 </transformations>

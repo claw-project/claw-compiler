@@ -4,7 +4,7 @@
 -->
 
 <!-- CX2X build process -->
-<project name="cx2x" default="main" basedir=".">
+<project name="claw" default="main" basedir=".">
     <description>Build CX2X libraries</description>
 
     <dirname property="antfile.dir" file="${ant.file}"/>
@@ -14,7 +14,7 @@
 
     <!-- Java sources -->
     <property name="src.translator.parser"
-              value="cx2x/translator/language/parser"/>
+              value="claw/wani/language/parser"/>
     <property name="src.base" value="."/>
 
     <!-- Java classes -->
@@ -48,7 +48,7 @@
 
     <!-- Check if parser is up-to-date or need to be re-generated -->
     <uptodate property="antlr.required"
-              targetfile="${src.translator.parser}/Claw.g4">
+              targetfile="claw/wani/language/parser/Claw.g4">
         <srcfiles dir="${src.translator.parser}" includes="*.java"/>
     </uptodate>
 
@@ -58,7 +58,7 @@
         <java classname="org.antlr.v4.Tool" fork="true" failonerror="true"
               classpathref="antlr.path">
             <arg value="-package"/>
-            <arg value="cx2x.translator.language.parser"/>
+            <arg value="claw.wani.language.parser"/>
             <arg line="${src.translator.parser}/Claw.g4"/>
         </java>
     </target>
@@ -73,18 +73,18 @@
     <!-- Pacakge compiled files into their own library -->
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${dist.dir}"/>
-        <jar jarfile="${dist.dir}/${cx2x.xcodeml.jar}" basedir="${build.dir}"
-             includes="cx2x/xcodeml/**"/>
-        <jar jarfile="${dist.dir}/${cx2x.translator.jar}" basedir="${build.dir}"
-             includes="cx2x/Cx2x.class cx2x/ClawVersion.class cx2x/translator/** cx2x/decompiler/** cx2x/configuration/**"/>
+        <jar jarfile="${dist.dir}/${claw.xcodeml.jar}" basedir="${build.dir}"
+             includes="claw/tatsu/**"/>
+        <jar jarfile="${dist.dir}/${claw.translator.jar}" basedir="${build.dir}"
+             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/** claw/shenron/**"/>
         <jar jarfile="${dist.dir}/${external.jar}" basedir="${build.dir}"
              includes="external/**"/>
     </target>
 
     <target name="clean" description="clean up">
         <delete dir="${build.dir}"/>
-        <delete file="${dist.dir}/${cx2x.xcodeml.jar}"/>
-        <delete file="${dist.dir}/${cx2x.translator.jar}"/>
+        <delete file="${dist.dir}/${claw.xcodeml.jar}"/>
+        <delete file="${dist.dir}/${claw.translator.jar}"/>
     </target>
 
     <!-- Default target -->

@@ -8,44 +8,44 @@ More information: https://github.com/C2SM-RCM/claw-language-specification
   <!-- Directive -->
   <transformation name="directive-primitive"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.directive.DirectivePrimitive" />
+    class="claw.wani.transformation.ll.directive.DirectivePrimitive" />
 
   <!-- Loop -->
   <transformation name="array-transform"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.ArrayTransform" />
+    class="claw.wani.transformation.ll.loop.ArrayTransform" />
 
   <transformation name="loop-extract"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.LoopExtraction" />
+    class="claw.wani.transformation.ll.loop.LoopExtraction" />
 
   <transformation name="loop-hoist"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.LoopHoist" />
+    class="claw.wani.transformation.ll.loop.LoopHoist" />
 
   <transformation name="loop-fusion"
     type="dependent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.LoopFusion" />
+    class="claw.wani.transformation.ll.loop.LoopFusion" />
 
   <transformation name="loop-interchange"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.LoopInterchange" />
+    class="claw.wani.transformation.ll.loop.LoopInterchange" />
 
   <transformation name="if-extract"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.loop.IfExtract" />
+    class="claw.wani.transformation.ll.loop.IfExtract" />
 
   <!-- Utility -->
   <transformation name="on-the-fly"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.utility.ArrayToFctCall" />
+    class="claw.wani.transformation.ll.utility.ArrayToFctCall" />
 
   <transformation name="remove"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.utility.UtilityRemove" />
+    class="claw.wani.transformation.ll.utility.UtilityRemove" />
 
   <!-- Caching -->
   <transformation name="kcache"
     type="independent" trigger="directive" directive="claw"
-    class="cx2x.translator.transformation.claw.caching.Kcaching" />
+    class="claw.wani.transformation.ll.caching.Kcaching" />
 </transformations>
