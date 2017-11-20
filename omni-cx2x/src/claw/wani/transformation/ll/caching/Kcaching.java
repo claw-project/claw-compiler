@@ -4,15 +4,15 @@
  */
 package claw.wani.transformation.ll.caching;
 
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.wani.x2t.translator.ClawTranslator;
-import claw.tatsu.directive.common.Directive;
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawTransformation;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.directive.common.Directive;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
+import claw.tatsu.xcodeml.xnode.common.*;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,8 +131,10 @@ public class Kcaching extends ClawTransformation {
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
-    Directive.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
-        cacheVar.value());
+    if(_claw.hasPrivateClause()) {
+      Directive.generatePrivateClause(xcodeml, _claw.getPragma(),
+          cacheVar.value());
+    }
   }
 
   /**
@@ -161,8 +163,10 @@ public class Kcaching extends ClawTransformation {
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
-    Directive.generatePrivateClause(_claw, xcodeml, _claw.getPragma(),
-        cacheVar.value());
+    if(_claw.hasPrivateClause()) {
+      Directive.generatePrivateClause(xcodeml, _claw.getPragma(),
+          cacheVar.value());
+    }
     stmt.delete();
   }
 

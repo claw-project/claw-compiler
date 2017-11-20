@@ -7,16 +7,11 @@ package claw.tatsu.directive.common;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
-import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.primitive.Pragma;
-import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-import claw.wani.language.ClawDirective;
-import claw.wani.language.ClawPragma;
-import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,15 +36,14 @@ public final class Directive {
    * Generate loop seq directives on the top of loops in the given function
    * definition.
    *
-   * @param claw    ClawPragma object that tells if the parallel clause is
-   *                enable and where the start pragma is located.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
    * @param fctDef  Function definition in which do statements will be
    *                decorated.
    */
-  public static void generateLoopSeq(ClawPragma claw, XcodeProgram xcodeml,
-                                     XfunctionDefinition fctDef)
+  public static void generateLoopSeq(XcodeProgram xcodeml,
+                                     XfunctionDefinition fctDef,
+                                     String noDependencyDirective)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
         == CompilerDirective.NONE)
@@ -60,7 +54,7 @@ public final class Directive {
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
-      Xnode noDependency = isDecoratedWithNoDependency(doStmt);
+      Xnode noDependency = isDecoratedWith(doStmt, noDependencyDirective);
       addPragmasBefore(xcodeml,
           Context.get().getGenerator().getStartLoopDirective(NO_COLLAPSE,
               noDependency == null, true, ""), doStmt);
@@ -81,20 +75,17 @@ public final class Directive {
   /**
    * Generate update directives for device and host data transfer.
    *
-   * @param claw    ClawPragma object that tells if the parallel clause is
-   *                enable and where the start pragma is located.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
    * @param hook    Node used as a hook for insertion. Update device are
    *                generated before the hook and update host after the hook.
    * @return Last inserted pragma.
    */
-  public static Xnode generateUpdate(ClawPragma claw, XcodeProgram xcodeml,
-                                     Xnode hook, List<String> vars,
-                                     DataMovement direction)
+  public static Xnode generateUpdate(XcodeProgram xcodeml, Xnode hook,
+                                     List<String> vars, DataMovement direction)
   {
     if(Context.get().getGenerator().getDirectiveLanguage() ==
-        CompilerDirective.NONE || !claw.hasUpdateClause())
+        CompilerDirective.NONE)
     {
       return null;
     }
@@ -119,23 +110,17 @@ public final class Directive {
    * @param doStmt Do statement to be checked.
    * @return True if the directive is present. False otherwise.
    */
-  private static Xnode isDecoratedWithNoDependency(Xnode doStmt) {
+  private static Xnode isDecoratedWith(Xnode doStmt, String directive) {
     if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
       return null;
     }
 
     Xnode sibling = doStmt.prevSibling();
     while(sibling != null && sibling.opcode() == Xcode.F_PRAGMA_STATEMENT) {
-      try {
-        ClawPragma pragma = ClawPragma.analyze(sibling);
-        if(pragma.getDirective() == ClawDirective.NO_DEP) {
-          return sibling;
-        }
-      } catch(IllegalDirectiveException ex) {
-        // do not care about the error
-      } finally {
-        sibling = sibling.prevSibling();
+      if(sibling.value().toLowerCase().contains(directive.toLowerCase())) {
+        return sibling;
       }
+      sibling = sibling.prevSibling();
     }
     return null;
   }
@@ -162,8 +147,6 @@ public final class Directive {
   /**
    * Generate directive directive for a parallel loop.
    *
-   * @param claw      ClawPragma object that tells if the parallel clause is
-   *                  enable and where the start pragma is located.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
    * @param privates  List of variables to be set privates.
@@ -173,8 +156,7 @@ public final class Directive {
    * @param collapse  If value bigger than 0, a corresponding collapse
    *                  constructs can be generated.
    */
-  public static void generateParallelLoopClause(ClawPragma claw,
-                                                XcodeProgram xcodeml,
+  public static void generateParallelLoopClause(XcodeProgram xcodeml,
                                                 List<String> privates,
                                                 Xnode startStmt, Xnode endStmt,
                                                 int collapse)
@@ -332,75 +314,33 @@ public final class Directive {
   /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
    *
-   * @param claw      ClawPragma object that tells if the parallel clause is
-   *                  enable and where the start pragma is located.
    * @param startStmt Start statement representing the beginning of the parallel
    *                  region.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  private static Xnode generateAcceleratorClause(
-      ClawPragma claw, XcodeProgram xcodeml, Xnode startStmt)
+  public static Xnode generateAcceleratorClause(
+      XcodeProgram xcodeml, Xnode startStmt, String accClause)
   {
-    if(claw.hasAcceleratorClause()) {
-      /* TODO
-         OpenACC and OpenMP loop construct are pretty different ...
-         have to look how to do that properly. See issue #22
-       */
-      return addPragmasBefore(xcodeml, Context.get().getGenerator().
-          getSingleDirective(claw.getAcceleratorClauses()), startStmt);
-    }
-    return null;
-  }
-
-  /**
-   * Generate all corresponding pragmas to be applied for directive.
-   *
-   * @param claw      ClawPragma object that tells which directive pragmas
-   *                  are enabled.
-   * @param xcodeml   Object representation of the current XcodeML
-   *                  representation in which the pragmas will be generated.
-   * @param startStmt Start statement for all pragma generation.
-   * @param endStmt   End statement for all pragma generation that need end
-   *                  pragma statement.
-   * @return Last stmt inserted.
-   */
-  public static Xnode generateAdditionalDirectives(
-      ClawPragma claw, XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
-  {
-    if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE)
-    {
-      return null;
-    }
-
-    Xnode pragma =
-        generateAcceleratorClause(claw, xcodeml, startStmt);
-    if(pragma != null) {
-      startStmt = pragma;
-    }
-
-    if(claw.hasParallelClause()) {
-      return generateParallelClause(xcodeml, startStmt, endStmt);
-    } else {
-      return startStmt;
-    }
+    /* TODO
+       OpenACC and OpenMP loop construct are pretty different ...
+       have to look how to do that properly. See issue #22
+     */
+    return addPragmasBefore(xcodeml, Context.get().getGenerator().
+        getSingleDirective(accClause), startStmt);
   }
 
   /**
    * Generate all corresponding pragmas to be applied to an accelerated
    * function/subroutine.
    *
-   * @param claw    ClawPragma object that tells which directive pragmas
-   *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
    * @param fctDef  Function/subroutine in which directive directives are
    *                generated.
    */
-  public static void generateRoutineDirectives(ClawPragma claw,
-                                               XcodeProgram xcodeml,
+  public static void generateRoutineDirectives(XcodeProgram xcodeml,
                                                XfunctionDefinition fctDef)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
@@ -462,21 +402,18 @@ public final class Directive {
   /**
    * Generate the correct clauses for private variable on directive.
    *
-   * @param claw    ClawPragma object that tells which directive pragmas
-   *                are enabled.
    * @param xcodeml Object representation of the current XcodeML
    *                representation in which the pragmas will be generated.
    * @param stmt    Statement from which we looks for a parallel clause to
    *                append private clauses.
    * @param var     Variable to generate the private clause.
    */
-  public static void generatePrivateClause(ClawPragma claw,
-                                           XcodeProgram xcodeml,
+  public static void generatePrivateClause(XcodeProgram xcodeml,
                                            Xnode stmt,
                                            String var)
   {
-    if(Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE
-        || !claw.hasPrivateClause())
+    if(Context.get().getGenerator().getDirectiveLanguage() ==
+        CompilerDirective.NONE)
     {
       return;
     }
@@ -487,7 +424,7 @@ public final class Directive {
 
     if(hook == null) {
       xcodeml.addWarning("No parallel construct found to attach private clause",
-          claw.getPragma().lineNo());
+          stmt.lineNo());
     } else {
       hook.setValue(hook.value() + " " +
           Context.get().getGenerator().getPrivateClause(var));
@@ -540,7 +477,7 @@ public final class Directive {
     }
     for(String directive : directives) {
       List<Xnode> pragmas = xcodeml.createPragma(directive,
-          Configuration.get().getMaxColumns());
+          Context.get().getMaxColumns());
       for(Xnode pragma : pragmas) {
         if(after) {
           ref.insertAfter(pragma);

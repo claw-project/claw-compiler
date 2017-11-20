@@ -6,22 +6,22 @@ package claw.wani.transformation.ll.loop;
 
 // ClawX2T import
 
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.wani.x2t.translator.ClawTranslator;
-import claw.wani.ClawConstant;
+import claw.shenron.transformation.Transformation;
+import claw.shenron.translator.Translator;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.common.Directive;
-import claw.wani.language.ClawMapping;
-import claw.wani.language.ClawMappingVar;
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawTransformation;
 import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.shenron.transformation.Transformation;
-import claw.shenron.translator.Translator;
+import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
+import claw.wani.ClawConstant;
+import claw.wani.language.ClawMapping;
+import claw.wani.language.ClawMappingVar;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -396,8 +396,21 @@ public class LoopExtraction extends ClawTransformation {
     }
 
     // Generate directive pragmas if needed
-    Directive.generateAdditionalDirectives(_claw, xcodeml,
-        extractedLoop, extractedLoop);
+    Xnode grip = null;
+    if(_claw.hasAcceleratorClause()) {
+      /* TODO see TODO in ArrayTransform
+         OpenACC and OpenMP loop construct are pretty different ...
+         have to look how to do that properly. See issue #22
+       */
+      grip = Directive.generateAcceleratorClause(xcodeml, extractedLoop,
+          _claw.getAcceleratorClauses());
+    }
+
+    if(_claw.hasParallelClause()) {
+      Directive.generateParallelClause(xcodeml,
+          (grip == null) ? extractedLoop : grip, extractedLoop);
+    }
+
     // TODO must be triggered by a clause
     //Directive.generateRoutineDirectives(_claw, xcodeml, clonedFctDef);
 

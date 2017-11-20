@@ -6,6 +6,7 @@ package claw.tatsu.primitive;
 
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Message;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -13,11 +14,8 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeML;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.common.Message;
 
 import java.util.List;
-
-//import claw.wani.ClawConstant;
 
 /**
  * Primitive transformation and test applied on FdoStatement. This included:

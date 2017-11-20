@@ -4,15 +4,15 @@
  */
 package claw.wani.transformation.internal;
 
-import claw.wani.x2t.configuration.Configuration;
+import claw.shenron.transformation.Transformation;
+import claw.shenron.translator.Translator;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.primitive.Pragma;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
-import claw.tatsu.primitive.Pragma;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.shenron.transformation.Transformation;
-import claw.shenron.translator.Translator;
+import claw.wani.x2t.configuration.Configuration;
 
 /**
  * <pre>

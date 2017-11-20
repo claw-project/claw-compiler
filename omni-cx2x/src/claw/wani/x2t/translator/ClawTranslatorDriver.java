@@ -4,21 +4,20 @@
  */
 package claw.wani.x2t.translator;
 
+import claw.shenron.transformation.TransformationGroup;
 import claw.tatsu.common.Context;
-import claw.tatsu.directive.generator.DirectiveGenerator;
-import claw.wani.ClawConstant;
 import claw.tatsu.common.Message;
-import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.GroupConfiguration;
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawTransformation;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.shenron.transformation.TransformationGroup;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.ClawConstant;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.GroupConfiguration;
 import xcodeml.util.XmOption;
 
 import java.io.PrintWriter;

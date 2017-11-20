@@ -4,9 +4,9 @@
  */
 package claw.tatsu.primitive;
 
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.common.*;
 
 import java.util.List;
 
@@ -18,7 +18,6 @@ public class Type {
   // Avoid instantiation of
   private Type() {
   }
-
 
   /**
    * Duplicates the type to update and add extra dimensions to match the base
@@ -101,7 +100,7 @@ public class Type {
    * @throws IllegalTransformationException If bound cannot be duplicated.
    */
   private static Xnode duplicateBound(Xnode baseBound, XcodeML xcodemlSrc,
-                                     XcodeML xcodemlDst)
+                                      XcodeML xcodemlDst)
       throws IllegalTransformationException
   {
     if(baseBound == null || (baseBound.opcode() != Xcode.LOWER_BOUND

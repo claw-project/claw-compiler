@@ -18,8 +18,6 @@ import org.w3c.dom.Node;
 import java.util.ArrayList;
 import java.util.List;
 
-//import claw.wani.x2t.configuration.Configuration;
-
 /**
  * Primitive transformation and test applied to FpragmaStatement. This included:
  * - Extract directive prefix of a FpragmaStatement.

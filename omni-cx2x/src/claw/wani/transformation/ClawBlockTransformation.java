@@ -4,8 +4,8 @@
  */
 package claw.wani.transformation;
 
-import claw.wani.language.ClawPragma;
 import claw.shenron.transformation.BlockTransformation;
+import claw.wani.language.ClawPragma;
 
 /**
  * A BlockTransformation is an extension of the standard Transformation that is

@@ -4,21 +4,21 @@
  */
 package claw.wani.transformation.ll.loop;
 
-import claw.wani.x2t.translator.ClawTranslator;
-import claw.wani.language.ClawPragma;
-import claw.wani.language.ClawReshapeInfo;
-import claw.wani.transformation.ClawBlockTransformation;
-import claw.tatsu.primitive.Field;
-import claw.tatsu.primitive.Loop;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.primitive.Field;
+import claw.tatsu.primitive.Loop;
+import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
+import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawBlockTransformation;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +136,7 @@ public class LoopHoist extends ClawBlockTransformation {
         return false;
       }
 
-      for(ClawReshapeInfo r : _clawStart.getReshapeClauseValues()) {
+      for(ReshapeInfo r : _clawStart.getReshapeClauseValues()) {
         if(!fctDef.getSymbolTable().contains(r.getArrayName()) ||
             !fctDef.getDeclarationTable().contains(r.getArrayName()))
         {
@@ -208,7 +208,7 @@ public class LoopHoist extends ClawBlockTransformation {
             _clawStart.getPragma().lineNo());
       }
 
-      for(ClawReshapeInfo reshapeInfo : _clawStart.getReshapeClauseValues()) {
+      for(ReshapeInfo reshapeInfo : _clawStart.getReshapeClauseValues()) {
         Field.reshape(fctDef, reshapeInfo, xcodeml);
       }
     }

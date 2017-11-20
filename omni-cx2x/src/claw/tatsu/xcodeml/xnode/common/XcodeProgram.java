@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.error.XanalysisError;
+import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import org.w3c.dom.Document;
 

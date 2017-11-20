@@ -4,15 +4,15 @@
  */
 package claw.wani.transformation.ll.utility;
 
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawBlockTransformation;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawBlockTransformation;
 
 /**
  * A UtilityRemove is an independent transformation. It allows to delete part of

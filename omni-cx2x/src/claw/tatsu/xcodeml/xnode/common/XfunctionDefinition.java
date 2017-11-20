@@ -4,9 +4,9 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.primitive.Module;
 import claw.tatsu.xcodeml.xnode.fortran.Xmod;
 import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
-import claw.tatsu.primitive.Module;
 
 /**
  * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in

@@ -4,15 +4,15 @@
  */
 package claw.wani.transformation.ll.loop;
 
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawTransformation;
-import claw.tatsu.primitive.Body;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.primitive.Body;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawTransformation;
 
 /**
  * If extraction transformation

@@ -11,7 +11,6 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-//import claw.wani.ClawConstant;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

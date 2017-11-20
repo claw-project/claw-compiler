@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
+import claw.tatsu.xcodeml.xnode.fortran.Xintent;
 
 import java.util.ArrayList;
 import java.util.List;

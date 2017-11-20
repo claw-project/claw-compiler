@@ -4,10 +4,10 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
+import claw.tatsu.primitive.Module;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeML;
 import claw.tatsu.xcodeml.xnode.common.XsymbolTable;
-import claw.tatsu.primitive.Module;
 import org.w3c.dom.Document;
 
 /**

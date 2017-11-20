@@ -4,8 +4,8 @@
  */
 package claw.wani.transformation;
 
-import claw.wani.language.ClawPragma;
 import claw.shenron.transformation.Transformation;
+import claw.wani.language.ClawPragma;
 
 /**
  * A Transformation is an object capable of analyzing a possible code

@@ -6,14 +6,15 @@ package claw.wani.language;
 
 import claw.shenron.translator.AnalyzedPragma;
 import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
+import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
-import claw.tatsu.common.Target;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -47,7 +48,7 @@ public class ClawPragma extends AnalyzedPragma {
   private List<ClawMapping> _mappingValues;
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
-  private List<ClawReshapeInfo> _reshapeInfos;
+  private List<ReshapeInfo> _reshapeInfos;
   private List<DimensionDefinition> _dimensions;
   private Map<String, DimensionDefinition> _dimensionsMap;
   private Map<String, List<DimensionDefinition>> _specializedDimensionsMap;
@@ -878,20 +879,20 @@ public class ClawPragma extends AnalyzedPragma {
   /**
    * Get the reshape extracted information.
    *
-   * @return List of ClawReshapeInfo objects containing the extracted
+   * @return List of ReshapeInfo objects containing the extracted
    * information from the reshape clause.
    */
-  public List<ClawReshapeInfo> getReshapeClauseValues() {
+  public List<ReshapeInfo> getReshapeClauseValues() {
     return _reshapeInfos;
   }
 
   /**
    * Set the reshape clause extracted information.
    *
-   * @param infos List of ClawReshapeInfo objects containing the extracted
+   * @param infos List of ReshapeInfo objects containing the extracted
    *              information from the reshape clause.
    */
-  public void setReshapeClauseValues(List<ClawReshapeInfo> infos) {
+  public void setReshapeClauseValues(List<ReshapeInfo> infos) {
     _hasReshapeClause = true;
     _reshapeInfos = infos;
   }

@@ -4,17 +4,17 @@
  */
 package claw.wani.transformation.ll.loop;
 
-import claw.tatsu.directive.common.Directive;
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawTransformation;
-import claw.tatsu.primitive.Loop;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.directive.common.Directive;
+import claw.tatsu.primitive.Loop;
+import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
 
@@ -60,8 +60,19 @@ public class LoopInterchange extends ClawTransformation {
     Loop.reorder(_doStmts, _claw.getIndexes());
 
     // Generate directive pragmas if needed
-    Directive.generateAdditionalDirectives(_claw, xcodeml,
-        _doStmts.getOuterStatement(), _doStmts.getOuterStatement());
+    if(_claw.hasAcceleratorClause()) {
+      /* TODO see TODO in ArrayTransform
+         OpenACC and OpenMP loop construct are pretty different ...
+         have to look how to do that properly. See issue #22
+       */
+      Directive.generateAcceleratorClause(xcodeml, _doStmts.getOuterStatement(),
+          _claw.getAcceleratorClauses());
+    }
+
+    if(_claw.hasParallelClause()) {
+      Directive.generateParallelClause(xcodeml, _doStmts.getOuterStatement(),
+          _doStmts.getOuterStatement());
+    }
 
     removePragma();
     transformed();

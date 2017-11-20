@@ -6,10 +6,7 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.CompilerDirective;
-import claw.tatsu.common.Context;
-import claw.tatsu.common.Message;
-import claw.tatsu.common.Utility;
+import claw.tatsu.common.*;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Field;
@@ -26,7 +23,6 @@ import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
-import claw.tatsu.common.Target;
 import claw.wani.x2t.configuration.openacc.OpenAccLocalStrategy;
 
 import java.util.*;
@@ -379,8 +375,9 @@ public class Parallelize extends ClawTransformation {
   private void transformForGPU(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-
-    Directive.generateLoopSeq(_claw, xcodeml, _fctDef);
+    // TODO nodep should be passed in another way.
+    Directive.generateLoopSeq(xcodeml, _fctDef,
+        CompilerDirective.CLAW.getPrefix() + " nodep");
 
     /* Create a nested loop with the new defined dimensions and wrap it around
      * the whole subroutine's body. This is for the moment a really naive
@@ -457,11 +454,11 @@ public class Parallelize extends ClawTransformation {
         createList, loops.getOuterStatement(), loops.getOuterStatement());
 
     // Generate the parallel region
-    Directive.generateParallelLoopClause(_claw, xcodeml, privateList,
+    Directive.generateParallelLoopClause(xcodeml, privateList,
         loops.getOuterStatement(), loops.getOuterStatement(),
         loops.size());
 
-    Directive.generateRoutineDirectives(_claw, xcodeml, _fctDef);
+    Directive.generateRoutineDirectives(xcodeml, _fctDef);
   }
 
   /**

@@ -4,16 +4,16 @@
  */
 package claw.wani.transformation.ll.loop;
 
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.wani.x2t.translator.ClawTranslator;
+import claw.shenron.transformation.Transformation;
+import claw.shenron.translator.Translator;
 import claw.tatsu.directive.common.Directive;
-import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawBlockTransformation;
 import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.shenron.transformation.Transformation;
-import claw.shenron.translator.Translator;
+import claw.tatsu.xcodeml.xnode.common.*;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawBlockTransformation;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -273,13 +273,25 @@ public class ArrayTransform extends ClawBlockTransformation {
     }
 
     // Generate directive pragmas if needed
-    Xnode potentialGrip = Directive.generateAdditionalDirectives(
-        _clawStart, xcodeml, new Xnode(doStmts[0].element()),
-        new Xnode(doStmts[0].element()));
+
+    Xnode grip = null;
+    if(_clawStart.hasAcceleratorClause()) {
+      /* TODO
+         OpenACC and OpenMP loop construct are pretty different ...
+         have to look how to do that properly. See issue #22
+       */
+      grip = Directive.generateAcceleratorClause(xcodeml, doStmts[0],
+          _clawStart.getAcceleratorClauses());
+    }
+
+    if(_clawStart.hasParallelClause()) {
+      grip = Directive.generateParallelClause(xcodeml,
+          (grip == null) ? doStmts[0] : grip, doStmts[0]);
+    }
 
     // Add any additional transformation defined in the directive clauses
     translator.generateAdditionalTransformation(_clawStart, xcodeml,
         doStmts[0]);
-    return potentialGrip == null ? doStmts[0] : potentialGrip;
+    return grip == null ? doStmts[0] : grip;
   }
 }

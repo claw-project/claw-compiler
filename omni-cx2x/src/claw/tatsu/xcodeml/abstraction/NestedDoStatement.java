@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.abstraction;
 
-import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.primitive.Loop;
+import claw.tatsu.xcodeml.xnode.common.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,9 +4,9 @@
  */
 package claw.wani.language;
 
-import claw.wani.ClawConstant;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.ClawConstant;
 
 /**
  * Store the information from a range clause in a CLAW directives.

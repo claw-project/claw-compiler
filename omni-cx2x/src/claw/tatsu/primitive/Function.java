@@ -4,11 +4,11 @@
  */
 package claw.tatsu.primitive;
 
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
+import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 
 /**
  * Primitive transformation, test and utility for Function related action.

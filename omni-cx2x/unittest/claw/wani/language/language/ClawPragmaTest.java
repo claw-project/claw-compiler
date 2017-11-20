@@ -8,6 +8,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.DataMovement;
+import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
@@ -812,9 +813,9 @@ public class ClawPragmaTest {
         null, false, null, 0);
 
     List<Integer> empty = Collections.emptyList();
-    ClawReshapeInfo info1 = new ClawReshapeInfo("zmd", 0, empty);
-    ClawReshapeInfo info2 =
-        new ClawReshapeInfo("zsediflux", 1, Collections.singletonList(2));
+    ReshapeInfo info1 = new ReshapeInfo("zmd", 0, empty);
+    ReshapeInfo info2 =
+        new ReshapeInfo("zsediflux", 1, Collections.singletonList(2));
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
         Arrays.asList(info1, info2), null, false, null, 0);
@@ -868,7 +869,7 @@ public class ClawPragmaTest {
   private void analyzeValidLoopHoist(String raw, List<String> inductions,
                                      boolean interchange, List<String> indexes,
                                      boolean reshape,
-                                     List<ClawReshapeInfo> infos,
+                                     List<ReshapeInfo> infos,
                                      List<Target> targets, boolean fusion,
                                      String group, int collapse)
   {

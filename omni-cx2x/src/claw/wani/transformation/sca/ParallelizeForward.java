@@ -4,27 +4,27 @@
  */
 package claw.wani.transformation.sca;
 
+import claw.shenron.transformation.Transformation;
+import claw.shenron.translator.Translator;
+import claw.tatsu.common.Message;
+import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
+import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.*;
+import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.abstraction.InsertionPosition;
+import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
 import claw.tatsu.xcodeml.xnode.fortran.Xmod;
 import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
-import claw.wani.x2t.translator.ClawTranslator;
-import claw.tatsu.common.Message;
-import claw.tatsu.common.Utility;
-import claw.tatsu.directive.common.Directive;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
-import claw.tatsu.xcodeml.abstraction.InsertionPosition;
-import claw.shenron.transformation.Transformation;
-import claw.shenron.translator.Translator;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
 
@@ -570,8 +570,9 @@ public class ParallelizeForward extends ClawTransformation {
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.IN, true);
-        Directive.generateUpdate(_claw, xcodeml, exprStmt, out,
-            DataMovement.DEVICE);
+        if(_claw.hasUpdateClause()) {
+          Directive.generateUpdate(xcodeml, exprStmt, out, DataMovement.DEVICE);
+        }
       }
 
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
@@ -579,8 +580,9 @@ public class ParallelizeForward extends ClawTransformation {
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Xintent.OUT, true);
-        Directive.generateUpdate(_claw, xcodeml, exprStmt, out,
-            DataMovement.HOST);
+        if(_claw.hasUpdateClause()) {
+          Directive.generateUpdate(xcodeml, exprStmt, out, DataMovement.HOST);
+        }
       }
     }
   }

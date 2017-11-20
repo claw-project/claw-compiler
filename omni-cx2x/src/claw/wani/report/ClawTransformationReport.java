@@ -5,11 +5,11 @@
 package claw.wani.report;
 
 import claw.ClawVersion;
-import claw.wani.x2t.translator.ClawTranslator;
-import claw.wani.x2t.translator.ClawTranslatorDriver;
+import claw.shenron.transformation.TransformationGroup;
 import claw.tatsu.common.Utility;
 import claw.wani.x2t.configuration.Configuration;
-import claw.shenron.transformation.TransformationGroup;
+import claw.wani.x2t.translator.ClawTranslator;
+import claw.wani.x2t.translator.ClawTranslatorDriver;
 
 import java.io.FileWriter;
 import java.text.DateFormat;

@@ -7,12 +7,12 @@ package claw.tatsu.primitive;
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-import claw.wani.language.ClawReshapeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -294,7 +294,7 @@ public final class Field {
    * @throws IllegalTransformationException If reshape cannot be done.
    */
   public static void reshape(XfunctionDefinition fctDef,
-                             ClawReshapeInfo reshapeInfo,
+                             ReshapeInfo reshapeInfo,
                              XcodeProgram xcodeml)
       throws IllegalTransformationException
   {

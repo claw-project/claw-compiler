@@ -11,8 +11,6 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import java.util.ArrayList;
 import java.util.List;
 
-//import claw.wani.language.ClawPragma;
-
 /**
  * Represents the different do statements part of the iteration space in a
  * subroutine.
