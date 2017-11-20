@@ -1,0 +1,387 @@
+<XcodeProgram source="dummy.f90"
+              language="Fortran"
+              time="2017-11-07 18:22:17"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+    <typeTable>
+        <FfunctionType type="F7f86f8507e70" return_type="Fvoid">
+            <params>
+            </params>
+        </FfunctionType>
+        <FbasicType type="A7f86f850a370" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850a770" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850b760" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850bb60" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850cb50" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850cf50" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850df50" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850e350" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850f340" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f850f740" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8510730" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8510b30" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8511b30" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8511f30" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8512f20" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8513320" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8514310" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+        <FbasicType type="A7f86f8514710" ref="Freal">
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">10</FintConstant>
+                </upperBound>
+            </indexRange>
+            <indexRange>
+                <lowerBound>
+                    <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                    <FintConstant type="Fint">20</FintConstant>
+                </upperBound>
+            </indexRange>
+        </FbasicType>
+    </typeTable>
+    <globalSymbols>
+        <id sclass="ffunc">
+            <name>m</name>
+        </id>
+    </globalSymbols>
+    <globalDeclarations>
+        <FmoduleDefinition name="m" lineno="1" file="dummy.f90">
+            <symbols>
+                <id type="F7f86f8507e70" sclass="ffunc">
+                    <name>sub1</name>
+                </id>
+            </symbols>
+            <declarations>
+            </declarations>
+            <FcontainsStatement lineno="3" file="dummy.f90">
+                <FfunctionDefinition lineno="5" file="dummy.f90">
+                    <name type="F7f86f8507e70">sub1</name>
+                    <symbols>
+                        <id type="F7f86f8507e70" sclass="ffunc">
+                            <name>sub1</name>
+                        </id>
+                        <id type="Freal" sclass="flocal">
+                            <name>s1</name>
+                        </id>
+                        <id type="Freal" sclass="flocal">
+                            <name>s2</name>
+                        </id>
+                        <id type="Freal" sclass="flocal">
+                            <name>s3</name>
+                        </id>
+                        <id type="Freal" sclass="flocal">
+                            <name>s4</name>
+                        </id>
+                        <id type="Freal" sclass="flocal">
+                            <name>s5</name>
+                        </id>
+                        <id type="Freal" sclass="flocal">
+                            <name>s6</name>
+                        </id>
+                        <id type="A7f86f850a770" sclass="flocal">
+                            <name>a</name>
+                        </id>
+                        <id type="A7f86f850bb60" sclass="flocal">
+                            <name>b</name>
+                        </id>
+                        <id type="A7f86f850cf50" sclass="flocal">
+                            <name>c</name>
+                        </id>
+                        <id type="A7f86f850e350" sclass="flocal">
+                            <name>d</name>
+                        </id>
+                        <id type="A7f86f850f740" sclass="flocal">
+                            <name>e</name>
+                        </id>
+                        <id type="A7f86f8510b30" sclass="flocal">
+                            <name>f</name>
+                        </id>
+                        <id type="A7f86f8511f30" sclass="flocal">
+                            <name>g</name>
+                        </id>
+                        <id type="A7f86f8513320" sclass="flocal">
+                            <name>h</name>
+                        </id>
+                        <id type="A7f86f8514710" sclass="flocal">
+                            <name>i</name>
+                        </id>
+                    </symbols>
+                    <declarations>
+                        <varDecl lineno="5" file="dummy.f90">
+                            <name type="F7f86f8507e70">sub1</name>
+                        </varDecl>
+                        <varDecl lineno="6" file="dummy.f90">
+                            <name type="Freal">s1</name>
+                        </varDecl>
+                        <varDecl lineno="7" file="dummy.f90">
+                            <name type="Freal">s2</name>
+                        </varDecl>
+                        <varDecl lineno="8" file="dummy.f90">
+                            <name type="Freal">s3</name>
+                        </varDecl>
+                        <varDecl lineno="6" file="dummy.f90">
+                            <name type="Freal">s4</name>
+                        </varDecl>
+                        <varDecl lineno="7" file="dummy.f90">
+                            <name type="Freal">s5</name>
+                        </varDecl>
+                        <varDecl lineno="8" file="dummy.f90">
+                            <name type="Freal">s6</name>
+                        </varDecl>
+                        <varDecl lineno="10" file="dummy.f90">
+                            <name type="A7f86f850a770">a</name>
+                        </varDecl>
+                        <varDecl lineno="11" file="dummy.f90">
+                            <name type="A7f86f850bb60">b</name>
+                        </varDecl>
+                        <varDecl lineno="12" file="dummy.f90">
+                            <name type="A7f86f850cf50">c</name>
+                        </varDecl>
+                        <varDecl lineno="14" file="dummy.f90">
+                            <name type="A7f86f850e350">d</name>
+                        </varDecl>
+                        <varDecl lineno="15" file="dummy.f90">
+                            <name type="A7f86f850f740">e</name>
+                        </varDecl>
+                        <varDecl lineno="16" file="dummy.f90">
+                            <name type="A7f86f8510b30">f</name>
+                        </varDecl>
+                        <varDecl lineno="18" file="dummy.f90">
+                            <name type="A7f86f8511f30">g</name>
+                        </varDecl>
+                        <varDecl lineno="19" file="dummy.f90">
+                            <name type="A7f86f8513320">h</name>
+                        </varDecl>
+                        <varDecl lineno="20" file="dummy.f90">
+                            <name type="A7f86f8514710">i</name>
+                        </varDecl>
+                    </declarations>
+                    <body>
+                    </body>
+                </FfunctionDefinition>
+            </FcontainsStatement>
+        </FmoduleDefinition>
+    </globalDeclarations>
+</XcodeProgram>

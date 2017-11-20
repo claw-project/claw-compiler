@@ -1,4 +1,4 @@
-# CLAW FORTRAN Compiler 
+# CLAW FORTRAN Compiler
 
 [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
 

@@ -1,6 +1,6 @@
 <claw version="0.4">
   <global type="root">
-    <parameter key="translator" value="cx2x.translator.ClawTranslator"/>
+    <parameter key="translator" value="claw.wani.x2t.translator.ClawTranslator"/>
   </global>
   <sets>
     <set name="claw-external-set"/>
