@@ -262,7 +262,7 @@ private_clause[ClawPragma l]:
 // reshape clause
 reshape_clause[ClawPragma l]
   @init{
-    List<ClawReshapeInfo> r = new ArrayList();
+    List<ReshapeInfo> r = new ArrayList();
   }
   :
     RESHAPE '(' reshape_list[r] ')'
@@ -270,18 +270,18 @@ reshape_clause[ClawPragma l]
 ;
 
 // reshape clause
-reshape_element returns [ClawReshapeInfo i]
+reshape_element returns [ReshapeInfo i]
   @init{
     List<Integer> temp = new ArrayList();
   }
 :
     array_name=IDENTIFIER '(' target_dim=NUMBER ')'
-    { $i = new ClawReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
+    { $i = new ReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
   | array_name=IDENTIFIER '(' target_dim=NUMBER ',' integers_list[temp] ')'
-    { $i = new ClawReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
+    { $i = new ReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
 ;
 
-reshape_list[List<ClawReshapeInfo> r]:
+reshape_list[List<ReshapeInfo> r]:
     info=reshape_element { $r.add($info.i); } ',' reshape_list[$r]
   | info=reshape_element { $r.add($info.i); }
 ;
