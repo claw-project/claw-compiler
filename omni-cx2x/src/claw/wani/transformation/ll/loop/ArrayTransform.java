@@ -11,6 +11,8 @@ import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.translator.ClawTranslator;

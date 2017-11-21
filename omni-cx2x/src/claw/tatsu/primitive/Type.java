@@ -7,6 +7,8 @@ package claw.tatsu.primitive;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
 
 import java.util.List;
 

@@ -10,6 +10,9 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.abstraction.BoundDefinition;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
+import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import helper.TestConstant;
 import org.junit.Test;
 

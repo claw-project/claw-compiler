@@ -9,8 +9,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.fortran.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -719,7 +718,7 @@ public class XcodeML extends Xnode {
     Xnode newParam = createName(nameValue, type);
     Xnode hook = null;
     // Newly created parameter must be added before any optional parameter
-    for(Xnode param : fctType.getParams().getAll()) {
+    for(Xnode param : fctType.getParameters()) {
       XbasicType paramType = getTypeTable().getBasicType(param);
       if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
@@ -727,9 +726,9 @@ public class XcodeML extends Xnode {
       }
     }
     if(hook == null) {
-      fctType.getParams().add(newParam);
+      fctType.addParameters(newParam);
     } else {
-      fctType.getParams().addBefore(hook, newParam);
+      fctType.addParameters(hook, newParam);
     }
     return newParam;
   }
@@ -746,7 +745,7 @@ public class XcodeML extends Xnode {
   public Xnode createAndAddParamIfNotExists(String nameValue, String type,
                                             XfunctionType fctType)
   {
-    for(Xnode p : fctType.getParams().getAll()) {
+    for(Xnode p : fctType.getParameters()) {
       if(p.value().equals(nameValue.toLowerCase())) {
         return null;
       }

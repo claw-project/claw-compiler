@@ -8,6 +8,8 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
 import claw.wani.language.ClawPragma;

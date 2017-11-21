@@ -6,6 +6,8 @@ package helper;
 
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

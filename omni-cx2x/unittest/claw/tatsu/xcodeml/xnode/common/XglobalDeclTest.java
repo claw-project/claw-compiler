@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
 import helper.XmlHelper;
 import org.junit.Test;

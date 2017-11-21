@@ -58,12 +58,11 @@ public class XfunctionTypeTest {
     assertEquals("F0", f.getType());
 
     // Test parameters
-    assertEquals(2, f.getParameterNb());
-    assertEquals(2, f.getParams().count());
-    assertEquals("a", f.getParams().getAll().get(0).value());
-    assertEquals("Fint", f.getParams().getAll().get(0).getType());
-    assertEquals("b", f.getParams().getAll().get(1).value());
-    assertEquals("Fint", f.getParams().getAll().get(1).getType());
+    assertEquals(2, f.getParameters().size());
+    assertEquals("a", f.getParameters().get(0).value());
+    assertEquals("Fint", f.getParameters().get(0).getType());
+    assertEquals("b", f.getParameters().get(1).value());
+    assertEquals("Fint", f.getParameters().get(1).getType());
 
     List<String> names = f.getParamsNames();
     List<String> expected = Arrays.asList("a", "b");

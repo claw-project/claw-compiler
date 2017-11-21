@@ -18,10 +18,7 @@ import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-import claw.tatsu.xcodeml.xnode.fortran.Xmod;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
@@ -221,7 +218,7 @@ public class ParallelizeForward extends ClawTransformation {
      * with no parameters. Thus, we have to matchSeq the correct FfunctionType
      * for the same function/subroutine with the same name in the module
      * symbol table. */
-    if(_fctType.getParameterNb() == 0) {
+    if(_fctType.getParameters().size() == 0) {
       // If not, try to matchSeq the correct FfunctionType in the module definitions
       Xid id = parentModule.getSymbolTable().get(_calledFctName);
 
@@ -377,7 +374,7 @@ public class ParallelizeForward extends ClawTransformation {
 
     XfunctionType parentFctType = xcodeml.getTypeTable().getFunctionType(fDef);
 
-    List<Xnode> params = _fctType.getParams().getAll();
+    List<Xnode> params = _fctType.getParameters();
 
     /* Compute the position of the first new arguments. In the case of a
      * type-bound procedure call, the first parameter declared in the procedure
@@ -464,14 +461,14 @@ public class ParallelizeForward extends ClawTransformation {
       }
     } else {
       // 2. Adapt function/subroutine in which the function call is nested
-      for(Xnode pBase : _fctType.getParams().getAll()) {
+      for(Xnode pBase : _fctType.getParameters()) {
         String original_param = pBase.value();
         if(_fctCallMapping.containsKey(original_param)) {
           original_param = _fctCallMapping.get(original_param);
         }
 
         Xnode pUpdate = null;
-        for(Xnode param : parentFctType.getParams().getAll()) {
+        for(Xnode param : parentFctType.getParameters()) {
           if(original_param.equals(param.value())) {
             pUpdate = param;
           }

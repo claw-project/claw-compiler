@@ -5,6 +5,8 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

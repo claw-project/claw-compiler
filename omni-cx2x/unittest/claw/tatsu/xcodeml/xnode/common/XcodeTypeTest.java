@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

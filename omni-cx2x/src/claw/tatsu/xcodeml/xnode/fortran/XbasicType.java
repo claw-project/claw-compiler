@@ -2,17 +2,19 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
- * representation.
+ * The XbasicType represents the FbasicType (3.3) element in XcodeML
+ * intermediate representation.
  * <p>
  * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:

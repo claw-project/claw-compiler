@@ -5,9 +5,7 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-import claw.tatsu.xcodeml.xnode.fortran.XstructType;
+import claw.tatsu.xcodeml.xnode.fortran.*;
 import helper.XmlHelper;
 import org.junit.Test;
 

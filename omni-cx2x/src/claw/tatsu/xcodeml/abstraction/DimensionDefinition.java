@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
 
 /**
  * Class holding information about defined dimension.

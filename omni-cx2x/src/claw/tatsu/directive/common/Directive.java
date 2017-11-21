@@ -11,6 +11,9 @@ import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
 
 import java.util.ArrayList;

@@ -7,7 +7,6 @@ package claw.tatsu.xcodeml.xnode.fortran;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.common.Xparams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
  * <p>
  * Elements: (params?)
  * - Optional:
- * - params (Xparams)
+ * - params
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
@@ -30,7 +29,8 @@ import java.util.List;
 
 public class XfunctionType extends Xnode {
 
-  private Xparams _params = null;
+  private Xnode _params = null;
+  private List<Xnode> _parameters = null;
 
   /**
    * Basic ctor from Xnode.
@@ -46,9 +46,11 @@ public class XfunctionType extends Xnode {
    * Read inner element information.
    */
   private void readElementInformation() {
-    Xnode paramsNode = matchSeq(Xcode.PARAMS);
-    if(paramsNode != null) {
-      _params = new Xparams(paramsNode);
+    _params = matchSeq(Xcode.PARAMS);
+    if(_params != null) {
+      _parameters = _params.matchAll(Xcode.NAME);
+    } else {
+      _parameters = new ArrayList<>();
     }
   }
 
@@ -118,12 +120,34 @@ public class XfunctionType extends Xnode {
   }
 
   /**
-   * Get the params element.
+   * Get the list of all parameters name node.
    *
-   * @return Params element.
+   * @return List of parameters Xnode objects.
    */
-  public Xparams getParams() {
-    return _params;
+  public List<Xnode> getParameters() {
+    return _parameters;
+  }
+
+  /**
+   * Add a name element to the parameters list.
+   *
+   * @param name The name element to add.
+   */
+  public void addParameters(Xnode name) {
+    _parameters.add(name);
+    _params.append(name);
+  }
+
+  /**
+   * Add a name element to the parameters list before the referenced element.
+   *
+   * @param ref  Referenced element. New element will be added before.
+   * @param name The name element to add.
+   */
+  public void addParameters(Xnode ref, Xnode name) {
+    int index = _parameters.indexOf(ref);
+    _parameters.add(index, name);
+    ref.insertBefore(name);
   }
 
   /**
@@ -133,19 +157,13 @@ public class XfunctionType extends Xnode {
    */
   public List<String> getParamsNames() {
     List<String> parameters = new ArrayList<>();
-    for(Xnode n : _params.getAll()) {
+    if(_parameters == null) {
+      return parameters;
+    }
+    for(Xnode n : _parameters) {
       parameters.add(n.value());
     }
     return parameters;
-  }
-
-  /**
-   * Check the number of parameters of the function.
-   *
-   * @return Number of parameters.
-   */
-  public int getParameterNb() {
-    return (_params == null) ? 0 : _params.getAll().size();
   }
 
   /**
@@ -165,11 +183,11 @@ public class XfunctionType extends Xnode {
    * otherwise.
    */
   public boolean hasParam(String paramName) {
-    if(_params == null) {
+    if(_parameters == null) {
       return false;
     }
-    for(Xnode param : _params.getAll()) {
-      if(param.value().equals(paramName.toLowerCase())) {
+    for(Xnode param : _parameters) {
+      if(param.value().toLowerCase().equals(paramName.toLowerCase())) {
         return true;
       }
     }

@@ -6,6 +6,8 @@ package claw.tatsu.xcodeml.xnode;
 
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
 import org.w3c.dom.Document;
@@ -614,7 +616,7 @@ public class XnodeUtil {
 
     // Retrieve function type to check intents and types of parameters
     XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
-    List<Xnode> parameters = fctType.getParams().getAll();
+    List<Xnode> parameters = fctType.getParameters();
     List<Xnode> arguments = argumentsNode.children();
 
     for(int i = 0; i < parameters.size(); ++i) {

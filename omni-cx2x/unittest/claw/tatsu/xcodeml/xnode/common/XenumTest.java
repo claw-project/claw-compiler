@@ -7,6 +7,7 @@ package claw.tatsu.xcodeml.xnode.common;
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintent;
 import org.junit.Test;
 

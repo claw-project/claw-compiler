@@ -10,9 +10,7 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-import claw.tatsu.xcodeml.xnode.fortran.Xmod;
+import claw.tatsu.xcodeml.xnode.fortran.*;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
 
@@ -145,8 +143,8 @@ public final class Module {
       mod.getIdentifiers().add(importedFctTypeId);
 
       // check if params need to be imported as well
-      if(importedFctType.getParameterNb() > 0) {
-        for(Xnode param : importedFctType.getParams().getAll()) {
+      if(importedFctType.getParameters().size() > 0) {
+        for(Xnode param : importedFctType.getParameters()) {
           mod.importType(xcodeml, param.getType());
         }
       }
@@ -181,8 +179,8 @@ public final class Module {
         mod.createBasicType(XcodeType.INTEGER, Xintent.IN);
     mod.getTypeTable().add(modIntTypeIntentIn);
 
-    List<Xnode> paramsLocal = fctType.getParams().getAll();
-    List<Xnode> paramsMod = fctTypeMod.getParams().getAll();
+    List<Xnode> paramsLocal = fctType.getParameters();
+    List<Xnode> paramsMod = fctTypeMod.getParameters();
 
     if(paramsLocal.size() < paramsMod.size()) {
       throw new IllegalTransformationException(

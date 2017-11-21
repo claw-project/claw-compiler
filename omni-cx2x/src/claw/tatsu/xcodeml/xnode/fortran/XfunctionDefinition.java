@@ -2,11 +2,10 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Module;
-import claw.tatsu.xcodeml.xnode.fortran.Xmod;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.common.*;
 
 /**
  * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -15,10 +14,10 @@ import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
  * Elements: (name, symbols?, params?, declarations?, body)
  * - Required:
  * - name (text)
- * - body (Xbody)
+ * - body
  * - Optional:
  * - symbols (XsymbolTable)
- * - params  (Xparams)
+ * - params
  * - declarations (XdeclTable)
  * <p>
  * Can have lineno and file attributes

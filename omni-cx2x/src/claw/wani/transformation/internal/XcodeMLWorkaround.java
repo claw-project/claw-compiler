@@ -7,7 +7,7 @@ package claw.wani.transformation.internal;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;

@@ -8,7 +8,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import helper.XmlHelper;
 import org.junit.Assert;
