@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
 import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -35,14 +36,47 @@ public class XfunctionTypeTest {
     XfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
     assertFunctionType(f);
 
-    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    XfunctionType emptyFctType =
-        new XfunctionType(xcodeml.createNode(Xcode.F_FUNCTION_TYPE));
-    assertFalse(emptyFctType.hasParam("a"));
-
     XfunctionType clone = f.cloneNode();
     assertNotEquals(clone.element(), f.element());
     assertFunctionType(clone);
+
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+
+    XfunctionType emptyFctType = xcodeml.createFunctionType(
+        xcodeml.getTypeTable().generateHash(XcodeType.FUNCTION));
+    assertFalse(emptyFctType.hasParam("a"));
+
+    Xnode paramA = xcodeml.createName("a", XcodeType.INTEGER.toString());
+    Xnode paramB = xcodeml.createName("b", XcodeType.INTEGER.toString());
+    Xnode paramC = xcodeml.createName("c", XcodeType.INTEGER.toString());
+    Xnode paramD = xcodeml.createName("d", XcodeType.INTEGER.toString());
+    emptyFctType.addParameters(paramB);
+    assertEquals(1, emptyFctType.getParameters().size());
+    emptyFctType.addParameters(paramB, paramA);
+    assertEquals(2, emptyFctType.getParameters().size());
+    emptyFctType.addParameters(paramD, paramC);
+    assertEquals(3, emptyFctType.getParameters().size());
+
+    emptyFctType.addParameters(null);
+    assertEquals(3, emptyFctType.getParameters().size());
+
+    emptyFctType.addParameters(null, null);
+    assertEquals(3, emptyFctType.getParameters().size());
+
+    assertEquals("a", emptyFctType.getParameters().get(0).value());
+    assertEquals("b", emptyFctType.getParameters().get(1).value());
+    assertEquals("c", emptyFctType.getParameters().get(2).value());
+
+    emptyFctType.addParameters(null, paramD);
+    assertEquals(4, emptyFctType.getParameters().size());
+    assertEquals("d", emptyFctType.getParameters().get(3).value());
+
+    List<String> names = emptyFctType.getParamsNames();
+    assertEquals(4, names.size());
+    assertEquals("a", names.get(0));
+    assertEquals("b", names.get(1));
+    assertEquals("c", names.get(2));
+    assertEquals("d", names.get(3));
   }
 
   private void assertFunctionType(XfunctionType f) {
@@ -72,5 +106,7 @@ public class XfunctionTypeTest {
     }
     assertTrue(f.hasParam("a"));
     assertFalse(f.hasParam("z"));
+
+    assertNotNull(f.toString());
   }
 }

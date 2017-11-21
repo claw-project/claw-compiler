@@ -428,7 +428,7 @@ public class XcodeML extends Xnode {
   }
 
   /**
-   * Create a new FunctionCall node with name and arguments as children nodes.
+   * Create a new functionCall node with name and arguments as children nodes.
    * <p>
    * {@code
    * <functionCall type="returnType">
@@ -453,6 +453,26 @@ public class XcodeML extends Xnode {
     fctCall.append(fctNameNode);
     fctCall.append(createNode(Xcode.ARGUMENTS));
     return fctCall;
+  }
+
+  /**
+   * Create a new FfunctionType with empty params child.
+   *
+   * {@code
+   * <functionCall type="returnType">
+   * <name type="fctType">fctName</name>
+   * <arguments></arguments>
+   * </functionCall>
+   * }
+   *
+   * @param type Type hash of the FfunctionType node.
+   *
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public XfunctionType createFunctionType(String type) {
+    Xnode functionType = createNode(Xcode.F_FUNCTION_TYPE);
+    functionType.append(createNode(Xcode.PARAMS));
+    return new XfunctionType(functionType);
   }
 
   /**

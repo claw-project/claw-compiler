@@ -26,11 +26,10 @@ import java.util.List;
  *
  * @author clementval
  */
-
 public class XfunctionType extends Xnode {
 
+  private final List<Xnode> _parameters;
   private Xnode _params = null;
-  private List<Xnode> _parameters = null;
 
   /**
    * Basic ctor from Xnode.
@@ -39,19 +38,9 @@ public class XfunctionType extends Xnode {
    */
   public XfunctionType(Xnode node) {
     super(node == null ? null : node.element());
-    readElementInformation();
-  }
-
-  /**
-   * Read inner element information.
-   */
-  private void readElementInformation() {
     _params = matchSeq(Xcode.PARAMS);
-    if(_params != null) {
-      _parameters = _params.matchAll(Xcode.NAME);
-    } else {
-      _parameters = new ArrayList<>();
-    }
+    _parameters = (_params != null) ?
+        _params.matchAll(Xcode.NAME) : new ArrayList<Xnode>();
   }
 
   /**
@@ -134,8 +123,10 @@ public class XfunctionType extends Xnode {
    * @param name The name element to add.
    */
   public void addParameters(Xnode name) {
-    _parameters.add(name);
-    _params.append(name);
+    if(name != null) {
+      _parameters.add(name);
+      _params.append(name);
+    }
   }
 
   /**
@@ -145,9 +136,16 @@ public class XfunctionType extends Xnode {
    * @param name The name element to add.
    */
   public void addParameters(Xnode ref, Xnode name) {
-    int index = _parameters.indexOf(ref);
-    _parameters.add(index, name);
-    ref.insertBefore(name);
+    if(name != null) {
+      int index = _parameters.indexOf(ref);
+      if(index >= 0) {
+        _parameters.add(index, name);
+        ref.insertBefore(name);
+      } else {
+        _parameters.add(name);
+        _params.append(name);
+      }
+    }
   }
 
   /**
@@ -156,14 +154,11 @@ public class XfunctionType extends Xnode {
    * @return List of string.
    */
   public List<String> getParamsNames() {
-    List<String> parameters = new ArrayList<>();
-    if(_parameters == null) {
-      return parameters;
-    }
+    List<String> parametersName = new ArrayList<>();
     for(Xnode n : _parameters) {
-      parameters.add(n.value());
+      parametersName.add(n.value());
     }
-    return parameters;
+    return parametersName;
   }
 
   /**
@@ -183,9 +178,6 @@ public class XfunctionType extends Xnode {
    * otherwise.
    */
   public boolean hasParam(String paramName) {
-    if(_parameters == null) {
-      return false;
-    }
     for(Xnode param : _parameters) {
       if(param.value().toLowerCase().equals(paramName.toLowerCase())) {
         return true;
