@@ -4,7 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -194,7 +194,7 @@ public class XdeclTable extends Xnode {
    *
    * @param fct Function definition which is checked.
    */
-  public void checkOrder(XfunctionDefinition fct) {
+  public void checkOrder(FfunctionDefinition fct) {
     int functionLineNo = fct.lineNo();
     List<Xnode> decl = new ArrayList<>();
 

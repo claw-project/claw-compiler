@@ -72,8 +72,8 @@ public class Parallelize extends ClawTransformation {
   private final List<String> _arrayFieldsInOut;
   private final List<String> _scalarFields;
   private int _overDimensions;
-  private XfunctionDefinition _fctDef;
-  private XfunctionType _fctType;
+  private FfunctionDefinition _fctDef;
+  private FfunctionType _fctType;
 
   /**
    * Constructs a new Parallelize transformation triggered from a specific
@@ -215,7 +215,7 @@ public class Parallelize extends ClawTransformation {
 
         if(xcodeml.getTypeTable().isBasicType(decl)) {
           String varName = decl.matchSeq(Xcode.NAME).value();
-          XbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
+          FbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
 
           if(bType.isArray()) {
             if(bType.hasIntent() || bType.isPointer()) {
@@ -357,7 +357,7 @@ public class Parallelize extends ClawTransformation {
     }
 
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
-      XmoduleDefinition modDef = _fctDef.findParentModule();
+      FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
         Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
             translator.getModCache(), false);
@@ -589,7 +589,7 @@ public class Parallelize extends ClawTransformation {
    */
   private void insertVariableToIterateOverDimension(XcodeProgram xcodeml) {
     // Create type and declaration for iterations over the new dimensions
-    XbasicType bt = xcodeml.createBasicType(XcodeType.INTEGER, Xintent.IN);
+    FbasicType bt = xcodeml.createBasicType(FortranType.INTEGER, Intent.IN);
     xcodeml.getTypeTable().add(bt);
 
     // For each dimension defined in the directive
@@ -618,7 +618,7 @@ public class Parallelize extends ClawTransformation {
         param.setBooleanAttribute(Xattr.IS_INSERTED, true);
       }
       // Create induction variable declaration
-      xcodeml.createIdAndDecl(dimension.getIdentifier(), XcodeType.INTEGER,
+      xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER,
           XstorageClass.F_LOCAL, _fctDef, false);
     }
   }

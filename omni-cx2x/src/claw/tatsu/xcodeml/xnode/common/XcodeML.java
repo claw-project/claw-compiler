@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * The XcodeML class represents the basic XcodeML file unit. Both XcodeProgram
- * and Xmod inherit from this class.
+ * and FortranModule inherit from this class.
  *
  * @author clementval
  */
@@ -65,7 +65,7 @@ public class XcodeML extends Xnode {
   }
 
   /**
-   * Get the type table of the Xmod module.
+   * Get the type table of the FortranModule module.
    *
    * @return The types table.
    */
@@ -78,11 +78,11 @@ public class XcodeML extends Xnode {
    *
    * @return A list of all function definitions in the XcodeProgram unit.
    */
-  public List<XfunctionDefinition> getAllFctDef() {
-    List<XfunctionDefinition> definitions = new ArrayList<>();
+  public List<FfunctionDefinition> getAllFctDef() {
+    List<FfunctionDefinition> definitions = new ArrayList<>();
     List<Xnode> nodes = matchAll(Xcode.F_FUNCTION_DEFINITION);
     for(Xnode fctDef : nodes) {
-      definitions.add(new XfunctionDefinition(fctDef));
+      definitions.add(new FfunctionDefinition(fctDef));
     }
     return definitions;
   }
@@ -128,13 +128,13 @@ public class XcodeML extends Xnode {
       throws IllegalTransformationException
   {
     String typeValue = base.getType();
-    if(!XcodeType.INTEGER.isOfType(typeValue)) {
+    if(!FortranType.INTEGER.isOfType(typeValue)) {
       throw new IllegalTransformationException("Only integer variable are " +
           "supported as lower/upper bound value for promoted arrays.");
     }
 
-    XbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
-    XbasicType bType = createBasicType(XcodeType.INTEGER, Xintent.NONE);
+    FbasicType type = xcodemlSrc.getTypeTable().getBasicType(typeValue);
+    FbasicType bType = createBasicType(FortranType.INTEGER, Intent.NONE);
     if(type != null) {
       bType.setIntent(type.getIntent());
     }
@@ -163,7 +163,7 @@ public class XcodeML extends Xnode {
     Xnode importedType = importNode(type);
     getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
-        && !XcodeType.isBuiltInType(importedType.getAttribute(Xattr.REF)))
+        && !FortranType.isBuiltInType(importedType.getAttribute(Xattr.REF)))
     {
       importType(src, importedType.getAttribute(Xattr.REF));
     }
@@ -316,9 +316,9 @@ public class XcodeML extends Xnode {
    *                       dummy argument. If false, the variable is append at
    *                       the end.
    */
-  public void createIdAndDecl(String name, XcodeType type,
+  public void createIdAndDecl(String name, FortranType type,
                               XstorageClass sclass,
-                              XfunctionDefinition fctDef,
+                              FfunctionDefinition fctDef,
                               boolean afterDummyArgs)
   {
     createIdAndDecl(name, type.toString(), sclass, fctDef, afterDummyArgs);
@@ -337,7 +337,7 @@ public class XcodeML extends Xnode {
    *                       the end.
    */
   public void createIdAndDecl(String name, String type, XstorageClass sclass,
-                              XfunctionDefinition fctDef,
+                              FfunctionDefinition fctDef,
                               boolean afterDummyArgs)
   {
     Xid id = createId(type, sclass, name);
@@ -347,7 +347,7 @@ public class XcodeML extends Xnode {
 
     // Check where is the last dummy arguments in the declaration
     if(afterDummyArgs) {
-      XfunctionType fctType = getTypeTable().getFunctionType(fctDef);
+      FfunctionType fctType = getTypeTable().getFunctionType(fctDef);
       List<String> parameters = fctType.getParamsNames();
 
       for(Xnode n : fctDef.getDeclarationTable().values()) {
@@ -403,7 +403,7 @@ public class XcodeML extends Xnode {
    * @param scope Value of the scope attribute.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createVar(XcodeType type, String value, Xscope scope) {
+  public Xnode createVar(FortranType type, String value, Xscope scope) {
     return createVar(type.toString(), value, scope);
   }
 
@@ -469,10 +469,10 @@ public class XcodeML extends Xnode {
    *
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public XfunctionType createFunctionType(String type) {
+  public FfunctionType createFunctionType(String type) {
     Xnode functionType = createNode(Xcode.F_FUNCTION_TYPE);
     functionType.append(createNode(Xcode.PARAMS));
-    return new XfunctionType(functionType);
+    return new FfunctionType(functionType);
   }
 
   /**
@@ -491,7 +491,7 @@ public class XcodeML extends Xnode {
    * @param var  Var node nested in the varRef element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createArrayRef(XbasicType type, Xnode var) {
+  public Xnode createArrayRef(FbasicType type, Xnode var) {
     Xnode ref = createNode(Xcode.F_ARRAY_REF);
     ref.setType(type.getRef());
     Xnode varRef = createNode(Xcode.VAR_REF);
@@ -513,7 +513,7 @@ public class XcodeML extends Xnode {
    * @param idValue Value of the name inner element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xid createId(XcodeType type, XstorageClass sclass, String idValue)
+  public Xid createId(FortranType type, XstorageClass sclass, String idValue)
   {
     return createId(type.toString(), sclass, idValue);
   }
@@ -553,7 +553,7 @@ public class XcodeML extends Xnode {
    * @param nameValue Value of the name inner node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createVarDecl(XcodeType nameType, String nameValue) {
+  public Xnode createVarDecl(FortranType nameType, String nameValue) {
     return createVarDecl(nameType.toString(), nameValue);
   }
 
@@ -591,7 +591,7 @@ public class XcodeML extends Xnode {
    * @return Newly create FbasicType with a corresponding generated type hash
    * value.
    */
-  public XbasicType createBasicType(XcodeType type, Xintent intent) {
+  public FbasicType createBasicType(FortranType type, Intent intent) {
     String typeHash = getTypeTable().generateHash(type);
     return createBasicType(typeHash, type.toString(), intent);
   }
@@ -608,13 +608,13 @@ public class XcodeML extends Xnode {
    * @param intent Optional intent value.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public XbasicType createBasicType(String type, String ref, Xintent intent) {
-    XbasicType bt = new XbasicType(createNode(Xcode.F_BASIC_TYPE));
+  public FbasicType createBasicType(String type, String ref, Intent intent) {
+    FbasicType bt = new FbasicType(createNode(Xcode.F_BASIC_TYPE));
     bt.setType(type);
     if(ref != null && !ref.isEmpty()) {
       bt.setRef(ref);
     }
-    if(intent != null && intent != Xintent.NONE) {
+    if(intent != null && intent != Intent.NONE) {
       bt.setAttribute(Xattr.INTENT, intent.toString());
     }
     return bt;
@@ -733,13 +733,13 @@ public class XcodeML extends Xnode {
    *                  parameter.
    */
   public Xnode createAndAddParam(String nameValue, String type,
-                                 XfunctionType fctType)
+                                 FfunctionType fctType)
   {
     Xnode newParam = createName(nameValue, type);
     Xnode hook = null;
     // Newly created parameter must be added before any optional parameter
     for(Xnode param : fctType.getParameters()) {
-      XbasicType paramType = getTypeTable().getBasicType(param);
+      FbasicType paramType = getTypeTable().getBasicType(param);
       if(paramType.getBooleanAttribute(Xattr.IS_OPTIONAL)) {
         hook = param;
         break;
@@ -763,7 +763,7 @@ public class XcodeML extends Xnode {
    *                  parameter.
    */
   public Xnode createAndAddParamIfNotExists(String nameValue, String type,
-                                            XfunctionType fctType)
+                                            FfunctionType fctType)
   {
     for(Xnode p : fctType.getParameters()) {
       if(p.value().equals(nameValue.toLowerCase())) {
@@ -798,7 +798,7 @@ public class XcodeML extends Xnode {
     Xnode valueList = createNode(Xcode.VALUE_LIST);
     for(String charConstant : charConstants) {
       // Create the char constant type
-      Xnode charType = createBasicType(XcodeType.CHARACTER, Xintent.NONE);
+      Xnode charType = createBasicType(FortranType.CHARACTER, Intent.NONE);
       Xnode len = createNode(Xcode.LEN);
       len.append(createIntConstant(charConstant.length()));
       charType.append(len);

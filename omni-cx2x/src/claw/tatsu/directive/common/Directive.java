@@ -11,10 +11,10 @@ import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public final class Directive {
    *                decorated.
    */
   public static void generateLoopSeq(XcodeProgram xcodeml,
-                                     XfunctionDefinition fctDef,
+                                     FfunctionDefinition fctDef,
                                      String noDependencyDirective)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
@@ -232,7 +232,7 @@ public final class Directive {
    * @return List of variables names that are function input/output.
    */
   public static List<String> getPresentVariables(XcodeProgram xcodeml,
-                                                 XfunctionDefinition fctDef)
+                                                 FfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
@@ -242,10 +242,10 @@ public final class Directive {
         if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
-        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
-        if(bt != null && (bt.getIntent() == Xintent.IN
-            || bt.getIntent() == Xintent.OUT
-            || bt.getIntent() == Xintent.INOUT) && bt.isArray())
+        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if(bt != null && (bt.getIntent() == Intent.IN
+            || bt.getIntent() == Intent.OUT
+            || bt.getIntent() == Intent.INOUT) && bt.isArray())
         {
           variables.add(name.value());
         }
@@ -262,21 +262,21 @@ public final class Directive {
    * @return List of variables names that are function local.
    */
   public static List<String> getLocalVariables(XcodeProgram xcodeml,
-                                               XfunctionDefinition fctDef)
+                                               FfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
     for(Xnode decl : declarations) {
       if(decl.opcode() == Xcode.VAR_DECL) {
         Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!XcodeType.isBuiltInType(decl.getType())
+        if(!FortranType.isBuiltInType(decl.getType())
             && !(xcodeml.getTypeTable().isBasicType(decl)))
         {
           continue; // Only check basic type
         }
-        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
-        if((bt == null && XcodeType.isBuiltInType(decl.getType()))
-            || (bt != null && bt.getIntent() == Xintent.NONE))
+        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if((bt == null && FortranType.isBuiltInType(decl.getType()))
+            || (bt != null && bt.getIntent() == Intent.NONE))
         {
           variables.add(name.value());
         }
@@ -293,7 +293,7 @@ public final class Directive {
    * @return List of variables names that are function local.
    */
   public static List<String> getLocalArrays(XcodeProgram xcodeml,
-                                            XfunctionDefinition fctDef)
+                                            FfunctionDefinition fctDef)
   {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
@@ -303,8 +303,8 @@ public final class Directive {
         if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
-        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
-        if(bt != null && bt.getIntent() == Xintent.NONE && bt.isArray()
+        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if(bt != null && bt.getIntent() == Intent.NONE && bt.isArray()
             && bt.isAllocatable())
         {
           variables.add(name.value());
@@ -344,7 +344,7 @@ public final class Directive {
    *                generated.
    */
   public static void generateRoutineDirectives(XcodeProgram xcodeml,
-                                               XfunctionDefinition fctDef)
+                                               FfunctionDefinition fctDef)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
         == CompilerDirective.NONE)
@@ -366,7 +366,7 @@ public final class Directive {
       } else {
         continue;
       }
-      XfunctionDefinition calledFctDef =
+      FfunctionDefinition calledFctDef =
           xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
       if(calledFctDef == null) {
         Xnode meaningfulParentNode = fctDef.findParentModule();
@@ -379,7 +379,7 @@ public final class Directive {
         for(Xnode fDef : fctDefs) {
           Xnode name = fDef.matchSeq(Xcode.NAME);
           if(name != null && name.value().equals(fctName)) {
-            calledFctDef = new XfunctionDefinition(fDef);
+            calledFctDef = new FfunctionDefinition(fDef);
             break;
           }
         }

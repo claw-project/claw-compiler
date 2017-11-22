@@ -4,7 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -179,7 +179,7 @@ public class XnodeTest {
 
     // Append/insert
     Xnode intConst = xcodeml.createIntConstant(10);
-    XfunctionDefinition fctDef = p.findParentFunction();
+    FfunctionDefinition fctDef = p.findParentFunction();
     Xnode clone = intConst.cloneNode();
     assertNotNull(clone);
     assertNotEquals(clone.element(), intConst.element());

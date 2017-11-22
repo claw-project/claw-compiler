@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -16,8 +16,8 @@ import java.util.Map;
  * <p>
  * Elements: (FfunctionDefinition | FmoduleDefinition)*
  * - Optional:
- * - FfunctionDefinition (XfunctionDefinition)
- * - FmoduleDefinition (XmoduleDefinition)
+ * - FfunctionDefinition (FfunctionDefinition)
+ * - FmoduleDefinition (FmoduleDefinition)
  *
  * @author clementval
  */
@@ -47,10 +47,10 @@ public class XglobalDeclTable extends Xnode {
     Xnode crt = firstChild();
     while(crt != null) {
       if(crt.opcode() == Xcode.F_FUNCTION_DEFINITION) {
-        XfunctionDefinition fctDef = new XfunctionDefinition(crt);
+        FfunctionDefinition fctDef = new FfunctionDefinition(crt);
         _table.put(fctDef.getName(), fctDef);
       } else if(crt.opcode() == Xcode.F_MODULE_DEFINITION) {
-        XmoduleDefinition moduleDef = new XmoduleDefinition(crt);
+        FmoduleDefinition moduleDef = new FmoduleDefinition(crt);
         _table.put(moduleDef.getName(), moduleDef);
       }
       crt = crt.nextSibling();
@@ -70,13 +70,13 @@ public class XglobalDeclTable extends Xnode {
    * Get a specific module declaration based on its name.
    *
    * @param name The name of the module to be returned.
-   * @return A XmoduleDefinition object if key is found. Null otherwise.
+   * @return A FmoduleDefinition object if key is found. Null otherwise.
    */
-  public XmoduleDefinition getModuleDefinition(String name) {
+  public FmoduleDefinition getModuleDefinition(String name) {
     if(_table.containsKey(name)) {
       Xnode el = _table.get(name);
-      if(el instanceof XmoduleDefinition) {
-        return (XmoduleDefinition) el;
+      if(el instanceof FmoduleDefinition) {
+        return (FmoduleDefinition) el;
       }
     }
     return null;
@@ -89,17 +89,17 @@ public class XglobalDeclTable extends Xnode {
    * @param fctName Function's name.
    * @return The function definition if found. Null otherwise.
    */
-  public XfunctionDefinition getFunctionDefinition(String fctName) {
+  public FfunctionDefinition getFunctionDefinition(String fctName) {
     if(_table.containsKey(fctName)) {
       Xnode el = _table.get(fctName);
-      if(el instanceof XfunctionDefinition) {
-        return (XfunctionDefinition) el;
+      if(el instanceof FfunctionDefinition) {
+        return (FfunctionDefinition) el;
       }
     } else {
       for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
-        if(entry.getValue() instanceof XmoduleDefinition) {
-          XmoduleDefinition mod = (XmoduleDefinition) entry.getValue();
-          XfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
+        if(entry.getValue() instanceof FmoduleDefinition) {
+          FmoduleDefinition mod = (FmoduleDefinition) entry.getValue();
+          FfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
           if(fctDef != null) {
             return fctDef;
           }
@@ -117,7 +117,7 @@ public class XglobalDeclTable extends Xnode {
    */
   public boolean hasModuleDefinition(String name) {
     return _table.containsKey(name) &&
-        (_table.get(name) instanceof XmoduleDefinition);
+        (_table.get(name) instanceof FmoduleDefinition);
   }
 
   /**
@@ -128,7 +128,7 @@ public class XglobalDeclTable extends Xnode {
    */
   public boolean hasFunctionDefinition(String name) {
     return _table.containsKey(name) &&
-        (_table.get(name) instanceof XfunctionDefinition);
+        (_table.get(name) instanceof FfunctionDefinition);
   }
 
   /**

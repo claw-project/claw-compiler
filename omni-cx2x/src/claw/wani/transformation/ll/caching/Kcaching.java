@@ -10,9 +10,9 @@ import claw.tatsu.directive.common.Directive;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
@@ -80,7 +80,7 @@ public class Kcaching extends ClawTransformation {
     // Check if there is an assignment
 
     // 1. Find the function/module declaration
-    XfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
+    FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
 
     for(String data : _claw.getDataClauseValues()) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
@@ -119,7 +119,7 @@ public class Kcaching extends ClawTransformation {
    * @param translator Current instance of the translator.
    * @throws Exception If something prevent the transformation to be done.
    */
-  private void transformData(XcodeProgram xcodeml, XfunctionDefinition fctDef,
+  private void transformData(XcodeProgram xcodeml, FfunctionDefinition fctDef,
                              String data,
                              Translator translator)
       throws Exception
@@ -151,7 +151,7 @@ public class Kcaching extends ClawTransformation {
    * @throws Exception If something prevent the transformation to be done.
    */
   private void transformAssignStmt(XcodeProgram xcodeml,
-                                   XfunctionDefinition fctDef,
+                                   FfunctionDefinition fctDef,
                                    String data,
                                    Xnode stmt,
                                    Translator translator) throws Exception
@@ -253,7 +253,7 @@ public class Kcaching extends ClawTransformation {
    * @throws IllegalTransformationException if symbol id is not found.
    */
   private List<Integer> generateInferredOffsets(XcodeProgram xcodeml,
-                                                XfunctionDefinition fctDef,
+                                                FfunctionDefinition fctDef,
                                                 String var)
       throws IllegalTransformationException
   {
@@ -264,7 +264,7 @@ public class Kcaching extends ClawTransformation {
           _claw.getPragma().lineNo()
       );
     }
-    XbasicType basicType = xcodeml.getTypeTable().getBasicType(id);
+    FbasicType basicType = xcodeml.getTypeTable().getBasicType(id);
     int dim = basicType.getDimensions();
     List<Integer> offsets = new ArrayList<>();
     for(int i = 0; i < dim; ++i) {
@@ -287,25 +287,25 @@ public class Kcaching extends ClawTransformation {
    */
   private Xnode generateCacheVarAndAssignStmt(XcodeProgram xcodeml, String var,
                                               String type,
-                                              XfunctionDefinition fctDef,
+                                              FfunctionDefinition fctDef,
                                               Xnode rhs,
                                               Xnode stmt)
   {
-    XbasicType t = xcodeml.getTypeTable().getBasicType(type); // TODO getType
+    FbasicType t = xcodeml.getTypeTable().getBasicType(type); // TODO getType
     if(t.getIntent() != null || t.isAllocatable()) {
       // Type has an intent ... duplicate it and remove it
-      XbasicType newType = t.cloneNode();
-      type = xcodeml.getTypeTable().generateHash(XcodeType.REAL);
+      FbasicType newType = t.cloneNode();
+      type = xcodeml.getTypeTable().generateHash(FortranType.REAL);
       newType.setType(type);
       newType.removeAttribute(Xattr.INTENT);
       newType.removeAttribute(Xattr.IS_ALLOCATABLE);
 
-      XbasicType ref = xcodeml.getTypeTable().getBasicType(newType.getRef());
+      FbasicType ref = xcodeml.getTypeTable().getBasicType(newType.getRef());
       if(ref != null && (ref.isAllocatable() || ref.hasIntent())) {
         // TODO is there several level to reach ref ? Check if ref is Freal ...
-        XbasicType newRef = ref.cloneNode();
+        FbasicType newRef = ref.cloneNode();
         // TODO generate appropriate type
-        String refType = xcodeml.getTypeTable().generateHash(XcodeType.REAL);
+        String refType = xcodeml.getTypeTable().generateHash(FortranType.REAL);
         newRef.setType(refType);
         newRef.removeAttribute(Xattr.INTENT);
         newRef.removeAttribute(Xattr.IS_ALLOCATABLE);
@@ -360,7 +360,7 @@ public class Kcaching extends ClawTransformation {
   }
 
   private List<Xnode> checkOffsetAndGetArrayRefs(XcodeProgram xcodeml,
-                                                 XfunctionDefinition fctDef,
+                                                 FfunctionDefinition fctDef,
                                                  String var)
       throws IllegalTransformationException
   {

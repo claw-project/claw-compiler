@@ -5,9 +5,9 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -722,11 +722,11 @@ public class Xnode {
   /**
    * Find module definition node in which the current node is nested if any.
    *
-   * @return A XmoduleDefinition node if found. Null otherwise.
+   * @return A FmoduleDefinition node if found. Null otherwise.
    */
-  public XmoduleDefinition findParentModule() {
+  public FmoduleDefinition findParentModule() {
     Xnode moduleDef = matchAncestor(Xcode.F_MODULE_DEFINITION);
-    return (moduleDef != null) ? new XmoduleDefinition(moduleDef) : null;
+    return (moduleDef != null) ? new FmoduleDefinition(moduleDef) : null;
   }
 
   /**
@@ -762,7 +762,7 @@ public class Xnode {
     switch(opcode()) {
       case F_ARRAY_REF:
         String type = getAttribute(Xattr.TYPE);
-        if(XcodeType.isBuiltInType(type)) {
+        if(FortranType.isBuiltInType(type)) {
           Xnode child = firstChild();
           return (child != null) ? child.getAttribute(Xattr.TYPE) : "";
         }
@@ -883,12 +883,12 @@ public class Xnode {
    *
    * @return The function definition found. Null if nothing found.
    */
-  public XfunctionDefinition findParentFunction() {
+  public FfunctionDefinition findParentFunction() {
     Xnode fctDef = matchAncestor(Xcode.F_FUNCTION_DEFINITION);
     if(fctDef == null) {
       return null;
     }
-    return new XfunctionDefinition(fctDef);
+    return new FfunctionDefinition(fctDef);
   }
 
   /**

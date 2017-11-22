@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class XglobalDeclTest {
     assertTrue(gdTable.hasDefinition("fct1"));
     assertTrue(gdTable.hasFunctionDefinition("fct1"));
     assertFalse(gdTable.hasModuleDefinition("fct1"));
-    XfunctionDefinition fDef = gdTable.getFunctionDefinition("fct1");
+    FfunctionDefinition fDef = gdTable.getFunctionDefinition("fct1");
     assertNotNull(fDef);
     assertEquals("fct1", fDef.getName());
     assertNotNull(fDef.body());
@@ -51,7 +51,7 @@ public class XglobalDeclTest {
     assertTrue(gdTable.hasDefinition("module"));
     assertFalse(gdTable.hasFunctionDefinition("module"));
     assertTrue(gdTable.hasModuleDefinition("module"));
-    XmoduleDefinition mDef = gdTable.getModuleDefinition("module");
+    FmoduleDefinition mDef = gdTable.getModuleDefinition("module");
     assertNotNull(mDef);
     assertEquals("module", mDef.getName());
     assertEquals(4, mDef.lineNo());

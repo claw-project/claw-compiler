@@ -11,8 +11,8 @@ import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
@@ -166,7 +166,7 @@ public class ArrayTransform extends ClawBlockTransformation {
     ClawTranslator ct = (ClawTranslator) translator;
 
     // 1. Find the function/module declaration TODO handle module/program ?
-    XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
+    FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
     Xnode grip = _clawStart.getPragma();
     for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
       grip = generateDoStmtNotation(xcodeml, ct, fctDef,
@@ -195,7 +195,7 @@ public class ArrayTransform extends ClawBlockTransformation {
    */
   private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
                                        ClawTranslator translator,
-                                       XfunctionDefinition fctDef,
+                                       FfunctionDefinition fctDef,
                                        List<Xnode> ranges,
                                        List<Xnode> statements,
                                        Xnode doStmtGrip)
@@ -217,7 +217,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       // 2.2 inject a new entry in the symbol table
       if(!fctDef.getSymbolTable().contains(inductionVars[i])) {
-        Xid inductionVarId = xcodeml.createId(XcodeType.INTEGER,
+        Xid inductionVarId = xcodeml.createId(FortranType.INTEGER,
             XstorageClass.F_LOCAL, inductionVars[i]);
         fctDef.getSymbolTable().add(inductionVarId, false);
       }
@@ -225,12 +225,12 @@ public class ArrayTransform extends ClawBlockTransformation {
       // 2.3 inject a new entry in the declaration table
       if(!fctDef.getDeclarationTable().contains(inductionVars[i])) {
         Xnode inductionVarDecl =
-            xcodeml.createVarDecl(XcodeType.INTEGER, inductionVars[i]);
+            xcodeml.createVarDecl(FortranType.INTEGER, inductionVars[i]);
         fctDef.getDeclarationTable().add(inductionVarDecl);
       }
 
       // 2.4 create do statements
-      Xnode inductionVar = xcodeml.createVar(XcodeType.INTEGER, inductionVars[i],
+      Xnode inductionVar = xcodeml.createVar(FortranType.INTEGER, inductionVars[i],
           Xscope.LOCAL);
       Xnode range;
       if(ranges.get(i).getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
@@ -258,7 +258,7 @@ public class ArrayTransform extends ClawBlockTransformation {
           if(el.opcode() == Xcode.INDEX_RANGE) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
-                xcodeml.createVar(XcodeType.INTEGER, induction, Xscope.LOCAL);
+                xcodeml.createVar(FortranType.INTEGER, induction, Xscope.LOCAL);
 
             Xnode arrayIdx = xcodeml.createNode(Xcode.ARRAY_INDEX);
             arrayIdx.append(inductionVar);

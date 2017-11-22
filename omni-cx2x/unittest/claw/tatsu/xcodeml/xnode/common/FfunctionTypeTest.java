@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -15,11 +15,11 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Test XfunctionType features
+ * Test FfunctionType features
  *
  * @author clementval
  */
-public class XfunctionTypeTest {
+public class FfunctionTypeTest {
 
   private static final String fctType1 = "<FfunctionType type=\"F0\" " +
       "return_type=\"Freal\"><params><name type=\"Fint\">a</name>" +
@@ -33,23 +33,23 @@ public class XfunctionTypeTest {
    */
   @Test
   public void simpleFctTypeTest() {
-    XfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
+    FfunctionType f = XmlHelper.createXfctTypeFromString(fctType1);
     assertFunctionType(f);
 
-    XfunctionType clone = f.cloneNode();
+    FfunctionType clone = f.cloneNode();
     assertNotEquals(clone.element(), f.element());
     assertFunctionType(clone);
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
 
-    XfunctionType emptyFctType = xcodeml.createFunctionType(
-        xcodeml.getTypeTable().generateHash(XcodeType.FUNCTION));
+    FfunctionType emptyFctType = xcodeml.createFunctionType(
+        xcodeml.getTypeTable().generateHash(FortranType.FUNCTION));
     assertFalse(emptyFctType.hasParam("a"));
 
-    Xnode paramA = xcodeml.createName("a", XcodeType.INTEGER.toString());
-    Xnode paramB = xcodeml.createName("b", XcodeType.INTEGER.toString());
-    Xnode paramC = xcodeml.createName("c", XcodeType.INTEGER.toString());
-    Xnode paramD = xcodeml.createName("d", XcodeType.INTEGER.toString());
+    Xnode paramA = xcodeml.createName("a", FortranType.INTEGER.toString());
+    Xnode paramB = xcodeml.createName("b", FortranType.INTEGER.toString());
+    Xnode paramC = xcodeml.createName("c", FortranType.INTEGER.toString());
+    Xnode paramD = xcodeml.createName("d", FortranType.INTEGER.toString());
     emptyFctType.addParameters(paramB);
     assertEquals(1, emptyFctType.getParameters().size());
     emptyFctType.addParameters(paramB, paramA);
@@ -79,7 +79,7 @@ public class XfunctionTypeTest {
     assertEquals("d", names.get(3));
   }
 
-  private void assertFunctionType(XfunctionType f) {
+  private void assertFunctionType(FfunctionType f) {
     assertNotNull(f);
 
     assertEquals("Freal", f.getReturnType());

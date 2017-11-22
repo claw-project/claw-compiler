@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class XdeclTableTest {
     List<Xnode> modules = xcodeml.matchAll(Xcode.F_MODULE_DEFINITION);
     assertEquals(1, modules.size());
 
-    XmoduleDefinition mod = new XmoduleDefinition(modules.get(0));
+    FmoduleDefinition mod = new FmoduleDefinition(modules.get(0));
     XdeclTable modDecl = mod.getDeclarationTable();
     assertNotNull(modDecl);
     List<Xnode> modDeclarations = modDecl.values();
@@ -83,7 +83,7 @@ public class XdeclTableTest {
     List<Xnode> functions = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
     assertEquals(1, functions.size());
 
-    XfunctionDefinition fctDef = new XfunctionDefinition(functions.get(0));
+    FfunctionDefinition fctDef = new FfunctionDefinition(functions.get(0));
     XdeclTable fctDecl = fctDef.getDeclarationTable();
     assertNotNull(fctDecl);
     List<Xnode> fctDeclarations = fctDecl.values();

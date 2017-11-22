@@ -45,20 +45,20 @@ public final class Field {
    *                                        in typeTable.
    */
   public static void promote(PromotionInfo fieldInfo,
-                             XfunctionDefinition fctDef,
+                             FfunctionDefinition fctDef,
                              XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
     Xid id = fctDef.getSymbolTable().get(fieldInfo.getIdentifier());
     Xnode decl = fctDef.getDeclarationTable().get(fieldInfo.getIdentifier());
-    XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
+    FbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
 
-    if(!XcodeType.isBuiltInType(id.getType()) && crtType == null) {
+    if(!FortranType.isBuiltInType(id.getType()) && crtType == null) {
       throw new IllegalTransformationException("Basic type of field " +
           fieldInfo.getIdentifier() + " could not be found");
     }
 
-    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef);
+    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef);
     if(fctType == null) {
       throw new IllegalTransformationException("Function type " +
           fctDef.getType() + " could not be found", fctDef.lineNo());
@@ -71,14 +71,14 @@ public final class Field {
           + "enough information. Dimension empty!", decl.lineNo());
     }
 
-    String type = xcodeml.getTypeTable().generateHash(XcodeType.ARRAY);
-    XbasicType newType;
+    String type = xcodeml.getTypeTable().generateHash(FortranType.ARRAY);
+    FbasicType newType;
     if(crtType != null && crtType.isArray()) {
       fieldInfo.setPromotionType(PromotionInfo.PromotionType.ARRAY_TO_ARRAY);
-      if(XcodeType.isBuiltInType(id.getType())) {
-        newType = xcodeml.createBasicType(type, id.getType(), Xintent.NONE);
+      if(FortranType.isBuiltInType(id.getType())) {
+        newType = xcodeml.createBasicType(type, id.getType(), Intent.NONE);
       } else {
-        XbasicType old = xcodeml.getTypeTable().getBasicType(id);
+        FbasicType old = xcodeml.getTypeTable().getBasicType(id);
         if(old == null) {
           throw new IllegalTransformationException("Cannot find type for " +
               fieldInfo.getIdentifier(), decl.lineNo());
@@ -89,7 +89,7 @@ public final class Field {
       }
     } else {
       fieldInfo.setPromotionType(PromotionInfo.PromotionType.SCALAR_TO_ARRAY);
-      Xintent newIntent = crtType != null ? crtType.getIntent() : Xintent.NONE;
+      Intent newIntent = crtType != null ? crtType.getIntent() : Intent.NONE;
       newType = xcodeml.createBasicType(type, id.getType(), newIntent);
     }
 
@@ -174,13 +174,13 @@ public final class Field {
    *                   created.
    */
   public static void adaptScalarRefToArrayRef(String identifier,
-                                              XfunctionDefinition fctDef,
+                                              FfunctionDefinition fctDef,
                                               List<DimensionDefinition> dims,
                                               XcodeML xcodeml)
   {
     List<Xnode> vars = XnodeUtil.findAllReferences(fctDef.body(), identifier);
     Xid sId = fctDef.getSymbolTable().get(identifier);
-    XbasicType type = xcodeml.getTypeTable().getBasicType(sId);
+    FbasicType type = xcodeml.getTypeTable().getBasicType(sId);
 
     List<Xnode> arrayIndexes = new ArrayList<>();
     for(DimensionDefinition d : dims) {
@@ -292,7 +292,7 @@ public final class Field {
    * @param xcodeml     Current XcodeML/F translation unit.
    * @throws IllegalTransformationException If reshape cannot be done.
    */
-  public static void reshape(XfunctionDefinition fctDef,
+  public static void reshape(FfunctionDefinition fctDef,
                              ReshapeInfo reshapeInfo,
                              XcodeProgram xcodeml)
       throws IllegalTransformationException
@@ -312,7 +312,7 @@ public final class Field {
               reshapeInfo.getArrayName())
       );
     }
-    XbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
+    FbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
 
     // Check dimension
     if(crtType.getDimensions() < reshapeInfo.getTargetDimension()) {
@@ -325,8 +325,8 @@ public final class Field {
     }
 
     // Create new type
-    XbasicType newType = crtType.cloneNode();
-    newType.setType(xcodeml.getTypeTable().generateHash(XcodeType.REAL));
+    FbasicType newType = crtType.cloneNode();
+    newType.setType(xcodeml.getTypeTable().generateHash(FortranType.REAL));
     if(reshapeInfo.getTargetDimension() == 0) { // Demote to scalar
       newType.resetDimension();
     } else { // Demote to smaller dimension array

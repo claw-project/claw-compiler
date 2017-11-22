@@ -10,9 +10,9 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.abstraction.BoundDefinition;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
-import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import helper.TestConstant;
 import org.junit.Test;
 
@@ -171,10 +171,10 @@ public class FieldTest {
         XcodeProgram.createFromFile(TestConstant.TEST_PROMOTION);
     assertNotNull(xcodeml);
 
-    List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
+    List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
     assertEquals(1, fctDefs.size());
 
-    XfunctionDefinition fctDef = fctDefs.get(0);
+    FfunctionDefinition fctDef = fctDefs.get(0);
     assertEquals("sub1", fctDef.getName());
 
     // Scalar to array promotion with 1 additional dimension
@@ -265,7 +265,7 @@ public class FieldTest {
    */
   private void performAndAssertPromotion(String id,
                                          List<DimensionDefinition> dims,
-                                         XfunctionDefinition fctDef,
+                                         FfunctionDefinition fctDef,
                                          XcodeProgram xcodeml,
                                          int base, int target, int[] dimensions)
   {
@@ -275,15 +275,15 @@ public class FieldTest {
 
       Xnode decl = fctDef.getDeclarationTable().get(id);
       assertNotNull(decl);
-      XbasicType bt;
+      FbasicType bt;
       if(base != 0) {
         bt = xcodeml.getTypeTable().getBasicType(decl);
         assertNotNull(bt);
         assertTrue(bt.isArray());
         assertEquals(base, bt.getDimensions());
       } else {
-        assertEquals(XcodeType.REAL,
-            XcodeType.fromString(decl.getType()));
+        assertEquals(FortranType.REAL,
+            FortranType.fromString(decl.getType()));
       }
 
       // Perform the promotion

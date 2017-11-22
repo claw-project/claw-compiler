@@ -6,7 +6,7 @@ package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +71,7 @@ public class NestedDoStatement {
   {
     _statements = new ArrayList<>();
     for(DimensionDefinition dim : dimensions) {
-      Xnode induction = xcodeml.createVar(XcodeType.INTEGER,
+      Xnode induction = xcodeml.createVar(FortranType.INTEGER,
           dim.getIdentifier(), Xscope.LOCAL);
       Xnode range = dim.generateIndexRange(xcodeml, true);
       Xnode doSt = xcodeml.createDoStmt(induction, range);

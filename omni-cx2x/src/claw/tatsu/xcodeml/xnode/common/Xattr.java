@@ -85,7 +85,7 @@ public enum Xattr {
   VALUE(Xname.ATTR_VALUE),
   VERSION(Xname.ATTR_VERSION),
 
-  // Xmod extension to share promotion information
+  // FortranModule extension to share promotion information
   IS_INSERTED(Xname.ATTR_IS_INSERTED),
   PROMOTION_INFO(Xname.ATTR_PROMOTION_INFO);
 

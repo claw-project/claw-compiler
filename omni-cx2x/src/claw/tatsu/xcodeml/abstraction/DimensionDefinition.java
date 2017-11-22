@@ -5,7 +5,7 @@
 package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XcodeType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
 /**
  * Class holding information about defined dimension.
@@ -124,7 +124,7 @@ public class DimensionDefinition {
    */
   public Xnode generateArrayIndex(XcodeML xcodeml) {
     Xnode aIdx = xcodeml.createNode(Xcode.ARRAY_INDEX);
-    aIdx.append(xcodeml.createVar(XcodeType.INTEGER,
+    aIdx.append(xcodeml.createVar(FortranType.INTEGER,
         _identifier, Xscope.LOCAL));
     return aIdx;
   }

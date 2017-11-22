@@ -11,8 +11,8 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 
 /**
  * Primitive transformation, test and utility for Function related action.
@@ -59,7 +59,7 @@ public final class Function {
    * @param name   Id name to be searched for.
    * @return The id if found. Null otherwise.
    */
-  public static Xid findId(XfunctionDefinition fctDef, String name) {
+  public static Xid findId(FfunctionDefinition fctDef, String name) {
     if(fctDef == null) {
       return null;
     }
@@ -67,7 +67,7 @@ public final class Function {
     if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getSymbolTable().get(name);
     }
-    XfunctionDefinition upperDef = fctDef.findParentFunction();
+    FfunctionDefinition upperDef = fctDef.findParentFunction();
     if(upperDef == null) {
       return null;
     }
@@ -82,11 +82,11 @@ public final class Function {
    * @param name   Declaration name to be searched for.
    * @return The element if found. Null otherwise.
    */
-  public static Xnode findDecl(XfunctionDefinition fctDef, String name) {
+  public static Xnode findDecl(FfunctionDefinition fctDef, String name) {
     if(fctDef.getSymbolTable().contains(name)) {
       return fctDef.getDeclarationTable().get(name);
     }
-    XfunctionDefinition upperDef = fctDef.findParentFunction();
+    FfunctionDefinition upperDef = fctDef.findParentFunction();
     if(upperDef == null) {
       return null;
     }
@@ -101,7 +101,7 @@ public final class Function {
    *                          original insertion position.
    * @return Promotion information object with read information.
    */
-  public static PromotionInfo readPromotionInfo(XfunctionType fctType,
+  public static PromotionInfo readPromotionInfo(FfunctionType fctType,
                                                 InsertionPosition
                                                     insertionPosition)
   {

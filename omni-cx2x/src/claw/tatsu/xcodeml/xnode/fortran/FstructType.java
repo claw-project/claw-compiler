@@ -8,7 +8,7 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 /**
- * The XstructType class represents the FstructType (3.5) element in XcodeML/F.
+ * The FstructType class represents the FstructType (3.5) element in XcodeML/F.
  * <p>
  * Elements: (params?)
  * - Optional: typeParams, symbols, typeBoundProcedures
@@ -21,14 +21,14 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
  *
  * @author clementval
  */
-public class XstructType extends Xnode {
+public class FstructType extends Xnode {
 
   /**
    * Basic ctor from Xnode.
    *
    * @param node Xnode object.
    */
-  public XstructType(Xnode node) {
+  public FstructType(Xnode node) {
     super(node == null ? null : node.element());
   }
 

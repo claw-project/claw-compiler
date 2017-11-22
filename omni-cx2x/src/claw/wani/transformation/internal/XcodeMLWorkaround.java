@@ -7,7 +7,7 @@ package claw.wani.transformation.internal;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
@@ -56,8 +56,8 @@ public class XcodeMLWorkaround extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit.
    */
   private void checkDeclarations(XcodeProgram xcodeml) {
-    List<XfunctionDefinition> definitions = xcodeml.getAllFctDef();
-    for(XfunctionDefinition fct : definitions) {
+    List<FfunctionDefinition> definitions = xcodeml.getAllFctDef();
+    for(FfunctionDefinition fct : definitions) {
       fct.getDeclarationTable().checkOrder(fct);
     }
   }

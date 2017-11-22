@@ -6,9 +6,9 @@ package helper;
 
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -61,16 +61,16 @@ public class XmlHelper {
     return new Xid(n);
   }
 
-  public static XbasicType createXbasicTypeFromString(String xml) {
+  public static FbasicType createXbasicTypeFromString(String xml) {
     Xnode n = XmlHelper.getElementFromString(xml);
     assertNotNull(n);
-    return new XbasicType(n);
+    return new FbasicType(n);
   }
 
-  public static XfunctionType createXfctTypeFromString(String xml) {
+  public static FfunctionType createXfctTypeFromString(String xml) {
     Xnode n = XmlHelper.getElementFromString(xml);
     assertNotNull(n);
-    return new XfunctionType(n);
+    return new FfunctionType(n);
   }
 
   public static XsymbolTable createXglobalSymbolFromString(String xml) {
@@ -91,12 +91,12 @@ public class XmlHelper {
     return new XtypeTable(n);
   }
 
-  public static XfunctionDefinition createXfunctionDefinitionFromString(
+  public static FfunctionDefinition createXfunctionDefinitionFromString(
       String xml)
   {
     Xnode n = XmlHelper.getElementFromString(xml);
     assertNotNull(n);
-    return new XfunctionDefinition(n);
+    return new FfunctionDefinition(n);
   }
 
   public static XglobalDeclTable createGlobalDeclTable(String xml) {

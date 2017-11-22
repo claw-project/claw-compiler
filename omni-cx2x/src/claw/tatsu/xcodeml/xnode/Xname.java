@@ -84,7 +84,7 @@ public final class Xname {
   public static final String ATTR_USE_NAME = "use_name";
   public static final String ATTR_VALUE = "value";
   public static final String ATTR_VERSION = "version";
-  // CLAW specific attribute used in Xmod files
+  // CLAW specific attribute used in FortranModule files
   public static final String ATTR_IS_INSERTED = "is_inserted";
   public static final String ATTR_PROMOTION_INFO = "promotion_info";
   // Element names
@@ -214,7 +214,7 @@ public final class Xname {
   public static final String VAR_LIST = "varList";
   public static final String VAR_REF = "varRef";
   public static final String XCODE_PROGRAM = "XcodeProgram";
-  // Xmod files
+  // FortranModule files
   public static final String DEPENDS = "depends";
   public static final String IDENTIFIERS = "identifiers";
   // Binary expression element

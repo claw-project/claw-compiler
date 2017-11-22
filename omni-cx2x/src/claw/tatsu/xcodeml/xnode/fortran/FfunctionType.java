@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The XfunctionType represents the FfunctionType (3.4) element in XcodeML
+ * The FfunctionType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
  * <p>
  * Elements: (params?)
@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class XfunctionType extends Xnode {
+public class FfunctionType extends Xnode {
 
   private final List<Xnode> _parameters;
   private Xnode _params = null;
@@ -36,7 +36,7 @@ public class XfunctionType extends Xnode {
    *
    * @param node Raw node.
    */
-  public XfunctionType(Xnode node) {
+  public FfunctionType(Xnode node) {
     super(node == null ? null : node.element());
     _params = matchSeq(Xcode.PARAMS);
     _parameters = (_params != null) ?
@@ -162,12 +162,12 @@ public class XfunctionType extends Xnode {
   }
 
   /**
-   * A new object XfunctionType that is the clone of the current object.
+   * A new object FfunctionType that is the clone of the current object.
    *
-   * @return A new XfunctionType that is a clone of the current one.
+   * @return A new FfunctionType that is a clone of the current one.
    */
-  public XfunctionType cloneNode() {
-    return new XfunctionType(super.cloneNode());
+  public FfunctionType cloneNode() {
+    return new FfunctionType(super.cloneNode());
   }
 
   /**
