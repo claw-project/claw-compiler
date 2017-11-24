@@ -6,12 +6,10 @@ package claw.tatsu.analysis.dependency;
 
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.wani.language.ClawPragma;
-import claw.wani.x2t.configuration.Configuration;
-import claw.tatsu.common.Target;
 import helper.TestConstant;
 import org.junit.Test;
 
@@ -116,14 +114,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-    Configuration.get().setMaxColumns(80);
     Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
-    try {
-      ClawPragma.analyze(pragmas.get(0));
-    } catch(Exception e) {
-      fail();
-    }
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);
@@ -151,14 +142,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-    Configuration.get().setMaxColumns(80);
     Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
-    try {
-      ClawPragma.analyze(pragmas.get(0));
-    } catch(Exception e) {
-      fail();
-    }
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);

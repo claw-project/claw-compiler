@@ -457,7 +457,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new FfunctionType with empty params child.
-   *
+   * <p>
    * {@code
    * <functionCall type="returnType">
    * <name type="fctType">fctName</name>
@@ -466,7 +466,6 @@ public class XcodeML extends Xnode {
    * }
    *
    * @param type Type hash of the FfunctionType node.
-   *
    * @return The newly created node detached in the current XcodeML unit.
    */
   public FfunctionType createFunctionType(String type) {
@@ -513,8 +512,7 @@ public class XcodeML extends Xnode {
    * @param idValue Value of the name inner element.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xid createId(FortranType type, XstorageClass sclass, String idValue)
-  {
+  public Xid createId(FortranType type, XstorageClass sclass, String idValue) {
     return createId(type.toString(), sclass, idValue);
   }
 
