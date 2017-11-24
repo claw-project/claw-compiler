@@ -1,6 +1,10 @@
 # CLAW FORTRAN Compiler
 
-[![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
+<a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.0.0-lightgray.svg)</a> [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
+<a target="_blank" href="https://claw-compiler.slack.com/">![Version](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
+
+<a target="_blank" href="https://github.com/C2SM-RCM/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-0.4.0-blue.svg)</a>
+
 
 > Who is in charge here?
 >
@@ -23,14 +27,6 @@ CLAW directive language specification.
 ### Status of implementation
 We are currently implementing the version `v0.3a` of the CLAW language
 specification in this reference compiler.
-
-### Versioning convention
-The versioning convention for the CLAW Compiler follows the versioning of the
-language definition. Version `0.1.0` implements the language specification
-`v0.1`. If there is bug fix or enhancement happening in the version implementing
-`v0.1` of the language specification, the last digit is incremented (e.g.
-`0.1.1`) and so on. During implementation of new specifications, the version
-number is followed by the letter `a` for the alphas and `b`for the betas.
 
 ### Compiler workflow
 The diagram below shows the workflow of the CLAW Compiler.
