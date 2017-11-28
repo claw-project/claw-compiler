@@ -374,7 +374,7 @@ public class Parallelize extends ClawTransformation {
       throws IllegalTransformationException
   {
     // TODO nodep should be passed in another way.
-    Directive.generateLoopSeq(xcodeml, _fctDef,
+    int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
         CompilerDirective.CLAW.getPrefix() + " nodep");
 
     /* Create a nested loop with the new defined dimensions and wrap it around
@@ -454,7 +454,7 @@ public class Parallelize extends ClawTransformation {
     // Generate the parallel region
     Directive.generateParallelLoopClause(xcodeml, privateList,
         loops.getOuterStatement(), loops.getOuterStatement(),
-        loops.size());
+        loops.size() + collapse);
 
     Directive.generateRoutineDirectives(xcodeml, _fctDef);
   }

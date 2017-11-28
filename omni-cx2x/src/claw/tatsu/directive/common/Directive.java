@@ -10,7 +10,10 @@ import claw.tatsu.common.Message;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -44,23 +47,29 @@ public final class Directive {
    * @param fctDef  Function definition in which do statements will be
    *                decorated.
    */
-  public static void generateLoopSeq(XcodeProgram xcodeml,
-                                     FfunctionDefinition fctDef,
-                                     String noDependencyDirective)
+  public static int generateLoopSeq(XcodeProgram xcodeml,
+                                    FfunctionDefinition fctDef,
+                                    String noDependencyDirective)
   {
+    int nodep_counter = 0;
+
     if(Context.get().getGenerator().getDirectiveLanguage()
         == CompilerDirective.NONE)
     {
-      return;
+      return nodep_counter;
     }
 
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
       Xnode noDependency = isDecoratedWith(doStmt, noDependencyDirective);
-      addPragmasBefore(xcodeml,
-          Context.get().getGenerator().getStartLoopDirective(NO_COLLAPSE,
-              noDependency == null, true, ""), doStmt);
+      if(noDependency == null) {
+        addPragmasBefore(xcodeml,
+            Context.get().getGenerator().
+                getStartLoopDirective(NO_COLLAPSE, true, true, ""), doStmt);
+      } else {
+        ++nodep_counter;
+      }
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
@@ -73,6 +82,7 @@ public final class Directive {
             + doStmt.lineNo());
       }
     }
+    return nodep_counter;
   }
 
   /**

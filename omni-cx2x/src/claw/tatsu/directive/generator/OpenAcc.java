@@ -192,8 +192,9 @@ public class OpenAcc extends DirectiveGenerator {
       } else {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
+                naked ? "" : _mode.getFormattedExecutionMode(),
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
-                naked ? "" : _mode.getFormattedExecutionMode(), clauses).trim()
+                clauses).trim()
         };
       }
     } else {
