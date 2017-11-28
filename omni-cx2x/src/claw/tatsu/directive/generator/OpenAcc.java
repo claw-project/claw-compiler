@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class OpenAcc extends DirectiveGenerator {
 
-  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC: ";
+  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC:";
   private static final String OPENACC_COLLAPSE = "collapse";
   private static final String OPENACC_DATA = "data";
   private static final String OPENACC_END = "end";
@@ -192,8 +192,9 @@ public class OpenAcc extends DirectiveGenerator {
       } else {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
+                naked ? "" : _mode.getFormattedExecutionMode(),
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
-                naked ? "" : _mode.getFormattedExecutionMode(), clauses).trim()
+                clauses).trim()
         };
       }
     } else {
