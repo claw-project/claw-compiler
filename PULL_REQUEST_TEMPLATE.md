@@ -6,5 +6,5 @@
 A few sentences describing the overall goals of the pull request's commits.
 
 ## Related issues
-#issue-number-00
-#issue-number-01
+Issue #00
+Issue #01
