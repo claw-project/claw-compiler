@@ -605,8 +605,10 @@ public final class Directive {
       while(last.prevSibling() != null
           && Context.get().getGenerator().getSkippedStatementsInEpilogue().
           contains(last.opcode())) {
-        if(last.hasBody()) {
-          for(Xnode child : last.body().children()) {
+        if(last.hasBody() || last.opcode() == Xcode.F_IF_STATEMENT) {
+          List<Xnode> children = (last.hasBody()) ? last.body().children()
+              : last.matchDirectDescendant(Xcode.THEN).children();
+          for(Xnode child : children) {
             if(!Context.get().getGenerator().getSkippedStatementsInEpilogue().
                 contains(child.opcode()))
             {
