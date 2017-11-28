@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.Xname;
 
@@ -13,7 +13,7 @@ import java.util.Random;
  *
  * @author clementval
  */
-public enum XcodeType {
+public enum FortranType {
 
   // Type prefix from OMNI Compiler. Taken for the F-output-xcodeml.c file.
   ARRAY('A', ""),
@@ -31,7 +31,7 @@ public enum XcodeType {
   private final char _prefix;
   private final String _irValue;
 
-  XcodeType(char prefix, String type) {
+  FortranType(char prefix, String type) {
     _prefix = prefix;
     _irValue = type;
   }
@@ -66,7 +66,7 @@ public enum XcodeType {
    * @param value Type value from XcodeML/F IR.
    * @return Corresponding enum value. NONE if value corresponds to nothing.
    */
-  public static XcodeType fromString(String value) {
+  public static FortranType fromString(String value) {
     if(value == null) {
       return NONE;
     }
@@ -89,7 +89,7 @@ public enum XcodeType {
   }
 
   /**
-   * Get a new unique hash with the current XcodeType prefix.
+   * Get a new unique hash with the current FortranType prefix.
    *
    * @return New unique hash.
    */

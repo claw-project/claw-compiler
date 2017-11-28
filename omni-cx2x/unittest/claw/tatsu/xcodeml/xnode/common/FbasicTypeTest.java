@@ -5,7 +5,9 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -16,7 +18,7 @@ import static org.junit.Assert.*;
 /**
  * @author clementval
  */
-public class XbasicTypeTest {
+public class FbasicTypeTest {
 
   private static final String type1 = "<FbasicType type=\"TYPE_NAME\" " +
       "ref=\"Fint\"><kind>8</kind></FbasicType>";
@@ -42,10 +44,10 @@ public class XbasicTypeTest {
   @Test
   public void setterTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    XbasicType bt1 = new XbasicType(xcodeml.createNode(Xcode.F_BASIC_TYPE));
-    XbasicType bt2 = new XbasicType(xcodeml.createNode(Xcode.F_BASIC_TYPE));
-    String typeHash1 = xcodeml.getTypeTable().generateHash(XcodeType.INTEGER);
-    String typeHash2 = xcodeml.getTypeTable().generateHash(XcodeType.INTEGER);
+    FbasicType bt1 = new FbasicType(xcodeml.createNode(Xcode.F_BASIC_TYPE));
+    FbasicType bt2 = new FbasicType(xcodeml.createNode(Xcode.F_BASIC_TYPE));
+    String typeHash1 = xcodeml.getTypeTable().generateHash(FortranType.INTEGER);
+    String typeHash2 = xcodeml.getTypeTable().generateHash(FortranType.INTEGER);
     bt1.setType(typeHash1);
     bt2.setType(typeHash2);
     bt1.setRef(typeHash2);
@@ -53,11 +55,11 @@ public class XbasicTypeTest {
     assertEquals(Xname.TYPE_F_INT, bt2.getRef());
     assertEquals(typeHash2, bt1.getRef());
     assertFalse(bt1.hasIntent());
-    bt1.setIntent(Xintent.IN);
+    bt1.setIntent(Intent.IN);
     assertTrue(bt1.hasIntent());
-    assertEquals(Xintent.IN, bt1.getIntent());
+    assertEquals(Intent.IN, bt1.getIntent());
     bt1.removeAttribute(Xattr.INTENT);
-    assertEquals(Xintent.NONE, bt1.getIntent());
+    assertEquals(Intent.NONE, bt1.getIntent());
     assertFalse(bt1.hasIntent());
     assertFalse(bt1.isArray());
     assertFalse(bt2.isArray());
@@ -75,7 +77,7 @@ public class XbasicTypeTest {
    */
   @Test
   public void simpleIntegerTypeTest() {
-    XbasicType b = XmlHelper.createXbasicTypeFromString(type1);
+    FbasicType b = XmlHelper.createXbasicTypeFromString(type1);
     assertNotNull(b);
     assertTrue(b.hasKind());
     assertNotNull(b.getKind());
@@ -108,7 +110,7 @@ public class XbasicTypeTest {
    */
   @Test
   public void simpleCharTypeTest() {
-    XbasicType b = XmlHelper.createXbasicTypeFromString(type2);
+    FbasicType b = XmlHelper.createXbasicTypeFromString(type2);
     assertNotNull(b);
     assertFalse(b.hasKind());
     assertNull(b.getKind());
@@ -142,7 +144,7 @@ public class XbasicTypeTest {
    */
   @Test
   public void complexIntTypeTest() {
-    XbasicType b = XmlHelper.createXbasicTypeFromString(type3);
+    FbasicType b = XmlHelper.createXbasicTypeFromString(type3);
     assertNotNull(b);
     assertFalse(b.hasKind());
     assertNull(b.getKind());
@@ -199,13 +201,13 @@ public class XbasicTypeTest {
 
   @Test
   public void dimTest() {
-    XbasicType b = XmlHelper.createXbasicTypeFromString(type3);
+    FbasicType b = XmlHelper.createXbasicTypeFromString(type3);
     b.removeDimension(Collections.<Integer>emptyList());
     assertEquals(0, b.getDimensions());
     assertFalse(b.isArray());
     assertFalse(b.isAllAssumedShape());
 
-    XbasicType b2 = XmlHelper.createXbasicTypeFromString(type4);
+    FbasicType b2 = XmlHelper.createXbasicTypeFromString(type4);
     assertNotNull(b2);
     assertTrue(b2.isAllAssumedShape());
 
@@ -216,7 +218,7 @@ public class XbasicTypeTest {
   @Test
   public void addDimensionTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    XbasicType bt = xcodeml.createBasicType(XcodeType.INTEGER, Xintent.NONE);
+    FbasicType bt = xcodeml.createBasicType(FortranType.INTEGER, Intent.NONE);
     assertEquals(0, bt.getDimensions());
     assertFalse(bt.isArray());
     assertFalse(bt.isAllAssumedShape());
@@ -242,8 +244,8 @@ public class XbasicTypeTest {
 
   @Test
   public void cloneTest() {
-    XbasicType b = XmlHelper.createXbasicTypeFromString(type3);
-    XbasicType b2 = b.cloneNode();
+    FbasicType b = XmlHelper.createXbasicTypeFromString(type3);
+    FbasicType b2 = b.cloneNode();
     assertEquals(b.isAllAssumedShape(), b2.isAllAssumedShape());
     assertEquals(b.isArray(), b2.isArray());
     assertEquals(b.isAllocatable(), b2.isAllocatable());

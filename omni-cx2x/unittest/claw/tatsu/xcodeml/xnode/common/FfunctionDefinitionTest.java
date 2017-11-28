@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -14,11 +15,11 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Test features of the XfunctionDefinition class.
+ * Test features of the FfunctionDefinition class.
  *
  * @author clementval
  */
-public class XfunctionDefinitionTest {
+public class FfunctionDefinitionTest {
 
   private static final String basicFDef = "<FfunctionDefinition lineno=\"1\" " +
       "file=\"original_code.f90\">" +
@@ -41,7 +42,7 @@ public class XfunctionDefinitionTest {
 
   @Test
   public void basicFunctionDefinitionTest() {
-    XfunctionDefinition fctDef =
+    FfunctionDefinition fctDef =
         XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
     assertEquals("force_dummy", fctDef.getName());
@@ -57,7 +58,7 @@ public class XfunctionDefinitionTest {
 
     assertNull(fctDef.findContainingXmod());
 
-    XfunctionDefinition clone = fctDef.cloneNode();
+    FfunctionDefinition clone = fctDef.cloneNode();
     assertNotNull(clone);
     assertEquals("force_dummy", fctDef.getName());
     assertEquals("force_dummy", fctDef.name().value());
@@ -70,8 +71,8 @@ public class XfunctionDefinitionTest {
     XcodeProgram xcodeml =
         XcodeProgram.createFromFile(TestConstant.TEST_DECLARATIONS);
     assertNotNull(xcodeml);
-    List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
-    for(XfunctionDefinition fctDef : fctDefs) {
+    List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
+    for(FfunctionDefinition fctDef : fctDefs) {
       // Search paths is not set so module cannot be found.
       assertNull(fctDef.findContainingXmod());
     }

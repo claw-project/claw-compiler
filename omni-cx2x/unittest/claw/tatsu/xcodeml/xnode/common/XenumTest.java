@@ -7,13 +7,14 @@ package claw.tatsu.xcodeml.xnode.common;
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * Testing methods from various enum class. Xattr, XcodeType, Xcode, Xintent,
+ * Testing methods from various enum class. Xattr, FortranType, Xcode, Intent,
  * Xscope.
  *
  * @author clementval
@@ -33,34 +34,34 @@ public class XenumTest {
 
   @Test
   public void xIntentCtorTest() {
-    assertEquals(Xintent.IN, Xintent.fromString("in"));
-    assertEquals(Xintent.IN, Xintent.fromString("IN"));
+    assertEquals(Intent.IN, Intent.fromString("in"));
+    assertEquals(Intent.IN, Intent.fromString("IN"));
 
-    assertEquals(Xintent.OUT, Xintent.fromString("out"));
-    assertEquals(Xintent.OUT, Xintent.fromString("OUT"));
+    assertEquals(Intent.OUT, Intent.fromString("out"));
+    assertEquals(Intent.OUT, Intent.fromString("OUT"));
 
-    assertEquals(Xintent.INOUT, Xintent.fromString("inout"));
-    assertEquals(Xintent.INOUT, Xintent.fromString("INOUT"));
+    assertEquals(Intent.INOUT, Intent.fromString("inout"));
+    assertEquals(Intent.INOUT, Intent.fromString("INOUT"));
 
-    assertEquals(Xintent.INOUT, Xintent.fromString("inOUT"));
+    assertEquals(Intent.INOUT, Intent.fromString("inOUT"));
 
-    assertEquals(Xintent.NONE, Xintent.fromString(null));
-    assertEquals(Xintent.NONE, Xintent.fromString(""));
+    assertEquals(Intent.NONE, Intent.fromString(null));
+    assertEquals(Intent.NONE, Intent.fromString(""));
 
-    assertEquals(Xname.INTENT_IN, Xintent.IN.toString());
-    assertEquals(Xname.INTENT_OUT, Xintent.OUT.toString());
-    assertEquals(Xname.INTENT_INOUT, Xintent.INOUT.toString());
-    assertEquals("", Xintent.NONE.toString());
-    assertEquals("", Xintent.ANY.toString());
+    assertEquals(Xname.INTENT_IN, Intent.IN.toString());
+    assertEquals(Xname.INTENT_OUT, Intent.OUT.toString());
+    assertEquals(Xname.INTENT_INOUT, Intent.INOUT.toString());
+    assertEquals("", Intent.NONE.toString());
+    assertEquals("", Intent.ANY.toString());
   }
 
   @Test
   public void xIntentCheckTest() {
-    Xintent intent1 = Xintent.IN;
-    Xintent intent2 = Xintent.OUT;
-    Xintent intent3 = Xintent.INOUT;
-    Xintent intent4 = Xintent.NONE;
-    Xintent any = Xintent.ANY;
+    Intent intent1 = Intent.IN;
+    Intent intent2 = Intent.OUT;
+    Intent intent3 = Intent.INOUT;
+    Intent intent4 = Intent.NONE;
+    Intent any = Intent.ANY;
 
     assertTrue(intent1.isIntentIn());
     assertFalse(intent2.isIntentIn());
@@ -133,27 +134,27 @@ public class XenumTest {
 
   @Test
   public void xCodeTypeCtorTest() {
-    assertEquals(XcodeType.NONE, XcodeType.fromString(null));
-    assertEquals(XcodeType.NONE, XcodeType.fromString(""));
-    assertEquals(XcodeType.INTEGER,
-        XcodeType.fromString(Xname.TYPE_F_INT));
-    assertEquals(XcodeType.REAL,
-        XcodeType.fromString(Xname.TYPE_F_REAL));
-    assertEquals(XcodeType.COMPLEX,
-        XcodeType.fromString(Xname.TYPE_F_COMPLEX));
-    assertEquals(XcodeType.LOGICAL,
-        XcodeType.fromString(Xname.TYPE_F_LOGICAL));
-    assertEquals(XcodeType.CHARACTER,
-        XcodeType.fromString(Xname.TYPE_F_CHAR));
-    assertEquals(XcodeType.VOID,
-        XcodeType.fromString(Xname.TYPE_F_VOID));
+    assertEquals(FortranType.NONE, FortranType.fromString(null));
+    assertEquals(FortranType.NONE, FortranType.fromString(""));
+    assertEquals(FortranType.INTEGER,
+        FortranType.fromString(Xname.TYPE_F_INT));
+    assertEquals(FortranType.REAL,
+        FortranType.fromString(Xname.TYPE_F_REAL));
+    assertEquals(FortranType.COMPLEX,
+        FortranType.fromString(Xname.TYPE_F_COMPLEX));
+    assertEquals(FortranType.LOGICAL,
+        FortranType.fromString(Xname.TYPE_F_LOGICAL));
+    assertEquals(FortranType.CHARACTER,
+        FortranType.fromString(Xname.TYPE_F_CHAR));
+    assertEquals(FortranType.VOID,
+        FortranType.fromString(Xname.TYPE_F_VOID));
 
-    assertEquals(Xname.TYPE_F_INT, XcodeType.INTEGER.toString());
-    assertEquals(Xname.TYPE_F_REAL, XcodeType.REAL.toString());
-    assertEquals(Xname.TYPE_F_COMPLEX, XcodeType.COMPLEX.toString());
-    assertEquals(Xname.TYPE_F_LOGICAL, XcodeType.LOGICAL.toString());
-    assertEquals(Xname.TYPE_F_CHAR, XcodeType.CHARACTER.toString());
-    assertEquals(Xname.TYPE_F_VOID, XcodeType.VOID.toString());
+    assertEquals(Xname.TYPE_F_INT, FortranType.INTEGER.toString());
+    assertEquals(Xname.TYPE_F_REAL, FortranType.REAL.toString());
+    assertEquals(Xname.TYPE_F_COMPLEX, FortranType.COMPLEX.toString());
+    assertEquals(Xname.TYPE_F_LOGICAL, FortranType.LOGICAL.toString());
+    assertEquals(Xname.TYPE_F_CHAR, FortranType.CHARACTER.toString());
+    assertEquals(Xname.TYPE_F_VOID, FortranType.VOID.toString());
   }
 
   @Test

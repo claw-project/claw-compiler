@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class XsymbolsTest {
     XsymbolTable table = xcodeml.getGlobalSymbolsTable();
     assertNotNull(table);
 
-    Xid id1 = xcodeml.createId(XcodeType.INTEGER, XstorageClass.F_LOCAL, "id1");
+    Xid id1 = xcodeml.createId(FortranType.INTEGER, XstorageClass.F_LOCAL, "id1");
     table.add(id1);
     assertTrue(table.contains("id1"));
   }

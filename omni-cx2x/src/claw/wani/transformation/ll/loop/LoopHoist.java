@@ -14,7 +14,7 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
@@ -127,7 +127,7 @@ public class LoopHoist extends ClawBlockTransformation {
 
     // Check reshape mandatory points
     if(_clawStart.hasReshapeClause()) {
-      XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
+      FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
         xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
                 "definition including the current directive",
@@ -162,9 +162,9 @@ public class LoopHoist extends ClawBlockTransformation {
    * @param name   Id to be looked for.
    * @return True if the id has been found. False otherwise.
    */
-  private boolean checkUpperDefinition(XfunctionDefinition fctDef, String name)
+  private boolean checkUpperDefinition(FfunctionDefinition fctDef, String name)
   {
-    XfunctionDefinition upperDef = fctDef.findParentFunction();
+    FfunctionDefinition upperDef = fctDef.findParentFunction();
     return upperDef != null
         && (!(!upperDef.getSymbolTable().contains(name)
         || !upperDef.getDeclarationTable().contains(name))
@@ -201,7 +201,7 @@ public class LoopHoist extends ClawBlockTransformation {
 
     // Apply reshape clause
     if(_clawStart.hasReshapeClause()) {
-      XfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
+      FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
         throw new IllegalTransformationException("Cannot apply reshape clause." +
             "Parent function definition not found.",

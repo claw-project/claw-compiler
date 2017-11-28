@@ -7,6 +7,8 @@ package claw.tatsu.primitive;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
 import java.util.List;
 
@@ -29,15 +31,15 @@ public class Type {
    * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
    * @return The new type hash generated.
    */
-  public static String duplicateWithDimension(XbasicType base,
-                                              XbasicType toUpdate,
+  public static String duplicateWithDimension(FbasicType base,
+                                              FbasicType toUpdate,
                                               XcodeML xcodemlSrc,
                                               XcodeML xcodemlDst,
                                               List<DimensionDefinition> dimensions)
       throws IllegalTransformationException
   {
-    XbasicType newType = toUpdate.cloneNode();
-    String type = xcodemlDst.getTypeTable().generateHash(XcodeType.ARRAY);
+    FbasicType newType = toUpdate.cloneNode();
+    String type = xcodemlDst.getTypeTable().generateHash(FortranType.ARRAY);
     newType.setType(type);
 
     if(base.isAllAssumedShape() && toUpdate.isAllAssumedShape()) {

@@ -8,7 +8,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.XfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import helper.XmlHelper;
 import org.junit.Assert;
@@ -105,9 +105,9 @@ public class PragmaTest {
   @Test
   public void splitByContTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
-    List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
+    List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
     assertTrue(fctDefs.size() > 0);
-    XfunctionDefinition fd = fctDefs.get(0);
+    FfunctionDefinition fd = fctDefs.get(0);
     assertNotNull(fd.body());
     List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
     Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);

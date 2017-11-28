@@ -8,8 +8,10 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 
@@ -23,7 +25,7 @@ import java.util.List;
  */
 public class ArrayToFctCall extends ClawTransformation {
 
-  private XfunctionDefinition _replaceFct;
+  private FfunctionDefinition _replaceFct;
 
   /**
    * ArrayToFctCall ctor.
@@ -36,7 +38,7 @@ public class ArrayToFctCall extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    XfunctionDefinition _fctDef = _claw.getPragma().findParentFunction();
+    FfunctionDefinition _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().lineNo());
@@ -53,7 +55,7 @@ public class ArrayToFctCall extends ClawTransformation {
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_claw.getFctName());
     if(_replaceFct == null) {
-      XmoduleDefinition parentModule = _claw.getPragma().findParentModule();
+      FmoduleDefinition parentModule = _claw.getPragma().findParentModule();
       _replaceFct = parentModule.getFunctionDefinition(_claw.getFctName());
 
       if(_replaceFct == null) {
@@ -91,14 +93,14 @@ public class ArrayToFctCall extends ClawTransformation {
                         Transformation other) throws Exception
   {
 
-    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
+    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
     // Prepare the function call
     Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),
         _claw.getFctName(), _replaceFct.getType());
     Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
     for(String arg : _claw.getFctParams()) {
-      args.append(xcodeml.createVar(XcodeType.INTEGER, arg, Xscope.LOCAL));
+      args.append(xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
     }
 
     List<Xnode> refs =

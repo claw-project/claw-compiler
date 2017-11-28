@@ -7,18 +7,17 @@ package claw.tatsu.xcodeml.xnode.fortran;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.common.Xparams;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The XfunctionType represents the FfunctionType (3.4) element in XcodeML
+ * The FfunctionType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
  * <p>
  * Elements: (params?)
  * - Optional:
- * - params (Xparams)
+ * - params
  * Attributes:
  * - Required: type (text), return_type (text)
  * - Optional: result_name (text), is_recursive (bool), is_program (bool),
@@ -27,29 +26,21 @@ import java.util.List;
  *
  * @author clementval
  */
+public class FfunctionType extends Xnode {
 
-public class XfunctionType extends Xnode {
-
-  private Xparams _params = null;
+  private final List<Xnode> _parameters;
+  private Xnode _params = null;
 
   /**
    * Basic ctor from Xnode.
    *
    * @param node Raw node.
    */
-  public XfunctionType(Xnode node) {
+  public FfunctionType(Xnode node) {
     super(node == null ? null : node.element());
-    readElementInformation();
-  }
-
-  /**
-   * Read inner element information.
-   */
-  private void readElementInformation() {
-    Xnode paramsNode = matchSeq(Xcode.PARAMS);
-    if(paramsNode != null) {
-      _params = new Xparams(paramsNode);
-    }
+    _params = matchSeq(Xcode.PARAMS);
+    _parameters = (_params != null) ?
+        _params.matchAll(Xcode.NAME) : new ArrayList<Xnode>();
   }
 
   /**
@@ -118,12 +109,43 @@ public class XfunctionType extends Xnode {
   }
 
   /**
-   * Get the params element.
+   * Get the list of all parameters name node.
    *
-   * @return Params element.
+   * @return List of parameters Xnode objects.
    */
-  public Xparams getParams() {
-    return _params;
+  public List<Xnode> getParameters() {
+    return _parameters;
+  }
+
+  /**
+   * Add a name element to the parameters list.
+   *
+   * @param name The name element to add.
+   */
+  public void addParameters(Xnode name) {
+    if(name != null) {
+      _parameters.add(name);
+      _params.append(name);
+    }
+  }
+
+  /**
+   * Add a name element to the parameters list before the referenced element.
+   *
+   * @param ref  Referenced element. New element will be added before.
+   * @param name The name element to add.
+   */
+  public void addParameters(Xnode ref, Xnode name) {
+    if(name != null) {
+      int index = _parameters.indexOf(ref);
+      if(index >= 0) {
+        _parameters.add(index, name);
+        ref.insertBefore(name);
+      } else {
+        _parameters.add(name);
+        _params.append(name);
+      }
+    }
   }
 
   /**
@@ -132,29 +154,20 @@ public class XfunctionType extends Xnode {
    * @return List of string.
    */
   public List<String> getParamsNames() {
-    List<String> parameters = new ArrayList<>();
-    for(Xnode n : _params.getAll()) {
-      parameters.add(n.value());
+    List<String> parametersName = new ArrayList<>();
+    for(Xnode n : _parameters) {
+      parametersName.add(n.value());
     }
-    return parameters;
+    return parametersName;
   }
 
   /**
-   * Check the number of parameters of the function.
+   * A new object FfunctionType that is the clone of the current object.
    *
-   * @return Number of parameters.
+   * @return A new FfunctionType that is a clone of the current one.
    */
-  public int getParameterNb() {
-    return (_params == null) ? 0 : _params.getAll().size();
-  }
-
-  /**
-   * A new object XfunctionType that is the clone of the current object.
-   *
-   * @return A new XfunctionType that is a clone of the current one.
-   */
-  public XfunctionType cloneNode() {
-    return new XfunctionType(super.cloneNode());
+  public FfunctionType cloneNode() {
+    return new FfunctionType(super.cloneNode());
   }
 
   /**
@@ -165,11 +178,8 @@ public class XfunctionType extends Xnode {
    * otherwise.
    */
   public boolean hasParam(String paramName) {
-    if(_params == null) {
-      return false;
-    }
-    for(Xnode param : _params.getAll()) {
-      if(param.value().equals(paramName.toLowerCase())) {
+    for(Xnode param : _parameters) {
+      if(param.value().toLowerCase().equals(paramName.toLowerCase())) {
         return true;
       }
     }

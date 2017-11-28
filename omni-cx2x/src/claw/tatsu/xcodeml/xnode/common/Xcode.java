@@ -31,7 +31,7 @@ public enum Xcode {
   CO_SHAPE(Xname.CO_SHAPE),                                  // XcodeML/F 3.2
   CRITICAL_STATEMENT(Xname.CRITICAL_STATEMENT, true),        // XcodeML/F 6.41
   DECLARATIONS(Xname.DECLARATIONS),                          // XcodeML/F 5.2
-  DEPENDS(Xname.DEPENDS),                                    // Xmod file
+  DEPENDS(Xname.DEPENDS),                                    // FortranModule file
   ELSE(Xname.ELSE, true),                                    // XcodeML/F 6.29
   EXPR_STATEMENT(Xname.EXPR_STATEMENT),                      // XcodeML/F 6.2
   EXTERN_DECL(Xname.EXTERN_DECL),                            // XcodeML/F 5.6
@@ -103,7 +103,7 @@ public enum Xcode {
   GLOBAL_SYMBOLS(Xname.GLOBAL_SYMBOLS),                      // XcodeML/F 4.1
   GOTO_STATEMENT(Xname.GOTO_STATEMENT),                      // XcodeML/F 6.11
   ID(Xname.ID),                                              // XcodeML/F 8.2
-  IDENTIFIERS(Xname.IDENTIFIERS),                            // Xmod file
+  IDENTIFIERS(Xname.IDENTIFIERS),                            // FortranModule file
   INDEX_RANGE(Xname.INDEX_RANGE),                            // XcodeML/F 8.11
   KIND(Xname.KIND),                                          // XcodeML/F 8.1
   LEN(Xname.LENGTH),                                         // XcodeML/F 8.6

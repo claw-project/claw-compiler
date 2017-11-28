@@ -2,23 +2,22 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Module;
-import claw.tatsu.xcodeml.xnode.fortran.Xmod;
-import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.common.*;
 
 /**
- * The XfunctionDefinition represents the FfunctionDefinition (5.3) element in
+ * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
  * XcodeML intermediate representation.
  * <p>
  * Elements: (name, symbols?, params?, declarations?, body)
  * - Required:
  * - name (text)
- * - body (Xbody)
+ * - body
  * - Optional:
  * - symbols (XsymbolTable)
- * - params  (Xparams)
+ * - params
  * - declarations (XdeclTable)
  * <p>
  * Can have lineno and file attributes
@@ -26,7 +25,7 @@ import claw.tatsu.xcodeml.xnode.fortran.XmoduleDefinition;
  * @author clementval
  */
 
-public class XfunctionDefinition extends Xnode {
+public class FfunctionDefinition extends Xnode {
 
   // Elements
   private final XsymbolTable _symbolTable;
@@ -35,11 +34,11 @@ public class XfunctionDefinition extends Xnode {
   private final Xnode _name;
 
   /**
-   * Constructs new XfunctionDefinition instance.
+   * Constructs new FfunctionDefinition instance.
    *
    * @param node Raw node.
    */
-  public XfunctionDefinition(Xnode node) {
+  public FfunctionDefinition(Xnode node) {
     super(node == null ? null : node.element());
     Xnode symbols = matchSeq(Xcode.SYMBOLS);
     assert (symbols != null);
@@ -101,10 +100,10 @@ public class XfunctionDefinition extends Xnode {
   /**
    * Find module containing the function and read its .xmod file.
    *
-   * @return Xmod object if the module has been found and read. Null otherwise.
+   * @return FortranModule object if the module has been found and read. Null otherwise.
    */
-  public Xmod findContainingXmod() {
-    XmoduleDefinition mod = findParentModule();
+  public FortranModule findContainingXmod() {
+    FmoduleDefinition mod = findParentModule();
     if(mod == null) {
       return null;
     }
@@ -114,10 +113,10 @@ public class XfunctionDefinition extends Xnode {
   /**
    * Create an identical copy of the current function definition.
    *
-   * @return A new XfunctionDefinition object that is the clone of this function definition.
+   * @return A new FfunctionDefinition object that is the clone of this function definition.
    */
   @Override
-  public XfunctionDefinition cloneNode() {
-    return new XfunctionDefinition(super.cloneNode());
+  public FfunctionDefinition cloneNode() {
+    return new FfunctionDefinition(super.cloneNode());
   }
 }

@@ -5,7 +5,9 @@
 package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 
 /**
  * Class holding information about bound (upper/lower).
@@ -84,7 +86,7 @@ public class BoundDefinition {
    */
   Xnode generateValueNode(XcodeML xcodeml) {
     if(isVar()) {
-      XbasicType bt = xcodeml.createBasicType(XcodeType.INTEGER, Xintent.IN);
+      FbasicType bt = xcodeml.createBasicType(FortranType.INTEGER, Intent.IN);
       xcodeml.getTypeTable().add(bt);
       return xcodeml.createVar(bt.getType(), _strBoundValue, Xscope.LOCAL);
     } else {

@@ -2,17 +2,19 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The XbasicType represents the basicType (3.3) element in XcodeML intermediate
- * representation.
+ * The FbasicType represents the FbasicType (3.3) element in XcodeML
+ * intermediate representation.
  * <p>
  * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:
@@ -30,7 +32,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class XbasicType extends Xnode {
+public class FbasicType extends Xnode {
 
   private static final int APPEND = -1;
   private boolean _isArray = false;
@@ -45,7 +47,7 @@ public class XbasicType extends Xnode {
    *
    * @param node Raw node.
    */
-  public XbasicType(Xnode node) {
+  public FbasicType(Xnode node) {
     super(node == null ? null : node.element());
     readBasicTypeInformation();
   }
@@ -250,7 +252,7 @@ public class XbasicType extends Xnode {
    * @return True if the type has an intent. False otherwise.
    */
   public boolean hasIntent() {
-    return Xintent.fromString(getAttribute(Xattr.INTENT)) != Xintent.NONE;
+    return Intent.fromString(getAttribute(Xattr.INTENT)) != Intent.NONE;
   }
 
   /**
@@ -258,8 +260,8 @@ public class XbasicType extends Xnode {
    *
    * @return Intent. Null if the type has no intent.
    */
-  public Xintent getIntent() {
-    return Xintent.fromString(getAttribute(Xattr.INTENT));
+  public Intent getIntent() {
+    return Intent.fromString(getAttribute(Xattr.INTENT));
   }
 
   /**
@@ -267,8 +269,8 @@ public class XbasicType extends Xnode {
    *
    * @param value Intent value to be set.
    */
-  public void setIntent(Xintent value) {
-    if(value != null && value != Xintent.NONE) {
+  public void setIntent(Intent value) {
+    if(value != null && value != Intent.NONE) {
       setAttribute(Xattr.INTENT, value.toString());
     }
   }
@@ -345,14 +347,14 @@ public class XbasicType extends Xnode {
   }
 
   @Override
-  public XbasicType cloneNode() {
-    return new XbasicType(super.cloneNode());
+  public FbasicType cloneNode() {
+    return new FbasicType(super.cloneNode());
   }
 
   /**
-   * Return a brief description of the XbasicType.
+   * Return a brief description of the FbasicType.
    *
-   * @return String description of the XbasicType as
+   * @return String description of the FbasicType as
    * "FbasicType (type=type-value, ref=ref-value)".
    */
   @Override

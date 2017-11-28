@@ -10,24 +10,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Xintent represents the possible value for the intent attribute in XcodeML
+ * The Intent represents the possible value for the intent attribute in XcodeML
  * intermediate representation.
  * <p>
  * Possible value are: in, out, inout
  *
  * @author clementval
  */
-public enum Xintent {
+public enum Intent {
   NONE,
   IN,
   OUT,
   INOUT,
   ANY; // Represents any intent as well as no intent.
 
-  private static final Map<String, Xintent> _stringToEnum = new HashMap<>();
+  private static final Map<String, Intent> _stringToEnum = new HashMap<>();
 
   static {
-    for(Xintent intent : values()) {
+    for(Intent intent : values()) {
       if(intent != ANY && intent != NONE) {
         _stringToEnum.put(intent.toString().toLowerCase(), intent);
       }
@@ -40,7 +40,7 @@ public enum Xintent {
    * @param value String value.
    * @return Corresponding enum value.
    */
-  public static Xintent fromString(String value) {
+  public static Intent fromString(String value) {
     return (value == null || !_stringToEnum.containsKey(value.toLowerCase())) ?
         NONE : _stringToEnum.get(value.toLowerCase());
   }
@@ -97,7 +97,7 @@ public enum Xintent {
    * @param intent Intent to check with.
    * @return True if intents are compatible.
    */
-  public boolean isCompatible(Xintent intent) {
+  public boolean isCompatible(Intent intent) {
     return intent != null && (this == ANY || (intent == ANY)
         || (isIntentIn() && intent.isIntentIn())
         || (isIntentOut() && intent.isIntentOut())

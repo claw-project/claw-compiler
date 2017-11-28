@@ -2,7 +2,7 @@
 All notable changes to the CLAW FORTRAN Compiler project will be documented in
 this file.
 
-## [0.4 Unreleased]
+## [1.0 Unreleased]
 New features:
 * Option `--target=<target>` or `-t=<target>` allows to choose the target for
   code transformation.
@@ -11,6 +11,8 @@ New features:
 * Transformation order is now configurable with the option `--config=`. A
   default configuration file is available in
   `<INSTALL_DIR>/etc/claw-default.xml`.
+* New configuration files with user extension.
+* OpenACC local arrays strategy private or promote available from configuration.
 
 New available transformations:
 * Low-level:
@@ -21,26 +23,32 @@ New available transformations:
   * `if-extract`
   * `verbatim`
   * `ignore`
-* High abstraction:
+* High abstraction (beta):
   * `parallelize`
+  * `parallelize-forward`
 
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
-* Group configuration must now specify trigger type (translation_unit, directive) 
+* Group configuration must now specify trigger type (translation_unit, directive)
 
-Architecture:
+Technical/Architecture change:
 * All Java libraries now compiled with Ant.
 * Execution of JUnit test cases is driven by Ant.
-* Program arguments of cx2x.Cx2x is now using Common CLI.
+* Program arguments of claw.ClawX2T is now using Common CLI.
 * Preprocessor specific configurations are now stored in
   `compiler/<compiler_id>.cmake` files.
-* Some transformations are implemented as driver transformations as they have
-  to be performed before the parsing step.
+* Some transformations are implemented directly into the driver as they have to
+  be performed before the parsing step.
+* The XcodeML AST abstraction and manipulation library is now independent from
+  the rest. CLAW TATSU is the name of this new library and it is now handle as a
+  dependency to this repository.
+* The full workflow is now pipelined. Only in debug mode, intermediate files are
+  written to disk.
 
 General:
-* OMNI Compiler submodule points to the official OMNI Compiler repository. The
-  state of the repository is updated only when the latest changes are tested
-  and validate.
+* OMNI Compiler submodule points to the official OMNI Compiler repository.
+  The state of the repository is updated only when the latest changes are tested
+  and validated.
 
 ## [0.1.0] - 2016-02-05
 ### First release

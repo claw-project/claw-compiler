@@ -6,8 +6,10 @@ package claw.tatsu.xcodeml.xnode;
 
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -600,7 +602,7 @@ public class XnodeUtil {
    * @return List of arguments as their string representation.
    */
   public static List<String> gatherArguments(XcodeProgram xcodeml,
-                                             Xnode fctCall, Xintent intent,
+                                             Xnode fctCall, Intent intent,
                                              boolean arrayOnly)
   {
     List<String> gatheredArguments = new ArrayList<>();
@@ -613,8 +615,8 @@ public class XnodeUtil {
     }
 
     // Retrieve function type to check intents and types of parameters
-    XfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
-    List<Xnode> parameters = fctType.getParams().getAll();
+    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
+    List<Xnode> parameters = fctType.getParameters();
     List<Xnode> arguments = argumentsNode.children();
 
     for(int i = 0; i < parameters.size(); ++i) {
@@ -623,10 +625,10 @@ public class XnodeUtil {
       Xnode arg = arguments.get(i);
 
       String rep = "";
-      if(XcodeType.isBuiltInType(arg.getType()) && !arrayOnly
+      if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
           && xcodeml.getTypeTable().isBasicType(parameter))
       {
-        XbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
@@ -634,8 +636,8 @@ public class XnodeUtil {
       } else if(xcodeml.getTypeTable().isBasicType(parameter)
           && xcodeml.getTypeTable().isBasicType(arg))
       {
-        XbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
-        XbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
+        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
         if((arrayOnly && !btArg.isArray())
             || !intent.isCompatible(btParameter.getIntent()))
         {

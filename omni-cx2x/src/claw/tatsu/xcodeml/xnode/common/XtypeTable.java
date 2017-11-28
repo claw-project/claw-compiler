@@ -4,8 +4,10 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.XstructType;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.FstructType;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -18,9 +20,9 @@ import java.util.Map;
  * <p>
  * Elements: ( FbasicType | FfunctionType | FstructType ) *
  * - Optional:
- * - FbasicType (XbasicType)
- * - FfunctionType (XfunctionType)
- * - FstructType (XstructType)
+ * - FbasicType (FbasicType)
+ * - FfunctionType (FfunctionType)
+ * - FstructType (FstructType)
  *
  * @author clementval
  */
@@ -48,15 +50,15 @@ public class XtypeTable extends Xnode {
     for(Xnode n : elements) {
       switch(n.opcode()) {
         case F_BASIC_TYPE:
-          XbasicType bt = new XbasicType(n);
+          FbasicType bt = new FbasicType(n);
           _table.put(bt.getType(), bt);
           break;
         case F_FUNCTION_TYPE:
-          XfunctionType ft = new XfunctionType(n);
+          FfunctionType ft = new FfunctionType(n);
           _table.put(ft.getType(), ft);
           break;
         case F_STRUCT_TYPE:
-          XstructType st = new XstructType(n);
+          FstructType st = new FstructType(n);
           _table.put(st.getType(), st);
           break;
       }
@@ -64,60 +66,60 @@ public class XtypeTable extends Xnode {
   }
 
   /**
-   * Check if the node is of type XbasicType.
+   * Check if the node is of type FbasicType.
    *
    * @param node Node to check.
-   * @return True if the node is of type XbasicType.
+   * @return True if the node is of type FbasicType.
    */
   public boolean isBasicType(Xnode node) {
     return isBasicType(node.getType());
   }
 
   /**
-   * Check if the hash correspond to a XbasicType.
+   * Check if the hash correspond to a FbasicType.
    *
    * @param hash Hash of type to check.
-   * @return True if the hash correspond to a XbasicType.
+   * @return True if the hash correspond to a FbasicType.
    */
   public boolean isBasicType(String hash) {
-    return isType(XbasicType.class, hash);
+    return isType(FbasicType.class, hash);
   }
 
   /**
-   * Check if the node is of type XfunctionType.
+   * Check if the node is of type FfunctionType.
    *
    * @param node Node to check.
-   * @return True if the node is of type XfunctionType.
+   * @return True if the node is of type FfunctionType.
    */
   public boolean isFunctionType(Xnode node) {
     return isFunctionType(node.getType());
   }
 
   /**
-   * Check if the hash correspond to a XfunctionType.
+   * Check if the hash correspond to a FfunctionType.
    *
    * @param hash Hash of type to check.
-   * @return True if the hash correspond to a XfunctionType.
+   * @return True if the hash correspond to a FfunctionType.
    */
   public boolean isFunctionType(String hash) {
-    return isType(XfunctionType.class, hash);
+    return isType(FfunctionType.class, hash);
   }
 
   /**
-   * Check if the hash correspond to a XstructType.
+   * Check if the hash correspond to a FstructType.
    *
    * @param hash Hash of type to check.
-   * @return True if the hash correspond to a XstructType.
+   * @return True if the hash correspond to a FstructType.
    */
   public boolean isStructType(String hash) {
-    return isType(XstructType.class, hash);
+    return isType(FstructType.class, hash);
   }
 
   /**
-   * Check if the hash correspond to a XstructType.
+   * Check if the hash correspond to a FstructType.
    *
    * @param node Node to check.
-   * @return True if the hash correspond to a XstructType.
+   * @return True if the hash correspond to a FstructType.
    */
   public boolean isStructType(Xnode node) {
     return isStructType(node.getType());
@@ -162,70 +164,70 @@ public class XtypeTable extends Xnode {
   }
 
   /**
-   * Get the XbasicType associated with the node if any.
+   * Get the FbasicType associated with the node if any.
    *
    * @param node Node to look for type.
-   * @return XbasicType if associated. Null otherwise.
+   * @return FbasicType if associated. Null otherwise.
    */
-  public XbasicType getBasicType(Xnode node) {
+  public FbasicType getBasicType(Xnode node) {
     return getBasicType(node.getType());
   }
 
   /**
-   * Get the XbasicType associated with the given hash value.
+   * Get the FbasicType associated with the given hash value.
    *
    * @param hash Hash value to check for.
-   * @return XbasicType if associated. Null otherwise.
+   * @return FbasicType if associated. Null otherwise.
    */
-  public XbasicType getBasicType(String hash) {
+  public FbasicType getBasicType(String hash) {
     if(isBasicType(hash)) {
-      return (XbasicType) get(hash);
+      return (FbasicType) get(hash);
     }
     return null;
   }
 
   /**
-   * Get the XfunctionType associated with the node if any.
+   * Get the FfunctionType associated with the node if any.
    *
    * @param node Node to look for type.
-   * @return XfunctionType if associated. Null otherwise.
+   * @return FfunctionType if associated. Null otherwise.
    */
-  public XfunctionType getFunctionType(Xnode node) {
+  public FfunctionType getFunctionType(Xnode node) {
     return getFunctionType(node.getType());
   }
 
   /**
-   * Get the XfunctionType associated with the given hash value.
+   * Get the FfunctionType associated with the given hash value.
    *
    * @param hash Hash value to check for.
-   * @return XfunctionType if associated. Null otherwise.
+   * @return FfunctionType if associated. Null otherwise.
    */
-  public XfunctionType getFunctionType(String hash) {
+  public FfunctionType getFunctionType(String hash) {
     if(isFunctionType(hash)) {
-      return (XfunctionType) get(hash);
+      return (FfunctionType) get(hash);
     }
     return null;
   }
 
   /**
-   * Get the XstructType associated with the node if any.
+   * Get the FstructType associated with the node if any.
    *
    * @param node Node to look for type.
-   * @return XstructType if associated. Null otherwise.
+   * @return FstructType if associated. Null otherwise.
    */
-  public XstructType getStructType(Xnode node) {
+  public FstructType getStructType(Xnode node) {
     return getStructType(node.getType());
   }
 
   /**
-   * Get the XstructType associated with the given hash value.
+   * Get the FstructType associated with the given hash value.
    *
    * @param hash Hash value to check for.
-   * @return XstructType if associated. Null otherwise.
+   * @return FstructType if associated. Null otherwise.
    */
-  public XstructType getStructType(String hash) {
+  public FstructType getStructType(String hash) {
     if(isStructType(hash)) {
-      return (XstructType) get(hash);
+      return (FstructType) get(hash);
     }
     return null;
   }
@@ -259,7 +261,7 @@ public class XtypeTable extends Xnode {
    * @param type Type to generate the hash.
    * @return New unique hash.
    */
-  public String generateHash(XcodeType type) {
+  public String generateHash(FortranType type) {
     if(type == null) {
       return "";
     }

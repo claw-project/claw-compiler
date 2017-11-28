@@ -5,9 +5,7 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.Xintent;
-import claw.tatsu.xcodeml.xnode.fortran.XstructType;
+import claw.tatsu.xcodeml.xnode.fortran.*;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -50,12 +48,12 @@ public class XtypeTableTest {
 
     assertTrue(typeTable.hasType(basicTypeHash));
     assertTrue(typeTable.isBasicType(basicTypeHash));
-    XbasicType type1 = typeTable.getBasicType(basicTypeHash);
+    FbasicType type1 = typeTable.getBasicType(basicTypeHash);
     assertNotNull(type1);
     assertTrue(typeTable.isBasicType(basicTypeHash));
     assertTrue(typeTable.isBasicType(type1));
     assertFalse(type1.hasIntent());
-    assertEquals(Xintent.NONE, type1.getIntent());
+    assertEquals(Intent.NONE, type1.getIntent());
     assertFalse(type1.hasKind());
     assertTrue(type1.hasLength());
     assertEquals(Xname.TYPE_F_CHAR, type1.getRef());
@@ -70,7 +68,7 @@ public class XtypeTableTest {
     // FfunctionType test
     assertTrue(typeTable.hasType(fctTypeHash));
     assertTrue(typeTable.isFunctionType(fctTypeHash));
-    XfunctionType type2 = typeTable.getFunctionType(fctTypeHash);
+    FfunctionType type2 = typeTable.getFunctionType(fctTypeHash);
     assertNotNull(type2);
     assertTrue(typeTable.isFunctionType(fctTypeHash));
     assertTrue(typeTable.isFunctionType(type2));
@@ -90,8 +88,8 @@ public class XtypeTableTest {
     assertTrue(typeTable.isStructType(structTypeHash1));
     assertTrue(typeTable.hasType(structTypeHash2));
     assertTrue(typeTable.isStructType(structTypeHash2));
-    XstructType structType1 = typeTable.getStructType(structTypeHash1);
-    XstructType structType2 = typeTable.getStructType(structTypeHash2);
+    FstructType structType1 = typeTable.getStructType(structTypeHash1);
+    FstructType structType2 = typeTable.getStructType(structTypeHash2);
     assertNotNull(structType1);
     assertNotNull(structType2);
     assertTrue(typeTable.isStructType(structTypeHash1));
@@ -133,23 +131,23 @@ public class XtypeTableTest {
 
     assertEquals("", typeTable.generateHash(null));
 
-    String intHash = typeTable.generateHash(XcodeType.INTEGER);
+    String intHash = typeTable.generateHash(FortranType.INTEGER);
     assertEquals(13, intHash.length());
     assertTrue(intHash.startsWith("I"));
 
-    String realHash = typeTable.generateHash(XcodeType.REAL);
+    String realHash = typeTable.generateHash(FortranType.REAL);
     assertEquals(13, realHash.length());
     assertTrue(realHash.startsWith("R"));
 
-    String complexHash = typeTable.generateHash(XcodeType.COMPLEX);
+    String complexHash = typeTable.generateHash(FortranType.COMPLEX);
     assertEquals(13, complexHash.length());
     assertTrue(complexHash.startsWith("P"));
 
-    String logicalHash = typeTable.generateHash(XcodeType.LOGICAL);
+    String logicalHash = typeTable.generateHash(FortranType.LOGICAL);
     assertEquals(13, logicalHash.length());
     assertTrue(logicalHash.startsWith("L"));
 
-    String charHash = typeTable.generateHash(XcodeType.CHARACTER);
+    String charHash = typeTable.generateHash(FortranType.CHARACTER);
     assertEquals(13, charHash.length());
     assertTrue(charHash.startsWith("C"));
   }

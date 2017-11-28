@@ -15,7 +15,10 @@ import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.XfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.ClawConstant;
 import claw.wani.language.ClawMapping;
 import claw.wani.language.ClawMappingVar;
@@ -45,8 +48,8 @@ public class LoopExtraction extends ClawTransformation {
   private final Map<String, ClawMapping> _argMappingMap;
   private Xnode _fctCall = null;
   private Xnode _extractedLoop = null;
-  private XfunctionDefinition _fctDef = null; // Fct holding the fct call
-  private XfunctionDefinition _fctDefToExtract = null;
+  private FfunctionDefinition _fctDef = null; // Fct holding the fct call
+  private FfunctionDefinition _fctDefToExtract = null;
 
   /**
    * Constructs a new LoopExtraction triggered from a specific pragma.
@@ -145,7 +148,7 @@ public class LoopExtraction extends ClawTransformation {
           _claw.getPragma().lineNo());
       return false;
     }
-    _fctDef = new XfunctionDefinition(fctDef);
+    _fctDef = new FfunctionDefinition(fctDef);
 
     // Find function declaration
     String fctName = _fctCall.matchDirectDescendant(Xcode.NAME).value();
@@ -200,9 +203,9 @@ public class LoopExtraction extends ClawTransformation {
      */
 
     // Duplicate function definition
-    XfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
+    FfunctionDefinition clonedFctDef = _fctDefToExtract.cloneNode();
     String newFctTypeHash =
-        xcodeml.getTypeTable().generateHash(XcodeType.FUNCTION);
+        xcodeml.getTypeTable().generateHash(FortranType.FUNCTION);
     String newFctName = clonedFctDef.getName() +
         ClawConstant.EXTRACTION_SUFFIX +
         translator.getNextTransformationCounter();
@@ -215,9 +218,9 @@ public class LoopExtraction extends ClawTransformation {
     fctId.setName(newFctName);
 
     // Get the fctType in typeTable
-    XfunctionType fctType =
+    FfunctionType fctType =
         xcodeml.getTypeTable().getFunctionType(_fctDefToExtract);
-    XfunctionType newFctType = fctType.cloneNode();
+    FfunctionType newFctType = fctType.cloneNode();
     newFctType.setType(newFctTypeHash);
     xcodeml.getTypeTable().add(newFctType);
 
@@ -296,7 +299,7 @@ public class LoopExtraction extends ClawTransformation {
          * 3. Create arrayRef element with varRef + arrayIndex
          */
         if(argument.opcode() == Xcode.VAR) {
-          XbasicType type = xcodeml.getTypeTable().getBasicType(argument);
+          FbasicType type = xcodeml.getTypeTable().getBasicType(argument);
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()) {
@@ -340,7 +343,7 @@ public class LoopExtraction extends ClawTransformation {
         // Change variable declaration in extracted fct
         Xnode varDecl = fctDeclarations.get(var.getFctMapping());
         Xid id = fctSymbols.get(var.getFctMapping());
-        XbasicType varDeclType = xcodeml.getTypeTable().getBasicType(varDecl);
+        FbasicType varDeclType = xcodeml.getTypeTable().getBasicType(varDecl);
 
         // Case 1: variable is demoted to scalar then take the ref type
         if(varDeclType.getDimensions() == mapping.getMappedDimensions()) {

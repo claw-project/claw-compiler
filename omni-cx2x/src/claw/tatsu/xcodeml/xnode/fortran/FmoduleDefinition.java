@@ -9,7 +9,7 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import java.util.List;
 
 /**
- * The XmoduleDefinition represents the FmoduleDefinition (5.7) element in
+ * The FmoduleDefinition represents the FmoduleDefinition (5.7) element in
  * XcodeML intermediate representation.
  * <p>
  * Elements: (symbols?, declarations?, FcontainsStatement?)
@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class XmoduleDefinition extends Xnode {
+public class FmoduleDefinition extends Xnode {
 
   private final String _name;
   private final XsymbolTable _symbols;
@@ -37,7 +37,7 @@ public class XmoduleDefinition extends Xnode {
    *
    * @param node Raw node.
    */
-  public XmoduleDefinition(Xnode node) {
+  public FmoduleDefinition(Xnode node) {
     super(node == null ? null : node.element());
     _name = getAttribute(Xattr.NAME);
     Xnode symbols = matchSeq(Xcode.SYMBOLS);
@@ -80,13 +80,13 @@ public class XmoduleDefinition extends Xnode {
    * @param name Name of the function to be found.
    * @return A function definition element if found. Null otherwise.
    */
-  public XfunctionDefinition getFunctionDefinition(String name) {
+  public FfunctionDefinition getFunctionDefinition(String name) {
     if(name == null || name.isEmpty()) {
       return null;
     }
     List<Xnode> fctDefs = matchAll(Xcode.F_FUNCTION_DEFINITION);
     for(Xnode n : fctDefs) {
-      XfunctionDefinition fctDef = new XfunctionDefinition(n);
+      FfunctionDefinition fctDef = new FfunctionDefinition(n);
       if(fctDef.getName().equals(name)) {
         return fctDef;
       }
@@ -95,7 +95,7 @@ public class XmoduleDefinition extends Xnode {
   }
 
   @Override
-  public XmoduleDefinition cloneNode() {
-    return new XmoduleDefinition(super.cloneNode());
+  public FmoduleDefinition cloneNode() {
+    return new FmoduleDefinition(super.cloneNode());
   }
 }
