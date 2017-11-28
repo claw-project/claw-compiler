@@ -16,7 +16,7 @@ CONTAINS
 
 !$acc data present(t,q)
 !$acc parallel
-!$acc loop collapse(2) gang vector
+!$acc loop gang vector collapse(2)
   DO j = 1 , ny , 1
    DO i = 1 , nx , 1
     c = 5.345
