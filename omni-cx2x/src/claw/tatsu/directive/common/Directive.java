@@ -7,6 +7,7 @@ package claw.tatsu.directive.common;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
+import claw.tatsu.common.Utility;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
@@ -73,14 +74,11 @@ public final class Directive {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      if(noDependency != null) {
-        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
-            "generated loop directive for loop at line: " + doStmt.lineNo());
-      } else {
-        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX +
-            "generated loop seq directive for loop at line: "
-            + doStmt.lineNo());
-      }
+      // TODO generic message for OpenMP as well
+      Message.debug(String.format(
+          "%s generated loop %s directive for loop at line: %d",
+          OpenAcc.OPENACC_DEBUG_PREFIX, (noDependency == null) ? "seq" : "",
+          doStmt.lineNo()));
     }
     return nodep_counter;
   }
@@ -587,7 +585,8 @@ public final class Directive {
   public static Xnode findParallelRegionEnd(Xnode functionDefinition,
                                             Xnode from)
   {
-    if(Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE
+    if(Context.get().getGenerator().getDirectiveLanguage() ==
+        CompilerDirective.NONE
         || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
     {
       return null;
@@ -607,7 +606,7 @@ public final class Directive {
           contains(last.opcode())) {
         if(last.hasBody() || last.opcode() == Xcode.F_IF_STATEMENT) {
           List<Xnode> children = (last.hasBody()) ? last.body().children()
-              : last.matchDirectDescendant(Xcode.THEN).children();
+              : last.matchDirectDescendant(Xcode.THEN).body().children();
           for(Xnode child : children) {
             if(!Context.get().getGenerator().getSkippedStatementsInEpilogue().
                 contains(child.opcode()))
