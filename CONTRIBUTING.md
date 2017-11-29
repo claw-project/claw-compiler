@@ -11,6 +11,8 @@ Pull requests are much welcome!!
   beforehand in the Slack workspace or in a dedicated issue.
 * PR must pass all tests executed by Travis CI. A PR might add tests or update
   references if the change requests it.
+* New code should be in principle be covered at 100% by unit tests.
+* Eventual conflict in PR should be resolved by the issuer of the PR.  
 
 ## Code Style Guide
 The CLAW Compiler project uses different languages and here are the code style
@@ -21,6 +23,28 @@ guidelines to follow for each of them.
 * 2 spaces indentation if not defined.
 * Source file have a mention of the LICENSE and point to the license file of
   this repository.
+
+  * for Java
+    ```java
+    /*
+     * This file is released under terms of BSD license
+     * See LICENSE file for more information
+     */
+     ```
+  * for FORTRAN
+    ```fortran
+    !
+    ! This file is released under terms of BSD license
+    ! See LICENSE file for more information
+    !
+    ```
+  * for bash
+    ```bash
+    #
+    # This file is released under terms of BSD license
+    # See LICENSE file for more information
+    #
+    ```
 * All the guidelines expressed here are not valid for the external submodule
   like OMNI Compiler where we have not power on this.
 
@@ -111,4 +135,5 @@ transformation is implemented in the CLAW XcodeML Translator (ClawX2T).
 FORTRAN is only used in the examples and reference tests. The following code
 guidelines are applied:
 
+* 2 spaces indentation
 *
