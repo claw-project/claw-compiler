@@ -14,12 +14,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +48,27 @@ public class XcodeML extends Xnode {
     super(baseElement.getDocumentElement());
     _typeTable = new XtypeTable(matchSeq(Xcode.TYPE_TABLE));
     _xcodemlDoc = baseElement;
+  }
+
+  /**
+   * Read XML from stream.
+   *
+   * @param input Xml file path.
+   * @return Document if the XML stream could be read. Null otherwise.
+   */
+  static Document readXmlStream(InputStream input) {
+    try {
+      if(input == null) {
+        return null;
+      }
+      DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+      Document doc = dBuilder.parse(input);
+      doc.getDocumentElement().normalize();
+      return doc;
+    } catch(Exception ignored) {
+    }
+    return null;
   }
 
   /**
@@ -263,6 +287,11 @@ public class XcodeML extends Xnode {
     }
   }
 
+
+  /*
+   * Node creation section
+   */
+
   /**
    * Check the type of the given node.
    *
@@ -277,11 +306,6 @@ public class XcodeML extends Xnode {
     return nodeType == Node.ELEMENT_NODE || nodeType == Node.CDATA_SECTION_NODE
         || nodeType == Node.COMMENT_NODE;
   }
-
-
-  /*
-   * Node creation section
-   */
 
   /**
    * Constructs a new name node with name value and optional type.

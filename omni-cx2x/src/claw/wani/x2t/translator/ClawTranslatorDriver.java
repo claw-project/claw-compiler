@@ -76,7 +76,10 @@ public class ClawTranslatorDriver {
    * transformation with the help of the translator.
    */
   public void analyze() {
-    _translationUnit = XcodeProgram.createFromFile(_xcodemlInputFile);
+    _translationUnit = (_xcodemlInputFile == null) ?
+        XcodeProgram.createFromStdInput() :
+        XcodeProgram.createFromFile(_xcodemlInputFile);
+
     if(_translationUnit == null) {
       abort();
     }
@@ -188,8 +191,10 @@ public class ClawTranslatorDriver {
         }
       }
 
-      // Write transformed IR to file
-      _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      if(_xcodemlOutputFile != null) {
+        // Write transformed IR to file
+        _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
+      }
     } catch(Exception ex) {
       System.err.println("Transformation exception: " + ex.getMessage());
     }

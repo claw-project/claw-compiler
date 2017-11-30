@@ -283,6 +283,7 @@ if [[ ${resolve_dependencies} == true ]]; then
   [[ ${stop_dependencies} == true ]] && exit 0;
 fi
 
+### Pipe workflow ###
 if [[ ${pipe_workflow} == true ]]; then
   for input_file in "${f_files_transformation[@]}"; do
     file_out_f=""
@@ -313,10 +314,28 @@ if [[ ${pipe_workflow} == true ]]; then
         "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
         "${trans_module_opt[@]}" | \
         sed -e "s/\!\$claw ignore//" | sed -e "s/\!\$claw end ignore//" | \
-        sed -e "s/__CLAWAMP__/\&/" | sed -e "s/\!\$claw verbatim //" > "${file_out_f}"
-      else
-        echo "FPP breaks pipe mode"
+        sed -e "s/__CLAWAMP__/\&/" | sed -e "s/\!\$claw verbatim //" > \
+        "${file_out_f}"
+
+      # 0: OMNI FORTRAN Front-end
+      # 1: CLAW XcodeML Translator
+      # 2: !$claw ignore     # revert pass
+      # 3: !$claw end ignore # revert pass
+      # 4: __CLAWAMP__       # convertion pass
+      # 5: !$claw verbatim   # revert pass
+      compiler_status=(${PIPESTATUS[*]})
+
+      if [[  ${compiler_status[0]} -ne 0 ]] || \
+        [[  ${compiler_status[1]} -ne 0 ]] || \
+        [[  ${compiler_status[2]} -ne 0 ]] || \
+        [[  ${compiler_status[3]} -ne 0 ]] || \
+        [[  ${compiler_status[4]} -ne 0 ]] || \
+        [[  ${compiler_status[5]} -ne 0 ]]; then
+        claw::error_exit "Internal error"
       fi
+    else
+      claw::error_exit "FPP breaks pipe mode"
+    fi
    done
    exit 0
 fi

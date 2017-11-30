@@ -239,8 +239,7 @@ public class ClawX2T {
     }
 
     if(cmd.getArgs().length == 0) {
-      error("internal", 0, 0, "no input file");
-      return;
+      input = null;
     } else {
       input = cmd.getArgs()[0];
     }
@@ -298,11 +297,22 @@ public class ClawX2T {
     } else {
       backend = new OmniBackendDriver(OmniBackendDriver.Lang.FORTRAN);
     }
-    if(!backend.decompile(targetLangOutput, xcmlOutput, maxColumns,
-        XmOption.isSuppressLineDirective()))
-    {
-      error(xcmlOutput, 0, 0, "Unable to decompile XcodeML to target language");
-      System.exit(1);
+
+    if(xcmlOutput == null) { // XcodeML output not written to file. Use pipe.
+      if(!backend.decompile(targetLangOutput,
+          translatorDriver.getTranslationUnit(), maxColumns,
+          XmOption.isSuppressLineDirective()))
+      {
+        error(targetLangOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
+        System.exit(1);
+      }
+    } else {
+      if(!backend.decompileFromFile(targetLangOutput, xcmlOutput, maxColumns,
+          XmOption.isSuppressLineDirective()))
+      {
+        error(xcmlOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
+        System.exit(1);
+      }
     }
   }
 }

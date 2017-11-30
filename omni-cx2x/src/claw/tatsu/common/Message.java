@@ -31,7 +31,7 @@ public final class Message {
    */
   public static void debug(String message) {
     if(XmOption.isDebugOutput()) {
-      System.out.println(message);
+      System.err.println(message);
     }
   }
 
