@@ -7,7 +7,6 @@ package claw.tatsu.directive.common;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
-import claw.tatsu.common.Utility;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;

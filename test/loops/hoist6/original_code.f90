@@ -1,4 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the loop-hoist directive with fusion clause
+!
 
 program loop_hoist6
   call clawloop

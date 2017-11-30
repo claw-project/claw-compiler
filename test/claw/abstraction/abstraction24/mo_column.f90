@@ -1,8 +1,11 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 MODULE mo_column
   IMPLICIT NONE
 CONTAINS
-
-
 
   ! Compute only one column
   FUNCTION compute_column(nz, q, t) result(res)

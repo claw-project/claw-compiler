@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 MODULE mo_column_extra
   USE mo_column, ONLY: ty_column, compute_column
   IMPLICIT NONE
