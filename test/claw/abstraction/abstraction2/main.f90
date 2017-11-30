@@ -1,4 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Test the CLAW abstraction model with two additional dimensions.
+!
+
 PROGRAM test_abstraction2
   USE mo_column, ONLY: compute_column
 

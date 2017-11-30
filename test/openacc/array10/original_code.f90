@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 ! Simple program to test the array notation to do loop directive
 
 PROGRAM VECTOR_LOOP

@@ -1,6 +1,12 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+!
 ! Simple program to test the loop-hoist directive with reshape
 ! Code is toally dummy and does not perform something useful. Structure is
 ! important for transformation test
+!
 
 PROGRAM claw_test
   CALL claw_hoist2
@@ -26,7 +32,7 @@ SUBROUTINE claw_hoist2
 
   ntrac=2
   klev=10
-  kproma=100  
+  kproma=100
   array2d_1(:,:) = 0.0
   array2d_2(:,:) = 0.0
   array2d_3(:,:) = 0.0

@@ -1,4 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the loop-extract directive with fusion option
+!
 
 PROGRAM LOOP_EXTRACT
   INTEGER :: value1(10)

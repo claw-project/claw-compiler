@@ -1,5 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the loop-interchange directive
-
+!
 PROGRAM LOOP_INTERCHANGE
   CALL clawloop
 END

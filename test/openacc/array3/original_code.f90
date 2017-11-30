@@ -1,5 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 ! Simple program to test the array notation to do loop directive
-! arrays do not have any index range. 
+! arrays do not have any index range.
 
 PROGRAM VECTOR_LOOP
   CALL claw

@@ -19,18 +19,20 @@ The CLAW Compiler project uses different languages and here are the code style
 guidelines to follow for each of them.
 
 ### General
+All the guidelines expressed here are not valid for the external submodule like
+the OMNI Compiler where we have not power on this.
+
 * No tab anywhere unless it is mandatory (e.g. Makefile)
 * 2 spaces indentation if not defined.
 * Source file have a mention of the LICENSE and point to the license file of
   this repository.
-
   * for Java
     ```java
     /*
      * This file is released under terms of BSD license
      * See LICENSE file for more information
      */
-     ```
+    ```
   * for FORTRAN
     ```fortran
     !
@@ -45,8 +47,13 @@ guidelines to follow for each of them.
     # See LICENSE file for more information
     #
     ```
-* All the guidelines expressed here are not valid for the external submodule
-  like OMNI Compiler where we have not power on this.
+  * for XML
+    ```xml
+    <!--
+     This file is released under terms of BSD license
+     See LICENSE file for more information
+    -->
+    ```
 
 ### Bash
 The main `bash` source code reside in the driver. The code should be
