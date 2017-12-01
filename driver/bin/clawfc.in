@@ -52,6 +52,7 @@ decompiler_max_column=false
 dump_cx2x_args=false
 force_pure=false
 report=false
+pipe_workflow=true
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -111,6 +112,16 @@ readonly decompiler_max_column
 readonly dump_cx2x_args
 readonly force_pure
 readonly report
+readonly pipe_workflow
+
+### sed constant ###
+readonly claw_sed_ignore="s/\!\$claw ignore//"
+readonly claw_sed_end_ignore="s/\!\$claw end ignore//"
+readonly claw_sed_cont="s/__CLAWAMP__/\&/"
+readonly claw_sed_verbatim="s/\!\$claw verbatim //"
+
+### Add additional parameters needed for cx2x ###
+claw::format_cx2x_params
 
 ### List target ###
 if [[ ${list_target} == true ]]; then
@@ -121,55 +132,9 @@ fi
 
 ### List directive ###
 if [[ ${list_directive} == true ]]; then
-   # shellcheck disable=SC2086
+  # shellcheck disable=SC2086
   ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --directive-list
   exit 0
-fi
-
-# Set configuraions directory
-OMNI_CX2X_CONFIG_OPT="--config-path=${OMNI_CX2X_CONFIG_PATH}"
-
-# Set user defined configuration
-if [[ ${user_config} == true ]]; then
-  OMNI_CX2X_CONFIG_OPT="${OMNI_CX2X_CONFIG_OPT} --config=${config_opt}"
-fi
-
-# Set the correct target option for the translator
-OMNI_CX2X_TARGET_OPT=""
-if [[ ${user_target} == true ]]; then
-  OMNI_CX2X_TARGET_OPT="--target=${target_opt}"
-fi
-
-# Set the correct directive option for the translator
-OMNI_CX2X_DIRECTIVE_OPT=""
-if [[ ${user_directive} == true ]]; then
-  OMNI_CX2X_DIRECTIVE_OPT="--directive=${directive_opt}"
-fi
-
-# Set the correct column option for the decompiler
-OMNI_CX2X_MAX_COLUMN_OPT=""
-if [[ ${decompiler_max_column} == true ]]; then
-  OMNI_CX2X_MAX_COLUMN_OPT="-w ${max_columns}"
-else
-  OMNI_CX2X_MAX_COLUMN_OPT="-w 80"
-fi
-
-# Set the correct line directive option for the decompiler
-OMNI_CX2X_LINE_OPT="-l"
-if [[ ${line_directive} == true ]]; then
-  OMNI_CX2X_LINE_OPT=""
-fi
-
-if [[ ${force_pure} == true ]]; then
-  TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --force-pure"
-fi
-
-# Module search path option
-OMNI_CX2X_MOD_OPT=""
-if [[ ${#module_opt[@]} -ne 0 ]]; then
-  for mod in "${module_opt[@]}"; do
-    OMNI_CX2X_MOD_OPT="${OMNI_CX2X_MOD_OPT} ${mod}"
-  done
 fi
 
 ### Show config ###
@@ -179,6 +144,7 @@ if [[ ${show_config} == true ]]; then
   exit 0
 fi
 
+## Check that input file exits
 claw::check_file_exist
 
 ## Check if multiple file, output_dir must be specified and output_file not
@@ -191,7 +157,10 @@ elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
     "Error: output directory and output file cannot be specified together"
 fi
 
-
+## No output file specifed so define a default one
+if [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
+  output_file="a.f90"
+fi
 
 ### Create temporal directory ###
 [[ ${enable_debug_omni} == true ]] && temp_dir=${debug_temp_dir}
@@ -204,9 +173,9 @@ for input_file in "${f_files[@]}"; do
     num_directives="$(grep --count --ignore-case "!\$claw" "${input_file}")"
     num_omp_compile_guard="$(grep --count --ignore-case "!\$omp claw-guard" "${input_file}")"
     num_acc_compile_guard="$(grep --count --ignore-case "!\$acc claw-guard" "${input_file}")"
-    if [[ "${num_directives}" == "0" ]] \
-      && [[ "${num_omp_compile_guard}" == "0" ]] \
-      && [[ "${num_acc_compile_guard}" == "0" ]]; then
+    if [[ "${num_directives}" == "0" ]] &&
+      [[ "${num_omp_compile_guard}" == "0" ]] &&
+      [[ "${num_acc_compile_guard}" == "0" ]]; then
       claw::warning "${input_file}" "-" "file does not contains \$claw. Skip..."
       if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
@@ -234,11 +203,11 @@ for input_file in "${f_files_transformation[@]}"; do
   ext=${input_file##*.}
   file_pp1=${temp_dir}/"${file_name}".pp1.${ext} # temp file for preprocessing 1
   file_pp2=${temp_dir}/"${file_name}".pp2.${ext} # temp file for preprocessing 2
-  file_pp=${temp_dir}/"${base_name}" # preprocessed file with original name
+  file_pp=${temp_dir}/"${base_name}"             # preprocessed file with original name
   preprocessor_output="$(basename "${file_pp%.*}")"
 
-  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
-    || [[ ${enable_cpp} == true ]]; then
+  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
+    [[ ${enable_cpp} == true ]]; then
 
     # Apply pre preprocessor pass to avoid ending backslash error
     claw::applyPreprocessorPass "${input_file}" "${file_pp1}"
@@ -254,7 +223,7 @@ for input_file in "${f_files_transformation[@]}"; do
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > "${file_pp2}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" >"${file_pp2}"
 
       mv "${file_pp2}" "${file_pp}"
     else
@@ -274,25 +243,28 @@ for input_file in "${f_files_transformation[@]}"; do
     fi
 
     if [[ ${only_pp} == true ]]; then
-      if [[ "${output_file}" = "" ]]; then
+      if [[ "${output_file}" == "" ]]; then
         cat "${file_pp}"
       else
-        cat "${file_pp}" >> "${output_file}" # TODO debug here
+        cat "${file_pp}" >>"${output_file}" # TODO debug here
       fi
     fi
   fi
 done
-[[ ${stop_pp} == true ]] && exit 0;
-[[ ${only_pp} == true ]] && [[ ${enable_debug_omni} == true ]] && exit 0;
-[[ ${only_pp} == true ]] && { rm -rf ${temp_dir}; exit 0; }
+[[ ${stop_pp} == true ]] && exit 0
+[[ ${only_pp} == true ]] && [[ ${enable_debug_omni} == true ]] && exit 0
+[[ ${only_pp} == true ]] && {
+  rm -rf ${temp_dir}
+  exit 0
+}
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   base_name="$(basename "${input_file}")"
-  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
-    || [[ ${enable_cpp} == true ]]; then
+  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
+    [[ ${enable_cpp} == true ]]; then
     file_pp=${temp_dir}/"${base_name}"
   else
     # TODO not correct file name as iignore is applied in place
@@ -308,8 +280,8 @@ if [[ ${resolve_dependencies} == true ]]; then
     file_name="$(claw::norm_file_name "${input_file}")"
     ext=${input_file##*.}
     base_name="$(basename "${input_file}")"
-    if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
-      || [[ ${enable_cpp} == true ]]; then
+    if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
+      [[ ${enable_cpp} == true ]]; then
       file_pp=${temp_dir}/"${base_name}"
     else
       file_pp="${input_file}"
@@ -317,7 +289,63 @@ if [[ ${resolve_dependencies} == true ]]; then
 
     claw::process_dependencies "${file_pp}" "${input_file}"
   done
-  [[ ${stop_dependencies} == true ]] && exit 0;
+  [[ ${stop_dependencies} == true ]] && exit 0
+fi
+
+### Pipe workflow ###
+if [[ ${pipe_workflow} == true ]]; then
+  for input_file in "${f_files_transformation[@]}"; do
+    file_out_f=""
+    if [[ "${output_file}" != "" ]]; then
+      file_out_f=${output_file}
+    elif [[ "${output_dir}" != "" ]]; then
+      file_out_f=${output_dir}/${input_file}
+    fi
+
+    if [[ ${fpp_redirect} == true ]]; then
+
+      file_name="$(claw::norm_file_name "${input_file}")"
+      ext=${input_file##*.}
+      base_name="$(basename "${input_file}")"
+      if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
+        [[ ${enable_cpp} == true ]]; then
+        file_pp=${temp_dir}/"${base_name}"
+      else
+        file_pp="${input_file}"
+      fi
+
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
+          ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
+          ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+          "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+          "${trans_module_opt[@]}" |
+        sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
+        sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" >"${file_out_f}"
+
+      # 0: OMNI FORTRAN Front-end
+      # 1: CLAW XcodeML Translator
+      # 2: !$claw ignore     # revert pass
+      # 3: !$claw end ignore # revert pass
+      # 4: __CLAWAMP__       # convertion pass
+      # 5: !$claw verbatim   # revert pass
+      compiler_status=(${PIPESTATUS[*]})
+
+      if [[ ${compiler_status[0]} -ne 0 ]] ||
+        [[ ${compiler_status[1]} -ne 0 ]] ||
+        [[ ${compiler_status[2]} -ne 0 ]] ||
+        [[ ${compiler_status[3]} -ne 0 ]] ||
+        [[ ${compiler_status[4]} -ne 0 ]] ||
+        [[ ${compiler_status[5]} -ne 0 ]]; then
+        claw::error_exit "Internal error"
+      fi
+    else
+      claw::error_exit "FPP breaks pipe mode"
+    fi
+  done
+  exit 0
 fi
 
 ### Frontend ###
@@ -326,8 +354,8 @@ for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   base_name="$(basename "${input_file}")"
-  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] \
-    || [[ ${enable_cpp} == true ]]; then
+  if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
+    [[ ${enable_cpp} == true ]]; then
     file_pp=${temp_dir}/"${base_name}"
   else
     file_pp="${input_file}"
@@ -352,7 +380,7 @@ for input_file in "${f_files_transformation[@]}"; do
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
     "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
 done
-[[ ${stop_frontend} == true ]] && exit 0;
+[[ ${stop_frontend} == true ]] && exit 0
 
 # Add debug flag for the translator options
 if [[ ${enable_debug} == true ]]; then
@@ -429,7 +457,7 @@ for input_file in "${f_files_transformation[@]}"; do
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
   # So that remains .F90 extention after process of the native compilier.
 done
-[[ ${stop_translator} == true ]] && exit 0;
+[[ ${stop_translator} == true ]] && exit 0
 
 ### Revert ignore prefix and apply verbatim
 for input_file in "${f_files_transformation[@]}"; do

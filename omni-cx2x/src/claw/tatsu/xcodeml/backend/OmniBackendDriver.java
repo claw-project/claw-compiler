@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.backend;
 
+import claw.tatsu.xcodeml.xnode.common.XcodeML;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import xcodeml.util.*;
@@ -64,32 +65,45 @@ public class OmniBackendDriver {
    * Decompile the XcodeML file into Fortran code.
    *
    * @param outputFilepath Fortran output file path.
-   * @param inputFilepath  XcodeML input file path.
+   * @param xcodeml        XcodeML translation unit.
    * @param maxColumns     Maximum number of column for the output file.
    * @param lineDirectives If true, preprocessor line directives are added.
    * @return True if the decompilation succeeded. False otherwise.
    */
-  public boolean decompile(String outputFilepath, String inputFilepath,
+  public boolean decompile(String outputFilepath, XcodeML xcodeml,
                            int maxColumns, boolean lineDirectives)
+  {
+    return decompile(outputFilepath, xcodeml.getDocument(), maxColumns,
+        lineDirectives);
+  }
+
+  /**
+   * Decompile the XcodeML file into Fortran code.
+   *
+   * @param outputFilepath Fortran output file path.
+   * @param xcodeml        XcodeML document.
+   * @param maxColumns     Maximum number of column for the output file.
+   * @param lineDirectives If true, preprocessor line directives are added.
+   * @return True if the decompilation succeeded. False otherwise.
+   */
+  private boolean decompile(String outputFilepath, Document xcodeml,
+                            int maxColumns, boolean lineDirectives)
   {
     if(!lineDirectives) {
       XmOption.setIsSuppressLineDirective(true);
     }
+    // Avoid insertion of USE xmpf_coarray statement
     XmOption.setCoarrayNoUseStatement(true);
     XmOption.setDebugOutput(false);
 
-    if(!openXcodeMLFile(inputFilepath)) {
-      return false;
-    }
-
     PrintWriter writer = null;
     try {
-      File outputFile = new File(outputFilepath);
-      File parentFile = outputFile.getParentFile();
-      if(parentFile != null) {
-        parentFile.mkdir();
+      if(outputFilepath == null || outputFilepath.isEmpty()) {
+        writer = new PrintWriter(System.out);
+      } else {
+        writer = new PrintWriter(new BufferedWriter(new
+            FileWriter(outputFilepath)));
       }
-      writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
     } catch(IOException e) {
       e.printStackTrace();
     }
@@ -103,16 +117,7 @@ public class OmniBackendDriver {
             maxColumns);
       }
 
-      try {
-        DocumentBuilderFactory docFactory =
-            DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = docFactory.newDocumentBuilder();
-        Document xcodeDoc;
-        xcodeDoc = builder.parse(inputFilepath);
-        decompiler.decompile(context, xcodeDoc, writer);
-      } catch(ParserConfigurationException | SAXException | IOException e) {
-        return false;
-      }
+      decompiler.decompile(context, xcodeml, writer);
 
       if(writer != null) {
         writer.flush();
@@ -133,6 +138,33 @@ public class OmniBackendDriver {
       }
     }
     return false;
+  }
+
+  /**
+   * Decompile the XcodeML file into Fortran code.
+   *
+   * @param outputFilepath Fortran output file path.
+   * @param inputFilepath  XcodeML input file path.
+   * @param maxColumns     Maximum number of column for the output file.
+   * @param lineDirectives If true, preprocessor line directives are added.
+   * @return True if the decompilation succeeded. False otherwise.
+   */
+  public boolean decompileFromFile(String outputFilepath, String inputFilepath,
+                                   int maxColumns, boolean lineDirectives)
+  {
+    if(!openXcodeMLFile(inputFilepath)) {
+      return false;
+    }
+
+    try {
+      DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = docFactory.newDocumentBuilder();
+      Document xcodeml = builder.parse(inputFilepath);
+      decompile(outputFilepath, xcodeml, maxColumns, lineDirectives);
+      return true;
+    } catch(ParserConfigurationException | SAXException | IOException e) {
+      return false;
+    }
   }
 
   public enum Lang {
