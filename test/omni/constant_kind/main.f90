@@ -1,4 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Test the OMNI Compiler kind specifier
+!
+
 PROGRAM constant_kind
   USE mo_column
   REAL(KIND=dp) :: a

@@ -13,11 +13,10 @@ CONTAINS
 
 !$acc data present(t,q)
 !$acc parallel
-!$acc loop gang vector
+!$acc loop gang vector collapse(2)
   DO proma = 1 , nproma , 1
-   c = 5.345
-!$acc loop
    DO k = 2 , nz , 1
+    c = 5.345
     t ( proma , k ) = c * k
     q ( proma , k ) = q ( proma , k ) + t ( proma , k ) * c
    END DO

@@ -1,9 +1,13 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+-->
 <claw version="0.4">
   <global type="extension"/>
   <groups>
     <group name="internal-xcodeml"/>
     <group name="remove"/>
-    <group name="primitive"/>
+    <group name="directive-primitive"/>
     <group name="array-transform"/>
     <group name="loop-extract"/>
     <group name="loop-fusion"/>

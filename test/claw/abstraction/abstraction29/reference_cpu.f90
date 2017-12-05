@@ -11,9 +11,9 @@ CONTAINS
   REAL :: c
   INTEGER :: proma
 
-  c = 5.345
 !$claw nodep
   DO k = 2 , nz , 1
+   c = 5.345
    DO proma = 1 , nproma , 1
     t ( proma , k ) = c * k
    END DO

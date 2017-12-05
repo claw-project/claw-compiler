@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 program test
   integer :: i
   logical :: ldo

@@ -1,4 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Small test case to test macro passing to the preprocessor by the CLAW driver
+!
+
 program testmacro
 
 #ifdef USER_MACRO1

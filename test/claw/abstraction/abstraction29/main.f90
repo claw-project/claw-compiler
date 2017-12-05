@@ -1,4 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Test the CLAW abstraction model with one additional dimension.
+!
+
 PROGRAM test_abstraction1
   USE mo_column, ONLY: compute_column
   REAL, DIMENSION(20,60) :: q, t  ! Fields as declared in the whole model

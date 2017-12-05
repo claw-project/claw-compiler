@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 MODULE mo_column
   IMPLICIT NONE
 CONTAINS
@@ -20,9 +25,9 @@ CONTAINS
     !$claw define dimension proma(1:nproma) &
     !$claw parallelize
 
-    c = 5.345
     !$claw nodep
     DO k = 2, nz
+      c = 5.345
       t(k) = c * k
       q(k) = q(k)  + t(k) * c
     END DO

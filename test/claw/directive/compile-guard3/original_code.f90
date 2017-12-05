@@ -1,4 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the CLAW compile guard OpenACC
+!
 
 PROGRAM compile_guard_test
   CALL dummy_subroutine

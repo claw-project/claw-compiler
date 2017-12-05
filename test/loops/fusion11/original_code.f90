@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 program ecmwf_case1
   integer :: jl, jm
   !$claw acc kernels

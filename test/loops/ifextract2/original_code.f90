@@ -1,4 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the if-extract directive
+!
 
 program ifextract2
   integer :: i
