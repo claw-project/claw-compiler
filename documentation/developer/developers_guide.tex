@@ -1,5 +1,8 @@
 \documentclass[a4paper, 11pt]{report}
-\author{Valentin Clement}
+\newcommand{\authorname}{Valentin Clement}
+\author{\authorname{}}
+\newcommand{\version}{1.0b}
+
 \title{CLAW FORTRAN Compiler - Developer's Guide}
 
 \usepackage[utf8]{inputenc}
@@ -118,7 +121,7 @@
 
 %Footer definition
 \renewcommand{\footrulewidth}{0.5pt}
-\lfoot{Version 0.1}
+\lfoot{Version \version{}}
 \rfoot{Page \thepage ~on \pageref{LastPage}}
 
 \definecolor{grey}{rgb}{0.9,0.9,0.9}
@@ -162,8 +165,8 @@
 \vfill % Space between the title box and author information
 
 \begin{center}
-Version 1.0, Last updated \today \\
-Author: Valentin Clement
+Version \version{}, Last updated \today \\
+Author: \authorname{}
 \end{center}
 \HRule
 
@@ -221,6 +224,8 @@ more than once is followed by ellipses:\\
 \input{guide_configuration.tex}
 \input{guide_transformation.tex}
 \input{guide_xcodeml_ast_manipulation.tex}
+\input{guide_claw_transformation_primitive.tex}
+
 
 % GLOSSARY
 \pagebreak

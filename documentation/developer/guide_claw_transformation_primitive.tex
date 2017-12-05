@@ -1,0 +1,140 @@
+\chapter{CLAW Primitives}
+\label{chapter:primitives}
+CLAW transformations, low-level or high-level, are built on various smaller 
+blocks that can be re-used in other transformations. Those blocks are called
+primitives as they define a well constraint test or transformation on the
+\xcodeml AST. These primitives block use the \xcodeml AST abstraction library
+detailed in Chapter \ref{chapter:astmanip}.
+The different primitives available in the CLAW framework are listed in this
+chapter. 
+%TODO complete the chapter with all primitives
+\textit{!!! CURRENTLY NOT COMPLETE !!!}.
+
+\section{Loop primitive}
+In this section, primitive transformations applicable on do statements are 
+detailed.
+
+\subsection{Loop fusion (merge)}
+Loop fusion or merge is the process of merge the body of a slave loop into
+the one of a master loop.
+In \xcodeml, a \lstinline|FdoStatement| has a child \lstinline|body| node.
+This \lstinline|body| node has 0 to N children. Performing a merge of two
+\lstinline|FdoStatement| is done by shifting all the element of the slave
+\lstinline|FdoStatement->body| to the master \lstinline|FdoStatement->body|.
+
+\subsubsection{API}
+Signatures of the available methods to perform a loop fusion are shown in
+Listing \ref{lst:pri_merge}. The first is used to perform a simple fusion 
+on two simple \lstinline|FdoStatement|. The second uses 
+\lstinline|NestedDoStatement| objects and will perform the merge of the 
+inner most bodies.
+
+\begin{lstlisting}[label=lst:pri_merge, language=java,title=LoopTransform.java]
+public static void merge(Xnode master, Xnode slave);
+public static void merge(NestedDoStatement master, NestedDoStatement slave);
+\end{lstlisting}
+
+\subsubsection{Implementation}
+The implementation is quite simple.
+\begin{itemize}
+  \item Check the two nodes are not null and actual \lstinline|FdoStatement|
+  \item Call the \lstinline|Body.appendBody| method that append the body of the
+        second node to the first node body.
+  \item Clean-up any \lstinline|FpragmaStatement| that were decorating the 
+        slave \lstinline|FdoStatement|
+  \item Delete the slave \lstinline|FdoStatement| as it is now included in the
+        master one.
+\end{itemize}
+
+\begin{lstlisting}[label=lst:loop_merge, language=java, title=Loop.java]
+public static void merge(Xnode masterDoStmt, Xnode slaveDoStmt)
+      throws IllegalTransformationException
+{
+  if(masterDoStmt == null || slaveDoStmt == null
+      || masterDoStmt.opcode() != Xcode.FDOSTATEMENT
+      || slaveDoStmt.opcode() != Xcode.FDOSTATEMENT)
+  {
+    throw new IllegalTransformationException(
+        "Incompatible node to perform a merge");
+  }
+
+  // Merge slave body into the master body
+  Body.append(masterDoStmt.body(), slaveDoStmt.body());
+
+  // Delete any acc loop / omp do pragma before/after the slave do statement.
+  Loop.cleanPragmas(slaveDoStmt, prevToDelete, nextToDelete);
+  
+  // Delete the slave do statement
+  slaveDoStmt.delete();
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[label=lst:body_append, language=java, title=Body.java]
+private static void appendBody(Xnode masterBody, Xnode slaveBody)
+    throws IllegalTransformationException
+{
+  if(masterBody == null || slaveBody == null
+      || masterBody.opcode() != Xcode.BODY
+      || slaveBody.opcode() != Xcode.BODY)
+  {
+    throw new IllegalTransformationException(ClawConstant.ERROR_INCOMPATIBLE);
+  }
+
+  // Append content of slave body master body
+  Xnode crtNode = slaveBody.firstChild();
+  while(crtNode != null) {
+    Xnode nextSibling = crtNode.nextSibling();
+    masterBody.append(crtNode);
+    crtNode = nextSibling;
+  }
+}
+\end{lstlisting}
+
+\subsection{Loop reorder}
+%TODO
+
+\section{Field primitive}
+%TODO
+
+
+\subsection{Scalar and arrays promotion}
+Promotion of a scalar or array field is defined as a primitive transformation.
+\lstinline|FieldTransform.promote| is the only method to be called to perform
+this transformation on a field.
+
+A promotion is defined by various elements. First, the dimension definition 
+describes a dimension that will be used for the promotion.
+In a promotion process, 1 to N dimension are added to an existing field type. 
+Each dimension definition can describe its insertion position regarding the 
+existing dimensions.
+
+
+\begin{lstlisting}[language=fortran]
+REAL, DIMENSION(1:10,1:20) :: a
+
+! Some dimensions used to illustrate the promotion process
+! Dimension description ndim(1:30)
+! Dimension description zdim(1:30)
+
+! Promoted with ndim before existing dimension
+REAL, DIMENSION(ndim,1:10,1:20) :: a
+! Promoted with ndim in middle existing dimensions
+REAL, DIMENSION(1:10,ndim,1:20) :: a
+! Promoted with ndim after existing dimensions
+REAL, DIMENSION(1:10,1:20,ndim) :: a
+
+! Promoted with ndim and zdim before existing dimension
+REAL, DIMENSION(ndim,zdim,1:10,1:20) :: a
+! Promoted with ndim and zdim in middle existing dimensions
+REAL, DIMENSION(1:10,ndim,zdim,1:20) :: a
+! Promoted with ndim,zdim after existing dimensions
+REAL, DIMENSION(1:10,1:20,ndim,zdim) :: a
+
+! Promoted with ndim before and zdim after existing dimension
+REAL, DIMENSION(ndim,1:10,1:20,zdim) :: a
+! Promoted with ndim in middle and zdim after existing dimensions
+REAL, DIMENSION(1:10,ndim,1:20,zdim) :: a
+! Promoted with ndim before and zdim in middle existing dimensions
+REAL, DIMENSION(1:10,1:20,ndim,zdim) :: a
+\end{lstlisting}

@@ -98,11 +98,22 @@ declarations in the translation unit (Listing \ref{xcodeml1} line 30-82).
 \subsection{The FORTRAN back-end}
 The FORTRAN back-end is the program that decompiles \gls{ir} back to FORTRAN
 code. It is a simple Java program that implements a visitor patterns across
-the \gls{ast}. It can be called as a standalone program or directly within the
-translator as it is done in the \clawfcomp.
+the \gls{ast}. It can be called as a standalone program (See Listing \ref{lst:fbackend}) or directly within the
+translator as it is done in the \clawfcomp (See Listing \ref{lst:fbackend_java}).
 
 \begin{lstlisting}[label=lst:fbackend, language=Bash, caption=Execute the FORTRAN back-end as a standalone]
 java -cp <omni-install-path>/share/xcalablemp/om-f-back.jar:<omni-install-path>/share/xcalablemp/om-exc-tools.jar xcodeml.f.util.omx2f -l xcodeml.xml
+\end{lstlisting}
+
+\begin{lstlisting}[label=lst:fbackend_java, language=Java, caption=FORTRAN back-end called from Java]
+PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
+XmToolFactory toolFactory = new XmToolFactory("F");
+XmOption.setCoarrayNoUseStatement(true);
+XmOption.setDebugOutput(false);
+XmDecompiler decompiler = toolFactory.createDecompiler();
+XmDecompilerContext context = toolFactory.createDecompilerContext();
+// xcodemlDocument is the XcodeML/F DOM document to write to file
+decompiler.decompile(context, xcodemlDocument, writer); 
 \end{lstlisting}
 
 \section{\clawfcomp}
@@ -152,6 +163,7 @@ transformation instances and and apply them to the to the \xcodeml \gls{ast}.
 \end{figure}
 
 Figure \ref{fig:cx2x_stack} shows the stack of libraries used in the the CLAW
-\xcodeml to \xcodeml translator. The two first layers from the bottom are
-explained in more details in chapter \ref{chapter:astmanip}. The three last
-layers are explained in chapter \ref{chapter:transformation}.
+\xcodeml to \xcodeml translator. The bottom layer is detailed in Chapter 
+\ref{chapter:astmanip}. The middle layer is explained in Chapter 
+\ref{chapter:primitives}. Finally, the top layer is detailed in Chapter 
+\ref{chapter:configuration} and \ref{chapter:transformation}.
