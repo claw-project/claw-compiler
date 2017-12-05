@@ -34,11 +34,17 @@ The diagram below shows the workflow of the CLAW Compiler.
 
 ##### Key components:
 * **FPP**: standard preprocessor.
-* **F_Front**: Fortran front-end. Convert Fortran program into an intermediate
-representation.
-* **cx2x**: CLAW intermediate representation translator.
-* **om-f-back**: Fortran back-end. Generates Fortran code from intermediate
-representation.
+* **OMNI F_Front**: FORTRAN front-end. Convert FORTRAN source code into an
+  intermediate representation (XcodeML/F).
+* **CLAWX2T**: CLAW XcodeML to XcodeML translator.
+* **OMNI F_Back**: FORTRAN back-end. Generates FORTRAN code from XcodeML/F
+  intermediate representation.
+* **OMNI C_Back**: C back-end. Generates C code from XcodeML/C
+  intermediate representation.
+
+### CLAWX2T Library stack overview
+
+![CLAWX2T Library stack](resource/clawx2t_stack.png)
 
 ### How to install
 See [INSTALL.md](./INSTALL.md) file.
