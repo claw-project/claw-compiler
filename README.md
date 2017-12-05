@@ -30,7 +30,7 @@ specification in this reference compiler.
 
 ### Compiler workflow
 The diagram below shows the workflow of the CLAW Compiler.
-![CLAW Compiler workflow](resource/clawfc_workflow.png)
+![CLAW Compiler workflow](documentation/developer/resources/clawfc_workflow.png)
 
 ##### Key components:
 * **FPP**: standard preprocessor.
@@ -44,7 +44,7 @@ The diagram below shows the workflow of the CLAW Compiler.
 
 ### CLAWX2T Library stack overview
 
-![CLAWX2T Library stack](resource/clawx2t_stack.png)
+![CLAWX2T Library stack](documentation/developer/resources/clawx2t_stack.png)
 
 ### How to install
 See [INSTALL.md](./INSTALL.md) file.
