@@ -285,12 +285,13 @@ public final class Pragma {
     if(pragma.ancestor().opcode() == Xcode.DECLARATIONS) {
       FfunctionDefinition fdef = pragma.findParentFunction();
       if(fdef != null) {
-        if(fdef.body().firstChild().opcode() == Xcode.F_PRAGMA_STATEMENT) {
+        if(fdef.body().firstChild() != null &&
+            fdef.body().firstChild().opcode() == Xcode.F_PRAGMA_STATEMENT)
+        {
           Xnode hook = null;
           Xnode crtNode = fdef.body().firstChild();
-          while (crtNode != null && crtNode.opcode() == Xcode.F_PRAGMA_STATEMENT
-              && pragma.lineNo() > crtNode.lineNo())
-          {
+          while(crtNode != null && crtNode.opcode() == Xcode.F_PRAGMA_STATEMENT
+              && pragma.lineNo() > crtNode.lineNo()) {
             hook = crtNode;
             crtNode = crtNode.nextSibling();
           }
