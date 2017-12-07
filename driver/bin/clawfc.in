@@ -302,7 +302,7 @@ if [[ ${pipe_workflow} == true ]]; then
       file_out_f=${output_dir}/${input_file}
     fi
 
-    if [[ ${fpp_redirect} == true ]]; then
+    #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
 
       file_name="$(claw::norm_file_name "${input_file}")"
       ext=${input_file##*.}
@@ -341,9 +341,9 @@ if [[ ${pipe_workflow} == true ]]; then
         [[ ${compiler_status[5]} -ne 0 ]]; then
         claw::error_exit "Internal error"
       fi
-    else
-      claw::error_exit "FPP breaks pipe mode"
-    fi
+    #TODO integrate when full workflow: else
+    #TODO integrate when full workflow:  claw::error_exit "FPP breaks pipe mode"
+    #TODO integrate when full workflow: fi
   done
   exit 0
 fi
