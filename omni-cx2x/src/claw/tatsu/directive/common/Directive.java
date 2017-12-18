@@ -310,9 +310,10 @@ public final class Directive {
         if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type
         }
+        System.out.println(name.value());
         FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
         if(bt != null && bt.getIntent() == Intent.NONE && bt.isArray()
-            && bt.isAllocatable())
+            && !bt.isAllocatable())
         {
           variables.add(name.value());
         }
