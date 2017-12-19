@@ -25,7 +25,7 @@ CONTAINS
   IF ( ( .NOT. allocated ( y ) ) ) THEN
    ALLOCATE ( y ( nproma , nz ) )
   END IF
-!$acc data present(t,q)
+!$acc data present(t,q) pcreate(y)
 !$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
