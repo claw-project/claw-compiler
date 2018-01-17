@@ -18,6 +18,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,10 @@ public final class Directive {
     int nodep_counter = 0;
 
     if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE)
+        == CompilerDirective.NONE
+        || (Configuration.get().getCurrentDirective() ==
+        CompilerDirective.OPENACC &&
+        Configuration.get().openACC().hasCollapseStrategy()))
     {
       return nodep_counter;
     }
