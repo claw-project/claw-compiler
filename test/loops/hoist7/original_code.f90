@@ -1,12 +1,19 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the loop-hoist directive with fusion clause
+!
 
 program loop_hoist7
   call clawloop
 end program loop_hoist7
 
 subroutine clawloop
+  IMPLICIT NONE
   INTEGER :: i
   INTEGER :: j
+  INTEGER :: k
   INTEGER :: iend = 2
   INTEGER :: jend = 4
   INTEGER :: kend = 2

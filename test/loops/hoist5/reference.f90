@@ -9,7 +9,6 @@ PROGRAM loop_opt
  LOGICAL :: flag
  INTEGER :: sum
 
-
  iend = 20
  jend = 40
  kend = 30
@@ -25,7 +24,7 @@ PROGRAM loop_opt
     d = sum + d
    END DO
    IF ( flag ) THEN
-    PRINT * ,"I did it"
+    PRINT * , "I did it"
    END IF
   END DO
  END DO

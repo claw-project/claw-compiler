@@ -38,14 +38,16 @@ endif()
 
 # Create intermediate representation in XcodeML Fortran format
 if(${TEST_DEBUG}) # with debug option
-  set(DEBUG_FLAG --debug)
+  set(DEBUG_FLAG --debug --debug-omni)
 endif()
 
 # Execute the CLAW compiler for CPU target
 add_custom_command(
   OUTPUT  ${OUTPUT_FILE_CPU}
   COMMAND touch ${ORIGINAL_FILE} # to force new compilation
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
+  COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+    ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU}
+    ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_CPU} ${ORIGINAL_FILE}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${ORIGINAL_FILE}
   COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${ORIGINAL_FILE}"
@@ -55,7 +57,9 @@ add_custom_command(
 add_custom_command(
   OUTPUT  ${OUTPUT_FILE_GPU}
   COMMAND touch ${ORIGINAL_FILE} # to force new compilation
-  COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
+  COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+    ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU}
+    ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS ${ORIGINAL_FILE}
   COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${ORIGINAL_FILE}"
@@ -66,7 +70,9 @@ if(HAS_EXTRA_MOD)
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE_EXTRA_CPU}
     COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_CPU} ${ORIGINAL_FILE_EXTRA}
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_CPU} ${ORIGINAL_FILE_EXTRA}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_CPU}
     COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${ORIGINAL_FILE_EXTRA}"
@@ -76,7 +82,10 @@ if(HAS_EXTRA_MOD)
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE_EXTRA_GPU}
     COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_GPU} ${ORIGINAL_FILE_EXTRA}
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_GPU}
+      ${ORIGINAL_FILE_EXTRA}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_GPU}
     COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${ORIGINAL_FILE_EXTRA}"
@@ -86,7 +95,9 @@ if(HAS_EXTRA_MOD)
   add_custom_command(
     OUTPUT  ${OUTPUT_MAIN_CPU}
     COMMAND touch ${MAIN_F90} # to force new compilation
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_CPU} ${MAIN_F90}
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_CPU} ${MAIN_F90}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${MAIN_F90} ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_EXTRA_CPU}
     COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${MAIN_F90}"
@@ -96,7 +107,9 @@ if(HAS_EXTRA_MOD)
   add_custom_command(
     OUTPUT  ${OUTPUT_MAIN_GPU}
     COMMAND touch ${MAIN_F90} # to force new compilation
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU} ${OUTPUT_FILE_EXTRA_GPU}
     COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${MAIN_F90}"
@@ -117,7 +130,9 @@ else()
   add_custom_command(
     OUTPUT  ${OUTPUT_MAIN_CPU}
     COMMAND touch ${MAIN_F90} # to force new compilation
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_CPU} ${MAIN_F90}
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${OPTIONAL_FLAGS} --target=cpu ${DIRECTIVE_CPU}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_CPU} ${MAIN_F90}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${MAIN_F90} ${OUTPUT_FILE_CPU}
     COMMENT "Translating CLAW directive with ${CLAWFC} for CPU target on file ${MAIN_F90}"
@@ -127,7 +142,9 @@ else()
   add_custom_command(
     OUTPUT  ${OUTPUT_MAIN_GPU}
     COMMAND touch ${MAIN_F90} # to force new compilation
-    COMMAND ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU} ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${OPTIONAL_FLAGS} --target=gpu ${DIRECTIVE_GPU}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU}
     COMMENT "Translating CLAW directive with ${CLAWFC} for GPU target on file ${MAIN_F90}"
@@ -196,10 +213,10 @@ endif()
 
 if(NOT IGNORE_TEST)
   # Compare reference transformed code and output of the transformation
-  add_test(NAME ast-compare-cpu-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_CPU} ${REFERENCE_FILE_CPU})
-  add_test(NAME ast-compare-gpu-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_GPU} ${REFERENCE_FILE_GPU})
-  add_test(NAME ast-compare-main-cpu-${TEST_NAME} COMMAND diff ${OUTPUT_MAIN_CPU} ${REFERENCE_MAIN_CPU})
-  add_test(NAME ast-compare-main-gpu-${TEST_NAME} COMMAND diff ${OUTPUT_MAIN_GPU} ${REFERENCE_MAIN_GPU})
+  add_test(NAME ast-compare-cpu-${TEST_NAME} COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_CPU} ${REFERENCE_FILE_CPU})
+  add_test(NAME ast-compare-gpu-${TEST_NAME} COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_GPU} ${REFERENCE_FILE_GPU})
+  add_test(NAME ast-compare-main-cpu-${TEST_NAME} COMMAND diff --ignore-blank-lines ${OUTPUT_MAIN_CPU} ${REFERENCE_MAIN_CPU})
+  add_test(NAME ast-compare-main-gpu-${TEST_NAME} COMMAND diff --ignore-blank-lines ${OUTPUT_MAIN_GPU} ${REFERENCE_MAIN_GPU})
   set_tests_properties(ast-compare-cpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
   set_tests_properties(ast-compare-gpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
   set_tests_properties(ast-compare-main-cpu-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
@@ -207,8 +224,8 @@ if(NOT IGNORE_TEST)
 
   # Test the extra module file with its reference
   if(HAS_EXTRA_MOD)
-    add_test(NAME ast-compare-cpu-extra-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_EXTRA_CPU} ${REFERENCE_FILE_EXTRA_CPU})
-    add_test(NAME ast-compare-gpu-extra-${TEST_NAME} COMMAND diff ${OUTPUT_FILE_EXTRA_GPU} ${REFERENCE_FILE_EXTRA_GPU})
+    add_test(NAME ast-compare-cpu-extra-${TEST_NAME} COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_EXTRA_CPU} ${REFERENCE_FILE_EXTRA_CPU})
+    add_test(NAME ast-compare-gpu-extra-${TEST_NAME} COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_EXTRA_GPU} ${REFERENCE_FILE_EXTRA_GPU})
     set_tests_properties(ast-compare-cpu-extra-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
     set_tests_properties(ast-compare-gpu-extra-${TEST_NAME} PROPERTIES DEPENDS ast-transform-${TEST_NAME})
   endif()

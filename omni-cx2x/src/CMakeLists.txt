@@ -5,15 +5,15 @@
 
 # Generate file with version number for Configuration check
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/cx2x/ClawVersion.java.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/cx2x/ClawVersion.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/claw/ClawVersion.java.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/claw/ClawVersion.java
   @ONLY
 )
 if(NOT OFFLINE)
   # Bootstrap the compilation process
-  add_custom_target(omni-cx2x-init ALL)
+  add_custom_target(omni-claw-init ALL)
   add_custom_command(
-    TARGET omni-cx2x-init
+    TARGET omni-claw-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
@@ -24,9 +24,9 @@ if(NOT OFFLINE)
 endif()
 
 # Compile the CX2X libraries
-add_custom_target(omni-cx2x ALL)
+add_custom_target(omni-claw ALL)
 add_custom_command(
-  TARGET omni-cx2x
+  TARGET omni-claw
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
@@ -39,13 +39,13 @@ add_custom_command(
   COMMENT "Building CLAW XcodeML/F to XcodeML/F libraries"
 )
 if(NOT OFFLINE)
-  add_dependencies(omni-cx2x omni-cx2x-init)
+  add_dependencies(omni-claw omni-claw-init)
 endif()
 
 # Install libraries
-install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
-install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${COMMON_CLI_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cx2x/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${COMMON_CLI_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)

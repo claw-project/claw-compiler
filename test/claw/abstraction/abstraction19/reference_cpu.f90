@@ -6,13 +6,13 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
+  INTEGER , INTENT(IN) :: nproma
   REAL :: z ( 1 : nproma )
+  REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
   REAL :: c
   INTEGER :: r
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1
@@ -32,14 +32,13 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute ( nz , b , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  INTEGER :: result
-
   INTEGER , INTENT(IN) :: nproma
-
+  INTEGER :: result
 
   result = compute_column ( nz , b , q , t , nproma = nproma )
  END SUBROUTINE compute

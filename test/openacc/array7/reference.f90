@@ -1,6 +1,5 @@
 PROGRAM vector_loop
 
-
  CALL claw ( )
 END PROGRAM vector_loop
 
@@ -11,7 +10,6 @@ SUBROUTINE claw ( )
 
  INTEGER :: j1
  INTEGER :: j3
-
 
  vec1 ( 0 : i , 0 : i ) = 0
  vec2 ( 0 : i , 0 : i ) = 100

@@ -15,15 +15,19 @@ set(OMNI_CX2X_XCODEML_NAME "om-cx2x-xcodeml")
 # Define default configuration path.
 set(CLAW_CONFIG_FILE "claw-default.xml")
 set(CLAW_CONFIG_XSD "claw_config.xsd")
-set(OMNI_CX2X_CONFIG_DEFAULT "${CMAKE_INSTALL_PREFIX}/etc/${CLAW_CONFIG_FILE}")
-set(OMNI_CX2X_CONFIG_XSD "${CMAKE_INSTALL_PREFIX}/etc/${CLAW_CONFIG_XSD}")
+set(CLAW_CONFIG_SET_XSD "claw_transformation_set.xsd")
+set(CLAW_TRANS_SET_INTERNAL "claw-internal-set.xml")
+set(CLAW_TRANS_SET_LOW "claw-low-level-set.xml")
+set(CLAW_TRANS_SET_HIGH "claw-high-level-set.xml")
+set(OMNI_CX2X_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/etc/")
 
 # Driver variables
 set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}")
 set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
 set(OMNI_INCLUDE_DIR "${OMNI_HOME}/include")
-set(XMOD_GENERIC "${OMNI_HOME}/fincludes")
+set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
+set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_BIN_DIR "${OMNI_HOME}/bin")
 set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
 set(OM_CX2X_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
@@ -46,7 +50,7 @@ set(OMNI_BUILD_JAR_CX2X_CLAW "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
 set(OMNI_BUILD_JAR_CX2X_XCODEML "${BUILD_DIR}/${OMNI_CX2X_XCODEML_NAME}.jar")
 
 # Define CLAW jar archives install location.
-set(CX2X_JAR_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/share/cx2x")
+set(CX2X_JAR_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/share/claw")
 set(OMNI_JAR_CX2X_CLAW "${CX2X_JAR_INSTALL_LOCATION}/${OMNI_CX2X_CLAW_NAME}.jar")
 set(OMNI_JAR_CX2X_XCODEML "${CX2X_JAR_INSTALL_LOCATION}/${OMNI_CX2X_XCODEML_NAME}.jar")
 

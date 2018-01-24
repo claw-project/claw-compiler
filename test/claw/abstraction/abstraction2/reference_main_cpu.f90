@@ -8,7 +8,6 @@ PROGRAM test_abstraction2
  INTEGER :: i
  INTEGER :: j
 
-
  nx = 10
  ny = 10
  nz = 60
@@ -18,7 +17,8 @@ PROGRAM test_abstraction2
    t ( i , j , 1 ) = 0.0
   END DO
  END DO
- CALL compute_column ( nz , q , t , nx = nx , ny = ny )
+ CALL compute_column ( nz , q ( : , : , 1 : 60 ) , t ( : , : , 1 : 60 ) , nx =&
+  nx , ny = ny )
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction2

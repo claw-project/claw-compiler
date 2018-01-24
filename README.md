@@ -1,43 +1,77 @@
-# CLAW FORTRAN Compiler 
+# CLAW Compiler
 
-[![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
+<a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.0.0-lightgray.svg)</a> [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
+<a target="_blank" href="https://claw-compiler.slack.com/">![Version](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
 
-![CLAW logo](resource/claw_image.png)
+<a target="_blank" href="https://github.com/C2SM-RCM/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-0.4.0-blue.svg)</a>
 
-### CLAW Directive language specifications
+
+> Who is in charge here?
+>
+> The CLAW!
+>
+> The CLAW is our master.
+>
+> The CLAW chooses who will go and who will stay.
+>
+> -- <cite>Buzz Lightyear & Two Green Aliens in the UFO Catcher.</cite>
+
+
+#### What is the CLAW Compiler?
+The CLAW Compiler is a source-to-source translator working on the XcodeML
+intermediate representation. It implements the necessary transformation to the
+CLAW Directive Language Specifications.
+Intent of this language is to achieve performance portability on weather and
+climate code, especially for column- or point-wise computation.
+
+#### CLAW Directive Language Specifications
 The directives that control the transformation flow are defined in the
 CLAW directive language specification.
 
 [CLAW language definition](https://github.com/C2SM-RCM/claw-language-definition)
 
-### Status of implementation
+
+#### Status of implementation
 We are currently implementing the version `v0.3a` of the CLAW language
 specification in this reference compiler.
 
-### Versioning convention
-The versioning convention for the CLAW Compiler follows the versioning of the
-language definition. Version `0.1.0` implements the language specification
-`v0.1`. If there is bug fix or enhancement happening in the version implementing
-`v0.1` of the language specification, the last digit is incremented (e.g.
-`0.1.1`) and so on. During implementation of new specifications, the version
-number is followed by the letter `a` for the alphas and `b`for the betas.
 
-### Compiler workflow
+#### Compiler workflow
 The diagram below shows the workflow of the CLAW Compiler.
 ![CLAW Compiler workflow](resource/clawfc_workflow.png)
 
 ##### Key components:
 * **FPP**: standard preprocessor.
-* **F_Front**: Fortran front-end. Convert Fortran program into an intermediate
-representation.
-* **cx2x**: CLAW intermediate representation translator.
-* **om-f-back**: Fortran back-end. Generates Fortran code from intermediate
-representation.
+* **OMNI F_Front**: FORTRAN front-end. Convert FORTRAN source code into an
+  intermediate representation (XcodeML/F).
+* **CLAWX2T**: CLAW XcodeML to XcodeML translator.
+* **OMNI F_Back**: FORTRAN back-end. Generates FORTRAN code from XcodeML/F
+  intermediate representation.
+* **OMNI C_Back**: C back-end. Generates C code from XcodeML/C
+  intermediate representation.
 
-### How to install
+
+#### CLAWX2T Java Library Stack Overview
+
+![CLAWX2T Library stack](resource/clawx2t_stack.png)
+
+The CLAW XcodeML to XcodeML translator library stack is divided in three
+distinct library:
+
+* CLAW-WANI: CLAW translator implementation with all high-level transformation
+  as well as mechanism to plug external translator and transformation.
+* CLAW-SHENRON: Define the super classes for any translator or transformation
+  implementation.
+* CLAW-TATSU: Define the interface between XcodeML IR and the translation
+  library. Implements all primitive transformations that serve as higher-level
+  transformation building block.
+
+
+#### How to install
 See [INSTALL.md](./INSTALL.md) file.
 
-### Documentation
+
+#### Documentation
 To generate the java documentation and the compiler documentation, run the
 following command. The compiler documentation require `pdflatex`.
 
@@ -49,11 +83,16 @@ the `javadoc` is generated in the `/documentation/javadoc/` directory.
 make doc
 ```
 
-### Supported version
+#### Supported version
 The CLAW XcodeML to XcodeML translator is written in Java. Java version 7 and
 above are supported.
 
 
-### OMNI Compiler
+#### OMNI Compiler
 The CLAW Compiler is built on the top of the OMNI Compiler. For more
 information: [OMNI Compiler website](http://omni-compiler.org)
+
+
+#### About
+This work was initially funded by the ETH zürich and the PASC initiative under
+the [ENIAC](http://www.pasc-ch.org/projects/2017-2020/eniac/) project.

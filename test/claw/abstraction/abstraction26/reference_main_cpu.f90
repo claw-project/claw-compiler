@@ -7,7 +7,6 @@ PROGRAM test_abstraction4
  INTEGER :: nz
  INTEGER :: p
 
-
  nproma = 20
  nz = 60
  z = 10.0
@@ -16,7 +15,8 @@ PROGRAM test_abstraction4
   t ( p , 1 ) = 0.0
  END DO
 !$ACC data copyin(q,t) copyout(q,t)
- CALL compute ( nz , q , t , z , nproma = nproma )
+ CALL compute ( nz , q ( : , 1 : 60 ) , t ( : , 1 : 60 ) , z ( : ) , nproma =&
+  nproma )
 !$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

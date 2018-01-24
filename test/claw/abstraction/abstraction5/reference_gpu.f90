@@ -2,19 +2,18 @@ MODULE mo_column
 
 CONTAINS
  SUBROUTINE compute_column ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
-
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
-!$acc data present(t,q,nproma,nz)
-!$acc parallel private(k,proma,c)
-!$acc loop
+!$acc data present(t,q)
+!$acc parallel
+!$acc loop gang vector
   DO proma = 1 , nproma , 1
    c = 5.345
 !$acc loop seq

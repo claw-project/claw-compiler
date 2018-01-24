@@ -1,25 +1,20 @@
-<claw version="0.3">
-  <global>
-    <parameter key="default_target" value="gpu"/>
-    <parameter key="default_directive" value="openacc"/>
-    <parameter key="openacc_vector_length" value="128"/> <!-- vector_length(128) -->
-    <parameter key="openacc_num_gangs" value="8"/>       <!-- num_gangs(8) -->
-    <parameter key="openacc_num_workers" value="8"/>     <!-- num_workers(8) -->
-    <parameter key="openacc_execution_mode" value="vector_gang"/>
-  </global>
+<claw version="0.4">
+  <!-- This configuration is just an extension of the default one -->
+  <global type="extension"/>
   <groups>
-    <group type="independent" name="internal-xcodeml"    class="cx2x.translator.transformation.utility.XcodeMLWorkaround" />
-    <group type="independent" name="remove"              class="cx2x.translator.transformation.utility.UtilityRemove" />
-    <group type="independent" name="primitive"           class="cx2x.translator.transformation.openacc.DirectivePrimitive" />
-    <group type="independent" name="array-transform"     class="cx2x.translator.transformation.loop.ArrayTransform" />
-    <group type="independent" name="loop-extract"        class="cx2x.translator.transformation.loop.LoopExtraction" />
-    <group type="independent" name="loop-hoist"          class="cx2x.translator.transformation.loop.LoopHoist" />
-    <group type="dependent"   name="loop-fusion"         class="cx2x.translator.transformation.loop.LoopFusion" />
-    <group type="independent" name="loop-interchange"    class="cx2x.translator.transformation.loop.LoopInterchange" />
-    <group type="independent" name="on-the-fly"          class="cx2x.translator.transformation.claw.ArrayToFctCall" />
-    <group type="independent" name="kcache"              class="cx2x.translator.transformation.claw.Kcaching" />
-    <group type="independent" name="if-extract"          class="cx2x.translator.transformation.loop.IfExtract" />
-    <group type="independent" name="parallelize"         class="cx2x.translator.transformation.claw.parallelize.Parallelize" />
-    <group type="independent" name="parallelize-forward" class="cx2x.translator.transformation.claw.parallelize.ParallelizeForward" />
+    <!-- Specifiy a new dedicated order -->
+    <group name="internal-xcodeml"/>
+    <group name="remove"/>
+    <group name="directive-primitive"/>
+    <group name="array-transform"/>
+    <group name="loop-extract"/>
+    <group name="loop-hoist"/>
+    <group name="loop-fusion"/>
+    <group name="loop-interchange"/>
+    <group name="on-the-fly"/>
+    <group name="kcache"/>
+    <group name="if-extract"/>
+    <group name="parallelize"/>
+    <group name="parallelize-forward"/>
   </groups>
 </claw>

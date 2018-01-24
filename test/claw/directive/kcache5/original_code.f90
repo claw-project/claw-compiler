@@ -1,4 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the kcache directive
+!
+
 PROGRAM claw_test
   INTEGER :: istart = 0
   INTEGER :: iend = 10

@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+
 MODULE mo_column
   IMPLICIT NONE
 CONTAINS
@@ -11,6 +16,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(1:b) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(1:b) ! Field declared as one column only
     REAL :: z
+    REAL, ALLOCATABLE :: y(:)
     INTEGER :: k                  ! Loop index
     REAL :: c                     ! Coefficient
     INTEGER :: r                  ! Function return value

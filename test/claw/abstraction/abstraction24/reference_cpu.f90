@@ -5,12 +5,11 @@ CONTAINS
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
   REAL :: res ( 1 : nz , 1 : nproma )
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
-
 
   c = 5.345
   DO k = 2 , nz , 1
@@ -28,22 +27,21 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute_all ( nz , q , val , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: val ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  INTEGER , INTENT(IN) :: nproma
   REAL , TARGET :: z ( 1 : nproma , 1 : nz )
   INTEGER :: k
   REAL , POINTER :: zp ( : , : )
   REAL , TARGET :: res ( 1 : nz , 1 : nproma )
   REAL , POINTER :: res_p ( : , : )
-
-  INTEGER , INTENT(IN) :: nproma
-  INTEGER :: iter_nproma
-
+  INTEGER :: proma
 
   DO k = 1 , nz , 1
-   DO iter_nproma = 1 , nproma , 1
-    z ( iter_nproma , k ) = val ( k , iter_nproma ) + q ( iter_nproma , k )
+   DO proma = 1 , nproma , 1
+    z ( proma , k ) = val ( k , proma ) + q ( proma , k )
    END DO
   END DO
   zp => z
@@ -52,4 +50,3 @@ CONTAINS
  END SUBROUTINE compute_all
 
 END MODULE mo_column
-

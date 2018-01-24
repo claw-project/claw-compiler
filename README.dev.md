@@ -3,12 +3,17 @@
 Useful information about the development of the CLAW Fortran Compiler are given
 on this page.
 
+### Developer's guide
+A guide is available under `documentation/developer`.
+
 ### Coding Style Guide
 Indent with spaces. NO tabs!
 
 #### Java code
 * An IDEA format configuration is available here:
-./omni-cx2x/config/claw_code_style_idea.xml
+[claw_code_style_idea.xml](./omni-cx2x/config/claw_code_style_idea.xml)
+If IDEA IntelliJ is not used, the coding style should reflect this
+configuration.
 
 #### Bash scripts
 In general, all bash scripts written for the CLAW FORTRAN Compiler projects
@@ -19,6 +24,18 @@ without errors or warnings. So warnings might be disable where it make sense
 for the correctness of the script.
 
 The main word is: `Use common sense and BE CONSISTENT.`
+
+### Git hooks
+* Git hooks present in the `./scripts/git_hooks/` directory should be enabled
+  in your local checkout. To enable them, you have to symlink them in the
+  `./.git/hooks/` directory.
+
+```bash
+cd .git/hooks
+ln -s ../../scripts/pre-commit pre-commit
+```
+
+Make sure the the file is executable.
 
 ### Testing
 

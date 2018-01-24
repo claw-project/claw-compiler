@@ -6,7 +6,6 @@ PROGRAM test_abstraction10
  INTEGER :: nz
  INTEGER :: p
 
-
  nproma = 20
  nz = 60
  DO p = 1 , nproma , 1
@@ -14,7 +13,8 @@ PROGRAM test_abstraction10
   t ( p , 1 ) = 0.0
  END DO
 !$ACC data copyin(q,t) copyout(q,t)
- CALL compute_column_public ( nz , q , t , nproma = nproma )
+ CALL compute_column_public ( nz , q ( : , 1 : 60 ) , t ( : , 1 : 60 ) ,&
+  nproma = nproma )
 !$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

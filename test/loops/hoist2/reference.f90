@@ -1,6 +1,5 @@
 PROGRAM claw_test
 
-
  CALL claw_hoist2 ( )
 END PROGRAM claw_test
 
@@ -16,10 +15,8 @@ SUBROUTINE claw_hoist2 ( )
  REAL :: var3
  REAL :: var4
  REAL :: var5
- TYPE :: dummy
-  REAL :: value1
-  REAL :: value2
- END TYPE dummy
+ REAL :: time_step_len
+ REAL :: zsedtend
  REAL :: array2d_1 ( 1 : 100 )
  REAL :: array2d_2
  REAL :: array2d_3 ( 1 : 10 , 1 : 100 )
@@ -27,10 +24,11 @@ SUBROUTINE claw_hoist2 ( )
  REAL :: array2d_5 ( 1 : 10 , 1 : 100 )
  REAL :: array3d_1 ( 1 : 10 , 1 : 100 , 1 : 2 )
  REAL :: array3d_2 ( 1 : 10 , 1 : 100 , 1 : 2 )
+ TYPE :: dummy
+  REAL :: value1
+  REAL :: value2
+ END TYPE dummy
  TYPE ( dummy ) :: tdum
- REAL :: zsedtend
- REAL :: time_step_len
-
 
 
  zsedtend = 1.0

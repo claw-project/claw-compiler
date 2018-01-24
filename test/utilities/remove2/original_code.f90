@@ -1,4 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Simple program to test the remove directive
+!
 
 PROGRAM remove2
   CALL dummy

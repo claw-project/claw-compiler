@@ -1,4 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
 ! Test code for issue 122 (ECMWF)
+!
+
 program loop_opt
   implicit none
   integer :: i,k,j,d

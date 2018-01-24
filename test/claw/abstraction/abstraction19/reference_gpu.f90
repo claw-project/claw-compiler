@@ -6,17 +6,17 @@ CONTAINS
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
+  INTEGER , INTENT(IN) :: nproma
   REAL :: z ( 1 : nproma )
+  REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
   REAL :: c
   INTEGER :: r
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: proma
 
-
-!$acc data present(q,nproma,nz,b,t)
-!$acc parallel private(r,k,proma,c,z)
-!$acc loop
+!$acc data present(t,q)
+!$acc parallel
+!$acc loop gang vector private(y)
   DO proma = 1 , nproma , 1
    c = 5.345
 !$acc loop seq
@@ -32,14 +32,13 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute ( nz , b , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   INTEGER , INTENT(IN) :: b
   REAL , INTENT(INOUT) :: t ( 1 : nproma , 1 : b )
   REAL , INTENT(INOUT) :: q ( 1 : b , 1 : nproma )
-  INTEGER :: result
-
   INTEGER , INTENT(IN) :: nproma
-
+  INTEGER :: result
 
   result = compute_column ( nz , b , q , t , nproma = nproma )
  END SUBROUTINE compute

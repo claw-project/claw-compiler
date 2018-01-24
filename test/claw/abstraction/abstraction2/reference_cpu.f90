@@ -2,18 +2,17 @@ MODULE mo_column
 
 CONTAINS
  SUBROUTINE compute_column ( nz , q , t , nx , ny )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : , : )
   REAL , INTENT(INOUT) :: q ( : , : , : )
+  INTEGER , INTENT(IN) :: ny
+  INTEGER , INTENT(IN) :: nx
   INTEGER :: k
   REAL :: c
   REAL :: d ( 1 : nx , 1 : ny )
-
-  INTEGER , INTENT(IN) :: nx
   INTEGER :: i
-  INTEGER , INTENT(IN) :: ny
   INTEGER :: j
-
 
   c = 5.345
   DO k = 2 , nz , 1

@@ -10,6 +10,15 @@
 
 module openacc
 
+  ! Type of accelerator device (Defined in standard OpenACC 2.5 (3.1))
+  integer(kind=8), parameter :: acc_device_none = 0
+  integer(kind=8), parameter :: acc_device_default = 1
+  integer(kind=8), parameter :: acc_device_host = 2
+  integer(kind=8), parameter :: acc_device_not_host = 3
+  
+  ! Supported by CRAY and PGI
+  integer(kind=8), parameter :: acc_device_nvidia = 4
+
   ! Automatically generated signatures for acc_copyin
   interface acc_copyin
     module procedure &

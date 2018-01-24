@@ -3,13 +3,12 @@ MODULE mo_column_extra
 
 CONTAINS
  SUBROUTINE compute_one ( nz , q , t , nproma )
+
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  TYPE ( ty_column ) :: column
-
   INTEGER , INTENT(IN) :: nproma
-
+  TYPE ( ty_column ) :: column
 
   CALL column % compute_column ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_one

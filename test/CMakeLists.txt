@@ -9,7 +9,7 @@ add_custom_target(${BUILD_TEST_TARGET})
 add_custom_target(${CLEAN_TEST_TARGET})
 
 # Define some test case sets
-foreach(TCSET claw-directive claw-abstraction driver loops openacc openmp utilities)
+foreach(TCSET claw-directive claw-abstraction driver loops openacc openmp utilities omni)
   add_custom_target(${BUILD_TEST_TARGET}-${TCSET})
   add_custom_target(${CLEAN_TEST_TARGET}-${TCSET})
 endforeach()
@@ -18,9 +18,10 @@ endforeach()
 add_subdirectory(claw)
 add_subdirectory(driver)
 add_subdirectory(loops)
-add_subdirectory(utilities)
+add_subdirectory(omni)
 add_subdirectory(openacc)
 add_subdirectory(openmp)
+add_subdirectory(utilities)
 
 # Custom target to run the full transformation test suite
 add_custom_target(test-suite

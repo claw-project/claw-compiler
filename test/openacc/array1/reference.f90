@@ -1,6 +1,5 @@
 PROGRAM vector_loop
 
-
  CALL claw ( )
  CALL claw_transformed ( )
 END PROGRAM vector_loop
@@ -10,7 +9,6 @@ SUBROUTINE claw ( )
  INTEGER :: vec1 ( 0 : 10 )
 
  INTEGER :: claw_induction_0
-
 
  DO j = 0 , 10 , 1
   vec1 ( j ) = j
@@ -29,7 +27,6 @@ SUBROUTINE claw_transformed ( )
  INTEGER :: vec1 ( 0 : 10 )
  INTEGER :: claw_induc1
  INTEGER :: j
-
 
 
  DO j = 0 , i , 1

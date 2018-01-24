@@ -8,7 +8,6 @@ CONTAINS
 
   INTEGER , INTENT(IN) :: nproma
 
-
   CALL compute_two ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_one
 
@@ -18,7 +17,6 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
 
   INTEGER , INTENT(IN) :: nproma
-
 
   CALL compute_three ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_two
@@ -30,7 +28,6 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : )
 
   INTEGER , INTENT(IN) :: nproma
-
 
   CALL compute_solver ( nz , q , t , nproma = nproma )
  END SUBROUTINE compute_three

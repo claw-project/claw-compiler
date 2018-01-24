@@ -63,8 +63,10 @@ script:
   - make install
   - make clean-transformation transformation test
   - cd -
+  - ./scripts/check_license # Check license header in sources files
+  - ./scripts/check_author # Check license header in sources files
   - cd scripts
-  - ./run.shellcheck # Check shell scripts with shellcheck
+  - ./run.shellcheck        # Check shell scripts with shellcheck
 
 # Notification settings
 notifications:

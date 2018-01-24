@@ -1,11 +1,10 @@
 PROGRAM test_abstraction22
  USE mo_column , ONLY: compute_all
+ REAL :: q ( 1 : 20 , 1 : 60 )
  REAL :: t ( 1 : 60 , 1 : 20 )
  INTEGER :: nproma
  INTEGER :: nz
  INTEGER :: p
- REAL :: q ( 1 : 20 , 1 : 60 )
-
 
  nproma = 20
  nz = 60
@@ -14,7 +13,8 @@ PROGRAM test_abstraction22
   t ( 1 , p ) = 0.0
  END DO
 !$ACC data copyin(q,t) copyout(q,t)
- CALL compute_all ( nz , q , t , nproma = nproma )
+ CALL compute_all ( nz , q ( : , 1 : 60 ) , t ( 1 : 60 , : ) , nproma = nproma&
+  )
 !$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

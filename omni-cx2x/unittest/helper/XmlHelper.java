@@ -2,23 +2,23 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-
 package helper;
 
-import static org.junit.Assert.*;
-
-import cx2x.xcodeml.xnode.*;
-import org.w3c.dom.Element;
+import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import org.w3c.dom.Document;
-
-import java.io.File;
-import java.io.StringReader;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.io.StringReader;
 
-import org.xml.sax.InputSource;
-
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Helper class containing static methods for the unit tests.
@@ -47,87 +47,87 @@ public class XmlHelper {
     }
   }
 
-  private static Element getElementFromString(String xml) {
+  private static Xnode getElementFromString(String xml) {
     Document doc = loadXMLFromString(xml);
     if(doc != null) {
-      return doc.getDocumentElement();
+      return new Xnode(doc.getDocumentElement());
     }
     return null;
   }
 
   public static Xid createXidFromString(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new Xid(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new Xid(n);
   }
 
-  public static XbasicType createXbasicTypeFromString(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XbasicType(el);
+  public static FbasicType createXbasicTypeFromString(String xml) {
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new FbasicType(n);
   }
 
-  public static XfunctionType createXfctTypeFromString(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XfunctionType(el);
+  public static FfunctionType createXfctTypeFromString(String xml) {
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new FfunctionType(n);
   }
 
   public static XsymbolTable createXglobalSymbolFromString(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XsymbolTable(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new XsymbolTable(n);
   }
 
   public static XsymbolTable createXSymbolTableFromString(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XsymbolTable(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new XsymbolTable(n);
   }
 
   public static XtypeTable createXtypeTableFromString(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XtypeTable(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new XtypeTable(n);
   }
 
-  public static XfunctionDefinition createXfunctionDefinitionFromString(
+  public static FfunctionDefinition createXfunctionDefinitionFromString(
       String xml)
   {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XfunctionDefinition(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new FfunctionDefinition(n);
   }
 
   public static XglobalDeclTable createGlobalDeclTable(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XglobalDeclTable(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new XglobalDeclTable(n);
   }
 
-  public static Xdecl createXvarDecl(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new Xdecl(el);
+  public static Xnode createXvarDecl(String xml) {
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return n;
   }
 
   public static XdeclTable createXdeclTable(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new XdeclTable(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return new XdeclTable(n);
   }
 
   public static Xnode createXpragma() {
-    String xml = "<" + Xname.PRAGMA_STMT + "></" +
-        Xname.PRAGMA_STMT + ">";
-    Element el = XmlHelper.getElementFromString(xml);
-    return new Xnode(el);
+    String xml = "<" + Xname.F_PRAGMA_STMT + "></" +
+        Xname.F_PRAGMA_STMT + ">";
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return n;
   }
 
-
   public static Xnode createXnode(String xml) {
-    Element el = XmlHelper.getElementFromString(xml);
-    assertNotNull(el);
-    return new Xnode(el);
+    Xnode n = XmlHelper.getElementFromString(xml);
+    assertNotNull(n);
+    return n;
   }
 }
