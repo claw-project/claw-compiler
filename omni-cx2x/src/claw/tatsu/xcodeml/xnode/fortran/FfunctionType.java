@@ -9,6 +9,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class FfunctionType extends Xnode {
     super(node == null ? null : node.element());
     _params = matchSeq(Xcode.PARAMS);
     _parameters = (_params != null) ?
-        _params.matchAll(Xcode.NAME) : new ArrayList<Xnode>();
+        _params.matchAll(Xcode.NAME) : Collections.<Xnode>emptyList();
   }
 
   /**

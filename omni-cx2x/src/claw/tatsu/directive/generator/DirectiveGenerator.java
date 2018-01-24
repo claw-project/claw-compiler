@@ -9,6 +9,7 @@ import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -186,7 +187,7 @@ public abstract class DirectiveGenerator {
    * @return List of Xcode opcode of unsupported statements.
    */
   public List<Xcode> getUnsupportedStatements() {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   /**
@@ -195,7 +196,7 @@ public abstract class DirectiveGenerator {
    * @return List of Xcode opcode of supported statements that are skipped.
    */
   public List<Xcode> getSkippedStatementsInPreamble() {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   /**
@@ -204,7 +205,7 @@ public abstract class DirectiveGenerator {
    * @return List of Xcode opcode of supported statements that are skipped.
    */
   public List<Xcode> getSkippedStatementsInEpilogue() {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   /**
