@@ -18,6 +18,7 @@
 ### Read configration file and library ###
 om_cx2x_driver_conf_dir=@OM_CX2X_DRIVER_CONF_DIR@
 om_cx2x_driver_lib_dir=@OM_CX2X_DRIVER_LIB_DIR@
+compiler_macro=@COMPILER_MACRO@
 # shellcheck source=../etc/claw_f.conf.in
 . ${om_cx2x_driver_conf_dir}/@CLAW_CONF_FILE@
 # shellcheck source=../libexec/claw_f_lib.sh.in
