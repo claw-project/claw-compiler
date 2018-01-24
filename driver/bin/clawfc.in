@@ -340,7 +340,7 @@ if [[ ${pipe_workflow} == true ]]; then
         [[ ${compiler_status[3]} -ne 0 ]] ||
         [[ ${compiler_status[4]} -ne 0 ]] ||
         [[ ${compiler_status[5]} -ne 0 ]]; then
-        claw::error_exit "Internal error"
+        claw::error_exit "${input_file}" "-" "-" "Internal error."
       fi
     #TODO integrate when full workflow: else
     #TODO integrate when full workflow:  claw::error_exit "FPP breaks pipe mode"

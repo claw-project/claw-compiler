@@ -99,7 +99,7 @@ function claw::show_env() {
       fi
     done <"${claw_env_file}"
   else
-    claw::error_exit "internal" "-" "-" "${claw_env_file} not exist."
+    claw::error_exit "" "-" "-" "${claw_env_file} not exist."
   fi
 }
 
@@ -527,7 +527,7 @@ function claw::process_dependencies() {
       error_msg="cannot locate any source file or module file for module: " \
         "${module_name}.\n " \
         "Provide source directory in module search path."
-      claw::error_exit "${error_msg}"
+      claw::error_exit "$2" "-" "-" "${error_msg}"
     fi
 
     ### Preprocess file ###
