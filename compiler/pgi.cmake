@@ -7,3 +7,4 @@ set(OPENACC_FLAGS "-acc")               # flags to compile with OpenACC support
                                         # TODO maybe need -ta=<target>
 set(OPENMP_FLAGS "-mp")                 # flags to compile with OpenMP support
 set(OMNI_CONF_OPTION ${OMNI_CONF_OPTION} "CPP=pgcc -E")
+set(COMPILER_MACRO "-D_PGI")            # predefined macro by compiler

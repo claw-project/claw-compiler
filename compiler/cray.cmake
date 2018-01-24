@@ -6,3 +6,4 @@ set(TEST_BASE_FLAGS "-h noacc,noomp") # Unactivate OpenACC and OpenMP
 set(OPENACC_FLAGS "-h acc,noomp")     # flags to compile with OpenACC support
 set(OPENMP_FLAGS "-h noacc,omp")      # flags to compile with OpenMP support
 set(OMNI_TARGET "--target=Cray-linux-gnu") # Compilation of OMNI compiler
+set(COMPILER_MACRO "-D_CRAY")         # predefined macro by compiler
