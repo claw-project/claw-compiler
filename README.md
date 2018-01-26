@@ -3,7 +3,7 @@
 <a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.0.0-lightgray.svg)</a> [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
 <a target="_blank" href="https://claw-compiler.slack.com/">![Version](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
 
-<a target="_blank" href="https://github.com/C2SM-RCM/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-0.4.0-blue.svg)</a>
+<a target="_blank" href="https://github.com/claw-project/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-0.4.0-blue.svg)</a>
 
 
 > Who is in charge here?
@@ -26,10 +26,7 @@ climate code, especially for column- or point-wise computation.
 
 #### CLAW Directive Language Specifications
 The directives that control the transformation flow are defined in the
-CLAW directive language specification.
-
-[CLAW language definition](https://github.com/C2SM-RCM/claw-language-definition)
-
+[CLAW Directive Language Specification](https://github.com/claw-project/claw-language-definition).
 
 #### Status of implementation
 We are currently implementing the version `v0.3a` of the CLAW language
