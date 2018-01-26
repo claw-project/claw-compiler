@@ -138,22 +138,17 @@
 %------------------------------------------------------------------------------
 %	TITLE SECTION
 %------------------------------------------------------------------------------
-\colorbox{grey}{
-	\parbox[t]{1.0\linewidth}{
-		\centering \fontsize{35pt}{80pt}\selectfont
-		% The first argument for fontsize is the font size of the text and the
-		% second is the line spacing - you may need to play with these for your
-		% particular title
+\vspace*{2cm}
+\begin{center}
+    \includegraphics[width=\textwidth]{resources/claw_logo_full_textured_black.png} \\
+\end{center}
 
-		\vspace*{2cm}
-		% Space between the start of the title and the top of the grey box
-
-		\hfill \textbf{CLAW FORTRAN Compiler} \\
-		\hfill Developer's Guide\par
-
-		\vspace*{2cm}
-		% Space between the end of the title and the bottom of the grey box
-	}
+\parbox[t]{1.0\linewidth}{
+    \centering \fontsize{35pt}{80pt}\selectfont
+	\vspace*{2cm}
+	\textbf{Developer's guide} \\
+	\vspace*{2cm}
+	
 }
 
 \vfill
@@ -164,6 +159,7 @@
 
 \vfill % Space between the title box and author information
 
+\HRule
 \begin{center}
 Version \version{}, Last updated \today \\
 Author: \authorname{}
