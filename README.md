@@ -1,4 +1,4 @@
-# CLAW Compiler
+![CLAW Logo](resources/logo_full_black.png)
 
 <a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.0.0-lightgray.svg)</a> [![Build Status](https://travis-ci.org/clementval/claw-compiler.svg?branch=master)](https://travis-ci.org/clementval/claw-compiler)
 <a target="_blank" href="https://claw-compiler.slack.com/">![Version](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
@@ -38,7 +38,7 @@ specification in this reference compiler.
 
 #### Compiler workflow
 The diagram below shows the workflow of the CLAW Compiler.
-![CLAW Compiler workflow](resource/clawfc_workflow.png)
+![CLAW Compiler workflow](resources/clawfc_workflow.png)
 
 ##### Key components:
 * **FPP**: standard preprocessor.
@@ -53,7 +53,7 @@ The diagram below shows the workflow of the CLAW Compiler.
 
 #### CLAWX2T Java Library Stack Overview
 
-![CLAWX2T Library stack](resource/clawx2t_stack.png)
+![CLAWX2T Library stack](resources/clawx2t_stack.png)
 
 The CLAW XcodeML to XcodeML translator library stack is divided in three
 distinct library:
