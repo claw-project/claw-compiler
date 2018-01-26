@@ -11,7 +11,7 @@ Indent with spaces. NO tabs!
 
 #### Java code
 * An IDEA format configuration is available here:
-[claw_code_style_idea.xml](./omni-cx2x/config/claw_code_style_idea.xml)
+[claw_code_style_idea.xml](./cx2t/config/claw_code_style_idea.xml)
 If IDEA IntelliJ is not used, the coding style should reflect this
 configuration.
 
@@ -78,7 +78,7 @@ in a standalone mode.
 The option can be used as follows with an example of outputs:
 ```bash
 clawfc --dump-cx2x-args <other_args>
--- [DEBUG] Arguments for omni-cx2x:
+-- [DEBUG] Arguments for cx2t:
    --config=/claw-compiler/driver/etc/claw-default.xml --schema=/claw-compiler/driver/etc/claw_config.xsd -w 80 -l  -M/claw-compiler/test/loops/fusion1  -o /tmp/__omni_tmp__65319/original_5f_code_f90_out.xml -f transformed_code.f90 /tmp/__omni_tmp__65319/original_5f_code_f90_in.xml
 ```
 

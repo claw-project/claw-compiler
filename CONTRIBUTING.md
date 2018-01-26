@@ -71,7 +71,7 @@ transformation is implemented in the CLAW XcodeML Translator (ClawX2T).
   claw/shenron and finally claw/wani. Dependency can be done from top to
   bottom but not from bottom to top.
 * If using IntelliJ IDEA, the code style file is located
-  [here](./omni-cx2x/config/claw_code_style_idea.xml). Otherwise, the following
+  [here](./cx2t/config/claw_code_style_idea.xml). Otherwise, the following
   rules apply:
 
 ##### General

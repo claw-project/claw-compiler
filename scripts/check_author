@@ -20,7 +20,7 @@ do
     let license_error++
     echo "${file} has no @author javadoc information."
   fi
-done < <(find ./omni-cx2x -path ./omni-cx2x/src/claw/wani/language/parser -prune -o -iname "*.java" -print0)
+done < <(find ./cx2t -path ./cx2t/src/claw/wani/language/parser -prune -o -iname "*.java" -print0)
 
 if [[ license_error -ne 0 ]]; then
   echo "${license_error} files without @author javadoc information!"
