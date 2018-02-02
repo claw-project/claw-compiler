@@ -4,6 +4,7 @@ PROGRAM loop_fusion
 END PROGRAM loop_fusion
 
 SUBROUTINE clawloop ( )
+
  INTEGER :: i
  INTEGER :: j
  INTEGER :: k
@@ -11,31 +12,30 @@ SUBROUTINE clawloop ( )
  INTEGER :: jend = 4
  INTEGER :: kend = 2
 
-
  DO i = 0 , iend , 1
 !$claw loop-hoist(j,k) target(cpu)
   IF ( i == 0 ) THEN
-   PRINT * , "First iteration of i" , i , "/" , j , "/" , k
+   PRINT * ,"First iteration of i" , i ,"/" , j ,"/" , k
   END IF
   DO j = 0 , jend , 1
    DO k = 0 , kend , 1
-    PRINT * , "First loop body:" , i , "/" , j , "/" , k
+    PRINT * ,"First loop body:" , i ,"/" , j ,"/" , k
    END DO
   END DO
   DO j = 2 , jend , 1
    DO k = 0 , kend , 1
-    PRINT * , "Second loop body:" , i , "/" , j , "/" , k
+    PRINT * ,"Second loop body:" , i ,"/" , j ,"/" , k
    END DO
   END DO
 !$claw end loop-hoist
   DO j = 0 , jend , 1
    DO k = 0 , kend , 1
     IF ( i == 0 ) THEN
-     PRINT * , "GPU First iteration of i" , i , "/" , j , "/" , k
+     PRINT * ,"GPU First iteration of i" , i ,"/" , j ,"/" , k
     END IF
-    PRINT * , "GPU First loop body:" , i , "/" , j , "/" , k
+    PRINT * ,"GPU First loop body:" , i ,"/" , j ,"/" , k
     IF ( j >= 2 ) THEN
-     PRINT * , "GPU Second loop body:" , i , "/" , j , "/" , k
+     PRINT * ,"GPU Second loop body:" , i ,"/" , j ,"/" , k
     END IF
    END DO
   END DO
