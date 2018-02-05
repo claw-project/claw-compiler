@@ -1,28 +1,29 @@
 \chapter{Transformation}
 \label{chapter:transformation}
-A transformation class is the the basic representation of a manipulation of the
-\gls{ast} triggered by a directive or on a whole translation unit. Each 
+A transformation is the the basic representation of a manipulation of the
+\gls{ast} triggered by a directive or for the whole translation unit. Each 
 translation unit transformation or directive transformation is implemented in
-its own class. If the directive can be used as a block directive (with a
-\lstinline|!$end <directive>| directive), the class must inherits from the
-\lstinline!ClawBlockTransformation!. Otherwise, it can inherits from the basic
-\lstinline!ClawTransformation! class.
+its own transformation class. If the directive can be used as a block directive 
+(with a \lstinline|!$end <directive>| directive), the transformation class must 
+inherits from the \lstinline!ClawBlockTransformation! super class. Otherwise, 
+it can inherits from the basic \lstinline!ClawTransformation! super class.
 
 \section{Type of transformation}
 \label{section:trans_type}
 Transformations are divided into two distinct groups. The independent and the
 dependent transformations. The first one, as its name implies, is performed
 independently of any other transformations. Translation unit transformations 
-are always independent. The dependent transformation, in the
+are always independent. 
+The dependent transformation, in the
 other hand, is applied only when it can be combined with another dependent
 transformation of the same kind in its group. Most of the transformations are
 independent. The best example for the dependent transformation is the loop
-fusion transformation. As shown in Listing \ref{lst:trans_dep}, there are two
-CLAW directives (line 4 and 9). These directives will trigger two dependent loop
-fusion transformations. Alone, those transformations have no effect
+fusion transformation. As shown in Listing~\ref{lst:trans_dep}, there are two
+CLAW directives (line 4 and 9). These directives will both trigger a dependent 
+loop fusion transformations. Alone, those transformations have no effect
 on the \gls{ast}. The translation engine will analyze if the
 first one can be transformed with the second one. If so, the transformations 
-will be grouped together and the fusion will happen. Otherwise, the 
+will be grouped together and the fusion will be done. Otherwise, the 
 transformations are just ignored as they have to depend on at least one other 
 transformation. Checks that match dependent transformation together are 
 specific to the kind of transformation.
@@ -39,11 +40,13 @@ specific to the kind of transformation.
 Transformations can be triggered by a directive or they can be applied for each
 translation unit independently from the directives present in it or not.
 This information is specified in the configuration file of the transformation
-set (see Section~\ref{section:conf_trans_set}).
+set (see Section~\ref{section:conf_trans_set}). Directive triggered 
+transformations must implement the constructor passing the 
+\lstinline|ClawPragma| parameter.
 
 
 \section{Transformation application order}
-The first step of the translation of a translation unit (an XcodeML/F \gls{ir}),
+The first step in the translation of a translation unit (an \xcodeml \gls{ir}),
 is the detection of all the directives. Each directive will trigger the
 creation of an instance of the transformation class it belongs to, if any. 
 For example, a loop-fusion directive will trigger the creation of a 
@@ -52,9 +55,9 @@ method is called in order to determine if the transformation can take place.
 If the analysis step is successful, the transformation is added to its 
 transformation group. Once all the transformation instances have been analyzed
 and categorized by groups, the actual code transformation can take place on 
-the XcodeML/F \gls{ir}. All transformations in a group are applied one after 
-another in a FIFO order. The order in which groups are processed is determined 
-by the CLAW configuration file.
+the \xcodeml \gls{ir}. All transformations in a group are applied one after 
+another in a \textit{fifo} order. The order in which groups are processed is 
+determined by the configuration file.
 
 \lstinputlisting
   [
@@ -73,17 +76,17 @@ details in Chapter~\ref{chapter:configuration}.
 \label{section:new_trans}
 A transformation in the \clawfc is represented as a class that inherits from
 the \lstinline|ClawTranformation| or \lstinline|ClawBlockTransformation|
-base class. In order to add a new transformation into the the CLAW Compiler,
+super class. In order to add a new transformation into the the CLAW Compiler,
 the following steps must be done.
 
 \begin{enumerate}
-\item Create a new class that inherits from one of the base transformation
-      class.
-\item (Optional) Define the directive that will trigger the transformation 
-      and add it to the CLAW language parser if the transformation is 
-      triggered by a directive.
-\item (Optional) Detect and categorize the new transformation if the 
+\item Create a new class that inherits from one of the transformation
+      super class.
+\item \textit{(Optional)} Define the directive that will trigger the 
+      transformation and add it to the CLAW directive language parser if the 
       transformation is triggered by a directive.
+\item \textit{(Optional)} Detect and categorize the new transformation if the 
+      transformation is triggered by a directive in the translator.
 \item Add the transformation to a transformation set configuration and to
       the global configuration.
 \end{enumerate}
@@ -92,8 +95,8 @@ As an example, the next 4 subsection describe those steps with more details.
 
 \subsection{New transformation class}
 The transformation created at this step will be a simple independent
-transformation triggered by a directive. It will then inherits for 
-\lstinline|ClawTransformation| base class.
+transformation triggered by a directive. It will then inherits from 
+\lstinline|ClawTransformation| super class.
 
 \lstinputlisting
   [
@@ -104,25 +107,26 @@ transformation triggered by a directive. It will then inherits for
 
 The transformation class shown in Listing~\ref{lst:myfirsttransformation.java}
 is really simple. It just inherits from \lstinline|ClawTransformation| on line
-16. Therefore, it has to implements the \lstinline|analyze|,
-\lstinline|transform| and \lstinline|canBeTransformedWith| methods as they are
-abstract in the base class.
+16. Therefore, it has to implements the \lstinline|analyze()|,
+\lstinline|transform()| and \lstinline|canBeTransformedWith()| methods as they 
+are abstract in the super class.
 
-The \lstinline|analyze| method does not perform any check and just return
-\lstinline|true| to tell the translation engine that the actual
-transformation can occur.
+The \lstinline|analyze()| method does not perform any check and just return
+\lstinline|true| to tell the translation engine that the transformation can 
+be applied.
 
-The \lstinline|transform| method is pretty simple. It delete the pragma that
+The \lstinline|transform()| method is pretty simple. It delete the pragma that
 triggered the transformation from the \gls{ast}. It will then not be in the
 resulting transformed code.
 
-\subsection{Directive and CLAW language parser}
+\subsection{Directive and CLAW directive language parser}
 If the new transformation class is triggered by a directive, it needs to
-be set up in the language parser in order to be instantiated. 
+be set up in the directive language parser in order to be instantiated. 
 Listing~\ref{lst:mydirective} is the directive that is used in 
 the current example.
 
-\begin{lstlisting}[label=lst:mydirective, caption=Example directive, language=fortran]
+\begin{lstlisting}[label=lst:mydirective, caption=Example directive, 
+  language=fortran]
 !$claw mydirective
 \end{lstlisting}
 
@@ -130,8 +134,9 @@ To parse the directive, two files need to be modified. First, the new directive
 needs to be added to the \lstinline|ClawDirective| enumeration. It is added as
 the last element of the enumeration in the Listing~\ref{lst:clawdirective}.
 
-\begin{lstlisting}[label=lst:clawdirective, caption=ClawDirective.java, language=java]
-package cx2x.translator.language.base;
+\begin{lstlisting}[label=lst:clawdirective, caption=ClawDirective.java, 
+  language=java]
+package cx2t.wani.language;
 
 public enum ClawDirective {
   ARRAY_TRANSFORM,
@@ -151,19 +156,18 @@ public enum ClawDirective {
 }
 \end{lstlisting}
 
-Then, the CLAW language parser has to be modified to understand this new
-directive and return the correct value from the enumeration.
+Then, the CLAW directive language parser has to be modified to understand 
+this new directive and return the correct value from the enumeration.
 
-\begin{lstlisting}[label=lst:clawdirectiveantlr, caption=Claw.g4, language=java]
+\begin{lstlisting}[label=lst:clawdirectiveantlr, caption=Claw.g4, 
+  language=java]
 grammar Claw;
 
 @header
 {
-import cx2x.translator.common.ClawConstant;
-import cx2x.translator.language.base.*;
-import cx2x.translator.language.common.*;
-import cx2x.translator.language.helper.target.Target;
-import cx2x.translator.common.Utility;
+import cx2t.wani.ClawConstant;
+import cx2t.wani.language.*;
+import cx2t.tatsu.common.*;
 }
 
 /*----------------------------------------------------------------------------
@@ -171,14 +175,14 @@ import cx2x.translator.common.Utility;
  *----------------------------------------------------------------------------*/
 
 // Entry point of the parsing
-analyze returns [ClawLanguage l]
-  @init{ $l = new ClawLanguage(); }:
-  CLAW directive[$l] EOF
+analyze returns [ClawPragma cp]
+  @init{ $cp = new ClawPragma(); }:
+  CLAW directive[$cp] EOF
 ;
 
-directive[ClawLanguage l]:
+directive[ClawPragma cp]:
   // The new directive
-  MYDIRECTIVE { $l.setDirective(ClawDirective.MYDIRETIVE); }
+  MYDIRECTIVE { $cp.setDirective(ClawDirective.MYDIRETIVE); }
 ;
 
 /*----------------------------------------------------------------------------
@@ -191,19 +195,19 @@ MYDIRECTIVE  : 'mydirective';
 \end{lstlisting}
 
 In Listing~\ref{lst:clawdirectiveantlr}, there is a minimal version of the
-ANTLR grammar file of the CLAW language parser. The token
-\lstinline|mydirective| is added in the lexer rules (line 33) and is then
-used in the parser rules (line 24). ANTLR grammar file accepts Java code
-to be inserted during the parsing. On line 24, the enumeration value for
+ANTLR grammar file of the CLAW directive language parser. The token
+\lstinline|mydirective| is added in the lexer rules (line 31) and is then
+used in the parser rules (line 22). ANTLR grammar file accepts Java code
+to be inserted during the parsing. On line 22, the enumeration value for
 the new directive is set in the analyzed pragma object.
 
 \subsection{Detection and categorization}
 The new directive has its transformation class and can be analyzed by the
-CLAW language parser.
+CLAW directive language parser.
 
 Now, it needs to be detected in order to create the transformation instance.
 This happens in the \lstinline|ClawTranslator| class. The
-\lstinline|generateTransformation| method detects all the pragmas in the 
+\lstinline|generateTransformation()| method detects all the pragmas in the 
 translation unit and categorize them.
 
 As shown in Listing~\ref{lst:categorization}, a new case is added to the switch
@@ -211,10 +215,11 @@ statement that categorize the transformation. Here, a new instance of
 \lstinline|MyFirstTransformation| transformation is created and added to the
 correct group as long as its analysis step succeed.
 
-\begin{lstlisting}[label=lst:categorization, caption=ClawXcodeMlTranslator.java, language=java]
+\begin{lstlisting}[label=lst:categorization, caption=ClawTranslator.java, 
+  language=java]
 switch(analyzedPragma.getDirective()) {
   case MYDIRECTIVE:
-    addOrAbort(new MyFirstTransformation(analyzedPragma));
+    addTransformation(xcodeml, new MyFirstTransformation(analyzedPragma));
     break;
 }
 \end{lstlisting}
@@ -231,7 +236,7 @@ including the new transformation class.
 \begin{lstlisting}[label=lst:new_trans_set, caption=claw-dummy-set.xml, language=xml]
 <transformations>
   <transformation name="delete-pragma" type="independent" trigger="directive"
-    class="cx2x.translator.transformation.MyFirstTransformation"/>
+    class="cx2t.wani.transformation.MyFirstTransformation"/>
 </transformations>
 \end{lstlisting}
 
