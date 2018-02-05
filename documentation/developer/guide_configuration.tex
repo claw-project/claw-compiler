@@ -2,9 +2,10 @@
 \label{chapter:configuration}
 
 The different transformation enabled in the \clawfcomp and their order of 
-application is configurable in the \clawfcomp global configuration file. The
-available transformation are defined in transformation set files (see 
-Section~\ref{section:conf_trans_set}.
+application is configurable in the \clawfcomp global configuration file. Each
+transformation might also have different options that can be activated via the
+configuration file. The available transformations are defined in transformation 
+set files (see Section~\ref{section:conf_trans_set}).
 
 \section{Transformation Set}
 \label{section:conf_trans_set}
@@ -21,30 +22,35 @@ configuration file for the CLAW internal transformation set.
     language=XML
   ]{code/claw-internal-set.xml}
 
-A transformation set configuration file defines several characteristics of a
-transformation:
+A transformation set configuration file defines several characteristics of each
+transformation defined into it:
 \begin{itemize}
   \item \textbf{name}: A unique name given to the transformation. This name is 
-        used when defining the application order of the transformations.
+        used when defining the activation and the application order of the 
+        transformation.
   \item \textbf{type}: Type of the transformation as describe in 
         Section~\ref{section:trans_type}. Only two values are possible
         \lstinline|dependent| or \lstinline|independent|.
   \item \textbf{trigger}: How the transformation is triggered as described in 
         Section~\ref{section:trans_trigger}. Only two values are possible
         \lstinline|directive| or \lstinline|translation_unit|.
+  \item \textbf{dircetive}: When \lstinline|directive| value is defined for the
+        trigger option, this define which directive triggers it (e.g. 
+        \lstinline|acc|, \lstinline|omp| or \lstinline|claw|). 
   \item \textbf{class}: Fully qualified class name implementing the 
         transformation.
 \end{itemize}
 
 \subsection{External Transformation Set}
-External transformation set can be implemented and their transformation applied
-with the \clawfcomp. Section~\ref{section:new_trans} explains in detail how to
-create and plus externals transformation and transformation sets. 
+External transformations can be implemented separately from the CLAW Compiler
+infrastructure and plugged into it easily. Section~\ref{section:new_trans} 
+explains in detail how to create and plug external transformations. 
 
-The transformation set configuration file for an external set must specify the
-name of the JAR file containing the transformation classes in the 
-\lstinline|transformations| element as shown in 
-Figure~\ref{lst:external_set_conf}. 
+External transformations must be defined in an external transformation set 
+configuration file. This transformation set must specify the
+name of the JAR file containing the transformation classes in the jar attribute
+of the \lstinline|transformations| element as shown in 
+Figure~\ref{lst:external_set_conf}.
 
 \lstinputlisting
   [
@@ -52,8 +58,7 @@ Figure~\ref{lst:external_set_conf}.
     caption=External transformation set configuration file,
     language=XML
   ]{code/external-set.xml}
-  
-\subsection{Location of external transformation sets JARs}
+
 The JAR files specified in external transformation sets can be located anywhere
 on disk. These location have to be set in the \lstinline!CLAW_TRANS_SET_PATH!
 environment variable.
@@ -64,13 +69,13 @@ Several paths can be provided and they must be separated by \lstinline!:!.
 The global configuration gives information about which transformation sets are
 used, which transformation are enabled, in which order the transformations are
 applied and several configuration key-value pair that can be accessed by the 
-transformations. 
+transformations them-self. 
 
 The configuration is separated in different sections: 
 \begin{itemize}
-\item \textbf{global}: this section encapsulate several key-value pair 
-      configuration parameter. The attribute \lstinline!type! of the global
-      section defines if the configuration is a root configuration or an 
+\item \textbf{global}: this section encapsulates several key-value pair 
+      configuration parameters. The attribute \lstinline!type! of the global
+      element defines if the configuration is a root configuration or an 
       extension of the default one. User can overwrite partially or entirely
       the default configuration.
       The only mandatory key-value pair in the global section is the 
@@ -96,9 +101,9 @@ The configuration is separated in different sections:
   ]{code/claw-default.xml}
 
 \subsection{User Defined Configuration}
-Listing~\ref{lst:external_config} is an example of an user configuration that
+Listing~\ref{lst:external_config} is an example of a user configuration that
 can be passed to the \clawfcomp. It uses one transformation set and enable
-one transformation. The transformation set is the one described in 
+one transformation only. The transformation set is the one described in 
 Listing~\ref{lst:external_set_conf}. This configuration will overwrite 
 entirely the default configuration as its \lstinline!type! is \lstinline!root!.
 
@@ -112,7 +117,7 @@ entirely the default configuration as its \lstinline!type! is \lstinline!root!.
 Listing~\ref{lst:extension_config} is an example of a user extension 
 configuration. Extension configuration overwrite only partially the default 
 configuration. In this example, only the \lstinline!groups! element is 
-overwritten with this new order of available transformation.
+overwritten with a new order for transformation.
 
 \lstinputlisting
   [
