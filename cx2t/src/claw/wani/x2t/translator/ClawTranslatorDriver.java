@@ -86,6 +86,13 @@ public class ClawTranslatorDriver {
     try {
       // Check all pragma found in the translation unit
       for(Xnode pragma : _translationUnit.matchAll(Xcode.F_PRAGMA_STATEMENT)) {
+
+        /* Since OMNI Compiler 1.2.2, any pragma that are just between the
+         * declaration and the execution part will be placed in the declaration
+         * part. This is not what is best for all the current CLAW directives.
+         * Therefore, we move them back to the execution block. */
+        Pragma.moveInExecution(pragma);
+
         // Pragma can be handled by the translator so let it do its job.
         if(_translator.isHandledPragma(pragma)) {
           _translator.generateTransformation(_translationUnit, pragma);

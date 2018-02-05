@@ -12,6 +12,7 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -266,5 +267,43 @@ public final class Pragma {
       prev = parent;
     } while(parent != null);
     return null;
+  }
+
+  /**
+   * If the first pragma statement is located as the first statement of the
+   * execution block, the OMNI Compiler front-end places it with the declaration
+   * block. If this doesn't make sense for a specific pragma, this method will
+   * move it to the execution block.
+   *
+   * @param pragma The pragma to be moved.
+   */
+  public static void moveInExecution(Xnode pragma) {
+    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+      return;
+    }
+
+    if(pragma.ancestor().opcode() == Xcode.DECLARATIONS) {
+      FfunctionDefinition fdef = pragma.findParentFunction();
+      if(fdef != null) {
+        if(fdef.body().firstChild() != null &&
+            fdef.body().firstChild().opcode() == Xcode.F_PRAGMA_STATEMENT)
+        {
+          Xnode hook = null;
+          Xnode crtNode = fdef.body().firstChild();
+          while(crtNode != null && crtNode.opcode() == Xcode.F_PRAGMA_STATEMENT
+              && pragma.lineNo() > crtNode.lineNo()) {
+            hook = crtNode;
+            crtNode = crtNode.nextSibling();
+          }
+          if(hook != null) {
+            hook.insertAfter(pragma);
+          } else {
+            fdef.body().append(pragma);
+          }
+        } else {
+          fdef.body().insert(pragma);
+        }
+      }
+    }
   }
 }

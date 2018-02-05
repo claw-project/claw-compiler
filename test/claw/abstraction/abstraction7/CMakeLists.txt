@@ -1,5 +1,5 @@
 set(TEST_NAME abstraction7)
-set(TEST_DEBUG OFF)    # If ON, clawfc is executed with the debig flag
+set(TEST_DEBUG OFF)    # If ON, clawfc is executed with the debug flag
 set(OUTPUT_TEST OFF)   # If ON, test the output of executables with original
 set(IGNORE_TEST OFF)   # If ON, ignore all test targets
 set(OPENACC_ENABLE ON) # If ON, try to compile with OpenACC

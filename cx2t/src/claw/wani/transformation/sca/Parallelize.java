@@ -431,6 +431,12 @@ public class Parallelize extends ClawTransformation {
         == OpenAccLocalStrategy.PRIVATE)
     {
       privateList = Directive.getLocalArrays(xcodeml, _fctDef);
+      // Iterate over a copy to be able to remove items
+      for(String identifier : new ArrayList<>(privateList)) {
+        if(_promotions.containsKey(identifier)) {
+          privateList.remove(identifier);
+        }
+      }
     } else if(Configuration.get().openACC().getLocalStrategy()
         == OpenAccLocalStrategy.PROMOTE)
     {

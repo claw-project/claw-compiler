@@ -45,7 +45,7 @@
   <!-- Package compiled files into their own library -->
   <target name="jar" depends="compile" description="package, output to JAR">
     <mkdir dir="${dist.dir}" />
-    <jar jarfile="${dist.dir}/omni-cx2x-unittest.jar" basedir="${build.dir}" />
+    <jar jarfile="${dist.dir}/cx2t-unittest.jar" basedir="${build.dir}" />
   </target>
 
   <!-- Clean build -->

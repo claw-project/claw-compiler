@@ -2,12 +2,12 @@
 # See LICENSE file for more information
 
 # Build the javadoc
-set (JAVADOC_TITLE "OMNI CLAW XcodeML to XcodeML translator (omni-cx2x)")
+set (JAVADOC_TITLE "OMNI CLAW XcodeML to XcodeML translator (cx2t)")
 add_custom_target(
   claw-javadoc
   COMMAND ${Java_JAVADOC_EXECUTABLE}
     -d ${CMAKE_SOURCE_DIR}/documentation/javadoc
-    -sourcepath ${CMAKE_SOURCE_DIR}/omni-cx2x/src
+    -sourcepath ${CMAKE_SOURCE_DIR}/cx2t/src
     -classpath ${LOCAL_OMNI_JAR_TOOLS}:${LOCAL_OMNI_JAR_COMMON}:${LOCAL_OMNI_JAR_F_BACKEND}:${LOCAL_OMNI_JAR_C_BACKEND}:${ANTLR}
     -doctitle '<h1>${JAVADOC_TITLE}</h1>'
     -windowtitle '${JAVADOC_TITLE}'

@@ -443,6 +443,18 @@ public class Xnode {
   }
 
   /**
+   * Get ancestor node if any.
+   *
+   * @return Ancestor node if any. Null otherwise.
+   */
+  public Xnode ancestor() {
+    if(_baseElement == null) {
+      return null;
+    }
+    return new Xnode((Element) _baseElement.getParentNode());
+  }
+
+  /**
    * Get previous sibling node.
    *
    * @return Previous sibling node.

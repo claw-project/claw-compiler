@@ -18,6 +18,7 @@
 ### Read configration file and library ###
 om_cx2x_driver_conf_dir=@OM_CX2X_DRIVER_CONF_DIR@
 om_cx2x_driver_lib_dir=@OM_CX2X_DRIVER_LIB_DIR@
+compiler_macro=@COMPILER_MACRO@
 # shellcheck source=../etc/claw_f.conf.in
 . ${om_cx2x_driver_conf_dir}/@CLAW_CONF_FILE@
 # shellcheck source=../libexec/claw_f_lib.sh.in
@@ -150,11 +151,11 @@ claw::check_file_exist
 ## Check if multiple file, output_dir must be specified and output_file not
 if [ ${#f_files[@]} -gt 1 ] && [ "${output_dir}" == "" ]; then
   # Error: multiple files without output directory specified
-  claw::error_exit "Error: output directory not specified"
+  claw::error_exit "internal" "-" "-" "output directory not specified"
 elif [ "${output_file}" != "" ] && [ "${output_dir}" != "" ]; then
   # Error: output file and output directory defined at the same time
-  claw::error_exit \
-    "Error: output directory and output file cannot be specified together"
+  claw::error_exit "internal" "-" "-" \
+    "output directory and output file cannot be specified together"
 fi
 
 ## No output file specifed so define a default one
@@ -302,7 +303,7 @@ if [[ ${pipe_workflow} == true ]]; then
       file_out_f=${output_dir}/${input_file}
     fi
 
-    if [[ ${fpp_redirect} == true ]]; then
+    #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
 
       file_name="$(claw::norm_file_name "${input_file}")"
       ext=${input_file##*.}
@@ -339,11 +340,11 @@ if [[ ${pipe_workflow} == true ]]; then
         [[ ${compiler_status[3]} -ne 0 ]] ||
         [[ ${compiler_status[4]} -ne 0 ]] ||
         [[ ${compiler_status[5]} -ne 0 ]]; then
-        claw::error_exit "Internal error"
+        claw::error_exit "${input_file}" "-" "-" "Internal error."
       fi
-    else
-      claw::error_exit "FPP breaks pipe mode"
-    fi
+    #TODO integrate when full workflow: else
+    #TODO integrate when full workflow:  claw::error_exit "FPP breaks pipe mode"
+    #TODO integrate when full workflow: fi
   done
   exit 0
 fi
@@ -364,7 +365,7 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Check that input file produced by preprocessing pass exists.
   if [[ ! -f ${file_pp} ]]; then
-    claw::error_exit \
+    claw::error_exit "${input_file}" "-" "-" \
       "Input file not preprocessed correctly. Parsing cannot be done."
   fi
 
@@ -396,7 +397,7 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Check that input file produced by parsing pass exists.
   if [[ ! -f ${file_in_x} ]]; then
-    claw::error_exit \
+    claw::error_exit "${input_file}" "-" "-" \
       "Input file not parsed correctly. Translation cannot be done."
   fi
 
@@ -417,7 +418,7 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Dump the arguments pass to the translator for easier debugging
   if [[ ${dump_cx2x_args} == true ]]; then
-    echo "-- [DEBUG] Arguments for omni-cx2x:"
+    echo "-- [DEBUG] Arguments for cx2t:"
     echo "${TRANSLATOR_OPTION} ${OMNI_CX2X_TARGET_OPT} \
       ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
       ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
@@ -445,12 +446,12 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Check that translation output a file
   if [[ ! -f ${file_out_x} ]]; then
-    claw::error_exit "Translation failed."
+    claw::error_exit "${input_file}" "-" "-" "Translation failed."
   fi
 
   # Check that decompiler output a file
   if [[ ! -f ${file_out_f} ]]; then
-    claw::error_exit "Decompiler failed."
+    claw::error_exit "${input_file}" "-" "-" "Decompiler failed."
   fi
 
   # also create ${temp_dir}/${file_name}_${ext}_in.F90
