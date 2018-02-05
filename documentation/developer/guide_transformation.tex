@@ -21,11 +21,11 @@ fusion transformation. As shown in Listing \ref{lst:trans_dep}, there are two
 CLAW directives (line 4 and 9). These directives will trigger two dependent loop
 fusion transformations. Alone, those transformations have no effect
 on the \gls{ast}. The translation engine will analyze if the
-first one can be transformed with the second one. If so, the transformations will
-be grouped together and the fusion will happen. Otherwise, the transformations
-are just ignored as they have to depend on at least one other transformation. 
-Checks that match dependent transformation together are specific to the kind
-of transformation.
+first one can be transformed with the second one. If so, the transformations 
+will be grouped together and the fusion will happen. Otherwise, the 
+transformations are just ignored as they have to depend on at least one other 
+transformation. Checks that match dependent transformation together are 
+specific to the kind of transformation.
 
 \lstinputlisting
   [
@@ -39,7 +39,7 @@ of transformation.
 Transformations can be triggered by a directive or they can be applied for each
 translation unit independently from the directives present in it or not.
 This information is specified in the configuration file of the transformation
-set (see \ref{section:conf_trans_set}).
+set (see Section~\ref{section:conf_trans_set}).
 
 
 \section{Transformation application order}
@@ -63,11 +63,11 @@ by the CLAW configuration file.
     language=xml
   ]{code/claw-default.xml}
 
-As shown in Figure \ref{lst:config}, the transformation order is specified the
+As shown in Figure~\ref{lst:config}, the transformation order is specified the
 configuration file under the XML format.
 Each transformation group name refers to its name in the transformation set it
 belongs to. Global configuration and transformation set file are described in
-details in Chapter \ref{chapter:configuration}.
+details in Chapter~\ref{chapter:configuration}.
 
 \section{Add a new transformation}
 \label{section:new_trans}
@@ -102,7 +102,7 @@ transformation triggered by a directive. It will then inherits for
     language=java
   ]{code/MyFirstTransformation.java}
 
-The transformation class shown in Listing \ref{lst:myfirsttransformation.java}
+The transformation class shown in Listing~\ref{lst:myfirsttransformation.java}
 is really simple. It just inherits from \lstinline|ClawTransformation| on line
 16. Therefore, it has to implements the \lstinline|analyze|,
 \lstinline|transform| and \lstinline|canBeTransformedWith| methods as they are
@@ -118,8 +118,9 @@ resulting transformed code.
 
 \subsection{Directive and CLAW language parser}
 If the new transformation class is triggered by a directive, it needs to
-be set up in the language parser in order to be instantiated. Listing
-\ref{lst:mydirective} is the directive that is used in the current example.
+be set up in the language parser in order to be instantiated. 
+Listing~\ref{lst:mydirective} is the directive that is used in 
+the current example.
 
 \begin{lstlisting}[label=lst:mydirective, caption=Example directive, language=fortran]
 !$claw mydirective
@@ -127,7 +128,7 @@ be set up in the language parser in order to be instantiated. Listing
 
 To parse the directive, two files need to be modified. First, the new directive
 needs to be added to the \lstinline|ClawDirective| enumeration. It is added as
-the last element of the enumeration in the Listing \ref{lst:clawdirective}.
+the last element of the enumeration in the Listing~\ref{lst:clawdirective}.
 
 \begin{lstlisting}[label=lst:clawdirective, caption=ClawDirective.java, language=java]
 package cx2x.translator.language.base;
@@ -189,7 +190,7 @@ CLAW         : 'claw';
 MYDIRECTIVE  : 'mydirective';
 \end{lstlisting}
 
-In Listing \ref{lst:clawdirectiveantlr}, there is a minimal version of the
+In Listing~\ref{lst:clawdirectiveantlr}, there is a minimal version of the
 ANTLR grammar file of the CLAW language parser. The token
 \lstinline|mydirective| is added in the lexer rules (line 33) and is then
 used in the parser rules (line 24). ANTLR grammar file accepts Java code
@@ -205,7 +206,7 @@ This happens in the \lstinline|ClawTranslator| class. The
 \lstinline|generateTransformation| method detects all the pragmas in the 
 translation unit and categorize them.
 
-As shown in Listing \ref{lst:categorization}, a new case is added to the switch
+As shown in Listing~\ref{lst:categorization}, a new case is added to the switch
 statement that categorize the transformation. Here, a new instance of
 \lstinline|MyFirstTransformation| transformation is created and added to the
 correct group as long as its analysis step succeed.
@@ -223,7 +224,7 @@ switch(analyzedPragma.getDirective()) {
 Finally, the new transformation needs to be enabled by adding it to the
 configuration file.
 
-Listing \ref{lst:new_trans_set} shows the transformation set configuration
+Listing~\ref{lst:new_trans_set} shows the transformation set configuration
 including the new transformation class.
 
 
@@ -234,8 +235,8 @@ including the new transformation class.
 </transformations>
 \end{lstlisting}
 
-Listing \ref{lst:new_trans_conf} uses the transformation set from Listing 
-\ref{lst:new_trans_set} and enables its only transformation.
+Listing~\ref{lst:new_trans_conf} uses the transformation set from 
+Listing~\ref{lst:new_trans_set} and enables its only transformation.
 
 \begin{lstlisting}[label=lst:new_trans_conf, caption=claw-dummy.xml, language=xml]
 <claw version="0.4">
@@ -254,10 +255,10 @@ The last step is to compile and install the new version of the \clawfcomp
 containing the new directive and transformation class. Once it is done, it
 can be directly tested with a simple FORTRAN program.
 
-Listing \ref{lst:mydirectiveoriginal} is the original code. Once it is
+Listing~\ref{lst:mydirectiveoriginal} is the original code. Once it is
 transformed by the CLAW FORTRAN Compiler, it will produce the code
-in Listing \ref{lst:mydirectivetransformed}. The command to call
-the \clawfcomp is shown in Listing \ref{lst:clawfcexample}.
+in Listing~\ref{lst:mydirectivetransformed}. The command to call
+the \clawfcomp is shown in Listing~\ref{lst:clawfcexample}.
 
 \lstinputlisting
   [

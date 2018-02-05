@@ -3,7 +3,7 @@
 CLAW transformations, low-level or high-level, are built on various smaller 
 blocks that can be re-used in other transformations. Those blocks are called
 primitives as they define a well constrained test or transformation on the
-\xcodeml AST. These primitives block use the \xcodeml AST abstraction library
+\xcodemlf AST. These primitives block use the \xcodemlf AST abstraction library
 detailed in Chapter \ref{chapter:astmanip}.
 The different primitives available in the CLAW framework are listed in this
 chapter.
@@ -19,7 +19,7 @@ detailed.
 \subsection{Loop fusion (merge)}
 Loop fusion or merge is the process of merging the body of a slave loop into
 the one of a master loop.
-In \xcodeml, a \lstinline|FdoStatement| has a child \lstinline|body| node.
+In \xcodemlf, a \lstinline|FdoStatement| has a child \lstinline|body| node.
 This \lstinline|body| node has 0 to N children. Performing a merge of two
 \lstinline|FdoStatement| is done by shifting all the element of the slave
 \lstinline|FdoStatement->body| to the master \lstinline|FdoStatement->body|.

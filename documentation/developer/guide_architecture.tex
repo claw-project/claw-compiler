@@ -61,15 +61,15 @@ module files. Several path can be given for the search but the first one will
 be used to store the newly created \lstinline|.xmod| files.
 
 
-\subsection{\xcodeml}
-\xcodeml is the \gls{ir} used by the
+\subsection{\xcodemlf}
+\xcodemlf is the \gls{ir} used by the
 translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML
 format and is described in a specification 
 document\cite{omni:xcodemlf95,omni:xcodemlf2008}. It allows to have an
 high-level representation of FORTRAN 2008 programs.
 
-Listing \ref{fortran1} is a simple FORTRAN program. Its \xcodeml \gls{ir} is
-shown in listing \ref{xcodeml1}. A typical \xcodeml translation unit is
+Listing \ref{fortran1} is a simple FORTRAN program. Its \xcodemlf \gls{ir} is
+shown in listing \ref{xcodeml1}. A typical \xcodemlf translation unit is
 composed of the followings sections:
 \begin{itemize}
 \item Type table with all the type definitions used in the translation unit
@@ -91,17 +91,19 @@ declarations in the translation unit (Listing \ref{xcodeml1} line 30-82).
 \lstinputlisting
   [
     label=xcodeml1,
-    caption=\xcodeml IR,
+    caption=\xcodemlf IR,
     language=xml
   ]{code/basic_fortran.xml}
 
 \subsection{The FORTRAN back-end}
 The FORTRAN back-end is the program that decompiles \gls{ir} back to FORTRAN
 code. It is a simple Java program that implements a visitor patterns across
-the \gls{ast}. It can be called as a standalone program (See Listing \ref{lst:fbackend}) or directly within the
-translator as it is done in the \clawfcomp (See Listing \ref{lst:fbackend_java}).
+the \gls{ast}. It can be called as a standalone program 
+(See Listing~\ref{lst:fbackend}) or directly within the translator as it is 
+done in the \clawfcomp (See Listing \ref{lst:fbackend_java}).
 
-\begin{lstlisting}[label=lst:fbackend, language=Bash, caption=Execute the FORTRAN back-end as a standalone]
+\begin{lstlisting}[label=lst:fbackend, language=Bash, caption=Execute the 
+  FORTRAN back-end as a standalone]
 java -cp <omni-install-path>/share/xcalablemp/om-f-back.jar:<omni-install-path>/share/xcalablemp/om-exc-tools.jar xcodeml.f.util.omx2f -l xcodeml.xml
 \end{lstlisting}
 
@@ -130,15 +132,17 @@ determine it. \textbf{FPP} is needed to have a syntactically correct FORTRAN
 code to give it to the parser. Code with preprocessor directive is impossible 
 to parse and to transform.
 \item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed
-by the OMNI Compiler FORTRAN front-end to produce the input \xcodeml \gls{ir}.
-\item \textbf{CX2X}: The input \xcodeml \gls{ir} is manipulated according to
-the rules of the transformations. It produces the output \xcodeml \gls{ir}.
-\item \textbf{F\_Back}: The output \xcodeml \gls{ir} is analyzed to produce
+by the OMNI Compiler FORTRAN front-end to produce the input \xcodemlf \gls{ir}.
+\item \textbf{CX2X}: The input \xcodemlf \gls{ir} is manipulated according to
+the rules of the transformations. It produces the output \xcodemlf \gls{ir}.
+\item \textbf{F\_Back}: The output \xcodemlf \gls{ir} is analyzed to produce
 the transformed FORTRAN code.
+\item \textbf{C\_Back}: The output \xcodemlc \gls{ir} is analyzed to produce
+the transformed C code.
 \end{enumerate}
 
-\ffront{}, \fback{} are part of the \omni{}, \fpp{} is provided by the
-installed FORTRAN compiler. The \xcodeml to \xcodeml translator \cx2x{} is
+\ffront{}, \fback{}, \cback{} are part of the \omni{}, \fpp{} is provided by the
+installed FORTRAN compiler. The \xcodemlf to \xcodeml translator \cx2x{} is
 actively developed as part of the CLAW project.
 
 \begin{figure}[!ht]
@@ -150,19 +154,20 @@ actively developed as part of the CLAW project.
   \label{fig:clawfc_main_workflow}
 \end{figure}
 
-\section{CLAW \xcodeml to \xcodeml translator (CX2X)}
-The \xcodeml to \xcodeml translator is the intelligence behind the \clawfcomp. It
-understands the CLAW directive language, generates directive and translation unit
-transformation instances and and apply them to the to the \xcodeml \gls{ast}.
+\section{CLAW \xcodemlf to \xcodeml translator (CX2T)}
+The \xcodemlf to \xcodeml translator is the intelligence behind the \clawfcomp. 
+It understands the CLAW directive language, generates directive and translation 
+unit transformation instances and and apply them to the to the \xcodeml
+\gls{ast}.
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=0.9\textwidth]{../../resources/clawx2t_stack.png} \\
-  \caption{CLAW \xcodeml Translator library stack.}
+  \caption{CLAW \xcodemlf Translator library stack.}
   \label{fig:clawx2_stack}
 \end{figure}
 
 Figure \ref{fig:clawx2_stack} shows the stack of libraries used in the the CLAW
-\xcodeml Translator. All blue blocks are actively developed as part of the CLAW
+\xcodemlf Translator. All blue blocks are actively developed as part of the CLAW
 project. Green part are external libraries coming from the OMNI-Compiler project
 or from other projects using the global CLAW infrastructure.

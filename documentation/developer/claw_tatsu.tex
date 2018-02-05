@@ -1,8 +1,8 @@
-\chapter{CLAW TATSU \xcodeml AST abstraction and manipulation library}
+\chapter{CLAW TATSU \xcodemlf AST abstraction and manipulation library}
 \label{chapter:clawtatsu}
-As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with
+As the \xcodemlf \gls{ir} is based on the XML format, it can be manipulated with
 any language that can read and write XML files. It can even be manipulated by
-hand depending on the user's knowledge of the \xcodeml \gls{ir} specification.
+hand depending on the user's knowledge of the \xcodemlf \gls{ir} specification.
 To ease this task, an AST abstraction and manipulation library is included 
 in the \cx2x program. This library helps to traverse the \gls{ast}, access and
 update the type table, add, modify or delete node.
@@ -26,7 +26,7 @@ This class has basic methods to perform the following actions:
       (See Listing \ref{lst:xnode_match}).
 \end{itemize}
 
-Each \lstinline|Xnode| instance has a specific opcode that match the \xcodeml 
+Each \lstinline|Xnode| instance has a specific opcode that match the \xcodemlf 
 element tag.
 This opcode is also used when creating new node or matching nodes in a tree.
 All the opcode are members of the \lstinline|Xcode| class.
@@ -86,7 +86,7 @@ Xnode arrayRef = n.matchDirectDescendant(Xcode.FARRAYREF);
 \end{lstlisting}
 
 \section{Access the type table}
-The type table of an \xcodeml translation unit is a child node of the root. 
+The type table of an \xcodemlf translation unit is a child node of the root. 
 The \lstinline|XcodeML| class gives access to this type table. 
 \lstinline|XcodeProgram| and \lstinline|Xmod| are child class of 
 \lstinline|XcodeML|. 
