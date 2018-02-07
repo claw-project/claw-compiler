@@ -97,7 +97,7 @@ if(BUILD_OMNI)
 endif()
 
 # translator library and xcodeml manipulation library
-add_subdirectory(omni-cx2x)
+add_subdirectory(cx2t)
 
 # compiler driver
 add_subdirectory(driver)

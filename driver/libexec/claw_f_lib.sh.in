@@ -99,7 +99,7 @@ function claw::show_env() {
       fi
     done <"${claw_env_file}"
   else
-    claw::error_exit "${claw_env_file} not exist."
+    claw::error_exit "" "-" "-" "${claw_env_file} not exist."
   fi
 }
 
@@ -256,6 +256,7 @@ function claw::set_parameters() {
 
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
+  pp_add_opt+=("${compiler_macro}")
   if [[ "${directive_opt[0]}" == "openacc" ]]; then
     pp_add_opt+=("-D_OPENACC")
   elif [[ "${directive_opt[0]}" == "openmp" ]]; then
@@ -278,13 +279,30 @@ function claw::print_version() {
 }
 
 ###################################################################
+# Display message on stderr and exit
+# Arguments:
+#   $1: message type
+#   $2: filename
+#   $3: line number
+#   $4: character number
+#   $5: error message
+###################################################################
+function claw::status_message()
+{
+  echo "$2:$3:$4 $1: $5" >&2
+}
+
+###################################################################
 # Display error message on stderr and exit
 # Arguments:
-#   $1: Error message
+#   $1: filename
+#   $2: line number
+#   $3: character number
+#   $4: error message
 ###################################################################
-function claw::error_exit() {
-  (echo >&2 "internal:0:0: error: $1")
-  (echo >&2 "compilation aborted.")
+function claw::error_exit()
+{
+  claw::status_message "error" "$1" "$2" "$3" "$4"
   exit 1
 }
 
@@ -293,10 +311,12 @@ function claw::error_exit() {
 # Arguments:
 #   $1: filename
 #   $2: line number
+#   $3: character number
 #   $3: Warning message
 ###################################################################
-function claw::warning() {
-  (echo >&2 "$1:$2 warning: $3")
+function claw::warning()
+{
+  claw::status_message "warning" "$1" "$2" "$3" "$4"
 }
 
 ###################################################################
@@ -314,12 +334,13 @@ function claw::verbose() {
 # Global:
 #   f_files
 ###################################################################
-function claw::check_file_exist() {
-  [[ ${#f_files[@]} -eq 0 ]] && claw::error_exit "no input files."
+function claw::check_file_exist()
+{
+  [[ ${#f_files[@]} -eq 0 ]] && claw::error_exit "-" "-" "-" "no input files."
 
   for fortran_file in "${f_files[@]}"; do
     [[ ! -f "${fortran_file}" ]] && claw::error_exit \
-      "file ${fortran_file} not found."
+      "${fortran_file}" "-" "-" "file not found."
   done
 }
 
@@ -506,7 +527,7 @@ function claw::process_dependencies() {
       error_msg="cannot locate any source file or module file for module: " \
         "${module_name}.\n " \
         "Provide source directory in module search path."
-      claw::error_exit "${error_msg}"
+      claw::error_exit "$2" "-" "-" "${error_msg}"
     fi
 
     ### Preprocess file ###
@@ -555,7 +576,7 @@ function claw::applyIgnore() {
   local startlen=${#startarray[*]}
   local endlen=${#endarray[*]}
   if [[ "${#startlen[@]}" -ne "${#endlen[@]}" ]]; then
-    claw::error_exit "Missing directives"
+    claw::error_exit "$1" "-" "-" "Missing directives"
   fi
 
   for ((i = 0; i <= $((startlen - 1)); i++)); do
@@ -563,7 +584,7 @@ function claw::applyIgnore() {
     local sedend=$((${endarray[$i]} - 1))     # Compute the end line
 
     if [[ "${sedstart}" -gt "${sedend}" ]]; then
-      claw::error_exit \
+      claw::error_exit "$1" "-" "-" \
         "inverted start-end in ignore directive. (${sedstart}:${sedend})"
     fi
 

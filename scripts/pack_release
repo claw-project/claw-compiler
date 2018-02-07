@@ -29,7 +29,7 @@ function show_help(){
 claw_branch="master"
 claw_main_repo="git@github.com:C2SM-RCM/claw-compiler.git"
 claw_release_dir=""
-claw_ant_root="omni-cx2x/src"
+claw_ant_root="cx2t/src"
 claw_version=""
 
 while getopts "hb:o:v:" opt; do
