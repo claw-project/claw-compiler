@@ -220,15 +220,18 @@ public class ParallelizeForward extends ClawTransformation {
      * symbol table. */
     if(_fctType.getParameters().size() == 0) {
       // If not, try to matchSeq the correct FfunctionType in the module definitions
-      Xid id = parentModule.getSymbolTable().get(_calledFctName);
+      Xid id = (parentModule == null) ? null :
+          parentModule.getSymbolTable().get(_calledFctName);
 
       if(id == null) {
         // Function is not located in the current module.
         List<Xnode> uses = parentFctDef.getDeclarationTable().uses();
-        uses.addAll(parentModule.getDeclarationTable().uses());
+        if(parentModule != null) {
+          uses.addAll(parentModule.getDeclarationTable().uses());
+        }
         if(!findInModule(uses)) {
-          xcodeml.addError("Function definition not found in module ",
-              _claw.getPragma().lineNo());
+          xcodeml.addError("Function definition " + _calledFctName +
+              " not found in module ", _claw.getPragma().lineNo());
           return false;
         }
       } else {
