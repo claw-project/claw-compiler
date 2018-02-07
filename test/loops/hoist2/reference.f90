@@ -4,6 +4,7 @@ PROGRAM claw_test
 END PROGRAM claw_test
 
 SUBROUTINE claw_hoist2 ( )
+
  INTEGER :: jt
  INTEGER :: i
  INTEGER :: j
@@ -30,17 +31,16 @@ SUBROUTINE claw_hoist2 ( )
  END TYPE dummy
  TYPE ( dummy ) :: tdum
 
-
  zsedtend = 1.0
  var3 = 2.0
  ntrac = 2
  klev = 10
  kproma = 100
- array2d_1 ( 1 : 100 ) = 0.0
+ array2d_1 ( : ) = 0.0
  array2d_2 = 0.0
- array2d_3 ( 1 : 10 , 1 : 100 ) = 0.0
- array2d_4 ( 1 : 10 , 1 : 100 ) = 0.0
- array2d_5 ( 1 : 10 , 1 : 100 ) = 0.0
+ array2d_3 ( : , : ) = 0.0
+ array2d_4 ( : , : ) = 0.0
+ array2d_5 ( : , : ) = 0.0
 !$ACC parallel loop gang vector collapse(2)
  DO jt = 1 , ntrac , 1
   DO i = 1 , kproma , 1
