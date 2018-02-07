@@ -47,8 +47,9 @@ CONTAINS
    END DO
   END DO
   zp => z
-  res ( 1 : , : ) = compute_column ( nz , q , t = val , nproma = nproma )
+  res ( : , : ) = compute_column ( nz , q , t = val , nproma = nproma )
   res_p => res
  END SUBROUTINE compute_all
 
 END MODULE mo_column
+

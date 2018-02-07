@@ -11,7 +11,7 @@ PROGRAM test_abstraction4
  DO p = 1 , nproma , 1
   q ( p , 1 ) = 0.0
  END DO
- CALL compute ( nz , q ( : , 1 : 60 ) , t ( : , 1 : 60 ) , nproma = nproma )
+ CALL compute ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma )
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction4
