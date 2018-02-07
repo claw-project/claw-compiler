@@ -5,9 +5,9 @@ END PROGRAM array4_test
 
 SUBROUTINE claw_test ( )
 
- INTEGER :: vec1 ( 0 : 10 )
- INTEGER :: vec2 ( 0 : 10 )
- INTEGER :: vec3 ( 0 : 10 )
+ INTEGER :: vec1 ( 1 : 10 )
+ INTEGER :: vec2 ( 1 : 10 )
+ INTEGER :: vec3 ( 1 : 10 )
  INTEGER :: claw_induction_0
 
  vec1 ( : ) = 0

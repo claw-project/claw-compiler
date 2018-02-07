@@ -12,9 +12,9 @@ END
 
 ! Before the transformation
 SUBROUTINE claw_test
-  INTEGER, DIMENSION(0:10) :: vec1
-  INTEGER, DIMENSION(0:10) :: vec2
-  INTEGER, DIMENSION(0:10) :: vec3
+  INTEGER, DIMENSION(10) :: vec1
+  INTEGER, DIMENSION(10) :: vec2
+  INTEGER, DIMENSION(10) :: vec3
 
   vec1(:) = 0;
   vec2(:) = 100;
