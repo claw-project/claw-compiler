@@ -1,8 +1,8 @@
-\chapter{\xcodeml AST abstraction and manipulation library }
+\chapter{\xcodeml AST abstraction and manipulation library - CLAW TATSU}
 \label{chapter:astmanip}
-As the \xcodemlf \gls{ir} is based on the XML format, it can be manipulated with
+As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with
 any language that can read and write XML files. It can even be manipulated by
-hand depending on the user's knowledge of the \xcodemlf \gls{ir} specification.
+hand depending on the user's knowledge of the \xcodeml \gls{ir} specification.
 To ease this task, an AST abstraction and manipulation library is included 
 in the \cx2x program. This library helps to traverse the \gls{ast}, access and
 update the type table and add, modify or delete nodes.
@@ -33,7 +33,8 @@ All the opcodes are members of the \lstinline|Xcode| class.
 The \lstinline|Xattr| class contains all the members to access and match 
 attributes of a node. 
 
-\begin{lstlisting}[label=lst:xnode_attr, language=Java, caption=XtypeTable]
+\begin{lstlisting}[label=lst:xnode_attr, language=Java, 
+  caption=Xnode attribute methods]
 // Gather a node
 Xnode n = ...
 // Check if a node has an attribute
@@ -50,7 +51,8 @@ n.setAttribute(Xattr.TYPE, "VALUE_OF_TYPE");
 n.removeAttribute(Xattr.IS_ALLOCATABLE);
 \end{lstlisting}
 
-\begin{lstlisting}[label=lst:xnode_node, language=Java, caption=XtypeTable]
+\begin{lstlisting}[label=lst:xnode_node, language=Java, 
+  caption=Xnode node methods]
 // Gather a node
 Xnode n = ...
 // Get first child
@@ -67,14 +69,14 @@ Xnode intConst = xcodeml.createIntConstant(10);
 n.append(xcodeml.createNode(intConst);
 \end{lstlisting}
 
-\begin{lstlisting}[label=lst:xnode_clone, language=Java, caption=XtypeTable]
+\begin{lstlisting}[label=lst:xnode_clone, language=Java, caption=Xnode cloning]
 // Gather a node
 Xnode n = ...
 // Get first child
 Xnode clone = n.cloneNode();
 \end{lstlisting}
 
-\begin{lstlisting}[label=lst:xnode_match, language=Java, caption=XtypeTable]
+\begin{lstlisting}[label=lst:xnode_match, language=Java, caption=Xnode match]
 // Gather a node
 Xnode n = ...
 // Match all arrayRef nodes in sub-tree
@@ -97,7 +99,8 @@ declaration is \lstinline|FbasicType|. If so, the type is retrieved from
 the type table (line 12) and its information can be queried to check its
 nature.
 
-\begin{lstlisting}[label=lst:xtype_table, language=Java, caption=XtypeTable]
+\begin{lstlisting}[label=lst:xtype_table, language=Java,
+  caption=Access the type table]
 public boolean analyze(XcodeProgram xcodeml, Translator translator) {
   // Get all function definitions in the translation unit
   List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
@@ -125,15 +128,16 @@ public boolean analyze(XcodeProgram xcodeml, Translator translator) {
 Listing \ref{lst:ast_next_sib} shows a simple way to go from a pragma and visit 
 its next siblings.
 
-\begin{lstlisting}[label=lst:ast_next_sib, language=Java, caption=XcodeML/F AST traverse]
+\begin{lstlisting}[label=lst:ast_next_sib, language=Java, 
+  caption=XcodeML AST traverse]
 public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
-    Xnode crt = _claw.getPragma();
-    while(crt != null){
-      System.out.println("Current node: " + crt.opcode());
-      crt = crt.nextSibling();          
-    }
+  Xnode crt = _claw.getPragma();
+  while(crt != null){
+    System.out.println("Current node: " + crt.opcode());
+    crt = crt.nextSibling();          
+  }
 }
 \end{lstlisting}
 
@@ -149,39 +153,42 @@ node accept text values.
 Finally, on line 6, the node is inserted in the AST. In this case, 
 the \lstinline!insertAfter! will add the new node after the current node.
 
-\begin{lstlisting}[label=lst:add_node, language=Java, caption=XcodeML/F add node example]
+\begin{lstlisting}[label=lst:add_node, language=Java, 
+  caption=XcodeML add node example]
 public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
-    Xnode myNewNode = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
-    myNewNode.setValue("omp parallel");
-    _claw.getPragma().insertAfter(myNewNode);
+  Xnode myNewNode = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+  myNewNode.setValue("omp parallel");
+  _claw.getPragma().insertAfter(myNewNode);
 }
 \end{lstlisting}
 
 \section{Modify nodes}
 
-\begin{lstlisting}[label=lst:update_node, language=Java, caption=XcodeML/F update node example]
+\begin{lstlisting}[label=lst:update_node, language=Java, 
+  caption=XcodeML update node example]
 public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
-    Xnode pragma = _claw.getPragma();
-    // Get current values from the node
-    String oldValue = pragma.value();
-    int line = pragma.lineNo();
-    // Update the value directly in the AST
-    pragma.setValue("acc routine seq");
-    pragma.setLineNo(line + 1);
+  Xnode pragma = _claw.getPragma();
+  // Get current values from the node
+  String oldValue = pragma.value();
+  int line = pragma.lineNo();
+  // Update the value directly in the AST
+  pragma.setValue("acc routine seq");
+  pragma.setLineNo(line + 1);
 }
 \end{lstlisting}
 
 \section{Delete nodes}
-\begin{lstlisting}[label=lst:delete_node, language=Java, caption=XcodeML/F delete node example]
+\begin{lstlisting}[label=lst:delete_node, language=Java, 
+  caption=XcodeML delete node example]
 public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
-    Xnode pragma = _claw.getPragma();
-    XnodeUtil.safeDelete(pragma); // Delete the node in the AST
+  Xnode pragma = _claw.getPragma();
+  XnodeUtil.safeDelete(pragma); // Delete the node in the AST
 }
 \end{lstlisting}
 
