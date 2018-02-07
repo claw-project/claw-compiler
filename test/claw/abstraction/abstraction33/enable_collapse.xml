@@ -1,0 +1,6 @@
+<claw version="0.4">
+  <!-- This configuration is just an extension of the default one -->
+  <global type="extension">
+    <parameter key="openacc_collapse" value="true" />
+  </global>
+</claw>
