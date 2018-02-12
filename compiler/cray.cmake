@@ -1,3 +1,9 @@
+# To avoid multiple include of different compiler
+if(__claw_base_compiler)
+	return()
+endif()
+set(__claw_base_compiler YES)
+
 # For Cray Compiler
 set(FPPFLAGS "-e P -hnoomp")          # for preprocessing only
 set(FPP_REDIRECT false)               # cannot use redirection > to save file

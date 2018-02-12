@@ -1,3 +1,9 @@
+# To avoid multiple include of different compiler
+if(__claw_base_compiler)
+	return()
+endif()
+set(__claw_base_compiler YES)
+
 # For PGI compiler
 set(FPPFLAGS "-E")                      # for preprocessing only
 set(FPP_REDIRECT true)                  # use redirection > to save file
