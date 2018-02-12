@@ -9,8 +9,9 @@ set(BUILD_DIR "${CMAKE_SOURCE_DIR}/build")
 set(ANT_FLAGS "-quiet")
 
 # Define CX2X libraries names
-set(OMNI_CX2X_CLAW_NAME "om-cx2x-claw")
-set(OMNI_CX2X_XCODEML_NAME "om-cx2x-xcodeml")
+set(CLAW_X2T_TATSU "claw-x2t-tatsu")
+set(CLAW_X2T_SHENRON "claw-x2t-shenron")
+set(CLAW_X2T_WANI "claw-x2t-wani")
 
 # Define default configuration path.
 set(CLAW_CONFIG_FILE "claw-default.xml")
@@ -19,18 +20,16 @@ set(CLAW_CONFIG_SET_XSD "claw_transformation_set.xsd")
 set(CLAW_TRANS_SET_INTERNAL "claw-internal-set.xml")
 set(CLAW_TRANS_SET_LOW "claw-low-level-set.xml")
 set(CLAW_TRANS_SET_HIGH "claw-high-level-set.xml")
-set(OMNI_CX2X_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/etc/")
+set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/etc/")
 
 # Driver variables
 set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}")
 set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
 set(OMNI_INCLUDE_DIR "${OMNI_HOME}/include")
-set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_BIN_DIR "${OMNI_HOME}/bin")
-set(OM_CX2X_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
-set(OM_CX2X_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
+set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_F_FRONT "${OMNI_BIN_DIR}/F_Front")
 set(OMNI_C_FRONT "${OMNI_BIN_DIR}/C_Front")
 set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-exc-tools.jar")
@@ -42,18 +41,17 @@ if(${Java_VERSION} VERSION_EQUAL "1.7")
 endif()
 set(FPP "${CMAKE_Fortran_COMPILER}")
 set(CPP_OPT "${FPPFLAGS}")
+set(CLAW_X2T_DRIVER_CONF_DIR "${CMAKE_INSTALL_PREFIX}/etc/")
+set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 
-# Define CLAW jar archives build location.
-set(OMNI_BUILD_JAR_CX2X_CLAW "${BUILD_DIR}/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_BUILD_JAR_CX2X_XCODEML "${BUILD_DIR}/${OMNI_CX2X_XCODEML_NAME}.jar")
-
 # Define CLAW jar archives install location.
-set(CX2X_JAR_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/share/claw")
-set(OMNI_JAR_CX2X_CLAW "${CX2X_JAR_INSTALL_LOCATION}/${OMNI_CX2X_CLAW_NAME}.jar")
-set(OMNI_JAR_CX2X_XCODEML "${CX2X_JAR_INSTALL_LOCATION}/${OMNI_CX2X_XCODEML_NAME}.jar")
+set(CLAW_X2T_JAR_INSTALL_PATH "${CMAKE_INSTALL_PREFIX}/share/claw")
+set(CLAW_X2T_TATSU_JAR "${CLAW_X2T_JAR_INSTALL_PATH}/${CLAW_X2T_TATSU}.jar")
+set(CLAW_X2T_SHENRON_JAR "${CLAW_X2T_JAR_INSTALL_PATH}/${CLAW_X2T_SHENRON}.jar")
+set(CLAW_X2T_WANI_JAR "${CLAW_X2T_JAR_INSTALL_PATH}/${CLAW_X2T_WANI}.jar")
 
 # Define OMNI Compiler jar archives build location.
 set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
@@ -65,8 +63,8 @@ set(ANTLR4_NAME "antlr4")
 set(ANTLR4_RUNTIME_NAME "antlr4-runtime")
 set(ANTLR_RUNTIME_NAME "antlr-runtime")
 
-set(ANTLR4 "${CX2X_JAR_INSTALL_LOCATION}/${ANTLR4_NAME}.jar")
-set(ANTLR4_RUNTIME "${CX2X_JAR_INSTALL_LOCATION}/${ANTLR4_RUNTIME_NAME}.jar")
+set(ANTLR4 "${CLAW_X2T_JAR_INSTALL_PATH}/${ANTLR4_NAME}.jar")
+set(ANTLR4_RUNTIME "${CLAW_X2T_JAR_INSTALL_PATH}/${ANTLR4_RUNTIME_NAME}.jar")
 
 set(COMMON_CLI_NAME "commons-cli")
-set(COMMON_CLI "${CX2X_JAR_INSTALL_LOCATION}/${COMMON_CLI_NAME}.jar")
+set(COMMON_CLI "${CLAW_X2T_JAR_INSTALL_PATH}/${COMMON_CLI_NAME}.jar")

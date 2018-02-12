@@ -23,7 +23,7 @@ if(NOT OFFLINE)
   )
 endif()
 
-# Compile the CX2X libraries
+# Compile the CX2T libraries
 add_custom_target(omni-claw ALL)
 add_custom_command(
   TARGET omni-claw
@@ -31,8 +31,6 @@ add_custom_command(
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Dcx2x.xcodeml.jar="${OMNI_CX2X_XCODEML_NAME}.jar"
-  -Dcx2x.translator.jar="${OMNI_CX2X_CLAW_NAME}.jar"
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}
@@ -43,8 +41,9 @@ if(NOT OFFLINE)
 endif()
 
 # Install libraries
-install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_CLAW_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
-install(FILES ${PROJECT_BINARY_DIR}/build/${OMNI_CX2X_XCODEML_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_SHENRON}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
+install(FILES ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_WANI}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar DESTINATION ${CMAKE_INSTALL_PREFIX}/share/claw/)

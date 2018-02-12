@@ -668,7 +668,7 @@ function claw::applyPreprocessorPass() {
 ###################################################################
 function claw::format_cx2x_params() {
   # Set configuraions directory
-  OMNI_CX2X_CONFIG_OPT="--config-path=${OMNI_CX2X_CONFIG_PATH}"
+  OMNI_CX2X_CONFIG_OPT="--config-path=${CLAW_X2T_CONFIG_PATH}"
 
   # Set user defined configuration
   if [[ ${user_config} == true ]]; then
