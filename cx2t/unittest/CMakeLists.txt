@@ -41,10 +41,28 @@ endif()
 
 # Add test cases
 add_test(
-  NAME junit
+  NAME junit-tatsu
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   ${DISABLE_RESOLVE}
-  junit
+  junit-tatsu
+)
+
+add_test(
+  NAME junit-shenron
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  ${DISABLE_RESOLVE}
+  junit-shenron
+)
+
+add_test(
+  NAME junit-wani
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  ${DISABLE_RESOLVE}
+  junit-wani
 )

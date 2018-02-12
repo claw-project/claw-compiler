@@ -65,15 +65,11 @@
   </target>
 
   <!-- Execution of JUnit tests -->
-  <target name="junit" depends="compile, jar">
+  <target name="junit-tatsu" depends="compile, jar">
     <junit haltonfailure="yes" haltonerror="on">
       <classpath path="${claw.tatsu.ut.dep}" />
-      <classpath path="${claw.shenron.ut.dep}" />
-      <classpath path="${claw.wani.ut.dep}" />
-      <classpath path="${claw.tatsu.dep}" />
-      <classpath path="${claw.shenron.dep}" />
-      <classpath path="${claw.wani.dep}" />
 
+      <classpath path="${claw.tatsu.dep}" />
       <classpath path="${junit.dep}" />
       <classpath path="${hamcrest.dep}" />
       <classpath path="${antlr.dep}" />
@@ -85,7 +81,56 @@
 
       <batchtest>
         <fileset dir="${build.dir}">
-          <include name="**/*Test*.class"/>
+          <include name="claw/tatsu/**/*Test*.class"/>
+          <exclude name="**/TestConstant.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="junit-shenron" depends="compile, jar">
+    <junit haltonfailure="yes" haltonerror="on">
+      <classpath path="${claw.shenron.ut.dep}" />
+
+      <classpath path="${claw.tatsu.dep}" />
+      <classpath path="${claw.shenron.dep}" />
+      <classpath path="${junit.dep}" />
+      <classpath path="${hamcrest.dep}" />
+      <classpath path="${antlr.dep}" />
+      <classpath path="${antlr4.dep}" />
+      <classpath path="${antlr4.runtime.dep}" />
+      <classpath path="${omni.exec.dep}"/>
+
+      <formatter type="plain" usefile="false" />
+
+      <batchtest>
+        <fileset dir="${build.dir}">
+          <include name="claw/shenron/**/*Test*.class"/>
+          <exclude name="**/TestConstant.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="junit-wani" depends="compile, jar">
+    <junit haltonfailure="yes" haltonerror="on">
+      <classpath path="${claw.wani.ut.dep}" />
+
+      <classpath path="${claw.tatsu.dep}" />
+      <classpath path="${claw.shenron.dep}" />
+      <classpath path="${claw.wani.dep}" />
+      <classpath path="${junit.dep}" />
+      <classpath path="${hamcrest.dep}" />
+      <classpath path="${antlr.dep}" />
+      <classpath path="${antlr4.dep}" />
+      <classpath path="${antlr4.runtime.dep}" />
+      <classpath path="${omni.exec.dep}"/>
+
+      <formatter type="plain" usefile="false" />
+
+      <batchtest>
+        <fileset dir="${build.dir}">
+          <include name="claw/wani/**/*Test*.class"/>
           <exclude name="**/TestConstant.class"/>
         </fileset>
       </batchtest>
