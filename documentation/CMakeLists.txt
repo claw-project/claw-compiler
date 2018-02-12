@@ -8,7 +8,7 @@ add_custom_target(
   COMMAND ${Java_JAVADOC_EXECUTABLE}
     -d ${CMAKE_SOURCE_DIR}/documentation/javadoc
     -sourcepath ${CMAKE_SOURCE_DIR}/cx2t/src
-    -classpath ${LOCAL_OMNI_JAR_TOOLS}:${LOCAL_OMNI_JAR_COMMON}:${LOCAL_OMNI_JAR_F_BACKEND}:${LOCAL_OMNI_JAR_C_BACKEND}:${ANTLR}
+    -classpath ${LOCAL_OMNI_JAR_TOOLS}:${LOCAL_OMNI_JAR_F_BACKEND}:${LOCAL_OMNI_JAR_C_BACKEND}:${ANTLR}
     -doctitle '<h1>${JAVADOC_TITLE}</h1>'
     -windowtitle '${JAVADOC_TITLE}'
     -author

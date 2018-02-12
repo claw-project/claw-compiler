@@ -34,7 +34,6 @@ set(OM_CX2X_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(OMNI_F_FRONT "${OMNI_BIN_DIR}/F_Front")
 set(OMNI_C_FRONT "${OMNI_BIN_DIR}/C_Front")
 set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-exc-tools.jar")
-set(OMNI_JAR_COMMON "${OMNI_CLASSPATH}/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
 set(OMNI_F2X_FLAGS "")
@@ -58,7 +57,6 @@ set(OMNI_JAR_CX2X_XCODEML "${CX2X_JAR_INSTALL_LOCATION}/${OMNI_CX2X_XCODEML_NAME
 
 # Define OMNI Compiler jar archives build location.
 set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
-set(LOCAL_OMNI_JAR_COMMON "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar")
 set(LOCAL_OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
 set(LOCAL_OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
 
