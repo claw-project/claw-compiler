@@ -5,7 +5,7 @@
 
 <!-- CX2X build process -->
 <project name="claw" default="main" basedir=".">
-    <description>Build CX2X libraries</description>
+    <description>Build CX2T libraries</description>
 
     <dirname property="antfile.dir" file="${ant.file}"/>
 
@@ -22,7 +22,6 @@
 
     <!-- Classpath for the CX2X Translator library -->
     <path id="build.path">
-        <pathelement path="${omni.common.dep}"/>
         <pathelement path="${omni.exec.dep}"/>
         <pathelement path="${st4.dep}"/>
         <pathelement path="${antlr.dep}"/>
@@ -73,18 +72,26 @@
     <!-- Pacakge compiled files into their own library -->
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${dist.dir}"/>
-        <jar jarfile="${dist.dir}/${claw.xcodeml.jar}" basedir="${build.dir}"
+        <!-- CLAW X2T TATSU -->
+        <jar jarfile="${dist.dir}/${claw.tatsu.jar}" basedir="${build.dir}"
              includes="claw/tatsu/**"/>
-        <jar jarfile="${dist.dir}/${claw.translator.jar}" basedir="${build.dir}"
-             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/** claw/shenron/**"/>
+        <!-- CLAW X2T SHENRON -->
+        <jar jarfile="${dist.dir}/${claw.shenron.jar}" basedir="${build.dir}"
+             includes="claw/shenron/**"/>
+        <!-- CLAW X2T WANI -->
+        <jar jarfile="${dist.dir}/${claw.wani.jar}" basedir="${build.dir}"
+             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/**"/>
+        <!-- -->
         <jar jarfile="${dist.dir}/${external.jar}" basedir="${build.dir}"
              includes="external/**"/>
     </target>
 
     <target name="clean" description="clean up">
         <delete dir="${build.dir}"/>
-        <delete file="${dist.dir}/${claw.xcodeml.jar}"/>
-        <delete file="${dist.dir}/${claw.translator.jar}"/>
+        <delete file="${dist.dir}/${claw.tatsu.jar}"/>
+        <delete file="${dist.dir}/${claw.shenron.jar}"/>
+        <delete file="${dist.dir}/${claw.wani.jar}"/>
+        <delete file="${dist.dir}/${external.jar}"/>
     </target>
 
     <!-- Default target -->

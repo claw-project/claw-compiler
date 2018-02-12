@@ -19,7 +19,6 @@
 
   <!-- Classpath for dependencies -->
   <path id="build.path">
-    <pathelement path="${omni.common.dep}" />
     <pathelement path="${omni.exec.dep}"/>
     <pathelement path="${junit.dep}" />
     <pathelement path="${st4.dep}"/>
@@ -27,8 +26,9 @@
     <pathelement path="${antlr4.dep}"/>
     <pathelement path="${antlr4.runtime.dep}"/>
     <pathelement path="${hamcrest.dep}" />
-    <pathelement path="${claw.xcodeml.dep}" />
-    <pathelement path="${claw.translator.dep}" />
+    <pathelement path="${claw.tatsu.dep}" />
+    <pathelement path="${claw.shenron.dep}" />
+    <pathelement path="${claw.wani.dep}" />
   </path>
 
   <!-- Initialization step -->
@@ -38,35 +38,47 @@
   </target>
 
   <!-- Compile java sources -->
-  <target name="compile" depends="common.resolve" description="compile the source ">
-    <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="build.path" />
+  <target name="compile" depends="common.resolve"
+          description="compile the source">
+    <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}"
+           classpathref="build.path" />
   </target>
 
   <!-- Package compiled files into their own library -->
   <target name="jar" depends="compile" description="package, output to JAR">
     <mkdir dir="${dist.dir}" />
-    <jar jarfile="${dist.dir}/cx2t-unittest.jar" basedir="${build.dir}" />
+    <jar jarfile="${dist.dir}/${claw.tatsu.ut.jar}" basedir="${build.dir}"
+         includes="claw/tatsu/** helper/**" />
+    <jar jarfile="${dist.dir}/${claw.shenron.ut.jar}" basedir="${build.dir}"
+         includes="claw/shenron/** helper/**" />
+    <jar jarfile="${dist.dir}/${claw.wani.ut.jar}" basedir="${build.dir}"
+         includes="claw/wani/** helper/**" />
   </target>
 
   <!-- Clean build -->
   <target name="clean" description="clean up">
     <delete dir="${build.dir}" />
     <delete dir="${ivy.dir}" />
-    <delete file="${dist.dir}/${claw.unittest.jar}" />
+    <delete file="${dist.dir}/${claw.tatsu.ut.jar}" />
+    <delete file="${dist.dir}/${claw.shenron.ut.jar}" />
+    <delete file="${dist.dir}/${claw.wani.ut.jar}" />
   </target>
 
   <!-- Execution of JUnit tests -->
   <target name="junit" depends="compile, jar">
     <junit haltonfailure="yes" haltonerror="on">
-      <classpath path="${claw.unittest.dep}" />
+      <classpath path="${claw.tatsu.ut.dep}" />
+      <classpath path="${claw.shenron.ut.dep}" />
+      <classpath path="${claw.wani.ut.dep}" />
+      <classpath path="${claw.tatsu.dep}" />
+      <classpath path="${claw.shenron.dep}" />
+      <classpath path="${claw.wani.dep}" />
+
       <classpath path="${junit.dep}" />
       <classpath path="${hamcrest.dep}" />
       <classpath path="${antlr.dep}" />
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
-      <classpath path="${claw.translator.dep}" />
-      <classpath path="${claw.xcodeml.dep}" />
-      <classpath path="${omni.common.dep}" />
       <classpath path="${omni.exec.dep}"/>
 
       <formatter type="plain" usefile="false" />
