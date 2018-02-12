@@ -16,13 +16,13 @@
 ## TODO cp original file in case of error
 
 ### Read configration file and library ###
-om_cx2x_driver_conf_dir=@CLAW_X2T_DRIVER_CONF_DIR@
-om_cx2x_driver_lib_dir=@CLAW_X2T_DRIVER_LIB_DIR@
+claw_x2t_driver_conf_dir=@CLAW_X2T_DRIVER_CONF_DIR@
+claw_x2t_driver_lib_dir=@CLAW_X2T_DRIVER_LIB_DIR@
 compiler_macro=@COMPILER_MACRO@
 # shellcheck source=../etc/claw_f.conf.in
-. ${om_cx2x_driver_conf_dir}/@CLAW_CONF_FILE@
+. ${claw_x2t_driver_conf_dir}/@CLAW_CONF_FILE@
 # shellcheck source=../libexec/claw_f_lib.sh.in
-. ${om_cx2x_driver_lib_dir}/@CLAW_LIB_SH@
+. ${claw_x2t_driver_lib_dir}/@CLAW_LIB_SH@
 
 ### Directory for saving intermediate files ###
 current_pid=$$
@@ -141,7 +141,7 @@ fi
 ### Show config ###
 if [[ ${show_config} == true ]]; then
   # shellcheck disable=SC2086
-  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --show-config ${OMNI_CX2X_CONFIG_OPT}
+  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --show-config ${CLAW_X2T_CONFIG_OPT}
   exit 0
 fi
 
@@ -318,9 +318,10 @@ if [[ ${pipe_workflow} == true ]]; then
       # shellcheck disable=SC2086,SC2068
       ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
         "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
-        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
-          ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
-          ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+          ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
+          ${CLAW_X2T_CONFIG_OPT} \
+          ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
           "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
           "${trans_module_opt[@]}" |
         sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
@@ -385,7 +386,7 @@ done
 
 # Add debug flag for the translator options
 if [[ ${enable_debug} == true ]]; then
-  TRANSLATOR_OPTION="${TRANSLATOR_OPTION} -d"
+  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
 fi
 
 ### Translator ###
@@ -413,15 +414,15 @@ for input_file in "${f_files_transformation[@]}"; do
   if [ ${report} == true ]; then
     file_out_r="${file_out_f%.*}"
     file_out_r="${file_out_r}.lst"
-    TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --report=${file_out_r}"
+    CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} --report=${file_out_r}"
   fi
 
   # Dump the arguments pass to the translator for easier debugging
   if [[ ${dump_cx2x_args} == true ]]; then
     echo "-- [DEBUG] Arguments for cx2t:"
-    echo "${TRANSLATOR_OPTION} ${OMNI_CX2X_TARGET_OPT} \
-      ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
-      ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+    echo "${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT} \
+      ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
+      ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
       ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} \
       -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
   fi
@@ -429,17 +430,17 @@ for input_file in "${f_files_transformation[@]}"; do
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Translation + backend"
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_FX2X_CMD} \
-    ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} ${OMNI_CX2X_TARGET_OPT}
-    ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
-    ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+    ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT}
+    ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
+    ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
     ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} -o \
     ${file_out_x} -f ${file_out_f} ${file_in_x}"
 
   # Call to the translator
   # shellcheck disable=SC2086
-  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${TRANSLATOR_OPTION} \
-    ${OMNI_CX2X_TARGET_OPT} ${OMNI_CX2X_DIRECTIVE_OPT} ${OMNI_CX2X_CONFIG_OPT} \
-    ${OMNI_CX2X_MAX_COLUMN_OPT} ${OMNI_CX2X_LINE_OPT} \
+  ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+    ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
+    ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
     "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
     "${trans_module_opt[@]}" -o "${file_out_x}" -f "${file_out_f}" \
     "${file_in_x}"
