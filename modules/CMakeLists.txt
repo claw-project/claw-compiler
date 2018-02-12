@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 # Generate .xmod file module for common intrinsic libraries
 omni_generate_xmod(TARGET xmod-openacc SOURCE openacc_lib.f90)
 omni_generate_xmod(TARGET xmod-ieee_features SOURCE ieee_features.f90)

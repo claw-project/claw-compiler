@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 # To avoid multiple include of different compiler
 if(__claw_base_compiler)
 	return()

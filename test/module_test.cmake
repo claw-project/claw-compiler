@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 # Base test definition for test case with a main file and one or two modules.
 # Perform code transformation and compare the output with a reference
 

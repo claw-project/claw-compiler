@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 # Failure test definition
 # Perform code transformation and check that it fails as it should
 

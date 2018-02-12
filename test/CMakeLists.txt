@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 enable_language(Fortran)
 
 # Set up some common env variable for the transformation flow
