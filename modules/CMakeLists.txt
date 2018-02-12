@@ -1,13 +1,8 @@
 # Generate .xmod file for dummy OpenACC library module
-add_custom_target(xmod-openacc ALL)
-add_custom_target(xmod-ieee_exceptions ALL)
-add_custom_target(xmod-ieee_arithmetic ALL)
-add_custom_target(xmod-ieee_features ALL)
-
-omni_generate_xmod(xmod-openacc openacc_lib.f90)
-omni_generate_xmod(xmod-ieee_features ieee_features.f90)
-omni_generate_xmod(xmod-ieee_exceptions ieee_exceptions.f90)
-omni_generate_xmod(xmod-ieee_arithmetic ieee_arithmetic.f90)
+omni_generate_xmod(TARGET xmod-openacc SOURCE openacc_lib.f90)
+omni_generate_xmod(TARGET xmod-ieee_features SOURCE ieee_features.f90)
+omni_generate_xmod(TARGET xmod-ieee_exceptions SOURCE ieee_exceptions.f90)
+omni_generate_xmod(TARGET xmod-ieee_arithmetic SOURCE ieee_arithmetic.f90)
 add_dependencies(xmod-ieee_arithmetic xmod-ieee_exceptions)
 
 # Install in the intrinsic mod directory
