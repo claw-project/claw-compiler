@@ -1,7 +1,7 @@
 # This file is released under terms of BSD license
 # See LICENSE file for more information
 
-# CLAW XcodeML manipulation library and translator library
+# CLAW X2T libraries
 
 # Generate file with version number for Configuration check
 configure_file(
@@ -34,7 +34,7 @@ add_custom_command(
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}
-  COMMENT "Building CLAW XcodeML/F to XcodeML/F libraries"
+  COMMENT "Building CLAW X2T libraries"
 )
 if(NOT OFFLINE)
   add_dependencies(omni-claw omni-claw-init)
