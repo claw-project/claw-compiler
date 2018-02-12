@@ -2,17 +2,17 @@
 # Perform code transformation and compare the output with a reference
 
 # Define input and output file name
-set (ORIGINAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/original_code.f90)
-set (OUTPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code.f90)
-set (REFERENCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/reference.f90)
+set(ORIGINAL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/original_code.f90)
+set(OUTPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/transformed_code.f90)
+set(REFERENCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/reference.f90)
 
 # Define executable file name
-set (EXECUTABLE_ORIGINAL original_code_${TEST_NAME})
-set (EXECUTABLE_TRANSFORMED transformed_code_${TEST_NAME})
+set(EXECUTABLE_ORIGINAL original_code_${TEST_NAME})
+set(EXECUTABLE_TRANSFORMED transformed_code_${TEST_NAME})
 
 # Define directory for build
-set (XMOD_DIR __xmod__)
-set (OMNI_TMP_DIR __omni_tmp__)
+set(XMOD_DIR __xmod__)
+set(OMNI_TMP_DIR __omni_tmp__)
 
 # Directory where OMNI xmod files will be placed
 if (NOT EXISTS ${XMOD_DIR})
