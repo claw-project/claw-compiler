@@ -85,5 +85,6 @@ install(
     ${CMAKE_CURRENT_BINARY_DIR}/ieee_arithmetic.xmod
     ${CMAKE_CURRENT_BINARY_DIR}/ieee_exceptions.xmod
     ${CMAKE_CURRENT_BINARY_DIR}/ieee_features.xmod
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/fincludes
+  DESTINATION
+    ${CMAKE_INSTALL_PREFIX}/fincludes
 )

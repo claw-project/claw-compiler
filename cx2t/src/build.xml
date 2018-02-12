@@ -3,7 +3,7 @@
  See LICENSE file for more information
 -->
 
-<!-- CX2X build process -->
+<!-- CLAW X2T build process -->
 <project name="claw" default="main" basedir=".">
     <description>Build CX2T libraries</description>
 
