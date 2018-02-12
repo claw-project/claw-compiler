@@ -3,12 +3,19 @@ if(__omni_compiler)
 endif()
 set(__omni_compiler YES)
 
+#
+# Generate the .xmod file for a given source file
+#
 function(omni_generate_xmod)
   set(oneValueArgs TARGET SOURCE)
-  cmake_parse_arguments(omni_generate_xmod "" "${oneValueArgs}" "" ${ARGN} )
+  cmake_parse_arguments(omni_generate_xmod "" "${oneValueArgs}" "" ${ARGN})
 
   if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE})
     message(FATAL "Input file ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE} does not exists !")
+  endif()
+
+  if(${FPPFLAGS} STREQUAL "")
+    message(FATAL "Pre-processor flags not set for ${CMAKE_Fortran_COMPILER_ID}")
   endif()
 
   add_custom_target(${omni_generate_xmod_TARGET} ALL)
