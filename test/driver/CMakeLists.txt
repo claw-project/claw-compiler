@@ -1,10 +1,42 @@
-# List of test cases targeting the driver
-set(TEST_SET driver)
+# CLAW driver related test set
 
-add_subdirectory(backslash_preprocessor) # Workaround for \ at end of line
+set(CLAW_FLAGS_backslash_preprocessor "--force")
+set(NOCOMPILE_backslash_preprocessor ON)
 
-add_subdirectory(dependencies1) # multiple dependencies with subfolder
-add_subdirectory(dependencies2) # 1 dependency in a subfolder
+set(CLAW_FLAGS_dependencies1 "--force -J subfolder/")
+set(NOCOMPILE_dependencies1 ON)
+
+set(CLAW_FLAGS_dependencies2 "--force -J subfolder/")
+set(NOCOMPILE_dependencies2 ON)
+
+set(CLAW_FLAGS_dependencies3 "--force -J subfolder/")
+set(NOCOMPILE_dependencies3 ON)
+
+set(CLAW_FLAGS_dependencies4 "--force")
+set(NOCOMPILE_dependencies4 ON)
+set(CLAW_FLAGS_dependencies5 "--force")
+set(NOCOMPILE_dependencies5 ON)
+set(CLAW_FLAGS_dependencies6 "--force")
+set(NOCOMPILE_dependencies6 ON)
+set(CLAW_FLAGS_dependencies7 "--force")
+set(NOCOMPILE_dependencies7 ON)
+set(CLAW_FLAGS_dependencies8 "--force")
+set(NOCOMPILE_dependencies8 ON)
+
+set(CLAW_FLAGS_force "--force")
+
+set(CLAW_FLAGS_macro1 "--force --target=gpu --directive=openacc")
+set(CLAW_FLAGS_macro2 "--force --directive=openmp")
+set(CLAW_FLAGS_macro3 "--force -DUSER_MACRO1 -DUSER_MACRO2")
+set(CLAW_FLAGS_target1 "--target=gpu --directive=openacc")
+set(CLAW_FLAGS_target2 "--target=gpu --directive=openmp")
+
+add_basic_test_set(NAME driver DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} EXCLUDE lib)
+
+
+# backslash_preprocessor: Workaround for \ at end of line
+# dependencies1: multiple dependencies with subfolder
+# dependencies2: 1 dependency in a subfolder
 add_subdirectory(dependencies3)
 add_subdirectory(dependencies4)
 add_subdirectory(dependencies5)

@@ -10,9 +10,7 @@ set(__reference_test YES)
 function(add_basic_test)
   set(options DEBUG COMPILE COMPARE IGNORE)
   set(oneValueArgs NAME ORIGINAL TRANSFORMED REFERENCE WORKING_DIRECTORY CLAW_FLAGS)
-  set(multiValueArgs TARGETS CONFIGURATIONS)
-  cmake_parse_arguments(add_basic_test "${options}" "${oneValueArgs}"
-    "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(add_basic_test "${options}" "${oneValueArgs}" "" ${ARGN})
 
   if(${add_basic_test_WORKING_DIRECTORY} STREQUAL "")
     set(add_basic_test_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
@@ -148,6 +146,40 @@ function(add_basic_test)
   )
 
 endfunction()
+
+
+function(add_basic_test_set)
+  set(oneValueArgs NAME DIRECTORY)
+  set(multiValueArgs EXCLUDE)
+  cmake_parse_arguments(add_basic_test_set "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  set(TEST_SET ${add_basic_test_set_NAME})
+
+  subdirlist(tests_dirs ${add_basic_test_set_DIRECTORY})
+  foreach(t_name ${tests_dirs})
+
+    if(NO_COMPILE_${t_name})
+      set(test_option_compile COMPILE)
+    else()
+      set(test_option_compile "")
+    endif()
+
+    if(COMPARE_${t_name})
+      set(test_option_compare COMPARE)
+    else()
+      set(test_option_compare "")
+    endif()
+
+    add_basic_test(
+      NAME ${TEST_SET}-${t_name}
+      WORKING_DIRECTORY ${add_basic_test_set_DIRECTORY}/${t_name}
+      CLAW_FLAGS ${CLAW_FLAGS_${t_name}}
+      ${test_option_compile}
+      ${test_option_compare}
+    )
+  endforeach()
+endfunction()
+
 
 macro(subdirlist result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)

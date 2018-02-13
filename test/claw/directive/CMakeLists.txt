@@ -1,14 +1,18 @@
-# List of test directories
-set(TEST_SET claw-directive)
+# CLAW specific directive test set
 
-add_subdirectory(call1)
-add_subdirectory(call2)   # with target clause
-add_subdirectory(kcache1) # assign cache
-add_subdirectory(kcache2) # assign cache with init clause
-add_subdirectory(kcache3) # assign cache with init clause and data cache
-add_subdirectory(kcache4) # assign cache with init, data and private clauses
-add_subdirectory(kcache5) # with target clause
-add_subdirectory(compile-guard1) # Check removal of the compile guard OpenACC
-add_subdirectory(compile-guard2) # Check removal of the compile guard OpenMP
-add_subdirectory(compile-guard3) # Compile guard without other claw directives
-add_subdirectory(compile-guard4) # Compile guard without other claw directives
+# call2: with target clause
+# kcache1: assign cache
+# kcache2: assign cache with init clause
+# kcache3: assign cache with init clause and data cache
+# kcache4: assign cache with init, data and private clauses
+# kcache5: with target clause
+# compile-guard1: Check removal of the compile guard OpenACC
+# compile-guard2: Check removal of the compile guard OpenMP
+# compile-guard3: Compile guard without other claw directives
+# compile-guard4: Compile guard without other claw directives
+
+# Set some specific CLAW Compiler flag for some tests
+set(CLAW_FLAGS_compile-guard2 "--directive=openmp")
+set(CLAW_FLAGS_compile-guard4 "--directive=openmp")
+
+add_basic_test_set(NAME claw-directive DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,5 +1,4 @@
 # List of test directories to be executed
-set(TEST_SET openacc)
 
 # array1: # simple transformation with 1 dimension
 # array2: # simple transformation with 2 dimension
@@ -20,26 +19,4 @@ set(NOCOMPILE_lib ON)
 set(NOCOMPILE_primitive2 ON)
 set(COMPARE_array5 ON)
 
-subdirlist(tests_dirs ${CMAKE_CURRENT_SOURCE_DIR})
-foreach(t_name ${tests_dirs})
-
-  if(NO_COMPILE_${t_name})
-    set(test_option_compile COMPILE)
-  else()
-    set(test_option_compile "")
-  endif()
-
-  if(COMPARE_${t_name})
-    set(test_option_compare COMPARE)
-  else()
-    set(test_option_compare "")
-  endif()
-
-  add_basic_test(
-    NAME ${TEST_SET}-${t_name}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${t_name}
-    CLAW_FLAGS ${CLAW_FLAGS_${t_name}}
-    ${test_option_compile}
-    ${test_option_compare}
-  )
-endforeach()
+add_basic_test_set(NAME openacc DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
