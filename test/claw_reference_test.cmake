@@ -9,8 +9,9 @@ set(__reference_test YES)
 
 function(claw_add_basic_test)
   set(options DEBUG COMPILE COMPARE IGNORE)
-  set(oneValueArgs NAME ORIGINAL TRANSFORMED REFERENCE WORKING_DIRECTORY CLAW_FLAGS)
-  cmake_parse_arguments(claw_add_basic_test "${options}" "${oneValueArgs}" "" ${ARGN})
+  set(oneValueArgs NAME ORIGINAL TRANSFORMED REFERENCE WORKING_DIRECTORY)
+  set(multiValueArgs CLAW_FLAGS)
+  cmake_parse_arguments(claw_add_basic_test "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if("${claw_add_basic_test_NAME}" STREQUAL "")
     message(FATAL "claw_add_basic_test NAME is required")
@@ -57,7 +58,8 @@ function(claw_add_basic_test)
     add_custom_command(
       OUTPUT  ${output_file}
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
-        ${CLAWFC} ${claw_add_basic_test_CLAW_FLAGS} --debug-omni --debug -J ${XMOD_DIR}
+        ${CLAWFC} ${claw_add_basic_test_CLAW_FLAGS} --debug-omni --debug
+        -J ${XMOD_DIR}
         -o ${output_file} ${original_file}
       WORKING_DIRECTORY ${claw_add_basic_test_WORKING_DIRECTORY}
       DEPENDS ${original_file}
@@ -152,8 +154,7 @@ endfunction()
 #
 function(claw_add_basic_test_set)
   set(oneValueArgs NAME DIRECTORY)
-  set(multiValueArgs EXCLUDE)
-  cmake_parse_arguments(claw_add_basic_test_set "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(claw_add_basic_test_set "" "${oneValueArgs}" "" ${ARGN})
 
   if("${claw_add_basic_test_set_NAME}" STREQUAL "")
     message(FATAL "claw_add_basic_test_set NAME is required")
@@ -167,12 +168,6 @@ function(claw_add_basic_test_set)
 
   subdirlist(tests_dirs ${claw_add_basic_test_set_DIRECTORY})
   foreach(t_name ${tests_dirs})
-    if(${claw_add_basic_test_set_EXCLUDE})
-      list(FIND ${claw_add_basic_test_set_EXCLUDE} ${t_name} _index)
-      if("${_index}" GREATER -1)
-        continue()
-      endif()
-    endif()
 
     if(NO_COMPILE_${t_name})
       set(test_option_compile COMPILE)
