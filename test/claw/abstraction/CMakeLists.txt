@@ -41,7 +41,7 @@ foreach(loop_var RANGE 1 33)
   endif()
 endforeach()
 
-set(CLAW_FLAGS_TARGET_CPU_abstraction3 -d=openmp)
+set(CLAW_FLAGS_TARGET_CPU_abstraction3 --directive=openmp)
 set(CLAW_FLAGS_abstraction32 --config=promote.xml)
 set(CLAW_FLAGS_abstraction33 --config=enable_collapse.xml)
 
