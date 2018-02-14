@@ -1,5 +1,9 @@
-# CLAW specific directive test set
+#
+# Low-level directives tests
+#
 
+# Information for specific test cases
+# -----------------------------------
 # call2: with target clause
 # kcache1: assign cache
 # kcache2: assign cache with init clause
@@ -12,7 +16,8 @@
 # compile-guard4: Compile guard without other claw directives
 
 # Set some specific CLAW Compiler flag for some tests
-set(CLAW_FLAGS_compile-guard2 "--directive=openmp")
-set(CLAW_FLAGS_compile-guard4 "--directive=openmp")
+set(CLAW_FLAGS_compile-guard2 --directive=openmp)
+set(CLAW_FLAGS_compile-guard4 --directive=openmp)
 
-claw_add_basic_test_set(NAME claw-directive DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+claw_add_basic_test_set(
+  NAME claw-directive DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
