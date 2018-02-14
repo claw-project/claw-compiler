@@ -12,7 +12,7 @@ add_custom_target(${BUILD_TEST_TARGET})
 add_custom_target(${CLEAN_TEST_TARGET})
 
 # Define some test case sets
-foreach(TCSET claw-directive claw-abstraction driver loops openacc openmp utilities omni)
+foreach(TCSET claw-directive claw-sca driver loops openacc openmp utilities omni)
   add_custom_target(${BUILD_TEST_TARGET}-${TCSET})
   add_custom_target(${CLEAN_TEST_TARGET}-${TCSET})
 endforeach()
