@@ -501,7 +501,7 @@ function(claw_add_advanced_test)
     endif()
 
     # Compare the output of both executable
-    if(OUTPUT)
+    if(claw_add_advanced_test_COMPARE)
       set(TEST_PARAMETERS_CPU "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED_CPU})")
       add_test(NAME compare-output-cpu-${claw_add_advanced_test_NAME} COMMAND bash -c "diff ${TEST_PARAMETERS_CPU}")
       set(TEST_PARAMETERS_GPU "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED_GPU})")
