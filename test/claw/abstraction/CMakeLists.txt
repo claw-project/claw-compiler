@@ -16,6 +16,14 @@ set(CLAW_FLAGS_TARGET_CPU_abstraction3 -d=openmp)
 set(CLAW_FLAGS_abstraction32 --config=promote.xml)
 set(CLAW_FLAGS_abstraction33 --config=enable_collapse.xml)
 
+claw_add_failure_test(
+  NAME claw-sca-abstraction30
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/abstraction30
+  SET claw-sca
+  CLAW_TARGET gpu
+  CLAW_DIRECTIVE openacc
+)
+
 # add_subdirectory(abstraction1) # simple 1d
 # add_subdirectory(abstraction2) # simple 2d
 # add_subdirectory(abstraction3) # openmp

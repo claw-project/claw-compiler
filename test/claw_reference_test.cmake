@@ -516,6 +516,107 @@ function(claw_add_advanced_test)
   )
 endfunction()
 
+function(claw_add_failure_test)
+  set(options DEBUG)
+  set(oneValueArgs NAME WORKING_DIRECTORY CLAW_TARGET CLAW_DIRECTIVE SET)
+  set(multiValueArgs CLAW_FLAGS)
+  cmake_parse_arguments(claw_add_failure_test "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if("${claw_add_failure_test_NAME}" STREQUAL "")
+    message(FATAL_ERROR "claw_add_failure_test NAME is required")
+  endif()
+
+  if("${claw_add_failure_test_WORKING_DIRECTORY}" STREQUAL "")
+    set(claw_add_failure_test_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
+
+  if(claw_add_failure_test_CLAW_TARGET)
+    set(claw_add_failure_test_CLAW_TARGET "--target=${claw_add_failure_test_CLAW_TARGET}")
+  endif()
+
+  if(claw_add_failure_test_CLAW_DIRECTIVE)
+    set(claw_add_failure_test_CLAW_DIRECTIVE "--directive=${claw_add_failure_test_CLAW_DIRECTIVE}")
+  endif()
+
+  # Define input and output file name
+  set (ORIGINAL_FILE ${claw_add_failure_test_WORKING_DIRECTORY}/original_code.f90)
+  set (OUTPUT_FILE ${claw_add_failure_test_WORKING_DIRECTORY}/transformed_code.f90)
+
+  # Define executable file name
+  set (EXECUTABLE_ORIGINAL original_code_${claw_add_failure_test_NAME})
+
+  # Define directory for build
+  set (XMOD_DIR ${claw_add_failure_test_WORKING_DIRECTORY}/__xmod__)
+  set (OMNI_TMP_DIR ${claw_add_failure_test_WORKING_DIRECTORY}/__omni_tmp__)
+
+  # Directory where OMNI xmod files will be placed
+  if (NOT EXISTS ${XMOD_DIR})
+    file(MAKE_DIRECTORY ${XMOD_DIR})
+  endif()
+
+  # Create intermediate representation in XcodeML Fortran format
+  if(DEBUG) # with debug option
+    add_custom_command(
+      OUTPUT  ${OUTPUT_FILE}
+      COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+        ${CLAWFC} ${claw_add_failure_test_CLAW_FLAGS} --debug-omni --debug -J ${XMOD_DIR}
+        ${claw_add_failure_test_CLAW_TARGET} ${claw_add_failure_test_CLAW_DIRECTIVE}
+        -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+      WORKING_DIRECTORY ${claw_add_failure_test_WORKING_DIRECTORY}
+      DEPENDS ${ORIGINAL_FILE}
+      COMMENT "Translating CLAW directive with ${CLAWFC}"
+    )
+  else() # without debug option
+    add_custom_command(
+      OUTPUT  ${OUTPUT_FILE}
+      COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+        ${CLAWFC} ${claw_add_failure_test_CLAW_FLAGS} -J ${XMOD_DIR}
+        ${claw_add_failure_test_CLAW_TARGET} ${claw_add_failure_test_CLAW_DIRECTIVE}
+        -o ${OUTPUT_FILE} ${ORIGINAL_FILE}
+      WORKING_DIRECTORY ${claw_add_failure_test_WORKING_DIRECTORY}
+      DEPENDS ${ORIGINAL_FILE}
+      COMMENT "Translating CLAW directive with ${CLAWFC}"
+    )
+  endif()
+
+  add_custom_target(
+    transform-${claw_add_failure_test_NAME}
+    DEPENDS ${OUTPUT_FILE}
+  )
+
+  # Build the original code and the transformed code
+  add_executable (${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL ${ORIGINAL_FILE})
+
+  # Target to clean the generated file (Output of clawfc)
+  add_custom_target(
+    clean-${claw_add_failure_test_NAME}
+    COMMAND rm -f ${OUTPUT_FILE}
+  )
+
+  # Add target to the global build/clean target
+  add_dependencies(${CLEAN_TEST_TARGET} clean-${claw_add_failure_test_NAME})
+  if(${claw_add_failure_test_SET})
+    add_dependencies(${CLEAN_TEST_TARGET}-${claw_add_failure_test_SET} clean-${claw_add_failure_test_NAME})
+  endif()
+
+  # Define additional compilation flags
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${CLAW_TEST_FFP_FLAGS}")
+  add_test(
+    NAME transform-failure-${claw_add_failure_test_NAME}
+    COMMAND "${CMAKE_COMMAND}"  --build ${CMAKE_BINARY_DIR}
+    --target transform-${claw_add_failure_test_NAME}
+  )
+  # Check that the command fails
+  set_tests_properties(transform-failure-${claw_add_failure_test_NAME} PROPERTIES WILL_FAIL TRUE)
+
+  # Add build directory to be removed with clean target
+  set_property(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    PROPERTY ADDITIONAL_MAKE_CLEAN_FILES ${XMOD_DIR} ${OMNI_TMP_DIR}
+  )
+
+endfunction()
+
 macro(subdirlist result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
   set(dirlist "")
