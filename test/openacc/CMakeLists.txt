@@ -19,4 +19,4 @@ set(NOCOMPILE_lib ON)
 set(NOCOMPILE_primitive2 ON)
 set(COMPARE_array5 ON)
 
-add_basic_test_set(NAME openacc DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+claw_add_basic_test_set(NAME openacc DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

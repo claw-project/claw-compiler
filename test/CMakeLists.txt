@@ -17,7 +17,7 @@ foreach(TCSET claw-directive claw-abstraction driver loops openacc openmp utilit
   add_custom_target(${CLEAN_TEST_TARGET}-${TCSET})
 endforeach()
 
-include(reference_test.cmake)
+include(claw_reference_test.cmake)
 
 # List of test directories
 add_subdirectory(claw)

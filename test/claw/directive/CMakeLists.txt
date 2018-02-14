@@ -15,4 +15,4 @@
 set(CLAW_FLAGS_compile-guard2 "--directive=openmp")
 set(CLAW_FLAGS_compile-guard4 "--directive=openmp")
 
-add_basic_test_set(NAME claw-directive DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+claw_add_basic_test_set(NAME claw-directive DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

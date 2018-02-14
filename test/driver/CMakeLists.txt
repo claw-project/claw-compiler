@@ -33,9 +33,9 @@ set(CLAW_FLAGS_target2 "--target=gpu --directive=openmp")
 
 set(CLAW_FLAGS_external1 "--force --config=external_config.xml")
 set(NOCOMPILE_external1 ON)
-set(CLAW_TRANS_SET_PATH "${PROJECT_BINARY_DIR}/build/" )
+set(CLAW_TRANS_SET_PATH "${PROJECT_BINARY_DIR}/build/")
 
-add_basic_test_set(NAME driver DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} EXCLUDE lib)
+claw_add_basic_test_set(NAME driver DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} EXCLUDE lib)
 
 # backslash_preprocessor: Workaround for \ at end of line
 # dependencies1: multiple dependencies with subfolder

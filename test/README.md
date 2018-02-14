@@ -4,8 +4,6 @@ This directory contains a set of functional tests for the CLAW Fortran compiler.
 All tests have the same structure described below:
 
 ###### Low level transformation tests
-* `CMakeLists.txt`: `CMake` file including specific information for the test
-  case for the test (see below the format for this file).
 * `original_code.f90`: The original Fortran code with CLAW directives.
 * `reference.f90`: A reference Fortran code that will be compared to the
   transformed code.
@@ -31,21 +29,44 @@ All tests have the same structure described below:
   the transformed code for the CPU target of the extra module.
 
 ##### CMakeLists.txt structure
-Each test has a `CMakeLists.txt` file that set up few variables to generate
-the specific targets for the test case. Here is the format of this file. Note
-that only first and last line are mandatory (`TEST_NAME` and `include`)
+Test are added using a `cmake` function described below.
 
 ###### For low level transformation tests
 ```cmake
-set(TEST_NAME <test_name>)  # test_name must be replaced by a relevant test name
-                            # for the test case
-set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
-set(OUTPUT_TEST ON)         # optional, execute executable output comparison
-set(IGNORE_TEST ON)         # optional, does not perform the test but apply
-                            # transformations
-set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
-include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # base cmake file
+claw_add_basic_test(
+  NAME <test_name> # Name of the test case
+  [ORIGINAL <original_code.f90>] # Original source code
+  [TRANSFORMED <transformed_code.f90>] # Transformed code
+  [REFERENCE <reference.f90>] # Reference code for compare test
+  [WORKING_DIRECTORY <path>] # Directory where code is located
+  [CLAW_FLAGS <flags>] # Additional flags passed to clawfc
+  [DEBUG]   # Enable debug
+  [COMPILE] # Compile original and transformed code
+  [COMPARE] # Compare the result of execution between the original and
+            # the transformed code
+  [IGNORE]  # Ignore tests
+)
 ```
+
+The basic test is doing the following actions:
+1. Run `clawfc` on the original source code and produce the transformed code.
+2. Compile the original code and the transformed code with a standard
+Fortran compiler to check their correctness.
+3. Execute a `diff` between the transformed code and the reference to check
+the correctness of the transformations applied.
+4. If the `COMPARE` option is set enabled, execute a `diff` between the
+output of the original and transformed executables.
+
+To ease addition of several test case, the function `claw_add_basic_test_set`
+can be used on a directory.
+```cmake
+claw_add_basic_test_set(
+  NAME <set-name>  # Name of the test set
+  DIRECTORY <path> # Directory in which subdirectories are listed
+  [EXCLUDE <dir1> <dir2>] # Excluded directory
+)
+```
+
 
 ###### For higher abstraction transformation tests
 ```cmake
@@ -64,18 +85,6 @@ set(OPENACC_ENABLE ON)      # Activate/deactivate OpenACC compilation if availab
 set(OPENMP_ENABLE OFF)      # Activate/deactivate OpenMP compilation if available
 include(${CMAKE_SOURCE_DIR}/test/module_test.cmake) # base cmake file
 ```
-
-The file `base_test.cmake` is common for all tests and does the following
-actions:
-
-1. Run `clawfc` on the file `original_code.f90` and produce a new file
-`transformed_code.f90`.
-2. Compile `original_code.f90` and `transformed_code.f90` with a standard
-Fortran compiler to check their correctness.
-3. Execute a `diff` between `transformed_code.f90` and `reference.f90` to check
-the correctness of the transformations applied.
-4. If the `OUTPUT_TEST` option is set to `ON`, execute a `diff` between the
-output of the executable `original_code` and `transformed_code`.
 
 #### Execution
 ##### All test suite
