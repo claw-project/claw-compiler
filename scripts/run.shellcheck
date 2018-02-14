@@ -46,8 +46,8 @@ fi
 cd - || exit 1
 
 # Check test driver scripts
-cd ../test/driver/lib/ || exit 1
-if ! shellcheck  test.claw_f_lib ../../../driver/libexec/claw_f_lib.sh.in; then
-  echo 'Script ./test/driver/lib/test.claw_f_lib failed!'
+cd ../test/lib/ || exit 1
+if ! shellcheck  test.claw_f_lib ../../driver/libexec/claw_f_lib.sh.in; then
+  echo 'Script ./test/lib/test.claw_f_lib failed!'
   exit 1
 fi

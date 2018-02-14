@@ -28,6 +28,12 @@ add_subdirectory(openacc)
 add_subdirectory(openmp)
 add_subdirectory(utilities)
 
+add_test(
+  NAME library-test-claw_f_lib
+  COMMAND ./test.claw_f_lib
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib
+)
+
 # Custom target to run the full transformation test suite
 add_custom_target(test-suite
   COMMAND ${CMAKE_MAKE_PROGRAM} ${CLEAN_TEST_TARGET} ${BUILD_TEST_TARGET} test
