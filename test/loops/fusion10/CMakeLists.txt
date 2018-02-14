@@ -1,6 +1,0 @@
-set(TEST_NAME fusion10)
-set(OPTIONAL_FLAGS "--config=fusion_first.xml")
-set(TEST_DEBUG OFF)
-set(OUTPUT_TEST OFF)
-set(IGNORE_TEST OFF)
-include(${CMAKE_SOURCE_DIR}/test/base_test.cmake)

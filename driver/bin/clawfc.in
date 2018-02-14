@@ -16,7 +16,7 @@
 ## TODO cp original file in case of error
 
 ### Read configration file and library ###
-claw_x2t_driver_conf_dir=@CLAW_X2T_DRIVER_CONF_DIR@
+claw_x2t_driver_conf_dir=@CLAW_X2T_CONFIG_PATH@
 claw_x2t_driver_lib_dir=@CLAW_X2T_DRIVER_LIB_DIR@
 compiler_macro=@COMPILER_MACRO@
 # shellcheck source=../etc/claw_f.conf.in

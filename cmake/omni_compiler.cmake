@@ -1,3 +1,6 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
 if(__omni_compiler)
 	return()
 endif()
