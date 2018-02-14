@@ -31,37 +31,30 @@ set(CLAW_FLAGS_macro3 "--force -DUSER_MACRO1 -DUSER_MACRO2")
 set(CLAW_FLAGS_target1 "--target=gpu --directive=openacc")
 set(CLAW_FLAGS_target2 "--target=gpu --directive=openmp")
 
-add_basic_test_set(NAME driver DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} EXCLUDE lib)
+set(CLAW_FLAGS_external1 "--force --config=external_config.xml")
+set(NOCOMPILE_external1 ON)
+set(CLAW_TRANS_SET_PATH "${PROJECT_BINARY_DIR}/build/" )
 
+add_basic_test_set(NAME driver DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} EXCLUDE lib)
 
 # backslash_preprocessor: Workaround for \ at end of line
 # dependencies1: multiple dependencies with subfolder
-# dependencies2: 1 dependency in a subfolder
-add_subdirectory(dependencies3)
-add_subdirectory(dependencies4)
-add_subdirectory(dependencies5)
-add_subdirectory(dependencies6) # intrinsic module dependency iso_c_binding
-add_subdirectory(dependencies7) # intrinsic module dependency iso_fortran_env
-add_subdirectory(dependencies8) # intrinsic module dependency ieee_*
+# dependencies2: one dependency in a subfolder
+# dependencies6: intrinsic module dependency iso_c_binding
+# dependencies7: intrinsic module dependency iso_fortran_env
+# dependencies8: intrinsic module dependency ieee_*
+# force: --force option
+# ignore1: test the ignore directive (driver directive)
+# ignore2: test the ignore directive (driver directive)
+# ignore3: test the ignore directive (driver directive)
+# macro1: test of automatic OpenACC macro
+# macro2: test of automatic OpenMP macro
+# macro3: test user defined macro passed to the driver
+# target1: check automatic passing of _OPENACC macro
+# target2: check automatic passing of _OPENMP macro
+# verbatim1: test the verbatim directive (driver directive)
+# external1: external transformation set
 
-add_subdirectory(force)     # --force option
-
-add_subdirectory(ignore1)   # test the ignore directive (driver directive)
-add_subdirectory(ignore2)   # test the ignore directive (driver directive)
-add_subdirectory(ignore3)   # test the ignore directive (driver directive)
-
-add_subdirectory(macro1)    # test of automatic OpenACC macro
-add_subdirectory(macro2)    # test of automatic OpenMP macro
-add_subdirectory(macro3)    # test user defined macro passed to the driver
-
-add_subdirectory(target1)   # check automatic passing of _OPENACC macro
-add_subdirectory(target2)   # check automatic passing of _OPENMP macro
-
-add_subdirectory(verbatim1) # test the verbatim directive (driver directive)
-
-add_subdirectory(external1) # external transformation set
-
-# Test for bash library functions
 add_test(
   NAME library-test-claw_f_lib
   COMMAND ./test.claw_f_lib
