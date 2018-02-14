@@ -1,10 +1,6 @@
 # List of test directories
 
-claw_add_advanced_test_set(
-  NAME claw-sca
-  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  EXCLUDE abstraction30
-)
+
 
 foreach(loop_var RANGE 1 33)
   if(NOT ${loop_var} EQUAL 30)
@@ -15,6 +11,12 @@ endforeach()
 set(CLAW_FLAGS_TARGET_CPU_abstraction3 -d=openmp)
 set(CLAW_FLAGS_abstraction32 --config=promote.xml)
 set(CLAW_FLAGS_abstraction33 --config=enable_collapse.xml)
+
+claw_add_advanced_test_set(
+  NAME claw-sca
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  EXCLUDE abstraction30
+)
 
 claw_add_failure_test(
   NAME claw-sca-abstraction30
