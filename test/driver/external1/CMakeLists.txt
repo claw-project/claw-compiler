@@ -1,5 +1,0 @@
-set(TEST_NAME external1)
-set(OPTIONAL_FLAGS "--force" "--config=external_config.xml")
-set(NO_COMPILE ON)
-set(CLAW_TRANS_SET_PATH "${PROJECT_BINARY_DIR}/build/" )
-include(${CMAKE_SOURCE_DIR}/test/base_test.cmake)

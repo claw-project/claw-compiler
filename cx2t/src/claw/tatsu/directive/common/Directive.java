@@ -18,6 +18,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,12 +54,6 @@ public final class Directive {
   {
     int nodep_counter = 0;
 
-    if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE)
-    {
-      return nodep_counter;
-    }
-
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
@@ -79,6 +74,16 @@ public final class Directive {
           OpenAcc.OPENACC_DEBUG_PREFIX, (noDependency == null) ? "seq" : "",
           doStmt.lineNo()));
     }
+
+    if(Context.get().getGenerator().getDirectiveLanguage()
+        == CompilerDirective.NONE
+        || (Configuration.get().getCurrentDirective() ==
+        CompilerDirective.OPENACC &&
+        !Configuration.get().openACC().hasCollapseStrategy()))
+    {
+      return 0;
+    }
+
     return nodep_counter;
   }
 

@@ -26,10 +26,12 @@ public class OpenAccConfiguration {
   private static final String OPENACC_EXECUTION_MODE = "openacc_execution_mode";
   private static final String OPENACC_DATA_STRATEGY = "openacc_data_strategy";
   private static final String OPENACC_LOCAL_STRATEGY = "openacc_local_strategy";
+  private static final String OPENACC_COLLAPSE = "openacc_collapse";
 
   private int _numWorkers = 0;
   private int _numGangs = 0;
   private int _vectorLength = 0;
+  private boolean _collapseStrategy = false;
   private OpenAccExecutionMode _mode = OpenAccExecutionMode.VECTOR;
   private OpenAccDataStrategy _dataStrategy = OpenAccDataStrategy.PRESENT;
   private OpenAccLocalStrategy _localStrategy = OpenAccLocalStrategy.PRIVATE;
@@ -61,6 +63,10 @@ public class OpenAccConfiguration {
     if(parameters.containsKey(OPENACC_LOCAL_STRATEGY)) {
       _localStrategy = OpenAccLocalStrategy.
           fromString(parameters.get(OPENACC_LOCAL_STRATEGY));
+    }
+    if(parameters.containsKey(OPENACC_COLLAPSE)) {
+      _collapseStrategy =
+          Boolean.parseBoolean(parameters.get(OPENACC_COLLAPSE));
     }
   }
 
@@ -116,5 +122,14 @@ public class OpenAccConfiguration {
    */
   public OpenAccLocalStrategy getLocalStrategy() {
     return _localStrategy;
+  }
+
+  /**
+   * Get the OpenACC collapse strategy.
+   *
+   * @return True if collapse strategy is on. False otherwise.
+   */
+  public boolean hasCollapseStrategy() {
+    return _collapseStrategy;
   }
 }

@@ -1,18 +1,54 @@
 # CLAW functional tests
 
-This directory contains a set of functional tests for the CLAW Fortran compiler.
-All tests have the same structure described below:
+This directory contains a set of functional tests for the CLAW Compiler. Each
+test applies the CLAW Compiler on a set of input files and compare the output
+with references.
+They are two category of tests as described below:
 
-###### Low level transformation tests
-* `CMakeLists.txt`: `CMake` file including specific information for the test
-  case for the test (see below the format for this file).
+#### Basic test: low-level directives
 * `original_code.f90`: The original Fortran code with CLAW directives.
 * `reference.f90`: A reference Fortran code that will be compared to the
   transformed code.
 
-###### Test case with module and targets for abstraction
-* `CMakeLists.txt`: `CMake` file including specific information for the test
-  case for the test (see below the format for this file).
+
+###### cmake function to add a single test
+```cmake
+claw_add_basic_test(
+  NAME <test_name> # Name of the test case
+  [ORIGINAL <original_code.f90>] # Original source code
+  [TRANSFORMED <transformed_code.f90>] # Transformed code
+  [REFERENCE <reference.f90>] # Reference code for compare test
+  [WORKING_DIRECTORY <path>] # Directory where code is located
+  [CLAW_FLAGS <flags>] # Additional flags passed to clawfc
+  [DEBUG]   # Enable debug
+  [COMPILE] # Compile original and transformed code
+  [COMPARE] # Compare the result of execution between the original and
+            # the transformed code
+  [IGNORE]  # Ignore tests
+)
+```
+
+The basic test is doing the following actions:
+1. Run `clawfc` on the original source code and produce the transformed code.
+2. Compile the original code and the transformed code with a standard
+   Fortran compiler to check their correctness.
+3. Execute a `diff` between the transformed code and the reference to check
+   the correctness of the transformations applied.
+4. If the `COMPARE` option is set enabled, execute a `diff` between the
+   output of the original and transformed executables.
+
+###### cmake function to add a test set
+To ease addition of several test case, the function `claw_add_basic_test_set`
+can be used on a directory.
+```cmake
+claw_add_basic_test_set(
+  NAME <set-name>  # Name of the test set
+  DIRECTORY <path> # Directory in which subdirectories are listed
+  [EXCLUDE <dir1> <dir2>] # Excluded directory
+)
+```
+
+#### Advanced test: high-level directive with specific targets
 * `main.f90`: The test driver including the `PROGRAM` subroutine.
 * `reference_main_gpu.f90`: A reference Fortran code that will be compared to the
   transformed code for the GPU target for the main file.
@@ -30,52 +66,14 @@ All tests have the same structure described below:
 * `reference_extra_cpu.f90`: A reference Fortran code that will be compared to
   the transformed code for the CPU target of the extra module.
 
-##### CMakeLists.txt structure
-Each test has a `CMakeLists.txt` file that set up few variables to generate
-the specific targets for the test case. Here is the format of this file. Note
-that only first and last line are mandatory (`TEST_NAME` and `include`)
-
-###### For low level transformation tests
-```cmake
-set(TEST_NAME <test_name>)  # test_name must be replaced by a relevant test name
-                            # for the test case
-set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
-set(OUTPUT_TEST ON)         # optional, execute executable output comparison
-set(IGNORE_TEST ON)         # optional, does not perform the test but apply
-                            # transformations
-set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
-include(${CMAKE_SOURCE_DIR}/test/base_test.cmake) # base cmake file
-```
 
 ###### For higher abstraction transformation tests
 ```cmake
-set(TEST_NAME <test_name>)  # test_name must be replaced by a relevant test name
-                            # for the test case
-set(TEST_DEBUG ON)          # optional, run clawfc with debug flag
-set(OUTPUT_TEST ON)         # optional, execute executable output comparison
-set(IGNORE_TEST ON)         # optional, does not perform the test but apply
-                            # transformations
-set(HAS_EXTRA_MOD ON)       # optional, enable the second module file      
-                            # transformation in the test case.
-set(OPTIONAL_FLAGS <flags>) # pass additional flags to clawfc
-set(DIRECTIVE_GPU "--directive=opemacc") # Define the directive language for GPU
-set(DIRECTIVE_CPU "--directive=opemmp")  # Define the directive language for CPU
-set(OPENACC_ENABLE ON)      # Activate/deactivate OpenACC compilation if available
-set(OPENMP_ENABLE OFF)      # Activate/deactivate OpenMP compilation if available
-include(${CMAKE_SOURCE_DIR}/test/module_test.cmake) # base cmake file
+claw_add_advanced_test(
+  NAME <test-name>  # Name of the test case
+  [WORKING_DIRECTORY <path>] # Directory in which source files are
+)
 ```
-
-The file `base_test.cmake` is common for all tests and does the following
-actions:
-
-1. Run `clawfc` on the file `original_code.f90` and produce a new file
-`transformed_code.f90`.
-2. Compile `original_code.f90` and `transformed_code.f90` with a standard
-Fortran compiler to check their correctness.
-3. Execute a `diff` between `transformed_code.f90` and `reference.f90` to check
-the correctness of the transformations applied.
-4. If the `OUTPUT_TEST` option is set to `ON`, execute a `diff` between the
-output of the executable `original_code` and `transformed_code`.
 
 #### Execution
 ##### All test suite
@@ -86,7 +84,7 @@ the following command:
 make clean-transformation transformation test
 ```
 
-The CLAW Fortran compiler must be compiled once before executing the test.
+The CLAW Compiler must be compiled once before executing the test.
 
 Make sure to use the `clean-transformation` target in order to get rid of
 previous code transformations. As the source files do not change, test cases
@@ -99,12 +97,12 @@ following command:
 
 ```bash
 cd test/loops/fusion1
-make clean-fusion1 transform-fusion1 test
+make clean-loops-fusion1 transform-loops-fusion1 test
 ```
 
-More generally, use the following command and modify `test_path`and `test_name`
+More generally, use the following command and modify `test-set` and `test_name`
 accordingly.
 ```bash
 cd <test_path>
-make clean-<test_name> transform-<test_name> test
+make clean-<test_set>-<test_name> transform-<test_set>-<test_name> test
 ```

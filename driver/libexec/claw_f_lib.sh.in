@@ -81,11 +81,11 @@ EOF
 # Display all the environment variables related to the CLAW FORTRAN
 # Compiler
 # Global:
-#   om_cx2x_driver_conf_dir
+#   claw_x2t_driver_conf_dir
 ###################################################################
 function claw::show_env() {
   # shellcheck disable=SC2154
-  claw_env_file=${om_cx2x_driver_conf_dir}/claw_f.conf
+  claw_env_file=${claw_x2t_driver_conf_dir}/claw_f.conf
   empty_line_regex="^[[:space:]]*$"
   comment_line_regex="^[[:space:]]*#"
 
@@ -659,57 +659,57 @@ function claw::applyPreprocessorPass() {
 ###################################################################
 # Prepare the variables that are passed as CX2X arguments
 # Arguments: None
-# Global: OMNI_CX2X_CONFIG_OPT, OMNI_CX2X_TARGET_OPT,
-#         OMNI_CX2X_DIRECTIVE_OPT, OMNI_CX2X_MAX_COLUMN_OPT,
-#         OMNI_CX2X_LINE_OPT, TRANSLATOR_OPTION, OMNI_CX2X_MOD_OPT,
+# Global: CLAW_X2T_CONFIG_OPT, CLAW_X2T_TARGET_OPT,
+#         CLAW_X2T_DIRECTIVE_OPT, CLAW_X2T_MAX_COLUMN_OPT,
+#         CLAW_X2T_LINE_OPT, CLAW_X2T_TRANSLATOR_OPT, CLAW_X2T_MOD_OPT,
 #         user_config, config_opt, user_target, target_opt,
 #         user_directive, directive_opt, decompiler_max_column,
 #         max_columns, line_directive, force_pure, module_opt
 ###################################################################
 function claw::format_cx2x_params() {
   # Set configuraions directory
-  OMNI_CX2X_CONFIG_OPT="--config-path=${OMNI_CX2X_CONFIG_PATH}"
+  CLAW_X2T_CONFIG_OPT="--config-path=${CLAW_X2T_CONFIG_PATH}"
 
   # Set user defined configuration
   if [[ ${user_config} == true ]]; then
-    OMNI_CX2X_CONFIG_OPT="${OMNI_CX2X_CONFIG_OPT} --config=${config_opt}"
+    CLAW_X2T_CONFIG_OPT="${CLAW_X2T_CONFIG_OPT} --config=${config_opt}"
   fi
 
   # Set the correct target option for the translator
-  OMNI_CX2X_TARGET_OPT=""
+  CLAW_X2T_TARGET_OPT=""
   if [[ ${user_target} == true ]]; then
-    OMNI_CX2X_TARGET_OPT="--target=${target_opt}"
+    CLAW_X2T_TARGET_OPT="--target=${target_opt}"
   fi
 
   # Set the correct directive option for the translator
-  OMNI_CX2X_DIRECTIVE_OPT=""
+  CLAW_X2T_DIRECTIVE_OPT=""
   if [[ ${user_directive} == true ]]; then
-    OMNI_CX2X_DIRECTIVE_OPT="--directive=${directive_opt}"
+    CLAW_X2T_DIRECTIVE_OPT="--directive=${directive_opt}"
   fi
 
   # Set the correct column option for the decompiler
-  OMNI_CX2X_MAX_COLUMN_OPT=""
+  CLAW_X2T_MAX_COLUMN_OPT=""
   if [[ ${decompiler_max_column} == true ]]; then
-    OMNI_CX2X_MAX_COLUMN_OPT="-w ${max_columns}"
+    CLAW_X2T_MAX_COLUMN_OPT="-w ${max_columns}"
   else
-    OMNI_CX2X_MAX_COLUMN_OPT="-w 80"
+    CLAW_X2T_MAX_COLUMN_OPT="-w 80"
   fi
 
   # Set the correct line directive option for the decompiler
-  OMNI_CX2X_LINE_OPT="-l"
+  CLAW_X2T_LINE_OPT="-l"
   if [[ ${line_directive} == true ]]; then
-    OMNI_CX2X_LINE_OPT=""
+    CLAW_X2T_LINE_OPT=""
   fi
 
   if [[ ${force_pure} == true ]]; then
-    TRANSLATOR_OPTION="${TRANSLATOR_OPTION} --force-pure"
+    CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} --force-pure"
   fi
 
   # Module search path option
-  OMNI_CX2X_MOD_OPT=""
+  CLAW_X2T_MOD_OPT=""
   if [[ ${#module_opt[@]} -ne 0 ]]; then
     for mod in "${module_opt[@]}"; do
-      OMNI_CX2X_MOD_OPT="${OMNI_CX2X_MOD_OPT} ${mod}"
+      CLAW_X2T_MOD_OPT="${CLAW_X2T_MOD_OPT} ${mod}"
     done
   fi
 }

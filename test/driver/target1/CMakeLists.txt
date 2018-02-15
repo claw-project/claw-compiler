@@ -1,6 +1,0 @@
-set(TEST_NAME target1)
-set(TEST_DEBUG OFF)
-set(OUTPUT_TEST OFF)
-set(IGNORE_TEST OFF)
-set(OPTIONAL_FLAGS "--target=gpu" "--directive=openacc")
-include(${CMAKE_SOURCE_DIR}/test/base_test.cmake)

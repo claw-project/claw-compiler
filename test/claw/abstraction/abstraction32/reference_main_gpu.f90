@@ -11,10 +11,10 @@ PROGRAM test_abstraction4
  DO p = 1 , nproma , 1
   q ( p , 1 ) = 0.0
  END DO
-!$acc data  pcreate(q(:,1:60),t(:,1:60))
-!$acc update device(q(:,1:60),t(:,1:60))
- CALL compute ( nz , q ( : , 1 : 60 ) , t ( : , 1 : 60 ) , nproma = nproma )
-!$acc update host(q(:,1:60),t(:,1:60))
+!$acc data  pcreate(q(:,:),t(:,:))
+!$acc update device(q(:,:),t(:,:))
+ CALL compute ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma )
+!$acc update host(q(:,:),t(:,:))
 !$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

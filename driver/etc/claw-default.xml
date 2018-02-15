@@ -40,12 +40,19 @@ refer to the developer's guide
     -->
     <parameter key="openacc_data_strategy" value="present" />
     <!--
-     Local array strategy influence how CLAW handle the local arrays in
-     parallelized subroutine.
+      Local array strategy influence how CLAW handle the local arrays in
+      parallelized subroutine.
       - private: Privatize local arrays if needed.
       - promote: Promote the array instead of making them private if needed.
     -->
     <parameter key="openacc_local_strategy" value="private" />
+
+    <!--
+      Collapse loops when possible (!$claw nodep)
+      - false: collapse clause is not used.
+      - true: collapse clause is used when possible.
+    -->
+    <parameter key="openacc_collapse" value="false" />
   </global>
 
   <!-- Transformation sets -->
