@@ -32,9 +32,6 @@ set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 
-# Common module files
-set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
-
 #
 # OMNI Compiler variables
 #
@@ -50,6 +47,9 @@ set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-exc-tools.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
 set(OMNI_F2X_FLAGS "")
+
+# Common module files
+set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 
 # Define OMNI Compiler jar archives build location.
 set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
