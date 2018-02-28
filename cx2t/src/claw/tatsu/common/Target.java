@@ -16,6 +16,7 @@ import java.util.List;
  * @author clementval
  */
 public enum Target {
+  ARM(TatsuConstant.TARGET_ARM),
   CPU(TatsuConstant.TARGET_CPU),
   GPU(TatsuConstant.TARGET_GPU),
   MIC(TatsuConstant.TARGET_MIC),
@@ -47,6 +48,8 @@ public enum Target {
       return NONE;
     }
     switch(value) {
+      case TatsuConstant.TARGET_ARM:
+        return ARM;
       case TatsuConstant.TARGET_CPU:
         return CPU;
       case TatsuConstant.TARGET_GPU:
@@ -68,6 +71,8 @@ public enum Target {
   @Override
   public String toString() {
     switch(this) {
+      case ARM:
+        return TatsuConstant.TARGET_ARM;
       case GPU:
         return TatsuConstant.TARGET_GPU;
       case CPU:
