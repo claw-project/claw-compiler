@@ -42,5 +42,6 @@ public class ConditionTest {
     assertFalse(Condition.dependsOn(null, Collections.singletonList("t")));
     assertFalse(Condition.dependsOn(ifStmt, Collections.singletonList("t")));
     assertTrue(Condition.dependsOn(condition, Collections.singletonList("t")));
+    assertFalse(Condition.dependsOn(condition, Collections.singletonList("k")));
   }
 }
