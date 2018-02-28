@@ -1,0 +1,191 @@
+<XcodeProgram source="mo_column.f90"
+              language="Fortran"
+              time="2018-02-28 14:15:38"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FfunctionType type="F7fcccad060e0" return_type="Fvoid">
+      <params>
+        <name type="I7fcccad07590">nz</name>
+        <name type="A7fcccad08950">q</name>
+        <name type="A7fcccad07f70">t</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I7fcccad07590" intent="in" ref="Fint"/>
+    <FbasicType type="R7fcccad08830" intent="inout" ref="Freal"/>
+    <FbasicType type="A7fcccad08950" intent="inout" ref="R7fcccad08830">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R7fcccad07e50" intent="inout" ref="Freal"/>
+    <FbasicType type="A7fcccad07f70" intent="inout" ref="R7fcccad07e50">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mo_column</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="mo_column" lineno="6" file="mo_column.f90">
+      <symbols>
+        <id type="F7fcccad060e0" sclass="ffunc">
+          <name>compute_column</name>
+        </id>
+      </symbols>
+      <declarations>
+      </declarations>
+      <FcontainsStatement lineno="8" file="mo_column.f90">
+        <FfunctionDefinition lineno="10" file="mo_column.f90">
+          <name type="F7fcccad060e0">compute_column</name>
+          <symbols>
+            <id type="F7fcccad060e0" sclass="ffunc">
+              <name>compute_column</name>
+            </id>
+            <id type="I7fcccad07590" sclass="fparam">
+              <name>nz</name>
+            </id>
+            <id type="A7fcccad08950" sclass="fparam">
+              <name>q</name>
+            </id>
+            <id type="A7fcccad07f70" sclass="fparam">
+              <name>t</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>k</name>
+            </id>
+          </symbols>
+          <declarations>
+            <varDecl lineno="10" file="mo_column.f90">
+              <name type="F7fcccad060e0">compute_column</name>
+            </varDecl>
+            <varDecl lineno="13" file="mo_column.f90">
+              <name type="I7fcccad07590">nz</name>
+            </varDecl>
+            <varDecl lineno="14" file="mo_column.f90">
+              <name type="A7fcccad07f70">t</name>
+            </varDecl>
+            <varDecl lineno="15" file="mo_column.f90">
+              <name type="A7fcccad08950">q</name>
+            </varDecl>
+            <varDecl lineno="16" file="mo_column.f90">
+              <name type="Fint">k</name>
+            </varDecl>
+          </declarations>
+          <body>
+            <FpragmaStatement lineno="24" file="mo_column.f90">claw define dimension proma(1:nproma) claw parallelize</FpragmaStatement>
+            <FdoStatement lineno="27" file="mo_column.f90">
+              <Var type="Fint" scope="local">k</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">1</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="I7fcccad07590" scope="local">nz</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FifStatement lineno="28" file="mo_column.f90">
+                  <condition>
+                    <logGTExpr type="Flogical">
+                      <FarrayRef type="R7fcccad07e50">
+                        <varRef type="A7fcccad07f70">
+                          <Var type="A7fcccad07f70" scope="local">t</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">k</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <FrealConstant type="Freal">0.</FrealConstant>
+                    </logGTExpr>
+                  </condition>
+                  <then>
+                    <body>
+                      <FifStatement lineno="29" file="mo_column.f90">
+                        <condition>
+                          <logLTExpr type="Flogical">
+                            <Var type="Fint" scope="local">k</Var>
+                            <FintConstant type="Fint">10</FintConstant>
+                          </logLTExpr>
+                        </condition>
+                        <then>
+                          <body>
+                            <FassignStatement lineno="30" file="mo_column.f90">
+                              <FarrayRef type="R7fcccad08830">
+                                <varRef type="A7fcccad08950">
+                                  <Var type="A7fcccad08950" scope="local">q</Var>
+                                </varRef>
+                                <arrayIndex>
+                                  <Var type="Fint" scope="local">k</Var>
+                                </arrayIndex>
+                              </FarrayRef>
+                              <divExpr type="R7fcccad08830">
+                                <FarrayRef type="R7fcccad08830">
+                                  <varRef type="A7fcccad08950">
+                                    <Var type="A7fcccad08950" scope="local">q</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">k</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                                <FarrayRef type="R7fcccad07e50">
+                                  <varRef type="A7fcccad07f70">
+                                    <Var type="A7fcccad07f70" scope="local">t</Var>
+                                  </varRef>
+                                  <arrayIndex>
+                                    <Var type="Fint" scope="local">k</Var>
+                                  </arrayIndex>
+                                </FarrayRef>
+                              </divExpr>
+                            </FassignStatement>
+                          </body>
+                        </then>
+                      </FifStatement>
+                    </body>
+                  </then>
+                  <else>
+                    <body>
+                      <FassignStatement lineno="33" file="mo_column.f90">
+                        <FarrayRef type="R7fcccad08830">
+                          <varRef type="A7fcccad08950">
+                            <Var type="A7fcccad08950" scope="local">q</Var>
+                          </varRef>
+                          <arrayIndex>
+                            <Var type="Fint" scope="local">k</Var>
+                          </arrayIndex>
+                        </FarrayRef>
+                        <mulExpr type="R7fcccad08830">
+                          <FarrayRef type="R7fcccad08830">
+                            <varRef type="A7fcccad08950">
+                              <Var type="A7fcccad08950" scope="local">q</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">k</Var>
+                            </arrayIndex>
+                          </FarrayRef>
+                          <FarrayRef type="R7fcccad08830">
+                            <varRef type="A7fcccad08950">
+                              <Var type="A7fcccad08950" scope="local">q</Var>
+                            </varRef>
+                            <arrayIndex>
+                              <Var type="Fint" scope="local">k</Var>
+                            </arrayIndex>
+                          </FarrayRef>
+                        </mulExpr>
+                      </FassignStatement>
+                    </body>
+                  </else>
+                </FifStatement>
+              </body>
+            </FdoStatement>
+          </body>
+        </FfunctionDefinition>
+      </FcontainsStatement>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>

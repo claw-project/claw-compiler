@@ -29,5 +29,7 @@ public class TestConstant {
     "@CMAKE_CURRENT_SOURCE_DIR@/data/promotion.xml";
   public static final String TEST_ASSIGN_STMT =
     "@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement.xml";
+  public static final String TEST_ASSIGN_STMT2 =
+    "@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement2.xml";
   public static final String TEST_CONFIG = "@CMAKE_SOURCE_DIR@/driver/etc/";
 }
