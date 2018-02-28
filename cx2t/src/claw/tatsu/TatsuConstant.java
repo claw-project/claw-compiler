@@ -32,6 +32,7 @@ public final class TatsuConstant {
   public static final String OPENACC_EXEC_MODE_VECTOR_GANG = "vector_gang";
   public static final String OPENACC_EXEC_MODE_GANG_VECTOR = "gang_vector";
   // Available targets
+  public static final String TARGET_ARM = "arm";
   public static final String TARGET_CPU = "cpu";
   public static final String TARGET_GPU = "gpu";
   public static final String TARGET_MIC = "mic";

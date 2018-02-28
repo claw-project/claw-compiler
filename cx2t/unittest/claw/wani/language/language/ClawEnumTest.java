@@ -27,9 +27,10 @@ public class ClawEnumTest {
     assertEquals(Target.NONE, Target.fromString("unknown"));
     assertEquals(Target.NONE, Target.fromString(null));
     assertEquals(Target.NONE, Target.fromString(""));
-    assertEquals(Arrays.asList(TatsuConstant.TARGET_CPU,
-        TatsuConstant.TARGET_GPU, TatsuConstant.TARGET_MIC,
-        TatsuConstant.TARGET_FPGA, TatsuConstant.TARGET_NONE),
+    assertEquals(Arrays.asList(TatsuConstant.TARGET_ARM,
+        TatsuConstant.TARGET_CPU, TatsuConstant.TARGET_GPU,
+        TatsuConstant.TARGET_MIC, TatsuConstant.TARGET_FPGA,
+        TatsuConstant.TARGET_NONE),
         Target.availableTargets());
   }
 }
