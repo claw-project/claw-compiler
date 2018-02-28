@@ -492,19 +492,31 @@ public class Parallelize extends ClawTransformation {
       NestedDoStatement loops = null;
 
       if(assign.isChildOf(Xcode.F_IF_STATEMENT)) {
-        Xnode parentIfStmt = assign.matchAncestor(Xcode.F_IF_STATEMENT);
-        if(Condition.dependsOn(
-            parentIfStmt.matchDirectDescendant(Xcode.CONDITION),
-            assign.getVarRefNames()))
-        {
-          // Have to put the do statement around the if as the assignment
-          // is conditional as well.
+
+        // Gather all potential ancestor if statements
+        List<Xnode> ifStatements = assign.matchAllAncestor(Xcode.F_IF_STATEMENT,
+            Xcode.F_FUNCTION_DEFINITION);
+
+        Xnode hookIfStmt = null;
+        for(Xnode ifStmt : ifStatements) {
+          if(Condition.dependsOn(
+              ifStmt.matchDirectDescendant(Xcode.CONDITION),
+              assign.getVarRefNames()))
+          {
+            // Have to put the do statement around the if as the assignment
+            // is conditional as well.
+            hookIfStmt = ifStmt;
+          }
+        }
+
+        if(hookIfStmt != null) {
           loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
               xcodeml);
-          parentIfStmt.insertAfter(loops.getOuterStatement());
-          loops.getInnerStatement().body().append(parentIfStmt, true);
-          parentIfStmt.delete();
+          hookIfStmt.insertAfter(loops.getOuterStatement());
+          loops.getInnerStatement().body().append(hookIfStmt, true);
+          hookIfStmt.delete();
         }
+        continue;
       }
 
       if(lhs.opcode() == Xcode.F_ARRAY_REF &&
