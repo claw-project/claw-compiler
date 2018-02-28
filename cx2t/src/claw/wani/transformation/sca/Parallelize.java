@@ -10,7 +10,9 @@ import claw.tatsu.common.*;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Field;
+import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Module;
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
@@ -479,13 +481,12 @@ public class Parallelize extends ClawTransformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-    List<Xnode> assignStatements =
-        _fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT);
+    List<AssignStatement> assignStatements =
+        Function.gatherAssignStatements(_fctDef);
 
-    for(Xnode assign : assignStatements) {
-      Xnode lhs = assign.child(Xnode.LHS);
-      String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.value() :
-          lhs.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
+    for(AssignStatement assign : assignStatements) {
+      Xnode lhs = assign.getLhs();
+      String lhsName = assign.getLhsName();
       NestedDoStatement loops = null;
       if(lhs.opcode() == Xcode.F_ARRAY_REF &&
           _arrayFieldsInOut.contains(lhsName))

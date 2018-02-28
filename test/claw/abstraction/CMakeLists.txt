@@ -34,8 +34,9 @@
 # abstraction31: parallelize forward with type%member slicing
 # abstraction32: parallel region start/end after/before unsupported + update/create
 # abstraction33: claw nodep on k loop (openacc_collapse = true)
+# abstraction34: (#355) CPU specific categorization for assign statement
 
-foreach(loop_var RANGE 1 33)
+foreach(loop_var RANGE 1 34)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_abstraction${loop_var} --directive=none)
   endif()
@@ -51,6 +52,7 @@ claw_add_advanced_test_set(
   EXCLUDE abstraction30
 )
 
+# Specific "fail" test to check correct failure
 claw_add_failure_test(
   NAME claw-sca-abstraction30
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/abstraction30
