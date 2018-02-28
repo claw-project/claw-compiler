@@ -8,10 +8,7 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Body;
-import claw.tatsu.primitive.Field;
-import claw.tatsu.primitive.Function;
-import claw.tatsu.primitive.Module;
+import claw.tatsu.primitive.*;
 import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
@@ -493,6 +490,23 @@ public class Parallelize extends ClawTransformation {
       Xnode lhs = assign.getLhs();
       String lhsName = assign.getLhsName();
       NestedDoStatement loops = null;
+
+      if(assign.isChildOf(Xcode.F_IF_STATEMENT)) {
+        Xnode parentIfStmt = assign.matchAncestor(Xcode.F_IF_STATEMENT);
+        if(Condition.dependsOn(
+            parentIfStmt.matchDirectDescendant(Xcode.CONDITION),
+            assign.getVarRefNames()))
+        {
+          // Have to put the do statement around the if as the assignment
+          // is conditional as well.
+          loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
+              xcodeml);
+          parentIfStmt.insertAfter(loops.getOuterStatement());
+          loops.getInnerStatement().body().append(parentIfStmt, true);
+          parentIfStmt.delete();
+        }
+      }
+
       if(lhs.opcode() == Xcode.F_ARRAY_REF &&
           _arrayFieldsInOut.contains(lhsName))
       {

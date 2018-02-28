@@ -8,6 +8,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Primitive analysis and transformation on condition node. This included:
@@ -28,7 +29,7 @@ public final class Condition {
    * @return True if the condition depend on a variable in the list. False
    * otherwise.
    */
-  public static boolean dependsOn(Xnode condition, List<String> variables) {
+  public static boolean dependsOn(Xnode condition, Set<String> variables) {
     if(condition == null || condition.opcode() != Xcode.CONDITION
         || variables.isEmpty())
     {

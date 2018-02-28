@@ -13,6 +13,7 @@ import helper.TestConstant;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static junit.framework.TestCase.*;
 
@@ -41,5 +42,10 @@ public class AssignStatementTest {
 
     assertTrue(assignStatements.get(0).isChildOf(Xcode.F_IF_STATEMENT));
     assertFalse(assignStatements.get(1).isChildOf(Xcode.F_IF_STATEMENT));
+
+    Set<String> vars = assignStatements.get(0).getVarRefNames();
+    assertEquals(2, vars.size());
+    assertTrue(vars.contains("t"));
+    assertTrue(vars.contains("q"));
   }
 }

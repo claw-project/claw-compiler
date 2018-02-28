@@ -6,8 +6,12 @@ package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Abstraction of assignment statement to be able to categorize them and
@@ -52,6 +56,7 @@ public class AssignStatement extends Xnode {
   /**
    * Check if the current assignment statement is a child of a give type of
    * node.
+   *
    * @param opcode Opcode of the ancestor to check for.
    * @return True if on of the ancestor is of the given kind. Search is
    * contained in the function definition itself.
@@ -69,6 +74,20 @@ public class AssignStatement extends Xnode {
       crt = crt.ancestor();
     }
     return false;
+  }
+
+  /**
+   * Get list of array variable names used in assignment statement.
+   *
+   * @return List of variables.
+   */
+  public Set<String> getVarRefNames() {
+    List<Xnode> varRefs = matchAll(Xcode.VAR_REF);
+    Set<String> names = new HashSet<>();
+    for(Xnode varRef : varRefs) {
+      names.add(varRef.matchSeq(Xcode.VAR).value());
+    }
+    return names;
   }
 
 }
