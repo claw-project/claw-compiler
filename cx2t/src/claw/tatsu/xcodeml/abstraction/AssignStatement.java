@@ -6,6 +6,7 @@ package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import org.w3c.dom.Element;
 
 /**
@@ -46,6 +47,28 @@ public class AssignStatement extends Xnode {
    */
   public Xnode getLhs() {
     return child(Xnode.LHS);
+  }
+
+  /**
+   * Check if the current assignment statement is a child of a give type of
+   * node.
+   * @param opcode Opcode of the ancestor to check for.
+   * @return True if on of the ancestor is of the given kind. Search is
+   * contained in the function definition itself.
+   */
+  public boolean isChildOf(Xcode opcode) {
+    Xnode crt = this;
+    while(crt != null) {
+      if(crt.ancestor().opcode() == opcode) {
+        return true;
+      }
+      // Stop searching when FfunctionDefinition is reached
+      if(crt.ancestor().opcode() == Xcode.F_FUNCTION_DEFINITION) {
+        return false;
+      }
+      crt = crt.ancestor();
+    }
+    return false;
   }
 
 }
