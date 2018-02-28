@@ -14,6 +14,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: z(:) ! Field declared as one column only
+    REAL :: tmp ! Temporary variable
     INTEGER :: k                  ! Loop index
 
     ! CLAW definition
@@ -28,11 +29,13 @@ CONTAINS
     DO k = 1, nz
       IF (t(k) > 0.) THEN
         IF(k < 10) THEN
+          tmp = tmp + q(k)
           q(k) = q(k) / t(k)
         END IF
       ELSE
         q(k) = q(k) * z(k)
       END IF
+      z(k) = z(k) * tmp
     END DO
   END SUBROUTINE compute_column
 END MODULE mo_column
