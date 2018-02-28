@@ -36,7 +36,7 @@
 # abstraction33: claw nodep on k loop (openacc_collapse = true)
 # abstraction34: (#355) CPU specific categorization for assign statement
 
-foreach(loop_var RANGE 1 34)
+foreach(loop_var RANGE 1 35)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_abstraction${loop_var} --directive=none)
   endif()
