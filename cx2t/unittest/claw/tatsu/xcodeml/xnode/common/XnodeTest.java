@@ -287,7 +287,7 @@ public class XnodeTest {
     assertNotNull(xcodeml);
 
     List<Xnode> nodes = xcodeml.matchAll(Xcode.F_ASSIGN_STATEMENT);
-    assertEquals(2, nodes.size());
+    assertEquals(4, nodes.size());
 
     List<Xnode> matches1 = nodes.get(0).matchAllAncestor(Xcode.F_IF_STATEMENT,
         Xcode.F_FUNCTION_DEFINITION);
@@ -298,7 +298,13 @@ public class XnodeTest {
     matches1 = nodes.get(1).matchAllAncestor(Xcode.F_IF_STATEMENT,
         Xcode.F_FUNCTION_DEFINITION);
     matches2 = nodes.get(1).matchAllAncestor(Xcode.F_IF_STATEMENT);
-    assertEquals(1, matches1.size());
-    assertEquals(1, matches2.size());
+    assertEquals(2, matches1.size());
+    assertEquals(2, matches2.size());
+
+    matches1 = nodes.get(3).matchAllAncestor(Xcode.F_IF_STATEMENT,
+        Xcode.F_FUNCTION_DEFINITION);
+    matches2 = nodes.get(3).matchAllAncestor(Xcode.F_IF_STATEMENT);
+    assertEquals(0, matches1.size());
+    assertEquals(0, matches2.size());
   }
 }
