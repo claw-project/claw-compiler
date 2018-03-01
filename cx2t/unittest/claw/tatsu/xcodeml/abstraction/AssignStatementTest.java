@@ -25,7 +25,7 @@ import static junit.framework.TestCase.*;
 public class AssignStatementTest {
 
   @Test
-  public void gatherAssignmentTest() {
+  public void gatherAssignmentTest1() {
     XcodeProgram xcodeml =
         XcodeProgram.createFromFile(TestConstant.TEST_ASSIGN_STMT);
     assertNotNull(xcodeml);
@@ -47,5 +47,22 @@ public class AssignStatementTest {
     assertEquals(2, vars.size());
     assertTrue(vars.contains("t"));
     assertTrue(vars.contains("q"));
+  }
+
+  @Test
+  public void gatherAssignmentTest2() {
+    XcodeProgram xcodeml =
+        XcodeProgram.createFromFile(TestConstant.TEST_ASSIGN_STMT2);
+    assertNotNull(xcodeml);
+
+    List<Xnode> nodes = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
+    assertEquals(1, nodes.size());
+
+    assertEquals(Xcode.F_FUNCTION_DEFINITION, nodes.get(0).opcode());
+    FfunctionDefinition fctDef = new FfunctionDefinition(nodes.get(0));
+
+    List<AssignStatement> assignStatements =
+        Function.gatherAssignStatements(fctDef);
+    assertEquals(4, assignStatements.size());
   }
 }
