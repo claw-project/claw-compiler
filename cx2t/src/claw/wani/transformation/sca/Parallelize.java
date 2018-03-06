@@ -491,6 +491,8 @@ public class Parallelize extends ClawTransformation {
       String lhsName = assign.getLhsName();
       NestedDoStatement loops = null;
 
+
+      // Check if assignment is dependant of an if statement.
       if(assign.isChildOf(Xcode.F_IF_STATEMENT)) {
 
         // Gather all potential ancestor if statements
@@ -516,7 +518,9 @@ public class Parallelize extends ClawTransformation {
           loops.getInnerStatement().body().append(hookIfStmt, true);
           hookIfStmt.delete();
         }
-        continue;
+        continue; // TODO this must be merged with the rest of the code below
+        // the special cases must be there as well
+
       }
 
       if(lhs.opcode() == Xcode.F_ARRAY_REF &&

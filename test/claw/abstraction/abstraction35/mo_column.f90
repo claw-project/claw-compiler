@@ -10,17 +10,16 @@ CONTAINS
   SUBROUTINE compute_column(nz, q, t, z)
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)   :: nz   ! Size of the array field
-    REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: z(:) ! Field declared as one column only
-    REAL :: tmp ! Temporary variable
-    INTEGER :: k                  ! Loop index
+    INTEGER, INTENT(IN)   :: nz   ! Vertical dimension size
+    REAL, INTENT(INOUT)   :: t(:) ! Field declared as single column only
+    REAL, INTENT(INOUT)   :: q(:) ! Field declared as single column only
+    REAL, INTENT(INOUT)   :: z(:) ! Field declared as single column only
+    REAL :: tmp, tmp2   ! Temporary variable
+    INTEGER :: k  ! Loop index over the verical dimension
 
     ! CLAW definition
-
-    ! Define one dimension that will be added to the variables defined in the
-    ! data clause.
+    ! Define horizontal dimension that will be added to the auto-detected
+    ! variables.
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
@@ -35,6 +34,7 @@ CONTAINS
       ELSE
         q(k) = q(k) * z(k)
       END IF
+      tmp2 = tmp + q(k)
       z(k) = z(k) * tmp
     END DO
   END SUBROUTINE compute_column
