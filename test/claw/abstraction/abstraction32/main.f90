@@ -9,6 +9,7 @@ PROGRAM test_abstraction4
   USE mo_column, ONLY: compute
   REAL, DIMENSION(20,60) :: q  ! Fields as declared in the whole model
   REAL, DIMENSION(20,60) :: t  ! Fields as declared in the whole model
+  REAL, DIMENSION(20) :: s
 
   INTEGER :: nproma, nz           ! Size of array fields
   INTEGER :: p                    ! Loop index
@@ -22,7 +23,7 @@ PROGRAM test_abstraction4
 
   !$claw parallelize forward create update
   DO p = 1, nproma
-    CALL compute(nz, q(p,:), t(p,:))
+    CALL compute(nz, q(p,:), t(p,:), s(p))
   END DO
 
   PRINT*,SUM(q)
