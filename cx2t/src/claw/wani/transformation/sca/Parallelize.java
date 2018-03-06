@@ -352,8 +352,13 @@ public class Parallelize extends ClawTransformation {
     // Apply specific target transformation
     if(Context.get().getTarget() == Target.GPU) {
       transformForGPU(xcodeml);
-    } else if(Context.get().getTarget() == Target.CPU) {
+    } else if(Context.get().getTarget() == Target.CPU
+        || Context.get().getTarget() == Target.ARM)
+    {
       transformForCPU(xcodeml);
+    } else {
+      throw new IllegalTransformationException("Unsupported target " +
+          Context.get().getTarget(), _claw.getPragma().lineNo());
     }
 
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
