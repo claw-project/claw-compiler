@@ -58,6 +58,8 @@ public final class Body {
    * @param from       Start element for the swifting.
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
+   * @throws IllegalTransformationException If one element is null or the
+   * targetBody element is not a body element.
    */
   public static void shiftIn(Xnode from, Xnode until, Xnode targetBody,
                              boolean included)
@@ -86,5 +88,24 @@ public final class Body {
       targetBody.element().insertBefore(currentSibling,
           firstStatementInBody);
     }
+  }
+
+  /**
+   * Check whether a body is empty.
+   *
+   * @param body Body element to check.
+   * @return True if empty. False otherwise.
+   * @throws IllegalTransformationException If given element is null or not
+   *                                        a body element.
+   */
+  public static boolean isEmpty(Xnode body)
+      throws IllegalTransformationException
+  {
+    if(body == null || body.opcode() != Xcode.BODY) {
+      throw new
+          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+    }
+
+    return body.firstChild() == null;
   }
 }

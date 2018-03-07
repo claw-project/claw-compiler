@@ -551,6 +551,9 @@ public final class Directive {
       return null;
     }
     Xnode first = functionDefinition.body().firstChild();
+    if(first == null) {
+      return null;
+    }
     if(from != null) { // Start from given element
       first = from;
     }
@@ -594,6 +597,9 @@ public final class Directive {
       return null;
     }
     Xnode last = functionDefinition.body().lastChild();
+    if(last == null) {
+      return null;
+    }
     if(from != null) { // Start from given element
       last = from;
       if(last.opcode() == Xcode.F_CONTAINS_STATEMENT) {
