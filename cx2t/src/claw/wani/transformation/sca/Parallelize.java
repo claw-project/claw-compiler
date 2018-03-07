@@ -381,90 +381,92 @@ public class Parallelize extends ClawTransformation {
     int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
         CompilerDirective.CLAW.getPrefix() + " nodep");
 
-    /* Create a nested loop with the new defined dimensions and wrap it around
-     * the whole subroutine's body. This is for the moment a really naive
-     * transformation idea but it is our start point.
-     * Use the first over clause to create it. */
-    NestedDoStatement loops =
-        new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+    if(!Body.isEmpty(_fctDef.body())) {
+      /* Create a nested loop with the new defined dimensions and wrap it around
+       * the whole subroutine's body. This is for the moment a really naive
+       * transformation idea but it is our start point.
+       * Use the first over clause to create it. */
+      NestedDoStatement loops =
+          new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
 
-    /* Subroutine/function can have a contains section with inner subroutines or
-     * functions. The newly created (nested) do statements should stop before
-     * this contains section if it exists. */
-    Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
-    if(contains != null) {
+      /* Subroutine/function can have a contains section with inner subroutines or
+       * functions. The newly created (nested) do statements should stop before
+       * this contains section if it exists. */
+      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
+      if(contains != null) {
 
-      Xnode parallelRegionStart =
-          Directive.findParallelRegionStart(_fctDef, null);
-      Xnode parallelRegionEnd =
-          Directive.findParallelRegionEnd(_fctDef, contains);
+        Xnode parallelRegionStart =
+            Directive.findParallelRegionStart(_fctDef, null);
+        Xnode parallelRegionEnd =
+            Directive.findParallelRegionEnd(_fctDef, contains);
 
-      Body.shiftIn(parallelRegionStart, parallelRegionEnd,
-          loops.getInnerStatement().body(), true);
+        Body.shiftIn(parallelRegionStart, parallelRegionEnd,
+            loops.getInnerStatement().body(), true);
 
-      contains.insertBefore(loops.getOuterStatement());
-    } else {
-      // No contains section, all the body is copied to the do statements.
-
-      Xnode parallelRegionStart =
-          Directive.findParallelRegionStart(_fctDef, null);
-      Xnode parallelRegionEnd =
-          Directive.findParallelRegionEnd(_fctDef, null);
-
-      // Define a hook from where we can insert the new do statement
-      Xnode hook = parallelRegionEnd.nextSibling();
-      Body.shiftIn(parallelRegionStart, parallelRegionEnd,
-          loops.getInnerStatement().body(), true);
-
-      // Hook is null then we append the do statement to the current fct body
-      if(hook == null) {
-        _fctDef.body().append(loops.getOuterStatement());
+        contains.insertBefore(loops.getOuterStatement());
       } else {
-        // Insert new do statement before the hook element
-        hook.insertBefore(loops.getOuterStatement());
-      }
-    }
+        // No contains section, all the body is copied to the do statements.
 
-    // Prepare variables list for present/pcreate clauses and handle
-    // promotion/privatize local strategy
-    List<String> presentList =
-        Directive.getPresentVariables(xcodeml, _fctDef);
-    List<String> privateList = Collections.emptyList();
-    List<String> createList = Collections.emptyList();
-    if(Configuration.get().openACC().getLocalStrategy()
-        == OpenAccLocalStrategy.PRIVATE)
-    {
-      privateList = Directive.getLocalArrays(xcodeml, _fctDef);
-      // Iterate over a copy to be able to remove items
-      for(String identifier : new ArrayList<>(privateList)) {
-        if(_promotions.containsKey(identifier)) {
-          privateList.remove(identifier);
+        Xnode parallelRegionStart =
+            Directive.findParallelRegionStart(_fctDef, null);
+        Xnode parallelRegionEnd =
+            Directive.findParallelRegionEnd(_fctDef, null);
+
+        // Define a hook from where we can insert the new do statement
+        Xnode hook = parallelRegionEnd.nextSibling();
+        Body.shiftIn(parallelRegionStart, parallelRegionEnd,
+            loops.getInnerStatement().body(), true);
+
+        // Hook is null then we append the do statement to the current fct body
+        if(hook == null) {
+          _fctDef.body().append(loops.getOuterStatement());
+        } else {
+          // Insert new do statement before the hook element
+          hook.insertBefore(loops.getOuterStatement());
         }
       }
-    } else if(Configuration.get().openACC().getLocalStrategy()
-        == OpenAccLocalStrategy.PROMOTE)
-    {
-      createList = Directive.getLocalArrays(xcodeml, _fctDef);
-      for(String arrayIdentifier : createList) {
-        _arrayFieldsInOut.add(arrayIdentifier);
-        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
-            _claw.getDimensionsForData(arrayIdentifier));
-        Field.promote(promotionInfo, _fctDef, xcodeml);
-        _promotions.put(arrayIdentifier, promotionInfo);
 
-        Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
-        Field.adaptAllocate(promotionInfo, _fctDef.body(), xcodeml);
+      // Prepare variables list for present/pcreate clauses and handle
+      // promotion/privatize local strategy
+      List<String> presentList =
+          Directive.getPresentVariables(xcodeml, _fctDef);
+      List<String> privateList = Collections.emptyList();
+      List<String> createList = Collections.emptyList();
+      if(Configuration.get().openACC().getLocalStrategy()
+          == OpenAccLocalStrategy.PRIVATE)
+      {
+        privateList = Directive.getLocalArrays(xcodeml, _fctDef);
+        // Iterate over a copy to be able to remove items
+        for(String identifier : new ArrayList<>(privateList)) {
+          if(_promotions.containsKey(identifier)) {
+            privateList.remove(identifier);
+          }
+        }
+      } else if(Configuration.get().openACC().getLocalStrategy()
+          == OpenAccLocalStrategy.PROMOTE)
+      {
+        createList = Directive.getLocalArrays(xcodeml, _fctDef);
+        for(String arrayIdentifier : createList) {
+          _arrayFieldsInOut.add(arrayIdentifier);
+          PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
+              _claw.getDimensionsForData(arrayIdentifier));
+          Field.promote(promotionInfo, _fctDef, xcodeml);
+          _promotions.put(arrayIdentifier, promotionInfo);
+
+          Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
+          Field.adaptAllocate(promotionInfo, _fctDef.body(), xcodeml);
+        }
       }
+
+      // Generate the data region
+      Directive.generateDataRegionClause(xcodeml, presentList,
+          createList, loops.getOuterStatement(), loops.getOuterStatement());
+
+      // Generate the parallel region
+      Directive.generateParallelLoopClause(xcodeml, privateList,
+          loops.getOuterStatement(), loops.getOuterStatement(),
+          loops.size() + collapse);
     }
-
-    // Generate the data region
-    Directive.generateDataRegionClause(xcodeml, presentList,
-        createList, loops.getOuterStatement(), loops.getOuterStatement());
-
-    // Generate the parallel region
-    Directive.generateParallelLoopClause(xcodeml, privateList,
-        loops.getOuterStatement(), loops.getOuterStatement(),
-        loops.size() + collapse);
 
     Directive.generateRoutineDirectives(xcodeml, _fctDef);
   }
