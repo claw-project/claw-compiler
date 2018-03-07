@@ -638,7 +638,7 @@ public class XnodeUtil {
       {
         FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
-        if((arrayOnly && !btArg.isArray())
+        if((arrayOnly && !btArg.isArray() && !btArg.isAllocatable())
             || !intent.isCompatible(btParameter.getIntent()))
         {
           continue;
