@@ -10,20 +10,14 @@ import claw.tatsu.common.Message;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.ClawConstant;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
-import xcodeml.util.XmOption;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Constructor;
-import java.util.Map;
 
 /**
  * ClawTranslatorDriver is the class driving the translation. It creates the
@@ -46,7 +40,9 @@ public abstract class ClawTranslatorDriverBase {
    * Analysis the XcodeML/F directives and categorized them in corresponding
    * transformation with the help of the translator.
    */
-  public abstract void analyze();
+  public void analyze()
+  {
+  }
 
   /**
    * Instantiate correct transformation class from group configuration.
