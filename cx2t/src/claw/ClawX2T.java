@@ -113,6 +113,8 @@ public class ClawX2T {
             "has to be transformed.");
     options.addOption("r", "report", true,
         "generate the transformation report.");
+    options.addOption("script", "python-script", true,
+                      "Python optimisation script to apply (requires Jython)");
     return options;
   }
 
@@ -145,6 +147,7 @@ public class ClawX2T {
     String directive_option = null;
     String configuration_file = null;
     String configuration_path = null;
+    String recipeScript = null;
     int maxColumns = 0;
     //boolean forcePure = false;
 
@@ -237,7 +240,12 @@ public class ClawX2T {
       Configuration.get().displayConfig();
       return;
     }
+    
+    if(cmd.hasOption("script")) {
+       recipeScript = cmd.getOptionValue("script");
+    }
 
+    // Get the input XcodeML file to transform
     if(cmd.getArgs().length == 0) {
       input = null;
     } else {
@@ -275,17 +283,26 @@ public class ClawX2T {
     }
 
     // Call the translator driver to apply transformation on XcodeML/F
-    ClawTranslatorDriver translatorDriver =
-        new ClawTranslatorDriver(input, xcmlOutput);
-    translatorDriver.analyze();
-    translatorDriver.transform();
-    translatorDriver.flush();
+    if(recipeScript != null){
+      // Transformation is to be performed by Python script
+      ClawExternalTranslatorDriver pythonDriver = 
+          new ClawExternalTranslatorDriver(recipeScript, input, xcmlOutput);
+            pythonDriver.analyze();
+      pythonDriver.transform();
 
-    // Produce report
-    if(cmd.hasOption("r")) {
-      ClawTransformationReport report =
-          new ClawTransformationReport(cmd.getOptionValue("r"));
-      report.generate(args, translatorDriver);
+    } else {
+      ClawTranslatorDriver translatorDriver =
+          new ClawTranslatorDriver(input, xcmlOutput);
+      translatorDriver.analyze();
+      translatorDriver.transform();
+      translatorDriver.flush();
+
+      // Produce report
+      if(cmd.hasOption("r")) {
+        ClawTransformationReport report =
+            new ClawTransformationReport(cmd.getOptionValue("r"));
+        report.generate(args, translatorDriver);
+      }
     }
 
     // Decompile XcodeML/F to target language
