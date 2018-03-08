@@ -11,7 +11,9 @@ import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.translator.ClawTranslatorDriverBase;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
+import claw.wani.x2t.translator.ClawPythonTranslatorDriver;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
@@ -282,27 +284,26 @@ public class ClawX2T {
       Configuration.get().setForcePure();
     }
 
+    ClawTranslatorDriverBase translatorDriver;
+
     // Call the translator driver to apply transformation on XcodeML/F
     if(recipeScript != null){
       // Transformation is to be performed by Python script
-      ClawExternalTranslatorDriver pythonDriver = 
-          new ClawExternalTranslatorDriver(recipeScript, input, xcmlOutput);
-            pythonDriver.analyze();
-      pythonDriver.transform();
+      translatorDriver = 
+          new ClawPythonTranslatorDriver(recipeScript, input, xcmlOutput);
 
     } else {
-      ClawTranslatorDriver translatorDriver =
-          new ClawTranslatorDriver(input, xcmlOutput);
-      translatorDriver.analyze();
-      translatorDriver.transform();
-      translatorDriver.flush();
+      translatorDriver = new ClawTranslatorDriver(input, xcmlOutput);
+    }
+    translatorDriver.analyze();
+    translatorDriver.transform();
+    translatorDriver.flush();
 
-      // Produce report
-      if(cmd.hasOption("r")) {
-        ClawTransformationReport report =
-            new ClawTransformationReport(cmd.getOptionValue("r"));
-        report.generate(args, translatorDriver);
-      }
+    // Produce report (unless we've used the Python driver)
+    if(recipeScript == null && cmd.hasOption("r")) {
+      ClawTransformationReport report =
+          new ClawTransformationReport(cmd.getOptionValue("r"));
+      report.generate(args, (ClawTranslatorDriver)translatorDriver);
     }
 
     // Decompile XcodeML/F to target language

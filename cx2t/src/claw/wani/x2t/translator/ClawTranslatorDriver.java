@@ -16,6 +16,7 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.ClawConstant;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.translator.ClawTranslatorDriverBase;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
 import xcodeml.util.XmOption;
@@ -33,13 +34,7 @@ import java.util.Map;
  *
  * @author clementval
  */
-public class ClawTranslatorDriver {
-
-  private String _xcodemlInputFile = null;
-  private String _xcodemlOutputFile = null;
-  private boolean _canTransform = false;
-  private ClawTranslator _translator = null;
-  private XcodeProgram _translationUnit = null;
+public class ClawTranslatorDriver extends ClawTranslatorDriverBase {
 
   /**
    * ClawTranslatorDriver ctor.
@@ -207,38 +202,4 @@ public class ClawTranslatorDriver {
     }
   }
 
-  /**
-   * Print all the errors stored in the XcodeML object and abort the program.
-   */
-  private void abort() {
-    Message.errors(_translationUnit);
-    System.exit(1);
-  }
-
-  /**
-   * Flush all information stored in the translator.
-   */
-  public void flush()
-      throws IllegalTransformationException
-  {
-    _translator.getModCache().write(ClawConstant.INDENT_OUTPUT);
-  }
-
-  /**
-   * Get the current translator associated with this translation.
-   *
-   * @return Get the current translator.
-   */
-  public ClawTranslator getTranslator() {
-    return _translator;
-  }
-
-  /**
-   * Get the XcodeProgram object representing the Fortran code translated.
-   *
-   * @return Current XcodeProgram object.
-   */
-  public XcodeProgram getTranslationUnit() {
-    return _translationUnit;
-  }
 }
