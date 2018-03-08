@@ -413,7 +413,8 @@ public class Parallelize extends ClawTransformation {
             Directive.findParallelRegionEnd(_fctDef, null);
 
         // Define a hook from where we can insert the new do statement
-        Xnode hook = parallelRegionEnd.nextSibling();
+        Xnode hook = parallelRegionEnd != null
+            ? parallelRegionEnd.nextSibling() : null;
         Body.shiftIn(parallelRegionStart, parallelRegionEnd,
             loops.getInnerStatement().body(), true);
 
