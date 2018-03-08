@@ -799,12 +799,6 @@ public class Xnode {
     return false;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return !(obj == null || !(obj instanceof Xnode))
-        && element() == ((Xnode) obj).element();
-  }
-
   /**
    * Return type hash associated with this node if any.
    *
@@ -964,5 +958,16 @@ public class Xnode {
   public String toString() {
     return String.format("%s (children: %d)", opcode().code(),
         children().size());
+  }
+
+  @Override
+  public int hashCode() {
+    return _baseElement.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return !(o == null || !(o instanceof Xnode))
+        && _baseElement.equals(o);
   }
 }
