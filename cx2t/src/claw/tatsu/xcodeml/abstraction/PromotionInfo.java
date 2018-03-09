@@ -266,6 +266,14 @@ public class PromotionInfo {
   }
 
   /**
+   * Reset adapted flags.
+   */
+  public void resterFlags() {
+    _referenceAdapted = false;
+    _allocateAdapted = false;
+  }
+
+  /**
    * Read the dimension information from a raw string.
    *
    * @param rawValue Raw string representation of the dimension information.

@@ -725,6 +725,7 @@ public class ParallelizeForward extends ClawTransformation {
 
           // Adapt the reference in the assignment statement
           for(String id : _promotedVar) {
+            _promotions.get(id).resterFlags();
             Field.adaptArrayRef(_promotions.get(id), assignment, xcodeml);
           }
 
