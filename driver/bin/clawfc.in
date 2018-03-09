@@ -177,7 +177,7 @@ for input_file in "${f_files[@]}"; do
     if [[ "${num_directives}" == "0" ]] &&
       [[ "${num_omp_compile_guard}" == "0" ]] &&
       [[ "${num_acc_compile_guard}" == "0" ]]; then
-      claw::warning "${input_file}" "-" "file does not contains \$claw. Skip..."
+      claw::warning "${input_file}" "-" "-" "file does not contains \$claw. Skip..."
       if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
       else
