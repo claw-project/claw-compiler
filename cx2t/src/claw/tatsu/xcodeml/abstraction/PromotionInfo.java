@@ -21,6 +21,8 @@ public class PromotionInfo {
   private String _targetType;
   private List<DimensionDefinition> _dimensions;
   private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
+  private boolean _referenceAdapted = false;
+  private boolean _allocateAdapted = false;
 
   /**
    * Default ctor. Used for global promotion information not attached to a
@@ -228,7 +230,45 @@ public class PromotionInfo {
   }
 
   /**
-   * @param rawValue
+   * Check if the references associated with this promotion have been adapted
+   * already.
+   *
+   * @return True if the references were adapted. False otherwise.
+   */
+  public boolean isRefAdapted() {
+    return _referenceAdapted;
+  }
+
+  /**
+   * Flag that the references associated with this promotion have been
+   * adapted.
+   */
+  public void setRefAdapted() {
+    _referenceAdapted = true;
+  }
+
+  /**
+   * Check if the allocate statements associated with this promotion have been
+   * adapted already.
+   *
+   * @return True if the references were adapted. False otherwise.
+   */
+  public boolean isAllocateAdapted() {
+    return _allocateAdapted;
+  }
+
+  /**
+   * Flag that the allocate statements associated with this promotion have been
+   * adapted.
+   */
+  public void setAllocateAdapted() {
+    _allocateAdapted = true;
+  }
+
+  /**
+   * Read the dimension information from a raw string.
+   *
+   * @param rawValue Raw string representation of the dimension information.
    */
   public void readDimensionsFromString(String rawValue) {
     _dimensions = new ArrayList<>();

@@ -210,6 +210,11 @@ public final class Field {
                                    XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
+
+    if(promotionInfo.isAllocateAdapted()) {
+      return;
+    }
+
     String arrayName = promotionInfo.getIdentifier();
     // Look through all allocate statements
     for(Xnode allocatedStmt : parent.matchAll(Xcode.F_ALLOCATE_STATEMENT)) {
@@ -243,6 +248,7 @@ public final class Field {
         }
       }
     }
+    promotionInfo.setAllocateAdapted();
   }
 
   /**
@@ -374,6 +380,10 @@ public final class Field {
   public static void adaptArrayRef(PromotionInfo promotionInfo, Xnode parent,
                                    XcodeProgram xcodeml)
   {
+    if(promotionInfo.isRefAdapted()) {
+      return;
+    }
+
     // Scalar to array reference
     if(promotionInfo.wasScalar()) {
       List<Xnode> refs =
@@ -422,28 +432,6 @@ public final class Field {
         }
       }
     }
-  }
-
-  /**
-   * Adapt all the array references of the variable in the data clause in the
-   * current function/subroutine definition.
-   *
-   * @param ids   List of array identifiers that must be adapted.
-   * @param index Index designing the correct over clause to be used.
-   */
-  public static void adaptArrayReferences(List<String> ids, int index,
-                                          Xnode parent,
-                                          Map<String, PromotionInfo> promotions,
-                                          List<List<Xnode>> beforeCrt,
-                                          List<List<Xnode>> inMiddle,
-                                          List<List<Xnode>> afterCrt,
-                                          XcodeProgram xcodeml)
-  {
-    // TODO get rid of beforeCrt, inMiddle and afterCrt. Should be read from
-    // promotion info
-    for(String id : ids) {
-      PromotionInfo promotionInfo = promotions.get(id);
-      Field.adaptArrayRef(promotionInfo, parent, xcodeml);
-    }
+    promotionInfo.setRefAdapted();
   }
 }
