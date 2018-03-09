@@ -177,7 +177,7 @@ for input_file in "${f_files[@]}"; do
     if [[ "${num_directives}" == "0" ]] &&
       [[ "${num_omp_compile_guard}" == "0" ]] &&
       [[ "${num_acc_compile_guard}" == "0" ]]; then
-      claw::warning "${input_file}" "-" "file does not contains \$claw. Skip..."
+      claw::warning "${input_file}" "-" "-" "file does not contains \$claw. Skip..."
       if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
       else
@@ -224,7 +224,7 @@ for input_file in "${f_files_transformation[@]}"; do
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" >"${file_pp2}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > "${file_pp2}"
 
       mv "${file_pp2}" "${file_pp}"
     else

@@ -7,19 +7,19 @@ matrix:
   include:
   - compiler: gcc
     env:
-    - CXX_COMPILER=g++-4.9
-    - CC_COMPILER=gcc-4.9
-    - FC_COMPILER=gfortran-4.9
-    - OMPI_CC=gcc-4.9
-    - OMPI_FC=gfortran-4.9
+    - CXX_COMPILER=g++-5
+    - CC_COMPILER=gcc-5
+    - FC_COMPILER=gfortran-5
+    - OMPI_CC=gcc-5
+    - OMPI_FC=gfortran-5
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
         packages:
-        - gcc-4.9
-        - g++-4.9
-        - gfortran-4.9
+        - gcc-5
+        - g++-5
+        - gfortran-5
         - ant
         - ant-optional
         - cabal-install

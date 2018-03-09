@@ -8,9 +8,8 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Body;
-import claw.tatsu.primitive.Field;
-import claw.tatsu.primitive.Module;
+import claw.tatsu.primitive.*;
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
@@ -414,7 +413,8 @@ public class Parallelize extends ClawTransformation {
             Directive.findParallelRegionEnd(_fctDef, null);
 
         // Define a hook from where we can insert the new do statement
-        Xnode hook = parallelRegionEnd.nextSibling();
+        Xnode hook = parallelRegionEnd != null
+            ? parallelRegionEnd.nextSibling() : null;
         Body.shiftIn(parallelRegionStart, parallelRegionEnd,
             loops.getInnerStatement().body(), true);
 
@@ -486,22 +486,59 @@ public class Parallelize extends ClawTransformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-    List<Xnode> assignStatements =
-        _fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT);
+    List<AssignStatement> assignStatements =
+        Function.gatherAssignStatements(_fctDef);
 
-    for(Xnode assign : assignStatements) {
-      Xnode lhs = assign.child(Xnode.LHS);
-      String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.value() :
-          lhs.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
-      NestedDoStatement loops = null;
-      if(lhs.opcode() == Xcode.F_ARRAY_REF &&
-          _arrayFieldsInOut.contains(lhsName))
+    Set<Xnode> hooks = new HashSet<>();
+
+    for(AssignStatement assign : assignStatements) {
+      Xnode lhs = assign.getLhs();
+      String lhsName = assign.getLhsName();
+      boolean wrapInDoStatement = true;
+
+      // Check if assignment is dependant of an if statement.
+      if(assign.isChildOf(Xcode.F_IF_STATEMENT)) {
+
+        // Gather all potential ancestor if statements
+        List<Xnode> ifStatements = assign.matchAllAncestor(Xcode.F_IF_STATEMENT,
+            Xcode.F_FUNCTION_DEFINITION);
+
+        Xnode hookIfStmt = null;
+        for(Xnode ifStmt : ifStatements) {
+          if(Condition.dependsOn(
+              ifStmt.matchDirectDescendant(Xcode.CONDITION),
+              assign.getVarRefNames()))
+          {
+            // Have to put the do statement around the if as the assignment
+            // is conditional as well.
+            hookIfStmt = ifStmt;
+          }
+        }
+
+        if(hookIfStmt != null) {
+          wrapInDoStatement = false;
+          Iterator<Xnode> iter = hooks.iterator();
+          while (iter.hasNext()) {
+            if(iter.next().isNestedIn(hookIfStmt)) {
+              iter.remove();
+            }
+          }
+          hooks.add(hookIfStmt);
+        } else {
+          Iterator<Xnode> iter = hooks.iterator();
+          while (iter.hasNext()) {
+            if(assign.isNestedIn(iter.next())) {
+              wrapInDoStatement = false;
+              break;
+            }
+          }
+        }
+      }
+
+      if(lhs.opcode() == Xcode.F_ARRAY_REF
+          && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
       {
-        loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
-            xcodeml);
-        assign.insertAfter(loops.getOuterStatement());
-        loops.getInnerStatement().body().append(assign, true);
-        assign.delete();
+        hooks.add(assign);
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
           && _scalarFields.contains(lhsName))
       {
@@ -525,19 +562,23 @@ public class Parallelize extends ClawTransformation {
             Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
                 xcodeml);
           }
-          loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
-              xcodeml);
-          assign.insertAfter(loops.getOuterStatement());
-          loops.getInnerStatement().body().append(assign, true);
-          assign.delete();
+          if(wrapInDoStatement) {
+            hooks.add(assign);
+          }
         }
       }
-      if(loops != null) {
-        // Generate the corresponding directive around the loop
-        Directive.generateLoopDirectives(xcodeml,
-            loops.getOuterStatement(), loops.getOuterStatement(),
-            Directive.NO_COLLAPSE);
-      }
+    }
+
+    // Generate loops around statements flagged in previous stage
+    for(Xnode hook : hooks) {
+      NestedDoStatement loops =
+          new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+      hook.insertAfter(loops.getOuterStatement());
+      loops.getInnerStatement().body().append(hook, true);
+      hook.delete();
+      Directive.generateLoopDirectives(xcodeml,
+          loops.getOuterStatement(), loops.getOuterStatement(),
+          Directive.NO_COLLAPSE);
     }
 
     // Generate the parallel region
