@@ -7,19 +7,57 @@ matrix:
   include:
   - compiler: gcc
     env:
-    - CXX_COMPILER=g++-4.9
-    - CC_COMPILER=gcc-4.9
-    - FC_COMPILER=gfortran-4.9
-    - OMPI_CC=gcc-4.9
-    - OMPI_FC=gfortran-4.9
+    - CXX_COMPILER=g++-5
+    - CC_COMPILER=gcc-5
+    - FC_COMPILER=gfortran-5
+    - OMPI_CC=gcc-5
+    - OMPI_FC=gfortran-5
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
         packages:
-        - gcc-4.9
-        - g++-4.9
-        - gfortran-4.9
+        - gcc-5
+        - g++-5
+        - gfortran-5
+        - ant
+        - ant-optional
+        - cabal-install
+        - ghc
+  - compiler: gcc
+    env:
+    - CXX_COMPILER=g++-6
+    - CC_COMPILER=gcc-6
+    - FC_COMPILER=gfortran-6
+    - OMPI_CC=gcc-6
+    - OMPI_FC=gfortran-6
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-6
+        - g++-6
+        - gfortran-6
+        - ant
+        - ant-optional
+        - cabal-install
+        - ghc
+  - compiler: gcc
+    env:
+    - CXX_COMPILER=g++-7
+    - CC_COMPILER=gcc-7
+    - FC_COMPILER=gfortran-7
+    - OMPI_CC=gcc-7
+    - OMPI_FC=gfortran-7
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-7
+        - g++-7
+        - gfortran-7
         - ant
         - ant-optional
         - cabal-install

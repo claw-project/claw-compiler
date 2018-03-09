@@ -448,9 +448,15 @@ public class Xnode {
    * @return Ancestor node if any. Null otherwise.
    */
   public Xnode ancestor() {
-    if(_baseElement == null) {
+    if(_baseElement == null || _baseElement.getParentNode() == null) {
       return null;
     }
+
+    // Reach document root stop here
+    if(_baseElement.getParentNode().getNodeType() == Node.DOCUMENT_NODE) {
+      return null;
+    }
+
     return new Xnode((Element) _baseElement.getParentNode());
   }
 
@@ -519,6 +525,40 @@ public class Xnode {
    */
   public Xnode matchSibling(Xcode opcode) {
     return universalMatch(opcode, true);
+  }
+
+  /**
+   * Find nodes with the given opcode in the ancestors of the current node.
+   *
+   * @param opcode Opcode of the node to be matched.
+   * @return List of matched node. Empty list if nothing matched.
+   */
+  public List<Xnode> matchAllAncestor(Xcode opcode) {
+    return matchAllAncestor(opcode, null);
+  }
+
+  /**
+   * Find nodes with the given opcode in the ancestors of the current node.
+   *
+   * @param opcode   Opcode of the node to be matched.
+   * @param stopCode Stop searching if given opcode is reached. If null, search
+   *                 until root node.
+   * @return List of matched node. Empty list if nothing matched.
+   */
+  public List<Xnode> matchAllAncestor(Xcode opcode, Xcode stopCode) {
+    List<Xnode> statements = new ArrayList<>();
+    Xnode crt = this;
+    while(crt != null && crt.ancestor() != null) {
+      if(crt.ancestor().opcode() == opcode) {
+        statements.add(crt.ancestor());
+      }
+      // Stop searching when FfunctionDefinition is reached
+      if(stopCode != null && crt.ancestor().opcode() == stopCode) {
+        return statements;
+      }
+      crt = crt.ancestor();
+    }
+    return statements;
   }
 
   /**
@@ -759,12 +799,6 @@ public class Xnode {
     return false;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return !(obj == null || !(obj instanceof Xnode))
-        && element() == ((Xnode) obj).element();
-  }
-
   /**
    * Return type hash associated with this node if any.
    *
@@ -924,5 +958,16 @@ public class Xnode {
   public String toString() {
     return String.format("%s (children: %d)", opcode().code(),
         children().size());
+  }
+
+  @Override
+  public int hashCode() {
+    return _baseElement.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    return !(o == null || !(o instanceof Xnode))
+        && element() == ((Xnode) o).element();
   }
 }

@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -13,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.*;
 
 /**
@@ -275,5 +278,33 @@ public class XnodeTest {
     n1.copyEnhancedInfo(n2);
     assertEquals(1, n2.lineNo());
     assertEquals(filename, n2.filename());
+  }
+
+  @Test
+  public void matchAllAncestorTest() {
+    XcodeProgram xcodeml =
+        XcodeProgram.createFromFile(TestConstant.TEST_ASSIGN_STMT2);
+    assertNotNull(xcodeml);
+
+    List<Xnode> nodes = xcodeml.matchAll(Xcode.F_ASSIGN_STATEMENT);
+    assertEquals(4, nodes.size());
+
+    List<Xnode> matches1 = nodes.get(0).matchAllAncestor(Xcode.F_IF_STATEMENT,
+        Xcode.F_FUNCTION_DEFINITION);
+    List<Xnode> matches2 = nodes.get(0).matchAllAncestor(Xcode.F_IF_STATEMENT);
+    assertEquals(2, matches1.size());
+    assertEquals(2, matches2.size());
+
+    matches1 = nodes.get(1).matchAllAncestor(Xcode.F_IF_STATEMENT,
+        Xcode.F_FUNCTION_DEFINITION);
+    matches2 = nodes.get(1).matchAllAncestor(Xcode.F_IF_STATEMENT);
+    assertEquals(2, matches1.size());
+    assertEquals(2, matches2.size());
+
+    matches1 = nodes.get(3).matchAllAncestor(Xcode.F_IF_STATEMENT,
+        Xcode.F_FUNCTION_DEFINITION);
+    matches2 = nodes.get(3).matchAllAncestor(Xcode.F_IF_STATEMENT);
+    assertEquals(0, matches1.size());
+    assertEquals(0, matches2.size());
   }
 }
