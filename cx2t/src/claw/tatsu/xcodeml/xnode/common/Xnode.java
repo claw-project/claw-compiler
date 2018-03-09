@@ -968,6 +968,6 @@ public class Xnode {
   @Override
   public boolean equals(Object o) {
     return !(o == null || !(o instanceof Xnode))
-        && _baseElement.equals(o);
+        && element() == ((Xnode) o).element();
   }
 }
