@@ -524,6 +524,14 @@ public class Parallelize extends ClawTransformation {
             }
           }
           hooks.add(hookIfStmt);
+        } else {
+          Iterator<Xnode> iter = hooks.iterator();
+          while (iter.hasNext()) {
+            if(assign.isNestedIn(iter.next())) {
+              wrapInDoStatement = false;
+              break;
+            }
+          }
         }
       }
 
