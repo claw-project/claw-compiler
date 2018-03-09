@@ -15,7 +15,6 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Primitive transformation and test applied to fields. This included:
@@ -208,9 +207,7 @@ public final class Field {
    */
   public static void adaptAllocate(PromotionInfo promotionInfo, Xnode parent,
                                    XcodeProgram xcodeml)
-      throws IllegalTransformationException
   {
-
     if(promotionInfo.isAllocateAdapted()) {
       return;
     }
