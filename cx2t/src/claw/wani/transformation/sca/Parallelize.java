@@ -517,21 +517,31 @@ public class Parallelize extends ClawTransformation {
 
         if(hookIfStmt != null) {
           wrapInDoStatement = false;
+          boolean addIfHook = true;
+
+          // Get rid of previously flagged hook in this if body.
           Iterator<Xnode> iter = hooks.iterator();
           while (iter.hasNext()) {
-            if(iter.next().isNestedIn(hookIfStmt)) {
+            Xnode crt = iter.next();
+            if(assign.isNestedIn(crt)) {
+              addIfHook = false;
+            }
+            if(crt.isNestedIn(hookIfStmt)) {
               iter.remove();
             }
           }
-          hooks.add(hookIfStmt);
-        } else {
-          Iterator<Xnode> iter = hooks.iterator();
-          while (iter.hasNext()) {
-            if(assign.isNestedIn(iter.next())) {
-              wrapInDoStatement = false;
-              break;
-            }
+
+          if(addIfHook) {
+            hooks.add(hookIfStmt);
           }
+        }
+      }
+
+      Iterator<Xnode> iter = hooks.iterator();
+      while (iter.hasNext()) {
+        if(assign.isNestedIn(iter.next())) {
+          wrapInDoStatement = false;
+          break;
         }
       }
 
