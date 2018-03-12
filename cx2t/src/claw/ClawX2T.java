@@ -286,7 +286,7 @@ public class ClawX2T {
     ClawTranslatorDriver translatorDriver;
 
     // Call the translator driver to apply transformation on XcodeML/F
-    if(recipeScript != null){
+    if(recipeScript != null) {
       // Transformation is to be performed by Python script
       translatorDriver = 
           new ClawPythonTranslatorDriver(recipeScript, input, xcmlOutput);
@@ -302,7 +302,7 @@ public class ClawX2T {
     if(recipeScript == null && cmd.hasOption("r")) {
       ClawTransformationReport report =
           new ClawTransformationReport(cmd.getOptionValue("r"));
-      report.generate(args, (ClawTranslatorDriver)translatorDriver);
+      report.generate(args, translatorDriver);
     }
 
     // Decompile XcodeML/F to target language

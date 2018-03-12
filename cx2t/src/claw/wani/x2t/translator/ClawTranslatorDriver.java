@@ -47,7 +47,6 @@ public class ClawTranslatorDriver {
    */
   public ClawTranslatorDriver()
   {
-
   }
 
   /**
