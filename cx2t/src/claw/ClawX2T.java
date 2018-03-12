@@ -11,8 +11,8 @@ import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.translator.ClawTranslatorDriver;
 import claw.wani.x2t.translator.ClawPythonTranslatorDriver;
+import claw.wani.x2t.translator.ClawTranslatorDriver;
 import exc.xcodeml.XcodeMLtools_Fmod;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
@@ -115,7 +115,7 @@ public class ClawX2T {
     options.addOption("r", "report", true,
         "generate the transformation report.");
     options.addOption("script", "python-script", true,
-                      "Python optimisation script to apply (requires Jython)");
+        "Python optimisation script to apply (requires Jython)");
     return options;
   }
 
@@ -241,9 +241,9 @@ public class ClawX2T {
       Configuration.get().displayConfig();
       return;
     }
-    
+
     if(cmd.hasOption("script")) {
-       recipeScript = cmd.getOptionValue("script");
+      recipeScript = cmd.getOptionValue("script");
     }
 
     // Get the input XcodeML file to transform
@@ -288,9 +288,8 @@ public class ClawX2T {
     // Call the translator driver to apply transformation on XcodeML/F
     if(recipeScript != null) {
       // Transformation is to be performed by Python script
-      translatorDriver = 
+      translatorDriver =
           new ClawPythonTranslatorDriver(recipeScript, input, xcmlOutput);
-
     } else {
       translatorDriver = new ClawTranslatorDriver(input, xcmlOutput);
     }
