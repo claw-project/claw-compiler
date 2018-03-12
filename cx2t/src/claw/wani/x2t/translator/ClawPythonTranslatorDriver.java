@@ -21,17 +21,14 @@ public class ClawPythonTranslatorDriver extends ClawTranslatorDriver {
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
    */
-  public ClawPythonTranslatorDriver(String transScript,
-                                    String xcodemlInputFile,
+  public ClawPythonTranslatorDriver(String transScript, String xcodemlInputFile,
                                     String xcodemlOutputFile)
-      throws Exception
   {
     _transformScript = transScript;
     _xcodemlInputFile = xcodemlInputFile;
     _xcodemlOutputFile = xcodemlOutputFile;
 
     System.out.println("Creating factory object");
-
   }
 
   /**
@@ -48,5 +45,4 @@ public class ClawPythonTranslatorDriver extends ClawTranslatorDriver {
   public void transform()
   {
   }
-
 }
