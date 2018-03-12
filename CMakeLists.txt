@@ -68,6 +68,11 @@ message(
 # Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
 # specific version of OMNI Compiler at the moment.
 option(BUILD_OMNI "Build OMNI Compiler" ON)
+option(OMNI_ENABLE_GNU_INTRINSIC "OMNI Compiler - Enable GNU intrinsic extensions" ON)
+
+if(OMNI_ENABLE_GNU_INTRINSIC)
+  list(APPEND OMNI_CONF_OPTION "--enable-gnu-extension")
+endif()
 
 # Build OMNI compiler
 if(BUILD_OMNI)
