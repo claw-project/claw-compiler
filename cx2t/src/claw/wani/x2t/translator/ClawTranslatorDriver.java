@@ -35,11 +35,19 @@ import java.util.Map;
  */
 public class ClawTranslatorDriver {
 
-  private String _xcodemlInputFile = null;
-  private String _xcodemlOutputFile = null;
-  private boolean _canTransform = false;
-  private ClawTranslator _translator = null;
-  private XcodeProgram _translationUnit = null;
+  protected String _xcodemlInputFile = null;
+  protected String _xcodemlOutputFile = null;
+  protected boolean _canTransform = false;
+  protected ClawTranslator _translator = null;
+  protected XcodeProgram _translationUnit = null;
+
+  /**
+   * Parameterless constructor does nothing. Added so that constructors
+   * of classes that extend this one don't have to worry.
+   */
+  public ClawTranslatorDriver()
+  {
+  }
 
   /**
    * ClawTranslatorDriver ctor.
