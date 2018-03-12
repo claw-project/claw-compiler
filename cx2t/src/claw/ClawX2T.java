@@ -290,7 +290,6 @@ public class ClawX2T {
       // Transformation is to be performed by Python script
       translatorDriver =
           new ClawPythonTranslatorDriver(recipeScript, input, xcmlOutput);
-
     } else {
       translatorDriver = new ClawTranslatorDriver(input, xcmlOutput);
     }
