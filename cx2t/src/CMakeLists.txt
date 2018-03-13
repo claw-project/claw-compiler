@@ -40,6 +40,18 @@ if(NOT OFFLINE)
   add_dependencies(omni-claw omni-claw-init)
 endif()
 
+# Compile Jython-dependent plugin
+add_custom_target(jython-plugin)
+add_custom_command(
+  TARGET jython-plugin
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+  ${ANT_FLAGS}
+  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Djython.dir=${CMAKE_JYTHON_DIR} jython-plugin
+  COMMENT "Building Jython plugin"
+)
+
 # Install JAR files
 install(
   FILES

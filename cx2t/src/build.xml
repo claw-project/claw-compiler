@@ -86,11 +86,17 @@
              includes="external/**"/>
     </target>
 
+    <target name="jython-plugin" description="Create JAR for Python plugin">
+      <jar jarfile="${dist.dir}/${claw.python.jar}" basedir="${build.dir}"
+	   includes="claw/python/PythonFactory.class"/>
+    </target>
+
     <target name="clean" description="clean up">
         <delete dir="${build.dir}"/>
         <delete file="${dist.dir}/${claw.tatsu.jar}"/>
         <delete file="${dist.dir}/${claw.shenron.jar}"/>
         <delete file="${dist.dir}/${claw.wani.jar}"/>
+        <delete file="${dist.dir}/${claw.python.jar}"/>
         <delete file="${dist.dir}/${external.jar}"/>
     </target>
 
