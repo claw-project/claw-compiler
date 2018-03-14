@@ -92,7 +92,7 @@ public final class Loop {
   /**
    * Perform a do statements reordering based on the new order specified by
    * induction variables.
-   * <p>
+   *
    * i,j,k &rarr; k,j,i
    *
    * @param nestedGroup          The nested group of do statements to be

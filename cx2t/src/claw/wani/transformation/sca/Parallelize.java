@@ -28,14 +28,14 @@ import java.util.*;
  * The Single Column Abstraction (SCA) transformation transforms the code
  * contained in a subroutine/function by adding necessary dimensions and
  * parallelism to the defined data.
- * <p>
+ *
  * Transformation for the GPU target: <ul>
  * <li> Automatic promotion is applied to all arrays with intent in, out or
  * inout.
  * <li> Do statements over the additional dimensions is added as an outer
  * loop and wrap the entire body of the subroutine.
  * </ul>
- * <p>
+ *
  * Transformation for the CPU target: <ul>
  * <li> Automatic promotion is applied to all arrays with intent in, out or
  * inout.
@@ -45,7 +45,7 @@ import java.util.*;
  * <li> Do statements over the additional dimensions are added as an inner
  * loop wrapping each assign statements including promoted variables.
  * </ul>
- * <p>
+ *
  * Generation of OpenACC directives:<ul>
  * <li> acc routine seq is generated for subroutine called from the parallelized
  * subroutine if they are located in the same translation unit.
@@ -57,7 +57,7 @@ import java.util.*;
  * <li> acc loop is generated for the generated do statement.
  * <li> acc loop seq is generated for already existing do statements.
  * </ul>
- * <p>
+ *
  * Generation of OpenMP directives: <ul>
  * <li> omp parallel do is generated for each generated do statements.
  * </ul>

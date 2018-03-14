@@ -7,7 +7,7 @@ package claw.tatsu.xcodeml.xnode;
 /**
  * Xname class contains all element and attributes values that can be
  * found in the XcodeML/F intermediate representation language.
- * <p>
+ *
  * All members of this class are immutable.
  *
  * @author clementval

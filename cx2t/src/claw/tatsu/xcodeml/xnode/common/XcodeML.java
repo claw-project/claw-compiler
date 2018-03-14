@@ -309,7 +309,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Constructs a new name node with name value and optional type.
-   * <p>
+   *
    * {@code
    * <name type="type">value</name>
    * }
@@ -401,7 +401,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new namedValue node with its attribute.
-   * <p>
+   *
    * {@code
    * <namedValue name="value"></namedValue>
    * }
@@ -417,7 +417,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new var node.
-   * <p>
+   *
    * {@code
    * <Var type="type" scope="scope">value</Var>
    * }
@@ -433,7 +433,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new var node.
-   * <p>
+   *
    * {@code
    * <Var type="type" scope="scope">value</Var>
    * }
@@ -453,7 +453,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new functionCall node with name and arguments as children nodes.
-   * <p>
+   *
    * {@code
    * <functionCall type="returnType">
    * <name type="fctType">fctName</name>
@@ -481,7 +481,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new FfunctionType with empty params child.
-   * <p>
+   *
    * {@code
    * <functionCall type="returnType">
    * <name type="fctType">fctName</name>
@@ -501,7 +501,7 @@ public class XcodeML extends Xnode {
   /**
    * Create a new FarrayRef node with varRef node as a child with the
    * given Var element.
-   * <p>
+   *
    * {@code
    * <FarrayRef type="type">
    * <varRef type="">
@@ -526,7 +526,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new Id node with all the underlying needed node and attributes.
-   * <p>
+   *
    * {@code
    * <id type="type" sclass="sclass">idValue</id>
    * }
@@ -542,7 +542,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new Id node with all the underlying needed node and attributes.
-   * <p>
+   *
    * {@code
    * <id type="type" sclass="sclass">idValue</id>
    * }
@@ -564,7 +564,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new varDecl node with all the mandatory nodes.
-   * <p>
+   *
    * {@code
    * <varDecl>
    * <name type="varType">varId</name>
@@ -581,7 +581,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new varDecl node with all the mandatory nodes.
-   * <p>
+   *
    * {@code
    * <varDecl>
    * <name type="varType">varId</name>
@@ -603,7 +603,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Constructs a new basicType node with attributes.
-   * <p>
+   *
    * {@code
    * <FbasicType type="type" ref="ref" intent="intent"/>
    * }
@@ -620,7 +620,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Constructs a new basicType node with attributes.
-   * <p>
+   *
    * {@code
    * <FbasicType type="type" ref="ref" intent="intent"/>
    * }
@@ -644,7 +644,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create an empty assumed shape indexRange node.
-   * <p>
+   *
    * {@code
    * <indexRange is_assumed_shape="true"></indexRange>
    * }
@@ -799,7 +799,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a print statement with the given char constants.
-   * <p>
+   *
    * {@code
    * <FprintStatement format="format">
    * <valueList>
@@ -842,7 +842,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a FintConstant node with the given value.
-   * <p>
+   *
    * {@code
    * <FintConstant type="Fint">value</FintConstant>
    * }
@@ -861,7 +861,7 @@ public class XcodeML extends Xnode {
    * Create a list of FpragmaStatement with correct line continuation symbols.
    * Initial value is splitted according to the max column information. This is
    * done as the OMNI Compiler backend doesn't split the FpragmaElement.
-   * <p>
+   *
    * Supports acc, omp and claw prefix
    *
    * @param value     Value of the FpragmaStatement.

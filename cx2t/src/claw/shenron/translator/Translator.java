@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Translator interface
- * <p>
+ *
  * Translator stores all the transformation to be applied by a translator.
  *
  * @author clementval

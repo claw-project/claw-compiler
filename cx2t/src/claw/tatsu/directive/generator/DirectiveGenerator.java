@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Interface for directive directive generator.
- * <p>
+ *
  * TODO interface might need some refinements when we have a better idea of
  * TODO OpenACC vs OpenMP
  *

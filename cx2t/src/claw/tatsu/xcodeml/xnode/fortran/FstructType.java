@@ -9,10 +9,10 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 /**
  * The FstructType class represents the FstructType (3.5) element in XcodeML/F.
- * <p>
+ *
  * Elements: (params?)
  * - Optional: typeParams, symbols, typeBoundProcedures
- * <p>
+ *
  * Attributes:
  * - Required: type (text)
  * - Optional: is_public (bool), is_private (bool), is_sequence (bool),
