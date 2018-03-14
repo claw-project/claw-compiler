@@ -25,9 +25,9 @@ import claw.wani.x2t.configuration.openacc.OpenAccLocalStrategy;
 import java.util.*;
 
 /**
- * The one_column transformation transforms the code contained in a
- * subroutine/function by adding necessary dimensions and parallelism to the
- * defined data.
+ * The Single Column Abstraction (SCA) transformation transforms the code
+ * contained in a subroutine/function by adding necessary dimensions and
+ * parallelism to the defined data.
  * <p>
  * Transformation for the GPU target: <ul>
  * <li> Automatic promotion is applied to all arrays with intent in, out or
