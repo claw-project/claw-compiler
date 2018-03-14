@@ -1,76 +1,100 @@
-# Ubuntu 14.04 Trusty support
 sudo: required
 dist: trusty
 language: cpp
-
-# Disable the default submodule logic
 git:
   submodules: false
-
-# Configuration matrix
 matrix:
   include:
-    - compiler: gcc
-      env:
-        - CXX_COMPILER=g++-4.9
-        - CC_COMPILER=gcc-4.9
-        - FC_COMPILER=gfortran-4.9
-        - OMPI_CC=gcc-4.9
-        - OMPI_FC=gfortran-4.9
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-4.9
-            - g++-4.9
-            - gfortran-4.9
-            - ant
-            - ant-optional
-            - cabal-install
-            - ghc
-
-# Save shellcheck installation in cache
+  - compiler: gcc
+    env:
+    - CXX_COMPILER=g++-5
+    - CC_COMPILER=gcc-5
+    - FC_COMPILER=gfortran-5
+    - OMPI_CC=gcc-5
+    - OMPI_FC=gfortran-5
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-5
+        - g++-5
+        - gfortran-5
+        - ant
+        - ant-optional
+        - cabal-install
+        - ghc
+  - compiler: gcc
+    env:
+    - CXX_COMPILER=g++-6
+    - CC_COMPILER=gcc-6
+    - FC_COMPILER=gfortran-6
+    - OMPI_CC=gcc-6
+    - OMPI_FC=gfortran-6
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-6
+        - g++-6
+        - gfortran-6
+        - ant
+        - ant-optional
+        - cabal-install
+        - ghc
+  - compiler: gcc
+    env:
+    - CXX_COMPILER=g++-7
+    - CC_COMPILER=gcc-7
+    - FC_COMPILER=gfortran-7
+    - OMPI_CC=gcc-7
+    - OMPI_FC=gfortran-7
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-7
+        - g++-7
+        - gfortran-7
+        - ant
+        - ant-optional
+        - cabal-install
+        - ghc
 cache:
   directories:
-    - $HOME/.ghc
-    - $HOME/.cabal
-    - $HOME/.stack
-
-# Fetch submodule for omni-compiler repository and install dependencies
+  - "$HOME/.ghc"
+  - "$HOME/.cabal"
+  - "$HOME/.stack"
 before_install:
-  - git submodule init
-  - git submodule update
-  - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
-  - cabal update && cabal install ShellCheck
-  - export PATH=$PATH:$HOME/.cabal/bin
-  - shellcheck --version
-
-# Export compiler variables
+- git submodule init
+- git submodule update
+- travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
+- cabal update && cabal install ShellCheck
+- export PATH=$PATH:$HOME/.cabal/bin
+- shellcheck --version
 before_script:
-  - export FC=$FC_COMPILER
-  - export CC=$CC_COMPILER
-  - export CXX=$CXX_COMPILER
-  - export OMPI_CC
-  - export OMPI_FC
-
-# Build CLAW FORTRAN Compiler and execute the test suite
+- export FC=$FC_COMPILER
+- export CC=$CC_COMPILER
+- export CXX=$CXX_COMPILER
+- export OMPI_CC
+- export OMPI_FC
 script:
-  - mkdir build
-  - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
-  - make
-  - make install
-  - make clean-transformation transformation test
-  - cd -
-  - ./scripts/check_license # Check license header in sources files
-  - ./scripts/check_author # Check license header in sources files
-  - cd scripts
-  - ./run.shellcheck        # Check shell scripts with shellcheck
-
-# Notification settings
+- mkdir build
+- cd build
+- cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw .. && make
+- make
+- make install
+- make clean-transformation transformation test
+- cd -
+- "./scripts/check_license"
+- "./scripts/check_author"
+- cd scripts
+- "./run.shellcheck"
 notifications:
-  slack: meteoswiss-apn:FFUYLitE3BsncqECl4RqlfHP
+  slack:
+    secure: NTIZzmDqsxEInCI7hwFB7uQZXWNTRHkGWIYZO5ZOr+2Tyksrff1j+vEGmHXwtbbFs4OgDTKz8uGfePsBrTdcUmGkMM7QdQm1pkWaA4VU4MJtviOiHkomypURBI3kwofhohRa7mvvAdiWcECkHGgZqtQYVTJve8LcgutNo2Zv0a0d9piTVCugyh3ONP/MvTSt/wRZ1Tkl59pXBpWCsbRDxZzoSh4feohPNwXtIvcvGBPy4jG14rDvrX3FIxFr56/RmBC89ldJuWkSIRHnTR3pm44W8PEduJ55hr+9EvDIDJJmIqlcanAJjbLBT8DZhXA3JbVoz6qF6t4I9daRK29jjaP6AVmPN61NOxL2HzzGTLl5X/7bEQQilBI8i3208jsIA53ZZmEzDkdu52SKUAEEQxEtrdo8ACvkav377MuuCX/LnmWNbvMlNEPmyKLwZNZaBas3s+ANoU1pMe92zw8oaG0MAxB9K2ejZcvwHDwSvXcTbZ5JXdYfmROyPLINf3s8uLJJaDMPLIPROOHMnGRIekLhUd4ELD1mLpPFqa0Z97xr0lIonAQqF2OedL9yCcX97ZDvooKARD0HRL9aqHeuc97RQsQAT1Y1wZ1zoEdZyX/I2338jmpnk2VIEyFH/rm8/OMgbIpHNo6eKIjLoozm8s3VHphl+FItLCdfBJWFVsE=
   email:
     on_success: never
     on_failure: always

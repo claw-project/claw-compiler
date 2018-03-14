@@ -35,11 +35,18 @@ import java.util.Map;
  */
 public class ClawTranslatorDriver {
 
-  private String _xcodemlInputFile = null;
-  private String _xcodemlOutputFile = null;
+  String _xcodemlInputFile = null;
+  String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
   private ClawTranslator _translator = null;
   private XcodeProgram _translationUnit = null;
+
+  /**
+   * Default ctor for child classes.
+   */
+  ClawTranslatorDriver()
+  {
+  }
 
   /**
    * ClawTranslatorDriver ctor.

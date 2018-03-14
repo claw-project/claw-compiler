@@ -31,10 +31,10 @@ function(omni_generate_xmod)
     add_custom_command(
       TARGET ${omni_generate_xmod_TARGET}
       COMMAND ${CMAKE_Fortran_COMPILER} ${FPP_ARG_LIST}
-        ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE} > /dev/null
       COMMAND
         ${OMNI_F_FRONT} -M${CMAKE_CURRENT_BINARY_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}/"${CRAY_PP_OUTPUT}.i"
+        ${CMAKE_CURRENT_BINARY_DIR}/"${CRAY_PP_OUTPUT}.i" > /dev/null
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE}
       COMMENT "Generating .xmod file for ${omni_generate_xmod_SOURCE}"
     )

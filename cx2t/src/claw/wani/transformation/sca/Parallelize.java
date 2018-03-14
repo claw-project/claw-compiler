@@ -8,9 +8,8 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Body;
-import claw.tatsu.primitive.Field;
-import claw.tatsu.primitive.Module;
+import claw.tatsu.primitive.*;
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
@@ -352,8 +351,13 @@ public class Parallelize extends ClawTransformation {
     // Apply specific target transformation
     if(Context.get().getTarget() == Target.GPU) {
       transformForGPU(xcodeml);
-    } else if(Context.get().getTarget() == Target.CPU) {
+    } else if(Context.get().getTarget() == Target.CPU
+        || Context.get().getTarget() == Target.ARM)
+    {
       transformForCPU(xcodeml);
+    } else {
+      throw new IllegalTransformationException("Unsupported target " +
+          Context.get().getTarget(), _claw.getPragma().lineNo());
     }
 
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
@@ -377,90 +381,93 @@ public class Parallelize extends ClawTransformation {
     int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
         CompilerDirective.CLAW.getPrefix() + " nodep");
 
-    /* Create a nested loop with the new defined dimensions and wrap it around
-     * the whole subroutine's body. This is for the moment a really naive
-     * transformation idea but it is our start point.
-     * Use the first over clause to create it. */
-    NestedDoStatement loops =
-        new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+    if(!Body.isEmpty(_fctDef.body())) {
+      /* Create a nested loop with the new defined dimensions and wrap it around
+       * the whole subroutine's body. This is for the moment a really naive
+       * transformation idea but it is our start point.
+       * Use the first over clause to create it. */
+      NestedDoStatement loops =
+          new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
 
-    /* Subroutine/function can have a contains section with inner subroutines or
-     * functions. The newly created (nested) do statements should stop before
-     * this contains section if it exists. */
-    Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
-    if(contains != null) {
+      /* Subroutine/function can have a contains section with inner subroutines or
+       * functions. The newly created (nested) do statements should stop before
+       * this contains section if it exists. */
+      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
+      if(contains != null) {
 
-      Xnode parallelRegionStart =
-          Directive.findParallelRegionStart(_fctDef, null);
-      Xnode parallelRegionEnd =
-          Directive.findParallelRegionEnd(_fctDef, contains);
+        Xnode parallelRegionStart =
+            Directive.findParallelRegionStart(_fctDef, null);
+        Xnode parallelRegionEnd =
+            Directive.findParallelRegionEnd(_fctDef, contains);
 
-      Body.shiftIn(parallelRegionStart, parallelRegionEnd,
-          loops.getInnerStatement().body(), true);
+        Body.shiftIn(parallelRegionStart, parallelRegionEnd,
+            loops.getInnerStatement().body(), true);
 
-      contains.insertBefore(loops.getOuterStatement());
-    } else {
-      // No contains section, all the body is copied to the do statements.
-
-      Xnode parallelRegionStart =
-          Directive.findParallelRegionStart(_fctDef, null);
-      Xnode parallelRegionEnd =
-          Directive.findParallelRegionEnd(_fctDef, null);
-
-      // Define a hook from where we can insert the new do statement
-      Xnode hook = parallelRegionEnd.nextSibling();
-      Body.shiftIn(parallelRegionStart, parallelRegionEnd,
-          loops.getInnerStatement().body(), true);
-
-      // Hook is null then we append the do statement to the current fct body
-      if(hook == null) {
-        _fctDef.body().append(loops.getOuterStatement());
+        contains.insertBefore(loops.getOuterStatement());
       } else {
-        // Insert new do statement before the hook element
-        hook.insertBefore(loops.getOuterStatement());
-      }
-    }
+        // No contains section, all the body is copied to the do statements.
 
-    // Prepare variables list for present/pcreate clauses and handle
-    // promotion/privatize local strategy
-    List<String> presentList =
-        Directive.getPresentVariables(xcodeml, _fctDef);
-    List<String> privateList = Collections.emptyList();
-    List<String> createList = Collections.emptyList();
-    if(Configuration.get().openACC().getLocalStrategy()
-        == OpenAccLocalStrategy.PRIVATE)
-    {
-      privateList = Directive.getLocalArrays(xcodeml, _fctDef);
-      // Iterate over a copy to be able to remove items
-      for(String identifier : new ArrayList<>(privateList)) {
-        if(_promotions.containsKey(identifier)) {
-          privateList.remove(identifier);
+        Xnode parallelRegionStart =
+            Directive.findParallelRegionStart(_fctDef, null);
+        Xnode parallelRegionEnd =
+            Directive.findParallelRegionEnd(_fctDef, null);
+
+        // Define a hook from where we can insert the new do statement
+        Xnode hook = parallelRegionEnd != null
+            ? parallelRegionEnd.nextSibling() : null;
+        Body.shiftIn(parallelRegionStart, parallelRegionEnd,
+            loops.getInnerStatement().body(), true);
+
+        // Hook is null then we append the do statement to the current fct body
+        if(hook == null) {
+          _fctDef.body().append(loops.getOuterStatement());
+        } else {
+          // Insert new do statement before the hook element
+          hook.insertBefore(loops.getOuterStatement());
         }
       }
-    } else if(Configuration.get().openACC().getLocalStrategy()
-        == OpenAccLocalStrategy.PROMOTE)
-    {
-      createList = Directive.getLocalArrays(xcodeml, _fctDef);
-      for(String arrayIdentifier : createList) {
-        _arrayFieldsInOut.add(arrayIdentifier);
-        PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
-            _claw.getDimensionsForData(arrayIdentifier));
-        Field.promote(promotionInfo, _fctDef, xcodeml);
-        _promotions.put(arrayIdentifier, promotionInfo);
 
-        Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
-        Field.adaptAllocate(promotionInfo, _fctDef.body(), xcodeml);
+      // Prepare variables list for present/pcreate clauses and handle
+      // promotion/privatize local strategy
+      List<String> presentList =
+          Directive.getPresentVariables(xcodeml, _fctDef);
+      List<String> privateList = Collections.emptyList();
+      List<String> createList = Collections.emptyList();
+      if(Configuration.get().openACC().getLocalStrategy()
+          == OpenAccLocalStrategy.PRIVATE)
+      {
+        privateList = Directive.getLocalArrays(xcodeml, _fctDef);
+        // Iterate over a copy to be able to remove items
+        for(String identifier : new ArrayList<>(privateList)) {
+          if(_promotions.containsKey(identifier)) {
+            privateList.remove(identifier);
+          }
+        }
+      } else if(Configuration.get().openACC().getLocalStrategy()
+          == OpenAccLocalStrategy.PROMOTE)
+      {
+        createList = Directive.getLocalArrays(xcodeml, _fctDef);
+        for(String arrayIdentifier : createList) {
+          _arrayFieldsInOut.add(arrayIdentifier);
+          PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
+              _claw.getDimensionsForData(arrayIdentifier));
+          Field.promote(promotionInfo, _fctDef, xcodeml);
+          _promotions.put(arrayIdentifier, promotionInfo);
+
+          Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
+          Field.adaptAllocate(promotionInfo, _fctDef.body(), xcodeml);
+        }
       }
+
+      // Generate the data region
+      Directive.generateDataRegionClause(xcodeml, presentList,
+          createList, loops.getOuterStatement(), loops.getOuterStatement());
+
+      // Generate the parallel region
+      Directive.generateParallelLoopClause(xcodeml, privateList,
+          loops.getOuterStatement(), loops.getOuterStatement(),
+          loops.size() + collapse);
     }
-
-    // Generate the data region
-    Directive.generateDataRegionClause(xcodeml, presentList,
-        createList, loops.getOuterStatement(), loops.getOuterStatement());
-
-    // Generate the parallel region
-    Directive.generateParallelLoopClause(xcodeml, privateList,
-        loops.getOuterStatement(), loops.getOuterStatement(),
-        loops.size() + collapse);
 
     Directive.generateRoutineDirectives(xcodeml, _fctDef);
   }
@@ -479,22 +486,69 @@ public class Parallelize extends ClawTransformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-    List<Xnode> assignStatements =
-        _fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT);
+    List<AssignStatement> assignStatements =
+        Function.gatherAssignStatements(_fctDef);
 
-    for(Xnode assign : assignStatements) {
-      Xnode lhs = assign.child(Xnode.LHS);
-      String lhsName = (lhs.opcode() == Xcode.VAR) ? lhs.value() :
-          lhs.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
-      NestedDoStatement loops = null;
-      if(lhs.opcode() == Xcode.F_ARRAY_REF &&
-          _arrayFieldsInOut.contains(lhsName))
+    Set<Xnode> hooks = new HashSet<>();
+
+    for(AssignStatement assign : assignStatements) {
+      Xnode lhs = assign.getLhs();
+      String lhsName = assign.getLhsName();
+      boolean wrapInDoStatement = true;
+
+      // Check if assignment is dependant of an if statement.
+      if(assign.isChildOf(Xcode.F_IF_STATEMENT)) {
+
+        // Gather all potential ancestor if statements
+        List<Xnode> ifStatements = assign.matchAllAncestor(Xcode.F_IF_STATEMENT,
+            Xcode.F_FUNCTION_DEFINITION);
+
+        Xnode hookIfStmt = null;
+        for(Xnode ifStmt : ifStatements) {
+          if(Condition.dependsOn(
+              ifStmt.matchDirectDescendant(Xcode.CONDITION),
+              assign.getVarRefNames()))
+          {
+            // Have to put the do statement around the if as the assignment
+            // is conditional as well.
+            hookIfStmt = ifStmt;
+          }
+        }
+
+        if(hookIfStmt != null) {
+          wrapInDoStatement = false;
+          boolean addIfHook = true;
+
+          // Get rid of previously flagged hook in this if body.
+          Iterator<Xnode> iter = hooks.iterator();
+          while (iter.hasNext()) {
+            Xnode crt = iter.next();
+            if(assign.isNestedIn(crt)) {
+              addIfHook = false;
+            }
+            if(crt.isNestedIn(hookIfStmt)) {
+              iter.remove();
+            }
+          }
+
+          if(addIfHook) {
+            hooks.add(hookIfStmt);
+          }
+        }
+      }
+
+      Iterator<Xnode> iter = hooks.iterator();
+      while (iter.hasNext()) {
+        if(assign.isNestedIn(iter.next())) {
+          wrapInDoStatement = false;
+          break;
+        }
+      }
+
+      if(lhs.opcode() == Xcode.F_ARRAY_REF
+          && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
       {
-        loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
-            xcodeml);
-        assign.insertAfter(loops.getOuterStatement());
-        loops.getInnerStatement().body().append(assign, true);
-        assign.delete();
+        hooks.add(assign);
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
           && _scalarFields.contains(lhsName))
       {
@@ -518,19 +572,23 @@ public class Parallelize extends ClawTransformation {
             Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
                 xcodeml);
           }
-          loops = new NestedDoStatement(_claw.getDimensionValuesReversed(),
-              xcodeml);
-          assign.insertAfter(loops.getOuterStatement());
-          loops.getInnerStatement().body().append(assign, true);
-          assign.delete();
+          if(wrapInDoStatement) {
+            hooks.add(assign);
+          }
         }
       }
-      if(loops != null) {
-        // Generate the corresponding directive around the loop
-        Directive.generateLoopDirectives(xcodeml,
-            loops.getOuterStatement(), loops.getOuterStatement(),
-            Directive.NO_COLLAPSE);
-      }
+    }
+
+    // Generate loops around statements flagged in previous stage
+    for(Xnode hook : hooks) {
+      NestedDoStatement loops =
+          new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+      hook.insertAfter(loops.getOuterStatement());
+      loops.getInnerStatement().body().append(hook, true);
+      hook.delete();
+      Directive.generateLoopDirectives(xcodeml,
+          loops.getOuterStatement(), loops.getOuterStatement(),
+          Directive.NO_COLLAPSE);
     }
 
     // Generate the parallel region

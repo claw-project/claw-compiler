@@ -1,21 +1,23 @@
 MODULE mo_column
 
 CONTAINS
- SUBROUTINE compute ( nz , q , t , nproma )
+ SUBROUTINE compute ( nz , q , t , s , nproma )
 
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  REAL , INTENT(INOUT) :: s ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
 
-  CALL compute_column ( nz , q , t , nproma = nproma )
+  CALL compute_column ( nz , q , t , s , nproma = nproma )
  END SUBROUTINE compute
 
- SUBROUTINE compute_column ( nz , q , t , nproma )
+ SUBROUTINE compute_column ( nz , q , t , s , nproma )
 
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
+  REAL , INTENT(INOUT) :: s ( 1 : nproma )
   INTEGER , INTENT(IN) :: nproma
   REAL , ALLOCATABLE :: y ( : , : )
   INTEGER :: k
@@ -31,7 +33,7 @@ CONTAINS
     t ( proma , k ) = c * k
    END DO
    DO proma = 1 , nproma , 1
-    y ( proma , k ) = t ( proma , k )
+    y ( proma , k ) = t ( proma , k ) + s ( proma )
    END DO
    DO proma = 1 , nproma , 1
     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c + y ( proma ,&

@@ -441,7 +441,11 @@ public class ParallelizeForward extends ClawTransformation {
       arg.append(xcodeml.createVar(type, varId, Xscope.LOCAL));
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       Xnode hook = arguments.child((i - 1) - argOffset);
-      hook.insertAfter(arg);
+      if(hook != null) {
+        hook.insertAfter(arg);
+      } else {
+        arguments.append(arg);
+      }
     }
 
     // In flatten mode, arguments are demoted if needed.
@@ -721,6 +725,7 @@ public class ParallelizeForward extends ClawTransformation {
 
           // Adapt the reference in the assignment statement
           for(String id : _promotedVar) {
+            _promotions.get(id).resterFlags();
             Field.adaptArrayRef(_promotions.get(id), assignment, xcodeml);
           }
 

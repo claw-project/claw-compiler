@@ -7,26 +7,28 @@ MODULE mo_column
   IMPLICIT NONE
 CONTAINS
 
-  SUBROUTINE compute(nz, q, t)
+  SUBROUTINE compute(nz, q, t, s)
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)   :: nz   ! Size of the array field
-    REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
+    INTEGER, INTENT(IN) :: nz   ! Size of the array field
+    REAL, INTENT(INOUT) :: t(:) ! Field declared as one column only
+    REAL, INTENT(INOUT) :: q(:) ! Field declared as one column only
+    REAL, INTENT(INOUT) :: s    ! Scalar in SCA but array in model data
 
     !$claw parallelize forward
-    CALL compute_column(nz, q, t)
+    CALL compute_column(nz, q, t, s)
 
   END SUBROUTINE compute
 
 
   ! Compute only one column
-  SUBROUTINE compute_column(nz, q, t)
+  SUBROUTINE compute_column(nz, q, t, s)
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN)   :: nz   ! Size of the array field
-    REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
+    INTEGER, INTENT(IN) :: nz   ! Size of the array field
+    REAL, INTENT(INOUT) :: t(:) ! Field declared as one column only
+    REAL, INTENT(INOUT) :: q(:) ! Field declared as one column only
+    REAL, INTENT(INOUT) :: s    ! Scalar in SCA but array in model data
     REAL, DIMENSION(:), ALLOCATABLE :: y
     INTEGER :: k                  ! Loop index
     REAL :: c                     ! Coefficient
@@ -38,7 +40,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize
+    !$claw parallelize scalar(s)
 
     IF(.NOT. ALLOCATED(y)) ALLOCATE(y(nz))
 
@@ -47,7 +49,7 @@ CONTAINS
     c = 5.345
     DO k = 2, nz
       t(k) = c * k
-      y(k) = t(k)
+      y(k) = t(k) + s
       q(k) = q(k - 1)  + t(k) * c + y(k)
     END DO
     q(nz) = q(nz) * c

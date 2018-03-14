@@ -508,7 +508,7 @@ function claw::process_dependencies() {
         [[ "${module_name}" != "ieee_features" ]] &&
         [[ "${module_name}" != "ieee_exceptions" ]] &&
         [[ "${module_name}" != "ieee_arithmetic" ]]; then
-        claw::warning "$2" "-" \
+        claw::warning "$2" "-" "-" \
           "only module file found for ${module_name}. Might be out-of-date..."
       fi
       continue
@@ -644,7 +644,7 @@ function claw::applyPreprocessorPass() {
     while IFS= read -r line; do
       if [[ ${line} =~ \\$ ]] && [[ ${line} =~ .*!.* ]]; then
         echo "${line//\\/}" >>"$2"
-        claw::warning "${input_file}" "${line_no}" \
+        claw::warning "${input_file}" "${line_no}" "-" \
           "'\' symbol at the end of a comment line. Possible preprocessing error."
       else
         echo "${line}" >>"$2"
