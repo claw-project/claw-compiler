@@ -93,12 +93,14 @@ public final class Loop {
    * Perform a do statements reordering based on the new order specified by
    * induction variables.
    * <p>
-   * i,j,k -> k,j,i
+   * i,j,k &rarr; k,j,i
    *
    * @param nestedGroup          The nested group of do statements to be
    *                             reordered.
    * @param newInductionVarOrder New order of the induction variables.
    *                             E.g. k,j,i.
+   * @throws IllegalTransformationException If reordering acton is not
+   *                                        supported.
    */
   public static void reorder(NestedDoStatement nestedGroup,
                              List<String> newInductionVarOrder)
@@ -147,6 +149,8 @@ public final class Loop {
    * @param end           Ending point of the hoisted loop.
    * @param xcodeml       Current XcodeML translation unit for node creation.
    * @return Hoisted nested do statement group.
+   * @throws IllegalTransformationException If underlying methods throw
+   *                                        exception.
    */
   public static HoistedNestedDoStatement hoist(List<HoistedNestedDoStatement>
                                                    hoistedGroups,

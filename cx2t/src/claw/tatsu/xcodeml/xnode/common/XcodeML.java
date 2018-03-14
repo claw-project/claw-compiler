@@ -659,7 +659,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new FdoStatement node with an empty body.
-   * <p>
+   *
    * <pre>
    * {@code
    * <FdoStatement>
@@ -684,7 +684,7 @@ public class XcodeML extends Xnode {
 
   /**
    * Create a new FifStatement node with an empty condition and then body.
-   * <p>
+   *
    * <pre>
    * {@code
    * <FifStatement>
@@ -753,6 +753,7 @@ public class XcodeML extends Xnode {
    * @param type      Type of the name node to create.
    * @param fctType   Function type in which the node will be added as a
    *                  parameter.
+   * @return newly created name element.
    */
   public Xnode createAndAddParam(String nameValue, String type,
                                  FfunctionType fctType)
@@ -783,6 +784,7 @@ public class XcodeML extends Xnode {
    * @param type      Type of the name node to create.
    * @param fctType   Function type in which the node will be added as a
    *                  parameter.
+   * @return newly created name element or null if not created.
    */
   public Xnode createAndAddParamIfNotExists(String nameValue, String type,
                                             FfunctionType fctType)

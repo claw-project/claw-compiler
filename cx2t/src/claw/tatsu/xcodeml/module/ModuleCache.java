@@ -67,6 +67,7 @@ public class ModuleCache {
    * Write all modules in the cache to files.
    *
    * @param ident Number of spaces used to indent the XML file.
+   * @throws IllegalTransformationException If module cannot be written.
    */
   public void write(int ident)
       throws IllegalTransformationException

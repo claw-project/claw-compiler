@@ -43,10 +43,14 @@ public final class Directive {
    * Generate loop seq directives on the top of loops in the given function
    * definition.
    *
-   * @param xcodeml Object representation of the current XcodeML
-   *                representation in which the pragmas will be generated.
-   * @param fctDef  Function definition in which do statements will be
-   *                decorated.
+   * @param xcodeml               Object representation of the current XcodeML
+   *                              representation in which the pragmas will be
+   *                              generated.
+   * @param fctDef                Function definition in which do statements
+   *                              will be decorated.
+   * @param noDependencyDirective Directive string used to flag a loop as
+   *                              no dependency loop.
+   * @return Number of independent flagged loop.
    */
   public static int generateLoopSeq(XcodeProgram xcodeml,
                                     FfunctionDefinition fctDef,
@@ -90,10 +94,12 @@ public final class Directive {
   /**
    * Generate update directives for device and host data transfer.
    *
-   * @param xcodeml Object representation of the current XcodeML
-   *                representation in which the pragmas will be generated.
-   * @param hook    Node used as a hook for insertion. Update device are
-   *                generated before the hook and update host after the hook.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be generated.
+   * @param hook      Node used as a hook for insertion. Update device are
+   *                  generated before the hook and update host after the hook.
+   * @param vars      List of variables inserted in the directive.
+   * @param direction Direction of the update directive.
    * @return Last inserted pragma.
    */
   public static Xnode generateUpdate(XcodeProgram xcodeml, Xnode hook,
@@ -331,6 +337,7 @@ public final class Directive {
    *                  region.
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
+   * @param accClause Additional clause append at the end of the directive.
    * @return Last stmt inserted or null if nothing is inserted.
    */
   public static Xnode generateAcceleratorClause(

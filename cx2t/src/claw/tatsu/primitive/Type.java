@@ -6,7 +6,9 @@ package claw.tatsu.primitive;
 
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeML;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
@@ -29,13 +31,16 @@ public class Type {
    * @param toUpdate   Type to update.
    * @param xcodemlSrc Source XcodeML unit. Contains base dimension.
    * @param xcodemlDst Destination XcodeML unit. Duplicate will be created here.
+   * @param dimensions List of dimensions definitions to be used.
    * @return The new type hash generated.
+   * @throws IllegalTransformationException If action is not supported.
    */
   public static String duplicateWithDimension(FbasicType base,
                                               FbasicType toUpdate,
                                               XcodeML xcodemlSrc,
                                               XcodeML xcodemlDst,
-                                              List<DimensionDefinition> dimensions)
+                                              List<DimensionDefinition>
+                                                  dimensions)
       throws IllegalTransformationException
   {
     FbasicType newType = toUpdate.cloneNode();

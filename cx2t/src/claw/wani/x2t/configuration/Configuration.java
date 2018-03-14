@@ -134,6 +134,7 @@ public class Configuration {
    *
    * @param configPath     Path to the configuration files and XSD schemas.
    * @param userConfigFile Path to the alternative configuration.
+   * @throws Exception If configuration cannot be loaded properly.
    */
   public void load(String configPath, String userConfigFile)
       throws Exception
@@ -613,7 +614,7 @@ public class Configuration {
   /**
    * Extract major and minor version number from the full version String.
    *
-   * @param version Full version String. <major>.<minor>.<fixes>
+   * @param version Full version String. Format: major.minor.fixes
    * @return Two dimensional array with the major number at index 0 and the
    * minor at index 1.
    * @throws Exception If the version String is not of the correct format.

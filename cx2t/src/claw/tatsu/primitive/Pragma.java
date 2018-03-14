@@ -102,8 +102,12 @@ public final class Pragma {
   /**
    * Split the line by its length and add continuation symbols.
    *
+   * @param pragma  Pragma statement to be splitted.
    * @param xcodeml The XcodeML on which the transformations are
    *                applied.
+   * @param prefix  Prefix of the directive.
+   * @throws IllegalTransformationException If the given element is not a
+   *                                        FpragmaStatement.
    */
   public static void splitByLength(Xnode pragma, XcodeProgram xcodeml,
                                    String prefix)
@@ -137,6 +141,8 @@ public final class Pragma {
    * @param pragma  Pragma node.
    * @param prefix  Pragma prefix.
    * @param xcodeml Current XcodeML translation unit.
+   * @throws IllegalTransformationException If the given element is not a
+   *                                        FpragmaStatement.
    */
   public static void splitByCont(Xnode pragma, String prefix,
                                  XcodeProgram xcodeml)
@@ -183,6 +189,7 @@ public final class Pragma {
    * Check if the pragma was already continued. Can happen when using the !$claw
    * primitive directive
    *
+   * @param pragma Pragma statement to be checked.
    * @return True if the pragma was previously continued.
    */
   public static boolean fromClawPrimitive(Xnode pragma) {
