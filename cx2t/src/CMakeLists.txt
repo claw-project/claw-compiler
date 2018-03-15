@@ -45,7 +45,8 @@ if(NOT OFFLINE)
 endif()
 
 if(EXISTS ${JYTHON_DIR}/jython.jar)
-  # Compile Jython-dependent plugin
+  set(WITH_JYTHON ON)
+  # Compile Jython-dependent plugin (interfaces between java and Python)
   add_custom_target(jython-plugin ALL)
   add_custom_command(
     TARGET jython-plugin
@@ -54,7 +55,7 @@ if(EXISTS ${JYTHON_DIR}/jython.jar)
     ${ANT_FLAGS}
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
-    -Djython.dir=JYTHON_DIR jython-plugin
+    -Djython.dir=${JYTHON_DIR} jython-plugin
     COMMENT "Building Jython plugin"
     )
 else()
@@ -68,6 +69,7 @@ install(
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_SHENRON}.jar
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_WANI}.jar
+    ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_PYTHON}.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar
