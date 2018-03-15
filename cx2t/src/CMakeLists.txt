@@ -3,6 +3,10 @@
 
 # CLAW X2T libraries
 
+# Allow the user to specify the location of Jython by doing
+# cmake -DJYTHON_DIR=/blah/jython.x
+set(JYTHON_DIR "" CACHE FILEPATH "Path to dir containing Jython jar")
+
 # Generate file with version number for Configuration check
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/claw/ClawVersion.java.in
@@ -40,17 +44,23 @@ if(NOT OFFLINE)
   add_dependencies(omni-claw omni-claw-init)
 endif()
 
-# Compile Jython-dependent plugin
-add_custom_target(jython-plugin)
-add_custom_command(
-  TARGET jython-plugin
-  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  ${ANT_FLAGS}
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Djython.dir=${CMAKE_JYTHON_DIR} jython-plugin
-  COMMENT "Building Jython plugin"
-)
+if(EXISTS ${JYTHON_DIR}/jython.jar)
+  # Compile Jython-dependent plugin
+  add_custom_target(jython-plugin ALL)
+  add_custom_command(
+    TARGET jython-plugin
+    DEPENDS ${JYTHON_DIR}/jython.jar
+    COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
+    ${ANT_FLAGS}
+    -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+    -Ddist.dir=${CMAKE_BINARY_DIR}/build
+    -Djython.dir=JYTHON_DIR jython-plugin
+    COMMENT "Building Jython plugin"
+    )
+else()
+  message(WARNING
+    "JYTHON_DIR not specified or incorrect - Jython plugin will not be built")
+endif()
 
 # Install JAR files
 install(
