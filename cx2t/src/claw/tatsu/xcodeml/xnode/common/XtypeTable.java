@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
  * representation.
- * <p>
+ *
  * Elements: ( FbasicType | FfunctionType | FstructType ) *
  * - Optional:
  * - FbasicType (FbasicType)

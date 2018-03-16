@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Translator interface
- * <p>
+ *
  * Translator stores all the transformation to be applied by a translator.
  *
  * @author clementval
@@ -27,7 +27,12 @@ public interface Translator {
   /**
    * Generate transformation according to the pragma.
    *
-   * @param pragma Pragma that can trigger a transformation.
+   * @param xcodeml Current XcodeML unit.
+   * @param pragma  Pragma that can trigger a transformation.
+   * @throws IllegalDirectiveException      If directive is not formatted
+   *                                        correctly.
+   * @throws IllegalTransformationException If transformation cannot be
+   *                                        generated.
    */
   void generateTransformation(XcodeProgram xcodeml, Xnode pragma)
       throws IllegalDirectiveException, IllegalTransformationException;
@@ -37,6 +42,7 @@ public interface Translator {
    *
    * @param xcodeml Current translation unit.
    * @param t       Transformation to add.
+   * @throws IllegalTransformationException If transformation cannot be added.
    */
   void addTransformation(XcodeProgram xcodeml, Transformation t)
       throws IllegalTransformationException;
@@ -51,6 +57,9 @@ public interface Translator {
 
   /**
    * Perform last tasks before applying transformations.
+   *
+   * @param xcodeml Current XcodeML unit.
+   * @throws IllegalTransformationException If translation cannot be finalized.
    */
   void finalize(XcodeProgram xcodeml) throws IllegalTransformationException;
 

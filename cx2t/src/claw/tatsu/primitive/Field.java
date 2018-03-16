@@ -252,6 +252,7 @@ public final class Field {
    * Demote an array reference to a var reference.
    *
    * @param arrayRef The array reference to be modified.
+   * @throws IllegalTransformationException If node is null or not an FarrayRef.
    */
   public static void demoteToScalar(Xnode arrayRef)
       throws IllegalTransformationException
@@ -272,6 +273,7 @@ public final class Field {
    * @param arrayRef       The array reference to be modified.
    * @param keptDimensions List of dimensions to be kept. Dimension index starts
    *                       at 1.
+   * @throws IllegalTransformationException If node is null or not an FarrayRef.
    */
   public static void demote(Xnode arrayRef, List<Integer> keptDimensions)
       throws IllegalTransformationException

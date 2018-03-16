@@ -829,6 +829,8 @@ public class Xnode {
 
   /**
    * Set the type of the current node.
+   *
+   * @param value Type value.
    */
   public void setType(String value) {
     setAttribute(Xattr.TYPE, value);

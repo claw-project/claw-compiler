@@ -191,11 +191,11 @@ public class PromotionInfo {
   /**
    * Get a formatted String representing the dimensions used in this promotion
    * information object. String is formatted as follows:
-   * <p>
+   *
    * - Dimension: dimension_id(lower_bound:upper_bound)
-   * <p>
+   *
    * - Existing dimensions are represented with :
-   * <p>
+   *
    * So a promotion information with 1 additional dimension will be
    * formatted like:
    * - New dimension before: "dimension_id(lower_bound:upper_bound),:"

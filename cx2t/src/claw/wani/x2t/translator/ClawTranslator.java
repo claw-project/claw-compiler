@@ -303,6 +303,8 @@ public class ClawTranslator implements Translator {
    *                clauses.
    * @param xcodeml Current XcodeML program.
    * @param stmt    Statement on which the transformation is attached.
+   * @throws IllegalTransformationException If transformation cannot be
+   *                                        generated.
    */
   public void generateAdditionalTransformation(ClawPragma claw,
                                                XcodeProgram xcodeml, Xnode stmt)

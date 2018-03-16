@@ -22,6 +22,7 @@ public class GroupConfiguration {
   /**
    * Constructs a new GroupConfiguration element with all mandatory information.
    *
+   * @param setName   Transformation set name.
    * @param name      User friendly name of the group.
    * @param type      Type of the group.
    * @param trigger   Type of the trigger action.

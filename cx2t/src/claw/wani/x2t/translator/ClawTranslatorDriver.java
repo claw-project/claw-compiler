@@ -44,8 +44,7 @@ public class ClawTranslatorDriver {
   /**
    * Default ctor for child classes.
    */
-  ClawTranslatorDriver()
-  {
+  ClawTranslatorDriver() {
   }
 
   /**
@@ -53,9 +52,9 @@ public class ClawTranslatorDriver {
    *
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
+   * @throws Exception If translator cannot be created.
    */
-  public ClawTranslatorDriver(String xcodemlInputFile,
-                              String xcodemlOutputFile)
+  public ClawTranslatorDriver(String xcodemlInputFile, String xcodemlOutputFile)
       throws Exception
   {
     _xcodemlInputFile = xcodemlInputFile;
@@ -224,6 +223,8 @@ public class ClawTranslatorDriver {
 
   /**
    * Flush all information stored in the translator.
+   *
+   * @throws IllegalTransformationException If module cache cannot be written.
    */
   public void flush()
       throws IllegalTransformationException

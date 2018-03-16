@@ -28,6 +28,7 @@ public class OmniBackendDriver {
   /**
    * Constructs a new OmniBackendDriver object.
    *
+   * @param lang Language of output.
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
   public OmniBackendDriver(Lang lang)
