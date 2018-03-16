@@ -58,6 +58,14 @@ if(EXISTS ${JYTHON_DIR}/jython.jar)
     -Djython.dir=${JYTHON_DIR} jython-plugin
     COMMENT "Building Jython plugin"
     )
+
+  # Install the plugin
+  install(
+    FILES
+      ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_PYTHON}.jar
+    DESTINATION
+      ${CMAKE_INSTALL_PREFIX}/share/claw/
+  )
 else()
   message(WARNING
     "JYTHON_DIR not specified or incorrect - Jython plugin will not be built")
@@ -69,7 +77,6 @@ install(
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_SHENRON}.jar
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_WANI}.jar
-    ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_PYTHON}.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar
