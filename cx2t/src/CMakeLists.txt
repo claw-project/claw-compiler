@@ -45,7 +45,6 @@ if(NOT OFFLINE)
 endif()
 
 if(EXISTS ${JYTHON_DIR}/jython.jar)
-  set(WITH_JYTHON ON)
   # Compile Jython-dependent plugin (interfaces between java and Python)
   add_custom_target(jython-plugin ALL)
   add_custom_command(
@@ -58,7 +57,6 @@ if(EXISTS ${JYTHON_DIR}/jython.jar)
     -Djython.dir=${JYTHON_DIR} jython-plugin
     COMMENT "Building Jython plugin"
     )
-
   # Install the plugin
   install(
     FILES
