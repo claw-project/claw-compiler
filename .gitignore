@@ -52,6 +52,7 @@ cx2t/src/cx2x/ClawVersion.java
 .idea
 .project
 *.iml
+*~
 
 # Ant files
 .ant-targets-build.xml
