@@ -4,16 +4,16 @@ The \clawfcomp is based on the \omni\cite{omni:website}. The \omni Project
 provides a set of programs to build source-to-source translator for C/C++
 and Fortran. It is jointly developed by the Programming Environment Research
 Team of the RIKEN AICS and the HPCS Lab. of the University of Tsukuba both
-located in Japan. The \clawfcomp is a contributor to this project. 
-The \clawfcomp is using the Fortran front-end and back-end as well as the 
+located in Japan. The \clawfcomp is a contributor to this project.
+The \clawfcomp is using the Fortran front-end and back-end as well as the
 C back-end of the \omni. Similar transformation mechanism could be
 applied without to much effort to C or C++ code by using their corresponding
-fron-end. The \omni Project is actively developed as of today. Contributions or 
+fron-end. The \omni Project is actively developed as of today. Contributions or
 issues can be reported on their master repository \cite{omni:github}.
 
 \subsection{The Fortran front-end}
 The Fortran front-end is the program that parses Fortran source code and that
-generates its \gls{ir}. The Fotran grammar is written in \lstinline|yacc| and 
+generates its \gls{ir}. The Fotran grammar is written in \lstinline|yacc| and
 the processing and \gls{ir} generation is written in \lstinline|C|. This program
 can be called individually as shown in Listing \ref{lst:ffront}.
 
@@ -23,8 +23,8 @@ F_Front -M my_module_dir -o my_program.xml my_program.f90
 
 As the \omni acts as an actual compiler, it also has a notion of module file.
 When a Fortran module is parsed with the front-end, a \lstinline|.xmod| file is
-generated. This file contains subroutines and function signatures and 
-type definitions. This file is then needed to parse other Fortran code depending 
+generated. This file contains subroutines and function signatures and
+type definitions. This file is then needed to parse other Fortran code depending
 on the module. This mechanism allows the cross-file transformation capabilities
 of the \clawfcomp.
 
@@ -56,7 +56,7 @@ F_Front -M . -o module_m2.xml module_m2.f90 # uses m3.xmod and produces m2.xmod
 F_Front -M . -o module_m1.xml module_m1.f90 # uses m2.xmod and produces m1.xmod
 \end{lstlisting}
 
-The \lstinline|-M| option tells the front-end where to search and store the 
+The \lstinline|-M| option tells the front-end where to search and store the
 module files. Several path can be given for the search but the first one will
 be used to store the newly created \lstinline|.xmod| files.
 
@@ -64,7 +64,7 @@ be used to store the newly created \lstinline|.xmod| files.
 \subsection{\xcodemlf}
 \xcodemlf is the \gls{ir} used by the
 translator in the CLAW Compiler. This \gls{ir} is based on the XML
-format and is described in a specification 
+format and is described in a specification
 document \cite{omni:xcodemlf95,omni:xcodemlf2008}. It allows to have an
 high-level representation of Fortran 2008 programs.
 
@@ -98,18 +98,18 @@ declarations in the translation unit (Listing \ref{xcodeml1} line 30-82).
 \subsection{The Fortran back-end}
 The Fortran back-end is the program that decompiles \gls{ir} back to Fortran
 code. It is a simple Java program that implements a visitor pattern across
-the \gls{ast}. It can be called as a standalone program 
-(See Listing~\ref{lst:fbackend}) or directly within the translator as it is 
+the \gls{ast}. It can be called as a standalone program
+(See Listing~\ref{lst:fbackend}) or directly within the translator as it is
 done in the \clawfcomp (See Listing \ref{lst:fbackend_java}).
 
-\begin{lstlisting}[label=lst:fbackend, language=Bash, caption=Execute the 
+\begin{lstlisting}[label=lst:fbackend, language=Bash, caption=Execute the
   Fortran back-end as a standalone]
 java -cp <omni-install-path>/share/xcalablemp/om-f-back.jar:<omni-install-path>/share/xcalablemp/om-exc-tools.jar xcodeml.f.util.omx2f -l xcodeml.xml
 \end{lstlisting}
 
-\begin{lstlisting}[label=lst:fbackend_java, language=Java, 
+\begin{lstlisting}[label=lst:fbackend_java, language=Java,
   caption=Fortran back-end called from Java]
-PrintWriter writer = 
+PrintWriter writer =
   new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
 XmToolFactory toolFactory = new XmToolFactory("F");
 XmOption.setCoarrayNoUseStatement(true);
@@ -117,16 +117,16 @@ XmOption.setDebugOutput(false);
 XmDecompiler decompiler = toolFactory.createDecompiler();
 XmDecompilerContext context = toolFactory.createDecompilerContext();
 // xcodemlDocument is the XcodeML/F DOM document to write to file
-decompiler.decompile(context, xcodemlDocument, writer); 
+decompiler.decompile(context, xcodemlDocument, writer);
 \end{lstlisting}
 
 The C back-end is a similar program but working on the \xcodemlc{} \gls{ir}.
 
 \section{\clawfcomp}
 The \clawfc is the program handed to the end-user. It performs all the needed
-step to have a source-to-source translation of a Fortran source code. 
-As shown in Figure~\ref{fig:clawfc_main_workflow}, 
-it is composed by various programs under-the-hood. 
+step to have a source-to-source translation of a Fortran source code.
+As shown in Figure~\ref{fig:clawfc_main_workflow},
+it is composed by various programs under-the-hood.
 The complete workflow is devided as follows:
 
 \begin{enumerate}
@@ -134,7 +134,7 @@ The complete workflow is devided as follows:
 Fortran preprocessor.
 The \lstinline|FC| environment variable is used by the CMake build system to
 determine it. \textbf{FPP} is needed to have a syntactically correct Fortran
-code to pass to the parser. Code with preprocessor directive is impossible 
+code to pass to the parser. Code with preprocessor directive is impossible
 to parse and to transform.
 \item \textbf{F\_Front}: The preprocessed Fortran source code is then parsed
 by the OMNI Compiler Fortran front-end to produce the input \xcodemlf \gls{ir}.
@@ -160,8 +160,8 @@ actively developed as part of the CLAW project.
 \end{figure}
 
 \section{CLAW \xcodemlf to \xcodeml translator (CX2T)}
-The \xcodemlf to \xcodeml translator is the intelligence behind the \clawfcomp. 
-It understands the CLAW directive language, generates directive and translation 
+The \xcodemlf to \xcodeml translator is the intelligence behind the \clawfcomp.
+It understands the CLAW directive language, generates directive and translation
 unit transformation instances and and apply them to the to the \xcodeml
 \gls{ast}.
 

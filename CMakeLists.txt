@@ -2,11 +2,11 @@
 # See LICENSE file for more information
 
 # This CMakeLists.txt file is the entry point for the configuration and the
-# compilation of the CLAW Fortran compiler.
+# compilation of the CLAW Compiler.
 
 cmake_minimum_required(VERSION 3.0)
 
-project("CLAW Compiler" VERSION 0.4.0)
+project("CLAW Compiler" VERSION 1.0)
 
 # Add local cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")

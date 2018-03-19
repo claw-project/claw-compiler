@@ -13,7 +13,7 @@
 }
 \usepackage{enumerate}
 
-\title{CLAW Fortran Compiler Documentation}
+\title{CLAW Compiler Documentation}
 \author{Valentin Clement}
 \date{\today\\\vspace{1em}v0.4}
 
@@ -23,10 +23,10 @@
 \begin{document}
 \maketitle
 
-CLAW Fortran Compiler is a source-to-source compiler interpreting the CLAW
+CLAW Compiler is a source-to-source compiler interpreting the CLAW
 directive language.
 
-The CLAW Fortran Compiler is based on the OMNI Compiler. For more information
+The CLAW Compiler is based on the OMNI Compiler. For more information
 about the OMNI Compiler project, visit http://omni-compiler.org.
 
 OMNI Compiler user manual can be found here: http://omni-compiler.org/manual.html
@@ -39,7 +39,7 @@ https://github.com/C2SM-RCM/claw-language-specification
 \begin{lstlisting}
 usage: clawfc_test <OPTIONS> <INPUTFILE> ...
 
-CLAW Fortran compiler options:
+CLAW Compiler options:
 
   -o <file>                  : place the output into <file>.
   -I <dir>                   : add the directory dir to the list of
@@ -105,7 +105,7 @@ Process Options
 \end{lstlisting}
 
 \subsection{Options for the output}
-These options affect how the CLAW compiler writes the output files.
+These options affect how the CLAW Compiler writes the output files.
 
 \textbf{\texttt{-o}}\\
 The output file can be specified with the \texttt{-o} option.
@@ -122,7 +122,7 @@ $ clawfc -D src/ -o transformed_code.f90 original_code.f90
 \end{lstlisting}
 
 \subsection{Options for directory search}
-These options affect how the CLAW compiler searches for files specified by the
+These options affect how the CLAW Compiler searches for files specified by the
 \texttt{"INCLUDE"} directive and where it searches for previously compiled modules.
 
 \textbf{\texttt{-I}}\\
@@ -198,12 +198,12 @@ Print the list of available type of accelerator directive language supported.
 \subsection{Options for the global configuration}
 Default target and directive language as well as transformation order are
 specified by a configuration file.
-A default file is generated an installed with the CLAW FORTRAN compiler.
+A default file is generated an installed with the CLAW Compiler.
 An option allows to use a different configuration while using the compiler.
 
 \begin{lstlisting}
   <!-- CLAW default configuration. This file should not be edited ! -->
-  <claw version="0.3">
+  <claw version="1.0">
     <!-- Transformation parameters -->
     <global>
       <!-- Default general values -->
@@ -272,7 +272,7 @@ Show all the environment variables used in the compiler workflow.
 Print process information and store all the intermediate files in \_\_omni\_tmp\_\_ directory.
 
 \subsection{Options for subprocesses}
-These options affect the different process part of the CLAW compiler.
+These options affect the different process part of the CLAW Compiler.
 
 \textbf{\texttt{--Wp}}\\
 Pass options to the underlying preprocessor.

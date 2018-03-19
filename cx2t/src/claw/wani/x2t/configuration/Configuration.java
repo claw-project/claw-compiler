@@ -606,7 +606,7 @@ public class Configuration {
         && configMajMin[1] < compilerMajMin[1]))
     {
       throw new Exception("Configuration version is smaller than " +
-          "CLAW FORTRAN Compiler version: " + compilerMajMin[0] + "." +
+          "CLAW Compiler version: " + compilerMajMin[0] + "." +
           compilerMajMin[1]);
     }
   }
@@ -653,7 +653,7 @@ public class Configuration {
    * Display the loaded configuration.
    */
   public void displayConfig() {
-    System.out.println("- CLAW FORTRAN Compiler configuration -\n");
+    System.out.println("- CLAW Compiler configuration -\n");
     System.out.println("Default directive directive: " +
         getCurrentDirective() + "\n");
     System.out.println("Default target: " + getCurrentTarget() + "\n");

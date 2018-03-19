@@ -1,4 +1,4 @@
-<claw version="0.4">
+<claw version="1.0">
   <global type="root">
     <parameter key="translator" value="cx2x.translator.ClawTranslator"/>
   </global>
