@@ -3,7 +3,7 @@
 
 # To avoid multiple include of different compiler
 if(__claw_base_compiler)
-	return()
+  return()
 endif()
 set(__claw_base_compiler YES)
 

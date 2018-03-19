@@ -2,6 +2,9 @@
 All notable changes to the CLAW Compiler project will be documented in
 this file.
 
+## [1.X] - Unreleased
+* Support of Intel Compiler preprocessing workflow.
+
 ## [1.0] - 2018-03-19
 New features:
 * Option `--target=<target>` or `-t=<target>` allows to choose the target for
