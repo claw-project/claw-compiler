@@ -11,6 +11,7 @@ The CLAW Compiler has the followings dependencies:
 * MPI-2 or greater (For OMNI Compiler)
 * libxml2 (For OMNI Compiler)
 * cmake and make
+* Jython 2.7.0 (if interoperability with Python is required)
 
 
 
@@ -20,6 +21,7 @@ CLAW Compiler (clawfc) is built on the top of the
 [OMNI Compiler](http://www,omni-compiler.org). It is currently tested with
 version [1.0.1](http://omni-compiler.org/download/stable/omnicompiler-1.0.1.tar.bz2).
 OMNI Compiler is packaged and built together with the CLAW Compiler.
+
 
 
 To build the and install the CLAW Compiler, use the followings commands.
@@ -47,6 +49,15 @@ cmake -DCMAKE_INSTALL_PREFIX=<install_path> ..
 make
 make install
 ```
+
+If you wish to build CLAW with the ability to use Python transformation
+scripts then you must provide CMake with the location of the Jython
+installation as follows:
+```bash
+cmake -DCMAKE_INSTALL_PREFIX=<install_path> -DJYTHON_DIR=<jython_install_path> .
+```
+where <jython_install_path> is the full path to the directory containing the
+Jython Jar file (jython.jar).
 
 ##### Offline build steps
 If your system has no network connection to the Internet, you need to get the

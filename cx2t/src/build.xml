@@ -38,6 +38,10 @@
         <pathelement path="${antlr4.runtime.dep}"/>
     </path>
 
+    <path id="jython.path">
+      <pathelement path="${jython.dep}"/>
+    </path>
+
     <!-- Initialization step -->
     <target name="init" depends="common.bootstrap"
             description="Initialize build directories">
@@ -66,7 +70,15 @@
     <target name="compile" depends="common.resolve, antlr"
             description="compile the source">
         <javac includeantruntime="false" srcdir="${src.base}"
-               destdir="${build.dir}" classpathref="build.path"/>
+               destdir="${build.dir}" classpathref="build.path"
+	       excludes="claw/python/"/>
+    </target>
+
+    <!-- Compile the java plugin code that relies on Jython -->
+    <target name="compile-plugin" depends="common.resolve"
+            description="compile the plugin source">
+        <javac includeantruntime="false" srcdir="${src.base}/claw/python/"
+               destdir="${build.dir}" classpathref="jython.path"/>
     </target>
 
     <!-- Pacakge compiled files into their own library -->
@@ -86,11 +98,19 @@
              includes="external/**"/>
     </target>
 
+    <!-- Package-up the compiled Jython plugin files -->
+    <target name="jython-plugin" depends="compile-plugin"
+	    description="Create JAR for Python plugin">
+      <jar jarfile="${dist.dir}/${claw.python.jar}" basedir="${build.dir}"
+	   includes="claw/python/**"/>
+    </target>
+
     <target name="clean" description="clean up">
         <delete dir="${build.dir}"/>
         <delete file="${dist.dir}/${claw.tatsu.jar}"/>
         <delete file="${dist.dir}/${claw.shenron.jar}"/>
         <delete file="${dist.dir}/${claw.wani.jar}"/>
+        <delete file="${dist.dir}/${claw.python.jar}"/>
         <delete file="${dist.dir}/${external.jar}"/>
     </target>
 

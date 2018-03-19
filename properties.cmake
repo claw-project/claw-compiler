@@ -16,6 +16,8 @@ set(CLAW_X2T_JAR_INSTALL_PATH "${CMAKE_INSTALL_PREFIX}/share/claw")
 set(CLAW_X2T_TATSU_JAR "${CLAW_X2T_JAR_INSTALL_PATH}/${CLAW_X2T_TATSU}.jar")
 set(CLAW_X2T_SHENRON_JAR "${CLAW_X2T_JAR_INSTALL_PATH}/${CLAW_X2T_SHENRON}.jar")
 set(CLAW_X2T_WANI_JAR "${CLAW_X2T_JAR_INSTALL_PATH}/${CLAW_X2T_WANI}.jar")
+# Optional plugin providing Python interoperability
+set(CLAW_X2T_PYTHON "claw-x2t-python")
 
 # Configurations files and paths
 set(CLAW_CONFIG_FILE "claw-default.xml")
