@@ -1,5 +1,5 @@
 # Change Log
-All notable changes to the CLAW FORTRAN Compiler project will be documented in
+All notable changes to the CLAW Compiler project will be documented in
 this file.
 
 ## [1.0] - 2018-03-19
@@ -58,5 +58,5 @@ code.
 - **CX2X CLAW translator**: An XcodeML to XcodeML translator that implements the
 CLAW language directive v0.1 (loop-fusion, loop-interchange, loop-extract,
 remove)
-- **CLAW Fortran Compiler driver**: the compiler driver that glue together all
+- **CLAW Compiler driver**: the compiler driver that glue together all
 pieces together for the full workflow.

@@ -1,16 +1,16 @@
-\chapter{CLAW FORTRAN Compiler configuration}
+\chapter{CLAW Compiler configuration}
 \label{chapter:configuration}
 
-The different transformation enabled in the \clawfcomp and their order of 
+The different transformation enabled in the \clawfcomp and their order of
 application is configurable in the \clawfcomp global configuration file. The
-available transformation are defined in transformation set files (see Section 
+available transformation are defined in transformation set files (see Section
 \ref{section:conf_trans_set}.
 
 \section{Transformation set}
 \label{section:conf_trans_set}
 A transformation set is a group of transformations that are packed together and
 that can be used during the translation. Each transformation set must be
-described in a transformation set configuration file once. Listing 
+described in a transformation set configuration file once. Listing
 \ref{lst:internal_set_conf} shows the transformation set configuration file for
 the CLAW internal transformation set.
 
@@ -38,12 +38,12 @@ transformation:
 \subsection{External transformation set}
 External transformation set can be implemented and their transformation applied
 with the \clawfcomp. Section \ref{section:new_trans} explains in detail how to
-create and plus externals transformation and transformation sets. 
+create and plus externals transformation and transformation sets.
 
 The transformation set configuration file for an external set must specify the
-name of the JAR file containing the transformation classes in the 
-\lstinline|transformations| element as shown in Figure 
-\ref{lst:external_set_conf}. 
+name of the JAR file containing the transformation classes in the
+\lstinline|transformations| element as shown in Figure
+\ref{lst:external_set_conf}.
 
 \lstinputlisting
   [
@@ -51,7 +51,7 @@ name of the JAR file containing the transformation classes in the
     caption=External transformation set configuration file,
     language=XML
   ]{code/external-set.xml}
-  
+
 \subsection{Location of external transformation sets JARs}
 The JAR files specified in external transformation sets can be located anywhere
 on disk. These location have to be set in the \lstinline!CLAW_TRANS_SET_PATH!
@@ -62,23 +62,23 @@ Several paths can be provided and they must be separated by \lstinline!:!.
 \section{\clawfcomp Global configuration}
 The global configuration gives information about which transformation sets are
 used, which transformation are enabled, in which order the transformations are
-applied and several configuration key-value pair that can be accessed by the 
-transformations. 
+applied and several configuration key-value pair that can be accessed by the
+transformations.
 
-The configuration is separated in different sections: 
+The configuration is separated in different sections:
 \begin{itemize}
-\item \textbf{global}: this section encapsulate several key-value pair 
+\item \textbf{global}: this section encapsulate several key-value pair
       configuration parameter. The attribute \lstinline!type! of the global
-      section defines if the configuration is a root configuration or an 
+      section defines if the configuration is a root configuration or an
       extension of the default one. User can overwrite partially or entirely
       the default configuration.
-      The only mandatory key-value pair in the global section is the 
+      The only mandatory key-value pair in the global section is the
       \lstinline!translator! key.
 \item \textbf{sets}: this section defines which transformation sets are used.
-      The name corresponds to the filename of the transformation set 
+      The name corresponds to the filename of the transformation set
       configuration file without extension.
 \item \textbf{groups}: this section defines which transformations are enabled.
-      The name corresponds to the name defined in each transformation set 
+      The name corresponds to the name defined in each transformation set
       configuration file.
       Only transformations part of the used transformation sets can be defined
       here.
@@ -90,14 +90,14 @@ The configuration is separated in different sections:
 \lstinputlisting
   [
     label=lst:claw_default_conf,
-    caption=CLAW FORTRAN Compiler default configuration,
+    caption=CLAW Compiler default configuration,
     language=XML
   ]{code/claw-default.xml}
 
 \subsection{User defined configuration}
 Listing \ref{lst:external_config} is an example of an user configuration that
 can be passed to the \clawfcomp. It uses one transformation set and enable
-one transformation. The transformation set is the one described in Listing 
+one transformation. The transformation set is the one described in Listing
 \ref{lst:external_set_conf}. This configuration will overwrite entirely the
 default configuration as its \lstinline!type! is \lstinline!root!.
 

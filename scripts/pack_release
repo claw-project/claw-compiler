@@ -60,7 +60,7 @@ claw_version_name="claw-compiler-${claw_version}"
 
 echo ""
 echo "================================================="
-echo "CLAW FORTRAN Compiler release archive information"
+echo "CLAW Compiler release archive information"
 echo "================================================="
 echo "- Repo: ${claw_main_repo}}"
 echo "- Branch: ${claw_branch}}"

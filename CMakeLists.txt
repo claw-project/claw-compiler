@@ -2,7 +2,7 @@
 # See LICENSE file for more information
 
 # This CMakeLists.txt file is the entry point for the configuration and the
-# compilation of the CLAW Fortran compiler.
+# compilation of the CLAW Compiler.
 
 cmake_minimum_required(VERSION 3.0)
 

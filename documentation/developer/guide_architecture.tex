@@ -4,11 +4,11 @@ The \clawfcomp is based on the \omni\cite{omni:website}. The \omni Project
 provides a set of programs to build source-to-source translator for C/C++
 and FORTRAN. It is jointly developed by the Programming Environment Research
 Team of the RIKEN AICS and the HPCS Lab. of the University of Tsukuba both
-located in Japan. The \clawfcomp is a contributor in this project. 
+located in Japan. The \clawfcomp is a contributor in this project.
 In the case of the \clawfcomp, we are using only the FORTRAN
 capabilities of the \omni but similar transformation mechanism could be
 applied without to much effort to C or C++ code. The \omni Project
-actively developed as of today and contribution or issue can be reported on 
+actively developed as of today and contribution or issue can be reported on
 their master repository\cite{omni:github}.
 
 \subsection{The FORTRAN front-end}
@@ -21,10 +21,10 @@ can be called individually as shown in listing \ref{lst:ffront}.
 F_Front -M my_module_dir -o my_program.xml my_program.f90
 \end{lstlisting}
 
-As the \omni acts as an actual compiler, it also has a notion of module file. 
+As the \omni acts as an actual compiler, it also has a notion of module file.
 When a FORTRAN module is parsed with the front-end, a \lstinline|.xmod| file is
-generated. This file contains all the signatures and type definitions included 
-in the module. This file is then needed to parse other FORTRAN code depending 
+generated. This file contains all the signatures and type definitions included
+in the module. This file is then needed to parse other FORTRAN code depending
 on the module. This mechanism will allow the cross-file transformation of the
 \clawfcomp.
 
@@ -56,15 +56,15 @@ F_Front -M . -o module_m2.xml module_m2.f90 # uses m3.xmod and produces m2.xmod
 F_Front -M . -o module_m1.xml module_m1.f90 # uses m2.xmod and produces m1.xmod
 \end{lstlisting}
 
-The \lstinline|-M| option tells the front-end where to search and store the 
+The \lstinline|-M| option tells the front-end where to search and store the
 module files. Several path can be given for the search but the first one will
 be used to store the newly created \lstinline|.xmod| files.
 
 
 \subsection{\xcodeml}
 \xcodeml is the \gls{ir} used by the
-translator in the CLAW FORTRAN Compiler. This \gls{ir} is based on the XML
-format and is described in a specification 
+translator in the CLAW Compiler. This \gls{ir} is based on the XML
+format and is described in a specification
 document\cite{omni:xcodemlf95,omni:xcodemlf2008}. It allows to have an
 high-level representation of FORTRAN 2008 programs.
 
@@ -113,7 +113,7 @@ XmOption.setDebugOutput(false);
 XmDecompiler decompiler = toolFactory.createDecompiler();
 XmDecompilerContext context = toolFactory.createDecompilerContext();
 // xcodemlDocument is the XcodeML/F DOM document to write to file
-decompiler.decompile(context, xcodemlDocument, writer); 
+decompiler.decompile(context, xcodemlDocument, writer);
 \end{lstlisting}
 
 \section{\clawfcomp}
@@ -127,7 +127,7 @@ under-the-hood. The complete workflow is devided as follows:
 FORTRAN preprocessor. Typically the one provided by the default compiler.
 The \lstinline|FC| environment variable is used by the CMake build system to
 determine it. \textbf{FPP} is needed to have a syntactically correct FORTRAN
-code to give it to the parser. Code with preprocessor directive is impossible 
+code to give it to the parser. Code with preprocessor directive is impossible
 to parse and to transform.
 \item \textbf{F\_Front}: The preprocessed FORTRAN source code is then parsed
 by the OMNI Compiler FORTRAN front-end to produce the input \xcodeml \gls{ir}.
@@ -146,7 +146,7 @@ actively developed as part of the CLAW project.
   \includegraphics[
     width=0.8\textwidth
   ]{resources/clawfc_global_workflow.png} \\
-  \caption{CLAW FORTRAN Compiler main workflow.}
+  \caption{CLAW Compiler main workflow.}
   \label{fig:clawfc_main_workflow}
 \end{figure}
 
@@ -163,7 +163,7 @@ transformation instances and and apply them to the to the \xcodeml \gls{ast}.
 \end{figure}
 
 Figure \ref{fig:cx2x_stack} shows the stack of libraries used in the the CLAW
-\xcodeml to \xcodeml translator. The bottom layer is detailed in Chapter 
-\ref{chapter:astmanip}. The middle layer is explained in Chapter 
-\ref{chapter:primitives}. Finally, the top layer is detailed in Chapter 
+\xcodeml to \xcodeml translator. The bottom layer is detailed in Chapter
+\ref{chapter:astmanip}. The middle layer is explained in Chapter
+\ref{chapter:primitives}. Finally, the top layer is detailed in Chapter
 \ref{chapter:configuration} and \ref{chapter:transformation}.
