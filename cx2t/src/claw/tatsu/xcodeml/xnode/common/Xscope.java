@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * The Xscope represents the possible value for the scope attribute in XcodeML
  * intermediate representation.
- * <p>
+ *
  * Possible value are: local, global, param
  *
  * @author clementval

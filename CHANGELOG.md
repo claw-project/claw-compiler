@@ -1,8 +1,8 @@
 # Change Log
-All notable changes to the CLAW FORTRAN Compiler project will be documented in
+All notable changes to the CLAW Compiler project will be documented in
 this file.
 
-## [1.0 Unreleased]
+## [1.0] - 2018-03-19
 New features:
 * Option `--target=<target>` or `-t=<target>` allows to choose the target for
   code transformation.
@@ -24,8 +24,9 @@ New available transformations:
   * `verbatim`
   * `ignore`
 * High abstraction (beta):
-  * `parallelize`
-  * `parallelize-forward`
+  * Single Column Abstraction
+    * `parallelize`
+    * `parallelize forward`
 
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
@@ -39,11 +40,10 @@ Technical/Architecture change:
   `compiler/<compiler_id>.cmake` files.
 * Some transformations are implemented directly into the driver as they have to
   be performed before the parsing step.
-* The XcodeML AST abstraction and manipulation library is now independent from
-  the rest. CLAW TATSU is the name of this new library and it is now handle as a
-  dependency to this repository.
 * The full workflow is now pipelined. Only in debug mode, intermediate files are
   written to disk.
+* CLAW X2T libraries are split in 3 distinct ones. For more information, refer
+  to the developer's guide.
 
 General:
 * OMNI Compiler submodule points to the official OMNI Compiler repository.
@@ -58,5 +58,5 @@ code.
 - **CX2X CLAW translator**: An XcodeML to XcodeML translator that implements the
 CLAW language directive v0.1 (loop-fusion, loop-interchange, loop-extract,
 remove)
-- **CLAW Fortran Compiler driver**: the compiler driver that glue together all
+- **CLAW Compiler driver**: the compiler driver that glue together all
 pieces together for the full workflow.

@@ -54,9 +54,18 @@ set(OMNI_F2X_FLAGS "")
 set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 
 # Define OMNI Compiler jar archives build location.
-set(LOCAL_OMNI_JAR_TOOLS "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar")
-set(LOCAL_OMNI_JAR_F_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar")
-set(LOCAL_OMNI_JAR_C_BACKEND "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar")
+set(
+  BUILD_OMNI_JAR_TOOLS
+  "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar"
+)
+set(
+  BUILD_OMNI_JAR_F_BACKEND
+  "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar"
+)
+set(
+  BUILD_OMNI_JAR_C_BACKEND
+  "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar"
+)
 
 
 #
@@ -71,6 +80,13 @@ set(ANTLR4_RUNTIME "${CLAW_X2T_JAR_INSTALL_PATH}/${ANTLR4_RUNTIME_NAME}.jar")
 
 set(COMMON_CLI_NAME "commons-cli")
 set(COMMON_CLI "${CLAW_X2T_JAR_INSTALL_PATH}/${COMMON_CLI_NAME}.jar")
+
+set(BUILD_ANTLR4 "${CMAKE_SOURCE_DIR}/cx2t/lib/${ANTLR4_NAME}.jar")
+set(
+  BUILD_ANTLR4_RUNTIME
+  "${CMAKE_SOURCE_DIR}/cx2t/lib/${ANTLR4_RUNTIME_NAME}.jar"
+)
+set(BUILD_COMMON_CLI "${CMAKE_SOURCE_DIR}/cx2t/lib/${COMMON_CLI_NAME}.jar")
 
 #
 # External program options

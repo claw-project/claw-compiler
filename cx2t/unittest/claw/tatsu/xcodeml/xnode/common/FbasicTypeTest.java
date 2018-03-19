@@ -72,7 +72,7 @@ public class FbasicTypeTest {
 
   /**
    * Test for a simple integer type
-   * <p>
+   *
    * integer(kind=8)
    */
   @Test
@@ -105,7 +105,7 @@ public class FbasicTypeTest {
 
   /**
    * Test for a simple character declarations
-   * <p>
+   *
    * character(len=10)
    */
   @Test
@@ -139,7 +139,7 @@ public class FbasicTypeTest {
 
   /**
    * Test for a more complex integer type with dimension
-   * <p>
+   *
    * integer dimension(10, 1:10)
    */
   @Test

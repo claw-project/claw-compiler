@@ -11,7 +11,7 @@
 #
 
 ###################################################################
-# Print the help for the CLAW FORTRAN Compiler
+# Print the help for the CLAW Compiler
 # Arguments:
 #   $1: program name
 ###################################################################
@@ -19,7 +19,7 @@ function claw::print_help() {
   cat <<EOF
 usage: $1 <OPTIONS> <INPUTFILE> ...
 
-CLAW FORTRAN Compiler options:
+CLAW Compiler options:
 
    -o <file>                  : output file for the transformed FORTRAN code. If
                                 omitted, code output on the standard output.
@@ -265,7 +265,7 @@ function claw::set_parameters() {
 }
 
 ###################################################################
-# Get the CLAW FORTRAN Compiler version
+# Get the CLAW Compiler version
 # Returns:
 #   Formatted version string
 ###################################################################

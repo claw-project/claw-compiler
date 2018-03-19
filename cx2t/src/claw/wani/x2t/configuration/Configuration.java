@@ -134,6 +134,7 @@ public class Configuration {
    *
    * @param configPath     Path to the configuration files and XSD schemas.
    * @param userConfigFile Path to the alternative configuration.
+   * @throws Exception If configuration cannot be loaded properly.
    */
   public void load(String configPath, String userConfigFile)
       throws Exception
@@ -605,7 +606,7 @@ public class Configuration {
         && configMajMin[1] < compilerMajMin[1]))
     {
       throw new Exception("Configuration version is smaller than " +
-          "CLAW FORTRAN Compiler version: " + compilerMajMin[0] + "." +
+          "CLAW Compiler version: " + compilerMajMin[0] + "." +
           compilerMajMin[1]);
     }
   }
@@ -613,7 +614,7 @@ public class Configuration {
   /**
    * Extract major and minor version number from the full version String.
    *
-   * @param version Full version String. <major>.<minor>.<fixes>
+   * @param version Full version String. Format: major.minor.fixes
    * @return Two dimensional array with the major number at index 0 and the
    * minor at index 1.
    * @throws Exception If the version String is not of the correct format.
@@ -652,7 +653,7 @@ public class Configuration {
    * Display the loaded configuration.
    */
   public void displayConfig() {
-    System.out.println("- CLAW FORTRAN Compiler configuration -\n");
+    System.out.println("- CLAW Compiler configuration -\n");
     System.out.println("Default directive directive: " +
         getCurrentDirective() + "\n");
     System.out.println("Default target: " + getCurrentTarget() + "\n");

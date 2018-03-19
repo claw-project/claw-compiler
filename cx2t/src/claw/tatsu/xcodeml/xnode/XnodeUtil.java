@@ -300,13 +300,13 @@ public class XnodeUtil {
   /**
    * Find all array references in the next children that match the given
    * criteria.
-   * <p>
+   *
    * This methods use powerful Xpath expression to locate the correct nodes in
    * the AST
-   * <p>
+   *
    * Here is an example of such a query that return all node that are array
    * references for the array "array6" with an offset of 0 -1
-   * <p>
+   *
    * //FarrayRef[varRef[Var[text()="array6"]] and arrayIndex and
    * arrayIndex[minusExpr[Var and FintConstant[text()="1"]]]]
    *

@@ -18,7 +18,7 @@ import java.util.Set;
  * Running a topological sort and then visiting the nodes in the order
  * specified by this sorted order ensures that the necessary values for each
  * node are available before the node is visited.
- * <p>
+ *
  * There are several algorithms for computing topological sorts.  The one used
  * here was first described in "Edge-Disjoint Spanning Trees and Depth-First
  * Search" by Robert Tarjan.  The algorithm is reminiscent of Kosaraju's SCC
@@ -30,7 +30,7 @@ import java.util.Set;
  * expanding out any node.  Since those nodes will be added to the sorted order
  * before the expanded node, we have the desired property of the topological
  * sort.
- * <p>
+ *
  * This process can be augmented to detect a cycle in the original graph.  As
  * we do the search, we'll maintain a set of nodes that we have visited and a
  * set of nodes that we have expanded.  If when doing the DFS we find a node

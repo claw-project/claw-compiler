@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * The FbasicType represents the FbasicType (3.3) element in XcodeML
  * intermediate representation.
- * <p>
+ *
  * Elements: (kind?, (len | (arrayIndex | indexRange)+)?, coShape?)
  * - Optional:
  * - kind

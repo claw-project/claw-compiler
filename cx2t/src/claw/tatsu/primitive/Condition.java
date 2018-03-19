@@ -25,6 +25,7 @@ public final class Condition {
   /**
    * Check whether the condition depends on some variables.
    *
+   * @param condition Condition element to check.
    * @param variables List of variable name.
    * @return True if the condition depend on a variable in the list. False
    * otherwise.

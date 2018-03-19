@@ -35,7 +35,7 @@ public class NestedDoStatement {
    * maximum Nb do statements.
    *
    * @param outerDoStatement Do statement node to start the nested group.
-   * @param nb               Number of do statements. If nb <= 0 match all
+   * @param nb               Number of do statements. If nb &le; 0 match all
    *                         possible nested do statement.
    */
   public NestedDoStatement(Xnode outerDoStatement, int nb) {
@@ -119,8 +119,8 @@ public class NestedDoStatement {
   /**
    * Compute the swapping indices for the new ordering. Gives new position
    * position of the xth index from right to left.
-   * E.g. current to new position: i,j,k -> k,i,j = 120 i goes to pos 1, j goes
-   * to pos 2 and k goes to pos 0.
+   * E.g. current to new position: i,j,k &rarr; k,i,j = 120 i goes to pos 1, j
+   * goes to pos 2 and k goes to pos 0.
    *
    * @param newInductionVarOrder List of induction variable in their new order.
    * @return Computed new position indices.
