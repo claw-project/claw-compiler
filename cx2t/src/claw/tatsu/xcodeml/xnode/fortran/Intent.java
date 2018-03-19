@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * The Intent represents the possible value for the intent attribute in XcodeML
  * intermediate representation.
- * <p>
+ *
  * Possible value are: in, out, inout
  *
  * @author clementval

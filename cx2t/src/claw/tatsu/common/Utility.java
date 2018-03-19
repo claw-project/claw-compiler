@@ -60,7 +60,7 @@ public final class Utility {
   }
 
   /**
-   * Convert an object back to a List<String>
+   * Convert an object back to a list of string
    *
    * @param rawObject Raw object to be converted.
    * @return A list of string values. If the raw object is null or not an

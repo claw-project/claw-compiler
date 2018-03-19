@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * The FfunctionType represents the FfunctionType (3.4) element in XcodeML
  * intermediate representation.
- * <p>
+ *
  * Elements: (params?)
  * - Optional:
  * - params

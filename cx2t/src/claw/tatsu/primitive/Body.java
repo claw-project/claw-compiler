@@ -53,13 +53,15 @@ public final class Body {
 
   /**
    * Shift all statements from the first siblings of the "from" element until
-   * the "until" element (not included).
+   * the "until" element if "included" is true.
    *
    * @param from       Start element for the swifting.
    * @param until      End element for the swifting.
    * @param targetBody Body element in which statements are inserted.
+   * @param included   If true, until element is shifted.
    * @throws IllegalTransformationException If one element is null or the
-   * targetBody element is not a body element.
+   *                                        targetBody element is not a body
+   *                                        element.
    */
   public static void shiftIn(Xnode from, Xnode until, Xnode targetBody,
                              boolean included)

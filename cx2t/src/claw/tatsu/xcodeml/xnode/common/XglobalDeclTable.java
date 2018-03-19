@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * The XglobalDeclTable represents the typeTable (5.1) element in XcodeML
  * intermediate representation.
- * <p>
+ *
  * Elements: (FfunctionDefinition | FmoduleDefinition)*
  * - Optional:
  * - FfunctionDefinition (FfunctionDefinition)

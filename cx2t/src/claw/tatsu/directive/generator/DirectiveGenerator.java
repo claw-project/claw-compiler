@@ -8,13 +8,12 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Interface for directive directive generator.
- * <p>
+ *
  * TODO interface might need some refinements when we have a better idea of
  * TODO OpenACC vs OpenMP
  *
@@ -42,6 +41,7 @@ public abstract class DirectiveGenerator {
   /**
    * Get the start pragma to define a parallel accelerated region.
    *
+   * @param clauses Additional clauses append at the start directive.
    * @return String value that represents the pragma.
    */
   public abstract String[] getStartParallelDirective(String clauses);
@@ -56,11 +56,12 @@ public abstract class DirectiveGenerator {
   /**
    * Get the formatted directive to start the parallelization of a loop.
    *
-   * @param value Collapse value. if greater than 0, a collapse clause will be
-   *              added to the construct.
-   * @param seq   If true, loop should be executed in a sequential mode.
-   * @param naked If true, simple directive is generated without special
-   *              clauses.
+   * @param value   Collapse value. if greater than 0, a collapse clause will be
+   *                added to the construct.
+   * @param seq     If true, loop should be executed in a sequential mode.
+   * @param naked   If true, simple directive is generated without special
+   *                clauses.
+   * @param clauses Additional clauses append at the start directive.
    * @return String value that represents the start of a parallelized loop.
    */
   public abstract String[] getStartLoopDirective(int value, boolean seq,
@@ -162,6 +163,7 @@ public abstract class DirectiveGenerator {
   /**
    * Get the start pragma to define the start of an directive data region.
    *
+   * @param clauses Additional clauses append at the start directive.
    * @return String value that represents the pragma.
    */
   public abstract String[] getStartDataRegion(List<String> clauses);

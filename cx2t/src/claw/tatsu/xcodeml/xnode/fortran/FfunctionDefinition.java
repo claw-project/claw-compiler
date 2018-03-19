@@ -10,7 +10,7 @@ import claw.tatsu.xcodeml.xnode.common.*;
 /**
  * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
  * XcodeML intermediate representation.
- * <p>
+ *
  * Elements: (name, symbols?, params?, declarations?, body)
  * - Required:
  * - name (text)
@@ -19,7 +19,7 @@ import claw.tatsu.xcodeml.xnode.common.*;
  * - symbols (XsymbolTable)
  * - params
  * - declarations (XdeclTable)
- * <p>
+ *
  * Can have lineno and file attributes
  *
  * @author clementval

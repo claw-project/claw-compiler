@@ -13,11 +13,11 @@ import java.util.*;
 /**
  * The XdeclTable represents the typeTable (5.2) element in XcodeML intermediate
  * representation.
- * <p>
+ *
  * Elements: ( varDecl | FstructDecl | externDecl | FuseDecl | FuseOnlyDecl
  * | FinterfaceDecl | FnamelistDecl | FequivalenceDecl
  * | FcommonDecl )*
- * <p>
+ *
  * - Optional:
  * - varDecl
  * - FstructDecl
