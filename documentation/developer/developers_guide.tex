@@ -1,7 +1,7 @@
 \documentclass[a4paper, 11pt]{report}
 \newcommand{\authorname}{Valentin Clement}
 \author{\authorname{}}
-\newcommand{\version}{1.0b}
+\newcommand{\version}{1.0}
 
 \title{CLAW Compiler - Developer's Guide}
 
@@ -18,7 +18,6 @@
 \usepackage[top=2cm, bottom=1cm, left=2cm, right=2cm]{geometry}
 \usepackage{color}
 \usepackage[table]{xcolor}
-\usepackage{graphicx}
 \usepackage{lipsum}
 \usepackage{pgfplots}
 \usepackage{glossaries}
@@ -35,15 +34,18 @@
 
 \setcounter{secnumdepth}{3}
 
-\def\fortran{FORTRAN\xspace}
+\def\fortran{Fortran\xspace}
 \def\clawfcomp{CLAW Compiler\xspace}
 \def\omni{OMNI Compiler\xspace}
-\def\xcodeml{XcodeML/F\xspace}
+\def\xcodeml{XcodeML\xspace}
+\def\xcodemlf{XcodeML/F\xspace}
+\def\xcodemlc{XcodeML/C\xspace}
 \def\ffront{\lstinline!F_Front!\xspace}
 \def\fback{\lstinline!F_Back!\xspace}
+\def\cback{\lstinline!C_Back!\xspace}
 \def\fpp{\lstinline!FPP!\xspace}
 \def\clawfc{\lstinline!clawfc!\xspace}
-\def\cx2x{\lstinline!CX2X!\xspace}
+\def\cx2x{\lstinline!CX2T!\xspace}
 
 \makeglossaries
 
@@ -138,22 +140,17 @@
 %------------------------------------------------------------------------------
 %	TITLE SECTION
 %------------------------------------------------------------------------------
-\colorbox{grey}{
-	\parbox[t]{1.0\linewidth}{
-		\centering \fontsize{35pt}{80pt}\selectfont
-		% The first argument for fontsize is the font size of the text and the
-		% second is the line spacing - you may need to play with these for your
-		% particular title
+\vspace*{2cm}
+\begin{center}
+    \includegraphics[width=\textwidth]{resources/claw_logo_full_textured_black.png} \\
+\end{center}
 
-		\vspace*{2cm}
-		% Space between the start of the title and the top of the grey box
+\parbox[t]{1.0\linewidth}{
+    \centering \fontsize{35pt}{80pt}\selectfont
+	\vspace*{2cm}
+	\textbf{Developer's guide} \\
+	\vspace*{2cm}
 
-		\hfill \textbf{CLAW Compiler} \\
-		\hfill Developer's Guide\par
-
-		\vspace*{2cm}
-		% Space between the end of the title and the bottom of the grey box
-	}
 }
 
 \vfill
@@ -164,6 +161,7 @@
 
 \vfill % Space between the title box and author information
 
+\HRule
 \begin{center}
 Version \version{}, Last updated \today \\
 Author: \authorname{}
@@ -198,11 +196,10 @@ Author: \authorname{}
 
 \chapter*{Introduction}
 This document describes the internal and external components of the \clawfcomp.
-It gives an in-depth overview of the architecture of the compiler as well as
-the implementation of new transformations.
+It gives an in-depth overview of the architecture of the compiler, its libraries
+as well as how to implement new transformations.
 
 \section*{Conventions used in this document}
-
 Keywords and punctuation that are part of the actual specification will appear
 in typewriter font: \\
 
@@ -219,18 +216,25 @@ more than once is followed by ellipses:\\
 
 % input of different chapters of the guide
 
+% Global architecture
 \input{guide_architecture.tex}
+
+% CLAW WANI Implementation of actual transformation
 \input{guide_claw_parser.tex}
 \input{guide_configuration.tex}
-\input{guide_transformation.tex}
-\input{guide_xcodeml_ast_manipulation.tex}
-\input{guide_claw_transformation_primitive.tex}
+
+% CLAW SHENRON Translator and Transformation Infrastructure
+\input{guide_claw_shenron.tex}
+
+% CLAW TATSU XcodeML Abstraction and Manipulation Library
+\input{guide_claw_tatsu_ast_library.tex}
+%\input{guide_claw_transformation_primitive.tex}
 
 
 % GLOSSARY
-\pagebreak
-\glsaddall
-\printglossaries
+% \pagebreak
+% \glsaddall
+% \printglossaries
 
 \emptypage
 % FIGURES
@@ -238,8 +242,8 @@ more than once is followed by ellipses:\\
 \listoffigures
 
 %TABLES
-\pagebreak
-\listoftables
+% \pagebreak
+% \listoftables
 
 \emptypage
 % LISTINGS

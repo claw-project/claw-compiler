@@ -39,7 +39,7 @@ message(STATUS "OMNI Compiler version ${OMNI_GIT_HASH}")
 
 # Set the default install directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set (
+  set(
     CMAKE_INSTALL_PREFIX "/usr/local"
     CACHE PATH "default install path" FORCE
   )

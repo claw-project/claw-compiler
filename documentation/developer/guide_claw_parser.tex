@@ -1,13 +1,14 @@
-\chapter{CLAW directive language}
-The CLAW directive language is specified in the "CLAW directive language
-specification"\cite{claw:specification}. To validate and understand this
-language, a parser is needed in the heart of the \clawfcomp. This section
-gives an in-depth description of the parser and its implementation.
+\chapter{CLAW Directive Language}
+The CLAW Directive Language is specified in the \textit{CLAW Directive Language
+Specification} document~\cite{claw:specification}. To parse and validate 
+this directive language, a parser is needed in the heart of the \clawfcomp. 
+This section gives an in-depth description of this parser and its 
+implementation.
 
 \section{CLAW directive language parser}
-The CLAW directive language parser is based on the ANTLR project
+The CLAW Directive Language parser is based on the ANTLR project
 \cite{Parr:2013:DAR:2501720}. ANTLR is a parser generator. From a grammar file,
-ANTLR generates a parser that is then used in the CLAW \xcodeml to \xcodeml
+ANTLR generates a parser that is then used in the CLAW \xcodemlf to \xcodeml
 translator to interpret the directives.
 
 \lstinputlisting
@@ -21,12 +22,12 @@ Listing \ref{lst:antlr} is a minimalist ANTLR example that support only two
 directives \lstinline|!$claw acc| or \lstinline|!$claw omp|.
 
 In this grammar, there are two important sections, the parser and the lexer
-sections. The lexer section defined what will be recognized as a token. Here
+sections. The lexer section defines what will be recognized as a token. Here
 we defined the directives, the clauses but also more complex construct such as
 the \lstinline|IDENTIFIER| on line 28. It described the possible element to
 compose an identifier. This \lstinline|IDENTIFIER| can then be used later in
 the parser rules.
-The parser rules are defining the actual grammar of the language. In the case
+The parser rules define the actual grammar of the language. In the case
 of this small example, the grammar says that the directive string must begins
 with \lstinline|claw| and then be followed by \lstinline|acc| or
 \lstinline|omp|. The code in \lstinline|{}| is java code that is triggered
@@ -36,9 +37,10 @@ The \lstinline|@init{}| section allows to execute some Java code before
 triggering the actual parse. The \lstinline|@header{}| allows to insert Java
 code before the parser class.
 
-\begin{lstlisting}[label=lst:antlr_cmd, caption=ANTLR parser generation command, language=bash]
+\begin{lstlisting}[label=lst:antlr_cmd, 
+  caption=ANTLR parser generation command, language=bash]
 javac -classpath <antlr_jar> org.antlr.v4.Tool -o . -package cx2x.translator.language.parser Claw.g4
 \end{lstlisting}
 
 The full CLAW ANTLR grammar is defined in the following file:
-\lstinline|cx2t/src/cx2x/translator/language/parser/Claw.g4|
+\lstinline|cx2t/src/claw/wani/language/parser/Claw.g4|
