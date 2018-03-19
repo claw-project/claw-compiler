@@ -27,7 +27,7 @@ function show_help(){
 
 # Define local variable
 claw_branch="master"
-claw_main_repo="git@github.com:C2SM-RCM/claw-compiler.git"
+claw_main_repo="git@github.com:claw-project/claw-compiler.git"
 claw_release_dir=""
 claw_ant_root="cx2t/src"
 claw_version=""
@@ -62,14 +62,14 @@ echo ""
 echo "================================================="
 echo "CLAW Compiler release archive information"
 echo "================================================="
-echo "- Repo: ${claw_main_repo}}"
-echo "- Branch: ${claw_branch}}"
+echo "- Repo: ${claw_main_repo}"
+echo "- Branch: ${claw_branch}"
 echo "- Dest dir: ${claw_release_dir}"
 echo "- Version: ${claw_version}"
 echo ""
 
 rm -rf "${claw_version_name}" # Make sure destination doesn't exists
-git clone --depth 1 -b "${claw_branch}}" ${claw_main_repo} "${claw_version_name}"
+git clone --depth 1 -b "${claw_branch}" ${claw_main_repo} "${claw_version_name}"
 cd "${claw_version_name}" || exit 1
 git submodule init
 git submodule update --remote
