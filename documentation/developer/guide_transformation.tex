@@ -1,7 +1,7 @@
 \chapter{Transformation}
 \label{chapter:transformation}
 A transformation class is the the basic representation of a manipulation of the
-\gls{ast} triggered by a directive or on a whole translation unit. Each 
+\gls{ast} triggered by a directive or on a whole translation unit. Each
 translation unit transformation or directive transformation is implemented in
 its own class. If the directive can be used as a block directive (with a
 \lstinline|!$end <directive>| directive), the class must inherits from the
@@ -12,7 +12,7 @@ its own class. If the directive can be used as a block directive (with a
 \label{section:trans_type}
 Transformations are divided into two distinct groups. The independent and the
 dependent transformations. The first one, as its name implies, is performed
-independently of any other transformations. Translation unit transformations 
+independently of any other transformations. Translation unit transformations
 are always independent. The dependent transformation, in the
 other hand, is applied only when it can be combined with another dependent
 transformation of the same kind in its group. Most of the transformations are
@@ -23,7 +23,7 @@ fusion transformations. Alone, those transformations have no effect
 on the \gls{ast}. The translation engine will analyze if the
 first one can be transformed with the second one. If so, the transformations will
 be grouped together and the fusion will happen. Otherwise, the transformations
-are just ignored as they have to depend on at least one other transformation. 
+are just ignored as they have to depend on at least one other transformation.
 Checks that match dependent transformation together are specific to the kind
 of transformation.
 
@@ -45,15 +45,15 @@ set (see \ref{section:conf_trans_set}).
 \section{Transformation application order}
 The first step of the translation of a translation unit (an XcodeML/F \gls{ir}),
 is the detection of all the directives. Each directive will trigger the
-creation of an instance of the transformation class it belongs to, if any. 
-For example, a loop-fusion directive will trigger the creation of a 
-\lstinline|LoopFusion| instance. On this instance, the \lstinline|analyze()| 
+creation of an instance of the transformation class it belongs to, if any.
+For example, a loop-fusion directive will trigger the creation of a
+\lstinline|LoopFusion| instance. On this instance, the \lstinline|analyze()|
 method is called in order to determine if the transformation can take place.
-If the analysis step is successful, the transformation is added to its 
+If the analysis step is successful, the transformation is added to its
 transformation group. Once all the transformation instances have been analyzed
-and categorized by groups, the actual code transformation can take place on 
-the XcodeML/F \gls{ir}. All transformations in a group are applied one after 
-another in a FIFO order. The order in which groups are processed is determined 
+and categorized by groups, the actual code transformation can take place on
+the XcodeML/F \gls{ir}. All transformations in a group are applied one after
+another in a FIFO order. The order in which groups are processed is determined
 by the CLAW configuration file.
 
 \lstinputlisting
@@ -79,10 +79,10 @@ the following steps must be done.
 \begin{enumerate}
 \item Create a new class that inherits from one of the base transformation
       class.
-\item (Optional) Define the directive that will trigger the transformation 
-      and add it to the CLAW language parser if the transformation is 
+\item (Optional) Define the directive that will trigger the transformation
+      and add it to the CLAW language parser if the transformation is
       triggered by a directive.
-\item (Optional) Detect and categorize the new transformation if the 
+\item (Optional) Detect and categorize the new transformation if the
       transformation is triggered by a directive.
 \item Add the transformation to a transformation set configuration and to
       the global configuration.
@@ -92,7 +92,7 @@ As an example, the next 4 subsection describe those steps with more details.
 
 \subsection{New transformation class}
 The transformation created at this step will be a simple independent
-transformation triggered by a directive. It will then inherits for 
+transformation triggered by a directive. It will then inherits for
 \lstinline|ClawTransformation| base class.
 
 \lstinputlisting
@@ -202,7 +202,7 @@ CLAW language parser.
 
 Now, it needs to be detected in order to create the transformation instance.
 This happens in the \lstinline|ClawTranslator| class. The
-\lstinline|generateTransformation| method detects all the pragmas in the 
+\lstinline|generateTransformation| method detects all the pragmas in the
 translation unit and categorize them.
 
 As shown in Listing \ref{lst:categorization}, a new case is added to the switch
@@ -235,11 +235,11 @@ transformation class.
 </transformations>
 \end{lstlisting}
 
-Listing \ref{lst:new_trans_conf} uses the transformation set from Listing 
+Listing \ref{lst:new_trans_conf} uses the transformation set from Listing
 \ref{lst:new_trans_set} and enable its only transformation.
 
 \begin{lstlisting}[label=lst:new_trans_conf, caption=claw-dummy.xml, language=xml]
-<claw version="0.4">
+<claw version="1.0">
   <global type="extension"/>
   <sets>
     <set name="claw-dummy"/>
