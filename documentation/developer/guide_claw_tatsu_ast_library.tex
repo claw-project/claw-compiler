@@ -1,0 +1,194 @@
+\chapter{\xcodeml AST abstraction and manipulation library}
+\label{chapter:astmanip}
+As the \xcodeml \gls{ir} is based on the XML format, it can be manipulated with
+any language that can read and write XML files. It can even be manipulated by
+hand depending on the user's knowledge of the \xcodeml \gls{ir} specification.
+To ease this task, an AST abstraction and manipulation library is included
+in the \cx2x program. This library helps to traverse the \gls{ast}, access and
+update the type table and add, modify or delete nodes.
+
+This section aims to describe very simple examples. For more information about
+the libraries, the complete javadoc\cite{claw:online, claw:javadoc} can be
+found online.
+
+\section{The Xnode class}
+The main class of this library is the \lstinline|Xnode| class that is the base
+of any node in the AST.
+Any specialization of a node like \lstinline|XcodeML|,
+\lstinline|XcodeProgram|, \lstinline|Xmod| or \lstinline|XbasicType| inherits
+from \lstinline|Xnode|.
+This class has basic methods to perform the following actions:
+\begin{itemize}
+\item Query, add, update or remove an attribute of a node
+      (See Listing \ref{lst:xnode_attr}).
+\item Query, add or remove children of a node (See Listing \ref{lst:xnode_node}).
+\item Clone a node (See Listing \ref{lst:xnode_clone}).
+\item Match nodes in the siblings, descendants or ancestor of a node
+      (See Listing \ref{lst:xnode_match}).
+\end{itemize}
+
+Each \lstinline|Xnode| instance has a specific opcode that matches the \xcodemlf
+element tag.
+This opcode is also used when creating new nodes or matching nodes in a tree.
+All the opcodes are members of the \lstinline|Xcode| class.
+The \lstinline|Xattr| class contains all the members to access and match
+attributes of a node.
+
+\begin{lstlisting}[label=lst:xnode_attr, language=Java,
+  caption=Xnode attribute methods]
+// Gather a node
+Xnode n = ...
+// Check if a node has an attribute
+boolean hasAttributeAllocatable = n.hasAttribute(Xattr.IS_ALLOCATABLE);
+// Get value from a boolean attribute
+boolean attributeAllocatable = n.getBooleanAttribute(Xattr.IS_ALLOCATABLE);
+// Get value from a boolean attribute
+String type = n.getAttribute(Xattr.TYPE);
+// Set value of a boolean attribute
+n.setAttribute(Xattr.IS_ALLOCATABLE, true);
+// Set value of an attribute
+n.setAttribute(Xattr.TYPE, "VALUE_OF_TYPE");
+// Remove an attribute
+n.removeAttribute(Xattr.IS_ALLOCATABLE);
+\end{lstlisting}
+
+\begin{lstlisting}[label=lst:xnode_node, language=Java,
+  caption=Xnode node methods]
+// Gather a node
+Xnode n = ...
+// Get first child
+Xnode fChild = n.firstChild();
+// Get last child
+Xnode lChild = n.lastChild();
+// Iterate through children
+Xnode crt = n.firstChild();
+while(crt != null) {
+  crt = crt.nextSibling()
+}
+// Add a child
+Xnode intConst = xcodeml.createIntConstant(10);
+n.append(xcodeml.createNode(intConst);
+\end{lstlisting}
+
+\begin{lstlisting}[label=lst:xnode_clone, language=Java, caption=Xnode cloning]
+// Gather a node
+Xnode n = ...
+// Get first child
+Xnode clone = n.cloneNode();
+\end{lstlisting}
+
+\begin{lstlisting}[label=lst:xnode_match, language=Java, caption=Xnode match]
+// Gather a node
+Xnode n = ...
+// Match all arrayRef nodes in sub-tree
+List<Xnode> arrayRefs = n.matchAll(Xcode.FARRAYREF);
+// Match all arrayRef nodes in the siblings of the node
+List<Xnode> arrayRefs = n.matchSibling(Xcode.FARRAYREF);
+// Match first arrayRef node in the direct descendant of the node
+Xnode arrayRef = n.matchDirectDescendant(Xcode.FARRAYREF);
+\end{lstlisting}
+
+\section{Access the type table}
+The type table of an \xcodemlf translation unit is a child node of the root.
+The \lstinline|XcodeML| class gives access to this type table.
+\lstinline|XcodeProgram| and \lstinline|Xmod| are child classes of
+\lstinline|XcodeML|.
+In the example in Listing \ref{lst:xtype_table}, the code is checking
+every function definition to find declaration of allocatable arrays.
+On line 9, the type table is accessed to check if the type of the
+declaration is \lstinline|FbasicType|. If so, the type is retrieved from
+the type table (line 12) and its information can be queried to check its
+nature.
+
+\begin{lstlisting}[label=lst:xtype_table, language=Java,
+  caption=Access the type table]
+public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+  // Get all function definitions in the translation unit
+  List<XfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
+  for(XfunctionDefinition fctDef : fctDefs) {
+    // Get the declarations of the function
+    List<Xnode> declarations = fctDef.getDeclarationTable().values();
+    for(Xnode decl : declarations) {
+      if(decl.opcode() == Xcode.VARDECL) {
+        if(!xcodeml.getTypeTable().isBasicType(decl)) {
+          continue; // Only FbasicType can be array
+        }
+        XbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if(bt != null && bt.isArray() && bt.isAllocatable()) {
+          System.out.println(decl.decl.matchSeq(Xcode.NAME).value());
+        }
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+
+
+\section{Traverse the \gls{ast}}
+Listing \ref{lst:ast_next_sib} shows a simple way to go from a pragma and visit
+its next siblings.
+
+\begin{lstlisting}[label=lst:ast_next_sib, language=Java,
+  caption=XcodeML AST traverse]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+  Xnode crt = _claw.getPragma();
+  while(crt != null){
+    System.out.println("Current node: " + crt.opcode());
+    crt = crt.nextSibling();
+  }
+}
+\end{lstlisting}
+
+\section{Add nodes}
+A new node can be easily added in the AST as shown in the Listing
+\ref{lst:add_node}. On line 4, the new "node" object is created by
+passing the "opcode" of the node. This code refers the the XcodeML/F
+specification defined in the \lstinline!Xcode! enumeration.
+
+On line 5, a new value is assigned to the node. \lstinline!FpragmaStatement!
+node accept text values.
+
+Finally, on line 6, the node is inserted in the AST. In this case,
+the \lstinline!insertAfter! will add the new node after the current node.
+
+\begin{lstlisting}[label=lst:add_node, language=Java,
+  caption=XcodeML add node example]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+  Xnode myNewNode = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+  myNewNode.setValue("omp parallel");
+  _claw.getPragma().insertAfter(myNewNode);
+}
+\end{lstlisting}
+
+\section{Modify nodes}
+
+\begin{lstlisting}[label=lst:update_node, language=Java,
+  caption=XcodeML update node example]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+  Xnode pragma = _claw.getPragma();
+  // Get current values from the node
+  String oldValue = pragma.value();
+  int line = pragma.lineNo();
+  // Update the value directly in the AST
+  pragma.setValue("acc routine seq");
+  pragma.setLineNo(line + 1);
+}
+\end{lstlisting}
+
+\section{Delete nodes}
+\begin{lstlisting}[label=lst:delete_node, language=Java,
+  caption=XcodeML delete node example]
+public void transform(XcodeProgram xcodeml, Translator translator,
+                      Transformation other)
+{
+  Xnode pragma = _claw.getPragma();
+  XnodeUtil.safeDelete(pragma); // Delete the node in the AST
+}
+\end{lstlisting}
