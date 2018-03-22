@@ -26,7 +26,7 @@ To build the and install the CLAW Compiler, use the followings commands.
 
 In source build:
 ```bash
-git clone git@github.com:C2SM-RCM/claw-compiler.git
+git clone git@github.com:claw-project/claw-compiler.git
 cd claw-compiler
 git submodule init
 git submodule update --remote
@@ -37,7 +37,7 @@ make install
 
 Out-of-source build:
 ```bash
-git clone git@github.com:C2SM-RCM/claw-compiler.git
+git clone git@github.com:claw-project/claw-compiler.git
 cd claw-compiler
 git submodule init
 git submodule update --remote
@@ -102,7 +102,7 @@ programming environment. So if you are compiling with PGI or GNU, use the
 following commands:
 
 ```bash
-git clone git@github.com:C2SM-RCM/claw-compiler.git
+git clone git@github.com:claw-project/claw-compiler.git
 cd claw-compiler
 git submodule init
 git submodule update --remote
