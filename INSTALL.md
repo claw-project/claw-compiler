@@ -16,9 +16,7 @@ The CLAW Compiler has the followings dependencies:
 
 ### Build & install
 
-CLAW Compiler (clawfc) is built on the top of the
-[OMNI Compiler](http://www,omni-compiler.org). It is currently tested with
-version [1.0.1](http://omni-compiler.org/download/stable/omnicompiler-1.0.1.tar.bz2).
+CLAW Compiler (clawfc) is built on the top of the [OMNI Compiler](http://www,omni-compiler.org).
 OMNI Compiler is packaged and built together with the CLAW Compiler.
 
 
