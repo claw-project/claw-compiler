@@ -50,7 +50,7 @@ user_config=false
 user_directive=false
 line_directive=false
 decompiler_max_column=false
-dump_cx2x_args=false
+dump_cx2t_args=false
 force_pure=false
 report=false
 pipe_workflow=true
@@ -110,7 +110,7 @@ readonly user_config
 readonly user_directive
 readonly line_directive
 readonly decompiler_max_column
-readonly dump_cx2x_args
+readonly dump_cx2t_args
 readonly force_pure
 readonly report
 readonly pipe_workflow
@@ -121,8 +121,8 @@ readonly claw_sed_end_ignore="s/\!\$claw end ignore//"
 readonly claw_sed_cont="s/__CLAWAMP__/\&/"
 readonly claw_sed_verbatim="s/\!\$claw verbatim //"
 
-### Add additional parameters needed for cx2x ###
-claw::format_cx2x_params
+### Add additional parameters needed for cx2t ###
+claw::format_cx2t_params
 
 ### List target ###
 if [[ ${list_target} == true ]]; then
@@ -418,7 +418,7 @@ for input_file in "${f_files_transformation[@]}"; do
   fi
 
   # Dump the arguments pass to the translator for easier debugging
-  if [[ ${dump_cx2x_args} == true ]]; then
+  if [[ ${dump_cx2t_args} == true ]]; then
     echo "-- [DEBUG] Arguments for cx2t:"
     echo "${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT} \
       ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \

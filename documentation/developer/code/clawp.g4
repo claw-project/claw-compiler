@@ -2,7 +2,7 @@ grammar Claw;
 
 @header
 {
-import cx2x.translator.language.base.ClawLanguage;
+import claw.wani.language.ClawLanguage;
 }
 
 /*----------------------------------------------------------------------------

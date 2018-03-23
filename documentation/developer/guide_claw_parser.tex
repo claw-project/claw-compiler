@@ -1,8 +1,8 @@
 \chapter{CLAW Directive Language}
 The CLAW Directive Language is specified in the \textit{CLAW Directive Language
-Specification} document~\cite{claw:specification}. To parse and validate 
-this directive language, a parser is needed in the heart of the \clawfcomp. 
-This section gives an in-depth description of this parser and its 
+Specification} document~\cite{claw:specification}. To parse and validate
+this directive language, a parser is needed in the heart of the \clawfcomp.
+This section gives an in-depth description of this parser and its
 implementation.
 
 \section{CLAW directive language parser}
@@ -37,9 +37,9 @@ The \lstinline|@init{}| section allows to execute some Java code before
 triggering the actual parse. The \lstinline|@header{}| allows to insert Java
 code before the parser class.
 
-\begin{lstlisting}[label=lst:antlr_cmd, 
+\begin{lstlisting}[label=lst:antlr_cmd,
   caption=ANTLR parser generation command, language=bash]
-javac -classpath <antlr_jar> org.antlr.v4.Tool -o . -package cx2x.translator.language.parser Claw.g4
+javac -classpath <antlr_jar> org.antlr.v4.Tool -o . -package claw.wani.language.parser Claw.g4
 \end{lstlisting}
 
 The full CLAW ANTLR grammar is defined in the following file:
