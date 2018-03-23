@@ -551,7 +551,9 @@ function claw::process_dependencies() {
     fi
 
     # Recurse to get dependencies in the right order
-    claw::process_dependencies "${file_pp}" "${base_file}"
+    if [[ "$2" != "${base_file}" ]]; then
+      claw::process_dependencies "${file_pp}" "${base_file}"
+    fi
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
