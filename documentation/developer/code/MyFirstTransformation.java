@@ -2,12 +2,12 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package cx2x.wani.transformation;
+package claw.wani.transformation;
 
-import cx2x.wani.language.ClawPragma;
-import cx2x.wani.transformation.ClawTransformation;
-import cx2x.shenron.transformation.Transformation;
-import cx2x.shenron.translator.Translator;
+import claw.wani.language.ClawPragma;
+import claw.wani.transformation.ClawTransformation;
+import claw.shenron.transformation.Transformation;
+import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.common;
 
 /**

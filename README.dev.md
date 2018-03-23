@@ -77,7 +77,7 @@ in a standalone mode.
 
 The option can be used as follows with an example of outputs:
 ```bash
-clawfc --dump-cx2x-args <other_args>
+clawfc --dump-cx2t-args <other_args>
 -- [DEBUG] Arguments for cx2t:
    --config=/claw-compiler/driver/etc/claw-default.xml --schema=/claw-compiler/driver/etc/claw_config.xsd -w 80 -l  -M/claw-compiler/test/loops/fusion1  -o /tmp/__omni_tmp__65319/original_5f_code_f90_out.xml -f transformed_code.f90 /tmp/__omni_tmp__65319/original_5f_code_f90_in.xml
 ```
