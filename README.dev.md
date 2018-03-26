@@ -1,6 +1,6 @@
-# CLAW FORTRAN Compiler development
+# CLAW Compiler development
 
-Useful information about the development of the CLAW Fortran Compiler are given
+Useful information about the development of the CLAW Compiler are given
 on this page.
 
 ### Developer's guide
@@ -16,7 +16,7 @@ If IDEA IntelliJ is not used, the coding style should reflect this
 configuration.
 
 #### Bash scripts
-In general, all bash scripts written for the CLAW FORTRAN Compiler projects
+In general, all bash scripts written for the CLAW Compiler projects
 follow those guidelines: https://google.github.io/styleguide/shell.xml
 
 In addition, all scripts are tested with `shellcheck` and must pass the tested
@@ -55,7 +55,7 @@ transformation by the translator.
 Those tests can be found under `/test/`
 
 To build all the tests, use the following command. All the tests are transformed
-with the CLAW Fortran Compiler and then the original code as well as the
+with the CLAW Compiler and then the original code as well as the
 transformed are compiled with a standard Fortran compiler.
 
 ```bash
@@ -77,12 +77,12 @@ in a standalone mode.
 
 The option can be used as follows with an example of outputs:
 ```bash
-clawfc --dump-cx2x-args <other_args>
+clawfc --dump-cx2t-args <other_args>
 -- [DEBUG] Arguments for cx2t:
    --config=/claw-compiler/driver/etc/claw-default.xml --schema=/claw-compiler/driver/etc/claw_config.xsd -w 80 -l  -M/claw-compiler/test/loops/fusion1  -o /tmp/__omni_tmp__65319/original_5f_code_f90_out.xml -f transformed_code.f90 /tmp/__omni_tmp__65319/original_5f_code_f90_in.xml
 ```
 
-It is recommended to use the `CLAW FORTRAN Compiler` with the `--debug` option in order to keep the intermediate files and ease the development/debugging of the translator.
+It is recommended to use the `CLAW Compiler` with the `--debug` option in order to keep the intermediate files and ease the development/debugging of the translator.
 
 ### Driver
 

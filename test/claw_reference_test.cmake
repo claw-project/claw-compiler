@@ -333,7 +333,7 @@ function(claw_add_advanced_test)
     set(DEBUG_FLAG --debug --debug-omni)
   endif()
 
-  # Execute the CLAW compiler for CPU target
+  # Execute the CLAW Compiler for CPU target
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE_CPU}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
@@ -346,7 +346,7 @@ function(claw_add_advanced_test)
     COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE}"
   )
 
-  # Execute the CLAW compiler for GPU target
+  # Execute the CLAW Compiler for GPU target
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE_GPU}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
@@ -360,7 +360,7 @@ function(claw_add_advanced_test)
   )
 
   if(EXISTS ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column_extra.f90)
-    # Execute the CLAW compiler for CPU target
+    # Execute the CLAW Compiler for CPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_FILE_EXTRA_CPU}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
@@ -374,7 +374,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE_EXTRA}"
     )
 
-    # Execute the CLAW compiler for GPU target
+    # Execute the CLAW Compiler for GPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_FILE_EXTRA_GPU}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
@@ -388,7 +388,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for GPU target on file ${ORIGINAL_FILE_EXTRA}"
     )
 
-    # Execute the CLAW compiler for CPU target
+    # Execute the CLAW Compiler for CPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_CPU}
       COMMAND touch ${MAIN_F90} # to force new compilation
@@ -401,7 +401,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW compiler for GPU target
+    # Execute the CLAW Compiler for GPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_GPU}
       COMMAND touch ${MAIN_F90} # to force new compilation
@@ -426,7 +426,7 @@ function(claw_add_advanced_test)
 
   else()
 
-    # Execute the CLAW compiler for CPU target
+    # Execute the CLAW Compiler for CPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_CPU}
       COMMAND touch ${MAIN_F90} # to force new compilation
@@ -439,7 +439,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW compiler for GPU target
+    # Execute the CLAW Compiler for GPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_GPU}
       COMMAND touch ${MAIN_F90} # to force new compilation

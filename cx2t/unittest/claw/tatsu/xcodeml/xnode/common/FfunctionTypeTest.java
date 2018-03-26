@@ -27,7 +27,7 @@ public class FfunctionTypeTest {
 
   /**
    * Test simple fct type
-   * <p>
+   *
    * function foo(a,b)
    * integer a, b
    */

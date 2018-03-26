@@ -35,20 +35,26 @@ import java.util.Map;
  */
 public class ClawTranslatorDriver {
 
-  private String _xcodemlInputFile = null;
-  private String _xcodemlOutputFile = null;
+  String _xcodemlInputFile = null;
+  String _xcodemlOutputFile = null;
   private boolean _canTransform = false;
   private ClawTranslator _translator = null;
   private XcodeProgram _translationUnit = null;
+
+  /**
+   * Default ctor for child classes.
+   */
+  ClawTranslatorDriver() {
+  }
 
   /**
    * ClawTranslatorDriver ctor.
    *
    * @param xcodemlInputFile  The XcodeML input file path.
    * @param xcodemlOutputFile The XcodeML output file path.
+   * @throws Exception If translator cannot be created.
    */
-  public ClawTranslatorDriver(String xcodemlInputFile,
-                              String xcodemlOutputFile)
+  public ClawTranslatorDriver(String xcodemlInputFile, String xcodemlOutputFile)
       throws Exception
   {
     _xcodemlInputFile = xcodemlInputFile;
@@ -217,6 +223,8 @@ public class ClawTranslatorDriver {
 
   /**
    * Flush all information stored in the translator.
+   *
+   * @throws IllegalTransformationException If module cache cannot be written.
    */
   public void flush()
       throws IllegalTransformationException

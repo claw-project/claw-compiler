@@ -11,7 +11,7 @@
 #
 
 ###################################################################
-# Print the help for the CLAW FORTRAN Compiler
+# Print the help for the CLAW Compiler
 # Arguments:
 #   $1: program name
 ###################################################################
@@ -19,7 +19,7 @@ function claw::print_help() {
   cat <<EOF
 usage: $1 <OPTIONS> <INPUTFILE> ...
 
-CLAW FORTRAN Compiler options:
+CLAW Compiler options:
 
    -o <file>                  : output file for the transformed FORTRAN code. If
                                 omitted, code output on the standard output.
@@ -115,7 +115,7 @@ function claw::show_env() {
 #   show_config, user_target, target_opt, list_directive,
 #   user_directive, directive_opt, user_config, config_opt,
 #   decompiler_max_column, max_columns, line_directive,
-#   dump_cx2x_args, force_pure, report
+#   dump_cx2t_args, force_pure, report
 ###################################################################
 function claw::set_parameters() {
   while [[ -n "$1" ]]; do
@@ -236,8 +236,8 @@ function claw::set_parameters() {
       max_columns="$1"
       ;;
     -l) line_directive=true ;;
-    --dump-cx2x-args)
-      dump_cx2x_args=true
+    --dump-cx2t-args)
+      dump_cx2t_args=true
       enable_debug_omni=true
       ;;
     --force-pure) force_pure=true ;;
@@ -265,7 +265,7 @@ function claw::set_parameters() {
 }
 
 ###################################################################
-# Get the CLAW FORTRAN Compiler version
+# Get the CLAW Compiler version
 # Returns:
 #   Formatted version string
 ###################################################################
@@ -551,7 +551,9 @@ function claw::process_dependencies() {
     fi
 
     # Recurse to get dependencies in the right order
-    claw::process_dependencies "${file_pp}" "${base_file}"
+    if [[ "$2" != "${base_file}" ]]; then
+      claw::process_dependencies "${file_pp}" "${base_file}"
+    fi
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086
@@ -657,7 +659,7 @@ function claw::applyPreprocessorPass() {
 }
 
 ###################################################################
-# Prepare the variables that are passed as CX2X arguments
+# Prepare the variables that are passed as CX2T arguments
 # Arguments: None
 # Global: CLAW_X2T_CONFIG_OPT, CLAW_X2T_TARGET_OPT,
 #         CLAW_X2T_DIRECTIVE_OPT, CLAW_X2T_MAX_COLUMN_OPT,
@@ -666,7 +668,7 @@ function claw::applyPreprocessorPass() {
 #         user_directive, directive_opt, decompiler_max_column,
 #         max_columns, line_directive, force_pure, module_opt
 ###################################################################
-function claw::format_cx2x_params() {
+function claw::format_cx2t_params() {
   # Set configuraions directory
   CLAW_X2T_CONFIG_OPT="--config-path=${CLAW_X2T_CONFIG_PATH}"
 

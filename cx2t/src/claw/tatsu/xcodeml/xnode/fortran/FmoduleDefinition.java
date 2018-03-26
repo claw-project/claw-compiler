@@ -11,16 +11,16 @@ import java.util.List;
 /**
  * The FmoduleDefinition represents the FmoduleDefinition (5.7) element in
  * XcodeML intermediate representation.
- * <p>
+ *
  * Elements: (symbols?, declarations?, FcontainsStatement?)
  * - Optional:
  * - symbols (XsymbolTable)
  * - declarations  (XdeclTable)
  * - FcontainsStatement (Xnode)
- * <p>
+ *
  * Attributes:
  * - Required: name (text)
- * <p>
+ *
  * Can have lineno and file attributes
  *
  * @author clementval

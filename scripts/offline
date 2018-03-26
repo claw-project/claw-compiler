@@ -11,7 +11,7 @@
 
 echo ""
 echo "=================================="
-echo "CLAW FORTRAN Compiler offline step"
+echo "CLAW Compiler offline step"
 echo "=================================="
 echo ""
 

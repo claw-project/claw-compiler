@@ -7,11 +7,11 @@ package claw.wani.language;
 /**
  * ClawMappingVar represents the mapping variable used in a loop-extract
  * transformation.
- * <p>
+ *
  * In the following mapping option:
- * <p>
+ *
  * map(v1,v2,v3:i/j)
- * <p>
+ *
  * The mapping variable i is the "arg" mapping as used as the mapping variable
  * in the function call arguments. The mapping variable j is the "fct" mapping
  * as used as the mapping variable in the function body.

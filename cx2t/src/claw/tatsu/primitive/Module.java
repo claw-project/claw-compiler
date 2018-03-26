@@ -104,11 +104,12 @@ public final class Module {
   /**
    * Update the function signature in the module file to reflects local changes.
    *
-   * @param moduleName  Module name to update.
-   * @param xcodeml     Current XcodeML file unit.
-   * @param fctDef      Function definition that has been changed.
-   * @param fctType     Function type that has been changed.
-   * @param moduleCache Current module cache.
+   * @param moduleName    Module name to update.
+   * @param xcodeml       Current XcodeML file unit.
+   * @param fctDef        Function definition that has been changed.
+   * @param fctType       Function type that has been changed.
+   * @param moduleCache   Current module cache.
+   * @param importFctType If true, import the functionType.
    * @throws IllegalTransformationException If the module file or the function
    *                                        cannot be located
    */

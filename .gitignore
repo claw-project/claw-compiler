@@ -46,7 +46,7 @@ ClawParser.java
 
 # CMake configured file
 cx2t/unittest/helper/TestConstant.java
-cx2t/src/cx2x/ClawVersion.java
+cx2t/src/claw/ClawVersion.java
 
 # IDE files
 .idea

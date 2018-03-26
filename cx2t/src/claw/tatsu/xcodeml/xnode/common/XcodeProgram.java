@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * The XcodeProgram represents the XcodeProgram (2) element in XcodeML
  * intermediate representation.
- * <p>
+ *
  * Elements: ( typeTable, globalSymbols, globalDeclarations )
  * - Required:
  * - typeTable (XtypeTable)

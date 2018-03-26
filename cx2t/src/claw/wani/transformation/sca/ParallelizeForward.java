@@ -26,10 +26,10 @@ import claw.wani.x2t.translator.ClawTranslator;
 import java.util.*;
 
 /**
- * The one_column forward transformation applies the changes in the subroutine
- * signatures to function call and function in which the call is nested if
- * needed.
- * <p>
+ * The Single Column Abstraction (SCA) forward transformation applies the
+ * changes in the subroutine signatures to function call and function in which
+ * the call is nested if needed.
+ *
  * During the transformation, a new "CLAW" XcodeML module file is generated
  * if the transformation has to be applied across several file unit. This
  * file will be located in the same directory as the original XcodeML module

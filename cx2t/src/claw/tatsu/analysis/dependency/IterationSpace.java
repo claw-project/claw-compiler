@@ -26,6 +26,7 @@ public class IterationSpace {
    * statements.
    *
    * @param doStatements List of do statements part of the iteration space.
+   * @throws Exception If iteration space cannot be loaded.
    */
   public IterationSpace(List<Xnode> doStatements) throws Exception {
     _levels = new ArrayList<>();

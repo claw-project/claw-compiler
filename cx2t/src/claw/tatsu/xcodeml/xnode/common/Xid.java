@@ -7,7 +7,7 @@ package claw.tatsu.xcodeml.xnode.common;
 /**
  * The Xid represents the id (8.2) element in XcodeML intermediate
  * representation.
- * <p>
+ *
  * Elements:
  * - Required:
  * - name (Xname)
