@@ -51,8 +51,10 @@ public enum CompilerDirective {
       case TatsuConstant.DIRECTIVE_NONE:
         return NONE;
       case TatsuConstant.DIRECTIVE_OPENACC:
+      case TatsuConstant.DIRECTIVE_SHORT_OPENACC:
         return OPENACC;
       case TatsuConstant.DIRECTIVE_OPENMP:
+      case TatsuConstant.DIRECTIVE_SHORT_OPENMP:
         return OPENMP;
       default:
         return NONE;
