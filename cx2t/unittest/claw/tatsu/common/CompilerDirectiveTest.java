@@ -20,13 +20,21 @@ public class CompilerDirectiveTest {
   public void ctorTest() {
     assertEquals(CompilerDirective.OPENMP,
         CompilerDirective.fromString(TatsuConstant.DIRECTIVE_OPENMP));
+    assertEquals(CompilerDirective.OPENMP,
+        CompilerDirective.fromString(TatsuConstant.DIRECTIVE_SHORT_OPENMP));
     assertEquals(CompilerDirective.OPENACC,
         CompilerDirective.fromString(TatsuConstant.DIRECTIVE_OPENACC));
+    assertEquals(CompilerDirective.OPENACC,
+        CompilerDirective.fromString(TatsuConstant.DIRECTIVE_SHORT_OPENACC));
 
     assertEquals(CompilerDirective.OPENMP,
         CompilerDirective.fromString("OPENMP"));
+    assertEquals(CompilerDirective.OPENMP,
+        CompilerDirective.fromString("OMP"));
     assertEquals(CompilerDirective.OPENACC,
         CompilerDirective.fromString("OPENACC"));
+    assertEquals(CompilerDirective.OPENACC,
+        CompilerDirective.fromString("ACC"));
 
     assertEquals(CompilerDirective.NONE,
         CompilerDirective.fromString(null));

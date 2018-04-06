@@ -257,9 +257,11 @@ function claw::set_parameters() {
   # Add automatically preprocessor macro for corresponding target
   pp_add_opt+=("-D_CLAW")
   pp_add_opt+=("${compiler_macro}")
-  if [[ "${directive_opt[0]}" == "openacc" ]]; then
+  if [[ "${directive_opt[0]}" == "openacc" ]] \
+    || [[ "${directive_opt[0]}" == "acc" ]]; then
     pp_add_opt+=("-D_OPENACC")
-  elif [[ "${directive_opt[0]}" == "openmp" ]]; then
+  elif [[ "${directive_opt[0]}" == "openmp" ]] \
+    || [[ "${directive_opt[0]}" == "omp" ]]; then
     pp_add_opt+=("-D_OPENMP")
   fi
 }

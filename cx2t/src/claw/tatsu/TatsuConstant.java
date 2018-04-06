@@ -13,7 +13,9 @@ public final class TatsuConstant {
 
   public static final String DIRECTIVE_NONE = "none";
   public static final String DIRECTIVE_OPENACC = "openacc";
+  public static final String DIRECTIVE_SHORT_OPENACC = "acc";
   public static final String DIRECTIVE_OPENMP = "openmp";
+  public static final String DIRECTIVE_SHORT_OPENMP = "omp";
   public static final String DIRECTIVE_CLAW = "claw";
   public static final String OPENACC_PREFIX = "acc";
   public static final String OPENACC_PREFIX_CONT = "acc&";
