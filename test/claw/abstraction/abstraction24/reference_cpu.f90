@@ -2,10 +2,10 @@ MODULE mo_column
 
 CONTAINS
  FUNCTION compute_column ( nz , q , t , nproma ) RESULT(res)
+  INTEGER , INTENT(IN) :: nproma
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  INTEGER , INTENT(IN) :: nproma
   INTEGER :: k
   REAL :: c
   REAL :: res ( 1 : nz , 1 : nproma )
@@ -27,11 +27,11 @@ CONTAINS
  END FUNCTION compute_column
 
  SUBROUTINE compute_all ( nz , q , val , nproma )
+  INTEGER , INTENT(IN) :: nproma
 
   INTEGER , INTENT(IN) :: nz
   REAL , INTENT(INOUT) :: val ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
-  INTEGER , INTENT(IN) :: nproma
   REAL , TARGET :: z ( 1 : nproma , 1 : nz )
   INTEGER :: k
   REAL , POINTER :: zp ( : , : )

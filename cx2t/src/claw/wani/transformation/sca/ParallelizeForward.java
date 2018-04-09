@@ -16,6 +16,7 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
@@ -416,7 +417,7 @@ public class ParallelizeForward extends ClawTransformation {
         FbasicType bt = xcodeml.createBasicType(FortranType.INTEGER, Intent.IN);
         xcodeml.getTypeTable().add(bt);
         xcodeml.createIdAndDecl(varId, bt.getType(),
-            XstorageClass.F_PARAM, fDef, true);
+            XstorageClass.F_PARAM, fDef, DeclarationPosition.FIRST);
         type = bt.getType();
         Xnode param = xcodeml.createAndAddParam(varId, type, parentFctType);
         param.setBooleanAttribute(Xattr.IS_INSERTED, true);
@@ -701,7 +702,8 @@ public class ParallelizeForward extends ClawTransformation {
                 == null)
             {
               xcodeml.createIdAndDecl(dim.getIdentifier(), FortranType.INTEGER,
-                  XstorageClass.F_LOCAL, parentFctDef, false);
+                  XstorageClass.F_LOCAL, parentFctDef,
+                  DeclarationPosition.LAST);
             }
           }
 

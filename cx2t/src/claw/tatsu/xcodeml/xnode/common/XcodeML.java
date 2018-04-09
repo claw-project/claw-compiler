@@ -8,6 +8,7 @@ import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import org.w3c.dom.Document;
@@ -332,37 +333,33 @@ public class XcodeML extends Xnode {
    * Create the id and varDecl nodes and add them to the symbol/declaration
    * table.
    *
-   * @param name           Name of the variable.
-   * @param type           Type of the variable.
-   * @param sclass         Scope class of the variable (from Xname).
-   * @param fctDef         Function definition in which id and decl are created.
-   * @param afterDummyArgs If true, the new variable is declared just after the
-   *                       dummy argument. If false, the variable is append at
-   *                       the end.
+   * @param name    Name of the variable.
+   * @param type    Type of the variable.
+   * @param sclass  Scope class of the variable (from Xname).
+   * @param fctDef  Function definition in which id and decl are created.
+   * @param declPos Position of the newly inserted declaration.
    */
   public void createIdAndDecl(String name, FortranType type,
                               XstorageClass sclass,
                               FfunctionDefinition fctDef,
-                              boolean afterDummyArgs)
+                              DeclarationPosition declPos)
   {
-    createIdAndDecl(name, type.toString(), sclass, fctDef, afterDummyArgs);
+    createIdAndDecl(name, type.toString(), sclass, fctDef, declPos);
   }
 
   /**
    * Create the id and varDecl nodes and add them to the symbol/declaration
    * table.
    *
-   * @param name           Name of the variable.
-   * @param type           Type of the variable.
-   * @param sclass         Scope class of the variable (from Xname).
-   * @param fctDef         Function definition in which id and decl are created.
-   * @param afterDummyArgs If true, the new variable is declared just after the
-   *                       dummy argument. If false, the variable is append at
-   *                       the end.
+   * @param name    Name of the variable.
+   * @param type    Type of the variable.
+   * @param sclass  Scope class of the variable (from Xname).
+   * @param fctDef  Function definition in which id and decl are created.
+   * @param declPos Position of the newly inserted declaration.
    */
   public void createIdAndDecl(String name, String type, XstorageClass sclass,
                               FfunctionDefinition fctDef,
-                              boolean afterDummyArgs)
+                              DeclarationPosition declPos)
   {
     Xid id = createId(type, sclass, name);
     fctDef.getSymbolTable().add(id);
@@ -370,7 +367,7 @@ public class XcodeML extends Xnode {
     Xnode hook = null;
 
     // Check where is the last dummy arguments in the declaration
-    if(afterDummyArgs) {
+    if(declPos == DeclarationPosition.AFTER_DUMMY) {
       FfunctionType fctType = getTypeTable().getFunctionType(fctDef);
       List<String> parameters = fctType.getParamsNames();
 
@@ -389,10 +386,22 @@ public class XcodeML extends Xnode {
           }
         }
       }
+    } else if(declPos == DeclarationPosition.FIRST) {
+      for(Xnode n : fctDef.getDeclarationTable().values()) {
+        if(n.opcode() == Xcode.F_USE_DECL
+            || n.opcode() == Xcode.F_USE_ONLY_DECL)
+        {
+          hook = n;
+        } else {
+          break;
+        }
+      }
     }
 
     // Insert the new declaration
-    if(hook == null) {
+    if(declPos == DeclarationPosition.FIRST && hook == null) {
+      fctDef.getDeclarationTable().addFirst(decl);
+    } else if(hook == null) {
       fctDef.getDeclarationTable().add(decl);
     } else {
       hook.insertAfter(decl);
