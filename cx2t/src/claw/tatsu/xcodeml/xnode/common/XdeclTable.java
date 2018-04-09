@@ -100,12 +100,27 @@ public class XdeclTable extends Xnode {
   }
 
   /**
-   * Add a new declaration.
+   * Add a new declaration as last element.
    *
    * @param decl The new declaration object.
    */
   public void add(Xnode decl) {
     _baseElement.appendChild(decl.cloneRawNode());
+    _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
+  }
+
+  /**
+   * Add a new declaration as last element.
+   *
+   * @param decl The new declaration object.
+   */
+  public void addFirst(Xnode decl) {
+    if(_baseElement.getFirstChild() != null) {
+      _baseElement.insertBefore(decl.cloneRawNode(),
+          _baseElement.getFirstChild());
+    } else {
+      _baseElement.appendChild(decl.cloneRawNode());
+    }
     _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
   }
 

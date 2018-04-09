@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
@@ -661,7 +662,8 @@ public class Parallelize extends ClawTransformation {
       // Create the parameter for the lower bound
       if(dimension.getLowerBound().isVar()) {
         xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
-            bt.getType(), XstorageClass.F_PARAM, _fctDef, true);
+            bt.getType(), XstorageClass.F_PARAM, _fctDef,
+            DeclarationPosition.FIRST);
 
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(
@@ -673,7 +675,8 @@ public class Parallelize extends ClawTransformation {
       // Create parameter for the upper bound
       if(dimension.getUpperBound().isVar()) {
         xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
-            bt.getType(), XstorageClass.F_PARAM, _fctDef, true);
+            bt.getType(), XstorageClass.F_PARAM, _fctDef,
+            DeclarationPosition.FIRST);
 
         // Add parameter to the local type table
         Xnode param = xcodeml.createAndAddParam(
@@ -683,7 +686,7 @@ public class Parallelize extends ClawTransformation {
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER,
-          XstorageClass.F_LOCAL, _fctDef, false);
+          XstorageClass.F_LOCAL, _fctDef, DeclarationPosition.LAST);
     }
   }
 
