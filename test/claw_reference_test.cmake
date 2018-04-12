@@ -142,7 +142,7 @@ function(claw_add_basic_test)
     )
     add_test(
       NAME ast-compare-${claw_add_basic_test_NAME}
-      COMMAND diff --ignore-blank-lines ${output_file} ${reference_file}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${output_file} ${reference_file}
     )
     set_tests_properties(ast-compare-${claw_add_basic_test_NAME}
       PROPERTIES DEPENDS ast-transform-${claw_add_basic_test_NAME})
@@ -525,16 +525,16 @@ function(claw_add_advanced_test)
   if(NOT IGNORE)
     # Compare reference transformed code and output of the transformation
     add_test(NAME ast-compare-cpu-${claw_add_advanced_test_NAME}
-      COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_CPU}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_CPU}
       ${REFERENCE_FILE_CPU})
     add_test(NAME ast-compare-gpu-${claw_add_advanced_test_NAME}
-      COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_GPU}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_GPU}
       ${REFERENCE_FILE_GPU})
     add_test(NAME ast-compare-main-cpu-${claw_add_advanced_test_NAME}
-      COMMAND diff --ignore-blank-lines ${OUTPUT_MAIN_CPU}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_MAIN_CPU}
       ${REFERENCE_MAIN_CPU})
     add_test(NAME ast-compare-main-gpu-${claw_add_advanced_test_NAME}
-      COMMAND diff --ignore-blank-lines ${OUTPUT_MAIN_GPU}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_MAIN_GPU}
       ${REFERENCE_MAIN_GPU})
     set_tests_properties(ast-compare-cpu-${claw_add_advanced_test_NAME}
       PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
@@ -548,10 +548,10 @@ function(claw_add_advanced_test)
     # Test the extra module file with its reference
     if(EXISTS ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column_extra.f90)
       add_test(NAME ast-compare-cpu-extra-${claw_add_advanced_test_NAME}
-        COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_EXTRA_CPU}
+        COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_EXTRA_CPU}
         ${REFERENCE_FILE_EXTRA_CPU})
       add_test(NAME ast-compare-gpu-extra-${claw_add_advanced_test_NAME}
-        COMMAND diff --ignore-blank-lines ${OUTPUT_FILE_EXTRA_GPU}
+        COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_EXTRA_GPU}
         ${REFERENCE_FILE_EXTRA_GPU})
       set_tests_properties(ast-compare-cpu-extra-${claw_add_advanced_test_NAME}
         PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
