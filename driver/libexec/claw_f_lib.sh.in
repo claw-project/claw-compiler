@@ -307,6 +307,7 @@ function claw::error_exit()
   claw::status_message "error" "$1" "$2" "$3" "$4"
   ### Delete temporal directory ###
   if [[ ${enable_debug_omni} == false ]]; then
+    # shellcheck disable=SC2154
     rm -rf "${temp_dir}"
   fi
   exit 1
