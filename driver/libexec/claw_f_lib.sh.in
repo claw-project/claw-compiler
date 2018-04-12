@@ -314,6 +314,19 @@ function claw::error_exit()
 }
 
 ###################################################################
+# Clean up temporary and exit
+###################################################################
+function claw::exit_without_error()
+{
+  ### Delete temporal directory ###
+  if [[ ${enable_debug_omni} == false ]]; then
+    # shellcheck disable=SC2154
+    rm -rf "${temp_dir}"
+  fi
+  exit 0
+}
+
+###################################################################
 # Display warning message
 # Arguments:
 #   $1: filename
