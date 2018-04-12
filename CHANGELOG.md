@@ -4,6 +4,7 @@ this file.
 
 ## [1.X] - Unreleased
 * Support of Intel Compiler preprocessing workflow.
+* SCA: Fix problem in the CPU backend with indirect promotion (missing do stmt).
 
 ## [1.0] - 2018-03-19
 New features:
