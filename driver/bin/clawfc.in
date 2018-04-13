@@ -290,7 +290,7 @@ if [[ ${resolve_dependencies} == true ]]; then
 
     claw::process_dependencies "${file_pp}" "${input_file}"
   done
-  [[ ${stop_dependencies} == true ]] && exit 0
+  [[ ${stop_dependencies} == true ]] && claw::exit_without_error
 fi
 
 ### Pipe workflow ###
@@ -347,7 +347,7 @@ if [[ ${pipe_workflow} == true ]]; then
     #TODO integrate when full workflow:  claw::error_exit "FPP breaks pipe mode"
     #TODO integrate when full workflow: fi
   done
-  exit 0
+  claw::exit_without_error
 fi
 
 ### Frontend ###
@@ -382,7 +382,7 @@ for input_file in "${f_files_transformation[@]}"; do
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
     "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
 done
-[[ ${stop_frontend} == true ]] && exit 0
+[[ ${stop_frontend} == true ]] && claw::exit_without_error
 
 # Add debug flag for the translator options
 if [[ ${enable_debug} == true ]]; then
@@ -459,7 +459,7 @@ for input_file in "${f_files_transformation[@]}"; do
   # Note : The BlueGene/Q 's mpi compiler can compile only *.F90 in XMP process.
   # So that remains .F90 extention after process of the native compilier.
 done
-[[ ${stop_translator} == true ]] && exit 0
+[[ ${stop_translator} == true ]] && claw::exit_without_error
 
 ### Revert ignore prefix and apply verbatim
 for input_file in "${f_files_transformation[@]}"; do
@@ -472,9 +472,4 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::applyVerbatim "${file_out_f}"
 done
 
-### Delete temporal directory ###
-if [[ ${enable_debug_omni} == false ]]; then
-  rm -rf ${temp_dir}
-fi
-
-exit 0
+claw::exit_without_error
