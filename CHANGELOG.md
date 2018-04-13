@@ -4,6 +4,7 @@ this file.
 
 ## [1.X] - Unreleased
 * Support of Intel Compiler preprocessing workflow.
+* Clean up properly temporary files when driver exits on error or not.
 
 ## [1.0] - 2018-03-19
 New features:
