@@ -14,7 +14,6 @@ import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
@@ -487,11 +486,44 @@ public class Parallelize extends ClawTransformation {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
+
     List<AssignStatement> assignStatements =
         Function.gatherAssignStatements(_fctDef);
 
-    Set<Xnode> hooks = new HashSet<>();
+    // Iterate over all assign statements to detect all the indirect promotion.
+    for(AssignStatement assign : assignStatements) {
+      Xnode lhs = assign.getLhs();
+      String lhsName = assign.getLhsName();
+      if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF) {
+        /* If the assignment is in the column loop and is composed with some
+         * promoted variables, the field must be promoted and the var reference
+         * switch to an array reference */
+        if(shouldBePromoted(assign)) {
+          // Do the promotion if needed
+          if(!_arrayFieldsInOut.contains(lhsName)) {
+            _arrayFieldsInOut.add(lhsName);
+            PromotionInfo promotionInfo =
+                new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
+            Field.promote(promotionInfo, _fctDef, xcodeml);
+            _promotions.put(lhsName, promotionInfo);
+          }
+          // Adapt references
+          if(lhs.opcode() == Xcode.VAR) {
+            Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
+                _claw.getDimensionValues(), xcodeml);
+          } else {
+            Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(),
+                xcodeml);
+            Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
+                xcodeml);
+          }
+        }
+      }
+    }
 
+    Set<Xnode> hooks = new HashSet<>();
+    /* Iterate a second time over assign statements to flag places where to
+     * insert the do statements */
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
       String lhsName = assign.getLhsName();
@@ -522,7 +554,7 @@ public class Parallelize extends ClawTransformation {
 
           // Get rid of previously flagged hook in this if body.
           Iterator<Xnode> iter = hooks.iterator();
-          while (iter.hasNext()) {
+          while(iter.hasNext()) {
             Xnode crt = iter.next();
             if(assign.isNestedIn(crt)) {
               addIfHook = false;
@@ -539,7 +571,7 @@ public class Parallelize extends ClawTransformation {
       }
 
       Iterator<Xnode> iter = hooks.iterator();
-      while (iter.hasNext()) {
+      while(iter.hasNext()) {
         if(assign.isNestedIn(iter.next())) {
           wrapInDoStatement = false;
           break;
@@ -553,29 +585,8 @@ public class Parallelize extends ClawTransformation {
       } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
           && _scalarFields.contains(lhsName))
       {
-        /* If the assignment is in the column loop and is composed with some
-         * promoted variables, the field must be promoted and the var reference
-         * switch to an array reference */
-        if(shouldBePromoted(assign)) {
-          if(!_arrayFieldsInOut.contains(lhsName)) {
-            _arrayFieldsInOut.add(lhsName);
-            PromotionInfo promotionInfo =
-                new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
-            Field.promote(promotionInfo, _fctDef, xcodeml);
-            _promotions.put(lhsName, promotionInfo);
-          }
-          if(lhs.opcode() == Xcode.VAR) {
-            Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
-                _claw.getDimensionValues(), xcodeml);
-          } else {
-            Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(),
-                xcodeml);
-            Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
-                xcodeml);
-          }
-          if(wrapInDoStatement) {
-            hooks.add(assign);
-          }
+        if(shouldBePromoted(assign) && wrapInDoStatement) {
+          hooks.add(assign);
         }
       }
     }
