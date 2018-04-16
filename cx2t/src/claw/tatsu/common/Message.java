@@ -17,8 +17,8 @@ import java.util.List;
  */
 public final class Message {
 
-  private static final String ERROR_PREFIX = "claw-error: ";
-  private static final String WARNING_PREFIX = "claw warning: ";
+  private static final String ERROR_PREFIX = "error: ";
+  private static final String WARNING_PREFIX = "warning: ";
 
   // Avoid potential instantiation of this class
   private Message() {
@@ -38,18 +38,20 @@ public final class Message {
   /**
    * Print all messages in the given list with the prefix.
    *
-   * @param prefix   Prefix for the message.
-   * @param messages List of messages to display.
+   * @param originalFile Original file name.
+   * @param prefix       Prefix for the message.
+   * @param messages     List of messages to display.
    */
-  private static void printMessages(String prefix, List<XanalysisError> messages)
+  private static void printMessages(String originalFile, String prefix,
+                                    List<XanalysisError> messages)
   {
     for(XanalysisError message : messages) {
       if(message.getLine() == 0) {
-        System.err.println(String.format("%s %s, line: -", prefix,
+        System.err.println(String.format("%s:-:- %s, %s", originalFile, prefix,
             message.getMessage()));
       } else {
-        System.err.println(String.format("%s %s, line: %s", prefix,
-            message.getMessage(), message.getConcatLines()));
+        System.err.println(String.format("%s:%s:- %s, %s", originalFile,
+            message.getConcatLines(), prefix, message.getMessage()));
       }
     }
     messages.clear();
@@ -62,7 +64,8 @@ public final class Message {
    */
   public static void warnings(XcodeProgram translationUnit) {
     if(translationUnit != null) {
-      printMessages(WARNING_PREFIX, translationUnit.getWarnings());
+      printMessages(translationUnit.getSourceFileOnly(), WARNING_PREFIX,
+          translationUnit.getWarnings());
     }
   }
 
@@ -73,7 +76,8 @@ public final class Message {
    */
   public static void errors(XcodeProgram translationUnit) {
     if(translationUnit != null) {
-      printMessages(ERROR_PREFIX, translationUnit.getErrors());
+      printMessages(translationUnit.getSourceFileOnly(),
+          ERROR_PREFIX, translationUnit.getErrors());
     }
   }
 }

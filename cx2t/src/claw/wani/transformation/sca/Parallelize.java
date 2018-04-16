@@ -522,7 +522,7 @@ public class Parallelize extends ClawTransformation {
     }
 
     Set<Xnode> hooks = new HashSet<>();
-    /* Iterate a second time over assign statements to flag places where to
+    /* Iterate a second time over assigclaw warningn statements to flag places where to
      * insert the do statements */
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
