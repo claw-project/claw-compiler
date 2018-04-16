@@ -10,6 +10,7 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import org.w3c.dom.Document;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -245,6 +246,18 @@ public class XcodeProgram extends XcodeML {
    */
   public String getSource() {
     return getAttribute(Xattr.SOURCE);
+  }
+
+  /**
+   * Get the XcodeML source file information. Only filename without the
+   * directory.
+   *
+   * @return Filename part of the source file attribute value.
+   */
+  public String getSourceFileOnly() {
+    String source = getSource();
+    File f = new File(source);
+    return f.getName();
   }
 
   /**
