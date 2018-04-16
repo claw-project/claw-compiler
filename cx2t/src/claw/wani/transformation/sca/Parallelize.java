@@ -68,8 +68,8 @@ public class Parallelize extends ClawTransformation {
 
   private final Map<String, DimensionDefinition> _dimensions;
   private final Map<String, PromotionInfo> _promotions;
-  private final List<String> _arrayFieldsInOut;
-  private final List<String> _scalarFields;
+  private final Set<String> _arrayFieldsInOut;
+  private final Set<String> _scalarFields;
   private int _overDimensions;
   private FfunctionDefinition _fctDef;
   private FfunctionType _fctType;
@@ -85,8 +85,8 @@ public class Parallelize extends ClawTransformation {
     _overDimensions = 0;
     _dimensions = new HashMap<>();
     _promotions = new HashMap<>();
-    _arrayFieldsInOut = new ArrayList<>();
-    _scalarFields = new ArrayList<>();
+    _arrayFieldsInOut = new HashSet<>();
+    _scalarFields = new HashSet<>();
   }
 
   /**
@@ -98,7 +98,7 @@ public class Parallelize extends ClawTransformation {
    * @param candidateArrays List of candidate array variables for promotion.
    * @param scalars         List of candidate scalar variables for promotion.
    */
-  private void printDebugPromotionInfos(String name, List<String> promoted,
+  private void printDebugPromotionInfos(String name, Set<String> promoted,
                                         List<String> candidateArrays,
                                         List<String> scalars)
   {
@@ -521,7 +521,18 @@ public class Parallelize extends ClawTransformation {
       }
     }
 
+    // Hold hooks on which do statement will be inserted
     Set<Xnode> hooks = new HashSet<>();
+
+    /* Check whether condition includes a promoted variables. If so, the
+     * ancestor node using the condition must be wrapped in a do statement. */
+    List<Xnode> conditions = _fctDef.body().matchAll(Xcode.CONDITION);
+    for(Xnode condition : conditions) {
+      if(Condition.dependsOn(condition, _arrayFieldsInOut)) {
+        hooks.add(condition.ancestor());
+      }
+    }
+
     /* Iterate a second time over assign statements to flag places where to
      * insert the do statements */
     for(AssignStatement assign : assignStatements) {

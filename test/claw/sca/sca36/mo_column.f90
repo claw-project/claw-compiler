@@ -49,7 +49,10 @@ CONTAINS
     DO k = 2, nz
       t(k) = c * k
       p = t(k) + 1.0
-      q(k) = q(k - 1)  + t(k) * c
+      q(k) = q(k - 1) + t(k) * c
+      IF(p > 2.0) THEN
+        q(k) = q(k - 1) + t(k) * c * 2.0
+      END IF
     END DO
     q(nz) = q(nz) * c
   END SUBROUTINE compute_column

@@ -85,7 +85,7 @@ public final class Utility {
    * @param <T>  Type of the objects in set or list.
    * @return True if there is an intersection. False otherwise.
    */
-  public static <T> boolean hasIntersection(Set<T> set, List<T> list) {
+  public static <T> boolean hasIntersection(Set<T> set, Set<T> list) {
     for(T n : set) {
       if(list.contains(n)) {
         return true;
