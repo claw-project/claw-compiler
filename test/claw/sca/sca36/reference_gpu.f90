@@ -35,6 +35,9 @@ CONTAINS
     t ( proma , k ) = c * k
     p = t ( proma , k ) + 1.0
     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
+    IF ( p > 2.0 ) THEN
+     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c * 2.0
+    END IF
    END DO
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO

@@ -2,7 +2,7 @@
 All notable changes to the CLAW Compiler project will be documented in
 this file.
 
-## [1.X] - Unreleased
+## [1.0.1] - Unreleased
 * Support of Intel Compiler preprocessing workflow.
 * Clean up properly temporary files when driver exits on error or not.
 * SCA: Fix problem in the CPU backend with indirect promotion (missing do stmt).

@@ -38,6 +38,11 @@ CONTAINS
    DO proma = 1 , nproma , 1
     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
    END DO
+   DO proma = 1 , nproma , 1
+    IF ( p ( proma ) > 2.0 ) THEN
+     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c * 2.0
+    END IF
+   END DO
   END DO
   DO proma = 1 , nproma , 1
    q ( proma , nz ) = q ( proma , nz ) * c
