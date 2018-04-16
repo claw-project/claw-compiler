@@ -291,7 +291,9 @@ function claw::print_version() {
 ###################################################################
 function claw::status_message()
 {
-  echo "$2:$3:$4 $1: $5" >&2
+  filepath=$2
+  filename=$(basename "${filepath%.*}")
+  echo "${filename}:$3:$4 $1: $5" >&2
 }
 
 ###################################################################
