@@ -2,12 +2,14 @@
 All notable changes to the CLAW Compiler project will be documented in
 this file.
 
-## [1.0.1] - Unreleased
+## [1.0.1] - 2018-04-17
 * Support of Intel Compiler preprocessing workflow.
-* Clean up properly temporary files when driver exits on error or not.
-* SCA: Fix problem in the CPU backend with indirect promotion (missing do stmt).
+* Clean up properly temporary files when driver exits.
+* SCA/CPU: Fix problem with indirect promotion (missing do stmt).
+* Move test from `abstraction` to `sca` folder.
+* OMNI Compiler to git hash f59978d90cc1d93cf16de125e8dd35ae1d2a6537.
 
-## [1.0] - 2018-03-19
+## [1.0.0] - 2018-03-19
 New features:
 * Option `--target=<target>` or `-t=<target>` allows to choose the target for
   code transformation.
