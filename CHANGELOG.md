@@ -4,6 +4,7 @@ this file.
 
 ## [X.Y.Z] - Unreleased
 * User comment line can be preserved with the `--keep-comment` option.
+* SCA: Fix duplicated array references inserted in some cases.
 
 ## [1.0.1] - 2018-04-17
 * Support of Intel Compiler preprocessing workflow.
