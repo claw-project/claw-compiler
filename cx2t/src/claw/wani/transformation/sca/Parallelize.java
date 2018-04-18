@@ -498,14 +498,20 @@ public class Parallelize extends ClawTransformation {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
+
+
+
+        PromotionInfo promotionInfo;
         if(shouldBePromoted(assign)) {
           // Do the promotion if needed
           if(!_arrayFieldsInOut.contains(lhsName)) {
             _arrayFieldsInOut.add(lhsName);
-            PromotionInfo promotionInfo =
+            promotionInfo =
                 new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
             Field.promote(promotionInfo, _fctDef, xcodeml);
             _promotions.put(lhsName, promotionInfo);
+          } else {
+            promotionInfo = _promotions.get(lhsName);
           }
           // Adapt references
           if(lhs.opcode() == Xcode.VAR) {
@@ -517,6 +523,7 @@ public class Parallelize extends ClawTransformation {
             Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
                 xcodeml);
           }
+          promotionInfo.setRefAdapted();
         }
       }
     }
