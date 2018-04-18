@@ -574,7 +574,7 @@ public class Parallelize extends ClawTransformation {
           Iterator<Xnode> iter = hooks.iterator();
           while(iter.hasNext()) {
             Xnode crt = iter.next();
-            if(assign.isNestedIn(crt)) {
+            if(assign.isNestedIn(crt) || hookIfStmt.isNestedIn(crt)) {
               addIfHook = false;
             }
             if(crt.isNestedIn(hookIfStmt)) {
