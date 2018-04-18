@@ -47,6 +47,7 @@ public enum Xcode {
   F_CHARACTER_REF(Xname.F_CHAR_REF),                         // XcodeML/F 7.4.5
   F_CLOSE_STATEMENT(Xname.F_CLOSE_STATEMENT),                // XcodeML/F 6.17.5
   F_COARRAY_REF(Xname.F_COARRAY_REF),                        // XcodeML/F 7.4.3
+  F_COMMENT_LINE(Xname.F_COMMENT_LINE),                      // 
   F_COMMON_DECL(Xname.F_COMMON_DECL),                        // XcodeML/F 6.22
   F_CONTAINS_STATEMENT(Xname.F_CONTAINS_STATEMENT),          // XcodeML/F 6.26
   F_CYCLE_STATEMENT(Xname.F_CYCLE_STATEMENT),                // XcodeML/F 6.8
