@@ -115,6 +115,7 @@ public final class Xname {
   public static final String F_CHAR_REF = "FcharacterRef";
   public static final String F_CLOSE_STATEMENT = "FcloseStatement";
   public static final String F_COARRAY_REF = "FcoArrayRef";
+  public static final String F_COMMENT_LINE = "FcommentLine";
   public static final String F_COMMON_DECL = "FcommonDecl";
   public static final String F_COMPLEX_CONST = "FcomplexConstant";
   public static final String F_COMPLEX_PART_REF = "FcomplexPartRef";

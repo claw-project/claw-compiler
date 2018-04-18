@@ -57,4 +57,6 @@ set(CLAW_FLAGS_external1 --force --config=external_config.xml)
 set(NOCOMPILE_external1 ON)
 set(CLAW_TRANS_SET_PATH "${PROJECT_BINARY_DIR}/build/")
 
+set(CLAW_FLAGS_keep_comment --force --keep-comment)
+
 claw_add_basic_test_set(NAME driver DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
