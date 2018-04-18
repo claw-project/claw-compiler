@@ -25,8 +25,7 @@ compiler_macro="@COMPILER_MACRO@"
 . ${claw_x2t_driver_lib_dir}/@CLAW_LIB_SH@
 
 ### Directory for saving intermediate files ###
-current_pid=$$
-temp_dir=/tmp/__omni_tmp__${current_pid}
+temp_dir=$(mktemp -d)
 debug_temp_dir="__omni_tmp__"
 
 ### Default options ###
