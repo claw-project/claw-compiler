@@ -2,6 +2,9 @@
 All notable changes to the CLAW Compiler project will be documented in
 this file.
 
+## [X.Y.Z] - Unreleased
+* User comment line can be preserved with the `--keep-comment` option.
+
 ## [1.0.1] - 2018-04-17
 * Support of Intel Compiler preprocessing workflow.
 * Clean up properly temporary files when driver exits.
