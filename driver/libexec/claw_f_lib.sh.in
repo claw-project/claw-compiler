@@ -41,6 +41,7 @@ CLAW Compiler options:
    --show-config              : list the current configuration information.
                                 If used with --config, list the information from
                                 the specific configuration.
+   -c,--keep-comment          : keep comment in the transformed file.
    -v,--verbose               : print processing status.
    --version                  : print version.
    -h,--help                  : print usage.
@@ -165,6 +166,7 @@ function claw::set_parameters() {
     -E) only_pp=true ;;
     -cpp) enable_cpp=true ;;
     -v | --verbose) verbose=true ;;
+    -c | --keep-comment) keep_comment=true ;;
     --version)
       claw::print_version
       exit 0

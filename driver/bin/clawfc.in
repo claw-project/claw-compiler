@@ -54,6 +54,7 @@ dump_cx2t_args=false
 force_pure=false
 report=false
 pipe_workflow=true
+keep_comment=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -114,6 +115,7 @@ readonly dump_cx2t_args
 readonly force_pure
 readonly report
 readonly pipe_workflow
+readonly keep_comment
 
 ### sed constant ###
 readonly claw_sed_ignore="s/\!\$claw ignore//"
@@ -143,6 +145,12 @@ if [[ ${show_config} == true ]]; then
   # shellcheck disable=SC2086
   ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} --show-config ${CLAW_X2T_CONFIG_OPT}
   exit 0
+fi
+
+### Add front-end option to keep the comment
+if [[ ${keep_comment} == true ]]; then
+  OMNI_F2X_OPT="${OMNI_F2X_OPT} -fleave-comment"
+  readonly OMNI_F2X_OPT
 fi
 
 ## Check that input file exits
