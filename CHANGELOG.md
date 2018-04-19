@@ -1,17 +1,17 @@
 # Change Log
-All notable changes to the CLAW Compiler project will be documented in
-this file.
+All notable changes to the CLAW Compiler project are documented in this file.
 
 ## [X.Y.Z] - Unreleased
 * User comment line can be preserved with the `--keep-comment` option.
 * SCA: Fix duplicated array references inserted in some cases.
+* OMNI Compiler to git hash omni-compiler/omni-compiler@
 
 ## [1.0.1] - 2018-04-17
 * Support of Intel Compiler preprocessing workflow.
 * Clean up properly temporary files when driver exits.
 * SCA/CPU: Fix problem with indirect promotion (missing do stmt).
 * Move test from `abstraction` to `sca` folder.
-* OMNI Compiler to git hash f59978d90cc1d93cf16de125e8dd35ae1d2a6537.
+* OMNI Compiler to git hash omni-compiler/omni-compiler@f59978d90cc1d93cf16de125e8dd35ae1d2a6537
 
 ## [1.0.0] - 2018-03-19
 New features:
