@@ -364,7 +364,7 @@ public class Parallelize extends ClawTransformation {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
         Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
-            translator.getModCache(), false);
+            false);
       }
     }
   }
@@ -498,8 +498,6 @@ public class Parallelize extends ClawTransformation {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
-
-
 
         PromotionInfo promotionInfo;
         if(shouldBePromoted(assign)) {

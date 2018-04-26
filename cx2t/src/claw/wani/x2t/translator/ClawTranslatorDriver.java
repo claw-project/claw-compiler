@@ -229,7 +229,7 @@ public class ClawTranslatorDriver {
   public void flush()
       throws IllegalTransformationException
   {
-    _translator.getModCache().write(ClawConstant.INDENT_OUTPUT);
+    Context.get().getModuleCache().write(ClawConstant.INDENT_OUTPUT);
   }
 
   /**
