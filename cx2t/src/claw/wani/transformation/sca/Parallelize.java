@@ -322,8 +322,8 @@ public class Parallelize extends ClawTransformation {
           "PURE specifier cannot be removed", _fctDef.lineNo());
     } else if(pureRemoved) {
       String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      xcodeml.addWarning("Warning: PURE specifier removed from function " +
-              fctName + ". Transformation and code generation applied to it.",
+      xcodeml.addWarning("PURE specifier removed from function " + fctName +
+              ". Transformation and code generation applied to it.",
           _fctDef.lineNo());
     }
 
