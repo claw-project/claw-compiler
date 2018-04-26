@@ -8,6 +8,7 @@ import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
+import claw.tatsu.xcodeml.module.ModuleCache;
 
 /**
  * @author clementval
@@ -20,6 +21,7 @@ public class Context {
   private final DirectiveGenerator _directiveGenerator;
   private final CompilerDirective _compilerDirective;
   private final Target _target;
+  private final ModuleCache _moduleCache;
 
   private Context(CompilerDirective compilerDirective, Target target,
                   int maxColumns)
@@ -36,6 +38,7 @@ public class Context {
       _target = target;
     }
     _maxColumns = maxColumns;
+    _moduleCache = new ModuleCache();
   }
 
   public static void init(CompilerDirective compilerDirective, Target target,
@@ -72,5 +75,9 @@ public class Context {
 
   public DirectiveGenerator getGenerator() {
     return _directiveGenerator;
+  }
+
+  public ModuleCache getModuleCache() {
+    return _moduleCache;
   }
 }

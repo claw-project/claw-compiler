@@ -8,7 +8,6 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
@@ -77,10 +76,4 @@ public interface Translator {
    */
   int getNextTransformationCounter();
 
-  /**
-   * Get the internal module cache.
-   *
-   * @return Module cache.
-   */
-  ModuleCache getModCache();
 }

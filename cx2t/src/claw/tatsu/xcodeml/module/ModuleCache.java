@@ -8,7 +8,9 @@ import claw.tatsu.primitive.Module;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.fortran.FortranModule;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,12 +23,14 @@ import java.util.Map;
 public class ModuleCache {
 
   private final Map<String, FortranModule> _moduleCache;
+  private final List<String> _searchPaths;
 
   /**
    * Constructs a new empty module cache.
    */
   public ModuleCache() {
     _moduleCache = new HashMap<>();
+    _searchPaths = new ArrayList<>();
   }
 
   /**
@@ -78,5 +82,23 @@ public class ModuleCache {
       String newModuleName = module.getPath() + module.getName() + suffix;
       module.write(newModuleName, ident);
     }
+  }
+
+  /**
+   * Add a path to the current list of possible search paths.
+   *
+   * @param path Path.
+   */
+  public void addSearchPath(String path) {
+    _searchPaths.add(path);
+  }
+
+  /**
+   * Get the list of possible search paths.
+   *
+   * @return Current list of search paths.
+   */
+  public List<String> getSearchPaths() {
+    return _searchPaths;
   }
 }
