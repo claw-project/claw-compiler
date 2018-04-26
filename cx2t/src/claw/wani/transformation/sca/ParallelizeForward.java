@@ -16,7 +16,6 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
@@ -544,16 +543,16 @@ public class ParallelizeForward extends ClawTransformation {
       if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
         // 3. Replicate the change in a potential module file
         FmoduleDefinition modDef = fDef.findParentModule();
-        Module.updateSignature(modDef.getName(), xcodeml, fDef,
-            parentFctType, translator.getModCache(), false);
+        Module.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+            false);
       } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
          * we can update it. */
         FmoduleDefinition modDef = fDef.findParentModule();
-        Module.updateSignature(modDef.getName(), xcodeml, fDef,
-            parentFctType, translator.getModCache(), true);
+        Module.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+            true);
       }
     }
 

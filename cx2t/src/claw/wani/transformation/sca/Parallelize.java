@@ -322,8 +322,8 @@ public class Parallelize extends ClawTransformation {
           "PURE specifier cannot be removed", _fctDef.lineNo());
     } else if(pureRemoved) {
       String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      xcodeml.addWarning("Warning: PURE specifier removed from function " +
-              fctName + ". Transformation and code generation applied to it.",
+      xcodeml.addWarning("PURE specifier removed from function " + fctName +
+              ". Transformation and code generation applied to it.",
           _fctDef.lineNo());
     }
 
@@ -364,7 +364,7 @@ public class Parallelize extends ClawTransformation {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
         Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
-            translator.getModCache(), false);
+            false);
       }
     }
   }
@@ -498,8 +498,6 @@ public class Parallelize extends ClawTransformation {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
-
-
 
         PromotionInfo promotionInfo;
         if(shouldBePromoted(assign)) {

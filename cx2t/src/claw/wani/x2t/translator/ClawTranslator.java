@@ -14,7 +14,6 @@ import claw.tatsu.analysis.topology.TopologicalSort;
 import claw.tatsu.common.Message;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -46,8 +45,6 @@ public class ClawTranslator implements Translator {
   private final Map<Class, TransformationGroup> _tGroups;
   // Hold cross-transformation elements
   private final Map<Element, Object> _crossTransformationTable;
-  // Hold the module file cache
-  private final ModuleCache _modCache;
   private final Map<ClawDirectiveKey, ClawPragma> _blockDirectives;
   private int _transformationCounter = 0;
 
@@ -79,8 +76,6 @@ public class ClawTranslator implements Translator {
         new IndependentTransformationGroup("internal-open-acc-continuation"));
 
     _crossTransformationTable = new HashMap<>();
-
-    _modCache = new ModuleCache();
 
     _blockDirectives = new Hashtable<>();
   }
@@ -377,14 +372,6 @@ public class ClawTranslator implements Translator {
    */
   public int getNextTransformationCounter() {
     return _transformationCounter++;
-  }
-
-  /**
-   * @see Translator#getModCache()
-   */
-  @Override
-  public ModuleCache getModCache() {
-    return _modCache;
   }
 
   /**

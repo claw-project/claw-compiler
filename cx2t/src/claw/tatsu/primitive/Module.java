@@ -11,7 +11,6 @@ import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
-import exc.xcodeml.XcodeMLtools_Fmod;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -47,7 +46,7 @@ public final class Module {
     if(moduleSuffix == null) {
       moduleSuffix = "";
     }
-    for(String dir : XcodeMLtools_Fmod.getSearchPath()) {
+    for(String dir : Context.get().getModuleCache().getSearchPaths()) {
       String path = dir + "/" + moduleName + moduleSuffix;
       File f = new File(path);
       if(f.exists()) {
@@ -108,7 +107,6 @@ public final class Module {
    * @param xcodeml       Current XcodeML file unit.
    * @param fctDef        Function definition that has been changed.
    * @param fctType       Function type that has been changed.
-   * @param moduleCache   Current module cache.
    * @param importFctType If true, import the functionType.
    * @throws IllegalTransformationException If the module file or the function
    *                                        cannot be located
@@ -116,20 +114,19 @@ public final class Module {
   public static void updateSignature(String moduleName, XcodeProgram xcodeml,
                                      FfunctionDefinition fctDef,
                                      FfunctionType fctType,
-                                     ModuleCache moduleCache,
                                      boolean importFctType)
       throws IllegalTransformationException
   {
     FortranModule mod;
-    if(moduleCache.isModuleLoaded(moduleName)) {
-      mod = moduleCache.get(moduleName);
+    if(Context.get().getModuleCache().isModuleLoaded(moduleName)) {
+      mod = Context.get().getModuleCache().get(moduleName);
     } else {
       mod = fctDef.findContainingXmod();
       if(mod == null) {
         throw new IllegalTransformationException(
             "Unable to locate module file for: " + moduleName);
       }
-      moduleCache.add(moduleName, mod);
+      Context.get().getModuleCache().add(moduleName, mod);
     }
 
     FfunctionType fctTypeMod;

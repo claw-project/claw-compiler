@@ -13,7 +13,6 @@ import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawPythonTranslatorDriver;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
-import exc.xcodeml.XcodeMLtools_Fmod;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
 
@@ -253,13 +252,6 @@ public class ClawX2T {
       input = cmd.getArgs()[0];
     }
 
-    // Module search path options
-    if(cmd.hasOption("M")) {
-      for(String value : cmd.getOptionValues("M")) {
-        XcodeMLtools_Fmod.addSearchPath(value);
-      }
-    }
-
     // Read the configuration file
     try {
       Configuration.get().load(configuration_path, configuration_file);
@@ -278,6 +270,13 @@ public class ClawX2T {
       return;
     }
 
+    // Module search path options
+    if(cmd.hasOption("M")) {
+      for(String value : cmd.getOptionValues("M")) {
+        Context.get().getModuleCache().addSearchPath(value);
+      }
+    }
+
     // Force pure option
     if(cmd.hasOption("fp")) {
       Configuration.get().setForcePure();
@@ -293,6 +292,7 @@ public class ClawX2T {
     } else {
       translatorDriver = new ClawTranslatorDriver(input, xcmlOutput);
     }
+
     translatorDriver.analyze();
     translatorDriver.transform();
     translatorDriver.flush();
