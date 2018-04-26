@@ -43,7 +43,7 @@ set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_BIN_DIR "${OMNI_HOME}/bin")
 set(OMNI_F_FRONT "${OMNI_BIN_DIR}/F_Front")
 set(OMNI_C_FRONT "${OMNI_BIN_DIR}/C_Front")
-set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-exc-tools.jar")
+set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
 set(OMNI_F2X_FLAGS "")
@@ -54,7 +54,7 @@ set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 # Define OMNI Compiler jar archives build location.
 set(
   BUILD_OMNI_JAR_TOOLS
-  "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Exc-Tools/build/om-exc-tools.jar"
+  "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar"
 )
 set(
   BUILD_OMNI_JAR_F_BACKEND
