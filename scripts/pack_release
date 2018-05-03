@@ -38,14 +38,13 @@ while getopts "hb:o:v:" opt; do
     show_help
     exit 0
     ;;
-  o)
-    claw_release_dir=$OPTARG
+  o) claw_release_dir=$OPTARG ;;
+  b) claw_branch=$OPTARG ;;
+  v) claw_version=$OPTARG ;;
+  *)
+    show_help
+    exit 1
     ;;
-  b)
-    claw_branch=$OPTARG
-    ;;
-  v)
-    claw_version=$OPTARG
   esac
 done
 

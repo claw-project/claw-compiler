@@ -17,7 +17,7 @@ license_error=0
 while IFS= read -r -d '' file
 do
   if ! grep -i -q "license" "${file}" ; then
-    let license_error++
+    (( license_error++ ))
     echo "${file} has no license information."
   fi
 done < <(find . -path ./omni-compiler -prune -o -iname "*.java" -print0)
@@ -25,7 +25,7 @@ done < <(find . -path ./omni-compiler -prune -o -iname "*.java" -print0)
 while IFS= read -r -d '' file
 do
   if ! grep -i -q "license" "${file}" ; then
-    let license_error++
+    (( license_error++ ))
     echo "${file} has no license information."
   fi
 done < <(find . ! -path "*/__omni_tmp__/*" -a ! -path "*/build/*" \

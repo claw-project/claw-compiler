@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC2034
+# shellcheck disable=SC2034,SC1117
 #
 # This file is released under terms of BSD license
 # See LICENSE file for more information
@@ -408,7 +408,7 @@ function claw::norm_file_name() {
       char="$(printf "\x${hex}")"
       local code
       code=\'${char}
-      norm_name="${norm_name}""$(printf "_%x_\n" "${code}")"
+      norm_name="${norm_name}""$(printf "_%x_\\n" "${code}")"
     fi
   done
 
@@ -471,7 +471,7 @@ function claw::process_dependencies() {
 
     # Add user given search paths (-J option)
     for search_path in "${module_opt[@]}"; do
-      module_search_path+=(${search_path:2})
+      module_search_path+=("${search_path:2}")
     done
 
     # Try to locate the fortran source file
@@ -503,7 +503,7 @@ function claw::process_dependencies() {
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
           found_file=("$(grep -s -l -i "^ *MODULE *${module_name}" \
-            "${directory}"/*"${ext}" | grep -v ".*\.claw\..*")")
+            "${directory}"/*"${ext}" | grep -v ".*\\.claw\\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
             break
           else
@@ -549,7 +549,7 @@ function claw::process_dependencies() {
       [[ ${compiled_mod_file_found} == false ]]; then
       local error_msg
       error_msg="cannot locate any source file or module file for module: " \
-        "${module_name}.\n " \
+        "${module_name}.\\n " \
         "Provide source directory in module search path."
       claw::error_exit "$2" "-" "-" "${error_msg}"
     fi
@@ -594,9 +594,12 @@ function claw::process_dependencies() {
 ###################################################################
 function claw::applyIgnore() {
   # Retrieve the ignore start directives in the file
-  local startarray=($(grep -n "\s*\!\$claw ignore" "$1" | cut -f1 -d:))
+  local startarray
+  mapfile -t startarray < <(grep -n "\s*\!\$claw ignore" "$1" | cut -f1 -d:)
+
   # Retrieve the ignore end directives in the file
-  local endarray=($(grep -n "\s*\!\$claw end ignore" "$1" | cut -f1 -d:))
+  local endarray
+  mapfile -t endarray < <(grep -n "\s*\!\$claw end ignore" "$1" | cut -f1 -d:)
 
   # Check that we have the same number of start and end directives
   local startlen=${#startarray[*]}
@@ -671,11 +674,11 @@ function claw::applyPreprocessorPass() {
       if [[ ${line} =~ \\$ ]] && [[ ${line} =~ .*!.* ]]; then
         echo "${line//\\/}" >>"$2"
         claw::warning "${input_file}" "${line_no}" "-" \
-          "'\' symbol at the end of a comment line. Possible preprocessing error."
+          "'\\' symbol at the end of a comment line. Possible preprocessing error."
       else
         echo "${line}" >>"$2"
       fi
-      let line_no=line_no+1
+      (( line_no=line_no+1 ))
     done <"$1"
   else
     cp "$1" "$2"

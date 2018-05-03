@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+# shellcheck disable=SC1117
 # This file is released under terms of BSD license
 # See LICENSE file for more information
 #
@@ -340,6 +340,7 @@ if [[ ${pipe_workflow} == true ]]; then
       # 3: !$claw end ignore # revert pass
       # 4: __CLAWAMP__       # convertion pass
       # 5: !$claw verbatim   # revert pass
+      # shellcheck disable=SC2206
       compiler_status=(${PIPESTATUS[*]})
 
       if [[ ${compiler_status[0]} -ne 0 ]] ||
