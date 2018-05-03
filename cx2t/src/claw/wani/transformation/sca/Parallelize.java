@@ -534,7 +534,18 @@ public class Parallelize extends ClawTransformation {
     List<Xnode> conditions = _fctDef.body().matchAll(Xcode.CONDITION);
     for(Xnode condition : conditions) {
       if(Condition.dependsOn(condition, _arrayFieldsInOut)) {
-        hooks.add(condition.ancestor());
+        Xnode ancestor = condition.ancestor();
+        Iterator<Xnode> iter = hooks.iterator();
+        boolean addHook = true;
+        while(iter.hasNext()) {
+          if(ancestor.isNestedIn(iter.next())) {
+            addHook = false;
+            break;
+          }
+        }
+        if(addHook) {
+          hooks.add(ancestor);
+        }
       }
     }
 
