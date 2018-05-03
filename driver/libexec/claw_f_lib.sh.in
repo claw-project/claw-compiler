@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC2034,SC1117
+# shellcheck disable=SC2034
 #
 # This file is released under terms of BSD license
 # See LICENSE file for more information
@@ -405,7 +405,7 @@ function claw::norm_file_name() {
       hex="$(printf "%x" "${ix}")"
       local char
       # shellcheck disable=SC2059
-      char="$(printf "\x${hex}")"
+      char="$(printf "\\x${hex}")"
       local code
       code=\'${char}
       norm_name="${norm_name}""$(printf "_%x_\\n" "${code}")"
@@ -595,11 +595,11 @@ function claw::process_dependencies() {
 function claw::applyIgnore() {
   # Retrieve the ignore start directives in the file
   local startarray
-  mapfile -t startarray < <(grep -n "\s*\!\$claw ignore" "$1" | cut -f1 -d:)
+  mapfile -t startarray < <(grep -n "\\s*\\!\$claw ignore" "$1" | cut -f1 -d:)
 
   # Retrieve the ignore end directives in the file
   local endarray
-  mapfile -t endarray < <(grep -n "\s*\!\$claw end ignore" "$1" | cut -f1 -d:)
+  mapfile -t endarray < <(grep -n "\\s*\\!\$claw end ignore" "$1" | cut -f1 -d:)
 
   # Check that we have the same number of start and end directives
   local startlen=${#startarray[*]}
