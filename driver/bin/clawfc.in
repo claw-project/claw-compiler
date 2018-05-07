@@ -1,5 +1,4 @@
 #!/bin/bash
-# shellcheck disable=SC1117
 # This file is released under terms of BSD license
 # See LICENSE file for more information
 #
@@ -117,10 +116,10 @@ readonly pipe_workflow
 readonly keep_comment
 
 ### sed constant ###
-readonly claw_sed_ignore="s/\!\$claw ignore//"
-readonly claw_sed_end_ignore="s/\!\$claw end ignore//"
-readonly claw_sed_cont="s/__CLAWAMP__/\&/"
-readonly claw_sed_verbatim="s/\!\$claw verbatim //"
+readonly claw_sed_ignore="s/\\!\$claw ignore//"
+readonly claw_sed_end_ignore="s/\\!\$claw end ignore//"
+readonly claw_sed_cont="s/__CLAWAMP__/\\&/"
+readonly claw_sed_verbatim="s/\\!\$claw verbatim //"
 
 ### Add additional parameters needed for cx2t ###
 claw::format_cx2t_params
