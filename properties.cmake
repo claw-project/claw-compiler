@@ -36,7 +36,7 @@ set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 # OMNI Compiler variables
 #
 set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}")
-set(OMNI_CLASSPATH "${OMNI_HOME}/share/xcalablemp")
+set(OMNI_CLASSPATH "${OMNI_HOME}/share")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
 set(OMNI_INCLUDE_DIR "${OMNI_HOME}/include")
 set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
