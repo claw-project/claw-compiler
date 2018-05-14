@@ -19,7 +19,6 @@
 
   <!-- Classpath for dependencies -->
   <path id="build.path">
-    <pathelement path="${omni.exec.dep}"/>
     <pathelement path="${junit.dep}" />
     <pathelement path="${st4.dep}"/>
     <pathelement path="${antlr.dep}"/>
@@ -29,6 +28,7 @@
     <pathelement path="${claw.tatsu.dep}" />
     <pathelement path="${claw.shenron.dep}" />
     <pathelement path="${claw.wani.dep}" />
+    <pathelement path="${omni.xcodeml-common.dep}"/>
   </path>
 
   <!-- Initialization step -->
@@ -75,7 +75,7 @@
       <classpath path="${antlr.dep}" />
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
-      <classpath path="${omni.exec.dep}"/>
+      <classpath path="${omni.xcodeml-common.dep}"/>
 
       <formatter type="plain" usefile="false" />
 
@@ -99,7 +99,7 @@
       <classpath path="${antlr.dep}" />
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
-      <classpath path="${omni.exec.dep}"/>
+      <classpath path="${omni.xcodeml-common.dep}"/>
 
       <formatter type="plain" usefile="false" />
 
@@ -124,7 +124,7 @@
       <classpath path="${antlr.dep}" />
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
-      <classpath path="${omni.exec.dep}"/>
+      <classpath path="${omni.xcodeml-common.dep}"/>
 
       <formatter type="plain" usefile="false" />
 
