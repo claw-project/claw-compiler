@@ -4,7 +4,7 @@ All notable changes to the CLAW Compiler project are documented in this file.
 ## [X.Y.Z] - Unreleased
 * User comment line can be preserved with the `--keep-comment` option.
 * SCA: Fix duplicated array references inserted in some cases.
-* OMNI Compiler to git hash omni-compiler/omni-compiler@
+* OMNI Compiler to git hash omni-compiler/xcodml-tools@e2d6978ba47e351146ba1812b927947156c9b913
 * OMNI Compiler submodule now pointing to XcodeML-tools omni-compiler/xcodeml-tools
 
 ## [1.0.1] - 2018-04-17
