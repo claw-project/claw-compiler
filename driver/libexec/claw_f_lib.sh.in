@@ -593,13 +593,23 @@ function claw::process_dependencies() {
 #   $1: input file path edited in place
 ###################################################################
 function claw::applyIgnore() {
-  # Retrieve the ignore start directives in the file
-  local startarray
-  mapfile -t startarray < <(grep -n "\\s*\\!\$claw ignore" "$1" | cut -f1 -d:)
+  if ! which mapfile > /dev/null; then
+    # workaround for OSX where mapfile is not available
+    # Retrieve the ignore start directives in the file
+    # shellcheck disable=SC2207
+    local startarray=($(grep -n "\\s*\\!\$claw ignore" "$1" | cut -f1 -d:))
+    # Retrieve the ignore end directives in the file
+    # shellcheck disable=SC2207
+    local endarray=($(grep -n "\\s*\\!\$claw end ignore" "$1" | cut -f1 -d:))
+  else
+    # Retrieve the ignore start directives in the file
+    local startarray
+    mapfile -t startarray < <(grep -n "\\s*\\!\$claw ignore" "$1" | cut -f1 -d:)
 
-  # Retrieve the ignore end directives in the file
-  local endarray
-  mapfile -t endarray < <(grep -n "\\s*\\!\$claw end ignore" "$1" | cut -f1 -d:)
+    # Retrieve the ignore end directives in the file
+    local endarray
+    mapfile -t endarray < <(grep -n "\\s*\\!\$claw end ignore" "$1" | cut -f1 -d:)
+  fi
 
   # Check that we have the same number of start and end directives
   local startlen=${#startarray[*]}
