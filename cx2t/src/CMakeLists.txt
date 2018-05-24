@@ -38,6 +38,7 @@ add_custom_command(
 )
 if(NOT OFFLINE)
   add_dependencies(claw-cx2t claw-init)
+  add_dependencies(claw-cx2t omni-compiler)
 endif()
 
 # Install JAR files
