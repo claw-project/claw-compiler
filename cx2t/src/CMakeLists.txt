@@ -11,9 +11,9 @@ configure_file(
 )
 if(NOT OFFLINE)
   # Bootstrap the compilation process
-  add_custom_target(omni-claw-init ALL)
+  add_custom_target(claw-init ALL)
   add_custom_command(
-    TARGET omni-claw-init
+    TARGET claw-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
@@ -24,9 +24,9 @@ if(NOT OFFLINE)
 endif()
 
 # Compile the CX2T libraries
-add_custom_target(omni-claw ALL)
+add_custom_target(claw-cx2t ALL)
 add_custom_command(
-  TARGET omni-claw
+  TARGET claw-cx2t
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
@@ -37,7 +37,7 @@ add_custom_command(
   COMMENT "Building CLAW X2T libraries"
 )
 if(NOT OFFLINE)
-  add_dependencies(omni-claw omni-claw-init)
+  add_dependencies(claw-cx2t claw-init)
 endif()
 
 # Install JAR files
