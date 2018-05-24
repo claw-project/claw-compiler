@@ -92,7 +92,7 @@ if(BUILD_OMNI)
       FC=${CMAKE_Fortran_COMPILER} ${OMNI_COMPILER_SUBMODULE}/configure
       --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
       ${OMNI_MPI_CC} ${OMNI_MPI_FC}
-    BUILD_COMMAND make -j
+    BUILD_COMMAND make # Not safe yet with -j
     BUILD_IN_SOURCE 1
   )
 endif()
