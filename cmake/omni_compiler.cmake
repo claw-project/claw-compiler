@@ -10,7 +10,7 @@ set(__omni_compiler YES)
 # Generate the .xmod file for a given source file
 #
 function(omni_generate_xmod)
-  set(oneValueArgs TARGET SOURCE)
+  set(oneValueArgs TARGET SOURCE DEPENDS)
   cmake_parse_arguments(omni_generate_xmod "" "${oneValueArgs}" "" ${ARGN})
 
   if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE})
@@ -48,4 +48,6 @@ function(omni_generate_xmod)
       COMMENT "Generating .xmod file for ${omni_generate_xmod_SOURCE}"
     )
   endif()
+
+  add_dependencies(${omni_generate_xmod_TARGET} ${omni_generate_xmod_DEPENDS})
 endfunction()

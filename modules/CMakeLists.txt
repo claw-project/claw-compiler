@@ -2,10 +2,15 @@
 # See LICENSE file for more information
 
 # Generate .xmod file module for common intrinsic libraries
-omni_generate_xmod(TARGET xmod-openacc SOURCE openacc_lib.f90)
-omni_generate_xmod(TARGET xmod-ieee_features SOURCE ieee_features.f90)
-omni_generate_xmod(TARGET xmod-ieee_exceptions SOURCE ieee_exceptions.f90)
-omni_generate_xmod(TARGET xmod-ieee_arithmetic SOURCE ieee_arithmetic.f90)
+omni_generate_xmod(
+  TARGET xmod-openacc SOURCE openacc_lib.f90 DEPENDS omni-compiler)
+omni_generate_xmod(
+  TARGET xmod-ieee_features SOURCE ieee_features.f90 DEPENDS omni-compiler)
+omni_generate_xmod(
+  TARGET xmod-ieee_exceptions SOURCE ieee_exceptions.f90 DEPENDS omni-compiler)
+omni_generate_xmod(
+  TARGET xmod-ieee_arithmetic SOURCE ieee_arithmetic.f90 DEPENDS omni-compiler)
+
 add_dependencies(xmod-ieee_arithmetic xmod-ieee_exceptions)
 
 # Install in the intrinsic mod directory
