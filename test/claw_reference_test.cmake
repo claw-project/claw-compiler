@@ -280,6 +280,9 @@ function(claw_add_advanced_test)
     set(claw_add_advanced_test_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 
+  # Specifiy the output directory if the module files
+  set(CMAKE_Fortran_MODULE_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY})
+
   # Define input and output file name
   set(MAIN_F90 ${claw_add_advanced_test_WORKING_DIRECTORY}/main.f90)
   set(ORIGINAL_FILE ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column.f90)
@@ -320,8 +323,8 @@ function(claw_add_advanced_test)
   set(EXECUTABLE_TRANSFORMED_GPU transformed_code_gpu_${claw_add_advanced_test_NAME})
 
   # Define directory for build
-  set (XMOD_DIR ${claw_add_advanced_test_WORKING_DIRECTORY}/__xmod__)
-  set (OMNI_TMP_DIR ${claw_add_advanced_test_WORKING_DIRECTORY}/__omni_tmp__)
+  set(XMOD_DIR ${claw_add_advanced_test_WORKING_DIRECTORY}/__xmod__)
+  set(OMNI_TMP_DIR ${claw_add_advanced_test_WORKING_DIRECTORY}/__omni_tmp__)
 
   # Directory where OMNI xmod files will be placed
   if (NOT EXISTS ${XMOD_DIR})
@@ -391,7 +394,7 @@ function(claw_add_advanced_test)
     # Execute the CLAW Compiler for CPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_CPU}
-      COMMAND touch ${MAIN_F90} # to force new compilation
+      #COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
         ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=cpu
         ${claw_add_advanced_test_CLAW_FLAGS_TARGET_CPU}
@@ -413,23 +416,12 @@ function(claw_add_advanced_test)
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU} ${OUTPUT_FILE_EXTRA_GPU}
       COMMENT "${CLAWFC} for GPU target on file ${MAIN_F90}"
     )
-
-    # Target for the transformation
-    add_custom_target(
-      transform-${claw_add_advanced_test_NAME}
-      DEPENDS
-      ${OUTPUT_MAIN_CPU} ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_EXTRA_CPU}
-      ${OUTPUT_MAIN_GPU} ${OUTPUT_FILE_GPU} ${OUTPUT_FILE_EXTRA_GPU}
-      ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED_CPU}
-      ${EXECUTABLE_TRANSFORMED_GPU}
-    )
-
   else()
 
     # Execute the CLAW Compiler for CPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_CPU}
-      COMMAND touch ${MAIN_F90} # to force new compilation
+      #COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
         ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=cpu
         ${claw_add_advanced_test_CLAW_FLAGS_TARGET_CPU}
@@ -442,7 +434,7 @@ function(claw_add_advanced_test)
     # Execute the CLAW Compiler for GPU target
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_GPU}
-      COMMAND touch ${MAIN_F90} # to force new compilation
+      #COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
         ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu
         ${claw_add_advanced_test_CLAW_FLAGS_TARGET_GPU}
@@ -451,16 +443,6 @@ function(claw_add_advanced_test)
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU}
       COMMENT "${CLAWFC} for GPU target on file ${MAIN_F90}"
     )
-
-    # Target for the transformation
-    add_custom_target(
-      transform-${claw_add_advanced_test_NAME}
-      DEPENDS
-      ${OUTPUT_MAIN_CPU} ${OUTPUT_FILE_CPU} ${OUTPUT_MAIN_GPU}
-      ${OUTPUT_FILE_GPU} ${EXECUTABLE_ORIGINAL} ${EXECUTABLE_TRANSFORMED_CPU}
-      ${EXECUTABLE_TRANSFORMED_GPU}
-    )
-
   endif()
 
   # Target to clean the generated file (Output of clawfc)
@@ -508,6 +490,16 @@ function(claw_add_advanced_test)
       "${OUTPUT_FILE_GPU}" "${OUTPUT_MAIN_GPU}")
     target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
   endif()
+
+  # Target for the transformation
+  add_custom_target(
+    transform-${claw_add_advanced_test_NAME}
+    DEPENDS ${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU}
+  )
+
+  add_dependencies(${EXECUTABLE_TRANSFORMED_GPU} ${EXECUTABLE_ORIGINAL})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_ORIGINAL})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU})
 
   # Set target specific compilation options
   if(OPENACC_ENABLE)

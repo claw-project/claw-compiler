@@ -12,9 +12,9 @@ configure_file(
 
 if(NOT OFFLINE)
   # Bootstrap the compilation process
-  add_custom_target(omni-claw-ut-init ALL)
+  add_custom_target(claw-ut-init ALL)
   add_custom_command(
-    TARGET omni-claw-ut-init
+    TARGET claw-ut-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
@@ -25,9 +25,9 @@ if(NOT OFFLINE)
 endif()
 
 # Add target for the compilation of JUnit test cases with ANT
-add_custom_target(omni-claw-ut ALL)
+add_custom_target(claw-ut ALL)
 add_custom_command(
-  TARGET omni-claw-ut
+  TARGET claw-ut
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
@@ -36,7 +36,7 @@ add_custom_command(
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
 if(NOT OFFLINE)
-  add_dependencies(omni-claw-ut omni-claw-ut-init)
+  add_dependencies(claw-ut claw-ut-init)
 endif()
 
 # Add test cases

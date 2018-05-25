@@ -7,3 +7,5 @@ endif()
 
 add_subdirectory(src)
 add_subdirectory(unittest)
+
+add_dependencies(claw-ut claw-cx2t)
