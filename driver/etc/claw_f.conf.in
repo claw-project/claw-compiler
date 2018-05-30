@@ -13,7 +13,6 @@
 # OMNI Compiler directories
 readonly OMNI_HOME="@OMNI_HOME@"
 readonly OMNI_DRIVER_DIR="@OMNI_DRIVER_DIR@"
-readonly OMNI_INCLUDE_DIR="@OMNI_INCLUDE_DIR@"
 readonly OMNI_BIN_DIR="@OMNI_BIN_DIR@"
 readonly OMNI_XMOD_GENERIC="@OMNI_XMOD_GENERIC@"
 readonly CLAW_XMOD_GENERIC="@CLAW_XMOD_GENERIC@"
@@ -21,10 +20,7 @@ readonly CLAW_XMOD_GENERIC="@CLAW_XMOD_GENERIC@"
 # Preprocessor
 readonly CPP_OPT="@CPP_OPT@"
 readonly OMNI_FPP_CMD="@FPP@"
-readonly OMNI_FPP_MUST_OPT="-I${OMNI_INCLUDE_DIR}"
-# Can be drop once Travis has shellcheck 0.4.4+
-# shellcheck disable=SC2034
-OMNI_FPP_OPT="@FPPFLAGS@ ${OMNI_FPP_MUST_OPT}"
+OMNI_FPP_OPT="@FPPFLAGS@"
 
 # FrontEnd
 readonly OMNI_F2X_CMD="${OMNI_BIN_DIR}/F_Front"
