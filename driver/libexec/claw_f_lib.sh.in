@@ -548,9 +548,10 @@ function claw::process_dependencies() {
     if [[ ${source_mod_file_found} == false ]] &&
       [[ ${compiled_mod_file_found} == false ]]; then
       local error_msg
-      error_msg="cannot locate any source file or module file for module: " \
-        "${module_name}.\\n " \
-        "Provide source directory in module search path."
+      error_msg="cannot locate any source file or module file for module: "
+      error_msg+="${module_name}"
+      error_msg+=$'\n'
+      error_msg+="Provide source directory in module search path."
       claw::error_exit "$2" "-" "-" "${error_msg}"
     fi
 
