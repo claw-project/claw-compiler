@@ -4,7 +4,7 @@
  */
 package claw.tatsu.xcodeml.module;
 
-import claw.tatsu.primitive.Module;
+import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.fortran.FortranModule;
 
@@ -48,7 +48,7 @@ public class ModuleCache {
    * overwritten.
    *
    * @param moduleName Name of the module.
-   * @param module     Module object.
+   * @param module     Xmod object.
    */
   public void add(String moduleName, FortranModule module) {
     if(_moduleCache.containsKey(moduleName.toLowerCase())) {
@@ -76,7 +76,7 @@ public class ModuleCache {
   public void write(int ident)
       throws IllegalTransformationException
   {
-    String suffix = Module.getSuffix();
+    String suffix = Xmod.getSuffix();
     for(Map.Entry<String, FortranModule> pair : _moduleCache.entrySet()) {
       FortranModule module = pair.getValue();
       String newModuleName = module.getPath() + module.getName() + suffix;

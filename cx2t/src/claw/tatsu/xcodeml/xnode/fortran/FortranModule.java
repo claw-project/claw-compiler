@@ -4,7 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.primitive.Module;
+import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeML;
 import claw.tatsu.xcodeml.xnode.common.XsymbolTable;
@@ -60,10 +60,10 @@ public class FortranModule extends XcodeML {
   /**
    * Get the full path of the module file.
    *
-   * @return Module file full path.
+   * @return Xmod file full path.
    */
   public String getFullPath() {
-    return _path + _name + Module.getSuffix();
+    return _path + _name + Xmod.getSuffix();
   }
 
   /**

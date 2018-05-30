@@ -4,7 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.primitive.Module;
+import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.xnode.common.*;
 
 /**
@@ -107,7 +107,7 @@ public class FfunctionDefinition extends Xnode {
     if(mod == null) {
       return null;
     }
-    return Module.find(mod.getAttribute(Xattr.NAME));
+    return Xmod.find(mod.getAttribute(Xattr.NAME));
   }
 
   /**

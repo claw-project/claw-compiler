@@ -12,30 +12,30 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertEquals;
 
 /**
- * Test methods of the Module class.
+ * Test methods of the Xmod class.
  *
  * @author clementval
  */
-public class ModuleTest {
+public class XmodTest {
 
   @Test
   public void getSuffixTest() {
     Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
     // .[directive].[target].claw
-    assertEquals(".openacc.gpu.claw.xmod", Module.getSuffix());
+    assertEquals(".openacc.gpu.claw.xmod", Xmod.getSuffix());
     Context.init(CompilerDirective.OPENMP, Target.CPU, 80);
-    assertEquals(".openmp.cpu.claw.xmod", Module.getSuffix());
+    assertEquals(".openmp.cpu.claw.xmod", Xmod.getSuffix());
     Context.init(CompilerDirective.NONE, Target.CPU, 80);
-    assertEquals(".none.cpu.claw.xmod", Module.getSuffix());
+    assertEquals(".none.cpu.claw.xmod", Xmod.getSuffix());
     Context.init(CompilerDirective.OPENMP, Target.MIC, 80);
-    assertEquals(".openmp.mic.claw.xmod", Module.getSuffix());
+    assertEquals(".openmp.mic.claw.xmod", Xmod.getSuffix());
     Context.init(CompilerDirective.NONE, Target.FPGA, 80);
-    assertEquals(".none.fpga.claw.xmod", Module.getSuffix());
+    assertEquals(".none.fpga.claw.xmod", Xmod.getSuffix());
     Context.init(CompilerDirective.OPENACC, null, 80);
-    assertEquals(".openacc.none.claw.xmod", Module.getSuffix());
+    assertEquals(".openacc.none.claw.xmod", Xmod.getSuffix());
     Context.init(null, null, 80);
-    assertEquals(".none.none.claw.xmod", Module.getSuffix());
+    assertEquals(".none.none.claw.xmod", Xmod.getSuffix());
     Context.init(CompilerDirective.NONE, Target.GPU, 80);
-    assertEquals(".none.gpu.claw.xmod", Module.getSuffix());
+    assertEquals(".none.gpu.claw.xmod", Xmod.getSuffix());
   }
 }

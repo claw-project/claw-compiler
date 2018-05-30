@@ -176,9 +176,7 @@ public class IllegalDirectiveException extends Exception {
    * @return Standard error message.
    */
   private String getStdMsg() {
-    String errorMessage = getMsgPrefix();
-    errorMessage += ": " + super.getMessage();
-    return errorMessage;
+    return getMsgPrefix() + ": " + super.getMessage();
   }
 
   /**
