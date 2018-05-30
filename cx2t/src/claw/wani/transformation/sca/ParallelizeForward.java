@@ -310,7 +310,7 @@ public class ParallelizeForward extends ClawTransformation {
     // TODO handle rename
     for(Xnode d : useDecls) {
       // Check whether a CLAW file is available.
-      _mod = Module.findClaw(d.getAttribute(Xattr.NAME));
+      _mod = Xmod.findClaw(d.getAttribute(Xattr.NAME));
 
       if(_mod != null) {
         Message.debug("Reading CLAW module file: " + _mod.getFullPath());
@@ -543,7 +543,7 @@ public class ParallelizeForward extends ClawTransformation {
       if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
         // 3. Replicate the change in a potential module file
         FmoduleDefinition modDef = fDef.findParentModule();
-        Module.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+        Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
             false);
       } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
@@ -551,7 +551,7 @@ public class ParallelizeForward extends ClawTransformation {
          * type table of the .xmod file. We need to insert it first and then
          * we can update it. */
         FmoduleDefinition modDef = fDef.findParentModule();
-        Module.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+        Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
             true);
       }
     }

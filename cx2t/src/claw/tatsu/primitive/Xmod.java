@@ -7,7 +7,6 @@ package claw.tatsu.primitive;
 import claw.tatsu.common.Context;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
@@ -26,13 +25,13 @@ import java.util.List;
  *
  * @author clementval
  */
-public final class Module {
+public final class Xmod {
 
   private static final String CLAW_MOD_SUFFIX = "claw";
   private static final String XMOD_FILE_EXTENSION = ".xmod";
 
   // Avoid instantiation of this class
-  private Module() {
+  private Xmod() {
   }
 
   /**
@@ -103,7 +102,7 @@ public final class Module {
   /**
    * Update the function signature in the module file to reflects local changes.
    *
-   * @param moduleName    Module name to update.
+   * @param moduleName    Xmod name to update.
    * @param xcodeml       Current XcodeML file unit.
    * @param fctDef        Function definition that has been changed.
    * @param fctType       Function type that has been changed.
