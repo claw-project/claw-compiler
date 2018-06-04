@@ -354,7 +354,11 @@ public class Parallelize extends ClawTransformation {
     } else if(Context.get().getTarget() == Target.CPU
         || Context.get().getTarget() == Target.ARM)
     {
-      transformForCPU(xcodeml);
+      if (Context.get().getCompilerDirective() == CompilerDirective.NONE) {
+        transformPartialForCPU(xcodeml);
+      } else {
+        transformForCPU(xcodeml);
+      }
     } else {
       throw new IllegalTransformationException("Unsupported target " +
           Context.get().getTarget(), _claw.getPragma().lineNo());
@@ -363,7 +367,7 @@ public class Parallelize extends ClawTransformation {
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
-        Xmod.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
+        Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
             false);
       }
     }
@@ -470,6 +474,253 @@ public class Parallelize extends ClawTransformation {
     }
 
     Directive.generateRoutineDirectives(xcodeml, _fctDef);
+  }
+
+  /**
+   * Apply partial CPU transformation.
+   * When we can fusion the loop and keep the scalar "as is", we will do that
+   * in order to reduce cache misses.
+   * In other case we will apply a classic CPU transformation {@link
+   * #transformForCPU(XcodeProgram)} which will wrap each statement in DO loop.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @throws IllegalTransformationException If promotion of arrays fails.
+   */
+  private void transformPartialForCPU(XcodeProgram xcodeml)
+          throws IllegalTransformationException {
+    // Apply transformation only when there is a body to modify
+    if (Body.isEmpty(_fctDef.body())) {
+      return;
+    }
+    // Variables on each "depth" of the method
+    List<Set<String>> depthVars = new ArrayList<>();
+    depthVars.add(new HashSet<String>());
+    // A growing list of affecting variables. Starting from the ones
+    // declared by SCA and successively any variables affected by the SCA
+    // declaration
+    Set<String> affectingVars = new HashSet<>(_promotions.keySet());
+    affectingVars.addAll(_arrayFieldsInOut);
+    // Keep track of the block we are in
+    int depth = 0;
+
+    // Extract all the variables used, this doesn't include vector's
+    // iterator variables
+    transformPartialForCPUAnalysis(_fctDef.body(), depth, depthVars,
+            affectingVars);
+
+    // Find the block we need to transform
+    Set<String>[] targetDepthIntersections = new Set[depthVars.size()];
+    int transformationNumbers = 0;
+    for (int i = 0; i < depthVars.size(); i++) {
+      Set<String> depthVar = depthVars.get(i);
+
+      if (!depthVar.isEmpty()) {
+        // Find intersection with other blocks
+        Set<String> intersection = new HashSet<>();
+        for (int j = 0; j < depthVars.size(); j++) {
+          // Skip itself
+          if (i == j) continue;
+          // Intersect the level set with the others
+          Set<String> copy = new HashSet<>(depthVars.get(i));
+          copy.retainAll(depthVars.get(j));
+          intersection.addAll(copy);
+          transformationNumbers++;
+        }
+
+        // All are on the same index
+        targetDepthIntersections[i] = intersection;
+      }
+    }
+
+    // No transformation found, abort
+    if (transformationNumbers == 0) {
+      Message.debug("No target found for transformation found");
+      return;
+    }
+
+    // Gather transformation groups
+    List<List<Xnode>> transformations = new ArrayList<>();
+    // Apply transformation at the indicated depth
+    for (int i = 0; i < depthVars.size(); i++) {
+      Set<String> vars = depthVars.get(i);
+      if (vars.isEmpty()) continue;
+      Set<String> intersection = targetDepthIntersections[i];
+      int targetDepth = i;
+
+      // Variables still waiting for a promotion which aren't promoted yet
+      Set<String> promotions = new HashSet<>(vars);
+      promotions.retainAll(intersection);
+
+      // Influenced arrays must be promoted anyway
+      for (String var : vars) {
+        Xid fieldId = _fctDef.getSymbolTable().get(var);
+        FbasicType type = xcodeml.getTypeTable().getBasicType(fieldId);
+        if (type != null && type.isArray()) {
+          promotions.add(var);
+        }
+      }
+
+      for (String promotion : promotions) {
+        if (_promotions.containsKey(promotion)) continue;
+        PromotionInfo promotionInfo = new PromotionInfo(promotion,
+                _claw.getDimensionsForData(promotion));
+        Field.promote(promotionInfo, _fctDef, xcodeml);
+        _promotions.put(promotion, promotionInfo);
+        Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
+        Field.adaptAllocate(_promotions.get(promotion), _fctDef.body(),
+                xcodeml);
+      }
+
+      // Transform indicated level by wrapping it in a DO loop
+      transformPartialForCPUGather(_fctDef.body(), 0, targetDepth,
+              affectingVars, transformations);
+    }
+
+    // After gathering we apply the transformations
+    for (List<Xnode> transformation : transformations) {
+      transformPartialForCPUApply(transformation, xcodeml);
+    }
+  }
+
+  /**
+   * Analysis of a routine in order to extracts the information necessary in
+   * order to promote a minimal number of variables.
+   * Only variables affected by affectingVars are kept in depthVars.
+   *
+   * @param body The body to analyze.
+   * @param depth The depth relative to the function declaration.
+   * @param depthVars Vars used on each depth.
+   * @param affectingVars Vars which are affected by SCA and consequently
+   *                      affect other variables.
+   */
+  private void transformPartialForCPUAnalysis(Xnode body, int depth,
+                                              List<Set<String>> depthVars,
+                                              Set<String> affectingVars) {
+    final List<Xnode> children = body.children();
+    for (Xnode node : children) {
+      // Handle an assignment
+      if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
+        AssignStatement as = new AssignStatement(node.element());
+        List<Xnode> varNodes = node.matchAll(Xcode.VAR);
+        Set<String> vars = new HashSet<>();
+        for (Xnode xnode : varNodes) {
+          if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
+            continue;
+          }
+          vars.add(xnode.value());
+        }
+
+        // Check if it's affected by the promotion
+        Set<String> affectedVars = new HashSet<>(vars);
+        affectedVars.retainAll(affectingVars);
+
+        // If the intersection of the sets contain anything the assignment is
+        // affected by a previous promotions
+        depthVars.get(depth).addAll(affectedVars);
+        if (!affectedVars.isEmpty()) {
+          affectingVars.add(as.getLhsName());
+          depthVars.get(depth).add(as.getLhsName());
+        }
+      }
+      // Handle node containing a body
+      else if (node.opcode().hasBody()) {
+        if (depthVars.size() <= depth + 1) {
+          depthVars.add(new HashSet<String>());
+        }
+        transformPartialForCPUAnalysis(node.body(), depth + 1, depthVars,
+                affectingVars);
+      }
+      // Keep going inside the new node
+      else {
+        transformPartialForCPUAnalysis(node, depth, depthVars,
+                affectingVars);
+      }
+    }
+  }
+
+  /**
+   * Transform the content of the routine and add a DO loop only at the
+   * indicated depth and only around the affecting variables.
+   *
+   * @param body The body to transform.
+   * @param targetDepth The depth we need to reach and transform.
+   * @param affectingVars The variable which should be contained inside the loop
+   */
+  private void transformPartialForCPUGather(Xnode body, int currentDepth,
+                                            int targetDepth,
+                                            Set<String> affectingVars,
+                                            List<List<Xnode>> toapply) {
+    final List<Xnode> children = body.children();
+    final List<Xnode> hooks = new ArrayList<>();
+    for (Xnode node : children) {
+      // Handle an assignment
+      if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
+        if (currentDepth != targetDepth) continue;
+        final AssignStatement as = new AssignStatement(node.element());
+        List<Xnode> varNodes = node.matchAll(Xcode.VAR);
+        Set<String> vars = new HashSet<>();
+        for (Xnode xnode : varNodes) {
+          if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
+            continue;
+          }
+          vars.add(xnode.value());
+        }
+        // Statement need to be in the loop
+        if (Utility.hasIntersection(vars, affectingVars)) {
+          hooks.add(node);
+        }
+        // Particular case, unused variable inside the body
+        else if (!hooks.isEmpty()) {
+          toapply.add(new ArrayList<>(hooks));
+          hooks.clear();
+        }
+      }
+      // Handle node containing a body
+      else if (node.opcode().hasBody()) {
+        if (!hooks.isEmpty()) {
+          toapply.add(new ArrayList<>(hooks));
+          hooks.clear();
+        }
+        transformPartialForCPUGather(node.body(), currentDepth + 1,
+                targetDepth, affectingVars, toapply);
+      }
+      // Keep going inside the new node
+      else {
+        if (!hooks.isEmpty()) {
+          toapply.add(new ArrayList<>(hooks));
+          hooks.clear();
+        }
+        transformPartialForCPUGather(node, currentDepth,
+                targetDepth, affectingVars, toapply);
+        }
+    }
+    if (!hooks.isEmpty()) {
+      toapply.add(new ArrayList<>(hooks));
+      hooks.clear();
+    }
+  }
+
+  /**
+   * Given a series of sequential hooks (nodes), envelope them in a DO loop.
+   *
+   * @param hooks List of nodes do envelope in a DO statement
+   * @param xcodeml The program
+   */
+  private void transformPartialForCPUApply(List<Xnode> hooks,
+                                             XcodeProgram xcodeml) {
+    if (hooks.isEmpty()) return;
+    NestedDoStatement loop =
+            new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+    for(Xnode hook : hooks) {
+      loop.getInnerStatement().body().append(hook, true);
+    }
+    // Add loop to AST at the end
+    hooks.get(hooks.size() - 1).insertAfter(loop.getOuterStatement());
+    // Remove hooks nodes
+    for (Xnode hook : hooks) {
+      hook.delete();
+    }
+    hooks.clear();
   }
 
   /**
