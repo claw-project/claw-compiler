@@ -229,8 +229,8 @@ public class ClawX2T {
     if(configuration_file != null) {
       File configFile = new File(configuration_file);
       if(!configFile.exists()) {
-        error("internal", 0, 0, "Configuration file not found. "
-            + configuration_path);
+        error("internal", 0, 0, "Configuration file not found: "
+            + configuration_file);
       }
     }
 
