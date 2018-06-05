@@ -367,7 +367,7 @@ public class Parallelize extends ClawTransformation {
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
-        Module.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
+        Xmod.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
             false);
       }
     }
@@ -541,11 +541,10 @@ public class Parallelize extends ClawTransformation {
     // Gather transformation groups
     List<List<Xnode>> transformations = new ArrayList<>();
     // Apply transformation at the indicated depth
-    for (int i = 0; i < depthVars.size(); i++) {
-      Set<String> vars = depthVars.get(i);
+    for (int targetDepth = 0; targetDepth < depthVars.size(); targetDepth++) {
+      Set<String> vars = depthVars.get(targetDepth);
       if (vars.isEmpty()) continue;
-      Set<String> intersection = targetDepthIntersections[i];
-      int targetDepth = i;
+      Set<String> intersection = targetDepthIntersections[targetDepth];
 
       // Variables still waiting for a promotion which aren't promoted yet
       Set<String> promotions = new HashSet<>(vars);
