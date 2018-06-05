@@ -600,14 +600,7 @@ public class Parallelize extends ClawTransformation {
       // Handle an assignment
       if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
         AssignStatement as = new AssignStatement(node.element());
-        List<Xnode> varNodes = node.matchAll(Xcode.VAR);
-        Set<String> vars = new HashSet<>();
-        for (Xnode xnode : varNodes) {
-          if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
-            continue;
-          }
-          vars.add(xnode.value());
-        }
+        Set<String> vars = XnodeUtil.findChildrenVariable(node);
 
         // Check if it's affected by the promotion
         Set<String> affectedVars = new HashSet<>(vars);
@@ -620,6 +613,11 @@ public class Parallelize extends ClawTransformation {
           affectingVars.add(as.getLhsName());
           depthVars.get(depth).add(as.getLhsName());
         }
+      }
+      // IF statement content shouldn't increase depth counter
+      else if (node.opcode() == Xcode.F_IF_STATEMENT) {
+        transformPartialForCPUAnalysis(node.lastChild().body(), depth, depthVars,
+                affectingVars);
       }
       // Handle node containing a body
       else if (node.opcode().hasBody()) {
@@ -655,23 +653,28 @@ public class Parallelize extends ClawTransformation {
       // Handle an assignment
       if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
         if (currentDepth != targetDepth) continue;
-        final AssignStatement as = new AssignStatement(node.element());
-        List<Xnode> varNodes = node.matchAll(Xcode.VAR);
-        Set<String> vars = new HashSet<>();
-        for (Xnode xnode : varNodes) {
-          if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
-            continue;
-          }
-          vars.add(xnode.value());
-        }
+        Set<String> vars = XnodeUtil.findChildrenVariable(node);
         // Statement need to be in the loop
         if (Utility.hasIntersection(vars, affectingVars)) {
           hooks.add(node);
         }
         // Particular case, unused variable inside the body
-        else if (!hooks.isEmpty()) {
+        else {
           toapply.add(new ArrayList<>(hooks));
           hooks.clear();
+        }
+      }
+      // IF statement my have to be contained inside
+      else if (node.opcode() == Xcode.F_IF_STATEMENT) {
+        Set<String> vars = XnodeUtil.findChildrenVariable(node.firstChild());
+        // Statement need to be in the loop
+        if (Utility.hasIntersection(vars, affectingVars)) {
+          hooks.add(node);
+        }
+        // Continue inside if
+        else {
+          transformPartialForCPUGather(node.lastChild().body(), currentDepth,
+                  targetDepth, affectingVars, toapply);
         }
       }
       // Handle node containing a body
@@ -710,14 +713,10 @@ public class Parallelize extends ClawTransformation {
     if (hooks.isEmpty()) return;
     NestedDoStatement loop =
             new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+    // Add loop to AST
+    hooks.get(0).insertBefore(loop.getOuterStatement());
     for(Xnode hook : hooks) {
-      loop.getInnerStatement().body().append(hook, true);
-    }
-    // Add loop to AST at the end
-    hooks.get(hooks.size() - 1).insertAfter(loop.getOuterStatement());
-    // Remove hooks nodes
-    for (Xnode hook : hooks) {
-      hook.delete();
+      loop.getInnerStatement().body().append(hook, false);
     }
     hooks.clear();
   }

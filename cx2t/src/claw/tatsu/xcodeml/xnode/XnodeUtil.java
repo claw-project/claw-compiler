@@ -411,6 +411,25 @@ public class XnodeUtil {
   }
 
   /**
+   * Find all Xnode.VAR inside the given node and return their value. From
+   * the set are excluded the variables used as indexes for vectors.
+   *
+   * @return A set contains the variables used inside the node.
+   */
+  public static Set<String> findChildrenVariable(Xnode node) {
+    List<Xnode> varNodes = node.matchAll(Xcode.VAR);
+    Set<String> vars = new HashSet<>();
+    for (Xnode xnode : varNodes) {
+      // Skip vector indexes
+      if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
+        continue;
+      }
+      vars.add(xnode.value());
+    }
+    return vars;
+  }
+
+  /**
    * Get all the variables names from a list of var elements.
    *
    * @param nodes List containing var element.
