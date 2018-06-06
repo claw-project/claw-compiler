@@ -10,7 +10,7 @@ CONTAINS
   REAL , INTENT(INOUT) :: q ( : , : , : )
   INTEGER :: k
   REAL :: c
-  REAL :: d ( 1 : nx , 1 : ny )
+  REAL :: d
   INTEGER :: i
   INTEGER :: j
 
@@ -19,16 +19,8 @@ CONTAINS
    DO j = 1 , ny , 1
     DO i = 1 , nx , 1
      t ( i , j , k ) = c * k
-    END DO
-   END DO
-   DO j = 1 , ny , 1
-    DO i = 1 , nx , 1
-     d ( i , j ) = t ( i , j , k ) + c
-    END DO
-   END DO
-   DO j = 1 , ny , 1
-    DO i = 1 , nx , 1
-     q ( i , j , k ) = q ( i , j , k - 1 ) + t ( i , j , k ) * c + d ( i , j )
+     d = t ( i , j , k ) + c
+     q ( i , j , k ) = q ( i , j , k - 1 ) + t ( i , j , k ) * c + d
     END DO
    END DO
   END DO
