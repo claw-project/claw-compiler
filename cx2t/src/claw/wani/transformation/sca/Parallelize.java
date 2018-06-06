@@ -477,11 +477,8 @@ public class Parallelize extends ClawTransformation {
   }
 
   /**
-   * Apply partial CPU transformation.
-   * When we can fusion the loop and keep the scalar "as is", we will do that
-   * in order to reduce cache misses.
-   * In other case we will apply a classic CPU transformation {@link
-   * #transformForCPU(XcodeProgram)} which will wrap each statement in DO loop.
+   * Apply a CPU transformation which group adjacent statements together and
+   * promote the minimum number of variables possible.
    *
    * @param xcodeml Current XcodeML program unit.
    * @throws IllegalTransformationException If promotion of arrays fails.
@@ -520,7 +517,9 @@ public class Parallelize extends ClawTransformation {
         Set<String> intersection = new HashSet<>();
         for (int j = 0; j < depthVars.size(); j++) {
           // Skip itself
-          if (i == j) continue;
+          if (i == j) {
+              continue;
+          }
           // Intersect the level set with the others
           Set<String> copy = new HashSet<>(depthVars.get(i));
           copy.retainAll(depthVars.get(j));
@@ -560,8 +559,11 @@ public class Parallelize extends ClawTransformation {
         }
       }
 
+      // Promote
       for (String promotion : promotions) {
-        if (_promotions.containsKey(promotion)) continue;
+        if (_promotions.containsKey(promotion)) {
+            continue;
+        }
         PromotionInfo promotionInfo = new PromotionInfo(promotion,
                 _claw.getDimensionsForData(promotion));
         Field.promote(promotionInfo, _fctDef, xcodeml);
@@ -710,8 +712,10 @@ public class Parallelize extends ClawTransformation {
    * @param xcodeml The program
    */
   private void transformPartialForCPUApply(List<Xnode> hooks,
-                                             XcodeProgram xcodeml) {
-    if (hooks.isEmpty()) return;
+                                           XcodeProgram xcodeml) {
+    if (hooks.isEmpty()) {
+        return;
+    }
     NestedDoStatement loop =
             new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
     // Add loop to AST
