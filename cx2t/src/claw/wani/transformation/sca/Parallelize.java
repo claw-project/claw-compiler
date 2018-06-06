@@ -502,34 +502,35 @@ public class Parallelize extends ClawTransformation {
 
     // Extract all the variables used, this doesn't include vector's
     // iterator variables
-    transformPartialForCPUAnalysis(_fctDef.body(), depth, depthVars,
+    transformPartialForCPUExtraction(_fctDef.body(), depth, depthVars,
             affectingVars);
 
     // Find the block we need to transform
-    List<Set<String>> targetDepthIntersections = new ArrayList<>(depthVars
-            .size());
+    List<Set<String>> targetDepthIntersections = new ArrayList<>();
     int transformationNumbers = 0;
     for (int i = 0; i < depthVars.size(); i++) {
       Set<String> depthVar = depthVars.get(i);
 
-      if (!depthVar.isEmpty()) {
-        // Find intersection with other blocks
-        Set<String> intersection = new HashSet<>();
-        for (int j = 0; j < depthVars.size(); j++) {
-          // Skip itself
-          if (i == j) {
-              continue;
-          }
-          // Intersect the level set with the others
-          Set<String> copy = new HashSet<>(depthVars.get(i));
-          copy.retainAll(depthVars.get(j));
-          intersection.addAll(copy);
-          transformationNumbers++;
-        }
-
-        // All are on the same index
-        targetDepthIntersections.add(i, intersection);
+      if (depthVar.isEmpty()) {
+        targetDepthIntersections.add(null);
+        continue;
       }
+      // Find intersection with other blocks
+      Set<String> intersection = new HashSet<>();
+      for (int j = 0; j < depthVars.size(); j++) {
+        // Skip itself
+        if (i == j) {
+          continue;
+        }
+        // Intersect the level set with the others
+        Set<String> copy = new HashSet<>(depthVars.get(i));
+        copy.retainAll(depthVars.get(j));
+        intersection.addAll(copy);
+        transformationNumbers++;
+      }
+
+      // All are on the same index
+      targetDepthIntersections.add(intersection);
     }
 
     // No transformation found, abort
@@ -595,9 +596,9 @@ public class Parallelize extends ClawTransformation {
    * @param affectingVars Vars which are affected by SCA and consequently
    *                      affect other variables.
    */
-  private void transformPartialForCPUAnalysis(Xnode body, int depth,
-                                              List<Set<String>> depthVars,
-                                              Set<String> affectingVars) {
+  private void transformPartialForCPUExtraction(Xnode body, int depth,
+                                                List<Set<String>> depthVars,
+                                                Set<String> affectingVars) {
     final List<Xnode> children = body.children();
     for (Xnode node : children) {
       // Handle an assignment
@@ -619,20 +620,20 @@ public class Parallelize extends ClawTransformation {
       }
       // IF statement content shouldn't increase depth counter
       else if (node.opcode() == Xcode.F_IF_STATEMENT) {
-        transformPartialForCPUAnalysis(node.lastChild().body(), depth, depthVars,
-                affectingVars);
+        transformPartialForCPUExtraction(node.lastChild().body(), depth,
+                depthVars, affectingVars);
       }
       // Handle node containing a body
       else if (node.opcode().hasBody()) {
         if (depthVars.size() <= depth + 1) {
           depthVars.add(new HashSet<String>());
         }
-        transformPartialForCPUAnalysis(node.body(), depth + 1, depthVars,
+        transformPartialForCPUExtraction(node.body(), depth + 1, depthVars,
                 affectingVars);
       }
       // Keep going inside the new node
       else {
-        transformPartialForCPUAnalysis(node, depth, depthVars,
+        transformPartialForCPUExtraction(node, depth, depthVars,
                 affectingVars);
       }
     }
@@ -663,12 +664,15 @@ public class Parallelize extends ClawTransformation {
         }
         // Particular case, unused variable inside the body
         else {
-          toapply.add(new ArrayList<>(hooks));
-          hooks.clear();
+          if (!hooks.isEmpty()) {
+            toapply.add(new ArrayList<>(hooks));
+            hooks.clear();
+          }
         }
       }
       // IF statement my have to be contained inside
       else if (node.opcode() == Xcode.F_IF_STATEMENT) {
+        if (currentDepth != targetDepth) continue;
         Set<String> vars = XnodeUtil.findChildrenVariable(node.firstChild());
         // Statement need to be in the loop
         if (Utility.hasIntersection(vars, affectingVars)) {
@@ -676,6 +680,10 @@ public class Parallelize extends ClawTransformation {
         }
         // Continue inside if
         else {
+          if (!hooks.isEmpty()) {
+            toapply.add(new ArrayList<>(hooks));
+            hooks.clear();
+          }
           transformPartialForCPUGather(node.lastChild().body(), currentDepth,
                   targetDepth, affectingVars, toapply);
         }
