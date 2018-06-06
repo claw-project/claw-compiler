@@ -509,7 +509,8 @@ public class Parallelize extends ClawTransformation {
             affectingVars);
 
     // Find the block we need to transform
-    Set<String>[] targetDepthIntersections = new Set[depthVars.size()];
+    List<Set<String>> targetDepthIntersections = new ArrayList<>(depthVars
+            .size());
     int transformationNumbers = 0;
     for (int i = 0; i < depthVars.size(); i++) {
       Set<String> depthVar = depthVars.get(i);
@@ -528,7 +529,7 @@ public class Parallelize extends ClawTransformation {
         }
 
         // All are on the same index
-        targetDepthIntersections[i] = intersection;
+        targetDepthIntersections.add(i, intersection);
       }
     }
 
@@ -544,7 +545,7 @@ public class Parallelize extends ClawTransformation {
     for (int targetDepth = 0; targetDepth < depthVars.size(); targetDepth++) {
       Set<String> vars = depthVars.get(targetDepth);
       if (vars.isEmpty()) continue;
-      Set<String> intersection = targetDepthIntersections[targetDepth];
+      Set<String> intersection = targetDepthIntersections.get(targetDepth);
 
       // Variables still waiting for a promotion which aren't promoted yet
       Set<String> promotions = new HashSet<>(vars);
