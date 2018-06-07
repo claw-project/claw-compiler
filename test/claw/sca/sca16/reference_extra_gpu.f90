@@ -1,6 +1,5 @@
 MODULE mo_column_extra
  USE mo_column , ONLY: ty_column , compute_column
- PUBLIC :: compute_column
 
 CONTAINS
  SUBROUTINE compute_one ( nz , q , t , nproma )
