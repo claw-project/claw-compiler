@@ -93,8 +93,6 @@ public class OmniBackendDriver {
     if(!lineDirectives) {
       XmOption.setIsSuppressLineDirective(true);
     }
-    // Avoid insertion of USE xmpf_coarray statement
-    XmOption.setCoarrayNoUseStatement(true);
     XmOption.setDebugOutput(false);
 
     PrintWriter writer = null;
