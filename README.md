@@ -29,11 +29,6 @@ climate code, especially for column- or point-wise computation.
 The directives that control the transformation flow are defined in the
 [CLAW Directive Language Specification](https://github.com/claw-project/claw-language-specification).
 
-#### Status of implementation
-We are currently implementing the version `v0.3a` of the CLAW language
-specification in this reference compiler.
-
-
 #### Compiler workflow
 The diagram below shows the workflow of the CLAW Compiler.
 ![CLAW Compiler workflow](resources/clawfc_workflow.png)
