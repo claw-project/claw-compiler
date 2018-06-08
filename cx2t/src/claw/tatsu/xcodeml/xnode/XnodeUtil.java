@@ -416,7 +416,7 @@ public class XnodeUtil {
    *
    * @return A set contains the variables used inside the node.
    */
-  public static Set<String> findChildrenVariable(Xnode node) {
+  public static Set<String> findChildrenVariables(Xnode node) {
     List<Xnode> varNodes = node.matchAll(Xcode.VAR);
     Set<String> vars = new HashSet<>();
     for (Xnode xnode : varNodes) {

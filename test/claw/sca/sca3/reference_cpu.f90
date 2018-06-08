@@ -17,10 +17,6 @@ CONTAINS
 !$omp do
    DO proma = 1 , nproma , 1
     t ( proma , k ) = c * k
-   END DO
-!$omp end do
-!$omp do
-   DO proma = 1 , nproma , 1
     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
    END DO
 !$omp end do

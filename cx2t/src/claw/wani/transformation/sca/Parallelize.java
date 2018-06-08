@@ -354,11 +354,7 @@ public class Parallelize extends ClawTransformation {
     } else if(Context.get().getTarget() == Target.CPU
         || Context.get().getTarget() == Target.ARM)
     {
-      if (Context.get().getCompilerDirective() == CompilerDirective.NONE) {
-        transformPartialForCPU(xcodeml);
-      } else {
-        transformForCPU(xcodeml);
-      }
+      transformPartialForCPU(xcodeml);
     } else {
       throw new IllegalTransformationException("Unsupported target " +
           Context.get().getTarget(), _claw.getPragma().lineNo());
@@ -583,6 +579,9 @@ public class Parallelize extends ClawTransformation {
     for (List<Xnode> transformation : transformations) {
       transformPartialForCPUApply(transformation, xcodeml);
     }
+    // Generate the parallel region
+    Directive.generateParallelClause(xcodeml, _fctDef.body().firstChild(),
+            _fctDef.body().lastChild());
   }
 
   /**
@@ -604,7 +603,7 @@ public class Parallelize extends ClawTransformation {
       // Handle an assignment
       if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
         AssignStatement as = new AssignStatement(node.element());
-        Set<String> vars = XnodeUtil.findChildrenVariable(node);
+        Set<String> vars = XnodeUtil.findChildrenVariables(node);
 
         // Check if it's affected by the promotion
         Set<String> affectedVars = new HashSet<>(vars);
@@ -657,56 +656,69 @@ public class Parallelize extends ClawTransformation {
       // Handle an assignment
       if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
         if (currentDepth != targetDepth) continue;
-        Set<String> vars = XnodeUtil.findChildrenVariable(node);
+        Set<String> vars = XnodeUtil.findChildrenVariables(node);
         // Statement need to be in the loop
         if (Utility.hasIntersection(vars, affectingVars)) {
+          // Is the statement wasn't promoted and is not in a current loop
+          // block, we can skip the promotion because it is not needed.
+          AssignStatement as = new AssignStatement(node.element());
+          if (!_promotions.containsKey(as.getLhsName()) && hooks.isEmpty()) {
+              continue;
+          }
+          // If the assignment is a vector, but we don't access its elements
+          // we don't have to add it to a loop
+          if (as.getVarRefNames().size() == 0) {
+            transformPartialForCPUGatherSaveHook(hooks, toapply);
+            continue;
+          }
           hooks.add(node);
         }
         // Particular case, unused variable inside the body
         else {
-          if (!hooks.isEmpty()) {
-            toapply.add(new ArrayList<>(hooks));
-            hooks.clear();
-          }
+          transformPartialForCPUGatherSaveHook(hooks, toapply);
         }
       }
       // IF statement my have to be contained inside
       else if (node.opcode() == Xcode.F_IF_STATEMENT) {
         if (currentDepth != targetDepth) continue;
-        Set<String> vars = XnodeUtil.findChildrenVariable(node.firstChild());
-        // Statement need to be in the loop
-        if (Utility.hasIntersection(vars, affectingVars)) {
-          hooks.add(node);
+        Set<String> vars = XnodeUtil.findChildrenVariables(node.firstChild());
+        // An assign statement is needed inside the IF for it to be eligible
+        final boolean varsIntersection = Utility.hasIntersection(vars,
+                affectingVars);
+        final boolean assignExists = node.matchDescendant(Xcode
+                .F_ASSIGN_STATEMENT) != null;
+        if (varsIntersection) {
+          if (assignExists) {
+            hooks.add(node);
+          } else {
+            transformPartialForCPUGatherSaveHook(hooks, toapply);
+          }
         }
         // Continue inside if
         else {
-          if (!hooks.isEmpty()) {
-            toapply.add(new ArrayList<>(hooks));
-            hooks.clear();
-          }
+          transformPartialForCPUGatherSaveHook(hooks, toapply);
           transformPartialForCPUGather(node.lastChild().body(), currentDepth,
                   targetDepth, affectingVars, toapply);
         }
       }
       // Handle node containing a body
       else if (node.opcode().hasBody()) {
-        if (!hooks.isEmpty()) {
-          toapply.add(new ArrayList<>(hooks));
-          hooks.clear();
-        }
+        transformPartialForCPUGatherSaveHook(hooks, toapply);
         transformPartialForCPUGather(node.body(), currentDepth + 1,
                 targetDepth, affectingVars, toapply);
       }
       // Keep going inside the new node
       else {
-        if (!hooks.isEmpty()) {
-          toapply.add(new ArrayList<>(hooks));
-          hooks.clear();
-        }
+        transformPartialForCPUGatherSaveHook(hooks, toapply);
         transformPartialForCPUGather(node, currentDepth,
                 targetDepth, affectingVars, toapply);
         }
     }
+    transformPartialForCPUGatherSaveHook(hooks, toapply);
+  }
+
+  private void transformPartialForCPUGatherSaveHook(List<Xnode> hooks,
+                                                    List<List<Xnode>> toapply) {
     if (!hooks.isEmpty()) {
       toapply.add(new ArrayList<>(hooks));
       hooks.clear();
@@ -731,6 +743,9 @@ public class Parallelize extends ClawTransformation {
     for(Xnode hook : hooks) {
       loop.getInnerStatement().body().append(hook, false);
     }
+    Directive.generateLoopDirectives(xcodeml,
+            loop.getOuterStatement(), loop.getOuterStatement(),
+            Directive.NO_COLLAPSE);
     hooks.clear();
   }
 
