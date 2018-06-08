@@ -668,14 +668,14 @@ public class Parallelize extends ClawTransformation {
           // If the assignment is a vector, but we don't access its elements
           // we don't have to add it to a loop
           if (as.getVarRefNames().size() == 0) {
-            transformPartialForCPUGatherSaveHook(hooks, toapply);
+            transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
             continue;
           }
           hooks.add(node);
         }
         // Particular case, unused variable inside the body
         else {
-          transformPartialForCPUGatherSaveHook(hooks, toapply);
+          transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
         }
       }
       // IF statement my have to be contained inside
@@ -691,34 +691,44 @@ public class Parallelize extends ClawTransformation {
           if (assignExists) {
             hooks.add(node);
           } else {
-            transformPartialForCPUGatherSaveHook(hooks, toapply);
+            transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
           }
         }
         // Continue inside if
         else {
-          transformPartialForCPUGatherSaveHook(hooks, toapply);
+          transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
           transformPartialForCPUGather(node.lastChild().body(), currentDepth,
                   targetDepth, affectingVars, toapply);
         }
       }
       // Handle node containing a body
       else if (node.opcode().hasBody()) {
-        transformPartialForCPUGatherSaveHook(hooks, toapply);
+        transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
         transformPartialForCPUGather(node.body(), currentDepth + 1,
                 targetDepth, affectingVars, toapply);
       }
       // Keep going inside the new node
       else {
-        transformPartialForCPUGatherSaveHook(hooks, toapply);
+        transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
         transformPartialForCPUGather(node, currentDepth,
                 targetDepth, affectingVars, toapply);
         }
     }
-    transformPartialForCPUGatherSaveHook(hooks, toapply);
+    transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
   }
 
-  private void transformPartialForCPUGatherSaveHook(List<Xnode> hooks,
-                                                    List<List<Xnode>> toapply) {
+  /**
+   * If a hooks group that will be wrapped exists, add it to the collection
+   * containing all the hooks group found until now.
+   * The content of `hooks` is copied in a new list and added to `toapply`,
+   * while `hooks` will be cleared of its content.
+   *
+   * @param hooks A list of adjacent nodes to be wrapped in a DO statement
+   * @param toapply A list to add a copy of `hooks`
+   */
+  private void transformPartialForCPUGatherSaveHooksGroup(List<Xnode> hooks,
+                                                          List<List<Xnode>>
+                                                                  toapply) {
     if (!hooks.isEmpty()) {
       toapply.add(new ArrayList<>(hooks));
       hooks.clear();
