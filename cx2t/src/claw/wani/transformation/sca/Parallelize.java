@@ -354,7 +354,7 @@ public class Parallelize extends ClawTransformation {
     } else if(Context.get().getTarget() == Target.CPU
         || Context.get().getTarget() == Target.ARM)
     {
-      transformPartialForCPU(xcodeml);
+      transformFusionForCPU(xcodeml);
     } else {
       throw new IllegalTransformationException("Unsupported target " +
           Context.get().getTarget(), _claw.getPragma().lineNo());
@@ -479,7 +479,7 @@ public class Parallelize extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit.
    * @throws IllegalTransformationException If promotion of arrays fails.
    */
-  private void transformPartialForCPU(XcodeProgram xcodeml)
+  private void transformFusionForCPU(XcodeProgram xcodeml)
           throws IllegalTransformationException {
     // Apply transformation only when there is a body to modify
     if (Body.isEmpty(_fctDef.body())) {
@@ -662,12 +662,14 @@ public class Parallelize extends ClawTransformation {
           // Is the statement wasn't promoted and is not in a current loop
           // block, we can skip the promotion because it is not needed.
           AssignStatement as = new AssignStatement(node.element());
-          if (!_promotions.containsKey(as.getLhsName()) && hooks.isEmpty()) {
+          if (!_promotions.containsKey(as.getLhsName()) && hooks.isEmpty() &&
+                  as.getVarRefNames().size() == 0) {
               continue;
           }
           // If the assignment is a vector, but we don't access its elements
           // we don't have to add it to a loop
-          if (as.getVarRefNames().size() == 0) {
+          if (_promotions.containsKey(as.getLhsName()) &&
+                  as.getVarRefNames().size() == 0) {
             transformPartialForCPUGatherSaveHooksGroup(hooks, toapply);
             continue;
           }
