@@ -414,6 +414,7 @@ public class XnodeUtil {
    * Find all Xnode.VAR inside the given node and return their value. From
    * the set are excluded the variables used as indexes for vectors.
    *
+   * @param node The node from where the research will start.
    * @return A set contains the variables used inside the node.
    */
   public static Set<String> findChildrenVariables(Xnode node) {

@@ -546,7 +546,7 @@ public class Parallelize extends ClawTransformation {
       return;
     }
 
-    // Gather transformation groups
+    // Gather all possible loop groups before their modification
     List<List<Xnode>> transformations = new ArrayList<>();
     // Apply transformation at the indicated depth
     for (int targetDepth = 0; targetDepth < depthVars.size(); targetDepth++) {
