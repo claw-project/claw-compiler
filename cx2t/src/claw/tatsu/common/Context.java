@@ -46,7 +46,9 @@ public class Context {
                           int maxColumns)
   {
     _instance = new Context(compilerDirective, target, maxColumns);
-    if(_instance.getCompilerDirective() == CompilerDirective.OPENACC) {
+    if(_instance.getCompilerDirective() == CompilerDirective.OPENACC
+        && Configuration.get().openACC() != null)
+    {
       OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
       openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
     }
