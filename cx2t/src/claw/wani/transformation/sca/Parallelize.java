@@ -23,6 +23,7 @@ import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.openacc.OpenAccLocalStrategy;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The Single Column Abstraction (SCA) transformation transforms the code
@@ -504,12 +505,10 @@ public class Parallelize extends ClawTransformation {
     // declaration
     Set<String> affectingVars = new HashSet<>(_promotions.keySet());
     affectingVars.addAll(_arrayFieldsInOut);
-    // Keep track of the block we are in
-    int depth = 0;
 
     // Extract all the variables used, this doesn't include vector's
     // iterator variables
-    transformFusionForCPUExtraction(_fctDef.body(), depth, depthVars,
+    transformFusionForCPUExtraction(_fctDef.body(), new AtomicInteger(), depthVars,
             affectingVars);
 
     // Find the block we need to transform
@@ -582,7 +581,7 @@ public class Parallelize extends ClawTransformation {
       }
 
       // Transform indicated level by wrapping it in a DO loop
-      transformFusionForCPUGather(_fctDef.body(), 0, targetDepth,
+      transformFusionForCPUGather(_fctDef.body(), new AtomicInteger(), targetDepth,
               affectingVars, transformations);
     }
 
@@ -590,9 +589,14 @@ public class Parallelize extends ClawTransformation {
     for (List<Xnode> transformation : transformations) {
       transformFusionForCPUApply(transformation, xcodeml);
     }
+    // If the last statement is a CONTAINS, fallback to the previous one
+    Xnode lastNode = _fctDef.body().lastChild();
+    while (lastNode.opcode() == Xcode.F_CONTAINS_STATEMENT) {
+      lastNode = lastNode.prevSibling();
+    }
     // Generate the parallel region
-    Directive.generateParallelClause(xcodeml, _fctDef.body().firstChild(),
-            _fctDef.body().lastChild());
+    Directive.generateParallelClause(xcodeml,
+          _fctDef.body().firstChild(), lastNode);
   }
 
   /**
@@ -606,7 +610,7 @@ public class Parallelize extends ClawTransformation {
    * @param affectingVars Vars which are affected by SCA and consequently
    *                      affect other variables.
    */
-  private void transformFusionForCPUExtraction(Xnode body, int depth,
+  private void transformFusionForCPUExtraction(Xnode body, AtomicInteger depth,
                                                List<Set<String>> depthVars,
                                                Set<String> affectingVars) {
     final List<Xnode> children = body.children();
@@ -622,23 +626,32 @@ public class Parallelize extends ClawTransformation {
 
         // If the intersection of the sets contain anything the assignment is
         // affected by a previous promotions
-        depthVars.get(depth).addAll(affectedVars);
+        depthVars.get(depth.get()).addAll(affectedVars);
         if (!affectedVars.isEmpty()) {
           affectingVars.add(as.getLhsName());
-          depthVars.get(depth).add(as.getLhsName());
+          depthVars.get(depth.get()).add(as.getLhsName());
         }
       }
       // IF statement content shouldn't increase depth counter
       else if (node.opcode() == Xcode.F_IF_STATEMENT) {
-        transformFusionForCPUExtraction(node.lastChild().body(), depth,
-                depthVars, affectingVars);
+        Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
+        Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
+        if (nThen != null) {
+          transformFusionForCPUExtraction(nThen.body(), depth, depthVars,
+                  affectingVars);
+        }
+        if (nElse != null) {
+          transformFusionForCPUExtraction(nElse.body(), depth, depthVars,
+                  affectingVars);
+        }
       }
       // Handle node containing a body
       else if (node.opcode().hasBody()) {
-        if (depthVars.size() <= depth + 1) {
+        if (depthVars.size() <= depth.get() + 1) {
           depthVars.add(new HashSet<String>());
         }
-        transformFusionForCPUExtraction(node.body(), depth + 1, depthVars,
+        depth.incrementAndGet();
+        transformFusionForCPUExtraction(node.body(), depth, depthVars,
                 affectingVars);
       }
       // Keep going inside the new node
@@ -654,19 +667,22 @@ public class Parallelize extends ClawTransformation {
    * indicated depth and only around the affecting variables.
    *
    * @param body The body to transform.
+   * @param currentDepth The depth we currently are at
    * @param targetDepth The depth we need to reach and transform.
    * @param affectingVars The variable which should be contained inside the loop
    */
-  private void transformFusionForCPUGather(Xnode body, int currentDepth,
-                                           int targetDepth,
+  private void transformFusionForCPUGather(Xnode body,
+                                           AtomicInteger currentDepth,
+                                           final int targetDepth,
                                            Set<String> affectingVars,
                                            List<List<Xnode>> toapply) {
     final List<Xnode> children = body.children();
     final List<Xnode> hooks = new ArrayList<>();
+    nodeLoop:
     for (Xnode node : children) {
       // Handle an assignment
       if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
-        if (currentDepth != targetDepth) continue;
+        if (currentDepth.get() != targetDepth) continue;
         Set<String> vars = XnodeUtil.findChildrenVariables(node);
         // Statement need to be in the loop
         if (Utility.hasIntersection(vars, affectingVars)) {
@@ -693,31 +709,51 @@ public class Parallelize extends ClawTransformation {
       }
       // IF statement my have to be contained inside
       else if (node.opcode() == Xcode.F_IF_STATEMENT) {
-        if (currentDepth != targetDepth) continue;
-        Set<String> vars = XnodeUtil.findChildrenVariables(node.firstChild());
-        // An assign statement is needed inside the IF for it to be eligible
-        final boolean varsIntersection = Utility.hasIntersection(vars,
-                affectingVars);
-        final boolean assignExists = node.matchDescendant(Xcode
-                .F_ASSIGN_STATEMENT) != null;
-        if (varsIntersection) {
-          if (assignExists) {
-            hooks.add(node);
-          } else {
+        // Enter the if in case it contains DO statements
+        if (currentDepth.get() != targetDepth) {
+          Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
+          Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
+          if (nThen != null) {
             transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+            transformFusionForCPUGather(nThen.body(), currentDepth,
+                  targetDepth, affectingVars, toapply);
+          }
+          if (nElse != null) {
+            transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+            transformFusionForCPUGather(nElse.body(), currentDepth,
+                  targetDepth, affectingVars, toapply);
+          }
+          continue;
+        }
+
+        // We need to wrap the whole IF based on the condition
+        List<Xnode> condNode = node.matchAll(Xcode.CONDITION);
+        for (Xnode xnode : condNode) {
+          if (Condition.dependsOn(xnode, affectingVars)) {
+            hooks.add(node);
+            continue nodeLoop;
           }
         }
-        // Continue inside if
-        else {
-          transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
-          transformFusionForCPUGather(node.lastChild().body(), currentDepth,
-                  targetDepth, affectingVars, toapply);
+
+        // We need to wrap the whole IF based on the statement inside
+        List<Xnode> statNode = node.matchAll(Xcode.F_ASSIGN_STATEMENT);
+        for (Xnode xnode : statNode) {
+          AssignStatement as = new AssignStatement(xnode.element());
+          if (affectingVars.contains(as.getLhsName())) {
+            hooks.add(node);
+            continue nodeLoop;
+          }
         }
+
+        // If the IF statement doesn't contains any dependency we gather the
+        // potential transformation and continue
+        transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
       }
       // Handle node containing a body
       else if (node.opcode().hasBody()) {
         transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
-        transformFusionForCPUGather(node.body(), currentDepth + 1,
+        currentDepth.incrementAndGet();
+        transformFusionForCPUGather(node.body(), currentDepth,
                 targetDepth, affectingVars, toapply);
       }
       // Keep going inside the new node
@@ -725,7 +761,7 @@ public class Parallelize extends ClawTransformation {
         transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
         transformFusionForCPUGather(node, currentDepth,
                 targetDepth, affectingVars, toapply);
-        }
+      }
     }
     transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
   }
