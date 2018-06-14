@@ -260,6 +260,12 @@ public class ClawX2T {
       Configuration.get().setMaxColumns(maxColumns);
       Context.init(Configuration.get().getCurrentDirective(),
           Configuration.get().getCurrentTarget(), maxColumns);
+
+      if(Context.get().getCompilerDirective() == CompilerDirective.OPENACC) {
+        OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
+        openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
+      }
+
     } catch(Exception ex) {
       error("internal", 0, 0, ex.getMessage());
       return;
