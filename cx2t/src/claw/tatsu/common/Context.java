@@ -9,6 +9,7 @@ import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
+import claw.wani.x2t.configuration.Configuration;
 
 /**
  * @author clementval
@@ -45,6 +46,10 @@ public class Context {
                           int maxColumns)
   {
     _instance = new Context(compilerDirective, target, maxColumns);
+    if(_instance.getCompilerDirective() == CompilerDirective.OPENACC) {
+      OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
+      openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
+    }
   }
 
   public static Context get() {
