@@ -356,11 +356,11 @@ public class Parallelize extends ClawTransformation {
         || Context.get().getTarget() == Target.ARM)
     {
       // Choose which mode to use
-      switch (Configuration.get().getParameter("cpu_trans_strategy")) {
-        case "fusion":
+      switch (Configuration.get().getParameter(Configuration.CPU_STRATEGY)) {
+        case Configuration.CPU_STRATEGY_FUSION:
          transformFusionForCPU(xcodeml);
           break;
-        case "single":
+        case Configuration.CPU_STRATEGY_SINGLE:
           transformForCPU(xcodeml);
           break;
         default:
@@ -504,7 +504,7 @@ public class Parallelize extends ClawTransformation {
     // declared by SCA and successively any variables affected by the SCA
     // declaration
     Set<String> affectingVars = new HashSet<>(_promotions.keySet());
-    affectingVars.addAll(_arrayFieldsInOut);
+    //affectingVars.addAll(_arrayFieldsInOut);
 
     // Extract all the variables used, this doesn't include vector's
     // iterator variables
@@ -730,6 +730,7 @@ public class Parallelize extends ClawTransformation {
         List<Xnode> condNode = node.matchAll(Xcode.CONDITION);
         for (Xnode xnode : condNode) {
           if (Condition.dependsOn(xnode, affectingVars)) {
+            System.err.println("d" + node.lineNo());
             hooks.add(node);
             continue nodeLoop;
           }
@@ -737,9 +738,20 @@ public class Parallelize extends ClawTransformation {
 
         // We need to wrap the whole IF based on the statement inside
         List<Xnode> statNode = node.matchAll(Xcode.F_ASSIGN_STATEMENT);
+        xNodeLoop:
         for (Xnode xnode : statNode) {
           AssignStatement as = new AssignStatement(xnode.element());
           if (affectingVars.contains(as.getLhsName())) {
+            // If the affected node is child of a DO, a dedicated loop
+            // group will be created.
+            Xnode pnode = xnode.ancestor();
+            while (pnode.hashCode() != node.hashCode()) {
+              if (pnode.opcode() == Xcode.F_DO_STATEMENT) {
+                break xNodeLoop;
+              }
+              pnode = pnode.ancestor();
+            }
+            // Add the whole if and continue otherwise
             hooks.add(node);
             continue nodeLoop;
           }
