@@ -23,7 +23,7 @@ PROGRAM test_abstraction4
 
   ALLOCATE(ty%y(nproma,nz))
 
-  !$acc data copyin(q,t) copyout(q,t)
+  !$acc data copy(q,t)
 
   !$claw parallelize forward
   DO p = 1, nproma
