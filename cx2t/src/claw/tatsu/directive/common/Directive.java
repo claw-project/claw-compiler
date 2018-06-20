@@ -572,9 +572,9 @@ public final class Directive {
     {
       return first;
     } else {
-      while(first.nextSibling() != null && (Context.get().getGenerator().
+      while(first.nextSibling() != null && ((Context.get().getGenerator().
           getSkippedStatementsInPreamble().contains(first.opcode()))
-          || isClawDirective(first))
+          || isClawDirective(first)))
       {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
