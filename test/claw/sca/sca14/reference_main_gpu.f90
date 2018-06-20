@@ -17,7 +17,7 @@ PROGRAM test_abstraction14
  DO p = 1 , nproma , 1
   t ( 1 , p ) = 0.0
  END DO
-!$ACC data copyin(q,t) copyout(q,t)
+!$ACC data copy(q,t)
  CALL compute ( nz , b , q ( : , : , : ) , t ( : , : ) , nproma = nproma )
 !$ACC end data
  PRINT * , sum ( q )
