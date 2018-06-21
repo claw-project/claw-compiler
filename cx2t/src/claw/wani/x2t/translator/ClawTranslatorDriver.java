@@ -5,8 +5,10 @@
 package claw.wani.x2t.translator;
 
 import claw.shenron.transformation.TransformationGroup;
+import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
+import claw.tatsu.common.Target;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -85,6 +87,13 @@ public class ClawTranslatorDriver {
     _translationUnit = (_xcodemlInputFile == null) ?
         XcodeProgram.createFromStdInput() :
         XcodeProgram.createFromFile(_xcodemlInputFile);
+
+    if(Configuration.get().getCurrentDirective() == CompilerDirective.OPENMP
+        && Configuration.get().getCurrentTarget() == Target.CPU)
+    {
+      _translationUnit.addWarning("Fine grain OpenMP directive generation " +
+          "is not advised for CPU target.", 0);
+    }
 
     if(_translationUnit == null) {
       abort();

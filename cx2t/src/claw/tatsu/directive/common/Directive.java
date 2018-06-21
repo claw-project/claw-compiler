@@ -4,6 +4,7 @@
  */
 package claw.tatsu.directive.common;
 
+import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
@@ -18,6 +19,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.wani.ClawConstant;
 import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
@@ -547,12 +549,14 @@ public final class Directive {
    * @param functionDefinition Function definition in which body checked.
    * @param from               Optional element to start from. If null, starts
    *                           from first element in function's body.
+   *
    * @return First element for the parallel region.
    */
   public static Xnode findParallelRegionStart(Xnode functionDefinition,
                                               Xnode from)
   {
-    if(Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE
+    if(Context.get().getGenerator().getDirectiveLanguage()
+        == CompilerDirective.NONE
         || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
     {
       return null;
@@ -564,12 +568,14 @@ public final class Directive {
     if(from != null) { // Start from given element
       first = from;
     }
-    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty()) {
+    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty())
+    {
       return first;
     } else {
-      while(first.nextSibling() != null
-          && Context.get().getGenerator().getSkippedStatementsInPreamble().
-          contains(first.opcode())) {
+      while(first.nextSibling() != null && ((Context.get().getGenerator().
+          getSkippedStatementsInPreamble().contains(first.opcode()))
+          || isClawDirective(first)))
+      {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!Context.get().getGenerator().getSkippedStatementsInPreamble().
@@ -583,6 +589,16 @@ public final class Directive {
       }
     }
     return first;
+  }
+
+  /**
+   * Check if the node is a CLAW directive
+   * @param node Node to check.
+   * @return True if the node is a CLAW directive. False otherwise.
+   */
+  private static boolean isClawDirective(Xnode node) {
+    return node != null && node.opcode() == Xcode.F_PRAGMA_STATEMENT
+        && node.value().toLowerCase().startsWith(TatsuConstant.DIRECTIVE_CLAW);
   }
 
   /**

@@ -119,7 +119,8 @@ public enum FortranType {
    * @return True if the hash is of current type. False otherwise.
    */
   public boolean isOfType(String hash) {
-    return hash != null && !hash.isEmpty() && hash.charAt(0) == _prefix;
+    return hash != null && !hash.isEmpty()
+        && (hash.charAt(0) == _prefix || hash.equals(_irValue));
   }
 
   @Override

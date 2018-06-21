@@ -229,8 +229,7 @@ public class OpenAcc extends DirectiveGenerator {
   @Override
   public List<Xcode> getSkippedStatementsInPreamble() {
     return Arrays.asList(
-        Xcode.F_IF_STATEMENT, Xcode.F_ALLOCATE_STATEMENT,
-        Xcode.F_PRAGMA_STATEMENT
+        Xcode.F_IF_STATEMENT, Xcode.F_ALLOCATE_STATEMENT
     );
   }
 
