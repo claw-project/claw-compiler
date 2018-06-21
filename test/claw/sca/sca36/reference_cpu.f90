@@ -21,25 +21,17 @@ CONTAINS
   REAL , INTENT(INOUT) :: z ( 1 : nproma )
   INTEGER :: k
   REAL :: c
-  REAL :: p ( 1 : nproma )
+  REAL :: p
   INTEGER :: proma
 
   c = 5.345
-  DO proma = 1 , nproma , 1
-   p ( proma ) = c ** ( 2.0 )
-  END DO
+  p = c ** ( 2.0 )
   DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
     t ( proma , k ) = c * k
-   END DO
-   DO proma = 1 , nproma , 1
-    p ( proma ) = t ( proma , k ) + 1.0
-   END DO
-   DO proma = 1 , nproma , 1
+    p = t ( proma , k ) + 1.0
     q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
-   END DO
-   DO proma = 1 , nproma , 1
-    IF ( p ( proma ) > 2.0 ) THEN
+    IF ( p > 2.0 ) THEN
      q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c * 2.0
     END IF
    END DO
