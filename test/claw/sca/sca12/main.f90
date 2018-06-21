@@ -21,7 +21,7 @@ PROGRAM test_abstraction12
     t(p,1) = 0.0
   END DO
 
-  !$acc data copyin(q,t) copyout(q,t)
+  !$acc data copy(q,t)
 
   !$claw parallelize forward
   DO p = 1, nproma

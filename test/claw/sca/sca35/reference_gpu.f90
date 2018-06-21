@@ -13,11 +13,11 @@ CONTAINS
   INTEGER :: k
   INTEGER :: proma
 
-!$acc loop seq
 !$acc data present(t,q,z)
 !$acc parallel
 !$acc loop gang vector
   DO proma = 1 , nproma , 1
+!$acc loop seq
    DO k = 1 , nz , 1
     IF ( t ( proma , k ) > 0. ) THEN
      IF ( k < 10 ) THEN

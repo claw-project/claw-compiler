@@ -265,6 +265,7 @@ public class ClawX2T {
         OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
         openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
       }
+
     } catch(Exception ex) {
       error("internal", 0, 0, ex.getMessage());
       return;

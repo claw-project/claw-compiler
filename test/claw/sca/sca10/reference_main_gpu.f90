@@ -12,7 +12,7 @@ PROGRAM test_abstraction10
   q ( p , 1 ) = 0.0
   t ( p , 1 ) = 0.0
  END DO
-!$ACC data copyin(q,t) copyout(q,t)
+!$ACC data copy(q,t)
  CALL compute_column_public ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma&
   )
 !$ACC end data

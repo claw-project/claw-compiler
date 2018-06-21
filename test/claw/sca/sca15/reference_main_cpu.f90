@@ -16,7 +16,7 @@ PROGRAM test_abstraction15
   z ( p ) = 0.0
   t ( 1 , p ) = 0.0
  END DO
-!$ACC data copyin(q,t) copyout(q,t)
+!$ACC data copy(q,t)
  CALL compute ( nz , b , q ( : , : ) , t ( : , : ) , z ( : ) , nproma = nproma&
   )
 !$ACC end data

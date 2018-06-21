@@ -14,7 +14,7 @@ PROGRAM test_abstraction4
   q ( p , 1 ) = 0.0
  END DO
  ALLOCATE ( ty % y ( nproma , nz ) )
-!$ACC data copyin(q,t) copyout(q,t)
+!$ACC data copy(q,t)
  CALL compute ( nz , q ( : , : ) , ty % y ( : , : ) , z ( : ) , nproma =&
   nproma )
 !$ACC end data

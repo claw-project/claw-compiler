@@ -9,6 +9,7 @@ import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
+import claw.wani.x2t.configuration.Configuration;
 
 /**
  * @author clementval
