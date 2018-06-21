@@ -554,11 +554,13 @@ public class Parallelize extends ClawTransformation {
       Set<String> intersection = targetDepthIntersections.get(targetDepth);
 
       // Variables still waiting for a promotion which aren't promoted yet
-      Set<String> promotions = new HashSet<>(vars);
-      promotions.retainAll(intersection);
+      Set<String> promotions = new HashSet<>(intersection);
 
+      // Check only the LHS arrays
+      Set<String> vectorType = new HashSet<>(vars);
+      vectorType.retainAll(affectingVars);
       // Influenced arrays must be promoted anyway
-      for (String var : vars) {
+      for (String var : vectorType) {
         Xid fieldId = _fctDef.getSymbolTable().get(var);
         FbasicType type = xcodeml.getTypeTable().getBasicType(fieldId);
         if (type != null && type.isArray()) {
@@ -687,7 +689,7 @@ public class Parallelize extends ClawTransformation {
         // Statement need to be in the loop
         if (Utility.hasIntersection(vars, affectingVars)) {
           // Is the statement wasn't promoted and is not in a current loop
-          // block, we can skip the promotion because it is not needed.
+          // block, we can avoid to add it to a loop because it is not needed.
           AssignStatement as = new AssignStatement(node.element());
           if (!_promotions.containsKey(as.getLhsName()) && hooks.isEmpty() &&
                   as.getVarRefNames().size() == 0) {
@@ -730,7 +732,6 @@ public class Parallelize extends ClawTransformation {
         List<Xnode> condNode = node.matchAll(Xcode.CONDITION);
         for (Xnode xnode : condNode) {
           if (Condition.dependsOn(xnode, affectingVars)) {
-            System.err.println("d" + node.lineNo());
             hooks.add(node);
             continue nodeLoop;
           }
