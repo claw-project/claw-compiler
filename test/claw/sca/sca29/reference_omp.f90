@@ -11,20 +11,20 @@ CONTAINS
   REAL :: c
   INTEGER :: proma
 
-!$acc data present(t,q)
-!$acc parallel
-!$acc loop gang vector
+!$omp target
+!$omp teams thread_limit(256) num_teams(65536)
+!$omp distribute dist_schedule(static, 256)
   DO proma = 1 , nproma , 1
-   c = 5.345
-!$acc loop seq
    DO k = 2 , nz , 1
+    c = 5.345
     t ( proma , k ) = c * k
-    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c
+    q ( proma , k ) = q ( proma , k ) + t ( proma , k ) * c
    END DO
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO
-!$acc end parallel
-!$acc end data
+!$omp end distribute
+!$omp end teams
+!$omp end target
  END SUBROUTINE compute_column
 
 END MODULE mo_column

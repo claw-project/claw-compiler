@@ -38,7 +38,7 @@
 
 # sca36: Correct handling of indirect promotion
 
-foreach(loop_var RANGE 1 37)
+foreach(loop_var RANGE 1 36)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
