@@ -8,7 +8,9 @@ import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
+import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.directive.generator.OpenAcc;
+import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
@@ -59,7 +61,8 @@ public final class Directive {
                                     String noDependencyDirective)
   {
     int nodep_counter = 0;
-
+    CompilerDirective currentDirective =
+        Configuration.get().getCurrentDirective();
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
@@ -74,23 +77,37 @@ public final class Directive {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      // TODO generic message for OpenMP as well
+      String prefix = "";
+      switch(currentDirective) {
+        case OPENACC:
+          prefix = OpenAcc.OPENACC_DEBUG_PREFIX;
+          break;
+        case OPENMP:
+          prefix = OpenMp.OPENMP_DEBUG_PREFIX;
+          break;
+          default:
+            throw new UnsupportedOperationException();
+      }
       Message.debug(String.format(
           "%s generated loop %s directive for loop at line: %d",
-          OpenAcc.OPENACC_DEBUG_PREFIX, (noDependency == null) ? "seq" : "",
+          prefix, (noDependency == null) ? "seq" : "",
           doStmt.lineNo()));
     }
 
-    if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE
-        || (Configuration.get().getCurrentDirective() ==
-        CompilerDirective.OPENACC &&
-        !Configuration.get().openACC().hasCollapseStrategy()))
-    {
-      return 0;
+    switch(currentDirective) {
+      case OPENACC:
+        if(Configuration.get().openACC().hasCollapseStrategy()) {
+          return nodep_counter;
+        }
+      case OPENMP:
+        if(Configuration.get().openMP().hasCollapseStrategy()) {
+          return nodep_counter;
+        }
+      case NONE:
+        return 0;
+        default:
+          throw new UnsupportedOperationException();
     }
-
-    return nodep_counter;
   }
 
   /**
@@ -222,7 +239,9 @@ public final class Directive {
   }
 
   /**
-   * Generate directive directive for a data region.
+   * Generate directive directive for a data region. Some clauses can be ignored
+   * depending on the configuration, if this results to discard all variables
+   * then the directive is not generated.
    *
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -237,11 +256,16 @@ public final class Directive {
                                               List<String> creates,
                                               Xnode startStmt, Xnode endStmt)
   {
-    insertPragmas(xcodeml, startStmt, endStmt,
-        Context.get().getGenerator().getStartDataRegion(
-            Arrays.asList(Context.get().getGenerator().getPresentClause(presents),
-                Context.get().getGenerator().getCreateClause(creates))),
-        Context.get().getGenerator().getEndDataRegion());
+    DirectiveGenerator generator = Context.get().getGenerator();
+    List<String> clauses = new ArrayList<>(Arrays.asList(
+        generator.getPresentClause(presents),
+        generator.getCreateClause(creates)));
+    clauses.removeIf(x -> x.equals(""));
+    // No need to create an empty data region
+    if(!clauses.isEmpty()) {
+      insertPragmas(xcodeml, startStmt, endStmt,
+          generator.getStartDataRegion(clauses), generator.getEndDataRegion());
+    }
   }
 
   /**

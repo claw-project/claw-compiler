@@ -12,10 +12,12 @@ PROGRAM test_abstraction10
   q ( p , 1 ) = 0.0
   t ( p , 1 ) = 0.0
  END DO
-!$ACC data copy(q,t)
+!$acc data pcreate(q(:,:),t(:,:))
+!$acc update device(q(:,:),t(:,:))
  CALL compute_column_public ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma&
   )
-!$ACC end data
+!$acc update host(q(:,:),t(:,:))
+!$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction10

@@ -1,4 +1,4 @@
-PROGRAM test_abstraction1
+PROGRAM test_abstraction3
  USE mo_column , ONLY: compute_column
  REAL :: q ( 1 : 20 , 1 : 60 )
  REAL :: t ( 1 : 20 , 1 : 60 )
@@ -12,10 +12,12 @@ PROGRAM test_abstraction1
   q ( p , 1 ) = 0.0
   t ( p , 1 ) = 0.0
  END DO
-!$ACC data copy(q,t)
+!$acc data pcreate(q(:,:),t(:,:))
+!$acc update device(q(:,:),t(:,:))
  CALL compute_column ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma )
-!$ACC end data
+!$acc update host(q(:,:),t(:,:))
+!$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
-END PROGRAM test_abstraction1
+END PROGRAM test_abstraction3
 

@@ -10,8 +10,10 @@ PROGRAM test_abstraction25
  DO p = 1 , nproma , 1
   q ( p , 1 ) = 0.0
  END DO
-!$omp target data map(tofrom: q, t)
+!$omp target data map(alloc:q(:,:))
+!$omp target update to(q(:,:))
  CALL compute ( nz , q ( : , : ) , nproma = nproma )
+!$omp target update from(q(:,:))
 !$omp end target data
  PRINT * , sum ( q )
 END PROGRAM test_abstraction25

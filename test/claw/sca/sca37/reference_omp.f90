@@ -19,14 +19,12 @@ CONTAINS
   INTEGER :: jkp1
   INTEGER :: jl
 
-!$acc data present(aa,bb)
-!$acc parallel
-!$acc loop gang vector
+!$omp target
+!$omp teams thread_limit(256) num_teams(65536)
+!$omp distribute dist_schedule(static, 256)
   DO jl = 1 , kproma , 1
-!$acc loop seq
    DO jvar = 1 , nvar_vdiff , 1
     im = matrix_idx ( jvar )
-!$acc loop seq
     DO jk = ibtm_var ( jvar ) - 1 , itop , (-1)
      jkp1 = jk + 1
      bb ( jl , jk , jvar ) = bb ( jl , jk , jvar ) - bb ( jl , jkp1 , jvar ) *&
@@ -34,8 +32,9 @@ CONTAINS
     END DO
    END DO
   END DO
-!$acc end parallel
-!$acc end data
+!$omp end distribute
+!$omp end teams
+!$omp end target
  END SUBROUTINE rhs_bksub
 
 END MODULE mod1

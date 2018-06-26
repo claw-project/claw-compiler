@@ -14,9 +14,11 @@ PROGRAM test_column_conditional
   t ( p , 1 : 6 ) = 2.0
   t ( p , 6 : nz ) = 0.0
  END DO
- !$omp target data map(tofrom: q, t)
+!$omp target data map(alloc:q(:,:),t(:,:))
+!$omp target update to(q(:,:),t(:,:))
  CALL compute_column ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma )
- !$omp end target data
+!$omp target update from(q(:,:),t(:,:))
+!$omp end target data
  PRINT * , ( q ( 1 , i ) , i = 1 , 10 , 1 )
 END PROGRAM test_column_conditional
 

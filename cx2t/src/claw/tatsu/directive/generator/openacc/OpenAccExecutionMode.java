@@ -22,7 +22,7 @@ public enum OpenAccExecutionMode {
    * Get enum value from a string.
    *
    * @param value Code value for the enumeration.
-   * @return The enumeration value if matches. VECTOR otherwise.
+   * @return The enumeration value if matches. NONE otherwise.
    */
   public static OpenAccExecutionMode fromString(String value) {
     if(value == null) {
@@ -52,7 +52,7 @@ public enum OpenAccExecutionMode {
   public String getFormattedExecutionMode() {
     switch(this) {
       case NONE:
-        return "";
+        return "none"; // TODO : according to config file this must not be ""
       case GANG_VECTOR:
         return "gang vector";
       case VECTOR_GANG:

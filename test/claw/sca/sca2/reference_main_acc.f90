@@ -17,8 +17,12 @@ PROGRAM test_abstraction2
    t ( i , j , 1 ) = 0.0
   END DO
  END DO
+!$acc data pcreate(q(:,:,:),t(:,:,:))
+!$acc update device(q(:,:,:),t(:,:,:))
  CALL compute_column ( nz , q ( : , : , : ) , t ( : , : , : ) , nx = nx , ny =&
   ny )
+!$acc update host(q(:,:,:),t(:,:,:))
+!$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction2

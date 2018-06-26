@@ -17,9 +17,11 @@ PROGRAM test_abstraction2
    t ( i , j , 1 ) = 0.0
   END DO
  END DO
-!$omp target data map(tofrom: q, t)
+!$omp target data map(alloc:q(:,:,:),t(:,:,:))
+!$omp target update to(q(:,:,:),t(:,:,:))
  CALL compute_column ( nz , q ( : , : , : ) , t ( : , : , : ) , nx = nx , ny =&
   ny )
+!$omp target update from(q(:,:,:),t(:,:,:))
 !$omp end target data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

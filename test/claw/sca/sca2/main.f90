@@ -7,7 +7,6 @@
 
 PROGRAM test_abstraction2
   USE mo_column, ONLY: compute_column
-
   REAL, DIMENSION(10,10,60) :: q, t ! fields as declared in the whole model
   INTEGER :: nx, ny, nz             ! Size of array fields
   INTEGER :: i,j                    ! Loop indices
@@ -23,7 +22,7 @@ PROGRAM test_abstraction2
     END DO
   END DO
 
-  !$claw parallelize forward
+  !$claw parallelize forward create update
   DO i = 1, nx
     DO j = 1, ny
       CALL compute_column(nz, q(i,j,:), t(i,j,:))

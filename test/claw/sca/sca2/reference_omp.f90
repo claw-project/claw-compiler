@@ -16,7 +16,7 @@ CONTAINS
 
 !$omp target
 !$omp teams thread_limit(256) num_teams(65536)
-!$omp distribute collapse(2) dist_schedule(static, 256)
+!$omp distribute dist_schedule(static, 256) collapse(2)
   DO j = 1 , ny , 1
    DO i = 1 , nx , 1
     c = 5.345

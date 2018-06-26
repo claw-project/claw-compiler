@@ -6,5 +6,6 @@
   <global type="extension">
     <!-- Override default behavior -->
     <parameter key="openacc_local_strategy" value="promote" />
+    <parameter key="openmp_local_strategy" value="promote" />
   </global>
 </claw>

@@ -4,11 +4,13 @@
  */
 package claw.tatsu.directive.generator;
 
-import claw.tatsu.common.CompilerDirective;
-import claw.tatsu.common.Context;
-import claw.tatsu.common.Target;
-import claw.tatsu.common.Utility;
+import claw.tatsu.common.*;
+import claw.tatsu.directive.common.DataMovement;
+import claw.tatsu.directive.generator.openmp.OpenMpExecutionMode;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.wani.x2t.configuration.Configuration;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,6 +21,7 @@ import java.util.List;
  */
 public class OpenMp extends DirectiveGenerator {
 
+  public static final String OPENMP_DEBUG_PREFIX = "CLAW-OpenMP:";
   private static final String OPENMP_PREFIX = "omp";
   private static final String OPENMP_DECLARE = "declare";
   private static final String OPENMP_TARGET = "target";
@@ -29,18 +32,30 @@ public class OpenMp extends DirectiveGenerator {
   private static final String OPENMP_DISTRIBUTE = "distribute";
   private static final String OPENMP_COLLAPSE = "collapse";
   private static final String OPENMP_DIST_SCHEDULE = "dist_schedule";
+  private static final String OPENMP_SCHEDULE_KIND = "static";
   private static final String OPENMP_PARALLEL = "parallel";
   private static final String OPENMP_SEQUENTIAL = "single";
+  private static final String OPENMP_MAP = "map";
+  private static final String OPENMP_FROM = "from";
+  private static final String OPENMP_TO = "to";
+  private static final String OPENMP_UPDATE = "update";
   private static final String OPENMP_PRIVATE = "private";
   private static final String OPENMP_FIRSTPRIVATE = "firstprivate";
+  private static final String OPENMP_ALLOC = "alloc";
   private static final String OPENMP_DO = "do";
   private static final String OPENMP_END = "end";
+
+  private OpenMpExecutionMode _mode;
 
   /**
    * Constructs a new object with the given target.
    */
   public OpenMp() {
     super();
+  }
+
+  public void setExecutionMode(OpenMpExecutionMode mode) {
+    _mode = mode;
   }
 
   @Override
@@ -54,6 +69,16 @@ public class OpenMp extends DirectiveGenerator {
     if(Context.get().getTarget() == Target.GPU) {
       //!$omp target
       //!$omp teams [num_teams(#)] [thread_limit(#)]
+      if(clauses == null) {
+        clauses = new String();
+      } else {
+        clauses = clauses.trim(); // Useless ?
+      }
+      clauses += String.format("%s(%d)", OPENMP_THREADS_LIMIT,
+          Configuration.get().openMP().getNumThreads());
+      clauses += String.format(" %s(%d)", OPENMP_NUM_TEAMS,
+          Configuration.get().openMP().getNumTeams());
+
       if(clauses == null || clauses.isEmpty()) {
         return new String[]{
             String.format(FORMAT2, OPENMP_PREFIX, OPENMP_TARGET),
@@ -117,7 +142,22 @@ public class OpenMp extends DirectiveGenerator {
     if(vars == null || vars.size() == 0) {
       return "";
     }
+    Message.debug(String.format(
+        "%s generate private clause for (%d variables): %s",
+        OPENMP_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
     return String.format(FORMATPAR, OPENMP_PRIVATE, Utility.join(",", vars));
+  }
+
+  @Override
+  public String getCreateClause(List<String> vars) {
+    if(vars == null || vars.size() == 0) {
+      return "";
+    }
+    Message.debug(String.format(
+        "%s generate map(alloc:x) clause for (%d variables): %s",
+        OPENMP_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
+    return String.format(FORMATPAR, OPENMP_MAP,
+        String.format("%s:%s", OPENMP_ALLOC, Utility.join(",", vars)));
   }
 
   @Override
@@ -125,7 +165,8 @@ public class OpenMp extends DirectiveGenerator {
     if(seq) {
       return new String[]{
           String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET),
-          String.format(FORMAT3, OPENMP_PREFIX, getSequentialClause()) // TODO: Check // Peclat
+          String.format(FORMAT3, OPENMP_PREFIX, getSequentialClause())
+          // TODO: Check // Peclat
       };
     } else {
       return new String[]{
@@ -138,12 +179,15 @@ public class OpenMp extends DirectiveGenerator {
   public String[] getEndRoutineDirective(boolean seq) {
     if(seq) {
       return new String[]{
-          String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_DECLARE, OPENMP_TARGET),
-          String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, getSequentialClause()) // TODO: Check // Peclat
+          String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_DECLARE,
+              OPENMP_TARGET),
+          String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END,
+              getSequentialClause()) // TODO: Check // Peclat
       };
     } else {
       return new String[]{
-          String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_DECLARE, OPENMP_TARGET)
+          String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_DECLARE,
+              OPENMP_TARGET)
       };
     }
 
@@ -173,14 +217,16 @@ public class OpenMp extends DirectiveGenerator {
   public String[] getEndDataRegion() {
     // !$omp end target data
     return new String[]{
-        String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET, OPENMP_DATA)
+        String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_TARGET,
+            OPENMP_DATA)
     };
   }
 
   @Override
   public String getSequentialClause() {
     // !$omp single / !$omp end single
-    return OPENMP_SEQUENTIAL; // TODO: For OpenMP this is a region and not a clause
+    return OPENMP_SEQUENTIAL;
+    // TODO: For OpenMP this is a region and not a clause
   }
 
   @Override
@@ -193,22 +239,25 @@ public class OpenMp extends DirectiveGenerator {
       return null;
     }
 
-    if(value > 0) {
-      clauses = clauses.trim(); // Useless ?
-      clauses += String.format("%s(%d)", OPENMP_COLLAPSE, value);
+    clauses = clauses.trim(); // Useless ?
+
+    if(value > 1) {
+      clauses += String.format("%s(%d) ", OPENMP_COLLAPSE, value);
     }
+    String scheduler = String.format("%s(%s, %d)", OPENMP_DIST_SCHEDULE,
+        OPENMP_SCHEDULE_KIND, Configuration.get().openMP().getSchedulerChunkSize());
 
     // TODO handle wrong clauses ?
-    // TODO handle naked
     if(Context.get().getTarget() == Target.GPU) {
       //!$omp distribute [collapse(#)] [dist_schedule(static,#)]
       if(clauses == null || clauses.isEmpty()) {
         return new String[]{
-            String.format(FORMAT2, OPENMP_PREFIX, OPENMP_DISTRIBUTE),
+            String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DISTRIBUTE, scheduler),
         };
       } else {
         return new String[]{
-            String.format(FORMAT2, OPENMP_PREFIX, OPENMP_DISTRIBUTE) + " " + clauses,
+            String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DISTRIBUTE, scheduler) + " "
+                + clauses,
         };
       }
     } else {
@@ -238,5 +287,43 @@ public class OpenMp extends DirectiveGenerator {
           String.format(FORMAT3, OPENMP_PREFIX, OPENMP_END, OPENMP_DO),
       };
     }
+  }
+
+  @Override
+  public List<Xcode> getUnsupportedStatements() {
+    return Arrays.asList(
+        Xcode.F_ALLOCATE_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT
+    );
+  }
+
+  @Override
+  public List<Xcode> getSkippedStatementsInPreamble() {
+    return Arrays.asList(
+        Xcode.F_IF_STATEMENT, Xcode.F_ALLOCATE_STATEMENT
+    );
+  }
+
+  @Override
+  public List<Xcode> getSkippedStatementsInEpilogue() {
+    return Arrays.asList(
+        Xcode.F_IF_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT,
+        Xcode.F_PRAGMA_STATEMENT
+    );
+  }
+
+  @Override
+  public String[] getUpdateClause(DataMovement direction, List<String> vars) {
+    //!$omp target update from/to(<vars>)
+    if(vars == null || vars.isEmpty()) {
+      return null;
+    }
+    Message.debug(OPENMP_DEBUG_PREFIX + "generate update " +
+        (direction == DataMovement.DEVICE ? OPENMP_TO : OPENMP_FROM) +
+        " clause for: " + Utility.join(",", vars));
+    String updates = String.format(FORMATPAR, direction == DataMovement.DEVICE ?
+        OPENMP_TO : OPENMP_FROM, Utility.join(",", vars));
+    return new String[]{
+        String.format(FORMAT4, OPENMP_PREFIX, OPENMP_TARGET, OPENMP_UPDATE, updates)
+    };
   }
 }

@@ -1,4 +1,4 @@
-PROGRAM test_abstraction4
+PROGRAM test_abstraction31
  USE mo_column , ONLY: compute , t1
  REAL :: q ( 1 : 20 , 1 : 60 )
  REAL :: z ( 1 : 20 )
@@ -14,12 +14,14 @@ PROGRAM test_abstraction4
   q ( p , 1 ) = 0.0
  END DO
  ALLOCATE ( ty % y ( nproma , nz ) )
-!$ACC data copy(q,t)
+!$acc data pcreate(q(:,:),ty%y(:,:),z(:))
+!$acc update device(q(:,:),ty%y(:,:),z(:))
  CALL compute ( nz , q ( : , : ) , ty % y ( : , : ) , z ( : ) , nproma =&
   nproma )
-!$ACC end data
+!$acc update host(q(:,:),ty%y(:,:),z(:))
+!$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( ty % y )
  DEALLOCATE ( ty % y )
-END PROGRAM test_abstraction4
+END PROGRAM test_abstraction31
 

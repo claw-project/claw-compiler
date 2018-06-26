@@ -27,7 +27,8 @@ CONTAINS
   IF ( ( .NOT. allocated ( y ) ) ) THEN
    ALLOCATE ( y ( nproma , nz ) )
   END IF
-!$omp target map(alloc:y)
+!$omp target data map(alloc:y)
+!$omp target
 !$omp teams thread_limit(256) num_teams(65536)
 !$omp distribute dist_schedule(static, 256)
   DO proma = 1 , nproma , 1
@@ -43,6 +44,7 @@ CONTAINS
 !$omp end distribute
 !$omp end teams
 !$omp end target
+!$omp end target data
   IF ( allocated ( y ) ) THEN
    DEALLOCATE ( y )
   END IF

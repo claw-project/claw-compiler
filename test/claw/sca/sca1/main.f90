@@ -2,9 +2,10 @@
 ! This file is released under terms of BSD license
 ! See LICENSE file for more information
 !
-
 ! Test the CLAW abstraction model with one additional dimension.
-PROGRAM test_abstraction1
+!
+
+PROGRAM test_abstraction3
   USE mo_column, ONLY: compute_column
   REAL, DIMENSION(20,60) :: q, t  ! Fields as declared in the whole model
   INTEGER :: nproma, nz           ! Size of array fields
@@ -18,15 +19,11 @@ PROGRAM test_abstraction1
     t(p,1) = 0.0
   END DO
 
-  !$acc data copy(q,t)
-
-  !$claw parallelize forward
+  !$claw parallelize forward create update
   DO p = 1, nproma
     CALL compute_column(nz, q(p,:), t(p,:))
   END DO
 
-  !$acc end data
-
   PRINT*,SUM(q)
   PRINT*,SUM(t)
-END PROGRAM test_abstraction1
+END PROGRAM test_abstraction3

@@ -16,8 +16,12 @@ PROGRAM test_column_conditional
   t ( p , 1 : 6 ) = 2.0
   t ( p , 6 : nz ) = 0.0
  END DO
+!$acc data pcreate(q(:,:),t(:,:),z(:,:))
+!$acc update device(q(:,:),t(:,:),z(:,:))
  CALL compute_column ( nz , q ( : , : ) , t ( : , : ) , z ( : , : ) , nproma =&
   nproma )
+!$acc update host(q(:,:),t(:,:),z(:,:))
+!$acc end data
  PRINT * , ( q ( 1 , i ) , i = 1 , 10 , 1 )
 END PROGRAM test_column_conditional
 

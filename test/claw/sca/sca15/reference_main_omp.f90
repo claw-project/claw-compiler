@@ -16,9 +16,11 @@ PROGRAM test_abstraction15
   z ( p ) = 0.0
   t ( 1 , p ) = 0.0
  END DO
-!$omp target data map(tofrom: q, t, z)
+!$omp target data map(alloc:q(:,:),t(:,:),z(:))
+!$omp target update to(q(:,:),t(:,:),z(:))
  CALL compute ( nz , b , q ( : , : ) , t ( : , : ) , z ( : ) , nproma = nproma&
   )
+!$omp target update from(q(:,:),t(:,:),z(:))
 !$omp end target data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

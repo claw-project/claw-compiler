@@ -16,10 +16,12 @@ PROGRAM test_abstraction15
   z ( p ) = 0.0
   t ( 1 , p ) = 0.0
  END DO
-!$ACC data copy(q,t)
+!$acc data pcreate(q(:,:),t(:,:),z(:))
+!$acc update device(q(:,:),t(:,:),z(:))
  CALL compute ( nz , b , q ( : , : ) , t ( : , : ) , z ( : ) , nproma = nproma&
   )
-!$ACC end data
+!$acc update host(q(:,:),t(:,:),z(:))
+!$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction15

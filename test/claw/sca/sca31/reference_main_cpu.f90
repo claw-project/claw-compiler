@@ -1,4 +1,4 @@
-PROGRAM test_abstraction4
+PROGRAM test_abstraction31
  USE mo_column , ONLY: compute , t1
  REAL :: q ( 1 : 20 , 1 : 60 )
  REAL :: z ( 1 : 20 )
@@ -14,12 +14,10 @@ PROGRAM test_abstraction4
   q ( p , 1 ) = 0.0
  END DO
  ALLOCATE ( ty % y ( nproma , nz ) )
-!$ACC data copy(q,t)
  CALL compute ( nz , q ( : , : ) , ty % y ( : , : ) , z ( : ) , nproma =&
   nproma )
-!$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( ty % y )
  DEALLOCATE ( ty % y )
-END PROGRAM test_abstraction4
+END PROGRAM test_abstraction31
 
