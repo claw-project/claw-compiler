@@ -196,6 +196,7 @@ public final class Pragma {
     if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
       return false;
     }
+    // TODO: Handle OpenMP pragma
     String allPragma = pragma.value().toLowerCase();
     return allPragma.contains(TatsuConstant.OPENACC_PREFIX_CONT) ||
         Utility.countOccurrences(allPragma,
@@ -223,6 +224,7 @@ public final class Pragma {
     Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p.setFilename(filename);
     p.setLine(lineNo);
+    // TODO: Handle OpenMP pragma
     if(continued) {
       if(!value.trim().toLowerCase().
           startsWith(CompilerDirective.OPENACC.getPrefix()))
