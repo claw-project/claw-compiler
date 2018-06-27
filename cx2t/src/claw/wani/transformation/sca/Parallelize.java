@@ -513,7 +513,6 @@ public class Parallelize extends ClawTransformation {
 
     // Find the block we need to transform
     List<Set<String>> targetDepthIntersections = new ArrayList<>();
-    int transformationNumbers = 0;
     for (int i = 0; i < depthVars.size(); i++) {
       Set<String> depthVar = depthVars.get(i);
 
@@ -532,17 +531,10 @@ public class Parallelize extends ClawTransformation {
         Set<String> copy = new HashSet<>(depthVars.get(i));
         copy.retainAll(depthVars.get(j));
         intersection.addAll(copy);
-        transformationNumbers++;
       }
 
       // All are on the same index
       targetDepthIntersections.add(intersection);
-    }
-
-    // No transformation found, abort
-    if (transformationNumbers == 0) {
-      Message.debug("No target found for transformation found");
-      return;
     }
 
     // Gather all possible loop groups before their modification
