@@ -52,15 +52,15 @@ public enum OpenMpExecutionMode {
   public String getFormattedExecutionMode() {
     switch(this) {
       case NONE:
-        return "none";
+        return "";
       case TEAMS_DISTRIBUTE:
-        return "teams_distribute";
+        return "teams distribute";
       case TEAMS_DISTRIBUTE_SIMD:
-        return "teams_distribute_simd";
+        return "teams distribute simd";
       case TEAMS_DISTRIBUTES_PARALLEL_DO:
-        return "teams_distribute_parallel_do";
+        return "teams distribute parallel do";
       case TEAMS_DISTRIBUTES_PARALLEL_DO_SIMD:
-        return "teams_distribute_parallel_do_simd";
+        return "teams distribute parallel do simd";
     }
     return "";
   }

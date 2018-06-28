@@ -13,7 +13,7 @@
   <!-- Get the ivy jar to be able to resolve dependencies -->
   <target name="bootstrap" depends="check-ivy" unless="ivy.present" description="Install ivy jar if not present">
       <mkdir dir="../lib"/>
-      <get dest="../lib/ivy.jar" src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar"/>
+      <get dest="../lib/ivy.jar" src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar"/>
   </target>
 
   <!-- Resolve the dependencies described in ivy.xml -->

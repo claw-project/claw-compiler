@@ -363,7 +363,7 @@ function(claw_add_advanced_test)
     COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE}"
   )
 
-  # Execute the CLAW Compiler for ACC target
+  # Execute the CLAW Compiler for GPU target with ACC directive
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE_ACC}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
@@ -373,10 +373,10 @@ function(claw_add_advanced_test)
       ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_ACC} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
     DEPENDS ${ORIGINAL_FILE}
-    COMMENT "${CLAWFC} for ACC target on file ${ORIGINAL_FILE}"
+    COMMENT "${CLAWFC} for GPU target with ACC directive on file ${ORIGINAL_FILE}"
   )
 
-  # Execute the CLAW Compiler for OMP target
+  # Execute the CLAW Compiler for GPU target with OMP directive
   add_custom_command(
     OUTPUT  ${OUTPUT_FILE_OMP}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
@@ -386,7 +386,7 @@ function(claw_add_advanced_test)
       ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_OMP} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
     DEPENDS ${ORIGINAL_FILE}
-    COMMENT "${CLAWFC} for OMP target on file ${ORIGINAL_FILE}"
+    COMMENT "${CLAWFC} for GPU target with OMP directive on file ${ORIGINAL_FILE}"
   )
 
   if(EXISTS ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column_extra.f90)
@@ -404,7 +404,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE_EXTRA}"
     )
 
-    # Execute the CLAW Compiler for ACC target
+    # Execute the CLAW Compiler for GPU target with ACC directive
     add_custom_command(
       OUTPUT  ${OUTPUT_FILE_EXTRA_ACC}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
@@ -415,10 +415,10 @@ function(claw_add_advanced_test)
         ${ORIGINAL_FILE_EXTRA}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_ACC}
-      COMMENT "${CLAWFC} for ACC target on file ${ORIGINAL_FILE_EXTRA}"
+      COMMENT "${CLAWFC} for GPU target with ACC directive on file ${ORIGINAL_FILE_EXTRA}"
     )
 
-    # Execute the CLAW Compiler for OMP target
+    # Execute the CLAW Compiler for GPU target with OMP directive
     add_custom_command(
       OUTPUT  ${OUTPUT_FILE_EXTRA_OMP}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
@@ -429,7 +429,7 @@ function(claw_add_advanced_test)
         ${ORIGINAL_FILE_EXTRA}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_OMP}
-      COMMENT "${CLAWFC} for OMP target on file ${ORIGINAL_FILE_EXTRA}"
+      COMMENT "${CLAWFC} for GPU target with OMP directive on file ${ORIGINAL_FILE_EXTRA}"
     )
 
     # Execute the CLAW Compiler for CPU target
@@ -445,7 +445,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW Compiler for ACC target
+    # Execute the CLAW Compiler for GPU target with ACC directive
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_ACC}
       COMMAND touch ${MAIN_F90} # to force new compilation
@@ -455,10 +455,10 @@ function(claw_add_advanced_test)
         ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_ACC} ${MAIN_F90}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_ACC} ${OUTPUT_FILE_EXTRA_ACC}
-      COMMENT "${CLAWFC} for ACC target on file ${MAIN_F90}"
+      COMMENT "${CLAWFC} for GPU target with ACC directive on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW Compiler for OMP target
+    # Execute the CLAW Compiler for GPU target with OMP directive
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_OMP}
       COMMAND touch ${MAIN_F90} # to force new compilation
@@ -468,7 +468,7 @@ function(claw_add_advanced_test)
         ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_OMP} ${MAIN_F90}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_OMP} ${OUTPUT_FILE_EXTRA_OMP}
-      COMMENT "${CLAWFC} for OMP target on file ${MAIN_F90}"
+      COMMENT "${CLAWFC} for GPU target with OMP directive on file ${MAIN_F90}"
     )
   else()
 
@@ -485,7 +485,7 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW Compiler for ACC target
+    # Execute the CLAW Compiler for GPU target with ACC directive
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_ACC}
       #COMMAND touch ${MAIN_F90} # to force new compilation
@@ -495,10 +495,10 @@ function(claw_add_advanced_test)
         ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_ACC} ${MAIN_F90}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_ACC}
-      COMMENT "${CLAWFC} for ACC target on file ${MAIN_F90}"
+      COMMENT "${CLAWFC} for GPU target with ACC directive on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW Compiler for OMP target
+    # Execute the CLAW Compiler for GPU target with OMP directive
     add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_OMP}
       #COMMAND touch ${MAIN_F90} # to force new compilation
@@ -508,7 +508,7 @@ function(claw_add_advanced_test)
         ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_OMP} ${MAIN_F90}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_OMP}
-      COMMENT "${CLAWFC} for OMP target on file ${MAIN_F90}"
+      COMMENT "${CLAWFC} for GPU target with OMP directive on file ${MAIN_F90}"
     )
   endif()
 

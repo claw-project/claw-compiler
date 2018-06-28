@@ -260,7 +260,7 @@ public final class Directive {
     List<String> clauses = new ArrayList<>(Arrays.asList(
         generator.getPresentClause(presents),
         generator.getCreateClause(creates)));
-    clauses.removeIf(x -> x.equals(""));
+    while(clauses.remove(""));
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
       insertPragmas(xcodeml, startStmt, endStmt,

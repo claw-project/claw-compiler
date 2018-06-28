@@ -52,7 +52,7 @@ public enum OpenAccExecutionMode {
   public String getFormattedExecutionMode() {
     switch(this) {
       case NONE:
-        return "none"; // TODO : according to config file this must not be ""
+        return "";
       case GANG_VECTOR:
         return "gang vector";
       case VECTOR_GANG:

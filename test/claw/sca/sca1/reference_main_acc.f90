@@ -1,4 +1,4 @@
-PROGRAM test_abstraction3
+PROGRAM test_abstraction1
  USE mo_column , ONLY: compute_column
  REAL :: q ( 1 : 20 , 1 : 60 )
  REAL :: t ( 1 : 20 , 1 : 60 )
@@ -19,5 +19,5 @@ PROGRAM test_abstraction3
 !$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
-END PROGRAM test_abstraction3
+END PROGRAM test_abstraction1
 
