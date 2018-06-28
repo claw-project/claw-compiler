@@ -12,11 +12,7 @@ PROGRAM test_abstraction3
   q ( p , 1 ) = 0.0
   t ( p , 1 ) = 0.0
  END DO
-!$omp target data map(alloc:q(:,:),t(:,:))
-!$omp target update to(q(:,:),t(:,:))
  CALL compute_column ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma )
-!$omp target update from(q(:,:),t(:,:))
-!$omp end target data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction3
