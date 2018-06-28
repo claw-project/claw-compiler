@@ -19,15 +19,10 @@ PROGRAM test_abstraction5
     t(p,1) = 0.0
   END DO
 
-  !$acc data copy(q,t)
-
-  !$claw parallelize forward
+  !$claw parallelize forward create update
   DO p = 1, nproma
     CALL compute(nz, q(p,:), t(p,:))
   END DO
-
-
-  !$acc end data
 
   PRINT*,SUM(q)
   PRINT*,SUM(t)

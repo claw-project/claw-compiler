@@ -6,7 +6,9 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
+import claw.tatsu.common.Target;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.directive.common.Directive;
@@ -561,14 +563,17 @@ public class ParallelizeForward extends ClawTransformation {
     propagatePromotion(xcodeml, (ClawTranslator) translator);
 
     Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
-    if(_claw.hasCreateClause()) {
+
+    // Peclat : Only useful for GPU
+    if(_claw.hasCreateClause() && Context.get().getTarget() == Target.GPU) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates, exprStmt, exprStmt);
     }
 
-    if(_claw.hasUpdateClause()) {
+    // Peclat : Only useful for GPU
+    if(_claw.hasUpdateClause() && Context.get().getTarget() == Target.GPU) {
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
       {
