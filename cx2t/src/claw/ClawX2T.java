@@ -8,6 +8,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.generator.OpenAcc;
+import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
@@ -264,6 +265,9 @@ public class ClawX2T {
       if(Context.get().getCompilerDirective() == CompilerDirective.OPENACC) {
         OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
         openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
+      } else if(Context.get().getCompilerDirective() == CompilerDirective.OPENMP) {
+        OpenMp openmpGen = (OpenMp) Context.get().getGenerator();
+        openmpGen.setExecutionMode(Configuration.get().openMP().getMode());
       }
 
     } catch(Exception ex) {

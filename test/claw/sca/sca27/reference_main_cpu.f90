@@ -12,9 +12,7 @@ PROGRAM test_abstraction27
   q ( p , 1 ) = 0.0
   t ( p , 1 ) = 0.0
  END DO
-!$ACC data copy(q,t)
  CALL compute_column ( nz , q ( : , : ) , t ( : , : ) , nproma = nproma )
-!$ACC end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
 END PROGRAM test_abstraction27
