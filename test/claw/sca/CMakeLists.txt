@@ -4,15 +4,15 @@
 
 # Information for specific test cases
 # -----------------------------------
-# sca1 : simple 1d
-# sca2 : simple 2d
-# sca3 : openmp
-# sca4 : simple with forward
-# sca5 : cross-module
-# sca6 : cross-module multiple forward
-# sca7 : ?
-# sca8 : ?
-# sca9 : Private function
+# sca1: simple 1d
+# sca2: simple 2d
+# sca3: openmp
+# sca4: simple with forward
+# sca5: cross-module
+# sca6: cross-module multiple forward
+# sca7: ?
+# sca8: ?
+# sca9: Private function
 # sca10: Private function, same as 9 but fct reorder
 # sca11: data over with assumed shaped arrays
 # sca12: data over with non-assumed shaped arrays
