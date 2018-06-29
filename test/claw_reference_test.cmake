@@ -361,7 +361,10 @@ function(claw_add_advanced_test)
     WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE}"
+  )
 
+  # Execute the CLAW Compiler for GPU target with ACC directive
+  add_custom_command(
     OUTPUT  ${OUTPUT_FILE_ACC}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
     COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -371,7 +374,10 @@ function(claw_add_advanced_test)
     WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
     DEPENDS ${ORIGINAL_FILE}
     COMMENT "${CLAWFC} for GPU target with ACC directive on file ${ORIGINAL_FILE}"
+  )
 
+  # Execute the CLAW Compiler for GPU target with OMP directive
+  add_custom_command(
     OUTPUT  ${OUTPUT_FILE_OMP}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
     COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -396,7 +402,10 @@ function(claw_add_advanced_test)
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_CPU}
       COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE_EXTRA}"
+    )
 
+    # Execute the CLAW Compiler for GPU target with ACC directive
+    add_custom_command(
       OUTPUT  ${OUTPUT_FILE_EXTRA_ACC}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -407,7 +416,10 @@ function(claw_add_advanced_test)
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_ACC}
       COMMENT "${CLAWFC} for GPU target with ACC directive on file ${ORIGINAL_FILE_EXTRA}"
+    )
 
+    # Execute the CLAW Compiler for GPU target with OMP directive
+    add_custom_command(
       OUTPUT  ${OUTPUT_FILE_EXTRA_OMP}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -431,7 +443,10 @@ function(claw_add_advanced_test)
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_EXTRA_CPU}
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
+    )
 
+    # Execute the CLAW Compiler for GPU target with ACC directive
+    add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_ACC}
       COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -441,7 +456,10 @@ function(claw_add_advanced_test)
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_ACC} ${OUTPUT_FILE_EXTRA_ACC}
       COMMENT "${CLAWFC} for GPU target with ACC directive on file ${MAIN_F90}"
+    )
 
+    # Execute the CLAW Compiler for GPU target with OMP directive
+    add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_OMP}
       COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -465,7 +483,10 @@ function(claw_add_advanced_test)
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_CPU}
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
+    )
 
+    # Execute the CLAW Compiler for GPU target with ACC directive
+    add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_ACC}
       #COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -475,7 +496,10 @@ function(claw_add_advanced_test)
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
       DEPENDS ${MAIN_F90} ${OUTPUT_FILE_ACC}
       COMMENT "${CLAWFC} for GPU target with ACC directive on file ${MAIN_F90}"
+    )
 
+    # Execute the CLAW Compiler for GPU target with OMP directive
+    add_custom_command(
       OUTPUT  ${OUTPUT_MAIN_OMP}
       #COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
@@ -549,7 +573,8 @@ function(claw_add_advanced_test)
   add_dependencies(${EXECUTABLE_TRANSFORMED_ACC} ${EXECUTABLE_ORIGINAL})
   add_dependencies(${EXECUTABLE_TRANSFORMED_OMP} ${EXECUTABLE_ORIGINAL})
   add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_ORIGINAL})
-  add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_ACC} ${EXECUTABLE_TRANSFORMED_OMP})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_ACC})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_ACC} ${EXECUTABLE_TRANSFORMED_OMP})
 
   # Set target specific compilation options
   if(OPENACC_ENABLE)
