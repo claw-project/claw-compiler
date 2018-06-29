@@ -72,6 +72,7 @@ refer to the developer's guide
     <group name="loop-hoist" />
     <group name="loop-fusion" />
     <group name="loop-interchange" />
+    <group name="loop-fission" />
     <group name="on-the-fly" />
     <group name="kcache" />
     <group name="if-extract" />

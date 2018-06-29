@@ -107,6 +107,9 @@ public class ClawTranslator implements Translator {
       case LOOP_HOIST:
         HandleBlockDirective(xcodeml, analyzedPragma);
         break;
+      case LOOP_FISSION:
+        addTransformation(xcodeml, new LoopFission(analyzedPragma));
+        break;
       case ARRAY_TRANSFORM:
         HandleBlockDirective(xcodeml, analyzedPragma);
         break;

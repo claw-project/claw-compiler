@@ -67,6 +67,10 @@ directive[ClawPragma l]
       $l.setMappings(m);
     }
 
+  // loop-fission directive
+  | LOOP_FISSION EOF
+    { $l.setDirective(ClawDirective.LOOP_FISSION); }
+
   // remove directive
   | REMOVE (target_clause[$l])? EOF
     { $l.setDirective(ClawDirective.REMOVE); }
@@ -550,6 +554,7 @@ LOOP_EXTRACT     : 'loop-extract';
 LOOP_FUSION      : 'loop-fusion';
 LOOP_HOIST       : 'loop-hoist';
 LOOP_INTERCHANGE : 'loop-interchange';
+LOOP_FISSION     : 'loop-fission';
 PARALLELIZE      : 'parallelize';
 REMOVE           : 'remove';
 IGNORE           : 'ignore';
