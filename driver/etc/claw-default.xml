@@ -53,6 +53,15 @@ refer to the developer's guide
       - true: collapse clause is used when possible.
     -->
     <parameter key="openacc_collapse" value="false" />
+
+    <!-- CPU transformation defaults -->
+    <!--
+      Which transformation should be used by default when transforming for CPU.
+      - fusion: adjacent statements are enveloped in a single loop
+      - single: each statement is enveloped into a loop
+    -->
+    <parameter key="cpu_trans_strategy" value="fusion" />
+
   </global>
 
   <!-- Transformation sets -->

@@ -23,6 +23,7 @@ import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.openacc.OpenAccLocalStrategy;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The Single Column Abstraction (SCA) transformation transforms the code
@@ -354,7 +355,18 @@ public class Parallelize extends ClawTransformation {
     } else if(Context.get().getTarget() == Target.CPU
         || Context.get().getTarget() == Target.ARM)
     {
-      transformForCPU(xcodeml);
+      // Choose which mode to use
+      switch (Configuration.get().getParameter(Configuration.CPU_STRATEGY)) {
+        case Configuration.CPU_STRATEGY_FUSION:
+         transformFusionForCPU(xcodeml);
+          break;
+        case Configuration.CPU_STRATEGY_SINGLE:
+          transformForCPU(xcodeml);
+          break;
+        default:
+          throw new IllegalTransformationException("No CPU strategy defined " +
+                  Context.get().getTarget(), _claw.getPragma().lineNo());
+      }
     } else {
       throw new IllegalTransformationException("Unsupported target " +
           Context.get().getTarget(), _claw.getPragma().lineNo());
@@ -473,36 +485,365 @@ public class Parallelize extends ClawTransformation {
   }
 
   /**
+   * Apply a CPU transformation which group adjacent statements together and
+   * promote the minimum number of variables possible.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @throws IllegalTransformationException If promotion of arrays fails.
+   */
+  private void transformFusionForCPU(XcodeProgram xcodeml)
+          throws IllegalTransformationException {
+    // Apply transformation only when there is a body to modify
+    if (Body.isEmpty(_fctDef.body())) {
+      return;
+    }
+    // Variables on each "depth" of the method
+    List<Set<String>> depthVars = new ArrayList<>();
+    depthVars.add(new HashSet<String>());
+    // A growing list of affecting variables. Starting from the ones
+    // declared by SCA and successively any variables affected by the SCA
+    // declaration
+    Set<String> affectingVars = new HashSet<>(_promotions.keySet());
+    //affectingVars.addAll(_arrayFieldsInOut);
+
+    // Extract all the variables used, this doesn't include vector's
+    // iterator variables
+    transformFusionForCPUExtraction(_fctDef.body(), new AtomicInteger(), depthVars,
+            affectingVars);
+
+    // Find the block we need to transform
+    List<Set<String>> targetDepthIntersections = new ArrayList<>();
+    for (int i = 0; i < depthVars.size(); i++) {
+      Set<String> depthVar = depthVars.get(i);
+
+      if (depthVar.isEmpty()) {
+        targetDepthIntersections.add(null);
+        continue;
+      }
+      // Find intersection with other blocks
+      Set<String> intersection = new HashSet<>();
+      for (int j = 0; j < depthVars.size(); j++) {
+        // Skip itself
+        if (i == j) {
+          continue;
+        }
+        // Intersect the level set with the others
+        Set<String> copy = new HashSet<>(depthVars.get(i));
+        copy.retainAll(depthVars.get(j));
+        intersection.addAll(copy);
+      }
+
+      // All are on the same index
+      targetDepthIntersections.add(intersection);
+    }
+
+    // Gather all possible loop groups before their modification
+    List<List<Xnode>> transformations = new ArrayList<>();
+    // Apply transformation at the indicated depth
+    for (int targetDepth = 0; targetDepth < depthVars.size(); targetDepth++) {
+      Set<String> vars = depthVars.get(targetDepth);
+      if (vars.isEmpty()) continue;
+      Set<String> intersection = targetDepthIntersections.get(targetDepth);
+
+      // Variables still waiting for a promotion which aren't promoted yet
+      Set<String> promotions = new HashSet<>(intersection);
+
+      // Check only the LHS arrays
+      Set<String> vectorType = new HashSet<>(vars);
+      vectorType.retainAll(affectingVars);
+      // Influenced arrays must be promoted anyway
+      for (String var : vectorType) {
+        Xid fieldId = _fctDef.getSymbolTable().get(var);
+        FbasicType type = xcodeml.getTypeTable().getBasicType(fieldId);
+        if (type != null && type.isArray()) {
+          promotions.add(var);
+        }
+      }
+
+      // Promote
+      for (String promotion : promotions) {
+        if (_promotions.containsKey(promotion)) {
+            continue;
+        }
+        PromotionInfo promotionInfo = new PromotionInfo(promotion,
+                _claw.getDimensionsForData(promotion));
+        Field.promote(promotionInfo, _fctDef, xcodeml);
+        _promotions.put(promotion, promotionInfo);
+        Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
+        Field.adaptAllocate(_promotions.get(promotion), _fctDef.body(),
+                xcodeml);
+      }
+
+      // Transform indicated level by wrapping it in a DO loop
+      transformFusionForCPUGather(_fctDef.body(), new AtomicInteger(), targetDepth,
+              affectingVars, transformations);
+    }
+
+    // After gathering we apply the transformations
+    for (List<Xnode> transformation : transformations) {
+      transformFusionForCPUApply(transformation, xcodeml);
+    }
+    // If the last statement is a CONTAINS, fallback to the previous one
+    Xnode lastNode = _fctDef.body().lastChild();
+    while (lastNode.opcode() == Xcode.F_CONTAINS_STATEMENT) {
+      lastNode = lastNode.prevSibling();
+    }
+    // Generate the parallel region
+    Directive.generateParallelClause(xcodeml,
+          _fctDef.body().firstChild(), lastNode);
+  }
+
+  /**
+   * Analysis of a routine in order to extracts the information necessary in
+   * order to promote a minimal number of variables.
+   * Only variables affected by affectingVars are kept in depthVars.
+   *
+   * @param body The body to analyze.
+   * @param depth The depth relative to the function declaration.
+   * @param depthVars Vars used on each depth.
+   * @param affectingVars Vars which are affected by SCA and consequently
+   *                      affect other variables.
+   */
+  private void transformFusionForCPUExtraction(Xnode body, AtomicInteger depth,
+                                               List<Set<String>> depthVars,
+                                               Set<String> affectingVars) {
+    final List<Xnode> children = body.children();
+    for (Xnode node : children) {
+      // Handle an assignment
+      if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
+        AssignStatement as = new AssignStatement(node.element());
+        Set<String> vars = XnodeUtil.findChildrenVariables(node);
+
+        // Check if it's affected by the promotion
+        Set<String> affectedVars = new HashSet<>(vars);
+        affectedVars.retainAll(affectingVars);
+
+        // If the intersection of the sets contain anything the assignment is
+        // affected by a previous promotions
+        depthVars.get(depth.get()).addAll(affectedVars);
+        if (!affectedVars.isEmpty()) {
+          affectingVars.add(as.getLhsName());
+          depthVars.get(depth.get()).add(as.getLhsName());
+        }
+      }
+      // IF statement content shouldn't increase depth counter
+      else if (node.opcode() == Xcode.F_IF_STATEMENT) {
+        Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
+        Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
+        if (nThen != null) {
+          transformFusionForCPUExtraction(nThen.body(), depth, depthVars,
+                  affectingVars);
+        }
+        if (nElse != null) {
+          transformFusionForCPUExtraction(nElse.body(), depth, depthVars,
+                  affectingVars);
+        }
+      }
+      // Handle node containing a body
+      else if (node.opcode().hasBody()) {
+        if (depthVars.size() <= depth.get() + 1) {
+          depthVars.add(new HashSet<String>());
+        }
+        depth.incrementAndGet();
+        transformFusionForCPUExtraction(node.body(), depth, depthVars,
+                affectingVars);
+      }
+      // Keep going inside the new node
+      else {
+        transformFusionForCPUExtraction(node, depth, depthVars,
+                affectingVars);
+      }
+    }
+  }
+
+  /**
+   * Transform the content of the routine and add a DO loop only at the
+   * indicated depth and only around the affecting variables.
+   *
+   * @param body The body to transform.
+   * @param currentDepth The depth we currently are at
+   * @param targetDepth The depth we need to reach and transform.
+   * @param affectingVars The variable which should be contained inside the loop
+   */
+  private void transformFusionForCPUGather(Xnode body,
+                                           AtomicInteger currentDepth,
+                                           final int targetDepth,
+                                           Set<String> affectingVars,
+                                           List<List<Xnode>> toapply) {
+    final List<Xnode> children = body.children();
+    final List<Xnode> hooks = new ArrayList<>();
+    nodeLoop:
+    for (Xnode node : children) {
+      // Handle an assignment
+      if (node.opcode() == Xcode.F_ASSIGN_STATEMENT) {
+        if (currentDepth.get() != targetDepth) continue;
+        Set<String> vars = XnodeUtil.findChildrenVariables(node);
+        // Statement need to be in the loop
+        if (Utility.hasIntersection(vars, affectingVars)) {
+          // Is the statement wasn't promoted and is not in a current loop
+          // block, we can avoid to add it to a loop because it is not needed.
+          AssignStatement as = new AssignStatement(node.element());
+          if (!_promotions.containsKey(as.getLhsName()) && hooks.isEmpty() &&
+                  as.getVarRefNames().size() == 0) {
+              continue;
+          }
+          // If the assignment is a vector, but we don't access its elements
+          // we don't have to add it to a loop
+          if (_promotions.containsKey(as.getLhsName()) &&
+                  as.getVarRefNames().size() == 0) {
+            transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+            continue;
+          }
+          hooks.add(node);
+        }
+        // Particular case, unused variable inside the body
+        else {
+          transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+        }
+      }
+      // IF statement my have to be contained inside
+      else if (node.opcode() == Xcode.F_IF_STATEMENT) {
+        // Enter the if in case it contains DO statements
+        if (currentDepth.get() != targetDepth) {
+          Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
+          Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
+          if (nThen != null) {
+            transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+            transformFusionForCPUGather(nThen.body(), currentDepth,
+                  targetDepth, affectingVars, toapply);
+          }
+          if (nElse != null) {
+            transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+            transformFusionForCPUGather(nElse.body(), currentDepth,
+                  targetDepth, affectingVars, toapply);
+          }
+          continue;
+        }
+
+        // We need to wrap the whole IF based on the condition
+        List<Xnode> condNode = node.matchAll(Xcode.CONDITION);
+        for (Xnode xnode : condNode) {
+          if (Condition.dependsOn(xnode, affectingVars)) {
+            hooks.add(node);
+            continue nodeLoop;
+          }
+        }
+
+        // We need to wrap the whole IF based on the statement inside
+        List<Xnode> statNode = node.matchAll(Xcode.F_ASSIGN_STATEMENT);
+        xNodeLoop:
+        for (Xnode xnode : statNode) {
+          AssignStatement as = new AssignStatement(xnode.element());
+          if (affectingVars.contains(as.getLhsName())) {
+            // If the affected node is child of a DO, a dedicated loop
+            // group will be created.
+            Xnode pnode = xnode.ancestor();
+            while (pnode.hashCode() != node.hashCode()) {
+              if (pnode.opcode() == Xcode.F_DO_STATEMENT) {
+                break xNodeLoop;
+              }
+              pnode = pnode.ancestor();
+            }
+            // Add the whole if and continue otherwise
+            hooks.add(node);
+            continue nodeLoop;
+          }
+        }
+
+        // If the IF statement doesn't contains any dependency we gather the
+        // potential transformation and continue
+        transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+      }
+      // Handle node containing a body
+      else if (node.opcode().hasBody()) {
+        transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+        currentDepth.incrementAndGet();
+        transformFusionForCPUGather(node.body(), currentDepth,
+                targetDepth, affectingVars, toapply);
+      }
+      // Keep going inside the new node
+      else {
+        transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+        transformFusionForCPUGather(node, currentDepth,
+                targetDepth, affectingVars, toapply);
+      }
+    }
+    transformFusionForCPUGatherSaveHooksGroup(hooks, toapply);
+  }
+
+  /**
+   * If a hooks group that will be wrapped exists, add it to the collection
+   * containing all the hooks group found until now.
+   * The content of `hooks` is copied in a new list and added to `toapply`,
+   * while `hooks` will be cleared of its content.
+   *
+   * @param hooks A list of adjacent nodes to be wrapped in a DO statement
+   * @param toapply A list to add a copy of `hooks`
+   */
+  private void transformFusionForCPUGatherSaveHooksGroup(List<Xnode> hooks,
+                                                         List<List<Xnode>>
+                                                                  toapply) {
+    if (!hooks.isEmpty()) {
+      toapply.add(new ArrayList<>(hooks));
+      hooks.clear();
+    }
+  }
+
+  /**
+   * Given a series of sequential hooks (nodes), envelope them in a DO loop.
+   *
+   * @param hooks List of nodes do envelope in a DO statement
+   * @param xcodeml The program
+   */
+  private void transformFusionForCPUApply(List<Xnode> hooks,
+                                          XcodeProgram xcodeml) {
+    if (hooks.isEmpty()) {
+        return;
+    }
+    NestedDoStatement loop =
+            new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+    // Add loop to AST
+    hooks.get(0).insertBefore(loop.getOuterStatement());
+    for(Xnode hook : hooks) {
+      loop.getInnerStatement().body().append(hook, false);
+    }
+    Directive.generateLoopDirectives(xcodeml,
+            loop.getOuterStatement(), loop.getOuterStatement(),
+            Directive.NO_COLLAPSE);
+    hooks.clear();
+  }
+
+
+  /**
    * Apply CPU based transformations.
    *
    * @param xcodeml Current XcodeML program unit.
    * @throws IllegalTransformationException If promotion of arrays fails.
    */
   private void transformForCPU(XcodeProgram xcodeml)
-      throws IllegalTransformationException
+          throws IllegalTransformationException
   {
     /* Create a group of nested loop with the newly defined dimension and wrap
      * every assignment statement in the column loop or including data with it.
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-
     List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(_fctDef);
+            Function.gatherAssignStatements(_fctDef);
 
     // Iterate over all assign statements to detect all the indirect promotion.
-    for(AssignStatement assign : assignStatements) {
+    for (AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
       String lhsName = assign.getLhsName();
-      if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF) {
+      if (lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF) {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
 
         PromotionInfo promotionInfo;
-        if(shouldBePromoted(assign)) {
+        if (shouldBePromoted(assign)) {
           // Do the promotion if needed
-          if(!_arrayFieldsInOut.contains(lhsName)) {
+          if (!_arrayFieldsInOut.contains(lhsName)) {
             _arrayFieldsInOut.add(lhsName);
             promotionInfo =
                 new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
@@ -512,14 +853,14 @@ public class Parallelize extends ClawTransformation {
             promotionInfo = _promotions.get(lhsName);
           }
           // Adapt references
-          if(lhs.opcode() == Xcode.VAR) {
+          if (lhs.opcode() == Xcode.VAR) {
             Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
-                _claw.getDimensionValues(), xcodeml);
+                    _claw.getDimensionValues(), xcodeml);
           } else {
             Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(),
-                xcodeml);
+                    xcodeml);
             Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
-                xcodeml);
+                    xcodeml);
           }
           promotionInfo.setRefAdapted();
         }
@@ -532,18 +873,18 @@ public class Parallelize extends ClawTransformation {
     /* Check whether condition includes a promoted variables. If so, the
      * ancestor node using the condition must be wrapped in a do statement. */
     List<Xnode> conditions = _fctDef.body().matchAll(Xcode.CONDITION);
-    for(Xnode condition : conditions) {
-      if(Condition.dependsOn(condition, _arrayFieldsInOut)) {
+    for (Xnode condition : conditions) {
+      if (Condition.dependsOn(condition, _arrayFieldsInOut)) {
         Xnode ancestor = condition.ancestor();
         Iterator<Xnode> iter = hooks.iterator();
         boolean addHook = true;
-        while(iter.hasNext()) {
-          if(ancestor.isNestedIn(iter.next())) {
+        while (iter.hasNext()) {
+          if (ancestor.isNestedIn(iter.next())) {
             addHook = false;
             break;
           }
         }
-        if(addHook) {
+        if (addHook) {
           hooks.add(ancestor);
         }
       }
@@ -551,105 +892,102 @@ public class Parallelize extends ClawTransformation {
 
     /* Iterate a second time over assign statements to flag places where to
      * insert the do statements */
-    for(AssignStatement assign : assignStatements) {
+    for (AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
       String lhsName = assign.getLhsName();
       boolean wrapInDoStatement = true;
 
       // Check if assignment is dependant of an if statement.
-      if(assign.isChildOf(Xcode.F_IF_STATEMENT)) {
+      if (assign.isChildOf(Xcode.F_IF_STATEMENT)) {
 
         // Gather all potential ancestor if statements
         List<Xnode> ifStatements = assign.matchAllAncestor(Xcode.F_IF_STATEMENT,
-            Xcode.F_FUNCTION_DEFINITION);
+                Xcode.F_FUNCTION_DEFINITION);
 
         Xnode hookIfStmt = null;
-        for(Xnode ifStmt : ifStatements) {
-          if(Condition.dependsOn(
-              ifStmt.matchDirectDescendant(Xcode.CONDITION),
-              assign.getVarRefNames()))
-          {
+        for (Xnode ifStmt : ifStatements) {
+          if (Condition.dependsOn(
+                  ifStmt.matchDirectDescendant(Xcode.CONDITION),
+                  assign.getVarRefNames())) {
             // Have to put the do statement around the if as the assignment
             // is conditional as well.
             hookIfStmt = ifStmt;
           }
         }
 
-        if(hookIfStmt != null) {
+        if (hookIfStmt != null) {
           wrapInDoStatement = false;
           boolean addIfHook = true;
 
           // Get rid of previously flagged hook in this if body.
           Iterator<Xnode> iter = hooks.iterator();
-          while(iter.hasNext()) {
+          while (iter.hasNext()) {
             Xnode crt = iter.next();
-            if(assign.isNestedIn(crt) || hookIfStmt.isNestedIn(crt)) {
+            if (assign.isNestedIn(crt) || hookIfStmt.isNestedIn(crt)) {
               addIfHook = false;
             }
-            if(crt.isNestedIn(hookIfStmt)) {
+            if (crt.isNestedIn(hookIfStmt)) {
               iter.remove();
             }
           }
 
-          if(addIfHook) {
+          if (addIfHook) {
             hooks.add(hookIfStmt);
           }
         }
       }
 
       Iterator<Xnode> iter = hooks.iterator();
-      while(iter.hasNext()) {
-        if(assign.isNestedIn(iter.next())) {
+      while (iter.hasNext()) {
+        if (assign.isNestedIn(iter.next())) {
           wrapInDoStatement = false;
           break;
         }
       }
 
-      if(lhs.opcode() == Xcode.F_ARRAY_REF
-          && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
-      {
+      if (lhs.opcode() == Xcode.F_ARRAY_REF
+              && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement) {
         hooks.add(assign);
-      } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
-          && _scalarFields.contains(lhsName))
-      {
-        if(shouldBePromoted(assign) && wrapInDoStatement) {
+      } else if (lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+              && _scalarFields.contains(lhsName)) {
+        if (shouldBePromoted(assign) && wrapInDoStatement) {
           hooks.add(assign);
         }
       }
     }
 
     // Generate loops around statements flagged in previous stage
-    for(Xnode hook : hooks) {
+    for (Xnode hook : hooks) {
       NestedDoStatement loops =
-          new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+             new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
       hook.insertAfter(loops.getOuterStatement());
       loops.getInnerStatement().body().append(hook, true);
       hook.delete();
       Directive.generateLoopDirectives(xcodeml,
-          loops.getOuterStatement(), loops.getOuterStatement(),
-          Directive.NO_COLLAPSE);
+              loops.getOuterStatement(), loops.getOuterStatement(),
+              Directive.NO_COLLAPSE);
     }
 
     // Generate the parallel region
     Directive.generateParallelClause(xcodeml,
-        _fctDef.body().firstChild(), _fctDef.body().lastChild());
+            _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 
-  /**
-   * Check whether the LHS variable should be promoted.
-   *
-   * @param assignStmt Assign statement node.
-   * @return True if the LHS variable should be promoted. False otherwise.
-   */
-  private boolean shouldBePromoted(Xnode assignStmt) {
-    Xnode rhs = assignStmt.child(Xnode.RHS);
-    if(rhs == null) {
-      return false;
+    /**
+     * Check whether the LHS variable should be promoted.
+     *
+     * @param assignStmt Assign statement node.
+     * @return True if the LHS variable should be promoted. False otherwise.
+     */
+    private boolean shouldBePromoted(Xnode assignStmt) {
+        Xnode rhs = assignStmt.child(Xnode.RHS);
+        if (rhs == null) {
+            return false;
+        }
+        List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
+        Set<String> names = XnodeUtil.getNamesFromReferences(vars);
+        return Utility.hasIntersection(names, _arrayFieldsInOut);
     }
-    List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
-    Set<String> names = XnodeUtil.getNamesFromReferences(vars);
-    return Utility.hasIntersection(names, _arrayFieldsInOut);
-  }
 
   /**
    * Promote all fields declared in the data clause with the additional
