@@ -90,6 +90,33 @@ public final class Loop {
   }
 
   /**
+   * Split two do loops at a given marker point by moving all nodes after
+   * and including the marker to the target loop.
+   *
+   * @param sourceLoop The primary loop from which to move elements.
+   * @param marker The firts element to be copied to the target loop.
+   * @param targetLoop The loop to which to move all node after the marker.
+   * @throws IllegalTransformationException If given node are null or not
+   *                                        FdoStatement nodes.
+   */
+    public static void split(Xnode sourceLoop, Xnode marker, Xnode targetLoop)
+      throws IllegalTransformationException
+  {
+    if(sourceLoop == null || marker == null || targetLoop == null
+       || sourceLoop.opcode() != Xcode.F_DO_STATEMENT
+       || targetLoop.opcode() != Xcode.F_DO_STATEMENT)
+    {
+      throw new
+          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+    }
+
+    Xnode sourceBody = sourceLoop.body();
+    Xnode lastElement = sourceBody.lastChild();
+    Xnode targetBody = targetLoop.body();
+    Body.shiftIn(marker, lastElement, targetBody, true);
+  }
+
+  /**
    * Perform a do statements reordering based on the new order specified by
    * induction variables.
    *

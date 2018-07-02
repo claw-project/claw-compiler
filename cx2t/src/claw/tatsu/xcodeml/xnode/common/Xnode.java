@@ -354,6 +354,25 @@ public class Xnode {
   }
 
   /**
+   * Insert after a given marker node.
+   *
+   * @param node  Node to be inserted.
+   * @param marker Node after which we want to insert.
+   */
+  public void insertAfter(Xnode node, Xnode marker) {
+    if(node != null && _baseElement != null) {
+      NodeList children = _baseElement.getChildNodes();
+      Node toInsert = node.element();
+      Node next = marker.element().getNextSibling();
+      if(next == null) {
+        append(node);
+      } else {
+        _baseElement.insertBefore(toInsert, next);
+      }
+    }
+  }
+
+  /**
    * Insert as first child.
    *
    * @param node Node to be inserted.

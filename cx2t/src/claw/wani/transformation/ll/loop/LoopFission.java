@@ -6,8 +6,12 @@ package claw.wani.transformation.ll.loop;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeML;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 
@@ -25,14 +29,26 @@ import claw.wani.transformation.ClawTransformation;
 
 public class LoopFission extends ClawTransformation {
 
+  // The do loop that we want to split
+  private Xnode _loop;
+  private Xnode _marker;
+
   /**
    * Constructs a new LoopFission triggered from a specific pragma.
    *
    * @param directive The directive that triggered the loop fission
    *                  transformation.
    */
-  public LoopFission(ClawPragma directive) {
+  public LoopFission(ClawPragma directive) throws IllegalTransformationException
+    {
     super(directive);
+
+    this._marker = directive.getPragma();
+    this._loop = this._marker.ancestor().ancestor();
+    if (this._loop.opcode() != Xcode.F_DO_STATEMENT) {
+      throw new IllegalTransformationException("Incompatible transformation",
+          _claw.getPragma().lineNo());
+    };
   }
 
   /**
@@ -68,6 +84,16 @@ public class LoopFission extends ClawTransformation {
           _claw.getPragma().lineNo());
     }
     LoopFission other = (LoopFission) transformation;
+
+    // Create new loop with identical variable and index range
+    Xnode inductionVar = this._loop.matchDirectDescendant(Xcode.VAR).cloneNode();
+    Xnode indexRange = this._loop.matchDirectDescendant(Xcode.INDEX_RANGE).cloneNode();
+    Xnode newLoop = xcodeml.createDoStmt(inductionVar, indexRange);
+
+    // Split the loop and insert new loop as a sibling
+    Xnode parent = this._loop.ancestor();
+    Loop.split(this._loop, this._marker, newLoop);
+    parent.insertAfter(newLoop, this._loop);
 
     // Clean up
     other.removePragma();
