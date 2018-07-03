@@ -19,6 +19,14 @@ SUBROUTINE clawloop
 
     PRINT *, 'Second loop body:',i
 
+    !$claw loop-fission
+
+    PRINT *, 'Third loop body:',i
+
+    !$claw loop-fission
+
+    PRINT *, 'Fourth loop body:',i
+
   END DO
 
 END
