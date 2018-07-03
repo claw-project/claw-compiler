@@ -69,8 +69,8 @@ public class LoopFission extends ClawTransformation {
    * @param xcodeml        The XcodeML on which the transformations are
    *                       applied.
    * @param translator     The translator used to applied the transformations.
-   * @param transformation The other loop fission unit to be merge with this
-   *                       one.
+   * @param transformation Only for dependent transformation. The other
+   *                       transformation part of the transformation.
    * @throws IllegalTransformationException if the transformation cannot be
    *                                        applied.
    */
@@ -79,12 +79,6 @@ public class LoopFission extends ClawTransformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
-    if(!(transformation instanceof LoopFission)) {
-      throw new IllegalTransformationException("Incompatible transformation",
-          _claw.getPragma().lineNo());
-    }
-    LoopFission other = (LoopFission) transformation;
-
     // Create new loop with identical variable and index range
     Xnode inductionVar = this._loop.matchDirectDescendant(Xcode.VAR).cloneNode();
     Xnode indexRange = this._loop.matchDirectDescendant(Xcode.INDEX_RANGE).cloneNode();
@@ -96,10 +90,8 @@ public class LoopFission extends ClawTransformation {
     parent.insertAfter(newLoop, this._loop);
 
     // Clean up
-    other.removePragma();
-    this.removePragma();
-
-    other.transformed();
+    removePragma();
+    transformed();
   }
 
   /**
@@ -112,7 +104,7 @@ public class LoopFission extends ClawTransformation {
   public boolean canBeTransformedWith(XcodeProgram xcodeml,
                                       Transformation transformation)
   {
-    return true;  // Independent transformation
+    return false;  // Independent transformation
   }
 
 }
