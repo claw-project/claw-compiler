@@ -44,11 +44,6 @@ public class LoopFission extends ClawTransformation {
     super(directive);
 
     this._marker = directive.getPragma();
-    this._loop = this._marker.ancestor().ancestor();
-    if (this._loop.opcode() != Xcode.F_DO_STATEMENT) {
-      throw new IllegalTransformationException("Incompatible transformation",
-          _claw.getPragma().lineNo());
-    };
   }
 
   /**
@@ -79,15 +74,17 @@ public class LoopFission extends ClawTransformation {
                         Transformation transformation)
       throws IllegalTransformationException
   {
+    Xnode loop = this._marker.ancestor().ancestor();
+
     // Create new loop with identical variable and index range
-    Xnode inductionVar = this._loop.matchDirectDescendant(Xcode.VAR).cloneNode();
-    Xnode indexRange = this._loop.matchDirectDescendant(Xcode.INDEX_RANGE).cloneNode();
+    Xnode inductionVar = loop.matchDirectDescendant(Xcode.VAR).cloneNode();
+    Xnode indexRange = loop.matchDirectDescendant(Xcode.INDEX_RANGE).cloneNode();
     Xnode newLoop = xcodeml.createDoStmt(inductionVar, indexRange);
 
     // Split the loop and insert new loop as a sibling
-    Xnode parent = this._loop.ancestor();
-    Loop.split(this._loop, this._marker, newLoop);
-    parent.insertAfter(newLoop, this._loop);
+    Xnode parent = loop.ancestor();
+    Loop.split(loop, this._marker, newLoop);
+    parent.insertAfter(newLoop, loop);
 
     // Clean up
     removePragma();

@@ -20,6 +20,8 @@
 # ifextract1: if-then block
 # ifextract2: if-then-else block
 # interchange3: with target clause
+# fission1: Single fission
+# fission2: Multiple fission
 
 # Sepcific flags for some test cases
 set(CLAW_FLAGS_fusion10 --config=fusion_first.xml)
