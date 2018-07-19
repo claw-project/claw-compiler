@@ -69,6 +69,8 @@ public class DependenceAnalysis {
               case PLUS_EXPR:
                 _directionVector = DependenceDirection.FORWARD;
                 break;
+              default:
+                _directionVector = DependenceDirection.NONE;
             }
           }
         }
