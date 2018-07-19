@@ -156,7 +156,7 @@ public class ClawTranslator implements Translator {
    * @param xcodeml        Current translation unit.
    * @param analyzedPragma Analyzed pragma object to be handle.
    */
-  private void HandleBlockDirective(XcodeProgram xcodeml,
+  private void handleBlockDirective(XcodeProgram xcodeml,
                                     ClawPragma analyzedPragma)
       throws IllegalDirectiveException, IllegalTransformationException
   {

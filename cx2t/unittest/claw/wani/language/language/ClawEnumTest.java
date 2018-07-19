@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class ClawEnumTest {
 
   @Test
-  public void TargetTest() {
+  public void targetTest() {
     assertEquals(Target.CPU, Target.fromString(TatsuConstant.TARGET_CPU));
     assertEquals(Target.GPU, Target.fromString(TatsuConstant.TARGET_GPU));
     assertEquals(Target.MIC, Target.fromString(TatsuConstant.TARGET_MIC));
