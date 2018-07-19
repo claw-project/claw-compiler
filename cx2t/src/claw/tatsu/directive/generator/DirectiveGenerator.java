@@ -28,9 +28,6 @@ public abstract class DirectiveGenerator {
   static final String FORMAT4 = "%s %s %s %s";
   static final String FORMAT5 = "%s %s %s %s %s";
 
-  public DirectiveGenerator() {
-  }
-
   /**
    * Get the prefix for the current directive language.
    *
