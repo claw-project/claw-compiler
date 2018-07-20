@@ -26,6 +26,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -396,12 +398,16 @@ public class Configuration {
    * @param jarFile Name of the jar file to load with .jar extension.
    * @return The URLClassLoader associated with the jar file if found. Null
    * otherwise.
-   * @throws Exception If no path defined
+   * @throws FileNotFoundException External jar file is not found.
+   * @throws MalformedURLException URL for class loader is not well formatted.
    */
-  private URLClassLoader loadExternalJar(String jarFile) throws Exception {
+  private URLClassLoader loadExternalJar(String jarFile)
+      throws FileNotFoundException, MalformedURLException
+  {
     if(_transSetPaths.length == 0) {
-      throw new Exception("No path defined in " + CLAW_TRANS_SET_PATH
-          + ". Unable to load transformation set: " + jarFile);
+      throw new FileNotFoundException("No path defined in "
+          + CLAW_TRANS_SET_PATH + ". Unable to load transformation set: "
+          + jarFile);
     }
     URLClassLoader external;
     for(String path : _transSetPaths) {
@@ -413,7 +419,7 @@ public class Configuration {
         return external;
       }
     }
-    throw new Exception("Cannot find jar file " + jarFile);
+    throw new FileNotFoundException("Cannot find jar file " + jarFile);
   }
 
   /**

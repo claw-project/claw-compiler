@@ -123,16 +123,14 @@ public class LoopFusion extends ClawTransformation {
 
     // Apply different transformation if the collapse clause is used
     if(_claw != null && _claw.hasCollapseClause()
-        && _claw.getCollapseValue() > 0)
+        && _claw.getCollapseValue() > 0
+        && _claw.getCollapseValue() > _doStmt.size())
     {
       // Merge the most inner loop with the most inner loop of the other fusion
       // unit
-      if(_claw.getCollapseValue() > _doStmt.size()) {
-        throw new IllegalTransformationException(
-            "Cannot apply transformation, one or both do stmt are invalid.",
-            _claw.getPragma().lineNo()
-        );
-      }
+      throw new IllegalTransformationException(
+          "Cannot apply transformation, one or both do stmt are invalid.",
+          _claw.getPragma().lineNo());
     }
 
     // Actual merge happens here

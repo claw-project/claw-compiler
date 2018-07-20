@@ -609,12 +609,11 @@ public class Parallelize extends ClawTransformation {
           && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
       {
         hooks.add(assign);
-      } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+      } else if((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
           && _scalarFields.contains(lhsName))
+          && (shouldBePromoted(assign) && wrapInDoStatement))
       {
-        if(shouldBePromoted(assign) && wrapInDoStatement) {
-          hooks.add(assign);
-        }
+        hooks.add(assign);
       }
     }
 

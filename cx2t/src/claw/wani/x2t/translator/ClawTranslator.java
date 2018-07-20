@@ -278,12 +278,12 @@ public class ClawTranslator implements Translator {
 
       for(Transformation t : tg.getTransformations()) {
         ParallelizeForward p = (ParallelizeForward) t;
-        if(p.getCalledFctName() != null) {
-          if(fctMap.containsKey(p.getCalledFctName())) {
-            List<Transformation> tList = fctMap.get(p.getCalledFctName());
-            for(Transformation end : tList) {
-              dg.addEdge(p, end);
-            }
+        if(p.getCalledFctName() != null
+            && fctMap.containsKey(p.getCalledFctName()))
+        {
+          List<Transformation> tList = fctMap.get(p.getCalledFctName());
+          for(Transformation end : tList) {
+            dg.addEdge(p, end);
           }
         }
       }
