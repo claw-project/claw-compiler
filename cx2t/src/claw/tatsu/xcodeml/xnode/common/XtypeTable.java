@@ -61,6 +61,7 @@ public class XtypeTable extends Xnode {
           FstructType st = new FstructType(n);
           _table.put(st.getType(), st);
           break;
+        default: // Do nothing
       }
     }
   }

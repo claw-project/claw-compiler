@@ -35,11 +35,12 @@ public class OmniBackendDriver {
       throws XmException
   {
     switch(lang) {
-      case FORTRAN:
-        _toolFactory = new XmToolFactory("F");
-        break;
       case C:
         _toolFactory = new XmToolFactory("C");
+        break;
+      case FORTRAN:
+      default:
+        _toolFactory = new XmToolFactory("F");
         break;
     }
   }

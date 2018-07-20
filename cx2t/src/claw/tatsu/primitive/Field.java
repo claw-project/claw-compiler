@@ -115,17 +115,18 @@ public final class Field {
 
         for(DimensionDefinition dim : fieldInfo.getDimensions()) {
           switch(dim.getInsertionPosition()) {
-            case BEFORE:
-              newType.addDimension(dim.generateIndexRange(xcodeml, false),
-                  beforePositionIndex++);
-              inMiddlePositionIndex++; // Update index to insert in middle
+            case AFTER:
+              newType.addDimension(dim.generateIndexRange(xcodeml, false));
               break;
             case IN_MIDDLE:
               newType.addDimension(dim.generateIndexRange(xcodeml, false),
                   inMiddlePositionIndex++);
               break;
-            case AFTER:
-              newType.addDimension(dim.generateIndexRange(xcodeml, false));
+            case BEFORE:
+            default:
+              newType.addDimension(dim.generateIndexRange(xcodeml, false),
+                  beforePositionIndex++);
+              inMiddlePositionIndex++; // Update index to insert in middle
               break;
           }
         }
