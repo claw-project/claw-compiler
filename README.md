@@ -1,8 +1,9 @@
 ![CLAW Logo](resources/logo_full_black.png)
 
 <a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.0.1-lightgray.svg)</a> [![Build Status](https://travis-ci.org/claw-project/claw-compiler.svg?branch=master)](https://travis-ci.org/claw-project/claw-compiler)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/eba4f595b3a640b0b9c55a061c09ae84)](https://www.codacy.com/app/clementval/claw-compiler?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=clementval/claw-compiler&amp;utm_campaign=Badge_Grade)
 <a target="_blank" href="https://claw-compiler.slack.com/">![Version](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
-<a target="_blank" href="https://claw-project.github.io/claw-documentation/">![Doc](https://img.shields.io/badge/Documentation-link-lightgray.svg)</a> 
+<a target="_blank" href="https://claw-project.github.io/claw-documentation/">![Doc](https://img.shields.io/badge/Documentation-link-lightgray.svg)</a>
 
 <a target="_blank" href="https://github.com/claw-project/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-0.4.0-blue.svg)</a>
 

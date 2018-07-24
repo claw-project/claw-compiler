@@ -4,6 +4,7 @@
  */
 package claw.tatsu.analysis.dependency;
 
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
@@ -40,7 +41,8 @@ public class DependenceAnalysis {
    */
   private void analyze() throws Exception {
     if(_mainLoop == null || _mainLoop.opcode() != Xcode.F_DO_STATEMENT) {
-      throw new Exception("Analysis only on FdoStatement node");
+      throw new
+          IllegalTransformationException("Analysis only on FdoStatement node");
     }
 
     Xnode inductionVarNode = _mainLoop.matchDirectDescendant(Xcode.VAR);
@@ -69,6 +71,8 @@ public class DependenceAnalysis {
               case PLUS_EXPR:
                 _directionVector = DependenceDirection.FORWARD;
                 break;
+              default:
+                _directionVector = DependenceDirection.NONE;
             }
           }
         }

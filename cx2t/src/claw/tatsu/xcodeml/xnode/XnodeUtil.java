@@ -382,6 +382,7 @@ public class XnodeUtil {
           case Xname.INDEX_RANGE:
             indexRanges.add(new Xnode(element));
             break;
+          default: // Do nothing
         }
       }
       node = node.getNextSibling();

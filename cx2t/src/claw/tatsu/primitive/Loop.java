@@ -132,6 +132,7 @@ public final class Loop {
           swapIterationRange(nestedGroup.get(0), nestedGroup.get(2));
           break;
         case 102: // Single swap: i,j,k -> j,i,k
+        default:
           swapIterationRange(nestedGroup.get(0), nestedGroup.get(1));
           break;
       }

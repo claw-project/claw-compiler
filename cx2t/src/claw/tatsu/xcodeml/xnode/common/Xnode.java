@@ -754,7 +754,7 @@ public class Xnode {
    * @return True if the values are identical. False otherwise.
    */
   public boolean compareValues(Xnode other) {
-    return !(other == null) && value().equals(other.value());
+    return (other != null) && value().equals(other.value());
   }
 
   /**

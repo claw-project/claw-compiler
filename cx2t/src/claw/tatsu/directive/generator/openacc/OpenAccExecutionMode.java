@@ -61,7 +61,8 @@ public enum OpenAccExecutionMode {
         return "gang";
       case VECTOR:
         return "vector";
+      default:
+        return "";
     }
-    return "";
   }
 }

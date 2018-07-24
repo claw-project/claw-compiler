@@ -77,6 +77,7 @@ public class XdeclTable extends Xnode {
         case F_EQUIVALENCE_DECL:
           key = Xcode.F_EQUIVALENCE_DECL.toString() + UUID.randomUUID();
           break;
+        default: // Do nothing
       }
       _table.put(key, n);
     }

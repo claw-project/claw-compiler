@@ -65,9 +65,11 @@ public class ClawTranslator implements Translator {
               new DependentTransformationGroup(g.getName()));
           break;
         case INDEPENDENT:
+        default:
           _tGroups.put(g.getTransformationClass(),
               new IndependentTransformationGroup(g.getName()));
           break;
+
       }
     }
 
@@ -105,13 +107,13 @@ public class ClawTranslator implements Translator {
         addTransformation(xcodeml, new LoopExtraction(analyzedPragma));
         break;
       case LOOP_HOIST:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case ARRAY_TRANSFORM:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case REMOVE:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case PARALLELIZE:
         if(analyzedPragma.hasForwardClause()) {
@@ -156,7 +158,7 @@ public class ClawTranslator implements Translator {
    * @param xcodeml        Current translation unit.
    * @param analyzedPragma Analyzed pragma object to be handle.
    */
-  private void HandleBlockDirective(XcodeProgram xcodeml,
+  private void handleBlockDirective(XcodeProgram xcodeml,
                                     ClawPragma analyzedPragma)
       throws IllegalDirectiveException, IllegalTransformationException
   {
@@ -209,6 +211,9 @@ public class ClawTranslator implements Translator {
       case LOOP_HOIST:
         addTransformation(xcodeml, new LoopHoist(begin, end));
         break;
+      default:
+        throw new IllegalTransformationException("Unknown block directive",
+            begin.getPragma().lineNo());
     }
   }
 
@@ -273,12 +278,12 @@ public class ClawTranslator implements Translator {
 
       for(Transformation t : tg.getTransformations()) {
         ParallelizeForward p = (ParallelizeForward) t;
-        if(p.getCalledFctName() != null) {
-          if(fctMap.containsKey(p.getCalledFctName())) {
-            List<Transformation> tList = fctMap.get(p.getCalledFctName());
-            for(Transformation end : tList) {
-              dg.addEdge(p, end);
-            }
+        if(p.getCalledFctName() != null
+            && fctMap.containsKey(p.getCalledFctName()))
+        {
+          List<Transformation> tList = fctMap.get(p.getCalledFctName());
+          for(Transformation end : tList) {
+            dg.addEdge(p, end);
           }
         }
       }

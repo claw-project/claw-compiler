@@ -57,16 +57,17 @@ public class Type {
     } else if(base.isAllAssumedShape() && !toUpdate.isAllAssumedShape()) {
       for(DimensionDefinition dim : dimensions) {
         switch(dim.getInsertionPosition()) {
-          case BEFORE:
-            // TODO control and validate the before/after
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
-            break;
           case AFTER:
             newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
             break;
           case IN_MIDDLE:
             throw new IllegalTransformationException("Not supported yet. " +
                 "Insertion in middle for duplicated array type.", 0);
+          case BEFORE:
+          default:
+            // TODO control and validate the before/after
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
+            break;
         }
       }
     } else {

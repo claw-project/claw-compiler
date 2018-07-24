@@ -91,7 +91,7 @@ public class PragmaTest {
   }
 
   @Test
-  public void PragmaCommentTest() {
+  public void pragmaCommentTest() {
     String p1 = "acc parallel";
     assertEquals(p1, Pragma.dropEndingComment(p1));
     String p2 = "acc parallel ! Start parallel region";
