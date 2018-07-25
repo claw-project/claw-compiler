@@ -4,6 +4,9 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import helper.TestConstant;
 import helper.XmlHelper;
@@ -42,6 +45,7 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void basicFunctionDefinitionTest() {
+    Context.init(CompilerDirective.NONE, Target.GPU, 80);
     FfunctionDefinition fctDef =
         XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
@@ -66,6 +70,7 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void findContainingXmodTest() {
+    Context.init(CompilerDirective.NONE, Target.GPU, 80);
     File f = new File(TestConstant.TEST_DECLARATIONS);
     assertTrue(f.exists());
     XcodeProgram xcodeml =
