@@ -74,10 +74,14 @@ public class OpenMp extends DirectiveGenerator {
       } else {
         clauses = clauses.trim(); // Useless ?
       }
-      clauses += String.format("%s(%d)", OPENMP_THREADS_LIMIT,
-          Configuration.get().openMP().getNumThreads());
-      clauses += String.format(" %s(%d)", OPENMP_NUM_TEAMS,
-          Configuration.get().openMP().getNumTeams());
+      int num_threads = Configuration.get().openMP().getNumThreads();
+      int num_teams = Configuration.get().openMP().getNumTeams();
+      if(num_threads > 0) {
+        clauses += String.format("%s(%d)", OPENMP_THREADS_LIMIT, num_threads);
+      }
+      if(num_teams > 0) {
+        clauses += String.format(" %s(%d)", OPENMP_NUM_TEAMS, num_teams);
+      }
 
       if(clauses == null || clauses.isEmpty()) {
         return new String[]{

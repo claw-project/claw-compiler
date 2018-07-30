@@ -449,8 +449,7 @@ public class Parallelize extends ClawTransformation {
           || currentDirective == CompilerDirective.OPENMP &&
           openMpConfiguration.getLocalStrategy() == OpenMpLocalStrategy.PRIVATE)
       {
-        // OpenMP doesn't privatize local variable by default
-        //privateList = Directive.getLocalVariables(xcodeml, _fctDef);
+        // OMP-TR6 p.48 l.28 Scalar are firstprivate
         privateList = Directive.getLocalArrays(xcodeml, _fctDef);
         // Iterate over a copy to be able to remove items
         for(String identifier : new ArrayList<>(privateList)) {
