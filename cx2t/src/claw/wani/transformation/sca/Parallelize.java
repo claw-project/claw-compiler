@@ -20,10 +20,10 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.gpu.GpuConfiguration;
+import claw.wani.x2t.configuration.gpu.GpuLocalStrategy;
 import claw.wani.x2t.configuration.openacc.OpenAccConfiguration;
-import claw.wani.x2t.configuration.openacc.OpenAccLocalStrategy;
 import claw.wani.x2t.configuration.openmp.OpenMpConfiguration;
-import claw.wani.x2t.configuration.openmp.OpenMpLocalStrategy;
 
 import java.util.*;
 
@@ -61,8 +61,19 @@ import java.util.*;
  * <li> acc loop seq is generated for already existing do statements.
  * </ul>
  *
- * Generation of OpenMP directives: <ul>
+ * Generation of OpenMP directives on CPU: <ul>
  * <li> omp parallel do is generated for each generated do statements.
+ * </ul>
+ *
+ * Generation of OpenMP directives on GPU:<ul>
+ * <li> omp declare target is generated for subroutine called from the parallelized
+ * subroutine if they are located in the same translation unit.
+ * <li> omp data region with corresponding present clause for all promoted
+ * variables with the intent to, from or tofrom.
+ * <li> omp target teams distribute region is generated to wrap all the body of the subroutine.
+ * <li> omp firstprivate clause is added to the target directive for all local
+ * variables.
+ * <li> omp collapse is generated for the generated do statement (if more that 1).
  * </ul>
  *
  * @author clementval
@@ -384,9 +395,7 @@ public class Parallelize extends ClawTransformation {
   private void transformForGPU(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    CompilerDirective currentDirective = Configuration.get().getCurrentDirective();
-    OpenMpConfiguration openMpConfiguration = Configuration.get().openMP();
-    OpenAccConfiguration openAccConfiguration = Configuration.get().openACC();
+    GpuConfiguration gpuCfg = Configuration.get().gpu();
 
     // TODO nodep should be passed in another way.
     int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
@@ -444,12 +453,7 @@ public class Parallelize extends ClawTransformation {
           Directive.getPresentVariables(xcodeml, _fctDef);
       List<String> privateList = Collections.emptyList();
       List<String> createList = Collections.emptyList();
-      if(currentDirective == CompilerDirective.OPENACC &&
-          openAccConfiguration.getLocalStrategy() == OpenAccLocalStrategy.PRIVATE
-          || currentDirective == CompilerDirective.OPENMP &&
-          openMpConfiguration.getLocalStrategy() == OpenMpLocalStrategy.PRIVATE)
-      {
-        // OMP-TR6 p.48 l.28 Scalar are firstprivate
+      if(gpuCfg.getLocalStrategy() == GpuLocalStrategy.PRIVATE) {
         privateList = Directive.getLocalArrays(xcodeml, _fctDef);
         // Iterate over a copy to be able to remove items
         for(String identifier : new ArrayList<>(privateList)) {
@@ -457,15 +461,8 @@ public class Parallelize extends ClawTransformation {
             privateList.remove(identifier);
           }
         }
-      } else if(currentDirective == CompilerDirective.OPENACC &&
-          openAccConfiguration.getLocalStrategy() == OpenAccLocalStrategy.PROMOTE
-          || currentDirective == CompilerDirective.OPENMP &&
-          openMpConfiguration.getLocalStrategy() == OpenMpLocalStrategy.PROMOTE)
-      {
-        // OpenMP doesn't privatize local variable by default
+      } else if(gpuCfg.getLocalStrategy() == GpuLocalStrategy.PROMOTE) {
         createList = Directive.getLocalArrays(xcodeml, _fctDef);
-        //createList = Directive.getLocalVariables(xcodeml, _fctDef);
-
         for(String arrayIdentifier : createList) {
           _arrayFieldsInOut.add(arrayIdentifier);
           PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,

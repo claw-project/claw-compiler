@@ -61,8 +61,6 @@ public final class Directive {
                                     String noDependencyDirective)
   {
     int nodep_counter = 0;
-    CompilerDirective currentDirective =
-        Configuration.get().getCurrentDirective();
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
@@ -78,7 +76,7 @@ public final class Directive {
 
       // Debug logging
       String prefix = "";
-      switch(currentDirective) {
+      switch(Configuration.get().getCurrentDirective()) {
         case OPENACC:
           prefix = OpenAcc.OPENACC_DEBUG_PREFIX;
           break;
@@ -94,20 +92,7 @@ public final class Directive {
           doStmt.lineNo()));
     }
 
-    switch(currentDirective) {
-      case OPENACC:
-        if(Configuration.get().openACC().hasCollapseStrategy()) {
-          return nodep_counter;
-        }
-      case OPENMP:
-        if(Configuration.get().openMP().hasCollapseStrategy()) {
-          return nodep_counter;
-        }
-      case NONE:
-        return 0;
-        default:
-          throw new UnsupportedOperationException();
-    }
+    return Configuration.get().gpu().hasCollapseStrategy() ? nodep_counter : 0;
   }
 
   /**

@@ -10,6 +10,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.wani.transformation.ClawBlockTransformation;
+import claw.wani.x2t.configuration.gpu.GpuConfiguration;
 import claw.wani.x2t.configuration.openacc.OpenAccConfiguration;
 import claw.wani.x2t.configuration.openmp.OpenMpConfiguration;
 import org.w3c.dom.Document;
@@ -85,6 +86,7 @@ public class Configuration {
   private Map<String, String> _parameters;
   private List<GroupConfiguration> _groups;
   private Map<String, GroupConfiguration> _availableGroups;
+  private GpuConfiguration _gpu;
   private OpenAccConfiguration _openacc;
   private OpenMpConfiguration _openmp;
   private String[] _transSetPaths;
@@ -127,6 +129,7 @@ public class Configuration {
     }
     _openacc = new OpenAccConfiguration(_parameters);
     _openmp = new OpenMpConfiguration(_parameters);
+    _gpu = new GpuConfiguration(_parameters);
     _groups = new ArrayList<>();
     _availableGroups = new HashMap<>();
     _configuration_path = null;
@@ -180,6 +183,7 @@ public class Configuration {
 
     _openacc = new OpenAccConfiguration(_parameters);
     _openmp = new OpenMpConfiguration(_parameters);
+    _gpu = new GpuConfiguration(_parameters);
   }
 
   /**
@@ -338,6 +342,15 @@ public class Configuration {
    */
   public OpenMpConfiguration openMP() {
     return _openmp;
+  }
+
+  /**
+   * Get the GPU specific configuration information.
+   *
+   * @return The GPU configuration object.
+   */
+  public GpuConfiguration gpu() {
+    return _gpu;
   }
 
   /**

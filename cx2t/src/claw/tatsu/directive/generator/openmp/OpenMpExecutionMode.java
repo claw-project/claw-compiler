@@ -9,7 +9,7 @@ import claw.tatsu.TatsuConstant;
 /**
  * Define the possible execution mode for OpenMP.
  *
- * @author clementval
+ * @author peclatj
  */
 public enum OpenMpExecutionMode {
   NONE,

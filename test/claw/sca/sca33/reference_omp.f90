@@ -13,7 +13,7 @@ CONTAINS
 
 !$omp target
 !$omp teams thread_limit(256) num_teams(65536)
-!$omp distribute dist_schedule(static, 256)
+!$omp distribute dist_schedule(static, 256) collapse(2)
   DO proma = 1 , nproma , 1
    DO k = 2 , nz , 1
     c = 5.345

@@ -45,6 +45,8 @@ public class OpenMp extends DirectiveGenerator {
   private static final String OPENMP_DO = "do";
   private static final String OPENMP_END = "end";
 
+  // Peclat
+  // TODO: For the second prototype, not used yet
   private OpenMpExecutionMode _mode;
 
   /**
@@ -72,7 +74,7 @@ public class OpenMp extends DirectiveGenerator {
       if(clauses == null) {
         clauses = new String();
       } else {
-        clauses = clauses.trim(); // Useless ?
+        clauses = clauses.trim();
       }
       int num_threads = Configuration.get().openMP().getNumThreads();
       int num_teams = Configuration.get().openMP().getNumTeams();
@@ -165,12 +167,13 @@ public class OpenMp extends DirectiveGenerator {
   }
 
   @Override
+  // Peclat
+  // TODO: For the second prototype, not used yet
   public String[] getRoutineDirective(boolean seq) {
     if(seq) {
       return new String[]{
           String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DECLARE, OPENMP_TARGET),
           String.format(FORMAT3, OPENMP_PREFIX, getSequentialClause())
-          // TODO: Check // Peclat
       };
     } else {
       return new String[]{
@@ -180,13 +183,14 @@ public class OpenMp extends DirectiveGenerator {
   }
 
   // Peclat
+  // TODO: For the second prototype, not used yet
   public String[] getEndRoutineDirective(boolean seq) {
     if(seq) {
       return new String[]{
           String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END, OPENMP_DECLARE,
               OPENMP_TARGET),
           String.format(FORMAT4, OPENMP_PREFIX, OPENMP_END,
-              getSequentialClause()) // TODO: Check // Peclat
+              getSequentialClause())
       };
     } else {
       return new String[]{
@@ -194,7 +198,6 @@ public class OpenMp extends DirectiveGenerator {
               OPENMP_TARGET)
       };
     }
-
   }
 
   @Override
@@ -243,7 +246,10 @@ public class OpenMp extends DirectiveGenerator {
       return null;
     }
 
-    clauses = clauses.trim(); // Useless ?
+    clauses = clauses.trim();
+    if(clauses.length() > 0) {
+      clauses += " ";
+    }
 
     if(value > 1) {
       clauses += String.format("%s(%d) ", OPENMP_COLLAPSE, value);
@@ -251,7 +257,6 @@ public class OpenMp extends DirectiveGenerator {
     String scheduler = String.format("%s(%s, %d)", OPENMP_DIST_SCHEDULE,
         OPENMP_SCHEDULE_KIND, Configuration.get().openMP().getSchedulerChunkSize());
 
-    // TODO handle wrong clauses ?
     if(Context.get().getTarget() == Target.GPU) {
       //!$omp distribute [collapse(#)] [dist_schedule(static,#)]
       if(clauses == null || clauses.isEmpty()) {
@@ -260,8 +265,8 @@ public class OpenMp extends DirectiveGenerator {
         };
       } else {
         return new String[]{
-            String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DISTRIBUTE, scheduler) + " "
-                + clauses,
+            String.format(FORMAT3, OPENMP_PREFIX, OPENMP_DISTRIBUTE, scheduler)
+                + " " + clauses,
         };
       }
     } else {
