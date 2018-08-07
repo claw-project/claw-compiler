@@ -66,12 +66,12 @@ import java.util.*;
  * </ul>
  *
  * Generation of OpenMP directives on GPU:<ul>
- * <li> omp declare target is generated for subroutine called from the parallelized
+ * <li> MISSING FEATURE : omp declare target is generated for subroutine called from the parallelized
  * subroutine if they are located in the same translation unit.
  * <li> omp data region with corresponding present clause for all promoted
  * variables with the intent to, from or tofrom.
  * <li> omp target teams distribute region is generated to wrap all the body of the subroutine.
- * <li> omp firstprivate clause is added to the target directive for all local
+ * <li> omp private clause is added to the target directive for all local
  * variables.
  * <li> omp collapse is generated for the generated do statement (if more that 1).
  * </ul>

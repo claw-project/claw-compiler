@@ -254,9 +254,12 @@ public class OpenMp extends DirectiveGenerator {
     if(value > 1) {
       clauses += String.format("%s(%d) ", OPENMP_COLLAPSE, value);
     }
-    String scheduler = String.format("%s(%s, %d)", OPENMP_DIST_SCHEDULE,
-        OPENMP_SCHEDULE_KIND, Configuration.get().openMP().getSchedulerChunkSize());
-
+    int chunkSize = Configuration.get().openMP().getSchedulerChunkSize();
+    String scheduler = "";
+    if(chunkSize > 0) {
+      scheduler = String.format("%s(%s, %d)", OPENMP_DIST_SCHEDULE,
+          OPENMP_SCHEDULE_KIND, chunkSize);
+    }
     if(Context.get().getTarget() == Target.GPU) {
       //!$omp distribute [collapse(#)] [dist_schedule(static,#)]
       if(clauses == null || clauses.isEmpty()) {
