@@ -17,6 +17,7 @@
 set(CLAW_FLAGS_primitive1 --target=gpu --directive=openacc)
 set(CLAW_FLAGS_primitive2 --target=gpu --directive=openacc)
 set(CLAW_FLAGS_primitive3 --target=gpu --directive=openacc)
+set(CLAW_FLAGS_primitive4 --target=gpu --directive=openacc)
 
 # Set some specific test options
 set(NOCOMPILE_lib ON)
