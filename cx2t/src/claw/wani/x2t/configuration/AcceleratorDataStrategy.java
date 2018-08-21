@@ -2,14 +2,14 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.wani.x2t.configuration.gpu;
+package claw.wani.x2t.configuration;
 
 /**
  * Define the enum values for the data strategy for OpenACC and OpenMP
  *
  * @author clementval
  */
-public enum GpuDataStrategy {
+public enum AcceleratorDataStrategy {
   NONE,
   PRESENT,
   KERNEL;
@@ -24,7 +24,7 @@ public enum GpuDataStrategy {
    * @param value String value from configuration.
    * @return Enum value corresponding to the string. Default is NONE.
    */
-  public static GpuDataStrategy fromString(String value) {
+  public static AcceleratorDataStrategy fromString(String value) {
     if(value == null) {
       return NONE;
     }

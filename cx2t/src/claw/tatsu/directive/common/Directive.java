@@ -21,7 +21,6 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
-import claw.wani.ClawConstant;
 import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
@@ -83,8 +82,8 @@ public final class Directive {
         case OPENMP:
           prefix = OpenMp.OPENMP_DEBUG_PREFIX;
           break;
-          default:
-            throw new UnsupportedOperationException();
+        default:
+          throw new UnsupportedOperationException();
       }
       Message.debug(String.format(
           "%s generated loop %s directive for loop at line: %d",
@@ -92,7 +91,8 @@ public final class Directive {
           doStmt.lineNo()));
     }
 
-    return Configuration.get().gpu().hasCollapseStrategy() ? nodep_counter : 0;
+    return Configuration.get().accelerator().hasCollapseStrategy()
+        ? nodep_counter : 0;
   }
 
   /**
@@ -245,7 +245,9 @@ public final class Directive {
     List<String> clauses = new ArrayList<>(Arrays.asList(
         generator.getPresentClause(presents),
         generator.getCreateClause(creates)));
-    while(clauses.remove(""));
+    while(clauses.remove("")) {
+      ;
+    }
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
       insertPragmas(xcodeml, startStmt, endStmt,
@@ -558,7 +560,6 @@ public final class Directive {
    * @param functionDefinition Function definition in which body checked.
    * @param from               Optional element to start from. If null, starts
    *                           from first element in function's body.
-   *
    * @return First element for the parallel region.
    */
   public static Xnode findParallelRegionStart(Xnode functionDefinition,
@@ -577,14 +578,12 @@ public final class Directive {
     if(from != null) { // Start from given element
       first = from;
     }
-    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty())
-    {
+    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty()) {
       return first;
     } else {
       while(first.nextSibling() != null && ((Context.get().getGenerator().
           getSkippedStatementsInPreamble().contains(first.opcode()))
-          || isClawDirective(first)))
-      {
+          || isClawDirective(first))) {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!Context.get().getGenerator().getSkippedStatementsInPreamble().
@@ -602,6 +601,7 @@ public final class Directive {
 
   /**
    * Check if the node is a CLAW directive
+   *
    * @param node Node to check.
    * @return True if the node is a CLAW directive. False otherwise.
    */

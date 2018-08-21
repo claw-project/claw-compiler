@@ -29,7 +29,7 @@ refer to the developer's guide
       possible values are vector_gang, gang_vector, vector, gang, none
     -->
     <parameter key="openacc_execution_mode" value="gang_vector" />
-    
+
     <!-- OpenMP default information -->
     <!--
       Define the default values to be used for the clauses.
@@ -46,8 +46,8 @@ refer to the developer's guide
       possible values are teams_distribute, teams_distribute_simd, teams_distribute_parallel_do, teams_distribute_parallel_do_simd, none
     -->
     <parameter key="openmp_execution_mode" value="teams_distribute" />
-    
-    <!-- GPU (OpenACC and OpenMP) default information -->
+
+    <!-- Accelerator (OpenACC and OpenMP) default information -->
     <!--
       Data strategy influence how CLAW generates data region with parallelize
       directive.
@@ -57,21 +57,21 @@ refer to the developer's guide
                 device at the beginning/end of the subroutine.
       - none: no data region generated.
     -->
-    <parameter key="gpu_data_strategy" value="present" />
+    <parameter key="accelerator_data_strategy" value="present" />
     <!--
       Local array strategy influence how CLAW handle the local arrays in
       parallelized subroutine.
       - private: Privatize local arrays if needed.
       - promote: Promote the array instead of making them private if needed.
     -->
-    <parameter key="gpu_local_strategy" value="private" />
+    <parameter key="accelerator_local_strategy" value="private" />
 
     <!--
       Collapse loops when possible (!$claw nodep)
       - false: collapse clause is not used.
       - true: collapse clause is used when possible.
     -->
-    <parameter key="gpu_collapse" value="false" />
+    <parameter key="accelerator_collapse" value="false" />
   </global>
 
   <!-- Transformation sets -->

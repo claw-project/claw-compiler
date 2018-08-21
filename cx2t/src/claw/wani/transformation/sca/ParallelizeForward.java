@@ -564,7 +564,6 @@ public class ParallelizeForward extends ClawTransformation {
 
     Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
 
-    // Peclat : Only useful for GPU
     if(_claw.hasCreateClause() && Context.get().getTarget() == Target.GPU) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
@@ -572,7 +571,6 @@ public class ParallelizeForward extends ClawTransformation {
           Collections.<String>emptyList(), creates, exprStmt, exprStmt);
     }
 
-    // Peclat : Only useful for GPU
     if(_claw.hasUpdateClause() && Context.get().getTarget() == Target.GPU) {
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
