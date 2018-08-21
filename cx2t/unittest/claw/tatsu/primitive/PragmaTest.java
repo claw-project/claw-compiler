@@ -121,4 +121,24 @@ public class PragmaTest {
       fail();
     }
   }
+
+  @Test
+  public void splitByContTest2() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
+    assertTrue(fctDefs.size() > 0);
+    FfunctionDefinition fd = fctDefs.get(0);
+    assertNotNull(fd.body());
+    List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
+    Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
+    fd.body().append(p);
+    p.setValue("acc data copyin(a) acc      present(b)");
+    try {
+      Pragma.splitByCont(p, CompilerDirective.OPENACC.getPrefix(), xcodeml);
+      List<Xnode> splittedPragma = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
+      assertEquals(previous.size() + 2, splittedPragma.size());
+    } catch(IllegalTransformationException e) {
+      fail();
+    }
+  }
 }
