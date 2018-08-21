@@ -20,10 +20,8 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.gpu.GpuConfiguration;
-import claw.wani.x2t.configuration.gpu.GpuLocalStrategy;
-import claw.wani.x2t.configuration.openacc.OpenAccConfiguration;
-import claw.wani.x2t.configuration.openmp.OpenMpConfiguration;
+import claw.wani.x2t.configuration.AcceleratorConfiguration;
+import claw.wani.x2t.configuration.AcceleratorLocalStrategy;
 
 import java.util.*;
 
@@ -395,7 +393,7 @@ public class Parallelize extends ClawTransformation {
   private void transformForGPU(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    GpuConfiguration gpuCfg = Configuration.get().gpu();
+    AcceleratorConfiguration accConfig = Configuration.get().accelerator();
 
     // TODO nodep should be passed in another way.
     int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
@@ -453,7 +451,7 @@ public class Parallelize extends ClawTransformation {
           Directive.getPresentVariables(xcodeml, _fctDef);
       List<String> privateList = Collections.emptyList();
       List<String> createList = Collections.emptyList();
-      if(gpuCfg.getLocalStrategy() == GpuLocalStrategy.PRIVATE) {
+      if(accConfig.getLocalStrategy() == AcceleratorLocalStrategy.PRIVATE) {
         privateList = Directive.getLocalArrays(xcodeml, _fctDef);
         // Iterate over a copy to be able to remove items
         for(String identifier : new ArrayList<>(privateList)) {
@@ -461,7 +459,9 @@ public class Parallelize extends ClawTransformation {
             privateList.remove(identifier);
           }
         }
-      } else if(gpuCfg.getLocalStrategy() == GpuLocalStrategy.PROMOTE) {
+      } else if(accConfig.getLocalStrategy()
+          == AcceleratorLocalStrategy.PROMOTE)
+      {
         createList = Directive.getLocalArrays(xcodeml, _fctDef);
         for(String arrayIdentifier : createList) {
           _arrayFieldsInOut.add(arrayIdentifier);

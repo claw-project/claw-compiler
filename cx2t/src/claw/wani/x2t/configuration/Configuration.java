@@ -10,9 +10,6 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.wani.transformation.ClawBlockTransformation;
-import claw.wani.x2t.configuration.gpu.GpuConfiguration;
-import claw.wani.x2t.configuration.openacc.OpenAccConfiguration;
-import claw.wani.x2t.configuration.openmp.OpenMpConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -86,9 +83,7 @@ public class Configuration {
   private Map<String, String> _parameters;
   private List<GroupConfiguration> _groups;
   private Map<String, GroupConfiguration> _availableGroups;
-  private GpuConfiguration _gpu;
-  private OpenAccConfiguration _openacc;
-  private OpenMpConfiguration _openmp;
+  private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
@@ -116,20 +111,34 @@ public class Configuration {
   /**
    * Constructs basic configuration object.
    *
-   * @param dir    Accelerator directive language.
-   * @param target Target architecture.
+   * @param directive Accelerator directive language.
+   * @param target    Target architecture.
    */
-  public void init(CompilerDirective dir, Target target) {
+  public void init(CompilerDirective directive, Target target) {
     _parameters = new HashMap<>();
-    if(dir != null) {
-      _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
+
+    if(directive == null) {
+      directive = CompilerDirective.NONE;
     }
+    _parameters.put(DEFAULT_DIRECTIVE, directive.toString());
+
     if(target != null) {
       _parameters.put(DEFAULT_TARGET, target.toString());
     }
-    _openacc = new OpenAccConfiguration(_parameters);
-    _openmp = new OpenMpConfiguration(_parameters);
-    _gpu = new GpuConfiguration(_parameters);
+
+    // Init specific configuration if needed
+    switch(directive) {
+      case OPENACC:
+        _accelerator = new OpenAccConfiguration(_parameters);
+        break;
+      case OPENMP:
+        _accelerator = new OpenMpConfiguration(_parameters);
+        break;
+      default:
+        _accelerator = new AcceleratorConfiguration(_parameters);
+        break;
+    }
+
     _groups = new ArrayList<>();
     _availableGroups = new HashMap<>();
     _configuration_path = null;
@@ -180,10 +189,8 @@ public class Configuration {
       // Then the default one is not read.
       readConfiguration(userConf, false);
     }
-
-    _openacc = new OpenAccConfiguration(_parameters);
-    _openmp = new OpenMpConfiguration(_parameters);
-    _gpu = new GpuConfiguration(_parameters);
+    
+    _accelerator = new AcceleratorConfiguration(_parameters);
   }
 
   /**
@@ -327,30 +334,12 @@ public class Configuration {
   }
 
   /**
-   * Get the OpenACC specific configuration information.
-   *
-   * @return The OpenACC configuration object.
-   */
-  public OpenAccConfiguration openACC() {
-    return _openacc;
-  }
-
-  /**
-   * Get the OpenMP specific configuration information.
-   *
-   * @return The OpenMP configuration object.
-   */
-  public OpenMpConfiguration openMP() {
-    return _openmp;
-  }
-
-  /**
    * Get the GPU specific configuration information.
    *
    * @return The GPU configuration object.
    */
-  public GpuConfiguration gpu() {
-    return _gpu;
+  public AcceleratorConfiguration accelerator() {
+    return _accelerator;
   }
 
   /**

@@ -2,16 +2,19 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.wani.x2t.configuration.openacc;
+package claw.wani.x2t.configuration;
 
 import claw.tatsu.directive.generator.openacc.OpenAccExecutionMode;
+import claw.wani.x2t.configuration.AcceleratorConfiguration;
 
 import java.util.Map;
 
 /**
+ * OpenACC specific configuration options.
+ *
  * @author clementval
  */
-public class OpenAccConfiguration {
+public class OpenAccConfiguration extends AcceleratorConfiguration {
 
   private static final String OPENACC_NUM_WORKERS = "openacc_num_workers";
   private static final String OPENACC_NUM_GANGS = "openacc_num_gangs";
@@ -31,6 +34,8 @@ public class OpenAccConfiguration {
    * @param parameters Map of all configuration parameters.
    */
   public OpenAccConfiguration(Map<String, String> parameters) {
+    super(parameters);
+
     if(parameters.containsKey(OPENACC_NUM_WORKERS)) {
       _numWorkers = Integer.parseInt(parameters.get(OPENACC_NUM_WORKERS));
     }

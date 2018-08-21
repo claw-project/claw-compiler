@@ -9,9 +9,13 @@ import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
+import claw.tatsu.directive.generator.openacc.OpenAccExecutionMode;
+import claw.tatsu.directive.generator.openmp.OpenMpExecutionMode;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.OpenAccConfiguration;
+import claw.wani.x2t.configuration.OpenMpConfiguration;
 import claw.wani.x2t.translator.ClawPythonTranslatorDriver;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
 import org.apache.commons.cli.*;
@@ -264,10 +268,16 @@ public class ClawX2T {
 
       if(Context.get().getCompilerDirective() == CompilerDirective.OPENACC) {
         OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
-        openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
-      } else if(Context.get().getCompilerDirective() == CompilerDirective.OPENMP) {
+        OpenAccExecutionMode mode =
+            ((OpenAccConfiguration) Configuration.get().accelerator()).getMode();
+        openaccGen.setExecutionMode(mode);
+      } else if(Context.get().getCompilerDirective()
+          == CompilerDirective.OPENMP)
+      {
         OpenMp openmpGen = (OpenMp) Context.get().getGenerator();
-        openmpGen.setExecutionMode(Configuration.get().openMP().getMode());
+        OpenMpExecutionMode mode =
+            ((OpenMpConfiguration) Configuration.get().accelerator()).getMode();
+        openmpGen.setExecutionMode(mode);
       }
 
     } catch(Exception ex) {

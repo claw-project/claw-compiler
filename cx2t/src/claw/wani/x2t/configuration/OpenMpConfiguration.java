@@ -2,16 +2,19 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.wani.x2t.configuration.openmp;
+package claw.wani.x2t.configuration;
 
 import claw.tatsu.directive.generator.openmp.OpenMpExecutionMode;
+import claw.wani.x2t.configuration.AcceleratorConfiguration;
 
 import java.util.Map;
 
 /**
- * @author peclatj
+ * OpenMP specific configuration options.
+ *
+ * @author peclatj, clementval
  */
-public class OpenMpConfiguration {
+public class OpenMpConfiguration extends AcceleratorConfiguration {
 
   private static final String OPENMP_NUM_THREADS = "openmp_num_threads";
   private static final String OPENMP_NUM_TEAMS = "openmp_num_teams";
@@ -31,6 +34,8 @@ public class OpenMpConfiguration {
    * @param parameters Map of all configuration parameters.
    */
   public OpenMpConfiguration(Map<String, String> parameters) {
+    super(parameters);
+
     if(parameters.containsKey(OPENMP_NUM_THREADS)) {
       _numThreads = Integer.parseInt(parameters.get(OPENMP_NUM_THREADS));
     }

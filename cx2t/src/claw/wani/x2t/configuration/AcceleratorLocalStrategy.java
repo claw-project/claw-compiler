@@ -2,14 +2,14 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.wani.x2t.configuration.gpu;
+package claw.wani.x2t.configuration;
 
 /**
  * Define the enum values for the local strategy for OpenACC
  *
  * @author clementval
  */
-public enum GpuLocalStrategy {
+public enum AcceleratorLocalStrategy {
   PRIVATE,
   PROMOTE;
 
@@ -22,7 +22,7 @@ public enum GpuLocalStrategy {
    * @param value String value from configuration.
    * @return Enum value corresponding to the string. Default is PRIVATE.
    */
-  public static GpuLocalStrategy fromString(String value) {
+  public static AcceleratorLocalStrategy fromString(String value) {
     if(value == null) {
       return PRIVATE;
     }
