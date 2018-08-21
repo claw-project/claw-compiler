@@ -63,7 +63,7 @@ public final class Xmod {
    * @return A FortranModule object representing the module if found. Null otherwise.
    */
   public static FortranModule find(String moduleName) {
-    return find(moduleName, XMOD_FILE_EXTENSION);
+    return moduleName == null ? null : find(moduleName, XMOD_FILE_EXTENSION);
   }
 
   /**
