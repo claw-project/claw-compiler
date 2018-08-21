@@ -20,7 +20,10 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.openacc.OpenAccLocalStrategy;
+import claw.wani.x2t.configuration.gpu.GpuConfiguration;
+import claw.wani.x2t.configuration.gpu.GpuLocalStrategy;
+import claw.wani.x2t.configuration.openacc.OpenAccConfiguration;
+import claw.wani.x2t.configuration.openmp.OpenMpConfiguration;
 
 import java.util.*;
 
@@ -58,8 +61,19 @@ import java.util.*;
  * <li> acc loop seq is generated for already existing do statements.
  * </ul>
  *
- * Generation of OpenMP directives: <ul>
+ * Generation of OpenMP directives on CPU: <ul>
  * <li> omp parallel do is generated for each generated do statements.
+ * </ul>
+ *
+ * Generation of OpenMP directives on GPU:<ul>
+ * <li> MISSING FEATURE : omp declare target is generated for subroutine called from the parallelized
+ * subroutine if they are located in the same translation unit.
+ * <li> omp data region with corresponding present clause for all promoted
+ * variables with the intent to, from or tofrom.
+ * <li> omp target teams distribute region is generated to wrap all the body of the subroutine.
+ * <li> omp private clause is added to the target directive for all local
+ * variables.
+ * <li> omp collapse is generated for the generated do statement (if more that 1).
  * </ul>
  *
  * @author clementval
@@ -140,8 +154,12 @@ public class Parallelize extends ClawTransformation {
     /* Check if unsupported statements are located in the future parallel
      * region. */
     if(Context.get().getTarget() == Target.GPU
-        && Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.OPENACC)
+        && (
+            Context.get().getGenerator().getDirectiveLanguage()
+                == CompilerDirective.OPENACC
+                || Context.get().getGenerator().getDirectiveLanguage()
+                == CompilerDirective.OPENMP)
+        )
     {
       Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
       Xnode parallelRegionStart =
@@ -377,21 +395,23 @@ public class Parallelize extends ClawTransformation {
   private void transformForGPU(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
+    GpuConfiguration gpuCfg = Configuration.get().gpu();
+
     // TODO nodep should be passed in another way.
     int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
         CompilerDirective.CLAW.getPrefix() + " nodep");
 
     if(!Body.isEmpty(_fctDef.body())) {
-      /* Create a nested loop with the new defined dimensions and wrap it around
-       * the whole subroutine's body. This is for the moment a really naive
-       * transformation idea but it is our start point.
-       * Use the first over clause to create it. */
+      // Create a nested loop with the new defined dimensions and wrap it around
+      // the whole subroutine's body. This is for the moment a really naive
+      // transformation idea but it is our start point.
+      // Use the first over clause to create it.
       NestedDoStatement loops =
           new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
 
-      /* Subroutine/function can have a contains section with inner subroutines or
-       * functions. The newly created (nested) do statements should stop before
-       * this contains section if it exists. */
+      // Subroutine/function can have a contains section with inner subroutines or
+      // functions. The newly created (nested) do statements should stop before
+      // this contains section if it exists.
       Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
       if(contains != null) {
 
@@ -433,9 +453,7 @@ public class Parallelize extends ClawTransformation {
           Directive.getPresentVariables(xcodeml, _fctDef);
       List<String> privateList = Collections.emptyList();
       List<String> createList = Collections.emptyList();
-      if(Configuration.get().openACC().getLocalStrategy()
-          == OpenAccLocalStrategy.PRIVATE)
-      {
+      if(gpuCfg.getLocalStrategy() == GpuLocalStrategy.PRIVATE) {
         privateList = Directive.getLocalArrays(xcodeml, _fctDef);
         // Iterate over a copy to be able to remove items
         for(String identifier : new ArrayList<>(privateList)) {
@@ -443,9 +461,7 @@ public class Parallelize extends ClawTransformation {
             privateList.remove(identifier);
           }
         }
-      } else if(Configuration.get().openACC().getLocalStrategy()
-          == OpenAccLocalStrategy.PROMOTE)
-      {
+      } else if(gpuCfg.getLocalStrategy() == GpuLocalStrategy.PROMOTE) {
         createList = Directive.getLocalArrays(xcodeml, _fctDef);
         for(String arrayIdentifier : createList) {
           _arrayFieldsInOut.add(arrayIdentifier);

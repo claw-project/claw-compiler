@@ -22,7 +22,7 @@ public enum OpenAccExecutionMode {
    * Get enum value from a string.
    *
    * @param value Code value for the enumeration.
-   * @return The enumeration value if matches. VECTOR otherwise.
+   * @return The enumeration value if matches. NONE otherwise.
    */
   public static OpenAccExecutionMode fromString(String value) {
     if(value == null) {

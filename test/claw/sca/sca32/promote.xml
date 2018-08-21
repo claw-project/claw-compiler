@@ -5,6 +5,6 @@
 <claw version="1.0">
   <global type="extension">
     <!-- Override default behavior -->
-    <parameter key="openacc_local_strategy" value="promote" />
+    <parameter key="gpu_local_strategy" value="promote" />
   </global>
 </claw>
