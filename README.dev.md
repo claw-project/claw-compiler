@@ -37,6 +37,19 @@ ln -s ../../scripts/pre-commit pre-commit
 
 Make sure the the file is executable.
 
+### Helper scripts
+The `scripts` directory contains helper scripts for the development and review
+process of the project.
+
+#### Updating the OMNI Compiler submodule
+To update the OMNI Compiler submodule to the latest version, the developer can
+run `./scripts/update_omni` in its local repository from the master branch.
+The script will automatically do the following:
+* Create a dedicated branch name `omni/<short_hash>`.
+* Update the submodule to the current master.
+* Add and commit the new submodule.
+* Output the pull request message.
+
 ### Testing
 
 #### Unit test with JUnit

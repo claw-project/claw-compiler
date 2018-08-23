@@ -164,8 +164,10 @@ public final class Pragma {
     Xnode newlyInserted = pragma;
     String[] lines = allPragma.split(splitter);
     for(int i = 0; i < lines.length - 1; ++i) {
-      newlyInserted = createAndInsertPragma(xcodeml, newlyInserted,
-          pragma.filename(), lineIndex++, lines[i], true);
+      if(!lines[i].isEmpty()) {
+        newlyInserted = createAndInsertPragma(xcodeml, newlyInserted,
+            pragma.filename(), lineIndex++, lines[i], true);
+      }
     }
     createAndInsertPragma(xcodeml, newlyInserted, pragma.filename(), lineIndex,
         lines[lines.length - 1], false);
