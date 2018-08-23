@@ -189,8 +189,17 @@ public class Configuration {
       // Then the default one is not read.
       readConfiguration(userConf, false);
     }
-    
-    _accelerator = new AcceleratorConfiguration(_parameters);
+
+    switch(getCurrentDirective()){
+      case OPENACC:
+        _accelerator = new OpenAccConfiguration(_parameters);
+        break;
+      case OPENMP:
+        _accelerator = new OpenMpConfiguration(_parameters);
+        break;
+      default:
+        _accelerator = new AcceleratorConfiguration(_parameters);
+    }
   }
 
   /**
