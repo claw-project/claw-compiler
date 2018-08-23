@@ -23,11 +23,11 @@ SUBROUTINE claw ( )
 END SUBROUTINE claw
 
 SUBROUTINE claw_transformed ( )
+ INTEGER :: j
 
  INTEGER :: i = 10
  INTEGER :: vec1 ( 0 : 10 )
  INTEGER :: claw_induc1
- INTEGER :: j
 
  DO j = 0 , i , 1
   vec1 ( j ) = j
