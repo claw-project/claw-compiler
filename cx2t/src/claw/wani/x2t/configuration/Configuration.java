@@ -151,7 +151,8 @@ public class Configuration {
    * @param userConfigFile Path to the alternative configuration.
    * @throws Exception If configuration cannot be loaded properly.
    */
-  public void load(String configPath, String userConfigFile)
+  public void load(String configPath, String userConfigFile,
+                   String userDefinedTarget, String userDefinedDirective)
       throws Exception
   {
     _configuration_path = configPath;
@@ -189,6 +190,9 @@ public class Configuration {
       // Then the default one is not read.
       readConfiguration(userConf, false);
     }
+
+    setUserDefinedTarget(userDefinedTarget);
+    setUserDefineDirective(userDefinedDirective);
 
     switch(getCurrentDirective()){
       case OPENACC:
@@ -580,7 +584,7 @@ public class Configuration {
    * @param option Option passed as argument. Has priority over configuration
    *               file.
    */
-  public void setUserDefinedTarget(String option) {
+  private void setUserDefinedTarget(String option) {
     if(option != null) {
       _parameters.put(DEFAULT_TARGET, option);
     }
@@ -592,7 +596,7 @@ public class Configuration {
    * @param option Option passed as argument. Has priority over configuration
    *               file.
    */
-  public void setUserDefineDirective(String option) {
+  private void setUserDefineDirective(String option) {
     if(option != null) {
       _parameters.put(DEFAULT_DIRECTIVE, option);
     }

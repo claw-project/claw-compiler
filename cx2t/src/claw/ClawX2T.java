@@ -241,7 +241,8 @@ public class ClawX2T {
 
     // --show-configuration option
     if(cmd.hasOption("sc")) {
-      Configuration.get().load(configuration_path, configuration_file);
+      Configuration.get().load(configuration_path, configuration_file,
+          target_option, directive_option);
       Configuration.get().displayConfig();
       return;
     }
@@ -259,9 +260,8 @@ public class ClawX2T {
 
     // Read the configuration file
     try {
-      Configuration.get().load(configuration_path, configuration_file);
-      Configuration.get().setUserDefinedTarget(target_option);
-      Configuration.get().setUserDefineDirective(directive_option);
+      Configuration.get().load(configuration_path, configuration_file,
+          target_option, directive_option);
       Configuration.get().setMaxColumns(maxColumns);
       Context.init(Configuration.get().getCurrentDirective(),
           Configuration.get().getCurrentTarget(), maxColumns);
