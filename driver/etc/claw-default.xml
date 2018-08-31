@@ -38,9 +38,9 @@ refer to the developer's guide
       - openmp_num_threads -> num_threads(256)
       - openmp_scheduler_chunk_size -> scheduler_chunk_size(256)
     -->
-    <parameter key="openmp_num_teams" value="65536" />
-    <parameter key="openmp_num_threads" value="256" />
-    <parameter key="openmp_scheduler_chunk_size" value="256" />
+    <parameter key="openmp_num_teams" value="0" />
+    <parameter key="openmp_num_threads" value="0" />
+    <parameter key="openmp_scheduler_chunk_size" value="0" />
     <!--
       Specify the order of generation of clauses when nested loops are generated
       possible values are teams_distribute, teams_distribute_simd, teams_distribute_parallel_do, teams_distribute_parallel_do_simd, none
@@ -64,7 +64,7 @@ refer to the developer's guide
       - private: Privatize local arrays if needed.
       - promote: Promote the array instead of making them private if needed.
     -->
-    <parameter key="accelerator_local_strategy" value="private" />
+    <parameter key="accelerator_local_strategy" value="promote" />
 
     <!--
       Collapse loops when possible (!$claw nodep)
