@@ -1,11 +1,11 @@
 PROGRAM test_column_conditional
  USE mo_column , ONLY: compute_column
+ INTEGER :: i
  REAL :: q ( 1 : 5 , 1 : 10 )
  REAL :: t ( 1 : 5 , 1 : 10 )
  INTEGER :: nproma
  INTEGER :: nz
  INTEGER :: p
- INTEGER :: i
 
  nproma = 5
  nz = 10

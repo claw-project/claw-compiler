@@ -1,10 +1,10 @@
 PROGRAM loop_extract
+ INTEGER :: i
  INTEGER :: value1 ( 1 : 10 )
  INTEGER :: value2 ( 1 : 10 )
  INTEGER :: j
  INTEGER :: istart = 1
  INTEGER :: iend = 10
- INTEGER :: i
 
  DO j = 1 , 10 , 1
   value1 ( j ) = j
