@@ -13,7 +13,7 @@ CONTAINS
 
 !$omp target
 !$omp teams
-!$omp distribute
+!$omp distribute  collapse(2)
   DO proma = 1 , nproma , 1
    DO k = 2 , nz , 1
     c = 5.345
