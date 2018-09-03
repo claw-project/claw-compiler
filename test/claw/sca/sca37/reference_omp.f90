@@ -20,8 +20,8 @@ CONTAINS
   INTEGER :: jl
 
 !$omp target
-!$omp teams thread_limit(256) num_teams(65536)
-!$omp distribute dist_schedule(static, 256)
+!$omp teams
+!$omp distribute
   DO jl = 1 , kproma , 1
    DO jvar = 1 , nvar_vdiff , 1
     im = matrix_idx ( jvar )

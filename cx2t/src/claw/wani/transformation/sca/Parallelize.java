@@ -153,11 +153,11 @@ public class Parallelize extends ClawTransformation {
      * region. */
     if(Context.get().getTarget() == Target.GPU
         && (
-            Context.get().getGenerator().getDirectiveLanguage()
-                == CompilerDirective.OPENACC
-                || Context.get().getGenerator().getDirectiveLanguage()
-                == CompilerDirective.OPENMP)
-        )
+        Context.get().getGenerator().getDirectiveLanguage()
+            == CompilerDirective.OPENACC
+            || Context.get().getGenerator().getDirectiveLanguage()
+            == CompilerDirective.OPENMP)
+    )
     {
       Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
       Xnode parallelRegionStart =

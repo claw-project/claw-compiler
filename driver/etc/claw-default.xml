@@ -64,7 +64,7 @@ refer to the developer's guide
       - private: Privatize local arrays if needed.
       - promote: Promote the array instead of making them private if needed.
     -->
-    <parameter key="accelerator_local_strategy" value="promote" />
+    <parameter key="accelerator_local_strategy" value="private" />
 
     <!--
       Collapse loops when possible (!$claw nodep)

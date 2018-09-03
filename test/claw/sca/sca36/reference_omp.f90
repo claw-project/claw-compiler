@@ -25,8 +25,8 @@ CONTAINS
   INTEGER :: proma
 
 !$omp target
-!$omp teams thread_limit(256) num_teams(65536)
-!$omp distribute dist_schedule(static, 256)
+!$omp teams
+!$omp distribute
   DO proma = 1 , nproma , 1
    c = 5.345
    p = c ** ( 2.0 )
