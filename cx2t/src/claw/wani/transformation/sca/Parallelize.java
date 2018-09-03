@@ -151,13 +151,9 @@ public class Parallelize extends ClawTransformation {
 
     /* Check if unsupported statements are located in the future parallel
      * region. */
-    if(Context.get().getTarget() == Target.GPU
-        && (
-        Context.get().getGenerator().getDirectiveLanguage()
-            == CompilerDirective.OPENACC
-            || Context.get().getGenerator().getDirectiveLanguage()
-            == CompilerDirective.OPENMP)
-    )
+    if(Context.isTarget(Target.GPU)
+        && (Context.get().getGenerator().getDirectiveLanguage()
+        != CompilerDirective.NONE))
     {
       Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
       Xnode parallelRegionStart =
@@ -365,11 +361,9 @@ public class Parallelize extends ClawTransformation {
     removePragma();
 
     // Apply specific target transformation
-    if(Context.get().getTarget() == Target.GPU) {
+    if(Context.isTarget(Target.GPU)) {
       transformForGPU(xcodeml);
-    } else if(Context.get().getTarget() == Target.CPU
-        || Context.get().getTarget() == Target.ARM)
-    {
+    } else if(Context.isTarget(Target.CPU) || Context.isTarget(Target.ARM)) {
       transformForCPU(xcodeml);
     } else {
       throw new IllegalTransformationException("Unsupported target " +
@@ -400,16 +394,16 @@ public class Parallelize extends ClawTransformation {
         CompilerDirective.CLAW.getPrefix() + " nodep");
 
     if(!Body.isEmpty(_fctDef.body())) {
-      // Create a nested loop with the new defined dimensions and wrap it around
-      // the whole subroutine's body. This is for the moment a really naive
-      // transformation idea but it is our start point.
-      // Use the first over clause to create it.
+      /* Create a nested loop with the new defined dimensions and wrap it around
+       * the whole subroutine's body. This is for the moment a really naive
+       * transformation idea but it is our start point.
+       * Use the first over clause to create it. */
       NestedDoStatement loops =
           new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
 
-      // Subroutine/function can have a contains section with inner subroutines or
-      // functions. The newly created (nested) do statements should stop before
-      // this contains section if it exists.
+      /* Subroutine/function can have a contains section with inner subroutines
+       * or functions. The newly created (nested) do statements should stop
+       * before this contains section if it exists. */
       Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
       if(contains != null) {
 
@@ -424,7 +418,6 @@ public class Parallelize extends ClawTransformation {
         contains.insertBefore(loops.getOuterStatement());
       } else {
         // No contains section, all the body is copied to the do statements.
-
         Xnode parallelRegionStart =
             Directive.findParallelRegionStart(_fctDef, null);
         Xnode parallelRegionEnd =

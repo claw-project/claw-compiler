@@ -564,14 +564,14 @@ public class ParallelizeForward extends ClawTransformation {
 
     Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
 
-    if(_claw.hasCreateClause() && Context.get().getTarget() == Target.GPU) {
+    if(_claw.hasCreateClause() && Context.isTarget(Target.GPU)) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates, exprStmt, exprStmt);
     }
 
-    if(_claw.hasUpdateClause() && Context.get().getTarget() == Target.GPU) {
+    if(_claw.hasUpdateClause() && Context.isTarget(Target.GPU)) {
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
       {

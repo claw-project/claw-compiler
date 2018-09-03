@@ -82,7 +82,7 @@ public class OpenMp extends DirectiveGenerator {
   @Override
   public String[] getStartParallelDirective(String clauses) {
     // TODO handle possible clauses
-    if(Context.get().getTarget() == Target.GPU) {
+    if(Context.isTarget(Target.GPU)) {
       //!$omp target
       //!$omp teams [num_teams(#)] [thread_limit(#)]
       if(clauses == null) {
@@ -124,7 +124,7 @@ public class OpenMp extends DirectiveGenerator {
 
   @Override
   public String[] getEndParallelDirective() {
-    if(Context.get().getTarget() == Target.GPU) {
+    if(Context.isTarget(Target.GPU)) {
       //!$omp end teams
       //!$omp end target
       return new String[]{
@@ -149,7 +149,7 @@ public class OpenMp extends DirectiveGenerator {
 
   @Override
   public String getParallelKeyword() {
-    if(Context.get().getTarget() == Target.GPU) {
+    if(Context.isTarget(Target.GPU)) {
       return OPENMP_TEAMS;
     } else {
       return OPENMP_PARALLEL;
@@ -280,7 +280,7 @@ public class OpenMp extends DirectiveGenerator {
       scheduler = String.format("%s(%s, %d)", OPENMP_DIST_SCHEDULE,
           OPENMP_SCHEDULE_KIND, chunkSize);
     }
-    if(Context.get().getTarget() == Target.GPU) {
+    if(Context.isTarget(Target.GPU)) {
       //!$omp distribute [collapse(#)] [dist_schedule(static,#)]
       if(clauses.isEmpty()) {
         return new String[]{
@@ -308,7 +308,7 @@ public class OpenMp extends DirectiveGenerator {
 
   @Override
   public String[] getEndLoopDirective() {
-    if(Context.get().getTarget() == Target.GPU) {
+    if(Context.isTarget(Target.GPU)) {
       //!$omp end distribute
       return new String[]{
           String.format(FORMAT3, OPENMP_PREFIX, OPENMP_END, OPENMP_DISTRIBUTE),

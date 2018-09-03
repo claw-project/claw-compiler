@@ -126,4 +126,14 @@ public class Context {
   public ModuleCache getModuleCache() {
     return _moduleCache;
   }
+
+  /**
+   * Check is current target is corresponding to the given one.
+   *
+   * @param value Target value to check against.
+   * @return True if the target is identical to the given one. False otherwise.
+   */
+  public static boolean isTarget(Target value) {
+    return (get().getTarget() == value);
+  }
 }
