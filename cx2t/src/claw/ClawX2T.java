@@ -262,21 +262,6 @@ public class ClawX2T {
     try {
       Configuration.get().load(configuration_path, configuration_file,
           target_option, directive_option, maxColumns);
-
-      if(Context.get().getCompilerDirective() == CompilerDirective.OPENACC) {
-        OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
-        OpenAccExecutionMode mode =
-            ((OpenAccConfiguration) Configuration.get().accelerator()).getMode();
-        openaccGen.setExecutionMode(mode);
-      } else if(Context.get().getCompilerDirective()
-          == CompilerDirective.OPENMP)
-      {
-        OpenMp openmpGen = (OpenMp) Context.get().getGenerator();
-        OpenMpExecutionMode mode =
-            ((OpenMpConfiguration) Configuration.get().accelerator()).getMode();
-        openmpGen.setExecutionMode(mode);
-      }
-
     } catch(Exception ex) {
       error("internal", 0, 0, ex.getMessage());
       return;

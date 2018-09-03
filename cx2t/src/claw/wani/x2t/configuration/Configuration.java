@@ -9,7 +9,6 @@ import claw.shenron.transformation.BlockTransformation;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
-import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.wani.transformation.ClawBlockTransformation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,8 +87,6 @@ public class Configuration {
   private String[] _transSetPaths;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
-
-  private DirectiveGenerator _generator;
 
   /**
    * private ctor
@@ -212,7 +209,8 @@ public class Configuration {
         _accelerator = new AcceleratorConfiguration(_parameters);
     }
 
-    Context.init(getCurrentDirective(), getCurrentTarget(), userMaxColumns);
+    Context.init(getCurrentDirective(), getCurrentTarget(), _accelerator,
+        userMaxColumns);
   }
 
   /**
@@ -463,7 +461,7 @@ public class Configuration {
     for(int i = 0; i < parameters.getLength(); ++i) {
       Element e = (Element) parameters.item(i);
       String key = e.getAttribute(KEY_ATTR);
-      if(overwrite && _parameters.containsKey(key)) { // Parameter overwritten
+      if(overwrite) { // Parameter overwritten
         _parameters.remove(key);
       }
       _parameters.put(key, e.getAttribute(VALUE_ATTR));

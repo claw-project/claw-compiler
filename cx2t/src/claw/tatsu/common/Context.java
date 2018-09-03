@@ -9,9 +9,13 @@ import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
-import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.AcceleratorConfiguration;
+import claw.wani.x2t.configuration.OpenAccConfiguration;
+import claw.wani.x2t.configuration.OpenMpConfiguration;
 
 /**
+ * Class holding all information needed during a translation.
+ *
  * @author clementval
  */
 public class Context {
@@ -24,7 +28,17 @@ public class Context {
   private final Target _target;
   private final ModuleCache _moduleCache;
 
+  /**
+   * Create a new context.
+   *
+   * @param compilerDirective        Compiler directive to used.
+   * @param target                   Target for the current translation.
+   * @param acceleratorConfiguration Configuration for the accelerator
+   *                                 translation.
+   * @param maxColumns               Max columns.
+   */
   private Context(CompilerDirective compilerDirective, Target target,
+                  AcceleratorConfiguration acceleratorConfiguration,
                   int maxColumns)
   {
     if(compilerDirective == null) {
@@ -32,7 +46,7 @@ public class Context {
     } else {
       _compilerDirective = compilerDirective;
     }
-    _directiveGenerator = instantiateGenerator();
+    _directiveGenerator = instantiateGenerator(acceleratorConfiguration);
     if(target == null) {
       _target = Target.NONE;
     } else {
@@ -42,21 +56,52 @@ public class Context {
     _moduleCache = new ModuleCache();
   }
 
+  /**
+   * Initialize the context.
+   *
+   * @param compilerDirective        Compiler directive to used.
+   * @param target                   Target for the current translation.
+   * @param acceleratorConfiguration Configuration for the accelerator
+   *                                 translation.
+   * @param maxColumns               Max columns.
+   */
   public static void init(CompilerDirective compilerDirective, Target target,
+                          AcceleratorConfiguration acceleratorConfiguration,
                           int maxColumns)
   {
-    _instance = new Context(compilerDirective, target, maxColumns);
+    _instance = new Context(compilerDirective, target, acceleratorConfiguration,
+        maxColumns);
   }
 
+  /**
+   * Get the unique context instance.
+   *
+   * @return Current context instance.
+   */
   public static Context get() {
     return _instance;
   }
 
-  private DirectiveGenerator instantiateGenerator() {
+  /**
+   * Initialize the directive generator based on the selected directive.
+   *
+   * @param acceleratorConfiguration Configuration for the accelerator
+   *                                 translation.
+   * @return Newly created generator.
+   */
+  private DirectiveGenerator instantiateGenerator(AcceleratorConfiguration
+                                                      acceleratorConfiguration)
+  {
     if(_compilerDirective == CompilerDirective.OPENACC) {
-      return new OpenAcc();
+      OpenAcc gen = new OpenAcc();
+      gen.setExecutionMode(
+          ((OpenAccConfiguration) acceleratorConfiguration).getMode());
+      return gen;
     } else if(_compilerDirective == CompilerDirective.OPENMP) {
-      return new OpenMp();
+      OpenMp gen = new OpenMp();
+      gen.setExecutionMode(
+          ((OpenMpConfiguration) acceleratorConfiguration).getMode());
+      return gen;
     } else {
       return new DirectiveNone();
     }
