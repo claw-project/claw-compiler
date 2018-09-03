@@ -19,24 +19,25 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   REAL , INTENT(INOUT) :: s ( 1 : nproma )
-  REAL , ALLOCATABLE :: y ( : )
+  REAL , ALLOCATABLE :: y ( : , : )
   INTEGER :: k
   REAL :: c
   INTEGER :: proma
 
   IF ( ( .NOT. allocated ( y ) ) ) THEN
-   ALLOCATE ( y ( nz ) )
+   ALLOCATE ( y ( nproma , nz ) )
   END IF
-!$acc data present(t,q,s)
+!$acc data present(t,q,s) pcreate(y)
 !$acc parallel
-!$acc loop gang vector private(y)
+!$acc loop gang vector
   DO proma = 1 , nproma , 1
    c = 5.345
 !$acc loop seq
    DO k = 2 , nz , 1
     t ( proma , k ) = c * k
-    y ( k ) = t ( proma , k ) + s ( proma )
-    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c + y ( k )
+    y ( proma , k ) = t ( proma , k ) + s ( proma )
+    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c + y ( proma ,&
+     k )
    END DO
    q ( proma , nz ) = q ( proma , nz ) * c
   END DO
