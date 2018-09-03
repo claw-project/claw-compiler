@@ -8,11 +8,14 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.wani.x2t.configuration.AcceleratorConfiguration;
+import claw.wani.x2t.configuration.OpenAccConfiguration;
 import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -45,7 +48,8 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void basicFunctionDefinitionTest() {
-    Context.init(CompilerDirective.NONE, Target.GPU, 80);
+    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
+    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
     FfunctionDefinition fctDef =
         XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
@@ -70,7 +74,8 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void findContainingXmodTest() {
-    Context.init(CompilerDirective.NONE, Target.GPU, 80);
+    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
+    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
     File f = new File(TestConstant.TEST_DECLARATIONS);
     assertTrue(f.exists());
     XcodeProgram xcodeml =

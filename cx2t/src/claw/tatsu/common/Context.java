@@ -46,7 +46,21 @@ public class Context {
     } else {
       _compilerDirective = compilerDirective;
     }
-    _directiveGenerator = instantiateGenerator(acceleratorConfiguration);
+
+    if(acceleratorConfiguration instanceof OpenAccConfiguration) {
+      OpenAcc gen = new OpenAcc();
+      gen.setExecutionMode(
+          ((OpenAccConfiguration) acceleratorConfiguration).getMode());
+      _directiveGenerator = gen;
+    } else if (acceleratorConfiguration instanceof OpenMpConfiguration) {
+      OpenMp gen = new OpenMp();
+      gen.setExecutionMode(
+          ((OpenMpConfiguration) acceleratorConfiguration).getMode());
+      _directiveGenerator = gen;
+    } else {
+      _directiveGenerator = new DirectiveNone();
+    }
+
     if(target == null) {
       _target = Target.NONE;
     } else {
@@ -80,31 +94,6 @@ public class Context {
    */
   public static Context get() {
     return _instance;
-  }
-
-  /**
-   * Initialize the directive generator based on the selected directive.
-   *
-   * @param acceleratorConfiguration Configuration for the accelerator
-   *                                 translation.
-   * @return Newly created generator.
-   */
-  private DirectiveGenerator instantiateGenerator(AcceleratorConfiguration
-                                                      acceleratorConfiguration)
-  {
-    if(_compilerDirective == CompilerDirective.OPENACC) {
-      OpenAcc gen = new OpenAcc();
-      gen.setExecutionMode(
-          ((OpenAccConfiguration) acceleratorConfiguration).getMode());
-      return gen;
-    } else if(_compilerDirective == CompilerDirective.OPENMP) {
-      OpenMp gen = new OpenMp();
-      gen.setExecutionMode(
-          ((OpenMpConfiguration) acceleratorConfiguration).getMode());
-      return gen;
-    } else {
-      return new DirectiveNone();
-    }
   }
 
   public int getMaxColumns() {
