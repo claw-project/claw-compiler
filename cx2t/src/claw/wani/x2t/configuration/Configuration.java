@@ -7,6 +7,7 @@ package claw.wani.x2t.configuration;
 import claw.ClawVersion;
 import claw.shenron.transformation.BlockTransformation;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.wani.transformation.ClawBlockTransformation;
@@ -147,12 +148,17 @@ public class Configuration {
   /**
    * Constructs a new configuration object from the give configuration file.
    *
-   * @param configPath     Path to the configuration files and XSD schemas.
-   * @param userConfigFile Path to the alternative configuration.
+   * @param configPath           Path to the configuration files and XSD
+   *                             schemas.
+   * @param userConfigFile       Path to the alternative configuration.
+   * @param userDefinedTarget    Target option passed by user. Can be null.
+   * @param userDefinedDirective Directive option passed by user. Can be null.
+   * @param userMaxColumns       Max column option passed by user. Can be 0.
    * @throws Exception If configuration cannot be loaded properly.
    */
   public void load(String configPath, String userConfigFile,
-                   String userDefinedTarget, String userDefinedDirective)
+                   String userDefinedTarget, String userDefinedDirective,
+                   int userMaxColumns)
       throws Exception
   {
     _configuration_path = configPath;
@@ -193,8 +199,9 @@ public class Configuration {
 
     setUserDefinedTarget(userDefinedTarget);
     setUserDefineDirective(userDefinedDirective);
+    setMaxColumns(userMaxColumns);
 
-    switch(getCurrentDirective()){
+    switch(getCurrentDirective()) {
       case OPENACC:
         _accelerator = new OpenAccConfiguration(_parameters);
         break;
@@ -204,6 +211,8 @@ public class Configuration {
       default:
         _accelerator = new AcceleratorConfiguration(_parameters);
     }
+
+    Context.init(getCurrentDirective(), getCurrentTarget(), userMaxColumns);
   }
 
   /**
@@ -673,8 +682,10 @@ public class Configuration {
    *
    * @param value New value of the max column parameter.
    */
-  public void setMaxColumns(int value) {
-    _maxColumns = value;
+  private void setMaxColumns(int value) {
+    if(value > 0) {
+      _maxColumns = value;
+    }
   }
 
   /**

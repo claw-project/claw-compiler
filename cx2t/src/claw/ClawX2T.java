@@ -242,7 +242,7 @@ public class ClawX2T {
     // --show-configuration option
     if(cmd.hasOption("sc")) {
       Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option);
+          target_option, directive_option, maxColumns);
       Configuration.get().displayConfig();
       return;
     }
@@ -261,10 +261,7 @@ public class ClawX2T {
     // Read the configuration file
     try {
       Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option);
-      Configuration.get().setMaxColumns(maxColumns);
-      Context.init(Configuration.get().getCurrentDirective(),
-          Configuration.get().getCurrentTarget(), maxColumns);
+          target_option, directive_option, maxColumns);
 
       if(Context.get().getCompilerDirective() == CompilerDirective.OPENACC) {
         OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
