@@ -48,8 +48,7 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void basicFunctionDefinitionTest() {
-    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
-    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     FfunctionDefinition fctDef =
         XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
@@ -74,8 +73,7 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void findContainingXmodTest() {
-    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
-    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     File f = new File(TestConstant.TEST_DECLARATIONS);
     assertTrue(f.exists());
     XcodeProgram xcodeml =

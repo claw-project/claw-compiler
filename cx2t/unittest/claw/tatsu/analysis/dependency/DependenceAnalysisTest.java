@@ -10,16 +10,13 @@ import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.wani.x2t.configuration.AcceleratorConfiguration;
-import claw.wani.x2t.configuration.OpenAccConfiguration;
+
 import helper.TestConstant;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -118,8 +115,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
-    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);
@@ -147,8 +143,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
-    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);

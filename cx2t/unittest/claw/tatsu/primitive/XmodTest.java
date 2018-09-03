@@ -24,23 +24,22 @@ public class XmodTest {
 
   @Test
   public void getSuffixTest() {
-    AcceleratorConfiguration config = new OpenAccConfiguration(new HashMap<>());
-    Context.init(CompilerDirective.OPENACC, Target.GPU, config, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     // .[directive].[target].claw
     assertEquals(".openacc.gpu.claw.xmod", Xmod.getSuffix());
-    Context.init(CompilerDirective.OPENMP, Target.CPU, config, 80);
+    Context.init(CompilerDirective.OPENMP, Target.CPU, null, 80);
     assertEquals(".openmp.cpu.claw.xmod", Xmod.getSuffix());
-    Context.init(CompilerDirective.NONE, Target.CPU, config, 80);
+    Context.init(CompilerDirective.NONE, Target.CPU, null, 80);
     assertEquals(".none.cpu.claw.xmod", Xmod.getSuffix());
-    Context.init(CompilerDirective.OPENMP, Target.MIC, config, 80);
+    Context.init(CompilerDirective.OPENMP, Target.MIC, null, 80);
     assertEquals(".openmp.mic.claw.xmod", Xmod.getSuffix());
-    Context.init(CompilerDirective.NONE, Target.FPGA, config, 80);
+    Context.init(CompilerDirective.NONE, Target.FPGA, null, 80);
     assertEquals(".none.fpga.claw.xmod", Xmod.getSuffix());
-    Context.init(CompilerDirective.OPENACC, null, config, 80);
+    Context.init(CompilerDirective.OPENACC, null, null, 80);
     assertEquals(".openacc.none.claw.xmod", Xmod.getSuffix());
     Context.init(null, null, null, 80);
     assertEquals(".none.none.claw.xmod", Xmod.getSuffix());
-    Context.init(CompilerDirective.NONE, Target.GPU, config, 80);
+    Context.init(CompilerDirective.NONE, Target.GPU, null, 80);
     assertEquals(".none.gpu.claw.xmod", Xmod.getSuffix());
   }
 }
