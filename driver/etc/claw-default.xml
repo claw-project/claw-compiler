@@ -17,18 +17,18 @@ refer to the developer's guide
     <!--
       Define the default values to be used for the clauses.
       If value set to 0, compiler default value used.
-      - openacc_vector_length -> vector_length(128)
-      - openacc_num_gangs -> num_gangs(8)
-      - openacc_num_workers -> num_workers(8)
+      - acc_vector_length -> vector_length(128)
+      - acc_num_gangs -> num_gangs(8)
+      - acc_num_workers -> num_workers(8)
     -->
-    <parameter key="openacc_vector_length" value="128" />
-    <parameter key="openacc_num_gangs" value="8" />
-    <parameter key="openacc_num_workers" value="8" />
+    <parameter key="acc_vector_length" value="128" />
+    <parameter key="acc_num_gangs" value="8" />
+    <parameter key="acc_num_workers" value="8" />
     <!--
       Specify the order of generation of clauses when nested loops are generated
       possible values are vector_gang, gang_vector, vector, gang, none
     -->
-    <parameter key="openacc_execution_mode" value="gang_vector" />
+    <parameter key="acc_execution_mode" value="gang_vector" />
 
     <!-- OpenMP default information -->
     <!--

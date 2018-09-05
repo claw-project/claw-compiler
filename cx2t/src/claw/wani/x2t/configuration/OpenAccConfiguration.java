@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class OpenAccConfiguration extends AcceleratorConfiguration {
 
-  private static final String OPENACC_NUM_WORKERS = "openacc_num_workers";
-  private static final String OPENACC_NUM_GANGS = "openacc_num_gangs";
-  private static final String OPENACC_VECTOR_LENGTH = "openacc_vector_length";
-  private static final String OPENACC_EXECUTION_MODE = "openacc_execution_mode";
+  private static final String OPENACC_NUM_WORKERS = "acc_num_workers";
+  private static final String OPENACC_NUM_GANGS = "acc_num_gangs";
+  private static final String OPENACC_VECTOR_LENGTH = "acc_vector_length";
+  private static final String OPENACC_EXECUTION_MODE = "acc_execution_mode";
 
   private int _numWorkers = 0;
   private int _numGangs = 0;

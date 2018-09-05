@@ -212,9 +212,9 @@ An option allows to use a different configuration while using the compiler.
 
       <!-- OpenACC default information -->
       <!-- Define the default values to be used for the clauses. If value set to 0, compiler default value used. -->
-      <parameter key="openacc_vector_length" value="128"/> <!-- vector_length(128) -->
-      <parameter key="openacc_num_gangs" value="8"/>       <!-- num_gangs(8) -->
-      <parameter key="openacc_num_workers" value="8"/>     <!-- num_workers(8) -->
+      <parameter key="acc_vector_length" value="128"/> <!-- vector_length(128) -->
+      <parameter key="acc_num_gangs" value="8"/>       <!-- num_gangs(8) -->
+      <parameter key="acc_num_workers" value="8"/>     <!-- num_workers(8) -->
       <!-- Specify the order of generation of clauses when nested loops are generated -->
       <!-- possible values are vector_gang, gang_vector, vector, gang, none -->
       <parameter key="openacc_execution_mode" value="vector_gang"/>
