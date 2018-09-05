@@ -4,8 +4,7 @@
  */
 package claw.wani.x2t.configuration;
 
-import claw.tatsu.directive.generator.openacc.OpenAccExecutionMode;
-import claw.wani.x2t.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.generator.OpenAccExecutionMode;
 
 import java.util.Map;
 

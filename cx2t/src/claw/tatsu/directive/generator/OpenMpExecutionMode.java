@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.directive.generator.openmp;
+package claw.tatsu.directive.generator;
 
 import claw.tatsu.TatsuConstant;
 

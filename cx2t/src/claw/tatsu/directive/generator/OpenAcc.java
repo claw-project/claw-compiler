@@ -8,7 +8,6 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
-import claw.tatsu.directive.generator.openacc.OpenAccExecutionMode;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 
 import java.util.Arrays;
