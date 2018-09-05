@@ -16,11 +16,11 @@ import java.util.Map;
  */
 public class OpenMpConfiguration extends AcceleratorConfiguration {
 
-  private static final String OPENMP_NUM_THREADS = "openmp_num_threads";
-  private static final String OPENMP_NUM_TEAMS = "openmp_num_teams";
+  private static final String OPENMP_NUM_THREADS = "omp_num_threads";
+  private static final String OPENMP_NUM_TEAMS = "omp_num_teams";
   private static final String OPENMP_SCHEDULER_CHUNK_SIZE =
-      "openmp_scheduler_chunk_size";
-  private static final String OPENMP_EXECUTION_MODE = "openmp_execution_mode";
+      "omp_scheduler_chunk_size";
+  private static final String OPENMP_EXECUTION_MODE = "omp_execution_mode";
 
   private int _numThreads = 0;
   private int _numTeams = 0;

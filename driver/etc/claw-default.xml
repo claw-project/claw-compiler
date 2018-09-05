@@ -34,18 +34,18 @@ refer to the developer's guide
     <!--
       Define the default values to be used for the clauses.
       If value set to 0, compiler default value used.
-      - openmp_num_teams -> num_teams(65536)
-      - openmp_num_threads -> num_threads(256)
-      - openmp_scheduler_chunk_size -> scheduler_chunk_size(256)
+      - omp_num_teams -> num_teams(65536)
+      - omp_num_threads -> num_threads(256)
+      - omp_scheduler_chunk_size -> scheduler_chunk_size(256)
     -->
-    <parameter key="openmp_num_teams" value="0" />
-    <parameter key="openmp_num_threads" value="0" />
-    <parameter key="openmp_scheduler_chunk_size" value="0" />
+    <parameter key="omp_num_teams" value="0" />
+    <parameter key="omp_num_threads" value="0" />
+    <parameter key="omp_scheduler_chunk_size" value="0" />
     <!--
       Specify the order of generation of clauses when nested loops are generated
       possible values are teams_distribute, teams_distribute_simd, teams_distribute_parallel_do, teams_distribute_parallel_do_simd, none
     -->
-    <parameter key="openmp_execution_mode" value="teams_distribute" />
+    <parameter key="omp_execution_mode" value="teams_distribute" />
 
     <!-- Accelerator (OpenACC and OpenMP) default information -->
     <!--
