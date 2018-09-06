@@ -74,21 +74,10 @@ public final class Directive {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      String prefix = "";
-      switch(Configuration.get().getCurrentDirective()) {
-        case OPENACC:
-          prefix = OpenAcc.OPENACC_DEBUG_PREFIX;
-          break;
-        case OPENMP:
-          prefix = OpenMp.OPENMP_DEBUG_PREFIX;
-          break;
-        default:
-          throw new UnsupportedOperationException();
-      }
       Message.debug(String.format(
           "%s generated loop %s directive for loop at line: %d",
-          prefix, (noDependency == null) ? "seq" : "",
-          doStmt.lineNo()));
+          Context.get().getGenerator().getPrefix(),
+          (noDependency == null) ? "seq" : "", doStmt.lineNo()));
     }
 
     return Configuration.get().accelerator().hasCollapseStrategy()
