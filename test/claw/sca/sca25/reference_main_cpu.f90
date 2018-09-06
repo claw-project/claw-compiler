@@ -10,9 +10,7 @@ PROGRAM test_abstraction25
  DO p = 1 , nproma , 1
   q ( p , 1 ) = 0.0
  END DO
-!$ACC data copy(q,t)
  CALL compute ( nz , q ( : , : ) , nproma = nproma )
-!$ACC end data
  PRINT * , sum ( q )
 END PROGRAM test_abstraction25
 

@@ -23,7 +23,12 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String getPrefix() {
-    return null;
+    return "";
+  }
+
+  @Override
+  public String getPrefixCont() {
+    return "";
   }
 
   @Override

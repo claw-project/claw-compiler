@@ -55,8 +55,8 @@ function(claw_add_basic_test)
   set(executable_transformed transformed_code_${claw_add_basic_test_NAME})
 
   # Define directory for build
-  set(XMOD_DIR "${CMAKE_CURRENT_BINARY_DIR}/__xmod__")
-  set(OMNI_TMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/__omni_tmp__")
+  set(XMOD_DIR "${claw_add_basic_test_WORKING_DIRECTORY}/__xmod__")
+  set(OMNI_TMP_DIR "${claw_add_basic_test_WORKING_DIRECTORY}/__omni_tmp__")
 
   # Directory where OMNI Compiler xmod files will be placed
   if (NOT EXISTS ${XMOD_DIR})
@@ -256,7 +256,8 @@ function(claw_add_advanced_test_set)
         WORKING_DIRECTORY ${claw_add_advanced_test_set_DIRECTORY}/${t_name}
         CLAW_FLAGS ${CLAW_FLAGS_${t_name}}
         CLAW_FLAGS_TARGET_CPU ${CLAW_FLAGS_TARGET_CPU_${t_name}}
-        CLAW_FLAGS_TARGET_GPU ${CLAW_FLAGS_TARGET_GPU_${t_name}}
+        CLAW_FLAGS_TARGET_ACC ${CLAW_FLAGS_TARGET_ACC_${t_name}}
+        CLAW_FLAGS_TARGET_OMP ${CLAW_FLAGS_TARGET_OMP_${t_name}}
         ${test_option_compile}
         ${test_option_compare}
       )
@@ -268,7 +269,7 @@ endfunction()
 function(claw_add_advanced_test)
   set(options DEBUG COMPILE COMPARE IGNORE)
   set(oneValueArgs NAME WORKING_DIRECTORY)
-  set(multiValueArgs CLAW_FLAGS CLAW_FLAGS_TARGET_CPU CLAW_FLAGS_TARGET_GPU)
+  set(multiValueArgs CLAW_FLAGS CLAW_FLAGS_TARGET_CPU CLAW_FLAGS_TARGET_ACC CLAW_FLAGS_TARGET_OMP)
   cmake_parse_arguments(claw_add_advanced_test "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
 
@@ -288,20 +289,28 @@ function(claw_add_advanced_test)
   set(ORIGINAL_FILE ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column.f90)
   set(OUTPUT_FILE_CPU
     ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_cpu.f90)
-  set(OUTPUT_FILE_GPU
-    ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_gpu.f90)
+  set(OUTPUT_FILE_ACC
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_acc.f90)
+  set(OUTPUT_FILE_OMP
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_omp.f90)
   set(REFERENCE_FILE_CPU
     ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_cpu.f90)
-  set(REFERENCE_FILE_GPU
-    ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_gpu.f90)
+  set(REFERENCE_FILE_ACC
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_acc.f90)
+  set(REFERENCE_FILE_OMP
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_omp.f90)
   set(OUTPUT_MAIN_CPU
     ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_main_cpu.f90)
-  set(OUTPUT_MAIN_GPU
-    ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_main_gpu.f90)
+  set(OUTPUT_MAIN_ACC
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_main_acc.f90)
+  set(OUTPUT_MAIN_OMP
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_main_omp.f90)
   set(REFERENCE_MAIN_CPU
     ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_main_cpu.f90)
-  set(REFERENCE_MAIN_GPU
-    ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_main_gpu.f90)
+  set(REFERENCE_MAIN_ACC
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_main_acc.f90)
+  set(REFERENCE_MAIN_OMP
+    ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_main_omp.f90)
 
   # If the test case has an extra module.
   if(EXISTS ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column_extra.f90)
@@ -309,18 +318,23 @@ function(claw_add_advanced_test)
       ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column_extra.f90)
     set(OUTPUT_FILE_EXTRA_CPU
       ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_extra_cpu.f90)
-    set(OUTPUT_FILE_EXTRA_GPU
-      ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_extra_gpu.f90)
+    set(OUTPUT_FILE_EXTRA_ACC
+      ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_extra_acc.f90)
+    set(OUTPUT_FILE_EXTRA_OMP
+      ${claw_add_advanced_test_WORKING_DIRECTORY}/transformed_code_extra_omp.f90)
     set(REFERENCE_FILE_EXTRA_CPU
       ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_extra_cpu.f90)
-    set(REFERENCE_FILE_EXTRA_GPU
-      ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_extra_gpu.f90)
+    set(REFERENCE_FILE_EXTRA_ACC
+      ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_extra_acc.f90)
+    set(REFERENCE_FILE_EXTRA_OMP
+      ${claw_add_advanced_test_WORKING_DIRECTORY}/reference_extra_omp.f90)
   endif()
 
   # Define executable file name
   set(EXECUTABLE_ORIGINAL original_code_${claw_add_advanced_test_NAME})
   set(EXECUTABLE_TRANSFORMED_CPU transformed_code_cpu_${claw_add_advanced_test_NAME})
-  set(EXECUTABLE_TRANSFORMED_GPU transformed_code_gpu_${claw_add_advanced_test_NAME})
+  set(EXECUTABLE_TRANSFORMED_ACC transformed_code_acc_${claw_add_advanced_test_NAME})
+  set(EXECUTABLE_TRANSFORMED_OMP transformed_code_omp_${claw_add_advanced_test_NAME})
 
   # Define directory for build
   set(XMOD_DIR ${claw_add_advanced_test_WORKING_DIRECTORY}/__xmod__)
@@ -349,17 +363,30 @@ function(claw_add_advanced_test)
     COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE}"
   )
 
-  # Execute the CLAW Compiler for GPU target
+  # Execute the CLAW Compiler for GPU target with ACC directive
   add_custom_command(
-    OUTPUT  ${OUTPUT_FILE_GPU}
+    OUTPUT  ${OUTPUT_FILE_ACC}
     COMMAND touch ${ORIGINAL_FILE} # to force new compilation
     COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
-      ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu
-      ${claw_add_advanced_test_CLAW_FLAGS_TARGET_GPU}
-      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_GPU} ${ORIGINAL_FILE}
+      ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openacc
+      ${claw_add_advanced_test_CLAW_FLAGS_TARGET_ACC}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_ACC} ${ORIGINAL_FILE}
     WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
     DEPENDS ${ORIGINAL_FILE}
-    COMMENT "${CLAWFC} for GPU target on file ${ORIGINAL_FILE}"
+    COMMENT "${CLAWFC} for GPU target with ACC directive on file ${ORIGINAL_FILE}"
+  )
+
+  # Execute the CLAW Compiler for GPU target with OMP directive
+  add_custom_command(
+    OUTPUT  ${OUTPUT_FILE_OMP}
+    COMMAND touch ${ORIGINAL_FILE} # to force new compilation
+    COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+      ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openmp
+      ${claw_add_advanced_test_CLAW_FLAGS_TARGET_OMP}
+      ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_OMP} ${ORIGINAL_FILE}
+    WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
+    DEPENDS ${ORIGINAL_FILE}
+    COMMENT "${CLAWFC} for GPU target with OMP directive on file ${ORIGINAL_FILE}"
   )
 
   if(EXISTS ${claw_add_advanced_test_WORKING_DIRECTORY}/mo_column_extra.f90)
@@ -377,18 +404,32 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${ORIGINAL_FILE_EXTRA}"
     )
 
-    # Execute the CLAW Compiler for GPU target
+    # Execute the CLAW Compiler for GPU target with ACC directive
     add_custom_command(
-      OUTPUT  ${OUTPUT_FILE_EXTRA_GPU}
+      OUTPUT  ${OUTPUT_FILE_EXTRA_ACC}
       COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
-        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu
-        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_GPU}
-        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_GPU}
+        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openacc
+        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_ACC}
+        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_ACC}
         ${ORIGINAL_FILE_EXTRA}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
-      DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_GPU}
-      COMMENT "${CLAWFC} for GPU target on file ${ORIGINAL_FILE_EXTRA}"
+      DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_ACC}
+      COMMENT "${CLAWFC} for GPU target with ACC directive on file ${ORIGINAL_FILE_EXTRA}"
+    )
+
+    # Execute the CLAW Compiler for GPU target with OMP directive
+    add_custom_command(
+      OUTPUT  ${OUTPUT_FILE_EXTRA_OMP}
+      COMMAND touch ${ORIGINAL_FILE_EXTRA} # to force new compilation
+      COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openmp
+        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_OMP}
+        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_FILE_EXTRA_OMP}
+        ${ORIGINAL_FILE_EXTRA}
+      WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
+      DEPENDS ${ORIGINAL_FILE_EXTRA} ${OUTPUT_FILE_OMP}
+      COMMENT "${CLAWFC} for GPU target with OMP directive on file ${ORIGINAL_FILE_EXTRA}"
     )
 
     # Execute the CLAW Compiler for CPU target
@@ -404,17 +445,30 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW Compiler for GPU target
+    # Execute the CLAW Compiler for GPU target with ACC directive
     add_custom_command(
-      OUTPUT  ${OUTPUT_MAIN_GPU}
+      OUTPUT  ${OUTPUT_MAIN_ACC}
       COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
-        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu
-        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_GPU}
-        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
+        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openacc
+        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_ACC}
+        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_ACC} ${MAIN_F90}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
-      DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU} ${OUTPUT_FILE_EXTRA_GPU}
-      COMMENT "${CLAWFC} for GPU target on file ${MAIN_F90}"
+      DEPENDS ${MAIN_F90} ${OUTPUT_FILE_ACC} ${OUTPUT_FILE_EXTRA_ACC}
+      COMMENT "${CLAWFC} for GPU target with ACC directive on file ${MAIN_F90}"
+    )
+
+    # Execute the CLAW Compiler for GPU target with OMP directive
+    add_custom_command(
+      OUTPUT  ${OUTPUT_MAIN_OMP}
+      COMMAND touch ${MAIN_F90} # to force new compilation
+      COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openmp
+        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_OMP}
+        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_OMP} ${MAIN_F90}
+      WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
+      DEPENDS ${MAIN_F90} ${OUTPUT_FILE_OMP} ${OUTPUT_FILE_EXTRA_OMP}
+      COMMENT "${CLAWFC} for GPU target with OMP directive on file ${MAIN_F90}"
     )
   else()
 
@@ -431,17 +485,30 @@ function(claw_add_advanced_test)
       COMMENT "${CLAWFC} for CPU target on file ${MAIN_F90}"
     )
 
-    # Execute the CLAW Compiler for GPU target
+    # Execute the CLAW Compiler for GPU target with ACC directive
     add_custom_command(
-      OUTPUT  ${OUTPUT_MAIN_GPU}
+      OUTPUT  ${OUTPUT_MAIN_ACC}
       #COMMAND touch ${MAIN_F90} # to force new compilation
       COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
-        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu
-        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_GPU}
-        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_GPU} ${MAIN_F90}
+        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openacc
+        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_ACC}
+        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_ACC} ${MAIN_F90}
       WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
-      DEPENDS ${MAIN_F90} ${OUTPUT_FILE_GPU}
-      COMMENT "${CLAWFC} for GPU target on file ${MAIN_F90}"
+      DEPENDS ${MAIN_F90} ${OUTPUT_FILE_ACC}
+      COMMENT "${CLAWFC} for GPU target with ACC directive on file ${MAIN_F90}"
+    )
+
+    # Execute the CLAW Compiler for GPU target with OMP directive
+    add_custom_command(
+      OUTPUT  ${OUTPUT_MAIN_OMP}
+      #COMMAND touch ${MAIN_F90} # to force new compilation
+      COMMAND ${CMAKE_COMMAND} -E env CLAW_TRANS_SET_PATH=${CLAW_TRANS_SET_PATH}
+        ${CLAWFC} ${claw_add_advanced_test_CLAW_FLAGS} --target=gpu --directive=openmp
+        ${claw_add_advanced_test_CLAW_FLAGS_TARGET_OMP}
+        ${DEBUG_FLAG} -J ${XMOD_DIR} -o ${OUTPUT_MAIN_OMP} ${MAIN_F90}
+      WORKING_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY}
+      DEPENDS ${MAIN_F90} ${OUTPUT_FILE_OMP}
+      COMMENT "${CLAWFC} for GPU target with OMP directive on file ${MAIN_F90}"
     )
   endif()
 
@@ -449,9 +516,9 @@ function(claw_add_advanced_test)
   add_custom_target(
     clean-${claw_add_advanced_test_NAME}
     COMMAND rm -f
-    ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_GPU}
-    ${OUTPUT_MAIN_CPU} ${OUTPUT_MAIN_GPU}
-    ${OUTPUT_FILE_EXTRA_CPU} ${OUTPUT_FILE_EXTRA_GPU}
+    ${OUTPUT_FILE_CPU} ${OUTPUT_FILE_ACC} ${OUTPUT_FILE_OMP}
+    ${OUTPUT_MAIN_CPU} ${OUTPUT_MAIN_ACC} ${OUTPUT_MAIN_OMP}
+    ${OUTPUT_FILE_EXTRA_CPU} ${OUTPUT_FILE_EXTRA_ACC} ${OUTPUT_FILE_EXTRA_OMP}
     ${XMOD_DIR}/*
   )
 
@@ -476,9 +543,12 @@ function(claw_add_advanced_test)
     add_executable(${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL
       "${OUTPUT_FILE_CPU}" "${OUTPUT_FILE_EXTRA_CPU}" "${OUTPUT_MAIN_CPU}")
     target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
-    add_executable(${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL
-      "${OUTPUT_FILE_GPU}" "${OUTPUT_FILE_EXTRA_GPU}" "${OUTPUT_MAIN_GPU}")
-    target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
+    add_executable(${EXECUTABLE_TRANSFORMED_ACC} EXCLUDE_FROM_ALL
+      "${OUTPUT_FILE_ACC}" "${OUTPUT_FILE_EXTRA_ACC}" "${OUTPUT_MAIN_ACC}")
+    target_compile_definitions(${EXECUTABLE_TRANSFORMED_ACC} PRIVATE -D_CLAW)
+    add_executable(${EXECUTABLE_TRANSFORMED_OMP} EXCLUDE_FROM_ALL
+      "${OUTPUT_FILE_OMP}" "${OUTPUT_FILE_EXTRA_OMP}" "${OUTPUT_MAIN_OMP}")
+    target_compile_definitions(${EXECUTABLE_TRANSFORMED_OMP} PRIVATE -D_CLAW)
   else()
     # Build the original code and the transformed code
     add_executable(${EXECUTABLE_ORIGINAL} EXCLUDE_FROM_ALL
@@ -486,31 +556,36 @@ function(claw_add_advanced_test)
     add_executable(${EXECUTABLE_TRANSFORMED_CPU} EXCLUDE_FROM_ALL
       "${OUTPUT_FILE_CPU}" "${OUTPUT_MAIN_CPU}")
     target_compile_definitions(${EXECUTABLE_TRANSFORMED_CPU} PRIVATE -D_CLAW)
-    add_executable(${EXECUTABLE_TRANSFORMED_GPU} EXCLUDE_FROM_ALL
-      "${OUTPUT_FILE_GPU}" "${OUTPUT_MAIN_GPU}")
-    target_compile_definitions(${EXECUTABLE_TRANSFORMED_GPU} PRIVATE -D_CLAW)
+    add_executable(${EXECUTABLE_TRANSFORMED_ACC} EXCLUDE_FROM_ALL
+      "${OUTPUT_FILE_ACC}" "${OUTPUT_MAIN_ACC}")
+    target_compile_definitions(${EXECUTABLE_TRANSFORMED_ACC} PRIVATE -D_CLAW)
+    add_executable(${EXECUTABLE_TRANSFORMED_OMP} EXCLUDE_FROM_ALL
+      "${OUTPUT_FILE_OMP}" "${OUTPUT_MAIN_OMP}")
+    target_compile_definitions(${EXECUTABLE_TRANSFORMED_OMP} PRIVATE -D_CLAW)
   endif()
 
   # Target for the transformation
   add_custom_target(
     transform-${claw_add_advanced_test_NAME}
-    DEPENDS ${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU}
+    DEPENDS ${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_ACC} ${EXECUTABLE_TRANSFORMED_OMP}
   )
 
-  add_dependencies(${EXECUTABLE_TRANSFORMED_GPU} ${EXECUTABLE_ORIGINAL})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_ACC} ${EXECUTABLE_ORIGINAL})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_OMP} ${EXECUTABLE_ORIGINAL})
   add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_ORIGINAL})
-  add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_GPU})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_CPU} ${EXECUTABLE_TRANSFORMED_ACC})
+  add_dependencies(${EXECUTABLE_TRANSFORMED_ACC} ${EXECUTABLE_TRANSFORMED_OMP})
 
   # Set target specific compilation options
   if(OPENACC_ENABLE)
-    target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC
+    target_compile_options(${EXECUTABLE_TRANSFORMED_ACC} PUBLIC
       ${OPENACC_FLAGS})
-    target_link_libraries(${EXECUTABLE_TRANSFORMED_GPU} ${OPENACC_FLAGS})
+    target_link_libraries(${EXECUTABLE_TRANSFORMED_ACC} ${OPENACC_FLAGS})
   elseif(OPENMP_ENABLE)
-    target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC
+    target_compile_options(${EXECUTABLE_TRANSFORMED_OMP} PUBLIC
       ${OPENMP_FLAGS})
   else()
-    target_compile_options(${EXECUTABLE_TRANSFORMED_GPU} PUBLIC
+    target_compile_options(${EXECUTABLE_TRANSFORMED_OMP} PUBLIC
       ${TEST_BASE_FLAGS})
   endif()
 
@@ -519,22 +594,32 @@ function(claw_add_advanced_test)
     add_test(NAME ast-compare-cpu-${claw_add_advanced_test_NAME}
       COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_CPU}
       ${REFERENCE_FILE_CPU})
-    add_test(NAME ast-compare-gpu-${claw_add_advanced_test_NAME}
-      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_GPU}
-      ${REFERENCE_FILE_GPU})
+    add_test(NAME ast-compare-acc-${claw_add_advanced_test_NAME}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_ACC}
+      ${REFERENCE_FILE_ACC})
+    add_test(NAME ast-compare-omp-${claw_add_advanced_test_NAME}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_OMP}
+      ${REFERENCE_FILE_OMP})
     add_test(NAME ast-compare-main-cpu-${claw_add_advanced_test_NAME}
       COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_MAIN_CPU}
       ${REFERENCE_MAIN_CPU})
-    add_test(NAME ast-compare-main-gpu-${claw_add_advanced_test_NAME}
-      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_MAIN_GPU}
-      ${REFERENCE_MAIN_GPU})
+    add_test(NAME ast-compare-main-acc-${claw_add_advanced_test_NAME}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_MAIN_ACC}
+      ${REFERENCE_MAIN_ACC})
+    add_test(NAME ast-compare-main-omp-${claw_add_advanced_test_NAME}
+      COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_MAIN_OMP}
+      ${REFERENCE_MAIN_OMP})
     set_tests_properties(ast-compare-cpu-${claw_add_advanced_test_NAME}
       PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
-    set_tests_properties(ast-compare-gpu-${claw_add_advanced_test_NAME}
+    set_tests_properties(ast-compare-acc-${claw_add_advanced_test_NAME}
+      PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
+    set_tests_properties(ast-compare-omp-${claw_add_advanced_test_NAME}
       PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
     set_tests_properties(ast-compare-main-cpu-${claw_add_advanced_test_NAME}
       PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
-    set_tests_properties(ast-compare-main-gpu-${claw_add_advanced_test_NAME}
+    set_tests_properties(ast-compare-main-acc-${claw_add_advanced_test_NAME}
+      PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
+    set_tests_properties(ast-compare-main-omp-${claw_add_advanced_test_NAME}
       PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
 
     # Test the extra module file with its reference
@@ -542,12 +627,17 @@ function(claw_add_advanced_test)
       add_test(NAME ast-compare-cpu-extra-${claw_add_advanced_test_NAME}
         COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_EXTRA_CPU}
         ${REFERENCE_FILE_EXTRA_CPU})
-      add_test(NAME ast-compare-gpu-extra-${claw_add_advanced_test_NAME}
-        COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_EXTRA_GPU}
-        ${REFERENCE_FILE_EXTRA_GPU})
+      add_test(NAME ast-compare-acc-extra-${claw_add_advanced_test_NAME}
+        COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_EXTRA_ACC}
+        ${REFERENCE_FILE_EXTRA_ACC})
+      add_test(NAME ast-compare-omp-extra-${claw_add_advanced_test_NAME}
+        COMMAND diff --ignore-all-space --ignore-blank-lines ${OUTPUT_FILE_EXTRA_OMP}
+        ${REFERENCE_FILE_EXTRA_OMP})
       set_tests_properties(ast-compare-cpu-extra-${claw_add_advanced_test_NAME}
         PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
-      set_tests_properties(ast-compare-gpu-extra-${claw_add_advanced_test_NAME}
+      set_tests_properties(ast-compare-acc-extra-${claw_add_advanced_test_NAME}
+        PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
+      set_tests_properties(ast-compare-omp-extra-${claw_add_advanced_test_NAME}
         PROPERTIES DEPENDS ast-transform-${claw_add_advanced_test_NAME})
     endif()
 
@@ -557,10 +647,14 @@ function(claw_add_advanced_test)
         "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED_CPU})")
       add_test(NAME compare-output-cpu-${claw_add_advanced_test_NAME}
         COMMAND bash -c "diff ${TEST_PARAMETERS_CPU}")
-      set(TEST_PARAMETERS_GPU
-        "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED_GPU})")
-      add_test(NAME compare-output-gpu-${claw_add_advanced_test_NAME}
-      COMMAND bash -c "diff ${TEST_PARAMETERS_GPU}")
+      set(TEST_PARAMETERS_ACC
+        "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED_ACC})")
+      add_test(NAME compare-output-acc-${claw_add_advanced_test_NAME}
+        COMMAND bash -c "diff ${TEST_PARAMETERS_ACC}")
+      set(TEST_PARAMETERS_OMP
+        "<(./${EXECUTABLE_ORIGINAL}) <(./${EXECUTABLE_TRANSFORMED_OMP})")
+      add_test(NAME compare-output-omp-${claw_add_advanced_test_NAME}
+        COMMAND bash -c "diff ${TEST_PARAMETERS_OMP}")
     endif()
   endif()
 

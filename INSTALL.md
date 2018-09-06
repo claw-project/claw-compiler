@@ -46,6 +46,11 @@ make
 make install
 ```
 
+##### Specific Java version
+If you have several Java compiler version installed on your machine, you must
+export the `JAVA_HOME` environment variable. This information will be picked
+by the build system for the entire project.
+
 ##### Offline build steps
 If your system has no network connection to the Internet, you need to get the
 submodule and the ANT dependencies for the repository. In order to gather all

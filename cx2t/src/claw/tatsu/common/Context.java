@@ -9,9 +9,13 @@ import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
-import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.AcceleratorConfiguration;
+import claw.wani.x2t.configuration.OpenAccConfiguration;
+import claw.wani.x2t.configuration.OpenMpConfiguration;
 
 /**
+ * Class holding all information needed during a translation.
+ *
  * @author clementval
  */
 public class Context {
@@ -24,42 +28,77 @@ public class Context {
   private final Target _target;
   private final ModuleCache _moduleCache;
 
+  /**
+   * Create a new context.
+   *
+   * @param compilerDirective        Compiler directive to used.
+   * @param target                   Target for the current translation.
+   * @param acceleratorConfiguration Configuration for the accelerator
+   *                                 translation.
+   * @param maxColumns               Max columns.
+   */
   private Context(CompilerDirective compilerDirective, Target target,
+                  AcceleratorConfiguration acceleratorConfiguration,
                   int maxColumns)
   {
-    if(compilerDirective == null) {
-      _compilerDirective = CompilerDirective.NONE;
-    } else {
+    if(compilerDirective != null) {
       _compilerDirective = compilerDirective;
+      if(compilerDirective == CompilerDirective.OPENACC) {
+        OpenAcc gen = new OpenAcc();
+        _directiveGenerator = gen;
+        if(acceleratorConfiguration != null) {
+          gen.setExecutionMode(
+              ((OpenAccConfiguration) acceleratorConfiguration).getMode());
+        }
+      } else if(compilerDirective == CompilerDirective.OPENMP) {
+        OpenMp gen = new OpenMp();
+        _directiveGenerator = gen;
+        if(acceleratorConfiguration != null) {
+          gen.setExecutionMode(
+              ((OpenMpConfiguration) acceleratorConfiguration).getMode());
+        }
+      } else {
+        _directiveGenerator = new DirectiveNone();
+      }
+    } else {
+      _compilerDirective = CompilerDirective.NONE;
+      _directiveGenerator = new DirectiveNone();
     }
-    _directiveGenerator = instantiateGenerator();
+
     if(target == null) {
       _target = Target.NONE;
     } else {
       _target = target;
     }
+
     _maxColumns = maxColumns;
     _moduleCache = new ModuleCache();
   }
 
+  /**
+   * Initialize the context.
+   *
+   * @param compilerDirective        Compiler directive to used.
+   * @param target                   Target for the current translation.
+   * @param acceleratorConfiguration Configuration for the accelerator
+   *                                 translation.
+   * @param maxColumns               Max columns.
+   */
   public static void init(CompilerDirective compilerDirective, Target target,
+                          AcceleratorConfiguration acceleratorConfiguration,
                           int maxColumns)
   {
-    _instance = new Context(compilerDirective, target, maxColumns);
+    _instance = new Context(compilerDirective, target, acceleratorConfiguration,
+        maxColumns);
   }
 
+  /**
+   * Get the unique context instance.
+   *
+   * @return Current context instance.
+   */
   public static Context get() {
     return _instance;
-  }
-
-  private DirectiveGenerator instantiateGenerator() {
-    if(_compilerDirective == CompilerDirective.OPENACC) {
-      return new OpenAcc();
-    } else if(_compilerDirective == CompilerDirective.OPENMP) {
-      return new OpenMp();
-    } else {
-      return new DirectiveNone();
-    }
   }
 
   public int getMaxColumns() {
@@ -80,5 +119,15 @@ public class Context {
 
   public ModuleCache getModuleCache() {
     return _moduleCache;
+  }
+
+  /**
+   * Check is current target is corresponding to the given one.
+   *
+   * @param value Target value to check against.
+   * @return True if the target is identical to the given one. False otherwise.
+   */
+  public static boolean isTarget(Target value) {
+    return (get().getTarget() == value);
   }
 }

@@ -1,4 +1,4 @@
-PROGRAM test_abstraction4
+PROGRAM test_abstraction32
  USE mo_column , ONLY: compute
  REAL :: q ( 1 : 20 , 1 : 60 )
  REAL :: t ( 1 : 20 , 1 : 60 )
@@ -15,5 +15,5 @@ PROGRAM test_abstraction4
  CALL compute ( nz , q ( : , : ) , t ( : , : ) , s ( : ) , nproma = nproma )
  PRINT * , sum ( q )
  PRINT * , sum ( t )
-END PROGRAM test_abstraction4
+END PROGRAM test_abstraction32
 

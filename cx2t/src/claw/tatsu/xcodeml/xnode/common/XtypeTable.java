@@ -138,7 +138,7 @@ public class XtypeTable extends Xnode {
       return false;
     }
     Xnode t = get(hash);
-    return t != null && typeClass.isInstance(t);
+    return typeClass.isInstance(t);
   }
 
   /**

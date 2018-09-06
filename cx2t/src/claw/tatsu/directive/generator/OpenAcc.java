@@ -8,7 +8,6 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
-import claw.tatsu.directive.generator.openacc.OpenAccExecutionMode;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 
 import java.util.Arrays;
@@ -28,6 +27,7 @@ public class OpenAcc extends DirectiveGenerator {
   private static final String OPENACC_LOOP = "loop";
   private static final String OPENACC_PARALLEL = "parallel";
   private static final String OPENACC_PREFIX = "acc";
+  private static final String OPENACC_PREFIX_CONT = "acc&";
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_PRESENT = "present";
   private static final String OPENACC_PCREATE = "pcreate";
@@ -53,6 +53,11 @@ public class OpenAcc extends DirectiveGenerator {
   @Override
   public String getPrefix() {
     return OPENACC_PREFIX;
+  }
+
+  @Override
+  public String getPrefixCont() {
+    return OPENACC_PREFIX_CONT;
   }
 
   @Override
