@@ -6,7 +6,6 @@ package claw.tatsu.directive.generator;
 
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.DataMovement;
-import claw.tatsu.directive.generator.openmp.OpenMpExecutionMode;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.OpenMpConfiguration;
