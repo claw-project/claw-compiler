@@ -104,7 +104,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.LOOP_FUSION, l.getDirective());
       if(groupName != null) {
@@ -143,7 +143,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma.analyze(p);
       fail();
     } catch(IllegalDirectiveException pex) {
@@ -204,7 +204,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.LOOP_INTERCHANGE, l.getDirective());
       if(indexes != null) {
@@ -291,7 +291,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(directive, l.getDirective());
       if(isEnd) {
@@ -548,7 +548,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.LOOP_EXTRACT, l.getDirective());
       assertEquals(induction, l.getRange().getInductionVar());
@@ -641,7 +641,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.KCACHE, l.getDirective());
       if(data != null) {
@@ -761,7 +761,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.ARRAY_TRANSFORM, l.getDirective());
       if(fusion) {
@@ -877,7 +877,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.LOOP_HOIST, l.getDirective());
 
@@ -987,7 +987,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.ARRAY_TO_CALL, l.getDirective());
 
@@ -1014,7 +1014,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue("claw nodep");
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.NO_DEP, l.getDirective());
     } catch(Exception e) {
@@ -1121,7 +1121,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
@@ -1376,7 +1376,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
@@ -1421,7 +1421,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
 
@@ -1527,7 +1527,7 @@ public class ClawPragmaTest {
     p.setValue(pragma);
     p.setLine(1);
     Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-    Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     try {
       ClawPragma.analyze(p);
     } catch(IllegalDirectiveException e) {

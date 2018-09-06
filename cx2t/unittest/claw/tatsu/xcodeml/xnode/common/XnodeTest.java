@@ -217,7 +217,7 @@ public class XnodeTest {
     assertNull(p.nextSibling());
     assertNull(p.prevSibling());
     assertNull(p.matchSibling(Xcode.F_DO_STATEMENT));
-    assertTrue(p.matchAll(Xcode.F_PRAGMA_STATEMENT).size() == 0);
+    assertSame(p.matchAll(Xcode.F_PRAGMA_STATEMENT).size(), 0);
     assertFalse(p.isDirectSibling(null, Collections.<Xcode>emptyList()));
   }
 

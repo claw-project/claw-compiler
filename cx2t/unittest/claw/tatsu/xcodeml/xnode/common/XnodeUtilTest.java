@@ -66,7 +66,7 @@ public class XnodeUtilTest {
     assertEquals(1, functionCalls.size());
 
     Xnode fctCall = functionCalls.get(0);
-    assertTrue(fctCall.opcode() == Xcode.FUNCTION_CALL);
+    assertSame(fctCall.opcode(), Xcode.FUNCTION_CALL);
 
     List<String> allArguments =
         XnodeUtil.gatherArguments(xcodeml, fctCall, Intent.ANY, false);

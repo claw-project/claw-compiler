@@ -88,8 +88,7 @@ public final class Pragma {
           }
         }
         String splittedPragma = fullPragma.substring(0, splitIndex);
-        fullPragma =
-            fullPragma.substring(splitIndex, fullPragma.length()).trim();
+        fullPragma = fullPragma.substring(splitIndex).trim();
         splittedPragmas.add(splittedPragma);
       }
     }
@@ -199,9 +198,30 @@ public final class Pragma {
       return false;
     }
     String allPragma = pragma.value().toLowerCase();
-    return allPragma.contains(TatsuConstant.OPENACC_PREFIX_CONT) ||
-        Utility.countOccurrences(allPragma,
-            CompilerDirective.OPENACC.getPrefix() + " ") > 1;
+
+    String prefixCont = Context.get().getGenerator().getPrefixCont();
+    String prefix = Context.get().getGenerator().getPrefix();
+
+    return allPragma.contains(prefixCont) ||
+        Utility.countOccurrences(allPragma, prefix + " ") > 1;
+  }
+
+  public static CompilerDirective getCompilerDirective(Xnode pragma) {
+    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+      return CompilerDirective.NONE;
+    }
+    if(pragma.value().toLowerCase().contains(TatsuConstant.OPENACC_PREFIX)) {
+      return CompilerDirective.OPENACC;
+    } else if(pragma.value().toLowerCase().
+        contains(TatsuConstant.OPENMP_PREFIX))
+    {
+      return CompilerDirective.OPENMP;
+    } else if(pragma.value().toLowerCase().
+        contains(TatsuConstant.CLAW_PREFIX))
+    {
+      return CompilerDirective.CLAW;
+    }
+    return CompilerDirective.NONE;
   }
 
   /**
@@ -222,23 +242,29 @@ public final class Pragma {
                                              int lineNo, String value,
                                              boolean continued)
   {
+    if(value == null || value.isEmpty()) {
+      return null;
+    }
+
     Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
-    p.setFilename(filename);
-    p.setLine(lineNo);
+    if(filename != null && !filename.isEmpty()) {
+      p.setFilename(filename);
+    }
+    if(lineNo > 0) {
+      p.setLine(lineNo);
+    }
+
+    String prefix = Context.get().getGenerator().getPrefix();
     if(continued) {
-      if(!value.trim().toLowerCase().
-          startsWith(CompilerDirective.OPENACC.getPrefix()))
-      {
-        p.setValue(CompilerDirective.OPENACC.getPrefix() + " " + value.trim()
-            + " " + TatsuConstant.CONTINUATION_LINE_SYMBOL);
+      if(!value.trim().toLowerCase().startsWith(prefix)) {
+        p.setValue(prefix + " " + value.trim() + " " +
+            TatsuConstant.CONTINUATION_LINE_SYMBOL);
       } else {
         p.setValue(value.trim() + " " + TatsuConstant.CONTINUATION_LINE_SYMBOL);
       }
     } else {
-      if(!value.trim().toLowerCase().
-          startsWith(CompilerDirective.OPENACC.getPrefix()))
-      {
-        p.setValue(CompilerDirective.OPENACC.getPrefix() + " " + value.trim());
+      if(!value.trim().toLowerCase().startsWith(prefix)) {
+        p.setValue(prefix + " " + value.trim());
       }
     }
     hook.insertAfter(p);

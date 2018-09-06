@@ -8,7 +8,8 @@ import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
-import claw.tatsu.directive.generator.OpenAcc;
+import claw.tatsu.directive.generator.DirectiveGenerator;
+
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
@@ -19,7 +20,6 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
-import claw.wani.ClawConstant;
 import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
@@ -59,7 +59,6 @@ public final class Directive {
                                     String noDependencyDirective)
   {
     int nodep_counter = 0;
-
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
@@ -74,23 +73,14 @@ public final class Directive {
       XnodeUtil.safeDelete(noDependency);
 
       // Debug logging
-      // TODO generic message for OpenMP as well
       Message.debug(String.format(
           "%s generated loop %s directive for loop at line: %d",
-          OpenAcc.OPENACC_DEBUG_PREFIX, (noDependency == null) ? "seq" : "",
-          doStmt.lineNo()));
+          Context.get().getGenerator().getPrefix(),
+          (noDependency == null) ? "seq" : "", doStmt.lineNo()));
     }
 
-    if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE
-        || (Configuration.get().getCurrentDirective() ==
-        CompilerDirective.OPENACC &&
-        !Configuration.get().openACC().hasCollapseStrategy()))
-    {
-      return 0;
-    }
-
-    return nodep_counter;
+    return Configuration.get().accelerator().hasCollapseStrategy()
+        ? nodep_counter : 0;
   }
 
   /**
@@ -222,7 +212,9 @@ public final class Directive {
   }
 
   /**
-   * Generate directive directive for a data region.
+   * Generate directive directive for a data region. Some clauses can be ignored
+   * depending on the configuration, if this results to discard all variables
+   * then the directive is not generated.
    *
    * @param xcodeml   Object representation of the current XcodeML
    *                  representation in which the pragmas will be generated.
@@ -237,11 +229,18 @@ public final class Directive {
                                               List<String> creates,
                                               Xnode startStmt, Xnode endStmt)
   {
-    insertPragmas(xcodeml, startStmt, endStmt,
-        Context.get().getGenerator().getStartDataRegion(
-            Arrays.asList(Context.get().getGenerator().getPresentClause(presents),
-                Context.get().getGenerator().getCreateClause(creates))),
-        Context.get().getGenerator().getEndDataRegion());
+    DirectiveGenerator generator = Context.get().getGenerator();
+    List<String> clauses = new ArrayList<>(Arrays.asList(
+        generator.getPresentClause(presents),
+        generator.getCreateClause(creates)));
+
+    while(clauses.remove("")) {
+    }
+    // No need to create an empty data region
+    if(!clauses.isEmpty()) {
+      insertPragmas(xcodeml, startStmt, endStmt,
+          generator.getStartDataRegion(clauses), generator.getEndDataRegion());
+    }
   }
 
   /**
@@ -371,6 +370,8 @@ public final class Directive {
       return;
     }
 
+    DirectiveGenerator dirGen = Context.get().getGenerator();
+
     // Find all fct call in the current transformed fct
     List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL);
     for(Xnode fctCall : fctCalls) {
@@ -406,10 +407,9 @@ public final class Directive {
 
       if(calledFctDef != null) {
         // TODO: check that the directive is not present yet.
-        addPragmasBefore(xcodeml,
-            Context.get().getGenerator().getRoutineDirective(true),
+        addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
             calledFctDef.body().child(0));
-        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX
+        Message.debug(dirGen.getPrefix()
             + "generated routine seq directive for " + fctName
             + " subroutine/function.");
       } else {
@@ -549,7 +549,6 @@ public final class Directive {
    * @param functionDefinition Function definition in which body checked.
    * @param from               Optional element to start from. If null, starts
    *                           from first element in function's body.
-   *
    * @return First element for the parallel region.
    */
   public static Xnode findParallelRegionStart(Xnode functionDefinition,
@@ -568,14 +567,12 @@ public final class Directive {
     if(from != null) { // Start from given element
       first = from;
     }
-    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty())
-    {
+    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty()) {
       return first;
     } else {
       while(first.nextSibling() != null && ((Context.get().getGenerator().
           getSkippedStatementsInPreamble().contains(first.opcode()))
-          || isClawDirective(first)))
-      {
+          || isClawDirective(first))) {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!Context.get().getGenerator().getSkippedStatementsInPreamble().
@@ -593,6 +590,7 @@ public final class Directive {
 
   /**
    * Check if the node is a CLAW directive
+   *
    * @param node Node to check.
    * @return True if the node is a CLAW directive. False otherwise.
    */

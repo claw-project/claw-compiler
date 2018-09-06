@@ -19,7 +19,7 @@ PROGRAM test_column_conditional
     t(p, 6:nz) = 0.0
   END DO
 
-  !$claw parallelize forward
+  !$claw parallelize forward create update
   DO p = 1, nproma
     CALL compute_column(nz, q(p,:), t(p,:), z(p,:))
   END DO

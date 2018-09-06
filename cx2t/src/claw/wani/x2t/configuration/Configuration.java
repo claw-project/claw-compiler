@@ -7,10 +7,9 @@ package claw.wani.x2t.configuration;
 import claw.ClawVersion;
 import claw.shenron.transformation.BlockTransformation;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
-import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.wani.transformation.ClawBlockTransformation;
-import claw.wani.x2t.configuration.openacc.OpenAccConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -84,12 +83,10 @@ public class Configuration {
   private Map<String, String> _parameters;
   private List<GroupConfiguration> _groups;
   private Map<String, GroupConfiguration> _availableGroups;
-  private OpenAccConfiguration _openacc;
+  private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
   private int _maxColumns; // Max column for code formatting
-
-  private DirectiveGenerator _generator;
 
   /**
    * private ctor
@@ -112,18 +109,34 @@ public class Configuration {
   /**
    * Constructs basic configuration object.
    *
-   * @param dir    Accelerator directive language.
-   * @param target Target architecture.
+   * @param directive Accelerator directive language.
+   * @param target    Target architecture.
    */
-  public void init(CompilerDirective dir, Target target) {
+  public void init(CompilerDirective directive, Target target) {
     _parameters = new HashMap<>();
-    if(dir != null) {
-      _parameters.put(DEFAULT_DIRECTIVE, dir.toString());
+
+    if(directive == null) {
+      directive = CompilerDirective.NONE;
     }
+    _parameters.put(DEFAULT_DIRECTIVE, directive.toString());
+
     if(target != null) {
       _parameters.put(DEFAULT_TARGET, target.toString());
     }
-    _openacc = new OpenAccConfiguration(_parameters);
+
+    // Init specific configuration if needed
+    switch(directive) {
+      case OPENACC:
+        _accelerator = new OpenAccConfiguration(_parameters);
+        break;
+      case OPENMP:
+        _accelerator = new OpenMpConfiguration(_parameters);
+        break;
+      default:
+        _accelerator = new AcceleratorConfiguration(_parameters);
+        break;
+    }
+
     _groups = new ArrayList<>();
     _availableGroups = new HashMap<>();
     _configuration_path = null;
@@ -132,11 +145,17 @@ public class Configuration {
   /**
    * Constructs a new configuration object from the give configuration file.
    *
-   * @param configPath     Path to the configuration files and XSD schemas.
-   * @param userConfigFile Path to the alternative configuration.
+   * @param configPath           Path to the configuration files and XSD
+   *                             schemas.
+   * @param userConfigFile       Path to the alternative configuration.
+   * @param userDefinedTarget    Target option passed by user. Can be null.
+   * @param userDefinedDirective Directive option passed by user. Can be null.
+   * @param userMaxColumns       Max column option passed by user. Can be 0.
    * @throws Exception If configuration cannot be loaded properly.
    */
-  public void load(String configPath, String userConfigFile)
+  public void load(String configPath, String userConfigFile,
+                   String userDefinedTarget, String userDefinedDirective,
+                   int userMaxColumns)
       throws Exception
   {
     _configuration_path = configPath;
@@ -175,7 +194,23 @@ public class Configuration {
       readConfiguration(userConf, false);
     }
 
-    _openacc = new OpenAccConfiguration(_parameters);
+    setUserDefinedTarget(userDefinedTarget);
+    setUserDefineDirective(userDefinedDirective);
+    setMaxColumns(userMaxColumns);
+
+    switch(getCurrentDirective()) {
+      case OPENACC:
+        _accelerator = new OpenAccConfiguration(_parameters);
+        break;
+      case OPENMP:
+        _accelerator = new OpenMpConfiguration(_parameters);
+        break;
+      default:
+        _accelerator = new AcceleratorConfiguration(_parameters);
+    }
+
+    Context.init(getCurrentDirective(), getCurrentTarget(), _accelerator,
+        userMaxColumns);
   }
 
   /**
@@ -319,12 +354,12 @@ public class Configuration {
   }
 
   /**
-   * Get the OpenACC specific configuration information.
+   * Get the GPU specific configuration information.
    *
-   * @return The OpenACC configuration object.
+   * @return The GPU configuration object.
    */
-  public OpenAccConfiguration openACC() {
-    return _openacc;
+  public AcceleratorConfiguration accelerator() {
+    return _accelerator;
   }
 
   /**
@@ -426,7 +461,7 @@ public class Configuration {
     for(int i = 0; i < parameters.getLength(); ++i) {
       Element e = (Element) parameters.item(i);
       String key = e.getAttribute(KEY_ATTR);
-      if(overwrite && _parameters.containsKey(key)) { // Parameter overwritten
+      if(overwrite) { // Parameter overwritten
         _parameters.remove(key);
       }
       _parameters.put(key, e.getAttribute(VALUE_ATTR));
@@ -556,7 +591,7 @@ public class Configuration {
    * @param option Option passed as argument. Has priority over configuration
    *               file.
    */
-  public void setUserDefinedTarget(String option) {
+  private void setUserDefinedTarget(String option) {
     if(option != null) {
       _parameters.put(DEFAULT_TARGET, option);
     }
@@ -568,7 +603,7 @@ public class Configuration {
    * @param option Option passed as argument. Has priority over configuration
    *               file.
    */
-  public void setUserDefineDirective(String option) {
+  private void setUserDefineDirective(String option) {
     if(option != null) {
       _parameters.put(DEFAULT_DIRECTIVE, option);
     }
@@ -645,8 +680,10 @@ public class Configuration {
    *
    * @param value New value of the max column parameter.
    */
-  public void setMaxColumns(int value) {
-    _maxColumns = value;
+  private void setMaxColumns(int value) {
+    if(value > 0) {
+      _maxColumns = value;
+    }
   }
 
   /**

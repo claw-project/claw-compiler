@@ -39,6 +39,13 @@ public abstract class DirectiveGenerator {
   public abstract String getPrefix();
 
   /**
+   * Get the prefix for the current directive language for a continuation.
+   *
+   * @return Language prefix with continuation.
+   */
+  public abstract String getPrefixCont();
+
+  /**
    * Get the start pragma to define a parallel accelerated region.
    *
    * @param clauses Additional clauses append at the start directive.

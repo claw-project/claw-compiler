@@ -10,6 +10,7 @@ import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+
 import helper.TestConstant;
 import org.junit.Test;
 
@@ -114,7 +115,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);
@@ -142,7 +143,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Context.init(CompilerDirective.OPENACC, Target.GPU, 80);
+    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);

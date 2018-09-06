@@ -7,11 +7,9 @@ package claw;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
-import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.translator.ClawPythonTranslatorDriver;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
@@ -113,8 +111,6 @@ public class ClawX2T {
             "has to be transformed.");
     options.addOption("r", "report", true,
         "generate the transformation report.");
-    options.addOption("script", "python-script", true,
-        "Python optimisation script to apply (requires Jython)");
     return options;
   }
 
@@ -147,7 +143,6 @@ public class ClawX2T {
     String directive_option = null;
     String configuration_file = null;
     String configuration_path = null;
-    String recipeScript = null;
     int maxColumns = 0;
     //boolean forcePure = false;
 
@@ -236,13 +231,10 @@ public class ClawX2T {
 
     // --show-configuration option
     if(cmd.hasOption("sc")) {
-      Configuration.get().load(configuration_path, configuration_file);
+      Configuration.get().load(configuration_path, configuration_file,
+          target_option, directive_option, maxColumns);
       Configuration.get().displayConfig();
       return;
-    }
-
-    if(cmd.hasOption("script")) {
-      recipeScript = cmd.getOptionValue("script");
     }
 
     // Get the input XcodeML file to transform
@@ -254,18 +246,8 @@ public class ClawX2T {
 
     // Read the configuration file
     try {
-      Configuration.get().load(configuration_path, configuration_file);
-      Configuration.get().setUserDefinedTarget(target_option);
-      Configuration.get().setUserDefineDirective(directive_option);
-      Configuration.get().setMaxColumns(maxColumns);
-      Context.init(Configuration.get().getCurrentDirective(),
-          Configuration.get().getCurrentTarget(), maxColumns);
-
-      if(Context.get().getCompilerDirective() == CompilerDirective.OPENACC) {
-        OpenAcc openaccGen = (OpenAcc) Context.get().getGenerator();
-        openaccGen.setExecutionMode(Configuration.get().openACC().getMode());
-      }
-
+      Configuration.get().load(configuration_path, configuration_file,
+          target_option, directive_option, maxColumns);
     } catch(Exception ex) {
       error("internal", 0, 0, ex.getMessage());
       return;
@@ -283,23 +265,15 @@ public class ClawX2T {
       Configuration.get().setForcePure();
     }
 
-    ClawTranslatorDriver translatorDriver;
-
-    // Call the translator driver to apply transformation on XcodeML/F
-    if(recipeScript != null) {
-      // Transformation is to be performed by Python script
-      translatorDriver =
-          new ClawPythonTranslatorDriver(recipeScript, input, xcmlOutput);
-    } else {
-      translatorDriver = new ClawTranslatorDriver(input, xcmlOutput);
-    }
+    ClawTranslatorDriver translatorDriver =
+        new ClawTranslatorDriver(input, xcmlOutput);
 
     translatorDriver.analyze();
     translatorDriver.transform();
     translatorDriver.flush();
 
     // Produce report (unless we've used the Python driver)
-    if(recipeScript == null && cmd.hasOption("r")) {
+    if(cmd.hasOption("r")) {
       ClawTransformationReport report =
           new ClawTransformationReport(cmd.getOptionValue("r"));
       report.generate(args, translatorDriver);

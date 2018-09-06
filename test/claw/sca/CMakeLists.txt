@@ -10,6 +10,8 @@
 # sca4: simple with forward
 # sca5: cross-module
 # sca6: cross-module multiple forward
+# sca7: forward with function result
+# sca8: forward dependencies
 # sca9: Private function
 # sca10: Private function, same as 9 but fct reorder
 # sca11: data over with assumed shaped arrays
@@ -32,11 +34,12 @@
 # sca29: claw nodep on k loop (openacc_collapse = false)
 # sca30: unsupported statement
 # sca31: parallelize forward with type%member slicing
-# sca32: parallel region start/end after/before unsupported + update/create
+# sca32: promotion instead of privatization of values + parallel region start/end after/before unsupported + update/create
 # sca33: claw nodep on k loop (openacc_collapse = true)
 # sca34: (#355) CPU specific categorization for assign statement
-
+# sca35: CPU handle "if" correcly
 # sca36: Correct handling of indirect promotion
+# sca37: Check not mixed "!$acc loop seq" order directive generation
 
 foreach(loop_var RANGE 1 37)
   if(NOT ${loop_var} EQUAL 30)

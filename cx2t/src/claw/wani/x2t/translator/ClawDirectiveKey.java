@@ -38,7 +38,7 @@ class ClawDirectiveKey {
 
   @Override
   public boolean equals(Object obj) {
-    if(obj != null && obj instanceof ClawDirectiveKey) {
+    if(obj instanceof ClawDirectiveKey) {
       ClawDirectiveKey o = (ClawDirectiveKey) obj;
       return _directive.equals(o._directive) && _depth == o._depth;
     }

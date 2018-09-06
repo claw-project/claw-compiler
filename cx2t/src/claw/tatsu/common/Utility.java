@@ -68,7 +68,7 @@ public final class Utility {
    */
   public static List<String> convertToList(Object rawObject) {
     List<String> strList = new ArrayList<>();
-    if(rawObject != null && rawObject instanceof ArrayList) {
+    if(rawObject instanceof ArrayList) {
       List rawList = (ArrayList) rawObject;
       for(Object object : rawList) {
         strList.add(Objects.toString(object, null));
