@@ -55,8 +55,8 @@ function(claw_add_basic_test)
   set(executable_transformed transformed_code_${claw_add_basic_test_NAME})
 
   # Define directory for build
-  set(XMOD_DIR "${CMAKE_CURRENT_BINARY_DIR}/__xmod__")
-  set(OMNI_TMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/__omni_tmp__")
+  set(XMOD_DIR "${claw_add_basic_test_WORKING_DIRECTORY}/__xmod__")
+  set(OMNI_TMP_DIR "${claw_add_basic_test_WORKING_DIRECTORY}/__omni_tmp__")
 
   # Directory where OMNI Compiler xmod files will be placed
   if (NOT EXISTS ${XMOD_DIR})
