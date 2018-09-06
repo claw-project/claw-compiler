@@ -133,7 +133,7 @@ public class FbasicTypeTest {
 
     assertEquals("Fcharacter", b.getRef());
     assertEquals("TYPE_NAME", b.getType());
-    assertTrue(b.getLength().child(0).opcode() == Xcode.F_INT_CONSTANT);
+    assertSame(b.getLength().child(0).opcode(), Xcode.F_INT_CONSTANT);
     assertEquals("10", b.getLength().child(0).value());
   }
 
@@ -171,19 +171,19 @@ public class FbasicTypeTest {
     Xnode dim0 = b.getDimensions(0);
     Xnode dim1 = b.getDimensions(1);
 
-    assertTrue(dim0.opcode() == Xcode.ARRAY_INDEX);
-    assertTrue(dim1.opcode() == Xcode.INDEX_RANGE);
+    assertSame(dim0.opcode(), Xcode.ARRAY_INDEX);
+    assertSame(dim1.opcode(), Xcode.INDEX_RANGE);
 
-    assertTrue(dim0.child(0).opcode() == Xcode.F_INT_CONSTANT);
+    assertSame(dim0.child(0).opcode(), Xcode.F_INT_CONSTANT);
     assertEquals("10", dim0.child(0).value());
 
     assertNotNull(dim1.matchSeq(Xcode.LOWER_BOUND));
     assertNotNull(dim1.matchSeq(Xcode.UPPER_BOUND));
-    assertTrue(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode()
-        == Xcode.F_INT_CONSTANT);
+    assertSame(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode(),
+        Xcode.F_INT_CONSTANT);
     assertEquals("1", dim1.matchSeq(Xcode.LOWER_BOUND).child(0).value());
-    assertTrue(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode()
-        == Xcode.F_INT_CONSTANT);
+    assertSame(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode(),
+        Xcode.F_INT_CONSTANT);
     assertEquals("10", dim1.matchSeq(Xcode.UPPER_BOUND).child(0).value());
 
     assertEquals("Fint", b.getRef());

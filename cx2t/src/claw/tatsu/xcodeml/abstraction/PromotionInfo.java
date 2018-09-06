@@ -5,7 +5,6 @@
 package claw.tatsu.xcodeml.abstraction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -280,8 +279,7 @@ public class PromotionInfo {
    */
   public void readDimensionsFromString(String rawValue) {
     _dimensions = new ArrayList<>();
-    List<String> rawDimensions =
-        Arrays.asList(rawValue.split(DimensionDefinition.SEPARATOR));
+    String[] rawDimensions = rawValue.split(DimensionDefinition.SEPARATOR);
 
     int baseDimOccurrence = 0;
     for(String d : rawDimensions) {

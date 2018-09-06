@@ -22,6 +22,10 @@ if ! shellcheck check_license; then
   echo 'Script ./scripts/check_license failed!'
   exit 1
 fi
+if ! shellcheck update_omni; then
+  echo 'Script ./scripts/update_omni failed!'
+  exit 1
+fi
 
 # Git hooks
 if ! shellcheck ./git_hooks/pre-commit; then

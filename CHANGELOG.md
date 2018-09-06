@@ -1,11 +1,15 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [X.Y.Z] - Unreleased
+## [1.1.0] - Unreleased
+* SCA: Initial support of OpenMP 4.5 code generation for accelerator.
+
+## [1.0.2] - 2018-08-21
 * User comment line can be preserved with the `--keep-comment` option.
 * SCA: Fix duplicated array references inserted in some cases.
-* OMNI Compiler to git hash omni-compiler/xcodml-tools@e2d6978ba47e351146ba1812b927947156c9b913
+* OMNI Compiler to git hash omni-compiler/xcodml-tools@2b72cd9fc9c6133bf9f806d3b7fc5a369265d605
 * OMNI Compiler submodule now pointing to XcodeML-tools omni-compiler/xcodeml-tools
+* Various bug fixes
 
 ## [1.0.1] - 2018-04-17
 * Support of Intel Compiler preprocessing workflow.

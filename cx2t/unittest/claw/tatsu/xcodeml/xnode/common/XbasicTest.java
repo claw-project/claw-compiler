@@ -25,7 +25,7 @@ public class XbasicTest {
   public void xValueTest() {
     Xnode val = XmlHelper.createXnode(value1);
     assertNotNull(val);
-    assertTrue(val.child(0).opcode() == Xcode.F_INT_CONSTANT);
+    assertSame(val.child(0).opcode(), Xcode.F_INT_CONSTANT);
     assertEquals(Xname.TYPE_F_INT, val.child(0).getType());
     assertEquals("1", val.child(0).value());
   }
