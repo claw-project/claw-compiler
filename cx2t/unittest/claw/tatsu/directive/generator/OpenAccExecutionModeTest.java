@@ -1,3 +1,7 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
 package claw.tatsu.directive.generator;
 
 import claw.tatsu.TatsuConstant;
@@ -7,13 +11,16 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Test enum OpenAccExecutionMode
+ *
+ * @author clementval
  */
 public class OpenAccExecutionModeTest {
 
   @Test
   public void executionModeTest() {
     // Test fromString method
-    assertEquals(OpenAccExecutionMode.NONE, OpenAccExecutionMode.fromString(""));
+    assertEquals(OpenAccExecutionMode.NONE,
+        OpenAccExecutionMode.fromString(""));
     assertEquals(OpenAccExecutionMode.NONE,
         OpenAccExecutionMode.fromString(null));
     assertEquals(OpenAccExecutionMode.NONE,

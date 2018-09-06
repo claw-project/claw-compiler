@@ -1,3 +1,8 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ *
+ */
 package claw.tatsu.directive.generator;
 
 import claw.tatsu.TatsuConstant;
@@ -7,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Test enum OpenMpExecutionMode
+ *
+ * @author clementval
  */
 public class OpenMpExecutionModeTest {
 
