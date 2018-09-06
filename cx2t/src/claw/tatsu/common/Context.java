@@ -41,23 +41,27 @@ public class Context {
                   AcceleratorConfiguration acceleratorConfiguration,
                   int maxColumns)
   {
-    if(compilerDirective == null) {
-      _compilerDirective = CompilerDirective.NONE;
-    } else {
+    if(compilerDirective != null) {
       _compilerDirective = compilerDirective;
-    }
-
-    if(acceleratorConfiguration instanceof OpenAccConfiguration) {
-      OpenAcc gen = new OpenAcc();
-      gen.setExecutionMode(
-          ((OpenAccConfiguration) acceleratorConfiguration).getMode());
-      _directiveGenerator = gen;
-    } else if (acceleratorConfiguration instanceof OpenMpConfiguration) {
-      OpenMp gen = new OpenMp();
-      gen.setExecutionMode(
-          ((OpenMpConfiguration) acceleratorConfiguration).getMode());
-      _directiveGenerator = gen;
+      if(compilerDirective == CompilerDirective.OPENACC) {
+        OpenAcc gen = new OpenAcc();
+        _directiveGenerator = gen;
+        if(acceleratorConfiguration != null) {
+          gen.setExecutionMode(
+              ((OpenAccConfiguration) acceleratorConfiguration).getMode());
+        }
+      } else if(compilerDirective == CompilerDirective.OPENMP) {
+        OpenMp gen = new OpenMp();
+        _directiveGenerator = gen;
+        if(acceleratorConfiguration != null) {
+          gen.setExecutionMode(
+              ((OpenMpConfiguration) acceleratorConfiguration).getMode());
+        }
+      } else {
+        _directiveGenerator = new DirectiveNone();
+      }
     } else {
+      _compilerDirective = CompilerDirective.NONE;
       _directiveGenerator = new DirectiveNone();
     }
 
@@ -66,6 +70,7 @@ public class Context {
     } else {
       _target = target;
     }
+
     _maxColumns = maxColumns;
     _moduleCache = new ModuleCache();
   }

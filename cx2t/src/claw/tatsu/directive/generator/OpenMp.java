@@ -23,6 +23,7 @@ public class OpenMp extends DirectiveGenerator {
 
   public static final String OPENMP_DEBUG_PREFIX = "CLAW-OpenMP:";
   private static final String OPENMP_PREFIX = "omp";
+  private static final String OPENMP_PREFIX_CONT = "omp&";
   private static final String OPENMP_DECLARE = "declare";
   private static final String OPENMP_TARGET = "target";
   private static final String OPENMP_DATA = "data";
@@ -76,6 +77,11 @@ public class OpenMp extends DirectiveGenerator {
   @Override
   public String getPrefix() {
     return OPENMP_PREFIX;
+  }
+
+  @Override
+  public String getPrefixCont() {
+    return OPENMP_PREFIX_CONT;
   }
 
   @Override
