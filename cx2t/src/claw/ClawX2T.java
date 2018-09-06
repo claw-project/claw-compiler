@@ -10,7 +10,6 @@ import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.translator.ClawPythonTranslatorDriver;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
 import org.apache.commons.cli.*;
 import xcodeml.util.XmOption;
@@ -112,8 +111,6 @@ public class ClawX2T {
             "has to be transformed.");
     options.addOption("r", "report", true,
         "generate the transformation report.");
-    options.addOption("script", "python-script", true,
-        "Python optimisation script to apply (requires Jython)");
     return options;
   }
 
@@ -146,7 +143,6 @@ public class ClawX2T {
     String directive_option = null;
     String configuration_file = null;
     String configuration_path = null;
-    String recipeScript = null;
     int maxColumns = 0;
     //boolean forcePure = false;
 
@@ -241,10 +237,6 @@ public class ClawX2T {
       return;
     }
 
-    if(cmd.hasOption("script")) {
-      recipeScript = cmd.getOptionValue("script");
-    }
-
     // Get the input XcodeML file to transform
     if(cmd.getArgs().length == 0) {
       input = null;
@@ -273,23 +265,15 @@ public class ClawX2T {
       Configuration.get().setForcePure();
     }
 
-    ClawTranslatorDriver translatorDriver;
-
-    // Call the translator driver to apply transformation on XcodeML/F
-    if(recipeScript != null) {
-      // Transformation is to be performed by Python script
-      translatorDriver =
-          new ClawPythonTranslatorDriver(recipeScript, input, xcmlOutput);
-    } else {
-      translatorDriver = new ClawTranslatorDriver(input, xcmlOutput);
-    }
+    ClawTranslatorDriver translatorDriver =
+        new ClawTranslatorDriver(input, xcmlOutput);
 
     translatorDriver.analyze();
     translatorDriver.transform();
     translatorDriver.flush();
 
     // Produce report (unless we've used the Python driver)
-    if(recipeScript == null && cmd.hasOption("r")) {
+    if(cmd.hasOption("r")) {
       ClawTransformationReport report =
           new ClawTransformationReport(cmd.getOptionValue("r"));
       report.generate(args, translatorDriver);

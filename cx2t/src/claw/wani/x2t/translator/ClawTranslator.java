@@ -395,9 +395,7 @@ public class ClawTranslator implements Translator {
    * @param value The element to be stored.
    */
   public void storeElement(Xnode key, Object value) {
-    if(_crossTransformationTable.containsKey(key.element())) {
-      _crossTransformationTable.remove(key.element());
-    }
+    _crossTransformationTable.remove(key.element());
     _crossTransformationTable.put(key.element(), value);
   }
 }

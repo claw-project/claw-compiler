@@ -51,9 +51,7 @@ public class ModuleCache {
    * @param module     Xmod object.
    */
   public void add(String moduleName, FortranModule module) {
-    if(_moduleCache.containsKey(moduleName.toLowerCase())) {
-      _moduleCache.remove(moduleName.toLowerCase());
-    }
+    _moduleCache.remove(moduleName.toLowerCase());
     _moduleCache.put(moduleName.toLowerCase(), module);
   }
 
