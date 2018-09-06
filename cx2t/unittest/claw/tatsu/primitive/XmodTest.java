@@ -7,11 +7,7 @@ package claw.tatsu.primitive;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
-import claw.wani.x2t.configuration.AcceleratorConfiguration;
-import claw.wani.x2t.configuration.OpenAccConfiguration;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 import static junit.framework.TestCase.assertEquals;
 

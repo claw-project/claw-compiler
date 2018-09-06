@@ -9,8 +9,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.generator.DirectiveGenerator;
-import claw.tatsu.directive.generator.OpenAcc;
-import claw.tatsu.directive.generator.OpenMp;
+
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
@@ -234,8 +233,8 @@ public final class Directive {
     List<String> clauses = new ArrayList<>(Arrays.asList(
         generator.getPresentClause(presents),
         generator.getCreateClause(creates)));
+
     while(clauses.remove("")) {
-      ;
     }
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
@@ -371,6 +370,8 @@ public final class Directive {
       return;
     }
 
+    DirectiveGenerator dirGen = Context.get().getGenerator();
+
     // Find all fct call in the current transformed fct
     List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL);
     for(Xnode fctCall : fctCalls) {
@@ -406,10 +407,9 @@ public final class Directive {
 
       if(calledFctDef != null) {
         // TODO: check that the directive is not present yet.
-        addPragmasBefore(xcodeml,
-            Context.get().getGenerator().getRoutineDirective(true),
+        addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
             calledFctDef.body().child(0));
-        Message.debug(OpenAcc.OPENACC_DEBUG_PREFIX
+        Message.debug(dirGen.getPrefix()
             + "generated routine seq directive for " + fctName
             + " subroutine/function.");
       } else {
@@ -572,8 +572,7 @@ public final class Directive {
     } else {
       while(first.nextSibling() != null && ((Context.get().getGenerator().
           getSkippedStatementsInPreamble().contains(first.opcode()))
-          || isClawDirective(first)))
-      {
+          || isClawDirective(first))) {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!Context.get().getGenerator().getSkippedStatementsInPreamble().

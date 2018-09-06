@@ -15,13 +15,11 @@ import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.*;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.OpenAccConfiguration;
 import helper.XmlHelper;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
