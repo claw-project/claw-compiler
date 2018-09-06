@@ -15,8 +15,8 @@ public enum OpenMpExecutionMode {
   NONE,
   TEAMS_DISTRIBUTE,
   TEAMS_DISTRIBUTE_SIMD,
-  TEAMS_DISTRIBUTES_PARALLEL_DO,
-  TEAMS_DISTRIBUTES_PARALLEL_DO_SIMD;
+  TEAMS_DISTRIBUTE_PARALLEL_DO,
+  TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD;
 
   /**
    * Get enum value from a string.
@@ -33,10 +33,10 @@ public enum OpenMpExecutionMode {
         return TEAMS_DISTRIBUTE;
       case TatsuConstant.OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_SIMD:
         return TEAMS_DISTRIBUTE_SIMD;
-      case TatsuConstant.OPENMP_EXEC_MODE_TEAMS_DISTRIBUTES_PARALLEL_DO:
-        return TEAMS_DISTRIBUTES_PARALLEL_DO;
-      case TatsuConstant.OPENMP_EXEC_MODE_TEAMS_DISTRIBUTES_PARALLEL_DO_SIMD:
-        return TEAMS_DISTRIBUTES_PARALLEL_DO_SIMD;
+      case TatsuConstant.OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_PARALLEL_DO:
+        return TEAMS_DISTRIBUTE_PARALLEL_DO;
+      case TatsuConstant.OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD:
+        return TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD;
       case TatsuConstant.OPENMP_EXEC_MODE_NONE:
         return NONE;
       default:
@@ -57,11 +57,12 @@ public enum OpenMpExecutionMode {
         return "teams distribute";
       case TEAMS_DISTRIBUTE_SIMD:
         return "teams distribute simd";
-      case TEAMS_DISTRIBUTES_PARALLEL_DO:
+      case TEAMS_DISTRIBUTE_PARALLEL_DO:
         return "teams distribute parallel do";
-      case TEAMS_DISTRIBUTES_PARALLEL_DO_SIMD:
+      case TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD:
         return "teams distribute parallel do simd";
+      default:
+        return "";
     }
-    return "";
   }
 }

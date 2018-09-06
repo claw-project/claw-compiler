@@ -15,7 +15,6 @@ public enum OpenAccExecutionMode {
   NONE,
   VECTOR,
   GANG,
-  VECTOR_GANG,
   GANG_VECTOR;
 
   /**
@@ -33,8 +32,6 @@ public enum OpenAccExecutionMode {
         return VECTOR;
       case TatsuConstant.OPENACC_EXEC_MODE_GANG:
         return GANG;
-      case TatsuConstant.OPENACC_EXEC_MODE_VECTOR_GANG:
-        return VECTOR_GANG;
       case TatsuConstant.OPENACC_EXEC_MODE_GANG_VECTOR:
         return GANG_VECTOR;
       case TatsuConstant.OPENACC_EXEC_MODE_NONE:
@@ -55,8 +52,6 @@ public enum OpenAccExecutionMode {
         return "";
       case GANG_VECTOR:
         return "gang vector";
-      case VECTOR_GANG:
-        return "vector gang";
       case GANG:
         return "gang";
       case VECTOR:

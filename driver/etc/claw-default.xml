@@ -26,7 +26,7 @@ refer to the developer's guide
     <parameter key="acc_num_workers" value="8" />
     <!--
       Specify the order of generation of clauses when nested loops are generated
-      possible values are vector_gang, gang_vector, vector, gang, none
+      possible values are: gang_vector, vector, gang, none
     -->
     <parameter key="acc_execution_mode" value="gang_vector" />
 

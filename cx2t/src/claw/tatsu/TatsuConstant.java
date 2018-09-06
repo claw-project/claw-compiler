@@ -33,7 +33,6 @@ public final class TatsuConstant {
   public static final String OPENACC_EXEC_MODE_NONE = "none";
   public static final String OPENACC_EXEC_MODE_VECTOR = "vector";
   public static final String OPENACC_EXEC_MODE_GANG = "gang";
-  public static final String OPENACC_EXEC_MODE_VECTOR_GANG = "vector_gang";
   public static final String OPENACC_EXEC_MODE_GANG_VECTOR = "gang_vector";
 
   public static final String OPENMP_EXEC_MODE_NONE = "none";
@@ -41,10 +40,11 @@ public final class TatsuConstant {
       "teams_distribute";
   public static final String OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_SIMD =
       "teams_distribute_simd";
-  public static final String OPENMP_EXEC_MODE_TEAMS_DISTRIBUTES_PARALLEL_DO =
+  public static final String OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_PARALLEL_DO =
       "teams_distribute_parallel_do";
-  public static final String OPENMP_EXEC_MODE_TEAMS_DISTRIBUTES_PARALLEL_DO_SIMD
+  public static final String OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD
       = "teams_distribute_parallel_do_simd";
+  
   // Available targets
   public static final String TARGET_ARM = "arm";
   public static final String TARGET_CPU = "cpu";
