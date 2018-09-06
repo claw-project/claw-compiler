@@ -2,7 +2,7 @@
 All notable changes to the CLAW Compiler project are documented in this file.
 
 ## [1.1.0] - Unreleased
-* SCA: Initial support of OpenMP 4.5 for accelerator code generation.
+* SCA: Initial support of OpenMP 4.5 code generation for accelerator.
 
 ## [1.0.2] - 2018-08-21
 * User comment line can be preserved with the `--keep-comment` option.
