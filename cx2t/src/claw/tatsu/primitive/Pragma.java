@@ -200,7 +200,7 @@ public final class Pragma {
     String allPragma = pragma.value().toLowerCase();
 
     String prefixCont = Context.get().getGenerator().getPrefixCont();
-    String prefix = Context.get().getGenerator().getPrefixCont();
+    String prefix = Context.get().getGenerator().getPrefix();
 
     return allPragma.contains(prefixCont) ||
         Utility.countOccurrences(allPragma, prefix + " ") > 1;
