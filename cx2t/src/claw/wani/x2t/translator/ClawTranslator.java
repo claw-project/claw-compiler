@@ -113,7 +113,7 @@ public class ClawTranslator implements Translator {
       case REMOVE:
         HandleBlockDirective(xcodeml, analyzedPragma);
         break;
-      case PARALLELIZE:
+      case SCA:
         if(analyzedPragma.hasForwardClause()) {
           addTransformation(xcodeml, new ParallelizeForward(analyzedPragma));
         } else {

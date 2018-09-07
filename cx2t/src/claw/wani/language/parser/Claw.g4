@@ -111,19 +111,45 @@ directive[ClawPragma l]
       $l.setArrayName($array_name.text);
     }
 
-   // one_column directive
+   // SCA (parallelize deprecated) directive
    | define_option[$l]+ PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
-       $l.setDirective(ClawDirective.PARALLELIZE);
+       // TODO to be removed
+       System.err.println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       $l.setDirective(ClawDirective.SCA);
      }
    | PARALLELIZE FORWARD parallelize_clauses[$l] EOF
      {
-       $l.setDirective(ClawDirective.PARALLELIZE);
+       // TODO to be removed
+       System.err.println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       $l.setDirective(ClawDirective.SCA);
        $l.setForwardClause();
      }
    | END PARALLELIZE EOF
      {
-       $l.setDirective(ClawDirective.PARALLELIZE);
+       // TODO to be removed
+       System.err.println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       $l.setDirective(ClawDirective.SCA);
+       $l.setEndPragma();
+     }
+
+   // SCA directive
+   | SCA EOF
+     {
+       $l.setDirective(ClawDirective.SCA);
+     }
+   | define_option[$l]+ SCA data_over_clause[$l]* parallelize_clauses[$l] EOF
+     {
+       $l.setDirective(ClawDirective.SCA);
+     }
+   | SCA FORWARD parallelize_clauses[$l] EOF
+     {
+       $l.setDirective(ClawDirective.SCA);
+       $l.setForwardClause();
+     }
+   | END SCA EOF
+     {
+       $l.setDirective(ClawDirective.SCA);
        $l.setEndPragma();
      }
 
@@ -545,6 +571,7 @@ ARRAY_TO_CALL    : 'call';
 DEFINE           : 'define';
 END              : 'end';
 IF_EXTRACT       : 'if-extract';
+IGNORE           : 'ignore';
 KCACHE           : 'kcache';
 LOOP_EXTRACT     : 'loop-extract';
 LOOP_FUSION      : 'loop-fusion';
@@ -552,9 +579,8 @@ LOOP_HOIST       : 'loop-hoist';
 LOOP_INTERCHANGE : 'loop-interchange';
 PARALLELIZE      : 'parallelize';
 REMOVE           : 'remove';
-IGNORE           : 'ignore';
+SCA              : 'sca';
 VERBATIM         : 'verbatim';
-
 
 // CLAW Clauses
 COLLAPSE     : 'collapse';

@@ -23,7 +23,7 @@ public enum ClawDirective {
   LOOP_EXTRACT,
   NO_DEP,
   PRIMITIVE,
-  PARALLELIZE,
   REMOVE,
+  SCA,
   VERBATIM
 }

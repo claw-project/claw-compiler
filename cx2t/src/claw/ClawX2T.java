@@ -8,6 +8,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
+import claw.wani.ClawConstant;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
@@ -34,8 +35,16 @@ public class ClawX2T {
   private static void error(String filename, int lineNumber,
                             int charPos, String msg)
   {
-    System.err.println(String.format("%s:%d:%d error: %s",
-        filename, lineNumber, charPos, msg));
+    StringBuilder errorStr = new StringBuilder();
+    errorStr.append(filename).append(":");
+    if(lineNumber > 0) {
+      errorStr.append(lineNumber).append(":");
+    }
+    if(charPos > 0) {
+      errorStr.append(lineNumber).append(":");
+    }
+    errorStr.append(msg);
+    System.err.println(errorStr);
     System.exit(1);
   }
 
@@ -111,6 +120,8 @@ public class ClawX2T {
             "has to be transformed.");
     options.addOption("r", "report", true,
         "generate the transformation report.");
+    options.addOption("m", "model-config", true,
+        "specify a model configuration for SCA transformation");
     return options;
   }
 
@@ -143,14 +154,15 @@ public class ClawX2T {
     String directive_option = null;
     String configuration_file = null;
     String configuration_path = null;
-    int maxColumns = 0;
-    //boolean forcePure = false;
+    String model_configuration = null;
+
+    int maxColumns = ClawConstant.DEFAULT_MAX_COLUMN;
 
     CommandLine cmd;
     try {
       cmd = processCommandArgs(args);
     } catch(ParseException pex) {
-      error("internal", 0, 0, pex.getMessage());
+      error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0, pex.getMessage());
       return;
     }
 
@@ -216,7 +228,8 @@ public class ClawX2T {
 
     // Check that configuration path exists
     if(configuration_path == null) {
-      error("internal", 0, 0, "Configuration path missing.");
+      error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0,
+          "Configuration path missing.");
       return;
     }
 
@@ -224,8 +237,8 @@ public class ClawX2T {
     if(configuration_file != null) {
       File configFile = new File(configuration_file);
       if(!configFile.exists()) {
-        error("internal", 0, 0, "Configuration file not found: "
-            + configuration_file);
+        error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0,
+            "Configuration file not found: " + configuration_file);
       }
     }
 
@@ -235,6 +248,16 @@ public class ClawX2T {
           target_option, directive_option, maxColumns);
       Configuration.get().displayConfig();
       return;
+    }
+
+    // Check if there is a model configuration and if file exists
+    if(cmd.hasOption("m")) {
+      model_configuration = cmd.getOptionValue("m");
+      File modelConfig = new File(model_configuration);
+      if(!modelConfig.exists()) {
+        error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0,
+            "Model configuration file not found: " + model_configuration);
+      }
     }
 
     // Get the input XcodeML file to transform
@@ -249,7 +272,7 @@ public class ClawX2T {
       Configuration.get().load(configuration_path, configuration_file,
           target_option, directive_option, maxColumns);
     } catch(Exception ex) {
-      error("internal", 0, 0, ex.getMessage());
+      error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0, ex.getMessage());
       return;
     }
 

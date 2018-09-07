@@ -1023,80 +1023,71 @@ public class ClawPragmaTest {
   }
 
   /**
-   * Test various input for the CLAW one_column directive.
+   * Test various input for the CLAW sca directive.
    */
   @Test
-  public void parallelizeOverClauseTest() {
+  public void scaOverClauseTest() {
     DimensionDefinition d1 = new DimensionDefinition("i", "1", "ni");
     DimensionDefinition d2 = new DimensionDefinition("j", "1", "nj");
     List<String> data1 = Arrays.asList("a", "b", "c");
     List<List<String>> data1Lst = Collections.singletonList(data1);
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) sca " +
             "data(a,b,c) over (i,:)", data1Lst,
         Collections.singletonList(Collections.singletonList(d1)));
 
     d1.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) sca " +
             "data(a,b,c) over (:,i)", data1Lst,
         Collections.singletonList(Collections.singletonList(d1)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.BEFORE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (i,j,:)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.AFTER);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (:,i,j)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
     d2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (:,i,j,:)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (i,:,j,:)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (i,:,j)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (:,i,:,j)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b) over (i,:)" +
             "data(c) over (:,j)",
         Arrays.asList(Arrays.asList("a", "b"), Collections.singletonList("c")),
@@ -1105,17 +1096,15 @@ public class ClawPragmaTest {
   }
 
   /**
-   * Assert the result for valid CLAW parallelize directive with data over
+   * Assert the result for valid CLAW sca directive with data over
    * clause.
    *
    * @param raw        Raw string value of the CLAW directive to be analyzed.
    * @param datas      Reference list for the data clause values.
    * @param dimensions Reference list of dimensions.
    */
-  private void analyzeValidOverParallelize(String raw,
-                                           List<List<String>> datas,
-                                           List<List<DimensionDefinition>>
-                                               dimensions)
+  private void analyzeValidOverSCA(String raw, List<List<String>> datas,
+                                   List<List<DimensionDefinition>> dimensions)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -1123,7 +1112,7 @@ public class ClawPragmaTest {
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+      assertEquals(ClawDirective.SCA, l.getDirective());
 
       if(datas != null) {
         assertEquals(datas.size(), dimensions.size());
@@ -1168,10 +1157,10 @@ public class ClawPragmaTest {
   }
 
   /**
-   * Test various input for the CLAW parallelize directive.
+   * Test various input for the CLAW SCA directive.
    */
   @Test
-  public void parallelizeTest() {
+  public void scaTest() {
 
     // Valid directives
     DimensionDefinition d1 = new DimensionDefinition("i", "1", "nx");
@@ -1184,135 +1173,135 @@ public class ClawPragmaTest {
     List<List<String>> over2 = Collections.singletonList(icj);
     List<List<String>> over3 = Collections.singletonList(cij);
 
-    analyzeValidParallelize("claw define dimension i(1:nx)" +
-            " parallelize data(t,qc,qv) over (i,j,:)",
+    analyzeValidSCA("claw define dimension i(1:nx)" +
+            " sca data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d1), null, null, null);
 
     DimensionDefinition d2 = new DimensionDefinition("j", "1", "ny");
-    analyzeValidParallelize("claw define dimension j(1:ny)" +
-            "parallelize data(t,qc,qv) over (i,j,:)",
+    analyzeValidSCA("claw define dimension j(1:ny)" +
+            "sca data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d2), null, null, null);
 
     DimensionDefinition d3 = new DimensionDefinition("j", "1", "10");
-    analyzeValidParallelize("claw define dimension j(1:10) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
+    analyzeValidSCA("claw define dimension j(1:10) " +
+            "sca data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d3), null, null, null);
 
     DimensionDefinition d4 = new DimensionDefinition("j", "jstart", "10");
-    analyzeValidParallelize("claw define dimension j(jstart:10) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
+    analyzeValidSCA("claw define dimension j(jstart:10) " +
+            "sca data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d4), null, null, null);
 
     DimensionDefinition d5 = new DimensionDefinition("j", "jstart", "ny");
-    analyzeValidParallelize("claw define dimension j(jstart:ny) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
+    analyzeValidSCA("claw define dimension j(jstart:ny) " +
+            "sca data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Collections.singletonList(d5), null, null, null);
 
     DimensionDefinition d6 = new DimensionDefinition("j", "jstart", "ny");
-    analyzeValidParallelize("claw define dimension j(jstart:ny) parallelize",
+    analyzeValidSCA("claw define dimension j(jstart:ny) sca",
         null, null, Collections.singletonList(d6), null, null, null);
 
-    analyzeValidParallelize("claw define dimension i(1:nx)" +
-            " parallelize scalar(s1,s2)",
+    analyzeValidSCA("claw define dimension i(1:nx)" +
+            " sca scalar(s1,s2)",
         null, null, Collections.singletonList(d1), null, null,
         Arrays.asList("s1", "s2"));
 
-    analyzeValidParallelize("claw parallelize forward",
+    analyzeValidSCA("claw sca forward",
         null, null, null, null, null, null);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
+            "sca data(t,qc,qv) over (i,j,:)",
         dataLst1, over1, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t,qc,qv) over (:,i,j)",
+            "sca data(t,qc,qv) over (:,i,j)",
         dataLst1, over3, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t,qc,qv) over (i,:,j)",
+            "sca data(t,qc,qv) over (i,:,j)",
         dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j)",
+            "sca data(t , qc , qv) over (i,:,j)",
         dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "sca data(t , qc , qv) over (i,:,j) " +
             "copy", dataLst1, over2, Arrays.asList(d1, d2),
         DataMovement.BOTH, null, null);
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "sca data(t , qc , qv) over (i,:,j) " +
             "copy(in)", dataLst1, over2, Arrays.asList(d1, d2),
         DataMovement.DEVICE, null, null);
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "sca data(t , qc , qv) over (i,:,j) " +
             "copy(out)", dataLst1, over2, Arrays.asList(d1, d2),
         DataMovement.HOST, null, null);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
-    analyzeValidParallelize("claw define dimension c(1:nc) parallelize copy",
+    analyzeValidSCA("claw define dimension c(1:nc) sca copy",
         null, null, Collections.singletonList(d7), DataMovement.BOTH, null, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize copy(in)", null, null, Collections.singletonList(d7),
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca copy(in)", null, null, Collections.singletonList(d7),
         DataMovement.DEVICE, null, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize copy(out)", null, null, Collections.singletonList(d7),
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca copy(out)", null, null, Collections.singletonList(d7),
         DataMovement.HOST, null, null);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "sca data(t , qc , qv) over (i,:,j) " +
             "update", dataLst1, over2, Arrays.asList(d1, d2),
         null, DataMovement.BOTH, null);
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "sca data(t , qc , qv) over (i,:,j) " +
             "update(in)", dataLst1, over2, Arrays.asList(d1, d2),
         null, DataMovement.DEVICE, null);
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
+            "sca data(t , qc , qv) over (i,:,j) " +
             "update(out)", dataLst1, over2, Arrays.asList(d1, d2),
         null, DataMovement.HOST, null);
 
-    analyzeValidParallelize("claw define dimension c(1:nc) parallelize update",
+    analyzeValidSCA("claw define dimension c(1:nc) sca update",
         null, null, Collections.singletonList(d7), null, DataMovement.BOTH, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize update(in)", null, null, Collections.singletonList(d7),
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca update(in)", null, null, Collections.singletonList(d7),
         null, DataMovement.DEVICE, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize update(out)", null, null, Collections.singletonList(d7),
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca update(out)", null, null, Collections.singletonList(d7),
         null, DataMovement.HOST, null);
 
-    analyzeValidParallelize("claw parallelize forward copy",
+    analyzeValidSCA("claw sca forward copy",
         null, null, null, DataMovement.BOTH, null, null);
-    analyzeValidParallelize("claw parallelize forward copy(in)",
+    analyzeValidSCA("claw sca forward copy(in)",
         null, null, null, DataMovement.DEVICE, null, null);
-    analyzeValidParallelize("claw parallelize forward copy(out)",
+    analyzeValidSCA("claw sca forward copy(out)",
         null, null, null, DataMovement.HOST, null, null);
 
-    analyzeValidParallelize("claw parallelize forward update",
+    analyzeValidSCA("claw sca forward update",
         null, null, null, null, DataMovement.BOTH, null);
-    analyzeValidParallelize("claw parallelize forward update(in)",
+    analyzeValidSCA("claw sca forward update(in)",
         null, null, null, null, DataMovement.DEVICE, null);
-    analyzeValidParallelize("claw parallelize forward update(out)",
+    analyzeValidSCA("claw sca forward update(out)",
         null, null, null, null, DataMovement.HOST, null);
 
     List<String> data2 = Collections.singletonList("t");
@@ -1323,54 +1312,54 @@ public class ClawPragmaTest {
     List<String> ci = Arrays.asList(":", "i");
     List<List<String>> over4 = Arrays.asList(ic, ci);
 
-    analyzeValidParallelize("claw  define dimension i(1:nx) " +
-            "parallelize data(t) over (i,:) data(q) over(:,i)",
+    analyzeValidSCA("claw  define dimension i(1:nx) " +
+            "sca data(t) over (i,:) data(q) over(:,i)",
         dataLst2, over4, Collections.singletonList(d1), null, null, null);
 
     // Invalid directives
-    analyzeInvalidClawLanguage("claw parallelize data over ");
-    analyzeInvalidClawLanguage("claw parallelize data");
-    analyzeInvalidClawLanguage("claw parallelize over");
+    analyzeInvalidClawLanguage("claw sca data over ");
+    analyzeInvalidClawLanguage("claw sca data");
+    analyzeInvalidClawLanguage("claw sca over");
     analyzeInvalidClawLanguage("claw parallelite data() over ()");
   }
 
   @Test
-  public void parallelizeDataMgtTest() {
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create",
+  public void scaDataMgtTest() {
+    analyzeValidScaDataMgtString("claw sca forward create",
         null, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "update", DataMovement.BOTH, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "update(in)", DataMovement.DEVICE, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "update(out)", DataMovement.HOST, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "copy", null, DataMovement.BOTH, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "copy(in)", null, DataMovement.DEVICE, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "copy(out)", null, DataMovement.HOST, true);
 
-    analyzeValidParallelizeDataMgtString("claw parallelize forward update",
+    analyzeValidScaDataMgtString("claw sca forward update",
         DataMovement.BOTH, null, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward update(in)",
+    analyzeValidScaDataMgtString("claw sca forward update(in)",
         DataMovement.DEVICE, null, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward update(out)",
+    analyzeValidScaDataMgtString("claw sca forward update(out)",
         DataMovement.HOST, null, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward copy", null,
+    analyzeValidScaDataMgtString("claw sca forward copy", null,
         DataMovement.BOTH, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward copy(in)",
+    analyzeValidScaDataMgtString("claw sca forward copy(in)",
         null, DataMovement.DEVICE, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward copy(out)",
+    analyzeValidScaDataMgtString("claw sca forward copy(out)",
         null, DataMovement.HOST, false);
   }
 
   /**
-   * Assert the result for valid CLAW parallelize directive
+   * Assert the result for valid CLAW SCA directive
    */
-  private void analyzeValidParallelizeDataMgtString(String raw, DataMovement update,
-                                                    DataMovement copy,
-                                                    boolean createClause)
+  private void analyzeValidScaDataMgtString(String raw, DataMovement update,
+                                            DataMovement copy,
+                                            boolean createClause)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -1378,7 +1367,7 @@ public class ClawPragmaTest {
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+      assertEquals(ClawDirective.SCA, l.getDirective());
 
       assertEquals(createClause, l.hasCreateClause());
       if(update != null) {
@@ -1401,7 +1390,7 @@ public class ClawPragmaTest {
   }
 
   /**
-   * Assert the result for valid CLAW parallelize directive
+   * Assert the result for valid CLAW SCA directive
    *
    * @param raw          Raw string value of the CLAW directive to be analyzed.
    * @param data         Reference list for the data clause values.
@@ -1411,11 +1400,12 @@ public class ClawPragmaTest {
    * @param updateClause Expected value for update clause
    *                     (Null if no update clause)
    */
-  private void analyzeValidParallelize(String raw, List<List<String>> data,
-                                       List<List<String>> over,
-                                       List<DimensionDefinition> dimensions,
-                                       DataMovement copyClause, DataMovement updateClause,
-                                       List<String> scalarData)
+  private void analyzeValidSCA(String raw, List<List<String>> data,
+                               List<List<String>> over,
+                               List<DimensionDefinition> dimensions,
+                               DataMovement copyClause,
+                               DataMovement updateClause,
+                               List<String> scalarData)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -1423,7 +1413,7 @@ public class ClawPragmaTest {
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
       Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+      assertEquals(ClawDirective.SCA, l.getDirective());
 
       if(data != null) {
         assertTrue(l.hasOverDataClause());
@@ -1519,7 +1509,7 @@ public class ClawPragmaTest {
   public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
-    analyzeErrors("claw loop", 17);
+    analyzeErrors("claw loop", 18);
   }
 
   private void analyzeErrors(String pragma, int nbExpectedToken) {
