@@ -278,6 +278,9 @@ public class ClawPragmaTest {
     analyzeInvalidClawLanguage("claw end re move");
   }
 
+  /**
+   * Test various input for the CLAW model-data directive.
+   */
   @Test
   public void scaModelDataTest() {
     analyzeValidSimpleClaw("claw model-data", ClawDirective.MODEL_DATA, false,
