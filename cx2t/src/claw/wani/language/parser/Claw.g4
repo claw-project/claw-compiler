@@ -102,6 +102,7 @@ directive[ClawPragma l]
       $l.setDirective(ClawDirective.LOOP_HOIST);
       $l.setEndPragma();
     }
+
   // on the fly directive
   | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')' (target_clause[$l])? EOF
     {
@@ -150,6 +151,17 @@ directive[ClawPragma l]
    | END SCA EOF
      {
        $l.setDirective(ClawDirective.SCA);
+       $l.setEndPragma();
+     }
+
+   // SCA model-data directive
+   | MODEL_DATA EOF
+     {
+       $l.setDirective(ClawDirective.MODEL_DATA);
+     }
+   | END MODEL_DATA EOF
+     {
+       $l.setDirective(ClawDirective.MODEL_DATA);
        $l.setEndPragma();
      }
 
@@ -577,7 +589,8 @@ LOOP_EXTRACT     : 'loop-extract';
 LOOP_FUSION      : 'loop-fusion';
 LOOP_HOIST       : 'loop-hoist';
 LOOP_INTERCHANGE : 'loop-interchange';
-PARALLELIZE      : 'parallelize';
+MODEL_DATA       : 'model-data';
+PARALLELIZE      : 'parallelize';  // TODO to be removed
 REMOVE           : 'remove';
 SCA              : 'sca';
 VERBATIM         : 'verbatim';

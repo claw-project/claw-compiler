@@ -243,7 +243,7 @@ public class ClawPragmaTest {
    * @param targets List of expected targets.
    */
   private void assertTargets(ClawPragma l, List<Target> targets) {
-    if(targets != null) {
+    if(targets != null && targets.size() > 0) {
       assertTrue(l.hasTargetClause());
       assertEquals(targets.size(), l.getTargetClauseValues().size());
       for(Target t : targets) {
@@ -276,6 +276,14 @@ public class ClawPragmaTest {
     analyzeInvalidClawLanguage("claw");
     analyzeInvalidClawLanguage("claw dummy");
     analyzeInvalidClawLanguage("claw end re move");
+  }
+
+  @Test
+  public void scaModelDataTest() {
+    analyzeValidSimpleClaw("claw model-data", ClawDirective.MODEL_DATA, false,
+        Collections.<Target>emptyList());
+    analyzeValidSimpleClaw("claw end model-data", ClawDirective.MODEL_DATA,
+        true, Collections.<Target>emptyList());
   }
 
   /**
