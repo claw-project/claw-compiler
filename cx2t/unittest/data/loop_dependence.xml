@@ -623,7 +623,7 @@
             </varDecl>
           </declarations>
           <body>
-            <FpragmaStatement lineno="65" file="../src/mo_lw_solver.F90">claw define dimension col(1:ncol) claw parallelize</FpragmaStatement>
+            <FpragmaStatement lineno="65" file="../src/mo_lw_solver.F90">claw define dimension col(1:ncol) claw sca</FpragmaStatement>
             <FifStatement lineno="70" file="../src/mo_lw_solver.F90">
               <condition>
                 <Var type="L1cd4c60" scope="local">top_is_1</Var>

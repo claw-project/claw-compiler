@@ -75,7 +75,7 @@
             </varDecl>
           </declarations>
           <body>
-            <FpragmaStatement lineno="24" file="mo_column.f90">claw define dimension proma(1:nproma) claw parallelize</FpragmaStatement>
+            <FpragmaStatement lineno="24" file="mo_column.f90">claw define dimension proma(1:nproma) claw sca</FpragmaStatement>
             <FdoStatement lineno="27" file="mo_column.f90">
               <Var type="Fint" scope="local">k</Var>
               <indexRange>
