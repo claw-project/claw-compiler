@@ -11,6 +11,9 @@ build
 omni-compiler-prefix
 out
 
+# macos hidden files
+.DS_Store
+
 # Compiled Java files
 *.class
 *.jar
