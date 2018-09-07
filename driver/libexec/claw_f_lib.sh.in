@@ -41,6 +41,7 @@ CLAW Compiler options:
    --show-config              : list the current configuration information.
                                 If used with --config, list the information from
                                 the specific configuration.
+  -m,--model-config           : Specific model configuratiojn for SCA.
    -c,--keep-comment          : keep comment in the transformed file.
    -v,--verbose               : print processing status.
    --version                  : print version.
@@ -231,6 +232,13 @@ function claw::set_parameters() {
     --config=*)
       user_config=true
       config_opt="${1#--config=}"
+      ;;
+    -m=*)
+      model_config=true
+      model_config_opt="${1#-m=}"
+      ;;
+    --model-config=*)
+      model_config_opt="${1#--model-config=}"
       ;;
     -w)
       decompiler_max_column=true
@@ -691,7 +699,7 @@ function claw::applyPreprocessorPass() {
 # Global: CLAW_X2T_CONFIG_OPT, CLAW_X2T_TARGET_OPT,
 #         CLAW_X2T_DIRECTIVE_OPT, CLAW_X2T_MAX_COLUMN_OPT,
 #         CLAW_X2T_LINE_OPT, CLAW_X2T_TRANSLATOR_OPT, CLAW_X2T_MOD_OPT,
-#         user_config, config_opt, user_target, target_opt,
+#         user_config, config_opt, model_config_opt, user_target, target_opt,
 #         user_directive, directive_opt, decompiler_max_column,
 #         max_columns, line_directive, force_pure, module_opt
 ###################################################################
@@ -702,6 +710,11 @@ function claw::format_cx2t_params() {
   # Set user defined configuration
   if [[ ${user_config} == true ]]; then
     CLAW_X2T_CONFIG_OPT="${CLAW_X2T_CONFIG_OPT} --config=${config_opt}"
+  fi
+
+  # Set model-config defined configuration
+  if [[ ${model_config} == true ]]; then
+    CLAW_X2T_MODEL_CONFIG_OPT="${CLAW_X2T_MODEL_CONFIG_OPT} --model-config=${model_config_opt}"
   fi
 
   # Set the correct target option for the translator
