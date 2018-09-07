@@ -25,7 +25,7 @@ CONTAINS
 
     !$claw define dimension i(1:nx) &
     !$claw define dimension j(1:ny) &
-    !$claw parallelize
+    !$claw sca
 
     c = 5.345
     DO k = 2, nz

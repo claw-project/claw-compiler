@@ -25,7 +25,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize data(t,q) over(:,proma)
+    !$claw sca data(t,q) over(:,proma)
 
     c = 5.345
     DO k = 2, nz
@@ -43,7 +43,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
     INTEGER :: result
 
-    !$claw parallelize forward
+    !$claw sca forward
     result = compute_column(nz, q, t)
 
   END SUBROUTINE compute

@@ -19,7 +19,7 @@ PROGRAM test_abstraction9
     t(p,1) = 0.0
   END DO
 
-  !$claw parallelize forward create update
+  !$claw sca forward create update
   DO p = 1, nproma
     CALL compute_column_public(nz, q(p,:), t(p,:))
   END DO

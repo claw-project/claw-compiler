@@ -14,7 +14,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
 
-    !$claw parallelize forward
+    !$claw sca forward
     CALL compute_column(nz, q, t)
 
   END SUBROUTINE compute_solver
@@ -36,7 +36,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize
+    !$claw sca
 
     c = 5.345
     DO k = 2, nz

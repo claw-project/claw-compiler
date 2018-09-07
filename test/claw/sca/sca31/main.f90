@@ -23,7 +23,7 @@ PROGRAM test_abstraction31
 
   ALLOCATE(ty%y(nproma,nz))
 
-  !$claw parallelize forward create update
+  !$claw sca forward create update
   DO p = 1, nproma
     CALL compute(nz, q(p,:), ty%y(p,:), z(p))
   END DO

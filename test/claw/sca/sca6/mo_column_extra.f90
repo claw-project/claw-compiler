@@ -14,7 +14,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
 
-    !$claw parallelize forward
+    !$claw sca forward
     CALL compute_two(nz, q, t)
   END SUBROUTINE compute_one
 
@@ -25,7 +25,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
 
-    !$claw parallelize forward
+    !$claw sca forward
     CALL compute_three(nz, q, t)
   END SUBROUTINE compute_two
 
@@ -37,7 +37,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
 
-    !$claw parallelize forward
+    !$claw sca forward
     CALL compute_solver(nz, q, t)
   END SUBROUTINE compute_three
 

@@ -15,7 +15,7 @@ CONTAINS
     REAL, INTENT(INOUT) :: q(:) ! Field declared as one column only
     REAL, INTENT(INOUT) :: s    ! Scalar in SCA but array in model data
 
-    !$claw parallelize forward
+    !$claw sca forward
     CALL compute_column(nz, q, t, s)
 
   END SUBROUTINE compute
@@ -40,7 +40,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize scalar(s)
+    !$claw sca scalar(s)
 
     IF(.NOT. ALLOCATED(y)) ALLOCATE(y(nz))
 

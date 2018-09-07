@@ -22,7 +22,7 @@ PROGRAM test_abstraction2
     END DO
   END DO
 
-  !$claw parallelize forward create update
+  !$claw sca forward create update
   DO i = 1, nx
     DO j = 1, ny
       CALL compute_column(nz, q(i,j,:), t(i,j,:))
