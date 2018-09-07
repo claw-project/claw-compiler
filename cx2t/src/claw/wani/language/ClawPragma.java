@@ -5,6 +5,7 @@
 package claw.wani.language;
 
 import claw.shenron.translator.AnalyzedPragma;
+import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.DataMovement;
@@ -59,6 +60,7 @@ public class ClawPragma extends AnalyzedPragma {
   private DataMovement _updateClauseValue;
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
+  private CompilerDirective _cleanupClauseValue;
 
   // Clauses flags
   private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
@@ -68,7 +70,7 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
   private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
   private boolean _hasTargetClause, _hasConstraintClause, _hasScalarClause;
-  private boolean _hasCreateClause;
+  private boolean _hasCreateClause, _hasCleanupClause;
 
   /**
    * Constructs an empty ClawPragma section.
@@ -277,6 +279,7 @@ public class ClawPragma extends AnalyzedPragma {
     _reshapeInfos = null;
     _targetClauseValues = null;
     _constraintClauseValue = ClawConstraint.DIRECT;
+    _cleanupClauseValue = CompilerDirective.NONE;
 
     // Clauses flags members
     _hasAccClause = false;
@@ -300,6 +303,7 @@ public class ClawPragma extends AnalyzedPragma {
     _hasConstraintClause = false;
     _hasScalarClause = false;
     _hasCreateClause = false;
+    _hasCleanupClause = false;
 
     // General members
     _directive = null;
@@ -1116,5 +1120,33 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public void setCreateClause() {
     _hasCreateClause = true;
+  }
+
+  /**
+   * Check whether the cleanup clause is used.
+   *
+   * @return True if the cleanup clause is used.
+   */
+  public boolean hasCleanupClause() {
+    return _hasCleanupClause;
+  }
+
+  /**
+   * Get the cleanup clause value.
+   *
+   * @return Cleanup clause value. NONE means both OpenACC and OpenMP.
+   */
+  public CompilerDirective getCleanupClauseValue() {
+    return _cleanupClauseValue;
+  }
+
+  /**
+   * Set the cleanup clause value and the update clause usage flag to true.
+   *
+   * @param value New compiler directive clause value.
+   */
+  public void setCleanupClauseValue(CompilerDirective value) {
+    _hasCleanupClause = true;
+    _cleanupClauseValue = value;
   }
 }

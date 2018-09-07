@@ -77,6 +77,17 @@ public final class Utility {
     return strList;
   }
 
+  public static Set<String> convertToSet(Object rawObject) {
+    Set<String> strSet = new HashSet<>();
+    if(rawObject instanceof HashSet) {
+      Set rawSet = (HashSet) rawObject;
+      for(Object object : rawSet) {
+        strSet.add(Objects.toString(object, null));
+      }
+    }
+    return strSet;
+  }
+
   /**
    * Check if there is an intersection between the set and the list.
    *

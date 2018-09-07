@@ -24,8 +24,9 @@ import claw.wani.transformation.ll.directive.DirectivePrimitive;
 import claw.wani.transformation.ll.loop.*;
 import claw.wani.transformation.ll.utility.ArrayToFctCall;
 import claw.wani.transformation.ll.utility.UtilityRemove;
-import claw.wani.transformation.sca.Parallelize;
-import claw.wani.transformation.sca.ParallelizeForward;
+import claw.wani.transformation.sca.ModelData;
+import claw.wani.transformation.sca.Sca;
+import claw.wani.transformation.sca.ScaForward;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
 import org.w3c.dom.Element;
@@ -115,9 +116,9 @@ public class ClawTranslator implements Translator {
         break;
       case SCA:
         if(analyzedPragma.hasForwardClause()) {
-          addTransformation(xcodeml, new ParallelizeForward(analyzedPragma));
+          addTransformation(xcodeml, new ScaForward(analyzedPragma));
         } else {
-          addTransformation(xcodeml, new Parallelize(analyzedPragma));
+          addTransformation(xcodeml, new Sca(analyzedPragma));
         }
         break;
       case PRIMITIVE:
@@ -209,6 +210,8 @@ public class ClawTranslator implements Translator {
       case LOOP_HOIST:
         addTransformation(xcodeml, new LoopHoist(begin, end));
         break;
+      case MODEL_DATA:
+        addTransformation(xcodeml, new ModelData(begin, end));
     }
   }
 
@@ -248,8 +251,8 @@ public class ClawTranslator implements Translator {
    *
    */
   private void reorderTransformations() {
-    if(getGroups().containsKey(ParallelizeForward.class)) {
-      TransformationGroup tg = getGroups().get(ParallelizeForward.class);
+    if(getGroups().containsKey(ScaForward.class)) {
+      TransformationGroup tg = getGroups().get(ScaForward.class);
 
       if(tg.count() <= 1) {
         return;
@@ -259,7 +262,7 @@ public class ClawTranslator implements Translator {
       Map<String, List<Transformation>> fctMap = new HashMap<>();
 
       for(Transformation t : tg.getTransformations()) {
-        ParallelizeForward p = (ParallelizeForward) t;
+        ScaForward p = (ScaForward) t;
         dg.addNode(p);
         if(fctMap.containsKey(p.getCallingFctName())) {
           List<Transformation> tList = fctMap.get(p.getCallingFctName());
@@ -272,7 +275,7 @@ public class ClawTranslator implements Translator {
       }
 
       for(Transformation t : tg.getTransformations()) {
-        ParallelizeForward p = (ParallelizeForward) t;
+        ScaForward p = (ScaForward) t;
         if(p.getCalledFctName() != null) {
           if(fctMap.containsKey(p.getCalledFctName())) {
             List<Transformation> tList = fctMap.get(p.getCalledFctName());

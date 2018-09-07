@@ -19,21 +19,21 @@
 # sca13: data over with non-assumed shaped arrays and multiple over clauses
 # sca14: adding dimension in the middle of already defined ones
 # sca15: data-over clause on a scalar
-# sca16: parallelize forward over type-bound procedure call
-# sca17: parallelize in a subroutine with contains
-# sca18: parallelize with automatic promotion std
-# sca19: parallelize in a subroutine with contains
-# sca20: parallelize/forward with optional not set
-# sca21: parallelize/forward with optional set
-# sca22: parallelize with automatic promotion placed
-# sca23: parallelize with promotion of result var
-# sca24: parallelize forward with namedValue
-# sca25: parallelize forward non fct field
-# sca26: parallelize forward with scalar to 1d propagation
+# sca16: sca forward over type-bound procedure call
+# sca17: sca in a subroutine with contains
+# sca18: sca with automatic promotion std
+# sca19: sca in a subroutine with contains
+# sca20: sca/forward with optional not set
+# sca21: sca/forward with optional set
+# sca22: sca with automatic promotion placed
+# sca23: sca with promotion of result var
+# sca24: sca forward with namedValue
+# sca25: sca forward non fct field
+# sca26: sca forward with scalar to 1d propagation
 # sca27: pure keyword
 # sca29: claw nodep on k loop (openacc_collapse = false)
 # sca30: unsupported statement
-# sca31: parallelize forward with type%member slicing
+# sca31: sca forward with type%member slicing
 # sca32: promotion instead of privatization of values + parallel region start/end after/before unsupported + update/create
 # sca33: claw nodep on k loop (openacc_collapse = true)
 # sca34: (#355) CPU specific categorization for assign statement
