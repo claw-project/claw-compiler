@@ -121,6 +121,9 @@ public class ClawTranslator implements Translator {
           addTransformation(xcodeml, new Sca(analyzedPragma));
         }
         break;
+      case MODEL_DATA:
+        HandleBlockDirective(xcodeml, analyzedPragma);
+        break;
       case PRIMITIVE:
         addTransformation(xcodeml, new DirectivePrimitive(analyzedPragma));
         break;
