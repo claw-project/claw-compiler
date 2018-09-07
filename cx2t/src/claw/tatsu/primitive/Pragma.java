@@ -9,6 +9,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Utility;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -17,6 +18,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -338,6 +341,34 @@ public final class Pragma {
         } else {
           fdef.body().insert(pragma);
         }
+      }
+    }
+  }
+
+  /**
+   * Delete all pragmas statement between the given start/end nodes.
+   *
+   * @param directive Compiler directive to delete.
+   *                  NONE means both OpenACC/OpenMP.
+   * @param start     Start node.
+   * @param end       End node.
+   */
+  public static void remove(CompilerDirective directive, Xnode start, Xnode end)
+  {
+    if(start == null || end == null) {
+      return;
+    }
+
+    List<Xnode> pragmas = XnodeUtil.getNodes(start, end,
+        Collections.singletonList(Xcode.F_PRAGMA_STATEMENT));
+
+    for(Xnode p : pragmas) {
+      CompilerDirective pDir = getCompilerDirective(p);
+      if(directive == pDir || (directive == CompilerDirective.NONE
+          && (pDir == CompilerDirective.OPENACC
+          || pDir == CompilerDirective.OPENMP)))
+      {
+        p.delete();
       }
     }
   }
