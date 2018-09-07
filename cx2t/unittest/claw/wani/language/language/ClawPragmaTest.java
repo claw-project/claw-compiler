@@ -1184,136 +1184,140 @@ public class ClawPragmaTest {
     List<List<String>> over2 = Collections.singletonList(icj);
     List<List<String>> over3 = Collections.singletonList(cij);
 
+    analyzeValidSCA("claw sca", null, null, null, null, null, null, true);
+
     analyzeValidSCA("claw define dimension i(1:nx)" +
-            " sca data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d1), null, null, null);
+            " sca data(t,qc,qv) over (i,j,:)", dataLst1, over1,
+        Collections.singletonList(d1), null, null, null, false);
 
     DimensionDefinition d2 = new DimensionDefinition("j", "1", "ny");
     analyzeValidSCA("claw define dimension j(1:ny)" +
-            "sca data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d2), null, null, null);
+            "sca data(t,qc,qv) over (i,j,:)", dataLst1, over1,
+        Collections.singletonList(d2), null, null, null, false);
 
     DimensionDefinition d3 = new DimensionDefinition("j", "1", "10");
     analyzeValidSCA("claw define dimension j(1:10) " +
-            "sca data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d3), null, null, null);
+            "sca data(t,qc,qv) over (i,j,:)", dataLst1, over1,
+        Collections.singletonList(d3), null, null, null, false);
 
     DimensionDefinition d4 = new DimensionDefinition("j", "jstart", "10");
     analyzeValidSCA("claw define dimension j(jstart:10) " +
-            "sca data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d4), null, null, null);
+            "sca data(t,qc,qv) over (i,j,:)", dataLst1, over1,
+        Collections.singletonList(d4), null, null, null, false);
 
     DimensionDefinition d5 = new DimensionDefinition("j", "jstart", "ny");
     analyzeValidSCA("claw define dimension j(jstart:ny) " +
-            "sca data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d5), null, null, null);
+            "sca data(t,qc,qv) over (i,j,:)", dataLst1, over1,
+        Collections.singletonList(d5), null, null, null, false);
 
     DimensionDefinition d6 = new DimensionDefinition("j", "jstart", "ny");
     analyzeValidSCA("claw define dimension j(jstart:ny) sca",
-        null, null, Collections.singletonList(d6), null, null, null);
+        null, null, Collections.singletonList(d6), null, null, null, false);
 
     analyzeValidSCA("claw define dimension i(1:nx)" +
             " sca scalar(s1,s2)",
         null, null, Collections.singletonList(d1), null, null,
-        Arrays.asList("s1", "s2"));
+        Arrays.asList("s1", "s2"), false);
 
     analyzeValidSCA("claw sca forward",
-        null, null, null, null, null, null);
+        null, null, null, null, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Arrays.asList(d1, d2), null, null, null);
+        dataLst1, over1, Arrays.asList(d1, d2), null, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t,qc,qv) over (:,i,j)",
-        dataLst1, over3, Arrays.asList(d1, d2), null, null, null);
+        dataLst1, over3, Arrays.asList(d1, d2), null, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t,qc,qv) over (i,:,j)",
-        dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
+        dataLst1, over2, Arrays.asList(d1, d2), null, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j)",
-        dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
+        dataLst1, over2, Arrays.asList(d1, d2), null, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "copy", dataLst1, over2, Arrays.asList(d1, d2),
-        DataMovement.BOTH, null, null);
+        DataMovement.BOTH, null, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "copy(in)", dataLst1, over2, Arrays.asList(d1, d2),
-        DataMovement.DEVICE, null, null);
+        DataMovement.DEVICE, null, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "copy(out)", dataLst1, over2, Arrays.asList(d1, d2),
-        DataMovement.HOST, null, null);
+        DataMovement.HOST, null, null, false);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
     analyzeValidSCA("claw define dimension c(1:nc) sca copy",
-        null, null, Collections.singletonList(d7), DataMovement.BOTH, null, null);
+        null, null, Collections.singletonList(d7),
+        DataMovement.BOTH, null, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca copy(in)", null, null, Collections.singletonList(d7),
-        DataMovement.DEVICE, null, null);
+        DataMovement.DEVICE, null, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca copy(out)", null, null, Collections.singletonList(d7),
-        DataMovement.HOST, null, null);
+        DataMovement.HOST, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "update", dataLst1, over2, Arrays.asList(d1, d2),
-        null, DataMovement.BOTH, null);
+        null, DataMovement.BOTH, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "update(in)", dataLst1, over2, Arrays.asList(d1, d2),
-        null, DataMovement.DEVICE, null);
+        null, DataMovement.DEVICE, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "update(out)", dataLst1, over2, Arrays.asList(d1, d2),
-        null, DataMovement.HOST, null);
+        null, DataMovement.HOST, null, false);
 
     analyzeValidSCA("claw define dimension c(1:nc) sca update",
-        null, null, Collections.singletonList(d7), null, DataMovement.BOTH, null);
+        null, null, Collections.singletonList(d7), null,
+        DataMovement.BOTH, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca update(in)", null, null, Collections.singletonList(d7),
-        null, DataMovement.DEVICE, null);
+        null, DataMovement.DEVICE, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca update(out)", null, null, Collections.singletonList(d7),
-        null, DataMovement.HOST, null);
+        null, DataMovement.HOST, null, false);
 
     analyzeValidSCA("claw sca forward copy",
-        null, null, null, DataMovement.BOTH, null, null);
+        null, null, null, DataMovement.BOTH, null, null, false);
     analyzeValidSCA("claw sca forward copy(in)",
-        null, null, null, DataMovement.DEVICE, null, null);
+        null, null, null, DataMovement.DEVICE, null, null, false);
     analyzeValidSCA("claw sca forward copy(out)",
-        null, null, null, DataMovement.HOST, null, null);
+        null, null, null, DataMovement.HOST, null, null, false);
 
     analyzeValidSCA("claw sca forward update",
-        null, null, null, null, DataMovement.BOTH, null);
+        null, null, null, null, DataMovement.BOTH, null, false);
     analyzeValidSCA("claw sca forward update(in)",
-        null, null, null, null, DataMovement.DEVICE, null);
+        null, null, null, null, DataMovement.DEVICE, null, false);
     analyzeValidSCA("claw sca forward update(out)",
-        null, null, null, null, DataMovement.HOST, null);
+        null, null, null, null, DataMovement.HOST, null, false);
 
     List<String> data2 = Collections.singletonList("t");
     List<String> data3 = Collections.singletonList("q");
@@ -1324,8 +1328,8 @@ public class ClawPragmaTest {
     List<List<String>> over4 = Arrays.asList(ic, ci);
 
     analyzeValidSCA("claw  define dimension i(1:nx) " +
-            "sca data(t) over (i,:) data(q) over(:,i)",
-        dataLst2, over4, Collections.singletonList(d1), null, null, null);
+            "sca data(t) over (i,:) data(q) over(:,i)", dataLst2, over4,
+        Collections.singletonList(d1), null, null, null, false);
 
     // Invalid directives
     analyzeInvalidClawLanguage("claw sca data over ");
@@ -1416,7 +1420,7 @@ public class ClawPragmaTest {
                                List<DimensionDefinition> dimensions,
                                DataMovement copyClause,
                                DataMovement updateClause,
-                               List<String> scalarData)
+                               List<String> scalarData, boolean isModelConfig)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -1480,7 +1484,7 @@ public class ClawPragmaTest {
         }
       }
 
-      if(data == null && over == null && dimensions == null) {
+      if(data == null && over == null && dimensions == null && !isModelConfig) {
         assertTrue(l.hasForwardClause());
       }
 
@@ -1520,7 +1524,7 @@ public class ClawPragmaTest {
   public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
-    analyzeErrors("claw loop", 18);
+    analyzeErrors("claw loop", 19);
   }
 
   private void analyzeErrors(String pragma, int nbExpectedToken) {
