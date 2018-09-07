@@ -1,12 +1,14 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
 package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Utility;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
@@ -14,6 +16,11 @@ import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
 
+/**
+ * Model data directive analysis for the SCA transformation.
+ *
+ * @author clementval
+ */
 public class ModelData extends ClawBlockTransformation {
 
   public ModelData(ClawPragma startDirective, ClawPragma endDirective) {
@@ -37,16 +44,8 @@ public class ModelData extends ClawBlockTransformation {
       modelVariables = new HashSet<>();
     }
 
-    // Locate all declarations in the model-data block
-    List<Xnode> decls = XnodeUtil.getNodes(getDirective().getPragma(),
-        getEndDirective().getPragma(),
-        Collections.singletonList(Xcode.VAR_DECL));
-
-    // Save variables for SCA usage
-    for(Xnode varDecl : decls) {
-      Xnode name = varDecl.matchSeq(Xcode.NAME);
-      modelVariables.add(name.value());
-    }
+    modelVariables.addAll(XnodeUtil.getAllVariables(getDirective().getPragma(),
+        getEndDirective().getPragma()));
 
     trans.storeElement(sub, modelVariables);
 

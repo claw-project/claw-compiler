@@ -22,10 +22,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -650,5 +647,20 @@ public class XnodeUtil {
       }
     }
     return gatheredArguments;
+  }
+
+  public static Set<String> getAllVariables(Xnode begin, Xnode end) {
+    Set<String> values = new HashSet<>();
+
+    // Locate all declarations in the model-data block
+    List<Xnode> decls = XnodeUtil.getNodes(begin, end,
+        Collections.singletonList(Xcode.VAR_DECL));
+
+    // Save variables for SCA usage
+    for(Xnode varDecl : decls) {
+      Xnode name = varDecl.matchSeq(Xcode.NAME);
+      values.add(name.value());
+    }
+    return values;
   }
 }
