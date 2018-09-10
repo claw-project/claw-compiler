@@ -728,12 +728,10 @@ public class Parallelize extends ClawTransformation {
         }
 
         // We need to wrap the whole IF based on the condition
-        List<Xnode> condNode = node.matchAll(Xcode.CONDITION);
-        for (Xnode xnode : condNode) {
-          if (Condition.dependsOn(xnode, affectingVars)) {
+        Xnode condNode = node.firstChild().matchSibling(Xcode.CONDITION);
+        if (Condition.dependsOn(condNode, affectingVars)) {
             hooks.add(node);
             continue nodeLoop;
-          }
         }
 
         // We need to wrap the whole IF based on the statement inside
