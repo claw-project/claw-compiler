@@ -31,6 +31,19 @@ CONTAINS
     END DO
    END DO
   END IF
+  DO k = 1 , nz , 1
+!$acc loop gang vector
+   DO proma = 1 , nproma , 1
+    IF ( flag ) THEN
+     z ( proma , k ) = z ( proma , k ) + tmp
+     DO j = 1 , 5 , 1
+      IF ( flag2 ) THEN
+       z ( proma , k ) = z ( proma , k ) * tmp3 ( k , j )
+      END IF
+     END DO
+    END IF
+   END DO
+  END DO
 !$acc end parallel
  END SUBROUTINE compute_column
 
