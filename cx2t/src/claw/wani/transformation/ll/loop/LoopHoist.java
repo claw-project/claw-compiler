@@ -76,9 +76,9 @@ public class LoopHoist extends ClawBlockTransformation {
             matchAncestor(Xcode.F_DO_STATEMENT);
 
         if(tmpIf == null && tmpSelect == null && tmpDo == null) {
-          xcodeml.addError("A nested group is nested in an unsupported " +
-                  "statement for loop hoisting.",
-              _clawStart.getPragma().lineNo());
+          xcodeml.addError("A nested do stmt group is nested in an unsupported "
+                  + "statement for loop hoisting.",
+              hoistedNestedDoStmt.getOuterStatement().lineNo());
           return false;
         }
 
