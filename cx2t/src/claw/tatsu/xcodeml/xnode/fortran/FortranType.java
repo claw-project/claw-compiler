@@ -6,6 +6,7 @@ package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.Xname;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -26,6 +27,9 @@ public enum FortranType {
   STRUCT('S', ""),
   VOID('V', Xname.TYPE_F_VOID),
   NONE('N', "");
+
+  // Java 1.8 -> private Random rand = SecureRandom.getInstanceStrong();
+  private Random rand = new Random();
 
   private static final int HASH_LENGTH = 12;
   private final char _prefix;
@@ -104,10 +108,9 @@ public enum FortranType {
    * @return The new unique hash.
    */
   private String generateHash(int length) {
-    Random r = new Random();
     StringBuilder sb = new StringBuilder();
     while(sb.length() < length) {
-      sb.append(Integer.toHexString(r.nextInt()));
+      sb.append(Integer.toHexString(this.rand.nextInt()));
     }
     return sb.toString().substring(0, length);
   }
