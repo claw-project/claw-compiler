@@ -10,6 +10,8 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.wani.transformation.ClawBlockTransformation;
+import net.consensys.cava.toml.Toml;
+import net.consensys.cava.toml.TomlParseResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -148,12 +150,13 @@ public class Configuration {
    * @param configPath           Path to the configuration files and XSD
    *                             schemas.
    * @param userConfigFile       Path to the alternative configuration.
+   * @param modelConfig          SCA specific model configuration.
    * @param userDefinedTarget    Target option passed by user. Can be null.
    * @param userDefinedDirective Directive option passed by user. Can be null.
    * @param userMaxColumns       Max column option passed by user. Can be 0.
    * @throws Exception If configuration cannot be loaded properly.
    */
-  public void load(String configPath, String userConfigFile,
+  public void load(String configPath, String userConfigFile, String modelConfig,
                    String userDefinedTarget, String userDefinedDirective,
                    int userMaxColumns)
       throws Exception
@@ -207,6 +210,10 @@ public class Configuration {
         break;
       default:
         _accelerator = new AcceleratorConfiguration(_parameters);
+    }
+
+    if(modelConfig != null) {
+      ModelConfig.load(modelConfig);
     }
 
     Context.init(getCurrentDirective(), getCurrentTarget(), _accelerator,

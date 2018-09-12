@@ -32,8 +32,8 @@ public class ClawX2T {
    * @param charPos    Character position of the error, if known.
    * @param msg        Error message.
    */
-  private static void error(String filename, int lineNumber,
-                            int charPos, String msg)
+  private static void error(String filename, int lineNumber, int charPos,
+                            String msg)
   {
     StringBuilder errorStr = new StringBuilder();
     errorStr.append(filename).append(":");
@@ -242,14 +242,6 @@ public class ClawX2T {
       }
     }
 
-    // --show-configuration option
-    if(cmd.hasOption("sc")) {
-      Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option, maxColumns);
-      Configuration.get().displayConfig();
-      return;
-    }
-
     // Check if there is a model configuration and if file exists
     if(cmd.hasOption("m")) {
       model_configuration = cmd.getOptionValue("m");
@@ -258,6 +250,14 @@ public class ClawX2T {
         error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0,
             "Model configuration file not found: " + model_configuration);
       }
+    }
+
+    // --show-configuration option
+    if(cmd.hasOption("sc")) {
+      Configuration.get().load(configuration_path, configuration_file,
+          model_configuration, target_option, directive_option, maxColumns);
+      Configuration.get().displayConfig();
+      return;
     }
 
     // Get the input XcodeML file to transform
@@ -270,7 +270,7 @@ public class ClawX2T {
     // Read the configuration file
     try {
       Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option, maxColumns);
+          model_configuration, target_option, directive_option, maxColumns);
     } catch(Exception ex) {
       error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0, ex.getMessage());
       return;
