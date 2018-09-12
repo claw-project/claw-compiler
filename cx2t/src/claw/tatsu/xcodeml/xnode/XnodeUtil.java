@@ -271,7 +271,8 @@ public class XnodeUtil {
         Element el = (Element) output.item(i);
         Xnode doStmt = new Xnode(el);
         if(doStmt.lineNo() != 0 &&
-            doStmt.lineNo() < endPragma.lineNo())
+            doStmt.lineNo() < endPragma.lineNo() &&
+            doStmt.lineNo() > from.lineNo())
         {
           doStatements.add(new HoistedNestedDoStatement(doStmt,
               inductionVars.size()));
