@@ -5,7 +5,6 @@
 package claw.tatsu.xcodeml.backend;
 
 import claw.tatsu.xcodeml.xnode.common.XcodeML;
-import com.sun.media.jfxmedia.logging.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import xcodeml.util.*;
@@ -14,6 +13,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Wrapper class to call the Fortran decompiler of OMNI Compiler directly
@@ -51,7 +52,7 @@ public class OmniBackendDriver {
       try {
         _reader.close();
       } catch(IOException e) {
-        Logger.logMsg(Logger.ERROR, e.getMessage());
+        Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
         return false;
       }
     }
@@ -105,7 +106,7 @@ public class OmniBackendDriver {
             FileWriter(outputFilepath)));
       }
     } catch(IOException e) {
-      Logger.logMsg(Logger.ERROR, e.getMessage());
+      Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
     }
 
     try {
