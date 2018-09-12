@@ -20,8 +20,7 @@ grammar Claw;
 import claw.wani.ClawConstant;
 import claw.wani.language.*;
 
-import claw.tatsu.common.Target;
-import claw.tatsu.common.Utility;
+import claw.tatsu.common.*;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.abstraction.*;
 }
@@ -267,6 +266,13 @@ reshape_clause[ClawPragma l]
   :
     RESHAPE '(' reshape_list[r] ')'
     { $l.setReshapeClauseValues(r); }
+;
+
+// cleanup clause
+cleanup_clause[ClawPragma l]:
+    CLEANUP { $l.setCleanupClauseValue(CompilerDirective.NONE); }
+  | CLEANUP '(' OMP ')' { $l.setCleanupClauseValue(CompilerDirective.OPENMP); }
+  | CLEANUP '(' ACC ')' { $l.setCleanupClauseValue(CompilerDirective.OPENACC); }
 ;
 
 // reshape clause
@@ -528,6 +534,7 @@ loop_hoist_clauses[ClawPragma l]:
   | { !$l.hasInterchangeClause() }? interchange_clause[$l]
   | { !$l.hasFusionClause() }?      fusion_clause[$l]
   | { !$l.hasTargetClause() }?      target_clause[$l]
+  | { !$l.hasCleanupClause() }?     cleanup_clause[$l]
   )*
 ;
 
@@ -557,6 +564,7 @@ VERBATIM         : 'verbatim';
 
 
 // CLAW Clauses
+CLEANUP      : 'cleanup';
 COLLAPSE     : 'collapse';
 CONSTRAINT   : 'constraint';
 COPY         : 'copy';

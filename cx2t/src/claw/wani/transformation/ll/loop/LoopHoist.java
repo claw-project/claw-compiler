@@ -8,6 +8,7 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.primitive.Loop;
+import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -75,9 +76,9 @@ public class LoopHoist extends ClawBlockTransformation {
             matchAncestor(Xcode.F_DO_STATEMENT);
 
         if(tmpIf == null && tmpSelect == null && tmpDo == null) {
-          xcodeml.addError("A nested group is nested in an unsupported " +
-                  "statement for loop hoisting.",
-              _clawStart.getPragma().lineNo());
+          xcodeml.addError("A nested do stmt group is nested in an unsupported "
+                  + "statement for loop hoisting.",
+              hoistedNestedDoStmt.getOuterStatement().lineNo());
           return false;
         }
 
@@ -198,6 +199,12 @@ public class LoopHoist extends ClawBlockTransformation {
     // Generate dynamic transformation (interchange)
     ct.generateAdditionalTransformation(_clawStart, xcodeml,
         hoisted.getOuterStatement());
+
+    // Apply cleanup clause
+    if(_clawStart.hasCleanupClause()) {
+      Pragma.remove(_clawStart.getCleanupClauseValue(),
+          _clawStart.getPragma(), _clawEnd.getPragma());
+    }
 
     // Apply reshape clause
     if(_clawStart.hasReshapeClause()) {
