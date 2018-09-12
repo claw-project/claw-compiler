@@ -135,7 +135,7 @@ public class NestedDoStatement {
       newInductionVarOrder.set(i, newInductionVarOrder.get(i).toLowerCase());
     }
 
-    int crtShift = (int) Math.pow(10, newInductionVarOrder.size() - 1);
+    int crtShift = (int) Math.pow(10, newInductionVarOrder.size() - 1.0);
     List<String> crtInductionVarOrder = getInductionVariables();
     for(String inductionVar : crtInductionVarOrder) {
       int pos = newInductionVarOrder.indexOf(inductionVar.toLowerCase());
