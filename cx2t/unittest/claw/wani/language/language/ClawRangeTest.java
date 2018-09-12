@@ -58,50 +58,50 @@ public class ClawRangeTest {
     assertNotNull(iterationRange1);
 
     ClawRange range1 = new ClawRange("i", "1", "10", "1");
-    assertTrue(range1.equals(iterationRange1));
-    assertFalse(range1.equals(iterationRange2));
+    assertTrue(range1.compareToDoStmt(iterationRange1));
+    assertFalse(range1.compareToDoStmt(iterationRange2));
 
     ClawRange range2 = new ClawRange("i", "1", "10", "2");
-    assertFalse(range2.equals(iterationRange1));
-    assertFalse(range2.equals(iterationRange2));
+    assertFalse(range2.compareToDoStmt(iterationRange1));
+    assertFalse(range2.compareToDoStmt(iterationRange2));
 
     ClawRange range3 = new ClawRange("i", "1", "11", "1");
-    assertFalse(range3.equals(iterationRange1));
-    assertFalse(range3.equals(iterationRange2));
+    assertFalse(range3.compareToDoStmt(iterationRange1));
+    assertFalse(range3.compareToDoStmt(iterationRange2));
 
     ClawRange range4 = new ClawRange("i", "2", "10", "1");
-    assertFalse(range4.equals(iterationRange1));
-    assertFalse(range4.equals(iterationRange2));
+    assertFalse(range4.compareToDoStmt(iterationRange1));
+    assertFalse(range4.compareToDoStmt(iterationRange2));
 
     ClawRange range5 = new ClawRange("j", "1", "10", "1");
-    assertFalse(range5.equals(iterationRange1));
-    assertFalse(range5.equals(iterationRange2));
+    assertFalse(range5.compareToDoStmt(iterationRange1));
+    assertFalse(range5.compareToDoStmt(iterationRange2));
 
     ClawRange range6 = new ClawRange("i", "istart", "iend", "1");
-    assertTrue(range6.equals(iterationRange2));
-    assertFalse(range6.equals(iterationRange1));
+    assertTrue(range6.compareToDoStmt(iterationRange2));
+    assertFalse(range6.compareToDoStmt(iterationRange1));
 
     ClawRange range7 = new ClawRange("i", "istart", "iend", "2");
-    assertFalse(range7.equals(iterationRange2));
-    assertFalse(range7.equals(iterationRange1));
+    assertFalse(range7.compareToDoStmt(iterationRange2));
+    assertFalse(range7.compareToDoStmt(iterationRange1));
 
     ClawRange range8 = new ClawRange("i", "istart", "ieend", "1");
-    assertFalse(range8.equals(iterationRange2));
-    assertFalse(range8.equals(iterationRange1));
+    assertFalse(range8.compareToDoStmt(iterationRange2));
+    assertFalse(range8.compareToDoStmt(iterationRange1));
 
     ClawRange range9 = new ClawRange("i", "istarter", "iend", "1");
-    assertFalse(range9.equals(iterationRange2));
-    assertFalse(range9.equals(iterationRange1));
+    assertFalse(range9.compareToDoStmt(iterationRange2));
+    assertFalse(range9.compareToDoStmt(iterationRange1));
 
     ClawRange range10 = new ClawRange("j", "istart", "iend", "1");
-    assertFalse(range10.equals(iterationRange2));
-    assertFalse(range10.equals(iterationRange1));
+    assertFalse(range10.compareToDoStmt(iterationRange2));
+    assertFalse(range10.compareToDoStmt(iterationRange1));
 
     ClawRange range11 = new ClawRange();
     range11.setInductionVar("i");
     range11.setLowerBound("istart");
     range11.setUpperBound("iend");
-    assertTrue(range11.equals(iterationRange2));
+    assertTrue(range11.compareToDoStmt(iterationRange2));
 
   }
 }
