@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.backend;
 
 import claw.tatsu.xcodeml.xnode.common.XcodeML;
+import com.sun.media.jfxmedia.logging.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import xcodeml.util.*;
@@ -50,7 +51,7 @@ public class OmniBackendDriver {
       try {
         _reader.close();
       } catch(IOException e) {
-        e.printStackTrace();
+        Logger.logMsg(Logger.ERROR, e.getMessage());
         return false;
       }
     }
@@ -104,7 +105,7 @@ public class OmniBackendDriver {
             FileWriter(outputFilepath)));
       }
     } catch(IOException e) {
-      e.printStackTrace();
+      Logger.logMsg(Logger.ERROR, e.getMessage());
     }
 
     try {

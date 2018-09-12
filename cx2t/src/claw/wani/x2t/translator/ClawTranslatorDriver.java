@@ -20,6 +20,7 @@ import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
+import com.sun.media.jfxmedia.logging.Logger;
 import xcodeml.util.XmOption;
 
 import java.io.PrintWriter;
@@ -172,8 +173,9 @@ public class ClawTranslatorDriver {
       }
       _translator.addTransformation(_translationUnit, transformation);
     } catch(Exception ex) {
-      System.err.println("Cannot generate transformation " + gc.getName());
-      System.err.println(ex.getMessage());
+      Logger.logMsg(Logger.ERROR,
+          "Cannot generate transformation " + gc.getName());
+      Logger.logMsg(Logger.ERROR, ex.getMessage());
       abort();
     }
   }
@@ -202,7 +204,7 @@ public class ClawTranslatorDriver {
           _translationUnit.addError(itex.getMessage(), itex.getStartLine());
           abort();
         } catch(Exception ex) {
-          ex.printStackTrace();
+          Logger.logMsg(Logger.ERROR, ex.getMessage());
           _translationUnit.addError("Unexpected error: " + ex.getMessage(), 0);
           if(XmOption.isDebugOutput()) {
             StringWriter errors = new StringWriter();

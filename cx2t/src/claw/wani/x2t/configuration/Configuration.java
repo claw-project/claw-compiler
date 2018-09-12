@@ -634,7 +634,7 @@ public class Configuration {
    */
   protected void checkVersion(String configVersion) throws Exception {
     int[] configMajMin = getMajorMinor(configVersion);
-    int[] compilerMajMin = getMajorMinor(ClawVersion.getVersion());
+    int[] compilerMajMin = getMajorMinor(ClawVersion.VERSION);
 
     if(configMajMin[0] < compilerMajMin[0]
         || (configMajMin[0] == compilerMajMin[0]

@@ -134,6 +134,9 @@ public final class Loop {
         case 102: // Single swap: i,j,k -> j,i,k
           swapIterationRange(nestedGroup.get(0), nestedGroup.get(1));
           break;
+        default:
+          // Do nothing.
+          break;
       }
     } else {
       throw new IllegalTransformationException("Currently unsupported " +

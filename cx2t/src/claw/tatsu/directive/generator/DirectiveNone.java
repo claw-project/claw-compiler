@@ -15,12 +15,6 @@ import java.util.List;
  */
 public class DirectiveNone extends DirectiveGenerator {
 
-  /**
-   * Constructs a new object with the given target.
-   */
-  public DirectiveNone() {
-  }
-
   @Override
   public String getPrefix() {
     return "";
