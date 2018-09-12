@@ -213,7 +213,7 @@ public class Configuration {
     }
 
     if(modelConfig != null) {
-      ModelConfig.load(modelConfig);
+      ModelConfig.get().load(modelConfig);
     }
 
     Context.init(getCurrentDirective(), getCurrentTarget(), _accelerator,

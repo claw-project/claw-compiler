@@ -5,6 +5,7 @@
 package claw.wani.x2t.configuration;
 
 import net.consensys.cava.toml.Toml;
+import net.consensys.cava.toml.TomlArray;
 import net.consensys.cava.toml.TomlParseResult;
 
 import java.nio.file.Path;
@@ -21,11 +22,23 @@ public class ModelConfig {
 
   private static ModelConfig _instance = null;
 
+  private static final String KEY_DIMENSIONS = "dimensions";
+  private static final String KEY_DIMENSION_ID = "id";
+  private static final String KEY_DIMENSION_SIZE = "size";
+
+  private static final String KEY_LAYOUTS = "dimensions";
+
   private ModelConfig() {
-    _instance = new ModelConfig();
   }
 
-  public static void load(String configPath) throws Exception {
+  public static ModelConfig get() {
+    if(_instance == null) {
+      _instance = new ModelConfig();
+    }
+    return _instance;
+  }
+
+  public void load(String configPath) throws Exception {
     if(_instance == null) {
       _instance = new ModelConfig();
     }
@@ -36,6 +49,16 @@ public class ModelConfig {
       throw new Exception("Model configuration file not formatted correctly.");
     } else {
       // Validate the information in the configuration file
+
+      TomlArray dimensions = result.getArray(KEY_DIMENSIONS);
+      
+
+      for(Object value : dimensions.toList()) {
+
+      }
+
+      TomlArray layouts = result.getArray(KEY_LAYOUTS);
+
     }
   }
 
