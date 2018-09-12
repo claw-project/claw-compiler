@@ -128,7 +128,7 @@ public class ClawTranslatorDriver {
         }
       }
 
-      _translator.finalize(_translationUnit);
+      _translator.finalizeTranslation(_translationUnit);
 
     } catch(IllegalDirectiveException e) {
       _translationUnit.addError(e.getMessage(), e.getDirectiveLine());
