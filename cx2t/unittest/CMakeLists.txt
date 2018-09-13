@@ -45,6 +45,7 @@ add_test(
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   ${DISABLE_RESOLVE}
   junit-tatsu
 )
@@ -54,6 +55,7 @@ add_test(
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   ${DISABLE_RESOLVE}
   junit-shenron
 )
@@ -63,6 +65,7 @@ add_test(
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   ${DISABLE_RESOLVE}
   junit-wani
 )
