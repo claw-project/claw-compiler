@@ -77,13 +77,18 @@ set(ANTLR4_RUNTIME "${CLAW_X2T_JAR_INSTALL_PATH}/${ANTLR4_RUNTIME_NAME}.jar")
 
 set(COMMON_CLI_NAME "commons-cli")
 set(COMMON_CLI "${CLAW_X2T_JAR_INSTALL_PATH}/${COMMON_CLI_NAME}.jar")
+set(BUILD_COMMON_CLI "${CMAKE_SOURCE_DIR}/cx2t/lib/${COMMON_CLI_NAME}.jar")
 
 set(BUILD_ANTLR4 "${CMAKE_SOURCE_DIR}/cx2t/lib/${ANTLR4_NAME}.jar")
 set(
   BUILD_ANTLR4_RUNTIME
   "${CMAKE_SOURCE_DIR}/cx2t/lib/${ANTLR4_RUNTIME_NAME}.jar"
 )
-set(BUILD_COMMON_CLI "${CMAKE_SOURCE_DIR}/cx2t/lib/${COMMON_CLI_NAME}.jar")
+
+set(ASM "asm.jar")
+set(ASM_COMMON "asm-commons.jar")
+set(ASM_TREE "asm-tree.jar")
+set(ASM_BUILD "${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM}.jar:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_COMMON}.jar:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_TREE}.jar")
 
 #
 # External program options
