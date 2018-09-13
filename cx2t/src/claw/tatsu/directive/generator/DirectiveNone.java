@@ -6,6 +6,7 @@ package claw.tatsu.directive.generator;
 
 import claw.tatsu.common.CompilerDirective;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,12 +28,12 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String[] getStartParallelDirective(String clauses) {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getEndParallelDirective() {
-    return null;
+    return new String[0];
   }
 
   @Override
@@ -44,12 +45,12 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String[] getEndLoopDirective() {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getSingleDirective(String clause) {
-    return null;
+    return new String[0];
   }
 
   @Override
@@ -69,7 +70,7 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String[] getRoutineDirective(boolean seq) {
-    return null;
+    return new String[0];
   }
 
   @Override
@@ -84,12 +85,12 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String[] getStartDataRegion(List<String> clauses) {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getEndDataRegion() {
-    return null;
+    return new String[0];
   }
 
   @Override

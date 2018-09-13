@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -325,15 +329,17 @@ public class Configuration {
     }
     return document;
   }
-
+  
   /**
    * Validate the configuration file with the XSD schema.
    *
-   * @param xsd File representing the XSD schema.
-   * @throws Exception If configuration file is not valid.
+   * @param document XML Document.
+   * @param xsd      File representing the XSD schema.
+   * @throws SAXException If configuration file is not valid.
+   * @throws IOException  If schema is not found.
    */
   private void validate(Document document, File xsd)
-      throws Exception
+      throws SAXException, IOException
   {
     SchemaFactory factory =
         SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -431,12 +437,16 @@ public class Configuration {
    * @param jarFile Name of the jar file to load with .jar extension.
    * @return The URLClassLoader associated with the jar file if found. Null
    * otherwise.
-   * @throws Exception If no path defined
+   * @throws FileNotFoundException If jar file not found.
+   * @throws MalformedURLException If classpath is malformed.
    */
-  private URLClassLoader loadExternalJar(String jarFile) throws Exception {
+  private URLClassLoader loadExternalJar(String jarFile)
+      throws FileNotFoundException, MalformedURLException
+  {
     if(_transSetPaths.length == 0) {
-      throw new Exception("No path defined in " + CLAW_TRANS_SET_PATH
-          + ". Unable to load transformation set: " + jarFile);
+      throw new FileNotFoundException("No path defined in "
+          + CLAW_TRANS_SET_PATH + ". Unable to load transformation set: "
+          + jarFile);
     }
     URLClassLoader external;
     for(String path : _transSetPaths) {
@@ -448,7 +458,7 @@ public class Configuration {
         return external;
       }
     }
-    throw new Exception("Cannot find jar file " + jarFile);
+    throw new FileNotFoundException("Cannot find jar file " + jarFile);
   }
 
   /**

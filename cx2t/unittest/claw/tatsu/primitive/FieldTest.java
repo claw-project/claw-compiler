@@ -273,6 +273,9 @@ public class FieldTest {
                                          int base, int target, int[] dimensions)
   {
     try {
+
+      int diff = target - base;
+
       PromotionInfo promotionInfo = new PromotionInfo(id);
       promotionInfo.setDimensions(dims);
 
@@ -300,7 +303,7 @@ public class FieldTest {
       assertEquals(target, dimensions.length / 2);
       assertEquals(target, promotionInfo.getTargetDimension());
       assertEquals(base, promotionInfo.getBaseDimension());
-      assertEquals(target - base, promotionInfo.diffDimension());
+      assertEquals(diff, promotionInfo.diffDimension());
       assertEquals(bt.getType(), promotionInfo.getTargetType());
 
       if(base > 0) {
