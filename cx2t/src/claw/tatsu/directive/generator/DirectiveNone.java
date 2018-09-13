@@ -39,7 +39,7 @@ public class DirectiveNone extends DirectiveGenerator {
   public String[] getStartLoopDirective(int value, boolean seq,
                                         boolean naked, String clauses)
   {
-    return null;
+    return new String[0];
   }
 
   @Override
