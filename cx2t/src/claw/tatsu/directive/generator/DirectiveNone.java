@@ -54,12 +54,12 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String getParallelKeyword() {
-    return null;
+    return "";
   }
 
   @Override
   public String getPrivateClause(String var) {
-    return null;
+    return "";
   }
 
   @Override
@@ -94,6 +94,6 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String getSequentialClause() {
-    return null;
+    return "";
   }
 }
