@@ -9,6 +9,7 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.wani.x2t.configuration.AcceleratorDataStrategy;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -186,6 +187,26 @@ public class XenumTest {
     assertEquals(Xname.SCLASS_F_PARAM, XstorageClass.F_PARAM.toString());
     assertEquals(Xname.SCLASS_LABEL, XstorageClass.LABEL.toString());
     assertEquals(Xname.SCLASS_PARAM, XstorageClass.PARAM.toString());
+  }
+
+  @Test
+  public void acceleratorDataStrategyCtorTest() {
+    assertEquals(AcceleratorDataStrategy.NONE,
+        AcceleratorDataStrategy.fromString(null));
+    assertEquals(AcceleratorDataStrategy.NONE,
+        AcceleratorDataStrategy.fromString(""));
+    assertEquals(AcceleratorDataStrategy.NONE,
+        AcceleratorDataStrategy.fromString("none"));
+    assertEquals(AcceleratorDataStrategy.NONE,
+        AcceleratorDataStrategy.fromString("NONE"));
+    assertEquals(AcceleratorDataStrategy.PRESENT,
+        AcceleratorDataStrategy.fromString("present"));
+    assertEquals(AcceleratorDataStrategy.PRESENT,
+        AcceleratorDataStrategy.fromString("PRESENT"));
+    assertEquals(AcceleratorDataStrategy.KERNEL,
+        AcceleratorDataStrategy.fromString("kernel"));
+    assertEquals(AcceleratorDataStrategy.KERNEL,
+        AcceleratorDataStrategy.fromString("KERNEL"));
   }
 
   @Test
