@@ -6,7 +6,6 @@ package claw.tatsu.directive.generator;
 
 import claw.tatsu.common.CompilerDirective;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
