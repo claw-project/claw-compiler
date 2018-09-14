@@ -49,7 +49,7 @@ public final class Function {
       return null;
     }
     for(Xnode arg : args.children()) {
-      if(argName.toLowerCase().equals(arg.value())) {
+      if(argName.equalsIgnoreCase(arg.value())) {
         return arg;
       }
     }

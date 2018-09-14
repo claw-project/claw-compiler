@@ -329,7 +329,7 @@ public class Configuration {
     }
     return document;
   }
-  
+
   /**
    * Validate the configuration file with the XSD schema.
    *
@@ -406,9 +406,9 @@ public class Configuration {
   private void readSets(Element sets) throws Exception {
     File xsdSchema = Paths.get(_configuration_path, SET_XSD).toFile();
 
-    NodeList transformation_sets = sets.getElementsByTagName(SET_ELEMENT);
-    for(int i = 0; i < transformation_sets.getLength(); ++i) {
-      Element e = (Element) transformation_sets.item(i);
+    NodeList transformationSets = sets.getElementsByTagName(SET_ELEMENT);
+    for(int i = 0; i < transformationSets.getLength(); ++i) {
+      Element e = (Element) transformationSets.item(i);
       String setName = e.getAttribute(NAME_ATTR);
       File setFile = Paths.get(_configuration_path, setName + XML_EXT).toFile();
       if(!setFile.exists()) {
@@ -513,9 +513,9 @@ public class Configuration {
           throw new Exception("Invalid group class transformation definition.");
         }
         // Read trigger type
-        String trigger_type = g.getAttribute(TRIGGER_ATTR);
+        String triggerTypeAttr = g.getAttribute(TRIGGER_ATTR);
         GroupConfiguration.TriggerType triggerType;
-        switch(trigger_type) {
+        switch(triggerTypeAttr) {
           case DIRECTIVE_TR_TYPE:
             triggerType = GroupConfiguration.TriggerType.DIRECTIVE;
             break;
@@ -700,18 +700,17 @@ public class Configuration {
    * Display the loaded configuration.
    */
   public void displayConfig() {
-    System.out.println("- CLAW Compiler configuration -\n");
-    System.out.println("Default directive directive: " +
-        getCurrentDirective() + "\n");
-    System.out.println("Default target: " + getCurrentTarget() + "\n");
+    System.out.println(String.format("- CLAW Compiler configuration -%n"));
+    System.out.println(String.format("Default directive directive: %s%n", getCurrentDirective()));
+    System.out.println(String.format("Default target: %s%n", getCurrentTarget()));
     System.out.println("Current transformation order:");
     int i = 0;
-    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s\n",
+    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n",
         "Id", "set", "name", "type", "trigger", "directive", "class");
-    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s\n",
+    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n",
         "--", "---", "----", "----", "-------", "---------", "-----");
     for(GroupConfiguration g : getGroups()) {
-      System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s\n",
+      System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s%n",
           i++, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
           g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
               ? g.getDirective() : "-", g.getTransformationClassName());

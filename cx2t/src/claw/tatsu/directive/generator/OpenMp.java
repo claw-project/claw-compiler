@@ -41,12 +41,10 @@ public class OpenMp extends DirectiveGenerator {
   private static final String OPENMP_TO = "to";
   private static final String OPENMP_UPDATE = "update";
   private static final String OPENMP_PRIVATE = "private";
-  //private static final String OPENMP_FIRSTPRIVATE = "firstprivate";
   private static final String OPENMP_ALLOC = "alloc";
   private static final String OPENMP_DO = "do";
   private static final String OPENMP_END = "end";
 
-  // TODO: For the second prototype, not used yet
   private OpenMpExecutionMode _mode;
 
   /**
@@ -99,13 +97,13 @@ public class OpenMp extends DirectiveGenerator {
       OpenMpConfiguration ompConfig =
           (OpenMpConfiguration) Configuration.get().accelerator();
 
-      int num_threads = ompConfig.getNumThreads();
-      int num_teams = ompConfig.getNumTeams();
-      if(num_threads > 0) {
-        clauses += String.format("%s(%d)", OPENMP_THREADS_LIMIT, num_threads);
+      int numThreads = ompConfig.getNumThreads();
+      int numTeams = ompConfig.getNumTeams();
+      if(numThreads > 0) {
+        clauses += String.format("%s(%d)", OPENMP_THREADS_LIMIT, numThreads);
       }
-      if(num_teams > 0) {
-        clauses += String.format(" %s(%d)", OPENMP_NUM_TEAMS, num_teams);
+      if(numTeams > 0) {
+        clauses += String.format(" %s(%d)", OPENMP_NUM_TEAMS, numTeams);
       }
 
       if(clauses.isEmpty()) {
@@ -168,8 +166,8 @@ public class OpenMp extends DirectiveGenerator {
 
   @Override
   public String getPrivateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
@@ -178,9 +176,14 @@ public class OpenMp extends DirectiveGenerator {
   }
 
   @Override
+  public String getPresentClause(List<String> vars) {
+    return DirectiveGenerator.EMPTY;
+  }
+
+  @Override
   public String getCreateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate map(alloc:x) clause for (%d variables): %s",
@@ -264,7 +267,7 @@ public class OpenMp extends DirectiveGenerator {
     // naked is not used for OpenMP
     // serial loop is the default behaviour for OpenMP
     if(seq) {
-      return null;
+      return new String[0];
     }
 
     clauses = clauses.trim();
@@ -352,7 +355,7 @@ public class OpenMp extends DirectiveGenerator {
   public String[] getUpdateClause(DataMovement direction, List<String> vars) {
     //!$omp target update from/to(<vars>)
     if(vars == null || vars.isEmpty()) {
-      return null;
+      return new String[0];
     }
     Message.debug(OPENMP_DEBUG_PREFIX + "generate update " +
         (direction == DataMovement.DEVICE ? OPENMP_TO : OPENMP_FROM) +

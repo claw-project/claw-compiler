@@ -144,12 +144,11 @@ public class ClawX2T {
     String input;
     String xcmlOutput = null;
     String targetLangOutput = null;
-    String target_option = null;
-    String directive_option = null;
-    String configuration_file = null;
-    String configuration_path = null;
+    String targetOption = null;
+    String directiveOption = null;
+    String configurationFile = null;
+    String configurationPath = null;
     int maxColumns = 0;
-    //boolean forcePure = false;
 
     CommandLine cmd = processCommandArgs(args);
 
@@ -172,10 +171,10 @@ public class ClawX2T {
     }
 
     // Target option
-    target_option = cmd.getOptionValue("t");
+    targetOption = cmd.getOptionValue("t");
 
     // Directive option
-    directive_option = cmd.getOptionValue("dir");
+    directiveOption = cmd.getOptionValue("dir");
 
     // Suppressing line directive option
     if(cmd.hasOption("l")) {
@@ -197,28 +196,28 @@ public class ClawX2T {
       maxColumns = Integer.parseInt(cmd.getOptionValue("w"));
     }
 
-    configuration_file = cmd.getOptionValue("c");
-    configuration_path = cmd.getOptionValue("cp");
+    configurationFile = cmd.getOptionValue("c");
+    configurationPath = cmd.getOptionValue("cp");
 
     // Check that configuration path exists
-    if(configuration_path == null) {
+    if(configurationPath == null) {
       error(ERR_INTERNAL, 0, 0, "Configuration path missing.");
       return;
     }
 
     // Check that configuration file exists
-    if(configuration_file != null) {
-      File configFile = new File(configuration_file);
+    if(configurationFile != null) {
+      File configFile = new File(configurationFile);
       if(!configFile.exists()) {
         error(ERR_INTERNAL, 0, 0, "Configuration file not found: "
-            + configuration_file);
+            + configurationFile);
       }
     }
 
     // --show-configuration option
     if(cmd.hasOption("sc")) {
-      Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option, maxColumns);
+      Configuration.get().load(configurationPath, configurationFile,
+          targetOption, directiveOption, maxColumns);
       Configuration.get().displayConfig();
       return;
     }
@@ -232,8 +231,8 @@ public class ClawX2T {
 
     // Read the configuration file
     try {
-      Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option, maxColumns);
+      Configuration.get().load(configurationPath, configurationFile,
+          targetOption, directiveOption, maxColumns);
     } catch(Exception ex) {
       error(ERR_INTERNAL, 0, 0, ex.getMessage());
       return;

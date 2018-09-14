@@ -55,7 +55,7 @@ public final class Pragma {
       return pragma.value();
     }
 
-    return pragma.value().substring(0, pragma.value().indexOf(" "));
+    return pragma.value().substring(0, pragma.value().indexOf(' '));
   }
 
   /**
@@ -79,15 +79,15 @@ public final class Pragma {
       while(fullPragma.length() > (maxColumns - addLength)) {
         int splitIndex =
             fullPragma.substring(0,
-                maxColumns - addLength).lastIndexOf(" ");
+                maxColumns - addLength).lastIndexOf(' ');
         // Cannot cut as it should. Take first possible cutting point.
         if(splitIndex == -1) {
           splitIndex = fullPragma.substring(0,
-              maxColumns - addLength).lastIndexOf(",");
+              maxColumns - addLength).lastIndexOf(',');
           if(splitIndex == -1) {
             splitIndex =
-                (fullPragma.contains(" ")) ? fullPragma.lastIndexOf(" ") :
-                    (fullPragma.contains(",")) ? fullPragma.lastIndexOf(",") :
+                (fullPragma.contains(" ")) ? fullPragma.lastIndexOf(' ') :
+                    (fullPragma.contains(",")) ? fullPragma.lastIndexOf(',') :
                         fullPragma.length();
           }
         }

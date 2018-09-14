@@ -17,12 +17,12 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String getPrefix() {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String getPrefixCont() {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
@@ -54,17 +54,27 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String getParallelKeyword() {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String getPrivateClause(String var) {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String getPrivateClause(List<String> vars) {
-    return "";
+    return DirectiveGenerator.EMPTY;
+  }
+
+  @Override
+  public String getPresentClause(List<String> vars) {
+    return null;
+  }
+
+  @Override
+  public String getCreateClause(List<String> vars) {
+    return null;
   }
 
   @Override
@@ -94,6 +104,6 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String getSequentialClause() {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 }

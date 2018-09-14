@@ -82,11 +82,11 @@ public class NestedDoStatementTest {
     assertNotEquals(ndo3.getOuterStatement(), ndo3.getInnerStatement());
 
     // Only two do statements in a potential 3 nested group one
-    NestedDoStatement ndo3_only2 = new NestedDoStatement(do3, 2);
-    assertNotNull(ndo3_only2);
-    assertEquals(2, ndo3_only2.size());
-    assertEquals(ndo3_only2.get(0), ndo3_only2.getOuterStatement());
-    assertEquals(ndo3_only2.get(1), ndo3_only2.getInnerStatement());
+    NestedDoStatement ndo3Only2 = new NestedDoStatement(do3, 2);
+    assertNotNull(ndo3Only2);
+    assertEquals(2, ndo3Only2.size());
+    assertEquals(ndo3Only2.get(0), ndo3Only2.getOuterStatement());
+    assertEquals(ndo3Only2.get(1), ndo3Only2.getInnerStatement());
     List<Xnode> doStmts = do3.matchAll(Xcode.F_DO_STATEMENT);
     assertEquals(2, doStmts.size());
   }

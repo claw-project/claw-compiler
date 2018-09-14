@@ -71,7 +71,7 @@ public class LoopTest {
         d1.generateIndexRange(xcodeml, true));
 
     List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
-    assertTrue(fctDefs.size() > 0);
+    assertTrue(!fctDefs.isEmpty());
 
     FfunctionDefinition f1 = fctDefs.get(0);
 

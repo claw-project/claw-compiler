@@ -68,8 +68,7 @@ public class XcodeML extends Xnode {
       Document doc = dBuilder.parse(input);
       doc.getDocumentElement().normalize();
       return doc;
-    } catch(Exception ignored) {
-    }
+    } catch(Exception ignored) {}
     return null;
   }
 
@@ -184,8 +183,7 @@ public class XcodeML extends Xnode {
     if(type == null) {
       return;
     }
-    //Node rawNode = getDocument().importNode(type.element(), true);
-    //Xnode importedType = new Xnode((Element) rawNode);
+
     Xnode importedType = importNode(type);
     getTypeTable().add(importedType);
     if(importedType.hasAttribute(Xattr.REF)
@@ -378,7 +376,7 @@ public class XcodeML extends Xnode {
         if(n.opcode() == Xcode.VAR_DECL) {
           String varId = n.matchDirectDescendant(Xcode.NAME).value();
           if(n.lineNo() == 0
-              || varId.toLowerCase().equals(fctDef.getName()))
+              || varId.equalsIgnoreCase(fctDef.getName()))
           {
             continue;
           }
@@ -802,7 +800,7 @@ public class XcodeML extends Xnode {
                                             FfunctionType fctType)
   {
     for(Xnode p : fctType.getParameters()) {
-      if(p.value().equals(nameValue.toLowerCase())) {
+      if(p.value().equalsIgnoreCase(nameValue)) {
         return null;
       }
     }

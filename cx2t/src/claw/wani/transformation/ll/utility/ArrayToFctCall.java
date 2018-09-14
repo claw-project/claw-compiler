@@ -38,14 +38,14 @@ public class ArrayToFctCall extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    FfunctionDefinition _fctDef = _claw.getPragma().findParentFunction();
-    if(_fctDef == null) {
+    FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
+    if(fctDef == null) {
       xcodeml.addError("Cannot locate function definition.",
           _claw.getPragma().lineNo());
       return false;
     }
 
-    if(!_fctDef.getDeclarationTable().contains(_claw.getArrayName())) {
+    if(!fctDef.getDeclarationTable().contains(_claw.getArrayName())) {
       xcodeml.addError(_claw.getArrayName() +
               " is not declared in current function/subroutine.",
           _claw.getPragma().lineNo());

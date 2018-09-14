@@ -63,14 +63,29 @@ public class ClawPragma extends AnalyzedPragma {
   private CompilerDirective _cleanupClauseValue;
 
   // Clauses flags
-  private boolean _hasAccClause, _hasCollapseClause, _hasDataClause;
-  private boolean _hasDimensionClause, _hasFusionClause, _hasGroupClause;
-  private boolean _hasIndexesValue, _hasInductionClause, _hasInitClause;
-  private boolean _hasInterchangeClause, _hasOverClause, _hasParallelClause;
-  private boolean _hasPrivateClause, _hasReshapeClause, _hasForward;
-  private boolean _hasOverDataClause, _hasCopyClause, _hasUpdateClause;
-  private boolean _hasTargetClause, _hasConstraintClause, _hasScalarClause;
-  private boolean _hasCreateClause, _hasCleanupClause;
+  private boolean _hasAccClause;
+  private boolean _hasCollapseClause;
+  private boolean _hasDataClause;
+  private boolean _hasDimensionClause;
+  private boolean _hasFusionClause;
+  private boolean _hasGroupClause;
+  private boolean _hasIndexesValue;
+  private boolean _hasInductionClause;
+  private boolean _hasInitClause;
+  private boolean _hasInterchangeClause;
+  private boolean _hasOverClause;
+  private boolean _hasParallelClause;
+  private boolean _hasPrivateClause;
+  private boolean _hasReshapeClause;
+  private boolean _hasForward;
+  private boolean _hasOverDataClause;
+  private boolean _hasCopyClause;
+  private boolean _hasUpdateClause;
+  private boolean _hasTargetClause;
+  private boolean _hasConstraintClause;
+  private boolean _hasScalarClause;
+  private boolean _hasCreateClause;
+  private boolean _hasCleanupClause;
 
   /**
    * Constructs an empty ClawPragma section.
@@ -676,7 +691,7 @@ public class ClawPragma extends AnalyzedPragma {
     }
 
     if(baseDimOccurrence == 0) {
-      // TODO 1.0 throw new Exception("Base dimension \":\" is not specified");
+      // TODO 1.5 exception Dimension " + d + " is not defined"
     }
 
     boolean hasMiddleInsertion = baseDimOccurrence > 1;
@@ -698,7 +713,7 @@ public class ClawPragma extends AnalyzedPragma {
           newDimension.setInsertionPosition(crt);
           specializedDimensions.add(newDimension);
         } else {
-          // TODO 1.0 throw new Exception("Dimension " + d + " is not defined");
+          // TODO 1.5 exception Dimension " + d + " is not defined"
         }
       }
     }
@@ -1102,7 +1117,7 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public boolean isApplicableToCurrentTarget() {
     return _targetClauseValues == null
-        || _targetClauseValues.size() == 0
+        || _targetClauseValues.isEmpty()
         || _targetClauseValues.contains(Context.get().getTarget());
   }
 

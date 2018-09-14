@@ -102,8 +102,8 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String getPrivateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
@@ -113,8 +113,8 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String getPresentClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate present clause for (%d variables): %s",
@@ -124,8 +124,8 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String getCreateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate pcreate clause for (%d variables): %s",
@@ -187,7 +187,6 @@ public class OpenAcc extends DirectiveGenerator {
   {
     if(value > 1) {
       //!$acc loop collapse(<value>)
-      // TODO do it differently
       if(seq) {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
@@ -221,7 +220,7 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String[] getEndLoopDirective() {
-    return null;
+    return new String[0];
   }
 
   @Override
@@ -250,7 +249,7 @@ public class OpenAcc extends DirectiveGenerator {
   public String[] getUpdateClause(DataMovement direction, List<String> vars) {
     //!$acc update host/device(<vars>)
     if(vars == null || vars.isEmpty()) {
-      return null;
+      return new String[0];
     }
     Message.debug(OPENACC_DEBUG_PREFIX + "generate update " +
         (direction == DataMovement.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +

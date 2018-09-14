@@ -33,16 +33,11 @@ public class OmniBackendDriver {
    * @param lang Language of output.
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
-  public OmniBackendDriver(Lang lang)
-      throws XmException
-  {
-    switch(lang) {
-      case FORTRAN:
-        _toolFactory = new XmToolFactory("F");
-        break;
-      case C:
-        _toolFactory = new XmToolFactory("C");
-        break;
+  public OmniBackendDriver(Lang lang) throws XmException {
+    if(lang == Lang.FORTRAN) {
+      _toolFactory = new XmToolFactory("F");
+    } else if(lang == Lang.C) {
+      _toolFactory = new XmToolFactory("C");
     }
   }
 
