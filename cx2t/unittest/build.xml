@@ -78,8 +78,8 @@
   <target name="junit-tatsu" depends="compile, jar">
     <mkdir dir="${test.reports}" />
 
-    <jacoco:coverage destfile="${test.reports}/jacoco.exec">
-      <junit fork="yes" printsummary="no" haltonfailure="no">
+    <jacoco:coverage destfile="${test.reports}/${jacoco.file}">
+      <junit fork="yes" printsummary="no" haltonfailure="yes">
         <classpath path="${claw.tatsu.ut.dep}" />
         <classpath path="${claw.tatsu.dep}" />
         <classpath path="${junit.dep}" />
@@ -102,7 +102,7 @@
 
     <jacoco:report>
       <executiondata>
-        <file file="${test.reports}/jacoco.exec"/>
+        <file file="${test.reports}/${jacoco.file}"/>
       </executiondata>
       <structure name="${ant.project.name}">
         <classfiles>
@@ -125,8 +125,8 @@
 
   <target name="junit-shenron" depends="compile, jar">
     <mkdir dir="${test.reports}" />
-    <jacoco:coverage destfile="${test.reports}/jacoco.exec" >
-    <junit fork="yes" printsummary="no" haltonfailure="no">
+    <jacoco:coverage destfile="${test.reports}/${jacoco.file}" >
+    <junit fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.shenron.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
       <classpath path="${claw.shenron.dep}" />
@@ -150,7 +150,7 @@
 
     <jacoco:report>
       <executiondata>
-        <file file="${test.reports}/jacoco.exec"/>
+        <file file="${test.reports}/${jacoco.file}"/>
       </executiondata>
       <structure name="${ant.project.name}">
         <classfiles>
@@ -173,8 +173,8 @@
 
   <target name="junit-wani" depends="compile, jar">
     <mkdir dir="${test.reports}" />
-    <jacoco:coverage destfile="${test.reports}/jacoco.exec" >
-    <junit fork="yes" printsummary="no" haltonfailure="no">
+    <jacoco:coverage destfile="${test.reports}/${jacoco.file}" >
+    <junit fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.wani.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
       <classpath path="${claw.shenron.dep}" />
@@ -199,7 +199,7 @@
 
     <jacoco:report>
       <executiondata>
-        <file file="${test.reports}/jacoco.exec"/>
+        <file file="${test.reports}/${jacoco.file}"/>
       </executiondata>
       <structure name="${ant.project.name}">
         <classfiles>

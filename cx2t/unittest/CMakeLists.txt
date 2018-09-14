@@ -49,6 +49,8 @@ add_test(
   ${DISABLE_RESOLVE}
   junit-tatsu
 )
+set_tests_properties(junit-tatsu PROPERTIES
+ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 
 add_test(
   NAME junit-shenron
@@ -59,6 +61,8 @@ add_test(
   ${DISABLE_RESOLVE}
   junit-shenron
 )
+set_tests_properties(junit-shenron PROPERTIES
+ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 
 add_test(
   NAME junit-wani
@@ -69,3 +73,5 @@ add_test(
   ${DISABLE_RESOLVE}
   junit-wani
 )
+set_tests_properties(junit-wani PROPERTIES
+ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})

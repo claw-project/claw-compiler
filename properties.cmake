@@ -88,7 +88,7 @@ set(
 set(ASM "asm.jar")
 set(ASM_COMMON "asm-commons.jar")
 set(ASM_TREE "asm-tree.jar")
-set(ASM_BUILD "${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM}.jar:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_COMMON}.jar:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_TREE}.jar")
+set(ASM_BUILD "${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM}:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_COMMON}:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_TREE}")
 
 #
 # External program options
