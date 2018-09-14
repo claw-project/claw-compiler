@@ -26,6 +26,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * ClawTranslatorDriver is the class driving the translation. It creates the
@@ -128,7 +130,7 @@ public class ClawTranslatorDriver {
         }
       }
 
-      _translator.finalize(_translationUnit);
+      _translator.finalizeTranslation(_translationUnit);
 
     } catch(IllegalDirectiveException e) {
       _translationUnit.addError(e.getMessage(), e.getDirectiveLine());
@@ -172,8 +174,9 @@ public class ClawTranslatorDriver {
       }
       _translator.addTransformation(_translationUnit, transformation);
     } catch(Exception ex) {
-      System.err.println("Cannot generate transformation " + gc.getName());
-      System.err.println(ex.getMessage());
+      Logger.getAnonymousLogger().log(Level.SEVERE,
+          "Cannot generate transformation " + gc.getName());
+      Logger.getAnonymousLogger().log(Level.SEVERE, ex.getMessage());
       abort();
     }
   }
@@ -202,7 +205,7 @@ public class ClawTranslatorDriver {
           _translationUnit.addError(itex.getMessage(), itex.getStartLine());
           abort();
         } catch(Exception ex) {
-          ex.printStackTrace();
+          Logger.getAnonymousLogger().log(Level.SEVERE, ex.getMessage());
           _translationUnit.addError("Unexpected error: " + ex.getMessage(), 0);
           if(XmOption.isDebugOutput()) {
             StringWriter errors = new StringWriter();

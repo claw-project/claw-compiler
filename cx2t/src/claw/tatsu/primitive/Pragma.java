@@ -18,7 +18,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +31,8 @@ import java.util.List;
  * @author clementval
  */
 public final class Pragma {
+
+  private static final String COMMENT_PREFIX = "!";
 
   // Avoid instantiation of this class
   private Pragma() {
@@ -183,8 +184,8 @@ public final class Pragma {
    * @return Pragma string without the trailing comment if any.
    */
   public static String dropEndingComment(String pragma) {
-    if(pragma != null && pragma.indexOf("!") > 0) {
-      return pragma.substring(0, pragma.indexOf("!")).trim();
+    if(pragma != null && pragma.contains(COMMENT_PREFIX)) {
+      return pragma.substring(0, pragma.indexOf(COMMENT_PREFIX)).trim();
     }
     return pragma;
   }

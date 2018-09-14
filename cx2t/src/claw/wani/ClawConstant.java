@@ -11,6 +11,10 @@ package claw.wani;
  */
 public class ClawConstant {
 
+  private ClawConstant() {
+    // Avoid possible instantiation of this class.
+  }
+
   public static final String EMPTY_STRING = "";
 
   public static final String DEFAULT_STEP_VALUE = "1";

@@ -65,7 +65,7 @@
     <target name="compile" depends="common.resolve, antlr"
             description="compile the source">
         <javac includeantruntime="false" srcdir="${src.base}"
-               destdir="${build.dir}" classpathref="build.path"/>
+               destdir="${build.dir}" classpathref="build.path" debug="on" />
     </target>
 
     <!-- Pacakge compiled files into their own library -->

@@ -61,4 +61,6 @@ cx2t/**/bin
 
 # Default install path
 install
-test/claw/abstraction/abstraction32/dummy.f90
+
+# sonar
+.scannerwork

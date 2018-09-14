@@ -138,7 +138,7 @@ public class ClawTranslator implements Translator {
   }
 
   @Override
-  public void finalize(XcodeProgram xcodeml)
+  public void finalizeTranslation(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
     // Clean up block transformation map

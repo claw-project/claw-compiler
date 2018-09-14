@@ -45,24 +45,33 @@ add_test(
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   ${DISABLE_RESOLVE}
   junit-tatsu
 )
+set_tests_properties(junit-tatsu PROPERTIES
+ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 
 add_test(
   NAME junit-shenron
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   ${DISABLE_RESOLVE}
   junit-shenron
 )
+set_tests_properties(junit-shenron PROPERTIES
+ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 
 add_test(
   NAME junit-wani
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   ${DISABLE_RESOLVE}
   junit-wani
 )
+set_tests_properties(junit-wani PROPERTIES
+ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
