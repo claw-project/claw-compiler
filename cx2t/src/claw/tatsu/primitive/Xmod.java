@@ -131,7 +131,6 @@ public final class Xmod {
     FfunctionType fctTypeMod;
     if(importFctType) {
       // TODO should be part of XcodeML
-      //Node rawNode = mod.getDocument().importNode(fctType.element(), true);
       Xnode importedNode = mod.importNode(fctType);
       mod.getTypeTable().append(importedNode);
       FfunctionType importedFctType = new FfunctionType(importedNode);
@@ -140,7 +139,7 @@ public final class Xmod {
       mod.getIdentifiers().add(importedFctTypeId);
 
       // check if params need to be imported as well
-      if(importedFctType.getParameters().size() > 0) {
+      if(!importedFctType.getParameters().isEmpty()) {
         for(Xnode param : importedFctType.getParameters()) {
           mod.importType(xcodeml, param.getType());
         }

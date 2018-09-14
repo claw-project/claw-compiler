@@ -17,7 +17,8 @@ import claw.wani.language.ClawPragma;
  */
 public abstract class ClawBlockTransformation extends BlockTransformation {
 
-  protected final ClawPragma _clawStart, _clawEnd;
+  protected final ClawPragma _clawStart;
+  protected final ClawPragma _clawEnd;
 
   protected ClawBlockTransformation(ClawPragma startDirective,
                                     ClawPragma endDirective)

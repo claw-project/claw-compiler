@@ -21,13 +21,6 @@ public class ClawMapping {
   private List<ClawMappingVar> _mappingVariables = null;
 
   /**
-   * Constructs an empty ClawMapping object. Normally only used from the
-   * CLAW Parser.
-   */
-  public ClawMapping() {
-  }
-
-  /**
    * Get a list of all mapping variables.
    *
    * @return List of mapping variable as ClawMappingVar.

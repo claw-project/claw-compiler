@@ -129,7 +129,7 @@ public class ClawRange {
    * @param doStmt The do statement to compare iteration range.
    * @return True if the iteration range share the same property.
    */
-  public boolean equals(Xnode doStmt) {
+  public boolean compareToDoStmt(Xnode doStmt) {
     if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
       return false;
     }

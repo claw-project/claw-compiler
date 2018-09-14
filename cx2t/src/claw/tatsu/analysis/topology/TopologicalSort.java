@@ -44,6 +44,10 @@ import java.util.Set;
 
 public final class TopologicalSort {
 
+  private TopologicalSort() {
+    // Hide implicit ctor
+  }
+
   /**
    * Given a directed acyclic graph, returns a topological sorting of the
    * nodes in the graph.  If the input graph is not a DAG, throws an

@@ -22,7 +22,7 @@ import java.util.List;
  * - len
  * - arrayIndex
  * - indexRange
- * - coShape TODO not needed for the moment
+ * - coShape - Not used in CLAW at the moment
  * Attributes:
  * - Required: type (text), ref (text)
  * - Optional: is_public (bool), is_private (bool), is_pointer (bool),
@@ -58,7 +58,7 @@ public class FbasicType extends Xnode {
   private void readBasicTypeInformation() {
     _dimensions = XnodeUtil.findIndexes(this);
     // is array ?
-    if(_dimensions.size() > 0) {
+    if(!_dimensions.isEmpty()) {
       _isArray = true;
     }
 
@@ -300,7 +300,7 @@ public class FbasicType extends Xnode {
         _dimensions.get(i).delete();
       }
     }
-    if(keptDim.size() == 0) {
+    if(keptDim.isEmpty()) {
       _isArray = false;
     }
     _dimensions = keptDim;
@@ -318,7 +318,7 @@ public class FbasicType extends Xnode {
    *                 dimension is added at the end.
    */
   public void addDimension(Xnode index, int position) {
-    if(_dimensions.size() == 0 || position == APPEND) {
+    if(_dimensions.isEmpty() || position == APPEND) {
       append(index);
       _dimensions.add(index);
       _isArray = true;

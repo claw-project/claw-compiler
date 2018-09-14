@@ -16,16 +16,16 @@ import static org.junit.Assert.*;
  */
 public class XvarDeclTest {
 
-  private static final String varDecl1 = "<varDecl lineno=\"946\" " +
+  private static final String VAR_DECL1 = "<varDecl lineno=\"946\" " +
       "file=\"./src/module.f90\"><name type=\"Ib3f750\">testvar</name>" +
       "<value>10.0</value></varDecl>";
-  private static final String varDecl2 = "<varDecl lineno=\"946\" " +
+  private static final String VAR_DECL2 = "<varDecl lineno=\"946\" " +
       "file=\"./src/module.f90\"><name type=\"Ib3f750\">testvar</name>" +
       "</varDecl>";
 
   @Test
   public void simpleXvarDeclWithValueTest() {
-    Xnode varDecl = XmlHelper.createXvarDecl(varDecl1);
+    Xnode varDecl = XmlHelper.createXnode(VAR_DECL1);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.filename());
@@ -38,7 +38,7 @@ public class XvarDeclTest {
 
   @Test
   public void simpleXvarDeclWithoutValueTest() {
-    Xnode varDecl = XmlHelper.createXvarDecl(varDecl2);
+    Xnode varDecl = XmlHelper.createXnode(VAR_DECL2);
     assertNotNull(varDecl);
     assertEquals(946, varDecl.lineNo());
     assertEquals("./src/module.f90", varDecl.filename());

@@ -17,13 +17,13 @@ import static org.junit.Assert.*;
  */
 public class XbasicTest {
 
-  private static final String name1 = "<name type=\"Fint\">a</name>";
-  private static final String value1 = "<value>" +
+  private static final String NAME1 = "<name type=\"Fint\">a</name>";
+  private static final String VALUE1 = "<value>" +
       "<FintConstant type=\"Fint\">1</FintConstant></value>";
 
   @Test
   public void xValueTest() {
-    Xnode val = XmlHelper.createXnode(value1);
+    Xnode val = XmlHelper.createXnode(VALUE1);
     assertNotNull(val);
     assertSame(val.child(0).opcode(), Xcode.F_INT_CONSTANT);
     assertEquals(Xname.TYPE_F_INT, val.child(0).getType());
@@ -32,7 +32,7 @@ public class XbasicTest {
 
   @Test
   public void xNameTest() {
-    Xnode name = XmlHelper.createXnode(name1);
+    Xnode name = XmlHelper.createXnode(NAME1);
     assertNotNull(name);
     assertEquals(Xname.TYPE_F_INT, name.getType());
     assertEquals("a", name.value());

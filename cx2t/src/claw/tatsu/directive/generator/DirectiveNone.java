@@ -15,67 +15,71 @@ import java.util.List;
  */
 public class DirectiveNone extends DirectiveGenerator {
 
-  /**
-   * Constructs a new object with the given target.
-   */
-  public DirectiveNone() {
-  }
-
   @Override
   public String getPrefix() {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String getPrefixCont() {
-    return "";
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String[] getStartParallelDirective(String clauses) {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getEndParallelDirective() {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getStartLoopDirective(int value, boolean seq,
                                         boolean naked, String clauses)
   {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getEndLoopDirective() {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getSingleDirective(String clause) {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String getParallelKeyword() {
-    return null;
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String getPrivateClause(String var) {
-    return null;
+    return DirectiveGenerator.EMPTY;
   }
 
   @Override
   public String getPrivateClause(List<String> vars) {
-    return "";
+    return DirectiveGenerator.EMPTY;
+  }
+
+  @Override
+  public String getPresentClause(List<String> vars) {
+    return null;
+  }
+
+  @Override
+  public String getCreateClause(List<String> vars) {
+    return null;
   }
 
   @Override
   public String[] getRoutineDirective(boolean seq) {
-    return null;
+    return new String[0];
   }
 
   @Override
@@ -90,16 +94,16 @@ public class DirectiveNone extends DirectiveGenerator {
 
   @Override
   public String[] getStartDataRegion(List<String> clauses) {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String[] getEndDataRegion() {
-    return null;
+    return new String[0];
   }
 
   @Override
   public String getSequentialClause() {
-    return null;
+    return DirectiveGenerator.EMPTY;
   }
 }

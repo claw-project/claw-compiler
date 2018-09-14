@@ -82,8 +82,8 @@ public final class Loop {
     if(master == null || master.size() == 0 || slave == null
         || slave.size() == 0)
     {
-      throw new IllegalTransformationException(
-          "Incompatible node to perform a merge");
+      throw new
+          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }
     merge(master.getInnerStatement(), slave.getInnerStatement());
     slave.getOuterStatement().delete();
@@ -133,6 +133,9 @@ public final class Loop {
           break;
         case 102: // Single swap: i,j,k -> j,i,k
           swapIterationRange(nestedGroup.get(0), nestedGroup.get(1));
+          break;
+        default:
+          // Do nothing.
           break;
       }
     } else {

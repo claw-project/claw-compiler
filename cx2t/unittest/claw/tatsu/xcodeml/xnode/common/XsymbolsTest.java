@@ -48,7 +48,7 @@ public class XsymbolsTest {
 
   @Test
   public void simpleGlobalSymbolsTest() {
-    XsymbolTable table = XmlHelper.createXglobalSymbolFromString(gSym1);
+    XsymbolTable table = XmlHelper.createXSymbolTableFromString(gSym1);
     assertNotNull(table);
     assertEquals(1, table.size());
 

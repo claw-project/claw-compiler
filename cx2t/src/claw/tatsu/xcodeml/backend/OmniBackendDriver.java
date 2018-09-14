@@ -13,6 +13,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Wrapper class to call the Fortran decompiler of OMNI Compiler directly
@@ -31,16 +33,11 @@ public class OmniBackendDriver {
    * @param lang Language of output.
    * @throws XmException If instantiation of the XmToolFactory fails.
    */
-  public OmniBackendDriver(Lang lang)
-      throws XmException
-  {
-    switch(lang) {
-      case FORTRAN:
-        _toolFactory = new XmToolFactory("F");
-        break;
-      case C:
-        _toolFactory = new XmToolFactory("C");
-        break;
+  public OmniBackendDriver(Lang lang) throws XmException {
+    if(lang == Lang.FORTRAN) {
+      _toolFactory = new XmToolFactory("F");
+    } else if(lang == Lang.C) {
+      _toolFactory = new XmToolFactory("C");
     }
   }
 
@@ -50,7 +47,7 @@ public class OmniBackendDriver {
       try {
         _reader.close();
       } catch(IOException e) {
-        e.printStackTrace();
+        Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
         return false;
       }
     }
@@ -104,7 +101,7 @@ public class OmniBackendDriver {
             FileWriter(outputFilepath)));
       }
     } catch(IOException e) {
-      e.printStackTrace();
+      Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
     }
 
     try {

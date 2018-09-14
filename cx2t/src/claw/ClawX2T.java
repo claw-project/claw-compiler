@@ -23,6 +23,8 @@ import java.io.File;
  */
 public class ClawX2T {
 
+  private static final String ERR_INTERNAL = "internal";
+
   /**
    * Print an error message an abort.
    *
@@ -119,14 +121,17 @@ public class ClawX2T {
    *
    * @param args Arguments passed to the program.
    * @return Parsed command line object.
-   * @throws ParseException If one or several arguments are not found.
    */
   private static CommandLine processCommandArgs(String[] args)
-      throws ParseException
   {
-    Options options = prepareOptions();
-    CommandLineParser parser = new DefaultParser();
-    return parser.parse(options, args);
+    try {
+      Options options = prepareOptions();
+      CommandLineParser parser = new DefaultParser();
+      return parser.parse(options, args);
+    } catch(ParseException pex) {
+      error(ERR_INTERNAL, 0, 0, pex.getMessage());
+      return null;
+    }
   }
 
   /**
@@ -139,20 +144,13 @@ public class ClawX2T {
     String input;
     String xcmlOutput = null;
     String targetLangOutput = null;
-    String target_option = null;
-    String directive_option = null;
-    String configuration_file = null;
-    String configuration_path = null;
+    String targetOption = null;
+    String directiveOption = null;
+    String configurationFile = null;
+    String configurationPath = null;
     int maxColumns = 0;
-    //boolean forcePure = false;
 
-    CommandLine cmd;
-    try {
-      cmd = processCommandArgs(args);
-    } catch(ParseException pex) {
-      error("internal", 0, 0, pex.getMessage());
-      return;
-    }
+    CommandLine cmd = processCommandArgs(args);
 
     // Help option
     if(cmd.hasOption("h")) {
@@ -173,14 +171,10 @@ public class ClawX2T {
     }
 
     // Target option
-    if(cmd.hasOption("t")) {
-      target_option = cmd.getOptionValue("t");
-    }
+    targetOption = cmd.getOptionValue("t");
 
     // Directive option
-    if(cmd.hasOption("dir")) {
-      directive_option = cmd.getOptionValue("dir");
-    }
+    directiveOption = cmd.getOptionValue("dir");
 
     // Suppressing line directive option
     if(cmd.hasOption("l")) {
@@ -193,46 +187,37 @@ public class ClawX2T {
     }
 
     // XcodeML/F output file option
-    if(cmd.hasOption("o")) {
-      xcmlOutput = cmd.getOptionValue("o");
-    }
+    xcmlOutput = cmd.getOptionValue("o");
 
     // FORTRAN output file option
-    if(cmd.hasOption("f")) {
-      targetLangOutput = cmd.getOptionValue("f");
-    }
+    targetLangOutput = cmd.getOptionValue("f");
 
     if(cmd.hasOption("w")) {
       maxColumns = Integer.parseInt(cmd.getOptionValue("w"));
     }
 
-    if(cmd.hasOption("c")) {
-      configuration_file = cmd.getOptionValue("c");
-    }
-
-    if(cmd.hasOption("cp")) {
-      configuration_path = cmd.getOptionValue("cp");
-    }
+    configurationFile = cmd.getOptionValue("c");
+    configurationPath = cmd.getOptionValue("cp");
 
     // Check that configuration path exists
-    if(configuration_path == null) {
-      error("internal", 0, 0, "Configuration path missing.");
+    if(configurationPath == null) {
+      error(ERR_INTERNAL, 0, 0, "Configuration path missing.");
       return;
     }
 
     // Check that configuration file exists
-    if(configuration_file != null) {
-      File configFile = new File(configuration_file);
+    if(configurationFile != null) {
+      File configFile = new File(configurationFile);
       if(!configFile.exists()) {
-        error("internal", 0, 0, "Configuration file not found: "
-            + configuration_file);
+        error(ERR_INTERNAL, 0, 0, "Configuration file not found: "
+            + configurationFile);
       }
     }
 
     // --show-configuration option
     if(cmd.hasOption("sc")) {
-      Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option, maxColumns);
+      Configuration.get().load(configurationPath, configurationFile,
+          targetOption, directiveOption, maxColumns);
       Configuration.get().displayConfig();
       return;
     }
@@ -246,10 +231,10 @@ public class ClawX2T {
 
     // Read the configuration file
     try {
-      Configuration.get().load(configuration_path, configuration_file,
-          target_option, directive_option, maxColumns);
+      Configuration.get().load(configurationPath, configurationFile,
+          targetOption, directiveOption, maxColumns);
     } catch(Exception ex) {
-      error("internal", 0, 0, ex.getMessage());
+      error(ERR_INTERNAL, 0, 0, ex.getMessage());
       return;
     }
 
@@ -295,14 +280,12 @@ public class ClawX2T {
           XmOption.isSuppressLineDirective()))
       {
         error(targetLangOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
-        System.exit(1);
       }
     } else {
       if(!backend.decompileFromFile(targetLangOutput, xcmlOutput, maxColumns,
           XmOption.isSuppressLineDirective()))
       {
         error(xcmlOutput, 0, 0, "Unable to decompile XcodeML to Fortran");
-        System.exit(1);
       }
     }
   }
