@@ -67,6 +67,11 @@ cache:
   - "$HOME/.ghc"
   - "$HOME/.cabal"
   - "$HOME/.stack"
+addons:
+  sonarcloud:
+    organization: claw-project
+    token:
+      secure: FFQ0dHEWqX8f47xCx0JeEoyiNHVz25BNmkTGJrS027J431ZnffCvQ2zgXNKFI8XvwElqe/3zooTuqMeCf0qpx86KRApX947Hn9N8534jkoZ4mKb5658UnQX2BkXj68XfshdgJU/d84eGTGJ+AlcV37uSyoCxwDFq/vkZZzhTnVGuAEJY5r/hH38wS6MSF+rCPncU1I/6G7u0EkwnGsKxPZcy5R3rtZ4Y/FhRE5WaoqSwM/QD7kA4p5FaWlUumMZgUD2Oof9HlGxv0PVTvjFWezSPhgqHXuwC7Uq4oBJL8O7OePXhpLurPIowtmIK0tzQSObpv8sNbMcR18HEqjnJggBrPmgEClVAOwZqfrAQ0uvBuUmolhxdp5gqwTIYr8Ry+y2pW6aZNfET5RvUjThqSZ+NTuc0i8AQjCdoSL3ResEL7oOnw/p9XzeiGMoQ38mukd2f+28UGuJu/2/BcO7svZQmp/9K29WHR8kp7jSCSJKN3QFWKOlBa5hs2O258qdTn5BYqbKXQBovzWYc6jWLPhALjL0lusW43+mejPep0qIBG4/QVrVWPscyVK4To1zDySBD0ew4+4RvFoW3lCzCcDg8BYzhaGvC9na5CVhXwkaWqr1qKbq6FZm5tGV+KVC0P6laS1xFMmm/nPJjj1OnmcGwc32BP8byQXKTJwG24n0=
 before_install:
 - git submodule init
 - git submodule update
@@ -92,6 +97,7 @@ script:
 - "./scripts/check_author"
 - cd scripts
 - "./run.shellcheck"
+- sonar-scanner
 notifications:
   slack:
     secure: NTIZzmDqsxEInCI7hwFB7uQZXWNTRHkGWIYZO5ZOr+2Tyksrff1j+vEGmHXwtbbFs4OgDTKz8uGfePsBrTdcUmGkMM7QdQm1pkWaA4VU4MJtviOiHkomypURBI3kwofhohRa7mvvAdiWcECkHGgZqtQYVTJve8LcgutNo2Zv0a0d9piTVCugyh3ONP/MvTSt/wRZ1Tkl59pXBpWCsbRDxZzoSh4feohPNwXtIvcvGBPy4jG14rDvrX3FIxFr56/RmBC89ldJuWkSIRHnTR3pm44W8PEduJ55hr+9EvDIDJJmIqlcanAJjbLBT8DZhXA3JbVoz6qF6t4I9daRK29jjaP6AVmPN61NOxL2HzzGTLl5X/7bEQQilBI8i3208jsIA53ZZmEzDkdu52SKUAEEQxEtrdo8ACvkav377MuuCX/LnmWNbvMlNEPmyKLwZNZaBas3s+ANoU1pMe92zw8oaG0MAxB9K2ejZcvwHDwSvXcTbZ5JXdYfmROyPLINf3s8uLJJaDMPLIPROOHMnGRIekLhUd4ELD1mLpPFqa0Z97xr0lIonAQqF2OedL9yCcX97ZDvooKARD0HRL9aqHeuc97RQsQAT1Y1wZ1zoEdZyX/I2338jmpnk2VIEyFH/rm8/OMgbIpHNo6eKIjLoozm8s3VHphl+FItLCdfBJWFVsE=
