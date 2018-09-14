@@ -1,6 +1,6 @@
 sudo: required
 dist: trusty
-language: java
+language: cpp
 git:
   submodules: false
 matrix:
@@ -68,7 +68,7 @@ matrix:
           - master
         organization: "claw-project"
         token:
-          secure: "FFQ0dHEWqX8f47xCx0JeEoyiNHVz25BNmkTGJrS027J431ZnffCvQ2zgXNKFI8XvwElqe/3zooTuqMeCf0qpx86KRApX947Hn9N8534jkoZ4mKb5658UnQX2BkXj68XfshdgJU/d84eGTGJ+AlcV37uSyoCxwDFq/vkZZzhTnVGuAEJY5r/hH38wS6MSF+rCPncU1I/6G7u0EkwnGsKxPZcy5R3rtZ4Y/FhRE5WaoqSwM/QD7kA4p5FaWlUumMZgUD2Oof9HlGxv0PVTvjFWezSPhgqHXuwC7Uq4oBJL8O7OePXhpLurPIowtmIK0tzQSObpv8sNbMcR18HEqjnJggBrPmgEClVAOwZqfrAQ0uvBuUmolhxdp5gqwTIYr8Ry+y2pW6aZNfET5RvUjThqSZ+NTuc0i8AQjCdoSL3ResEL7oOnw/p9XzeiGMoQ38mukd2f+28UGuJu/2/BcO7svZQmp/9K29WHR8kp7jSCSJKN3QFWKOlBa5hs2O258qdTn5BYqbKXQBovzWYc6jWLPhALjL0lusW43+mejPep0qIBG4/QVrVWPscyVK4To1zDySBD0ew4+4RvFoW3lCzCcDg8BYzhaGvC9na5CVhXwkaWqr1qKbq6FZm5tGV+KVC0P6laS1xFMmm/nPJjj1OnmcGwc32BP8byQXKTJwG24n0="
+          secure: "FFQ0dHEWqX8f47xCx0JeEoyiNHVz25BNmkTGJrS027J431ZnffCvQ2zgXNKFI8XvwElqe/3zooTuqMeCf0qpx86KRApX947Hn9N8534jkoZ4mKb5658UnQX2BkXj68XfshdgJU/d84eGTGJ+AlcV37uSyoCxwDFq/vkZZzhTnVGuAEJY5r/hH38wS6MSF+rCPncU1I/6G7u0EkwnGsKxPZcy5R3rtZ4Y/FhRE5WaoqSwM/QD7kA4p5FaWlUumMZgUD2Oof9HlGxv0PVTvjFWezSPhgqHXuwC7Uq4oBJL8O7OePXhpLurPIowtmIK0tzQSObpv8sNbMcR18HEqjnJggBrPmgEClVAOwZqfrAQ0uvBuUmolhxdp5gqwTIYr8Ry+y2pW6aZNfET5RvUjThqSZ+NTuc0i8AQjCdoSL3ResEL7oOnw/p9XzeiGMoQ38mukd2f+28UGuJu/2/BcO7svZQmp/9K29WHR8kp7jSCSJKN3QFWKOlBa5hs2O258qdTn5BYqbKXQBovzWYc6jWLPhALjL0lusW43+mejPep0qIBG4/QVrVWPscyVK4To1zDySBD0ew4+4RvFoW3lCzCcDg8BYzhaGvC9na5CVhXwkaWqr1qKbq6FZm5tGV+KVC0P6laS1xFMmm/nPJjj1OnmcGwc32BP8byQXKTJwG24n0="an
       apt:
         sources:
         - ubuntu-toolchain-r-test
