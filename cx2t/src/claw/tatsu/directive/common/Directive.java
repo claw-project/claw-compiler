@@ -58,7 +58,7 @@ public final class Directive {
                                     FfunctionDefinition fctDef,
                                     String noDependencyDirective)
   {
-    int nodep_counter = 0;
+    int nodepCounter = 0;
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {
       // Check if the nodep directive decorates the loop
@@ -68,7 +68,7 @@ public final class Directive {
             Context.get().getGenerator().
                 getStartLoopDirective(NO_COLLAPSE, true, true, ""), doStmt);
       } else {
-        ++nodep_counter;
+        ++nodepCounter;
       }
       XnodeUtil.safeDelete(noDependency);
 
@@ -80,7 +80,7 @@ public final class Directive {
     }
 
     return Configuration.get().accelerator().hasCollapseStrategy()
-        ? nodep_counter : 0;
+        ? nodepCounter : 0;
   }
 
   /**

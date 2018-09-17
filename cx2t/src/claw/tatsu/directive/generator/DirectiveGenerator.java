@@ -14,9 +14,6 @@ import java.util.List;
 /**
  * Interface for directive directive generator.
  *
- * TODO interface might need some refinements when we have a better idea of
- * TODO OpenACC vs OpenMP
- *
  * @author clementval
  */
 public abstract class DirectiveGenerator {
@@ -27,6 +24,7 @@ public abstract class DirectiveGenerator {
   static final String FORMAT3 = "%s %s %s";
   static final String FORMAT4 = "%s %s %s %s";
   static final String FORMAT5 = "%s %s %s %s %s";
+  static final String EMPTY = "";
 
   public DirectiveGenerator() {
   }
@@ -125,9 +123,7 @@ public abstract class DirectiveGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  public String getPresentClause(List<String> vars) {
-    return "";
-  }
+  public abstract String getPresentClause(List<String> vars);
 
   /**
    * Return construction of the clause for a list of created variables.
@@ -138,9 +134,7 @@ public abstract class DirectiveGenerator {
    * variables. If the list is null or empty, the implementation returns an
    * empty string.
    */
-  public String getCreateClause(List<String> vars) {
-    return "";
-  }
+  public abstract String getCreateClause(List<String> vars);
 
   /**
    * Return the formatted directive to be inserted in a subroutine/function
@@ -227,6 +221,6 @@ public abstract class DirectiveGenerator {
    * generated.
    */
   public String[] getUpdateClause(DataMovement direction, List<String> vars) {
-    return null;
+    return new String[0];
   }
 }

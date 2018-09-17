@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class UtilityTest {
 
   @Test
-  public void JoinArrayTest() {
+  public void joinArrayTest() {
     String[] a = {"a", "b", "c"};
     assertEquals("a,b,c", Utility.join(",", a));
     String[] b = {"a"};
@@ -27,7 +27,7 @@ public class UtilityTest {
   }
 
   @Test
-  public void JoinListTest() {
+  public void joinListTest() {
     List<String> a = new ArrayList<>();
     a.add("a");
     a.add("b");

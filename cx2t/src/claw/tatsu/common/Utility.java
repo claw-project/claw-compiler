@@ -124,6 +124,6 @@ public final class Utility {
       return 0;
     }
     String newStr = source.toLowerCase().replace(pattern.toLowerCase(), "");
-    return ((source.length() - newStr.length())) / pattern.length();
+    return (source.length() - newStr.length()) / pattern.length();
   }
 }

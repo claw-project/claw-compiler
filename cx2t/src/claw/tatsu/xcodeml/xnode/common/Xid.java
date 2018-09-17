@@ -58,6 +58,7 @@ public class Xid extends Xnode {
    *
    * @param value The new type value.
    */
+  @Override
   public void setType(String value) {
     setAttribute(Xattr.TYPE, value);
   }
@@ -83,6 +84,7 @@ public class Xid extends Xnode {
   /**
    * @return A new object Xid that is the clone of the current object.
    */
+  @Override
   public Xid cloneNode() {
     return new Xid(super.cloneNode());
   }

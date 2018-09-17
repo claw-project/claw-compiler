@@ -28,7 +28,7 @@ public enum AcceleratorDataStrategy {
     if(value == null) {
       return NONE;
     }
-    switch(value) {
+    switch(value.toLowerCase()) {
       case DATA_STRATEGY_KERNEL:
         return KERNEL;
       case DATA_STRATEGY_PRESENT:

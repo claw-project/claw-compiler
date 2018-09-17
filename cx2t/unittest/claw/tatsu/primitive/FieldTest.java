@@ -13,12 +13,15 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+
 import helper.TestConstant;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
@@ -270,6 +273,9 @@ public class FieldTest {
                                          int base, int target, int[] dimensions)
   {
     try {
+
+      int diff = target - base;
+
       PromotionInfo promotionInfo = new PromotionInfo(id);
       promotionInfo.setDimensions(dims);
 
@@ -297,7 +303,7 @@ public class FieldTest {
       assertEquals(target, dimensions.length / 2);
       assertEquals(target, promotionInfo.getTargetDimension());
       assertEquals(base, promotionInfo.getBaseDimension());
-      assertEquals(target - base, promotionInfo.diffDimension());
+      assertEquals(diff, promotionInfo.diffDimension());
       assertEquals(bt.getType(), promotionInfo.getTargetType());
 
       if(base > 0) {
@@ -313,7 +319,7 @@ public class FieldTest {
             dimensions[(i * 2) + 1]);
       }
     } catch(IllegalTransformationException itex) {
-      System.err.println(itex.getMessage());
+      Logger.getAnonymousLogger().log(Level.SEVERE, itex.getMessage());
       fail();
     }
   }

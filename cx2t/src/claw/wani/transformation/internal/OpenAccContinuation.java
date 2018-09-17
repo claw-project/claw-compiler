@@ -7,6 +7,7 @@ package claw.wani.transformation.internal;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
@@ -92,7 +93,7 @@ public class OpenAccContinuation extends ClawTransformation {
     if(Pragma.fromClawPrimitive(getDirective().getPragma())) {
       Pragma.splitByCont(getDirective().getPragma(),
           CompilerDirective.OPENACC.getPrefix(), xcodeml);
-    } else if(Configuration.get().getMaxColumns() > 0
+    } else if(Context.get().getMaxColumns() > 0
         && !getDirective().getPragma().isDeleted())
     {
       Pragma.splitByLength(getDirective().getPragma(), xcodeml,

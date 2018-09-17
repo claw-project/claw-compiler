@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -90,7 +94,6 @@ public class Configuration {
   private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
-  private int _maxColumns; // Max column for code formatting
 
   /**
    * private ctor
@@ -200,7 +203,6 @@ public class Configuration {
 
     setUserDefinedTarget(userDefinedTarget);
     setUserDefineDirective(userDefinedDirective);
-    setMaxColumns(userMaxColumns);
 
     switch(getCurrentDirective()) {
       case OPENACC:
@@ -333,11 +335,13 @@ public class Configuration {
   /**
    * Validate the configuration file with the XSD schema.
    *
-   * @param xsd File representing the XSD schema.
-   * @throws Exception If configuration file is not valid.
+   * @param document XML Document.
+   * @param xsd      File representing the XSD schema.
+   * @throws SAXException If configuration file is not valid.
+   * @throws IOException  If schema is not found.
    */
   private void validate(Document document, File xsd)
-      throws Exception
+      throws SAXException, IOException
   {
     SchemaFactory factory =
         SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -404,9 +408,9 @@ public class Configuration {
   private void readSets(Element sets) throws Exception {
     File xsdSchema = Paths.get(_configuration_path, SET_XSD).toFile();
 
-    NodeList transformation_sets = sets.getElementsByTagName(SET_ELEMENT);
-    for(int i = 0; i < transformation_sets.getLength(); ++i) {
-      Element e = (Element) transformation_sets.item(i);
+    NodeList transformationSets = sets.getElementsByTagName(SET_ELEMENT);
+    for(int i = 0; i < transformationSets.getLength(); ++i) {
+      Element e = (Element) transformationSets.item(i);
       String setName = e.getAttribute(NAME_ATTR);
       File setFile = Paths.get(_configuration_path, setName + XML_EXT).toFile();
       if(!setFile.exists()) {
@@ -435,12 +439,16 @@ public class Configuration {
    * @param jarFile Name of the jar file to load with .jar extension.
    * @return The URLClassLoader associated with the jar file if found. Null
    * otherwise.
-   * @throws Exception If no path defined
+   * @throws FileNotFoundException If jar file not found.
+   * @throws MalformedURLException If classpath is malformed.
    */
-  private URLClassLoader loadExternalJar(String jarFile) throws Exception {
+  private URLClassLoader loadExternalJar(String jarFile)
+      throws FileNotFoundException, MalformedURLException
+  {
     if(_transSetPaths.length == 0) {
-      throw new Exception("No path defined in " + CLAW_TRANS_SET_PATH
-          + ". Unable to load transformation set: " + jarFile);
+      throw new FileNotFoundException("No path defined in "
+          + CLAW_TRANS_SET_PATH + ". Unable to load transformation set: "
+          + jarFile);
     }
     URLClassLoader external;
     for(String path : _transSetPaths) {
@@ -452,7 +460,7 @@ public class Configuration {
         return external;
       }
     }
-    throw new Exception("Cannot find jar file " + jarFile);
+    throw new FileNotFoundException("Cannot find jar file " + jarFile);
   }
 
   /**
@@ -507,9 +515,9 @@ public class Configuration {
           throw new Exception("Invalid group class transformation definition.");
         }
         // Read trigger type
-        String trigger_type = g.getAttribute(TRIGGER_ATTR);
+        String triggerTypeAttr = g.getAttribute(TRIGGER_ATTR);
         GroupConfiguration.TriggerType triggerType;
-        switch(trigger_type) {
+        switch(triggerTypeAttr) {
           case DIRECTIVE_TR_TYPE:
             triggerType = GroupConfiguration.TriggerType.DIRECTIVE;
             break;
@@ -638,7 +646,7 @@ public class Configuration {
    */
   protected void checkVersion(String configVersion) throws Exception {
     int[] configMajMin = getMajorMinor(configVersion);
-    int[] compilerMajMin = getMajorMinor(ClawVersion.getVersion());
+    int[] compilerMajMin = getMajorMinor(ClawVersion.VERSION);
 
     if(configMajMin[0] < compilerMajMin[0]
         || (configMajMin[0] == compilerMajMin[0]
@@ -671,41 +679,20 @@ public class Configuration {
   }
 
   /**
-   * Get the defined max column parameter.
-   *
-   * @return Int value representing the max column.
-   */
-  public int getMaxColumns() {
-    return _maxColumns;
-  }
-
-  /**
-   * Set the max column value.
-   *
-   * @param value New value of the max column parameter.
-   */
-  private void setMaxColumns(int value) {
-    if(value > 0) {
-      _maxColumns = value;
-    }
-  }
-
-  /**
    * Display the loaded configuration.
    */
   public void displayConfig() {
-    System.out.println("- CLAW Compiler configuration -\n");
-    System.out.println("Default directive directive: " +
-        getCurrentDirective() + "\n");
-    System.out.println("Default target: " + getCurrentTarget() + "\n");
+    System.out.println(String.format("- CLAW Compiler configuration -%n"));
+    System.out.println(String.format("Default directive directive: %s%n", getCurrentDirective()));
+    System.out.println(String.format("Default target: %s%n", getCurrentTarget()));
     System.out.println("Current transformation order:");
     int i = 0;
-    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s\n",
+    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n",
         "Id", "set", "name", "type", "trigger", "directive", "class");
-    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s\n",
+    System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n",
         "--", "---", "----", "----", "-------", "---------", "-----");
     for(GroupConfiguration g : getGroups()) {
-      System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s\n",
+      System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s%n",
           i++, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
           g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
               ? g.getDirective() : "-", g.getTransformationClassName());

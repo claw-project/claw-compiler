@@ -20,14 +20,16 @@ import java.util.List;
  */
 public class OpenAcc extends DirectiveGenerator {
 
+  public static final String OPENACC_PREFIX = "acc";
+  public static final String OPENACC_PREFIX_CONT = "acc&";
+  public static final String OPENACC_NAME = "openacc";
+
   public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC:";
   private static final String OPENACC_COLLAPSE = "collapse";
   private static final String OPENACC_DATA = "data";
   private static final String OPENACC_END = "end";
   private static final String OPENACC_LOOP = "loop";
   private static final String OPENACC_PARALLEL = "parallel";
-  private static final String OPENACC_PREFIX = "acc";
-  private static final String OPENACC_PREFIX_CONT = "acc&";
   private static final String OPENACC_PRIVATE = "private";
   private static final String OPENACC_PRESENT = "present";
   private static final String OPENACC_PCREATE = "pcreate";
@@ -102,8 +104,8 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String getPrivateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
@@ -113,8 +115,8 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String getPresentClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate present clause for (%d variables): %s",
@@ -124,8 +126,8 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String getCreateClause(List<String> vars) {
-    if(vars == null || vars.size() == 0) {
-      return "";
+    if(vars == null || vars.isEmpty()) {
+      return DirectiveGenerator.EMPTY;
     }
     Message.debug(String.format(
         "%s generate pcreate clause for (%d variables): %s",
@@ -187,7 +189,6 @@ public class OpenAcc extends DirectiveGenerator {
   {
     if(value > 1) {
       //!$acc loop collapse(<value>)
-      // TODO do it differently
       if(seq) {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
@@ -221,7 +222,7 @@ public class OpenAcc extends DirectiveGenerator {
 
   @Override
   public String[] getEndLoopDirective() {
-    return null;
+    return new String[0];
   }
 
   @Override
@@ -250,7 +251,7 @@ public class OpenAcc extends DirectiveGenerator {
   public String[] getUpdateClause(DataMovement direction, List<String> vars) {
     //!$acc update host/device(<vars>)
     if(vars == null || vars.isEmpty()) {
-      return null;
+      return new String[0];
     }
     Message.debug(OPENACC_DEBUG_PREFIX + "generate update " +
         (direction == DataMovement.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
