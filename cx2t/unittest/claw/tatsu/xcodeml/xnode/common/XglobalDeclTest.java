@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class XglobalDeclTest {
 
-  private static final String simpleGlobDecl =
+  private static final String SIMPLE_GLOB_DECL =
       "<globalDeclarations>" +
           "<FmoduleDefinition name=\"module\" lineno=\"4\" " +
           "file=\"./src/module.f90\">" +
@@ -33,7 +33,8 @@ public class XglobalDeclTest {
 
   @Test
   public void simpleGlobalDeclarationTest() {
-    XglobalDeclTable gdTable = XmlHelper.createGlobalDeclTable(simpleGlobDecl);
+    XglobalDeclTable gdTable =
+        XmlHelper.createGlobalDeclTable(SIMPLE_GLOB_DECL);
     assertNotNull(gdTable);
     assertEquals(2, gdTable.size());
     assertTrue(gdTable.hasDefinition("fct1"));

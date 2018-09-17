@@ -60,7 +60,8 @@ public interface Translator {
    * @param xcodeml Current XcodeML unit.
    * @throws IllegalTransformationException If translation cannot be finalized.
    */
-  void finalize(XcodeProgram xcodeml) throws IllegalTransformationException;
+  void finalizeTranslation(XcodeProgram xcodeml)
+      throws IllegalTransformationException;
 
   /**
    * Get all transformation groups stored in this translator.

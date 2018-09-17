@@ -64,7 +64,7 @@ public final class Field {
     }
 
     if(fieldInfo.getDimensions() == null
-        || fieldInfo.getDimensions().size() == 0)
+        || fieldInfo.getDimensions().isEmpty())
     {
       throw new IllegalTransformationException("Promotion information has not "
           + "enough information. Dimension empty!", decl.lineNo());

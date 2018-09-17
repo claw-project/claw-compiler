@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  */
 public class XdeclTableTest {
 
-  private static final String decl1 = "<declarations>" +
+  private static final String DECL1 = "<declarations>" +
       "<varDecl lineno=\"4730\" file=\"dummy.f90\">" +
       "<name type=\"I1241bd0\">name1</name></varDecl>\n" +
       "<varDecl lineno=\"4731\" file=\"dummy.f90\">" +
@@ -31,7 +31,7 @@ public class XdeclTableTest {
 
   @Test
   public void simpleDeclTableTest() {
-    XdeclTable decl = XmlHelper.createXdeclTable(decl1);
+    XdeclTable decl = XmlHelper.createXdeclTable(DECL1);
     assertNotNull(decl);
     assertEquals(2, decl.count());
 

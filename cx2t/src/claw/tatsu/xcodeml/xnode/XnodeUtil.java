@@ -36,6 +36,10 @@ import java.util.Set;
 
 public class XnodeUtil {
 
+  private XnodeUtil(){
+    // Hide implicit public ctor
+  }
+
   // TODO 1.0 move method to specific primitives or classes and delete this class
 
   /**
@@ -56,7 +60,7 @@ public class XnodeUtil {
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode ref = new Xnode((Element) n);
         Xnode var = ref.matchSeq(Xcode.VAR_REF, Xcode.VAR);
-        if(var != null && var.value().equals(arrayName.toLowerCase())) {
+        if(var != null && var.value().equalsIgnoreCase(arrayName)) {
           references.add(ref);
         }
       }
@@ -78,7 +82,7 @@ public class XnodeUtil {
       Node n = nList.item(i);
       if(n.getNodeType() == Node.ELEMENT_NODE) {
         Xnode var = new Xnode((Element) n);
-        if(var.value().equals(varName.toLowerCase())) {
+        if(var.value().equalsIgnoreCase(varName)) {
           references.add(var);
         }
       }
@@ -232,7 +236,7 @@ public class XnodeUtil {
      * from the "from" element down to the end of the block. */
     String s1 = "following::";
 
-    String dynamic_part_s1 = "";
+    String dynamicPartS1 = "";
     for(int i = inductionVars.size() - 1; i >= 0; --i) {
       /*
        * Here is example of there xpath query format for 1,2 and 3 nested loops
@@ -259,11 +263,11 @@ public class XnodeUtil {
             Xname.VAR,
             inductionVars.get(i),
             Xname.BODY,
-            dynamic_part_s1); // Including previously formed xpath query
+            dynamicPartS1); // Including previously formed xpath query
       }
-      dynamic_part_s1 = tempQuery;
+      dynamicPartS1 = tempQuery;
     }
-    s1 = s1 + dynamic_part_s1;
+    s1 = s1 + dynamicPartS1;
     List<HoistedNestedDoStatement> doStatements = new ArrayList<>();
     try {
       NodeList output = evaluateXpath(from.element(), s1);
@@ -378,11 +382,10 @@ public class XnodeUtil {
     while(node != null) {
       if(node.getNodeType() == Node.ELEMENT_NODE) {
         Element element = (Element) node;
-        switch(element.getTagName()) {
-          case Xname.ARRAY_INDEX:
-          case Xname.INDEX_RANGE:
-            indexRanges.add(new Xnode(element));
-            break;
+        if(element.getTagName().equals(Xname.ARRAY_INDEX)
+            || element.getTagName().equals(Xname.INDEX_RANGE))
+        {
+          indexRanges.add(new Xnode(element));
         }
       }
       node = node.getNextSibling();
@@ -442,7 +445,7 @@ public class XnodeUtil {
     for(Xnode var : vars) {
       if(!((Element) var.element().getParentNode()).getTagName().
           equals(Xcode.ARRAY_INDEX.code())
-          && var.value().equals(id.toLowerCase()))
+          && var.value().equalsIgnoreCase(id))
       {
         realReferences.add(var);
       }

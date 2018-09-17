@@ -12,16 +12,9 @@ package claw.tatsu;
 public final class TatsuConstant {
 
   public static final String DIRECTIVE_NONE = "none";
-  public static final String DIRECTIVE_OPENACC = "openacc";
-  public static final String DIRECTIVE_SHORT_OPENACC = "acc";
-  public static final String DIRECTIVE_OPENMP = "openmp";
-  public static final String DIRECTIVE_SHORT_OPENMP = "omp";
   public static final String DIRECTIVE_CLAW = "claw";
-  public static final String OPENACC_PREFIX = "acc";
-  public static final String OPENACC_PREFIX_CONT = "acc&";
-  public static final String OPENMP_PREFIX_CONT = "omp&";
-  public static final String OPENMP_PREFIX = "omp";
   public static final String CLAW_PREFIX = "claw";
+
   // Insertion position constant value
   public static final String BEFORE = "before";
   public static final String MIDDLE = "middle";
@@ -53,7 +46,7 @@ public final class TatsuConstant {
   public static final String TARGET_FPGA = "fpga";
   public static final String TARGET_NONE = "none";
 
-  // Avoid instantiation of this class.
   private TatsuConstant() {
+    // Avoid instantiation of this class.
   }
 }

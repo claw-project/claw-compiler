@@ -99,7 +99,7 @@ public class ClawTransformationReport {
         translator.getTranslationUnit().getCompilerInfo()});
     infos.add(new String[]{"XcodeML/F",
         translator.getTranslationUnit().getVersion()});
-    infos.add(new String[]{"CLAW Compiler", ClawVersion.getVersion()});
+    infos.add(new String[]{"CLAW Compiler", ClawVersion.VERSION});
     infos.add(new String[]{"Target",
         Configuration.get().getCurrentTarget().toString()});
     infos.add(new String[]{"Directive",

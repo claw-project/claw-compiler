@@ -165,7 +165,7 @@ public class Parallelize extends ClawTransformation {
           XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
               Context.get().getGenerator().getUnsupportedStatements());
 
-      if(unsupportedStatements.size() > 0) {
+      if(!unsupportedStatements.isEmpty()) {
         for(Xnode statement : unsupportedStatements) {
           xcodeml.addError("Unsupported statement in parallel region",
               statement.lineNo());

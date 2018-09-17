@@ -102,7 +102,7 @@ public class PragmaTest {
   }
 
   @Test
-  public void PragmaCommentTest() {
+  public void pragmaCommentTest() {
     // OpenACC
     String p1 = "acc parallel";
     assertEquals(p1, Pragma.dropEndingComment(p1));
@@ -128,7 +128,7 @@ public class PragmaTest {
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
-    assertTrue(fctDefs.size() > 0);
+    assertTrue(!fctDefs.isEmpty());
     FfunctionDefinition fd = fctDefs.get(0);
     assertNotNull(fd.body());
     List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
@@ -159,7 +159,7 @@ public class PragmaTest {
   public void splitByContTest2() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
-    assertTrue(fctDefs.size() > 0);
+    assertTrue(!fctDefs.isEmpty());
     FfunctionDefinition fd = fctDefs.get(0);
     assertNotNull(fd.body());
     List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);

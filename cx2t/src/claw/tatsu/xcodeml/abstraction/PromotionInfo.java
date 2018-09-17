@@ -204,7 +204,7 @@ public class PromotionInfo {
    * @return Dimensions information in a formatted string.
    */
   public String getFormattedDimensions() {
-    if(_dimensions == null || _dimensions.size() == 0) {
+    if(_dimensions == null || _dimensions.isEmpty()) {
       return "";
     }
     StringBuilder str = new StringBuilder();

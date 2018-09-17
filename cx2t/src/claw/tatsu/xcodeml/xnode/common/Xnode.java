@@ -267,7 +267,7 @@ public class Xnode {
    */
   public Xnode firstChild() {
     List<Xnode> children = this.children();
-    return children.size() == 0 ? null : children.get(0);
+    return children.isEmpty() ? null : children.get(0);
   }
 
   /**
@@ -277,7 +277,7 @@ public class Xnode {
    */
   public Xnode lastChild() {
     List<Xnode> children = this.children();
-    return children.size() == 0 ? null : children.get(children.size() - 1);
+    return children.isEmpty() ? null : children.get(children.size() - 1);
   }
 
   /**
@@ -743,8 +743,7 @@ public class Xnode {
    * otherwise.
    */
   public boolean compareOptionalValues(Xnode other) {
-    return other == null ||
-        value().toLowerCase().equals(other.value().toLowerCase());
+    return other == null || value().equalsIgnoreCase(other.value());
   }
 
   /**
@@ -754,7 +753,7 @@ public class Xnode {
    * @return True if the values are identical. False otherwise.
    */
   public boolean compareValues(Xnode other) {
-    return !(other == null) && value().equals(other.value());
+    return other != null && value().equals(other.value());
   }
 
   /**

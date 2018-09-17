@@ -67,7 +67,7 @@ public class ArrayTransform extends ClawBlockTransformation {
               _clawEnd.getPragma().value()
           );
 
-      if(foundAssignments.size() == 0) {
+      if(foundAssignments.isEmpty()) {
         xcodeml.addError(
             "No array notation assignments found in the array-transform block.",
             _clawStart.getPragma().lineNo()
@@ -115,7 +115,7 @@ public class ArrayTransform extends ClawBlockTransformation {
         return false;
       }
       // Check if we are dealing with an array notation
-      if(!(stmt.child(0).opcode() == Xcode.F_ARRAY_REF)) {
+      if(stmt.child(0).opcode() != Xcode.F_ARRAY_REF) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
         return false;
@@ -127,7 +127,7 @@ public class ArrayTransform extends ClawBlockTransformation {
           ranges.add(el);
         }
       }
-      if(ranges.size() == 0) {
+      if(ranges.isEmpty()) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
         return false;

@@ -167,6 +167,7 @@ public class FfunctionType extends Xnode {
    *
    * @return A new FfunctionType that is a clone of the current one.
    */
+  @Override
   public FfunctionType cloneNode() {
     return new FfunctionType(super.cloneNode());
   }
@@ -180,7 +181,7 @@ public class FfunctionType extends Xnode {
    */
   public boolean hasParam(String paramName) {
     for(Xnode param : _parameters) {
-      if(param.value().toLowerCase().equals(paramName.toLowerCase())) {
+      if(param.value().equalsIgnoreCase(paramName)) {
         return true;
       }
     }
