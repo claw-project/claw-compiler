@@ -5,16 +5,18 @@
 package claw.wani.x2t.configuration;
 
 import claw.ClawVersion;
+import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
+import claw.tatsu.directive.generator.OpenAcc;
 import helper.TestConstant;
 import org.junit.Test;
-
-import java.io.File;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -37,7 +39,7 @@ public class ConfigurationTest {
 
       assertNotNull(Context.get().getGenerator());
       assertNotNull(conf.accelerator());
-      assertEquals(MAX_COLUMN, conf.getMaxColumns());
+      assertEquals(MAX_COLUMN, Context.get().getMaxColumns());
 
       assertFalse(conf.isForcePure());
       conf.setForcePure();
@@ -65,19 +67,13 @@ public class ConfigurationTest {
         fail();
       }
 
-     /*
-      assertNotNull(configuration.getAcceleratorGenerator());
-      assertNotNull(configuration.openACC());
+      assertTrue(conf.accelerator() instanceof OpenAccConfiguration);
+      assertTrue(Context.get().getGenerator() instanceof OpenAcc);
 
-      assertEquals(Target.GPU, configuration.getCurrentTarget());
-      configuration.setUserDefinedTarget(Target.CPU.toString());
-      assertEquals(Target.CPU, configuration.getCurrentTarget());
+      assertSame(Target.GPU, conf.getCurrentTarget());
+      assertSame(CompilerDirective.OPENACC, conf.getCurrentDirective());
 
-      assertEquals(CompilerDirective.OPENACC, configuration.getCurrentDirective());
-      configuration.setUserDefineDirective(CompilerDirective.OPENMP.toString());
-      assertEquals(CompilerDirective.OPENMP, configuration.getCurrentDirective());
 
-      configuration.displayConfig();*/
 
     } catch(Exception e) {
       fail();

@@ -90,7 +90,6 @@ public class Configuration {
   private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
-  private int _maxColumns; // Max column for code formatting
 
   /**
    * private ctor
@@ -200,7 +199,6 @@ public class Configuration {
 
     setUserDefinedTarget(userDefinedTarget);
     setUserDefineDirective(userDefinedDirective);
-    setMaxColumns(userMaxColumns);
 
     switch(getCurrentDirective()) {
       case OPENACC:
@@ -674,26 +672,6 @@ public class Configuration {
     int major = Integer.parseInt(m.group(1));
     int minor = Integer.parseInt(m.group(2));
     return new int[]{major, minor};
-  }
-
-  /**
-   * Get the defined max column parameter.
-   *
-   * @return Int value representing the max column.
-   */
-  public int getMaxColumns() {
-    return _maxColumns;
-  }
-
-  /**
-   * Set the max column value.
-   *
-   * @param value New value of the max column parameter.
-   */
-  private void setMaxColumns(int value) {
-    if(value > 0) {
-      _maxColumns = value;
-    }
   }
 
   /**
