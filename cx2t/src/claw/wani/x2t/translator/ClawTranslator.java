@@ -33,6 +33,8 @@ import org.w3c.dom.Element;
 
 import java.util.*;
 
+import static claw.wani.x2t.configuration.GroupConfiguration.GroupType.DEPENDENT;
+
 /**
  * ClawTranslator stores all transformation groups applied during the
  * translation.
@@ -60,15 +62,12 @@ public class ClawTranslator implements Translator {
      */
     _tGroups = new LinkedHashMap<>();
     for(GroupConfiguration g : Configuration.get().getGroups()) {
-      switch(g.getType()) {
-        case DEPENDENT:
-          _tGroups.put(g.getTransformationClass(),
-              new DependentTransformationGroup(g.getName()));
-          break;
-        case INDEPENDENT:
-          _tGroups.put(g.getTransformationClass(),
-              new IndependentTransformationGroup(g.getName()));
-          break;
+      if(g.getType() == DEPENDENT) {
+        _tGroups.put(g.getTransformationClass(),
+            new DependentTransformationGroup(g.getName()));
+      } else {
+        _tGroups.put(g.getTransformationClass(),
+            new IndependentTransformationGroup(g.getName()));
       }
     }
 
@@ -106,13 +105,13 @@ public class ClawTranslator implements Translator {
         addTransformation(xcodeml, new LoopExtraction(analyzedPragma));
         break;
       case LOOP_HOIST:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case ARRAY_TRANSFORM:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case REMOVE:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case SCA:
         if(analyzedPragma.hasForwardClause()) {
@@ -122,7 +121,7 @@ public class ClawTranslator implements Translator {
         }
         break;
       case MODEL_DATA:
-        HandleBlockDirective(xcodeml, analyzedPragma);
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case PRIMITIVE:
         addTransformation(xcodeml, new DirectivePrimitive(analyzedPragma));
@@ -142,7 +141,7 @@ public class ClawTranslator implements Translator {
   }
 
   @Override
-  public void finalize(XcodeProgram xcodeml)
+  public void finalizeTranslation(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
     // Clean up block transformation map
@@ -160,7 +159,7 @@ public class ClawTranslator implements Translator {
    * @param xcodeml        Current translation unit.
    * @param analyzedPragma Analyzed pragma object to be handle.
    */
-  private void HandleBlockDirective(XcodeProgram xcodeml,
+  private void handleBlockDirective(XcodeProgram xcodeml,
                                     ClawPragma analyzedPragma)
       throws IllegalDirectiveException, IllegalTransformationException
   {
@@ -215,6 +214,10 @@ public class ClawTranslator implements Translator {
         break;
       case MODEL_DATA:
         addTransformation(xcodeml, new ModelData(begin, end));
+        break;
+      default:
+        throw new IllegalTransformationException("Unknown block transformation",
+            begin.getPragma().lineNo());
     }
   }
 
@@ -227,8 +230,7 @@ public class ClawTranslator implements Translator {
   public void addTransformation(XcodeProgram xcodeml, Transformation t)
       throws IllegalTransformationException
   {
-    if(t.getDirective() != null
-        && t.getDirective() instanceof ClawPragma
+    if(t.getDirective() instanceof ClawPragma
         && !((ClawPragma) t.getDirective()).isApplicableToCurrentTarget())
     {
       return;
@@ -279,12 +281,12 @@ public class ClawTranslator implements Translator {
 
       for(Transformation t : tg.getTransformations()) {
         ScaForward p = (ScaForward) t;
-        if(p.getCalledFctName() != null) {
-          if(fctMap.containsKey(p.getCalledFctName())) {
-            List<Transformation> tList = fctMap.get(p.getCalledFctName());
-            for(Transformation end : tList) {
-              dg.addEdge(p, end);
-            }
+        if(p.getCalledFctName() != null
+            && fctMap.containsKey(p.getCalledFctName()))
+        {
+          List<Transformation> tList = fctMap.get(p.getCalledFctName());
+          for(Transformation end : tList) {
+            dg.addEdge(p, end);
           }
         }
       }
@@ -293,6 +295,7 @@ public class ClawTranslator implements Translator {
           TopologicalSort.sort(TopologicalSort.reverseGraph(dg));
       tg.setTransformations(ordered);
     }
+
   }
 
   /**

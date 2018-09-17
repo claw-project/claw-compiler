@@ -364,7 +364,7 @@ public class LoopExtraction extends ClawTransformation {
     List<Xnode> arrayReferences =
         clonedFctDef.body().matchAll(Xcode.F_ARRAY_REF);
     for(Xnode ref : arrayReferences) {
-      if(!(ref.matchSeq(Xcode.VAR_REF).child(0).opcode() == Xcode.VAR)) {
+      if(ref.matchSeq(Xcode.VAR_REF).child(0).opcode() != Xcode.VAR) {
         continue;
       }
       String mappedVar = ref.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
@@ -377,7 +377,7 @@ public class LoopExtraction extends ClawTransformation {
         for(Xnode e : ref.children()) {
           if(e.opcode() == Xcode.ARRAY_INDEX) {
             List<Xnode> children = e.children();
-            if(children.size() > 0 && children.get(0).opcode() == Xcode.VAR) {
+            if(!children.isEmpty() && children.get(0).opcode() == Xcode.VAR) {
               String varName = e.matchSeq(Xcode.VAR).value();
               if(varName.equals(mapping.getMappingVariables().
                   get(mappingIndex).getFctMapping()))
@@ -441,12 +441,12 @@ public class LoopExtraction extends ClawTransformation {
       throw new IllegalTransformationException("No loop found in function",
           _claw.getPragma().lineNo());
     } else {
-      if(!_claw.getRange().equals(foundStatement)) {
+      if(!_claw.getRange().compareToDoStmt(foundStatement)) {
         // Try to match another loops that meet the criteria
         do {
           foundStatement = foundStatement.matchSibling(Xcode.F_DO_STATEMENT);
         } while(foundStatement != null &&
-            !_claw.getRange().equals(foundStatement));
+            !_claw.getRange().compareToDoStmt(foundStatement));
       }
     }
 
@@ -455,7 +455,7 @@ public class LoopExtraction extends ClawTransformation {
           _claw.getPragma().lineNo());
     }
 
-    if(!_claw.getRange().equals(foundStatement)) {
+    if(!_claw.getRange().compareToDoStmt(foundStatement)) {
       throw new IllegalTransformationException(
           "Iteration range is different than the loop to be extracted",
           _claw.getPragma().lineNo()

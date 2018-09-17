@@ -28,6 +28,10 @@ import static org.junit.Assert.assertTrue;
 
 public class XmlHelper {
 
+  private XmlHelper() {
+    // Hide implicit public ctor
+  }
+
   public static XcodeProgram getDummyXcodeProgram() {
     File f = new File(TestConstant.TEST_DATA);
     assertTrue(f.exists());
@@ -73,12 +77,6 @@ public class XmlHelper {
     return new FfunctionType(n);
   }
 
-  public static XsymbolTable createXglobalSymbolFromString(String xml) {
-    Xnode n = XmlHelper.getElementFromString(xml);
-    assertNotNull(n);
-    return new XsymbolTable(n);
-  }
-
   public static XsymbolTable createXSymbolTableFromString(String xml) {
     Xnode n = XmlHelper.getElementFromString(xml);
     assertNotNull(n);
@@ -103,12 +101,6 @@ public class XmlHelper {
     Xnode n = XmlHelper.getElementFromString(xml);
     assertNotNull(n);
     return new XglobalDeclTable(n);
-  }
-
-  public static Xnode createXvarDecl(String xml) {
-    Xnode n = XmlHelper.getElementFromString(xml);
-    assertNotNull(n);
-    return n;
   }
 
   public static XdeclTable createXdeclTable(String xml) {

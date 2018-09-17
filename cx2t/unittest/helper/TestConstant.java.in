@@ -31,8 +31,10 @@ public class TestConstant {
     "@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement.xml";
   public static final String TEST_ASSIGN_STMT2 =
     "@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement2.xml";
+  public static final String TEST_MODEL_CONFIG =
+      "@CMAKE_CURRENT_SOURCE_DIR@/data/model.toml";
   public static final String TEST_MODEL_DATA1 =
     "@CMAKE_CURRENT_SOURCE_DIR@/data/modeldata1.xml";
-  public static final String TEST_CONFIG = "@CMAKE_SOURCE_DIR@/driver/etc/";
-  public static final String TEST_MODEL_CONFIG = "@CMAKE_CURRENT_SOURCE_DIR@/data/model.toml";
+  public static final String TEST_CONFIG_PATH =
+    "@CMAKE_SOURCE_DIR@/driver/etc/";
 }

@@ -816,12 +816,14 @@ public class ClawPragmaTest {
   public void loopHoistTest() {
     // Valid directives
     analyzeValidLoopHoist("claw loop-hoist(i,j)",
-        Arrays.asList("i", "j"), false, null, false, null, null, false, null, 0);
+        Arrays.asList("i", "j"), false, null, false, null, null, false, null, 0,
+        false, null);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange",
-        Arrays.asList("i", "j"), true, null, false, null, null, false, null, 0);
+        Arrays.asList("i", "j"), true, null, false, null, null, false, null, 0,
+        false, null);
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange(j,i)",
         Arrays.asList("i", "j"), true, Arrays.asList("j", "i"), false, null,
-        null, false, null, 0);
+        null, false, null, 0, false, null);
 
     List<Integer> empty = Collections.emptyList();
     ReshapeInfo info1 = new ReshapeInfo("zmd", 0, empty);
@@ -829,33 +831,51 @@ public class ClawPragmaTest {
         new ReshapeInfo("zsediflux", 1, Collections.singletonList(2));
     analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
-        Arrays.asList(info1, info2), null, false, null, 0);
+        Arrays.asList(info1, info2), null, false, null, 0, false, null);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) target(cpu) interchange",
         Arrays.asList("i", "j"), true, null, false, null,
-        Collections.singletonList(Target.CPU), false, null, 0);
+        Collections.singletonList(Target.CPU), false, null, 0, false, null);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) interchange target(cpu, gpu)",
         Arrays.asList("i", "j"), true, null, false, null,
-        Arrays.asList(Target.CPU, Target.GPU), false, null, 0);
+        Arrays.asList(Target.CPU, Target.GPU), false, null, 0, false, null);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) target(mic)",
         Arrays.asList("i", "j"), false, null, false, null,
-        Collections.singletonList(Target.MIC), false, null, 0);
+        Collections.singletonList(Target.MIC), false, null, 0, false, null);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) fusion",
-        Arrays.asList("i", "j"), false, null, false, null, null, true, null, 0);
+        Arrays.asList("i", "j"), false, null, false, null, null, true, null, 0,
+        false, null);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) fusion group(j1)",
-        Arrays.asList("i", "j"), false, null, false, null, null, true, "j1", 0);
+        Arrays.asList("i", "j"), false, null, false, null, null, true, "j1", 0,
+        false, null);
 
     analyzeValidLoopHoist("claw loop-hoist(i,j) fusion collapse(2)",
-        Arrays.asList("i", "j"), false, null, false, null, null, true, null, 2);
+        Arrays.asList("i", "j"), false, null, false, null, null, true, null, 2,
+        false, null);
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) cleanup",
+        Arrays.asList("i", "j"), false, null, false, null, null, false, null, 0,
+        true, CompilerDirective.NONE);
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) cleanup(acc)",
+        Arrays.asList("i", "j"), false, null, false, null, null, false, null, 0,
+        true, CompilerDirective.OPENACC);
+
+    analyzeValidLoopHoist("claw loop-hoist(i,j) cleanup(omp)",
+        Arrays.asList("i", "j"), false, null, false, null, null, false, null, 0,
+        true, CompilerDirective.OPENMP);
 
     // Invalid directives
     analyzeInvalidClawLanguage("claw loop-hoist");
     analyzeInvalidClawLanguage("claw loop-hoist()");
     analyzeInvalidClawLanguage("claw loop-hoist(i,j) interchange()");
+    analyzeInvalidClawLanguage("claw loop-hoist(i,j) cleanup()");
+    analyzeInvalidClawLanguage("claw loop-hoist(i,j) cleanup(claw)");
+    analyzeInvalidClawLanguage("claw loop-hoist(i,j) cleanup(dummy)");
 
     analyzeValidSimpleClaw("claw end loop-hoist",
         ClawDirective.LOOP_HOIST, true, null);
@@ -882,7 +902,9 @@ public class ClawPragmaTest {
                                      boolean reshape,
                                      List<ReshapeInfo> infos,
                                      List<Target> targets, boolean fusion,
-                                     String group, int collapse)
+                                     String group, int collapse,
+                                     boolean cleanup,
+                                     CompilerDirective cleanupValue)
   {
     try {
       Xnode p = XmlHelper.createXpragma();
@@ -944,6 +966,13 @@ public class ClawPragmaTest {
         assertEquals(collapse, l.getCollapseValue());
       } else {
         assertFalse(l.hasCollapseClause());
+      }
+
+      if(cleanup) {
+        assertTrue(l.hasCleanupClause());
+        assertSame(cleanupValue, l.getCleanupClauseValue());
+      } else {
+        assertFalse(l.hasCleanupClause());
       }
 
     } catch(IllegalDirectiveException idex) {

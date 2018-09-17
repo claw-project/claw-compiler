@@ -28,6 +28,7 @@
         <pathelement path="${antlr4.runtime.dep}"/>
         <pathelement path="${commoncli.dep}"/>
         <pathelement path="${omni.xcodeml-common.dep}"/>
+        <pathelement path="${toml.dep}"/>
     </path>
 
     <path id="antlr.path">
@@ -65,7 +66,7 @@
     <target name="compile" depends="common.resolve, antlr"
             description="compile the source">
         <javac includeantruntime="false" srcdir="${src.base}"
-               destdir="${build.dir}" classpathref="build.path"/>
+               destdir="${build.dir}" classpathref="build.path" debug="on" />
     </target>
 
     <!-- Pacakge compiled files into their own library -->

@@ -18,26 +18,27 @@ import static org.junit.Assert.*;
  */
 public class XtypeTableTest {
 
-  private static final String basicTypeHash = "C2307e50";
-  private static final String fctTypeHash = "F23079f0";
-  private static final String structTypeHash1 = "S7fd10b600b70";
-  private static final String structTypeHash2 = "S7fd10b6012d0";
-  private static final String basicTypeTable = "<typeTable>" +
-      "<FbasicType type=\"" + basicTypeHash + "\" ref=\"Fcharacter\">" +
+  private static final String BASIC_TYPE_HASH = "C2307e50";
+  private static final String FCT_TYPE_HASH = "F23079f0";
+  private static final String STRUCT_TYPE_HASH_1 = "S7fd10b600b70";
+  private static final String STRUCT_TYPE_HASH_2 = "S7fd10b6012d0";
+  private static final String BASIC_TYPE_TABLE = "<typeTable>" +
+      "<FbasicType type=\"" + BASIC_TYPE_HASH + "\" ref=\"Fcharacter\">" +
       "<len><FintConstant type=\"Fint\">30</FintConstant></len>" +
       "</FbasicType>" +
-      "<FfunctionType type=\"" + fctTypeHash +
+      "<FfunctionType type=\"" + FCT_TYPE_HASH +
       "\" return_type=\"Fvoid\" is_program=\"true\"/>" +
-      "<FstructType type=\"" + structTypeHash1 + "\">" +
+      "<FstructType type=\"" + STRUCT_TYPE_HASH_1 + "\">" +
       "<symbols></symbols></FstructType>" +
-      "<FstructType type=\"" + structTypeHash2 + "\" " +
-      "extends=\"" + structTypeHash1 + "\">" +
+      "<FstructType type=\"" + STRUCT_TYPE_HASH_2 + "\" " +
+      "extends=\"" + STRUCT_TYPE_HASH_1 + "\">" +
       "<symbols></symbols></FstructType></typeTable>";
 
   @Test
   public void basicTypeTableTest() {
     // Base typeTable tests
-    XtypeTable typeTable = XmlHelper.createXtypeTableFromString(basicTypeTable);
+    XtypeTable typeTable =
+        XmlHelper.createXtypeTableFromString(BASIC_TYPE_TABLE);
     assertNotNull(typeTable);
     assertEquals(4, typeTable.size());
     assertEquals(4, typeTable.values().size());
@@ -46,11 +47,11 @@ public class XtypeTableTest {
     assertFalse(typeTable.isBasicType((String) null));
     assertFalse(typeTable.isBasicType(""));
 
-    assertTrue(typeTable.hasType(basicTypeHash));
-    assertTrue(typeTable.isBasicType(basicTypeHash));
-    FbasicType type1 = typeTable.getBasicType(basicTypeHash);
+    assertTrue(typeTable.hasType(BASIC_TYPE_HASH));
+    assertTrue(typeTable.isBasicType(BASIC_TYPE_HASH));
+    FbasicType type1 = typeTable.getBasicType(BASIC_TYPE_HASH);
     assertNotNull(type1);
-    assertTrue(typeTable.isBasicType(basicTypeHash));
+    assertTrue(typeTable.isBasicType(BASIC_TYPE_HASH));
     assertTrue(typeTable.isBasicType(type1));
     assertFalse(type1.hasIntent());
     assertEquals(Intent.NONE, type1.getIntent());
@@ -60,17 +61,17 @@ public class XtypeTableTest {
     assertSame(type1.getLength().child(0).opcode(), Xcode.F_INT_CONSTANT);
     assertEquals("30", type1.getLength().child(0).value());
 
-    assertNull(typeTable.getFunctionType(basicTypeHash));
+    assertNull(typeTable.getFunctionType(BASIC_TYPE_HASH));
     assertNull(typeTable.getFunctionType(type1));
-    assertNull(typeTable.getStructType(basicTypeHash));
+    assertNull(typeTable.getStructType(BASIC_TYPE_HASH));
     assertNull(typeTable.getStructType(type1));
 
     // FfunctionType test
-    assertTrue(typeTable.hasType(fctTypeHash));
-    assertTrue(typeTable.isFunctionType(fctTypeHash));
-    FfunctionType type2 = typeTable.getFunctionType(fctTypeHash);
+    assertTrue(typeTable.hasType(FCT_TYPE_HASH));
+    assertTrue(typeTable.isFunctionType(FCT_TYPE_HASH));
+    FfunctionType type2 = typeTable.getFunctionType(FCT_TYPE_HASH);
     assertNotNull(type2);
-    assertTrue(typeTable.isFunctionType(fctTypeHash));
+    assertTrue(typeTable.isFunctionType(FCT_TYPE_HASH));
     assertTrue(typeTable.isFunctionType(type2));
     assertEquals(Xname.TYPE_F_VOID, type2.getReturnType());
     assertTrue(type2.isProgram());
@@ -78,27 +79,27 @@ public class XtypeTableTest {
     assertFalse(type2.isRecursive());
     assertNull(type2.getResultName());
 
-    assertNull(typeTable.getBasicType(fctTypeHash));
-    assertNull(typeTable.getStructType(fctTypeHash));
+    assertNull(typeTable.getBasicType(FCT_TYPE_HASH));
+    assertNull(typeTable.getStructType(FCT_TYPE_HASH));
     assertNull(typeTable.getBasicType(type2));
     assertNull(typeTable.getStructType(type2));
 
     // FstructType tests
-    assertTrue(typeTable.hasType(structTypeHash1));
-    assertTrue(typeTable.isStructType(structTypeHash1));
-    assertTrue(typeTable.hasType(structTypeHash2));
-    assertTrue(typeTable.isStructType(structTypeHash2));
-    FstructType structType1 = typeTable.getStructType(structTypeHash1);
-    FstructType structType2 = typeTable.getStructType(structTypeHash2);
+    assertTrue(typeTable.hasType(STRUCT_TYPE_HASH_1));
+    assertTrue(typeTable.isStructType(STRUCT_TYPE_HASH_1));
+    assertTrue(typeTable.hasType(STRUCT_TYPE_HASH_2));
+    assertTrue(typeTable.isStructType(STRUCT_TYPE_HASH_2));
+    FstructType structType1 = typeTable.getStructType(STRUCT_TYPE_HASH_1);
+    FstructType structType2 = typeTable.getStructType(STRUCT_TYPE_HASH_2);
     assertNotNull(structType1);
     assertNotNull(structType2);
-    assertTrue(typeTable.isStructType(structTypeHash1));
-    assertTrue(typeTable.isStructType(structTypeHash2));
+    assertTrue(typeTable.isStructType(STRUCT_TYPE_HASH_1));
+    assertTrue(typeTable.isStructType(STRUCT_TYPE_HASH_2));
     assertTrue(typeTable.isStructType(structType1));
     assertTrue(typeTable.isStructType(structType2));
     assertFalse(structType1.isExtend());
     assertTrue(structType2.isExtend());
-    assertEquals(structTypeHash1, structType2.getExtend());
+    assertEquals(STRUCT_TYPE_HASH_1, structType2.getExtend());
     assertFalse(structType1.isSequence());
     assertFalse(structType1.isInternalPrivate());
     assertFalse(structType1.isAbstract());
@@ -106,10 +107,10 @@ public class XtypeTableTest {
     assertFalse(structType1.isPublic());
     assertNull(structType1.getBind());
 
-    assertNull(typeTable.getBasicType(structTypeHash1));
-    assertNull(typeTable.getFunctionType(structTypeHash1));
-    assertNull(typeTable.getBasicType(structTypeHash2));
-    assertNull(typeTable.getFunctionType(structTypeHash2));
+    assertNull(typeTable.getBasicType(STRUCT_TYPE_HASH_1));
+    assertNull(typeTable.getFunctionType(STRUCT_TYPE_HASH_1));
+    assertNull(typeTable.getBasicType(STRUCT_TYPE_HASH_2));
+    assertNull(typeTable.getFunctionType(STRUCT_TYPE_HASH_2));
     assertNull(typeTable.getBasicType(structType1));
     assertNull(typeTable.getFunctionType(structType1));
     assertNull(typeTable.getBasicType(structType2));
@@ -123,10 +124,10 @@ public class XtypeTableTest {
     assertEquals(4, clone.size());
   }
 
-
   @Test
   public void hashTest() {
-    XtypeTable typeTable = XmlHelper.createXtypeTableFromString(basicTypeTable);
+    XtypeTable typeTable =
+        XmlHelper.createXtypeTableFromString(BASIC_TYPE_TABLE);
     assertNotNull(typeTable);
 
     assertEquals("", typeTable.generateHash(null));

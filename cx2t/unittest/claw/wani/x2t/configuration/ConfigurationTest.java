@@ -4,7 +4,20 @@
  */
 package claw.wani.x2t.configuration;
 
+import claw.ClawVersion;
+import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
+import claw.tatsu.directive.generator.OpenAcc;
+import helper.TestConstant;
 import org.junit.Test;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test method of the Configuration class
@@ -13,56 +26,56 @@ import org.junit.Test;
  */
 public class ConfigurationTest {
 
+  private static final int MAX_COLUMN = 80;
+
   @Test
   public void readConfigTest() {
-    /*try {
-      Configuration configuration = new Configuration(TestConstant.TEST_CONFIG, null);
-      assertNotNull(configuration.getAcceleratorGenerator());
-      assertNotNull(configuration.openACC());
+    try {
 
-      configuration.setMaxColumns(80);
-      assertEquals(80, configuration.getMaxColumns());
+      Configuration conf = Configuration.get();
+      assertNotNull(conf);
+      conf.load(TestConstant.TEST_CONFIG_PATH,
+          null, null, null, null, MAX_COLUMN);
+      assertNotNull(Context.get());
 
-      assertFalse(configuration.isForcePure());
-      configuration.setForcePure();
-      assertTrue(configuration.isForcePure());
+      assertNotNull(Context.get().getGenerator());
+      assertNotNull(conf.accelerator());
+      assertEquals(MAX_COLUMN, Context.get().getMaxColumns());
 
-      int[] majorMinor = configuration.getMajorMinor("0.3");
+      assertFalse(conf.isForcePure());
+      conf.setForcePure();
+      assertTrue(conf.isForcePure());
+
+      int[] majorMinor = conf.getMajorMinor("0.3");
       assertEquals(0, majorMinor[0]);
       assertEquals(3, majorMinor[1]);
 
       try {
-        configuration.checkVersion("0.2");
+        conf.checkVersion("0.2");
         fail();
       } catch(Exception ignored) {
       }
 
       try {
-        //noinspection unused
-        int[] majorMinor2 = configuration.getMajorMinor("sdjhsajkd");
+        conf.getMajorMinor("sdjhsajkd");
         fail();
       } catch(Exception ignored) {
       }
 
       try {
-        configuration.checkVersion("0.4");
+        conf.checkVersion(ClawVersion.VERSION);
       } catch(Exception ignored) {
         fail();
       }
 
+      assertTrue(conf.accelerator() instanceof OpenAccConfiguration);
+      assertTrue(Context.get().getGenerator() instanceof OpenAcc);
 
-      assertEquals(Target.GPU, configuration.getCurrentTarget());
-      configuration.setUserDefinedTarget(Target.CPU.toString());
-      assertEquals(Target.CPU, configuration.getCurrentTarget());
-
-      assertEquals(CompilerDirective.OPENACC, configuration.getCurrentDirective());
-      configuration.setUserDefineDirective(CompilerDirective.OPENMP.toString());
-      assertEquals(CompilerDirective.OPENMP, configuration.getCurrentDirective());
-
-      configuration.displayConfig();
+      assertSame(Target.GPU, conf.getCurrentTarget());
+      assertSame(CompilerDirective.OPENACC, conf.getCurrentDirective());
 
     } catch(Exception e) {
       fail();
-    }*/
+    }
   }
 }

@@ -20,17 +20,17 @@ public class ReshapeInfo {
   /**
    * Constructs a new ReshapeInfo object with all its needed information.
    *
-   * @param array_name      Identifier of the array.
+   * @param arrayName      Identifier of the array.
    * @param dimension       Number of dimension after reshape transformation.
-   * @param kept_dimensions Optional, if target dimension is bigger than 0 then
+   * @param keptDimensions Optional, if target dimension is bigger than 0 then
    *                        this list informs which dimension is preserved.
    */
-  public ReshapeInfo(String array_name, int dimension,
-                     List<Integer> kept_dimensions)
+  public ReshapeInfo(String arrayName, int dimension,
+                     List<Integer> keptDimensions)
   {
-    _array_name = array_name;
+    _array_name = arrayName;
     _target_dimension = dimension;
-    _kept_dimensions = kept_dimensions;
+    _kept_dimensions = keptDimensions;
   }
 
   /**

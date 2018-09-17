@@ -365,14 +365,14 @@ public class Kcaching extends ClawTransformation {
       throws IllegalTransformationException
   {
     List<Integer> offsets = _claw.getOffsets();
-    if(offsets.size() == 0) {
+    if(offsets.isEmpty()) {
       offsets = generateInferredOffsets(xcodeml, fctDef, var);
     }
 
     List<Xnode> arrayRefs =
         XnodeUtil.getAllArrayReferencesByOffsets(_doStmt.body(),
             var, offsets);
-    if(arrayRefs.size() == 0) {
+    if(arrayRefs.isEmpty()) {
       throw new IllegalTransformationException("Variable " + var +
           " defined in the data clause has not been found",
           _claw.getPragma().lineNo()

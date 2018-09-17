@@ -220,7 +220,7 @@ public class ScaForward extends ClawTransformation {
      * with no parameters. Thus, we have to matchSeq the correct FfunctionType
      * for the same function/subroutine with the same name in the module
      * symbol table. */
-    if(_fctType.getParameters().size() == 0) {
+    if(_fctType.getParameters().isEmpty()) {
       // If not, try to matchSeq the correct FfunctionType in the module definitions
       Xid id = (parentModule == null) ? null :
           parentModule.getSymbolTable().get(_calledFctName);
@@ -289,13 +289,13 @@ public class ScaForward extends ClawTransformation {
     }
     for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
       if(arg.opcode() == Xcode.NAMED_VALUE) {
-        String original_name = arg.getAttribute(Xattr.NAME);
-        Xnode target_var = arg.matchDescendant(Xcode.VAR);
-        if(target_var != null) {
-          _fctCallMapping.put(original_name, target_var.value());
+        String originalName = arg.getAttribute(Xattr.NAME);
+        Xnode targetVar = arg.matchDescendant(Xcode.VAR);
+        if(targetVar != null) {
+          _fctCallMapping.put(originalName, targetVar.value());
 
           Message.debug("Fct parameter mapping: original_name=" +
-              original_name + " target_name=" + target_var.value());
+              originalName + " target_name=" + targetVar.value());
         }
       }
     }
@@ -471,20 +471,20 @@ public class ScaForward extends ClawTransformation {
     } else {
       // 2. Adapt function/subroutine in which the function call is nested
       for(Xnode pBase : _fctType.getParameters()) {
-        String original_param = pBase.value();
-        if(_fctCallMapping.containsKey(original_param)) {
-          original_param = _fctCallMapping.get(original_param);
+        String originalParam = pBase.value();
+        if(_fctCallMapping.containsKey(originalParam)) {
+          originalParam = _fctCallMapping.get(originalParam);
         }
 
         Xnode pUpdate = null;
         for(Xnode param : parentFctType.getParameters()) {
-          if(original_param.equals(param.value())) {
+          if(originalParam.equals(param.value())) {
             pUpdate = param;
           }
         }
 
         if(pUpdate == null) { // field is not a parameter but maybe out field
-          Xnode d = fDef.getDeclarationTable().get(original_param);
+          Xnode d = fDef.getDeclarationTable().get(originalParam);
           if(d != null) {
             pUpdate = d.matchSeq(Xcode.NAME);
           }
@@ -511,7 +511,7 @@ public class ScaForward extends ClawTransformation {
 
           // Types have different dimensions
           if(typeBase.getDimensions() > typeToUpdate.getDimensions()) {
-            PromotionInfo promotionInfo = new PromotionInfo(original_param);
+            PromotionInfo promotionInfo = new PromotionInfo(originalParam);
             promotionInfo.readDimensionsFromString(
                 pBase.getAttribute(Xattr.PROMOTION_INFO));
 
@@ -522,11 +522,11 @@ public class ScaForward extends ClawTransformation {
 
             pUpdate.setType(type);
 
-            Xid id = fDef.getSymbolTable().get(original_param);
+            Xid id = fDef.getSymbolTable().get(originalParam);
             if(id != null) {
               id.setType(type);
             }
-            Xnode varDecl = fDef.getDeclarationTable().get(original_param);
+            Xnode varDecl = fDef.getDeclarationTable().get(originalParam);
             if(varDecl != null) {
               varDecl.matchSeq(Xcode.NAME).setType(type);
             }
@@ -534,8 +534,8 @@ public class ScaForward extends ClawTransformation {
             promotionInfo.setBaseDimension(baseDim);
             promotionInfo.setTargetDimension(targetDim);
             promotionInfo.setTargetType(type);
-            _promotions.put(original_param, promotionInfo);
-            _promotedVar.add(original_param);
+            _promotions.put(originalParam, promotionInfo);
+            _promotedVar.add(originalParam);
 
             pBase.copyAttribute(pUpdate, Xattr.PROMOTION_INFO);
           }

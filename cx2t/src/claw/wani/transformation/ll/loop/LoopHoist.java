@@ -8,6 +8,7 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.primitive.Loop;
+import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -51,14 +52,14 @@ public class LoopHoist extends ClawBlockTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    int _pragmaDepthLevel = _clawStart.getPragma().depth();
+    int pragmaDepthLevel = _clawStart.getPragma().depth();
 
     // Find all the group of nested loops that can be part of the hoisting
     List<HoistedNestedDoStatement> statements =
         XnodeUtil.findDoStatementForHoisting(_clawStart.getPragma(),
             _clawEnd.getPragma(), _clawStart.getHoistInductionVars());
 
-    if(statements.size() == 0) {
+    if(statements.isEmpty()) {
       xcodeml.addError("No do statement group meets the criteria of hoisting.",
           _clawStart.getPragma().lineNo());
       return false;
@@ -66,7 +67,7 @@ public class LoopHoist extends ClawBlockTransformation {
 
     for(HoistedNestedDoStatement hoistedNestedDoStmt : statements) {
       int depth = hoistedNestedDoStmt.getOuterStatement().depth();
-      if(depth != _pragmaDepthLevel) {
+      if(depth != pragmaDepthLevel) {
         Xnode tmpIf = hoistedNestedDoStmt.getOuterStatement().
             matchAncestor(Xcode.F_IF_STATEMENT);
         Xnode tmpSelect = hoistedNestedDoStmt.getOuterStatement().
@@ -75,9 +76,9 @@ public class LoopHoist extends ClawBlockTransformation {
             matchAncestor(Xcode.F_DO_STATEMENT);
 
         if(tmpIf == null && tmpSelect == null && tmpDo == null) {
-          xcodeml.addError("A nested group is nested in an unsupported " +
-                  "statement for loop hoisting.",
-              _clawStart.getPragma().lineNo());
+          xcodeml.addError("A nested do stmt group is nested in an unsupported "
+                  + "statement for loop hoisting.",
+              hoistedNestedDoStmt.getOuterStatement().lineNo());
           return false;
         }
 
@@ -88,8 +89,8 @@ public class LoopHoist extends ClawBlockTransformation {
         int doDepth =
             (tmpDo != null) ? tmpDo.depth() : Xnode.UNDEF_DEPTH;
 
-        if((_pragmaDepthLevel <= ifDepth || _pragmaDepthLevel <= selectDepth
-            || _pragmaDepthLevel <= doDepth)
+        if((pragmaDepthLevel <= ifDepth || pragmaDepthLevel <= selectDepth
+            || pragmaDepthLevel <= doDepth)
             && (ifDepth < depth || selectDepth < depth || doDepth < depth))
         {
           hoistedNestedDoStmt.setExtraction();
@@ -198,6 +199,12 @@ public class LoopHoist extends ClawBlockTransformation {
     // Generate dynamic transformation (interchange)
     ct.generateAdditionalTransformation(_clawStart, xcodeml,
         hoisted.getOuterStatement());
+
+    // Apply cleanup clause
+    if(_clawStart.hasCleanupClause()) {
+      Pragma.remove(_clawStart.getCleanupClauseValue(),
+          _clawStart.getPragma(), _clawEnd.getPragma());
+    }
 
     // Apply reshape clause
     if(_clawStart.hasReshapeClause()) {
