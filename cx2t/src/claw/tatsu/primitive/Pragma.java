@@ -8,6 +8,8 @@ import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Utility;
+import claw.tatsu.directive.generator.OpenAcc;
+import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
@@ -214,11 +216,9 @@ public final class Pragma {
     if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
       return CompilerDirective.NONE;
     }
-    if(pragma.value().toLowerCase().contains(TatsuConstant.OPENACC_PREFIX)) {
+    if(pragma.value().toLowerCase().contains(OpenAcc.OPENACC_PREFIX)) {
       return CompilerDirective.OPENACC;
-    } else if(pragma.value().toLowerCase().
-        contains(TatsuConstant.OPENMP_PREFIX))
-    {
+    } else if(pragma.value().toLowerCase().contains(OpenMp.OPENMP_PREFIX)) {
       return CompilerDirective.OPENMP;
     } else if(pragma.value().toLowerCase().
         contains(TatsuConstant.CLAW_PREFIX))

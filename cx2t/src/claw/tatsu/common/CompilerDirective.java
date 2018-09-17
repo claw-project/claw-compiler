@@ -5,6 +5,8 @@
 package claw.tatsu.common;
 
 import claw.tatsu.TatsuConstant;
+import claw.tatsu.directive.generator.OpenAcc;
+import claw.tatsu.directive.generator.OpenMp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +19,8 @@ import java.util.List;
  */
 public enum CompilerDirective {
   NONE(TatsuConstant.DIRECTIVE_NONE, ""),
-  OPENACC(TatsuConstant.DIRECTIVE_OPENACC, TatsuConstant.OPENACC_PREFIX),
-  OPENMP(TatsuConstant.DIRECTIVE_OPENMP, TatsuConstant.OPENMP_PREFIX),
+  OPENACC(OpenAcc.OPENACC_NAME, OpenAcc.OPENACC_PREFIX),
+  OPENMP(OpenMp.OPENMP_NAME, OpenMp.OPENMP_PREFIX),
   CLAW(TatsuConstant.DIRECTIVE_CLAW, TatsuConstant.CLAW_PREFIX);
 
   private final String _code;
@@ -50,11 +52,11 @@ public enum CompilerDirective {
     switch(value.toLowerCase()) {
       case TatsuConstant.DIRECTIVE_NONE:
         return NONE;
-      case TatsuConstant.DIRECTIVE_OPENACC:
-      case TatsuConstant.DIRECTIVE_SHORT_OPENACC:
+      case OpenAcc.OPENACC_NAME:
+      case OpenAcc.OPENACC_PREFIX:
         return OPENACC;
-      case TatsuConstant.DIRECTIVE_OPENMP:
-      case TatsuConstant.DIRECTIVE_SHORT_OPENMP:
+      case OpenMp.OPENMP_NAME:
+      case OpenMp.OPENMP_PREFIX:
         return OPENMP;
       default:
         return NONE;
@@ -88,9 +90,9 @@ public enum CompilerDirective {
   public String toString() {
     switch(this) {
       case OPENACC:
-        return TatsuConstant.DIRECTIVE_OPENACC;
+        return OpenAcc.OPENACC_NAME;
       case OPENMP:
-        return TatsuConstant.DIRECTIVE_OPENMP;
+        return OpenMp.OPENMP_NAME;
       default:
         return TatsuConstant.DIRECTIVE_NONE;
     }

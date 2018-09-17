@@ -66,14 +66,6 @@ public class ArrayToFctCall extends ClawTransformation {
       }
     }
 
-    // TODO does it make sense ?
-   /*if(_replaceFct.getParams().count() != _claw.getFctParams().size()){
-      xcodeml.addError("Function " + _claw.getFctName() +
-              " parameters mismatch.",
-          _claw.getPragma().lineNo());
-      return false;
-    }*/
-
     return true; // skeleton
   }
 

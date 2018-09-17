@@ -5,6 +5,8 @@
 package claw.tatsu.common;
 
 import claw.tatsu.TatsuConstant;
+import claw.tatsu.directive.generator.OpenAcc;
+import claw.tatsu.directive.generator.OpenMp;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -19,13 +21,13 @@ public class CompilerDirectiveTest {
   @Test
   public void ctorTest() {
     assertEquals(CompilerDirective.OPENMP,
-        CompilerDirective.fromString(TatsuConstant.DIRECTIVE_OPENMP));
+        CompilerDirective.fromString(OpenMp.OPENMP_NAME));
     assertEquals(CompilerDirective.OPENMP,
-        CompilerDirective.fromString(TatsuConstant.DIRECTIVE_SHORT_OPENMP));
+        CompilerDirective.fromString(OpenMp.OPENMP_PREFIX));
     assertEquals(CompilerDirective.OPENACC,
-        CompilerDirective.fromString(TatsuConstant.DIRECTIVE_OPENACC));
+        CompilerDirective.fromString(OpenAcc.OPENACC_NAME));
     assertEquals(CompilerDirective.OPENACC,
-        CompilerDirective.fromString(TatsuConstant.DIRECTIVE_SHORT_OPENACC));
+        CompilerDirective.fromString(OpenAcc.OPENACC_PREFIX));
 
     assertEquals(CompilerDirective.OPENMP,
         CompilerDirective.fromString("OPENMP"));
@@ -41,16 +43,13 @@ public class CompilerDirectiveTest {
     assertEquals(CompilerDirective.NONE,
         CompilerDirective.fromString(""));
 
-    assertEquals(TatsuConstant.DIRECTIVE_OPENACC,
+    assertEquals(OpenAcc.OPENACC_NAME,
         CompilerDirective.OPENACC.toString());
-    assertEquals(TatsuConstant.DIRECTIVE_OPENMP,
-        CompilerDirective.OPENMP.toString());
+    assertEquals(OpenMp.OPENMP_NAME, CompilerDirective.OPENMP.toString());
     assertEquals(TatsuConstant.DIRECTIVE_NONE,
         CompilerDirective.NONE.toString());
 
-    assertEquals(TatsuConstant.OPENMP_PREFIX,
-        CompilerDirective.OPENMP.getPrefix());
-    assertEquals(TatsuConstant.OPENACC_PREFIX,
-        CompilerDirective.OPENACC.getPrefix());
+    assertEquals(OpenMp.OPENMP_PREFIX, CompilerDirective.OPENMP.getPrefix());
+    assertEquals(OpenAcc.OPENACC_PREFIX, CompilerDirective.OPENACC.getPrefix());
   }
 }
