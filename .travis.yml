@@ -1,6 +1,6 @@
 sudo: required
 dist: trusty
-language: java
+language: cpp
 git:
   submodules: false
 sonarcloud:
@@ -76,6 +76,10 @@ before_install:
 - cabal update && cabal install ShellCheck
 - export PATH=$PATH:$HOME/.cabal/bin
 - shellcheck --version
+- wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
+- unzip sonar-scanner-cli-3.2.0.1227-linux.zip
+- export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
+- sonar-scanner --help
 before_script:
 - export FC=$FC_COMPILER
 - export CC=$CC_COMPILER
