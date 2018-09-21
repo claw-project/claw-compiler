@@ -515,8 +515,8 @@ public class Parallelize extends ClawTransformation {
 
     /* Extract all the variables used, this doesn't include vector's
      * iterator variables */
-    transformFusionForCPUExtraction(_fctDef.body(), new AtomicInteger(),
-        depthVars, affectingVars);
+    extractInfoSmartFusion(_fctDef.body(), new AtomicInteger(), depthVars,
+        affectingVars);
 
     // Find the block we need to transform
     List<Set<String>> targetDepthIntersections = new ArrayList<>();
@@ -584,8 +584,8 @@ public class Parallelize extends ClawTransformation {
       }
 
       // Transform indicated level by wrapping it in a DO loop
-      transformFusionForCPUGather(_fctDef.body(), new AtomicInteger(),
-          targetDepth, affectingVars, transformations);
+      gatherGroups(_fctDef.body(), new AtomicInteger(), targetDepth,
+          affectingVars, transformations);
     }
 
     // Avoid double DO statement generation in nested groups
@@ -593,7 +593,7 @@ public class Parallelize extends ClawTransformation {
 
     // After gathering we apply the transformations
     for(List<Xnode> groupedNodes : transformations) {
-      transformFusionForCPUApply(groupedNodes, xcodeml);
+      wrapGroupInDoStatement(groupedNodes, xcodeml);
     }
 
     // If the last statement is a CONTAINS, fallback to the previous one
@@ -663,9 +663,9 @@ public class Parallelize extends ClawTransformation {
    * @param affectingVars Vars which are affected by SCA and consequently
    *                      affect other variables.
    */
-  private void transformFusionForCPUExtraction(Xnode body, AtomicInteger depth,
-                                               List<Set<String>> depthVars,
-                                               Set<String> affectingVars)
+  private void extractInfoSmartFusion(Xnode body, AtomicInteger depth,
+                                      List<Set<String>> depthVars,
+                                      Set<String> affectingVars)
   {
     final List<Xnode> children = body.children();
     for(Xnode node : children) {
@@ -691,11 +691,11 @@ public class Parallelize extends ClawTransformation {
         Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
         Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
         if(nThen != null) {
-          transformFusionForCPUExtraction(nThen.body(), depth, depthVars,
+          extractInfoSmartFusion(nThen.body(), depth, depthVars,
               affectingVars);
         }
         if(nElse != null) {
-          transformFusionForCPUExtraction(nElse.body(), depth, depthVars,
+          extractInfoSmartFusion(nElse.body(), depth, depthVars,
               affectingVars);
         }
       }
@@ -705,12 +705,12 @@ public class Parallelize extends ClawTransformation {
           depthVars.add(new HashSet<String>());
         }
         depth.incrementAndGet();
-        transformFusionForCPUExtraction(node.body(), depth, depthVars,
+        extractInfoSmartFusion(node.body(), depth, depthVars,
             affectingVars);
       }
       // Keep going inside the new node
       else {
-        transformFusionForCPUExtraction(node, depth, depthVars,
+        extractInfoSmartFusion(node, depth, depthVars,
             affectingVars);
       }
     }
@@ -726,11 +726,9 @@ public class Parallelize extends ClawTransformation {
    * @param affectingVars The variable which should be contained inside the loop
    * @param groups        List of grouped nodes.
    */
-  private void transformFusionForCPUGather(Xnode body,
-                                           AtomicInteger currentDepth,
-                                           final int targetDepth,
-                                           Set<String> affectingVars,
-                                           List<List<Xnode>> groups)
+  private void gatherGroups(Xnode body, AtomicInteger currentDepth,
+                            final int targetDepth, Set<String> affectingVars,
+                            List<List<Xnode>> groups)
   {
     final List<Xnode> children = body.children();
     final List<Xnode> groupedNodes = new ArrayList<>();
@@ -755,14 +753,14 @@ public class Parallelize extends ClawTransformation {
           if(_promotions.containsKey(as.getLhsName()) &&
               as.getVarRefNames().isEmpty())
           {
-            transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
+            addGroupedNodes(groupedNodes, groups);
             continue;
           }
           groupedNodes.add(node);
         }
         // Particular case, unused variable inside the body
         else {
-          transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
+          addGroupedNodes(groupedNodes, groups);
         }
       }
       // IF statement my have to be contained inside
@@ -772,14 +770,14 @@ public class Parallelize extends ClawTransformation {
           Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
           Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
           if(nThen != null) {
-            transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
-            transformFusionForCPUGather(nThen.body(), currentDepth,
-                targetDepth, affectingVars, groups);
+            addGroupedNodes(groupedNodes, groups);
+            gatherGroups(nThen.body(), currentDepth, targetDepth, affectingVars,
+                groups);
           }
           if(nElse != null) {
-            transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
-            transformFusionForCPUGather(nElse.body(), currentDepth,
-                targetDepth, affectingVars, groups);
+            addGroupedNodes(groupedNodes, groups);
+            gatherGroups(nElse.body(), currentDepth, targetDepth, affectingVars,
+                groups);
           }
           continue;
         }
@@ -792,14 +790,14 @@ public class Parallelize extends ClawTransformation {
         }
 
         // We need to wrap the whole IF based on the statement inside
-        List<Xnode> statNode = node.matchAll(Xcode.F_ASSIGN_STATEMENT);
+        List<Xnode> assignStatements = node.matchAll(Xcode.F_ASSIGN_STATEMENT);
         xNodeLoop:
-        for(Xnode xnode : statNode) {
-          AssignStatement as = new AssignStatement(xnode.element());
+        for(Xnode statement : assignStatements) {
+          AssignStatement as = new AssignStatement(statement.element());
           if(affectingVars.contains(as.getLhsName())) {
             // If the affected node is child of a DO, a dedicated loop
             // group will be created.
-            Xnode pnode = xnode.ancestor();
+            Xnode pnode = statement.ancestor();
             while(pnode.hashCode() != node.hashCode()) {
               if(pnode.opcode() == Xcode.F_DO_STATEMENT) {
                 break xNodeLoop;
@@ -814,48 +812,50 @@ public class Parallelize extends ClawTransformation {
 
         // If the IF statement doesn't contains any dependency we gather the
         // potential transformation and continue
-        transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
+        addGroupedNodes(groupedNodes, groups);
       } else if(node.opcode().hasBody()) { // Handle node containing a body
-        transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
+        addGroupedNodes(groupedNodes, groups);
         currentDepth.incrementAndGet();
-        transformFusionForCPUGather(node.body(), currentDepth,
-            targetDepth, affectingVars, groups);
+        gatherGroups(node.body(), currentDepth, targetDepth, affectingVars,
+            groups);
       } else { // Keep going inside the new node
-        transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
-        transformFusionForCPUGather(node, currentDepth,
-            targetDepth, affectingVars, groups);
+        addGroupedNodes(groupedNodes, groups);
+        gatherGroups(node, currentDepth, targetDepth, affectingVars, groups);
       }
     }
-    transformFusionForCPUGatherSaveHooksGroup(groupedNodes, groups);
+    addGroupedNodes(groupedNodes, groups);
   }
 
   /**
-   * If a hooks group that will be wrapped exists, add it to the collection
-   * containing all the hooks group found until now.
-   * The content of `hooks` is copied in a new list and added to `toapply`,
-   * while `hooks` will be cleared of its content.
+   * If a group of nodes flagged to be is not empty, add it to the collection
+   * containing all the group of nodes found until now.
+   * The content of group of nodes is copied into a new list added to `groups`.
+   * The content of the `groupedNodes` is then cleared.
+   * Used by CPU smart fusion transformation.
    *
-   * @param hooks   A list of adjacent nodes to be wrapped in a DO statement
-   * @param toapply A list to add a copy of `hooks`
+   * @param groupedNodes A list of adjacent (grouped) nodes to be wrapped in a
+   *                     DO statement.
+   * @param groups       List containing all group of nodes.
    */
-  private void transformFusionForCPUGatherSaveHooksGroup(List<Xnode> hooks,
-                                                         List<List<Xnode>>
-                                                             toapply)
+  private void addGroupedNodes(List<Xnode> groupedNodes,
+                               List<List<Xnode>> groups)
   {
-    if(!hooks.isEmpty()) {
-      toapply.add(new ArrayList<>(hooks));
-      hooks.clear();
+    if(groupedNodes.isEmpty()) {
+      return;
     }
+    groups.add(new ArrayList<>(groupedNodes));
+    groupedNodes.clear();
   }
 
   /**
    * Given a series of sequential nodes wrapped them in a DO statement.
+   * Used by CPU smart fusion transformation.
    *
    * @param groupedNodes List of nodes do envelope in a DO statement.
    * @param xcodeml      Current translation unit.
    */
-  private void transformFusionForCPUApply(List<Xnode> groupedNodes,
-                                          XcodeProgram xcodeml)
+  private void wrapGroupInDoStatement(List<Xnode> groupedNodes,
+                                      XcodeProgram xcodeml)
   {
     if(groupedNodes.isEmpty()) {
       return;
