@@ -14,6 +14,7 @@ import claw.tatsu.primitive.Field;
 import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
@@ -55,16 +56,21 @@ public class ParallelizeCPUSmartFusion extends Parallelize {
     super.transform(xcodeml, translator, other);
 
     // Apply specific steps for CPU smart fusion
-    applySpecificTransformation(xcodeml, translator, other);
+    applySpecificTransformation(xcodeml);
 
     // Finalize the common steps
     super.finalizeTransformation(xcodeml);
   }
 
-  private void applySpecificTransformation(XcodeProgram xcodeml,
-                                           Translator translator,
-                                           Transformation other)
-      throws Exception
+  /**
+   * Apply specific step of the transformation for a CPU target with smart
+   * fusion DO statement generation.
+   *
+   * @param xcodeml Current translation unit.
+   * @throws IllegalTransformationException If any transformation fails.
+   */
+  private void applySpecificTransformation(XcodeProgram xcodeml)
+      throws IllegalTransformationException
   {
 
     // Apply transformation only when there is a body to modify
