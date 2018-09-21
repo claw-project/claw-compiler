@@ -46,4 +46,3 @@ CONTAINS
  END SUBROUTINE compute_column
 
 END MODULE mod1
-

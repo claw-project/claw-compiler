@@ -40,6 +40,7 @@
 # sca35: CPU handle "if" correcly
 # sca36: Correct handling of indirect promotion
 # sca37: Check not mixed "!$acc loop seq" order directive generation
+# sca38: Check independent "if" handling for CPU target
 
 foreach(loop_var RANGE 1 38)
   if(NOT ${loop_var} EQUAL 30)
