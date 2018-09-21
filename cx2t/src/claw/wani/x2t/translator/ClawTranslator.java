@@ -11,7 +11,9 @@ import claw.shenron.transformation.TransformationGroup;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
+import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
@@ -24,8 +26,7 @@ import claw.wani.transformation.ll.directive.DirectivePrimitive;
 import claw.wani.transformation.ll.loop.*;
 import claw.wani.transformation.ll.utility.ArrayToFctCall;
 import claw.wani.transformation.ll.utility.UtilityRemove;
-import claw.wani.transformation.sca.Parallelize;
-import claw.wani.transformation.sca.ParallelizeForward;
+import claw.wani.transformation.sca.*;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
 import org.w3c.dom.Element;
@@ -116,7 +117,18 @@ public class ClawTranslator implements Translator {
         if(analyzedPragma.hasForwardClause()) {
           addTransformation(xcodeml, new ParallelizeForward(analyzedPragma));
         } else {
-          addTransformation(xcodeml, new Parallelize(analyzedPragma));
+          if(Context.get().getTarget() == Target.GPU) {
+            addTransformation(xcodeml, new ParallelizeGPU(analyzedPragma));
+          } else {
+            if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
+                equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
+            {
+              addTransformation(xcodeml,
+                  new ParallelizeCPUSmartFusion(analyzedPragma));
+            } else {
+              addTransformation(xcodeml, new ParallelizeCPU(analyzedPragma));
+            }
+          }
         }
         break;
       case PRIMITIVE:
@@ -231,6 +243,8 @@ public class ClawTranslator implements Translator {
     if(t.analyze(xcodeml, this)) {
       if(_tGroups.containsKey(t.getClass())) {
         _tGroups.get(t.getClass()).add(t);
+      } else if (_tGroups.containsKey(t.getClass().getSuperclass())) {
+        _tGroups.get(t.getClass().getSuperclass()).add(t);
       }
     } else if(t.abortOnFailedAnalysis()) {
       throw new IllegalTransformationException(
