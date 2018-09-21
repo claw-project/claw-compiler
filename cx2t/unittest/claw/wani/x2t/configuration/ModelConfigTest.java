@@ -4,9 +4,9 @@
  */
 package claw.wani.x2t.configuration;
 
+import helper.TestConstant;
 import org.junit.Test;
 
-import static helper.TestConstant.TEST_MODEL_CONFIG;
 import static junit.framework.TestCase.fail;
 
 /**
@@ -20,10 +20,7 @@ public class ModelConfigTest {
   public void loadTest() {
     ModelConfig cfg = ModelConfig.get();
     try {
-      cfg.load(TEST_MODEL_CONFIG);
-
-
-
+      cfg.load(TestConstant.TEST_MODEL_CONFIG);
     } catch(Exception ignored) {
       fail();
     }
