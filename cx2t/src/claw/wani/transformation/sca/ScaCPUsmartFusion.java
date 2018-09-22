@@ -8,7 +8,6 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Condition;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.xcodeml.abstraction.AssignStatement;
@@ -35,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author clementval
  */
-public class ParallelizeCPUSmartFusion extends Parallelize {
+public class ScaCPUsmartFusion extends Sca {
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -43,7 +42,7 @@ public class ParallelizeCPUSmartFusion extends Parallelize {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public ParallelizeCPUSmartFusion(ClawPragma directive) {
+  public ScaCPUsmartFusion(ClawPragma directive) {
     super(directive);
   }
 

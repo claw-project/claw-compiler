@@ -115,18 +115,18 @@ public class ClawTranslator implements Translator {
         break;
       case PARALLELIZE:
         if(analyzedPragma.hasForwardClause()) {
-          addTransformation(xcodeml, new ParallelizeForward(analyzedPragma));
+          addTransformation(xcodeml, new ScaForward(analyzedPragma));
         } else {
           if(Context.get().getTarget() == Target.GPU) {
-            addTransformation(xcodeml, new ParallelizeGPU(analyzedPragma));
+            addTransformation(xcodeml, new ScaGPU(analyzedPragma));
           } else {
             if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
                 equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
             {
               addTransformation(xcodeml,
-                  new ParallelizeCPUSmartFusion(analyzedPragma));
+                  new ScaCPUsmartFusion(analyzedPragma));
             } else {
-              addTransformation(xcodeml, new ParallelizeCPU(analyzedPragma));
+              addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
             }
           }
         }
@@ -263,8 +263,8 @@ public class ClawTranslator implements Translator {
    *
    */
   private void reorderTransformations() {
-    if(getGroups().containsKey(ParallelizeForward.class)) {
-      TransformationGroup tg = getGroups().get(ParallelizeForward.class);
+    if(getGroups().containsKey(ScaForward.class)) {
+      TransformationGroup tg = getGroups().get(ScaForward.class);
 
       if(tg.count() <= 1) {
         return;
@@ -274,7 +274,7 @@ public class ClawTranslator implements Translator {
       Map<String, List<Transformation>> fctMap = new HashMap<>();
 
       for(Transformation t : tg.getTransformations()) {
-        ParallelizeForward p = (ParallelizeForward) t;
+        ScaForward p = (ScaForward) t;
         dg.addNode(p);
         if(fctMap.containsKey(p.getCallingFctName())) {
           List<Transformation> tList = fctMap.get(p.getCallingFctName());
@@ -287,7 +287,7 @@ public class ClawTranslator implements Translator {
       }
 
       for(Transformation t : tg.getTransformations()) {
-        ParallelizeForward p = (ParallelizeForward) t;
+        ScaForward p = (ScaForward) t;
         if(p.getCalledFctName() != null
             && fctMap.containsKey(p.getCalledFctName()))
         {

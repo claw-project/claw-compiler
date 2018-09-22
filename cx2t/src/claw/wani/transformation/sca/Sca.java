@@ -44,7 +44,7 @@ import java.util.*;
  * </ul>
  *
  * Generation of OpenACC directives:<ul>
- * <li> acc routine seq is generated for subroutine called from the parallelized
+ * <li> acc routine seq is generated for subroutine called from the SCA
  * subroutine if they are located in the same translation unit.
  * <li> acc data region with corresponding present clause for all promoted
  * variables with the intent in, out or inout.
@@ -60,7 +60,8 @@ import java.util.*;
  * </ul>
  *
  * Generation of OpenMP directives on GPU:<ul>
- * <li> MISSING FEATURE : omp declare target is generated for subroutine called from the parallelized
+ * <li> MISSING FEATURE : omp declare target is generated for subroutine called
+ * from the SCA
  * subroutine if they are located in the same translation unit.
  * <li> omp data region with corresponding present clause for all promoted
  * variables with the intent to, from or tofrom.
@@ -72,7 +73,7 @@ import java.util.*;
  *
  * @author clementval
  */
-public class Parallelize extends ClawTransformation {
+public class Sca extends ClawTransformation {
 
   protected final Map<String, DimensionDefinition> _dimensions;
   protected final Map<String, PromotionInfo> _promotions;
@@ -83,12 +84,12 @@ public class Parallelize extends ClawTransformation {
   protected FfunctionType _fctType;
 
   /**
-   * Constructs a new Parallelize transformation triggered from a specific
+   * Constructs a new Sca transformation triggered from a specific
    * pragma.
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public Parallelize(ClawPragma directive) {
+  public Sca(ClawPragma directive) {
     super(directive);
     _overDimensions = 0;
     _dimensions = new HashMap<>();
@@ -111,7 +112,7 @@ public class Parallelize extends ClawTransformation {
                                         List<String> scalars)
   {
     Message.debug("==========================================");
-    Message.debug("Parallelize promotion infos for subroutine " + name);
+    Message.debug("Sca promotion infos for subroutine " + name);
     Message.debug("  - Promoted arrays(" + promoted.size() + "):");
     for(String array : promoted) {
       Message.debug("      " + array);
@@ -134,7 +135,7 @@ public class Parallelize extends ClawTransformation {
     _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
-              "Parallelize directive must be defined in a function/subroutine.",
+              "Sca directive must be defined in a function/subroutine.",
           _claw.getPragma().lineNo());
       return false;
     }

@@ -31,7 +31,7 @@ import java.util.Set;
  *
  * @author clementval
  */
-public class ParallelizeCPU extends Parallelize {
+public class ScaCPUbasic extends Sca {
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -39,7 +39,7 @@ public class ParallelizeCPU extends Parallelize {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public ParallelizeCPU(ClawPragma directive) {
+  public ScaCPUbasic(ClawPragma directive) {
     super(directive);
   }
 

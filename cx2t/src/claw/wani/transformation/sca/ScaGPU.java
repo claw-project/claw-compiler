@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ParallelizeGPU extends Parallelize {
+public class ScaGPU extends Sca {
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -38,7 +38,7 @@ public class ParallelizeGPU extends Parallelize {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public ParallelizeGPU(ClawPragma directive) {
+  public ScaGPU(ClawPragma directive) {
     super(directive);
   }
 
