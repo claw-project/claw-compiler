@@ -47,6 +47,7 @@ refer to the developer's guide
     -->
     <parameter key="omp_execution_mode" value="teams_distribute" />
 
+
     <!-- Accelerator (OpenACC and OpenMP) default information -->
     <!--
       Data strategy influence how CLAW generates data region with SCA
@@ -67,8 +68,8 @@ refer to the developer's guide
     <parameter key="accelerator_local_strategy" value="private" />
 
     <!--
-      Collapse loops when possible (!$claw nodep)
-      - false: collapse clause is not used.
+      Collapse DO statement when possible (!$claw nodep)
+      - false: collapse clause is disable.
       - true: collapse clause is used when possible.
     -->
     <parameter key="accelerator_collapse" value="false" />
@@ -76,8 +77,9 @@ refer to the developer's guide
     <!-- CPU transformation defaults -->
     <!--
       Which transformation should be used by default when transforming for CPU.
-      - fusion: adjacent statements are enveloped in a single loop
-      - single: each statement is enveloped into a loop
+      - fusion: adjacent statements are grouped together and wrapped in a DO
+                statement.
+      - single: each assign statement is wrapped in a DO statement.
     -->
     <parameter key="cpu_trans_strategy" value="fusion" />
   </global>
