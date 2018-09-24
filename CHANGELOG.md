@@ -9,6 +9,7 @@ All notable changes to the CLAW Compiler project are documented in this file.
 * Compiler options: `-x=<key:value>` can be used to override configuration
   parameters.
 * Configuration file version is checked on the major version number.
+* OMNI Compiler submodule now pointing to omni-compiler/xcodeml-tools@95e1bf985330ef14cdd0b1afef9c97999e6b6404
 
 ## [1.0.2] - 2018-08-21
 * User comment line can be preserved with the `--keep-comment` option.
