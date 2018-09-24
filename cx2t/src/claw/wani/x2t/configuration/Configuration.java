@@ -653,10 +653,7 @@ public class Configuration {
     int[] configMajMin = getMajorMinor(configVersion);
     int[] compilerMajMin = getMajorMinor(ClawVersion.VERSION);
 
-    if(configMajMin[0] < compilerMajMin[0]
-        || (configMajMin[0] == compilerMajMin[0]
-        && configMajMin[1] < compilerMajMin[1]))
-    {
+    if(configMajMin[0] < compilerMajMin[0]) {
       throw new Exception("Configuration version is smaller than " +
           "CLAW Compiler version: " + compilerMajMin[0] + "." +
           compilerMajMin[1]);

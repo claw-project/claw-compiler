@@ -1,10 +1,10 @@
 ![CLAW Logo](resources/logo_full_black.png)
 
-<a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.0.2-lightgray.svg)</a> [![Build Status](https://travis-ci.org/claw-project/claw-compiler.svg?branch=master)](https://travis-ci.org/claw-project/claw-compiler)
-<a target="_blank" href="https://claw-compiler.slack.com/">![Version](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
+<a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.1.0-lightgray.svg)</a> [![Build Status](https://travis-ci.org/claw-project/claw-compiler.svg?branch=master)](https://travis-ci.org/claw-project/claw-compiler)
+<a target="_blank" href="https://claw-compiler.slack.com/">![Slack](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
 <a target="_blank" href="https://claw-project.github.io/claw-documentation/">![Doc](https://img.shields.io/badge/Documentation-link-lightgray.svg)</a>
 
-<a target="_blank" href="https://github.com/claw-project/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-0.4.0-blue.svg)</a>
+<a target="_blank" href="https://github.com/claw-project/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-1.1-blue.svg)</a>
 
 
 > Who is in charge here?
