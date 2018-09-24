@@ -75,13 +75,13 @@ import java.util.*;
  */
 public class Sca extends ClawTransformation {
 
-  protected final Map<String, DimensionDefinition> _dimensions;
-  protected final Map<String, PromotionInfo> _promotions;
-  protected final Set<String> _arrayFieldsInOut;
-  protected final Set<String> _scalarFields;
-  protected int _overDimensions;
-  protected FfunctionDefinition _fctDef;
-  protected FfunctionType _fctType;
+  final Map<String, PromotionInfo> _promotions;
+  final Set<String> _arrayFieldsInOut;
+  final Set<String> _scalarFields;
+  FfunctionDefinition _fctDef;
+  private int _overDimensions;
+  private final Map<String, DimensionDefinition> _dimensions;
+  private FfunctionType _fctType;
 
   /**
    * Constructs a new Sca transformation triggered from a specific
@@ -218,19 +218,17 @@ public class Sca extends ClawTransformation {
   /**
    * If there is no data/over clause specified, an automatic deduction for
    * array promotion is performed.
+   *
    * @param xcodeml Current translation unit
    * @return True if the analyzis succeed. False otherwise.
    */
   private boolean analyzeDataForAutomaticPromotion(XcodeProgram xcodeml) {
     List<String> scalars = new ArrayList<>();
     List<String> candidateArrays = new ArrayList<>();
-    List<Xnode> declarations = _fctDef.getDeclarationTable().values();
+    List<Xnode> declarations =
+        _fctDef.getDeclarationTable().values(Xcode.VAR_DECL);
 
     for(Xnode decl : declarations) {
-      if(decl.opcode() != Xcode.VAR_DECL) {
-        continue;
-      }
-
       if(xcodeml.getTypeTable().isBasicType(decl)) {
         String varName = decl.matchSeq(Xcode.NAME).value();
         FbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
