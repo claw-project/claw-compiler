@@ -1,19 +1,24 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [1.1.0] - Unreleased
+## [1.1.0] - 2018-09-24
 * SCA: Initial support of OpenMP 4.5 code generation for accelerator.
 * SCA: Smart fusion option as CPU transformation strategy. Tries to group
   adjacent statements together.
 * `loop-hoist`: new clause `cleanup` to remove previously defined directive.
 * Compiler options: `-x=<key:value>` can be used to override configuration
   parameters.
+* Configuration file version is checked on the major version number.
+* OMNI Compiler submodule now pointing to
+  omni-compiler/xcodeml-tools@95e1bf985330ef14cdd0b1afef9c97999e6b6404
 
 ## [1.0.2] - 2018-08-21
 * User comment line can be preserved with the `--keep-comment` option.
 * SCA: Fix duplicated array references inserted in some cases.
-* OMNI Compiler to git hash omni-compiler/xcodml-tools@2b72cd9fc9c6133bf9f806d3b7fc5a369265d605
-* OMNI Compiler submodule now pointing to XcodeML-tools omni-compiler/xcodeml-tools
+* OMNI Compiler to git hash
+  omni-compiler/xcodml-tools@2b72cd9fc9c6133bf9f806d3b7fc5a369265d605
+* OMNI Compiler submodule now pointing to XcodeML-tools
+  omni-compiler/xcodeml-tools
 * Various bug fixes
 
 ## [1.0.1] - 2018-04-17
@@ -21,7 +26,8 @@ All notable changes to the CLAW Compiler project are documented in this file.
 * Clean up properly temporary files when driver exits.
 * SCA/CPU: Fix problem with indirect promotion (missing do stmt).
 * Move test from `abstraction` to `sca` folder.
-* OMNI Compiler to git hash omni-compiler/omni-compiler@f59978d90cc1d93cf16de125e8dd35ae1d2a6537
+* OMNI Compiler to git hash
+  omni-compiler/omni-compiler@f59978d90cc1d93cf16de125e8dd35ae1d2a6537
 
 ## [1.0.0] - 2018-03-19
 New features:
@@ -51,7 +57,8 @@ New available transformations:
 
 Modification:
 * `collapse` clause can be applied to `loop-fusion` transformation.
-* Group configuration must now specify trigger type (translation_unit, directive)
+* Group configuration must now specify trigger type (translation_unit,
+  directive)
 
 Technical/Architecture change:
 * All Java libraries now compiled with Ant.
