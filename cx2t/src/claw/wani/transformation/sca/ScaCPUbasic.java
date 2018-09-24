@@ -162,8 +162,8 @@ public class ScaCPUbasic extends Sca {
         }
       }
 
-      for(Xnode hook : hooks)  {
-        if(assign.isNestedIn(hook)){
+      for(Xnode hook : hooks) {
+        if(assign.isNestedIn(hook)) {
           wrapInDoStatement = false;
           break;
         }
@@ -173,12 +173,11 @@ public class ScaCPUbasic extends Sca {
           && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
       {
         hooks.add(assign);
-      } else if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
-          && _scalarFields.contains(lhsName))
+      } else if((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+          && _scalarFields.contains(lhsName)) &&
+          (shouldBePromoted(assign) && wrapInDoStatement))
       {
-        if(shouldBePromoted(assign) && wrapInDoStatement) {
-          hooks.add(assign);
-        }
+        hooks.add(assign);
       }
     }
   }
@@ -197,37 +196,44 @@ public class ScaCPUbasic extends Sca {
   {
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
-      String lhsName = assign.getLhsName();
       if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF) {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
-
-        PromotionInfo promotionInfo;
-        if(shouldBePromoted(assign)) {
-          // Do the promotion if needed
-          if(!_arrayFieldsInOut.contains(lhsName)) {
-            _arrayFieldsInOut.add(lhsName);
-            promotionInfo =
-                new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
-            Field.promote(promotionInfo, _fctDef, xcodeml);
-            _promotions.put(lhsName, promotionInfo);
-          } else {
-            promotionInfo = _promotions.get(lhsName);
-          }
-          // Adapt references
-          if(lhs.opcode() == Xcode.VAR) {
-            Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
-                _claw.getDimensionValues(), xcodeml);
-          } else {
-            Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(),
-                xcodeml);
-            Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
-                xcodeml);
-          }
-          promotionInfo.setRefAdapted();
-        }
+        promoteIfNeeded(xcodeml, assign);
       }
+    }
+  }
+
+  private void promoteIfNeeded(XcodeProgram xcodeml, AssignStatement assign)
+      throws IllegalTransformationException
+  {
+    if(shouldBePromoted(assign)) {
+      PromotionInfo promotionInfo;
+      Xnode lhs = assign.getLhs();
+      String lhsName = assign.getLhsName();
+
+      // Do the promotion if needed
+      if(!_arrayFieldsInOut.contains(lhsName)) {
+        _arrayFieldsInOut.add(lhsName);
+        promotionInfo =
+            new PromotionInfo(lhsName, _claw.getDimensionsForData(lhsName));
+        Field.promote(promotionInfo, _fctDef, xcodeml);
+        _promotions.put(lhsName, promotionInfo);
+      } else {
+        promotionInfo = _promotions.get(lhsName);
+      }
+      // Adapt references
+      if(lhs.opcode() == Xcode.VAR) {
+        Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
+            _claw.getDimensionValues(), xcodeml);
+      } else {
+        Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(),
+            xcodeml);
+        Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(),
+            xcodeml);
+      }
+      promotionInfo.setRefAdapted();
     }
   }
 

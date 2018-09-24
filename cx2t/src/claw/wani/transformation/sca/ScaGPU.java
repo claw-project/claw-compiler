@@ -68,7 +68,7 @@ public class ScaGPU extends Sca {
   {
     AcceleratorConfiguration config = Configuration.get().accelerator();
 
-    // TODO nodep should be passed in another way.
+    // TODO nodep passing!
     int collapse = Directive.generateLoopSeq(xcodeml, _fctDef,
         CompilerDirective.CLAW.getPrefix() + " nodep");
 

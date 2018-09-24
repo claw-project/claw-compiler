@@ -89,7 +89,7 @@ public class Sca extends ClawTransformation {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public Sca(ClawPragma directive) {
+  Sca(ClawPragma directive) {
     super(directive);
     _overDimensions = 0;
     _dimensions = new HashMap<>();
@@ -115,15 +115,15 @@ public class Sca extends ClawTransformation {
     Message.debug("Sca promotion infos for subroutine " + name);
     Message.debug("  - Promoted arrays(" + promoted.size() + "):");
     for(String array : promoted) {
-      Message.debug("      " + array);
+      Message.debug("\t" + array);
     }
     Message.debug("  - Candidate arrays(" + candidateArrays.size() + "):");
     for(String array : candidateArrays) {
-      Message.debug("      " + array);
+      Message.debug("\t" + array);
     }
     Message.debug("  - Candidate scalars(" + scalars.size() + "):");
     for(String array : scalars) {
-      Message.debug("      " + array);
+      Message.debug("\t" + array);
     }
     Message.debug("==========================================");
   }
@@ -208,55 +208,73 @@ public class Sca extends ClawTransformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyzeData(XcodeProgram xcodeml) {
-    /* If there is no data/over clause specified, an automatic deduction for
-     * array promotion is performed. */
     if(!_claw.hasOverDataClause()) {
+      return analyzeDataForAutomaticPromotion(xcodeml);
+    } else {
+      return analyzeDataFromOverClause(xcodeml);
+    }
+  }
 
-      List<String> scalars = new ArrayList<>();
-      List<String> candidateArrays = new ArrayList<>();
+  /**
+   * If there is no data/over clause specified, an automatic deduction for
+   * array promotion is performed.
+   * @param xcodeml Current translation unit
+   * @return True if the analyzis succeed. False otherwise.
+   */
+  private boolean analyzeDataForAutomaticPromotion(XcodeProgram xcodeml) {
+    List<String> scalars = new ArrayList<>();
+    List<String> candidateArrays = new ArrayList<>();
+    List<Xnode> declarations = _fctDef.getDeclarationTable().values();
 
-      List<Xnode> declarations = _fctDef.getDeclarationTable().values();
-      for(Xnode decl : declarations) {
-        if(decl.opcode() != Xcode.VAR_DECL) {
-          continue;
-        }
+    for(Xnode decl : declarations) {
+      if(decl.opcode() != Xcode.VAR_DECL) {
+        continue;
+      }
 
-        if(xcodeml.getTypeTable().isBasicType(decl)) {
-          String varName = decl.matchSeq(Xcode.NAME).value();
-          FbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
+      if(xcodeml.getTypeTable().isBasicType(decl)) {
+        String varName = decl.matchSeq(Xcode.NAME).value();
+        FbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
 
-          if(bType.isArray()) {
-            if(bType.hasIntent() || bType.isPointer()) {
-              _arrayFieldsInOut.add(varName);
-            } else {
-              candidateArrays.add(varName);
-            }
+        if(bType.isArray()) {
+          if(bType.hasIntent() || bType.isPointer()) {
+            _arrayFieldsInOut.add(varName);
           } else {
-            if(_claw.hasScalarClause() &&
-                _claw.getScalarClauseValues().contains(varName))
-            {
-              _arrayFieldsInOut.add(varName);
-            }
-            if(!bType.isParameter() && bType.hasIntent()) {
-              scalars.add(varName);
-            }
+            candidateArrays.add(varName);
+          }
+        } else {
+          if(_claw.hasScalarClause() &&
+              _claw.getScalarClauseValues().contains(varName))
+          {
+            _arrayFieldsInOut.add(varName);
+          }
+          if(!bType.isParameter() && bType.hasIntent()) {
+            scalars.add(varName);
           }
         }
       }
-      _scalarFields.addAll(scalars);
-      _scalarFields.addAll(candidateArrays);
-
-      printDebugPromotionInfos(_fctDef.getName(), _arrayFieldsInOut,
-          candidateArrays, scalars);
-
-      return true;
     }
+    _scalarFields.addAll(scalars);
+    _scalarFields.addAll(candidateArrays);
 
-    /* If the data clause if defined at least once, manual promotion is the
-     * rule. The array identifiers defined in the data clauses will be used as
-     * the list of array to be promoted.
-     * In the analysis, we control that all defined arrays in the data clauses
-     * are actual declared variables. */
+    printDebugPromotionInfos(_fctDef.getName(), _arrayFieldsInOut,
+        candidateArrays, scalars);
+
+    return true;
+  }
+
+  /**
+   * If the data clause is defined at least once, manual promotion is the
+   * rule.
+   * The array identifiers defined in the data clauses will be used as
+   * the list of array to be promoted.
+   * In the analysis, we control that all defined arrays in the data clauses
+   * are actual declared variables.
+   *
+   * @param xcodeml Current translation unit.
+   * @return True if all variable in over clause are real variables. False
+   * otherwise.
+   */
+  private boolean analyzeDataFromOverClause(XcodeProgram xcodeml) {
     for(List<String> data : _claw.getOverDataClauseValues()) {
       for(String d : data) {
         if(!_fctDef.getSymbolTable().contains(d)) {
