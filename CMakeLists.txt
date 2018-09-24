@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project("CLAW Compiler" VERSION 1.0.2)
+project("CLAW Compiler" VERSION 1.1.0)
 
 # Add local cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
@@ -89,7 +89,7 @@ if(BUILD_OMNI)
         ${OMNI_COMPILER_SUBMODULE}/Makefile.am
         ${OMNI_COMPILER_SUBMODULE}/Makefile.in
       && CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
-      FC=${CMAKE_Fortran_COMPILER} JAVAC=${Java_JAVAC_EXECUTABLE} 
+      FC=${CMAKE_Fortran_COMPILER} JAVAC=${Java_JAVAC_EXECUTABLE}
       ${OMNI_COMPILER_SUBMODULE}/configure
       --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
       ${OMNI_MPI_CC} ${OMNI_MPI_FC}

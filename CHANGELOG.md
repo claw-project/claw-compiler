@@ -1,13 +1,14 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [1.1.0] - Unreleased
+## [1.1.0] - 2018-09-24
 * SCA: Initial support of OpenMP 4.5 code generation for accelerator.
 * SCA: Smart fusion option as CPU transformation strategy. Tries to group
   adjacent statements together.
 * `loop-hoist`: new clause `cleanup` to remove previously defined directive.
 * Compiler options: `-x=<key:value>` can be used to override configuration
   parameters.
+* Configuration file version is checked on the major version number.
 
 ## [1.0.2] - 2018-08-21
 * User comment line can be preserved with the `--keep-comment` option.
