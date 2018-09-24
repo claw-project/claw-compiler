@@ -16,7 +16,7 @@
     <group name="on-the-fly"/>
     <group name="kcache"/>
     <group name="if-extract"/>
-    <group name="parallelize"/>
-    <group name="parallelize-forward"/>
+    <group name="sca"/>
+    <group name="sca-forward"/>
   </groups>
 </claw>

@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author clementval
  */
-public class ParallelizeForward extends ClawTransformation {
+public class ScaForward extends ClawTransformation {
 
   private final Set<String> _promotedVar; // Promoted array from the call
   private final Map<String, PromotionInfo> _promotions; // Info about promotion
@@ -57,12 +57,12 @@ public class ParallelizeForward extends ClawTransformation {
   private boolean _isNestedInAssignment;
 
   /**
-   * Constructs a new Parallelize transformation triggered from a specific
+   * Constructs a new Sca transformation triggered from a specific
    * pragma.
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public ParallelizeForward(ClawPragma directive) {
+  public ScaForward(ClawPragma directive) {
     super(directive);
     _promotedVar = new HashSet<>();
     _promotions = new HashMap<>();
@@ -180,7 +180,7 @@ public class ParallelizeForward extends ClawTransformation {
         getFunctionDefinition(_calledFctName);
     FfunctionDefinition parentFctDef = _claw.getPragma().findParentFunction();
     if(parentFctDef == null) {
-      xcodeml.addError("Parallelize directive is not nested in a " +
+      xcodeml.addError("Sca directive is not nested in a " +
           "function/subroutine.", _claw.getPragma().lineNo());
       return false;
     }
@@ -373,7 +373,7 @@ public class ParallelizeForward extends ClawTransformation {
   {
     FfunctionDefinition fDef = _claw.getPragma().findParentFunction();
     if(fDef == null) {
-      throw new IllegalTransformationException("Parallelize directive is not " +
+      throw new IllegalTransformationException("Sca directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().lineNo());
     }
 

@@ -15,8 +15,6 @@ CONTAINS
   DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
     t ( k , proma ) = c * k
-   END DO
-   DO proma = 1 , nproma , 1
     q ( proma , k ) = t ( k - 1 , proma ) + t ( k , proma ) * c
    END DO
   END DO

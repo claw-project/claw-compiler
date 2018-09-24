@@ -15,9 +15,7 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Test method of the Configuration class
@@ -25,6 +23,9 @@ import static org.junit.Assert.assertTrue;
  * @author clementval
  */
 public class ConfigurationTest {
+
+  private static final String DUMMY_KEY = "dummy";
+  private static final String DUMMY_VALUE = "dummyValue";
 
   private static final int MAX_COLUMN = 80;
 
@@ -73,7 +74,19 @@ public class ConfigurationTest {
       assertSame(Target.GPU, conf.getCurrentTarget());
       assertSame(CompilerDirective.OPENACC, conf.getCurrentDirective());
 
+      assertEquals(Configuration.CPU_STRATEGY_FUSION,
+          Configuration.get().getParameter(Configuration.CPU_STRATEGY));
 
+      Configuration.get().overrideConfigurationParameter(
+          Configuration.CPU_STRATEGY, Configuration.CPU_STRATEGY_SINGLE);
+
+      assertEquals(Configuration.CPU_STRATEGY_SINGLE,
+          Configuration.get().getParameter(Configuration.CPU_STRATEGY));
+
+      assertNull(Configuration.get().getParameter(DUMMY_KEY));
+      Configuration.get().
+          overrideConfigurationParameter(DUMMY_KEY, DUMMY_VALUE);
+      assertEquals(DUMMY_VALUE, Configuration.get().getParameter(DUMMY_KEY));
 
     } catch(Exception e) {
       fail();

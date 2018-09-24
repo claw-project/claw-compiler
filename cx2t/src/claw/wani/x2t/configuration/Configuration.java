@@ -80,6 +80,10 @@ public class Configuration {
   private static final String INDEPENDENT_GR_TYPE = "independent";
   private static final String DIRECTIVE_TR_TYPE = "directive";
   private static final String TRANSLATION_UNIT_TR_TYPE = "translation_unit";
+  // OpenMP specific values
+  public static final String CPU_STRATEGY = "cpu_trans_strategy";
+  public static final String CPU_STRATEGY_SINGLE = "single";
+  public static final String CPU_STRATEGY_FUSION = "fusion";
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
   private static Configuration _instance = null;
@@ -692,6 +696,19 @@ public class Configuration {
           i++, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
           g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
               ? g.getDirective() : "-", g.getTransformationClassName());
+    }
+  }
+
+  /**
+   * Override a configuration key-value parameter.
+   *
+   * @param key   Key of the parameter.
+   * @param value Value of the parameter.
+   */
+  public void overrideConfigurationParameter(String key, String value) {
+    if(value != null && !value.isEmpty()) {
+      _parameters.remove(key.toLowerCase());
+      _parameters.put(key, value);
     }
   }
 }

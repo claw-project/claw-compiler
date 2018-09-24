@@ -11,7 +11,9 @@ import claw.shenron.transformation.TransformationGroup;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
+import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
@@ -24,8 +26,7 @@ import claw.wani.transformation.ll.directive.DirectivePrimitive;
 import claw.wani.transformation.ll.loop.*;
 import claw.wani.transformation.ll.utility.ArrayToFctCall;
 import claw.wani.transformation.ll.utility.UtilityRemove;
-import claw.wani.transformation.sca.Parallelize;
-import claw.wani.transformation.sca.ParallelizeForward;
+import claw.wani.transformation.sca.*;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
 import org.w3c.dom.Element;
@@ -114,9 +115,20 @@ public class ClawTranslator implements Translator {
         break;
       case PARALLELIZE:
         if(analyzedPragma.hasForwardClause()) {
-          addTransformation(xcodeml, new ParallelizeForward(analyzedPragma));
+          addTransformation(xcodeml, new ScaForward(analyzedPragma));
         } else {
-          addTransformation(xcodeml, new Parallelize(analyzedPragma));
+          if(Context.get().getTarget() == Target.GPU) {
+            addTransformation(xcodeml, new ScaGPU(analyzedPragma));
+          } else {
+            if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
+                equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
+            {
+              addTransformation(xcodeml,
+                  new ScaCPUsmartFusion(analyzedPragma));
+            } else {
+              addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
+            }
+          }
         }
         break;
       case PRIMITIVE:
@@ -231,6 +243,8 @@ public class ClawTranslator implements Translator {
     if(t.analyze(xcodeml, this)) {
       if(_tGroups.containsKey(t.getClass())) {
         _tGroups.get(t.getClass()).add(t);
+      } else if (_tGroups.containsKey(t.getClass().getSuperclass())) {
+        _tGroups.get(t.getClass().getSuperclass()).add(t);
       }
     } else if(t.abortOnFailedAnalysis()) {
       throw new IllegalTransformationException(
@@ -249,8 +263,8 @@ public class ClawTranslator implements Translator {
    *
    */
   private void reorderTransformations() {
-    if(getGroups().containsKey(ParallelizeForward.class)) {
-      TransformationGroup tg = getGroups().get(ParallelizeForward.class);
+    if(getGroups().containsKey(ScaForward.class)) {
+      TransformationGroup tg = getGroups().get(ScaForward.class);
 
       if(tg.count() <= 1) {
         return;
@@ -260,7 +274,7 @@ public class ClawTranslator implements Translator {
       Map<String, List<Transformation>> fctMap = new HashMap<>();
 
       for(Transformation t : tg.getTransformations()) {
-        ParallelizeForward p = (ParallelizeForward) t;
+        ScaForward p = (ScaForward) t;
         dg.addNode(p);
         if(fctMap.containsKey(p.getCallingFctName())) {
           List<Transformation> tList = fctMap.get(p.getCallingFctName());
@@ -273,7 +287,7 @@ public class ClawTranslator implements Translator {
       }
 
       for(Transformation t : tg.getTransformations()) {
-        ParallelizeForward p = (ParallelizeForward) t;
+        ScaForward p = (ScaForward) t;
         if(p.getCalledFctName() != null
             && fctMap.containsKey(p.getCalledFctName()))
         {

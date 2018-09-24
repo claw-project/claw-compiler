@@ -6,7 +6,6 @@ package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.Xname;
 
-import java.security.SecureRandom;
 import java.util.Random;
 
 /**
