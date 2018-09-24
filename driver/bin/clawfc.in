@@ -79,6 +79,7 @@ xcode_translator_add_opt=()
 module_opt=()
 trans_module_opt=()
 include_opt=()
+override_config_opt=()
 
 # CLAW special options
 target_opt=""
@@ -329,7 +330,7 @@ if [[ ${pipe_workflow} == true ]]; then
           ${CLAW_X2T_CONFIG_OPT} \
           ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
           "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-          "${trans_module_opt[@]}" |
+          "${trans_module_opt[@]}" "${override_config_opt[@]}" |
         sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
         sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" >"${file_out_f}"
 
@@ -449,8 +450,8 @@ for input_file in "${f_files_transformation[@]}"; do
     ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
     ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
     "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-    "${trans_module_opt[@]}" -o "${file_out_x}" -f "${file_out_f}" \
-    "${file_in_x}"
+    "${trans_module_opt[@]}" "${override_config_opt[@]}"  -o "${file_out_x}" \
+    -f "${file_out_f}" "${file_in_x}"
 
   # Check that translation output a file
   if [[ ! -f ${file_out_x} ]]; then

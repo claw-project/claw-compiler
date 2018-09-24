@@ -698,4 +698,17 @@ public class Configuration {
               ? g.getDirective() : "-", g.getTransformationClassName());
     }
   }
+
+  /**
+   * Override a configuration key-value parameter.
+   *
+   * @param key   Key of the parameter.
+   * @param value Value of the parameter.
+   */
+  public void overrideConfigurationParameter(String key, String value) {
+    if(value != null && !value.isEmpty()) {
+      _parameters.remove(key.toLowerCase());
+      _parameters.put(key, value);
+    }
+  }
 }
