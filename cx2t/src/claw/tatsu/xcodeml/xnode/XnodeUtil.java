@@ -267,7 +267,7 @@ public class XnodeUtil {
       }
       dynamicPartS1 = tempQuery;
     }
-    s1 = s1 + dynamicPartS1;
+    s1 += dynamicPartS1;
     List<HoistedNestedDoStatement> doStatements = new ArrayList<>();
     try {
       NodeList output = evaluateXpath(from.element(), s1);
