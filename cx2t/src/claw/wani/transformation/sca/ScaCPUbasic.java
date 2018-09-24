@@ -27,7 +27,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Specific SCA tranformation for CPU target. Naive algorithm is used here.
+ * Specific SCA transformation for CPU target. Naive algorithm is used here.
+ *
+ * Transformation for the CPU target: <ul>
+ * <li> Automatic promotion is applied to all arrays with intent in, out or
+ * inout.
+ * <li> Propagated promotion is applied to all scalars or arrays used in an
+ * assign statement at the lhs and where a promoted variable is used on the
+ * rhs.
+ * <li> Do statements over the additional dimensions are added as an inner
+ * loop wrapping each assign statements including promoted variables.
+ * </ul>
  *
  * @author clementval
  */

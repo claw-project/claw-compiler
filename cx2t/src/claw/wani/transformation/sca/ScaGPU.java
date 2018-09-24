@@ -28,6 +28,42 @@ import java.util.List;
 /**
  * Specialized version of SCA transformation for GPU target.
  *
+ * Transformation for the GPU target: <ul>
+ * <li> Automatic promotion is applied to all arrays with intent in, out or
+ * inout.
+ * <li> Do statements over the additional dimensions is added as an outer
+ * loop and wrap the entire body of the subroutine.
+ * </ul>
+ *
+ * Generation of OpenACC directives:<ul>
+ * <li> acc routine seq is generated for subroutine called from the SCA
+ * subroutine if they are located in the same translation unit.
+ * <li> acc data region with corresponding present clause for all promoted
+ * variables with the intent in, out or inout.
+ * <li> acc parallel region is generated to wrap all the body of the subroutine.
+ * <li> acc private clause is added to the parallel directive for all local
+ * variables.
+ * <li> acc loop is generated for the generated do statement.
+ * <li> acc loop seq is generated for already existing do statements.
+ * </ul>
+ *
+ * Generation of OpenMP directives on CPU: <ul>
+ * <li> omp parallel do is generated for each generated do statements.
+ * </ul>
+ *
+ * Generation of OpenMP directives on GPU:<ul>
+ * <li> MISSING FEATURE : omp declare target is generated for subroutine called
+ * from the SCA subroutine if they are located in the same translation unit.
+ * <li> omp data region with corresponding present clause for all promoted
+ * variables with the intent to, from or tofrom.
+ * <li> omp target teams distribute region is generated to wrap all the body of
+ * the subroutine.
+ * <li> omp private clause is added to the target directive for all local
+ * variables.
+ * <li> omp collapse is generated for the generated do statement
+ * (if more that 1).
+ * </ul>
+ *
  * @author clementval
  */
 public class ScaGPU extends Sca {

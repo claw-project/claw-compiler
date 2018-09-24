@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Specific transformation for CPU target with smart fusion algrithm to group
+ * Specific transformation for CPU target with smart fusion algorithm to group
  * statements.
  *
  * @author clementval

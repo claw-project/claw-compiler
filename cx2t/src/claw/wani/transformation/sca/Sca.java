@@ -26,50 +26,11 @@ import java.util.*;
  * contained in a subroutine/function by adding necessary dimensions and
  * parallelism to the defined data.
  *
- * Transformation for the GPU target: <ul>
- * <li> Automatic promotion is applied to all arrays with intent in, out or
- * inout.
- * <li> Do statements over the additional dimensions is added as an outer
- * loop and wrap the entire body of the subroutine.
- * </ul>
- *
- * Transformation for the CPU target: <ul>
- * <li> Automatic promotion is applied to all arrays with intent in, out or
- * inout.
- * <li> Propagated promotion is applied to all scalars or arrays used in an
- * assign statement at the lhs and where a promoted variable is used on the
- * rhs.
- * <li> Do statements over the additional dimensions are added as an inner
- * loop wrapping each assign statements including promoted variables.
- * </ul>
- *
- * Generation of OpenACC directives:<ul>
- * <li> acc routine seq is generated for subroutine called from the SCA
- * subroutine if they are located in the same translation unit.
- * <li> acc data region with corresponding present clause for all promoted
- * variables with the intent in, out or inout.
- * <li> acc parallel region is generated to wrap all the body of the subroutine.
- * <li> acc private clause is added to the parallel directive for all local
- * variables.
- * <li> acc loop is generated for the generated do statement.
- * <li> acc loop seq is generated for already existing do statements.
- * </ul>
- *
- * Generation of OpenMP directives on CPU: <ul>
- * <li> omp parallel do is generated for each generated do statements.
- * </ul>
- *
- * Generation of OpenMP directives on GPU:<ul>
- * <li> MISSING FEATURE : omp declare target is generated for subroutine called
- * from the SCA
- * subroutine if they are located in the same translation unit.
- * <li> omp data region with corresponding present clause for all promoted
- * variables with the intent to, from or tofrom.
- * <li> omp target teams distribute region is generated to wrap all the body of the subroutine.
- * <li> omp private clause is added to the target directive for all local
- * variables.
- * <li> omp collapse is generated for the generated do statement (if more that 1).
- * </ul>
+ * This class holds the basic common elements for all targets. Specific
+ * transformations are detailed in the children classes:
+ * @see claw.wani.transformation.sca.ScaGPU
+ * @see claw.wani.transformation.sca.ScaCPUbasic
+ * @see claw.wani.transformation.sca.ScaCPUsmartFusion
  *
  * @author clementval
  */
