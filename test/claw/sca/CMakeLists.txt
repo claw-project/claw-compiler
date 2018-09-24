@@ -40,9 +40,11 @@
 # sca35: CPU handle "if" correcly
 # sca36: Correct handling of indirect promotion
 # sca37: Check not mixed "!$acc loop seq" order directive generation
-# sca38: SCA with model config
+# sca38: Check independent "if" handling for CPU target
+# sca39: Same as SCA1 with override option passed to the driver -x
+# sca40: SCA with model config
 
-foreach(loop_var RANGE 1 38)
+foreach(loop_var RANGE 1 39)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
@@ -51,7 +53,8 @@ endforeach()
 set(CLAW_FLAGS_TARGET_CPU_sca3 --directive=openmp)
 set(CLAW_FLAGS_sca32 --config=promote.xml)
 set(CLAW_FLAGS_sca33 --config=enable_collapse.xml)
-set(CLAW_FLAGS_sca38 --model-config=${CMAKE_CURRENT_SOURCE_DIR}/basic_model.toml)
+set(CLAW_FLAGS_sca39 -x=cpu_trans_strategy:single)
+set(CLAW_FLAGS_sca40 --model-config=${CMAKE_CURRENT_SOURCE_DIR}/basic_model.toml)
 
 claw_add_advanced_test_set(
   NAME claw-sca

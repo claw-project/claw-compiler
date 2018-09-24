@@ -111,6 +111,15 @@ public class FfunctionDefinition extends Xnode {
   }
 
   /**
+   * Check if function body is empty.
+   *
+   * @return True if function body is empty.
+   */
+  public boolean hasEmptyBody() {
+    return (body() != null && body().children().isEmpty());
+  }
+
+  /**
    * Create an identical copy of the current function definition.
    *
    * @return A new FfunctionDefinition object that is the clone of this function definition.

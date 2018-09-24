@@ -8,8 +8,8 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   REAL , INTENT(INOUT) :: z ( : , : )
-  REAL :: tmp ( 1 : nproma )
-  REAL :: tmp2 ( 1 : nproma )
+  REAL :: tmp
+  REAL :: tmp2
   INTEGER :: k
   INTEGER :: proma
 
@@ -17,18 +17,14 @@ CONTAINS
    DO proma = 1 , nproma , 1
     IF ( t ( proma , k ) > 0. ) THEN
      IF ( k < 10 ) THEN
-      tmp ( proma ) = tmp ( proma ) + q ( proma , k )
+      tmp = tmp + q ( proma , k )
       q ( proma , k ) = q ( proma , k ) / t ( proma , k )
      END IF
     ELSE
      q ( proma , k ) = q ( proma , k ) * z ( proma , k )
     END IF
-   END DO
-   DO proma = 1 , nproma , 1
-    tmp2 ( proma ) = tmp ( proma ) + q ( proma , k )
-   END DO
-   DO proma = 1 , nproma , 1
-    z ( proma , k ) = z ( proma , k ) * tmp ( proma )
+    tmp2 = tmp + q ( proma , k )
+    z ( proma , k ) = z ( proma , k ) * tmp
    END DO
   END DO
  END SUBROUTINE compute_column

@@ -264,7 +264,7 @@ public class XnodeUtil {
       }
       dynamicPartS1 = tempQuery;
     }
-    s1 = s1 + dynamicPartS1;
+    s1 += dynamicPartS1;
     List<HoistedNestedDoStatement> doStatements = new ArrayList<>();
     try {
       NodeList output = evaluateXpath(from.element(), s1);
@@ -409,6 +409,26 @@ public class XnodeUtil {
       }
     }
     return realReferences;
+  }
+
+  /**
+   * Find all Xnode.VAR inside the given node and return their value. From
+   * the set are excluded the variables used as indexes for vectors.
+   *
+   * @param node The node from where the research will start.
+   * @return A set contains the variables used inside the node.
+   */
+  public static Set<String> findChildrenVariables(Xnode node) {
+    List<Xnode> varNodes = node.matchAll(Xcode.VAR);
+    Set<String> vars = new HashSet<>();
+    for (Xnode xnode : varNodes) {
+      // Skip vector indexes
+      if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
+        continue;
+      }
+      vars.add(xnode.value());
+    }
+    return vars;
   }
 
   /**

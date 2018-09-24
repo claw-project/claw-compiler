@@ -124,6 +124,9 @@ public class ClawX2T {
         "generate the transformation report.");
     options.addOption("m", "model-config", true,
         "specify a model configuration for SCA transformation");
+    options.addOption("x", true,
+        "override configuration option. Higher priority over base " +
+            "configuration and user configuration.");
     return options;
   }
 
@@ -264,6 +267,15 @@ public class ClawX2T {
     if(cmd.hasOption("M")) {
       for(String value : cmd.getOptionValues("M")) {
         Context.get().getModuleCache().addSearchPath(value);
+      }
+    }
+
+    // Override some configuration value.
+    if(cmd.hasOption("x")) {
+      for(String keyValue : cmd.getOptionValues("x")) {
+        String key = keyValue.substring(0, keyValue.indexOf(":"));
+        String value = keyValue.substring(keyValue.indexOf(":")+1);
+        Configuration.get().overrideConfigurationParameter(key, value);
       }
     }
 

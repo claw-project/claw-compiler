@@ -88,5 +88,4 @@ public class AssignStatement extends Xnode {
     }
     return names;
   }
-
 }

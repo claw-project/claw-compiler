@@ -13,7 +13,6 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
-import claw.wani.x2t.configuration.Configuration;
 
 /**
  * <pre>

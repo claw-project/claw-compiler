@@ -143,7 +143,7 @@ public class NestedDoStatement {
         swapIndices += pos * crtShift;
       }
       if(crtShift != 0) {
-        crtShift = crtShift / 10;
+        crtShift /= 10;
       }
     }
     return swapIndices;
