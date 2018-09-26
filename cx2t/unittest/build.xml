@@ -186,6 +186,7 @@
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
       <classpath path="${omni.xcodeml-common.dep}"/>
+      <classpath path="${toml.dep}"/>
 
       <formatter type="xml" />
 

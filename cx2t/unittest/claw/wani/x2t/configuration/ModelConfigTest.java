@@ -63,7 +63,6 @@ public class ModelConfigTest {
       assertTrue(cfg.getLayout(null).isEmpty());
 
     } catch(Exception ignored) {
-      System.out.println(ignored.getMessage());
       fail();
     }
   }
@@ -90,6 +89,8 @@ public class ModelConfigTest {
   @Test
   public void errorCheckTest() {
 
+    String layout1 = "layout1";
+
     // No dimension defined
     StringBuilder config = new StringBuilder();
     config.append("[model]").append("\n");
@@ -115,15 +116,15 @@ public class ModelConfigTest {
     config.append("[[layouts]]").append("\n");
     assertError(config, ModelConfig.ERR_LAYOUT_NO_ID);
 
-    config.append("id=\"layout1\"").append("\n");
+    config.append("id=\"").append(layout1).append("\"").append("\n");
     assertError(config,
-        String.format(ModelConfig.ERR_LAYOUT_NO_POSITION, "layout1"));
+        String.format(ModelConfig.ERR_LAYOUT_NO_POSITION, layout1));
 
     String positionNotAvail = "position = [ \"dim2\" ] ";
 
     config.append(positionNotAvail).append("\n");
     assertError(config,
-        String.format(ModelConfig.ERR_DIM_NOT_AVAIL, "dim2", "layout1"));
+        String.format(ModelConfig.ERR_DIM_NOT_AVAIL, "dim2", layout1));
 
     config.delete(config.length() - positionNotAvail.length() - 1,
         config.length());
