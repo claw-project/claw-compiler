@@ -84,10 +84,8 @@ public class DimensionTest {
 
   @Test
   public void dimensionWithIterationDefinitionTest() {
-    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     DimensionDefinition dimDef = new DimensionDefinition("block", "1", "nproma",
         "nstart", "nend", "nstep");
-
 
     assertNotNull(dimDef.getLowerBound());
     assertNotNull(dimDef.getUpperBound());

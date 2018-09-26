@@ -4,12 +4,15 @@
  */
 package claw.wani.x2t.configuration;
 
+import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import net.consensys.cava.toml.Toml;
 import net.consensys.cava.toml.TomlArray;
 import net.consensys.cava.toml.TomlParseResult;
+import net.consensys.cava.toml.TomlTable;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * SCA Specific model configuration. This class reads and holds all
@@ -20,46 +23,318 @@ import java.nio.file.Paths;
  */
 public class ModelConfig {
 
-  private static ModelConfig _instance = null;
-
   private static final String KEY_DIMENSIONS = "dimensions";
   private static final String KEY_DIMENSION_ID = "id";
   private static final String KEY_DIMENSION_SIZE = "size";
+  private static final String KEY_DIMENSION_LB = "lower";
+  private static final String KEY_DIMENSION_UB = "upper";
+  private static final String KEY_DIMENSION_STEP = "step";
+  private static final String KEY_DIMENSION_ITERATION = "iteration";
+  private static final String KEY_LAYOUTS = "layouts";
+  private static final String KEY_LAYOUT_POSITION = "position";
 
-  private static final String KEY_LAYOUTS = "dimensions";
+  private static final String DEFAULT_LAYOUT_ID = "default";
+  private static final String DEFAULT_LOWER_BOUND = "1";
 
+  static final String ERR_MALFORMATTED =
+      "Model configuration file not formatted correctly.";
+  static final String ERR_NO_DIMENSIONS =
+      "No dimension defined in the model configuration %s.";
+  static final String ERR_NO_SIZE = "Size information missing in dimension %s";
+  static final String ERR_NO_UPPER =
+      "Upper information missing in size dimension %s";
+  static final String ERR_NO_LAYOUTS =
+      "No layouts defined in the model configuration %s" +
+          ". At least \"default\" should be defined!";
+  static final String ERR_LAYOUT_NO_ID =
+      "Layout is missing identifier information";
+  static final String ERR_LAYOUT_NO_POSITION =
+      "Layout %s is missing position information";
+  static final String ERR_DIM_NOT_AVAIL = "Dimension %s defined in layout "
+      + "%s in not available in this configuration.";
+  static final String ERR_NO_BASE_DIM =
+      "Layout %s is missing the base dimension \":\"";
+
+  // Dotted key from the configuration file
+  private static final String KEY_MODEL_NAME = "model.name";
+
+  private final Map<String, DimensionDefinition> _dimensions;
+  private final Map<String, List<DimensionDefinition>> _layouts;
+
+  private String _modelName;
+
+  /**
+   * Private ctor to avoid instantiation of this class.
+   */
   private ModelConfig() {
+    _dimensions = new HashMap<>();
+    _layouts = new HashMap<>();
   }
 
+  /**
+   * Lazy holder pattern.
+   */
+  private static class LazyHolder {
+
+    static final ModelConfig INSTANCE = new ModelConfig();
+  }
+
+  /**
+   * Get the unique instance of the model configuration.
+   *
+   * @return Unique instance of ModelConfig.
+   */
   public static ModelConfig get() {
-    if(_instance == null) {
-      _instance = new ModelConfig();
-    }
-    return _instance;
+    return LazyHolder.INSTANCE;
   }
 
-  public void load(String configPath) throws Exception {
-    if(_instance == null) {
-      _instance = new ModelConfig();
+  /**
+   * Load a model configuration file and read its content.
+   *
+   * @param configPath Path to the model configuration file.
+   * @throws Exception If the configuration does not conform to the
+   *                   specification.
+   */
+  void load(String configPath) throws Exception {
+    _dimensions.clear();
+    _layouts.clear();
+    load(new FileInputStream(configPath));
+  }
+
+  void load(InputStream is) throws Exception {
+    TomlParseResult result = Toml.parse(is);
+    if(result.hasErrors()) {
+      throw new Exception(ERR_MALFORMATTED);
+    } else {
+      _modelName = result.getString(KEY_MODEL_NAME);
+      readDimensions(result);
+      readLayouts(result);
+    }
+  }
+
+  /**
+   * Read all the dimensions defined in the model configuration.
+   *
+   * The dimension can be defined as follows:<br><br>
+   *
+   * [[dimensions]] # Definition of dimensions that can be used in layouts<br>
+   * id = "horizontal"<br>
+   * [dimensions.size]<br>
+   * lower = 1             # if not specified, 1 by default<br>
+   * upper = "nproma"      # mandatory information<br>
+   * [dimensions.iteration]<br>
+   * lower = "pstart" # if not specified size.lower by default<br>
+   * upper = "pend"   # if not specified size.upper by default<br>
+   * step = 1         # if not specified, 1 by default<br><br>
+   *
+   * @param result The current TOML parse result object.
+   * @throws Exception If the result is not conform to the specifications.
+   */
+  private void readDimensions(TomlParseResult result) throws Exception {
+    TomlArray dimensions = result.getArray(KEY_DIMENSIONS);
+    if(dimensions == null) {
+      throw new Exception(String.format(ERR_NO_DIMENSIONS, _modelName));
     }
 
-    Path source = Paths.get(configPath);
-    TomlParseResult result = Toml.parse(source);
-    if(result.hasErrors()) {
-      throw new Exception("Model configuration file not formatted correctly.");
-    } else {
-      // Validate the information in the configuration file
+    for(int i = 0; i < dimensions.size(); ++i) {
+      TomlTable dimension = dimensions.getTable(i);
+      String dimId = dimension.getString(KEY_DIMENSION_ID);
 
-      TomlArray dimensions = result.getArray(KEY_DIMENSIONS);
-      
-
-      for(Object value : dimensions.toList()) {
-
+      TomlTable dimSize = dimension.getTable(KEY_DIMENSION_SIZE);
+      if(dimSize == null) {
+        throw new Exception(String.format(ERR_NO_SIZE, dimId));
       }
 
-      TomlArray layouts = result.getArray(KEY_LAYOUTS);
+      String lowerBound = readBoundOrDefault(dimSize);
+      String upperBound = readStringOrInt(dimSize, KEY_DIMENSION_UB);
+      if(upperBound.isEmpty()) {
+        throw new Exception(String.format(ERR_NO_UPPER, dimId));
+      }
 
+      TomlTable dimIt = dimension.getTable(KEY_DIMENSION_ITERATION);
+
+      if(dimIt == null) {
+        _dimensions.put(dimId,
+            new DimensionDefinition(dimId, lowerBound, upperBound));
+      } else {
+        String lowerItBound = readBoundOrNull(dimIt, KEY_DIMENSION_LB);
+        String upperItBound = readBoundOrNull(dimIt, KEY_DIMENSION_UB);
+        String stepItBound = readBoundOrNull(dimIt, KEY_DIMENSION_STEP);
+
+        _dimensions.put(dimId,
+            new DimensionDefinition(dimId, lowerBound, upperBound,
+                lowerItBound, upperItBound, stepItBound));
+      }
     }
+  }
+
+  /**
+   * Read all the layouts defined in the model configuration.
+   *
+   * The layouts can be defined as follows:
+   *
+   * [[layouts]]
+   * id = "id"
+   * position = [ "dim1", ":" ]
+   *
+   * The ":" dimension is resprensting the base dimension
+   * (currently present dimensions)
+   *
+   * @param result The current TOML parse result object.
+   * @throws Exception If the result is not conform to the specifications.
+   */
+  private void readLayouts(TomlParseResult result) throws Exception {
+    TomlArray layouts = result.getArray(KEY_LAYOUTS);
+    if(layouts == null) {
+      throw new Exception(String.format(ERR_NO_LAYOUTS, _modelName));
+    }
+
+    for(int i = 0; i < layouts.size(); ++i) {
+      TomlTable layout = layouts.getTable(i);
+      String layoutId = layout.getString(KEY_DIMENSION_ID);
+      if(layoutId == null) {
+        throw new Exception(ERR_LAYOUT_NO_ID);
+      }
+
+      TomlArray position = layout.getArray(KEY_LAYOUT_POSITION);
+      if(position == null) {
+        throw new Exception(String.format(ERR_LAYOUT_NO_POSITION, layoutId));
+      }
+
+      List<DimensionDefinition> dimensions = new ArrayList<>();
+
+      for(int j = 0; j < position.size(); ++j) {
+        String pos = position.getString(j);
+
+        if(pos.equals(DimensionDefinition.BASE_DIM)) {
+          dimensions.add(DimensionDefinition.BASE_DIMENSION);
+        } else {
+          if(!_dimensions.containsKey(pos)) {
+            throw new Exception(String.format(ERR_DIM_NOT_AVAIL,
+                pos, layoutId));
+          }
+          dimensions.add(_dimensions.get(pos));
+        }
+      }
+
+      if(!dimensions.contains(DimensionDefinition.BASE_DIMENSION)) {
+        throw new Exception(String.format(ERR_NO_BASE_DIM, layoutId));
+      }
+
+      _layouts.put(layoutId, dimensions);
+    }
+  }
+
+  /**
+   * Read value if present or return null.
+   *
+   * @param table     Current table to read in.
+   * @param dottedKey Dotted key to get the value.
+   * @return String representation of the value if present. Null otherwise.
+   */
+  private String readBoundOrNull(TomlTable table, String dottedKey) {
+    String value = readStringOrInt(table, dottedKey);
+    if(value.isEmpty()) {
+      return null;
+    }
+    return value;
+  }
+
+  /**
+   * Read a value if present or set it to the default.
+   *
+   * @param table Current table to read in.
+   * @return String representation of the value if present. Default value
+   * otherwise.
+   */
+  private String readBoundOrDefault(TomlTable table) {
+    String value = readStringOrInt(table, KEY_DIMENSION_LB);
+    if(value.isEmpty()) {
+      return DEFAULT_LOWER_BOUND;
+    }
+    return value;
+  }
+
+  /**
+   * Read a value in the TOML file that can be a String or an Integer.
+   *
+   * @param table     Current table to read in.
+   * @param dottedKey Dotted key to get the value.
+   * @return String respresentation of the actual value if present. Empty string
+   * otherwise.
+   */
+  private String readStringOrInt(TomlTable table, String dottedKey) {
+    Object value = table.get(dottedKey);
+    if(value == null) {
+      return "";
+    }
+    if(value instanceof String) {
+      return (String) value;
+    }
+    return String.valueOf(value);
+  }
+
+  /**
+   * Return the model name defined in the configuration file.
+   *
+   * @return String value representing the model name.
+   */
+  public String getName() {
+    return _modelName;
+  }
+
+  /**
+   * Get a dimension by its identifier.
+   *
+   * @param id Dimension identifier.
+   * @return The named dimension if present. Null otherwise.
+   */
+  public DimensionDefinition getDimension(String id) {
+    if(_dimensions.containsKey(id)) {
+      return _dimensions.get(id);
+    }
+    return null;
+  }
+
+  /**
+   * Get the number of dimensions defined in the configuration.
+   *
+   * @return Number of dimensions.
+   */
+  public int getNbDimensions() {
+    return _dimensions.size();
+  }
+
+  /**
+   * Get a layout by its identifier.
+   *
+   * @param id Layout identifier.
+   * @return The named layout if present. Empty list otherwise.
+   */
+  public List<DimensionDefinition> getLayout(String id) {
+    if(_layouts.containsKey(id)) {
+      return _layouts.get(id);
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * Get the default layout. Defined with "default" identifier in the
+   * configuration.
+   *
+   * @return The default layout information.
+   */
+  public List<DimensionDefinition> getDefaultLayout() {
+    return getLayout(DEFAULT_LAYOUT_ID);
+  }
+
+  /**
+   * Get the number of layouts defined in the configuration.
+   *
+   * @return Number of layout.
+   */
+  public int getNbLayouts() {
+    return _layouts.size();
   }
 
 }

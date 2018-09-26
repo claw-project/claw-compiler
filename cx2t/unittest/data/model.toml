@@ -10,7 +10,7 @@
   [dimensions.size]
     lower = 1             # if not specified, 1 by default
     upper = "nproma"      # mandatory information
-  [dimension.iteration]
+  [dimensions.iteration]
     lower = "pstart" # if not specified size.lower by default
     upper = "pend"   # if not specified size.upper by default
     step = 1         # if not specified, 1 by default

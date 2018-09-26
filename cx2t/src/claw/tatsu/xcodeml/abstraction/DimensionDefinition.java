@@ -14,8 +14,12 @@ import claw.tatsu.xcodeml.xnode.fortran.FortranType;
  */
 public class DimensionDefinition {
 
+  public static final DimensionDefinition BASE_DIMENSION
+      = createBaseDimension();
+
   public static final String SEPARATOR = ",";
   public static final String BASE_DIM = ":";
+  private static final String BASE_DIMENSION_ID = "__BASE__";
   private static final int DEFAULT_STEP_VALUE = 1;
 
   private final BoundDefinition _lowerBound;
@@ -28,6 +32,27 @@ public class DimensionDefinition {
   private final String _identifier; // Used as array index
   private InsertionPosition _insertionPosition = InsertionPosition.BEFORE;
 
+  /**
+   * Create the special dimension definition used as place holder for
+   * currently existing dimensions.
+   *
+   * @return A DimensionDefinition object with __BASE__ as id and undefined
+   * bounds.
+   */
+  private static DimensionDefinition createBaseDimension() {
+    return new DimensionDefinition(BASE_DIMENSION_ID,
+        new BoundDefinition("", BoundDefinition.BoundType.LOWER),
+        new BoundDefinition("", BoundDefinition.BoundType.UPPER));
+  }
+
+  /**
+   * Internal constructor with bound object.
+   *
+   * @param id         Identifier of the defined dimension. Will be used as the
+   *                   array index variable.
+   * @param lowerBound Lower bound of the dimension.
+   * @param upperBound Upper bound of the dimension.
+   */
   private DimensionDefinition(String id, BoundDefinition lowerBound,
                               BoundDefinition upperBound)
   {

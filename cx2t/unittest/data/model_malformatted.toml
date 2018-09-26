@@ -1,0 +1,16 @@
+# ModelX SCA configuration file
+# This file is an example to show the different posibility in the configuration
+# file
+
+[model] # Definition of global model information
+  name = "ModelX"
+
+[[dimensions] # Definition of dimensions that can be used in layouts
+  id = "horizontal"
+  [dimensions.size]
+    lower = 1             # if not specified, 1 by default
+    upper = "nproma"      # mandatory information
+  [dimensions.iteration]
+    lower = "pstart" # if not specified size.lower by default
+    upper = "pend"   # if not specified size.upper by default
+    step = 1         # if not specified, 1 by default
