@@ -96,6 +96,6 @@ public class BoundDefinition {
 
   // Enum representing the type of bound
   public enum BoundType {
-    LOWER, UPPER
+    LOWER, UPPER, STEP
   }
 }

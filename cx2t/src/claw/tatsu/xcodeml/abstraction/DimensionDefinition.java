@@ -20,6 +20,11 @@ public class DimensionDefinition {
 
   private final BoundDefinition _lowerBound;
   private final BoundDefinition _upperBound;
+
+  private final BoundDefinition _iterationLowerBound;
+  private final BoundDefinition _iterationUpperBound;
+  private final BoundDefinition _iterationStep;
+
   private final String _identifier; // Used as array index
   private InsertionPosition _insertionPosition = InsertionPosition.BEFORE;
 
@@ -29,6 +34,10 @@ public class DimensionDefinition {
     _identifier = id;
     _lowerBound = lowerBound;
     _upperBound = upperBound;
+    _iterationLowerBound = lowerBound;
+    _iterationUpperBound = upperBound;
+    _iterationStep = new BoundDefinition(String.valueOf(DEFAULT_STEP_VALUE),
+        BoundDefinition.BoundType.STEP);
   }
 
   /**
@@ -38,7 +47,6 @@ public class DimensionDefinition {
    *                   array index variable.
    * @param lowerBound Lower bound of the dimension.
    * @param upperBound Upper bound of the dimension.
-   *                   TODO maybe add step information (in the grammar as well)
    */
   public DimensionDefinition(String id, String lowerBound, String upperBound) {
     _identifier = id;
@@ -46,6 +54,57 @@ public class DimensionDefinition {
         new BoundDefinition(lowerBound, BoundDefinition.BoundType.LOWER);
     _upperBound =
         new BoundDefinition(upperBound, BoundDefinition.BoundType.UPPER);
+    _iterationLowerBound = _lowerBound;
+    _iterationUpperBound = _upperBound;
+    _iterationStep = new BoundDefinition(String.valueOf(DEFAULT_STEP_VALUE),
+        BoundDefinition.BoundType.STEP);
+  }
+
+  /**
+   * Constructs a new dimension object from the extracted bound and iteration
+   * information.
+   *
+   * @param id           Identifier of the defined dimension. Will be used as
+   *                     the array index variable.
+   * @param lowerBound   Lower bound of the dimension.
+   * @param upperBound   Upper bound of the dimension.
+   * @param itLowerBound Iteration lower bound. If null, lower bound information
+   *                     is the default.
+   * @param itUpperBound Iteration upper bound. If null, upper bound information
+   *                     is the default.
+   * @param step         Iteration step. If null, 1 is the default
+   */
+  public DimensionDefinition(String id, String lowerBound, String upperBound,
+                             String itLowerBound, String itUpperBound,
+                             String step)
+  {
+    _identifier = id;
+    _lowerBound =
+        new BoundDefinition(lowerBound, BoundDefinition.BoundType.LOWER);
+    _upperBound =
+        new BoundDefinition(upperBound, BoundDefinition.BoundType.UPPER);
+
+    if(itLowerBound != null) {
+      _iterationLowerBound =
+          new BoundDefinition(itLowerBound, BoundDefinition.BoundType.LOWER);
+    } else {
+      _iterationLowerBound = _lowerBound;
+    }
+
+    if(itUpperBound != null) {
+      _iterationUpperBound =
+          new BoundDefinition(itUpperBound, BoundDefinition.BoundType.UPPER);
+    } else {
+      _iterationUpperBound = _upperBound;
+    }
+
+    if(step != null) {
+      _iterationStep =
+          new BoundDefinition(step, BoundDefinition.BoundType.STEP);
+    } else {
+      _iterationStep = new BoundDefinition(String.valueOf(DEFAULT_STEP_VALUE),
+          BoundDefinition.BoundType.STEP);
+    }
   }
 
   /**
@@ -64,6 +123,33 @@ public class DimensionDefinition {
    */
   public BoundDefinition getUpperBound() {
     return _upperBound;
+  }
+
+  /**
+   * Get iteration lower bound definition.
+   *
+   * @return iteration lower bound definition.
+   */
+  public BoundDefinition getIterationLowerBound() {
+    return _iterationLowerBound;
+  }
+
+  /**
+   * Get iteration upper bound definition.
+   *
+   * @return iteration upper bound definition.
+   */
+  public BoundDefinition getIterationUpperBound() {
+    return _iterationUpperBound;
+  }
+
+  /**
+   * Get iteration step definition.
+   *
+   * @return iteration step.
+   */
+  public BoundDefinition getIterationStep() {
+    return _iterationStep;
   }
 
   /**
