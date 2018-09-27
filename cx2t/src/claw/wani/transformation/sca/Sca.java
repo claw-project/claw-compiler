@@ -434,6 +434,14 @@ public class Sca extends ClawTransformation {
     }
   }
 
+  protected List<DimensionDefinition> getDimensionValues() {
+    if(_claw.hasDimensionClause()){
+      return _claw.getDimensionValues();
+    } else {
+      return ModelConfig.get().getDefaultLayout();
+    }
+  }
+
 
 
   private List<DimensionDefinition> getUsedDimensions() {
