@@ -30,7 +30,7 @@ public class BoundDefinition {
     _boundType = type;
     try {
       _intBoundValue = Integer.parseInt(boundValue);
-      _strBoundValue = null;
+      _strBoundValue = "";
     } catch(NumberFormatException ex) {
       _intBoundValue = -1;
       _strBoundValue = boundValue;

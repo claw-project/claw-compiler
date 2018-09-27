@@ -24,5 +24,5 @@ public class ClawConstant {
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
 
-  public static String ERROR_PREFIX_INTERNAL = "internal";
+  public static final String ERROR_PREFIX_INTERNAL = "internal";
 }

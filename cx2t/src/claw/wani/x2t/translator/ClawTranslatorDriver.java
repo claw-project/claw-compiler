@@ -39,17 +39,11 @@ import java.util.logging.Logger;
  */
 public class ClawTranslatorDriver {
 
-  String _xcodemlInputFile = null;
-  String _xcodemlOutputFile = null;
+  private String _xcodemlInputFile;
+  private String _xcodemlOutputFile;
   private boolean _canTransform = false;
-  private ClawTranslator _translator = null;
+  private ClawTranslator _translator;
   private XcodeProgram _translationUnit = null;
-
-  /**
-   * Default ctor for child classes.
-   */
-  ClawTranslatorDriver() {
-  }
 
   /**
    * ClawTranslatorDriver ctor.

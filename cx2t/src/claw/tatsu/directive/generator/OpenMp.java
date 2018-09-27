@@ -25,7 +25,7 @@ public class OpenMp extends DirectiveGenerator {
   public static final String OPENMP_PREFIX_CONT = "omp&";
   public static final String OPENMP_NAME = "openmp";
 
-  public static final String OPENMP_DEBUG_PREFIX = "CLAW-OpenMP:";
+  private static final String OPENMP_DEBUG_PREFIX = "CLAW-OpenMP:";
   private static final String OPENMP_DECLARE = "declare";
   private static final String OPENMP_TARGET = "target";
   private static final String OPENMP_DATA = "data";

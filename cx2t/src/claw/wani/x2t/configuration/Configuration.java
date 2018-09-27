@@ -695,9 +695,10 @@ public class Configuration {
         "--", "---", "----", "----", "-------", "---------", "-----");
     for(GroupConfiguration g : getGroups()) {
       System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s%n",
-          i++, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
+          i, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
           g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
               ? g.getDirective() : "-", g.getTransformationClassName());
+      ++i;
     }
   }
 

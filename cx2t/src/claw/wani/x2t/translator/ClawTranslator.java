@@ -393,7 +393,9 @@ public class ClawTranslator implements Translator {
    * @return Transformation counter value.
    */
   public int getNextTransformationCounter() {
-    return _transformationCounter++;
+    int currentCounter = _transformationCounter;
+    ++_transformationCounter;
+    return currentCounter;
   }
 
   /**

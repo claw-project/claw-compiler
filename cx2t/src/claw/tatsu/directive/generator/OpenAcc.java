@@ -24,7 +24,7 @@ public class OpenAcc extends DirectiveGenerator {
   public static final String OPENACC_PREFIX_CONT = "acc&";
   public static final String OPENACC_NAME = "openacc";
 
-  public static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC:";
+  private static final String OPENACC_DEBUG_PREFIX = "CLAW-OpenACC:";
   private static final String OPENACC_COLLAPSE = "collapse";
   private static final String OPENACC_DATA = "data";
   private static final String OPENACC_END = "end";

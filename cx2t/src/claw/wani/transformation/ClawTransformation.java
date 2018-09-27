@@ -23,7 +23,7 @@ public abstract class ClawTransformation extends Transformation {
   /**
    * Default ctor for translation_unit transformation.
    */
-  public ClawTransformation() {
+  protected ClawTransformation() {
     super();
     _claw = null;
   }
@@ -33,7 +33,7 @@ public abstract class ClawTransformation extends Transformation {
    *
    * @param directive Directive that trigger the transformation.
    */
-  public ClawTransformation(ClawPragma directive) {
+  protected ClawTransformation(ClawPragma directive) {
     super(directive);
     _claw = directive;
   }

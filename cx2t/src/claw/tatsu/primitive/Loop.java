@@ -331,7 +331,7 @@ public final class Loop {
    *                                        incompatible with the
    *                                        transformation.
    */
-  public static void extractBody(Xnode loop, Xnode ref)
+  private static void extractBody(Xnode loop, Xnode ref)
       throws IllegalTransformationException
   {
     if(loop == null || ref == null || loop.opcode() != Xcode.F_DO_STATEMENT) {

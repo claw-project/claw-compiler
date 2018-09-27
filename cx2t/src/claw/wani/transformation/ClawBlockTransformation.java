@@ -31,7 +31,7 @@ public abstract class ClawBlockTransformation extends BlockTransformation {
   /**
    * Delete the associated pragma statement(s).
    */
-  public void removePragma() {
+  protected void removePragma() {
     if(_clawStart != null && _clawStart.getPragma() != null) {
       _clawStart.getPragma().delete();
     }

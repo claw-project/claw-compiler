@@ -156,12 +156,12 @@ public class ClawX2T {
    */
   public static void main(String[] args) throws Exception {
     String input;
-    String xcmlOutput = null;
-    String targetLangOutput = null;
-    String targetOption = null;
-    String directiveOption = null;
-    String configurationFile = null;
-    String configurationPath = null;
+    String xcmlOutput;
+    String targetLangOutput;
+    String targetOption;
+    String directiveOption;
+    String configurationFile;
+    String configurationPath;
     String modelConfiguration = null;
     int maxColumns = 0;
 
