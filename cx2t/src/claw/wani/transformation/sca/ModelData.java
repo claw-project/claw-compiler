@@ -64,5 +64,6 @@ public class ModelData extends ClawBlockTransformation {
                         Transformation other)
   {
     // Analysis only transformation. All the work is done in SCA and SCAForward
+    removePragma();
   }
 }

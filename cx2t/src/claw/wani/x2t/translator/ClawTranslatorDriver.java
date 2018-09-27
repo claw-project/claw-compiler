@@ -102,7 +102,7 @@ public class ClawTranslatorDriver {
          * declaration and the execution part will be placed in the declaration
          * part. This is not what is best for all the current CLAW directives.
          * Therefore, we move them back to the execution block. */
-        Pragma.moveInExecution(pragma);
+        //TODO MODEL_CONFIG: Pragma.moveInExecution(pragma);
 
         // Pragma can be handled by the translator so let it do its job.
         if(_translator.isHandledPragma(pragma)) {

@@ -5,6 +5,7 @@
 package claw.wani.x2t.configuration;
 
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import net.consensys.cava.toml.Toml;
 import net.consensys.cava.toml.TomlArray;
 import net.consensys.cava.toml.TomlParseResult;
@@ -221,6 +222,30 @@ public class ModelConfig {
         throw new Exception(String.format(ERR_NO_BASE_DIM, layoutId));
       }
 
+      int baseDimensionOccurence = 0;
+      for(DimensionDefinition dim : dimensions) {
+        if(dim == DimensionDefinition.BASE_DIMENSION) {
+          ++baseDimensionOccurence;
+        }
+      }
+
+      boolean hasMiddleInsertion = baseDimensionOccurence > 1;
+      InsertionPosition crtPos = InsertionPosition.BEFORE;
+      for(DimensionDefinition dim : dimensions) {
+        if(dim == DimensionDefinition.BASE_DIMENSION) {
+          if(hasMiddleInsertion && crtPos == InsertionPosition.BEFORE) {
+            crtPos = InsertionPosition.IN_MIDDLE;
+          } else if(crtPos == InsertionPosition.BEFORE) {
+            crtPos = InsertionPosition.AFTER;
+          } else if(crtPos == InsertionPosition.IN_MIDDLE) {
+            crtPos = InsertionPosition.AFTER;
+          }
+        } else {
+          dim.setInsertionPosition(crtPos);
+        }
+      }
+
+      dimensions.remove(DimensionDefinition.BASE_DIMENSION);
       _layouts.put(layoutId, dimensions);
     }
   }
@@ -294,6 +319,14 @@ public class ModelConfig {
       return _dimensions.get(id);
     }
     return null;
+  }
+
+  public boolean hasDimension(String id) {
+    return _dimensions.containsKey(id);
+  }
+
+  public void putDimension(String id, DimensionDefinition d) {
+    _dimensions.put(id, d);
   }
 
   /**

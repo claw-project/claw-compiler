@@ -43,7 +43,7 @@ public class BoundDefinition {
    * @return True if the bound is a var.
    */
   public boolean isVar() {
-    return _strBoundValue != null;
+    return _strBoundValue != null && !_strBoundValue.isEmpty();
   }
 
   /**

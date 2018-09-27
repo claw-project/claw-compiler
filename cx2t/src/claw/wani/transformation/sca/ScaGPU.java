@@ -117,7 +117,7 @@ public class ScaGPU extends Sca {
      * transformation idea but it is our start point.
      * Use the first over clause to create it. */
     NestedDoStatement loops =
-        new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+        new NestedDoStatement(getDimensionValuesReversed(), xcodeml);
 
     /* Subroutine/function can have a contains section with inner subroutines
      * or functions. The newly created (nested) do statements should stop
@@ -213,7 +213,7 @@ public class ScaGPU extends Sca {
     for(String arrayIdentifier : createList) {
       _arrayFieldsInOut.add(arrayIdentifier);
       PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
-          _claw.getDimensionsForData(arrayIdentifier));
+          getDimensionsForData(arrayIdentifier));
 
       Field.promote(promotionInfo, _fctDef, xcodeml);
       _promotions.put(arrayIdentifier, promotionInfo);

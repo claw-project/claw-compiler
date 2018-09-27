@@ -18,6 +18,8 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.ModelConfig;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
 
@@ -28,11 +30,11 @@ import java.util.*;
  *
  * This class holds the basic common elements for all targets. Specific
  * transformations are detailed in the children classes:
+ *
+ * @author clementval
  * @see claw.wani.transformation.sca.ScaGPU
  * @see claw.wani.transformation.sca.ScaCPUbasic
  * @see claw.wani.transformation.sca.ScaCPUsmartFusion
- *
- * @author clementval
  */
 public class Sca extends ClawTransformation {
 
@@ -41,7 +43,6 @@ public class Sca extends ClawTransformation {
   final Set<String> _scalarFields;
   FfunctionDefinition _fctDef;
   private int _overDimensions;
-  private final Map<String, DimensionDefinition> _dimensions;
   private FfunctionType _fctType;
 
   /**
@@ -53,7 +54,6 @@ public class Sca extends ClawTransformation {
   Sca(ClawPragma directive) {
     super(directive);
     _overDimensions = 0;
-    _dimensions = new HashMap<>();
     _promotions = new HashMap<>();
     _arrayFieldsInOut = new HashSet<>();
     _scalarFields = new HashSet<>();
@@ -91,6 +91,8 @@ public class Sca extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+
+    ClawTranslator trans = (ClawTranslator) translator;
 
     // Check for the parent fct/subroutine definition
     _fctDef = _claw.getPragma().findParentFunction();
@@ -132,8 +134,13 @@ public class Sca extends ClawTransformation {
       }
     }
 
-    return analyzeDimension(xcodeml) && analyzeData(xcodeml) &&
-        analyzeOver(xcodeml);
+    if(_claw.hasDimensionClause()) {
+      return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans) &&
+          analyzeOver(xcodeml);
+    } else {
+      // Run analysis for model config only
+      return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+    }
   }
 
   /**
@@ -143,21 +150,25 @@ public class Sca extends ClawTransformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyzeDimension(XcodeProgram xcodeml) {
-    if(!_claw.hasDimensionClause()) {
+    if(!_claw.hasDimensionClause()
+        && ModelConfig.get().getNbDimensions() == 0)
+    {
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().lineNo());
       return false;
     }
 
-    for(DimensionDefinition d : _claw.getDimensionValues()) {
-      if(_dimensions.containsKey(d.getIdentifier())) {
-        xcodeml.addError(
-            String.format("Dimension with identifier %s already specified.",
-                d.getIdentifier()), _claw.getPragma().lineNo()
-        );
-        return false;
+    if(_claw.hasDimensionClause()) {
+      for(DimensionDefinition d : _claw.getDimensionValues()) {
+        if(ModelConfig.get().getDimension(d.getIdentifier()) != null) {
+          xcodeml.addError(
+              String.format("Dimension with identifier %s already specified.",
+                  d.getIdentifier()), _claw.getPragma().lineNo()
+          );
+          return false;
+        }
+        ModelConfig.get().putDimension(d.getIdentifier(), d);
       }
-      _dimensions.put(d.getIdentifier(), d);
     }
     return true;
   }
@@ -168,11 +179,30 @@ public class Sca extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyzeData(XcodeProgram xcodeml) {
-    if(!_claw.hasOverDataClause()) {
+  private boolean analyzeData(XcodeProgram xcodeml, ClawTranslator trans) {
+    if(!_claw.hasOverDataClause() && _claw.hasDimensionClause()) { // Full directive without over clause
       return analyzeDataForAutomaticPromotion(xcodeml);
-    } else {
+    } else if(_claw.hasOverDataClause()) {
       return analyzeDataFromOverClause(xcodeml);
+    } else {
+      return analyzeModelData(xcodeml, trans);
+    }
+  }
+
+  private boolean analyzeModelData(XcodeProgram xcodeml, ClawTranslator trans) {
+    Set<String> modelVariables;
+    if(trans.hasElement(_fctDef) != null) {
+      modelVariables = Utility.convertToSet(trans.hasElement(_fctDef));
+
+      for(String data : modelVariables) {
+        _arrayFieldsInOut.add(data);
+      }
+
+      return true;
+    } else {
+      xcodeml.addError("No model-data defined in function " + _fctDef.getName(),
+          _claw.getPragma().lineNo());
+      return false;
     }
   }
 
@@ -274,7 +304,7 @@ public class Sca extends ClawTransformation {
       int usedDimension = 0;
       for(String o : overLst) {
         if(!o.equals(DimensionDefinition.BASE_DIM)) {
-          if(!_dimensions.containsKey(o)) {
+          if(!ModelConfig.get().hasDimension(o)) {
             xcodeml.addError(
                 String.format(
                     "Dimension %s is not defined. Cannot be used in over " +
@@ -379,10 +409,38 @@ public class Sca extends ClawTransformation {
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
-            _claw.getDimensionsForData(fieldId));
+            getDimensionsForData(fieldId));
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }
+    }
+  }
+
+  protected List<DimensionDefinition> getDimensionsForData(String fieldId) {
+    if(_claw.hasDimensionClause()){
+      return _claw.getDimensionsForData(fieldId);
+    } else {
+      return ModelConfig.get().getDefaultLayout();
+    }
+  }
+
+  protected List<DimensionDefinition> getDimensionValuesReversed() {
+    if(_claw.hasDimensionClause()){
+      return _claw.getDimensionValuesReversed();
+    } else {
+      List<DimensionDefinition> tmp = new ArrayList<>(ModelConfig.get().getDefaultLayout());
+      Collections.reverse(tmp);
+      return tmp;
+    }
+  }
+
+
+
+  private List<DimensionDefinition> getUsedDimensions() {
+    if(_claw.hasDimensionClause()) {
+      return _claw.getDimensionValues();
+    } else {
+      return ModelConfig.get().getDefaultLayout();
     }
   }
 
@@ -399,7 +457,7 @@ public class Sca extends ClawTransformation {
     xcodeml.getTypeTable().add(bt);
 
     // For each dimension defined in the directive
-    for(DimensionDefinition dimension : _claw.getDimensionValues()) {
+    for(DimensionDefinition dimension : getUsedDimensions()) {
       // Create the parameter for the lower bound
       if(dimension.getLowerBound().isVar()) {
         xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
