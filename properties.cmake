@@ -90,6 +90,10 @@ set(ASM_COMMON "asm-commons.jar")
 set(ASM_TREE "asm-tree.jar")
 set(ASM_BUILD "${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM}:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_COMMON}:${CMAKE_SOURCE_DIR}/cx2t/lib/${ASM_TREE}")
 
+set(TOML_NAME "cava-toml")
+set(TOML "${CLAW_X2T_JAR_INSTALL_PATH}/${TOML_NAME}.jar")
+set(BUILD_TOML "${CMAKE_SOURCE_DIR}/cx2t/lib/${TOML_NAME}.jar")
+
 #
 # External program options
 #

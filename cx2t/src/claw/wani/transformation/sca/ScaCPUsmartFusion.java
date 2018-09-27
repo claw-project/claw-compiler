@@ -434,7 +434,7 @@ public class ScaCPUsmartFusion extends Sca {
 
     // Create the DO statement
     NestedDoStatement loop =
-        new NestedDoStatement(_claw.getDimensionValuesReversed(), xcodeml);
+        new NestedDoStatement(getDimensionValuesReversed(), xcodeml);
 
     // Insert DO statement into the AST and add statements in its body
     groupedNodes.get(0).insertBefore(loop.getOuterStatement());

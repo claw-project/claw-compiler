@@ -86,6 +86,7 @@ set(CLAW_XMOD_GENERIC "${CMAKE_BINARY_DIR}/modules/")
 set(ANTLR4 "${CMAKE_SOURCE_DIR}/cx2t/lib/${ANTLR4_NAME}.jar")
 set(ANTLR4_RUNTIME "${CMAKE_SOURCE_DIR}/cx2t/lib/${ANTLR4_RUNTIME_NAME}.jar")
 set(COMMON_CLI "${CMAKE_SOURCE_DIR}/cx2t/lib/${COMMON_CLI_NAME}.jar")
+set(TOML "${CMAKE_SOURCE_DIR}/cx2t/lib/${TOML_NAME}.jar")
 
 
 configure_file(
