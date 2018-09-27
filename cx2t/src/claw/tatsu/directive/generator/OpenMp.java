@@ -365,7 +365,8 @@ public class OpenMp extends DirectiveGenerator {
     String updates = String.format(FORMATPAR, direction == DataMovement.DEVICE ?
         OPENMP_TO : OPENMP_FROM, Utility.join(",", vars));
     return new String[]{
-        String.format(FORMAT4, OPENMP_PREFIX, OPENMP_TARGET, OPENMP_UPDATE, updates)
+        String.format(FORMAT4,
+            OPENMP_PREFIX, OPENMP_TARGET, OPENMP_UPDATE, updates)
     };
   }
 }

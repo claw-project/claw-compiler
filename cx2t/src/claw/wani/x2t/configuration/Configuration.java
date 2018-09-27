@@ -685,8 +685,10 @@ public class Configuration {
    */
   public void displayConfig() {
     System.out.println(String.format("- CLAW Compiler configuration -%n"));
-    System.out.println(String.format("Default directive directive: %s%n", getCurrentDirective()));
-    System.out.println(String.format("Default target: %s%n", getCurrentTarget()));
+    System.out.println(String.format("Default directive directive: %s%n",
+        getCurrentDirective()));
+    System.out.println(String.format("Default target: %s%n",
+        getCurrentTarget()));
     System.out.println("Current transformation order:");
     int i = 0;
     System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n",

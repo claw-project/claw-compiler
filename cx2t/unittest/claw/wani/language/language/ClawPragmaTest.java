@@ -69,7 +69,8 @@ public class ClawPragmaTest {
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu,mic)", null,
         false, 0, Arrays.asList(Target.CPU, Target.GPU, Target.MIC), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu) collapse(3) " +
-        "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU), null);
+            "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU),
+        null);
 
     // Constraint clause
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(direct)",
@@ -443,8 +444,10 @@ public class ClawPragmaTest {
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(j1=ki1sc,ki1ec) " +
             "map(pduh2oc,pduh2of:j1,ki3sc/j3) " +
-            "map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3) " +
-            "map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) " +
+            "map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac," +
+            "podaf:j1,ki3sc/j3) " +
+            "map(pbsff,pbsfc:j1,ki3sc/j3) " +
+            "map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) " +
             "fusion group(coeth-j1) parallel acc(loop gang vector)",
         "j1", "ki1sc", "ki1ec", null, null);
     assertNotNull(l);
@@ -587,11 +590,14 @@ public class ClawPragmaTest {
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1)",
         Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,-1,0)",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0)",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) private",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) private",
         Arrays.asList("var1", "var2"), null, false, true, null);
 
@@ -610,11 +616,15 @@ public class ClawPragmaTest {
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1) init",
         Arrays.asList("var1", "var2"), Arrays.asList(0, 1), true, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,-1,0) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false, null);
-    analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) init private",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false,
+        null);
+    analyzeValidKcache(
+        "claw kcache data(var1,var2) offset(+1,-1,0) init private",
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) init private",
         Arrays.asList("var1", "var2"), null, true, true, null);
 
@@ -829,7 +839,8 @@ public class ClawPragmaTest {
     ReshapeInfo info1 = new ReshapeInfo("zmd", 0, empty);
     ReshapeInfo info2 =
         new ReshapeInfo("zsediflux", 1, Collections.singletonList(2));
-    analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
+    analyzeValidLoopHoist("claw loop-hoist(i,j) " +
+            "reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
         Arrays.asList(info1, info2), null, false, null, 0, false, null);
 

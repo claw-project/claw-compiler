@@ -32,7 +32,8 @@ public class GeneratorTest {
     assertEquals(0, gen.getSingleDirective("").length);
     assertEquals(0, gen.getRoutineDirective(false).length);
     assertEquals(0, gen.getRoutineDirective(true).length);
-    assertEquals(0, gen.getStartDataRegion(Collections.<String>emptyList()).length);
+    assertEquals(0,
+        gen.getStartDataRegion(Collections.<String>emptyList()).length);
     assertEquals(0, gen.getEndDataRegion().length);
 
     assertTrue(gen.getParallelKeyword().isEmpty());

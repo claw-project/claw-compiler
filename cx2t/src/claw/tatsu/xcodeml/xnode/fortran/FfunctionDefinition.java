@@ -102,7 +102,8 @@ public class FfunctionDefinition extends Xnode {
   /**
    * Find module containing the function and read its .xmod file.
    *
-   * @return FortranModule object if the module has been found and read. Null otherwise.
+   * @return FortranModule object if the module has been found and read.
+   * Null otherwise.
    */
   public FortranModule findContainingXmod() {
     FmoduleDefinition mod = findParentModule();
@@ -134,7 +135,8 @@ public class FfunctionDefinition extends Xnode {
   /**
    * Create an identical copy of the current function definition.
    *
-   * @return A new FfunctionDefinition object that is the clone of this function definition.
+   * @return A new FfunctionDefinition object that is the clone of this
+   * function definition.
    */
   @Override
   public FfunctionDefinition cloneNode() {

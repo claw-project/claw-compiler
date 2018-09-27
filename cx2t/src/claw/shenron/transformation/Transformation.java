@@ -60,7 +60,8 @@ public abstract class Transformation {
    * the given transformation. Useful only for dependent transformation.
    *
    * @param xcodeml The XcodeML on which the transformations are applied.
-   * @param other   The other transformation part of the dependent transformation.
+   * @param other   The other transformation part of the dependent
+   *                transformation.
    * @return True if the two transformation can be transform together. False
    * otherwise.
    * @see DependentTransformationGroup

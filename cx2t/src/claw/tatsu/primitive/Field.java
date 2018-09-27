@@ -152,7 +152,8 @@ public final class Field {
         param.setType(type);
 
         // Save the over clause for one_column forward transformation
-        param.setAttribute(Xattr.PROMOTION_INFO, fieldInfo.getFormattedDimensions());
+        param.setAttribute(Xattr.PROMOTION_INFO,
+            fieldInfo.getFormattedDimensions());
       }
     }
 
@@ -160,7 +161,8 @@ public final class Field {
         && fctType.getAttribute(Xattr.RESULT_NAME).
         equals(fieldInfo.getIdentifier()))
     {
-      fctType.setAttribute(Xattr.PROMOTION_INFO, fieldInfo.getFormattedDimensions());
+      fctType.setAttribute(Xattr.PROMOTION_INFO,
+          fieldInfo.getFormattedDimensions());
     }
   }
 

@@ -59,7 +59,8 @@ directive[ClawPragma l]
     { $l.setDirective(ClawDirective.LOOP_INTERCHANGE); }
 
   // loop-extract directive
-  | LOOP_EXTRACT range_option mapping_option_list[m] loop_extract_clauses[$l] EOF
+  | LOOP_EXTRACT range_option mapping_option_list[m]
+    loop_extract_clauses[$l] EOF
     {
       $l.setDirective(ClawDirective.LOOP_EXTRACT);
       $l.setRange($range_option.r);
@@ -103,7 +104,8 @@ directive[ClawPragma l]
     }
 
   // on the fly directive
-  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER '(' identifiers_list[o] ')' (target_clause[$l])? EOF
+  | ARRAY_TO_CALL array_name=IDENTIFIER '=' fct_name=IDENTIFIER
+    '(' identifiers_list[o] ')' (target_clause[$l])? EOF
     {
       $l.setDirective(ClawDirective.ARRAY_TO_CALL);
       $l.setFctParams(o);
@@ -112,23 +114,27 @@ directive[ClawPragma l]
     }
 
    // SCA (parallelize deprecated) directive
-   | define_option[$l]+ PARALLELIZE data_over_clause[$l]* parallelize_clauses[$l] EOF
+   | define_option[$l]+ PARALLELIZE data_over_clause[$l]*
+     parallelize_clauses[$l] EOF
      {
        // TODO to be removed
-       System.err.println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       System.err.
+       println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
      }
    | PARALLELIZE FORWARD parallelize_clauses[$l] EOF
      {
        // TODO to be removed
-       System.err.println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       System.err.
+       println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
        $l.setForwardClause();
      }
    | END PARALLELIZE EOF
      {
        // TODO to be removed
-       System.err.println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       System.err.
+       println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
        $l.setEndPragma();
      }
@@ -265,7 +271,8 @@ acc_clause[ClawPragma l]
     List<String> tempAcc = new ArrayList<>();
   }
   :
-    ACC '(' identifiers[tempAcc] ')' { $l.setAcceleratorClauses(Utility.join(" ", tempAcc)); }
+    ACC '(' identifiers[tempAcc] ')'
+    { $l.setAcceleratorClauses(Utility.join(" ", tempAcc)); }
 ;
 
 // interchange clause
@@ -320,9 +327,15 @@ reshape_element returns [ReshapeInfo i]
   }
 :
     array_name=IDENTIFIER '(' target_dim=NUMBER ')'
-    { $i = new ReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
+    {
+      $i = new ReshapeInfo($array_name.text,
+      Integer.parseInt($target_dim.text), temp);
+    }
   | array_name=IDENTIFIER '(' target_dim=NUMBER ',' integers_list[temp] ')'
-    { $i = new ReshapeInfo($array_name.text, Integer.parseInt($target_dim.text), temp); }
+    {
+      $i = new ReshapeInfo($array_name.text,
+      Integer.parseInt($target_dim.text), temp);
+    }
 ;
 
 reshape_list[List<ReshapeInfo> r]:
@@ -386,7 +399,8 @@ range_option returns [ClawRange r]
       $r.setUpperBound($upper.text);
       $r.setStep(ClawConstant.DEFAULT_STEP_VALUE);
     }
-  | RANGE '(' induction_var=IDENTIFIER '=' lower=range_id ',' upper=range_id ',' step=range_id ')'
+  | RANGE '(' induction_var=IDENTIFIER '=' lower=range_id ',' upper=range_id ','
+    step=range_id ')'
     {
       $r.setInductionVar($induction_var.text);
       $r.setLowerBound($lower.text);
@@ -433,14 +447,16 @@ mapping_option returns [ClawMapping mapping]
 
 mapping_option_list[List<ClawMapping> mappings]:
     m=mapping_option { $mappings.add($m.mapping); }
-  | m=mapping_option { $mappings.add($m.mapping); } mapping_option_list[$mappings]
+  | m=mapping_option { $mappings.add($m.mapping); }
+    mapping_option_list[$mappings]
 ;
 
 
 define_option[ClawPragma l]:
     DEFINE DIMENSION id=IDENTIFIER '(' lower=range_id ':' upper=range_id ')'
     {
-      DimensionDefinition cd = new DimensionDefinition($id.text, $lower.text, $upper.text);
+      DimensionDefinition cd =
+        new DimensionDefinition($id.text, $lower.text, $upper.text);
       $l.addDimension(cd);
     }
 ;
@@ -495,7 +511,8 @@ constraint_clause[ClawPragma l]:
 
 target_list[List<Target> targets]:
     target { if(!$targets.contains($target.t)) { $targets.add($target.t); } }
-  | target { if(!$targets.contains($target.t)) { $targets.add($target.t); } } ',' target_list[$targets]
+  | target { if(!$targets.contains($target.t)) { $targets.add($target.t); } }
+    ',' target_list[$targets]
 ;
 
 

@@ -50,11 +50,11 @@ public class ClawRangeTest {
 
   @Test
   public void compareWithLoopIterationRangeTest() {
-    Xnode iterationRange1 =
-        XmlHelper.createXnode(beginLoop + inductionVar1 + indexRange1 + endLoop);
+    Xnode iterationRange1 = XmlHelper.createXnode(beginLoop +
+        inductionVar1 + indexRange1 + endLoop);
     assertNotNull(iterationRange1);
-    Xnode iterationRange2 =
-        XmlHelper.createXnode(beginLoop + inductionVar1 + indexRange2 + endLoop);
+    Xnode iterationRange2 = XmlHelper.createXnode(beginLoop +
+        inductionVar1 + indexRange2 + endLoop);
     assertNotNull(iterationRange1);
 
     ClawRange range1 = new ClawRange("i", "1", "10", "1");

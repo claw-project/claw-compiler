@@ -202,7 +202,8 @@ public class XnodeTest {
       crt = crt.prevSibling();
     }
 
-    assertNotNull(fctDef.body().matchDirectDescendant(Xcode.F_PRAGMA_STATEMENT));
+    assertNotNull(fctDef.body().
+        matchDirectDescendant(Xcode.F_PRAGMA_STATEMENT));
     assertNull(p.matchDirectDescendant(Xcode.F_PRAGMA_STATEMENT));
 
     // Methods should not crash on deleted node

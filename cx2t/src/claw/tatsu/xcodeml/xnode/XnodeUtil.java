@@ -33,11 +33,9 @@ import java.util.*;
 
 public class XnodeUtil {
 
-  private XnodeUtil(){
+  private XnodeUtil() {
     // Hide implicit public ctor
   }
-
-  // TODO 1.0 move method to specific primitives or classes and delete this class
 
   /**
    * Find all array references elements in a given body and give var name.
@@ -319,7 +317,8 @@ public class XnodeUtil {
    */
   public static List<Xnode> getAllArrayReferencesByOffsets(Xnode from,
                                                            String identifier,
-                                                           List<Integer> offsets)
+                                                           List<Integer>
+                                                               offsets)
   {
     StringBuilder offsetXpath = new StringBuilder();
     for(int i = 0; i < offsets.size(); ++i) {
@@ -330,21 +329,23 @@ public class XnodeUtil {
             Xname.VAR
         ));
       } else if(offsets.get(i) > 0) {
-        offsetXpath.append(String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
-            Xname.ARRAY_INDEX,
-            i + 1,
-            Xname.MINUS_EXPR,
-            Xname.VAR,
-            Xname.F_INT_CONST,
-            offsets.get(i)));
+        offsetXpath.append(String.
+            format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
+                Xname.ARRAY_INDEX,
+                i + 1,
+                Xname.MINUS_EXPR,
+                Xname.VAR,
+                Xname.F_INT_CONST,
+                offsets.get(i)));
       } else {
-        offsetXpath.append(String.format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
-            Xname.ARRAY_INDEX,
-            i + 1,
-            Xname.MINUS_EXPR,
-            Xname.VAR,
-            Xname.F_INT_CONST,
-            Math.abs(offsets.get(i))));
+        offsetXpath.append(String.
+            format("%s[position()=%s and %s[%s and %s[text()=\"%s\"]]]",
+                Xname.ARRAY_INDEX,
+                i + 1,
+                Xname.MINUS_EXPR,
+                Xname.VAR,
+                Xname.F_INT_CONST,
+                Math.abs(offsets.get(i))));
       }
       if(i != offsets.size() - 1) {
         offsetXpath.append(" and ");
@@ -421,9 +422,9 @@ public class XnodeUtil {
   public static Set<String> findChildrenVariables(Xnode node) {
     List<Xnode> varNodes = node.matchAll(Xcode.VAR);
     Set<String> vars = new HashSet<>();
-    for (Xnode xnode : varNodes) {
+    for(Xnode xnode : varNodes) {
       // Skip vector indexes
-      if (xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
+      if(xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
         continue;
       }
       vars.add(xnode.value());

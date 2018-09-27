@@ -17,8 +17,8 @@ import claw.wani.transformation.ClawTransformation;
 /**
  * <pre>
  * OpenACC line continuation transformation. The XcodeML/F pragma statement
- * representation is an aggregated version of the pragma with all its continuation
- * lines.
+ * representation is an aggregated version of the pragma with all its
+ * continuation lines.
  * As those directives are not handled by the CLAW XcodeML to XcodeML
  * translator, they must be output in a correct way. This transformation divides
  * the XcodeML representation back to a multi-line pragma definition.
@@ -31,7 +31,8 @@ import claw.wani.transformation.ClawTransformation;
  *
  * are represented in XcodeML with
  *
- * &lt;FpragmaStatement&gt;acc data present (a,b,c,d,e,f,g)&lt;/FpragmaStatement&gt;
+ * &lt;FpragmaStatement&gt;acc data present (a,b,c,d,e,f,g)
+ * &lt;/FpragmaStatement&gt;
  *
  * Based on the defined max columns, the pragma statement will be splitted.
  * </pre>

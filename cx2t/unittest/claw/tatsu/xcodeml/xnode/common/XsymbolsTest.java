@@ -26,10 +26,12 @@ public class XsymbolsTest {
 
   private static final String sym2 =
       "<symbols>" +
-          "<id type=\"I7fcbf34041b0\" sclass=\"flocal\" declared_in=\"mo_kind\">" +
+          "<id type=\"I7fcbf34041b0\" sclass=\"flocal\" " +
+          "declared_in=\"mo_kind\">" +
           "<name>dp</name>" +
           "</id>" +
-          "<id type=\"I7fcbf3409ec0\" sclass=\"flocal\" declared_in=\"mo_kind\">" +
+          "<id type=\"I7fcbf3409ec0\" sclass=\"flocal\" " +
+          "declared_in=\"mo_kind\">" +
           "<name>sp</name>" +
           "</id>" +
           "</symbols>";
@@ -41,7 +43,8 @@ public class XsymbolsTest {
     XsymbolTable table = xcodeml.getGlobalSymbolsTable();
     assertNotNull(table);
 
-    Xid id1 = xcodeml.createId(FortranType.INTEGER, XstorageClass.F_LOCAL, "id1");
+    Xid id1 = xcodeml.createId(FortranType.INTEGER,
+        XstorageClass.F_LOCAL, "id1");
     table.add(id1);
     assertTrue(table.contains("id1"));
   }
