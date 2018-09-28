@@ -16,6 +16,7 @@ import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
+import claw.wani.x2t.configuration.ModelConfig;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -50,9 +51,6 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ReshapeInfo> _reshapeInfos;
-  private List<DimensionDefinition> _dimensions;
-  private Map<String, DimensionDefinition> _dimensionsMap;
-  private Map<String, List<DimensionDefinition>> _specializedDimensionsMap;
   private List<List<String>> _overValues;
   private List<List<String>> _overDataValues;
   private List<String> _scalarValues;
@@ -61,6 +59,8 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
   private CompilerDirective _cleanupClauseValue;
+  private String _layoutValue;
+  private ModelConfig _localModelConfig;
 
   // Clauses flags
   private boolean _hasAccClause;
@@ -86,6 +86,9 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasScalarClause;
   private boolean _hasCreateClause;
   private boolean _hasCleanupClause;
+  private boolean _hasLayoutClause;
+
+  private boolean _scaModelConfig;
 
   /**
    * Constructs an empty ClawPragma section.
@@ -277,9 +280,6 @@ public class ClawPragma extends AnalyzedPragma {
     _arrayName = null;
     _collapseClauseValue = 1;
     _dataValues = null;
-    _dimensions = null;
-    _dimensionsMap = null;
-    _specializedDimensionsMap = null;
     _fctCallParameters = null;
     _fctName = null;
     _groupClauseValue = null;
@@ -295,6 +295,7 @@ public class ClawPragma extends AnalyzedPragma {
     _targetClauseValues = null;
     _constraintClauseValue = ClawConstraint.DIRECT;
     _cleanupClauseValue = CompilerDirective.NONE;
+    _layoutValue = null;
 
     // Clauses flags members
     _hasAccClause = false;
@@ -319,9 +320,12 @@ public class ClawPragma extends AnalyzedPragma {
     _hasScalarClause = false;
     _hasCreateClause = false;
     _hasCleanupClause = false;
+    _hasLayoutClause = false;
 
     // General members
     _directive = null;
+
+    _scaModelConfig = false;
 
     // Data Movement Direction
     _copyClauseValue = null;
@@ -676,12 +680,8 @@ public class ClawPragma extends AnalyzedPragma {
   public void processDataOverClauses(List<String> data, List<String> over)
   //throws Exception
   {
-    List<DimensionDefinition> specializedDimensions = new ArrayList<>();
+    List<DimensionDefinition> overLayout = new ArrayList<>();
     InsertionPosition crt = InsertionPosition.BEFORE;
-
-    if(_specializedDimensionsMap == null) {
-      _specializedDimensionsMap = new HashMap<>();
-    }
 
     int baseDimOccurrence = 0;
     for(String d : over) {
@@ -706,12 +706,12 @@ public class ClawPragma extends AnalyzedPragma {
           crt = InsertionPosition.AFTER;
         }
       } else {
-        DimensionDefinition dim = _dimensionsMap.get(d);
-        if(dim != null) {
 
-          DimensionDefinition newDimension = dim.copy();
+        if(_localModelConfig.hasDimension(d)) {
+          DimensionDefinition newDimension
+              = _localModelConfig.getDimension(d).copy();
           newDimension.setInsertionPosition(crt);
-          specializedDimensions.add(newDimension);
+          overLayout.add(newDimension);
         } else {
           // TODO 1.5 exception Dimension " + d + " is not defined"
         }
@@ -719,17 +719,15 @@ public class ClawPragma extends AnalyzedPragma {
     }
 
     for(String d : data) {
-      _specializedDimensionsMap.put(d, specializedDimensions);
+      _localModelConfig.putLayout(d.toLowerCase(), overLayout);
     }
   }
 
   public List<DimensionDefinition> getDimensionsForData(String identifier) {
-    if(_specializedDimensionsMap != null &&
-        _specializedDimensionsMap.containsKey(identifier.toLowerCase()))
-    {
-      return _specializedDimensionsMap.get(identifier.toLowerCase());
+    if(_localModelConfig.hasLayout(identifier.toLowerCase())) {
+      return _localModelConfig.getLayout(identifier.toLowerCase());
     }
-    return _dimensions;
+    return _localModelConfig.getDefaultLayout();
   }
 
   /**
@@ -957,15 +955,13 @@ public class ClawPragma extends AnalyzedPragma {
    *                  extracted in the clause.
    */
   public void addDimension(DimensionDefinition dimension) {
+
     _hasDimensionClause = true;
-    if(_dimensions == null) {
-      _dimensions = new ArrayList<>();
+
+    if(_localModelConfig == null) {
+      _localModelConfig = new ModelConfig();
     }
-    if(_dimensionsMap == null) {
-      _dimensionsMap = new HashMap<>();
-    }
-    _dimensions.add(dimension);
-    _dimensionsMap.put(dimension.getIdentifier(), dimension);
+    _localModelConfig.putDimension(dimension);
   }
 
   /**
@@ -1085,20 +1081,20 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @return All dimensions extracted from the directive.
    */
-  public List<DimensionDefinition> getDimensionValues() {
+  /*public List<DimensionDefinition> getDimensionValues() {
     return _dimensions;
-  }
+  }*/
 
   /**
    * Get the dimensions extracted information in reverse order.
    *
    * @return All dimensions extracted from the directive in reverse order.
    */
-  public List<DimensionDefinition> getDimensionValuesReversed() {
+  /*public List<DimensionDefinition> getDimensionValuesReversed() {
     List<DimensionDefinition> tmp = new ArrayList<>(_dimensions);
     Collections.reverse(tmp);
     return tmp;
-  }
+  }*/
 
   /**
    * Attach the pragma related to this CLAW language analysis.
@@ -1163,5 +1159,56 @@ public class ClawPragma extends AnalyzedPragma {
   public void setCleanupClauseValue(CompilerDirective value) {
     _hasCleanupClause = true;
     _cleanupClauseValue = value;
+  }
+
+  /**
+   * Check whether the layout clause is used.
+   *
+   * @return True if the layout clause is used.
+   */
+  public boolean hasLayoutClause() {
+    return _hasLayoutClause;
+  }
+
+  /**
+   * Get the layout clause value.
+   *
+   * @return Layout clause value.
+   */
+  public String getLayoutValue() {
+    return _layoutValue;
+  }
+
+  /**
+   * Set the layout clause value and the update clause usage flag to true.
+   *
+   * @param value New compiler directive clause value.
+   */
+  public void setLayoutClause(String value) {
+    _hasLayoutClause = true;
+    _layoutValue = value;
+  }
+
+  /**
+   * Set the current directive as a SCA from model config.
+   */
+  public void setScaModelConfig() {
+    _scaModelConfig = true;
+  }
+
+  /**
+   * Check whether the current directive is a SCA using model config.
+   * @return True if the current directive is a SCA using model config.
+   */
+  public boolean isScaModelConfig() {
+    return _scaModelConfig;
+  }
+
+  /**
+   *
+   * @return
+   */
+  public ModelConfig getLocalModelConfig() {
+    return _localModelConfig;
   }
 }

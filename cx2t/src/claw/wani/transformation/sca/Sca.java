@@ -134,12 +134,12 @@ public class Sca extends ClawTransformation {
       }
     }
 
-    if(_claw.hasDimensionClause()) {
-      return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans) &&
-          analyzeOver(xcodeml);
-    } else {
+    if(_claw.isScaModelConfig()) {
       // Run analysis for model config only
       return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+    } else {
+      return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans)
+          && analyzeOver(xcodeml);
     }
   }
 
@@ -151,14 +151,18 @@ public class Sca extends ClawTransformation {
    */
   private boolean analyzeDimension(XcodeProgram xcodeml) {
     if(!_claw.hasDimensionClause()
-        && ModelConfig.get().getNbDimensions() == 0)
+        && (_claw.isScaModelConfig()
+        && ModelConfig.get().getNbDimensions() == 0))
     {
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().lineNo());
       return false;
     }
 
-    if(_claw.hasDimensionClause()) {
+    // Dimension defined directly in the directive, check them and populate the
+    // model config.
+   /* if(!_claw.isScaModelConfig() && _claw.hasDimensionClause()) {
+      //List<DimensionDefinition> defaultLayout = new ArrayList<>();
       for(DimensionDefinition d : _claw.getDimensionValues()) {
         if(ModelConfig.get().getDimension(d.getIdentifier()) != null) {
           xcodeml.addError(
@@ -167,9 +171,13 @@ public class Sca extends ClawTransformation {
           );
           return false;
         }
-        ModelConfig.get().putDimension(d.getIdentifier(), d);
       }
+
     }
+
+
+
+    return true;*/
     return true;
   }
 
@@ -180,13 +188,17 @@ public class Sca extends ClawTransformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyzeData(XcodeProgram xcodeml, ClawTranslator trans) {
-    if(!_claw.hasOverDataClause() && _claw.hasDimensionClause()) { // Full directive without over clause
-      return analyzeDataForAutomaticPromotion(xcodeml);
-    } else if(_claw.hasOverDataClause()) {
-      return analyzeDataFromOverClause(xcodeml);
-    } else {
+
+    if(_claw.isScaModelConfig()) {
       return analyzeModelData(xcodeml, trans);
+    } else {
+      if(!_claw.hasOverDataClause()) {
+        return analyzeDataForAutomaticPromotion(xcodeml);
+      } else if(_claw.hasOverDataClause()) {
+        return analyzeDataFromOverClause(xcodeml);
+      }
     }
+    return false;
   }
 
   /**
@@ -298,12 +310,12 @@ public class Sca extends ClawTransformation {
    */
   private boolean analyzeOver(XcodeProgram xcodeml) {
     if(!_claw.hasOverClause()) {
-      _overDimensions += _claw.getDimensionValues().size();
+      _overDimensions += ModelConfig.get().getDefaultLayout().size();
       return true;
     }
 
     // Check if over dimensions are defined dimensions
-    _overDimensions = _claw.getDimensionValues().size();
+    _overDimensions = ModelConfig.get().getDefaultLayout().size();
     for(List<String> overLst : _claw.getOverClauseValues()) {
       int usedDimension = 0;
       for(String o : overLst) {
@@ -427,7 +439,6 @@ public class Sca extends ClawTransformation {
       return _claw.getDimensionsForData(fieldId);
     } else {
       // TODO get specific layout if provided by user
-
       return ModelConfig.get().getDefaultLayout();
     }
   }
@@ -438,23 +449,22 @@ public class Sca extends ClawTransformation {
    * @return Reversed list of dimensions.
    */
   protected List<DimensionDefinition> getDimensionValuesReversed() {
-    if(_claw.hasDimensionClause()) {
-      return _claw.getDimensionValuesReversed();
+    List<DimensionDefinition> tmp;
+    if(_claw.isScaModelConfig()) {
+      tmp = new ArrayList<>(ModelConfig.get().getDefaultLayout());
     } else {
-      // TODO get specific layout if provided by user
-      List<DimensionDefinition> tmp =
-          new ArrayList<>(ModelConfig.get().getDefaultLayout());
-      Collections.reverse(tmp);
-      return tmp;
+      tmp = _claw.getLocalModelConfig().getDefaultLayout();
     }
+    Collections.reverse(tmp);
+    return tmp;
   }
 
   protected List<DimensionDefinition> getUsedDimensions() {
-    if(_claw.hasDimensionClause()) {
-      return _claw.getDimensionValues();
-    } else {
+    if(_claw.isScaModelConfig()) {
       // TODO get specific layout if provided by user
       return ModelConfig.get().getDefaultLayout();
+    } else {
+      return _claw.getLocalModelConfig().getDefaultLayout();
     }
   }
 

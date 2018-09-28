@@ -143,7 +143,9 @@ directive[ClawPragma l]
    | SCA EOF
      {
        $l.setDirective(ClawDirective.SCA);
+       $l.setScaModelConfig();
      }
+   // SCA directive with define dimension
    | define_option[$l]+ SCA data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.SCA);
@@ -163,6 +165,11 @@ directive[ClawPragma l]
    | MODEL_DATA EOF
      {
        $l.setDirective(ClawDirective.MODEL_DATA);
+     }
+   | MODEL_DATA LAYOUT '(' layout_id=IDENTIFIER ')' EOF
+     {
+       $l.setDirective(ClawDirective.MODEL_DATA);
+       $l.setLayoutClause($layout_id.text);
      }
    | END MODEL_DATA EOF
      {
@@ -633,6 +640,7 @@ GROUP        : 'group';
 INDUCTION    : 'induction';
 INIT         : 'init';
 INTERCHANGE  : 'interchange';
+LAYOUT       : 'layout';
 MAP          : 'map';
 OFFSET       : 'offset';
 OVER         : 'over';

@@ -5,7 +5,6 @@
 package claw.wani.x2t.configuration;
 
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
-import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import net.consensys.cava.toml.Toml;
 import net.consensys.cava.toml.TomlArray;
 import net.consensys.cava.toml.TomlParseResult;
@@ -67,7 +66,7 @@ public class ModelConfig {
   /**
    * Private ctor to avoid instantiation of this class.
    */
-  private ModelConfig() {
+  public ModelConfig() {
     _dimensions = new HashMap<>();
     _layouts = new HashMap<>();
   }
@@ -264,7 +263,7 @@ public class ModelConfig {
    *
    * @param table     Current table to read in.
    * @param dottedKey Dotted key to get the value.
-   * @return String respresentation of the actual value if present. Empty string
+   * @return String representation of the actual value if present. Empty string
    * otherwise.
    */
   private String readStringOrInt(TomlTable table, String dottedKey) {
@@ -300,12 +299,23 @@ public class ModelConfig {
     return null;
   }
 
+  /**
+   * Check if a dimension is available from its identifier.
+   *
+   * @param id Identifier of the dimension to query.
+   * @return True if the dimension is available. False otherwise.
+   */
   public boolean hasDimension(String id) {
     return _dimensions.containsKey(id);
   }
 
-  public void putDimension(String id, DimensionDefinition d) {
-    _dimensions.put(id, d);
+  /**
+   * Add a dimension in the model configuration.
+   *
+   * @param d Dimension to add.
+   */
+  public void putDimension(DimensionDefinition d) {
+    _dimensions.put(d.getIdentifier(), d);
   }
 
   /**
@@ -315,6 +325,41 @@ public class ModelConfig {
    */
   public int getNbDimensions() {
     return _dimensions.size();
+  }
+
+  /**
+   * Check whether a layout is available.
+   *
+   * @param id Id of the layout to query.
+   * @return True if the layout is available. False otherwise.
+   */
+  public boolean hasLayout(String id) {
+    return _layouts.containsKey(id);
+  }
+
+  /**
+   * Add a layout in the model configuration. If dimensions in layout are not
+   * present, they are automatically added.
+   *
+   * @param id         Unique identifier of the layout.
+   * @param dimensions List of dimensions composing the layout.
+   */
+  public void putLayout(String id, List<DimensionDefinition> dimensions) {
+    _layouts.put(id, dimensions);
+    for(DimensionDefinition dim : dimensions) {
+      if(!_dimensions.containsKey(dim.getIdentifier())) {
+        putDimension(dim);
+      }
+    }
+  }
+
+  /**
+   * Add a default layout in the model configuration.
+   *
+   * @param dimensions List of dimensions composing the layout.
+   */
+  public void putDefaultLayout(List<DimensionDefinition> dimensions) {
+    putLayout(DEFAULT_LAYOUT_ID, dimensions);
   }
 
   /**

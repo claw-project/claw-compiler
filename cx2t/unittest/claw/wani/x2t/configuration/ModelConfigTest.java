@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -65,6 +66,33 @@ public class ModelConfigTest {
     } catch(Exception ignored) {
       fail();
     }
+  }
+
+  @Test
+  public void dimensionsTest() {
+    ModelConfig cfg = ModelConfig.get();
+    assertEquals(0, cfg.getNbDimensions());
+
+    DimensionDefinition d = new DimensionDefinition("dim1", "0", "ndim1");
+    assertFalse(cfg.hasDimension(d.getIdentifier()));
+    cfg.putDimension(d);
+    assertTrue(cfg.hasDimension(d.getIdentifier()));
+    assertEquals(d, cfg.getDimension(d.getIdentifier()));
+  }
+
+  @Test
+  public void layoutTest() {
+    ModelConfig cfg = ModelConfig.get();
+    assertEquals(0, cfg.getNbLayouts());
+    DimensionDefinition d = new DimensionDefinition("dim1", "0", "ndim1");
+    assertTrue(cfg.getDefaultLayout().isEmpty());
+    assertFalse(cfg.hasDimension(d.getIdentifier()));
+    cfg.putDefaultLayout(Collections.singletonList(d));
+    assertFalse(cfg.getDefaultLayout().isEmpty());
+    assertTrue(cfg.hasDimension(d.getIdentifier()));
+    assertEquals(d, cfg.getDimension(d.getIdentifier()));
+    assertEquals(1, cfg.getDefaultLayout().size());
+    assertEquals(d, cfg.getDefaultLayout().get(0));
   }
 
   @Test
