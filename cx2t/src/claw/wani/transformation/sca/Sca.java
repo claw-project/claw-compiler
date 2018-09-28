@@ -189,15 +189,19 @@ public class Sca extends ClawTransformation {
     }
   }
 
+  /**
+   * Recover data defined by the model-data directive in this subroutine.
+   *
+   * @param xcodeml Current translation unit.
+   * @param trans   Current translator holding information from model-data
+   *                directive.
+   * @return True if model-data information could be recovered. False otherwise.
+   */
   private boolean analyzeModelData(XcodeProgram xcodeml, ClawTranslator trans) {
     Set<String> modelVariables;
     if(trans.hasElement(_fctDef) != null) {
       modelVariables = Utility.convertToSet(trans.hasElement(_fctDef));
-
-      for(String data : modelVariables) {
-        _arrayFieldsInOut.add(data);
-      }
-
+      _arrayFieldsInOut.addAll(modelVariables);
       return true;
     } else {
       xcodeml.addError("No model-data defined in function " + _fctDef.getName(),
@@ -375,6 +379,8 @@ public class Sca extends ClawTransformation {
       throws IllegalTransformationException
 
   {
+    /* If the subroutine/function is public and part of a module, update the
+     * module signature to propagate the promotion information. */
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
@@ -417,37 +423,37 @@ public class Sca extends ClawTransformation {
   }
 
   protected List<DimensionDefinition> getDimensionsForData(String fieldId) {
-    if(_claw.hasDimensionClause()){
+    if(_claw.hasDimensionClause()) {
       return _claw.getDimensionsForData(fieldId);
     } else {
+      // TODO get specific layout if provided by user
+
       return ModelConfig.get().getDefaultLayout();
     }
   }
 
+  /**
+   * Return the list of used dimensions in reverse order.
+   *
+   * @return Reversed list of dimensions.
+   */
   protected List<DimensionDefinition> getDimensionValuesReversed() {
-    if(_claw.hasDimensionClause()){
+    if(_claw.hasDimensionClause()) {
       return _claw.getDimensionValuesReversed();
     } else {
-      List<DimensionDefinition> tmp = new ArrayList<>(ModelConfig.get().getDefaultLayout());
+      // TODO get specific layout if provided by user
+      List<DimensionDefinition> tmp =
+          new ArrayList<>(ModelConfig.get().getDefaultLayout());
       Collections.reverse(tmp);
       return tmp;
     }
   }
 
-  protected List<DimensionDefinition> getDimensionValues() {
-    if(_claw.hasDimensionClause()){
-      return _claw.getDimensionValues();
-    } else {
-      return ModelConfig.get().getDefaultLayout();
-    }
-  }
-
-
-
-  private List<DimensionDefinition> getUsedDimensions() {
+  protected List<DimensionDefinition> getUsedDimensions() {
     if(_claw.hasDimensionClause()) {
       return _claw.getDimensionValues();
     } else {
+      // TODO get specific layout if provided by user
       return ModelConfig.get().getDefaultLayout();
     }
   }

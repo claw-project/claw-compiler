@@ -7,6 +7,9 @@ package claw.tatsu.xcodeml.abstraction;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Class holding information about defined dimension.
  *
@@ -270,5 +273,32 @@ public class DimensionDefinition {
             _lowerBound.getValue() : String.valueOf(_lowerBound.getIntValue()),
         _upperBound.isVar() ?
             _upperBound.getValue() : String.valueOf(_upperBound.getIntValue()));
+  }
+
+  /**
+   * Flag the insertion position in a list of dimension definition based on the
+   * location of the base dimension.
+   *
+   * @param dimensions List of dimension definition to be flagged.
+   */
+  public static void flagInsertPosition(List<DimensionDefinition> dimensions) {
+    int baseDimensionOccurences =
+        Collections.frequency(dimensions, DimensionDefinition.BASE_DIMENSION);
+
+    boolean hasMiddleInsertion = baseDimensionOccurences > 1;
+    InsertionPosition crtPos = InsertionPosition.BEFORE;
+    for(DimensionDefinition dim : dimensions) {
+      if(dim == DimensionDefinition.BASE_DIMENSION) {
+        if(hasMiddleInsertion && crtPos == InsertionPosition.BEFORE) {
+          crtPos = InsertionPosition.IN_MIDDLE;
+        } else if(crtPos == InsertionPosition.BEFORE) {
+          crtPos = InsertionPosition.AFTER;
+        } else if(crtPos == InsertionPosition.IN_MIDDLE) {
+          crtPos = InsertionPosition.AFTER;
+        }
+      } else {
+        dim.setInsertionPosition(crtPos);
+      }
+    }
   }
 }

@@ -55,9 +55,9 @@ public class ModelConfigTest {
       assertNull(cfg.getDimension(null));
 
       assertNotNull(cfg.getDefaultLayout());
-      assertLayout(cfg, "cpu", 2);
-      assertLayout(cfg, "gpu", 2);
-      assertLayout(cfg, "radiation", 2);
+      assertLayout(cfg, "cpu", 1);
+      assertLayout(cfg, "gpu", 1);
+      assertLayout(cfg, "radiation", 1);
 
       assertTrue(cfg.getLayout("unknown").isEmpty());
       assertTrue(cfg.getLayout(null).isEmpty());
