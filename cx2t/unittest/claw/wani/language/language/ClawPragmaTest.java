@@ -1118,8 +1118,8 @@ public class ClawPragmaTest {
         List<DimensionDefinition> dimension = dimensions.get(j);
 
         for(String id : data) {
-          assertNotNull(l.getDimensionsForData(id));
-          List<DimensionDefinition> dims = l.getDimensionsForData(id);
+          assertNotNull(l.getLayout(id));
+          List<DimensionDefinition> dims = l.getLayout(id);
           assertEquals(dimension.size(), dims.size());
           for(int i = 0; i < dimension.size(); ++i) {
             assertEquals(dimension.get(i).getIdentifier(),

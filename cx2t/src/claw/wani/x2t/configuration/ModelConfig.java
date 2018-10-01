@@ -67,7 +67,7 @@ public class ModelConfig {
    * Private ctor to avoid instantiation of this class.
    */
   public ModelConfig() {
-    _dimensions = new HashMap<>();
+    _dimensions = new LinkedHashMap<>();
     _layouts = new HashMap<>();
   }
 
@@ -366,6 +366,16 @@ public class ModelConfig {
    */
   public List<DimensionDefinition> getDefaultLayout() {
     return getLayout(DEFAULT_LAYOUT_ID);
+  }
+
+  /**
+   * Generate the default layout when not present. Used for in directive
+   * dimension definition.
+   */
+  public void generateDefaultLayout() {
+    if(!_dimensions.isEmpty() && !hasLayout(DEFAULT_LAYOUT_ID)) {
+      putLayout(DEFAULT_LAYOUT_ID, new ArrayList<>(_dimensions.values()));
+    }
   }
 
   /**

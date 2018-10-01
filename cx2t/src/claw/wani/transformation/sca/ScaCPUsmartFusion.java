@@ -146,7 +146,7 @@ public class ScaCPUsmartFusion extends Sca {
           continue;
         }
         PromotionInfo promotionInfo = new PromotionInfo(promotion,
-            _claw.getDimensionsForData(promotion));
+            _claw.getLayout(promotion));
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(promotion, promotionInfo);
         Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);

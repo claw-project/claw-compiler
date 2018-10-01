@@ -121,6 +121,7 @@ directive[ClawPragma l]
        System.err.
        println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
+       $l.getLocalModelConfig().generateDefaultLayout();
      }
    | PARALLELIZE FORWARD parallelize_clauses[$l] EOF
      {
@@ -139,7 +140,7 @@ directive[ClawPragma l]
        $l.setEndPragma();
      }
 
-   // SCA directive
+   // SCA directive using model configuration file.
    | SCA EOF
      {
        $l.setDirective(ClawDirective.SCA);
@@ -149,6 +150,7 @@ directive[ClawPragma l]
    | define_option[$l]+ SCA data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.SCA);
+       $l.getLocalModelConfig().generateDefaultLayout();
      }
    | SCA FORWARD parallelize_clauses[$l] EOF
      {
@@ -235,8 +237,8 @@ data_over_clause[ClawPragma l]
     { $l.setScalarClause(dataLst); }
   | DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
     {
-      $l.setOverDataClause(dataLst); // TODO remove
-      $l.setOverClause(overLst); // TODO remove
+      $l.setOverDataClause(dataLst);
+      $l.setOverClause(overLst);
       $l.processDataOverClauses(dataLst, overLst);
     }
 ;

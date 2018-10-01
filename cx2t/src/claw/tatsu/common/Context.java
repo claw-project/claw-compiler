@@ -10,7 +10,6 @@ import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.wani.x2t.configuration.AcceleratorConfiguration;
-import claw.wani.x2t.configuration.ModelConfig;
 import claw.wani.x2t.configuration.OpenAccConfiguration;
 import claw.wani.x2t.configuration.OpenMpConfiguration;
 
@@ -20,15 +19,11 @@ import claw.wani.x2t.configuration.OpenMpConfiguration;
  * @author clementval
  */
 public class Context {
-
-  private static Context _instance = null;
-
   private int _maxColumns;
   private DirectiveGenerator _directiveGenerator;
   private CompilerDirective _compilerDirective;
   private Target _target;
   private ModuleCache _moduleCache;
-  private ModelConfig _modelConfig;
 
   /**
    * Lazy holder pattern.
@@ -38,6 +33,9 @@ public class Context {
     static final Context INSTANCE = new Context();
   }
 
+  /**
+   * Private ctor to avoid external instantiation.
+   */
   private Context() {
   }
 
@@ -95,7 +93,6 @@ public class Context {
 
     _maxColumns = maxColumns;
     _moduleCache = new ModuleCache();
-    _modelConfig = new ModelConfig();
   }
 
   public int getMaxColumns() {
@@ -118,7 +115,6 @@ public class Context {
     return _moduleCache;
   }
 
-  public ModelConfig getModelConfig() { return _modelConfig; }
   /**
    * Check is current target is corresponding to the given one.
    *

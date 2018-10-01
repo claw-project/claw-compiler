@@ -18,7 +18,6 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.ModelConfig;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
@@ -152,32 +151,12 @@ public class Sca extends ClawTransformation {
   private boolean analyzeDimension(XcodeProgram xcodeml) {
     if(!_claw.hasDimensionClause()
         && (_claw.isScaModelConfig()
-        && Context.get().getModelConfig().getNbDimensions() == 0))
+        && Configuration.get().getModelConfig().getNbDimensions() == 0))
     {
       xcodeml.addError("No dimension defined for parallelization.",
           _claw.getPragma().lineNo());
       return false;
     }
-
-    // Dimension defined directly in the directive, check them and populate the
-    // model config.
-   /* if(!_claw.isScaModelConfig() && _claw.hasDimensionClause()) {
-      //List<DimensionDefinition> defaultLayout = new ArrayList<>();
-      for(DimensionDefinition d : _claw.getDimensionValues()) {
-        if(ModelConfig.get().getDimension(d.getIdentifier()) != null) {
-          xcodeml.addError(
-              String.format("Dimension with identifier %s already specified.",
-                  d.getIdentifier()), _claw.getPragma().lineNo()
-          );
-          return false;
-        }
-      }
-
-    }
-
-
-
-    return true;*/
     return true;
   }
 
@@ -310,18 +289,17 @@ public class Sca extends ClawTransformation {
    */
   private boolean analyzeOver(XcodeProgram xcodeml) {
     if(!_claw.hasOverClause()) {
-      _overDimensions +=
-          Context.get().getModelConfig().getDefaultLayout().size();
+      _overDimensions += _claw.getLocalModelConfig().getDefaultLayout().size();
       return true;
     }
 
     // Check if over dimensions are defined dimensions
-    _overDimensions = Context.get().getModelConfig().getDefaultLayout().size();
+    _overDimensions = _claw.getLocalModelConfig().getDefaultLayout().size();
     for(List<String> overLst : _claw.getOverClauseValues()) {
       int usedDimension = 0;
       for(String o : overLst) {
         if(!o.equals(DimensionDefinition.BASE_DIM)) {
-          if(!Context.get().getModelConfig().hasDimension(o)) {
+          if(!_claw.getLocalModelConfig().hasDimension(o)) {
             xcodeml.addError(
                 String.format(
                     "Dimension %s is not defined. Cannot be used in over " +
@@ -419,7 +397,7 @@ public class Sca extends ClawTransformation {
       for(int i = 0; i < _claw.getOverDataClauseValues().size(); ++i) {
         for(String fieldId : _claw.getOverDataClauseValues().get(i)) {
           PromotionInfo promotionInfo = new PromotionInfo(fieldId,
-              _claw.getDimensionsForData(fieldId));
+              _claw.getLayout(fieldId));
           Field.promote(promotionInfo, _fctDef, xcodeml);
           _promotions.put(fieldId, promotionInfo);
         }
@@ -437,10 +415,10 @@ public class Sca extends ClawTransformation {
 
   protected List<DimensionDefinition> getDimensionsForData(String fieldId) {
     if(_claw.hasDimensionClause()) {
-      return _claw.getDimensionsForData(fieldId);
+      return _claw.getLayout(fieldId);
     } else {
       // TODO get specific layout if provided by user
-      return Context.get().getModelConfig().getDefaultLayout();
+      return Configuration.get().getModelConfig().getDefaultLayout();
     }
   }
 
@@ -452,18 +430,22 @@ public class Sca extends ClawTransformation {
   protected List<DimensionDefinition> getDimensionValuesReversed() {
     List<DimensionDefinition> tmp;
     if(_claw.isScaModelConfig()) {
-      tmp = new ArrayList<>(Context.get().getModelConfig().getDefaultLayout());
+      tmp = new ArrayList<>(
+          Configuration.get().getModelConfig().getDefaultLayout());
     } else {
-      tmp = _claw.getLocalModelConfig().getDefaultLayout();
+      tmp = new ArrayList<>(_claw.getLocalModelConfig().getDefaultLayout());
     }
     Collections.reverse(tmp);
     return tmp;
   }
 
+  /**
+   * @return
+   */
   protected List<DimensionDefinition> getUsedDimensions() {
     if(_claw.isScaModelConfig()) {
       // TODO get specific layout if provided by user
-      return Context.get().getModelConfig().getDefaultLayout();
+      return Configuration.get().getModelConfig().getDefaultLayout();
     } else {
       return _claw.getLocalModelConfig().getDefaultLayout();
     }

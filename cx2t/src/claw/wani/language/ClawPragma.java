@@ -61,6 +61,7 @@ public class ClawPragma extends AnalyzedPragma {
   private CompilerDirective _cleanupClauseValue;
   private String _layoutValue;
   private ModelConfig _localModelConfig;
+  private List<String> _errors = new ArrayList<>();
 
   // Clauses flags
   private boolean _hasAccClause;
@@ -677,27 +678,54 @@ public class ClawPragma extends AnalyzedPragma {
     _overValues.add(data);
   }
 
-  public void processDataOverClauses(List<String> data, List<String> over)
-  //throws Exception
-  {
-    List<DimensionDefinition> overLayout = new ArrayList<>();
-    InsertionPosition crt = InsertionPosition.BEFORE;
+  /**
+   * Process the data / over clause from the SCA directive.
+   *
+   * @param data List of variable used in the data clause.
+   * @param over List of dimension used in the over clause.
+   */
+  public void processDataOverClauses(List<String> data, List<String> over) {
+    int baseDimOccurrence = getNbOfBaseDimensions(over);
+    if(baseDimOccurrence == 0) {
+      _errors.add("Over clause does not specify the position " +
+          "of existing dimensions.");
+    }
 
+    List<DimensionDefinition> overLayout = generateLayoutFromOver(over);
+    for(String d : data) {
+      _localModelConfig.putLayout(d.toLowerCase(), overLayout);
+    }
+  }
+
+  /**
+   * Get the number of base dimension placeholders used in the over definition.
+   *
+   * @param over List of dimension defined in over clause.
+   * @return Number of base dimension placeholders found in the list.
+   */
+  private int getNbOfBaseDimensions(List<String> over) {
     int baseDimOccurrence = 0;
     for(String d : over) {
-      if(d.equals(":")) {
+      if(d.equals(DimensionDefinition.BASE_DIM)) {
         ++baseDimOccurrence;
       }
     }
+    return baseDimOccurrence;
+  }
 
-    if(baseDimOccurrence == 0) {
-      // TODO 1.5 exception Dimension " + d + " is not defined"
-    }
-
-    boolean hasMiddleInsertion = baseDimOccurrence > 1;
+  /**
+   * Generate a layout from the over clause information.
+   *
+   * @param over Over clause as a list of String (dimension ids).
+   * @return A list of dimension definition used as a layout.
+   */
+  private List<DimensionDefinition> generateLayoutFromOver(List<String> over) {
+    boolean hasMiddleInsertion = getNbOfBaseDimensions(over) > 1;
+    List<DimensionDefinition> overLayout = new ArrayList<>();
+    InsertionPosition crt = InsertionPosition.BEFORE;
 
     for(String d : over) {
-      if(d.equals(":")) {
+      if(d.equals(DimensionDefinition.BASE_DIM)) {
         if(hasMiddleInsertion && crt == InsertionPosition.BEFORE) {
           crt = InsertionPosition.IN_MIDDLE;
         } else if(crt == InsertionPosition.BEFORE) {
@@ -713,17 +741,21 @@ public class ClawPragma extends AnalyzedPragma {
           newDimension.setInsertionPosition(crt);
           overLayout.add(newDimension);
         } else {
-          // TODO 1.5 exception Dimension " + d + " is not defined"
+          _errors.add(String.format("Dimension %s is not defined", d));
         }
       }
     }
-
-    for(String d : data) {
-      _localModelConfig.putLayout(d.toLowerCase(), overLayout);
-    }
+    return overLayout;
   }
 
-  public List<DimensionDefinition> getDimensionsForData(String identifier) {
+  /**
+   * Get the correct layout for a specific field if one is defined. Default
+   * layout otherwise.
+   *
+   * @param identifier Field id.
+   * @return Layout for the given field id.
+   */
+  public List<DimensionDefinition> getLayout(String identifier) {
     if(_localModelConfig.hasLayout(identifier.toLowerCase())) {
       return _localModelConfig.getLayout(identifier.toLowerCase());
     }
@@ -955,9 +987,7 @@ public class ClawPragma extends AnalyzedPragma {
    *                  extracted in the clause.
    */
   public void addDimension(DimensionDefinition dimension) {
-
     _hasDimensionClause = true;
-
     if(_localModelConfig == null) {
       _localModelConfig = new ModelConfig();
     }
@@ -1077,26 +1107,6 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Get the dimensions extracted information.
-   *
-   * @return All dimensions extracted from the directive.
-   */
-  /*public List<DimensionDefinition> getDimensionValues() {
-    return _dimensions;
-  }*/
-
-  /**
-   * Get the dimensions extracted information in reverse order.
-   *
-   * @return All dimensions extracted from the directive in reverse order.
-   */
-  /*public List<DimensionDefinition> getDimensionValuesReversed() {
-    List<DimensionDefinition> tmp = new ArrayList<>(_dimensions);
-    Collections.reverse(tmp);
-    return tmp;
-  }*/
-
-  /**
    * Attach the pragma related to this CLAW language analysis.
    *
    * @param pragma Raw pragma element object.
@@ -1213,5 +1223,22 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public ModelConfig getLocalModelConfig() {
     return _localModelConfig;
+  }
+
+  /**
+   * Check whether any erros has been reported.
+   *
+   * @return True if any error reported. False otherwise.
+   */
+  public boolean hasErrors() {
+    return !_errors.isEmpty();
+  }
+
+  /**
+   * Get list of reported errors.
+   * @return List of errors.
+   */
+  public List<String> getErrors() {
+    return _errors;
   }
 }

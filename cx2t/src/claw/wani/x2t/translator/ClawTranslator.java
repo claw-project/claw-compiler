@@ -86,6 +86,15 @@ public class ClawTranslator implements Translator {
   {
     // Analyze the raw pragma with the CLAW language parser
     ClawPragma analyzedPragma = ClawPragma.analyze(pragma);
+    if(analyzedPragma.hasErrors()) {
+      for(String err : analyzedPragma.getErrors()) {
+        xcodeml.addError(err, analyzedPragma.getPragma().lineNo());
+      }
+      throw new IllegalDirectiveException(
+          analyzedPragma.getDirective().toString(),
+          "Errors detected during directive analysis.",
+          analyzedPragma.getPragma().lineNo());
+    }
 
     // Create transformation object based on the directive
     switch(analyzedPragma.getDirective()) {

@@ -86,7 +86,8 @@ public class Configuration {
   public static final String CPU_STRATEGY_FUSION = "fusion";
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
-  private static Configuration _instance = null;
+
+  // Local objects
   private String _configuration_path;
   private Map<String, String> _parameters;
   private List<GroupConfiguration> _groups;
@@ -94,11 +95,21 @@ public class Configuration {
   private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
+  private ModelConfig _modelConfig;
 
   /**
-   * private ctor
+   * Lazy holder pattern.
+   */
+  private static class LazyHolder {
+
+    static final Configuration INSTANCE = new Configuration();
+  }
+
+  /**
+   * Private ctor to avoid external instantiation.
    */
   private Configuration() {
+    _modelConfig = new ModelConfig();
   }
 
   /**
@@ -107,10 +118,7 @@ public class Configuration {
    * @return Unique Configuration instance.
    */
   public static Configuration get() {
-    if(_instance == null) {
-      _instance = new Configuration();
-    }
-    return _instance;
+    return LazyHolder.INSTANCE;
   }
 
   /**
@@ -216,13 +224,11 @@ public class Configuration {
         _accelerator = new AcceleratorConfiguration(_parameters);
     }
 
-
     Context.get().init(getCurrentDirective(), getCurrentTarget(), _accelerator,
         userMaxColumns);
 
-
     if(modelConfig != null) {
-      Context.get().getModelConfig().load(modelConfig);
+      getModelConfig().load(modelConfig);
     }
   }
 
@@ -717,5 +723,14 @@ public class Configuration {
       _parameters.remove(key.toLowerCase());
       _parameters.put(key, value);
     }
+  }
+
+  /**
+   * Get the global model configuration.
+   *
+   * @return Global model config instance.
+   */
+  public ModelConfig getModelConfig() {
+    return _modelConfig;
   }
 }
