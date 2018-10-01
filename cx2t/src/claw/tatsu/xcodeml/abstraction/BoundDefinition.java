@@ -16,9 +16,9 @@ import claw.tatsu.xcodeml.xnode.fortran.Intent;
  */
 public class BoundDefinition {
 
-  private String _strBoundValue = null;
+  private String _strBoundValue;
   private int _intBoundValue;
-  private BoundType _boundType = BoundType.LOWER;
+  private BoundType _boundType;
 
   /**
    * Constructs a BoundDefinition from String value. Detects if bound is an

@@ -37,7 +37,7 @@ import java.util.List;
 public class XcodeML extends Xnode {
 
   private final XtypeTable _typeTable;
-  private Document _xcodemlDoc = null;
+  private Document _xcodemlDoc;
 
   /**
    * Constructs a basic XcodeML object representing the XcodeML file given in

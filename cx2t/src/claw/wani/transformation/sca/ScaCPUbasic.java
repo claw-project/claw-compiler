@@ -235,7 +235,7 @@ public class ScaCPUbasic extends Sca {
       }
       // Adapt references
       if(lhs.opcode() == Xcode.VAR) {
-        Field.adaptScalarRefToArrayRef(lhsName, _fctDef, getUsedDimensions(),
+        Field.adaptScalarRefToArrayRef(lhsName, _fctDef, getDefinedDimensions(),
             xcodeml);
       } else {
         Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(), xcodeml);

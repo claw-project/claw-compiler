@@ -24,6 +24,7 @@ import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -232,8 +233,8 @@ public final class Directive {
         generator.getPresentClause(presents),
         generator.getCreateClause(creates)));
 
-    while(clauses.remove("")) {
-    }
+    clauses.removeAll(Collections.singletonList(""));
+    
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
       insertPragmas(xcodeml, startStmt, endStmt,

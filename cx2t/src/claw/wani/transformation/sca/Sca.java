@@ -440,9 +440,11 @@ public class Sca extends ClawTransformation {
   }
 
   /**
-   * @return
+   * Get the defined dimensions for SCA transformation.
+   *
+   * @return List of defined dimensions.
    */
-  protected List<DimensionDefinition> getUsedDimensions() {
+  protected List<DimensionDefinition> getDefinedDimensions() {
     if(_claw.isScaModelConfig()) {
       // TODO get specific layout if provided by user
       return Configuration.get().getModelConfig().getDefaultLayout();
@@ -464,7 +466,7 @@ public class Sca extends ClawTransformation {
     xcodeml.getTypeTable().add(bt);
 
     // For each dimension defined in the directive
-    for(DimensionDefinition dimension : getUsedDimensions()) {
+    for(DimensionDefinition dimension : getDefinedDimensions()) {
       // Create the parameter for the lower bound
       if(dimension.getLowerBound().isVar()) {
         xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
