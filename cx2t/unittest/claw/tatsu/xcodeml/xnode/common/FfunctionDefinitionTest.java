@@ -45,7 +45,7 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void basicFunctionDefinitionTest() {
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     FfunctionDefinition fctDef =
         XmlHelper.createXfunctionDefinitionFromString(basicFDef);
     assertNotNull(fctDef);
@@ -70,7 +70,7 @@ public class FfunctionDefinitionTest {
 
   @Test
   public void findContainingXmodTest() {
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     File f = new File(TestConstant.TEST_DECLARATIONS);
     assertTrue(f.exists());
     XcodeProgram xcodeml =

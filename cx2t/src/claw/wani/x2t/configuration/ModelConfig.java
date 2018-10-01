@@ -72,23 +72,6 @@ public class ModelConfig {
   }
 
   /**
-   * Lazy holder pattern.
-   */
-  private static class LazyHolder {
-
-    static final ModelConfig INSTANCE = new ModelConfig();
-  }
-
-  /**
-   * Get the unique instance of the model configuration.
-   *
-   * @return Unique instance of ModelConfig.
-   */
-  public static ModelConfig get() {
-    return LazyHolder.INSTANCE;
-  }
-
-  /**
    * Load a model configuration file and read its content.
    *
    * @param configPath Path to the model configuration file.

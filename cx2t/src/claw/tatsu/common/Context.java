@@ -10,6 +10,7 @@ import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
 import claw.wani.x2t.configuration.AcceleratorConfiguration;
+import claw.wani.x2t.configuration.ModelConfig;
 import claw.wani.x2t.configuration.OpenAccConfiguration;
 import claw.wani.x2t.configuration.OpenMpConfiguration;
 
@@ -22,11 +23,32 @@ public class Context {
 
   private static Context _instance = null;
 
-  private final int _maxColumns;
-  private final DirectiveGenerator _directiveGenerator;
-  private final CompilerDirective _compilerDirective;
-  private final Target _target;
-  private final ModuleCache _moduleCache;
+  private int _maxColumns;
+  private DirectiveGenerator _directiveGenerator;
+  private CompilerDirective _compilerDirective;
+  private Target _target;
+  private ModuleCache _moduleCache;
+  private ModelConfig _modelConfig;
+
+  /**
+   * Lazy holder pattern.
+   */
+  private static class LazyHolder {
+
+    static final Context INSTANCE = new Context();
+  }
+
+  private Context() {
+  }
+
+  /**
+   * Get the unique context instance.
+   *
+   * @return Current context instance.
+   */
+  public static Context get() {
+    return LazyHolder.INSTANCE;
+  }
 
   /**
    * Create a new context.
@@ -37,9 +59,9 @@ public class Context {
    *                                 translation.
    * @param maxColumns               Max columns.
    */
-  private Context(CompilerDirective compilerDirective, Target target,
-                  AcceleratorConfiguration acceleratorConfiguration,
-                  int maxColumns)
+  public void init(CompilerDirective compilerDirective, Target target,
+                   AcceleratorConfiguration acceleratorConfiguration,
+                   int maxColumns)
   {
     if(compilerDirective != null) {
       _compilerDirective = compilerDirective;
@@ -73,32 +95,7 @@ public class Context {
 
     _maxColumns = maxColumns;
     _moduleCache = new ModuleCache();
-  }
-
-  /**
-   * Initialize the context.
-   *
-   * @param compilerDirective        Compiler directive to used.
-   * @param target                   Target for the current translation.
-   * @param acceleratorConfiguration Configuration for the accelerator
-   *                                 translation.
-   * @param maxColumns               Max columns.
-   */
-  public static void init(CompilerDirective compilerDirective, Target target,
-                          AcceleratorConfiguration acceleratorConfiguration,
-                          int maxColumns)
-  {
-    _instance = new Context(compilerDirective, target, acceleratorConfiguration,
-        maxColumns);
-  }
-
-  /**
-   * Get the unique context instance.
-   *
-   * @return Current context instance.
-   */
-  public static Context get() {
-    return _instance;
+    _modelConfig = new ModelConfig();
   }
 
   public int getMaxColumns() {
@@ -121,6 +118,7 @@ public class Context {
     return _moduleCache;
   }
 
+  public ModelConfig getModelConfig() { return _modelConfig; }
   /**
    * Check is current target is corresponding to the given one.
    *

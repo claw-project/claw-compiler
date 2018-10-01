@@ -66,7 +66,7 @@ public class PragmaTest {
 
   @Test
   public void splitTest() {
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     String p1 = "acc data present(var1,var2,var3,var4,var5,var6,var7,var8," +
         "var10,var11,var12,var13,var14,var15,var16)";
     int maxCol = 40;
@@ -124,7 +124,7 @@ public class PragmaTest {
 
   @Test
   public void splitByContTest() {
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();

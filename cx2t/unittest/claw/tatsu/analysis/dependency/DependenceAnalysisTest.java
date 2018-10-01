@@ -115,7 +115,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);
@@ -143,7 +143,7 @@ public class DependenceAnalysisTest {
     assertEquals(1, pragmas.size());
 
     // Analyze the pragma
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
 
     // Get the function definition that interests us
     Xnode fctDef = functions.get(0);

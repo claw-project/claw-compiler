@@ -216,12 +216,14 @@ public class Configuration {
         _accelerator = new AcceleratorConfiguration(_parameters);
     }
 
-    if(modelConfig != null) {
-      ModelConfig.get().load(modelConfig);
-    }
 
-    Context.init(getCurrentDirective(), getCurrentTarget(), _accelerator,
+    Context.get().init(getCurrentDirective(), getCurrentTarget(), _accelerator,
         userMaxColumns);
+
+
+    if(modelConfig != null) {
+      Context.get().getModelConfig().load(modelConfig);
+    }
   }
 
   /**

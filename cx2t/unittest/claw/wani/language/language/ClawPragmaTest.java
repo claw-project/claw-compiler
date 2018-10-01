@@ -134,7 +134,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+      Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma.analyze(p);
       fail();
     } catch(IllegalDirectiveException pex) {
@@ -285,7 +285,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+      Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma l = ClawPragma.analyze(p);
       assertEquals(directive, l.getDirective());
       return l;
@@ -771,6 +771,7 @@ public class ClawPragmaTest {
                                           List<Target> targets)
   {
     ClawPragma l = analyze(raw, ClawDirective.ARRAY_TRANSFORM);
+    assertNotNull(l);
     if(fusion) {
       assertTrue(l.hasFusionClause());
       assertEquals(fusionGroup, l.getGroupValue());
@@ -1491,7 +1492,7 @@ public class ClawPragmaTest {
     p.setValue(pragma);
     p.setLine(1);
     Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     try {
       ClawPragma.analyze(p);
     } catch(IllegalDirectiveException e) {

@@ -25,7 +25,7 @@ public class ModelConfigTest {
 
   @Test
   public void loadTest() {
-    ModelConfig cfg = ModelConfig.get();
+    ModelConfig cfg = new ModelConfig();
     try {
       cfg.load(TestConstant.TEST_MODEL_CONFIG);
 
@@ -70,7 +70,7 @@ public class ModelConfigTest {
 
   @Test
   public void dimensionsTest() {
-    ModelConfig cfg = ModelConfig.get();
+    ModelConfig cfg = new ModelConfig();
     assertEquals(0, cfg.getNbDimensions());
 
     DimensionDefinition d = new DimensionDefinition("dim1", "0", "ndim1");
@@ -82,7 +82,7 @@ public class ModelConfigTest {
 
   @Test
   public void layoutTest() {
-    ModelConfig cfg = ModelConfig.get();
+    ModelConfig cfg = new ModelConfig();
     assertEquals(0, cfg.getNbLayouts());
     DimensionDefinition d = new DimensionDefinition("dim1", "0", "ndim1");
     assertTrue(cfg.getDefaultLayout().isEmpty());
@@ -98,7 +98,8 @@ public class ModelConfigTest {
   @Test
   public void wrongPathTest() {
     try {
-      ModelConfig.get().load("dummy.toml");
+      ModelConfig cfg = new ModelConfig();
+      cfg.load("dummy.toml");
       fail();
     } catch(Exception ignored) {
     }
@@ -107,7 +108,8 @@ public class ModelConfigTest {
   @Test
   public void malformattedTomlTest() {
     try {
-      ModelConfig.get().load(TestConstant.TEST_MODEL_CONFIG_MALFORMATTED);
+      ModelConfig cfg = new ModelConfig();
+      cfg.load(TestConstant.TEST_MODEL_CONFIG_MALFORMATTED);
       fail();
     } catch(Exception ex) {
       assertEquals(ModelConfig.ERR_MALFORMATTED, ex.getMessage());
@@ -165,7 +167,8 @@ public class ModelConfigTest {
 
   private void assertError(StringBuilder config, String expectedError) {
     try {
-      ModelConfig.get().load(getStreamFromString(config.toString()));
+      ModelConfig cfg = new ModelConfig();
+      cfg.load(getStreamFromString(config.toString()));
       fail();
     } catch(Exception ex) {
       assertEquals(expectedError, ex.getMessage());

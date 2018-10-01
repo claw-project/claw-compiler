@@ -1198,6 +1198,7 @@ public class ClawPragma extends AnalyzedPragma {
 
   /**
    * Check whether the current directive is a SCA using model config.
+   *
    * @return True if the current directive is a SCA using model config.
    */
   public boolean isScaModelConfig() {
@@ -1205,8 +1206,10 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
+   * Return local configuration object. Used when dimensions and layouts are
+   * defined directly in the pragma itself.
    *
-   * @return
+   * @return Instance of ModelConfig object local to this pragma.
    */
   public ModelConfig getLocalModelConfig() {
     return _localModelConfig;
