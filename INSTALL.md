@@ -8,7 +8,6 @@ The CLAW Compiler has the followings dependencies:
 * yacc, lex (For OMNI Compiler)
 * C/C++ compiler (supports C99) (For OMNI Compiler)
 * Fortran compiler (supports Fortran 90) (For OMNI Compiler)
-* MPI-2 or greater (For OMNI Compiler)
 * libxml2 (For OMNI Compiler)
 * cmake and make
 
