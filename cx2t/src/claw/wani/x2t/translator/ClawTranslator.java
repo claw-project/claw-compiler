@@ -8,6 +8,7 @@ import claw.shenron.transformation.DependentTransformationGroup;
 import claw.shenron.transformation.IndependentTransformationGroup;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
+import claw.shenron.translator.AnalyzedPragma;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
@@ -123,22 +124,7 @@ public class ClawTranslator implements Translator {
         handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case SCA:
-        if(analyzedPragma.hasForwardClause()) {
-          addTransformation(xcodeml, new ScaForward(analyzedPragma));
-        } else {
-          if(Context.get().getTarget() == Target.GPU) {
-            addTransformation(xcodeml, new ScaGPU(analyzedPragma));
-          } else {
-            if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
-                equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
-            {
-              addTransformation(xcodeml,
-                  new ScaCPUsmartFusion(analyzedPragma));
-            } else {
-              addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
-            }
-          }
-        }
+        addScaTransformation(xcodeml, analyzedPragma);
         break;
       case MODEL_DATA:
         handleBlockDirective(xcodeml, analyzedPragma);
@@ -157,6 +143,35 @@ public class ClawTranslator implements Translator {
       default:
         throw new IllegalDirectiveException(null, "Unrecognized CLAW directive",
             pragma.lineNo());
+    }
+  }
+
+  /**
+   * Create specific SCA transformation.
+   *
+   * @param xcodeml        Current translation unit.
+   * @param analyzedPragma Analyzed pragma object.
+   * @throws IllegalTransformationException If transformation cannot be created.
+   */
+  private void addScaTransformation(XcodeProgram xcodeml,
+                                    ClawPragma analyzedPragma)
+      throws IllegalTransformationException
+  {
+    if(analyzedPragma.hasForwardClause()) {
+      addTransformation(xcodeml, new ScaForward(analyzedPragma));
+    } else {
+      if(Context.get().getTarget() == Target.GPU) {
+        addTransformation(xcodeml, new ScaGPU(analyzedPragma));
+      } else {
+        if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
+            equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
+        {
+          addTransformation(xcodeml,
+              new ScaCPUsmartFusion(analyzedPragma));
+        } else {
+          addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
+        }
+      }
     }
   }
 

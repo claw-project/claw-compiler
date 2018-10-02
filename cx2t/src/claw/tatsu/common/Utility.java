@@ -71,21 +71,29 @@ public final class Utility {
     if(rawObject instanceof ArrayList) {
       List rawList = (ArrayList) rawObject;
       for(Object object : rawList) {
-        strList.add(Objects.toString(object, null));
+        strList.add((String) object);
       }
     }
     return strList;
   }
 
-  public static Set<String> convertToSet(Object rawObject) {
-    Set<String> strSet = new HashSet<>();
-    if(rawObject instanceof HashSet) {
-      Set rawSet = (HashSet) rawObject;
-      for(Object object : rawSet) {
-        strSet.add(Objects.toString(object, null));
+  /**
+   * Convert an object back to a map of String, String.
+   *
+   * @param rawObject Raw object to be converted.
+   * @return A map of string keys and values. If the raw object is null or
+   * not an original map of string, the returned map will be empty.
+   */
+  public static Map<String, String> convertToMap(Object rawObject) {
+    Map<String, String> map = new HashMap<>();
+    if(rawObject instanceof HashMap) {
+      Map rawMap = (HashMap) rawObject;
+      for(Object object : rawMap.keySet()) {
+        String key = (String) object;
+        map.put(key, (String) rawMap.get(key));
       }
     }
-    return strSet;
+    return map;
   }
 
   /**

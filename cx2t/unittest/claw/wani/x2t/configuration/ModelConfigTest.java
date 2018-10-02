@@ -56,6 +56,7 @@ public class ModelConfigTest {
       assertNull(cfg.getDimension(null));
 
       assertNotNull(cfg.getDefaultLayout());
+      assertFalse(cfg.hasLayout(null));
       assertLayout(cfg, "cpu", 1);
       assertLayout(cfg, "gpu", 1);
       assertLayout(cfg, "radiation", 1);
@@ -183,6 +184,7 @@ public class ModelConfigTest {
                             int expectedNbDimensions)
   {
     assertNotNull(cfg.getLayout(layoutId));
+    assertTrue(cfg.hasLayout(layoutId));
     assertEquals(expectedNbDimensions, cfg.getLayout(layoutId).size());
   }
 

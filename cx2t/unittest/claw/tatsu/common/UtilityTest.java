@@ -6,10 +6,12 @@ package claw.tatsu.common;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Join utility test
@@ -48,4 +50,42 @@ public class UtilityTest {
     assertEquals(0, Utility.countOccurrences("acc private acc", "omp"));
     assertEquals(0, Utility.countOccurrences("acc private acc", "OMP"));
   }
+
+  private Object getRawList() {
+    return new ArrayList<>(Arrays.asList("a", "b", null, "c"));
+  }
+
+  @Test
+  public void convertToListTest() {
+    List<String> recovered = Utility.convertToList(getRawList());
+    assertNotNull(recovered);
+    assertEquals(4, recovered.size());
+    assertEquals("a", recovered.get(0));
+    assertEquals("b", recovered.get(1));
+    assertNull(recovered.get(2));
+    assertEquals("c", recovered.get(3));
+  }
+
+  private Object getRawMap() {
+    Map<String, String> map = new HashMap<>();
+    map.put("a", "layout1");
+    map.put("b", null);
+    map.put("c", null);
+    return map;
+  }
+
+  @Test
+  public void convertToMapTest() {
+    Map<String, String> recovered = Utility.convertToMap(getRawMap());
+    assertNotNull(recovered);
+
+    assertTrue(recovered.containsKey("a"));
+    assertTrue(recovered.containsKey("b"));
+    assertTrue(recovered.containsKey("c"));
+
+    assertEquals("layout1", recovered.get("a"));
+    assertNull(recovered.get("b"));
+    assertNull(recovered.get("c"));
+  }
+
 }

@@ -227,7 +227,7 @@ public class ScaCPUbasic extends Sca {
       if(!_arrayFieldsInOut.contains(lhsName)) {
         _arrayFieldsInOut.add(lhsName);
         promotionInfo =
-            new PromotionInfo(lhsName, getDimensionsForData(lhsName));
+            new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(lhsName, promotionInfo);
       } else {
@@ -235,8 +235,8 @@ public class ScaCPUbasic extends Sca {
       }
       // Adapt references
       if(lhs.opcode() == Xcode.VAR) {
-        Field.adaptScalarRefToArrayRef(lhsName, _fctDef, getDefinedDimensions(),
-            xcodeml);
+        Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
+            _claw.getDefaultLayout(), xcodeml);
       } else {
         Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(), xcodeml);
         Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(), xcodeml);
@@ -254,7 +254,7 @@ public class ScaCPUbasic extends Sca {
   private void generateDoStatements(XcodeProgram xcodeml, Set<Xnode> hooks) {
     for(Xnode hook : hooks) {
       NestedDoStatement loops =
-          new NestedDoStatement(getDimensionValuesReversed(), xcodeml);
+          new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
       hook.insertAfter(loops.getOuterStatement());
       loops.getInnerStatement().body().append(hook, true);
       hook.delete();

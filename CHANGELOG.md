@@ -7,6 +7,7 @@ All notable changes to the CLAW Compiler project are documented in this file.
   `!$claw sca` directive construct.
 * SCA: in directive dimension definition is still supported as a local model
   configuration per pragma.
+* SCA: Support `model-data` directive.
 * Various bug fixes.
 
 ## [1.1.0] - 2018-09-24

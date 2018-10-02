@@ -37,15 +37,18 @@ public class ModelData extends ClawBlockTransformation {
     // Locate the subroutine/function in which the directive is defined
     FfunctionDefinition sub = getDirective().getPragma().findParentFunction();
 
-    Set<String> modelVariables;
+    Map<String, String> modelVariables;
     if(trans.hasElement(sub) != null) {
-      modelVariables = Utility.convertToSet(trans.hasElement(sub));
+      modelVariables = Utility.convertToMap(trans.hasElement(sub));
     } else {
-      modelVariables = new HashSet<>();
+      modelVariables = new HashMap<>();
     }
 
-    modelVariables.addAll(XnodeUtil.getAllVariables(getDirective().getPragma(),
-        getEndDirective().getPragma()));
+    for(String data : XnodeUtil.getAllVariables(getDirective().getPragma(),
+        getEndDirective().getPragma()))
+    {
+      modelVariables.put(data, _clawStart.getLayoutValue());
+    }
 
     trans.storeElement(sub, modelVariables);
 

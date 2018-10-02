@@ -234,11 +234,11 @@ data_over_clause[ClawPragma l]
   }
 :
     SCALAR '(' ids_list[dataLst] ')'
-    { $l.setScalarClause(dataLst); }
+    {
+      $l.setScalarClause(dataLst);
+    }
   | DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
     {
-      $l.setOverDataClause(dataLst);
-      $l.setOverClause(overLst);
       $l.processDataOverClauses(dataLst, overLst);
     }
 ;

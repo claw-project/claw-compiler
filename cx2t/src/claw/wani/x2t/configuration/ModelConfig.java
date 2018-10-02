@@ -276,8 +276,11 @@ public class ModelConfig {
    * @return The named dimension if present. Null otherwise.
    */
   public DimensionDefinition getDimension(String id) {
-    if(_dimensions.containsKey(id)) {
-      return _dimensions.get(id);
+    if(id == null) {
+      return null;
+    }
+    if(_dimensions.containsKey(id.toLowerCase())) {
+      return _dimensions.get(id.toLowerCase());
     }
     return null;
   }
@@ -289,7 +292,7 @@ public class ModelConfig {
    * @return True if the dimension is available. False otherwise.
    */
   public boolean hasDimension(String id) {
-    return _dimensions.containsKey(id);
+    return id != null && _dimensions.containsKey(id.toLowerCase());
   }
 
   /**
@@ -298,7 +301,9 @@ public class ModelConfig {
    * @param d Dimension to add.
    */
   public void putDimension(DimensionDefinition d) {
-    _dimensions.put(d.getIdentifier(), d);
+    if(d != null) {
+      _dimensions.put(d.getIdentifier().toLowerCase(), d);
+    }
   }
 
   /**
@@ -317,7 +322,7 @@ public class ModelConfig {
    * @return True if the layout is available. False otherwise.
    */
   public boolean hasLayout(String id) {
-    return _layouts.containsKey(id);
+    return id != null && _layouts.containsKey(id.toLowerCase());
   }
 
   /**
@@ -328,7 +333,7 @@ public class ModelConfig {
    * @param dimensions List of dimensions composing the layout.
    */
   public void putLayout(String id, List<DimensionDefinition> dimensions) {
-    _layouts.put(id, dimensions);
+    _layouts.put(id.toLowerCase(), dimensions);
     for(DimensionDefinition dim : dimensions) {
       if(!_dimensions.containsKey(dim.getIdentifier())) {
         putDimension(dim);
@@ -352,8 +357,11 @@ public class ModelConfig {
    * @return The named layout if present. Empty list otherwise.
    */
   public List<DimensionDefinition> getLayout(String id) {
-    if(_layouts.containsKey(id)) {
-      return _layouts.get(id);
+    if(id == null) {
+      return Collections.emptyList();
+    }
+    if(_layouts.containsKey(id.toLowerCase())) {
+      return _layouts.get(id.toLowerCase());
     }
     return Collections.emptyList();
   }

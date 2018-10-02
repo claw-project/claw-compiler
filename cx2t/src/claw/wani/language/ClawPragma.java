@@ -16,6 +16,7 @@ import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.InputMismatchException;
@@ -51,8 +52,8 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ReshapeInfo> _reshapeInfos;
-  private List<List<String>> _overValues;
-  private List<List<String>> _overDataValues;
+  //private List<List<String>> _overDataValues;
+  private Set<String> _overDataValues;
   private List<String> _scalarValues;
   private DataMovement _copyClauseValue;
   private DataMovement _updateClauseValue;
@@ -67,6 +68,7 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasAccClause;
   private boolean _hasCollapseClause;
   private boolean _hasDataClause;
+  private boolean _hasDataOverClause;
   private boolean _hasDimensionClause;
   private boolean _hasFusionClause;
   private boolean _hasGroupClause;
@@ -74,12 +76,10 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasInductionClause;
   private boolean _hasInitClause;
   private boolean _hasInterchangeClause;
-  private boolean _hasOverClause;
   private boolean _hasParallelClause;
   private boolean _hasPrivateClause;
   private boolean _hasReshapeClause;
   private boolean _hasForward;
-  private boolean _hasOverDataClause;
   private boolean _hasCopyClause;
   private boolean _hasUpdateClause;
   private boolean _hasTargetClause;
@@ -289,7 +289,6 @@ public class ClawPragma extends AnalyzedPragma {
     _inductionClauseValues = null;
     _mappingValues = null;
     _offsetValues = null;
-    _overValues = null;
     _overDataValues = null;
     _rangeValue = null;
     _reshapeInfos = null;
@@ -302,6 +301,8 @@ public class ClawPragma extends AnalyzedPragma {
     _hasAccClause = false;
     _hasCollapseClause = false;
     _hasCopyClause = false;
+    _hasDataClause = false;
+    _hasDataOverClause = false;
     _hasDimensionClause = false;
     _hasFusionClause = false;
     _hasForward = false;
@@ -310,8 +311,6 @@ public class ClawPragma extends AnalyzedPragma {
     _hasInductionClause = false;
     _hasInitClause = false;
     _hasInterchangeClause = false;
-    _hasOverClause = false;
-    _hasOverDataClause = false;
     _hasParallelClause = false;
     _hasPrivateClause = false;
     _hasReshapeClause = false;
@@ -327,6 +326,7 @@ public class ClawPragma extends AnalyzedPragma {
     _directive = null;
 
     _scaModelConfig = false;
+    _localModelConfig = new ModelConfig();
 
     // Data Movement Direction
     _copyClauseValue = null;
@@ -636,6 +636,15 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
+   * Check whether the current directive has the induction clause enabled.
+   *
+   * @return True if the data clause is enabled.
+   */
+  public boolean hasDataClause() {
+    return _hasDataClause;
+  }
+
+  /**
    * Enable the data clause for the current directive and set the extracted
    * identifiers value.
    *
@@ -644,15 +653,6 @@ public class ClawPragma extends AnalyzedPragma {
   public void setDataClause(List<String> data) {
     _hasDataClause = true;
     _dataValues = data;
-  }
-
-  /**
-   * Check whether the current directive has the induction clause enabled.
-   *
-   * @return True if the data clause is enabled.
-   */
-  public boolean hasDataClause() {
-    return _hasDataClause;
   }
 
   /**
@@ -665,35 +665,36 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Enable the over clause for the current directive and set the extracted
-   * dimensions value.
-   *
-   * @param data List of dimension extracted from the clause.
-   */
-  public void setOverClause(List<String> data) {
-    if(_overValues == null) {
-      _hasOverClause = true;
-      _overValues = new ArrayList<>();
-    }
-    _overValues.add(data);
-  }
-
-  /**
-   * Process the data / over clause from the SCA directive.
+   * Process the data / over clause from the SCA directive. The over clause is
+   * turned into a layout and each variable presented in the data clause will be
+   * assigned this layout.
    *
    * @param data List of variable used in the data clause.
    * @param over List of dimension used in the over clause.
    */
   public void processDataOverClauses(List<String> data, List<String> over) {
+    _hasDataOverClause = true;
+    if(_overDataValues == null) {
+      _overDataValues = new HashSet<>();
+    }
+    _overDataValues.addAll(data);
+
     int baseDimOccurrence = getNbOfBaseDimensions(over);
     if(baseDimOccurrence == 0) {
       _errors.add("Over clause does not specify the position " +
           "of existing dimensions.");
+      return;
     }
 
     List<DimensionDefinition> overLayout = generateLayoutFromOver(over);
     for(String d : data) {
-      _localModelConfig.putLayout(d.toLowerCase(), overLayout);
+      if(_localModelConfig.hasLayout(d)) {
+        _errors.add(String.format(
+            "Variable %s has already a layout from another over clause.", d));
+        return;
+      } else {
+        _localModelConfig.putLayout(d, overLayout);
+      }
     }
   }
 
@@ -752,45 +753,45 @@ public class ClawPragma extends AnalyzedPragma {
    * Get the correct layout for a specific field if one is defined. Default
    * layout otherwise.
    *
-   * @param identifier Field id.
+   * @param dataId Data identifier.
    * @return Layout for the given field id.
    */
-  public List<DimensionDefinition> getLayout(String identifier) {
-    if(_localModelConfig.hasLayout(identifier.toLowerCase())) {
-      return _localModelConfig.getLayout(identifier.toLowerCase());
+  public List<DimensionDefinition> getLayoutForData(String dataId) {
+    if(_scaModelConfig) {
+      if(getLocalModelConfig().hasLayout(dataId)) {
+        return getLocalModelConfig().getLayout(dataId);
+      }
+      return Configuration.get().getModelConfig().getDefaultLayout();
+    } else {
+      if(_localModelConfig.hasLayout(dataId)) {
+        return _localModelConfig.getLayout(dataId);
+      }
+      return _localModelConfig.getDefaultLayout();
     }
-    return _localModelConfig.getDefaultLayout();
   }
 
   /**
-   * Check whether the current directive has the over clause enabled.
+   * Return the default layout in reverse order.
    *
-   * @return True if the over clause is enabled.
+   * @return Reversed list of dimensions from the default layout.
    */
-  public boolean hasOverClause() {
-    return _hasOverClause;
+  public List<DimensionDefinition> getDefaultLayoutReversed() {
+    List<DimensionDefinition> tmp = new ArrayList<>(getDefaultLayout());
+    Collections.reverse(tmp);
+    return tmp;
   }
 
   /**
-   * Get the dimensions values extracted from the over clause.
+   * Get the default layout dimensions from the local or global configuration.
    *
-   * @return Dimensions identifier or : as a String.
+   * @return List of dimensions from the default layout.
    */
-  public List<List<String>> getOverClauseValues() {
-    return _overValues;
-  }
-
-  /**
-   * Enable the data over clause for the current directive.
-   *
-   * @param data List of array identifiers extracted from the clause.
-   */
-  public void setOverDataClause(List<String> data) {
-    if(_overDataValues == null) {
-      _hasOverDataClause = true;
-      _overDataValues = new ArrayList<>();
+  public List<DimensionDefinition> getDefaultLayout() {
+    if(_scaModelConfig) {
+      return Configuration.get().getModelConfig().getDefaultLayout();
+    } else {
+      return _localModelConfig.getDefaultLayout();
     }
-    _overDataValues.add(data);
   }
 
   /**
@@ -798,8 +799,8 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @return True if the data over clause is enabled.
    */
-  public boolean hasOverDataClause() {
-    return _hasOverDataClause;
+  public boolean hasDataOverClause() {
+    return _hasDataOverClause;
   }
 
   /**
@@ -807,7 +808,7 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @return Array identifier.
    */
-  public List<List<String>> getOverDataClauseValues() {
+  public Set<String> getDataOverClauseValues() {
     return _overDataValues;
   }
 
@@ -988,9 +989,6 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public void addDimension(DimensionDefinition dimension) {
     _hasDimensionClause = true;
-    if(_localModelConfig == null) {
-      _localModelConfig = new ModelConfig();
-    }
     _localModelConfig.putDimension(dimension);
   }
 
@@ -1236,6 +1234,7 @@ public class ClawPragma extends AnalyzedPragma {
 
   /**
    * Get list of reported errors.
+   *
    * @return List of errors.
    */
   public List<String> getErrors() {

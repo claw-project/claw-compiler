@@ -146,7 +146,7 @@ public class ScaCPUsmartFusion extends Sca {
           continue;
         }
         PromotionInfo promotionInfo = new PromotionInfo(promotion,
-            _claw.getLayout(promotion));
+            _claw.getLayoutForData(promotion));
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(promotion, promotionInfo);
         Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
@@ -434,7 +434,7 @@ public class ScaCPUsmartFusion extends Sca {
 
     // Create the DO statement
     NestedDoStatement loop =
-        new NestedDoStatement(getDimensionValuesReversed(), xcodeml);
+        new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
 
     // Insert DO statement into the AST and add statements in its body
     groupedNodes.get(0).insertBefore(loop.getOuterStatement());
