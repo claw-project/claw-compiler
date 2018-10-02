@@ -4,7 +4,7 @@
 
 The CLAW Compiler has the followings dependencies:
 * Java 1.7 or greater
-* Ant 1.7.1 or greater
+* Ant 1.9 or greater
 * yacc, lex (For OMNI Compiler)
 * C/C++ compiler (supports C99) (For OMNI Compiler)
 * Fortran compiler (supports Fortran 90) (For OMNI Compiler)
