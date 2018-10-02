@@ -47,8 +47,9 @@ public class IfExtract extends ClawTransformation {
       if(n.opcode() != Xcode.F_IF_STATEMENT
           && n.opcode() != Xcode.F_PRAGMA_STATEMENT)
       {
-        xcodeml.addError("If statement is not purely nested in the do statement",
-            _claw.getPragma().lineNo());
+        xcodeml.
+            addError("If statement is not purely nested in the do statement",
+                _claw.getPragma().lineNo());
         return false;
       } else if(n.opcode() == Xcode.F_IF_STATEMENT) {
         ++counterIfStmt;

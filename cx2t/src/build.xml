@@ -28,6 +28,7 @@
         <pathelement path="${antlr4.runtime.dep}"/>
         <pathelement path="${commoncli.dep}"/>
         <pathelement path="${omni.xcodeml-common.dep}"/>
+        <pathelement path="${toml.dep}"/>
     </path>
 
     <path id="antlr.path">

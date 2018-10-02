@@ -1,6 +1,6 @@
 <!--
 This file describe all high-level transformations included in the CLAW
-language specifications.
+Directive Language Specification.
 
 More information: https://github.com/C2SM-RCM/claw-language-specification
 -->
@@ -12,4 +12,8 @@ More information: https://github.com/C2SM-RCM/claw-language-specification
   <transformation name="sca-forward"
     type="independent" trigger="directive" directive="claw"
     class="claw.wani.transformation.sca.ScaForward" />
+
+  <transformation name="sca-model-data"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.sca.ModelData" />
 </transformations>

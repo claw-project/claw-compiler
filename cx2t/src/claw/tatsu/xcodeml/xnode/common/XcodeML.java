@@ -8,7 +8,6 @@ import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import org.w3c.dom.Document;
@@ -38,7 +37,7 @@ import java.util.List;
 public class XcodeML extends Xnode {
 
   private final XtypeTable _typeTable;
-  private Document _xcodemlDoc = null;
+  private Document _xcodemlDoc;
 
   /**
    * Constructs a basic XcodeML object representing the XcodeML file given in
@@ -68,7 +67,8 @@ public class XcodeML extends Xnode {
       Document doc = dBuilder.parse(input);
       doc.getDocumentElement().normalize();
       return doc;
-    } catch(Exception ignored) {}
+    } catch(Exception ignored) {
+    }
     return null;
   }
 

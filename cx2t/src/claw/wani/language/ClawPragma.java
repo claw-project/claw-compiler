@@ -16,6 +16,8 @@ import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
+import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.configuration.ModelConfig;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.InputMismatchException;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -50,22 +52,23 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ReshapeInfo> _reshapeInfos;
-  private List<DimensionDefinition> _dimensions;
-  private Map<String, DimensionDefinition> _dimensionsMap;
-  private Map<String, List<DimensionDefinition>> _specializedDimensionsMap;
-  private List<List<String>> _overValues;
-  private List<List<String>> _overDataValues;
+  //private List<List<String>> _overDataValues;
+  private Set<String> _overDataValues;
   private List<String> _scalarValues;
   private DataMovement _copyClauseValue;
   private DataMovement _updateClauseValue;
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
   private CompilerDirective _cleanupClauseValue;
+  private String _layoutValue;
+  private ModelConfig _localModelConfig;
+  private List<String> _errors = new ArrayList<>();
 
   // Clauses flags
   private boolean _hasAccClause;
   private boolean _hasCollapseClause;
   private boolean _hasDataClause;
+  private boolean _hasDataOverClause;
   private boolean _hasDimensionClause;
   private boolean _hasFusionClause;
   private boolean _hasGroupClause;
@@ -73,12 +76,10 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasInductionClause;
   private boolean _hasInitClause;
   private boolean _hasInterchangeClause;
-  private boolean _hasOverClause;
   private boolean _hasParallelClause;
   private boolean _hasPrivateClause;
   private boolean _hasReshapeClause;
   private boolean _hasForward;
-  private boolean _hasOverDataClause;
   private boolean _hasCopyClause;
   private boolean _hasUpdateClause;
   private boolean _hasTargetClause;
@@ -86,6 +87,9 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasScalarClause;
   private boolean _hasCreateClause;
   private boolean _hasCleanupClause;
+  private boolean _hasLayoutClause;
+
+  private boolean _scaModelConfig;
 
   /**
    * Constructs an empty ClawPragma section.
@@ -277,9 +281,6 @@ public class ClawPragma extends AnalyzedPragma {
     _arrayName = null;
     _collapseClauseValue = 1;
     _dataValues = null;
-    _dimensions = null;
-    _dimensionsMap = null;
-    _specializedDimensionsMap = null;
     _fctCallParameters = null;
     _fctName = null;
     _groupClauseValue = null;
@@ -288,18 +289,20 @@ public class ClawPragma extends AnalyzedPragma {
     _inductionClauseValues = null;
     _mappingValues = null;
     _offsetValues = null;
-    _overValues = null;
     _overDataValues = null;
     _rangeValue = null;
     _reshapeInfos = null;
     _targetClauseValues = null;
     _constraintClauseValue = ClawConstraint.DIRECT;
     _cleanupClauseValue = CompilerDirective.NONE;
+    _layoutValue = null;
 
     // Clauses flags members
     _hasAccClause = false;
     _hasCollapseClause = false;
     _hasCopyClause = false;
+    _hasDataClause = false;
+    _hasDataOverClause = false;
     _hasDimensionClause = false;
     _hasFusionClause = false;
     _hasForward = false;
@@ -308,8 +311,6 @@ public class ClawPragma extends AnalyzedPragma {
     _hasInductionClause = false;
     _hasInitClause = false;
     _hasInterchangeClause = false;
-    _hasOverClause = false;
-    _hasOverDataClause = false;
     _hasParallelClause = false;
     _hasPrivateClause = false;
     _hasReshapeClause = false;
@@ -319,9 +320,13 @@ public class ClawPragma extends AnalyzedPragma {
     _hasScalarClause = false;
     _hasCreateClause = false;
     _hasCleanupClause = false;
+    _hasLayoutClause = false;
 
     // General members
     _directive = null;
+
+    _scaModelConfig = false;
+    _localModelConfig = new ModelConfig();
 
     // Data Movement Direction
     _copyClauseValue = null;
@@ -631,6 +636,15 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
+   * Check whether the current directive has the induction clause enabled.
+   *
+   * @return True if the data clause is enabled.
+   */
+  public boolean hasDataClause() {
+    return _hasDataClause;
+  }
+
+  /**
    * Enable the data clause for the current directive and set the extracted
    * identifiers value.
    *
@@ -639,15 +653,6 @@ public class ClawPragma extends AnalyzedPragma {
   public void setDataClause(List<String> data) {
     _hasDataClause = true;
     _dataValues = data;
-  }
-
-  /**
-   * Check whether the current directive has the induction clause enabled.
-   *
-   * @return True if the data clause is enabled.
-   */
-  public boolean hasDataClause() {
-    return _hasDataClause;
   }
 
   /**
@@ -660,44 +665,68 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Enable the over clause for the current directive and set the extracted
-   * dimensions value.
+   * Process the data / over clause from the SCA directive. The over clause is
+   * turned into a layout and each variable presented in the data clause will be
+   * assigned this layout.
    *
-   * @param data List of dimension extracted from the clause.
+   * @param data List of variable used in the data clause.
+   * @param over List of dimension used in the over clause.
    */
-  public void setOverClause(List<String> data) {
-    if(_overValues == null) {
-      _hasOverClause = true;
-      _overValues = new ArrayList<>();
+  public void processDataOverClauses(List<String> data, List<String> over) {
+    _hasDataOverClause = true;
+    if(_overDataValues == null) {
+      _overDataValues = new HashSet<>();
     }
-    _overValues.add(data);
+    _overDataValues.addAll(data);
+
+    int baseDimOccurrence = getNbOfBaseDimensions(over);
+    if(baseDimOccurrence == 0) {
+      _errors.add("Over clause does not specify the position " +
+          "of existing dimensions.");
+      return;
+    }
+
+    List<DimensionDefinition> overLayout = generateLayoutFromOver(over);
+    for(String d : data) {
+      if(_localModelConfig.hasLayout(d)) {
+        _errors.add(String.format(
+            "Variable %s has already a layout from another over clause.", d));
+        return;
+      } else {
+        _localModelConfig.putLayout(d, overLayout);
+      }
+    }
   }
 
-  public void processDataOverClauses(List<String> data, List<String> over)
-  //throws Exception
-  {
-    List<DimensionDefinition> specializedDimensions = new ArrayList<>();
-    InsertionPosition crt = InsertionPosition.BEFORE;
-
-    if(_specializedDimensionsMap == null) {
-      _specializedDimensionsMap = new HashMap<>();
-    }
-
+  /**
+   * Get the number of base dimension placeholders used in the over definition.
+   *
+   * @param over List of dimension defined in over clause.
+   * @return Number of base dimension placeholders found in the list.
+   */
+  private int getNbOfBaseDimensions(List<String> over) {
     int baseDimOccurrence = 0;
     for(String d : over) {
-      if(d.equals(":")) {
+      if(d.equals(DimensionDefinition.BASE_DIM)) {
         ++baseDimOccurrence;
       }
     }
+    return baseDimOccurrence;
+  }
 
-    if(baseDimOccurrence == 0) {
-      // TODO 1.5 exception Dimension " + d + " is not defined"
-    }
-
-    boolean hasMiddleInsertion = baseDimOccurrence > 1;
+  /**
+   * Generate a layout from the over clause information.
+   *
+   * @param over Over clause as a list of String (dimension ids).
+   * @return A list of dimension definition used as a layout.
+   */
+  private List<DimensionDefinition> generateLayoutFromOver(List<String> over) {
+    boolean hasMiddleInsertion = getNbOfBaseDimensions(over) > 1;
+    List<DimensionDefinition> overLayout = new ArrayList<>();
+    InsertionPosition crt = InsertionPosition.BEFORE;
 
     for(String d : over) {
-      if(d.equals(":")) {
+      if(d.equals(DimensionDefinition.BASE_DIM)) {
         if(hasMiddleInsertion && crt == InsertionPosition.BEFORE) {
           crt = InsertionPosition.IN_MIDDLE;
         } else if(crt == InsertionPosition.BEFORE) {
@@ -706,61 +735,63 @@ public class ClawPragma extends AnalyzedPragma {
           crt = InsertionPosition.AFTER;
         }
       } else {
-        DimensionDefinition dim = _dimensionsMap.get(d);
-        if(dim != null) {
 
-          DimensionDefinition newDimension = dim.copy();
+        if(_localModelConfig.hasDimension(d)) {
+          DimensionDefinition newDimension
+              = _localModelConfig.getDimension(d).copy();
           newDimension.setInsertionPosition(crt);
-          specializedDimensions.add(newDimension);
+          overLayout.add(newDimension);
         } else {
-          // TODO 1.5 exception Dimension " + d + " is not defined"
+          _errors.add(String.format("Dimension %s is not defined", d));
         }
       }
     }
-
-    for(String d : data) {
-      _specializedDimensionsMap.put(d, specializedDimensions);
-    }
-  }
-
-  public List<DimensionDefinition> getDimensionsForData(String identifier) {
-    if(_specializedDimensionsMap != null &&
-        _specializedDimensionsMap.containsKey(identifier.toLowerCase()))
-    {
-      return _specializedDimensionsMap.get(identifier.toLowerCase());
-    }
-    return _dimensions;
+    return overLayout;
   }
 
   /**
-   * Check whether the current directive has the over clause enabled.
+   * Get the correct layout for a specific field if one is defined. Default
+   * layout otherwise.
    *
-   * @return True if the over clause is enabled.
+   * @param dataId Data identifier.
+   * @return Layout for the given field id.
    */
-  public boolean hasOverClause() {
-    return _hasOverClause;
-  }
-
-  /**
-   * Get the dimensions values extracted from the over clause.
-   *
-   * @return Dimensions identifier or : as a String.
-   */
-  public List<List<String>> getOverClauseValues() {
-    return _overValues;
-  }
-
-  /**
-   * Enable the data over clause for the current directive.
-   *
-   * @param data List of array identifiers extracted from the clause.
-   */
-  public void setOverDataClause(List<String> data) {
-    if(_overDataValues == null) {
-      _hasOverDataClause = true;
-      _overDataValues = new ArrayList<>();
+  public List<DimensionDefinition> getLayoutForData(String dataId) {
+    if(_scaModelConfig) {
+      if(getLocalModelConfig().hasLayout(dataId)) {
+        return getLocalModelConfig().getLayout(dataId);
+      }
+      return Configuration.get().getModelConfig().getDefaultLayout();
+    } else {
+      if(_localModelConfig.hasLayout(dataId)) {
+        return _localModelConfig.getLayout(dataId);
+      }
+      return _localModelConfig.getDefaultLayout();
     }
-    _overDataValues.add(data);
+  }
+
+  /**
+   * Return the default layout in reverse order.
+   *
+   * @return Reversed list of dimensions from the default layout.
+   */
+  public List<DimensionDefinition> getDefaultLayoutReversed() {
+    List<DimensionDefinition> tmp = new ArrayList<>(getDefaultLayout());
+    Collections.reverse(tmp);
+    return tmp;
+  }
+
+  /**
+   * Get the default layout dimensions from the local or global configuration.
+   *
+   * @return List of dimensions from the default layout.
+   */
+  public List<DimensionDefinition> getDefaultLayout() {
+    if(_scaModelConfig) {
+      return Configuration.get().getModelConfig().getDefaultLayout();
+    } else {
+      return _localModelConfig.getDefaultLayout();
+    }
   }
 
   /**
@@ -768,8 +799,8 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @return True if the data over clause is enabled.
    */
-  public boolean hasOverDataClause() {
-    return _hasOverDataClause;
+  public boolean hasDataOverClause() {
+    return _hasDataOverClause;
   }
 
   /**
@@ -777,7 +808,7 @@ public class ClawPragma extends AnalyzedPragma {
    *
    * @return Array identifier.
    */
-  public List<List<String>> getOverDataClauseValues() {
+  public Set<String> getDataOverClauseValues() {
     return _overDataValues;
   }
 
@@ -958,14 +989,7 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public void addDimension(DimensionDefinition dimension) {
     _hasDimensionClause = true;
-    if(_dimensions == null) {
-      _dimensions = new ArrayList<>();
-    }
-    if(_dimensionsMap == null) {
-      _dimensionsMap = new HashMap<>();
-    }
-    _dimensions.add(dimension);
-    _dimensionsMap.put(dimension.getIdentifier(), dimension);
+    _localModelConfig.putDimension(dimension);
   }
 
   /**
@@ -1081,26 +1105,6 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Get the dimensions extracted information.
-   *
-   * @return All dimensions extracted from the directive.
-   */
-  public List<DimensionDefinition> getDimensionValues() {
-    return _dimensions;
-  }
-
-  /**
-   * Get the dimensions extracted information in reverse order.
-   *
-   * @return All dimensions extracted from the directive in reverse order.
-   */
-  public List<DimensionDefinition> getDimensionValuesReversed() {
-    List<DimensionDefinition> tmp = new ArrayList<>(_dimensions);
-    Collections.reverse(tmp);
-    return tmp;
-  }
-
-  /**
    * Attach the pragma related to this CLAW language analysis.
    *
    * @param pragma Raw pragma element object.
@@ -1163,5 +1167,77 @@ public class ClawPragma extends AnalyzedPragma {
   public void setCleanupClauseValue(CompilerDirective value) {
     _hasCleanupClause = true;
     _cleanupClauseValue = value;
+  }
+
+  /**
+   * Check whether the layout clause is used.
+   *
+   * @return True if the layout clause is used.
+   */
+  public boolean hasLayoutClause() {
+    return _hasLayoutClause;
+  }
+
+  /**
+   * Get the layout clause value.
+   *
+   * @return Layout clause value.
+   */
+  public String getLayoutValue() {
+    return _layoutValue;
+  }
+
+  /**
+   * Set the layout clause value and the update clause usage flag to true.
+   *
+   * @param value New compiler directive clause value.
+   */
+  public void setLayoutClause(String value) {
+    _hasLayoutClause = true;
+    _layoutValue = value;
+  }
+
+  /**
+   * Set the current directive as a SCA from model config.
+   */
+  public void setScaModelConfig() {
+    _scaModelConfig = true;
+  }
+
+  /**
+   * Check whether the current directive is a SCA using model config.
+   *
+   * @return True if the current directive is a SCA using model config.
+   */
+  public boolean isScaModelConfig() {
+    return _scaModelConfig;
+  }
+
+  /**
+   * Return local configuration object. Used when dimensions and layouts are
+   * defined directly in the pragma itself.
+   *
+   * @return Instance of ModelConfig object local to this pragma.
+   */
+  public ModelConfig getLocalModelConfig() {
+    return _localModelConfig;
+  }
+
+  /**
+   * Check whether any erros has been reported.
+   *
+   * @return True if any error reported. False otherwise.
+   */
+  public boolean hasErrors() {
+    return !_errors.isEmpty();
+  }
+
+  /**
+   * Get list of reported errors.
+   *
+   * @return List of errors.
+   */
+  public List<String> getErrors() {
+    return _errors;
   }
 }

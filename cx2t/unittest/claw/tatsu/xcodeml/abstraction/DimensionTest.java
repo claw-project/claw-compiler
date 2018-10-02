@@ -29,10 +29,24 @@ public class DimensionTest {
     assertEquals("nproma(nstart:nend)", dimDef2.toString());
     assertNotNull(dimDef.getLowerBound());
     assertNotNull(dimDef.getUpperBound());
+    assertNotNull(dimDef.getIterationLowerBound());
+    assertNotNull(dimDef.getIterationUpperBound());
+    assertNotNull(dimDef.getIterationStep());
     assertFalse(dimDef.getLowerBound().isVar());
     assertEquals(1, dimDef.getLowerBound().getIntValue());
+
+    assertFalse(dimDef.getIterationLowerBound().isVar());
+    assertEquals(1, dimDef.getIterationLowerBound().getIntValue());
+
     assertTrue(dimDef.getUpperBound().isVar());
     assertEquals("nend", dimDef.getUpperBound().getValue());
+
+    assertTrue(dimDef.getIterationUpperBound().isVar());
+    assertEquals("nend", dimDef.getIterationUpperBound().getValue());
+
+    assertFalse(dimDef.getIterationStep().isVar());
+    assertEquals(1, dimDef.getIterationStep().getIntValue());
+
     assertEquals("nproma", dimDef.getIdentifier());
     assertEquals(InsertionPosition.BEFORE, dimDef.getInsertionPosition());
     dimDef.setInsertionPosition(InsertionPosition.AFTER);
@@ -67,6 +81,36 @@ public class DimensionTest {
         allocateNode.firstChild().value());
   }
 
+
+  @Test
+  public void dimensionWithIterationDefinitionTest() {
+    DimensionDefinition dimDef = new DimensionDefinition("block", "1", "nproma",
+        "nstart", "nend", "nstep");
+
+    assertNotNull(dimDef.getLowerBound());
+    assertNotNull(dimDef.getUpperBound());
+    assertNotNull(dimDef.getIterationLowerBound());
+    assertNotNull(dimDef.getIterationUpperBound());
+    assertNotNull(dimDef.getIterationStep());
+
+    assertFalse(dimDef.getLowerBound().isVar());
+    assertEquals(1, dimDef.getLowerBound().getIntValue());
+
+    assertTrue(dimDef.getIterationLowerBound().isVar());
+    assertEquals("nstart", dimDef.getIterationLowerBound().getValue());
+
+    assertTrue(dimDef.getUpperBound().isVar());
+    assertEquals("nproma", dimDef.getUpperBound().getValue());
+
+    assertTrue(dimDef.getIterationUpperBound().isVar());
+    assertEquals("nend", dimDef.getIterationUpperBound().getValue());
+
+    assertTrue(dimDef.getIterationStep().isVar());
+    assertEquals("nstep", dimDef.getIterationStep().getValue());
+
+    assertEquals("block", dimDef.getIdentifier());
+  }
+
   @Test
   public void boundDefinitionTest() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
@@ -74,12 +118,16 @@ public class DimensionTest {
         new BoundDefinition("1", BoundDefinition.BoundType.LOWER);
     BoundDefinition upperBound =
         new BoundDefinition("nend", BoundDefinition.BoundType.LOWER);
+    BoundDefinition step =
+        new BoundDefinition("1", BoundDefinition.BoundType.STEP);
 
     assertFalse(lowerBound.isVar());
     assertTrue(upperBound.isVar());
+    assertFalse(step.isVar());
 
     assertEquals(1, lowerBound.getIntValue());
     assertEquals("nend", upperBound.getValue());
+    assertEquals(1, step.getIntValue());
 
     Xnode lowerNode = lowerBound.generate(xcodeml);
     assertNotNull(lowerNode);

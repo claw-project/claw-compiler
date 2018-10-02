@@ -1,0 +1,181 @@
+<XcodeProgram source="__omni_tmp__/mo_column.f90"
+              language="Fortran"
+              time="2018-09-07 16:06:01"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FfunctionType type="F7f986f5075d0" return_type="Fvoid">
+      <params>
+        <name type="I7f986f508aa0">nz</name>
+        <name type="A7f986f50a250">q</name>
+        <name type="A7f986f509900">t</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I7f986f508aa0" intent="in" ref="Fint"/>
+    <FbasicType type="R7f986f50a120" intent="inout" ref="Freal"/>
+    <FbasicType type="A7f986f50a250" intent="inout" ref="R7f986f50a120">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="R7f986f5097d0" intent="inout" ref="Freal"/>
+    <FbasicType type="A7f986f509900" intent="inout" ref="R7f986f5097d0">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mo_column</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="mo_column" lineno="6" file="__omni_tmp__/mo_column.f90">
+      <symbols>
+        <id type="F7f986f5075d0" sclass="ffunc">
+          <name>compute_column</name>
+        </id>
+      </symbols>
+      <declarations>
+      </declarations>
+      <FcontainsStatement lineno="8" file="__omni_tmp__/mo_column.f90">
+        <FfunctionDefinition lineno="10" file="__omni_tmp__/mo_column.f90">
+          <name type="F7f986f5075d0">compute_column</name>
+          <symbols>
+            <id type="F7f986f5075d0" sclass="ffunc">
+              <name>compute_column</name>
+            </id>
+            <id type="I7f986f508aa0" sclass="fparam">
+              <name>nz</name>
+            </id>
+            <id type="A7f986f50a250" sclass="fparam">
+              <name>q</name>
+            </id>
+            <id type="A7f986f509900" sclass="fparam">
+              <name>t</name>
+            </id>
+            <id type="Fint" sclass="flocal">
+              <name>k</name>
+            </id>
+            <id type="Freal" sclass="flocal">
+              <name>c</name>
+            </id>
+          </symbols>
+          <declarations>
+            <varDecl lineno="10" file="__omni_tmp__/mo_column.f90">
+              <name type="F7f986f5075d0">compute_column</name>
+            </varDecl>
+            <varDecl lineno="13" file="__omni_tmp__/mo_column.f90">
+              <name type="I7f986f508aa0">nz</name>
+            </varDecl>
+            <FpragmaStatement lineno="14" file="__omni_tmp__/mo_column.f90">claw model-data</FpragmaStatement>
+            <varDecl lineno="15" file="__omni_tmp__/mo_column.f90">
+              <name type="A7f986f509900">t</name>
+            </varDecl>
+            <varDecl lineno="16" file="__omni_tmp__/mo_column.f90">
+              <name type="A7f986f50a250">q</name>
+            </varDecl>
+            <FpragmaStatement lineno="17" file="__omni_tmp__/mo_column.f90">claw end model-data</FpragmaStatement>
+            <varDecl lineno="18" file="__omni_tmp__/mo_column.f90">
+              <name type="Fint">k</name>
+            </varDecl>
+            <varDecl lineno="19" file="__omni_tmp__/mo_column.f90">
+              <name type="Freal">c</name>
+            </varDecl>
+          </declarations>
+          <body>
+            <FpragmaStatement lineno="27" file="__omni_tmp__/mo_column.f90">claw sca</FpragmaStatement>
+            <FassignStatement lineno="29" file="__omni_tmp__/mo_column.f90">
+              <Var type="Freal" scope="local">c</Var>
+              <FrealConstant type="Freal">5.345</FrealConstant>
+            </FassignStatement>
+            <FdoStatement lineno="30" file="__omni_tmp__/mo_column.f90">
+              <Var type="Fint" scope="local">k</Var>
+              <indexRange>
+                <lowerBound>
+                  <FintConstant type="Fint">2</FintConstant>
+                </lowerBound>
+                <upperBound>
+                  <Var type="I7f986f508aa0" scope="local">nz</Var>
+                </upperBound>__omni_tmp__
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FassignStatement lineno="31" file="__omni_tmp__/mo_column.f90">
+                  <FarrayRef type="R7f986f5097d0">
+                    <varRef type="A7f986f509900">
+                      <Var type="A7f986f509900" scope="local">t</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">k</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                  <mulExpr type="Freal">
+                    <Var type="Freal" scope="local">c</Var>
+                    <Var type="Fint" scope="local">k</Var>
+                  </mulExpr>
+                </FassignStatement>
+                <FassignStatement lineno="32" file="__omni_tmp__/mo_column.f90">
+                  <FarrayRef type="R7f986f50a120">
+                    <varRef type="A7f986f50a250">
+                      <Var type="A7f986f50a250" scope="local">q</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">k</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                  <plusExpr type="R7f986f50a120">
+                    <FarrayRef type="R7f986f50a120">
+                      <varRef type="A7f986f50a250">
+                        <Var type="A7f986f50a250" scope="local">q</Var>
+                      </varRef>
+                      <arrayIndex>
+                        <minusExpr type="Fint">
+                          <Var type="Fint" scope="local">k</Var>
+                          <FintConstant type="Fint">1</FintConstant>
+                        </minusExpr>
+                      </arrayIndex>
+                    </FarrayRef>
+                    <mulExpr type="R7f986f5097d0">
+                      <FarrayRef type="R7f986f5097d0">
+                        <varRef type="A7f986f509900">
+                          <Var type="A7f986f509900" scope="local">t</Var>
+                        </varRef>
+                        <arrayIndex>
+                          <Var type="Fint" scope="local">k</Var>
+                        </arrayIndex>
+                      </FarrayRef>
+                      <Var type="Freal" scope="local">c</Var>
+                    </mulExpr>
+                  </plusExpr>
+                </FassignStatement>
+              </body>
+            </FdoStatement>
+            <FassignStatement lineno="34" file="__omni_tmp__/mo_column.f90">
+              <FarrayRef type="R7f986f50a120">
+                <varRef type="A7f986f50a250">
+                  <Var type="A7f986f50a250" scope="local">q</Var>
+                </varRef>
+                <arrayIndex>
+                  <Var type="I7f986f508aa0" scope="local">nz</Var>
+                </arrayIndex>
+              </FarrayRef>
+              <mulExpr type="R7f986f50a120">
+                <FarrayRef type="R7f986f50a120">
+                  <varRef type="A7f986f50a250">
+                    <Var type="A7f986f50a250" scope="local">q</Var>
+                  </varRef>
+                  <arrayIndex>
+                    <Var type="I7f986f508aa0" scope="local">nz</Var>
+                  </arrayIndex>
+                </FarrayRef>
+                <Var type="Freal" scope="local">c</Var>
+              </mulExpr>
+            </FassignStatement>
+          </body>
+        </FfunctionDefinition>
+      </FcontainsStatement>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>

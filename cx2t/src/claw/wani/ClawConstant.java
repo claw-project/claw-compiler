@@ -18,8 +18,11 @@ public class ClawConstant {
   public static final String EMPTY_STRING = "";
 
   public static final String DEFAULT_STEP_VALUE = "1";
+  public static final int DEFAULT_MAX_COLUMN = 80;
   public static final String CLAW = "claw";
   public static final int INDENT_OUTPUT = 2; // Number of spaces for indent
 
   public static final String EXTRACTION_SUFFIX = "_extracted";
+
+  public static final String ERROR_PREFIX_INTERNAL = "internal";
 }

@@ -18,7 +18,7 @@ PROGRAM test_abstraction25
     q(p,1) = 0.0
   END DO
 
-  !$claw parallelize forward create update
+  !$claw sca forward create update
   DO p = 1, nproma
     CALL compute(nz, q(p,:))
   END DO

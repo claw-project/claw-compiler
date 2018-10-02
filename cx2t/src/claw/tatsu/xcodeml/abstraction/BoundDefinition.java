@@ -16,9 +16,9 @@ import claw.tatsu.xcodeml.xnode.fortran.Intent;
  */
 public class BoundDefinition {
 
-  private String _strBoundValue = null;
+  private String _strBoundValue;
   private int _intBoundValue;
-  private BoundType _boundType = BoundType.LOWER;
+  private BoundType _boundType;
 
   /**
    * Constructs a BoundDefinition from String value. Detects if bound is an
@@ -30,7 +30,7 @@ public class BoundDefinition {
     _boundType = type;
     try {
       _intBoundValue = Integer.parseInt(boundValue);
-      _strBoundValue = null;
+      _strBoundValue = "";
     } catch(NumberFormatException ex) {
       _intBoundValue = -1;
       _strBoundValue = boundValue;
@@ -43,7 +43,7 @@ public class BoundDefinition {
    * @return True if the bound is a var.
    */
   public boolean isVar() {
-    return _strBoundValue != null;
+    return _strBoundValue != null && !_strBoundValue.isEmpty();
   }
 
   /**
@@ -96,6 +96,6 @@ public class BoundDefinition {
 
   // Enum representing the type of bound
   public enum BoundType {
-    LOWER, UPPER
+    LOWER, UPPER, STEP
   }
 }

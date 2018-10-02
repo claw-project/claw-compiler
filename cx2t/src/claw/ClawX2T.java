@@ -8,6 +8,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
+import claw.wani.ClawConstant;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
@@ -33,11 +34,19 @@ public class ClawX2T {
    * @param charPos    Character position of the error, if known.
    * @param msg        Error message.
    */
-  private static void error(String filename, int lineNumber,
-                            int charPos, String msg)
+  private static void error(String filename, int lineNumber, int charPos,
+                            String msg)
   {
-    System.err.println(String.format("%s:%d:%d error: %s",
-        filename, lineNumber, charPos, msg));
+    StringBuilder errorStr = new StringBuilder();
+    errorStr.append(filename).append(":");
+    if(lineNumber > 0) {
+      errorStr.append(lineNumber).append(":");
+    }
+    if(charPos > 0) {
+      errorStr.append(lineNumber).append(":");
+    }
+    errorStr.append(msg);
+    System.err.println(errorStr);
     System.exit(1);
   }
 
@@ -113,6 +122,8 @@ public class ClawX2T {
             "has to be transformed.");
     options.addOption("r", "report", true,
         "generate the transformation report.");
+    options.addOption("m", "model-config", true,
+        "specify a model configuration for SCA transformation");
     options.addOption("x", true,
         "override configuration option. Higher priority over base " +
             "configuration and user configuration.");
@@ -145,12 +156,13 @@ public class ClawX2T {
    */
   public static void main(String[] args) throws Exception {
     String input;
-    String xcmlOutput = null;
-    String targetLangOutput = null;
-    String targetOption = null;
-    String directiveOption = null;
-    String configurationFile = null;
-    String configurationPath = null;
+    String xcmlOutput;
+    String targetLangOutput;
+    String targetOption;
+    String directiveOption;
+    String configurationFile;
+    String configurationPath;
+    String modelConfiguration = null;
     int maxColumns = 0;
 
     CommandLine cmd = processCommandArgs(args);
@@ -217,10 +229,20 @@ public class ClawX2T {
       }
     }
 
+    // Check if there is a model configuration and if file exists
+    if(cmd.hasOption("m")) {
+      modelConfiguration = cmd.getOptionValue("m");
+      File modelConfig = new File(modelConfiguration);
+      if(!modelConfig.exists()) {
+        error(ClawConstant.ERROR_PREFIX_INTERNAL, 0, 0,
+            "Model configuration file not found: " + modelConfiguration);
+      }
+    }
+
     // --show-configuration option
     if(cmd.hasOption("sc")) {
       Configuration.get().load(configurationPath, configurationFile,
-          targetOption, directiveOption, maxColumns);
+          modelConfiguration, targetOption, directiveOption, maxColumns);
       Configuration.get().displayConfig();
       return;
     }
@@ -235,7 +257,7 @@ public class ClawX2T {
     // Read the configuration file
     try {
       Configuration.get().load(configurationPath, configurationFile,
-          targetOption, directiveOption, maxColumns);
+          modelConfiguration, targetOption, directiveOption, maxColumns);
     } catch(Exception ex) {
       error(ERR_INTERNAL, 0, 0, ex.getMessage());
       return;

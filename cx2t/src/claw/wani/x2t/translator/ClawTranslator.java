@@ -8,6 +8,7 @@ import claw.shenron.transformation.DependentTransformationGroup;
 import claw.shenron.transformation.IndependentTransformationGroup;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
+import claw.shenron.translator.AnalyzedPragma;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
@@ -86,6 +87,15 @@ public class ClawTranslator implements Translator {
   {
     // Analyze the raw pragma with the CLAW language parser
     ClawPragma analyzedPragma = ClawPragma.analyze(pragma);
+    if(analyzedPragma.hasErrors()) {
+      for(String err : analyzedPragma.getErrors()) {
+        xcodeml.addError(err, analyzedPragma.getPragma().lineNo());
+      }
+      throw new IllegalDirectiveException(
+          analyzedPragma.getDirective().toString(),
+          "Errors detected during directive analysis.",
+          analyzedPragma.getPragma().lineNo());
+    }
 
     // Create transformation object based on the directive
     switch(analyzedPragma.getDirective()) {
@@ -113,23 +123,11 @@ public class ClawTranslator implements Translator {
       case REMOVE:
         handleBlockDirective(xcodeml, analyzedPragma);
         break;
-      case PARALLELIZE:
-        if(analyzedPragma.hasForwardClause()) {
-          addTransformation(xcodeml, new ScaForward(analyzedPragma));
-        } else {
-          if(Context.get().getTarget() == Target.GPU) {
-            addTransformation(xcodeml, new ScaGPU(analyzedPragma));
-          } else {
-            if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
-                equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
-            {
-              addTransformation(xcodeml,
-                  new ScaCPUsmartFusion(analyzedPragma));
-            } else {
-              addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
-            }
-          }
-        }
+      case SCA:
+        addScaTransformation(xcodeml, analyzedPragma);
+        break;
+      case MODEL_DATA:
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case PRIMITIVE:
         addTransformation(xcodeml, new DirectivePrimitive(analyzedPragma));
@@ -145,6 +143,35 @@ public class ClawTranslator implements Translator {
       default:
         throw new IllegalDirectiveException(null, "Unrecognized CLAW directive",
             pragma.lineNo());
+    }
+  }
+
+  /**
+   * Create specific SCA transformation.
+   *
+   * @param xcodeml        Current translation unit.
+   * @param analyzedPragma Analyzed pragma object.
+   * @throws IllegalTransformationException If transformation cannot be created.
+   */
+  private void addScaTransformation(XcodeProgram xcodeml,
+                                    ClawPragma analyzedPragma)
+      throws IllegalTransformationException
+  {
+    if(analyzedPragma.hasForwardClause()) {
+      addTransformation(xcodeml, new ScaForward(analyzedPragma));
+    } else {
+      if(Context.get().getTarget() == Target.GPU) {
+        addTransformation(xcodeml, new ScaGPU(analyzedPragma));
+      } else {
+        if(Configuration.get().getParameter(Configuration.CPU_STRATEGY).
+            equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
+        {
+          addTransformation(xcodeml,
+              new ScaCPUsmartFusion(analyzedPragma));
+        } else {
+          addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
+        }
+      }
     }
   }
 
@@ -220,6 +247,9 @@ public class ClawTranslator implements Translator {
       case LOOP_HOIST:
         addTransformation(xcodeml, new LoopHoist(begin, end));
         break;
+      case MODEL_DATA:
+        addTransformation(xcodeml, new ModelData(begin, end));
+        break;
       default:
         throw new IllegalTransformationException("Unknown block transformation",
             begin.getPragma().lineNo());
@@ -243,7 +273,7 @@ public class ClawTranslator implements Translator {
     if(t.analyze(xcodeml, this)) {
       if(_tGroups.containsKey(t.getClass())) {
         _tGroups.get(t.getClass()).add(t);
-      } else if (_tGroups.containsKey(t.getClass().getSuperclass())) {
+      } else if(_tGroups.containsKey(t.getClass().getSuperclass())) {
         _tGroups.get(t.getClass().getSuperclass()).add(t);
       }
     } else if(t.abortOnFailedAnalysis()) {
@@ -302,6 +332,7 @@ public class ClawTranslator implements Translator {
           TopologicalSort.sort(TopologicalSort.reverseGraph(dg));
       tg.setTransformations(ordered);
     }
+
   }
 
   /**
@@ -386,7 +417,9 @@ public class ClawTranslator implements Translator {
    * @return Transformation counter value.
    */
   public int getNextTransformationCounter() {
-    return _transformationCounter++;
+    int currentCounter = _transformationCounter;
+    ++_transformationCounter;
+    return currentCounter;
   }
 
   /**

@@ -86,7 +86,8 @@ public class Configuration {
   public static final String CPU_STRATEGY_FUSION = "fusion";
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
-  private static Configuration _instance = null;
+
+  // Local objects
   private String _configuration_path;
   private Map<String, String> _parameters;
   private List<GroupConfiguration> _groups;
@@ -94,11 +95,21 @@ public class Configuration {
   private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
+  private ModelConfig _modelConfig;
 
   /**
-   * private ctor
+   * Lazy holder pattern.
+   */
+  private static class LazyHolder {
+
+    static final Configuration INSTANCE = new Configuration();
+  }
+
+  /**
+   * Private ctor to avoid external instantiation.
    */
   private Configuration() {
+    _modelConfig = new ModelConfig();
   }
 
   /**
@@ -107,10 +118,7 @@ public class Configuration {
    * @return Unique Configuration instance.
    */
   public static Configuration get() {
-    if(_instance == null) {
-      _instance = new Configuration();
-    }
-    return _instance;
+    return LazyHolder.INSTANCE;
   }
 
   /**
@@ -155,12 +163,13 @@ public class Configuration {
    * @param configPath           Path to the configuration files and XSD
    *                             schemas.
    * @param userConfigFile       Path to the alternative configuration.
+   * @param modelConfig          SCA specific model configuration.
    * @param userDefinedTarget    Target option passed by user. Can be null.
    * @param userDefinedDirective Directive option passed by user. Can be null.
    * @param userMaxColumns       Max column option passed by user. Can be 0.
    * @throws Exception If configuration cannot be loaded properly.
    */
-  public void load(String configPath, String userConfigFile,
+  public void load(String configPath, String userConfigFile, String modelConfig,
                    String userDefinedTarget, String userDefinedDirective,
                    int userMaxColumns)
       throws Exception
@@ -215,8 +224,12 @@ public class Configuration {
         _accelerator = new AcceleratorConfiguration(_parameters);
     }
 
-    Context.init(getCurrentDirective(), getCurrentTarget(), _accelerator,
+    Context.get().init(getCurrentDirective(), getCurrentTarget(), _accelerator,
         userMaxColumns);
+
+    if(modelConfig != null) {
+      getModelConfig().load(modelConfig);
+    }
   }
 
   /**
@@ -680,8 +693,10 @@ public class Configuration {
    */
   public void displayConfig() {
     System.out.println(String.format("- CLAW Compiler configuration -%n"));
-    System.out.println(String.format("Default directive directive: %s%n", getCurrentDirective()));
-    System.out.println(String.format("Default target: %s%n", getCurrentTarget()));
+    System.out.println(String.format("Default directive directive: %s%n",
+        getCurrentDirective()));
+    System.out.println(String.format("Default target: %s%n",
+        getCurrentTarget()));
     System.out.println("Current transformation order:");
     int i = 0;
     System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n",
@@ -690,9 +705,10 @@ public class Configuration {
         "--", "---", "----", "----", "-------", "---------", "-----");
     for(GroupConfiguration g : getGroups()) {
       System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s%n",
-          i++, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
+          i, g.getSetName(), g.getName(), g.getType(), g.getTriggerType(),
           g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
               ? g.getDirective() : "-", g.getTransformationClassName());
+      ++i;
     }
   }
 
@@ -707,5 +723,14 @@ public class Configuration {
       _parameters.remove(key.toLowerCase());
       _parameters.put(key, value);
     }
+  }
+
+  /**
+   * Get the global model configuration.
+   *
+   * @return Global model config instance.
+   */
+  public ModelConfig getModelConfig() {
+    return _modelConfig;
   }
 }

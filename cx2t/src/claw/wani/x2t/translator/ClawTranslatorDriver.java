@@ -39,17 +39,11 @@ import java.util.logging.Logger;
  */
 public class ClawTranslatorDriver {
 
-  String _xcodemlInputFile = null;
-  String _xcodemlOutputFile = null;
+  private String _xcodemlInputFile;
+  private String _xcodemlOutputFile;
   private boolean _canTransform = false;
-  private ClawTranslator _translator = null;
+  private ClawTranslator _translator;
   private XcodeProgram _translationUnit = null;
-
-  /**
-   * Default ctor for child classes.
-   */
-  ClawTranslatorDriver() {
-  }
 
   /**
    * ClawTranslatorDriver ctor.
@@ -108,7 +102,7 @@ public class ClawTranslatorDriver {
          * declaration and the execution part will be placed in the declaration
          * part. This is not what is best for all the current CLAW directives.
          * Therefore, we move them back to the execution block. */
-        Pragma.moveInExecution(pragma);
+        //TODO MODEL_CONFIG: Pragma.moveInExecution(pragma);
 
         // Pragma can be handled by the translator so let it do its job.
         if(_translator.isHandledPragma(pragma)) {

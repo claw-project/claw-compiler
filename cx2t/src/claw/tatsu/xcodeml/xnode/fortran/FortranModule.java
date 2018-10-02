@@ -11,8 +11,8 @@ import claw.tatsu.xcodeml.xnode.common.XsymbolTable;
 import org.w3c.dom.Document;
 
 /**
- * The FortranModule represents the module information produced by the Fortran front-end
- * of OMNI Compiler.
+ * The FortranModule represents the module information produced by the Fortran
+ * front-end of OMNI Compiler.
  *
  * @author clementval
  */
@@ -22,11 +22,11 @@ public class FortranModule extends XcodeML {
   private final String _path;
   private final String _name;
 
-  private XsymbolTable _identifiers = null;
+  private XsymbolTable _identifiers;
 
   /**
-   * Constructs a basic FortranModule object representing the XcodeML module file given
-   * in input.
+   * Constructs a basic FortranModule object representing the XcodeML module
+   * file given in input.
    *
    * @param baseElement XcodeML document.
    * @param name        Name of the module.

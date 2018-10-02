@@ -22,7 +22,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize
+    !$claw sca
 
     DO k = 1, nz
       IF (t(k) > 0.) THEN

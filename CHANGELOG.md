@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
+## [1.2] - Unreleased
+* SCA: Support model configuration file with the `--model-config=<path>` option.
+* SCA: `parallelize` can still be used but it is deprecated. Use the new
+  `!$claw sca` directive construct.
+* SCA: in directive dimension definition is still supported as a local model
+  configuration per pragma.
+* SCA: Support `model-data` directive.
+* Various bug fixes.
+
 ## [1.1.0] - 2018-09-24
 * SCA: Initial support of OpenMP 4.5 code generation for accelerator.
 * SCA: Smart fusion option as CPU transformation strategy. Tries to group

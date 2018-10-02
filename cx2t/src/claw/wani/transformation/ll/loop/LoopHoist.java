@@ -210,8 +210,8 @@ public class LoopHoist extends ClawBlockTransformation {
     if(_clawStart.hasReshapeClause()) {
       FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
-        throw new IllegalTransformationException("Cannot apply reshape clause." +
-            "Parent function definition not found.",
+        throw new IllegalTransformationException("Cannot apply reshape clause."
+            + "Parent function definition not found.",
             _clawStart.getPragma().lineNo());
       }
 

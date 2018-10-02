@@ -300,9 +300,12 @@ public class PromotionInfo {
         }
       } else {
         String dimensionId = rawDim.substring(0, rawDim.indexOf('('));
-        String lowerBound = rawDim.substring(rawDim.indexOf('(') + 1, rawDim.indexOf(':'));
-        String upperBound = rawDim.substring(rawDim.indexOf(':') + 1, rawDim.indexOf(')'));
-        DimensionDefinition dim = new DimensionDefinition(dimensionId, lowerBound, upperBound);
+        String lowerBound =
+            rawDim.substring(rawDim.indexOf('(') + 1, rawDim.indexOf(':'));
+        String upperBound =
+            rawDim.substring(rawDim.indexOf(':') + 1, rawDim.indexOf(')'));
+        DimensionDefinition dim =
+            new DimensionDefinition(dimensionId, lowerBound, upperBound);
         dim.setInsertionPosition(crtPos);
         _dimensions.add(dim);
       }

@@ -69,7 +69,8 @@ public class ClawPragmaTest {
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu,mic)", null,
         false, 0, Arrays.asList(Target.CPU, Target.GPU, Target.MIC), null);
     analyzeValidClawLoopFusion("claw loop-fusion target(cpu,gpu) collapse(3) " +
-        "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU), null);
+            "group(g1)", "g1", true, 3, Arrays.asList(Target.CPU, Target.GPU),
+        null);
 
     // Constraint clause
     analyzeValidClawLoopFusion("claw loop-fusion group(g1) constraint(direct)",
@@ -100,37 +101,27 @@ public class ClawPragmaTest {
                                           List<Target> targets,
                                           ClawConstraint constraint)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.LOOP_FUSION, l.getDirective());
-      if(groupName != null) {
-        assertTrue(l.hasGroupClause());
-        assertEquals(groupName, l.getGroupValue());
-      } else {
-        assertFalse(l.hasGroupClause());
-        assertNull(l.getGroupValue());
-      }
-      if(collapse) {
-        assertTrue(l.hasCollapseClause());
-        assertEquals(n, l.getCollapseValue());
-      } else {
-        assertFalse(l.hasCollapseClause());
-      }
-      if(constraint != null) {
-        assertTrue(l.hasConstraintClause());
-        assertEquals(constraint, l.getConstraintClauseValue());
-      } else {
-        assertFalse(l.hasConstraintClause());
-      }
-
-      assertTargets(l, targets);
-    } catch(IllegalDirectiveException idex) {
-      fail();
+    ClawPragma l = analyze(raw, ClawDirective.LOOP_FUSION);
+    if(groupName != null) {
+      assertTrue(l.hasGroupClause());
+      assertEquals(groupName, l.getGroupValue());
+    } else {
+      assertFalse(l.hasGroupClause());
+      assertNull(l.getGroupValue());
     }
+    if(collapse) {
+      assertTrue(l.hasCollapseClause());
+      assertEquals(n, l.getCollapseValue());
+    } else {
+      assertFalse(l.hasCollapseClause());
+    }
+    if(constraint != null) {
+      assertTrue(l.hasConstraintClause());
+      assertEquals(constraint, l.getConstraintClauseValue());
+    } else {
+      assertFalse(l.hasConstraintClause());
+    }
+    assertTargets(l, targets);
   }
 
   /**
@@ -143,7 +134,7 @@ public class ClawPragmaTest {
       Xnode p = XmlHelper.createXpragma();
       p.setValue(raw);
       Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+      Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
       ClawPragma.analyze(p);
       fail();
     } catch(IllegalDirectiveException pex) {
@@ -200,40 +191,30 @@ public class ClawPragmaTest {
                                                boolean parallel, String acc,
                                                List<Target> targets)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.LOOP_INTERCHANGE, l.getDirective());
-      if(indexes != null) {
-        assertTrue(l.hasIndexes());
-        assertEquals(indexes.size(), l.getIndexes().size());
-      } else {
-        assertFalse(l.hasIndexes());
-        assertNull(l.getIndexes());
-      }
-
-      if(parallel) {
-        assertTrue(l.hasParallelClause());
-      } else {
-        assertFalse(l.hasParallelClause());
-      }
-
-      if(acc != null) {
-        assertTrue(l.hasAcceleratorClause());
-        assertEquals(acc, l.getAcceleratorClauses());
-      } else {
-        assertFalse(l.hasAcceleratorClause());
-        assertNull(l.getAcceleratorClauses());
-      }
-
-      assertTargets(l, targets);
-
-    } catch(IllegalDirectiveException idex) {
-      fail();
+    ClawPragma l = analyze(raw, ClawDirective.LOOP_INTERCHANGE);
+    if(indexes != null) {
+      assertTrue(l.hasIndexes());
+      assertEquals(indexes.size(), l.getIndexes().size());
+    } else {
+      assertFalse(l.hasIndexes());
+      assertNull(l.getIndexes());
     }
+
+    if(parallel) {
+      assertTrue(l.hasParallelClause());
+    } else {
+      assertFalse(l.hasParallelClause());
+    }
+
+    if(acc != null) {
+      assertTrue(l.hasAcceleratorClause());
+      assertEquals(acc, l.getAcceleratorClauses());
+    } else {
+      assertFalse(l.hasAcceleratorClause());
+      assertNull(l.getAcceleratorClauses());
+    }
+
+    assertTargets(l, targets);
   }
 
   /**
@@ -243,7 +224,7 @@ public class ClawPragmaTest {
    * @param targets List of expected targets.
    */
   private void assertTargets(ClawPragma l, List<Target> targets) {
-    if(targets != null) {
+    if(targets != null && targets.size() > 0) {
       assertTrue(l.hasTargetClause());
       assertEquals(targets.size(), l.getTargetClauseValues().size());
       for(Target t : targets) {
@@ -279,6 +260,60 @@ public class ClawPragmaTest {
   }
 
   /**
+   * Test various input for the CLAW model-data directive.
+   */
+  @Test
+  public void scaModelDataTest() {
+    analyzeValidSimpleClaw("claw model-data", ClawDirective.MODEL_DATA, false,
+        Collections.<Target>emptyList());
+    analyzeValidSimpleClaw("claw end model-data", ClawDirective.MODEL_DATA,
+        true, Collections.<Target>emptyList());
+    assertModelDataDirective("claw model-data layout(radiation)", "radiation");
+    assertModelDataDirective("claw model-data layout( default )", "default");
+  }
+
+  /**
+   * Execute the parsing on the raw string and return a ClawPragma object if
+   * successful.
+   *
+   * @param raw       Raw directive.
+   * @param directive Expected directive.
+   * @return ClawPragma object with information extracted from parsing.
+   */
+  private ClawPragma analyze(String raw, ClawDirective directive) {
+    try {
+      Xnode p = XmlHelper.createXpragma();
+      p.setValue(raw);
+      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
+      Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+      ClawPragma l = ClawPragma.analyze(p);
+      assertEquals(directive, l.getDirective());
+      return l;
+    } catch(IllegalDirectiveException idex) {
+      fail();
+    }
+    return null;
+  }
+
+  /**
+   * Assert the result for model-data directive
+   *
+   * @param raw      Raw directive.
+   * @param layoutId Optional layout id to check for.
+   */
+  private void assertModelDataDirective(String raw, String layoutId) {
+    ClawPragma l = analyze(raw, ClawDirective.MODEL_DATA);
+    assertNotNull(l);
+    if(layoutId == null) {
+      assertFalse(l.hasLayoutClause());
+      assertNull(l.getLayoutValue());
+    } else {
+      assertTrue(l.hasLayoutClause());
+      assertEquals(layoutId, l.getLayoutValue());
+    }
+  }
+
+  /**
    * Assert the result for valid simple CLAW directive
    *
    * @param raw       Raw string value of the CLAW directive to be analyzed.
@@ -287,23 +322,13 @@ public class ClawPragmaTest {
   private void analyzeValidSimpleClaw(String raw, ClawDirective directive,
                                       boolean isEnd, List<Target> targets)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(directive, l.getDirective());
-      if(isEnd) {
-        assertTrue(l.isEndPragma());
-      } else {
-        assertFalse(l.isEndPragma());
-      }
-      assertTargets(l, targets);
-    } catch(IllegalDirectiveException idex) {
-      System.err.println(idex.getMessage());
-      fail();
+    ClawPragma l = analyze(raw, directive);
+    if(isEnd) {
+      assertTrue(l.isEndPragma());
+    } else {
+      assertFalse(l.isEndPragma());
     }
+    assertTargets(l, targets);
   }
 
   /**
@@ -432,8 +457,10 @@ public class ClawPragmaTest {
     l = analyzeValidClawLoopExtract(
         "claw loop-extract range(j1=ki1sc,ki1ec) " +
             "map(pduh2oc,pduh2of:j1,ki3sc/j3) " +
-            "map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac,podaf:j1,ki3sc/j3) " +
-            "map(pbsff,pbsfc:j1,ki3sc/j3) map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) " +
+            "map(pduco2,pduo3,palogp,palogt,podsc,podsf,podac," +
+            "podaf:j1,ki3sc/j3) " +
+            "map(pbsff,pbsfc:j1,ki3sc/j3) " +
+            "map(pa1c,pa1f,pa2c,pa2f,pa3c,pa3f:j1) " +
             "fusion group(coeth-j1) parallel acc(loop gang vector)",
         "j1", "ki1sc", "ki1ec", null, null);
     assertNotNull(l);
@@ -544,26 +571,15 @@ public class ClawPragmaTest {
                                                  String step,
                                                  List<Target> targets)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.LOOP_EXTRACT, l.getDirective());
-      assertEquals(induction, l.getRange().getInductionVar());
-      assertEquals(lower, l.getRange().getLowerBound());
-      assertEquals(upper, l.getRange().getUpperBound());
-      if(step != null) {
-        assertEquals(step, l.getRange().getStep());
-      }
-      assertTargets(l, targets);
-      return l;
-    } catch(IllegalDirectiveException idex) {
-      System.err.println(idex.getMessage());
-      fail();
-      return null;
+    ClawPragma l = analyze(raw, ClawDirective.LOOP_EXTRACT);
+    assertEquals(induction, l.getRange().getInductionVar());
+    assertEquals(lower, l.getRange().getLowerBound());
+    assertEquals(upper, l.getRange().getUpperBound());
+    if(step != null) {
+      assertEquals(step, l.getRange().getStep());
     }
+    assertTargets(l, targets);
+    return l;
   }
 
   /**
@@ -576,11 +592,14 @@ public class ClawPragmaTest {
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1)",
         Arrays.asList("var1", "var2"), Arrays.asList(0, 1), false, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,-1,0)",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), false, false,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0)",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, false,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) private",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), false, true,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) private",
         Arrays.asList("var1", "var2"), null, false, true, null);
 
@@ -599,11 +618,15 @@ public class ClawPragmaTest {
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,1) init",
         Arrays.asList("var1", "var2"), Arrays.asList(0, 1), true, false, null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(0,-1,0) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(0, -1, 0), true, false,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) init",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false, null);
-    analyzeValidKcache("claw kcache data(var1,var2) offset(+1,-1,0) init private",
-        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true, null);
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, false,
+        null);
+    analyzeValidKcache(
+        "claw kcache data(var1,var2) offset(+1,-1,0) init private",
+        Arrays.asList("var1", "var2"), Arrays.asList(1, -1, 0), true, true,
+        null);
     analyzeValidKcache("claw kcache data(var1,var2) init private",
         Arrays.asList("var1", "var2"), null, true, true, null);
 
@@ -637,43 +660,33 @@ public class ClawPragmaTest {
                                   List<Integer> offsets, boolean init,
                                   boolean hasPrivate, List<Target> targets)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.KCACHE, l.getDirective());
-      if(data != null) {
-        assertTrue(l.hasDataClause());
-        assertEquals(data.size(), l.getDataClauseValues().size());
-        for(int i = 0; i < data.size(); ++i) {
-          assertEquals(data.get(i), l.getDataClauseValues().get(i));
-        }
-      } else {
-        assertFalse(l.hasDataClause());
+    ClawPragma l = analyze(raw, ClawDirective.KCACHE);
+    if(data != null) {
+      assertTrue(l.hasDataClause());
+      assertEquals(data.size(), l.getDataClauseValues().size());
+      for(int i = 0; i < data.size(); ++i) {
+        assertEquals(data.get(i), l.getDataClauseValues().get(i));
       }
-      if(offsets != null) {
-        assertEquals(offsets.size(), l.getOffsets().size());
-        for(int i = 0; i < offsets.size(); ++i) {
-          assertEquals(offsets.get(i), l.getOffsets().get(i));
-        }
-      }
-      if(init) {
-        assertTrue(l.hasInitClause());
-      } else {
-        assertFalse(l.hasInitClause());
-      }
-      if(hasPrivate) {
-        assertTrue(l.hasPrivateClause());
-      } else {
-        assertFalse(l.hasPrivateClause());
-      }
-      assertTargets(l, targets);
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+    } else {
+      assertFalse(l.hasDataClause());
     }
+    if(offsets != null) {
+      assertEquals(offsets.size(), l.getOffsets().size());
+      for(int i = 0; i < offsets.size(); ++i) {
+        assertEquals(offsets.get(i), l.getOffsets().get(i));
+      }
+    }
+    if(init) {
+      assertTrue(l.hasInitClause());
+    } else {
+      assertFalse(l.hasInitClause());
+    }
+    if(hasPrivate) {
+      assertTrue(l.hasPrivateClause());
+    } else {
+      assertFalse(l.hasPrivateClause());
+    }
+    assertTargets(l, targets);
   }
 
   /**
@@ -757,45 +770,36 @@ public class ClawPragmaTest {
                                           String acc, List<String> inducNames,
                                           List<Target> targets)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.ARRAY_TRANSFORM, l.getDirective());
-      if(fusion) {
-        assertTrue(l.hasFusionClause());
-        assertEquals(fusionGroup, l.getGroupValue());
-      } else {
-        assertFalse(l.hasFusionClause());
-        assertNull(l.getGroupValue());
-      }
-      if(parallel) {
-        assertTrue(l.hasParallelClause());
-      } else {
-        assertFalse(l.hasParallelClause());
-      }
-      if(acc != null) {
-        assertTrue(l.hasAcceleratorClause());
-        assertEquals(acc, l.getAcceleratorClauses());
-      } else {
-        assertFalse(l.hasAcceleratorClause());
-      }
-      if(inducNames != null) {
-        assertTrue(l.hasInductionClause());
-        assertEquals(inducNames.size(), l.getInductionValues().size());
-        for(int i = 0; i < inducNames.size(); ++i) {
-          assertEquals(inducNames.get(i), l.getInductionValues().get(i));
-        }
-      } else {
-        assertFalse(l.hasInductionClause());
-      }
-      assertTargets(l, targets);
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+    ClawPragma l = analyze(raw, ClawDirective.ARRAY_TRANSFORM);
+    assertNotNull(l);
+    if(fusion) {
+      assertTrue(l.hasFusionClause());
+      assertEquals(fusionGroup, l.getGroupValue());
+    } else {
+      assertFalse(l.hasFusionClause());
+      assertNull(l.getGroupValue());
     }
+    if(parallel) {
+      assertTrue(l.hasParallelClause());
+    } else {
+      assertFalse(l.hasParallelClause());
+    }
+    if(acc != null) {
+      assertTrue(l.hasAcceleratorClause());
+      assertEquals(acc, l.getAcceleratorClauses());
+    } else {
+      assertFalse(l.hasAcceleratorClause());
+    }
+    if(inducNames != null) {
+      assertTrue(l.hasInductionClause());
+      assertEquals(inducNames.size(), l.getInductionValues().size());
+      for(int i = 0; i < inducNames.size(); ++i) {
+        assertEquals(inducNames.get(i), l.getInductionValues().get(i));
+      }
+    } else {
+      assertFalse(l.hasInductionClause());
+    }
+    assertTargets(l, targets);
   }
 
   /**
@@ -818,7 +822,8 @@ public class ClawPragmaTest {
     ReshapeInfo info1 = new ReshapeInfo("zmd", 0, empty);
     ReshapeInfo info2 =
         new ReshapeInfo("zsediflux", 1, Collections.singletonList(2));
-    analyzeValidLoopHoist("claw loop-hoist(i,j) reshape(zmd(0), zsediflux(1,2))",
+    analyzeValidLoopHoist("claw loop-hoist(i,j) " +
+            "reshape(zmd(0), zsediflux(1,2))",
         Arrays.asList("i", "j"), false, null, true,
         Arrays.asList(info1, info2), null, false, null, 0, false, null);
 
@@ -895,78 +900,66 @@ public class ClawPragmaTest {
                                      boolean cleanup,
                                      CompilerDirective cleanupValue)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.LOOP_HOIST, l.getDirective());
+    ClawPragma l = analyze(raw, ClawDirective.LOOP_HOIST);
+    assertEquals(inductions.size(), l.getHoistInductionVars().size());
+    for(int i = 0; i < inductions.size(); ++i) {
+      assertEquals(inductions.get(i), l.getHoistInductionVars().get(i));
+    }
 
-      assertEquals(inductions.size(), l.getHoistInductionVars().size());
-      for(int i = 0; i < inductions.size(); ++i) {
-        assertEquals(inductions.get(i), l.getHoistInductionVars().get(i));
+    if(interchange) {
+      assertTrue(l.hasInterchangeClause());
+    } else {
+      assertFalse(l.hasInterchangeClause());
+    }
+
+    if(indexes != null) {
+      for(int i = 0; i < indexes.size(); ++i) {
+        assertEquals(indexes.get(i), l.getIndexes().get(i));
       }
+    }
 
-      if(interchange) {
-        assertTrue(l.hasInterchangeClause());
-      } else {
-        assertFalse(l.hasInterchangeClause());
-      }
-
-      if(indexes != null) {
-        for(int i = 0; i < indexes.size(); ++i) {
-          assertEquals(indexes.get(i), l.getIndexes().get(i));
+    if(reshape) {
+      assertTrue(l.hasReshapeClause());
+      assertEquals(infos.size(), l.getReshapeClauseValues().size());
+      for(int i = 0; i < infos.size(); ++i) {
+        assertEquals(infos.get(i).getArrayName(),
+            l.getReshapeClauseValues().get(i).getArrayName());
+        assertEquals(infos.get(i).getTargetDimension(),
+            l.getReshapeClauseValues().get(i).getTargetDimension());
+        List<Integer> expected = infos.get(i).getKeptDimensions();
+        List<Integer> actual =
+            l.getReshapeClauseValues().get(i).getKeptDimensions();
+        assertEquals(expected.size(), actual.size());
+        for(int j = 0; j < expected.size(); ++j) {
+          assertEquals(expected.get(j), actual.get(j));
         }
       }
+    } else {
+      assertFalse(l.hasReshapeClause());
+    }
+    assertTargets(l, targets);
 
-      if(reshape) {
-        assertTrue(l.hasReshapeClause());
-        assertEquals(infos.size(), l.getReshapeClauseValues().size());
-        for(int i = 0; i < infos.size(); ++i) {
-          assertEquals(infos.get(i).getArrayName(),
-              l.getReshapeClauseValues().get(i).getArrayName());
-          assertEquals(infos.get(i).getTargetDimension(),
-              l.getReshapeClauseValues().get(i).getTargetDimension());
-          List<Integer> expected = infos.get(i).getKeptDimensions();
-          List<Integer> actual =
-              l.getReshapeClauseValues().get(i).getKeptDimensions();
-          assertEquals(expected.size(), actual.size());
-          for(int j = 0; j < expected.size(); ++j) {
-            assertEquals(expected.get(j), actual.get(j));
-          }
-        }
-      } else {
-        assertFalse(l.hasReshapeClause());
-      }
-      assertTargets(l, targets);
+    assertEquals(fusion, l.hasFusionClause());
 
-      assertEquals(fusion, l.hasFusionClause());
+    if(group != null) {
+      assertTrue(l.hasGroupClause());
+      assertEquals(group, l.getGroupValue());
+    } else {
+      assertFalse(l.hasGroupClause());
+    }
 
-      if(group != null) {
-        assertTrue(l.hasGroupClause());
-        assertEquals(group, l.getGroupValue());
-      } else {
-        assertFalse(l.hasGroupClause());
-      }
+    if(collapse > 0) {
+      assertTrue(l.hasCollapseClause());
+      assertEquals(collapse, l.getCollapseValue());
+    } else {
+      assertFalse(l.hasCollapseClause());
+    }
 
-      if(collapse > 0) {
-        assertTrue(l.hasCollapseClause());
-        assertEquals(collapse, l.getCollapseValue());
-      } else {
-        assertFalse(l.hasCollapseClause());
-      }
-
-      if(cleanup) {
-        assertTrue(l.hasCleanupClause());
-        assertSame(cleanupValue, l.getCleanupClauseValue());
-      } else {
-        assertFalse(l.hasCleanupClause());
-      }
-
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+    if(cleanup) {
+      assertTrue(l.hasCleanupClause());
+      assertSame(cleanupValue, l.getCleanupClauseValue());
+    } else {
+      assertFalse(l.hasCleanupClause());
     }
   }
 
@@ -1012,26 +1005,15 @@ public class ClawPragmaTest {
                                           String fctName, List<String> params,
                                           List<Target> targets)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.ARRAY_TO_CALL, l.getDirective());
-
-      assertEquals(params.size(), l.getFctParams().size());
-      for(int i = 0; i < params.size(); ++i) {
-        assertEquals(params.get(i), l.getFctParams().get(i));
-      }
-
-      assertEquals(arrayName, l.getArrayName());
-      assertEquals(fctName, l.getFctName());
-      assertTargets(l, targets);
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+    ClawPragma l = analyze(raw, ClawDirective.ARRAY_TO_CALL);
+    assertEquals(params.size(), l.getFctParams().size());
+    for(int i = 0; i < params.size(); ++i) {
+      assertEquals(params.get(i), l.getFctParams().get(i));
     }
+
+    assertEquals(arrayName, l.getArrayName());
+    assertEquals(fctName, l.getFctName());
+    assertTargets(l, targets);
   }
 
   /**
@@ -1039,93 +1021,75 @@ public class ClawPragmaTest {
    */
   @Test
   public void nodepTest() {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue("claw nodep");
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.NO_DEP, l.getDirective());
-    } catch(Exception e) {
-      fail();
-    }
+    ClawPragma l = analyze("claw nodep", ClawDirective.NO_DEP);
   }
 
   /**
-   * Test various input for the CLAW one_column directive.
+   * Test various input for the CLAW sca directive.
    */
   @Test
-  public void parallelizeOverClauseTest() {
+  public void scaOverClauseTest() {
     DimensionDefinition d1 = new DimensionDefinition("i", "1", "ni");
     DimensionDefinition d2 = new DimensionDefinition("j", "1", "nj");
     List<String> data1 = Arrays.asList("a", "b", "c");
     List<List<String>> data1Lst = Collections.singletonList(data1);
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) sca " +
             "data(a,b,c) over (i,:)", data1Lst,
         Collections.singletonList(Collections.singletonList(d1)));
 
     d1.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) sca " +
             "data(a,b,c) over (:,i)", data1Lst,
         Collections.singletonList(Collections.singletonList(d1)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.BEFORE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (i,j,:)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.AFTER);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (:,i,j)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
     d2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (:,i,j,:)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.IN_MIDDLE);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (i,:,j,:)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (i,:,j)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.IN_MIDDLE);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b,c) over (:,i,:,j)", data1Lst,
         Collections.singletonList(Arrays.asList(d1, d2)));
 
     d1.setInsertionPosition(InsertionPosition.BEFORE);
     d2.setInsertionPosition(InsertionPosition.AFTER);
-    analyzeValidOverParallelize("claw define dimension i(1:ni) " +
-            "define dimension j(1:nj) " +
-            "parallelize " +
+    analyzeValidOverSCA("claw define dimension i(1:ni) " +
+            "define dimension j(1:nj) sca " +
             "data(a,b) over (i,:)" +
             "data(c) over (:,j)",
         Arrays.asList(Arrays.asList("a", "b"), Collections.singletonList("c")),
@@ -1134,403 +1098,369 @@ public class ClawPragmaTest {
   }
 
   /**
-   * Assert the result for valid CLAW parallelize directive with data over
+   * Assert the result for valid CLAW sca directive with data over
    * clause.
    *
    * @param raw        Raw string value of the CLAW directive to be analyzed.
    * @param datas      Reference list for the data clause values.
    * @param dimensions Reference list of dimensions.
    */
-  private void analyzeValidOverParallelize(String raw,
-                                           List<List<String>> datas,
-                                           List<List<DimensionDefinition>>
-                                               dimensions)
+  private void analyzeValidOverSCA(String raw, List<List<String>> datas,
+                                   List<List<DimensionDefinition>> dimensions)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+    ClawPragma l = analyze(raw, ClawDirective.SCA);
+    if(datas != null) {
+      assertEquals(datas.size(), dimensions.size());
+      assertTrue(l.hasDataOverClause());
 
-      if(datas != null) {
-        assertEquals(datas.size(), dimensions.size());
-        assertTrue(l.hasOverDataClause());
+      for(int j = 0; j < datas.size(); ++j) {
+        List<String> data = datas.get(j);
+        List<DimensionDefinition> dimension = dimensions.get(j);
 
-        for(int j = 0; j < datas.size(); ++j) {
-          List<String> data = datas.get(j);
-          List<DimensionDefinition> dimension = dimensions.get(j);
+        for(String id : data) {
+          assertNotNull(l.getLayoutForData(id));
+          List<DimensionDefinition> dims = l.getLayoutForData(id);
+          assertEquals(dimension.size(), dims.size());
+          for(int i = 0; i < dimension.size(); ++i) {
+            assertEquals(dimension.get(i).getIdentifier(),
+                dims.get(i).getIdentifier());
+            assertEquals(dimension.get(i).getInsertionPosition(),
+                dims.get(i).getInsertionPosition());
 
-          for(String id : data) {
-            assertNotNull(l.getDimensionsForData(id));
-            List<DimensionDefinition> dims = l.getDimensionsForData(id);
-            assertEquals(dimension.size(), dims.size());
-            for(int i = 0; i < dimension.size(); ++i) {
-              assertEquals(dimension.get(i).getIdentifier(),
-                  dims.get(i).getIdentifier());
-              assertEquals(dimension.get(i).getInsertionPosition(),
-                  dims.get(i).getInsertionPosition());
+            assertEquals(dimension.get(i).getLowerBound().isVar(),
+                dims.get(i).getLowerBound().isVar());
+            assertEquals(dimension.get(i).getLowerBound().getValue(),
+                dims.get(i).getLowerBound().getValue());
+            assertEquals(dimension.get(i).getLowerBound().getIntValue(),
+                dims.get(i).getLowerBound().getIntValue());
 
-              assertEquals(dimension.get(i).getLowerBound().isVar(),
-                  dims.get(i).getLowerBound().isVar());
-              assertEquals(dimension.get(i).getLowerBound().getValue(),
-                  dims.get(i).getLowerBound().getValue());
-              assertEquals(dimension.get(i).getLowerBound().getIntValue(),
-                  dims.get(i).getLowerBound().getIntValue());
-
-              assertEquals(dimension.get(i).getUpperBound().isVar(),
-                  dims.get(i).getUpperBound().isVar());
-              assertEquals(dimension.get(i).getUpperBound().getValue(),
-                  dims.get(i).getUpperBound().getValue());
-              assertEquals(dimension.get(i).getUpperBound().getIntValue(),
-                  dims.get(i).getUpperBound().getIntValue());
-            }
+            assertEquals(dimension.get(i).getUpperBound().isVar(),
+                dims.get(i).getUpperBound().isVar());
+            assertEquals(dimension.get(i).getUpperBound().getValue(),
+                dims.get(i).getUpperBound().getValue());
+            assertEquals(dimension.get(i).getUpperBound().getIntValue(),
+                dims.get(i).getUpperBound().getIntValue());
           }
         }
-
       }
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+
     }
   }
 
+  private DimensionDefinition getDimDef(String id, String start, String end,
+                                        InsertionPosition pos)
+  {
+    DimensionDefinition dimDef = new DimensionDefinition(id, start, end);
+    dimDef.setInsertionPosition(pos);
+    return dimDef;
+  }
+
   /**
-   * Test various input for the CLAW parallelize directive.
+   * Test various input for the CLAW SCA directive.
    */
   @Test
-  public void parallelizeTest() {
+  public void scaTest() {
 
     // Valid directives
     DimensionDefinition d1 = new DimensionDefinition("i", "1", "nx");
     List<String> data1 = Arrays.asList("t", "qc", "qv");
-    List<List<String>> dataLst1 = Collections.singletonList(data1);
+
+    DimensionDefinition dimI =
+        getDimDef("i", "1", "nx", InsertionPosition.BEFORE);
+    List<String> layout1 = Arrays.asList("i", ":");
+
     List<String> ijc = Arrays.asList("i", "j", ":");
     List<String> icj = Arrays.asList("i", ":", "j");
     List<String> cij = Arrays.asList(":", "i", "j");
-    List<List<String>> over1 = Collections.singletonList(ijc);
+
+    List<List<String>> layouts1 = Arrays.asList(layout1, layout1, layout1);
     List<List<String>> over2 = Collections.singletonList(icj);
     List<List<String>> over3 = Collections.singletonList(cij);
 
-    analyzeValidParallelize("claw define dimension i(1:nx)" +
-            " parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d1), null, null, null);
+    analyzeValidSCA("claw sca", null, null, null, null, null, true);
+
+    analyzeValidSCA("claw define dimension i(1:nx)" +
+            " sca data(t,qc,qv) over (i,:)", data1,
+        Collections.singletonList(d1), null, null, null, false);
 
     DimensionDefinition d2 = new DimensionDefinition("j", "1", "ny");
-    analyzeValidParallelize("claw define dimension j(1:ny)" +
-            "parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d2), null, null, null);
+    analyzeValidSCA("claw define dimension j(1:ny)" +
+            "sca data(t,qc,qv) over (j,:)", data1,
+        Collections.singletonList(d2), null, null, null, false);
 
     DimensionDefinition d3 = new DimensionDefinition("j", "1", "10");
-    analyzeValidParallelize("claw define dimension j(1:10) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d3), null, null, null);
+    analyzeValidSCA("claw define dimension j(1:10) " +
+            "sca data(t,qc,qv) over (j,:)", data1,
+        Collections.singletonList(d3), null, null, null, false);
 
     DimensionDefinition d4 = new DimensionDefinition("j", "jstart", "10");
-    analyzeValidParallelize("claw define dimension j(jstart:10) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d4), null, null, null);
+    analyzeValidSCA("claw define dimension j(jstart:10) " +
+            "sca data(t,qc,qv) over (j,:)", data1,
+        Collections.singletonList(d4), null, null, null, false);
 
     DimensionDefinition d5 = new DimensionDefinition("j", "jstart", "ny");
-    analyzeValidParallelize("claw define dimension j(jstart:ny) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Collections.singletonList(d5), null, null, null);
+    analyzeValidSCA("claw define dimension j(jstart:ny) " +
+            "sca data(t,qc,qv) over (j,:)", data1,
+        Collections.singletonList(d5), null, null, null, false);
 
     DimensionDefinition d6 = new DimensionDefinition("j", "jstart", "ny");
-    analyzeValidParallelize("claw define dimension j(jstart:ny) parallelize",
-        null, null, Collections.singletonList(d6), null, null, null);
+    analyzeValidSCA("claw define dimension j(jstart:ny) sca", null,
+        Collections.singletonList(d6), null, null, null, false);
 
-    analyzeValidParallelize("claw define dimension i(1:nx)" +
-            " parallelize scalar(s1,s2)",
-        null, null, Collections.singletonList(d1), null, null,
-        Arrays.asList("s1", "s2"));
+    analyzeValidSCA("claw define dimension i(1:nx) sca scalar(s1,s2)", null,
+        Collections.singletonList(d1), null, null,
+        Arrays.asList("s1", "s2"), false);
 
-    analyzeValidParallelize("claw parallelize forward",
-        null, null, null, null, null, null);
+    analyzeValidSCA("claw sca forward",
+        null, null, null, null, null, false);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t,qc,qv) over (i,j,:)",
-        dataLst1, over1, Arrays.asList(d1, d2), null, null, null);
+            "sca data(t,qc,qv) over (i,j,:)",
+        data1, Arrays.asList(d1, d2), null, null, null, false);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t,qc,qv) over (:,i,j)",
-        dataLst1, over3, Arrays.asList(d1, d2), null, null, null);
+            "sca data(t,qc,qv) over (:,i,j)",
+        data1, Arrays.asList(d1, d2), null, null, null, false);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t,qc,qv) over (i,:,j)",
-        dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
+            "sca data(t,qc,qv) over (i,:,j)",
+        data1, Arrays.asList(d1, d2), null, null, null, false);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j)",
-        dataLst1, over2, Arrays.asList(d1, d2), null, null, null);
+            "sca data(t , qc , qv) over (i,:,j)",
+        data1, Arrays.asList(d1, d2), null, null, null, false);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
-            "copy", dataLst1, over2, Arrays.asList(d1, d2),
-        DataMovement.BOTH, null, null);
-    analyzeValidParallelize("claw " +
+            "sca data(t , qc , qv) over (i,:,j) " +
+            "copy", data1, Arrays.asList(d1, d2),
+        DataMovement.BOTH, null, null, false);
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
-            "copy(in)", dataLst1, over2, Arrays.asList(d1, d2),
-        DataMovement.DEVICE, null, null);
-    analyzeValidParallelize("claw " +
+            "sca data(t , qc , qv) over (i,:,j) " +
+            "copy(in)", data1, Arrays.asList(d1, d2),
+        DataMovement.DEVICE, null, null, false);
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
-            "copy(out)", dataLst1, over2, Arrays.asList(d1, d2),
-        DataMovement.HOST, null, null);
+            "sca data(t , qc , qv) over (i,:,j) " +
+            "copy(out)", data1, Arrays.asList(d1, d2),
+        DataMovement.HOST, null, null, false);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
-    analyzeValidParallelize("claw define dimension c(1:nc) parallelize copy",
-        null, null, Collections.singletonList(d7), DataMovement.BOTH, null, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize copy(in)", null, null, Collections.singletonList(d7),
-        DataMovement.DEVICE, null, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize copy(out)", null, null, Collections.singletonList(d7),
-        DataMovement.HOST, null, null);
+    analyzeValidSCA("claw define dimension c(1:nc) sca copy",
+        null, Collections.singletonList(d7),
+        DataMovement.BOTH, null, null, false);
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca copy(in)", null, Collections.singletonList(d7),
+        DataMovement.DEVICE, null, null, false);
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca copy(out)", null, Collections.singletonList(d7),
+        DataMovement.HOST, null, null, false);
 
-    analyzeValidParallelize("claw " +
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
-            "update", dataLst1, over2, Arrays.asList(d1, d2),
-        null, DataMovement.BOTH, null);
-    analyzeValidParallelize("claw " +
+            "sca data(t , qc , qv) over (i,:,j) " +
+            "update", data1, Arrays.asList(d1, d2),
+        null, DataMovement.BOTH, null, false);
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
-            "update(in)", dataLst1, over2, Arrays.asList(d1, d2),
-        null, DataMovement.DEVICE, null);
-    analyzeValidParallelize("claw " +
+            "sca data(t , qc , qv) over (i,:,j) " +
+            "update(in)", data1, Arrays.asList(d1, d2),
+        null, DataMovement.DEVICE, null, false);
+    analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
-            "parallelize data(t , qc , qv) over (i,:,j) " +
-            "update(out)", dataLst1, over2, Arrays.asList(d1, d2),
-        null, DataMovement.HOST, null);
+            "sca data(t , qc , qv) over (i,:,j) " +
+            "update(out)", data1, Arrays.asList(d1, d2),
+        null, DataMovement.HOST, null, false);
 
-    analyzeValidParallelize("claw define dimension c(1:nc) parallelize update",
-        null, null, Collections.singletonList(d7), null, DataMovement.BOTH, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize update(in)", null, null, Collections.singletonList(d7),
-        null, DataMovement.DEVICE, null);
-    analyzeValidParallelize("claw define dimension c(1:nc) " +
-            "parallelize update(out)", null, null, Collections.singletonList(d7),
-        null, DataMovement.HOST, null);
+    analyzeValidSCA("claw define dimension c(1:nc) sca update",
+        null, Collections.singletonList(d7), null,
+        DataMovement.BOTH, null, false);
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca update(in)", null, Collections.singletonList(d7),
+        null, DataMovement.DEVICE, null, false);
+    analyzeValidSCA("claw define dimension c(1:nc) " +
+            "sca update(out)", null, Collections.singletonList(d7),
+        null, DataMovement.HOST, null, false);
 
-    analyzeValidParallelize("claw parallelize forward copy",
-        null, null, null, DataMovement.BOTH, null, null);
-    analyzeValidParallelize("claw parallelize forward copy(in)",
-        null, null, null, DataMovement.DEVICE, null, null);
-    analyzeValidParallelize("claw parallelize forward copy(out)",
-        null, null, null, DataMovement.HOST, null, null);
+    analyzeValidSCA("claw sca forward copy",
+        null, null, DataMovement.BOTH, null, null, false);
+    analyzeValidSCA("claw sca forward copy(in)",
+        null, null, DataMovement.DEVICE, null, null, false);
+    analyzeValidSCA("claw sca forward copy(out)",
+        null, null, DataMovement.HOST, null, null, false);
 
-    analyzeValidParallelize("claw parallelize forward update",
-        null, null, null, null, DataMovement.BOTH, null);
-    analyzeValidParallelize("claw parallelize forward update(in)",
-        null, null, null, null, DataMovement.DEVICE, null);
-    analyzeValidParallelize("claw parallelize forward update(out)",
-        null, null, null, null, DataMovement.HOST, null);
+    analyzeValidSCA("claw sca forward update",
+        null, null, null, DataMovement.BOTH, null, false);
+    analyzeValidSCA("claw sca forward update(in)",
+        null, null, null, DataMovement.DEVICE, null, false);
+    analyzeValidSCA("claw sca forward update(out)",
+        null, null, null, DataMovement.HOST, null, false);
 
-    List<String> data2 = Collections.singletonList("t");
-    List<String> data3 = Collections.singletonList("q");
-    List<List<String>> dataLst2 = Arrays.asList(data2, data3);
+    List<String> dataLst2 = Arrays.asList("t", "q");
 
     List<String> ic = Arrays.asList("i", ":");
     List<String> ci = Arrays.asList(":", "i");
     List<List<String>> over4 = Arrays.asList(ic, ci);
 
-    analyzeValidParallelize("claw  define dimension i(1:nx) " +
-            "parallelize data(t) over (i,:) data(q) over(:,i)",
-        dataLst2, over4, Collections.singletonList(d1), null, null, null);
+    analyzeValidSCA("claw  define dimension i(1:nx) " +
+            "sca data(t) over (i,:) data(q) over(:,i)", dataLst2,
+        Collections.singletonList(d1), null, null, null, false);
 
     // Invalid directives
-    analyzeInvalidClawLanguage("claw parallelize data over ");
-    analyzeInvalidClawLanguage("claw parallelize data");
-    analyzeInvalidClawLanguage("claw parallelize over");
+    analyzeInvalidClawLanguage("claw sca data over ");
+    analyzeInvalidClawLanguage("claw sca data");
+    analyzeInvalidClawLanguage("claw sca over");
     analyzeInvalidClawLanguage("claw parallelite data() over ()");
   }
 
   @Test
-  public void parallelizeDataMgtTest() {
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create",
+  public void scaDataMgtTest() {
+    analyzeValidScaDataMgtString("claw sca forward create",
         null, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "update", DataMovement.BOTH, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "update(in)", DataMovement.DEVICE, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "update(out)", DataMovement.HOST, null, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "copy", null, DataMovement.BOTH, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "copy(in)", null, DataMovement.DEVICE, true);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward create " +
+    analyzeValidScaDataMgtString("claw sca forward create " +
         "copy(out)", null, DataMovement.HOST, true);
 
-    analyzeValidParallelizeDataMgtString("claw parallelize forward update",
+    analyzeValidScaDataMgtString("claw sca forward update",
         DataMovement.BOTH, null, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward update(in)",
+    analyzeValidScaDataMgtString("claw sca forward update(in)",
         DataMovement.DEVICE, null, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward update(out)",
+    analyzeValidScaDataMgtString("claw sca forward update(out)",
         DataMovement.HOST, null, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward copy", null,
+    analyzeValidScaDataMgtString("claw sca forward copy", null,
         DataMovement.BOTH, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward copy(in)",
+    analyzeValidScaDataMgtString("claw sca forward copy(in)",
         null, DataMovement.DEVICE, false);
-    analyzeValidParallelizeDataMgtString("claw parallelize forward copy(out)",
+    analyzeValidScaDataMgtString("claw sca forward copy(out)",
         null, DataMovement.HOST, false);
   }
 
   /**
-   * Assert the result for valid CLAW parallelize directive
+   * Assert the result for valid CLAW SCA directive
    */
-  private void analyzeValidParallelizeDataMgtString(String raw, DataMovement update,
-                                                    DataMovement copy,
-                                                    boolean createClause)
+  private void analyzeValidScaDataMgtString(String raw, DataMovement update,
+                                            DataMovement copy,
+                                            boolean createClause)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
-
-      assertEquals(createClause, l.hasCreateClause());
-      if(update != null) {
-        assertTrue(l.hasUpdateClause());
-        assertEquals(update, l.getUpdateClauseValue());
-      } else {
-        assertFalse(l.hasUpdateClause());
-      }
-      if(copy != null) {
-        assertTrue(l.hasCopyClause());
-        assertEquals(copy, l.getCopyClauseValue());
-      } else {
-        assertFalse(l.hasCopyClause());
-      }
-
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+    ClawPragma l = analyze(raw, ClawDirective.SCA);
+    assertEquals(createClause, l.hasCreateClause());
+    if(update != null) {
+      assertTrue(l.hasUpdateClause());
+      assertEquals(update, l.getUpdateClauseValue());
+    } else {
+      assertFalse(l.hasUpdateClause());
+    }
+    if(copy != null) {
+      assertTrue(l.hasCopyClause());
+      assertEquals(copy, l.getCopyClauseValue());
+    } else {
+      assertFalse(l.hasCopyClause());
     }
   }
 
   /**
-   * Assert the result for valid CLAW parallelize directive
+   * Assert the result for valid CLAW SCA directive
    *
    * @param raw          Raw string value of the CLAW directive to be analyzed.
    * @param data         Reference list for the data clause values.
-   * @param over         Reference list for the over clause values.
    * @param dimensions   Reference list of dimensions.
    * @param copyClause   Expected value for copy clause (Null if no copy clause)
    * @param updateClause Expected value for update clause
    *                     (Null if no update clause)
    */
-  private void analyzeValidParallelize(String raw, List<List<String>> data,
-                                       List<List<String>> over,
-                                       List<DimensionDefinition> dimensions,
-                                       DataMovement copyClause, DataMovement updateClause,
-                                       List<String> scalarData)
+  private void analyzeValidSCA(String raw, List<String> data,
+                               List<DimensionDefinition> dimensions,
+                               DataMovement copyClause,
+                               DataMovement updateClause,
+                               List<String> scalarData, boolean isModelConfig)
   {
-    try {
-      Xnode p = XmlHelper.createXpragma();
-      p.setValue(raw);
-      Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-      Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
-      ClawPragma l = ClawPragma.analyze(p);
-      assertEquals(ClawDirective.PARALLELIZE, l.getDirective());
+    ClawPragma l = analyze(raw, ClawDirective.SCA);
 
-      if(data != null) {
-        assertTrue(l.hasOverDataClause());
-        assertEquals(data.size(), l.getOverDataClauseValues().size());
-        for(int i = 0; i < data.size(); ++i) {
-          assertEquals(data.get(i).size(),
-              l.getOverDataClauseValues().get(i).size());
-          for(int j = 0; j < data.get(i).size(); ++j) {
-            assertEquals(data.get(i).get(j),
-                l.getOverDataClauseValues().get(i).get(j));
-          }
-        }
+    assertEquals(0, l.getErrors().size());
+
+    if(data != null) {
+      assertTrue(l.hasDataOverClause());
+      assertEquals(data.size(), l.getDataOverClauseValues().size());
+      for(int i = 0; i < data.size(); ++i) {
+        assertTrue(l.getDataOverClauseValues().contains(data.get(i)));
+        assertTrue(l.getLocalModelConfig().hasLayout(data.get(i)));
       }
+    }
 
-      if(over != null) {
-        assertTrue(l.hasOverClause());
-        assertEquals(over.size(), l.getOverClauseValues().size());
-        for(int i = 0; i < over.size(); ++i) {
-          assertEquals(over.get(i).size(),
-              l.getOverClauseValues().get(i).size());
-          for(int j = 0; j < over.get(i).size(); ++j) {
-            assertEquals(over.get(i).get(j),
-                l.getOverClauseValues().get(i).get(j));
-          }
-        }
+    if(dimensions != null) {
+      assertEquals(dimensions.size(),
+          l.getLocalModelConfig().getNbDimensions());
+
+      for(DimensionDefinition expected : dimensions) {
+        DimensionDefinition actual =
+            l.getLocalModelConfig().getDimension(expected.getIdentifier());
+        assertNotNull(actual);
+        assertEquals(expected.getIdentifier(), actual.getIdentifier());
+        assertEquals(expected.getLowerBound().isVar(),
+            actual.getLowerBound().isVar());
+        assertEquals(expected.getUpperBound().isVar(),
+            actual.getUpperBound().isVar());
+        assertEquals(expected.getLowerBound().getIntValue(),
+            actual.getLowerBound().getIntValue());
+        assertEquals(expected.getUpperBound().getIntValue(),
+            actual.getUpperBound().getIntValue());
+        assertEquals(expected.getLowerBound().getValue(),
+            actual.getLowerBound().getValue());
+        assertEquals(expected.getUpperBound().getValue(),
+            actual.getUpperBound().getValue());
       }
+    }
 
-      if(dimensions != null) {
-        assertEquals(dimensions.size(), l.getDimensionValues().size());
-        for(int i = 0; i < dimensions.size(); ++i) {
-          assertEquals(dimensions.get(i).getIdentifier(),
-              l.getDimensionValues().get(i).getIdentifier());
-          assertEquals(dimensions.get(i).getLowerBound().isVar(),
-              l.getDimensionValues().get(i).getLowerBound().isVar());
-          assertEquals(dimensions.get(i).getUpperBound().isVar(),
-              l.getDimensionValues().get(i).getUpperBound().isVar());
-          assertEquals(dimensions.get(i).getLowerBound().getIntValue(),
-              l.getDimensionValues().get(i).getLowerBound().getIntValue());
-          assertEquals(dimensions.get(i).getUpperBound().getIntValue(),
-              l.getDimensionValues().get(i).getUpperBound().getIntValue());
-          assertEquals(dimensions.get(i).getLowerBound().getValue(),
-              l.getDimensionValues().get(i).getLowerBound().getValue());
-          assertEquals(dimensions.get(i).getUpperBound().getValue(),
-              l.getDimensionValues().get(i).getUpperBound().getValue());
-        }
+    if(scalarData != null) {
+      assertTrue(l.hasScalarClause());
+      assertEquals(scalarData.size(), l.getScalarClauseValues().size());
+      for(int i = 0; i < scalarData.size(); ++i) {
+        assertEquals(scalarData.get(i), l.getScalarClauseValues().get(i));
       }
+    }
 
-      if(scalarData != null) {
-        assertTrue(l.hasScalarClause());
-        assertEquals(scalarData.size(), l.getScalarClauseValues().size());
-        for(int i = 0; i < scalarData.size(); ++i) {
-          assertEquals(scalarData.get(i), l.getScalarClauseValues().get(i));
-        }
-      }
+    if(data == null && dimensions == null && !isModelConfig) {
+      assertTrue(l.hasForwardClause());
+    }
 
-      if(data == null && over == null && dimensions == null) {
-        assertTrue(l.hasForwardClause());
-      }
+    if(copyClause == null) {
+      assertFalse(l.hasCopyClause());
+      assertNull(l.getCopyClauseValue());
+    } else {
+      assertTrue(l.hasCopyClause());
+      assertEquals(copyClause, l.getCopyClauseValue());
+    }
 
-      if(copyClause == null) {
-        assertFalse(l.hasCopyClause());
-        assertNull(l.getCopyClauseValue());
-      } else {
-        assertTrue(l.hasCopyClause());
-        assertEquals(copyClause, l.getCopyClauseValue());
-      }
-
-      if(updateClause == null) {
-        assertFalse(l.hasUpdateClause());
-        assertNull(l.getUpdateClauseValue());
-      } else {
-        assertTrue(l.hasUpdateClause());
-        assertEquals(updateClause, l.getUpdateClauseValue());
-      }
-
-    } catch(IllegalDirectiveException idex) {
-      System.err.print(idex.getMessage());
-      fail();
+    if(updateClause == null) {
+      assertFalse(l.hasUpdateClause());
+      assertNull(l.getUpdateClauseValue());
+    } else {
+      assertTrue(l.hasUpdateClause());
+      assertEquals(updateClause, l.getUpdateClauseValue());
     }
   }
 
@@ -1548,7 +1478,7 @@ public class ClawPragmaTest {
   public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
-    analyzeErrors("claw loop", 17);
+    analyzeErrors("claw loop", 19);
   }
 
   private void analyzeErrors(String pragma, int nbExpectedToken) {
@@ -1556,7 +1486,7 @@ public class ClawPragmaTest {
     p.setValue(pragma);
     p.setLine(1);
     Configuration.get().init(CompilerDirective.OPENACC, Target.GPU);
-    Context.init(CompilerDirective.OPENACC, Target.GPU, null, 80);
+    Context.get().init(CompilerDirective.OPENACC, Target.GPU, null, 80);
     try {
       ClawPragma.analyze(p);
     } catch(IllegalDirectiveException e) {

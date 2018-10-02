@@ -15,7 +15,7 @@ CONTAINS
     REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
     REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
 
-    !$claw parallelize forward
+    !$claw sca forward
     CALL compute_column(nz, q, t)
   END SUBROUTINE compute
 

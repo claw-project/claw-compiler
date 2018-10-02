@@ -117,12 +117,14 @@ public final class Field {
           switch(dim.getInsertionPosition()) {
             case BEFORE:
               newType.addDimension(dim.generateIndexRange(xcodeml, false),
-                  beforePositionIndex++);
-              inMiddlePositionIndex++; // Update index to insert in middle
+                  beforePositionIndex);
+              ++beforePositionIndex;
+              ++inMiddlePositionIndex; // Update index to insert in middle
               break;
             case IN_MIDDLE:
               newType.addDimension(dim.generateIndexRange(xcodeml, false),
-                  inMiddlePositionIndex++);
+                  inMiddlePositionIndex);
+              ++inMiddlePositionIndex;
               break;
             case AFTER:
               newType.addDimension(dim.generateIndexRange(xcodeml, false));
@@ -150,7 +152,8 @@ public final class Field {
         param.setType(type);
 
         // Save the over clause for one_column forward transformation
-        param.setAttribute(Xattr.PROMOTION_INFO, fieldInfo.getFormattedDimensions());
+        param.setAttribute(Xattr.PROMOTION_INFO,
+            fieldInfo.getFormattedDimensions());
       }
     }
 
@@ -158,7 +161,8 @@ public final class Field {
         && fctType.getAttribute(Xattr.RESULT_NAME).
         equals(fieldInfo.getIdentifier()))
     {
-      fctType.setAttribute(Xattr.PROMOTION_INFO, fieldInfo.getFormattedDimensions());
+      fctType.setAttribute(Xattr.PROMOTION_INFO,
+          fieldInfo.getFormattedDimensions());
     }
   }
 
@@ -254,7 +258,7 @@ public final class Field {
    * @param arrayRef The array reference to be modified.
    * @throws IllegalTransformationException If node is null or not an FarrayRef.
    */
-  public static void demoteToScalar(Xnode arrayRef)
+  private static void demoteToScalar(Xnode arrayRef)
       throws IllegalTransformationException
   {
     if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
@@ -275,7 +279,7 @@ public final class Field {
    *                       at 1.
    * @throws IllegalTransformationException If node is null or not an FarrayRef.
    */
-  public static void demote(Xnode arrayRef, List<Integer> keptDimensions)
+  private static void demote(Xnode arrayRef, List<Integer> keptDimensions)
       throws IllegalTransformationException
   {
     if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {

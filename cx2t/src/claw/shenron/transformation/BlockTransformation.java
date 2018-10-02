@@ -16,7 +16,7 @@ import claw.shenron.translator.AnalyzedPragma;
  */
 public abstract class BlockTransformation extends Transformation {
 
-  private AnalyzedPragma _endDirective = null;
+  private AnalyzedPragma _endDirective;
 
   /**
    * BlockTransformation ctor.

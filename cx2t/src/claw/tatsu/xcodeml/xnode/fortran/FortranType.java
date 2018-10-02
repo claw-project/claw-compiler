@@ -28,7 +28,7 @@ public enum FortranType {
   NONE('N', "");
 
   // Java 1.8 should use SecureRandom
-  private Random rand = new Random();
+  private final Random rand = new Random();
 
   private static final int HASH_LENGTH = 12;
   private final char _prefix;

@@ -35,7 +35,8 @@ public class ConfigurationTest {
 
       Configuration conf = Configuration.get();
       assertNotNull(conf);
-      conf.load(TestConstant.TEST_CONFIG_PATH, null, null, null, MAX_COLUMN);
+      conf.load(TestConstant.TEST_CONFIG_PATH,
+          null, null, null, null, MAX_COLUMN);
       assertNotNull(Context.get());
 
       assertNotNull(Context.get().getGenerator());
@@ -87,7 +88,6 @@ public class ConfigurationTest {
       Configuration.get().
           overrideConfigurationParameter(DUMMY_KEY, DUMMY_VALUE);
       assertEquals(DUMMY_VALUE, Configuration.get().getParameter(DUMMY_KEY));
-
     } catch(Exception e) {
       fail();
     }

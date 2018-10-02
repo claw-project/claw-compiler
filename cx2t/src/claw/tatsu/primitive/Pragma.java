@@ -171,7 +171,8 @@ public final class Pragma {
     for(int i = 0; i < lines.length - 1; ++i) {
       if(!lines[i].isEmpty()) {
         newlyInserted = createAndInsertPragma(xcodeml, newlyInserted,
-            pragma.filename(), lineIndex++, lines[i], true);
+            pragma.filename(), lineIndex, lines[i], true);
+        ++lineIndex;
       }
     }
     createAndInsertPragma(xcodeml, newlyInserted, pragma.filename(), lineIndex,

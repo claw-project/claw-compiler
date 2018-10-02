@@ -33,7 +33,8 @@ public class FortranTypeTest {
 
   @Test
   public void isOfTypeTest() {
-    assertTrue(FortranType.INTEGER.isOfType(FortranType.INTEGER.generateHash()));
+    assertTrue(FortranType.INTEGER.
+        isOfType(FortranType.INTEGER.generateHash()));
     assertTrue(FortranType.REAL.isOfType(FortranType.REAL.generateHash()));
     assertFalse(FortranType.REAL.isOfType(null));
     assertFalse(FortranType.REAL.isOfType(""));

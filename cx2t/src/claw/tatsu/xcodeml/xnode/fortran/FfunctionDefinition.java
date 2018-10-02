@@ -4,7 +4,9 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
+import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
 
 /**
@@ -100,7 +102,8 @@ public class FfunctionDefinition extends Xnode {
   /**
    * Find module containing the function and read its .xmod file.
    *
-   * @return FortranModule object if the module has been found and read. Null otherwise.
+   * @return FortranModule object if the module has been found and read.
+   * Null otherwise.
    */
   public FortranModule findContainingXmod() {
     FmoduleDefinition mod = findParentModule();
@@ -114,15 +117,26 @@ public class FfunctionDefinition extends Xnode {
    * Check if function body is empty.
    *
    * @return True if function body is empty.
+   * False otherwise (no body or not empty).
    */
   public boolean hasEmptyBody() {
-    return (body() != null && body().children().isEmpty());
+    if(body() == null) {
+      return false;
+    }
+
+    try {
+      return Body.isEmpty(body());
+    } catch(IllegalTransformationException itex) {
+      // TODO logger
+      return false;
+    }
   }
 
   /**
    * Create an identical copy of the current function definition.
    *
-   * @return A new FfunctionDefinition object that is the clone of this function definition.
+   * @return A new FfunctionDefinition object that is the clone of this
+   * function definition.
    */
   @Override
   public FfunctionDefinition cloneNode() {

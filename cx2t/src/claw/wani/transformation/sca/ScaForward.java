@@ -208,8 +208,9 @@ public class ScaForward extends ClawTransformation {
       if(xcodeml.getTypeTable().isFunctionType(_fctCall)) {
         _fctType = xcodeml.getTypeTable().getFunctionType(_fctCall);
       } else {
-        xcodeml.addError("Unsupported type of XcodeML/F element for the function "
-            + _calledFctName, _claw.getPragma().lineNo());
+        xcodeml.
+            addError("Unsupported type of XcodeML/F element for the function "
+                + _calledFctName, _claw.getPragma().lineNo());
         return false;
       }
     }
@@ -221,7 +222,8 @@ public class ScaForward extends ClawTransformation {
      * for the same function/subroutine with the same name in the module
      * symbol table. */
     if(_fctType.getParameters().isEmpty()) {
-      // If not, try to matchSeq the correct FfunctionType in the module definitions
+      /* If not, try to matchSeq the correct FfunctionType in the module
+       * definitions */
       Xid id = (parentModule == null) ? null :
           parentModule.getSymbolTable().get(_calledFctName);
 

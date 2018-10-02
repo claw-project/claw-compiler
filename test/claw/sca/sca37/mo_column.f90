@@ -21,7 +21,7 @@ MODULE mod1
     INTEGER  :: jvar, im, jk, jkp1
 
     !$claw define dimension jl(1:kproma) &
-    !$claw parallelize
+    !$claw sca
     DO jvar = 1,nvar_vdiff
       im = matrix_idx(jvar)
       DO jk = ibtm_var(jvar)-1,itop,-1

@@ -23,16 +23,16 @@ public enum Target {
   FPGA(TatsuConstant.TARGET_FPGA),
   NONE(TatsuConstant.TARGET_NONE);
 
-  private final String code;
+  private final String _code;
 
   Target(String code) {
-    this.code = code;
+    this._code = code;
   }
 
   public static List<String> availableTargets() {
     List<String> codes = new ArrayList<>();
     for(Target t : Target.values()) {
-      codes.add(t.code);
+      codes.add(t._code);
     }
     return codes;
   }

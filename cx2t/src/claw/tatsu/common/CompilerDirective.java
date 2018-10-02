@@ -68,7 +68,7 @@ public enum CompilerDirective {
    *
    * @return Compiler directive code name.
    */
-  public String getCode() {
+  private String getCode() {
     return _code;
   }
 

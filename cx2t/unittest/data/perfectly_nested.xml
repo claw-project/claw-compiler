@@ -153,7 +153,7 @@
             </varDecl>
           </declarations>
           <body>
-            <FpragmaStatement lineno="8" file="original_code.f90">claw define dimension icol(1:ncol) claw parallelize</FpragmaStatement>
+            <FpragmaStatement lineno="8" file="original_code.f90">claw define dimension icol(1:ncol) claw sca</FpragmaStatement>
             <FdoStatement lineno="11" file="original_code.f90">
               <Var type="Fint" scope="local">i2</Var>
               <indexRange>

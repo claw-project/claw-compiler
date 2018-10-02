@@ -847,7 +847,7 @@
             </varDecl>
           </declarations>
           <body>
-            <FpragmaStatement lineno="65" file="../src/mo_lw_solver.F90">claw define dimension col(1:ncol) claw parallelize</FpragmaStatement>
+            <FpragmaStatement lineno="65" file="../src/mo_lw_solver.F90">claw define dimension col(1:ncol) claw sca</FpragmaStatement>
             <FdoStatement lineno="62" file="mo_lw_solver_gpu.F90">
               <Var type="Fint" scope="local">icol</Var>
               <indexRange>

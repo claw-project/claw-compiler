@@ -32,15 +32,24 @@ class ClawDirectiveKey {
    *
    * @return ClawDirective value.
    */
-  public ClawDirective getDirective() {
+  private ClawDirective getDirective() {
     return _directive;
+  }
+
+  /**
+   * Get the depth of this directive in the AST.
+   *
+   * @return depth
+   */
+  private int getDepth() {
+    return _depth;
   }
 
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof ClawDirectiveKey) {
       ClawDirectiveKey o = (ClawDirectiveKey) obj;
-      return _directive.equals(o._directive) && _depth == o._depth;
+      return _directive.equals(o.getDirective()) && _depth == o.getDepth();
     }
     return false;
   }

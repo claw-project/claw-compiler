@@ -21,7 +21,7 @@ CONTAINS
     ! Apply the parallelization transformation on this subroutine.
 
     !$claw define dimension proma(1:nproma) &
-    !$claw parallelize
+    !$claw sca
 
     ! No body just for testing purpose
   END SUBROUTINE compute_column

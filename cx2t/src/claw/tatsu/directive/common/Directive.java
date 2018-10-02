@@ -24,6 +24,7 @@ import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -180,15 +181,13 @@ public final class Directive {
       return;
     }
 
-    addPragmasBefore(xcodeml,
-        Context.get().getGenerator().getStartParallelDirective(null), startStmt);
-    addPragmasBefore(xcodeml,
-        Context.get().getGenerator().getStartLoopDirective(collapse, false, false,
-            Context.get().getGenerator().getPrivateClause(privates)), startStmt);
-    addPragmaAfter(xcodeml,
-        Context.get().getGenerator().getEndParallelDirective(), endStmt);
-    addPragmaAfter(xcodeml,
-        Context.get().getGenerator().getEndLoopDirective(), endStmt);
+    DirectiveGenerator dg = Context.get().getGenerator();
+
+    addPragmasBefore(xcodeml, dg.getStartParallelDirective(null), startStmt);
+    addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse, false, false,
+        dg.getPrivateClause(privates)), startStmt);
+    addPragmaAfter(xcodeml, dg.getEndParallelDirective(), endStmt);
+    addPragmaAfter(xcodeml, dg.getEndLoopDirective(), endStmt);
   }
 
   /**
@@ -234,8 +233,8 @@ public final class Directive {
         generator.getPresentClause(presents),
         generator.getCreateClause(creates)));
 
-    while(clauses.remove("")) {
-    }
+    clauses.removeAll(Collections.singletonList(""));
+    
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
       insertPragmas(xcodeml, startStmt, endStmt,
@@ -554,8 +553,8 @@ public final class Directive {
   public static Xnode findParallelRegionStart(Xnode functionDefinition,
                                               Xnode from)
   {
-    if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE
+    DirectiveGenerator dg = Context.get().getGenerator();
+    if(dg.getDirectiveLanguage() == CompilerDirective.NONE
         || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
     {
       return null;
@@ -567,15 +566,15 @@ public final class Directive {
     if(from != null) { // Start from given element
       first = from;
     }
-    if(Context.get().getGenerator().getSkippedStatementsInPreamble().isEmpty()) {
+    if(dg.getSkippedStatementsInPreamble().isEmpty()) {
       return first;
     } else {
-      while(first.nextSibling() != null && ((Context.get().getGenerator().
-          getSkippedStatementsInPreamble().contains(first.opcode()))
+      while(first.nextSibling() != null
+          && ((dg.getSkippedStatementsInPreamble().contains(first.opcode()))
           || isClawDirective(first))) {
         if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
-            if(!Context.get().getGenerator().getSkippedStatementsInPreamble().
+            if(!dg.getSkippedStatementsInPreamble().
                 contains(child.opcode()))
             {
               return first;
@@ -611,8 +610,9 @@ public final class Directive {
   public static Xnode findParallelRegionEnd(Xnode functionDefinition,
                                             Xnode from)
   {
-    if(Context.get().getGenerator().getDirectiveLanguage() ==
-        CompilerDirective.NONE
+    DirectiveGenerator dg = Context.get().getGenerator();
+
+    if(dg.getDirectiveLanguage() == CompilerDirective.NONE
         || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
     {
       return null;
@@ -627,19 +627,16 @@ public final class Directive {
         last = last.prevSibling();
       }
     }
-    if(Context.get().getGenerator().getSkippedStatementsInEpilogue().isEmpty()) {
+    if(dg.getSkippedStatementsInEpilogue().isEmpty()) {
       return last;
     } else {
       while(last.prevSibling() != null
-          && Context.get().getGenerator().getSkippedStatementsInEpilogue().
-          contains(last.opcode())) {
+          && dg.getSkippedStatementsInEpilogue().contains(last.opcode())) {
         if(last.hasBody() || last.opcode() == Xcode.F_IF_STATEMENT) {
           List<Xnode> children = (last.hasBody()) ? last.body().children()
               : last.matchDirectDescendant(Xcode.THEN).body().children();
           for(Xnode child : children) {
-            if(!Context.get().getGenerator().getSkippedStatementsInEpilogue().
-                contains(child.opcode()))
-            {
+            if(!dg.getSkippedStatementsInEpilogue().contains(child.opcode())) {
               return last;
             }
           }

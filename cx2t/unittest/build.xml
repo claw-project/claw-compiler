@@ -3,7 +3,8 @@
  See LICENSE file for more information
 -->
 
-<project name="claw-test" default="main" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">
+<project name="claw-test" default="main" basedir="."
+         xmlns:jacoco="antlib:org.jacoco.ant">
   <description>Build CLAWX2T unit tests</description>
 
   <dirname property="antfile.dir" file="${ant.file}"/>
@@ -39,6 +40,7 @@
     <pathelement path="${claw.shenron.dep}" />
     <pathelement path="${claw.wani.dep}" />
     <pathelement path="${omni.xcodeml-common.dep}"/>
+    <pathelement path="${toml.dep}"/>
   </path>
 
   <!-- Initialization step -->
@@ -185,6 +187,7 @@
       <classpath path="${antlr4.dep}" />
       <classpath path="${antlr4.runtime.dep}" />
       <classpath path="${omni.xcodeml-common.dep}"/>
+      <classpath path="${toml.dep}"/>
 
       <formatter type="xml" />
 
