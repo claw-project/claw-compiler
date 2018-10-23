@@ -75,8 +75,8 @@ before_install:
 - export PATH=$PATH:$HOME/.cabal/bin
 - shellcheck --version
 - wget https://github.com/SonarSource/sonar-scanner-cli/archive/3.2.0.1227.zip
-- unzip sonar-scanner-cli-3.2.0.1227-linux.zip
-- export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
+- unzip 3.2.0.1227.zip
+- export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-cli-3.2.0.1227/bin
 - sonar-scanner --help
 before_script:
 - export FC=$FC_COMPILER
