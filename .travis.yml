@@ -74,7 +74,7 @@ before_install:
 - cabal update && cabal install ShellCheck
 - export PATH=$PATH:$HOME/.cabal/bin
 - shellcheck --version
-- wget https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip
+- wget https://github.com/SonarSource/sonar-scanner-cli/archive/3.2.0.1227.zip
 - unzip sonar-scanner-cli-3.2.0.1227-linux.zip
 - export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
 - sonar-scanner --help
