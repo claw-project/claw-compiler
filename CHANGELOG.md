@@ -9,6 +9,8 @@ All notable changes to the CLAW Compiler project are documented in this file.
   configuration per pragma.
 * SCA: Support `model-data` directive.
 * Various bug fixes.
+* OMNI Compiler submodule now pointing to
+  omni-compiler/xcodeml-tools@8d782adcd2fc521911c927540682ce6c0fa620bc
 
 ## [1.1.0] - 2018-09-24
 * SCA: Initial support of OpenMP 4.5 code generation for accelerator.
