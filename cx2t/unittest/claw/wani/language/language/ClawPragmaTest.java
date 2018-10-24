@@ -751,9 +751,9 @@ public class ClawPragmaTest {
         true, null, true, "loop", null, Collections.singletonList(Target.CPU));
 
     analyzeValidSimpleClaw("claw end array-transform",
-        ClawDirective.ARRAY_TRANSFORM, true, null);
+        ClawDirective.EXPAND, true, null);
     analyzeValidSimpleClaw("claw   end   array-transform  ",
-        ClawDirective.ARRAY_TRANSFORM, true, null);
+        ClawDirective.EXPAND, true, null);
   }
 
   /**
@@ -770,7 +770,7 @@ public class ClawPragmaTest {
                                           String acc, List<String> inducNames,
                                           List<Target> targets)
   {
-    ClawPragma l = analyze(raw, ClawDirective.ARRAY_TRANSFORM);
+    ClawPragma l = analyze(raw, ClawDirective.EXPAND);
     assertNotNull(l);
     if(fusion) {
       assertTrue(l.hasFusionClause());

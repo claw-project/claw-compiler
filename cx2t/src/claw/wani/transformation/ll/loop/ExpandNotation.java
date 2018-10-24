@@ -24,7 +24,8 @@ import java.util.List;
 /**
  * <pre>
  * An ExpandNotation transformation is an independent transformation. It
- * transforms the Fortran array notation into single or nested do statements.
+ * transforms the Fortran vector notation into single or nested do statements
+ * notation.
  *
  * Array notation example:
  * A(1:n) = A(1+m:n+m) + B(1:n) * C(n+1:n+n)
