@@ -43,8 +43,9 @@
 # sca38: Check independent "if" handling for CPU target
 # sca39: Same as SCA1 with override option passed to the driver -x
 # sca40: SCA with model config
+# sca16: sca forward over type-bound procedure call
 
-foreach(loop_var RANGE 1 40)
+foreach(loop_var RANGE 1 42)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
