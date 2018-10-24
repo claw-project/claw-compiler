@@ -8,7 +8,6 @@ import claw.shenron.transformation.DependentTransformationGroup;
 import claw.shenron.transformation.IndependentTransformationGroup;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
-import claw.shenron.translator.AnalyzedPragma;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
@@ -242,7 +241,7 @@ public class ClawTranslator implements Translator {
         addTransformation(xcodeml, new UtilityRemove(begin, end));
         break;
       case ARRAY_TRANSFORM:
-        addTransformation(xcodeml, new ArrayTransform(begin, end));
+        addTransformation(xcodeml, new ExpandNotation(begin, end));
         break;
       case LOOP_HOIST:
         addTransformation(xcodeml, new LoopHoist(begin, end));

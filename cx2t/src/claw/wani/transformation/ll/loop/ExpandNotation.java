@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * <pre>
- * An ArrayTransform transformation is an independent transformation. It
+ * An ExpandNotation transformation is an independent transformation. It
  * transforms the Fortran array notation into single or nested do statements.
  *
  * Array notation example:
@@ -36,20 +36,20 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ArrayTransform extends ClawBlockTransformation {
+public class ExpandNotation extends ClawBlockTransformation {
 
   private final List<List<Xnode>> _groupIterationRanges;
   private final List<List<Xnode>> _groupedAssignStmts;
 
   /**
-   * Constructs a new ArrayTransform triggered from a specific directive.
+   * Constructs a new ExpandNotation triggered from a specific directive.
    *
    * @param begin The directive that triggered the array transform
    *              transformation.
    * @param end   The directive that close the block transformation.
    *              Can be null.
    */
-  public ArrayTransform(ClawPragma begin, ClawPragma end) {
+  public ExpandNotation(ClawPragma begin, ClawPragma end) {
     super(begin, end);
     _groupedAssignStmts = new ArrayList<>();
     _groupIterationRanges = new ArrayList<>();
