@@ -70,7 +70,7 @@ public class ExpandNotation extends ClawBlockTransformation {
 
       if(foundAssignments.isEmpty()) {
         xcodeml.addError(
-            "No array notation assignments found in the array-transform block.",
+            "No array notation assignments found in the expand block.",
             _clawStart.getPragma().lineNo()
         );
         return false;

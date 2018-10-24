@@ -690,74 +690,74 @@ public class ClawPragmaTest {
   }
 
   /**
-   * Test various input for the CLAW array-transform directive.
+   * Test various input for the CLAW expand directive.
    */
   @Test
   public void arrayTransformTest() {
     // Valid directives
-    analyzeValidArrayTransform("claw array-transform", false, null, false,
+    analyzeValidArrayTransform("claw expand", false, null, false,
         null, null, null);
-    analyzeValidArrayTransform("claw array-transform fusion", true, null, false,
+    analyzeValidArrayTransform("claw expand fusion", true, null, false,
         null, null, null);
-    analyzeValidArrayTransform("claw array-transform fusion group(j1)", true,
+    analyzeValidArrayTransform("claw expand fusion group(j1)", true,
         "j1", false, null, null, null);
-    analyzeValidArrayTransform("claw array-transform fusion parallel", true,
+    analyzeValidArrayTransform("claw expand fusion parallel", true,
         null, true, null, null, null);
-    analyzeValidArrayTransform("claw array-transform fusion parallel acc(loop)",
+    analyzeValidArrayTransform("claw expand fusion parallel acc(loop)",
         true, null, true, "loop", null, null);
-    analyzeValidArrayTransform("claw array-transform fusion acc(loop)", true,
+    analyzeValidArrayTransform("claw expand fusion acc(loop)", true,
         null, false, "loop", null, null);
     analyzeValidArrayTransform(
-        "claw array-transform fusion parallel acc(loop gang vector)", true,
+        "claw expand fusion parallel acc(loop gang vector)", true,
         null, true, "loop gang vector", null, null);
     analyzeValidArrayTransform(
-        "claw array-transform fusion group(j1) parallel acc(loop gang vector)",
+        "claw expand fusion group(j1) parallel acc(loop gang vector)",
         true, "j1", true, "loop gang vector", null, null);
     analyzeValidArrayTransform(
-        "claw array-transform parallel acc(loop gang vector)",
+        "claw expand parallel acc(loop gang vector)",
         false, null, true, "loop gang vector", null, null);
-    analyzeValidArrayTransform("claw array-transform parallel", false, null,
+    analyzeValidArrayTransform("claw expand parallel", false, null,
         true, null, null, null);
-    analyzeValidArrayTransform("claw array-transform acc(loop gang vector)",
+    analyzeValidArrayTransform("claw expand acc(loop gang vector)",
         false, null, false, "loop gang vector", null, null);
 
-    analyzeValidArrayTransform("claw array-transform induction(j1,j3)",
+    analyzeValidArrayTransform("claw expand induction(j1,j3)",
         false, null, false, null, Arrays.asList("j1", "j3"), null);
-    analyzeValidArrayTransform("claw array-transform induction(j1)",
+    analyzeValidArrayTransform("claw expand induction(j1)",
         false, null, false, null, Collections.singletonList("j1"), null);
-    analyzeValidArrayTransform("claw array-transform induction(i,j,k)",
+    analyzeValidArrayTransform("claw expand induction(i,j,k)",
         false, null, false, null, Arrays.asList("i", "j", "k"), null);
-    analyzeInvalidClawLanguage("claw array-transform induction()");
-    analyzeInvalidClawLanguage("claw array-transform induction");
+    analyzeInvalidClawLanguage("claw expand induction()");
+    analyzeInvalidClawLanguage("claw expand induction");
 
-    analyzeValidArrayTransform("claw array-transform target(cpu)", false, null,
+    analyzeValidArrayTransform("claw expand target(cpu)", false, null,
         false, null, null, Collections.singletonList(Target.CPU));
-    analyzeValidArrayTransform("claw array-transform target(gpu)", false, null,
+    analyzeValidArrayTransform("claw expand target(gpu)", false, null,
         false, null, null, Collections.singletonList(Target.GPU));
-    analyzeValidArrayTransform("claw array-transform target(cpu, gpu)", false,
+    analyzeValidArrayTransform("claw expand target(cpu, gpu)", false,
         null, false, null, null, Arrays.asList(Target.CPU, Target.GPU));
 
     analyzeValidArrayTransform(
-        "claw array-transform target(cpu) fusion parallel acc(loop)",
+        "claw expand target(cpu) fusion parallel acc(loop)",
         true, null, true, "loop", null, Collections.singletonList(Target.CPU));
     analyzeValidArrayTransform(
-        "claw array-transform fusion target(cpu) parallel acc(loop)",
+        "claw expand fusion target(cpu) parallel acc(loop)",
         true, null, true, "loop", null, Collections.singletonList(Target.CPU));
     analyzeValidArrayTransform(
-        "claw array-transform fusion parallel target(cpu) acc(loop)",
+        "claw expand fusion parallel target(cpu) acc(loop)",
         true, null, true, "loop", null, Collections.singletonList(Target.CPU));
     analyzeValidArrayTransform(
-        "claw array-transform fusion parallel acc(loop) target(cpu)",
+        "claw expand fusion parallel acc(loop) target(cpu)",
         true, null, true, "loop", null, Collections.singletonList(Target.CPU));
 
-    analyzeValidSimpleClaw("claw end array-transform",
+    analyzeValidSimpleClaw("claw end expand",
         ClawDirective.EXPAND, true, null);
-    analyzeValidSimpleClaw("claw   end   array-transform  ",
+    analyzeValidSimpleClaw("claw   end   expand  ",
         ClawDirective.EXPAND, true, null);
   }
 
   /**
-   * Assert the result for valid CLAW array-transform directive
+   * Assert the result for valid CLAW expand directive
    *
    * @param raw         Raw string value of the CLAW directive to be analyzed.
    * @param fusion      Set to true if the extracted option should be present.

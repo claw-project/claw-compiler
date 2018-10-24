@@ -18,7 +18,7 @@ SUBROUTINE claw
   vec1(0:i,0:i) = 0;
   vec2(0:i,0:i) = 100;
 
-  !$claw array-transform
+  !$claw expand
   vec1(0:i,0:i) = vec2(0:i,0:i) + 10
 
   PRINT*,vec1

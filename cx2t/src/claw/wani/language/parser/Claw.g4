@@ -561,7 +561,7 @@ loop_extract_clauses[ClawPragma l]:
   )*
 ;
 
-// Possible permutation of clauses for the array-transform directive
+// Possible permutation of clauses for the expand directive
 expand_clauses[ClawPragma l]:
   (
     { !$l.hasFusionClause() }?      fusion_clause[$l]
