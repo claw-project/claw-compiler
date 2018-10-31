@@ -11,6 +11,7 @@ import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
@@ -116,10 +117,19 @@ public class ExpandNotation extends ClawBlockTransformation {
         return false;
       }
       // Check if we are dealing with an array notation
+
       if(stmt.child(0).opcode() != Xcode.F_ARRAY_REF) {
-        xcodeml.addError("Assign statement is not an array notation",
-            _clawStart.getPragma().lineNo());
-        return false;
+        FbasicType lhsType = xcodeml.getTypeTable().getBasicType(stmt.child(0));
+        // vector notation without assumed shape
+        if(stmt.child(0).opcode() == Xcode.VAR && lhsType.isArray()) {
+          for(int d = 0; d < lhsType.getDimensions(); ++d) {
+            stmt.child(0).append(xcodeml.createEmptyAssumedShaped());
+          }
+        } else {
+          xcodeml.addError("Assign statement is not an array notation",
+              _clawStart.getPragma().lineNo());
+          return false;
+        }
       }
 
       List<Xnode> ranges = new ArrayList<>();

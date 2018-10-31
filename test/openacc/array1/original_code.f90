@@ -22,6 +22,10 @@ SUBROUTINE claw
   !$claw expand parallel acc(loop)
   vec1(:) = vec1(:) + 10
 
+
+  !$claw expand parallel acc(loop)
+  vec1 = vec1 + 10
+
   PRINT*,vec1
 END SUBROUTINE claw
 

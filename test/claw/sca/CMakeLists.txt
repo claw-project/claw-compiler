@@ -45,7 +45,7 @@
 # sca40: SCA with model config
 # sca16: sca forward over type-bound procedure call
 
-foreach(loop_var RANGE 1 42)
+foreach(loop_var RANGE 1 40)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
