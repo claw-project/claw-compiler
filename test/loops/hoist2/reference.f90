@@ -62,7 +62,7 @@ SUBROUTINE claw_hoist2 ( )
      array3d_2 ( i , j , jt ) = array3d_2 ( i , j , jt ) - var4
      array2d_1 ( j ) = var4 * array2d_4 ( i , j )
     END IF
-    IF ( j >= 2 ) THEN
+    IF ( j .ge. 2 ) THEN
      array3d_2 ( i , j , jt ) = array3d_2 ( i , j , jt ) + array2d_1 ( j - 1 )&
       / array2d_5 ( i , j )
     END IF
