@@ -23,7 +23,7 @@ SUBROUTINE clawloop ( )
     PRINT * ,"First loop body:" , i ,"/" , j ,"/" , k
 !$OMP end parallel do
 !$OMP parallel do
-    IF ( j >= 2 ) THEN
+    IF ( j .ge. 2 ) THEN
      PRINT * ,"Second loop body:" , i ,"/" , j ,"/" , k
     END IF
 !$OMP end parallel do
