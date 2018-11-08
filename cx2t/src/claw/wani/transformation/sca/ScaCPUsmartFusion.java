@@ -191,7 +191,7 @@ public class ScaCPUsmartFusion extends Sca {
       if(block.isEmpty()) {
         continue;
       }
-      if(isNestedIn(blocks, block)) {
+      if(isNestedIn(blocks, block) || isContainedWithin(blocks, block)) {
         flaggedAsNested.add(block);
       }
     }
@@ -199,6 +199,20 @@ public class ScaCPUsmartFusion extends Sca {
     for(List<Xnode> flagged : flaggedAsNested) {
       blocks.remove(flagged);
     }
+  }
+
+  private boolean isNestedIn(List<List<Xnode>> blocks, List<Xnode> block) {
+    Xnode probe = block.get(0);
+    for(List<Xnode> nest : blocks) {
+      if(block != nest) {
+        for(Xnode possibleAncestor : nest) {
+          if(probe.isNestedIn(possibleAncestor)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   /**
@@ -210,7 +224,8 @@ public class ScaCPUsmartFusion extends Sca {
    * @param block  The block to be checked for nesting.
    * @return True if the block is nested in another block.
    */
-  private boolean isNestedIn(List<List<Xnode>> blocks, List<Xnode> block) {
+  private boolean isContainedWithin(List<List<Xnode>> blocks, List<Xnode> block)
+  {
     for(List<Xnode> nest : blocks) {
       if(block != nest && (block.get(0).lineNo() >= nest.get(0).lineNo())
           && (block.get(block.size() - 1).lineNo()
