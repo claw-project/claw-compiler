@@ -115,7 +115,7 @@ public class ScaCPUsmartFusion extends Sca {
       targetDepthIntersections.add(intersection);
     }
 
-    // Gather all possible loop groups before their modification
+    // Gather all possible block of nodes before their modification
     List<List<Xnode>> transformations = new ArrayList<>();
     // Apply transformation at the indicated depth
     for(int targetDepth = 0; targetDepth < depthVars.size(); targetDepth++) {
@@ -155,16 +155,16 @@ public class ScaCPUsmartFusion extends Sca {
       }
 
       // Transform indicated level by wrapping it in a DO loop
-      gatherGroups(_fctDef.body(), new AtomicInteger(), targetDepth,
+      gatherBlocks(_fctDef.body(), new AtomicInteger(), targetDepth,
           affectingVars, transformations);
     }
 
     // Avoid double DO statement generation in nested groups
-    cleanupGroups(transformations);
+    cleanupBlocks(transformations);
 
     // After gathering we apply the transformations
-    for(List<Xnode> groupedNodes : transformations) {
-      wrapGroupInDoStatement(groupedNodes, xcodeml);
+    for(List<Xnode> nodeBlock : transformations) {
+      wrapGroupInDoStatement(nodeBlock, xcodeml);
     }
 
     // If the last statement is a CONTAINS, fallback to the previous one
@@ -178,46 +178,60 @@ public class ScaCPUsmartFusion extends Sca {
   }
 
   /**
-   * Check that flagged group to be wrapped in DO statements are not nested in
-   * each other. If so, the nested group is removed from the flagged list.
+   * Check that flagged block to be wrapped in DO statements are not nested in
+   * each other. If so, the nested block is removed from the flagged list.
    *
-   * @param groups List of grouped nodes flagged to be wrapped with DO
+   * @param blocks List of block of nodes flagged to be wrapped with DO
    *               statement.
    */
-  private void cleanupGroups(List<List<Xnode>> groups) {
-    List<List<Xnode>> flaggedNested = new ArrayList<>();
+  private void cleanupBlocks(List<List<Xnode>> blocks) {
+    List<List<Xnode>> flaggedAsNested = new ArrayList<>();
 
-    for(List<Xnode> group : groups) {
-      if(group.isEmpty()) {
+    for(List<Xnode> block : blocks) {
+      if(block.isEmpty()) {
         continue;
       }
-      if(isNestedIn(groups, group)) {
-        flaggedNested.add(group);
+      if(isNestedIn(blocks, block) || isContainedWithin(blocks, block)) {
+        flaggedAsNested.add(block);
       }
     }
 
-    for(List<Xnode> flagged : flaggedNested) {
-      groups.remove(flagged);
+    for(List<Xnode> flagged : flaggedAsNested) {
+      blocks.remove(flagged);
     }
   }
 
-  /**
-   * Check if the given group has any nested statements inside one of the
-   * other groups.
-   *
-   * @param groups List of group of statements.
-   * @param group  The group of statement to be checked.
-   * @return True if the group has any statement nested in another group.
-   */
-  private boolean isNestedIn(List<List<Xnode>> groups, List<Xnode> group) {
-    Xnode probe = group.get(0);
-    for(List<Xnode> nest : groups) {
-      if(group != nest) {
+  private boolean isNestedIn(List<List<Xnode>> blocks, List<Xnode> block) {
+    Xnode probe = block.get(0);
+    for(List<Xnode> nest : blocks) {
+      if(block != nest) {
         for(Xnode possibleAncestor : nest) {
           if(probe.isNestedIn(possibleAncestor)) {
             return true;
           }
         }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Check if the given block of nodes has any nested statements inside one of
+   * the other block. The check is done with line numbers of 1st and last
+   * statements as those elements are not nested in the AST yet.
+   *
+   * @param blocks List of block of nodes.
+   * @param block  The block to be checked for nesting.
+   * @return True if the block is nested in another block.
+   */
+  private boolean isContainedWithin(List<List<Xnode>> blocks, List<Xnode> block)
+  {
+    for(List<Xnode> nest : blocks) {
+      if(block != nest && (block.get(0).lineNo() >= nest.get(0).lineNo())
+          && (block.get(block.size() - 1).lineNo()
+          <= nest.get(nest.size() - 1).lineNo()))
+      {
+        return true;
       }
     }
     return false;
@@ -295,14 +309,14 @@ public class ScaCPUsmartFusion extends Sca {
    * @param currentDepth  The depth we currently are at
    * @param targetDepth   The depth we need to reach and transform.
    * @param affectingVars The variable which should be contained inside the loop
-   * @param groups        List of grouped nodes.
+   * @param blocks        List of block of nodes.
    */
-  private void gatherGroups(Xnode body, AtomicInteger currentDepth,
+  private void gatherBlocks(Xnode body, AtomicInteger currentDepth,
                             final int targetDepth, Set<String> affectingVars,
-                            List<List<Xnode>> groups)
+                            List<List<Xnode>> blocks)
   {
     final List<Xnode> children = body.children();
-    final List<Xnode> groupedNodes = new ArrayList<>();
+    final List<Xnode> nodeBlocks = new ArrayList<>();
     nodeLoop:
     for(Xnode node : children) {
       // Handle an assignment
@@ -315,7 +329,7 @@ public class ScaCPUsmartFusion extends Sca {
           // block, we can avoid to add it to a loop because it is not needed.
           AssignStatement as = new AssignStatement(node.element());
           if(!_promotions.containsKey(as.getLhsName())
-              && groupedNodes.isEmpty() && as.getVarRefNames().isEmpty())
+              && nodeBlocks.isEmpty() && as.getVarRefNames().isEmpty())
           {
             continue;
           }
@@ -324,14 +338,14 @@ public class ScaCPUsmartFusion extends Sca {
           if(_promotions.containsKey(as.getLhsName()) &&
               as.getVarRefNames().isEmpty())
           {
-            addGroupedNodes(groupedNodes, groups);
+            addNodeBlock(nodeBlocks, blocks);
             continue;
           }
-          groupedNodes.add(node);
+          nodeBlocks.add(node);
         }
         // Particular case, unused variable inside the body
         else {
-          addGroupedNodes(groupedNodes, groups);
+          addNodeBlock(nodeBlocks, blocks);
         }
       }
       // IF statement my have to be contained inside
@@ -341,14 +355,14 @@ public class ScaCPUsmartFusion extends Sca {
           Xnode nThen = node.firstChild().matchSibling(Xcode.THEN);
           Xnode nElse = node.firstChild().matchSibling(Xcode.ELSE);
           if(nThen != null) {
-            addGroupedNodes(groupedNodes, groups);
-            gatherGroups(nThen.body(), currentDepth, targetDepth, affectingVars,
-                groups);
+            addNodeBlock(nodeBlocks, blocks);
+            gatherBlocks(nThen.body(), currentDepth, targetDepth, affectingVars,
+                blocks);
           }
           if(nElse != null) {
-            addGroupedNodes(groupedNodes, groups);
-            gatherGroups(nElse.body(), currentDepth, targetDepth, affectingVars,
-                groups);
+            addNodeBlock(nodeBlocks, blocks);
+            gatherBlocks(nElse.body(), currentDepth, targetDepth, affectingVars,
+                blocks);
           }
           continue;
         }
@@ -356,7 +370,7 @@ public class ScaCPUsmartFusion extends Sca {
         // We need to wrap the whole IF based on the condition
         Xnode condNode = node.firstChild().matchSibling(Xcode.CONDITION);
         if(Condition.dependsOn(condNode, affectingVars)) {
-          groupedNodes.add(node);
+          nodeBlocks.add(node);
           continue nodeLoop;
         }
 
@@ -366,8 +380,8 @@ public class ScaCPUsmartFusion extends Sca {
         for(Xnode statement : assignStatements) {
           AssignStatement as = new AssignStatement(statement.element());
           if(affectingVars.contains(as.getLhsName())) {
-            // If the affected node is child of a DO, a dedicated loop
-            // group will be created.
+            // If the affected node is child of a DO, a dedicated
+            // block will be created.
             Xnode pnode = statement.ancestor();
             while(pnode.hashCode() != node.hashCode()) {
               if(pnode.opcode() == Xcode.F_DO_STATEMENT) {
@@ -376,59 +390,59 @@ public class ScaCPUsmartFusion extends Sca {
               pnode = pnode.ancestor();
             }
             // Add the whole if and continue otherwise
-            groupedNodes.add(node);
+            nodeBlocks.add(node);
             continue nodeLoop;
           }
         }
 
         // If the IF statement doesn't contains any dependency we gather the
         // potential transformation and continue
-        addGroupedNodes(groupedNodes, groups);
+        addNodeBlock(nodeBlocks, blocks);
       } else if(node.opcode().hasBody()) { // Handle node containing a body
-        addGroupedNodes(groupedNodes, groups);
+        addNodeBlock(nodeBlocks, blocks);
         currentDepth.incrementAndGet();
-        gatherGroups(node.body(), currentDepth, targetDepth, affectingVars,
-            groups);
+        gatherBlocks(node.body(), currentDepth, targetDepth, affectingVars,
+            blocks);
       } else { // Keep going inside the new node
-        addGroupedNodes(groupedNodes, groups);
-        gatherGroups(node, currentDepth, targetDepth, affectingVars, groups);
+        addNodeBlock(nodeBlocks, blocks);
+        gatherBlocks(node, currentDepth, targetDepth, affectingVars, blocks);
       }
     }
-    addGroupedNodes(groupedNodes, groups);
+    addNodeBlock(nodeBlocks, blocks);
   }
 
   /**
-   * If a group of nodes flagged to be is not empty, add it to the collection
-   * containing all the group of nodes found until now.
-   * The content of group of nodes is copied into a new list added to `groups`.
-   * The content of the `groupedNodes` is then cleared.
+   * If a block of nodes flagged to be wrapped is not empty, add it to the
+   * collection containing all the blocks of nodes found until now.
+   * The content of the block of nodes is copied into a new list added to
+   * `blocks`.
+   * The content of the `nodeBlock` is then cleared.
    * Used by CPU smart fusion transformation.
    *
-   * @param groupedNodes A list of adjacent (grouped) nodes to be wrapped in a
-   *                     DO statement.
-   * @param groups       List containing all group of nodes.
+   * @param nodeBlock A list of adjacent (block) nodes to be wrapped in a
+   *                  DO statement.
+   * @param blocks    List containing all block of nodes.
    */
-  private void addGroupedNodes(List<Xnode> groupedNodes,
-                               List<List<Xnode>> groups)
+  private void addNodeBlock(List<Xnode> nodeBlock,
+                            List<List<Xnode>> blocks)
   {
-    if(groupedNodes.isEmpty()) {
+    if(nodeBlock.isEmpty()) {
       return;
     }
-    groups.add(new ArrayList<>(groupedNodes));
-    groupedNodes.clear();
+    blocks.add(new ArrayList<>(nodeBlock));
+    nodeBlock.clear();
   }
 
   /**
-   * Given a series of sequential nodes wrapped them in a DO statement.
-   * Used by CPU smart fusion transformation.
+   * Wrap each block of nodes given in the list with appropriate DO statement.
    *
-   * @param groupedNodes List of nodes do envelope in a DO statement.
-   * @param xcodeml      Current translation unit.
+   * @param nodeBlock Block of nodes to be wrapped in a DO statement.
+   * @param xcodeml   Current translation unit.
    */
-  private void wrapGroupInDoStatement(List<Xnode> groupedNodes,
+  private void wrapGroupInDoStatement(List<Xnode> nodeBlock,
                                       XcodeProgram xcodeml)
   {
-    if(groupedNodes.isEmpty()) {
+    if(nodeBlock.isEmpty()) {
       return;
     }
 
@@ -437,14 +451,14 @@ public class ScaCPUsmartFusion extends Sca {
         new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
 
     // Insert DO statement into the AST and add statements in its body
-    groupedNodes.get(0).insertBefore(loop.getOuterStatement());
-    for(Xnode node : groupedNodes) {
+    nodeBlock.get(0).insertBefore(loop.getOuterStatement());
+    for(Xnode node : nodeBlock) {
       loop.getInnerStatement().body().append(node, false);
     }
 
     Directive.generateLoopDirectives(xcodeml,
         loop.getOuterStatement(), loop.getOuterStatement(),
         Directive.NO_COLLAPSE);
-    groupedNodes.clear();
+    nodeBlock.clear();
   }
 }
