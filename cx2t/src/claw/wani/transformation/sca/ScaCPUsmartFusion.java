@@ -191,7 +191,10 @@ public class ScaCPUsmartFusion extends Sca {
       if(block.isEmpty()) {
         continue;
       }
-      if(isNestedIn(blocks, block) || isContainedWithin(blocks, block)) {
+      if(isNestedIn(blocks, block)) {
+        flaggedAsNested.add(block);
+      }
+      if(isContainedWithin(blocks, block)) {
         flaggedAsNested.add(block);
       }
     }
@@ -235,6 +238,14 @@ public class ScaCPUsmartFusion extends Sca {
       }
     }
     return false;
+  }
+
+
+  private boolean isSameBlock(List<Xnode> block1, List<Xnode> block2) {
+    return !block1.isEmpty() && !block2.isEmpty()
+        && block1.size() == block2.size()
+        && block1.get(0).equals(block2.get(0))
+        && block1.get(block1.size()-1).equals(block2.get(block2.size()-1));
   }
 
   /**
@@ -429,6 +440,14 @@ public class ScaCPUsmartFusion extends Sca {
     if(nodeBlock.isEmpty()) {
       return;
     }
+
+    for(List<Xnode> existingBlock : blocks) {
+      if(isSameBlock(existingBlock, nodeBlock)) {
+        nodeBlock.clear();
+        return;
+      }
+    }
+
     blocks.add(new ArrayList<>(nodeBlock));
     nodeBlock.clear();
   }
