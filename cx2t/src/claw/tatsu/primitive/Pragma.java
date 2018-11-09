@@ -270,6 +270,8 @@ public final class Pragma {
     } else {
       if(!value.trim().toLowerCase().startsWith(prefix)) {
         p.setValue(prefix + " " + value.trim());
+      } else {
+        p.setValue(value.trim());
       }
     }
     hook.insertAfter(p);
