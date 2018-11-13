@@ -71,4 +71,11 @@ PROGRAM openacc_cont
 
   !$acc end data
 
+
+  !$acc data if(lzacc)   &
+  !$acc present (ps,p0,pp,dp0,t,qv,qc,qrs,rho0) &
+  !$acc create  (lzmask) !XL_TODO make lzmask global
+
+  !$acc end data
+
 END PROGRAM openacc_cont
