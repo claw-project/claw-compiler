@@ -287,6 +287,23 @@ public class Sca extends ClawTransformation {
                         Transformation other)
       throws Exception
   {
+
+    /* SCA in ELEMENTAL function. Only flag the function and leave the actual
+     * transformation until having information on the calling site from
+     * another translation unit. */
+    if(_fctType.isElemental()) {
+      // SCA ELEMENTAL
+      FmoduleDefinition modDef = _fctDef.findParentModule();
+      if(modDef == null) {
+        throw new IllegalTransformationException("SCA ELEMENTAL function " +
+            "transformation requires module encapsulation.");
+      }
+
+      // Flag the function in the module file.
+
+      return;
+    }
+
     // Handle PURE function / subroutine
     boolean pureRemoved = _fctType.isPure();
     _fctType.removeAttribute(Xattr.IS_PURE);
