@@ -53,6 +53,8 @@ CLAW Compiler options:
                                 directives.
    --force-pure               : force compiler to exit when transformation
                                 applied to PURE subroutine/function.
+   --add-paren                : Add parenthesis to binary operation in generated
+                                code.
    -r,--report                : generate the tranformation report.
    --debug                    : display transformation debug information.
    --debug-omni               : save intermediate files in __omni_tmp__ and
@@ -256,6 +258,7 @@ function claw::set_parameters() {
       enable_debug_omni=true
       ;;
     --force-pure) force_pure=true ;;
+    --add-paren) add_paren=true ;;
     -r | --report) report=true ;;
     *) other_args+=("$1") ;;
     esac
@@ -751,6 +754,10 @@ function claw::format_cx2t_params() {
 
   if [[ ${force_pure} == true ]]; then
     CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} --force-pure"
+  fi
+
+  if [[ ${add_paren} == true ]]; then
+    CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} --add-paren"
   fi
 
   # Module search path option
