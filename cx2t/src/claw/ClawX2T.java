@@ -127,6 +127,9 @@ public class ClawX2T {
     options.addOption("x", true,
         "override configuration option. Higher priority over base " +
             "configuration and user configuration.");
+    options.addOption("ap", "--add-paren", false,
+        "Force backend to add parenthesis in binary mathematical binary " +
+            "operation.");
     return options;
   }
 
@@ -282,6 +285,11 @@ public class ClawX2T {
     // Force pure option
     if(cmd.hasOption("fp")) {
       Configuration.get().setForcePure();
+    }
+
+    // Add parenthesis option
+    if(cmd.hasOption("ap")) {
+      XmOption.setAddPar(true);
     }
 
     ClawTranslatorDriver translatorDriver =
