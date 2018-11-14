@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
+## [1.3.0] - Unrelease
+* driver: new option `--add-paren` to force parenthesis on mathematical binary operation in code generation.
+
 ## [1.2.0] - 2018-11-13
 * SCA: Support model configuration file with the `--model-config=<path>` option.
 * SCA: `parallelize` can still be used but it is deprecated. Use the new
