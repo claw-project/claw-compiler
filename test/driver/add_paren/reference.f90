@@ -5,5 +5,6 @@ PROGRAM add_paren
  INTEGER :: res
 
  res = ( ( a + b ) + c )
+ res = ( a + ( b * c ) )
 END PROGRAM add_paren
 
