@@ -87,8 +87,9 @@ information: [OMNI Compiler website](http://omni-compiler.org)
 
 
 #### About
-This work was initially funded by the ETH zürich and the PASC initiative under
-the [ENIAC](http://www.pasc-ch.org/projects/2017-2020/eniac/) project.
+This work was initially funded by the ETH zürich, MeteoSwiss and the PASC
+initiative under the [ENIAC](http://www.pasc-ch.org/projects/2017-2020/eniac/)
+project.
 
 ---
 Logo by [adrienbachmann.ch](http://www.adrienbachmann.ch)

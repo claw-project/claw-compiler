@@ -26,7 +26,7 @@
 set(CLAW_FLAGS_backslash_preprocessor --force)
 set(NOCOMPILE_backslash_preprocessor ON)
 
-set(CLAW_FLAGS_dependencies1 --force -J subfolder/)
+set(CLAW_FLAGS_dependencies1 --force -J subfolder/ -D__DEP2__ --verbose)
 set(NOCOMPILE_dependencies1 ON)
 
 set(CLAW_FLAGS_dependencies2 --force -J subfolder/)

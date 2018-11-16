@@ -555,7 +555,7 @@ function claw::process_dependencies() {
     elif [[ ${source_mod_file_found} == true ]] &&
       [[ ${compiled_mod_file_found} == true ]]; then
       if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then
-        claw::verbose "Info: module file for ${module_name} seems up-to-date"
+        claw::verbose "Info: module file for ${module_name} seems up-to-date (${compiled_mod_file})"
         continue
       fi
     fi
@@ -581,13 +581,13 @@ function claw::process_dependencies() {
 
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then
-      # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} \
-        "${other_args[@]}" "${base_file}" >"${file_pp}"
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
+        ${other_args[@]} "${base_file}" > "${file_pp}"
     else
-      # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} \
-        "${other_args[@]}" "${base_file}"
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
+        ${other_args[@]} "${base_file}"
       mv "${dep_basename}.i" "${file_pp}"
     fi
 
