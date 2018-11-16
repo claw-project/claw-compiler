@@ -597,9 +597,9 @@ function claw::process_dependencies() {
     fi
 
     # Pass the module in the front-end to get the .xmod file
-    # shellcheck disable=SC2086
-    ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-      "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" >/dev/null
+    # shellcheck disable=SC2086,SC2068
+    ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} \
+      ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" >/dev/null
   done
 }
 
