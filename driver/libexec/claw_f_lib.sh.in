@@ -53,6 +53,8 @@ CLAW Compiler options:
                                 directives.
    --force-pure               : force compiler to exit when transformation
                                 applied to PURE subroutine/function.
+   --add-paren                : Add parenthesis to binary operation in generated
+                                code.
    -r,--report                : generate the tranformation report.
    --debug                    : display transformation debug information.
    --debug-omni               : save intermediate files in __omni_tmp__ and
@@ -256,6 +258,7 @@ function claw::set_parameters() {
       enable_debug_omni=true
       ;;
     --force-pure) force_pure=true ;;
+    --add-paren) add_paren=true ;;
     -r | --report) report=true ;;
     *) other_args+=("$1") ;;
     esac
@@ -552,7 +555,7 @@ function claw::process_dependencies() {
     elif [[ ${source_mod_file_found} == true ]] &&
       [[ ${compiled_mod_file_found} == true ]]; then
       if [[ ${compiled_mod_file} -nt ${source_mod_file} ]]; then
-        claw::verbose "Info: module file for ${module_name} seems up-to-date"
+        claw::verbose "Info: module file for ${module_name} seems up-to-date (${compiled_mod_file})"
         continue
       fi
     fi
@@ -578,13 +581,13 @@ function claw::process_dependencies() {
 
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then
-      # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} \
-        "${other_args[@]}" "${base_file}" >"${file_pp}"
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
+        ${other_args[@]} "${base_file}" > "${file_pp}"
     else
-      # shellcheck disable=SC2086
-      ${OMNI_FPP_CMD} "${include_opt[@]}" "${pp_add_opt[@]}" ${OMNI_FPP_OPT} \
-        "${other_args[@]}" "${base_file}"
+      # shellcheck disable=SC2086,SC2068
+      ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
+        ${other_args[@]} "${base_file}"
       mv "${dep_basename}.i" "${file_pp}"
     fi
 
@@ -594,9 +597,9 @@ function claw::process_dependencies() {
     fi
 
     # Pass the module in the front-end to get the .xmod file
-    # shellcheck disable=SC2086
-    ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-      "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" >/dev/null
+    # shellcheck disable=SC2086,SC2068
+    ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} \
+      ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" >/dev/null
   done
 }
 
@@ -751,6 +754,10 @@ function claw::format_cx2t_params() {
 
   if [[ ${force_pure} == true ]]; then
     CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} --force-pure"
+  fi
+
+  if [[ ${add_paren} == true ]]; then
+    CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} --add-paren"
   fi
 
   # Module search path option

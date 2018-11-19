@@ -54,6 +54,7 @@ force_pure=false
 report=false
 pipe_workflow=true
 keep_comment=false
+add_paren=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -118,6 +119,7 @@ readonly force_pure
 readonly report
 readonly pipe_workflow
 readonly keep_comment
+readonly add_paren
 
 ### sed constant ###
 readonly claw_sed_ignore="s/\\!\$claw ignore//"

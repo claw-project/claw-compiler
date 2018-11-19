@@ -1,6 +1,6 @@
 ![CLAW Logo](resources/logo_full_black.png)
 
-<a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.2.0-lightgray.svg)</a> [![Build Status](https://travis-ci.org/claw-project/claw-compiler.svg?branch=master)](https://travis-ci.org/claw-project/claw-compiler)
+<a target="_blank" href="http://semver.org">![Version](https://img.shields.io/badge/Version-1.2.1-lightgray.svg)</a> [![Build Status](https://travis-ci.org/claw-project/claw-compiler.svg?branch=master)](https://travis-ci.org/claw-project/claw-compiler)
 <a target="_blank" href="https://claw-compiler.slack.com/">![Slack](https://img.shields.io/badge/Collab-Slack-yellow.svg)</a>
 <a target="_blank" href="https://claw-project.github.io/claw-documentation/">![Doc](https://img.shields.io/badge/Documentation-link-lightgray.svg)</a>
 
@@ -87,8 +87,9 @@ information: [OMNI Compiler website](http://omni-compiler.org)
 
 
 #### About
-This work was initially funded by the ETH zürich and the PASC initiative under
-the [ENIAC](http://www.pasc-ch.org/projects/2017-2020/eniac/) project.
+This work was initially funded by the ETH zürich, MeteoSwiss and the PASC
+initiative under the [ENIAC](http://www.pasc-ch.org/projects/2017-2020/eniac/)
+project.
 
 ---
 Logo by [adrienbachmann.ch](http://www.adrienbachmann.ch)

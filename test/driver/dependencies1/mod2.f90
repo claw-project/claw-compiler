@@ -5,4 +5,9 @@
 
 module mod2
   use mod4
+
+#ifdef __DEP2__
+  integer :: i
+#endif
+
 end module mod2
