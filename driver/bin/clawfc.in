@@ -157,6 +157,11 @@ if [[ ${keep_comment} == true ]]; then
   readonly OMNI_F2X_OPT
 fi
 
+# Add debug flag for the translator options
+if [[ ${enable_debug} == true ]]; then
+  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
+fi
+
 ## Check that input file exits
 claw::check_file_exist
 
@@ -396,11 +401,6 @@ for input_file in "${f_files_transformation[@]}"; do
     "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
 done
 [[ ${stop_frontend} == true ]] && claw::exit_without_error
-
-# Add debug flag for the translator options
-if [[ ${enable_debug} == true ]]; then
-  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
-fi
 
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
