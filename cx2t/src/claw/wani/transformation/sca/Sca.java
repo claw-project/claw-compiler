@@ -42,7 +42,6 @@ public class Sca extends ClawTransformation {
   final Set<String> _arrayFieldsInOut;
   final Set<String> _scalarFields;
   FfunctionDefinition _fctDef;
-  // private int _overDimensions;
   private FfunctionType _fctType;
 
   /**
@@ -53,7 +52,6 @@ public class Sca extends ClawTransformation {
    */
   Sca(ClawPragma directive) {
     super(directive);
-    //_overDimensions = 0;
     _promotions = new HashMap<>();
     _arrayFieldsInOut = new HashSet<>();
     _scalarFields = new HashSet<>();
@@ -73,16 +71,21 @@ public class Sca extends ClawTransformation {
                                         List<String> scalars)
   {
     Message.debug("==========================================");
-    Message.debug("Sca promotion infos for subroutine " + name);
+    Message.debug("SCA automatic promotion deduction information for subroutine "
+        + name);
     Message.debug("  - Promoted arrays(" + promoted.size() + "):");
-    for(String array : promoted) {
+    List<String> unsorted = new ArrayList<>(promoted);
+    Collections.sort(unsorted);
+    for(String array : unsorted) {
       Message.debug("\t" + array);
     }
     Message.debug("  - Candidate arrays(" + candidateArrays.size() + "):");
+    Collections.sort(candidateArrays);
     for(String array : candidateArrays) {
       Message.debug("\t" + array);
     }
     Message.debug("  - Candidate scalars(" + scalars.size() + "):");
+    Collections.sort(scalars);
     for(String array : scalars) {
       Message.debug("\t" + array);
     }
