@@ -182,7 +182,7 @@ fi
 
 ### Create temporal directory ###
 [[ ${enable_debug_omni} == true ]] && temp_dir=${debug_temp_dir}
-mkdir -p ${temp_dir}
+mkdir -p "${temp_dir}"
 claw::verbose "Create ${temp_dir}/"
 
 ### Bypass file without code transformation ###
@@ -272,7 +272,7 @@ done
 [[ ${stop_pp} == true ]] && exit 0
 [[ ${only_pp} == true ]] && [[ ${enable_debug_omni} == true ]] && exit 0
 [[ ${only_pp} == true ]] && {
-  rm -rf ${temp_dir}
+  rm -rf "${temp_dir}"
   exit 0
 }
 
