@@ -6,6 +6,7 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Condition;
@@ -71,14 +72,15 @@ public class ScaCPUsmartFusion extends Sca {
   private void applySpecificTransformation(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-
     // Apply transformation only when there is a body to modify
     if(_fctDef.hasEmptyBody()) {
       return;
     }
+
     // Variables on each "depth" of the method
     List<Set<String>> depthVars = new ArrayList<>();
     depthVars.add(new HashSet<String>());
+
     /* A growing list of affecting variables. Starting from the ones
      * declared by SCA and successively any variables affected by the SCA
      * declaration */
@@ -278,7 +280,12 @@ public class ScaCPUsmartFusion extends Sca {
         // affected by a previous promotions
         depthVars.get(depth.get()).addAll(affectedVars);
         if(!affectedVars.isEmpty()) {
-          affectingVars.add(as.getLhsName());
+          if(!affectedVars.contains(as.getLhsName())) {
+            Message.debug("SCA: Variable " + as.getLhsName()
+                + " added to affected vars from assignStmt at line "
+                + as.lineNo());
+            affectingVars.add(as.getLhsName());
+          }
           depthVars.get(depth.get()).add(as.getLhsName());
         }
       }
@@ -468,6 +475,11 @@ public class ScaCPUsmartFusion extends Sca {
     // Create the DO statement
     NestedDoStatement loop =
         new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
+
+    Message.debug(
+        String.format("SCA: Generating do statement to wrap line %d to %d.",
+        nodeBlock.get(0).lineNo(), nodeBlock.get(nodeBlock.size()-1).lineNo()));
+
 
     // Insert DO statement into the AST and add statements in its body
     nodeBlock.get(0).insertBefore(loop.getOuterStatement());
