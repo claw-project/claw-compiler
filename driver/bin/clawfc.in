@@ -25,7 +25,7 @@ compiler_macro="@COMPILER_MACRO@"
 
 ### Directory for saving intermediate files ###
 temp_dir=$(mktemp -d)
-debug_temp_dir="__omni_tmp__"
+debug_temp_dir="${PWD}/__omni_tmp__"
 
 ### Default options ###
 fpp_redirect=@FPP_REDIRECT@
@@ -432,13 +432,18 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Dump the arguments pass to the translator for easier debugging
   if [[ ${dump_cx2t_args} == true ]]; then
+    echo "=============================="
     echo "-- [DEBUG] Arguments for cx2t:"
+    echo "=============================="
+    echo ""
     echo "${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT} \
       ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
       ${CLAW_X2T_MODEL_CONFIG_OPT} \
       ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
       ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} \
       -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
+    echo ""
+    echo "=============================="
   fi
 
   # Debug output
