@@ -33,8 +33,7 @@ import java.util.*;
  *
  * @author clementval
  * @see claw.wani.transformation.sca.ScaGPU
- * @see claw.wani.transformation.sca.ScaCPUbasic
- * @see claw.wani.transformation.sca.ScaCPUsmartFusion
+ * @see claw.wani.transformation.sca.ScaCPUvectorizeGroup
  */
 public class Sca extends ClawTransformation {
 

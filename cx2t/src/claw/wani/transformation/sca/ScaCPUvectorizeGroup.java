@@ -8,6 +8,7 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Condition;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.primitive.Function;
@@ -21,27 +22,15 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * Specific SCA transformation for CPU target. Naive algorithm is used here.
- *
- * Transformation for the CPU target: <ul>
- * <li> Automatic promotion is applied to all arrays with intent in, out or
- * inout.
- * <li> Propagated promotion is applied to all scalars or arrays used in an
- * assign statement at the lhs and where a promoted variable is used on the
- * rhs.
- * <li> Do statements over the additional dimensions are added as an inner
- * loop wrapping each assign statements including promoted variables.
- * </ul>
- *
  * @author clementval
  */
-public class ScaCPUbasic extends Sca {
+public class ScaCPUvectorizeGroup extends Sca {
+
+  private final boolean _fusion;
+  private final Set<AssignStatement> _temporaryCandidate = new HashSet<>();
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -49,8 +38,14 @@ public class ScaCPUbasic extends Sca {
    *
    * @param directive The directive that triggered the define transformation.
    */
-  public ScaCPUbasic(ClawPragma directive) {
+  public ScaCPUvectorizeGroup(ClawPragma directive) {
     super(directive);
+    _fusion = false;
+  }
+
+  public ScaCPUvectorizeGroup(ClawPragma directive, boolean fusion) {
+    super(directive);
+    _fusion = fusion;
   }
 
   @Override
@@ -61,7 +56,7 @@ public class ScaCPUbasic extends Sca {
     // Apply the common transformation
     super.transform(xcodeml, translator, other);
 
-    // Apply specific steps for CPU
+    // Apply specific steps for CPU smart fusion
     applySpecificTransformation(xcodeml);
 
     // Finalize the common steps
@@ -89,7 +84,7 @@ public class ScaCPUbasic extends Sca {
     detectIndirectPromotion(xcodeml, assignStatements);
 
     // Hold hooks on which do statement will be inserted
-    Set<Xnode> hooks = new HashSet<>();
+    Set<VectorBlock> blocks = new HashSet<>();
 
     /* Check whether condition includes a promoted variables. If so, the
      * ancestor node using the condition must be wrapped in a do statement. */
@@ -97,32 +92,120 @@ public class ScaCPUbasic extends Sca {
     for(Xnode condition : conditions) {
       if(Condition.dependsOn(condition, _arrayFieldsInOut)) {
         Xnode ancestor = condition.ancestor();
-        Iterator<Xnode> iter = hooks.iterator();
+        Iterator<VectorBlock> iter = blocks.iterator();
         boolean addHook = true;
         while(iter.hasNext()) {
-          if(ancestor.isNestedIn(iter.next())) {
+          if(ancestor.isNestedIn(iter.next().getStartStmt())) {
             addHook = false;
             break;
           }
         }
         if(addHook) {
-          hooks.add(ancestor);
+          blocks.add(new VectorBlock(ancestor));
         }
       }
     }
 
-    flagDoStatementLocation(assignStatements, hooks);
+    flagDoStatementLocation(assignStatements, blocks);
+
+    List<VectorBlock> fusionBlocks;
+    if(_fusion) {
+      fusionBlocks = fusionVectorBlock(blocks);
+    } else {
+      fusionBlocks = new ArrayList<>(blocks);
+    }
+
+    //Set<AssignStatement> noPromotion = controlPromotion(fusionBlocks);
+
+    /*_temporaryCandidate.removeAll(noPromotion);
+
+    for(AssignStatement as : _temporaryCandidate) {
+      promote(xcodeml, as);
+    }*/
+
 
     // Generate loops around statements flagged in previous stage
-    generateDoStatements(xcodeml, hooks);
+    generateDoStatements(xcodeml, fusionBlocks);
 
     // Generate the parallel region
     Directive.generateParallelClause(xcodeml,
         _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 
+  private Set<AssignStatement> controlPromotion(List<VectorBlock> blocks) {
+
+    Set<AssignStatement> _noPromotionNeeded = new HashSet<>();
+
+    for(VectorBlock block : blocks) {
+      block.gatherUsedVars();
+    }
+
+    for(AssignStatement tmp : _temporaryCandidate) {
+      int writeBlock = 0;
+      for(VectorBlock block : blocks) {
+        if(block.getWrittenVariables().contains(tmp.getLhsName())) {
+          ++writeBlock;
+          if(writeBlock > 1) {
+            break;
+          }
+        }
+      }
+
+      if(writeBlock <= 1) {
+        _noPromotionNeeded.add(tmp);
+      }
+    }
+    return _noPromotionNeeded;
+  }
+
+  /**
+   * Fusion adjacent block together to maximize vetorization and data locality.
+   *
+   * @param blocks Set of flagged blocks containing a single statement.
+   * @return List of fusioned blocks.
+   */
+  private List<VectorBlock> fusionVectorBlock(Set<VectorBlock> blocks) {
+
+    List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
+
+    Collections.sort(sortedVectorBlocks, new Comparator<VectorBlock>() {
+      @Override
+      public int compare(VectorBlock s1, VectorBlock s2) {
+        if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
+          return -1;
+        } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
+          return 1;
+        }
+        return 0;
+      }
+    });
+
+    List<VectorBlock> toBeRemoved = new ArrayList<>();
+
+    VectorBlock crtBlock = sortedVectorBlocks.get(0);
+    int crtLocaton = crtBlock.getStartStmt().lineNo();
+
+    for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
+
+      VectorBlock nextBlock = sortedVectorBlocks.get(i);
+
+      if(nextBlock.getStartStmt().lineNo() == crtLocaton + 1) {
+        ++crtLocaton;
+        toBeRemoved.add(nextBlock);
+        crtBlock.setEndStmt(nextBlock.getStartStmt());
+      } else {
+        crtLocaton = nextBlock.getStartStmt().lineNo();
+        crtBlock = nextBlock;
+      }
+
+    }
+
+    sortedVectorBlocks.removeAll(toBeRemoved);
+    return sortedVectorBlocks;
+  }
+
   private void flagDoStatementLocation(List<AssignStatement> assignStatements,
-                                       Set<Xnode> hooks)
+                                       Set<VectorBlock> hooks)
   {
     /* Iterate a second time over assign statements to flag places where to
      * insert the do statements */
@@ -155,9 +238,9 @@ public class ScaCPUbasic extends Sca {
           boolean addIfHook = true;
 
           // Get rid of previously flagged hook in this if body.
-          Iterator<Xnode> iter = hooks.iterator();
+          Iterator<VectorBlock> iter = hooks.iterator();
           while(iter.hasNext()) {
-            Xnode crt = iter.next();
+            Xnode crt = iter.next().getStartStmt();
             if(assign.isNestedIn(crt) || hookIfStmt.isNestedIn(crt)) {
               addIfHook = false;
             }
@@ -167,13 +250,13 @@ public class ScaCPUbasic extends Sca {
           }
 
           if(addIfHook) {
-            hooks.add(hookIfStmt);
+            hooks.add(new VectorBlock(hookIfStmt));
           }
         }
       }
 
-      for(Xnode hook : hooks) {
-        if(assign.isNestedIn(hook)) {
+      for(VectorBlock hook : hooks) {
+        if(assign.isNestedIn(hook.getStartStmt())) {
           wrapInDoStatement = false;
           break;
         }
@@ -182,12 +265,12 @@ public class ScaCPUbasic extends Sca {
       if(lhs.opcode() == Xcode.F_ARRAY_REF
           && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
       {
-        hooks.add(assign);
+        hooks.add(new VectorBlock(assign));
       } else if((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
           && _scalarFields.contains(lhsName)) &&
           (shouldBePromoted(assign) && wrapInDoStatement))
       {
-        hooks.add(assign);
+        hooks.add(new VectorBlock(assign));
       }
     }
   }
@@ -211,6 +294,9 @@ public class ScaCPUbasic extends Sca {
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
         promoteIfNeeded(xcodeml, assign);
+
+        _temporaryCandidate.add(assign);
+
       }
     }
   }
@@ -219,6 +305,13 @@ public class ScaCPUbasic extends Sca {
       throws IllegalTransformationException
   {
     if(shouldBePromoted(assign)) {
+      promote(xcodeml, assign);
+    }
+  }
+
+  private void promote(XcodeProgram xcodeml, AssignStatement assign)
+      throws IllegalTransformationException
+  {
       PromotionInfo promotionInfo;
       Xnode lhs = assign.getLhs();
       String lhsName = assign.getLhsName();
@@ -242,22 +335,32 @@ public class ScaCPUbasic extends Sca {
         Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(), xcodeml);
       }
       promotionInfo.setRefAdapted();
-    }
   }
 
   /**
    * Generate new DO statement at flagged location.
    *
    * @param xcodeml Current translation unit.
-   * @param hooks   Set of flagged location.
+   * @param blocks  List of vectorization friendly blocks.
    */
-  private void generateDoStatements(XcodeProgram xcodeml, Set<Xnode> hooks) {
-    for(Xnode hook : hooks) {
+  private void generateDoStatements(XcodeProgram xcodeml,
+                                    List<VectorBlock> blocks)
+      throws IllegalTransformationException
+  {
+    for(VectorBlock block : blocks) {
       NestedDoStatement loops =
           new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
-      hook.insertAfter(loops.getOuterStatement());
-      loops.getInnerStatement().body().append(hook, true);
-      hook.delete();
+
+      if(block.isSingleStatement()) {
+        block.getStartStmt().insertAfter(loops.getOuterStatement());
+        loops.getInnerStatement().body().append(block.getStartStmt(), true);
+        block.getStartStmt().delete();
+      } else {
+        block.getEndStmt().insertAfter(loops.getOuterStatement());
+        Body.shiftIn(block.getStartStmt(), block.getEndStmt(),
+            loops.getInnerStatement().body(), true);
+      }
+
       Directive.generateLoopDirectives(xcodeml,
           loops.getOuterStatement(), loops.getOuterStatement(),
           Directive.NO_COLLAPSE);
