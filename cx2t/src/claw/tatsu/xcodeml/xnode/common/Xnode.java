@@ -957,8 +957,8 @@ public class Xnode {
    */
   @Override
   public String toString() {
-    return String.format("%s (children: %d)", opcode().code(),
-        children().size());
+    return String.format("%s (children: %d) - %d", opcode().code(),
+        children().size(), lineNo());
   }
 
   @Override
