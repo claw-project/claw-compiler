@@ -53,6 +53,15 @@ public class AssignStatement extends Xnode {
   }
 
   /**
+   * Get the right hand-side node of the assignment.
+   *
+   * @return Right hans-side node.
+   */
+  public Xnode getRhs() {
+    return child(Xnode.RHS);
+  }
+
+  /**
    * Check if the current assignment statement is a child of a give type of
    * node.
    *
@@ -82,6 +91,20 @@ public class AssignStatement extends Xnode {
    */
   public Set<String> getVarRefNames() {
     List<Xnode> varRefs = matchAll(Xcode.VAR_REF);
+    Set<String> names = new HashSet<>();
+    for(Xnode varRef : varRefs) {
+      names.add(varRef.matchSeq(Xcode.VAR).value());
+    }
+    return names;
+  }
+
+  /**
+   * Get all variables names on the RHS.
+   *
+   * @return Set of variables names used on the RHS.
+   */
+  public Set<String> getReadNames() {
+    List<Xnode> varRefs = getRhs().matchAll(Xcode.VAR_REF);
     Set<String> names = new HashSet<>();
     for(Xnode varRef : varRefs) {
       names.add(varRef.matchSeq(Xcode.VAR).value());
