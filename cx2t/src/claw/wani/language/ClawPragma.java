@@ -55,6 +55,7 @@ public class ClawPragma extends AnalyzedPragma {
   //private List<List<String>> _overDataValues;
   private Set<String> _overDataValues;
   private List<String> _scalarValues;
+  private List<String> _noPromoteValues;
   private DataMovement _copyClauseValue;
   private DataMovement _updateClauseValue;
   private List<Target> _targetClauseValues;
@@ -88,6 +89,7 @@ public class ClawPragma extends AnalyzedPragma {
   private boolean _hasCreateClause;
   private boolean _hasCleanupClause;
   private boolean _hasLayoutClause;
+  private boolean _hasNoPromoteClause;
 
   private boolean _scaModelConfig;
 
@@ -296,6 +298,8 @@ public class ClawPragma extends AnalyzedPragma {
     _constraintClauseValue = ClawConstraint.DIRECT;
     _cleanupClauseValue = CompilerDirective.NONE;
     _layoutValue = null;
+    _scalarValues = null;
+    _noPromoteValues = null;
 
     // Clauses flags members
     _hasAccClause = false;
@@ -321,6 +325,7 @@ public class ClawPragma extends AnalyzedPragma {
     _hasCreateClause = false;
     _hasCleanupClause = false;
     _hasLayoutClause = false;
+    _hasNoPromoteClause = false;
 
     // General members
     _directive = null;
@@ -820,6 +825,34 @@ public class ClawPragma extends AnalyzedPragma {
   public void setScalarClause(List<String> data) {
     _hasScalarClause = true;
     _scalarValues = data;
+  }
+
+  /**
+   * Check whether the current directly has the nopromote clause enabled.
+   *
+   * @return True if the nopromote clause is enabled.
+   */
+  public boolean hasNoPromoteClause() {
+    return _hasNoPromoteClause;
+  }
+
+  /**
+   * Get the data clause values extracted from the nopromote clause.
+   *
+   * @return List of identifier declared in the nopromote clause.
+   */
+  public List<String> getNoPromoteValues() {
+    return _noPromoteValues;
+  }
+
+  /**
+   * Enable nopromote clause for the current directive and stores the data.
+   *
+   * @param data List of identifier declared in the nopromote clause.
+   */
+  public void setNoPromoteClause(List<String> data) {
+    _hasNoPromoteClause = true;
+    _noPromoteValues = data;
   }
 
   /**

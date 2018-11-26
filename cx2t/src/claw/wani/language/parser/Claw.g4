@@ -241,6 +241,10 @@ data_over_clause[ClawPragma l]
     {
       $l.processDataOverClauses(dataLst, overLst);
     }
+  | NOPROMOTE '(' ids_list[dataLst] ')'
+    {
+      $l.setNoPromoteClause(dataLst);
+    }
 ;
 
 // group clause
@@ -644,6 +648,7 @@ INIT         : 'init';
 INTERCHANGE  : 'interchange';
 LAYOUT       : 'layout';
 MAP          : 'map';
+NOPROMOTE    : 'nopromote';
 OFFSET       : 'offset';
 OVER         : 'over';
 PARALLEL     : 'parallel';

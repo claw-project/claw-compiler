@@ -40,6 +40,7 @@ public class Sca extends ClawTransformation {
   final Map<String, PromotionInfo> _promotions;
   final Set<String> _arrayFieldsInOut;
   final Set<String> _scalarFields;
+  final Set<String> _noPromotion;
   FfunctionDefinition _fctDef;
   private FfunctionType _fctType;
 
@@ -54,6 +55,7 @@ public class Sca extends ClawTransformation {
     _promotions = new HashMap<>();
     _arrayFieldsInOut = new HashSet<>();
     _scalarFields = new HashSet<>();
+    _noPromotion = new HashSet<>();
   }
 
   /**
@@ -61,21 +63,27 @@ public class Sca extends ClawTransformation {
    * scalars.
    *
    * @param name            Name of the subroutine.
-   * @param promoted        List of promoted array variables.
    * @param candidateArrays List of candidate array variables for promotion.
    * @param scalars         List of candidate scalar variables for promotion.
    */
-  private void printDebugPromotionInfos(String name, Set<String> promoted,
+  private void printDebugPromotionInfos(String name,
                                         List<String> candidateArrays,
                                         List<String> scalars)
   {
     Message.debug("==========================================");
     Message.debug("SCA automatic promotion deduction information for subroutine "
         + name);
-    Message.debug("  - Promoted arrays(" + promoted.size() + "):");
-    List<String> unsorted = new ArrayList<>(promoted);
+    Message.debug("  - Promoted arrays(" + _arrayFieldsInOut.size() + "):");
+    List<String> unsorted = new ArrayList<>(_arrayFieldsInOut);
     Collections.sort(unsorted);
     for(String array : unsorted) {
+      Message.debug("\t" + array);
+    }
+    Message.debug("  - Excluded from promotion variables("
+        + _noPromotion.size() + "):");
+    List<String> unsortedNoPromotions = new ArrayList<>(_noPromotion);
+    Collections.sort(unsortedNoPromotions);
+    for(String array : unsortedNoPromotions) {
       Message.debug("\t" + array);
     }
     Message.debug("  - Candidate arrays(" + candidateArrays.size() + "):");
@@ -219,34 +227,38 @@ public class Sca extends ClawTransformation {
     List<Xnode> declarations =
         _fctDef.getDeclarationTable().values(Xcode.VAR_DECL);
 
+    if(_claw.hasNoPromoteClause()) {
+      _noPromotion.addAll(_claw.getNoPromoteValues());
+    }
+
     for(Xnode decl : declarations) {
       if(xcodeml.getTypeTable().isBasicType(decl)) {
         String varName = decl.matchSeq(Xcode.NAME).value();
         FbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
 
-        if(bType.isArray()) {
-          if(bType.hasIntent() || bType.isPointer()) {
-            _arrayFieldsInOut.add(varName);
+        if(!_noPromotion.contains(varName)) {
+          if(bType.isArray()) {
+            if(bType.hasIntent() || bType.isPointer()) {
+              _arrayFieldsInOut.add(varName);
+            } else {
+              candidateArrays.add(varName);
+            }
           } else {
-            candidateArrays.add(varName);
-          }
-        } else {
-          if(_claw.hasScalarClause() &&
-              _claw.getScalarClauseValues().contains(varName))
-          {
-            _arrayFieldsInOut.add(varName);
-          }
-          if(!bType.isParameter() && bType.hasIntent()) {
-            scalars.add(varName);
+            // Scalars mentioned in the scalar clause will be promoted.
+            if(_claw.hasScalarClause() &&
+                _claw.getScalarClauseValues().contains(varName))
+            {
+              _arrayFieldsInOut.add(varName);
+            } else if(!bType.isParameter() && !bType.hasIntent()) {
+              scalars.add(varName); // Add scalar as candidate
+            }
           }
         }
       }
     }
     _scalarFields.addAll(scalars);
-    _scalarFields.addAll(candidateArrays);
 
-    printDebugPromotionInfos(_fctDef.getName(), _arrayFieldsInOut,
-        candidateArrays, scalars);
+    printDebugPromotionInfos(_fctDef.getName(), candidateArrays, scalars);
 
     return true;
   }

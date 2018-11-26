@@ -30,7 +30,7 @@ import java.util.*;
 public class ScaCPUvectorizeGroup extends Sca {
 
   private final boolean _fusion;
-  private final Set<AssignStatement> _temporaryCandidate = new HashSet<>();
+  private final Set<AssignStatement> _temporaryCandidates = new HashSet<>();
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -113,12 +113,12 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     if(_fusion) {
       //Set<AssignStatement> noPromotion = controlPromotion(fusionBlocks);
-
-      /*_temporaryCandidate.removeAll(noPromotion);
-      for(AssignStatement as : _temporaryCandidate) {
-        promote(xcodeml, as);
-      }*/
     }
+    //_temporaryCandidates.removeAll(noPromotion);
+    /*for(AssignStatement as : _temporaryCandidates) {
+      //if(_claw.getScalarClauseValues().contains(as.getLhsName()))
+      promote(xcodeml, as);
+    }*/
 
     // Generate loops around statements flagged in previous stage
     generateDoStatements(xcodeml, fusionBlocks);
@@ -136,7 +136,7 @@ public class ScaCPUvectorizeGroup extends Sca {
       block.gatherUsedVars();
     }
 
-    for(AssignStatement tmp : _temporaryCandidate) {
+    for(AssignStatement tmp : _temporaryCandidates) {
       int writeBlock = 0;
       for(VectorBlock block : blocks) {
         if(block.getWrittenVariables().contains(tmp.getLhsName())) {
@@ -299,8 +299,9 @@ public class ScaCPUvectorizeGroup extends Sca {
          * switch to an array reference */
         promoteIfNeeded(xcodeml, assign);
 
-        _temporaryCandidate.add(assign);
-
+        /*if(shouldBePromoted(assign)) {
+          _temporaryCandidates.add(assign);
+        }*/
       }
     }
   }
@@ -308,7 +309,10 @@ public class ScaCPUvectorizeGroup extends Sca {
   private void promoteIfNeeded(XcodeProgram xcodeml, AssignStatement assign)
       throws IllegalTransformationException
   {
-    if(shouldBePromoted(assign)) {
+
+    if(shouldBePromoted(assign)
+        && !_noPromotion.contains(assign.getLhsName()))
+    {
       promote(xcodeml, assign);
     }
   }
