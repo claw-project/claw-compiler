@@ -49,16 +49,41 @@ public class VectorBlock {
   public void gatherUsedVars() {
 
     if(isSingleStatement()) {
-      if(_startStmt.opcode() == Xcode.F_ASSIGN_STATEMENT) {
+
+      List<Xnode> vars = _startStmt.matchAll(Xcode.VAR);
+      for(Xnode var : vars) {
+        _writtenVariables.add(var.value());
+      }
+
+     /* if(_startStmt.opcode() == Xcode.F_ASSIGN_STATEMENT) {
         AssignStatement as = new AssignStatement(_startStmt.element());
         _writtenVariables.add(as.getLhsName());
         _writtenVariables.addAll(as.getReadNames());
       } else {
         populateWrittenVars(_startStmt.matchAll(Xcode.F_ASSIGN_STATEMENT));
-      }
+      }*/
     } else {
-      populateWrittenVars(XnodeUtil.getNodes(getStartStmt(), getEndStmt(),
-          Collections.singletonList(Xcode.F_ASSIGN_STATEMENT)));
+
+      Xnode crt = getStartStmt();
+      while(!crt.equals(getEndStmt())) {
+        List<Xnode> vars = crt.matchAll(Xcode.VAR);
+        for(Xnode var : vars) {
+          _writtenVariables.add(var.value());
+        }
+        crt = crt.nextSibling();
+      }
+
+      if(crt.equals(getEndStmt())) {
+        List<Xnode> vars = crt.matchAll(Xcode.VAR);
+        for(Xnode var : vars) {
+          _writtenVariables.add(var.value());
+        }
+      }
+
+
+
+     /* populateWrittenVars(XnodeUtil.getNodes(getStartStmt(), getEndStmt(),
+          Collections.singletonList(Xcode.F_ASSIGN_STATEMENT)));*/
     }
   }
 

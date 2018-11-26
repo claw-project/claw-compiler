@@ -536,6 +536,10 @@ public class XnodeUtil {
       unsupportedStatements.addAll(getNodes(crt, nodeOpcodes));
       crt = crt.nextSibling();
     }
+
+    if(crt != null && crt.equals(to) && nodeOpcodes.contains(crt.opcode())) {
+      unsupportedStatements.add(crt);
+    }
     return unsupportedStatements;
   }
 

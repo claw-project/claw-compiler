@@ -117,16 +117,12 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     if(_fusion) {
       Set<String> noPromotion = controlPromotion(fusionBlocks);
-      Message.debug("Unnecessary: " + noPromotion.size());
-
-      //_temporaryFields.removeAll(noPromotion);
-      for(String temporary : _temporaryFields) {
-        //_arrayFieldsInOut.remove(temporary);
-        promote(xcodeml, temporary);
-      }
-
+      _temporaryFields.removeAll(noPromotion);
     }
-    //_temporaryCandidates.removeAll(noPromotion);
+
+    for(String temporary : _temporaryFields) {
+      promote(xcodeml, temporary);
+    }
 
     // Generate loops around statements flagged in previous stage
     generateDoStatements(xcodeml, fusionBlocks);
@@ -144,46 +140,42 @@ public class ScaCPUvectorizeGroup extends Sca {
       block.gatherUsedVars();
     }
 
-    for(String var : _scalarFields) {
-      if(_temporaryFields.contains(var)) {
-        int usedInBlock = 0;
-        for(VectorBlock block : blocks) {
-          if(block.getWrittenVariables().contains(var)) {
-            ++usedInBlock;
-            if(usedInBlock > 1) {
+    for(String var : _temporaryFields) {
+
+      int usedInBlock = 0;
+      for(VectorBlock block : blocks) {
+        if(block.getWrittenVariables().contains(var)) {
+          ++usedInBlock;
+          if(usedInBlock > 1) {
+            break;
+          }
+        }
+      }
+      if(usedInBlock > 1 && !_arrayFieldsInOut.contains(var)) {
+
+        List<AssignStatement> assignStatements =
+            Function.gatherAssignStatements(_fctDef);
+        boolean notOnlyConstant = false;
+        for(AssignStatement as : assignStatements) {
+          if(as.getLhsName().equals(var)) {
+            Set<String> usedVars = as.getReadNames();
+            usedVars.remove(var);
+
+            if(as.getRhs().opcode() != Xcode.F_INT_CONSTANT
+                && as.getLhs().opcode() != Xcode.F_REAL_CONSTANT
+                && !usedVars.isEmpty())
+            {
+              notOnlyConstant = true;
               break;
             }
           }
         }
-        if(usedInBlock > 1 && !_arrayFieldsInOut.contains(var)) {
 
-          List<AssignStatement> assignStatements =
-              Function.gatherAssignStatements(_fctDef);
-          boolean notOnlyConstant = false;
-          for(AssignStatement as : assignStatements) {
-            if(as.getLhsName().equals(var)) {
-              Set<String> usedVars = as.getReadNames();
-              usedVars.remove(var);
-
-              if(as.getRhs().opcode() != Xcode.F_INT_CONSTANT
-                  && as.getLhs().opcode() != Xcode.F_REAL_CONSTANT
-                  && !usedVars.isEmpty())
-              {
-                notOnlyConstant = true;
-                break;
-              }
-            }
-          }
-
-          if(notOnlyConstant) {
-            Message.debug("Might miss promotion for :" + var);
-          }
-        } else if(usedInBlock <= 1 && _arrayFieldsInOut.contains(var)) {
-          Message.debug("Unnecessary promotion " + var);
-          if(_scalarFields.contains(var)) {
-            _noPromotionNeeded.add(var);
-          }
+        if(notOnlyConstant) {
+          Message.debug("Might miss promotion for :" + var);
         }
+      } else if(usedInBlock <= 1 && _arrayFieldsInOut.contains(var)) {
+        _noPromotionNeeded.add(var);
       }
     }
 
