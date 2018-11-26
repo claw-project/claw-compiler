@@ -123,7 +123,6 @@ public class ScaCPUvectorizeGroup extends Sca {
       promote(xcodeml, as);
     }*/
 
-
     // Generate loops around statements flagged in previous stage
     generateDoStatements(xcodeml, fusionBlocks);
 
@@ -166,8 +165,35 @@ public class ScaCPUvectorizeGroup extends Sca {
    */
   private List<VectorBlock> fusionVectorBlock(Set<VectorBlock> blocks) {
 
-    List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
+    List<VectorBlock> sortedVectorBlocks = sortBlockByLineOrder(blocks);
+    List<VectorBlock> toBeRemoved = new ArrayList<>();
 
+    VectorBlock crtBlock = sortedVectorBlocks.get(0);
+    for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
+      VectorBlock nextBlock = sortedVectorBlocks.get(i);
+      if(nextBlock.getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+          && crtBlock.canMergeNextNode(nextBlock.getStartStmt())) {
+        toBeRemoved.add(nextBlock);
+        crtBlock.setEndStmt(nextBlock.getStartStmt());
+      } else {
+        crtBlock = nextBlock;
+      }
+    }
+
+    sortedVectorBlocks.removeAll(toBeRemoved);
+    return sortedVectorBlocks;
+  }
+
+
+
+  /**
+   * Sort the vector blocks according to their position in the code.
+   *
+   * @param blocks Set of vector blocks
+   * @return List of ordered vector block.
+   */
+  private List<VectorBlock> sortBlockByLineOrder(Set<VectorBlock> blocks) {
+    List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
     Collections.sort(sortedVectorBlocks, new Comparator<VectorBlock>() {
       @Override
       public int compare(VectorBlock s1, VectorBlock s2) {
@@ -179,31 +205,14 @@ public class ScaCPUvectorizeGroup extends Sca {
         return 0;
       }
     });
-
-    List<VectorBlock> toBeRemoved = new ArrayList<>();
-
-    VectorBlock crtBlock = sortedVectorBlocks.get(0);
-    int crtLocaton = crtBlock.getStartStmt().lineNo();
-
-    for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
-
-      VectorBlock nextBlock = sortedVectorBlocks.get(i);
-
-      if(nextBlock.getStartStmt().lineNo() == crtLocaton + 1) {
-        ++crtLocaton;
-        toBeRemoved.add(nextBlock);
-        crtBlock.setEndStmt(nextBlock.getStartStmt());
-      } else {
-        crtLocaton = nextBlock.getStartStmt().lineNo();
-        crtBlock = nextBlock;
-      }
-
-    }
-
-    sortedVectorBlocks.removeAll(toBeRemoved);
     return sortedVectorBlocks;
   }
 
+  /**
+   *
+   * @param assignStatements
+   * @param hooks
+   */
   private void flagDoStatementLocation(List<AssignStatement> assignStatements,
                                        Set<VectorBlock> hooks)
   {
@@ -312,29 +321,29 @@ public class ScaCPUvectorizeGroup extends Sca {
   private void promote(XcodeProgram xcodeml, AssignStatement assign)
       throws IllegalTransformationException
   {
-      PromotionInfo promotionInfo;
-      Xnode lhs = assign.getLhs();
-      String lhsName = assign.getLhsName();
+    PromotionInfo promotionInfo;
+    Xnode lhs = assign.getLhs();
+    String lhsName = assign.getLhsName();
 
-      // Do the promotion if needed
-      if(!_arrayFieldsInOut.contains(lhsName)) {
-        _arrayFieldsInOut.add(lhsName);
-        promotionInfo =
-            new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
-        Field.promote(promotionInfo, _fctDef, xcodeml);
-        _promotions.put(lhsName, promotionInfo);
-      } else {
-        promotionInfo = _promotions.get(lhsName);
-      }
-      // Adapt references
-      if(lhs.opcode() == Xcode.VAR) {
-        Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
-            _claw.getDefaultLayout(), xcodeml);
-      } else {
-        Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(), xcodeml);
-        Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(), xcodeml);
-      }
-      promotionInfo.setRefAdapted();
+    // Do the promotion if needed
+    if(!_arrayFieldsInOut.contains(lhsName)) {
+      _arrayFieldsInOut.add(lhsName);
+      promotionInfo =
+          new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
+      Field.promote(promotionInfo, _fctDef, xcodeml);
+      _promotions.put(lhsName, promotionInfo);
+    } else {
+      promotionInfo = _promotions.get(lhsName);
+    }
+    // Adapt references
+    if(lhs.opcode() == Xcode.VAR) {
+      Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
+          _claw.getDefaultLayout(), xcodeml);
+    } else {
+      Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(), xcodeml);
+      Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(), xcodeml);
+    }
+    promotionInfo.setRefAdapted();
   }
 
   /**

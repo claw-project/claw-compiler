@@ -48,8 +48,6 @@ public class VectorBlock {
 
   public void gatherUsedVars() {
 
-
-
     if(isSingleStatement()) {
       if(_startStmt.opcode() == Xcode.F_ASSIGN_STATEMENT) {
         AssignStatement as = new AssignStatement(_startStmt.element());
@@ -74,6 +72,22 @@ public class VectorBlock {
 
   public Set<String> getWrittenVariables() {
     return _writtenVariables;
+  }
+
+  /**
+   * Check if the given node is the direct sibling of this node.
+   *
+   * @param potentialSibling Potential next sibling to test for.
+   * @return True if the given node is the direct next sibling. False otherwise.
+   */
+  public boolean canMergeNextNode(Xnode potentialSibling) {
+    if(isSingleStatement()) {
+      return getStartStmt().nextSibling() != null
+          && getStartStmt().nextSibling().equals(potentialSibling);
+    } else {
+      return getEndStmt().nextSibling() != null
+          && getEndStmt().nextSibling().equals(potentialSibling);
+    }
   }
 
 }
