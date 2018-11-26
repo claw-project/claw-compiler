@@ -36,10 +36,9 @@ public final class Condition {
     {
       return false;
     }
-    List<Xnode> varRefs = condition.matchAll(Xcode.VAR_REF);
-    for(Xnode varRef : varRefs) {
-      String varName = varRef.matchSeq(Xcode.VAR).value();
-      if(variables.contains(varName)){
+    List<Xnode> vars = condition.matchAll(Xcode.VAR);
+    for(Xnode var : vars) {
+      if(variables.contains(var.value())){
         return true;
       }
     }

@@ -400,6 +400,10 @@ public class XnodeUtil {
    * @return A list of all var elements found.
    */
   public static List<Xnode> findAllReferences(Xnode parent) {
+    if(parent.opcode() == Xcode.VAR) {
+      return Collections.singletonList(parent);
+    }
+
     List<Xnode> vars = parent.matchAll(Xcode.VAR);
     List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {

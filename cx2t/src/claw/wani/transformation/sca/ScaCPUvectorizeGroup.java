@@ -6,6 +6,8 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Body;
@@ -19,7 +21,9 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.wani.language.ClawPragma;
 
 import java.util.*;
@@ -30,7 +34,7 @@ import java.util.*;
 public class ScaCPUvectorizeGroup extends Sca {
 
   private final boolean _fusion;
-  private final Set<AssignStatement> _temporaryCandidates = new HashSet<>();
+  private final Set<String> _temporaryFields = new HashSet<>();
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -112,13 +116,17 @@ public class ScaCPUvectorizeGroup extends Sca {
         (_fusion) ? mergeVectorBlocks(blocks) : new ArrayList<>(blocks);
 
     if(_fusion) {
-      //Set<AssignStatement> noPromotion = controlPromotion(fusionBlocks);
+      Set<String> noPromotion = controlPromotion(fusionBlocks);
+      Message.debug("Unnecessary: " + noPromotion.size());
+
+      //_temporaryFields.removeAll(noPromotion);
+      for(String temporary : _temporaryFields) {
+        //_arrayFieldsInOut.remove(temporary);
+        promote(xcodeml, temporary);
+      }
+
     }
     //_temporaryCandidates.removeAll(noPromotion);
-    /*for(AssignStatement as : _temporaryCandidates) {
-      //if(_claw.getScalarClauseValues().contains(as.getLhsName()))
-      promote(xcodeml, as);
-    }*/
 
     // Generate loops around statements flagged in previous stage
     generateDoStatements(xcodeml, fusionBlocks);
@@ -128,29 +136,57 @@ public class ScaCPUvectorizeGroup extends Sca {
         _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 
-  private Set<AssignStatement> controlPromotion(List<VectorBlock> blocks) {
+  private Set<String> controlPromotion(List<VectorBlock> blocks) {
 
-    Set<AssignStatement> _noPromotionNeeded = new HashSet<>();
+    Set<String> _noPromotionNeeded = new HashSet<>();
 
     for(VectorBlock block : blocks) {
       block.gatherUsedVars();
     }
 
-    for(AssignStatement tmp : _temporaryCandidates) {
-      int writeBlock = 0;
-      for(VectorBlock block : blocks) {
-        if(block.getWrittenVariables().contains(tmp.getLhsName())) {
-          ++writeBlock;
-          if(writeBlock > 1) {
-            break;
+    for(String var : _scalarFields) {
+      if(_temporaryFields.contains(var)) {
+        int usedInBlock = 0;
+        for(VectorBlock block : blocks) {
+          if(block.getWrittenVariables().contains(var)) {
+            ++usedInBlock;
+            if(usedInBlock > 1) {
+              break;
+            }
+          }
+        }
+        if(usedInBlock > 1 && !_arrayFieldsInOut.contains(var)) {
+
+          List<AssignStatement> assignStatements =
+              Function.gatherAssignStatements(_fctDef);
+          boolean notOnlyConstant = false;
+          for(AssignStatement as : assignStatements) {
+            if(as.getLhsName().equals(var)) {
+              Set<String> usedVars = as.getReadNames();
+              usedVars.remove(var);
+
+              if(as.getRhs().opcode() != Xcode.F_INT_CONSTANT
+                  && as.getLhs().opcode() != Xcode.F_REAL_CONSTANT
+                  && !usedVars.isEmpty())
+              {
+                notOnlyConstant = true;
+                break;
+              }
+            }
+          }
+
+          if(notOnlyConstant) {
+            Message.debug("Might miss promotion for :" + var);
+          }
+        } else if(usedInBlock <= 1 && _arrayFieldsInOut.contains(var)) {
+          Message.debug("Unnecessary promotion " + var);
+          if(_scalarFields.contains(var)) {
+            _noPromotionNeeded.add(var);
           }
         }
       }
-
-      if(writeBlock <= 1) {
-        _noPromotionNeeded.add(tmp);
-      }
     }
+
     return _noPromotionNeeded;
   }
 
@@ -226,10 +262,13 @@ public class ScaCPUvectorizeGroup extends Sca {
             Xcode.F_FUNCTION_DEFINITION);
 
         Xnode hookIfStmt = null;
+
+        Set<String> assignVars = assign.getVarNames();
+        assignVars.retainAll(_arrayFieldsInOut);
+
         for(Xnode ifStmt : ifStatements) {
           if(Condition.dependsOn(
-              ifStmt.matchDirectDescendant(Xcode.CONDITION),
-              assign.getVarRefNames()))
+              ifStmt.matchDirectDescendant(Xcode.CONDITION), assignVars))
           {
             // Have to put the do statement around the if as the assignment
             // is conditional as well.
@@ -266,7 +305,7 @@ public class ScaCPUvectorizeGroup extends Sca {
         }
       }
 
-      if(lhs.opcode() == Xcode.F_ARRAY_REF
+      if((lhs.opcode() == Xcode.F_ARRAY_REF || lhs.opcode() == Xcode.VAR)
           && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
       {
         hooks.add(new VectorBlock(assign));
@@ -298,10 +337,6 @@ public class ScaCPUvectorizeGroup extends Sca {
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
         promoteIfNeeded(xcodeml, assign);
-
-        /*if(shouldBePromoted(assign)) {
-          _temporaryCandidates.add(assign);
-        }*/
       }
     }
   }
@@ -310,23 +345,29 @@ public class ScaCPUvectorizeGroup extends Sca {
       throws IllegalTransformationException
   {
 
-    if(shouldBePromoted(assign)
+    if(!_arrayFieldsInOut.contains(assign.getLhsName())
+        && shouldBePromoted(assign)
         && !_noPromotion.contains(assign.getLhsName()))
     {
-      promote(xcodeml, assign);
+      //promote(xcodeml, assign);
+      _arrayFieldsInOut.add(assign.getLhsName());
+      _temporaryFields.add(assign.getLhsName());
     }
   }
 
-  private void promote(XcodeProgram xcodeml, AssignStatement assign)
+  private void promote(XcodeProgram xcodeml, String lhsName)
       throws IllegalTransformationException
   {
     PromotionInfo promotionInfo;
-    Xnode lhs = assign.getLhs();
-    String lhsName = assign.getLhsName();
+    //Xnode lhs = assign.getLhs();
+    //String lhsName = assign.getLhsName();
 
     // Do the promotion if needed
-    if(!_arrayFieldsInOut.contains(lhsName)) {
-      _arrayFieldsInOut.add(lhsName);
+
+    if(!_promotions.containsKey(lhsName)) {
+
+      //if(!_arrayFieldsInOut.contains(lhsName)) {
+      //_arrayFieldsInOut.add(lhsName);
       promotionInfo =
           new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
       Field.promote(promotionInfo, _fctDef, xcodeml);
@@ -335,8 +376,11 @@ public class ScaCPUvectorizeGroup extends Sca {
       promotionInfo = _promotions.get(lhsName);
     }
     // Adapt references
-    if(lhs.opcode() == Xcode.VAR) {
-      Field.adaptScalarRefToArrayRef(lhsName, _fctDef,
+    Xid id = _fctDef.getSymbolTable().get(lhsName);
+    FbasicType bType = xcodeml.getTypeTable().getBasicType(id);
+    if(!bType.isArray()) {
+      //if(lhs.opcode() == Xcode.VAR) {
+      Field.adaptScalarRefToArrayRef(_promotions.get(lhsName), _fctDef,
           _claw.getDefaultLayout(), xcodeml);
     } else {
       Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(), xcodeml);

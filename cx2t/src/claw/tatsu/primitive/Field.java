@@ -170,19 +170,25 @@ public final class Field {
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *
-   * @param identifier List of array identifiers that must be adapted.
-   * @param fctDef     Function definition in which reference are changed.
-   * @param dims       Dimension definition to use for array index generation.
-   * @param xcodeml    Current XcodeML program unit in which the element will be
-   *                   created.
+   * @param promotionInfo Object holding the promotion information.
+   * @param fctDef        Function definition in which reference are changed.
+   * @param dims          Dimension definition to use for array index
+   *                      generation.
+   * @param xcodeml       Current XcodeML program unit in which the element
+   *                      will be created.
    */
-  public static void adaptScalarRefToArrayRef(String identifier,
+  public static void adaptScalarRefToArrayRef(PromotionInfo promotionInfo,
                                               FfunctionDefinition fctDef,
                                               List<DimensionDefinition> dims,
                                               XcodeML xcodeml)
   {
-    List<Xnode> vars = XnodeUtil.findAllReferences(fctDef.body(), identifier);
-    Xid sId = fctDef.getSymbolTable().get(identifier);
+    if(promotionInfo.isRefAdapted()) {
+      return;
+    }
+
+    List<Xnode> vars = XnodeUtil.findAllReferences(fctDef.body(),
+        promotionInfo.getIdentifier());
+    Xid sId = fctDef.getSymbolTable().get(promotionInfo.getIdentifier());
     FbasicType type = xcodeml.getTypeTable().getBasicType(sId);
 
     List<Xnode> arrayIndexes = new ArrayList<>();
@@ -198,6 +204,7 @@ public final class Field {
       var.insertAfter(ref);
       var.delete();
     }
+    promotionInfo.setRefAdapted();
   }
 
   /**

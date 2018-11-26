@@ -89,11 +89,11 @@ public class AssignStatement extends Xnode {
    *
    * @return List of variables.
    */
-  public Set<String> getVarRefNames() {
-    List<Xnode> varRefs = matchAll(Xcode.VAR_REF);
+  public Set<String> getVarNames() {
+    List<Xnode> vars = matchAll(Xcode.VAR);
     Set<String> names = new HashSet<>();
-    for(Xnode varRef : varRefs) {
-      names.add(varRef.matchSeq(Xcode.VAR).value());
+    for(Xnode var : vars) {
+      names.add(var.value());
     }
     return names;
   }
@@ -104,10 +104,10 @@ public class AssignStatement extends Xnode {
    * @return Set of variables names used on the RHS.
    */
   public Set<String> getReadNames() {
-    List<Xnode> varRefs = getRhs().matchAll(Xcode.VAR_REF);
+    List<Xnode> vars = getRhs().matchAll(Xcode.VAR);
     Set<String> names = new HashSet<>();
-    for(Xnode varRef : varRefs) {
-      names.add(varRef.matchSeq(Xcode.VAR).value());
+    for(Xnode var : vars) {
+      names.add(var.value());
     }
     return names;
   }
