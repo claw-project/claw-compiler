@@ -248,6 +248,11 @@ public class Sca extends ClawTransformation {
             if(_claw.hasScalarClause() &&
                 _claw.getScalarClauseValues().contains(varName))
             {
+              if(!bType.hasIntent()) {
+                xcodeml.addWarning(String.format(
+                    "Variable %s in scalar clause but not a dummy argument!",
+                    varName), _claw.getPragma().lineNo());
+              }
               _arrayFieldsInOut.add(varName);
             } else if(!bType.isParameter() && !bType.hasIntent()) {
               scalars.add(varName); // Add scalar as candidate
