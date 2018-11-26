@@ -6,7 +6,6 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
@@ -316,11 +315,9 @@ public class ScaCPUvectorizeGroup extends Sca {
    *
    * @param xcodeml          Current translation unit.
    * @param assignStatements List of assignment statements
-   * @throws IllegalTransformationException If promotion failed.
    */
   private void detectIndirectPromotion(XcodeProgram xcodeml,
                                        List<AssignStatement> assignStatements)
-      throws IllegalTransformationException
   {
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
@@ -333,15 +330,11 @@ public class ScaCPUvectorizeGroup extends Sca {
     }
   }
 
-  private void promoteIfNeeded(XcodeProgram xcodeml, AssignStatement assign)
-      throws IllegalTransformationException
-  {
-
+  private void promoteIfNeeded(XcodeProgram xcodeml, AssignStatement assign) {
     if(!_arrayFieldsInOut.contains(assign.getLhsName())
         && shouldBePromoted(assign)
         && !_noPromotion.contains(assign.getLhsName()))
     {
-      //promote(xcodeml, assign);
       _arrayFieldsInOut.add(assign.getLhsName());
       _temporaryFields.add(assign.getLhsName());
     }
@@ -351,15 +344,8 @@ public class ScaCPUvectorizeGroup extends Sca {
       throws IllegalTransformationException
   {
     PromotionInfo promotionInfo;
-    //Xnode lhs = assign.getLhs();
-    //String lhsName = assign.getLhsName();
-
     // Do the promotion if needed
-
     if(!_promotions.containsKey(lhsName)) {
-
-      //if(!_arrayFieldsInOut.contains(lhsName)) {
-      //_arrayFieldsInOut.add(lhsName);
       promotionInfo =
           new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
       Field.promote(promotionInfo, _fctDef, xcodeml);
@@ -371,7 +357,6 @@ public class ScaCPUvectorizeGroup extends Sca {
     Xid id = _fctDef.getSymbolTable().get(lhsName);
     FbasicType bType = xcodeml.getTypeTable().getBasicType(id);
     if(!bType.isArray()) {
-      //if(lhs.opcode() == Xcode.VAR) {
       Field.adaptScalarRefToArrayRef(_promotions.get(lhsName), _fctDef,
           _claw.getDefaultLayout(), xcodeml);
     } else {
