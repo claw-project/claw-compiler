@@ -108,20 +108,17 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     flagDoStatementLocation(assignStatements, blocks);
 
-    List<VectorBlock> fusionBlocks;
+    List<VectorBlock> fusionBlocks =
+        (_fusion) ? mergeVectorBlocks(blocks) : new ArrayList<>(blocks);
+
     if(_fusion) {
-      fusionBlocks = fusionVectorBlock(blocks);
-    } else {
-      fusionBlocks = new ArrayList<>(blocks);
+      //Set<AssignStatement> noPromotion = controlPromotion(fusionBlocks);
+
+      /*_temporaryCandidate.removeAll(noPromotion);
+      for(AssignStatement as : _temporaryCandidate) {
+        promote(xcodeml, as);
+      }*/
     }
-
-    //Set<AssignStatement> noPromotion = controlPromotion(fusionBlocks);
-
-    /*_temporaryCandidate.removeAll(noPromotion);
-
-    for(AssignStatement as : _temporaryCandidate) {
-      promote(xcodeml, as);
-    }*/
 
     // Generate loops around statements flagged in previous stage
     generateDoStatements(xcodeml, fusionBlocks);
@@ -158,12 +155,12 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   /**
-   * Fusion adjacent block together to maximize vetorization and data locality.
+   * Merge adjacent block together to maximize vectorization and data locality.
    *
    * @param blocks Set of flagged blocks containing a single statement.
-   * @return List of fusioned blocks.
+   * @return List of merged blocks.
    */
-  private List<VectorBlock> fusionVectorBlock(Set<VectorBlock> blocks) {
+  private List<VectorBlock> mergeVectorBlocks(Set<VectorBlock> blocks) {
 
     List<VectorBlock> sortedVectorBlocks = sortBlockByLineOrder(blocks);
     List<VectorBlock> toBeRemoved = new ArrayList<>();
@@ -172,7 +169,8 @@ public class ScaCPUvectorizeGroup extends Sca {
     for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
       VectorBlock nextBlock = sortedVectorBlocks.get(i);
       if(nextBlock.getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
-          && crtBlock.canMergeNextNode(nextBlock.getStartStmt())) {
+          && crtBlock.canMergeNextNode(nextBlock.getStartStmt()))
+      {
         toBeRemoved.add(nextBlock);
         crtBlock.setEndStmt(nextBlock.getStartStmt());
       } else {
@@ -183,8 +181,6 @@ public class ScaCPUvectorizeGroup extends Sca {
     sortedVectorBlocks.removeAll(toBeRemoved);
     return sortedVectorBlocks;
   }
-
-
 
   /**
    * Sort the vector blocks according to their position in the code.
@@ -209,7 +205,6 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   /**
-   *
    * @param assignStatements
    * @param hooks
    */
