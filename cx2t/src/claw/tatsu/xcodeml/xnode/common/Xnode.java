@@ -971,4 +971,12 @@ public class Xnode {
     return !(o == null || !(o instanceof Xnode))
         && element() == ((Xnode) o).element();
   }
+
+  public boolean isNotArrayIndex() {
+    if(ancestor() == null) {
+      return true;
+    } else {
+      return ancestor().opcode() != Xcode.ARRAY_INDEX;
+    }
+  }
 }

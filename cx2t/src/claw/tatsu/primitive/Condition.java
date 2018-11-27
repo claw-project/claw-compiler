@@ -38,11 +38,13 @@ public final class Condition {
     }
     List<Xnode> vars = condition.matchAll(Xcode.VAR);
     for(Xnode var : vars) {
-      if(variables.contains(var.value())){
+      if(var.isNotArrayIndex() && variables.contains(var.value())) {
         return true;
       }
     }
     return false;
   }
 
+
 }
+
