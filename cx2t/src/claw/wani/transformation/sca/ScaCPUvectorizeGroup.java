@@ -93,7 +93,9 @@ public class ScaCPUvectorizeGroup extends Sca {
      * ancestor node using the condition must be wrapped in a do statement. */
     List<Xnode> conditions = _fctDef.body().matchAll(Xcode.CONDITION);
     for(Xnode condition : conditions) {
-      if(Condition.dependsOn(condition, _arrayFieldsInOut)) {
+      if(Condition.dependsOn(condition, _arrayFieldsInOut)
+          && !Condition.isAllocationRelated(condition))
+      {
         Xnode ancestor = condition.ancestor();
         Iterator<VectorBlock> iter = blocks.iterator();
         boolean addHook = true;

@@ -4,6 +4,7 @@
  */
 package claw.tatsu.primitive;
 
+import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
@@ -45,6 +46,31 @@ public final class Condition {
     return false;
   }
 
+  /**
+   * Check if the condition is checking if a variable is allocated.
+   *
+   * @param condition Condition node to check.
+   * @return True if the condition is using the allocated intrinsic. False
+   * otherwise.
+   */
+  public static boolean isAllocationRelated(Xnode condition) {
+    if(condition == null || condition.opcode() != Xcode.CONDITION) {
+      return false;
+    }
+
+    List<Xnode> nodes = condition.matchAll(Xcode.FUNCTION_CALL);
+    if(nodes.isEmpty()) {
+      return false;
+    }
+
+    for(Xnode node : nodes) {
+      Xnode name = node.matchSeq(Xcode.NAME);
+      if(name.value().equals(Xname.F_INTR_ALLOCATED)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 }
 
