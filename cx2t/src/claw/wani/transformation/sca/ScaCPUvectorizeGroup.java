@@ -192,6 +192,10 @@ public class ScaCPUvectorizeGroup extends Sca {
     List<VectorBlock> sortedVectorBlocks = sortBlockByLineOrder(blocks);
     List<VectorBlock> toBeRemoved = new ArrayList<>();
 
+    if(blocks.isEmpty()) {
+      return sortedVectorBlocks;
+    }
+
     VectorBlock crtBlock = sortedVectorBlocks.get(0);
     for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
       VectorBlock nextBlock = sortedVectorBlocks.get(i);
