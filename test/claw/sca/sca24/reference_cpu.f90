@@ -20,8 +20,8 @@ CONTAINS
   END DO
   DO proma = 1 , nproma , 1
    q ( proma , nz ) = q ( proma , nz ) * c
+   res = t
   END DO
-  res = t
  END FUNCTION compute_column
 
  SUBROUTINE compute_all ( nz , q , val , nproma )

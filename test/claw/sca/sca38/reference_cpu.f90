@@ -32,17 +32,20 @@ CONTAINS
    END DO
   END IF
   DO k = 1 , nz , 1
-   DO proma = 1 , nproma , 1
-    IF ( flag ) THEN
+   IF ( flag ) THEN
+    DO proma = 1 , nproma , 1
      z ( proma , k ) = z ( proma , k ) + tmp
-     DO j = 1 , 5 , 1
-      IF ( flag2 ) THEN
+    END DO
+    DO j = 1 , 5 , 1
+     IF ( flag2 ) THEN
+      DO proma = 1 , nproma , 1
        z ( proma , k ) = z ( proma , k ) * tmp3 ( k , j )
-      END IF
-     END DO
-    END IF
-   END DO
+      END DO
+     END IF
+    END DO
+   END IF
   END DO
  END SUBROUTINE compute_column
 
 END MODULE mod1
+
