@@ -164,7 +164,7 @@ public class XnodeTest {
 
     Xnode p2 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     p.copyAttribute(p2, Xattr.LINENO);
-    assertEquals("FpragmaStatement (children: 0)", p2.toString());
+    assertEquals("FpragmaStatement (children: 0) - 8", p2.toString());
 
     // No first child
     assertFalse(p.compareFirstChildValues(null));
