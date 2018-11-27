@@ -93,7 +93,9 @@ public class AssignStatement extends Xnode {
     List<Xnode> vars = matchAll(Xcode.VAR);
     Set<String> names = new HashSet<>();
     for(Xnode var : vars) {
-      names.add(var.value());
+      if(var.isNotArrayIndex()) {
+        names.add(var.value());
+      }
     }
     return names;
   }
