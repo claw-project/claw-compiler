@@ -90,14 +90,7 @@ public class AssignStatement extends Xnode {
    * @return List of variables.
    */
   public Set<String> getVarNames() {
-    List<Xnode> vars = matchAll(Xcode.VAR);
-    Set<String> names = new HashSet<>();
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex()) {
-        names.add(var.value());
-      }
-    }
-    return names;
+    return filterVars(matchAll(Xcode.VAR));
   }
 
   /**
@@ -106,10 +99,22 @@ public class AssignStatement extends Xnode {
    * @return Set of variables names used on the RHS.
    */
   public Set<String> getReadNames() {
-    List<Xnode> vars = getRhs().matchAll(Xcode.VAR);
+    return filterVars(getRhs().matchAll(Xcode.VAR));
+  }
+
+  /**
+   * Filter a list of Var nodes to keep only the real var and exclude the array
+   * index variables.
+   *
+   * @param vars List of Var node to filter.
+   * @return Set of variable names.
+   */
+  private Set<String> filterVars(List<Xnode> vars) {
     Set<String> names = new HashSet<>();
     for(Xnode var : vars) {
-      names.add(var.value());
+      if(var.isNotArrayIndex()) {
+        names.add(var.value());
+      }
     }
     return names;
   }
