@@ -138,14 +138,14 @@ public class ScaCPUvectorizeGroup extends Sca {
     Set<String> _noPromotionNeeded = new HashSet<>();
 
     for(VectorBlock block : blocks) {
-      block.gatherUsedVars();
+      block.gatherUsedVariables();
     }
 
     for(String var : _temporaryFields) {
 
       int usedInBlock = 0;
       for(VectorBlock block : blocks) {
-        if(block.getWrittenVariables().contains(var)) {
+        if(block.getUsedVariables().contains(var)) {
           ++usedInBlock;
           if(usedInBlock > 1) {
             break;

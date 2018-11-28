@@ -22,12 +22,12 @@ public class VectorBlock {
   private final Xnode _startStmt;
   private Xnode _endStmt;
 
-  private final Set<String> _writtenVariables;
+  private final Set<String> _usedVars;
 
   public VectorBlock(Xnode startStmt) {
     _startStmt = startStmt;
     _endStmt = null;
-    _writtenVariables = new HashSet<>();
+    _usedVars = new HashSet<>();
   }
 
   public boolean isSingleStatement() {
@@ -46,29 +46,20 @@ public class VectorBlock {
     return _endStmt;
   }
 
-  public void gatherUsedVars() {
+  public void gatherUsedVariables() {
 
     if(isSingleStatement()) {
 
       List<Xnode> vars = _startStmt.matchAll(Xcode.VAR);
       for(Xnode var : vars) {
-        _writtenVariables.add(var.value());
+        _usedVars.add(var.value());
       }
-
-     /* if(_startStmt.opcode() == Xcode.F_ASSIGN_STATEMENT) {
-        AssignStatement as = new AssignStatement(_startStmt.element());
-        _writtenVariables.add(as.getLhsName());
-        _writtenVariables.addAll(as.getReadNames());
-      } else {
-        populateWrittenVars(_startStmt.matchAll(Xcode.F_ASSIGN_STATEMENT));
-      }*/
     } else {
-
       Xnode crt = getStartStmt();
       while(!crt.equals(getEndStmt())) {
         List<Xnode> vars = crt.matchAll(Xcode.VAR);
         for(Xnode var : vars) {
-          _writtenVariables.add(var.value());
+          _usedVars.add(var.value());
         }
         crt = crt.nextSibling();
       }
@@ -76,27 +67,14 @@ public class VectorBlock {
       if(crt.equals(getEndStmt())) {
         List<Xnode> vars = crt.matchAll(Xcode.VAR);
         for(Xnode var : vars) {
-          _writtenVariables.add(var.value());
+          _usedVars.add(var.value());
         }
       }
-
-
-
-     /* populateWrittenVars(XnodeUtil.getNodes(getStartStmt(), getEndStmt(),
-          Collections.singletonList(Xcode.F_ASSIGN_STATEMENT)));*/
     }
   }
 
-  private void populateWrittenVars(List<Xnode> assignStatements) {
-    for(Xnode node : assignStatements) {
-      AssignStatement as = new AssignStatement(node.element());
-      _writtenVariables.add(as.getLhsName());
-      _writtenVariables.addAll(as.getReadNames());
-    }
-  }
-
-  public Set<String> getWrittenVariables() {
-    return _writtenVariables;
+  public Set<String> getUsedVariables() {
+    return _usedVars;
   }
 
   /**
