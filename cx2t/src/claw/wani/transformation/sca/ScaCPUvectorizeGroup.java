@@ -28,13 +28,17 @@ import claw.wani.language.ClawPragma;
 import java.util.*;
 
 /**
+ * Single Column Abstraction (SCA) CPU target transformation. This
+ * transformation has two modes:
+ * - single: single statements are wrapped in do statements
+ * - fusion: merge adjacent statements together to maximize vectorization.
+ *
  * @author clementval
  */
 public class ScaCPUvectorizeGroup extends Sca {
 
   private final boolean _fusion;
   private final Set<String> _temporaryFields = new HashSet<>();
-  private Set<String> _inductionVariables;
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -57,9 +61,6 @@ public class ScaCPUvectorizeGroup extends Sca {
                         Transformation other)
       throws Exception
   {
-
-    _inductionVariables = Function.detectInductionVariables(_fctDef);
-
     // Apply the common transformation
     super.transform(xcodeml, translator, other);
 

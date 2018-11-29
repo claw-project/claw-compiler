@@ -42,6 +42,7 @@ public class Sca extends ClawTransformation {
   final Set<String> _scalarFields;
   final Set<String> _noPromotion;
   FfunctionDefinition _fctDef;
+  Set<String> _inductionVariables;
   private FfunctionType _fctType;
 
   /**
@@ -143,6 +144,8 @@ public class Sca extends ClawTransformation {
         return false;
       }
     }
+
+    _inductionVariables = Function.detectInductionVariables(_fctDef);
 
     return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
   }
