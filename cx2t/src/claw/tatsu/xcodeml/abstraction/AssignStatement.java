@@ -118,4 +118,17 @@ public class AssignStatement extends Xnode {
     }
     return names;
   }
+
+  /**
+   * Check whether the assignment is made with constant only.
+   *
+   * @return True of the assignment is constant only. False otherwise.
+   */
+  public boolean isContantAssignment() {
+    Set<String> usedVars = getReadNames();
+    usedVars.remove(getLhsName());
+    return getRhs().opcode() == Xcode.F_INT_CONSTANT
+        || getLhs().opcode() == Xcode.F_REAL_CONSTANT
+        || usedVars.isEmpty();
+  }
 }
