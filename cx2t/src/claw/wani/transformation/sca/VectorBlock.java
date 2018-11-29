@@ -4,6 +4,7 @@
  */
 package claw.wani.transformation.sca;
 
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
@@ -22,7 +23,8 @@ public class VectorBlock {
   private final Xnode _startStmt;
   private Xnode _endStmt;
 
-  private Set<String> _usedVars = null;
+  private Set<String> _readAndWrittenVariables = null;
+  private Set<String> _writtenVariables = null;
 
   /**
    * Create a new VectorBlock instance with a single statement.
@@ -76,22 +78,22 @@ public class VectorBlock {
    */
   private void gatherUsedVariables() {
 
-    if(_usedVars == null) {
-      _usedVars = new HashSet<>();
+    if(_readAndWrittenVariables == null) {
+      _readAndWrittenVariables = new HashSet<>();
     }
 
     if(isSingleStatement()) {
 
       List<Xnode> vars = _startStmt.matchAll(Xcode.VAR);
       for(Xnode var : vars) {
-        _usedVars.add(var.value());
+        _readAndWrittenVariables.add(var.value());
       }
     } else {
       Xnode crt = getStartStmt();
       while(!crt.equals(getEndStmt())) {
         List<Xnode> vars = crt.matchAll(Xcode.VAR);
         for(Xnode var : vars) {
-          _usedVars.add(var.value());
+          _readAndWrittenVariables.add(var.value());
         }
         crt = crt.nextSibling();
       }
@@ -99,10 +101,48 @@ public class VectorBlock {
       if(crt.equals(getEndStmt())) {
         List<Xnode> vars = crt.matchAll(Xcode.VAR);
         for(Xnode var : vars) {
-          _usedVars.add(var.value());
+          _readAndWrittenVariables.add(var.value());
         }
       }
     }
+  }
+
+  /**
+   * Collect all variables written within the block.
+   */
+  private void gatherWrittenVariables() {
+    if(_writtenVariables == null) {
+      _writtenVariables = new HashSet<>();
+    }
+
+    if(isSingleStatement()) {
+      fillUpWrittenVariables(_startStmt);
+    } else {
+      Xnode crt = getStartStmt();
+      while(!crt.equals(getEndStmt())) {
+        fillUpWrittenVariables(crt);
+        crt = crt.nextSibling();
+      }
+
+      if(crt.equals(getEndStmt())) {
+        fillUpWrittenVariables(crt);
+      }
+    }
+  }
+
+  private void fillUpWrittenVariables(Xnode root) {
+    List<Xnode> assignStatements = root.matchAll(Xcode.F_ASSIGN_STATEMENT);
+    for(Xnode assign : assignStatements) {
+      AssignStatement as = new AssignStatement(assign.element());
+      _writtenVariables.add(as.getLhsName());
+    }
+  }
+
+  public Set<String> getWrittenVariables() {
+    if(_writtenVariables == null) {
+      gatherWrittenVariables();
+    }
+    return _writtenVariables;
   }
 
   /**
@@ -110,11 +150,11 @@ public class VectorBlock {
    *
    * @return Set containing variables names.
    */
-  public Set<String> getUsedVariables() {
-    if(_usedVars == null) {
+  public Set<String> getReadAndWrittentVariables() {
+    if(_readAndWrittenVariables == null) {
       gatherUsedVariables();
     }
-    return _usedVars;
+    return _readAndWrittenVariables;
   }
 
   /**
