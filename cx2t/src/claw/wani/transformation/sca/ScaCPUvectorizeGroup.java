@@ -34,6 +34,7 @@ public class ScaCPUvectorizeGroup extends Sca {
 
   private final boolean _fusion;
   private final Set<String> _temporaryFields = new HashSet<>();
+  private Set<String> _inductionVariables;
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -56,6 +57,9 @@ public class ScaCPUvectorizeGroup extends Sca {
                         Transformation other)
       throws Exception
   {
+
+    _inductionVariables = Function.detectInductionVariables(_fctDef);
+
     // Apply the common transformation
     super.transform(xcodeml, translator, other);
 
@@ -116,6 +120,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     List<VectorBlock> fusionBlocks =
         (_fusion) ? mergeVectorBlocks(blocks) : new ArrayList<>(blocks);
 
+    checkMissingPromotion(fusionBlocks);
     if(_fusion) {
       Set<String> noPromotion = controlPromotion(fusionBlocks);
       _temporaryFields.removeAll(noPromotion);
@@ -137,10 +142,6 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     Set<String> _noPromotionNeeded = new HashSet<>();
 
-    for(VectorBlock block : blocks) {
-      block.gatherUsedVariables();
-    }
-
     for(String var : _temporaryFields) {
 
       int usedInBlock = 0;
@@ -152,6 +153,28 @@ public class ScaCPUvectorizeGroup extends Sca {
           }
         }
       }
+      if(usedInBlock <= 1 && _arrayFieldsInOut.contains(var)) {
+        _noPromotionNeeded.add(var);
+      }
+    }
+
+    return _noPromotionNeeded;
+  }
+
+  private void checkMissingPromotion(List<VectorBlock> blocks) {
+
+    for(String var : _scalarFields) {
+      int usedInBlock = 0;
+
+      for(VectorBlock block : blocks) {
+        if(block.getUsedVariables().contains(var)) {
+          ++usedInBlock;
+          if(usedInBlock > 1) {
+            break;
+          }
+        }
+      }
+
       if(usedInBlock > 1 && !_arrayFieldsInOut.contains(var)) {
 
         List<AssignStatement> assignStatements =
@@ -172,15 +195,11 @@ public class ScaCPUvectorizeGroup extends Sca {
           }
         }
 
-        if(notOnlyConstant) {
-          Message.debug("Might miss promotion for :" + var);
+        if(notOnlyConstant && !_inductionVariables.contains(var)) {
+          Message.debug("Might miss promotion for: " + var);
         }
-      } else if(usedInBlock <= 1 && _arrayFieldsInOut.contains(var)) {
-        _noPromotionNeeded.add(var);
       }
     }
-
-    return _noPromotionNeeded;
   }
 
   /**
