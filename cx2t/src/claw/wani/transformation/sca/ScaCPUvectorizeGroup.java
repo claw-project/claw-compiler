@@ -146,7 +146,7 @@ public class ScaCPUvectorizeGroup extends Sca {
 
       int usedInBlock = 0;
       for(VectorBlock block : blocks) {
-        if(block.getUsedVariables().contains(var)) {
+        if(block.getReadAndWrittentVariables().contains(var)) {
           ++usedInBlock;
           if(usedInBlock > 1) {
             break;
@@ -167,7 +167,7 @@ public class ScaCPUvectorizeGroup extends Sca {
       int usedInBlock = 0;
 
       for(VectorBlock block : blocks) {
-        if(block.getUsedVariables().contains(var)) {
+        if(block.getReadAndWrittentVariables().contains(var)) {
           ++usedInBlock;
           if(usedInBlock > 1) {
             break;
@@ -177,26 +177,30 @@ public class ScaCPUvectorizeGroup extends Sca {
 
       if(usedInBlock > 1 && !_arrayFieldsInOut.contains(var)) {
 
+        boolean writtenInBlock = false;
+        for(VectorBlock block : blocks) {
+          if(block.getWrittenVariables().contains(var)) {
+            writtenInBlock = true;
+            break;
+          }
+        }
+
         List<AssignStatement> assignStatements =
             Function.gatherAssignStatements(_fctDef);
         boolean notOnlyConstant = false;
         for(AssignStatement as : assignStatements) {
           if(as.getLhsName().equals(var)) {
-            Set<String> usedVars = as.getReadNames();
-            usedVars.remove(var);
-
-            if(as.getRhs().opcode() != Xcode.F_INT_CONSTANT
-                && as.getLhs().opcode() != Xcode.F_REAL_CONSTANT
-                && !usedVars.isEmpty())
-            {
+            if(!as.isContantAssignment()) {
               notOnlyConstant = true;
               break;
             }
           }
         }
 
-        if(notOnlyConstant && !_inductionVariables.contains(var)) {
-          Message.debug("Might miss promotion for: " + var);
+        if(notOnlyConstant && !_inductionVariables.contains(var)
+            && !_noPromotion.contains(var) && writtenInBlock)
+        {
+          Message.debug("SCA: Promotion might be missing for: " + var);
         }
       }
     }
