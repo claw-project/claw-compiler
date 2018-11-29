@@ -89,9 +89,9 @@ public class ScaCPUvectorizeGroup extends Sca {
     List<AssignStatement> assignStatements =
         Function.gatherAssignStatements(_fctDef);
 
-    detectIndirectPromotion(xcodeml, assignStatements);
+    detectIndirectPromotion(assignStatements);
 
-    // Hold hooks on which do statement will be inserted
+    // Hold block on which do statement will be inserted
     Set<VectorBlock> blocks = new HashSet<>();
 
     /* Check whether condition includes a promoted variables. If so, the
@@ -139,9 +139,16 @@ public class ScaCPUvectorizeGroup extends Sca {
         _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 
+  /**
+   * Check temporary variables flagged for promotion to see if this promotion
+   * is still needed.
+   *
+   * @param blocks List of blocks.
+   * @return Set of variables where promotion is not needed anymore.
+   */
   private Set<String> controlPromotion(List<VectorBlock> blocks) {
 
-    Set<String> _noPromotionNeeded = new HashSet<>();
+    Set<String> noPromotionNeeded = new HashSet<>();
 
     for(String var : _temporaryFields) {
 
@@ -155,28 +162,35 @@ public class ScaCPUvectorizeGroup extends Sca {
         }
       }
       if(usedInBlock <= 1 && _arrayFieldsInOut.contains(var)) {
-        _noPromotionNeeded.add(var);
+        noPromotionNeeded.add(var);
       }
     }
 
-    return _noPromotionNeeded;
+    return noPromotionNeeded;
   }
 
+  /**
+   * Check for potential missing promotions of scalar fields.
+   *
+   * @param blocks List of blocks.
+   */
   private void checkMissingPromotion(List<VectorBlock> blocks) {
 
     for(String var : _scalarFields) {
-      int usedInBlock = 0;
+      int nbBlockSharingVariable = 0;
 
+      // Check if there is more than one block using the variable.
       for(VectorBlock block : blocks) {
         if(block.getReadAndWrittentVariables().contains(var)) {
-          ++usedInBlock;
-          if(usedInBlock > 1) {
+          ++nbBlockSharingVariable;
+          if(nbBlockSharingVariable > 1) {
             break;
           }
         }
       }
 
-      if(usedInBlock > 1 && !_arrayFieldsInOut.contains(var)) {
+
+      if(nbBlockSharingVariable > 1 && !_arrayFieldsInOut.contains(var)) {
 
         boolean writtenInBlock = false;
         for(VectorBlock block : blocks) {
@@ -202,6 +216,7 @@ public class ScaCPUvectorizeGroup extends Sca {
             && !_noPromotion.contains(var) && writtenInBlock)
         {
           Message.debug("SCA: Promotion might be missing for: " + var);
+          // TODO decide to promote? 
         }
       }
     }
@@ -262,11 +277,12 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   /**
+   *
    * @param assignStatements
-   * @param hooks
+   * @param blocks
    */
   private void flagDoStatementLocation(List<AssignStatement> assignStatements,
-                                       Set<VectorBlock> hooks)
+                                       Set<VectorBlock> blocks)
   {
     /* Iterate a second time over assign statements to flag places where to
      * insert the do statements */
@@ -302,7 +318,7 @@ public class ScaCPUvectorizeGroup extends Sca {
           boolean addIfHook = true;
 
           // Get rid of previously flagged hook in this if body.
-          Iterator<VectorBlock> iter = hooks.iterator();
+          Iterator<VectorBlock> iter = blocks.iterator();
           while(iter.hasNext()) {
             Xnode crt = iter.next().getStartStmt();
             if(assign.isNestedIn(crt) || hookIfStmt.isNestedIn(crt)) {
@@ -314,27 +330,25 @@ public class ScaCPUvectorizeGroup extends Sca {
           }
 
           if(addIfHook) {
-            hooks.add(new VectorBlock(hookIfStmt));
+            blocks.add(new VectorBlock(hookIfStmt));
           }
         }
       }
 
-      for(VectorBlock hook : hooks) {
+      for(VectorBlock hook : blocks) {
         if(assign.isNestedIn(hook.getStartStmt())) {
           wrapInDoStatement = false;
           break;
         }
       }
 
-      if((lhs.opcode() == Xcode.F_ARRAY_REF || lhs.opcode() == Xcode.VAR)
-          && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement)
+      if(((lhs.opcode() == Xcode.F_ARRAY_REF || lhs.opcode() == Xcode.VAR)
+          && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement) ||
+          ((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+              && _scalarFields.contains(lhsName)) &&
+              (shouldBePromoted(assign) && wrapInDoStatement)))
       {
-        hooks.add(new VectorBlock(assign));
-      } else if((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
-          && _scalarFields.contains(lhsName)) &&
-          (shouldBePromoted(assign) && wrapInDoStatement))
-      {
-        hooks.add(new VectorBlock(assign));
+        blocks.add(new VectorBlock(assign));
       }
     }
   }
@@ -343,24 +357,24 @@ public class ScaCPUvectorizeGroup extends Sca {
    * Iterate over all assign statements to detect all indirect promotion. Apply
    * correct promotion if detected.
    *
-   * @param xcodeml          Current translation unit.
    * @param assignStatements List of assignment statements
    */
-  private void detectIndirectPromotion(XcodeProgram xcodeml,
-                                       List<AssignStatement> assignStatements)
-  {
+  private void detectIndirectPromotion(List<AssignStatement> assignStatements) {
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
       if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF) {
         /* If the assignment is in the column loop and is composed with some
          * promoted variables, the field must be promoted and the var reference
          * switch to an array reference */
-        promoteIfNeeded(xcodeml, assign);
+        flagForPromotionIfNeeded(assign);
       }
     }
   }
 
-  private void promoteIfNeeded(XcodeProgram xcodeml, AssignStatement assign) {
+  /**
+   * @param assign
+   */
+  private void flagForPromotionIfNeeded(AssignStatement assign) {
     if(!_arrayFieldsInOut.contains(assign.getLhsName())
         && shouldBePromoted(assign)
         && !_noPromotion.contains(assign.getLhsName()))
@@ -370,6 +384,11 @@ public class ScaCPUvectorizeGroup extends Sca {
     }
   }
 
+  /**
+   * @param xcodeml
+   * @param lhsName
+   * @throws IllegalTransformationException
+   */
   private void promote(XcodeProgram xcodeml, String lhsName)
       throws IllegalTransformationException
   {
