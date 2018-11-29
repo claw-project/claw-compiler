@@ -4,17 +4,17 @@
  */
 package claw.wani.transformation.sca;
 
-import claw.tatsu.xcodeml.abstraction.AssignStatement;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
+ * Class representing a set of contiguous statements that can be wrapped in
+ * a do statement and should vectorize.
+ *
  * @author clementval
  */
 public class VectorBlock {
@@ -22,31 +22,63 @@ public class VectorBlock {
   private final Xnode _startStmt;
   private Xnode _endStmt;
 
-  private final Set<String> _usedVars;
+  private Set<String> _usedVars = null;
 
+  /**
+   * Create a new VectorBlock instance with a single statement.
+   *
+   * @param startStmt Statement used as the start statement of the created
+   *                  block.
+   */
   public VectorBlock(Xnode startStmt) {
     _startStmt = startStmt;
     _endStmt = null;
-    _usedVars = new HashSet<>();
   }
 
+  /**
+   * Check whether the VectorBlock is composed of a single statement.
+   *
+   * @return True if the block is composed by a single statement.
+   */
   public boolean isSingleStatement() {
     return _endStmt == null;
   }
 
+  /**
+   * Set the end statement of the block.
+   *
+   * @param endStmt Statement to be set as end statement.
+   */
   public void setEndStmt(Xnode endStmt) {
     _endStmt = endStmt;
   }
 
+  /**
+   * Get the start statement of the block.
+   *
+   * @return Start node.
+   */
   public Xnode getStartStmt() {
     return _startStmt;
   }
 
+  /**
+   * Get the end statement of the block.
+   *
+   * @return End node.
+   */
   public Xnode getEndStmt() {
     return _endStmt;
   }
 
-  public void gatherUsedVariables() {
+  /**
+   * Collect all variables names used within the block.
+   */
+  private void gatherUsedVariables() {
+
+    if(_usedVars == null) {
+      _usedVars = new HashSet<>();
+    }
 
     if(isSingleStatement()) {
 
@@ -73,7 +105,15 @@ public class VectorBlock {
     }
   }
 
+  /**
+   * Get all variable names used within the block.
+   *
+   * @return Set containing variables names.
+   */
   public Set<String> getUsedVariables() {
+    if(_usedVars == null) {
+      gatherUsedVariables();
+    }
     return _usedVars;
   }
 
