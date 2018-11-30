@@ -400,7 +400,7 @@ public class ScaCPUvectorizeGroup extends Sca {
      * switch to an array reference */
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
-      if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+      if((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF)
           && !_noPromotion.contains(assign.getLhsName())
           && !_inductionVariables.contains(assign.getLhsName())
           && !_arrayFieldsInOut.contains(assign.getLhsName())
