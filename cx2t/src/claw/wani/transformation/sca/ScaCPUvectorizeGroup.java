@@ -395,29 +395,20 @@ public class ScaCPUvectorizeGroup extends Sca {
    * @param assignStatements List of assignment statements
    */
   private void detectIndirectPromotion(List<AssignStatement> assignStatements) {
+    /* If the assignment is in the column loop and is composed with some
+     * promoted variables, the field must be promoted and the var reference
+     * switch to an array reference */
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
-      if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF) {
-        /* If the assignment is in the column loop and is composed with some
-         * promoted variables, the field must be promoted and the var reference
-         * switch to an array reference */
-        flagForPromotionIfNeeded(assign);
+      if(lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+          && !_noPromotion.contains(assign.getLhsName())
+          && !_inductionVariables.contains(assign.getLhsName())
+          && !_arrayFieldsInOut.contains(assign.getLhsName())
+          && shouldBePromoted(assign))
+      {
+        _arrayFieldsInOut.add(assign.getLhsName());
+        _temporaryFields.add(assign.getLhsName());
       }
-    }
-  }
-
-  /**
-   * Flag variable for promotion if it should be promoted.
-   *
-   * @param assign Assignment to check for.
-   */
-  private void flagForPromotionIfNeeded(AssignStatement assign) {
-    if(!_arrayFieldsInOut.contains(assign.getLhsName())
-        && shouldBePromoted(assign)
-        && !_noPromotion.contains(assign.getLhsName()))
-    {
-      _arrayFieldsInOut.add(assign.getLhsName());
-      _temporaryFields.add(assign.getLhsName());
     }
   }
 
