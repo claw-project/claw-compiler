@@ -91,30 +91,7 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     detectIndirectPromotion(assignStatements);
 
-    // Hold block on which do statement will be inserted
-    Set<VectorBlock> blocks = new HashSet<>();
-
-    /* Check whether condition includes a promoted variables. If so, the
-     * ancestor node using the condition must be wrapped in a do statement. */
-    List<Xnode> conditions = _fctDef.body().matchAll(Xcode.CONDITION);
-    for(Xnode condition : conditions) {
-      if(Condition.dependsOn(condition, _arrayFieldsInOut)
-          && !Condition.isAllocationRelated(condition))
-      {
-        Xnode ancestor = condition.ancestor();
-        Iterator<VectorBlock> iter = blocks.iterator();
-        boolean addHook = true;
-        while(iter.hasNext()) {
-          if(ancestor.isNestedIn(iter.next().getStartStmt())) {
-            addHook = false;
-            break;
-          }
-        }
-        if(addHook) {
-          blocks.add(new VectorBlock(ancestor));
-        }
-      }
-    }
+    Set<VectorBlock> blocks = flagIfStatementWithPromotion();
 
     flagDoStatementLocation(assignStatements, blocks);
 
@@ -149,9 +126,7 @@ public class ScaCPUvectorizeGroup extends Sca {
   private Set<String> controlPromotion(List<VectorBlock> blocks) {
 
     Set<String> noPromotionNeeded = new HashSet<>();
-
     for(String var : _temporaryFields) {
-
       int usedInBlock = 0;
       for(VectorBlock block : blocks) {
         if(block.getReadAndWrittentVariables().contains(var)) {
@@ -177,49 +152,76 @@ public class ScaCPUvectorizeGroup extends Sca {
   private void checkMissingPromotion(List<VectorBlock> blocks) {
 
     for(String var : _scalarFields) {
-      int nbBlockSharingVariable = 0;
-
-      // Check if there is more than one block using the variable.
-      for(VectorBlock block : blocks) {
-        if(block.getReadAndWrittentVariables().contains(var)) {
-          ++nbBlockSharingVariable;
-          if(nbBlockSharingVariable > 1) {
-            break;
-          }
-        }
+      // If shared by multiple block and not promoted yet.
+      if(isVarSharedByMultipleBlocks(blocks, var) && isVarNotOnlyConstant(var)
+          && isVarWrittenInBlocks(blocks, var)
+          && !_arrayFieldsInOut.contains(var)
+          && !_inductionVariables.contains(var)
+          && !_noPromotion.contains(var))
+      {
+        Message.debug("SCA: Promotion might be missing for: " + var);
+        // TODO decide to promote?
       }
 
+    }
+  }
 
-      if(nbBlockSharingVariable > 1 && !_arrayFieldsInOut.contains(var)) {
+  /**
+   * Check is the variable is not only updated by constant values.
+   *
+   * @param var Variable to check.
+   * @return True if the variable is written with none constant value. False
+   * otherwise.
+   */
+  private boolean isVarNotOnlyConstant(String var) {
+    List<AssignStatement> assignStatements =
+        Function.gatherAssignStatements(_fctDef);
+    for(AssignStatement as : assignStatements) {
+      if(as.getLhsName().equals(var) && !as.isContantAssignment()) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-        boolean writtenInBlock = false;
-        for(VectorBlock block : blocks) {
-          if(block.getWrittenVariables().contains(var)) {
-            writtenInBlock = true;
-            break;
-          }
-        }
-
-        List<AssignStatement> assignStatements =
-            Function.gatherAssignStatements(_fctDef);
-        boolean notOnlyConstant = false;
-        for(AssignStatement as : assignStatements) {
-          if(as.getLhsName().equals(var)) {
-            if(!as.isContantAssignment()) {
-              notOnlyConstant = true;
-              break;
-            }
-          }
-        }
-
-        if(notOnlyConstant && !_inductionVariables.contains(var)
-            && !_noPromotion.contains(var) && writtenInBlock)
-        {
-          Message.debug("SCA: Promotion might be missing for: " + var);
-          // TODO decide to promote? 
+  /**
+   * Check is variable is shared by at two or more blocks.
+   *
+   * @param blocks List of blocks to check.
+   * @param var    Variable name to check.
+   * @return True if the variable is shared by at least two blocks.
+   * False otherwise.
+   */
+  private boolean isVarSharedByMultipleBlocks(List<VectorBlock> blocks,
+                                              String var)
+  {
+    int nbBlockSharingVariable = 0;
+    // Check if there is more than one block using the variable.
+    for(VectorBlock block : blocks) {
+      if(block.getReadAndWrittentVariables().contains(var)) {
+        ++nbBlockSharingVariable;
+        if(nbBlockSharingVariable > 1) {
+          return true;
         }
       }
     }
+    return false;
+  }
+
+  /**
+   * Check if the variable is written in any blocks.
+   *
+   * @param blocks List of blocks to check.
+   * @param var    Variable name to check.
+   * @return True if the variable is written in any blocks.
+   */
+  private boolean isVarWrittenInBlocks(List<VectorBlock> blocks, String var) {
+    for(VectorBlock block : blocks) {
+      if(block.getWrittenVariables().contains(var)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -277,9 +279,42 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   /**
+   * Check whether condition includes a promoted variables. If so, the
+   * ancestor node using the condition must be wrapped in a do statement.
    *
-   * @param assignStatements
-   * @param blocks
+   * @return Set of vector block for flagged location.
+   */
+  private Set<VectorBlock> flagIfStatementWithPromotion() {
+    Set<VectorBlock> blocks = new HashSet<>();
+    /*  */
+    List<Xnode> conditions = _fctDef.body().matchAll(Xcode.CONDITION);
+    for(Xnode condition : conditions) {
+      if(Condition.dependsOn(condition, _arrayFieldsInOut)
+          && !Condition.isAllocationRelated(condition))
+      {
+        Xnode ancestor = condition.ancestor();
+        Iterator<VectorBlock> iter = blocks.iterator();
+        boolean addHook = true;
+        while(iter.hasNext()) {
+          if(ancestor.isNestedIn(iter.next().getStartStmt())) {
+            addHook = false;
+            break;
+          }
+        }
+        if(addHook) {
+          blocks.add(new VectorBlock(ancestor));
+        }
+      }
+    }
+    return blocks;
+  }
+
+  /**
+   * Go through all assignments and flag all location where a do statement
+   * should be inserted after variables promotion.
+   *
+   * @param assignStatements List of assignments.
+   * @param blocks           Set of vector blocks.
    */
   private void flagDoStatementLocation(List<AssignStatement> assignStatements,
                                        Set<VectorBlock> blocks)
@@ -372,7 +407,9 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   /**
-   * @param assign
+   * Flag variable for promotion if it should be promoted.
+   *
+   * @param assign Assignment to check for.
    */
   private void flagForPromotionIfNeeded(AssignStatement assign) {
     if(!_arrayFieldsInOut.contains(assign.getLhsName())
@@ -385,9 +422,11 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   /**
-   * @param xcodeml
-   * @param lhsName
-   * @throws IllegalTransformationException
+   * Promote the given variable and adapt references.
+   *
+   * @param xcodeml Current translation unit.
+   * @param lhsName Variable name to be promoted.
+   * @throws IllegalTransformationException If promotion cannot be done.
    */
   private void promote(XcodeProgram xcodeml, String lhsName)
       throws IllegalTransformationException
