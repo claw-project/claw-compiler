@@ -483,12 +483,9 @@ public class ScaCPUvectorizeGroup extends Sca {
    */
   private boolean shouldBePromoted(Xnode assignStmt) {
     Xnode rhs = assignStmt.child(Xnode.RHS);
-    if(rhs == null) {
-      return false;
-    }
-    List<Xnode> vars = XnodeUtil.findAllReferences(rhs);
-    Set<String> names = XnodeUtil.getNamesFromReferences(vars);
-    return Utility.hasIntersection(names, _arrayFieldsInOut);
+    return (rhs != null)
+        && Utility.hasIntersection(XnodeUtil.findAllReferences(rhs),
+        _arrayFieldsInOut);
   }
 
 }

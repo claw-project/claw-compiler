@@ -393,62 +393,24 @@ public class XnodeUtil {
   }
 
   /**
-   * Find all the var elements that are real references to a variable. Var
-   * element nested in an arrayIndex element are excluded.
+   * Find all the var names that are real references to a variable. Variable
+   * used as array index are excluded.
    *
    * @param parent Root element to search from.
-   * @return A list of all var elements found.
+   * @return A set of all variables names.
    */
-  public static List<Xnode> findAllReferences(Xnode parent) {
+  public static Set<String> findAllReferences(Xnode parent) {
+    Set<String> names = new HashSet<>();
     if(parent.opcode() == Xcode.VAR) {
-      return Collections.singletonList(parent);
+      names.add(parent.value());
+      return names;
     }
 
     List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    List<Xnode> realReferences = new ArrayList<>();
     for(Xnode var : vars) {
-      if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAY_INDEX.code()))
-      {
-        realReferences.add(var);
+      if(var.isNotArrayIndex()) {
+        names.add(var.value());
       }
-    }
-    return realReferences;
-  }
-
-  /**
-   * Find all Xnode.VAR inside the given node and return their value. From
-   * the set are excluded the variables used as indexes for vectors.
-   *
-   * @param node The node from where the research will start.
-   * @return A set contains the variables used inside the node.
-   */
-  public static Set<String> findChildrenVariables(Xnode node) {
-    List<Xnode> varNodes = node.matchAll(Xcode.VAR);
-    Set<String> vars = new HashSet<>();
-    for(Xnode xnode : varNodes) {
-      // Skip vector indexes
-      if(xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
-        continue;
-      }
-      vars.add(xnode.value());
-    }
-    return vars;
-  }
-
-  /**
-   * Get all the variables names from a list of var elements.
-   *
-   * @param nodes List containing var element.
-   * @return A set of all variable's name.
-   */
-  public static Set<String> getNamesFromReferences(List<Xnode> nodes) {
-    Set<String> names = new HashSet<>();
-    for(Xnode node : nodes) {
-      if(node.opcode() != Xcode.VAR) {
-        continue;
-      }
-      names.add(node.value());
     }
     return names;
   }
