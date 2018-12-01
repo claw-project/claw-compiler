@@ -272,6 +272,9 @@ public final class Xname {
   public static final String SUPPORTED_VERSION = "1.0";
   public static final String SUPPORTED_LANGUAGE = "Fortran";
 
+  // Fortran intrinsics
+  public static final String F_INTR_ALLOCATED = "allocated";
+
   // Avoid instantiation of this class
   private Xname() {
   }

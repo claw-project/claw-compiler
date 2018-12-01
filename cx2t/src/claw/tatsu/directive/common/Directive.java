@@ -59,6 +59,11 @@ public final class Directive {
                                     FfunctionDefinition fctDef,
                                     String noDependencyDirective)
   {
+
+    if(Context.get().getCompilerDirective() == CompilerDirective.NONE) {
+      return 0;
+    }
+
     int nodepCounter = 0;
     List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
     for(Xnode doStmt : doStmts) {

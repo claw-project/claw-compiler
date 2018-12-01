@@ -167,9 +167,9 @@ public class ClawTranslator implements Translator {
             equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
         {
           addTransformation(xcodeml,
-              new ScaCPUsmartFusion(analyzedPragma));
+              new ScaCPUvectorizeGroup(analyzedPragma, true));
         } else {
-          addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
+          addTransformation(xcodeml, new ScaCPUvectorizeGroup(analyzedPragma));
         }
       }
     }
