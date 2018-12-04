@@ -425,6 +425,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     PromotionInfo promotionInfo;
     // Do the promotion if needed
     if(!_promotions.containsKey(lhsName)) {
+      Message.debug("SCA: promote variable " + lhsName);
       promotionInfo =
           new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
       Field.promote(promotionInfo, _fctDef, xcodeml);
@@ -478,13 +479,12 @@ public class ScaCPUvectorizeGroup extends Sca {
   /**
    * Check whether the LHS variable should be promoted.
    *
-   * @param assignStmt Assign statement node.
+   * @param assign Assign statement node.
    * @return True if the LHS variable should be promoted. False otherwise.
    */
-  private boolean shouldBePromoted(Xnode assignStmt) {
-    Xnode rhs = assignStmt.child(Xnode.RHS);
-    return (rhs != null)
-        && Utility.hasIntersection(XnodeUtil.findAllReferences(rhs),
+  private boolean shouldBePromoted(AssignStatement assign) {
+    return (assign.getRhs() != null)
+        && Utility.hasIntersection(XnodeUtil.findAllReferences(assign.getRhs()),
         _arrayFieldsInOut);
   }
 
