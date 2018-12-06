@@ -6,8 +6,13 @@ package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -141,5 +146,44 @@ public class FfunctionDefinition extends Xnode {
   @Override
   public FfunctionDefinition cloneNode() {
     return new FfunctionDefinition(super.cloneNode());
+  }
+
+  /**
+   * Gather all assignment statements in the function definition.
+   *
+   * @return List of assignment statement in AST order. Empty list if function
+   * definition is null or no statement found.
+   */
+  public List<AssignStatement> gatherAssignStatements()
+  {
+    if(body() == null) {
+      return Collections.emptyList();
+    }
+    List<AssignStatement> statements = new ArrayList<>();
+    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
+      statements.add(new AssignStatement(n.element()));
+    }
+    return statements;
+  }
+
+  /**
+   * Gather all assignment statements in the function definition.
+   *
+   * @return List of assignment statement in AST order. Empty list if function
+   * definition is null or no statement found.
+   */
+  public List<AssignStatement> gatherAssignStatementsByLhsName(String var)
+  {
+    if(body() == null) {
+      return Collections.emptyList();
+    }
+    List<AssignStatement> statements = new ArrayList<>();
+    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
+      AssignStatement as = new AssignStatement(n.element());
+      if(as.getLhsName().equals(var)) {
+        statements.add(as);
+      }
+    }
+    return statements;
   }
 }

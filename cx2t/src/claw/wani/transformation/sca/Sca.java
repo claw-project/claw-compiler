@@ -45,6 +45,8 @@ public class Sca extends ClawTransformation {
   Set<String> _inductionVariables;
   private FfunctionType _fctType;
 
+  static final String SCA_DEBUG_PREFIX = "SCA:";
+
   /**
    * Constructs a new Sca transformation triggered from a specific
    * pragma.

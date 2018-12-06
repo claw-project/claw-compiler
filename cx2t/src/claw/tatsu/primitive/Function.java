@@ -125,26 +125,6 @@ public final class Function {
   }
 
   /**
-   * Gather all assignment statements in the function definition.
-   *
-   * @param fctDef Function definition in which statements are gathered.
-   * @return List of assignment statement in AST order. Empty list if function
-   * definition is null or no statement found.
-   */
-  public static List<AssignStatement> gatherAssignStatements(
-      FfunctionDefinition fctDef)
-  {
-    if(fctDef == null || fctDef.body() == null) {
-      return Collections.emptyList();
-    }
-    List<AssignStatement> statements = new ArrayList<>();
-    for(Xnode n : fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
-      statements.add(new AssignStatement(n.element()));
-    }
-    return statements;
-  }
-
-  /**
    * Detect all induction variables in the function body.
    *
    * @param fctDef Function definition to be checked.
