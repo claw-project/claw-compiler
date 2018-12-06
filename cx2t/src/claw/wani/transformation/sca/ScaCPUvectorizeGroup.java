@@ -6,6 +6,7 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
@@ -24,6 +25,7 @@ import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.wani.language.ClawPragma;
+import claw.wani.x2t.configuration.Configuration;
 
 import java.util.*;
 
@@ -86,8 +88,7 @@ public class ScaCPUvectorizeGroup extends Sca {
      * This is for the moment a really naive transformation idea but it is our
      * start point.
      * Use the first over clause to do it. */
-    List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(_fctDef);
+    List<AssignStatement> assignStatements = _fctDef.gatherAssignStatements();
 
     detectIndirectPromotion(assignStatements);
 
@@ -159,8 +160,15 @@ public class ScaCPUvectorizeGroup extends Sca {
           && !_inductionVariables.contains(var)
           && !_noPromotion.contains(var))
       {
-        Message.debug("SCA: Promotion might be missing for: " + var);
-        // TODO decide to promote?
+        Message.debug(String.format("%s Promotion might be missing for: %s",
+            SCA_DEBUG_PREFIX, var));
+        _temporaryFields.add(var);
+
+        for(AssignStatement as : _fctDef.gatherAssignStatementsByLhsName(var)) {
+          // Check that assignments are contained in a vector block
+
+        }
+
       }
 
     }
@@ -175,9 +183,9 @@ public class ScaCPUvectorizeGroup extends Sca {
    */
   private boolean isVarNotOnlyConstant(String var) {
     List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(_fctDef);
+        _fctDef.gatherAssignStatementsByLhsName(var);
     for(AssignStatement as : assignStatements) {
-      if(as.getLhsName().equals(var) && !as.isContantAssignment()) {
+      if(!as.isContantAssignment()) {
         return true;
       }
     }
@@ -416,32 +424,32 @@ public class ScaCPUvectorizeGroup extends Sca {
    * Promote the given variable and adapt references.
    *
    * @param xcodeml Current translation unit.
-   * @param lhsName Variable name to be promoted.
+   * @param var     Variable name to be promoted.
    * @throws IllegalTransformationException If promotion cannot be done.
    */
-  private void promote(XcodeProgram xcodeml, String lhsName)
+  private void promote(XcodeProgram xcodeml, String var)
       throws IllegalTransformationException
   {
     PromotionInfo promotionInfo;
     // Do the promotion if needed
-    if(!_promotions.containsKey(lhsName)) {
-      Message.debug("SCA: promote variable " + lhsName);
-      promotionInfo =
-          new PromotionInfo(lhsName, _claw.getLayoutForData(lhsName));
+    if(!_promotions.containsKey(var)) {
+      Message.debug(String.format("%s promote variable %s",
+          SCA_DEBUG_PREFIX, var));
+      promotionInfo = new PromotionInfo(var, _claw.getLayoutForData(var));
       Field.promote(promotionInfo, _fctDef, xcodeml);
-      _promotions.put(lhsName, promotionInfo);
+      _promotions.put(var, promotionInfo);
     } else {
-      promotionInfo = _promotions.get(lhsName);
+      promotionInfo = _promotions.get(var);
     }
     // Adapt references
-    Xid id = _fctDef.getSymbolTable().get(lhsName);
+    Xid id = _fctDef.getSymbolTable().get(var);
     FbasicType bType = xcodeml.getTypeTable().getBasicType(id);
     if(!bType.isArray()) {
-      Field.adaptScalarRefToArrayRef(_promotions.get(lhsName), _fctDef,
+      Field.adaptScalarRefToArrayRef(_promotions.get(var), _fctDef,
           _claw.getDefaultLayout(), xcodeml);
     } else {
-      Field.adaptArrayRef(_promotions.get(lhsName), _fctDef.body(), xcodeml);
-      Field.adaptAllocate(_promotions.get(lhsName), _fctDef.body(), xcodeml);
+      Field.adaptArrayRef(_promotions.get(var), _fctDef.body(), xcodeml);
+      Field.adaptAllocate(_promotions.get(var), _fctDef.body(), xcodeml);
     }
     promotionInfo.setRefAdapted();
   }
