@@ -59,6 +59,7 @@ CLAW Compiler options:
    --debug                    : display transformation debug information.
    --debug-omni               : save intermediate files in __omni_tmp__ and
                                 display driver information.
+   --debug-ffront             : Drive OMNI Fortran front-end in debug mode.
    --stop-pp                  : save intermediate files and stop after
                                 preprocess.
    --stop-dependencies        : save intermediate files and stop after
@@ -191,6 +192,9 @@ function claw::set_parameters() {
     --debug-omni)
       enable_debug_omni=true
       pipe_workflow=false
+      ;;
+    --debug-ffront)
+      omni_ffront_debug=true
       ;;
     --stop-pp)
       verbose=true
