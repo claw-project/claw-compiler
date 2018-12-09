@@ -55,6 +55,7 @@ report=false
 pipe_workflow=true
 keep_comment=false
 add_paren=false
+omni_ffront_debug=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -120,6 +121,7 @@ readonly report
 readonly pipe_workflow
 readonly keep_comment
 readonly add_paren
+readonly omni_ffront_debug
 
 ### sed constant ###
 readonly claw_sed_ignore="s/\\!\$claw ignore//"
@@ -154,11 +156,17 @@ if [[ ${show_config} == true ]]; then
   exit 0
 fi
 
+### Add front-end debug option
+if [[ ${omni_ffront_debug} == true ]]; then
+OMNI_F2X_OPT="${OMNI_F2X_OPT} -d"
+fi
+
 ### Add front-end option to keep the comment
 if [[ ${keep_comment} == true ]]; then
   OMNI_F2X_OPT="${OMNI_F2X_OPT} -fleave-comment"
-  readonly OMNI_F2X_OPT
 fi
+
+readonly OMNI_F2X_OPT
 
 # Add debug flag for the translator options
 if [[ ${enable_debug} == true ]]; then

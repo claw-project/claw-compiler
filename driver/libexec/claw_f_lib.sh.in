@@ -192,6 +192,9 @@ function claw::set_parameters() {
       enable_debug_omni=true
       pipe_workflow=false
       ;;
+    --debug-front)
+      omni_ffront_debug=true
+      ;;
     --stop-pp)
       verbose=true
       stop_pp=true
