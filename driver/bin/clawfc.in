@@ -127,6 +127,9 @@ readonly claw_sed_end_ignore="s/\\!\$claw end ignore//"
 readonly claw_sed_cont="s/__CLAWAMP__/\\&/"
 readonly claw_sed_verbatim="s/\\!\$claw verbatim //"
 
+readonly claw_debug_prefix="claw-driver-debug"
+readonly claw_debug_lvl_dep="CLAW_DEBUG_DEP"
+
 ### Add additional parameters needed for cx2t ###
 claw::format_cx2t_params
 
