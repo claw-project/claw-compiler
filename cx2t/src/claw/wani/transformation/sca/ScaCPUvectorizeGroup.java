@@ -101,11 +101,10 @@ public class ScaCPUvectorizeGroup extends Sca {
     List<VectorBlock> mergedBlocks = (_applyFusion) ?
         VectorBlock.mergeAdjacent(naiveBlocks) : new ArrayList<>(naiveBlocks);
 
+    checkMissingPromotion(mergedBlocks);
     if(_applyFusion) {
       removeUselessPromotion(mergedBlocks);
     }
-
-    checkMissingPromotion(mergedBlocks);
 
     for(String temporary : _temporaryFieldsToPromote) {
       promote(xcodeml, temporary);
@@ -165,10 +164,11 @@ public class ScaCPUvectorizeGroup extends Sca {
 
         for(AssignStatement as : _fctDef.gatherAssignStatementsByLhsName(var)) {
           // Check that assignments are contained in a vector block
-          
+          if(!VectorBlock.isContainedIn(blocks, as)) {
+            blocks.add(new VectorBlock(as));
+          }
         }
       }
-
     }
   }
 

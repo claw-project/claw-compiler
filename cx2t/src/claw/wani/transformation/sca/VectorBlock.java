@@ -156,12 +156,37 @@ public class VectorBlock {
   }
 
   /**
+   * Check if the block contains the given assign statement.
+   *
+   * @param as Assign statement to look for.
+   * @return True if the statement is contained in the current block. False
+   * otherwise.
+   */
+  public boolean contains(AssignStatement as) {
+    if(isSingleStatement()) {
+      return (getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+          && getStartStmt().equals(as))
+          || (getStartStmt().opcode() == Xcode.F_IF_STATEMENT
+          && as.isNestedIn(getStartStmt()));
+    } else {
+      Xnode crtStmt = getStartStmt();
+      while(!crtStmt.equals(getEndStmt())) {
+        if(crtStmt.equals(as)) {
+          return true;
+        }
+        crtStmt = crtStmt.nextSibling();
+      }
+    }
+    return false;
+  }
+
+  /**
    * Check if the given node is the direct sibling of this node.
    *
    * @param potentialSibling Potential next sibling to test for.
    * @return True if the given node is the direct next sibling. False otherwise.
    */
-  public boolean canMergeNextNode(Xnode potentialSibling) {
+  private boolean canMergeNextNode(Xnode potentialSibling) {
     if(isSingleStatement()) {
       return getStartStmt().nextSibling() != null
           && getStartStmt().nextSibling().equals(potentialSibling);
@@ -203,8 +228,6 @@ public class VectorBlock {
     return sortedVectorBlocks;
   }
 
-
-
   /**
    * Sort the vector blocks according to their position in the code.
    *
@@ -226,6 +249,24 @@ public class VectorBlock {
       }
     });
     return sortedVectorBlocks;
+  }
+
+  /**
+   * Check if a block contains the given assign statement.
+   *
+   * @param blocks List of blocks.
+   * @param as     Assign statement.
+   * @return True if a block contain the statement. False otherwise.
+   */
+  public static boolean isContainedIn(List<VectorBlock> blocks,
+                                      AssignStatement as)
+  {
+    for(VectorBlock block : blocks) {
+      if(block.contains(as)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
