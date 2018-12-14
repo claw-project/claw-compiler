@@ -8,9 +8,7 @@ import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class representing a set of contiguous statements that can be wrapped in
@@ -171,6 +169,63 @@ public class VectorBlock {
       return getEndStmt().nextSibling() != null
           && getEndStmt().nextSibling().equals(potentialSibling);
     }
+  }
+
+  /**
+   * Merge adjacent block together to maximize vectorization and data locality.
+   *
+   * @param blocks Set of flagged blocks containing a single statement.
+   * @return List of merged blocks.
+   */
+  public static List<VectorBlock> mergeAdjacent(Set<VectorBlock> blocks) {
+
+    List<VectorBlock> sortedVectorBlocks = sortBlockByLineOrder(blocks);
+    List<VectorBlock> toBeRemoved = new ArrayList<>();
+
+    if(blocks.isEmpty()) {
+      return sortedVectorBlocks;
+    }
+
+    VectorBlock crtBlock = sortedVectorBlocks.get(0);
+    for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
+      VectorBlock nextBlock = sortedVectorBlocks.get(i);
+      if(nextBlock.getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+          && crtBlock.canMergeNextNode(nextBlock.getStartStmt()))
+      {
+        toBeRemoved.add(nextBlock);
+        crtBlock.setEndStmt(nextBlock.getStartStmt());
+      } else {
+        crtBlock = nextBlock;
+      }
+    }
+
+    sortedVectorBlocks.removeAll(toBeRemoved);
+    return sortedVectorBlocks;
+  }
+
+
+
+  /**
+   * Sort the vector blocks according to their position in the code.
+   *
+   * @param blocks Set of vector blocks
+   * @return List of ordered vector block.
+   */
+  private static List<VectorBlock> sortBlockByLineOrder(Set<VectorBlock> blocks)
+  {
+    List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
+    Collections.sort(sortedVectorBlocks, new Comparator<VectorBlock>() {
+      @Override
+      public int compare(VectorBlock s1, VectorBlock s2) {
+        if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
+          return -1;
+        } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
+          return 1;
+        }
+        return 0;
+      }
+    });
+    return sortedVectorBlocks;
   }
 
 }
