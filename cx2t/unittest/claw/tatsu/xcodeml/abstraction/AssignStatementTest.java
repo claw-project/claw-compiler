@@ -37,7 +37,7 @@ public class AssignStatementTest {
     FfunctionDefinition fctDef = new FfunctionDefinition(nodes.get(0));
 
     List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(fctDef);
+        fctDef.gatherAssignStatements();
     assertEquals(2, assignStatements.size());
 
     assertTrue(assignStatements.get(0).isChildOf(Xcode.F_IF_STATEMENT));
@@ -61,8 +61,7 @@ public class AssignStatementTest {
     assertEquals(Xcode.F_FUNCTION_DEFINITION, nodes.get(0).opcode());
     FfunctionDefinition fctDef = new FfunctionDefinition(nodes.get(0));
 
-    List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(fctDef);
+    List<AssignStatement> assignStatements = fctDef.gatherAssignStatements();
     assertEquals(4, assignStatements.size());
   }
 }

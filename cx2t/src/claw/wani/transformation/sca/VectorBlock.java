@@ -8,9 +8,7 @@ import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class representing a set of contiguous statements that can be wrapped in
@@ -150,11 +148,36 @@ public class VectorBlock {
    *
    * @return Set containing variables names.
    */
-  public Set<String> getReadAndWrittentVariables() {
+  public Set<String> getReadAndWrittenVariables() {
     if(_readAndWrittenVariables == null) {
       gatherUsedVariables();
     }
     return _readAndWrittenVariables;
+  }
+
+  /**
+   * Check if the block contains the given assign statement.
+   *
+   * @param as Assign statement to look for.
+   * @return True if the statement is contained in the current block. False
+   * otherwise.
+   */
+  public boolean contains(AssignStatement as) {
+    if(isSingleStatement()) {
+      return (getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+          && getStartStmt().equals(as))
+          || (getStartStmt().opcode() == Xcode.F_IF_STATEMENT
+          && as.isNestedIn(getStartStmt()));
+    } else {
+      Xnode crtStmt = getStartStmt();
+      while(!crtStmt.equals(getEndStmt())) {
+        if(crtStmt.equals(as)) {
+          return true;
+        }
+        crtStmt = crtStmt.nextSibling();
+      }
+    }
+    return false;
   }
 
   /**
@@ -163,7 +186,7 @@ public class VectorBlock {
    * @param potentialSibling Potential next sibling to test for.
    * @return True if the given node is the direct next sibling. False otherwise.
    */
-  public boolean canMergeNextNode(Xnode potentialSibling) {
+  private boolean canMergeNextNode(Xnode potentialSibling) {
     if(isSingleStatement()) {
       return getStartStmt().nextSibling() != null
           && getStartStmt().nextSibling().equals(potentialSibling);
@@ -171,6 +194,79 @@ public class VectorBlock {
       return getEndStmt().nextSibling() != null
           && getEndStmt().nextSibling().equals(potentialSibling);
     }
+  }
+
+  /**
+   * Merge adjacent block together to maximize vectorization and data locality.
+   *
+   * @param blocks Set of flagged blocks containing a single statement.
+   * @return List of merged blocks.
+   */
+  public static List<VectorBlock> mergeAdjacent(Set<VectorBlock> blocks) {
+
+    List<VectorBlock> sortedVectorBlocks = sortBlockByLineOrder(blocks);
+    List<VectorBlock> toBeRemoved = new ArrayList<>();
+
+    if(blocks.isEmpty()) {
+      return sortedVectorBlocks;
+    }
+
+    VectorBlock crtBlock = sortedVectorBlocks.get(0);
+    for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
+      VectorBlock nextBlock = sortedVectorBlocks.get(i);
+      if(nextBlock.getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+          && crtBlock.canMergeNextNode(nextBlock.getStartStmt()))
+      {
+        toBeRemoved.add(nextBlock);
+        crtBlock.setEndStmt(nextBlock.getStartStmt());
+      } else {
+        crtBlock = nextBlock;
+      }
+    }
+
+    sortedVectorBlocks.removeAll(toBeRemoved);
+    return sortedVectorBlocks;
+  }
+
+  /**
+   * Sort the vector blocks according to their position in the code.
+   *
+   * @param blocks Set of vector blocks
+   * @return List of ordered vector block.
+   */
+  private static List<VectorBlock> sortBlockByLineOrder(Set<VectorBlock> blocks)
+  {
+    List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
+    Collections.sort(sortedVectorBlocks, new Comparator<VectorBlock>() {
+      @Override
+      public int compare(VectorBlock s1, VectorBlock s2) {
+        if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
+          return -1;
+        } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
+          return 1;
+        }
+        return 0;
+      }
+    });
+    return sortedVectorBlocks;
+  }
+
+  /**
+   * Check if a block contains the given assign statement.
+   *
+   * @param blocks List of blocks.
+   * @param as     Assign statement.
+   * @return True if a block contain the statement. False otherwise.
+   */
+  public static boolean isContainedIn(List<VectorBlock> blocks,
+                                      AssignStatement as)
+  {
+    for(VectorBlock block : blocks) {
+      if(block.contains(as)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
