@@ -59,6 +59,7 @@ CLAW Compiler options:
    --debug                    : display transformation debug information.
    --debug-omni               : save intermediate files in __omni_tmp__ and
                                 display driver information.
+   --debug-ffront             : Drive OMNI Fortran front-end in debug mode.
    --stop-pp                  : save intermediate files and stop after
                                 preprocess.
    --stop-dependencies        : save intermediate files and stop after
@@ -191,6 +192,9 @@ function claw::set_parameters() {
     --debug-omni)
       enable_debug_omni=true
       pipe_workflow=false
+      ;;
+    --debug-ffront)
+      omni_ffront_debug=true
       ;;
     --stop-pp)
       verbose=true
@@ -434,6 +438,22 @@ function claw::norm_file_name() {
 ###################################################################
 # Process dependencies file trough the frontend.
 # Arguments:
+#   $1: debug level
+#   $2: message
+###################################################################
+function claw::debug() {
+  if [[ ${enable_debug} == true ]]; then
+    # shellcheck disable=SC2154
+    if [[ "$1" == "${claw_debug_lvl_dep}" ]] && [[ ! -z ${CLAW_DEBUG_DEP+x} ]]; then
+      # shellcheck disable=SC2154
+      echo "${claw_debug_prefix}: [dependency] $2"
+    fi
+  fi
+}
+
+###################################################################
+# Process dependencies file trough the frontend.
+# Arguments:
 #   $1: preprocessed file
 #   $2: original file
 ###################################################################
@@ -455,9 +475,13 @@ function claw::process_dependencies() {
   while IFS= read -r line; do
     if [[ ${line} =~ ${module_regex} ]]; then
       module_name="${BASH_REMATCH[3]}"
-      dependencies+=("${module_name}")
+      if [[ ! ${dependencies[*]} =~ ${module_name} ]]; then
+        dependencies+=("${module_name}")
+      fi
     fi
   done <"$1"
+
+  claw::debug "${claw_debug_lvl_dep}" "looking for ${dependencies[*]} from $2"
 
   # Get the directory and use it to look in the same for dependencies
   current_src_dir="$(dirname "$2")"
@@ -478,6 +502,8 @@ function claw::process_dependencies() {
     module_name=$(echo "$module_name" | tr '[:upper:]' '[:lower:]')
     source_mod_file="" # Holder variable for the module file when found
 
+    claw::debug "${claw_debug_lvl_dep}" "looking for module ${dep}"
+
     # FORTRAN file extensions used for the search
     fortran_ext=(".f90" ".F90" ".f" ".F" ".f95" ".f03")
 
@@ -490,11 +516,14 @@ function claw::process_dependencies() {
       module_search_path+=("${search_path:2}")
     done
 
+    claw::debug "${claw_debug_lvl_dep}" "looking for file in ${module_search_path[*]}"
+
     # Try to locate the fortran source file
     for directory in "${module_search_path[@]}"; do
       compiled_mod_file="${directory}/${module_name}.xmod"
       if [[ -f ${compiled_mod_file} ]]; then
         compiled_mod_file_found=true
+        claw::debug "${claw_debug_lvl_dep}" "found .xmod file ${compiled_mod_file}"
         break
       fi
     done
@@ -593,14 +622,17 @@ function claw::process_dependencies() {
 
     # Recurse to get dependencies in the right order
     if [[ "$2" != "${base_file}" ]]; then
+      claw::debug "${claw_debug_lvl_dep}" "recurse resolution with ${base_file}"
       claw::process_dependencies "${file_pp}" "${base_file}"
     fi
 
+    claw::debug "${claw_debug_lvl_dep}" "calling OMNI front-end on ${source_mod_file}"
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086,SC2068
     ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} \
       ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" >/dev/null
   done
+  claw::debug "${claw_debug_lvl_dep}" "resolution for $2 done"
 }
 
 ###################################################################
