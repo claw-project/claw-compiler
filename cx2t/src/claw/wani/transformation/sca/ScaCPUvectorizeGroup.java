@@ -6,14 +6,12 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Condition;
 import claw.tatsu.primitive.Field;
-import claw.tatsu.primitive.Function;
 import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
@@ -25,7 +23,6 @@ import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.wani.language.ClawPragma;
-import claw.wani.x2t.configuration.Configuration;
 
 import java.util.*;
 
@@ -39,8 +36,8 @@ import java.util.*;
  */
 public class ScaCPUvectorizeGroup extends Sca {
 
-  private final boolean _fusion;
-  private final Set<String> _temporaryFields = new HashSet<>();
+  private final boolean _applyFusion;
+  private final Set<String> _temporaryFieldsToPromote = new HashSet<>();
 
   /**
    * Constructs a new SCA transformation triggered from a specific
@@ -50,12 +47,19 @@ public class ScaCPUvectorizeGroup extends Sca {
    */
   public ScaCPUvectorizeGroup(ClawPragma directive) {
     super(directive);
-    _fusion = false;
+    _applyFusion = false;
   }
 
+  /**
+   * Constructs a new SCA transformation triggered from a specific
+   * pragma for a CPU target.
+   *
+   * @param directive The directive that triggered the define transformation.
+   * @param fusion    If true, the fusion algorithm to the transformation.
+   */
   public ScaCPUvectorizeGroup(ClawPragma directive, boolean fusion) {
     super(directive);
-    _fusion = fusion;
+    _applyFusion = fusion;
   }
 
   @Override
@@ -96,16 +100,16 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     flagDoStatementLocation(assignStatements, blocks);
 
-    List<VectorBlock> fusionBlocks =
-        (_fusion) ? mergeVectorBlocks(blocks) : new ArrayList<>(blocks);
+    List<VectorBlock> fusionBlocks = (_applyFusion) ?
+        VectorBlock.mergeAdjacent(blocks) : new ArrayList<>(blocks);
 
     checkMissingPromotion(fusionBlocks);
-    if(_fusion) {
+    if(_applyFusion) {
       Set<String> noPromotion = controlPromotion(fusionBlocks);
-      _temporaryFields.removeAll(noPromotion);
+      _temporaryFieldsToPromote.removeAll(noPromotion);
     }
 
-    for(String temporary : _temporaryFields) {
+    for(String temporary : _temporaryFieldsToPromote) {
       promote(xcodeml, temporary);
     }
 
@@ -127,7 +131,7 @@ public class ScaCPUvectorizeGroup extends Sca {
   private Set<String> controlPromotion(List<VectorBlock> blocks) {
 
     Set<String> noPromotionNeeded = new HashSet<>();
-    for(String var : _temporaryFields) {
+    for(String var : _temporaryFieldsToPromote) {
       int usedInBlock = 0;
       for(VectorBlock block : blocks) {
         if(block.getReadAndWrittentVariables().contains(var)) {
@@ -162,7 +166,7 @@ public class ScaCPUvectorizeGroup extends Sca {
       {
         Message.debug(String.format("%s Promotion might be missing for: %s",
             SCA_DEBUG_PREFIX, var));
-        _temporaryFields.add(var);
+        _temporaryFieldsToPromote.add(var);
 
         for(AssignStatement as : _fctDef.gatherAssignStatementsByLhsName(var)) {
           // Check that assignments are contained in a vector block
@@ -230,60 +234,6 @@ public class ScaCPUvectorizeGroup extends Sca {
       }
     }
     return false;
-  }
-
-  /**
-   * Merge adjacent block together to maximize vectorization and data locality.
-   *
-   * @param blocks Set of flagged blocks containing a single statement.
-   * @return List of merged blocks.
-   */
-  private List<VectorBlock> mergeVectorBlocks(Set<VectorBlock> blocks) {
-
-    List<VectorBlock> sortedVectorBlocks = sortBlockByLineOrder(blocks);
-    List<VectorBlock> toBeRemoved = new ArrayList<>();
-
-    if(blocks.isEmpty()) {
-      return sortedVectorBlocks;
-    }
-
-    VectorBlock crtBlock = sortedVectorBlocks.get(0);
-    for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
-      VectorBlock nextBlock = sortedVectorBlocks.get(i);
-      if(nextBlock.getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
-          && crtBlock.canMergeNextNode(nextBlock.getStartStmt()))
-      {
-        toBeRemoved.add(nextBlock);
-        crtBlock.setEndStmt(nextBlock.getStartStmt());
-      } else {
-        crtBlock = nextBlock;
-      }
-    }
-
-    sortedVectorBlocks.removeAll(toBeRemoved);
-    return sortedVectorBlocks;
-  }
-
-  /**
-   * Sort the vector blocks according to their position in the code.
-   *
-   * @param blocks Set of vector blocks
-   * @return List of ordered vector block.
-   */
-  private List<VectorBlock> sortBlockByLineOrder(Set<VectorBlock> blocks) {
-    List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
-    Collections.sort(sortedVectorBlocks, new Comparator<VectorBlock>() {
-      @Override
-      public int compare(VectorBlock s1, VectorBlock s2) {
-        if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
-          return -1;
-        } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
-          return 1;
-        }
-        return 0;
-      }
-    });
-    return sortedVectorBlocks;
   }
 
   /**
@@ -415,7 +365,7 @@ public class ScaCPUvectorizeGroup extends Sca {
           && shouldBePromoted(assign))
       {
         _arrayFieldsInOut.add(assign.getLhsName());
-        _temporaryFields.add(assign.getLhsName());
+        _temporaryFieldsToPromote.add(assign.getLhsName());
       }
     }
   }
