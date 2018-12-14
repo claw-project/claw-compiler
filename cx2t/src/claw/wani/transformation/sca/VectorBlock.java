@@ -148,7 +148,7 @@ public class VectorBlock {
    *
    * @return Set containing variables names.
    */
-  public Set<String> getReadAndWrittentVariables() {
+  public Set<String> getReadAndWrittenVariables() {
     if(_readAndWrittenVariables == null) {
       gatherUsedVariables();
     }

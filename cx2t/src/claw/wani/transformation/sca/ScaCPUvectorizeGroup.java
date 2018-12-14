@@ -96,16 +96,14 @@ public class ScaCPUvectorizeGroup extends Sca {
 
     detectIndirectPromotion(assignStatements);
 
-    Set<VectorBlock> blocks = flagIfStatementWithPromotion();
+    Set<VectorBlock> naiveBlocks = flagDoStatementLocation(assignStatements);
 
-    flagDoStatementLocation(assignStatements, blocks);
+    List<VectorBlock> mergedBlocks = (_applyFusion) ?
+        VectorBlock.mergeAdjacent(naiveBlocks) : new ArrayList<>(naiveBlocks);
 
-    List<VectorBlock> fusionBlocks = (_applyFusion) ?
-        VectorBlock.mergeAdjacent(blocks) : new ArrayList<>(blocks);
-
-    checkMissingPromotion(fusionBlocks);
+    checkMissingPromotion(mergedBlocks);
     if(_applyFusion) {
-      Set<String> noPromotion = controlPromotion(fusionBlocks);
+      Set<String> noPromotion = controlPromotion(mergedBlocks);
       _temporaryFieldsToPromote.removeAll(noPromotion);
     }
 
@@ -114,7 +112,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     }
 
     // Generate loops around statements flagged in previous stage
-    generateDoStatements(xcodeml, fusionBlocks);
+    generateDoStatements(xcodeml, mergedBlocks);
 
     // Generate the parallel region
     Directive.generateParallelClause(xcodeml,
@@ -134,7 +132,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     for(String var : _temporaryFieldsToPromote) {
       int usedInBlock = 0;
       for(VectorBlock block : blocks) {
-        if(block.getReadAndWrittentVariables().contains(var)) {
+        if(block.getReadAndWrittenVariables().contains(var)) {
           ++usedInBlock;
           if(usedInBlock > 1) {
             break;
@@ -210,7 +208,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     int nbBlockSharingVariable = 0;
     // Check if there is more than one block using the variable.
     for(VectorBlock block : blocks) {
-      if(block.getReadAndWrittentVariables().contains(var)) {
+      if(block.getReadAndWrittenVariables().contains(var)) {
         ++nbBlockSharingVariable;
         if(nbBlockSharingVariable > 1) {
           return true;
@@ -272,11 +270,13 @@ public class ScaCPUvectorizeGroup extends Sca {
    * should be inserted after variables promotion.
    *
    * @param assignStatements List of assignments.
-   * @param blocks           Set of vector blocks.
+   * @return Set of vector blocks as flag to do statement insertion location.
    */
-  private void flagDoStatementLocation(List<AssignStatement> assignStatements,
-                                       Set<VectorBlock> blocks)
+  private Set<VectorBlock> flagDoStatementLocation(List<AssignStatement>
+                                                       assignStatements)
   {
+    Set<VectorBlock> blocks = flagIfStatementWithPromotion();
+
     /* Iterate a second time over assign statements to flag places where to
      * insert the do statements */
     for(AssignStatement assign : assignStatements) {
@@ -344,6 +344,7 @@ public class ScaCPUvectorizeGroup extends Sca {
         blocks.add(new VectorBlock(assign));
       }
     }
+    return blocks;
   }
 
   /**
