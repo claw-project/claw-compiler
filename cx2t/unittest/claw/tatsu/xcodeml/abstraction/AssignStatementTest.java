@@ -4,7 +4,6 @@
  */
 package claw.tatsu.xcodeml.abstraction;
 
-import claw.tatsu.primitive.Function;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;

@@ -8,7 +8,6 @@ import claw.shenron.transformation.DependentTransformationGroup;
 import claw.shenron.transformation.IndependentTransformationGroup;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
-import claw.shenron.translator.AnalyzedPragma;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
