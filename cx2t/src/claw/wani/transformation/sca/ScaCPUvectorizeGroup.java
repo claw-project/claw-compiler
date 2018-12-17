@@ -246,14 +246,14 @@ public class ScaCPUvectorizeGroup extends Sca {
       {
         Xnode ancestor = condition.ancestor();
         Iterator<VectorBlock> iter = blocks.iterator();
-        boolean addHook = true;
+        boolean addFlaggedLocation = true;
         while(iter.hasNext()) {
           if(ancestor.isNestedIn(iter.next().getStartStmt())) {
-            addHook = false;
+            addFlaggedLocation = false;
             break;
           }
         }
-        if(addHook) {
+        if(addFlaggedLocation) {
           blocks.add(new VectorBlock(ancestor));
         }
       }
@@ -287,7 +287,7 @@ public class ScaCPUvectorizeGroup extends Sca {
         List<Xnode> ifStatements = assign.matchAllAncestor(Xcode.F_IF_STATEMENT,
             Xcode.F_FUNCTION_DEFINITION);
 
-        Xnode hookIfStmt = null;
+        Xnode flaggedIfStmt = null;
 
         Set<String> assignVars = assign.getVarNames();
         assignVars.retainAll(_arrayFieldsInOut);
@@ -298,34 +298,34 @@ public class ScaCPUvectorizeGroup extends Sca {
           {
             // Have to put the do statement around the if as the assignment
             // is conditional as well.
-            hookIfStmt = ifStmt;
+            flaggedIfStmt = ifStmt;
           }
         }
 
-        if(hookIfStmt != null) {
+        if(flaggedIfStmt != null) {
           wrapInDoStatement = false;
-          boolean addIfHook = true;
+          boolean addFlaggedIf = true;
 
-          // Get rid of previously flagged hook in this if body.
+          // Get rid of previously flagged location in this if body.
           Iterator<VectorBlock> iter = blocks.iterator();
           while(iter.hasNext()) {
             Xnode crt = iter.next().getStartStmt();
-            if(assign.isNestedIn(crt) || hookIfStmt.isNestedIn(crt)) {
-              addIfHook = false;
+            if(assign.isNestedIn(crt) || flaggedIfStmt.isNestedIn(crt)) {
+              addFlaggedIf = false;
             }
-            if(crt.isNestedIn(hookIfStmt)) {
+            if(crt.isNestedIn(flaggedIfStmt)) {
               iter.remove();
             }
           }
 
-          if(addIfHook) {
-            blocks.add(new VectorBlock(hookIfStmt));
+          if(addFlaggedIf) {
+            blocks.add(new VectorBlock(flaggedIfStmt));
           }
         }
       }
 
-      for(VectorBlock hook : blocks) {
-        if(assign.isNestedIn(hook.getStartStmt())) {
+      for(VectorBlock block : blocks) {
+        if(assign.isNestedIn(block.getStartStmt())) {
           wrapInDoStatement = false;
           break;
         }
