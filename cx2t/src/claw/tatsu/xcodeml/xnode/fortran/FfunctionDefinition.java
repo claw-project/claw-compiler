@@ -186,4 +186,83 @@ public class FfunctionDefinition extends Xnode {
     }
     return statements;
   }
+
+  /**
+   * Get all the function variables that are input/output parameters.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @return List of variables names that are function input/output.
+   */
+  public List<String> getPresentVariables(XcodeProgram xcodeml) {
+    return getVariables(xcodeml, true, false, true);
+  }
+
+  /**
+   * Get all the local variables in the function definition.
+   *
+   * @param xcodeml   Current XcodeML program unit.
+   * @param onlyArray If true, filter only arrays.
+   * @return List of variables names that are function local.
+   */
+  public List<String> getLocalVariables(XcodeProgram xcodeml, boolean onlyArray)
+  {
+    return getVariables(xcodeml, false, true, onlyArray);
+  }
+
+  /**
+   * Get variables declared in the function.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param parameters If true, parameters are returned.
+   * @param temporary  If true, local variables are returned.
+   * @param onlyArray  If true, only arrays are returned.
+   * @return List of variables names.
+   */
+  private List<String> getVariables(XcodeProgram xcodeml, boolean parameters,
+                                    boolean temporary, boolean onlyArray)
+  {
+    List<String> variables = new ArrayList<>();
+    List<Xnode> declarations = getDeclarationTable().values();
+    for(Xnode decl : declarations) {
+      if(decl.opcode() == Xcode.VAR_DECL) {
+        Xnode name = decl.matchSeq(Xcode.NAME);
+        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
+          continue; // Only check basic type
+        }
+        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if((parameters && isParameterVariable(bt, onlyArray))
+            || (temporary && isTemporaryVariable(bt, onlyArray)))
+        {
+            variables.add(name.value());
+        }
+      }
+    }
+    return variables;
+  }
+
+  /**
+   * Check if the variable is a parameter with intent.
+   *
+   * @param bt        FbasicType to be checked.
+   * @param onlyArray If true, check for arrays only.
+   * @return True if the variable is a parameter and pass the onlyArray filter.
+   */
+  private boolean isParameterVariable(FbasicType bt, boolean onlyArray) {
+    return bt != null && (bt.getIntent() == Intent.IN
+        || bt.getIntent() == Intent.OUT
+        || bt.getIntent() == Intent.INOUT) && (!onlyArray || bt.isArray());
+  }
+
+  /**
+   * Check if the variable is a temporary.
+   *
+   * @param bt        FbasicType to be checked.
+   * @param onlyArray If true, check for arrays only.
+   * @return True if the variable is a temporary and pass the onlyArray filter.
+   */
+  private boolean isTemporaryVariable(FbasicType bt, boolean onlyArray) {
+    return bt != null && bt.getIntent() == Intent.NONE
+        && (!onlyArray || bt.isArray());
+  }
+
 }
