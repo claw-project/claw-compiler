@@ -289,13 +289,7 @@ public class DimensionDefinition {
     InsertionPosition crtPos = InsertionPosition.BEFORE;
     for(DimensionDefinition dim : dimensions) {
       if(dim == DimensionDefinition.BASE_DIMENSION) {
-        if(hasMiddleInsertion && crtPos == InsertionPosition.BEFORE) {
-          crtPos = InsertionPosition.IN_MIDDLE;
-        } else if(crtPos == InsertionPosition.BEFORE) {
-          crtPos = InsertionPosition.AFTER;
-        } else if(crtPos == InsertionPosition.IN_MIDDLE) {
-          crtPos = InsertionPosition.AFTER;
-        }
+        crtPos = crtPos.getNext(hasMiddleInsertion);
       } else {
         dim.setInsertionPosition(crtPos);
       }
