@@ -732,13 +732,7 @@ public class ClawPragma extends AnalyzedPragma {
 
     for(String d : over) {
       if(d.equals(DimensionDefinition.BASE_DIM)) {
-        if(hasMiddleInsertion && crt == InsertionPosition.BEFORE) {
-          crt = InsertionPosition.IN_MIDDLE;
-        } else if(crt == InsertionPosition.BEFORE) {
-          crt = InsertionPosition.AFTER;
-        } else if(crt == InsertionPosition.IN_MIDDLE) {
-          crt = InsertionPosition.AFTER;
-        }
+        crt = crt.getNext(hasMiddleInsertion);
       } else {
 
         if(_localModelConfig.hasDimension(d)) {

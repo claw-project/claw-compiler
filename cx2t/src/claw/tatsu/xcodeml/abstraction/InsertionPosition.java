@@ -46,6 +46,21 @@ public enum InsertionPosition {
         BEFORE : _stringToEnum.get(value.toLowerCase());
   }
 
+  /**
+   * Get the next insertion position based on the current one and whether in
+   * middle insertion are allowed.
+   *
+   * @param hasMiddleInsertion True if in middle insertion are enabled.
+   * @return Next insertion position to be used.
+   */
+  public InsertionPosition getNext(boolean hasMiddleInsertion) {
+    if(hasMiddleInsertion && this == InsertionPosition.BEFORE) {
+      return InsertionPosition.IN_MIDDLE;
+    } else {
+      return InsertionPosition.AFTER;
+    }
+  }
+
   @Override
   public String toString() {
     return _value;
