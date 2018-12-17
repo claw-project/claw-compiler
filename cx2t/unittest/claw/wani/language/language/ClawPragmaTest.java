@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.*;
+import claw.wani.language.parser.ClawClause;
 import claw.wani.x2t.configuration.Configuration;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -103,23 +104,23 @@ public class ClawPragmaTest {
   {
     ClawPragma l = analyze(raw, ClawDirective.LOOP_FUSION);
     if(groupName != null) {
-      assertTrue(l.hasGroupClause());
+      assertTrue(l.hasClause(ClawClause.GROUP));
       assertEquals(groupName, l.getGroupValue());
     } else {
-      assertFalse(l.hasGroupClause());
+      assertFalse(l.hasClause(ClawClause.GROUP));
       assertNull(l.getGroupValue());
     }
     if(collapse) {
-      assertTrue(l.hasCollapseClause());
+      assertTrue(l.hasClause(ClawClause.COLLAPSE));
       assertEquals(n, l.getCollapseValue());
     } else {
-      assertFalse(l.hasCollapseClause());
+      assertFalse(l.hasClause(ClawClause.COLLAPSE));
     }
     if(constraint != null) {
-      assertTrue(l.hasConstraintClause());
+      assertTrue(l.hasClause(ClawClause.CONSTRAINT));
       assertEquals(constraint, l.getConstraintClauseValue());
     } else {
-      assertFalse(l.hasConstraintClause());
+      assertFalse(l.hasClause(ClawClause.CONSTRAINT));
     }
     assertTargets(l, targets);
   }
@@ -201,16 +202,16 @@ public class ClawPragmaTest {
     }
 
     if(parallel) {
-      assertTrue(l.hasParallelClause());
+      assertTrue(l.hasClause(ClawClause.PARALLEL));
     } else {
-      assertFalse(l.hasParallelClause());
+      assertFalse(l.hasClause(ClawClause.PARALLEL));
     }
 
     if(acc != null) {
-      assertTrue(l.hasAcceleratorClause());
+      assertTrue(l.hasClause(ClawClause.ACC));
       assertEquals(acc, l.getAcceleratorClauses());
     } else {
-      assertFalse(l.hasAcceleratorClause());
+      assertFalse(l.hasClause(ClawClause.ACC));
       assertNull(l.getAcceleratorClauses());
     }
 
@@ -225,13 +226,13 @@ public class ClawPragmaTest {
    */
   private void assertTargets(ClawPragma l, List<Target> targets) {
     if(targets != null && targets.size() > 0) {
-      assertTrue(l.hasTargetClause());
+      assertTrue(l.hasClause(ClawClause.TARGET));
       assertEquals(targets.size(), l.getTargetClauseValues().size());
       for(Target t : targets) {
         assertTrue(l.getTargetClauseValues().contains(t));
       }
     } else {
-      assertFalse(l.hasTargetClause());
+      assertFalse(l.hasClause(ClawClause.TARGET));
     }
   }
 
@@ -305,10 +306,10 @@ public class ClawPragmaTest {
     ClawPragma l = analyze(raw, ClawDirective.MODEL_DATA);
     assertNotNull(l);
     if(layoutId == null) {
-      assertFalse(l.hasLayoutClause());
+      assertFalse(l.hasClause(ClawClause.LAYOUT));
       assertNull(l.getLayoutValue());
     } else {
-      assertTrue(l.hasLayoutClause());
+      assertTrue(l.hasClause(ClawClause.LAYOUT));
       assertEquals(layoutId, l.getLayoutValue());
     }
   }
@@ -385,7 +386,7 @@ public class ClawPragmaTest {
         "i", "1", "10", "2", null);
     assertNotNull(l);
     map = l.getMappings().get(0);
-    assertTrue(l.hasParallelClause());
+    assertTrue(l.hasClause(ClawClause.PARALLEL));
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
     assertEquals("i", map.getMappedVariables().get(0).getArgMapping());
@@ -401,9 +402,9 @@ public class ClawPragmaTest {
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
-    assertTrue(l.hasFusionClause());
-    assertFalse(l.hasGroupClause());
-    assertFalse(l.hasParallelClause());
+    assertTrue(l.hasClause(ClawClause.FUSION));
+    assertFalse(l.hasClause(ClawClause.GROUP));
+    assertFalse(l.hasClause(ClawClause.PARALLEL));
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
     assertEquals(1, map.getMappingVariables().size());
@@ -420,8 +421,8 @@ public class ClawPragmaTest {
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
-    assertTrue(l.hasFusionClause());
-    assertTrue(l.hasGroupClause());
+    assertTrue(l.hasClause(ClawClause.FUSION));
+    assertTrue(l.hasClause(ClawClause.GROUP));
     assertEquals("j1", l.getGroupValue());
     map = l.getMappings().get(0);
     assertEquals(1, map.getMappedVariables().size());
@@ -439,9 +440,9 @@ public class ClawPragmaTest {
     assertNotNull(l);
     assertEquals(1, l.getMappings().size());
     assertNotNull(l.getMappings().get(0));
-    assertTrue(l.hasFusionClause());
-    assertTrue(l.hasGroupClause());
-    assertTrue(l.hasAcceleratorClause());
+    assertTrue(l.hasClause(ClawClause.FUSION));
+    assertTrue(l.hasClause(ClawClause.GROUP));
+    assertTrue(l.hasClause(ClawClause.ACC));
     assertEquals("loop gang vector", l.getAcceleratorClauses());
     assertEquals("j1", l.getGroupValue());
     map = l.getMappings().get(0);
@@ -536,10 +537,10 @@ public class ClawPragmaTest {
     assertEquals("j1", map4.getMappingVariables().get(0).getArgMapping());
     assertEquals("j1", map4.getMappingVariables().get(0).getFctMapping());
 
-    assertTrue(l.hasFusionClause());
-    assertTrue(l.hasGroupClause());
+    assertTrue(l.hasClause(ClawClause.FUSION));
+    assertTrue(l.hasClause(ClawClause.GROUP));
     assertEquals("coeth-j1", l.getGroupValue());
-    assertTrue(l.hasAcceleratorClause());
+    assertTrue(l.hasClause(ClawClause.ACC));
     assertEquals("loop gang vector", l.getAcceleratorClauses());
 
     analyzeValidClawLoopExtract(
@@ -662,13 +663,13 @@ public class ClawPragmaTest {
   {
     ClawPragma l = analyze(raw, ClawDirective.KCACHE);
     if(data != null) {
-      assertTrue(l.hasDataClause());
+      assertTrue(l.hasClause(ClawClause.DATA));
       assertEquals(data.size(), l.getDataClauseValues().size());
       for(int i = 0; i < data.size(); ++i) {
         assertEquals(data.get(i), l.getDataClauseValues().get(i));
       }
     } else {
-      assertFalse(l.hasDataClause());
+      assertFalse(l.hasClause(ClawClause.DATA));
     }
     if(offsets != null) {
       assertEquals(offsets.size(), l.getOffsets().size());
@@ -677,14 +678,14 @@ public class ClawPragmaTest {
       }
     }
     if(init) {
-      assertTrue(l.hasInitClause());
+      assertTrue(l.hasClause(ClawClause.INIT));
     } else {
-      assertFalse(l.hasInitClause());
+      assertFalse(l.hasClause(ClawClause.INIT));
     }
     if(hasPrivate) {
-      assertTrue(l.hasPrivateClause());
+      assertTrue(l.hasClause(ClawClause.PRIVATE));
     } else {
-      assertFalse(l.hasPrivateClause());
+      assertFalse(l.hasClause(ClawClause.PRIVATE));
     }
     assertTargets(l, targets);
   }
@@ -773,31 +774,31 @@ public class ClawPragmaTest {
     ClawPragma l = analyze(raw, ClawDirective.ARRAY_TRANSFORM);
     assertNotNull(l);
     if(fusion) {
-      assertTrue(l.hasFusionClause());
+      assertTrue(l.hasClause(ClawClause.FUSION));
       assertEquals(fusionGroup, l.getGroupValue());
     } else {
-      assertFalse(l.hasFusionClause());
+      assertFalse(l.hasClause(ClawClause.FUSION));
       assertNull(l.getGroupValue());
     }
     if(parallel) {
-      assertTrue(l.hasParallelClause());
+      assertTrue(l.hasClause(ClawClause.PARALLEL));
     } else {
-      assertFalse(l.hasParallelClause());
+      assertFalse(l.hasClause(ClawClause.PARALLEL));
     }
     if(acc != null) {
-      assertTrue(l.hasAcceleratorClause());
+      assertTrue(l.hasClause(ClawClause.ACC));
       assertEquals(acc, l.getAcceleratorClauses());
     } else {
-      assertFalse(l.hasAcceleratorClause());
+      assertFalse(l.hasClause(ClawClause.ACC));
     }
     if(inducNames != null) {
-      assertTrue(l.hasInductionClause());
+      assertTrue(l.hasClause(ClawClause.INDUCTION));
       assertEquals(inducNames.size(), l.getInductionValues().size());
       for(int i = 0; i < inducNames.size(); ++i) {
         assertEquals(inducNames.get(i), l.getInductionValues().get(i));
       }
     } else {
-      assertFalse(l.hasInductionClause());
+      assertFalse(l.hasClause(ClawClause.INDUCTION));
     }
     assertTargets(l, targets);
   }
@@ -907,9 +908,9 @@ public class ClawPragmaTest {
     }
 
     if(interchange) {
-      assertTrue(l.hasInterchangeClause());
+      assertTrue(l.hasClause(ClawClause.INTERCHANGE));
     } else {
-      assertFalse(l.hasInterchangeClause());
+      assertFalse(l.hasClause(ClawClause.INTERCHANGE));
     }
 
     if(indexes != null) {
@@ -919,7 +920,7 @@ public class ClawPragmaTest {
     }
 
     if(reshape) {
-      assertTrue(l.hasReshapeClause());
+      assertTrue(l.hasClause(ClawClause.RESHAPE));
       assertEquals(infos.size(), l.getReshapeClauseValues().size());
       for(int i = 0; i < infos.size(); ++i) {
         assertEquals(infos.get(i).getArrayName(),
@@ -935,31 +936,31 @@ public class ClawPragmaTest {
         }
       }
     } else {
-      assertFalse(l.hasReshapeClause());
+      assertFalse(l.hasClause(ClawClause.RESHAPE));
     }
     assertTargets(l, targets);
 
-    assertEquals(fusion, l.hasFusionClause());
+    assertEquals(fusion, l.hasClause(ClawClause.FUSION));
 
     if(group != null) {
-      assertTrue(l.hasGroupClause());
+      assertTrue(l.hasClause(ClawClause.GROUP));
       assertEquals(group, l.getGroupValue());
     } else {
-      assertFalse(l.hasGroupClause());
+      assertFalse(l.hasClause(ClawClause.GROUP));
     }
 
     if(collapse > 0) {
-      assertTrue(l.hasCollapseClause());
+      assertTrue(l.hasClause(ClawClause.COLLAPSE));
       assertEquals(collapse, l.getCollapseValue());
     } else {
-      assertFalse(l.hasCollapseClause());
+      assertFalse(l.hasClause(ClawClause.COLLAPSE));
     }
 
     if(cleanup) {
-      assertTrue(l.hasCleanupClause());
+      assertTrue(l.hasClause(ClawClause.CLEANUP));
       assertSame(cleanupValue, l.getCleanupClauseValue());
     } else {
-      assertFalse(l.hasCleanupClause());
+      assertFalse(l.hasClause(ClawClause.CLEANUP));
     }
   }
 
@@ -1111,7 +1112,7 @@ public class ClawPragmaTest {
     ClawPragma l = analyze(raw, ClawDirective.SCA);
     if(datas != null) {
       assertEquals(datas.size(), dimensions.size());
-      assertTrue(l.hasDataOverClause());
+      assertTrue(l.hasClause(ClawClause.DATA_OVER));
 
       for(int j = 0; j < datas.size(); ++j) {
         List<String> data = datas.get(j);
@@ -1367,18 +1368,18 @@ public class ClawPragmaTest {
                                             boolean createClause)
   {
     ClawPragma l = analyze(raw, ClawDirective.SCA);
-    assertEquals(createClause, l.hasCreateClause());
+    assertEquals(createClause, l.hasClause(ClawClause.CREATE));
     if(update != null) {
-      assertTrue(l.hasUpdateClause());
+      assertTrue(l.hasClause(ClawClause.UPDATE));
       assertEquals(update, l.getUpdateClauseValue());
     } else {
-      assertFalse(l.hasUpdateClause());
+      assertFalse(l.hasClause(ClawClause.UPDATE));
     }
     if(copy != null) {
-      assertTrue(l.hasCopyClause());
+      assertTrue(l.hasClause(ClawClause.COPY));
       assertEquals(copy, l.getCopyClauseValue());
     } else {
-      assertFalse(l.hasCopyClause());
+      assertFalse(l.hasClause(ClawClause.COPY));
     }
   }
 
@@ -1403,7 +1404,7 @@ public class ClawPragmaTest {
     assertEquals(0, l.getErrors().size());
 
     if(data != null) {
-      assertTrue(l.hasDataOverClause());
+      assertTrue(l.hasClause(ClawClause.DATA_OVER));
       assertEquals(data.size(), l.getDataOverClauseValues().size());
       for(int i = 0; i < data.size(); ++i) {
         assertTrue(l.getDataOverClauseValues().contains(data.get(i)));
@@ -1436,7 +1437,7 @@ public class ClawPragmaTest {
     }
 
     if(scalarData != null) {
-      assertTrue(l.hasScalarClause());
+      assertTrue(l.hasClause(ClawClause.SCALAR));
       assertEquals(scalarData.size(), l.getScalarClauseValues().size());
       for(int i = 0; i < scalarData.size(); ++i) {
         assertEquals(scalarData.get(i), l.getScalarClauseValues().get(i));
@@ -1444,22 +1445,22 @@ public class ClawPragmaTest {
     }
 
     if(data == null && dimensions == null && !isModelConfig) {
-      assertTrue(l.hasForwardClause());
+      assertTrue(l.hasClause(ClawClause.FORWARD));
     }
 
     if(copyClause == null) {
-      assertFalse(l.hasCopyClause());
+      assertFalse(l.hasClause(ClawClause.COPY));
       assertNull(l.getCopyClauseValue());
     } else {
-      assertTrue(l.hasCopyClause());
+      assertTrue(l.hasClause(ClawClause.COPY));
       assertEquals(copyClause, l.getCopyClauseValue());
     }
 
     if(updateClause == null) {
-      assertFalse(l.hasUpdateClause());
+      assertFalse(l.hasClause(ClawClause.UPDATE));
       assertNull(l.getUpdateClauseValue());
     } else {
-      assertTrue(l.hasUpdateClause());
+      assertTrue(l.hasClause(ClawClause.UPDATE));
       assertEquals(updateClause, l.getUpdateClauseValue());
     }
   }

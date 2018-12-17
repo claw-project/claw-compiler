@@ -15,6 +15,7 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.ClawConstant;
 import claw.wani.language.ClawConstraint;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.parser.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class LoopFusion extends ClawTransformation {
    */
   public LoopFusion(ClawPragma directive) {
     super(directive);
-    if(_claw.hasGroupClause()) {
+    if(_claw.hasClause(ClawClause.FUSION)) {
       _groupClauseLabel = directive.getGroupValue();
     }
   }
@@ -60,7 +61,7 @@ public class LoopFusion extends ClawTransformation {
   public LoopFusion(Xnode loop, ClawPragma ghostDirective) {
     super(ghostDirective);
     _doStmt = new NestedDoStatement(loop, 1);
-    if(_claw.hasGroupClause()) {
+    if(_claw.hasClause(ClawClause.GROUP)) {
       _groupClauseLabel = ghostDirective.getGroupValue();
     }
     if(_claw.getPragma() != null) {
@@ -89,7 +90,7 @@ public class LoopFusion extends ClawTransformation {
     _doStmt = new NestedDoStatement(outerLoop, _claw.getCollapseValue());
 
     // With collapse clause
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0
+    if(_claw.hasClause(ClawClause.COLLAPSE) && _claw.getCollapseValue() > 0
         && _claw.getCollapseValue() > _doStmt.size())
     {
       xcodeml.addError("not enough do statements for collapse value",
@@ -122,7 +123,7 @@ public class LoopFusion extends ClawTransformation {
     LoopFusion other = (LoopFusion) transformation;
 
     // Apply different transformation if the collapse clause is used
-    if(_claw != null && _claw.hasCollapseClause()
+    if(_claw != null && _claw.hasClause(ClawClause.COLLAPSE)
         && _claw.getCollapseValue() > 0)
     {
       // Merge the most inner loop with the most inner loop of the other fusion
@@ -174,8 +175,8 @@ public class LoopFusion extends ClawTransformation {
     }
 
     ClawConstraint currentConstraint = ClawConstraint.DIRECT;
-    if(_claw.hasConstraintClause()
-        && other.getLanguageInfo().hasConstraintClause())
+    if(_claw.hasClause(ClawClause.CONSTRAINT)
+        && other.getLanguageInfo().hasClause(ClawClause.CONSTRAINT))
     {
       // Check the constraint clause. Must be identical if set.
       if(_claw.getConstraintClauseValue() !=
@@ -185,8 +186,8 @@ public class LoopFusion extends ClawTransformation {
       }
       currentConstraint = _claw.getConstraintClauseValue();
     } else {
-      if(_claw.hasConstraintClause()
-          || other.getLanguageInfo().hasConstraintClause())
+      if(_claw.hasClause(ClawClause.CONSTRAINT)
+          || other.getLanguageInfo().hasClause(ClawClause.CONSTRAINT))
       {
         // Constraint are not consistent
         return false;
@@ -216,7 +217,7 @@ public class LoopFusion extends ClawTransformation {
       return false;
     }
 
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
+    if(_claw.hasClause(ClawClause.COLLAPSE) && _claw.getCollapseValue() > 0) {
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
         if(!Loop.hasSameIndexRange(_doStmt.get(i),
             other.getNestedDoStmt().get(i)))

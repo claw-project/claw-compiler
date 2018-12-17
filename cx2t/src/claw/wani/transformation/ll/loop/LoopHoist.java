@@ -18,6 +18,7 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.parser.ClawClause;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -127,7 +128,7 @@ public class LoopHoist extends ClawBlockTransformation {
     }
 
     // Check reshape mandatory points
-    if(_clawStart.hasReshapeClause()) {
+    if(_clawStart.hasClause(ClawClause.RESHAPE)) {
       FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
         xcodeml.addError("Unable to matchSeq the function/subroutine/module " +
@@ -201,13 +202,13 @@ public class LoopHoist extends ClawBlockTransformation {
         hoisted.getOuterStatement());
 
     // Apply cleanup clause
-    if(_clawStart.hasCleanupClause()) {
+    if(_clawStart.hasClause(ClawClause.CLEANUP)) {
       Pragma.remove(_clawStart.getCleanupClauseValue(),
           _clawStart.getPragma(), _clawEnd.getPragma());
     }
 
     // Apply reshape clause
-    if(_clawStart.hasReshapeClause()) {
+    if(_clawStart.hasClause(ClawClause.RESHAPE)) {
       FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
       if(fctDef == null) {
         throw new IllegalTransformationException("Cannot apply reshape clause."

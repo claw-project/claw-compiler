@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.parser.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class LoopInterchange extends ClawTransformation {
     Loop.reorder(_doStmts, _claw.getIndexes());
 
     // Generate directive pragmas if needed
-    if(_claw.hasAcceleratorClause()) {
+    if(_claw.hasClause(ClawClause.ACC)) {
       /* TODO see TODO in ArrayTransform
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
@@ -69,7 +70,7 @@ public class LoopInterchange extends ClawTransformation {
           _claw.getAcceleratorClauses());
     }
 
-    if(_claw.hasParallelClause()) {
+    if(_claw.hasClause(ClawClause.PARALLEL)) {
       Directive.generateParallelClause(xcodeml, _doStmts.getOuterStatement(),
           _doStmts.getOuterStatement());
     }

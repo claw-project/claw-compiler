@@ -1,0 +1,27 @@
+package claw.wani.language.parser;
+
+public enum ClawClause {
+  ACC,
+  COLLAPSE,
+  DATA,
+  DATA_OVER,
+  DIMENSION,
+  FUSION,
+  GROUP,
+  INDUCTION,
+  INIT,
+  INTERCHANGE,
+  PARALLEL,
+  PRIVATE,
+  RESHAPE,
+  FORWARD,
+  COPY,
+  UPDATE,
+  TARGET,
+  CONSTRAINT,
+  SCALAR,
+  CREATE,
+  CLEANUP,
+  LAYOUT,
+  NO_PROMOTE
+}

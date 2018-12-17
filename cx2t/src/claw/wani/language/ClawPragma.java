@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.parser.ClawClause;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
 import claw.wani.x2t.configuration.Configuration;
@@ -36,18 +37,24 @@ public class ClawPragma extends AnalyzedPragma {
   private static final String IGNORE = "ignore";
 
   private ClawDirective _directive;
+  private final Set<ClawClause> _clauses = new HashSet<>();
 
   // Clauses values
+  private boolean _hasIndexesValue;
+
   private String _accClausesValue;
   private String _arrayName;
+  private String _groupClauseValue;
+  private String _fctName;
+  private String _layoutValue;
+
   private int _collapseClauseValue;
   private List<String> _dataValues;
-  private String _groupClauseValue;
   private List<String> _fctCallParameters;
-  private String _fctName;
   private List<String> _hoistInductionValues;
   private List<String> _indexesValues;
   private List<String> _inductionClauseValues;
+
   private List<ClawMapping> _mappingValues;
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
@@ -61,37 +68,16 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
   private CompilerDirective _cleanupClauseValue;
-  private String _layoutValue;
+
+  //
   private ModelConfig _localModelConfig;
   private List<String> _errors = new ArrayList<>();
-
-  // Clauses flags
-  private boolean _hasAccClause;
-  private boolean _hasCollapseClause;
-  private boolean _hasDataClause;
-  private boolean _hasDataOverClause;
-  private boolean _hasDimensionClause;
-  private boolean _hasFusionClause;
-  private boolean _hasGroupClause;
-  private boolean _hasIndexesValue;
-  private boolean _hasInductionClause;
-  private boolean _hasInitClause;
-  private boolean _hasInterchangeClause;
-  private boolean _hasParallelClause;
-  private boolean _hasPrivateClause;
-  private boolean _hasReshapeClause;
-  private boolean _hasForward;
-  private boolean _hasCopyClause;
-  private boolean _hasUpdateClause;
-  private boolean _hasTargetClause;
-  private boolean _hasConstraintClause;
-  private boolean _hasScalarClause;
-  private boolean _hasCreateClause;
-  private boolean _hasCleanupClause;
-  private boolean _hasLayoutClause;
-  private boolean _hasNoPromoteClause;
-
   private boolean _scaModelConfig;
+
+
+
+
+
 
   /**
    * Constructs an empty ClawPragma section.
@@ -110,6 +96,14 @@ public class ClawPragma extends AnalyzedPragma {
   public ClawPragma(Xnode pragma) {
     super(pragma);
     resetVariables();
+  }
+
+  public boolean hasClause(ClawClause clause) {
+    return _clauses.contains(clause);
+  }
+
+  public void setClause(ClawClause clause) {
+    _clauses.add(clause);
   }
 
   /**
@@ -226,13 +220,13 @@ public class ClawPragma extends AnalyzedPragma {
   public static ClawPragma createLoopFusionLanguage(ClawPragma master) {
     ClawPragma l = new ClawPragma();
     l.setDirective(ClawDirective.LOOP_FUSION);
-    if(master.hasGroupClause()) {
+    if(master.hasClause(ClawClause.GROUP)) {
       l.setGroupClause(master.getGroupValue());
     }
-    if(master.hasCollapseClause()) {
+    if(master.hasClause(ClawClause.COLLAPSE)) {
       l.setCollapseClause(master.getCollapseValue());
     }
-    if(master.hasConstraintClause()) {
+    if(master.hasClause(ClawClause.CONSTRAINT)) {
       l.setConstraintClauseValue(master.getConstraintClauseValue());
     }
     l.attachPragma(master.getPragma());
@@ -302,30 +296,7 @@ public class ClawPragma extends AnalyzedPragma {
     _noPromoteValues = null;
 
     // Clauses flags members
-    _hasAccClause = false;
-    _hasCollapseClause = false;
-    _hasCopyClause = false;
-    _hasDataClause = false;
-    _hasDataOverClause = false;
-    _hasDimensionClause = false;
-    _hasFusionClause = false;
-    _hasForward = false;
-    _hasGroupClause = false;
-    _hasIndexesValue = false;
-    _hasInductionClause = false;
-    _hasInitClause = false;
-    _hasInterchangeClause = false;
-    _hasParallelClause = false;
-    _hasPrivateClause = false;
-    _hasReshapeClause = false;
-    _hasUpdateClause = false;
-    _hasTargetClause = false;
-    _hasConstraintClause = false;
-    _hasScalarClause = false;
-    _hasCreateClause = false;
-    _hasCleanupClause = false;
-    _hasLayoutClause = false;
-    _hasNoPromoteClause = false;
+    _clauses.clear();
 
     // General members
     _directive = null;
@@ -339,22 +310,13 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Check whether a group clause was specified.
-   *
-   * @return True if group clause was specified.
-   */
-  public boolean hasGroupClause() {
-    return _hasGroupClause;
-  }
-
-  /**
    * Set the group name and hasGroupClause to true
    *
    * @param groupName The group name defined in the group clause.
    */
   public void setGroupClause(String groupName) {
     if(groupName != null) {
-      _hasGroupClause = true;
+      setClause(ClawClause.GROUP);
       _groupClauseValue = groupName;
     }
   }
@@ -366,15 +328,6 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public String getGroupValue() {
     return _groupClauseValue;
-  }
-
-  /**
-   * Check whether the collapse clause is used.
-   *
-   * @return True if the collapse clause if used.
-   */
-  public boolean hasCollapseClause() {
-    return _hasCollapseClause;
   }
 
   /**
@@ -396,7 +349,7 @@ public class ClawPragma extends AnalyzedPragma {
    */
   private void setCollapseClause(int n) {
     if(n > 1) {
-      _hasCollapseClause = true;
+      setClause(ClawClause.COLLAPSE);
       _collapseClauseValue = n;
     }
   }
@@ -477,47 +430,6 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Enable the fusion clause for the current directive.
-   */
-  public void setFusionClause() {
-    _hasFusionClause = true;
-  }
-
-  /**
-   * Check whether the current directive has the fusion clause enabled.
-   *
-   * @return True if the fusion clause is enabled.
-   */
-  public boolean hasFusionClause() {
-    return _hasFusionClause;
-  }
-
-  /**
-   * Enable the parallel clause for the current directive.
-   */
-  public void setParallelClause() {
-    _hasParallelClause = true;
-  }
-
-  /**
-   * Check whether the current directive has the parallel clause enabled.
-   *
-   * @return True if the parallel clause is enabled.
-   */
-  public boolean hasParallelClause() {
-    return _hasParallelClause;
-  }
-
-  /**
-   * Check whether the current directive has the directive clause enabled.
-   *
-   * @return True if the directive clause is enabled.
-   */
-  public boolean hasAcceleratorClause() {
-    return _hasAccClause;
-  }
-
-  /**
    * Get the directive clauses extracted from the directive clause.
    *
    * @return Accelerator clauses as a String.
@@ -533,7 +445,7 @@ public class ClawPragma extends AnalyzedPragma {
    * @param clauses Accelerator clauses extracted from the directive clause.
    */
   public void setAcceleratorClauses(String clauses) {
-    _hasAccClause = true;
+    setClause(ClawClause.ACC);
     _accClausesValue = clauses;
   }
 
@@ -555,22 +467,6 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public void setOffsets(List<Integer> offsets) {
     _offsetValues = offsets;
-  }
-
-  /**
-   * Check whether the interchange clause is used.
-   *
-   * @return True if the interchange clause if used.
-   */
-  public boolean hasInterchangeClause() {
-    return _hasInterchangeClause;
-  }
-
-  /**
-   * Set the interchange clause as used.
-   */
-  public void setInterchangeClause() {
-    _hasInterchangeClause = true;
   }
 
   // Directive generic method
@@ -618,17 +514,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param names List of induction name extracted from the clause.
    */
   public void setInductionClause(List<String> names) {
-    _hasInductionClause = true;
+    setClause(ClawClause.INDUCTION);
     _inductionClauseValues = names;
-  }
-
-  /**
-   * Check whether the current directive has the induction clause enabled.
-   *
-   * @return True if the induction clause is enabled.
-   */
-  public boolean hasInductionClause() {
-    return _hasInductionClause;
   }
 
   /**
@@ -641,22 +528,13 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Check whether the current directive has the induction clause enabled.
-   *
-   * @return True if the data clause is enabled.
-   */
-  public boolean hasDataClause() {
-    return _hasDataClause;
-  }
-
-  /**
    * Enable the data clause for the current directive and set the extracted
    * identifiers value.
    *
    * @param data List of identifiers extracted from the clause.
    */
   public void setDataClause(List<String> data) {
-    _hasDataClause = true;
+    setClause(ClawClause.DATA);
     _dataValues = data;
   }
 
@@ -678,7 +556,7 @@ public class ClawPragma extends AnalyzedPragma {
    * @param over List of dimension used in the over clause.
    */
   public void processDataOverClauses(List<String> data, List<String> over) {
-    _hasDataOverClause = true;
+    setClause(ClawClause.DATA_OVER);
     if(_overDataValues == null) {
       _overDataValues = new HashSet<>();
     }
@@ -794,15 +672,6 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Check whether the current directive has the data over clause enabled.
-   *
-   * @return True if the data over clause is enabled.
-   */
-  public boolean hasDataOverClause() {
-    return _hasDataOverClause;
-  }
-
-  /**
    * Get the data values extracted from the data over clause.
    *
    * @return Array identifier.
@@ -817,17 +686,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param data List of identifier declared in the scalar clause.
    */
   public void setScalarClause(List<String> data) {
-    _hasScalarClause = true;
+    setClause(ClawClause.SCALAR);
     _scalarValues = data;
-  }
-
-  /**
-   * Check whether the current directly has the nopromote clause enabled.
-   *
-   * @return True if the nopromote clause is enabled.
-   */
-  public boolean hasNoPromoteClause() {
-    return _hasNoPromoteClause;
   }
 
   /**
@@ -845,17 +705,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param data List of identifier declared in the nopromote clause.
    */
   public void setNoPromoteClause(List<String> data) {
-    _hasNoPromoteClause = true;
+    setClause(ClawClause.NO_PROMOTE);
     _noPromoteValues = data;
-  }
-
-  /**
-   * Check whether the current directly has the scalar clause enabled.
-   *
-   * @return True if the scalar clause is enabled.
-   */
-  public boolean hasScalarClause() {
-    return _hasScalarClause;
   }
 
   /**
@@ -865,38 +716,6 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public List<String> getScalarClauseValues() {
     return _scalarValues;
-  }
-
-  /**
-   * Check whether the init clause is used.
-   *
-   * @return True if the init clause is used.
-   */
-  public boolean hasInitClause() {
-    return _hasInitClause;
-  }
-
-  /**
-   * Set the init clause flag.
-   */
-  public void setInitClause() {
-    _hasInitClause = true;
-  }
-
-  /**
-   * Check whether the private clause is used.
-   *
-   * @return True if the private clause is used.
-   */
-  public boolean hasPrivateClause() {
-    return _hasPrivateClause;
-  }
-
-  /**
-   * Set the private clause flag.
-   */
-  public void setPrivateClause() {
-    _hasPrivateClause = true;
   }
 
   /**
@@ -970,42 +789,8 @@ public class ClawPragma extends AnalyzedPragma {
    *              information from the reshape clause.
    */
   public void setReshapeClauseValues(List<ReshapeInfo> infos) {
-    _hasReshapeClause = true;
+    setClause(ClawClause.RESHAPE);
     _reshapeInfos = infos;
-  }
-
-  /**
-   * Check whether the reshape clause is used.
-   *
-   * @return True if the reshape clause is used.
-   */
-  public boolean hasReshapeClause() {
-    return _hasReshapeClause;
-  }
-
-  /**
-   * Set the forward clause.
-   */
-  public void setForwardClause() {
-    _hasForward = true;
-  }
-
-  /**
-   * Check whether the forward clause is used.
-   *
-   * @return True if the forward clause is used.
-   */
-  public boolean hasForwardClause() {
-    return _hasForward;
-  }
-
-  /**
-   * Check whether the dimension clause is used.
-   *
-   * @return True if the dimension clause is used.
-   */
-  public boolean hasDimensionClause() {
-    return _hasDimensionClause;
   }
 
   /**
@@ -1015,17 +800,8 @@ public class ClawPragma extends AnalyzedPragma {
    *                  extracted in the clause.
    */
   public void addDimension(DimensionDefinition dimension) {
-    _hasDimensionClause = true;
+    setClause(ClawClause.DIMENSION);
     _localModelConfig.putDimension(dimension);
-  }
-
-  /**
-   * Check whether the copy clause is used.
-   *
-   * @return True if the copy clause is used.
-   */
-  public boolean hasCopyClause() {
-    return _hasCopyClause;
   }
 
   /**
@@ -1043,17 +819,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param value New copy clause value.
    */
   public void setCopyClauseValue(DataMovement value) {
-    _hasCopyClause = true;
+    setClause(ClawClause.COPY);
     _copyClauseValue = value;
-  }
-
-  /**
-   * Check whether the update clause is used.
-   *
-   * @return True if the update clause is used.
-   */
-  public boolean hasUpdateClause() {
-    return _hasUpdateClause;
   }
 
   /**
@@ -1071,17 +838,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param value New update clause value.
    */
   public void setUpdateClauseValue(DataMovement value) {
-    _hasUpdateClause = true;
+    setClause(ClawClause.UPDATE);
     _updateClauseValue = value;
-  }
-
-  /**
-   * Check whether the target clause is used.
-   *
-   * @return True if the target clause is used.
-   */
-  public boolean hasTargetClause() {
-    return _hasTargetClause;
   }
 
   /**
@@ -1099,17 +857,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param values New target clause values.
    */
   public void setTargetClauseValue(List<Target> values) {
-    _hasTargetClause = true;
+    setClause(ClawClause.TARGET);
     _targetClauseValues = values;
-  }
-
-  /**
-   * Check whether the constraint clause is used.
-   *
-   * @return True if the constraint clause is used.
-   */
-  public boolean hasConstraintClause() {
-    return _hasConstraintClause;
   }
 
   /**
@@ -1127,7 +876,7 @@ public class ClawPragma extends AnalyzedPragma {
    * @param value New constraint clause value.
    */
   public void setConstraintClauseValue(ClawConstraint value) {
-    _hasConstraintClause = true;
+    setClause(ClawClause.CONSTRAINT);
     _constraintClauseValue = value;
   }
 
@@ -1153,31 +902,6 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Check whether the create clause is used.
-   *
-   * @return True if the create clause is used.
-   */
-  public boolean hasCreateClause() {
-    return _hasCreateClause;
-  }
-
-  /**
-   * Enable the create clause.
-   */
-  public void setCreateClause() {
-    _hasCreateClause = true;
-  }
-
-  /**
-   * Check whether the cleanup clause is used.
-   *
-   * @return True if the cleanup clause is used.
-   */
-  public boolean hasCleanupClause() {
-    return _hasCleanupClause;
-  }
-
-  /**
    * Get the cleanup clause value.
    *
    * @return Cleanup clause value. NONE means both OpenACC and OpenMP.
@@ -1192,17 +916,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @param value New compiler directive clause value.
    */
   public void setCleanupClauseValue(CompilerDirective value) {
-    _hasCleanupClause = true;
+    setClause(ClawClause.CLEANUP);
     _cleanupClauseValue = value;
-  }
-
-  /**
-   * Check whether the layout clause is used.
-   *
-   * @return True if the layout clause is used.
-   */
-  public boolean hasLayoutClause() {
-    return _hasLayoutClause;
   }
 
   /**
@@ -1220,7 +935,7 @@ public class ClawPragma extends AnalyzedPragma {
    * @param value New compiler directive clause value.
    */
   public void setLayoutClause(String value) {
-    _hasLayoutClause = true;
+    setClause(ClawClause.LAYOUT);
     _layoutValue = value;
   }
 
