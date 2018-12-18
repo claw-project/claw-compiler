@@ -94,7 +94,7 @@ directive[ClawPragma l]
   // loop-hoist directive
   | LOOP_HOIST '(' ids_list[o] ')' loop_hoist_clauses[$l] EOF
     {
-      $l.setHoistInductionVars(o);
+      $l.setValues(ClawClause.HOIST_INDUCTIONS, o);
       $l.setDirective(ClawDirective.LOOP_HOIST);
     }
   | END LOOP_HOIST EOF
@@ -108,9 +108,9 @@ directive[ClawPragma l]
     '(' identifiers_list[o] ')' (target_clause[$l])? EOF
     {
       $l.setDirective(ClawDirective.ARRAY_TO_CALL);
-      $l.setFctParams(o);
-      $l.setFctName($fct_name.text);
-      $l.setArrayName($array_name.text);
+      $l.setValues(ClawClause.FCT_PARAMETERS, o);
+      $l.setValue(ClawClause.FCT_NAME, $fct_name.text);
+      $l.setValue(ClawClause.ARRAY_NAME, $array_name.text);
     }
 
    // SCA (parallelize deprecated) directive
@@ -171,7 +171,7 @@ directive[ClawPragma l]
    | MODEL_DATA LAYOUT '(' layout_id=IDENTIFIER ')' EOF
      {
        $l.setDirective(ClawDirective.MODEL_DATA);
-       $l.setLayoutClause($layout_id.text);
+       $l.setValue(ClawClause.LAYOUT, $layout_id.text);
      }
    | END MODEL_DATA EOF
      {
@@ -235,7 +235,7 @@ data_over_clause[ClawPragma l]
 :
     SCALAR '(' ids_list[dataLst] ')'
     {
-      $l.setScalarClause(dataLst);
+      $l.setValues(ClawClause.SCALAR, dataLst);
     }
   | DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
     {
@@ -243,14 +243,14 @@ data_over_clause[ClawPragma l]
     }
   | NOPROMOTE '(' ids_list[dataLst] ')'
     {
-      $l.setNoPromoteClause(dataLst);
+      $l.setValues(ClawClause.NO_PROMOTE, dataLst);
     }
 ;
 
 // group clause
 group_clause[ClawPragma l]:
     GROUP '(' group_name=IDENTIFIER ')'
-    { $l.setGroupClause($group_name.text); }
+    { $l.setValue(ClawClause.GROUP, $group_name.text); }
 ;
 
 // collapse clause
@@ -285,7 +285,7 @@ acc_clause[ClawPragma l]
   }
   :
     ACC '(' identifiers[tempAcc] ')'
-    { $l.setAcceleratorClauses(Utility.join(" ", tempAcc)); }
+    { $l.setValue(ClawClause.ACC, Utility.join(" ", tempAcc)); }
 ;
 
 // interchange clause
@@ -299,7 +299,9 @@ induction_clause[ClawPragma l]
     List<String> temp = new ArrayList<>();
   }
   :
-    INDUCTION '(' ids_list[temp] ')' { $l.setInductionClause(temp); }
+    INDUCTION '(' ids_list[temp] ')' {
+        $l.setValues(ClawClause.INDUCTION, temp);
+    }
 ;
 
 // data clause
@@ -308,7 +310,7 @@ data_clause[ClawPragma l]
     List<String> temp = new ArrayList<>();
   }
   :
-    DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
+    DATA '(' ids_list[temp] ')' { $l.setValues(ClawClause.DATA, temp); }
 ;
 
 // private clause
@@ -380,7 +382,9 @@ indexes_option[ClawPragma l]
     List<String> indexes = new ArrayList();
   }
   :
-    '(' ids_list[indexes] ')' { $l.setIndexes(indexes); }
+    '(' ids_list[indexes] ')' {
+        $l.setValues(ClawClause.INTERCHANGE_INDEXES, indexes);
+     }
   | /* empty */
 ;
 

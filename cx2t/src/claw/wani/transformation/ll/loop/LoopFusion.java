@@ -47,7 +47,7 @@ public class LoopFusion extends ClawTransformation {
   public LoopFusion(ClawPragma directive) {
     super(directive);
     if(_claw.hasClause(ClawClause.FUSION)) {
-      _groupClauseLabel = directive.getGroupValue();
+      _groupClauseLabel = directive.value(ClawClause.GROUP);
     }
   }
 
@@ -62,7 +62,7 @@ public class LoopFusion extends ClawTransformation {
     super(ghostDirective);
     _doStmt = new NestedDoStatement(loop, 1);
     if(_claw.hasClause(ClawClause.GROUP)) {
-      _groupClauseLabel = ghostDirective.getGroupValue();
+      _groupClauseLabel = ghostDirective.value(ClawClause.GROUP);
     }
     if(_claw.getPragma() != null) {
       setStartLine(ghostDirective.getPragma().lineNo());

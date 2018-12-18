@@ -380,7 +380,8 @@ public class ClawTranslator implements Translator {
       ClawPragma l = ClawPragma.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       addTransformation(xcodeml, interchange);
-      Message.debug("Loop interchange added: " + claw.getIndexes());
+      Message.debug("Loop interchange added: " +
+          claw.values(ClawClause.INTERCHANGE_INDEXES));
     }
   }
 
@@ -404,7 +405,8 @@ public class ClawTranslator implements Translator {
     {
       ClawPragma l = ClawPragma.createLoopFusionLanguage(claw);
       addTransformation(xcodeml, new LoopFusion(stmt, l));
-      Message.debug("Loop fusion added: " + claw.getGroupValue());
+      Message.debug("Loop fusion added: " +
+          claw.value(ClawClause.GROUP));
     }
   }
 

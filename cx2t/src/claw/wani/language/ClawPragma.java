@@ -38,31 +38,19 @@ public class ClawPragma extends AnalyzedPragma {
 
   private ClawDirective _directive;
   private final Set<ClawClause> _clauses = new HashSet<>();
+  private final Map<ClawClause, String> _clauseStringValues =
+      new EnumMap<>(ClawClause.class);
+  private final Map<ClawClause, List<String>> _clauseListStringValues =
+      new EnumMap<>(ClawClause.class);
 
   // Clauses values
-  private boolean _hasIndexesValue;
-
-  private String _accClausesValue;
-  private String _arrayName;
-  private String _groupClauseValue;
-  private String _fctName;
-  private String _layoutValue;
-
   private int _collapseClauseValue;
-  private List<String> _dataValues;
-  private List<String> _fctCallParameters;
-  private List<String> _hoistInductionValues;
-  private List<String> _indexesValues;
-  private List<String> _inductionClauseValues;
 
   private List<ClawMapping> _mappingValues;
   private List<Integer> _offsetValues;
   private ClawRange _rangeValue;
   private List<ReshapeInfo> _reshapeInfos;
-  //private List<List<String>> _overDataValues;
   private Set<String> _overDataValues;
-  private List<String> _scalarValues;
-  private List<String> _noPromoteValues;
   private DataMovement _copyClauseValue;
   private DataMovement _updateClauseValue;
   private List<Target> _targetClauseValues;
@@ -73,11 +61,6 @@ public class ClawPragma extends AnalyzedPragma {
   private ModelConfig _localModelConfig;
   private List<String> _errors = new ArrayList<>();
   private boolean _scaModelConfig;
-
-
-
-
-
 
   /**
    * Constructs an empty ClawPragma section.
@@ -98,12 +81,46 @@ public class ClawPragma extends AnalyzedPragma {
     resetVariables();
   }
 
+  /**
+   * @param clause
+   * @return
+   */
   public boolean hasClause(ClawClause clause) {
     return _clauses.contains(clause);
   }
 
+  /**
+   * @param clause
+   */
   public void setClause(ClawClause clause) {
     _clauses.add(clause);
+  }
+
+  /**
+   * @param clause
+   * @param value
+   */
+  public void setValue(ClawClause clause, String value) {
+    _clauses.add(clause);
+    _clauseStringValues.put(clause, value);
+  }
+
+  /**
+   * @param clause
+   * @return
+   */
+  public String value(ClawClause clause) {
+    return _clauseStringValues.containsKey(clause) ? _clauseStringValues.get(clause) : null;
+  }
+
+  public void setValues(ClawClause clause, List<String> values) {
+    _clauses.add(clause);
+    _clauseListStringValues.put(clause, values);
+  }
+
+  public List<String> values(ClawClause clause) {
+    return _clauseListStringValues.containsKey(clause) ?
+        _clauseListStringValues.get(clause) : null;
   }
 
   /**
@@ -221,7 +238,8 @@ public class ClawPragma extends AnalyzedPragma {
     ClawPragma l = new ClawPragma();
     l.setDirective(ClawDirective.LOOP_FUSION);
     if(master.hasClause(ClawClause.GROUP)) {
-      l.setGroupClause(master.getGroupValue());
+      l.setValue(ClawClause.GROUP,
+          master.value(ClawClause.GROUP));
     }
     if(master.hasClause(ClawClause.COLLAPSE)) {
       l.setCollapseClause(master.getCollapseValue());
@@ -247,7 +265,8 @@ public class ClawPragma extends AnalyzedPragma {
   {
     ClawPragma l = new ClawPragma();
     l.setDirective(ClawDirective.LOOP_INTERCHANGE);
-    l.setIndexes(master.getIndexes());
+    l.setValues(ClawClause.INTERCHANGE_INDEXES,
+        master.values(ClawClause.INTERCHANGE_INDEXES));
     l.attachPragma(pragma);
     return l;
   }
@@ -273,16 +292,7 @@ public class ClawPragma extends AnalyzedPragma {
 
   private void resetVariables() {
     // Clauses values members
-    _accClausesValue = null;
-    _arrayName = null;
     _collapseClauseValue = 1;
-    _dataValues = null;
-    _fctCallParameters = null;
-    _fctName = null;
-    _groupClauseValue = null;
-    _hoistInductionValues = null;
-    _indexesValues = null;
-    _inductionClauseValues = null;
     _mappingValues = null;
     _offsetValues = null;
     _overDataValues = null;
@@ -291,12 +301,12 @@ public class ClawPragma extends AnalyzedPragma {
     _targetClauseValues = null;
     _constraintClauseValue = ClawConstraint.DIRECT;
     _cleanupClauseValue = CompilerDirective.NONE;
-    _layoutValue = null;
-    _scalarValues = null;
-    _noPromoteValues = null;
 
     // Clauses flags members
     _clauses.clear();
+
+    _clauseStringValues.clear();
+    _clauseListStringValues.clear();
 
     // General members
     _directive = null;
@@ -307,27 +317,6 @@ public class ClawPragma extends AnalyzedPragma {
     // Data Movement Direction
     _copyClauseValue = null;
     _updateClauseValue = null;
-  }
-
-  /**
-   * Set the group name and hasGroupClause to true
-   *
-   * @param groupName The group name defined in the group clause.
-   */
-  public void setGroupClause(String groupName) {
-    if(groupName != null) {
-      setClause(ClawClause.GROUP);
-      _groupClauseValue = groupName;
-    }
-  }
-
-  /**
-   * Get the group name defined in the group clause.
-   *
-   * @return The group name as a String value.
-   */
-  public String getGroupValue() {
-    return _groupClauseValue;
   }
 
   /**
@@ -363,35 +352,7 @@ public class ClawPragma extends AnalyzedPragma {
     return _collapseClauseValue;
   }
 
-  /**
-   * Get the loop index list
-   *
-   * @return List of loop index
-   */
-  public List<String> getIndexes() {
-    return _indexesValues;
-  }
-
   // Loop extract specific methods
-
-  /**
-   * Set the list of interchange indexes.
-   *
-   * @param indexes List of indexes as string.
-   */
-  public void setIndexes(List<String> indexes) {
-    _hasIndexesValue = true;
-    _indexesValues = indexes;
-  }
-
-  /**
-   * Check whether the interchange directive has indexes values.
-   *
-   * @return True if the directive has interchange value.
-   */
-  public boolean hasIndexes() {
-    return _hasIndexesValue;
-  }
 
   /**
    * Get the range extracted value.
@@ -429,26 +390,6 @@ public class ClawPragma extends AnalyzedPragma {
     _mappingValues = mappings;
   }
 
-  /**
-   * Get the directive clauses extracted from the directive clause.
-   *
-   * @return Accelerator clauses as a String.
-   */
-  public String getAcceleratorClauses() {
-    return _accClausesValue;
-  }
-
-  /**
-   * Enable the directive clause for the current directive and set the
-   * extracted clauses.
-   *
-   * @param clauses Accelerator clauses extracted from the directive clause.
-   */
-  public void setAcceleratorClauses(String clauses) {
-    setClause(ClawClause.ACC);
-    _accClausesValue = clauses;
-  }
-
   // loop hoist clauses
 
   /**
@@ -472,24 +413,6 @@ public class ClawPragma extends AnalyzedPragma {
   // Directive generic method
 
   /**
-   * Get the list of induction variables used in the hoist directive.
-   *
-   * @return A list of induction variable.
-   */
-  public List<String> getHoistInductionVars() {
-    return _hoistInductionValues;
-  }
-
-  /**
-   * Set the list of induction variables used in the loop-hoist directive.
-   *
-   * @param vars List of induction variable.
-   */
-  public void setHoistInductionVars(List<String> vars) {
-    _hoistInductionValues = vars;
-  }
-
-  /**
    * Get the current directive of the language section.
    *
    * @return Value of the current directive.
@@ -505,46 +428,6 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public void setDirective(ClawDirective directive) {
     _directive = directive;
-  }
-
-  /**
-   * Enable the induction clause for the current directive and set the extracted
-   * name value.
-   *
-   * @param names List of induction name extracted from the clause.
-   */
-  public void setInductionClause(List<String> names) {
-    setClause(ClawClause.INDUCTION);
-    _inductionClauseValues = names;
-  }
-
-  /**
-   * Get the name value extracted from the induction clause.
-   *
-   * @return Induction name as a String.
-   */
-  public List<String> getInductionValues() {
-    return _inductionClauseValues;
-  }
-
-  /**
-   * Enable the data clause for the current directive and set the extracted
-   * identifiers value.
-   *
-   * @param data List of identifiers extracted from the clause.
-   */
-  public void setDataClause(List<String> data) {
-    setClause(ClawClause.DATA);
-    _dataValues = data;
-  }
-
-  /**
-   * Get the identifier values extracted from the data clause.
-   *
-   * @return Identifier as a String.
-   */
-  public List<String> getDataClauseValues() {
-    return _dataValues;
   }
 
   /**
@@ -678,98 +561,6 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public Set<String> getDataOverClauseValues() {
     return _overDataValues;
-  }
-
-  /**
-   * Enable scalar clause for the current directive and stores the data.
-   *
-   * @param data List of identifier declared in the scalar clause.
-   */
-  public void setScalarClause(List<String> data) {
-    setClause(ClawClause.SCALAR);
-    _scalarValues = data;
-  }
-
-  /**
-   * Get the data clause values extracted from the nopromote clause.
-   *
-   * @return List of identifier declared in the nopromote clause.
-   */
-  public List<String> getNoPromoteValues() {
-    return _noPromoteValues;
-  }
-
-  /**
-   * Enable nopromote clause for the current directive and stores the data.
-   *
-   * @param data List of identifier declared in the nopromote clause.
-   */
-  public void setNoPromoteClause(List<String> data) {
-    setClause(ClawClause.NO_PROMOTE);
-    _noPromoteValues = data;
-  }
-
-  /**
-   * Get the data clause values extracted from the scalar clause.
-   *
-   * @return List of identifier declared in the scalar clause.
-   */
-  public List<String> getScalarClauseValues() {
-    return _scalarValues;
-  }
-
-  /**
-   * Get the list of parameters extracted from the call directive.
-   *
-   * @return List of parameters identifier as String value.
-   */
-  public List<String> getFctParams() {
-    return _fctCallParameters;
-  }
-
-  /**
-   * Set the list of parameters for the fct call of the "call" directive
-   *
-   * @param data List of identifiers extracted from the clause.
-   */
-  public void setFctParams(List<String> data) {
-    _fctCallParameters = data;
-  }
-
-  /**
-   * Get the array name extracted from the call directive.
-   *
-   * @return Array name from the call directive.
-   */
-  public String getArrayName() {
-    return _arrayName;
-  }
-
-  /**
-   * Set the array name value.
-   *
-   * @param value String value for the array name.
-   */
-  public void setArrayName(String value) {
-    _arrayName = value;
-  }
-
-  /**
-   * Get the fct name extracted from the call directive.
-   *
-   * @return Fct name from the call directive.
-   */
-  public String getFctName() {
-    return _fctName;
-  }
-
-  /**
-   * Set the function name value.
-   *
-   * @param value String value for the function name.
-   */
-  public void setFctName(String value) {
-    _fctName = value;
   }
 
   /**
@@ -918,25 +709,6 @@ public class ClawPragma extends AnalyzedPragma {
   public void setCleanupClauseValue(CompilerDirective value) {
     setClause(ClawClause.CLEANUP);
     _cleanupClauseValue = value;
-  }
-
-  /**
-   * Get the layout clause value.
-   *
-   * @return Layout clause value.
-   */
-  public String getLayoutValue() {
-    return _layoutValue;
-  }
-
-  /**
-   * Set the layout clause value and the update clause usage flag to true.
-   *
-   * @param value New compiler directive clause value.
-   */
-  public void setLayoutClause(String value) {
-    setClause(ClawClause.LAYOUT);
-    _layoutValue = value;
   }
 
   /**

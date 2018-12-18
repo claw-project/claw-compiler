@@ -83,7 +83,7 @@ public class Kcaching extends ClawTransformation {
     // 1. Find the function/module declaration
     FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
 
-    for(String data : _claw.getDataClauseValues()) {
+    for(String data : _claw.values(ClawClause.DATA)) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
 
       boolean standardArrayRef = true;

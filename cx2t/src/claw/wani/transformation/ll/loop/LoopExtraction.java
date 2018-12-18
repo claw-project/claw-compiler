@@ -407,7 +407,7 @@ public class LoopExtraction extends ClawTransformation {
          have to look how to do that properly. See issue #22
        */
       grip = Directive.generateAcceleratorClause(xcodeml, extractedLoop,
-          _claw.getAcceleratorClauses());
+          _claw.value(ClawClause.ACC));
     }
 
     if(_claw.hasClause(ClawClause.PARALLEL)) {

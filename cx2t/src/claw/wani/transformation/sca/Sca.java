@@ -234,7 +234,7 @@ public class Sca extends ClawTransformation {
         _fctDef.getDeclarationTable().values(Xcode.VAR_DECL);
 
     if(_claw.hasClause(ClawClause.NO_PROMOTE)) {
-      _noPromotion.addAll(_claw.getNoPromoteValues());
+      _noPromotion.addAll(_claw.values(ClawClause.NO_PROMOTE));
     }
 
     for(Xnode decl : declarations) {
@@ -252,7 +252,7 @@ public class Sca extends ClawTransformation {
           } else {
             // Scalars mentioned in the scalar clause will be promoted.
             if(_claw.hasClause(ClawClause.SCALAR) &&
-                _claw.getScalarClauseValues().contains(varName))
+                _claw.values(ClawClause.SCALAR).contains(varName))
             {
               if(!bType.hasIntent()) {
                 xcodeml.addWarning(String.format(

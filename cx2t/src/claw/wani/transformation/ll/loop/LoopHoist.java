@@ -58,7 +58,8 @@ public class LoopHoist extends ClawBlockTransformation {
     // Find all the group of nested loops that can be part of the hoisting
     List<HoistedNestedDoStatement> statements =
         XnodeUtil.findDoStatementForHoisting(_clawStart.getPragma(),
-            _clawEnd.getPragma(), _clawStart.getHoistInductionVars());
+            _clawEnd.getPragma(),
+            _clawStart.values(ClawClause.HOIST_INDUCTIONS));
 
     if(statements.isEmpty()) {
       xcodeml.addError("No do statement group meets the criteria of hoisting.",

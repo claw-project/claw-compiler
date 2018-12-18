@@ -210,7 +210,7 @@ public class ArrayTransform extends ClawBlockTransformation {
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
       if(_clawStart.hasClause(ClawClause.INDUCTION)) { // Use user names
-        inductionVars[i] = _clawStart.getInductionValues().get(i);
+        inductionVars[i] = _clawStart.values(ClawClause.INDUCTION).get(i);
       } else { // generate new names
         inductionVars[i] = "claw_induction_" +
             translator.getNextTransformationCounter();
@@ -284,7 +284,7 @@ public class ArrayTransform extends ClawBlockTransformation {
          have to look how to do that properly. See issue #22
        */
       grip = Directive.generateAcceleratorClause(xcodeml, doStmts[0],
-          _clawStart.getAcceleratorClauses());
+          _clawStart.value(ClawClause.ACC));
     }
 
     if(_clawStart.hasClause(ClawClause.PARALLEL)) {
