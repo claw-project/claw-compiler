@@ -23,7 +23,7 @@ import claw.wani.ClawConstant;
 import claw.wani.language.ClawMapping;
 import claw.wani.language.ClawMappingVar;
 import claw.wani.language.ClawPragma;
-import claw.wani.language.parser.ClawClause;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 

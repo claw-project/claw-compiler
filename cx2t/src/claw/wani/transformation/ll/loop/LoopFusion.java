@@ -15,7 +15,7 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.ClawConstant;
 import claw.wani.language.ClawConstraint;
 import claw.wani.language.ClawPragma;
-import claw.wani.language.parser.ClawClause;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.Arrays;

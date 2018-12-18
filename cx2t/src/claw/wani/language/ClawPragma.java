@@ -14,7 +14,6 @@ import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.ReshapeInfo;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.wani.language.parser.ClawClause;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
 import claw.wani.x2t.configuration.Configuration;

@@ -1,5 +1,15 @@
-package claw.wani.language.parser;
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
+package claw.wani.language;
 
+/**
+ * Enumeration representing the clauses in the CLAW directive language.
+ * Some clauses are hidden but reflected in this enumeration.
+ *
+ * @author clementval 
+ */
 public enum ClawClause {
   ACC,
   COLLAPSE,

@@ -20,7 +20,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
-import claw.wani.language.parser.ClawClause;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.internal.OpenAccContinuation;
 import claw.wani.transformation.ll.caching.Kcaching;
 import claw.wani.transformation.ll.directive.DirectivePrimitive;

@@ -14,7 +14,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.language.ClawPragma;
-import claw.wani.language.parser.ClawClause;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 

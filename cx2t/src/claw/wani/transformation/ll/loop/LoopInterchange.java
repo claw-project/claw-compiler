@@ -14,7 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
-import claw.wani.language.parser.ClawClause;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
@@ -25,7 +25,6 @@ import java.util.List;
  *
  * @author clementval
  */
-
 public class LoopInterchange extends ClawTransformation {
 
   private NestedDoStatement _doStmts = null;
