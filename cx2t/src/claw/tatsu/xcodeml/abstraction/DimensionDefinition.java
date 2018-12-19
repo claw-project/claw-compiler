@@ -282,10 +282,10 @@ public class DimensionDefinition {
    * @param dimensions List of dimension definition to be flagged.
    */
   public static void flagInsertPosition(List<DimensionDefinition> dimensions) {
-    int baseDimensionOccurences =
+    int baseDimensionNb =
         Collections.frequency(dimensions, DimensionDefinition.BASE_DIMENSION);
 
-    boolean hasMiddleInsertion = baseDimensionOccurences > 1;
+    boolean hasMiddleInsertion = baseDimensionNb > 1;
     InsertionPosition crtPos = InsertionPosition.BEFORE;
     for(DimensionDefinition dim : dimensions) {
       if(dim == DimensionDefinition.BASE_DIMENSION) {

@@ -183,7 +183,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     List<AssignStatement> assignStatements =
         _fctDef.gatherAssignStatementsByLhsName(var);
     for(AssignStatement as : assignStatements) {
-      if(!as.isContantAssignment()) {
+      if(!as.isConstantAssignement()) {
         return true;
       }
     }

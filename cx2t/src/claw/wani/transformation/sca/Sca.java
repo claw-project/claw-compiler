@@ -225,7 +225,7 @@ public class Sca extends ClawTransformation {
    * array promotion is performed.
    *
    * @param xcodeml Current translation unit
-   * @return True if the analyzis succeed. False otherwise.
+   * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeDataForAutomaticPromotion(XcodeProgram xcodeml) {
     List<String> scalars = new ArrayList<>();
