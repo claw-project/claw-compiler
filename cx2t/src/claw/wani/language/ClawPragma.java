@@ -92,7 +92,9 @@ public class ClawPragma extends AnalyzedPragma {
    * @param clause
    */
   public void setClause(ClawClause clause) {
-    _clauses.add(clause);
+    if(clause != null) {
+      _clauses.add(clause);
+    }
   }
 
   /**
@@ -100,6 +102,9 @@ public class ClawPragma extends AnalyzedPragma {
    * @param value
    */
   public void setValue(ClawClause clause, String value) {
+    if(clause == null || value == null) {
+      return;
+    }
     _clauses.add(clause);
     _clauseStringValues.put(clause, value);
   }
@@ -112,11 +117,24 @@ public class ClawPragma extends AnalyzedPragma {
     return _clauseStringValues.containsKey(clause) ? _clauseStringValues.get(clause) : null;
   }
 
+  /**
+   *
+   * @param clause
+   * @param values
+   */
   public void setValues(ClawClause clause, List<String> values) {
+    if(clause == null || values == null) {
+      return;
+    }
     _clauses.add(clause);
     _clauseListStringValues.put(clause, values);
   }
 
+  /**
+   *
+   * @param clause
+   * @return
+   */
   public List<String> values(ClawClause clause) {
     return _clauseListStringValues.containsKey(clause) ?
         _clauseListStringValues.get(clause) : null;

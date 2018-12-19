@@ -8,7 +8,7 @@ package claw.wani.language;
  * Enumeration representing the clauses in the CLAW directive language.
  * Some clauses are hidden but reflected in this enumeration.
  *
- * @author clementval 
+ * @author clementval
  */
 public enum ClawClause {
   ACC,

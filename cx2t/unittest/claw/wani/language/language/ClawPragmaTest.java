@@ -1503,6 +1503,20 @@ public class ClawPragmaTest {
   }
 
   @Test
+  public void simpleTest() {
+    ClawPragma cp = new ClawPragma();
+    cp.setValue(ClawClause.GROUP, "g1");
+    assertTrue(cp.hasClause(ClawClause.GROUP));
+    assertEquals("g1", cp.value(ClawClause.GROUP));
+    assertNull(cp.values(ClawClause.GROUP));
+    assertFalse(cp.hasClause(ClawClause.INTERCHANGE));
+    assertNull(cp.value(ClawClause.INTERCHANGE));
+
+    cp.setValue(null, null);
+  }
+
+
+  @Test
   public void primitiveTest() {
     analyzeValidSimpleClaw("claw omp do", ClawDirective.PRIMITIVE, false, null);
     analyzeValidSimpleClaw("claw   omp end do", ClawDirective.PRIMITIVE, false,
