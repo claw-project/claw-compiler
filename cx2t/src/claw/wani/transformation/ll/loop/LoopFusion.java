@@ -46,7 +46,7 @@ public class LoopFusion extends ClawTransformation {
    */
   public LoopFusion(ClawPragma directive) {
     super(directive);
-    if(_claw.hasClause(ClawClause.FUSION)) {
+    if(_claw.hasClause(ClawClause.GROUP)) {
       _groupClauseLabel = directive.value(ClawClause.GROUP);
     }
   }
