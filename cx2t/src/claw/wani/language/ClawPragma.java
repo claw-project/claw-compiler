@@ -56,7 +56,7 @@ public class ClawPragma extends AnalyzedPragma {
   private ClawConstraint _constraintClauseValue;
   private CompilerDirective _cleanupClauseValue;
 
-  //
+  // Model config information
   private ModelConfig _localModelConfig;
   private List<String> _errors = new ArrayList<>();
   private boolean _scaModelConfig;
@@ -122,7 +122,8 @@ public class ClawPragma extends AnalyzedPragma {
    * @return String value if clause is set. Null otherwise.
    */
   public String value(ClawClause clause) {
-    return _clauseStringValues.containsKey(clause) ? _clauseStringValues.get(clause) : null;
+    return _clauseStringValues.containsKey(clause) ?
+        _clauseStringValues.get(clause) : null;
   }
 
   /**
@@ -173,8 +174,7 @@ public class ClawPragma extends AnalyzedPragma {
   public static ClawPragma analyze(Xnode pragma)
       throws IllegalDirectiveException
   {
-    ClawPragma l =
-        analyze(pragma.value(), pragma.lineNo());
+    ClawPragma l = analyze(pragma.value(), pragma.lineNo());
     if(l != null) {
       l.attachPragma(pragma);
     }
