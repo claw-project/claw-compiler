@@ -260,6 +260,7 @@ function claw::set_parameters() {
     --dump-cx2t-args)
       dump_cx2t_args=true
       enable_debug_omni=true
+      pipe_workflow=false
       ;;
     --force-pure) force_pure=true ;;
     --add-paren) add_paren=true ;;
