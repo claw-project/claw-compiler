@@ -260,18 +260,21 @@ public final class Pragma {
     }
 
     String prefix = Context.get().getGenerator().getPrefix();
+    value = value.trim().toLowerCase();
+    boolean notStartWithPrefix = !value.startsWith(prefix);
+
     if(continued) {
-      if(!value.trim().toLowerCase().startsWith(prefix)) {
-        p.setValue(prefix + " " + value.trim() + " " +
+      if(notStartWithPrefix) {
+        p.setValue(prefix + " " + value + " " +
             TatsuConstant.CONTINUATION_LINE_SYMBOL);
       } else {
-        p.setValue(value.trim() + " " + TatsuConstant.CONTINUATION_LINE_SYMBOL);
+        p.setValue(value + " " + TatsuConstant.CONTINUATION_LINE_SYMBOL);
       }
     } else {
-      if(!value.trim().toLowerCase().startsWith(prefix)) {
-        p.setValue(prefix + " " + value.trim());
+      if(notStartWithPrefix) {
+        p.setValue(prefix + " " + value);
       } else {
-        p.setValue(value.trim());
+        p.setValue(value);
       }
     }
     hook.insertAfter(p);
