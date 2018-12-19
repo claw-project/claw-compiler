@@ -39,7 +39,11 @@ public final class Body {
         || slaveBody.opcode() != Xcode.BODY)
     {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.append. opcode: %s - %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          masterBody == null ? "null" : masterBody.opcode(),
+          slaveBody == null ? "null" : slaveBody.opcode()));
     }
 
     // Move all nodes to master body
@@ -67,11 +71,20 @@ public final class Body {
                              boolean included)
       throws IllegalTransformationException
   {
+    if(from == null && until == null) {
+      return;
+    }
+
     if(from == null || until == null || targetBody == null
         || targetBody.opcode() != Xcode.BODY)
     {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.shiftIn. opcode: %s, from: %s, until: %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          targetBody == null ? "null" : targetBody.opcode(),
+          from == null ? "null" : from.opcode(),
+          until == null ? "null" : until.opcode()));
     }
 
     Node currentSibling = from.element();
@@ -105,7 +118,10 @@ public final class Body {
   {
     if(body == null || body.opcode() != Xcode.BODY) {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.isEmpty. opcode: %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          body == null ? "null" : body.opcode()));
     }
 
     return body.firstChild() == null;

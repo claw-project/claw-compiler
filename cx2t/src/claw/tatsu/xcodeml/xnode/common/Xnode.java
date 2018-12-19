@@ -957,8 +957,8 @@ public class Xnode {
    */
   @Override
   public String toString() {
-    return String.format("%s (children: %d)", opcode().code(),
-        children().size());
+    return String.format("%s (children: %d) - %d", opcode().code(),
+        children().size(), lineNo());
   }
 
   @Override
@@ -970,5 +970,13 @@ public class Xnode {
   public boolean equals(Object o) {
     return !(o == null || !(o instanceof Xnode))
         && element() == ((Xnode) o).element();
+  }
+
+  public boolean isNotArrayIndex() {
+    if(ancestor() == null) {
+      return true;
+    } else {
+      return ancestor().opcode() != Xcode.ARRAY_INDEX;
+    }
   }
 }

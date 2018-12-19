@@ -55,7 +55,11 @@ public final class Loop {
         || slaveDoStmt.opcode() != Xcode.F_DO_STATEMENT)
     {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.append. opcode: %s - %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          masterDoStmt == null ? "null" : masterDoStmt.opcode(),
+          slaveDoStmt == null ? "null" : slaveDoStmt.opcode()));
     }
 
     // Merge slave body into the master body
@@ -83,7 +87,8 @@ public final class Loop {
         || slave.size() == 0)
     {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE +
+          " for loop fusion");
     }
     merge(master.getInnerStatement(), slave.getInnerStatement());
     slave.getOuterStatement().delete();
@@ -336,7 +341,10 @@ public final class Loop {
   {
     if(loop == null || ref == null || loop.opcode() != Xcode.F_DO_STATEMENT) {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Loop.extractBody. opcode: %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          loop == null ? "null" : loop.opcode()));
     }
     Xnode body = loop.body();
     if(body == null) {

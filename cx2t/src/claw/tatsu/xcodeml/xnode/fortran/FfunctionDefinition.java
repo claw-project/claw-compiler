@@ -6,8 +6,13 @@ package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -142,4 +147,122 @@ public class FfunctionDefinition extends Xnode {
   public FfunctionDefinition cloneNode() {
     return new FfunctionDefinition(super.cloneNode());
   }
+
+  /**
+   * Gather all assignment statements in the function definition.
+   *
+   * @return List of assignment statement in AST order. Empty list if function
+   * definition is null or no statement found.
+   */
+  public List<AssignStatement> gatherAssignStatements()
+  {
+    if(body() == null) {
+      return Collections.emptyList();
+    }
+    List<AssignStatement> statements = new ArrayList<>();
+    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
+      statements.add(new AssignStatement(n.element()));
+    }
+    return statements;
+  }
+
+  /**
+   * Gather all assignment statements in the function definition.
+   *
+   * @return List of assignment statement in AST order. Empty list if function
+   * definition is null or no statement found.
+   */
+  public List<AssignStatement> gatherAssignStatementsByLhsName(String var)
+  {
+    if(body() == null) {
+      return Collections.emptyList();
+    }
+    List<AssignStatement> statements = new ArrayList<>();
+    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
+      AssignStatement as = new AssignStatement(n.element());
+      if(as.getLhsName().equals(var)) {
+        statements.add(as);
+      }
+    }
+    return statements;
+  }
+
+  /**
+   * Get all the function variables that are input/output parameters.
+   *
+   * @param xcodeml Current XcodeML program unit.
+   * @return List of variables names that are function input/output.
+   */
+  public List<String> getPresentVariables(XcodeProgram xcodeml) {
+    return getVariables(xcodeml, true, false, true);
+  }
+
+  /**
+   * Get all the local variables in the function definition.
+   *
+   * @param xcodeml   Current XcodeML program unit.
+   * @param onlyArray If true, filter only arrays.
+   * @return List of variables names that are function local.
+   */
+  public List<String> getLocalVariables(XcodeProgram xcodeml, boolean onlyArray)
+  {
+    return getVariables(xcodeml, false, true, onlyArray);
+  }
+
+  /**
+   * Get variables declared in the function.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param parameters If true, parameters are returned.
+   * @param temporary  If true, local variables are returned.
+   * @param onlyArray  If true, only arrays are returned.
+   * @return List of variables names.
+   */
+  private List<String> getVariables(XcodeProgram xcodeml, boolean parameters,
+                                    boolean temporary, boolean onlyArray)
+  {
+    List<String> variables = new ArrayList<>();
+    List<Xnode> declarations = getDeclarationTable().values();
+    for(Xnode decl : declarations) {
+      if(decl.opcode() == Xcode.VAR_DECL) {
+        Xnode name = decl.matchSeq(Xcode.NAME);
+        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
+          continue; // Only check basic type
+        }
+        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
+        if((parameters && isParameterVariable(bt, onlyArray))
+            || (temporary && isTemporaryVariable(bt, onlyArray)))
+        {
+            variables.add(name.value());
+        }
+      }
+    }
+    return variables;
+  }
+
+  /**
+   * Check if the variable is a parameter with intent.
+   *
+   * @param bt        FbasicType to be checked.
+   * @param onlyArray If true, check for arrays only.
+   * @return True if the variable is a parameter and pass the onlyArray filter.
+   */
+  private boolean isParameterVariable(FbasicType bt, boolean onlyArray) {
+    return bt != null && (bt.getIntent() == Intent.IN
+        || bt.getIntent() == Intent.OUT
+        || bt.getIntent() == Intent.INOUT) && (!onlyArray || bt.isArray());
+  }
+
+  /**
+   * Check if the variable is a temporary.
+   *
+   * @param bt        FbasicType to be checked.
+   * @param onlyArray If true, check for arrays only.
+   * @return True if the variable is a temporary and pass the onlyArray filter.
+   */
+  private boolean isTemporaryVariable(FbasicType bt, boolean onlyArray) {
+    return bt != null && bt.getIntent() == Intent.NONE
+        && (!onlyArray || bt.isArray());
+  }
+
 }

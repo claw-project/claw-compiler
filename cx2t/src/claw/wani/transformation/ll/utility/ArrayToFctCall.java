@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
@@ -45,21 +46,25 @@ public class ArrayToFctCall extends ClawTransformation {
       return false;
     }
 
-    if(!fctDef.getDeclarationTable().contains(_claw.getArrayName())) {
-      xcodeml.addError(_claw.getArrayName() +
+    if(!fctDef.getDeclarationTable().
+        contains(_claw.value(ClawClause.ARRAY_NAME)))
+    {
+      xcodeml.addError(_claw.value(ClawClause.ARRAY_NAME) +
               " is not declared in current function/subroutine.",
           _claw.getPragma().lineNo());
       return false;
     }
 
     _replaceFct = xcodeml.getGlobalDeclarationsTable().
-        getFunctionDefinition(_claw.getFctName());
+        getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
     if(_replaceFct == null) {
       FmoduleDefinition parentModule = _claw.getPragma().findParentModule();
-      _replaceFct = parentModule.getFunctionDefinition(_claw.getFctName());
+      _replaceFct = parentModule.getFunctionDefinition(
+          _claw.value(ClawClause.FCT_NAME));
 
       if(_replaceFct == null) {
-        xcodeml.addError("Function " + _claw.getFctName() +
+        xcodeml.addError("Function " +
+                _claw.value(ClawClause.FCT_NAME) +
                 " not found in current file.",
             _claw.getPragma().lineNo());
         return false;
@@ -89,15 +94,15 @@ public class ArrayToFctCall extends ClawTransformation {
 
     // Prepare the function call
     Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),
-        _claw.getFctName(), _replaceFct.getType());
+        _claw.value(ClawClause.FCT_NAME), _replaceFct.getType());
     Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
-    for(String arg : _claw.getFctParams()) {
+    for(String arg : _claw.values(ClawClause.FCT_PARAMETERS)) {
       args.append(xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
     }
 
     List<Xnode> refs =
         XnodeUtil.getAllArrayReferencesInSiblings(_claw.getPragma(),
-            _claw.getArrayName());
+            _claw.value(ClawClause.ARRAY_NAME));
 
     for(Xnode ref : refs) {
       ref.insertAfter(fctCall.cloneNode());

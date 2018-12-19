@@ -8,7 +8,6 @@ import claw.shenron.transformation.DependentTransformationGroup;
 import claw.shenron.transformation.IndependentTransformationGroup;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
-import claw.shenron.translator.AnalyzedPragma;
 import claw.shenron.translator.Translator;
 import claw.tatsu.analysis.topology.DirectedGraph;
 import claw.tatsu.analysis.topology.TopologicalSort;
@@ -21,6 +20,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.internal.OpenAccContinuation;
 import claw.wani.transformation.ll.caching.Kcaching;
 import claw.wani.transformation.ll.directive.DirectivePrimitive;
@@ -157,7 +157,7 @@ public class ClawTranslator implements Translator {
                                     ClawPragma analyzedPragma)
       throws IllegalTransformationException
   {
-    if(analyzedPragma.hasForwardClause()) {
+    if(analyzedPragma.hasClause(ClawClause.FORWARD)) {
       addTransformation(xcodeml, new ScaForward(analyzedPragma));
     } else {
       if(Context.get().getTarget() == Target.GPU) {
@@ -167,9 +167,9 @@ public class ClawTranslator implements Translator {
             equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
         {
           addTransformation(xcodeml,
-              new ScaCPUsmartFusion(analyzedPragma));
+              new ScaCPUvectorizeGroup(analyzedPragma, true));
         } else {
-          addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
+          addTransformation(xcodeml, new ScaCPUvectorizeGroup(analyzedPragma));
         }
       }
     }
@@ -372,13 +372,16 @@ public class ClawTranslator implements Translator {
                                       Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.F_DO_STATEMENT) {
+    if(claw.hasClause(ClawClause.INTERCHANGE)
+        && stmt.opcode() == Xcode.F_DO_STATEMENT)
+    {
       Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
       stmt.insertBefore(p);
       ClawPragma l = ClawPragma.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       addTransformation(xcodeml, interchange);
-      Message.debug("Loop interchange added: " + claw.getIndexes());
+      Message.debug("Loop interchange added: " +
+          claw.values(ClawClause.INTERCHANGE_INDEXES));
     }
   }
 
@@ -397,10 +400,13 @@ public class ClawTranslator implements Translator {
                                  Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasFusionClause() && stmt.opcode() == Xcode.F_DO_STATEMENT) {
+    if(claw.hasClause(ClawClause.FUSION)
+        && stmt.opcode() == Xcode.F_DO_STATEMENT)
+    {
       ClawPragma l = ClawPragma.createLoopFusionLanguage(claw);
       addTransformation(xcodeml, new LoopFusion(stmt, l));
-      Message.debug("Loop fusion added: " + claw.getGroupValue());
+      Message.debug("Loop fusion added: " +
+          claw.value(ClawClause.GROUP));
     }
   }
 

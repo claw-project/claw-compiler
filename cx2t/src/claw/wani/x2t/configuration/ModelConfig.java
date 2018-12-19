@@ -160,7 +160,7 @@ public class ModelConfig {
    * id = "id"
    * position = [ "dim1", ":" ]
    *
-   * The ":" dimension is resprensting the base dimension
+   * The ":" dimension is representing the base dimension
    * (currently present dimensions)
    *
    * @param result The current TOML parse result object.

@@ -158,8 +158,7 @@ public class ScaGPU extends Sca {
 
     // Prepare variables list for present/pcreate clauses and handle
     // promotion/privatize local strategy
-    List<String> presentList =
-        Directive.getPresentVariables(xcodeml, _fctDef);
+    List<String> presentList = _fctDef.getPresentVariables(xcodeml);
     List<String> privateList = Collections.emptyList();
     List<String> createList = Collections.emptyList();
     if(config.getLocalStrategy() == AcceleratorLocalStrategy.PRIVATE) {
@@ -188,7 +187,7 @@ public class ScaGPU extends Sca {
    * @return List of private variables.
    */
   private List<String> applyPrivateStrategy(XcodeProgram xcodeml) {
-    List<String> privateList = Directive.getLocalArrays(xcodeml, _fctDef);
+    List<String> privateList = _fctDef.getLocalVariables(xcodeml, true);
     // Iterate over a copy to be able to remove items
     for(String identifier : new ArrayList<>(privateList)) {
       if(_promotions.containsKey(identifier)) {
@@ -209,7 +208,7 @@ public class ScaGPU extends Sca {
   private List<String> applyPromoteStrategy(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    List<String> createList = Directive.getLocalArrays(xcodeml, _fctDef);
+    List<String> createList = _fctDef.getLocalVariables(xcodeml, true);
     for(String arrayIdentifier : createList) {
       _arrayFieldsInOut.add(arrayIdentifier);
       PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,

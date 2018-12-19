@@ -23,6 +23,7 @@ import claw.wani.ClawConstant;
 import claw.wani.language.ClawMapping;
 import claw.wani.language.ClawMappingVar;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -400,16 +401,16 @@ public class LoopExtraction extends ClawTransformation {
 
     // Generate directive pragmas if needed
     Xnode grip = null;
-    if(_claw.hasAcceleratorClause()) {
+    if(_claw.hasClause(ClawClause.ACC)) {
       /* TODO see TODO in ArrayTransform
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */
       grip = Directive.generateAcceleratorClause(xcodeml, extractedLoop,
-          _claw.getAcceleratorClauses());
+          _claw.value(ClawClause.ACC));
     }
 
-    if(_claw.hasParallelClause()) {
+    if(_claw.hasClause(ClawClause.PARALLEL)) {
       Directive.generateParallelClause(xcodeml,
           (grip == null) ? extractedLoop : grip, extractedLoop);
     }

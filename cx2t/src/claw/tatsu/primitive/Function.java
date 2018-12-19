@@ -4,7 +4,6 @@
  */
 package claw.tatsu.primitive;
 
-import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
@@ -15,9 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Primitive transformation, test and utility for Function related action.
@@ -127,21 +124,21 @@ public final class Function {
   }
 
   /**
-   * Gather all assignment statements in the function definition.
-   * @param fctDef Function definition in which statements are gathered.
-   * @return List of assignment statement in AST order. Empty list if function
-   * definition is null or no statement found.
+   * Detect all induction variables in the function body.
+   *
+   * @param fctDef Function definition to be checked.
+   * @return Set of induction variables stored in a set.
    */
-  public static List<AssignStatement> gatherAssignStatements(
-      FfunctionDefinition fctDef)
+  public static Set<String> detectInductionVariables(FfunctionDefinition fctDef)
   {
-    if(fctDef == null || fctDef.body() == null) {
-      return Collections.emptyList();
+    Set<String> inductionVariables = new HashSet<>();
+
+    List<Xnode> doStatements = fctDef.body().matchAll(Xcode.F_DO_STATEMENT);
+
+    for(Xnode doStatement : doStatements) {
+      inductionVariables.add(Loop.extractInductionVariable(doStatement));
     }
-    List<AssignStatement> statements = new ArrayList<>();
-    for(Xnode n : fctDef.body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
-      statements.add(new AssignStatement(n.element()));
-    }
-    return statements;
+
+    return inductionVariables;
   }
 }

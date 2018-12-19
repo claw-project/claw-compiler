@@ -22,6 +22,7 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -566,20 +567,20 @@ public class ScaForward extends ClawTransformation {
 
     Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
 
-    if(_claw.hasCreateClause() && Context.isTarget(Target.GPU)) {
+    if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates, exprStmt, exprStmt);
     }
 
-    if(_claw.hasUpdateClause() && Context.isTarget(Target.GPU)) {
+    if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.IN, true);
-        if(_claw.hasUpdateClause()) {
+        if(_claw.hasClause(ClawClause.UPDATE)) {
           Directive.generateUpdate(xcodeml, exprStmt, out, DataMovement.DEVICE);
         }
       }
@@ -589,7 +590,7 @@ public class ScaForward extends ClawTransformation {
       {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.OUT, true);
-        if(_claw.hasUpdateClause()) {
+        if(_claw.hasClause(ClawClause.UPDATE)) {
           Directive.generateUpdate(xcodeml, exprStmt, out, DataMovement.HOST);
         }
       }
