@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -82,7 +83,7 @@ public class Kcaching extends ClawTransformation {
     // 1. Find the function/module declaration
     FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
 
-    for(String data : _claw.getDataClauseValues()) {
+    for(String data : _claw.values(ClawClause.DATA)) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
 
       boolean standardArrayRef = true;
@@ -134,7 +135,7 @@ public class Kcaching extends ClawTransformation {
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
-    if(_claw.hasPrivateClause()) {
+    if(_claw.hasClause(ClawClause.PRIVATE)) {
       Directive.generatePrivateClause(xcodeml, _claw.getPragma(),
           cacheVar.value());
     }
@@ -166,7 +167,7 @@ public class Kcaching extends ClawTransformation {
 
     updateArrayRefWithCache(aRefs, cacheVar);
 
-    if(_claw.hasPrivateClause()) {
+    if(_claw.hasClause(ClawClause.PRIVATE)) {
       Directive.generatePrivateClause(xcodeml, _claw.getPragma(),
           cacheVar.value());
     }
@@ -190,7 +191,7 @@ public class Kcaching extends ClawTransformation {
                                Xnode cacheVar, Xnode arrayRef)
   {
 
-    if(_claw.hasInitClause()) {
+    if(_claw.hasClause(ClawClause.INIT)) {
       ClawTranslator ct = (ClawTranslator) translator;
       Xnode initIfStmt = (Xnode) ct.hasElement(_doStmt);
       if(initIfStmt == null) {

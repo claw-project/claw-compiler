@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -208,8 +209,8 @@ public class ArrayTransform extends ClawBlockTransformation {
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
-      if(_clawStart.hasInductionClause()) { // Use user names
-        inductionVars[i] = _clawStart.getInductionValues().get(i);
+      if(_clawStart.hasClause(ClawClause.INDUCTION)) { // Use user names
+        inductionVars[i] = _clawStart.values(ClawClause.INDUCTION).get(i);
       } else { // generate new names
         inductionVars[i] = "claw_induction_" +
             translator.getNextTransformationCounter();
@@ -277,16 +278,16 @@ public class ArrayTransform extends ClawBlockTransformation {
     // Generate directive pragmas if needed
 
     Xnode grip = null;
-    if(_clawStart.hasAcceleratorClause()) {
+    if(_clawStart.hasClause(ClawClause.ACC)) {
       /* TODO
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */
       grip = Directive.generateAcceleratorClause(xcodeml, doStmts[0],
-          _clawStart.getAcceleratorClauses());
+          _clawStart.value(ClawClause.ACC));
     }
 
-    if(_clawStart.hasParallelClause()) {
+    if(_clawStart.hasClause(ClawClause.PARALLEL)) {
       grip = Directive.generateParallelClause(xcodeml,
           (grip == null) ? doStmts[0] : grip, doStmts[0]);
     }

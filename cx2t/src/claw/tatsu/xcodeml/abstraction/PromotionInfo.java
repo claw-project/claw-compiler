@@ -291,13 +291,7 @@ public class PromotionInfo {
     InsertionPosition crtPos = InsertionPosition.BEFORE;
     for(String rawDim : rawDimensions) {
       if(rawDim.equals(DimensionDefinition.BASE_DIM)) {
-        if(hasMiddleInsertion && crtPos == InsertionPosition.BEFORE) {
-          crtPos = InsertionPosition.IN_MIDDLE;
-        } else if(crtPos == InsertionPosition.BEFORE) {
-          crtPos = InsertionPosition.AFTER;
-        } else if(crtPos == InsertionPosition.IN_MIDDLE) {
-          crtPos = InsertionPosition.AFTER;
-        }
+        crtPos = crtPos.getNext(hasMiddleInsertion);
       } else {
         String dimensionId = rawDim.substring(0, rawDim.indexOf('('));
         String lowerBound =

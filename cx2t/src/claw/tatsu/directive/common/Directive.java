@@ -16,10 +16,7 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
-import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
@@ -247,93 +244,7 @@ public final class Directive {
     }
   }
 
-  /**
-   * Get all the function variables that are input/output parameters.
-   *
-   * @param xcodeml Current XcodeML program unit.
-   * @param fctDef  Function definition to look in.
-   * @return List of variables names that are function input/output.
-   */
-  public static List<String> getPresentVariables(XcodeProgram xcodeml,
-                                                 FfunctionDefinition fctDef)
-  {
-    List<String> variables = new ArrayList<>();
-    List<Xnode> declarations = fctDef.getDeclarationTable().values();
-    for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VAR_DECL) {
-        Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
-          continue; // Only check basic type
-        }
-        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
-        if(bt != null && (bt.getIntent() == Intent.IN
-            || bt.getIntent() == Intent.OUT
-            || bt.getIntent() == Intent.INOUT) && bt.isArray())
-        {
-          variables.add(name.value());
-        }
-      }
-    }
-    return variables;
-  }
 
-  /**
-   * Get all the local variables in the function definition.
-   *
-   * @param xcodeml Current XcodeML program unit.
-   * @param fctDef  Function definition to look in.
-   * @return List of variables names that are function local.
-   */
-  public static List<String> getLocalVariables(XcodeProgram xcodeml,
-                                               FfunctionDefinition fctDef)
-  {
-    List<String> variables = new ArrayList<>();
-    List<Xnode> declarations = fctDef.getDeclarationTable().values();
-    for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VAR_DECL) {
-        Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!FortranType.isBuiltInType(decl.getType())
-            && !(xcodeml.getTypeTable().isBasicType(decl)))
-        {
-          continue; // Only check basic type
-        }
-        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
-        if((bt == null && FortranType.isBuiltInType(decl.getType()))
-            || (bt != null && bt.getIntent() == Intent.NONE))
-        {
-          variables.add(name.value());
-        }
-      }
-    }
-    return variables;
-  }
-
-  /**
-   * Get all the local variables in the function definition.
-   *
-   * @param xcodeml Current XcodeML program unit.
-   * @param fctDef  Function definition to look in.
-   * @return List of variables names that are function local.
-   */
-  public static List<String> getLocalArrays(XcodeProgram xcodeml,
-                                            FfunctionDefinition fctDef)
-  {
-    List<String> variables = new ArrayList<>();
-    List<Xnode> declarations = fctDef.getDeclarationTable().values();
-    for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VAR_DECL) {
-        Xnode name = decl.matchSeq(Xcode.NAME);
-        if(!(xcodeml.getTypeTable().isBasicType(decl))) {
-          continue; // Only check basic type
-        }
-        FbasicType bt = xcodeml.getTypeTable().getBasicType(decl);
-        if(bt != null && bt.getIntent() == Intent.NONE && bt.isArray()) {
-          variables.add(name.value());
-        }
-      }
-    }
-    return variables;
-  }
 
   /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.

@@ -16,6 +16,7 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
@@ -159,7 +160,7 @@ public class Sca extends ClawTransformation {
    * @return True if the analysis succeeded. False otherwise.
    */
   private boolean analyzeDimension(XcodeProgram xcodeml) {
-    if(!_claw.hasDimensionClause()
+    if(!_claw.hasClause(ClawClause.DIMENSION)
         && (_claw.isScaModelConfig()
         && Configuration.get().getModelConfig().getNbDimensions() == 0))
     {
@@ -180,7 +181,7 @@ public class Sca extends ClawTransformation {
     if(_claw.isScaModelConfig()) {
       return analyzeModelData(xcodeml, trans);
     } else {
-      if(!_claw.hasDataOverClause()) {
+      if(!_claw.hasClause(ClawClause.DATA_OVER)) {
         return analyzeDataForAutomaticPromotion(xcodeml);
       } else {
         return analyzeDataFromOverClause(xcodeml);
@@ -224,7 +225,7 @@ public class Sca extends ClawTransformation {
    * array promotion is performed.
    *
    * @param xcodeml Current translation unit
-   * @return True if the analyzis succeed. False otherwise.
+   * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeDataForAutomaticPromotion(XcodeProgram xcodeml) {
     List<String> scalars = new ArrayList<>();
@@ -232,8 +233,8 @@ public class Sca extends ClawTransformation {
     List<Xnode> declarations =
         _fctDef.getDeclarationTable().values(Xcode.VAR_DECL);
 
-    if(_claw.hasNoPromoteClause()) {
-      _noPromotion.addAll(_claw.getNoPromoteValues());
+    if(_claw.hasClause(ClawClause.NO_PROMOTE)) {
+      _noPromotion.addAll(_claw.values(ClawClause.NO_PROMOTE));
     }
 
     for(Xnode decl : declarations) {
@@ -250,8 +251,8 @@ public class Sca extends ClawTransformation {
             }
           } else {
             // Scalars mentioned in the scalar clause will be promoted.
-            if(_claw.hasScalarClause() &&
-                _claw.getScalarClauseValues().contains(varName))
+            if(_claw.hasClause(ClawClause.SCALAR) &&
+                _claw.values(ClawClause.SCALAR).contains(varName))
             {
               if(!bType.hasIntent()) {
                 xcodeml.addWarning(String.format(
@@ -331,7 +332,7 @@ public class Sca extends ClawTransformation {
     promoteFields(xcodeml);
 
     // Adapt array references.
-    if(_claw.hasDataOverClause()) {
+    if(_claw.hasClause(ClawClause.DATA_OVER)) {
       for(String id : _claw.getDataOverClauseValues()) {
         Field.adaptArrayRef(_promotions.get(id), _fctDef.body(), xcodeml);
       }
@@ -376,7 +377,7 @@ public class Sca extends ClawTransformation {
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(_claw.hasDataOverClause()) {
+    if(_claw.hasClause(ClawClause.DATA_OVER)) {
       for(String fieldId : _claw.getDataOverClauseValues()) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getLayoutForData(fieldId));

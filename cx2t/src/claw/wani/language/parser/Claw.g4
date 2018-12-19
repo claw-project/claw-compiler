@@ -94,7 +94,7 @@ directive[ClawPragma l]
   // loop-hoist directive
   | LOOP_HOIST '(' ids_list[o] ')' loop_hoist_clauses[$l] EOF
     {
-      $l.setHoistInductionVars(o);
+      $l.setValues(ClawClause.HOIST_INDUCTIONS, o);
       $l.setDirective(ClawDirective.LOOP_HOIST);
     }
   | END LOOP_HOIST EOF
@@ -108,9 +108,9 @@ directive[ClawPragma l]
     '(' identifiers_list[o] ')' (target_clause[$l])? EOF
     {
       $l.setDirective(ClawDirective.ARRAY_TO_CALL);
-      $l.setFctParams(o);
-      $l.setFctName($fct_name.text);
-      $l.setArrayName($array_name.text);
+      $l.setValues(ClawClause.FCT_PARAMETERS, o);
+      $l.setValue(ClawClause.FCT_NAME, $fct_name.text);
+      $l.setValue(ClawClause.ARRAY_NAME, $array_name.text);
     }
 
    // SCA (parallelize deprecated) directive
@@ -129,7 +129,7 @@ directive[ClawPragma l]
        System.err.
        println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
-       $l.setForwardClause();
+       $l.setClause(ClawClause.FORWARD);
      }
    | END PARALLELIZE EOF
      {
@@ -155,7 +155,7 @@ directive[ClawPragma l]
    | SCA FORWARD parallelize_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.SCA);
-       $l.setForwardClause();
+       $l.setClause(ClawClause.FORWARD);
      }
    | END SCA EOF
      {
@@ -171,7 +171,7 @@ directive[ClawPragma l]
    | MODEL_DATA LAYOUT '(' layout_id=IDENTIFIER ')' EOF
      {
        $l.setDirective(ClawDirective.MODEL_DATA);
-       $l.setLayoutClause($layout_id.text);
+       $l.setValue(ClawClause.LAYOUT, $layout_id.text);
      }
    | END MODEL_DATA EOF
      {
@@ -235,7 +235,7 @@ data_over_clause[ClawPragma l]
 :
     SCALAR '(' ids_list[dataLst] ')'
     {
-      $l.setScalarClause(dataLst);
+      $l.setValues(ClawClause.SCALAR, dataLst);
     }
   | DATA '(' ids_list[dataLst] ')' OVER '(' ids_or_colon_list[overLst] ')'
     {
@@ -243,14 +243,14 @@ data_over_clause[ClawPragma l]
     }
   | NOPROMOTE '(' ids_list[dataLst] ')'
     {
-      $l.setNoPromoteClause(dataLst);
+      $l.setValues(ClawClause.NO_PROMOTE, dataLst);
     }
 ;
 
 // group clause
 group_clause[ClawPragma l]:
     GROUP '(' group_name=IDENTIFIER ')'
-    { $l.setGroupClause($group_name.text); }
+    { $l.setValue(ClawClause.GROUP, $group_name.text); }
 ;
 
 // collapse clause
@@ -261,21 +261,21 @@ collapse_clause[ClawPragma l]:
 
 // fusion clause
 fusion_clause[ClawPragma l]:
-    FUSION { $l.setFusionClause(); }
+    FUSION { $l.setClause(ClawClause.FUSION); }
     fusion_options[$l]
 ;
 
 fusion_options[ClawPragma l]:
   (
-      { !$l.hasGroupClause() }?      group_clause[$l]
-    | { !$l.hasCollapseClause() }?   collapse_clause[$l]
-    | { !$l.hasConstraintClause() }? constraint_clause[$l]
+      { !$l.hasClause(ClawClause.GROUP) }?      group_clause[$l]
+    | { !$l.hasClause(ClawClause.COLLAPSE) }?   collapse_clause[$l]
+    | { !$l.hasClause(ClawClause.CONSTRAINT) }? constraint_clause[$l]
   )*
 ;
 
 // parallel clause
 parallel_clause[ClawPragma l]:
-    PARALLEL { $l.setParallelClause(); }
+    PARALLEL { $l.setClause(ClawClause.PARALLEL); }
 ;
 
 // acc clause
@@ -285,12 +285,12 @@ acc_clause[ClawPragma l]
   }
   :
     ACC '(' identifiers[tempAcc] ')'
-    { $l.setAcceleratorClauses(Utility.join(" ", tempAcc)); }
+    { $l.setValue(ClawClause.ACC, Utility.join(" ", tempAcc)); }
 ;
 
 // interchange clause
 interchange_clause[ClawPragma l]:
-    INTERCHANGE indexes_option[$l] { $l.setInterchangeClause(); }
+    INTERCHANGE indexes_option[$l] { $l.setClause(ClawClause.INTERCHANGE); }
 ;
 
 // induction clause
@@ -299,7 +299,9 @@ induction_clause[ClawPragma l]
     List<String> temp = new ArrayList<>();
   }
   :
-    INDUCTION '(' ids_list[temp] ')' { $l.setInductionClause(temp); }
+    INDUCTION '(' ids_list[temp] ')' {
+        $l.setValues(ClawClause.INDUCTION, temp);
+    }
 ;
 
 // data clause
@@ -308,12 +310,12 @@ data_clause[ClawPragma l]
     List<String> temp = new ArrayList<>();
   }
   :
-    DATA '(' ids_list[temp] ')' { $l.setDataClause(temp); }
+    DATA '(' ids_list[temp] ')' { $l.setValues(ClawClause.DATA, temp); }
 ;
 
 // private clause
 private_clause[ClawPragma l]:
-    PRIVATE { $l.setPrivateClause(); }
+    PRIVATE { $l.setClause(ClawClause.PRIVATE); }
 ;
 
 // reshape clause
@@ -380,7 +382,9 @@ indexes_option[ClawPragma l]
     List<String> indexes = new ArrayList();
   }
   :
-    '(' ids_list[indexes] ')' { $l.setIndexes(indexes); }
+    '(' ids_list[indexes] ')' {
+        $l.setValues(ClawClause.INTERCHANGE_INDEXES, indexes);
+     }
   | /* empty */
 ;
 
@@ -477,9 +481,9 @@ define_option[ClawPragma l]:
 // Allow to switch order
 parallelize_clauses[ClawPragma l]:
   (
-    { !$l.hasCopyClause() }?   copy_clause[$l]
-  | { !$l.hasUpdateClause() }? update_clause[$l]
-  | { !$l.hasCreateClause() }? create_clause[$l]
+    { !$l.hasClause(ClawClause.COPY) }?   copy_clause[$l]
+  | { !$l.hasClause(ClawClause.UPDATE) }? update_clause[$l]
+  | { !$l.hasClause(ClawClause.CREATE) }? create_clause[$l]
   )*
 ;
 
@@ -503,7 +507,7 @@ update_clause[ClawPragma l]:
 
 create_clause[ClawPragma l]:
     CREATE
-    { $l.setCreateClause(); }
+    { $l.setClause(ClawClause.CREATE); }
 ;
 
 target_clause[ClawPragma l]
@@ -538,10 +542,10 @@ target returns [Target t]:
 // Possible permutation of clauses for the loop-fusion directive
 loop_fusion_clauses[ClawPragma l]:
   (
-    { !$l.hasGroupClause() }?      group_clause[$l]
-  | { !$l.hasCollapseClause() }?   collapse_clause[$l]
-  | { !$l.hasTargetClause() }?     target_clause[$l]
-  | { !$l.hasConstraintClause() }? constraint_clause[$l]
+    { !$l.hasClause(ClawClause.GROUP) }?      group_clause[$l]
+  | { !$l.hasClause(ClawClause.COLLAPSE) }?   collapse_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?     target_clause[$l]
+  | { !$l.hasClause(ClawClause.CONSTRAINT) }? constraint_clause[$l]
   )*
 ;
 
@@ -549,30 +553,30 @@ loop_fusion_clauses[ClawPragma l]:
 loop_interchange_clauses[ClawPragma l]:
   indexes_option[$l]
   (
-    { !$l.hasParallelClause() }?    parallel_clause[$l]
-  | { !$l.hasAcceleratorClause() }? acc_clause[$l]
-  | { !$l.hasTargetClause() }?      target_clause[$l]
+    { !$l.hasClause(ClawClause.PARALLEL) }?    parallel_clause[$l]
+  | { !$l.hasClause(ClawClause.ACC) }? acc_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?      target_clause[$l]
   )*
 ;
 
 // Possible permutation of clauses for the loop-extract directive
 loop_extract_clauses[ClawPragma l]:
   (
-    { !$l.hasFusionClause() }?      fusion_clause[$l]
-  | { !$l.hasParallelClause() }?    parallel_clause[$l]
-  | { !$l.hasAcceleratorClause() }? acc_clause[$l]
-  | { !$l.hasTargetClause() }?      target_clause[$l]
+    { !$l.hasClause(ClawClause.FUSION) }?      fusion_clause[$l]
+  | { !$l.hasClause(ClawClause.PARALLEL) }?    parallel_clause[$l]
+  | { !$l.hasClause(ClawClause.ACC) }? acc_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?      target_clause[$l]
   )*
 ;
 
 // Possible permutation of clauses for the array-transform directive
 array_transform_clauses[ClawPragma l]:
   (
-    { !$l.hasFusionClause() }?      fusion_clause[$l]
-  | { !$l.hasParallelClause() }?    parallel_clause[$l]
-  | { !$l.hasAcceleratorClause() }? acc_clause[$l]
-  | { !$l.hasInductionClause() }?   induction_clause[$l]
-  | { !$l.hasTargetClause() }?      target_clause[$l]
+    { !$l.hasClause(ClawClause.FUSION) }?      fusion_clause[$l]
+  | { !$l.hasClause(ClawClause.PARALLEL) }?    parallel_clause[$l]
+  | { !$l.hasClause(ClawClause.ACC) }? acc_clause[$l]
+  | { !$l.hasClause(ClawClause.INDUCTION) }?   induction_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?      target_clause[$l]
   )*
 ;
 
@@ -584,9 +588,9 @@ kcache_clauses[ClawPragma l]
 :
   (
     { $l.getOffsets() == null }? offset_clause[i] { $l.setOffsets(i); }
-  | { !$l.hasInitClause() }?     INIT { $l.setInitClause(); }
-  | { !$l.hasPrivateClause() }?  private_clause[$l]
-  | { !$l.hasTargetClause() }?   target_clause[$l]
+  | { !$l.hasClause(ClawClause.INIT) }?     INIT { $l.setClause(ClawClause.INIT); }
+  | { !$l.hasClause(ClawClause.PRIVATE) }?  private_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?   target_clause[$l]
   )*
   {
     if($l.getOffsets() == null) {
@@ -598,11 +602,11 @@ kcache_clauses[ClawPragma l]
 // Possible permutation of clauses for the loop-hoist directive
 loop_hoist_clauses[ClawPragma l]:
   (
-    { !$l.hasReshapeClause() }?     reshape_clause[$l]
-  | { !$l.hasInterchangeClause() }? interchange_clause[$l]
-  | { !$l.hasFusionClause() }?      fusion_clause[$l]
-  | { !$l.hasTargetClause() }?      target_clause[$l]
-  | { !$l.hasCleanupClause() }?     cleanup_clause[$l]
+    { !$l.hasClause(ClawClause.RESHAPE) }?     reshape_clause[$l]
+  | { !$l.hasClause(ClawClause.INTERCHANGE) }? interchange_clause[$l]
+  | { !$l.hasClause(ClawClause.FUSION) }?      fusion_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?      target_clause[$l]
+  | { !$l.hasClause(ClawClause.CLEANUP) }?     cleanup_clause[$l]
   )*
 ;
 
