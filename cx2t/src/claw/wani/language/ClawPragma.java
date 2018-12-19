@@ -81,15 +81,19 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * @param clause
-   * @return
+   * Check whether a clause is set.
+   *
+   * @param clause Clause to be checked.
+   * @return True if the clause is set. False otherwise.
    */
   public boolean hasClause(ClawClause clause) {
     return _clauses.contains(clause);
   }
 
   /**
-   * @param clause
+   * Set a clause.
+   *
+   * @param clause Clause to be set.
    */
   public void setClause(ClawClause clause) {
     if(clause != null) {
@@ -98,8 +102,10 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * @param clause
-   * @param value
+   * Set a clause and attach a String value to it.
+   *
+   * @param clause Clause to be set.
+   * @param value  Value to be attached.
    */
   public void setValue(ClawClause clause, String value) {
     if(clause == null || value == null) {
@@ -110,17 +116,20 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * @param clause
-   * @return
+   * Retrieve a String value attached to a clause.
+   *
+   * @param clause Clause for which the value is retrieved.
+   * @return String value if clause is set. Null otherwise.
    */
   public String value(ClawClause clause) {
     return _clauseStringValues.containsKey(clause) ? _clauseStringValues.get(clause) : null;
   }
 
   /**
+   * Set a clause and attach a list of String values to it.
    *
-   * @param clause
-   * @param values
+   * @param clause Clause to be set.
+   * @param values Values to be attached.
    */
   public void setValues(ClawClause clause, List<String> values) {
     if(clause == null || values == null) {
@@ -131,9 +140,10 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
+   * Retrieve a list of String values attached to a clause.
    *
-   * @param clause
-   * @return
+   * @param clause Clause for which the value is retrieved.
+   * @return List of values if clause is set. Null otherwise.
    */
   public List<String> values(ClawClause clause) {
     return _clauseListStringValues.containsKey(clause) ?
@@ -755,7 +765,7 @@ public class ClawPragma extends AnalyzedPragma {
   }
 
   /**
-   * Check whether any erros has been reported.
+   * Check whether any errors has been reported.
    *
    * @return True if any error reported. False otherwise.
    */
