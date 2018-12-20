@@ -33,5 +33,10 @@ public class XcodeProgTest {
     assertEquals(8, xcodeml.getTypeTable().size());
     assertEquals(2, xcodeml.getGlobalSymbolsTable().size());
     assertEquals(2, xcodeml.getGlobalDeclarationsTable().size());
+
+    xcodeml.addError("", 0);
+    xcodeml.addError("", null);
+
+    assertEquals(0, xcodeml.getErrors().size());
   }
 }

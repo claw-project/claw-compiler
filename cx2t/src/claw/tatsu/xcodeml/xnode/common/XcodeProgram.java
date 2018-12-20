@@ -7,6 +7,7 @@ package claw.tatsu.xcodeml.xnode.common;
 import claw.tatsu.xcodeml.error.XanalysisError;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
+import claw.wani.language.ClawPragma;
 import org.w3c.dom.Document;
 
 import java.io.BufferedInputStream;
@@ -105,13 +106,30 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
-   * Add an error.
+   * Add an error. If msg is null or empty, the error is not added.
    *
    * @param msg    Error message.
    * @param lineno Line number that triggered the error.
    */
   public void addError(String msg, int lineno) {
+    if(msg == null || msg.isEmpty()) {
+      return;
+    }
     _errors.add(new XanalysisError(msg, lineno));
+  }
+
+  /**
+   * Add an error. If msg is null or empty, the error is not added.
+   *
+   * @param msg    Error message.
+   * @param pragma Pragma that triggered the error.
+   */
+  public void addError(String msg, ClawPragma pragma) {
+    if(pragma == null) {
+      return;
+    }
+    _errors.add(new XanalysisError(msg,
+        pragma.getPragma() != null ? pragma.getPragma().lineNo() : 0));
   }
 
   /**
