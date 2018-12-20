@@ -7,19 +7,24 @@ package claw.wani.transformation.sca;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.x2t.configuration.AcceleratorConfiguration;
 import claw.wani.x2t.configuration.AcceleratorLocalStrategy;
 import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,10 +84,51 @@ public class ScaGPU extends Sca {
   }
 
   @Override
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+
+    if(!detectParentFunction(xcodeml)) {
+      return false;
+    }
+
+    DirectiveGenerator dirGen = Context.get().getGenerator();
+    ClawTranslator trans = (ClawTranslator) translator;
+
+    /* Check if unsupported statements are located in the future parallel
+     * region. */
+    if(dirGen.getDirectiveLanguage() != CompilerDirective.NONE) {
+      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
+      Xnode parallelRegionStart =
+          Directive.findParallelRegionStart(_fctDef, null);
+      Xnode parallelRegionEnd =
+          Directive.findParallelRegionEnd(_fctDef, contains);
+
+      List<Xnode> unsupportedStatements =
+          XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
+              dirGen.getUnsupportedStatements());
+
+      if(!unsupportedStatements.isEmpty()) {
+        for(Xnode statement : unsupportedStatements) {
+          xcodeml.addError("Unsupported statement in parallel region",
+              statement.lineNo());
+        }
+        return false;
+      }
+    }
+
+    detectInductionVariables();
+
+    return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+  }
+
+  @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
       throws Exception
   {
+    if(appliedOnElemental()) {
+      return;
+    }
+
     // Apply the common transformation
     super.transform(xcodeml, translator, other);
 
@@ -91,6 +137,23 @@ public class ScaGPU extends Sca {
 
     // Finalize the common steps
     super.finalizeTransformation(xcodeml);
+  }
+
+  private boolean appliedOnElemental() throws IllegalTransformationException
+  {
+    /* SCA in ELEMENTAL function. Only flag the function and leave the actual
+     * transformation until having information on the calling site from
+     * another translation unit. */
+    if(_fctType.isElemental()) {
+      // SCA ELEMENTAL
+      FmoduleDefinition modDef = _fctDef.findParentModule();
+      if(modDef == null) {
+        throw new IllegalTransformationException("SCA ELEMENTAL function " +
+            "transformation requires module encapsulation.");
+      }
+      return true;
+    }
+    return false;
   }
 
   /**

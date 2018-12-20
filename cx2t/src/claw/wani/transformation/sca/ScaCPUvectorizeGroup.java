@@ -6,8 +6,7 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.Message;
-import claw.tatsu.common.Utility;
+import claw.tatsu.common.*;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Condition;
@@ -23,6 +22,7 @@ import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.wani.language.ClawPragma;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
 
@@ -63,10 +63,32 @@ public class ScaCPUvectorizeGroup extends Sca {
   }
 
   @Override
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+    if(!detectParentFunction(xcodeml)) {
+      return false;
+    }
+
+    if(!_fctType.isElemental()) { // Only for non-elemental function/subroutine
+      ClawTranslator trans = (ClawTranslator) translator;
+      detectInductionVariables();
+      return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+    }
+    return true;
+  }
+
+  @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
       throws Exception
   {
+    // SCA in ELEMENTAL function has no effect for CPU target
+    if(_fctType.isElemental()) {
+      xcodeml.addWarning(
+          "SCA in ELEMENTAL function has no impact for CPU target",
+          _claw.getPragma().lineNo());
+      removePragma();
+    }
+
     // Apply the common transformation
     super.transform(xcodeml, translator, other);
 
