@@ -119,7 +119,7 @@ directive[ClawPragma l]
      {
        // TODO to be removed
        System.err.
-       println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       println("\"parallelize\" directive is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
        $l.getLocalModelConfig().generateDefaultLayout();
      }
@@ -127,7 +127,7 @@ directive[ClawPragma l]
      {
        // TODO to be removed
        System.err.
-       println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       println("\"parallelize\" directive is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
        $l.setClause(ClawClause.FORWARD);
      }
@@ -135,7 +135,7 @@ directive[ClawPragma l]
      {
        // TODO to be removed
        System.err.
-       println("\"parallelize\" clause is deprecated. Use \"sca\" instead");
+       println("\"parallelize\" directive is deprecated. Use \"sca\" instead");
        $l.setDirective(ClawDirective.SCA);
        $l.setEndPragma();
      }
