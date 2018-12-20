@@ -87,6 +87,7 @@ public class ScaCPUvectorizeGroup extends Sca {
           "SCA in ELEMENTAL function has no impact for CPU target",
           _claw.getPragma().lineNo());
       removePragma();
+      return;
     }
 
     // Apply the common transformation

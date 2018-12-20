@@ -216,6 +216,10 @@ public class ScaForward extends ClawTransformation {
       }
     }
 
+    if(_fctType.isElemental() && Context.isTarget(Target.CPU)) {
+      return true;
+    }
+
     /* Workaround for a bug in OMNI Compiler. Look at test case
      * claw/abstraction10. In this test case, the XcodeML/F intermediate
      * representation for the function call points to a FfunctionType element
