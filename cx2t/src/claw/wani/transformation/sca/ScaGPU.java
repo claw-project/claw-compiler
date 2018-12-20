@@ -90,6 +90,10 @@ public class ScaGPU extends Sca {
       return false;
     }
 
+    if(_fctType.isElemental()) {
+      return analyzeElemental(xcodeml);
+    }
+
     DirectiveGenerator dirGen = Context.get().getGenerator();
     ClawTranslator trans = (ClawTranslator) translator;
 
@@ -118,6 +122,21 @@ public class ScaGPU extends Sca {
     detectInductionVariables();
 
     return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+  }
+
+  private boolean analyzeElemental(XcodeProgram xcodeml) {
+    // Elemental needs model-data directive
+    if(!_claw.isScaModelConfig()
+        || !Configuration.get().getModelConfig().isLoaded())
+    {
+      xcodeml.addError("SCA applied in ELEMENTAL function/subroutine " +
+          "requires model configuration!", _claw);
+      return false;
+    }
+
+
+
+    return true;
   }
 
   @Override
