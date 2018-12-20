@@ -84,8 +84,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     // SCA in ELEMENTAL function has no effect for CPU target
     if(_fctType.isElemental()) {
       xcodeml.addWarning(
-          "SCA in ELEMENTAL function has no impact for CPU target",
-          _claw.getPragma().lineNo());
+          "SCA in ELEMENTAL function has no impact for CPU target", _claw);
       removePragma();
       return;
     }

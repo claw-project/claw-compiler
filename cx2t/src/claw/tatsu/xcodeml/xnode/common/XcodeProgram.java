@@ -142,6 +142,20 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
+   * Add an warning. If msg is null or empty, the warning is not added.
+   *
+   * @param msg    Warning message.
+   * @param pragma Pragma that triggered the warning.
+   */
+  public void addWarning(String msg, ClawPragma pragma) {
+    if(pragma == null) {
+      return;
+    }
+    _warnings.add(new XanalysisError(msg,
+        pragma.getPragma() != null ? pragma.getPragma().lineNo() : 0));
+  }
+
+  /**
    * Add a warning.
    *
    * @param msg    Warning message.

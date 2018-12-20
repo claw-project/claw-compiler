@@ -75,7 +75,7 @@ public class ScaForward extends ClawTransformation {
     Xnode next = _claw.getPragma().nextSibling();
     if(next == null) {
       xcodeml.addError("Directive is not followed by a valid statement.",
-          _claw.getPragma().lineNo());
+          _claw);
       return false;
     }
     if(next.opcode() == Xcode.EXPR_STATEMENT
@@ -90,8 +90,7 @@ public class ScaForward extends ClawTransformation {
       _doStatements = new NestedDoStatement(next);
       return analyzeForwardWithDo(xcodeml);
     }
-    xcodeml.addError("Directive is not followed by a valid statement.",
-        _claw.getPragma().lineNo());
+    xcodeml.addError("Directive is not followed by a valid statement.", _claw);
     return false;
   }
 
@@ -104,8 +103,7 @@ public class ScaForward extends ClawTransformation {
   private boolean analyzeForwardWithDo(XcodeProgram xcodeml) {
     _flatten = true;
     if(_doStatements == null) {
-      xcodeml.addError("Directive is not followed by do statement.",
-          _claw.getPragma().lineNo());
+      xcodeml.addError("Directive is not followed by do statement.", _claw);
       return false;
     }
 
@@ -124,8 +122,7 @@ public class ScaForward extends ClawTransformation {
     for(int i = 0; i < _doStatements.size(); ++i) {
       if(i == _doStatements.size() - 1) {
         if(_doStatements.get(i).body() == null) {
-          xcodeml.addError("Cannot locate function call.",
-              _claw.getPragma().lineNo());
+          xcodeml.addError("Cannot locate function call.", _claw);
           return false;
         }
       }
@@ -137,7 +134,7 @@ public class ScaForward extends ClawTransformation {
             && n.opcode() != Xcode.EXPR_STATEMENT)
         {
           xcodeml.addError("Only pragmas, comments and function calls allowed "
-              + "in the do statements.", _claw.getPragma().lineNo());
+              + "in the do statements.", _claw);
           return false;
         } else if(n.opcode() == Xcode.EXPR_STATEMENT
             || n.opcode() == Xcode.F_ASSIGN_STATEMENT)
@@ -150,7 +147,7 @@ public class ScaForward extends ClawTransformation {
       }
     }
 
-    xcodeml.addError("Function call not found.", _claw.getPragma().lineNo());
+    xcodeml.addError("Function call not found.", _claw);
     return false;
   }
 
@@ -162,8 +159,7 @@ public class ScaForward extends ClawTransformation {
    */
   private boolean analyzeForward(XcodeProgram xcodeml) {
     if(_fctCall == null) {
-      xcodeml.addError("Directive is not followed by a fct call.",
-          _claw.getPragma().lineNo());
+      xcodeml.addError("Directive is not followed by a fct call.", _claw);
       return false;
     }
 
@@ -181,8 +177,8 @@ public class ScaForward extends ClawTransformation {
         getFunctionDefinition(_calledFctName);
     FfunctionDefinition parentFctDef = _claw.getPragma().findParentFunction();
     if(parentFctDef == null) {
-      xcodeml.addError("Sca directive is not nested in a " +
-          "function/subroutine.", _claw.getPragma().lineNo());
+      xcodeml.addError("SCA directive is not nested in a " +
+          "function/subroutine.", _claw);
       return false;
     }
 
@@ -198,8 +194,7 @@ public class ScaForward extends ClawTransformation {
         List<Xnode> uses = parentFctDef.getDeclarationTable().uses();
         uses.addAll(parentModule.getDeclarationTable().uses());
         if(!findInModule(uses)) {
-          xcodeml.addError("Function definition not found in module ",
-              _claw.getPragma().lineNo());
+          xcodeml.addError("Function definition not found in module ", _claw);
           return false;
         }
       } else {
@@ -211,7 +206,7 @@ public class ScaForward extends ClawTransformation {
       } else {
         xcodeml.
             addError("Unsupported type of XcodeML/F element for the function "
-                + _calledFctName, _claw.getPragma().lineNo());
+                + _calledFctName, _claw);
         return false;
       }
     }
@@ -240,15 +235,14 @@ public class ScaForward extends ClawTransformation {
         }
         if(!findInModule(uses)) {
           xcodeml.addError("Function definition " + _calledFctName +
-              " not found in module ", _claw.getPragma().lineNo());
+              " not found in module ", _claw);
           return false;
         }
       } else {
         _fctType = xcodeml.getTypeTable().getFunctionType(id);
         if(_fctType == null) {
           xcodeml.addError(
-              "Called function cannot be found in the same module ",
-              _claw.getPragma().lineNo());
+              "Called function cannot be found in the same module ", _claw);
           return false;
         }
       }
@@ -277,7 +271,7 @@ public class ScaForward extends ClawTransformation {
       }
 
       xcodeml.addError("Function signature not found in the current module.",
-          _claw.getPragma().lineNo());
+          _claw);
       return false;
     }
 
