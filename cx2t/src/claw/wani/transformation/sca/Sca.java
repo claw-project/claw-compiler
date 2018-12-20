@@ -118,13 +118,13 @@ public class Sca extends ClawTransformation {
     _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
-              "Sca directive must be defined in a function/subroutine.",
+              "SCA directive must be defined in a function/subroutine.",
           _claw.getPragma().lineNo());
       return false;
     }
     _fctType = xcodeml.getTypeTable().getFunctionType(_fctDef);
     if(_fctType == null) {
-      xcodeml.addError("Function/subroutine signature cannot be found. ",
+      xcodeml.addError("Function/subroutine signature cannot be found!",
           _claw.getPragma().lineNo());
       return false;
     }
