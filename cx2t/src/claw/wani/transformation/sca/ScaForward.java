@@ -376,11 +376,15 @@ public class ScaForward extends ClawTransformation {
   {
     FfunctionDefinition fDef = _claw.getPragma().findParentFunction();
     if(fDef == null) {
-      throw new IllegalTransformationException("Sca directive is not " +
+      throw new IllegalTransformationException("SCA directive is not " +
           "nested in a function/subroutine.", _claw.getPragma().lineNo());
     }
 
     FfunctionType parentFctType = xcodeml.getTypeTable().getFunctionType(fDef);
+
+    if(_fctType.isElemental()) {
+      _flatten = true;
+    }
 
     List<Xnode> params = _fctType.getParameters();
 
@@ -565,13 +569,17 @@ public class ScaForward extends ClawTransformation {
 
     propagatePromotion(xcodeml, (ClawTranslator) translator);
 
-    Xnode exprStmt = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
+    Xnode fctCallAncestor = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
+    if(fctCallAncestor == null) {
+      fctCallAncestor = _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+    }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
       List<String> creates =
           XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
       Directive.generateDataRegionClause(xcodeml,
-          Collections.<String>emptyList(), creates, exprStmt, exprStmt);
+          Collections.<String>emptyList(), creates,
+          fctCallAncestor, fctCallAncestor);
     }
 
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
@@ -581,7 +589,8 @@ public class ScaForward extends ClawTransformation {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.IN, true);
         if(_claw.hasClause(ClawClause.UPDATE)) {
-          Directive.generateUpdate(xcodeml, exprStmt, out, DataMovement.DEVICE);
+          Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+              DataMovement.DEVICE);
         }
       }
 
@@ -591,7 +600,8 @@ public class ScaForward extends ClawTransformation {
         List<String> out =
             XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.OUT, true);
         if(_claw.hasClause(ClawClause.UPDATE)) {
-          Directive.generateUpdate(xcodeml, exprStmt, out, DataMovement.HOST);
+          Directive.generateUpdate(xcodeml, fctCallAncestor,
+              out, DataMovement.HOST);
         }
       }
     }
