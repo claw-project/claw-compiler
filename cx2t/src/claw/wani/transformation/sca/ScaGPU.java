@@ -16,6 +16,7 @@ import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -93,7 +94,7 @@ public class ScaGPU extends Sca {
     ClawTranslator trans = (ClawTranslator) translator;
 
     if(_fctType.isElemental()) {
-      return analyzeElemental(xcodeml);
+      return analyzeElemental(xcodeml, trans);
     } else {
       return analyzeStandard(xcodeml, trans);
     }
@@ -144,10 +145,13 @@ public class ScaGPU extends Sca {
    * Perform analysis steps for SCA transformation on ELEMENTAL
    * function/subroutine for GPU target.
    *
-   * @param xcodeml Current translation unit.
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
    * @return True if the analysis succeed. False otherwise.
    */
-  private boolean analyzeElemental(XcodeProgram xcodeml) {
+  private boolean analyzeElemental(XcodeProgram xcodeml,
+                                   ClawTranslator translator)
+  {
     // Elemental needs model-data directive
     if(!_claw.isScaModelConfig()
         || !Configuration.get().getModelConfig().isLoaded())
@@ -156,7 +160,7 @@ public class ScaGPU extends Sca {
           "requires model configuration!", _claw);
       return false;
     }
-    return true;
+    return analyzeData(xcodeml, translator);
   }
 
   @Override
@@ -184,7 +188,7 @@ public class ScaGPU extends Sca {
     // Apply the common transformation
     super.transform(xcodeml, translator, null);
 
-    // Apply specific steps for CPU smart fusion
+    // Apply specific steps for GPU target
     applySpecificTransformation(xcodeml);
 
     // Finalize the common steps
@@ -199,7 +203,7 @@ public class ScaGPU extends Sca {
    * @throws IllegalTransformationException
    */
   private void transformElemental(XcodeProgram xcodeml, Translator translator)
-      throws IllegalTransformationException
+      throws Exception
   {
     /* SCA in ELEMENTAL function. Only flag the function and leave the actual
      * transformation until having information on the calling site from
@@ -211,6 +215,17 @@ public class ScaGPU extends Sca {
         throw new IllegalTransformationException("SCA in ELEMENTAL function " +
             "transformation requires module encapsulation.");
       }
+
+      // Apply the common transformation
+      super.transform(xcodeml, translator, null);
+
+      _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
+
+      // Apply specific steps for GPU
+      applySpecificTransformation(xcodeml);
+
+      // Finalize the common steps
+      super.finalizeTransformation(xcodeml);
     }
   }
 
