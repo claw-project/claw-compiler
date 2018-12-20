@@ -90,12 +90,28 @@ public class ScaGPU extends Sca {
       return false;
     }
 
+    ClawTranslator trans = (ClawTranslator) translator;
+
     if(_fctType.isElemental()) {
       return analyzeElemental(xcodeml);
+    } else {
+      return analyzeStandard(xcodeml, trans);
     }
 
+  }
+
+  /**
+   * Perform analysis steps for SCA transformation on standard
+   * function/subroutine for GPU target.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @return True if the analysis succeed. False otherwise.
+   */
+  private boolean analyzeStandard(XcodeProgram xcodeml,
+                                  ClawTranslator translator)
+  {
     DirectiveGenerator dirGen = Context.get().getGenerator();
-    ClawTranslator trans = (ClawTranslator) translator;
 
     /* Check if unsupported statements are located in the future parallel
      * region. */
@@ -121,9 +137,16 @@ public class ScaGPU extends Sca {
 
     detectInductionVariables();
 
-    return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+    return analyzeDimension(xcodeml) && analyzeData(xcodeml, translator);
   }
 
+  /**
+   * Perform analysis steps for SCA transformation on ELEMENTAL
+   * function/subroutine for GPU target.
+   *
+   * @param xcodeml Current translation unit.
+   * @return True if the analysis succeed. False otherwise.
+   */
   private boolean analyzeElemental(XcodeProgram xcodeml) {
     // Elemental needs model-data directive
     if(!_claw.isScaModelConfig()
@@ -133,9 +156,6 @@ public class ScaGPU extends Sca {
           "requires model configuration!", _claw);
       return false;
     }
-
-
-
     return true;
   }
 
@@ -144,12 +164,25 @@ public class ScaGPU extends Sca {
                         Transformation other)
       throws Exception
   {
-    if(appliedOnElemental()) {
-      return;
+    if(_fctType.isElemental()) {
+      transformElemental(xcodeml, translator);
+    } else {
+      transformStandard(xcodeml, translator);
     }
+  }
 
+  /**
+   * Apply transformation on standard function/subroutine.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @throws Exception when transformation cannot by applied.
+   */
+  private void transformStandard(XcodeProgram xcodeml, Translator translator)
+      throws Exception
+  {
     // Apply the common transformation
-    super.transform(xcodeml, translator, other);
+    super.transform(xcodeml, translator, null);
 
     // Apply specific steps for CPU smart fusion
     applySpecificTransformation(xcodeml);
@@ -158,7 +191,15 @@ public class ScaGPU extends Sca {
     super.finalizeTransformation(xcodeml);
   }
 
-  private boolean appliedOnElemental() throws IllegalTransformationException
+  /**
+   * Apply transformation on ELEMENTAL function/subroutine.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @throws IllegalTransformationException
+   */
+  private void transformElemental(XcodeProgram xcodeml, Translator translator)
+      throws IllegalTransformationException
   {
     /* SCA in ELEMENTAL function. Only flag the function and leave the actual
      * transformation until having information on the calling site from
@@ -167,12 +208,10 @@ public class ScaGPU extends Sca {
       // SCA ELEMENTAL
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef == null) {
-        throw new IllegalTransformationException("SCA ELEMENTAL function " +
+        throw new IllegalTransformationException("SCA in ELEMENTAL function " +
             "transformation requires module encapsulation.");
       }
-      return true;
     }
-    return false;
   }
 
   /**
