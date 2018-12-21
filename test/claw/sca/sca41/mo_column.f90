@@ -6,16 +6,19 @@
 MODULE mo_column
   IMPLICIT NONE
 CONTAINS
+
   ! Compute single point with elemental function
   ELEMENTAL FUNCTION compute_point(t) RESULT(q)
     IMPLICIT NONE
 
     !$claw model-data
-    REAL, INTENT(IN)   :: t ! Field declared as one column only
-    REAL :: q ! Field declared as one column only
+    REAL, INTENT(IN)   :: t ! Field declared as a single point only
+    REAL :: q               ! Field declared as a single point only
     !$claw end model-data
 
     REAL :: c
+
+    ! The following directive is optional in ELEMENTAL function/subroutine
 
     !$claw sca
 
