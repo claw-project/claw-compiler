@@ -199,7 +199,6 @@ public class ClawTranslatorDriver {
           _translationUnit.addError(itex.getMessage(), itex.getStartLine());
           abort();
         } catch(Exception ex) {
-          Logger.getAnonymousLogger().log(Level.SEVERE, ex.getMessage());
           _translationUnit.addError("Unexpected error: " + ex.getMessage(), 0);
           if(XmOption.isDebugOutput()) {
             StringWriter errors = new StringWriter();
