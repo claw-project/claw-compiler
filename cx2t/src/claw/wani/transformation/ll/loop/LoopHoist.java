@@ -53,6 +53,12 @@ public class LoopHoist extends ClawBlockTransformation {
    */
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+    if(_clawEnd == null) {
+      xcodeml.addError("loop-hoist directive requires an end directive.",
+          _clawStart.getPragma().lineNo());
+      return false;
+    }
+
     int pragmaDepthLevel = _clawStart.getPragma().depth();
 
     // Find all the group of nested loops that can be part of the hoisting
