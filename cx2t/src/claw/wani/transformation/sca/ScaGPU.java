@@ -20,6 +20,7 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.x2t.configuration.AcceleratorConfiguration;
@@ -200,7 +201,7 @@ public class ScaGPU extends Sca {
    *
    * @param xcodeml    Current translation unit.
    * @param translator Current translator.
-   * @throws IllegalTransformationException
+   * @throws IllegalTransformationException If transformation fails.
    */
   private void transformElemental(XcodeProgram xcodeml, Translator translator)
       throws Exception
@@ -219,13 +220,34 @@ public class ScaGPU extends Sca {
       // Apply the common transformation
       super.transform(xcodeml, translator, null);
 
-      _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
+      // Remove ELEMENTAL and PURE attributes if present.
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_ELEMENTAL);
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_PURE);
 
       // Apply specific steps for GPU
       applySpecificTransformation(xcodeml);
 
       // Finalize the common steps
       super.finalizeTransformation(xcodeml);
+    }
+  }
+
+  /**
+   * Remove the given attribute if exists and add a warning.
+   *
+   * @param xcodeml   Current translation unit.
+   * @param fctType   Function type on which attribute is removed.
+   * @param attribute Attribute to remove.
+   */
+  private void removeAttributesWithWaring(XcodeProgram xcodeml,
+                                          FfunctionType fctType,
+                                          Xattr attribute)
+  {
+    if(fctType.hasAttribute(attribute)) {
+      xcodeml.addWarning(String.format(
+          "SCA attribute %s removed from function/subroutine %s",
+          attribute.toString(), _fctDef.getName()), _claw);
+      fctType.removeAttribute(attribute);
     }
   }
 
