@@ -7,12 +7,10 @@ package claw.wani.transformation.sca;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.*;
-import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.*;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
@@ -44,7 +42,7 @@ public class Sca extends ClawTransformation {
   final Set<String> _noPromotion;
   FfunctionDefinition _fctDef;
   Set<String> _inductionVariables;
-  private FfunctionType _fctType;
+  FfunctionType _fctType;
 
   static final String SCA_DEBUG_PREFIX = "SCA:";
 
@@ -60,6 +58,12 @@ public class Sca extends ClawTransformation {
     _arrayFieldsInOut = new HashSet<>();
     _scalarFields = new HashSet<>();
     _noPromotion = new HashSet<>();
+  }
+
+  @Override
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+    // Analysis is performed in child classes.
+    return false;
   }
 
   /**
@@ -103,54 +107,33 @@ public class Sca extends ClawTransformation {
     Message.debug("==========================================");
   }
 
-  @Override
-  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-
-    ClawTranslator trans = (ClawTranslator) translator;
-
+  /**
+   * Locate the parent function/subroutine in which the pragma is located.
+   *
+   * @param xcodeml Current translation unit.
+   * @return True if the function/subroutine was located. False otherwise.
+   */
+  boolean detectParentFunction(XcodeProgram xcodeml) {
     // Check for the parent fct/subroutine definition
     _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
-              "Sca directive must be defined in a function/subroutine.",
-          _claw.getPragma().lineNo());
+              "SCA directive must be defined in a function/subroutine.", _claw);
       return false;
     }
     _fctType = xcodeml.getTypeTable().getFunctionType(_fctDef);
     if(_fctType == null) {
-      xcodeml.addError("Function/subroutine signature cannot be found. ",
-          _claw.getPragma().lineNo());
+      xcodeml.addError("Function/subroutine signature cannot be found!", _claw);
       return false;
     }
+    return true;
+  }
 
-    /* Check if unsupported statements are located in the future parallel
-     * region. */
-    if(Context.isTarget(Target.GPU)
-        && (Context.get().getGenerator().getDirectiveLanguage()
-        != CompilerDirective.NONE))
-    {
-      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
-      Xnode parallelRegionStart =
-          Directive.findParallelRegionStart(_fctDef, null);
-      Xnode parallelRegionEnd =
-          Directive.findParallelRegionEnd(_fctDef, contains);
-
-      List<Xnode> unsupportedStatements =
-          XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
-              Context.get().getGenerator().getUnsupportedStatements());
-
-      if(!unsupportedStatements.isEmpty()) {
-        for(Xnode statement : unsupportedStatements) {
-          xcodeml.addError("Unsupported statement in parallel region",
-              statement.lineNo());
-        }
-        return false;
-      }
-    }
-
+  /**
+   * Populate list of induction variables used in the function/subroutine body.
+   */
+  void detectInductionVariables() {
     _inductionVariables = Function.detectInductionVariables(_fctDef);
-
-    return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
   }
 
   /**
@@ -159,13 +142,12 @@ public class Sca extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyzeDimension(XcodeProgram xcodeml) {
+  boolean analyzeDimension(XcodeProgram xcodeml) {
     if(!_claw.hasClause(ClawClause.DIMENSION)
         && (_claw.isScaModelConfig()
         && Configuration.get().getModelConfig().getNbDimensions() == 0))
     {
-      xcodeml.addError("No dimension defined for parallelization.",
-          _claw.getPragma().lineNo());
+      xcodeml.addError("No dimension defined for parallelization.", _claw);
       return false;
     }
     return true;
@@ -177,7 +159,7 @@ public class Sca extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyzeData(XcodeProgram xcodeml, ClawTranslator trans) {
+  boolean analyzeData(XcodeProgram xcodeml, ClawTranslator trans) {
     if(_claw.isScaModelConfig()) {
       return analyzeModelData(xcodeml, trans);
     } else {
@@ -207,7 +189,9 @@ public class Sca extends ClawTransformation {
         _arrayFieldsInOut.add(dataInfo.getKey());
 
         ModelConfig global = Configuration.get().getModelConfig();
-        if(dataInfo.getValue() != null && global.hasLayout(dataInfo.getValue())) {
+        if(dataInfo.getValue() != null
+            && global.hasLayout(dataInfo.getValue()))
+        {
           _claw.getLocalModelConfig().putLayout(dataInfo.getKey(),
               global.getLayout(dataInfo.getKey()));
         }
@@ -215,7 +199,7 @@ public class Sca extends ClawTransformation {
       return true;
     } else {
       xcodeml.addError("No model-data defined in function " + _fctDef.getName(),
-          _claw.getPragma().lineNo());
+          _claw);
       return false;
     }
   }
@@ -257,7 +241,7 @@ public class Sca extends ClawTransformation {
               if(!bType.hasIntent()) {
                 xcodeml.addWarning(String.format(
                     "Variable %s in scalar clause but not a dummy argument!",
-                    varName), _claw.getPragma().lineNo());
+                    varName), _claw);
               }
               _arrayFieldsInOut.add(varName);
             } else if(!bType.isParameter() && !bType.hasIntent()) {
@@ -291,14 +275,14 @@ public class Sca extends ClawTransformation {
       if(!_fctDef.getSymbolTable().contains(d)) {
         xcodeml.addError(
             String.format("Data %s is not defined in the current block.", d),
-            _claw.getPragma().lineNo()
+            _claw
         );
         return false;
       }
       if(!_fctDef.getDeclarationTable().contains(d)) {
         xcodeml.addError(
             String.format("Data %s is not declared in the current block.", d),
-            _claw.getPragma().lineNo()
+            _claw
         );
         return false;
       }

@@ -7,19 +7,26 @@ package claw.wani.transformation.sca;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.x2t.configuration.AcceleratorConfiguration;
 import claw.wani.x2t.configuration.AcceleratorLocalStrategy;
 import claw.wani.x2t.configuration.Configuration;
+import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,18 +86,169 @@ public class ScaGPU extends Sca {
   }
 
   @Override
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+
+    if(!detectParentFunction(xcodeml)) {
+      return false;
+    }
+
+    ClawTranslator trans = (ClawTranslator) translator;
+
+    if(_fctType.isElemental()) {
+      return analyzeElemental(xcodeml, trans);
+    } else {
+      return analyzeStandard(xcodeml, trans);
+    }
+
+  }
+
+  /**
+   * Perform analysis steps for SCA transformation on standard
+   * function/subroutine for GPU target.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @return True if the analysis succeed. False otherwise.
+   */
+  private boolean analyzeStandard(XcodeProgram xcodeml,
+                                  ClawTranslator translator)
+  {
+    DirectiveGenerator dirGen = Context.get().getGenerator();
+
+    /* Check if unsupported statements are located in the future parallel
+     * region. */
+    if(dirGen.getDirectiveLanguage() != CompilerDirective.NONE) {
+      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
+      Xnode parallelRegionStart =
+          Directive.findParallelRegionStart(_fctDef, null);
+      Xnode parallelRegionEnd =
+          Directive.findParallelRegionEnd(_fctDef, contains);
+
+      List<Xnode> unsupportedStatements =
+          XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
+              dirGen.getUnsupportedStatements());
+
+      if(!unsupportedStatements.isEmpty()) {
+        for(Xnode statement : unsupportedStatements) {
+          xcodeml.addError("Unsupported statement in parallel region",
+              statement.lineNo());
+        }
+        return false;
+      }
+    }
+
+    detectInductionVariables();
+
+    return analyzeDimension(xcodeml) && analyzeData(xcodeml, translator);
+  }
+
+  /**
+   * Perform analysis steps for SCA transformation on ELEMENTAL
+   * function/subroutine for GPU target.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @return True if the analysis succeed. False otherwise.
+   */
+  private boolean analyzeElemental(XcodeProgram xcodeml,
+                                   ClawTranslator translator)
+  {
+    // Elemental needs model-data directive
+    if(!_claw.isScaModelConfig()
+        || !Configuration.get().getModelConfig().isLoaded())
+    {
+      xcodeml.addError("SCA applied in ELEMENTAL function/subroutine " +
+          "requires model configuration!", _claw);
+      return false;
+    }
+    return analyzeData(xcodeml, translator);
+  }
+
+  @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
       throws Exception
   {
-    // Apply the common transformation
-    super.transform(xcodeml, translator, other);
+    if(_fctType.isElemental()) {
+      transformElemental(xcodeml, translator);
+    } else {
+      transformStandard(xcodeml, translator);
+    }
+  }
 
-    // Apply specific steps for CPU smart fusion
+  /**
+   * Apply transformation on standard function/subroutine.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @throws Exception when transformation cannot by applied.
+   */
+  private void transformStandard(XcodeProgram xcodeml, Translator translator)
+      throws Exception
+  {
+    // Apply the common transformation
+    super.transform(xcodeml, translator, null);
+
+    // Apply specific steps for GPU target
     applySpecificTransformation(xcodeml);
 
     // Finalize the common steps
     super.finalizeTransformation(xcodeml);
+  }
+
+  /**
+   * Apply transformation on ELEMENTAL function/subroutine.
+   *
+   * @param xcodeml    Current translation unit.
+   * @param translator Current translator.
+   * @throws IllegalTransformationException If transformation fails.
+   */
+  private void transformElemental(XcodeProgram xcodeml, Translator translator)
+      throws Exception
+  {
+    /* SCA in ELEMENTAL function. Only flag the function and leave the actual
+     * transformation until having information on the calling site from
+     * another translation unit. */
+    if(_fctType.isElemental()) {
+      // SCA ELEMENTAL
+      FmoduleDefinition modDef = _fctDef.findParentModule();
+      if(modDef == null) {
+        throw new IllegalTransformationException("SCA in ELEMENTAL function " +
+            "transformation requires module encapsulation.");
+      }
+
+      // Apply the common transformation
+      super.transform(xcodeml, translator, null);
+
+      // Remove ELEMENTAL and PURE attributes if present.
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_ELEMENTAL);
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_PURE);
+
+      // Apply specific steps for GPU
+      applySpecificTransformation(xcodeml);
+
+      // Finalize the common steps
+      super.finalizeTransformation(xcodeml);
+    }
+  }
+
+  /**
+   * Remove the given attribute if exists and add a warning.
+   *
+   * @param xcodeml   Current translation unit.
+   * @param fctType   Function type on which attribute is removed.
+   * @param attribute Attribute to remove.
+   */
+  private void removeAttributesWithWaring(XcodeProgram xcodeml,
+                                          FfunctionType fctType,
+                                          Xattr attribute)
+  {
+    if(fctType.hasAttribute(attribute)) {
+      xcodeml.addWarning(String.format(
+          "SCA attribute %s removed from function/subroutine %s",
+          attribute.toString(), _fctDef.getName()), _claw);
+      fctType.removeAttribute(attribute);
+    }
   }
 
   /**

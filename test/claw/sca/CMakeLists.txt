@@ -43,8 +43,9 @@
 # sca38: Check independent "if" handling for CPU target
 # sca39: Same as SCA1 with override option passed to the driver -x
 # sca40: SCA with model config
+# sca41: SCA on ELEMENTAL function
 
-foreach(loop_var RANGE 1 40)
+foreach(loop_var RANGE 1 41)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
@@ -57,6 +58,10 @@ set(CLAW_FLAGS_sca39 -x=cpu_trans_strategy:single)
 set(
   CLAW_FLAGS_sca40
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/basic_model.toml
+)
+set(
+  CLAW_FLAGS_sca41
+  --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca41/model.toml
 )
 
 claw_add_advanced_test_set(
