@@ -124,16 +124,13 @@ public class LoopFusion extends ClawTransformation {
 
     // Apply different transformation if the collapse clause is used
     if(_claw != null && _claw.hasClause(ClawClause.COLLAPSE)
-        && _claw.getCollapseValue() > 0)
+        && _claw.getCollapseValue() > 0 &&
+        _claw.getCollapseValue() > _doStmt.size())
     {
-      // Merge the most inner loop with the most inner loop of the other fusion
-      // unit
-      if(_claw.getCollapseValue() > _doStmt.size()) {
-        throw new IllegalTransformationException(
-            "Cannot apply transformation, one or both do stmt are invalid.",
-            _claw.getPragma().lineNo()
-        );
-      }
+      throw new IllegalTransformationException(
+          "Cannot apply transformation, one or both do stmt are invalid.",
+          _claw.getPragma().lineNo()
+      );
     }
 
     // Actual merge happens here
@@ -169,11 +166,49 @@ public class LoopFusion extends ClawTransformation {
     if(this.isTransformed() || other.isTransformed()) {
       return false;
     }
+
     // Loop must share the same group option
     if(!hasSameGroupClause(other)) {
       return false;
     }
 
+    // Loops can only be merged if they are at the same level
+    if(!_doStmt.getOuterStatement().hasSameParentBlock(
+        other.getNestedDoStmt().getOuterStatement()))
+    {
+      return false;
+    }
+
+    if(!hasCompatibleConstraints(xcodeml, other)) {
+      return false;
+    }
+
+    if(_claw.hasClause(ClawClause.COLLAPSE) && _claw.getCollapseValue() > 0) {
+      for(int i = 0; i < _claw.getCollapseValue(); ++i) {
+        if(!Loop.hasSameIndexRange(_doStmt.get(i),
+            other.getNestedDoStmt().get(i)))
+        {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      // Loop must share the same iteration range
+      return Loop.hasSameIndexRange(_doStmt.getOuterStatement(),
+          other.getNestedDoStmt().getOuterStatement());
+    }
+  }
+
+  /**
+   * Check compatibility of constraint clause on loop-fusion transformation.
+   *
+   * @param xcodeml Current translation unit.
+   * @param other   The other loop fusion unit to be merge with this one.
+   * @return True if the constraints are compatible. False otherwise.
+   */
+  private boolean hasCompatibleConstraints(XcodeProgram xcodeml,
+                                           LoopFusion other)
+  {
     ClawConstraint currentConstraint = ClawConstraint.DIRECT;
     if(_claw.hasClause(ClawClause.CONSTRAINT)
         && other.getLanguageInfo().hasClause(ClawClause.CONSTRAINT))
@@ -196,41 +231,19 @@ public class LoopFusion extends ClawTransformation {
 
     // Following constraint are used only in default mode. If constraint clause
     // is set to none, there are note checked.
-    if(currentConstraint == ClawConstraint.DIRECT) {
-      // Only pragma statement can be between the two loops.
-      if(!_doStmt.getOuterStatement().isDirectSibling(
-          other.getNestedDoStmt().getOuterStatement(),
-          Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
-      {
-        return false;
-      }
+    if(currentConstraint == ClawConstraint.DIRECT
+        && !_doStmt.getOuterStatement().isDirectSibling(
+        other.getNestedDoStmt().getOuterStatement(),
+        Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
+    // Only pragma statement can be between the two loops.
+    {
+      return false;
     } else {
       xcodeml.addWarning("Unconstrained loop-fusion generated",
           Arrays.asList(_claw.getPragma().lineNo(),
               other.getLanguageInfo().getPragma().lineNo()));
     }
-
-    // Loops can only be merged if they are at the same level
-    if(!_doStmt.getOuterStatement().hasSameParentBlock(
-        other.getNestedDoStmt().getOuterStatement()))
-    {
-      return false;
-    }
-
-    if(_claw.hasClause(ClawClause.COLLAPSE) && _claw.getCollapseValue() > 0) {
-      for(int i = 0; i < _claw.getCollapseValue(); ++i) {
-        if(!Loop.hasSameIndexRange(_doStmt.get(i),
-            other.getNestedDoStmt().get(i)))
-        {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      // Loop must share the same iteration range
-      return Loop.hasSameIndexRange(_doStmt.getOuterStatement(),
-          other.getNestedDoStmt().getOuterStatement());
-    }
+    return true;
   }
 
   /**
