@@ -233,11 +233,11 @@ public class LoopFusion extends ClawTransformation {
     // is set to none, there are note checked.
     if(currentConstraint == ClawConstraint.DIRECT
         && !_doStmt.getOuterStatement().isDirectSibling(
-          other.getNestedDoStmt().getOuterStatement(),
-          Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
-          // Only pragma statement can be between the two loops.
+        other.getNestedDoStmt().getOuterStatement(),
+        Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
+    // Only pragma statement can be between the two loops.
     {
-        return false;
+      return false;
     } else {
       xcodeml.addWarning("Unconstrained loop-fusion generated",
           Arrays.asList(_claw.getPragma().lineNo(),
