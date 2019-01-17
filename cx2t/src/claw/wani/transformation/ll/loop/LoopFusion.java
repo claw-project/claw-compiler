@@ -179,7 +179,7 @@ public class LoopFusion extends ClawTransformation {
       return false;
     }
 
-    if(!hasCompatibleConstraint(xcodeml, other)) {
+    if(!hasCompatibleConstraints(xcodeml, other)) {
       return false;
     }
 
@@ -206,8 +206,8 @@ public class LoopFusion extends ClawTransformation {
    * @param other   The other loop fusion unit to be merge with this one.
    * @return True if the constraints are compatible. False otherwise.
    */
-  private boolean hasCompatibleConstraint(XcodeProgram xcodeml,
-                                          LoopFusion other)
+  private boolean hasCompatibleConstraints(XcodeProgram xcodeml,
+                                           LoopFusion other)
   {
     ClawConstraint currentConstraint = ClawConstraint.DIRECT;
     if(_claw.hasClause(ClawClause.CONSTRAINT)
