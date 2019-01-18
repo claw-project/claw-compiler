@@ -292,23 +292,18 @@ public final class Pragma {
     if(from == null || from.element() == null) {
       return null;
     }
-    // TODO use Xnode infra
-    Node prev = from.element().getPreviousSibling();
-    Node parent = from.element();
+    Xnode prev = from.prevSibling();
+    Xnode parent = from;
     do {
       while(prev != null) {
-        if(prev.getNodeType() == Node.ELEMENT_NODE) {
-          Element element = (Element) prev;
-          if(element.getTagName().equals(Xcode.F_PRAGMA_STATEMENT.code())
-              && element.getTextContent().toLowerCase().
-              contains(keyword.toLowerCase()))
-          {
-            return new Xnode(element);
-          }
+        if(prev.opcode() == Xcode.F_PRAGMA_STATEMENT
+            && prev.value().toLowerCase().contains(keyword.toLowerCase()))
+        {
+          return prev;
         }
-        prev = prev.getPreviousSibling();
+        prev = prev.prevSibling();
       }
-      parent = parent.getParentNode();
+      parent = parent.ancestor();
       prev = parent;
     } while(parent != null);
     return null;
