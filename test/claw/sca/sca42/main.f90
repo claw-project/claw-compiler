@@ -21,7 +21,7 @@ PROGRAM test_abstraction1
 
   !$claw sca forward create update
   DO p = 1, nproma
-    CALL compute_column(nz, q(p,:), t(p,:))
+    CALL compute_column(4, nz, q(p,:), t(p,:))
   END DO
 
   PRINT*,SUM(q)

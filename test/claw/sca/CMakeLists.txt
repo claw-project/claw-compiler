@@ -44,6 +44,7 @@
 # sca39: Same as SCA1 with override option passed to the driver -x
 # sca40: SCA with model config
 # sca41: SCA on ELEMENTAL function
+# sca42: Bug for #499
 
 foreach(loop_var RANGE 1 41)
   if(NOT ${loop_var} EQUAL 30)
