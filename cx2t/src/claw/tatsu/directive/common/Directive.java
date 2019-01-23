@@ -236,15 +236,13 @@ public final class Directive {
         generator.getCreateClause(creates)));
 
     clauses.removeAll(Collections.singletonList(""));
-    
+
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
       insertPragmas(xcodeml, startStmt, endStmt,
           generator.getStartDataRegion(clauses), generator.getEndDataRegion());
     }
   }
-
-
 
   /**
    * Generate corresponding pragmas applied directly after a CLAW pragma.
@@ -488,7 +486,19 @@ public final class Directive {
       while(first.nextSibling() != null
           && ((dg.getSkippedStatementsInPreamble().contains(first.opcode()))
           || isClawDirective(first))) {
-        if(first.hasBody()) {
+
+        if(first.opcode() == Xcode.F_IF_STATEMENT) {
+          Xnode then = first.matchDescendant(Xcode.THEN);
+          if(then != null && then.hasBody()) {
+            for(Xnode child : then.body().children()) {
+              if(!dg.getSkippedStatementsInPreamble().
+                  contains(child.opcode()))
+              {
+                return first;
+              }
+            }
+          }
+        } else if(first.hasBody()) {
           for(Xnode child : first.body().children()) {
             if(!dg.getSkippedStatementsInPreamble().
                 contains(child.opcode()))
