@@ -245,7 +245,7 @@ public class ScaGPU extends Sca {
   {
     if(fctType.hasAttribute(attribute)) {
       xcodeml.addWarning(String.format(
-          "SCA attribute %s removed from function/subroutine %s",
+          "SCA: attribute %s removed from function/subroutine %s",
           attribute.toString(), _fctDef.getName()), _claw);
       fctType.removeAttribute(attribute);
     }
