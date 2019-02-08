@@ -65,6 +65,10 @@ set(
   CLAW_FLAGS_sca41
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca41/model.toml
 )
+set(
+  CLAW_FLAGS_sca43
+  --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca43/model.toml
+)
 
 claw_add_advanced_test_set(
   NAME claw-sca
