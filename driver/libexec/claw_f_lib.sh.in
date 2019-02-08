@@ -41,7 +41,7 @@ CLAW Compiler options:
    --show-config              : list the current configuration information.
                                 If used with --config, list the information from
                                 the specific configuration.
-   -m,--model-config          : Specific model configuratiojn for SCA.
+   -m=,--model-config=<file>  : Specific model configuratiojn for SCA.
    -c,--keep-comment          : keep comment in the transformed file.
    -v,--verbose               : print processing status.
    --version                  : print version.
