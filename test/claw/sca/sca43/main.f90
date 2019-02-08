@@ -16,7 +16,7 @@ PROGRAM test_abstraction1
   end do
 
   !$claw sca forward create update
-  q = compute_point(t, w)
+  q = compute_point(t, w = w)
 
   PRINT*,SUM(q)
   PRINT*,SUM(t)
