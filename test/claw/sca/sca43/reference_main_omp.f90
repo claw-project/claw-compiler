@@ -12,7 +12,7 @@ PROGRAM test_abstraction1
  END DO
 !$omp target data map(alloc:t)
 !$omp target update to(t)
- q = compute_point ( t , nproma = nproma , w )
+ q = compute_point ( t , nproma = nproma , w = w )
 !$omp end target data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
