@@ -45,8 +45,9 @@
 # sca40: SCA with model config
 # sca41: SCA on ELEMENTAL function
 # sca42: Bug for #499
+# sca43: SCA on ELEMENTAL function with present intrinsic
 
-foreach(loop_var RANGE 1 41)
+foreach(loop_var RANGE 1 43)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
@@ -63,6 +64,10 @@ set(
 set(
   CLAW_FLAGS_sca41
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca41/model.toml
+)
+set(
+  CLAW_FLAGS_sca43
+  --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca43/model.toml
 )
 
 claw_add_advanced_test_set(

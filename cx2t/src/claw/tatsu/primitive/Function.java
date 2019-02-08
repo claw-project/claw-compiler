@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.*;
 
@@ -140,5 +141,24 @@ public final class Function {
     }
 
     return inductionVariables;
+  }
+
+  /**
+   * Check if the given element is argument of a function call for a given
+   * intrinsic function name.
+   *
+   * @param var  Element to be checked.
+   * @param name Intrinsic function name as Xintrinsic.
+   * @return True if the element is an argument. False otherwise.
+   */
+  public static boolean isArgOfFunction(Xnode var, Xintrinsic name) {
+    if(var == null) {
+      return false;
+    }
+
+    Xnode args = var.matchAncestor(Xcode.ARGUMENTS);
+    return (args != null && args.prevSibling() != null
+        && args.prevSibling().opcode() == Xcode.NAME
+        && args.prevSibling().value().equalsIgnoreCase(name.toString()));
   }
 }

@@ -399,6 +399,11 @@ public final class Field {
       List<Xnode> refs =
           XnodeUtil.getAllVarReferences(parent, promotionInfo.getIdentifier());
       for(Xnode ref : refs) {
+
+        if(Function.isArgOfFunction(ref, Xintrinsic.PRESENT)) {
+          continue;
+        }
+
         Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
         Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
         arrayRef.setType(ref.getType());
