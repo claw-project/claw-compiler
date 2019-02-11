@@ -130,7 +130,8 @@ public class ScaGPU extends Sca {
 
       if(!unsupportedStatements.isEmpty()) {
         for(Xnode statement : unsupportedStatements) {
-          xcodeml.addError("Unsupported statement in parallel region",
+          xcodeml.addError("Unsupported statement in parallel region: "
+                  + statement.opcode().fortran(),
               statement.lineNo());
         }
         return false;

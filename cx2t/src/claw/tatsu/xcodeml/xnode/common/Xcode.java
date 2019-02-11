@@ -37,7 +37,7 @@ public enum Xcode {
   EXPR_STATEMENT(Xname.EXPR_STATEMENT),                      // XcodeML/F 6.2
   EXTERN_DECL(Xname.EXTERN_DECL),                            // XcodeML/F 5.6
   FUNCTION_CALL(Xname.FUNCTION_CALL),                        // XcodeML/F 7.5.1
-  F_ALLOCATE_STATEMENT(Xname.F_ALLOCATE_STATEMENT),          // XcodeML/F 6.24.1
+  F_ALLOCATE_STATEMENT(Xname.F_ALLOCATE_STATEMENT, Xname.ALLOCATE), // F 6.24.1
   F_ARRAY_CONSTRUCTOR(Xname.F_ARRAY_CONSTRUCTOR),            // XcodeML/F 7.2.1
   F_ARRAY_REF(Xname.F_ARRAY_REF),                            // XcodeML/F 7.4.4
   F_ASSIGN_STATEMENT(Xname.F_ASSIGN_STATEMENT),              // XcodeML/F 6.1
@@ -52,7 +52,7 @@ public enum Xcode {
   F_CONTAINS_STATEMENT(Xname.F_CONTAINS_STATEMENT),          // XcodeML/F 6.26
   F_CYCLE_STATEMENT(Xname.F_CYCLE_STATEMENT),                // XcodeML/F 6.8
   F_DATA_DECL(Xname.F_DATA_DECL),                            // XcodeML/F 6.19
-  F_DEALLOCATE_STATEMENT(Xname.F_DEALLOCATE_STATEMENT),      // XcodeML/F 6.24.2
+  F_DEALLOCATE_STATEMENT(Xname.F_DEALLOCATE_STATEMENT, Xname.DEALLOCATE), // F 6.24.2
   F_DO_CONCURRENT_STATEMENT(Xname.F_DO_CONCURRENT_STATEMENT, true), // X/F 6.33
   F_DO_LOOP(Xname.F_DO_LOOP),                                // XcodeML/F 8.15
   F_DO_STATEMENT(Xname.F_DO_STATEMENT, true),                // XcodeML/F 6.5
@@ -103,7 +103,7 @@ public enum Xcode {
   F_WRITE_STATEMENT(Xname.F_WRITE_STATEMENT),                // XcodeML/F 6.17.1
   GLOBAL_DECLARATIONS(Xname.GLOBAL_DECLARATIONS),            // XcodeML/F 5.1
   GLOBAL_SYMBOLS(Xname.GLOBAL_SYMBOLS),                      // XcodeML/F 4.1
-  GOTO_STATEMENT(Xname.GOTO_STATEMENT),                      // XcodeML/F 6.11
+  GOTO_STATEMENT(Xname.GOTO_STATEMENT, Xname.GOTO),          // XcodeML/F 6.11
   ID(Xname.ID),                                              // XcodeML/F 8.2
   IDENTIFIERS(Xname.IDENTIFIERS),
   // FortranModule file
@@ -182,14 +182,26 @@ public enum Xcode {
   }
 
   private final String _irValue;
+  private final String _fortranValue;
   private final boolean _hasBody;
 
   Xcode(String s) {
     this(s, false);
   }
 
+  Xcode(String s, String fortran) {
+    this(s, fortran, false);
+  }
+
   Xcode(String s, boolean hasBody) {
     _irValue = s;
+    _fortranValue = "";
+    _hasBody = hasBody;
+  }
+
+  Xcode(String s, String fortran, boolean hasBody) {
+    _irValue = s;
+    _fortranValue = fortran;
     _hasBody = hasBody;
   }
 
@@ -210,6 +222,15 @@ public enum Xcode {
    */
   public String code() {
     return _irValue;
+  }
+
+  /**
+   * Get the Fortran keyword value of this Xcode.
+   *
+   * @return Fortran value.
+   */
+  public String fortran() {
+    return _fortranValue;
   }
 
   public boolean hasBody() {

@@ -228,7 +228,8 @@ public class OpenAcc extends DirectiveGenerator {
   @Override
   public List<Xcode> getUnsupportedStatements() {
     return Arrays.asList(
-        Xcode.F_ALLOCATE_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT
+        Xcode.F_ALLOCATE_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT,
+        Xcode.GOTO_STATEMENT
     );
   }
 
