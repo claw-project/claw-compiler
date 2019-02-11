@@ -46,6 +46,7 @@
 # sca41: SCA on ELEMENTAL function
 # sca42: Bug for #499
 # sca43: SCA on ELEMENTAL function with present intrinsic
+# sca44: unsupported statement (GOTO)
 
 foreach(loop_var RANGE 1 43)
   if(NOT ${loop_var} EQUAL 30)
@@ -73,13 +74,21 @@ set(
 claw_add_advanced_test_set(
   NAME claw-sca
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  EXCLUDE sca30
+  EXCLUDE sca30 sca44
 )
 
 # Specific "fail" test to check correct failure
 claw_add_failure_test(
   NAME claw-sca-sca30
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca30
+  SET claw-sca
+  CLAW_TARGET gpu
+  CLAW_DIRECTIVE openacc
+)
+
+claw_add_failure_test(
+  NAME claw-sca-sca44
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca44
   SET claw-sca
   CLAW_TARGET gpu
   CLAW_DIRECTIVE openacc
