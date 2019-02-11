@@ -275,6 +275,12 @@ public final class Xname {
   // Fortran intrinsics
   public static final String F_INTR_ALLOCATED = "allocated";
 
+  // Fortran keyword
+  public static final String ALLOCATE = "ALLOCATE";
+  public static final String DEALLOCATE = "DEALLOCATE";
+  public static final String GOTO = "GOTO";
+
+
   // Avoid instantiation of this class
   private Xname() {
   }
