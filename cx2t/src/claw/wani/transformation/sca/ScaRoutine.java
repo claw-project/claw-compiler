@@ -6,14 +6,19 @@ package claw.wani.transformation.sca;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.wani.language.ClawPragma;
-import claw.wani.transformation.ClawTransformation;
 
 /**
+ * Sca routine is a simple transformation targeting ELEMENTAL
+ * function/subroutine used inside other ELEMENT function/subroutine that have
+ * been parallelized.
+ *
  * @author clementval
  */
-public class ScaRoutine extends ClawTransformation {
+public class ScaRoutine extends Sca {
 
   /**
    * Constructs a new Sca transformation triggered from a specific
@@ -27,6 +32,15 @@ public class ScaRoutine extends ClawTransformation {
 
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+    if(!detectParentFunction(xcodeml)) {
+      return false;
+    }
+
+    if(!_fctType.isElemental()) {
+      xcodeml.addError("Parent function/subroutine must be ELEMENTAL.", _claw);
+      return false;
+    }
+
     return true;
   }
 
@@ -34,6 +48,12 @@ public class ScaRoutine extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
+    if(Context.isTarget(Target.GPU)) {
+      _fctType.removeAttribute(Xattr.IS_PURE);
+      _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
+      Xnode pragma = xcodeml.createSinglePragma("acc routine seq");
+      _fctDef.body().insert(pragma);
+    }
     removePragma();
   }
 
