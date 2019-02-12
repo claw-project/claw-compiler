@@ -146,6 +146,11 @@ directive[ClawPragma l]
        $l.setDirective(ClawDirective.SCA);
        $l.setScaModelConfig();
      }
+   | SCA ROUTINE EOF
+     {
+       $l.setDirective(ClawDirective.SCA);
+       $l.setClause(ClawClause.ROUTINE);
+     }
    // SCA directive with define dimension
    | define_option[$l]+ SCA data_over_clause[$l]* parallelize_clauses[$l] EOF
      {
@@ -659,6 +664,7 @@ PARALLEL     : 'parallel';
 PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
+ROUTINE      : 'routine';
 SCALAR       : 'scalar';
 TARGET       : 'target';
 UPDATE       : 'update';
