@@ -157,6 +157,8 @@ public class ClawTranslator implements Translator {
   {
     if(analyzedPragma.hasClause(ClawClause.FORWARD)) {
       addTransformation(xcodeml, new ScaForward(analyzedPragma));
+    } else if (analyzedPragma.hasClause(ClawClause.ROUTINE)) {
+      addTransformation(xcodeml, new ScaRoutine(analyzedPragma));
     } else {
       if(Context.get().getTarget() == Target.GPU) {
         addTransformation(xcodeml, new ScaGPU(analyzedPragma));
