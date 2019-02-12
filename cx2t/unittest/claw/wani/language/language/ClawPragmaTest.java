@@ -1231,6 +1231,9 @@ public class ClawPragmaTest {
     analyzeValidSCA("claw sca forward",
         null, null, null, null, null, false);
 
+    analyzeValidSCA("claw sca routine",
+        null, null, null, null, null, false);
+
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
@@ -1462,7 +1465,8 @@ public class ClawPragmaTest {
     }
 
     if(data == null && dimensions == null && !isModelConfig) {
-      assertTrue(l.hasClause(ClawClause.FORWARD));
+      assertTrue(l.hasClause(ClawClause.FORWARD)
+          || l.hasClause(ClawClause.ROUTINE));
     }
 
     if(copyClause == null) {
