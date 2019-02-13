@@ -8,6 +8,7 @@ import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
+import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.wani.language.ClawPragma;
 
@@ -51,8 +52,17 @@ public class ScaRoutine extends Sca {
     if(Context.isTarget(Target.GPU)) {
       _fctType.removeAttribute(Xattr.IS_PURE);
       _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
-      Xnode pragma = xcodeml.createSinglePragma("acc routine seq");
-      _fctDef.body().insert(pragma);
+      DirectiveGenerator dirGen = Context.get().getGenerator();
+      Xnode hook = null;
+      for(String directive : dirGen.getRoutineDirective(true)) {
+        Xnode pragma = xcodeml.createSinglePragma(directive);
+        if(hook == null) {
+          _fctDef.body().insert(pragma);
+        } else {
+          hook.insertAfter(pragma);
+        }
+        hook = pragma;
+      }
     }
     removePragma();
   }
