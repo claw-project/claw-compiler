@@ -581,7 +581,7 @@ public final class Directive {
    * function definition. False otherwise.
    */
   public static boolean hasDirectives(FfunctionDefinition fctDef) {
-    List<Xnode> pragmas = fctDef.matchAll(Xcode.F_PRAGMA_STATEMENT);
+    List<Xnode> pragmas = fctDef.body().matchAll(Xcode.F_PRAGMA_STATEMENT);
     for(Xnode pragma : pragmas) {
       if(pragma.value().toLowerCase().
           startsWith(Context.get().getGenerator().getPrefix()))
