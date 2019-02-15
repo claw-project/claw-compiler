@@ -52,7 +52,14 @@ public class ScaRoutine extends Sca {
     if(Context.isTarget(Target.GPU)) {
       _fctType.removeAttribute(Xattr.IS_PURE);
       _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
-      Directive.generateRoutineDirectives(xcodeml, _fctDef);
+
+      if(Directive.hasDirectives(_fctDef)) {
+        xcodeml.addWarning("Function/subroutine has some directives! " +
+                "Cannot insert new directives without breaking existing ones!",
+            _claw);
+      } else {
+        Directive.generateRoutineDirectives(xcodeml, _fctDef);
+      }
     }
     removePragma();
   }
