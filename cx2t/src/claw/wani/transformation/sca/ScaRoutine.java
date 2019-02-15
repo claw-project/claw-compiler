@@ -9,8 +9,6 @@ import claw.shenron.translator.Translator;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.directive.generator.DirectiveGenerator;
-import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.wani.language.ClawPragma;
 
