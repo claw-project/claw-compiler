@@ -572,4 +572,23 @@ public final class Directive {
     }
     return last;
   }
+
+  /**
+   * Check if the function definition has directives already.
+   *
+   * @param fctDef Function definition to check
+   * @return True if there is directive of the current chosen directive in the
+   * function definition. False otherwise.
+   */
+  public static boolean hasDirectives(FfunctionDefinition fctDef) {
+    List<Xnode> pragmas = fctDef.matchAll(Xcode.F_PRAGMA_STATEMENT);
+    for(Xnode pragma : pragmas) {
+      if(pragma.value().toLowerCase().
+          startsWith(Context.get().getGenerator().getPrefix()))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
 }
