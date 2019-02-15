@@ -9,6 +9,7 @@ import claw.shenron.translator.Translator;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.wani.language.ClawPragma;
 
@@ -50,6 +51,9 @@ public class ScaRoutine extends Sca {
                         Transformation other)
   {
     if(Context.isTarget(Target.GPU)) {
+
+      DirectiveGenerator dirGen = Context.get().getGenerator();
+
       _fctType.removeAttribute(Xattr.IS_PURE);
       _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
 
@@ -58,7 +62,8 @@ public class ScaRoutine extends Sca {
                 "Cannot insert new directives without breaking existing ones!",
             _claw);
       } else {
-        Directive.generateRoutineDirectives(xcodeml, _fctDef);
+        Directive.addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
+            _fctDef.body().child(0));
       }
     }
     removePragma();
