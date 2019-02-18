@@ -375,7 +375,7 @@ public final class Directive {
    * @return Newly created pragma statement as an Xnode object.
    */
   public static Xnode addPragmasBefore(XcodeProgram xcodeml,
-                                        String[] directives, Xnode ref)
+                                       String[] directives, Xnode ref)
   {
     return insertPragmas(xcodeml, directives, ref, false);
   }
