@@ -50,7 +50,9 @@ public abstract class TransformationGroup {
    * @param translation The transformation to be added.
    */
   public void add(Transformation translation) {
-    _transformations.add(translation);
+    if(translation != null) {
+      _transformations.add(translation);
+    }
   }
 
   /**
