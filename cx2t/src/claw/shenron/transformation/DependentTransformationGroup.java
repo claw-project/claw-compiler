@@ -73,6 +73,9 @@ public class DependentTransformationGroup extends TransformationGroup {
    */
   @Override
   public void add(Transformation transformation) {
+    if(transformation == null) {
+      return;
+    }
     int linePosition = transformation.getStartLine();
     int insertIndex = 0;
     for(Transformation t : getTransformations()) {
