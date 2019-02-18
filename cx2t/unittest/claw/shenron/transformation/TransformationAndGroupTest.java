@@ -89,7 +89,7 @@ public class TransformationAndGroupTest {
 
   @Test
   public void assignTransformationsToGroupTest() {
-    TransformationGroup ig = new IndependentTransformationGroup("loop-hoist");
+    TransformationGroup ig = new IndependentTransformationGroup("ig");
 
     List<Transformation> transformations = new ArrayList<>();
     transformations.add(new T1());
