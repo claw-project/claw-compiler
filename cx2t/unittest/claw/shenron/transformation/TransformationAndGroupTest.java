@@ -133,7 +133,7 @@ public class TransformationAndGroupTest {
   /**
    * Only for testing purpose in claw.shenron
    */
-  public class T1 extends Transformation {
+  private class T1 extends Transformation {
 
     T1() {
       super();
@@ -166,7 +166,7 @@ public class TransformationAndGroupTest {
   /**
    * Only for testing purpose in claw.shenron
    */
-  public class T2 extends BlockTransformation {
+  private class T2 extends BlockTransformation {
 
     T2(AnalyzedPragma startDirective, AnalyzedPragma endDirective) {
       super(startDirective, endDirective);
