@@ -47,11 +47,11 @@ public abstract class TransformationGroup {
   /**
    * Add a new transformation in the group.
    *
-   * @param translation The transformation to be added.
+   * @param transformation The transformation to be added.
    */
-  public void add(Transformation translation) {
-    if(translation != null) {
-      _transformations.add(translation);
+  public void add(Transformation transformation) {
+    if(transformation != null) {
+      _transformations.add(transformation);
     }
   }
 
