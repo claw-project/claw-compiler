@@ -26,6 +26,7 @@ public enum ClawClause {
   PARALLEL,
   PRIVATE,
   RESHAPE,
+  ROUTINE,
   FORWARD,
   COPY,
   UPDATE,

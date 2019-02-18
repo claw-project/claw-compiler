@@ -868,6 +868,18 @@ public class XcodeML extends Xnode {
   }
 
   /**
+   * Create a single FpragmaStatement with the given value.
+   *
+   * @param value Value of the created pragma.
+   * @return Created node.
+   */
+  public Xnode createSinglePragma(String value) {
+    Xnode p = createNode(Xcode.F_PRAGMA_STATEMENT);
+    p.setValue(value);
+    return p;
+  }
+
+  /**
    * Create a list of FpragmaStatement with correct line continuation symbols.
    * Initial value is splitted according to the max column information. This is
    * done as the OMNI Compiler backend doesn't split the FpragmaElement.

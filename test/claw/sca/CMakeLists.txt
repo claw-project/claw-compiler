@@ -48,7 +48,7 @@
 # sca43: SCA on ELEMENTAL function with present intrinsic
 # sca44: unsupported statement (GOTO)
 
-foreach(loop_var RANGE 1 43)
+foreach(loop_var RANGE 1 45)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()
@@ -69,6 +69,10 @@ set(
 set(
   CLAW_FLAGS_sca43
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca43/model.toml
+)
+set(
+  CLAW_FLAGS_sca45
+  --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca45/model.toml
 )
 
 claw_add_advanced_test_set(
