@@ -38,5 +38,10 @@ public class AnalyzedPragmaTest {
     AnalyzedPragma ap2 = new AnalyzedPragma();
     assertFalse(ap2.isEndPragma());
     assertNull(ap2.getPragma());
+
+    ap2.setPragma(p2);
+    ap2.setEndPragma();
+    assertTrue(ap2.isEndPragma());
+    assertNotNull(ap2.getPragma());
   }
 }
