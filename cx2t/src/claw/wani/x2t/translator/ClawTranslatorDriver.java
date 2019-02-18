@@ -193,7 +193,7 @@ public class ClawTranslatorDriver {
         );
 
         try {
-          entry.getValue().applyTranslations(_translationUnit, _translator);
+          entry.getValue().applyTransformations(_translationUnit, _translator);
           Message.warnings(_translationUnit);
         } catch(IllegalTransformationException itex) {
           _translationUnit.addError(itex.getMessage(), itex.getStartLine());

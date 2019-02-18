@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * A TransformationGroup holds transformation units and can apply. Only derived
  * classes of TransformationGroup must be used as they implement
- * applyTranslations.
+ * applyTransformations.
  *
  * @author clementval
  */
@@ -107,7 +107,7 @@ public abstract class TransformationGroup {
    * @throws IllegalTransformationException if transformation cannot be applied.
    * @see Transformation#transform(XcodeProgram, Translator, Transformation)
    */
-  public abstract void applyTranslations(XcodeProgram xcodeml,
-                                         Translator translator)
+  public abstract void applyTransformations(XcodeProgram xcodeml,
+                                            Translator translator)
       throws Exception;
 }
