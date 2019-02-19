@@ -2,12 +2,13 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
-import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
