@@ -6,6 +6,7 @@ package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import helper.TestConstant;
 import helper.XmlHelper;
 import org.junit.Test;
@@ -156,11 +157,36 @@ public class XdeclTableTest {
     XdeclTable fctDecl = fctDef.getDeclarationTable();
     assertNotNull(fctDecl);
 
-    Xnode varDecl1 = fctDecl.get("sub1");
-    assertNotNull(varDecl1);
+    String key1 = "key1";
+    String key2 = "key2";
+    String key3 = "key3";
 
+    // Add
+    Xnode varDecl1 = xcodeml.createVarDecl(
+        xcodeml.getTypeTable().generateHash(FortranType.INTEGER), key1);
+    fctDecl.add(varDecl1);
+    assertNotNull(fctDecl.get(key1));
 
+    // Replace existing one
+    Xnode varDecl2 = xcodeml.createVarDecl(
+        xcodeml.getTypeTable().generateHash(FortranType.INTEGER), key1);
+    fctDecl.replace(varDecl2, key1);
+    assertNotNull(fctDecl.get(key1));
+    assertEquals(varDecl2.getType(), fctDecl.get(key1).getType());
 
+    // Replace non-existing - like add
+    Xnode varDecl3 = xcodeml.createVarDecl(
+        xcodeml.getTypeTable().generateHash(FortranType.INTEGER), key2);
+    fctDecl.replace(varDecl3, key2);
+    assertNotNull(fctDecl.get(key2));
+    assertEquals(varDecl3.getType(), fctDecl.get(key2).getType());
+
+    // Add at the beginning of the table
+    Xnode varDecl4 = xcodeml.createVarDecl(
+        xcodeml.getTypeTable().generateHash(FortranType.INTEGER), key3);
+    fctDecl.addFirst(varDecl4);
+    assertEquals(varDecl4.getType(), fctDecl.firstChild().getType());
 
   }
+
 }
