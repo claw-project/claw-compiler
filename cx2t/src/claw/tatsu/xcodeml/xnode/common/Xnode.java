@@ -966,7 +966,7 @@ public class Xnode {
 
   @Override
   public int hashCode() {
-    return _baseElement.hashCode();
+    return _baseElement != null ? _baseElement.hashCode() : 0;
   }
 
   @Override
@@ -975,11 +975,13 @@ public class Xnode {
         && element() == ((Xnode) o).element();
   }
 
+  /**
+   * Check whether current node is not part of an arrayIndex node.
+   *
+   * @return True if the node is not a direct child of an arrayIndex node.
+   * False otherwise.
+   */
   public boolean isNotArrayIndex() {
-    if(ancestor() == null) {
-      return true;
-    } else {
-      return ancestor().opcode() != Xcode.ARRAY_INDEX;
-    }
+    return ancestor() == null || ancestor().opcode() != Xcode.ARRAY_INDEX;
   }
 }
