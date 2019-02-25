@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -125,11 +126,56 @@ public class XcodeProgram extends XcodeML {
    * @param pragma Pragma that triggered the error.
    */
   public void addError(String msg, ClawPragma pragma) {
-    if(pragma == null) {
+    addMsg(msg, pragma, _errors);
+  }
+
+  /**
+   * Add an warning. If msg is null or empty, the warning is not added.
+   *
+   * @param msg    Warning message.
+   * @param pragma Pragma that triggered the warning.
+   */
+  public void addWarning(String msg, ClawPragma pragma) {
+    addMsg(msg, pragma, _warnings);
+  }
+
+  /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg    Message to be added.
+   * @param pragma Pragma triggering the message.
+   * @param list   List in which the message should be added.
+   */
+  private void addMsg(String msg, ClawPragma pragma, List<XanalysisError> list) {
+    addMsg(msg, (pragma != null && pragma.getPragma() != null) ?
+        pragma.getPragma().lineNo() : 0, list);
+  }
+
+  /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg    Message to be added.
+   * @param lineno Line number that trigger the message.
+   * @param list   List in which the message should be added.
+   */
+  private void addMsg(String msg, int lineno, List<XanalysisError> list) {
+    addMsg(msg, Collections.singletonList(lineno), list);
+  }
+
+  /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg    Message to be added.
+   * @param lineno List of lines triggering the messages.
+   * @param list   List in which the message should be added.
+   */
+  private void addMsg(String msg, List<Integer> lineno,
+                      List<XanalysisError> list)
+  {
+    if(msg == null || msg.isEmpty()) {
       return;
     }
-    _errors.add(new XanalysisError(msg,
-        pragma.getPragma() != null ? pragma.getPragma().lineNo() : 0));
+    list.add(new XanalysisError(msg, lineno));
   }
 
   /**
@@ -142,27 +188,13 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
-   * Add an warning. If msg is null or empty, the warning is not added.
-   *
-   * @param msg    Warning message.
-   * @param pragma Pragma that triggered the warning.
-   */
-  public void addWarning(String msg, ClawPragma pragma) {
-    if(pragma == null) {
-      return;
-    }
-    _warnings.add(new XanalysisError(msg,
-        pragma.getPragma() != null ? pragma.getPragma().lineNo() : 0));
-  }
-
-  /**
    * Add a warning.
    *
    * @param msg    Warning message.
    * @param lineno Line number that triggered the warning.
    */
   public void addWarning(String msg, int lineno) {
-    _warnings.add(new XanalysisError(msg, lineno));
+    addMsg(msg, lineno, _warnings);
   }
 
   /**
@@ -172,7 +204,7 @@ public class XcodeProgram extends XcodeML {
    * @param lineno Line numbers that triggered the warning.
    */
   public void addWarning(String msg, List<Integer> lineno) {
-    _warnings.add(new XanalysisError(msg, lineno));
+    addMsg(msg, lineno, _warnings);
   }
 
   /**
