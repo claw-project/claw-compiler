@@ -91,6 +91,7 @@ public class XdeclTable extends Xnode {
     Xnode oldDecl = _table.get(name);
     if(oldDecl == null) {
       append(decl);
+      _table.put(name, decl);
     } else {
       oldDecl.insertAfter(decl);
       oldDecl.delete();
