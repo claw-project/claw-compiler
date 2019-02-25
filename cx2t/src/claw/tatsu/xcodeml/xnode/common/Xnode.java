@@ -38,7 +38,7 @@ public class Xnode {
   }
 
   /**
-   * Delete this nodes with all its siblings.
+   * Delete this nodes with all its next siblings.
    */
   public void deleteWithSiblings() {
     List<Xnode> toDelete = new ArrayList<>();
