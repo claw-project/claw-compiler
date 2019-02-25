@@ -204,51 +204,6 @@ public class XdeclTable extends Xnode {
     return _table.containsKey(name);
   }
 
-  /**
-   * Check if the order of declaration makes sense. If not, fix it.
-   *
-   * @param fct Function definition which is checked.
-   */
-  public void checkOrder(FfunctionDefinition fct) {
-    int functionLineNo = fct.lineNo();
-    List<Xnode> decl = new ArrayList<>();
-
-    // TODO DOM element
-    Node crtNode = _baseElement.getFirstChild();
-    while(crtNode != null) {
-      if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
-        Xnode node = new Xnode((Element) crtNode);
-        // Only var declarations can be disordered
-        if(node.opcode() == Xcode.VAR_DECL
-            || node.opcode() == Xcode.F_STRUCT_DECL)
-        {
-          decl.add(node);
-        }
-      }
-      crtNode = crtNode.getNextSibling();
-    }
-
-    if(decl.size() < 2) {
-      return;
-    }
-
-    int firstDeclLineNo = decl.get(0).lineNo();
-    int secondDeclLineNo = decl.get(1).lineNo();
-
-    if(functionLineNo == firstDeclLineNo) {
-      _baseElement.appendChild(decl.get(0).element());
-    } else if(firstDeclLineNo > secondDeclLineNo) {
-      Xnode hook = decl.get(1);
-      for(int i = 1; i < decl.size(); ++i) {
-        if(decl.get(i).lineNo() > firstDeclLineNo) {
-          break;
-        }
-        hook = decl.get(i);
-      }
-      hook.insertAfter(decl.get(0));
-    }
-  }
-
   @Override
   public XdeclTable cloneNode() {
     return new XdeclTable(super.cloneNode());

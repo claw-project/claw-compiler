@@ -30,6 +30,18 @@ public class XdeclTableTest {
       "</declarations>";
 
   @Test
+  public void emptyTest() {
+    XdeclTable decl =
+        XmlHelper.createXdeclTable("<declarations></declarations>");
+    assertNotNull(decl);
+    assertEquals(0, decl.count());
+    assertTrue(decl.uses().isEmpty());
+    assertTrue(decl.values().isEmpty());
+    assertFalse(decl.contains("name1"));
+    assertNull(decl.get("name1"));
+  }
+
+  @Test
   public void simpleDeclTableTest() {
     XdeclTable decl = XmlHelper.createXdeclTable(DECL1);
     assertNotNull(decl);
@@ -50,13 +62,18 @@ public class XdeclTableTest {
     assertEquals("I1241c70", var2.getType());
   }
 
-  @Test
-  public void allKindOfDeclTest() {
+  private XcodeProgram createFromFile() {
     File f = new File(TestConstant.TEST_PROGRAM);
     assertTrue(f.exists());
     XcodeProgram xcodeml =
         XcodeProgram.createFromFile(TestConstant.TEST_DECLARATIONS);
     assertNotNull(xcodeml);
+    return xcodeml;
+  }
+
+  @Test
+  public void allKindOfDeclTest() {
+    XcodeProgram xcodeml = createFromFile();
 
     XglobalDeclTable global = xcodeml.getGlobalDeclarationsTable();
     assertNotNull(global);
@@ -125,5 +142,25 @@ public class XdeclTableTest {
     assertEquals(1, fctDecl.values(Xcode.F_NAMELIST_DECL).size());
     assertEquals(1, fctDecl.values(Xcode.F_EQUIVALENCE_DECL).size());
     assertEquals(1, fctDecl.values(Xcode.EXTERN_DECL).size());
+  }
+
+  @Test
+  public void addRemoveTest() {
+    XcodeProgram xcodeml = createFromFile();
+
+    List<Xnode> functions = xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION);
+    assertEquals(1, functions.size());
+    FfunctionDefinition fctDef = new FfunctionDefinition(functions.get(0));
+    assertNotNull(fctDef);
+
+    XdeclTable fctDecl = fctDef.getDeclarationTable();
+    assertNotNull(fctDecl);
+
+    Xnode varDecl1 = fctDecl.get("sub1");
+    assertNotNull(varDecl1);
+
+
+
+
   }
 }
