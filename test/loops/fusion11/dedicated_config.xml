@@ -3,7 +3,6 @@
   <global type="extension"/>
   <groups>
     <!-- Specifiy a new dedicated order -->
-    <group name="internal-xcodeml"/>
     <group name="remove"/>
     <group name="directive-primitive"/>
     <group name="array-transform"/>
