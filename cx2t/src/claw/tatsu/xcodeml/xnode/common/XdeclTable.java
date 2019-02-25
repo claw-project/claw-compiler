@@ -85,7 +85,7 @@ public class XdeclTable extends Xnode {
    * Replace a declaration in the table.
    *
    * @param decl The new declaration to be inserted.
-   * @param name Name describing the declaration in the table.
+   * @param name Name describing the declaration in the table to be replaced.
    */
   public void replace(Xnode decl, String name) {
     Xnode oldDecl = _table.get(name);
@@ -94,6 +94,8 @@ public class XdeclTable extends Xnode {
     } else {
       oldDecl.insertAfter(decl);
       oldDecl.delete();
+      _table.remove(name);
+      _table.put(name, decl);
     }
   }
 
