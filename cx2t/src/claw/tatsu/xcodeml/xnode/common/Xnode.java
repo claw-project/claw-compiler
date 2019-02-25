@@ -807,6 +807,9 @@ public class Xnode {
    * @return Type hash. Empty string if there is no type hash associated.
    */
   public String getType() {
+    if(_baseElement == null) {
+      return "";
+    }
     switch(opcode()) {
       case F_ARRAY_REF:
         String type = getAttribute(Xattr.TYPE);
