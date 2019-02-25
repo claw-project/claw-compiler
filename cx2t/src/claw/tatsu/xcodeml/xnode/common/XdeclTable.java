@@ -88,11 +88,11 @@ public class XdeclTable extends Xnode {
    * @param name Name describing the declaration in the table to be replaced.
    */
   public void replace(Xnode decl, String name) {
-    Xnode oldDecl = _table.get(name);
-    if(oldDecl == null) {
+    if(!_table.containsKey(name)) {
       append(decl);
       _table.put(name, decl);
     } else {
+      Xnode oldDecl = _table.get(name);
       oldDecl.insertAfter(decl);
       oldDecl.delete();
       _table.remove(name);
@@ -101,28 +101,34 @@ public class XdeclTable extends Xnode {
   }
 
   /**
-   * Add a new declaration as last element.
+   * Add a new declaration as last element if key is not used yet.
    *
    * @param decl The new declaration object.
    */
   public void add(Xnode decl) {
-    _baseElement.appendChild(decl.cloneRawNode());
-    _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
+    String key = decl.matchSeq(Xcode.NAME).value();
+    if(!_table.containsKey(key)) {
+      _baseElement.appendChild(decl.cloneRawNode());
+      _table.put(key, decl);
+    }
   }
 
   /**
-   * Add a new declaration as last element.
+   * Add a new declaration as last element if key is not used yet.
    *
    * @param decl The new declaration object.
    */
   public void addFirst(Xnode decl) {
     if(_baseElement.getFirstChild() != null) {
-      _baseElement.insertBefore(decl.cloneRawNode(),
-          _baseElement.getFirstChild());
+      String key = decl.matchSeq(Xcode.NAME).value();
+      if(!_table.containsKey(key)) {
+        _baseElement.insertBefore(decl.cloneRawNode(),
+            _baseElement.getFirstChild());
+        _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
+      }
     } else {
-      _baseElement.appendChild(decl.cloneRawNode());
+      add(decl);
     }
-    _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
   }
 
   /**
