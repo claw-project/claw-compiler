@@ -788,6 +788,9 @@ public class Xnode {
    * otherwise.
    */
   public boolean isNestedIn(Xnode ancestor) {
+    if(ancestor == null || element() == null) {
+      return false;
+    }
     Node possibleAncestor = element().getParentNode();
     while(possibleAncestor != null) {
       if(possibleAncestor == ancestor.element()) {
