@@ -4,10 +4,6 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import java.util.*;
 
 /**
@@ -56,7 +52,7 @@ public class XdeclTable extends Xnode {
   private void readTable() {
     List<Xnode> declarations = children();
     for(Xnode n : declarations) {
-      String key = "";
+      String key;
       switch(n.opcode()) {
         case EXTERN_DECL:
         case F_STRUCT_DECL:
@@ -77,6 +73,8 @@ public class XdeclTable extends Xnode {
         case F_EQUIVALENCE_DECL:
           key = Xcode.F_EQUIVALENCE_DECL.toString() + UUID.randomUUID();
           break;
+        default:
+          continue;
       }
       _table.put(key, n);
     }
