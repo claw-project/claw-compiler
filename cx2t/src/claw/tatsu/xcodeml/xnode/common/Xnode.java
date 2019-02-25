@@ -971,8 +971,7 @@ public class Xnode {
 
   @Override
   public boolean equals(Object o) {
-    return !(o == null || !(o instanceof Xnode))
-        && element() == ((Xnode) o).element();
+    return o instanceof Xnode && element() == ((Xnode) o).element();
   }
 
   /**
