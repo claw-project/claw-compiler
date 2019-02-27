@@ -372,10 +372,17 @@ public class Sca extends ClawTransformation {
         _promotions.put(fieldId, promotionInfo);
       }
     } else {
+      boolean forceAssumedShape = _fctType.isElemental() &&
+          Configuration.get().getBooleanParameter(
+              Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED);
+
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getLayoutForData(fieldId));
+        if(forceAssumedShape) {
+          promotionInfo.forceAssumedShape();
+        }
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }

@@ -134,7 +134,12 @@ public final class Field {
       }
     } else { // SCALAR to ARRAY promotion
       for(DimensionDefinition dim : fieldInfo.getDimensions()) {
-        Xnode index = dim.generateIndexRange(xcodeml, false);
+        Xnode index;
+        if(fieldInfo.isForcedAssumedShape()) {
+          index = xcodeml.createEmptyAssumedShaped();
+        } else {
+          index = dim.generateIndexRange(xcodeml, false);
+        }
         newType.addDimension(index);
       }
     }
