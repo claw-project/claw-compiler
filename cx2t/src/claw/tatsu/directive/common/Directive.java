@@ -17,7 +17,6 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +81,7 @@ public final class Directive {
           (noDependency == null) ? "seq" : "", doStmt.lineNo()));
     }
 
-    return Configuration.get().accelerator().hasCollapseStrategy()
+    return Context.get().getAcceleratorConfig().hasCollapseStrategy()
         ? nodepCounter : 0;
   }
 

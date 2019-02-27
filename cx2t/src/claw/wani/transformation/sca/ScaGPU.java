@@ -23,8 +23,8 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
-import claw.wani.x2t.configuration.AcceleratorConfiguration;
-import claw.wani.x2t.configuration.AcceleratorLocalStrategy;
+import claw.tatsu.directive.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.configuration.AcceleratorLocalStrategy;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
