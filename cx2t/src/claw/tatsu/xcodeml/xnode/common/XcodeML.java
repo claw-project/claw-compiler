@@ -491,9 +491,34 @@ public class XcodeML extends Xnode {
     fctCall.setType(returnType);
     Xnode fctNameNode = createNode(Xcode.NAME);
     fctNameNode.setValue(fctName);
-    fctNameNode.setType(fctType);
+    if(fctType != null) {
+      fctNameNode.setType(fctType);
+    }
     fctCall.append(fctNameNode);
     fctCall.append(createNode(Xcode.ARGUMENTS));
+    return fctCall;
+  }
+
+  /**
+   * Create a new functionCall node with name and arguments as children nodes.
+   *
+   * {@code
+   * <functionCall type="returnType">
+   * <name type="fctType">fctName</name>
+   * <arguments></arguments>
+   * </functionCall>
+   * }
+   *
+   * @param returnType Value of the type attribute for the functionCall node.
+   * @param fctName    Value of the name node.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public Xnode createIntrinsicFctCall(FortranType returnType,
+                                      Xintrinsic fctName)
+  {
+    Xnode fctCall =
+        createFctCall(returnType.toString(), fctName.toString(), null);
+    fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     return fctCall;
   }
 
