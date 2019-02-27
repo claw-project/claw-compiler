@@ -90,6 +90,7 @@ public final class Field {
       fieldInfo.setPromotionType(PromotionInfo.PromotionType.SCALAR_TO_ARRAY);
       Intent newIntent = crtType != null ? crtType.getIntent() : Intent.NONE;
       newType = xcodeml.createBasicType(type, id.getType(), newIntent);
+      newType.copyAttributes(crtType);
     }
 
     // Save promotion information (base dimensions, target dimensions, type)
