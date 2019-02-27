@@ -41,6 +41,14 @@ public class XcodeProgram extends XcodeML {
   private XglobalDeclTable _globalDeclarationsTable = null;
 
   /**
+   * Default ctor used just to carry errors.
+   */
+  private XcodeProgram() {
+    _errors = new ArrayList<>();
+    _warnings = new ArrayList<>();
+  }
+
+  /**
    * XcodeProgram base constructor.
    *
    * @param doc The XcodeML document.
@@ -73,14 +81,14 @@ public class XcodeProgram extends XcodeML {
    */
   public static XcodeProgram createFromDocument(Document doc) {
     if(doc == null) {
-      System.err.println("Unable to read document");
-      return null;
+      XcodeProgram program = new XcodeProgram();
+      program.addError("Unable to read document", 0);
+      return program;
     }
     XcodeProgram program = new XcodeProgram(doc);
     program.readDocumentInformation();
     if(!program.isXcodeMLvalid()) {
-      System.err.print("XcodeML file is not valid");
-      return null;
+      program.addError("XcodeML file is not valid", 0);
     }
     return program;
   }
@@ -179,6 +187,15 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
+   * Check if the current translation unit has error.
+   *
+   * @return True if there is at least one error. False otherwise.
+   */
+  public boolean hasErrors() {
+    return !_errors.isEmpty();
+  }
+
+  /**
    * Get all the errors.
    *
    * @return A list containing all the errors.
@@ -241,20 +258,22 @@ public class XcodeProgram extends XcodeML {
    */
   private boolean isXcodeMLvalid() {
     if(getDocument() == null) {
+      addError("Not an valid document", 0);
       return false;
     }
 
     if(opcode() != Xcode.XCODE_PROGRAM) {
+      addError("Not an XcodeProgram document", 0);
       return false;
     }
 
     if(!Xname.SUPPORTED_VERSION.equals(getAttribute(Xattr.VERSION))) {
-      System.err.println("XcodeML version is not supported");
+      addError("XcodeML version is not supported", 0);
       return false;
     }
 
     if(!Xname.SUPPORTED_LANGUAGE.equals(getAttribute(Xattr.LANGUAGE))) {
-      System.err.println("Language is not set to fortran");
+      addError("Language is not set to Fortran", 0);
       return false;
     }
 
