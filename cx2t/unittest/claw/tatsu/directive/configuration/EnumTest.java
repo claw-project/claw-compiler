@@ -2,8 +2,9 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.wani.x2t.configuration;
+package claw.tatsu.directive.configuration;
 
+import claw.tatsu.directive.configuration.AcceleratorDataStrategy;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;

@@ -118,12 +118,14 @@ public class Sca extends ClawTransformation {
     _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
-              "SCA directive must be defined in a function/subroutine.", _claw);
+              "SCA directive must be defined in a function/subroutine.",
+          _claw.getPragma());
       return false;
     }
     _fctType = xcodeml.getTypeTable().getFunctionType(_fctDef);
     if(_fctType == null) {
-      xcodeml.addError("Function/subroutine signature cannot be found!", _claw);
+      xcodeml.addError("Function/subroutine signature cannot be found!",
+          _claw.getPragma());
       return false;
     }
     return true;
@@ -147,7 +149,8 @@ public class Sca extends ClawTransformation {
         && (_claw.isScaModelConfig()
         && Configuration.get().getModelConfig().getNbDimensions() == 0))
     {
-      xcodeml.addError("No dimension defined for parallelization.", _claw);
+      xcodeml.addError("No dimension defined for parallelization.",
+          _claw.getPragma());
       return false;
     }
     return true;
@@ -199,7 +202,7 @@ public class Sca extends ClawTransformation {
       return true;
     } else {
       xcodeml.addError("No model-data defined in function " + _fctDef.getName(),
-          _claw);
+          _claw.getPragma());
       return false;
     }
   }
@@ -241,7 +244,7 @@ public class Sca extends ClawTransformation {
               if(!bType.hasIntent()) {
                 xcodeml.addWarning(String.format(
                     "Variable %s in scalar clause but not a dummy argument!",
-                    varName), _claw);
+                    varName), _claw.getPragma());
               }
               _arrayFieldsInOut.add(varName);
             } else if(!bType.isParameter() && !bType.hasIntent()) {
@@ -275,14 +278,14 @@ public class Sca extends ClawTransformation {
       if(!_fctDef.getSymbolTable().contains(d)) {
         xcodeml.addError(
             String.format("Data %s is not defined in the current block.", d),
-            _claw
+            _claw.getPragma()
         );
         return false;
       }
       if(!_fctDef.getDeclarationTable().contains(d)) {
         xcodeml.addError(
             String.format("Data %s is not declared in the current block.", d),
-            _claw
+            _claw.getPragma()
         );
         return false;
       }

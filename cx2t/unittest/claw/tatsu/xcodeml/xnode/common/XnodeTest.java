@@ -308,4 +308,59 @@ public class XnodeTest {
     assertEquals(0, matches1.size());
     assertEquals(0, matches2.size());
   }
+
+  @Test
+  public void nullBaseElementTest() {
+    Xnode node = new Xnode(null);
+    assertNotNull(node);
+    assertEquals(Xcode.NONE, node.opcode());
+    assertFalse(node.hasAttribute(Xattr.LINENO));
+    assertNull(node.getAttribute(Xattr.LINENO));
+    assertEquals("", node.value());
+    node.setValue("dummy");
+    assertEquals("", node.value());
+    node.setAttribute(Xattr.LINENO, "1");
+    assertFalse(node.hasAttribute(Xattr.LINENO));
+    assertFalse(node.hasBody());
+    assertNull(node.body());
+
+
+    assertTrue(node.children().isEmpty());
+    assertNull(node.child(1));
+    assertNull(node.firstChild());
+    assertNull(node.lastChild());
+
+    assertTrue(node.isDeleted());
+    assertNull(node.element());
+    assertEquals(0, node.lineNo());
+    assertEquals("", node.filename());
+
+
+    assertNull(node.nextSibling());
+    assertNull(node.prevSibling());
+    assertNull(node.ancestor());
+
+    assertNull(node.matchDescendant(Xcode.VAR));
+    assertNull(node.matchDirectDescendant(Xcode.VAR));
+    assertTrue(node.matchAll(Xcode.VAR).isEmpty());
+
+    assertEquals(Xnode.UNDEF_DEPTH, node.depth());
+
+    assertFalse(node.compareValues(null));
+    assertTrue(node.compareOptionalValues(null));
+
+    assertFalse(node.isNestedIn(null));
+
+    assertFalse(node.hasSameParentBlock(null));
+
+    assertEquals(0, node.hashCode());
+
+    assertTrue(node.isNotArrayIndex());
+
+    assertEquals(node, node);
+    assertNotEquals(node, null);
+  }
+
+
+
 }

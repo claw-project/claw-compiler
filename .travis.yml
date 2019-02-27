@@ -94,6 +94,7 @@ script:
 - cd -
 - "./scripts/check_license"
 - "./scripts/check_author"
+- "./scripts/check_lib_split"
 - cd scripts
 - "./run.shellcheck"
 - cd ..

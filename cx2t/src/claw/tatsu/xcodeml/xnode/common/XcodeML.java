@@ -40,6 +40,14 @@ public class XcodeML extends Xnode {
   private Document _xcodemlDoc;
 
   /**
+   * Default ctor used for unvalid XcodeML.
+   */
+  protected XcodeML() {
+    super(null);
+    _typeTable = null;
+  }
+
+  /**
    * Constructs a basic XcodeML object representing the XcodeML file given in
    * input.
    *

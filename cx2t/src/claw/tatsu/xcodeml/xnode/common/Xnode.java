@@ -38,7 +38,7 @@ public class Xnode {
   }
 
   /**
-   * Delete this nodes with all its siblings.
+   * Delete this nodes with all its next siblings.
    */
   public void deleteWithSiblings() {
     List<Xnode> toDelete = new ArrayList<>();
@@ -788,6 +788,9 @@ public class Xnode {
    * otherwise.
    */
   public boolean isNestedIn(Xnode ancestor) {
+    if(ancestor == null || element() == null) {
+      return false;
+    }
     Node possibleAncestor = element().getParentNode();
     while(possibleAncestor != null) {
       if(possibleAncestor == ancestor.element()) {
@@ -804,6 +807,9 @@ public class Xnode {
    * @return Type hash. Empty string if there is no type hash associated.
    */
   public String getType() {
+    if(_baseElement == null) {
+      return "";
+    }
     switch(opcode()) {
       case F_ARRAY_REF:
         String type = getAttribute(Xattr.TYPE);
@@ -963,20 +969,21 @@ public class Xnode {
 
   @Override
   public int hashCode() {
-    return _baseElement.hashCode();
+    return _baseElement != null ? _baseElement.hashCode() : 0;
   }
 
   @Override
   public boolean equals(Object o) {
-    return !(o == null || !(o instanceof Xnode))
-        && element() == ((Xnode) o).element();
+    return o instanceof Xnode && element() == ((Xnode) o).element();
   }
 
+  /**
+   * Check whether current node is not part of an arrayIndex node.
+   *
+   * @return True if the node is not a direct child of an arrayIndex node.
+   * False otherwise.
+   */
   public boolean isNotArrayIndex() {
-    if(ancestor() == null) {
-      return true;
-    } else {
-      return ancestor().opcode() != Xcode.ARRAY_INDEX;
-    }
+    return ancestor() == null || ancestor().opcode() != Xcode.ARRAY_INDEX;
   }
 }
