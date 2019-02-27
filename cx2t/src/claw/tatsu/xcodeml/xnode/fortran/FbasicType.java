@@ -346,6 +346,26 @@ public class FbasicType extends Xnode {
     return true;
   }
 
+  /**
+   * Copy the attributes from the type to this one.
+   *
+   * @param from Type to copy attributes from.
+   */
+  public void copyAttributes(FbasicType from) {
+    if(from == null) {
+      return;
+    }
+
+    if(from.isAllocatable()) setBooleanAttribute(Xattr.IS_ALLOCATABLE, true);
+    if(from.isOptional()) setBooleanAttribute(Xattr.IS_OPTIONAL, true);
+    if(from.isPointer()) setBooleanAttribute(Xattr.IS_POINTER, true);
+    if(from.isTarget()) setBooleanAttribute(Xattr.IS_TARGET, true);
+    if(from.isParameter()) setBooleanAttribute(Xattr.IS_PARAMETER, true);
+    if(from.isPrivate()) setBooleanAttribute(Xattr.IS_PRIVATE, true);
+    if(from.isPublic()) setBooleanAttribute(Xattr.IS_PUBLIC, true);
+    if(from.isSave()) setBooleanAttribute(Xattr.IS_SAVE, true);
+  }
+
   @Override
   public FbasicType cloneNode() {
     return new FbasicType(super.cloneNode());
