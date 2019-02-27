@@ -82,13 +82,13 @@ public class XcodeProgram extends XcodeML {
   public static XcodeProgram createFromDocument(Document doc) {
     if(doc == null) {
       XcodeProgram program = new XcodeProgram();
-      program.addError("Unable to read document", 0);
+      program.addError("Unable to read document");
       return program;
     }
     XcodeProgram program = new XcodeProgram(doc);
     program.readDocumentInformation();
     if(!program.isXcodeMLvalid()) {
-      program.addError("XcodeML file is not valid", 0);
+      program.addError("XcodeML file is not valid");
     }
     return program;
   }
@@ -121,10 +121,16 @@ public class XcodeProgram extends XcodeML {
    * @param lineno Line number that triggered the error.
    */
   public void addError(String msg, int lineno) {
-    if(msg == null || msg.isEmpty()) {
-      return;
-    }
-    _errors.add(new XanalysisError(msg, lineno));
+    addMsg(msg, lineno, _errors);
+  }
+
+  /**
+   * Add an error. If msg is null or empty, the error is not added.
+   *
+   * @param msg Error message.
+   */
+  public void addError(String msg) {
+    addMsg(msg, _errors);
   }
 
   /**
@@ -145,6 +151,15 @@ public class XcodeProgram extends XcodeML {
    */
   public void addWarning(String msg, ClawPragma pragma) {
     addMsg(msg, pragma, _warnings);
+  }
+
+  /**
+   * Add an warning. If msg is null or empty, the warning is not added.
+   *
+   * @param msg Warning message.
+   */
+  public void addWarning(String msg) {
+    addMsg(msg, 0, _warnings);
   }
 
   /**
@@ -187,12 +202,31 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg  Message to be added.
+   * @param list List in which the message should be added.
+   */
+  private void addMsg(String msg, List<XanalysisError> list) {
+    addMsg(msg, 0, list);
+  }
+
+  /**
    * Check if the current translation unit has error.
    *
    * @return True if there is at least one error. False otherwise.
    */
   public boolean hasErrors() {
     return !_errors.isEmpty();
+  }
+
+  /**
+   * Check if the current translation unit has warnings.
+   *
+   * @return True if there is at least one warning. False otherwise.
+   */
+  public boolean hasWarnings() {
+    return !_warnings.isEmpty();
   }
 
   /**
@@ -258,22 +292,22 @@ public class XcodeProgram extends XcodeML {
    */
   private boolean isXcodeMLvalid() {
     if(getDocument() == null) {
-      addError("Not an valid document", 0);
+      addError("Not an valid document");
       return false;
     }
 
     if(opcode() != Xcode.XCODE_PROGRAM) {
-      addError("Not an XcodeProgram document", 0);
+      addError("Not an XcodeProgram document");
       return false;
     }
 
     if(!Xname.SUPPORTED_VERSION.equals(getAttribute(Xattr.VERSION))) {
-      addError("XcodeML version is not supported", 0);
+      addError("XcodeML version is not supported");
       return false;
     }
 
     if(!Xname.SUPPORTED_LANGUAGE.equals(getAttribute(Xattr.LANGUAGE))) {
-      addError("Language is not set to Fortran", 0);
+      addError("Language is not set to Fortran");
       return false;
     }
 

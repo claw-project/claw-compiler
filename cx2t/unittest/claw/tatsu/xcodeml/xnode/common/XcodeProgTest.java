@@ -40,22 +40,29 @@ public class XcodeProgTest {
     assertEquals(2, xcodeml.getGlobalDeclarationsTable().size());
 
     // Try to add not meaningful messages in errors
+    xcodeml.addError("");
     xcodeml.addError("", 0);
+    xcodeml.addError(null, 0);
     xcodeml.addError("", null);
     xcodeml.addError("", new ClawPragma());
+    assertFalse(xcodeml.hasErrors());
     assertTrue(xcodeml.getErrors().isEmpty());
 
     xcodeml.addError("Error1", 1);
+    assertTrue(xcodeml.hasErrors());
     assertEquals(1, xcodeml.getErrors().size());
 
     // Try to add not meaningful messages in warnings
+    xcodeml.addWarning("");
     xcodeml.addWarning(null, 0);
     xcodeml.addWarning("", 0);
     xcodeml.addWarning(null, Collections.<Integer>emptyList());
     xcodeml.addWarning("", new ClawPragma());
+    assertFalse(xcodeml.hasWarnings());
     assertTrue(xcodeml.getWarnings().isEmpty());
 
     xcodeml.addWarning("New warning 1", 1);
+    assertTrue(xcodeml.hasWarnings());
     assertEquals(1, xcodeml.getWarnings().size());
   }
 
