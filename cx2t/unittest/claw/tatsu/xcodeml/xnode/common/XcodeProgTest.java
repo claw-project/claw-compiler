@@ -4,7 +4,6 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.wani.language.ClawPragma;
 import helper.TestConstant;
 import org.junit.Test;
 
@@ -43,8 +42,6 @@ public class XcodeProgTest {
     xcodeml.addError("");
     xcodeml.addError("", 0);
     xcodeml.addError(null, 0);
-    xcodeml.addError("", null);
-    xcodeml.addError("", new ClawPragma());
     assertFalse(xcodeml.hasErrors());
     assertTrue(xcodeml.getErrors().isEmpty());
 
@@ -57,7 +54,6 @@ public class XcodeProgTest {
     xcodeml.addWarning(null, 0);
     xcodeml.addWarning("", 0);
     xcodeml.addWarning(null, Collections.<Integer>emptyList());
-    xcodeml.addWarning("", new ClawPragma());
     assertFalse(xcodeml.hasWarnings());
     assertTrue(xcodeml.getWarnings().isEmpty());
 

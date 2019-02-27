@@ -7,7 +7,6 @@ package claw.tatsu.xcodeml.xnode.common;
 import claw.tatsu.xcodeml.error.XanalysisError;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.wani.language.ClawPragma;
 import org.w3c.dom.Document;
 
 import java.io.BufferedInputStream;
@@ -127,30 +126,20 @@ public class XcodeProgram extends XcodeML {
   /**
    * Add an error. If msg is null or empty, the error is not added.
    *
-   * @param msg Error message.
+   * @param msg  Error message.
+   * @param node Node that triggered the error.
    */
-  public void addError(String msg) {
-    addMsg(msg, _errors);
+  public void addError(String msg, Xnode node) {
+    addMsg(msg, node != null ? node.lineNo() : 0, _errors);
   }
 
   /**
    * Add an error. If msg is null or empty, the error is not added.
    *
-   * @param msg    Error message.
-   * @param pragma Pragma that triggered the error.
+   * @param msg Error message.
    */
-  public void addError(String msg, ClawPragma pragma) {
-    addMsg(msg, pragma, _errors);
-  }
-
-  /**
-   * Add an warning. If msg is null or empty, the warning is not added.
-   *
-   * @param msg    Warning message.
-   * @param pragma Pragma that triggered the warning.
-   */
-  public void addWarning(String msg, ClawPragma pragma) {
-    addMsg(msg, pragma, _warnings);
+  public void addError(String msg) {
+    addMsg(msg, _errors);
   }
 
   /**
@@ -163,15 +152,12 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
-   * Add a new message to the error or the warning list
+   * Add an warning. If msg is null or empty, the warning is not added.
    *
-   * @param msg    Message to be added.
-   * @param pragma Pragma triggering the message.
-   * @param list   List in which the message should be added.
+   * @param msg Warning message.
    */
-  private void addMsg(String msg, ClawPragma pragma, List<XanalysisError> list) {
-    addMsg(msg, (pragma != null && pragma.getPragma() != null) ?
-        pragma.getPragma().lineNo() : 0, list);
+  public void addWarning(String msg, Xnode node) {
+    addMsg(msg, node != null ? node.lineNo() : 0, _warnings);
   }
 
   /**

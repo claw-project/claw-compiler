@@ -159,7 +159,7 @@ public class ScaGPU extends Sca {
         || !Configuration.get().getModelConfig().isLoaded())
     {
       xcodeml.addError("SCA applied in ELEMENTAL function/subroutine " +
-          "requires model configuration!", _claw);
+          "requires model configuration!", _claw.getPragma());
       return false;
     }
     return analyzeData(xcodeml, translator);
@@ -247,7 +247,7 @@ public class ScaGPU extends Sca {
     if(fctType.hasAttribute(attribute)) {
       xcodeml.addWarning(String.format(
           "SCA: attribute %s removed from function/subroutine %s",
-          attribute.toString(), _fctDef.getName()), _claw);
+          attribute.toString(), _fctDef.getName()), _claw.getPragma());
       fctType.removeAttribute(attribute);
     }
   }

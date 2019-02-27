@@ -37,7 +37,7 @@ public class ModelData extends ClawBlockTransformation {
     if(!Configuration.get().getModelConfig().isLoaded()) {
       xcodeml.addError(
           "SCA model-data directive requires model configuration!",
-          _clawStart);
+          _clawStart.getPragma());
     }
 
     ClawTranslator trans = (ClawTranslator) translator;

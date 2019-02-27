@@ -39,7 +39,8 @@ public class ScaRoutine extends Sca {
     }
 
     if(!_fctType.isElemental()) {
-      xcodeml.addError("Parent function/subroutine must be ELEMENTAL.", _claw);
+      xcodeml.addError("Parent function/subroutine must be ELEMENTAL.",
+          _claw.getPragma());
       return false;
     }
 
@@ -60,7 +61,7 @@ public class ScaRoutine extends Sca {
       if(Directive.hasDirectives(_fctDef)) {
         xcodeml.addWarning("Function/subroutine has some directives! " +
                 "Cannot insert new directives without breaking existing ones!",
-            _claw);
+            _claw.getPragma());
       } else {
         Directive.addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
             _fctDef.body().child(0));
