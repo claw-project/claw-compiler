@@ -22,6 +22,7 @@ public class PromotionInfo {
   private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
   private boolean _referenceAdapted = false;
   private boolean _allocateAdapted = false;
+  private boolean _forceAssumendShape = false;
 
   /**
    * Default ctor. Used for global promotion information not attached to a
@@ -304,6 +305,14 @@ public class PromotionInfo {
         _dimensions.add(dim);
       }
     }
+  }
+
+  public void forceAssumedShape() {
+    _forceAssumendShape = true;
+  }
+
+  public boolean isForcedAssumedShape() {
+    return _forceAssumendShape;
   }
 
   // Type of promotion
