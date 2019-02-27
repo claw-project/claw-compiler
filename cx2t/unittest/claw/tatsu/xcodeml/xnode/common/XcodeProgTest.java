@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.wani.language.ClawPragma;
 import helper.TestConstant;
 import org.junit.Test;
 
@@ -38,16 +39,20 @@ public class XcodeProgTest {
     assertEquals(2, xcodeml.getGlobalSymbolsTable().size());
     assertEquals(2, xcodeml.getGlobalDeclarationsTable().size());
 
+    // Try to add not meaningful messages in errors
     xcodeml.addError("", 0);
     xcodeml.addError("", null);
+    xcodeml.addError("", new ClawPragma());
     assertTrue(xcodeml.getErrors().isEmpty());
 
     xcodeml.addError("Error1", 1);
     assertEquals(1, xcodeml.getErrors().size());
 
+    // Try to add not meaningful messages in warnings
     xcodeml.addWarning(null, 0);
     xcodeml.addWarning("", 0);
     xcodeml.addWarning(null, Collections.<Integer>emptyList());
+    xcodeml.addWarning("", new ClawPragma());
     assertTrue(xcodeml.getWarnings().isEmpty());
 
     xcodeml.addWarning("New warning 1", 1);
@@ -57,7 +62,8 @@ public class XcodeProgTest {
   @Test
   public void creationFailingTest() {
     XcodeProgram xc1 = XcodeProgram.createFromDocument(null);
-    assertNull(xc1);
+    assertNotNull(xc1);
+    assertTrue(xc1.hasErrors());
 
     // Simulate STDIN
     ByteArrayInputStream in =
@@ -65,6 +71,7 @@ public class XcodeProgTest {
     System.setIn(in);
 
     XcodeProgram xc2 = XcodeProgram.createFromStdInput();
-    assertNull(xc2);
+    assertNotNull(xc2);
+    assertTrue(xc2.hasErrors());
   }
 }
