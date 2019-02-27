@@ -67,6 +67,38 @@ public class XcodeProgTest {
   }
 
   @Test
+  public void createUnvalidXcodeProgram() {
+
+    String d1 = "<XcodeProgram source=\"original_code.f90\"\n" +
+        "language=\"Fortran\"\n" +
+        "time=\"2015-11-25 14:47:59\"\n" +
+        "compiler-info=\"XcodeML/Fortran-FrontEnd\"\n" +
+        "version=\"1.5\"></XcodeProgram>";
+    String d2 = "<XcodeProgram source=\"original_code.f90\"\n" +
+        "language=\"C\"\n" +
+        "time=\"2015-11-25 14:47:59\"\n" +
+        "compiler-info=\"XcodeML/Fortran-FrontEnd\"\n" +
+        "version=\"1.0\"></XcodeProgram>";
+
+    // Simulate STDIN
+    ByteArrayInputStream in = new ByteArrayInputStream(d1.getBytes());
+    System.setIn(in);
+
+    // Version not valid
+    XcodeProgram xc1 = XcodeProgram.createFromStdInput();
+    assertNotNull(xc1);
+    assertTrue(xc1.hasErrors());
+
+    in = new ByteArrayInputStream(d2.getBytes());
+    System.setIn(in);
+
+    // Language not valid
+    XcodeProgram xc2 = XcodeProgram.createFromStdInput();
+    assertNotNull(xc2);
+    assertTrue(xc2.hasErrors());
+  }
+
+  @Test
   public void creationFailingTest() {
     XcodeProgram xc1 = XcodeProgram.createFromDocument(null);
     assertNotNull(xc1);
