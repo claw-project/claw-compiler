@@ -84,6 +84,10 @@ public class ClawTranslatorDriver {
         XcodeProgram.createFromStdInput() :
         XcodeProgram.createFromFile(_xcodemlInputFile);
 
+    if(_translationUnit.hasErrors()) {
+      abort();
+    }
+
     if(Configuration.get().getCurrentDirective() == CompilerDirective.OPENMP
         && Configuration.get().getCurrentTarget() == Target.CPU)
     {
@@ -91,9 +95,6 @@ public class ClawTranslatorDriver {
           "is not advised for CPU target.", 0);
     }
 
-    if(_translationUnit == null) {
-      abort();
-    }
     try {
       // Check all pragma found in the translation unit
       for(Xnode pragma : _translationUnit.matchAll(Xcode.F_PRAGMA_STATEMENT)) {
