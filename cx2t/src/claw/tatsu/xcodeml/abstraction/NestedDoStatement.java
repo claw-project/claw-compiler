@@ -6,6 +6,7 @@ package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
 import java.util.ArrayList;
@@ -63,8 +64,8 @@ public class NestedDoStatement {
    * the inner statement represents the last element of the list.
    *
    * @param dimensions A list of dimension objects.
-   * @param xcodeml    The current XcodeML program unit in which the elements
-   *                   will be created.
+   * @param xcodeml    The current XcodeML translation unit in which the
+   *                   elements will be created.
    */
   public NestedDoStatement(List<DimensionDefinition> dimensions,
                            XcodeProgram xcodeml)
@@ -74,11 +75,33 @@ public class NestedDoStatement {
       Xnode induction = xcodeml.createVar(FortranType.INTEGER,
           dim.getIdentifier(), Xscope.LOCAL);
       Xnode range = dim.generateIndexRange(xcodeml, true);
-      Xnode doSt = xcodeml.createDoStmt(induction, range);
+      Xnode doStmt = xcodeml.createDoStmt(induction, range);
       if(!_statements.isEmpty()) {
-        _statements.get(_statements.size() - 1).body().append(doSt);
+        _statements.get(_statements.size() - 1).body().append(doStmt);
       }
-      _statements.add(doSt);
+      _statements.add(doStmt);
+    }
+  }
+
+  /**
+   * Constructs a group of nested do statements from a promotion information
+   * object to iterate over assumed shape arrays.
+   *
+   * @param pi      Promotion information of one array taken as basis for the
+   *                iteration.
+   * @param xcodeml The current XcodeML translation unit in which the
+   *                elements will be created.
+   */
+  public NestedDoStatement(List<DimensionDefinition> dimensions,
+                           PromotionInfo pi, XcodeProgram xcodeml)
+  {
+    _statements = new ArrayList<>();
+    int index = 1;
+    for(DimensionDefinition dim : dimensions) {
+      _statements.add(Loop.createDoStmtOverAssumedShapeArray(
+          pi.getTargetType(), pi.getIdentifier(), dim.getIdentifier(),
+          index, xcodeml));
+      ++index;
     }
   }
 
