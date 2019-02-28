@@ -44,6 +44,8 @@ public class Sca extends ClawTransformation {
   Set<String> _inductionVariables;
   FfunctionType _fctType;
 
+  protected boolean forceAssumedShapedArrayPromotion = false;
+
   static final String SCA_DEBUG_PREFIX = "SCA:";
 
   /**
@@ -372,15 +374,11 @@ public class Sca extends ClawTransformation {
         _promotions.put(fieldId, promotionInfo);
       }
     } else {
-      boolean forceAssumedShape = _fctType.isElemental() &&
-          Configuration.get().getBooleanParameter(
-              Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED);
-
       // Promote all arrays in a similar manner
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getLayoutForData(fieldId));
-        if(forceAssumedShape) {
+        if(forceAssumedShapedArrayPromotion) {
           promotionInfo.forceAssumedShape();
         }
         Field.promote(promotionInfo, _fctDef, xcodeml);
@@ -403,30 +401,32 @@ public class Sca extends ClawTransformation {
 
     // For each dimension defined in the directive
     for(DimensionDefinition dimension : _claw.getDefaultLayout()) {
-      // Create the parameter for the lower bound
-      if(dimension.getLowerBound().isVar()) {
-        xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
-            bt.getType(), XstorageClass.F_PARAM, _fctDef,
-            DeclarationPosition.FIRST);
+      if(!forceAssumedShapedArrayPromotion) {
+        // Create the parameter for the lower bound
+        if(dimension.getLowerBound().isVar()) {
+          xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
+              bt.getType(), XstorageClass.F_PARAM, _fctDef,
+              DeclarationPosition.FIRST);
 
-        // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(
-            dimension.getLowerBound().getValue(),
-            bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
-      }
+          // Add parameter to the local type table
+          Xnode param = xcodeml.createAndAddParam(
+              dimension.getLowerBound().getValue(),
+              bt.getType(), _fctType);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+        }
 
-      // Create parameter for the upper bound
-      if(dimension.getUpperBound().isVar()) {
-        xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
-            bt.getType(), XstorageClass.F_PARAM, _fctDef,
-            DeclarationPosition.FIRST);
+        // Create parameter for the upper bound
+        if(dimension.getUpperBound().isVar()) {
+          xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
+              bt.getType(), XstorageClass.F_PARAM, _fctDef,
+              DeclarationPosition.FIRST);
 
-        // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(
-            dimension.getUpperBound().getValue(),
-            bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+          // Add parameter to the local type table
+          Xnode param = xcodeml.createAndAddParam(
+              dimension.getUpperBound().getValue(),
+              bt.getType(), _fctType);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+        }
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER,
