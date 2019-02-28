@@ -20,7 +20,6 @@ function claw::print_help() {
 usage: $1 <OPTIONS> <INPUTFILE> ...
 
 CLAW Compiler options:
-
    -o <file>                  : output file for the transformed FORTRAN code. If
                                 omitted, code output on the standard output.
    -I <dir>                   : add the directory dir to the list of directories
@@ -77,8 +76,7 @@ Decompiler options:
    -l                         : Add preprocessor line directives in the output
                                 FORTRAN file.
 
-Process Options
-
+Process options:
    --Wp[option] : Add preprocessor option.
    --Wf[option] : Add frontend option.
    --Wx[option] : Add Xcode translator option.
