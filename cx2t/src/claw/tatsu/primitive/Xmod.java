@@ -212,7 +212,7 @@ public final class Xmod {
                 pLocal.getAttribute(Xattr.PROMOTION_INFO));
 
             if(lType.isArray()) {
-              String newType = Type.duplicateWithDimension(lType, crtType,
+              FbasicType newType = Type.duplicateWithDimension(lType, crtType,
                   xcodeml, mod, promotionInfo.getDimensions());
               pMod.setType(newType);
             }

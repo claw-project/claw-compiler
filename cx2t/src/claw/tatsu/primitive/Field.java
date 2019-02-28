@@ -97,7 +97,7 @@ public final class Field {
     fieldInfo.setBaseDimension(newType.getDimensions());
     fieldInfo.setTargetDimension(newType.getDimensions() +
         fieldInfo.getDimensions().size());
-    fieldInfo.setTargetType(type);
+    fieldInfo.setTargetType(newType);
 
     if(fieldInfo.getPromotionType() ==
         PromotionInfo.PromotionType.ARRAY_TO_ARRAY)

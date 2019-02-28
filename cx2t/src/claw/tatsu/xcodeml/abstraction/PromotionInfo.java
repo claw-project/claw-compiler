@@ -4,6 +4,8 @@
  */
 package claw.tatsu.xcodeml.abstraction;
 
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class PromotionInfo {
   private String _identifier;
   private int _baseDimension;
   private int _targetDimension;
-  private String _targetType;
+  private FbasicType _targetType;
   private List<DimensionDefinition> _dimensions;
   private PromotionType _promotionType = PromotionType.ARRAY_TO_ARRAY; //Default
   private boolean _referenceAdapted = false;
@@ -63,7 +65,7 @@ public class PromotionInfo {
    * @param targetType      Type if after the promotion.
    */
   public PromotionInfo(String id, int baseDimension, int targetDimension,
-                       String targetType)
+                       FbasicType targetType)
   {
     _identifier = id;
     _baseDimension = baseDimension;
@@ -112,7 +114,7 @@ public class PromotionInfo {
    *
    * @return Type id.
    */
-  public String getTargetType() {
+  public FbasicType getTargetType() {
     return _targetType;
   }
 
@@ -121,7 +123,7 @@ public class PromotionInfo {
    *
    * @param value Type hash value.
    */
-  public void setTargetType(String value) {
+  public void setTargetType(FbasicType value) {
     _targetType = value;
   }
 
