@@ -18,7 +18,6 @@ import claw.tatsu.xcodeml.xnode.common.Xscope;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
-import claw.wani.ClawConstant;
 
 import java.util.List;
 
