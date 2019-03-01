@@ -65,14 +65,17 @@ set(
 set(
   CLAW_FLAGS_sca41
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca41/model.toml
+  -x=sca_elemental_promotion_assumed:false
 )
 set(
   CLAW_FLAGS_sca43
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca43/model.toml
+  -x=sca_elemental_promotion_assumed:false
 )
 set(
   CLAW_FLAGS_sca45
   --model-config=${CMAKE_CURRENT_SOURCE_DIR}/sca45/model.toml
+  -x=sca_elemental_promotion_assumed:false
 )
 
 claw_add_advanced_test_set(

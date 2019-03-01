@@ -304,7 +304,7 @@ public class FieldTest {
       assertEquals(target, promotionInfo.getTargetDimension());
       assertEquals(base, promotionInfo.getBaseDimension());
       assertEquals(diff, promotionInfo.diffDimension());
-      assertEquals(bt.getType(), promotionInfo.getTargetType());
+      assertEquals(bt.getType(), promotionInfo.getTargetType().getType());
 
       if(base > 0) {
         assertEquals(PromotionInfo.PromotionType.ARRAY_TO_ARRAY,

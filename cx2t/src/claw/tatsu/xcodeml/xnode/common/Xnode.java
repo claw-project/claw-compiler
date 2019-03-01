@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -830,6 +831,14 @@ public class Xnode {
       default:
         return getAttribute(Xattr.TYPE);
     }
+  }
+
+  /**
+   *
+   * @param type
+   */
+  public void setType(FbasicType type) {
+    setAttribute(Xattr.TYPE, type.getType());
   }
 
   /**

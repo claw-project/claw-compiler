@@ -35,12 +35,12 @@ public class Type {
    * @return The new type hash generated.
    * @throws IllegalTransformationException If action is not supported.
    */
-  public static String duplicateWithDimension(FbasicType base,
-                                              FbasicType toUpdate,
-                                              XcodeML xcodemlSrc,
-                                              XcodeML xcodemlDst,
-                                              List<DimensionDefinition>
-                                                  dimensions)
+  public static FbasicType duplicateWithDimension(FbasicType base,
+                                                  FbasicType toUpdate,
+                                                  XcodeML xcodemlSrc,
+                                                  XcodeML xcodemlDst,
+                                                  List<DimensionDefinition>
+                                                      dimensions)
       throws IllegalTransformationException
   {
     FbasicType newType = toUpdate.cloneNode();
@@ -94,7 +94,7 @@ public class Type {
     }
 
     xcodemlDst.getTypeTable().add(newType);
-    return type;
+    return newType;
   }
 
   /**

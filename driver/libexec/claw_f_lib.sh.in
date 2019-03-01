@@ -20,7 +20,6 @@ function claw::print_help() {
 usage: $1 <OPTIONS> <INPUTFILE> ...
 
 CLAW Compiler options:
-
    -o <file>                  : output file for the transformed FORTRAN code. If
                                 omitted, code output on the standard output.
    -I <dir>                   : add the directory dir to the list of directories
@@ -67,7 +66,7 @@ CLAW Compiler options:
    --stop-frontend            : save intermediate files and stop after frontend.
    --stop-translator          : save intermediate files and stop after
                                 translator.
-   -x <config_key:value>      : override a configuration key:value pair from
+   -x=<config_key:value>      : override a configuration key:value pair from
                                 the command line. Higher priority over base
                                 configuration and user configuration.
 
@@ -77,8 +76,7 @@ Decompiler options:
    -l                         : Add preprocessor line directives in the output
                                 FORTRAN file.
 
-Process Options
-
+Process options:
    --Wp[option] : Add preprocessor option.
    --Wf[option] : Add frontend option.
    --Wx[option] : Add Xcode translator option.

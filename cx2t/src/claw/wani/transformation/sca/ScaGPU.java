@@ -20,6 +20,7 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
@@ -211,6 +212,12 @@ public class ScaGPU extends Sca {
      * transformation until having information on the calling site from
      * another translation unit. */
     if(_fctType.isElemental()) {
+      if(Configuration.get().getBooleanParameter(
+          Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED))
+      {
+        forceAssumedShapedArrayPromotion = true;
+      }
+
       // SCA ELEMENTAL
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef == null) {
@@ -275,8 +282,19 @@ public class ScaGPU extends Sca {
      * the whole subroutine's body. This is for the moment a really naive
      * transformation idea but it is our start point.
      * Use the first over clause to create it. */
-    NestedDoStatement loops =
-        new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
+    NestedDoStatement loops;
+    if(forceAssumedShapedArrayPromotion) {
+      if(_promotions.isEmpty()) {
+        throw new IllegalTransformationException("Cannot assume shape of " +
+            "array in elemental function/subroutine.",
+            _claw.getPragma().lineNo());
+      }
+      PromotionInfo pi = _promotions.entrySet().iterator().next().getValue();
+      loops =
+          new NestedDoStatement(_claw.getDefaultLayoutReversed(), pi, xcodeml);
+    } else {
+      loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
+    }
 
     /* Subroutine/function can have a contains section with inner subroutines
      * or functions. The newly created (nested) do statements should stop

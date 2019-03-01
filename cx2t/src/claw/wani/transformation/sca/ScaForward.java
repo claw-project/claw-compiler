@@ -526,7 +526,7 @@ public class ScaForward extends ClawTransformation {
             promotionInfo.readDimensionsFromString(
                 pBase.getAttribute(Xattr.PROMOTION_INFO));
 
-            String type = _localFct ? Type.duplicateWithDimension(typeBase,
+            FbasicType type = _localFct ? Type.duplicateWithDimension(typeBase,
                 typeToUpdate, xcodeml, xcodeml, promotionInfo.getDimensions())
                 : Type.duplicateWithDimension(typeBase, typeToUpdate, _mod,
                 xcodeml, promotionInfo.getDimensions());

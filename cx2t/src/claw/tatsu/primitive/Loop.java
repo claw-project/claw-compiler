@@ -14,6 +14,10 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeML;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.Xscope;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.List;
 
@@ -452,4 +456,50 @@ public final class Loop {
   public static boolean hasSameIndexRangeBesidesLower(Xnode l1, Xnode l2) {
     return compareIndexRanges(l1, l2, false);
   }
+
+  /**
+   * Create a do statement to iterate over an array from 1 to size.
+   *
+   * @param fbt          FbasicType of the array.
+   * @param arrayName    Array name.
+   * @param inductionVar Identifier of a the induction variable.
+   * @param dimId        Dimension on which size is called.
+   * @param xcodeml      Current translation unit.
+   * @return Newly created node.
+   */
+  public static Xnode createDoStmtOverAssumedShapeArray(FbasicType fbt,
+                                                        String arrayName,
+                                                        String inductionVar,
+                                                        int dimId,
+                                                        XcodeML xcodeml)
+  {
+    // Induction variable
+    Xnode induction =
+        xcodeml.createVar(FortranType.INTEGER, inductionVar, Xscope.LOCAL);
+
+    // Lower bound
+    Xnode lb = xcodeml.createNode(Xcode.LOWER_BOUND);
+    lb.append(xcodeml.createIntConstant(1));
+
+    // upper bound
+    Xnode up = xcodeml.createNode(Xcode.UPPER_BOUND);
+    Xnode sizeCall =
+        xcodeml.createIntrinsicFctCall(FortranType.INTEGER, Xintrinsic.SIZE);
+    Xnode varArg = xcodeml.createVar(fbt.getType(), arrayName, Xscope.LOCAL);
+    Xnode dimArg = xcodeml.createIntConstant(dimId);
+    sizeCall.matchDescendant(Xcode.ARGUMENTS).append(varArg);
+    sizeCall.matchDescendant(Xcode.ARGUMENTS).append(dimArg);
+    up.append(sizeCall);
+
+    // step
+    Xnode step = xcodeml.createNode(Xcode.STEP);
+    step.append(xcodeml.createIntConstant(1));
+
+    Xnode range = xcodeml.createNode(Xcode.INDEX_RANGE);
+    range.append(lb);
+    range.append(up);
+    range.append(step);
+    return xcodeml.createDoStmt(induction, range);
+  }
+
 }

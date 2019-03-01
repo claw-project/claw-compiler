@@ -97,7 +97,7 @@ public final class Field {
     fieldInfo.setBaseDimension(newType.getDimensions());
     fieldInfo.setTargetDimension(newType.getDimensions() +
         fieldInfo.getDimensions().size());
-    fieldInfo.setTargetType(type);
+    fieldInfo.setTargetType(newType);
 
     if(fieldInfo.getPromotionType() ==
         PromotionInfo.PromotionType.ARRAY_TO_ARRAY)
@@ -135,7 +135,12 @@ public final class Field {
       }
     } else { // SCALAR to ARRAY promotion
       for(DimensionDefinition dim : fieldInfo.getDimensions()) {
-        Xnode index = dim.generateIndexRange(xcodeml, false);
+        Xnode index;
+        if(fieldInfo.isForcedAssumedShape()) {
+          index = xcodeml.createEmptyAssumedShaped();
+        } else {
+          index = dim.generateIndexRange(xcodeml, false);
+        }
         newType.addDimension(index);
       }
     }
