@@ -13,7 +13,7 @@ SUBROUTINE claw ( )
 
  vec1 ( 0 : i , 0 : i ) = 0
  vec2 ( 0 : i , 0 : i ) = 100
-!$claw array-transform target(cpu)
+!$claw expand target(cpu)
  vec1 ( 0 : i , 0 : i ) = vec2 ( 0 : i , 0 : i ) + 10
  DO claw_induction_0 = 0 , i
   DO claw_induction_1 = 0 , i
@@ -24,4 +24,3 @@ SUBROUTINE claw ( )
  PRINT * , vec1
  PRINT * , vec2
 END SUBROUTINE claw
-

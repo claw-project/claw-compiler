@@ -5,7 +5,7 @@
     <!-- Specifiy a new dedicated order -->
     <group name="remove"/>
     <group name="directive-primitive"/>
-    <group name="array-transform"/>
+    <group name="expand"/>
     <group name="loop-extract"/>
     <group name="loop-hoist"/>
     <group name="loop-fusion"/>

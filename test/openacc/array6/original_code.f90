@@ -20,10 +20,10 @@ SUBROUTINE claw
   vec1 = 0;
   vec2 = 100;
 
-  !$claw array-transform
+  !$claw expand
   vec1(lower:upper) = vec2(lower:upper) + 10
 
-  !$claw array-transform
+  !$claw expand
   vec2(lower + 1:upper) = vec2(1) + 10
 
   PRINT*,vec1
