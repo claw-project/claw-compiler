@@ -83,11 +83,11 @@ directive[ClawPragma l]
     }
 
   // Array notation transformation directive
-  | ARRAY_TRANS array_transform_clauses[$l] EOF
-    {  $l.setDirective(ClawDirective.ARRAY_TRANSFORM); }
-  | END ARRAY_TRANS
+  | EXPAND expand_clauses[$l] EOF
+    {  $l.setDirective(ClawDirective.EXPAND); }
+  | END EXPAND
     {
-      $l.setDirective(ClawDirective.ARRAY_TRANSFORM);
+      $l.setDirective(ClawDirective.EXPAND);
       $l.setEndPragma();
     }
 
@@ -574,8 +574,8 @@ loop_extract_clauses[ClawPragma l]:
   )*
 ;
 
-// Possible permutation of clauses for the array-transform directive
-array_transform_clauses[ClawPragma l]:
+// Possible permutation of clauses for the expand directive
+expand_clauses[ClawPragma l]:
   (
     { !$l.hasClause(ClawClause.FUSION) }?      fusion_clause[$l]
   | { !$l.hasClause(ClawClause.PARALLEL) }?    parallel_clause[$l]
@@ -624,10 +624,10 @@ loop_hoist_clauses[ClawPragma l]:
 CLAW         : 'claw';
 
 // CLAW Directives
-ARRAY_TRANS      : 'array-transform';
 ARRAY_TO_CALL    : 'call';
 DEFINE           : 'define';
 END              : 'end';
+EXPAND           : 'expand';
 IF_EXTRACT       : 'if-extract';
 IGNORE           : 'ignore';
 KCACHE           : 'kcache';

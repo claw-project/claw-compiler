@@ -402,7 +402,7 @@ public class LoopExtraction extends ClawTransformation {
     // Generate directive pragmas if needed
     Xnode grip = null;
     if(_claw.hasClause(ClawClause.ACC)) {
-      /* TODO see TODO in ArrayTransform
+      /* TODO see TODO in ExpandNotation
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */

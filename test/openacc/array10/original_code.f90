@@ -18,10 +18,10 @@ SUBROUTINE claw
   vec1(0:i,0:i) = 0;
   vec2(0:i,0:i) = 100;
 
-  !$claw array-transform target(cpu)
+  !$claw expand target(cpu)
   vec1(0:i,0:i) = vec2(0:i,0:i) + 10
 
-  !$claw array-transform target(gpu)
+  !$claw expand target(gpu)
   vec1(0:i,0:i) = vec2(0:i,0:i) + 10
 
   PRINT*,vec1

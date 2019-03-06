@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * <pre>
- * An ArrayTransform transformation is an independent transformation. It
+ * An ExpandNotation transformation is an independent transformation. It
  * transforms the Fortran array notation into single or nested do statements.
  *
  * Array notation example:
@@ -37,20 +37,20 @@ import java.util.List;
  *
  * @author clementval
  */
-public class ArrayTransform extends ClawBlockTransformation {
+public class ExpandNotation extends ClawBlockTransformation {
 
   private final List<List<Xnode>> _groupIterationRanges;
   private final List<List<Xnode>> _groupedAssignStmts;
 
   /**
-   * Constructs a new ArrayTransform triggered from a specific directive.
+   * Constructs a new ExpandNotation triggered from a specific directive.
    *
-   * @param begin The directive that triggered the array transform
+   * @param begin The directive that triggered the expand notation
    *              transformation.
    * @param end   The directive that close the block transformation.
    *              Can be null.
    */
-  public ArrayTransform(ClawPragma begin, ClawPragma end) {
+  public ExpandNotation(ClawPragma begin, ClawPragma end) {
     super(begin, end);
     _groupedAssignStmts = new ArrayList<>();
     _groupIterationRanges = new ArrayList<>();
@@ -62,7 +62,7 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       // TODO Analyse dependency between assignments. cf array9 example.
 
-      // Find assignments with array notation
+      // Find assignments with vector notation
       List<Xnode> foundAssignments =
           XnodeUtil.getArrayAssignInBlock(_clawStart.getPragma(),
               _clawEnd.getPragma().value()
@@ -70,14 +70,14 @@ public class ArrayTransform extends ClawBlockTransformation {
 
       if(foundAssignments.isEmpty()) {
         xcodeml.addError(
-            "No array notation assignments found in the array-transform block.",
+            "No vector notation assignments found in the expand block.",
             _clawStart.getPragma().lineNo()
         );
         return false;
       }
 
       /* Using a structure of list of list of assignments to group together the
-       * array notation that share an identical iteration range. */
+       * expand notation that share an identical iteration range. */
 
       // 1st group always exists
       _groupedAssignStmts.add(new ArrayList<Xnode>());
@@ -86,7 +86,7 @@ public class ArrayTransform extends ClawBlockTransformation {
       List<Xnode> refRanges =
           XnodeUtil.getIdxRangesFromArrayRef(refArrayRef);
 
-      // First array notation is automatically in the 1st group as 1st element
+      // First vector notation is automatically in the 1st group as 1st element
       _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(0));
       _groupIterationRanges.add(refRanges);
 
@@ -115,7 +115,7 @@ public class ArrayTransform extends ClawBlockTransformation {
             _clawStart.getPragma().lineNo());
         return false;
       }
-      // Check if we are dealing with an array notation
+      // Check if we are dealing with an vector notation
       if(stmt.child(0).opcode() != Xcode.F_ARRAY_REF) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
