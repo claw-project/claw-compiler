@@ -115,7 +115,7 @@ public class ClawTranslator implements Translator {
       case LOOP_HOIST:
         handleBlockDirective(xcodeml, analyzedPragma);
         break;
-      case ARRAY_TRANSFORM:
+      case EXPAND:
         handleBlockDirective(xcodeml, analyzedPragma);
         break;
       case REMOVE:
@@ -278,8 +278,8 @@ public class ClawTranslator implements Translator {
       case REMOVE:
         addTransformation(xcodeml, new UtilityRemove(begin, end));
         break;
-      case ARRAY_TRANSFORM:
-        addTransformation(xcodeml, new ArrayTransform(begin, end));
+      case EXPAND:
+        addTransformation(xcodeml, new ExpandNotation(begin, end));
         break;
       case LOOP_HOIST:
         addTransformation(xcodeml, new LoopHoist(begin, end));
