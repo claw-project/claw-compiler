@@ -359,6 +359,9 @@ public class XcodeProgram extends XcodeML {
    */
   public String getSourceFileOnly() {
     String source = getSource();
+    if(source == null) {
+      return "";
+    }
     File f = new File(source);
     return f.getName();
   }
