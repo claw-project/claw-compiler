@@ -84,10 +84,10 @@ refer to the developer's guide
     <parameter key="cpu_trans_strategy" value="fusion" />
 
     <!-- SCA defaults -->
-    <!-- 
-      How promotion is handle in SCA element function/subroutine. If true, 
-      newly added dimension are inserted as assumed shape and no new 
-      parameter is inserted in the function/subroutine signature. If false, 
+    <!--
+      How promotion is handle in SCA element function/subroutine. If true,
+      newly added dimension are inserted as assumed shape and no new
+      parameter is inserted in the function/subroutine signature. If false,
       the promotion is performed like in normal function/subroutine.
     -->
     <parameter key="sca_elemental_promotion_assumed" value="true" />
@@ -105,7 +105,7 @@ refer to the developer's guide
     <!-- Low-level transformations -->
     <group name="remove" />
     <group name="directive-primitive" />
-    <group name="array-transform" />
+    <group name="expand" />
     <group name="loop-extract" />
     <group name="loop-hoist" />
     <group name="loop-fusion" />
