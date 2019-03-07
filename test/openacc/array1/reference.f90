@@ -14,7 +14,7 @@ SUBROUTINE claw ( )
   vec1 ( j ) = j
  END DO
 !$acc parallel
-!$acc loop
+!$acc loop gang vector
  DO claw_induction_0 = 1 , size ( vec1 , 1 )
   vec1 ( claw_induction_0 ) = vec1 ( claw_induction_0 ) + 10
  END DO
