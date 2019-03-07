@@ -193,14 +193,14 @@ public class OpenAcc extends DirectiveGenerator {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 getSequentialClause(), String.format("%s(%d)",
-                    OPENACC_COLLAPSE, value), clauses).trim()
+                    OPENACC_COLLAPSE, value), clauses.trim()).trim()
         };
       } else {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 naked ? "" : _mode.getFormattedExecutionMode(),
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
-                clauses).trim()
+                clauses.trim()).trim()
         };
       }
     } else {
@@ -208,12 +208,13 @@ public class OpenAcc extends DirectiveGenerator {
       if(seq) {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause(), clauses).trim()
+                getSequentialClause(), clauses.trim()).trim()
         };
       } else {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-                naked ? "" : _mode.getFormattedExecutionMode(), clauses).trim()
+                naked ? "" : _mode.getFormattedExecutionMode(),
+                clauses.trim()).trim()
         };
       }
 
