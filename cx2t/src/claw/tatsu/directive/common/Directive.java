@@ -187,11 +187,23 @@ public final class Directive {
     DirectiveGenerator dg = Context.get().getGenerator();
     addPragmasBefore(xcodeml, dg.getStartParallelDirective(null), startStmt);
     Xnode grip = addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse,
-        false, false, String.format("%s %s", dg.getPrivateClause(privates),
-            extraDirective)), startStmt);
+        false, false, format(dg.getPrivateClause(privates), extraDirective)),
+        startStmt);
     addPragmaAfter(xcodeml, dg.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, dg.getEndLoopDirective(), endStmt);
     return grip;
+  }
+
+  /**
+   * Format two string together.
+   *
+   * @param s1 String value or null.
+   * @param s2 String value or null.
+   * @return Formatted trimmed string.
+   */
+  private static String format(String s1, String s2) {
+    return String.format("%s %s", s1 == null ? "" : s1.trim(),
+        s2 == null ? "" : s2.trim()).trim();
   }
 
   /**
