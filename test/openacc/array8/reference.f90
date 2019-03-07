@@ -17,7 +17,7 @@ SUBROUTINE claw_test ( )
  vec4 ( : ) = 10
  vec5 ( : ) = 11
 !$acc parallel
-!$acc loop vector
+!$acc loop gang vector
  DO claw_induction_0 = 1 , size ( vec1 , 1 )
   vec1 ( claw_induction_0 ) = vec2 ( claw_induction_0 ) + 10
   vec2 ( claw_induction_0 ) = vec1 ( claw_induction_0 ) + 10

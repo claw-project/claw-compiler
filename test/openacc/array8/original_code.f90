@@ -23,7 +23,7 @@ SUBROUTINE claw_test
   vec4(:) = 10;
   vec5(:) = 11;
 
-  !$claw expand parallel acc(loop vector)
+  !$claw expand parallel 
   vec1(:) = vec2(:) + 10
   vec2(:) = vec1(:) + 10
 

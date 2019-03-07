@@ -275,21 +275,14 @@ public class ExpandNotation extends ClawBlockTransformation {
       stmt.delete();
     }
 
-    // Generate directive pragmas if needed
-
     Xnode grip = null;
-    if(_clawStart.hasClause(ClawClause.ACC)) {
-      /* TODO
-         OpenACC and OpenMP loop construct are pretty different ...
-         have to look how to do that properly. See issue #22
-       */
-      grip = Directive.generateAcceleratorClause(xcodeml, doStmts[0],
-          _clawStart.value(ClawClause.ACC));
-    }
-
     if(_clawStart.hasClause(ClawClause.PARALLEL)) {
-      grip = Directive.generateParallelClause(xcodeml,
-          (grip == null) ? doStmts[0] : grip, doStmts[0]);
+      List<String> privates = Collections.emptyList();
+
+      String clauses = _clawStart.hasClause(ClawClause.ACC)
+          ? _clawStart.value(ClawClause.ACC) : "";
+      grip = Directive.generateParallelLoopClause(xcodeml, privates, doStmts[0],
+          doStmts[0], clauses, doStmts.length);
     }
 
     // Add any additional transformation defined in the directive clauses
