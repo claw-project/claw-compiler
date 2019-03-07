@@ -170,25 +170,28 @@ public final class Directive {
    * @param endStmt   End statement representing the end of the parallel region.
    * @param collapse  If value bigger than 0, a corresponding collapse
    *                  constructs can be generated.
+   * @return Directive just over the do statement.
    */
-  public static void generateParallelLoopClause(XcodeProgram xcodeml,
-                                                List<String> privates,
-                                                Xnode startStmt, Xnode endStmt,
-                                                int collapse)
+  public static Xnode generateParallelLoopClause(XcodeProgram xcodeml,
+                                                 List<String> privates,
+                                                 Xnode startStmt, Xnode endStmt,
+                                                 String extraDirective,
+                                                 int collapse)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
         == CompilerDirective.NONE)
     {
-      return;
+      return null;
     }
 
     DirectiveGenerator dg = Context.get().getGenerator();
-
     addPragmasBefore(xcodeml, dg.getStartParallelDirective(null), startStmt);
-    addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse, false, false,
-        dg.getPrivateClause(privates)), startStmt);
+    Xnode grip = addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse,
+        false, false, String.format("%s %s", dg.getPrivateClause(privates),
+            extraDirective)), startStmt);
     addPragmaAfter(xcodeml, dg.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, dg.getEndLoopDirective(), endStmt);
+    return grip;
   }
 
   /**
