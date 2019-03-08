@@ -556,16 +556,20 @@ public class ScaForward extends ClawTransformation {
       if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
         // 3. Replicate the change in a potential module file
         FmoduleDefinition modDef = fDef.findParentModule();
-        Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
-            false);
+        if(modDef != null) {
+          Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+              false);
+        }
       } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
          * we can update it. */
         FmoduleDefinition modDef = fDef.findParentModule();
-        Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
-            true);
+        if(modDef != null) {
+          Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+              true);
+        }
       }
     }
 
