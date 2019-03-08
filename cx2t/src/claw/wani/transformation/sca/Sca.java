@@ -341,8 +341,9 @@ public class Sca extends ClawTransformation {
   {
     if(fctType.hasAttribute(attribute)) {
       xcodeml.addWarning(String.format(
-          "SCA: attribute %s removed from function/subroutine %s",
-          attribute.toStringForMsg(), _fctDef.getName()), _claw.getPragma());
+          "%s attribute %s removed from function/subroutine %s",
+          SCA_DEBUG_PREFIX, attribute.toStringForMsg(), _fctDef.getName()),
+          _claw.getPragma());
       fctType.removeAttribute(attribute);
     }
   }

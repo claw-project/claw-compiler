@@ -59,8 +59,9 @@ public class ScaRoutine extends Sca {
       _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
 
       if(Directive.hasDirectives(_fctDef)) {
-        xcodeml.addWarning("Function/subroutine has some directives! " +
-                "Cannot insert new directives without breaking existing ones!",
+        xcodeml.addWarning(String.format("%s %s", SCA_DEBUG_PREFIX,
+            "Function/subroutine has some directives! " +
+                "Cannot insert new directives without breaking existing ones!"),
             _claw.getPragma());
       } else {
         Directive.addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
