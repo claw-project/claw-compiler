@@ -587,15 +587,21 @@ public class XnodeUtil {
   /**
    * Gather arguments of a function call.
    *
-   * @param xcodeml   Current XcodeML translation unit.
-   * @param fctCall   functionCall node in which the arguments are retrieved.
-   * @param intent    Intent to use for gathering.
-   * @param arrayOnly If true, gather only arrays arguments.
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param fctCall       functionCall node in which the arguments are
+   *                      retrieved.
+   * @param fctType       FfunctionType information for parameters.
+   * @param fctTypeHolder XcodeML holding the function type information. Might
+   *                      be identical to fctCall.
+   * @param intent        Intent to use for gathering.
+   * @param arrayOnly     If true, gather only arrays arguments.
    * @return List of arguments as their string representation.
    */
   public static List<String> gatherArguments(XcodeProgram xcodeml,
-                                             Xnode fctCall, Intent intent,
-                                             boolean arrayOnly)
+                                             Xnode fctCall,
+                                             FfunctionType fctType,
+                                             XcodeML fctTypeHolder,
+                                             Intent intent, boolean arrayOnly)
   {
     List<String> gatheredArguments = new ArrayList<>();
     if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
@@ -607,7 +613,6 @@ public class XnodeUtil {
     }
 
     // Retrieve function type to check intents and types of parameters
-    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
     List<Xnode> parameters = fctType.getParameters();
     List<Xnode> arguments = argumentsNode.children();
 
@@ -621,19 +626,24 @@ public class XnodeUtil {
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
 
+      if(arg.opcode() == Xcode.NAMED_VALUE) {
+        arg = arg.firstChild();
+      }
+
       String nodeRepresentation = "";
       if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
-          && xcodeml.getTypeTable().isBasicType(parameter))
+          && fctTypeHolder.getTypeTable().isBasicType(parameter))
       {
         FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
         nodeRepresentation = arg.constructRepresentation(false);
-      } else if(xcodeml.getTypeTable().isBasicType(parameter)
+      } else if(fctTypeHolder.getTypeTable().isBasicType(parameter)
           && xcodeml.getTypeTable().isBasicType(arg))
       {
-        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        FbasicType btParameter =
+            fctTypeHolder.getTypeTable().getBasicType(parameter);
         FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
         if((arrayOnly && !btArg.isArray() && !btArg.isAllocatable())
             || !intent.isCompatible(btParameter.getIntent()))

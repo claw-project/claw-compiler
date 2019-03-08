@@ -584,7 +584,7 @@ public class ScaForward extends ClawTransformation {
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
       List<String> creates =
-          XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
+          XnodeUtil.gatherArguments(xcodeml, _fctCall, _fctType, _mod, Intent.INOUT, true);
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates,
           fctCallAncestor, fctCallAncestor);
@@ -595,7 +595,7 @@ public class ScaForward extends ClawTransformation {
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
       {
         List<String> out =
-            XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.IN, true);
+            XnodeUtil.gatherArguments(xcodeml, _fctCall, _fctType, _mod, Intent.IN, true);
         if(_claw.hasClause(ClawClause.UPDATE)) {
           Directive.generateUpdate(xcodeml, fctCallAncestor, out,
               DataMovement.DEVICE);
@@ -606,7 +606,7 @@ public class ScaForward extends ClawTransformation {
           _claw.getUpdateClauseValue() == DataMovement.HOST)
       {
         List<String> out =
-            XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.OUT, true);
+            XnodeUtil.gatherArguments(xcodeml, _fctCall, _fctType, _mod, Intent.OUT, true);
         if(_claw.hasClause(ClawClause.UPDATE)) {
           Directive.generateUpdate(xcodeml, fctCallAncestor,
               out, DataMovement.HOST);
