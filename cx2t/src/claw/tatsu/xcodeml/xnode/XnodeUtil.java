@@ -585,17 +585,49 @@ public class XnodeUtil {
   }
 
   /**
+   * Gather string representation of the return value if there is one.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param fctCall Function call to retrieve the return value.
+   * @return String representation of the return value if any. Null otherwise.
+   */
+  public static String gatherReturnValue(XcodeProgram xcodeml, Xnode fctCall) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+      return null;
+    }
+
+    Xnode fctCallAncestor = fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+    if(fctCallAncestor == null) {
+      return null;
+    }
+
+    Xnode returnNode = fctCallAncestor.firstChild();
+    if(xcodeml.getTypeTable().isBasicType(returnNode) &&
+        xcodeml.getTypeTable().getBasicType(returnNode).isArray())
+    {
+      return returnNode.constructRepresentation(false);
+    }
+    return null;
+  }
+
+  /**
    * Gather arguments of a function call.
    *
-   * @param xcodeml   Current XcodeML translation unit.
-   * @param fctCall   functionCall node in which the arguments are retrieved.
-   * @param intent    Intent to use for gathering.
-   * @param arrayOnly If true, gather only arrays arguments.
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param fctCall       functionCall node in which the arguments are
+   *                      retrieved.
+   * @param fctType       FfunctionType information for parameters.
+   * @param fctTypeHolder XcodeML holding the function type information. Might
+   *                      be identical to fctCall.
+   * @param intent        Intent to use for gathering.
+   * @param arrayOnly     If true, gather only arrays arguments.
    * @return List of arguments as their string representation.
    */
   public static List<String> gatherArguments(XcodeProgram xcodeml,
-                                             Xnode fctCall, Intent intent,
-                                             boolean arrayOnly)
+                                             Xnode fctCall,
+                                             FfunctionType fctType,
+                                             XcodeML fctTypeHolder,
+                                             Intent intent, boolean arrayOnly)
   {
     List<String> gatheredArguments = new ArrayList<>();
     if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
@@ -607,38 +639,47 @@ public class XnodeUtil {
     }
 
     // Retrieve function type to check intents and types of parameters
-    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
     List<Xnode> parameters = fctType.getParameters();
     List<Xnode> arguments = argumentsNode.children();
 
     for(int i = 0; i < parameters.size(); ++i) {
       // TODO handle optional arguments, named value args
+
+      if(i >= arguments.size()) { // avoid getting args out of list
+        break;
+      }
+
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
 
-      String rep = "";
+      if(arg.opcode() == Xcode.NAMED_VALUE) {
+        arg = arg.firstChild();
+      }
+
+      String nodeRepresentation = "";
       if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
-          && xcodeml.getTypeTable().isBasicType(parameter))
+          && fctTypeHolder.getTypeTable().isBasicType(parameter))
       {
         FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
-        rep = arg.constructRepresentation(false);
-      } else if(xcodeml.getTypeTable().isBasicType(parameter)
+        nodeRepresentation = arg.constructRepresentation(false);
+      } else if(fctTypeHolder.getTypeTable().isBasicType(parameter)
           && xcodeml.getTypeTable().isBasicType(arg))
       {
-        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        FbasicType btParameter =
+            fctTypeHolder.getTypeTable().getBasicType(parameter);
         FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
         if((arrayOnly && !btArg.isArray() && !btArg.isAllocatable())
             || !intent.isCompatible(btParameter.getIntent()))
         {
           continue;
         }
-        rep = arg.constructRepresentation(false);
+        nodeRepresentation = arg.constructRepresentation(false);
       }
-      if(rep != null && !rep.isEmpty()) {
-        gatheredArguments.add(rep);
+      if(nodeRepresentation != null && !nodeRepresentation.isEmpty()) {
+        gatheredArguments.add(nodeRepresentation);
       }
     }
     return gatheredArguments;

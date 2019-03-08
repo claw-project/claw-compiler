@@ -834,8 +834,9 @@ public class Xnode {
   }
 
   /**
+   * Set type of the node.
    *
-   * @param type
+   * @param type FbasicType to be associated with this node.
    */
   public void setType(FbasicType type) {
     setAttribute(Xattr.TYPE, type.getType());
@@ -962,6 +963,25 @@ public class Xnode {
   public void copyAttribute(Xnode to, Xattr attr) {
     if(hasAttribute(attr)) {
       to.setAttribute(attr, getAttribute(attr));
+    }
+  }
+
+  /**
+   * Sync given attribute between two node. Attribute present in this node
+   * is created in "to" if not present yet. Attribute not present in this node
+   * is removed from "to" if present.
+   *
+   * @param to        Node to which attribute is synced.
+   * @param attribute Attribute to be synced.
+   */
+  public void syncBooleanAttribute(Xnode to, Xattr attribute)
+  {
+    if(getBooleanAttribute(attribute) && !to.getBooleanAttribute(attribute)) {
+      to.setBooleanAttribute(attribute, true);
+    } else if(!getBooleanAttribute(attribute)
+        && to.getBooleanAttribute(attribute))
+    {
+      to.removeAttribute(attribute);
     }
   }
 

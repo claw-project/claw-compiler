@@ -241,25 +241,6 @@ public class ScaGPU extends Sca {
   }
 
   /**
-   * Remove the given attribute if exists and add a warning.
-   *
-   * @param xcodeml   Current translation unit.
-   * @param fctType   Function type on which attribute is removed.
-   * @param attribute Attribute to remove.
-   */
-  private void removeAttributesWithWaring(XcodeProgram xcodeml,
-                                          FfunctionType fctType,
-                                          Xattr attribute)
-  {
-    if(fctType.hasAttribute(attribute)) {
-      xcodeml.addWarning(String.format(
-          "SCA: attribute %s removed from function/subroutine %s",
-          attribute.toString(), _fctDef.getName()), _claw.getPragma());
-      fctType.removeAttribute(attribute);
-    }
-  }
-
-  /**
    * Apply specific transformation steps for GPU target.
    *
    * @param xcodeml Current translation unit.

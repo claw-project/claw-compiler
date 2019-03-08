@@ -10,9 +10,10 @@ PROGRAM test_abstraction1
  DO i = 1 , 20 , 1
   t ( i ) = 0.5 * i
  END DO
-!$omp target data map(alloc:t)
-!$omp target update to(t)
+!$omp target data map(alloc:t,w,q)
+!$omp target update to(t,w)
  q = compute_point ( t , nproma = nproma , w = w )
+!$omp target update from(q)
 !$omp end target data
  PRINT * , sum ( q )
  PRINT * , sum ( t )

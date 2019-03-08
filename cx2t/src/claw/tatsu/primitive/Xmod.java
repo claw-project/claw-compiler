@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import org.w3c.dom.Document;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -227,6 +228,13 @@ public final class Xmod {
         // Copy the promotion information
         pLocal.copyAttribute(pMod, Xattr.PROMOTION_INFO);
       }
+    }
+
+    // Sync attribute between local fct type and module fct type.
+    for(Xattr attr : Arrays.asList(Xattr.IS_ELEMENTAL, Xattr.IS_PURE,
+        Xattr.IS_FORCE_ASSUMED, Xattr.IS_RECURSIVE, Xattr.IS_PROGRAM,
+        Xattr.IS_INTERNAL)) {
+      fctType.syncBooleanAttribute(fctTypeMod, attr);
     }
   }
 }

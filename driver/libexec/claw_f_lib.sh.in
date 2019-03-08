@@ -313,7 +313,7 @@ function claw::print_version() {
 function claw::status_message()
 {
   filepath=$2
-  filename=$(basename "${filepath%.*}")
+  filename=$(basename "${filepath}")
   echo "${filename}:$3:$4 $1: $5" >&2
 }
 

@@ -556,16 +556,20 @@ public class ScaForward extends ClawTransformation {
       if(!parentFctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
         // 3. Replicate the change in a potential module file
         FmoduleDefinition modDef = fDef.findParentModule();
-        Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
-            false);
+        if(modDef != null) {
+          Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+              false);
+        }
       } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
          * we can update it. */
         FmoduleDefinition modDef = fDef.findParentModule();
-        Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
-            true);
+        if(modDef != null) {
+          Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
+              true);
+        }
       }
     }
 
@@ -579,8 +583,16 @@ public class ScaForward extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
-      List<String> creates =
-          XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.INOUT, true);
+      List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+          _fctType, _mod, Intent.INOUT, true);
+
+      if(_fctType.isFunction()) {
+        String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fctCall);
+        if(returnValue != null) {
+          creates.add(returnValue);
+        }
+      }
+
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates,
           fctCallAncestor, fctCallAncestor);
@@ -590,23 +602,27 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
       {
-        List<String> out =
-            XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.IN, true);
-        if(_claw.hasClause(ClawClause.UPDATE)) {
-          Directive.generateUpdate(xcodeml, fctCallAncestor, out,
-              DataMovement.DEVICE);
-        }
+        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+            _fctType, _mod, Intent.IN, true);
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+            DataMovement.DEVICE);
       }
 
-      if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
-          _claw.getUpdateClauseValue() == DataMovement.HOST)
+      if(_claw.getUpdateClauseValue() == DataMovement.BOTH
+          || _claw.getUpdateClauseValue() == DataMovement.HOST)
       {
-        List<String> out =
-            XnodeUtil.gatherArguments(xcodeml, _fctCall, Intent.OUT, true);
-        if(_claw.hasClause(ClawClause.UPDATE)) {
-          Directive.generateUpdate(xcodeml, fctCallAncestor,
-              out, DataMovement.HOST);
+        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+            _fctType, _mod, Intent.OUT, true);
+
+        if(_fctType.isFunction()) {
+          String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fctCall);
+          if(returnValue != null) {
+            out.add(returnValue);
+          }
         }
+
+        Directive.generateUpdate(xcodeml, fctCallAncestor,
+            out, DataMovement.HOST);
       }
     }
   }

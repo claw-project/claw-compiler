@@ -302,16 +302,11 @@ public class Sca extends ClawTransformation {
       throws Exception
   {
     // Handle PURE function / subroutine
-    boolean pureRemoved = _fctType.isPure();
-    _fctType.removeAttribute(Xattr.IS_PURE);
-    if(Configuration.get().isForcePure() && pureRemoved) {
+    if(Configuration.get().isForcePure() && _fctType.isPure()) {
       throw new IllegalTransformationException(
           "PURE specifier cannot be removed", _fctDef.lineNo());
-    } else if(pureRemoved) {
-      String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      xcodeml.addWarning("PURE specifier removed from function " + fctName +
-              ". Transformation and code generation applied to it.",
-          _fctDef.lineNo());
+    } else {
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_PURE);
     }
 
     // Insert the declarations of variables to iterate over the new dimensions.
@@ -335,6 +330,25 @@ public class Sca extends ClawTransformation {
   }
 
   /**
+   * Remove the given attribute if exists and add a warning.
+   *
+   * @param xcodeml   Current translation unit.
+   * @param fctType   Function type on which attribute is removed.
+   * @param attribute Attribute to remove.
+   */
+  void removeAttributesWithWaring(XcodeProgram xcodeml, FfunctionType fctType,
+                                  Xattr attribute)
+  {
+    if(fctType.hasAttribute(attribute)) {
+      xcodeml.addWarning(String.format(
+          "%s attribute %s removed from function/subroutine %s",
+          SCA_DEBUG_PREFIX, attribute.toStringForMsg(), _fctDef.getName()),
+          _claw.getPragma());
+      fctType.removeAttribute(attribute);
+    }
+  }
+
+  /**
    * This method should be call by any class inheriting this class to apply
    * the last steps fo the transformation common to all SCA transformation.
    *
@@ -348,6 +362,9 @@ public class Sca extends ClawTransformation {
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
+        if(forceAssumedShapedArrayPromotion) {
+          _fctType.setBooleanAttribute(Xattr.IS_FORCE_ASSUMED, true);
+        }
         Xmod.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
             false);
       }
