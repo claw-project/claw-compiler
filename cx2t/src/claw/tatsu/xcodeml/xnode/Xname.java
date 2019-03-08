@@ -87,6 +87,7 @@ public final class Xname {
   // CLAW specific attribute used in FortranModule files
   public static final String ATTR_IS_INSERTED = "is_inserted";
   public static final String ATTR_PROMOTION_INFO = "promotion_info";
+  public static final String ATTR_IS_FORCE_ASSUMED = "is_force_assumed";
   // Element names
   public static final String ALLOC = "alloc";
   public static final String ALLOC_OPT = "allocOpt";
@@ -279,7 +280,6 @@ public final class Xname {
   public static final String ALLOCATE = "ALLOCATE";
   public static final String DEALLOCATE = "DEALLOCATE";
   public static final String GOTO = "GOTO";
-
 
   // Avoid instantiation of this class
   private Xname() {

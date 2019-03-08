@@ -348,6 +348,9 @@ public class Sca extends ClawTransformation {
     if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
+        if(forceAssumedShapedArrayPromotion) {
+          _fctType.setBooleanAttribute(Xattr.IS_FORCE_ASSUMED, true);
+        }
         Xmod.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
             false);
       }
