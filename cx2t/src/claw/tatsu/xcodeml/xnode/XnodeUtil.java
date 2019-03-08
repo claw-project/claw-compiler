@@ -613,6 +613,11 @@ public class XnodeUtil {
 
     for(int i = 0; i < parameters.size(); ++i) {
       // TODO handle optional arguments, named value args
+
+      if(i >= arguments.size()) { // avoid getting args out of list
+        break;
+      }
+
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
 
