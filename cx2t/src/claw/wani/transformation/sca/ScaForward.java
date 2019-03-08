@@ -583,8 +583,8 @@ public class ScaForward extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
-      List<String> creates =
-          XnodeUtil.gatherArguments(xcodeml, _fctCall, _fctType, _mod, Intent.INOUT, true);
+      List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+          _fctType, _mod, Intent.INOUT, true);
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates,
           fctCallAncestor, fctCallAncestor);
@@ -594,23 +594,19 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
           _claw.getUpdateClauseValue() == DataMovement.DEVICE)
       {
-        List<String> out =
-            XnodeUtil.gatherArguments(xcodeml, _fctCall, _fctType, _mod, Intent.IN, true);
-        if(_claw.hasClause(ClawClause.UPDATE)) {
-          Directive.generateUpdate(xcodeml, fctCallAncestor, out,
-              DataMovement.DEVICE);
-        }
+        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+            _fctType, _mod, Intent.IN, true);
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+            DataMovement.DEVICE);
       }
 
-      if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
-          _claw.getUpdateClauseValue() == DataMovement.HOST)
+      if(_claw.getUpdateClauseValue() == DataMovement.BOTH
+          || _claw.getUpdateClauseValue() == DataMovement.HOST)
       {
-        List<String> out =
-            XnodeUtil.gatherArguments(xcodeml, _fctCall, _fctType, _mod, Intent.OUT, true);
-        if(_claw.hasClause(ClawClause.UPDATE)) {
-          Directive.generateUpdate(xcodeml, fctCallAncestor,
-              out, DataMovement.HOST);
-        }
+        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+            _fctType, _mod, Intent.OUT, true);
+        Directive.generateUpdate(xcodeml, fctCallAncestor,
+            out, DataMovement.HOST);
       }
     }
   }
