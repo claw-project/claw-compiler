@@ -302,16 +302,11 @@ public class Sca extends ClawTransformation {
       throws Exception
   {
     // Handle PURE function / subroutine
-    boolean pureRemoved = _fctType.isPure();
-    _fctType.removeAttribute(Xattr.IS_PURE);
-    if(Configuration.get().isForcePure() && pureRemoved) {
+    if(Configuration.get().isForcePure() && _fctType.isPure()) {
       throw new IllegalTransformationException(
           "PURE specifier cannot be removed", _fctDef.lineNo());
-    } else if(pureRemoved) {
-      String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      xcodeml.addWarning("PURE specifier removed from function " + fctName +
-              ". Transformation and code generation applied to it.",
-          _fctDef.lineNo());
+    } else {
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_PURE);
     }
 
     // Insert the declarations of variables to iterate over the new dimensions.
@@ -332,6 +327,24 @@ public class Sca extends ClawTransformation {
     }
 
     removePragma();
+  }
+
+  /**
+   * Remove the given attribute if exists and add a warning.
+   *
+   * @param xcodeml   Current translation unit.
+   * @param fctType   Function type on which attribute is removed.
+   * @param attribute Attribute to remove.
+   */
+  void removeAttributesWithWaring(XcodeProgram xcodeml, FfunctionType fctType,
+                                  Xattr attribute)
+  {
+    if(fctType.hasAttribute(attribute)) {
+      xcodeml.addWarning(String.format(
+          "SCA: attribute %s removed from function/subroutine %s",
+          attribute.toStringForMsg(), _fctDef.getName()), _claw.getPragma());
+      fctType.removeAttribute(attribute);
+    }
   }
 
   /**

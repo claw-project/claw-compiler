@@ -113,4 +113,8 @@ public enum Xattr {
   public String toString() {
     return _irValue;
   }
+
+  public String toStringForMsg() {
+    return _irValue.replaceAll("is_", "").toUpperCase();
+  }
 }
