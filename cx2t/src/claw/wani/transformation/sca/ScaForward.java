@@ -585,6 +585,14 @@ public class ScaForward extends ClawTransformation {
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
       List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fctCall,
           _fctType, _mod, Intent.INOUT, true);
+
+      if(_fctType.isFunction()) {
+        String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fctCall);
+        if(returnValue != null) {
+          creates.add(returnValue);
+        }
+      }
+
       Directive.generateDataRegionClause(xcodeml,
           Collections.<String>emptyList(), creates,
           fctCallAncestor, fctCallAncestor);
@@ -605,6 +613,14 @@ public class ScaForward extends ClawTransformation {
       {
         List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
             _fctType, _mod, Intent.OUT, true);
+
+        if(_fctType.isFunction()) {
+          String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fctCall);
+          if(returnValue != null) {
+            out.add(returnValue);
+          }
+        }
+
         Directive.generateUpdate(xcodeml, fctCallAncestor,
             out, DataMovement.HOST);
       }

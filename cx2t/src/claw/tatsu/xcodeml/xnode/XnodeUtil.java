@@ -585,6 +585,32 @@ public class XnodeUtil {
   }
 
   /**
+   * Gather string representation of the return value if there is one.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param fctCall Function call to retrieve the return value.
+   * @return String representation of the return value if any. Null otherwise.
+   */
+  public static String gatherReturnValue(XcodeProgram xcodeml, Xnode fctCall) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+      return null;
+    }
+
+    Xnode fctCallAncestor = fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+    if(fctCallAncestor == null) {
+      return null;
+    }
+
+    Xnode returnNode = fctCallAncestor.firstChild();
+    if(xcodeml.getTypeTable().isBasicType(returnNode) &&
+        xcodeml.getTypeTable().getBasicType(returnNode).isArray())
+    {
+      return returnNode.constructRepresentation(false);
+    }
+    return null;
+  }
+
+  /**
    * Gather arguments of a function call.
    *
    * @param xcodeml       Current XcodeML translation unit.
