@@ -9,9 +9,10 @@ PROGRAM test_abstraction1
  DO i = 1 , 20 , 1
   t ( i ) = 0.5 * i
  END DO
-!$acc data pcreate(t)
+!$acc data pcreate(t,q)
 !$acc update device(t)
  q = compute_point ( t , nproma = nproma )
+!$acc update host(q)
 !$acc end data
  PRINT * , sum ( q )
  PRINT * , sum ( t )
