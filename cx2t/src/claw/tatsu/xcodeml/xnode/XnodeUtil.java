@@ -621,7 +621,7 @@ public class XnodeUtil {
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
 
-      String rep = "";
+      String nodeRepresentation = "";
       if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
           && xcodeml.getTypeTable().isBasicType(parameter))
       {
@@ -629,7 +629,7 @@ public class XnodeUtil {
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
-        rep = arg.constructRepresentation(false);
+        nodeRepresentation = arg.constructRepresentation(false);
       } else if(xcodeml.getTypeTable().isBasicType(parameter)
           && xcodeml.getTypeTable().isBasicType(arg))
       {
@@ -640,10 +640,10 @@ public class XnodeUtil {
         {
           continue;
         }
-        rep = arg.constructRepresentation(false);
+        nodeRepresentation = arg.constructRepresentation(false);
       }
-      if(rep != null && !rep.isEmpty()) {
-        gatheredArguments.add(rep);
+      if(nodeRepresentation != null && !nodeRepresentation.isEmpty()) {
+        gatheredArguments.add(nodeRepresentation);
       }
     }
     return gatheredArguments;
