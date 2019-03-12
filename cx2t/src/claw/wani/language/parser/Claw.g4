@@ -494,7 +494,7 @@ parallelize_clauses[ClawPragma l]:
 
 copy_clause[ClawPragma l]:
     COPY
-    { $l.setCopyClauseValue(DataMovement.BOTH); }
+    { $l.setCopyClauseValue(DataMovement.TWO_WAY); }
   | COPY '(' IN ')'
     { $l.setCopyClauseValue(DataMovement.HOST_TO_DEVICE); }
   | COPY '(' OUT ')'
@@ -503,7 +503,7 @@ copy_clause[ClawPragma l]:
 
 update_clause[ClawPragma l]:
     UPDATE
-    { $l.setUpdateClauseValue(DataMovement.BOTH); }
+    { $l.setUpdateClauseValue(DataMovement.TWO_WAY); }
   | UPDATE '(' IN ')'
     { $l.setUpdateClauseValue(DataMovement.HOST_TO_DEVICE); }
   | UPDATE '(' OUT ')'
