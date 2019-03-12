@@ -106,15 +106,19 @@ public final class Directive {
     }
 
     Xnode p = null;
-    if(direction == DataMovement.DEVICE || direction == DataMovement.BOTH) {
+    if(direction == DataMovement.HOST_TO_DEVICE
+        || direction == DataMovement.TWO_WAY)
+    {
       p = addPragmasBefore(xcodeml, Context.get().getGenerator().
-          getUpdateClause(direction == DataMovement.BOTH ?
-              DataMovement.DEVICE : direction, vars), hook);
+          getUpdateClause(direction == DataMovement.TWO_WAY ?
+              DataMovement.HOST_TO_DEVICE : direction, vars), hook);
     }
-    if(direction == DataMovement.HOST || direction == DataMovement.BOTH) {
+    if(direction == DataMovement.DEVICE_TO_HOST
+        || direction == DataMovement.TWO_WAY)
+    {
       p = addPragmaAfter(xcodeml, Context.get().getGenerator().
-          getUpdateClause(direction == DataMovement.BOTH ?
-              DataMovement.HOST : direction, vars), hook);
+          getUpdateClause(direction == DataMovement.TWO_WAY ?
+              DataMovement.DEVICE_TO_HOST : direction, vars), hook);
     }
     return p;
   }

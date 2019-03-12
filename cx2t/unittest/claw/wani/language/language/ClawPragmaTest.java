@@ -1263,73 +1263,73 @@ public class ClawPragmaTest {
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "copy", data1, Arrays.asList(d1, d2),
-        DataMovement.BOTH, null, null, false);
+        DataMovement.TWO_WAY, null, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "copy(in)", data1, Arrays.asList(d1, d2),
-        DataMovement.DEVICE, null, null, false);
+        DataMovement.HOST_TO_DEVICE, null, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "copy(out)", data1, Arrays.asList(d1, d2),
-        DataMovement.HOST, null, null, false);
+        DataMovement.DEVICE_TO_HOST, null, null, false);
 
     DimensionDefinition d7 = new DimensionDefinition("c", "1", "nc");
     analyzeValidSCA("claw define dimension c(1:nc) sca copy",
         null, Collections.singletonList(d7),
-        DataMovement.BOTH, null, null, false);
+        DataMovement.TWO_WAY, null, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca copy(in)", null, Collections.singletonList(d7),
-        DataMovement.DEVICE, null, null, false);
+        DataMovement.HOST_TO_DEVICE, null, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca copy(out)", null, Collections.singletonList(d7),
-        DataMovement.HOST, null, null, false);
+        DataMovement.DEVICE_TO_HOST, null, null, false);
 
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "update", data1, Arrays.asList(d1, d2),
-        null, DataMovement.BOTH, null, false);
+        null, DataMovement.TWO_WAY, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "update(in)", data1, Arrays.asList(d1, d2),
-        null, DataMovement.DEVICE, null, false);
+        null, DataMovement.HOST_TO_DEVICE, null, false);
     analyzeValidSCA("claw " +
             "define dimension i(1:nx) " +
             "define dimension j(1:ny) " +
             "sca data(t , qc , qv) over (i,:,j) " +
             "update(out)", data1, Arrays.asList(d1, d2),
-        null, DataMovement.HOST, null, false);
+        null, DataMovement.DEVICE_TO_HOST, null, false);
 
     analyzeValidSCA("claw define dimension c(1:nc) sca update",
         null, Collections.singletonList(d7), null,
-        DataMovement.BOTH, null, false);
+        DataMovement.TWO_WAY, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca update(in)", null, Collections.singletonList(d7),
-        null, DataMovement.DEVICE, null, false);
+        null, DataMovement.HOST_TO_DEVICE, null, false);
     analyzeValidSCA("claw define dimension c(1:nc) " +
             "sca update(out)", null, Collections.singletonList(d7),
-        null, DataMovement.HOST, null, false);
+        null, DataMovement.DEVICE_TO_HOST, null, false);
 
     analyzeValidSCA("claw sca forward copy",
-        null, null, DataMovement.BOTH, null, null, false);
+        null, null, DataMovement.TWO_WAY, null, null, false);
     analyzeValidSCA("claw sca forward copy(in)",
-        null, null, DataMovement.DEVICE, null, null, false);
+        null, null, DataMovement.HOST_TO_DEVICE, null, null, false);
     analyzeValidSCA("claw sca forward copy(out)",
-        null, null, DataMovement.HOST, null, null, false);
+        null, null, DataMovement.DEVICE_TO_HOST, null, null, false);
 
     analyzeValidSCA("claw sca forward update",
-        null, null, null, DataMovement.BOTH, null, false);
+        null, null, null, DataMovement.TWO_WAY, null, false);
     analyzeValidSCA("claw sca forward update(in)",
-        null, null, null, DataMovement.DEVICE, null, false);
+        null, null, null, DataMovement.HOST_TO_DEVICE, null, false);
     analyzeValidSCA("claw sca forward update(out)",
-        null, null, null, DataMovement.HOST, null, false);
+        null, null, null, DataMovement.DEVICE_TO_HOST, null, false);
 
     List<String> dataLst2 = Arrays.asList("t", "q");
 
@@ -1353,30 +1353,30 @@ public class ClawPragmaTest {
     analyzeValidScaDataMgtString("claw sca forward create",
         null, null, true);
     analyzeValidScaDataMgtString("claw sca forward create " +
-        "update", DataMovement.BOTH, null, true);
+        "update", DataMovement.TWO_WAY, null, true);
     analyzeValidScaDataMgtString("claw sca forward create " +
-        "update(in)", DataMovement.DEVICE, null, true);
+        "update(in)", DataMovement.HOST_TO_DEVICE, null, true);
     analyzeValidScaDataMgtString("claw sca forward create " +
-        "update(out)", DataMovement.HOST, null, true);
+        "update(out)", DataMovement.DEVICE_TO_HOST, null, true);
     analyzeValidScaDataMgtString("claw sca forward create " +
-        "copy", null, DataMovement.BOTH, true);
+        "copy", null, DataMovement.TWO_WAY, true);
     analyzeValidScaDataMgtString("claw sca forward create " +
-        "copy(in)", null, DataMovement.DEVICE, true);
+        "copy(in)", null, DataMovement.HOST_TO_DEVICE, true);
     analyzeValidScaDataMgtString("claw sca forward create " +
-        "copy(out)", null, DataMovement.HOST, true);
+        "copy(out)", null, DataMovement.DEVICE_TO_HOST, true);
 
     analyzeValidScaDataMgtString("claw sca forward update",
-        DataMovement.BOTH, null, false);
+        DataMovement.TWO_WAY, null, false);
     analyzeValidScaDataMgtString("claw sca forward update(in)",
-        DataMovement.DEVICE, null, false);
+        DataMovement.HOST_TO_DEVICE, null, false);
     analyzeValidScaDataMgtString("claw sca forward update(out)",
-        DataMovement.HOST, null, false);
+        DataMovement.DEVICE_TO_HOST, null, false);
     analyzeValidScaDataMgtString("claw sca forward copy", null,
-        DataMovement.BOTH, false);
+        DataMovement.TWO_WAY, false);
     analyzeValidScaDataMgtString("claw sca forward copy(in)",
-        null, DataMovement.DEVICE, false);
+        null, DataMovement.HOST_TO_DEVICE, false);
     analyzeValidScaDataMgtString("claw sca forward copy(out)",
-        null, DataMovement.HOST, false);
+        null, DataMovement.DEVICE_TO_HOST, false);
   }
 
   /**

@@ -256,10 +256,12 @@ public class OpenAcc extends DirectiveGenerator {
       return new String[0];
     }
     Message.debug(OPENACC_DEBUG_PREFIX + "generate update " +
-        (direction == DataMovement.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
-        " clause for: " + Utility.join(",", vars));
-    String updates = String.format(FORMATPAR, direction == DataMovement.DEVICE ?
-        OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
+        (direction == DataMovement.HOST_TO_DEVICE
+            ? OPENACC_DEVICE : OPENACC_HOST) + " clause for: "
+        + Utility.join(",", vars));
+    String updates =
+        String.format(FORMATPAR, direction == DataMovement.HOST_TO_DEVICE ?
+            OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_UPDATE, updates)
     };

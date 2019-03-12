@@ -599,17 +599,17 @@ public class ScaForward extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
-      if(_claw.getUpdateClauseValue() == DataMovement.BOTH ||
-          _claw.getUpdateClauseValue() == DataMovement.DEVICE)
+      if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
+          _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
         List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
             _fctType, _mod, Intent.IN, true);
         Directive.generateUpdate(xcodeml, fctCallAncestor, out,
-            DataMovement.DEVICE);
+            DataMovement.HOST_TO_DEVICE);
       }
 
-      if(_claw.getUpdateClauseValue() == DataMovement.BOTH
-          || _claw.getUpdateClauseValue() == DataMovement.HOST)
+      if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
+          || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
       {
         List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
             _fctType, _mod, Intent.OUT, true);
@@ -621,8 +621,8 @@ public class ScaForward extends ClawTransformation {
           }
         }
 
-        Directive.generateUpdate(xcodeml, fctCallAncestor,
-            out, DataMovement.HOST);
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+            DataMovement.DEVICE_TO_HOST);
       }
     }
   }
