@@ -77,14 +77,16 @@ public class DirectivePrimitive extends ClawTransformation {
       return;
     }
 
-    String regex = ClawConstant.CLAW + " *" + prefix;
-    getDirective().getPragma().setValue(
-        getDirective().getPragma().value().replaceAll(regex, prefix)
-    );
+    if(getDirective().getPragma().value().toLowerCase().contains(prefix)) {
+      String regex = ClawConstant.CLAW + " *" + prefix;
+      getDirective().getPragma().setValue(
+          getDirective().getPragma().value().replaceAll(regex, prefix)
+      );
 
-    getDirective().getPragma().setValue(
-        getDirective().getPragma().value().replaceAll(ClawConstant.CLAW, "")
-    );
+      getDirective().getPragma().setValue(
+          getDirective().getPragma().value().replaceAll(ClawConstant.CLAW, "")
+      );
+    }
 
     translator.addTransformation(xcodeml,
         new OpenAccContinuation((ClawPragma) getDirective()));
