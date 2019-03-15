@@ -284,7 +284,8 @@ public class ScaGPU extends Sca {
       if(Configuration.get().getBooleanParameter(
           Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED))
       {
-        forceAssumedShapedArrayPromotion = true;
+        forceAssumedShapedArrayPromotion = !_fctType.isFunction()
+            || !_arrayFieldsInOut.contains(_fctType.getResultName());
       }
 
       // SCA ELEMENTAL
