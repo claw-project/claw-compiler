@@ -130,18 +130,51 @@ public class ScaGPU extends Sca {
               dirGen.getUnsupportedStatements());
 
       if(!unsupportedStatements.isEmpty()) {
+        List<Xnode> falsePositive = new ArrayList<>();
         for(Xnode statement : unsupportedStatements) {
-          xcodeml.addError("Unsupported statement in parallel region: "
-                  + statement.opcode().fortran(),
-              statement.lineNo());
+          if(canTransformReturn(statement)) {
+            falsePositive.add(statement);
+          } else {
+            xcodeml.addError("Unsupported statement in parallel region: "
+                + statement.opcode().fortran(), statement.lineNo());
+          }
         }
-        return false;
+        // Only one return statement can be transformed at the moment.
+        if(falsePositive.size() > 1) {
+          return false;
+        }
+        unsupportedStatements.removeAll(falsePositive);
+        if(!unsupportedStatements.isEmpty()) {
+          return false;
+        }
       }
     }
 
     detectInductionVariables();
 
     return analyzeDimension(xcodeml) && analyzeData(xcodeml, translator);
+  }
+
+  /**
+   * Check whether a return statement can be transformed or will trigger an
+   * unsupported statement error. Currently, only if statement located at the
+   * first level of the function definition are transformable.
+   *
+   * @param returnStmt Node pointing to the return statement.
+   * @return True if the return statement is directly nested in a if-then body.
+   * False otherwise.
+   */
+  private boolean canTransformReturn(Xnode returnStmt) {
+    return returnStmt != null
+        && returnStmt.is(Xcode.F_RETURN_STATEMENT)
+        && returnStmt.isAncestor(Xcode.BODY)
+        && returnStmt.ancestor().isAncestor(Xcode.THEN)
+        && returnStmt.ancestor().ancestor().isAncestor(Xcode.F_IF_STATEMENT)
+        && returnStmt.ancestor().ancestor().ancestor().isAncestor(Xcode.BODY)
+        && returnStmt.ancestor().ancestor().ancestor().ancestor().
+        isAncestor(Xcode.F_FUNCTION_DEFINITION)
+        && returnStmt.ancestor().ancestor().ancestor().ancestor().ancestor().
+        equals(_fctDef);
   }
 
   /**
@@ -178,6 +211,40 @@ public class ScaGPU extends Sca {
     }
   }
 
+  private void transformReturnStatement(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    List<Xnode> returns = _fctDef.matchAll(Xcode.F_RETURN_STATEMENT);
+    if(returns.isEmpty()) {
+      return; // No return statement to be transformed
+    }
+
+    if(returns.size() > 1) {
+      throw new IllegalTransformationException("RETURN transformation is " +
+          "currently limited to one per subroutine/function");
+    }
+
+    Xnode returnStmt = returns.get(0);
+    if(!canTransformReturn(returnStmt)) {
+      throw new IllegalTransformationException("RETURN statement cannot be " +
+          "transformed.");
+    }
+
+    Xnode thenBody = returnStmt.ancestor();
+    Xnode thenNode = thenBody.ancestor();
+    Xnode ifNode = thenNode.ancestor();
+
+    Xnode elseNode = xcodeml.createElse();
+    ifNode.append(elseNode);
+
+    returnStmt.delete();
+    thenBody.append(xcodeml.createComment(
+        "CLAW: RETURN statement transformed for parallel region"));
+
+    Body.shiftIn(ifNode.nextSibling(), _fctDef.lastChild(),
+        elseNode.body(), true);
+  }
+
   /**
    * Apply transformation on standard function/subroutine.
    *
@@ -188,6 +255,8 @@ public class ScaGPU extends Sca {
   private void transformStandard(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
+    transformReturnStatement(xcodeml);
+
     // Apply the common transformation
     super.transform(xcodeml, translator, null);
 
@@ -224,6 +293,8 @@ public class ScaGPU extends Sca {
         throw new IllegalTransformationException("SCA in ELEMENTAL function " +
             "transformation requires module encapsulation.");
       }
+
+      transformReturnStatement(xcodeml);
 
       // Apply the common transformation
       super.transform(xcodeml, translator, null);

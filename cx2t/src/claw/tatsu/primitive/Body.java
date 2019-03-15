@@ -59,8 +59,8 @@ public final class Body {
    * Shift all statements from the first siblings of the "from" element until
    * the "until" element if "included" is true.
    *
-   * @param from       Start element for the swifting.
-   * @param until      End element for the swifting.
+   * @param from       Start element for the shifting.
+   * @param until      End element for the shifting.
    * @param targetBody Body element in which statements are inserted.
    * @param included   If true, until element is shifted.
    * @throws IllegalTransformationException If one element is null or the
