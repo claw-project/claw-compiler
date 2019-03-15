@@ -91,6 +91,18 @@ public class XcodeML extends Xnode {
   }
 
   /**
+   * Create a comment node with its string value. Should not be modified.
+   *
+   * @param value String value of the comment.
+   * @return Newly created comment node.
+   */
+  public Xnode createComment(String value) {
+    Xnode comment = createNode(Xcode.F_PRAGMA_STATEMENT);
+    comment.setValue(String.format("cdir %s", value));
+    return comment;
+  }
+
+  /**
    * @return The XML Document representing the XcodeML file.
    */
   public Document getDocument() {
@@ -748,6 +760,17 @@ public class XcodeML extends Xnode {
     ifNode.append(createNode(Xcode.CONDITION));
     ifNode.append(thenNode);
     return ifNode;
+  }
+
+  /**
+   * Create a new else node with a body node inside.
+   *
+   * @return The newly create node detached in the current XcodeML unit.
+   */
+  public Xnode createElse() {
+    Xnode elseNode = createNode(Xcode.ELSE);
+    elseNode.append(createNode(Xcode.BODY));
+    return elseNode;
   }
 
   /**
