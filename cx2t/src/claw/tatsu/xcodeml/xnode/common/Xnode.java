@@ -782,6 +782,26 @@ public class Xnode {
   }
 
   /**
+   * Check if the ancestor if of the given opcode.
+   *
+   * @param opcode Opcode to check for
+   * @return True if the ancestor if of the given opcode. False otherwise.
+   */
+  public boolean isAncestor(Xcode opcode) {
+    return ancestor() != null && ancestor().is(opcode);
+  }
+
+  /**
+   * Check is the node is of the given opcode.
+   *
+   * @param opcode Opcode to check for.
+   * @return True if the node is of the given opcode.
+   */
+  public boolean is(Xcode opcode) {
+    return opcode() == opcode;
+  }
+
+  /**
    * Check whether a node is nested into another one.
    *
    * @param ancestor Node in which the current node is supposed to be nested.
