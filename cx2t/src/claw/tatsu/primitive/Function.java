@@ -7,10 +7,7 @@ package claw.tatsu.primitive;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
-import claw.tatsu.xcodeml.xnode.common.Xattr;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.tatsu.xcodeml.xnode.common.Xid;
-import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
@@ -160,5 +157,48 @@ public final class Function {
     return (args != null && args.prevSibling() != null
         && args.prevSibling().opcode() == Xcode.NAME
         && args.prevSibling().value().equalsIgnoreCase(name.toString()));
+  }
+
+  /**
+   * Check if the function definition is a module procedure.
+   *
+   * @param fctDef  Function definition to check.
+   * @param xcodeml Current XcodeML translation unit.
+   * @return True if it is a module procedure. False otherwise.
+   */
+  public static boolean isModuleProcedure(FfunctionDefinition fctDef,
+                                          XcodeProgram xcodeml)
+  {
+    if(fctDef == null || xcodeml == null) {
+      return false;
+    }
+
+    List<Xnode> nodes = xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL);
+    for(Xnode node : nodes) {
+      Xnode nameNode = node.matchSeq(Xcode.NAME);
+      if(nameNode != null
+          && nameNode.value().compareToIgnoreCase(fctDef.getName()) == 0)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Extract the name of the function in a function call.
+   *
+   * @param fctCall Function call node.
+   * @return Function name if can be extracted. Null otherwise.
+   */
+  public static String getFctNameFromFctCall(Xnode fctCall) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+      return null;
+    }
+    if(fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF) {
+      return fctCall.firstChild().getAttribute(Xattr.MEMBER);
+    } else {
+      return fctCall.matchSeq(Xcode.NAME).value();
+    }
   }
 }
