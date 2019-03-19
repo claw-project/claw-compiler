@@ -85,7 +85,7 @@ public class FortranModule extends XcodeML {
    * @return True if the interface is defined in the current module.
    * False otherwise.
    */
-  public boolean isInterfaceDeclaration(String interfaceName) {
+  private boolean isInterfaceDeclaration(String interfaceName) {
     List<Xnode> interfaceDecls = matchAll(Xcode.F_INTERFACE_DECL);
     for(Xnode interfaceDecl : interfaceDecls) {
       if(interfaceDecl.getAttribute(Xattr.NAME) != null
@@ -104,7 +104,7 @@ public class FortranModule extends XcodeML {
    * @param fctCall Actual function call.
    * @return Matched function type if can be found. Null otherwise.
    */
-  public FfunctionType findFunctionTypeFromCall(Xnode fctCall) {
+  private FfunctionType findFunctionTypeMatchingFctCall(Xnode fctCall) {
     String fctName = Function.getFctNameFromFctCall(fctCall);
     if(fctName == null) {
       return null;
@@ -146,23 +146,49 @@ public class FortranModule extends XcodeML {
     return fctTypes;
   }
 
-  public FfunctionType findFunctionType(String name) {
-    Xid id = getIdentifiers().get(name);
-    if(id != null) {
-      return getTypeTable().getFunctionType(id);
-    } else {
-      String typeHash = findFunctionImplementation(name);
-      return getTypeTable().getFunctionType(typeHash);
+  /**
+   * Try to find the function type in the module.
+   *
+   * @param fctCall Function call node.
+   * @return Function type if found. Null otherwise.
+   */
+  public FfunctionType findFunctionTypeFromCall(Xnode fctCall) {
+    String fctName = Function.getFctNameFromFctCall(fctCall);
+    if(fctName == null) {
+      return null;
     }
+    Xid id = getIdentifiers().get(fctName);
+    FfunctionType fctType;
+    if(id != null) {
+      fctType = getTypeTable().getFunctionType(id);
+    } else {
+      String typeHash = findFunctionImplementationInInterface(fctName);
+      fctType = getTypeTable().getFunctionType(typeHash);
+    }
+
+    // Make sure it is not the generic function type for the interface
+    if(fctType != null && fctType.getParameters().isEmpty()
+        && isInterfaceDeclaration(fctName))
+    {
+      fctType = findFunctionTypeMatchingFctCall(fctCall);
+    }
+
+    return fctType;
   }
 
-  private String findFunctionImplementation(String name) {
-    List<Xnode> interfaceDecls = matchAll(Xcode.F_INTERFACE_DECL);
-    for(Xnode interfaceDecl : interfaceDecls) {
-      for(Xnode moduleProcDecl :
-          interfaceDecl.matchAll(Xcode.F_MODULE_PROCEDURE_DECL))
-      {
-        for(Xnode nameNode : moduleProcDecl.matchAll(Xcode.NAME)) {
+  /**
+   * Try to find the function type hash in the module procedure of interfaces
+   * in the module.
+   *
+   * @param name Name of the function to be found.
+   * @return Type hash if found. Null otherwise.
+   */
+  private String findFunctionImplementationInInterface(String name) {
+    List<Xnode> interfaceDeclarations = matchAll(Xcode.F_INTERFACE_DECL);
+    for(Xnode interfaceDeclaration : interfaceDeclarations) {
+      for(Xnode moduleProcDeclaration :
+          interfaceDeclaration.matchAll(Xcode.F_MODULE_PROCEDURE_DECL)) {
+        for(Xnode nameNode : moduleProcDeclaration.matchAll(Xcode.NAME)) {
           if(nameNode.value().equalsIgnoreCase(name)) {
             return nameNode.getAttribute(Xattr.TYPE);
           }

@@ -322,15 +322,9 @@ public class ScaForward extends ClawTransformation {
       if(_mod != null) {
         Message.debug("Reading CLAW module file: " + _mod.getFullPath());
         if(_mod.getIdentifiers().contains(_calledFctName)) {
-          _fctType = _mod.findFunctionType(_calledFctName);
-          if(_fctType != null && _fctType.getParameters().isEmpty()
-              && _mod.isInterfaceDeclaration(_calledFctName))
-          {
-            // Might be interface. Try to locate implementation
-            _fctType = _mod.findFunctionTypeFromCall(_fctCall);
-          }
+          _fctType = _mod.findFunctionTypeFromCall(_fctCall);
           if(_fctType != null) {
-            _calledFctName = null;
+            _calledFctName = null; // TODO check if still useful
             return true;
           }
         }
