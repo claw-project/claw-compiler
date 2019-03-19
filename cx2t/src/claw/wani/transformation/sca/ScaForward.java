@@ -169,12 +169,11 @@ public class ScaForward extends ClawTransformation {
 
     detectParameterMapping(_fctCall);
 
+    _calledFctName = Function.getFctNameFromFctCall(_fctCall);
+
     boolean isTypeBoundProcedure = false;
     if(_fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF) {
       isTypeBoundProcedure = true;
-      _calledFctName = _fctCall.firstChild().getAttribute(Xattr.MEMBER);
-    } else {
-      _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
     }
 
     FfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
@@ -320,12 +319,16 @@ public class ScaForward extends ClawTransformation {
     for(Xnode d : useDecls) {
       // Check whether a CLAW file is available.
       _mod = Xmod.findClaw(d.getAttribute(Xattr.NAME));
-
       if(_mod != null) {
         Message.debug("Reading CLAW module file: " + _mod.getFullPath());
         if(_mod.getIdentifiers().contains(_calledFctName)) {
-          Xid id = _mod.getIdentifiers().get(_calledFctName);
-          _fctType = _mod.getTypeTable().getFunctionType(id);
+          _fctType = _mod.findFunctionType(_calledFctName);
+          if(_fctType != null && _fctType.getParameters().isEmpty()
+              && _mod.isInterfaceDeclaration(_calledFctName))
+          {
+            // Might be interface. Try to locate implementation
+            _fctType = _mod.findFunctionTypeFromCall(_fctCall);
+          }
           if(_fctType != null) {
             _calledFctName = null;
             return true;
@@ -401,7 +404,7 @@ public class ScaForward extends ClawTransformation {
      * TODO cont: FmemberRef element
      */
     int argOffset = 0;
-    if(FortranType.STRUCT.isOfType(params.get(0).getType())
+    if(!params.isEmpty() && FortranType.STRUCT.isOfType(params.get(0).getType())
         && _fctCall.firstChild().opcode().equals(Xcode.F_MEMBER_REF))
     {
       argOffset = 1;
