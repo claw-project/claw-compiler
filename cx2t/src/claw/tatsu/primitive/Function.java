@@ -177,7 +177,7 @@ public final class Function {
     for(Xnode node : nodes) {
       Xnode nameNode = node.matchSeq(Xcode.NAME);
       if(nameNode != null
-          && nameNode.value().compareToIgnoreCase(fctDef.getName()) == 0)
+          && nameNode.value().equalsIgnoreCase(fctDef.getName()))
       {
         return true;
       }
@@ -200,5 +200,20 @@ public final class Function {
     } else {
       return fctCall.matchSeq(Xcode.NAME).value();
     }
+  }
+
+  /**
+   * Get the number of arguments in a function call.
+   *
+   * @param fctCall Function call to check.
+   * @return Number of arguments in the function call. -1 if not a function
+   * call.
+   */
+  public static int getNbOfArgsFromFctCall(Xnode fctCall) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+      return -1;
+    }
+    Xnode arguments = fctCall.matchDescendant(Xcode.ARGUMENTS);
+    return arguments != null ? arguments.children().size() : 0;
   }
 }
