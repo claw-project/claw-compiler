@@ -157,6 +157,24 @@ public class FortranModule extends XcodeML {
     if(fctName == null) {
       return null;
     }
+    FfunctionType fctType = findFunctionType(fctName);
+
+    // Make sure it is not the generic function type for the interface
+    if(fctType != null && fctType.getParameters().isEmpty()
+        && isInterfaceDeclaration(fctName))
+    {
+      fctType = findFunctionTypeMatchingFctCall(fctCall);
+    }
+    return fctType;
+  }
+
+  /**
+   * Try to find the function type in the module.
+   *
+   * @param fctName Function name.
+   * @return Function type if found. Null otherwise.
+   */
+  public FfunctionType findFunctionType(String fctName) {
     Xid id = getIdentifiers().get(fctName);
     FfunctionType fctType;
     if(id != null) {
@@ -165,14 +183,6 @@ public class FortranModule extends XcodeML {
       String typeHash = findFunctionImplementationInInterface(fctName);
       fctType = getTypeTable().getFunctionType(typeHash);
     }
-
-    // Make sure it is not the generic function type for the interface
-    if(fctType != null && fctType.getParameters().isEmpty()
-        && isInterfaceDeclaration(fctName))
-    {
-      fctType = findFunctionTypeMatchingFctCall(fctCall);
-    }
-
     return fctType;
   }
 
