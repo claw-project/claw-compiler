@@ -98,11 +98,10 @@ public enum FortranType {
    */
   public String generateHash() {
     StringBuilder sb = new StringBuilder();
-    sb.append(_prefix);
     while(sb.length() < HASH_LENGTH) {
       sb.append(Integer.toHexString(this.rand.nextInt()));
     }
-    return sb.toString().substring(0, HASH_LENGTH);
+    return _prefix + sb.toString().substring(0, HASH_LENGTH);
   }
 
   /**
