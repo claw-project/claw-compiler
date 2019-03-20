@@ -15,6 +15,7 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Primitive transformation and test applied to fields. This included:
@@ -454,5 +455,51 @@ public final class Field {
       }
     }
     promotionInfo.setRefAdapted();
+  }
+
+  /**
+   * Adapt potential pointer that are assigned from a promoted variable in
+   * a function definition.
+   *
+   * @param xcodeml     Current XcodeML program unit.
+   * @param fctDef      Function definition in which assignment statements are
+   *                    checked.
+   * @param promotions  Map of promoted variable with their promotion info.
+   * @param pointeeInfo PromotionInformation about the promoted variable.
+   * @throws IllegalTransformationException If XcodeML modifications failed.
+   */
+  public static void adaptPointer(XcodeProgram xcodeml,
+                                  FfunctionDefinition fctDef,
+                                  Map<String, PromotionInfo> promotions,
+                                  PromotionInfo pointeeInfo)
+      throws IllegalTransformationException
+  {
+    FbasicType varType =
+        xcodeml.getTypeTable().getBasicType(pointeeInfo.getTargetType());
+    if(varType != null && varType.isTarget()) {
+      List<Xnode> pAssignments =
+          fctDef.matchAll(Xcode.F_POINTER_ASSIGN_STATEMENT);
+      for(Xnode pAssignment : pAssignments) {
+        Xnode pointer = pAssignment.child(0);
+        Xnode pointee = pAssignment.child(1);
+
+        // Check if the pointer assignment has the promoted variable
+        if(pointee.value().equals(pointeeInfo.getIdentifier())) {
+          FbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
+          FbasicType pointeeType = xcodeml.getTypeTable().
+              getBasicType(pointeeInfo.getTargetType());
+
+          // Check if their dimensions differ
+          if(pointeeType.getDimensions() != pointerType.getDimensions()
+              && !promotions.containsKey(pointer.value()))
+          {
+            PromotionInfo promotionInfo =
+                new PromotionInfo(pointer.value(), pointeeInfo.getDimensions());
+            Field.promote(promotionInfo, fctDef, xcodeml);
+            promotions.put(pointer.value(), promotionInfo);
+          }
+        }
+      }
+    }
   }
 }

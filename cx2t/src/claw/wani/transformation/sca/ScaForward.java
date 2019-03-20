@@ -488,7 +488,6 @@ public class ScaForward extends ClawTransformation {
           if(d != null) {
             pUpdate = d.matchSeq(Xcode.NAME);
           }
-          // TODO handle deferred shape
         }
 
         if(pUpdate != null) {
@@ -636,7 +635,6 @@ public class ScaForward extends ClawTransformation {
       // TODO handle the case when the array ref is a var directly
       Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
       FfunctionDefinition parentFctDef = _fctCall.findParentFunction();
-      FbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
 
       PromotionInfo promotionInfo;
       if(!_promotions.containsKey(varInLhs.value())) {
@@ -664,8 +662,7 @@ public class ScaForward extends ClawTransformation {
       }
 
       // If the array is a target, check if we have to promote a pointer
-      adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
-          promotionInfo);
+      Field.adaptPointer(xcodeml, parentFctDef, _promotions, promotionInfo);
     }
   }
 
@@ -713,8 +710,6 @@ public class ScaForward extends ClawTransformation {
                 "promotion. Internal error.", _claw.getPragma().lineNo());
           }
 
-          FbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
-
           // Declare the induction variable if they are not present
           for(DimensionDefinition dim : defaultInfo.getDimensions()) {
             if(parentFctDef.getDeclarationTable().get(dim.getIdentifier())
@@ -746,16 +741,14 @@ public class ScaForward extends ClawTransformation {
 
           // Adapt the reference in the assignment statement
           for(String id : _promotedVar) {
-            _promotions.get(id).resterFlags();
+            _promotions.get(id).resetFlags();
             Field.adaptArrayRef(_promotions.get(id), assignment, xcodeml);
           }
 
           // If the array is a target, check if we have to promote a pointer
           if(!previouslyPromoted.contains(varInLhs.value())) {
-            adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
+            Field.adaptPointer(xcodeml, parentFctDef, _promotions,
                 promotionInfo);
-
-            // TODO centralized info
             previouslyPromoted.add(varInLhs.value());
           }
 
@@ -768,50 +761,6 @@ public class ScaForward extends ClawTransformation {
     }
 
     translator.storeElement(parentFctDef, previouslyPromoted);
-  }
-
-  /**
-   * Adapt potential pointer that are assigned from a promoted variable.
-   *
-   * @param varType     Type of the promoted variable.
-   * @param fieldId     Name of the promoted variable.
-   * @param fctDef      Function definition in which assignment statements are
-   *                    checked.
-   * @param xcodeml     Current XcodeML program unit.
-   * @param pointeeInfo PromotionInformation about the promoted variable.
-   * @throws IllegalTransformationException If XcodeML modifications failed.
-   */
-  private void adaptPointer(FbasicType varType, String fieldId,
-                            FfunctionDefinition fctDef, XcodeProgram xcodeml,
-                            PromotionInfo pointeeInfo)
-      throws IllegalTransformationException
-  {
-    // TODO 1.0 move to Field primitive
-    if(varType.isTarget()) {
-      List<Xnode> pAssignments =
-          fctDef.matchAll(Xcode.F_POINTER_ASSIGN_STATEMENT);
-      for(Xnode pAssignment : pAssignments) {
-        Xnode pointer = pAssignment.child(0);
-        Xnode pointee = pAssignment.child(1);
-
-        // Check if the pointer assignment has the promoted variable
-        if(pointee.value().equals(fieldId)) {
-          FbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
-          FbasicType pointeeType = xcodeml.getTypeTable().
-              getBasicType(pointeeInfo.getTargetType());
-
-          // Check if their dimensions differ
-          if(pointeeType.getDimensions() != pointerType.getDimensions()
-              && !_promotions.containsKey(pointer.value()))
-          {
-            PromotionInfo promotionInfo =
-                new PromotionInfo(pointer.value(), pointeeInfo.getDimensions());
-            Field.promote(promotionInfo, fctDef, xcodeml);
-            _promotions.put(pointer.value(), promotionInfo);
-          }
-        }
-      }
-    }
   }
 
   /**

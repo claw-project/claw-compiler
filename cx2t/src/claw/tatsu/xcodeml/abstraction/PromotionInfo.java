@@ -270,7 +270,7 @@ public class PromotionInfo {
   /**
    * Reset adapted flags.
    */
-  public void resterFlags() {
+  public void resetFlags() {
     _referenceAdapted = false;
     _allocateAdapted = false;
   }
