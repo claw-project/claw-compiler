@@ -78,15 +78,15 @@ public class ScaForward extends ClawTransformation {
           _claw.getPragma());
       return false;
     }
-    if(next.opcode() == Xcode.EXPR_STATEMENT
-        || next.opcode() == Xcode.F_ASSIGN_STATEMENT)
+    if(Xnode.isOfCode(next, Xcode.EXPR_STATEMENT)
+        || Xnode.isOfCode(next, Xcode.F_ASSIGN_STATEMENT))
     {
-      _isNestedInAssignment = next.opcode() == Xcode.F_ASSIGN_STATEMENT;
+      _isNestedInAssignment = Xnode.isOfCode(next, Xcode.F_ASSIGN_STATEMENT);
       _fctCall = next.matchSeq(Xcode.FUNCTION_CALL);
       if(_fctCall != null) {
         return analyzeForward(xcodeml);
       }
-    } else if(next.opcode() == Xcode.F_DO_STATEMENT) {
+    } else if(Xnode.isOfCode(next, Xcode.F_DO_STATEMENT)) {
       _doStatements = new NestedDoStatement(next);
       return analyzeForwardWithDo(xcodeml);
     }
@@ -130,17 +130,15 @@ public class ScaForward extends ClawTransformation {
         }
       }
       for(Xnode n : _doStatements.get(i).body().children()) {
-        if(n.opcode() == Xcode.F_DO_STATEMENT) {
+        if(n.is(Xcode.F_DO_STATEMENT)) {
           continue;
         }
-        if(n.opcode() != Xcode.F_PRAGMA_STATEMENT
-            && n.opcode() != Xcode.EXPR_STATEMENT)
-        {
+        if(!n.is(Xcode.F_PRAGMA_STATEMENT) && !n.is(Xcode.EXPR_STATEMENT)) {
           xcodeml.addError("Only pragmas, comments and function calls allowed "
               + "in the do statements.", _claw.getPragma());
           return false;
-        } else if(n.opcode() == Xcode.EXPR_STATEMENT
-            || n.opcode() == Xcode.F_ASSIGN_STATEMENT)
+        } else if(n.is(Xcode.EXPR_STATEMENT)
+            || n.is(Xcode.F_ASSIGN_STATEMENT))
         {
           _fctCall = n.matchSeq(Xcode.FUNCTION_CALL);
           if(_fctCall != null) {
@@ -169,13 +167,7 @@ public class ScaForward extends ClawTransformation {
 
     detectParameterMapping(_fctCall);
 
-    boolean isTypeBoundProcedure = false;
-    if(_fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF) {
-      isTypeBoundProcedure = true;
-      _calledFctName = _fctCall.firstChild().getAttribute(Xattr.MEMBER);
-    } else {
-      _calledFctName = _fctCall.matchSeq(Xcode.NAME).value();
-    }
+    _calledFctName = Function.getFctNameFromFctCall(_fctCall);
 
     FfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_calledFctName);
@@ -188,7 +180,7 @@ public class ScaForward extends ClawTransformation {
 
     FmoduleDefinition parentModule = parentFctDef.findParentModule();
 
-    if(isTypeBoundProcedure) {
+    if(Function.isCallToTypeBoundProcedure(_fctCall)) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * matchSeq the correct function in the typeTable.
        * TODO if there is a rename.
@@ -239,8 +231,9 @@ public class ScaForward extends ClawTransformation {
           uses.addAll(parentModule.getDeclarationTable().uses());
         }
         if(!findInModule(uses)) {
-          xcodeml.addError("Function definition " + _calledFctName +
-              " not found in module ", _claw.getPragma());
+          xcodeml.addError(
+              String.format("Function definition %s not found in module.",
+                  _calledFctName), _claw.getPragma());
           return false;
         }
       } else {
@@ -291,11 +284,11 @@ public class ScaForward extends ClawTransformation {
    * @param fctCall Function call to be analyzed.
    */
   private void detectParameterMapping(Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return;
     }
     for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
-      if(arg.opcode() == Xcode.NAMED_VALUE) {
+      if(arg.is(Xcode.NAMED_VALUE)) {
         String originalName = arg.getAttribute(Xattr.NAME);
         Xnode targetVar = arg.matchDescendant(Xcode.VAR);
         if(targetVar != null) {
@@ -318,16 +311,13 @@ public class ScaForward extends ClawTransformation {
   private boolean findInModule(List<Xnode> useDecls) {
     // TODO handle rename
     for(Xnode d : useDecls) {
-      // Check whether a CLAW file is available.
+      // Check whether a CLAW module file is available.
       _mod = Xmod.findClaw(d.getAttribute(Xattr.NAME));
-
       if(_mod != null) {
         Message.debug("Reading CLAW module file: " + _mod.getFullPath());
         if(_mod.getIdentifiers().contains(_calledFctName)) {
-          Xid id = _mod.getIdentifiers().get(_calledFctName);
-          _fctType = _mod.getTypeTable().getFunctionType(id);
+          _fctType = _mod.findFunctionTypeFromCall(_fctCall);
           if(_fctType != null) {
-            _calledFctName = null;
             return true;
           }
         }
@@ -401,8 +391,8 @@ public class ScaForward extends ClawTransformation {
      * TODO cont: FmemberRef element
      */
     int argOffset = 0;
-    if(FortranType.STRUCT.isOfType(params.get(0).getType())
-        && _fctCall.firstChild().opcode().equals(Xcode.F_MEMBER_REF))
+    if(!params.isEmpty() && FortranType.STRUCT.isOfType(params.get(0).getType())
+        && Xnode.isOfCode(_fctCall.firstChild(), Xcode.F_MEMBER_REF))
     {
       argOffset = 1;
     }
@@ -465,7 +455,7 @@ public class ScaForward extends ClawTransformation {
     if(_flatten) {
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.children()) {
-        if(arg.opcode() == Xcode.F_ARRAY_REF && arg.matchDirectDescendant(
+        if(arg.is(Xcode.F_ARRAY_REF) && arg.matchDirectDescendant(
             Arrays.asList(Xcode.INDEX_RANGE, Xcode.ARRAY_INDEX)) != null)
         {
           List<Xnode> arrayIndexes = arg.matchAll(Xcode.ARRAY_INDEX);
@@ -499,7 +489,6 @@ public class ScaForward extends ClawTransformation {
           if(d != null) {
             pUpdate = d.matchSeq(Xcode.NAME);
           }
-          // TODO handle deferred shape
         }
 
         if(pUpdate != null) {
@@ -647,7 +636,6 @@ public class ScaForward extends ClawTransformation {
       // TODO handle the case when the array ref is a var directly
       Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
       FfunctionDefinition parentFctDef = _fctCall.findParentFunction();
-      FbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
 
       PromotionInfo promotionInfo;
       if(!_promotions.containsKey(varInLhs.value())) {
@@ -664,24 +652,18 @@ public class ScaForward extends ClawTransformation {
       }
 
       // Adapt array index to reflect the new return type
-      if(lhs.opcode() == Xcode.F_ARRAY_REF) {
+      if(Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF)) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
           Xnode indexRange = xcodeml.createEmptyAssumedShaped();
           lhs.append(indexRange);
         }
-      /*} else if(lhs.opcode() == Xcode.VAR) {
-        // TODO avoid array var without colon notation
-          /* throw new IllegalTransformationException("Use the colon notation "
-              + "for the return variable. This notation is not supported." +
-              _claw.getPragma().value()); */
       } else {
         throw new IllegalTransformationException("Unsupported return " +
             "variable for promotion.", _claw.getPragma().lineNo());
       }
 
       // If the array is a target, check if we have to promote a pointer
-      adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
-          promotionInfo);
+      Field.adaptPointer(xcodeml, parentFctDef, _promotions, promotionInfo);
     }
   }
 
@@ -721,15 +703,13 @@ public class ScaForward extends ClawTransformation {
         // Check if the assignment statement uses a promoted variable
         if(_promotedVar.contains(var.value())
             && var.matchAncestor(Xcode.FUNCTION_CALL) == null
-            && lhs.opcode() == Xcode.F_ARRAY_REF)
+            && Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF))
         {
           Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
           if(varInLhs == null) {
             throw new IllegalTransformationException("Unable to propagate " +
                 "promotion. Internal error.", _claw.getPragma().lineNo());
           }
-
-          FbasicType varType = xcodeml.getTypeTable().getBasicType(varInLhs);
 
           // Declare the induction variable if they are not present
           for(DimensionDefinition dim : defaultInfo.getDimensions()) {
@@ -762,16 +742,14 @@ public class ScaForward extends ClawTransformation {
 
           // Adapt the reference in the assignment statement
           for(String id : _promotedVar) {
-            _promotions.get(id).resterFlags();
+            _promotions.get(id).resetFlags();
             Field.adaptArrayRef(_promotions.get(id), assignment, xcodeml);
           }
 
           // If the array is a target, check if we have to promote a pointer
           if(!previouslyPromoted.contains(varInLhs.value())) {
-            adaptPointer(varType, varInLhs.value(), parentFctDef, xcodeml,
+            Field.adaptPointer(xcodeml, parentFctDef, _promotions,
                 promotionInfo);
-
-            // TODO centralized info
             previouslyPromoted.add(varInLhs.value());
           }
 
@@ -784,50 +762,6 @@ public class ScaForward extends ClawTransformation {
     }
 
     translator.storeElement(parentFctDef, previouslyPromoted);
-  }
-
-  /**
-   * Adapt potential pointer that are assigned from a promoted variable.
-   *
-   * @param varType     Type of the promoted variable.
-   * @param fieldId     Name of the promoted variable.
-   * @param fctDef      Function definition in which assignment statements are
-   *                    checked.
-   * @param xcodeml     Current XcodeML program unit.
-   * @param pointeeInfo PromotionInformation about the promoted variable.
-   * @throws IllegalTransformationException If XcodeML modifications failed.
-   */
-  private void adaptPointer(FbasicType varType, String fieldId,
-                            FfunctionDefinition fctDef, XcodeProgram xcodeml,
-                            PromotionInfo pointeeInfo)
-      throws IllegalTransformationException
-  {
-    // TODO 1.0 move to Field primitive
-    if(varType.isTarget()) {
-      List<Xnode> pAssignments =
-          fctDef.matchAll(Xcode.F_POINTER_ASSIGN_STATEMENT);
-      for(Xnode pAssignment : pAssignments) {
-        Xnode pointer = pAssignment.child(0);
-        Xnode pointee = pAssignment.child(1);
-
-        // Check if the pointer assignment has the promoted variable
-        if(pointee.value().equals(fieldId)) {
-          FbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
-          FbasicType pointeeType = xcodeml.getTypeTable().
-              getBasicType(pointeeInfo.getTargetType());
-
-          // Check if their dimensions differ
-          if(pointeeType.getDimensions() != pointerType.getDimensions()
-              && !_promotions.containsKey(pointer.value()))
-          {
-            PromotionInfo promotionInfo =
-                new PromotionInfo(pointer.value(), pointeeInfo.getDimensions());
-            Field.promote(promotionInfo, fctDef, xcodeml);
-            _promotions.put(pointer.value(), promotionInfo);
-          }
-        }
-      }
-    }
   }
 
   /**

@@ -145,14 +145,16 @@ public class XcodeML extends Xnode {
   public Xnode importConstOrVar(Xnode base, XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
-    if(base.opcode() != Xcode.F_INT_CONSTANT && base.opcode() != Xcode.VAR) {
+    if(!Xnode.isOfCode(base, Xcode.F_INT_CONSTANT)
+        && !Xnode.isOfCode(base, Xcode.VAR))
+    {
       throw new IllegalTransformationException(
           String.format("Lower/upper bound type currently not supported (%s)",
               base.opcode().toString())
       );
     }
 
-    if(base.opcode() == Xcode.VAR) {
+    if(Xnode.isOfCode(base, Xcode.VAR)) {
       return importVar(base, xcodemlSrc);
     } else {
       return createIntConstant(Integer.parseInt(base.value()));
@@ -393,7 +395,7 @@ public class XcodeML extends Xnode {
       List<String> parameters = fctType.getParamsNames();
 
       for(Xnode n : fctDef.getDeclarationTable().values()) {
-        if(n.opcode() == Xcode.VAR_DECL) {
+        if(n.is(Xcode.VAR_DECL)) {
           String varId = n.matchDirectDescendant(Xcode.NAME).value();
           if(n.lineNo() == 0
               || varId.equalsIgnoreCase(fctDef.getName()))
@@ -409,9 +411,7 @@ public class XcodeML extends Xnode {
       }
     } else if(declPos == DeclarationPosition.FIRST) {
       for(Xnode n : fctDef.getDeclarationTable().values()) {
-        if(n.opcode() == Xcode.F_USE_DECL
-            || n.opcode() == Xcode.F_USE_ONLY_DECL)
-        {
+        if(n.is(Xcode.F_USE_DECL) || n.is(Xcode.F_USE_ONLY_DECL)) {
           hook = n;
         } else {
           break;
@@ -538,17 +538,24 @@ public class XcodeML extends Xnode {
    * Create a new FfunctionType with empty params child.
    *
    * {@code
-   * <functionCall type="returnType">
-   * <name type="fctType">fctName</name>
-   * <arguments></arguments>
-   * </functionCall>
+   * <FfunctionType return_type="returnType" type="type">
+   * <params></params>
+   * </FfunctionType>
    * }
    *
    * @param type Type hash of the FfunctionType node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public FfunctionType createFunctionType(String type) {
+  public FfunctionType createFunctionType(String type, String returnType) {
     Xnode functionType = createNode(Xcode.F_FUNCTION_TYPE);
+    if(type != null) {
+      functionType.setType(type);
+    }
+    if(returnType != null) {
+      functionType.setAttribute(Xattr.RETURN_TYPE, returnType);
+    } else {
+      functionType.setAttribute(Xattr.RETURN_TYPE, FortranType.VOID.toString());
+    }
     functionType.append(createNode(Xcode.PARAMS));
     return new FfunctionType(functionType);
   }

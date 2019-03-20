@@ -59,7 +59,7 @@ public enum Xcode {
   F_DO_WHILE_STATEMENT(Xname.F_DO_WHILE_STATEMENT, true),    // XcodeML/F 6.6
   F_END_FILE_STATEMENT(Xname.F_ENDFILE_STATEMENT),           // XcodeML/F 6.17.3
   F_ENTRY_DECL(Xname.F_ENTRY_DECL),                          // XcodeML/F 6.23
-  F_ENUM_DECL(Xname.F_ENUM_DECL),                            // TODO no ref yet
+  F_ENUM_DECL(Xname.F_ENUM_DECL),                            // XcodeML/F 5.14
   F_ENUM_TYPE(Xname.F_ENUM_TYPE),                            // XcodeML/F 3.14
   F_EQUIVALENCE_DECL(Xname.F_EQUIVALENCE_DECL),              // XcodeML/F 6.21
   F_EXIT_STATEMENT(Xname.F_EXIT_STATEMENT),                  // XcodeML/F 6.9

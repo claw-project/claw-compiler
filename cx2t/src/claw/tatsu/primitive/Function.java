@@ -7,10 +7,7 @@ package claw.tatsu.primitive;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
-import claw.tatsu.xcodeml.xnode.common.Xattr;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.tatsu.xcodeml.xnode.common.Xid;
-import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
@@ -39,7 +36,7 @@ public final class Function {
    * @return The argument if found. Null otherwise.
    */
   public static Xnode findArg(Xnode fctCall, String argName) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return null;
     }
     Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
@@ -158,7 +155,79 @@ public final class Function {
 
     Xnode args = var.matchAncestor(Xcode.ARGUMENTS);
     return (args != null && args.prevSibling() != null
-        && args.prevSibling().opcode() == Xcode.NAME
+        && Xnode.isOfCode(args.prevSibling(), Xcode.NAME)
         && args.prevSibling().value().equalsIgnoreCase(name.toString()));
+  }
+
+  /**
+   * Check if the function definition is a module procedure.
+   *
+   * @param fctDef  Function definition to check.
+   * @param xcodeml Current XcodeML translation unit.
+   * @return True if it is a module procedure. False otherwise.
+   */
+  public static boolean isModuleProcedure(FfunctionDefinition fctDef,
+                                          XcodeProgram xcodeml)
+  {
+    if(fctDef == null || xcodeml == null) {
+      return false;
+    }
+
+    List<Xnode> nodes = xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL);
+    for(Xnode node : nodes) {
+      Xnode nameNode = node.matchSeq(Xcode.NAME);
+      if(nameNode != null
+          && nameNode.value().equalsIgnoreCase(fctDef.getName()))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Extract the name of the function in a function call.
+   *
+   * @param fctCall Function call node.
+   * @return Function name if can be extracted. Null otherwise.
+   */
+  public static String getFctNameFromFctCall(Xnode fctCall) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
+      return null;
+    }
+    if(Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF)) {
+      return fctCall.firstChild().getAttribute(Xattr.MEMBER);
+    } else {
+      return fctCall.matchSeq(Xcode.NAME).value();
+    }
+  }
+
+  /**
+   * Get the number of arguments in a function call.
+   *
+   * @param fctCall Function call to check.
+   * @return Number of arguments in the function call. -1 if not a function
+   * call.
+   */
+  public static int getNbOfArgsFromFctCall(Xnode fctCall) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
+      return -1;
+    }
+    Xnode arguments = fctCall.matchDescendant(Xcode.ARGUMENTS);
+    return arguments != null ? arguments.children().size() : 0;
+  }
+
+  /**
+   * Check whether the function call is calling a type bound procedure.
+   *
+   * @param fctCall Function call node.
+   * @return True if the function call is a type bound procedure call. False
+   * otherwise.
+   */
+  public static boolean isCallToTypeBoundProcedure(Xnode fctCall) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
+      return false;
+    }
+    return Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF);
   }
 }

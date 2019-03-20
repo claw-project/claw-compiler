@@ -132,7 +132,6 @@ public class FfunctionDefinition extends Xnode {
     try {
       return Body.isEmpty(body());
     } catch(IllegalTransformationException itex) {
-      // TODO logger
       return false;
     }
   }
@@ -224,7 +223,7 @@ public class FfunctionDefinition extends Xnode {
     List<String> variables = new ArrayList<>();
     List<Xnode> declarations = getDeclarationTable().values();
     for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VAR_DECL) {
+      if(decl.is(Xcode.VAR_DECL)) {
         Xnode name = decl.matchSeq(Xcode.NAME);
         if(!(xcodeml.getTypeTable().isBasicType(decl))) {
           continue; // Only check basic type

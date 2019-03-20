@@ -359,7 +359,9 @@ public class Sca extends ClawTransformation {
   {
     /* If the subroutine/function is public and part of a module, update the
      * module signature to propagate the promotion information. */
-    if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
+    if(Function.isModuleProcedure(_fctDef, xcodeml)
+        || !_fctType.getBooleanAttribute(Xattr.IS_PRIVATE))
+    {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
         if(forceAssumedShapedArrayPromotion) {

@@ -6,7 +6,6 @@ package claw.tatsu.xcodeml.abstraction;
 
 import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
 import java.util.ArrayList;
@@ -41,9 +40,7 @@ public class NestedDoStatement {
    */
   public NestedDoStatement(Xnode outerDoStatement, int nb) {
     _statements = new ArrayList<>();
-    if(outerDoStatement == null
-        || outerDoStatement.opcode() != Xcode.F_DO_STATEMENT)
-    {
+    if(!Xnode.isOfCode(outerDoStatement, Xcode.F_DO_STATEMENT)) {
       return;
     }
 

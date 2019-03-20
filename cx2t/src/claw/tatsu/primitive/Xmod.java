@@ -150,7 +150,7 @@ public final class Xmod {
       }
       return;
     } else {
-      fctTypeMod = mod.getTypeTable().getFunctionType(fctDef);
+      fctTypeMod = mod.findFunctionType(fctDef.getName());
     }
 
     if(fctTypeMod == null) {
@@ -165,11 +165,7 @@ public final class Xmod {
 
       /* If not, try to matchSeq the correct FfunctionType in the module
        * definitions */
-      Xid id = mod.getIdentifiers().get(fctDef.getName());
-      if(id == null) {
-        throw new IllegalTransformationException(errorMsg);
-      }
-      fctTypeMod = mod.getTypeTable().getFunctionType(id);
+      fctTypeMod = mod.findFunctionType(fctDef.getName());
       if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg);
       }

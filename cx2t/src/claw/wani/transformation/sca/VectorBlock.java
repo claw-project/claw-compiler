@@ -164,9 +164,9 @@ public class VectorBlock {
    */
   public boolean contains(AssignStatement as) {
     if(isSingleStatement()) {
-      return (getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+      return (Xnode.isOfCode(getStartStmt(), Xcode.F_ASSIGN_STATEMENT)
           && getStartStmt().equals(as))
-          || (getStartStmt().opcode() == Xcode.F_IF_STATEMENT
+          || (Xnode.isOfCode(getStartStmt(), Xcode.F_IF_STATEMENT)
           && as.isNestedIn(getStartStmt()));
     } else {
       Xnode crtStmt = getStartStmt();
@@ -214,7 +214,7 @@ public class VectorBlock {
     VectorBlock crtBlock = sortedVectorBlocks.get(0);
     for(int i = 1; i < sortedVectorBlocks.size(); ++i) {
       VectorBlock nextBlock = sortedVectorBlocks.get(i);
-      if(nextBlock.getStartStmt().opcode() == Xcode.F_ASSIGN_STATEMENT
+      if(Xnode.isOfCode(nextBlock.getStartStmt(), Xcode.F_ASSIGN_STATEMENT)
           && crtBlock.canMergeNextNode(nextBlock.getStartStmt()))
       {
         toBeRemoved.add(nextBlock);

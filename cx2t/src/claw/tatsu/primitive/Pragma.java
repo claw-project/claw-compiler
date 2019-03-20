@@ -16,8 +16,6 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +45,7 @@ public final class Pragma {
    * @return Directive prefix if any. Empty string otherwise.
    */
   public static String getPrefix(Xnode pragma) {
-    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT
+    if(!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT)
         || pragma.value().isEmpty())
     {
       return "";
@@ -118,7 +116,7 @@ public final class Pragma {
                                    String prefix)
       throws IllegalTransformationException
   {
-    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+    if(!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT)) {
       throw new
           IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }
@@ -153,7 +151,7 @@ public final class Pragma {
                                  XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+    if(!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT)) {
       throw new
           IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }
@@ -201,7 +199,7 @@ public final class Pragma {
    * @return True if the pragma was previously continued.
    */
   public static boolean fromClawPrimitive(Xnode pragma) {
-    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+    if(!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT)) {
       return false;
     }
     String allPragma = pragma.value().toLowerCase();
@@ -214,7 +212,7 @@ public final class Pragma {
   }
 
   public static CompilerDirective getCompilerDirective(Xnode pragma) {
-    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+    if(!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT)) {
       return CompilerDirective.NONE;
     }
     if(pragma.value().toLowerCase().contains(OpenAcc.OPENACC_PREFIX)) {
@@ -296,7 +294,7 @@ public final class Pragma {
     Xnode parent = from;
     do {
       while(prev != null) {
-        if(prev.opcode() == Xcode.F_PRAGMA_STATEMENT
+        if(prev.is(Xcode.F_PRAGMA_STATEMENT)
             && prev.value().toLowerCase().contains(keyword.toLowerCase()))
         {
           return prev;
@@ -318,19 +316,17 @@ public final class Pragma {
    * @param pragma The pragma to be moved.
    */
   public static void moveInExecution(Xnode pragma) {
-    if(pragma == null || pragma.opcode() != Xcode.F_PRAGMA_STATEMENT) {
+    if(!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT)) {
       return;
     }
 
-    if(pragma.ancestor().opcode() == Xcode.DECLARATIONS) {
+    if(Xnode.isOfCode(pragma.ancestor(), Xcode.DECLARATIONS)) {
       FfunctionDefinition fdef = pragma.findParentFunction();
       if(fdef != null) {
-        if(fdef.body().firstChild() != null &&
-            fdef.body().firstChild().opcode() == Xcode.F_PRAGMA_STATEMENT)
-        {
+        if(Xnode.isOfCode(fdef.body().firstChild(), Xcode.F_PRAGMA_STATEMENT)) {
           Xnode hook = null;
           Xnode crtNode = fdef.body().firstChild();
-          while(crtNode != null && crtNode.opcode() == Xcode.F_PRAGMA_STATEMENT
+          while(Xnode.isOfCode(crtNode, Xcode.F_PRAGMA_STATEMENT)
               && pragma.lineNo() > crtNode.lineNo()) {
             hook = crtNode;
             crtNode = crtNode.nextSibling();

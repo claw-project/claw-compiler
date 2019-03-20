@@ -282,7 +282,7 @@ public class XcodeProgram extends XcodeML {
       return false;
     }
 
-    if(opcode() != Xcode.XCODE_PROGRAM) {
+    if(!is(Xcode.XCODE_PROGRAM)) {
       addError("Not an XcodeProgram document");
       return false;
     }

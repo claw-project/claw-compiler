@@ -787,7 +787,7 @@ public class Xnode {
    * @param opcode Opcode to check for
    * @return True if the ancestor if of the given opcode. False otherwise.
    */
-  public boolean isAncestor(Xcode opcode) {
+  public boolean ancestorIs(Xcode opcode) {
     return ancestor() != null && ancestor().is(opcode);
   }
 
@@ -799,6 +799,18 @@ public class Xnode {
    */
   public boolean is(Xcode opcode) {
     return opcode() == opcode;
+  }
+
+  /**
+   * Check whether the given node is of the given opcode.
+   *
+   * @param node   Node to be checked.
+   * @param opcode Opcode to be matched.
+   * @return True if the node is not null and match the given opcode. False
+   * otherwise.
+   */
+  public static boolean isOfCode(Xnode node, Xcode opcode) {
+    return node != null && node.is(opcode);
   }
 
   /**
@@ -888,54 +900,106 @@ public class Xnode {
       case ARRAY_INDEX:
       case LOWER_BOUND:
       case UPPER_BOUND:
-      case VAR_REF: {
-        Xnode n = firstChild();
-        return (n != null) ? n.constructRepresentation(withNamedValue) : "";
-      }
+      case VAR_REF:
+        return constructSimpleRepresentation(withNamedValue);
       case INDEX_RANGE:
-        if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
-          return ":";
-        }
-        Xnode child0 = child(0);
-        Xnode child1 = child(1);
-        return ((child0 != null) ?
-            child0.constructRepresentation(withNamedValue) : "") + ":" +
-            ((child1 != null) ?
-                child1.constructRepresentation(withNamedValue) : "");
+        return constructIndexRangeRepresentation(withNamedValue);
       case F_ARRAY_REF:
-        List<Xnode> childs = children();
-        if(childs.size() == 1) {
-          return childs.get(0).constructRepresentation(withNamedValue);
-        } else {
-          StringBuilder str = new StringBuilder();
-          str.append(childs.get(0).constructRepresentation(withNamedValue));
-          str.append("(");
-          for(int i = 1; i < childs.size(); ++i) {
-            str.append(childs.get(i).constructRepresentation(withNamedValue));
-            if(i != childs.size() - 1) {
-              str.append(",");
-            }
-          }
-          str.append(")");
-          return str.toString();
-        }
-      case F_MEMBER_REF: {
-        Xnode n = firstChild();
-        return ((n != null) ?
-            n.constructRepresentation(withNamedValue) + "%" +
-                getAttribute(Xattr.MEMBER) : "");
-      }
-      case NAMED_VALUE: {
-        Xnode n = firstChild();
-        if(withNamedValue) {
-          return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
-              n.constructRepresentation(true) : "");
-        }
-        return (n != null) ? n.constructRepresentation(false) : "";
-      }
+        return constructArrayRefRepresentation(withNamedValue);
+      case F_MEMBER_REF:
+        return constructMemberRefRepresentation(withNamedValue);
+      case NAMED_VALUE:
+        return constructNamedValueRepresentation(withNamedValue);
       default:
         return "";
     }
+  }
+
+  /**
+   * Construct string representation of the IndexRange node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructIndexRangeRepresentation(boolean withNamedValue) {
+    if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
+      return ":";
+    }
+    Xnode child0 = child(0);
+    Xnode child1 = child(1);
+    return ((child0 != null) ?
+        child0.constructRepresentation(withNamedValue) : "") + ":" +
+        ((child1 != null) ?
+            child1.constructRepresentation(withNamedValue) : "");
+  }
+
+  /**
+   * Construct string representation of the simple node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructSimpleRepresentation(boolean withNamedValue) {
+    Xnode n = firstChild();
+    return (n != null) ? n.constructRepresentation(withNamedValue) : "";
+  }
+
+  /**
+   * Construct string representation of the ArrayRef node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructArrayRefRepresentation(boolean withNamedValue) {
+    List<Xnode> childs = children();
+    if(childs.size() == 1) {
+      return childs.get(0).constructRepresentation(withNamedValue);
+    } else {
+      StringBuilder str = new StringBuilder();
+      str.append(childs.get(0).constructRepresentation(withNamedValue));
+      str.append("(");
+      for(int i = 1; i < childs.size(); ++i) {
+        str.append(childs.get(i).constructRepresentation(withNamedValue));
+        if(i != childs.size() - 1) {
+          str.append(",");
+        }
+      }
+      str.append(")");
+      return str.toString();
+    }
+  }
+
+  /**
+   * Construct string representation of the MemberRef node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructMemberRefRepresentation(boolean withNamedValue) {
+    Xnode n = firstChild();
+    return ((n != null) ?
+        n.constructRepresentation(withNamedValue) + "%" +
+            getAttribute(Xattr.MEMBER) : "");
+  }
+
+  /**
+   * Construct string representation of the NamedValue node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructNamedValueRepresentation(boolean withNamedValue) {
+    Xnode n = firstChild();
+    if(withNamedValue) {
+      return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
+          n.constructRepresentation(true) : "");
+    }
+    return (n != null) ? n.constructRepresentation(false) : "";
   }
 
   /**
@@ -1033,6 +1097,6 @@ public class Xnode {
    * False otherwise.
    */
   public boolean isNotArrayIndex() {
-    return ancestor() == null || ancestor().opcode() != Xcode.ARRAY_INDEX;
+    return !Xnode.isOfCode(ancestor(), Xcode.ARRAY_INDEX);
   }
 }

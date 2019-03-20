@@ -54,9 +54,8 @@ public final class Loop {
   public static void merge(Xnode masterDoStmt, Xnode slaveDoStmt)
       throws IllegalTransformationException
   {
-    if(masterDoStmt == null || slaveDoStmt == null
-        || masterDoStmt.opcode() != Xcode.F_DO_STATEMENT
-        || slaveDoStmt.opcode() != Xcode.F_DO_STATEMENT)
+    if(!Xnode.isOfCode(masterDoStmt, Xcode.F_DO_STATEMENT)
+        || !Xnode.isOfCode(slaveDoStmt, Xcode.F_DO_STATEMENT))
     {
       throw new
           IllegalTransformationException(String.format(
@@ -231,8 +230,8 @@ public final class Loop {
       throws IllegalTransformationException
   {
     // The two nodes must be do statement
-    if(e1.opcode() != Xcode.F_DO_STATEMENT
-        || e2.opcode() != Xcode.F_DO_STATEMENT)
+    if(!Xnode.isOfCode(e1, Xcode.F_DO_STATEMENT)
+        || !Xnode.isOfCode(e2, Xcode.F_DO_STATEMENT))
     {
       throw new IllegalTransformationException("Only two do statement can be " +
           "swap iteration ranges.");
@@ -287,14 +286,13 @@ public final class Loop {
    */
   private static void cleanPragmas(Xnode node, String[] previous, String[] next)
   {
-    if(node.opcode() != Xcode.F_DO_STATEMENT) {
+    if(!Xnode.isOfCode(node, Xcode.F_DO_STATEMENT)) {
       return;
     }
 
     Xnode doStatement = node;
 
-    while(node.prevSibling() != null
-        && node.prevSibling().opcode() == Xcode.F_PRAGMA_STATEMENT) {
+    while(Xnode.isOfCode(node.prevSibling(), Xcode.F_PRAGMA_STATEMENT)) {
       String pragma = node.prevSibling().value().toLowerCase();
       Xnode toDelete = null;
 
@@ -312,8 +310,7 @@ public final class Loop {
     }
 
     node = doStatement; // Reset node to the initial position.
-    while(node.nextSibling() != null
-        && node.nextSibling().opcode() == Xcode.F_PRAGMA_STATEMENT) {
+    while(Xnode.isOfCode(node.nextSibling(), Xcode.F_PRAGMA_STATEMENT)) {
       String pragma = node.nextSibling().value().toLowerCase();
       Xnode toDelete = null;
 
@@ -343,7 +340,7 @@ public final class Loop {
   private static void extractBody(Xnode loop, Xnode ref)
       throws IllegalTransformationException
   {
-    if(loop == null || ref == null || loop.opcode() != Xcode.F_DO_STATEMENT) {
+    if(ref == null || !Xnode.isOfCode(loop, Xcode.F_DO_STATEMENT)) {
       throw new
           IllegalTransformationException(String.format(
           "%s for Loop.extractBody. opcode: %s",
@@ -398,7 +395,7 @@ public final class Loop {
    * passed Xnode is not a FdoStatement node or has no Var node.
    */
   public static String extractInductionVariable(Xnode doStatement) {
-    if(doStatement == null || doStatement.opcode() != Xcode.F_DO_STATEMENT) {
+    if(!Xnode.isOfCode(doStatement, Xcode.F_DO_STATEMENT)) {
       return "";
     }
     Xnode var = doStatement.matchDirectDescendant(Xcode.VAR);
@@ -420,8 +417,8 @@ public final class Loop {
                                             boolean withLowerBound)
   {
     // The two nodes must be do statement
-    if(l1 == null || l2 == null || l1.opcode() != Xcode.F_DO_STATEMENT
-        || l2.opcode() != Xcode.F_DO_STATEMENT)
+    if(!Xnode.isOfCode(l1, Xcode.F_DO_STATEMENT)
+        || !Xnode.isOfCode(l2, Xcode.F_DO_STATEMENT))
     {
       return false;
     }

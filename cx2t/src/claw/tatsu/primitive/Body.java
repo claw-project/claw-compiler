@@ -34,9 +34,8 @@ public final class Body {
   public static void append(Xnode masterBody, Xnode slaveBody)
       throws IllegalTransformationException
   {
-    if(masterBody == null || slaveBody == null
-        || masterBody.opcode() != Xcode.BODY
-        || slaveBody.opcode() != Xcode.BODY)
+    if(!Xnode.isOfCode(masterBody, Xcode.BODY)
+        || !Xnode.isOfCode(slaveBody, Xcode.BODY))
     {
       throw new
           IllegalTransformationException(String.format(
@@ -75,8 +74,8 @@ public final class Body {
       return;
     }
 
-    if(from == null || until == null || targetBody == null
-        || targetBody.opcode() != Xcode.BODY)
+    if(from == null || until == null
+        || !Xnode.isOfCode(targetBody, Xcode.BODY))
     {
       throw new
           IllegalTransformationException(String.format(
@@ -116,7 +115,7 @@ public final class Body {
   public static boolean isEmpty(Xnode body)
       throws IllegalTransformationException
   {
-    if(body == null || body.opcode() != Xcode.BODY) {
+    if(!Xnode.isOfCode(body, Xcode.BODY)) {
       throw new
           IllegalTransformationException(String.format(
           "%s for Body.isEmpty. opcode: %s",

@@ -37,7 +37,7 @@ public class AssignStatement extends Xnode {
   public String getLhsName() {
     Xnode lhs = getLhs();
     if(lhs != null) {
-      return (lhs.opcode() == Xcode.VAR) ? lhs.value() :
+      return lhs.is(Xcode.VAR) ? lhs.value() :
           lhs.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
     }
     return "";
@@ -72,11 +72,11 @@ public class AssignStatement extends Xnode {
   public boolean isChildOf(Xcode opcode) {
     Xnode crt = this;
     while(crt != null) {
-      if(crt.ancestor().opcode() == opcode) {
+      if(Xnode.isOfCode(crt.ancestor(), opcode)) {
         return true;
       }
       // Stop searching when FfunctionDefinition is reached
-      if(crt.ancestor().opcode() == Xcode.F_FUNCTION_DEFINITION) {
+      if(Xnode.isOfCode(crt.ancestor(), Xcode.F_FUNCTION_DEFINITION)) {
         return false;
       }
       crt = crt.ancestor();
@@ -127,8 +127,8 @@ public class AssignStatement extends Xnode {
   public boolean isConstantAssignement() {
     Set<String> usedVars = getReadNames();
     usedVars.remove(getLhsName());
-    return getRhs().opcode() == Xcode.F_INT_CONSTANT
-        || getLhs().opcode() == Xcode.F_REAL_CONSTANT
+    return Xnode.isOfCode(getRhs(), Xcode.F_INT_CONSTANT)
+        || Xnode.isOfCode(getLhs(), Xcode.F_REAL_CONSTANT)
         || usedVars.isEmpty();
   }
 }
