@@ -572,7 +572,7 @@ public class ScaForward extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-      Directive.generateParallelClause(xcodeml, fctCallAncestor,
+      Directive.generateParallelRegion(xcodeml, fctCallAncestor,
           fctCallAncestor);
     }
 

@@ -155,7 +155,7 @@ public final class Directive {
    * @param endStmt   End statement representing the end of the parallel region.
    * @return Last stmt inserted or null if nothing is inserted.
    */
-  public static Xnode generateParallelClause(XcodeProgram xcodeml,
+  public static Xnode generateParallelRegion(XcodeProgram xcodeml,
                                              Xnode startStmt, Xnode endStmt)
   {
     return insertPragmas(xcodeml, startStmt, endStmt,

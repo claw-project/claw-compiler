@@ -137,7 +137,7 @@ public class ScaCPUvectorizeGroup extends Sca {
     generateDoStatements(xcodeml, mergedBlocks);
 
     // Generate the parallel region
-    Directive.generateParallelClause(xcodeml,
+    Directive.generateParallelRegion(xcodeml,
         _fctDef.body().firstChild(), _fctDef.body().lastChild());
   }
 

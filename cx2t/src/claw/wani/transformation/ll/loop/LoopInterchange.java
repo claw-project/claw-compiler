@@ -70,7 +70,7 @@ public class LoopInterchange extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.PARALLEL)) {
-      Directive.generateParallelClause(xcodeml, _doStmts.getOuterStatement(),
+      Directive.generateParallelRegion(xcodeml, _doStmts.getOuterStatement(),
           _doStmts.getOuterStatement());
     }
 
