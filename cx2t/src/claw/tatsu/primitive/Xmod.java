@@ -150,7 +150,7 @@ public final class Xmod {
       }
       return;
     } else {
-      fctTypeMod = mod.getTypeTable().getFunctionType(fctDef);
+      fctTypeMod = mod.findFunctionType(fctDef.getName());
     }
 
     if(fctTypeMod == null) {
