@@ -165,12 +165,12 @@ public class ScaGPU extends Sca {
   private boolean canTransformReturn(Xnode returnStmt) {
     return returnStmt != null
         && returnStmt.is(Xcode.F_RETURN_STATEMENT)
-        && returnStmt.isAncestor(Xcode.BODY)
-        && returnStmt.ancestor().isAncestor(Xcode.THEN)
-        && returnStmt.ancestor().ancestor().isAncestor(Xcode.F_IF_STATEMENT)
-        && returnStmt.ancestor().ancestor().ancestor().isAncestor(Xcode.BODY)
+        && returnStmt.ancestorIs(Xcode.BODY)
+        && returnStmt.ancestor().ancestorIs(Xcode.THEN)
+        && returnStmt.ancestor().ancestor().ancestorIs(Xcode.F_IF_STATEMENT)
+        && returnStmt.ancestor().ancestor().ancestor().ancestorIs(Xcode.BODY)
         && returnStmt.ancestor().ancestor().ancestor().ancestor().
-        isAncestor(Xcode.F_FUNCTION_DEFINITION)
+        ancestorIs(Xcode.F_FUNCTION_DEFINITION)
         && returnStmt.ancestor().ancestor().ancestor().ancestor().ancestor().
         equals(_fctDef);
   }

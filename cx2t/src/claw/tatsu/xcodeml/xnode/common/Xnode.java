@@ -787,7 +787,7 @@ public class Xnode {
    * @param opcode Opcode to check for
    * @return True if the ancestor if of the given opcode. False otherwise.
    */
-  public boolean isAncestor(Xcode opcode) {
+  public boolean ancestorIs(Xcode opcode) {
     return ancestor() != null && ancestor().is(opcode);
   }
 
