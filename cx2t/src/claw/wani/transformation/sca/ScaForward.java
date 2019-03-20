@@ -391,7 +391,7 @@ public class ScaForward extends ClawTransformation {
      */
     int argOffset = 0;
     if(!params.isEmpty() && FortranType.STRUCT.isOfType(params.get(0).getType())
-        && _fctCall.firstChild().opcode().equals(Xcode.F_MEMBER_REF))
+        && Xnode.isOfCode(_fctCall.firstChild(), Xcode.F_MEMBER_REF))
     {
       argOffset = 1;
     }
