@@ -115,7 +115,7 @@ directive[ClawPragma l]
 
    // SCA (parallelize deprecated) directive
    | define_option[$l]+ PARALLELIZE data_over_clause[$l]*
-     parallelize_clauses[$l] EOF
+     sca_clauses[$l] EOF
      {
        // TODO to be removed
        System.err.
@@ -123,7 +123,7 @@ directive[ClawPragma l]
        $l.setDirective(ClawDirective.SCA);
        $l.getLocalModelConfig().generateDefaultLayout();
      }
-   | PARALLELIZE FORWARD parallelize_clauses[$l] EOF
+   | PARALLELIZE FORWARD foward_clauses[$l] EOF
      {
        // TODO to be removed
        System.err.
@@ -152,12 +152,12 @@ directive[ClawPragma l]
        $l.setClause(ClawClause.ROUTINE);
      }
    // SCA directive with define dimension
-   | define_option[$l]+ SCA data_over_clause[$l]* parallelize_clauses[$l] EOF
+   | define_option[$l]+ SCA data_over_clause[$l]* sca_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.SCA);
        $l.getLocalModelConfig().generateDefaultLayout();
      }
-   | SCA FORWARD parallelize_clauses[$l] EOF
+   | SCA FORWARD foward_clauses[$l] EOF
      {
        $l.setDirective(ClawDirective.SCA);
        $l.setClause(ClawClause.FORWARD);
@@ -484,11 +484,21 @@ define_option[ClawPragma l]:
 ;
 
 // Allow to switch order
-parallelize_clauses[ClawPragma l]:
+sca_clauses[ClawPragma l]:
   (
     { !$l.hasClause(ClawClause.COPY) }?   copy_clause[$l]
   | { !$l.hasClause(ClawClause.UPDATE) }? update_clause[$l]
   | { !$l.hasClause(ClawClause.CREATE) }? create_clause[$l]
+  )*
+;
+
+// Allow to switch order
+foward_clauses[ClawPragma l]:
+  (
+    { !$l.hasClause(ClawClause.COPY) }?   copy_clause[$l]
+  | { !$l.hasClause(ClawClause.UPDATE) }? update_clause[$l]
+  | { !$l.hasClause(ClawClause.CREATE) }? create_clause[$l]
+  | { !$l.hasClause(ClawClause.PARALLEL) }? parallel_clause[$l]
   )*
 ;
 
