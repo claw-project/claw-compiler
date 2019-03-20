@@ -571,6 +571,11 @@ public class ScaForward extends ClawTransformation {
       fctCallAncestor = _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
     }
 
+    if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
+      Directive.generateParallelClause(xcodeml, fctCallAncestor,
+          fctCallAncestor);
+    }
+
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
       List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fctCall,
           _fctType, _mod, Intent.INOUT, true);
