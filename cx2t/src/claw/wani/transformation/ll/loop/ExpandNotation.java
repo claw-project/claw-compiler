@@ -116,7 +116,7 @@ public class ExpandNotation extends ClawBlockTransformation {
         return false;
       }
       // Check if we are dealing with an vector notation
-      if(stmt.child(0).opcode() != Xcode.F_ARRAY_REF) {
+      if(!Xnode.isOfCode(stmt.child(0), Xcode.F_ARRAY_REF)) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
         return false;
@@ -124,7 +124,7 @@ public class ExpandNotation extends ClawBlockTransformation {
 
       List<Xnode> ranges = new ArrayList<>();
       for(Xnode el : stmt.child(0).children()) {
-        if(el.opcode() == Xcode.INDEX_RANGE) {
+        if(Xnode.isOfCode(el, Xcode.INDEX_RANGE)) {
           ranges.add(el);
         }
       }
@@ -256,7 +256,7 @@ public class ExpandNotation extends ClawBlockTransformation {
       for(Xnode arrayRef : allArrayRef) {
         for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);
-          if(el.opcode() == Xcode.INDEX_RANGE) {
+          if(Xnode.isOfCode(el, Xcode.INDEX_RANGE)) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
                 xcodeml.createVar(FortranType.INTEGER, induction, Xscope.LOCAL);

@@ -36,7 +36,7 @@ public final class Function {
    * @return The argument if found. Null otherwise.
    */
   public static Xnode findArg(Xnode fctCall, String argName) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return null;
     }
     Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
@@ -155,7 +155,7 @@ public final class Function {
 
     Xnode args = var.matchAncestor(Xcode.ARGUMENTS);
     return (args != null && args.prevSibling() != null
-        && args.prevSibling().opcode() == Xcode.NAME
+        && Xnode.isOfCode(args.prevSibling(), Xcode.NAME)
         && args.prevSibling().value().equalsIgnoreCase(name.toString()));
   }
 
@@ -192,10 +192,10 @@ public final class Function {
    * @return Function name if can be extracted. Null otherwise.
    */
   public static String getFctNameFromFctCall(Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return null;
     }
-    if(fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF) {
+    if(Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF)) {
       return fctCall.firstChild().getAttribute(Xattr.MEMBER);
     } else {
       return fctCall.matchSeq(Xcode.NAME).value();
@@ -210,7 +210,7 @@ public final class Function {
    * call.
    */
   public static int getNbOfArgsFromFctCall(Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return -1;
     }
     Xnode arguments = fctCall.matchDescendant(Xcode.ARGUMENTS);
@@ -225,9 +225,9 @@ public final class Function {
    * otherwise.
    */
   public static boolean isCallToTypeBoundProcedure(Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return false;
     }
-    return fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF;
+    return Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF);
   }
 }

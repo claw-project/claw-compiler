@@ -802,6 +802,18 @@ public class Xnode {
   }
 
   /**
+   * Check whether the given node is of the given opcode.
+   *
+   * @param node   Node to be checked.
+   * @param opcode Opcode to be matched.
+   * @return True if the node is not null and match the given opcode. False
+   * otherwise.
+   */
+  public static boolean isOfCode(Xnode node, Xcode opcode) {
+    return node != null && node.is(opcode);
+  }
+
+  /**
    * Check whether a node is nested into another one.
    *
    * @param ancestor Node in which the current node is supposed to be nested.
@@ -1033,6 +1045,6 @@ public class Xnode {
    * False otherwise.
    */
   public boolean isNotArrayIndex() {
-    return ancestor() == null || ancestor().opcode() != Xcode.ARRAY_INDEX;
+    return !Xnode.isOfCode(ancestor(), Xcode.ARRAY_INDEX);
   }
 }

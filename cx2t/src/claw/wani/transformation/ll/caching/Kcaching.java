@@ -90,8 +90,7 @@ public class Kcaching extends ClawTransformation {
       if(stmt != null) {
         for(Xnode el :
             stmt.matchDirectDescendant(Xcode.F_ARRAY_REF).children()) {
-          if(el.opcode() == Xcode.ARRAY_INDEX) {
-
+          if(el.is(Xcode.ARRAY_INDEX)) {
             if(!(el.matchDirectDescendant(Xcode.VAR) != null ||
                 el.matchDirectDescendant(Xcode.F_INT_CONSTANT) != null))
             {

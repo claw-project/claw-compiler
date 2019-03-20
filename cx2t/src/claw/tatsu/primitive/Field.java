@@ -274,7 +274,7 @@ public final class Field {
   private static void demoteToScalar(Xnode arrayRef)
       throws IllegalTransformationException
   {
-    if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
+    if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
       throw new
           IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }
@@ -295,7 +295,7 @@ public final class Field {
   private static void demote(Xnode arrayRef, List<Integer> keptDimensions)
       throws IllegalTransformationException
   {
-    if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
+    if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
       throw new
           IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }

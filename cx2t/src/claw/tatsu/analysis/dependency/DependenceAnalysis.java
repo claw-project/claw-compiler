@@ -39,7 +39,7 @@ public class DependenceAnalysis {
    * @throws Exception If the given node is null or is not a do statement node.
    */
   private void analyze() throws Exception {
-    if(_mainLoop == null || _mainLoop.opcode() != Xcode.F_DO_STATEMENT) {
+    if(!Xnode.isOfCode(_mainLoop, Xcode.F_DO_STATEMENT)) {
       throw new Exception("Analysis only on FdoStatement node");
     }
 
@@ -54,8 +54,8 @@ public class DependenceAnalysis {
     for(Xnode arrayRef : arrayRefs) {
       List<Xnode> arrayIndexes = arrayRef.matchAll(Xcode.ARRAY_INDEX);
       for(Xnode arrayIndex : arrayIndexes) {
-        if(arrayIndex.firstChild().opcode() == Xcode.MINUS_EXPR
-            || arrayIndex.firstChild().opcode() == Xcode.PLUS_EXPR)
+        if(Xnode.isOfCode(arrayIndex.firstChild(), Xcode.MINUS_EXPR)
+            || Xnode.isOfCode(arrayIndex.firstChild(), Xcode.PLUS_EXPR))
         {
           Xnode expr = arrayIndex.firstChild();
           Xnode var = expr.firstChild();

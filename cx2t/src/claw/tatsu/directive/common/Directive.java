@@ -130,12 +130,12 @@ public final class Directive {
    * @return True if the directive is present. False otherwise.
    */
   private static Xnode isDecoratedWith(Xnode doStmt, String directive) {
-    if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
+    if(!Xnode.isOfCode(doStmt, Xcode.F_DO_STATEMENT)) {
       return null;
     }
 
     Xnode sibling = doStmt.prevSibling();
-    while(sibling != null && sibling.opcode() == Xcode.F_PRAGMA_STATEMENT) {
+    while(Xnode.isOfCode(sibling, Xcode.F_PRAGMA_STATEMENT)) {
       if(sibling.value().toLowerCase().contains(directive.toLowerCase())) {
         return sibling;
       }
@@ -487,7 +487,7 @@ public final class Directive {
   {
     DirectiveGenerator dg = Context.get().getGenerator();
     if(dg.getDirectiveLanguage() == CompilerDirective.NONE
-        || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
+        || !Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
     {
       return null;
     }
@@ -505,7 +505,7 @@ public final class Directive {
           && ((dg.getSkippedStatementsInPreamble().contains(first.opcode()))
           || isClawDirective(first))) {
 
-        if(first.opcode() == Xcode.F_IF_STATEMENT) {
+        if(Xnode.isOfCode(first, Xcode.F_IF_STATEMENT)) {
           Xnode then = first.matchDescendant(Xcode.THEN);
           if(then != null && then.hasBody()) {
             for(Xnode child : then.body().children()) {
@@ -538,7 +538,7 @@ public final class Directive {
    * @return True if the node is a CLAW directive. False otherwise.
    */
   private static boolean isClawDirective(Xnode node) {
-    return node != null && node.opcode() == Xcode.F_PRAGMA_STATEMENT
+    return Xnode.isOfCode(node, Xcode.F_PRAGMA_STATEMENT)
         && node.value().toLowerCase().startsWith(TatsuConstant.DIRECTIVE_CLAW);
   }
 
@@ -557,7 +557,7 @@ public final class Directive {
     DirectiveGenerator dg = Context.get().getGenerator();
 
     if(dg.getDirectiveLanguage() == CompilerDirective.NONE
-        || functionDefinition.opcode() != Xcode.F_FUNCTION_DEFINITION)
+        || !Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
     {
       return null;
     }
@@ -567,7 +567,7 @@ public final class Directive {
     }
     if(from != null) { // Start from given element
       last = from;
-      if(last.opcode() == Xcode.F_CONTAINS_STATEMENT) {
+      if(last.is(Xcode.F_CONTAINS_STATEMENT)) {
         last = last.prevSibling();
       }
     }
@@ -576,7 +576,7 @@ public final class Directive {
     } else {
       while(last.prevSibling() != null
           && dg.getSkippedStatementsInEpilogue().contains(last.opcode())) {
-        if(last.hasBody() || last.opcode() == Xcode.F_IF_STATEMENT) {
+        if(last.hasBody() || last.is(Xcode.F_IF_STATEMENT)) {
           List<Xnode> children = (last.hasBody()) ? last.body().children()
               : last.matchDirectDescendant(Xcode.THEN).body().children();
           for(Xnode child : children) {

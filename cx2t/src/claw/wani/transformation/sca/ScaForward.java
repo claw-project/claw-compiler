@@ -78,15 +78,15 @@ public class ScaForward extends ClawTransformation {
           _claw.getPragma());
       return false;
     }
-    if(next.opcode() == Xcode.EXPR_STATEMENT
-        || next.opcode() == Xcode.F_ASSIGN_STATEMENT)
+    if(Xnode.isOfCode(next, Xcode.EXPR_STATEMENT)
+        || Xnode.isOfCode(next, Xcode.F_ASSIGN_STATEMENT))
     {
-      _isNestedInAssignment = next.opcode() == Xcode.F_ASSIGN_STATEMENT;
+      _isNestedInAssignment = Xnode.isOfCode(next, Xcode.F_ASSIGN_STATEMENT);
       _fctCall = next.matchSeq(Xcode.FUNCTION_CALL);
       if(_fctCall != null) {
         return analyzeForward(xcodeml);
       }
-    } else if(next.opcode() == Xcode.F_DO_STATEMENT) {
+    } else if(Xnode.isOfCode(next, Xcode.F_DO_STATEMENT)) {
       _doStatements = new NestedDoStatement(next);
       return analyzeForwardWithDo(xcodeml);
     }
@@ -130,17 +130,15 @@ public class ScaForward extends ClawTransformation {
         }
       }
       for(Xnode n : _doStatements.get(i).body().children()) {
-        if(n.opcode() == Xcode.F_DO_STATEMENT) {
+        if(n.is(Xcode.F_DO_STATEMENT)) {
           continue;
         }
-        if(n.opcode() != Xcode.F_PRAGMA_STATEMENT
-            && n.opcode() != Xcode.EXPR_STATEMENT)
-        {
+        if(!n.is(Xcode.F_PRAGMA_STATEMENT) && !n.is(Xcode.EXPR_STATEMENT)) {
           xcodeml.addError("Only pragmas, comments and function calls allowed "
               + "in the do statements.", _claw.getPragma());
           return false;
-        } else if(n.opcode() == Xcode.EXPR_STATEMENT
-            || n.opcode() == Xcode.F_ASSIGN_STATEMENT)
+        } else if(n.is(Xcode.EXPR_STATEMENT)
+            || n.is(Xcode.F_ASSIGN_STATEMENT))
         {
           _fctCall = n.matchSeq(Xcode.FUNCTION_CALL);
           if(_fctCall != null) {
@@ -285,11 +283,11 @@ public class ScaForward extends ClawTransformation {
    * @param fctCall Function call to be analyzed.
    */
   private void detectParameterMapping(Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return;
     }
     for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
-      if(arg.opcode() == Xcode.NAMED_VALUE) {
+      if(arg.is(Xcode.NAMED_VALUE)) {
         String originalName = arg.getAttribute(Xattr.NAME);
         Xnode targetVar = arg.matchDescendant(Xcode.VAR);
         if(targetVar != null) {
@@ -456,7 +454,7 @@ public class ScaForward extends ClawTransformation {
     if(_flatten) {
       Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
       for(Xnode arg : arguments.children()) {
-        if(arg.opcode() == Xcode.F_ARRAY_REF && arg.matchDirectDescendant(
+        if(arg.is(Xcode.F_ARRAY_REF) && arg.matchDirectDescendant(
             Arrays.asList(Xcode.INDEX_RANGE, Xcode.ARRAY_INDEX)) != null)
         {
           List<Xnode> arrayIndexes = arg.matchAll(Xcode.ARRAY_INDEX);
@@ -655,16 +653,11 @@ public class ScaForward extends ClawTransformation {
       }
 
       // Adapt array index to reflect the new return type
-      if(lhs.opcode() == Xcode.F_ARRAY_REF) {
+      if(Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF)) {
         for(int i = 0; i < promotionInfo.diffDimension(); ++i) {
           Xnode indexRange = xcodeml.createEmptyAssumedShaped();
           lhs.append(indexRange);
         }
-      /*} else if(lhs.opcode() == Xcode.VAR) {
-        // TODO avoid array var without colon notation
-          /* throw new IllegalTransformationException("Use the colon notation "
-              + "for the return variable. This notation is not supported." +
-              _claw.getPragma().value()); */
       } else {
         throw new IllegalTransformationException("Unsupported return " +
             "variable for promotion.", _claw.getPragma().lineNo());
@@ -712,7 +705,7 @@ public class ScaForward extends ClawTransformation {
         // Check if the assignment statement uses a promoted variable
         if(_promotedVar.contains(var.value())
             && var.matchAncestor(Xcode.FUNCTION_CALL) == null
-            && lhs.opcode() == Xcode.F_ARRAY_REF)
+            && Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF))
         {
           Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
           if(varInLhs == null) {

@@ -93,11 +93,11 @@ public class XnodeUtil {
    */
   public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef) {
     List<Xnode> ranges = new ArrayList<>();
-    if(arrayRef.opcode() != Xcode.F_ARRAY_REF) {
+    if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
       return ranges;
     }
     for(Xnode el : arrayRef.children()) {
-      if(el.opcode() == Xcode.INDEX_RANGE) {
+      if(el.is(Xcode.INDEX_RANGE)) {
         ranges.add(el);
       }
     }
@@ -401,7 +401,7 @@ public class XnodeUtil {
    */
   public static Set<String> findAllReferences(Xnode parent) {
     Set<String> names = new HashSet<>();
-    if(parent.opcode() == Xcode.VAR) {
+    if(Xnode.isOfCode(parent, Xcode.VAR)) {
       names.add(parent.value());
       return names;
     }
@@ -449,7 +449,7 @@ public class XnodeUtil {
   public static boolean isInductionIndex(Xnode arrayIndex,
                                          List<String> inductionVariables)
   {
-    if(arrayIndex == null || arrayIndex.opcode() != Xcode.ARRAY_INDEX
+    if(!Xnode.isOfCode(arrayIndex, Xcode.ARRAY_INDEX)
         || inductionVariables == null || inductionVariables.isEmpty())
     {
       return false;
@@ -592,7 +592,7 @@ public class XnodeUtil {
    * @return String representation of the return value if any. Null otherwise.
    */
   public static String gatherReturnValue(XcodeProgram xcodeml, Xnode fctCall) {
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return null;
     }
 
@@ -630,7 +630,7 @@ public class XnodeUtil {
                                              Intent intent, boolean arrayOnly)
   {
     List<String> gatheredArguments = new ArrayList<>();
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return gatheredArguments;
     }
     Xnode argumentsNode = fctCall.matchDescendant(Xcode.ARGUMENTS);
@@ -652,7 +652,7 @@ public class XnodeUtil {
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
 
-      if(arg.opcode() == Xcode.NAMED_VALUE) {
+      if(Xnode.isOfCode(arg, Xcode.NAMED_VALUE)) {
         arg = arg.firstChild();
       }
 

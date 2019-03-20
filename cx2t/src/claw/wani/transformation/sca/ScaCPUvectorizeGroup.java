@@ -354,9 +354,11 @@ public class ScaCPUvectorizeGroup extends Sca {
         }
       }
 
-      if(((lhs.opcode() == Xcode.F_ARRAY_REF || lhs.opcode() == Xcode.VAR)
+      if(((Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF)
+          || Xnode.isOfCode(lhs, Xcode.VAR))
           && _arrayFieldsInOut.contains(lhsName) && wrapInDoStatement) ||
-          ((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF
+          ((Xnode.isOfCode(lhs, Xcode.VAR)
+              || Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF)
               && _scalarFields.contains(lhsName)) &&
               (shouldBePromoted(assign) && wrapInDoStatement)))
       {
@@ -378,7 +380,8 @@ public class ScaCPUvectorizeGroup extends Sca {
      * switch to an array reference */
     for(AssignStatement assign : assignStatements) {
       Xnode lhs = assign.getLhs();
-      if((lhs.opcode() == Xcode.VAR || lhs.opcode() == Xcode.F_ARRAY_REF)
+      if((Xnode.isOfCode(lhs, Xcode.VAR)
+          || Xnode.isOfCode(lhs, Xcode.F_ARRAY_REF))
           && !_noPromotion.contains(assign.getLhsName())
           && !_inductionVariables.contains(assign.getLhsName())
           && !_arrayFieldsInOut.contains(assign.getLhsName())

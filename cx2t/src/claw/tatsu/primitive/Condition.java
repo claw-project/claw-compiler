@@ -32,9 +32,7 @@ public final class Condition {
    * otherwise.
    */
   public static boolean dependsOn(Xnode condition, Set<String> variables) {
-    if(condition == null || condition.opcode() != Xcode.CONDITION
-        || variables.isEmpty())
-    {
+    if(!Xnode.isOfCode(condition, Xcode.CONDITION) || variables.isEmpty()) {
       return false;
     }
     List<Xnode> vars = condition.matchAll(Xcode.VAR);
@@ -54,7 +52,7 @@ public final class Condition {
    * otherwise.
    */
   public static boolean isAllocationRelated(Xnode condition) {
-    if(condition == null || condition.opcode() != Xcode.CONDITION) {
+    if(!Xnode.isOfCode(condition, Xcode.CONDITION)) {
       return false;
     }
 

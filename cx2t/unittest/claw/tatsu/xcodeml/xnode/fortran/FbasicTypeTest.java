@@ -172,19 +172,19 @@ public class FbasicTypeTest {
     Xnode dim0 = b.getDimensions(0);
     Xnode dim1 = b.getDimensions(1);
 
-    assertSame(dim0.opcode(), Xcode.ARRAY_INDEX);
-    assertSame(dim1.opcode(), Xcode.INDEX_RANGE);
+    assertTrue(Xnode.isOfCode(dim0, Xcode.ARRAY_INDEX));
+    assertTrue(Xnode.isOfCode(dim1, Xcode.INDEX_RANGE));
 
-    assertSame(dim0.child(0).opcode(), Xcode.F_INT_CONSTANT);
+    assertTrue(Xnode.isOfCode(dim0.child(0), Xcode.F_INT_CONSTANT));
     assertEquals("10", dim0.child(0).value());
 
     assertNotNull(dim1.matchSeq(Xcode.LOWER_BOUND));
     assertNotNull(dim1.matchSeq(Xcode.UPPER_BOUND));
-    assertSame(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode(),
-        Xcode.F_INT_CONSTANT);
+    assertTrue(Xnode.isOfCode(dim1.matchSeq(Xcode.LOWER_BOUND).child(0),
+        Xcode.F_INT_CONSTANT));
     assertEquals("1", dim1.matchSeq(Xcode.LOWER_BOUND).child(0).value());
-    assertSame(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode(),
-        Xcode.F_INT_CONSTANT);
+    assertTrue(Xnode.isOfCode(dim1.matchSeq(Xcode.LOWER_BOUND).child(0),
+        Xcode.F_INT_CONSTANT));
     assertEquals("10", dim1.matchSeq(Xcode.UPPER_BOUND).child(0).value());
 
     assertEquals("Fint", b.getRef());

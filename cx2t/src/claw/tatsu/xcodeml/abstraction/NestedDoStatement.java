@@ -41,9 +41,7 @@ public class NestedDoStatement {
    */
   public NestedDoStatement(Xnode outerDoStatement, int nb) {
     _statements = new ArrayList<>();
-    if(outerDoStatement == null
-        || outerDoStatement.opcode() != Xcode.F_DO_STATEMENT)
-    {
+    if(!Xnode.isOfCode(outerDoStatement, Xcode.F_DO_STATEMENT)) {
       return;
     }
 
