@@ -6,7 +6,6 @@ package claw.wani.x2t.configuration;
 
 import claw.ClawVersion;
 import claw.shenron.transformation.BlockTransformation;
-import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;

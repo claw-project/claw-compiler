@@ -20,8 +20,6 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
 import claw.tatsu.directive.configuration.AcceleratorConfiguration;
