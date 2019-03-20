@@ -216,4 +216,18 @@ public final class Function {
     Xnode arguments = fctCall.matchDescendant(Xcode.ARGUMENTS);
     return arguments != null ? arguments.children().size() : 0;
   }
+
+  /**
+   * Check whether the function call is calling a type bound procedure.
+   *
+   * @param fctCall Function call node.
+   * @return True if the function call is a type bound procedure call. False
+   * otherwise.
+   */
+  public static boolean isCallToTypeBoundProcedure(Xnode fctCall) {
+    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+      return false;
+    }
+    return fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF;
+  }
 }

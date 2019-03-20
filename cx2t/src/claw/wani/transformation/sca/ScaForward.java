@@ -171,11 +171,6 @@ public class ScaForward extends ClawTransformation {
 
     _calledFctName = Function.getFctNameFromFctCall(_fctCall);
 
-    boolean isTypeBoundProcedure = false;
-    if(_fctCall.firstChild().opcode() == Xcode.F_MEMBER_REF) {
-      isTypeBoundProcedure = true;
-    }
-
     FfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_calledFctName);
     FfunctionDefinition parentFctDef = _claw.getPragma().findParentFunction();
@@ -187,7 +182,7 @@ public class ScaForward extends ClawTransformation {
 
     FmoduleDefinition parentModule = parentFctDef.findParentModule();
 
-    if(isTypeBoundProcedure) {
+    if(Function.isCallToTypeBoundProcedure(_fctCall)) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * matchSeq the correct function in the typeTable.
        * TODO if there is a rename.
@@ -317,14 +312,13 @@ public class ScaForward extends ClawTransformation {
   private boolean findInModule(List<Xnode> useDecls) {
     // TODO handle rename
     for(Xnode d : useDecls) {
-      // Check whether a CLAW file is available.
+      // Check whether a CLAW module file is available.
       _mod = Xmod.findClaw(d.getAttribute(Xattr.NAME));
       if(_mod != null) {
         Message.debug("Reading CLAW module file: " + _mod.getFullPath());
         if(_mod.getIdentifiers().contains(_calledFctName)) {
           _fctType = _mod.findFunctionTypeFromCall(_fctCall);
           if(_fctType != null) {
-            _calledFctName = null; // TODO check if still useful
             return true;
           }
         }
