@@ -132,7 +132,6 @@ public class FfunctionDefinition extends Xnode {
     try {
       return Body.isEmpty(body());
     } catch(IllegalTransformationException itex) {
-      // TODO logger
       return false;
     }
   }
