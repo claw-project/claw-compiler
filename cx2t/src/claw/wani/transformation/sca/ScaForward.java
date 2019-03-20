@@ -231,8 +231,9 @@ public class ScaForward extends ClawTransformation {
           uses.addAll(parentModule.getDeclarationTable().uses());
         }
         if(!findInModule(uses)) {
-          xcodeml.addError("Function definition " + _calledFctName +
-              " not found in module ", _claw.getPragma());
+          xcodeml.addError(
+              String.format("Function definition %s not found in module.",
+                  _calledFctName), _claw.getPragma());
           return false;
         }
       } else {
