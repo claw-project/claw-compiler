@@ -10,6 +10,7 @@ import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.generator.DirectiveGenerator;
 
+import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
@@ -295,49 +296,28 @@ public final class Directive {
   public static void generateRoutineDirectives(XcodeProgram xcodeml,
                                                FfunctionDefinition fctDef)
   {
-    if(Context.get().getGenerator().getDirectiveLanguage()
-        == CompilerDirective.NONE)
-    {
-      return;
-    }
-
     DirectiveGenerator dirGen = Context.get().getGenerator();
+    if(dirGen.getDirectiveLanguage() == CompilerDirective.NONE) {
+      return; // Do nothing if "none" is selected for directive
+    }
 
     // Find all fct call in the current transformed fct
     List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL);
     for(Xnode fctCall : fctCalls) {
-      // Do nothing for intrinsic fct
-      if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
+      String fctName = Function.getFctNameFromFctCall(fctCall);
+      // Do nothing for intrinsic fct or null fctName
+      if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)
+          || fctName == null)
+      {
         continue;
-      }
-      Xnode nameNode = fctCall.matchSeq(Xcode.NAME);
-      String fctName;
-      if(nameNode != null) {
-        fctName = nameNode.value();
-      } else {
-        continue;
-      }
-      FfunctionDefinition calledFctDef =
-          xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
-      if(calledFctDef == null) {
-        Xnode meaningfulParentNode = fctDef.findParentModule();
-        if(meaningfulParentNode == null) { // fct is not a module child
-          meaningfulParentNode =
-              fctDef.matchAncestor(Xcode.GLOBAL_DECLARATIONS);
-        }
-        List<Xnode> fctDefs =
-            meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION);
-        for(Xnode fDef : fctDefs) {
-          Xnode name = fDef.matchSeq(Xcode.NAME);
-          if(name != null && name.value().equals(fctName)) {
-            calledFctDef = new FfunctionDefinition(fDef);
-            break;
-          }
-        }
       }
 
+      FfunctionDefinition calledFctDef =
+          Function.findFunctionDefinitionFromFctCall(xcodeml, fctDef, fctCall);
+
       if(calledFctDef != null) {
-        // TODO: check that the directive is not present yet.
+        // TODO - Check that the directive is not present yet.
+        // TODO - Directive.hasDirectives(calledFctDef)
         addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
             calledFctDef.body().child(0));
         Message.debug(dirGen.getPrefix()
