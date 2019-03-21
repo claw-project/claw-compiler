@@ -429,10 +429,10 @@ public class ScaForward extends ClawTransformation {
         type = fDef.getSymbolTable().get(varId).getType();
 
         /* If flatten mode, we do not add extra parameters to the function
-         * definition */
-        if(!_flatten) {
-          Xnode param =
-              xcodeml.createAndAddParamIfNotExists(varId, type, parentFctType);
+         * definition. */
+        if(!_flatten && !fDef.getSymbolTable().contains(varId)) {
+          Xnode param = xcodeml.createAndAddParamIfNotExists(varId, type,
+              parentFctType);
           if(param != null) {
             param.setBooleanAttribute(Xattr.IS_INSERTED, true);
           }

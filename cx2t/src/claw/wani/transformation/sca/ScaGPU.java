@@ -279,11 +279,17 @@ public class ScaGPU extends Sca {
      * transformation until having information on the calling site from
      * another translation unit. */
     if(_fctType.isElemental()) {
+
+      if(_fctType.isFunction() && !_fctType.hasAttribute(Xattr.RESULT_NAME)) {
+        _arrayFieldsInOut.add(_fctDef.getName());
+      }
+
       if(Configuration.get().getBooleanParameter(
           Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED))
       {
-        forceAssumedShapedArrayPromotion = !_fctType.isFunction()
-            || !_arrayFieldsInOut.contains(_fctType.getResultName());
+        forceAssumedShapedArrayPromotion = _fctType.isSubroutine()
+            || !(_arrayFieldsInOut.contains(_fctType.getResultName())
+            || _arrayFieldsInOut.contains(_fctDef.getName()));
       }
 
       // SCA ELEMENTAL
