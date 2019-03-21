@@ -186,6 +186,41 @@ public final class Function {
   }
 
   /**
+   * Find function definition node from a function call node.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param fctDef  Function definition encapsulating the function call.
+   * @param fctCall Function call to find the definition.
+   * @return The function definition if found. Null otherwise.
+   */
+  public static FfunctionDefinition findFunctionDefinitionFromFctCall(
+      XcodeProgram xcodeml, FfunctionDefinition fctDef, Xnode fctCall)
+  {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
+      return null;
+    }
+
+    String fctName = getFctNameFromFctCall(fctCall);
+    FfunctionDefinition calledFctDef =
+        xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
+    if(calledFctDef == null) {
+      Xnode meaningfulParentNode = fctDef.findParentModule();
+      if(meaningfulParentNode == null) { // fct is not a module child
+        meaningfulParentNode = fctDef.matchAncestor(Xcode.GLOBAL_DECLARATIONS);
+      }
+      List<Xnode> fctDefs =
+          meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION);
+      for(Xnode fDef : fctDefs) {
+        Xnode name = fDef.matchSeq(Xcode.NAME);
+        if(name != null && name.value().equals(fctName)) {
+          return new FfunctionDefinition(fDef);
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Extract the name of the function in a function call.
    *
    * @param fctCall Function call node.

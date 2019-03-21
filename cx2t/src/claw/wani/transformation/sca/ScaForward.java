@@ -429,10 +429,10 @@ public class ScaForward extends ClawTransformation {
         type = fDef.getSymbolTable().get(varId).getType();
 
         /* If flatten mode, we do not add extra parameters to the function
-         * definition */
-        if(!_flatten) {
-          Xnode param =
-              xcodeml.createAndAddParamIfNotExists(varId, type, parentFctType);
+         * definition. */
+        if(!_flatten && !fDef.getSymbolTable().contains(varId)) {
+          Xnode param = xcodeml.createAndAddParamIfNotExists(varId, type,
+              parentFctType);
           if(param != null) {
             param.setBooleanAttribute(Xattr.IS_INSERTED, true);
           }
@@ -569,6 +569,11 @@ public class ScaForward extends ClawTransformation {
     Xnode fctCallAncestor = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
     if(fctCallAncestor == null) {
       fctCallAncestor = _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+    }
+
+    if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
+      Directive.generateParallelRegion(xcodeml, fctCallAncestor,
+          fctCallAncestor);
     }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {

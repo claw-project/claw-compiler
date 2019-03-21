@@ -215,11 +215,6 @@ public final class Xmod {
             }
           }
         }
-        String dummy;
-        if(pLocal.hasAttribute(Xattr.PROMOTION_INFO)) {
-          dummy = pLocal.getAttribute(Xattr.PROMOTION_INFO);
-          pLocal.setAttribute(Xattr.PROMOTION_INFO, dummy);
-        }
 
         // Copy the promotion information
         pLocal.copyAttribute(pMod, Xattr.PROMOTION_INFO);

@@ -52,6 +52,13 @@ public final class Field {
     Xid id = fctDef.getSymbolTable().get(fieldInfo.getIdentifier());
     Xnode decl = fctDef.getDeclarationTable().get(fieldInfo.getIdentifier());
     FbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
+    FfunctionType tmpFctType = xcodeml.getTypeTable().getFunctionType(id);
+    boolean returnTypePromotion = false;
+    if(crtType == null && tmpFctType != null) {
+      // Have to retrieve function return type.
+      crtType = xcodeml.getTypeTable().getBasicType(tmpFctType.getReturnType());
+      returnTypePromotion = true;
+    }
 
     if(!FortranType.isBuiltInType(id.getType()) && crtType == null) {
       throw new IllegalTransformationException("Basic type of field " +
@@ -90,7 +97,11 @@ public final class Field {
     } else {
       fieldInfo.setPromotionType(PromotionInfo.PromotionType.SCALAR_TO_ARRAY);
       Intent newIntent = crtType != null ? crtType.getIntent() : Intent.NONE;
-      newType = xcodeml.createBasicType(type, id.getType(), newIntent);
+      if(returnTypePromotion) {
+        newType = xcodeml.createBasicType(type, crtType.getRef(), newIntent);
+      } else {
+        newType = xcodeml.createBasicType(type, id.getType(), newIntent);
+      }
       newType.copyAttributes(crtType);
     }
 
@@ -150,6 +161,10 @@ public final class Field {
     id.setType(type);
     decl.matchSeq(Xcode.NAME).setType(type);
     xcodeml.getTypeTable().add(newType);
+
+    if(returnTypePromotion) {
+      fctType.setAttribute(Xattr.RETURN_TYPE, type);
+    }
 
     // Update params in function type with correct type hash
     for(Xnode param : fctType.getParameters()) {

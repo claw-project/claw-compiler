@@ -406,7 +406,7 @@ public class LoopExtraction extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.PARALLEL)) {
-      Directive.generateParallelClause(xcodeml,
+      Directive.generateParallelRegion(xcodeml,
           (grip == null) ? extractedLoop : grip, extractedLoop);
     }
 
