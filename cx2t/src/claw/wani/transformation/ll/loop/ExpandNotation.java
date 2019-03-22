@@ -256,7 +256,7 @@ public class ExpandNotation extends ClawBlockTransformation {
       for(Xnode arrayRef : allArrayRef) {
         for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);
-          if(Xnode.isOfCode(el, Xcode.INDEX_RANGE)) {
+          if(Xnode.isOfCode(el, Xcode.INDEX_RANGE) && i < doStmts.length) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
                 xcodeml.createVar(FortranType.INTEGER, induction, Xscope.LOCAL);
