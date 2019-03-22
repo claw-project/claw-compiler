@@ -7,12 +7,14 @@ package claw.wani.transformation.ll.loop;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawBlockTransformation;
@@ -270,10 +272,21 @@ public class ExpandNotation extends ClawBlockTransformation {
         }
       }
 
+      List<Xnode> fctCalls = stmt.matchAll(Xcode.FUNCTION_CALL);
+      for(Xnode fctCall : fctCalls) {
+        if(Function.isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
+          Function.adaptIntrinsicSumCall(fctCall);
+        }
+      }
+
       // 4. Move assignment statement inside the most inner loop
       doStmts[ranges.size() - 1].body().append(stmt, true);
       stmt.delete();
     }
+
+
+
+
 
     Xnode grip = null;
     if(_clawStart.hasClause(ClawClause.PARALLEL)) {
