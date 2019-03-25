@@ -378,7 +378,7 @@ public class Configuration {
    * @return Value of the parameter. Null if parameter doesn't exists.
    */
   public String getParameter(String key) {
-    return (_parameters.containsKey(key)) ? _parameters.get(key) : null;
+    return _parameters.getOrDefault(key, null);
   }
 
   /**
