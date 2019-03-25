@@ -283,11 +283,7 @@ public class ExpandNotation extends ClawBlockTransformation {
       doStmts[ranges.size() - 1].body().append(stmt, true);
       stmt.delete();
     }
-
-
-
-
-
+    
     Xnode grip = null;
     if(_clawStart.hasClause(ClawClause.PARALLEL)) {
       List<String> privates = Collections.emptyList();
