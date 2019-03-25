@@ -237,16 +237,13 @@ public class VectorBlock {
   private static List<VectorBlock> sortBlockByLineOrder(Set<VectorBlock> blocks)
   {
     List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
-    Collections.sort(sortedVectorBlocks, new Comparator<VectorBlock>() {
-      @Override
-      public int compare(VectorBlock s1, VectorBlock s2) {
-        if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
-          return -1;
-        } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
-          return 1;
-        }
-        return 0;
+    Collections.sort(sortedVectorBlocks, (s1, s2) -> {
+      if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
+        return -1;
+      } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
+        return 1;
       }
+      return 0;
     });
     return sortedVectorBlocks;
   }
