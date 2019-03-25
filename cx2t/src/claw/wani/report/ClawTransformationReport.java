@@ -105,7 +105,7 @@ public class ClawTransformationReport {
     infos.add(new String[]{"Directive",
         Configuration.get().getCurrentDirective().toString()});
     infos.add(new String[]{"Driver command", ""}); // TODO
-    infos.add(new String[]{"Translator command", Utility.join(" ", args)});
+    infos.add(new String[]{"Translator command", String.join(" ", args)});
 
     int indentCol = 0;
     for(String[] info : infos) {

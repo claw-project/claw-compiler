@@ -290,7 +290,7 @@ acc_clause[ClawPragma l]
   }
   :
     ACC '(' identifiers[tempAcc] ')'
-    { $l.setValue(ClawClause.ACC, Utility.join(" ", tempAcc)); }
+    { $l.setValue(ClawClause.ACC, String.join(" ", tempAcc)); }
 ;
 
 // interchange clause

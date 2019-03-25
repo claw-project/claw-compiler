@@ -186,7 +186,7 @@ public class IllegalDirectiveException extends Exception {
    */
   private String getExpectingByFoundTokenMsg() {
     return String.format("%s Expected %s but found '%s'", getMsgPrefix(),
-        Utility.join(",", _expectedTokens), _offendingToken);
+        String.join(",", _expectedTokens), _offendingToken);
   }
 
   /**
@@ -196,7 +196,7 @@ public class IllegalDirectiveException extends Exception {
    */
   private String getExpectingTokenMsg() {
     return String.format("%s Expecting %s", getMsgPrefix(),
-        Utility.join(", ", _expectedTokens));
+        String.join(", ", _expectedTokens));
   }
 
   /**

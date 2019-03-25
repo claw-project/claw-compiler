@@ -8,6 +8,7 @@ import claw.tatsu.common.Utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class hold information about error happening during transformation
@@ -75,6 +76,8 @@ public class XanalysisError {
    * @return String value of the line numbers.
    */
   public String getConcatLines() {
-    return Utility.join(",", _errorLineNumbers);
+    return _errorLineNumbers.stream()
+        .map( n -> n.toString() )
+        .collect( Collectors.joining( "," ) );
   }
 }

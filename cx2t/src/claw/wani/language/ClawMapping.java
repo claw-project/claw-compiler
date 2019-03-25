@@ -7,6 +7,7 @@ package claw.wani.language;
 import claw.tatsu.common.Utility;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A ClawMapping object holds the loop-extract mapping clause representation
@@ -74,7 +75,9 @@ public class ClawMapping {
    */
   @Override
   public String toString() {
-    return Utility.join(",", getMappedVariables()) + ":" +
-        Utility.join(",", getMappingVariables());
+    return getMappedVariables().stream().map(ClawMappingVar::toString)
+        .collect(Collectors.joining(",")) + ":" +
+        getMappingVariables().stream().map(ClawMappingVar::toString)
+            .collect(Collectors.joining(","));
   }
 }
