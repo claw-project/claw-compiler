@@ -82,7 +82,7 @@ public class ExpandNotation extends ClawBlockTransformation {
        * expand notation that share an identical iteration range. */
 
       // 1st group always exists
-      _groupedAssignStmts.add(new ArrayList<Xnode>());
+      _groupedAssignStmts.add(new ArrayList<>());
       int crtGroup = 0;
       Xnode refArrayRef = foundAssignments.get(0).matchSeq(Xcode.F_ARRAY_REF);
       List<Xnode> refRanges =
@@ -102,7 +102,7 @@ public class ExpandNotation extends ClawBlockTransformation {
         if(!Range.compare(refRanges, ranges)) {
           refRanges = ranges;
           ++crtGroup;
-          _groupedAssignStmts.add(new ArrayList<Xnode>());
+          _groupedAssignStmts.add(new ArrayList<>());
           _groupIterationRanges.add(refRanges);
         }
         _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(i));
@@ -283,7 +283,7 @@ public class ExpandNotation extends ClawBlockTransformation {
       doStmts[ranges.size() - 1].body().append(stmt, true);
       stmt.delete();
     }
-    
+
     Xnode grip = null;
     if(_clawStart.hasClause(ClawClause.PARALLEL)) {
       List<String> privates = Collections.emptyList();

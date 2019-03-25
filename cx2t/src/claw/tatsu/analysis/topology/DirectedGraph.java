@@ -33,7 +33,7 @@ public final class DirectedGraph<T> implements Iterable<T> {
     }
 
     // Otherwise, add the node with an empty set of outgoing edges.
-    mGraph.put(node, new HashSet<T>());
+    mGraph.put(node, new HashSet<>());
     return true;
   }
 
