@@ -237,7 +237,7 @@ public class VectorBlock {
   private static List<VectorBlock> sortBlockByLineOrder(Set<VectorBlock> blocks)
   {
     List<VectorBlock> sortedVectorBlocks = new ArrayList<>(blocks);
-    Collections.sort(sortedVectorBlocks, (s1, s2) -> {
+    sortedVectorBlocks.sort((s1, s2) -> {
       if(s1.getStartStmt().lineNo() < s2.getStartStmt().lineNo()) {
         return -1;
       } else if(s1.getStartStmt().lineNo() > s2.getStartStmt().lineNo()) {
