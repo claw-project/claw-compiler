@@ -4,8 +4,6 @@
  */
 package claw.tatsu.xcodeml.error;
 
-import claw.wani.language.ClawMapping;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
