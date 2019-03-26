@@ -4,8 +4,6 @@
  */
 package claw.wani.language;
 
-import claw.tatsu.common.Utility;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

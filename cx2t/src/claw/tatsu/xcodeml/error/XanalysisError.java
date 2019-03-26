@@ -4,8 +4,6 @@
  */
 package claw.tatsu.xcodeml.error;
 
-import claw.tatsu.common.Utility;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,7 +75,7 @@ public class XanalysisError {
    */
   public String getConcatLines() {
     return _errorLineNumbers.stream()
-        .map( n -> n.toString() )
-        .collect( Collectors.joining( "," ) );
+        .map(n -> n.toString())
+        .collect(Collectors.joining(","));
   }
 }

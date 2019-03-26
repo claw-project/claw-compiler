@@ -4,8 +4,6 @@
  */
 package claw.tatsu.xcodeml.exception;
 
-import claw.tatsu.common.Utility;
-
 import java.util.List;
 
 /**
