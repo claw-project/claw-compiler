@@ -6,7 +6,6 @@ package external.transformation;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
