@@ -105,7 +105,7 @@ public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     // Get the declarations of the function
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
     for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL) {
+      if(decl.is(Xcode.VAR_DECL)) {
         if(!xcodeml.getTypeTable().isBasicType(decl)) {
           continue; // Only FbasicType can be array
         }
@@ -132,7 +132,7 @@ public void transform(XcodeProgram xcodeml, Translator translator,
     Xnode crt = _claw.getPragma();
     while(crt != null){
       System.out.println("Current node: " + crt.opcode());
-      crt = crt.nextSibling();          
+      crt = crt.nextSibling();
     }
 }
 \end{lstlisting}
