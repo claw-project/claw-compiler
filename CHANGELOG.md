@@ -12,7 +12,7 @@ All notable changes to the CLAW Compiler project are documented in this file.
 * `parallel` clause for `expand` directive is implemented.   
 * OMNI Compiler submodule now pointing to
   omni-compiler/xcodeml-tools@6dfda5a2bb16ed04487d9e3c688dbba27072944e
-* Java 1.8 is now required for CX2T.
+* Java 1.8 or newer is now required for CX2T.
 
 ## [1.2.1] - 2018-11-16
 * driver: new option `--add-paren` to force parenthesis on mathematical binary
