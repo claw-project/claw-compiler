@@ -87,9 +87,8 @@ public class ArrayToFctCall extends ClawTransformation {
 
   @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
-                        Transformation other) throws Exception
+                        Transformation other)
   {
-
     FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
     // Prepare the function call
