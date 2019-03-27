@@ -18,7 +18,7 @@ public class BoundDefinition {
 
   private String _strBoundValue;
   private int _intBoundValue;
-  private BoundType _boundType;
+  private final BoundType _boundType;
 
   /**
    * Constructs a BoundDefinition from String value. Detects if bound is an

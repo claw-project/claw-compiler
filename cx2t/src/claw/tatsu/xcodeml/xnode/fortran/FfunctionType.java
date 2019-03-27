@@ -31,7 +31,7 @@ import java.util.List;
 public class FfunctionType extends Xnode {
 
   private final List<Xnode> _parameters;
-  private Xnode _params;
+  private final Xnode _params;
 
   /**
    * Basic ctor from Xnode.

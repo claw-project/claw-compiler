@@ -58,7 +58,7 @@ public class ClawPragma extends AnalyzedPragma {
 
   // Model config information
   private ModelConfig _localModelConfig;
-  private List<String> _errors = new ArrayList<>();
+  private final List<String> _errors = new ArrayList<>();
   private boolean _scaModelConfig;
 
   /**

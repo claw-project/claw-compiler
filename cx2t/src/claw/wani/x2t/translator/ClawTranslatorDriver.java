@@ -39,8 +39,8 @@ import java.util.logging.Logger;
  */
 public class ClawTranslatorDriver {
 
-  private String _xcodemlInputFile;
-  private String _xcodemlOutputFile;
+  private final String _xcodemlInputFile;
+  private final String _xcodemlOutputFile;
   private boolean _canTransform = false;
   private ClawTranslator _translator;
   private XcodeProgram _translationUnit = null;

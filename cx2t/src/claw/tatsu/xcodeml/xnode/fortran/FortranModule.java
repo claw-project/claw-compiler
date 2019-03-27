@@ -25,7 +25,7 @@ public class FortranModule extends XcodeML {
   private final String _path;
   private final String _name;
 
-  private XsymbolTable _identifiers;
+  private final XsymbolTable _identifiers;
 
   /**
    * Constructs a basic FortranModule object representing the XcodeML module

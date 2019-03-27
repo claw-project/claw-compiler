@@ -102,7 +102,7 @@ public class Configuration {
   private AcceleratorConfiguration _accelerator;
   private String[] _transSetPaths;
   private boolean _forcePure = false;
-  private ModelConfig _modelConfig;
+  private final ModelConfig _modelConfig;
 
   /**
    * Lazy holder pattern.
