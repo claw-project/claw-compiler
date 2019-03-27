@@ -267,9 +267,9 @@ public class ClawPragmaTest {
   @Test
   public void scaModelDataTest() {
     analyzeValidSimpleClaw("claw model-data", ClawDirective.MODEL_DATA, false,
-        Collections.<Target>emptyList());
+        Collections.emptyList());
     analyzeValidSimpleClaw("claw end model-data", ClawDirective.MODEL_DATA,
-        true, Collections.<Target>emptyList());
+        true, Collections.emptyList());
     assertModelDataDirective("claw model-data layout(radiation)", "radiation");
     assertModelDataDirective("claw model-data layout( default )", "default");
   }

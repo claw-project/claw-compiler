@@ -37,8 +37,7 @@ public class ConditionTest {
     Xnode condition = ifStmt.matchDirectDescendant(Xcode.CONDITION);
     assertNotNull(condition);
 
-    assertFalse(Condition.dependsOn(condition,
-        Collections.<String>emptySet()));
+    assertFalse(Condition.dependsOn(condition, Collections.emptySet()));
     assertFalse(Condition.dependsOn(null, Collections.singleton("t")));
     assertFalse(Condition.dependsOn(ifStmt, Collections.singleton("t")));
     assertTrue(Condition.dependsOn(condition, Collections.singleton("t")));

@@ -587,9 +587,8 @@ public class ScaForward extends ClawTransformation {
         }
       }
 
-      Directive.generateDataRegionClause(xcodeml,
-          Collections.<String>emptyList(), creates,
-          fctCallAncestor, fctCallAncestor);
+      Directive.generateDataRegionClause(xcodeml, Collections.emptyList(),
+          creates, fctCallAncestor, fctCallAncestor);
     }
 
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {

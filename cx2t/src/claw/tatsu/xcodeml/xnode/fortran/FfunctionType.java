@@ -42,7 +42,7 @@ public class FfunctionType extends Xnode {
     super(node == null ? null : node.element());
     _params = matchSeq(Xcode.PARAMS);
     _parameters = (_params != null) ?
-        _params.matchAll(Xcode.NAME) : Collections.<Xnode>emptyList();
+        _params.matchAll(Xcode.NAME) : Collections.emptyList();
   }
 
   /**
