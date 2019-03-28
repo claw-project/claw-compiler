@@ -55,7 +55,93 @@ function test_claw::sha1sum(){
   done
 }
 
+function test_claw::get_pp_filename(){
+  # Array of input values
+  test_inputs=()
+  test_inputs+=("original.f90")
+  test_inputs+=("original.F90")
+  test_inputs+=("original.f")
+  test_inputs+=("original.F")
+
+  # Array of expected output value
+  expected_outputs=()
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp.f90")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp.F90")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp.f")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp.F")
+
+  temp_dir="__omni_tmp__"
+
+  for ((i=0;i<${#test_inputs[@]};++i))
+  do
+    test_result=$(claw::get_pp_filename "${test_inputs[i]}" "${temp_dir}")
+    if [ "${test_result}" != "${expected_outputs[i]}" ]
+    then
+      echo "Error: claw::get_pp_filename: ${test_result} != ${expected_outputs[i]}"
+      exit 1
+    fi
+  done
+}
+
+function test_claw::get_pp1_filename(){
+  # Array of input values
+  test_inputs=()
+  test_inputs+=("original.f90")
+  test_inputs+=("original.F90")
+  test_inputs+=("original.f")
+  test_inputs+=("original.F")
+
+  # Array of expected output value
+  expected_outputs=()
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp1.f90")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp1.F90")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp1.f")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp1.F")
+
+  temp_dir="__omni_tmp__"
+
+  for ((i=0;i<${#test_inputs[@]};++i))
+  do
+    test_result=$(claw::get_pp1_filename "${test_inputs[i]}" "${temp_dir}")
+    if [ "${test_result}" != "${expected_outputs[i]}" ]
+    then
+      echo "Error: claw::get_pp1_filename: ${test_result} != ${expected_outputs[i]}"
+      exit 1
+    fi
+  done
+}
+
+function test_claw::get_pp2_filename(){
+  # Array of input values
+  test_inputs=()
+  test_inputs+=("original.f90")
+  test_inputs+=("original.F90")
+  test_inputs+=("original.f")
+  test_inputs+=("original.F")
+
+  # Array of expected output value
+  expected_outputs=()
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp2.f90")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp2.F90")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp2.f")
+  expected_outputs+=("__omni_tmp__/c9e870f04c9a67f50f304ab2bb80cbefa3960adb.pp2.F")
+
+  temp_dir="__omni_tmp__"
+
+  for ((i=0;i<${#test_inputs[@]};++i))
+  do
+    test_result=$(claw::get_pp2_filename "${test_inputs[i]}" "${temp_dir}")
+    if [ "${test_result}" != "${expected_outputs[i]}" ]
+    then
+      echo "Error: claw::get_pp2_filename: ${test_result} != ${expected_outputs[i]}"
+      exit 1
+    fi
+  done
+}
 
 # Execute test cases
 test_claw::norm_file_name
 test_claw::sha1sum
+test_claw::get_pp_filename
+test_claw::get_pp1_filename
+test_claw::get_pp2_filename
