@@ -385,6 +385,20 @@ function claw::check_file_exist()
 }
 
 ###################################################################
+# Get sha1 sum of a string
+# Arguments:
+#   $1: string to get sha1 sum from
+# Returns:
+#   sha1 sum of the input
+###################################################################
+function claw::sha1sum()
+{
+  local sha1sum_result
+  sha1sum_result=$(echo "$1" | shasum | cut -d' ' -f1)
+  echo "${sha1sum_result}"
+}
+
+###################################################################
 # Normalize the filename and path
 # ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
 # Arguments:
