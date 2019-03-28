@@ -589,9 +589,10 @@ function claw::process_dependencies() {
     base_file=${source_mod_file}
     dep_basename="$(basename "${base_file%.*}")"
     file_name="$(claw::norm_file_name "${base_file}")"
+    file_tmp_sha="$(claw::sha1sum "${file_name}")"
     ext=${base_file##*.}
     # shellcheck disable=SC2154
-    local file_pp=${temp_dir}/"${file_name}".${ext}
+    local file_pp=${temp_dir}/"${file_tmp_sha}".${ext}
 
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then
