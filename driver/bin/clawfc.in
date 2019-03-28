@@ -214,11 +214,11 @@ for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   base_name="$(basename "${input_file}")"
   ext=${input_file##*.}
-  file_tmp_base=${temp_dir}/"${file_name}"
-  file_tmp_sha="$(claw::sha1sum "${file_pp1_base}")"
-  file_pp1="${file_tmp_sha}".pp1.${ext} # temp file for preprocessing 1
-  file_pp2="${file_tmp_sha}".pp2.${ext} # temp file for preprocessing 2
-  file_pp="${file_tmp_sha}".${ext}      # preprocessed file with original name
+  file_tmp_sha="$(claw::sha1sum "${file_name}")"
+  file_tmp_base=${temp_dir}/"${file_tmp_sha}"
+  file_pp1="${file_tmp_base}".pp1.${ext} # temp file for preprocessing 1
+  file_pp2="${file_tmp_base}".pp2.${ext} # temp file for preprocessing 2
+  file_pp="${file_tmp_base}".${ext}      # preprocessed file with original name
   preprocessor_output="$(basename "${file_pp%.*}")"
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
@@ -275,7 +275,6 @@ done
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
-  file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
@@ -292,7 +291,6 @@ done
 if [[ ${resolve_dependencies} == true ]]; then
   for input_file in "${f_files_transformation[@]}"; do
     claw::verbose "Dependencies resolution ..."
-    file_name="$(claw::norm_file_name "${input_file}")"
     ext=${input_file##*.}
     base_name="$(basename "${input_file}")"
     if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
@@ -318,8 +316,6 @@ if [[ ${pipe_workflow} == true ]]; then
     fi
 
     #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
-
-      file_name="$(claw::norm_file_name "${input_file}")"
       ext=${input_file##*.}
       base_name="$(basename "${input_file}")"
       if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
@@ -370,6 +366,7 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Fortran to XcodeML ..."
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
+  file_tmp_sha="$(claw::sha1sum "${file_name}")"
   base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
     [[ ${enable_cpp} == true ]]; then
@@ -377,7 +374,7 @@ for input_file in "${f_files_transformation[@]}"; do
   else
     file_pp="${input_file}"
   fi
-  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_in_x=${temp_dir}/"${file_tmp_sha}"_${ext}_in.xml
 
   # Check that input file produced by preprocessing pass exists.
   if [[ ! -f ${file_pp} ]]; then
@@ -409,7 +406,8 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "XcodeML to XcodeML translation ..."
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
-  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_tmp_sha="$(claw::sha1sum "${file_name}")"
+  file_in_x=${temp_dir}/"${file_tmp_sha}"_${ext}_in.xml
 
   # Check that input file produced by parsing pass exists.
   if [[ ! -f ${file_in_x} ]]; then
@@ -417,7 +415,7 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not parsed correctly. Translation cannot be done."
   fi
 
-  file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
+  file_out_x=${temp_dir}/"${file_tmp_sha}"_${ext}_out.xml
   file_out_f=${temp_dir}/"${input_file}"
   if [[ "${output_file}" != "" ]]; then
     file_out_f=${output_file}
