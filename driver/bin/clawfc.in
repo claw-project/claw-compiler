@@ -212,7 +212,6 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Prepocessing ..."
 
   file_name="$(claw::norm_file_name "${input_file}")"
-  base_name="$(basename "${input_file}")"
   ext=${input_file##*.}
   file_tmp_sha="$(claw::sha1sum "${file_name}")"
   file_pp1=${temp_dir}/"${file_tmp_sha}".pp1.${ext} # temp file for preprocessing 1
@@ -277,7 +276,6 @@ for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Apply !\$claw ignore ..."
   ext=${input_file##*.}
   file_name="$(claw::norm_file_name "${input_file}")"
-  base_name="$(basename "${input_file}")"
   ext=${input_file##*.}
   file_tmp_sha="$(claw::sha1sum "${file_name}")"
 
@@ -322,13 +320,15 @@ if [[ ${pipe_workflow} == true ]]; then
     fi
 
     #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
+      file_name="$(claw::norm_file_name "${input_file}")"
       ext=${input_file##*.}
-      base_name="$(basename "${input_file}")"
+      file_tmp_sha="$(claw::sha1sum "${file_name}")"
+
       if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
         [[ ${enable_cpp} == true ]]; then
-        file_pp=${temp_dir}/"${base_name}"
+        file_pp=${temp_dir}/"${file_tmp_sha}".${ext}
       else
-        file_pp="${input_file}"
+        file_pp=${temp_dir}/"${file_tmp_sha}".${ext}
       fi
 
       # shellcheck disable=SC2086,SC2068
@@ -373,7 +373,6 @@ for input_file in "${f_files_transformation[@]}"; do
   file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
   file_tmp_sha="$(claw::sha1sum "${file_name}")"
-  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
     [[ ${enable_cpp} == true ]]; then
     file_pp=${temp_dir}/"${file_tmp_sha}".${ext}
