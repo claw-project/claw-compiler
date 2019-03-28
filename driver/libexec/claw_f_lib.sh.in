@@ -418,7 +418,7 @@ function claw::get_in_xcodeml_filename()
   file_ext=${1##*.}
   file_shasum="$(claw::sha1sum "${file_name}")"
   file_in_x=${temp_dir}/"${file_shasum}"_${file_ext}_in.xml
-  echo ${file_in_x}
+  echo "${file_in_x}"
 }
 
 ###################################################################
@@ -441,7 +441,7 @@ function claw::get_out_xcodeml_filename()
   file_ext=${1##*.}
   file_shasum="$(claw::sha1sum "${file_name}")"
   file_in_x=${temp_dir}/"${file_shasum}"_${file_ext}_out.xml
-  echo ${file_in_x}
+  echo "${file_in_x}"
 }
 
 ###################################################################
@@ -465,7 +465,7 @@ function claw::get_pp_generic_filename()
   file_ext=${1##*.}
   file_shasum="$(claw::sha1sum "${file_name}")"
   file_pp=${temp_dir}/"${file_shasum}".$2.${file_ext}
-  echo ${file_pp}
+  echo "${file_pp}"
 }
 
 
@@ -484,7 +484,7 @@ function claw::get_pp_filename()
 {
   local file_name
   file_name="$(claw::get_pp_generic_filename "$1" "pp")"
-  echo ${file_name}
+  echo "${file_name}"
 }
 
 ###################################################################
@@ -499,7 +499,7 @@ function claw::get_pp1_filename()
 {
   local file_name
   file_name="$(claw::get_pp_generic_filename "$1" "pp1")"
-  echo ${file_name}
+  echo "${file_name}"
 }
 
 ###################################################################
@@ -514,7 +514,7 @@ function claw::get_pp2_filename()
 {
   local file_name
   file_name="$(claw::get_pp_generic_filename "$1" "pp2")"
-  echo ${file_name}
+  echo "${file_name}"
 }
 
 ###################################################################
