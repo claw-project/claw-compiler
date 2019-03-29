@@ -707,7 +707,8 @@ function claw::process_dependencies() {
     ### Preprocess file ###
     base_file=${source_mod_file}
     # shellcheck disable=SC2154
-    local file_pp="$(claw::get_pp_filename "${base_file}")"
+    local file_pp
+    file_pp="$(claw::get_pp_filename "${base_file}")"
 
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then
