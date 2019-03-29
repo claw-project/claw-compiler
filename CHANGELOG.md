@@ -14,7 +14,7 @@ All notable changes to the CLAW Compiler project are documented in this file.
   omni-compiler/xcodeml-tools@6dfda5a2bb16ed04487d9e3c688dbba27072944e
 * Java 1.8 or newer is now required for CX2T.
 
-## [1.2.2] - 2019-04-19
+## [1.2.2] - 2019-04-29
 * driver: fix temporary file name being too long in some cases.
 
 ## [1.2.1] - 2018-11-16
