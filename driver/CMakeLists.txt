@@ -4,6 +4,12 @@
 # This CMake file define the configuration and the installation steps of the
 # claw compiler driver
 
+if(APPLE)
+  set(SHA1SUM_CMD "shasum")
+else()
+  set(SHA1SUM_CMD "sha1sum")
+endif()
+
 # Configure files with variables information
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/etc/${CLAW_CONF_FILE}.in
