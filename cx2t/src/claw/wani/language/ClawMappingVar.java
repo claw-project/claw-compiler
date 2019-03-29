@@ -20,8 +20,8 @@ package claw.wani.language;
  */
 public class ClawMappingVar {
 
-  private String _argPart;
-  private String _fctPart;
+  private final String _argPart;
+  private final String _fctPart;
 
   /**
    * Constructs a new ClawMappingVar.

@@ -53,7 +53,7 @@ public class XcodeProgTest {
     xcodeml.addWarning("");
     xcodeml.addWarning(null, 0);
     xcodeml.addWarning("", 0);
-    xcodeml.addWarning(null, Collections.<Integer>emptyList());
+    xcodeml.addWarning(null, Collections.emptyList());
     assertFalse(xcodeml.hasWarnings());
     assertTrue(xcodeml.getWarnings().isEmpty());
 

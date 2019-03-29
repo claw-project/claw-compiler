@@ -203,7 +203,7 @@ public class FbasicTypeTest {
   @Test
   public void dimTest() {
     FbasicType b = XmlHelper.createXbasicTypeFromString(type3);
-    b.removeDimension(Collections.<Integer>emptyList());
+    b.removeDimension(Collections.emptyList());
     assertEquals(0, b.getDimensions());
     assertFalse(b.isArray());
     assertFalse(b.isAllAssumedShape());

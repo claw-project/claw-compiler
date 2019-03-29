@@ -172,8 +172,8 @@ public class OpenMp extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
-        OPENMP_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
-    return String.format(FORMATPAR, OPENMP_PRIVATE, Utility.join(",", vars));
+        OPENMP_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
+    return String.format(FORMATPAR, OPENMP_PRIVATE, String.join(",", vars));
   }
 
   @Override
@@ -188,9 +188,9 @@ public class OpenMp extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate map(alloc:x) clause for (%d variables): %s",
-        OPENMP_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
+        OPENMP_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
     return String.format(FORMATPAR, OPENMP_MAP,
-        String.format("%s:%s", OPENMP_ALLOC, Utility.join(",", vars)));
+        String.format("%s:%s", OPENMP_ALLOC, String.join(",", vars)));
   }
 
   @Override
@@ -241,7 +241,7 @@ public class OpenMp extends DirectiveGenerator {
     // !$omp target data
     return new String[]{
         String.format(FORMAT4, OPENMP_PREFIX, OPENMP_TARGET, OPENMP_DATA,
-            Utility.join(" ", clauses)).trim()
+            String.join(" ", clauses)).trim()
     };
   }
 
@@ -360,9 +360,9 @@ public class OpenMp extends DirectiveGenerator {
     }
     Message.debug(OPENMP_DEBUG_PREFIX + "generate update " +
         (direction == DataMovement.HOST_TO_DEVICE ? OPENMP_TO : OPENMP_FROM) +
-        " clause for: " + Utility.join(",", vars));
+        " clause for: " + String.join(",", vars));
     String updates = String.format(FORMATPAR, direction == DataMovement.HOST_TO_DEVICE ?
-        OPENMP_TO : OPENMP_FROM, Utility.join(",", vars));
+        OPENMP_TO : OPENMP_FROM, String.join(",", vars));
     return new String[]{
         String.format(FORMAT4,
             OPENMP_PREFIX, OPENMP_TARGET, OPENMP_UPDATE, updates)

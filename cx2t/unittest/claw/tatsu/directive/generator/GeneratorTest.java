@@ -33,12 +33,12 @@ public class GeneratorTest {
     assertEquals(0, gen.getRoutineDirective(false).length);
     assertEquals(0, gen.getRoutineDirective(true).length);
     assertEquals(0,
-        gen.getStartDataRegion(Collections.<String>emptyList()).length);
+        gen.getStartDataRegion(Collections.emptyList()).length);
     assertEquals(0, gen.getEndDataRegion().length);
 
     assertTrue(gen.getParallelKeyword().isEmpty());
     assertTrue(gen.getPrivateClause("").isEmpty());
-    assertTrue(gen.getPrivateClause(Collections.<String>emptyList()).isEmpty());
+    assertTrue(gen.getPrivateClause(Collections.emptyList()).isEmpty());
     assertTrue(gen.getSequentialClause().isEmpty());
 
     assertFalse(gen.isCompileGuard(""));

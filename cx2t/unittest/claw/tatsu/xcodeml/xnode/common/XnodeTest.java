@@ -189,7 +189,7 @@ public class XnodeTest {
 
     fctDef.body().append(intConst);
     fctDef.body().append(clone);
-    assertTrue(intConst.isDirectSibling(clone, Collections.<Xcode>emptyList()));
+    assertTrue(intConst.isDirectSibling(clone, Collections.emptyList()));
 
     fctDef.body().append(null);
     fctDef.body().insert(intConst, true);
@@ -219,7 +219,7 @@ public class XnodeTest {
     assertNull(p.prevSibling());
     assertNull(p.matchSibling(Xcode.F_DO_STATEMENT));
     assertSame(p.matchAll(Xcode.F_PRAGMA_STATEMENT).size(), 0);
-    assertFalse(p.isDirectSibling(null, Collections.<Xcode>emptyList()));
+    assertFalse(p.isDirectSibling(null, Collections.emptyList()));
   }
 
   @Test

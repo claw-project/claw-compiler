@@ -58,7 +58,7 @@ public class ClawPragma extends AnalyzedPragma {
 
   // Model config information
   private ModelConfig _localModelConfig;
-  private List<String> _errors = new ArrayList<>();
+  private final List<String> _errors = new ArrayList<>();
   private boolean _scaModelConfig;
 
   /**
@@ -122,8 +122,7 @@ public class ClawPragma extends AnalyzedPragma {
    * @return String value if clause is set. Null otherwise.
    */
   public String value(ClawClause clause) {
-    return _clauseStringValues.containsKey(clause) ?
-        _clauseStringValues.get(clause) : null;
+    return _clauseStringValues.getOrDefault(clause, null);
   }
 
   /**
@@ -147,8 +146,7 @@ public class ClawPragma extends AnalyzedPragma {
    * @return List of values if clause is set. Null otherwise.
    */
   public List<String> values(ClawClause clause) {
-    return _clauseListStringValues.containsKey(clause) ?
-        _clauseListStringValues.get(clause) : null;
+    return _clauseListStringValues.getOrDefault(clause, null);
   }
 
   /**

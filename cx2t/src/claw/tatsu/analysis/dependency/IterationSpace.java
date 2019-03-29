@@ -52,7 +52,7 @@ public class IterationSpace {
    * @throws Exception If a node is not a do statement.
    */
   private void load(List<Xnode> doStatements) throws Exception {
-    _levels.add(0, new ArrayList<DependenceAnalysis>()); // Init the level 0
+    _levels.add(0, new ArrayList<>()); // Init the level 0
     DependenceAnalysis baseLoopLevel0 = null;
     for(Xnode doStmt : doStatements) {
       if(!doStmt.is(Xcode.F_DO_STATEMENT)) {
@@ -96,7 +96,7 @@ public class IterationSpace {
    */
   private void addAtLevel(int level, DependenceAnalysis dep) {
     if(_levels.size() <= level) {
-      _levels.add(level, new ArrayList<DependenceAnalysis>());
+      _levels.add(level, new ArrayList<>());
     }
     _levels.get(level).add(dep);
   }
