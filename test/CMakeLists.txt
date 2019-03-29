@@ -4,7 +4,7 @@
 enable_language(Fortran)
 
 if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
-  set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS) # Problem on some cray system with -rdynamic
+  set(CMAKE_SHARED_LIBRARY_LINK_Fortran_FLAGS) # Problem on some cray system with -rdynamic
 endif()
 
 # Set up some common env variable for the transformation flow
