@@ -2,6 +2,7 @@
 
 # source the library
 . ../../driver/libexec/claw_f_lib.sh.in
+. ../../driver/etc/claw_f.conf
 
 # Test the claw::norm_file_name function
 function test_claw::norm_file_name()
