@@ -385,6 +385,139 @@ function claw::check_file_exist()
 }
 
 ###################################################################
+# Get sha1 sum of a string
+# Arguments:
+#   $1: string to get sha1 sum from
+# Returns:
+#   sha1 sum of the input
+###################################################################
+function claw::sha1sum()
+{
+  local sha1sum_result
+  sha1sum_result=$(echo "$1" | ${SHA1SUM_CMD} | cut -d' ' -f1)
+  echo "${sha1sum_result}"
+}
+
+###################################################################
+# Get the formatted filename for input xcodeml tmp file
+# Arguments:
+#   $1: original filename
+# Returns:
+#   formatted filename for input xcodeml file
+#   <temp_dir>/sha1sum_ext_in.xml
+# Global:
+#   temp_dir
+###################################################################
+function claw::get_in_xcodeml_filename()
+{
+  local file_name
+  local file_ext
+  local file_shasum
+  local file_in_x
+  file_name="$(claw::norm_file_name "$1")"
+  file_ext=${1##*.}
+  file_shasum="$(claw::sha1sum "${file_name}")"
+  file_in_x=${temp_dir}/"${file_shasum}"_${file_ext}_in.xml
+  echo "${file_in_x}"
+}
+
+###################################################################
+# Get the formatted filename for input xcodeml tmp file
+# Arguments:
+#   $1: original filename
+# Returns:
+#   formatted filename for output xcodeml file
+#   <temp_dir>/sha1sum_ext_in.xml
+# Global:
+#   temp_dir
+###################################################################
+function claw::get_out_xcodeml_filename()
+{
+  local file_name
+  local file_ext
+  local file_shasum
+  local file_in_x
+  file_name="$(claw::norm_file_name "$1")"
+  file_ext=${1##*.}
+  file_shasum="$(claw::sha1sum "${file_name}")"
+  file_in_x=${temp_dir}/"${file_shasum}"_${file_ext}_out.xml
+  echo "${file_in_x}"
+}
+
+###################################################################
+# Get the formatted filename for the preprocessed file
+# Arguments:
+#   $1: original filename
+#   $2: pp prefix
+# Returns:
+#   formatted filename for preprocessed file
+#   <temp_dir>/sha1sum.pp.ext
+# Global:
+#   temp_dir
+###################################################################
+function claw::get_pp_generic_filename()
+{
+  local file_name
+  local file_ext
+  local file_shasum
+  local file_pp
+  file_name="$(claw::norm_file_name "$1")"
+  file_ext=${1##*.}
+  file_shasum="$(claw::sha1sum "${file_name}")"
+  file_pp=${temp_dir}/"${file_shasum}".$2.${file_ext}
+  echo "${file_pp}"
+}
+
+
+
+###################################################################
+# Get the formatted filename for the preprocessed file
+# Arguments:
+#   $1: original filename
+# Returns:
+#   formatted filename for preprocessed file
+#   <temp_dir>/sha1sum.pp.ext
+# Global:
+#   temp_dir
+###################################################################
+function claw::get_pp_filename()
+{
+  local file_name
+  file_name="$(claw::get_pp_generic_filename "$1" "pp")"
+  echo "${file_name}"
+}
+
+###################################################################
+# Get the formatted filename for the preprocessed file 1
+# Arguments:
+#   $1: original filename
+# Returns:
+#   formatted filename for preprocessed file
+#   <temp_dir>/sha1sum.pp.ext
+###################################################################
+function claw::get_pp1_filename()
+{
+  local file_name
+  file_name="$(claw::get_pp_generic_filename "$1" "pp1")"
+  echo "${file_name}"
+}
+
+###################################################################
+# Get the formatted filename for the preprocessed file 2
+# Arguments:
+#   $1: original filename
+# Returns:
+#   formatted filename for preprocessed file
+#   <temp_dir>/sha1sum.pp.ext
+###################################################################
+function claw::get_pp2_filename()
+{
+  local file_name
+  file_name="$(claw::get_pp_generic_filename "$1" "pp2")"
+  echo "${file_name}"
+}
+
+###################################################################
 # Normalize the filename and path
 # ./hoge/fuga-a.f90 -> hoge_2f_fuga_2d_a
 # Arguments:
@@ -573,11 +706,9 @@ function claw::process_dependencies() {
 
     ### Preprocess file ###
     base_file=${source_mod_file}
-    dep_basename="$(basename "${base_file%.*}")"
-    file_name="$(claw::norm_file_name "${base_file}")"
-    ext=${base_file##*.}
     # shellcheck disable=SC2154
-    local file_pp=${temp_dir}/"${file_name}".${ext}
+    local file_pp
+    file_pp="$(claw::get_pp_filename "${base_file}")"
 
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then

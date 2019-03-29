@@ -209,14 +209,12 @@ done
 [[ ${only_pp} == true ]] && [[ -f "${output_file}" ]] && rm "${output_file}"
 [[ ${enable_cpp} == true ]] && OMNI_FPP_OPT="${OMNI_FPP_OPT} ${CPP_OPT}"
 for input_file in "${f_files_transformation[@]}"; do
-  claw::verbose "Prepocessing ..."
+  claw::verbose "Prepocessing file ${input_file}"
 
-  file_name="$(claw::norm_file_name "${input_file}")"
-  base_name="$(basename "${input_file}")"
   ext=${input_file##*.}
-  file_pp1=${temp_dir}/"${file_name}".pp1.${ext} # temp file for preprocessing 1
-  file_pp2=${temp_dir}/"${file_name}".pp2.${ext} # temp file for preprocessing 2
-  file_pp=${temp_dir}/"${base_name}"             # preprocessed file with original name
+  file_pp="$(claw::get_pp_filename "${input_file}")"   # preprocessed file with original name
+  file_pp1="$(claw::get_pp1_filename "${input_file}")" # temp file for preprocessing 1
+  file_pp2="$(claw::get_pp2_filename "${input_file}")" # temp file for preprocessing 2
   preprocessor_output="$(basename "${file_pp%.*}")"
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
@@ -228,7 +226,7 @@ for input_file in "${f_files_transformation[@]}"; do
 
     if [[ ${fpp_redirect} == true ]]; then
       # Debug output
-      [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Preprocessing"
+      [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Preprocessing (redirect)"
       [[ ${enable_debug_omni} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
         ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp} > \
         ${file_pp2}"
@@ -236,7 +234,7 @@ for input_file in "${f_files_transformation[@]}"; do
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > "${file_pp2}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > ${file_pp2}
 
       mv "${file_pp2}" "${file_pp}"
     else
@@ -273,15 +271,13 @@ done
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
-  file_name="$(claw::norm_file_name "${input_file}")"
+  claw::verbose "Apply !\$claw ignore to file ${input_file}"
   ext=${input_file##*.}
-  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
     [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${base_name}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   else
-    # TODO not correct file name as iignore is applied in place
-    file_pp="${input_file}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   fi
   claw::applyIgnore "${file_pp}"
 done
@@ -289,15 +285,13 @@ done
 ### dependencies resolution ###
 if [[ ${resolve_dependencies} == true ]]; then
   for input_file in "${f_files_transformation[@]}"; do
-    claw::verbose "Dependencies resolution ..."
-    file_name="$(claw::norm_file_name "${input_file}")"
+    claw::verbose "Dependencies resolution for file ${input_file}"
     ext=${input_file##*.}
-    base_name="$(basename "${input_file}")"
     if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
       [[ ${enable_cpp} == true ]]; then
-      file_pp=${temp_dir}/"${base_name}"
+      file_pp="$(claw::get_pp_filename "${input_file}")"
     else
-      file_pp="${input_file}"
+      file_pp="$(claw::get_pp_filename "${input_file}")"
     fi
 
     claw::process_dependencies "${file_pp}" "${input_file}"
@@ -316,15 +310,12 @@ if [[ ${pipe_workflow} == true ]]; then
     fi
 
     #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
-
-      file_name="$(claw::norm_file_name "${input_file}")"
       ext=${input_file##*.}
-      base_name="$(basename "${input_file}")"
       if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
         [[ ${enable_cpp} == true ]]; then
-        file_pp=${temp_dir}/"${base_name}"
+        file_pp="$(claw::get_pp_filename "${input_file}")"
       else
-        file_pp="${input_file}"
+        file_pp="$(claw::get_pp_filename "${input_file}")"
       fi
 
       # shellcheck disable=SC2086,SC2068
@@ -366,16 +357,14 @@ fi
 ### Frontend ###
 for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Fortran to XcodeML ..."
-  file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
-  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
     [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${base_name}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   else
-    file_pp="${input_file}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   fi
-  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_in_x="$(claw::get_in_xcodeml_filename "${input_file}")"
 
   # Check that input file produced by preprocessing pass exists.
   if [[ ! -f ${file_pp} ]]; then
@@ -405,9 +394,9 @@ fi
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "XcodeML to XcodeML translation ..."
-  file_name="$(claw::norm_file_name "${input_file}")"
+
   ext=${input_file##*.}
-  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_in_x="$(claw::get_in_xcodeml_filename "${input_file}")"
 
   # Check that input file produced by parsing pass exists.
   if [[ ! -f ${file_in_x} ]]; then
@@ -415,7 +404,7 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not parsed correctly. Translation cannot be done."
   fi
 
-  file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
+  file_out_x="$(claw::get_out_xcodeml_filename "${input_file}")"
   file_out_f=${temp_dir}/"${input_file}"
   if [[ "${output_file}" != "" ]]; then
     file_out_f=${output_file}
