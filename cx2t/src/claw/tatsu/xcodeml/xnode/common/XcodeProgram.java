@@ -12,6 +12,7 @@ import org.w3c.dom.Document;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +38,14 @@ public class XcodeProgram extends XcodeML {
   // XcodeProgram inner elements
   private XsymbolTable _globalSymbolsTable = null;
   private XglobalDeclTable _globalDeclarationsTable = null;
+
+  /**
+   * Default ctor used just to carry errors.
+   */
+  private XcodeProgram() {
+    _errors = new ArrayList<>();
+    _warnings = new ArrayList<>();
+  }
 
   /**
    * XcodeProgram base constructor.
@@ -71,14 +80,14 @@ public class XcodeProgram extends XcodeML {
    */
   public static XcodeProgram createFromDocument(Document doc) {
     if(doc == null) {
-      System.err.println("Unable to read document");
-      return null;
+      XcodeProgram program = new XcodeProgram();
+      program.addError("Unable to read document");
+      return program;
     }
     XcodeProgram program = new XcodeProgram(doc);
     program.readDocumentInformation();
     if(!program.isXcodeMLvalid()) {
-      System.err.print("XcodeML file is not valid");
-      return null;
+      program.addError("XcodeML file is not valid");
     }
     return program;
   }
@@ -105,13 +114,105 @@ public class XcodeProgram extends XcodeML {
   }
 
   /**
-   * Add an error.
+   * Add an error. If msg is null or empty, the error is not added.
    *
    * @param msg    Error message.
    * @param lineno Line number that triggered the error.
    */
   public void addError(String msg, int lineno) {
-    _errors.add(new XanalysisError(msg, lineno));
+    addMsg(msg, lineno, _errors);
+  }
+
+  /**
+   * Add an error. If msg is null or empty, the error is not added.
+   *
+   * @param msg  Error message.
+   * @param node Node that triggered the error.
+   */
+  public void addError(String msg, Xnode node) {
+    addMsg(msg, node != null ? node.lineNo() : 0, _errors);
+  }
+
+  /**
+   * Add an error. If msg is null or empty, the error is not added.
+   *
+   * @param msg Error message.
+   */
+  public void addError(String msg) {
+    addMsg(msg, _errors);
+  }
+
+  /**
+   * Add an warning. If msg is null or empty, the warning is not added.
+   *
+   * @param msg Warning message.
+   */
+  public void addWarning(String msg) {
+    addMsg(msg, 0, _warnings);
+  }
+
+  /**
+   * Add an warning. If msg is null or empty, the warning is not added.
+   *
+   * @param msg Warning message.
+   */
+  public void addWarning(String msg, Xnode node) {
+    addMsg(msg, node != null ? node.lineNo() : 0, _warnings);
+  }
+
+  /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg    Message to be added.
+   * @param lineno Line number that trigger the message.
+   * @param list   List in which the message should be added.
+   */
+  private void addMsg(String msg, int lineno, List<XanalysisError> list) {
+    addMsg(msg, Collections.singletonList(lineno), list);
+  }
+
+  /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg    Message to be added.
+   * @param lineno List of lines triggering the messages.
+   * @param list   List in which the message should be added.
+   */
+  private void addMsg(String msg, List<Integer> lineno,
+                      List<XanalysisError> list)
+  {
+    if(msg == null || msg.isEmpty()) {
+      return;
+    }
+    list.add(new XanalysisError(msg, lineno));
+  }
+
+  /**
+   * Add a new message to the error or the warning list
+   *
+   * @param msg  Message to be added.
+   * @param list List in which the message should be added.
+   */
+  private void addMsg(String msg, List<XanalysisError> list) {
+    addMsg(msg, 0, list);
+  }
+
+  /**
+   * Check if the current translation unit has error.
+   *
+   * @return True if there is at least one error. False otherwise.
+   */
+  public boolean hasErrors() {
+    return !_errors.isEmpty();
+  }
+
+  /**
+   * Check if the current translation unit has warnings.
+   *
+   * @return True if there is at least one warning. False otherwise.
+   */
+  public boolean hasWarnings() {
+    return !_warnings.isEmpty();
   }
 
   /**
@@ -130,7 +231,7 @@ public class XcodeProgram extends XcodeML {
    * @param lineno Line number that triggered the warning.
    */
   public void addWarning(String msg, int lineno) {
-    _warnings.add(new XanalysisError(msg, lineno));
+    addMsg(msg, lineno, _warnings);
   }
 
   /**
@@ -140,7 +241,7 @@ public class XcodeProgram extends XcodeML {
    * @param lineno Line numbers that triggered the warning.
    */
   public void addWarning(String msg, List<Integer> lineno) {
-    _warnings.add(new XanalysisError(msg, lineno));
+    addMsg(msg, lineno, _warnings);
   }
 
   /**
@@ -177,20 +278,22 @@ public class XcodeProgram extends XcodeML {
    */
   private boolean isXcodeMLvalid() {
     if(getDocument() == null) {
+      addError("Not an valid document");
       return false;
     }
 
-    if(opcode() != Xcode.XCODE_PROGRAM) {
+    if(!is(Xcode.XCODE_PROGRAM)) {
+      addError("Not an XcodeProgram document");
       return false;
     }
 
     if(!Xname.SUPPORTED_VERSION.equals(getAttribute(Xattr.VERSION))) {
-      System.err.println("XcodeML version is not supported");
+      addError("XcodeML version is not supported");
       return false;
     }
 
     if(!Xname.SUPPORTED_LANGUAGE.equals(getAttribute(Xattr.LANGUAGE))) {
-      System.err.println("Language is not set to fortran");
+      addError("Language is not set to Fortran");
       return false;
     }
 
@@ -256,6 +359,9 @@ public class XcodeProgram extends XcodeML {
    */
   public String getSourceFileOnly() {
     String source = getSource();
+    if(source == null) {
+      return "";
+    }
     File f = new File(source);
     return f.getName();
   }

@@ -84,6 +84,10 @@ public class ClawTranslatorDriver {
         XcodeProgram.createFromStdInput() :
         XcodeProgram.createFromFile(_xcodemlInputFile);
 
+    if(_translationUnit.hasErrors()) {
+      abort();
+    }
+
     if(Configuration.get().getCurrentDirective() == CompilerDirective.OPENMP
         && Configuration.get().getCurrentTarget() == Target.CPU)
     {
@@ -91,9 +95,6 @@ public class ClawTranslatorDriver {
           "is not advised for CPU target.", 0);
     }
 
-    if(_translationUnit == null) {
-      abort();
-    }
     try {
       // Check all pragma found in the translation unit
       for(Xnode pragma : _translationUnit.matchAll(Xcode.F_PRAGMA_STATEMENT)) {
@@ -193,13 +194,12 @@ public class ClawTranslatorDriver {
         );
 
         try {
-          entry.getValue().applyTranslations(_translationUnit, _translator);
+          entry.getValue().applyTransformations(_translationUnit, _translator);
           Message.warnings(_translationUnit);
         } catch(IllegalTransformationException itex) {
           _translationUnit.addError(itex.getMessage(), itex.getStartLine());
           abort();
         } catch(Exception ex) {
-          Logger.getAnonymousLogger().log(Level.SEVERE, ex.getMessage());
           _translationUnit.addError("Unexpected error: " + ex.getMessage(), 0);
           if(XmOption.isDebugOutput()) {
             StringWriter errors = new StringWriter();

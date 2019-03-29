@@ -11,9 +11,9 @@ package claw.wani.language;
  * @author clementval
  */
 public enum ClawDirective {
-  ARRAY_TRANSFORM,
   ARRAY_TO_CALL,
   DEFINE,
+  EXPAND,
   IGNORE,
   IF_EXTRACT,
   KCACHE,

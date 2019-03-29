@@ -4,7 +4,6 @@
  */
 package claw.tatsu.xcodeml.abstraction;
 
-import claw.tatsu.primitive.Function;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -37,13 +36,13 @@ public class AssignStatementTest {
     FfunctionDefinition fctDef = new FfunctionDefinition(nodes.get(0));
 
     List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(fctDef);
+        fctDef.gatherAssignStatements();
     assertEquals(2, assignStatements.size());
 
     assertTrue(assignStatements.get(0).isChildOf(Xcode.F_IF_STATEMENT));
     assertFalse(assignStatements.get(1).isChildOf(Xcode.F_IF_STATEMENT));
 
-    Set<String> vars = assignStatements.get(0).getVarRefNames();
+    Set<String> vars = assignStatements.get(0).getVarNames();
     assertEquals(2, vars.size());
     assertTrue(vars.contains("t"));
     assertTrue(vars.contains("q"));
@@ -61,8 +60,7 @@ public class AssignStatementTest {
     assertEquals(Xcode.F_FUNCTION_DEFINITION, nodes.get(0).opcode());
     FfunctionDefinition fctDef = new FfunctionDefinition(nodes.get(0));
 
-    List<AssignStatement> assignStatements =
-        Function.gatherAssignStatements(fctDef);
+    List<AssignStatement> assignStatements = fctDef.gatherAssignStatements();
     assertEquals(4, assignStatements.size());
   }
 }

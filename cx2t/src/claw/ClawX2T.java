@@ -171,7 +171,7 @@ public class ClawX2T {
     CommandLine cmd = processCommandArgs(args);
 
     // Help option
-    if(cmd.hasOption("h")) {
+    if(cmd == null || cmd.hasOption("h")) {
       usage();
       return;
     }

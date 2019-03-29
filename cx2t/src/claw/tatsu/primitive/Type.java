@@ -35,12 +35,12 @@ public class Type {
    * @return The new type hash generated.
    * @throws IllegalTransformationException If action is not supported.
    */
-  public static String duplicateWithDimension(FbasicType base,
-                                              FbasicType toUpdate,
-                                              XcodeML xcodemlSrc,
-                                              XcodeML xcodemlDst,
-                                              List<DimensionDefinition>
-                                                  dimensions)
+  public static FbasicType duplicateWithDimension(FbasicType base,
+                                                  FbasicType toUpdate,
+                                                  XcodeML xcodemlSrc,
+                                                  XcodeML xcodemlDst,
+                                                  List<DimensionDefinition>
+                                                      dimensions)
       throws IllegalTransformationException
   {
     FbasicType newType = toUpdate.cloneNode();
@@ -94,7 +94,7 @@ public class Type {
     }
 
     xcodemlDst.getTypeTable().add(newType);
-    return type;
+    return newType;
   }
 
   /**
@@ -110,8 +110,8 @@ public class Type {
                                       XcodeML xcodemlDst)
       throws IllegalTransformationException
   {
-    if(baseBound == null || (baseBound.opcode() != Xcode.LOWER_BOUND
-        && baseBound.opcode() != Xcode.UPPER_BOUND))
+    if(!Xnode.isOfCode(baseBound, Xcode.LOWER_BOUND)
+        && !Xnode.isOfCode(baseBound, Xcode.UPPER_BOUND))
     {
       throw new IllegalTransformationException("Cannot duplicate bound");
     }
@@ -127,11 +127,9 @@ public class Type {
     }
 
     Xnode bound = xcodemlDst.createNode(baseBound.opcode());
-    if(boundChild.opcode() == Xcode.F_INT_CONSTANT
-        || boundChild.opcode() == Xcode.VAR)
-    {
+    if(boundChild.is(Xcode.F_INT_CONSTANT) || boundChild.is(Xcode.VAR)) {
       bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
-    } else if(boundChild.opcode() == Xcode.PLUS_EXPR) {
+    } else if(boundChild.is(Xcode.PLUS_EXPR)) {
       Xnode lhs = boundChild.child(Xnode.LHS);
       Xnode rhs = boundChild.child(Xnode.RHS);
       Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUS_EXPR);

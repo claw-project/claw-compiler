@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import org.w3c.dom.Document;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -149,7 +150,7 @@ public final class Xmod {
       }
       return;
     } else {
-      fctTypeMod = mod.getTypeTable().getFunctionType(fctDef);
+      fctTypeMod = mod.findFunctionType(fctDef.getName());
     }
 
     if(fctTypeMod == null) {
@@ -164,11 +165,7 @@ public final class Xmod {
 
       /* If not, try to matchSeq the correct FfunctionType in the module
        * definitions */
-      Xid id = mod.getIdentifiers().get(fctDef.getName());
-      if(id == null) {
-        throw new IllegalTransformationException(errorMsg);
-      }
-      fctTypeMod = mod.getTypeTable().getFunctionType(id);
+      fctTypeMod = mod.findFunctionType(fctDef.getName());
       if(fctTypeMod == null) {
         throw new IllegalTransformationException(errorMsg);
       }
@@ -212,21 +209,23 @@ public final class Xmod {
                 pLocal.getAttribute(Xattr.PROMOTION_INFO));
 
             if(lType.isArray()) {
-              String newType = Type.duplicateWithDimension(lType, crtType,
+              FbasicType newType = Type.duplicateWithDimension(lType, crtType,
                   xcodeml, mod, promotionInfo.getDimensions());
               pMod.setType(newType);
             }
           }
         }
-        String dummy;
-        if(pLocal.hasAttribute(Xattr.PROMOTION_INFO)) {
-          dummy = pLocal.getAttribute(Xattr.PROMOTION_INFO);
-          pLocal.setAttribute(Xattr.PROMOTION_INFO, dummy);
-        }
 
         // Copy the promotion information
         pLocal.copyAttribute(pMod, Xattr.PROMOTION_INFO);
       }
+    }
+
+    // Sync attribute between local fct type and module fct type.
+    for(Xattr attr : Arrays.asList(Xattr.IS_ELEMENTAL, Xattr.IS_PURE,
+        Xattr.IS_FORCE_ASSUMED, Xattr.IS_RECURSIVE, Xattr.IS_PROGRAM,
+        Xattr.IS_INTERNAL)) {
+      fctType.syncBooleanAttribute(fctTypeMod, attr);
     }
   }
 }

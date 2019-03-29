@@ -9,6 +9,10 @@ import claw.shenron.transformation.BlockTransformation;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
+import claw.tatsu.directive.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.configuration.OpenAccConfiguration;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
+import claw.tatsu.xcodeml.xnode.Xname;
 import claw.wani.transformation.ClawBlockTransformation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -84,6 +88,9 @@ public class Configuration {
   public static final String CPU_STRATEGY = "cpu_trans_strategy";
   public static final String CPU_STRATEGY_SINGLE = "single";
   public static final String CPU_STRATEGY_FUSION = "fusion";
+  // SCA configuration keys
+  public static final String SCA_ELEMENTAL_PROMOTION_ASSUMED =
+      "sca_elemental_promotion_assumed";
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
 
@@ -372,6 +379,18 @@ public class Configuration {
    */
   public String getParameter(String key) {
     return (_parameters.containsKey(key)) ? _parameters.get(key) : null;
+  }
+
+  /**
+   * Get boolean value of a parameter.
+   *
+   * @param key Key of the parameter.
+   * @return Value of the parameter. False if parameter doesn't exists or its
+   * value is false.
+   */
+  public boolean getBooleanParameter(String key) {
+    return _parameters.containsKey(key)
+        && _parameters.get(key).equalsIgnoreCase(Xname.TRUE);
   }
 
   /**

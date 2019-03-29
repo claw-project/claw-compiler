@@ -17,8 +17,8 @@ import java.util.List;
  */
 public final class Message {
 
-  private static final String ERROR_PREFIX = "error: ";
-  private static final String WARNING_PREFIX = "warning: ";
+  private static final String ERROR_PREFIX = "error:";
+  private static final String WARNING_PREFIX = "warning:";
 
   // Avoid potential instantiation of this class
   private Message() {
@@ -47,10 +47,10 @@ public final class Message {
   {
     for(XanalysisError message : messages) {
       if(message.getLine() == 0) {
-        System.err.println(String.format("%s:-:- %s, %s", originalFile, prefix,
+        System.err.println(String.format("%s:-:- %s %s", originalFile, prefix,
             message.getMessage()));
       } else {
-        System.err.println(String.format("%s:%s:- %s, %s", originalFile,
+        System.err.println(String.format("%s:%s:- %s %s", originalFile,
             message.getConcatLines(), prefix, message.getMessage()));
       }
     }

@@ -11,7 +11,9 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawBlockTransformation;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
@@ -32,6 +34,12 @@ public class ModelData extends ClawBlockTransformation {
     /* Discover variable part of the model configuration and the subroutine
      * holding them */
 
+    if(!Configuration.get().getModelConfig().isLoaded()) {
+      xcodeml.addError(
+          "SCA model-data directive requires model configuration!",
+          _clawStart.getPragma());
+    }
+
     ClawTranslator trans = (ClawTranslator) translator;
 
     // Locate the subroutine/function in which the directive is defined
@@ -45,9 +53,8 @@ public class ModelData extends ClawBlockTransformation {
     }
 
     for(String data : XnodeUtil.getAllVariables(getDirective().getPragma(),
-        getEndDirective().getPragma()))
-    {
-      modelVariables.put(data, _clawStart.getLayoutValue());
+        getEndDirective().getPragma())) {
+      modelVariables.put(data, _clawStart.value(ClawClause.LAYOUT));
     }
 
     trans.storeElement(sub, modelVariables);

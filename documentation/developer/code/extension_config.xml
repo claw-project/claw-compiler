@@ -1,10 +1,9 @@
 <claw version="1.0">
   <global type="extension"/>
   <groups>
-    <group name="internal-xcodeml"/>
     <group name="remove"/>
     <group name="directive-primitive"/>
-    <group name="array-transform"/>
+    <group name="expand"/>
     <group name="loop-extract"/>
     <group name="loop-fusion"/>
     <group name="loop-hoist"/>

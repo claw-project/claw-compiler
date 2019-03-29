@@ -27,9 +27,9 @@ public class IndependentTransformationGroup extends TransformationGroup {
   }
 
   /**
-   * @see TransformationGroup#applyTranslations(XcodeProgram, Translator)
+   * @see TransformationGroup#applyTransformations(XcodeProgram, Translator)
    */
-  public void applyTranslations(XcodeProgram xcodeml, Translator translator)
+  public void applyTransformations(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
     for(Transformation trans : getTransformations()) {

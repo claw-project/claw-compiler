@@ -54,9 +54,10 @@ public class UtilityRemove extends ClawBlockTransformation {
     if(_clawEnd == null) {
       Xnode next = _clawStart.getPragma().nextSibling();
 
-      _do = next.opcode() == Xcode.F_DO_STATEMENT ? next : null;
-      _if = next.opcode() == Xcode.F_IF_STATEMENT ? next : null;
-      _contains = next.opcode() == Xcode.F_CONTAINS_STATEMENT ? next : null;
+      _do = Xnode.isOfCode(next, Xcode.F_DO_STATEMENT) ? next : null;
+      _if = Xnode.isOfCode(next, Xcode.F_IF_STATEMENT) ? next : null;
+      _contains =
+          Xnode.isOfCode(next, Xcode.F_CONTAINS_STATEMENT) ? next : null;
 
       if(_do == null && _if == null && _contains == null) {
         xcodeml.addError("Directive remove without end not followed by a do " +

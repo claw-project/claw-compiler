@@ -19,21 +19,20 @@ CONTAINS
   REAL , INTENT(INOUT) :: t ( : , : )
   REAL , INTENT(INOUT) :: q ( : , : )
   REAL , INTENT(INOUT) :: s ( 1 : nproma )
-  REAL , ALLOCATABLE :: y ( : , : )
+  REAL , ALLOCATABLE :: y ( : )
   INTEGER :: k
   REAL :: c
   INTEGER :: proma
 
   IF ( ( .NOT. allocated ( y ) ) ) THEN
-   ALLOCATE ( y ( nproma , nz ) )
+   ALLOCATE ( y ( nz ) )
   END IF
   c = 5.345
   DO k = 2 , nz , 1
    DO proma = 1 , nproma , 1
     t ( proma , k ) = c * k
-    y ( proma , k ) = t ( proma , k ) + s ( proma )
-    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c + y ( proma ,&
-     k )
+    y ( k ) = t ( proma , k ) + s ( proma )
+    q ( proma , k ) = q ( proma , k - 1 ) + t ( proma , k ) * c + y ( k )
    END DO
   END DO
   DO proma = 1 , nproma , 1

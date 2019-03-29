@@ -7,8 +7,7 @@ package claw.tatsu.directive.generator;
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.OpenMpConfiguration;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +96,7 @@ public class OpenMp extends DirectiveGenerator {
       }
 
       OpenMpConfiguration ompConfig =
-          (OpenMpConfiguration) Configuration.get().accelerator();
+          (OpenMpConfiguration) Context.get().getAcceleratorConfig();
 
       int numThreads = ompConfig.getNumThreads();
       int numTeams = ompConfig.getNumTeams();
@@ -282,7 +281,7 @@ public class OpenMp extends DirectiveGenerator {
     }
 
     OpenMpConfiguration ompConfig =
-        (OpenMpConfiguration) Configuration.get().accelerator();
+        (OpenMpConfiguration) Context.get().getAcceleratorConfig();
     int chunkSize = ompConfig.getSchedulerChunkSize();
 
     String scheduler = "";
@@ -360,9 +359,9 @@ public class OpenMp extends DirectiveGenerator {
       return new String[0];
     }
     Message.debug(OPENMP_DEBUG_PREFIX + "generate update " +
-        (direction == DataMovement.DEVICE ? OPENMP_TO : OPENMP_FROM) +
+        (direction == DataMovement.HOST_TO_DEVICE ? OPENMP_TO : OPENMP_FROM) +
         " clause for: " + Utility.join(",", vars));
-    String updates = String.format(FORMATPAR, direction == DataMovement.DEVICE ?
+    String updates = String.format(FORMATPAR, direction == DataMovement.HOST_TO_DEVICE ?
         OPENMP_TO : OPENMP_FROM, Utility.join(",", vars));
     return new String[]{
         String.format(FORMAT4,

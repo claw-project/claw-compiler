@@ -130,7 +130,7 @@ public class ClawRange {
    * @return True if the iteration range share the same property.
    */
   public boolean compareToDoStmt(Xnode doStmt) {
-    if(doStmt.opcode() != Xcode.F_DO_STATEMENT) {
+    if(!Xnode.isOfCode(doStmt, Xcode.F_DO_STATEMENT)) {
       return false;
     }
 

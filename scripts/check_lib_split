@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+#
+# Helper script check library separation is kept. 
+#
+# - claw.tatsu do not use any claw.shenron and claw.wani
+# - claw.shenron do not use any claw.wani
+#
+# Must be run from the root directory.
+#
+# author: clementval
+#
+if [ ! -f LICENSE ] ; then
+    echo "The script has to be executed from the root directory ./script/check_lib_split"
+    exit 1
+fi
+
+split_error=0
+while IFS= read -r -d '' file
+do
+  if grep -q "import claw.wani" "${file}" ; then
+    let split_error++
+    echo "${file} uses claw.wani"
+  fi
+done < <(find ./cx2t/src/claw/shenron ./cx2t/src/claw/tatsu -iname "*.java" -print0)
+
+while IFS= read -r -d '' file
+do
+  if grep -q "import claw.shenron" "${file}" ; then
+    let split_error++
+    echo "${file} uses claw.wani"
+  fi
+done < <(find ./cx2t/src/claw/tatsu -iname "*.java" -print0)
+
+if [[ split_error -ne 0 ]]; then
+  echo "${license_error} files use library out of their scope!"
+  exit 2
+fi

@@ -1,6 +1,17 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
+## [1.3] - Unreleased
+* SCA: basic support for transformation in ELEMENTAL function/subroutine for
+  GPU target
+* low-level: block directive like `loop-hoist` can now be nested on the same
+  depth.
+* driver: `_CRAYFTN` macro is passed directly when Cray preprocessor is used.
+* `array-transform` directive as been renamed `expand` as specified in v2.0 of
+  the CLAW Directive Language Specification.
+* OMNI Compiler submodule now pointing to
+  omni-compiler/xcodeml-tools@6dfda5a2bb16ed04487d9e3c688dbba27072944e
+
 ## [1.2.2] - 2019-04-19
 * driver: fix temporary file name being too long in some cases.
 
