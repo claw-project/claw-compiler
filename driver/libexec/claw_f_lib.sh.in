@@ -394,7 +394,7 @@ function claw::check_file_exist()
 function claw::sha1sum()
 {
   local sha1sum_result
-  sha1sum_result=$(echo "$1" | shasum | cut -d' ' -f1)
+  sha1sum_result=$(echo "$1" | ${SHA1SUM_CMD} | cut -d' ' -f1)
   echo "${sha1sum_result}"
 }
 

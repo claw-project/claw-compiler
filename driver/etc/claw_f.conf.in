@@ -51,3 +51,6 @@ JAR1="${JAR1}:${ANTLR4}:${ANTLR4_RUNTIME}:${TOML}"
 
 readonly OMNI_FX2X_MUST_OPT="-cp ${JAR1} claw.ClawX2T"
 readonly OMNI_FX2X_OPT="@JAVA_OPT@ ${OMNI_FX2X_MUST_OPT} @OMNI_X2X_FLAGS@"
+
+# Driver
+readonly SHA1SUM_CMD="@SHA1SUM_CMD@"
