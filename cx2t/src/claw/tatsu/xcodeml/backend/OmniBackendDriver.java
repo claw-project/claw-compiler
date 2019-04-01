@@ -156,8 +156,7 @@ public class OmniBackendDriver {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = docFactory.newDocumentBuilder();
       Document xcodeml = builder.parse(inputFilepath);
-      decompile(outputFilepath, xcodeml, maxColumns, lineDirectives);
-      return true;
+      return decompile(outputFilepath, xcodeml, maxColumns, lineDirectives);
     } catch(ParserConfigurationException | SAXException | IOException e) {
       return false;
     }
