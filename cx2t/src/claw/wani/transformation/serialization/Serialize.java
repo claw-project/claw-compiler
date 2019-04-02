@@ -4,14 +4,22 @@
  */
 package claw.wani.transformation.serialization;
 
+import java.util.List;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.primitive.Function;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 
 /**
  * @author phmarti, havogt, clementval
@@ -62,6 +70,22 @@ public class Serialize extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-    System.out.println(_claw.value(ClawClause.SERIALIZE_SAVEPOINT));
+    FfunctionDefinition fctDef = Function.findFunctionDefinitionFromFctCall(xcodeml, _fctCall.findParentFunction(), _fctCall);
+    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef.getType());
+	List<Xnode> params = fctType.getParameters();
+	for(Xnode param : params) {
+	    FbasicType type = xcodeml.getTypeTable().getBasicType(param);
+	    
+	    if(type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT) {
+	        // TODO save before
+	        Xnode comment = xcodeml.createComment(" write " + param.value());
+	        _fctCall.insertBefore(comment);
+	    }
+	    if(type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT) {
+	        // TODO save after
+	        Xnode comment = xcodeml.createComment(" write " + param.value());
+	        _fctCall.insertAfter(comment);
+	    }
+	}
   }
 }
