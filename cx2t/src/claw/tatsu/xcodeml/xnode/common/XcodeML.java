@@ -521,6 +521,25 @@ public class XcodeML extends Xnode {
    * </functionCall>
    * }
    *
+   * @param fctType FfunctionType holding the return type and the type
+   *                information.
+   * @param fctName Value of the name node.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public Xnode createFctCall(FfunctionType fctType, String fctName) {
+    return createFctCall(fctType.getReturnType(), fctName, fctType.getType());
+  }
+
+  /**
+   * Create a new functionCall node with name and arguments as children nodes.
+   *
+   * {@code
+   * <functionCall type="returnType">
+   * <name type="fctType">fctName</name>
+   * <arguments></arguments>
+   * </functionCall>
+   * }
+   *
    * @param returnType Value of the type attribute for the functionCall node.
    * @param fctName    Value of the name node.
    * @return The newly created node detached in the current XcodeML unit.
@@ -558,6 +577,20 @@ public class XcodeML extends Xnode {
     }
     functionType.append(createNode(Xcode.PARAMS));
     return new FfunctionType(functionType);
+  }
+
+  /**
+   * Create a FfunctionType representing a subrountine and add it to the type
+   * table.
+   *
+   * @return Newly created node.
+   */
+  public FfunctionType createSubroutineType() {
+    FfunctionType subroutine =
+        createFunctionType(getTypeTable().generateHash(FortranType.FUNCTION),
+            Xname.TYPE_F_VOID);
+    getTypeTable().add(subroutine);
+    return subroutine;
   }
 
   /**

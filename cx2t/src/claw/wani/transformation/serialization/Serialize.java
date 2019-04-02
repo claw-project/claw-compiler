@@ -84,13 +84,11 @@ public class Serialize extends ClawTransformation {
 
   private Xnode createSavepoint(XcodeProgram xcodeml, String savepoint)
   {
-    FfunctionType serType = xcodeml.createFunctionType(xcodeml.getTypeTable().generateHash(FortranType.FUNCTION), TYPE_F_VOID);
-    xcodeml.getTypeTable().add(serType);
-
+    FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
     Xnode savepointArg = xcodeml.createCharConstant(savepoint);
 
-    Xnode serCall = xcodeml.createFctCall(TYPE_F_VOID, "fs_create_savepoint", serType.getType());
+    Xnode serCall = xcodeml.createFctCall(serType, "fs_create_savepoint");
     serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
     serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
 
