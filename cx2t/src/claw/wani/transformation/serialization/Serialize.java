@@ -74,14 +74,14 @@ public class Serialize extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-      writeIn(xcodeml);
-      writeOut(xcodeml);
+    writeIn(xcodeml);
+    writeOut(xcodeml);
   }
-  
+
   private List<Xnode> getParameters(XcodeProgram xcodeml) {
-      FfunctionDefinition fctDef = Function.findFunctionDefinitionFromFctCall(xcodeml, _fctCall.findParentFunction(), _fctCall);
-      FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef.getType());
-      return fctType.getParameters();
+    FfunctionDefinition fctDef = Function.findFunctionDefinitionFromFctCall(xcodeml, _fctCall.findParentFunction(), _fctCall);
+    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef.getType());
+    return fctType.getParameters();
   }
 
   private Xnode createSavepoint(XcodeProgram xcodeml, String savepoint)
@@ -98,7 +98,7 @@ public class Serialize extends ClawTransformation {
 
     Xnode serCall = xcodeml.createFctCall(TYPE_F_VOID, "fs_create_savepoint", serType.getType());
     serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName(savepoint, charType.getType()));
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint",null));
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
 
     return serCall;
 
@@ -106,32 +106,34 @@ public class Serialize extends ClawTransformation {
 
   private void writeIn(XcodeProgram xcodeml)
   {
-      Xnode savepoint = createSavepoint(xcodeml, ClawClause.SERIALIZE_SAVEPOINT.toString());
-      _fctCall.insertBefore(savepoint);
-      writeFields(xcodeml, true);
+    Xnode savepoint = createSavepoint(xcodeml,
+        _claw.value(ClawClause.SERIALIZE_SAVEPOINT));
+    _fctCall.insertBefore(savepoint);
+    writeFields(xcodeml, true);
   }
-  
+
   private void writeOut(XcodeProgram xcodeml)
   {
-      writeFields(xcodeml, false);
-      Xnode savepoint = createSavepoint(xcodeml, ClawClause.SERIALIZE_SAVEPOINT.toString());
-      _fctCall.insertAfter(savepoint);
+    writeFields(xcodeml, false);
+    Xnode savepoint = createSavepoint(xcodeml,
+        _claw.value(ClawClause.SERIALIZE_SAVEPOINT));
+    _fctCall.insertAfter(savepoint);
   }
-  
+
   private void writeFields(XcodeProgram xcodeml, boolean in) {
-      List<Xnode> params = getParameters(xcodeml);
-      for(Xnode param : params) {
-          FbasicType type = xcodeml.getTypeTable().getBasicType(param);
-          if(in && ( type.getIntent() == Intent.IN ||type.getIntent() == Intent.INOUT)) {
-              // TODO save before
-              Xnode comment = xcodeml.createComment(" write " + param.value());
-              _fctCall.insertBefore(comment);
-          }
-          if(!in && (type.getIntent() == Intent.OUT ||type.getIntent() == Intent.INOUT)) {
-              // TODO save before
-              Xnode comment = xcodeml.createComment(" write " + param.value());
-              _fctCall.insertAfter(comment);
-          }
+    List<Xnode> params = getParameters(xcodeml);
+    for(Xnode param : params) {
+      FbasicType type = xcodeml.getTypeTable().getBasicType(param);
+      if(in && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
+        // TODO save before
+        Xnode comment = xcodeml.createComment(" write " + param.value());
+        _fctCall.insertBefore(comment);
       }
+      if(!in && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
+        // TODO save before
+        Xnode comment = xcodeml.createComment(" write " + param.value());
+        _fctCall.insertAfter(comment);
+      }
+    }
   }
 }
