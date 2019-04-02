@@ -119,5 +119,6 @@ refer to the developer's guide
     <group name="sca-forward" />
     <!-- internal applied at the end -->
     <group name="openacc-continuation" />
+    <group name="serialize" />
   </groups>
 </claw>

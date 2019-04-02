@@ -5,4 +5,7 @@ This file describes CLAW internal transformation not triggered by the user.
   <transformation name="openacc-continuation"
     type="independent" trigger="directive" directive="acc"
     class="claw.wani.transformation.internal.OpenAccContinuation" />
+  <transformation name="serialize"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.serialization.Serialize" />
 </transformations>
