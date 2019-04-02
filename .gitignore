@@ -55,6 +55,8 @@ cx2t/src/claw/ClawVersion.java
 # IDE files
 .idea
 .project
+.settings
+.classpath
 *.iml
 
 # Ant files
@@ -67,3 +69,4 @@ install
 
 # sonar
 .scannerwork
+/bin/
