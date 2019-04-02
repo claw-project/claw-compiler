@@ -7,11 +7,11 @@ To ease this task, an AST abstraction and manipulation library is included
 in the \cx2x program. This library helps to traverse the \gls{ast}, access and
 update the type table, add, modify or delete node.
 
-This section is currently very simple but will be enhanced in the future version
+This section is currently very basic but will be enhanced in the future version
 of this manual.
 
 \section{The Xnode class}
-The main class of this library is the \lstinline|Xnode| class that is the base
+The main class of this library is the \lstinline|Xnode| class, the base class
 of any node in the AST. 
 Any specialization of the a node like \lstinline|XcodeML|, 
 \lstinline|XcodeProgram|, \lstinline|Xmod| or \lstinline|XbasicType| inherits 
@@ -27,10 +27,10 @@ This class has basic methods to perform the following actions:
 \end{itemize}
 
 Each \lstinline|Xnode| instance has a specific opcode that match the \xcodemlf 
-element tag.
+element tag name.
 This opcode is also used when creating new node or matching nodes in a tree.
-All the opcode are members of the \lstinline|Xcode| class.
-The \lstinline|Xattr| class contains all the members to access and match 
+All the opcode are members of the \lstinline|Xcode| enumeration.
+The \lstinline|Xattr| enumeration contains all names the to access and match 
 attribute of a node. 
 
 \begin{lstlisting}[label=lst:xnode_attr, language=Java, caption=XtypeTable]
@@ -51,8 +51,8 @@ n.removeAttribute(Xattr.IS_ALLOCATABLE);
 \end{lstlisting}
 
 \begin{lstlisting}[label=lst:xnode_node, language=Java, caption=XtypeTable]
-// Gather a node
-Xnode n = ...
+// Gather the root node
+Xnode n = xcodeml;
 // Get first child
 Xnode fChild = n.firstChild();
 // Get last child

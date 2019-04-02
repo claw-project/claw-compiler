@@ -42,8 +42,7 @@ public class FfunctionTypeTest {
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
 
-    FfunctionType emptyFctType = xcodeml.createFunctionType(
-        xcodeml.getTypeTable().generateHash(FortranType.FUNCTION), null);
+    FfunctionType emptyFctType = xcodeml.createFunctionType(null);
     assertFalse(emptyFctType.hasParam("a"));
 
     Xnode paramA = xcodeml.createName("a", FortranType.INTEGER.toString());

@@ -4,11 +4,10 @@
  */
 package claw.wani.transformation;
 
-import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.xnode.common;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;  
 
 /**
  * Simple transformation for documentation example
@@ -33,7 +32,8 @@ public class MyFirstTransformation extends ClawTransformation {
   }
 
   // Only used by dependent transformation
-  public boolean canBeTransformedWith(Transformation other) {
+  public boolean canBeTransformedWith(XcodeProgram xcodeml,
+                                      Transformation other) {
     return false; // Independent transformation
   }
 }
