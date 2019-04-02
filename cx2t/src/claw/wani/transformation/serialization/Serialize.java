@@ -17,11 +17,9 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
-import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
-import claw.tatsu.xcodeml.xnode.fortran.Intent;
 
 import static claw.tatsu.xcodeml.xnode.Xname.TYPE_F_VOID;
 
@@ -101,7 +99,6 @@ public class Serialize extends ClawTransformation {
     serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
 
     return serCall;
-
   }
 
   private void writeIn(XcodeProgram xcodeml)
