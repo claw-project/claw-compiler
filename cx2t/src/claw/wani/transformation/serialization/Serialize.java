@@ -9,9 +9,13 @@ import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
+
+import static claw.tatsu.xcodeml.xnode.Xname.TYPE_F_VOID;
 
 /**
  * @author phmarti, havogt, clementval
@@ -63,5 +67,22 @@ public class Serialize extends ClawTransformation {
                         Transformation other)
   {
     System.out.println(_claw.value(ClawClause.SERIALIZE_SAVEPOINT));
+  }
+
+  private Xnode createSavepoint(XcodeProgram xcodeml, String savepoint)
+  {
+    FfunctionType serType = xcodeml.createFunctionType(xcodeml.getTypeTable().generateHash(FortranType.FUNCTION), TYPE_F_VOID);
+    xcodeml.getTypeTable().add(serType);
+    Xnode serCall = xcodeml.createFctCall(TYPE_F_VOID, "fs_create_savepoint", serType.getType());
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName(savepoint,null));
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint",null));
+
+    return serCall;
+
+  }
+
+  private void writeIn(XcodeProgram xcodeml)
+  {
+
   }
 }
