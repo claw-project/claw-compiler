@@ -202,6 +202,9 @@ directive[ClawPragma l]
    | NODEP
      { $l.setDirective(ClawDirective.NO_DEP); }
 
+   | SERIALIZE
+     { $l.setDirective(ClawDirective.SERIALIZE); }
+
    // Special directives
 
    | VERBATIM // this directive accept anything after the verbatim
@@ -675,6 +678,7 @@ PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
 ROUTINE      : 'routine';
+SERIALIZE    : 'serialize';
 SCALAR       : 'scalar';
 TARGET       : 'target';
 UPDATE       : 'update';

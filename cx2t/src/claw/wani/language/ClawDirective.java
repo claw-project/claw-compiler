@@ -25,6 +25,7 @@ public enum ClawDirective {
   NO_DEP,
   PRIMITIVE,
   REMOVE,
+  SERIALIZE,
   SCA,
   VERBATIM
 }

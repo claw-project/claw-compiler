@@ -28,6 +28,7 @@ import claw.wani.transformation.ll.loop.*;
 import claw.wani.transformation.ll.utility.ArrayToFctCall;
 import claw.wani.transformation.ll.utility.UtilityRemove;
 import claw.wani.transformation.sca.*;
+import claw.wani.transformation.serialization.Serialize;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
 import org.w3c.dom.Element;
@@ -132,6 +133,9 @@ public class ClawTranslator implements Translator {
         break;
       case IF_EXTRACT:
         addTransformation(xcodeml, new IfExtract(analyzedPragma));
+        break;
+      case SERIALIZE:
+        addTransformation(xcodeml, new Serialize(analyzedPragma));
         break;
       // driver handled directives
       case IGNORE:

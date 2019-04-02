@@ -237,6 +237,12 @@ public class ClawPragmaTest {
     }
   }
 
+  @Test
+  public void serializeTest() {
+    analyzeValidSimpleClaw("claw serialize", ClawDirective.SERIALIZE,
+        false, null);
+  }
+
   /**
    * Test various input for the CLAW remove directive.
    */
