@@ -31,6 +31,7 @@ add_subdirectory(omni)
 add_subdirectory(openacc)
 add_subdirectory(openmp)
 add_subdirectory(utilities)
+add_subdirectory(serialization)
 
 add_test(
   NAME library-test-claw_f_lib
