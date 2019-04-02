@@ -17,6 +17,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
@@ -87,8 +88,16 @@ public class Serialize extends ClawTransformation {
   {
     FfunctionType serType = xcodeml.createFunctionType(xcodeml.getTypeTable().generateHash(FortranType.FUNCTION), TYPE_F_VOID);
     xcodeml.getTypeTable().add(serType);
+
+    // Create the char constant type
+    Xnode charType = xcodeml.createBasicType(FortranType.CHARACTER, Intent.NONE);
+    Xnode len = xcodeml.createNode(Xcode.LEN);
+    len.append(xcodeml.createIntConstant(savepoint.length()));
+    charType.append(len);
+    xcodeml.getTypeTable().add(charType);
+
     Xnode serCall = xcodeml.createFctCall(TYPE_F_VOID, "fs_create_savepoint", serType.getType());
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName(savepoint,null));
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName(savepoint, charType.getType()));
     serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint",null));
 
     return serCall;
