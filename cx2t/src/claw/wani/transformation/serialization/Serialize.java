@@ -88,7 +88,7 @@ public class Serialize extends ClawTransformation {
     xcodeml.getTypeTable().add(serType);
 
     // Create the char constant type
-    Xnode savepointArg = xcodeml.createCharConstantAndType(savepoint);
+    Xnode savepointArg = xcodeml.createCharConstant(savepoint);
 
     Xnode serCall = xcodeml.createFctCall(TYPE_F_VOID, "fs_create_savepoint", serType.getType());
     serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);

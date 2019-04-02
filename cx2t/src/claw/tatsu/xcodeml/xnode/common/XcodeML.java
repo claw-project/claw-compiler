@@ -898,12 +898,12 @@ public class XcodeML extends Xnode {
 
     Xnode valueList = createNode(Xcode.VALUE_LIST);
     for(String charConstant : charConstants) {
-      Xnode charType = createCharType(charConstant);
+      FbasicType charType = createCharType(charConstant);
 
       // Create the value element to be added to the list
       Xnode valueElement = createNode(Xcode.VALUE);
       Xnode fCharElement = createNode(Xcode.F_CHARACTER_CONSTANT);
-      fCharElement.setType(charType.getType());
+      fCharElement.setType(charType);
       fCharElement.setValue(charConstant);
       valueElement.append(fCharElement);
       valueList.append(valueElement);
@@ -913,12 +913,12 @@ public class XcodeML extends Xnode {
   }
 
   /**
-   * Create a character constant with its associated type.
+   * Create a character constant.
    *
    * @param value String to be placed as the character constant.
    * @return Newly created FcharacterConstant node.
    */
-  public Xnode createCharConstantAndType(String value) {
+  public Xnode createCharConstant(String value) {
     FbasicType charType = createCharType(value);
     Xnode charConstant = createNode(Xcode.F_CHARACTER_CONSTANT);
     charConstant.setType(charType);
