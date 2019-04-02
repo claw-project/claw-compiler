@@ -1,17 +1,17 @@
 \chapter{CLAW Compiler Configuration}
 \label{chapter:configuration}
 
-The different transformation enabled in the \clawfcomp and their order of
+The different transformations enabled in the \clawfcomp and their order of
 application is configurable in the \clawfcomp global configuration file. Each
-transformation might also have different options that can be activated via the
+transformation might also have different options that can be activated via this
 configuration file. The available transformations are defined in transformation
 set files (see Section~\ref{section:conf_trans_set}).
 
 \section{Transformation Set}
 \label{section:conf_trans_set}
-A transformation set is a group of transformations that are packed together and
-that can be used during the translation. Each transformation set must be
-described in a transformation set configuration file once.
+A transformation set is a group of transformations that are packaged together 
+and that can be used during the translation phase. Each transformation set must 
+be described in a transformation set configuration file once.
 Listing~\ref{lst:internal_set_conf} shows the transformation set
 configuration file for the CLAW internal transformation set.
 
@@ -34,7 +34,7 @@ transformation defined into it:
   \item \textbf{trigger}: How the transformation is triggered as described in
         Section~\ref{section:trans_trigger}. Only two values are possible
         \lstinline|directive| or \lstinline|translation_unit|.
-  \item \textbf{dircetive}: When \lstinline|directive| value is defined for the
+  \item \textbf{directive}: When \lstinline|directive| value is defined for the
         trigger option, this define which directive triggers it (e.g.
         \lstinline|acc|, \lstinline|omp| or \lstinline|claw|).
   \item \textbf{class}: Fully qualified class name implementing the
