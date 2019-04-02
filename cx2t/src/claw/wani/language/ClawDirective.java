@@ -26,5 +26,6 @@ public enum ClawDirective {
   PRIMITIVE,
   REMOVE,
   SCA,
-  VERBATIM
+  VERBATIM,
+  AUTOPORT
 }

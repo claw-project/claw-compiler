@@ -132,6 +132,7 @@ public class ClawTranslator implements Translator {
         break;
       case IF_EXTRACT:
         addTransformation(xcodeml, new IfExtract(analyzedPragma));
+      case AUTOPORT:
         break;
       // driver handled directives
       case IGNORE:

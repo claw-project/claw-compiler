@@ -202,6 +202,15 @@ directive[ClawPragma l]
    | NODEP
      { $l.setDirective(ClawDirective.NO_DEP); }
 
+   // autoport directive
+   | AUTOPORT EOF
+     { $l.setDirective(ClawDirective.AUTOPORT); }
+   | END AUTOPORT EOF
+     {
+       $l.setDirective(ClawDirective.AUTOPORT);
+       $l.setEndPragma();
+     }
+
    // Special directives
 
    | VERBATIM // this directive accept anything after the verbatim
@@ -650,6 +659,7 @@ PARALLELIZE      : 'parallelize';  // TODO to be removed
 REMOVE           : 'remove';
 SCA              : 'sca';
 VERBATIM         : 'verbatim';
+AUTOPORT         : 'autoport';
 
 // CLAW Clauses
 CLEANUP      : 'cleanup';
