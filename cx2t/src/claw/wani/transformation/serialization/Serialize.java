@@ -9,6 +9,7 @@ import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 
@@ -61,6 +62,6 @@ public class Serialize extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-
+    System.out.println(_claw.value(ClawClause.SERIALIZE_SAVEPOINT));
   }
 }
