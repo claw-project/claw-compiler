@@ -26,6 +26,7 @@ import claw.wani.transformation.ll.caching.Kcaching;
 import claw.wani.transformation.ll.directive.DirectivePrimitive;
 import claw.wani.transformation.ll.loop.*;
 import claw.wani.transformation.ll.utility.ArrayToFctCall;
+import claw.wani.transformation.ll.utility.AutoPort;
 import claw.wani.transformation.ll.utility.UtilityRemove;
 import claw.wani.transformation.sca.*;
 import claw.wani.x2t.configuration.Configuration;
@@ -133,6 +134,7 @@ public class ClawTranslator implements Translator {
       case IF_EXTRACT:
         addTransformation(xcodeml, new IfExtract(analyzedPragma));
       case AUTOPORT:
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       // driver handled directives
       case IGNORE:
@@ -287,6 +289,9 @@ public class ClawTranslator implements Translator {
         break;
       case MODEL_DATA:
         addTransformation(xcodeml, new ModelData(begin, end));
+        break;
+      case AUTOPORT:
+        addTransformation(xcodeml, new AutoPort(begin, end));
         break;
       default:
         throw new IllegalTransformationException("Unknown block transformation",
