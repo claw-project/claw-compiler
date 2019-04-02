@@ -239,7 +239,7 @@ public class ClawPragmaTest {
 
   @Test
   public void serializeTest() {
-    analyzeValidSimpleClaw("claw serialize", ClawDirective.SERIALIZE,
+    analyzeValidSimpleClaw("claw serialize savepoint1", ClawDirective.SERIALIZE,
         false, null);
   }
 

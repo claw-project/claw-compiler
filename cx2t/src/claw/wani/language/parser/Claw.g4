@@ -202,8 +202,10 @@ directive[ClawPragma l]
    | NODEP
      { $l.setDirective(ClawDirective.NO_DEP); }
 
-   | SERIALIZE
-     { $l.setDirective(ClawDirective.SERIALIZE); }
+   | SERIALIZE savepoint=IDENTIFIER
+     { $l.setDirective(ClawDirective.SERIALIZE);
+       $l.setValue(ClawClause.SERIALIZE_SAVEPOINT, $savepoint.text);
+     }
 
    // Special directives
 

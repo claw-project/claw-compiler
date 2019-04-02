@@ -1,3 +1,7 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ */
 package claw.wani.transformation.serialization;
 
 import claw.shenron.transformation.Transformation;
@@ -6,6 +10,9 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 
+/**
+ * @author phmarti, havogt, clementval
+ */
 public class Serialize extends ClawTransformation {
 
   /**
