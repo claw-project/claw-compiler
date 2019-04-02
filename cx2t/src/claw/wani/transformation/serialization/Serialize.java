@@ -14,12 +14,15 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
+
+import static claw.tatsu.xcodeml.xnode.Xname.TYPE_F_VOID;
 
 /**
  * @author phmarti, havogt, clementval
@@ -70,22 +73,56 @@ public class Serialize extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-    FfunctionDefinition fctDef = Function.findFunctionDefinitionFromFctCall(xcodeml, _fctCall.findParentFunction(), _fctCall);
-    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef.getType());
-	List<Xnode> params = fctType.getParameters();
-	for(Xnode param : params) {
-	    FbasicType type = xcodeml.getTypeTable().getBasicType(param);
-	    
-	    if(type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT) {
-	        // TODO save before
-	        Xnode comment = xcodeml.createComment(" write " + param.value());
-	        _fctCall.insertBefore(comment);
-	    }
-	    if(type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT) {
-	        // TODO save after
-	        Xnode comment = xcodeml.createComment(" write " + param.value());
-	        _fctCall.insertAfter(comment);
-	    }
-	}
+      writeIn(xcodeml);
+      writeOut(xcodeml);
+  }
+  
+  private List<Xnode> getParameters(XcodeProgram xcodeml) {
+      FfunctionDefinition fctDef = Function.findFunctionDefinitionFromFctCall(xcodeml, _fctCall.findParentFunction(), _fctCall);
+      FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctDef.getType());
+      return fctType.getParameters();
+  }
+
+  private Xnode createSavepoint(XcodeProgram xcodeml, String savepoint)
+  {
+    FfunctionType serType = xcodeml.createFunctionType(xcodeml.getTypeTable().generateHash(FortranType.FUNCTION), TYPE_F_VOID);
+    xcodeml.getTypeTable().add(serType);
+    Xnode serCall = xcodeml.createFctCall(TYPE_F_VOID, "fs_create_savepoint", serType.getType());
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName(savepoint,null));
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint",null));
+
+    return serCall;
+
+  }
+
+  private void writeIn(XcodeProgram xcodeml)
+  {
+      Xnode savepoint = createSavepoint(xcodeml, ClawClause.SERIALIZE_SAVEPOINT.toString());
+      _fctCall.insertBefore(savepoint);
+      writeFields(xcodeml, true);
+  }
+  
+  private void writeOut(XcodeProgram xcodeml)
+  {
+      Xnode savepoint = createSavepoint(xcodeml, ClawClause.SERIALIZE_SAVEPOINT.toString());
+      _fctCall.insertAfter(savepoint);
+      writeFields(xcodeml, false);
+  }
+  
+  private void writeFields(XcodeProgram xcodeml, boolean in) {
+      List<Xnode> params = getParameters(xcodeml);
+      for(Xnode param : params) {
+          FbasicType type = xcodeml.getTypeTable().getBasicType(param);
+          if(in && ( type.getIntent() == Intent.IN ||type.getIntent() == Intent.INOUT)) {
+              // TODO save before
+              Xnode comment = xcodeml.createComment(" write " + param.value());
+              _fctCall.insertBefore(comment);
+          }
+          if(!in && (type.getIntent() == Intent.OUT ||type.getIntent() == Intent.INOUT)) {
+              // TODO save before
+              Xnode comment = xcodeml.createComment(" write " + param.value());
+              _fctCall.insertAfter(comment);
+          }
+      }
   }
 }
