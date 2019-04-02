@@ -898,12 +898,7 @@ public class XcodeML extends Xnode {
 
     Xnode valueList = createNode(Xcode.VALUE_LIST);
     for(String charConstant : charConstants) {
-      // Create the char constant type
-      Xnode charType = createBasicType(FortranType.CHARACTER, Intent.NONE);
-      Xnode len = createNode(Xcode.LEN);
-      len.append(createIntConstant(charConstant.length()));
-      charType.append(len);
-      getTypeTable().add(charType);
+      Xnode charType = createCharType(charConstant);
 
       // Create the value element to be added to the list
       Xnode valueElement = createNode(Xcode.VALUE);
@@ -915,6 +910,36 @@ public class XcodeML extends Xnode {
     }
     printStatement.append(valueList);
     return printStatement;
+  }
+
+  /**
+   * Create a character constant with its associated type.
+   *
+   * @param value String to be placed as the character constant.
+   * @return Newly created FcharacterConstant node.
+   */
+  public Xnode createCharConstantAndType(String value) {
+    FbasicType charType = createCharType(value);
+    Xnode charConstant = createNode(Xcode.F_CHARACTER_CONSTANT);
+    charConstant.setType(charType);
+    charConstant.setValue(value);
+    return charConstant;
+  }
+
+  /**
+   * Create a character type based on the given string
+   *
+   * @param charConstant String to based the character type on.
+   * @return Newly FbasicType created.
+   */
+  private FbasicType createCharType(String charConstant) {
+    // Create the char constant type
+    FbasicType charType = createBasicType(FortranType.CHARACTER, Intent.NONE);
+    Xnode len = createNode(Xcode.LEN);
+    len.append(createIntConstant(charConstant.length()));
+    charType.append(len);
+    getTypeTable().add(charType);
+    return charType;
   }
 
   /**
