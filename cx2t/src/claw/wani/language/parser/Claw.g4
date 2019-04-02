@@ -203,7 +203,8 @@ directive[ClawPragma l]
      { $l.setDirective(ClawDirective.NO_DEP); }
 
    | SERIALIZE savepoint=IDENTIFIER
-     { $l.setDirective(ClawDirective.SERIALIZE);
+     {
+       $l.setDirective(ClawDirective.SERIALIZE);
        $l.setValue(ClawClause.SERIALIZE_SAVEPOINT, $savepoint.text);
      }
 
