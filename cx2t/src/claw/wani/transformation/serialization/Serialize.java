@@ -113,9 +113,9 @@ public class Serialize extends ClawTransformation {
   
   private void writeOut(XcodeProgram xcodeml)
   {
+      writeFields(xcodeml, false);
       Xnode savepoint = createSavepoint(xcodeml, ClawClause.SERIALIZE_SAVEPOINT.toString());
       _fctCall.insertAfter(savepoint);
-      writeFields(xcodeml, false);
   }
   
   private void writeFields(XcodeProgram xcodeml, boolean in) {
