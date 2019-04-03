@@ -30,7 +30,7 @@ public class Serialize extends ClawTransformation {
   private Xnode _fctCall;
   private Xnode _anchor;
 
-  private enum SerializationMode {SER_READ, SER_WRITE, SER_READ_PERTURB};
+  private enum SerializationMode {SER_READ, SER_WRITE, SER_READ_PERTURB}
 
   private static final String SER_PPSER_SAVEPOINT = "ppser_savepoint";
   private static final String SER_PPSER_SERIALIZER = "ppser_serializer";
@@ -154,7 +154,7 @@ public class Serialize extends ClawTransformation {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepoint + "_" + param.value());
-    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SAVEPOINT, Xscope.GLOBAL);
+    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SERIALIZER, Xscope.GLOBAL);
     Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SAVEPOINT, Xscope.GLOBAL);
     Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
 
