@@ -4,7 +4,7 @@
 !
 ! Simple program to test the serialize directive
 !
-PROGRAM SERIALIZE
+PROGRAM serialize
   INTEGER :: i = 4
   INTEGER :: j = 2
   INTEGER :: k = 6
@@ -26,6 +26,6 @@ PROGRAM SERIALIZE
       REAL, INTENT(INOUT)     :: c(:), cc(:,:), ccc(:,:,:)
 
 
-    END
+    END SUBROUTINE clawserialize
 
-END
+END PROGRAM serialize
