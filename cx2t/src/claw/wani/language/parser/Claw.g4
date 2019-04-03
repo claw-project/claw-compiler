@@ -202,10 +202,11 @@ directive[ClawPragma l]
    | NODEP
      { $l.setDirective(ClawDirective.NO_DEP); }
 
-   | SERIALIZE savepoint=IDENTIFIER
+   | SERIALIZE savepoint=IDENTIFIER sermode=IDENTIFIER EOF
      {
        $l.setDirective(ClawDirective.SERIALIZE);
        $l.setValue(ClawClause.SERIALIZE_SAVEPOINT, $savepoint.text);
+       $l.setValue(ClawClause.SERIALIZE_SERMODE, $sermode.text);
      }
 
    // Special directives
