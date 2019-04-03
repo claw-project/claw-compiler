@@ -102,10 +102,11 @@ public class Serialize extends ClawTransformation {
     Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
 
     Xnode serCall = xcodeml.createFctCall(serType, "fs_write_field");
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    arguments.append(savepointArg);
+    arguments.append(savepointArg);
+    arguments.append(savepointArg);
+    arguments.append(xcodeml.createName("ppser_savepoint", null));
 
     return serCall;
   }
@@ -117,10 +118,11 @@ public class Serialize extends ClawTransformation {
     Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
 
     Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    arguments.append(savepointArg);
+    arguments.append(savepointArg);
+    arguments.append(savepointArg);
+    arguments.append(xcodeml.createName("ppser_savepoint", null));
 
     return serCall;
   }
