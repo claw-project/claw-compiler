@@ -6,16 +6,12 @@ package claw.wani.transformation.ll.utility;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * An array access to function call transformation replace the access to an
@@ -65,15 +61,28 @@ public class AutoPort extends ClawBlockTransformation {
     }
     if(siblingsInRegion.isEmpty()) {return;}
 
-    List<Xnode> fields = new LinkedList<>();
-    for(Xnode s : siblingsInRegion) {
-      fields.addAll(s.matchAll(Xcode.F_ARRAY_REF));
-    }
-    for(Xnode f : fields) {
-      System.out.println(f.toString());
-      if(xcodeml.getGlobalSymbolsTable().contains(f.firstChild().value())) {
-        System.out.println(f.firstChild().value());
+    Set<String> locArray = new HashSet<>();
+    Set<String> otherArray = new HashSet<>();
+    for(Xnode sibling : siblingsInRegion) {
+     List<Xnode> fields = sibling.matchAll(Xcode.F_ARRAY_REF);
+      for(Xnode field : fields) {
+        FfunctionDefinition parentFunction =  field.findParentFunction();
+        XsymbolTable funcTable = parentFunction.getSymbolTable();
+        otherArray.add(field.firstChild().value());
+        for(Xnode child : funcTable.children()) {
+          String name = field.firstChild().value();
+          if(child.firstChild().value().equals(name)) {
+            if (child.getAttribute(Xattr.SCLASS).equals("flocal")) {
+              System.out.println(name);
+              locArray.add(name);
+            }
+          }
+        }
       }
     }
+
+    otherArray.removeAll(locArray);
+    System.out.println(locArray.toString());
+    System.out.println(otherArray.toString());
   }
 }
