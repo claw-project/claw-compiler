@@ -6,20 +6,15 @@ package claw.wani.transformation.ll.utility;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.common.Xscope;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
-import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
-import claw.wani.transformation.ClawTransformation;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -62,6 +57,21 @@ public class AutoPort extends ClawBlockTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-    System.out.println(1);
+    List<Xnode> siblingsInRegion = new LinkedList<>();
+    Xnode current = _clawStart.getPragma().nextSibling();
+    while(!current.equals(_clawEnd.getPragma())) {
+      siblingsInRegion.add(current);
+      current = current.nextSibling();
+    }
+    if(siblingsInRegion.isEmpty()) {return;}
+
+    List<Xnode> fields = new LinkedList<>();
+    for(Xnode s : siblingsInRegion) {
+      fields.addAll(s.matchAll(Xcode.F_ARRAY_REF));
+    }
+    for(Xnode f : fields) {
+      System.out.println(f.toString());
+      f.getGlobalSymbolsTable().
+    }
   }
 }
