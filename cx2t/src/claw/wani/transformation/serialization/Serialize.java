@@ -51,6 +51,10 @@ public class Serialize extends ClawTransformation {
   private static final String SAVEPOINT_IN_SUFFIX = "-input";
   private static final String SAVEPOINT_OUT_SUFFIX = "-output";
 
+  private static final String SER_MODE_WRITE = "write";
+  private static final String SER_MODE_READ = "read";
+  private static final String SER_MODE_PERTURB = "perturb";
+
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
    *
@@ -99,7 +103,20 @@ public class Serialize extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-    writeIn(xcodeml);
+    switch(_claw.value(ClawClause.SERIALIZE_SERMODE)) {
+      case SER_MODE_WRITE:
+        writeIn(xcodeml);
+        break;
+      case SER_MODE_READ:
+        readIn(xcodeml);
+        break;
+      case SER_MODE_PERTURB:
+        perturbIn(xcodeml);
+        break;
+      default:
+        writeIn(xcodeml);
+        break;
+    }
 
     writeOut(xcodeml);
     removePragma();
