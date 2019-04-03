@@ -16,19 +16,19 @@ PROGRAM serialize
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"i" , i )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"k" , k )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_a" , a )
+ "banana1-input_a" , a )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_aa" , aa )
+ "banana1-input_aa" , aa )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_aaa" , aaa )
+ "banana1-input_aaa" , aaa )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_c" , c )
+ "banana1-input_c" , c )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_cc" , cc )
+ "banana1-input_cc" , cc )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_ccc" , ccc )
- CALL clawserialize ( i , a , aa , aaa , j , b, bb , bbb , k , c, cc , ccc )
- CALL fs_create_savepoint ( "banana1-output" , ppser_savepoint )
+ "banana1-input_ccc" , ccc )
+ CALL clawserialize ( i , a , aa , aaa , j , b , bb , bbb , k , c , cc , ccc )
+ CALL fs_create_savepoint ("banana1-output" , ppser_savepoint )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"i" , i )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"k" , k )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_b"&
@@ -36,13 +36,13 @@ PROGRAM serialize
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_bb"&
   , bb )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,&
-  "banana1-output_bbb" , bbb )
+ "banana1-output_bbb" , bbb )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_c"&
-   , c )
+  , c )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_cc"&
-   , cc )
+  , cc )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,&
-  "banana1-output_ccc" , ccc )
+ "banana1-output_ccc" , ccc )
 
 CONTAINS
  SUBROUTINE clawserialize ( i , a , aa , aaa , j , b , bb , bbb , k , c , cc ,&
@@ -64,3 +64,4 @@ CONTAINS
  END SUBROUTINE clawserialize
 
 END PROGRAM serialize
+

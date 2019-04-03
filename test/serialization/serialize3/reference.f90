@@ -16,19 +16,19 @@ PROGRAM serialize
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"i" , i )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"k" , k )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_a" , a , ppser_zrperturb )
+ "banana1-input_a" , a , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_aa" , aa , ppser_zrperturb )
+ "banana1-input_aa" , aa , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_aaa" , aaa , ppser_zrperturb )
+ "banana1-input_aaa" , aaa , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_c" , c , ppser_zrperturb )
+ "banana1-input_c" , c , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_cc" , cc , ppser_zrperturb )
+ "banana1-input_cc" , cc , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_ccc" , ccc , ppser_zrperturb )
- CALL clawserialize ( i , a , aa , aaa , j , b , bb , bbb, k , c , cc , ccc )
- CALL fs_create_savepoint ( "banana1-output" , ppser_savepoint )
+ "banana1-input_ccc" , ccc , ppser_zrperturb )
+ CALL clawserialize ( i , a , aa , aaa , j , b , bb , bbb , k , c , cc , ccc )
+ CALL fs_create_savepoint ("banana1-output" , ppser_savepoint )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"i" , i )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"k" , k )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_b"&
@@ -36,13 +36,13 @@ PROGRAM serialize
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_bb"&
   , bb )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,&
-  "banana1-output_bbb" , bbb )
+ "banana1-output_bbb" , bbb )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_c"&
-   , c )
+  , c )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,"banana1-output_cc"&
-   , cc )
+  , cc )
  CALL fs_write_field ( ppser_serializer , ppser_savepoint ,&
-  "banana1-output_ccc" , ccc )
+ "banana1-output_ccc" , ccc )
 
 CONTAINS
  SUBROUTINE clawserialize ( i , a , aa , aaa , j , b , bb , bbb , k , c , cc ,&
@@ -64,3 +64,4 @@ CONTAINS
  END SUBROUTINE clawserialize
 
 END PROGRAM serialize
+

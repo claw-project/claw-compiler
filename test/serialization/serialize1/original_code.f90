@@ -12,7 +12,7 @@ PROGRAM serialize
   REAL, DIMENSION(10,20) :: aa, bb, cc
   REAL, DIMENSION(10,20,30) :: aaa, bbb, ccc
 
-  !$claw serialize banana1
+  !$claw serialize banana1 write
   CALL clawserialize(i, a, aa, aaa,j ,b, bb, bbb,k ,c, cc, ccc)
 
   CONTAINS
