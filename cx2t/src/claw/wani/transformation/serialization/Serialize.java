@@ -106,6 +106,38 @@ public class Serialize extends ClawTransformation {
     return serCall;
   }
 
+  private Xnode createMetainfo(XcodeProgram xcodeml, Xnode param)
+  {
+    FfunctionType serType = xcodeml.createSubroutineType();
+    // Create the char constant type
+    Xnode nameArg = xcodeml.createCharConstant(param.value());
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
+    Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
+
+    Xnode serCall = xcodeml.createFctCall(serType, "fs_add_savepoint_metainfo");
+    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    arguments.append(savepointArg);
+    arguments.append(nameArg);
+    arguments.append(varArg);
+
+    return serCall;
+  }
+
+  private void addMetainfo(XcodeProgram xcodeml, Xnode savepoint)
+  {
+    List<Xnode> params = getParameters(xcodeml);
+    for(Xnode param : params) {
+      FbasicType type = xcodeml.getTypeTable().getBasicType(param);
+      if(!type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
+        // TODO save before
+        Xnode serCall = createMetainfo(xcodeml, param);
+        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+        savepoint.insertAfter(exprStmt);
+        exprStmt.insert(serCall);
+      }
+    }
+  }
+
   private Xnode createWriteField(XcodeProgram xcodeml, String savepoint, Xnode param)
   {
     FfunctionType serType = xcodeml.createSubroutineType();
@@ -173,6 +205,7 @@ public class Serialize extends ClawTransformation {
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
+    addMetainfo(xcodeml, exprStmt);
     writeFields(xcodeml, savename, true);
   }
 
@@ -185,7 +218,7 @@ public class Serialize extends ClawTransformation {
     exprStmt.insert(savepoint);
     writeFields(xcodeml, savename,false);
     _anchor.insertAfter(exprStmt);
-
+    addMetainfo(xcodeml, exprStmt);
   }
 
   private void readIn(XcodeProgram xcodeml)
@@ -196,6 +229,7 @@ public class Serialize extends ClawTransformation {
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
+    addMetainfo(xcodeml, exprStmt);
     readFields(xcodeml, savename);
   }
 
@@ -207,6 +241,7 @@ public class Serialize extends ClawTransformation {
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
+    addMetainfo(xcodeml, exprStmt);
     perturbFields(xcodeml, savename);
   }
 
