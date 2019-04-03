@@ -22,8 +22,6 @@ import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 
-import static claw.tatsu.xcodeml.xnode.Xname.TYPE_F_VOID;
-
 /**
  * @author phmarti, havogt, clementval
  */
@@ -32,9 +30,7 @@ public class Serialize extends ClawTransformation {
   private Xnode _fctCall;
   private Xnode _anchor;
 
-  private enum SerializationMode {SER_READ, SER_WRITE, SER_READ_PERTURB}
-
-  ;
+  private enum SerializationMode {SER_READ, SER_WRITE, SER_READ_PERTURB};
 
   private static final String SER_PPSER_SAVEPOINT = "ppser_savepoint";
   private static final String SER_PPSER_SERIALIZER = "ppser_serializer";
