@@ -4,6 +4,7 @@
  */
 package claw.wani.transformation.serialization;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import claw.shenron.transformation.Transformation;
@@ -140,9 +141,10 @@ public class Serialize extends ClawTransformation {
     return serCall;
   }
 
-  private void addMetainfo(XcodeProgram xcodeml, Xnode savepoint)
+  private List<Xnode> addMetainfo(XcodeProgram xcodeml)
   {
     List<Xnode> params = getParameters(xcodeml);
+    List<Xnode> createdNodes = new ArrayList<>();
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(type != null && !type.isArray()
@@ -151,10 +153,11 @@ public class Serialize extends ClawTransformation {
         // TODO save before
         Xnode serCall = createMetainfo(xcodeml, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        savepoint.insertAfter(exprStmt);
         exprStmt.insert(serCall);
+        createdNodes.add(exprStmt);
       }
     }
+    return createdNodes;
   }
 
   private Xnode createSerializeSkeletonFctCall(XcodeProgram xcodeml,
@@ -197,12 +200,10 @@ public class Serialize extends ClawTransformation {
   private Xnode createField(XcodeProgram xcodeml, String savepoint, Xnode param,
                             SerializationCall callType)
   {
-
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepoint + "_" + param.value());
     Xnode varArg =
         xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
-
     Xnode serCall = createSerializeSkeletonFctCall(xcodeml, callType);
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
     arguments.append(nameArg);
@@ -230,33 +231,56 @@ public class Serialize extends ClawTransformation {
     return createField(xcodeml, savepoint, param, SerializationCall.SER_READ_PERTURB);
   }
 
+  private void insertNodes(SerializationDirection direction, List<Xnode> nodes)
+  {
+    Xnode hook = _anchor;
+    for(Xnode node : nodes) {
+      if(direction == SerializationDirection.SER_OUT) {
+        hook.insertAfter(node);
+        hook = node;
+      } else if(direction == SerializationDirection.SER_IN) {
+        if(hook.equals(_anchor)) {
+          hook.insertBefore(node);
+        } else {
+          hook.insertAfter(node);
+        }
+        hook = node;
+      }
+    }
+  }
+
   private void writeIn(XcodeProgram xcodeml)
   {
-    generateCalls(xcodeml, SerializationCall.SER_WRITE,
-        SerializationDirection.SER_IN);
+    List<Xnode> createdNodes = generateCalls(xcodeml,
+        SerializationCall.SER_WRITE, SerializationDirection.SER_IN);
+    insertNodes(SerializationDirection.SER_IN, createdNodes);
   }
 
   private void writeOut(XcodeProgram xcodeml)
   {
-    generateCalls(xcodeml, SerializationCall.SER_WRITE,
-        SerializationDirection.SER_OUT);
+    List<Xnode> createdNodes = generateCalls(xcodeml,
+        SerializationCall.SER_WRITE, SerializationDirection.SER_OUT);
+    insertNodes(SerializationDirection.SER_OUT, createdNodes);
   }
 
   private void readIn(XcodeProgram xcodeml)
   {
-    generateCalls(xcodeml, SerializationCall.SER_READ,
-        SerializationDirection.SER_IN);
+    List<Xnode> createdNodes = generateCalls(xcodeml,
+        SerializationCall.SER_READ, SerializationDirection.SER_IN);
+    insertNodes(SerializationDirection.SER_IN, createdNodes);
   }
 
   private void perturbIn(XcodeProgram xcodeml)
   {
-    generateCalls(xcodeml, SerializationCall.SER_READ_PERTURB,
-        SerializationDirection.SER_IN);
+    List<Xnode> createdNodes = generateCalls(xcodeml,
+        SerializationCall.SER_READ_PERTURB, SerializationDirection.SER_IN);
+    insertNodes(SerializationDirection.SER_IN, createdNodes);
   }
 
-  private void generateCalls(XcodeProgram xcodeml, SerializationCall callType,
-                             SerializationDirection direction)
+  private List<Xnode> generateCalls(XcodeProgram xcodeml, SerializationCall callType,
+                                    SerializationDirection direction)
   {
+    List<Xnode> createdNodes = new ArrayList<>();
     String savepointName;
     if(direction == SerializationDirection.SER_IN) {
       savepointName = _claw.value(ClawClause.SERIALIZE_SAVEPOINT)
@@ -269,13 +293,15 @@ public class Serialize extends ClawTransformation {
     Xnode savepoint = createSavepoint(xcodeml, savepointName);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     exprStmt.insert(savepoint);
+    createdNodes.add(exprStmt);
+    createdNodes.addAll(addMetainfo(xcodeml));
     if(callType == SerializationCall.SER_WRITE) {
-      writeFields(xcodeml, savepointName,
-          direction == SerializationDirection.SER_IN);
+      createdNodes.addAll(writeFields(xcodeml, savepointName,
+          direction == SerializationDirection.SER_IN));
     } else if(callType == SerializationCall.SER_READ) {
-      readFields(xcodeml, savepointName);
+      createdNodes.addAll(readFields(xcodeml, savepointName));
     } else if(callType == SerializationCall.SER_READ_PERTURB) {
-      perturbFields(xcodeml, savepointName);
+      createdNodes.addAll(perturbFields(xcodeml, savepointName));
     }
 
     if(direction == SerializationDirection.SER_IN) {
@@ -283,55 +309,62 @@ public class Serialize extends ClawTransformation {
     } else {
       _anchor.insertAfter(exprStmt);
     }
-    addMetainfo(xcodeml, exprStmt);
+
+    return createdNodes;
   }
 
-  private void writeFields(XcodeProgram xcodeml, String savepoint, boolean in) {
+  private List<Xnode> writeFields(XcodeProgram xcodeml, String savepoint, boolean in) {
     List<Xnode> params = getParameters(xcodeml);
+    List<Xnode> createdNodes = new ArrayList<>();
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(in && type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _anchor.insertBefore(exprStmt);
         exprStmt.insert(serCall);
+        createdNodes.add(exprStmt);
       }
       if(!in && type.isArray() && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _anchor.insertAfter(exprStmt);
         exprStmt.insert(serCall);
+        createdNodes.add(exprStmt);
       }
     }
+    return createdNodes;
   }
 
-  private void readFields(XcodeProgram xcodeml, String savepoint) {
+  private List<Xnode> readFields(XcodeProgram xcodeml, String savepoint) {
     List<Xnode> params = getParameters(xcodeml);
+    List<Xnode> createdNodes = new ArrayList<>();
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createReadField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _anchor.insertBefore(exprStmt);
         exprStmt.insert(serCall);
+        createdNodes.add(exprStmt);
       }
     }
+    return createdNodes;
   }
 
-  private void perturbFields(XcodeProgram xcodeml, String savepoint) {
+  private List<Xnode> perturbFields(XcodeProgram xcodeml, String savepoint) {
     List<Xnode> params = getParameters(xcodeml);
+    List<Xnode> createdNodes = new ArrayList<>();
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createPerturbField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _anchor.insertBefore(exprStmt);
         exprStmt.insert(serCall);
+        createdNodes.add(exprStmt);
       }
     }
+    return createdNodes;
   }
 }
