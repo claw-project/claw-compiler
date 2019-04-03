@@ -6,12 +6,14 @@ package claw.wani.transformation.ll.utility;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.directive.common.Directive;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An array access to function call transformation replace the access to an
@@ -73,7 +75,6 @@ public class AutoPort extends ClawBlockTransformation {
           String name = field.firstChild().value();
           if(child.firstChild().value().equals(name)) {
             if (child.getAttribute(Xattr.SCLASS).equals("flocal")) {
-              System.out.println(name);
               locArray.add(name);
             }
           }
@@ -82,7 +83,11 @@ public class AutoPort extends ClawBlockTransformation {
     }
 
     otherArray.removeAll(locArray);
-    System.out.println(locArray.toString());
-    System.out.println(otherArray.toString());
+    List<String> otherArrayList = otherArray.stream().collect(Collectors.toList());
+    List<String> locArrayList = locArray.stream().collect(Collectors.toList());
+
+    Directive.generateDataRegionClause(xcodeml, otherArrayList, locArrayList, _clawStart.getPragma(), _clawEnd.getPragma());
+
+    removePragma();
   }
 }
