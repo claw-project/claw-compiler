@@ -352,6 +352,7 @@ sermode_clause[ClawPragma l]:
     READ { $l.setSerModeClauseValue(SerializationMode.READ); }
   | WRITE { $l.setSerModeClauseValue(SerializationMode.WRITE); }
   | PERTURB { $l.setSerModeClauseValue(SerializationMode.PERTURB); }
+  |  /* empty */ { $l.setSerModeClauseValue(SerializationMode.READ); }
 ;
 
 // reshape clause
