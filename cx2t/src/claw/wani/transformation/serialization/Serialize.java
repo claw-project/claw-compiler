@@ -30,6 +30,7 @@ import static claw.tatsu.xcodeml.xnode.Xname.TYPE_F_VOID;
 public class Serialize extends ClawTransformation {
 
   private Xnode _fctCall;
+  private Xnode _anchor;
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -59,6 +60,10 @@ public class Serialize extends ClawTransformation {
         return false;
       }
     }
+
+    // Set anchor for new code
+    _anchor = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT) == null ? _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT): _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
+
     return true;
   }
 
@@ -78,6 +83,7 @@ public class Serialize extends ClawTransformation {
     perturbIn(xcodeml);
 
     writeOut(xcodeml);
+    removePragma();
   }
 
   private List<Xnode> getParameters(XcodeProgram xcodeml) {
@@ -165,7 +171,7 @@ public class Serialize extends ClawTransformation {
     Xnode savepoint = createSavepoint(xcodeml,
         savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-    _fctCall.ancestor().insertBefore(exprStmt);
+    _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
     writeFields(xcodeml, savename, true);
   }
@@ -178,7 +184,7 @@ public class Serialize extends ClawTransformation {
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     exprStmt.insert(savepoint);
     writeFields(xcodeml, savename,false);
-    _fctCall.ancestor().insertAfter(exprStmt);
+    _anchor.insertAfter(exprStmt);
 
   }
 
@@ -188,7 +194,7 @@ public class Serialize extends ClawTransformation {
     Xnode savepoint = createSavepoint(xcodeml,
             savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-    _fctCall.ancestor().insertBefore(exprStmt);
+    _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
     readFields(xcodeml, savename);
   }
@@ -199,7 +205,7 @@ public class Serialize extends ClawTransformation {
     Xnode savepoint = createSavepoint(xcodeml,
             savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-    _fctCall.ancestor().insertBefore(exprStmt);
+    _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
     perturbFields(xcodeml, savename);
   }
@@ -212,14 +218,14 @@ public class Serialize extends ClawTransformation {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _fctCall.ancestor().insertBefore(exprStmt);
+        _anchor.insertBefore(exprStmt);
         exprStmt.insert(serCall);
       }
       if(!in && type.isArray() && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _fctCall.ancestor().insertAfter(exprStmt);
+        _anchor.insertAfter(exprStmt);
         exprStmt.insert(serCall);
       }
     }
@@ -233,7 +239,7 @@ public class Serialize extends ClawTransformation {
         // TODO save before
         Xnode serCall = createReadField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _fctCall.ancestor().insertBefore(exprStmt);
+        _anchor.insertBefore(exprStmt);
         exprStmt.insert(serCall);
       }
     }
@@ -247,7 +253,7 @@ public class Serialize extends ClawTransformation {
         // TODO save before
         Xnode serCall = createPerturbField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _fctCall.ancestor().insertBefore(exprStmt);
+        _anchor.insertBefore(exprStmt);
         exprStmt.insert(serCall);
       }
     }
