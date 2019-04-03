@@ -71,6 +71,9 @@ public class AutoPort extends ClawBlockTransformation {
     }
     for(Xnode f : fields) {
       System.out.println(f.toString());
+      if(xcodeml.getGlobalSymbolsTable().contains(f.firstChild().value())) {
+        System.out.println(f.firstChild().value());
+      }
     }
   }
 }
