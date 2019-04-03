@@ -1,11 +1,15 @@
 PROGRAM automatic_openacc
 REAL,DIMENSION(10) :: g1
+REAL,DIMENSION(10) :: ga, gb
+
+    ga(:)=2
+    gb(:)=0
     g1(:)=1
-    CALL my_subroutine()
+    CALL my_subroutine(ga, gb)
 
-END PROGRAM
+CONTAINS
 
-SUBROUTINE my_subroutine(a, b, c)
+SUBROUTINE my_subroutine(a, b)
     REAL, DIMENSION(10), INTENT(IN) :: a
     REAL, DIMENSION(10), INTENT(OUT) :: b
     
@@ -21,3 +25,5 @@ SUBROUTINE my_subroutine(a, b, c)
 
 
 END SUBROUTINE my_subroutine
+
+END PROGRAM
