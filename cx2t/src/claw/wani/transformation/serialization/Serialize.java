@@ -208,8 +208,15 @@ public class Serialize extends ClawTransformation {
     return serCall;
   }
 
-  private Xnode createField(XcodeProgram xcodeml, String savepoint, Xnode param,
-                            SerializationCall callType)
+  /**
+   * @param xcodeml
+   * @param savepoint
+   * @param param
+   * @param callType
+   * @return exprStmt node created with the specific function call inside.
+   */
+  private Xnode createSerFctCall(XcodeProgram xcodeml, String savepoint, Xnode param,
+                                 SerializationCall callType)
   {
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepoint + "_" + param.value());
@@ -224,22 +231,9 @@ public class Serialize extends ClawTransformation {
           SER_PPSER_ZPERTURB, Xscope.GLOBAL);
       arguments.append(perturbArg);
     }
-    return serCall;
-  }
-
-  private Xnode createWriteField(XcodeProgram xcodeml, String savepoint, Xnode param)
-  {
-    return createField(xcodeml, savepoint, param, SerializationCall.SER_WRITE);
-  }
-
-  private Xnode createReadField(XcodeProgram xcodeml, String savepoint, Xnode param)
-  {
-    return createField(xcodeml, savepoint, param, SerializationCall.SER_READ);
-  }
-
-  private Xnode createPerturbField(XcodeProgram xcodeml, String savepoint, Xnode param)
-  {
-    return createField(xcodeml, savepoint, param, SerializationCall.SER_READ_PERTURB);
+    Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+    exprStmt.insert(serCall);
+    return exprStmt;
   }
 
   private void insertNodes(SerializationDirection direction, List<Xnode> nodes)
@@ -330,17 +324,11 @@ public class Serialize extends ClawTransformation {
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(in && type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
-        // TODO save before
-        Xnode serCall = createWriteField(xcodeml, savepoint, param);
-        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        exprStmt.insert(serCall);
+        Xnode exprStmt = createSerFctCall(xcodeml, savepoint, param, SerializationCall.SER_WRITE);
         createdNodes.add(exprStmt);
       }
       if(!in && type.isArray() && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
-        // TODO save before
-        Xnode serCall = createWriteField(xcodeml, savepoint, param);
-        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        exprStmt.insert(serCall);
+        Xnode exprStmt = createSerFctCall(xcodeml, savepoint, param, SerializationCall.SER_WRITE);
         createdNodes.add(exprStmt);
       }
     }
@@ -353,10 +341,7 @@ public class Serialize extends ClawTransformation {
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
-        // TODO save before
-        Xnode serCall = createReadField(xcodeml, savepoint, param);
-        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        exprStmt.insert(serCall);
+        Xnode exprStmt = createSerFctCall(xcodeml, savepoint, param, SerializationCall.SER_READ);
         createdNodes.add(exprStmt);
       }
     }
@@ -369,10 +354,7 @@ public class Serialize extends ClawTransformation {
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
-        // TODO save before
-        Xnode serCall = createPerturbField(xcodeml, savepoint, param);
-        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        exprStmt.insert(serCall);
+        Xnode exprStmt = createSerFctCall(xcodeml, savepoint, param, SerializationCall.SER_READ_PERTURB);
         createdNodes.add(exprStmt);
       }
     }

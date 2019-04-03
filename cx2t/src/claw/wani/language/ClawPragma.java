@@ -17,7 +17,6 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
 import claw.wani.transformation.serialization.SerializationMode;
-import claw.wani.transformation.serialization.Serialize;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
 import org.antlr.v4.runtime.*;
@@ -742,11 +741,21 @@ public class ClawPragma extends AnalyzedPragma {
     _cleanupClauseValue = value;
   }
 
+  /**
+   * Set the serialization mode clause value
+   *
+   * @param mode One of the enum value.
+   */
   public void setSerModeClauseValue(SerializationMode mode) {
     setClause(ClawClause.SERIALIZE_SERMODE);
     _serializationMode = mode;
   }
 
+  /**
+   * Get the serialization mode clause value.
+   *
+   * @return Set serialization mode.
+   */
   public SerializationMode getSerModeClauseValue() {
     return _serializationMode;
   }
