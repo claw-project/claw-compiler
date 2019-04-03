@@ -147,9 +147,9 @@ public class Serialize extends ClawTransformation {
     Xnode savepoint = createSavepoint(xcodeml,
         savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-    _fctCall.insertBefore(exprStmt);
+    _fctCall.ancestor().insertBefore(exprStmt);
     exprStmt.insert(savepoint);
-    writeFields(xcodeml, savepoint.value(), true);
+    writeFields(xcodeml, savename, true);
   }
 
   private void writeOut(XcodeProgram xcodeml)
@@ -159,8 +159,8 @@ public class Serialize extends ClawTransformation {
         savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     exprStmt.insert(savepoint);
-    writeFields(xcodeml, savepoint.value(),false);
-    _fctCall.insertAfter(exprStmt);
+    writeFields(xcodeml, savename,false);
+    _fctCall.ancestor().insertAfter(exprStmt);
 
   }
 
@@ -172,14 +172,14 @@ public class Serialize extends ClawTransformation {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _fctCall.insertBefore(exprStmt);
+        _fctCall.ancestor().insertBefore(exprStmt);
         exprStmt.insert(serCall);
       }
       if(!in && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
-        _fctCall.insertAfter(exprStmt);
+        _fctCall.ancestor().insertAfter(exprStmt);
         exprStmt.insert(serCall);
       }
     }
