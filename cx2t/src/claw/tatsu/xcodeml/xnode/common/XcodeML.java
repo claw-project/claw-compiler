@@ -561,6 +561,23 @@ public class XcodeML extends Xnode {
   }
 
   /**
+   * Create a new FfunctionType with a new generated hash with empty
+   * params child.
+   *
+   * {@code
+   * <FfunctionType return_type="returnType" type="type">
+   * <params></params>
+   * </FfunctionType>
+   * }
+   *
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public FfunctionType createFunctionType(String returnType) {
+    String type = getTypeTable().generateHash(FortranType.FUNCTION);
+    return createFunctionType(type, returnType);
+  }
+
+  /**
    * Create a new FarrayRef node with varRef node as a child with the
    * given Var element.
    *
